@@ -1,0 +1,68 @@
+# Backlog for clean Harness project.
+# Business implementation tasks must be added explicitly and confirmed by PM before execution.
+
+tasks:
+  - id: H001
+    title: "最小 Harness 初始化"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "scripts/check.sh"
+      - ".gitignore"
+      - "README.md"
+    forbidden_files:
+      - "frontend/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "项目根目录只包含最小 Harness 文件。"
+      - "`bash scripts/check.sh` 通过。"
+      - "没有新增业务代码、依赖、前端页面、后端服务或 mock 数据。"
+    auto_run: false
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要开发业务代码"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、后端或数据库"
+    commit_after_done: false
+  - id: H002
+    title: "追加前端设计与开发规则"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "frontend/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AGENTS.md 记录 shadcn/ui 前端 Golden Rule、UI baseline、主题、侧边栏和 dashboard 结构规则。"
+      - "docs/PROJECT_STATE.md 记录前端方向摘要。"
+      - "`bash scripts/check.sh` 通过。"
+      - "没有新增业务代码、依赖、前端页面、后端服务或 mock 数据。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要开发业务代码"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、后端或数据库"
+      - "需要修改业务指标、状态码、结算公式或收费因子"
+    commit_after_done: false
