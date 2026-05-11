@@ -46,7 +46,8 @@
 6. 哪些事情暂时不建议做：
 7. 如果 PM 不反对，默认从推荐第 1 项继续开发：
 
-### 是否建议 commit
+### Git 提交状态
 
-- 是 / 否
-- 建议 commit message：
+- 是否已本地 commit：
+- commit message：
+- 是否建议 push：

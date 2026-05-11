@@ -4,7 +4,7 @@
 
 - Project name: `bpo-schedule-platform`
 - Current stage: frontend dashboard scaffold
-- Current development mode: Story Runner first, Gate Plan controlled, continuous delivery when explicitly requested
+- Current development mode: Story Runner first, Gate Plan controlled, auto local commit after green check, push only after PM confirmation
 - Goal: provide an auditable Harness while iterating on a PM-confirmed static BPO WFM dashboard scaffold.
 
 ## Project Root
@@ -54,7 +54,26 @@ Every non-trivial task must follow this order:
 5. Run `bash scripts/check.sh`.
 6. Update `docs/dev/branch-log.md`.
 7. Output a Chinese Done Report.
-8. Suggest whether to commit, but do not commit unless the user explicitly asks.
+8. After `bash scripts/check.sh` passes, commit the verified completed scope to the local Git repository without another confirmation pause.
+9. At stage, module block, or coherent feature-set completion, ask PM whether to push to the remote repository.
+
+## Verified Task Commit Policy
+
+PM confirmed on 2026-05-12 that this project should auto-commit completed verified work.
+
+Default rule:
+
+- Every completed task that passes `bash scripts/check.sh` must be committed to the local Git repository.
+- Commit messages must be clear English.
+- Stage, module block, or coherent feature-set completion must ask PM whether to push; do not push without explicit PM confirmation.
+- Commits must include only the intended files for the current task scope.
+
+Do not auto-commit when:
+
+- `bash scripts/check.sh` fails.
+- The Git status contains unrelated changes that cannot be safely separated from the current scope.
+- The task scope is ambiguous or has expanded beyond the Gate Plan.
+- The task requires new dependencies, package or lockfile changes, real external data, database persistence, authentication, permissions, approval, export, batch operations, production status codes, formulas, settlement rules, charge factors, or destructive Git/file operations without PM confirmation.
 
 ## Continuous Delivery Mode
 
@@ -66,7 +85,8 @@ In Continuous Delivery Mode, Codex should:
 2. Run the required verification before reporting completion.
 3. Commit the completed, verified scope without asking again.
 4. Use a clear English commit message.
-5. Continue to respect all stop conditions and forbidden scopes.
+5. Ask PM before pushing any completed stage, module block, or coherent feature set.
+6. Continue to respect all stop conditions and forbidden scopes.
 
 Continuous Delivery Mode does not bypass PM confirmation for new risky scope. Codex must still stop when the next step requires:
 
@@ -96,6 +116,8 @@ The forward plan must use this Chinese structure:
 
 Recommendations should be based on dependency order, business value, implementation risk, and the project's current stop conditions. Codex must call out risky items such as dependencies, database persistence, authentication, real integrations, approval, export, batch operations, production status codes, formulas, settlement rules, and charge factors instead of silently recommending them.
 
+After stage, module block, or coherent feature-set completion, Codex must also ask PM whether to push the locally committed work to the remote repository.
+
 ## Story Runner Mode
 
 When the PM asks to "开始", "继续", "自动走完", "按用户故事开发", "挨个开发完测试完提交完", or otherwise clearly requests continuous delivery from a goal, Codex must use Story Runner Mode.
@@ -107,7 +129,7 @@ In Story Runner Mode, Codex must:
 1. Treat the user story as the primary execution unit.
 2. Convert the goal into raw requirements and the smallest useful user stories before implementation.
 3. Build a Story Execution Queue ordered by dependency and priority.
-4. Execute each ready story through implementation, verification, documentation update, and commit when `commit_after_done` or Continuous Delivery Mode allows it.
+4. Execute each ready story through implementation, verification, documentation update, and local commit after `bash scripts/check.sh` passes.
 5. Continue to the next ready story after a green gate without asking again.
 6. Keep UI feedback, small visual fixes, and acceptance corrections inside the current story instead of creating a new backlog task for every small adjustment.
 7. Update `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml` so story state remains the source of truth.

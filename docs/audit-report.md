@@ -4,6 +4,24 @@
 
 ## Current Audit
 
+### 2026-05-12 - H015 绿色检查后自动本地提交规则审计
+
+#### 审计结论
+
+- 已将 PM 确认的交付规则写入 `AGENTS.md`：每个完成且通过 `bash scripts/check.sh` 的任务自动本地 commit。
+- 已明确 push 仍由 PM 控制：阶段、模块块或连续开发块完成后，Codex 需要询问是否推送远端。
+- 已同步 `docs/PROJECT_STATE.md`、`docs/harness/lightweight-harness.md` 和 `docs/quality/DONE_REPORT_TEMPLATE.md`，避免 Done Report 继续停留在“建议 commit”的旧口径。
+- 本次只改变 Harness 流程文档和追踪文件，不修改业务代码、前端、后端、依赖、package 或 lockfile。
+
+#### 风险
+
+- 自动本地提交要求 Codex 在每次提交前只 stage 当前任务范围，避免混入用户或其他任务的无关改动。
+- 如果工作区出现无法安全分离的无关改动，应暂停并说明原因，而不是强行提交。
+
+#### 建议
+
+- 后续 Done Report 应报告已创建的本地 commit message，并在阶段完成时明确询问 PM 是否 push。
+
 ### 2026-05-11 - H012 Harness 文档一致性快速修复审计
 
 #### 审计结论

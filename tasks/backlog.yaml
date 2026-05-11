@@ -1417,6 +1417,46 @@ tasks:
       - "需要连接外部网络或复制外部源码"
       - "验证失败"
     commit_after_done: true
+  - id: H015
+    title: "绿色检查后自动本地提交规则"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/harness/lightweight-harness.md"
+      - "docs/quality/DONE_REPORT_TEMPLATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/decision-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AGENTS.md 明确每个通过 bash scripts/check.sh 的已完成任务自动本地 commit。"
+      - "AGENTS.md 明确阶段、模块块或连续开发块完成后询问 PM 是否 push。"
+      - "Project State、Lightweight Harness 和 Done Report Template 同步新规则。"
+      - "branch log、task log、decision log、audit report 记录该流程变更。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要修改业务代码"
+      - "Git 状态存在无法安全分离的无关改动"
+      - "验证失败"
+    commit_after_done: true
   - id: F013
     title: "shadcn dashboard-01 视觉差距审计"
     priority: P0

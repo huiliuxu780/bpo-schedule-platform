@@ -278,3 +278,12 @@
 - action: 快速修复 Harness 文档一致性残留问题。
 - status: `done`
 - notes: 已同步 lightweight-harness 当前阶段与分阶段路线，修正 AGENTS 中 Story Runner subagent 授权残留文案，并将 audit-report 中旧的 clean Harness 偏差风险降级为历史结论。
+
+### 2026-05-12
+
+- task_id: `H015`
+- source_ids: []
+- story_ids: []
+- action: 固化绿色检查后的自动本地提交规则。
+- status: `done`
+- notes: PM 已确认以后本项目每完成一个通过 `bash scripts/check.sh` 的任务就自动本地 commit；阶段、模块块或连续开发块完成后再询问是否 push。

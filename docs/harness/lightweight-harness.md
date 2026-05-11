@@ -7,7 +7,7 @@
 当前阶段的目标不是扩展生产业务能力，而是在已确认的 F001 静态前端脚手架和本地排班计划 MVP 纵切基础上，建立一套可追溯、可审计、可分阶段执行的需求闭环：
 
 ```txt
-原始需求 -> 用户故事 -> Story Execution Queue -> Gate Plan for risky scope -> 执行 -> 验证 -> 提交/继续 -> 审计复盘
+原始需求 -> 用户故事 -> Story Execution Queue -> Gate Plan for risky scope -> 执行 -> 验证 -> 绿色检查后本地提交 -> 继续/审计复盘
 ```
 
 ## 2. 当前边界
@@ -132,7 +132,7 @@ Story Runner Mode 的主规则：
 - Codex 必须先把 goal 拆成最小可验收用户故事，并按依赖顺序形成 Story Execution Queue。
 - 一个用户故事内的 UI 细节反馈、验收修正、视觉微调和小 bug 修复，应归入当前 story，不再为每个小改动新建独立 `F00x`。
 - 当一个 story 通过验证后，若未触发停止条件，Codex 应自动进入下一个 ready story。
-- 当 Continuous Delivery Mode 或 `commit_after_done: true` 允许时，story 通过验证后应直接提交。
+- 每个 story 或任务通过 `bash scripts/check.sh` 后，应直接提交到本地 Git 仓库；阶段、模块块或连续开发块完成后再询问 PM 是否 push。
 - `docs/user-stories.md` 的状态必须与 `tasks/backlog.yaml`、`docs/task-log.md` 和 `docs/audit-report.md` 保持同步。
 
 Story Runner Mode 的停止条件：
@@ -167,6 +167,8 @@ Story Runner Mode 的停止条件：
 - 是否会触发新增依赖、数据库、认证、真实集成、审批、导出、批量、生产状态码、公式、结算规则或收费因子等停止条件
 
 若推荐第 1 项不触发停止条件，Story Runner Mode 可以在 PM 未反对时继续执行；若触发停止条件，必须先停下说明原因。
+
+阶段、模块块或连续开发块完成后，主 Agent 还必须询问 PM 是否 push 到远端；本地 commit 已由绿色检查后的自动提交规则处理。
 
 ## 10. Subagent 提示词管理
 
