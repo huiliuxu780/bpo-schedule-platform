@@ -80,3 +80,11 @@
 - 原因：第二条纵切需要让系统从只读查看推进到受控草稿编辑，但还不能提前引入数据库、认证、权限或生产工作流。
 - 影响：后端现在提供 `POST /api/v1/schedule-plans/drafts` 和 `PUT /api/v1/schedule-plans/{plan_id}/draft`，并由服务端计算汇总字段。
 - 限制：B002 只允许更新 `draft` 状态计划；不提供发布、审批、导出、批量操作、权限、数据库持久化、真实 Excel、真实 CORN、生产状态码最终定稿、结算公式或收费因子。
+
+### 2026-05-11 - D012 - 采用 Story Runner 作为默认连续交付模式
+
+- 决策：正式开发默认以用户故事为执行单位，而不是为每个小 UI 反馈或实现细节新建任务。
+- 原因：PM 明确反馈此前 Codex 频繁切换小 Gate，导致用户故事主线被 backlog 执行项挤到旁边，影响开发节奏。
+- 影响：当 PM 要求“开始”“继续”“自动走完”“按用户故事开发”“挨个开发完测试完提交完”时，Codex 应进入 Story Runner Mode，按依赖顺序自动实现、验证、提交并进入下一个 ready story。
+- Subagent：Story Runner Mode 下允许主 Worker 默认启动 bounded subagents，前提是写入范围清晰且互不冲突；主 Worker 负责整合、最终验证、提交和 Done Report。
+- 限制：该模式不绕过新增依赖、package/lockfile、真实数据、数据库、认证、权限、审批、导出、批量、生产状态码/公式/结算/收费因子、破坏性操作或失败验证等停止条件。

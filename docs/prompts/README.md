@@ -4,17 +4,27 @@
 
 This folder defines prompt contracts for future subagent work in `bpo-schedule-platform`.
 
-The contracts are documentation/control-layer only. They do not authorize subagent execution, new frontend implementation, backend implementation, dependency installation, package changes, new mock data, real API integration, or database work.
+The contracts define controlled subagent execution. They do not authorize dependency installation, package changes, real API integration, database work, production permissions, approval, export, batch operations, settlement formulas, or charge factors outside a confirmed story scope.
 
 ## Execution Rule
 
-Subagents may be used only when all conditions are true:
+In Story Runner Mode, subagents may be used by default when all conditions are true:
+
+- The PM has authorized continuous story execution, such as "开始", "继续", "自动走完", "按用户故事开发", or "挨个开发完测试完提交完".
+- The story queue is clear and the target story is ready.
+- The work is split into independent tasks with non-overlapping write scopes.
+- Each subagent receives a bounded dispatch packet with inputs, allowed files, forbidden files, stop conditions, acceptance, and verification.
+- The main Codex worker remains responsible for integration, verification, logs, commits, and final Done Report.
+
+Outside Story Runner Mode, subagents may be used only when all conditions are true:
 
 - The PM has confirmed the Gate Plan.
 - The user explicitly allows subagents, delegation, or parallel agent work for the task.
 - The work is split into independent tasks with non-overlapping write scopes.
 - Each subagent receives a bounded prompt with inputs, allowed files, forbidden files, stop conditions, and required output format.
 - The main Codex worker remains responsible for integration, verification, logs, and final Done Report.
+
+Small UI corrections and acceptance fixes inside the active story should stay in the same dispatch chain. Do not create a new backlog task for every icon, label, spacing, or style correction unless the scope changes.
 
 ## Prompt Files
 

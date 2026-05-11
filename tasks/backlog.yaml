@@ -784,6 +784,50 @@ tasks:
       - "需要固化生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: H010
+    title: "Story Runner 连续用户故事交付流程"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/harness/lightweight-harness.md"
+      - "docs/prompts/README.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/decision-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AGENTS.md 明确 Story Runner Mode：goal -> minimal user stories -> story queue -> implementation -> verification -> commit -> next story。"
+      - "Story Runner Mode 明确 UI 细节反馈归入当前 story，不为每个小修正新建任务。"
+      - "Story Runner Mode 明确可默认启动 bounded subagents，前提是写入范围不冲突。"
+      - "docs/harness/lightweight-harness.md 和 docs/prompts/README.md 同步 Story Runner 与 subagent 规则。"
+      - "docs/user-stories.md 状态与已完成 backlog/task-log/audit 对齐。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要新增业务能力"
+      - "需要数据库、认证、真实 Excel、真实 CORN 或外部系统"
+      - "需要生产审批、导出或批量操作"
+      - "验证失败"
+    commit_after_done: true
   - id: Q002
     title: "排班计划草稿创建与更新纵切验收"
     priority: P0
@@ -821,6 +865,48 @@ tasks:
       - "需要数据库持久化"
       - "需要认证或权限系统"
       - "需要生产审批、发布、导出或批量操作"
+      - "需要固化生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: H011
+    title: "Harness Gate Review 修复"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "tasks/backlog.yaml"
+      - "scripts/check.sh"
+      - "scripts/dev.sh"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "plain `bash scripts/check.sh` 不再依赖调用者 PATH 中碰巧排在第一位的 Python。"
+      - "PROJECT_STATE 不再同时声明无 backend services 和 B001/B002 已实现。"
+      - "AGENTS 二级导航规则与 F002 / PROJECT_STATE 对齐。"
+      - "audit-report 中关于未跟踪工程文件和 package.json 导致 check 失败的旧结论已标记为过期或改写。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要新增业务能力"
+      - "需要数据库、认证、真实 Excel、真实 CORN 或外部系统"
+      - "需要生产审批、导出或批量操作"
       - "需要固化生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true

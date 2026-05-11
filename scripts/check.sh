@@ -36,6 +36,60 @@ fi
 
 echo "using Node.js $(node -v) at $(command -v node)"
 
+resolve_backend_python() {
+  local candidate
+  local candidates=()
+
+  if [[ -n "${BPO_BACKEND_PYTHON:-}" ]]; then
+    candidates+=("$BPO_BACKEND_PYTHON")
+  else
+    candidates+=(
+      "$ROOT_DIR/.venv/bin/python"
+      "$ROOT_DIR/.venv/bin/python3"
+    )
+
+    if command -v python3 >/dev/null 2>&1; then
+      candidates+=("$(command -v python3)")
+    fi
+
+    candidates+=(
+      "/Users/mac/.local/bin/python3"
+      "/opt/homebrew/bin/python3"
+      "/usr/bin/python3"
+    )
+  fi
+
+  for candidate in "${candidates[@]}"; do
+    if [[ -z "$candidate" || ! -x "$candidate" ]]; then
+      continue
+    fi
+
+    if "$candidate" - <<'PY' >/dev/null 2>&1; then
+import importlib.util
+
+required = ("fastapi", "pydantic")
+raise SystemExit(
+    0 if all(importlib.util.find_spec(name) is not None for name in required) else 1
+)
+PY
+      printf '%s\n' "$candidate"
+      return 0
+    fi
+  done
+
+  echo "backend toolchain missing: fastapi pydantic" >&2
+  if [[ -n "${BPO_BACKEND_PYTHON:-}" ]]; then
+    echo "BPO_BACKEND_PYTHON is set to '$BPO_BACKEND_PYTHON' but it cannot import the backend dependencies" >&2
+  else
+    echo "install backend dependencies with: python3 -m pip install -r backend/requirements.txt" >&2
+    echo "or set BPO_BACKEND_PYTHON to a Python executable that can import fastapi and pydantic" >&2
+  fi
+  return 1
+}
+
+backend_python="$(resolve_backend_python)"
+echo "using backend Python $("$backend_python" -c 'import sys; print(sys.executable)')"
+
 required_files=(
   ".node-version"
   ".nvmrc"
@@ -131,7 +185,7 @@ for file in "${backend_files[@]}"; do
   fi
 done
 
-python3 - <<'PY'
+if ! "$backend_python" - <<'PY'
 import importlib.util
 import sys
 
@@ -146,7 +200,10 @@ if missing:
     print("install backend dependencies under a confirmed backend dependency Gate", file=sys.stderr)
     raise SystemExit(1)
 PY
+then
+  exit 1
+fi
 
-python3 -m unittest discover -s backend/tests -v
+"$backend_python" -m unittest discover -s backend/tests -v
 
 echo "project Harness check passed"

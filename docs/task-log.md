@@ -128,6 +128,15 @@
 
 ### 2026-05-11
 
+- task_id: `H010`
+- source_ids: [`R014`]
+- story_ids: [`US021`]
+- action: 将默认开发节奏改为 Story Runner 连续用户故事交付。
+- status: `done`
+- notes: 已在 AGENTS、Harness、Subagent Prompt Contract 和 Project State 中明确：goal 先拆最小用户故事，按依赖顺序自动执行、验证、提交并进入下一个 ready story；同一 story 内的 UI 反馈不再拆成多个小任务；Story Runner Mode 下允许 bounded subagents。
+
+### 2026-05-11
+
 - task_id: `F006`
 - source_ids: [`R012`, `R011`]
 - story_ids: [`US019`, `US017`]
@@ -152,3 +161,12 @@
 - action: 验收排班计划草稿创建与更新纵切。
 - status: `done`
 - notes: 已验证 B002 后端 unittest、F006/F007 前端 lint/typecheck/build、Harness check、本地新建页 200、编辑页 200、POST 创建草稿和 PUT 更新草稿；仍不包含数据库、认证、权限、发布、审批、导出或批量。
+
+### 2026-05-11
+
+- task_id: `H011`
+- source_ids: []
+- story_ids: []
+- action: 修复 Harness gate review 中发现的 backend Python、项目状态、侧边栏规则和审计结论不一致问题。
+- status: `done`
+- notes: `scripts/check.sh` 与 `scripts/dev.sh` 已显式选择可导入 FastAPI/Pydantic 的 backend Python；PROJECT_STATE 已同步当前前端脚手架 + 本地排班计划纵切阶段；AGENTS 二级导航规则已与 F002 对齐；audit-report 已标记过期结论。

@@ -7,7 +7,7 @@
 当前阶段的目标不是扩展真实业务能力，而是在已确认的 F001 静态前端脚手架基础上，建立一套可追溯、可审计、可分阶段执行的需求闭环：
 
 ```txt
-原始需求 -> 用户故事 -> DAG 依赖排序 -> Gate Plan -> PM 确认 -> 小步执行 -> Done Report -> 审计复盘
+原始需求 -> 用户故事 -> Story Execution Queue -> Gate Plan for risky scope -> 执行 -> 验证 -> 提交/继续 -> 审计复盘
 ```
 
 ## 2. 当前边界
@@ -122,19 +122,42 @@ docs/
 
 若存在循环依赖或关键口径未确认，任务状态必须标记为 `blocked`，并在 `audit-report.md` 中记录。
 
-## 8. Subagent 提示词管理
+## 8. Story Runner Mode
+
+当 PM 明确要求“开始”“继续”“自动走完”“按用户故事开发”“挨个开发完测试完提交完”时，项目进入 Story Runner Mode。
+
+Story Runner Mode 的主规则：
+
+- 用户故事是默认执行单位，backlog 任务只是 story 的实现载体。
+- Codex 必须先把 goal 拆成最小可验收用户故事，并按依赖顺序形成 Story Execution Queue。
+- 一个用户故事内的 UI 细节反馈、验收修正、视觉微调和小 bug 修复，应归入当前 story，不再为每个小改动新建独立 `F00x`。
+- 当一个 story 通过验证后，若未触发停止条件，Codex 应自动进入下一个 ready story。
+- 当 Continuous Delivery Mode 或 `commit_after_done: true` 允许时，story 通过验证后应直接提交。
+- `docs/user-stories.md` 的状态必须与 `tasks/backlog.yaml`、`docs/task-log.md` 和 `docs/audit-report.md` 保持同步。
+
+Story Runner Mode 的停止条件：
+
+- 需求或验收标准不清楚。
+- 需要新增依赖、修改 package 或 lockfile。
+- 需要真实外部数据、数据库、认证、权限、审批、导出、批量或生产工作流。
+- 需要确认生产状态码、公式、结算规则或收费因子。
+- subagent 写入范围可能冲突。
+- 验证失败。
+- 需要破坏性 Git 或文件操作。
+
+## 9. Subagent 提示词管理
 
 提示词模板放在 `docs/prompts/`。
 
-当前阶段只建立模板，不自动启用多 Agent 并行执行。若后续需要使用 Subagent，必须满足：
+Story Runner Mode 默认授权主 Worker 启动 bounded subagents，但必须满足：
 
 - 任务已拆分清楚。
 - 写入范围互不冲突。
 - 已通过 Gate Plan。
-- PM 已确认允许多 Agent 或并行执行。
-- 用户明确允许 subagent、delegation 或 parallel agent work。
 - 主 Worker 提供 dispatch packet，包括 `task_id`、目标、输入文件、允许文件、禁止文件、停止条件和验收标准。
 - 每个 Subagent 必须按 `docs/prompts/README.md` 返回结构化状态。
+
+若不在 Story Runner Mode，subagent 启动仍需要 PM 明确授权 subagents、delegation 或 parallel agent work。
 
 ### Subagent Contract Files
 
@@ -213,7 +236,7 @@ Agent assignment:
 
 The shadcn skill does not authorize dependency installation, package changes, preset application, component overwrite, or registry changes unless the confirmed Gate explicitly allows them.
 
-## 9. 主 Worker 闭环
+## 10. 主 Worker 闭环
 
 每次需求进入项目后，主 Worker 应按以下顺序执行：
 
@@ -236,7 +259,7 @@ The shadcn skill does not authorize dependency installation, package changes, pr
 - 执行最终验证。
 - 更新任务日志、审计报告和 Done Report。
 
-## 10. 审计规则
+## 11. 审计规则
 
 审计关注四件事：
 
@@ -247,7 +270,7 @@ The shadcn skill does not authorize dependency installation, package changes, pr
 
 审计结果写入 `docs/audit-report.md`。
 
-## 11. 分阶段升级路线
+## 12. 分阶段升级路线
 
 ### 阶段 1：文档型 Harness
 

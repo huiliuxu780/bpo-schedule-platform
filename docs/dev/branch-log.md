@@ -75,7 +75,7 @@
 - Added `docs/prompts/README.md` with the required dispatch packet, structured return format, universal stop conditions, and review chain.
 - Reworked PM, UI/UX, Frontend, Backend, QA, and Doc Agent prompts into explicit contracts with inputs, outputs, rules, and stop conditions.
 - Added generic Implementer, Spec Reviewer, and Code Quality Reviewer prompt contracts for future implementation workflows.
-- Recorded that subagents must not start automatically; they require explicit PM/user permission, a confirmed Gate Plan, and non-overlapping write scopes.
+- Recorded the original conservative subagent rule, which was later superseded by H010 Story Runner Mode for continuous story delivery.
 
 ### shadcn Skill Assignment
 
@@ -171,6 +171,15 @@
 - Kept the first UI version intentionally small: plan metadata plus four core 0.5h intervals.
 - Kept full editing, publish, approval, export, batch operations, authentication, permissions, and persistence out of scope.
 
+### H010 Story Runner Delivery Flow
+
+- Added raw requirement `R014` and user story `US021` for PM's Harness optimization feedback.
+- Added Story Runner Mode to `AGENTS.md`: goal -> minimal user stories -> Story Execution Queue -> implementation -> verification -> commit -> next story.
+- Updated `docs/harness/lightweight-harness.md` so story-first continuous delivery is the main development flow.
+- Updated `docs/prompts/README.md` so bounded subagents can be used by default in Story Runner Mode when write scopes do not overlap.
+- Synchronized completed user-story statuses with completed backlog/task-log/audit state.
+- Recorded that small UI corrections stay inside the active story instead of becoming new `F00x` tasks unless scope changes.
+
 ### F007 Schedule Plan Draft Update UI
 
 - Added an "编辑草稿" action on draft schedule plan detail pages.
@@ -186,3 +195,10 @@
 - Confirmed local HTTP 200 for the new draft page and edit draft page.
 - Confirmed direct POST draft creation and PUT draft update against the FastAPI service.
 - Recorded that persistence, authentication, permissions, publish, approval, export, batch operations, real Excel, and real CORN remain out of scope.
+
+### H011 Harness Gate Review Fixes
+
+- Fixed backend Python selection in `scripts/check.sh` and `scripts/dev.sh` so local verification chooses a Python runtime that can import FastAPI/Pydantic instead of depending on whichever `python3` appears first in PATH.
+- Reconciled `docs/PROJECT_STATE.md` so the active scope now reflects the frontend dashboard scaffold plus local scheduling-plan MVP vertical, while keeping real integrations, database, auth, permissions, export, approval, batch operations, production formulas, and charge factors out of scope.
+- Reconciled sidebar rules so primary navigation keeps icons and secondary navigation stays text-first with badge/tag states unless a later Gate changes that decision.
+- Marked stale audit conclusions as superseded: key frontend/backend files are tracked, and the current Gate risk is backend Python runtime selection rather than the presence of `package.json`.

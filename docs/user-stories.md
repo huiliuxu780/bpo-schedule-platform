@@ -47,7 +47,7 @@ acceptance:
   - "支持 light/dark theme。"
 dependencies:
   - "F001"
-status: "in_progress"
+status: "done"
 ```
 
 ### US002 - 运营查看履约趋势与时段缺口
@@ -69,7 +69,7 @@ acceptance:
 dependencies:
   - "US001"
   - "D005"
-status: "in_progress"
+status: "done"
 ```
 
 ### US003 - 运营复核异常工时列表
@@ -89,7 +89,7 @@ acceptance:
   - "不提供真实审批、导出、批量处理或结算确认能力。"
 dependencies:
   - "US001"
-status: "in_progress"
+status: "done"
 ```
 
 ### US004 - 运营查看数据同步状态
@@ -108,7 +108,7 @@ acceptance:
   - "仅展示静态 mock 状态，不接入真实 API。"
 dependencies:
   - "US001"
-status: "in_progress"
+status: "done"
 ```
 
 ### US005 - 用户切换 light/dark 主题
@@ -128,7 +128,7 @@ acceptance:
   - "优先使用 shadcn / Tailwind semantic tokens。"
 dependencies:
   - "US001"
-status: "in_progress"
+status: "done"
 ```
 
 ### US006 - PM 确认 MVP 第一条纵切范围
@@ -170,7 +170,7 @@ acceptance:
 dependencies:
   - "US006"
   - "US010"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US008 - 排班人员打开排班计划详情
@@ -192,7 +192,7 @@ acceptance:
 dependencies:
   - "US007"
   - "US011"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US009 - 运营负责人查看排班覆盖风险
@@ -215,7 +215,7 @@ acceptance:
 dependencies:
   - "US007"
   - "US008"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US010 - 后端提供排班计划列表接口
@@ -236,7 +236,7 @@ acceptance:
   - "接口从本地种子数据读取，不接数据库、认证或真实外部系统。"
 dependencies:
   - "US006"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US011 - 后端提供排班计划详情接口
@@ -258,7 +258,7 @@ acceptance:
   - "当 plan_id 不存在时返回 404 和 machine-readable error code。"
 dependencies:
   - "US010"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US012 - 前端从 FastAPI 读取排班计划数据
@@ -280,7 +280,7 @@ acceptance:
 dependencies:
   - "US010"
   - "US011"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US013 - 后端本地种子数据表达预测需求
@@ -301,7 +301,7 @@ acceptance:
   - "不实现上传、解析 Excel 或外部预测系统接入。"
 dependencies:
   - "US006"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US014 - 后端本地种子数据表达排班计划
@@ -323,7 +323,7 @@ acceptance:
   - "字段使用 English keys，业务展示值可使用中文。"
 dependencies:
   - "US013"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US015 - PM 确认 MVP 状态与公式展示口径
@@ -343,7 +343,7 @@ acceptance:
   - "结算公式、排班拟合度、排班遵守率和生产状态码不在第一条纵切中固化。"
 dependencies:
   - "US006"
-status: "needs_pm_confirmation_before_implementation"
+status: "done"
 ```
 
 ### US016 - QA 验证第一条纵切交付
@@ -368,7 +368,7 @@ dependencies:
   - "US010"
   - "US011"
   - "US012"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US017 - 后端创建排班计划草稿
@@ -392,7 +392,7 @@ acceptance:
 dependencies:
   - "US010"
   - "US011"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US018 - 后端更新排班计划草稿
@@ -416,7 +416,7 @@ acceptance:
   - "不实现发布、审批、导出、批量操作、权限或数据库持久化。"
 dependencies:
   - "US017"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US019 - 前端创建排班计划草稿
@@ -439,7 +439,7 @@ acceptance:
   - "不实现完整编辑器、发布、审批、导出、批量操作、权限或数据库持久化。"
 dependencies:
   - "US017"
-status: "ready_for_gate"
+status: "done"
 ```
 
 ### US020 - 前端更新排班计划草稿
@@ -464,5 +464,27 @@ acceptance:
 dependencies:
   - "US018"
   - "US019"
-status: "ready_for_gate"
+status: "done"
+```
+
+### US021 - Codex 按用户故事连续交付
+
+```yaml
+id: US021
+requirement_ids:
+  - R014
+module: "Harness 流程"
+role: "PM"
+story: "作为 PM，我希望 Codex 从 goal 拆出最小用户故事后，能够按依赖顺序自动开发、测试、提交，并在安全时启动 subagent 并行处理，以便项目快速进入连续交付节奏。"
+task_type: "docs"
+priority: "P0"
+acceptance:
+  - "AGENTS.md 定义 Story Runner Mode。"
+  - "Story Runner Mode 明确用户故事是默认执行单位，UI 细节反馈归入当前 story。"
+  - "Story Runner Mode 允许在写入范围不冲突时默认启动 bounded subagents。"
+  - "docs/harness/lightweight-harness.md 和 docs/prompts/README.md 同步该规则。"
+  - "已完成用户故事状态与 backlog/task-log/audit 状态对齐。"
+dependencies:
+  - "H009"
+status: "done"
 ```

@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-11 - H010 Story Runner 连续用户故事交付流程审计
+
+#### 审计结论
+
+- 已新增 `R014` 和 `US021`，将 PM 的 Harness 优化反馈纳入需求与用户故事追溯。
+- 已在 `AGENTS.md` 新增 Story Runner Mode，明确 goal -> minimal user stories -> Story Execution Queue -> implementation -> verification -> commit -> next story。
+- 已更新 `docs/harness/lightweight-harness.md`，将 Harness 主流程从小 Gate 切换为 story-first continuous delivery。
+- 已更新 `docs/prompts/README.md`，允许 Story Runner Mode 下默认启动 bounded subagents，前提是写入范围独立且不重叠。
+- 已将已完成的用户故事状态与 backlog、task-log、audit 当前记录对齐。
+
+#### 风险
+
+- Story Runner 会减少中途确认，因此必须严格依赖清晰的 user story、stop conditions、write scope 和 `bash scripts/check.sh`。
+- 若 PM 的 goal 跨越依赖、真实数据、数据库、认证、权限、审批、导出、批量或生产公式，仍必须暂停确认。
+- Subagent 并行可以提升速度，但写入范围必须由主 Worker 先拆清楚，否则会产生集成冲突。
+
+#### 建议
+
+- 下一次正式开发应从 `docs/user-stories.md` 选择第一个 `ready` story，而不是临时创建零碎 `F00x`。
+- UI 反馈应作为当前 story 的验收修正处理，除非范围变化。
+- 主 Worker 可以将 Backend、Frontend、QA、Doc 分配给 subagents，但必须保留最终集成和验证责任。
+
 ### 2026-05-11 - Q002 排班计划草稿创建与更新纵切验收审计
 
 #### 审计结论
@@ -299,11 +321,11 @@
 
 #### 审计结论
 
-- 当前项目目录不再是纯 clean Harness 形态；工作区存在未跟踪的 `app/`、`components/`、`hooks/`、`lib/`、`public/`、`package.json`、`tsconfig.json`、`next.config.mjs`、`eslint.config.mjs`、`postcss.config.mjs`、`components.json` 等前端工程文件。
-- 上述未跟踪工程文件与 `docs/PROJECT_STATE.md` 中“无 active business code / frontend pages / package dependencies”的描述不一致。
+- 当前项目目录不再是纯 clean Harness 形态；`app/`、`components/`、`hooks/`、`lib/`、`public/`、`package.json`、`tsconfig.json`、`next.config.mjs`、`eslint.config.mjs`、`postcss.config.mjs`、`components.json` 等前端工程文件已由 F001/F005 等任务纳入当前工程范围。
+- 早期“未跟踪工程文件”和 `docs/PROJECT_STATE.md` 中“无 active business code / frontend pages / package dependencies”的冲突结论已过期；当前真实阶段是 frontend dashboard scaffold + local scheduling-plan MVP vertical。
 - `app/dashboard/data.ts` 已包含 BPO、CORN、排班、异常工时、同步状态等业务 mock 数据。
 - `package.json` 已声明 Next / React / Tailwind / shadcn 相关依赖，并包含 `recharts`，这与“图表库不默认使用 Recharts”的当前规则冲突。
-- `bash scripts/check.sh` 当前会失败，直接原因是根目录存在 `package.json`。
+- 早期 `bash scripts/check.sh` 因根目录 `package.json` 失败的结论已过期；当前 Gate 关注前端 lint/typecheck/build、backend Python toolchain、backend unittest 和 Harness 文件一致性。
 - `docs/prompts/` 中原先的 `user_story`、`dag_scheduler`、`code_generation`、`ui_design`、`testing` 是占位式 Skill 名称，不是当前 Codex 环境中可直接引用的 Skill。
 
 #### 已处理
@@ -321,6 +343,12 @@
 
 - 不要在当前任务中直接删除这些未跟踪文件。
 - 下一步建议开一个单独 Gate：`H004 当前工作区 clean Harness 偏差处置`，在 PM 确认后选择“清理回纯 Harness”或“承认工程初始化已开始并重写项目状态”。
+
+#### 2026-05-11 复核更新
+
+- `git ls-files package.json app/dashboard/page.tsx backend/app/main.py` 已确认这些关键工程文件处于 tracked 状态。
+- 当前失败风险不再是 `package.json` 存在，而是 backend Python 运行时如果落到 `/usr/bin/python3` 会缺少 `fastapi` / `pydantic`。
+- H011 已将 `scripts/check.sh` 和 `scripts/dev.sh` 改为显式选择可导入 backend 依赖的 Python，避免依赖调用者 PATH 的偶然状态。
 
 ### 2026-05-11 - Lightweight Harness 文档型升级
 

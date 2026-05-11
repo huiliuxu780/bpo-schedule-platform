@@ -6,9 +6,9 @@ Frontend dashboard scaffold.
 
 ## Active Scope
 
-The project now contains a PM-confirmed static frontend prototype for the BPO WFM dashboard. The active implementation scope is limited to a shadcn/ui-style dashboard shell, local mock data, dark / light theme support, and BPO WFM navigation/content replacement.
+The project now contains a PM-confirmed frontend dashboard scaffold and the first local scheduling-plan MVP vertical. The active implementation scope includes the shadcn/ui-style dashboard shell, local mock data, dark / light theme support, BPO WFM navigation/content replacement, and a minimal Python + FastAPI read/draft API for local schedule-plan verification.
 
-The project still does not contain backend services, real API integration, database work, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, or intelligent scheduling algorithms.
+The project still does not contain real external API integration, database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, production scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.
 
 ## MVP Build Direction
 
@@ -60,6 +60,8 @@ That archive is read-only reference material for future audits or explicitly app
 - Every task must pass `bash scripts/check.sh`.
 - F001 is the confirmed exception that allows frontend package files, local mock data, and dashboard UI files for a static prototype only.
 - Continuous Delivery Mode is active when the PM explicitly asks to continue through green gates or to finish, test, verify, and commit in one pass. In that mode, completed verified scope should be committed without an extra confirmation pause.
+- Story Runner Mode is now the preferred product-development flow: goals are split into minimal user stories, ready stories are executed in dependency order, small UI corrections stay inside the active story, and verified stories continue automatically until a stop condition is reached.
+- Story Runner Mode authorizes bounded subagents by default when write scopes are independent and non-overlapping; the main Codex worker remains responsible for dispatch design, integration, final verification, commits, and Done Report.
 
 ## Development Environment
 
@@ -89,7 +91,7 @@ Current sidebar interaction decision: the collapse / expand trigger belongs in `
 
 The project now uses a documentation-first Lightweight Harness flow for future module requests:
 
-`raw requirement -> user story -> DAG / dependency check -> Gate Plan -> PM confirmation -> scoped execution -> Done Report -> audit`
+`raw requirement -> user story -> Story Execution Queue -> Gate Plan for risky scope -> implementation -> verification -> commit when allowed -> next ready story -> audit`
 
 Current Lightweight Harness artifacts:
 
@@ -109,7 +111,7 @@ Charting remains a controlled frontend decision. For F001 only, PM confirmed tha
 
 Subagent prompt templates are now treated as contracts rather than loose role descriptions.
 
-Future subagent execution requires:
+Subagent execution outside Story Runner Mode requires:
 
 - explicit PM/user permission for subagents, delegation, or parallel agent work
 - a confirmed Gate Plan
@@ -117,7 +119,7 @@ Future subagent execution requires:
 - structured return status: `DONE`, `DONE_WITH_CONCERNS`, `NEEDS_CONTEXT`, or `BLOCKED`
 - implementation review chain: Implementer -> Spec Reviewer -> Code Quality Reviewer -> Main Worker Integration
 
-This contract does not authorize automatic subagent startup. The main Codex worker remains responsible for integration, verification, task logs, audit records, and Done Report.
+Story Runner Mode authorizes bounded subagent dispatch for independent write scopes. The main Codex worker remains responsible for integration, verification, task logs, audit records, commits, and Done Report.
 
 ## shadcn Skill Direction
 

@@ -185,3 +185,16 @@ version: "1.0"
 status: "split"
 notes: "F007 只允许编辑 draft 状态计划，通过 Next server action 调用 B002 PUT；不做发布、审批、导出、批量、权限、数据库或人员级排班。"
 ```
+
+### R014 - Story Runner 连续用户故事交付流程
+
+```yaml
+id: R014
+module: "Harness 流程"
+description: "PM 期望 Codex 按 goal 拆出最小用户故事后，能够自动按依赖顺序开发、测试、提交，并在写入范围不冲突时启动 subagent 并行处理，而不是频繁把小 UI 反馈切成独立任务。"
+source: "PM harness optimization feedback"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "该需求优化执行流程，不授权新增依赖、真实数据、数据库、认证、权限、审批、导出、批量或生产公式。"
+```

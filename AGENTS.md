@@ -96,7 +96,7 @@ In Story Runner Mode, Codex must:
 6. Keep UI feedback, small visual fixes, and acceptance corrections inside the current story instead of creating a new backlog task for every small adjustment.
 7. Update `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml` so story state remains the source of truth.
 
-Subagents are not automatic in Story Runner Mode. Codex may use subagents only when the PM explicitly authorizes subagents, delegation, or parallel agent work, and only when the work can be split into independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, integration, final verification, commits, and Done Report.
+Story Runner Mode authorizes Codex to use bounded subagents by default when the work can be split into independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, integration, final verification, commits, and Done Report.
 
 Codex should only pause in Story Runner Mode when:
 
@@ -374,7 +374,9 @@ Primary navigation:
 - 数据与集成
 - 系统管理
 
-Secondary navigation must have icons.
+Primary navigation must have icons.
+
+Secondary navigation should not use icons by default. Keep second-level items text-first with optional badge or tag states, unless a later confirmed frontend Gate explicitly restores secondary icons.
 
 Every sidebar item must align by fixed columns:
 
@@ -385,7 +387,7 @@ Every sidebar item must align by fixed columns:
 
 Do not use emoji icons.
 
-Use `lucide-react` icons or the project's existing icon system.
+Use `lucide-react` icons or the project's existing icon system for places where icons are required.
 
 Current active item must have a clear selected state.
 
