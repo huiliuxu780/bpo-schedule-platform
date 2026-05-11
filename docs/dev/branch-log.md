@@ -170,3 +170,11 @@
 - Extended `lib/schedule-plans.ts` with draft payload types and write helpers.
 - Kept the first UI version intentionally small: plan metadata plus four core 0.5h intervals.
 - Kept full editing, publish, approval, export, batch operations, authentication, permissions, and persistence out of scope.
+
+### F007 Schedule Plan Draft Update UI
+
+- Added an "编辑草稿" action on draft schedule plan detail pages.
+- Added `/schedule-plans/[planId]/edit` as the draft update page.
+- Added a server action that calls the B002 draft update API from the Next.js server.
+- Kept non-draft plans read-only and hid the edit action outside draft status.
+- Kept full personnel-level scheduling, publish, approval, export, batch operations, authentication, permissions, and persistence out of scope.

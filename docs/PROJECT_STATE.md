@@ -37,6 +37,8 @@ The first vertical intentionally excludes create/edit/publish workflow, approval
 
 `F006` adds `/schedule-plans/new` as the frontend draft creation entry. It uses a Next server action to call the B002 draft API and redirects to the created draft detail page after success.
 
+`F007` adds `/schedule-plans/[planId]/edit` as the frontend draft update entry. Draft detail pages can navigate to the edit page, which uses a Next server action to call the B002 draft update API.
+
 The project still does not contain database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, intelligent scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.
 
 ## Lab Archive

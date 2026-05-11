@@ -134,3 +134,12 @@
 - action: 创建前端排班计划草稿入口。
 - status: `done`
 - notes: 新增 `/schedule-plans/new` 和 server action，从列表进入新建草稿，提交后调用 B002 并跳转到详情页；不做完整编辑器、发布、审批、导出、批量、权限或数据库持久化。
+
+### 2026-05-11
+
+- task_id: `F007`
+- source_ids: [`R013`, `R011`]
+- story_ids: [`US020`, `US018`]
+- action: 创建前端排班计划草稿更新入口。
+- status: `done`
+- notes: draft 详情页新增编辑入口，新增 `/schedule-plans/[planId]/edit` 和 server action，提交后调用 B002 PUT 并跳转回详情；非 draft 不展示编辑入口。

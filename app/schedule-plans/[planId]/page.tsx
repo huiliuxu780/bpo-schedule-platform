@@ -50,9 +50,18 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
               {plan.summary.version}
             </p>
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/schedule-plans">返回列表</Link>
-          </Button>
+          <div className="flex gap-2">
+            {plan.summary.status === "draft" ? (
+              <Button asChild size="sm">
+                <Link href={`/schedule-plans/${plan.summary.id}/edit`}>
+                  编辑草稿
+                </Link>
+              </Button>
+            ) : null}
+            <Button asChild variant="outline" size="sm">
+              <Link href="/schedule-plans">返回列表</Link>
+            </Button>
+          </div>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">

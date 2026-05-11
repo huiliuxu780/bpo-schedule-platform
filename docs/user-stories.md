@@ -441,3 +441,28 @@ dependencies:
   - "US017"
 status: "ready_for_gate"
 ```
+
+### US020 - 前端更新排班计划草稿
+
+```yaml
+id: US020
+requirement_ids:
+  - R013
+  - R011
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望从 draft 计划详情进入编辑页面并保存草稿，以便调整本地 MVP 排班计划的时段信息。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "draft 计划详情页展示编辑草稿入口。"
+  - "非 draft 计划不展示编辑入口。"
+  - "编辑页预填计划信息和现有 0.5h 时段。"
+  - "提交时通过 Next server action 调用 B002 PUT 草稿更新接口。"
+  - "保存成功后跳转回计划详情页。"
+  - "不实现发布、审批、导出、批量操作、权限、数据库持久化或人员级排班。"
+dependencies:
+  - "US018"
+  - "US019"
+status: "ready_for_gate"
+```

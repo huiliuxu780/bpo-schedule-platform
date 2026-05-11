@@ -172,3 +172,16 @@ version: "1.0"
 status: "split"
 notes: "F006 只做最小创建入口，通过 Next server action 调用 B002；不做完整编辑器、发布、审批、导出、批量、数据库或权限。"
 ```
+
+### R013 - 前端排班计划草稿更新入口
+
+```yaml
+id: R013
+module: "计划与排班"
+description: "运营排班人员需要从 draft 排班计划详情进入编辑页面，更新计划信息和 0.5h 时段后保存草稿。"
+source: "PM continuous delivery instruction"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "F007 只允许编辑 draft 状态计划，通过 Next server action 调用 B002 PUT；不做发布、审批、导出、批量、权限、数据库或人员级排班。"
+```
