@@ -4,6 +4,134 @@
 
 ## Current Audit
 
+### 2026-05-11 - H009 连续交付提交流程优化审计
+
+#### 审计结论
+
+- 已在 `AGENTS.md` 新增 Continuous Delivery Mode。
+- 当 PM 明确要求“别一直停下”“通过就继续下一步”“一口气做完”或“做完测完验证完提交完”时，Codex 应在绿色验证后直接提交已完成范围。
+- 该模式仍保留所有关键停止条件：新增依赖、package/lockfile、真实外部数据、数据库、认证、权限、审批、导出、批量、生产状态码/公式/结算/收费因子、破坏性 Git 操作和失败验证。
+- `docs/PROJECT_STATE.md` 已记录当前连续交付提交规则。
+
+#### 风险
+
+- 连续提交会减少中途确认，但必须依赖清晰的 backlog scope 和 `bash scripts/check.sh` 结果。
+- 若未来工作区存在用户未提交的无关改动，仍需只提交本轮范围，避免把无关文件打进同一个 commit。
+
+#### 建议
+
+- 后续正式开发默认采用“完成 -> 验证 -> 提交 -> 继续下一 scoped 任务”的节奏。
+- 遇到停止条件时只暂停一次，并明确说明卡点和下一步选项。
+
+### 2026-05-11 - H008 本地前后端联调启动入口审计
+
+#### 审计结论
+
+- 已新增 `scripts/dev.sh` 作为项目根目录的一键本地联调入口。
+- 脚本会优先使用 Node.js 22，并检查 `fastapi`、`uvicorn`、`pydantic` 是否可用。
+- 脚本默认设置 `BPO_API_BASE_URL=http://127.0.0.1:8000`，同时允许外部环境变量覆盖。
+- 脚本会启动 FastAPI `backend.app.main:app` 和 Next.js dev server。
+- `scripts/check.sh` 已加入 `bash -n scripts/dev.sh`，确保启动脚本语法进入交付检查。
+- README、backend README 和 `docs/dev/setup.md` 已补充本地联调启动说明。
+
+#### 风险
+
+- `scripts/dev.sh` 不自动安装依赖；缺少后端依赖时会提示执行 `python3 -m pip install -r backend/requirements.txt`。
+- 该脚本只服务本地开发联调，不代表生产部署脚本或进程管理方案。
+
+#### 建议
+
+- 后续如果要交付给非开发用户，应新增单独 Gate 处理打包、部署、环境变量模板和启动健康检查。
+
+### 2026-05-11 - Q001 排班计划第一条纵切验收审计
+
+#### 审计结论
+
+- B001 后端接口已通过 `python3 -m unittest discover -s backend/tests -v`，覆盖列表、详情、404 和路由注册。
+- F005 前端已通过 `npm run lint`、`npm run typecheck` 和 `bash scripts/check.sh`。
+- `next build --webpack` 已生成 `/schedule-plans` 和 `/schedule-plans/[planId]` 路由。
+- 本地 HTTP 验证中，`/schedule-plans` 和 `/schedule-plans/plan-20260511-shanghai-bosch-v1` 均返回 200。
+- 接口契约字段已在 `backend/app/models.py`、`backend/app/seed_data.py` 和 `lib/schedule-plans.ts` 之间保持一致，包括计划摘要、状态、覆盖率、缺口数和 0.5h 时段明细。
+- 新增前端文件未引入硬编码色值或任意色值，核心 UI 继续使用 shadcn theme token 与现有 dark / light 主题系统。
+
+#### 风险
+
+- 本次验收未引入真实浏览器截图归档；受当前本地浏览器自动化工具可用性限制，视觉验收以构建、HTML 路由、语义 token 和组件结构检查为主。
+- 后端仍是本地种子数据，不代表生产数据源、权限、审批、发布、导出、批量处理、真实 Excel 或真实 CORN 已完成。
+
+#### 建议
+
+- 第一条只读纵切可以作为正式系统继续开发的基线。
+- 下一步应新增一个只读前后端联调增强任务，处理 FastAPI 启动脚本、前端 API base 配置说明、以及本地一键启动体验。
+- 编辑、发布、审批、导出、批量和真实数据接入仍需各自进入 Gate。
+
+### 2026-05-11 - F005 排班计划列表与详情前端纵切审计
+
+#### 审计结论
+
+- 已新增 `/schedule-plans` 排班计划列表页。
+- 已新增 `/schedule-plans/[planId]` 排班计划详情页。
+- 已新增 `lib/schedule-plans.ts` 作为集中 API client，读取 B001 的排班计划列表/详情契约。
+- 已新增只读列表表格、搜索、排序、状态 badge、详情跳转、摘要卡片和 0.5h 时段明细表。
+- 已复用 shadcn 风格的 App shell、sidebar、header、card、table、badge、button 和 input 结构。
+- 未新增依赖，未修改 package 或 lockfile，未实现新增、编辑、发布、审批、导出、批量操作、认证、数据库、真实 Excel 或真实 CORN。
+
+#### 风险
+
+- 本地开发在后端未启动时使用同契约 fallback 数据保证 Next 构建和页面预览稳定；这不是生产数据源。
+- 计划状态和覆盖率展示仍是 MVP 纵切口径，不代表生产状态码、排班拟合度、遵守率、结算或收费公式最终确认。
+- 真实浏览器像素验收受当前工具可用性限制，本次优先以 lint/typecheck/build、Harness check 和 HTTP 200 验证收口。
+
+#### 建议
+
+- 下一步进入 `Q001`，做第一条纵切验收记录，覆盖 B001 后端、F005 前端、接口契约和主题可读性。
+- 后续若要做编辑、发布、审批、导出、批量操作或真实数据接入，必须新开 Gate。
+
+### 2026-05-11 - B001 FastAPI 排班计划只读接口纵切审计
+
+#### 审计结论
+
+- 已新增最小 Python + FastAPI 后端工程到 `backend/**`。
+- 已提供 `GET /api/v1/schedule-plans` 排班计划列表接口。
+- 已提供 `GET /api/v1/schedule-plans/{plan_id}` 排班计划详情接口。
+- 已使用本地种子数据表达排班计划摘要和 0.5h 时段明细。
+- 已新增标准库 `unittest` 测试覆盖路由注册、列表字段、详情时段和 404 错误。
+- `scripts/check.sh` 已扩展为同时验证前端 scaffold 和 B001 后端纵切。
+
+#### 风险
+
+- 当前后端使用本机已有 FastAPI/Pydantic 环境，未创建虚拟环境，也未执行依赖安装。
+- 本地种子数据只服务第一条纵切验收，不代表生产数据来源。
+- API 暂不包含认证、权限、数据库、审计日志、真实 Excel、真实 CORN、审批、导出或批量能力。
+
+#### 建议
+
+- 下一步进入 `F005`，让前端排班计划列表和详情通过 API client 读取 B001 接口。
+- 在引入数据库或认证前单独开 Gate。
+
+### 2026-05-11 - M001 正式 MVP 需求拆解与排班计划纵切审计
+
+#### 审计结论
+
+- 已新增正式 MVP 原始需求 `R003` 至 `R010`。
+- 已新增用户故事 `US006` 至 `US016`，并追溯到对应 raw requirements。
+- 第一条前后端纵切已确定为排班计划列表、排班计划详情、FastAPI 只读接口和本地种子数据。
+- 已新增设计文档 `docs/superpowers/specs/2026-05-11-mvp-scheduling-vertical-design.md`。
+- 已新增后续 backlog 任务 `B001`、`F005`、`Q001`，状态为 `draft`。
+- 本次任务未新增业务代码、未创建后端工程、未修改 package 或 lockfile、未安装依赖。
+
+#### 风险
+
+- `draft`、`review_ready`、`published` 只是 MVP 展示状态，不是生产最终状态码。
+- `coverage_rate = scheduled_agents / forecast_agents` 只是第一条纵切展示公式，不代表排班拟合度、排班遵守率、结算或收费规则。
+- B001 会引入后端工程和可能的 Python 依赖，必须单独 Gate。
+
+#### 建议
+
+- 下一步先执行 B001，创建最小 FastAPI 只读接口和本地种子数据。
+- B001 完成后再执行 F005，避免前端继续扩大静态 mock。
+- Q001 应在 B001 和 F005 均完成后执行。
+
 ### 2026-05-11 - H007 开发环境与交付验证固化审计
 
 #### 审计结论

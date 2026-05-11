@@ -102,3 +102,53 @@
 - Updated `README.md` from the old clean Harness wording to the current frontend dashboard scaffold state.
 - Updated `scripts/check.sh` so it prefers Homebrew `node@22` when the current shell is not already using Node.js 22.
 - Recorded the Node.js 22 environment decision in `docs/PROJECT_STATE.md`, `docs/decision-log.md`, `docs/task-log.md`, and `docs/audit-report.md`.
+
+### M001 MVP Scheduling Vertical Design
+
+- Added raw requirements `R003` through `R010` for formal MVP setup and the scheduling-plan vertical.
+- Added user stories `US006` through `US016` covering MVP scope confirmation, schedule plan list/detail, FastAPI read APIs, seed data, API contract, MVP status/formula boundary, and QA verification.
+- Added `docs/superpowers/specs/2026-05-11-mvp-scheduling-vertical-design.md` to record the selected vertical, data model draft, API draft, scope exclusions, risks, and acceptance.
+- Added backlog items `M001`, `B001`, `F005`, and `Q001`.
+- Recorded `D008` to confirm the first formal MVP vertical as scheduling plan read-only delivery.
+
+### B001 FastAPI Schedule Read API
+
+- Added a minimal FastAPI backend under `backend/**`.
+- Added read-only schedule plan endpoints: `GET /api/v1/schedule-plans` and `GET /api/v1/schedule-plans/{plan_id}`.
+- Added local seed data for three schedule plans, each with 0.5h interval details.
+- Added standard-library `unittest` coverage for route registration, list contract, detail contract, and 404 error payload.
+- Updated `scripts/check.sh` to verify backend files, FastAPI/Pydantic availability, and backend tests as part of the Harness check.
+
+### F005 Schedule Plan Frontend Vertical
+
+- Added `/schedule-plans` as the read-only schedule plan list entry.
+- Added `/schedule-plans/[planId]` as the read-only schedule plan detail entry.
+- Added `lib/schedule-plans.ts` as the centralized frontend API client for the B001 schedule plan contract.
+- Added `AppShell` and `SchedulePlanTable` to reuse the shadcn dashboard shell while keeping the page components scoped.
+- Updated the sidebar to link into `/schedule-plans` and highlight only the active scheduling-plan item.
+- Added button `asChild` support for link-style shadcn actions without introducing a new dependency.
+- Verified the list route and detail route with local HTTP 200 responses after clearing a corrupted Next/Turbopack dev cache.
+
+### Q001 Scheduling Vertical Acceptance
+
+- Accepted the first read-only scheduling-plan vertical across backend, frontend, API contract, routing, and Harness verification.
+- Re-ran backend unittest coverage for list/detail/404 route behavior.
+- Confirmed `bash scripts/check.sh` passes with frontend lint/typecheck/build and backend tests.
+- Confirmed `/schedule-plans` and `/schedule-plans/plan-20260511-shanghai-bosch-v1` returned local HTTP 200 during dev verification.
+- Reviewed new frontend files for shadcn theme-token usage and found no newly introduced hardcoded color or arbitrary color classes.
+- Kept production workflow capabilities out of scope: no edit, publish, approval, export, batch operation, authentication, database, real Excel, or real CORN integration.
+
+### H008 Local Vertical Startup
+
+- Added `scripts/dev.sh` to start the FastAPI backend and Next.js frontend together for local vertical verification.
+- Defaulted `BPO_API_BASE_URL` to `http://127.0.0.1:8000` while allowing caller override.
+- Added Node.js 22 selection and backend dependency checks to the local startup script.
+- Added `bash -n scripts/dev.sh` to the Harness check.
+- Updated README, backend README, and setup documentation with frontend-only and frontend + backend startup paths.
+
+### H009 Continuous Delivery Commit Flow
+
+- Added Continuous Delivery Mode to `AGENTS.md`.
+- Recorded that explicit PM instructions such as "一口气做完" or "做完测完验证完提交完" authorize Codex to finish, verify, and commit without another commit confirmation pause.
+- Kept high-risk stop conditions intact for dependencies, package changes, real data, database, authentication, approval, export, batch operations, production formulas, destructive Git actions, and failed verification.
+- Updated `docs/PROJECT_STATE.md`, task log, audit report, and backlog with the new operating rule.

@@ -22,25 +22,38 @@ const sizes: Record<ButtonSize, string> = {
 }
 
 export function Button({
+  asChild = false,
   className,
   variant = "default",
   size = "default",
   type = "button",
+  children,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  asChild?: boolean
   variant?: ButtonVariant
   size?: ButtonSize
 }) {
+  const buttonClassName = cn(
+    "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+    variants[variant],
+    sizes[size],
+    className
+  )
+
+  if (asChild && React.isValidElement<{ className?: string }>(children)) {
+    return React.cloneElement(children, {
+      className: cn(buttonClassName, children.props.className),
+    })
+  }
+
   return (
     <button
       type={type}
-      className={cn(
-        "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
-        variants[variant],
-        sizes[size],
-        className
-      )}
+      className={buttonClassName}
       {...props}
-    />
+    >
+      {children}
+    </button>
   )
 }

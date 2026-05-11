@@ -62,3 +62,57 @@
 - action: 固化开发环境与交付验证入口。
 - status: `done`
 - notes: 将项目运行时声明为 Node.js 22，补充本地 setup 文档，更新 README，并让 `scripts/check.sh` 在本机自动优先使用 Homebrew `node@22` 完成交付验证。
+
+### 2026-05-11
+
+- task_id: `M001`
+- source_ids: [`R003`, `R004`, `R005`, `R006`, `R007`, `R008`, `R009`, `R010`]
+- story_ids: [`US006`, `US007`, `US008`, `US009`, `US010`, `US011`, `US012`, `US013`, `US014`, `US015`, `US016`]
+- action: 拆解正式 MVP 需求并定义排班计划第一条前后端纵切。
+- status: `done`
+- notes: 第一条纵切确定为排班计划列表、排班计划详情、FastAPI 只读接口和本地种子数据；后续实现任务拆为 B001、F005 和 Q001。
+
+### 2026-05-11
+
+- task_id: `B001`
+- source_ids: [`R007`, `R008`]
+- story_ids: [`US010`, `US011`, `US013`, `US014`]
+- action: 创建 FastAPI 排班计划只读接口纵切。
+- status: `done`
+- notes: 新增 `backend/**`，提供 `GET /api/v1/schedule-plans` 和 `GET /api/v1/schedule-plans/{plan_id}`；使用本地种子数据和标准库 unittest 验证，不接数据库、认证、真实 Excel 或真实 CORN。
+
+### 2026-05-11
+
+- task_id: `F005`
+- source_ids: [`R005`, `R006`, `R007`, `R008`, `R009`]
+- story_ids: [`US007`, `US008`, `US009`, `US012`, `US013`]
+- action: 创建排班计划列表与详情前端纵切。
+- status: `done`
+- notes: 新增 `/schedule-plans` 和 `/schedule-plans/[planId]`，通过 `lib/schedule-plans.ts` 集中读取 B001 契约；页面仅展示只读计划、0.5h 时段、缺口和覆盖率，不提供新增、编辑、发布、审批、导出或批量操作。
+
+### 2026-05-11
+
+- task_id: `Q001`
+- source_ids: [`R005`, `R006`, `R007`, `R008`, `R009`, `R010`]
+- story_ids: [`US007`, `US008`, `US009`, `US010`, `US011`, `US012`, `US013`, `US014`, `US015`, `US016`]
+- action: 验收排班计划第一条前后端只读纵切。
+- status: `done`
+- notes: 已验证 B001 后端 unittest、F005 前端 lint/typecheck/build、Harness check、路由生成、列表/详情 HTTP 200、接口字段追溯和 shadcn theme token 使用；未发现新增依赖、真实外部系统或越界业务能力。
+
+### 2026-05-11
+
+- task_id: `H008`
+- source_ids: []
+- story_ids: []
+- action: 固化本地前后端联调启动入口。
+- status: `done`
+- notes: 新增 `scripts/dev.sh`，统一启动 FastAPI 与 Next.js dev server，默认 `BPO_API_BASE_URL=http://127.0.0.1:8000`；同步更新 README、backend README、setup 文档和 Harness check。
+
+### 2026-05-11
+
+- task_id: `H009`
+- source_ids: []
+- story_ids: []
+- action: 优化连续交付提交流程。
+- status: `done`
+- notes: 已在 `AGENTS.md` 增加 Continuous Delivery Mode：用户显式要求连续执行或一口气交付时，绿色验证后直接提交；保留依赖、真实数据、数据库、认证、审批、导出、批量、生产公式和失败验证等停止条件。

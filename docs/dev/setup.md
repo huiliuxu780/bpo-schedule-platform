@@ -44,6 +44,31 @@ npm run dev
 http://localhost:3000/dashboard
 ```
 
+排班计划纵切页面：
+
+```txt
+http://localhost:3000/schedule-plans
+```
+
+启动第一条前后端纵切联调：
+
+```bash
+bash scripts/dev.sh
+```
+
+该脚本会：
+
+- 优先使用 Homebrew Node.js 22
+- 检查 `fastapi`、`uvicorn`、`pydantic`
+- 默认使用 `BPO_API_BASE_URL=http://127.0.0.1:8000`
+- 同时启动 FastAPI 和 Next.js dev server
+
+如需覆盖 API base：
+
+```bash
+BPO_API_BASE_URL=http://127.0.0.1:8000 bash scripts/dev.sh
+```
+
 ## Delivery Check
 
 交付前运行：
@@ -62,10 +87,12 @@ bash scripts/check.sh
 - `npm run lint`
 - `npm run typecheck`
 - `npm run build`
+- `bash -n scripts/dev.sh`
+- backend unittest
 
 ## Scope Boundary
 
-H007 只固化开发环境与交付验证入口。
+H007/H008 只固化开发环境、交付验证入口和本地联调启动方式。
 
 它不授权：
 

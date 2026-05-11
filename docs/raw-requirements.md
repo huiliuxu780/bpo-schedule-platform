@@ -42,3 +42,107 @@ version: "1.0"
 status: "split"
 notes: "F001 允许按官方 shadcn chart structure 使用 Recharts；正式图表层未来需单独 Gate。"
 ```
+
+### R003 - 正式 MVP 第一条前后端纵切
+
+```yaml
+id: R003
+module: "MVP 范围"
+description: "正式系统搭建采用前后端一条纵切方式启动，第一条纵切确定为排班计划列表、排班计划详情、FastAPI 只读接口和本地种子数据。"
+source: "PM confirmed M001"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "本需求只定义 MVP 第一条纵切范围，不直接授权后端工程创建、依赖安装、数据库接入或真实数据接入；这些需要后续 B001/F005 Gate。"
+```
+
+### R004 - 预测需求作为排班计划输入
+
+```yaml
+id: R004
+module: "博西预测需求"
+description: "排班计划纵切需要展示预测需求作为计划输入，包括日期、职场、业务线、0.5h 时段和预测所需人数。"
+source: "PM confirmed M001"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "MVP 阶段使用本地种子数据表达预测需求，不接真实 Excel、真实预测系统或上传导入。"
+```
+
+### R005 - BPO 排班计划列表
+
+```yaml
+id: R005
+module: "计划与排班"
+description: "运营排班人员需要查看排班计划列表，按日期、项目、职场、版本、状态、覆盖人数和缺口风险识别需要处理的计划。"
+source: "PM confirmed M001"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "MVP 第一条纵切只做只读列表；新增、编辑、发布、审批和批量操作不在第一条纵切内。"
+```
+
+### R006 - BPO 排班计划详情
+
+```yaml
+id: R006
+module: "计划与排班"
+description: "运营排班人员需要打开单个排班计划详情，查看 0.5h 时段级预测需求、已排人数、缺口、覆盖率和备注。"
+source: "PM confirmed M001"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "详情页仅展示只读计划明细和基础汇总，不做拖拽排班、人员级编辑或智能排班算法。"
+```
+
+### R007 - FastAPI 后端只读接口
+
+```yaml
+id: R007
+module: "后端服务"
+description: "第一条纵切需要 Python + FastAPI 提供排班计划列表和详情只读接口，供前端从本地种子数据读取。"
+source: "PM confirmed M001"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "B001 才能创建 backend 工程、依赖和接口；M001 只定义接口边界。数据库、认证和真实集成不在第一条纵切内。"
+```
+
+### R008 - 前后端接口契约
+
+```yaml
+id: R008
+module: "接口契约"
+description: "第一条纵切需要明确前端与 FastAPI 后端之间的字段契约，包括计划摘要、计划详情、时段明细和错误响应。"
+source: "PM confirmed M001"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "接口字段使用 English keys；业务展示值可使用中文。错误响应先采用最小只读查询错误，不定义生产级权限或审计错误码。"
+```
+
+### R009 - MVP 阶段状态与公式边界
+
+```yaml
+id: R009
+module: "业务口径"
+description: "第一条纵切需要明确哪些状态、指标和公式只是 MVP 展示口径，哪些必须在后续 Gate 中由 PM 再确认。"
+source: "PM confirmed M001"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "计划状态建议先限于 draft、review_ready、published 三个展示状态；排班覆盖率建议为 scheduled_agents / forecast_agents。该建议用于 M001 设计，不代表生产最终口径。"
+```
+
+### R010 - 第一条纵切验证与交付
+
+```yaml
+id: R010
+module: "质量与交付"
+description: "第一条纵切需要具备可验证交付标准，包括前端构建、后端测试、接口契约检查、Harness check 和 Done Report。"
+source: "PM confirmed M001"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "Q001 后续定义具体验证命令；M001 只定义验收方向，不引入测试依赖。"
+```

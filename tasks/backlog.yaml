@@ -417,3 +417,239 @@ tasks:
       - "需要接入真实 API、后端或数据库"
       - "需要修改业务指标、状态码、结算公式或收费因子"
     commit_after_done: false
+  - id: M001
+    title: "正式 MVP 需求拆解与排班计划纵切设计"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/superpowers/specs/**"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/decision-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "public/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "docs/raw-requirements.md 新增正式 MVP 需求 R003-R010。"
+      - "docs/user-stories.md 新增 US006-US016，并能追溯到 raw requirements。"
+      - "第一条纵切明确为排班计划列表、排班计划详情、FastAPI 只读接口和本地种子数据。"
+      - "docs/superpowers/specs/2026-05-11-mvp-scheduling-vertical-design.md 记录设计、接口草案、数据模型、范围边界和后续任务。"
+      - "后续任务 B001、F005、Q001 已进入 backlog，状态为 draft。"
+      - "不新增业务代码、不创建 backend 工程、不修改 package 或 lockfile、不安装依赖。"
+      - "`git diff --check` 通过。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要创建 backend 工程"
+      - "需要开发前端页面"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、数据库、认证或外部系统"
+      - "需要固化生产状态码、结算公式或收费因子"
+    commit_after_done: false
+  - id: B001
+    title: "FastAPI 排班计划只读接口纵切"
+    priority: P0
+    status: done
+    required_workflow: backend-vertical
+    allowed_files:
+      - "backend/**"
+      - "docs/superpowers/plans/**"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/decision-log.md"
+      - "tasks/backlog.yaml"
+      - "scripts/check.sh"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "创建 Python + FastAPI 后端基础。"
+      - "提供 GET /api/v1/schedule-plans。"
+      - "提供 GET /api/v1/schedule-plans/{plan_id}。"
+      - "使用本地种子数据，不接数据库、认证、真实 Excel 或真实 CORN。"
+      - "后端 `python3 -m unittest discover -s backend/tests -v` 通过。"
+      - "`bash scripts/check.sh` 通过，并包含后端测试。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要数据库"
+      - "需要认证或权限系统"
+      - "需要真实 Excel、CORN API 或外部系统"
+      - "需要生产审批、导出或批量操作"
+      - "需要固化生产状态码、结算公式或收费因子"
+    commit_after_done: false
+  - id: F005
+    title: "排班计划列表与详情前端纵切"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增排班计划列表入口。"
+      - "新增排班计划详情入口。"
+      - "使用集中 API client 读取 B001 接口。"
+      - "UI 继续遵循 shadcn dashboard 风格和 dark/light theme。"
+      - "不新增依赖、不接真实外部系统、不实现新增、编辑、发布、审批、导出或批量操作。"
+      - "`npm run lint`、`npm run typecheck`、`npm run build` 和 `bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "B001 接口未完成"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要生产权限、审批、导出或批量操作"
+      - "需要改变业务指标公式、状态码、结算公式或收费因子"
+    commit_after_done: false
+  - id: Q001
+    title: "排班计划第一条纵切验收"
+    priority: P0
+    status: done
+    required_workflow: qa
+    allowed_files:
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+      - "scripts/check.sh"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "验证 B001 后端接口。"
+      - "验证 F005 前端列表和详情。"
+      - "验证接口契约字段。"
+      - "验证 light/dark theme 下核心页面可读。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "B001 或 F005 未完成"
+      - "需要新增业务能力"
+      - "需要修改生产状态码、结算公式或收费因子"
+    commit_after_done: false
+  - id: H008
+    title: "本地前后端联调启动入口"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "scripts/dev.sh"
+      - "scripts/check.sh"
+      - "README.md"
+      - "backend/README.md"
+      - "docs/dev/setup.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `scripts/dev.sh`，可从项目根目录启动 FastAPI 和 Next.js dev server。"
+      - "`scripts/dev.sh` 默认使用 `BPO_API_BASE_URL=http://127.0.0.1:8000`，并允许环境变量覆盖。"
+      - "`scripts/dev.sh` 优先使用 Node.js 22，并检查后端开发依赖是否存在。"
+      - "README、backend README 和 setup 文档说明前后端联调启动方式。"
+      - "`bash -n scripts/dev.sh` 通过。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要新增业务能力"
+      - "需要数据库、认证、真实 Excel、真实 CORN 或外部系统"
+      - "需要生产审批、导出或批量操作"
+    commit_after_done: false
+  - id: H009
+    title: "连续交付提交流程优化"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AGENTS.md 明确 Continuous Delivery Mode：用户显式要求连续执行或一口气交付时，绿色验证后直接提交。"
+      - "Continuous Delivery Mode 不绕过新增依赖、package/lockfile、真实数据、数据库、认证、审批、导出、批量、生产公式或失败验证等停止条件。"
+      - "docs/PROJECT_STATE.md 记录当前连续交付提交规则。"
+      - "`bash scripts/check.sh` 通过。"
+      - "当前已完成纵切提交到 Git。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要新增业务能力"
+      - "需要数据库、认证、真实 Excel、真实 CORN 或外部系统"
+      - "需要生产审批、导出或批量操作"
+      - "验证失败"
+    commit_after_done: true

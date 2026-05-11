@@ -10,6 +10,31 @@ The project now contains a PM-confirmed static frontend prototype for the BPO WF
 
 The project still does not contain backend services, real API integration, database work, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, or intelligent scheduling algorithms.
 
+## MVP Build Direction
+
+The first formal MVP vertical is now defined as scheduling plan read-only delivery:
+
+- 排班计划列表
+- 排班计划详情
+- Python + FastAPI read-only API
+- local seed data
+- frontend API client
+- delivery verification
+
+The first implementation tasks are `B001` for the FastAPI read-only backend, `F005` for the frontend schedule plan list/detail, and `Q001` for vertical acceptance.
+
+The first vertical intentionally excludes create/edit/publish workflow, approval, export, batch operations, authentication, database persistence, real Excel import, real CORN integration, intelligent scheduling, production status-code finalization, settlement formulas, and charge factors.
+
+`B001` is now implemented as a minimal Python + FastAPI read-only backend under `backend/**`. It provides schedule plan list/detail endpoints from local seed data and is covered by standard-library `unittest` tests.
+
+`F005` is now implemented as the frontend read-only scheduling-plan list/detail vertical. It adds `/schedule-plans` and `/schedule-plans/[planId]`, uses a centralized frontend API client in `lib/schedule-plans.ts`, and keeps the shadcn dashboard shell, sidebar, table, cards, and dark / light theme behavior.
+
+`Q001` has accepted the first scheduling-plan read-only vertical based on backend unit tests, frontend lint/typecheck/build, Harness check, route generation, local HTTP 200 validation, API contract review, and shadcn theme-token review.
+
+`H008` adds `scripts/dev.sh` as the local frontend + backend vertical startup entry. It starts FastAPI on `127.0.0.1:8000`, starts Next.js on `localhost:3000`, and defaults frontend server-side reads to `BPO_API_BASE_URL=http://127.0.0.1:8000`.
+
+The project still does not contain database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, intelligent scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.
+
 ## Lab Archive
 
 The previous working project was archived as:
@@ -23,9 +48,10 @@ That archive is read-only reference material for future audits or explicitly app
 - No business implementation without a confirmed task.
 - No dependency installation without PM confirmation.
 - No package or lockfile changes without PM confirmation.
-- No real API, backend, database, or production integration by default.
+- No real API, database, or production integration by default.
 - Every task must pass `bash scripts/check.sh`.
 - F001 is the confirmed exception that allows frontend package files, local mock data, and dashboard UI files for a static prototype only.
+- Continuous Delivery Mode is active when the PM explicitly asks to continue through green gates or to finish, test, verify, and commit in one pass. In that mode, completed verified scope should be committed without an extra confirmation pause.
 
 ## Development Environment
 

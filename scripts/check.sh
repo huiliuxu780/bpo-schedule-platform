@@ -47,6 +47,7 @@ required_files=(
   "docs/quality/DONE_REPORT_TEMPLATE.md"
   "docs/dev/branch-log.md"
   "tasks/backlog.yaml"
+  "scripts/dev.sh"
   ".gitignore"
   "README.md"
 )
@@ -58,7 +59,7 @@ for file in "${required_files[@]}"; do
   fi
 done
 
-for forbidden in frontend backend pnpm-lock.yaml yarn.lock; do
+for forbidden in frontend pnpm-lock.yaml yarn.lock; do
   if [[ -e "$forbidden" ]]; then
     echo "project boundary violation: $forbidden exists" >&2
     exit 1
@@ -113,4 +114,39 @@ npm run lint
 npm run typecheck
 npm run build
 
-echo "frontend scaffold Harness check passed"
+bash -n scripts/dev.sh
+
+backend_files=(
+  "backend/app/main.py"
+  "backend/app/models.py"
+  "backend/app/repository.py"
+  "backend/app/seed_data.py"
+  "backend/tests/test_schedule_plans.py"
+)
+
+for file in "${backend_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "missing backend vertical file: $file" >&2
+    exit 1
+  fi
+done
+
+python3 - <<'PY'
+import importlib.util
+import sys
+
+missing = [
+    name
+    for name in ("fastapi", "pydantic")
+    if importlib.util.find_spec(name) is None
+]
+
+if missing:
+    print(f"backend toolchain missing: {' '.join(missing)}", file=sys.stderr)
+    print("install backend dependencies under a confirmed backend dependency Gate", file=sys.stderr)
+    raise SystemExit(1)
+PY
+
+python3 -m unittest discover -s backend/tests -v
+
+echo "project Harness check passed"

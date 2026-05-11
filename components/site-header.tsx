@@ -12,11 +12,15 @@ import { Separator } from "@/components/ui/separator"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 type SiteHeaderProps = {
+  title?: string
+  searchPlaceholder?: string
   sidebarCollapsed: boolean
   onToggleSidebar: () => void
 }
 
 export function SiteHeader({
+  title = "经营总览",
+  searchPlaceholder = "搜索异常编号、团队或员工",
   sidebarCollapsed,
   onToggleSidebar,
 }: SiteHeaderProps) {
@@ -36,13 +40,13 @@ export function SiteHeader({
         )}
       </Button>
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-sm font-semibold">经营总览</h1>
+        <h1 className="truncate text-sm font-semibold">{title}</h1>
       </div>
       <div className="hidden w-72 items-center gap-2 rounded-md border bg-background px-2 md:flex">
         <Search className="size-4 text-muted-foreground" />
         <Input
           aria-label="搜索"
-          placeholder="搜索异常编号、团队或员工"
+          placeholder={searchPlaceholder}
           className="h-8 border-0 px-0 shadow-none focus-visible:ring-0"
         />
       </div>

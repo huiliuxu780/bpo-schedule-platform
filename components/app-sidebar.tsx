@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import {
   BarChart3,
   CalendarDays,
@@ -17,6 +19,8 @@ import { cn } from "@/lib/utils"
 
 type NavItem = {
   title: string
+  href: string
+  activeMatch?: "exact" | "prefix"
   active?: boolean
   badge?: string
   tag?: string
@@ -37,68 +41,67 @@ const nav: NavGroup[] = [
   {
     title: "运营工作台",
     icon: LayoutDashboard,
-    active: true,
     items: [
-      { title: "经营总览", active: true },
-      { title: "今日履约" },
-      { title: "异常预警", badge: "12" },
-      { title: "时段缺口热力图" },
+      { title: "经营总览", href: "/dashboard", activeMatch: "exact" },
+      { title: "今日履约", href: "/dashboard" },
+      { title: "异常预警", href: "/dashboard", badge: "12" },
+      { title: "时段缺口热力图", href: "/dashboard" },
     ],
   },
   {
     title: "计划与排班",
     icon: CalendarDays,
     items: [
-      { title: "需求计划" },
-      { title: "排班计划" },
-      { title: "班次明细" },
-      { title: "不可用管理", tag: "P1" },
-      { title: "智能排班", tag: "Beta" },
+      { title: "需求计划", href: "/schedule-plans" },
+      { title: "排班计划", href: "/schedule-plans", activeMatch: "prefix" },
+      { title: "班次明细", href: "/schedule-plans" },
+      { title: "不可用管理", href: "/schedule-plans", tag: "P1" },
+      { title: "智能排班", href: "/schedule-plans", tag: "Beta" },
     ],
   },
   {
     title: "履约监控",
     icon: ClipboardCheck,
     items: [
-      { title: "工时核验" },
-      { title: "坐席状态轨迹" },
-      { title: "异常管理", badge: "12" },
-      { title: "实时遵守率", tag: "P1" },
-      { title: "异常复核", tag: "P1" },
+      { title: "工时核验", href: "/dashboard" },
+      { title: "坐席状态轨迹", href: "/dashboard" },
+      { title: "异常管理", href: "/dashboard", badge: "12" },
+      { title: "实时遵守率", href: "/dashboard", tag: "P1" },
+      { title: "异常复核", href: "/dashboard", tag: "P1" },
     ],
   },
   {
     title: "结算复盘",
     icon: BarChart3,
     items: [
-      { title: "月度结算" },
-      { title: "报表中心" },
-      { title: "供应商复盘", tag: "P1" },
-      { title: "结算锁账", tag: "P1" },
+      { title: "月度结算", href: "/dashboard" },
+      { title: "报表中心", href: "/dashboard" },
+      { title: "供应商复盘", href: "/dashboard", tag: "P1" },
+      { title: "结算锁账", href: "/dashboard", tag: "P1" },
     ],
   },
   {
     title: "数据与集成",
     icon: Database,
     items: [
-      { title: "数据源管理" },
-      { title: "文件导入" },
-      { title: "接入批次" },
-      { title: "CORN 状态日志" },
-      { title: "字段映射", tag: "P1" },
-      { title: "接口集成", tag: "P1" },
-      { title: "数据质量", tag: "P1" },
+      { title: "数据源管理", href: "/dashboard" },
+      { title: "文件导入", href: "/dashboard" },
+      { title: "接入批次", href: "/dashboard" },
+      { title: "CORN 状态日志", href: "/dashboard" },
+      { title: "字段映射", href: "/dashboard", tag: "P1" },
+      { title: "接口集成", href: "/dashboard", tag: "P1" },
+      { title: "数据质量", href: "/dashboard", tag: "P1" },
     ],
   },
   {
     title: "系统管理",
     icon: Settings,
     items: [
-      { title: "组织与人员" },
-      { title: "供应商管理" },
-      { title: "规则配置" },
-      { title: "权限管理", tag: "P1" },
-      { title: "操作审计", tag: "P1" },
+      { title: "组织与人员", href: "/dashboard" },
+      { title: "供应商管理", href: "/dashboard" },
+      { title: "规则配置", href: "/dashboard" },
+      { title: "权限管理", href: "/dashboard", tag: "P1" },
+      { title: "操作审计", href: "/dashboard", tag: "P1" },
     ],
   },
 ]
@@ -122,8 +125,26 @@ function BrandMark({ className }: { className?: string }) {
 }
 
 export function AppSidebar({ collapsed }: AppSidebarProps) {
+  const pathname = usePathname()
+  const isActiveItem = React.useCallback(
+    (item: NavItem) => {
+      if (item.activeMatch === "exact") {
+        return pathname === item.href
+      }
+
+      if (item.activeMatch === "prefix") {
+        return pathname.startsWith(item.href)
+      }
+
+      return false
+    },
+    [pathname]
+  )
+  const activeGroupTitle =
+    nav.find((group) => group.items.some((item) => isActiveItem(item)))?.title ??
+    "运营工作台"
   const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(
-    () => new Set(nav.filter((group) => group.active).map((group) => group.title))
+    () => new Set([activeGroupTitle])
   )
 
   function toggleGroup(title: string) {
@@ -185,7 +206,9 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
         {nav.map((group) => (
           <div key={group.title} className={cn("pb-1", collapsed && "w-10")}>
             <button
-              aria-expanded={expandedGroups.has(group.title)}
+              aria-expanded={
+                expandedGroups.has(group.title) || group.title === activeGroupTitle
+              }
               title={collapsed ? group.title : undefined}
               onClick={() => toggleGroup(group.title)}
               className={cn(
@@ -193,7 +216,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
                 collapsed
                   ? "place-items-center px-0"
                   : "grid-cols-[1rem_1fr_1rem] px-2",
-                group.active
+                group.title === activeGroupTitle
                   ? "bg-muted text-foreground"
                   : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
               )}
@@ -210,15 +233,16 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
                 )}
               />
             </button>
-            {!collapsed && expandedGroups.has(group.title) ? (
+            {!collapsed &&
+            (expandedGroups.has(group.title) || group.title === activeGroupTitle) ? (
               <div className="mt-1 grid gap-1 pl-7">
                 {group.items.map((item) => (
-                  <a
+                  <Link
                     key={item.title}
-                    href="#"
+                    href={item.href}
                     className={cn(
                       "grid min-h-7 grid-cols-[1fr_auto] items-center gap-2 rounded-md px-2 text-xs",
-                      item.active
+                      isActiveItem(item)
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
                     )}
@@ -237,7 +261,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
                         {item.tag}
                       </Badge>
                     ) : null}
-                  </a>
+                  </Link>
                 ))}
               </div>
             ) : null}

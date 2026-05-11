@@ -56,6 +56,30 @@ Every non-trivial task must follow this order:
 7. Output a Chinese Done Report.
 8. Suggest whether to commit, but do not commit unless the user explicitly asks.
 
+## Continuous Delivery Mode
+
+When the PM explicitly asks for continuous execution, such as "别一直停下", "通过就继续下一步", "一口气做完", or "做完测完验证完提交完", Codex should use Continuous Delivery Mode for the current development chain.
+
+In Continuous Delivery Mode, Codex should:
+
+1. Continue to the next already-scoped logical task after a green gate.
+2. Run the required verification before reporting completion.
+3. Commit the completed, verified scope without asking again.
+4. Use a clear English commit message.
+5. Continue to respect all stop conditions and forbidden scopes.
+
+Continuous Delivery Mode does not bypass PM confirmation for new risky scope. Codex must still stop when the next step requires:
+
+- new dependencies
+- package or lockfile changes
+- real external data sources or integrations
+- database persistence
+- authentication or permission boundaries
+- approval, export, or batch-operation capabilities
+- production status codes, formulas, settlement rules, or charge factors
+- ambiguous destructive Git operations
+- failed verification
+
 ## Default Scope Constraints
 
 Unless the current user instruction explicitly allows it, Codex must not:

@@ -130,3 +130,243 @@ dependencies:
   - "US001"
 status: "in_progress"
 ```
+
+### US006 - PM 确认 MVP 第一条纵切范围
+
+```yaml
+id: US006
+requirement_ids:
+  - R003
+module: "MVP 范围"
+role: "PM"
+story: "作为 PM，我希望先确认第一条前后端纵切范围，以便团队在正式开发前知道第一批只做排班计划列表、详情、FastAPI 只读接口和本地种子数据。"
+task_type: "product"
+priority: "P0"
+acceptance:
+  - "第一条纵切明确为排班计划。"
+  - "明确本阶段不做新增、编辑、发布、审批、导出、批量操作、认证、数据库或真实集成。"
+  - "明确后续实现拆为 B001、F005 和 Q001。"
+dependencies:
+  - "H007"
+status: "done"
+```
+
+### US007 - 排班人员查看排班计划列表
+
+```yaml
+id: US007
+requirement_ids:
+  - R003
+  - R005
+module: "计划与排班"
+role: "排班人员"
+story: "作为排班人员，我希望查看排班计划列表，以便按日期、项目、职场、版本、状态和缺口风险找到需要处理的计划。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "列表展示计划编号、日期、项目、职场、版本、状态、预测人数、已排人数、缺口人数和更新时间。"
+  - "列表支持按关键词搜索计划编号、项目或职场。"
+  - "状态展示仅使用 draft、review_ready、published 三个 MVP 展示状态。"
+dependencies:
+  - "US006"
+  - "US010"
+status: "ready_for_gate"
+```
+
+### US008 - 排班人员打开排班计划详情
+
+```yaml
+id: US008
+requirement_ids:
+  - R003
+  - R006
+module: "计划与排班"
+role: "排班人员"
+story: "作为排班人员，我希望打开单个排班计划详情，以便查看计划摘要、时段明细、缺口和备注。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "详情展示计划基础信息、版本、状态、覆盖率和缺口汇总。"
+  - "详情展示 0.5h 时段级预测人数、已排人数、缺口人数和备注。"
+  - "详情仅只读展示，不提供人员级编辑、拖拽、发布或审批操作。"
+dependencies:
+  - "US007"
+  - "US011"
+status: "ready_for_gate"
+```
+
+### US009 - 运营负责人查看排班覆盖风险
+
+```yaml
+id: US009
+requirement_ids:
+  - R005
+  - R006
+  - R009
+module: "计划与排班"
+role: "运营负责人"
+story: "作为运营负责人，我希望在计划列表和详情中看到覆盖率、缺口人数和风险标记，以便判断哪天或哪个职场需要优先复核。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "列表和详情均展示 forecast_agents、scheduled_agents、gap_agents 和 coverage_rate。"
+  - "coverage_rate 在 MVP 中按 scheduled_agents / forecast_agents 展示。"
+  - "当 gap_agents 大于 0 时展示风险标记，但不触发真实告警、审批或通知。"
+dependencies:
+  - "US007"
+  - "US008"
+status: "ready_for_gate"
+```
+
+### US010 - 后端提供排班计划列表接口
+
+```yaml
+id: US010
+requirement_ids:
+  - R007
+  - R008
+module: "后端服务"
+role: "前端应用"
+story: "作为前端应用，我希望调用 FastAPI 排班计划列表接口，以便从后端读取本地种子数据并渲染计划列表。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "提供 GET /api/v1/schedule-plans。"
+  - "响应包含 items 数组，每项包含 id、plan_date、project_name、site_name、version、status、forecast_agents、scheduled_agents、gap_agents、coverage_rate、updated_at。"
+  - "接口从本地种子数据读取，不接数据库、认证或真实外部系统。"
+dependencies:
+  - "US006"
+status: "ready_for_gate"
+```
+
+### US011 - 后端提供排班计划详情接口
+
+```yaml
+id: US011
+requirement_ids:
+  - R007
+  - R008
+module: "后端服务"
+role: "前端应用"
+story: "作为前端应用，我希望调用 FastAPI 排班计划详情接口，以便读取单个计划的摘要和 0.5h 时段明细。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "提供 GET /api/v1/schedule-plans/{plan_id}。"
+  - "响应包含 summary 和 intervals。"
+  - "intervals 每项包含 interval_start、interval_end、forecast_agents、scheduled_agents、gap_agents、coverage_rate、note。"
+  - "当 plan_id 不存在时返回 404 和 machine-readable error code。"
+dependencies:
+  - "US010"
+status: "ready_for_gate"
+```
+
+### US012 - 前端从 FastAPI 读取排班计划数据
+
+```yaml
+id: US012
+requirement_ids:
+  - R007
+  - R008
+module: "接口契约"
+role: "前端应用"
+story: "作为前端应用，我希望使用统一 API client 读取排班计划列表和详情，以便后续从静态 mock 过渡到后端数据。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "前端使用集中封装的 API client 调用排班接口。"
+  - "接口失败时展示可读错误状态。"
+  - "不把 FastAPI URL 和字段映射散落在多个组件里。"
+dependencies:
+  - "US010"
+  - "US011"
+status: "ready_for_gate"
+```
+
+### US013 - 后端本地种子数据表达预测需求
+
+```yaml
+id: US013
+requirement_ids:
+  - R004
+  - R007
+module: "博西预测需求"
+role: "后端服务"
+story: "作为后端服务，我希望用本地种子数据表达预测需求，以便第一条纵切能在不接真实 Excel 的情况下展示计划输入。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "种子数据包含日期、项目、职场、0.5h 时段和预测人数。"
+  - "种子数据与排班计划详情中的 intervals 可追溯。"
+  - "不实现上传、解析 Excel 或外部预测系统接入。"
+dependencies:
+  - "US006"
+status: "ready_for_gate"
+```
+
+### US014 - 后端本地种子数据表达排班计划
+
+```yaml
+id: US014
+requirement_ids:
+  - R005
+  - R006
+  - R007
+module: "计划与排班"
+role: "后端服务"
+story: "作为后端服务，我希望用本地种子数据表达排班计划，以便列表和详情接口能返回稳定、可验收的数据。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "种子数据包含至少 3 个排班计划。"
+  - "每个计划包含至少 8 个 0.5h 时段明细。"
+  - "字段使用 English keys，业务展示值可使用中文。"
+dependencies:
+  - "US013"
+status: "ready_for_gate"
+```
+
+### US015 - PM 确认 MVP 状态与公式展示口径
+
+```yaml
+id: US015
+requirement_ids:
+  - R009
+module: "业务口径"
+role: "PM"
+story: "作为 PM，我希望确认第一条纵切中的状态和公式只是 MVP 展示口径，以便不把它误认为生产最终规则。"
+task_type: "product"
+priority: "P0"
+acceptance:
+  - "计划状态暂定为 draft、review_ready、published。"
+  - "coverage_rate 暂按 scheduled_agents / forecast_agents 展示。"
+  - "结算公式、排班拟合度、排班遵守率和生产状态码不在第一条纵切中固化。"
+dependencies:
+  - "US006"
+status: "needs_pm_confirmation_before_implementation"
+```
+
+### US016 - QA 验证第一条纵切交付
+
+```yaml
+id: US016
+requirement_ids:
+  - R010
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望验证第一条纵切的前端、后端、接口契约和 Harness check，以便确认它可以作为正式开发基线。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "前端 lint、typecheck、build 通过。"
+  - "后端测试通过。"
+  - "接口返回字段满足 user stories 中的契约。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US007"
+  - "US008"
+  - "US010"
+  - "US011"
+  - "US012"
+status: "ready_for_gate"
+```

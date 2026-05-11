@@ -10,15 +10,15 @@ BPO Workforce Management / BPO 人力计划与履约管理平台。
 
 - shadcn/ui-style dashboard shell
 - local static mock data for the dashboard prototype
+- read-only FastAPI schedule plan API vertical
+- read-only schedule plan list/detail frontend vertical
 - dark / light theme support
 - BPO WFM navigation and content replacement
 - Lightweight Harness 文档、Gate、日志和审计闭环
 
 当前不包含：
 
-- backend services
-- real API integration
-- database work
+- database persistence
 - authentication
 - real Excel import
 - real CORN integration
@@ -51,6 +51,8 @@ npm install
 
 ## Run Locally
 
+启动前端：
+
 ```bash
 npm run dev
 ```
@@ -60,6 +62,26 @@ Dashboard:
 ```txt
 http://localhost:3000/dashboard
 ```
+
+排班计划：
+
+```txt
+http://localhost:3000/schedule-plans
+```
+
+启动第一条前后端纵切联调：
+
+```bash
+bash scripts/dev.sh
+```
+
+默认 API base：
+
+```txt
+http://127.0.0.1:8000
+```
+
+可通过 `BPO_API_BASE_URL` 覆盖。
 
 ## Verify
 
@@ -77,7 +99,8 @@ bash scripts/check.sh
 - `npm run lint`
 - `npm run typecheck`
 - `npm run build`
+- backend read-only API tests
 
 ## Working Rule
 
-任何新的产品模块、前端页面、依赖、package 变更、真实 API、后端、数据库、权限、导出、审批或批量能力，都必须先进入 backlog，并通过 Gate Plan。
+任何新的产品模块、前端页面、依赖、package 变更、真实 API、后端能力、数据库、权限、导出、审批或批量能力，都必须先进入 backlog，并通过 Gate Plan。
