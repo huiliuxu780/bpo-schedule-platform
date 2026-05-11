@@ -718,3 +718,47 @@ dependencies:
   - "US030"
 status: "done"
 ```
+
+### US032 - shadcn dashboard-01 视觉差距审计
+
+```yaml
+id: US032
+requirement_ids:
+  - R020
+module: "前端设计"
+role: "PM"
+story: "作为 PM，我希望先对当前前端和 shadcn dashboard-01 复刻规格做差距审计，以便确认哪些差异必须改、哪些差异可以接受。"
+task_type: "frontend-audit"
+priority: "P0"
+acceptance:
+  - "阅读项目当前 components、app 页面、global CSS、components.json 和 shadcn 相关配置。"
+  - "基于 spec 检查 token、字体、圆角、sidebar/header 尺寸、card 尺寸、chart/table 结构、响应式行为和 light/dark 模式。"
+  - "输出差距清单，按 P0/P1/P2 标注。"
+  - "明确哪些差距需要新增依赖或 package/lockfile 变更。"
+  - "不直接改 UI，不安装依赖。"
+dependencies:
+  - "F012"
+status: "todo"
+```
+
+### US033 - shadcn dashboard-01 视觉对齐实施
+
+```yaml
+id: US033
+requirement_ids:
+  - R020
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望当前 BPO WFM 后台页面在保留业务数据、接口和路由的前提下，对齐 shadcn dashboard-01 的 token、尺寸、组件结构和响应式质感，以便界面更专业稳定。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "保留现有业务字段、接口、路由和中文业务文案。"
+  - "按 spec 对齐 light/dark token、字体、圆角、sidebar/header、metric cards、chart/table 和响应式行为。"
+  - "优先使用 shadcn token，不硬编码颜色。"
+  - "浏览器验证 1440x900 深色、1440x900 浅色、1314px、移动端。"
+  - "列出与官方 dashboard-01 仍存在的差异。"
+dependencies:
+  - "US032"
+status: "todo"
+```

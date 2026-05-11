@@ -1379,3 +1379,107 @@ tasks:
       - "需要固化生产风险等级、生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: H014
+    title: "插入 shadcn dashboard-01 前端视觉对齐需求"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "确认前一阶段 Git 提交已存在。"
+      - "将 shadcn dashboard-01 replica spec 插入为 raw requirement。"
+      - "拆分视觉差距审计和视觉对齐实施用户故事。"
+      - "backlog 记录后续执行项和停止条件。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要直接改 UI 代码"
+      - "需要连接外部网络或复制外部源码"
+      - "验证失败"
+    commit_after_done: true
+  - id: F013
+    title: "shadcn dashboard-01 视觉差距审计"
+    priority: P0
+    status: todo
+    required_workflow: frontend-audit
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "读取 shadcn dashboard-01 replica spec 和当前项目前端结构。"
+      - "审计 token、字体、圆角、sidebar/header、metric cards、chart/table、响应式和 light/dark。"
+      - "输出 P0/P1/P2 差距清单。"
+      - "明确哪些差距需要新增依赖或 package/lockfile 变更。"
+      - "不直接改 UI、不安装依赖。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要直接改 UI 代码"
+      - "需要复制外部源码"
+      - "验证失败"
+    commit_after_done: true
+  - id: F014
+    title: "shadcn dashboard-01 视觉对齐实施"
+    priority: P0
+    status: todo
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "hooks/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+    acceptance:
+      - "保留现有 BPO 业务字段、接口、路由和中文文案。"
+      - "按 spec 对齐 light/dark token、字体、圆角、sidebar/header、metric cards、chart/table 和响应式行为。"
+      - "优先使用 shadcn token，不硬编码颜色。"
+      - "浏览器验证 1440x900 深色、1440x900 浅色、1314px 和移动端。"
+      - "列出与官方 dashboard-01 仍存在的差异。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖时必须先确认"
+      - "需要修改 package 或 lockfile 时必须先确认"
+      - "需要 Geist 字体、Tabler icons 或 shadcn 组件补齐时必须先确认"
+      - "需要复制外部源码或访问网络时必须先确认"
+      - "不得替换现有业务字段、接口、路由或中文文案"
+      - "验证失败"
+    commit_after_done: true

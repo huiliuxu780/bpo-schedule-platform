@@ -244,6 +244,13 @@
 - Added a risk-hint section to `/schedule-plans` with high-risk count, risk rows, reason, recommendation, and links into shift details.
 - Kept the risk level as MVP display guidance only; no production formula, automatic scheduling, approval, or batch adjustment was added.
 
+### H014 Insert shadcn Dashboard Replica Requirement
+
+- Confirmed the previous development commits are present, including `1a8671f feat: add schedule risk hints`.
+- Inserted `R020` from `/Users/mac/Documents/Codex/2026-05-10/computeruse-https-ui-shadcn-com/docs/design/shadcn-dashboard-01-replica-spec.md`.
+- Split the inserted design requirement into `US032` visual gap audit and `US033` visual alignment implementation.
+- Added `F013` and `F014` as the queued execution items, with `F014` explicitly gated if package, lockfile, font, icon, or shadcn component changes are needed.
+
 ### H012 Harness Documentation Consistency Fixes
 
 - Reconciled `docs/harness/lightweight-harness.md` with the current frontend dashboard scaffold plus local scheduling-plan MVP vertical state.

@@ -227,6 +227,18 @@
 
 ### 2026-05-12
 
+- task_id: `H014`
+- source_ids:
+  - `R020`
+- story_ids:
+  - `US032`
+  - `US033`
+- action: 插入 shadcn dashboard-01 前端视觉对齐需求。
+- status: `done`
+- notes: 已基于外部 spec 插入前端设计需求，拆分为先审计差距、再实施视觉对齐；实施阶段若涉及依赖、package/lockfile、字体、Tabler icons 或 shadcn 组件补齐，需要单独 Gate。
+
+### 2026-05-12
+
 - task_id: `B007/F012`
 - source_ids:
   - `R019`

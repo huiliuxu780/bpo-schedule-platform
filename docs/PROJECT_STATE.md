@@ -128,6 +128,12 @@ This upgrade is a Harness and documentation structure. It does not authorize new
 
 Charting remains a controlled frontend decision. For F001 only, PM confirmed that the dashboard trend chart should follow the official shadcn dashboard chart structure first, which permits Recharts in the static prototype. Any future replacement with ECharts or another charting layer must be handled by a separate confirmed Gate.
 
+## Inserted Design Alignment Requirement
+
+`R020` inserts `/Users/mac/Documents/Codex/2026-05-10/computeruse-https-ui-shadcn-com/docs/design/shadcn-dashboard-01-replica-spec.md` as the project-level shadcn dashboard-01 visual alignment source.
+
+The inserted requirement does not immediately authorize UI rewrites, dependency installation, package or lockfile changes, Tabler icon migration, font changes, or shadcn component additions. The next safe step is `US032/F013`: a read-only visual gap audit against the spec. Any implementation step such as `US033/F014` must preserve existing BPO business routes, fields, interfaces, and Chinese copy, and must receive a separate Gate if it needs package or lockfile changes.
+
 ## Subagent Prompt Contract Direction
 
 Subagent prompt templates are now treated as contracts rather than loose role descriptions.

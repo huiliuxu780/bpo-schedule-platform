@@ -445,6 +445,19 @@
 
 - `high/medium/low` 风险等级当前只是 MVP 展示口径，生产分级、阈值和动作建议需要后续 Gate 单独确认。
 - 风险提示目前基于本地 seed 数据和简单时段重叠判断，不代表真实人事、CORN 或排班系统联动结果。
+
+### 2026-05-12 - shadcn dashboard-01 前端视觉对齐需求插入审计
+
+#### 审计结论
+
+- `H014` 已将 `/Users/mac/Documents/Codex/2026-05-10/computeruse-https-ui-shadcn-com/docs/design/shadcn-dashboard-01-replica-spec.md` 插入为 `R020`。
+- `R020` 已拆为 `US032` 视觉差距审计和 `US033` 视觉对齐实施，避免直接从 spec 跳到 UI 大改。
+- backlog 已加入 `F013` 和 `F014`，其中 `F014` 明确如果需要 Geist 字体、Tabler icons、shadcn 组件补齐或 package/lockfile 变更，必须另行 Gate。
+
+#### 风险
+
+- 该 spec 明确追求 1:1 时推荐 Tabler icons 和 Geist 字体，当前项目不应在未确认依赖变更前直接实施。
+- 视觉对齐可能影响多个现有业务页面，建议先做差距审计和截图验收计划，再进入实现。
 - H012 已将本节旧风险降级为历史风险，并取消继续建议 H004 clean Harness 偏差处置。
 
 ### 2026-05-11 - Lightweight Harness 文档型升级
