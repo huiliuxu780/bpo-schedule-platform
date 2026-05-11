@@ -4,7 +4,7 @@
 
 - Project name: `bpo-schedule-platform`
 - Current stage: frontend dashboard scaffold
-- Current development mode: Gate Plan first, small checkpoints, traceable implementation only
+- Current development mode: Story Runner first, Gate Plan controlled, continuous delivery when explicitly requested
 - Goal: provide an auditable Harness while iterating on a PM-confirmed static BPO WFM dashboard scaffold.
 
 ## Project Root
@@ -79,6 +79,34 @@ Continuous Delivery Mode does not bypass PM confirmation for new risky scope. Co
 - production status codes, formulas, settlement rules, or charge factors
 - ambiguous destructive Git operations
 - failed verification
+
+## Story Runner Mode
+
+When the PM asks to "开始", "继续", "自动走完", "按用户故事开发", "挨个开发完测试完提交完", or otherwise clearly requests continuous delivery from a goal, Codex must use Story Runner Mode.
+
+Story Runner Mode is the default execution model for confirmed product development chains.
+
+In Story Runner Mode, Codex must:
+
+1. Treat the user story as the primary execution unit.
+2. Convert the goal into raw requirements and the smallest useful user stories before implementation.
+3. Build a Story Execution Queue ordered by dependency and priority.
+4. Execute each ready story through implementation, verification, documentation update, and commit when `commit_after_done` or Continuous Delivery Mode allows it.
+5. Continue to the next ready story after a green gate without asking again.
+6. Keep UI feedback, small visual fixes, and acceptance corrections inside the current story instead of creating a new backlog task for every small adjustment.
+7. Update `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml` so story state remains the source of truth.
+
+Subagents are not automatic in Story Runner Mode. Codex may use subagents only when the PM explicitly authorizes subagents, delegation, or parallel agent work, and only when the work can be split into independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, integration, final verification, commits, and Done Report.
+
+Codex should only pause in Story Runner Mode when:
+
+- the next story is blocked by PM/product ambiguity
+- the next step needs new dependencies, package or lockfile changes
+- the next step needs real external data, database persistence, authentication, permissions, approval, export, batch operation, or production workflow capability
+- the next step changes production status codes, formulas, settlement rules, or charge factors
+- subagent write scopes would overlap or conflict
+- verification fails
+- the requested action is destructive or ambiguous
 
 ## Default Scope Constraints
 
