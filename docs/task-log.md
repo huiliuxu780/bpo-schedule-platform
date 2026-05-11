@@ -143,3 +143,12 @@
 - action: 创建前端排班计划草稿更新入口。
 - status: `done`
 - notes: draft 详情页新增编辑入口，新增 `/schedule-plans/[planId]/edit` 和 server action，提交后调用 B002 PUT 并跳转回详情；非 draft 不展示编辑入口。
+
+### 2026-05-11
+
+- task_id: `Q002`
+- source_ids: [`R011`, `R012`, `R013`]
+- story_ids: [`US017`, `US018`, `US019`, `US020`]
+- action: 验收排班计划草稿创建与更新纵切。
+- status: `done`
+- notes: 已验证 B002 后端 unittest、F006/F007 前端 lint/typecheck/build、Harness check、本地新建页 200、编辑页 200、POST 创建草稿和 PUT 更新草稿；仍不包含数据库、认证、权限、发布、审批、导出或批量。

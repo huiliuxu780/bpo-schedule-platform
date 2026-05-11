@@ -178,3 +178,11 @@
 - Added a server action that calls the B002 draft update API from the Next.js server.
 - Kept non-draft plans read-only and hid the edit action outside draft status.
 - Kept full personnel-level scheduling, publish, approval, export, batch operations, authentication, permissions, and persistence out of scope.
+
+### Q002 Draft Create And Update Acceptance
+
+- Accepted the local schedule-plan draft creation/update vertical across backend API, frontend create UI, frontend edit UI, and Harness verification.
+- Confirmed `bash scripts/check.sh` passes with `/schedule-plans/new` and `/schedule-plans/[planId]/edit` in the build output.
+- Confirmed local HTTP 200 for the new draft page and edit draft page.
+- Confirmed direct POST draft creation and PUT draft update against the FastAPI service.
+- Recorded that persistence, authentication, permissions, publish, approval, export, batch operations, real Excel, and real CORN remain out of scope.
