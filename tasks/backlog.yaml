@@ -1027,3 +1027,82 @@ tasks:
       - "需要固化生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: B004
+    title: "班次明细后端列表"
+    priority: P0
+    status: done
+    required_workflow: backend
+    allowed_files:
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/repository.py"
+      - "backend/tests/test_schedule_plans.py"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "GET /api/v1/shift-details 返回 0.5h 班次明细。"
+      - "明细字段包含计划、日期、时段、预测、已排、缺口、覆盖率和备注。"
+      - "接口支持 query 和 status 筛选。"
+      - "后端 unittest 覆盖字段契约和关键词筛选。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要数据库、认证、真实 Excel、真实 CORN 或外部系统"
+      - "需要人员级排班、审批、发布、导出或批量操作"
+      - "需要固化生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F009
+    title: "班次明细前端页面"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/shift-details/**"
+      - "components/app-sidebar.tsx"
+      - "lib/schedule-plans.ts"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "侧边栏班次明细进入 `/shift-details`。"
+      - "页面展示班次数量、缺口班次、最大缺口和整体覆盖率。"
+      - "页面展示 0.5h 明细表并能跳回对应计划。"
+      - "页面支持关键词、状态和清空筛选。"
+      - "不新增依赖、不修改 package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "B004 未完成"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要数据库、认证、真实 Excel、真实 CORN 或外部系统"
+      - "需要人员级排班、审批、发布、导出或批量操作"
+      - "需要固化生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true

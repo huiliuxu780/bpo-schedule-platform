@@ -35,6 +35,26 @@ class SchedulePlanDetail(BaseModel):
     intervals: list[SchedulePlanInterval]
 
 
+class ShiftDetailRow(BaseModel):
+    plan_id: str
+    plan_date: str
+    project_name: str
+    site_name: str
+    version: str
+    status: SchedulePlanStatus
+    interval_start: str
+    interval_end: str
+    forecast_agents: int = Field(ge=0)
+    scheduled_agents: int = Field(ge=0)
+    gap_agents: int = Field(ge=0)
+    coverage_rate: float = Field(ge=0)
+    note: str
+
+
+class ShiftDetailListResponse(BaseModel):
+    items: list[ShiftDetailRow]
+
+
 class SchedulePlanIntervalInput(BaseModel):
     interval_start: str
     interval_end: str

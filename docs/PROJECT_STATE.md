@@ -43,6 +43,10 @@ The first vertical intentionally excludes create/edit/publish workflow, approval
 
 `F008` adds URL-based keyword/status filtering to `/schedule-plans`, with filtered summary cards, sortable results, and an empty-result state.
 
+`B004` adds a local FastAPI shift-detail list endpoint that flattens schedule-plan intervals into 0.5h rows.
+
+`F009` adds `/shift-details` and wires the sidebar "班次明细" item to a real page with keyword/status filters, summary cards, and plan links.
+
 `Q002` has accepted the local schedule-plan draft creation/update vertical based on backend unittest coverage, frontend lint/typecheck/build, Harness check, local new/edit page HTTP checks, and direct POST/PUT API verification.
 
 The project still does not contain database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, intelligent scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.

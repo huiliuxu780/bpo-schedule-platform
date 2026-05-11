@@ -54,7 +54,7 @@ const nav: NavGroup[] = [
     items: [
       { title: "需求计划", href: "/schedule-plans" },
       { title: "排班计划", href: "/schedule-plans", activeMatch: "prefix" },
-      { title: "班次明细", href: "/schedule-plans" },
+      { title: "班次明细", href: "/shift-details", activeMatch: "exact" },
       { title: "不可用管理", href: "/schedule-plans", tag: "P1" },
       { title: "智能排班", href: "/schedule-plans", tag: "Beta" },
     ],

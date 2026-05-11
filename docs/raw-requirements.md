@@ -211,3 +211,16 @@ version: "1.0"
 status: "split"
 notes: "本需求只做本地 FastAPI 列表查询和前端 URL 筛选；不做权限、审批、发布、批量、数据库、真实 Excel、真实 CORN 或生产状态口径变更。"
 ```
+
+### R016 - 班次明细查看
+
+```yaml
+id: R016
+module: "计划与排班"
+description: "运营排班人员需要从计划与排班中查看 0.5h 班次明细，包含计划、日期、时段、预测人数、已排人数、缺口、覆盖率和备注。"
+source: "PM continuous development instruction"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "本需求只做本地只读明细查看和筛选；不做人员级排班、拖拽排班、审批、发布、批量、数据库、真实 Excel 或真实 CORN。"
+```

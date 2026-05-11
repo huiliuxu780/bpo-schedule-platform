@@ -6,6 +6,7 @@ from backend.app.models import (
     SchedulePlanInterval,
     SchedulePlanSummary,
     SchedulePlanStatus,
+    ShiftDetailRow,
 )
 from backend.app.seed_data import SCHEDULE_PLANS
 
@@ -88,6 +89,28 @@ def _matches_query(summary: SchedulePlanSummary, query: str) -> bool:
     return normalized in searchable_text
 
 
+def _matches_shift_query(row: ShiftDetailRow, query: str) -> bool:
+    normalized = query.strip().lower()
+    if not normalized:
+        return True
+
+    searchable_text = " ".join(
+        [
+            row.plan_id,
+            row.plan_date,
+            row.project_name,
+            row.site_name,
+            row.version,
+            row.status,
+            row.interval_start,
+            row.interval_end,
+            row.note,
+        ]
+    ).lower()
+
+    return normalized in searchable_text
+
+
 def list_plan_summaries(
     status: SchedulePlanStatus | None = None,
     query: str | None = None,
@@ -101,6 +124,39 @@ def list_plan_summaries(
         summaries = [summary for summary in summaries if _matches_query(summary, query)]
 
     return summaries
+
+
+def list_shift_detail_rows(
+    status: SchedulePlanStatus | None = None,
+    query: str | None = None,
+) -> list[ShiftDetailRow]:
+    rows = [
+        ShiftDetailRow(
+            plan_id=plan.summary.id,
+            plan_date=plan.summary.plan_date,
+            project_name=plan.summary.project_name,
+            site_name=plan.summary.site_name,
+            version=plan.summary.version,
+            status=plan.summary.status,
+            interval_start=interval.interval_start,
+            interval_end=interval.interval_end,
+            forecast_agents=interval.forecast_agents,
+            scheduled_agents=interval.scheduled_agents,
+            gap_agents=interval.gap_agents,
+            coverage_rate=interval.coverage_rate,
+            note=interval.note,
+        )
+        for plan in SCHEDULE_PLANS
+        for interval in plan.intervals
+    ]
+
+    if status is not None:
+        rows = [row for row in rows if row.status == status]
+
+    if query is not None:
+        rows = [row for row in rows if _matches_shift_query(row, query)]
+
+    return rows
 
 
 def find_plan_detail(plan_id: str) -> SchedulePlanDetail | None:

@@ -6,6 +6,7 @@ from backend.app.main import (
     app,
     create_schedule_plan_draft,
     get_schedule_plan,
+    list_shift_details,
     list_schedule_plans,
     update_schedule_plan_draft,
 )
@@ -17,6 +18,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         routes = {(route.path, ",".join(sorted(route.methods))) for route in app.routes}
 
         self.assertIn(("/api/v1/schedule-plans", "GET"), routes)
+        self.assertIn(("/api/v1/shift-details", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
 
@@ -64,6 +66,35 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertGreaterEqual(len(detail.intervals), 8)
         self.assertEqual(detail.intervals[0].interval_start, "09:00")
         self.assertEqual(detail.intervals[0].interval_end, "09:30")
+
+    def test_list_shift_details_returns_plan_and_interval_fields(self) -> None:
+        response = list_shift_details()
+
+        self.assertGreaterEqual(len(response.items), 24)
+        first_item = response.items[0].model_dump()
+        required_fields = {
+            "plan_id",
+            "plan_date",
+            "project_name",
+            "site_name",
+            "version",
+            "status",
+            "interval_start",
+            "interval_end",
+            "forecast_agents",
+            "scheduled_agents",
+            "gap_agents",
+            "coverage_rate",
+            "note",
+        }
+
+        self.assertTrue(required_fields.issubset(first_item.keys()))
+
+    def test_list_shift_details_filters_by_query(self) -> None:
+        response = list_shift_details(query="培训")
+
+        self.assertGreaterEqual(len(response.items), 1)
+        self.assertTrue(all("培训" in item.note for item in response.items))
 
     def test_get_schedule_plan_returns_404_for_missing_plan(self) -> None:
         with self.assertRaises(HTTPException) as raised:

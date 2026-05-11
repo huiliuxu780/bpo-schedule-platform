@@ -533,3 +533,49 @@ dependencies:
   - "US022"
 status: "done"
 ```
+
+### US024 - 后端班次明细列表
+
+```yaml
+id: US024
+requirement_ids:
+  - R016
+  - R008
+module: "计划与排班"
+role: "前端应用"
+story: "作为前端应用，我希望 FastAPI 提供班次明细列表接口，以便页面可以按 0.5h 时段读取计划、预测、已排、缺口和备注。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "提供 GET /api/v1/shift-details。"
+  - "返回字段包含 plan_id、plan_date、project_name、site_name、version、status、interval_start、interval_end、forecast_agents、scheduled_agents、gap_agents、coverage_rate 和 note。"
+  - "支持 query 查询参数。"
+  - "后端 unittest 覆盖明细字段和关键词筛选。"
+  - "不接数据库、认证、真实 Excel、真实 CORN 或外部系统。"
+dependencies:
+  - "US010"
+  - "US011"
+status: "done"
+```
+
+### US025 - 前端班次明细页面
+
+```yaml
+id: US025
+requirement_ids:
+  - R016
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望打开班次明细页面并按关键词或状态筛选，以便定位具体时段缺口。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "侧边栏班次明细进入真实页面。"
+  - "页面展示班次数量、缺口班次、最大缺口和整体覆盖率。"
+  - "页面展示 0.5h 明细表并可跳回对应排班计划。"
+  - "页面支持关键词、状态和清空筛选。"
+  - "不新增依赖、不修改 package 或 lockfile。"
+dependencies:
+  - "US024"
+status: "done"
+```

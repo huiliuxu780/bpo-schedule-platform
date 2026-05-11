@@ -210,6 +210,13 @@
 - Added URL-based keyword search, status switching, clear filters, filtered summary cards, and empty-result messaging to `/schedule-plans`.
 - Kept this story local-only: no new dependency, package change, database, auth, real Excel, real CORN, publish, approval, export, or batch operation.
 
+### B004/F009 Shift Details
+
+- Added `GET /api/v1/shift-details` to expose flattened 0.5h schedule-plan interval rows.
+- Added backend tests for shift-detail contract fields and keyword filtering.
+- Added `/shift-details` with summary cards, keyword/status filters, empty state, and links back to the source schedule plan.
+- Updated the sidebar "班次明细" item to point at the new page.
+
 ### H012 Harness Documentation Consistency Fixes
 
 - Reconciled `docs/harness/lightweight-harness.md` with the current frontend dashboard scaffold plus local scheduling-plan MVP vertical state.

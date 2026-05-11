@@ -191,6 +191,24 @@
 
 ### 2026-05-11
 
+- task_id: `B004`
+- source_ids: [`R016`]
+- story_ids: [`US024`]
+- action: 增加班次明细后端列表。
+- status: `done`
+- notes: FastAPI 新增 `GET /api/v1/shift-details`，将排班计划 intervals 展平成 0.5h 明细行；支持 `status` 和 `query`；后端 unittest 增加字段和关键词筛选覆盖。
+
+### 2026-05-11
+
+- task_id: `F009`
+- source_ids: [`R016`]
+- story_ids: [`US025`]
+- action: 增加班次明细前端页面。
+- status: `done`
+- notes: 新增 `/shift-details`，侧边栏班次明细指向真实页面；页面提供关键词/状态筛选、汇总卡、明细表和返回计划链接。
+
+### 2026-05-11
+
 - task_id: `H012`
 - source_ids: []
 - story_ids: []

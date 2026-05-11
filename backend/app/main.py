@@ -5,10 +5,12 @@ from backend.app.models import (
     SchedulePlanDraftRequest,
     SchedulePlanListResponse,
     SchedulePlanStatus,
+    ShiftDetailListResponse,
 )
 from backend.app.repository import (
     create_plan_draft,
     find_plan_detail,
+    list_shift_detail_rows,
     list_plan_summaries,
     update_plan_draft,
 )
@@ -27,6 +29,16 @@ def list_schedule_plans(
 ) -> SchedulePlanListResponse:
     return SchedulePlanListResponse(
         items=list_plan_summaries(status=status, query=query)
+    )
+
+
+@app.get("/api/v1/shift-details", response_model=ShiftDetailListResponse)
+def list_shift_details(
+    status: SchedulePlanStatus | None = None,
+    query: str | None = None,
+) -> ShiftDetailListResponse:
+    return ShiftDetailListResponse(
+        items=list_shift_detail_rows(status=status, query=query)
     )
 
 

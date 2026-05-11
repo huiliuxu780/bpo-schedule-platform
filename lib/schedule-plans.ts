@@ -29,6 +29,22 @@ export type SchedulePlanDetail = {
   intervals: SchedulePlanInterval[]
 }
 
+export type ShiftDetailRow = {
+  plan_id: string
+  plan_date: string
+  project_name: string
+  site_name: string
+  version: string
+  status: SchedulePlanStatus
+  interval_start: string
+  interval_end: string
+  forecast_agents: number
+  scheduled_agents: number
+  gap_agents: number
+  coverage_rate: number
+  note: string
+}
+
 export type SchedulePlanIntervalInput = Pick<
   SchedulePlanInterval,
   | "interval_start"
@@ -48,6 +64,10 @@ export type SchedulePlanDraftPayload = {
 
 type SchedulePlanListResponse = {
   items: SchedulePlanSummary[]
+}
+
+type ShiftDetailListResponse = {
+  items: ShiftDetailRow[]
 }
 
 export type SchedulePlanListFilters = {
@@ -248,6 +268,27 @@ export async function getSchedulePlan(
   return response ?? fallbackPlans.find((plan) => plan.summary.id === planId) ?? null
 }
 
+export async function getShiftDetails(
+  filters: SchedulePlanListFilters = {}
+): Promise<ShiftDetailRow[]> {
+  const searchParams = new URLSearchParams()
+
+  if (filters.query?.trim()) {
+    searchParams.set("query", filters.query.trim())
+  }
+
+  if (filters.status) {
+    searchParams.set("status", filters.status)
+  }
+
+  const path = `/api/v1/shift-details${
+    searchParams.size > 0 ? `?${searchParams.toString()}` : ""
+  }`
+  const response = await fetchJson<ShiftDetailListResponse>(path)
+
+  return response?.items ?? filterFallbackShiftDetails(flattenFallbackShiftDetails(), filters)
+}
+
 export async function createSchedulePlanDraft(
   payload: SchedulePlanDraftPayload
 ): Promise<SchedulePlanDetail | null> {
@@ -305,6 +346,58 @@ function filterFallbackPlans(
       plan.version,
       plan.status,
       schedulePlanStatusLabel(plan.status),
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(normalizedQuery)
+  })
+}
+
+function flattenFallbackShiftDetails(): ShiftDetailRow[] {
+  return fallbackPlans.flatMap((plan) =>
+    plan.intervals.map((intervalItem) => ({
+      plan_id: plan.summary.id,
+      plan_date: plan.summary.plan_date,
+      project_name: plan.summary.project_name,
+      site_name: plan.summary.site_name,
+      version: plan.summary.version,
+      status: plan.summary.status,
+      interval_start: intervalItem.interval_start,
+      interval_end: intervalItem.interval_end,
+      forecast_agents: intervalItem.forecast_agents,
+      scheduled_agents: intervalItem.scheduled_agents,
+      gap_agents: intervalItem.gap_agents,
+      coverage_rate: intervalItem.coverage_rate,
+      note: intervalItem.note,
+    }))
+  )
+}
+
+function filterFallbackShiftDetails(
+  rows: ShiftDetailRow[],
+  filters: SchedulePlanListFilters
+) {
+  return rows.filter((row) => {
+    if (filters.status && row.status !== filters.status) {
+      return false
+    }
+
+    const normalizedQuery = filters.query?.trim().toLowerCase()
+    if (!normalizedQuery) {
+      return true
+    }
+
+    return [
+      row.plan_id,
+      row.plan_date,
+      row.project_name,
+      row.site_name,
+      row.version,
+      row.status,
+      row.interval_start,
+      row.interval_end,
+      row.note,
+      schedulePlanStatusLabel(row.status),
     ]
       .join(" ")
       .toLowerCase()
