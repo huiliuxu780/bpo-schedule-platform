@@ -52,7 +52,7 @@ const nav: NavGroup[] = [
     title: "计划与排班",
     icon: CalendarDays,
     items: [
-      { title: "需求计划", href: "/schedule-plans" },
+      { title: "需求计划", href: "/demand-plans", activeMatch: "exact" },
       { title: "排班计划", href: "/schedule-plans", activeMatch: "prefix" },
       { title: "班次明细", href: "/shift-details", activeMatch: "exact" },
       { title: "不可用管理", href: "/schedule-plans", tag: "P1" },

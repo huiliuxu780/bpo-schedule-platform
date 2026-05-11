@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
 from backend.app.models import (
+    DemandPlanRow,
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
     SchedulePlanInterval,
@@ -111,6 +112,27 @@ def _matches_shift_query(row: ShiftDetailRow, query: str) -> bool:
     return normalized in searchable_text
 
 
+def _matches_demand_query(row: DemandPlanRow, query: str) -> bool:
+    normalized = query.strip().lower()
+    if not normalized:
+        return True
+
+    searchable_text = " ".join(
+        [
+            row.demand_id,
+            row.plan_date,
+            row.project_name,
+            row.site_name,
+            row.interval_start,
+            row.interval_end,
+            row.source,
+            row.status,
+        ]
+    ).lower()
+
+    return normalized in searchable_text
+
+
 def list_plan_summaries(
     status: SchedulePlanStatus | None = None,
     query: str | None = None,
@@ -155,6 +177,31 @@ def list_shift_detail_rows(
 
     if query is not None:
         rows = [row for row in rows if _matches_shift_query(row, query)]
+
+    return rows
+
+
+def list_demand_plan_rows(query: str | None = None) -> list[DemandPlanRow]:
+    rows = [
+        DemandPlanRow(
+            demand_id=f"demand-{plan.summary.plan_date}-{plan.summary.site_name}-{interval.interval_start}".replace(
+                " ", "-"
+            ),
+            plan_date=plan.summary.plan_date,
+            project_name=plan.summary.project_name,
+            site_name=plan.summary.site_name,
+            interval_start=interval.interval_start,
+            interval_end=interval.interval_end,
+            forecast_agents=interval.forecast_agents,
+            source="本地预测需求",
+            status="mapped",
+        )
+        for plan in SCHEDULE_PLANS
+        for interval in plan.intervals
+    ]
+
+    if query is not None:
+        rows = [row for row in rows if _matches_demand_query(row, query)]
 
     return rows
 

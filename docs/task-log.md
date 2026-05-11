@@ -209,6 +209,24 @@
 
 ### 2026-05-11
 
+- task_id: `B005`
+- source_ids: [`R017`]
+- story_ids: [`US026`]
+- action: 增加需求计划后端列表。
+- status: `done`
+- notes: FastAPI 新增 `GET /api/v1/demand-plans`，从本地 forecast 数据生成预测需求行；支持 `query`；后端 unittest 增加字段和关键词筛选覆盖。
+
+### 2026-05-11
+
+- task_id: `F010`
+- source_ids: [`R017`]
+- story_ids: [`US027`]
+- action: 增加需求计划前端页面。
+- status: `done`
+- notes: 新增 `/demand-plans`，侧边栏需求计划指向真实页面；页面提供关键词搜索、汇总卡和预测需求表。
+
+### 2026-05-11
+
 - task_id: `H012`
 - source_ids: []
 - story_ids: []

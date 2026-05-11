@@ -224,3 +224,16 @@ version: "1.0"
 status: "split"
 notes: "本需求只做本地只读明细查看和筛选；不做人员级排班、拖拽排班、审批、发布、批量、数据库、真实 Excel 或真实 CORN。"
 ```
+
+### R017 - 需求计划查看
+
+```yaml
+id: R017
+module: "计划与排班"
+description: "运营排班人员需要查看预测需求计划，按日期、项目、职场和 0.5h 时段了解预测人数，作为排班计划输入。"
+source: "PM continuous development instruction"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "本需求只做本地只读预测需求查看和搜索；不做真实 Excel 导入、字段映射、数据库、审批、发布、批量或生产预测算法。"
+```

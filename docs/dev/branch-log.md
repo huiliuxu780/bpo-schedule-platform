@@ -217,6 +217,13 @@
 - Added `/shift-details` with summary cards, keyword/status filters, empty state, and links back to the source schedule plan.
 - Updated the sidebar "班次明细" item to point at the new page.
 
+### B005/F010 Demand Plans
+
+- Added `GET /api/v1/demand-plans` to expose local forecast-demand rows.
+- Added backend tests for demand-plan contract fields and keyword filtering.
+- Added `/demand-plans` with summary cards, keyword search, empty state, and a forecast-demand table.
+- Updated the sidebar "需求计划" item to point at the new page.
+
 ### H012 Harness Documentation Consistency Fixes
 
 - Reconciled `docs/harness/lightweight-harness.md` with the current frontend dashboard scaffold plus local scheduling-plan MVP vertical state.

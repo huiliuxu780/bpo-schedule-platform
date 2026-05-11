@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 
 SchedulePlanStatus = Literal["draft", "review_ready", "published"]
+DemandPlanStatus = Literal["imported", "mapped"]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -33,6 +34,22 @@ class SchedulePlanInterval(BaseModel):
 class SchedulePlanDetail(BaseModel):
     summary: SchedulePlanSummary
     intervals: list[SchedulePlanInterval]
+
+
+class DemandPlanRow(BaseModel):
+    demand_id: str
+    plan_date: str
+    project_name: str
+    site_name: str
+    interval_start: str
+    interval_end: str
+    forecast_agents: int = Field(ge=0)
+    source: str
+    status: DemandPlanStatus
+
+
+class DemandPlanListResponse(BaseModel):
+    items: list[DemandPlanRow]
 
 
 class ShiftDetailRow(BaseModel):

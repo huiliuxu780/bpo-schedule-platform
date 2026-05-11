@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 
 from backend.app.models import (
+    DemandPlanListResponse,
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
     SchedulePlanListResponse,
@@ -10,6 +11,7 @@ from backend.app.models import (
 from backend.app.repository import (
     create_plan_draft,
     find_plan_detail,
+    list_demand_plan_rows,
     list_shift_detail_rows,
     list_plan_summaries,
     update_plan_draft,
@@ -30,6 +32,11 @@ def list_schedule_plans(
     return SchedulePlanListResponse(
         items=list_plan_summaries(status=status, query=query)
     )
+
+
+@app.get("/api/v1/demand-plans", response_model=DemandPlanListResponse)
+def list_demand_plans(query: str | None = None) -> DemandPlanListResponse:
+    return DemandPlanListResponse(items=list_demand_plan_rows(query=query))
 
 
 @app.get("/api/v1/shift-details", response_model=ShiftDetailListResponse)

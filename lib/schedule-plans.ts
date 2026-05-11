@@ -45,6 +45,18 @@ export type ShiftDetailRow = {
   note: string
 }
 
+export type DemandPlanRow = {
+  demand_id: string
+  plan_date: string
+  project_name: string
+  site_name: string
+  interval_start: string
+  interval_end: string
+  forecast_agents: number
+  source: string
+  status: "imported" | "mapped"
+}
+
 export type SchedulePlanIntervalInput = Pick<
   SchedulePlanInterval,
   | "interval_start"
@@ -68,6 +80,10 @@ type SchedulePlanListResponse = {
 
 type ShiftDetailListResponse = {
   items: ShiftDetailRow[]
+}
+
+type DemandPlanListResponse = {
+  items: DemandPlanRow[]
 }
 
 export type SchedulePlanListFilters = {
@@ -289,6 +305,21 @@ export async function getShiftDetails(
   return response?.items ?? filterFallbackShiftDetails(flattenFallbackShiftDetails(), filters)
 }
 
+export async function getDemandPlans(query = ""): Promise<DemandPlanRow[]> {
+  const searchParams = new URLSearchParams()
+
+  if (query.trim()) {
+    searchParams.set("query", query.trim())
+  }
+
+  const path = `/api/v1/demand-plans${
+    searchParams.size > 0 ? `?${searchParams.toString()}` : ""
+  }`
+  const response = await fetchJson<DemandPlanListResponse>(path)
+
+  return response?.items ?? filterFallbackDemandPlans(flattenFallbackDemandPlans(), query)
+}
+
 export async function createSchedulePlanDraft(
   payload: SchedulePlanDraftPayload
 ): Promise<SchedulePlanDetail | null> {
@@ -403,4 +434,43 @@ function filterFallbackShiftDetails(
       .toLowerCase()
       .includes(normalizedQuery)
   })
+}
+
+function flattenFallbackDemandPlans(): DemandPlanRow[] {
+  return fallbackPlans.flatMap((plan) =>
+    plan.intervals.map((intervalItem) => ({
+      demand_id: `demand-${plan.summary.plan_date}-${plan.summary.site_name}-${intervalItem.interval_start}`,
+      plan_date: plan.summary.plan_date,
+      project_name: plan.summary.project_name,
+      site_name: plan.summary.site_name,
+      interval_start: intervalItem.interval_start,
+      interval_end: intervalItem.interval_end,
+      forecast_agents: intervalItem.forecast_agents,
+      source: "本地预测需求",
+      status: "mapped" as const,
+    }))
+  )
+}
+
+function filterFallbackDemandPlans(rows: DemandPlanRow[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase()
+  if (!normalizedQuery) {
+    return rows
+  }
+
+  return rows.filter((row) =>
+    [
+      row.demand_id,
+      row.plan_date,
+      row.project_name,
+      row.site_name,
+      row.interval_start,
+      row.interval_end,
+      row.source,
+      row.status,
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(normalizedQuery)
+  )
 }

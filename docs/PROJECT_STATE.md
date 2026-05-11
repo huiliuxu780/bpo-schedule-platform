@@ -47,6 +47,10 @@ The first vertical intentionally excludes create/edit/publish workflow, approval
 
 `F009` adds `/shift-details` and wires the sidebar "班次明细" item to a real page with keyword/status filters, summary cards, and plan links.
 
+`B005` adds a local FastAPI demand-plan list endpoint based on existing forecast demand data.
+
+`F010` adds `/demand-plans` and wires the sidebar "需求计划" item to a real page with search, summary cards, and a forecast-demand table.
+
 `Q002` has accepted the local schedule-plan draft creation/update vertical based on backend unittest coverage, frontend lint/typecheck/build, Harness check, local new/edit page HTTP checks, and direct POST/PUT API verification.
 
 The project still does not contain database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, intelligent scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.

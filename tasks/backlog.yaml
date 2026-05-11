@@ -1106,3 +1106,82 @@ tasks:
       - "需要固化生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: B005
+    title: "需求计划后端列表"
+    priority: P0
+    status: done
+    required_workflow: backend
+    allowed_files:
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/repository.py"
+      - "backend/tests/test_schedule_plans.py"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "GET /api/v1/demand-plans 返回预测需求行。"
+      - "需求字段包含日期、时段、项目、职场、预测人数、来源和状态。"
+      - "接口支持 query 筛选。"
+      - "后端 unittest 覆盖字段契约和关键词筛选。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要数据库、认证、真实 Excel、真实 CORN 或外部系统"
+      - "需要审批、发布、导出或批量操作"
+      - "需要固化生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F010
+    title: "需求计划前端页面"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/demand-plans/**"
+      - "components/app-sidebar.tsx"
+      - "lib/schedule-plans.ts"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "侧边栏需求计划进入 `/demand-plans`。"
+      - "页面展示需求时段、预测人次、覆盖职场和峰值需求。"
+      - "页面展示预测需求表。"
+      - "页面支持关键词搜索和清空筛选。"
+      - "不新增依赖、不修改 package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "B005 未完成"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要数据库、认证、真实 Excel、真实 CORN 或外部系统"
+      - "需要审批、发布、导出或批量操作"
+      - "需要固化生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true

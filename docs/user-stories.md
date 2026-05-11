@@ -579,3 +579,49 @@ dependencies:
   - "US024"
 status: "done"
 ```
+
+### US026 - 后端需求计划列表
+
+```yaml
+id: US026
+requirement_ids:
+  - R017
+  - R008
+module: "计划与排班"
+role: "前端应用"
+story: "作为前端应用，我希望 FastAPI 提供预测需求列表接口，以便页面可以读取日期、时段、职场和预测人数。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "提供 GET /api/v1/demand-plans。"
+  - "返回字段包含 demand_id、plan_date、project_name、site_name、interval_start、interval_end、forecast_agents、source 和 status。"
+  - "支持 query 查询参数。"
+  - "后端 unittest 覆盖字段契约和关键词筛选。"
+  - "不接真实 Excel、数据库、认证、真实 CORN 或外部系统。"
+dependencies:
+  - "US010"
+  - "US011"
+status: "done"
+```
+
+### US027 - 前端需求计划页面
+
+```yaml
+id: US027
+requirement_ids:
+  - R017
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望打开需求计划页面查看预测需求并按关键词搜索，以便快速定位某个日期、职场或时段的需求输入。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "侧边栏需求计划进入真实页面。"
+  - "页面展示需求时段、预测人次、覆盖职场和峰值需求。"
+  - "页面展示预测需求表。"
+  - "页面支持关键词搜索和清空筛选。"
+  - "不新增依赖、不修改 package 或 lockfile。"
+dependencies:
+  - "US026"
+status: "done"
+```
