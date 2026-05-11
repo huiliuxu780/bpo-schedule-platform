@@ -211,7 +211,7 @@ The templates cover:
 - QA Agent
 - Doc Agent
 
-These templates do not authorize automatic multi-agent execution. Subagents may only be used when the task is clearly split, write scopes do not conflict, and PM confirmation allows that execution mode.
+These templates do not authorize automatic multi-agent execution by themselves. In Story Runner Mode, bounded subagents may be used under the Story Runner rules above. Outside Story Runner Mode, subagents may only be used when the task is clearly split, write scopes do not conflict, and PM/user confirmation allows that execution mode.
 
 ### Logs And Audit
 

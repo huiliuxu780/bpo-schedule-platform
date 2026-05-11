@@ -4,6 +4,23 @@
 
 ## Current Audit
 
+### 2026-05-11 - H012 Harness 文档一致性快速修复审计
+
+#### 审计结论
+
+- 已将 `docs/harness/lightweight-harness.md` 的当前阶段从旧的 clean/static Harness 描述更新为 frontend dashboard scaffold + local scheduling-plan MVP vertical。
+- 已明确 B001/B002/F005/F006/F007/Q001/Q002 是已确认的本地纵切范围，同时继续阻止数据库、认证、权限、真实 Excel、真实 CORN、审批、导出、批量、生产公式和收费因子。
+- 已将 `AGENTS.md` 中 Subagent 模板授权文案改为：模板本身不授权自动执行；Story Runner Mode 内按 Story Runner 规则允许 bounded subagents；Story Runner 外需要 PM/user 明确授权。
+- 已将早期“未跟踪工程文件 / package.json 导致 check 失败”的旧风险标记为历史结论，避免继续误导后续 Gate。
+
+#### 风险
+
+- DAG、Skill 输入输出校验、回滚策略仍以文档规则为主，尚未升级为可执行脚本。
+
+#### 建议
+
+- 后续若要把 DAG 循环依赖检测或 Skill I/O 校验自动化，应新开独立 Harness 工具任务。
+
 ### 2026-05-11 - H010 Story Runner 连续用户故事交付流程审计
 
 #### 审计结论
@@ -333,22 +350,22 @@
 - 已将 Subagent prompt 模板中的占位式 Skill 名称替换为当前可用的 Codex skill 名称。
 - 已在 `docs/harness/lightweight-harness.md` 增加 Current Skill Mapping，避免后续继续引用不存在的 Skill。
 
-#### 风险
+#### 历史风险（已被 H011/H012 复核更新取代）
 
-- 如果这些未跟踪前端工程文件是 PM 有意保留的工作成果，当前 clean Harness 规则需要重新定级，并补齐前端工程初始化 Gate。
-- 如果这些文件不是当前阶段要保留的成果，应另起清理 Gate，决定删除、归档或正式纳入工程初始化任务。
-- 若决定保留当前前端工程，必须单独处理 `recharts` 是否继续存在的问题。
+- 早期风险曾认为当前目录存在未跟踪前端工程文件、clean Harness 规则需要重新定级、或需要另起 H004 处置。H011/H012 已确认关键前端/后端文件处于 tracked 状态，当前项目阶段已更新为 frontend dashboard scaffold + local scheduling-plan MVP vertical。
+- Recharts 仍只作为 F001 静态 prototype 的 shadcn dashboard chart 例外；未来图表层替换仍需另行 Gate。
 
-#### 建议
+#### 当前建议
 
-- 不要在当前任务中直接删除这些未跟踪文件。
-- 下一步建议开一个单独 Gate：`H004 当前工作区 clean Harness 偏差处置`，在 PM 确认后选择“清理回纯 Harness”或“承认工程初始化已开始并重写项目状态”。
+- 不需要再开旧的 H004 clean Harness 偏差处置任务。
+- 后续继续以已确认的 frontend scaffold + local scheduling-plan MVP vertical 为当前基线。
 
 #### 2026-05-11 复核更新
 
 - `git ls-files package.json app/dashboard/page.tsx backend/app/main.py` 已确认这些关键工程文件处于 tracked 状态。
 - 当前失败风险不再是 `package.json` 存在，而是 backend Python 运行时如果落到 `/usr/bin/python3` 会缺少 `fastapi` / `pydantic`。
 - H011 已将 `scripts/check.sh` 和 `scripts/dev.sh` 改为显式选择可导入 backend 依赖的 Python，避免依赖调用者 PATH 的偶然状态。
+- H012 已将本节旧风险降级为历史风险，并取消继续建议 H004 clean Harness 偏差处置。
 
 ### 2026-05-11 - Lightweight Harness 文档型升级
 

@@ -910,3 +910,42 @@ tasks:
       - "需要固化生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: H012
+    title: "Harness 文档一致性快速修复"
+    priority: P1
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/harness/lightweight-harness.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "docs/harness/lightweight-harness.md 不再把已落地的本地前后端纵切描述为未来工程初始化。"
+      - "AGENTS.md 中 Story Runner Mode 的 bounded subagent 默认授权与 Subagent Prompt Templates 文案一致。"
+      - "docs/audit-report.md 中旧的未跟踪工程文件和 H004 clean Harness 偏差处置建议不再作为当前风险。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要新增业务能力"
+      - "需要数据库、认证、真实 Excel、真实 CORN 或外部系统"
+      - "需要生产审批、导出或批量操作"
+      - "需要固化生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: false

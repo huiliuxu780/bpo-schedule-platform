@@ -2,9 +2,9 @@
 
 ## 1. 定位
 
-本文件把外部讨论稿中的 Lightweight Harness 思路，转成 `bpo-schedule-platform` 当前 frontend dashboard scaffold 阶段可执行的项目规则。
+本文件把外部讨论稿中的 Lightweight Harness 思路，转成 `bpo-schedule-platform` 当前 frontend dashboard scaffold + local scheduling-plan MVP vertical 阶段可执行的项目规则。
 
-当前阶段的目标不是扩展真实业务能力，而是在已确认的 F001 静态前端脚手架基础上，建立一套可追溯、可审计、可分阶段执行的需求闭环：
+当前阶段的目标不是扩展生产业务能力，而是在已确认的 F001 静态前端脚手架和本地排班计划 MVP 纵切基础上，建立一套可追溯、可审计、可分阶段执行的需求闭环：
 
 ```txt
 原始需求 -> 用户故事 -> Story Execution Queue -> Gate Plan for risky scope -> 执行 -> 验证 -> 提交/继续 -> 审计复盘
@@ -24,10 +24,10 @@
 
 除非 PM 后续明确批准进入新的工程初始化或业务开发 Gate，否则不得：
 
-- 创建超出 F001 或后续确认 Gate 的真实业务页面。
-- 创建真实后端服务。
+- 创建超出 F001/F005/F006/F007 或后续确认 Gate 的真实业务页面。
+- 创建超出 B001/B002 或后续确认 Gate 的生产后端服务。
 - 接入真实 API、数据库或生产权限。
-- 新增 mock 业务数据。
+- 新增超出已确认前端脚手架和本地纵切范围的 mock 业务数据。
 - 安装依赖。
 - 修改 `package.json` 或 lockfile。
 - 从 lab archive 搬运代码。
@@ -36,12 +36,12 @@
 ## 3. 项目核心信息
 
 - 项目名称：`bpo-schedule-platform`
-- 当前阶段：frontend dashboard scaffold + documentation-first Harness
+- 当前阶段：frontend dashboard scaffold + local scheduling-plan MVP vertical + documentation-first Harness
 - 项目目标：为 BPO 人力计划、排班履约、异常工时和结算复盘建立可审计的产品与工程闭环。
-- 前端方向：Next.js / React / TypeScript / shadcn/ui / Tailwind / Lucide，实际工程初始化需另行 Gate。
-- 后端方向：Python / FastAPI，数据库与 ORM 选择需另行 Gate。
-- 图表方向：图表库待 PM 确认；不得默认使用 Recharts。
-- 工具方向：检查脚本、测试、E2E 和 CI 均需分阶段引入，不在 clean Harness 阶段一次性落地。
+- 前端方向：Next.js / React / TypeScript / shadcn/ui / Tailwind / Lucide 已用于当前 dashboard scaffold 和排班计划纵切；新增页面或 package 变化仍需 Gate。
+- 后端方向：Python / FastAPI 本地 read/draft API 已用于排班计划纵切；数据库、ORM、认证和生产权限仍需另行 Gate。
+- 图表方向：F001 允许 Recharts 作为静态 prototype 的 shadcn dashboard chart 例外；未来图表层替换仍需另行 Gate。
+- 工具方向：`scripts/check.sh` 已覆盖 frontend lint/typecheck/build 与 backend unittest；E2E 和 CI 仍需分阶段引入。
 
 ## 4. 文档结构
 
@@ -278,19 +278,32 @@ The shadcn skill does not authorize dependency installation, package changes, pr
 
 ### 阶段 2：静态前端脚手架 Harness
 
-当前阶段。F001 允许静态 dashboard scaffold、前端 package 文件、local mock data 和 shadcn/ui 风格组件。
+已完成并持续作为当前 UI 基线。F001 允许静态 dashboard scaffold、前端 package 文件、local mock data 和 shadcn/ui 风格组件。
 
-### 阶段 3：工程初始化扩展 Harness
+### 阶段 3：本地排班计划纵切 Harness
+
+当前阶段。B001/B002/F005/F006/F007/Q001/Q002 已允许并验收本地排班计划纵切，包括：
+
+- Python + FastAPI read/draft API。
+- 本地 seed / in-memory draft 数据。
+- 排班计划列表、详情、新建草稿、编辑草稿入口。
+- frontend lint/typecheck/build。
+- backend unittest。
+- `bash scripts/check.sh` 统一验证。
+
+该阶段仍不包含数据库持久化、认证、权限、真实 Excel、真实 CORN、发布审批、导出、批量、生产公式或收费因子。
+
+### 阶段 4：工程质量扩展 Harness
 
 需 PM 另行确认。可能包括：
 
-- 前端工程初始化。
-- 后端工程初始化。
-- 基础 lint / build / test。
 - E2E 框架。
 - CI 或本地检查增强。
+- 数据库与迁移方案。
+- 认证、权限和审计日志。
+- 部署、环境变量和健康检查。
 
-### 阶段 4：业务实现 Harness
+### 阶段 5：业务实现 Harness
 
 需按模块逐个进入 Gate。每个模块必须先完成：
 
