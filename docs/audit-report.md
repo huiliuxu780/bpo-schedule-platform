@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-11 - B002 FastAPI 排班计划草稿创建与更新审计
+
+#### 审计结论
+
+- 已新增 `SchedulePlanIntervalInput` 和 `SchedulePlanDraftRequest`，用于草稿创建/更新请求。
+- 已新增 `POST /api/v1/schedule-plans/drafts`，创建 `draft` 状态排班计划。
+- 已新增 `PUT /api/v1/schedule-plans/{plan_id}/draft`，只允许更新 `draft` 状态计划。
+- 服务端会重新计算 forecast_agents、scheduled_agents、gap_agents、coverage_rate 和 updated_at。
+- 已新增后端 unittest 覆盖草稿创建、草稿更新、非草稿更新 409 和路由注册。
+
+#### 风险
+
+- 草稿数据保存在本地进程内存中，重启后不会保留；这是 B002 的明确范围，不代表生产持久化。
+- 当前没有用户、权限、审计、发布、审批、导出或批量操作能力。
+- `draft`、`review_ready`、`published` 仍是 MVP 展示状态，不是生产最终状态码。
+
+#### 建议
+
+- 下一步进入 `F006`，在前端增加草稿创建/编辑入口，并通过现有 API client 调用 B002 接口。
+- 数据库持久化、权限、发布审批和导出批量仍需单独 Gate。
+
 ### 2026-05-11 - H009 连续交付提交流程优化审计
 
 #### 审计结论

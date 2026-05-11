@@ -146,3 +146,16 @@ version: "1.0"
 status: "split"
 notes: "Q001 后续定义具体验证命令；M001 只定义验收方向，不引入测试依赖。"
 ```
+
+### R011 - 本地排班计划草稿创建与更新
+
+```yaml
+id: R011
+module: "计划与排班"
+description: "运营排班人员需要在本地 MVP 中创建排班计划草稿，并在草稿状态下更新 0.5h 时段的预测人数、已排人数和备注，以便系统从只读查看推进到受控编辑闭环。"
+source: "PM continuous delivery instruction"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "本需求只允许本地内存数据和 draft 草稿更新；不接数据库、认证、真实 Excel、真实 CORN、发布、审批、导出、批量操作或生产公式。"
+```

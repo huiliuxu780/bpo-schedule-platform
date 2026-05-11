@@ -35,6 +35,22 @@ class SchedulePlanDetail(BaseModel):
     intervals: list[SchedulePlanInterval]
 
 
+class SchedulePlanIntervalInput(BaseModel):
+    interval_start: str
+    interval_end: str
+    forecast_agents: int = Field(ge=0)
+    scheduled_agents: int = Field(ge=0)
+    note: str
+
+
+class SchedulePlanDraftRequest(BaseModel):
+    plan_date: str
+    project_name: str
+    site_name: str
+    version: str
+    intervals: list[SchedulePlanIntervalInput] = Field(min_length=1)
+
+
 class SchedulePlanListResponse(BaseModel):
     items: list[SchedulePlanSummary]
 

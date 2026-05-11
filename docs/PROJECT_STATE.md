@@ -33,6 +33,8 @@ The first vertical intentionally excludes create/edit/publish workflow, approval
 
 `H008` adds `scripts/dev.sh` as the local frontend + backend vertical startup entry. It starts FastAPI on `127.0.0.1:8000`, starts Next.js on `localhost:3000`, and defaults frontend server-side reads to `BPO_API_BASE_URL=http://127.0.0.1:8000`.
 
+`B002` adds local in-memory draft creation and draft update API endpoints. It lets the backend create `draft` schedule plans and update only draft plans while recalculating summary fields.
+
 The project still does not contain database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, intelligent scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.
 
 ## Lab Archive

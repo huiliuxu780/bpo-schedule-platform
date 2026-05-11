@@ -27,6 +27,8 @@ Excluded:
 ```txt
 GET /api/v1/schedule-plans
 GET /api/v1/schedule-plans/{plan_id}
+POST /api/v1/schedule-plans/drafts
+PUT /api/v1/schedule-plans/{plan_id}/draft
 ```
 
 ## Run Tests

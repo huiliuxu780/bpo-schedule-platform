@@ -1,7 +1,16 @@
 from fastapi import FastAPI, HTTPException
 
-from backend.app.models import SchedulePlanDetail, SchedulePlanListResponse
-from backend.app.repository import find_plan_detail, list_plan_summaries
+from backend.app.models import (
+    SchedulePlanDetail,
+    SchedulePlanDraftRequest,
+    SchedulePlanListResponse,
+)
+from backend.app.repository import (
+    create_plan_draft,
+    find_plan_detail,
+    list_plan_summaries,
+    update_plan_draft,
+)
 
 app = FastAPI(
     title="BPO Schedule Platform API",
@@ -29,3 +38,42 @@ def get_schedule_plan(plan_id: str) -> SchedulePlanDetail:
             },
         )
     return plan
+
+
+@app.post("/api/v1/schedule-plans/drafts", response_model=SchedulePlanDetail)
+def create_schedule_plan_draft(
+    request: SchedulePlanDraftRequest,
+) -> SchedulePlanDetail:
+    return create_plan_draft(request)
+
+
+@app.put("/api/v1/schedule-plans/{plan_id}/draft", response_model=SchedulePlanDetail)
+def update_schedule_plan_draft(
+    plan_id: str,
+    request: SchedulePlanDraftRequest,
+) -> SchedulePlanDetail:
+    existing = find_plan_detail(plan_id)
+    if existing is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_PLAN_NOT_FOUND",
+                    "message": "排班计划不存在",
+                }
+            },
+        )
+
+    updated = update_plan_draft(plan_id, request)
+    if updated is None:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "SCHEDULE_PLAN_NOT_EDITABLE",
+                    "message": "只有草稿排班计划允许更新",
+                }
+            },
+        )
+
+    return updated

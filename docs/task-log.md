@@ -116,3 +116,12 @@
 - action: 优化连续交付提交流程。
 - status: `done`
 - notes: 已在 `AGENTS.md` 增加 Continuous Delivery Mode：用户显式要求连续执行或一口气交付时，绿色验证后直接提交；保留依赖、真实数据、数据库、认证、审批、导出、批量、生产公式和失败验证等停止条件。
+
+### 2026-05-11
+
+- task_id: `B002`
+- source_ids: [`R011`]
+- story_ids: [`US017`, `US018`]
+- action: 创建 FastAPI 排班计划草稿创建与更新接口。
+- status: `done`
+- notes: 先写失败测试，再新增 `SchedulePlanDraftRequest`、草稿创建接口和草稿更新接口；仅使用本地内存数据，只允许更新 draft 计划，不接数据库、认证、真实 Excel、真实 CORN、发布、审批、导出或批量操作。

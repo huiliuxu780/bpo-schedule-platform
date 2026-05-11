@@ -370,3 +370,51 @@ dependencies:
   - "US012"
 status: "ready_for_gate"
 ```
+
+### US017 - 后端创建排班计划草稿
+
+```yaml
+id: US017
+requirement_ids:
+  - R011
+  - R008
+module: "计划与排班"
+role: "前端应用"
+story: "作为前端应用，我希望调用 FastAPI 创建排班计划草稿，以便本地 MVP 可以生成 draft 状态的计划并返回计算后的摘要。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "提供 POST /api/v1/schedule-plans/drafts。"
+  - "请求包含 plan_date、project_name、site_name、version 和 intervals。"
+  - "服务端计算 forecast_agents、scheduled_agents、gap_agents、coverage_rate 和 updated_at。"
+  - "新建计划状态固定为 draft。"
+  - "不接数据库、认证、真实 Excel、真实 CORN 或外部系统。"
+dependencies:
+  - "US010"
+  - "US011"
+status: "ready_for_gate"
+```
+
+### US018 - 后端更新排班计划草稿
+
+```yaml
+id: US018
+requirement_ids:
+  - R011
+  - R008
+module: "计划与排班"
+role: "前端应用"
+story: "作为前端应用，我希望更新 draft 状态的排班计划，以便本地 MVP 可以调整 0.5h 时段并重新计算摘要。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "提供 PUT /api/v1/schedule-plans/{plan_id}/draft。"
+  - "仅允许更新 status 为 draft 的计划。"
+  - "更新后重新计算 forecast_agents、scheduled_agents、gap_agents 和 coverage_rate。"
+  - "当计划不存在时返回 404。"
+  - "当计划不是 draft 时返回 409 和 machine-readable error code。"
+  - "不实现发布、审批、导出、批量操作、权限或数据库持久化。"
+dependencies:
+  - "US017"
+status: "ready_for_gate"
+```

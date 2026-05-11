@@ -152,3 +152,12 @@
 - Recorded that explicit PM instructions such as "一口气做完" or "做完测完验证完提交完" authorize Codex to finish, verify, and commit without another commit confirmation pause.
 - Kept high-risk stop conditions intact for dependencies, package changes, real data, database, authentication, approval, export, batch operations, production formulas, destructive Git actions, and failed verification.
 - Updated `docs/PROJECT_STATE.md`, task log, audit report, and backlog with the new operating rule.
+
+### B002 Schedule Plan Draft API
+
+- Added draft request models for schedule plan interval input and draft payloads.
+- Added `POST /api/v1/schedule-plans/drafts` for local in-memory draft creation.
+- Added `PUT /api/v1/schedule-plans/{plan_id}/draft` for updating draft plans only.
+- Added server-side recalculation for forecast totals, scheduled totals, gap, coverage rate, and update timestamp.
+- Added backend unittest coverage for draft creation, draft update, non-draft rejection, and route registration.
+- Kept persistence, authentication, permissions, publish, approval, export, batch operations, real Excel, and real CORN out of scope.
