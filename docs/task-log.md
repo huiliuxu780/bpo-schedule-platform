@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-05-12
+
+- task_id: `F015`
+- source_ids:
+  - `R021`
+- story_ids:
+  - `US034`
+- action: 收口 shadcn 依赖与组件接入。
+- status: `done`
+- notes: 已接受 PM 确认的 package/lockfile 依赖变更和新增 shadcn UI 组件；修复 `hooks/use-mobile.ts` 的 React hooks lint 问题；核对 dashboard、排班计划搜索、新建草稿和编辑草稿页面冒烟通过。
+
 ### 2026-05-11
 
 - task_id: `H003`

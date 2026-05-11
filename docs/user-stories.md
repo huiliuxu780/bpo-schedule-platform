@@ -762,3 +762,26 @@ dependencies:
   - "US032"
 status: "done"
 ```
+
+### US034 - shadcn 依赖与组件接入收口
+
+```yaml
+id: US034
+requirement_ids:
+  - R021
+module: "前端设计"
+role: "前端应用"
+story: "作为前端应用，我希望已确认的 shadcn dashboard parity 依赖和组件先被纳入受控工程范围并通过验证，以便后续表格交互、Drawer 和 Tabler 图标迁移可以在稳定基线上继续。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "package.json 和 package-lock.json 记录 PM 已确认的依赖变更。"
+  - "新增 shadcn UI 组件文件和 hooks/use-mobile.ts 纳入受控范围。"
+  - "修复 use-mobile.ts 当前 lint 失败。"
+  - "核对 Button、Input、Separator 上游替换不会破坏现有表单、筛选、导航和主题行为。"
+  - "不开发新的业务页面或业务能力。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US033"
+status: "done"
+```

@@ -141,6 +141,8 @@ The inserted requirement does not immediately authorize UI rewrites, dependency 
 
 `US033/F014` is now complete as a dependency-free visual baseline pass. The implementation report lives at `docs/design/shadcn-dashboard-01-visual-alignment-report.md`. The project now uses OKLCH dashboard tokens, sidebar tokens, a 288px sidebar baseline, container-query metric cards, larger metric values, natural area curves, and denser table rows. Remaining 1:1 parity items such as Tabler icons, extra shadcn components, TanStack Table, DnD, and Drawer stay explicitly gated because they require package or component-surface changes.
 
+`US034/F015` is now complete as the confirmed dependency and shadcn component intake pass. The PM-confirmed package and lockfile changes are accepted, the added shadcn UI components and `hooks/use-mobile.ts` are now in the controlled scope, and `useIsMobile` uses `useSyncExternalStore` so the project passes the current React hooks lint gate. This does not add new business pages, real data, database persistence, authentication, permissions, approval, export, batch operations, production formulas, status-code finalization, settlement rules, or charge factors.
+
 ## Subagent Prompt Contract Direction
 
 Subagent prompt templates are now treated as contracts rather than loose role descriptions.
