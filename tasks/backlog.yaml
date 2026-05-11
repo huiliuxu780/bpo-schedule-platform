@@ -1494,7 +1494,7 @@ tasks:
   - id: F014
     title: "shadcn dashboard-01 视觉对齐实施"
     priority: P0
-    status: todo
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/**"

@@ -70,36 +70,36 @@ function TrendAreaChartContent() {
           <linearGradient id="realization" x1="0" x2="0" y1="0" y2="1">
             <stop
               offset="5%"
-              stopColor="hsl(var(--chart-1))"
+              stopColor="var(--chart-1)"
               stopOpacity={0.32}
             />
             <stop
               offset="95%"
-              stopColor="hsl(var(--chart-1))"
+              stopColor="var(--chart-1)"
               stopOpacity={0.04}
             />
           </linearGradient>
           <linearGradient id="fit" x1="0" x2="0" y1="0" y2="1">
             <stop
               offset="5%"
-              stopColor="hsl(var(--chart-2))"
+              stopColor="var(--chart-2)"
               stopOpacity={0.26}
             />
             <stop
               offset="95%"
-              stopColor="hsl(var(--chart-2))"
+              stopColor="var(--chart-2)"
               stopOpacity={0.04}
             />
           </linearGradient>
           <linearGradient id="adherence" x1="0" x2="0" y1="0" y2="1">
             <stop
               offset="5%"
-              stopColor="hsl(var(--chart-3))"
+              stopColor="var(--chart-3)"
               stopOpacity={0.22}
             />
             <stop
               offset="95%"
-              stopColor="hsl(var(--chart-3))"
+              stopColor="var(--chart-3)"
               stopOpacity={0.04}
             />
           </linearGradient>
@@ -123,10 +123,10 @@ function TrendAreaChartContent() {
         <Tooltip
           cursor={false}
           contentStyle={{
-            background: "hsl(var(--card))",
-            border: "1px solid hsl(var(--border))",
+            background: "var(--card)",
+            border: "1px solid var(--border)",
             borderRadius: "var(--radius)",
-            color: "hsl(var(--card-foreground))",
+            color: "var(--card-foreground)",
           }}
           formatter={(value, name) => [
             `${Number(value).toFixed(1)}%`,
@@ -139,22 +139,22 @@ function TrendAreaChartContent() {
         />
         <Area
           dataKey="realization"
-          type="monotone"
-          stroke="hsl(var(--chart-1))"
+          type="natural"
+          stroke="var(--chart-1)"
           fill="url(#realization)"
           strokeWidth={2}
         />
         <Area
           dataKey="fit"
-          type="monotone"
-          stroke="hsl(var(--chart-2))"
+          type="natural"
+          stroke="var(--chart-2)"
           fill="url(#fit)"
           strokeWidth={2}
         />
         <Area
           dataKey="adherence"
-          type="monotone"
-          stroke="hsl(var(--chart-3))"
+          type="natural"
+          stroke="var(--chart-3)"
           fill="url(#adherence)"
           strokeWidth={2}
         />

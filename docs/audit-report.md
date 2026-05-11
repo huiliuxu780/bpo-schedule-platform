@@ -489,6 +489,18 @@
 #### 风险
 
 - 若直接实施完整 1:1，会触发依赖和锁文件风险。推荐先做无依赖视觉基线修正，再确认是否引入 Tabler、TanStack Table、DnD、Drawer、Select、Tabs、Dropdown、ToggleGroup、Chart 等。
+
+### 2026-05-12 - shadcn dashboard-01 无依赖视觉基线对齐
+
+#### 审计结论
+
+- `F014/US033` 已完成无依赖视觉基线对齐，实施报告见 `docs/design/shadcn-dashboard-01-visual-alignment-report.md`。
+- 本轮完成 OKLCH token、sidebar token、sidebar 288px 基线、导航行高、header 标题尺度、metric card 204px 基线、container query、指标字号、chart natural curve 和 table row density。
+- 本轮未新增依赖、未修改 package 或 lockfile、未替换业务字段、接口、路由或中文文案。
+
+#### 风险
+
+- 完整 1:1 parity 仍需要单独确认：Tabler icons、额外 shadcn 组件、TanStack Table、DnD、Drawer、Select、Tabs、Dropdown、ToggleGroup、Chart 等。
 - H012 已将本节旧风险降级为历史风险，并取消继续建议 H004 clean Harness 偏差处置。
 
 ### 2026-05-11 - Lightweight Harness 文档型升级

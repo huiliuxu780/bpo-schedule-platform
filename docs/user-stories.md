@@ -760,5 +760,5 @@ acceptance:
   - "列出与官方 dashboard-01 仍存在的差异。"
 dependencies:
   - "US032"
-status: "todo"
+status: "done"
 ```

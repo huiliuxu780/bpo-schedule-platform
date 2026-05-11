@@ -9,7 +9,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-lg border bg-card text-card-foreground shadow-xs",
+        "rounded-xl border bg-card text-card-foreground shadow-xs",
         className
       )}
       {...props}
@@ -52,4 +52,11 @@ export function CardContent({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("p-4 pt-0 lg:p-6 lg:pt-0", className)} {...props} />
+}
+
+export function CardFooter({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("flex items-center p-4 pt-0 lg:p-6 lg:pt-0", className)} {...props} />
 }

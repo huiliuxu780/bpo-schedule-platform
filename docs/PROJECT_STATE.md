@@ -139,6 +139,8 @@ The inserted requirement does not immediately authorize UI rewrites, dependency 
 
 `US032/F013` is now complete. The gap audit lives at `docs/design/shadcn-dashboard-01-gap-audit.md`. The key recommendation is to split `F014` into a dependency-free visual baseline pass first, then separately confirm any package or lockfile changes for Tabler icons, additional shadcn components, TanStack Table, DnD, Drawer, or other official dashboard table interactions.
 
+`US033/F014` is now complete as a dependency-free visual baseline pass. The implementation report lives at `docs/design/shadcn-dashboard-01-visual-alignment-report.md`. The project now uses OKLCH dashboard tokens, sidebar tokens, a 288px sidebar baseline, container-query metric cards, larger metric values, natural area curves, and denser table rows. Remaining 1:1 parity items such as Tabler icons, extra shadcn components, TanStack Table, DnD, and Drawer stay explicitly gated because they require package or component-surface changes.
+
 ## Subagent Prompt Contract Direction
 
 Subagent prompt templates are now treated as contracts rather than loose role descriptions.

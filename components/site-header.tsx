@@ -40,7 +40,7 @@ export function SiteHeader({
         )}
       </Button>
       <div className="min-w-0 flex-1">
-        <h1 className="truncate text-sm font-semibold">{title}</h1>
+        <h1 className="truncate text-base font-medium">{title}</h1>
       </div>
       <div className="hidden w-72 items-center gap-2 rounded-md border bg-background px-2 md:flex">
         <Search className="size-4 text-muted-foreground" />

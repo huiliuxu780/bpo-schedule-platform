@@ -164,8 +164,8 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   return (
     <aside
       className={cn(
-        "hidden h-svh shrink-0 border-r bg-background transition-[width] duration-200 md:block",
-        collapsed ? "w-16" : "w-64"
+        "hidden h-svh shrink-0 border-r bg-sidebar text-sidebar-foreground transition-[width] duration-200 md:block",
+        collapsed ? "w-16" : "w-72"
       )}
     >
       <div
@@ -212,13 +212,13 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
               title={collapsed ? group.title : undefined}
               onClick={() => toggleGroup(group.title)}
               className={cn(
-                "grid h-7 w-full items-center gap-2 rounded-md text-left text-xs font-medium",
+                "grid h-8 w-full items-center gap-2 rounded-md text-left text-sm font-medium",
                 collapsed
                   ? "place-items-center px-0"
                   : "grid-cols-[1rem_1fr_1rem] px-2",
                 group.title === activeGroupTitle
-                  ? "bg-muted text-foreground"
-                  : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               )}
             >
               <group.icon className="size-4" />
@@ -241,10 +241,10 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
                     key={item.title}
                     href={item.href}
                     className={cn(
-                      "grid min-h-7 grid-cols-[1fr_auto] items-center gap-2 rounded-md px-2 text-xs",
+                      "grid min-h-8 grid-cols-[1fr_auto] items-center gap-2 rounded-md px-2 text-sm",
                       isActiveItem(item)
                         ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                        : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     )}
                   >
                     <span className="truncate">{item.title}</span>

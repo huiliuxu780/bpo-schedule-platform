@@ -227,6 +227,17 @@
 
 ### 2026-05-12
 
+- task_id: `F014`
+- source_ids:
+  - `R020`
+- story_ids:
+  - `US033`
+- action: 完成 shadcn dashboard-01 无依赖视觉基线对齐。
+- status: `done`
+- notes: 已对齐 OKLCH token、sidebar token、sidebar 宽度和行高、metric cards container query、指标字号、chart natural curve 和 table row density；未新增依赖、未改 package/lockfile，剩余 Tabler/TanStack/DnD/Drawer 等完整 parity 项继续 gated。
+
+### 2026-05-12
+
 - task_id: `F013`
 - source_ids:
   - `R020`

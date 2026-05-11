@@ -258,6 +258,14 @@
 - Classified gaps as P0/P1/P2, including theme token mismatch, sidebar width/token mismatch, metric-card sizing, missing container queries, incomplete table interactions, and dependency-gated Tabler/TanStack/DnD work.
 - Marked `US032/F013` done while leaving `US033/F014` as the gated implementation story.
 
+### F014 shadcn Dashboard Replica Visual Baseline
+
+- Aligned `app/globals.css` to OKLCH dashboard tokens and added sidebar semantic tokens.
+- Adjusted sidebar width, background token, nav row height, header title scale, metric card height, metric value typography, and metric card container-query behavior.
+- Updated chart token usage for OKLCH compatibility and switched area curves to `natural`.
+- Increased table row density toward the measured dashboard-01 baseline.
+- Added `docs/design/shadcn-dashboard-01-visual-alignment-report.md` with completed work and remaining gated parity items.
+
 ### H012 Harness Documentation Consistency Fixes
 
 - Reconciled `docs/harness/lightweight-harness.md` with the current frontend dashboard scaffold plus local scheduling-plan MVP vertical state.
