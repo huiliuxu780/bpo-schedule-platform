@@ -356,6 +356,14 @@ export async function getScheduleRisks(query = ""): Promise<ScheduleRiskRow[]> {
   return response?.items ?? filterFallbackScheduleRisks(fallbackScheduleRisks, query)
 }
 
+export async function getScheduleRisk(
+  riskId: string
+): Promise<ScheduleRiskRow | null> {
+  const risks = await getScheduleRisks()
+
+  return risks.find((risk) => risk.risk_id === riskId) ?? null
+}
+
 export async function createSchedulePlanDraft(
   payload: SchedulePlanDraftPayload
 ): Promise<SchedulePlanDetail | null> {

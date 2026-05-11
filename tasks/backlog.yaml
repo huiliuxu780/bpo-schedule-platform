@@ -1599,7 +1599,7 @@ tasks:
   - id: F016
     title: "风险明细钻取入口"
     priority: P0
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/**"

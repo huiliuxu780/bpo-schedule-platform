@@ -294,3 +294,10 @@
 - Aligned `AGENTS.md` and `docs/PROJECT_STATE.md` to the same current stage: frontend dashboard scaffold + local scheduling-plan MVP vertical.
 - Moved stale clean-Harness conclusions in `docs/audit-report.md` into a historical audit snapshot section.
 - Added `R023`, `US036`, and `F016` as the next `ready` Story Runner entry for risk-detail drilldown without implementing it in this task.
+
+### F016 Schedule Risk Detail Drilldown
+
+- Added `/schedule-risks/[riskId]` as a frontend-only risk-detail drilldown.
+- Added a stable "明细" action from the schedule-plan risk table to the risk detail page.
+- Reused existing local MVP data contracts to show risk context, related shift detail rows, and overlapping active unavailability rows.
+- Kept the page as manual review support only: no backend endpoint, dependency, real data source, database, auth, approval, export, batch adjustment, automatic scheduling, production formula, status-code change, settlement rule, or charge factor was added.

@@ -831,5 +831,5 @@ acceptance:
 dependencies:
   - "US031"
   - "US034"
-status: "ready"
+status: "done"
 ```

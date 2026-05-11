@@ -205,12 +205,19 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
                     </TableCell>
                     <TableCell>{risk.reason}</TableCell>
                     <TableCell>{risk.recommendation}</TableCell>
-                    <TableCell className="text-right">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/shift-details?query=${risk.site_name}`}>
-                          班次
-                        </Link>
-                      </Button>
+                    <TableCell>
+                      <div className="flex justify-end gap-2">
+                        <Button asChild variant="outline" size="sm">
+                          <Link href={`/schedule-risks/${encodeURIComponent(risk.risk_id)}`}>
+                            明细
+                          </Link>
+                        </Button>
+                        <Button asChild variant="ghost" size="sm">
+                          <Link href={`/shift-details?query=${risk.site_name}`}>
+                            班次
+                          </Link>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
