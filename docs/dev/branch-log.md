@@ -251,6 +251,13 @@
 - Split the inserted design requirement into `US032` visual gap audit and `US033` visual alignment implementation.
 - Added `F013` and `F014` as the queued execution items, with `F014` explicitly gated if package, lockfile, font, icon, or shadcn component changes are needed.
 
+### F013 shadcn Dashboard Replica Gap Audit
+
+- Added `docs/design/shadcn-dashboard-01-gap-audit.md`.
+- Audited current `components.json`, `package.json`, `app/globals.css`, layout, sidebar, header, cards, chart, table, and UI primitives against the inserted replica spec.
+- Classified gaps as P0/P1/P2, including theme token mismatch, sidebar width/token mismatch, metric-card sizing, missing container queries, incomplete table interactions, and dependency-gated Tabler/TanStack/DnD work.
+- Marked `US032/F013` done while leaving `US033/F014` as the gated implementation story.
+
 ### H012 Harness Documentation Consistency Fixes
 
 - Reconciled `docs/harness/lightweight-harness.md` with the current frontend dashboard scaffold plus local scheduling-plan MVP vertical state.

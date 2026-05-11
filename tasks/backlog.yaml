@@ -1460,7 +1460,7 @@ tasks:
   - id: F013
     title: "shadcn dashboard-01 视觉差距审计"
     priority: P0
-    status: todo
+    status: done
     required_workflow: frontend-audit
     allowed_files:
       - "docs/**"

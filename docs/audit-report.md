@@ -476,6 +476,19 @@
 
 - 该 spec 明确追求 1:1 时推荐 Tabler icons 和 Geist 字体，当前项目不应在未确认依赖变更前直接实施。
 - 视觉对齐可能影响多个现有业务页面，建议先做差距审计和截图验收计划，再进入实现。
+
+### 2026-05-12 - shadcn dashboard-01 视觉差距审计
+
+#### 审计结论
+
+- `F013/US032` 已完成，只读审计结果见 `docs/design/shadcn-dashboard-01-gap-audit.md`。
+- 当前项目已有 dashboard 骨架和 shadcn 风格组件，但与 dashboard-01 measured-values 复刻仍有 P0 差距：OKLCH/sidebar token、sidebar 288px 体系、metric card 尺寸和 container query。
+- P1 差距主要是 1:1 图标体系、缺失 shadcn 组件、图表 range 控件、DataTable 完整交互和 header 结构。
+- 审计未改 UI、未安装依赖、未改 package 或 lockfile。
+
+#### 风险
+
+- 若直接实施完整 1:1，会触发依赖和锁文件风险。推荐先做无依赖视觉基线修正，再确认是否引入 Tabler、TanStack Table、DnD、Drawer、Select、Tabs、Dropdown、ToggleGroup、Chart 等。
 - H012 已将本节旧风险降级为历史风险，并取消继续建议 H004 clean Harness 偏差处置。
 
 ### 2026-05-11 - Lightweight Harness 文档型升级

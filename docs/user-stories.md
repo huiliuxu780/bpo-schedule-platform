@@ -738,7 +738,7 @@ acceptance:
   - "不直接改 UI，不安装依赖。"
 dependencies:
   - "F012"
-status: "todo"
+status: "done"
 ```
 
 ### US033 - shadcn dashboard-01 视觉对齐实施

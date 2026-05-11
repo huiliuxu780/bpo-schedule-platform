@@ -137,6 +137,8 @@ Charting remains a controlled frontend decision. For F001 only, PM confirmed tha
 
 The inserted requirement does not immediately authorize UI rewrites, dependency installation, package or lockfile changes, Tabler icon migration, font changes, or shadcn component additions. The next safe step is `US032/F013`: a read-only visual gap audit against the spec. Any implementation step such as `US033/F014` must preserve existing BPO business routes, fields, interfaces, and Chinese copy, and must receive a separate Gate if it needs package or lockfile changes.
 
+`US032/F013` is now complete. The gap audit lives at `docs/design/shadcn-dashboard-01-gap-audit.md`. The key recommendation is to split `F014` into a dependency-free visual baseline pass first, then separately confirm any package or lockfile changes for Tabler icons, additional shadcn components, TanStack Table, DnD, Drawer, or other official dashboard table interactions.
+
 ## Subagent Prompt Contract Direction
 
 Subagent prompt templates are now treated as contracts rather than loose role descriptions.

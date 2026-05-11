@@ -227,6 +227,17 @@
 
 ### 2026-05-12
 
+- task_id: `F013`
+- source_ids:
+  - `R020`
+- story_ids:
+  - `US032`
+- action: 完成 shadcn dashboard-01 视觉差距审计。
+- status: `done`
+- notes: 新增 `docs/design/shadcn-dashboard-01-gap-audit.md`，按 P0/P1/P2 归类 token、sidebar/header、metric cards、chart/table、响应式、light/dark 和依赖门禁差距；未改 UI、未安装依赖。
+
+### 2026-05-12
+
 - task_id: `H014`
 - source_ids:
   - `R020`
