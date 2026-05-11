@@ -125,3 +125,12 @@
 - action: 创建 FastAPI 排班计划草稿创建与更新接口。
 - status: `done`
 - notes: 先写失败测试，再新增 `SchedulePlanDraftRequest`、草稿创建接口和草稿更新接口；仅使用本地内存数据，只允许更新 draft 计划，不接数据库、认证、真实 Excel、真实 CORN、发布、审批、导出或批量操作。
+
+### 2026-05-11
+
+- task_id: `F006`
+- source_ids: [`R012`, `R011`]
+- story_ids: [`US019`, `US017`]
+- action: 创建前端排班计划草稿入口。
+- status: `done`
+- notes: 新增 `/schedule-plans/new` 和 server action，从列表进入新建草稿，提交后调用 B002 并跳转到详情页；不做完整编辑器、发布、审批、导出、批量、权限或数据库持久化。

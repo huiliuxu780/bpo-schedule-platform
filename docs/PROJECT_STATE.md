@@ -35,6 +35,8 @@ The first vertical intentionally excludes create/edit/publish workflow, approval
 
 `B002` adds local in-memory draft creation and draft update API endpoints. It lets the backend create `draft` schedule plans and update only draft plans while recalculating summary fields.
 
+`F006` adds `/schedule-plans/new` as the frontend draft creation entry. It uses a Next server action to call the B002 draft API and redirects to the created draft detail page after success.
+
 The project still does not contain database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, intelligent scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.
 
 ## Lab Archive

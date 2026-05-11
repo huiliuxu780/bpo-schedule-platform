@@ -159,3 +159,16 @@ version: "1.0"
 status: "split"
 notes: "本需求只允许本地内存数据和 draft 草稿更新；不接数据库、认证、真实 Excel、真实 CORN、发布、审批、导出、批量操作或生产公式。"
 ```
+
+### R012 - 前端排班计划草稿创建入口
+
+```yaml
+id: R012
+module: "计划与排班"
+description: "运营排班人员需要在排班计划列表中进入新建草稿页面，填写计划信息和核心 0.5h 时段后创建 draft 排班计划。"
+source: "PM continuous delivery instruction"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "F006 只做最小创建入口，通过 Next server action 调用 B002；不做完整编辑器、发布、审批、导出、批量、数据库或权限。"
+```

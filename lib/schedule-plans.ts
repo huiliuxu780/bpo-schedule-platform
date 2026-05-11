@@ -29,6 +29,23 @@ export type SchedulePlanDetail = {
   intervals: SchedulePlanInterval[]
 }
 
+export type SchedulePlanIntervalInput = Pick<
+  SchedulePlanInterval,
+  | "interval_start"
+  | "interval_end"
+  | "forecast_agents"
+  | "scheduled_agents"
+  | "note"
+>
+
+export type SchedulePlanDraftPayload = {
+  plan_date: string
+  project_name: string
+  site_name: string
+  version: string
+  intervals: SchedulePlanIntervalInput[]
+}
+
 type SchedulePlanListResponse = {
   items: SchedulePlanSummary[]
 }
@@ -160,6 +177,32 @@ async function fetchJson<T>(path: string): Promise<T | null> {
   }
 }
 
+async function writeJson<T>(
+  path: string,
+  method: "POST" | "PUT",
+  payload: unknown
+): Promise<T | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    return (await response.json()) as T
+  } catch {
+    return null
+  }
+}
+
 export async function getSchedulePlans(): Promise<SchedulePlanSummary[]> {
   const response = await fetchJson<SchedulePlanListResponse>(
     "/api/v1/schedule-plans"
@@ -176,6 +219,27 @@ export async function getSchedulePlan(
   )
 
   return response ?? fallbackPlans.find((plan) => plan.summary.id === planId) ?? null
+}
+
+export async function createSchedulePlanDraft(
+  payload: SchedulePlanDraftPayload
+): Promise<SchedulePlanDetail | null> {
+  return writeJson<SchedulePlanDetail>(
+    "/api/v1/schedule-plans/drafts",
+    "POST",
+    payload
+  )
+}
+
+export async function updateSchedulePlanDraft(
+  planId: string,
+  payload: SchedulePlanDraftPayload
+): Promise<SchedulePlanDetail | null> {
+  return writeJson<SchedulePlanDetail>(
+    `/api/v1/schedule-plans/${planId}/draft`,
+    "PUT",
+    payload
+  )
 }
 
 export function formatCoverageRate(value: number) {

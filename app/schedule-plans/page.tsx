@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import { AppShell } from "@/components/app-shell"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import {
@@ -11,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 export default async function SchedulePlansPage() {
   const plans = await getSchedulePlans()
@@ -25,6 +28,17 @@ export default async function SchedulePlansPage() {
   return (
     <AppShell title="排班计划" searchPlaceholder="搜索计划、项目或职场">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-lg font-semibold">排班计划</h1>
+            <p className="text-sm text-muted-foreground">
+              查看计划列表，并创建本地 draft 草稿
+            </p>
+          </div>
+          <Button asChild size="sm">
+            <Link href="/schedule-plans/new">新建草稿</Link>
+          </Button>
+        </div>
         <section className="grid gap-4 md:grid-cols-4">
           <SummaryCard title="计划数量" value={`${plans.length}`} description="本地只读纵切" />
           <SummaryCard title="预测人次" value={`${totalForecast}`} description="0.5h 时段汇总" />

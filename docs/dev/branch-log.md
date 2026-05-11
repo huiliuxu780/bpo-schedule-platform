@@ -161,3 +161,12 @@
 - Added server-side recalculation for forecast totals, scheduled totals, gap, coverage rate, and update timestamp.
 - Added backend unittest coverage for draft creation, draft update, non-draft rejection, and route registration.
 - Kept persistence, authentication, permissions, publish, approval, export, batch operations, real Excel, and real CORN out of scope.
+
+### F006 Schedule Plan Draft Creation UI
+
+- Added a "新建草稿" action to the schedule plan list page.
+- Added `/schedule-plans/new` as the minimal draft creation page.
+- Added a server action that calls the B002 draft creation API from the Next.js server.
+- Extended `lib/schedule-plans.ts` with draft payload types and write helpers.
+- Kept the first UI version intentionally small: plan metadata plus four core 0.5h intervals.
+- Kept full editing, publish, approval, export, batch operations, authentication, permissions, and persistence out of scope.

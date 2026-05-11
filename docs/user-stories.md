@@ -418,3 +418,26 @@ dependencies:
   - "US017"
 status: "ready_for_gate"
 ```
+
+### US019 - 前端创建排班计划草稿
+
+```yaml
+id: US019
+requirement_ids:
+  - R012
+  - R011
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望从排班计划列表进入新建草稿页面并提交草稿，以便快速创建本地 MVP 排班计划。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "排班计划列表提供新建草稿入口。"
+  - "新建页面包含日期、项目、职场、版本和核心 0.5h 时段输入。"
+  - "提交时通过 Next server action 调用 B002 创建草稿接口。"
+  - "创建成功后跳转到新草稿详情。"
+  - "不实现完整编辑器、发布、审批、导出、批量操作、权限或数据库持久化。"
+dependencies:
+  - "US017"
+status: "ready_for_gate"
+```
