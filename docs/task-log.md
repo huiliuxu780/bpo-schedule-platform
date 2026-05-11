@@ -173,6 +173,24 @@
 
 ### 2026-05-11
 
+- task_id: `B003`
+- source_ids: [`R015`]
+- story_ids: [`US022`]
+- action: 增加排班计划列表后端筛选。
+- status: `done`
+- notes: FastAPI 列表接口新增 `status` 和 `query` 查询参数；repository 支持按状态和关键词筛选；后端 unittest 新增 2 个筛选用例。
+
+### 2026-05-11
+
+- task_id: `F008`
+- source_ids: [`R015`]
+- story_ids: [`US023`]
+- action: 增加排班计划列表前端筛选。
+- status: `done`
+- notes: `/schedule-plans` 读取 URL 中的 `query` / `status`，页面提供搜索、状态切换、清空筛选、筛选后汇总和空结果状态；表格保留排序。
+
+### 2026-05-11
+
 - task_id: `H012`
 - source_ids: []
 - story_ids: []

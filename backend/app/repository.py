@@ -5,6 +5,7 @@ from backend.app.models import (
     SchedulePlanDraftRequest,
     SchedulePlanInterval,
     SchedulePlanSummary,
+    SchedulePlanStatus,
 )
 from backend.app.seed_data import SCHEDULE_PLANS
 
@@ -68,8 +69,38 @@ def _build_detail(
     )
 
 
-def list_plan_summaries() -> list[SchedulePlanSummary]:
-    return [plan.summary for plan in SCHEDULE_PLANS]
+def _matches_query(summary: SchedulePlanSummary, query: str) -> bool:
+    normalized = query.strip().lower()
+    if not normalized:
+        return True
+
+    searchable_text = " ".join(
+        [
+            summary.id,
+            summary.plan_date,
+            summary.project_name,
+            summary.site_name,
+            summary.version,
+            summary.status,
+        ]
+    ).lower()
+
+    return normalized in searchable_text
+
+
+def list_plan_summaries(
+    status: SchedulePlanStatus | None = None,
+    query: str | None = None,
+) -> list[SchedulePlanSummary]:
+    summaries = [plan.summary for plan in SCHEDULE_PLANS]
+
+    if status is not None:
+        summaries = [summary for summary in summaries if summary.status == status]
+
+    if query is not None:
+        summaries = [summary for summary in summaries if _matches_query(summary, query)]
+
+    return summaries
 
 
 def find_plan_detail(plan_id: str) -> SchedulePlanDetail | None:

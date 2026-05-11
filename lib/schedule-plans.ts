@@ -50,6 +50,11 @@ type SchedulePlanListResponse = {
   items: SchedulePlanSummary[]
 }
 
+export type SchedulePlanListFilters = {
+  query?: string
+  status?: SchedulePlanStatus
+}
+
 const API_BASE_URL =
   process.env.BPO_API_BASE_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8000"
 
@@ -204,11 +209,33 @@ async function writeJson<T>(
 }
 
 export async function getSchedulePlans(): Promise<SchedulePlanSummary[]> {
+  return getSchedulePlansWithFilters()
+}
+
+export async function getSchedulePlansWithFilters(
+  filters: SchedulePlanListFilters = {}
+): Promise<SchedulePlanSummary[]> {
+  const searchParams = new URLSearchParams()
+
+  if (filters.query?.trim()) {
+    searchParams.set("query", filters.query.trim())
+  }
+
+  if (filters.status) {
+    searchParams.set("status", filters.status)
+  }
+
+  const path = `/api/v1/schedule-plans${
+    searchParams.size > 0 ? `?${searchParams.toString()}` : ""
+  }`
   const response = await fetchJson<SchedulePlanListResponse>(
-    "/api/v1/schedule-plans"
+    path
   )
 
-  return response?.items ?? fallbackPlans.map((plan) => plan.summary)
+  return (
+    response?.items ??
+    filterFallbackPlans(fallbackPlans.map((plan) => plan.summary), filters)
+  )
 }
 
 export async function getSchedulePlan(
@@ -254,4 +281,33 @@ export function schedulePlanStatusLabel(status: SchedulePlanStatus) {
   }
 
   return labels[status]
+}
+
+function filterFallbackPlans(
+  plans: SchedulePlanSummary[],
+  filters: SchedulePlanListFilters
+) {
+  return plans.filter((plan) => {
+    if (filters.status && plan.status !== filters.status) {
+      return false
+    }
+
+    const normalizedQuery = filters.query?.trim().toLowerCase()
+    if (!normalizedQuery) {
+      return true
+    }
+
+    return [
+      plan.id,
+      plan.plan_date,
+      plan.project_name,
+      plan.site_name,
+      plan.version,
+      plan.status,
+      schedulePlanStatusLabel(plan.status),
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(normalizedQuery)
+  })
 }

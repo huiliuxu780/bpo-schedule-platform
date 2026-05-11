@@ -488,3 +488,48 @@ dependencies:
   - "H009"
 status: "done"
 ```
+
+### US022 - 后端排班计划列表筛选
+
+```yaml
+id: US022
+requirement_ids:
+  - R015
+  - R008
+module: "计划与排班"
+role: "前端应用"
+story: "作为前端应用，我希望 FastAPI 排班计划列表支持 status 和 query 查询参数，以便列表页可以按状态和关键词读取计划摘要。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "GET /api/v1/schedule-plans 支持 status 查询参数。"
+  - "GET /api/v1/schedule-plans 支持 query 查询参数，覆盖编号、日期、项目、职场、版本和状态。"
+  - "后端 unittest 覆盖按状态筛选和按关键词筛选。"
+  - "不接数据库、认证、真实 Excel、真实 CORN 或外部系统。"
+dependencies:
+  - "US010"
+  - "US011"
+status: "done"
+```
+
+### US023 - 前端排班计划列表筛选
+
+```yaml
+id: US023
+requirement_ids:
+  - R015
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望在排班计划列表按关键词搜索并切换草稿、待复核、已发布状态，以便快速找到要处理的计划。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "列表页读取 URL query 和 status 参数。"
+  - "页面提供关键词搜索框、状态切换和清空筛选。"
+  - "筛选后指标卡和表格基于当前结果重新汇总。"
+  - "表格保留排序能力并展示空结果状态。"
+  - "不新增依赖、不修改 package 或 lockfile。"
+dependencies:
+  - "US022"
+status: "done"
+```

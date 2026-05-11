@@ -203,6 +203,13 @@
 - Reconciled sidebar rules so primary navigation keeps icons and secondary navigation stays text-first with badge/tag states unless a later Gate changes that decision.
 - Marked stale audit conclusions as superseded: key frontend/backend files are tracked, and the current Gate risk is backend Python runtime selection rather than the presence of `package.json`.
 
+### B003/F008 Schedule Plan Filters
+
+- Added backend `status` and `query` filtering for `GET /api/v1/schedule-plans`.
+- Added unittest coverage for backend status and keyword filtering.
+- Added URL-based keyword search, status switching, clear filters, filtered summary cards, and empty-result messaging to `/schedule-plans`.
+- Kept this story local-only: no new dependency, package change, database, auth, real Excel, real CORN, publish, approval, export, or batch operation.
+
 ### H012 Harness Documentation Consistency Fixes
 
 - Reconciled `docs/harness/lightweight-harness.md` with the current frontend dashboard scaffold plus local scheduling-plan MVP vertical state.

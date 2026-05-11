@@ -43,6 +43,18 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertTrue(required_fields.issubset(first_plan.keys()))
         self.assertIn(first_plan["status"], {"draft", "review_ready", "published"})
 
+    def test_list_schedule_plans_filters_by_status(self) -> None:
+        response = list_schedule_plans(status="draft")
+
+        self.assertGreaterEqual(len(response.items), 1)
+        self.assertTrue(all(plan.status == "draft" for plan in response.items))
+
+    def test_list_schedule_plans_filters_by_query(self) -> None:
+        response = list_schedule_plans(query="苏州")
+
+        self.assertGreaterEqual(len(response.items), 1)
+        self.assertTrue(all("苏州" in plan.site_name for plan in response.items))
+
     def test_get_schedule_plan_returns_detail_with_half_hour_intervals(self) -> None:
         plan_id = list_schedule_plans().items[0].id
 

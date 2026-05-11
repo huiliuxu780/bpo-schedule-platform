@@ -365,6 +365,20 @@
 - `git ls-files package.json app/dashboard/page.tsx backend/app/main.py` 已确认这些关键工程文件处于 tracked 状态。
 - 当前失败风险不再是 `package.json` 存在，而是 backend Python 运行时如果落到 `/usr/bin/python3` 会缺少 `fastapi` / `pydantic`。
 - H011 已将 `scripts/check.sh` 和 `scripts/dev.sh` 改为显式选择可导入 backend 依赖的 Python，避免依赖调用者 PATH 的偶然状态。
+
+### 2026-05-11 - 排班计划列表筛选审计
+
+#### 审计结论
+
+- `B003` 已为 `GET /api/v1/schedule-plans` 增加 `status` 和 `query` 本地筛选。
+- `F008` 已在 `/schedule-plans` 增加 URL 可追踪的关键词搜索、状态切换和清空筛选。
+- 筛选后的计划数量、预测人次、已排人次和覆盖率会随当前结果重新汇总。
+- 未新增依赖，未修改 package 或 lockfile，未引入数据库、认证、真实 Excel、真实 CORN、审批、发布、导出或批量能力。
+
+#### 风险
+
+- `status` 仍为 MVP 展示状态，不代表生产最终状态流。
+- `query` 为本地内存数据筛选，未来接数据库后需要重新设计索引、分页和权限边界。
 - H012 已将本节旧风险降级为历史风险，并取消继续建议 H004 clean Harness 偏差处置。
 
 ### 2026-05-11 - Lightweight Harness 文档型升级

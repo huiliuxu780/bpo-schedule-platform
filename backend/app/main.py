@@ -4,6 +4,7 @@ from backend.app.models import (
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
     SchedulePlanListResponse,
+    SchedulePlanStatus,
 )
 from backend.app.repository import (
     create_plan_draft,
@@ -20,8 +21,13 @@ app = FastAPI(
 
 
 @app.get("/api/v1/schedule-plans", response_model=SchedulePlanListResponse)
-def list_schedule_plans() -> SchedulePlanListResponse:
-    return SchedulePlanListResponse(items=list_plan_summaries())
+def list_schedule_plans(
+    status: SchedulePlanStatus | None = None,
+    query: str | None = None,
+) -> SchedulePlanListResponse:
+    return SchedulePlanListResponse(
+        items=list_plan_summaries(status=status, query=query)
+    )
 
 
 @app.get("/api/v1/schedule-plans/{plan_id}", response_model=SchedulePlanDetail)

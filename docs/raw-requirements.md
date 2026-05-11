@@ -198,3 +198,16 @@ version: "1.0"
 status: "split"
 notes: "该需求优化执行流程，不授权新增依赖、真实数据、数据库、认证、权限、审批、导出、批量或生产公式。"
 ```
+
+### R015 - 排班计划列表筛选
+
+```yaml
+id: R015
+module: "计划与排班"
+description: "运营排班人员需要在排班计划列表中按关键词和计划状态筛选，以便快速定位草稿、待复核或已发布计划。"
+source: "PM continuous development instruction"
+submitted_at: "2026-05-11"
+version: "1.0"
+status: "split"
+notes: "本需求只做本地 FastAPI 列表查询和前端 URL 筛选；不做权限、审批、发布、批量、数据库、真实 Excel、真实 CORN 或生产状态口径变更。"
+```

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ArrowUpDown, Search } from "lucide-react"
+import { ArrowUpDown } from "lucide-react"
 
 import {
   formatCoverageRate,
@@ -19,7 +19,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -65,32 +64,20 @@ function compareValue(row: SchedulePlanSummary, key: SortKey) {
   return row[key]
 }
 
-export function SchedulePlanTable({ plans }: { plans: SchedulePlanSummary[] }) {
-  const [query, setQuery] = React.useState("")
+export function SchedulePlanTable({
+  plans,
+  filterLabel,
+}: {
+  plans: SchedulePlanSummary[]
+  filterLabel?: string
+}) {
   const [sortKey, setSortKey] = React.useState<SortKey>("plan_date")
   const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">(
     "asc"
   )
 
-  const filtered = React.useMemo(() => {
-    const normalized = query.trim().toLowerCase()
-    const rows = normalized
-      ? plans.filter((plan) =>
-          [
-            plan.id,
-            plan.plan_date,
-            plan.project_name,
-            plan.site_name,
-            plan.version,
-            schedulePlanStatusLabel(plan.status),
-          ]
-            .join(" ")
-            .toLowerCase()
-            .includes(normalized)
-        )
-      : plans
-
-    return [...rows].sort((a, b) => {
+  const sortedPlans = React.useMemo(() => {
+    return [...plans].sort((a, b) => {
       const aValue = compareValue(a, sortKey)
       const bValue = compareValue(b, sortKey)
 
@@ -104,7 +91,7 @@ export function SchedulePlanTable({ plans }: { plans: SchedulePlanSummary[] }) {
 
       return 0
     })
-  }, [plans, query, sortDirection, sortKey])
+  }, [plans, sortDirection, sortKey])
 
   function toggleSort(key: SortKey) {
     if (key === sortKey) {
@@ -122,23 +109,13 @@ export function SchedulePlanTable({ plans }: { plans: SchedulePlanSummary[] }) {
         <div>
           <CardTitle>排班计划</CardTitle>
           <CardDescription>
-            只读纵切：从 FastAPI 契约读取计划摘要与缺口风险
+            从 FastAPI 契约读取计划摘要与缺口风险
+            {filterLabel ? ` / 当前筛选：${filterLabel}` : ""}
           </CardDescription>
         </div>
-        <Badge variant="outline">B001 API</Badge>
+        <Badge variant="outline">B003 筛选</Badge>
       </CardHeader>
       <CardContent>
-        <div className="mb-3 flex items-center gap-2">
-          <div className="flex max-w-sm flex-1 items-center gap-2 rounded-md border px-2">
-            <Search className="size-4 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="搜索计划编号、项目或职场"
-              className="h-8 border-0 px-0 shadow-none focus-visible:ring-0"
-            />
-          </div>
-        </div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -160,7 +137,7 @@ export function SchedulePlanTable({ plans }: { plans: SchedulePlanSummary[] }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((plan) => (
+            {sortedPlans.map((plan) => (
               <TableRow key={plan.id}>
                 <TableCell className="whitespace-nowrap">
                   {plan.plan_date}
@@ -194,6 +171,16 @@ export function SchedulePlanTable({ plans }: { plans: SchedulePlanSummary[] }) {
                 </TableCell>
               </TableRow>
             ))}
+            {sortedPlans.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={10}
+                  className="h-24 text-center text-sm text-muted-foreground"
+                >
+                  暂无符合条件的排班计划
+                </TableCell>
+              </TableRow>
+            ) : null}
           </TableBody>
         </Table>
       </CardContent>

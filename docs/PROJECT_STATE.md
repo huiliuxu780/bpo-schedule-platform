@@ -39,6 +39,10 @@ The first vertical intentionally excludes create/edit/publish workflow, approval
 
 `F007` adds `/schedule-plans/[planId]/edit` as the frontend draft update entry. Draft detail pages can navigate to the edit page, which uses a Next server action to call the B002 draft update API.
 
+`B003` adds status and keyword filtering to the local FastAPI schedule plan list endpoint.
+
+`F008` adds URL-based keyword/status filtering to `/schedule-plans`, with filtered summary cards, sortable results, and an empty-result state.
+
 `Q002` has accepted the local schedule-plan draft creation/update vertical based on backend unittest coverage, frontend lint/typecheck/build, Harness check, local new/edit page HTTP checks, and direct POST/PUT API verification.
 
 The project still does not contain database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, intelligent scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.
