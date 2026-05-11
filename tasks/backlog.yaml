@@ -371,3 +371,49 @@ tasks:
       - "需要接入真实 API、后端或数据库"
       - "需要修改业务指标、状态码、结算公式或收费因子"
     commit_after_done: false
+  - id: H007
+    title: "开发环境与交付验证固化"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - ".nvmrc"
+      - ".node-version"
+      - "README.md"
+      - "scripts/check.sh"
+      - "docs/dev/setup.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/decision-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "public/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - ".nvmrc 和 .node-version 均声明 Node.js 22。"
+      - "docs/dev/setup.md 说明本地安装、启动、验证和 Node.js 22 约束。"
+      - "README.md 更新为 frontend dashboard scaffold 当前状态，并指向标准验证命令。"
+      - "scripts/check.sh 在当前 shell 非 Node.js 22 时自动优先使用 Homebrew node@22；缺失时给出明确失败提示。"
+      - "不新增依赖、不修改 package 或 lockfile、不开发业务页面、不接入后端或真实接口。"
+      - "`git diff --check` 通过。"
+      - "`bash scripts/check.sh` 直接通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要开发新的业务能力或前端页面"
+      - "需要接入真实 API、后端或数据库"
+      - "需要修改业务指标、状态码、结算公式或收费因子"
+    commit_after_done: false

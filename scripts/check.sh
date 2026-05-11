@@ -4,8 +4,43 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+preferred_node_dir="${BPO_NODE22_BIN:-/opt/homebrew/opt/node@22/bin}"
+node_major=""
+
+if command -v node >/dev/null 2>&1; then
+  node_major="$(node -p "process.versions.node.split('.')[0]" 2>/dev/null || true)"
+fi
+
+if [[ "$node_major" != "22" ]]; then
+  if [[ -x "$preferred_node_dir/node" && -x "$preferred_node_dir/npm" ]]; then
+    export PATH="$preferred_node_dir:$PATH"
+    hash -r 2>/dev/null || true
+    node_major="$(node -p "process.versions.node.split('.')[0]" 2>/dev/null || true)"
+  else
+    echo "unsupported Node.js runtime: expected Node.js 22" >&2
+    if command -v node >/dev/null 2>&1; then
+      echo "current node: $(node -v) at $(command -v node)" >&2
+    else
+      echo "current node: not found" >&2
+    fi
+    echo "install Homebrew node@22 or set BPO_NODE22_BIN to a directory containing node and npm" >&2
+    exit 1
+  fi
+fi
+
+if [[ "$node_major" != "22" ]]; then
+  echo "unsupported Node.js runtime after PATH setup: expected Node.js 22" >&2
+  echo "current node: $(node -v 2>/dev/null || echo not-found) at $(command -v node 2>/dev/null || echo not-found)" >&2
+  exit 1
+fi
+
+echo "using Node.js $(node -v) at $(command -v node)"
+
 required_files=(
+  ".node-version"
+  ".nvmrc"
   "AGENTS.md"
+  "docs/dev/setup.md"
   "docs/PROJECT_STATE.md"
   "docs/quality/GATE_REGISTRY.md"
   "docs/quality/GATE_PLAN_TEMPLATE.md"

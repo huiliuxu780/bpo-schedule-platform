@@ -93,3 +93,12 @@
 - Added `docs/prompts/file_ownership_matrix.md` and sample dispatch packets under `docs/prompts/examples/`.
 - Formalized the F001-only Recharts exception in `docs/decision-log.md`.
 - Strengthened `scripts/check.sh` so frontend toolchain gaps are surfaced before coding claims are made.
+
+### H007 Development Environment Hardening
+
+- Added backlog item `H007` for development runtime and delivery verification hardening.
+- Added `.nvmrc` and `.node-version` to declare Node.js 22 as the project runtime.
+- Added `docs/dev/setup.md` with local install, startup, delivery check, and scope boundary instructions.
+- Updated `README.md` from the old clean Harness wording to the current frontend dashboard scaffold state.
+- Updated `scripts/check.sh` so it prefers Homebrew `node@22` when the current shell is not already using Node.js 22.
+- Recorded the Node.js 22 environment decision in `docs/PROJECT_STATE.md`, `docs/decision-log.md`, `docs/task-log.md`, and `docs/audit-report.md`.

@@ -45,3 +45,10 @@
 - 原因：仅检查文件存在会造成“看起来通过但无法 coding”的假阳性。
 - 影响：若 `node_modules/.bin/eslint`、`tsc` 或 `next` 缺失，`scripts/check.sh` 应失败并提示需要单独依赖安装 Gate。
 - 限制：H006 不安装依赖，也不修改 package 或 lockfile。
+
+### 2026-05-11 - D007 - 本地开发与交付验证固定使用 Node.js 22
+
+- 决策：项目通过 `.nvmrc`、`.node-version` 和 `scripts/check.sh` 固定使用 Node.js 22。
+- 原因：本机默认 Node.js 24 会触发 Next.js / lightningcss 原生 `.node` 包加载问题；Homebrew `node@22` 已验证可以通过完整交付检查。
+- 影响：`bash scripts/check.sh` 会优先使用 `/opt/homebrew/opt/node@22/bin`，新成员应按 `docs/dev/setup.md` 配置本地环境。
+- 限制：该决策只处理本地运行时和验证入口，不授权新增依赖、修改 package 或 lockfile、开发业务功能、接入后端或真实数据源。

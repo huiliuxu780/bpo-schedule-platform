@@ -53,3 +53,12 @@
 - action: 开发前 Harness 收口。
 - status: `done_with_verification_blocker`
 - notes: 对齐项目阶段、补齐 F001 追溯、增加文件所有权矩阵和 dispatch 示例、formalize Recharts 例外，并将 `scripts/check.sh` 增强为真实验证前端工具链；当前阻塞为 `eslint`、`tsc`、`next` 缺失。
+
+### 2026-05-11
+
+- task_id: `H007`
+- source_ids: []
+- story_ids: []
+- action: 固化开发环境与交付验证入口。
+- status: `done`
+- notes: 将项目运行时声明为 Node.js 22，补充本地 setup 文档，更新 README，并让 `scripts/check.sh` 在本机自动优先使用 Homebrew `node@22` 完成交付验证。

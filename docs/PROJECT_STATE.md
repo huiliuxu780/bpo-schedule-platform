@@ -27,6 +27,20 @@ That archive is read-only reference material for future audits or explicitly app
 - Every task must pass `bash scripts/check.sh`.
 - F001 is the confirmed exception that allows frontend package files, local mock data, and dashboard UI files for a static prototype only.
 
+## Development Environment
+
+The project uses Node.js 22 for local development and delivery verification.
+
+Current environment artifacts:
+
+- `.nvmrc`
+- `.node-version`
+- `docs/dev/setup.md`
+
+`scripts/check.sh` automatically prefers `/opt/homebrew/opt/node@22/bin` when the current shell is not already using Node.js 22. This avoids the local Node.js 24 native package loading issue observed with Next.js / lightningcss on macOS.
+
+This environment decision does not authorize dependency changes, package or lockfile edits, business implementation, backend work, real API integration, database work, permission systems, export pipelines, approval flows, or batch operations outside a confirmed Gate.
+
 ## Frontend Direction
 
 Future frontend work is constrained to a professional shadcn/ui-based B2B SaaS admin console for BPO Workforce Management / BPO 人力计划与履约管理平台.

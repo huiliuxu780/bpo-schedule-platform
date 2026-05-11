@@ -4,6 +4,26 @@
 
 ## Current Audit
 
+### 2026-05-11 - H007 开发环境与交付验证固化审计
+
+#### 审计结论
+
+- 已新增 `.nvmrc` 和 `.node-version`，项目运行时明确为 Node.js 22。
+- 已新增 `docs/dev/setup.md`，说明本地安装、启动、验证命令和 H007 范围边界。
+- `README.md` 已从 clean Harness 初始描述更新为 frontend dashboard scaffold 当前状态。
+- `scripts/check.sh` 已支持在当前 shell 非 Node.js 22 时优先切换到 `/opt/homebrew/opt/node@22/bin`。
+- 本次任务未新增依赖，未修改 `package.json` 或 lockfile，未开发业务页面，未接入后端、数据库或真实 API。
+
+#### 风险
+
+- 若新机器没有安装 Homebrew `node@22`，`scripts/check.sh` 会明确失败并提示安装或设置 `BPO_NODE22_BIN`。
+- 若未来切换 Node.js 大版本，必须通过新的 Gate 更新 `.nvmrc`、`.node-version`、setup 文档和 check 脚本。
+
+#### 建议
+
+- 后续开发前统一执行 `bash scripts/check.sh`，不要绕过 Harness check。
+- 新成员先阅读 `docs/dev/setup.md`，再启动本地开发。
+
 ### 2026-05-11 - H006 开发前 Harness 收口审计
 
 #### 审计结论

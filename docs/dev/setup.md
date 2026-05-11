@@ -1,0 +1,76 @@
+# Development Setup
+
+## Runtime
+
+本项目固定使用 Node.js 22 作为本地开发与交付验证运行时。
+
+原因：
+
+- 当前 Next.js / Tailwind / lightningcss 工具链在本机默认 Node.js 24 下可能触发 macOS 原生 `.node` 包 code-signing 加载失败。
+- Homebrew `node@22` 已在本机验证可完整通过 `lint`、`typecheck`、`build` 和 Harness check。
+- `.nvmrc` 与 `.node-version` 均声明为 `22`，方便 nvm、fnm、mise、asdf 等工具识别。
+
+## First-Time Setup
+
+在 macOS 上推荐使用 Homebrew 安装 Node.js 22：
+
+```bash
+brew install node@22
+```
+
+如果当前 shell 默认不是 Node.js 22，可以临时切换：
+
+```bash
+export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
+```
+
+安装依赖：
+
+```bash
+npm install
+```
+
+## Local Development
+
+启动开发服务：
+
+```bash
+npm run dev
+```
+
+默认访问：
+
+```txt
+http://localhost:3000/dashboard
+```
+
+## Delivery Check
+
+交付前运行：
+
+```bash
+bash scripts/check.sh
+```
+
+`scripts/check.sh` 会优先使用 `/opt/homebrew/opt/node@22/bin` 下的 Node.js 22。如果本机缺少 Node.js 22，脚本会提前失败并给出安装提示。
+
+该检查包含：
+
+- Harness 必需文件检查
+- frontend scaffold 必需文件检查
+- 前端工具链检查：`eslint`、`tsc`、`next`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run build`
+
+## Scope Boundary
+
+H007 只固化开发环境与交付验证入口。
+
+它不授权：
+
+- 新增业务功能
+- 新增依赖
+- 修改 `package.json` 或 lockfile
+- 接入后端、数据库、真实 API、真实 CORN 或真实 Excel
+- 修改指标公式、状态码、结算公式或收费因子
