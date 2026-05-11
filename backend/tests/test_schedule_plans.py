@@ -9,6 +9,7 @@ from backend.app.main import (
     list_demand_plans,
     list_shift_details,
     list_schedule_plans,
+    list_unavailability,
     update_schedule_plan_draft,
 )
 from backend.app.models import SchedulePlanDraftRequest, SchedulePlanIntervalInput
@@ -21,6 +22,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/schedule-plans", "GET"), routes)
         self.assertIn(("/api/v1/demand-plans", "GET"), routes)
         self.assertIn(("/api/v1/shift-details", "GET"), routes)
+        self.assertIn(("/api/v1/unavailability", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
 
@@ -122,6 +124,41 @@ class SchedulePlansApiTest(unittest.TestCase):
 
         self.assertGreaterEqual(len(response.items), 1)
         self.assertTrue(all("苏州" in item.site_name for item in response.items))
+
+    def test_list_unavailability_returns_required_fields(self) -> None:
+        response = list_unavailability()
+
+        self.assertGreaterEqual(len(response.items), 3)
+        first_item = response.items[0].model_dump()
+        required_fields = {
+            "unavailability_id",
+            "staff_name",
+            "team_name",
+            "project_name",
+            "site_name",
+            "unavailable_date",
+            "start_time",
+            "end_time",
+            "reason",
+            "status",
+            "affected_intervals",
+            "note",
+        }
+
+        self.assertTrue(required_fields.issubset(first_item.keys()))
+        self.assertIn(first_item["status"], {"active", "resolved"})
+
+    def test_list_unavailability_filters_by_status(self) -> None:
+        response = list_unavailability(status="active")
+
+        self.assertGreaterEqual(len(response.items), 1)
+        self.assertTrue(all(item.status == "active" for item in response.items))
+
+    def test_list_unavailability_filters_by_query(self) -> None:
+        response = list_unavailability(query="培训")
+
+        self.assertGreaterEqual(len(response.items), 1)
+        self.assertTrue(all("培训" in item.reason or "培训" in item.note for item in response.items))
 
     def test_get_schedule_plan_returns_404_for_missing_plan(self) -> None:
         with self.assertRaises(HTTPException) as raised:

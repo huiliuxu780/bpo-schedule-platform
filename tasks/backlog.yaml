@@ -1225,3 +1225,80 @@ tasks:
       - "需要固化生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: B006
+    title: "不可用记录后端列表"
+    priority: P0
+    status: done
+    required_workflow: backend-mvp
+    allowed_files:
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "GET /api/v1/unavailability 返回不可用记录行。"
+      - "字段包含人员、团队、项目、职场、日期、开始结束时间、原因、状态、影响时段和备注。"
+      - "接口支持 status 和 query 筛选。"
+      - "后端 unittest 覆盖字段契约、状态筛选和关键词筛选。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要数据库、认证、人事系统、真实请假审批或外部系统"
+      - "需要审批、发布、导出或批量操作"
+      - "需要固化生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F011
+    title: "不可用管理前端页面"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/unavailability/**"
+      - "components/app-sidebar.tsx"
+      - "lib/unavailability.ts"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "侧边栏不可用管理进入 `/unavailability`。"
+      - "页面展示不可用记录、生效中、影响时段和涉及团队。"
+      - "页面展示不可用记录表并可跳转班次明细。"
+      - "页面支持关键词、状态和清空筛选。"
+      - "不新增依赖、不修改 package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "B006 未完成"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要数据库、认证、人事系统、真实请假审批或外部系统"
+      - "需要审批、发布、导出或批量操作"
+      - "需要固化生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true

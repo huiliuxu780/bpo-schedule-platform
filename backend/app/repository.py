@@ -8,8 +8,55 @@ from backend.app.models import (
     SchedulePlanSummary,
     SchedulePlanStatus,
     ShiftDetailRow,
+    UnavailabilityRow,
+    UnavailabilityStatus,
 )
 from backend.app.seed_data import SCHEDULE_PLANS
+
+UNAVAILABILITY_ROWS = [
+    UnavailabilityRow(
+        unavailability_id="unavail-20260511-001",
+        staff_name="张敏",
+        team_name="一线客服 A 组",
+        project_name="博西客服",
+        site_name="上海职场",
+        unavailable_date="2026-05-11",
+        start_time="09:30",
+        end_time="10:30",
+        reason="临时请假",
+        status="active",
+        affected_intervals=2,
+        note="需补 2 个 0.5h 时段",
+    ),
+    UnavailabilityRow(
+        unavailability_id="unavail-20260511-002",
+        staff_name="李想",
+        team_name="一线客服 B 组",
+        project_name="博西客服",
+        site_name="苏州职场",
+        unavailable_date="2026-05-11",
+        start_time="10:00",
+        end_time="11:00",
+        reason="培训占用",
+        status="active",
+        affected_intervals=2,
+        note="影响午前覆盖率",
+    ),
+    UnavailabilityRow(
+        unavailability_id="unavail-20260512-001",
+        staff_name="王宁",
+        team_name="外包夜班组",
+        project_name="博西客服",
+        site_name="上海职场",
+        unavailable_date="2026-05-12",
+        start_time="12:00",
+        end_time="13:00",
+        reason="不可用申请",
+        status="resolved",
+        affected_intervals=2,
+        note="已调整排班",
+    ),
+]
 
 
 def _coverage_rate(scheduled_agents: int, forecast_agents: int) -> float:
@@ -133,6 +180,30 @@ def _matches_demand_query(row: DemandPlanRow, query: str) -> bool:
     return normalized in searchable_text
 
 
+def _matches_unavailability_query(row: UnavailabilityRow, query: str) -> bool:
+    normalized = query.strip().lower()
+    if not normalized:
+        return True
+
+    searchable_text = " ".join(
+        [
+            row.unavailability_id,
+            row.staff_name,
+            row.team_name,
+            row.project_name,
+            row.site_name,
+            row.unavailable_date,
+            row.start_time,
+            row.end_time,
+            row.reason,
+            row.status,
+            row.note,
+        ]
+    ).lower()
+
+    return normalized in searchable_text
+
+
 def list_plan_summaries(
     status: SchedulePlanStatus | None = None,
     query: str | None = None,
@@ -202,6 +273,21 @@ def list_demand_plan_rows(query: str | None = None) -> list[DemandPlanRow]:
 
     if query is not None:
         rows = [row for row in rows if _matches_demand_query(row, query)]
+
+    return rows
+
+
+def list_unavailability_rows(
+    status: UnavailabilityStatus | None = None,
+    query: str | None = None,
+) -> list[UnavailabilityRow]:
+    rows = list(UNAVAILABILITY_ROWS)
+
+    if status is not None:
+        rows = [row for row in rows if row.status == status]
+
+    if query is not None:
+        rows = [row for row in rows if _matches_unavailability_query(row, query)]
 
     return rows
 

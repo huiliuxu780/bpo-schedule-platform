@@ -227,6 +227,18 @@
 
 ### 2026-05-12
 
+- task_id: `B006/F011`
+- source_ids:
+  - `R018`
+- story_ids:
+  - `US028`
+  - `US029`
+- action: 新增计划与排班模块的不可用管理最小只读能力。
+- status: `done`
+- notes: 新增 `GET /api/v1/unavailability`，增加 `/unavailability` 页面和侧边栏入口；支持关键词、状态筛选、汇总卡、不可用记录表和跳转班次明细。
+
+### 2026-05-12
+
 - task_id: `H013`
 - source_ids: []
 - story_ids: []

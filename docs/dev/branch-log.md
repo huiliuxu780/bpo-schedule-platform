@@ -230,6 +230,13 @@
 - Added the same rule to the Lightweight Harness workflow and Done Report template.
 - Updated Project State so future main-worker reports include completed scope, verification, remaining work, recommended next 2-3 steps, reasoning, not-yet-recommended items, and the default next item when PM does not object.
 
+### B006/F011 Unavailability Management
+
+- Added `GET /api/v1/unavailability` to expose local staff unavailable-interval records.
+- Added backend tests for unavailability route registration, field contract, status filtering, and keyword filtering.
+- Added `/unavailability` with summary cards, keyword/status filters, empty state, and links into shift details by site.
+- Updated the sidebar "不可用管理" item to point at the new page.
+
 ### H012 Harness Documentation Consistency Fixes
 
 - Reconciled `docs/harness/lightweight-harness.md` with the current frontend dashboard scaffold plus local scheduling-plan MVP vertical state.

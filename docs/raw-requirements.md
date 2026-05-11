@@ -237,3 +237,16 @@ version: "1.0"
 status: "split"
 notes: "本需求只做本地只读预测需求查看和搜索；不做真实 Excel 导入、字段映射、数据库、审批、发布、批量或生产预测算法。"
 ```
+
+### R018 - 不可用管理查看
+
+```yaml
+id: R018
+module: "计划与排班"
+description: "运营排班人员需要查看人员不可用时段，按人员、团队、项目、职场、原因和状态定位不可用对排班覆盖的影响。"
+source: "PM continuous development instruction"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只做本地只读不可用记录查看和筛选；不做人事系统接入、真实请假审批、数据库、权限、批量导入、排班自动冲突计算或生产状态口径。"
+```

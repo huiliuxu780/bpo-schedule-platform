@@ -625,3 +625,49 @@ dependencies:
   - "US026"
 status: "done"
 ```
+
+### US028 - 后端不可用记录列表
+
+```yaml
+id: US028
+requirement_ids:
+  - R018
+  - R008
+module: "计划与排班"
+role: "前端应用"
+story: "作为前端应用，我希望 FastAPI 提供不可用记录列表接口，以便页面可以读取人员、团队、时段、原因、状态和影响时段。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "提供 GET /api/v1/unavailability。"
+  - "返回字段包含 unavailability_id、staff_name、team_name、project_name、site_name、unavailable_date、start_time、end_time、reason、status、affected_intervals 和 note。"
+  - "支持 status 和 query 查询参数。"
+  - "后端 unittest 覆盖字段契约、状态筛选和关键词筛选。"
+  - "不接数据库、认证、人事系统、真实请假审批或外部系统。"
+dependencies:
+  - "US010"
+  - "US011"
+status: "done"
+```
+
+### US029 - 前端不可用管理页面
+
+```yaml
+id: US029
+requirement_ids:
+  - R018
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望打开不可用管理页面并按关键词或状态筛选，以便快速识别可能影响排班覆盖的不可用时段。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "侧边栏不可用管理进入真实页面。"
+  - "页面展示不可用记录、生效中、影响时段和涉及团队。"
+  - "页面展示不可用记录表并可跳转到班次明细。"
+  - "页面支持关键词、状态和清空筛选。"
+  - "不新增依赖、不修改 package 或 lockfile。"
+dependencies:
+  - "US028"
+status: "done"
+```

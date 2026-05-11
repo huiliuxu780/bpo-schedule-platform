@@ -51,6 +51,10 @@ The first vertical intentionally excludes create/edit/publish workflow, approval
 
 `F010` adds `/demand-plans` and wires the sidebar "需求计划" item to a real page with search, summary cards, and a forecast-demand table.
 
+`B006` adds a local FastAPI unavailability list endpoint for staff unavailable intervals, status filtering, and keyword search.
+
+`F011` adds `/unavailability` and wires the sidebar "不可用管理" item to a real page with search, status filters, summary cards, and an unavailable-interval table.
+
 `Q002` has accepted the local schedule-plan draft creation/update vertical based on backend unittest coverage, frontend lint/typecheck/build, Harness check, local new/edit page HTTP checks, and direct POST/PUT API verification.
 
 The project still does not contain database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, intelligent scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.

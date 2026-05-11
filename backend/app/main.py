@@ -7,6 +7,8 @@ from backend.app.models import (
     SchedulePlanListResponse,
     SchedulePlanStatus,
     ShiftDetailListResponse,
+    UnavailabilityListResponse,
+    UnavailabilityStatus,
 )
 from backend.app.repository import (
     create_plan_draft,
@@ -14,6 +16,7 @@ from backend.app.repository import (
     list_demand_plan_rows,
     list_shift_detail_rows,
     list_plan_summaries,
+    list_unavailability_rows,
     update_plan_draft,
 )
 
@@ -46,6 +49,16 @@ def list_shift_details(
 ) -> ShiftDetailListResponse:
     return ShiftDetailListResponse(
         items=list_shift_detail_rows(status=status, query=query)
+    )
+
+
+@app.get("/api/v1/unavailability", response_model=UnavailabilityListResponse)
+def list_unavailability(
+    status: UnavailabilityStatus | None = None,
+    query: str | None = None,
+) -> UnavailabilityListResponse:
+    return UnavailabilityListResponse(
+        items=list_unavailability_rows(status=status, query=query)
     )
 
 

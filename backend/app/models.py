@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 SchedulePlanStatus = Literal["draft", "review_ready", "published"]
 DemandPlanStatus = Literal["imported", "mapped"]
+UnavailabilityStatus = Literal["active", "resolved"]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -50,6 +51,25 @@ class DemandPlanRow(BaseModel):
 
 class DemandPlanListResponse(BaseModel):
     items: list[DemandPlanRow]
+
+
+class UnavailabilityRow(BaseModel):
+    unavailability_id: str
+    staff_name: str
+    team_name: str
+    project_name: str
+    site_name: str
+    unavailable_date: str
+    start_time: str
+    end_time: str
+    reason: str
+    status: UnavailabilityStatus
+    affected_intervals: int = Field(ge=0)
+    note: str
+
+
+class UnavailabilityListResponse(BaseModel):
+    items: list[UnavailabilityRow]
 
 
 class ShiftDetailRow(BaseModel):
