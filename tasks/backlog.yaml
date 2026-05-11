@@ -1,4 +1,4 @@
-# Backlog for clean Harness project.
+# Backlog for the BPO WFM frontend scaffold project.
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
@@ -63,6 +63,311 @@ tasks:
       - "需要开发业务代码"
       - "需要新增依赖"
       - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、后端或数据库"
+      - "需要修改业务指标、状态码、结算公式或收费因子"
+    commit_after_done: false
+  - id: H003
+    title: "Lightweight Harness 文档型升级"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+      - "docs/dev/branch-log.md"
+      - "docs/harness/**"
+      - "docs/prompts/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/decision-log.md"
+      - "docs/audit-report.md"
+    forbidden_files:
+      - "frontend/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "记录 Lightweight Harness 项目版流程：原始需求、用户故事、DAG、Gate、执行、审计。"
+      - "建立原始需求、用户故事、任务日志、决策日志、审计报告和 Subagent 提示词模板入口。"
+      - "保持 clean Harness 边界，不新增业务代码、依赖、真实前端/后端工程或 mock 数据。"
+      - "`bash scripts/check.sh` 已执行；若因既有未跟踪工程文件失败，Done Report 需说明。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要开发业务代码"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、后端或数据库"
+      - "需要修改业务指标、状态码、结算公式或收费因子"
+      - "需要从 lab archive 复制代码"
+    commit_after_done: false
+  - id: F001
+    title: "基于 shadcn 官方 dashboard-01 结构实现 BPO WFM Dashboard 静态首页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "public/**"
+      - "package.json"
+      - "package-lock.json"
+      - "components.json"
+      - "eslint.config.mjs"
+      - "next.config.mjs"
+      - "postcss.config.mjs"
+      - "tsconfig.json"
+      - ".prettierignore"
+      - ".prettierrc"
+      - ".gitignore"
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+      - "scripts/check.sh"
+    forbidden_files:
+      - "backend/**"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "页面视觉和组件结构尽量贴近 shadcn/ui v4 官方 Examples Dashboard / dashboard-01。"
+      - "实现 AppSidebar、SiteHeader、SectionCards、ChartAreaInteractive、DataTable、BpoHeatmap、DataSyncStatus、ThemeToggle。"
+      - "左侧导航为两级结构，一级和二级菜单均有 lucide icon，异常管理显示 badge，P1/Beta 能力显示 tag。"
+      - "Dashboard 首页顺序为 SiteHeader、Global filter bar、四个指标卡、趋势图 + 热力图、异常表格 + 数据接入状态面板。"
+      - "指标卡一行四个，使用 shadcn Card 视觉结构，业务文案为中文。"
+      - "趋势图展示排班实现率、排班拟合度、排班遵守率；F001 允许跟随官方 dashboard chart 结构使用 Recharts。"
+      - "异常表格展示指定字段，并至少支持搜索、状态 badge、分页和行操作。"
+      - "支持 dark / light 主题切换。"
+      - "不接入后端、真实 Excel、真实 CORN API、权限系统、登录认证、数据库或智能排班算法。"
+      - "`npm run lint`、`npm run build`、`npm run typecheck` 和 `bash scripts/check.sh` 通过，若外部依赖安装失败需说明。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要后端接口、真实导入、真实 CORN API、认证、数据库或智能排班算法"
+      - "需要从 lab archive 复制代码"
+      - "需要改变业务指标公式、状态码、结算公式或收费因子"
+      - "依赖安装持续失败导致无法验证"
+    commit_after_done: false
+  - id: F002
+    title: "Dashboard 左侧导航降噪与折叠能力"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "一级导航保留 icon，二级导航移除 icon，只保留中文文案、badge/tag 和选中态。"
+      - "左侧导航支持向左收起为窄栏，收起后显示一级 icon，主内容自动扩展。"
+      - "一级导航默认只展开当前业务域，其他一级默认折叠，可点击展开或收起。"
+      - "不新增依赖、不改业务数据、不接入后端或真实接口。"
+      - "`npm run lint`、`npm run typecheck` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要后端接口、真实导入、真实 CORN API、认证、数据库或智能排班算法"
+      - "需要改变业务指标公式、状态码、结算公式或收费因子"
+    commit_after_done: false
+  - id: F003
+    title: "Dashboard Sidebar 官方比例与滚动行为修正"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/dashboard/page.tsx"
+      - "components/app-sidebar.tsx"
+      - "components/site-header.tsx"
+      - "components/data-table.tsx"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "一级导航字号和行高收紧，比例更接近 shadcn dashboard sidebar。"
+      - "Sidebar 收起/展开触发器放在 SiteHeader 左侧，而不是 sidebar 品牌区。"
+      - "页面滚动时左侧 sidebar 不跟随主体内容滚动。"
+      - "页面本身不出现横向滚动条；表格宽度由表格区域内部处理。"
+      - "`npm run lint`、`npm run typecheck` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要后端接口、真实导入、真实 CORN API、认证、数据库或智能排班算法"
+      - "需要改变业务指标公式、状态码、结算公式或收费因子"
+    commit_after_done: false
+  - id: F004
+    title: "Dashboard 官方风格品牌与主题 Icon 对齐"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "components/theme-toggle.tsx"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "ThemeToggle 使用 PM 提供的官方 dashboard SVG：圆形、竖线和三条斜线 glyph。"
+      - "左上角系统品牌 icon 替换为接近 shadcn Acme 风格的圆形 mark。"
+      - "不新增依赖、不改业务数据、不接入后端或真实接口。"
+      - "`npm run lint`、`npm run typecheck` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要后端接口、真实导入、真实 CORN API、认证、数据库或智能排班算法"
+      - "需要改变业务指标公式、状态码、结算公式或收费因子"
+    commit_after_done: false
+  - id: H004
+    title: "Subagent Prompt Contract 细化"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "docs/prompts/**"
+      - "docs/harness/lightweight-harness.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/decision-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "docs/prompts/README.md 定义统一 dispatch packet、返回状态、停止条件和评审链路。"
+      - "PM、UI/UX、Frontend、Backend、QA、Doc Agent prompt 均包含输入、输出、权限边界和停止条件。"
+      - "新增 Implementer、Spec Reviewer、Code Quality Reviewer prompt contract。"
+      - "明确 Subagent 不会自动启动，必须有 PM/user 明确允许和确认 Gate。"
+      - "`git diff --check` 通过。"
+      - "`bash scripts/check.sh` 已执行；若失败，Done Report 需说明。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动 subagent"
+      - "需要开发新的业务能力"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、后端或数据库"
+      - "需要修改业务指标、状态码、结算公式或收费因子"
+      - "需要处理或删除当前未跟踪前端工程文件"
+    commit_after_done: false
+  - id: H005
+    title: "shadcn Skill 接入与 Subagent 使用场景定义"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "docs/prompts/**"
+      - "docs/harness/lightweight-harness.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/decision-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "明确 `/Users/mac/.codex/skills/shadcn/SKILL.md` 的适用场景。"
+      - "明确 UI/UX Agent、Frontend Agent、Implementer、Code Quality Reviewer 应优先使用 shadcn skill。"
+      - "明确 QA Agent 仅将 shadcn skill 作为 UI 验收参考。"
+      - "明确 PM、Backend、Doc Agent 默认不使用 shadcn skill。"
+      - "明确 shadcn skill 不授权 CLI 写入、preset 变更、依赖安装、package 修改或组件覆盖。"
+      - "`git diff --check` 通过。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要运行 shadcn CLI 写入项目"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要开发新的业务能力"
+      - "需要启动 subagent"
+    commit_after_done: false
+  - id: H006
+    title: "开发前 Harness 收口"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+      - "scripts/check.sh"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/prompts/**"
+      - "docs/harness/**"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/decision-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AGENTS.md 与 docs/PROJECT_STATE.md 对齐到 frontend dashboard scaffold 阶段。"
+      - "F001 在 raw requirements 和 user stories 中具备可追溯链路。"
+      - "新增 Subagent dispatch 示例和文件所有权矩阵。"
+      - "D004 记录 F001 的 Recharts 例外，并明确后续图表层需重新 Gate。"
+      - "scripts/check.sh 增强为真实验证前端工具链；若依赖未安装则明确失败原因。"
+      - "`git diff --check` 通过。"
+      - "`bash scripts/check.sh` 已执行；如因依赖未安装失败，Done Report 需说明。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要安装依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要开发新的业务能力"
+      - "需要启动 subagent"
       - "需要接入真实 API、后端或数据库"
       - "需要修改业务指标、状态码、结算公式或收费因子"
     commit_after_done: false

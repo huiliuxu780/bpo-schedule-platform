@@ -3,9 +3,9 @@
 ## Project Identity
 
 - Project name: `bpo-schedule-platform`
-- Current stage: clean Harness initialization
-- Current development mode: Gate Plan first, small checkpoints, no business code by default
-- Goal: provide a minimal, auditable Harness before any product implementation starts.
+- Current stage: frontend dashboard scaffold
+- Current development mode: Gate Plan first, small checkpoints, traceable implementation only
+- Goal: provide an auditable Harness while iterating on a PM-confirmed static BPO WFM dashboard scaffold.
 
 ## Project Root
 
@@ -71,9 +71,104 @@ Unless the current user instruction explicitly allows it, Codex must not:
 - create production permissions, approval, export, or batch-operation capabilities
 - change business metrics, status codes, settlement formulas, or charge factors
 
-## Clean Project Rule
+## Project Stage Rule
 
-This clean workspace intentionally contains no active business implementation. Any future product work must first enter the backlog, pass the appropriate Gate Plan, and receive PM confirmation when required.
+The project started as a clean Harness workspace, but `F001` is now the confirmed exception that allows a static frontend dashboard scaffold.
+
+The confirmed F001 scope allows:
+
+- frontend package files
+- shadcn/ui-style dashboard UI files
+- local static mock data for the dashboard prototype
+- dark / light theme support
+- BPO WFM navigation and content replacement
+
+Outside confirmed tasks such as F001, any future product work must first enter the backlog, pass the appropriate Gate Plan, and receive PM confirmation when required.
+
+## Lightweight Harness Workflow
+
+This project uses a documentation-first Lightweight Harness during the frontend dashboard scaffold stage.
+
+The required flow for new product or module requests is:
+
+```txt
+raw requirement -> user story -> DAG / dependency check -> Gate Plan -> PM confirmation when required -> scoped execution -> check -> Done Report -> audit
+```
+
+### Raw Requirements
+
+New module requests and PM-provided requirement points must first be recorded in `docs/raw-requirements.md`.
+
+Each raw requirement should include:
+
+- stable ID, such as `R001`
+- module
+- original description
+- source
+- submitted date
+- version
+- status
+- notes
+
+Do not convert a raw requirement directly into implementation before user-story splitting and Gate review.
+
+### User Stories
+
+Raw requirements should be split into user stories in `docs/user-stories.md`.
+
+Each user story should include:
+
+- stable ID, such as `US001`
+- linked raw requirement IDs
+- module
+- user role
+- story description
+- task type
+- priority
+- acceptance criteria
+- dependencies
+- status
+
+Every user story must trace back to at least one raw requirement.
+
+### DAG And Dependency Rules
+
+The Harness must check dependencies before implementation planning.
+
+Block and record the task when:
+
+- business formulas are not confirmed
+- status codes are not confirmed
+- permission boundaries are not confirmed
+- export, approval, or batch-operation rules are not confirmed
+- real data sources or integrations are not confirmed
+- user-story dependencies form a cycle
+
+DAG tracking is documentation-based unless a future confirmed task introduces scripts or dependencies.
+
+### Subagent Prompt Templates
+
+Subagent prompt templates live under `docs/prompts/`.
+
+The templates cover:
+
+- PM Agent
+- UI/UX Agent
+- Frontend Agent
+- Backend Agent
+- QA Agent
+- Doc Agent
+
+These templates do not authorize automatic multi-agent execution. Subagents may only be used when the task is clearly split, write scopes do not conflict, and PM confirmation allows that execution mode.
+
+### Logs And Audit
+
+Task progress and decisions must be traceable through:
+
+- `docs/task-log.md`
+- `docs/decision-log.md`
+- `docs/audit-report.md`
+- `docs/dev/branch-log.md`
 
 ## Product And Frontend Identity
 
@@ -95,7 +190,7 @@ Core business concepts include:
 
 ## Frontend Design And Development Rules
 
-These rules are mandatory for future frontend tasks, but they do not authorize frontend implementation during clean Harness initialization. Any frontend page, dependency, package change, mock data, or business implementation still requires an explicit backlog task and PM confirmation when required by the gate.
+These rules are mandatory for future frontend tasks, but they do not authorize new frontend implementation outside a confirmed Gate. Any frontend page, dependency, package change, mock data, or business implementation still requires an explicit backlog task and PM confirmation when required by the gate.
 
 ### Frontend Golden Rule
 
@@ -266,6 +361,7 @@ components/
   data-table.tsx
   bpo-heatmap.tsx
   data-sync-status.tsx
+  theme-toggle.tsx
 ```
 
 ## Archive Boundary
