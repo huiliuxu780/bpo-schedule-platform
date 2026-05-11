@@ -671,3 +671,50 @@ dependencies:
   - "US028"
 status: "done"
 ```
+
+### US030 - 后端排班风险提示列表
+
+```yaml
+id: US030
+requirement_ids:
+  - R019
+  - R015
+  - R018
+module: "计划与排班"
+role: "前端应用"
+story: "作为前端应用，我希望 FastAPI 提供排班风险提示列表，将时段缺口和生效中不可用记录合并为本地风险提示，以便排班计划页展示优先复核项。"
+task_type: "backend"
+priority: "P0"
+acceptance:
+  - "提供 GET /api/v1/schedule-risks。"
+  - "返回字段包含 risk_id、plan_id、plan_date、project_name、site_name、interval_start、interval_end、risk_level、gap_agents、affected_unavailability、reason 和 recommendation。"
+  - "高风险包含同一日期、项目、职场、时段下同时存在缺口和生效中不可用记录的情况。"
+  - "支持 query 查询参数。"
+  - "后端 unittest 覆盖字段契约、高风险合并和关键词筛选。"
+dependencies:
+  - "US022"
+  - "US028"
+status: "done"
+```
+
+### US031 - 前端排班风险提示区
+
+```yaml
+id: US031
+requirement_ids:
+  - R019
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望在排班计划页看到风险提示区，按风险等级查看缺口和不可用影响，并能跳转到班次明细继续处理。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "排班计划页展示排班风险提示区。"
+  - "风险提示区展示风险等级、日期、时段、项目、职场、缺口、不可用、原因和建议。"
+  - "风险提示区高风险数量清晰可见。"
+  - "风险行可以跳转到班次明细。"
+  - "不新增依赖、不修改 package 或 lockfile。"
+dependencies:
+  - "US030"
+status: "done"
+```

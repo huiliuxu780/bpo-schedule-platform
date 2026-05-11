@@ -1302,3 +1302,80 @@ tasks:
       - "需要固化生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: B007
+    title: "排班风险提示后端列表"
+    priority: P0
+    status: done
+    required_workflow: backend-mvp
+    allowed_files:
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "GET /api/v1/schedule-risks 返回排班风险提示行。"
+      - "字段包含计划、日期、项目、职场、时段、风险等级、缺口、不可用影响、原因和建议。"
+      - "高风险合并同一日期、项目、职场、时段下的缺口和生效中不可用记录。"
+      - "接口支持 query 筛选。"
+      - "后端 unittest 覆盖字段契约、高风险合并和关键词筛选。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要数据库、认证、人事系统、真实请假审批、真实 CORN 或外部系统"
+      - "需要审批、发布、导出、批量调班或自动排班"
+      - "需要固化生产风险等级、生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F012
+    title: "排班计划页风险提示区"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/page.tsx"
+      - "lib/schedule-plans.ts"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "排班计划页展示风险提示区。"
+      - "风险提示区展示风险等级、日期、时段、项目、职场、缺口、不可用、原因和建议。"
+      - "风险提示区高风险数量清晰可见。"
+      - "风险行可以跳转到班次明细。"
+      - "不新增依赖、不修改 package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "B007 未完成"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要数据库、认证、人事系统、真实请假审批、真实 CORN 或外部系统"
+      - "需要审批、发布、导出、批量调班或自动排班"
+      - "需要固化生产风险等级、生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true

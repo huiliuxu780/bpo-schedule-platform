@@ -57,6 +57,23 @@ export type DemandPlanRow = {
   status: "imported" | "mapped"
 }
 
+export type ScheduleRiskLevel = "high" | "medium" | "low"
+
+export type ScheduleRiskRow = {
+  risk_id: string
+  plan_id: string
+  plan_date: string
+  project_name: string
+  site_name: string
+  interval_start: string
+  interval_end: string
+  risk_level: ScheduleRiskLevel
+  gap_agents: number
+  affected_unavailability: number
+  reason: string
+  recommendation: string
+}
+
 export type SchedulePlanIntervalInput = Pick<
   SchedulePlanInterval,
   | "interval_start"
@@ -84,6 +101,10 @@ type ShiftDetailListResponse = {
 
 type DemandPlanListResponse = {
   items: DemandPlanRow[]
+}
+
+type ScheduleRiskListResponse = {
+  items: ScheduleRiskRow[]
 }
 
 export type SchedulePlanListFilters = {
@@ -320,6 +341,21 @@ export async function getDemandPlans(query = ""): Promise<DemandPlanRow[]> {
   return response?.items ?? filterFallbackDemandPlans(flattenFallbackDemandPlans(), query)
 }
 
+export async function getScheduleRisks(query = ""): Promise<ScheduleRiskRow[]> {
+  const searchParams = new URLSearchParams()
+
+  if (query.trim()) {
+    searchParams.set("query", query.trim())
+  }
+
+  const path = `/api/v1/schedule-risks${
+    searchParams.size > 0 ? `?${searchParams.toString()}` : ""
+  }`
+  const response = await fetchJson<ScheduleRiskListResponse>(path)
+
+  return response?.items ?? filterFallbackScheduleRisks(fallbackScheduleRisks, query)
+}
+
 export async function createSchedulePlanDraft(
   payload: SchedulePlanDraftPayload
 ): Promise<SchedulePlanDetail | null> {
@@ -354,6 +390,61 @@ export function schedulePlanStatusLabel(status: SchedulePlanStatus) {
 
   return labels[status]
 }
+
+export function scheduleRiskLevelLabel(level: ScheduleRiskLevel) {
+  const labels: Record<ScheduleRiskLevel, string> = {
+    high: "高风险",
+    medium: "需关注",
+    low: "提醒",
+  }
+
+  return labels[level]
+}
+
+const fallbackScheduleRisks: ScheduleRiskRow[] = [
+  {
+    risk_id: "risk-plan-20260511-suzhou-bosch-v1-10:00",
+    plan_id: "plan-20260511-suzhou-bosch-v1",
+    plan_date: "2026-05-11",
+    project_name: "博西客服",
+    site_name: "苏州职场",
+    interval_start: "10:00",
+    interval_end: "10:30",
+    risk_level: "high",
+    gap_agents: 2,
+    affected_unavailability: 1,
+    reason: "缺口 2 人，且存在 1 条生效中不可用记录",
+    recommendation: "优先复核不可用记录，并从相邻冗余时段调剂",
+  },
+  {
+    risk_id: "risk-plan-20260511-shanghai-bosch-v1-09:30",
+    plan_id: "plan-20260511-shanghai-bosch-v1",
+    plan_date: "2026-05-11",
+    project_name: "博西客服",
+    site_name: "上海职场",
+    interval_start: "09:30",
+    interval_end: "10:00",
+    risk_level: "high",
+    gap_agents: 1,
+    affected_unavailability: 1,
+    reason: "缺口 1 人，且存在 1 条生效中不可用记录",
+    recommendation: "优先复核不可用记录，并从相邻冗余时段调剂",
+  },
+  {
+    risk_id: "risk-plan-20260512-shanghai-bosch-v2-10:30",
+    plan_id: "plan-20260512-shanghai-bosch-v2",
+    plan_date: "2026-05-12",
+    project_name: "博西客服",
+    site_name: "上海职场",
+    interval_start: "10:30",
+    interval_end: "11:00",
+    risk_level: "medium",
+    gap_agents: 1,
+    affected_unavailability: 0,
+    reason: "排班缺口 1 人",
+    recommendation: "检查草稿排班覆盖，必要时补班或跨团队调剂",
+  },
+]
 
 function filterFallbackPlans(
   plans: SchedulePlanSummary[],
@@ -468,6 +559,32 @@ function filterFallbackDemandPlans(rows: DemandPlanRow[], query: string) {
       row.interval_end,
       row.source,
       row.status,
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(normalizedQuery)
+  )
+}
+
+function filterFallbackScheduleRisks(rows: ScheduleRiskRow[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase()
+  if (!normalizedQuery) {
+    return rows
+  }
+
+  return rows.filter((row) =>
+    [
+      row.risk_id,
+      row.plan_id,
+      row.plan_date,
+      row.project_name,
+      row.site_name,
+      row.interval_start,
+      row.interval_end,
+      row.risk_level,
+      scheduleRiskLevelLabel(row.risk_level),
+      row.reason,
+      row.recommendation,
     ]
       .join(" ")
       .toLowerCase()

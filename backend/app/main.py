@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 
 from backend.app.models import (
     DemandPlanListResponse,
+    ScheduleRiskListResponse,
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
     SchedulePlanListResponse,
@@ -14,6 +15,7 @@ from backend.app.repository import (
     create_plan_draft,
     find_plan_detail,
     list_demand_plan_rows,
+    list_schedule_risk_rows,
     list_shift_detail_rows,
     list_plan_summaries,
     list_unavailability_rows,
@@ -50,6 +52,11 @@ def list_shift_details(
     return ShiftDetailListResponse(
         items=list_shift_detail_rows(status=status, query=query)
     )
+
+
+@app.get("/api/v1/schedule-risks", response_model=ScheduleRiskListResponse)
+def list_schedule_risks(query: str | None = None) -> ScheduleRiskListResponse:
+    return ScheduleRiskListResponse(items=list_schedule_risk_rows(query=query))
 
 
 @app.get("/api/v1/unavailability", response_model=UnavailabilityListResponse)

@@ -9,6 +9,7 @@ from backend.app.main import (
     list_demand_plans,
     list_shift_details,
     list_schedule_plans,
+    list_schedule_risks,
     list_unavailability,
     update_schedule_plan_draft,
 )
@@ -22,6 +23,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/schedule-plans", "GET"), routes)
         self.assertIn(("/api/v1/demand-plans", "GET"), routes)
         self.assertIn(("/api/v1/shift-details", "GET"), routes)
+        self.assertIn(("/api/v1/schedule-risks", "GET"), routes)
         self.assertIn(("/api/v1/unavailability", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
@@ -159,6 +161,50 @@ class SchedulePlansApiTest(unittest.TestCase):
 
         self.assertGreaterEqual(len(response.items), 1)
         self.assertTrue(all("培训" in item.reason or "培训" in item.note for item in response.items))
+
+    def test_list_schedule_risks_returns_gap_and_unavailability_fields(self) -> None:
+        response = list_schedule_risks()
+
+        self.assertGreaterEqual(len(response.items), 1)
+        first_item = response.items[0].model_dump()
+        required_fields = {
+            "risk_id",
+            "plan_id",
+            "plan_date",
+            "project_name",
+            "site_name",
+            "interval_start",
+            "interval_end",
+            "risk_level",
+            "gap_agents",
+            "affected_unavailability",
+            "reason",
+            "recommendation",
+        }
+
+        self.assertTrue(required_fields.issubset(first_item.keys()))
+        self.assertIn(first_item["risk_level"], {"high", "medium", "low"})
+
+    def test_list_schedule_risks_includes_combined_high_risk(self) -> None:
+        response = list_schedule_risks()
+
+        combined = [
+            item
+            for item in response.items
+            if item.site_name == "苏州职场"
+            and item.interval_start == "10:00"
+            and item.risk_level == "high"
+        ]
+
+        self.assertEqual(len(combined), 1)
+        self.assertEqual(combined[0].gap_agents, 2)
+        self.assertEqual(combined[0].affected_unavailability, 1)
+
+    def test_list_schedule_risks_filters_by_query(self) -> None:
+        response = list_schedule_risks(query="苏州")
+
+        self.assertGreaterEqual(len(response.items), 1)
+        self.assertTrue(all("苏州" in item.site_name for item in response.items))
 
     def test_get_schedule_plan_returns_404_for_missing_plan(self) -> None:
         with self.assertRaises(HTTPException) as raised:

@@ -6,9 +6,12 @@ import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import {
   formatCoverageRate,
   getSchedulePlansWithFilters,
+  getScheduleRisks,
+  scheduleRiskLevelLabel,
   schedulePlanStatusLabel,
   type SchedulePlanStatus,
 } from "@/lib/schedule-plans"
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
@@ -18,6 +21,14 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 const statusOptions: { label: string; value?: SchedulePlanStatus }[] = [
   { label: "全部" },
@@ -65,6 +76,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
   const plans = await getSchedulePlansWithFilters({ query, status })
+  const risks = await getScheduleRisks(query)
   const totalForecast = plans.reduce((sum, plan) => sum + plan.forecast_agents, 0)
   const totalScheduled = plans.reduce(
     (sum, plan) => sum + plan.scheduled_agents,
@@ -73,6 +85,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const totalGap = plans.reduce((sum, plan) => sum + plan.gap_agents, 0)
   const coverageRate =
     plans.length === 0 ? 0 : totalForecast === 0 ? 1 : totalScheduled / totalForecast
+  const highRiskCount = risks.filter((risk) => risk.risk_level === "high").length
 
   return (
     <AppShell title="排班计划" searchPlaceholder="搜索计划、项目或职场">
@@ -138,6 +151,83 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             description={`缺口 ${totalGap} 人次`}
           />
         </section>
+        <Card>
+          <CardHeader className="flex flex-row items-start justify-between gap-4">
+            <div>
+              <CardTitle>排班风险提示</CardTitle>
+              <CardDescription>
+                缺口与不可用记录的本地 MVP 联动提示
+              </CardDescription>
+            </div>
+            <Badge variant={highRiskCount > 0 ? "default" : "outline"}>
+              {highRiskCount} 条高风险
+            </Badge>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>风险</TableHead>
+                  <TableHead>日期</TableHead>
+                  <TableHead>时段</TableHead>
+                  <TableHead>项目</TableHead>
+                  <TableHead>职场</TableHead>
+                  <TableHead className="text-right">缺口</TableHead>
+                  <TableHead className="text-right">不可用</TableHead>
+                  <TableHead>原因</TableHead>
+                  <TableHead>建议</TableHead>
+                  <TableHead className="w-24 text-right">操作</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {risks.slice(0, 5).map((risk) => (
+                  <TableRow key={risk.risk_id}>
+                    <TableCell>
+                      <Badge
+                        variant={risk.risk_level === "high" ? "default" : "outline"}
+                      >
+                        {scheduleRiskLevelLabel(risk.risk_level)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {risk.plan_date}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {risk.interval_start}-{risk.interval_end}
+                    </TableCell>
+                    <TableCell className="font-medium">{risk.project_name}</TableCell>
+                    <TableCell>{risk.site_name}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {risk.gap_agents}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {risk.affected_unavailability}
+                    </TableCell>
+                    <TableCell>{risk.reason}</TableCell>
+                    <TableCell>{risk.recommendation}</TableCell>
+                    <TableCell className="text-right">
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/shift-details?query=${risk.site_name}`}>
+                          班次
+                        </Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {risks.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={10}
+                      className="h-20 text-center text-sm text-muted-foreground"
+                    >
+                      当前筛选下暂无排班风险提示
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
         <SchedulePlanTable
           plans={plans}
           filterLabel={

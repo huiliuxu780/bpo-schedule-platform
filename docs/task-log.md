@@ -227,6 +227,18 @@
 
 ### 2026-05-12
 
+- task_id: `B007/F012`
+- source_ids:
+  - `R019`
+- story_ids:
+  - `US030`
+  - `US031`
+- action: 新增排班风险提示最小能力。
+- status: `done`
+- notes: 新增 `GET /api/v1/schedule-risks`，在 `/schedule-plans` 增加风险提示区，合并展示时段缺口和生效中不可用记录；风险等级仅为本地 MVP 展示口径。
+
+### 2026-05-12
+
 - task_id: `B006/F011`
 - source_ids:
   - `R018`

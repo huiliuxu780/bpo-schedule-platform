@@ -237,6 +237,13 @@
 - Added `/unavailability` with summary cards, keyword/status filters, empty state, and links into shift details by site.
 - Updated the sidebar "不可用管理" item to point at the new page.
 
+### B007/F012 Schedule Risk Hints
+
+- Added `GET /api/v1/schedule-risks` to expose local MVP risk hints from schedule gaps plus active unavailability records.
+- Added backend tests for risk route registration, field contract, combined high-risk detection, and keyword filtering.
+- Added a risk-hint section to `/schedule-plans` with high-risk count, risk rows, reason, recommendation, and links into shift details.
+- Kept the risk level as MVP display guidance only; no production formula, automatic scheduling, approval, or batch adjustment was added.
+
 ### H012 Harness Documentation Consistency Fixes
 
 - Reconciled `docs/harness/lightweight-harness.md` with the current frontend dashboard scaffold plus local scheduling-plan MVP vertical state.
