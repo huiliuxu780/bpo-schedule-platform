@@ -74,6 +74,7 @@ That archive is read-only reference material for future audits or explicitly app
 - Continuous Delivery Mode is active when the PM explicitly asks to continue through green gates or to finish, test, verify, and commit in one pass. In that mode, completed verified scope should be committed without an extra confirmation pause.
 - Story Runner Mode is now the preferred product-development flow: goals are split into minimal user stories, ready stories are executed in dependency order, small UI corrections stay inside the active story, and verified stories continue automatically until a stop condition is reached.
 - Story Runner Mode authorizes bounded subagents by default when write scopes are independent and non-overlapping; the main Codex worker remains responsible for dispatch design, integration, final verification, commits, and Done Report.
+- Stage Completion Planning is mandatory: after each stage, module block, or coherent feature set, the main worker must report what was completed, whether verification passed, what remains, the next 2-3 recommended steps, why that order is recommended, what is not recommended yet, and the default next item if PM does not object.
 
 ## Development Environment
 

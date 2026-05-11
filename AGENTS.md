@@ -80,6 +80,22 @@ Continuous Delivery Mode does not bypass PM confirmation for new risky scope. Co
 - ambiguous destructive Git operations
 - failed verification
 
+## Stage Completion Planning
+
+When Codex completes a stage, module block, or coherent feature set, the final Done Report must include a forward plan for the PM.
+
+The forward plan must use this Chinese structure:
+
+1. 本阶段完成了什么
+2. 验证是否通过
+3. 当前还剩什么
+4. 推荐下一阶段做哪 2-3 个
+5. 为什么推荐这个顺序
+6. 哪些事情暂时不建议做
+7. 如果 PM 不反对，默认从推荐第 1 项继续开发
+
+Recommendations should be based on dependency order, business value, implementation risk, and the project's current stop conditions. Codex must call out risky items such as dependencies, database persistence, authentication, real integrations, approval, export, batch operations, production status codes, formulas, settlement rules, and charge factors instead of silently recommending them.
+
 ## Story Runner Mode
 
 When the PM asks to "开始", "继续", "自动走完", "按用户故事开发", "挨个开发完测试完提交完", or otherwise clearly requests continuous delivery from a goal, Codex must use Story Runner Mode.

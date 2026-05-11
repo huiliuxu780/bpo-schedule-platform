@@ -225,6 +225,15 @@
 - status: `done`
 - notes: 新增 `/demand-plans`，侧边栏需求计划指向真实页面；页面提供关键词搜索、汇总卡和预测需求表。
 
+### 2026-05-12
+
+- task_id: `H013`
+- source_ids: []
+- story_ids: []
+- action: 固化阶段完成后的后续计划输出规则。
+- status: `done`
+- notes: 已将阶段/模块块完成后的固定汇报结构写入 AGENTS、Lightweight Harness、Done Report Template 和 Project State；后续 Done Report 必须说明完成内容、验证、剩余事项、推荐下阶段 2-3 项、推荐理由、暂不建议事项和默认下一项。
+
 ### 2026-05-11
 
 - task_id: `H012`

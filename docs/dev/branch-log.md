@@ -224,6 +224,12 @@
 - Added `/demand-plans` with summary cards, keyword search, empty state, and a forecast-demand table.
 - Updated the sidebar "需求计划" item to point at the new page.
 
+### H013 Stage Completion Planning
+
+- Added a mandatory stage-completion planning section to `AGENTS.md`.
+- Added the same rule to the Lightweight Harness workflow and Done Report template.
+- Updated Project State so future main-worker reports include completed scope, verification, remaining work, recommended next 2-3 steps, reasoning, not-yet-recommended items, and the default next item when PM does not object.
+
 ### H012 Harness Documentation Consistency Fixes
 
 - Reconciled `docs/harness/lightweight-harness.md` with the current frontend dashboard scaffold plus local scheduling-plan MVP vertical state.
