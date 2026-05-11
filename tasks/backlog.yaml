@@ -1559,3 +1559,75 @@ tasks:
       - "现有业务字段、接口、路由或中文文案被意外替换"
       - "验证失败"
     commit_after_done: true
+  - id: H016
+    title: "Harness Gate 体系审计反馈修复"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "GATE_REGISTRY.md 建立 required_workflow 到 Gate 的映射矩阵，覆盖 harness、frontend-scaffold、frontend-audit、backend、backend-mvp、backend-vertical 和 qa。"
+      - "AGENTS.md 的 Current stage 与 PROJECT_STATE 当前范围一致。"
+      - "audit-report 将旧 clean-Harness 结论标记为历史审计快照。"
+      - "backlog 至少存在一条 `ready` 状态任务作为 Story Runner 下一步入口。"
+      - "不修改业务实现、不修改 package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改业务代码"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、后端或数据库"
+      - "需要修改业务指标、生产状态码、结算公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F016
+    title: "风险明细钻取入口"
+    priority: P0
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "排班计划页风险提示行提供稳定明细入口。"
+      - "风险明细展示风险等级、计划、日期、时段、项目、职场、缺口、不可用影响、原因和建议。"
+      - "风险明细可继续跳转到排班计划详情、班次明细或不可用相关视图。"
+      - "复用现有本地 MVP 数据契约，不新增真实数据源。"
+      - "不新增依赖、不修改 package 或 lockfile。"
+      - "不提供审批、批量调班、自动排班或生产公式能力。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

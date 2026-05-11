@@ -19,6 +19,17 @@
 
 ### 2026-05-12
 
+- task_id: `H016`
+- source_ids:
+  - `R022`
+- story_ids:
+  - `US035`
+- action: 修复 Harness Gate 体系审计反馈。
+- status: `done`
+- notes: 已建立 required_workflow 到 Gate 的矩阵，更新 AGENTS/PROJECT_STATE 阶段名，将旧 clean-Harness 审计结论改为历史快照，并预置 `US036/F016` 为下一条 ready Story Runner 入口。
+
+### 2026-05-12
+
 - task_id: `F015`
 - source_ids:
   - `R021`

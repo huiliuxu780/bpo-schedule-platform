@@ -4,6 +4,26 @@
 
 ## Current Audit
 
+### 2026-05-12 - H016 Harness Gate 体系审计反馈修复
+
+#### 审计结论
+
+- 已确认审计反馈成立：`docs/quality/GATE_REGISTRY.md` 只有默认 Gate 和 Clean Harness Gate，但 backlog 已使用多个 `required_workflow`。
+- 已在 Gate Registry 增加 Workflow Gate Matrix，覆盖 `harness`、`frontend-scaffold`、`frontend-audit`、`backend`、`backend-mvp`、`backend-vertical` 和 `qa`。
+- 已将 `AGENTS.md` 的 Current stage 对齐为 `frontend dashboard scaffold + local scheduling-plan MVP vertical`。
+- 已将旧 clean-Harness 结论改写为历史审计快照，避免与当前项目状态并列。
+- 已预置 `US036/F016` 为 `ready` 状态，作为 Story Runner 下一轮开发入口。
+
+#### 风险
+
+- `US036/F016` 只是 ready 队列入口，本轮未实现风险明细钻取。
+- 后续执行 `F016` 时仍需遵守 stop conditions：不得新增依赖、真实数据、数据库、认证、权限、审批、导出、批量调班、自动排班、生产公式、状态码、结算规则或收费因子。
+
+#### 建议
+
+- 后续新增 `required_workflow` 名称时，必须同步更新 Gate Registry。
+- 下一轮若 PM 说“继续”，默认从 `US036/F016` 开始，但遇到 stop conditions 仍需暂停确认。
+
 ### 2026-05-12 - F015 shadcn 依赖与组件接入收口审计
 
 #### 审计结论
@@ -521,20 +541,23 @@
 - 完整 1:1 parity 仍需要单独确认：Tabler icons、额外 shadcn 组件、TanStack Table、DnD、Drawer、Select、Tabs、Dropdown、ToggleGroup、Chart 等。
 - H012 已将本节旧风险降级为历史风险，并取消继续建议 H004 clean Harness 偏差处置。
 
-### 2026-05-11 - Lightweight Harness 文档型升级
+## Historical Audit Snapshots
+
+### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
 
 #### 审计结论
 
 - 原始需求、用户故事、DAG、提示词、任务日志、决策日志和审计报告已建立文档入口。
-- 当前升级保持在 clean Harness 允许范围内。
-- 未授权创建真实前端、后端、依赖、API、数据库或业务 mock 数据。
+- 历史当时的结论是：升级保持在 clean Harness 允许范围内。
+- 历史当时的限制是：未授权创建真实前端、后端、依赖、API、数据库或业务 mock 数据。
 
-#### 风险
+#### 历史风险
 
-- 当前工作区存在未跟踪工程文件，可能导致 `bash scripts/check.sh` 在真实工作区失败。
-- 后续若直接引入前端/后端工程，必须先通过工程初始化 Gate。
+- 当时曾记录“当前工作区存在未跟踪工程文件，可能导致 `bash scripts/check.sh` 在真实工作区失败”。
+- 该风险已被后续 H011/H012/H016 复核取代；当前真实阶段是 frontend dashboard scaffold + local scheduling-plan MVP vertical，且关键工程文件已纳入 tracked 范围。
+- 后续不应再按 clean-Harness-only 状态判断当前 Gate。
 
-#### 建议
+#### 历史建议
 
 - 下一次新增业务模块需求时，先登记到 `docs/raw-requirements.md`。
 - 再拆分到 `docs/user-stories.md`，并检查依赖、优先级和阻塞项。

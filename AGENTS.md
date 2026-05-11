@@ -3,9 +3,9 @@
 ## Project Identity
 
 - Project name: `bpo-schedule-platform`
-- Current stage: frontend dashboard scaffold
+- Current stage: frontend dashboard scaffold + local scheduling-plan MVP vertical
 - Current development mode: Story Runner first, Gate Plan controlled, auto local commit after green check, push only after PM confirmation
-- Goal: provide an auditable Harness while iterating on a PM-confirmed static BPO WFM dashboard scaffold.
+- Goal: provide an auditable Harness while iterating on a PM-confirmed BPO WFM dashboard scaffold and local scheduling-plan MVP vertical.
 
 ## Project Root
 

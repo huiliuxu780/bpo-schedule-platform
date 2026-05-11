@@ -785,3 +785,51 @@ dependencies:
   - "US033"
 status: "done"
 ```
+
+### US035 - Harness Gate 体系审计反馈修复
+
+```yaml
+id: US035
+requirement_ids:
+  - R022
+module: "Harness"
+role: "PM"
+story: "作为 PM，我希望 Gate Registry、AGENTS 阶段名、audit-report 口径和 Story Runner 队列入口与当前项目真实范围一致，以便后续执行者不会误判 Gate 标准和下一步起点。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "GATE_REGISTRY.md 建立 required_workflow 到 Gate 的映射矩阵。"
+  - "AGENTS.md 的 Current stage 与 PROJECT_STATE 当前范围一致。"
+  - "audit-report 中旧 clean-Harness 结论被标记为历史审计快照，不再与当前结论并列。"
+  - "backlog 至少有一条 `ready` 状态任务作为 Story Runner 下一步入口。"
+  - "不修改业务实现、不修改 package 或 lockfile。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US034"
+status: "done"
+```
+
+### US036 - 前端风险明细钻取入口
+
+```yaml
+id: US036
+requirement_ids:
+  - R019
+  - R023
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望从排班计划页的风险提示进入风险明细，以便查看风险项关联的计划、时段缺口、不可用影响和人工复核建议。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "风险提示行提供稳定的明细入口。"
+  - "明细展示风险等级、计划、日期、时段、项目、职场、缺口、不可用影响、原因和建议。"
+  - "明细可继续跳转到排班计划详情、班次明细或不可用记录相关视图。"
+  - "复用现有本地 MVP 数据契约，不新增真实数据源。"
+  - "不新增依赖、不修改 package 或 lockfile。"
+  - "不提供审批、批量调班、自动排班或生产公式能力。"
+dependencies:
+  - "US031"
+  - "US034"
+status: "ready"
+```

@@ -289,3 +289,29 @@ version: "1.0"
 status: "split"
 notes: "本需求只收口已确认的 package/lockfile、shadcn UI 组件和 lint/compatibility 修复；不开发新业务功能，不接入真实数据、数据库、认证、权限、审批、导出、批量操作，不固化生产公式、状态码、结算口径或收费因子。"
 ```
+
+### R022 - Harness Gate 体系审计反馈修复
+
+```yaml
+id: R022
+module: "Harness"
+description: "审计反馈指出 Gate Registry 与 backlog required_workflow 脱节、AGENTS 阶段名滞后、audit-report 当前/历史口径混写、Story Runner 缺少 ready 队列入口，需要进行文档型修复。"
+source: "PM audit feedback"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只修复 Harness 文档、Gate 映射、审计口径和下一步队列可观测性；不开发业务代码，不改 package/lockfile，不接入真实数据、数据库、认证、权限、审批、导出、批量操作或生产公式。"
+```
+
+### R023 - 风险明细钻取
+
+```yaml
+id: R023
+module: "计划与排班"
+description: "运营排班人员需要从排班风险提示进入风险明细，查看同一风险项关联的计划、时段缺口、不可用记录和建议动作，以便继续人工复核。"
+source: "F015 Done Report recommended next stage"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求作为下一轮 Story Runner ready 入口预置；实现时应优先复用本地 `schedule-risks`、`schedule-plans`、`shift-details`、`unavailability` 数据，不做真实人事/CORN 集成、数据库、审批、批量调班、生产风险公式或状态码定稿。"
+```

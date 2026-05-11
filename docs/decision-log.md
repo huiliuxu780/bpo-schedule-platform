@@ -95,3 +95,10 @@
 - 原因：PM 希望代码仓库随任务完成持续留痕，但仍希望远端 push 保持确认点，避免把未检查或未确认范围推到 GitHub。
 - 影响：普通任务不再停在“建议 commit”；Done Report 应报告本地 commit 状态和是否建议 push。
 - 限制：检查失败、无法安全分离的无关改动、未确认依赖/package/真实集成/数据库/认证/权限/审批/导出/批量/生产口径、或破坏性 Git 操作时，仍必须暂停。
+
+### 2026-05-12 - D014 - backlog workflow 必须映射到 Gate Registry
+
+- 决策：`tasks/backlog.yaml` 中出现的每个 `required_workflow` 必须能在 `docs/quality/GATE_REGISTRY.md` 找到对应 Gate。
+- 原因：此前 backlog 已使用 `frontend-scaffold`、`frontend-audit`、`backend`、`backend-mvp`、`backend-vertical`、`qa` 等 workflow，但 Gate Registry 只有默认 Gate 和 Clean Harness Gate，执行标准容易依赖个人解释。
+- 影响：后续新增 workflow 名称时，必须在同一任务内补充 Gate Registry；Story Runner 选择下一条任务时也要先确认该 workflow 有 Gate 锚点。
+- 限制：Gate 映射只定义执行约束，不授权新增业务代码、依赖、真实数据、数据库、认证、权限、审批、导出、批量、生产状态码、公式、结算规则或收费因子。
