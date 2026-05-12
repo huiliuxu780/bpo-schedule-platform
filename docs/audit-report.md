@@ -963,6 +963,31 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-13 - Table parity 20-task 连续增强块
+
+#### 审计结论
+
+- `F041-F046/US083-US088` 已增强排班计划表：模型测试、筛选摘要、本地查询、状态/缺口筛选、重置、分页范围、首页/末页和列显示控制。
+- `F047-F052/US089-US094` 已增强风险提示表：模型测试、筛选摘要、风险等级筛选、本地搜索、重置、空态和分页控制。
+- `F053-F059/US095-US101` 已增强不可用表：模型测试、筛选摘要、状态筛选、本地搜索、重置、空态、分页控制和列显示控制。
+- `Q014/US102` 已完成 20-task 连续块 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+
+#### 风险
+
+- 本轮仍只做本地前端展示层 parity；没有引入真实同步、数据库、后端契约变更、审批、导出、批量、权限或生产公式。
+- 表格筛选是客户端局部筛选，不替代服务端查询契约；真实数据接入和数据库仍需后续单独 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，9 个 table model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+- `curl -fsS http://127.0.0.1:3015/schedule-plans`：通过，页面包含排班计划表和风险提示表关键文本。
+- `curl -fsS http://127.0.0.1:3015/unavailability`：通过，页面包含不可用表关键文本。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

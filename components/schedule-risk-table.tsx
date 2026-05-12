@@ -1,19 +1,43 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowUpDown } from "lucide-react"
+import {
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  RotateCcw,
+  Search,
+} from "lucide-react"
 import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
+  type PaginationState,
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table"
 import * as React from "react"
 
+import {
+  clampDashboardPageIndex,
+  filterScheduleRiskRows,
+  getDashboardPaginationRange,
+  summarizeScheduleRiskRows,
+} from "@/components/data-table-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -23,6 +47,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
+  type ScheduleRiskLevel,
   scheduleRiskLevelLabel,
   type ScheduleRiskRow,
 } from "@/lib/schedule-plans"
@@ -168,19 +193,134 @@ export function ScheduleRiskTable({ risks }: { risks: ScheduleRiskRow[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "risk_level", desc: false },
   ])
+  const [globalFilter, setGlobalFilter] = React.useState("")
+  const [levelFilter, setLevelFilter] =
+    React.useState<ScheduleRiskLevel | "all">("all")
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 5,
+  })
+  const filteredRisks = React.useMemo(
+    () =>
+      filterScheduleRiskRows(risks, {
+        query: globalFilter,
+        level: levelFilter,
+      }),
+    [globalFilter, levelFilter, risks]
+  )
+  const summary = summarizeScheduleRiskRows(filteredRisks)
   // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data: risks,
+    data: filteredRisks,
     columns,
-    state: { sorting },
+    state: {
+      pagination,
+      sorting,
+    },
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
+  const pageCount = Math.max(1, table.getPageCount())
+  const paginationRange = getDashboardPaginationRange({
+    pageIndex: pagination.pageIndex,
+    pageSize: pagination.pageSize,
+    rowCount: filteredRisks.length,
+  })
+  const hasActiveFilters = globalFilter.trim() !== "" || levelFilter !== "all"
+
+  React.useEffect(() => {
+    const clampedPageIndex = clampDashboardPageIndex({
+      pageIndex: pagination.pageIndex,
+      pageSize: pagination.pageSize,
+      rowCount: filteredRisks.length,
+    })
+
+    if (clampedPageIndex !== pagination.pageIndex) {
+      setPagination((current) => ({
+        ...current,
+        pageIndex: clampedPageIndex,
+      }))
+    }
+  }, [filteredRisks.length, pagination.pageIndex, pagination.pageSize])
 
   return (
-    <Table>
+    <div>
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div className="flex min-w-56 flex-1 items-center gap-2 rounded-md border px-2">
+          <Search className="size-4 text-muted-foreground" />
+          <Input
+            value={globalFilter}
+            onChange={(event) => {
+              setGlobalFilter(event.target.value)
+              table.setPageIndex(0)
+            }}
+            placeholder="搜索风险、项目、职场或建议"
+            className="h-8 border-0 px-0 shadow-none focus-visible:ring-0"
+          />
+        </div>
+        <Select
+          value={levelFilter}
+          onValueChange={(value) => {
+            setLevelFilter(value as ScheduleRiskLevel | "all")
+            table.setPageIndex(0)
+          }}
+        >
+          <SelectTrigger size="sm" className="w-28">
+            <SelectValue aria-label="风险等级筛选" />
+          </SelectTrigger>
+          <SelectContent align="end">
+            <SelectItem value="all">全部风险</SelectItem>
+            <SelectItem value="high">高风险</SelectItem>
+            <SelectItem value="medium">需关注</SelectItem>
+            <SelectItem value="low">提醒</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={`${pagination.pageSize}`}
+          onValueChange={(value) => {
+            table.setPageSize(Number(value))
+            table.setPageIndex(0)
+          }}
+        >
+          <SelectTrigger size="sm" className="w-28">
+            <SelectValue aria-label={`${pagination.pageSize} 条/页`} />
+          </SelectTrigger>
+          <SelectContent align="end">
+            {[5, 10, 20].map((pageSize) => (
+              <SelectItem key={pageSize} value={`${pageSize}`}>
+                {pageSize} 条/页
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={!hasActiveFilters}
+          onClick={() => {
+            setGlobalFilter("")
+            setLevelFilter("all")
+            table.setPageIndex(0)
+          }}
+        >
+          <RotateCcw className="size-4" />
+          重置
+        </Button>
+      </div>
+      <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        <Badge variant="outline">筛选后 {summary.total} 条</Badge>
+        <span>高风险 {summary.high}</span>
+        <span>需关注 {summary.medium}</span>
+        <span>提醒 {summary.low}</span>
+        <span>缺口 {summary.totalGap}</span>
+        <span>不可用影响 {summary.affectedUnavailability}</span>
+      </div>
+      <div className="overflow-x-auto">
+        <Table>
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
@@ -207,7 +347,7 @@ export function ScheduleRiskTable({ risks }: { risks: ScheduleRiskRow[] }) {
             ))}
           </TableRow>
         ))}
-        {risks.length === 0 ? (
+        {table.getRowModel().rows.length === 0 ? (
           <TableRow>
             <TableCell
               colSpan={columns.length}
@@ -218,6 +358,52 @@ export function ScheduleRiskTable({ risks }: { risks: ScheduleRiskRow[] }) {
           </TableRow>
         ) : null}
       </TableBody>
-    </Table>
+        </Table>
+      </div>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+        <div>
+          共 {filteredRisks.length} 条，显示 {paginationRange.from}-
+          {paginationRange.to}，当前第 {pagination.pageIndex + 1} / {pageCount} 页
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!table.getCanPreviousPage()}
+            onClick={() => table.setPageIndex(0)}
+          >
+            <ChevronsLeft className="size-4" />
+            首页
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!table.getCanPreviousPage()}
+            onClick={() => table.previousPage()}
+          >
+            <ChevronLeft className="size-4" />
+            上一页
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!table.getCanNextPage()}
+            onClick={() => table.nextPage()}
+          >
+            下一页
+            <ChevronRight className="size-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!table.getCanNextPage()}
+            onClick={() => table.setPageIndex(pageCount - 1)}
+          >
+            末页
+            <ChevronsRight className="size-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
   )
 }

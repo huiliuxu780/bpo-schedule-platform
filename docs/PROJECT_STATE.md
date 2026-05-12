@@ -79,6 +79,7 @@ Current invariants:
 - `H026/US067` changed standard verification to strict state checks by default, with explicit `BPO_STATE_CHECK_MODE=repair-scope` and `BPO_STATE_CHECK_MODE=warning` overrides for repair and diagnostics.
 - `H027/US068` extended state checks to validate `TRACE_INDEX.yaml` current file paths and reduce duplicate registry path output.
 - `H028/US069` fixed the Codex Plan boundary: the Plan panel is only a session projection and must never override Harness current/registry state.
+- `F041-F059/Q014` completed a 20-task local frontend parity block across schedule plans, schedule risks, and unavailability tables, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
@@ -88,7 +89,7 @@ Recommended order after state governance:
 
 1. Seed the next ready story in current state before execution.
 2. Continue frontend/local-contract work only when it avoids database, real integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, and charge factors.
-3. Add table parity only in small display-only slices unless PM confirms a broader component-interaction Gate.
+3. Continue table parity only in small display-only slices unless PM confirms a broader component-interaction Gate.
 
 ## Frontend Direction
 

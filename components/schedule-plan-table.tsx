@@ -2,16 +2,34 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ArrowUpDown } from "lucide-react"
+import {
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Columns3,
+  RotateCcw,
+  Search,
+} from "lucide-react"
 import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
+  type PaginationState,
   type SortingState,
+  type VisibilityState,
   useReactTable,
 } from "@tanstack/react-table"
 
+import {
+  clampDashboardPageIndex,
+  filterSchedulePlanRows,
+  getDashboardPaginationRange,
+  summarizeSchedulePlanRows,
+} from "@/components/data-table-model"
 import {
   formatCoverageRate,
   schedulePlanStatusLabel,
@@ -27,6 +45,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -52,6 +86,18 @@ const statusRank: Record<SchedulePlanStatus, number> = {
   draft: 0,
   review_ready: 1,
   published: 2,
+}
+
+const columnLabels: Record<string, string> = {
+  plan_date: "日期",
+  project_name: "项目",
+  site_name: "职场",
+  status: "状态",
+  gap_agents: "缺口",
+  coverage_rate: "覆盖率",
+  version: "版本",
+  forecast_agents: "预测",
+  scheduled_agents: "已排",
 }
 
 const columns: ColumnDef<SchedulePlanSummary>[] = [
@@ -182,6 +228,7 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
   },
   {
     id: "actions",
+    enableHiding: false,
     header: () => <div className="text-right">操作</div>,
     cell: ({ row }) => (
       <div className="text-right">
@@ -205,16 +252,67 @@ export function SchedulePlanTable({
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "plan_date", desc: false },
   ])
+  const [globalFilter, setGlobalFilter] = React.useState("")
+  const [statusFilter, setStatusFilter] =
+    React.useState<SchedulePlanStatus | "all">("all")
+  const [gapFilter, setGapFilter] =
+    React.useState<"all" | "with_gap" | "covered">("all")
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({})
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 5,
+  })
+  const filteredPlans = React.useMemo(
+    () =>
+      filterSchedulePlanRows(plans, {
+        query: globalFilter,
+        status: statusFilter,
+        gap: gapFilter,
+      }),
+    [gapFilter, globalFilter, plans, statusFilter]
+  )
+  const summary = summarizeSchedulePlanRows(filteredPlans)
   // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data: plans,
+    data: filteredPlans,
     columns,
-    state: { sorting },
+    state: {
+      columnVisibility,
+      pagination,
+      sorting,
+    },
+    onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
+  const pageCount = Math.max(1, table.getPageCount())
+  const paginationRange = getDashboardPaginationRange({
+    pageIndex: pagination.pageIndex,
+    pageSize: pagination.pageSize,
+    rowCount: filteredPlans.length,
+  })
+  const hasActiveFilters =
+    globalFilter.trim() !== "" || statusFilter !== "all" || gapFilter !== "all"
+
+  React.useEffect(() => {
+    const clampedPageIndex = clampDashboardPageIndex({
+      pageIndex: pagination.pageIndex,
+      pageSize: pagination.pageSize,
+      rowCount: filteredPlans.length,
+    })
+
+    if (clampedPageIndex !== pagination.pageIndex) {
+      setPagination((current) => ({
+        ...current,
+        pageIndex: clampedPageIndex,
+      }))
+    }
+  }, [filteredPlans.length, pagination.pageIndex, pagination.pageSize])
 
   return (
     <Card>
@@ -222,52 +320,208 @@ export function SchedulePlanTable({
         <div>
           <CardTitle>排班计划</CardTitle>
           <CardDescription>
-            从 FastAPI 契约读取计划摘要与缺口风险
+            本地筛选计划摘要与缺口风险
             {filterLabel ? ` / 当前筛选：${filterLabel}` : ""}
           </CardDescription>
         </div>
-        <Badge variant="outline">B003 筛选</Badge>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Columns3 className="size-4" />
+              列控制
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-44">
+            <DropdownMenuLabel>显示字段</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {table
+              .getAllLeafColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {columnLabels[column.id] ?? column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <div className="flex min-w-56 flex-1 items-center gap-2 rounded-md border px-2">
+            <Search className="size-4 text-muted-foreground" />
+            <Input
+              value={globalFilter}
+              onChange={(event) => {
+                setGlobalFilter(event.target.value)
+                table.setPageIndex(0)
+              }}
+              placeholder="搜索计划、项目、职场或版本"
+              className="h-8 border-0 px-0 shadow-none focus-visible:ring-0"
+            />
+          </div>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => {
+              setStatusFilter(value as SchedulePlanStatus | "all")
+              table.setPageIndex(0)
+            }}
+          >
+            <SelectTrigger size="sm" className="w-28">
+              <SelectValue aria-label="计划状态筛选" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="all">全部状态</SelectItem>
+              <SelectItem value="draft">草稿</SelectItem>
+              <SelectItem value="review_ready">待复核</SelectItem>
+              <SelectItem value="published">已发布</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={gapFilter}
+            onValueChange={(value) => {
+              setGapFilter(value as "all" | "with_gap" | "covered")
+              table.setPageIndex(0)
+            }}
+          >
+            <SelectTrigger size="sm" className="w-28">
+              <SelectValue aria-label="缺口筛选" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="all">全部缺口</SelectItem>
+              <SelectItem value="with_gap">有缺口</SelectItem>
+              <SelectItem value="covered">已覆盖</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={`${pagination.pageSize}`}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value))
+              table.setPageIndex(0)
+            }}
+          >
+            <SelectTrigger size="sm" className="w-28">
+              <SelectValue aria-label={`${pagination.pageSize} 条/页`} />
+            </SelectTrigger>
+            <SelectContent align="end">
+              {[5, 10, 20].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize} 条/页
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={!hasActiveFilters}
+            onClick={() => {
+              setGlobalFilter("")
+              setStatusFilter("all")
+              setGapFilter("all")
+              table.setPageIndex(0)
+            }}
+          >
+            <RotateCcw className="size-4" />
+            重置
+          </Button>
+        </div>
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <Badge variant="outline">筛选后 {summary.total} 条</Badge>
+          <span>草稿 {summary.draft}</span>
+          <span>待复核 {summary.reviewReady}</span>
+          <span>已发布 {summary.published}</span>
+          <span>缺口 {summary.totalGap}</span>
+          <span>覆盖率 {formatCoverageRate(summary.coverageRate)}</span>
+        </div>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+              {table.getRowModel().rows.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={table.getVisibleLeafColumns().length}
+                    className="h-24 text-center text-sm text-muted-foreground"
+                  >
+                    暂无符合条件的排班计划
                   </TableCell>
-                ))}
-              </TableRow>
-            ))}
-            {plans.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-sm text-muted-foreground"
-                >
-                  暂无符合条件的排班计划
-                </TableCell>
-              </TableRow>
-            ) : null}
-          </TableBody>
-        </Table>
+                </TableRow>
+              ) : null}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+          <div>
+            共 {filteredPlans.length} 条，显示 {paginationRange.from}-
+            {paginationRange.to}，当前第 {pagination.pageIndex + 1} / {pageCount} 页
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!table.getCanPreviousPage()}
+              onClick={() => table.setPageIndex(0)}
+            >
+              <ChevronsLeft className="size-4" />
+              首页
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!table.getCanPreviousPage()}
+              onClick={() => table.previousPage()}
+            >
+              <ChevronLeft className="size-4" />
+              上一页
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!table.getCanNextPage()}
+              onClick={() => table.nextPage()}
+            >
+              下一页
+              <ChevronRight className="size-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!table.getCanNextPage()}
+              onClick={() => table.setPageIndex(pageCount - 1)}
+            >
+              末页
+              <ChevronsRight className="size-4" />
+            </Button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )

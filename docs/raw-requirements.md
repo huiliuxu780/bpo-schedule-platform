@@ -827,3 +827,34 @@ version: "1.0"
 status: "split"
 notes: "本组只做 dashboard 本地展示层增强；不新增依赖、不改后端契约、不接数据库、不做真实同步、审批、导出、批量或生产公式。"
 ```
+
+### R071-R090 - 排班/风险/不可用表格本地 parity 连续增强
+
+```yaml
+requirements:
+  - {id: R071, description: "排班计划表需要本地筛选与统计模型测试。"}
+  - {id: R072, description: "排班计划表需要本地摘要条。"}
+  - {id: R073, description: "排班计划表需要本地查询、状态和缺口筛选。"}
+  - {id: R074, description: "排班计划表需要重置筛选和空结果提示。"}
+  - {id: R075, description: "排班计划表需要本地分页范围与翻页控制。"}
+  - {id: R076, description: "排班计划表需要本地列显示控制。"}
+  - {id: R077, description: "风险提示表需要本地筛选与统计模型测试。"}
+  - {id: R078, description: "风险提示表需要本地摘要条。"}
+  - {id: R079, description: "风险提示表需要风险等级筛选。"}
+  - {id: R080, description: "风险提示表需要本地搜索。"}
+  - {id: R081, description: "风险提示表需要本地分页范围与翻页控制。"}
+  - {id: R082, description: "风险提示表需要重置筛选和空结果提示。"}
+  - {id: R083, description: "不可用表需要本地筛选与统计模型测试。"}
+  - {id: R084, description: "不可用表需要本地摘要条。"}
+  - {id: R085, description: "不可用表需要状态筛选。"}
+  - {id: R086, description: "不可用表需要本地搜索。"}
+  - {id: R087, description: "不可用表需要本地分页范围与翻页控制。"}
+  - {id: R088, description: "不可用表需要重置筛选和空结果提示。"}
+  - {id: R089, description: "不可用表需要本地列显示控制。"}
+  - {id: R090, description: "F041-F059 完成后需要 QA 收口。"}
+source: "PM requested 20-task continuous development on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端表格展示层 parity；不新增依赖、不改后端契约、不接数据库、不做审批、导出、批量、权限或生产公式。"
+```

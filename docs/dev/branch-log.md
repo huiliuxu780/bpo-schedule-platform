@@ -636,3 +636,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
+
+### F041-F059 Table Parity Continuation Block
+
+- branch_name: `codex/f041-dashboard-continuation-2`
+- base_main_commit: `b0beab6`
+- remote_status: `local branch created from prior pushed dashboard continuation branch because main has not yet integrated H022-H028, F030-F031, or F032-F040`
+- scope: 20-task local frontend table parity continuation: schedule plan table filters/summary/pagination/columns, schedule risk filters/summary/pagination, unavailability filters/summary/pagination/columns, QA traceability, and state cleanup.
+- allowed_files_check: `components/**`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `components/schedule-plan-table.tsx`, `components/schedule-risk-table.tsx`, `components/unavailability-table.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- check_result: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 9 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed; local HTTP smoke passed for `/schedule-plans` and `/unavailability` on `http://127.0.0.1:3015`.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`

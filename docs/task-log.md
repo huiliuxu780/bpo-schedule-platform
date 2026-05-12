@@ -765,3 +765,25 @@
 - action: 执行 F032-F040 dashboard 连续开发块 QA 收口。
 - status: `done`
 - notes: 10 个任务均保持 no-database、本地展示层边界；未新增依赖、未改后端契约、未引入真实同步、审批、导出、批量或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-13
+
+- task_id: `F041-F059`
+- source_ids:
+  - `R071-R089`
+- story_ids:
+  - `US083-US101`
+- action: 连续完成排班计划、风险提示、不可用三张表的本地 parity 增强。
+- status: `done`
+- notes: 排班计划表新增本地摘要、查询、状态/缺口筛选、重置、分页和列控制；风险提示表新增摘要、等级筛选、搜索、重置和分页；不可用表新增摘要、状态筛选、搜索、重置、分页和列控制。
+
+### 2026-05-13
+
+- task_id: `Q014`
+- source_ids:
+  - `R090`
+- story_ids:
+  - `US102`
+- action: 执行 F041-F059 20-task table parity QA 收口。
+- status: `done`
+- notes: 模型测试覆盖三张表的本地筛选与统计；未新增依赖、未改后端契约、未接数据库、未引入审批、导出、批量、权限或生产公式；current queue 与 active tasks 已清空。

@@ -1,4 +1,14 @@
 import type { Anomaly } from "@/app/dashboard/data"
+import type {
+  SchedulePlanStatus,
+  SchedulePlanSummary,
+  ScheduleRiskLevel,
+  ScheduleRiskRow,
+} from "@/lib/schedule-plans"
+import type {
+  UnavailabilityRow,
+  UnavailabilityStatus,
+} from "@/lib/unavailability"
 
 export type DashboardAnomalyFilters = {
   query?: string
@@ -23,6 +33,22 @@ export type DashboardHeatmapSummary = {
   severeSlotCount: number
   normalSlotCount: number
   peak: { day: string; slot: string; value: number } | null
+}
+
+export type SchedulePlanTableFilters = {
+  query?: string
+  status?: SchedulePlanStatus | "all"
+  gap?: "all" | "with_gap" | "covered"
+}
+
+export type ScheduleRiskTableFilters = {
+  query?: string
+  level?: ScheduleRiskLevel | "all"
+}
+
+export type UnavailabilityTableFilters = {
+  query?: string
+  status?: UnavailabilityStatus | "all"
 }
 
 export function dashboardAnomalyMatchesQuery(row: Anomaly, query: string) {
@@ -170,5 +196,251 @@ export function summarizeHeatmapRows(
     severeSlotCount,
     normalSlotCount,
     peak,
+  }
+}
+
+export function schedulePlanMatchesQuery(
+  row: SchedulePlanSummary,
+  query: string
+) {
+  const normalized = query.trim().toLowerCase()
+
+  if (!normalized) {
+    return true
+  }
+
+  return [
+    row.id,
+    row.plan_date,
+    row.project_name,
+    row.site_name,
+    row.version,
+    row.status,
+    row.forecast_agents,
+    row.scheduled_agents,
+    row.gap_agents,
+    row.coverage_rate,
+  ]
+    .join(" ")
+    .toLowerCase()
+    .includes(normalized)
+}
+
+export function filterSchedulePlanRows(
+  rows: SchedulePlanSummary[],
+  { query = "", status = "all", gap = "all" }: SchedulePlanTableFilters
+) {
+  return rows.filter((row) => {
+    if (!schedulePlanMatchesQuery(row, query)) {
+      return false
+    }
+
+    if (status !== "all" && row.status !== status) {
+      return false
+    }
+
+    if (gap === "with_gap" && row.gap_agents <= 0) {
+      return false
+    }
+
+    if (gap === "covered" && row.gap_agents > 0) {
+      return false
+    }
+
+    return true
+  })
+}
+
+export function summarizeSchedulePlanRows(rows: SchedulePlanSummary[]) {
+  const summary = rows.reduce(
+    (current, row) => {
+      current.total += 1
+      current.totalForecast += row.forecast_agents
+      current.totalScheduled += row.scheduled_agents
+      current.totalGap += row.gap_agents
+
+      if (row.status === "draft") {
+        current.draft += 1
+      } else if (row.status === "review_ready") {
+        current.reviewReady += 1
+      } else {
+        current.published += 1
+      }
+
+      return current
+    },
+    {
+      total: 0,
+      draft: 0,
+      reviewReady: 0,
+      published: 0,
+      totalForecast: 0,
+      totalScheduled: 0,
+      totalGap: 0,
+      coverageRate: 0,
+    }
+  )
+
+  return {
+    ...summary,
+    coverageRate:
+      summary.totalForecast === 0
+        ? summary.total === 0
+          ? 0
+          : 1
+        : summary.totalScheduled / summary.totalForecast,
+  }
+}
+
+export function scheduleRiskMatchesQuery(row: ScheduleRiskRow, query: string) {
+  const normalized = query.trim().toLowerCase()
+
+  if (!normalized) {
+    return true
+  }
+
+  return [
+    row.risk_id,
+    row.plan_id,
+    row.plan_date,
+    row.project_name,
+    row.site_name,
+    row.interval_start,
+    row.interval_end,
+    row.risk_level,
+    row.gap_agents,
+    row.affected_unavailability,
+    row.reason,
+    row.recommendation,
+  ]
+    .join(" ")
+    .toLowerCase()
+    .includes(normalized)
+}
+
+export function filterScheduleRiskRows(
+  rows: ScheduleRiskRow[],
+  { query = "", level = "all" }: ScheduleRiskTableFilters
+) {
+  return rows.filter((row) => {
+    if (!scheduleRiskMatchesQuery(row, query)) {
+      return false
+    }
+
+    if (level !== "all" && row.risk_level !== level) {
+      return false
+    }
+
+    return true
+  })
+}
+
+export function summarizeScheduleRiskRows(rows: ScheduleRiskRow[]) {
+  return rows.reduce(
+    (summary, row) => {
+      summary.total += 1
+      summary.totalGap += row.gap_agents
+      summary.affectedUnavailability += row.affected_unavailability
+
+      if (row.risk_level === "high") {
+        summary.high += 1
+      } else if (row.risk_level === "medium") {
+        summary.medium += 1
+      } else {
+        summary.low += 1
+      }
+
+      return summary
+    },
+    {
+      total: 0,
+      high: 0,
+      medium: 0,
+      low: 0,
+      totalGap: 0,
+      affectedUnavailability: 0,
+    }
+  )
+}
+
+export function unavailabilityMatchesQuery(
+  row: UnavailabilityRow,
+  query: string
+) {
+  const normalized = query.trim().toLowerCase()
+
+  if (!normalized) {
+    return true
+  }
+
+  return [
+    row.unavailability_id,
+    row.staff_name,
+    row.team_name,
+    row.project_name,
+    row.site_name,
+    row.unavailable_date,
+    row.start_time,
+    row.end_time,
+    row.reason,
+    row.status,
+    row.affected_intervals,
+    row.note,
+  ]
+    .join(" ")
+    .toLowerCase()
+    .includes(normalized)
+}
+
+export function filterUnavailabilityRows(
+  rows: UnavailabilityRow[],
+  { query = "", status = "all" }: UnavailabilityTableFilters
+) {
+  return rows.filter((row) => {
+    if (!unavailabilityMatchesQuery(row, query)) {
+      return false
+    }
+
+    if (status !== "all" && row.status !== status) {
+      return false
+    }
+
+    return true
+  })
+}
+
+export function summarizeUnavailabilityRows(rows: UnavailabilityRow[]) {
+  const summary = rows.reduce(
+    (summary, row) => {
+      summary.total += 1
+      summary.affectedIntervals += row.affected_intervals
+      summary.teamNames.add(row.team_name)
+      summary.siteNames.add(row.site_name)
+
+      if (row.status === "active") {
+        summary.active += 1
+      } else {
+        summary.resolved += 1
+      }
+
+      return summary
+    },
+    {
+      total: 0,
+      active: 0,
+      resolved: 0,
+      affectedIntervals: 0,
+      teamNames: new Set<string>(),
+      siteNames: new Set<string>(),
+    }
+  )
+
+  return {
+    total: summary.total,
+    active: summary.active,
+    resolved: summary.resolved,
+    affectedIntervals: summary.affectedIntervals,
+    teamCount: summary.teamNames.size,
+    siteCount: summary.siteNames.size,
   }
 }
