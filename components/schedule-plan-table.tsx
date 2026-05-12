@@ -3,6 +3,14 @@
 import * as React from "react"
 import Link from "next/link"
 import { ArrowUpDown } from "lucide-react"
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+} from "@tanstack/react-table"
 
 import {
   formatCoverageRate,
@@ -28,26 +36,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-type SortKey = keyof Pick<
-  SchedulePlanSummary,
-  | "id"
-  | "plan_date"
-  | "project_name"
-  | "site_name"
-  | "status"
-  | "gap_agents"
-  | "coverage_rate"
->
-
-const columns: { key: SortKey; label: string; className?: string }[] = [
-  { key: "plan_date", label: "日期" },
-  { key: "project_name", label: "项目" },
-  { key: "site_name", label: "职场" },
-  { key: "status", label: "状态" },
-  { key: "gap_agents", label: "缺口", className: "text-right" },
-  { key: "coverage_rate", label: "覆盖率", className: "text-right" },
-]
-
 function statusVariant(status: SchedulePlanStatus) {
   if (status === "published") {
     return "default" as const
@@ -60,9 +48,150 @@ function statusVariant(status: SchedulePlanStatus) {
   return "outline" as const
 }
 
-function compareValue(row: SchedulePlanSummary, key: SortKey) {
-  return row[key]
+const statusRank: Record<SchedulePlanStatus, number> = {
+  draft: 0,
+  review_ready: 1,
+  published: 2,
 }
+
+const columns: ColumnDef<SchedulePlanSummary>[] = [
+  {
+    accessorKey: "plan_date",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        日期
+        <ArrowUpDown data-icon="inline-end" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap">{row.original.plan_date}</span>
+    ),
+  },
+  {
+    accessorKey: "project_name",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        项目
+        <ArrowUpDown data-icon="inline-end" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span className="font-medium">{row.original.project_name}</span>
+    ),
+  },
+  {
+    accessorKey: "site_name",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        职场
+        <ArrowUpDown data-icon="inline-end" />
+      </Button>
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        状态
+        <ArrowUpDown data-icon="inline-end" />
+      </Button>
+    ),
+    sortingFn: (left, right) =>
+      statusRank[left.original.status] - statusRank[right.original.status],
+    cell: ({ row }) => (
+      <Badge variant={statusVariant(row.original.status)}>
+        {schedulePlanStatusLabel(row.original.status)}
+      </Badge>
+    ),
+  },
+  {
+    accessorKey: "gap_agents",
+    header: ({ column }) => (
+      <div className="flex justify-end">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          缺口
+          <ArrowUpDown data-icon="inline-end" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="text-right tabular-nums">{row.original.gap_agents}</div>
+    ),
+  },
+  {
+    accessorKey: "coverage_rate",
+    header: ({ column }) => (
+      <div className="flex justify-end">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          覆盖率
+          <ArrowUpDown data-icon="inline-end" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="text-right tabular-nums">
+        {formatCoverageRate(row.original.coverage_rate)}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "version",
+    header: "版本",
+  },
+  {
+    accessorKey: "forecast_agents",
+    header: () => <div className="text-right">预测</div>,
+    cell: ({ row }) => (
+      <div className="text-right tabular-nums">
+        {row.original.forecast_agents}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "scheduled_agents",
+    header: () => <div className="text-right">已排</div>,
+    cell: ({ row }) => (
+      <div className="text-right tabular-nums">
+        {row.original.scheduled_agents}
+      </div>
+    ),
+  },
+  {
+    id: "actions",
+    header: () => <div className="text-right">操作</div>,
+    cell: ({ row }) => (
+      <div className="text-right">
+        <Button asChild variant="outline" size="sm">
+          <Link href={`/schedule-plans/${row.original.id}`}>查看</Link>
+        </Button>
+      </div>
+    ),
+  },
+]
 
 export function SchedulePlanTable({
   plans,
@@ -71,37 +200,21 @@ export function SchedulePlanTable({
   plans: SchedulePlanSummary[]
   filterLabel?: string
 }) {
-  const [sortKey, setSortKey] = React.useState<SortKey>("plan_date")
-  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">(
-    "asc"
-  )
+  "use no memo"
 
-  const sortedPlans = React.useMemo(() => {
-    return [...plans].sort((a, b) => {
-      const aValue = compareValue(a, sortKey)
-      const bValue = compareValue(b, sortKey)
-
-      if (aValue < bValue) {
-        return sortDirection === "asc" ? -1 : 1
-      }
-
-      if (aValue > bValue) {
-        return sortDirection === "asc" ? 1 : -1
-      }
-
-      return 0
-    })
-  }, [plans, sortDirection, sortKey])
-
-  function toggleSort(key: SortKey) {
-    if (key === sortKey) {
-      setSortDirection((current) => (current === "asc" ? "desc" : "asc"))
-      return
-    }
-
-    setSortKey(key)
-    setSortDirection("asc")
-  }
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "plan_date", desc: false },
+  ])
+  // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const table = useReactTable({
+    data: plans,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  })
 
   return (
     <Card>
@@ -118,63 +231,35 @@ export function SchedulePlanTable({
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow>
-              {columns.map((column) => (
-                <TableHead key={column.key} className={column.className}>
-                  <button
-                    className="inline-flex items-center gap-1"
-                    onClick={() => toggleSort(column.key)}
-                  >
-                    {column.label}
-                    <ArrowUpDown className="size-3" />
-                  </button>
-                </TableHead>
-              ))}
-              <TableHead>版本</TableHead>
-              <TableHead className="text-right">预测</TableHead>
-              <TableHead className="text-right">已排</TableHead>
-              <TableHead className="w-24 text-right">操作</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedPlans.map((plan) => (
-              <TableRow key={plan.id}>
-                <TableCell className="whitespace-nowrap">
-                  {plan.plan_date}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {plan.project_name}
-                </TableCell>
-                <TableCell>{plan.site_name}</TableCell>
-                <TableCell>
-                  <Badge variant={statusVariant(plan.status)}>
-                    {schedulePlanStatusLabel(plan.status)}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {plan.gap_agents}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {formatCoverageRate(plan.coverage_rate)}
-                </TableCell>
-                <TableCell>{plan.version}</TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {plan.forecast_agents}
-                </TableCell>
-                <TableCell className="text-right tabular-nums">
-                  {plan.scheduled_agents}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`/schedule-plans/${plan.id}`}>查看</Link>
-                  </Button>
-                </TableCell>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
-            {sortedPlans.length === 0 ? (
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+            {plans.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={10}
+                  colSpan={columns.length}
                   className="h-24 text-center text-sm text-muted-foreground"
                 >
                   暂无符合条件的排班计划

@@ -367,3 +367,68 @@ version: "1.0"
 status: "split"
 notes: "本需求只固化 Python 开发版本、验证脚本和文档说明；不新增依赖，不修改业务代码、后端契约、数据库、认证、权限、审批、导出、批量能力或生产口径。"
 ```
+
+### R028 - 标准化分支与验证工作流
+
+```yaml
+id: R028
+module: "Harness"
+description: "PM 要求将取任务、分支/worktree、开发、验证、提交、集成、push 确认、异常处理和审计证据补齐为标准化工作流，同时避免 AGENTS.md 继续膨胀。"
+source: "PM workflow governance confirmation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只做 Harness 文档和审计模板治理；不修改业务代码，不新增依赖，不修改 package/lockfile，不接入真实数据、数据库、认证、权限、审批、导出、批量操作或生产公式。"
+```
+
+### R029 - No Database MVP Mode
+
+```yaml
+id: R029
+module: "MVP 范围"
+description: "PM 明确要求在功能开发完毕前先不要接数据库，因为当前没有数据库环境；MVP 阶段必须继续使用本地接口、种子数据、进程内存和前端 fallback 完成业务链路验证。"
+source: "PM instruction 2026-05-12"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求固化 no-database 边界：不创建数据库连接、ORM、migration、schema、持久化配置或真实数据接入；后续任何数据库相关工作必须另开 Gate 并等待 PM 明确确认。"
+```
+
+### R030 - 本地 MVP 功能闭环入口
+
+```yaml
+id: R030
+module: "计划与排班"
+description: "PM 要求先回到业务开发主线，在不接数据库的前提下完成本地 MVP 功能闭环，让风险明细、不可用影响、班次明细和需求计划形成可导航链路。"
+source: "PM instruction 2026-05-12"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只允许前端展示层和导航闭环，不新增后端接口、不新增依赖、不接数据库、不做真实数据、审批、导出、批量调班或生产公式。"
+```
+
+### R031 - 排班计划主表 table parity 局部迁移
+
+```yaml
+id: R031
+module: "前端设计"
+description: "在风险提示表已完成 TanStack Table 局部迁移后，继续选择排班计划主表做局部 table parity 展示迁移。"
+source: "PM instruction 2026-05-12"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只迁移展示层排序和列渲染，不启用批量选择、拖拽、导出、审批、批量调班、生产状态码或结算口径。"
+```
+
+### R032 - 本地 MVP 验收审计
+
+```yaml
+id: R032
+module: "质量与交付"
+description: "完成 no-database 边界、本地 MVP 功能闭环和 table parity 局部迁移后，做一轮 MVP 验收审计，明确当前通过项、剩余项和暂不建议项。"
+source: "PM instruction 2026-05-12"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只做验收审计和验证记录；不新增业务能力、不接数据库、不修改依赖或 package/lockfile。"
+```

@@ -43,68 +43,96 @@ Before every non-trivial task, Codex must read:
 
 If the user gives only a task ID, Codex must find the task in `tasks/backlog.yaml` before acting.
 
-## Execution Flow
+## Standard Workflow
+
+Detailed branch, worktree, integration, exception, and audit runbook: `docs/quality/GIT_BRANCH_WORKFLOW.md`.
+
+### Rule Priority
+
+1. `AGENTS.md` current execution rules.
+2. Per-task `allowed_files`, `forbidden_files`, and `stop_conditions` in `tasks/backlog.yaml`.
+3. Workflow gates in `docs/quality/GATE_REGISTRY.md`.
+4. When rules conflict, the more specific task-level rule wins over the generic workflow rule.
+
+### Execution Flow
 
 Every non-trivial task must follow this order:
 
-1. Read rules and task context.
+1. Read the Harness entry files and task context.
 2. Output a Chinese Gate Plan.
-3. Stop for PM confirmation whenever the task requires confirmation.
-4. Only modify files allowed by the confirmed scope.
-5. Run `bash scripts/check.sh`.
-6. Update `docs/dev/branch-log.md`.
-7. Output a Chinese Done Report.
-8. After `bash scripts/check.sh` passes, commit the verified completed scope to the local Git repository without another confirmation pause.
-9. At stage, module block, or coherent feature-set completion, ask PM whether to push to the remote repository.
+3. Stop for PM confirmation when the task requires confirmation or triggers a hard stop condition.
+4. Work on a task branch, never directly on `main`.
+5. Modify only confirmed in-scope files.
+6. Run `bash scripts/check.sh`.
+7. Update traceability logs and audit evidence.
+8. Run final verification after log/audit updates.
+9. Commit the verified completed scope locally.
+10. Output a Chinese Done Report.
+11. At stage, module block, or coherent feature-set completion, ask PM whether to push.
 
-## Verified Task Commit Policy
+### Branch And Worktree Rules
 
-PM confirmed on 2026-05-12 that this project should auto-commit completed verified work.
+- Direct development on `main` is forbidden.
+- Default task branch: `codex/<task-id>-<short-name>`.
+- Before creating a task branch, sync `main` from `origin/main` with fast-forward only and record `base_main_commit`.
+- A single module block may continue multiple ready stories on one branch when scope, risk, and allowed files stay consistent.
+- Cross-module work, high-risk work, dependency/package changes, real integrations, database, auth, permissions, approval, export, batch operations, production status/formula/settlement/charge-factor changes, or clearly different allowed files require a new branch and Gate.
+- Use `git worktree` only for 2+ independent ready tasks with non-overlapping write scopes and independent verification paths.
+- If the workspace is dirty and the current task cannot be safely separated, mark the task blocked and do not commit a done state.
 
-Default rule:
+### Verified Commit And Push Policy
 
-- Every completed task that passes `bash scripts/check.sh` must be committed to the local Git repository.
+PM confirmed on 2026-05-12 that completed verified work should be committed locally.
+
+- Every completed task that passes final `bash scripts/check.sh` must be committed to the local Git repository.
 - Commit messages must be clear English.
-- Stage, module block, or coherent feature-set completion must ask PM whether to push; do not push without explicit PM confirmation.
 - Commits must include only the intended files for the current task scope.
+- Remote push is never automatic. Ask PM before pushing after a stage, module block, or coherent feature set is complete.
 
 Do not auto-commit when:
 
-- `bash scripts/check.sh` fails.
-- The Git status contains unrelated changes that cannot be safely separated from the current scope.
-- The task scope is ambiguous or has expanded beyond the Gate Plan.
-- The task requires new dependencies, package or lockfile changes, real external data, database persistence, authentication, permissions, approval, export, batch operations, production status codes, formulas, settlement rules, charge factors, or destructive Git/file operations without PM confirmation.
+- final `bash scripts/check.sh` fails
+- unrelated changes cannot be safely separated
+- scope is ambiguous or expanded beyond the Gate Plan
+- hard stop conditions require PM confirmation
+- local commit fails
 
-## Continuous Delivery Mode
+### Stop Conditions
 
-When the PM explicitly asks for continuous execution, such as "别一直停下", "通过就继续下一步", "一口气做完", or "做完测完验证完提交完", Codex should use Continuous Delivery Mode for the current development chain.
-
-In Continuous Delivery Mode, Codex should:
-
-1. Continue to the next already-scoped logical task after a green gate.
-2. Run the required verification before reporting completion.
-3. Commit the completed, verified scope without asking again.
-4. Use a clear English commit message.
-5. Ask PM before pushing any completed stage, module block, or coherent feature set.
-6. Continue to respect all stop conditions and forbidden scopes.
-
-Continuous Delivery Mode does not bypass PM confirmation for new risky scope. Codex must still stop when the next step requires:
+Hard stop conditions require PM confirmation:
 
 - new dependencies
 - package or lockfile changes
 - real external data sources or integrations
 - database persistence
+- database connection setup, ORM, migration, schema design, or production persistence configuration
 - authentication or permission boundaries
 - approval, export, or batch-operation capabilities
 - production status codes, formulas, settlement rules, or charge factors
-- ambiguous destructive Git operations
-- failed verification
+- destructive or ambiguous Git/file operations
+- failed final verification
+
+Soft ambiguity such as minor UI copy or local acceptance wording can be resolved with explicit assumptions inside the current story when it does not change scope or risk.
+
+## Story Runner Mode
+
+Story Runner Mode is the default execution model for confirmed product-development chains when PM asks to "开始", "继续", "自动走完", "按用户故事开发", "挨个开发完测试完提交完", or equivalent continuous delivery.
+
+Story Runner must:
+
+- treat user stories as the primary execution unit
+- execute only from ready backlog/user-story queue entries
+- convert new goals into raw requirements and the smallest useful user stories before implementation
+- run implementation, final verification, traceability updates, local commit, and Done Report for each completed scope
+- continue to the next ready story after a green gate unless a stop condition is reached
+- keep small UI feedback and acceptance corrections inside the current story when they do not expand scope
+- avoid guessing the next task when the ready queue is empty
+
+Bounded subagents may be used in Story Runner Mode only for independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, diff review, final verification, traceability, commits, and Done Report. Outside Story Runner Mode, subagents require explicit PM/user permission and a confirmed Gate.
 
 ## Stage Completion Planning
 
-When Codex completes a stage, module block, or coherent feature set, the final Done Report must include a forward plan for the PM.
-
-The forward plan must use this Chinese structure:
+When Codex completes a stage, module block, or coherent feature set, the final Done Report must include this Chinese forward plan:
 
 1. 本阶段完成了什么
 2. 验证是否通过
@@ -114,37 +142,7 @@ The forward plan must use this Chinese structure:
 6. 哪些事情暂时不建议做
 7. 如果 PM 不反对，默认从推荐第 1 项继续开发
 
-Recommendations should be based on dependency order, business value, implementation risk, and the project's current stop conditions. Codex must call out risky items such as dependencies, database persistence, authentication, real integrations, approval, export, batch operations, production status codes, formulas, settlement rules, and charge factors instead of silently recommending them.
-
-After stage, module block, or coherent feature-set completion, Codex must also ask PM whether to push the locally committed work to the remote repository.
-
-## Story Runner Mode
-
-When the PM asks to "开始", "继续", "自动走完", "按用户故事开发", "挨个开发完测试完提交完", or otherwise clearly requests continuous delivery from a goal, Codex must use Story Runner Mode.
-
-Story Runner Mode is the default execution model for confirmed product development chains.
-
-In Story Runner Mode, Codex must:
-
-1. Treat the user story as the primary execution unit.
-2. Convert the goal into raw requirements and the smallest useful user stories before implementation.
-3. Build a Story Execution Queue ordered by dependency and priority.
-4. Execute each ready story through implementation, verification, documentation update, and local commit after `bash scripts/check.sh` passes.
-5. Continue to the next ready story after a green gate without asking again.
-6. Keep UI feedback, small visual fixes, and acceptance corrections inside the current story instead of creating a new backlog task for every small adjustment.
-7. Update `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml` so story state remains the source of truth.
-
-Story Runner Mode authorizes Codex to use bounded subagents by default when the work can be split into independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, integration, final verification, commits, and Done Report.
-
-Codex should only pause in Story Runner Mode when:
-
-- the next story is blocked by PM/product ambiguity
-- the next step needs new dependencies, package or lockfile changes
-- the next step needs real external data, database persistence, authentication, permissions, approval, export, batch operation, or production workflow capability
-- the next step changes production status codes, formulas, settlement rules, or charge factors
-- subagent write scopes would overlap or conflict
-- verification fails
-- the requested action is destructive or ambiguous
+Recommendations must reflect dependency order, business value, implementation risk, and the current stop conditions. Push remains PM-controlled.
 
 ## Default Scope Constraints
 
@@ -153,6 +151,7 @@ Unless the current user instruction explicitly allows it, Codex must not:
 - develop business features
 - create frontend pages
 - create backend services or databases
+- create database connections, ORM models, migrations, schema files, or production persistence config
 - connect real APIs
 - add mock business data
 - install dependencies
@@ -177,81 +176,18 @@ Outside confirmed tasks such as F001, any future product work must first enter t
 
 ## Lightweight Harness Workflow
 
-This project uses a documentation-first Lightweight Harness during the frontend dashboard scaffold stage.
+This project uses a documentation-first Lightweight Harness. Detailed workflow and prompt contracts live in:
 
-The required flow for new product or module requests is:
+- `docs/harness/lightweight-harness.md`
+- `docs/raw-requirements.md`
+- `docs/user-stories.md`
+- `docs/prompts/`
+
+Required flow:
 
 ```txt
-raw requirement -> user story -> DAG / dependency check -> Gate Plan -> PM confirmation when required -> scoped execution -> check -> Done Report -> audit
+raw requirement -> user story -> DAG / dependency check -> Gate Plan -> branch -> scoped execution -> final check -> traceability/audit -> local commit -> Done Report -> PM push decision when applicable
 ```
-
-### Raw Requirements
-
-New module requests and PM-provided requirement points must first be recorded in `docs/raw-requirements.md`.
-
-Each raw requirement should include:
-
-- stable ID, such as `R001`
-- module
-- original description
-- source
-- submitted date
-- version
-- status
-- notes
-
-Do not convert a raw requirement directly into implementation before user-story splitting and Gate review.
-
-### User Stories
-
-Raw requirements should be split into user stories in `docs/user-stories.md`.
-
-Each user story should include:
-
-- stable ID, such as `US001`
-- linked raw requirement IDs
-- module
-- user role
-- story description
-- task type
-- priority
-- acceptance criteria
-- dependencies
-- status
-
-Every user story must trace back to at least one raw requirement.
-
-### DAG And Dependency Rules
-
-The Harness must check dependencies before implementation planning.
-
-Block and record the task when:
-
-- business formulas are not confirmed
-- status codes are not confirmed
-- permission boundaries are not confirmed
-- export, approval, or batch-operation rules are not confirmed
-- real data sources or integrations are not confirmed
-- user-story dependencies form a cycle
-
-DAG tracking is documentation-based unless a future confirmed task introduces scripts or dependencies.
-
-### Subagent Prompt Templates
-
-Subagent prompt templates live under `docs/prompts/`.
-
-The templates cover:
-
-- PM Agent
-- UI/UX Agent
-- Frontend Agent
-- Backend Agent
-- QA Agent
-- Doc Agent
-
-These templates do not authorize automatic multi-agent execution by themselves. In Story Runner Mode, bounded subagents may be used under the Story Runner rules above. Outside Story Runner Mode, subagents may only be used when the task is clearly split, write scopes do not conflict, and PM/user confirmation allows that execution mode.
-
-### Logs And Audit
 
 Task progress and decisions must be traceable through:
 
@@ -260,201 +196,21 @@ Task progress and decisions must be traceable through:
 - `docs/audit-report.md`
 - `docs/dev/branch-log.md`
 
-## Product And Frontend Identity
+## Product And Frontend Rules
 
 This project is a BPO Workforce Management / BPO 人力计划与履约管理平台.
 
-Future frontend work must be built as a professional B2B SaaS admin console.
+Future frontend work must follow `docs/quality/FRONTEND_RULES.md`. Summary:
 
-Core business concepts include:
+- build a professional shadcn/ui-based B2B SaaS admin console
+- use official shadcn dashboard examples, dashboard-01, New York style, and dark/light theme behavior as the baseline
+- do not hand-roll UI when a shadcn/ui component exists
+- use semantic theme tokens instead of custom color systems
+- keep dark/light mode mandatory
+- use a professional two-level sidebar with first-level icons and text-first secondary items
+- keep dashboard pages split into established components such as `AppSidebar`, `SiteHeader`, `SectionCards`, chart/table components, and supporting panels
 
-- 博西预测需求
-- BPO 排班计划
-- CORN 坐席状态变更日志
-- 0.5h 时段标准化
-- 排班实现率
-- 排班拟合度
-- 排班遵守率
-- 异常工时
-- 可结算工时
-
-## Frontend Design And Development Rules
-
-These rules are mandatory for future frontend tasks, but they do not authorize new frontend implementation outside a confirmed Gate. Any frontend page, dependency, package change, mock data, or business implementation still requires an explicit backlog task and PM confirmation when required by the gate.
-
-### Frontend Golden Rule
-
-All frontend UI development must strictly follow shadcn/ui conventions.
-
-Do not invent a custom design system unless explicitly requested.
-
-Use shadcn/ui as the primary source of truth for:
-
-- layout
-- sidebar
-- header
-- cards
-- tables
-- tabs
-- dropdowns
-- buttons
-- forms
-- dialogs
-- sheets
-- badges
-- charts
-- theme tokens
-- dark / light mode
-
-This project should look and behave like a professional shadcn-based SaaS admin platform, not a flashy dashboard or generic CRUD backend.
-
-### Required UI Baseline
-
-For dashboard and admin pages, use the official shadcn dashboard examples as the implementation baseline.
-
-Primary references:
-
-- shadcn/ui v4 Examples Dashboard
-- shadcn dashboard-01 block
-- shadcn New York style
-- shadcn dark / light theme system
-
-The goal is not to loosely "take inspiration". The goal is to preserve the official shadcn layout, spacing, hierarchy, component rhythm, and theme behavior, then replace the content with BPO WFM business data.
-
-### Do Not Hand-Roll UI
-
-Do not create one-off custom UI components when a shadcn/ui component exists.
-
-Prefer existing shadcn/ui components:
-
-- Button
-- Card
-- Badge
-- Table
-- Tabs
-- DropdownMenu
-- Select
-- Dialog
-- Sheet
-- Sidebar
-- Separator
-- Tooltip
-- Input
-- Command
-- Chart components if already available
-
-Avoid:
-
-- hand-written button styles
-- custom table implementations
-- custom dropdowns
-- random CSS-only widgets
-- giant single-file dashboard components
-- large inline style objects
-- hardcoded visual patterns that bypass the design system
-
-### Use shadcn Theme Tokens
-
-Do not hardcode large amounts of colors.
-
-Use shadcn / Tailwind semantic tokens:
-
-- `bg-background`
-- `text-foreground`
-- `bg-card`
-- `text-card-foreground`
-- `text-muted-foreground`
-- `border-border`
-- `bg-muted`
-- `bg-primary`
-- `text-primary-foreground`
-- `bg-destructive`
-- `text-destructive-foreground`
-
-Avoid excessive use of:
-
-- `bg-[#xxxxxx]`
-- `text-[#xxxxxx]`
-- arbitrary gradients
-- one-off color systems
-- large custom palettes
-
-Only use specific colors for business status where necessary:
-
-- success
-- warning
-- destructive
-- info
-
-### Dark / Light Mode Is Mandatory
-
-All frontend pages must support both dark and light themes.
-
-Use the existing shadcn / next-themes setup if available. If theme support is missing, add `next-themes`, `ThemeProvider`, and `ThemeToggle` only inside a confirmed frontend task that allows dependency and package changes.
-
-Do not build pages that only look correct in one theme.
-
-Every component must be checked in:
-
-- light mode
-- dark mode
-
-### Sidebar Rules
-
-The app must use a professional two-level sidebar.
-
-Primary navigation:
-
-- 运营工作台
-- 计划与排班
-- 履约监控
-- 结算复盘
-- 数据与集成
-- 系统管理
-
-Primary navigation must have icons.
-
-Secondary navigation should not use icons by default. Keep second-level items text-first with optional badge or tag states, unless a later confirmed frontend Gate explicitly restores secondary icons.
-
-Every sidebar item must align by fixed columns:
-
-- icon column
-- label column
-- badge / tag column
-- chevron / action column if needed
-
-Do not use emoji icons.
-
-Use `lucide-react` icons or the project's existing icon system for places where icons are required.
-
-Current active item must have a clear selected state.
-
-### Dashboard Structure
-
-Dashboard pages should follow the shadcn dashboard layout pattern:
-
-- `AppSidebar`
-- `SiteHeader`
-- `SectionCards`
-- `ChartAreaInteractive`
-- `DataTable`
-- optional supporting panels
-
-Do not implement dashboards as a single giant file.
-
-Expected component structure:
-
-```txt
-components/
-  app-sidebar.tsx
-  site-header.tsx
-  section-cards.tsx
-  chart-area-interactive.tsx
-  data-table.tsx
-  bpo-heatmap.tsx
-  data-sync-status.tsx
-  theme-toggle.tsx
-```
+These frontend rules do not authorize new frontend implementation outside a confirmed Gate.
 
 ## Archive Boundary
 

@@ -316,6 +316,39 @@
 - Added sortable risk level, date, gap, and unavailable-impact columns while preserving existing fields and detail/shift actions.
 - Kept this as display-only table parity: no dependency change, batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code change, settlement rule, or charge factor was added.
 
+### H017 Standard Branch Workflow
+
+- branch_name: `codex/H017-standard-workflow`
+- base_main_commit: `1b8adb4c75ff670cebebb6d9420f0f9b54d4194b`
+- remote_status: `origin/main available; main fast-forward synced before branch creation`
+- scope: Harness workflow and frontend-rule documentation only; no business code, dependency, package, lockfile, backend, or frontend implementation changes.
+- allowed_files_check: `AGENTS.md`, `docs/**`, and `tasks/backlog.yaml` only.
+- scope_diff_check: `AGENTS.md`, `docs/**`, and `tasks/backlog.yaml` only; no app/backend/package/lockfile files.
+- check_result: `git diff --check` passed; `bash scripts/check.sh` passed with frontend lint, typecheck, Next build, and 19 backend unittest cases.
+- local_commit_sha: `07fc4e09a961adaebf8384682855069389d76f4f`
+- integration_status: `integrated`
+- integration_method: `merge into main`
+- integration_commit_sha: to be reported in Done Report after final integration commit creation.
+- push_decision: `approved by PM after integration plan`
+
+### H018/F019/F020/Q003 No Database MVP Completion Block
+
+- branch_name: `codex/mvp-no-db-completion`
+- base_main_commit: `1b8adb4c75ff670cebebb6d9420f0f9b54d4194b`
+- upstream_governance_commit: `07fc4e09a961adaebf8384682855069389d76f4f`
+- remote_status: `origin/main available; git fetch origin passed before branch work`
+- scope: No Database MVP Mode governance, local MVP flow entry, schedule-plan table parity slice, and MVP acceptance audit.
+- allowed_files_check: `AGENTS.md`, `app/**`, `components/**`, `docs/**`, and `tasks/backlog.yaml`; no backend or package/lockfile files.
+- scope_diff_check: `AGENTS.md`, `app/schedule-plans/page.tsx`, `components/mvp-flow-summary.tsx`, `components/schedule-plan-table.tsx`, `docs/**`, and `tasks/backlog.yaml`; no backend or package/lockfile files.
+- check_result: `git diff --check` passed; `bash scripts/check.sh` passed once before final evidence update; final check to be reported in Done Report.
+- local_commit_sha: `f59f821b8e744a015603280879ca45e3116e08dd`
+- integration_status: `integrated`
+- integration_method: `merge into main`
+- integration_commit_sha: to be reported in Done Report after final integration commit creation.
+- merge_to_main_commit: to be reported in Done Report after final integration commit creation.
+- push_decision: `approved by PM after integration plan`
+- blocked_reason: `N/A`
+
 ### H019 Dev Native Runtime Hardening
 
 - Added `scripts/verify-frontend-native-runtime.mjs` to preflight the Node.js major version plus `lightningcss-darwin-arm64` and `@next/swc-darwin-arm64` native addon loading before starting the frontend.

@@ -391,3 +391,58 @@
 - action: 固化 Python 3.12 开发运行时。
 - status: `done`
 - notes: 已新增 `.python-version` 和 `scripts/verify-backend-runtime.sh`，backend dev/check 入口现在只接受 Python 3.12；回归测试已覆盖支持运行时成功与系统 Python 3.9 失败可识别场景，`bash scripts/check.sh` 已通过。
+
+### 2026-05-12
+
+- task_id: `H017`
+- source_ids:
+  - `R028`
+- story_ids:
+  - `US041`
+- action: 标准化任务分支、worktree、验证、提交、集成和 push 确认工作流。
+- status: `done`
+- notes: 已将 `AGENTS.md` 压缩为短版强制入口，新增 `docs/quality/GIT_BRANCH_WORKFLOW.md` 作为命令级 runbook，新增 `docs/quality/FRONTEND_RULES.md` 承接详细前端规则，并补充 Gate Registry、Done Report Template、Project State、Decision Log、Audit Report 和 Branch Log 的证据规则；不修改业务代码、依赖、package 或 lockfile。
+
+### 2026-05-12
+
+- task_id: `H018`
+- source_ids:
+  - `R029`
+- story_ids:
+  - `US042`
+- action: 固化 No Database MVP Mode。
+- status: `done`
+- notes: 已明确功能完备前不接数据库；数据库连接、ORM、migration、schema 实现和生产持久化配置均为 hard stop。继续允许本地 FastAPI seed/process-memory 数据和前端 fallback 契约验证。
+
+### 2026-05-12
+
+- task_id: `F019`
+- source_ids:
+  - `R030`
+- story_ids:
+  - `US043`
+- action: 增加本地 MVP 功能闭环入口。
+- status: `done`
+- notes: `/schedule-plans` 新增 No Database MVP 链路面板，连通需求计划、排班计划、风险明细、不可用管理和班次明细；未新增后端接口、mock 数据、依赖、package 或 lockfile。
+
+### 2026-05-12
+
+- task_id: `F020`
+- source_ids:
+  - `R031`
+- story_ids:
+  - `US044`
+- action: 迁移排班计划主表到 TanStack Table 局部 parity。
+- status: `done`
+- notes: `SchedulePlanTable` 由 TanStack Table 管理列、行模型和排序；保留原字段与查看动作，不启用批量、拖拽、审批、导出、批量调班或生产动作。
+
+### 2026-05-12
+
+- task_id: `Q003`
+- source_ids:
+  - `R032`
+- story_ids:
+  - `US045`
+- action: 完成本地 MVP no-database 验收审计。
+- status: `done`
+- notes: 审计记录 no-database 边界、本地 MVP 链路入口、计划表 table parity 和最终验证结果；数据库、真实集成、权限、审批、导出、批量和生产口径继续 deferred。

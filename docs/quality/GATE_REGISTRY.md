@@ -12,6 +12,8 @@ Checks:
 - Does the task require PM confirmation?
 - Does the task touch business code, package files, dependencies, real APIs, backend, database, metrics, status codes, settlement formulas, or archive material?
 - Is acceptance verifiable?
+- Will the task run on a task branch instead of `main`?
+- Are branch, scope diff, check, commit, integration, and push evidence fields known for the Done Report?
 - Will `bash scripts/check.sh` be run before Done Report?
 
 Stop conditions:
@@ -20,9 +22,18 @@ Stop conditions:
 - Scope expands beyond the Gate Plan.
 - The task needs dependencies, package or lockfile changes.
 - The task needs real API, backend, database, or production capability.
+- The task needs database connection setup, ORM, migrations, schema implementation, or production persistence configuration.
 - The task changes business metrics, status codes, settlement formulas, or charge factors.
 - The task imports from a lab/archive/reference source.
 - `bash scripts/check.sh` fails.
+
+Branch and verification rules:
+
+- Direct development on `main` is forbidden.
+- Each task must follow `docs/quality/GIT_BRANCH_WORKFLOW.md` unless a stricter task-level Gate overrides it.
+- Final completion requires `bash scripts/check.sh` after traceability updates, not only an intermediate check.
+- Local commit must include only files allowed by the current task scope.
+- Remote push requires PM confirmation.
 
 ## Workflow Gate Matrix
 
@@ -38,6 +49,28 @@ Backlog `required_workflow` values must map to one of the gates below. If a task
 | `backend-vertical` | Backend Local MVP Gate | Backend portion of a confirmed vertical slice using local data and tests | Same as `backend` |
 | `qa` | QA Acceptance Gate | Acceptance review, verification evidence, audit/report updates | Product behavior changes, implementation edits outside acceptance corrections, dependency/package changes |
 
+## No Database MVP Mode
+
+PM confirmed on 2026-05-12 that database work should stay out of scope until the local MVP feature chain is developed and verified.
+
+Allowed without a database Gate:
+
+- local FastAPI seed data or process-memory state
+- frontend fallback data that matches existing local contracts
+- frontend-only navigation, drilldown, table parity, and acceptance audit work
+- documentation that records database work as deferred
+
+Hard stop until PM confirms a later database Gate:
+
+- database connection setup
+- ORM models, repositories, or adapters
+- migration files
+- schema implementation
+- production persistence configuration
+- real external data-source integration
+
+This rule applies to `frontend-scaffold`, `backend`, `backend-mvp`, `backend-vertical`, and `qa` tasks. A task may mention future database needs in documentation, but it must not implement database persistence or prepare production persistence files unless a specific PM-confirmed database task allows it.
+
 ## Harness Documentation Gate
 
 Use this gate for `required_workflow: harness` tasks after the project has moved beyond the initial clean Harness stage.
@@ -45,6 +78,7 @@ Use this gate for `required_workflow: harness` tasks after the project has moved
 Allowed:
 
 - Update Harness rules and workflow documentation.
+- Update branch/worktree/integration workflow documentation.
 - Update backlog, raw requirements, user stories, task log, decision log, audit report, branch log, and project state.
 - Update check scripts only when the task explicitly concerns verification mechanics.
 
@@ -60,6 +94,15 @@ Required verification:
 
 - `git diff --check`
 - `bash scripts/check.sh`
+
+Required Git evidence:
+
+- `base_main_commit`
+- `branch_name`
+- `scope_diff_check`
+- `check_result`
+- `local_commit_sha` when final check passes and local commit succeeds
+- `push_decision` for stage/module/coherent feature-set completion
 
 ## Frontend Scaffold Gate
 

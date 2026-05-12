@@ -103,6 +103,20 @@
 - 影响：后续新增 workflow 名称时，必须在同一任务内补充 Gate Registry；Story Runner 选择下一条任务时也要先确认该 workflow 有 Gate 锚点。
 - 限制：Gate 映射只定义执行约束，不授权新增业务代码、依赖、真实数据、数据库、认证、权限、审批、导出、批量、生产状态码、公式、结算规则或收费因子。
 
+### 2026-05-12 - D015 - AGENTS 保持短入口，Git 工作流迁入 runbook
+
+- 决策：`AGENTS.md` 只保留规则优先级、入口、分支红线、stop condition、Story Runner、push 控制和前端规则摘要等强制原则；命令级分支/worktree/集成/异常处理迁入 `docs/quality/GIT_BRANCH_WORKFLOW.md`，详细前端规则迁入 `docs/quality/FRONTEND_RULES.md`。
+- 原因：`AGENTS.md` 已经接近操作手册体量，继续追加会增加规则重复和执行歧义；拆分后主入口更容易被每次任务读取和遵守。
+- 影响：后续任务必须从 fast-forward 同步后的 `main` 创建任务分支，最终 check 后更新 traceability，再本地 commit；阶段/模块块完成后才进入集成和 PM push 决策。
+- 限制：该决策只改变 Harness 执行流程和审计证据，不授权业务实现、依赖/package/lockfile、真实数据、数据库、认证、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-12 - D016 - MVP 功能完备前保持 No Database Mode
+
+- 决策：在当前没有数据库环境的情况下，本地 MVP 功能开发继续保持 No Database Mode，不创建数据库连接、ORM、migration、schema 实现或生产持久化配置。
+- 原因：PM 明确希望在功能开发完毕前先不要接数据库，避免因环境缺失拖慢风险明细、不可用影响和 table parity 等主线交付。
+- 影响：后续业务链路继续使用本地 FastAPI seed/process-memory 数据和前端 fallback 契约验证；任何数据库相关实现都必须另开 PM-confirmed Gate。
+- 限制：该决策不禁止本地 MVP 业务页面、导航、只读/草稿链路和展示层迁移；但禁止真实数据接入、数据库持久化、认证、权限、审批、导出、批量、生产状态码/公式/结算/收费因子。
+
 ### 2026-05-12 - D017 - 开发服务器入口必须先过原生运行时预检
 
 - 决策：`npm run dev` 与 `scripts/dev.sh` 必须通过受控 Node.js 22 入口启动，并在启动 Next.js 前显式预检 `lightningcss` 与 `@next/swc-darwin-arm64` 原生包加载。

@@ -1596,6 +1596,53 @@ tasks:
       - "需要修改业务指标、生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: H017
+    title: "标准化分支 Worktree 验证与集成工作流"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/quality/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/decision-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AGENTS.md 保留短版强制原则和红线，不继续堆叠命令级 runbook。"
+      - "新增 docs/quality/GIT_BRANCH_WORKFLOW.md，记录任务分支、worktree、验证、提交、集成、push 和异常处理流程。"
+      - "新增 docs/quality/FRONTEND_RULES.md 承接详细前端规则，避免 AGENTS.md 继续膨胀。"
+      - "GATE_REGISTRY.md 补充分支、scope diff、最终验证和本地提交证据要求。"
+      - "DONE_REPORT_TEMPLATE.md 增加分支、提交、集成和 push 决策审计字段。"
+      - "任务日志、决策日志、审计报告和 branch-log 记录 H017 执行证据。"
+      - "不修改业务实现、不修改 package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改业务代码"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、后端或数据库"
+      - "需要修改业务指标、生产状态码、结算公式或收费因子"
+      - "当前分支或 main 无法安全同步或切换"
+      - "验证失败"
+    commit_after_done: true
   - id: F016
     title: "风险明细钻取入口"
     priority: P0
@@ -1700,6 +1747,189 @@ tasks:
       - "需要后端接口、真实数据源、数据库、认证或权限"
       - "需要审批、导出、批量调班、自动排班或生产工作流能力"
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: H017
+    title: "标准化分支 Worktree 验证与集成工作流"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/quality/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/decision-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AGENTS.md 保留短版强制原则和红线，不继续堆叠命令级 runbook。"
+      - "新增 docs/quality/GIT_BRANCH_WORKFLOW.md，记录任务分支、worktree、验证、提交、集成、push 和异常处理流程。"
+      - "新增 docs/quality/FRONTEND_RULES.md 承接详细前端规则，避免 AGENTS.md 继续膨胀。"
+      - "GATE_REGISTRY.md 补充分支、scope diff、最终验证和本地提交证据要求。"
+      - "DONE_REPORT_TEMPLATE.md 增加分支、提交、集成和 push 决策审计字段。"
+      - "任务日志、决策日志、审计报告和 branch-log 记录 H017 执行证据。"
+      - "不修改业务实现、不修改 package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改业务代码"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、后端或数据库"
+      - "需要修改业务指标、生产状态码、结算公式或收费因子"
+      - "当前分支或 main 无法安全同步或切换"
+      - "验证失败"
+    commit_after_done: true
+  - id: H018
+    title: "No Database MVP Mode 固化"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "No Database MVP Mode 已写入 Project State、Gate Registry、Decision Log 和追踪日志。"
+      - "数据库连接、ORM、migration、schema、持久化配置和真实数据接入均列为 hard stop。"
+      - "明确允许继续用本地接口、种子数据、进程内存和前端 fallback 完成本地 MVP 验证。"
+      - "不修改 backend、package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改业务实现"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要创建数据库连接、ORM、migration、schema 或持久化配置"
+      - "需要接入真实数据源、认证、权限、审批、导出或批量能力"
+      - "需要固化生产状态码、公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F019
+    title: "本地 MVP 功能闭环入口"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "排班计划页展示本地 MVP 链路面板。"
+      - "链路面板可跳转到需求计划、排班计划、风险明细、不可用管理和班次明细。"
+      - "链路面板明确当前为 No Database 本地 MVP。"
+      - "不新增后端接口、不新增 mock 数据、不修改 package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F020
+    title: "排班计划主表 table parity 局部迁移"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "components/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "排班计划主表由 TanStack Table 管理列、行模型和排序。"
+      - "保留日期、项目、职场、状态、缺口、覆盖率、版本、预测、已排和查看动作。"
+      - "排序仍为展示层行为，不改变后端契约或业务口径。"
+      - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q003
+    title: "本地 MVP 验收审计"
+    priority: P0
+    status: done
+    required_workflow: qa
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "审计报告记录 No Database MVP Mode、功能闭环入口和 table parity 迁移结果。"
+      - "明确当前仍不包含数据库、真实集成、权限、审批、导出、批量和生产口径。"
+      - "记录最终 `bash scripts/check.sh` 验证结果。"
+      - "给出下一阶段建议。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增业务实现"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实数据源、认证、权限、审批、导出或批量能力"
+      - "需要固化生产状态码、公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
   - id: H019

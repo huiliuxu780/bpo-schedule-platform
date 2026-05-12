@@ -14,6 +14,7 @@
 
 ### 验证结果
 
+- `git diff --check`：
 - `bash scripts/check.sh`：
 - 其他：
 
@@ -48,6 +49,20 @@
 
 ### Git 提交状态
 
-- 是否已本地 commit：
+- task_id：
+- story_ids：
+- branch_name：
+- base_main_commit：
+- remote_status：
+- allowed_files_check：
+- scope_diff_check：
+- check_result：
+- local_commit_sha：
+- integration_status：
+- integration_method：
+- integration_commit_sha：
+- merge_to_main_commit：
+- push_decision：
+- blocked_reason：
 - commit message：
 - 是否建议 push：

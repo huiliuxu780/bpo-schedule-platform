@@ -933,3 +933,120 @@ dependencies:
   - "US039"
 status: "done"
 ```
+
+### US041 - Harness 标准化分支与验证工作流
+
+```yaml
+id: US041
+requirement_ids:
+  - R028
+module: "Harness"
+role: "PM"
+story: "作为 PM，我希望 Codex 在每个任务中使用可审计的分支、worktree、验证、提交、集成和 push 确认流程，同时让 AGENTS.md 保持短版入口，以便后续开发既能连续推进又能控制风险。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "AGENTS.md 保留规则优先级、入口、分支红线、stop condition、Story Runner 和 push 控制等短版原则。"
+  - "docs/quality/GIT_BRANCH_WORKFLOW.md 提供命令级 runbook。"
+  - "docs/quality/FRONTEND_RULES.md 承接详细前端规则，避免 AGENTS.md 继续膨胀。"
+  - "GATE_REGISTRY.md 映射分支、scope diff、最终验证和本地提交证据要求。"
+  - "DONE_REPORT_TEMPLATE.md 增加分支、提交、集成和 push 决策证据字段。"
+  - "H017 的 task-log、branch-log、decision-log 和 audit-report 留痕完整。"
+  - "不修改业务实现、不修改 package 或 lockfile。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US035"
+status: "done"
+```
+
+### US042 - No Database MVP Mode 固化
+
+```yaml
+id: US042
+requirement_ids:
+  - R029
+module: "MVP 范围"
+role: "PM"
+story: "作为 PM，我希望项目在功能开发完毕前明确保持 No Database MVP Mode，以便当前没有数据库环境时仍能继续验证本地业务链路。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "Project State、Gate Registry、Decision Log 和追踪日志明确 no-database 边界。"
+  - "任何数据库连接、ORM、migration、schema、持久化配置或真实数据接入都被列为 hard stop。"
+  - "允许继续使用本地接口、种子数据、进程内存和前端 fallback 完成本地 MVP 验证。"
+  - "不修改 backend、package 或 lockfile。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US041"
+status: "done"
+```
+
+### US043 - 本地 MVP 功能闭环入口
+
+```yaml
+id: US043
+requirement_ids:
+  - R030
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望在排班计划页看到本地 MVP 链路入口，以便从需求计划、排班计划、风险明细、不可用影响和班次明细之间连续复核。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "排班计划页展示本地 MVP 链路面板。"
+  - "链路面板可跳转到需求计划、排班计划、风险明细、不可用管理和班次明细。"
+  - "链路面板明确当前为 No Database 本地 MVP。"
+  - "不新增后端接口、不新增 mock 数据、不修改 package 或 lockfile。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US042"
+  - "US036"
+  - "US037"
+status: "done"
+```
+
+### US044 - 排班计划主表 table parity 局部迁移
+
+```yaml
+id: US044
+requirement_ids:
+  - R031
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望排班计划主表也使用 TanStack Table 管理列和排序，以便逐步接近 shadcn dashboard table 的实现方式。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "排班计划主表由 TanStack Table 管理列、行模型和排序。"
+  - "保留日期、项目、职场、状态、缺口、覆盖率、版本、预测、已排和查看动作。"
+  - "排序仍为展示层行为，不改变后端契约或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US038"
+  - "US043"
+status: "done"
+```
+
+### US045 - 本地 MVP 验收审计
+
+```yaml
+id: US045
+requirement_ids:
+  - R032
+module: "质量与交付"
+role: "PM"
+story: "作为 PM，我希望在本轮 no-database、功能闭环和 table parity 后看到一轮验收审计，以便确认下一步仍应围绕本地 MVP 而不是数据库展开。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "审计报告记录 No Database MVP Mode、功能闭环入口和 table parity 迁移结果。"
+  - "明确当前仍不包含数据库、真实集成、权限、审批、导出、批量和生产口径。"
+  - "记录最终 `bash scripts/check.sh` 验证结果。"
+  - "给出下一阶段建议。"
+dependencies:
+  - "US042"
+  - "US043"
+  - "US044"
+status: "done"
+```
