@@ -2142,7 +2142,7 @@ tasks:
   - id: F024
     title: "需求计划 table parity 第四条迁移"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/**"
@@ -2159,6 +2159,71 @@ tasks:
     acceptance:
       - "需求计划页由独立的 TanStack Table 组件渲染。"
       - "保留日期、时段、项目、职场、预测人数、来源、状态字段。"
+      - "排序保持展示层行为，不改变后端契约或业务口径。"
+      - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q005
+    title: "F024 单故事 QA 验收收口"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "app/**"
+      - "components/**"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`bash scripts/check.sh` 通过。"
+      - "需求计划页面由独立 TanStack Table 组件渲染。"
+      - "需求计划字段保留：日期、时段、项目、职场、预测人数、来源、状态。"
+      - "完成审计与追溯更新。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true
+  - id: F025
+    title: "排班计划详情时段表 table parity 第五条迁移"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "排班计划详情时段表由独立 TanStack Table 组件渲染。"
+      - "保留开始、结束、预测、已排、缺口、覆盖率、备注字段。"
       - "排序保持展示层行为，不改变后端契约或业务口径。"
       - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
       - "`bash scripts/check.sh` 通过。"

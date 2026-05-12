@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { DemandPlanTable } from "@/components/demand-plan-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,14 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import { getDemandPlans, type DemandPlanRow } from "@/lib/schedule-plans"
 
 type PageProps = {
@@ -97,50 +90,7 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
             <Badge variant="outline">B005 需求</Badge>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>日期</TableHead>
-                  <TableHead>时段</TableHead>
-                  <TableHead>项目</TableHead>
-                  <TableHead>职场</TableHead>
-                  <TableHead className="text-right">预测人数</TableHead>
-                  <TableHead>来源</TableHead>
-                  <TableHead>状态</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.demand_id}>
-                    <TableCell className="whitespace-nowrap">{row.plan_date}</TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {row.interval_start}-{row.interval_end}
-                    </TableCell>
-                    <TableCell className="font-medium">{row.project_name}</TableCell>
-                    <TableCell>{row.site_name}</TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.forecast_agents}
-                    </TableCell>
-                    <TableCell>{row.source}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {row.status === "mapped" ? "已映射" : "已导入"}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {rows.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="h-24 text-center text-sm text-muted-foreground"
-                    >
-                      暂无符合条件的预测需求
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
+            <DemandPlanTable rows={rows} />
           </CardContent>
         </Card>
       </main>

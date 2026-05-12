@@ -490,3 +490,25 @@
 - action: 执行 F021-F023 本地链路 QA 验收收口。
 - status: `done`
 - notes: 验证复核链路入口与关键计数、班次明细 TanStack 表和不可用记录 TanStack 表；同步新增下一条 parity 目标 `R037/US050/F024` 为 ready。
+
+### 2026-05-12
+
+- task_id: `F024`
+- source_ids:
+  - `R037`
+- story_ids:
+  - `US050`
+- action: 迁移需求计划到 TanStack Table。
+- status: `done`
+- notes: 新增 `DemandPlanTable` 组件，由 TanStack Table 管理需求计划列和排序；保留日期、时段、项目、职场、预测人数、来源、状态字段并保持 display-only。
+
+### 2026-05-12
+
+- task_id: `Q005`
+- source_ids:
+  - `R038`
+- story_ids:
+  - `US051`
+- action: 执行 F024 单故事 QA 验收收口。
+- status: `done`
+- notes: 验证需求计划 TanStack 表渲染和字段完整性；同步新增下一条 parity 目标 `R039/US052/F025` 为 ready。

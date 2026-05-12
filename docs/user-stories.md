@@ -1161,5 +1161,47 @@ acceptance:
   - "`bash scripts/check.sh` 通过。"
 dependencies:
   - "US048"
+status: "done"
+```
+
+### US051 - F024 单故事 QA 验收收口
+
+```yaml
+id: US051
+requirement_ids:
+  - R038
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F024 做单故事验收收口，确认需求计划 parity 在 no-database 边界内可验证、可追溯。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 通过。"
+  - "验证需求计划页面由独立 TanStack Table 组件渲染且关键字段仍保留。"
+  - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
+dependencies:
+  - "US050"
+status: "done"
+```
+
+### US052 - 排班计划详情时段表 table parity 第五条迁移
+
+```yaml
+id: US052
+requirement_ids:
+  - R039
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望排班计划详情页的 0.5h 时段表也使用 TanStack Table 管理列和排序，以保持主要表格一致性。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "排班计划详情时段表由独立 TanStack Table 组件渲染。"
+  - "保留开始、结束、预测、已排、缺口、覆盖率、备注字段。"
+  - "排序保持展示层行为，不改变后端契约或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US050"
 status: "ready"
 ```
