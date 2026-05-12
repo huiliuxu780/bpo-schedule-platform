@@ -144,3 +144,10 @@
 - 原因：PM 要求治理继续推进，但 v3 方案明确前 1-2 个任务不应让状态系统自锁；先进入标准检查可以提升可观测性，同时用回归测试约束未来 strict 升级。
 - 影响：普通检查会显示 current/registry 漂移；严格失败场景由 `scripts/tests/check-state.test.mjs` 覆盖，未来升级到阻断模式时有测试依据。
 - 限制：该决策不迁移大量历史，不删除旧大文件，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-12 - D021 - current queue 不保留 done 历史
+
+- 决策：H024/US065 作为第一条真实 current-queue 冒烟任务，执行前写入 current story 和 active task，执行后从 current 清除，done 历史只保留在 registry 和 legacy traceability 中。
+- 原因：current 层的目标是降低默认上下文，只承载 ready、in_progress、blocked；若 done 历史继续留在 current，会重新膨胀上下文并制造状态漂移。
+- 影响：后续任务可以先 seed current queue，再执行并在完成后清空或替换为下一条 ready；`TRACE_INDEX.yaml` 负责历史定位，但不记录状态。
+- 限制：该决策不删除旧大文件，不迁移大量历史，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。

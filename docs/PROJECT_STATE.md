@@ -72,6 +72,7 @@ Current invariants:
 - The main Worker is the single writer for `docs/current/**` and `docs/registry/**`.
 - `scripts/check-state.sh` validates state consistency and is warning-only during the initial rollout.
 - `bash scripts/check.sh` runs `check-state` and its regression tests so state drift is visible in the standard verification path without self-locking ordinary tasks.
+- `H024/US065` completed the first real current-queue smoke task: a ready story and matching active task passed strict state checks before execution, then current returned to an empty active queue after completion.
 
 ## Product Direction
 

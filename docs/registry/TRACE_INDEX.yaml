@@ -9,8 +9,20 @@ current_files:
   story_queue: "docs/current/STORY_QUEUE.yaml"
   active_tasks: "docs/current/ACTIVE_TASKS.yaml"
   blockers: "docs/current/BLOCKERS.md"
-stories: {}
-tasks: {}
+stories:
+  US065:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R053"
+    task_ids:
+      - "H024"
+    archive_refs: []
+tasks:
+  H024:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US065"
+    gate: "state-hygiene"
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -24,7 +36,14 @@ requirements:
       - "US064"
     task_ids:
       - "H023"
+  R053:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US065"
+    task_ids:
+      - "H024"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
+  - "D-2026-05-12-current-queue-smoke"
 archive_refs: []

@@ -808,6 +808,28 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 warning-only state check、state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-12 - current queue 真实任务冒烟
+
+#### 审计结论
+
+- `H024/US065` 已作为第一条真实 current-queue 冒烟任务执行。
+- 执行前，`docs/current/STORY_QUEUE.yaml` 写入 `US065` ready story，`docs/current/ACTIVE_TASKS.yaml` 写入匹配的 `H024` active task。
+- 带 current entry 的 `bash scripts/check-state.sh --strict` 已通过，证明 ready story 与 active task 能被匹配。
+- 任务完成后，current queue 和 active task 已恢复为空，done 历史未累积在 current 文件中。
+- `docs/registry/TRACE_INDEX.yaml` 已记录 `US065/H024/R053` 的定位关系，且不记录 lifecycle state。
+
+#### 风险
+
+- 这只是第一条 current queue 冒烟；还需要再跑至少一条真实产品或 QA 小任务，才能判断 current 层在业务开发中是否也无漂移。
+- 当前仍未做大量历史归档；旧大文件仍作为过渡期历史来源存在。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict` 带 current entry：通过。
+- `bash scripts/check-state.sh --strict` 完成后 empty current：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 warning-only state check、state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

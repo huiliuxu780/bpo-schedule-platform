@@ -34,3 +34,11 @@ decisions:
       - "scripts/check.sh"
       - "scripts/check-state.sh"
       - "scripts/tests/check-state.test.mjs"
+  D-2026-05-12-current-queue-smoke:
+    title: "First live current queue task completed without retaining done history"
+    file: "docs/decision-log.md"
+    related_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"

@@ -655,3 +655,14 @@
 - action: 将 check-state 接入标准验证链路并补回归测试。
 - status: `done`
 - notes: `bash scripts/check.sh` 现在运行 warning-only state check 和 `scripts/tests/check-state.test.mjs`；回归覆盖一致状态、warning-only 不自锁、strict 缺 active task 失败和 TRACE_INDEX lifecycle state 失败。
+
+### 2026-05-12
+
+- task_id: `H024`
+- source_ids:
+  - `R053`
+- story_ids:
+  - `US065`
+- action: 用 current queue 执行真实治理小任务冒烟。
+- status: `done`
+- notes: H024/US065 曾写入 `docs/current/STORY_QUEUE.yaml` 与 `docs/current/ACTIVE_TASKS.yaml` 并通过 `bash scripts/check-state.sh --strict`；完成后 current queue 已清空，历史定位保留在 registry 和 legacy traceability 中。

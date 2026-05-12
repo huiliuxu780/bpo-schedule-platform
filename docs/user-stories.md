@@ -1467,3 +1467,25 @@ dependencies:
   - "US063"
 status: "done"
 ```
+
+### US065 - current queue 真实任务冒烟
+
+```yaml
+id: US065
+requirement_ids:
+  - R053
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望用 current queue 执行一条真实治理小任务，验证下一轮任务可以从 current 层启动而不是读取大 backlog。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "`docs/current/STORY_QUEUE.yaml` 曾提供 ready story，`docs/current/ACTIVE_TASKS.yaml` 曾提供匹配 active task。"
+  - "`bash scripts/check-state.sh --strict` 在 current entry 存在时通过。"
+  - "任务完成后 current queue 清空，不保留 done 历史。"
+  - "TRACE_INDEX 记录 US065/H024 的历史定位，但不记录 lifecycle state。"
+  - "`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US064"
+status: "done"
+```

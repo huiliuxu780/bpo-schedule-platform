@@ -119,6 +119,10 @@ Regression coverage:
 - Missing active task fails strict mode.
 - Lifecycle state in `TRACE_INDEX.yaml` fails strict mode.
 
+First live smoke result:
+
+- `H024/US065` was seeded into current queue, matched to an active task, verified with `bash scripts/check-state.sh --strict`, then removed from current after completion so done history stayed out of current files.
+
 ## State Repair Mode
 
 State Repair Mode triggers when:

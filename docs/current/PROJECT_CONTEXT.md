@@ -12,6 +12,8 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 No ready product story is currently queued. Before the next development story starts, add a small ready story to `docs/current/STORY_QUEUE.yaml` and a matching task to `docs/current/ACTIVE_TASKS.yaml`, then update `docs/registry/TRACE_INDEX.yaml`.
 
+The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
+
 ## Current Execution Rules
 
 - Read current files by default, not historical archive files.
