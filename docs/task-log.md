@@ -512,3 +512,25 @@
 - action: 执行 F024 单故事 QA 验收收口。
 - status: `done`
 - notes: 验证需求计划 TanStack 表渲染和字段完整性；同步新增下一条 parity 目标 `R039/US052/F025` 为 ready。
+
+### 2026-05-12
+
+- task_id: `F025`
+- source_ids:
+  - `R039`
+- story_ids:
+  - `US052`
+- action: 迁移排班计划详情时段表到 TanStack Table。
+- status: `done`
+- notes: 新增 `SchedulePlanIntervalTable` 组件，由 TanStack Table 管理时段明细列和排序；保留开始、结束、预测、已排、缺口、覆盖率、备注字段并保持 display-only。
+
+### 2026-05-12
+
+- task_id: `Q006`
+- source_ids:
+  - `R040`
+- story_ids:
+  - `US053`
+- action: 执行 F025 单故事 QA 验收收口。
+- status: `done`
+- notes: 验证排班计划详情页时段明细已由独立 TanStack Table 组件渲染并保留关键字段；同步新增下一条 parity 目标 `R041/US054/F026` 为 ready。

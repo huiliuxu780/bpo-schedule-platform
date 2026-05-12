@@ -523,3 +523,29 @@ version: "1.0"
 status: "split"
 notes: "仅迁移展示层列与排序；不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
 ```
+
+### R040 - F025 单故事 QA 验收收口
+
+```yaml
+id: R040
+module: "质量与交付"
+description: "在 F025 完成后执行一条 qa 验收故事，确认排班计划详情时段表 parity 的展示与追溯收口。"
+source: "Story Runner accelerated decomposition"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只做验收验证和审计记录，不新增业务能力、不改依赖、不改后端契约、不接数据库或真实数据。"
+```
+
+### R041 - 风险明细受影响班次表 table parity 第六条迁移
+
+```yaml
+id: R041
+module: "前端设计"
+description: "在排班计划详情时段表完成 parity 后，继续把风险明细页中的受影响班次表迁移到独立 TanStack Table 组件。"
+source: "Story Runner accelerated decomposition"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "仅迁移展示层列与排序；不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+```

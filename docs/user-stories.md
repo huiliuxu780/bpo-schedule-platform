@@ -1203,5 +1203,48 @@ acceptance:
   - "`bash scripts/check.sh` 通过。"
 dependencies:
   - "US050"
+status: "done"
+```
+
+### US053 - F025 单故事 QA 验收收口
+
+```yaml
+id: US053
+requirement_ids:
+  - R040
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F025 做单故事验收收口，确认排班计划详情时段表 parity 在 no-database 边界内可验证、可追溯。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 通过。"
+  - "排班计划详情页 0.5h 时段表由独立 TanStack Table 组件渲染。"
+  - "时段表字段保留：开始、结束、预测、已排、缺口、覆盖率、备注。"
+  - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
+dependencies:
+  - "US052"
+status: "done"
+```
+
+### US054 - 风险明细受影响班次表 table parity 第六条迁移
+
+```yaml
+id: US054
+requirement_ids:
+  - R041
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望风险明细页的受影响班次表也使用 TanStack Table 管理列和排序，以继续收口关键详情视图的一致性。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "风险明细页受影响班次表由独立 TanStack Table 组件渲染。"
+  - "保留计划、项目、职场、时段、缺口、不可用人数、原因、建议和动作字段。"
+  - "排序保持展示层行为，不改变后端契约或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US052"
 status: "ready"
 ```

@@ -179,7 +179,7 @@ The inserted requirement does not immediately authorize UI rewrites, dependency 
 
 Current Story Runner ready queue:
 
-- Next recommended story after `US051/Q005`: 排班计划详情时段表 table parity 第五条迁移。
+- Next recommended story after `US053/Q006`: 风险明细受影响班次表 table parity 第六条迁移。
 
 `US036/F016` is now complete as the frontend risk-detail drilldown. Schedule-risk rows link to `/schedule-risks/[riskId]`, and the detail view shows risk level, plan/date/interval context, gap, active unavailability impact, reason, recommendation, related shift details, and overlapping unavailable records. It reuses existing local MVP contracts and does not add backend endpoints, dependencies, real data, database persistence, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
 
@@ -209,7 +209,11 @@ Current Story Runner ready queue:
 
 `US051/Q005` is now complete as the local QA acceptance closure for F024. The demand-plans parity table and required fields were re-verified under the no-database MVP boundary, and traceability records were updated.
 
-`US052/F025` is now the next `ready` frontend parity target, focused on migrating the schedule-plan detail interval table to a dedicated TanStack Table component while keeping display-only behavior and current contract boundaries.
+`US052/F025` is now complete as the fifth follow-up table parity slice. `SchedulePlanIntervalTable` now uses TanStack Table for columns, row model, and sorting while preserving the existing interval fields in schedule-plan detail. It remains display-only and does not add batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code, settlement-rule, or charge-factor behavior.
+
+`US053/Q006` is now complete as the local QA acceptance closure for F025. The schedule-plan detail interval parity table and required fields were re-verified under the no-database MVP boundary, and traceability records were updated.
+
+`US054/F026` is now the next `ready` frontend parity target, focused on migrating the impacted-shifts table on schedule-risk detail to a dedicated TanStack Table component while keeping display-only behavior and current contract boundaries.
 
 ## Subagent Prompt Contract Direction
 

@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-table"
 import {
   formatCoverageRate,
   getSchedulePlan,
@@ -18,14 +19,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { getUnavailability } from "@/lib/unavailability"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 
 type PageProps = {
   params: Promise<{
@@ -167,44 +160,7 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
             <Badge variant="outline">{plan.summary.id}</Badge>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>开始</TableHead>
-                  <TableHead>结束</TableHead>
-                  <TableHead className="text-right">预测</TableHead>
-                  <TableHead className="text-right">已排</TableHead>
-                  <TableHead className="text-right">缺口</TableHead>
-                  <TableHead className="text-right">覆盖率</TableHead>
-                  <TableHead>备注</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {plan.intervals.map((item) => (
-                  <TableRow key={`${item.interval_start}-${item.interval_end}`}>
-                    <TableCell className="font-mono text-xs">
-                      {item.interval_start}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {item.interval_end}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {item.forecast_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {item.scheduled_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {item.gap_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {formatCoverageRate(item.coverage_rate)}
-                    </TableCell>
-                    <TableCell>{item.note}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <SchedulePlanIntervalTable intervals={plan.intervals} />
           </CardContent>
         </Card>
       </main>

@@ -722,6 +722,20 @@
 - 当前 `DemandPlanTable` 仍是 display-only parity，不包含批量选择、拖拽、审批、导出、列显隐、Drawer 或分页交互。
 - 本轮收口仍基于本地契约和页面验证，不涉及数据库、真实数据源、权限、审批或生产口径能力。
 
+### 2026-05-12 - 排班计划详情时段表 table parity 第五条迁移与单故事 QA 收口
+
+#### 审计结论
+
+- `F025/US052` 已将排班计划详情页 `0.5h` 时段表迁移到 `SchedulePlanIntervalTable`，由 TanStack Table 管理列、行模型和排序。
+- 已保留原有字段：开始、结束、预测、已排、缺口、覆盖率、备注。
+- `Q006/US053` 已完成单故事验收收口，确认上述 parity 在 no-database 模式下可验证、可追溯。
+- 已新增下一条 parity 目标 `R041/US054/F026`，并置为 `ready`（风险明细受影响班次表迁移）。
+
+#### 风险
+
+- 当前 `SchedulePlanIntervalTable` 仍是 display-only parity，不包含批量选择、拖拽、审批、导出、列显隐、Drawer 或分页交互。
+- 本轮收口仍基于本地契约和页面验证，不涉及数据库、真实数据源、权限、审批或生产口径能力。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
