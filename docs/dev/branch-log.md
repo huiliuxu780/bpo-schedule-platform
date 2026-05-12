@@ -330,3 +330,21 @@
 - integration_method: `rebase origin/main`
 - integration_commit_sha: reported in Done Report after final commit creation.
 - push_decision: `pending PM decision after local commit`
+
+### H018/F019/F020/Q003 No Database MVP Completion Block
+
+- branch_name: `codex/mvp-no-db-completion`
+- base_main_commit: `1b8adb4c75ff670cebebb6d9420f0f9b54d4194b`
+- upstream_governance_commit: `07fc4e09a961adaebf8384682855069389d76f4f`
+- remote_status: `origin/main available; git fetch origin passed before branch work`
+- scope: No Database MVP Mode governance, local MVP flow entry, schedule-plan table parity slice, and MVP acceptance audit.
+- allowed_files_check: `AGENTS.md`, `app/**`, `components/**`, `docs/**`, and `tasks/backlog.yaml`; no backend or package/lockfile files.
+- scope_diff_check: `AGENTS.md`, `app/schedule-plans/page.tsx`, `components/mvp-flow-summary.tsx`, `components/schedule-plan-table.tsx`, `docs/**`, and `tasks/backlog.yaml`; no backend or package/lockfile files.
+- check_result: `git diff --check` passed; `bash scripts/check.sh` passed once before final evidence update; final check to be reported in Done Report.
+- local_commit_sha: reported in Done Report after final commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

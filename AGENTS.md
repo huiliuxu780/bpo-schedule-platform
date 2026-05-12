@@ -105,6 +105,7 @@ Hard stop conditions require PM confirmation:
 - package or lockfile changes
 - real external data sources or integrations
 - database persistence
+- database connection setup, ORM, migration, schema design, or production persistence configuration
 - authentication or permission boundaries
 - approval, export, or batch-operation capabilities
 - production status codes, formulas, settlement rules, or charge factors
@@ -150,6 +151,7 @@ Unless the current user instruction explicitly allows it, Codex must not:
 - develop business features
 - create frontend pages
 - create backend services or databases
+- create database connections, ORM models, migrations, schema files, or production persistence config
 - connect real APIs
 - add mock business data
 - install dependencies

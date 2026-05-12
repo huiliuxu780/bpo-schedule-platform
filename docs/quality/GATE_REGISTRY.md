@@ -22,6 +22,7 @@ Stop conditions:
 - Scope expands beyond the Gate Plan.
 - The task needs dependencies, package or lockfile changes.
 - The task needs real API, backend, database, or production capability.
+- The task needs database connection setup, ORM, migrations, schema implementation, or production persistence configuration.
 - The task changes business metrics, status codes, settlement formulas, or charge factors.
 - The task imports from a lab/archive/reference source.
 - `bash scripts/check.sh` fails.
@@ -47,6 +48,28 @@ Backlog `required_workflow` values must map to one of the gates below. If a task
 | `backend-mvp` | Backend Local MVP Gate | Same as `backend`, used for MVP-local backend tasks that explicitly avoid production workflow capability | Same as `backend` |
 | `backend-vertical` | Backend Local MVP Gate | Backend portion of a confirmed vertical slice using local data and tests | Same as `backend` |
 | `qa` | QA Acceptance Gate | Acceptance review, verification evidence, audit/report updates | Product behavior changes, implementation edits outside acceptance corrections, dependency/package changes |
+
+## No Database MVP Mode
+
+PM confirmed on 2026-05-12 that database work should stay out of scope until the local MVP feature chain is developed and verified.
+
+Allowed without a database Gate:
+
+- local FastAPI seed data or process-memory state
+- frontend fallback data that matches existing local contracts
+- frontend-only navigation, drilldown, table parity, and acceptance audit work
+- documentation that records database work as deferred
+
+Hard stop until PM confirms a later database Gate:
+
+- database connection setup
+- ORM models, repositories, or adapters
+- migration files
+- schema implementation
+- production persistence configuration
+- real external data-source integration
+
+This rule applies to `frontend-scaffold`, `backend`, `backend-mvp`, `backend-vertical`, and `qa` tasks. A task may mention future database needs in documentation, but it must not implement database persistence or prepare production persistence files unless a specific PM-confirmed database task allows it.
 
 ## Harness Documentation Gate
 

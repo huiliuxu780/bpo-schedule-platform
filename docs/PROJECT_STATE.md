@@ -10,6 +10,28 @@ The project now contains a PM-confirmed frontend dashboard scaffold and the firs
 
 The project still does not contain real external API integration, database persistence, authentication, real Excel import, real CORN integration, production permissions, approval flows, export pipelines, batch operations, production scheduling algorithms, production status-code finalization, settlement formulas, or charge factors.
 
+## No Database MVP Mode
+
+PM confirmed on 2026-05-12 that the project should not connect a database before the local MVP feature chain is developed and verified, because there is currently no database environment.
+
+Current allowed local-MVP data modes:
+
+- local FastAPI endpoints backed by seed data or process memory
+- frontend API-client fallback data that matches the same contract
+- read-only or draft-only local verification flows
+- documentation and audit records that keep database work out of scope
+
+Hard stop until a later PM-confirmed Gate:
+
+- database connection setup
+- ORM models or adapters
+- migration files
+- schema design as implementation work
+- production persistence configuration
+- real external data source integration
+
+This mode does not block continued frontend/business-chain development when the story can reuse existing local contracts. It does block any attempt to turn the MVP into a database-backed system before PM confirms the database plan and environment.
+
 ## MVP Build Direction
 
 The first formal MVP vertical is now defined as scheduling plan read-only delivery:
@@ -160,6 +182,14 @@ Current Story Runner ready queue:
 `US038/F018` is now complete as a local table parity migration. The schedule-plan risk-hint table has been extracted to `ScheduleRiskTable` and uses TanStack Table for columns and sorting while preserving existing fields and detail/shift actions. This is display-only and does not enable batch selection, drag sorting, approval, export, batch adjustment, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
 
 `US039/H017` is now complete as the standardized branch/worktree/verification/integration workflow governance task. `AGENTS.md` has been compressed toward a short rule entry, `docs/quality/GIT_BRANCH_WORKFLOW.md` now owns command-level runbook details, `docs/quality/FRONTEND_RULES.md` now owns detailed frontend rules, `GATE_REGISTRY.md` maps branch and final-verification evidence expectations, and `DONE_REPORT_TEMPLATE.md` includes branch, scope diff, commit, integration, and push-decision fields. This does not modify business code, dependencies, package/lockfile files, real data, database persistence, auth, permissions, approval, export, batch operations, production formulas, status-code finalization, settlement rules, or charge factors.
+
+`US040/H018` is now complete as the No Database MVP Mode governance task. Database connection setup, ORM, migrations, schema implementation, production persistence configuration, and real external data integration are hard stops until PM confirms a later database Gate. The allowed MVP path remains local FastAPI seed/process-memory data and frontend fallback contracts.
+
+`US041/F019` is now complete as the local MVP flow entry. `/schedule-plans` now shows a No Database MVP chain panel that links demand plans, schedule plans, a representative risk detail, unavailability, and shift details while keeping all data local.
+
+`US042/F020` is now complete as the second local table parity slice. `SchedulePlanTable` now uses TanStack Table for columns, row model, and sorting while preserving the existing schedule-plan fields and view action. It remains display-only and does not add batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code, settlement-rule, or charge-factor behavior.
+
+`US043/Q003` is now complete as the local MVP acceptance audit for this block. The current no-database MVP chain is suitable for continued feature development without database persistence; database planning should remain deferred until the local workflows are more complete and PM provides a database environment.
 
 ## Subagent Prompt Contract Direction
 
