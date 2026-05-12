@@ -55,6 +55,11 @@ function createStateRoot({ storyQueue, activeTasks, traceIndex } = {}) {
     traceIndex ??
       [
         "version: 1",
+        "current_files:",
+        "  project_context: docs/current/PROJECT_CONTEXT.md",
+        "  story_queue: docs/current/STORY_QUEUE.yaml",
+        "  active_tasks: docs/current/ACTIVE_TASKS.yaml",
+        "  blockers: docs/current/BLOCKERS.md",
         "tasks:",
         "  H900:",
         "    file: docs/raw/source.md",
@@ -169,4 +174,25 @@ test("check-state strict mode rejects done task history in active tasks", () => 
 
   assert.notEqual(result.status, 0, "expected strict mode to fail");
   assert.match(result.stdout, /must not retain done task history/);
+});
+
+test("check-state strict mode rejects missing TRACE_INDEX current file paths", () => {
+  const stateRoot = createStateRoot({
+    traceIndex: [
+      "version: 1",
+      "current_files:",
+      "  project_context: docs/current/MISSING.md",
+      "  story_queue: docs/current/STORY_QUEUE.yaml",
+      "  active_tasks: docs/current/ACTIVE_TASKS.yaml",
+      "  blockers: docs/current/BLOCKERS.md",
+      "tasks:",
+      "  H900:",
+      "    file: docs/raw/source.md",
+      "",
+    ].join("\n"),
+  });
+  const result = runCheckState(stateRoot, ["--strict"]);
+
+  assert.notEqual(result.status, 0, "expected strict mode to fail");
+  assert.match(result.stdout, /registry path missing: docs\/current\/MISSING\.md/);
 });

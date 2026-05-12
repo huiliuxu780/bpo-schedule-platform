@@ -115,6 +115,7 @@ Current checks:
 - Every active task references an existing current story.
 - `TRACE_INDEX.yaml` does not contain `status`.
 - Registry `file:` paths exist.
+- Registry `current_files` paths exist.
 - Current queue entries do not point to archive files as execution sources.
 - Current files stay under line-count budgets.
 
@@ -126,12 +127,14 @@ Regression coverage:
 - Lifecycle state in `TRACE_INDEX.yaml` fails strict mode.
 - Done story history in current queue warns in warning mode and fails strict mode.
 - Done task history in active tasks fails strict mode.
+- Missing `TRACE_INDEX.yaml` current file paths fail strict mode.
 
 First live smoke result:
 
 - `H024/US065` was seeded into current queue, matched to an active task, verified with `bash scripts/check-state.sh --strict`, then removed from current after completion so done history stayed out of current files.
 - `H025/US066` added a concrete invariant that current story/task files must not retain `status: done`, with regression coverage for warning-only and strict modes.
 - `H026/US067` promoted standard `bash scripts/check.sh` to strict state checking by default while preserving explicit repair-scope and warning-only overrides.
+- `H027/US068` added strict validation for `TRACE_INDEX.yaml` current file paths and de-duplicated registry path output.
 
 ## State Repair Mode
 

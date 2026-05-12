@@ -688,3 +688,14 @@
 - action: 将标准 check-state 升级为 strict 默认阻断。
 - status: `done`
 - notes: `bash scripts/check.sh` 默认运行 `bash scripts/check-state.sh --strict`；State Repair Mode 可显式使用 `BPO_STATE_CHECK_MODE=repair-scope`，临时诊断可显式使用 `BPO_STATE_CHECK_MODE=warning`。
+
+### 2026-05-13
+
+- task_id: `H027`
+- source_ids:
+  - `R056`
+- story_ids:
+  - `US068`
+- action: 补强 TRACE_INDEX current_files 路径校验。
+- status: `done`
+- notes: `scripts/check-state.sh` 现在会校验 `TRACE_INDEX.yaml` 中 `current_files` 的路径，并对重复 registry 路径输出去重；回归测试覆盖缺失 current file path 的 strict 失败。

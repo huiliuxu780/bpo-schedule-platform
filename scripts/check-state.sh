@@ -174,7 +174,14 @@ if [[ -f "$trace_file" ]]; then
       gsub(/[[:space:]]+$/, "", value)
       print value
     }
-  ' "$trace_file")
+    /^[[:space:]]*(project_context|story_queue|active_tasks|blockers):[[:space:]]*/ {
+      value=$0
+      sub(/^[[:space:]]*[^:]+:[[:space:]]*/, "", value)
+      gsub(/["'\'']/, "", value)
+      gsub(/[[:space:]]+$/, "", value)
+      print value
+    }
+  ' "$trace_file" | sort -u)
 fi
 
 if [[ -f "$story_file" ]] && grep -Eq 'docs/archive/|archive_file:' "$story_file"; then

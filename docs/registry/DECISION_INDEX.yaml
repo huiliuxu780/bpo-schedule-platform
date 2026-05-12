@@ -57,3 +57,10 @@ decisions:
       - "scripts/check.sh"
       - "scripts/check-state.sh"
       - "docs/quality/STATE_MANAGEMENT.md"
+  D-2026-05-13-trace-current-files-path-check:
+    title: "TRACE_INDEX current_files paths are validated"
+    file: "docs/decision-log.md"
+    related_files:
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "scripts/check-state.sh"
+      - "scripts/tests/check-state.test.mjs"

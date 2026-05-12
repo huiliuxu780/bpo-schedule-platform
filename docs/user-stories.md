@@ -1533,3 +1533,25 @@ dependencies:
   - "US066"
 status: "done"
 ```
+
+### US068 - TRACE_INDEX current_files 路径校验
+
+```yaml
+id: US068
+requirement_ids:
+  - R056
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望 check-state 校验 TRACE_INDEX 的 current_files 路径，避免 registry 指向缺失 current 文件。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "`TRACE_INDEX.yaml` 的 `current_files` 路径会被 check-state 校验。"
+  - "重复 registry 路径不会产生重复输出。"
+  - "回归测试覆盖 missing current_files path strict 失败。"
+  - "任务完成后 current queue 清空，不保留 done 历史。"
+  - "`bash scripts/check-state.sh --strict`、`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US067"
+status: "done"
+```

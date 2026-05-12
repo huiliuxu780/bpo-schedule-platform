@@ -18,6 +18,8 @@ The H025 invariant pass added strict checks and regression tests that reject `st
 
 The H026 rollout changed `bash scripts/check.sh` to use strict state checks by default. State Repair Mode can run `BPO_STATE_CHECK_MODE=repair-scope bash scripts/check.sh`; temporary warning-only diagnostics can run `BPO_STATE_CHECK_MODE=warning bash scripts/check.sh`.
 
+The H027 registry pass added strict validation for `TRACE_INDEX.yaml` current file paths and de-duplicated registry path output.
+
 ## Current Execution Rules
 
 - Read current files by default, not historical archive files.

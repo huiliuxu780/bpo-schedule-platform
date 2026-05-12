@@ -731,3 +731,16 @@ version: "1.0"
 status: "split"
 notes: "只改标准检查入口和治理追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R056 - TRACE_INDEX current_files 路径校验
+
+```yaml
+id: R056
+module: "Harness"
+description: "补强 check-state，对 TRACE_INDEX.yaml 的 current_files 路径进行存在性校验，并对重复 registry path 输出去重。"
+source: "State governance continuation on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只改状态检查、回归测试和治理追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

@@ -874,6 +874,27 @@
 - `bash scripts/check.sh`：通过，默认 strict state check。
 - `BPO_STATE_CHECK_MODE=repair-scope bash scripts/check.sh`：通过，State Repair Mode 旁路可用。
 
+### 2026-05-13 - TRACE_INDEX current_files 路径校验
+
+#### 审计结论
+
+- `H027/US068` 已补强 `scripts/check-state.sh`，会校验 `TRACE_INDEX.yaml` 中的 `current_files` 路径。
+- registry path 输出已去重，避免相同 legacy/current 路径重复刷屏。
+- `scripts/tests/check-state.test.mjs` 已新增 missing `TRACE_INDEX` current file path 的 strict 失败场景，state-check 回归从 7 个扩展到 8 个。
+- 任务完成后 current queue 和 active task 已恢复为空，done 历史未累积在 current 文件中。
+
+#### 风险
+
+- 仍未做大量历史归档；旧大文件继续作为过渡期历史来源。
+- 下一步若继续治理，建议进入 archive dry-run 事务，而不是直接移动历史。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `node --test scripts/tests/check-state.test.mjs`：通过，8 个 state-check 回归测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
