@@ -151,3 +151,10 @@
 - 原因：current 层的目标是降低默认上下文，只承载 ready、in_progress、blocked；若 done 历史继续留在 current，会重新膨胀上下文并制造状态漂移。
 - 影响：后续任务可以先 seed current queue，再执行并在完成后清空或替换为下一条 ready；`TRACE_INDEX.yaml` 负责历史定位，但不记录状态。
 - 限制：该决策不删除旧大文件，不迁移大量历史，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-12 - D022 - current done history 进入状态检查不变量
+
+- 决策：`scripts/check-state.sh` 检查 `docs/current/STORY_QUEUE.yaml` 和 `docs/current/ACTIVE_TASKS.yaml` 中的 `status: done`，warning-only 模式告警，strict 模式失败。
+- 原因：current 层只能承载 ready、in_progress、blocked；done 历史进入 current 会重新拉长默认上下文并破坏 v3 治理目标。
+- 影响：后续完成任务后必须清空 current 或替换为下一条 ready，不能把 done 留在 current 作为历史日志。
+- 限制：该决策不删除旧大文件，不迁移大量历史，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。

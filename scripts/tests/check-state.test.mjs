@@ -121,3 +121,52 @@ test("check-state strict mode rejects lifecycle state in trace index", () => {
   assert.notEqual(result.status, 0, "expected strict mode to fail");
   assert.match(result.stdout, /TRACE_INDEX.yaml must not contain/);
 });
+
+test("check-state warning mode reports done story history without self-locking", () => {
+  const stateRoot = createStateRoot({
+    storyQueue: [
+      "version: 1",
+      "stories:",
+      "  - id: US900",
+      "    status: done",
+      "",
+    ].join("\n"),
+  });
+  const result = runCheckState(stateRoot);
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /must not retain done story history/);
+});
+
+test("check-state strict mode rejects done story history in current queue", () => {
+  const stateRoot = createStateRoot({
+    storyQueue: [
+      "version: 1",
+      "stories:",
+      "  - id: US900",
+      "    status: done",
+      "",
+    ].join("\n"),
+  });
+  const result = runCheckState(stateRoot, ["--strict"]);
+
+  assert.notEqual(result.status, 0, "expected strict mode to fail");
+  assert.match(result.stdout, /must not retain done story history/);
+});
+
+test("check-state strict mode rejects done task history in active tasks", () => {
+  const stateRoot = createStateRoot({
+    activeTasks: [
+      "version: 1",
+      "tasks:",
+      "  - id: H900",
+      "    story_ids: [US900]",
+      "    status: done",
+      "",
+    ].join("\n"),
+  });
+  const result = runCheckState(stateRoot, ["--strict"]);
+
+  assert.notEqual(result.status, 0, "expected strict mode to fail");
+  assert.match(result.stdout, /must not retain done task history/);
+});

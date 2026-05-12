@@ -534,3 +534,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### H025 Current Done History Invariant
+
+- branch_name: `codex/h022-state-governance-v3`
+- base_main_commit: `242b1e9`
+- remote_status: `origin/codex/h022-state-governance-v3` already exists; this task continues the same coherent state-governance branch.
+- scope: state-check current done history invariant, regression tests, registry update, and traceability records only.
+- allowed_files_check: `docs/current/**`, `docs/registry/**`, `docs/PROJECT_STATE.md`, `docs/quality/STATE_MANAGEMENT.md`, legacy traceability docs, `tasks/backlog.yaml`, `scripts/check-state.sh`, and `scripts/tests/check-state.test.mjs`; no business code, backend, lib, package, or lockfile files.
+- scope_diff_check: `docs/current/**`, `docs/registry/**`, `docs/PROJECT_STATE.md`, `docs/quality/STATE_MANAGEMENT.md`, legacy traceability docs, `tasks/backlog.yaml`, `scripts/check-state.sh`, and `scripts/tests/check-state.test.mjs`; no business code, backend, lib, package, or lockfile files.
+- check_result: `bash scripts/check-state.sh --strict` passed; `node --test scripts/tests/check-state.test.mjs` passed with 7 tests; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

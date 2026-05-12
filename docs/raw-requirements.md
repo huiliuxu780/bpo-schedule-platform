@@ -705,3 +705,16 @@ version: "1.0"
 status: "split"
 notes: "只做 current queue 冒烟和治理记录；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R054 - current done history 不变量检查
+
+```yaml
+id: R054
+module: "Harness"
+description: "补强 check-state，明确 current story/task 文件不能保留 done 历史，并用回归测试覆盖 warning-only 与 strict 行为。"
+source: "State governance continuation on 2026-05-12"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只改状态检查、回归测试和治理追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

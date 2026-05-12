@@ -91,6 +91,22 @@ if [[ -f "$task_file" ]]; then
   fi
 fi
 
+if [[ -f "$story_file" ]]; then
+  if grep -Eq '^[[:space:]]*status:[[:space:]]*["'\'']?done["'\'']?[[:space:]]*$' "$story_file"; then
+    warn "docs/current/STORY_QUEUE.yaml must not retain done story history"
+  else
+    pass "current story queue does not retain done history"
+  fi
+fi
+
+if [[ -f "$task_file" ]]; then
+  if grep -Eq '^[[:space:]]*status:[[:space:]]*["'\'']?done["'\'']?[[:space:]]*$' "$task_file"; then
+    warn "docs/current/ACTIVE_TASKS.yaml must not retain done task history"
+  else
+    pass "current active tasks do not retain done history"
+  fi
+fi
+
 story_ids="$(extract_ids "$story_file" 2>/dev/null || true)"
 task_story_refs="$(awk '
   /^[[:space:]]*story_ids:[[:space:]]*\[/ {

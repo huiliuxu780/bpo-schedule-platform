@@ -42,3 +42,11 @@ decisions:
       - "docs/current/ACTIVE_TASKS.yaml"
       - "docs/current/PROJECT_CONTEXT.md"
       - "docs/registry/TRACE_INDEX.yaml"
+  D-2026-05-12-current-done-history-invariant:
+    title: "Current files must not retain done history"
+    file: "docs/decision-log.md"
+    related_files:
+      - "scripts/check-state.sh"
+      - "scripts/tests/check-state.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"

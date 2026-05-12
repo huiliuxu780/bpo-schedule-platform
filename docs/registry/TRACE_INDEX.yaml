@@ -17,11 +17,23 @@ stories:
     task_ids:
       - "H024"
     archive_refs: []
+  US066:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R054"
+    task_ids:
+      - "H025"
+    archive_refs: []
 tasks:
   H024:
     file: "tasks/backlog.yaml"
     story_ids:
       - "US065"
+    gate: "state-hygiene"
+  H025:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US066"
     gate: "state-hygiene"
 requirements:
   R051:
@@ -42,8 +54,15 @@ requirements:
       - "US065"
     task_ids:
       - "H024"
+  R054:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US066"
+    task_ids:
+      - "H025"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
   - "D-2026-05-12-current-queue-smoke"
+  - "D-2026-05-12-current-done-history-invariant"
 archive_refs: []

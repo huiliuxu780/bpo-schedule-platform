@@ -14,6 +14,8 @@ No ready product story is currently queued. Before the next development story st
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
+The H025 invariant pass added strict checks and regression tests that reject `status: done` inside current story/task files.
+
 ## Current Execution Rules
 
 - Read current files by default, not historical archive files.

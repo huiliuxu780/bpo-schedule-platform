@@ -1489,3 +1489,25 @@ dependencies:
   - "US064"
 status: "done"
 ```
+
+### US066 - current done history 不变量检查
+
+```yaml
+id: US066
+requirement_ids:
+  - R054
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望 state check 能发现 current 文件中的 done 历史，避免 current 层重新膨胀成历史日志。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "`STORY_QUEUE.yaml` 出现 `status: done` 时 warning-only mode 告警，strict mode 失败。"
+  - "`ACTIVE_TASKS.yaml` 出现 `status: done` 时 strict mode 失败。"
+  - "state-check 回归测试覆盖 done story/task in current。"
+  - "任务完成后 current queue 清空，不保留 done 历史。"
+  - "`bash scripts/check-state.sh --strict`、`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US065"
+status: "done"
+```

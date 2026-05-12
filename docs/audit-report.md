@@ -830,6 +830,28 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 warning-only state check、state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-12 - current done history 不变量检查
+
+#### 审计结论
+
+- `H025/US066` 已补强 `scripts/check-state.sh`，current story/task 文件出现 `status: done` 会被识别。
+- warning-only mode 对 current done history 只告警，不会自锁普通任务。
+- strict mode 对 current done story 和 current done task 均会失败。
+- `scripts/tests/check-state.test.mjs` 已新增 done story/done task 场景，state-check 回归从 4 个扩展到 7 个。
+- 任务完成后 current queue 和 active task 已恢复为空，done 历史仍只保留在 registry 和 legacy traceability 中。
+
+#### 风险
+
+- 当前标准 `bash scripts/check.sh` 仍运行 warning-only state check；strict 阻断尚未启用。
+- 后续若要升级为阻断，应只在非 state-repair 任务中启用，并保留 State Repair Mode 旁路。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `node --test scripts/tests/check-state.test.mjs`：通过，7 个 state-check 回归测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 warning-only state check、7 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

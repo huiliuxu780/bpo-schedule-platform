@@ -666,3 +666,14 @@
 - action: 用 current queue 执行真实治理小任务冒烟。
 - status: `done`
 - notes: H024/US065 曾写入 `docs/current/STORY_QUEUE.yaml` 与 `docs/current/ACTIVE_TASKS.yaml` 并通过 `bash scripts/check-state.sh --strict`；完成后 current queue 已清空，历史定位保留在 registry 和 legacy traceability 中。
+
+### 2026-05-12
+
+- task_id: `H025`
+- source_ids:
+  - `R054`
+- story_ids:
+  - `US066`
+- action: 补强 current done history 不变量检查。
+- status: `done`
+- notes: `scripts/check-state.sh` 现在会检测 current story/task 文件中的 `status: done`；warning-only 模式只告警，strict 模式失败，回归测试覆盖 done story 和 done task 场景。

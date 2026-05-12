@@ -118,10 +118,13 @@ Regression coverage:
 - Missing active task for a ready story warns without self-locking warning mode.
 - Missing active task fails strict mode.
 - Lifecycle state in `TRACE_INDEX.yaml` fails strict mode.
+- Done story history in current queue warns in warning mode and fails strict mode.
+- Done task history in active tasks fails strict mode.
 
 First live smoke result:
 
 - `H024/US065` was seeded into current queue, matched to an active task, verified with `bash scripts/check-state.sh --strict`, then removed from current after completion so done history stayed out of current files.
+- `H025/US066` added a concrete invariant that current story/task files must not retain `status: done`, with regression coverage for warning-only and strict modes.
 
 ## State Repair Mode
 
