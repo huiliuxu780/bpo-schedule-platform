@@ -602,3 +602,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### F030-F031 Dashboard Table Parity Block
+
+- branch_name: `codex/f030-dashboard-table-parity`
+- base_main_commit: `2ba7170`
+- remote_status: `branch created from pushed state-governance head because main has not yet integrated H022-H028`
+- scope: dashboard anomaly detail table parity, local column visibility, local page-size controls, QA traceability, and state cleanup.
+- allowed_files_check: `app/dashboard/**`, `components/data-table.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, lib contract, package, or lockfile files.
+- scope_diff_check: `components/data-table.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, lib contract, package, or lockfile files.
+- check_result: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed; `npm run lint` passed; `npm run typecheck` passed; `curl -fsS http://127.0.0.1:3014/dashboard` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`

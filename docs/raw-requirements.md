@@ -757,3 +757,42 @@ version: "1.0"
 status: "split"
 notes: "只改治理规则和追溯记录；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R058 - Dashboard 异常明细表 TanStack Table parity
+
+```yaml
+id: R058
+module: "前端设计"
+description: "Dashboard 首页的 BPO 异常明细表仍是手写排序和分页，需要迁移到 TanStack Table，以便与当前主链路表格 parity 保持一致。"
+source: "Story Runner continuation on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做 dashboard 本地静态异常表展示层迁移；不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量或生产动作。"
+```
+
+### R059 - Dashboard 异常明细表本地列显示与分页控制
+
+```yaml
+id: R059
+module: "前端设计"
+description: "Dashboard 异常明细表的列控制目前是占位按钮，需要补成本地列显示开关和分页大小控制，形成可用但不连接生产动作的 table parity 交互。"
+source: "Story Runner continuation on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地 UI 状态控制；不新增依赖、不改数据来源、不接数据库、不做导出、批量选择、拖拽或生产动作。"
+```
+
+### R060 - F030-F031 dashboard table parity QA 收口
+
+```yaml
+id: R060
+module: "质量与交付"
+description: "F030 和 F031 完成后，对 dashboard 异常明细表 parity 做一轮 QA 验收，确认迁移、交互、边界和追溯均可验证。"
+source: "Story Runner continuation on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做验收验证和追溯更新；不新增业务能力、不改依赖、不改后端契约、不接数据库。"
+```

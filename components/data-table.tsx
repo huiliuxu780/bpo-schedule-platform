@@ -2,6 +2,18 @@
 
 import * as React from "react"
 import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type PaginationState,
+  type SortingState,
+  type VisibilityState,
+  useReactTable,
+} from "@tanstack/react-table"
+import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
@@ -11,6 +23,10 @@ import {
 } from "lucide-react"
 
 import { anomalies, type Anomaly } from "@/app/dashboard/data"
+import {
+  clampDashboardPageIndex,
+  dashboardAnomalyMatchesQuery,
+} from "@/components/data-table-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,7 +36,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -30,27 +61,28 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-type SortKey = keyof Pick<
-  Anomaly,
-  "id" | "type" | "team" | "headcount" | "impactedHours" | "severity" | "status"
->
+const columnLabels: Record<string, string> = {
+  id: "异常编号",
+  type: "异常类型",
+  team: "团队",
+  headcount: "人数",
+  impactedHours: "影响工时",
+  severity: "严重度",
+  status: "状态",
+  project: "项目",
+  shiftTime: "班次时间",
+}
 
-const columns: { key: SortKey; label: string; className?: string }[] = [
-  { key: "id", label: "异常编号" },
-  { key: "type", label: "异常类型" },
-  { key: "team", label: "团队" },
-  { key: "headcount", label: "人数", className: "text-right" },
-  { key: "impactedHours", label: "影响工时", className: "text-right" },
-  { key: "severity", label: "严重度" },
-  { key: "status", label: "状态" },
-]
+const severityRank: Record<Anomaly["severity"], number> = {
+  高: 0,
+  中: 1,
+  低: 2,
+}
 
-function compareValue(row: Anomaly, key: SortKey) {
-  if (key === "impactedHours") {
-    return Number.parseFloat(row.impactedHours)
-  }
-
-  return row[key]
+const statusRank: Record<Anomaly["status"], number> = {
+  待复核: 0,
+  已确认: 1,
+  已忽略: 2,
 }
 
 function severityVariant(severity: Anomaly["severity"]) {
@@ -77,158 +109,334 @@ function statusVariant(status: Anomaly["status"]) {
   return "default" as const
 }
 
+const columns: ColumnDef<Anomaly>[] = [
+  {
+    accessorKey: "id",
+    enableHiding: false,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        异常编号
+        <ArrowUpDown data-icon="inline-end" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span className="font-mono text-xs">{row.original.id}</span>
+    ),
+  },
+  {
+    accessorKey: "type",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        异常类型
+        <ArrowUpDown data-icon="inline-end" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span className="min-w-36 font-medium">{row.original.type}</span>
+    ),
+  },
+  {
+    accessorKey: "team",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        团队
+        <ArrowUpDown data-icon="inline-end" />
+      </Button>
+    ),
+  },
+  {
+    accessorKey: "headcount",
+    header: ({ column }) => (
+      <div className="flex justify-end">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          人数
+          <ArrowUpDown data-icon="inline-end" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="text-right tabular-nums">{row.original.headcount}</div>
+    ),
+  },
+  {
+    accessorKey: "impactedHours",
+    header: ({ column }) => (
+      <div className="flex justify-end">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          影响工时
+          <ArrowUpDown data-icon="inline-end" />
+        </Button>
+      </div>
+    ),
+    sortingFn: (left, right) =>
+      Number.parseFloat(left.original.impactedHours) -
+      Number.parseFloat(right.original.impactedHours),
+    cell: ({ row }) => (
+      <div className="text-right tabular-nums">
+        {row.original.impactedHours}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "severity",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        严重度
+        <ArrowUpDown data-icon="inline-end" />
+      </Button>
+    ),
+    sortingFn: (left, right) =>
+      severityRank[left.original.severity] -
+      severityRank[right.original.severity],
+    cell: ({ row }) => (
+      <Badge variant={severityVariant(row.original.severity)}>
+        {row.original.severity}
+      </Badge>
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        状态
+        <ArrowUpDown data-icon="inline-end" />
+      </Button>
+    ),
+    sortingFn: (left, right) =>
+      statusRank[left.original.status] - statusRank[right.original.status],
+    cell: ({ row }) => (
+      <Badge variant={statusVariant(row.original.status)}>
+        {row.original.status}
+      </Badge>
+    ),
+  },
+  {
+    accessorKey: "project",
+    header: "项目",
+  },
+  {
+    accessorKey: "shiftTime",
+    header: "班次时间",
+    cell: ({ row }) => (
+      <span className="whitespace-nowrap">{row.original.shiftTime}</span>
+    ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    header: () => <div className="text-right">操作</div>,
+    cell: () => (
+      <div className="text-right">
+        <Button variant="ghost" size="icon" aria-label="行操作">
+          <MoreHorizontal className="size-4" />
+        </Button>
+      </div>
+    ),
+  },
+]
+
 export function DataTable() {
-  const [query, setQuery] = React.useState("")
-  const [sortKey, setSortKey] = React.useState<SortKey>("id")
-  const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">(
-    "asc"
-  )
-  const [page, setPage] = React.useState(1)
-  const pageSize = 5
+  "use no memo"
 
-  const filtered = React.useMemo(() => {
-    const normalized = query.trim().toLowerCase()
-    const rows = normalized
-      ? anomalies.filter((item) =>
-          [
-            item.id,
-            item.type,
-            item.project,
-            item.team,
-            item.shiftTime,
-            item.severity,
-            item.status,
-          ]
-            .join(" ")
-            .toLowerCase()
-            .includes(normalized)
-        )
-      : anomalies
+  const [globalFilter, setGlobalFilter] = React.useState("")
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "id", desc: false },
+  ])
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({})
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 5,
+  })
 
-    return [...rows].sort((a, b) => {
-      const aValue = compareValue(a, sortKey)
-      const bValue = compareValue(b, sortKey)
+  // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const table = useReactTable({
+    data: anomalies,
+    columns,
+    state: {
+      columnVisibility,
+      globalFilter,
+      pagination,
+      sorting,
+    },
+    globalFilterFn: (row, _columnId, filterValue) =>
+      dashboardAnomalyMatchesQuery(row.original, String(filterValue ?? "")),
+    onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  })
 
-      if (aValue < bValue) {
-        return sortDirection === "asc" ? -1 : 1
-      }
+  const filteredRowCount = table.getFilteredRowModel().rows.length
+  const pageCount = Math.max(1, table.getPageCount())
+  const currentPage = pagination.pageIndex + 1
 
-      if (aValue > bValue) {
-        return sortDirection === "asc" ? 1 : -1
-      }
-
-      return 0
+  React.useEffect(() => {
+    const clampedPageIndex = clampDashboardPageIndex({
+      pageIndex: pagination.pageIndex,
+      pageSize: pagination.pageSize,
+      rowCount: filteredRowCount,
     })
-  }, [query, sortDirection, sortKey])
 
-  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize))
-  const visibleRows = filtered.slice((page - 1) * pageSize, page * pageSize)
-
-  function toggleSort(key: SortKey) {
-    if (key === sortKey) {
-      setSortDirection((current) => (current === "asc" ? "desc" : "asc"))
-      return
+    if (clampedPageIndex !== pagination.pageIndex) {
+      setPagination((current) => ({
+        ...current,
+        pageIndex: clampedPageIndex,
+      }))
     }
-
-    setSortKey(key)
-    setSortDirection("asc")
-  }
+  }, [filteredRowCount, pagination.pageIndex, pagination.pageSize])
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
           <CardTitle>BPO 异常明细</CardTitle>
-          <CardDescription>支持搜索、排序、分页与行操作占位</CardDescription>
+          <CardDescription>
+            支持搜索、排序、列显示、分页与行操作占位
+          </CardDescription>
         </div>
-        <Button variant="outline" size="sm">
-          <Columns3 className="size-4" />
-          列控制
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Columns3 className="size-4" />
+              列控制
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-44">
+            <DropdownMenuLabel>显示字段</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {table
+              .getAllLeafColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {columnLabels[column.id] ?? column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent>
         <div className="mb-3 flex items-center gap-2">
           <div className="flex max-w-sm flex-1 items-center gap-2 rounded-md border px-2">
             <Search className="size-4 text-muted-foreground" />
             <Input
-              value={query}
+              value={globalFilter}
               onChange={(event) => {
-                setQuery(event.target.value)
-                setPage(1)
+                setGlobalFilter(event.target.value)
+                table.setPageIndex(0)
               }}
               placeholder="搜索异常编号、类型、团队或状态"
               className="h-8 border-0 px-0 shadow-none focus-visible:ring-0"
             />
           </div>
+          <Select
+            value={`${pagination.pageSize}`}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value))
+              table.setPageIndex(0)
+            }}
+          >
+            <SelectTrigger size="sm" className="w-28">
+              <SelectValue aria-label={`${pagination.pageSize} 条/页`} />
+            </SelectTrigger>
+            <SelectContent align="end">
+              {[5, 10, 20].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize} 条/页
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableHead key={column.key} className={column.className}>
-                    <button
-                      className="inline-flex items-center gap-1"
-                      onClick={() => toggleSort(column.key)}
-                    >
-                      {column.label}
-                      <ArrowUpDown className="size-3" />
-                    </button>
-                  </TableHead>
-                ))}
-                <TableHead>项目</TableHead>
-                <TableHead>班次时间</TableHead>
-                <TableHead className="w-12 text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {visibleRows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell className="font-mono text-xs">{row.id}</TableCell>
-                  <TableCell className="min-w-36 font-medium">
-                    {row.type}
-                  </TableCell>
-                  <TableCell>{row.team}</TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {row.headcount}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {row.impactedHours}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={severityVariant(row.severity)}>
-                      {row.severity}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={statusVariant(row.status)}>
-                      {row.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{row.project}</TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    {row.shiftTime}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" aria-label="行操作">
-                      <MoreHorizontal className="size-4" />
-                    </Button>
-                  </TableCell>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  ))}
                 </TableRow>
               ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+              {table.getRowModel().rows.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={table.getVisibleLeafColumns().length}
+                    className="h-24 text-center text-sm text-muted-foreground"
+                  >
+                    暂无符合条件的异常记录
+                  </TableCell>
+                </TableRow>
+              ) : null}
             </TableBody>
           </Table>
         </div>
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <div>
-            共 {filtered.length} 条，当前第 {page} / {pageCount} 页
+            共 {filteredRowCount} 条，当前第 {currentPage} / {pageCount} 页
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              disabled={page === 1}
-              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={!table.getCanPreviousPage()}
+              onClick={() => table.previousPage()}
             >
               <ChevronLeft className="size-4" />
               上一页
@@ -236,10 +444,8 @@ export function DataTable() {
             <Button
               variant="outline"
               size="sm"
-              disabled={page === pageCount}
-              onClick={() =>
-                setPage((current) => Math.min(pageCount, current + 1))
-              }
+              disabled={!table.getCanNextPage()}
+              onClick={() => table.nextPage()}
             >
               下一页
               <ChevronRight className="size-4" />

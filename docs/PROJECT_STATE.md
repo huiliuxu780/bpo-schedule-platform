@@ -22,6 +22,7 @@ The project contains:
 - No Database MVP Mode.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
+- Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
 - A documentation-first Lightweight Harness with current/registry state governance.
 
 The project does not contain:

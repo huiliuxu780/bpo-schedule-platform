@@ -1577,3 +1577,67 @@ dependencies:
   - "US068"
 status: "done"
 ```
+
+### US070 - Dashboard 异常明细表 TanStack Table parity
+
+```yaml
+id: US070
+requirement_ids:
+  - R058
+module: "前端设计"
+role: "运营负责人"
+story: "作为运营负责人，我希望 dashboard 的 BPO 异常明细表也使用 TanStack Table 管理排序和分页，以便首页表格与其他 MVP 表格保持一致。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "Dashboard 异常明细表由 TanStack Table 管理列、排序和分页。"
+  - "保留异常编号、异常类型、团队、人数、影响工时、严重度、状态、项目、班次时间和操作字段。"
+  - "搜索、排序和分页仍为本地展示行为，不改变数据来源或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US069"
+status: "done"
+```
+
+### US071 - Dashboard 异常明细表本地列显示与分页控制
+
+```yaml
+id: US071
+requirement_ids:
+  - R059
+module: "前端设计"
+role: "运营负责人"
+story: "作为运营负责人，我希望 dashboard 异常明细表的列控制和分页大小是可用的本地交互，以便快速聚焦异常字段。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "列控制按钮可打开本地列显示开关。"
+  - "分页大小可在本地切换，并保持当前筛选结果下的页码有效。"
+  - "交互只改变本地表格展示，不触发真实动作或后端写入。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US070"
+status: "done"
+```
+
+### US072 - F030-F031 dashboard table parity QA 收口
+
+```yaml
+id: US072
+requirement_ids:
+  - R060
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F030-F031 做验收收口，确认 dashboard table parity 在 no-database 边界内可验证、可追溯。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 通过。"
+  - "Dashboard 异常明细表使用 TanStack Table 管理排序和分页。"
+  - "列显示与分页大小控制可用，且未引入审批、导出、批量或生产动作。"
+  - "完成审计、任务日志、项目状态、分支日志和 backlog 追溯。"
+dependencies:
+  - "US071"
+status: "done"
+```

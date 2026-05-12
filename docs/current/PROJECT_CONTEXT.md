@@ -10,7 +10,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-No ready product story is currently queued. Before the next development story starts, add a small ready story to `docs/current/STORY_QUEUE.yaml` and a matching task to `docs/current/ACTIVE_TASKS.yaml`, then update `docs/registry/TRACE_INDEX.yaml`.
+No ready product story is currently queued. The last completed product chain was `US070/F030 -> US071/F031 -> US072/Q012`, which migrated the dashboard anomaly detail table to TanStack Table parity, added local column visibility and pagination controls, and completed QA closeout.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -21,6 +21,8 @@ The H026 rollout changed `bash scripts/check.sh` to use strict state checks by d
 The H027 registry pass added strict validation for `TRACE_INDEX.yaml` current file paths and de-duplicated registry path output.
 
 The H028 plan-boundary pass made Codex Plan a temporary projection only. Harness current and registry files remain the state source.
+
+The F030-F031/Q012 product pass proved the current/active state model can drive a frontend table parity chain and return current to empty after completion.
 
 ## Current Execution Rules
 

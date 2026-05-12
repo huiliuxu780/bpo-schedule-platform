@@ -710,3 +710,36 @@
 - action: 固化 Codex Plan 面板边界规则。
 - status: `done`
 - notes: `AGENTS.md` 和 `docs/quality/STATE_MANAGEMENT.md` 明确 Codex Plan 只是当前会话投影视图，不是状态源；若 Plan 与 Harness state 冲突，以 Harness state 为准。
+
+### 2026-05-13
+
+- task_id: `F030`
+- source_ids:
+  - `R058`
+- story_ids:
+  - `US070`
+- action: 迁移 dashboard BPO 异常明细表到 TanStack Table。
+- status: `done`
+- notes: `components/data-table.tsx` 现在由 TanStack Table 管理本地排序、搜索过滤和分页；新增 `components/data-table-model.ts` 与无依赖模型测试覆盖搜索和页码夹紧。
+
+### 2026-05-13
+
+- task_id: `F031`
+- source_ids:
+  - `R059`
+- story_ids:
+  - `US071`
+- action: 补 dashboard 异常明细表本地列显示和分页大小控制。
+- status: `done`
+- notes: 列控制从占位按钮改为本地字段显示开关，分页大小可在 5/10/20 条之间切换；不触发后端写入、审批、导出、批量或生产动作。
+
+### 2026-05-13
+
+- task_id: `Q012`
+- source_ids:
+  - `R060`
+- story_ids:
+  - `US072`
+- action: 执行 F030-F031 dashboard table parity QA 收口。
+- status: `done`
+- notes: 验证 dashboard 异常明细表已完成 TanStack Table parity 和本地交互收口；current queue 与 active tasks 已清空，不保留 done 历史。
