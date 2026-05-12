@@ -1596,6 +1596,53 @@ tasks:
       - "需要修改业务指标、生产状态码、结算公式或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: H017
+    title: "标准化分支 Worktree 验证与集成工作流"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/quality/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/decision-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AGENTS.md 保留短版强制原则和红线，不继续堆叠命令级 runbook。"
+      - "新增 docs/quality/GIT_BRANCH_WORKFLOW.md，记录任务分支、worktree、验证、提交、集成、push 和异常处理流程。"
+      - "新增 docs/quality/FRONTEND_RULES.md 承接详细前端规则，避免 AGENTS.md 继续膨胀。"
+      - "GATE_REGISTRY.md 补充分支、scope diff、最终验证和本地提交证据要求。"
+      - "DONE_REPORT_TEMPLATE.md 增加分支、提交、集成和 push 决策审计字段。"
+      - "任务日志、决策日志、审计报告和 branch-log 记录 H017 执行证据。"
+      - "不修改业务实现、不修改 package 或 lockfile。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改业务代码"
+      - "需要新增依赖"
+      - "需要修改 package 或 lockfile"
+      - "需要接入真实 API、后端或数据库"
+      - "需要修改业务指标、生产状态码、结算公式或收费因子"
+      - "当前分支或 main 无法安全同步或切换"
+      - "验证失败"
+    commit_after_done: true
   - id: F016
     title: "风险明细钻取入口"
     priority: P0

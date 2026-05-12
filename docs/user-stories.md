@@ -887,3 +887,28 @@ dependencies:
   - "US037"
 status: "done"
 ```
+
+### US039 - Harness 标准化分支与验证工作流
+
+```yaml
+id: US039
+requirement_ids:
+  - R026
+module: "Harness"
+role: "PM"
+story: "作为 PM，我希望 Codex 在每个任务中使用可审计的分支、worktree、验证、提交、集成和 push 确认流程，同时让 AGENTS.md 保持短版入口，以便后续开发既能连续推进又能控制风险。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "AGENTS.md 保留规则优先级、入口、分支红线、stop condition、Story Runner 和 push 控制等短版原则。"
+  - "docs/quality/GIT_BRANCH_WORKFLOW.md 提供命令级 runbook。"
+  - "docs/quality/FRONTEND_RULES.md 承接详细前端规则，避免 AGENTS.md 继续膨胀。"
+  - "GATE_REGISTRY.md 映射分支、scope diff、最终验证和本地提交证据要求。"
+  - "DONE_REPORT_TEMPLATE.md 增加分支、提交、集成和 push 决策证据字段。"
+  - "H017 的 task-log、branch-log、decision-log 和 audit-report 留痕完整。"
+  - "不修改业务实现、不修改 package 或 lockfile。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US035"
+status: "done"
+```

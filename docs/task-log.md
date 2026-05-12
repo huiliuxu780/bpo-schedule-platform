@@ -369,3 +369,14 @@
 - action: 固化绿色检查后的自动本地提交规则。
 - status: `done`
 - notes: PM 已确认以后本项目每完成一个通过 `bash scripts/check.sh` 的任务就自动本地 commit；阶段、模块块或连续开发块完成后再询问是否 push。
+
+### 2026-05-12
+
+- task_id: `H017`
+- source_ids:
+  - `R026`
+- story_ids:
+  - `US039`
+- action: 标准化任务分支、worktree、验证、提交、集成和 push 确认工作流。
+- status: `done`
+- notes: 已将 `AGENTS.md` 压缩为短版强制入口，新增 `docs/quality/GIT_BRANCH_WORKFLOW.md` 作为命令级 runbook，新增 `docs/quality/FRONTEND_RULES.md` 承接详细前端规则，并补充 Gate Registry、Done Report Template、Project State、Decision Log、Audit Report 和 Branch Log 的证据规则；不修改业务代码、依赖、package 或 lockfile。

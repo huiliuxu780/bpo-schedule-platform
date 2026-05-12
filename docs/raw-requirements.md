@@ -341,3 +341,16 @@ version: "1.0"
 status: "split"
 notes: "本需求只做展示层局部迁移；不新增依赖，不修改 package/lockfile，不改变业务字段、生产状态码、公式、结算规则或收费因子。"
 ```
+
+### R026 - 标准化分支与验证工作流
+
+```yaml
+id: R026
+module: "Harness"
+description: "PM 要求将取任务、分支/worktree、开发、验证、提交、集成、push 确认、异常处理和审计证据补齐为标准化工作流，同时避免 AGENTS.md 继续膨胀。"
+source: "PM workflow governance confirmation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只做 Harness 文档和审计模板治理；不修改业务代码，不新增依赖，不修改 package/lockfile，不接入真实数据、数据库、认证、权限、审批、导出、批量操作或生产公式。"
+```

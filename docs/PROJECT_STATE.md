@@ -86,6 +86,10 @@ That archive is read-only reference material for future audits or explicitly app
 - Story Runner Mode authorizes bounded subagents by default when write scopes are independent and non-overlapping; the main Codex worker remains responsible for dispatch design, integration, final verification, commits, and Done Report.
 - Stage Completion Planning is mandatory: after each stage, module block, or coherent feature set, the main worker must report what was completed, whether verification passed, what remains, the next 2-3 recommended steps, why that order is recommended, what is not recommended yet, and the default next item if PM does not object.
 - Stage completion should also include the push decision point: ask PM whether to push the locally committed work to the remote repository.
+- Direct development on `main` is forbidden. Tasks use `codex/<task-id>-<short-name>` branches created from fast-forward-synced `main`.
+- Branch/worktree/integration/push details live in `docs/quality/GIT_BRANCH_WORKFLOW.md`; `AGENTS.md` stays as the short mandatory rule entry.
+- Detailed frontend UI rules live in `docs/quality/FRONTEND_RULES.md`; `AGENTS.md` keeps only the frontend summary and Gate boundary.
+- Done Reports now include branch, base commit, scope diff, final check, local commit, integration, and push-decision evidence fields.
 
 ## Development Environment
 
@@ -154,6 +158,8 @@ Current Story Runner ready queue:
 `US037/F017` is now complete as the frontend unavailability impact locator. Unavailability rows link to `/unavailability/[unavailabilityId]`, and the detail view shows the unavailable staff/team/context, impacted shift details, overlapping risk hints, and navigation back to plans, shift details, risk details, and the unavailability list. It reuses existing local MVP contracts and does not add backend endpoints, dependencies, real data, database persistence, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
 
 `US038/F018` is now complete as a local table parity migration. The schedule-plan risk-hint table has been extracted to `ScheduleRiskTable` and uses TanStack Table for columns and sorting while preserving existing fields and detail/shift actions. This is display-only and does not enable batch selection, drag sorting, approval, export, batch adjustment, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
+
+`US039/H017` is now complete as the standardized branch/worktree/verification/integration workflow governance task. `AGENTS.md` has been compressed toward a short rule entry, `docs/quality/GIT_BRANCH_WORKFLOW.md` now owns command-level runbook details, `docs/quality/FRONTEND_RULES.md` now owns detailed frontend rules, `GATE_REGISTRY.md` maps branch and final-verification evidence expectations, and `DONE_REPORT_TEMPLATE.md` includes branch, scope diff, commit, integration, and push-decision fields. This does not modify business code, dependencies, package/lockfile files, real data, database persistence, auth, permissions, approval, export, batch operations, production formulas, status-code finalization, settlement rules, or charge factors.
 
 ## Subagent Prompt Contract Direction
 

@@ -102,3 +102,10 @@
 - 原因：此前 backlog 已使用 `frontend-scaffold`、`frontend-audit`、`backend`、`backend-mvp`、`backend-vertical`、`qa` 等 workflow，但 Gate Registry 只有默认 Gate 和 Clean Harness Gate，执行标准容易依赖个人解释。
 - 影响：后续新增 workflow 名称时，必须在同一任务内补充 Gate Registry；Story Runner 选择下一条任务时也要先确认该 workflow 有 Gate 锚点。
 - 限制：Gate 映射只定义执行约束，不授权新增业务代码、依赖、真实数据、数据库、认证、权限、审批、导出、批量、生产状态码、公式、结算规则或收费因子。
+
+### 2026-05-12 - D015 - AGENTS 保持短入口，Git 工作流迁入 runbook
+
+- 决策：`AGENTS.md` 只保留规则优先级、入口、分支红线、stop condition、Story Runner、push 控制和前端规则摘要等强制原则；命令级分支/worktree/集成/异常处理迁入 `docs/quality/GIT_BRANCH_WORKFLOW.md`，详细前端规则迁入 `docs/quality/FRONTEND_RULES.md`。
+- 原因：`AGENTS.md` 已经接近操作手册体量，继续追加会增加规则重复和执行歧义；拆分后主入口更容易被每次任务读取和遵守。
+- 影响：后续任务必须从 fast-forward 同步后的 `main` 创建任务分支，最终 check 后更新 traceability，再本地 commit；阶段/模块块完成后才进入集成和 PM push 决策。
+- 限制：该决策只改变 Harness 执行流程和审计证据，不授权业务实现、依赖/package/lockfile、真实数据、数据库、认证、权限、审批、导出、批量或生产口径变更。

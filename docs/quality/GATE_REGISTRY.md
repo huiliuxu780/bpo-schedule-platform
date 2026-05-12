@@ -12,6 +12,8 @@ Checks:
 - Does the task require PM confirmation?
 - Does the task touch business code, package files, dependencies, real APIs, backend, database, metrics, status codes, settlement formulas, or archive material?
 - Is acceptance verifiable?
+- Will the task run on a task branch instead of `main`?
+- Are branch, scope diff, check, commit, integration, and push evidence fields known for the Done Report?
 - Will `bash scripts/check.sh` be run before Done Report?
 
 Stop conditions:
@@ -23,6 +25,14 @@ Stop conditions:
 - The task changes business metrics, status codes, settlement formulas, or charge factors.
 - The task imports from a lab/archive/reference source.
 - `bash scripts/check.sh` fails.
+
+Branch and verification rules:
+
+- Direct development on `main` is forbidden.
+- Each task must follow `docs/quality/GIT_BRANCH_WORKFLOW.md` unless a stricter task-level Gate overrides it.
+- Final completion requires `bash scripts/check.sh` after traceability updates, not only an intermediate check.
+- Local commit must include only files allowed by the current task scope.
+- Remote push requires PM confirmation.
 
 ## Workflow Gate Matrix
 
@@ -45,6 +55,7 @@ Use this gate for `required_workflow: harness` tasks after the project has moved
 Allowed:
 
 - Update Harness rules and workflow documentation.
+- Update branch/worktree/integration workflow documentation.
 - Update backlog, raw requirements, user stories, task log, decision log, audit report, branch log, and project state.
 - Update check scripts only when the task explicitly concerns verification mechanics.
 
@@ -60,6 +71,15 @@ Required verification:
 
 - `git diff --check`
 - `bash scripts/check.sh`
+
+Required Git evidence:
+
+- `base_main_commit`
+- `branch_name`
+- `scope_diff_check`
+- `check_result`
+- `local_commit_sha` when final check passes and local commit succeeds
+- `push_decision` for stage/module/coherent feature-set completion
 
 ## Frontend Scaffold Gate
 

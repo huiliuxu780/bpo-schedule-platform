@@ -315,3 +315,18 @@
 - Replaced the inline risk table in `/schedule-plans` with `ScheduleRiskTable`.
 - Added sortable risk level, date, gap, and unavailable-impact columns while preserving existing fields and detail/shift actions.
 - Kept this as display-only table parity: no dependency change, batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code change, settlement rule, or charge factor was added.
+
+### H017 Standard Branch Workflow
+
+- branch_name: `codex/H017-standard-workflow`
+- base_main_commit: `1b8adb4c75ff670cebebb6d9420f0f9b54d4194b`
+- remote_status: `origin/main available; main fast-forward synced before branch creation`
+- scope: Harness workflow and frontend-rule documentation only; no business code, dependency, package, lockfile, backend, or frontend implementation changes.
+- allowed_files_check: `AGENTS.md`, `docs/**`, and `tasks/backlog.yaml` only.
+- scope_diff_check: `AGENTS.md`, `docs/**`, and `tasks/backlog.yaml` only; no app/backend/package/lockfile files.
+- check_result: `git diff --check` passed; `bash scripts/check.sh` passed with frontend lint, typecheck, Next build, and 19 backend unittest cases.
+- local_commit_sha: reported in Done Report after final commit creation.
+- integration_status: `integrated`
+- integration_method: `rebase origin/main`
+- integration_commit_sha: reported in Done Report after final commit creation.
+- push_decision: `pending PM decision after local commit`
