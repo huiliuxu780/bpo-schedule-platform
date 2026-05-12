@@ -471,3 +471,29 @@ version: "1.0"
 status: "split"
 notes: "本需求只迁移展示层列和排序，不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
 ```
+
+### R036 - F021-F023 本地链路 QA 验收收口
+
+```yaml
+id: R036
+module: "质量与交付"
+description: "在 F021、F022、F023 完成后，执行一条 qa 验收故事，对计划详情复核链路、班次明细 table parity、不可用记录 table parity 进行集中收口验证。"
+source: "PM instruction"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只做验收验证和审计记录，不新增业务能力、不改依赖、不改后端契约、不接数据库或真实数据。"
+```
+
+### R037 - 需求计划 table parity 第四条迁移
+
+```yaml
+id: R037
+module: "前端设计"
+description: "在不可用记录 table parity 完成后，把需求计划页迁移到同一 TanStack Table 展示层 parity 模式，作为下一条前端一致性目标。"
+source: "PM instruction"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "仅迁移展示层列与排序；不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+```

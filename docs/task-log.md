@@ -479,3 +479,14 @@
 - action: 迁移不可用记录到 TanStack Table。
 - status: `done`
 - notes: 新增 `UnavailabilityTable` 组件，由 TanStack Table 管理不可用记录列和排序；保留影响/班次动作并保持 display-only，不启用批量、拖拽、审批、导出或批量调班。
+
+### 2026-05-12
+
+- task_id: `Q004`
+- source_ids:
+  - `R036`
+- story_ids:
+  - `US049`
+- action: 执行 F021-F023 本地链路 QA 验收收口。
+- status: `done`
+- notes: 验证复核链路入口与关键计数、班次明细 TanStack 表和不可用记录 TanStack 表；同步新增下一条 parity 目标 `R037/US050/F024` 为 ready。

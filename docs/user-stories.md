@@ -1118,3 +1118,48 @@ dependencies:
   - "US047"
 status: "done"
 ```
+
+### US049 - F021-F023 本地链路 QA 验收收口
+
+```yaml
+id: US049
+requirement_ids:
+  - R036
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F021-F023 进行一次集中验收，确认复核链路和两条 table parity 在 no-database 模式下可验证、可追溯、可持续交付。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 通过。"
+  - "验证排班计划详情可见复核链路入口和关键计数。"
+  - "验证班次明细和不可用记录均由独立 TanStack Table 组件渲染并保留既有动作入口。"
+  - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
+dependencies:
+  - "US046"
+  - "US047"
+  - "US048"
+status: "done"
+```
+
+### US050 - 需求计划 table parity 第四条迁移
+
+```yaml
+id: US050
+requirement_ids:
+  - R037
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望需求计划页也使用 TanStack Table 管理列和排序，以便本地 MVP 的主要表格保持一致交互节奏。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "需求计划页由独立的 TanStack Table 组件渲染。"
+  - "保留日期、时段、项目、职场、预测人数、来源、状态字段。"
+  - "排序保持展示层行为，不改变后端契约或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US048"
+status: "ready"
+```
