@@ -1511,3 +1511,25 @@ dependencies:
   - "US065"
 status: "done"
 ```
+
+### US067 - check-state strict 默认阻断
+
+```yaml
+id: US067
+requirement_ids:
+  - R055
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望普通任务的标准检查默认阻断状态漂移，同时 state-repair 任务仍有明确旁路。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 默认运行 `bash scripts/check-state.sh --strict`。"
+  - "`BPO_STATE_CHECK_MODE=repair-scope bash scripts/check.sh` 可用于 State Repair Mode。"
+  - "`BPO_STATE_CHECK_MODE=warning bash scripts/check.sh` 可用于临时诊断。"
+  - "任务完成后 current queue 清空，不保留 done 历史。"
+  - "`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US066"
+status: "done"
+```

@@ -852,6 +852,28 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 warning-only state check、7 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-12 - check-state strict 默认阻断
+
+#### 审计结论
+
+- `H026/US067` 已将 `bash scripts/check.sh` 的 state check 升级为 strict 默认阻断。
+- 普通任务现在会在标准检查中阻断 queue/task/index 不一致、TRACE_INDEX lifecycle state、current done history 等状态漂移。
+- State Repair Mode 保留显式旁路：`BPO_STATE_CHECK_MODE=repair-scope bash scripts/check.sh`。
+- 临时诊断保留 warning-only 显式旁路：`BPO_STATE_CHECK_MODE=warning bash scripts/check.sh`。
+- 任务完成后 current queue 和 active task 已恢复为空，done 历史未累积在 current 文件中。
+
+#### 风险
+
+- strict 已成为默认路径；后续若状态文件不一致，普通任务会被阻断，必须进入 State Repair Mode 处理。
+- 仍未做大量历史归档；旧大文件继续作为过渡期历史来源。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，默认 strict state check。
+- `BPO_STATE_CHECK_MODE=repair-scope bash scripts/check.sh`：通过，State Repair Mode 旁路可用。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

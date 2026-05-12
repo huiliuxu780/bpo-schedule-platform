@@ -677,3 +677,14 @@
 - action: 补强 current done history 不变量检查。
 - status: `done`
 - notes: `scripts/check-state.sh` 现在会检测 current story/task 文件中的 `status: done`；warning-only 模式只告警，strict 模式失败，回归测试覆盖 done story 和 done task 场景。
+
+### 2026-05-12
+
+- task_id: `H026`
+- source_ids:
+  - `R055`
+- story_ids:
+  - `US067`
+- action: 将标准 check-state 升级为 strict 默认阻断。
+- status: `done`
+- notes: `bash scripts/check.sh` 默认运行 `bash scripts/check-state.sh --strict`；State Repair Mode 可显式使用 `BPO_STATE_CHECK_MODE=repair-scope`，临时诊断可显式使用 `BPO_STATE_CHECK_MODE=warning`。

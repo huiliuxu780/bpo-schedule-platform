@@ -718,3 +718,16 @@ version: "1.0"
 status: "split"
 notes: "只改状态检查、回归测试和治理追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R055 - check-state strict 默认阻断
+
+```yaml
+id: R055
+module: "Harness"
+description: "在 current queue 冒烟和 done-history 不变量跑稳后，将标准 `bash scripts/check.sh` 的 state check 从 warning-only 升级为 strict 默认阻断，并保留 state-repair 和 warning-only 显式旁路。"
+source: "State governance continuation on 2026-05-12"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只改标准检查入口和治理追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

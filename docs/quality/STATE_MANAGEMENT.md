@@ -99,7 +99,13 @@ Forbidden:
 
 `scripts/check-state.sh` validates the current and registry layer.
 
-Initial rollout mode is warning-only by default. `--strict` is available for later hard blocking after the workflow runs cleanly across real tasks. The standard `bash scripts/check.sh` path runs `check-state` in warning-only mode and runs regression tests for strict failure cases.
+`scripts/check-state.sh` supports warning, strict, and repair-scope modes. The standard `bash scripts/check.sh` path runs strict state checks by default and runs regression tests for strict failure cases.
+
+Mode overrides:
+
+- Default: `bash scripts/check.sh` runs `bash scripts/check-state.sh --strict`.
+- State repair: `BPO_STATE_CHECK_MODE=repair-scope bash scripts/check.sh`.
+- Temporary diagnostics: `BPO_STATE_CHECK_MODE=warning bash scripts/check.sh`.
 
 Current checks:
 
@@ -125,6 +131,7 @@ First live smoke result:
 
 - `H024/US065` was seeded into current queue, matched to an active task, verified with `bash scripts/check-state.sh --strict`, then removed from current after completion so done history stayed out of current files.
 - `H025/US066` added a concrete invariant that current story/task files must not retain `status: done`, with regression coverage for warning-only and strict modes.
+- `H026/US067` promoted standard `bash scripts/check.sh` to strict state checking by default while preserving explicit repair-scope and warning-only overrides.
 
 ## State Repair Mode
 

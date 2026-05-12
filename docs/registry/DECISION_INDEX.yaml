@@ -50,3 +50,10 @@ decisions:
       - "scripts/tests/check-state.test.mjs"
       - "docs/current/STORY_QUEUE.yaml"
       - "docs/current/ACTIVE_TASKS.yaml"
+  D-2026-05-12-strict-state-check-default:
+    title: "Standard check defaults to strict state check"
+    file: "docs/decision-log.md"
+    related_files:
+      - "scripts/check.sh"
+      - "scripts/check-state.sh"
+      - "docs/quality/STATE_MANAGEMENT.md"

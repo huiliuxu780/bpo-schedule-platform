@@ -127,7 +127,23 @@ fi
 
 npm run verify:dev-runtime
 npm run test:dev-runtime
-bash scripts/check-state.sh
+state_check_mode="${BPO_STATE_CHECK_MODE:-strict}"
+case "$state_check_mode" in
+  strict)
+    bash scripts/check-state.sh --strict
+    ;;
+  repair-scope)
+    bash scripts/check-state.sh --repair-scope
+    ;;
+  warning)
+    bash scripts/check-state.sh
+    ;;
+  *)
+    echo "unsupported BPO_STATE_CHECK_MODE: $state_check_mode" >&2
+    echo "expected one of: strict, repair-scope, warning" >&2
+    exit 1
+    ;;
+esac
 node --test scripts/tests/check-state.test.mjs
 bash scripts/verify-backend-runtime.sh
 node --test scripts/tests/verify-backend-runtime.test.mjs

@@ -16,6 +16,8 @@ The H024 current-queue smoke task proved that a ready story plus matching active
 
 The H025 invariant pass added strict checks and regression tests that reject `status: done` inside current story/task files.
 
+The H026 rollout changed `bash scripts/check.sh` to use strict state checks by default. State Repair Mode can run `BPO_STATE_CHECK_MODE=repair-scope bash scripts/check.sh`; temporary warning-only diagnostics can run `BPO_STATE_CHECK_MODE=warning bash scripts/check.sh`.
+
 ## Current Execution Rules
 
 - Read current files by default, not historical archive files.
@@ -25,7 +27,7 @@ The H025 invariant pass added strict checks and regression tests that reject `st
 - Keep subagents read-only for `docs/current/**` and `docs/registry/**`; the main Worker is the single writer.
 - Keep old large files as historical sources during the transition.
 - Run `bash scripts/check-state.sh` for state changes.
-- `bash scripts/check.sh` runs state checks in warning-only mode during the initial rollout.
+- `bash scripts/check.sh` runs strict state checks by default.
 - Run `bash scripts/check.sh` before reporting a task complete.
 
 ## Current Stop Conditions

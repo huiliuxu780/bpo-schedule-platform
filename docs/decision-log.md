@@ -158,3 +158,10 @@
 - 原因：current 层只能承载 ready、in_progress、blocked；done 历史进入 current 会重新拉长默认上下文并破坏 v3 治理目标。
 - 影响：后续完成任务后必须清空 current 或替换为下一条 ready，不能把 done 留在 current 作为历史日志。
 - 限制：该决策不删除旧大文件，不迁移大量历史，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-12 - D023 - 标准 check 默认阻断状态漂移
+
+- 决策：`bash scripts/check.sh` 默认运行 `bash scripts/check-state.sh --strict`。
+- 原因：current queue 冒烟、done-history 不变量和回归测试已经跑稳；继续 warning-only 会降低状态治理价值。
+- 影响：普通任务中的 queue/task/index 不一致会阻断标准检查；State Repair Mode 使用 `BPO_STATE_CHECK_MODE=repair-scope bash scripts/check.sh`，临时诊断使用 `BPO_STATE_CHECK_MODE=warning bash scripts/check.sh`。
+- 限制：该决策只改变状态检查强度，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。
