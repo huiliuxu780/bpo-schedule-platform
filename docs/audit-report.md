@@ -895,6 +895,27 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-13 - Codex Plan 面板边界规则
+
+#### 审计结论
+
+- `H028/US069` 已在 `AGENTS.md` 和 `docs/quality/STATE_MANAGEMENT.md` 固化 Plan 边界。
+- Codex Plan 明确不是 source of truth，只能作为当前会话的临时执行投影视图。
+- 当 Codex Plan 与 Harness current/registry state 冲突时，以 Harness state 为准。
+- Plan 不得作为 ready/done、归档、allowed files、stop conditions、commit SHA、验证结果或 Done Report 字段来源。
+- 任务完成后 current queue 和 active task 已恢复为空，done 历史未累积在 current 文件中。
+
+#### 风险
+
+- 该规则依赖执行者遵守：每轮如果使用 Plan 面板，必须先从 current queue/active task 派生。
+- 仍未做大量历史归档；旧大文件继续作为过渡期历史来源。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

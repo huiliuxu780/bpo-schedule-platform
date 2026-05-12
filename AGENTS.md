@@ -67,6 +67,16 @@ History-On-Demand is allowed only when current state is insufficient, the user a
 
 State Repair Mode triggers when current queue and active tasks disagree, registry paths are missing, archive migration is partially complete, or `check-state` blocks normal execution. In State Repair Mode, modify only `docs/current/**`, `docs/registry/**`, and necessary archive index pointers; do not modify business code, package/lockfiles, dependencies, database, integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors.
 
+## Codex Plan Boundary
+
+Codex Plan is not a source of truth.
+
+- Codex Plan is a temporary execution view for the current session only.
+- Codex Plan must be derived from `docs/current/STORY_QUEUE.yaml` and `docs/current/ACTIVE_TASKS.yaml` when current Harness state is available.
+- If Codex Plan differs from Harness state, Harness state wins.
+- Codex Plan must not decide project status, readiness, completion, archive state, allowed files, stop conditions, commit evidence, or verification evidence.
+- Project state must be persisted through Harness files, registry indexes, audit records, branch logs, task logs, commits, and Done Reports.
+
 ## Standard Workflow
 
 Detailed branch, worktree, integration, exception, and audit runbook: `docs/quality/GIT_BRANCH_WORKFLOW.md`.

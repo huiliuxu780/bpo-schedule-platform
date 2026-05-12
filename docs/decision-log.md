@@ -172,3 +172,10 @@
 - 原因：current_files 是默认读取入口索引，如果这些路径漂移或缺失，启动任务会回退到 legacy 大文件或产生错误上下文。
 - 影响：`TRACE_INDEX.yaml` 的 current 文件路径缺失会在 strict state check 中失败。
 - 限制：该决策不迁移大量历史，不删除旧大文件，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-13 - D025 - Codex Plan 不是状态源
+
+- 决策：Codex Plan is not a source of truth；它只能作为当前会话的临时执行投影视图。
+- 原因：Plan 面板不是持久 SoT，不天然绑定 Harness，也不包含完整审计字段。
+- 影响：Plan 必须从 `docs/current/STORY_QUEUE.yaml` 和 `docs/current/ACTIVE_TASKS.yaml` 派生；如果 Plan 与 Harness state 冲突，Harness state wins。
+- 限制：不得用 Plan 判断项目真实状态、ready/done、归档状态、allowed files、stop conditions、commit SHA、验证结果或 Done Report 字段。

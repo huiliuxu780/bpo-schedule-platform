@@ -64,3 +64,11 @@ decisions:
       - "docs/registry/TRACE_INDEX.yaml"
       - "scripts/check-state.sh"
       - "scripts/tests/check-state.test.mjs"
+  D-2026-05-13-codex-plan-boundary:
+    title: "Codex Plan is a projection, not project state"
+    file: "docs/decision-log.md"
+    related_files:
+      - "AGENTS.md"
+      - "docs/quality/STATE_MANAGEMENT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"

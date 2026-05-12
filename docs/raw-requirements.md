@@ -744,3 +744,16 @@ version: "1.0"
 status: "split"
 notes: "只改状态检查、回归测试和治理追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R057 - Codex Plan 面板边界规则
+
+```yaml
+id: R057
+module: "Harness"
+description: "明确 Codex Plan/进度面板只是当前会话投影视图，不是项目状态源；真实状态必须以 Harness current queue、active tasks 和 registry 为准。"
+source: "PM supplied Codex Plan boundary rule on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只改治理规则和追溯记录；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

@@ -38,6 +38,13 @@ stories:
     task_ids:
       - "H027"
     archive_refs: []
+  US069:
+    file: "docs/user-stories.md"
+    requirement_ids:
+      - "R057"
+    task_ids:
+      - "H028"
+    archive_refs: []
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -58,6 +65,11 @@ tasks:
     file: "tasks/backlog.yaml"
     story_ids:
       - "US068"
+    gate: "state-hygiene"
+  H028:
+    file: "tasks/backlog.yaml"
+    story_ids:
+      - "US069"
     gate: "state-hygiene"
 requirements:
   R051:
@@ -96,6 +108,12 @@ requirements:
       - "US068"
     task_ids:
       - "H027"
+  R057:
+    file: "docs/raw-requirements.md"
+    story_ids:
+      - "US069"
+    task_ids:
+      - "H028"
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
@@ -103,4 +121,5 @@ decisions:
   - "D-2026-05-12-current-done-history-invariant"
   - "D-2026-05-12-strict-state-check-default"
   - "D-2026-05-13-trace-current-files-path-check"
+  - "D-2026-05-13-codex-plan-boundary"
 archive_refs: []

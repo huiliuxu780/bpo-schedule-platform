@@ -65,6 +65,37 @@ Only the main Worker may write:
 
 Subagents may inspect relevant files and return recommendations, but they must not directly modify current or registry state.
 
+## Codex Plan Boundary
+
+Codex Plan is not a source of truth.
+
+Role split:
+
+- Harness current files own state.
+- Registry files own lookup and trace relationships.
+- Codex Plan is only a projection for the current execution turn.
+
+Rules:
+
+- Generate Codex Plan from `docs/current/STORY_QUEUE.yaml` and `docs/current/ACTIVE_TASKS.yaml` when those files exist.
+- If Codex Plan and Harness state conflict, Harness state wins.
+- Do not use Codex Plan to decide whether a story is ready, in progress, blocked, done, archived, or restored.
+- Do not use Codex Plan as audit evidence.
+- Do not use Codex Plan as the source for allowed files, stop conditions, verification results, commit SHA, archive status, or Done Report fields.
+- After execution, write real state changes back to Harness files, registry indexes, audit records, branch logs, task logs, commits, and Done Reports.
+
+Acceptable use:
+
+- Display the current step checklist for this session.
+- Track immediate execution progress.
+- Summarize work-in-progress while commands or verification are running.
+
+Forbidden use:
+
+- Treating an old Plan as project memory.
+- Reconstructing current queue from Plan when Harness current files disagree.
+- Marking project tasks done because the Plan panel says they are done.
+
 ## History-On-Demand Rule
 
 Archive and legacy history may be read only when:

@@ -20,6 +20,8 @@ The H026 rollout changed `bash scripts/check.sh` to use strict state checks by d
 
 The H027 registry pass added strict validation for `TRACE_INDEX.yaml` current file paths and de-duplicated registry path output.
 
+The H028 plan-boundary pass made Codex Plan a temporary projection only. Harness current and registry files remain the state source.
+
 ## Current Execution Rules
 
 - Read current files by default, not historical archive files.

@@ -1555,3 +1555,25 @@ dependencies:
   - "US067"
 status: "done"
 ```
+
+### US069 - Codex Plan 面板边界规则
+
+```yaml
+id: US069
+requirement_ids:
+  - R057
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望 Codex Plan 面板只作为当前会话投影视图，避免它被误用成项目状态源。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "AGENTS.md 明确 Codex Plan is not a source of truth。"
+  - "STATE_MANAGEMENT.md 明确 Plan 必须从 Harness current queue 派生。"
+  - "当 Codex Plan 与 Harness state 冲突时，Harness state wins。"
+  - "任务完成后 current queue 清空，不保留 done 历史。"
+  - "`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US068"
+status: "done"
+```

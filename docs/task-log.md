@@ -699,3 +699,14 @@
 - action: 补强 TRACE_INDEX current_files 路径校验。
 - status: `done`
 - notes: `scripts/check-state.sh` 现在会校验 `TRACE_INDEX.yaml` 中 `current_files` 的路径，并对重复 registry 路径输出去重；回归测试覆盖缺失 current file path 的 strict 失败。
+
+### 2026-05-13
+
+- task_id: `H028`
+- source_ids:
+  - `R057`
+- story_ids:
+  - `US069`
+- action: 固化 Codex Plan 面板边界规则。
+- status: `done`
+- notes: `AGENTS.md` 和 `docs/quality/STATE_MANAGEMENT.md` 明确 Codex Plan 只是当前会话投影视图，不是状态源；若 Plan 与 Harness state 冲突，以 Harness state 为准。
