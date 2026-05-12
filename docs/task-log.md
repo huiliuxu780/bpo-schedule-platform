@@ -556,3 +556,80 @@
 - action: 执行 F026 单故事 QA 验收收口。
 - status: `done`
 - notes: 验证风险明细页关联班次已由独立 TanStack Table 组件渲染并保留关键字段；下一条连续开发入口为 `R043/US056/F027`。
+
+### 2026-05-12
+
+- task_id: `F027`
+- source_ids:
+  - `R043`
+- story_ids:
+  - `US056`
+- action: 迁移风险明细不可用影响表到 TanStack Table。
+- status: `done`
+- notes: 新增 `ScheduleRiskUnavailabilityTable` 组件，由 TanStack Table 管理风险明细页重叠不可用记录列和排序；保留人员、团队、时间、原因、状态、影响时段、备注字段并保持 display-only。
+
+### 2026-05-12
+
+- task_id: `Q008`
+- source_ids:
+  - `R044`
+- story_ids:
+  - `US057`
+- action: 执行 F027 单故事 QA 验收收口。
+- status: `done`
+- notes: 验证风险明细页不可用影响表已由独立 TanStack Table 组件渲染并保留关键字段。
+
+### 2026-05-12
+
+- task_id: `F028`
+- source_ids:
+  - `R045`
+- story_ids:
+  - `US058`
+- action: 迁移不可用影响详情受影响班次表到 TanStack Table。
+- status: `done`
+- notes: 新增 `UnavailabilityImpactShiftTable` 组件，由 TanStack Table 管理不可用影响详情页受影响班次列和排序；保留计划、时段、状态、预测、已排、缺口、覆盖率、备注和动作字段并保持 display-only。
+
+### 2026-05-12
+
+- task_id: `Q009`
+- source_ids:
+  - `R046`
+- story_ids:
+  - `US059`
+- action: 执行 F028 单故事 QA 验收收口。
+- status: `done`
+- notes: 验证不可用影响详情页受影响班次表已由独立 TanStack Table 组件渲染并保留关键字段。
+
+### 2026-05-12
+
+- task_id: `F029`
+- source_ids:
+  - `R047`
+- story_ids:
+  - `US060`
+- action: 迁移不可用影响详情关联风险表到 TanStack Table。
+- status: `done`
+- notes: 新增 `UnavailabilityImpactRiskTable` 组件，由 TanStack Table 管理不可用影响详情页关联风险列和排序；保留风险、时段、缺口、不可用、原因、建议和动作字段并保持 display-only。
+
+### 2026-05-12
+
+- task_id: `Q010`
+- source_ids:
+  - `R048`
+- story_ids:
+  - `US061`
+- action: 执行 F029 单故事 QA 验收收口。
+- status: `done`
+- notes: 验证不可用影响详情页关联风险表已由独立 TanStack Table 组件渲染并保留关键字段。
+
+### 2026-05-12
+
+- task_id: `Q011`
+- source_ids:
+  - `R049`
+- story_ids:
+  - `US062`
+- action: 执行详情页 table parity 连续开发块 QA 总收口。
+- status: `done`
+- notes: 验证风险明细两张表与不可用影响详情两张表均已迁移为独立 TanStack Table 组件，相关详情页动作入口保持可用；本条连续 parity 链已收口完毕。

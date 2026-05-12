@@ -1289,7 +1289,7 @@ acceptance:
   - "`bash scripts/check.sh` 通过。"
 dependencies:
   - "US054"
-status: "ready"
+status: "done"
 ```
 
 ### US057 - F027 单故事 QA 验收收口
@@ -1310,7 +1310,7 @@ acceptance:
   - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
 dependencies:
   - "US056"
-status: "ready"
+status: "done"
 ```
 
 ### US058 - 不可用影响详情受影响班次表 table parity 第八条迁移
@@ -1332,7 +1332,7 @@ acceptance:
   - "`bash scripts/check.sh` 通过。"
 dependencies:
   - "US056"
-status: "ready"
+status: "done"
 ```
 
 ### US059 - F028 单故事 QA 验收收口
@@ -1353,7 +1353,7 @@ acceptance:
   - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
 dependencies:
   - "US058"
-status: "ready"
+status: "done"
 ```
 
 ### US060 - 不可用影响详情关联风险表 table parity 第九条迁移
@@ -1375,7 +1375,7 @@ acceptance:
   - "`bash scripts/check.sh` 通过。"
 dependencies:
   - "US058"
-status: "ready"
+status: "done"
 ```
 
 ### US061 - F029 单故事 QA 验收收口
@@ -1396,7 +1396,7 @@ acceptance:
   - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
 dependencies:
   - "US060"
-status: "ready"
+status: "done"
 ```
 
 ### US062 - 详情页 table parity 连续开发块 QA 总收口
@@ -1420,5 +1420,5 @@ dependencies:
   - "US057"
   - "US059"
   - "US061"
-status: "ready"
+status: "done"
 ```

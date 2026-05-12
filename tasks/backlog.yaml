@@ -2337,7 +2337,7 @@ tasks:
   - id: F027
     title: "风险明细不可用影响表 table parity 第七条迁移"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/**"
@@ -2370,7 +2370,7 @@ tasks:
   - id: Q008
     title: "F027 单故事 QA 验收收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "docs/**"
@@ -2402,7 +2402,7 @@ tasks:
   - id: F028
     title: "不可用影响详情受影响班次表 table parity 第八条迁移"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/**"
@@ -2435,7 +2435,7 @@ tasks:
   - id: Q009
     title: "F028 单故事 QA 验收收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "docs/**"
@@ -2467,7 +2467,7 @@ tasks:
   - id: F029
     title: "不可用影响详情关联风险表 table parity 第九条迁移"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/**"
@@ -2500,7 +2500,7 @@ tasks:
   - id: Q010
     title: "F029 单故事 QA 验收收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "docs/**"
@@ -2532,7 +2532,7 @@ tasks:
   - id: Q011
     title: "详情页 table parity 连续开发块 QA 总收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "docs/**"

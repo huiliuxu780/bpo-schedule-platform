@@ -2,6 +2,8 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { UnavailabilityImpactRiskTable } from "@/components/unavailability-impact-risk-table"
+import { UnavailabilityImpactShiftTable } from "@/components/unavailability-impact-shift-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,19 +14,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  formatCoverageRate,
   getScheduleRisks,
   getShiftDetails,
-  schedulePlanStatusLabel,
-  scheduleRiskLevelLabel,
 } from "@/lib/schedule-plans"
 import {
   getUnavailabilityRecord,
@@ -147,64 +138,7 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
             </Button>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>计划</TableHead>
-                  <TableHead>时段</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead className="text-right">预测</TableHead>
-                  <TableHead className="text-right">已排</TableHead>
-                  <TableHead className="text-right">缺口</TableHead>
-                  <TableHead className="text-right">覆盖率</TableHead>
-                  <TableHead>备注</TableHead>
-                  <TableHead className="text-right">操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {impactedShiftDetails.map((row) => (
-                  <TableRow key={`${row.plan_id}-${row.interval_start}`}>
-                    <TableCell className="font-medium">{row.plan_id}</TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {row.interval_start}-{row.interval_end}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {schedulePlanStatusLabel(row.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.forecast_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.scheduled_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.gap_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {formatCoverageRate(row.coverage_rate)}
-                    </TableCell>
-                    <TableCell>{row.note}</TableCell>
-                    <TableCell className="text-right">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/schedule-plans/${row.plan_id}`}>计划</Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {impactedShiftDetails.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={9}
-                      className="h-20 text-center text-sm text-muted-foreground"
-                    >
-                      当前不可用时段暂无匹配班次
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
+            <UnavailabilityImpactShiftTable rows={impactedShiftDetails} />
           </CardContent>
         </Card>
 
@@ -221,60 +155,7 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
             </Button>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>风险</TableHead>
-                  <TableHead>时段</TableHead>
-                  <TableHead className="text-right">缺口</TableHead>
-                  <TableHead className="text-right">不可用</TableHead>
-                  <TableHead>原因</TableHead>
-                  <TableHead>建议</TableHead>
-                  <TableHead className="text-right">操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {relatedRisks.map((risk) => (
-                  <TableRow key={risk.risk_id}>
-                    <TableCell>
-                      <Badge
-                        variant={risk.risk_level === "high" ? "default" : "outline"}
-                      >
-                        {scheduleRiskLevelLabel(risk.risk_level)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {risk.interval_start}-{risk.interval_end}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {risk.gap_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {risk.affected_unavailability}
-                    </TableCell>
-                    <TableCell>{risk.reason}</TableCell>
-                    <TableCell>{risk.recommendation}</TableCell>
-                    <TableCell className="text-right">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/schedule-risks/${encodeURIComponent(risk.risk_id)}`}>
-                          明细
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {relatedRisks.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="h-20 text-center text-sm text-muted-foreground"
-                    >
-                      当前不可用时段暂无关联风险提示
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
+            <UnavailabilityImpactRiskTable rows={relatedRisks} />
           </CardContent>
         </Card>
       </main>

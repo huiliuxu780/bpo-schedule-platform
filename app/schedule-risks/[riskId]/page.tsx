@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
 import { ScheduleRiskShiftTable } from "@/components/schedule-risk-shift-table"
+import { ScheduleRiskUnavailabilityTable } from "@/components/schedule-risk-unavailability-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,21 +14,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
   getScheduleRisk,
   getShiftDetails,
   scheduleRiskLevelLabel,
 } from "@/lib/schedule-plans"
 import {
   getUnavailability,
-  unavailabilityStatusLabel,
 } from "@/lib/unavailability"
 
 type PageProps = {
@@ -163,50 +155,7 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
             </Button>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>人员</TableHead>
-                  <TableHead>团队</TableHead>
-                  <TableHead>时间</TableHead>
-                  <TableHead>原因</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead className="text-right">影响时段</TableHead>
-                  <TableHead>备注</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {relatedUnavailabilityRows.map((row) => (
-                  <TableRow key={row.unavailability_id}>
-                    <TableCell className="font-medium">{row.staff_name}</TableCell>
-                    <TableCell>{row.team_name}</TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {row.start_time}-{row.end_time}
-                    </TableCell>
-                    <TableCell>{row.reason}</TableCell>
-                    <TableCell>
-                      <Badge variant="default">
-                        {unavailabilityStatusLabel(row.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.affected_intervals}
-                    </TableCell>
-                    <TableCell>{row.note}</TableCell>
-                  </TableRow>
-                ))}
-                {relatedUnavailabilityRows.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="h-20 text-center text-sm text-muted-foreground"
-                    >
-                      当前风险时段暂无重叠的生效中不可用记录
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
+            <ScheduleRiskUnavailabilityTable rows={relatedUnavailabilityRows} />
           </CardContent>
         </Card>
       </main>
