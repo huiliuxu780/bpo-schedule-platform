@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { ShiftDetailsTable } from "@/components/shift-details-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,14 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import {
   formatCoverageRate,
   getShiftDetails,
@@ -155,68 +148,7 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
             <Badge variant="outline">B004 明细</Badge>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>日期</TableHead>
-                  <TableHead>时段</TableHead>
-                  <TableHead>项目</TableHead>
-                  <TableHead>职场</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead className="text-right">预测</TableHead>
-                  <TableHead className="text-right">已排</TableHead>
-                  <TableHead className="text-right">缺口</TableHead>
-                  <TableHead className="text-right">覆盖率</TableHead>
-                  <TableHead>备注</TableHead>
-                  <TableHead className="w-24 text-right">操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={`${row.plan_id}-${row.interval_start}`}>
-                    <TableCell className="whitespace-nowrap">{row.plan_date}</TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {row.interval_start}-{row.interval_end}
-                    </TableCell>
-                    <TableCell className="font-medium">{row.project_name}</TableCell>
-                    <TableCell>{row.site_name}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {schedulePlanStatusLabel(row.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.forecast_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.scheduled_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.gap_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {formatCoverageRate(row.coverage_rate)}
-                    </TableCell>
-                    <TableCell>{row.note}</TableCell>
-                    <TableCell className="text-right">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/schedule-plans/${row.plan_id}`}>计划</Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {rows.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={11}
-                      className="h-24 text-center text-sm text-muted-foreground"
-                    >
-                      暂无符合条件的班次明细
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
+            <ShiftDetailsTable rows={rows} />
           </CardContent>
         </Card>
       </main>

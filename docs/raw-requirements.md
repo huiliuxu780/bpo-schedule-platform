@@ -432,3 +432,42 @@ version: "1.0"
 status: "split"
 notes: "本需求只做验收审计和验证记录；不新增业务能力、不接数据库、不修改依赖或 package/lockfile。"
 ```
+
+### R033 - 排班计划详情复核链路补强
+
+```yaml
+id: R033
+module: "计划与排班"
+description: "在不接数据库的前提下，排班计划详情页需要直接给出班次、风险和不可用的复核入口，并展示本地关联计数，减少人工来回跳转。"
+source: "PM continue mainline after no-database integration"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只复用现有本地 schedule-plans、schedule-risks、shift-details、unavailability 契约；不新增后端接口、真实数据、数据库、审批、导出、批量调班或生产公式。"
+```
+
+### R034 - 班次明细 table parity 第二条迁移
+
+```yaml
+id: R034
+module: "前端设计"
+description: "在风险提示表和排班计划主表之后，继续把班次明细页迁移到 TanStack Table，实现第二条展示层 table parity。"
+source: "PM continue mainline after no-database integration"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只迁移展示层列和排序，不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+```
+
+### R035 - 不可用记录 table parity 第三条迁移
+
+```yaml
+id: R035
+module: "前端设计"
+description: "在班次明细页完成 TanStack Table 迁移后，继续把不可用记录页迁移到同一展示层 table parity 模式。"
+source: "Mainline follow-up after F021/F022"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只迁移展示层列和排序，不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+```

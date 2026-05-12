@@ -364,3 +364,20 @@
 - Updated `scripts/check.sh` and `scripts/dev.sh` to reuse the same backend runtime verifier instead of hand-rolled candidate logic.
 - Added `scripts/tests/verify-backend-runtime.test.mjs` and integrated it into the main Harness check so supported Python 3.12 passes and system Python 3.9 fails clearly.
 - Verified on this machine that `/Users/mac/.local/bin/python3` 3.12.13 is accepted and `/usr/bin/python3` 3.9.6 is rejected as unsupported.
+
+### F021/F022 Local Detail Chain And Shift Table Parity
+
+- branch_name: `codex/f021-detail-chain`
+- base_main_commit: `86833e6b37a4b0c8a6423287517f920c6fd36d84`
+- remote_status: `origin/main available; fetch passed and local main already matched origin/main`
+- scope: schedule-plan detail review-chain strengthening, shift-details table parity, and traceability updates only.
+- allowed_files_check: `app/**`, `components/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, lib, package, or lockfile files.
+- scope_diff_check: `app/schedule-plans/[planId]/page.tsx`, `app/shift-details/page.tsx`, `components/shift-details-table.tsx`, `docs/PROJECT_STATE.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, `docs/raw-requirements.md`, `docs/task-log.md`, `docs/user-stories.md`, and `tasks/backlog.yaml`; no backend, lib, package, or lockfile files.
+- check_result: `git diff --check` passed; `bash scripts/check.sh` passed; local dev smoke used `npm run dev` on `http://localhost:3002` and verified the updated schedule-plan detail, shift-details, and schedule-risk detail routes by local HTTP content checks because browser navigation tools were not exposed in this turn.
+- local_commit_sha: `current HEAD on codex/f021-detail-chain; exact SHA recorded in the Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -446,3 +446,25 @@
 - action: 完成本地 MVP no-database 验收审计。
 - status: `done`
 - notes: 审计记录 no-database 边界、本地 MVP 链路入口、计划表 table parity 和最终验证结果；数据库、真实集成、权限、审批、导出、批量和生产口径继续 deferred。
+
+### 2026-05-12
+
+- task_id: `F021`
+- source_ids:
+  - `R033`
+- story_ids:
+  - `US046`
+- action: 补强排班计划详情复核链路。
+- status: `done`
+- notes: 详情页新增本地复核链路面板，展示缺口时段、关联风险、生效不可用计数，并提供班次、风险、不可用入口；未新增后端接口、数据库、真实数据或依赖。
+
+### 2026-05-12
+
+- task_id: `F022`
+- source_ids:
+  - `R034`
+- story_ids:
+  - `US047`
+- action: 迁移班次明细到 TanStack Table。
+- status: `done`
+- notes: 新增 `ShiftDetailsTable` 组件，由 TanStack Table 管理班次明细列和排序；保持 display-only，不启用批量、拖拽、审批、导出或批量调班。

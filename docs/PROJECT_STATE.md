@@ -179,7 +179,7 @@ The inserted requirement does not immediately authorize UI rewrites, dependency 
 
 Current Story Runner ready queue:
 
-- Next recommended story after `US036/F016`: 不可用影响定位
+- Next recommended story after `US047/F022`: 不可用记录 table parity 第三条迁移
 
 `US036/F016` is now complete as the frontend risk-detail drilldown. Schedule-risk rows link to `/schedule-risks/[riskId]`, and the detail view shows risk level, plan/date/interval context, gap, active unavailability impact, reason, recommendation, related shift details, and overlapping unavailable records. It reuses existing local MVP contracts and does not add backend endpoints, dependencies, real data, database persistence, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
 
@@ -196,6 +196,10 @@ Current Story Runner ready queue:
 `US044/F020` is now complete as the second local table parity slice. `SchedulePlanTable` now uses TanStack Table for columns, row model, and sorting while preserving the existing schedule-plan fields and view action. It remains display-only and does not add batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code, settlement-rule, or charge-factor behavior.
 
 `US045/Q003` is now complete as the local MVP acceptance audit for this block. The current no-database MVP chain is suitable for continued feature development without database persistence; database planning should remain deferred until the local workflows are more complete and PM provides a database environment.
+
+`US046/F021` is now complete as the schedule-plan detail review-chain strengthening pass. The detail page now exposes local review counts and direct links to shift details, risk hints, and active unavailability views for the same plan context, without adding backend endpoints, database work, real data, approval, export, batch operations, production formulas, status-code finalization, settlement rules, or charge factors.
+
+`US047/F022` is now complete as the second follow-up table parity slice. `ShiftDetailsTable` now uses TanStack Table for columns, row model, and sorting while preserving the existing shift-detail fields and plan action. It remains display-only and does not add batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code, settlement-rule, or charge-factor behavior.
 
 ## Subagent Prompt Contract Direction
 

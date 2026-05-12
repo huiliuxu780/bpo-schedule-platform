@@ -1050,3 +1050,71 @@ dependencies:
   - "US044"
 status: "done"
 ```
+
+### US046 - 排班计划详情复核链路补强
+
+```yaml
+id: US046
+requirement_ids:
+  - R033
+module: "计划与排班"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望在排班计划详情页直接看到班次、风险和不可用的复核入口与本地计数，以便更快完成同一计划的人工复核。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "排班计划详情页新增复核链路面板。"
+  - "面板展示缺口时段、关联风险和生效中不可用的本地计数。"
+  - "面板可跳转到班次明细、风险提示和不可用管理相关视图。"
+  - "复用现有本地 MVP 契约，不新增后端接口、真实数据源、数据库或依赖。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US043"
+  - "US045"
+status: "done"
+```
+
+### US047 - 班次明细 table parity 第二条迁移
+
+```yaml
+id: US047
+requirement_ids:
+  - R034
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望班次明细页也使用 TanStack Table 管理列和排序，以便继续靠近 shadcn dashboard table 的展示体验。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "班次明细页由独立的 TanStack Table 组件渲染。"
+  - "保留日期、时段、项目、职场、状态、预测、已排、缺口、覆盖率、备注和计划动作。"
+  - "排序保持展示层行为，不改变后端契约或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US046"
+  - "US044"
+status: "done"
+```
+
+### US048 - 不可用记录 table parity 第三条迁移
+
+```yaml
+id: US048
+requirement_ids:
+  - R035
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望不可用记录页也使用 TanStack Table 管理列和排序，以便本地 MVP 的主要列表都收口到一致的 table parity 体验。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "不可用记录页由独立的 TanStack Table 组件渲染。"
+  - "保留日期、时间、人员、团队、项目、职场、原因、状态、影响时段、备注和影响/班次动作。"
+  - "排序保持展示层行为，不改变后端契约或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US047"
+status: "ready"
+```
