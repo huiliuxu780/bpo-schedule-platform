@@ -151,6 +151,8 @@ Current Story Runner ready queue:
 
 `US036/F016` is now complete as the frontend risk-detail drilldown. Schedule-risk rows link to `/schedule-risks/[riskId]`, and the detail view shows risk level, plan/date/interval context, gap, active unavailability impact, reason, recommendation, related shift details, and overlapping unavailable records. It reuses existing local MVP contracts and does not add backend endpoints, dependencies, real data, database persistence, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
 
+`US037/F017` is now complete as the frontend unavailability impact locator. Unavailability rows link to `/unavailability/[unavailabilityId]`, and the detail view shows the unavailable staff/team/context, impacted shift details, overlapping risk hints, and navigation back to plans, shift details, risk details, and the unavailability list. It reuses existing local MVP contracts and does not add backend endpoints, dependencies, real data, database persistence, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
+
 ## Subagent Prompt Contract Direction
 
 Subagent prompt templates are now treated as contracts rather than loose role descriptions.

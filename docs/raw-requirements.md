@@ -315,3 +315,16 @@ version: "1.0"
 status: "split"
 notes: "本需求作为下一轮 Story Runner ready 入口预置；实现时应优先复用本地 `schedule-risks`、`schedule-plans`、`shift-details`、`unavailability` 数据，不做真实人事/CORN 集成、数据库、审批、批量调班、生产风险公式或状态码定稿。"
 ```
+
+### R024 - 不可用影响定位
+
+```yaml
+id: R024
+module: "计划与排班"
+description: "运营排班人员需要从不可用记录定位其影响的班次和关联风险，以便判断是否需要人工复核排班覆盖。"
+source: "PM requested development mainline after push"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只做本地只读影响定位和跳转；不做人事/CORN 真实集成、数据库、权限、审批、导出、批量调班、自动排班、生产状态码、生产公式、结算规则或收费因子。"
+```

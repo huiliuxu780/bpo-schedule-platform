@@ -114,6 +114,14 @@ export async function getUnavailability(
   )
 }
 
+export async function getUnavailabilityRecord(
+  unavailabilityId: string
+): Promise<UnavailabilityRow | null> {
+  const rows = await getUnavailability()
+
+  return rows.find((row) => row.unavailability_id === unavailabilityId) ?? null
+}
+
 export function unavailabilityStatusLabel(status: UnavailabilityStatus) {
   const labels: Record<UnavailabilityStatus, string> = {
     active: "生效中",

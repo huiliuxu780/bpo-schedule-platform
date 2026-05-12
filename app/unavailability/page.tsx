@@ -189,11 +189,20 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
                     </TableCell>
                     <TableCell>{row.note}</TableCell>
                     <TableCell className="text-right">
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={`/shift-details?query=${row.site_name}`}>
-                          班次
-                        </Link>
-                      </Button>
+                      <div className="flex justify-end gap-2">
+                        <Button asChild variant="outline" size="sm">
+                          <Link
+                            href={`/unavailability/${encodeURIComponent(row.unavailability_id)}`}
+                          >
+                            影响
+                          </Link>
+                        </Button>
+                        <Button asChild variant="ghost" size="sm">
+                          <Link href={`/shift-details?query=${row.site_name}`}>
+                            班次
+                          </Link>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

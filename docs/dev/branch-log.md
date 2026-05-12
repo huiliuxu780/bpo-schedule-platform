@@ -301,3 +301,10 @@
 - Added a stable "明细" action from the schedule-plan risk table to the risk detail page.
 - Reused existing local MVP data contracts to show risk context, related shift detail rows, and overlapping active unavailability rows.
 - Kept the page as manual review support only: no backend endpoint, dependency, real data source, database, auth, approval, export, batch adjustment, automatic scheduling, production formula, status-code change, settlement rule, or charge factor was added.
+
+### F017 Unavailability Impact Locator
+
+- Added `/unavailability/[unavailabilityId]` as a frontend-only impact locator for unavailable staff intervals.
+- Added a stable "影响" action from the unavailability table to the impact locator page.
+- Reused existing local MVP data contracts to show unavailable-staff context, impacted shift detail rows, and overlapping schedule risk rows.
+- Kept the page as manual review support only: no backend endpoint, dependency, real data source, database, auth, approval, export, batch adjustment, automatic scheduling, production formula, status-code change, settlement rule, or charge factor was added.

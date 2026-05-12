@@ -19,6 +19,19 @@
 
 ### 2026-05-12
 
+- task_id: `F017`
+- source_ids:
+  - `R018`
+  - `R019`
+  - `R024`
+- story_ids:
+  - `US037`
+- action: 新增不可用影响定位。
+- status: `done`
+- notes: 不可用记录行新增“影响”入口；新增 `/unavailability/[unavailabilityId]`，展示不可用记录、重叠班次、关联风险和跳转入口；未新增依赖、后端接口、真实数据、审批、批量或生产公式能力。
+
+### 2026-05-12
+
 - task_id: `F016`
 - source_ids:
   - `R019`
