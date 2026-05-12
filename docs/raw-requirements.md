@@ -679,3 +679,16 @@ version: "3.0"
 status: "split"
 notes: "第一轮只做治理文件、current/registry 入口和状态检查，不迁移大量 done 历史、不改业务代码、不改依赖、不接数据库。旧大文件暂保留为历史来源和过渡期追溯。"
 ```
+
+### R052 - check-state 标准验证链路接入
+
+```yaml
+id: R052
+module: "Harness"
+description: "在状态治理 v3 第一轮后，把 check-state 接入标准 `bash scripts/check.sh` 的 warning-only 路径，并补充无依赖回归测试，证明状态漂移能被发现且不会导致普通任务自锁。"
+source: "PM requested continued governance on 2026-05-12"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只改 Harness 脚本、测试和治理追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

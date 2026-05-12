@@ -21,6 +21,7 @@ No ready product story is currently queued. Before the next development story st
 - Keep subagents read-only for `docs/current/**` and `docs/registry/**`; the main Worker is the single writer.
 - Keep old large files as historical sources during the transition.
 - Run `bash scripts/check-state.sh` for state changes.
+- `bash scripts/check.sh` runs state checks in warning-only mode during the initial rollout.
 - Run `bash scripts/check.sh` before reporting a task complete.
 
 ## Current Stop Conditions

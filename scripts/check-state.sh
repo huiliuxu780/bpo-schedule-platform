@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -u
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="${BPO_STATE_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 MODE="warning"
 
 for arg in "$@"; do
@@ -59,9 +59,9 @@ trace_file="$ROOT_DIR/docs/registry/TRACE_INDEX.yaml"
 extract_ids() {
   local file="$1"
   awk '
-    /^[[:space:]]*id:[[:space:]]*/ {
+    /^[[:space:]]*(-[[:space:]]*)?id:[[:space:]]*/ {
       value=$0
-      sub(/^[[:space:]]*id:[[:space:]]*/, "", value)
+      sub(/^[[:space:]]*(-[[:space:]]*)?id:[[:space:]]*/, "", value)
       gsub(/["'\'']/, "", value)
       gsub(/[[:space:]]+$/, "", value)
       if (value != "") print value
@@ -110,9 +110,9 @@ task_story_refs="$(awk '
 ' "$task_file" 2>/dev/null || true)"
 
 ready_story_ids="$(awk '
-  /^[[:space:]]*id:[[:space:]]*/ {
+  /^[[:space:]]*(-[[:space:]]*)?id:[[:space:]]*/ {
     current=$0
-    sub(/^[[:space:]]*id:[[:space:]]*/, "", current)
+    sub(/^[[:space:]]*(-[[:space:]]*)?id:[[:space:]]*/, "", current)
     gsub(/["'\'']/, "", current)
   }
   /^[[:space:]]*status:[[:space:]]*ready/ {

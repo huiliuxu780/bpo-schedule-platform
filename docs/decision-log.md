@@ -137,3 +137,10 @@
 - 原因：PM 希望降低默认上下文长度，同时避免拆文件后产生状态漂移、索引失真、check 自锁和并行写冲突。
 - 影响：Story Runner 默认从 `docs/current/STORY_QUEUE.yaml` 找 story，从 `docs/current/ACTIVE_TASKS.yaml` 找 task；`TRACE_INDEX.yaml` 只存 ID、路径和关系，不存状态；`scripts/check-state.sh` 先以 warning-only 方式验证状态一致性。
 - 限制：archive 和 legacy 文件不可直接作为执行队列；subagent 不得写 current/registry；本决策不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-12 - D020 - check-state 先进入标准检查但保持 warning-only
+
+- 决策：`bash scripts/check.sh` 运行 `bash scripts/check-state.sh` 和 state-check 回归测试，但状态检查默认仍保持 warning-only。
+- 原因：PM 要求治理继续推进，但 v3 方案明确前 1-2 个任务不应让状态系统自锁；先进入标准检查可以提升可观测性，同时用回归测试约束未来 strict 升级。
+- 影响：普通检查会显示 current/registry 漂移；严格失败场景由 `scripts/tests/check-state.test.mjs` 覆盖，未来升级到阻断模式时有测试依据。
+- 限制：该决策不迁移大量历史，不删除旧大文件，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。

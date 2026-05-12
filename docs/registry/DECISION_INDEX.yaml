@@ -27,3 +27,10 @@ decisions:
     related_files:
       - "AGENTS.md"
       - "docs/registry/TRACE_INDEX.yaml"
+  D-2026-05-12-check-state-warning-only:
+    title: "check-state is visible in standard checks but warning-only during initial rollout"
+    file: "docs/decision-log.md"
+    related_files:
+      - "scripts/check.sh"
+      - "scripts/check-state.sh"
+      - "scripts/tests/check-state.test.mjs"

@@ -57,8 +57,10 @@ required_files=(
   "tasks/backlog.yaml"
   "scripts/dev.sh"
   "scripts/run-next-dev.sh"
+  "scripts/check-state.sh"
   "scripts/verify-backend-runtime.sh"
   "scripts/verify-frontend-native-runtime.mjs"
+  "scripts/tests/check-state.test.mjs"
   "scripts/tests/verify-backend-runtime.test.mjs"
   "scripts/tests/verify-frontend-native-runtime.test.mjs"
   ".gitignore"
@@ -125,6 +127,8 @@ fi
 
 npm run verify:dev-runtime
 npm run test:dev-runtime
+bash scripts/check-state.sh
+node --test scripts/tests/check-state.test.mjs
 bash scripts/verify-backend-runtime.sh
 node --test scripts/tests/verify-backend-runtime.test.mjs
 npm run lint
@@ -133,6 +137,7 @@ npm run build
 
 bash -n scripts/dev.sh
 bash -n scripts/run-next-dev.sh
+bash -n scripts/check-state.sh
 bash -n scripts/verify-backend-runtime.sh
 
 backend_files=(

@@ -1445,3 +1445,25 @@ dependencies:
   - "US062"
 status: "done"
 ```
+
+### US064 - check-state 标准验证链路接入
+
+```yaml
+id: US064
+requirement_ids:
+  - R052
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望标准检查能自动暴露 current/registry 状态漂移，并用回归测试证明 warning-only 不会让普通任务自锁。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 运行 `bash scripts/check-state.sh`。"
+  - "新增 `scripts/tests/check-state.test.mjs`，覆盖一致状态、warning-only 不自锁、strict 缺 active task 失败、TRACE_INDEX lifecycle state 失败。"
+  - "`scripts/check-state.sh` 支持测试通过 `BPO_STATE_ROOT` 注入临时状态根目录。"
+  - "不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+  - "`bash scripts/check-state.sh --strict`、`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US063"
+status: "done"
+```

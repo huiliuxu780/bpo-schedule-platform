@@ -644,3 +644,14 @@
 - action: 落地 Harness 状态治理 v3 第一轮。
 - status: `done`
 - notes: 新增 current/registry 状态层、`scripts/check-state.sh`、State Hygiene/Repair Gate、History-On-Demand、archive 不可执行和 single-writer 规则；不迁移大量 done 历史、不改业务代码、不改依赖、不接数据库。
+
+### 2026-05-12
+
+- task_id: `H023`
+- source_ids:
+  - `R052`
+- story_ids:
+  - `US064`
+- action: 将 check-state 接入标准验证链路并补回归测试。
+- status: `done`
+- notes: `bash scripts/check.sh` 现在运行 warning-only state check 和 `scripts/tests/check-state.test.mjs`；回归覆盖一致状态、warning-only 不自锁、strict 缺 active task 失败和 TRACE_INDEX lifecycle state 失败。

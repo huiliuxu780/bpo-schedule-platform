@@ -99,7 +99,7 @@ Forbidden:
 
 `scripts/check-state.sh` validates the current and registry layer.
 
-Initial rollout mode is warning-only by default. `--strict` is available for later hard blocking after the workflow runs cleanly across real tasks.
+Initial rollout mode is warning-only by default. `--strict` is available for later hard blocking after the workflow runs cleanly across real tasks. The standard `bash scripts/check.sh` path runs `check-state` in warning-only mode and runs regression tests for strict failure cases.
 
 Current checks:
 
@@ -111,6 +111,13 @@ Current checks:
 - Registry `file:` paths exist.
 - Current queue entries do not point to archive files as execution sources.
 - Current files stay under line-count budgets.
+
+Regression coverage:
+
+- Consistent current state passes strict mode.
+- Missing active task for a ready story warns without self-locking warning mode.
+- Missing active task fails strict mode.
+- Lifecycle state in `TRACE_INDEX.yaml` fails strict mode.
 
 ## State Repair Mode
 

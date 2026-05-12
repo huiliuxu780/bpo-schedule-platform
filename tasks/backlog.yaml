@@ -2609,3 +2609,50 @@ tasks:
       - "需要审批、导出、批量调班、自动排班或生产工作流能力"
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
     commit_after_done: true
+  - id: H023
+    title: "check-state 标准验证链路接入"
+    priority: P1
+    status: done
+    required_workflow: state-hygiene
+    allowed_files:
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/PROJECT_STATE.md"
+      - "docs/quality/STATE_MANAGEMENT.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/decision-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+      - "scripts/check-state.sh"
+      - "scripts/check.sh"
+      - "scripts/tests/check-state.test.mjs"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`bash scripts/check.sh` 运行 `bash scripts/check-state.sh` 和 state-check 回归测试。"
+      - "`scripts/tests/check-state.test.mjs` 覆盖一致状态、warning-only 不自锁、strict 缺 active task 失败、TRACE_INDEX lifecycle state 失败。"
+      - "`scripts/check-state.sh` 支持 `BPO_STATE_ROOT` 测试注入。"
+      - "`bash scripts/check-state.sh --strict`、`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要业务代码改动"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要迁移大量 done 历史或删除旧大文件"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true
