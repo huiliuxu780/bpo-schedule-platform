@@ -308,3 +308,10 @@
 - Added a stable "影响" action from the unavailability table to the impact locator page.
 - Reused existing local MVP data contracts to show unavailable-staff context, impacted shift detail rows, and overlapping schedule risk rows.
 - Kept the page as manual review support only: no backend endpoint, dependency, real data source, database, auth, approval, export, batch adjustment, automatic scheduling, production formula, status-code change, settlement rule, or charge factor was added.
+
+### F018 Schedule Risk Table Parity Slice
+
+- Added `components/schedule-risk-table.tsx` as a local TanStack Table slice for schedule risk hints.
+- Replaced the inline risk table in `/schedule-plans` with `ScheduleRiskTable`.
+- Added sortable risk level, date, gap, and unavailable-impact columns while preserving existing fields and detail/shift actions.
+- Kept this as display-only table parity: no dependency change, batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code change, settlement rule, or charge factor was added.

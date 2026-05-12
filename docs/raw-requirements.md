@@ -328,3 +328,16 @@ version: "1.0"
 status: "split"
 notes: "本需求只做本地只读影响定位和跳转；不做人事/CORN 真实集成、数据库、权限、审批、导出、批量调班、自动排班、生产状态码、生产公式、结算规则或收费因子。"
 ```
+
+### R025 - table parity 局部迁移
+
+```yaml
+id: R025
+module: "前端设计"
+description: "在已接入 TanStack Table 和 shadcn 组件的前提下，先选择一个低风险表格做局部迁移，提升官方 dashboard table parity，但不启用批量、拖拽、审批、导出或生产动作。"
+source: "PM requested development mainline after push"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只做展示层局部迁移；不新增依赖，不修改 package/lockfile，不改变业务字段、生产状态码、公式、结算规则或收费因子。"
+```

@@ -1668,3 +1668,37 @@ tasks:
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F018
+    title: "风险提示表局部 table parity 迁移"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增局部 `ScheduleRiskTable` 组件。"
+      - "风险提示表由 TanStack Table 管理列和排序。"
+      - "保留风险等级、日期、时段、项目、职场、缺口、不可用、原因、建议和明细/班次动作。"
+      - "不新增依赖、不修改 package 或 lockfile。"
+      - "不启用批量选择、拖拽排序、审批、导出、批量调班或生产动作。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

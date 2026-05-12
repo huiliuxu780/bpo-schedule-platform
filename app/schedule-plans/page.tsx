@@ -3,11 +3,11 @@ import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
+import { ScheduleRiskTable } from "@/components/schedule-risk-table"
 import {
   formatCoverageRate,
   getSchedulePlansWithFilters,
   getScheduleRisks,
-  scheduleRiskLevelLabel,
   schedulePlanStatusLabel,
   type SchedulePlanStatus,
 } from "@/lib/schedule-plans"
@@ -21,14 +21,6 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 
 const statusOptions: { label: string; value?: SchedulePlanStatus }[] = [
   { label: "全部" },
@@ -164,75 +156,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             </Badge>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>风险</TableHead>
-                  <TableHead>日期</TableHead>
-                  <TableHead>时段</TableHead>
-                  <TableHead>项目</TableHead>
-                  <TableHead>职场</TableHead>
-                  <TableHead className="text-right">缺口</TableHead>
-                  <TableHead className="text-right">不可用</TableHead>
-                  <TableHead>原因</TableHead>
-                  <TableHead>建议</TableHead>
-                  <TableHead className="w-24 text-right">操作</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {risks.slice(0, 5).map((risk) => (
-                  <TableRow key={risk.risk_id}>
-                    <TableCell>
-                      <Badge
-                        variant={risk.risk_level === "high" ? "default" : "outline"}
-                      >
-                        {scheduleRiskLevelLabel(risk.risk_level)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      {risk.plan_date}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {risk.interval_start}-{risk.interval_end}
-                    </TableCell>
-                    <TableCell className="font-medium">{risk.project_name}</TableCell>
-                    <TableCell>{risk.site_name}</TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {risk.gap_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {risk.affected_unavailability}
-                    </TableCell>
-                    <TableCell>{risk.reason}</TableCell>
-                    <TableCell>{risk.recommendation}</TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-2">
-                        <Button asChild variant="outline" size="sm">
-                          <Link href={`/schedule-risks/${encodeURIComponent(risk.risk_id)}`}>
-                            明细
-                          </Link>
-                        </Button>
-                        <Button asChild variant="ghost" size="sm">
-                          <Link href={`/shift-details?query=${risk.site_name}`}>
-                            班次
-                          </Link>
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {risks.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={10}
-                      className="h-20 text-center text-sm text-muted-foreground"
-                    >
-                      当前筛选下暂无排班风险提示
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
+            <ScheduleRiskTable risks={risks.slice(0, 5)} />
           </CardContent>
         </Card>
         <SchedulePlanTable

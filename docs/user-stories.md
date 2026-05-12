@@ -861,3 +861,29 @@ dependencies:
   - "US036"
 status: "done"
 ```
+
+### US038 - 风险提示表局部 table parity 迁移
+
+```yaml
+id: US038
+requirement_ids:
+  - R020
+  - R021
+  - R025
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望排班计划页的风险提示表先迁移到 TanStack Table 局部实现，以便后续逐步接近 shadcn dashboard table 交互。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "新增局部 ScheduleRiskTable 组件。"
+  - "风险提示表由 TanStack Table 管理列和排序。"
+  - "保留风险等级、日期、时段、项目、职场、缺口、不可用、原因、建议和明细/班次动作。"
+  - "不新增依赖、不修改 package 或 lockfile。"
+  - "不启用批量选择、拖拽排序、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US036"
+  - "US037"
+status: "done"
+```

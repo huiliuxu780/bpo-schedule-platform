@@ -19,6 +19,19 @@
 
 ### 2026-05-12
 
+- task_id: `F018`
+- source_ids:
+  - `R020`
+  - `R021`
+  - `R025`
+- story_ids:
+  - `US038`
+- action: 完成风险提示表局部 table parity 迁移。
+- status: `done`
+- notes: 新增 `components/schedule-risk-table.tsx`，使用 TanStack Table 管理风险提示表列和排序；保留明细/班次动作；未新增依赖、未改 package/lockfile、未启用批量、拖拽、审批、导出或生产动作。
+
+### 2026-05-12
+
 - task_id: `F017`
 - source_ids:
   - `R018`

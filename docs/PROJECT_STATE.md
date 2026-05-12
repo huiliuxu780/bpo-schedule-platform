@@ -153,6 +153,8 @@ Current Story Runner ready queue:
 
 `US037/F017` is now complete as the frontend unavailability impact locator. Unavailability rows link to `/unavailability/[unavailabilityId]`, and the detail view shows the unavailable staff/team/context, impacted shift details, overlapping risk hints, and navigation back to plans, shift details, risk details, and the unavailability list. It reuses existing local MVP contracts and does not add backend endpoints, dependencies, real data, database persistence, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
 
+`US038/F018` is now complete as a local table parity migration. The schedule-plan risk-hint table has been extracted to `ScheduleRiskTable` and uses TanStack Table for columns and sorting while preserving existing fields and detail/shift actions. This is display-only and does not enable batch selection, drag sorting, approval, export, batch adjustment, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
+
 ## Subagent Prompt Contract Direction
 
 Subagent prompt templates are now treated as contracts rather than loose role descriptions.
