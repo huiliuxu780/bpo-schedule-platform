@@ -408,7 +408,7 @@
 - allowed_files_check: `docs/**`, `tasks/backlog.yaml`, and read-only verification across `app/**` + `components/**`; no backend, lib, package, or lockfile files.
 - scope_diff_check: `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/PROJECT_STATE.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, lib, package, or lockfile files.
 - check_result: `git diff --check` passed; `bash scripts/check.sh` passed; local QA smoke confirmed `/schedule-plans/[planId]`, `/shift-details`, and `/unavailability` key labels/entry texts via local HTTP checks on `http://localhost:3002`.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `2d2035b`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
