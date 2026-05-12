@@ -680,6 +680,20 @@
 - 风险和不可用入口目前仍基于本地 query 过滤，不是新的专用聚合路由；这符合 MVP 收敛原则，但后续如果要继续压缩人工筛选成本，可能需要单独的跨页面聚合视图。
 - `ShiftDetailsTable` 目前仍是 display-only parity，不包含批量选择、列显隐、分页、拖拽、Drawer 或导出交互。
 
+### 2026-05-12 - 不可用记录 table parity 第三条迁移
+
+#### 审计结论
+
+- `F023/US048` 已将不可用记录页迁移到 `UnavailabilityTable`，由 TanStack Table 管理列、行模型和排序。
+- 已保留原有展示字段：日期、时间、人员、团队、项目、职场、原因、状态、影响时段、备注，以及“影响/班次”动作入口。
+- 本轮仅做前端展示层 parity，不新增后端接口、依赖、真实数据源、数据库、认证、权限、审批、导出、批量调班或生产口径变更。
+- Story Runner 当前已无 `ready` 任务，下一条需 PM 指定或新增 backlog 条目后继续。
+
+#### 风险
+
+- 当前 `UnavailabilityTable` 仍是 display-only parity，不包含批量选择、拖拽、审批、导出、列显隐、Drawer 或分页交互。
+- 不可用记录与风险/班次仍是页面跳转复核链路，不是生产级自动冲突处理或执行动作。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

@@ -179,7 +179,7 @@ The inserted requirement does not immediately authorize UI rewrites, dependency 
 
 Current Story Runner ready queue:
 
-- Next recommended story after `US047/F022`: 不可用记录 table parity 第三条迁移
+- 当前无 `ready` 任务；下一条需 PM 指定或新增 backlog 条目后继续。
 
 `US036/F016` is now complete as the frontend risk-detail drilldown. Schedule-risk rows link to `/schedule-risks/[riskId]`, and the detail view shows risk level, plan/date/interval context, gap, active unavailability impact, reason, recommendation, related shift details, and overlapping unavailable records. It reuses existing local MVP contracts and does not add backend endpoints, dependencies, real data, database persistence, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
 
@@ -200,6 +200,8 @@ Current Story Runner ready queue:
 `US046/F021` is now complete as the schedule-plan detail review-chain strengthening pass. The detail page now exposes local review counts and direct links to shift details, risk hints, and active unavailability views for the same plan context, without adding backend endpoints, database work, real data, approval, export, batch operations, production formulas, status-code finalization, settlement rules, or charge factors.
 
 `US047/F022` is now complete as the second follow-up table parity slice. `ShiftDetailsTable` now uses TanStack Table for columns, row model, and sorting while preserving the existing shift-detail fields and plan action. It remains display-only and does not add batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code, settlement-rule, or charge-factor behavior.
+
+`US048/F023` is now complete as the third follow-up table parity slice. `UnavailabilityTable` now uses TanStack Table for columns, row model, and sorting while preserving the existing unavailability fields plus the impact/shift actions. It remains display-only and does not add batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code, settlement-rule, or charge-factor behavior.
 
 ## Subagent Prompt Contract Direction
 

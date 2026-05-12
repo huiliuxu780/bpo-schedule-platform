@@ -1116,5 +1116,5 @@ acceptance:
   - "`bash scripts/check.sh` 通过。"
 dependencies:
   - "US047"
-status: "ready"
+status: "done"
 ```

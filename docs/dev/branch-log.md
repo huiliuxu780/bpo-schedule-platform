@@ -381,3 +381,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### F023 Unavailability Table Parity
+
+- branch_name: `codex/f021-detail-chain`
+- base_main_commit: `86833e6b37a4b0c8a6423287517f920c6fd36d84`
+- remote_status: `origin/main available; branch already tracks origin/codex/f021-detail-chain`
+- scope: unavailability table parity migration and traceability updates only.
+- allowed_files_check: `app/**`, `components/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, lib, package, or lockfile files.
+- scope_diff_check: `app/unavailability/page.tsx`, `components/unavailability-table.tsx`, `docs/PROJECT_STATE.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, `docs/task-log.md`, `docs/user-stories.md`, and `tasks/backlog.yaml`; no backend, lib, package, or lockfile files.
+- check_result: `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

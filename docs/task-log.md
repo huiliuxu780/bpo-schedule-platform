@@ -468,3 +468,14 @@
 - action: 迁移班次明细到 TanStack Table。
 - status: `done`
 - notes: 新增 `ShiftDetailsTable` 组件，由 TanStack Table 管理班次明细列和排序；保持 display-only，不启用批量、拖拽、审批、导出或批量调班。
+
+### 2026-05-12
+
+- task_id: `F023`
+- source_ids:
+  - `R035`
+- story_ids:
+  - `US048`
+- action: 迁移不可用记录到 TanStack Table。
+- status: `done`
+- notes: 新增 `UnavailabilityTable` 组件，由 TanStack Table 管理不可用记录列和排序；保留影响/班次动作并保持 display-only，不启用批量、拖拽、审批、导出或批量调班。

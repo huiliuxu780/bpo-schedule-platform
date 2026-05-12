@@ -2077,7 +2077,7 @@ tasks:
   - id: F023
     title: "不可用记录 table parity 第三条迁移"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/**"
