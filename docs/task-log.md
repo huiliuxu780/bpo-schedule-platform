@@ -380,3 +380,14 @@
 - action: 修复开发服务器原生运行时签名/缺失导致的本地 500 风险。
 - status: `done`
 - notes: 已将 `npm run dev` 收口到 `scripts/run-next-dev.sh`，强制使用 Node.js 22、先做 `lightningcss` / `@next/swc-darwin-arm64` native preflight，再以 webpack dev server 启动；`bash scripts/check.sh` 已通过，且回归测试覆盖了支持运行时成功、默认 Codex Node 失败可识别和 dev 入口受控三类场景。
+
+### 2026-05-12
+
+- task_id: `H020`
+- source_ids:
+  - `R027`
+- story_ids:
+  - `US040`
+- action: 固化 Python 3.12 开发运行时。
+- status: `done`
+- notes: 已新增 `.python-version` 和 `scripts/verify-backend-runtime.sh`，backend dev/check 入口现在只接受 Python 3.12；回归测试已覆盖支持运行时成功与系统 Python 3.9 失败可识别场景，`bash scripts/check.sh` 已通过。

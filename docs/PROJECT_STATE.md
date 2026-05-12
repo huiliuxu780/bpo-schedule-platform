@@ -90,16 +90,20 @@ That archive is read-only reference material for future audits or explicitly app
 ## Development Environment
 
 The project uses Node.js 22 for local development and delivery verification.
+The project uses Python 3.12 for backend development and verification.
 
 Current environment artifacts:
 
 - `.nvmrc`
 - `.node-version`
+- `.python-version`
 - `docs/dev/setup.md`
 
 `scripts/check.sh` automatically prefers `/opt/homebrew/opt/node@22/bin` when the current shell is not already using Node.js 22. This avoids the local Node.js 24 native package loading issue observed with Next.js / lightningcss on macOS.
 
 `npm run dev` is now a hardened frontend entrypoint. It selects Node.js 22, runs a native-addon preflight for `lightningcss` and Next.js SWC, and starts Next.js dev with webpack so the development path matches the accepted production build chain more closely. `scripts/dev.sh` reuses the same protected frontend entrypoint for local frontend + backend startup.
+
+Backend runtime selection is now also hardened. `scripts/verify-backend-runtime.sh` only accepts Python 3.12 plus the required backend modules, so PATH order or a system Python 3.9 installation cannot silently become the project backend runtime.
 
 This environment decision does not authorize dependency changes, package or lockfile edits, business implementation, backend work, real API integration, database work, permission systems, export pipelines, approval flows, or batch operations outside a confirmed Gate.
 

@@ -910,3 +910,26 @@ dependencies:
   - "US035"
 status: "done"
 ```
+
+### US040 - Python 3.12 开发运行时固化
+
+```yaml
+id: US040
+requirement_ids:
+  - R027
+module: "Harness"
+role: "前后端开发者"
+story: "作为前后端开发者，我希望 backend dev/check 入口只接受 Python 3.12，并在启动前明确验证版本和依赖，以便不同 PATH 或系统 Python 不会悄悄改变项目运行时。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "项目根目录提供 `.python-version` 并声明 Python 3.12。"
+  - "backend runtime 验证会拒绝系统 Python 3.9 等不受支持版本。"
+  - "回归测试覆盖支持运行时成功、系统 Python 失败可识别两类场景。"
+  - "README、setup、project state 和 backend README 明确 Python 3.12 约束。"
+  - "不新增依赖、不修改业务代码或后端契约。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US039"
+status: "done"
+```

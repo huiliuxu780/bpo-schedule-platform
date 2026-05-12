@@ -109,3 +109,10 @@
 - 原因：本机默认 Codex Node.js 24 会因 macOS code-signing 校验拒载 native addon，之前症状会拖到 dev server 启动后，表现为 500、模块缺失或 Turbopack/webpack 分叉问题。
 - 影响：前端开发入口现在统一走 `scripts/run-next-dev.sh`，默认使用 webpack dev server，并把 native runtime 回归测试纳入 `bash scripts/check.sh`。
 - 限制：该决策不新增依赖、不修改 lockfile、不授权业务代码、后端契约、真实数据、数据库、认证、权限、审批、导出、批量能力或生产口径变更。
+
+### 2026-05-12 - D018 - backend 开发运行时固定为 Python 3.12
+
+- 决策：backend 开发与验证入口固定使用 Python 3.12，并通过 `.python-version` 与 `scripts/verify-backend-runtime.sh` 显式验证版本和模块依赖。
+- 原因：当前机器同时存在系统 Python 3.9.6 和项目可用 Python 3.12.13；如果继续按“谁先出现在 PATH 且能 import 依赖就用谁”的策略，换机器或环境变化时会产生隐性运行时漂移。
+- 影响：`scripts/check.sh` 与 `scripts/dev.sh` 现在都通过统一后端运行时验证脚本选择解释器，系统 Python 3.9 不会再被误当作项目 backend runtime。
+- 限制：该决策不新增依赖、不修改业务代码、后端契约、数据库、认证、权限、审批、导出、批量能力或生产口径。

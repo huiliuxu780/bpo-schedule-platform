@@ -30,11 +30,13 @@ BPO Workforce Management / BPO 人力计划与履约管理平台。
 ## Development Runtime
 
 本项目固定使用 Node.js 22。
+本项目固定使用 Python 3.12。
 
 项目根目录提供：
 
 - `.nvmrc`
 - `.node-version`
+- `.python-version`
 - `docs/dev/setup.md`
 
 本机推荐使用 Homebrew `node@22`：

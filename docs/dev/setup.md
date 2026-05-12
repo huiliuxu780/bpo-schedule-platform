@@ -3,12 +3,14 @@
 ## Runtime
 
 本项目固定使用 Node.js 22 作为本地开发与交付验证运行时。
+本项目固定使用 Python 3.12 作为 backend 开发与验证运行时。
 
 原因：
 
 - 当前 Next.js / Tailwind / lightningcss 工具链在本机默认 Node.js 24 下可能触发 macOS 原生 `.node` 包 code-signing 加载失败。
 - Homebrew `node@22` 已在本机验证可完整通过 `lint`、`typecheck`、`build` 和 Harness check。
 - `.nvmrc` 与 `.node-version` 均声明为 `22`，方便 nvm、fnm、mise、asdf 等工具识别。
+- backend 脚本现在只接受 Python 3.12；系统自带 Python 3.9 即使出现在 PATH 里，也不会被当作本项目运行时。
 
 ## First-Time Setup
 
@@ -28,6 +30,17 @@ export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
 
 ```bash
 npm install
+```
+
+为 backend 准备 Python 3.12：
+
+- 优先使用项目 `.venv/bin/python3`
+- 或设置 `BPO_BACKEND_PYTHON` / `BPO_PYTHON312_BIN` 指向可用的 Python 3.12 解释器
+
+backend 依赖安装示例：
+
+```bash
+<python-3.12> -m pip install -r backend/requirements.txt
 ```
 
 ## Local Development
@@ -68,6 +81,7 @@ bash scripts/dev.sh
 
 - 优先使用 Homebrew Node.js 22
 - 调用与 `npm run dev` 相同的前端 native preflight 和 webpack dev 入口
+- 只接受 Python 3.12 backend runtime
 - 检查 `fastapi`、`uvicorn`、`pydantic`
 - 默认使用 `BPO_API_BASE_URL=http://127.0.0.1:8000`
 - 同时启动 FastAPI 和 Next.js dev server
@@ -95,11 +109,14 @@ bash scripts/check.sh
 - 前端工具链检查：`eslint`、`tsc`、`next`
 - `npm run verify:dev-runtime`
 - `npm run test:dev-runtime`
+- `bash scripts/verify-backend-runtime.sh`
+- `node --test scripts/tests/verify-backend-runtime.test.mjs`
 - `npm run lint`
 - `npm run typecheck`
 - `npm run build`
 - `bash -n scripts/dev.sh`
 - `bash -n scripts/run-next-dev.sh`
+- `bash -n scripts/verify-backend-runtime.sh`
 - backend unittest
 
 ## Scope Boundary

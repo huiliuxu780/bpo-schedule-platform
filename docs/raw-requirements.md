@@ -354,3 +354,16 @@ version: "1.0"
 status: "split"
 notes: "本需求只修复本地开发运行时、入口脚本、验证和文档说明；不新增依赖，不修改 lockfile，不改业务代码、后端契约、真实数据、数据库、认证、权限、审批、导出、批量能力或生产口径。"
 ```
+
+### R027 - Python 3.12 开发运行时固化
+
+```yaml
+id: R027
+module: "Harness"
+description: "项目开发期固定使用 Python 3.12，并将 backend dev/check 入口从“任意可导入依赖的 Python”收口到受支持版本，避免换机器或 PATH 顺序变化导致后端运行时漂移。"
+source: "PM requested runtime pinning on 2026-05-12"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只固化 Python 开发版本、验证脚本和文档说明；不新增依赖，不修改业务代码、后端契约、数据库、认证、权限、审批、导出、批量能力或生产口径。"
+```

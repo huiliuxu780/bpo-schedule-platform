@@ -33,8 +33,10 @@ PUT /api/v1/schedule-plans/{plan_id}/draft
 
 ## Run Tests
 
+Use a Python 3.12 interpreter for all backend commands below.
+
 ```bash
-python3 -m unittest discover -s backend/tests -v
+<python-3.12> -m unittest discover -s backend/tests -v
 ```
 
 ## Run Locally
@@ -42,13 +44,13 @@ python3 -m unittest discover -s backend/tests -v
 Install backend dependencies in a confirmed dependency setup environment:
 
 ```bash
-python3 -m pip install -r backend/requirements.txt
+<python-3.12> -m pip install -r backend/requirements.txt
 ```
 
 Start the API:
 
 ```bash
-python3 -m uvicorn backend.app.main:app --reload
+<python-3.12> -m uvicorn backend.app.main:app --reload
 ```
 
 Or start the first frontend + backend vertical together from the project root:

@@ -37,54 +37,7 @@ fi
 echo "using Node.js $(node -v) at $(command -v node)"
 
 resolve_backend_python() {
-  local candidate
-  local candidates=()
-
-  if [[ -n "${BPO_BACKEND_PYTHON:-}" ]]; then
-    candidates+=("$BPO_BACKEND_PYTHON")
-  else
-    candidates+=(
-      "$ROOT_DIR/.venv/bin/python"
-      "$ROOT_DIR/.venv/bin/python3"
-    )
-
-    if command -v python3 >/dev/null 2>&1; then
-      candidates+=("$(command -v python3)")
-    fi
-
-    candidates+=(
-      "/Users/mac/.local/bin/python3"
-      "/opt/homebrew/bin/python3"
-      "/usr/bin/python3"
-    )
-  fi
-
-  for candidate in "${candidates[@]}"; do
-    if [[ -z "$candidate" || ! -x "$candidate" ]]; then
-      continue
-    fi
-
-    if "$candidate" - <<'PY' >/dev/null 2>&1; then
-import importlib.util
-
-required = ("fastapi", "pydantic")
-raise SystemExit(
-    0 if all(importlib.util.find_spec(name) is not None for name in required) else 1
-)
-PY
-      printf '%s\n' "$candidate"
-      return 0
-    fi
-  done
-
-  echo "backend toolchain missing: fastapi pydantic" >&2
-  if [[ -n "${BPO_BACKEND_PYTHON:-}" ]]; then
-    echo "BPO_BACKEND_PYTHON is set to '$BPO_BACKEND_PYTHON' but it cannot import the backend dependencies" >&2
-  else
-    echo "install backend dependencies with: python3 -m pip install -r backend/requirements.txt" >&2
-    echo "or set BPO_BACKEND_PYTHON to a Python executable that can import fastapi and pydantic" >&2
-  fi
-  return 1
+  bash scripts/verify-backend-runtime.sh --print-path
 }
 
 backend_python="$(resolve_backend_python)"
@@ -93,6 +46,7 @@ echo "using backend Python $("$backend_python" -c 'import sys; print(sys.executa
 required_files=(
   ".node-version"
   ".nvmrc"
+  ".python-version"
   "AGENTS.md"
   "docs/dev/setup.md"
   "docs/PROJECT_STATE.md"
@@ -103,7 +57,9 @@ required_files=(
   "tasks/backlog.yaml"
   "scripts/dev.sh"
   "scripts/run-next-dev.sh"
+  "scripts/verify-backend-runtime.sh"
   "scripts/verify-frontend-native-runtime.mjs"
+  "scripts/tests/verify-backend-runtime.test.mjs"
   "scripts/tests/verify-frontend-native-runtime.test.mjs"
   ".gitignore"
   "README.md"
@@ -169,12 +125,15 @@ fi
 
 npm run verify:dev-runtime
 npm run test:dev-runtime
+bash scripts/verify-backend-runtime.sh
+node --test scripts/tests/verify-backend-runtime.test.mjs
 npm run lint
 npm run typecheck
 npm run build
 
 bash -n scripts/dev.sh
 bash -n scripts/run-next-dev.sh
+bash -n scripts/verify-backend-runtime.sh
 
 backend_files=(
   "backend/app/main.py"
@@ -190,25 +149,6 @@ for file in "${backend_files[@]}"; do
     exit 1
   fi
 done
-
-if ! "$backend_python" - <<'PY'
-import importlib.util
-import sys
-
-missing = [
-    name
-    for name in ("fastapi", "pydantic")
-    if importlib.util.find_spec(name) is None
-]
-
-if missing:
-    print(f"backend toolchain missing: {' '.join(missing)}", file=sys.stderr)
-    print("install backend dependencies under a confirmed backend dependency Gate", file=sys.stderr)
-    raise SystemExit(1)
-PY
-then
-  exit 1
-fi
 
 "$backend_python" -m unittest discover -s backend/tests -v
 
