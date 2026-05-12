@@ -534,3 +534,25 @@
 - action: 执行 F025 单故事 QA 验收收口。
 - status: `done`
 - notes: 验证排班计划详情页时段明细已由独立 TanStack Table 组件渲染并保留关键字段；同步新增下一条 parity 目标 `R041/US054/F026` 为 ready。
+
+### 2026-05-12
+
+- task_id: `F026`
+- source_ids:
+  - `R041`
+- story_ids:
+  - `US054`
+- action: 迁移风险明细受影响班次表到 TanStack Table。
+- status: `done`
+- notes: 新增 `ScheduleRiskShiftTable` 组件，由 TanStack Table 管理关联班次列和排序；保留计划、状态、时段、预测、已排、缺口、覆盖率、备注字段并保持 display-only。
+
+### 2026-05-12
+
+- task_id: `Q007`
+- source_ids:
+  - `R042`
+- story_ids:
+  - `US055`
+- action: 执行 F026 单故事 QA 验收收口。
+- status: `done`
+- notes: 验证风险明细页关联班次已由独立 TanStack Table 组件渲染并保留关键字段；下一条连续开发入口为 `R043/US056/F027`。

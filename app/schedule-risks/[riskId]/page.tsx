@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { ScheduleRiskShiftTable } from "@/components/schedule-risk-shift-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,10 +21,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  formatCoverageRate,
   getScheduleRisk,
   getShiftDetails,
-  schedulePlanStatusLabel,
   scheduleRiskLevelLabel,
 } from "@/lib/schedule-plans"
 import {
@@ -145,58 +144,7 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
             </Button>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>计划</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead>时段</TableHead>
-                  <TableHead className="text-right">预测</TableHead>
-                  <TableHead className="text-right">已排</TableHead>
-                  <TableHead className="text-right">缺口</TableHead>
-                  <TableHead className="text-right">覆盖率</TableHead>
-                  <TableHead>备注</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {relatedShiftDetails.map((row) => (
-                  <TableRow key={`${row.plan_id}-${row.interval_start}`}>
-                    <TableCell className="font-medium">{row.plan_id}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {schedulePlanStatusLabel(row.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {row.interval_start}-{row.interval_end}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.forecast_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.scheduled_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {row.gap_agents}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {formatCoverageRate(row.coverage_rate)}
-                    </TableCell>
-                    <TableCell>{row.note}</TableCell>
-                  </TableRow>
-                ))}
-                {relatedShiftDetails.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="h-20 text-center text-sm text-muted-foreground"
-                    >
-                      暂无匹配的班次明细
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
+            <ScheduleRiskShiftTable rows={relatedShiftDetails} />
           </CardContent>
         </Card>
 

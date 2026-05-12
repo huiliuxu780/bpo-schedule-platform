@@ -549,3 +549,120 @@ version: "1.0"
 status: "split"
 notes: "仅迁移展示层列与排序；不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
 ```
+
+### R042 - F026 单故事 QA 验收收口
+
+```yaml
+id: R042
+module: "质量与交付"
+description: "在 F026 完成后执行一条 qa 验收故事，确认风险明细受影响班次表 parity 的展示与追溯收口。"
+source: "Story Runner queue consolidation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只做验收验证和审计记录，不新增业务能力、不改依赖、不改后端契约、不接数据库或真实数据。"
+```
+
+### R043 - 风险明细不可用影响表 table parity 第七条迁移
+
+```yaml
+id: R043
+module: "前端设计"
+description: "在风险明细受影响班次表完成 parity 后，继续把风险明细页中的不可用影响表迁移到独立 TanStack Table 组件。"
+source: "Story Runner queue consolidation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "仅迁移展示层列与排序；不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+```
+
+### R044 - F027 单故事 QA 验收收口
+
+```yaml
+id: R044
+module: "质量与交付"
+description: "在 F027 完成后执行一条 qa 验收故事，确认风险明细不可用影响表 parity 的展示与追溯收口。"
+source: "Story Runner queue consolidation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只做验收验证和审计记录，不新增业务能力、不改依赖、不改后端契约、不接数据库或真实数据。"
+```
+
+### R045 - 不可用影响详情受影响班次表 table parity 第八条迁移
+
+```yaml
+id: R045
+module: "前端设计"
+description: "在风险明细两张详情表完成 parity 后，继续把不可用影响详情页中的受影响班次表迁移到独立 TanStack Table 组件。"
+source: "Story Runner queue consolidation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "仅迁移展示层列与排序；不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+```
+
+### R046 - F028 单故事 QA 验收收口
+
+```yaml
+id: R046
+module: "质量与交付"
+description: "在 F028 完成后执行一条 qa 验收故事，确认不可用影响详情受影响班次表 parity 的展示与追溯收口。"
+source: "Story Runner queue consolidation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只做验收验证和审计记录，不新增业务能力、不改依赖、不改后端契约、不接数据库或真实数据。"
+```
+
+### R047 - 不可用影响详情关联风险表 table parity 第九条迁移
+
+```yaml
+id: R047
+module: "前端设计"
+description: "在不可用影响详情受影响班次表完成 parity 后，继续把不可用影响详情页中的关联风险表迁移到独立 TanStack Table 组件。"
+source: "Story Runner queue consolidation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "仅迁移展示层列与排序；不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+```
+
+### R048 - F029 单故事 QA 验收收口
+
+```yaml
+id: R048
+module: "质量与交付"
+description: "在 F029 完成后执行一条 qa 验收故事，确认不可用影响详情关联风险表 parity 的展示与追溯收口。"
+source: "Story Runner queue consolidation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只做验收验证和审计记录，不新增业务能力、不改依赖、不改后端契约、不接数据库或真实数据。"
+```
+
+### R049 - 详情页 table parity 连续开发块 QA 总收口
+
+```yaml
+id: R049
+module: "质量与交付"
+description: "在 F026-F029 完成后，对风险明细和不可用影响详情两页的四张明细表做一次连续开发块 QA 总收口。"
+source: "Story Runner queue consolidation"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "只做验收验证和审计记录，不新增业务能力、不改依赖、不改后端契约、不接数据库或真实数据。"
+```
+
+### R050 - Harness current/archive 双层状态治理试点
+
+```yaml
+id: R050
+module: "Harness"
+description: "为降低开发期上下文负担并提升状态一致性，项目需要从现有大文件驱动方式升级为 v2 双层状态治理：先建立 current 层做小范围试点，再加入 registry 与 state check，最后按阶段归档历史。"
+source: "PM supplied compensation-fix proposal v2 on 2026-05-12"
+submitted_at: "2026-05-12"
+version: "2.0"
+status: "split"
+notes: "该需求暂不直接全量迁移 backlog、stories、audit；先以一个真实 ready story 试点 current 层。设计约束包括：1) 只迁移最小闭环，不全量拆历史；2) `STORY_QUEUE.yaml`、`ACTIVE_TASKS.yaml`、`TRACE_INDEX.yaml`、`PROJECT_CONTEXT.md` 之间必须满足状态一致性不变量；3) 增加 `scripts/check-state.sh` 作为自动状态检查；4) 每次归档必须按事务顺序执行并支持 blocked/回滚；5) 历史查询必须受预算限制，禁止全量打开 archive；6) 第一阶段保留旧大文件作为可回退过渡层；7) 试点验收必须证明 Agent 可只靠 current 层完成一次真实任务并通过 `check-state` 与 `bash scripts/check.sh`；8) 推荐拆为三阶段：A 只建 `docs/current/*`，B 加 `docs/registry/*` 与 state check，C 再按月或按块归档 done 历史。"
+```

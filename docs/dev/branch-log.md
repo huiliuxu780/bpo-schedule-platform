@@ -449,3 +449,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### F026 Risk Detail Shift Table Parity And Q007 QA Closure
+
+- branch_name: `codex/f021-detail-chain`
+- base_main_commit: `86833e6b37a4b0c8a6423287517f920c6fd36d84`
+- remote_status: `origin/main available; branch already tracks origin/codex/f021-detail-chain`
+- scope: schedule-risk detail related-shifts table parity migration, F026 QA closure, and explicit remaining queue consolidation only.
+- allowed_files_check: `app/**`, `components/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, lib, package, or lockfile files.
+- scope_diff_check: `app/schedule-risks/[riskId]/page.tsx`, `components/schedule-risk-shift-table.tsx`, `docs/PROJECT_STATE.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, `docs/raw-requirements.md`, `docs/task-log.md`, `docs/user-stories.md`, and `tasks/backlog.yaml`; no backend, lib, package, or lockfile files.
+- check_result: `git diff --check` passed; `bash scripts/check.sh` passed (frontend lint/typecheck/build green; backend unittest 19/19 green); local smoke on `http://localhost:3012/schedule-risks/[riskId]` confirmed related-shifts card title, table columns, and representative note content.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

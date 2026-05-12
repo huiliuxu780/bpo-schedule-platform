@@ -2272,7 +2272,7 @@ tasks:
   - id: F026
     title: "风险明细受影响班次表 table parity 第六条迁移"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/**"
@@ -2288,7 +2288,7 @@ tasks:
       - "yarn.lock"
     acceptance:
       - "风险明细页受影响班次表由独立 TanStack Table 组件渲染。"
-      - "保留计划、项目、职场、时段、缺口、不可用人数、原因、建议和动作字段。"
+      - "保留计划、状态、时段、预测、已排、缺口、覆盖率、备注字段。"
       - "排序保持展示层行为，不改变后端契约或业务口径。"
       - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
       - "`bash scripts/check.sh` 通过。"
@@ -2301,4 +2301,263 @@ tasks:
       - "需要审批、导出、批量调班、自动排班或生产工作流能力"
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
       - "验证失败"
+    commit_after_done: true
+  - id: Q007
+    title: "F026 单故事 QA 验收收口"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "app/**"
+      - "components/**"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`bash scripts/check.sh` 通过。"
+      - "风险明细页受影响班次表由独立 TanStack Table 组件渲染。"
+      - "受影响班次表字段保留：计划、状态、时段、预测、已排、缺口、覆盖率、备注。"
+      - "完成审计与追溯更新。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true
+  - id: F027
+    title: "风险明细不可用影响表 table parity 第七条迁移"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "风险明细页不可用影响表由独立 TanStack Table 组件渲染。"
+      - "保留人员、团队、时间、原因、状态、影响时段、备注字段。"
+      - "排序保持展示层行为，不改变后端契约或业务口径。"
+      - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q008
+    title: "F027 单故事 QA 验收收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "app/**"
+      - "components/**"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`bash scripts/check.sh` 通过。"
+      - "风险明细页不可用影响表由独立 TanStack Table 组件渲染。"
+      - "不可用影响表字段保留：人员、团队、时间、原因、状态、影响时段、备注。"
+      - "完成审计与追溯更新。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true
+  - id: F028
+    title: "不可用影响详情受影响班次表 table parity 第八条迁移"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "不可用影响详情页受影响班次表由独立 TanStack Table 组件渲染。"
+      - "保留计划、时段、状态、预测、已排、缺口、覆盖率、备注和动作字段。"
+      - "排序保持展示层行为，不改变后端契约或业务口径。"
+      - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q009
+    title: "F028 单故事 QA 验收收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "app/**"
+      - "components/**"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`bash scripts/check.sh` 通过。"
+      - "不可用影响详情页受影响班次表由独立 TanStack Table 组件渲染。"
+      - "受影响班次表字段保留：计划、时段、状态、预测、已排、缺口、覆盖率、备注和动作。"
+      - "完成审计与追溯更新。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true
+  - id: F029
+    title: "不可用影响详情关联风险表 table parity 第九条迁移"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "不可用影响详情页关联风险表由独立 TanStack Table 组件渲染。"
+      - "保留风险、时段、缺口、不可用、原因、建议和动作字段。"
+      - "排序保持展示层行为，不改变后端契约或业务口径。"
+      - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q010
+    title: "F029 单故事 QA 验收收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "app/**"
+      - "components/**"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`bash scripts/check.sh` 通过。"
+      - "不可用影响详情页关联风险表由独立 TanStack Table 组件渲染。"
+      - "关联风险表字段保留：风险、时段、缺口、不可用、原因、建议和动作。"
+      - "完成审计与追溯更新。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true
+  - id: Q011
+    title: "详情页 table parity 连续开发块 QA 总收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "app/**"
+      - "components/**"
+    forbidden_files:
+      - "backend/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`bash scripts/check.sh` 通过。"
+      - "风险明细两张表与不可用影响详情两张表均已迁移为独立 TanStack Table 组件。"
+      - "相关详情页动作入口保持可用，未引入审批、导出、批量调班或生产动作。"
+      - "完成审计与追溯更新。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
     commit_after_done: true

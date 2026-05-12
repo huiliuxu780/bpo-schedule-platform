@@ -1240,11 +1240,185 @@ task_type: "frontend"
 priority: "P1"
 acceptance:
   - "风险明细页受影响班次表由独立 TanStack Table 组件渲染。"
-  - "保留计划、项目、职场、时段、缺口、不可用人数、原因、建议和动作字段。"
+  - "保留计划、状态、时段、预测、已排、缺口、覆盖率、备注字段。"
   - "排序保持展示层行为，不改变后端契约或业务口径。"
   - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
   - "`bash scripts/check.sh` 通过。"
 dependencies:
   - "US052"
+status: "done"
+```
+
+### US055 - F026 单故事 QA 验收收口
+
+```yaml
+id: US055
+requirement_ids:
+  - R042
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F026 做单故事验收收口，确认风险明细受影响班次表 parity 在 no-database 边界内可验证、可追溯。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 通过。"
+  - "风险明细页受影响班次表由独立 TanStack Table 组件渲染。"
+  - "受影响班次表字段保留：计划、状态、时段、预测、已排、缺口、覆盖率、备注。"
+  - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
+dependencies:
+  - "US054"
+status: "done"
+```
+
+### US056 - 风险明细不可用影响表 table parity 第七条迁移
+
+```yaml
+id: US056
+requirement_ids:
+  - R043
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望风险明细页的不可用影响表也使用 TanStack Table 管理列和排序，以统一详情页的表格交互。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "风险明细页不可用影响表由独立 TanStack Table 组件渲染。"
+  - "保留人员、团队、时间、原因、状态、影响时段、备注字段。"
+  - "排序保持展示层行为，不改变后端契约或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US054"
+status: "ready"
+```
+
+### US057 - F027 单故事 QA 验收收口
+
+```yaml
+id: US057
+requirement_ids:
+  - R044
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F027 做单故事验收收口，确认风险明细不可用影响表 parity 在 no-database 边界内可验证、可追溯。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 通过。"
+  - "风险明细页不可用影响表由独立 TanStack Table 组件渲染。"
+  - "不可用影响表字段保留：人员、团队、时间、原因、状态、影响时段、备注。"
+  - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
+dependencies:
+  - "US056"
+status: "ready"
+```
+
+### US058 - 不可用影响详情受影响班次表 table parity 第八条迁移
+
+```yaml
+id: US058
+requirement_ids:
+  - R045
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望不可用影响详情页的受影响班次表也使用 TanStack Table 管理列和排序，以继续收口详情视图的一致性。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "不可用影响详情页受影响班次表由独立 TanStack Table 组件渲染。"
+  - "保留计划、时段、状态、预测、已排、缺口、覆盖率、备注和动作字段。"
+  - "排序保持展示层行为，不改变后端契约或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US056"
+status: "ready"
+```
+
+### US059 - F028 单故事 QA 验收收口
+
+```yaml
+id: US059
+requirement_ids:
+  - R046
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F028 做单故事验收收口，确认不可用影响详情受影响班次表 parity 在 no-database 边界内可验证、可追溯。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 通过。"
+  - "不可用影响详情页受影响班次表由独立 TanStack Table 组件渲染。"
+  - "受影响班次表字段保留：计划、时段、状态、预测、已排、缺口、覆盖率、备注和动作。"
+  - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
+dependencies:
+  - "US058"
+status: "ready"
+```
+
+### US060 - 不可用影响详情关联风险表 table parity 第九条迁移
+
+```yaml
+id: US060
+requirement_ids:
+  - R047
+module: "前端设计"
+role: "运营排班人员"
+story: "作为运营排班人员，我希望不可用影响详情页的关联风险表也使用 TanStack Table 管理列和排序，以完成这组详情页 parity 闭环。"
+task_type: "frontend"
+priority: "P1"
+acceptance:
+  - "不可用影响详情页关联风险表由独立 TanStack Table 组件渲染。"
+  - "保留风险、时段、缺口、不可用、原因、建议和动作字段。"
+  - "排序保持展示层行为，不改变后端契约或业务口径。"
+  - "不启用批量选择、拖拽、审批、导出、批量调班或生产动作。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US058"
+status: "ready"
+```
+
+### US061 - F029 单故事 QA 验收收口
+
+```yaml
+id: US061
+requirement_ids:
+  - R048
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F029 做单故事验收收口，确认不可用影响详情关联风险表 parity 在 no-database 边界内可验证、可追溯。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 通过。"
+  - "不可用影响详情页关联风险表由独立 TanStack Table 组件渲染。"
+  - "关联风险表字段保留：风险、时段、缺口、不可用、原因、建议和动作。"
+  - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
+dependencies:
+  - "US060"
+status: "ready"
+```
+
+### US062 - 详情页 table parity 连续开发块 QA 总收口
+
+```yaml
+id: US062
+requirement_ids:
+  - R049
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望在 F026-F029 完成后，对风险明细和不可用影响详情这组详情页 table parity 做一次总收口，确认连续开发块可验证、可追溯、可持续交付。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 通过。"
+  - "风险明细两张表与不可用影响详情两张表均已迁移为独立 TanStack Table 组件。"
+  - "相关详情页动作入口保持可用，未引入审批、导出、批量调班或生产动作。"
+  - "更新审计、任务日志、项目状态、分支日志和 backlog 追溯。"
+dependencies:
+  - "US055"
+  - "US057"
+  - "US059"
+  - "US061"
 status: "ready"
 ```

@@ -179,7 +179,13 @@ The inserted requirement does not immediately authorize UI rewrites, dependency 
 
 Current Story Runner ready queue:
 
-- Next recommended story after `US053/Q006`: 风险明细受影响班次表 table parity 第六条迁移。
+- `US056/F027`: 风险明细不可用影响表 table parity 第七条迁移
+- `US057/Q008`: F027 单故事 QA 验收收口
+- `US058/F028`: 不可用影响详情受影响班次表 table parity 第八条迁移
+- `US059/Q009`: F028 单故事 QA 验收收口
+- `US060/F029`: 不可用影响详情关联风险表 table parity 第九条迁移
+- `US061/Q010`: F029 单故事 QA 验收收口
+- `US062/Q011`: 详情页 table parity 连续开发块 QA 总收口
 
 `US036/F016` is now complete as the frontend risk-detail drilldown. Schedule-risk rows link to `/schedule-risks/[riskId]`, and the detail view shows risk level, plan/date/interval context, gap, active unavailability impact, reason, recommendation, related shift details, and overlapping unavailable records. It reuses existing local MVP contracts and does not add backend endpoints, dependencies, real data, database persistence, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, status-code finalization, settlement rules, or charge factors.
 
@@ -213,7 +219,13 @@ Current Story Runner ready queue:
 
 `US053/Q006` is now complete as the local QA acceptance closure for F025. The schedule-plan detail interval parity table and required fields were re-verified under the no-database MVP boundary, and traceability records were updated.
 
-`US054/F026` is now the next `ready` frontend parity target, focused on migrating the impacted-shifts table on schedule-risk detail to a dedicated TanStack Table component while keeping display-only behavior and current contract boundaries.
+`US054/F026` is now complete as the sixth follow-up table parity slice. `ScheduleRiskShiftTable` now uses TanStack Table for columns, row model, and sorting while preserving the existing related-shift fields on schedule-risk detail. It remains display-only and does not add batch selection, drag sorting, approval, export, batch adjustment, production workflow, formula, status-code, settlement-rule, or charge-factor behavior.
+
+`US055/Q007` is now complete as the local QA acceptance closure for F026. The schedule-risk detail related-shifts parity table and required fields were re-verified under the no-database MVP boundary, and traceability records were updated.
+
+`US056/F027` is now the next `ready` frontend parity target, focused on migrating the overlapping-unavailability table on schedule-risk detail to a dedicated TanStack Table component while keeping display-only behavior and current contract boundaries.
+
+The current explicit detail-page parity chain remains queued end-to-end from `F027` through `Q011`. It covers the remaining inline table on schedule-risk detail and both inline tables on unavailability-impact detail, with a single-story QA closure after each frontend parity step plus one final block-level QA closure.
 
 ## Subagent Prompt Contract Direction
 
