@@ -5,7 +5,6 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   type PaginationState,
@@ -17,15 +16,19 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   Columns3,
   MoreHorizontal,
+  RotateCcw,
   Search,
 } from "lucide-react"
 
 import { anomalies, type Anomaly } from "@/app/dashboard/data"
 import {
   clampDashboardPageIndex,
-  dashboardAnomalyMatchesQuery,
+  filterDashboardAnomalies,
+  getDashboardPaginationRange,
 } from "@/components/data-table-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -267,6 +270,10 @@ export function DataTable() {
   "use no memo"
 
   const [globalFilter, setGlobalFilter] = React.useState("")
+  const [severityFilter, setSeverityFilter] =
+    React.useState<Anomaly["severity"] | "all">("all")
+  const [statusFilter, setStatusFilter] =
+    React.useState<Anomaly["status"] | "all">("all")
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "id", desc: false },
   ])
@@ -276,33 +283,46 @@ export function DataTable() {
     pageIndex: 0,
     pageSize: 5,
   })
+  const filteredData = React.useMemo(
+    () =>
+      filterDashboardAnomalies(anomalies, {
+        query: globalFilter,
+        severity: severityFilter,
+        status: statusFilter,
+      }),
+    [globalFilter, severityFilter, statusFilter]
+  )
 
   // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data: anomalies,
+    data: filteredData,
     columns,
     state: {
       columnVisibility,
-      globalFilter,
       pagination,
       sorting,
     },
-    globalFilterFn: (row, _columnId, filterValue) =>
-      dashboardAnomalyMatchesQuery(row.original, String(filterValue ?? "")),
     onColumnVisibilityChange: setColumnVisibility,
-    onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
 
-  const filteredRowCount = table.getFilteredRowModel().rows.length
+  const filteredRowCount = filteredData.length
   const pageCount = Math.max(1, table.getPageCount())
   const currentPage = pagination.pageIndex + 1
+  const paginationRange = getDashboardPaginationRange({
+    pageIndex: pagination.pageIndex,
+    pageSize: pagination.pageSize,
+    rowCount: filteredRowCount,
+  })
+  const hasActiveFilters =
+    globalFilter.trim() !== "" ||
+    severityFilter !== "all" ||
+    statusFilter !== "all"
 
   React.useEffect(() => {
     const clampedPageIndex = clampDashboardPageIndex({
@@ -368,6 +388,40 @@ export function DataTable() {
             />
           </div>
           <Select
+            value={severityFilter}
+            onValueChange={(value) => {
+              setSeverityFilter(value as Anomaly["severity"] | "all")
+              table.setPageIndex(0)
+            }}
+          >
+            <SelectTrigger size="sm" className="w-24">
+              <SelectValue aria-label="严重度筛选" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="all">全部严重度</SelectItem>
+              <SelectItem value="高">高</SelectItem>
+              <SelectItem value="中">中</SelectItem>
+              <SelectItem value="低">低</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) => {
+              setStatusFilter(value as Anomaly["status"] | "all")
+              table.setPageIndex(0)
+            }}
+          >
+            <SelectTrigger size="sm" className="w-24">
+              <SelectValue aria-label="状态筛选" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="all">全部状态</SelectItem>
+              <SelectItem value="待复核">待复核</SelectItem>
+              <SelectItem value="已确认">已确认</SelectItem>
+              <SelectItem value="已忽略">已忽略</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
             value={`${pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value))
@@ -385,6 +439,27 @@ export function DataTable() {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={!hasActiveFilters}
+            onClick={() => {
+              setGlobalFilter("")
+              setSeverityFilter("all")
+              setStatusFilter("all")
+              table.setPageIndex(0)
+            }}
+          >
+            <RotateCcw className="size-4" />
+            重置
+          </Button>
+        </div>
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <Badge variant="outline">筛选后 {filteredRowCount} 条</Badge>
+          <span>
+            严重度：{severityFilter === "all" ? "全部" : severityFilter}
+          </span>
+          <span>状态：{statusFilter === "all" ? "全部" : statusFilter}</span>
         </div>
         <div className="overflow-x-auto">
           <Table>
@@ -429,9 +504,19 @@ export function DataTable() {
         </div>
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <div>
-            共 {filteredRowCount} 条，当前第 {currentPage} / {pageCount} 页
+            共 {filteredRowCount} 条，显示 {paginationRange.from}-
+            {paginationRange.to}，当前第 {currentPage} / {pageCount} 页
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!table.getCanPreviousPage()}
+              onClick={() => table.setPageIndex(0)}
+            >
+              <ChevronsLeft className="size-4" />
+              首页
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -449,6 +534,15 @@ export function DataTable() {
             >
               下一页
               <ChevronRight className="size-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!table.getCanNextPage()}
+              onClick={() => table.setPageIndex(pageCount - 1)}
+            >
+              末页
+              <ChevronsRight className="size-4" />
             </Button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { heatmapRows, heatmapSlots } from "@/app/dashboard/data"
+import { summarizeHeatmapRows } from "@/components/data-table-model"
 import {
   Card,
   CardContent,
@@ -27,11 +28,19 @@ function heatClass(value: number) {
 }
 
 export function BpoHeatmap() {
+  const summary = summarizeHeatmapRows(heatmapRows, heatmapSlots)
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>时段人力缺口</CardTitle>
-        <CardDescription>按周几与关键时段查看缺口人数</CardDescription>
+        <CardDescription>
+          总缺口 {summary.totalDeficit} 人次 / 严重时段{" "}
+          {summary.severeSlotCount} 个 / 峰值{" "}
+          {summary.peak
+            ? `${summary.peak.day} ${summary.peak.slot} ${summary.peak.value}`
+            : "无"}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-[3rem_repeat(8,minmax(0,1fr))] gap-1 text-xs">
@@ -54,8 +63,11 @@ export function BpoHeatmap() {
               {row.slots.map((value, index) => (
                 <div
                   key={`${row.day}-${heatmapSlots[index]}`}
+                  role="gridcell"
+                  tabIndex={0}
+                  aria-label={`${row.day} ${heatmapSlots[index]} 缺口 ${value} 人`}
                   className={cn(
-                    "flex h-8 items-center justify-center rounded-md border text-xs tabular-nums",
+                    "flex h-8 items-center justify-center rounded-md border text-xs tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     heatClass(value)
                   )}
                   title={`${row.day} ${heatmapSlots[index]} 缺口 ${value}`}

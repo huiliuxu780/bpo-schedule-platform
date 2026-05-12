@@ -653,6 +653,136 @@ tasks:
       - "需要生产审批、导出或批量操作"
       - "验证失败"
     commit_after_done: true
+  - id: F032
+    title: "Dashboard 异常表状态与严重度筛选"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["异常表支持本地状态与严重度筛选。", "`bash scripts/check.sh` 通过。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
+  - id: F033
+    title: "Dashboard 异常表筛选摘要与重置"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["异常表显示筛选摘要并可一键重置。", "`bash scripts/check.sh` 通过。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
+  - id: F034
+    title: "Dashboard 异常表分页范围与首末页"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["异常表显示分页范围并支持首页/末页。", "`bash scripts/check.sh` 通过。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
+  - id: F035
+    title: "Dashboard 数据接入状态模型测试"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["数据接入状态模型测试覆盖本地筛选和状态统计。", "`bash scripts/check.sh` 通过。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
+  - id: F036
+    title: "Dashboard 数据接入状态 table parity"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["数据接入状态使用 TanStack Table 展示。", "`bash scripts/check.sh` 通过。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
+  - id: F037
+    title: "Dashboard 数据接入状态本地筛选"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["数据接入状态支持本地状态筛选和摘要。", "`bash scripts/check.sh` 通过。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
+  - id: F038
+    title: "Dashboard 热力图摘要模型测试"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["热力图模型测试覆盖缺口统计、严重时段和峰值缺口。", "`bash scripts/check.sh` 通过。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
+  - id: F039
+    title: "Dashboard 热力图缺口摘要"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["热力图显示缺口总览、严重时段和峰值缺口。", "`bash scripts/check.sh` 通过。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
+  - id: F040
+    title: "Dashboard 热力图可访问性增强"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["热力图格子有清晰可访问标签和键盘聚焦状态。", "`bash scripts/check.sh` 通过。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
+  - id: Q013
+    title: "F032-F040 dashboard 连续开发 QA 收口"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["app/dashboard/**", "components/**", "scripts/tests/dashboard-table-model.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["`bash scripts/check.sh` 通过。", "完成审计、任务日志、项目状态、分支日志和 backlog 追溯。"]
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、真实数据源、数据库、认证或权限", "需要审批、导出、批量调班、自动排班或生产工作流能力", "需要固化生产风险公式、状态码、结算规则或收费因子"]
+    commit_after_done: true
   - id: B002
     title: "FastAPI 排班计划草稿创建与更新"
     priority: P0

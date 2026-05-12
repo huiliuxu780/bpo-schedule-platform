@@ -743,3 +743,25 @@
 - action: 执行 F030-F031 dashboard table parity QA 收口。
 - status: `done`
 - notes: 验证 dashboard 异常明细表已完成 TanStack Table parity 和本地交互收口；current queue 与 active tasks 已清空，不保留 done 历史。
+
+### 2026-05-13
+
+- task_id: `F032-F040`
+- source_ids:
+  - `R061-R069`
+- story_ids:
+  - `US073-US081`
+- action: 连续完成 dashboard 本地 parity 和摘要增强。
+- status: `done`
+- notes: 异常明细表新增本地严重度/状态筛选、筛选摘要、重置、分页范围和首页/末页；数据接入状态迁移为 TanStack Table 并支持状态筛选和摘要；热力图新增缺口摘要、峰值缺口和可访问标签。
+
+### 2026-05-13
+
+- task_id: `Q013`
+- source_ids:
+  - `R070`
+- story_ids:
+  - `US082`
+- action: 执行 F032-F040 dashboard 连续开发块 QA 收口。
+- status: `done`
+- notes: 10 个任务均保持 no-database、本地展示层边界；未新增依赖、未改后端契约、未引入真实同步、审批、导出、批量或生产公式；current queue 与 active tasks 已清空。

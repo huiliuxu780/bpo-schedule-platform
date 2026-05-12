@@ -50,6 +50,56 @@ dependencies:
 status: "done"
 ```
 
+### US073-US082 - Dashboard 本地 parity 连续增强
+
+```yaml
+stories:
+  - id: US073
+    requirement_ids: [R061]
+    story: "作为运营负责人，我希望 dashboard 异常明细表支持本地状态与严重度筛选。"
+    status: "done"
+  - id: US074
+    requirement_ids: [R062]
+    story: "作为运营负责人，我希望 dashboard 异常明细表显示筛选摘要并可一键重置。"
+    status: "done"
+  - id: US075
+    requirement_ids: [R063]
+    story: "作为运营负责人，我希望 dashboard 异常明细表显示分页范围并支持首页/末页。"
+    status: "done"
+  - id: US076
+    requirement_ids: [R064]
+    story: "作为项目执行者，我希望 dashboard 数据接入状态模型有本地测试覆盖。"
+    status: "done"
+  - id: US077
+    requirement_ids: [R065]
+    story: "作为运营负责人，我希望 dashboard 数据接入状态使用 TanStack Table 展示。"
+    status: "done"
+  - id: US078
+    requirement_ids: [R066]
+    story: "作为运营负责人，我希望 dashboard 数据接入状态支持本地状态筛选和摘要。"
+    status: "done"
+  - id: US079
+    requirement_ids: [R067]
+    story: "作为项目执行者，我希望 dashboard 热力图缺口统计有本地测试覆盖。"
+    status: "done"
+  - id: US080
+    requirement_ids: [R068]
+    story: "作为运营负责人，我希望 dashboard 热力图显示缺口总览、严重时段和峰值缺口。"
+    status: "done"
+  - id: US081
+    requirement_ids: [R069]
+    story: "作为运营负责人，我希望 dashboard 热力图格子有更清晰的可访问标签和聚焦状态。"
+    status: "done"
+  - id: US082
+    requirement_ids: [R070]
+    story: "作为 QA，我希望 F032-F040 dashboard 连续开发块完成后有验收收口。"
+    status: "done"
+acceptance:
+  - "只做本地展示层增强，不新增依赖、不改后端契约、不接数据库。"
+  - "不启用真实同步、审批、导出、批量、权限或生产公式。"
+  - "`bash scripts/check.sh` 通过。"
+```
+
 ### US002 - 运营查看履约趋势与时段缺口
 
 ```yaml

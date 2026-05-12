@@ -10,7 +10,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed product chain was `US070/F030 -> US071/F031 -> US072/Q012`, which migrated the dashboard anomaly detail table to TanStack Table parity, added local column visibility and pagination controls, and completed QA closeout.
+No ready product story is currently queued. The last completed product chain was `US073/F032 -> US074/F033 -> US075/F034 -> US076/F035 -> US077/F036 -> US078/F037 -> US079/F038 -> US080/F039 -> US081/F040 -> US082/Q013`, which continued dashboard local table parity and summary polish without database, package, backend contract, approval, export, batch, or production formula work.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -23,6 +23,8 @@ The H027 registry pass added strict validation for `TRACE_INDEX.yaml` current fi
 The H028 plan-boundary pass made Codex Plan a temporary projection only. Harness current and registry files remain the state source.
 
 The F030-F031/Q012 product pass proved the current/active state model can drive a frontend table parity chain and return current to empty after completion.
+
+The F032-F040/Q013 product pass proved the same model can run a 10-task frontend chain and return current to empty after completion.
 
 ## Current Execution Rules
 

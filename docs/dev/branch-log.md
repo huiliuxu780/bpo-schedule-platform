@@ -619,3 +619,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
+
+### F032-F040 Dashboard Continuation Block
+
+- branch_name: `codex/f032-dashboard-continuation`
+- base_main_commit: `f7b1ef1`
+- remote_status: `branch created from prior pushed dashboard parity branch because main has not yet integrated H022-H028 and F030-F031`
+- scope: 10-task dashboard local frontend continuation: anomaly filters/pagination, data sync table parity/filtering, heatmap summaries/accessibility, QA traceability, and state cleanup.
+- allowed_files_check: `app/dashboard/**`, `components/**`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, lib contract, package, or lockfile files.
+- scope_diff_check: `components/bpo-heatmap.tsx`, `components/data-sync-status.tsx`, `components/data-table.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/current/PROJECT_CONTEXT.md`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, lib contract, package, or lockfile files.
+- check_result: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 6 tests; `npm run typecheck` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`

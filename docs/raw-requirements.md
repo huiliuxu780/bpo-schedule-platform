@@ -796,3 +796,34 @@ version: "1.0"
 status: "split"
 notes: "只做验收验证和追溯更新；不新增业务能力、不改依赖、不改后端契约、不接数据库。"
 ```
+
+### R061-R070 - Dashboard 本地 parity 连续增强
+
+```yaml
+requirements:
+  - id: R061
+    description: "Dashboard 异常明细表需要本地状态与严重度筛选。"
+  - id: R062
+    description: "Dashboard 异常明细表需要筛选摘要和一键重置。"
+  - id: R063
+    description: "Dashboard 异常明细表需要分页范围、首页和末页控制。"
+  - id: R064
+    description: "Dashboard 数据接入状态需要模型测试覆盖本地筛选和状态统计。"
+  - id: R065
+    description: "Dashboard 数据接入状态需要迁移为 TanStack Table 展示层 parity。"
+  - id: R066
+    description: "Dashboard 数据接入状态需要本地状态筛选和摘要，不触发真实同步。"
+  - id: R067
+    description: "Dashboard 热力图需要模型测试覆盖缺口统计、严重时段和峰值缺口。"
+  - id: R068
+    description: "Dashboard 热力图需要显示本地缺口摘要。"
+  - id: R069
+    description: "Dashboard 热力图格子需要更明确的可访问标签和键盘聚焦样式。"
+  - id: R070
+    description: "F032-F040 完成后需要 QA 收口。"
+source: "PM requested 10-task continuous development on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "本组只做 dashboard 本地展示层增强；不新增依赖、不改后端契约、不接数据库、不做真实同步、审批、导出、批量或生产公式。"
+```
