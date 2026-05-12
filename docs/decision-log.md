@@ -102,3 +102,10 @@
 - 原因：此前 backlog 已使用 `frontend-scaffold`、`frontend-audit`、`backend`、`backend-mvp`、`backend-vertical`、`qa` 等 workflow，但 Gate Registry 只有默认 Gate 和 Clean Harness Gate，执行标准容易依赖个人解释。
 - 影响：后续新增 workflow 名称时，必须在同一任务内补充 Gate Registry；Story Runner 选择下一条任务时也要先确认该 workflow 有 Gate 锚点。
 - 限制：Gate 映射只定义执行约束，不授权新增业务代码、依赖、真实数据、数据库、认证、权限、审批、导出、批量、生产状态码、公式、结算规则或收费因子。
+
+### 2026-05-12 - D017 - 开发服务器入口必须先过原生运行时预检
+
+- 决策：`npm run dev` 与 `scripts/dev.sh` 必须通过受控 Node.js 22 入口启动，并在启动 Next.js 前显式预检 `lightningcss` 与 `@next/swc-darwin-arm64` 原生包加载。
+- 原因：本机默认 Codex Node.js 24 会因 macOS code-signing 校验拒载 native addon，之前症状会拖到 dev server 启动后，表现为 500、模块缺失或 Turbopack/webpack 分叉问题。
+- 影响：前端开发入口现在统一走 `scripts/run-next-dev.sh`，默认使用 webpack dev server，并把 native runtime 回归测试纳入 `bash scripts/check.sh`。
+- 限制：该决策不新增依赖、不修改 lockfile、不授权业务代码、后端契约、真实数据、数据库、认证、权限、审批、导出、批量能力或生产口径变更。

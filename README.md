@@ -57,6 +57,12 @@ npm install
 npm run dev
 ```
 
+`npm run dev` 会自动：
+
+- 优先切到 Homebrew Node.js 22
+- 先做 `lightningcss` / Next.js native addon 预检
+- 使用 webpack dev server，而不是裸 `next dev`
+
 Dashboard:
 
 ```txt
@@ -96,6 +102,8 @@ bash scripts/check.sh
 - Harness file checks
 - frontend scaffold file checks
 - frontend toolchain checks
+- frontend native runtime preflight
+- frontend dev runtime regression test
 - `npm run lint`
 - `npm run typecheck`
 - `npm run build`

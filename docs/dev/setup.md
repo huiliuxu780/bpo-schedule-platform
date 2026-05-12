@@ -38,6 +38,14 @@ npm install
 npm run dev
 ```
 
+`npm run dev` 不再直接裸跑 `next dev`。它会先：
+
+- 优先切到 Homebrew Node.js 22
+- 预检 `lightningcss` 和 Next.js compiler 原生包是否可加载
+- 再以 webpack dev server 启动 Next.js
+
+如果你直接手动执行 `next dev`，仍然可能绕过项目保护并重新踩到本机 Node.js 24 的原生包签名问题。
+
 默认访问：
 
 ```txt
@@ -59,6 +67,7 @@ bash scripts/dev.sh
 该脚本会：
 
 - 优先使用 Homebrew Node.js 22
+- 调用与 `npm run dev` 相同的前端 native preflight 和 webpack dev 入口
 - 检查 `fastapi`、`uvicorn`、`pydantic`
 - 默认使用 `BPO_API_BASE_URL=http://127.0.0.1:8000`
 - 同时启动 FastAPI 和 Next.js dev server
@@ -84,10 +93,13 @@ bash scripts/check.sh
 - Harness 必需文件检查
 - frontend scaffold 必需文件检查
 - 前端工具链检查：`eslint`、`tsc`、`next`
+- `npm run verify:dev-runtime`
+- `npm run test:dev-runtime`
 - `npm run lint`
 - `npm run typecheck`
 - `npm run build`
 - `bash -n scripts/dev.sh`
+- `bash -n scripts/run-next-dev.sh`
 - backend unittest
 
 ## Scope Boundary

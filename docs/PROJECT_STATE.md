@@ -99,6 +99,8 @@ Current environment artifacts:
 
 `scripts/check.sh` automatically prefers `/opt/homebrew/opt/node@22/bin` when the current shell is not already using Node.js 22. This avoids the local Node.js 24 native package loading issue observed with Next.js / lightningcss on macOS.
 
+`npm run dev` is now a hardened frontend entrypoint. It selects Node.js 22, runs a native-addon preflight for `lightningcss` and Next.js SWC, and starts Next.js dev with webpack so the development path matches the accepted production build chain more closely. `scripts/dev.sh` reuses the same protected frontend entrypoint for local frontend + backend startup.
+
 This environment decision does not authorize dependency changes, package or lockfile edits, business implementation, backend work, real API integration, database work, permission systems, export pipelines, approval flows, or batch operations outside a confirmed Gate.
 
 ## Frontend Direction

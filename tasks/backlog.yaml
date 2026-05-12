@@ -1702,3 +1702,40 @@ tasks:
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: H019
+    title: "开发服务器原生运行时硬化"
+    priority: P0
+    status: done
+    required_workflow: harness
+    allowed_files:
+      - "package.json"
+      - "scripts/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "README.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "开发入口不再直接依赖调用者当前 shell 的 Node 版本。"
+      - "`npm run dev` 和 `scripts/dev.sh` 都会收口到受控的 Node.js 22 + webpack dev 链路。"
+      - "启动前会显式预检 Next.js / lightningcss 原生包加载；失败时输出可操作错误，而不是继续启动后返回 500。"
+      - "新增自动化回归校验覆盖支持运行时通过、默认 Codex Node 失败可识别的场景。"
+      - "不新增依赖，不修改 lockfile，不改业务代码或后端契约。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要改动业务实现、后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

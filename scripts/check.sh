@@ -102,6 +102,9 @@ required_files=(
   "docs/dev/branch-log.md"
   "tasks/backlog.yaml"
   "scripts/dev.sh"
+  "scripts/run-next-dev.sh"
+  "scripts/verify-frontend-native-runtime.mjs"
+  "scripts/tests/verify-frontend-native-runtime.test.mjs"
   ".gitignore"
   "README.md"
 )
@@ -164,11 +167,14 @@ if (( ${#missing_tools[@]} > 0 )); then
   exit 1
 fi
 
+npm run verify:dev-runtime
+npm run test:dev-runtime
 npm run lint
 npm run typecheck
 npm run build
 
 bash -n scripts/dev.sh
+bash -n scripts/run-next-dev.sh
 
 backend_files=(
   "backend/app/main.py"

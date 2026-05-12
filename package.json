@@ -4,10 +4,12 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "bash scripts/run-next-dev.sh",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
+    "verify:dev-runtime": "node scripts/verify-frontend-native-runtime.mjs",
+    "test:dev-runtime": "node --test scripts/tests/verify-frontend-native-runtime.test.mjs",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit"
   },

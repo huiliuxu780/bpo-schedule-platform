@@ -341,3 +341,16 @@ version: "1.0"
 status: "split"
 notes: "本需求只做展示层局部迁移；不新增依赖，不修改 package/lockfile，不改变业务字段、生产状态码、公式、结算规则或收费因子。"
 ```
+
+### R026 - 开发服务器原生运行时硬化
+
+```yaml
+id: R026
+module: "Harness"
+description: "项目级修复开发服务器在本机原生包签名或缺失场景下返回 500 的问题，要求将前端开发入口收口到受控 Node.js 22 运行时、统一 dev/build 编译链，并在启动前显式预检 Next.js 与 lightningcss 原生包加载。"
+source: "PM requested project-level repair on 2026-05-12"
+submitted_at: "2026-05-12"
+version: "1.0"
+status: "split"
+notes: "本需求只修复本地开发运行时、入口脚本、验证和文档说明；不新增依赖，不修改 lockfile，不改业务代码、后端契约、真实数据、数据库、认证、权限、审批、导出、批量能力或生产口径。"
+```

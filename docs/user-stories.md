@@ -887,3 +887,26 @@ dependencies:
   - "US037"
 status: "done"
 ```
+
+### US039 - 开发服务器原生运行时硬化
+
+```yaml
+id: US039
+requirement_ids:
+  - R026
+module: "Harness"
+role: "前端开发者"
+story: "作为前端开发者，我希望 `npm run dev` 和 `scripts/dev.sh` 在本机总是通过受控 Node.js 22 与受检原生包链路启动，以便不会再因为默认 Node 或 native addon 签名/缺失问题把错误拖到运行时 500。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "`npm run dev` 收口到项目受控开发入口，而不是裸 `next dev`。"
+  - "开发入口会在启动前验证 `lightningcss` 和 Next.js compiler 原生包可加载。"
+  - "开发入口与 build 统一使用 webpack 链路。"
+  - "回归测试覆盖支持运行时成功和默认 Codex Node 失败可识别两类场景。"
+  - "不新增依赖、不修改 lockfile、不改业务代码或后端契约。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US035"
+status: "done"
+```

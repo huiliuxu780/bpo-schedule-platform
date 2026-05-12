@@ -128,7 +128,7 @@ echo "starting API at ${BPO_API_BASE_URL}"
 api_pid=$!
 
 echo "starting frontend at http://localhost:3000"
-npm run dev &
+bash scripts/run-next-dev.sh &
 web_pid=$!
 
 exit_code=0
