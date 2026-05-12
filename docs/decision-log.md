@@ -130,3 +130,10 @@
 - 原因：当前机器同时存在系统 Python 3.9.6 和项目可用 Python 3.12.13；如果继续按“谁先出现在 PATH 且能 import 依赖就用谁”的策略，换机器或环境变化时会产生隐性运行时漂移。
 - 影响：`scripts/check.sh` 与 `scripts/dev.sh` 现在都通过统一后端运行时验证脚本选择解释器，系统 Python 3.9 不会再被误当作项目 backend runtime。
 - 限制：该决策不新增依赖、不修改业务代码、后端契约、数据库、认证、权限、审批、导出、批量能力或生产口径。
+
+### 2026-05-12 - D019 - 默认执行状态切到 current/registry 层
+
+- 决策：项目默认启动上下文从 legacy backlog/user stories 大文件切换到 `docs/current/**`，并用 `docs/registry/**` 做历史定位索引。
+- 原因：PM 希望降低默认上下文长度，同时避免拆文件后产生状态漂移、索引失真、check 自锁和并行写冲突。
+- 影响：Story Runner 默认从 `docs/current/STORY_QUEUE.yaml` 找 story，从 `docs/current/ACTIVE_TASKS.yaml` 找 task；`TRACE_INDEX.yaml` 只存 ID、路径和关系，不存状态；`scripts/check-state.sh` 先以 warning-only 方式验证状态一致性。
+- 限制：archive 和 legacy 文件不可直接作为执行队列；subagent 不得写 current/registry；本决策不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。

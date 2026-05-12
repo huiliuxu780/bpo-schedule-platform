@@ -633,3 +633,14 @@
 - action: 执行详情页 table parity 连续开发块 QA 总收口。
 - status: `done`
 - notes: 验证风险明细两张表与不可用影响详情两张表均已迁移为独立 TanStack Table 组件，相关详情页动作入口保持可用；本条连续 parity 链已收口完毕。
+
+### 2026-05-12
+
+- task_id: `H022`
+- source_ids:
+  - `R051`
+- story_ids:
+  - `US063`
+- action: 落地 Harness 状态治理 v3 第一轮。
+- status: `done`
+- notes: 新增 current/registry 状态层、`scripts/check-state.sh`、State Hygiene/Repair Gate、History-On-Demand、archive 不可执行和 single-writer 规则；不迁移大量 done 历史、不改业务代码、不改依赖、不接数据库。

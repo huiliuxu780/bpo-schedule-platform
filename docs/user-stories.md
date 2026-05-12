@@ -1422,3 +1422,26 @@ dependencies:
   - "US061"
 status: "done"
 ```
+
+### US063 - Harness 状态治理 v3 第一轮落地
+
+```yaml
+id: US063
+requirement_ids:
+  - R051
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望默认启动上下文从大 backlog/user stories 切到 current 状态层，并能通过 registry 和 check-state 发现状态漂移，以便后续开发不再依赖读取超大历史文件。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "新增 `docs/current/PROJECT_CONTEXT.md`、`docs/current/STORY_QUEUE.yaml`、`docs/current/ACTIVE_TASKS.yaml` 和 `docs/current/BLOCKERS.md`。"
+  - "新增 `docs/registry/TRACE_INDEX.yaml` 和 `docs/registry/DECISION_INDEX.yaml`，且 `TRACE_INDEX.yaml` 不记录 status。"
+  - "新增 `scripts/check-state.sh`，默认 warning-only，并支持 `--repair-scope` 和 `--strict`。"
+  - "AGENTS、Lightweight Harness、Gate Registry、Done Report Template 和 Project State 已对齐 current/registry/archive、History-On-Demand、archive 不可执行、single writer 和 State Repair Mode。"
+  - "不迁移大量 done 历史，不改业务代码，不改 package/lockfile，不接数据库。"
+  - "`bash scripts/check-state.sh` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US062"
+status: "done"
+```

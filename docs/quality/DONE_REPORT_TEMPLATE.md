@@ -27,6 +27,17 @@
 - 是否接入真实 API：
 - 是否修改 Archive / Lab：
 
+### 状态治理
+
+- 是否查询历史：
+- 查询了哪些历史文件：
+- 查询原因：
+- 是否更新 `docs/current/**`：
+- 是否更新 `docs/registry/**`：
+- 是否归档：
+- `bash scripts/check-state.sh`：
+- `bash scripts/check-state.sh --repair-scope`：
+
 ### 人工验收方式
 
 1.

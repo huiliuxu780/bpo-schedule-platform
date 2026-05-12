@@ -7,7 +7,7 @@
 当前阶段的目标不是扩展生产业务能力，而是在已确认的 F001 静态前端脚手架和本地排班计划 MVP 纵切基础上，建立一套可追溯、可审计、可分阶段执行的需求闭环：
 
 ```txt
-原始需求 -> 用户故事 -> Story Execution Queue -> Gate Plan for risky scope -> 执行 -> 验证 -> 绿色检查后本地提交 -> 继续/审计复盘
+current context -> current story queue -> active task -> Gate Plan -> 执行 -> state check -> final check -> 绿色检查后本地提交 -> 继续/审计复盘
 ```
 
 ## 2. 当前边界
@@ -47,6 +47,14 @@
 
 ```txt
 docs/
+  current/
+    PROJECT_CONTEXT.md
+    STORY_QUEUE.yaml
+    ACTIVE_TASKS.yaml
+    BLOCKERS.md
+  registry/
+    TRACE_INDEX.yaml
+    DECISION_INDEX.yaml
   harness/
     lightweight-harness.md
   raw-requirements.md
@@ -69,6 +77,12 @@ docs/
 
 说明：
 
+- `docs/current/PROJECT_CONTEXT.md` 记录当前阶段、边界、默认下一步和禁止事项。
+- `docs/current/STORY_QUEUE.yaml` 是 Story Runner 的默认 story 队列，只保留 `ready`、`in_progress`、`blocked`。
+- `docs/current/ACTIVE_TASKS.yaml` 是当前可执行 task 的唯一执行入口。
+- `docs/current/BLOCKERS.md` 只记录当前有效阻塞。
+- `docs/registry/TRACE_INDEX.yaml` 只记录 ID、路径和关联关系，禁止记录状态。
+- `docs/registry/DECISION_INDEX.yaml` 只索引关键决策，不复制决策全文。
 - `raw-requirements.md` 记录 PM 原始需求，不做过度加工。
 - `user-stories.md` 将原始需求拆成可验收的最小交付单元。
 - `task-log.md` 记录任务执行过程、状态和阻塞。
@@ -129,11 +143,14 @@ docs/
 Story Runner Mode 的主规则：
 
 - 用户故事是默认执行单位，backlog 任务只是 story 的实现载体。
-- Codex 必须先把 goal 拆成最小可验收用户故事，并按依赖顺序形成 Story Execution Queue。
+- Codex 必须先把 goal 拆成最小可验收用户故事，并按依赖顺序写入 `docs/current/STORY_QUEUE.yaml`。
+- 每条可执行 story 必须在 `docs/current/ACTIVE_TASKS.yaml` 有对应 task。
 - 一个用户故事内的 UI 细节反馈、验收修正、视觉微调和小 bug 修复，应归入当前 story，不再为每个小改动新建独立 `F00x`。
 - 当一个 story 通过验证后，若未触发停止条件，Codex 应自动进入下一个 ready story。
 - 每个 story 或任务通过 `bash scripts/check.sh` 后，应直接提交到本地 Git 仓库；阶段、模块块或连续开发块完成后再询问 PM 是否 push。
-- `docs/user-stories.md` 的状态必须与 `tasks/backlog.yaml`、`docs/task-log.md` 和 `docs/audit-report.md` 保持同步。
+- `docs/current/STORY_QUEUE.yaml`、`docs/current/ACTIVE_TASKS.yaml` 和 `docs/registry/TRACE_INDEX.yaml` 必须保持一致。
+- 过渡期仍可更新 `docs/user-stories.md`、`tasks/backlog.yaml`、`docs/task-log.md` 和 `docs/audit-report.md` 作为历史追溯，但它们不再是默认执行入口。
+- current 或 registry 变化后必须运行 `bash scripts/check-state.sh`。
 
 Story Runner Mode 的停止条件：
 
@@ -144,6 +161,46 @@ Story Runner Mode 的停止条件：
 - subagent 写入范围可能冲突。
 - 验证失败。
 - 需要破坏性 Git 或文件操作。
+
+## 8A. 状态治理
+
+项目使用 current/registry/archive 三层状态模型：
+
+- current：只存当前可执行状态。
+- registry：只存 ID、路径和关系索引。
+- archive/legacy：只作为历史来源，不作为执行入口。
+
+默认读取集：
+
+```txt
+AGENTS.md
+docs/current/PROJECT_CONTEXT.md
+docs/current/STORY_QUEUE.yaml
+docs/current/ACTIVE_TASKS.yaml
+docs/current/BLOCKERS.md
+docs/quality/GATE_REGISTRY.md
+当前任务涉及的具体文件
+```
+
+默认不读取：
+
+```txt
+tasks/backlog.yaml
+docs/user-stories.md
+docs/raw-requirements.md
+docs/audit-report.md
+docs/task-log.md
+docs/dev/branch-log.md
+docs/archive/**
+```
+
+History-On-Demand 只在当前信息不足、用户要求查历史、任务依赖历史决策、文档冲突、审计、复盘、回滚、事故定位或复用旧接口/模式时使用。普通开发最多读取 3 个历史文件，审计最多读取 8 个历史文件。
+
+`docs/current/**` 和 `docs/registry/**` 只能由主 Worker 写入。Subagent 可以返回建议，但不能直接写 current/registry。
+
+Archive 不可执行。恢复历史任务时必须新建 current task，并重新写明恢复原因和新的验收标准。
+
+State Repair Mode 用于修复 queue/task/index 不一致、路径缺失、归档半完成或 `check-state` 阻断普通任务启动的问题。修复时不得改业务代码、package/lockfile、依赖、数据库或生产能力。
 
 ## 9. 阶段完成后的后续计划
 

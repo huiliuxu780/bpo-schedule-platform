@@ -34,14 +34,38 @@ Do not translate existing code identifiers, route names, file paths, package nam
 
 ## Harness Entry
 
-Before every non-trivial task, Codex must read:
+Before every non-trivial task, Codex must read the default current-state set:
 
 1. `AGENTS.md`
-2. `docs/PROJECT_STATE.md`
-3. `tasks/backlog.yaml`
-4. `docs/quality/GATE_REGISTRY.md`
+2. `docs/current/PROJECT_CONTEXT.md`
+3. `docs/current/STORY_QUEUE.yaml`
+4. `docs/current/ACTIVE_TASKS.yaml`
+5. `docs/current/BLOCKERS.md`
+6. `docs/quality/GATE_REGISTRY.md`
+7. Current task files
 
-If the user gives only a task ID, Codex must find the task in `tasks/backlog.yaml` before acting.
+Legacy files such as `tasks/backlog.yaml`, `docs/user-stories.md`, `docs/raw-requirements.md`, `docs/audit-report.md`, `docs/task-log.md`, and `docs/dev/branch-log.md` are not default startup context after the current layer exists.
+
+If the user gives only a task ID and it is not present in `docs/current/ACTIVE_TASKS.yaml`, Codex may use `docs/registry/TRACE_INDEX.yaml` and then the specific legacy file that contains the task.
+
+During the current-layer transition, tasks that modify Harness history or traceability may still update the legacy files required by the active Gate.
+
+## State Governance
+
+Detailed state governance rules live in `docs/quality/STATE_MANAGEMENT.md`.
+
+Hard rules:
+
+- Default to reading `docs/current/**`, not archive or legacy history.
+- Archive files are historical reference only and are not executable queues.
+- `docs/current/**` and `docs/registry/**` follow a single-writer rule: only the main Worker may write them.
+- Subagents may review or recommend state changes, but must not directly write current or registry files.
+- `docs/registry/TRACE_INDEX.yaml` stores IDs, paths, and relationships only; it must not store `status`.
+- Run `bash scripts/check-state.sh` when current or registry state changes.
+
+History-On-Demand is allowed only when current state is insufficient, the user asks for history, the task depends on a historical decision, documents conflict, or the task is audit, review, rollback, incident investigation, migration, or state repair.
+
+State Repair Mode triggers when current queue and active tasks disagree, registry paths are missing, archive migration is partially complete, or `check-state` blocks normal execution. In State Repair Mode, modify only `docs/current/**`, `docs/registry/**`, and necessary archive index pointers; do not modify business code, package/lockfiles, dependencies, database, integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors.
 
 ## Standard Workflow
 
@@ -121,12 +145,13 @@ Story Runner Mode is the default execution model for confirmed product-developme
 Story Runner must:
 
 - treat user stories as the primary execution unit
-- execute only from ready backlog/user-story queue entries
+- execute only from ready entries in `docs/current/STORY_QUEUE.yaml` with matching tasks in `docs/current/ACTIVE_TASKS.yaml`
 - convert new goals into raw requirements and the smallest useful user stories before implementation
 - run implementation, final verification, traceability updates, local commit, and Done Report for each completed scope
 - continue to the next ready story after a green gate unless a stop condition is reached
 - keep small UI feedback and acceptance corrections inside the current story when they do not expand scope
 - avoid guessing the next task when the ready queue is empty
+- run `bash scripts/check-state.sh` after current or registry state changes
 
 Bounded subagents may be used in Story Runner Mode only for independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, diff review, final verification, traceability, commits, and Done Report. Outside Story Runner Mode, subagents require explicit PM/user permission and a confirmed Gate.
 

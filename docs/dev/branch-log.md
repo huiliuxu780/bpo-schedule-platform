@@ -483,3 +483,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### H022 State Governance V3 Round 1
+
+- branch_name: `codex/h022-state-governance-v3`
+- base_main_commit: `242b1e9`
+- remote_status: `origin/main available; local main already matched origin/main before branch creation`
+- scope: state-governance documents, current/registry state entrypoints, state check script, and traceability updates only.
+- allowed_files_check: `AGENTS.md`, `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/harness/lightweight-harness.md`, `docs/PROJECT_STATE.md`, legacy traceability docs, `tasks/backlog.yaml`, and `scripts/check-state.sh`; no business code, backend, lib, package, or lockfile files.
+- scope_diff_check: `AGENTS.md`, `docs/PROJECT_STATE.md`, `docs/audit-report.md`, `docs/decision-log.md`, `docs/dev/branch-log.md`, `docs/harness/lightweight-harness.md`, `docs/quality/DONE_REPORT_TEMPLATE.md`, `docs/quality/GATE_REGISTRY.md`, `docs/quality/STATE_MANAGEMENT.md`, `docs/raw-requirements.md`, `docs/task-log.md`, `docs/user-stories.md`, `docs/current/**`, `docs/registry/**`, `tasks/backlog.yaml`, and `scripts/check-state.sh`; no business code, backend, lib, package, or lockfile files.
+- check_result: `bash scripts/check-state.sh` passed; `bash scripts/check-state.sh --repair-scope` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

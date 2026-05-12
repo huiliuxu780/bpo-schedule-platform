@@ -2561,3 +2561,51 @@ tasks:
       - "需要审批、导出、批量调班、自动排班或生产工作流能力"
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
     commit_after_done: true
+  - id: H022
+    title: "Harness 状态治理 v3 第一轮落地"
+    priority: P1
+    status: done
+    required_workflow: state-hygiene
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/quality/**"
+      - "docs/harness/lightweight-harness.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/decision-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+      - "scripts/check-state.sh"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`docs/current/**` 建立当前执行入口，初始队列不迁移 done 历史。"
+      - "`docs/registry/**` 建立索引入口，`TRACE_INDEX.yaml` 不含 `status`。"
+      - "`scripts/check-state.sh` 默认 warning-only，并支持 `--repair-scope` 和 `--strict`。"
+      - "AGENTS、Lightweight Harness、Gate Registry、Done Report Template 和 Project State 对齐 v3 状态治理。"
+      - "`bash scripts/check-state.sh`、`bash scripts/check-state.sh --repair-scope`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "验证失败"
+      - "需要业务代码改动"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要迁移大量 done 历史或删除旧大文件"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true

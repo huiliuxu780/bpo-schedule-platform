@@ -48,6 +48,8 @@ Backlog `required_workflow` values must map to one of the gates below. If a task
 | `backend-mvp` | Backend Local MVP Gate | Same as `backend`, used for MVP-local backend tasks that explicitly avoid production workflow capability | Same as `backend` |
 | `backend-vertical` | Backend Local MVP Gate | Backend portion of a confirmed vertical slice using local data and tests | Same as `backend` |
 | `qa` | QA Acceptance Gate | Acceptance review, verification evidence, audit/report updates | Product behavior changes, implementation edits outside acceptance corrections, dependency/package changes |
+| `state-hygiene` | State Hygiene Gate | Current/registry state model, state checks, default read set, archive boundary, trace indexes | Business implementation, dependency/package changes, database, real integrations, auth, permissions, approval, export, batch operations |
+| `state-repair` | State Repair Gate | Repair inconsistent current/registry/archive index state | Business code, package/lockfile changes, new dependencies, database, real integrations, product feature work |
 
 ## No Database MVP Mode
 
@@ -188,6 +190,58 @@ Required verification:
 
 - `bash scripts/check.sh`
 - Any story-specific browser, API, or contract checks listed in the task acceptance.
+
+## State Hygiene Gate
+
+Use this gate for `required_workflow: state-hygiene` tasks.
+
+Allowed:
+
+- Add or update `docs/current/**`.
+- Add or update `docs/registry/**`.
+- Update `AGENTS.md`, `docs/quality/STATE_MANAGEMENT.md`, `docs/quality/GATE_REGISTRY.md`, `docs/quality/DONE_REPORT_TEMPLATE.md`, `docs/harness/lightweight-harness.md`, and `docs/PROJECT_STATE.md` for state-governance rules.
+- Add or update `scripts/check-state.sh`.
+- Update legacy traceability files only when the active transition task requires it.
+
+Forbidden unless explicitly confirmed by PM:
+
+- Business implementation under `app/**`, `components/**`, `hooks/**`, `lib/**`, or `backend/**`.
+- New dependencies or package/lockfile changes.
+- Real integrations, database, auth, permissions, approval, export, batch operations, production formulas, status codes, settlement rules, or charge factors.
+- Large history migration or archive deletion outside a confirmed archive transaction.
+
+Required verification:
+
+- `bash scripts/check-state.sh`
+- `bash scripts/check-state.sh --repair-scope`
+- `git diff --check`
+- `bash scripts/check.sh`
+
+## State Repair Gate
+
+Use this gate for `required_workflow: state-repair` tasks.
+
+Allowed:
+
+- Repair inconsistencies in `docs/current/**`.
+- Repair missing or incorrect pointers in `docs/registry/**`.
+- Update necessary archive index references when a migration is partially complete.
+- Update audit notes that explain the repair.
+
+Forbidden:
+
+- Business code changes.
+- Package or lockfile changes.
+- New dependencies.
+- Database, real integrations, auth, permissions, approval, export, batch operations, production formulas, status codes, settlement rules, or charge factors.
+- Replaying archived tasks as current work without creating a new current task.
+
+Required verification:
+
+- `bash scripts/check-state.sh --repair-scope`
+- `bash scripts/check-state.sh`
+- `git diff --check`
+- `bash scripts/check.sh`
 
 ## Clean Harness Gate
 
