@@ -52,7 +52,7 @@ description: "正式系统搭建采用前后端一条纵切方式启动，第一
 source: "PM confirmed M001"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "本需求只定义 MVP 第一条纵切范围，不直接授权后端工程创建、依赖安装、数据库接入或真实数据接入；这些需要后续 B001/F005 Gate。"
 ```
 
@@ -883,4 +883,17 @@ submitted_at: "2026-05-13"
 version: "1.0"
 status: "split"
 notes: "只做前端页、现有本地契约和跨页跳转对齐；不新增依赖、不改 package/lockfile、不接数据库、不做审批、导出、批量或生产公式。"
+```
+
+### R093 - 风险工作台 QA 收口
+
+```yaml
+id: R093
+module: "质量与交付"
+description: "对 F060 风险工作台链路做一轮 QA 收口，确认独立页、导航入口、计划详情和不可用影响定位的风险跳转都在 no-database 边界内可验证、可追溯。"
+source: "Story Runner continuation after F060 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做验收、必要的轻微修正和追溯更新；不新增依赖、不改 package/lockfile、不接数据库、不做审批、导出、批量或生产公式。"
 ```

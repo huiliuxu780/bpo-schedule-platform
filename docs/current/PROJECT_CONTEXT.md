@@ -53,6 +53,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-No ready story is currently queued. `F060 risk workbench page` is complete: `/schedule-risks` is now a dedicated local no-database risk workspace, and plan/unavailability drilldown links can land on a stable risk list context instead of bouncing through indirect pages.
+No ready story is currently queued in current state. The `F060/US104` risk workbench chain and `Q015/US105` QA closeout are complete, and current queue has returned to empty.
 
-The next recommended slice is a narrow QA or workflow follow-up on top of the new risk workspace, or another frontend/local-contract story that stays clear of database, real integrations, auth, approval, export, batch operations, and production formulas. Database work stays deferred.
+Next, either seed the next risk/unavailability workflow slice or switch to another frontend/local-contract story that stays clear of database, real integrations, auth, approval, export, batch operations, and production formulas. Database work stays deferred.

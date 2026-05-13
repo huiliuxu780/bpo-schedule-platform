@@ -1768,3 +1768,25 @@ dependencies:
   - "US103"
 status: "done"
 ```
+
+### US105 - 风险工作台 QA 收口
+
+```yaml
+id: US105
+requirement_ids:
+  - R093
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对风险工作台链路做验收收口，确认独立页、导航入口和跨页风险跳转已经形成可验证、可追溯的本地 MVP 复核链。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "`/schedule-risks` 独立页可访问，并显示本地风险摘要与列表。"
+  - "按计划上下文筛选的风险工作台路由可访问，并正确收敛到对应风险。"
+  - "计划详情、风险明细、不可用影响定位和 sidebar 风险入口链路一致。"
+  - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US104"
+status: "done"
+```

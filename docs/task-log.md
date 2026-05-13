@@ -809,3 +809,12 @@
 - action: 新增独立风险提示工作台页，并对齐计划/不可用链路的风险入口。
 - status: `done`
 - notes: 新增 `/schedule-risks` 页面与 sidebar 导航入口；计划详情和不可用影响定位可带上下文跳到风险工作台，风险明细可返回到上下文列表；复用现有本地风险契约，不接数据库、不改依赖；Safari 在 `http://localhost:3016/schedule-risks` 和按计划上下文筛选页完成烟测。
+
+- task_id: `Q015`
+- source_ids:
+  - `R093`
+- story_ids:
+  - `US105`
+- action: 收口 F060 风险工作台 QA，验证独立页、上下文筛选、计划详情、风险明细和不可用影响定位的跨页链路。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过；本地 prod server 在 `http://localhost:3014` 验证了 `/schedule-risks`、按计划上下文筛选页、计划详情页、风险明细页和不可用明细页的风险跳转链路；未引入数据库、依赖、后端契约、审批、导出、批量、权限或生产公式。

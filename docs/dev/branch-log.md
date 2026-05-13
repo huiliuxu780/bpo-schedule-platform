@@ -675,15 +675,32 @@
 
 - branch_name: `codex/f060-risk-workbench`
 - base_main_commit: `a3a134c`
-- remote_status: `branch created from pushed H029 governance head because main has not yet integrated H029`
+- remote_status: `branch pushed to origin/codex/f060-risk-workbench`
 - scope: dedicated risk workspace route, sidebar entry, cross-page drilldown alignment, local risk filtering helper, tests, and traceability updates only.
 - allowed_files_check: `app/schedule-risks/**`, `app/schedule-plans/**`, `app/unavailability/**`, `components/app-sidebar.tsx`, `components/schedule-risk-table.tsx`, `lib/schedule-plans.ts`, `next-env.d.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - scope_diff_check: `app/schedule-risks/page.tsx`, `app/schedule-risks/[riskId]/page.tsx`, `app/schedule-plans/page.tsx`, `app/schedule-plans/[planId]/page.tsx`, `app/unavailability/[unavailabilityId]/page.tsx`, `components/app-sidebar.tsx`, `lib/schedule-plans.ts`, `next-env.d.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - check_result: Safari smoke passed for `http://localhost:3016/schedule-risks` and plan-context filtered risk workspace; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 10 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `808c181`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed on branch`
+- blocked_reason: `N/A`
+
+### Q015 Risk Workbench QA Closeout
+
+- branch_name: `codex/f060-risk-workbench`
+- base_main_commit: `a3a134c`
+- remote_status: `QA closeout completed on the existing tracked branch`
+- scope: QA closeout, smoke evidence, current-state cleanup, and traceability updates for the F060 risk workbench chain only.
+- allowed_files_check: `app/schedule-risks/**`, `app/schedule-plans/**`, `app/unavailability/**`, `components/app-sidebar.tsx`, `lib/schedule-plans.ts`, `next-env.d.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `docs/current/**`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, `docs/PROJECT_STATE.md`, `docs/registry/TRACE_INDEX.yaml`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- check_result: `bash scripts/check-state.sh --strict`, `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`, `git diff --check`, and `bash scripts/check.sh` passed; prod smoke on port 3014 confirmed risk workspace, filtered workspace, schedule plan detail, risk detail, and unavailability detail chain.
 - local_commit_sha: to be reported in Done Report after local commit creation.
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM decision after local commit`
+- push_decision: `direct push on the same branch once the closeout commit is created`
 - blocked_reason: `N/A`

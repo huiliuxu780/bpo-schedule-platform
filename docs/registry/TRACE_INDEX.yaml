@@ -138,6 +138,7 @@ stories:
   US102: {file: "docs/user-stories.md", requirement_ids: ["R090"], task_ids: ["Q014"], archive_refs: []}
   US103: {file: "docs/user-stories.md", requirement_ids: ["R091"], task_ids: ["H029"], archive_refs: []}
   US104: {file: "docs/user-stories.md", requirement_ids: ["R092"], task_ids: ["F060"], archive_refs: []}
+  US105: {file: "docs/user-stories.md", requirement_ids: ["R093"], task_ids: ["Q015"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -241,6 +242,7 @@ tasks:
   Q014: {file: "tasks/backlog.yaml", story_ids: ["US102"], gate: "qa"}
   H029: {file: "tasks/backlog.yaml", story_ids: ["US103"], gate: "state-hygiene"}
   F060: {file: "tasks/backlog.yaml", story_ids: ["US104"], gate: "frontend-scaffold"}
+  Q015: {file: "tasks/backlog.yaml", story_ids: ["US105"], gate: "qa"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -364,6 +366,7 @@ requirements:
   R090: {file: "docs/raw-requirements.md", story_ids: ["US102"], task_ids: ["Q014"]}
   R091: {file: "docs/raw-requirements.md", story_ids: ["US103"], task_ids: ["H029"]}
   R092: {file: "docs/raw-requirements.md", story_ids: ["US104"], task_ids: ["F060"]}
+  R093: {file: "docs/raw-requirements.md", story_ids: ["US105"], task_ids: ["Q015"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

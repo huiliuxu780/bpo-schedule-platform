@@ -1035,6 +1035,27 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-13 - 风险工作台 QA 收口
+
+#### 审计结论
+
+- `Q015/US105` 已完成对风险工作台链路的 QA 收口，确认 `/schedule-risks` 独立页、按计划上下文筛选页、计划详情、风险明细和不可用明细之间的风险复核链路可访问、可追溯。
+- sidebar 的 `风险提示` 入口、计划详情页的 `查看风险`、风险明细页的 `返回风险列表`、不可用明细页的 `查看风险列表` 已形成一致的 no-database 本地 MVP 导航闭环。
+- QA 收口没有引入新的业务实现范围，只回写了 current state 和 traceability；数据库、依赖、后端契约、审批、导出、批量、权限和生产公式边界保持不变。
+
+#### 风险
+
+- 当前验收仍基于本地 seed 数据和 SSR 页面内容；未来若切到真实后端分页或服务端过滤，需要单独 Gate 重新验收。
+- 风险工作台目前是主内容区表格，不存在独立右侧任务 rail；如果要固定右侧待办视图，需要作为新故事单独设计和实现。
+
+#### 验证
+
+- 本地 prod smoke：`http://localhost:3014/schedule-risks`、按计划上下文筛选的 `/schedule-risks?...`、`/schedule-plans/plan-20260511-shanghai-bosch-v1`、`/schedule-risks/risk-plan-20260511-shanghai-bosch-v1-09%3A30`、`/unavailability/unavail-20260511-001` 均返回预期页面关键文案，风险链路完整。
+- `bash scripts/check-state.sh --strict`：通过。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，10 个测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
