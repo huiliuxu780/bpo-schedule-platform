@@ -17,6 +17,14 @@ Default execution state lives in:
 
 Only `ready`, `in_progress`, and `blocked` stories/tasks belong in current files. Done history must not accumulate here.
 
+Current execution state source of truth is limited to:
+
+- `docs/current/STORY_QUEUE.yaml`
+- `docs/current/ACTIVE_TASKS.yaml`
+- `docs/current/BLOCKERS.md`
+
+Legacy files may still record history and traceability, but they must not override current execution state.
+
 ### Registry Layer
 
 Lookup indexes live in:
@@ -64,6 +72,34 @@ Only the main Worker may write:
 - `docs/registry/**`
 
 Subagents may inspect relevant files and return recommendations, but they must not directly modify current or registry state.
+
+## Active Task Contract
+
+`docs/current/ACTIVE_TASKS.yaml` is the execution source of truth for current task contracts. Keep it lightweight and limited to the minimum execution contract:
+
+- `id`
+- `story_ids`
+- `status`
+- `gate`
+- `branch`
+- `allowed_files`
+- `forbidden_files`
+- `stop_conditions`
+- `acceptance_ref`
+- `verification`
+- `evidence_expected`
+
+Do not copy full historical acceptance, large audit text, or done-history detail into current active tasks.
+
+## Current State Transitions
+
+Current state changes must stay within these paths:
+
+- `ready -> in_progress -> removed from current + written to history`
+- `ready -> blocked`
+- `in_progress -> blocked`
+
+Current files must not retain long-lived `done` entries. Completion is recorded by removing the story/task from current files and writing evidence to legacy or archive traceability files.
 
 ## Codex Plan Boundary
 
@@ -142,13 +178,19 @@ Current checks:
 
 - Story IDs in `STORY_QUEUE.yaml` are unique.
 - Task IDs in `ACTIVE_TASKS.yaml` are unique.
-- Every ready story has a matching active task.
+- Story and task statuses in current files are limited to `ready`, `in_progress`, or `blocked`.
+- Every ready or in-progress story has a matching active task.
 - Every active task references an existing current story.
+- Every active task has the minimum execution contract fields.
+- Every active task `gate` exists in `docs/quality/GATE_REGISTRY.md`.
 - `TRACE_INDEX.yaml` does not contain `status`.
 - Registry `file:` paths exist.
 - Registry `current_files` paths exist.
+- Current story/task IDs referenced by execution state exist in `TRACE_INDEX.yaml`.
 - Current queue entries do not point to archive files as execution sources.
 - Current files stay under line-count budgets.
+- `TRACE_INDEX.yaml` stays under its registry budget and remains a lookup index instead of a new default context dump.
+- Strict mode fails when current git changes violate active-task `allowed_files` or `forbidden_files`.
 
 Regression coverage:
 
@@ -190,6 +232,8 @@ Forbidden in State Repair Mode:
 - Package or lockfile changes.
 - New dependencies.
 - Database, real integration, auth, permission, approval, export, batch, production formula, settlement, or charge-factor work.
+
+If `bash scripts/check-state.sh --strict` fails, normal development must stop. Only `state-repair` work may proceed until strict state checks pass again.
 
 ## Archive Transaction Rule
 

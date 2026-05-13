@@ -653,3 +653,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending after verified local commit`
 - blocked_reason: `N/A`
+
+### H029 Current-State Governance Closeout
+
+- branch_name: `codex/h029-current-state-closeout`
+- base_main_commit: `a3a134c`
+- remote_status: `not_pushed`
+- scope: current-state governance closeout, strict state-check hardening, regression tests, and traceability updates only.
+- allowed_files_check: `AGENTS.md`, `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/harness/lightweight-harness.md`, `docs/PROJECT_STATE.md`, legacy traceability docs, `tasks/backlog.yaml`, `scripts/check-state.sh`, and `scripts/tests/check-state.test.mjs`; no business code, backend, lib, package, or lockfile files.
+- scope_diff_check: `AGENTS.md`, `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/harness/lightweight-harness.md`, `docs/PROJECT_STATE.md`, legacy traceability docs, `tasks/backlog.yaml`, `scripts/check-state.sh`, and `scripts/tests/check-state.test.mjs`; no business code, backend, lib, package, or lockfile files.
+- check_result: `bash scripts/check-state.sh --strict` passed while `H029` was active; `bash scripts/check-state.sh --repair-scope` passed; `node --test scripts/tests/check-state.test.mjs` passed with 15 tests; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

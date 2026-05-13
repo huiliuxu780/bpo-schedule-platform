@@ -136,6 +136,7 @@ stories:
   US100: {file: "docs/user-stories.md", requirement_ids: ["R088"], task_ids: ["F058"], archive_refs: []}
   US101: {file: "docs/user-stories.md", requirement_ids: ["R089"], task_ids: ["F059"], archive_refs: []}
   US102: {file: "docs/user-stories.md", requirement_ids: ["R090"], task_ids: ["Q014"], archive_refs: []}
+  US103: {file: "docs/user-stories.md", requirement_ids: ["R091"], task_ids: ["H029"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -237,6 +238,7 @@ tasks:
   F058: {file: "tasks/backlog.yaml", story_ids: ["US100"], gate: "frontend-scaffold"}
   F059: {file: "tasks/backlog.yaml", story_ids: ["US101"], gate: "frontend-scaffold"}
   Q014: {file: "tasks/backlog.yaml", story_ids: ["US102"], gate: "qa"}
+  H029: {file: "tasks/backlog.yaml", story_ids: ["US103"], gate: "state-hygiene"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -358,6 +360,7 @@ requirements:
   R088: {file: "docs/raw-requirements.md", story_ids: ["US100"], task_ids: ["F058"]}
   R089: {file: "docs/raw-requirements.md", story_ids: ["US101"], task_ids: ["F059"]}
   R090: {file: "docs/raw-requirements.md", story_ids: ["US102"], task_ids: ["Q014"]}
+  R091: {file: "docs/raw-requirements.md", story_ids: ["US103"], task_ids: ["H029"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
@@ -366,4 +369,5 @@ decisions:
   - "D-2026-05-12-strict-state-check-default"
   - "D-2026-05-13-trace-current-files-path-check"
   - "D-2026-05-13-codex-plan-boundary"
+  - "D-2026-05-13-current-state-closeout"
 archive_refs: []

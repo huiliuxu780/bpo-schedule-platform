@@ -787,3 +787,14 @@
 - action: 执行 F041-F059 20-task table parity QA 收口。
 - status: `done`
 - notes: 模型测试覆盖三张表的本地筛选与统计；未新增依赖、未改后端契约、未接数据库、未引入审批、导出、批量、权限或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-13
+
+- task_id: `H029`
+- source_ids:
+  - `R091`
+- story_ids:
+  - `US103`
+- action: 收口 current-state 治理规则、最小 active-task 合同和 strict state-repair 边界。
+- status: `done`
+- notes: 对齐 `AGENTS.md`、`docs/quality/GATE_REGISTRY.md`、`docs/quality/STATE_MANAGEMENT.md`、`docs/harness/lightweight-harness.md` 和 `docs/current/PROJECT_CONTEXT.md` 的默认读集与 SoT 口径；`scripts/check-state.sh` 新增 gate 存在性、最小字段、registry 预算、inline trace entry 和 active diff scope 校验；state-check 回归测试扩展到 15 个并通过；current queue 与 active tasks 已清空。

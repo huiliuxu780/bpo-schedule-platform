@@ -72,20 +72,21 @@ Current invariants:
 - `docs/registry/TRACE_INDEX.yaml` stores IDs, paths, and relationships only; it must not store status.
 - Archive files are not executable.
 - The main Worker is the single writer for `docs/current/**` and `docs/registry/**`.
-- `scripts/check-state.sh` validates state consistency and is warning-only during the initial rollout.
-- `bash scripts/check.sh` runs `check-state` and its regression tests so state drift is visible in the standard verification path without self-locking ordinary tasks.
+- `scripts/check-state.sh` validates current status enums, active-task minimum contract fields, gate existence, registry path/budget rules, archive non-executable rules, and active diff scope while work is in progress.
+- `bash scripts/check.sh` runs strict state checks and the state-check regression suite by default; if strict fails, only `state-repair` work may proceed until state is green again.
 - `H024/US065` completed the first real current-queue smoke task: a ready story and matching active task passed strict state checks before execution, then current returned to an empty active queue after completion.
 - `H025/US066` added state-check coverage that rejects done history in current story/task files, keeping current limited to ready, in-progress, and blocked work.
 - `H026/US067` changed standard verification to strict state checks by default, with explicit `BPO_STATE_CHECK_MODE=repair-scope` and `BPO_STATE_CHECK_MODE=warning` overrides for repair and diagnostics.
 - `H027/US068` extended state checks to validate `TRACE_INDEX.yaml` current file paths and reduce duplicate registry path output.
 - `H028/US069` fixed the Codex Plan boundary: the Plan panel is only a session projection and must never override Harness current/registry state.
+- `H029/US103` closed the current-state governance loop: `AGENTS.md`, `GATE_REGISTRY.md`, `PROJECT_CONTEXT.md`, and `lightweight-harness.md` now align on the current-layer read set, `ACTIVE_TASKS.yaml` is explicitly a lightweight execution contract, and strict failure now forces `state-repair`.
 - `F041-F059/Q014` completed a 20-task local frontend parity block across schedule plans, schedule risks, and unavailability tables, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
 Near-term product work should remain inside the no-database local MVP boundary.
 
-Recommended order after state governance:
+Recommended order after H029:
 
 1. Seed the next ready story in current state before execution.
 2. Continue frontend/local-contract work only when it avoids database, real integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, and charge factors.

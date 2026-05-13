@@ -988,6 +988,29 @@
 - `curl -fsS http://127.0.0.1:3015/schedule-plans`：通过，页面包含排班计划表和风险提示表关键文本。
 - `curl -fsS http://127.0.0.1:3015/unavailability`：通过，页面包含不可用表关键文本。
 
+### 2026-05-13 - current-state governance closeout
+
+#### 审计结论
+
+- `H029/US103` 已对齐 `AGENTS.md`、`docs/quality/GATE_REGISTRY.md`、`docs/quality/STATE_MANAGEMENT.md`、`docs/harness/lightweight-harness.md` 和 `docs/current/PROJECT_CONTEXT.md` 的默认读集与 SoT 口径。
+- `docs/current/ACTIVE_TASKS.yaml` 已明确为轻量执行合同，只保留 `id / story_ids / status / gate / branch / allowed_files / forbidden_files / stop_conditions / acceptance_ref / verification / evidence_expected`。
+- `scripts/check-state.sh` 已新增 current 状态枚举、active task 最小字段、gate 存在性、registry 路径与预算、archive 不可执行、inline trace entry 和 active diff scope 校验。
+- `strict` 失败后的行为已固化为 `state-repair only`；普通开发不能在状态失败时继续推进。
+- `H029` 完成后 current queue 与 active tasks 已恢复为空，不保留 done 历史。
+
+#### 风险
+
+- `TRACE_INDEX.yaml`、legacy backlog 和审计日志仍会继续增长；当前已经加了 line budget 和 lookup-only 规则，但后续仍需要按窗口做归档治理。
+- active diff scope 校验依赖任务执行期间 current active task 仍在场；完成后清空 current 属于预期，因此要保证任务关闭前至少跑过一次 active 状态下的 strict check。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `bash scripts/check-state.sh --repair-scope`：通过。
+- `node --test scripts/tests/check-state.test.mjs`：通过，15 个 state-check 回归测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

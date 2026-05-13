@@ -6,7 +6,7 @@ Use this gate for every non-trivial task.
 
 Checks:
 
-- Has Codex read `AGENTS.md`, `docs/PROJECT_STATE.md`, `tasks/backlog.yaml`, and this file?
+- Has Codex read `AGENTS.md`, `docs/current/PROJECT_CONTEXT.md`, `docs/current/STORY_QUEUE.yaml`, `docs/current/ACTIVE_TASKS.yaml`, `docs/current/BLOCKERS.md`, this file, and the current task files?
 - Is the requested task documented in the backlog or clearly specified by the PM?
 - Are allowed files and forbidden files explicit?
 - Does the task require PM confirmation?
@@ -31,6 +31,7 @@ Branch and verification rules:
 
 - Direct development on `main` is forbidden.
 - Each task must follow `docs/quality/GIT_BRANCH_WORKFLOW.md` unless a stricter task-level Gate overrides it.
+- If `bash scripts/check-state.sh --strict` fails, normal development must stop and only `state-repair` work may proceed until strict state checks pass.
 - Final completion requires `bash scripts/check.sh` after traceability updates, not only an intermediate check.
 - Local commit must include only files allowed by the current task scope.
 - Remote push requires PM confirmation.
@@ -239,7 +240,7 @@ Forbidden:
 Required verification:
 
 - `bash scripts/check-state.sh --repair-scope`
-- `bash scripts/check-state.sh`
+- `bash scripts/check-state.sh --strict`
 - `git diff --check`
 - `bash scripts/check.sh`
 

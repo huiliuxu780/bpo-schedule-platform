@@ -26,7 +26,7 @@ description: "基于 shadcn 官方 dashboard-01 结构，实现 BPO Workforce Ma
 source: "PM confirmed F001"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "仅限静态前端 prototype；不接入后端、真实 Excel、真实 CORN API、权限系统、登录认证、数据库、导出、审批或智能排班算法。"
 ```
 
@@ -857,4 +857,17 @@ submitted_at: "2026-05-13"
 version: "1.0"
 status: "split"
 notes: "本组只做本地前端表格展示层 parity；不新增依赖、不改后端契约、不接数据库、不做审批、导出、批量、权限或生产公式。"
+```
+
+### R091 - current-state governance closeout
+
+```yaml
+id: R091
+module: "Harness"
+description: "统一 current-state 执行 SoT、ACTIVE_TASKS 最小合同、History-On-Demand 路径和 state-check 严格规则，避免在继续堆功能前出现状态漂移。"
+source: "Harness governance closeout on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只改状态治理、state-check、测试和追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```

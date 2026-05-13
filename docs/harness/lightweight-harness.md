@@ -79,7 +79,7 @@ docs/
 
 - `docs/current/PROJECT_CONTEXT.md` 记录当前阶段、边界、默认下一步和禁止事项。
 - `docs/current/STORY_QUEUE.yaml` 是 Story Runner 的默认 story 队列，只保留 `ready`、`in_progress`、`blocked`。
-- `docs/current/ACTIVE_TASKS.yaml` 是当前可执行 task 的唯一执行入口。
+- `docs/current/ACTIVE_TASKS.yaml` 是当前可执行 task 的唯一执行入口，只保留最小执行合同。
 - `docs/current/BLOCKERS.md` 只记录当前有效阻塞。
 - `docs/registry/TRACE_INDEX.yaml` 只记录 ID、路径和关联关系，禁止记录状态。
 - `docs/registry/DECISION_INDEX.yaml` 只索引关键决策，不复制决策全文。
@@ -202,6 +202,26 @@ Archive 不可执行。恢复历史任务时必须新建 current task，并重�
 
 State Repair Mode 用于修复 queue/task/index 不一致、路径缺失、归档半完成或 `check-state` 阻断普通任务启动的问题。修复时不得改业务代码、package/lockfile、依赖、数据库或生产能力。
 
+`docs/current/ACTIVE_TASKS.yaml` 的最小执行合同应保持轻量，只包含：
+
+```txt
+id
+story_ids
+status
+gate
+branch
+allowed_files
+forbidden_files
+stop_conditions
+acceptance_ref
+verification
+evidence_expected
+```
+
+不得把完整历史验收、长审计结论或 done 历史复制进 current task。
+
+若 `bash scripts/check-state.sh --strict` 失败，普通开发必须停止，后续只能进入 `state-repair` 直到 strict 恢复为绿。
+
 ## 9. 阶段完成后的后续计划
 
 每完成一个阶段、模块块或连续开发块，主 Agent 必须在 Done Report 中固定输出后续计划，避免 PM 无法判断项目推进方向。
@@ -322,7 +342,7 @@ The shadcn skill does not authorize dependency installation, package changes, pr
 
 每次需求进入项目后，主 Worker 应按以下顺序执行：
 
-1. 读取 `AGENTS.md`、`docs/PROJECT_STATE.md`、`tasks/backlog.yaml`、`docs/quality/GATE_REGISTRY.md`。
+1. 读取 `AGENTS.md`、`docs/current/PROJECT_CONTEXT.md`、`docs/current/STORY_QUEUE.yaml`、`docs/current/ACTIVE_TASKS.yaml`、`docs/current/BLOCKERS.md`、`docs/quality/GATE_REGISTRY.md` 和当前任务文件。
 2. 将 PM 输入登记为原始需求。
 3. 拆成用户故事。
 4. 标记依赖、优先级和阻塞项。

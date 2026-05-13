@@ -53,4 +53,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-After this state-governance layer is verified, seed the next ready story explicitly before returning to product development. The recommended product order remains: risk detail drilldown follow-ups only if needed, unavailability impact locator follow-ups only if needed, then table parity slices. Database work stays deferred.
+No ready story is currently queued. `H029 current-state governance closeout` is complete: the default read set, current-task schema, strict state-repair boundary, and `check-state` rules are now aligned.
+
+Before the next product iteration, seed the next ready story into `docs/current/STORY_QUEUE.yaml` and its matching task into `docs/current/ACTIVE_TASKS.yaml`. Database work stays deferred.

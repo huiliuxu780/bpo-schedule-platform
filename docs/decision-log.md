@@ -179,3 +179,10 @@
 - 原因：Plan 面板不是持久 SoT，不天然绑定 Harness，也不包含完整审计字段。
 - 影响：Plan 必须从 `docs/current/STORY_QUEUE.yaml` 和 `docs/current/ACTIVE_TASKS.yaml` 派生；如果 Plan 与 Harness state 冲突，Harness state wins。
 - 限制：不得用 Plan 判断项目真实状态、ready/done、归档状态、allowed files、stop conditions、commit SHA、验证结果或 Done Report 字段。
+
+### 2026-05-13 - D026 - current-state 治理收口以 ACTIVE_TASKS 轻量合同为中心
+
+- 决策：`docs/current/ACTIVE_TASKS.yaml` 明确作为当前任务执行 SoT，并收敛为轻量最小合同；`check-state` strict 失败后普通开发必须停止，后续只能进入 `state-repair` 直到 strict 恢复为绿。
+- 原因：`AGENTS.md`、`GATE_REGISTRY.md`、`PROJECT_CONTEXT.md` 和 `lightweight-harness.md` 如果对默认读集、SoT 和 strict 失败行为存在偏差，会让 Story Runner 被 stale 文案或隐式约定误导。
+- 影响：当前启动顺序固定为 `current -> registry -> exact legacy/archive section`；`scripts/check-state.sh` 现在校验状态枚举、gate 存在性、active task 最小字段、registry 预算、archive 不可执行、inline trace entry 和 active diff scope；state-check 回归测试扩展到 15 个。
+- 限制：该决策只收口治理规则、检查脚本、测试与追溯，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。

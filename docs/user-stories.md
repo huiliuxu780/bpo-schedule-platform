@@ -1722,3 +1722,25 @@ acceptance:
   - "本地筛选和统计模型有回归测试覆盖。"
   - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
 ```
+
+### US103 - current-state governance closeout
+
+```yaml
+id: US103
+requirement_ids:
+  - R091
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望 current-state 的执行 SoT、最小 schema 和 state-check 规则收口一致，这样 Story Runner 在继续开发前不会被状态漂移误导。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "`AGENTS.md`、`GATE_REGISTRY.md`、`PROJECT_CONTEXT.md` 的默认读集和 SoT 口径一致。"
+  - "`ACTIVE_TASKS.yaml` 明确最小执行合同，不复制完整历史验收。"
+  - "`check-state` 校验 current 状态枚举、gate 存在性、active task 最小字段、registry 预算和 archive 不可执行。"
+  - "`check-state` strict 失败后，普通开发必须转入 `state-repair`。"
+  - "`bash scripts/check-state.sh --strict`、`bash scripts/check-state.sh --repair-scope`、`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US102"
+status: "done"
+```

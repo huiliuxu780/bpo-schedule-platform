@@ -50,6 +50,16 @@ If the user gives only a task ID and it is not present in `docs/current/ACTIVE_T
 
 During the current-layer transition, tasks that modify Harness history or traceability may still update the legacy files required by the active Gate.
 
+## Execution State Source
+
+Current execution state is owned only by:
+
+- `docs/current/STORY_QUEUE.yaml`
+- `docs/current/ACTIVE_TASKS.yaml`
+- `docs/current/BLOCKERS.md`
+
+`tasks/backlog.yaml`, `docs/user-stories.md`, `docs/raw-requirements.md`, `docs/audit-report.md`, `docs/task-log.md`, and `docs/dev/branch-log.md` are legacy or historical ledgers. They may be updated for traceability, but they are not executable queues and must not override current state.
+
 ## State Governance
 
 Detailed state governance rules live in `docs/quality/STATE_MANAGEMENT.md`.
@@ -62,8 +72,13 @@ Hard rules:
 - Subagents may review or recommend state changes, but must not directly write current or registry files.
 - `docs/registry/TRACE_INDEX.yaml` stores IDs, paths, and relationships only; it must not store `status`.
 - Run `bash scripts/check-state.sh` when current or registry state changes.
+- If `bash scripts/check-state.sh --strict` fails, normal development must stop and only `state-repair` work may proceed until strict state checks pass again.
 
 History-On-Demand is allowed only when current state is insufficient, the user asks for history, the task depends on a historical decision, documents conflict, or the task is audit, review, rollback, incident investigation, migration, or state repair.
+
+Current execution must follow this lookup order:
+
+`docs/current/** -> docs/registry/** -> exact legacy/archive section`
 
 State Repair Mode triggers when current queue and active tasks disagree, registry paths are missing, archive migration is partially complete, or `check-state` blocks normal execution. In State Repair Mode, modify only `docs/current/**`, `docs/registry/**`, and necessary archive index pointers; do not modify business code, package/lockfiles, dependencies, database, integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors.
 
@@ -162,6 +177,22 @@ Story Runner must:
 - keep small UI feedback and acceptance corrections inside the current story when they do not expand scope
 - avoid guessing the next task when the ready queue is empty
 - run `bash scripts/check-state.sh` after current or registry state changes
+
+`docs/current/ACTIVE_TASKS.yaml` is the execution source of truth for current task contracts. Its minimal contract must stay lightweight and include only the fields needed to execute safely:
+
+- `id`
+- `story_ids`
+- `status`
+- `gate`
+- `branch`
+- `allowed_files`
+- `forbidden_files`
+- `stop_conditions`
+- `acceptance_ref`
+- `verification`
+- `evidence_expected`
+
+Do not copy full historical acceptance text into current active tasks.
 
 Bounded subagents may be used in Story Runner Mode only for independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, diff review, final verification, traceability, commits, and Done Report. Outside Story Runner Mode, subagents require explicit PM/user permission and a confirmed Gate.
 
