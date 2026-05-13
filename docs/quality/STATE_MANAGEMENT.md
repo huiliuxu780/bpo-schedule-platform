@@ -248,7 +248,9 @@ Validation requirements:
 - `acceptance_ref` file exists and the referenced ID exists
 - without batch, diff may touch only the active `in_progress` task's `allowed_files + traceability_files`
 - with batch, diff may touch only the batch union scope
-- if there is diff but no `in_progress` task, strict mode fails
+- if there is diff but no `in_progress` task, strict mode fails unless either:
+  - the staged diff is a same-commit closeout transition that empties current and can derive scope from `HEAD`
+  - the staged diff is branch-log-only post-closeout evidence under `docs/dev/branch-log.md`
 - touching `forbidden_files` fails strict mode
 - product tasks must not touch `docs/current/**` or `docs/registry/**` unless the gate is `state-hygiene` or `state-repair`
 - `TRACE_INDEX.yaml` contains no `status`
@@ -281,6 +283,7 @@ Rules:
 - hooks only block inconsistency
 - hooks do not auto-generate or auto-edit documentation
 - `pre-push` is a technical gate only, not PM push confirmation
+- once current is already empty, only branch-log-only commit-SHA evidence may bypass the normal `in_progress` requirement
 
 Allowed special commit prefixes:
 

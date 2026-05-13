@@ -326,6 +326,32 @@ test("check-state strict mode rejects staged diff when no task is in progress", 
   assert.match(result.stdout, /no in_progress task/);
 });
 
+test("check-state strict mode accepts branch-log-only post-closeout staged diff", () => {
+  const stateRoot = createStateRoot({
+    projectContext: [
+      "# Current Project Context",
+      "",
+      "```yaml",
+      "current_summary:",
+      "  queue_state: idle",
+      "  active_batch_id: null",
+      "  in_progress_task: null",
+      "  ready_tasks: []",
+      "```",
+      "",
+    ].join("\n"),
+    storyQueue: ["version: 1", "stories: []", ""].join("\n"),
+    activeTasks: ["version: 1", "tasks: []", ""].join("\n"),
+  });
+  initGitRepo(stateRoot);
+  writeRelative(stateRoot, "docs/dev/branch-log.md", "# branch log\nbackfill sha\n");
+  spawnSync("git", ["add", "docs/dev/branch-log.md"], { cwd: stateRoot, encoding: "utf8" });
+
+  const result = runCheckState(stateRoot, ["--strict", "--diff=staged"]);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /traceability-only post-closeout diff allowed/);
+});
+
 test("check-state strict mode accepts closeout diff using HEAD active task contract", () => {
   const stateRoot = createStateRoot();
   initGitRepo(stateRoot);
@@ -364,6 +390,32 @@ test("check-state strict mode accepts closeout diff using HEAD active task contr
   const result = runCheckState(stateRoot, ["--strict", "--diff=staged"]);
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(result.stdout, /closeout transition detected/);
+});
+
+test("check-state strict mode still rejects unrelated no-active-task staged diff", () => {
+  const stateRoot = createStateRoot({
+    projectContext: [
+      "# Current Project Context",
+      "",
+      "```yaml",
+      "current_summary:",
+      "  queue_state: idle",
+      "  active_batch_id: null",
+      "  in_progress_task: null",
+      "  ready_tasks: []",
+      "```",
+      "",
+    ].join("\n"),
+    storyQueue: ["version: 1", "stories: []", ""].join("\n"),
+    activeTasks: ["version: 1", "tasks: []", ""].join("\n"),
+  });
+  initGitRepo(stateRoot);
+  writeRelative(stateRoot, "docs/task-log.md", "# task log\nunscoped edit\n");
+  spawnSync("git", ["add", "docs/task-log.md"], { cwd: stateRoot, encoding: "utf8" });
+
+  const result = runCheckState(stateRoot, ["--strict", "--diff=staged"]);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stdout, /no in_progress task/);
 });
 
 test("check-state strict mode rejects batch missing scope_reason", () => {

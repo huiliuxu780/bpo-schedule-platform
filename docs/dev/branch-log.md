@@ -697,12 +697,12 @@
 - allowed_files_check: `app/schedule-risks/**`, `app/schedule-plans/**`, `app/unavailability/**`, `components/app-sidebar.tsx`, `lib/schedule-plans.ts`, `next-env.d.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - scope_diff_check: `docs/current/**`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, `docs/PROJECT_STATE.md`, `docs/registry/TRACE_INDEX.yaml`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - check_result: `bash scripts/check-state.sh --strict`, `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`, `git diff --check`, and `bash scripts/check.sh` passed; prod smoke on port 3014 confirmed risk workspace, filtered workspace, schedule plan detail, risk detail, and unavailability detail chain.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `550dea1`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `direct push on the same branch once the closeout commit is created`
+- push_decision: `pushed on branch`
 - blocked_reason: `N/A`
 
 ### F061-F064 Scoped Drilldown Continuation
@@ -714,12 +714,12 @@
 - allowed_files_check: `app/shift-details/**`, `app/schedule-plans/**`, `app/schedule-risks/**`, `app/unavailability/**`, `components/**`, `lib/schedule-plans.ts`, `lib/unavailability.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - scope_diff_check: frontend routes/components, local helper filters, state/traceability docs, and backlog only; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - check_result: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 12 tests; `npm run lint` passed; `npm run typecheck` passed; `git diff --check` passed; `bash scripts/check.sh` passed; Safari and local HTTP smoke confirmed scoped drilldown and right rail behavior.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `0c5b47c`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `direct push on the same branch after the closeout commit`
+- push_decision: `pushed on branch`
 - blocked_reason: `N/A`
 
 ### F065-F068 Review Rail and Continuation Actions
@@ -731,12 +731,12 @@
 - allowed_files_check: `app/shift-details/**`, `app/schedule-plans/**`, `app/unavailability/**`, `components/**`, `lib/review-navigation.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - scope_diff_check: `app/shift-details/page.tsx`, `app/unavailability/page.tsx`, `app/schedule-plans/[planId]/page.tsx`, `components/schedule-plan-interval-table.tsx`, `components/unavailability-impact-risk-table.tsx`, `lib/review-navigation.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - check_result: failing tests first verified missing rail/action strings; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` then passed with 16 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed; local dev server started on `http://localhost:3014`; local HTTP smoke confirmed `/shift-details`, `/unavailability`, schedule-plan detail, and unavailability-impact detail HTML contained the new rail/action text.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `5be22c2`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM decision after verified local commit`
+- push_decision: `pushed on branch`
 - blocked_reason: `N/A`
 
 ### F069-F072 Detail Review Rails
@@ -748,7 +748,7 @@
 - allowed_files_check: `app/schedule-plans/**`, `app/schedule-risks/**`, `app/unavailability/**`, `components/**`, `lib/review-navigation.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - scope_diff_check: `app/schedule-plans/[planId]/page.tsx`, `app/schedule-risks/[riskId]/page.tsx`, `app/unavailability/[unavailabilityId]/page.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - check_result: failing tests first verified missing detail-page rail strings; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` then passed with 19 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed; local HTML smoke on `http://localhost:3014` confirmed plan detail, risk detail, and unavailability impact pages contained `当前复核范围 / 复核任务 / 回到全部` text.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `1c70ea8`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
@@ -781,8 +781,25 @@
 - scope: current-state seeding for a state-hygiene task, TRACE_INDEX compaction, registry windowing rule update, and traceability records only.
 - allowed_files_check: `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/harness/lightweight-harness.md`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no business code, backend, package, or lockfile files.
 - scope_diff_check: same as allowed scope; no business code, backend, package, or lockfile files.
-- check_result: `bash scripts/check-state.sh --strict --diff=working` passed with TRACE_INDEX back under budget; `git diff --check` passed; final `bash scripts/check.sh` to be re-run after traceability closeout.
-- local_commit_sha: `N/A`
+- check_result: `bash scripts/check-state.sh --strict --diff=working` passed with TRACE_INDEX back under budget; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `0b63408`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
+
+### H032 Traceability Closeout Guard
+
+- branch_name: `codex/h032-traceability-closeout-guard`
+- base_main_commit: `0b63408`
+- remote_status: `not_pushed`
+- scope: post-closeout traceability-only guard tightening, branch-log SHA backfill, state-check regression expansion, and governance traceability updates only.
+- allowed_files_check: `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/harness/lightweight-harness.md`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/decision-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, `tasks/backlog.yaml`, `scripts/check-state.sh`, and `scripts/tests/check-state.test.mjs`; no business code, backend, package, or lockfile files.
+- scope_diff_check: same as allowed scope; no business code, backend, package, or lockfile files.
+- check_result: `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --repair-scope` passed; `node --test scripts/tests/check-state.test.mjs` passed with 23 tests; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending next traceability closeout pass after H032 local commit`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

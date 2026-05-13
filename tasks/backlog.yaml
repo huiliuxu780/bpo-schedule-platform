@@ -3827,3 +3827,50 @@ tasks:
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
       - "需要大规模 archive 迁移才能解决 registry 预算"
     commit_after_done: true
+  - id: H032
+    title: "Traceability closeout 守门与提交后证据回写"
+    priority: P1
+    status: done
+    required_workflow: state-hygiene
+    allowed_files:
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/quality/**"
+      - "docs/harness/lightweight-harness.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/decision-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+      - "scripts/check-state.sh"
+      - "scripts/tests/check-state.test.mjs"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "当 current 已清空且 staged diff 只包含允许的 traceability closeout 文件时，`check-state --strict --diff=staged` 通过。"
+      - "无 active task 的普通 staged diff 仍然严格失败，不放宽到任意文档。"
+      - "治理文档明确 post-closeout traceability-only diff 的边界。"
+      - "最近几条 branch-log 记录补齐真实 `local_commit_sha`。"
+      - "`bash scripts/check-state.sh --strict --diff=working`、`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要业务代码改动"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true

@@ -102,3 +102,12 @@ decisions:
       - "docs/registry/TRACE_INDEX.yaml"
       - "docs/quality/STATE_MANAGEMENT.md"
       - "docs/current/ACTIVE_TASKS.yaml"
+  D-2026-05-13-traceability-closeout-guard:
+    title: "Branch-log-only post-closeout evidence may commit after current clears"
+    file: "docs/decision-log.md"
+    related_files:
+      - "scripts/check-state.sh"
+      - "scripts/tests/check-state.test.mjs"
+      - "docs/dev/branch-log.md"
+      - "docs/quality/STATE_MANAGEMENT.md"
+      - "docs/quality/GIT_BRANCH_WORKFLOW.md"

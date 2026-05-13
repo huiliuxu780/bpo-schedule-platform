@@ -74,6 +74,9 @@ const currentLineBudgets = [
 ];
 const traceIndexWarningBudget = 420;
 const traceIndexStrictBudget = 480;
+const postCloseoutTraceabilityFiles = new Set([
+  "docs/dev/branch-log.md",
+]);
 
 let warnings = 0;
 let softWarnings = 0;
@@ -492,6 +495,14 @@ function matchesAnyPattern(filePath, patterns) {
     .some((pattern) => globToRegExp(pattern).test(filePath));
 }
 
+function isBusinessCodeFile(filePath) {
+  return /^(app|components|hooks|lib|backend)\//.test(filePath);
+}
+
+function isPackageBoundaryFile(filePath) {
+  return /^(package\.json|package-lock\.json|pnpm-lock\.yaml|yarn\.lock)$/.test(filePath);
+}
+
 function parseAcceptanceRef(value) {
   if (!value || typeof value !== "string") {
     return null;
@@ -835,11 +846,13 @@ if (scopeTasks.length === 0 && changedFiles.length > 0) {
     closeoutTouchesCurrent &&
     changedFiles.every(
       (file) =>
-        !/^(app|components|hooks|lib|backend)\//.test(file) &&
-        !/^(package\.json|package-lock\.json|pnpm-lock\.yaml|yarn\.lock)$/.test(file),
+        !isBusinessCodeFile(file) &&
+        !isPackageBoundaryFile(file),
     )
   ) {
     pass("docs/scripts closeout diff allowed without an active task");
+  } else if (changedFiles.every((file) => postCloseoutTraceabilityFiles.has(file))) {
+    pass("traceability-only post-closeout diff allowed without an active task");
   } else {
     warn(`git ${diffMode} diff exists but there is no in_progress task`);
   }

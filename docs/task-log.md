@@ -908,3 +908,12 @@
 - action: 治理 TRACE_INDEX 预算并补 registry 窗口化规则。
 - status: `done`
 - notes: `TRACE_INDEX` 从 428 行压到 313 行，strict state check 不再输出 registry budget warning；新增“先压缩再归档”的 registry slimming 规则；只改 current/registry/quality/traceability 文档，没有碰业务代码、依赖、package/lockfile 或数据库。
+
+- task_id: `H032`
+- source_ids:
+  - `R111`
+- story_ids:
+  - `US123`
+- action: 收口 post-closeout traceability guard，并回填最近 branch-log 缺失的 local commit sha。
+- status: `done`
+- notes: `check-state` 现在允许 branch-log-only 的 post-closeout staged diff 在 current 已清空后继续提交；无 active task 的其他 staged diff 仍严格失败；最近 `Q015`、`F061-F064`、`F065-F068`、`F069-F072` 和 `H031` 的 branch-log commit SHA 已回填。

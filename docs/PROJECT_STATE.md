@@ -88,6 +88,7 @@ Current invariants:
 - `F069-F072/Q018` completed the next review slice: `排班计划详情`、`风险明细`、`不可用影响定位` 三个 detail 页 now have wide-screen right-side review rails, and the detail-level review actions continue to share the same local navigation helper, then current queue returned to empty after QA closeout.
 - `H030/US121` aligned Harness rule sources and hook guardrails on top of the active product branch: SoT priority now points at `ACTIVE_TASKS/STORY_QUEUE/BLOCKERS`, `check-state` validates diff mode, batch, branch, acceptance_ref, and closeout transitions, repo-local hooks are installed, and `check.sh` clears stale `.next` route types before plain typecheck.
 - `H031/US122` closed the remaining registry budget warning: `TRACE_INDEX` was compacted back under budget, registry windowing rules now require compaction before archive migration, and strict state check returns to green without registry warnings.
+- `H032/US123` closed the remaining post-closeout traceability gap: branch-log-only commit-SHA backfills can now pass strict staged state checks after current returns to empty, while other no-active-task diffs still fail; recent missing branch-log commit SHAs were backfilled.
 
 ## Product Direction
 

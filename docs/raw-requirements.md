@@ -1118,3 +1118,16 @@ version: "1.0"
 status: "split"
 notes: "只做 current/registry/quality/traceability 文档治理；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R111 - Traceability closeout 守门与提交后证据回写
+
+```yaml
+id: R111
+module: "Harness"
+description: "允许严格限定的 post-closeout traceability-only diff 在 current 已清空后继续通过 state check，并把最近几条 branch-log 的 local_commit_sha 补齐成真实证据。"
+source: "Governance continuation on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只改 current/registry/quality/traceability 文档、状态校验和测试；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

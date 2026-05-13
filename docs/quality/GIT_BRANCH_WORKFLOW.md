@@ -92,6 +92,11 @@ bash scripts/check.sh
 7. 本地 commit
 8. 输出 Done Report
 
+补充规则：
+
+- 如果同一提交里完成 current 清空，`check-state` 可以回看 `HEAD` 中的 active contract 校验 closeout diff。
+- 如果任务已经完成并且 current 已为空，只有 `docs/dev/branch-log.md` 的极小范围 commit-SHA 回写允许继续提交；这不是重新开启普通文档修改窗口。
+
 scope diff 检查：
 
 ```bash

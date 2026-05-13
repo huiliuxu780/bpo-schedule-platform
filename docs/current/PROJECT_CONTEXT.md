@@ -18,7 +18,9 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-No ready story is currently queued. The latest completed governance task was `US122/H031` on branch `codex/h031-risk-governance-reconcile`. It pulled `TRACE_INDEX` back under budget and codified the registry slimming rule without broad archive migration.
+No ready story is currently queued. The latest completed governance task was `US123/H032` on branch `codex/h032-traceability-closeout-guard`. It narrowed the remaining traceability closeout gap: after a task is verified and current returns to empty, a branch-log-only commit-SHA backfill can now pass strict staged state checks without reopening current.
+
+The latest completed governance task was `US122/H031` on branch `codex/h031-risk-governance-reconcile`. It pulled `TRACE_INDEX` back under budget and codified the registry slimming rule without broad archive migration.
 
 The latest completed governance pass was `US121/H030` on branch `codex/h030-harness-hook-guard`, which aligned the Harness rule sources, tightened the active-task contract, expanded `check-state`, added repo-local hooks, and made standard verification resilient to stale `.next` route typings across branches.
 

@@ -1168,6 +1168,28 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过，已无 registry budget warning。
 - `git diff --check`：通过。
 
+### 2026-05-13 - Traceability Closeout Guard
+
+#### 审计结论
+
+- `H032/US123` 收口了 current 已清空后的最后一个 traceability 自锁点：当 staged diff 只包含 `docs/dev/branch-log.md` 的 commit-SHA 证据回写时，strict staged state check 现在允许继续提交。
+- 这个例外保持得很窄：branch-log-only 可以通过，但没有 active task 的其他 staged diff 仍然失败，没有把“无 active task 也能改文档”扩成通用能力。
+- 最近缺失的 branch-log `local_commit_sha` 已补齐到真实提交：`Q015 -> 550dea1`，`F061-F064 -> 0c5b47c`，`F065-F068 -> 5be22c2`，`F069-F072 -> 1c70ea8`，`H031 -> 0b63408`。
+
+#### 风险
+
+- `H032` 自己的 `local_commit_sha` 仍然存在自引用问题，必须由下一次 traceability closeout pass 回填；这不是规则缺口，而是 Git commit SHA 生成顺序的天然限制。
+- 当前放行范围刻意只到 `docs/dev/branch-log.md`；如果后续想扩到其他 traceability 文件，需要单独 state-hygiene 任务验证边界。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check-state.sh --repair-scope`：通过。
+- `node --test scripts/tests/check-state.test.mjs`：通过，23 个测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state 回归、commit-message 回归、lint、typecheck、Next build 和后端 19 个 unittest。
+- 新增回归：branch-log-only post-closeout staged diff 通过；无 active task 的其他 staged diff 继续失败。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

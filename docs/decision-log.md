@@ -200,3 +200,10 @@
 - 原因：当前 registry 的问题是体积膨胀，而不是历史缺失；先压缩可以保留完整追溯路径，同时避免为了小幅超预算启动大范围归档事务。
 - 影响：registry 中只保留最小关系字段；多行空 `archive_refs`、单关系 story/task/requirement 项优先压成单行；state-hygiene 任务需要先尝试 compaction，再决定是否需要更大迁移。
 - 限制：该决策只约束 registry 减重顺序，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-13 - D029 - branch-log-only post-closeout evidence 可继续提交
+
+- 决策：当 current 已经为空且 staged diff 只包含 `docs/dev/branch-log.md` 的 commit-SHA 证据回写时，`check-state --strict --diff=staged` 可以通过；这个例外不扩展到其他普通文档。
+- 原因：closeout 任务提交之后，branch-log 的 `local_commit_sha` 回写是天然晚于被引用 commit 的；如果 hook 仍要求存在 `in_progress` task，就会再次把 traceability 自锁住。
+- 影响：pre-commit 现在保留两种无 active task 的合法路径：同一提交里的 current closeout，以及 branch-log-only 的 post-closeout evidence backfill；除此之外，无 active task 的 staged diff 仍然严格失败。
+- 限制：该决策不放宽业务代码、其他 traceability 文档、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。

@@ -2118,3 +2118,25 @@ dependencies:
   - "US121"
 status: "done"
 ```
+
+### US123 - Traceability closeout guard
+
+```yaml
+id: US123
+requirement_ids:
+  - R111
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望在任务验证完成并清空 current 后，仍能对极小范围的 traceability 证据回写继续提交，这样 branch-log 的 local_commit_sha 不会因为 hook 自锁而长期缺失。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "当 current 已清空且 staged diff 只包含允许的 traceability closeout 文件时，`check-state --strict --diff=staged` 通过。"
+  - "无 active task 的普通 staged diff 仍然严格失败，不放宽到任意文档。"
+  - "STATE_MANAGEMENT 与 GIT_BRANCH_WORKFLOW 明确 post-closeout traceability-only diff 的边界。"
+  - "最近几条 branch-log 记录补齐真实 `local_commit_sha`。"
+  - "`bash scripts/check-state.sh --strict --diff=working`、`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US122"
+status: "done"
+```
