@@ -818,6 +818,7 @@ if (batch && Object.keys(batch).length > 0) {
 
 const changedFiles = getChangedFiles();
 const currentBranch = isGitRepo() ? getCurrentBranch() : null;
+let startupSeedDetected = false;
 
 if (scopeTasks.length === 0 && changedFiles.length > 0) {
   const previousActiveContent = isGitRepo() ? readGitFile("HEAD", "docs/current/ACTIVE_TASKS.yaml") : null;
@@ -855,6 +856,30 @@ if (scopeTasks.length === 0 && changedFiles.length > 0) {
     pass("traceability-only post-closeout diff allowed without an active task");
   } else {
     warn(`git ${diffMode} diff exists but there is no in_progress task`);
+  }
+}
+
+if (scopeTasks.length > 0 && changedFiles.length > 0 && isGitRepo()) {
+  const previousActiveContent = readGitFile("HEAD", "docs/current/ACTIVE_TASKS.yaml");
+  const previousTasks = previousActiveContent
+    ? parseListSectionFromContent(previousActiveContent, "tasks")
+    : [];
+  const previousInProgressTasks = previousTasks.filter((task) => task.status === "in_progress");
+  const startupTouchesState = changedFiles.some(
+    (file) => file.startsWith("docs/current/") || file.startsWith("docs/registry/"),
+  );
+  const startupTouchesOnlyNonBusinessFiles = changedFiles.every(
+    (file) => !isBusinessCodeFile(file) && !isPackageBoundaryFile(file),
+  );
+
+  if (
+    previousInProgressTasks.length === 0 &&
+    inProgressTasks.length > 0 &&
+    startupTouchesState &&
+    startupTouchesOnlyNonBusinessFiles
+  ) {
+    startupSeedDetected = true;
+    pass("startup seed transition detected; limited current/registry diff allowed before product implementation");
   }
 }
 
@@ -897,7 +922,11 @@ for (const changedFile of changedFiles) {
     pass(`git ${diffMode} diff stays inside allowed scope for: ${changedFile}`);
   }
 
-  if (!stateGateOnly && (changedFile.startsWith("docs/current/") || changedFile.startsWith("docs/registry/"))) {
+  if (
+    !stateGateOnly &&
+    !startupSeedDetected &&
+    (changedFile.startsWith("docs/current/") || changedFile.startsWith("docs/registry/"))
+  ) {
     warn(`product task diff must not modify current or registry state: ${changedFile}`);
   }
 }

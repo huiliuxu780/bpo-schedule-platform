@@ -2140,3 +2140,41 @@ dependencies:
   - "US122"
 status: "done"
 ```
+
+### US124 - Shared review checklist across local review pages
+
+```yaml
+id: US124
+requirement_ids:
+  - R112
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望计划、风险、班次和不可用页面右侧都使用同一套 review checklist，这样我能知道当前处于哪一步，并沿着同一上下文继续复核。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "risk/plan/shift/unavailability 相关页面右侧 `复核任务` 区块统一成共享 checklist 结构。"
+  - "checklist 能显示当前步骤和下一步动作，不回退到宽泛列表。"
+  - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "ready"
+```
+
+### US125 - startup seed strict-state guard
+
+```yaml
+id: US125
+requirement_ids:
+  - R113
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望产品 batch 在 seed current state 之后能先通过严格状态校验，再进入实现，这样 Story Runner 不会在第一步就被 current/registry startup diff 自锁。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "当 diff 只包含 startup seed 所需的 current/registry/traceability 文件时，`check-state --strict` 可以通过。"
+  - "普通产品任务在 startup 之外仍不得修改 `docs/current/**` 或 `docs/registry/**`。"
+  - "STATE_MANAGEMENT 明确 startup seed 例外边界。"
+  - "`bash scripts/check-state.sh --strict --diff=working`、`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+status: "done"
+```

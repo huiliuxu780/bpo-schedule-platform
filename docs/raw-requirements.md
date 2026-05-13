@@ -1131,3 +1131,29 @@ version: "1.0"
 status: "split"
 notes: "只改 current/registry/quality/traceability 文档、状态校验和测试；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R112 - 统一 review checklist 与右侧任务结构
+
+```yaml
+id: R112
+module: "排班与风险联动"
+description: "risk/plan/shift/unavailability 页面右侧重复的复核任务块需要统一成共享的本地 review checklist，显示当前步骤、下一步和范围内跳转，不接数据库。"
+source: "Story Runner continuation after Q018 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只改前端页面、共享组件、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
+
+### R113 - startup seed strict-state 守门
+
+```yaml
+id: R113
+module: "Harness"
+description: "当新产品 batch 从 idle seed 到 active 时，strict state check 需要允许严格限定的 current/registry/traceability startup diff，否则 Story Runner 会在实现前自锁。"
+source: "Governance repair during US124 startup on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只改 current/registry/quality 文档、状态校验和测试；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

@@ -18,11 +18,11 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-No ready story is currently queued. The latest completed governance task was `US123/H032` on branch `codex/h032-traceability-closeout-guard`. It narrowed the remaining traceability closeout gap: after a task is verified and current returns to empty, a branch-log-only commit-SHA backfill can now pass strict staged state checks without reopening current.
+The latest completed governance task was `US125/H033` on branch `codex/f073-review-checklist-h032`. It closed the startup-state self-lock: a new product batch can now seed the required current/registry startup diff and pass strict state checks before business implementation begins, while ordinary product edits still cannot modify current or registry state.
 
-The latest completed governance task was `US122/H031` on branch `codex/h031-risk-governance-reconcile`. It pulled `TRACE_INDEX` back under budget and codified the registry slimming rule without broad archive migration.
+The latest completed governance task was `US123/H032` on branch `codex/h032-traceability-closeout-guard`. It narrowed the remaining traceability closeout gap: after a task is verified and current returns to empty, a branch-log-only commit-SHA backfill can now pass strict staged state checks without reopening current.
 
-The latest completed governance pass was `US121/H030` on branch `codex/h030-harness-hook-guard`, which aligned the Harness rule sources, tightened the active-task contract, expanded `check-state`, added repo-local hooks, and made standard verification resilient to stale `.next` route typings across branches.
+The last completed product chain was `US116/F069 -> US119/F072`, followed by `US120/Q018`, on branch `codex/f060-risk-workbench`. This batch continued the same no-database risk/unavailability review vertical by extending wide-screen right-side review rails to the detail pages so plan, risk, and unavailability detail views keep the same review posture as the list/workbench pages.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -65,4 +65,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Current has returned to empty again. Seed the next ready story explicitly before resuming product development. Database work stays deferred.
+Current is idle again. The next step is to seed `US124` back into current and continue the same no-database review workflow for the shared checklist refactor and QA closeout. Database work stays deferred.

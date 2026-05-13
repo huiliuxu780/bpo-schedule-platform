@@ -313,6 +313,111 @@ test("check-state strict mode accepts staged diff inside the in_progress scope",
   assert.match(result.stdout, /stays inside allowed scope/);
 });
 
+test("check-state strict mode accepts startup seed diff for a new product task", () => {
+  const stateRoot = createStateRoot({
+    projectContext: [
+      "# Current Project Context",
+      "",
+      "```yaml",
+      "current_summary:",
+      "  queue_state: idle",
+      "  active_batch_id: null",
+      "  in_progress_task: null",
+      "  ready_tasks: []",
+      "```",
+      "",
+    ].join("\n"),
+    storyQueue: ["version: 1", "stories: []", ""].join("\n"),
+    activeTasks: ["version: 1", "tasks: []", ""].join("\n"),
+    traceIndex: [
+      "version: 1",
+      "current_files:",
+      "  project_context: docs/current/PROJECT_CONTEXT.md",
+      "  story_queue: docs/current/STORY_QUEUE.yaml",
+      "  active_tasks: docs/current/ACTIVE_TASKS.yaml",
+      "  blockers: docs/current/BLOCKERS.md",
+      "stories:",
+      '  US900: {file: "docs/user-stories.md", requirement_ids: ["R900"], task_ids: ["F900"], archive_refs: []}',
+      "tasks:",
+      '  F900: {file: "tasks/backlog.yaml", story_ids: ["US900"], gate: "frontend-scaffold"}',
+      "requirements:",
+      '  R900: {file: "docs/raw-requirements.md", story_ids: ["US900"], task_ids: ["F900"]}',
+      "",
+    ].join("\n"),
+    backlog: [
+      "tasks:",
+      "  - id: F900",
+      "",
+    ].join("\n"),
+  });
+  initGitRepo(stateRoot);
+  writeRelative(
+    stateRoot,
+    "docs/current/PROJECT_CONTEXT.md",
+    [
+      "# Current Project Context",
+      "",
+      "```yaml",
+      "current_summary:",
+      "  queue_state: active",
+      "  active_batch_id: null",
+      "  in_progress_task: F900",
+      "  ready_tasks: []",
+      "```",
+      "",
+    ].join("\n"),
+  );
+  writeRelative(
+    stateRoot,
+    "docs/current/STORY_QUEUE.yaml",
+    [
+      "version: 1",
+      "stories:",
+      "  - id: US900",
+      "    status: in_progress",
+      "    task_ids: [F900]",
+      "",
+    ].join("\n"),
+  );
+  writeRelative(
+    stateRoot,
+    "docs/current/ACTIVE_TASKS.yaml",
+    [
+      "version: 1",
+      "tasks:",
+      "  - id: F900",
+      "    story_ids: [US900]",
+      "    status: in_progress",
+      "    gate: frontend-scaffold",
+      "    branch: codex/h900-state-check",
+      "    allowed_files:",
+      "      - components/**",
+      "    traceability_files:",
+      "      - docs/current/**",
+      "      - docs/registry/**",
+      "      - tasks/backlog.yaml",
+      "    forbidden_files:",
+      "      - backend/**",
+      "    stop_conditions:",
+      "      - verification failed",
+      "    acceptance_ref: tasks/backlog.yaml#F900",
+      "    verification:",
+      "      - bash scripts/check-state.sh --strict --diff=staged",
+      "    evidence_expected:",
+      "      - startup seed is allowed",
+      "",
+    ].join("\n"),
+  );
+  spawnSync("git", ["add", "docs/current/PROJECT_CONTEXT.md", "docs/current/STORY_QUEUE.yaml", "docs/current/ACTIVE_TASKS.yaml"], {
+    cwd: stateRoot,
+    encoding: "utf8",
+  });
+
+  const result = runCheckState(stateRoot, ["--strict", "--diff=staged"]);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /startup seed transition detected/);
+});
+
 test("check-state strict mode rejects staged diff when no task is in progress", () => {
   const stateRoot = createStateRoot({
     activeTasks: defaultActiveTasks().replace("status: in_progress", "status: ready"),
