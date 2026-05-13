@@ -3923,7 +3923,7 @@ tasks:
   - id: H034
     title: "product closeout strict-state 与 commit-message 守门"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: state-hygiene
     allowed_files:
       - "docs/current/**"

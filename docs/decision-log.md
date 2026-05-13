@@ -207,3 +207,10 @@
 - 原因：closeout 任务提交之后，branch-log 的 `local_commit_sha` 回写是天然晚于被引用 commit 的；如果 hook 仍要求存在 `in_progress` task，就会再次把 traceability 自锁住。
 - 影响：pre-commit 现在保留两种无 active task 的合法路径：同一提交里的 current closeout，以及 branch-log-only 的 post-closeout evidence backfill；除此之外，无 active task 的 staged diff 仍然严格失败。
 - 限制：该决策不放宽业务代码、其他 traceability 文档、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-13 - D030 - product closeout 同时放行 strict state 与 commit subject
+
+- 决策：当产品任务在同一提交里合法清空 current 时，`check-state --strict` 允许 current closeout 所需的 `docs/current/**` 变更，`validate-commit-message` 也允许从 `HEAD` 的 active task 合同识别普通任务 id。
+- 原因：如果 strict state 与 commit-message 只看“当前工作区里的 active task”，那么已验证完成的产品 batch 依然无法在 closeout 提交中通过 pre-commit 和 commit-msg，形成最后一步自锁。
+- 影响：same-commit closeout 现在可以保留 `F0xx:` 之类的普通产品提交格式；无 active task 的无关 staged diff 仍然失败，没有放宽普通文档/业务代码越权提交。
+- 限制：该决策只放行合法 closeout transition，不授权普通产品任务修改 current/registry，不授权依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。

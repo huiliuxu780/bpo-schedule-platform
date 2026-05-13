@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US126
-    title: "product closeout guard for strict state and commit message"
-    status: in_progress
-    requirement_ids: [R114]
-    task_ids: [H034]
+stories: []

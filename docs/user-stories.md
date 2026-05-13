@@ -2195,5 +2195,5 @@ acceptance:
   - "普通产品 closeout 提交可以继续使用当前任务 id 作为 commit subject。"
   - "普通无 active task 的无关提交仍然失败。"
   - "`bash scripts/check-state.sh --strict --diff=working`、`node --test scripts/tests/check-state.test.mjs`、`node --test scripts/tests/validate-commit-message.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
-status: "in_progress"
+status: "done"
 ```
