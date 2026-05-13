@@ -7,11 +7,14 @@
 每个非 trivial 任务开始前必须读取：
 
 - `AGENTS.md`
-- `docs/PROJECT_STATE.md`
-- `tasks/backlog.yaml`
+- `docs/current/PROJECT_CONTEXT.md`
+- `docs/current/STORY_QUEUE.yaml`
+- `docs/current/ACTIVE_TASKS.yaml`
+- `docs/current/BLOCKERS.md`
 - `docs/quality/GATE_REGISTRY.md`
+- 当前任务文件
 
-如果任务不在 backlog、scope 不清、或没有明确 allowed/forbidden 文件，先输出 Gate Plan，不直接开发。
+如果任务不在 current queue / active tasks、scope 不清、或没有明确 allowed/forbidden 文件，先输出 Gate Plan，不直接开发。历史查询先走 `docs/registry/TRACE_INDEX.yaml`，再定位到精确 legacy 段落。
 
 ## 2. Branch Creation
 
@@ -35,7 +38,7 @@
 
 默认一个 backlog task 对应一个 task branch。
 
-Story Runner 下，同一模块块、同一风险等级、同一 allowed_files 范围内的多个 ready stories 可以共用一个任务分支。
+Story Runner 下，只有 `docs/current/ACTIVE_TASKS.yaml` 显式声明 `batch` 合同，且 scope、风险和 allowed_files 仍然一致时，多个 ready stories 才能共用一个任务分支。
 
 以下情况必须新分支：
 
@@ -131,6 +134,8 @@ rebase/merge 冲突处理：
 本地 commit 自动化，远端 push 非自动化。
 
 只有阶段、模块块或 coherent feature-set 完成后，才询问 PM 是否 push。未获 PM 明确确认，不得 push。
+
+`pre-push` hook 只是技术 gate：它只负责运行完整校验，不代表 PM 已确认 push。
 
 禁止 `--force` push。任何破坏性 Git 操作都必须先获得明确授权。
 

@@ -858,3 +858,16 @@ version: "1.0"
 status: "split"
 notes: "本组只做本地前端表格展示层 parity；不新增依赖、不改后端契约、不接数据库、不做审批、导出、批量、权限或生产公式。"
 ```
+
+### R092 - Harness 文档一致性与 Hook 守门
+
+```yaml
+id: R092
+module: "Harness"
+description: "统一 Harness 规则源与 SoT 优先级，收紧 ACTIVE_TASKS 最小合同，增强 check-state 与 Git hooks，让状态、范围、提交和推送前验证都可校验。"
+source: "PM supplied full Harness consistency and hook-guard plan on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只改治理文档、状态校验、hook 脚本和追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

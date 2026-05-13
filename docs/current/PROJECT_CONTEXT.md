@@ -1,5 +1,13 @@
 # Current Project Context
 
+```yaml
+current_summary:
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
+```
+
 ## Current Stage
 
 Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness.
@@ -10,7 +18,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed product chain was `US083/F041 -> ... -> US102/Q014`, which extended local table parity across schedule plans, schedule risks, and unavailability tables without database, package, backend contract, approval, export, batch, permission, or production formula work.
+No ready story is currently queued. The latest completed governance pass was `US104/H030` on branch `codex/h030-harness-hook-guard`, which aligned the Harness rule sources, tightened the active-task contract, expanded `check-state`, added repo-local hooks, and made standard verification resilient to stale `.next` route typings across branches.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +61,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-After this state-governance layer is verified, seed the next ready story explicitly before returning to product development. The recommended product order remains: risk detail drilldown follow-ups only if needed, unavailability impact locator follow-ups only if needed, then table parity slices. Database work stays deferred.
+Seed the next ready story explicitly before returning to product development. Database work stays deferred.

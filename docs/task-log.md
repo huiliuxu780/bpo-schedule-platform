@@ -787,3 +787,14 @@
 - action: 执行 F041-F059 20-task table parity QA 收口。
 - status: `done`
 - notes: 模型测试覆盖三张表的本地筛选与统计；未新增依赖、未改后端契约、未接数据库、未引入审批、导出、批量、权限或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-13
+
+- task_id: `H030`
+- source_ids:
+  - `R092`
+- story_ids:
+  - `US104`
+- action: 收口 Harness 文档一致性与 Hook 守门。
+- status: `done`
+- notes: 统一 AGENTS/STATE_MANAGEMENT/GIT_BRANCH_WORKFLOW/GATE_REGISTRY 的 SoT 与 hook 边界；`check-state` 新增 diff mode、batch、branch、acceptance_ref 和 closeout scope 校验；新增 repo-local hooks 与 commit message 校验；`check.sh` 会在 typecheck 前清理 stale `.next` route types；current queue 与 active tasks 已恢复为空。

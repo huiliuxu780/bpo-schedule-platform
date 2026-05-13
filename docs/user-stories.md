@@ -1722,3 +1722,26 @@ acceptance:
   - "本地筛选和统计模型有回归测试覆盖。"
   - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
 ```
+
+### US104 - Harness 文档一致性与 Hook 守门
+
+```yaml
+id: US104
+requirement_ids:
+  - R092
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望 Harness 状态、文档、任务范围、提交和推送前验证都有一致的可校验合同，这样 Story Runner 和人工审计都不会被漂移状态误导。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "AGENTS.md、STATE_MANAGEMENT.md、GIT_BRANCH_WORKFLOW.md 和 GATE_REGISTRY.md 对齐同一套 SoT、优先级与 hook 边界。"
+  - "ACTIVE_TASKS 最小合同包含 traceability_files，并定义 batch 约束与 diff scope 规则。"
+  - "`check-state` 支持 `--diff=working|staged|none`，并校验 branch、acceptance_ref、diff scope、batch 和 registry 预算。"
+  - "pre-commit、commit-msg、pre-push 与 install-hooks 脚本落地，hook 只拦截不一致，不自动改文档。"
+  - "回归测试覆盖新的 strict failure 场景和 commit message 校验。"
+  - "`bash scripts/check-state.sh --strict --diff=working`、`node --test scripts/tests/check-state.test.mjs`、`node --test scripts/tests/validate-commit-message.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US102"
+status: "done"
+```

@@ -179,3 +179,10 @@
 - 原因：Plan 面板不是持久 SoT，不天然绑定 Harness，也不包含完整审计字段。
 - 影响：Plan 必须从 `docs/current/STORY_QUEUE.yaml` 和 `docs/current/ACTIVE_TASKS.yaml` 派生；如果 Plan 与 Harness state 冲突，Harness state wins。
 - 限制：不得用 Plan 判断项目真实状态、ready/done、归档状态、allowed files、stop conditions、commit SHA、验证结果或 Done Report 字段。
+
+### 2026-05-13 - D026 - Hook 守门只拦截不一致，closeout diff 回看 HEAD 合同
+
+- 决策：Git hooks 只负责拦截 Harness 不一致，不自动生成或修改文档；当任务在同一提交里清空 current 时，`check-state` 会回看 `HEAD` 中的 active task 合同来校验 closeout diff。
+- 原因：如果 strict 校验只看“当前快照里的 in_progress task”，那么任何合法的 current 清空提交都会被错误拦截，造成状态收口自锁。
+- 影响：`pre-commit` 运行 `bash scripts/check-state.sh --strict --diff=staged` 和 `git diff --cached --check`；`commit-msg` 强制当前 active task id 或允许的 `harness:/state-repair:/audit:` 前缀；`pre-push` 运行 `bash scripts/check.sh`；closeout 提交可以在同一提交中完成 current 清空和追溯更新。
+- 限制：该决策不放宽业务范围，不授权依赖、package/lockfile、数据库、真实集成、认证、权限、审批、导出、批量或生产口径变更。

@@ -6,7 +6,7 @@ Use this gate for every non-trivial task.
 
 Checks:
 
-- Has Codex read `AGENTS.md`, `docs/PROJECT_STATE.md`, `tasks/backlog.yaml`, and this file?
+- Has Codex read `AGENTS.md`, `docs/current/PROJECT_CONTEXT.md`, `docs/current/STORY_QUEUE.yaml`, `docs/current/ACTIVE_TASKS.yaml`, `docs/current/BLOCKERS.md`, this file, and the current task files?
 - Is the requested task documented in the backlog or clearly specified by the PM?
 - Are allowed files and forbidden files explicit?
 - Does the task require PM confirmation?
@@ -38,6 +38,8 @@ Branch and verification rules:
 ## Workflow Gate Matrix
 
 Backlog `required_workflow` values must map to one of the gates below. If a task introduces a new workflow name, this registry must be updated in the same task before execution.
+
+This file defines gate intent, allowed scope, stop conditions, and verification only. Detailed hook/script enforcement lives in `docs/quality/STATE_MANAGEMENT.md`.
 
 | required_workflow | Gate | Typical Scope | Extra Stop Conditions |
 | --- | --- | --- | --- |
@@ -200,7 +202,7 @@ Allowed:
 - Add or update `docs/current/**`.
 - Add or update `docs/registry/**`.
 - Update `AGENTS.md`, `docs/quality/STATE_MANAGEMENT.md`, `docs/quality/GATE_REGISTRY.md`, `docs/quality/DONE_REPORT_TEMPLATE.md`, `docs/harness/lightweight-harness.md`, and `docs/PROJECT_STATE.md` for state-governance rules.
-- Add or update `scripts/check-state.sh`.
+- Add or update `scripts/check-state.sh`, `scripts/install-hooks.sh`, `scripts/validate-commit-message.mjs`, `scripts/hooks/**`, and related state-check/commit-message tests.
 - Update legacy traceability files only when the active transition task requires it.
 
 Forbidden unless explicitly confirmed by PM:

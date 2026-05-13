@@ -988,6 +988,30 @@
 - `curl -fsS http://127.0.0.1:3015/schedule-plans`：通过，页面包含排班计划表和风险提示表关键文本。
 - `curl -fsS http://127.0.0.1:3015/unavailability`：通过，页面包含不可用表关键文本。
 
+### 2026-05-13 - Harness 文档一致性与 Hook 守门
+
+#### 审计结论
+
+- `AGENTS.md`、`docs/quality/STATE_MANAGEMENT.md`、`docs/quality/GIT_BRANCH_WORKFLOW.md`、`docs/quality/GATE_REGISTRY.md` 和 `docs/harness/lightweight-harness.md` 已对齐 current-layer 启动入口、SoT 优先级和 hook 边界。
+- `docs/current/ACTIVE_TASKS.yaml` 最小合同已包含 `traceability_files`，并在详细规则中定义了 batch 约束、gate 组合和 diff scope。
+- `scripts/check-state.sh` 已支持 `--diff=working|staged|none`，并校验 branch、acceptance_ref、trace index 预算、product task state-boundary、batch gate combo 与 closeout diff。
+- 已新增 `scripts/hooks/pre-commit`、`commit-msg`、`pre-push`、`scripts/install-hooks.sh` 和 `scripts/validate-commit-message.mjs`；hook 只拦截不一致，不自动生成或修改文档。
+- `scripts/check.sh` 会在 `npm run typecheck` 前清理 stale `.next` route typings，避免跨分支生成物污染标准验证。
+
+#### 风险
+
+- `TRACE_INDEX.yaml` 当前约 373 行，仍低于 420 warning 预算和 480 strict 预算，但继续增长后需要再做窗口化收口。
+- 当前 hook 守门依赖自写轻量 YAML 解析；如果 future batch/contract 继续复杂化，后续应考虑单独的 Node 校验器。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `node --test scripts/tests/check-state.test.mjs`：通过，20 个测试通过。
+- `node --test scripts/tests/validate-commit-message.test.mjs`：通过，5 个测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、两组 node 回归、lint、typecheck、Next build 和后端 19 个 unittest。
+- `bash scripts/install-hooks.sh`：通过，repo-local hooks 已安装。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

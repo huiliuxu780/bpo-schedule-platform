@@ -322,7 +322,7 @@ The shadcn skill does not authorize dependency installation, package changes, pr
 
 每次需求进入项目后，主 Worker 应按以下顺序执行：
 
-1. 读取 `AGENTS.md`、`docs/PROJECT_STATE.md`、`tasks/backlog.yaml`、`docs/quality/GATE_REGISTRY.md`。
+1. 读取 `AGENTS.md`、`docs/current/PROJECT_CONTEXT.md`、`docs/current/STORY_QUEUE.yaml`、`docs/current/ACTIVE_TASKS.yaml`、`docs/current/BLOCKERS.md`、`docs/quality/GATE_REGISTRY.md`。
 2. 将 PM 输入登记为原始需求。
 3. 拆成用户故事。
 4. 标记依赖、优先级和阻塞项。

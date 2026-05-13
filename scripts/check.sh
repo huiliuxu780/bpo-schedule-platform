@@ -58,9 +58,15 @@ required_files=(
   "scripts/dev.sh"
   "scripts/run-next-dev.sh"
   "scripts/check-state.sh"
+  "scripts/install-hooks.sh"
+  "scripts/validate-commit-message.mjs"
+  "scripts/hooks/pre-commit"
+  "scripts/hooks/commit-msg"
+  "scripts/hooks/pre-push"
   "scripts/verify-backend-runtime.sh"
   "scripts/verify-frontend-native-runtime.mjs"
   "scripts/tests/check-state.test.mjs"
+  "scripts/tests/validate-commit-message.test.mjs"
   "scripts/tests/verify-backend-runtime.test.mjs"
   "scripts/tests/verify-frontend-native-runtime.test.mjs"
   ".gitignore"
@@ -130,7 +136,7 @@ npm run test:dev-runtime
 state_check_mode="${BPO_STATE_CHECK_MODE:-strict}"
 case "$state_check_mode" in
   strict)
-    bash scripts/check-state.sh --strict
+    bash scripts/check-state.sh --strict --diff=working
     ;;
   repair-scope)
     bash scripts/check-state.sh --repair-scope
@@ -145,15 +151,22 @@ case "$state_check_mode" in
     ;;
 esac
 node --test scripts/tests/check-state.test.mjs
+node --test scripts/tests/validate-commit-message.test.mjs
 bash scripts/verify-backend-runtime.sh
 node --test scripts/tests/verify-backend-runtime.test.mjs
 npm run lint
+# Next route types can drift across branches; clear generated route typings before plain tsc.
+rm -rf .next/types .next/dev/types
 npm run typecheck
 npm run build
 
 bash -n scripts/dev.sh
 bash -n scripts/run-next-dev.sh
 bash -n scripts/check-state.sh
+bash -n scripts/install-hooks.sh
+bash -n scripts/hooks/pre-commit
+bash -n scripts/hooks/commit-msg
+bash -n scripts/hooks/pre-push
 bash -n scripts/verify-backend-runtime.sh
 
 backend_files=(

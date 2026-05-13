@@ -79,6 +79,7 @@ Current invariants:
 - `H026/US067` changed standard verification to strict state checks by default, with explicit `BPO_STATE_CHECK_MODE=repair-scope` and `BPO_STATE_CHECK_MODE=warning` overrides for repair and diagnostics.
 - `H027/US068` extended state checks to validate `TRACE_INDEX.yaml` current file paths and reduce duplicate registry path output.
 - `H028/US069` fixed the Codex Plan boundary: the Plan panel is only a session projection and must never override Harness current/registry state.
+- `H030/US104` aligned Harness rule sources and hook guardrails: SoT priority now points at `ACTIVE_TASKS/STORY_QUEUE/BLOCKERS`, `check-state` validates diff mode, batch, branch, acceptance_ref, and closeout transitions, repo-local hooks are installed, and `check.sh` clears stale `.next` route types before plain typecheck.
 - `F041-F059/Q014` completed a 20-task local frontend parity block across schedule plans, schedule risks, and unavailability tables, then returned current queue and active tasks to empty.
 
 ## Product Direction
