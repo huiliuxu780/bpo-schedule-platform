@@ -30,6 +30,8 @@ const genericSubjects = new Set(["update", "misc", "fix stuff", "wip"]);
 const businessCodeTouched = stagedFiles.some((file) =>
   /^(app|components|hooks|lib|backend)\//.test(file),
 );
+let cachedHeadActiveTasks = null;
+const effectiveTaskIds = resolveEffectiveTaskIds();
 
 if (!subject) {
   fail("empty commit subject is not allowed");
@@ -52,7 +54,7 @@ if (!taskMatch) {
 }
 
 const taskId = taskMatch[1];
-if (!activeTaskIds.has(taskId)) {
+if (!effectiveTaskIds.has(taskId)) {
   fail(`commit subject task id is not a current active task: ${taskId}`);
 }
 
@@ -69,7 +71,11 @@ function resolveGitRoot() {
 }
 
 function parseListSection(filePath, sectionName) {
-  const lines = fs.readFileSync(filePath, "utf8").split(/\r?\n/);
+  return parseListSectionFromContent(fs.readFileSync(filePath, "utf8"), sectionName);
+}
+
+function parseListSectionFromContent(content, sectionName) {
+  const lines = content.split(/\r?\n/);
   const items = [];
   let inSection = false;
   let current = null;
@@ -172,6 +178,47 @@ function getStagedFiles(repoRoot) {
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function resolveEffectiveTaskIds() {
+  if (activeTaskIds.size > 0) {
+    return activeTaskIds;
+  }
+
+  if (!isCloseoutTransition()) {
+    return activeTaskIds;
+  }
+
+  const headActiveTasks = parseHeadActiveTasks();
+  return new Set(headActiveTasks.map((task) => task.id).filter(Boolean));
+}
+
+function isCloseoutTransition() {
+  return (
+    stagedFiles.some((file) => file.startsWith("docs/current/")) &&
+    activeTaskIds.size === 0 &&
+    parseHeadActiveTasks().some((task) => task.status === "in_progress")
+  );
+}
+
+function parseHeadActiveTasks() {
+  if (cachedHeadActiveTasks) {
+    return cachedHeadActiveTasks;
+  }
+
+  const content = readGitFile("HEAD", "docs/current/ACTIVE_TASKS.yaml");
+  cachedHeadActiveTasks = content ? parseListSectionFromContent(content, "tasks") : [];
+  return cachedHeadActiveTasks;
+}
+
+function readGitFile(revision, filePath) {
+  const result = spawnSync("git", ["-C", rootDir, "show", `${revision}:${filePath}`], {
+    encoding: "utf8",
+  });
+  if (result.status !== 0) {
+    return null;
+  }
+  return result.stdout;
 }
 
 function validateSpecialPrefix(prefix) {

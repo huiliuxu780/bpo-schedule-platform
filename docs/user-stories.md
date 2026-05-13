@@ -2157,7 +2157,7 @@ acceptance:
   - "checklist 能显示当前步骤和下一步动作，不回退到宽泛列表。"
   - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```
 
 ### US125 - startup seed strict-state guard
@@ -2177,4 +2177,23 @@ acceptance:
   - "STATE_MANAGEMENT 明确 startup seed 例外边界。"
   - "`bash scripts/check-state.sh --strict --diff=working`、`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 status: "done"
+```
+
+### US126 - product closeout strict-state and commit-message guard
+
+```yaml
+id: US126
+requirement_ids:
+  - R114
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望产品 batch 在同一提交里完成 current closeout 时，strict state 和 commit-message 都能识别合法 closeout，这样已验证的产品任务可以正常提交而不会被 Harness 自锁。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "same-commit product closeout diff 在 `check-state --strict` 下可通过。"
+  - "普通产品 closeout 提交可以继续使用当前任务 id 作为 commit subject。"
+  - "普通无 active task 的无关提交仍然失败。"
+  - "`bash scripts/check-state.sh --strict --diff=working`、`node --test scripts/tests/check-state.test.mjs`、`node --test scripts/tests/validate-commit-message.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
 ```

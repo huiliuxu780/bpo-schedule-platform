@@ -111,6 +111,7 @@ stories:
   US123: {file: "docs/user-stories.md", requirement_ids: ["R111"], task_ids: ["H032"], archive_refs: []}
   US124: {file: "docs/user-stories.md", requirement_ids: ["R112"], task_ids: ["F073", "F074", "F075", "F076", "Q019"], archive_refs: []}
   US125: {file: "docs/user-stories.md", requirement_ids: ["R113"], task_ids: ["H033"], archive_refs: []}
+  US126: {file: "docs/user-stories.md", requirement_ids: ["R114"], task_ids: ["H034"], archive_refs: []}
 tasks:
   H024: {file: "tasks/backlog.yaml", story_ids: ["US065"], gate: "state-hygiene"}
   H025: {file: "tasks/backlog.yaml", story_ids: ["US066"], gate: "state-hygiene"}
@@ -214,6 +215,7 @@ tasks:
   H031: {file: "tasks/backlog.yaml", story_ids: ["US122"], gate: "state-hygiene"}
   H032: {file: "tasks/backlog.yaml", story_ids: ["US123"], gate: "state-hygiene"}
   H033: {file: "tasks/backlog.yaml", story_ids: ["US125"], gate: "state-hygiene"}
+  H034: {file: "tasks/backlog.yaml", story_ids: ["US126"], gate: "state-hygiene"}
   F073: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
   F074: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
   F075: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
@@ -313,6 +315,7 @@ requirements:
   R111: {file: "docs/raw-requirements.md", story_ids: ["US123"], task_ids: ["H032"]}
   R112: {file: "docs/raw-requirements.md", story_ids: ["US124"], task_ids: ["F073", "F074", "F075", "F076", "Q019"]}
   R113: {file: "docs/raw-requirements.md", story_ids: ["US125"], task_ids: ["H033"]}
+  R114: {file: "docs/raw-requirements.md", story_ids: ["US126"], task_ids: ["H034"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

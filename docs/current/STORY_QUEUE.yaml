@@ -6,8 +6,8 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US124
-    title: "Shared review checklist across local review pages"
+  - id: US126
+    title: "product closeout guard for strict state and commit message"
     status: in_progress
-    requirement_ids: [R112]
-    task_ids: [F073, F074, F075, F076, Q019]
+    requirement_ids: [R114]
+    task_ids: [H034]

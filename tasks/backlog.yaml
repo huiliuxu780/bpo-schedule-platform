@@ -3920,10 +3920,58 @@ tasks:
       - "需要审批、导出、批量调班、自动排班或生产工作流能力"
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
     commit_after_done: true
+  - id: H034
+    title: "product closeout strict-state 与 commit-message 守门"
+    priority: P1
+    status: in_progress
+    required_workflow: state-hygiene
+    allowed_files:
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/quality/**"
+      - "docs/harness/lightweight-harness.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/decision-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+      - "scripts/check-state.sh"
+      - "scripts/validate-commit-message.mjs"
+      - "scripts/tests/check-state.test.mjs"
+      - "scripts/tests/validate-commit-message.test.mjs"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "same-commit product closeout diff 在严格 state check 下可通过。"
+      - "commit-message 校验允许从 HEAD active task 上下文识别合法 closeout task id。"
+      - "普通无 active task 的无关提交仍然失败。"
+      - "`bash scripts/check-state.sh --strict --diff=working`、`node --test scripts/tests/check-state.test.mjs`、`node --test scripts/tests/validate-commit-message.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要业务代码改动"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true
   - id: F073
     title: "共享 review checklist 组件"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -3955,7 +4003,7 @@ tasks:
   - id: F074
     title: "checklist 当前步骤与下一步提示"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -3987,7 +4035,7 @@ tasks:
   - id: F075
     title: "list/detail 页右侧 review 结构统一"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -4019,7 +4067,7 @@ tasks:
   - id: F076
     title: "review checklist scope-aware 回退与完成姿态"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -4051,7 +4099,7 @@ tasks:
   - id: Q019
     title: "F073-F076 shared review checklist QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/**"

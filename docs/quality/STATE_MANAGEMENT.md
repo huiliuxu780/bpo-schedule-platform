@@ -251,6 +251,7 @@ Validation requirements:
 - if there is diff but no `in_progress` task, strict mode fails unless either:
   - the staged diff is a same-commit closeout transition that empties current and can derive scope from `HEAD`
   - the staged diff is branch-log-only post-closeout evidence under `docs/dev/branch-log.md`
+- a valid same-commit closeout transition may touch the required `docs/current/**` files that remove the active queue entry; that exception does not widen ordinary product-task access to current or registry state
 - if `HEAD` has no `in_progress` task and the current diff seeds a new active task only through current/registry/traceability startup files without business-code or package-boundary changes, strict mode may treat it as a startup seed transition
 - touching `forbidden_files` fails strict mode
 - product tasks must not touch `docs/current/**` or `docs/registry/**` unless the gate is `state-hygiene` or `state-repair`

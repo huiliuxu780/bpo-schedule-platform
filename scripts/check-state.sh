@@ -819,6 +819,7 @@ if (batch && Object.keys(batch).length > 0) {
 const changedFiles = getChangedFiles();
 const currentBranch = isGitRepo() ? getCurrentBranch() : null;
 let startupSeedDetected = false;
+let closeoutTransitionDetected = false;
 
 if (scopeTasks.length === 0 && changedFiles.length > 0) {
   const previousActiveContent = isGitRepo() ? readGitFile("HEAD", "docs/current/ACTIVE_TASKS.yaml") : null;
@@ -842,6 +843,7 @@ if (scopeTasks.length === 0 && changedFiles.length > 0) {
       scopeTasks = previousInProgressTasks;
       scopeBranch = previousInProgressTasks.length === 1 ? previousInProgressTasks[0].branch : scopeBranch;
     }
+    closeoutTransitionDetected = true;
     pass("closeout transition detected; diff scope derived from HEAD active task contract");
   } else if (
     closeoutTouchesCurrent &&
@@ -924,6 +926,7 @@ for (const changedFile of changedFiles) {
 
   if (
     !stateGateOnly &&
+    !closeoutTransitionDetected &&
     !startupSeedDetected &&
     (changedFile.startsWith("docs/current/") || changedFile.startsWith("docs/registry/"))
   ) {

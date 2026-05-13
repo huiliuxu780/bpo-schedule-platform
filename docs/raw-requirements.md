@@ -1157,3 +1157,16 @@ version: "1.0"
 status: "split"
 notes: "只改 current/registry/quality 文档、状态校验和测试；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R114 - product closeout guard for strict state and commit message
+
+```yaml
+id: R114
+module: "Harness"
+description: "当产品 batch 在同一提交里完成 current closeout 时，strict state check 和 commit-message 校验都必须识别这种合法 closeout，否则已验证的产品任务仍无法合法提交。"
+source: "Governance repair during US124 closeout on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只改 current/registry/quality 文档、状态校验、commit-message 校验和测试；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

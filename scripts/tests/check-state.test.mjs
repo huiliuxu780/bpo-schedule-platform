@@ -730,6 +730,113 @@ test("check-state strict mode accepts explicitly allowed mixed-gate batch", () =
   assert.match(result.stdout, /batch gate combo explicitly allowed/);
 });
 
+test("check-state strict mode accepts product closeout diff using HEAD active task contract", () => {
+  const stateRoot = createStateRoot({
+    projectContext: [
+      "# Current Project Context",
+      "",
+      "```yaml",
+      "current_summary:",
+      "  queue_state: active",
+      "  active_batch_id: null",
+      "  in_progress_task: F900",
+      "  ready_tasks: []",
+      "```",
+      "",
+    ].join("\n"),
+    storyQueue: [
+      "version: 1",
+      "stories:",
+      "  - id: US900",
+      "    status: in_progress",
+      "    task_ids: [F900]",
+      "",
+    ].join("\n"),
+    activeTasks: [
+      "version: 1",
+      "tasks:",
+      "  - id: F900",
+      "    story_ids: [US900]",
+      "    status: in_progress",
+      "    gate: frontend-scaffold",
+      "    branch: codex/h900-state-check",
+      "    allowed_files:",
+      "      - components/**",
+      "    traceability_files:",
+      "      - docs/current/**",
+      "      - docs/task-log.md",
+      "    forbidden_files:",
+      "      - backend/**",
+      "    stop_conditions:",
+      "      - verification failed",
+      "    acceptance_ref: tasks/backlog.yaml#F900",
+      "    verification:",
+      "      - bash scripts/check-state.sh --strict --diff=staged",
+      "    evidence_expected:",
+      "      - frontend closeout",
+      "",
+    ].join("\n"),
+    traceIndex: [
+      "version: 1",
+      "current_files:",
+      "  project_context: docs/current/PROJECT_CONTEXT.md",
+      "  story_queue: docs/current/STORY_QUEUE.yaml",
+      "  active_tasks: docs/current/ACTIVE_TASKS.yaml",
+      "  blockers: docs/current/BLOCKERS.md",
+      "stories:",
+      '  US900: {file: "docs/user-stories.md", requirement_ids: ["R900"], task_ids: ["F900"], archive_refs: []}',
+      "tasks:",
+      '  F900: {file: "tasks/backlog.yaml", story_ids: ["US900"], gate: "frontend-scaffold"}',
+      "requirements:",
+      '  R900: {file: "docs/raw-requirements.md", story_ids: ["US900"], task_ids: ["F900"]}',
+      "",
+    ].join("\n"),
+    backlog: [
+      "tasks:",
+      "  - id: F900",
+      "",
+    ].join("\n"),
+    extraFiles: {
+      "components/x.tsx": "export const x = 1;\n",
+    },
+  });
+  initGitRepo(stateRoot);
+  writeRelative(
+    stateRoot,
+    "docs/current/PROJECT_CONTEXT.md",
+    [
+      "# Current Project Context",
+      "",
+      "```yaml",
+      "current_summary:",
+      "  queue_state: idle",
+      "  active_batch_id: null",
+      "  in_progress_task: null",
+      "  ready_tasks: []",
+      "```",
+      "",
+    ].join("\n"),
+  );
+  writeRelative(stateRoot, "docs/current/STORY_QUEUE.yaml", "version: 1\nstories: []\n");
+  writeRelative(stateRoot, "docs/current/ACTIVE_TASKS.yaml", "version: 1\ntasks: []\n");
+  writeRelative(stateRoot, "components/x.tsx", "export const x = 2;\n");
+  spawnSync(
+    "git",
+    [
+      "add",
+      "docs/current/PROJECT_CONTEXT.md",
+      "docs/current/STORY_QUEUE.yaml",
+      "docs/current/ACTIVE_TASKS.yaml",
+      "components/x.tsx",
+    ],
+    { cwd: stateRoot, encoding: "utf8" },
+  );
+
+  const result = runCheckState(stateRoot, ["--strict", "--diff=staged"]);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /closeout transition detected/);
+});
+
 test("check-state strict mode rejects product-task diff touching docs/current", () => {
   const stateRoot = createStateRoot({
     activeTasks: [

@@ -100,6 +100,49 @@ test("history-only task id fails for ordinary commit subject", () => {
   assert.match(result.stderr, /not a current active task/);
 });
 
+test("closeout commit subject passes when HEAD provides the active task id", () => {
+  const repoRoot = createRepo({
+    activeTasks: [
+      "version: 1",
+      "tasks:",
+      "  - id: F900",
+      "    story_ids: [US900]",
+      "    status: in_progress",
+      "    gate: frontend-scaffold",
+      "    branch: codex/f900-closeout",
+      "    allowed_files:",
+      "      - app/**",
+      "    traceability_files:",
+      "      - docs/current/**",
+      "      - docs/task-log.md",
+      "    forbidden_files:",
+      "      - backend/**",
+      "    stop_conditions:",
+      "      - verification failed",
+      "    acceptance_ref: tasks/backlog.yaml#F900",
+      "    verification:",
+      "      - bash scripts/check-state.sh --strict --diff=staged",
+      "    evidence_expected:",
+      "      - frontend closeout",
+      "",
+    ].join("\n"),
+  });
+  stageFile(repoRoot, "docs/current/ACTIVE_TASKS.yaml", "version: 1\ntasks: []\n");
+  stageFile(repoRoot, "app/page.tsx", "export default function Page() { return <main /> }\n");
+  const result = runValidator(repoRoot, "F900: close review closeout");
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+test("ordinary commit subject still fails without current or HEAD active task context", () => {
+  const repoRoot = createRepo({ activeTasks: "version: 1\ntasks: []\n" });
+  stageFile(repoRoot, "docs/task-log.md", "# log\nchanged\n");
+  const result = runValidator(repoRoot, "F900: stale closeout");
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /not a current active task/);
+});
+
 test("harness prefix passes with non-business staged files", () => {
   const repoRoot = createRepo();
   stageFile(repoRoot, "docs/task-log.md", "# log\nchanged\n");
