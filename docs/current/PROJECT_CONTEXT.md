@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-REVIEW-CHECKLIST-001
+  in_progress_task: F073
+  ready_tasks: [F074, F075, F076, Q019]
 ```
 
 ## Current Stage
@@ -17,6 +17,8 @@ Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governe
 The project is in No Database MVP Mode. Product work may continue only through confirmed local frontend stories, local FastAPI seed/process-memory contracts, and verification tasks. The project must not connect or prepare a production database before PM confirms a later database Gate and provides an environment.
 
 ## Default Next Step
+
+The current product batch is `US124` on branch `codex/f073-review-checklist-h032`. This slice keeps the same no-database risk/unavailability review vertical and upgrades the right-side `复核任务` block into a shared local review checklist across list, workbench, and detail pages.
 
 The latest completed governance task was `US125/H033` on branch `codex/f073-review-checklist-h032`. It closed the startup-state self-lock: a new product batch can now seed the required current/registry startup diff and pass strict state checks before business implementation begins, while ordinary product edits still cannot modify current or registry state.
 
@@ -65,4 +67,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Current is idle again. The next step is to seed `US124` back into current and continue the same no-database review workflow for the shared checklist refactor and QA closeout. Database work stays deferred.
+The next product batch has been re-seeded into current. Keep work inside the same no-database review workflow, finish the shared checklist refactor and QA closeout, then return current to empty before seeding another story. Database work stays deferred.

@@ -6,4 +6,231 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+tasks:
+  - id: F073
+    story_ids: [US124]
+    status: in_progress
+    gate: frontend-scaffold
+    branch: codex/f073-review-checklist-h032
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/shift-details/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "最终验证失败"
+    acceptance_ref: "tasks/backlog.yaml#F073"
+    verification:
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "git diff --check"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "Shared review checklist component replaces duplicated review task blocks."
+      - "Checklist preserves local review context across review pages."
+  - id: F074
+    story_ids: [US124]
+    status: ready
+    gate: frontend-scaffold
+    branch: codex/f073-review-checklist-h032
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/shift-details/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "最终验证失败"
+    acceptance_ref: "tasks/backlog.yaml#F074"
+    verification:
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "git diff --check"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "Checklist shows current step and next actions consistently."
+  - id: F075
+    story_ids: [US124]
+    status: ready
+    gate: frontend-scaffold
+    branch: codex/f073-review-checklist-h032
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/shift-details/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "最终验证失败"
+    acceptance_ref: "tasks/backlog.yaml#F075"
+    verification:
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "git diff --check"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "List and detail rails reuse the same checklist structure and wording."
+  - id: F076
+    story_ids: [US124]
+    status: ready
+    gate: frontend-scaffold
+    branch: codex/f073-review-checklist-h032
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/shift-details/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "最终验证失败"
+    acceptance_ref: "tasks/backlog.yaml#F076"
+    verification:
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "git diff --check"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "Review checklist supports scope-aware back links and clearer completion posture."
+  - id: Q019
+    story_ids: [US124]
+    status: ready
+    gate: qa
+    branch: codex/f073-review-checklist-h032
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/shift-details/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "最终验证失败"
+    acceptance_ref: "tasks/backlog.yaml#Q019"
+    verification:
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "git diff --check"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "Shared review checklist renders consistently across risk workflow pages."
+batch:
+  id: BATCH-REVIEW-CHECKLIST-001
+  branch: codex/f073-review-checklist-h032
+  task_ids: [F073, F074, F075, F076, Q019]
+  scope_reason: "These tasks share one local review workflow, one app/components/lib surface, and one frontend-plus-qa closeout path."
+  allowed_gate_combo: [frontend-scaffold, qa]
