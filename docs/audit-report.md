@@ -1056,6 +1056,27 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-13 - scoped drilldown 与右侧 rail 连续块
+
+#### 审计结论
+
+- `F061-F064/US106-US109` 已把风险复核链路从“宽泛列表跳转”收紧为“scoped drilldown”：班次明细与不可用列表页支持精确上下文过滤，计划详情、风险明细、风险工作台、不可用影响定位和表格操作入口都能保留同一复核范围。
+- `/schedule-risks` 已新增宽屏右侧复核 rail，显示当前范围摘要、关键指标和跨页动作，不再只有中间主表格区。
+- 这组改动仍然全部停留在本地页面、前端过滤和本地 seed 契约层，没有引入数据库、依赖、后端契约变更、审批、导出、批量、权限或生产公式。
+
+#### 风险
+
+- 当前 scoped drilldown 仍是本地过滤逻辑；未来如果接真实后端分页、服务端过滤或持久化，需要重新定义参数契约并单独过 Gate。
+- 右侧 rail 目前是本地复核辅助视图，不是任务系统，也不持久化用户状态；如果后续要变成真实任务面板，需要新故事单独定义。
+
+#### 验证
+
+- Safari smoke：验证了 scoped 风险工作台显示右侧 rail、scoped 班次明细页、scoped 不可用页，以及这些页之间的返回/继续复核入口。
+- 本地 HTTP smoke：计划详情、风险明细、不可用详情的 HTML 中均包含 scoped 链接参数。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，12 个测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

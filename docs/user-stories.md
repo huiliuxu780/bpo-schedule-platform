@@ -1790,3 +1790,98 @@ dependencies:
   - "US104"
 status: "done"
 ```
+
+### US106 - 班次明细 scoped drilldown
+
+```yaml
+id: US106
+requirement_ids:
+  - R094
+module: "排班复核"
+role: "排班复核专员"
+story: "作为复核专员，我希望班次明细页能保留计划、风险或不可用带来的精确上下文，这样我打开班次后不用重新人工筛一遍。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "班次明细支持 plan/date/project/site/interval 级别的本地上下文过滤。"
+  - "从计划详情、风险明细、不可用影响定位进入班次时，不再回到宽泛列表。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US107 - 不可用 scoped drilldown
+
+```yaml
+id: US107
+requirement_ids:
+  - R095
+module: "排班复核"
+role: "排班复核专员"
+story: "作为复核专员，我希望不可用列表页能保留计划或风险带来的项目、职场、日期和时间范围，这样我能直接看到真正相关的不可用记录。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "不可用列表支持 project/site/date/time 级别的本地上下文过滤。"
+  - "从计划详情和风险明细进入不可用页时，范围能正确收敛。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US108 - 风险工作台右侧 rail
+
+```yaml
+id: US108
+requirement_ids:
+  - R096
+module: "排班复核"
+role: "排班复核专员"
+story: "作为复核专员，我希望风险工作台在宽屏下有稳定的右侧复核 rail，用来看到当前范围、建议动作和下一跳入口。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "风险工作台在宽屏布局显示右侧 rail，不与主表格重叠。"
+  - "右侧 rail 展示当前上下文、建议动作和跨页入口。"
+  - "不新增依赖、不接数据库、不引入审批或任务系统。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US109 - 四页上下文链路对齐
+
+```yaml
+id: US109
+requirement_ids:
+  - R097
+module: "排班复核"
+role: "排班复核专员"
+story: "作为复核专员，我希望计划、风险、班次和不可用四页之间的链接都保留同一复核范围，这样我可以连续检查，不用在各页重复搜索。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "计划、风险、班次和不可用四页的主要链接都保留精确上下文。"
+  - "同一链路下的返回入口不再退化成宽泛列表。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US110 - scoped drilldown QA 收口
+
+```yaml
+id: US110
+requirement_ids:
+  - R098
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F061-F064 的 scoped drilldown 和右侧 rail 做收口验收，确保链路、布局和 no-database 边界都可验证。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "风险工作台右侧 rail 在宽屏可见，主内容不遮挡。"
+  - "计划、风险、班次和不可用四页的 scoped drilldown 都可访问且范围正确。"
+  - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```

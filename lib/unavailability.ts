@@ -20,6 +20,16 @@ export type UnavailabilityFilters = {
   status?: UnavailabilityStatus
 }
 
+export type UnavailabilityScopeFilters = {
+  query?: string
+  status?: UnavailabilityStatus
+  projectName?: string
+  siteName?: string
+  unavailableDate?: string
+  startTime?: string
+  endTime?: string
+}
+
 type UnavailabilityListResponse = {
   items: UnavailabilityRow[]
 }
@@ -129,6 +139,75 @@ export function unavailabilityStatusLabel(status: UnavailabilityStatus) {
   }
 
   return labels[status]
+}
+
+function normalizeScopeValue(value?: string) {
+  return value?.trim().toLowerCase() ?? ""
+}
+
+export function filterUnavailabilityRowsByScope(
+  rows: UnavailabilityRow[],
+  filters: UnavailabilityScopeFilters = {}
+) {
+  const query = normalizeScopeValue(filters.query)
+  const status = filters.status
+  const projectName = normalizeScopeValue(filters.projectName)
+  const siteName = normalizeScopeValue(filters.siteName)
+  const unavailableDate = normalizeScopeValue(filters.unavailableDate)
+  const startTime = normalizeScopeValue(filters.startTime)
+  const endTime = normalizeScopeValue(filters.endTime)
+
+  return rows.filter((row) => {
+    if (status && row.status !== status) {
+      return false
+    }
+
+    if (projectName && normalizeScopeValue(row.project_name) !== projectName) {
+      return false
+    }
+
+    if (siteName && normalizeScopeValue(row.site_name) !== siteName) {
+      return false
+    }
+
+    if (
+      unavailableDate &&
+      normalizeScopeValue(row.unavailable_date) !== unavailableDate
+    ) {
+      return false
+    }
+
+    if (startTime && normalizeScopeValue(row.end_time) <= startTime) {
+      return false
+    }
+
+    if (endTime && normalizeScopeValue(row.start_time) >= endTime) {
+      return false
+    }
+
+    if (!query) {
+      return true
+    }
+
+    const searchable = [
+      row.unavailability_id,
+      row.staff_name,
+      row.team_name,
+      row.project_name,
+      row.site_name,
+      row.unavailable_date,
+      row.start_time,
+      row.end_time,
+      row.reason,
+      row.status,
+      unavailabilityStatusLabel(row.status),
+      row.note,
+    ]
+      .join(" ")
+      .toLowerCase()
+
+    return searchable.includes(query)
+  })
 }
 
 function filterFallbackUnavailability(

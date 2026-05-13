@@ -83,12 +83,13 @@ Current invariants:
 - `F041-F059/Q014` completed a 20-task local frontend parity block across schedule plans, schedule risks, and unavailability tables, then returned current queue and active tasks to empty.
 - `F060/US104` added a dedicated `/schedule-risks` workbench route, aligned sidebar and cross-page risk links, and kept the whole workflow inside the local no-database contract.
 - `Q015/US105` closed QA on the risk workbench chain, verified the cross-page drilldown loop on a local server, and returned current queue and active tasks to empty.
+- `F061-F064/Q016` deepened the risk review chain with scoped drilldown filters, a wide-screen right rail on `/schedule-risks`, and aligned context links across plan, risk, shift, and unavailability pages, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
 Near-term product work should remain inside the no-database local MVP boundary.
 
-Recommended order after F060/Q015:
+Recommended order after F060/Q015/F061-F064/Q016:
 
 1. Seed the next ready story in current state before execution.
 2. Continue the next narrow risk/unavailability workflow slice or another frontend/local-contract story.

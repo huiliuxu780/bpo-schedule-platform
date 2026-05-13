@@ -215,7 +215,11 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
           </Link>
         </Button>
         <Button asChild variant="ghost" size="sm">
-          <Link href={`/shift-details?query=${row.original.site_name}`}>班次</Link>
+          <Link
+            href={`/shift-details?project=${encodeURIComponent(row.original.project_name)}&site=${encodeURIComponent(row.original.site_name)}&date=${encodeURIComponent(row.original.unavailable_date)}&intervalStart=${encodeURIComponent(row.original.start_time)}&intervalEnd=${encodeURIComponent(row.original.end_time)}`}
+          >
+            班次
+          </Link>
         </Button>
       </div>
     ),

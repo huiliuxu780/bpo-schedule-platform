@@ -704,3 +704,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `direct push on the same branch once the closeout commit is created`
 - blocked_reason: `N/A`
+
+### F061-F064 Scoped Drilldown Continuation
+
+- branch_name: `codex/f060-risk-workbench`
+- base_main_commit: `a3a134c`
+- remote_status: `scoped drilldown block completed locally; follow-up push required after closeout commit`
+- scope: scoped shift-detail and unavailability drilldown, risk workbench right rail, context-link alignment across plan/risk/shift/unavailability pages, focused tests, and traceability updates only.
+- allowed_files_check: `app/shift-details/**`, `app/schedule-plans/**`, `app/schedule-risks/**`, `app/unavailability/**`, `components/**`, `lib/schedule-plans.ts`, `lib/unavailability.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: frontend routes/components, local helper filters, state/traceability docs, and backlog only; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- check_result: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 12 tests; `npm run lint` passed; `npm run typecheck` passed; `git diff --check` passed; `bash scripts/check.sh` passed; Safari and local HTTP smoke confirmed scoped drilldown and right rail behavior.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `direct push on the same branch after the closeout commit`
+- blocked_reason: `N/A`

@@ -65,7 +65,7 @@ description: "排班计划纵切需要展示预测需求作为计划输入，包
 source: "PM confirmed M001"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "MVP 阶段使用本地种子数据表达预测需求，不接真实 Excel、真实预测系统或上传导入。"
 ```
 
@@ -78,7 +78,7 @@ description: "运营排班人员需要查看排班计划列表，按日期、项
 source: "PM confirmed M001"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "MVP 第一条纵切只做只读列表；新增、编辑、发布、审批和批量操作不在第一条纵切内。"
 ```
 
@@ -91,7 +91,7 @@ description: "运营排班人员需要打开单个排班计划详情，查看 0.
 source: "PM confirmed M001"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "详情页仅展示只读计划明细和基础汇总，不做拖拽排班、人员级编辑或智能排班算法。"
 ```
 
@@ -104,7 +104,7 @@ description: "第一条纵切需要 Python + FastAPI 提供排班计划列表和
 source: "PM confirmed M001"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "B001 才能创建 backend 工程、依赖和接口；M001 只定义接口边界。数据库、认证和真实集成不在第一条纵切内。"
 ```
 
@@ -117,7 +117,7 @@ description: "第一条纵切需要明确前端与 FastAPI 后端之间的字段
 source: "PM confirmed M001"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "接口字段使用 English keys；业务展示值可使用中文。错误响应先采用最小只读查询错误，不定义生产级权限或审计错误码。"
 ```
 
@@ -896,4 +896,69 @@ submitted_at: "2026-05-13"
 version: "1.0"
 status: "split"
 notes: "只做验收、必要的轻微修正和追溯更新；不新增依赖、不改 package/lockfile、不接数据库、不做审批、导出、批量或生产公式。"
+```
+
+### R094 - 班次明细精确上下文过滤
+
+```yaml
+id: R094
+module: "排班复核"
+description: "让班次明细页支持 plan/date/project/site/interval 级别的精确上下文过滤，避免从计划、风险或不可用链路跳回宽泛列表。"
+source: "Story Runner continuation after Q015 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做前端本地过滤、列表文案和跨页链接；不新增依赖、不接数据库。"
+```
+
+### R095 - 不可用列表精确上下文过滤
+
+```yaml
+id: R095
+module: "排班复核"
+description: "让不可用列表页支持 project/site/date/time 级别的精确上下文过滤，使计划和风险页能落到相关不可用范围。"
+source: "Story Runner continuation after Q015 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做前端本地过滤、列表文案和跨页链接；不新增依赖、不接数据库。"
+```
+
+### R096 - 风险工作台右侧复核 rail
+
+```yaml
+id: R096
+module: "排班复核"
+description: "为风险工作台增加宽屏右侧复核 rail，展示当前范围、建议动作和跨页入口，让复核任务不只停在主表格区域。"
+source: "Story Runner continuation after Q015 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做前端布局和本地指标展示；不引入审批、任务系统、数据库或新依赖。"
+```
+
+### R097 - 四页上下文链路对齐
+
+```yaml
+id: R097
+module: "排班复核"
+description: "统一计划、风险、班次和不可用四页的上下文链接，让用户可以沿着同一范围持续复核，而不是频繁回到宽泛列表。"
+source: "Story Runner continuation after Q015 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地页面和链接对齐；不改后端契约、不接数据库。"
+```
+
+### R098 - scoped drilldown QA 收口
+
+```yaml
+id: R098
+module: "质量与交付"
+description: "对 F061-F064 这组 scoped drilldown 和右侧 rail 改动做 QA 收口，确认链路、布局和 no-database 边界可验证、可追溯。"
+source: "Story Runner continuation after Q015 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做验收、必要轻微修正和追溯更新；不新增依赖、不接数据库。"
 ```

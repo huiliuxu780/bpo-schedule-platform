@@ -54,6 +54,30 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
       row.start_time < risk.interval_end &&
       row.end_time > risk.interval_start
   )
+  const riskSearchParams = new URLSearchParams({
+    planId: risk.plan_id,
+    project: risk.project_name,
+    site: risk.site_name,
+    date: risk.plan_date,
+    intervalStart: risk.interval_start,
+    intervalEnd: risk.interval_end,
+  })
+  const shiftSearchParams = new URLSearchParams({
+    planId: risk.plan_id,
+    project: risk.project_name,
+    site: risk.site_name,
+    date: risk.plan_date,
+    intervalStart: risk.interval_start,
+    intervalEnd: risk.interval_end,
+  })
+  const unavailabilitySearchParams = new URLSearchParams({
+    project: risk.project_name,
+    site: risk.site_name,
+    date: risk.plan_date,
+    startTime: risk.interval_start,
+    endTime: risk.interval_end,
+    status: "active",
+  })
 
   return (
     <AppShell title="风险明细" searchPlaceholder="搜索风险、计划或职场">
@@ -72,7 +96,7 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link
-                href={`/schedule-risks?planId=${encodeURIComponent(risk.plan_id)}&project=${encodeURIComponent(risk.project_name)}&site=${encodeURIComponent(risk.site_name)}&date=${encodeURIComponent(risk.plan_date)}`}
+                href={`/schedule-risks?${riskSearchParams.toString()}`}
               >
                 返回风险列表
               </Link>
@@ -136,7 +160,9 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
               </CardDescription>
             </div>
             <Button asChild variant="outline" size="sm">
-              <Link href={`/shift-details?query=${risk.site_name}`}>查看班次</Link>
+              <Link href={`/shift-details?${shiftSearchParams.toString()}`}>
+                查看班次
+              </Link>
             </Button>
           </CardHeader>
           <CardContent>
@@ -153,7 +179,7 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
               </CardDescription>
             </div>
             <Button asChild variant="outline" size="sm">
-              <Link href={`/unavailability?query=${risk.site_name}&status=active`}>
+              <Link href={`/unavailability?${unavailabilitySearchParams.toString()}`}>
                 查看不可用
               </Link>
             </Button>

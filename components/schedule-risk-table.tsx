@@ -178,7 +178,9 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
           </Link>
         </Button>
         <Button asChild variant="ghost" size="sm">
-          <Link href={`/shift-details?query=${row.original.site_name}`}>
+          <Link
+            href={`/shift-details?planId=${encodeURIComponent(row.original.plan_id)}&project=${encodeURIComponent(row.original.project_name)}&site=${encodeURIComponent(row.original.site_name)}&date=${encodeURIComponent(row.original.plan_date)}&intervalStart=${encodeURIComponent(row.original.interval_start)}&intervalEnd=${encodeURIComponent(row.original.interval_end)}`}
+          >
             班次
           </Link>
         </Button>

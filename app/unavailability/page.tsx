@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
+  filterUnavailabilityRowsByScope,
   getUnavailability,
   unavailabilityStatusLabel,
   type UnavailabilityStatus,
@@ -29,7 +30,29 @@ type PageProps = {
   searchParams: Promise<{
     query?: string
     status?: string
+    project?: string
+    site?: string
+    date?: string
+    startTime?: string
+    endTime?: string
   }>
+}
+
+function buildScopeLabel({
+  project,
+  site,
+  date,
+  startTime,
+  endTime,
+}: {
+  project?: string
+  site?: string
+  date?: string
+  startTime?: string
+  endTime?: string
+}) {
+  const interval = startTime && endTime ? `${startTime}-${endTime}` : undefined
+  return [project, site, date, interval].filter(Boolean).join(" / ")
 }
 
 function parseStatus(status?: string): UnavailabilityStatus | undefined {
@@ -40,7 +63,17 @@ function parseStatus(status?: string): UnavailabilityStatus | undefined {
   return undefined
 }
 
-function statusHref(status: UnavailabilityStatus | undefined, query: string) {
+function statusHref(
+  status: UnavailabilityStatus | undefined,
+  query: string,
+  scope: {
+    project?: string
+    site?: string
+    date?: string
+    startTime?: string
+    endTime?: string
+  }
+) {
   const searchParams = new URLSearchParams()
 
   if (query.trim()) {
@@ -51,6 +84,12 @@ function statusHref(status: UnavailabilityStatus | undefined, query: string) {
     searchParams.set("status", status)
   }
 
+  if (scope.project) searchParams.set("project", scope.project)
+  if (scope.site) searchParams.set("site", scope.site)
+  if (scope.date) searchParams.set("date", scope.date)
+  if (scope.startTime) searchParams.set("startTime", scope.startTime)
+  if (scope.endTime) searchParams.set("endTime", scope.endTime)
+
   const suffix = searchParams.toString()
   return `/unavailability${suffix ? `?${suffix}` : ""}`
 }
@@ -59,7 +98,31 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
-  const rows = await getUnavailability({ query, status })
+  const project = params.project?.trim() ?? ""
+  const site = params.site?.trim() ?? ""
+  const date = params.date?.trim() ?? ""
+  const startTime = params.startTime?.trim() ?? ""
+  const endTime = params.endTime?.trim() ?? ""
+  const rows = filterUnavailabilityRowsByScope(
+    await getUnavailability({ query, status }),
+    {
+      query,
+      status,
+      projectName: project,
+      siteName: site,
+      unavailableDate: date,
+      startTime,
+      endTime,
+    }
+  )
+  const scopeLabel = buildScopeLabel({
+    project,
+    site,
+    date,
+    startTime,
+    endTime,
+  })
+  const hasScope = Boolean(project || site || date || startTime || endTime)
   const activeRows = rows.filter((row) => row.status === "active")
   const affectedIntervals = rows.reduce(
     (sum, row) => sum + row.affected_intervals,
@@ -67,6 +130,26 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   )
   const teamCount = new Set(rows.map((row) => row.team_name)).size
   const siteCount = new Set(rows.map((row) => row.site_name)).size
+  const riskSearchParams = new URLSearchParams()
+  if (query) riskSearchParams.set("query", query)
+  if (project) riskSearchParams.set("project", project)
+  if (site) riskSearchParams.set("site", site)
+  if (date) riskSearchParams.set("date", date)
+  if (startTime) riskSearchParams.set("intervalStart", startTime)
+  if (endTime) riskSearchParams.set("intervalEnd", endTime)
+  const riskHref = `/schedule-risks${
+    riskSearchParams.toString() ? `?${riskSearchParams.toString()}` : ""
+  }`
+  const shiftSearchParams = new URLSearchParams()
+  if (query) shiftSearchParams.set("query", query)
+  if (project) shiftSearchParams.set("project", project)
+  if (site) shiftSearchParams.set("site", site)
+  if (date) shiftSearchParams.set("date", date)
+  if (startTime) shiftSearchParams.set("intervalStart", startTime)
+  if (endTime) shiftSearchParams.set("intervalEnd", endTime)
+  const shiftHref = `/shift-details${
+    shiftSearchParams.toString() ? `?${shiftSearchParams.toString()}` : ""
+  }`
 
   return (
     <AppShell title="不可用管理" searchPlaceholder="搜索人员、团队或原因">
@@ -83,6 +166,22 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
           </Button>
         </div>
 
+        {hasScope ? (
+          <section className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3 text-sm">
+            <Badge variant="outline">上下文 drilldown</Badge>
+            {scopeLabel ? <span>{scopeLabel}</span> : null}
+            <Button asChild variant="ghost" size="sm">
+              <Link href={riskHref}>查看风险</Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm">
+              <Link href={shiftHref}>查看班次</Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/unavailability">清空范围</Link>
+            </Button>
+          </section>
+        ) : null}
+
         <section className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3">
           <form className="flex min-w-64 flex-1 items-center gap-2">
             <div className="flex flex-1 items-center gap-2 rounded-md border bg-background px-2">
@@ -95,6 +194,11 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
               />
             </div>
             {status ? <input name="status" type="hidden" value={status} /> : null}
+            {project ? <input name="project" type="hidden" value={project} /> : null}
+            {site ? <input name="site" type="hidden" value={site} /> : null}
+            {date ? <input name="date" type="hidden" value={date} /> : null}
+            {startTime ? <input name="startTime" type="hidden" value={startTime} /> : null}
+            {endTime ? <input name="endTime" type="hidden" value={endTime} /> : null}
             <Button type="submit" variant="outline" size="sm">
               搜索
             </Button>
@@ -110,7 +214,15 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
                   variant={active ? "default" : "outline"}
                   size="sm"
                 >
-                  <Link href={statusHref(option.value, query)}>
+                  <Link
+                    href={statusHref(option.value, query, {
+                      project,
+                      site,
+                      date,
+                      startTime,
+                      endTime,
+                    })}
+                  >
                     {option.label}
                   </Link>
                 </Button>
@@ -136,7 +248,11 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
             <div>
               <CardTitle>不可用记录</CardTitle>
               <CardDescription>
-                {status ? `${unavailabilityStatusLabel(status)} / ${query || "全部"}` : query || "全部记录"}
+                {scopeLabel
+                  ? scopeLabel
+                  : status
+                    ? `${unavailabilityStatusLabel(status)} / ${query || "全部"}`
+                    : query || "全部记录"}
               </CardDescription>
             </div>
             <Badge variant="outline">B006 不可用</Badge>

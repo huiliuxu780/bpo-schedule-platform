@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
+  filterShiftDetailRowsByScope,
   formatCoverageRate,
   getShiftDetails,
   schedulePlanStatusLabel,
@@ -31,7 +32,34 @@ type PageProps = {
   searchParams: Promise<{
     query?: string
     status?: string
+    planId?: string
+    date?: string
+    project?: string
+    site?: string
+    intervalStart?: string
+    intervalEnd?: string
   }>
+}
+
+function buildScopeLabel({
+  planId,
+  date,
+  project,
+  site,
+  intervalStart,
+  intervalEnd,
+}: {
+  planId?: string
+  date?: string
+  project?: string
+  site?: string
+  intervalStart?: string
+  intervalEnd?: string
+}) {
+  const interval =
+    intervalStart && intervalEnd ? `${intervalStart}-${intervalEnd}` : undefined
+
+  return [project, site, date, interval, planId].filter(Boolean).join(" / ")
 }
 
 function parseStatus(status?: string): SchedulePlanStatus | undefined {
@@ -46,7 +74,18 @@ function parseStatus(status?: string): SchedulePlanStatus | undefined {
   return undefined
 }
 
-function statusHref(status: SchedulePlanStatus | undefined, query: string) {
+function statusHref(
+  status: SchedulePlanStatus | undefined,
+  query: string,
+  scope: {
+    planId?: string
+    date?: string
+    project?: string
+    site?: string
+    intervalStart?: string
+    intervalEnd?: string
+  }
+) {
   const searchParams = new URLSearchParams()
 
   if (query.trim()) {
@@ -57,6 +96,13 @@ function statusHref(status: SchedulePlanStatus | undefined, query: string) {
     searchParams.set("status", status)
   }
 
+  if (scope.planId) searchParams.set("planId", scope.planId)
+  if (scope.date) searchParams.set("date", scope.date)
+  if (scope.project) searchParams.set("project", scope.project)
+  if (scope.site) searchParams.set("site", scope.site)
+  if (scope.intervalStart) searchParams.set("intervalStart", scope.intervalStart)
+  if (scope.intervalEnd) searchParams.set("intervalEnd", scope.intervalEnd)
+
   const suffix = searchParams.toString()
   return `/shift-details${suffix ? `?${suffix}` : ""}`
 }
@@ -65,7 +111,32 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
-  const rows = await getShiftDetails({ query, status })
+  const planId = params.planId?.trim() ?? ""
+  const date = params.date?.trim() ?? ""
+  const project = params.project?.trim() ?? ""
+  const site = params.site?.trim() ?? ""
+  const intervalStart = params.intervalStart?.trim() ?? ""
+  const intervalEnd = params.intervalEnd?.trim() ?? ""
+  const rows = filterShiftDetailRowsByScope(await getShiftDetails({ query, status }), {
+    query,
+    planId,
+    planDate: date,
+    projectName: project,
+    siteName: site,
+    intervalStart,
+    intervalEnd,
+  })
+  const scopeLabel = buildScopeLabel({
+    planId,
+    date,
+    project,
+    site,
+    intervalStart,
+    intervalEnd,
+  })
+  const hasScope = Boolean(
+    planId || date || project || site || intervalStart || intervalEnd
+  )
   const totalGap = rows.reduce((sum, row) => sum + row.gap_agents, 0)
   const gapRows = rows.filter((row) => row.gap_agents > 0)
   const maxGap = rows.reduce((max, row) => Math.max(max, row.gap_agents), 0)
@@ -73,6 +144,32 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
   const totalScheduled = rows.reduce((sum, row) => sum + row.scheduled_agents, 0)
   const coverageRate =
     rows.length === 0 ? 0 : totalForecast === 0 ? 1 : totalScheduled / totalForecast
+  const riskSearchParams = new URLSearchParams()
+  if (query) riskSearchParams.set("query", query)
+  if (planId) riskSearchParams.set("planId", planId)
+  if (date) riskSearchParams.set("date", date)
+  if (project) riskSearchParams.set("project", project)
+  if (site) riskSearchParams.set("site", site)
+  if (intervalStart) riskSearchParams.set("intervalStart", intervalStart)
+  if (intervalEnd) riskSearchParams.set("intervalEnd", intervalEnd)
+  const riskHref = `/schedule-risks${
+    riskSearchParams.toString() ? `?${riskSearchParams.toString()}` : ""
+  }`
+  const unavailabilitySearchParams = new URLSearchParams()
+  if (query) unavailabilitySearchParams.set("query", query)
+  if (project) unavailabilitySearchParams.set("project", project)
+  if (site) unavailabilitySearchParams.set("site", site)
+  if (date) unavailabilitySearchParams.set("date", date)
+  if (intervalStart) unavailabilitySearchParams.set("startTime", intervalStart)
+  if (intervalEnd) unavailabilitySearchParams.set("endTime", intervalEnd)
+  if (project || site || date || intervalStart || intervalEnd) {
+    unavailabilitySearchParams.set("status", "active")
+  }
+  const unavailabilityHref = `/unavailability${
+    unavailabilitySearchParams.toString()
+      ? `?${unavailabilitySearchParams.toString()}`
+      : ""
+  }`
 
   return (
     <AppShell title="班次明细" searchPlaceholder="搜索班次、计划或备注">
@@ -89,6 +186,22 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
           </Button>
         </div>
 
+        {hasScope ? (
+          <section className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-3 text-sm">
+            <Badge variant="outline">上下文 drilldown</Badge>
+            {scopeLabel ? <span>{scopeLabel}</span> : null}
+            <Button asChild variant="ghost" size="sm">
+              <Link href={riskHref}>查看风险</Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm">
+              <Link href={unavailabilityHref}>查看不可用</Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/shift-details">清空范围</Link>
+            </Button>
+          </section>
+        ) : null}
+
         <section className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3">
           <form className="flex min-w-64 flex-1 items-center gap-2">
             <div className="flex flex-1 items-center gap-2 rounded-md border bg-background px-2">
@@ -101,6 +214,16 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
               />
             </div>
             {status ? <input name="status" type="hidden" value={status} /> : null}
+            {planId ? <input name="planId" type="hidden" value={planId} /> : null}
+            {date ? <input name="date" type="hidden" value={date} /> : null}
+            {project ? <input name="project" type="hidden" value={project} /> : null}
+            {site ? <input name="site" type="hidden" value={site} /> : null}
+            {intervalStart ? (
+              <input name="intervalStart" type="hidden" value={intervalStart} />
+            ) : null}
+            {intervalEnd ? (
+              <input name="intervalEnd" type="hidden" value={intervalEnd} />
+            ) : null}
             <Button type="submit" variant="outline" size="sm">
               搜索
             </Button>
@@ -116,7 +239,16 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
                   variant={active ? "default" : "outline"}
                   size="sm"
                 >
-                  <Link href={statusHref(option.value, query)}>
+                  <Link
+                    href={statusHref(option.value, query, {
+                      planId,
+                      date,
+                      project,
+                      site,
+                      intervalStart,
+                      intervalEnd,
+                    })}
+                  >
                     {option.label}
                   </Link>
                 </Button>
@@ -142,7 +274,11 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
             <div>
               <CardTitle>班次明细</CardTitle>
               <CardDescription>
-                {status ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}` : query || "全部计划"}
+                {scopeLabel
+                  ? scopeLabel
+                  : status
+                    ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}`
+                    : query || "全部计划"}
               </CardDescription>
             </div>
             <Badge variant="outline">B004 明细</Badge>

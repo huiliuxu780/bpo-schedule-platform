@@ -80,6 +80,18 @@ export type ScheduleRiskScopeFilters = {
   planDate?: string
   projectName?: string
   siteName?: string
+  intervalStart?: string
+  intervalEnd?: string
+}
+
+export type ShiftDetailScopeFilters = {
+  query?: string
+  planId?: string
+  planDate?: string
+  projectName?: string
+  siteName?: string
+  intervalStart?: string
+  intervalEnd?: string
 }
 
 export type SchedulePlanIntervalInput = Pick<
@@ -430,6 +442,8 @@ export function filterScheduleRiskRowsByScope(
   const planDate = normalizeScopeValue(filters.planDate)
   const projectName = normalizeScopeValue(filters.projectName)
   const siteName = normalizeScopeValue(filters.siteName)
+  const intervalStart = normalizeScopeValue(filters.intervalStart)
+  const intervalEnd = normalizeScopeValue(filters.intervalEnd)
 
   return rows.filter((row) => {
     if (planId && normalizeScopeValue(row.plan_id) !== planId) {
@@ -448,6 +462,14 @@ export function filterScheduleRiskRowsByScope(
       return false
     }
 
+    if (intervalStart && normalizeScopeValue(row.interval_start) !== intervalStart) {
+      return false
+    }
+
+    if (intervalEnd && normalizeScopeValue(row.interval_end) !== intervalEnd) {
+      return false
+    }
+
     if (!query) {
       return true
     }
@@ -462,6 +484,66 @@ export function filterScheduleRiskRowsByScope(
       row.interval_end,
       row.reason,
       row.recommendation,
+    ]
+      .join(" ")
+      .toLowerCase()
+
+    return searchable.includes(query)
+  })
+}
+
+export function filterShiftDetailRowsByScope(
+  rows: ShiftDetailRow[],
+  filters: ShiftDetailScopeFilters = {}
+) {
+  const query = normalizeScopeValue(filters.query)
+  const planId = normalizeScopeValue(filters.planId)
+  const planDate = normalizeScopeValue(filters.planDate)
+  const projectName = normalizeScopeValue(filters.projectName)
+  const siteName = normalizeScopeValue(filters.siteName)
+  const intervalStart = normalizeScopeValue(filters.intervalStart)
+  const intervalEnd = normalizeScopeValue(filters.intervalEnd)
+
+  return rows.filter((row) => {
+    if (planId && normalizeScopeValue(row.plan_id) !== planId) {
+      return false
+    }
+
+    if (planDate && normalizeScopeValue(row.plan_date) !== planDate) {
+      return false
+    }
+
+    if (projectName && normalizeScopeValue(row.project_name) !== projectName) {
+      return false
+    }
+
+    if (siteName && normalizeScopeValue(row.site_name) !== siteName) {
+      return false
+    }
+
+    if (intervalStart && normalizeScopeValue(row.interval_start) !== intervalStart) {
+      return false
+    }
+
+    if (intervalEnd && normalizeScopeValue(row.interval_end) !== intervalEnd) {
+      return false
+    }
+
+    if (!query) {
+      return true
+    }
+
+    const searchable = [
+      row.plan_id,
+      row.plan_date,
+      row.project_name,
+      row.site_name,
+      row.version,
+      row.status,
+      row.interval_start,
+      row.interval_end,
+      row.note,
+      schedulePlanStatusLabel(row.status),
     ]
       .join(" ")
       .toLowerCase()

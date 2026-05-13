@@ -818,3 +818,27 @@
 - action: 收口 F060 风险工作台 QA，验证独立页、上下文筛选、计划详情、风险明细和不可用影响定位的跨页链路。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过；本地 prod server 在 `http://localhost:3014` 验证了 `/schedule-risks`、按计划上下文筛选页、计划详情页、风险明细页和不可用明细页的风险跳转链路；未引入数据库、依赖、后端契约、审批、导出、批量、权限或生产公式。
+
+- task_id: `F061-F064`
+- source_ids:
+  - `R094`
+  - `R095`
+  - `R096`
+  - `R097`
+- story_ids:
+  - `US106`
+  - `US107`
+  - `US108`
+  - `US109`
+- action: 完成 scoped drilldown 批次，补齐班次明细、不可用列表、风险工作台右侧 rail 和四页上下文链接。
+- status: `done`
+- notes: 班次明细和不可用列表新增 scope banner，本地过滤和保参搜索/tab；风险工作台新增宽屏右侧复核 rail；计划、风险、班次和不可用四页主要入口都改成精确 context link；保持 no-database、no-dependency 边界。
+
+- task_id: `Q016`
+- source_ids:
+  - `R098`
+- story_ids:
+  - `US110`
+- action: 收口 F061-F064 的 scoped drilldown 和右侧 rail QA。
+- status: `done`
+- notes: Safari 在 `http://localhost:3014` 验证了风险工作台右侧 rail、scoped `shift-details`、scoped `unavailability` 和跨页保参；`curl` 补充验证了计划详情、风险明细和不可用详情的 scoped 链接；`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。

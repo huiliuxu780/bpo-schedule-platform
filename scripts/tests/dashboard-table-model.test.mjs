@@ -17,9 +17,11 @@ import {
   summarizeUnavailabilityRows,
 } from "../../components/data-table-model.ts";
 import {
+  filterShiftDetailRowsByScope,
   filterScheduleRiskRowsByScope,
   scheduleRiskLevelLabel,
 } from "../../lib/schedule-plans.ts";
+import { filterUnavailabilityRowsByScope } from "../../lib/unavailability.ts";
 
 const anomaly = {
   id: "ANM-202605-001",
@@ -247,9 +249,58 @@ test("schedule risk scope filters preserve upstream drilldown context", () => {
       planId: "plan-a",
       planDate: "2026-05-11",
       siteName: "上海职场",
+      intervalStart: "09:30",
+      intervalEnd: "10:00",
       query: "优先",
     }).map((row) => row.risk_id),
     ["risk-a"],
+  );
+});
+
+test("shift detail scope filters keep exact drilldown context", () => {
+  const rows = [
+    {
+      plan_id: "plan-a",
+      plan_date: "2026-05-11",
+      project_name: "博西客服",
+      site_name: "上海职场",
+      version: "v1",
+      status: "review_ready",
+      interval_start: "09:30",
+      interval_end: "10:00",
+      forecast_agents: 18,
+      scheduled_agents: 17,
+      gap_agents: 1,
+      coverage_rate: 0.944,
+      note: "预测需求上升",
+    },
+    {
+      plan_id: "plan-a",
+      plan_date: "2026-05-11",
+      project_name: "博西客服",
+      site_name: "上海职场",
+      version: "v1",
+      status: "review_ready",
+      interval_start: "10:00",
+      interval_end: "10:30",
+      forecast_agents: 18,
+      scheduled_agents: 18,
+      gap_agents: 0,
+      coverage_rate: 1,
+      note: "覆盖正常",
+    },
+  ];
+
+  assert.deepEqual(
+    filterShiftDetailRowsByScope(rows, {
+      planId: "plan-a",
+      planDate: "2026-05-11",
+      siteName: "上海职场",
+      intervalStart: "09:30",
+      intervalEnd: "10:00",
+      query: "需求上升",
+    }).map((row) => `${row.plan_id}-${row.interval_start}`),
+    ["plan-a-09:30"],
   );
 });
 
@@ -297,4 +348,49 @@ test("unavailability helpers filter rows and summarize active impact", () => {
     teamCount: 2,
     siteCount: 2,
   });
+});
+
+test("unavailability scope filters preserve overlapping drilldown context", () => {
+  const rows = [
+    {
+      unavailability_id: "unavail-a",
+      staff_name: "张敏",
+      team_name: "一线客服 A 组",
+      project_name: "博西客服",
+      site_name: "上海职场",
+      unavailable_date: "2026-05-11",
+      start_time: "09:30",
+      end_time: "10:30",
+      reason: "临时请假",
+      status: "active",
+      affected_intervals: 2,
+      note: "需补位",
+    },
+    {
+      unavailability_id: "unavail-b",
+      staff_name: "李想",
+      team_name: "一线客服 B 组",
+      project_name: "博西客服",
+      site_name: "上海职场",
+      unavailable_date: "2026-05-11",
+      start_time: "11:00",
+      end_time: "11:30",
+      reason: "培训",
+      status: "active",
+      affected_intervals: 1,
+      note: "不重叠",
+    },
+  ];
+
+  assert.deepEqual(
+    filterUnavailabilityRowsByScope(rows, {
+      projectName: "博西客服",
+      siteName: "上海职场",
+      unavailableDate: "2026-05-11",
+      startTime: "09:30",
+      endTime: "10:00",
+      status: "active",
+    }).map((row) => row.unavailability_id),
+    ["unavail-a"],
+  );
 });

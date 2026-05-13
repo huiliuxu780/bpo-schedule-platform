@@ -50,6 +50,24 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
       row.site_name === plan.summary.site_name &&
       row.unavailable_date === plan.summary.plan_date
   )
+  const shiftSearchParams = new URLSearchParams({
+    planId: plan.summary.id,
+    date: plan.summary.plan_date,
+    project: plan.summary.project_name,
+    site: plan.summary.site_name,
+  })
+  const riskSearchParams = new URLSearchParams({
+    planId: plan.summary.id,
+    project: plan.summary.project_name,
+    site: plan.summary.site_name,
+    date: plan.summary.plan_date,
+  })
+  const unavailabilitySearchParams = new URLSearchParams({
+    project: plan.summary.project_name,
+    site: plan.summary.site_name,
+    date: plan.summary.plan_date,
+    status: "active",
+  })
 
   return (
     <AppShell title="排班计划详情" searchPlaceholder="搜索计划、项目或职场">
@@ -122,19 +140,17 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
             </div>
             <div className="flex flex-wrap gap-2">
               <Button asChild variant="outline" size="sm">
-                <Link href={`/shift-details?query=${plan.summary.id}`}>查看班次</Link>
+                <Link href={`/shift-details?${shiftSearchParams.toString()}`}>
+                  查看班次
+                </Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <Link
-                  href={`/schedule-risks?planId=${encodeURIComponent(plan.summary.id)}&project=${encodeURIComponent(plan.summary.project_name)}&site=${encodeURIComponent(plan.summary.site_name)}&date=${encodeURIComponent(plan.summary.plan_date)}`}
-                >
+                <Link href={`/schedule-risks?${riskSearchParams.toString()}`}>
                   查看风险
                 </Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <Link
-                  href={`/unavailability?query=${encodeURIComponent(plan.summary.site_name)}&status=active`}
-                >
+                <Link href={`/unavailability?${unavailabilitySearchParams.toString()}`}>
                   查看不可用
                 </Link>
               </Button>

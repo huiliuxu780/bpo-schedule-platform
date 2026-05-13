@@ -60,6 +60,21 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
     (sum, row) => sum + row.gap_agents,
     0
   )
+  const primaryPlanId = impactedShiftDetails[0]?.plan_id
+  const shiftSearchParams = new URLSearchParams({
+    project: record.project_name,
+    site: record.site_name,
+    date: record.unavailable_date,
+    intervalStart: record.start_time,
+    intervalEnd: record.end_time,
+  })
+  const riskSearchParams = new URLSearchParams({
+    project: record.project_name,
+    site: record.site_name,
+    date: record.unavailable_date,
+    intervalStart: record.start_time,
+    intervalEnd: record.end_time,
+  })
 
   return (
     <AppShell title="不可用影响定位" searchPlaceholder="搜索不可用、班次或风险">
@@ -74,8 +89,17 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline" size="sm">
-              <Link href={`/shift-details?query=${record.site_name}`}>查看班次</Link>
+              <Link href={`/shift-details?${shiftSearchParams.toString()}`}>
+                查看班次
+              </Link>
             </Button>
+            {primaryPlanId ? (
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/schedule-plans/${encodeURIComponent(primaryPlanId)}`}>
+                  计划详情
+                </Link>
+              </Button>
+            ) : null}
             <Button asChild variant="outline" size="sm">
               <Link href="/unavailability">返回不可用</Link>
             </Button>
@@ -134,7 +158,9 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
               </CardDescription>
             </div>
             <Button asChild variant="outline" size="sm">
-              <Link href={`/shift-details?query=${record.site_name}`}>全部班次</Link>
+              <Link href={`/shift-details?${shiftSearchParams.toString()}`}>
+                查看班次
+              </Link>
             </Button>
           </CardHeader>
           <CardContent>
@@ -151,9 +177,7 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
               </CardDescription>
             </div>
             <Button asChild variant="outline" size="sm">
-              <Link
-                href={`/schedule-risks?query=${encodeURIComponent(record.site_name)}&project=${encodeURIComponent(record.project_name)}&site=${encodeURIComponent(record.site_name)}&date=${encodeURIComponent(record.unavailable_date)}`}
-              >
+              <Link href={`/schedule-risks?${riskSearchParams.toString()}`}>
                 查看风险列表
               </Link>
             </Button>

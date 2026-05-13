@@ -206,9 +206,16 @@ const columns: ColumnDef<ShiftDetailRow>[] = [
     id: "actions",
     header: () => <div className="text-right">操作</div>,
     cell: ({ row }) => (
-      <div className="text-right">
+      <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm">
           <Link href={`/schedule-plans/${row.original.plan_id}`}>计划</Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link
+            href={`/schedule-risks?planId=${encodeURIComponent(row.original.plan_id)}&project=${encodeURIComponent(row.original.project_name)}&site=${encodeURIComponent(row.original.site_name)}&date=${encodeURIComponent(row.original.plan_date)}&intervalStart=${encodeURIComponent(row.original.interval_start)}&intervalEnd=${encodeURIComponent(row.original.interval_end)}`}
+          >
+            风险
+          </Link>
         </Button>
       </div>
     ),
