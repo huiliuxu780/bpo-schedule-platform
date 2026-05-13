@@ -1885,3 +1885,98 @@ acceptance:
   - "`bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US111 - 班次明细右侧复核 rail
+
+```yaml
+id: US111
+requirement_ids:
+  - R099
+module: "排班与风险联动"
+role: "排班经理"
+story: "作为排班经理，我希望班次明细页在宽屏下也有右侧复核 rail，这样我不会只剩一整块表格。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "班次明细页在宽屏下显示右侧复核 rail。"
+  - "rail 显示当前上下文、关键指标和继续复核入口。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US112 - 不可用列表右侧复核 rail
+
+```yaml
+id: US112
+requirement_ids:
+  - R100
+module: "排班与风险联动"
+role: "排班经理"
+story: "作为排班经理，我希望不可用列表页在宽屏下也有右侧复核 rail，这样我能在列表旁继续看范围和复核入口。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "不可用列表页在宽屏下显示右侧复核 rail。"
+  - "rail 显示当前范围、影响摘要和继续复核入口。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US113 - 计划时段明细 continuation actions
+
+```yaml
+id: US113
+requirement_ids:
+  - R101
+module: "排班与风险联动"
+role: "排班经理"
+story: "作为排班经理，我希望计划详情里的 0.5h 时段明细能直接继续查看风险、班次和不可用，这样复核链路不会中断。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "计划详情里的时段表提供风险、班次和不可用 continuation actions。"
+  - "跳转保留计划、日期、职场和时段上下文。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US114 - 不可用影响表 continuation actions
+
+```yaml
+id: US114
+requirement_ids:
+  - R102
+module: "排班与风险联动"
+role: "排班经理"
+story: "作为排班经理，我希望不可用影响页里的关联风险表能继续跳到同范围的风险、班次和计划，这样可以保持上下文继续复核。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "不可用影响页里的关联风险表提供风险、班次和计划 continuation actions。"
+  - "detail 页之间不退回宽泛列表。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US115 - review rail + continuation action QA 收口
+
+```yaml
+id: US115
+requirement_ids:
+  - R103
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F065-F068 这组 review rail 和 continuation action 改动做收口验收，确保链路、布局和 no-database 边界都可验证。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "宽屏右侧 rail 在班次明细和不可用列表可见，主内容不遮挡。"
+  - "计划详情和不可用影响页的 continuation actions 保留精确上下文。"
+  - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```

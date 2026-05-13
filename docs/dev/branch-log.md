@@ -721,3 +721,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `direct push on the same branch after the closeout commit`
 - blocked_reason: `N/A`
+
+### F065-F068 Review Rail and Continuation Actions
+
+- branch_name: `codex/f060-risk-workbench`
+- base_main_commit: `a3a134c`
+- remote_status: `active branch continuation after F061-F064/Q016 on the same tracked branch`
+- scope: shift-details and unavailability wide-screen review rails, schedule-plan interval continuation actions, unavailability-impact risk continuation actions, local navigation helper, focused tests, and traceability updates only.
+- allowed_files_check: `app/shift-details/**`, `app/schedule-plans/**`, `app/unavailability/**`, `components/**`, `lib/review-navigation.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `app/shift-details/page.tsx`, `app/unavailability/page.tsx`, `app/schedule-plans/[planId]/page.tsx`, `components/schedule-plan-interval-table.tsx`, `components/unavailability-impact-risk-table.tsx`, `lib/review-navigation.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- check_result: failing tests first verified missing rail/action strings; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` then passed with 16 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed; local dev server started on `http://localhost:3014`; local HTTP smoke confirmed `/shift-details`, `/unavailability`, schedule-plan detail, and unavailability-impact detail HTML contained the new rail/action text.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

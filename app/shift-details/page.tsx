@@ -14,6 +14,11 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
+  buildReviewScopeLabel,
+  buildScheduleRisksHref,
+  buildUnavailabilityHref,
+} from "@/lib/review-navigation"
+import {
   filterShiftDetailRowsByScope,
   formatCoverageRate,
   getShiftDetails,
@@ -39,27 +44,6 @@ type PageProps = {
     intervalStart?: string
     intervalEnd?: string
   }>
-}
-
-function buildScopeLabel({
-  planId,
-  date,
-  project,
-  site,
-  intervalStart,
-  intervalEnd,
-}: {
-  planId?: string
-  date?: string
-  project?: string
-  site?: string
-  intervalStart?: string
-  intervalEnd?: string
-}) {
-  const interval =
-    intervalStart && intervalEnd ? `${intervalStart}-${intervalEnd}` : undefined
-
-  return [project, site, date, interval, planId].filter(Boolean).join(" / ")
 }
 
 function parseStatus(status?: string): SchedulePlanStatus | undefined {
@@ -126,7 +110,7 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
     intervalStart,
     intervalEnd,
   })
-  const scopeLabel = buildScopeLabel({
+  const scopeLabel = buildReviewScopeLabel({
     planId,
     date,
     project,
@@ -144,32 +128,25 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
   const totalScheduled = rows.reduce((sum, row) => sum + row.scheduled_agents, 0)
   const coverageRate =
     rows.length === 0 ? 0 : totalForecast === 0 ? 1 : totalScheduled / totalForecast
-  const riskSearchParams = new URLSearchParams()
-  if (query) riskSearchParams.set("query", query)
-  if (planId) riskSearchParams.set("planId", planId)
-  if (date) riskSearchParams.set("date", date)
-  if (project) riskSearchParams.set("project", project)
-  if (site) riskSearchParams.set("site", site)
-  if (intervalStart) riskSearchParams.set("intervalStart", intervalStart)
-  if (intervalEnd) riskSearchParams.set("intervalEnd", intervalEnd)
-  const riskHref = `/schedule-risks${
-    riskSearchParams.toString() ? `?${riskSearchParams.toString()}` : ""
-  }`
-  const unavailabilitySearchParams = new URLSearchParams()
-  if (query) unavailabilitySearchParams.set("query", query)
-  if (project) unavailabilitySearchParams.set("project", project)
-  if (site) unavailabilitySearchParams.set("site", site)
-  if (date) unavailabilitySearchParams.set("date", date)
-  if (intervalStart) unavailabilitySearchParams.set("startTime", intervalStart)
-  if (intervalEnd) unavailabilitySearchParams.set("endTime", intervalEnd)
-  if (project || site || date || intervalStart || intervalEnd) {
-    unavailabilitySearchParams.set("status", "active")
-  }
-  const unavailabilityHref = `/unavailability${
-    unavailabilitySearchParams.toString()
-      ? `?${unavailabilitySearchParams.toString()}`
-      : ""
-  }`
+  const riskHref = buildScheduleRisksHref({
+    query,
+    planId,
+    date,
+    project,
+    site,
+    intervalStart,
+    intervalEnd,
+  })
+  const unavailabilityHref = buildUnavailabilityHref({
+    query,
+    project,
+    site,
+    date,
+    intervalStart,
+    intervalEnd,
+    status:
+      project || site || date || intervalStart || intervalEnd ? "active" : undefined,
+  })
 
   return (
     <AppShell title="班次明细" searchPlaceholder="搜索班次、计划或备注">
@@ -262,31 +239,84 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
           ) : null}
         </section>
 
-        <section className="grid gap-4 md:grid-cols-4">
-          <MetricCard title="班次数量" value={`${rows.length}`} description="0.5h 颗粒度" />
-          <MetricCard title="缺口班次" value={`${gapRows.length}`} description={`合计缺口 ${totalGap} 人次`} />
-          <MetricCard title="最大缺口" value={`${maxGap}`} description="单个时段最大缺口" />
-          <MetricCard title="整体覆盖率" value={formatCoverageRate(coverageRate)} description="当前筛选结果" />
-        </section>
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
+          <div className="grid gap-4">
+            <section className="grid gap-4 md:grid-cols-4">
+              <MetricCard title="班次数量" value={`${rows.length}`} description="0.5h 颗粒度" />
+              <MetricCard title="缺口班次" value={`${gapRows.length}`} description={`合计缺口 ${totalGap} 人次`} />
+              <MetricCard title="最大缺口" value={`${maxGap}`} description="单个时段最大缺口" />
+              <MetricCard title="整体覆盖率" value={formatCoverageRate(coverageRate)} description="当前筛选结果" />
+            </section>
 
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>班次明细</CardTitle>
-              <CardDescription>
-                {scopeLabel
-                  ? scopeLabel
-                  : status
-                    ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}`
-                    : query || "全部计划"}
-              </CardDescription>
-            </div>
-            <Badge variant="outline">B004 明细</Badge>
-          </CardHeader>
-          <CardContent>
-            <ShiftDetailsTable rows={rows} />
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-start justify-between gap-4">
+                <div>
+                  <CardTitle>班次明细</CardTitle>
+                  <CardDescription>
+                    {scopeLabel
+                      ? scopeLabel
+                      : status
+                        ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}`
+                        : query || "全部计划"}
+                  </CardDescription>
+                </div>
+                <Badge variant="outline">B004 明细</Badge>
+              </CardHeader>
+              <CardContent>
+                <ShiftDetailsTable rows={rows} />
+              </CardContent>
+            </Card>
+          </div>
+
+          <aside className="grid gap-4 xl:sticky xl:top-16">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">当前复核范围</CardTitle>
+                <CardDescription>宽屏下固定显示，避免页面只剩主表格</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-3 text-sm">
+                <div className="rounded-lg border bg-background p-3">
+                  <p className="text-xs text-muted-foreground">范围摘要</p>
+                  <p className="mt-1">{scopeLabel || "全部班次"}</p>
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
+                    <span className="text-muted-foreground">班次数量</span>
+                    <span className="font-medium tabular-nums">{rows.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
+                    <span className="text-muted-foreground">缺口班次</span>
+                    <span className="font-medium tabular-nums">{gapRows.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
+                    <span className="text-muted-foreground">整体覆盖率</span>
+                    <span className="font-medium tabular-nums">
+                      {formatCoverageRate(coverageRate)}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">复核任务</CardTitle>
+                <CardDescription>沿着当前上下文继续检查，不回到宽泛列表</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-2">
+                <Button asChild variant="outline" size="sm">
+                  <Link href={riskHref}>查看风险</Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={unavailabilityHref}>查看不可用</Link>
+                </Button>
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/shift-details">回到全部班次</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </aside>
+        </div>
       </main>
     </AppShell>
   )

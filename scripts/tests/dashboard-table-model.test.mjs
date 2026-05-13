@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
@@ -393,4 +394,41 @@ test("unavailability scope filters preserve overlapping drilldown context", () =
     }).map((row) => row.unavailability_id),
     ["unavail-a"],
   );
+});
+
+test("shift details page exposes a wide-screen review rail", async () => {
+  const source = await readFile(new URL("../../app/shift-details/page.tsx", import.meta.url), "utf8");
+
+  assert.match(source, /当前复核范围/);
+  assert.match(source, /复核任务/);
+});
+
+test("unavailability page exposes a wide-screen review rail", async () => {
+  const source = await readFile(new URL("../../app/unavailability/page.tsx", import.meta.url), "utf8");
+
+  assert.match(source, /当前复核范围/);
+  assert.match(source, /复核任务/);
+});
+
+test("schedule plan interval table exposes continuation actions", async () => {
+  const source = await readFile(
+    new URL("../../components/schedule-plan-interval-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /Link/);
+  assert.match(source, /查看风险/);
+  assert.match(source, /查看班次/);
+  assert.match(source, /查看不可用/);
+});
+
+test("unavailability impact risk table exposes scoped continuation actions", async () => {
+  const source = await readFile(
+    new URL("../../components/unavailability-impact-risk-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /查看计划/);
+  assert.match(source, /查看班次/);
+  assert.match(source, /查看风险/);
 });

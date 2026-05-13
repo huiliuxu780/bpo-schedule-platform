@@ -962,3 +962,68 @@ version: "1.0"
 status: "split"
 notes: "只做验收、必要轻微修正和追溯更新；不新增依赖、不接数据库。"
 ```
+
+### R099 - 班次明细右侧复核 rail
+
+```yaml
+id: R099
+module: "排班与风险联动"
+description: "班次明细页需要在宽屏下提供右侧复核 rail，显示当前上下文、关键指标和继续复核入口，避免页面只剩主表格。"
+source: "Story Runner continuation after Q016 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地前端布局和上下文入口，不接数据库。"
+```
+
+### R100 - 不可用列表右侧复核 rail
+
+```yaml
+id: R100
+module: "排班与风险联动"
+description: "不可用列表页需要在宽屏下提供右侧复核 rail，显示当前范围、影响摘要和继续复核入口。"
+source: "Story Runner continuation after Q016 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地前端布局和上下文入口，不接数据库。"
+```
+
+### R101 - 计划时段明细 continuation actions
+
+```yaml
+id: R101
+module: "排班与风险联动"
+description: "计划详情里的 0.5h 时段明细需要直接提供风险、班次和不可用 continuation actions，并保留计划、日期、职场和时段上下文。"
+source: "Story Runner continuation after Q016 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地表格操作链和链接拼装，不改后端契约。"
+```
+
+### R102 - 不可用影响表 continuation actions
+
+```yaml
+id: R102
+module: "排班与风险联动"
+description: "不可用影响页里的关联风险表需要继续跳到同范围的风险、班次和计划详情，保证 detail-to-detail 的复核链路不断开。"
+source: "Story Runner continuation after Q016 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地页面和链接对齐；不改后端契约、不接数据库。"
+```
+
+### R103 - review rail + continuation action QA 收口
+
+```yaml
+id: R103
+module: "质量与交付"
+description: "对 F065-F068 这组 review rail 和 continuation action 改动做 QA 收口，确认链路、布局和 no-database 边界可验证、可追溯。"
+source: "Story Runner continuation after Q016 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做验收、必要轻微修正和追溯更新；不新增依赖、不接数据库。"
+```

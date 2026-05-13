@@ -14,6 +14,11 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
+  buildReviewScopeLabel,
+  buildScheduleRisksHref,
+  buildShiftDetailsHref,
+} from "@/lib/review-navigation"
+import {
   filterUnavailabilityRowsByScope,
   getUnavailability,
   unavailabilityStatusLabel,
@@ -36,23 +41,6 @@ type PageProps = {
     startTime?: string
     endTime?: string
   }>
-}
-
-function buildScopeLabel({
-  project,
-  site,
-  date,
-  startTime,
-  endTime,
-}: {
-  project?: string
-  site?: string
-  date?: string
-  startTime?: string
-  endTime?: string
-}) {
-  const interval = startTime && endTime ? `${startTime}-${endTime}` : undefined
-  return [project, site, date, interval].filter(Boolean).join(" / ")
 }
 
 function parseStatus(status?: string): UnavailabilityStatus | undefined {
@@ -115,7 +103,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
       endTime,
     }
   )
-  const scopeLabel = buildScopeLabel({
+  const scopeLabel = buildReviewScopeLabel({
     project,
     site,
     date,
@@ -130,26 +118,22 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   )
   const teamCount = new Set(rows.map((row) => row.team_name)).size
   const siteCount = new Set(rows.map((row) => row.site_name)).size
-  const riskSearchParams = new URLSearchParams()
-  if (query) riskSearchParams.set("query", query)
-  if (project) riskSearchParams.set("project", project)
-  if (site) riskSearchParams.set("site", site)
-  if (date) riskSearchParams.set("date", date)
-  if (startTime) riskSearchParams.set("intervalStart", startTime)
-  if (endTime) riskSearchParams.set("intervalEnd", endTime)
-  const riskHref = `/schedule-risks${
-    riskSearchParams.toString() ? `?${riskSearchParams.toString()}` : ""
-  }`
-  const shiftSearchParams = new URLSearchParams()
-  if (query) shiftSearchParams.set("query", query)
-  if (project) shiftSearchParams.set("project", project)
-  if (site) shiftSearchParams.set("site", site)
-  if (date) shiftSearchParams.set("date", date)
-  if (startTime) shiftSearchParams.set("intervalStart", startTime)
-  if (endTime) shiftSearchParams.set("intervalEnd", endTime)
-  const shiftHref = `/shift-details${
-    shiftSearchParams.toString() ? `?${shiftSearchParams.toString()}` : ""
-  }`
+  const riskHref = buildScheduleRisksHref({
+    query,
+    project,
+    site,
+    date,
+    startTime,
+    endTime,
+  })
+  const shiftHref = buildShiftDetailsHref({
+    query,
+    project,
+    site,
+    date,
+    startTime,
+    endTime,
+  })
 
   return (
     <AppShell title="不可用管理" searchPlaceholder="搜索人员、团队或原因">
@@ -236,31 +220,82 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
           ) : null}
         </section>
 
-        <section className="grid gap-4 md:grid-cols-4">
-          <MetricCard title="不可用记录" value={`${rows.length}`} description="当前筛选结果" />
-          <MetricCard title="生效中" value={`${activeRows.length}`} description="需要排班复核" />
-          <MetricCard title="影响时段" value={`${affectedIntervals}`} description="按 0.5h 颗粒度" />
-          <MetricCard title="涉及团队" value={`${teamCount}`} description={`${siteCount} 个职场`} />
-        </section>
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
+          <div className="grid gap-4">
+            <section className="grid gap-4 md:grid-cols-4">
+              <MetricCard title="不可用记录" value={`${rows.length}`} description="当前筛选结果" />
+              <MetricCard title="生效中" value={`${activeRows.length}`} description="需要排班复核" />
+              <MetricCard title="影响时段" value={`${affectedIntervals}`} description="按 0.5h 颗粒度" />
+              <MetricCard title="涉及团队" value={`${teamCount}`} description={`${siteCount} 个职场`} />
+            </section>
 
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>不可用记录</CardTitle>
-              <CardDescription>
-                {scopeLabel
-                  ? scopeLabel
-                  : status
-                    ? `${unavailabilityStatusLabel(status)} / ${query || "全部"}`
-                    : query || "全部记录"}
-              </CardDescription>
-            </div>
-            <Badge variant="outline">B006 不可用</Badge>
-          </CardHeader>
-          <CardContent>
-            <UnavailabilityTable rows={rows} />
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-start justify-between gap-4">
+                <div>
+                  <CardTitle>不可用记录</CardTitle>
+                  <CardDescription>
+                    {scopeLabel
+                      ? scopeLabel
+                      : status
+                        ? `${unavailabilityStatusLabel(status)} / ${query || "全部"}`
+                        : query || "全部记录"}
+                  </CardDescription>
+                </div>
+                <Badge variant="outline">B006 不可用</Badge>
+              </CardHeader>
+              <CardContent>
+                <UnavailabilityTable rows={rows} />
+              </CardContent>
+            </Card>
+          </div>
+
+          <aside className="grid gap-4 xl:sticky xl:top-16">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">当前复核范围</CardTitle>
+                <CardDescription>宽屏下固定显示，保留列表旁的复核摘要</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-3 text-sm">
+                <div className="rounded-lg border bg-background p-3">
+                  <p className="text-xs text-muted-foreground">范围摘要</p>
+                  <p className="mt-1">{scopeLabel || "全部不可用"}</p>
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
+                    <span className="text-muted-foreground">生效中</span>
+                    <span className="font-medium tabular-nums">{activeRows.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
+                    <span className="text-muted-foreground">影响时段</span>
+                    <span className="font-medium tabular-nums">{affectedIntervals}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
+                    <span className="text-muted-foreground">涉及团队</span>
+                    <span className="font-medium tabular-nums">{teamCount}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">复核任务</CardTitle>
+                <CardDescription>继续沿着当前范围查看风险和班次影响</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-2">
+                <Button asChild variant="outline" size="sm">
+                  <Link href={riskHref}>查看风险</Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={shiftHref}>查看班次</Link>
+                </Button>
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/unavailability">回到全部不可用</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </aside>
+        </div>
       </main>
     </AppShell>
   )

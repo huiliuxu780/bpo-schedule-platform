@@ -15,6 +15,10 @@ import * as React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
+  buildPlanDetailHref,
+  buildShiftDetailsHref,
+} from "@/lib/review-navigation"
+import {
   Table,
   TableBody,
   TableCell,
@@ -126,11 +130,28 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
     id: "actions",
     header: () => <div className="text-right">操作</div>,
     cell: ({ row }) => (
-      <div className="text-right">
+      <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm">
           <Link href={`/schedule-risks/${encodeURIComponent(row.original.risk_id)}`}>
-            明细
+            查看风险
           </Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link
+            href={buildShiftDetailsHref({
+              planId: row.original.plan_id,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+              intervalStart: row.original.interval_start,
+              intervalEnd: row.original.interval_end,
+            })}
+          >
+            查看班次
+          </Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link href={buildPlanDetailHref(row.original.plan_id)}>查看计划</Link>
         </Button>
       </div>
     ),

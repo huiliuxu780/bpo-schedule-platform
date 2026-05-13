@@ -842,3 +842,27 @@
 - action: 收口 F061-F064 的 scoped drilldown 和右侧 rail QA。
 - status: `done`
 - notes: Safari 在 `http://localhost:3014` 验证了风险工作台右侧 rail、scoped `shift-details`、scoped `unavailability` 和跨页保参；`curl` 补充验证了计划详情、风险明细和不可用详情的 scoped 链接；`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。
+
+- task_id: `F065-F068`
+- source_ids:
+  - `R099`
+  - `R100`
+  - `R101`
+  - `R102`
+- story_ids:
+  - `US111`
+  - `US112`
+  - `US113`
+  - `US114`
+- action: 完成班次明细/不可用列表右侧复核 rail，并补齐计划时段明细、不可用影响表的 continuation actions。
+- status: `done`
+- notes: 新增 `lib/review-navigation.ts` 统一 review 链路 URL；`/shift-details` 和 `/unavailability` 在宽屏下新增右侧复核 rail；计划详情里的时段表可继续查看风险/班次/不可用；不可用影响页里的关联风险表可继续查看风险/班次/计划；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q017`
+- source_ids:
+  - `R103`
+- story_ids:
+  - `US115`
+- action: 收口 F065-F068 的 review rail 和 continuation action QA。
+- status: `done`
+- notes: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run lint`、`npm run typecheck`、`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过；在 `http://localhost:3014` 启动本地 dev server 后，`curl` 命中了 `/shift-details`、`/unavailability`、计划详情和不可用影响定位页的关键 rail/action 文案；current queue 与 active tasks 已清空。

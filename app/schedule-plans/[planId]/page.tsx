@@ -4,6 +4,11 @@ import { notFound } from "next/navigation"
 import { AppShell } from "@/components/app-shell"
 import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-table"
 import {
+  buildScheduleRisksHref,
+  buildShiftDetailsHref,
+  buildUnavailabilityHref,
+} from "@/lib/review-navigation"
+import {
   formatCoverageRate,
   getSchedulePlan,
   getScheduleRisks,
@@ -50,19 +55,19 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
       row.site_name === plan.summary.site_name &&
       row.unavailable_date === plan.summary.plan_date
   )
-  const shiftSearchParams = new URLSearchParams({
+  const shiftHref = buildShiftDetailsHref({
     planId: plan.summary.id,
     date: plan.summary.plan_date,
     project: plan.summary.project_name,
     site: plan.summary.site_name,
   })
-  const riskSearchParams = new URLSearchParams({
+  const riskHref = buildScheduleRisksHref({
     planId: plan.summary.id,
     project: plan.summary.project_name,
     site: plan.summary.site_name,
     date: plan.summary.plan_date,
   })
-  const unavailabilitySearchParams = new URLSearchParams({
+  const unavailabilityHref = buildUnavailabilityHref({
     project: plan.summary.project_name,
     site: plan.summary.site_name,
     date: plan.summary.plan_date,
@@ -140,19 +145,13 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
             </div>
             <div className="flex flex-wrap gap-2">
               <Button asChild variant="outline" size="sm">
-                <Link href={`/shift-details?${shiftSearchParams.toString()}`}>
-                  查看班次
-                </Link>
+                <Link href={shiftHref}>查看班次</Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <Link href={`/schedule-risks?${riskSearchParams.toString()}`}>
-                  查看风险
-                </Link>
+                <Link href={riskHref}>查看风险</Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <Link href={`/unavailability?${unavailabilitySearchParams.toString()}`}>
-                  查看不可用
-                </Link>
+                <Link href={unavailabilityHref}>查看不可用</Link>
               </Button>
             </div>
           </CardContent>
@@ -169,7 +168,13 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
             <Badge variant="outline">{plan.summary.id}</Badge>
           </CardHeader>
           <CardContent>
-            <SchedulePlanIntervalTable intervals={plan.intervals} />
+            <SchedulePlanIntervalTable
+              intervals={plan.intervals}
+              planId={plan.summary.id}
+              planDate={plan.summary.plan_date}
+              projectName={plan.summary.project_name}
+              siteName={plan.summary.site_name}
+            />
           </CardContent>
         </Card>
       </main>

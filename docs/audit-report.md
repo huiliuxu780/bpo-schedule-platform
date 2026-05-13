@@ -1077,6 +1077,31 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-13 - review rail 与 continuation action 连续块
+
+#### 审计结论
+
+- `F065-F068/US111-US114` 已把 review rail 从风险工作台扩展到 `班次明细` 和 `不可用管理` 两页，宽屏下右侧固定显示当前范围、关键指标和继续复核入口，页面不再只剩主表格区。
+- `计划详情 -> 0.5h 时段明细` 现在可直接继续查看同范围的风险、班次和不可用；`不可用影响定位 -> 关联风险` 现在可直接继续查看风险、班次和计划详情，detail-to-detail 复核链路保持在同一上下文内。
+- 本轮新增 `lib/review-navigation.ts` 统一 review 链路的本地 URL 拼装，减少多页重复 query 组装逻辑。
+- 整个批次仍然停留在本地前端和本地 seed 契约层，没有引入数据库、依赖、后端契约变更、审批、导出、批量、权限或生产公式。
+
+#### 风险
+
+- 这组 review rail 和 continuation actions 仍基于前端本地 query 参数与本地过滤，不等同于服务端查询契约；未来如果接入真实分页、服务端过滤或持久化，需要单独过 Gate。
+- in-app browser runtime 在本轮 smoke 时两次连接超时，因此最终验收证据采用本地 dev server HTML smoke 和全量 `bash scripts/check.sh`；如果后续要补视觉级截图，应在 browser runtime 恢复后单独补一轮。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，16 个测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+- 本地 dev server：`npm run dev -- --port 3014` 启动成功。
+- 本地 HTTP smoke：`/shift-details`、`/unavailability`、`/schedule-plans/plan-20260511-shanghai-bosch-v1`、`/unavailability/unavail-20260511-001` 的 HTML 均包含本轮新增的 rail 或 continuation action 关键文案。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
