@@ -432,3 +432,33 @@ test("unavailability impact risk table exposes scoped continuation actions", asy
   assert.match(source, /查看班次/);
   assert.match(source, /查看风险/);
 });
+
+test("schedule plan detail page exposes a wide-screen review rail", async () => {
+  const source = await readFile(
+    new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /当前复核范围/);
+  assert.match(source, /复核任务/);
+});
+
+test("schedule risk detail page exposes a wide-screen review rail", async () => {
+  const source = await readFile(
+    new URL("../../app/schedule-risks/[riskId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /当前复核范围/);
+  assert.match(source, /复核任务/);
+});
+
+test("unavailability impact page exposes a wide-screen review rail", async () => {
+  const source = await readFile(
+    new URL("../../app/unavailability/[unavailabilityId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /当前复核范围/);
+  assert.match(source, /复核任务/);
+});

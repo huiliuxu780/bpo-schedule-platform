@@ -85,12 +85,13 @@ Current invariants:
 - `Q015/US105` closed QA on the risk workbench chain, verified the cross-page drilldown loop on a local server, and returned current queue and active tasks to empty.
 - `F061-F064/Q016` deepened the risk review chain with scoped drilldown filters, a wide-screen right rail on `/schedule-risks`, and aligned context links across plan, risk, shift, and unavailability pages, then returned current queue and active tasks to empty.
 - `F065-F068/Q017` extended the review chain again: `班次明细` and `不可用管理` now have wide-screen right-side review rails, plan interval rows can continue into scoped risk/shift/unavailability views, unavailability-impact risk rows can continue into risk/shift/plan views, and current queue returned to empty after QA closeout.
+- `F069-F072/Q018` completed the next review slice: `排班计划详情`、`风险明细`、`不可用影响定位` 三个 detail 页 now have wide-screen right-side review rails, and the detail-level review actions continue to share the same local navigation helper, then current queue returned to empty after QA closeout.
 
 ## Product Direction
 
 Near-term product work should remain inside the no-database local MVP boundary.
 
-Recommended order after F060/Q015/F061-F064/Q016/F065-F068/Q017:
+Recommended order after F060/Q015/F061-F064/Q016/F065-F068/Q017/F069-F072/Q018:
 
 1. Seed the next ready story in current state before execution.
 2. Continue the next narrow risk/unavailability workflow slice or another frontend/local-contract story.

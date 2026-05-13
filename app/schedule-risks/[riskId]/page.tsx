@@ -19,6 +19,13 @@ import {
   scheduleRiskLevelLabel,
 } from "@/lib/schedule-plans"
 import {
+  buildPlanDetailHref,
+  buildReviewScopeLabel,
+  buildScheduleRisksHref,
+  buildUnavailabilityHref,
+  buildShiftDetailsHref,
+} from "@/lib/review-navigation"
+import {
   getUnavailability,
 } from "@/lib/unavailability"
 
@@ -54,7 +61,7 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
       row.start_time < risk.interval_end &&
       row.end_time > risk.interval_start
   )
-  const riskSearchParams = new URLSearchParams({
+  const scopeLabel = buildReviewScopeLabel({
     planId: risk.plan_id,
     project: risk.project_name,
     site: risk.site_name,
@@ -62,7 +69,8 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
     intervalStart: risk.interval_start,
     intervalEnd: risk.interval_end,
   })
-  const shiftSearchParams = new URLSearchParams({
+  const planHref = buildPlanDetailHref(risk.plan_id)
+  const riskListHref = buildScheduleRisksHref({
     planId: risk.plan_id,
     project: risk.project_name,
     site: risk.site_name,
@@ -70,7 +78,15 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
     intervalStart: risk.interval_start,
     intervalEnd: risk.interval_end,
   })
-  const unavailabilitySearchParams = new URLSearchParams({
+  const shiftHref = buildShiftDetailsHref({
+    planId: risk.plan_id,
+    project: risk.project_name,
+    site: risk.site_name,
+    date: risk.plan_date,
+    intervalStart: risk.interval_start,
+    intervalEnd: risk.interval_end,
+  })
+  const unavailabilityHref = buildUnavailabilityHref({
     project: risk.project_name,
     site: risk.site_name,
     date: risk.plan_date,
@@ -92,102 +108,152 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline" size="sm">
-              <Link href={`/schedule-plans/${risk.plan_id}`}>计划详情</Link>
+              <Link href={planHref}>计划详情</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
-              <Link
-                href={`/schedule-risks?${riskSearchParams.toString()}`}
-              >
-                返回风险列表
-              </Link>
+              <Link href={riskListHref}>返回风险列表</Link>
             </Button>
           </div>
         </div>
 
-        <section className="grid gap-4 md:grid-cols-4">
-          <MetricCard
-            title="风险等级"
-            value={scheduleRiskLevelLabel(risk.risk_level)}
-            description={risk.risk_id}
-          />
-          <MetricCard
-            title="排班缺口"
-            value={`${risk.gap_agents}`}
-            description="本地 MVP 展示口径"
-          />
-          <MetricCard
-            title="不可用影响"
-            value={`${risk.affected_unavailability}`}
-            description="生效中记录数量"
-          />
-          <MetricCard
-            title="关联班次"
-            value={`${relatedShiftDetails.length}`}
-            description="同计划同一 0.5h 时段"
-          />
-        </section>
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
+          <div className="grid gap-4">
+            <section className="grid gap-4 md:grid-cols-4">
+              <MetricCard
+                title="风险等级"
+                value={scheduleRiskLevelLabel(risk.risk_level)}
+                description={risk.risk_id}
+              />
+              <MetricCard
+                title="排班缺口"
+                value={`${risk.gap_agents}`}
+                description="本地 MVP 展示口径"
+              />
+              <MetricCard
+                title="不可用影响"
+                value={`${risk.affected_unavailability}`}
+                description="生效中记录数量"
+              />
+              <MetricCard
+                title="关联班次"
+                value={`${relatedShiftDetails.length}`}
+                description="同计划同一 0.5h 时段"
+              />
+            </section>
 
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>复核建议</CardTitle>
-              <CardDescription>
-                本页只做本地展示，不触发审批、批量调班或自动排班
-              </CardDescription>
-            </div>
-            <Badge variant={risk.risk_level === "high" ? "default" : "outline"}>
-              {scheduleRiskLevelLabel(risk.risk_level)}
-            </Badge>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-lg border bg-background p-3">
-              <p className="text-xs text-muted-foreground">风险原因</p>
-              <p className="mt-1 text-sm">{risk.reason}</p>
-            </div>
-            <div className="rounded-lg border bg-background p-3">
-              <p className="text-xs text-muted-foreground">建议动作</p>
-              <p className="mt-1 text-sm">{risk.recommendation}</p>
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-start justify-between gap-4">
+                <div>
+                  <CardTitle>复核建议</CardTitle>
+                  <CardDescription>
+                    本页只做本地展示，不触发审批、批量调班或自动排班
+                  </CardDescription>
+                </div>
+                <Badge variant={risk.risk_level === "high" ? "default" : "outline"}>
+                  {scheduleRiskLevelLabel(risk.risk_level)}
+                </Badge>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-lg border bg-background p-3">
+                  <p className="text-xs text-muted-foreground">风险原因</p>
+                  <p className="mt-1 text-sm">{risk.reason}</p>
+                </div>
+                <div className="rounded-lg border bg-background p-3">
+                  <p className="text-xs text-muted-foreground">建议动作</p>
+                  <p className="mt-1 text-sm">{risk.recommendation}</p>
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>关联班次</CardTitle>
-              <CardDescription>
-                同一计划、日期、职场和 0.5h 时段的排班明细
-              </CardDescription>
-            </div>
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/shift-details?${shiftSearchParams.toString()}`}>
-                查看班次
-              </Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <ScheduleRiskShiftTable rows={relatedShiftDetails} />
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-start justify-between gap-4">
+                <div>
+                  <CardTitle>关联班次</CardTitle>
+                  <CardDescription>
+                    同一计划、日期、职场和 0.5h 时段的排班明细
+                  </CardDescription>
+                </div>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={shiftHref}>查看班次</Link>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <ScheduleRiskShiftTable rows={relatedShiftDetails} />
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>不可用影响</CardTitle>
-              <CardDescription>
-                与风险时段重叠的生效中不可用记录
-              </CardDescription>
-            </div>
-            <Button asChild variant="outline" size="sm">
-              <Link href={`/unavailability?${unavailabilitySearchParams.toString()}`}>
-                查看不可用
-              </Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <ScheduleRiskUnavailabilityTable rows={relatedUnavailabilityRows} />
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-start justify-between gap-4">
+                <div>
+                  <CardTitle>不可用影响</CardTitle>
+                  <CardDescription>
+                    与风险时段重叠的生效中不可用记录
+                  </CardDescription>
+                </div>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={unavailabilityHref}>查看不可用</Link>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <ScheduleRiskUnavailabilityTable rows={relatedUnavailabilityRows} />
+              </CardContent>
+            </Card>
+          </div>
+
+          <aside className="grid gap-4 xl:sticky xl:top-16">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">当前复核范围</CardTitle>
+                <CardDescription>宽屏下固定显示，保持 detail 页复核姿态</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-3 text-sm">
+                <div className="rounded-lg border bg-background p-3">
+                  <p className="text-xs text-muted-foreground">范围摘要</p>
+                  <p className="mt-1">{scopeLabel}</p>
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
+                    <span className="text-muted-foreground">排班缺口</span>
+                    <span className="font-medium tabular-nums">{risk.gap_agents}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
+                    <span className="text-muted-foreground">不可用影响</span>
+                    <span className="font-medium tabular-nums">
+                      {risk.affected_unavailability}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
+                    <span className="text-muted-foreground">关联班次</span>
+                    <span className="font-medium tabular-nums">
+                      {relatedShiftDetails.length}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">复核任务</CardTitle>
+                <CardDescription>继续沿着当前风险范围检查计划、班次和不可用</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-2">
+                <Button asChild variant="outline" size="sm">
+                  <Link href={planHref}>查看计划</Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={shiftHref}>查看班次</Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={unavailabilityHref}>查看不可用</Link>
+                </Button>
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/schedule-risks">回到全部风险</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </aside>
+        </div>
       </main>
     </AppShell>
   )

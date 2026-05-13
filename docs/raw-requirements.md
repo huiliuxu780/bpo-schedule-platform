@@ -1027,3 +1027,68 @@ version: "1.0"
 status: "split"
 notes: "只做验收、必要轻微修正和追溯更新；不新增依赖、不接数据库。"
 ```
+
+### R104 - 排班计划详情右侧复核 rail
+
+```yaml
+id: R104
+module: "排班与风险联动"
+description: "排班计划详情页需要在宽屏下提供右侧复核 rail，显示当前范围、关键指标和继续复核入口。"
+source: "Story Runner continuation after Q017 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地前端布局和 review 入口，不接数据库。"
+```
+
+### R105 - 风险明细右侧复核 rail
+
+```yaml
+id: R105
+module: "排班与风险联动"
+description: "风险明细页需要在宽屏下提供右侧复核 rail，显示当前范围、关键指标和继续复核入口。"
+source: "Story Runner continuation after Q017 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地前端布局和 review 入口，不接数据库。"
+```
+
+### R106 - 不可用影响定位右侧复核 rail
+
+```yaml
+id: R106
+module: "排班与风险联动"
+description: "不可用影响定位页需要在宽屏下提供右侧复核 rail，显示当前范围、关键指标和继续复核入口。"
+source: "Story Runner continuation after Q017 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地前端布局和 review 入口，不接数据库。"
+```
+
+### R107 - detail 页复核入口统一 helper
+
+```yaml
+id: R107
+module: "排班与风险联动"
+description: "计划详情、风险明细和不可用影响定位的复核入口需要继续统一到同一套本地 helper，避免 URL 组装再次漂移。"
+source: "Story Runner continuation after Q017 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做本地 helper 收敛和 detail 页入口对齐，不改后端契约。"
+```
+
+### R108 - detail 页右侧 rail QA 收口
+
+```yaml
+id: R108
+module: "质量与交付"
+description: "对 F069-F072 这组 detail 页右侧 rail 改动做 QA 收口，确认链路、布局和 no-database 边界可验证、可追溯。"
+source: "Story Runner continuation after Q017 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做验收、必要轻微修正和追溯更新；不新增依赖、不接数据库。"
+```

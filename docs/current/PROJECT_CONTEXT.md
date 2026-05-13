@@ -10,7 +10,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed product chain was `US111/F065 -> US114/F068`, followed by `US115/Q017`, on branch `codex/f060-risk-workbench`. This batch extended the same no-database risk/unavailability review vertical by adding wide-screen review rails and continuation actions so plan, risk, shift-detail, and unavailability pages keep users inside the same scoped review path.
+No ready product story is currently queued. The last completed product chain was `US116/F069 -> US119/F072`, followed by `US120/Q018`, on branch `codex/f060-risk-workbench`. This batch continued the same no-database risk/unavailability review vertical by extending wide-screen right-side review rails to the detail pages so plan, risk, and unavailability detail views keep the same review posture as the list/workbench pages.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,6 +53,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The `F065-F068 + Q017` batch is complete and current has returned to empty.
+The `F069-F072 + Q018` batch is complete and current has returned to empty.
 
 Next, either continue the same no-database review workflow with another local frontend slice or switch to a different local-contract story that still avoids database, real integrations, auth, approval, export, batch operations, and production formulas. Database work stays deferred.

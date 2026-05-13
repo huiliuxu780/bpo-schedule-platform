@@ -866,3 +866,27 @@
 - action: 收口 F065-F068 的 review rail 和 continuation action QA。
 - status: `done`
 - notes: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run lint`、`npm run typecheck`、`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过；在 `http://localhost:3014` 启动本地 dev server 后，`curl` 命中了 `/shift-details`、`/unavailability`、计划详情和不可用影响定位页的关键 rail/action 文案；current queue 与 active tasks 已清空。
+
+- task_id: `F069-F072`
+- source_ids:
+  - `R104`
+  - `R105`
+  - `R106`
+  - `R107`
+- story_ids:
+  - `US116`
+  - `US117`
+  - `US118`
+  - `US119`
+- action: 完成计划详情、风险明细、不可用影响定位三张 detail 页的右侧复核 rail，并统一 detail 页 review helper 入口。
+- status: `done`
+- notes: 三个 detail 页在宽屏下新增右侧复核 rail；计划详情、风险明细和不可用影响定位均展示范围摘要、关键指标和继续复核入口；继续复用 `lib/review-navigation.ts`，没有引入数据库、依赖或后端契约变更。
+
+- task_id: `Q018`
+- source_ids:
+  - `R108`
+- story_ids:
+  - `US120`
+- action: 收口 F069-F072 的 detail 页右侧 rail QA。
+- status: `done`
+- notes: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run lint`、`npm run typecheck`、`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过；本地 `http://localhost:3014` HTML smoke 命中了计划详情、风险明细和不可用影响定位页的 `当前复核范围 / 复核任务 / 回到全部` 关键文案；current queue 与 active tasks 已清空。

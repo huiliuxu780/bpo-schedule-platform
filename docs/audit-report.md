@@ -1102,6 +1102,29 @@
 - 本地 dev server：`npm run dev -- --port 3014` 启动成功。
 - 本地 HTTP smoke：`/shift-details`、`/unavailability`、`/schedule-plans/plan-20260511-shanghai-bosch-v1`、`/unavailability/unavail-20260511-001` 的 HTML 均包含本轮新增的 rail 或 continuation action 关键文案。
 
+### 2026-05-13 - detail 页右侧 rail 连续块
+
+#### 审计结论
+
+- `F069-F072/US116-US119` 已把宽屏右侧复核 rail 补到 `排班计划详情`、`风险明细`、`不可用影响定位` 三个 detail 页，三页现在都能在主内容旁固定显示范围摘要、关键指标和继续复核入口。
+- `计划详情 / 风险明细 / 不可用影响定位` 的 detail-level review actions 已继续收敛到 `lib/review-navigation.ts`，避免 query 拼装再次散落回页面内部。
+- 整个批次仍然停留在本地前端和本地 seed 契约层，没有引入数据库、依赖、后端契约变更、审批、导出、批量、权限或生产公式。
+
+#### 风险
+
+- 当前 detail 页右侧 rail 仍是本地复核辅助视图，不持久化用户状态；如果后续要变成真实任务面板或带用户偏好，需要新故事单独定义。
+- HTML smoke 能验证 rail 文案和入口存在，但不是视觉级截图验收；如果要补视觉截图，应在浏览器 runtime 稳定时单独补一轮。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，19 个测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+- 本地 HTTP smoke：`/schedule-plans/plan-20260511-shanghai-bosch-v1`、`/schedule-risks/risk-plan-20260511-shanghai-bosch-v1-09%3A30`、`/unavailability/unavail-20260511-001` 的 HTML 均包含 `当前复核范围`、`复核任务` 和对应 `回到全部` 关键文案。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

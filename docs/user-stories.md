@@ -1980,3 +1980,97 @@ acceptance:
   - "`bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US116 - 排班计划详情右侧复核 rail
+
+```yaml
+id: US116
+requirement_ids:
+  - R104
+module: "排班与风险联动"
+role: "排班经理"
+story: "作为排班经理，我希望排班计划详情页在宽屏下也有右侧复核 rail，这样查看 0.5h 时段时不会只剩主内容。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "排班计划详情页在宽屏下显示右侧复核 rail。"
+  - "rail 显示当前范围、关键指标和继续复核入口。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US117 - 风险明细右侧复核 rail
+
+```yaml
+id: US117
+requirement_ids:
+  - R105
+module: "排班与风险联动"
+role: "排班经理"
+story: "作为排班经理，我希望风险明细页在宽屏下也有右侧复核 rail，这样查看关联班次和不可用时能保持复核姿态。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "风险明细页在宽屏下显示右侧复核 rail。"
+  - "rail 显示当前范围、关键指标和继续复核入口。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US118 - 不可用影响定位右侧复核 rail
+
+```yaml
+id: US118
+requirement_ids:
+  - R106
+module: "排班与风险联动"
+role: "排班经理"
+story: "作为排班经理，我希望不可用影响定位页在宽屏下也有右侧复核 rail，这样查看影响班次和关联风险时能保持复核姿态。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "不可用影响定位页在宽屏下显示右侧复核 rail。"
+  - "rail 显示当前范围、关键指标和继续复核入口。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US119 - detail 页复核入口统一 helper
+
+```yaml
+id: US119
+requirement_ids:
+  - R107
+module: "排班与风险联动"
+role: "排班经理"
+story: "作为排班经理，我希望 detail 页的复核入口继续统一到同一套本地 helper，这样跨页动作不会再次漂移。"
+task_type: "feature"
+priority: "P0"
+acceptance:
+  - "计划详情、风险明细和不可用影响定位的主要 review 入口统一使用同一套本地 helper。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US120 - detail 页右侧 rail QA 收口
+
+```yaml
+id: US120
+requirement_ids:
+  - R108
+module: "质量与交付"
+role: "QA"
+story: "作为 QA，我希望对 F069-F072 这组 detail 页右侧 rail 改动做收口验收，确保链路、布局和 no-database 边界都可验证。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "计划详情、风险明细和不可用影响定位页在宽屏下均可见右侧 rail。"
+  - "detail 页的 review 入口和范围摘要与现有列表页保持一致。"
+  - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
+  - "`bash scripts/check.sh` 通过。"
+status: "done"
+```

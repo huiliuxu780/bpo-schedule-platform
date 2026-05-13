@@ -738,3 +738,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F069-F072 Detail Review Rails
+
+- branch_name: `codex/f060-risk-workbench`
+- base_main_commit: `a3a134c`
+- remote_status: `branch continued after pushing 5be22c2`
+- scope: schedule-plan detail, risk detail, and unavailability-impact detail right-side review rails; detail-page review helper alignment; focused tests; and traceability updates only.
+- allowed_files_check: `app/schedule-plans/**`, `app/schedule-risks/**`, `app/unavailability/**`, `components/**`, `lib/review-navigation.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `app/schedule-plans/[planId]/page.tsx`, `app/schedule-risks/[riskId]/page.tsx`, `app/unavailability/[unavailabilityId]/page.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- check_result: failing tests first verified missing detail-page rail strings; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` then passed with 19 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed; local HTML smoke on `http://localhost:3014` confirmed plan detail, risk detail, and unavailability impact pages contained `当前复核范围 / 复核任务 / 回到全部` text.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
