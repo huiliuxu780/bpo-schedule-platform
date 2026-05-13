@@ -899,3 +899,12 @@
 - action: 收口 Harness 文档一致性与 Hook 守门。
 - status: `done`
 - notes: 统一 AGENTS/STATE_MANAGEMENT/GIT_BRANCH_WORKFLOW/GATE_REGISTRY 的 SoT 与 hook 边界；`check-state` 新增 diff mode、batch、branch、acceptance_ref 和 closeout scope 校验；新增 repo-local hooks 与 commit message 校验；`check.sh` 会在 typecheck 前清理 stale `.next` route types；current queue 与 active tasks 已恢复为空。
+
+- task_id: `H031`
+- source_ids:
+  - `R110`
+- story_ids:
+  - `US122`
+- action: 治理 TRACE_INDEX 预算并补 registry 窗口化规则。
+- status: `done`
+- notes: `TRACE_INDEX` 从 428 行压到 313 行，strict state check 不再输出 registry budget warning；新增“先压缩再归档”的 registry slimming 规则；只改 current/registry/quality/traceability 文档，没有碰业务代码、依赖、package/lockfile 或数据库。

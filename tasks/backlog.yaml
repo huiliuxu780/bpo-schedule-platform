@@ -3783,3 +3783,47 @@ tasks:
       - "需要审批、导出、批量调班、自动排班或生产工作流能力"
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
     commit_after_done: true
+  - id: H031
+    title: "TRACE_INDEX 预算治理与窗口化"
+    priority: P1
+    status: done
+    required_workflow: state-hygiene
+    allowed_files:
+      - "docs/current/**"
+      - "docs/registry/**"
+      - "docs/quality/**"
+      - "docs/harness/lightweight-harness.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "TRACE_INDEX 回到 warning 预算内，strict state check 不再输出 registry budget warning。"
+      - "registry 的窗口化/减重规则写入治理文档，避免 registry 漂移成默认大上下文。"
+      - "只改 current/registry/quality/traceability 文档，不改业务代码、不改依赖、不接数据库。"
+      - "`bash scripts/check-state.sh --strict --diff=working`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要业务代码改动"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "需要大规模 archive 迁移才能解决 registry 预算"
+    commit_after_done: true

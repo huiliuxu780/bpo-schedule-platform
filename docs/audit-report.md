@@ -1149,6 +1149,25 @@
 - `bash scripts/check.sh`：通过，包含 strict state、两组 node 回归、lint、typecheck、Next build 和后端 19 个 unittest。
 - `bash scripts/install-hooks.sh`：通过，repo-local hooks 已安装。
 
+### 2026-05-13 - TRACE_INDEX 预算治理与窗口化
+
+#### 审计结论
+
+- `H031/US122` 已把 `TRACE_INDEX` 从 428 行压缩到 313 行，warning 预算信号已消失。
+- registry 现在明确采用“先压缩再归档”的减重顺序，避免为轻度超预算触发大范围 archive transaction。
+- 本轮只修改 current/registry/quality/traceability 文档，没有碰业务代码、依赖、package/lockfile、数据库、认证、权限、审批、导出、批量或生产公式。
+
+#### 风险
+
+- 这次减重主要依赖结构压缩；如果后续继续高速增长，仍然可能需要真正的 archive window 任务。
+- 当前压缩保留了完整 ID 与关系，但可读性比多行块更紧凑；后续如要引入自动 formatter，需要确保不把 registry 再次膨胀回去。
+
+#### 验证
+
+- `wc -l docs/registry/TRACE_INDEX.yaml`：313 行。
+- `bash scripts/check-state.sh --strict --diff=working`：通过，已无 registry budget warning。
+- `git diff --check`：通过。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

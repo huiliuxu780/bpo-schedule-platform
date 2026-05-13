@@ -206,6 +206,18 @@ Query budget:
 
 Do not read archive broadly just to feel safe.
 
+## Registry Windowing
+
+`docs/registry/TRACE_INDEX.yaml` is a lookup index, not a narrative ledger.
+
+Registry slimming rules:
+
+- Prefer compact one-line entries when an item only needs `file`, relationship IDs, and empty `archive_refs`.
+- When the trace index crosses the warning budget, the next state-hygiene pass should first compress eligible multiline entries before considering archive migration.
+- Use archive migration only when compaction and duplicate removal are no longer enough.
+- Keep `current_files` explicit, but keep historical story/task/requirement entries structurally minimal.
+- Do not copy acceptance text, status, audit prose, or long notes into registry indexes.
+
 ## check-state
 
 `scripts/check-state.sh` supports:

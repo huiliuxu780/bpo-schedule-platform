@@ -18,7 +18,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-No ready story is currently queued. The last completed product chain was `US116/F069 -> US119/F072`, followed by `US120/Q018`, on branch `codex/f060-risk-workbench`. This batch continued the same no-database risk/unavailability review vertical by extending wide-screen right-side review rails to the detail pages so plan, risk, and unavailability detail views keep the same review posture as the list/workbench pages.
+No ready story is currently queued. The latest completed governance task was `US122/H031` on branch `codex/h031-risk-governance-reconcile`. It pulled `TRACE_INDEX` back under budget and codified the registry slimming rule without broad archive migration.
 
 The latest completed governance pass was `US121/H030` on branch `codex/h030-harness-hook-guard`, which aligned the Harness rule sources, tightened the active-task contract, expanded `check-state`, added repo-local hooks, and made standard verification resilient to stale `.next` route typings across branches.
 
@@ -63,8 +63,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The `F069-F072 + Q018` batch and `H030/US121` governance pass are complete, and current has returned to empty.
-
-The reconciliation branch is now carrying the merged product and governance baseline, but no new ready story is queued yet.
-
-Seed the next ready story explicitly before returning to product development. Database work stays deferred.
+Current has returned to empty again. Seed the next ready story explicitly before resuming product development. Database work stays deferred.

@@ -1,5 +1,5 @@
 version: 1
-updated_at: "2026-05-12"
+updated_at: "2026-05-13"
 rules:
   - "This registry stores IDs, paths, and relationships only."
   - "Do not store lifecycle state in this file."
@@ -10,62 +10,14 @@ current_files:
   active_tasks: "docs/current/ACTIVE_TASKS.yaml"
   blockers: "docs/current/BLOCKERS.md"
 stories:
-  US065:
-    file: "docs/user-stories.md"
-    requirement_ids:
-      - "R053"
-    task_ids:
-      - "H024"
-    archive_refs: []
-  US066:
-    file: "docs/user-stories.md"
-    requirement_ids:
-      - "R054"
-    task_ids:
-      - "H025"
-    archive_refs: []
-  US067:
-    file: "docs/user-stories.md"
-    requirement_ids:
-      - "R055"
-    task_ids:
-      - "H026"
-    archive_refs: []
-  US068:
-    file: "docs/user-stories.md"
-    requirement_ids:
-      - "R056"
-    task_ids:
-      - "H027"
-    archive_refs: []
-  US069:
-    file: "docs/user-stories.md"
-    requirement_ids:
-      - "R057"
-    task_ids:
-      - "H028"
-    archive_refs: []
-  US070:
-    file: "docs/user-stories.md"
-    requirement_ids:
-      - "R058"
-    task_ids:
-      - "F030"
-    archive_refs: []
-  US071:
-    file: "docs/user-stories.md"
-    requirement_ids:
-      - "R059"
-    task_ids:
-      - "F031"
-    archive_refs: []
-  US072:
-    file: "docs/user-stories.md"
-    requirement_ids:
-      - "R060"
-    task_ids:
-      - "Q012"
-    archive_refs: []
+  US065: {file: "docs/user-stories.md", requirement_ids: ["R053"], task_ids: ["H024"], archive_refs: []}
+  US066: {file: "docs/user-stories.md", requirement_ids: ["R054"], task_ids: ["H025"], archive_refs: []}
+  US067: {file: "docs/user-stories.md", requirement_ids: ["R055"], task_ids: ["H026"], archive_refs: []}
+  US068: {file: "docs/user-stories.md", requirement_ids: ["R056"], task_ids: ["H027"], archive_refs: []}
+  US069: {file: "docs/user-stories.md", requirement_ids: ["R057"], task_ids: ["H028"], archive_refs: []}
+  US070: {file: "docs/user-stories.md", requirement_ids: ["R058"], task_ids: ["F030"], archive_refs: []}
+  US071: {file: "docs/user-stories.md", requirement_ids: ["R059"], task_ids: ["F031"], archive_refs: []}
+  US072: {file: "docs/user-stories.md", requirement_ids: ["R060"], task_ids: ["Q012"], archive_refs: []}
   US073:
     file: "docs/user-stories.md"
     requirement_ids: ["R061"]
@@ -155,32 +107,13 @@ stories:
   US119: {file: "docs/user-stories.md", requirement_ids: ["R107"], task_ids: ["F072"], archive_refs: []}
   US120: {file: "docs/user-stories.md", requirement_ids: ["R108"], task_ids: ["Q018"], archive_refs: []}
   US121: {file: "docs/user-stories.md", requirement_ids: ["R109"], task_ids: ["H030"], archive_refs: []}
+  US122: {file: "docs/user-stories.md", requirement_ids: ["R110"], task_ids: ["H031"], archive_refs: []}
 tasks:
-  H024:
-    file: "tasks/backlog.yaml"
-    story_ids:
-      - "US065"
-    gate: "state-hygiene"
-  H025:
-    file: "tasks/backlog.yaml"
-    story_ids:
-      - "US066"
-    gate: "state-hygiene"
-  H026:
-    file: "tasks/backlog.yaml"
-    story_ids:
-      - "US067"
-    gate: "state-hygiene"
-  H027:
-    file: "tasks/backlog.yaml"
-    story_ids:
-      - "US068"
-    gate: "state-hygiene"
-  H028:
-    file: "tasks/backlog.yaml"
-    story_ids:
-      - "US069"
-    gate: "state-hygiene"
+  H024: {file: "tasks/backlog.yaml", story_ids: ["US065"], gate: "state-hygiene"}
+  H025: {file: "tasks/backlog.yaml", story_ids: ["US066"], gate: "state-hygiene"}
+  H026: {file: "tasks/backlog.yaml", story_ids: ["US067"], gate: "state-hygiene"}
+  H027: {file: "tasks/backlog.yaml", story_ids: ["US068"], gate: "state-hygiene"}
+  H028: {file: "tasks/backlog.yaml", story_ids: ["US069"], gate: "state-hygiene"}
   F030:
     file: "tasks/backlog.yaml"
     story_ids:
@@ -275,67 +208,18 @@ tasks:
   F072: {file: "tasks/backlog.yaml", story_ids: ["US119"], gate: "frontend-scaffold"}
   Q018: {file: "tasks/backlog.yaml", story_ids: ["US120"], gate: "qa"}
   H030: {file: "tasks/backlog.yaml", story_ids: ["US121"], gate: "state-hygiene"}
+  H031: {file: "tasks/backlog.yaml", story_ids: ["US122"], gate: "state-hygiene"}
 requirements:
-  R051:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US063"
-    task_ids:
-      - "H022"
-  R052:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US064"
-    task_ids:
-      - "H023"
-  R053:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US065"
-    task_ids:
-      - "H024"
-  R054:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US066"
-    task_ids:
-      - "H025"
-  R055:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US067"
-    task_ids:
-      - "H026"
-  R056:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US068"
-    task_ids:
-      - "H027"
-  R057:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US069"
-    task_ids:
-      - "H028"
-  R058:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US070"
-    task_ids:
-      - "F030"
-  R059:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US071"
-    task_ids:
-      - "F031"
-  R060:
-    file: "docs/raw-requirements.md"
-    story_ids:
-      - "US072"
-    task_ids:
-      - "Q012"
+  R051: {file: "docs/raw-requirements.md", story_ids: ["US063"], task_ids: ["H022"]}
+  R052: {file: "docs/raw-requirements.md", story_ids: ["US064"], task_ids: ["H023"]}
+  R053: {file: "docs/raw-requirements.md", story_ids: ["US065"], task_ids: ["H024"]}
+  R054: {file: "docs/raw-requirements.md", story_ids: ["US066"], task_ids: ["H025"]}
+  R055: {file: "docs/raw-requirements.md", story_ids: ["US067"], task_ids: ["H026"]}
+  R056: {file: "docs/raw-requirements.md", story_ids: ["US068"], task_ids: ["H027"]}
+  R057: {file: "docs/raw-requirements.md", story_ids: ["US069"], task_ids: ["H028"]}
+  R058: {file: "docs/raw-requirements.md", story_ids: ["US070"], task_ids: ["F030"]}
+  R059: {file: "docs/raw-requirements.md", story_ids: ["US071"], task_ids: ["F031"]}
+  R060: {file: "docs/raw-requirements.md", story_ids: ["US072"], task_ids: ["Q012"]}
   R061:
     file: "docs/raw-requirements.md"
     story_ids: ["US073"]
@@ -415,6 +299,7 @@ requirements:
   R107: {file: "docs/raw-requirements.md", story_ids: ["US119"], task_ids: ["F072"]}
   R108: {file: "docs/raw-requirements.md", story_ids: ["US120"], task_ids: ["Q018"]}
   R109: {file: "docs/raw-requirements.md", story_ids: ["US121"], task_ids: ["H030"]}
+  R110: {file: "docs/raw-requirements.md", story_ids: ["US122"], task_ids: ["H031"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

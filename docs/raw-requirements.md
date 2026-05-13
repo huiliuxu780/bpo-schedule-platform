@@ -1105,3 +1105,16 @@ version: "1.0"
 status: "split"
 notes: "只改治理文档、状态校验、hook 脚本和追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R110 - TRACE_INDEX 预算治理与窗口化
+
+```yaml
+id: R110
+module: "Harness"
+description: "把 TRACE_INDEX 收回 warning 预算内，并明确 registry 的窗口化与减重规则，避免 registry 成为新的默认大上下文入口。"
+source: "Governance continuation on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做 current/registry/quality/traceability 文档治理；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

@@ -193,3 +193,10 @@
 - 原因：如果 strict 校验只看“当前快照里的 in_progress task”，那么任何合法的 current 清空提交都会被错误拦截，造成状态收口自锁。
 - 影响：`pre-commit` 运行 `bash scripts/check-state.sh --strict --diff=staged` 和 `git diff --cached --check`；`commit-msg` 强制当前 active task id 或允许的 `harness:/state-repair:/audit:` 前缀；`pre-push` 运行 `bash scripts/check.sh`；closeout 提交可以在同一提交中完成 current 清空和追溯更新。
 - 限制：该决策不放宽业务范围，不授权依赖、package/lockfile、数据库、真实集成、认证、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-13 - D028 - TRACE_INDEX 先压缩再归档
+
+- 决策：当 `TRACE_INDEX.yaml` 超过 warning 预算时，优先通过结构压缩和重复消除减重；只有这些手段不够时，才进入 archive migration。
+- 原因：当前 registry 的问题是体积膨胀，而不是历史缺失；先压缩可以保留完整追溯路径，同时避免为了小幅超预算启动大范围归档事务。
+- 影响：registry 中只保留最小关系字段；多行空 `archive_refs`、单关系 story/task/requirement 项优先压成单行；state-hygiene 任务需要先尝试 compaction，再决定是否需要更大迁移。
+- 限制：该决策只约束 registry 减重顺序，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。

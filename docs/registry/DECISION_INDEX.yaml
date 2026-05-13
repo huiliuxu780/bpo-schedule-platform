@@ -95,3 +95,10 @@ decisions:
       - "scripts/hooks/pre-push"
       - "scripts/validate-commit-message.mjs"
       - "docs/quality/STATE_MANAGEMENT.md"
+  D-2026-05-13-trace-index-compaction:
+    title: "TRACE_INDEX crosses warning budget should compact before archive migration"
+    file: "docs/decision-log.md"
+    related_files:
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/quality/STATE_MANAGEMENT.md"
+      - "docs/current/ACTIVE_TASKS.yaml"

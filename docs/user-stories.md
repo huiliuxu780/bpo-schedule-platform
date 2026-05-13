@@ -2097,3 +2097,24 @@ dependencies:
   - "US120"
 status: "done"
 ```
+
+### US122 - TRACE_INDEX 预算治理与窗口化
+
+```yaml
+id: US122
+requirement_ids:
+  - R110
+module: "Harness"
+role: "项目执行者"
+story: "作为项目执行者，我希望 TRACE_INDEX 保持在明确预算内并有稳定的减重规则，这样 current 之外的 lookup 层不会重新膨胀成默认上下文负担。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "TRACE_INDEX 回到 warning 预算内，strict state check 不再输出 registry budget warning。"
+  - "STATE_MANAGEMENT 或同级规则文档明确 registry windowing / slimming 规则。"
+  - "current queue、trace index 和 legacy traceability 对这条治理任务保持一致。"
+  - "`bash scripts/check-state.sh --strict --diff=working`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US121"
+status: "done"
+```

@@ -772,3 +772,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pushed on branch`
 - blocked_reason: `N/A`
+
+### H031 TRACE_INDEX Budget Governance
+
+- branch_name: `codex/h031-risk-governance-reconcile`
+- base_main_commit: `5a3a522`
+- remote_status: `not_pushed`
+- scope: current-state seeding for a state-hygiene task, TRACE_INDEX compaction, registry windowing rule update, and traceability records only.
+- allowed_files_check: `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/harness/lightweight-harness.md`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no business code, backend, package, or lockfile files.
+- scope_diff_check: same as allowed scope; no business code, backend, package, or lockfile files.
+- check_result: `bash scripts/check-state.sh --strict --diff=working` passed with TRACE_INDEX back under budget; `git diff --check` passed; final `bash scripts/check.sh` to be re-run after traceability closeout.
+- local_commit_sha: `N/A`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
