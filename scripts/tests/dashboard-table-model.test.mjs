@@ -399,15 +399,13 @@ test("unavailability scope filters preserve overlapping drilldown context", () =
 test("shift details page exposes a wide-screen review rail", async () => {
   const source = await readFile(new URL("../../app/shift-details/page.tsx", import.meta.url), "utf8");
 
-  assert.match(source, /当前复核范围/);
-  assert.match(source, /复核任务/);
+  assert.match(source, /ReviewChecklistRail/);
 });
 
 test("unavailability page exposes a wide-screen review rail", async () => {
   const source = await readFile(new URL("../../app/unavailability/page.tsx", import.meta.url), "utf8");
 
-  assert.match(source, /当前复核范围/);
-  assert.match(source, /复核任务/);
+  assert.match(source, /ReviewChecklistRail/);
 });
 
 test("schedule plan interval table exposes continuation actions", async () => {
@@ -439,8 +437,7 @@ test("schedule plan detail page exposes a wide-screen review rail", async () => 
     "utf8",
   );
 
-  assert.match(source, /当前复核范围/);
-  assert.match(source, /复核任务/);
+  assert.match(source, /ReviewChecklistRail/);
 });
 
 test("schedule risk detail page exposes a wide-screen review rail", async () => {
@@ -449,8 +446,7 @@ test("schedule risk detail page exposes a wide-screen review rail", async () => 
     "utf8",
   );
 
-  assert.match(source, /当前复核范围/);
-  assert.match(source, /复核任务/);
+  assert.match(source, /ReviewChecklistRail/);
 });
 
 test("unavailability impact page exposes a wide-screen review rail", async () => {
@@ -459,6 +455,31 @@ test("unavailability impact page exposes a wide-screen review rail", async () =>
     "utf8",
   );
 
-  assert.match(source, /当前复核范围/);
-  assert.match(source, /复核任务/);
+  assert.match(source, /ReviewChecklistRail/);
+});
+
+test("shared review checklist rail component defines current and next step sections", async () => {
+  const source = await readFile(
+    new URL("../../components/review-checklist-rail.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /当前步骤/);
+  assert.match(source, /下一步/);
+});
+
+test("review workflow pages use the shared review checklist rail", async () => {
+  const pagePaths = [
+    "../../app/schedule-risks/page.tsx",
+    "../../app/schedule-plans/[planId]/page.tsx",
+    "../../app/shift-details/page.tsx",
+    "../../app/unavailability/page.tsx",
+    "../../app/schedule-risks/[riskId]/page.tsx",
+    "../../app/unavailability/[unavailabilityId]/page.tsx",
+  ];
+
+  for (const pagePath of pagePaths) {
+    const source = await readFile(new URL(pagePath, import.meta.url), "utf8");
+    assert.match(source, /ReviewChecklistRail/);
+  }
 });

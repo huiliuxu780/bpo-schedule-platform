@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { UnavailabilityImpactRiskTable } from "@/components/unavailability-impact-risk-table"
 import { UnavailabilityImpactShiftTable } from "@/components/unavailability-impact-shift-table"
 import { Badge } from "@/components/ui/badge"
@@ -198,55 +199,26 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
             </Card>
           </div>
 
-          <aside className="grid gap-4 xl:sticky xl:top-16">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">当前复核范围</CardTitle>
-                <CardDescription>宽屏下固定显示，保持 detail 页复核姿态</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3 text-sm">
-                <div className="rounded-lg border bg-background p-3">
-                  <p className="text-xs text-muted-foreground">范围摘要</p>
-                  <p className="mt-1">{scopeLabel}</p>
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">影响班次</span>
-                    <span className="font-medium tabular-nums">{impactedShiftDetails.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">关联风险</span>
-                    <span className="font-medium tabular-nums">{relatedRisks.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">排班缺口</span>
-                    <span className="font-medium tabular-nums">{totalGap}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">复核任务</CardTitle>
-                <CardDescription>继续沿着当前不可用范围检查风险、班次和计划</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={shiftHref}>查看班次</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={riskHref}>查看风险</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={planHref}>查看计划</Link>
-                </Button>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href={listHref}>回到全部不可用</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </aside>
+          <ReviewChecklistRail
+            scopeLabel={scopeLabel}
+            scopeFallbackLabel={scopeLabel}
+            scopeDescription="宽屏下固定显示，保持 detail 页复核姿态"
+            taskDescription="继续沿着当前不可用范围检查风险、班次和计划"
+            currentStep="确认当前不可用的影响班次、关联风险和排班缺口。"
+            nextStep="继续查看班次、风险与计划，确认不可用影响是否已定位清楚。"
+            summaryItems={[
+              { label: "影响班次", value: impactedShiftDetails.length },
+              { label: "关联风险", value: relatedRisks.length },
+              { label: "排班缺口", value: totalGap },
+            ]}
+            actions={[
+              { label: "查看班次", href: shiftHref },
+              { label: "查看风险", href: riskHref },
+              { label: "查看计划", href: planHref },
+            ]}
+            backHref={listHref}
+            backLabel="回到全部不可用"
+          />
         </div>
       </main>
     </AppShell>

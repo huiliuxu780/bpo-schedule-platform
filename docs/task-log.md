@@ -917,3 +917,39 @@
 - action: 收口 post-closeout traceability guard，并回填最近 branch-log 缺失的 local commit sha。
 - status: `done`
 - notes: `check-state` 现在允许 branch-log-only 的 post-closeout staged diff 在 current 已清空后继续提交；无 active task 的其他 staged diff 仍严格失败；最近 `Q015`、`F061-F064`、`F065-F068`、`F069-F072` 和 `H031` 的 branch-log commit SHA 已回填。
+
+- task_id: `H033`
+- source_ids:
+  - `R113`
+- story_ids:
+  - `US125`
+- action: 收口 startup seed strict-state guard，并把 current 恢复到 idle。
+- status: `done`
+- notes: `check-state` 现在允许从 idle seed 到 active 的受限 startup diff，通过后产品任务仍不能继续修改 `docs/current/**` 或 `docs/registry/**`；`node --test scripts/tests/check-state.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。
+
+- task_id: `H034`
+- source_ids:
+  - `R114`
+- story_ids:
+  - `US126`
+- action: 收口 product closeout strict-state 与 commit-message 守门。
+- status: `done`
+- notes: `check-state` 现在允许 same-commit product closeout 合法修改 current 清空文件；`validate-commit-message` 会在 current 已清空但 staged diff 属于合法 closeout 时，从 `HEAD` 的 active task 合同识别 commit subject；`node --test scripts/tests/check-state.test.mjs`、`node --test scripts/tests/validate-commit-message.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。
+
+- task_id: `F073-F076`
+- source_ids:
+  - `R112`
+- story_ids:
+  - `US124`
+- action: 抽出共享 `ReviewChecklistRail`，统一 risk/plan/shift/unavailability 页面右侧复核 rail。
+- status: `done`
+- notes: 新增 `components/review-checklist-rail.tsx`；风险工作台、计划详情、班次明细、不可用列表、风险明细、不可用影响定位六个页面统一显示范围摘要、当前步骤、下一步、scoped actions 和稳定回退入口；`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过。
+
+- task_id: `Q019`
+- source_ids:
+  - `R112`
+- story_ids:
+  - `US124`
+- action: 收口共享 review checklist rail 的 QA。
+- status: `done`
+- notes: 严格状态、状态回归、commit-message 回归、lint、typecheck、Next build 和后端 19 个 unittest 全部通过；current queue 与 active tasks 已清空。

@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { ShiftDetailsTable } from "@/components/shift-details-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -268,54 +269,25 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
             </Card>
           </div>
 
-          <aside className="grid gap-4 xl:sticky xl:top-16">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">当前复核范围</CardTitle>
-                <CardDescription>宽屏下固定显示，避免页面只剩主表格</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3 text-sm">
-                <div className="rounded-lg border bg-background p-3">
-                  <p className="text-xs text-muted-foreground">范围摘要</p>
-                  <p className="mt-1">{scopeLabel || "全部班次"}</p>
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">班次数量</span>
-                    <span className="font-medium tabular-nums">{rows.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">缺口班次</span>
-                    <span className="font-medium tabular-nums">{gapRows.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">整体覆盖率</span>
-                    <span className="font-medium tabular-nums">
-                      {formatCoverageRate(coverageRate)}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">复核任务</CardTitle>
-                <CardDescription>沿着当前上下文继续检查，不回到宽泛列表</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={riskHref}>查看风险</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={unavailabilityHref}>查看不可用</Link>
-                </Button>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/shift-details">回到全部班次</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </aside>
+          <ReviewChecklistRail
+            scopeLabel={scopeLabel}
+            scopeFallbackLabel="全部班次"
+            scopeDescription="宽屏下固定显示，避免页面只剩主表格"
+            taskDescription="沿着当前上下文继续检查，不回到宽泛列表"
+            currentStep="核对当前时段的班次数量、缺口班次和整体覆盖率。"
+            nextStep="继续查看风险与不可用，确认缺口是否来自同一范围因素。"
+            summaryItems={[
+              { label: "班次数量", value: rows.length },
+              { label: "缺口班次", value: gapRows.length },
+              { label: "整体覆盖率", value: formatCoverageRate(coverageRate) },
+            ]}
+            actions={[
+              { label: "查看风险", href: riskHref },
+              { label: "查看不可用", href: unavailabilityHref },
+            ]}
+            backHref="/shift-details"
+            backLabel="回到全部班次"
+          />
         </div>
       </main>
     </AppShell>

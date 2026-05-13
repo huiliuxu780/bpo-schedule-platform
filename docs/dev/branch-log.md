@@ -806,3 +806,54 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### H033 Startup Seed Strict-State Guard
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `5fd1a21^`
+- remote_status: `not_pushed`
+- scope: startup-seed state-check guard only; no business code, no dependency, no database, no real integration changes.
+- allowed_files_check: `docs/current/**`, `docs/registry/**`, `docs/quality/**`, legacy traceability docs, `tasks/backlog.yaml`, `scripts/check-state.sh`, and `scripts/tests/check-state.test.mjs`; no `app/**`, `components/**`, `lib/**`, `backend/**`, package, or lockfile files.
+- scope_diff_check: current closeout/startup-state docs, state-check script, state-check tests, and traceability docs only.
+- check_result: `bash scripts/check-state.sh --strict --diff=working` passed; `node --test scripts/tests/check-state.test.mjs` passed with 24 tests; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `5fd1a21`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
+
+### H034 Product Closeout Guard
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `5fd1a21`
+- remote_status: `not_pushed`
+- scope: product closeout strict-state guard, commit-message closeout guard, current/traceability updates, and governance regression tests only.
+- allowed_files_check: `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/decision-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, `docs/PROJECT_STATE.md`, `tasks/backlog.yaml`, `scripts/check-state.sh`, `scripts/validate-commit-message.mjs`, and related tests; no business code, backend, package, or lockfile files.
+- scope_diff_check: same as allowed scope; no `app/**`, `components/**`, `hooks/**`, `lib/**`, `backend/**`, package, or lockfile files.
+- check_result: `bash scripts/check-state.sh --strict --diff=working` passed; `node --test scripts/tests/check-state.test.mjs` passed with 25 tests; `node --test scripts/tests/validate-commit-message.test.mjs` passed with 7 tests; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `6af4131`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
+
+### F073-F076 Shared Review Checklist Rail
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `5fd1a21`
+- remote_status: `not_pushed`
+- scope: shared review rail component, page-level rail replacement across risk/plan/shift/unavailability routes, focused source regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `app/schedule-plans/**`, `app/schedule-risks/**`, `app/shift-details/**`, `app/unavailability/**`, `components/**`, `lib/**`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `components/review-checklist-rail.tsx`, the six review routes, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 21 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

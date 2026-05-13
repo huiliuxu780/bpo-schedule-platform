@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { UnavailabilityTable } from "@/components/unavailability-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -249,52 +250,25 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
             </Card>
           </div>
 
-          <aside className="grid gap-4 xl:sticky xl:top-16">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">当前复核范围</CardTitle>
-                <CardDescription>宽屏下固定显示，保留列表旁的复核摘要</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3 text-sm">
-                <div className="rounded-lg border bg-background p-3">
-                  <p className="text-xs text-muted-foreground">范围摘要</p>
-                  <p className="mt-1">{scopeLabel || "全部不可用"}</p>
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">生效中</span>
-                    <span className="font-medium tabular-nums">{activeRows.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">影响时段</span>
-                    <span className="font-medium tabular-nums">{affectedIntervals}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">涉及团队</span>
-                    <span className="font-medium tabular-nums">{teamCount}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">复核任务</CardTitle>
-                <CardDescription>继续沿着当前范围查看风险和班次影响</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={riskHref}>查看风险</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={shiftHref}>查看班次</Link>
-                </Button>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/unavailability">回到全部不可用</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </aside>
+          <ReviewChecklistRail
+            scopeLabel={scopeLabel}
+            scopeFallbackLabel="全部不可用"
+            scopeDescription="宽屏下固定显示，保留列表旁的复核摘要"
+            taskDescription="继续沿着当前范围查看风险和班次影响"
+            currentStep="确认当前范围内的生效记录、影响时段和涉及团队。"
+            nextStep="继续查看风险与班次，确认不可用是否正在放大排班缺口。"
+            summaryItems={[
+              { label: "生效中", value: activeRows.length },
+              { label: "影响时段", value: affectedIntervals },
+              { label: "涉及团队", value: teamCount },
+            ]}
+            actions={[
+              { label: "查看风险", href: riskHref },
+              { label: "查看班次", href: shiftHref },
+            ]}
+            backHref="/unavailability"
+            backLabel="回到全部不可用"
+          />
         </div>
       </main>
     </AppShell>

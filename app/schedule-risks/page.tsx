@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { AppShell } from "@/components/app-shell"
+import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -205,59 +206,26 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
             </Card>
           </div>
 
-          <aside className="grid gap-4 xl:sticky xl:top-16">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">当前复核范围</CardTitle>
-                <CardDescription>
-                  宽屏下固定显示，避免只剩主表格区域
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3 text-sm">
-                <div className="rounded-lg border bg-background p-3">
-                  <p className="text-xs text-muted-foreground">范围摘要</p>
-                  <p className="mt-1">{scopeLabel || "全部风险"}</p>
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">高风险</span>
-                    <span className="font-medium tabular-nums">{summary.high}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">缺口合计</span>
-                    <span className="font-medium tabular-nums">{summary.totalGap}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">不可用影响</span>
-                    <span className="font-medium tabular-nums">
-                      {summary.affectedUnavailability}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">复核任务</CardTitle>
-                <CardDescription>沿着同一上下文继续检查，不回到宽泛列表</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={shiftHref}>查看班次</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={unavailabilityHref}>查看不可用</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={planHref}>查看计划</Link>
-                </Button>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/schedule-risks">回到全部风险</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </aside>
+          <ReviewChecklistRail
+            scopeLabel={scopeLabel}
+            scopeFallbackLabel="全部风险"
+            scopeDescription="宽屏下固定显示，避免只剩主表格区域"
+            taskDescription="沿着同一上下文继续检查，不回到宽泛列表"
+            currentStep="确认当前范围内的高风险、缺口合计和不可用影响。"
+            nextStep="继续查看班次、不可用或计划，沿同一范围完成复核。"
+            summaryItems={[
+              { label: "高风险", value: summary.high },
+              { label: "缺口合计", value: summary.totalGap },
+              { label: "不可用影响", value: summary.affectedUnavailability },
+            ]}
+            actions={[
+              { label: "查看班次", href: shiftHref },
+              { label: "查看不可用", href: unavailabilityHref },
+              { label: "查看计划", href: planHref },
+            ]}
+            backHref="/schedule-risks"
+            backLabel="回到全部风险"
+          />
         </div>
       </main>
     </AppShell>

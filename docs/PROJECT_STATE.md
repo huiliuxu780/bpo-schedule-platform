@@ -89,6 +89,9 @@ Current invariants:
 - `H030/US121` aligned Harness rule sources and hook guardrails on top of the active product branch: SoT priority now points at `ACTIVE_TASKS/STORY_QUEUE/BLOCKERS`, `check-state` validates diff mode, batch, branch, acceptance_ref, and closeout transitions, repo-local hooks are installed, and `check.sh` clears stale `.next` route types before plain typecheck.
 - `H031/US122` closed the remaining registry budget warning: `TRACE_INDEX` was compacted back under budget, registry windowing rules now require compaction before archive migration, and strict state check returns to green without registry warnings.
 - `H032/US123` closed the remaining post-closeout traceability gap: branch-log-only commit-SHA backfills can now pass strict staged state checks after current returns to empty, while other no-active-task diffs still fail; recent missing branch-log commit SHAs were backfilled.
+- `H033/US125` closed the startup-state self-lock: a new product batch can now seed limited current/registry startup diff and pass strict state checks before business code starts, without reopening current/registry writes for ordinary product edits.
+- `H034/US126` closed the last product closeout self-lock: same-commit product closeout now passes both strict state checks and commit-message validation, so a verified frontend batch can return current to empty and still commit with its active task id.
+- `F073-F076/Q019/US124` replaced duplicated right-side review cards across risk/plan/shift/unavailability pages with one shared `ReviewChecklistRail`, keeping summary metrics, current/next steps, scoped actions, and stable back links aligned while staying inside the no-database local review workflow.
 
 ## Product Direction
 

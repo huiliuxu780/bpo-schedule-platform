@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { ScheduleRiskShiftTable } from "@/components/schedule-risk-shift-table"
 import { ScheduleRiskUnavailabilityTable } from "@/components/schedule-risk-unavailability-table"
 import { Badge } from "@/components/ui/badge"
@@ -200,59 +201,26 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
             </Card>
           </div>
 
-          <aside className="grid gap-4 xl:sticky xl:top-16">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">当前复核范围</CardTitle>
-                <CardDescription>宽屏下固定显示，保持 detail 页复核姿态</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3 text-sm">
-                <div className="rounded-lg border bg-background p-3">
-                  <p className="text-xs text-muted-foreground">范围摘要</p>
-                  <p className="mt-1">{scopeLabel}</p>
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">排班缺口</span>
-                    <span className="font-medium tabular-nums">{risk.gap_agents}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">不可用影响</span>
-                    <span className="font-medium tabular-nums">
-                      {risk.affected_unavailability}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">关联班次</span>
-                    <span className="font-medium tabular-nums">
-                      {relatedShiftDetails.length}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">复核任务</CardTitle>
-                <CardDescription>继续沿着当前风险范围检查计划、班次和不可用</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={planHref}>查看计划</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={shiftHref}>查看班次</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={unavailabilityHref}>查看不可用</Link>
-                </Button>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/schedule-risks">回到全部风险</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </aside>
+          <ReviewChecklistRail
+            scopeLabel={scopeLabel}
+            scopeFallbackLabel={scopeLabel}
+            scopeDescription="宽屏下固定显示，保持 detail 页复核姿态"
+            taskDescription="继续沿着当前风险范围检查计划、班次和不可用"
+            currentStep="确认当前风险的排班缺口、不可用影响和关联班次。"
+            nextStep="继续查看计划、班次与不可用，确认风险是否闭环。"
+            summaryItems={[
+              { label: "排班缺口", value: risk.gap_agents },
+              { label: "不可用影响", value: risk.affected_unavailability },
+              { label: "关联班次", value: relatedShiftDetails.length },
+            ]}
+            actions={[
+              { label: "查看计划", href: planHref },
+              { label: "查看班次", href: shiftHref },
+              { label: "查看不可用", href: unavailabilityHref },
+            ]}
+            backHref="/schedule-risks"
+            backLabel="回到全部风险"
+          />
         </div>
       </main>
     </AppShell>

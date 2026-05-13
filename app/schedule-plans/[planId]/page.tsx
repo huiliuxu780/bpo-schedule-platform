@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-table"
 import {
   buildReviewScopeLabel,
@@ -188,57 +189,26 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
             </Card>
           </div>
 
-          <aside className="grid gap-4 xl:sticky xl:top-16">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">当前复核范围</CardTitle>
-                <CardDescription>宽屏下固定显示，保持 detail 页复核姿态</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3 text-sm">
-                <div className="rounded-lg border bg-background p-3">
-                  <p className="text-xs text-muted-foreground">范围摘要</p>
-                  <p className="mt-1">{scopeLabel}</p>
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">缺口时段</span>
-                    <span className="font-medium tabular-nums">{gapIntervals.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">关联风险</span>
-                    <span className="font-medium tabular-nums">{relatedRisks.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded-lg border bg-background px-3 py-2">
-                    <span className="text-muted-foreground">生效不可用</span>
-                    <span className="font-medium tabular-nums">
-                      {relatedUnavailability.length}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">复核任务</CardTitle>
-                <CardDescription>继续沿着当前计划范围检查风险、班次和不可用</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={shiftHref}>查看班次</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={riskHref}>查看风险</Link>
-                </Button>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={unavailabilityHref}>查看不可用</Link>
-                </Button>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/schedule-plans">回到全部计划</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </aside>
+          <ReviewChecklistRail
+            scopeLabel={scopeLabel}
+            scopeFallbackLabel={scopeLabel}
+            scopeDescription="宽屏下固定显示，保持 detail 页复核姿态"
+            taskDescription="继续沿着当前计划范围检查风险、班次和不可用"
+            currentStep="确认当前计划的缺口时段、关联风险和生效不可用。"
+            nextStep="继续查看风险、班次与不可用，沿同一范围完成计划复核。"
+            summaryItems={[
+              { label: "缺口时段", value: gapIntervals.length },
+              { label: "关联风险", value: relatedRisks.length },
+              { label: "生效不可用", value: relatedUnavailability.length },
+            ]}
+            actions={[
+              { label: "查看班次", href: shiftHref },
+              { label: "查看风险", href: riskHref },
+              { label: "查看不可用", href: unavailabilityHref },
+            ]}
+            backHref="/schedule-plans"
+            backLabel="回到全部计划"
+          />
         </div>
       </main>
     </AppShell>

@@ -1188,7 +1188,48 @@
 - `node --test scripts/tests/check-state.test.mjs`：通过，23 个测试通过。
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state 回归、commit-message 回归、lint、typecheck、Next build 和后端 19 个 unittest。
+
+### 2026-05-13 - Shared Review Checklist Rail
+
+#### 审计结论
+
+- `F073-F076/Q019/US124` 已把 risk/plan/shift/unavailability 相关页面右侧重复的 `复核任务` 区块收敛成共享 `ReviewChecklistRail` 组件。
+- 这套共享 rail 统一展示范围摘要、关键指标、当前步骤、下一步、scoped continuation actions 和稳定回退入口，列表页与 detail 页不再各自维护分散的两张卡片。
+- 本轮仍然保持 no-database、no-dependency、no-backend-contract、no-approval/export/batch/permission/production-formula 边界。
+
+#### 风险
+
+- 当前 rail 仍是本地静态复核辅助视图，不持久化用户级任务完成状态；如果后续要引入真实任务状态，需要新故事单独定义。
+- 本轮验证以源码回归、strict state、lint/typecheck/build 和后端回归为主，没有补视觉截图审计。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，21 个测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state 回归、commit-message 回归、lint、typecheck、Next build 和后端 19 个 unittest。
 - 新增回归：branch-log-only post-closeout staged diff 通过；无 active task 的其他 staged diff 继续失败。
+
+### 2026-05-13 - Product Closeout Guard
+
+#### 审计结论
+
+- `H034/US126` 收口了最后一个产品 closeout 自锁点：same-commit product closeout 现在同时通过 strict state 和 commit-message 守门。
+- `check-state` 在合法 closeout transition 中，会允许清空 `docs/current/**` 所需的 current 文件修改，但不会放宽普通产品任务对 current/registry 的写权限。
+- `validate-commit-message` 在 current 已清空但 staged diff 属于合法 closeout 时，会从 `HEAD` 的 active task 合同识别普通任务 id，因此产品提交仍可使用 `F0xx:` 形式。
+
+#### 风险
+
+- 这次放行刻意只限于“当前快照为空、`HEAD` 有 active task、staged diff 属于 same-commit closeout”的窄场景；如果后续出现新的 closeout 变体，需要单独 state-hygiene 任务验证。
+- 轻量 YAML 解析和 HEAD 回看逻辑仍是 repo 内脚本实现；如果 contract 继续变复杂，后续应考虑更稳的 Node 校验器。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `node --test scripts/tests/check-state.test.mjs`：通过，25 个测试通过。
+- `node --test scripts/tests/validate-commit-message.test.mjs`：通过，7 个测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、两组 node 回归、lint、typecheck、Next build 和后端 19 个 unittest。
 
 ## Historical Audit Snapshots
 

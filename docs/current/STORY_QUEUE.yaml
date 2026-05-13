@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US124
-    title: "Shared review checklist across local review pages"
-    status: in_progress
-    requirement_ids: [R112]
-    task_ids: [F073, F074, F075, F076, Q019]
+stories: []
