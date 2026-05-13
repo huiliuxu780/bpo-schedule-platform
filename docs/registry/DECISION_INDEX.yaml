@@ -84,3 +84,14 @@ decisions:
       - "docs/harness/lightweight-harness.md"
       - "scripts/check-state.sh"
       - "scripts/tests/check-state.test.mjs"
+  D-2026-05-13-harness-hook-guard:
+    title: "Hooks guard consistency; closeout diff validates against HEAD active contract"
+    file: "docs/decision-log.md"
+    related_files:
+      - "scripts/check-state.sh"
+      - "scripts/check.sh"
+      - "scripts/hooks/pre-commit"
+      - "scripts/hooks/commit-msg"
+      - "scripts/hooks/pre-push"
+      - "scripts/validate-commit-message.mjs"
+      - "docs/quality/STATE_MANAGEMENT.md"

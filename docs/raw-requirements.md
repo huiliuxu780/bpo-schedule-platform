@@ -1092,3 +1092,16 @@ version: "1.0"
 status: "split"
 notes: "只做验收、必要轻微修正和追溯更新；不新增依赖、不接数据库。"
 ```
+
+### R109 - Harness 文档一致性与 Hook 守门
+
+```yaml
+id: R109
+module: "Harness"
+description: "统一 Harness 规则源与 SoT 优先级，收紧 ACTIVE_TASKS 最小合同，增强 check-state 与 Git hooks，让状态、范围、提交和推送前验证都可校验。"
+source: "PM supplied full Harness consistency and hook-guard plan on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只改治理文档、状态校验、hook 脚本和追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```

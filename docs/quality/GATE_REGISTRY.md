@@ -40,6 +40,8 @@ Branch and verification rules:
 
 Backlog `required_workflow` values must map to one of the gates below. If a task introduces a new workflow name, this registry must be updated in the same task before execution.
 
+This file defines gate intent, allowed scope, stop conditions, and verification only. Detailed hook/script enforcement lives in `docs/quality/STATE_MANAGEMENT.md`.
+
 | required_workflow | Gate | Typical Scope | Extra Stop Conditions |
 | --- | --- | --- | --- |
 | `harness` | Harness Documentation Gate | Harness rules, backlog planning, project state, audit, branch log, check scripts | Business implementation, new dependencies, package/lockfile changes, real integrations, database, auth, permissions, approval, export, batch operations |
@@ -201,7 +203,7 @@ Allowed:
 - Add or update `docs/current/**`.
 - Add or update `docs/registry/**`.
 - Update `AGENTS.md`, `docs/quality/STATE_MANAGEMENT.md`, `docs/quality/GATE_REGISTRY.md`, `docs/quality/DONE_REPORT_TEMPLATE.md`, `docs/harness/lightweight-harness.md`, and `docs/PROJECT_STATE.md` for state-governance rules.
-- Add or update `scripts/check-state.sh`.
+- Add or update `scripts/check-state.sh`, `scripts/install-hooks.sh`, `scripts/validate-commit-message.mjs`, `scripts/hooks/**`, and related state-check/commit-message tests.
 - Update legacy traceability files only when the active transition task requires it.
 
 Forbidden unless explicitly confirmed by PM:

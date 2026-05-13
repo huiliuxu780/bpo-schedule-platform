@@ -86,6 +86,7 @@ Current invariants:
 - `F061-F064/Q016` deepened the risk review chain with scoped drilldown filters, a wide-screen right rail on `/schedule-risks`, and aligned context links across plan, risk, shift, and unavailability pages, then returned current queue and active tasks to empty.
 - `F065-F068/Q017` extended the review chain again: `班次明细` and `不可用管理` now have wide-screen right-side review rails, plan interval rows can continue into scoped risk/shift/unavailability views, unavailability-impact risk rows can continue into risk/shift/plan views, and current queue returned to empty after QA closeout.
 - `F069-F072/Q018` completed the next review slice: `排班计划详情`、`风险明细`、`不可用影响定位` 三个 detail 页 now have wide-screen right-side review rails, and the detail-level review actions continue to share the same local navigation helper, then current queue returned to empty after QA closeout.
+- `H030/US121` aligned Harness rule sources and hook guardrails on top of the active product branch: SoT priority now points at `ACTIVE_TASKS/STORY_QUEUE/BLOCKERS`, `check-state` validates diff mode, batch, branch, acceptance_ref, and closeout transitions, repo-local hooks are installed, and `check.sh` clears stale `.next` route types before plain typecheck.
 
 ## Product Direction
 

@@ -186,3 +186,10 @@
 - 原因：`AGENTS.md`、`GATE_REGISTRY.md`、`PROJECT_CONTEXT.md` 和 `lightweight-harness.md` 如果对默认读集、SoT 和 strict 失败行为存在偏差，会让 Story Runner 被 stale 文案或隐式约定误导。
 - 影响：当前启动顺序固定为 `current -> registry -> exact legacy/archive section`；`scripts/check-state.sh` 现在校验状态枚举、gate 存在性、active task 最小字段、registry 预算、archive 不可执行、inline trace entry 和 active diff scope；state-check 回归测试扩展到 15 个。
 - 限制：该决策只收口治理规则、检查脚本、测试与追溯，不授权业务代码、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量或生产口径变更。
+
+### 2026-05-13 - D027 - Hook 守门只拦截不一致，closeout diff 回看 HEAD 合同
+
+- 决策：Git hooks 只负责拦截 Harness 不一致，不自动生成或修改文档；当任务在同一提交里清空 current 时，`check-state` 会回看 `HEAD` 中的 active task 合同来校验 closeout diff。
+- 原因：如果 strict 校验只看“当前快照里的 in_progress task”，那么任何合法的 current 清空提交都会被错误拦截，造成状态收口自锁。
+- 影响：`pre-commit` 运行 `bash scripts/check-state.sh --strict --diff=staged` 和 `git diff --cached --check`；`commit-msg` 强制当前 active task id 或允许的 `harness:/state-repair:/audit:` 前缀；`pre-push` 运行 `bash scripts/check.sh`；closeout 提交可以在同一提交中完成 current 清空和追溯更新。
+- 限制：该决策不放宽业务范围，不授权依赖、package/lockfile、数据库、真实集成、认证、权限、审批、导出、批量或生产口径变更。

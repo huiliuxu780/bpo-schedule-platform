@@ -658,17 +658,17 @@
 
 - branch_name: `codex/h029-current-state-closeout`
 - base_main_commit: `a3a134c`
-- remote_status: `not_pushed`
+- remote_status: `pushed to origin/codex/h029-current-state-closeout`
 - scope: current-state governance closeout, strict state-check hardening, regression tests, and traceability updates only.
 - allowed_files_check: `AGENTS.md`, `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/harness/lightweight-harness.md`, `docs/PROJECT_STATE.md`, legacy traceability docs, `tasks/backlog.yaml`, `scripts/check-state.sh`, and `scripts/tests/check-state.test.mjs`; no business code, backend, lib, package, or lockfile files.
 - scope_diff_check: `AGENTS.md`, `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/harness/lightweight-harness.md`, `docs/PROJECT_STATE.md`, legacy traceability docs, `tasks/backlog.yaml`, `scripts/check-state.sh`, and `scripts/tests/check-state.test.mjs`; no business code, backend, lib, package, or lockfile files.
 - check_result: `bash scripts/check-state.sh --strict` passed while `H029` was active; `bash scripts/check-state.sh --repair-scope` passed; `node --test scripts/tests/check-state.test.mjs` passed with 15 tests; `git diff --check` passed; `bash scripts/check.sh` passed.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `dc54aa2`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM decision after local commit`
+- push_decision: `pushed on branch`
 - blocked_reason: `N/A`
 
 ### F060 Risk Workbench
@@ -754,4 +754,21 @@
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
+
+### H030 Harness Consistency And Hook Guard
+
+- branch_name: `codex/h030-harness-hook-guard`
+- base_main_commit: `a3a134c`
+- remote_status: `pushed to origin/codex/h030-harness-hook-guard`
+- scope: Harness rule-source alignment, active-task contract tightening, state-check expansion, repo-local hooks, closeout-diff handling, and traceability records only.
+- allowed_files_check: `AGENTS.md`, `docs/current/**`, `docs/registry/**`, `docs/quality/**`, `docs/harness/lightweight-harness.md`, `docs/PROJECT_STATE.md`, legacy traceability docs, `tasks/backlog.yaml`, `scripts/check-state.sh`, `scripts/check.sh`, `scripts/install-hooks.sh`, `scripts/validate-commit-message.mjs`, `scripts/hooks/**`, and related tests; no business code, backend, package, or lockfile files.
+- scope_diff_check: same as allowed scope; no business code, backend, package, or lockfile files.
+- check_result: `bash scripts/check-state.sh --strict --diff=working` passed; `node --test scripts/tests/check-state.test.mjs` passed with 20 tests; `node --test scripts/tests/validate-commit-message.test.mjs` passed with 5 tests; `git diff --check` passed; `bash scripts/check.sh` passed; `bash scripts/install-hooks.sh` succeeded.
+- local_commit_sha: `fcc8e9e`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed on branch`
 - blocked_reason: `N/A`

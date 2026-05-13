@@ -1125,6 +1125,30 @@
 - `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 - 本地 HTTP smoke：`/schedule-plans/plan-20260511-shanghai-bosch-v1`、`/schedule-risks/risk-plan-20260511-shanghai-bosch-v1-09%3A30`、`/unavailability/unavail-20260511-001` 的 HTML 均包含 `当前复核范围`、`复核任务` 和对应 `回到全部` 关键文案。
 
+### 2026-05-13 - Harness 文档一致性与 Hook 守门
+
+#### 审计结论
+
+- `AGENTS.md`、`docs/quality/STATE_MANAGEMENT.md`、`docs/quality/GIT_BRANCH_WORKFLOW.md`、`docs/quality/GATE_REGISTRY.md` 和 `docs/harness/lightweight-harness.md` 已对齐 current-layer 启动入口、SoT 优先级和 hook 边界。
+- `docs/current/ACTIVE_TASKS.yaml` 最小合同已包含 `traceability_files`，并在详细规则中定义了 batch 约束、gate 组合和 diff scope。
+- `scripts/check-state.sh` 已支持 `--diff=working|staged|none`，并校验 branch、acceptance_ref、trace index 预算、product task state-boundary、batch gate combo 与 closeout diff。
+- 已新增 `scripts/hooks/pre-commit`、`commit-msg`、`pre-push`、`scripts/install-hooks.sh` 和 `scripts/validate-commit-message.mjs`；hook 只拦截不一致，不自动生成或修改文档。
+- `scripts/check.sh` 会在 `npm run typecheck` 前清理 stale `.next` route typings，避免跨分支生成物污染标准验证。
+
+#### 风险
+
+- `TRACE_INDEX.yaml` 仍低于 warning 和 strict 预算，但继续增长后需要再做窗口化收口。
+- 当前 hook 守门依赖自写轻量 YAML 解析；如果 batch/contract 继续复杂化，后续应考虑单独的 Node 校验器。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `node --test scripts/tests/check-state.test.mjs`：通过，20 个测试通过。
+- `node --test scripts/tests/validate-commit-message.test.mjs`：通过，5 个测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、两组 node 回归、lint、typecheck、Next build 和后端 19 个 unittest。
+- `bash scripts/install-hooks.sh`：通过，repo-local hooks 已安装。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

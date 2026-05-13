@@ -154,6 +154,7 @@ stories:
   US118: {file: "docs/user-stories.md", requirement_ids: ["R106"], task_ids: ["F071"], archive_refs: []}
   US119: {file: "docs/user-stories.md", requirement_ids: ["R107"], task_ids: ["F072"], archive_refs: []}
   US120: {file: "docs/user-stories.md", requirement_ids: ["R108"], task_ids: ["Q018"], archive_refs: []}
+  US121: {file: "docs/user-stories.md", requirement_ids: ["R109"], task_ids: ["H030"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -273,6 +274,7 @@ tasks:
   F071: {file: "tasks/backlog.yaml", story_ids: ["US118"], gate: "frontend-scaffold"}
   F072: {file: "tasks/backlog.yaml", story_ids: ["US119"], gate: "frontend-scaffold"}
   Q018: {file: "tasks/backlog.yaml", story_ids: ["US120"], gate: "qa"}
+  H030: {file: "tasks/backlog.yaml", story_ids: ["US121"], gate: "state-hygiene"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -412,6 +414,7 @@ requirements:
   R106: {file: "docs/raw-requirements.md", story_ids: ["US118"], task_ids: ["F071"]}
   R107: {file: "docs/raw-requirements.md", story_ids: ["US119"], task_ids: ["F072"]}
   R108: {file: "docs/raw-requirements.md", story_ids: ["US120"], task_ids: ["Q018"]}
+  R109: {file: "docs/raw-requirements.md", story_ids: ["US121"], task_ids: ["H030"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
@@ -421,4 +424,5 @@ decisions:
   - "D-2026-05-13-trace-current-files-path-check"
   - "D-2026-05-13-codex-plan-boundary"
   - "D-2026-05-13-current-state-closeout"
+  - "D-2026-05-13-harness-hook-guard"
 archive_refs: []

@@ -890,3 +890,12 @@
 - action: 收口 F069-F072 的 detail 页右侧 rail QA。
 - status: `done`
 - notes: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run lint`、`npm run typecheck`、`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过；本地 `http://localhost:3014` HTML smoke 命中了计划详情、风险明细和不可用影响定位页的 `当前复核范围 / 复核任务 / 回到全部` 关键文案；current queue 与 active tasks 已清空。
+
+- task_id: `H030`
+- source_ids:
+  - `R109`
+- story_ids:
+  - `US121`
+- action: 收口 Harness 文档一致性与 Hook 守门。
+- status: `done`
+- notes: 统一 AGENTS/STATE_MANAGEMENT/GIT_BRANCH_WORKFLOW/GATE_REGISTRY 的 SoT 与 hook 边界；`check-state` 新增 diff mode、batch、branch、acceptance_ref 和 closeout scope 校验；新增 repo-local hooks 与 commit message 校验；`check.sh` 会在 typecheck 前清理 stale `.next` route types；current queue 与 active tasks 已恢复为空。

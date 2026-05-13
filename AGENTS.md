@@ -50,15 +50,14 @@ If the user gives only a task ID and it is not present in `docs/current/ACTIVE_T
 
 During the current-layer transition, tasks that modify Harness history or traceability may still update the legacy files required by the active Gate.
 
-## Execution State Source
-
-Current execution state is owned only by:
+Current execution must start only from:
 
 - `docs/current/STORY_QUEUE.yaml`
 - `docs/current/ACTIVE_TASKS.yaml`
-- `docs/current/BLOCKERS.md`
 
-`tasks/backlog.yaml`, `docs/user-stories.md`, `docs/raw-requirements.md`, `docs/audit-report.md`, `docs/task-log.md`, and `docs/dev/branch-log.md` are legacy or historical ledgers. They may be updated for traceability, but they are not executable queues and must not override current state.
+Historical lookup must follow:
+
+`docs/registry/TRACE_INDEX.yaml -> exact legacy/archive section`
 
 ## State Governance
 
@@ -72,13 +71,8 @@ Hard rules:
 - Subagents may review or recommend state changes, but must not directly write current or registry files.
 - `docs/registry/TRACE_INDEX.yaml` stores IDs, paths, and relationships only; it must not store `status`.
 - Run `bash scripts/check-state.sh` when current or registry state changes.
-- If `bash scripts/check-state.sh --strict` fails, normal development must stop and only `state-repair` work may proceed until strict state checks pass again.
 
 History-On-Demand is allowed only when current state is insufficient, the user asks for history, the task depends on a historical decision, documents conflict, or the task is audit, review, rollback, incident investigation, migration, or state repair.
-
-Current execution must follow this lookup order:
-
-`docs/current/** -> docs/registry/** -> exact legacy/archive section`
 
 State Repair Mode triggers when current queue and active tasks disagree, registry paths are missing, archive migration is partially complete, or `check-state` blocks normal execution. In State Repair Mode, modify only `docs/current/**`, `docs/registry/**`, and necessary archive index pointers; do not modify business code, package/lockfiles, dependencies, database, integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors.
 
@@ -98,10 +92,14 @@ Detailed branch, worktree, integration, exception, and audit runbook: `docs/qual
 
 ### Rule Priority
 
-1. `AGENTS.md` current execution rules.
-2. Per-task `allowed_files`, `forbidden_files`, and `stop_conditions` in `tasks/backlog.yaml`.
-3. Workflow gates in `docs/quality/GATE_REGISTRY.md`.
-4. When rules conflict, the more specific task-level rule wins over the generic workflow rule.
+1. `AGENTS.md` hard rules.
+2. `docs/current/ACTIVE_TASKS.yaml` current task contract.
+3. `docs/current/STORY_QUEUE.yaml` current story queue.
+4. `docs/current/BLOCKERS.md` current blockers.
+5. Workflow gates in `docs/quality/GATE_REGISTRY.md`.
+6. Legacy files only as `acceptance_ref` or historical evidence.
+
+When rules conflict, the more specific current-task contract wins over the generic workflow rule.
 
 ### Execution Flow
 
@@ -124,7 +122,7 @@ Every non-trivial task must follow this order:
 - Direct development on `main` is forbidden.
 - Default task branch: `codex/<task-id>-<short-name>`.
 - Before creating a task branch, sync `main` from `origin/main` with fast-forward only and record `base_main_commit`.
-- A single module block may continue multiple ready stories on one branch when scope, risk, and allowed files stay consistent.
+- A single module block may continue multiple ready stories on one branch only when `ACTIVE_TASKS.yaml` declares a valid `batch` contract and scope, risk, and allowed files stay consistent.
 - Cross-module work, high-risk work, dependency/package changes, real integrations, database, auth, permissions, approval, export, batch operations, production status/formula/settlement/charge-factor changes, or clearly different allowed files require a new branch and Gate.
 - Use `git worktree` only for 2+ independent ready tasks with non-overlapping write scopes and independent verification paths.
 - If the workspace is dirty and the current task cannot be safely separated, mark the task blocked and do not commit a done state.
@@ -186,6 +184,7 @@ Story Runner must:
 - `gate`
 - `branch`
 - `allowed_files`
+- `traceability_files`
 - `forbidden_files`
 - `stop_conditions`
 - `acceptance_ref`
@@ -193,6 +192,8 @@ Story Runner must:
 - `evidence_expected`
 
 Do not copy full historical acceptance text into current active tasks.
+
+When multiple same-scope tasks legitimately share one branch, `ACTIVE_TASKS.yaml` may add a lightweight `batch` block. Detailed batch rules, diff-scope enforcement, and hook behavior live in `docs/quality/STATE_MANAGEMENT.md`.
 
 Bounded subagents may be used in Story Runner Mode only for independent, non-overlapping write scopes. The main Codex worker remains responsible for dispatch design, diff review, final verification, traceability, commits, and Done Report. Outside Story Runner Mode, subagents require explicit PM/user permission and a confirmed Gate.
 

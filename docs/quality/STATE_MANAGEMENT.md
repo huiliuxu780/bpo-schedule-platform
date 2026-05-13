@@ -2,11 +2,22 @@
 
 ## Purpose
 
-This project uses a current/registry/archive state model to reduce default context size while keeping Story Runner execution traceable and repairable.
+This project uses a current/registry/archive model so Story Runner can execute from a small active context while keeping history, traceability, and state repair auditable.
+
+This file is the single detailed rule source for:
+
+- current/registry/archive boundaries
+- `ACTIVE_TASKS.yaml` execution contract
+- batch rules
+- diff-scope enforcement
+- hook enforcement
+- state-repair behavior
+
+`AGENTS.md` keeps only the hard-rule summary.
 
 ## Layers
 
-### Current Layer
+### Current
 
 Default execution state lives in:
 
@@ -15,17 +26,15 @@ Default execution state lives in:
 - `docs/current/ACTIVE_TASKS.yaml`
 - `docs/current/BLOCKERS.md`
 
-Only `ready`, `in_progress`, and `blocked` stories/tasks belong in current files. Done history must not accumulate here.
-
 Current execution state source of truth is limited to:
 
 - `docs/current/STORY_QUEUE.yaml`
 - `docs/current/ACTIVE_TASKS.yaml`
 - `docs/current/BLOCKERS.md`
 
-Legacy files may still record history and traceability, but they must not override current execution state.
+Only `ready`, `in_progress`, and `blocked` belong in current files. Current files must not retain `done` history.
 
-### Registry Layer
+### Registry
 
 Lookup indexes live in:
 
@@ -34,11 +43,11 @@ Lookup indexes live in:
 
 `TRACE_INDEX.yaml` stores IDs, paths, and relationships only. It must not store `status`.
 
-### Archive And Legacy Layer
+### Archive And Legacy
 
-Legacy files and future archive files are historical sources. They are not execution queues.
+Legacy files and archive files are historical ledgers only. They are not executable queues.
 
-Default no-read files:
+Non-default startup files:
 
 - `tasks/backlog.yaml`
 - `docs/user-stories.md`
@@ -48,7 +57,27 @@ Default no-read files:
 - `docs/dev/branch-log.md`
 - `docs/archive/**`
 
-These files may still be updated during the transition when the active Gate requires traceability, but they are not the default startup context once current files exist.
+Use them only as `acceptance_ref`, historical evidence, or on-demand lookup.
+
+## SoT And Priority
+
+Rule priority is:
+
+1. `AGENTS.md` hard rules
+2. `docs/current/ACTIVE_TASKS.yaml` current task contract
+3. `docs/current/STORY_QUEUE.yaml` current story queue
+4. `docs/current/BLOCKERS.md` current blockers
+5. `docs/quality/GATE_REGISTRY.md` workflow gates
+6. legacy/backlog files only as `acceptance_ref` or historical evidence
+
+Current execution must start only from:
+
+- `docs/current/STORY_QUEUE.yaml`
+- `docs/current/ACTIVE_TASKS.yaml`
+
+Historical lookup order is:
+
+`docs/current/** -> docs/registry/** -> exact legacy/archive section`
 
 ## Default Read Set
 
@@ -60,9 +89,7 @@ Before non-trivial execution, read:
 4. `docs/current/ACTIVE_TASKS.yaml`
 5. `docs/current/BLOCKERS.md`
 6. `docs/quality/GATE_REGISTRY.md`
-7. Current task files
-
-Use legacy files only when current state is missing, inconsistent, or the task is explicitly about migration, audit, repair, or historical lookup.
+7. current task files
 
 ## Single Writer Rule
 
@@ -71,11 +98,34 @@ Only the main Worker may write:
 - `docs/current/**`
 - `docs/registry/**`
 
-Subagents may inspect relevant files and return recommendations, but they must not directly modify current or registry state.
+Subagents may inspect and recommend, but must not directly modify current or registry files.
 
-## Active Task Contract
+## PROJECT_CONTEXT Rule
 
-`docs/current/ACTIVE_TASKS.yaml` is the execution source of truth for current task contracts. Keep it lightweight and limited to the minimum execution contract:
+`docs/current/PROJECT_CONTEXT.md` is a human summary, not machine SoT.
+
+If a structured summary block is maintained, use only:
+
+```yaml
+current_summary:
+  queue_state: active | idle | blocked
+  active_batch_id: <batch-id-or-null>
+  in_progress_task: <task-id-or-null>
+  ready_tasks: [<task-id>, ...]
+```
+
+Rules:
+
+- `queue_state` must match `STORY_QUEUE.yaml`.
+- `in_progress_task` must match `ACTIVE_TASKS.yaml`.
+- If the block is absent, `check-state` does not validate prose.
+- Ready state must never be inferred from free text.
+
+## ACTIVE_TASKS Contract
+
+`docs/current/ACTIVE_TASKS.yaml` is the execution source of truth for current task contracts.
+
+Minimum task contract:
 
 - `id`
 - `story_ids`
@@ -83,195 +133,187 @@ Subagents may inspect relevant files and return recommendations, but they must n
 - `gate`
 - `branch`
 - `allowed_files`
+- `traceability_files`
 - `forbidden_files`
 - `stop_conditions`
 - `acceptance_ref`
 - `verification`
 - `evidence_expected`
 
-Do not copy full historical acceptance, large audit text, or done-history detail into current active tasks.
+Keep it lightweight. Do not copy full acceptance history or audit prose into current.
+
+### Single Task Mode
+
+Without a `batch` block, diff validation uses only the `in_progress` task contract.
+
+### Batch Mode
+
+Batch shape:
+
+```yaml
+batch:
+  id: BATCH-...
+  branch: codex/<branch>
+  task_ids: [F001, F002]
+  scope_reason: "why one branch is valid"
+  allowed_gate_combo: [frontend-scaffold, qa]
+```
+
+Rules:
+
+- `id`, `branch`, `task_ids`, and `scope_reason` are required.
+- Every batch task must exist in `tasks`.
+- Every batch task `branch` must equal `batch.branch`.
+- Diff scope is the union of each batch task's `allowed_files + traceability_files`.
+- Batch is allowed only for same-scope, same-branch work.
+- Default rule is same gate only.
+- Mixed gates require explicit `allowed_gate_combo`.
+- High-risk boundaries must not be batched: dependency/package changes, database, auth, permissions, approval, export, batch-operation features, production formulas, settlement rules, or charge factors.
 
 ## Current State Transitions
 
-Current state changes must stay within these paths:
+Allowed transitions:
 
 - `ready -> in_progress -> removed from current + written to history`
 - `ready -> blocked`
 - `in_progress -> blocked`
 
-Current files must not retain long-lived `done` entries. Completion is recorded by removing the story/task from current files and writing evidence to legacy or archive traceability files.
+Current files must not keep long-lived `done` entries.
 
 ## Codex Plan Boundary
 
 Codex Plan is not a source of truth.
 
-Role split:
+- It is a temporary session view only.
+- It must be derived from the active Harness queue when available.
+- If Plan and Harness disagree, Harness wins.
+- Plan must not decide readiness, completion, archive state, allowed files, stop conditions, verification evidence, or commit evidence.
 
-- Harness current files own state.
-- Registry files own lookup and trace relationships.
-- Codex Plan is only a projection for the current execution turn.
+## History-On-Demand
 
-Rules:
+Use historical files only when:
 
-- Generate Codex Plan from `docs/current/STORY_QUEUE.yaml` and `docs/current/ACTIVE_TASKS.yaml` when those files exist.
-- If Codex Plan and Harness state conflict, Harness state wins.
-- Do not use Codex Plan to decide whether a story is ready, in progress, blocked, done, archived, or restored.
-- Do not use Codex Plan as audit evidence.
-- Do not use Codex Plan as the source for allowed files, stop conditions, verification results, commit SHA, archive status, or Done Report fields.
-- After execution, write real state changes back to Harness files, registry indexes, audit records, branch logs, task logs, commits, and Done Reports.
-
-Acceptable use:
-
-- Display the current step checklist for this session.
-- Track immediate execution progress.
-- Summarize work-in-progress while commands or verification are running.
-
-Forbidden use:
-
-- Treating an old Plan as project memory.
-- Reconstructing current queue from Plan when Harness current files disagree.
-- Marking project tasks done because the Plan panel says they are done.
-
-## History-On-Demand Rule
-
-Archive and legacy history may be read only when:
-
-- PM asks for historical lookup.
-- The current task depends on a historical decision.
-- Current files are insufficient.
-- Documents conflict.
-- The task is audit, review, rollback, incident investigation, or state repair.
-- Old interfaces, patterns, or designs must be reused.
+- current files are insufficient
+- the user asks for history
+- the task depends on a historical decision
+- documents conflict
+- the task is audit, rollback, incident investigation, migration, or state repair
 
 Query budget:
 
-- Normal development: at most 3 historical files, depth 2.
-- Audit: at most 8 historical files, depth 3.
-- Incident or rollback: scope may expand, but the Worker must state the range and reason first.
+- normal development: up to 3 history files, depth 2
+- audit: up to 8 history files, depth 3
 
-Query order:
+Do not read archive broadly just to feel safe.
 
-1. `docs/registry/TRACE_INDEX.yaml`
-2. `docs/registry/DECISION_INDEX.yaml`
-3. Specific archive or legacy files
-4. Raw logs only when needed
+## check-state
 
-Forbidden:
+`scripts/check-state.sh` supports:
 
-- Reading archive broadly for safety.
-- Executing directly from archive.
-- Treating historical `ready` as current `ready`.
+- `--strict --diff=working`
+- `--strict --diff=staged`
+- `--strict --diff=none`
+- `--repair-scope`
+- warning mode by default
 
-## State Check
+Intended use:
 
-`scripts/check-state.sh` validates the current and registry layer.
+- `--diff=working`: manual review and `bash scripts/check.sh`
+- `--diff=staged`: `pre-commit`
+- `--diff=none`: state repair or non-git test fixtures
 
-`scripts/check-state.sh` supports warning, strict, and repair-scope modes. The standard `bash scripts/check.sh` path runs strict state checks by default and runs regression tests for strict failure cases.
+Validation requirements:
 
-Mode overrides:
+- current files exist
+- story/task IDs are unique
+- status is only `ready`, `in_progress`, or `blocked`
+- current files do not contain `done`
+- every `ready`/`in_progress` story has a matching active task
+- every active task references an existing current story
+- every active task has the full minimum contract
+- active task `gate` exists in `docs/quality/GATE_REGISTRY.md`
+- current git branch matches the active task branch; batch mode matches the batch branch
+- `acceptance_ref` file exists and the referenced ID exists
+- without batch, diff may touch only the active `in_progress` task's `allowed_files + traceability_files`
+- with batch, diff may touch only the batch union scope
+- if there is diff but no `in_progress` task, strict mode fails
+- touching `forbidden_files` fails strict mode
+- product tasks must not touch `docs/current/**` or `docs/registry/**` unless the gate is `state-hygiene` or `state-repair`
+- `TRACE_INDEX.yaml` contains no `status`
+- current story/task IDs have trace entries
+- `current_files`, `file`, and `archive_refs` paths exist
+- `TRACE_INDEX.yaml` over 420 lines warns
+- `TRACE_INDEX.yaml` over 480 lines fails strict mode
+- current file line budgets remain enforced
 
-- Default: `bash scripts/check.sh` runs `bash scripts/check-state.sh --strict`.
-- State repair: `BPO_STATE_CHECK_MODE=repair-scope bash scripts/check.sh`.
-- Temporary diagnostics: `BPO_STATE_CHECK_MODE=warning bash scripts/check.sh`.
+If strict mode fails, normal development stops and only `state-repair` work may continue.
 
-Current checks:
+## Hook Enforcement
 
-- Story IDs in `STORY_QUEUE.yaml` are unique.
-- Task IDs in `ACTIVE_TASKS.yaml` are unique.
-- Story and task statuses in current files are limited to `ready`, `in_progress`, or `blocked`.
-- Every ready or in-progress story has a matching active task.
-- Every active task references an existing current story.
-- Every active task has the minimum execution contract fields.
-- Every active task `gate` exists in `docs/quality/GATE_REGISTRY.md`.
-- `TRACE_INDEX.yaml` does not contain `status`.
-- Registry `file:` paths exist.
-- Registry `current_files` paths exist.
-- Current story/task IDs referenced by execution state exist in `TRACE_INDEX.yaml`.
-- Current queue entries do not point to archive files as execution sources.
-- Current files stay under line-count budgets.
-- `TRACE_INDEX.yaml` stays under its registry budget and remains a lookup index instead of a new default context dump.
-- Strict mode fails when current git changes violate active-task `allowed_files` or `forbidden_files`.
+Hooks use repo-local `core.hooksPath`:
 
-Regression coverage:
+- `scripts/hooks/pre-commit`
+- `scripts/hooks/commit-msg`
+- `scripts/hooks/pre-push`
 
-- Consistent current state passes strict mode.
-- Missing active task for a ready story warns without self-locking warning mode.
-- Missing active task fails strict mode.
-- Lifecycle state in `TRACE_INDEX.yaml` fails strict mode.
-- Done story history in current queue warns in warning mode and fails strict mode.
-- Done task history in active tasks fails strict mode.
-- Missing `TRACE_INDEX.yaml` current file paths fail strict mode.
+Install with `bash scripts/install-hooks.sh`.
 
-First live smoke result:
+Hook responsibilities:
 
-- `H024/US065` was seeded into current queue, matched to an active task, verified with `bash scripts/check-state.sh --strict`, then removed from current after completion so done history stayed out of current files.
-- `H025/US066` added a concrete invariant that current story/task files must not retain `status: done`, with regression coverage for warning-only and strict modes.
-- `H026/US067` promoted standard `bash scripts/check.sh` to strict state checking by default while preserving explicit repair-scope and warning-only overrides.
-- `H027/US068` added strict validation for `TRACE_INDEX.yaml` current file paths and de-duplicated registry path output.
+- `pre-commit`: run `bash scripts/check-state.sh --strict --diff=staged` and `git diff --cached --check`
+- `commit-msg`: validate commit subject against current active task or approved special prefixes
+- `pre-push`: run `bash scripts/check.sh`
 
-## State Repair Mode
+Rules:
+
+- hooks only block inconsistency
+- hooks do not auto-generate or auto-edit documentation
+- `pre-push` is a technical gate only, not PM push confirmation
+
+Allowed special commit prefixes:
+
+- `state-repair:`
+- `harness:`
+- `audit:`
+
+Ordinary development commits must reference a current active task ID, not a history-only task ID.
+
+## State Repair
 
 State Repair Mode triggers when:
 
-- Current story queue and active tasks disagree.
-- Registry paths point to missing files.
-- Archive migration is partially complete.
-- `check-state` failure blocks normal task startup.
+- current queue and active tasks disagree
+- registry paths are missing
+- archive migration is partially complete
+- strict state checks block normal task startup
 
-Allowed in State Repair Mode:
+Allowed in state repair:
 
-- Modify `docs/current/**`.
-- Modify `docs/registry/**`.
-- Modify necessary archive index pointers.
-- Run `bash scripts/check-state.sh --repair-scope`.
-- Run full `bash scripts/check.sh` after repair.
+- modify `docs/current/**`
+- modify `docs/registry/**`
+- modify necessary archive index pointers
+- add minimal audit notes needed to explain the repair
+- run `bash scripts/check-state.sh --repair-scope`
 
-Forbidden in State Repair Mode:
+Forbidden in state repair:
 
-- Business code changes.
-- Package or lockfile changes.
-- New dependencies.
-- Database, real integration, auth, permission, approval, export, batch, production formula, settlement, or charge-factor work.
+- business code changes
+- dependency or package/lockfile changes
+- database, integration, auth, permissions, approval, export, batch, or production-rule work
 
-If `bash scripts/check-state.sh --strict` fails, normal development must stop. Only `state-repair` work may proceed until strict state checks pass again.
+## Archive Transactions
 
-## Archive Transaction Rule
+When archival is approved, use this order:
 
-When archiving is approved, use this order:
+1. dry-run the move list
+2. write archive content
+3. update `TRACE_INDEX.yaml`
+4. update `STORY_QUEUE.yaml`
+5. update `ACTIVE_TASKS.yaml`
+6. update `PROJECT_CONTEXT.md`
+7. update current audit/task-log/branch-log window
+8. run `bash scripts/check-state.sh`
+9. run `bash scripts/check.sh`
+10. commit after green verification
 
-1. Dry-run the move list.
-2. Write archive content.
-3. Update `TRACE_INDEX.yaml`.
-4. Update `STORY_QUEUE.yaml`.
-5. Update `ACTIVE_TASKS.yaml`.
-6. Update `PROJECT_CONTEXT.md`.
-7. Update current audit/task-log/branch-log window when applicable.
-8. Run `bash scripts/check-state.sh`.
-9. Run `bash scripts/check.sh`.
-10. Commit only after green verification.
-
-Failure handling:
-
-- Do not delete active entries after a failed step.
-- Mark `state_migration_blocked`.
-- Report the failed step in the Done Report.
-- Do not leave archive-only state without matching index/current updates.
-
-## Restoring Historical Tasks
-
-Archive is not executable. To restore old work, create a new current task with:
-
-```yaml
-id: F0XX
-status: ready
-restored_from_archive:
-  story_id: US0XX
-  task_id: F0YY
-  archive_file: docs/archive/2026-05/tasks.yaml
-reason: "Why this is restored"
-new_acceptance:
-  - "New acceptance criteria"
-gate: frontend-scaffold
-```
-
-Restored tasks run through current Gates and do not inherit historical readiness.
+If any step fails, do not delete active entries and record `state_migration_blocked`.

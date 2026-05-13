@@ -1,5 +1,13 @@
 # Current Project Context
 
+```yaml
+current_summary:
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
+```
+
 ## Current Stage
 
 Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness.
@@ -10,7 +18,9 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed product chain was `US116/F069 -> US119/F072`, followed by `US120/Q018`, on branch `codex/f060-risk-workbench`. This batch continued the same no-database risk/unavailability review vertical by extending wide-screen right-side review rails to the detail pages so plan, risk, and unavailability detail views keep the same review posture as the list/workbench pages.
+No ready story is currently queued. The last completed product chain was `US116/F069 -> US119/F072`, followed by `US120/Q018`, on branch `codex/f060-risk-workbench`. This batch continued the same no-database risk/unavailability review vertical by extending wide-screen right-side review rails to the detail pages so plan, risk, and unavailability detail views keep the same review posture as the list/workbench pages.
+
+The latest completed governance pass was `US121/H030` on branch `codex/h030-harness-hook-guard`, which aligned the Harness rule sources, tightened the active-task contract, expanded `check-state`, added repo-local hooks, and made standard verification resilient to stale `.next` route typings across branches.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,6 +63,8 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The `F069-F072 + Q018` batch is complete and current has returned to empty.
+The `F069-F072 + Q018` batch and `H030/US121` governance pass are complete, and current has returned to empty.
 
-Next, either continue the same no-database review workflow with another local frontend slice or switch to a different local-contract story that still avoids database, real integrations, auth, approval, export, batch operations, and production formulas. Database work stays deferred.
+The reconciliation branch is now carrying the merged product and governance baseline, but no new ready story is queued yet.
+
+Seed the next ready story explicitly before returning to product development. Database work stays deferred.
