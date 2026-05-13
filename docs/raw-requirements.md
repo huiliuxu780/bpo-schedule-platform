@@ -39,7 +39,7 @@ description: "Dashboard 需遵循 shadcn/ui v4 dashboard examples、dashboard-01
 source: "PM confirmed frontend direction"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "F001 允许按官方 shadcn chart structure 使用 Recharts；正式图表层未来需单独 Gate。"
 ```
 
@@ -870,4 +870,17 @@ submitted_at: "2026-05-13"
 version: "1.0"
 status: "split"
 notes: "只改状态治理、state-check、测试和追溯；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
+```
+
+### R092 - 风险提示独立工作台
+
+```yaml
+id: R092
+module: "前端设计"
+description: "为风险提示提供独立的工作台页和稳定入口，统一从排班计划详情、不可用影响定位等页面进入风险列表复核，而不是只落到单条明细或间接回到计划页。"
+source: "Story Runner continuation after H029 on 2026-05-13"
+submitted_at: "2026-05-13"
+version: "1.0"
+status: "split"
+notes: "只做前端页、现有本地契约和跨页跳转对齐；不新增依赖、不改 package/lockfile、不接数据库、不做审批、导出、批量或生产公式。"
 ```

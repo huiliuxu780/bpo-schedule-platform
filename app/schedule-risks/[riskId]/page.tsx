@@ -71,7 +71,11 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
               <Link href={`/schedule-plans/${risk.plan_id}`}>计划详情</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
-              <Link href="/schedule-plans">返回列表</Link>
+              <Link
+                href={`/schedule-risks?planId=${encodeURIComponent(risk.plan_id)}&project=${encodeURIComponent(risk.project_name)}&site=${encodeURIComponent(risk.site_name)}&date=${encodeURIComponent(risk.plan_date)}`}
+              >
+                返回风险列表
+              </Link>
             </Button>
           </div>
         </div>

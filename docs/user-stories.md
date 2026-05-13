@@ -1744,3 +1744,27 @@ dependencies:
   - "US102"
 status: "done"
 ```
+
+### US104 - 风险提示工作台页
+
+```yaml
+id: US104
+requirement_ids:
+  - R092
+module: "前端设计"
+role: "运营负责人"
+story: "作为运营负责人，我希望有一个独立的风险提示工作台页，并从计划详情、不可用影响定位等页面稳定进入风险列表，以便统一复核风险、缺口和不可用影响。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "新增 `/schedule-risks` 页面，展示本地风险列表、摘要和复核入口。"
+  - "风险列表复用现有本地 MVP 风险契约，不新增真实数据源。"
+  - "排班计划详情、不可用影响定位和相关返回入口统一到风险工作台或风险明细，不再使用误导性的间接跳转。"
+  - "导航提供稳定风险入口。"
+  - "不新增依赖、不改 package 或 lockfile。"
+  - "不提供审批、批量调班、自动排班或生产公式能力。"
+  - "`bash scripts/check.sh` 通过。"
+dependencies:
+  - "US103"
+status: "done"
+```

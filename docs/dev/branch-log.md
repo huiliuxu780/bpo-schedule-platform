@@ -670,3 +670,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### F060 Risk Workbench
+
+- branch_name: `codex/f060-risk-workbench`
+- base_main_commit: `a3a134c`
+- remote_status: `branch created from pushed H029 governance head because main has not yet integrated H029`
+- scope: dedicated risk workspace route, sidebar entry, cross-page drilldown alignment, local risk filtering helper, tests, and traceability updates only.
+- allowed_files_check: `app/schedule-risks/**`, `app/schedule-plans/**`, `app/unavailability/**`, `components/app-sidebar.tsx`, `components/schedule-risk-table.tsx`, `lib/schedule-plans.ts`, `next-env.d.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `app/schedule-risks/page.tsx`, `app/schedule-risks/[riskId]/page.tsx`, `app/schedule-plans/page.tsx`, `app/schedule-plans/[planId]/page.tsx`, `app/unavailability/[unavailabilityId]/page.tsx`, `components/app-sidebar.tsx`, `lib/schedule-plans.ts`, `next-env.d.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- check_result: Safari smoke passed for `http://localhost:3016/schedule-risks` and plan-context filtered risk workspace; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 10 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

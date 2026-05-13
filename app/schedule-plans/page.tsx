@@ -157,9 +157,16 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
                 缺口与不可用记录的本地 MVP 联动提示
               </CardDescription>
             </div>
-            <Badge variant={highRiskCount > 0 ? "default" : "outline"}>
-              {highRiskCount} 条高风险
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant={highRiskCount > 0 ? "default" : "outline"}>
+                {highRiskCount} 条高风险
+              </Badge>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/schedule-risks${query ? `?query=${encodeURIComponent(query)}` : ""}`}>
+                  查看全部
+                </Link>
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <ScheduleRiskTable risks={risks.slice(0, 5)} />

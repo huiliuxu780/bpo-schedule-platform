@@ -81,16 +81,17 @@ Current invariants:
 - `H028/US069` fixed the Codex Plan boundary: the Plan panel is only a session projection and must never override Harness current/registry state.
 - `H029/US103` closed the current-state governance loop: `AGENTS.md`, `GATE_REGISTRY.md`, `PROJECT_CONTEXT.md`, and `lightweight-harness.md` now align on the current-layer read set, `ACTIVE_TASKS.yaml` is explicitly a lightweight execution contract, and strict failure now forces `state-repair`.
 - `F041-F059/Q014` completed a 20-task local frontend parity block across schedule plans, schedule risks, and unavailability tables, then returned current queue and active tasks to empty.
+- `F060/US104` added a dedicated `/schedule-risks` workbench route, aligned sidebar and cross-page risk links, and kept the whole workflow inside the local no-database contract.
 
 ## Product Direction
 
 Near-term product work should remain inside the no-database local MVP boundary.
 
-Recommended order after H029:
+Recommended order after F060:
 
 1. Seed the next ready story in current state before execution.
-2. Continue frontend/local-contract work only when it avoids database, real integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, and charge factors.
-3. Continue table parity only in small display-only slices unless PM confirms a broader component-interaction Gate.
+2. Add a narrow QA or workflow follow-up on top of the new risk workspace and cross-page drilldown.
+3. Continue frontend/local-contract work only when it avoids database, real integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, and charge factors.
 
 ## Frontend Direction
 

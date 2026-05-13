@@ -798,3 +798,14 @@
 - action: 收口 current-state 治理规则、最小 active-task 合同和 strict state-repair 边界。
 - status: `done`
 - notes: 对齐 `AGENTS.md`、`docs/quality/GATE_REGISTRY.md`、`docs/quality/STATE_MANAGEMENT.md`、`docs/harness/lightweight-harness.md` 和 `docs/current/PROJECT_CONTEXT.md` 的默认读集与 SoT 口径；`scripts/check-state.sh` 新增 gate 存在性、最小字段、registry 预算、inline trace entry 和 active diff scope 校验；state-check 回归测试扩展到 15 个并通过；current queue 与 active tasks 已清空。
+
+### 2026-05-13
+
+- task_id: `F060`
+- source_ids:
+  - `R092`
+- story_ids:
+  - `US104`
+- action: 新增独立风险提示工作台页，并对齐计划/不可用链路的风险入口。
+- status: `done`
+- notes: 新增 `/schedule-risks` 页面与 sidebar 导航入口；计划详情和不可用影响定位可带上下文跳到风险工作台，风险明细可返回到上下文列表；复用现有本地风险契约，不接数据库、不改依赖；Safari 在 `http://localhost:3016/schedule-risks` 和按计划上下文筛选页完成烟测。

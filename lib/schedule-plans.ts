@@ -74,6 +74,14 @@ export type ScheduleRiskRow = {
   recommendation: string
 }
 
+export type ScheduleRiskScopeFilters = {
+  query?: string
+  planId?: string
+  planDate?: string
+  projectName?: string
+  siteName?: string
+}
+
 export type SchedulePlanIntervalInput = Pick<
   SchedulePlanInterval,
   | "interval_start"
@@ -407,6 +415,59 @@ export function scheduleRiskLevelLabel(level: ScheduleRiskLevel) {
   }
 
   return labels[level]
+}
+
+function normalizeScopeValue(value?: string) {
+  return value?.trim().toLowerCase() ?? ""
+}
+
+export function filterScheduleRiskRowsByScope(
+  rows: ScheduleRiskRow[],
+  filters: ScheduleRiskScopeFilters = {}
+) {
+  const query = normalizeScopeValue(filters.query)
+  const planId = normalizeScopeValue(filters.planId)
+  const planDate = normalizeScopeValue(filters.planDate)
+  const projectName = normalizeScopeValue(filters.projectName)
+  const siteName = normalizeScopeValue(filters.siteName)
+
+  return rows.filter((row) => {
+    if (planId && normalizeScopeValue(row.plan_id) !== planId) {
+      return false
+    }
+
+    if (planDate && normalizeScopeValue(row.plan_date) !== planDate) {
+      return false
+    }
+
+    if (projectName && normalizeScopeValue(row.project_name) !== projectName) {
+      return false
+    }
+
+    if (siteName && normalizeScopeValue(row.site_name) !== siteName) {
+      return false
+    }
+
+    if (!query) {
+      return true
+    }
+
+    const searchable = [
+      row.risk_id,
+      row.plan_id,
+      row.plan_date,
+      row.project_name,
+      row.site_name,
+      row.interval_start,
+      row.interval_end,
+      row.reason,
+      row.recommendation,
+    ]
+      .join(" ")
+      .toLowerCase()
+
+    return searchable.includes(query)
+  })
 }
 
 const fallbackScheduleRisks: ScheduleRiskRow[] = [

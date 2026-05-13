@@ -1011,6 +1011,30 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-13 - 风险提示独立工作台
+
+#### 审计结论
+
+- `F060/US104` 已新增 `/schedule-risks` 工作台页，集中展示本地风险列表、摘要和复核入口。
+- 侧边栏新增稳定 `风险提示` 导航入口；计划详情与不可用影响定位页面已统一跳到风险工作台上下文，而不是间接回到计划页或只落单条详情。
+- 风险明细页已补 `返回风险列表` 入口，保持计划详情和风险工作台之间的来回复核链路。
+- 新页面和跳转全部复用本地风险契约与现有 TanStack Table 行为；没有引入数据库、依赖、后端契约变更、审批、导出、批量或生产公式。
+
+#### 风险
+
+- 当前工作台的上下文过滤是前端本地过滤，不等同于后端查询契约；未来若引入真实数据或分页，需要单独 Gate。
+- `next-env.d.ts` 会随 Next 路由类型生成变化，因此已纳入当前任务允许范围；后续新增路由时也要注意这类生成文件。
+
+#### 验证
+
+- Safari smoke：`http://localhost:3016/schedule-risks` 正常显示 3 条风险；按计划上下文 URL 过滤后正常收敛到 1 条。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，10 个测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、15 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

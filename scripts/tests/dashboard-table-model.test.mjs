@@ -16,6 +16,10 @@ import {
   summarizeSyncStatusRows,
   summarizeUnavailabilityRows,
 } from "../../components/data-table-model.ts";
+import {
+  filterScheduleRiskRowsByScope,
+  scheduleRiskLevelLabel,
+} from "../../lib/schedule-plans.ts";
 
 const anomaly = {
   id: "ANM-202605-001",
@@ -203,6 +207,50 @@ test("schedule risk helpers filter rows and summarize risk exposure", () => {
     totalGap: 3,
     affectedUnavailability: 1,
   });
+});
+
+test("schedule risk scope filters preserve upstream drilldown context", () => {
+  const rows = [
+    {
+      risk_id: "risk-a",
+      plan_id: "plan-a",
+      plan_date: "2026-05-11",
+      project_name: "博西客服",
+      site_name: "上海职场",
+      interval_start: "09:30",
+      interval_end: "10:00",
+      risk_level: "high",
+      gap_agents: 2,
+      affected_unavailability: 1,
+      reason: "缺口 2 人",
+      recommendation: "优先复核",
+    },
+    {
+      risk_id: "risk-b",
+      plan_id: "plan-b",
+      plan_date: "2026-05-11",
+      project_name: "博西客服",
+      site_name: "苏州职场",
+      interval_start: "09:30",
+      interval_end: "10:00",
+      risk_level: "medium",
+      gap_agents: 1,
+      affected_unavailability: 0,
+      reason: "排班缺口",
+      recommendation: "检查草稿",
+    },
+  ];
+
+  assert.equal(scheduleRiskLevelLabel("high"), "高风险");
+  assert.deepEqual(
+    filterScheduleRiskRowsByScope(rows, {
+      planId: "plan-a",
+      planDate: "2026-05-11",
+      siteName: "上海职场",
+      query: "优先",
+    }).map((row) => row.risk_id),
+    ["risk-a"],
+  );
 });
 
 test("unavailability helpers filter rows and summarize active impact", () => {

@@ -151,7 +151,11 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
               </CardDescription>
             </div>
             <Button asChild variant="outline" size="sm">
-              <Link href={`/schedule-plans?query=${record.site_name}`}>查看风险列表</Link>
+              <Link
+                href={`/schedule-risks?query=${encodeURIComponent(record.site_name)}&project=${encodeURIComponent(record.project_name)}&site=${encodeURIComponent(record.site_name)}&date=${encodeURIComponent(record.unavailable_date)}`}
+              >
+                查看风险列表
+              </Link>
             </Button>
           </CardHeader>
           <CardContent>

@@ -44,7 +44,6 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
       risk.plan_id === plan.summary.id &&
       risk.plan_date === plan.summary.plan_date
   )
-  const primaryRisk = relatedRisks[0] ?? null
   const relatedUnavailability = activeUnavailability.filter(
     (row) =>
       row.project_name === plan.summary.project_name &&
@@ -125,19 +124,13 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
               <Button asChild variant="outline" size="sm">
                 <Link href={`/shift-details?query=${plan.summary.id}`}>查看班次</Link>
               </Button>
-              {primaryRisk ? (
-                <Button asChild variant="outline" size="sm">
-                  <Link
-                    href={`/schedule-risks/${encodeURIComponent(primaryRisk.risk_id)}`}
-                  >
-                    查看风险
-                  </Link>
-                </Button>
-              ) : (
-                <Button variant="outline" size="sm" disabled>
+              <Button asChild variant="outline" size="sm">
+                <Link
+                  href={`/schedule-risks?planId=${encodeURIComponent(plan.summary.id)}&project=${encodeURIComponent(plan.summary.project_name)}&site=${encodeURIComponent(plan.summary.site_name)}&date=${encodeURIComponent(plan.summary.plan_date)}`}
+                >
                   查看风险
-                </Button>
-              )}
+                </Link>
+              </Button>
               <Button asChild variant="outline" size="sm">
                 <Link
                   href={`/unavailability?query=${encodeURIComponent(plan.summary.site_name)}&status=active`}

@@ -53,6 +53,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-No ready story is currently queued. `H029 current-state governance closeout` is complete: the default read set, current-task schema, strict state-repair boundary, and `check-state` rules are now aligned.
+No ready story is currently queued. `F060 risk workbench page` is complete: `/schedule-risks` is now a dedicated local no-database risk workspace, and plan/unavailability drilldown links can land on a stable risk list context instead of bouncing through indirect pages.
 
-Before the next product iteration, seed the next ready story into `docs/current/STORY_QUEUE.yaml` and its matching task into `docs/current/ACTIVE_TASKS.yaml`. Database work stays deferred.
+The next recommended slice is a narrow QA or workflow follow-up on top of the new risk workspace, or another frontend/local-contract story that stays clear of database, real integrations, auth, approval, export, batch operations, and production formulas. Database work stays deferred.
