@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-REVIEW-CHECKLIST-001
+  in_progress_task: F073
+  ready_tasks: [F074, F075, F076, Q019]
 ```
 
 ## Current Stage
@@ -18,9 +18,9 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-The latest completed governance task is `US126/H034` on branch `codex/f073-review-checklist-h032`. It closes the remaining product closeout self-lock: same-commit closeout transitions now pass both strict state checks and commit-message validation, so a verified frontend batch can return current to empty and still commit with its active task id.
+The current product batch is `US124` on branch `codex/f073-review-checklist-h032`. This slice keeps the same no-database risk/unavailability review vertical and upgrades the right-side `复核任务` block into a shared local review checklist across list, workbench, and detail pages.
 
-The latest completed governance task before that was `US125/H033` on branch `codex/f073-review-checklist-h032`. It closed the startup-state self-lock: a new product batch can now seed the required current/registry startup diff and pass strict state checks before business implementation begins, while ordinary product edits still cannot modify current or registry state.
+The latest completed governance task is `US126/H034` on branch `codex/f073-review-checklist-h032`. It closes the remaining product closeout self-lock: same-commit closeout transitions now pass both strict state checks and commit-message validation, so a verified frontend batch can return current to empty and still commit with its active task id.
 
 The latest completed governance task was `US123/H032` on branch `codex/h032-traceability-closeout-guard`. It narrowed the remaining traceability closeout gap: after a task is verified and current returns to empty, a branch-log-only commit-SHA backfill can now pass strict staged state checks without reopening current.
 
@@ -67,4 +67,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Current is idle again. Re-seed `US124 / F073-F076 / Q019` and continue the shared review checklist product batch. Database work stays deferred.
+The next product batch has been re-seeded into current. Finish the shared review checklist refactor and QA closeout, then return current to empty again. Database work stays deferred.
