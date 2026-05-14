@@ -1196,3 +1196,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 route、review helper、页面返回动作、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R117 - plan-origin row-action context closure
+
+```yaml
+id: R117
+module: "排班与风险联动"
+description: "计划详情时段表和班次明细表里的行级动作仍可能丢失 schedule-plans 来源页，需要继续透传 plan-origin review context，避免从表格动作掉回宽泛列表或无来源状态。"
+source: "Story Runner continuation after US128 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 table action、review helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

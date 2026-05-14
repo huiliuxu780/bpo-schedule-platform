@@ -29,6 +29,25 @@
 
 ## Stories
 
+### US129 - Plan-origin row-action context closure
+
+```yaml
+id: US129
+requirement_ids:
+  - R117
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望计划详情时段表和班次明细表里的行级动作继续保留 plan-origin review context，这样从表格继续钻取时不会丢失当前计划的复核上下文。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "计划详情时段表里的 风险 / 班次 / 不可用 行级动作保留 schedule-plans 来源页。"
+  - "班次明细表里的 计划 / 风险 行级动作保留当前 scope 和来源页，而不是回到宽泛列表。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```
+
 ### US001 - 运营负责人查看 Dashboard 总览
 
 ```yaml
