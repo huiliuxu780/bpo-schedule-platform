@@ -2350,3 +2350,22 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US135 - Schedule plan draft failure feedback closure
+
+```yaml
+id: US135
+requirement_ids:
+  - R123
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望当新建或编辑草稿失败后，回到计划列表或计划详情时能直接看到失败提示，这样我不用靠 URL 参数猜测刚才的操作结果。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "计划列表在 `draft=failed` 时显示可见失败提示。"
+  - "计划详情在 `draft=failed` 时显示可见失败提示。"
+  - "提示不引入数据库、依赖、后端契约或生产工作流能力。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "split"
+```

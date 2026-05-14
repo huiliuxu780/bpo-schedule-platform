@@ -1274,3 +1274,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 route、server action、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R123 - schedule plan draft failure feedback closure
+
+```yaml
+id: R123
+module: "排班与风险联动"
+description: "当新建或编辑草稿失败并带着 `draft=failed` 回跳时，计划列表或计划详情需要给出可见提示，不能把失败信号只留在 URL 参数里。"
+source: "Story Runner continuation after US134 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端页面、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
