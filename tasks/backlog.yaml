@@ -4000,6 +4000,129 @@ tasks:
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F077
+    title: "scoped detail href builder"
+    priority: P1
+    status: in_progress
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "review-navigation helper 支持保留 scope 和来源页的 detail href。"
+      - "相关 builder 不回退到无 scope 的 detail URL。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F078
+    title: "drilldown tables preserve scoped detail URLs"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "风险表、不可用表和关联风险表进入 detail 页时保留 scoped review context。"
+      - "相关 detail link 保留来源页信息。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F079
+    title: "detail page scoped back links"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "plan / risk / unavailability detail 页里的返回动作保留 scoped review context。"
+      - "detail 页内的相关计划跳转也保留 scope 和来源页。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q020
+    title: "scoped detail navigation QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "scoped detail navigation 在 risk / plan / unavailability review 链路内保持一致。"
+      - "严格状态、lint、typecheck、build 和后端 unittest 继续通过。"
+      - "current queue 与 active tasks 在 closeout 后清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: F074
     title: "checklist 当前步骤与下一步提示"
     priority: P1

@@ -5,4 +5,9 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US127
+    title: "Scoped detail navigation across review drilldown"
+    status: in_progress
+    requirement_ids: [R115]
+    task_ids: [F077, F078, F079, Q020]

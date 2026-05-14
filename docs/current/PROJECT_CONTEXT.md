@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-SCOPED-DETAIL-NAV-001
+  in_progress_task: F077
+  ready_tasks: [F078, F079, Q020]
 ```
 
 ## Current Stage
@@ -18,7 +18,9 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-The latest completed product batch was `US124 / F073-F076 / Q019` on branch `codex/f073-review-checklist-h032`. It replaced the duplicated right-side `复核任务` blocks across risk/plan/shift/unavailability pages with one shared local review checklist rail that carries summary metrics, current step, next step, scoped actions, and stable back links.
+The current product batch is `US127` on branch `codex/f073-review-checklist-h032`. It keeps the same no-database review vertical and fixes scoped detail navigation: detail links, related plan links, and back links should preserve the active review scope instead of dropping back to full lists.
+
+The latest completed product batch before that was `US124 / F073-F076 / Q019` on branch `codex/f073-review-checklist-h032`. It replaced the duplicated right-side `复核任务` blocks across risk/plan/shift/unavailability pages with one shared local review checklist rail that carries summary metrics, current step, next step, scoped actions, and stable back links.
 
 The latest completed governance task is `US126/H034` on branch `codex/f073-review-checklist-h032`. It closes the remaining product closeout self-lock: same-commit closeout transitions now pass both strict state checks and commit-message validation, so a verified frontend batch can return current to empty and still commit with its active task id.
 
@@ -67,4 +69,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Current is idle again. The next step is to seed the next no-database review story or another local frontend/local-contract slice before resuming Story Runner. Database work stays deferred.
+The next product batch has been seeded into current. Keep work inside the same no-database review workflow, finish scoped detail navigation, then return current to empty before seeding another story. Database work stays deferred.

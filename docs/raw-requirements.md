@@ -1170,3 +1170,16 @@ version: "1.0"
 status: "split"
 notes: "只改 current/registry/quality 文档、状态校验、commit-message 校验和测试；不改业务代码、不改依赖、不改 package/lockfile、不接数据库。"
 ```
+
+### R115 - scoped detail navigation across review drilldown
+
+```yaml
+id: R115
+module: "排班与风险联动"
+description: "review drilldown 从风险表、不可用表和关联表进入 detail 页时，需要保留当前 scope 和来源页；detail 页里的返回和相关计划跳转也不能掉回全量列表。"
+source: "Story Runner continuation after US124 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 route、navigation helper、表格链接、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

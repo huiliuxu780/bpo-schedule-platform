@@ -2197,3 +2197,22 @@ acceptance:
   - "`bash scripts/check-state.sh --strict --diff=working`、`node --test scripts/tests/check-state.test.mjs`、`node --test scripts/tests/validate-commit-message.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US127 - Scoped detail navigation across review drilldown
+
+```yaml
+id: US127
+requirement_ids:
+  - R115
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望从风险、不可用和关联表进入 detail 页后还能保留当前 review scope 和返回路径，这样我不会在 drilldown 过程中掉回全量列表。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "risk / unavailability / 关联风险表进入 detail 页时，URL 保留当前 scope 和来源页。"
+  - "plan / risk / unavailability detail 页里的返回动作和相关计划跳转保留 scoped review context。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```
