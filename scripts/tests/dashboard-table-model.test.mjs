@@ -676,6 +676,28 @@ test("schedule plan list and detail pages surface visible draft failure feedback
   assert.match(detailSource, /草稿操作失败/);
 });
 
+test("schedule plan detail page surfaces visible draft success feedback", async () => {
+  const detailSource = await readFile(
+    new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const createActionSource = await readFile(
+    new URL("../../app/schedule-plans/new/actions.ts", import.meta.url),
+    "utf8",
+  );
+  const editActionSource = await readFile(
+    new URL("../../app/schedule-plans/[planId]/edit/actions.ts", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(detailSource, /draft === "created"/);
+  assert.match(detailSource, /draft === "updated"/);
+  assert.match(detailSource, /草稿已创建/);
+  assert.match(detailSource, /草稿已保存/);
+  assert.match(createActionSource, /draft: "created"/);
+  assert.match(editActionSource, /draft: "updated"/);
+});
+
 test("schedule plan detail page exposes a wide-screen review rail", async () => {
   const source = await readFile(
     new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),

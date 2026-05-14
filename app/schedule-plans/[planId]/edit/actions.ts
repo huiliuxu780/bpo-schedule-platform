@@ -56,5 +56,10 @@ export async function updateDraftAction(formData: FormData) {
     redirect(buildPlanDetailHref(planId, { ...scope, draft: "failed" }))
   }
 
-  redirect(buildPlanDetailHref(updated.summary.id, scope))
+  redirect(
+    buildPlanDetailHref(updated.summary.id, {
+      ...scope,
+      draft: "updated",
+    }),
+  )
 }

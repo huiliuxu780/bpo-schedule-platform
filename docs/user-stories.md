@@ -2386,5 +2386,5 @@ acceptance:
   - "保存草稿成功回跳到计划详情时显示可见成功提示。"
   - "提示不引入数据库、依赖、后端契约或生产工作流能力。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "split"
+status: "done"
 ```

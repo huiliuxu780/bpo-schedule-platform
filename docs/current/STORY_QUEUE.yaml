@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: "US136"
-    requirement_ids: ["R124"]
-    task_ids: ["F096", "F097", "Q029"]
-    status: "in_progress"
-    summary: "Surface visible success feedback after local schedule-plan draft create and update."
+stories: []

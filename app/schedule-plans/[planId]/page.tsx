@@ -185,6 +185,26 @@ export default async function SchedulePlanDetailPage({
                 </CardHeader>
               </Card>
             ) : null}
+            {draft === "created" ? (
+              <Card className="border-emerald-500/40 bg-emerald-500/5">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">草稿已创建</CardTitle>
+                  <CardDescription>
+                    本地 draft 已创建完成，可以继续复核时段、风险和不可用。
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            ) : null}
+            {draft === "updated" ? (
+              <Card className="border-emerald-500/40 bg-emerald-500/5">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">草稿已保存</CardTitle>
+                  <CardDescription>
+                    本地 draft 已保存完成，可以继续沿当前上下文复核。
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            ) : null}
             <section className="grid gap-4 md:grid-cols-4">
               <DetailCard title="状态" value={schedulePlanStatusLabel(plan.summary.status)} />
               <DetailCard title="预测人次" value={`${plan.summary.forecast_agents}`} />

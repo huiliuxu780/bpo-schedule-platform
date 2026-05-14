@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: BATCH-PLAN-DRAFT-SUCCESS-001
-  in_progress_task: F096
-  ready_tasks: [F097, Q029]
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -18,7 +18,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-The current active product batch is `US136 / F096-F097 / Q029` on branch `codex/f073-review-checklist-h032`. It closes the remaining draft success-feedback gap: after local draft create/save redirects to plan detail, the page should show whether the draft was newly created or updated instead of only changing routes.
+The latest completed product batch is `US136 / F096-F097 / Q029` on branch `codex/f073-review-checklist-h032`. It closes the remaining draft success-feedback gap: after local draft create/save redirects to plan detail, the page now shows whether the draft was newly created or updated instead of only changing routes.
 
 The latest completed product batch is `US130 / F085 / Q023` on branch `codex/f073-review-checklist-h032`. It closes the remaining scoped plan-link gap inside the unavailability impact shift table so row-level plan actions preserve the same review source and scope instead of dropping back to a bare plan detail route.
 
@@ -77,4 +77,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The current active product batch is `US136 / F096-F097 / Q029` on branch `codex/f073-review-checklist-h032`. It extends the same no-database draft workflow by turning successful create/save redirects into visible UI feedback on the plan detail page.
+The latest completed product batch is `US136 / F096-F097 / Q029` on branch `codex/f073-review-checklist-h032`. It extends the same no-database draft workflow by turning successful create/save redirects into visible UI feedback on the plan detail page.

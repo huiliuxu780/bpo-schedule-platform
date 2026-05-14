@@ -1115,3 +1115,21 @@
 - action: 收口 schedule plan draft failure feedback QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F096-F097`
+- source_ids:
+  - `R124`
+- story_ids:
+  - `US136`
+- action: 完成 schedule plan draft success feedback 收口，在计划详情补齐创建成功和保存成功提示。
+- status: `done`
+- notes: 本地新建草稿成功后，计划详情会显示“草稿已创建”；本地保存草稿成功后，计划详情会显示“草稿已保存”；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 38 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q029`
+- source_ids:
+  - `R124`
+- story_ids:
+  - `US136`
+- action: 收口 schedule plan draft success feedback QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

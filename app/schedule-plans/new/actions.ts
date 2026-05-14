@@ -48,5 +48,11 @@ export async function createDraftAction(formData: FormData) {
     redirect(buildSchedulePlansHref({ query, status, draft: "failed" }))
   }
 
-  redirect(buildPlanDetailHref(created.summary.id, { query, status }))
+  redirect(
+    buildPlanDetailHref(created.summary.id, {
+      query,
+      status,
+      draft: "created",
+    }),
+  )
 }
