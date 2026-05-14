@@ -21,7 +21,7 @@ import {
 import {
   buildPlanDetailHref,
   buildReviewBackLink,
-  buildSchedulePlansHref,
+  buildScheduleRisksHref,
   buildShiftDetailsHref,
   buildUnavailabilityHref,
 } from "@/lib/review-navigation"
@@ -168,7 +168,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
       intervalEnd,
     },
     {
-      href: buildSchedulePlansHref({ query, status }),
+      href: buildScheduleRisksHref({ query, status }),
       label: "回到全部风险",
     },
   )
@@ -190,7 +190,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
               <Link href={backLink.href}>{backLink.label}</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
-              <Link href="/unavailability">不可用管理</Link>
+              <Link href={unavailabilityHref}>不可用管理</Link>
             </Button>
           </div>
         </div>

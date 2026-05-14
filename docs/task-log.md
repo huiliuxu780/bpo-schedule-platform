@@ -1205,3 +1205,21 @@
 - action: 收口 schedule plan summary CTA context QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F106-F107`
+- source_ids:
+  - `R129`
+- story_ids:
+  - `US141`
+- action: 完成 risk workbench unavailability CTA context 收口，补齐风险工作台头部跨页 CTA 与默认回退目标。
+- status: `done`
+- notes: 风险工作台头部 `不可用管理` 不再使用裸 `/unavailability`，而是复用 `unavailabilityHref` 保留当前来源页和范围上下文；当风险工作台无上游来源时，默认回退 CTA 现在留在风险工作台而不是跳回排班计划页；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 46 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q034`
+- source_ids:
+  - `R129`
+- story_ids:
+  - `US141`
+- action: 收口 risk workbench CTA context QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

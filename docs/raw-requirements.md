@@ -1362,6 +1362,6 @@ description: "风险工作台头部的 `不可用管理` 仍使用裸跳转，�
 source: "Story Runner continuation after US140 closeout on 2026-05-14"
 submitted_at: "2026-05-14"
 version: "1.0"
-status: "ready"
+status: "done"
 notes: "只改本地前端风险页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```

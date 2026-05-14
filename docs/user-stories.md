@@ -2483,5 +2483,5 @@ acceptance:
   - "风险工作台在无上游来源时，默认回退 CTA 仍停留在风险工作台，不跳回排班计划页。"
   - "改动只限本地前端风险页、轻量测试和追溯；不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "in_progress"
+status: "done"
 ```

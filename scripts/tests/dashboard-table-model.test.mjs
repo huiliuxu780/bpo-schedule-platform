@@ -902,7 +902,7 @@ test("schedule-plans risk summary entry preserves plan-list source and status co
   assert.match(listPageSource, /status,/);
   assert.match(riskPageSource, /status\?: string/);
   assert.match(riskPageSource, /const status = params\.status/);
-  assert.match(riskPageSource, /buildSchedulePlansHref\(\{ query, status \}\)/);
+  assert.match(riskPageSource, /buildScheduleRisksHref\(\{ query, status \}\)/);
 });
 
 test("schedule risk table can preserve schedule-plans list review context", async () => {
@@ -947,4 +947,19 @@ test("mvp flow summary avoids hardcoded risk detail routes and uses context-awar
   assert.match(plansPageSource, /<MvpFlowSummary/);
   assert.match(plansPageSource, /query=\{query\}/);
   assert.match(plansPageSource, /status=\{status\}/);
+});
+
+test("risk workbench header CTA and fallback stay inside context-aware routes", async () => {
+  const riskPageSource = await readFile(
+    new URL("../../app/schedule-risks/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(riskPageSource, /const unavailabilityHref = buildUnavailabilityHref/);
+  assert.match(riskPageSource, /<Link href=\{unavailabilityHref\}>不可用管理<\/Link>/);
+  assert.doesNotMatch(riskPageSource, /<Link href="\/unavailability">不可用管理<\/Link>/);
+  assert.match(
+    riskPageSource,
+    /href: buildScheduleRisksHref\(\{ query, status \}\),\s+label: "回到全部风险"/,
+  );
 });
