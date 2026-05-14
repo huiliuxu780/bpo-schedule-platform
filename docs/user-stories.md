@@ -2330,3 +2330,23 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US134 - Schedule plan draft flow context closure
+
+```yaml
+id: US134
+requirement_ids:
+  - R122
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望从计划列表或计划详情进入新建/编辑草稿后仍能保留当前筛选和来源页，并在取消、返回或保存后回到正确的上下文，这样 draft 工作流不会打断当前复核链。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "计划列表进入新建草稿时保留当前 query/status 上下文。"
+  - "计划详情进入编辑草稿时保留当前来源页和 scope。"
+  - "新建/编辑页的返回、取消和提交后回跳保持稳定上下文，不退化成裸列表或无来源详情。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "split"
+```

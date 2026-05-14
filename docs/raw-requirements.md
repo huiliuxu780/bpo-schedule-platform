@@ -1261,3 +1261,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 table action、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R122 - schedule plan draft flow context closure
+
+```yaml
+id: R122
+module: "排班与风险联动"
+description: "从排班计划列表或计划详情进入新建/编辑草稿时，需要保留当前列表筛选、来源页和返回目标；提交后的回跳也不能退化成裸列表或无上下文详情。"
+source: "Story Runner continuation after US133 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 route、server action、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

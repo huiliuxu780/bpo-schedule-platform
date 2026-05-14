@@ -4650,6 +4650,104 @@ tasks:
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F092
+    title: "schedule plan draft entry context preservation"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/page.tsx"
+      - "app/schedule-plans/new/page.tsx"
+      - "app/schedule-plans/new/actions.ts"
+      - "app/schedule-plans/[planId]/page.tsx"
+      - "app/schedule-plans/[planId]/edit/page.tsx"
+      - "app/schedule-plans/[planId]/edit/actions.ts"
+      - "lib/review-navigation.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "计划列表进入新建草稿时保留 query/status 过滤上下文。"
+      - "计划详情进入编辑草稿时保留来源页和 review scope。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F093
+    title: "schedule plan draft return-target closure"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/page.tsx"
+      - "app/schedule-plans/new/page.tsx"
+      - "app/schedule-plans/new/actions.ts"
+      - "app/schedule-plans/[planId]/page.tsx"
+      - "app/schedule-plans/[planId]/edit/page.tsx"
+      - "app/schedule-plans/[planId]/edit/actions.ts"
+      - "lib/review-navigation.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新建/编辑页的返回、取消和提交后回跳保持正确上下文。"
+      - "失败回跳保留当前列表或详情来源。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q027
+    title: "schedule plan draft flow QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/schedule-plans/page.tsx"
+      - "app/schedule-plans/new/page.tsx"
+      - "app/schedule-plans/new/actions.ts"
+      - "app/schedule-plans/[planId]/page.tsx"
+      - "app/schedule-plans/[planId]/edit/page.tsx"
+      - "app/schedule-plans/[planId]/edit/actions.ts"
+      - "lib/review-navigation.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "计划草稿 new/edit 工作流在 QA closeout 后保持列表筛选与来源页上下文。"
+      - "严格状态、lint、typecheck、build 和后端 unittest 继续通过。"
+      - "current queue 与 active tasks 在 closeout 后清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: F074
     title: "checklist 当前步骤与下一步提示"
     priority: P1

@@ -119,6 +119,7 @@ stories:
   US131: {file: "docs/user-stories.md", requirement_ids: ["R119"], task_ids: ["F086", "F087", "Q024"], archive_refs: []}
   US132: {file: "docs/user-stories.md", requirement_ids: ["R120"], task_ids: ["F088", "F089", "Q025"], archive_refs: []}
   US133: {file: "docs/user-stories.md", requirement_ids: ["R121"], task_ids: ["F090", "F091", "Q026"], archive_refs: []}
+  US134: {file: "docs/user-stories.md", requirement_ids: ["R122"], task_ids: ["F092", "F093", "Q027"], archive_refs: []}
 tasks:
   H024: {file: "tasks/backlog.yaml", story_ids: ["US065"], gate: "state-hygiene"}
   H025: {file: "tasks/backlog.yaml", story_ids: ["US066"], gate: "state-hygiene"}
@@ -239,6 +240,8 @@ tasks:
   F089: {file: "tasks/backlog.yaml", story_ids: ["US132"], gate: "frontend-scaffold"}
   F090: {file: "tasks/backlog.yaml", story_ids: ["US133"], gate: "frontend-scaffold"}
   F091: {file: "tasks/backlog.yaml", story_ids: ["US133"], gate: "frontend-scaffold"}
+  F092: {file: "tasks/backlog.yaml", story_ids: ["US134"], gate: "frontend-scaffold"}
+  F093: {file: "tasks/backlog.yaml", story_ids: ["US134"], gate: "frontend-scaffold"}
   F074: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
   F075: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
   F076: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
@@ -250,6 +253,7 @@ tasks:
   Q024: {file: "tasks/backlog.yaml", story_ids: ["US131"], gate: "qa"}
   Q025: {file: "tasks/backlog.yaml", story_ids: ["US132"], gate: "qa"}
   Q026: {file: "tasks/backlog.yaml", story_ids: ["US133"], gate: "qa"}
+  Q027: {file: "tasks/backlog.yaml", story_ids: ["US134"], gate: "qa"}
 requirements:
   R051: {file: "docs/raw-requirements.md", story_ids: ["US063"], task_ids: ["H022"]}
   R052: {file: "docs/raw-requirements.md", story_ids: ["US064"], task_ids: ["H023"]}
@@ -352,6 +356,7 @@ requirements:
   R119: {file: "docs/raw-requirements.md", story_ids: ["US131"], task_ids: ["F086", "F087", "Q024"]}
   R120: {file: "docs/raw-requirements.md", story_ids: ["US132"], task_ids: ["F088", "F089", "Q025"]}
   R121: {file: "docs/raw-requirements.md", story_ids: ["US133"], task_ids: ["F090", "F091", "Q026"]}
+  R122: {file: "docs/raw-requirements.md", story_ids: ["US134"], task_ids: ["F092", "F093", "Q027"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
