@@ -1007,3 +1007,21 @@
 - action: 收口 plan-origin row-action context QA。
 - status: `done`
 - notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 28 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；本地 dev server 可在 `http://localhost:3014` 启动，但 cross-sandbox localhost smoke 因审批超时未追加为最终证据；current queue 与 active tasks 已清空。
+
+- task_id: `F085`
+- source_ids:
+  - `R118`
+- story_ids:
+  - `US130`
+- action: 完成 unavailability impact shift-table scoped plan-link 收口，补齐影响班次表的计划行级动作保参。
+- status: `done`
+- notes: `UnavailabilityImpactShiftTable` 现在使用 review helper 构造计划详情链接，并透传当前不可用页的来源页和 scope；不可用影响定位页把当前 project/site/date/start/end 显式传给表格组件；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q023`
+- source_ids:
+  - `R118`
+- story_ids:
+  - `US130`
+- action: 收口 unavailability impact shift-table scoped plan-link QA。
+- status: `done`
+- notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 29 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

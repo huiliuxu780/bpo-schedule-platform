@@ -14,6 +14,7 @@ import * as React from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { buildPlanDetailHref } from "@/lib/review-navigation"
 import {
   Table,
   TableBody,
@@ -35,7 +36,15 @@ const statusRank: Record<SchedulePlanStatus, number> = {
   published: 2,
 }
 
-const columns: ColumnDef<ShiftDetailRow>[] = [
+function getColumns(scope: {
+  sourceFrom?: string
+  project?: string
+  site?: string
+  date?: string
+  intervalStart?: string
+  intervalEnd?: string
+}): ColumnDef<ShiftDetailRow>[] {
+  return [
   {
     accessorKey: "plan_id",
     header: ({ column }) => (
@@ -177,23 +186,59 @@ const columns: ColumnDef<ShiftDetailRow>[] = [
     cell: ({ row }) => (
       <div className="text-right">
         <Button asChild variant="outline" size="sm">
-          <Link href={`/schedule-plans/${row.original.plan_id}`}>计划</Link>
+          <Link
+            href={buildPlanDetailHref(row.original.plan_id, {
+              from: scope.sourceFrom || "unavailability",
+              project: scope.project,
+              site: scope.site,
+              date: scope.date,
+              intervalStart: scope.intervalStart,
+              intervalEnd: scope.intervalEnd,
+            })}
+          >
+            计划
+          </Link>
         </Button>
       </div>
     ),
   },
 ]
+}
 
 export function UnavailabilityImpactShiftTable({
   rows,
+  sourceFrom,
+  project,
+  site,
+  date,
+  intervalStart,
+  intervalEnd,
 }: {
   rows: ShiftDetailRow[]
+  sourceFrom?: string
+  project?: string
+  site?: string
+  date?: string
+  intervalStart?: string
+  intervalEnd?: string
 }) {
   "use no memo"
 
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "plan_id", desc: false },
   ])
+  const columns = React.useMemo(
+    () =>
+      getColumns({
+        sourceFrom,
+        project,
+        site,
+        date,
+        intervalStart,
+        intervalEnd,
+      }),
+    [date, intervalEnd, intervalStart, project, site, sourceFrom]
+  )
   // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

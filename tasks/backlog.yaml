@@ -4339,7 +4339,7 @@ tasks:
   - id: F085
     title: "unavailability impact shift-table preserves scoped plan links"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/unavailability/[unavailabilityId]/page.tsx"
@@ -4368,7 +4368,7 @@ tasks:
   - id: Q023
     title: "unavailability impact shift-table scoped plan-link QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/unavailability/[unavailabilityId]/page.tsx"

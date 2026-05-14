@@ -227,7 +227,15 @@ export default async function UnavailabilityImpactPage({
                 </Button>
               </CardHeader>
               <CardContent>
-                <UnavailabilityImpactShiftTable rows={impactedShiftDetails} />
+                <UnavailabilityImpactShiftTable
+                  rows={impactedShiftDetails}
+                  sourceFrom={sourceFrom}
+                  project={record.project_name}
+                  site={record.site_name}
+                  date={record.unavailable_date}
+                  intervalStart={record.start_time}
+                  intervalEnd={record.end_time}
+                />
               </CardContent>
             </Card>
 

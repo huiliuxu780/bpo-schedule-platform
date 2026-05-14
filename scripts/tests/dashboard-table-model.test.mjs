@@ -513,6 +513,17 @@ test("unavailability impact risk table exposes scoped continuation actions", asy
   assert.match(source, /查看风险/);
 });
 
+test("unavailability impact shift table preserves scoped plan links", async () => {
+  const source = await readFile(
+    new URL("../../components/unavailability-impact-shift-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /buildPlanDetailHref/);
+  assert.match(source, /sourceFrom/);
+  assert.doesNotMatch(source, /href=\{`\/schedule-plans\/\$\{row\.original\.plan_id\}`\}/);
+});
+
 test("schedule plan detail page exposes a wide-screen review rail", async () => {
   const source = await readFile(
     new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),
