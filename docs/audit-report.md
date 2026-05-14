@@ -1607,6 +1607,27 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+## 2026-05-14 - Schedule Plans Draft Feedback Context Persistence
+
+#### 审计结论
+
+- `F112/Q038/US145` 已把排班计划页剩余的 draft feedback 上下文缺口补齐：搜索、状态切换和 `清空` 不再把本地 draft 失败/成功反馈立刻冲掉。
+- 这让用户在仍停留当前计划列表页面时，可以继续筛选和检查列表，同时保留刚发生的 draft 结果提示。
+- 本轮仍然只停留在本地前端和本地 seed 契约层，没有引入数据库、依赖、后端契约、审批、导出、批量、权限或生产公式。
+
+#### 风险
+
+- 当前反馈保持仍建立在 query 参数和本地 helper 之上，不等同于服务端态或用户级持久化返回；若后续需要跨会话保持，需要单独过 Gate。
+- 本轮没有追加浏览器交互自动化；当前验收依赖失败测试先验、源码断言、strict state 和全量 `check.sh`。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，51 个测试通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check-state.sh --strict --diff=staged`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

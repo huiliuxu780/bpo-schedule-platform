@@ -975,6 +975,24 @@ test("demand-plans CTA into schedule-plans preserves the active query", async ()
   assert.doesNotMatch(demandPlansSource, /<Link href="\/schedule-plans">查看排班计划<\/Link>/);
 });
 
+test("schedule-plans list interactions preserve local draft feedback context", async () => {
+  const plansPageSource = await readFile(
+    new URL("../../app/schedule-plans/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(plansPageSource, /buildSchedulePlansHref/);
+  assert.match(
+    plansPageSource,
+    /function statusHref\([\s\S]*?status: SchedulePlanStatus \| undefined,[\s\S]*?query: string,[\s\S]*?draft: string,[\s\S]*?\)/,
+  );
+  assert.match(plansPageSource, /if \(draft\.trim\(\)\) \{\s+searchParams\.set\("draft", draft\.trim\(\)\)\s+\}/);
+  assert.match(plansPageSource, /\{draft \? <input name="draft" type="hidden" value=\{draft\} \/>\s+: null\}/);
+  assert.match(plansPageSource, /<Link href=\{statusHref\(option\.value, query, draft\)\}>/);
+  assert.match(plansPageSource, /<Link href=\{buildSchedulePlansHref\(\{ draft \}\)\}>清空<\/Link>/);
+  assert.doesNotMatch(plansPageSource, /<Link href="\/schedule-plans">清空<\/Link>/);
+});
+
 test("risk workbench scoped `查看全部` preserves query and status while clearing drilldown scope", async () => {
   const riskPageSource = await readFile(
     new URL("../../app/schedule-risks/page.tsx", import.meta.url),

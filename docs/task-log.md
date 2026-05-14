@@ -1277,3 +1277,21 @@
 - action: 收口 shift-details / unavailability clear CTA QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F112`
+- source_ids:
+  - `R133`
+- story_ids:
+  - `US145`
+- action: 完成 schedule-plans draft feedback context 收口，补齐列表内搜索、状态切换和清空对 draft 反馈的保留。
+- status: `done`
+- notes: 排班计划页搜索表单、状态切换和 `清空` 现在都会保留 `draft` 参数，因此本地 draft 失败/成功提示不会在仍留在当前页面时被列表交互直接冲掉；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 51 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q038`
+- source_ids:
+  - `R133`
+- story_ids:
+  - `US145`
+- action: 收口 schedule-plans draft feedback context QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

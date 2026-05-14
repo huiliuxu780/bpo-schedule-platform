@@ -130,7 +130,7 @@ description: "第一条纵切需要明确哪些状态、指标和公式只是 MV
 source: "PM confirmed M001"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "计划状态建议先限于 draft、review_ready、published 三个展示状态；排班覆盖率建议为 scheduled_agents / forecast_agents。该建议用于 M001 设计，不代表生产最终口径。"
 ```
 

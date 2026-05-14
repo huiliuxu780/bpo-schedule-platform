@@ -2559,5 +2559,5 @@ acceptance:
   - "本地 draft 失败/成功提示不会因为列表内搜索或筛选动作立刻消失。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "in_progress"
+status: "done"
 ```

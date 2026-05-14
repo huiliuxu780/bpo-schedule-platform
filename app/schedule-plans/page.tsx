@@ -7,6 +7,7 @@ import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
 import {
   buildNewSchedulePlanHref,
+  buildSchedulePlansHref,
   buildScheduleRisksHref,
 } from "@/lib/review-navigation"
 import {
@@ -54,7 +55,11 @@ function parseStatus(status?: string): SchedulePlanStatus | undefined {
   return undefined
 }
 
-function statusHref(status: SchedulePlanStatus | undefined, query: string) {
+function statusHref(
+  status: SchedulePlanStatus | undefined,
+  query: string,
+  draft: string,
+) {
   const searchParams = new URLSearchParams()
 
   if (query.trim()) {
@@ -63,6 +68,10 @@ function statusHref(status: SchedulePlanStatus | undefined, query: string) {
 
   if (status) {
     searchParams.set("status", status)
+  }
+
+  if (draft.trim()) {
+    searchParams.set("draft", draft.trim())
   }
 
   const suffix = searchParams.toString()
@@ -122,6 +131,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
               />
             </div>
             {status ? <input name="status" type="hidden" value={status} /> : null}
+            {draft ? <input name="draft" type="hidden" value={draft} /> : null}
             <Button type="submit" variant="outline" size="sm">
               搜索
             </Button>
@@ -137,7 +147,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
                   variant={active ? "default" : "outline"}
                   size="sm"
                 >
-                  <Link href={statusHref(option.value, query)}>
+                  <Link href={statusHref(option.value, query, draft)}>
                     {option.label}
                   </Link>
                 </Button>
@@ -146,7 +156,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
           </div>
           {query || status ? (
             <Button asChild variant="ghost" size="sm">
-              <Link href="/schedule-plans">清空</Link>
+              <Link href={buildSchedulePlansHref({ draft })}>清空</Link>
             </Button>
           ) : null}
         </section>

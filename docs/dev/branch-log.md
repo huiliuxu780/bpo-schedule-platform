@@ -1163,3 +1163,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F112 Schedule Plans Draft Feedback Context Persistence
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `92c9c99`
+- remote_status: `active tracked branch continuation after local closeout commit 92c9c99`
+- scope: schedule-plans draft feedback context preservation across list search, status switching, clear-filter actions, focused regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `app/schedule-plans/page.tsx`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `app/schedule-plans/page.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing tests first verified that schedule-plans list interactions still dropped the local `draft` feedback parameter; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 51 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --strict --diff=staged` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
