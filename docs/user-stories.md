@@ -45,7 +45,7 @@ acceptance:
   - "影响班次表不再使用裸计划详情链接。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "done"
+status: "in_progress"
 ```
 
 ### US129 - Plan-origin row-action context closure
@@ -2403,6 +2403,25 @@ priority: "P1"
 acceptance:
   - "计划列表表格中的 `查看` 动作保留当前 query/status 和 `from=schedule-plans`。"
   - "从该入口进入的计划详情返回动作能回到同一筛选列表，而不是裸列表。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "done"
+```
+
+### US138 - Schedule plan list-origin review return closure
+
+```yaml
+id: US138
+requirement_ids:
+  - R126
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望从计划列表直接进入风险、班次或不可用页后，仍能回到同一筛选计划列表，这样列表发起的 review chain 不会被误判成计划详情发起的 drilldown。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "计划列表中的 `风险`、`班次`、`不可用` 动作保留当前 query/status 和独立的 plan-list source。"
+  - "风险、班次、不可用页识别该 source，并把返回目标稳定指向当前筛选计划列表。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"

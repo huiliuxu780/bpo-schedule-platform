@@ -5,7 +5,7 @@ tasks:
   - id: H001
     title: "最小 Harness 初始化"
     priority: P0
-    status: done
+    status: in_progress
     required_workflow: harness
     allowed_files:
       - "AGENTS.md"
@@ -37,7 +37,7 @@ tasks:
   - id: H002
     title: "追加前端设计与开发规则"
     priority: P0
-    status: done
+    status: ready
     required_workflow: harness
     allowed_files:
       - "AGENTS.md"
@@ -69,7 +69,7 @@ tasks:
   - id: H003
     title: "Lightweight Harness 文档型升级"
     priority: P0
-    status: done
+    status: ready
     required_workflow: harness
     allowed_files:
       - "AGENTS.md"
@@ -4985,6 +4985,95 @@ tasks:
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
     acceptance:
       - "计划列表进入详情的 context preservation 有测试和 closeout 证据。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F100
+    title: "计划列表 review 入口 source 拆分"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-risks/page.tsx"
+      - "app/shift-details/page.tsx"
+      - "app/unavailability/page.tsx"
+      - "components/schedule-plan-table.tsx"
+      - "lib/review-navigation.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "计划列表中的 `风险`、`班次`、`不可用` 动作使用独立的 plan-list source，而不是复用计划详情来源。"
+      - "相关 workbench 页能识别并保留当前筛选列表作为回退目标。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F101
+    title: "计划列表发起的 risk/shift/unavailability 回退稳定化"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-risks/page.tsx"
+      - "app/shift-details/page.tsx"
+      - "app/unavailability/page.tsx"
+      - "components/schedule-plan-table.tsx"
+      - "lib/review-navigation.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "计划列表发起的风险、班次、不可用页都提供 source-aware 返回目标。"
+      - "同一链路不退化成计划详情返回态或宽泛列表。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q031
+    title: "schedule plan list-origin review return QA 收口"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files:
+      - "app/schedule-risks/page.tsx"
+      - "app/shift-details/page.tsx"
+      - "app/unavailability/page.tsx"
+      - "components/schedule-plan-table.tsx"
+      - "lib/review-navigation.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "计划列表发起的 review return 行为有测试和 closeout 证据。"
       - "不新增依赖、不改后端契约、不接数据库。"
       - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
     auto_run: true

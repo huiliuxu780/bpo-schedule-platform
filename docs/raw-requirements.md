@@ -1313,3 +1313,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端列表页、表格链接、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R126 - schedule plan list-origin review return closure
+
+```yaml
+id: R126
+module: "排班与风险联动"
+description: "排班计划列表中的 `风险`、`班次`、`不可用` 动作仍把 schedule-plans 统一当作计划详情来源，导致返回目标不稳定；需要把计划列表来源单独建模，保留当前筛选列表作为回退目标。"
+source: "Story Runner continuation after US137 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 helper、列表动作、workbench 返回态、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
