@@ -1430,3 +1430,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端排班计划页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R135 - demand plan clear CTA consistency
+
+```yaml
+id: R135
+module: "排班与需求联动"
+description: "demand-plans 页头 CTA 已经会保留 query 进入 schedule-plans，但当前列表 `清空` 仍使用裸 `/demand-plans`；需要把它收口到 helper-driven clear CTA，保持本地需求页路由一致性。"
+source: "Story Runner continuation after US146 closeout on 2026-05-15"
+submitted_at: "2026-05-15"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 demand-plans 页面、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

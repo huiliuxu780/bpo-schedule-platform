@@ -2580,3 +2580,22 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US147 - Demand plan clear CTA consistency
+
+```yaml
+id: US147
+requirement_ids:
+  - R135
+module: "排班与需求联动"
+role: "复核人员"
+story: "作为复核人员，我希望需求计划页的 `清空` 动作也走 helper 驱动的同页路由，这样需求页和排班页的本地 CTA 行为能保持一致。"
+task_type: "feature"
+priority: "P2"
+acceptance:
+  - "需求计划页 `清空` 不再使用裸 `/demand-plans`。"
+  - "`清空` 使用 helper-driven route，并保持同页 query reset 语义。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```
