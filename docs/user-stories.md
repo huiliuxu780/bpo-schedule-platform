@@ -2388,3 +2388,22 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US137 - Schedule plan list detail-context closure
+
+```yaml
+id: US137
+requirement_ids:
+  - R125
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望从排班计划列表点击 `查看` 进入详情时保留当前筛选和来源页，这样我完成 detail 内复核后还能回到同一个列表上下文。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "计划列表表格中的 `查看` 动作保留当前 query/status 和 `from=schedule-plans`。"
+  - "从该入口进入的计划详情返回动作能回到同一筛选列表，而不是裸列表。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```

@@ -1300,3 +1300,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端页面、server action、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R125 - schedule plan list detail-context closure
+
+```yaml
+id: R125
+module: "排班与风险联动"
+description: "排班计划列表表格中的 `查看` 仍使用裸详情链接，需要保留当前 query、status 和来源页上下文，避免用户从 detail 返回时掉回无筛选状态。"
+source: "Story Runner continuation after US136 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端列表页、表格链接、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
