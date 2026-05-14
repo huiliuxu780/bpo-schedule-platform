@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: "US140"
-    requirement_ids: ["R128"]
-    task_ids: ["F104", "F105", "Q033"]
-    status: "in_progress"
-    summary: "计划页 summary CTA 需要保留 plan-list review context。"
+stories: []

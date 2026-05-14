@@ -2464,5 +2464,5 @@ acceptance:
   - "计划页 summary CTA 与现有 plan-list review chain 的 helper routing 保持一致。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "in_progress"
+status: "done"
 ```

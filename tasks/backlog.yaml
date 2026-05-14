@@ -5175,7 +5175,7 @@ tasks:
   - id: F104
     title: "计划页 summary CTA helper routing 对齐"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -5203,7 +5203,7 @@ tasks:
   - id: F105
     title: "计划页 summary CTA cross-page 上下文稳定化"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -5231,7 +5231,7 @@ tasks:
   - id: Q033
     title: "schedule plan summary CTA context QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/page.tsx"

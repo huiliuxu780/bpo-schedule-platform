@@ -164,6 +164,8 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
           planCount={plans.length}
           highRiskCount={highRiskCount}
           totalGap={totalGap}
+          query={query}
+          status={status}
         />
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">

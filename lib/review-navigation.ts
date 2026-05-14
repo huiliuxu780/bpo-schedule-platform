@@ -75,6 +75,15 @@ export function buildSchedulePlansHref(scope: ReviewScopeParams = {}) {
   return `/schedule-plans${suffix ? `?${suffix}` : ""}`
 }
 
+export function buildDemandPlansHref(scope: ReviewScopeParams = {}) {
+  const searchParams = new URLSearchParams()
+
+  setIfPresent(searchParams, "query", scope.query)
+
+  const suffix = searchParams.toString()
+  return `/demand-plans${suffix ? `?${suffix}` : ""}`
+}
+
 export function buildNewSchedulePlanHref(scope: ReviewScopeParams = {}) {
   const searchParams = new URLSearchParams()
 

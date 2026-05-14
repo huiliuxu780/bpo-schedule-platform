@@ -4,6 +4,13 @@ import { ArrowRight, DatabaseZap } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
+  buildDemandPlansHref,
+  buildSchedulePlansHref,
+  buildScheduleRisksHref,
+  buildShiftDetailsHref,
+  buildUnavailabilityHref,
+} from "@/lib/review-navigation"
+import {
   Card,
   CardContent,
   CardDescription,
@@ -12,43 +19,59 @@ import {
 } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 
-const flowSteps = [
-  {
-    label: "需求计划",
-    description: "查看预测需求输入",
-    href: "/demand-plans",
-  },
-  {
-    label: "排班计划",
-    description: "筛选计划并进入详情",
-    href: "/schedule-plans",
-  },
-  {
-    label: "风险明细",
-    description: "从风险项钻取复核",
-    href: "/schedule-risks/risk-plan-20260511-suzhou-bosch-v1-10%3A00",
-  },
-  {
-    label: "不可用影响",
-    description: "定位受影响班次",
-    href: "/unavailability",
-  },
-  {
-    label: "班次明细",
-    description: "回看 0.5h 明细",
-    href: "/shift-details",
-  },
-]
-
 export function MvpFlowSummary({
   planCount,
   highRiskCount,
   totalGap,
+  query,
+  status,
 }: {
   planCount: number
   highRiskCount: number
   totalGap: number
+  query?: string
+  status?: string
 }) {
+  const flowSteps = [
+    {
+      label: "需求计划",
+      description: "查看预测需求输入",
+      href: buildDemandPlansHref({ query }),
+    },
+    {
+      label: "排班计划",
+      description: "筛选计划并进入详情",
+      href: buildSchedulePlansHref({ query, status }),
+    },
+    {
+      label: "风险明细",
+      description: "进入风险工作台继续复核",
+      href: buildScheduleRisksHref({
+        from: "schedule-plans-list",
+        query,
+        status,
+      }),
+    },
+    {
+      label: "不可用影响",
+      description: "定位受影响班次",
+      href: buildUnavailabilityHref({
+        from: "schedule-plans-list",
+        query,
+        status,
+      }),
+    },
+    {
+      label: "班次明细",
+      description: "回看 0.5h 明细",
+      href: buildShiftDetailsHref({
+        from: "schedule-plans-list",
+        query,
+        status,
+      }),
+    },
+  ]
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4">

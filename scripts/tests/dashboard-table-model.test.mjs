@@ -927,3 +927,24 @@ test("review-navigation keeps status when risk entry starts from schedule-plans 
     "/schedule-risks?from=schedule-plans-list&query=%E4%B8%8A%E6%B5%B7&status=review_ready",
   );
 });
+
+test("mvp flow summary avoids hardcoded risk detail routes and uses context-aware CTA builders", async () => {
+  const summarySource = await readFile(
+    new URL("../../components/mvp-flow-summary.tsx", import.meta.url),
+    "utf8",
+  );
+  const plansPageSource = await readFile(
+    new URL("../../app/schedule-plans/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(summarySource, /buildScheduleRisksHref/);
+  assert.match(summarySource, /buildShiftDetailsHref/);
+  assert.match(summarySource, /buildUnavailabilityHref/);
+  assert.doesNotMatch(summarySource, /risk-plan-20260511-suzhou-bosch-v1-10%3A00/);
+  assert.match(summarySource, /query\?: string/);
+  assert.match(summarySource, /status\?: string/);
+  assert.match(plansPageSource, /<MvpFlowSummary/);
+  assert.match(plansPageSource, /query=\{query\}/);
+  assert.match(plansPageSource, /status=\{status\}/);
+});

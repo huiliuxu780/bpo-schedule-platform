@@ -1187,3 +1187,21 @@
 - action: 收口 schedule plan risk-entry context QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F104-F105`
+- source_ids:
+  - `R128`
+- story_ids:
+  - `US140`
+- action: 完成 schedule plan summary CTA context 收口，补齐计划页本地 MVP flow summary 的 context-aware cross-page CTA。
+- status: `done`
+- notes: `MvpFlowSummary` 不再使用硬编码 risk detail 和裸跨页链接；计划页 summary CTA 进入需求、风险、不可用和班次页时，会使用与当前计划列表一致的 helper routing，其中风险、不可用和班次会保留 `schedule-plans-list`、`query` 和 `status`；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 45 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q033`
+- source_ids:
+  - `R128`
+- story_ids:
+  - `US140`
+- action: 收口 schedule plan summary CTA context QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

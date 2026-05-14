@@ -1349,6 +1349,6 @@ description: "排班计划页里的本地 MVP flow summary 仍使用裸跨页链
 source: "Story Runner continuation after US139 closeout on 2026-05-14"
 submitted_at: "2026-05-14"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "只改本地前端 summary 组件、计划页、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
