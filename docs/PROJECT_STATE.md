@@ -111,6 +111,7 @@ Current invariants:
 - `F109/Q036/US143` closed the remaining risk-workbench clear-scope CTA gap: when the risk workbench clears plan/date/site drilldown, it now preserves the active query/status context instead of dropping back to a completely bare risk page; current queue returned to empty after QA closeout.
 - `F110-F111/Q037/US144` closed the remaining clear CTA context gaps on `shift-details` and `unavailability`: scoped clear actions now drop only drilldown parameters, while list-level clear actions reset local filters without dropping the active review source; current queue returned to empty after QA closeout.
 - `F112/Q038/US145` closed the remaining schedule-plans draft feedback context gap: list-level search, status switching, and clear-filter actions now preserve local draft feedback until the user leaves the page; current queue returned to empty after QA closeout.
+- `F113/Q039/US146` closed the remaining schedule-plans same-page dismiss gap: the local draft failure banner now exposes a `关闭` action that removes only `draft` and preserves the active query/status list context; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

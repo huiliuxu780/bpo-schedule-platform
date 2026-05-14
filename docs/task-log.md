@@ -1295,3 +1295,21 @@
 - action: 收口 schedule-plans draft feedback context QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F113`
+- source_ids:
+  - `R134`
+- story_ids:
+  - `US146`
+- action: 完成 schedule-plans draft feedback dismiss 收口，补齐同页关闭动作并保留当前 query/status。
+- status: `done`
+- notes: 排班计划页的 draft failure 卡片现在提供显式 `关闭` 动作，通过 `buildSchedulePlansHref({ query, status })` 只移除 `draft`、不丢当前列表筛选；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 52 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q039`
+- source_ids:
+  - `R134`
+- story_ids:
+  - `US146`
+- action: 收口 schedule-plans draft dismiss QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

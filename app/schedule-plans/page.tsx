@@ -111,11 +111,16 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
         </div>
         {draft === "failed" ? (
           <Card className="border-destructive/40 bg-destructive/5">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">草稿操作失败</CardTitle>
-              <CardDescription>
-                本地 draft 创建未完成，请检查输入后重试。
-              </CardDescription>
+            <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
+              <div className="space-y-1">
+                <CardTitle className="text-base">草稿操作失败</CardTitle>
+                <CardDescription>
+                  本地 draft 创建未完成，请检查输入后重试。
+                </CardDescription>
+              </div>
+              <Button asChild variant="ghost" size="sm">
+                <Link href={buildSchedulePlansHref({ query, status })}>关闭</Link>
+              </Button>
             </CardHeader>
           </Card>
         ) : null}

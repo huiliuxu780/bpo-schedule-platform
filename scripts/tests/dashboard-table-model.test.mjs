@@ -465,6 +465,14 @@ test("schedule plan draft builders preserve list and detail return context", () 
   );
 
   assert.equal(
+    buildSchedulePlansHref({
+      query: "上海",
+      status: "review_ready",
+    }),
+    "/schedule-plans?query=%E4%B8%8A%E6%B5%B7&status=review_ready",
+  );
+
+  assert.equal(
     buildPlanEditHref("plan-a", {
       from: "schedule-risks",
       query: "高风险",
@@ -991,6 +999,17 @@ test("schedule-plans list interactions preserve local draft feedback context", a
   assert.match(plansPageSource, /<Link href=\{statusHref\(option\.value, query, draft\)\}>/);
   assert.match(plansPageSource, /<Link href=\{buildSchedulePlansHref\(\{ draft \}\)\}>清空<\/Link>/);
   assert.doesNotMatch(plansPageSource, /<Link href="\/schedule-plans">清空<\/Link>/);
+});
+
+test("schedule-plans list exposes a dismiss action for local draft feedback", async () => {
+  const plansPageSource = await readFile(
+    new URL("../../app/schedule-plans/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(plansPageSource, /buildSchedulePlansHref\(\{ query, status \}\)/);
+  assert.match(plansPageSource, /草稿操作失败/);
+  assert.match(plansPageSource, /<Link href=\{buildSchedulePlansHref\(\{ query, status \}\)\}>关闭<\/Link>/);
 });
 
 test("risk workbench scoped `查看全部` preserves query and status while clearing drilldown scope", async () => {

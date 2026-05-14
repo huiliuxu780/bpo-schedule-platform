@@ -5562,7 +5562,7 @@ tasks:
   - id: F113
     title: "排班计划 draft feedback 同页关闭动作"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -5588,7 +5588,7 @@ tasks:
   - id: Q039
     title: "schedule-plans draft dismiss QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/page.tsx"

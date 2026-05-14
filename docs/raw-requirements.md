@@ -143,7 +143,7 @@ description: "第一条纵切需要具备可验证交付标准，包括前端构
 source: "PM confirmed M001"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "Q001 后续定义具体验证命令；M001 只定义验收方向，不引入测试依赖。"
 ```
 
