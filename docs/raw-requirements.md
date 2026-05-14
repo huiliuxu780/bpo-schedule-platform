@@ -1365,3 +1365,16 @@ version: "1.0"
 status: "done"
 notes: "只改本地前端风险页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R130 - demand plan to schedule plan CTA context closure
+
+```yaml
+id: R130
+module: "需求与排班联动"
+description: "需求计划页头部的 `查看排班计划` 仍使用裸 `/schedule-plans`，会在用户带着 demand query 进入排班计划链路前丢失当前搜索上下文；需要把它补成 helper-driven handoff。"
+source: "Story Runner continuation after US141 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "ready"
+notes: "只改本地前端需求页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

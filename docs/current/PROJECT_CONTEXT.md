@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-DEMAND-PLAN-SCHEDULE-CTA-001
+  in_progress_task: F108
+  ready_tasks: [Q035]
 ```
 
 ## Current Stage
@@ -17,6 +17,8 @@ Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governe
 The project is in No Database MVP Mode. Product work may continue only through confirmed local frontend stories, local FastAPI seed/process-memory contracts, and verification tasks. The project must not connect or prepare a production database before PM confirms a later database Gate and provides an environment.
 
 ## Default Next Step
+
+The active product batch is `US142 / F108 / Q035` on branch `codex/f073-review-checklist-h032`. It targets the remaining demand-plan to schedule-plan CTA gap: the demand-plans page still uses a bare `/schedule-plans` entry, so the current demand query is lost before users move into the schedule-plans review chain.
 
 The latest completed product batch is `US141 / F106-F107 / Q034` on branch `codex/f073-review-checklist-h032`. It closes the remaining risk-workbench CTA context gap that still affected the schedule-plans review chain: the top-level `不可用管理` action on the risk workbench no longer uses a bare route, and the default back-link fallback now stays inside the risk workbench instead of routing to the wrong page when no upstream source is present.
 
@@ -87,4 +89,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The latest completed product batch is `US141 / F106-F107 / Q034` on branch `codex/f073-review-checklist-h032`. It keeps the same no-database schedule-plan review chain coherent by making the risk-workbench header CTA and default back-link fallback use the same context-aware routing posture as the rest of the plan-list review flow.
+The active product batch is `US142 / F108 / Q035` on branch `codex/f073-review-checklist-h032`. It keeps the same no-database planning chain coherent by making the demand-plans handoff into schedule-plans preserve the current query context before the user enters the schedule review flow.

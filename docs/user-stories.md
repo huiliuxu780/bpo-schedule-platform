@@ -2485,3 +2485,21 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US142 - Demand plan to schedule plan CTA context closure
+
+```yaml
+id: US142
+requirement_ids:
+  - R130
+module: "需求与排班联动"
+role: "复核人员"
+story: "作为复核人员，我希望从需求计划页跳到排班计划页时能保留当前 demand query，这样我从需求入口切到排班 review flow 时不会丢掉正在看的筛选范围。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "需求计划页头部 `查看排班计划` 不再使用裸 `/schedule-plans`，而是保留当前 query。"
+  - "改动只限本地前端需求页、轻量测试和追溯；不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```
