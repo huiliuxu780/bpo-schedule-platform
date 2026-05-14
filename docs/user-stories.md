@@ -2561,3 +2561,22 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US146 - Schedule plan draft feedback dismiss action
+
+```yaml
+id: US146
+requirement_ids:
+  - R134
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望排班计划页上的本地 draft 失败/成功提示可以在同一页主动关闭，这样我清掉结果提示时仍然留在当前筛选后的计划列表。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "排班计划页 draft feedback 卡片提供显式 dismiss/关闭动作。"
+  - "dismiss 只移除 `draft`，保留当前 `query` 和 `status`。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```

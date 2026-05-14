@@ -1417,3 +1417,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端排班计划页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R134 - schedule plan draft feedback dismiss action
+
+```yaml
+id: R134
+module: "排班与风险联动"
+description: "排班计划页已经会在当前列表内保留本地 draft 失败/成功反馈，但用户还缺一个显式的同页关闭动作；需要新增 dismiss CTA，只去掉 `draft`，同时保留当前 `query/status` 列表上下文。"
+source: "Story Runner continuation after US145 closeout on 2026-05-15"
+submitted_at: "2026-05-15"
+version: "1.0"
+status: "split"
+notes: "只改本地前端排班计划页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
