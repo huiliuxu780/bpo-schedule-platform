@@ -1209,3 +1209,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 table action、review helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R118 - unavailability impact shift-table scoped plan-link closure
+
+```yaml
+id: R118
+module: "排班与风险联动"
+description: "不可用影响定位页中的影响班次表仍使用裸计划链接，需要保留当前 review scope 和来源页，避免从关联班次行动作跳到无上下文的计划详情。"
+source: "Story Runner continuation after US129 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 table action、调用页传参、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

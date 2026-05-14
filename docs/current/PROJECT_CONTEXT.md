@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-UNAVAIL-SHIFT-PLAN-001
+  in_progress_task: F085
+  ready_tasks: [Q023]
 ```
 
 ## Current Stage
@@ -18,7 +18,9 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-The latest completed product batch is `US129 / F083-F084 / Q022` on branch `codex/f073-review-checklist-h032`. It closes the remaining plan-origin row-action gap: row-level actions inside plan detail and shift detail now preserve `schedule-plans` review context instead of falling back to broad list routes or raw hrefs.
+The current active product batch is `US130 / F085 / Q023` on branch `codex/f073-review-checklist-h032`. It closes the remaining scoped plan-link gap inside the unavailability impact shift table so row-level plan actions preserve the same review source and scope instead of dropping back to a bare plan detail route.
+
+The latest completed product batch before that is `US129 / F083-F084 / Q022` on branch `codex/f073-review-checklist-h032`. It closes the remaining plan-origin row-action gap: row-level actions inside plan detail and shift detail now preserve `schedule-plans` review context instead of falling back to broad list routes or raw hrefs.
 
 The latest completed product batch before that is `US128 / F080-F082 / Q021` on branch `codex/f073-review-checklist-h032`. It closes the remaining `schedule-plans` source-page gap: when review drilldown starts from plan detail, shift/risk/unavailability pages now carry that source through and return to the current plan detail instead of falling back to broad list pages.
 
@@ -73,4 +75,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Current is idle again. The next step is to seed the next no-database review story or another local frontend/local-contract slice before resuming Story Runner. Database work stays deferred.
+Current is active on the next no-database review story. The next step is to finish the unavailability-impact row-action context pass, close QA, and return current to idle again. Database work stays deferred.

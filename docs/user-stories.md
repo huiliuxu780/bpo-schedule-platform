@@ -29,6 +29,25 @@
 
 ## Stories
 
+### US130 - Unavailability impact shift-table scoped plan-link closure
+
+```yaml
+id: US130
+requirement_ids:
+  - R118
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望不可用影响定位页里的影响班次表在继续查看计划时也保留当前 review scope 和来源页，这样我不会从关联班次表格动作里丢失上下文。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "不可用影响定位页的影响班次表里，计划行级动作保留当前 scope 和来源页。"
+  - "影响班次表不再使用裸计划详情链接。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```
+
 ### US129 - Plan-origin row-action context closure
 
 ```yaml
