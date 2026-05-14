@@ -1404,3 +1404,16 @@ version: "1.0"
 status: "done"
 notes: "只改本地前端班次页、不可用页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R133 - schedule plan draft feedback context persistence
+
+```yaml
+id: R133
+module: "排班与风险联动"
+description: "排班计划页已经能显示本地 draft 失败/成功反馈，但当前搜索、状态切换和 `清空` 仍会直接丢掉 `draft` 参数；需要让这组列表交互在留在当前页面时继续保留反馈上下文。"
+source: "Story Runner continuation after US144 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端排班计划页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

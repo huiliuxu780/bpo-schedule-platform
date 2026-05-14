@@ -2542,3 +2542,22 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US145 - Schedule plan draft feedback context persistence
+
+```yaml
+id: US145
+requirement_ids:
+  - R133
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望排班计划页在我还停留在当前列表时继续保留本地 draft 失败/成功提示，这样我切换筛选、搜索或清空条件时不会把刚发生的结果提示直接冲掉。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "排班计划页搜索表单、状态切换和 `清空` 在仍停留当前页面时保留 `draft` 参数。"
+  - "本地 draft 失败/成功提示不会因为列表内搜索或筛选动作立刻消失。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```

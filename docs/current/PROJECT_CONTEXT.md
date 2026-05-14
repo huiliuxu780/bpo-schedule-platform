@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-SCHEDULE-PLAN-DRAFT-FEEDBACK-001
+  in_progress_task: F112
+  ready_tasks: [Q038]
 ```
 
 ## Current Stage
@@ -91,4 +91,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The latest completed product batch is `US144 / F110-F111 / Q037` on branch `codex/f073-review-checklist-h032`. It closes the remaining clear-scope and clear-filter CTA context gaps on `shift-details` and `unavailability`: scope-clearing actions now drop only drilldown parameters, while list-level clear actions reset local filters without dropping the active review source.
+The active product batch is `US145 / F112 / Q038` on branch `codex/f073-review-checklist-h032`. It targets the remaining schedule-plans draft feedback context gap: the local draft failure/success feedback should survive list-level search, status switching, and clear-filter actions until the user intentionally leaves the page.
