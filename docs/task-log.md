@@ -1061,3 +1061,21 @@
 - action: 收口 review list row-action parity QA。
 - status: `done`
 - notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 33 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F090-F091`
+- source_ids:
+  - `R121`
+- story_ids:
+  - `US133`
+- action: 完成 schedule plan list review parity 收口，补齐计划列表的 scoped continuation actions。
+- status: `done`
+- notes: `SchedulePlanTable` 现在提供 查看 / 风险 / 班次 / 不可用 行级动作；计划列表可以直接沿当前项目、职场、日期维度进入本地 review chain，不再只剩单一 detail 入口；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q026`
+- source_ids:
+  - `R121`
+- story_ids:
+  - `US133`
+- action: 收口 schedule plan list review parity QA。
+- status: `done`
+- notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 34 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

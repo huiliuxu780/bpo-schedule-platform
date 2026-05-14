@@ -959,3 +959,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit; branch push is separately blocked by local approval timeout`
 - blocked_reason: `git push escalation timed out locally; code path and verification remain green`
+
+### F090-F091 Schedule Plan List Review Parity Closure
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `4f68189`
+- remote_status: `active tracked branch continuation after pushing 4f68189`
+- scope: scoped row-action parity for the schedule plan list table, focused regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `components/schedule-plan-table.tsx`, `lib/**`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `components/schedule-plan-table.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing tests first verified the missing helper-driven continuation actions in the plan list table; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 34 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --strict --diff=staged` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

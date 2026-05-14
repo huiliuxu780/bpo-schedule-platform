@@ -575,6 +575,17 @@ test("unavailability list exposes row-action parity with risk links", async () =
   assert.match(source, /buildScheduleRisksHref/);
 });
 
+test("schedule plan list exposes review continuation actions beyond the detail entry", async () => {
+  const source = await readFile(
+    new URL("../../components/schedule-plan-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /buildScheduleRisksHref/);
+  assert.match(source, /buildShiftDetailsHref/);
+  assert.match(source, /buildUnavailabilityHref/);
+});
+
 test("schedule plan detail page exposes a wide-screen review rail", async () => {
   const source = await readFile(
     new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),

@@ -69,6 +69,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  buildScheduleRisksHref,
+  buildShiftDetailsHref,
+  buildUnavailabilityHref,
+} from "@/lib/review-navigation"
 
 function statusVariant(status: SchedulePlanStatus) {
   if (status === "published") {
@@ -231,9 +236,47 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
     enableHiding: false,
     header: () => <div className="text-right">操作</div>,
     cell: ({ row }) => (
-      <div className="text-right">
+      <div className="flex flex-wrap justify-end gap-2">
         <Button asChild variant="outline" size="sm">
           <Link href={`/schedule-plans/${row.original.id}`}>查看</Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link
+            href={buildScheduleRisksHref({
+              from: "schedule-plans",
+              planId: row.original.id,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+            })}
+          >
+            风险
+          </Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link
+            href={buildShiftDetailsHref({
+              from: "schedule-plans",
+              planId: row.original.id,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+            })}
+          >
+            班次
+          </Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link
+            href={buildUnavailabilityHref({
+              from: "schedule-plans",
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+            })}
+          >
+            不可用
+          </Link>
         </Button>
       </div>
     ),

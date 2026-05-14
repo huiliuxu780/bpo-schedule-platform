@@ -4571,7 +4571,7 @@ tasks:
   - id: F090
     title: "schedule plan list scoped review actions"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "components/schedule-plan-table.tsx"
@@ -4599,7 +4599,7 @@ tasks:
   - id: F091
     title: "schedule plan list review parity refinement"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "components/schedule-plan-table.tsx"
@@ -4626,7 +4626,7 @@ tasks:
   - id: Q026
     title: "schedule plan list review parity QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "components/schedule-plan-table.tsx"
