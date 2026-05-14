@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: BATCH-DEMAND-PLAN-CLEAR-CTA-001
-  in_progress_task: F114
-  ready_tasks: [Q040]
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -18,7 +18,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-The active product batch is `US147 / F114 / Q040` on branch `codex/f073-review-checklist-h032`. It closes the next local handoff consistency gap on `demand-plans`: the page still uses a bare `清空` route instead of a helper-driven clear action.
+The latest completed product batch is `US147 / F114 / Q040` on branch `codex/f073-review-checklist-h032`. It closes the next local handoff consistency gap on `demand-plans`: the page no longer uses a bare `清空` route and now follows the same helper-driven clear behavior as the other local list pages.
 
 The latest completed product batch before that is `US142 / F108 / Q035` on branch `codex/f073-review-checklist-h032`. It closes the remaining demand-plan to schedule-plan CTA gap: the demand-plans page no longer uses a bare `/schedule-plans` entry, so the current demand query is preserved before users move into the schedule-plans review chain.
 
@@ -91,4 +91,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Continue `US147 / F114 / Q040` on branch `codex/f073-review-checklist-h032`, then return current to idle after local verification, traceability updates, and QA closeout.
+The latest completed product batch is `US147 / F114 / Q040` on branch `codex/f073-review-checklist-h032`. It closes the remaining demand-plans clear CTA consistency gap: users now clear the local demand query through the same helper-driven route pattern used elsewhere in the local review flow.

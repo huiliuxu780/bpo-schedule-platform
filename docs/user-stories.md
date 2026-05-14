@@ -2597,5 +2597,5 @@ acceptance:
   - "`清空` 使用 helper-driven route，并保持同页 query reset 语义。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "in_progress"
+status: "done"
 ```

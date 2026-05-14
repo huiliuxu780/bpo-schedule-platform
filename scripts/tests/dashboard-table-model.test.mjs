@@ -24,6 +24,7 @@ import {
 } from "../../lib/schedule-plans.ts";
 import { filterUnavailabilityRowsByScope } from "../../lib/unavailability.ts";
 import {
+  buildDemandPlansHref,
   buildNewSchedulePlanHref,
   buildPlanEditHref,
   buildReviewBackLink,
@@ -978,9 +979,13 @@ test("demand-plans CTA into schedule-plans preserves the active query", async ()
     "utf8",
   );
 
+  assert.equal(buildDemandPlansHref(), "/demand-plans");
   assert.match(demandPlansSource, /buildSchedulePlansHref/);
+  assert.match(demandPlansSource, /buildDemandPlansHref/);
   assert.match(demandPlansSource, /<Link href=\{buildSchedulePlansHref\(\{ query \}\)\}>查看排班计划<\/Link>/);
+  assert.match(demandPlansSource, /<Link href=\{buildDemandPlansHref\(\)\}>清空<\/Link>/);
   assert.doesNotMatch(demandPlansSource, /<Link href="\/schedule-plans">查看排班计划<\/Link>/);
+  assert.doesNotMatch(demandPlansSource, /<Link href="\/demand-plans">清空<\/Link>/);
 });
 
 test("schedule-plans list interactions preserve local draft feedback context", async () => {

@@ -1313,3 +1313,21 @@
 - action: 收口 schedule-plans draft dismiss QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F114`
+- source_ids:
+  - `R135`
+- story_ids:
+  - `US147`
+- action: 完成 demand-plans clear CTA 一致性收口，补齐 helper-driven `清空` 动作。
+- status: `done`
+- notes: 需求计划页的 `清空` 现在通过 `buildDemandPlansHref()` 回到同页空 query 状态，不再使用裸 `/demand-plans`；通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 保持 52 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q040`
+- source_ids:
+  - `R135`
+- story_ids:
+  - `US147`
+- action: 收口 demand-plans clear CTA QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

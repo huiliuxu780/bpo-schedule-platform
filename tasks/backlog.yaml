@@ -5613,7 +5613,7 @@ tasks:
   - id: F114
     title: "需求计划 clear CTA 一致性收口"
     priority: P2
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/demand-plans/page.tsx"
@@ -5639,7 +5639,7 @@ tasks:
   - id: Q040
     title: "demand-plans clear CTA QA 收口"
     priority: P2
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/demand-plans/page.tsx"

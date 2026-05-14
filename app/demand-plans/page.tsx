@@ -13,7 +13,10 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { buildSchedulePlansHref } from "@/lib/review-navigation"
+import {
+  buildDemandPlansHref,
+  buildSchedulePlansHref,
+} from "@/lib/review-navigation"
 import { getDemandPlans, type DemandPlanRow } from "@/lib/schedule-plans"
 
 type PageProps = {
@@ -66,7 +69,7 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
           </form>
           {query ? (
             <Button asChild variant="ghost" size="sm">
-              <Link href="/demand-plans">清空</Link>
+              <Link href={buildDemandPlansHref()}>清空</Link>
             </Button>
           ) : null}
         </section>
