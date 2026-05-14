@@ -2446,3 +2446,23 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US140 - Schedule plan summary CTA context closure
+
+```yaml
+id: US140
+requirement_ids:
+  - R128
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望排班计划页里的 summary CTA 在跳到需求、风险、不可用和班次页时能保留当前计划列表上下文，这样我从 summary 层发起 review chain 时不会掉回硬编码或无来源的页面。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "计划页 summary CTA 不再使用硬编码 risk detail 或裸跨页链接。"
+  - "从 summary CTA 进入风险、不可用和班次页时保留 `schedule-plans-list`、`query` 和 `status`。"
+  - "计划页 summary CTA 与现有 plan-list review chain 的 helper routing 保持一致。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```

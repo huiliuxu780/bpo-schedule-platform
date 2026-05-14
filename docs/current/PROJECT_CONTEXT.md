@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-PLAN-SUMMARY-CTA-CONTEXT-001
+  in_progress_task: F104
+  ready_tasks: [F105, Q033]
 ```
 
 ## Current Stage
@@ -18,7 +18,9 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-The latest completed product batch is `US139 / F102-F103 / Q032` on branch `codex/f073-review-checklist-h032`. It closes the remaining schedule-plan risk-entry context gap: when a user enters the risk workbench from the schedule-plans risk summary card or the embedded risk preview table, the destination and continuation actions now preserve `schedule-plans-list`, `query`, and `status` instead of dropping into a generic risk route.
+The active product batch is `US140 / F104-F105 / Q033` on branch `codex/f073-review-checklist-h032`. It closes the remaining schedule-plans summary CTA context gap: the local MVP flow summary on the schedule-plans page must stop using hardcoded cross-page links and instead preserve `schedule-plans-list`, `query`, and `status` where the CTA continues the current review chain.
+
+The latest completed product batch before that is `US139 / F102-F103 / Q032` on branch `codex/f073-review-checklist-h032`. It closes the remaining schedule-plan risk-entry context gap: when a user enters the risk workbench from the schedule-plans risk summary card or the embedded risk preview table, the destination and continuation actions now preserve `schedule-plans-list`, `query`, and `status` instead of dropping into a generic risk route.
 
 The latest completed product batch before that is `US138 / F100-F101 / Q031` on branch `codex/f073-review-checklist-h032`. It closes the remaining schedule-plan list-origin review gap: when a user enters risk, shift, or unavailability from a plan-list row, the destination page now preserves the filtered list as the return target instead of treating the route like a plan-detail origin.
 
@@ -83,4 +85,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The latest completed product batch is `US139 / F102-F103 / Q032` on branch `codex/f073-review-checklist-h032`. It keeps the same no-database schedule-plan review chain coherent by preserving plan-list context for the schedule-plans risk summary entry and embedded risk preview row actions.
+Continue `US140 / F104-F105 / Q033` on branch `codex/f073-review-checklist-h032`. Keep the same no-database schedule-plan review chain coherent by making the summary CTA layer use the same context-aware helper routing as the plan list and risk workbench.

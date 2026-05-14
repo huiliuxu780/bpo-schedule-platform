@@ -5172,6 +5172,89 @@ tasks:
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F104
+    title: "计划页 summary CTA helper routing 对齐"
+    priority: P1
+    status: in_progress
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/page.tsx"
+      - "components/mvp-flow-summary.tsx"
+      - "lib/review-navigation.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "计划页 summary CTA 不再使用硬编码 risk detail 或裸跨页链接。"
+      - "从 summary CTA 进入风险、不可用和班次页时保留 `schedule-plans-list`、`query` 和 `status`。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F105
+    title: "计划页 summary CTA cross-page 上下文稳定化"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/page.tsx"
+      - "components/mvp-flow-summary.tsx"
+      - "lib/review-navigation.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "summary CTA 进入风险、不可用和班次页后，后续返回和 continuation 与当前计划列表上下文一致。"
+      - "计划页 summary CTA 与现有 plan-list review chain 的 helper routing 保持一致。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q033
+    title: "schedule plan summary CTA context QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/schedule-plans/page.tsx"
+      - "components/mvp-flow-summary.tsx"
+      - "lib/review-navigation.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "计划页 summary CTA 上下文透传有测试和 closeout 证据。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: F074
     title: "checklist 当前步骤与下一步提示"
     priority: P1

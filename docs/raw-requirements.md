@@ -1339,3 +1339,16 @@ version: "1.0"
 status: "done"
 notes: "只改本地前端 helper、计划页、风险页、风险表、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R128 - schedule plan summary CTA context closure
+
+```yaml
+id: R128
+module: "排班与风险联动"
+description: "排班计划页里的本地 MVP flow summary 仍使用裸跨页链接和硬编码 risk detail，缺少与当前计划列表 query/status/source 一致的上下文透传；需要把 summary CTA 层补成与当前 review chain 一致的入口。"
+source: "Story Runner continuation after US139 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 summary 组件、计划页、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
