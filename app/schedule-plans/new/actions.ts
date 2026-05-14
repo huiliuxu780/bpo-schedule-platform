@@ -3,6 +3,10 @@
 import { redirect } from "next/navigation"
 
 import {
+  buildPlanDetailHref,
+  buildSchedulePlansHref,
+} from "@/lib/review-navigation"
+import {
   createSchedulePlanDraft,
   type SchedulePlanDraftPayload,
   type SchedulePlanIntervalInput,
@@ -20,6 +24,8 @@ function formNumber(formData: FormData, key: string) {
 }
 
 export async function createDraftAction(formData: FormData) {
+  const query = formText(formData, "query")
+  const status = formText(formData, "status")
   const intervals: SchedulePlanIntervalInput[] = slotKeys.map((slot) => ({
     interval_start: formText(formData, `interval_start_${slot}`),
     interval_end: formText(formData, `interval_end_${slot}`),
@@ -39,8 +45,8 @@ export async function createDraftAction(formData: FormData) {
   const created = await createSchedulePlanDraft(payload)
 
   if (!created) {
-    redirect("/schedule-plans?draft=failed")
+    redirect(buildSchedulePlansHref({ query, status, draft: "failed" }))
   }
 
-  redirect(`/schedule-plans/${created.summary.id}`)
+  redirect(buildPlanDetailHref(created.summary.id, { query, status }))
 }

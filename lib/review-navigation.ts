@@ -10,6 +10,7 @@ type ReviewScopeParams = {
   startTime?: string
   endTime?: string
   status?: string
+  draft?: string
 }
 
 function setIfPresent(
@@ -63,6 +64,27 @@ export function buildShiftDetailsHref(scope: ReviewScopeParams = {}) {
   return `/shift-details${suffix ? `?${suffix}` : ""}`
 }
 
+export function buildSchedulePlansHref(scope: ReviewScopeParams = {}) {
+  const searchParams = new URLSearchParams()
+
+  setIfPresent(searchParams, "query", scope.query)
+  setIfPresent(searchParams, "status", scope.status)
+  setIfPresent(searchParams, "draft", scope.draft)
+
+  const suffix = searchParams.toString()
+  return `/schedule-plans${suffix ? `?${suffix}` : ""}`
+}
+
+export function buildNewSchedulePlanHref(scope: ReviewScopeParams = {}) {
+  const searchParams = new URLSearchParams()
+
+  setIfPresent(searchParams, "query", scope.query)
+  setIfPresent(searchParams, "status", scope.status)
+
+  const suffix = searchParams.toString()
+  return `/schedule-plans/new${suffix ? `?${suffix}` : ""}`
+}
+
 export function buildScheduleRisksHref(scope: ReviewScopeParams = {}) {
   const searchParams = new URLSearchParams()
 
@@ -101,13 +123,15 @@ export function buildPlanDetailHref(
 ) {
   const normalizedPlanId = planId?.trim()
   if (!normalizedPlanId) {
-    return "/schedule-plans"
+    return buildSchedulePlansHref(scope)
   }
 
   const searchParams = new URLSearchParams()
 
   setIfPresent(searchParams, "from", scope.from)
   setIfPresent(searchParams, "query", scope.query)
+  setIfPresent(searchParams, "status", scope.status)
+  setIfPresent(searchParams, "draft", scope.draft)
   setIfPresent(searchParams, "date", scope.date)
   setIfPresent(searchParams, "project", scope.project)
   setIfPresent(searchParams, "site", scope.site)
@@ -116,6 +140,32 @@ export function buildPlanDetailHref(
 
   const suffix = searchParams.toString()
   return `/schedule-plans/${encodeURIComponent(normalizedPlanId)}${
+    suffix ? `?${suffix}` : ""
+  }`
+}
+
+export function buildPlanEditHref(
+  planId?: string,
+  scope: ReviewScopeParams = {},
+) {
+  const normalizedPlanId = planId?.trim()
+  if (!normalizedPlanId) {
+    return buildSchedulePlansHref(scope)
+  }
+
+  const searchParams = new URLSearchParams()
+
+  setIfPresent(searchParams, "from", scope.from)
+  setIfPresent(searchParams, "query", scope.query)
+  setIfPresent(searchParams, "status", scope.status)
+  setIfPresent(searchParams, "date", scope.date)
+  setIfPresent(searchParams, "project", scope.project)
+  setIfPresent(searchParams, "site", scope.site)
+  setIfPresent(searchParams, "intervalStart", scope.intervalStart ?? scope.startTime)
+  setIfPresent(searchParams, "intervalEnd", scope.intervalEnd ?? scope.endTime)
+
+  const suffix = searchParams.toString()
+  return `/schedule-plans/${encodeURIComponent(normalizedPlanId)}/edit${
     suffix ? `?${suffix}` : ""
   }`
 }

@@ -4653,7 +4653,7 @@ tasks:
   - id: F092
     title: "schedule plan draft entry context preservation"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -4686,7 +4686,7 @@ tasks:
   - id: F093
     title: "schedule plan draft return-target closure"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -4719,7 +4719,7 @@ tasks:
   - id: Q027
     title: "schedule plan draft flow QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/page.tsx"

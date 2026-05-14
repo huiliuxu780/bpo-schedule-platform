@@ -5,8 +5,10 @@ import { AppShell } from "@/components/app-shell"
 import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-table"
 import {
+  buildPlanEditHref,
   buildReviewBackLink,
   buildReviewScopeLabel,
+  buildSchedulePlansHref,
   buildScheduleRisksHref,
   buildShiftDetailsHref,
   buildUnavailabilityHref,
@@ -125,7 +127,10 @@ export default async function SchedulePlanDetailPage({
       endTime: scopeParams.endTime,
     },
     {
-      href: "/schedule-plans",
+      href: buildSchedulePlansHref({
+        query: scopeParams.query,
+        status: scopeParams.status,
+      }),
       label: "返回列表",
     },
   )
@@ -144,7 +149,18 @@ export default async function SchedulePlanDetailPage({
           <div className="flex gap-2">
             {plan.summary.status === "draft" ? (
               <Button asChild size="sm">
-                <Link href={`/schedule-plans/${plan.summary.id}/edit`}>
+                <Link
+                  href={buildPlanEditHref(plan.summary.id, {
+                    from: scopeParams.from,
+                    query: scopeParams.query,
+                    status: scopeParams.status,
+                    date: scopeParams.date ?? plan.summary.plan_date,
+                    project: scopeParams.project ?? plan.summary.project_name,
+                    site: scopeParams.site ?? plan.summary.site_name,
+                    intervalStart: scopeParams.intervalStart ?? scopeParams.startTime,
+                    intervalEnd: scopeParams.intervalEnd ?? scopeParams.endTime,
+                  })}
+                >
                   编辑草稿
                 </Link>
               </Button>

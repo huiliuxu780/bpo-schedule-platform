@@ -1376,6 +1376,27 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-14 - Schedule Plan Draft Flow Context Closure
+
+#### 审计结论
+
+- `F092-F093/Q027/US134` 已把排班计划 draft 工作流的剩余上下文缺口补齐：从计划列表进入 `新建草稿` 会保留当前 `query/status`，从计划详情进入 `编辑草稿` 会保留来源页与 review scope。
+- `new/edit` 页的返回、取消和提交后回跳现在统一走 review helper，因此创建或保存 draft 后不会退化成裸列表或无来源计划详情。
+- 本轮仍然只停留在本地前端和本地 seed 契约层，没有引入数据库、依赖、后端契约、审批、导出、批量、权限或生产公式。
+
+#### 风险
+
+- 本轮 draft-flow 上下文仍建立在本地 query 参数和本地 helper 之上，不等同于服务端 session 或用户级持久化返回态；后续若接入真实状态保持，需要单独过 Gate。
+- 本轮没有追加新的 browser smoke；当前验收依赖失败测试先验、源码断言、strict state 和全量 `check.sh`。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，36 个测试通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check-state.sh --strict --diff=staged`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

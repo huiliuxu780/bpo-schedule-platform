@@ -2348,5 +2348,5 @@ acceptance:
   - "新建/编辑页的返回、取消和提交后回跳保持稳定上下文，不退化成裸列表或无来源详情。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "split"
+status: "done"
 ```

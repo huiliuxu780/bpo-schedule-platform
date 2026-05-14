@@ -1079,3 +1079,21 @@
 - action: 收口 schedule plan list review parity QA。
 - status: `done`
 - notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 34 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F092-F093`
+- source_ids:
+  - `R122`
+- story_ids:
+  - `US134`
+- action: 完成 schedule plan draft flow context 收口，补齐计划列表、计划详情、new/edit 页面和 server action 的上下文回跳。
+- status: `done`
+- notes: 计划列表进入 `new` 时现在保留 `query/status`，计划详情进入 `edit` 时现在保留来源页和 scope；new/edit 页的返回、取消和提交后回跳统一走 review helper，不再退化成裸列表或无来源详情；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 36 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q027`
+- source_ids:
+  - `R122`
+- story_ids:
+  - `US134`
+- action: 收口 schedule plan draft flow context QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

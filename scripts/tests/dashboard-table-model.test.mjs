@@ -24,8 +24,11 @@ import {
 } from "../../lib/schedule-plans.ts";
 import { filterUnavailabilityRowsByScope } from "../../lib/unavailability.ts";
 import {
+  buildNewSchedulePlanHref,
+  buildPlanEditHref,
   buildReviewBackLink,
   buildPlanDetailHref,
+  buildSchedulePlansHref,
   buildScheduleRiskDetailHref,
   buildUnavailabilityDetailHref,
 } from "../../lib/review-navigation.ts";
@@ -442,6 +445,39 @@ test("review-navigation detail builders preserve scoped source context", () => {
   );
 });
 
+test("schedule plan draft builders preserve list and detail return context", () => {
+  assert.equal(
+    buildSchedulePlansHref({
+      query: "上海",
+      status: "review_ready",
+      draft: "failed",
+    }),
+    "/schedule-plans?query=%E4%B8%8A%E6%B5%B7&status=review_ready&draft=failed",
+  );
+
+  assert.equal(
+    buildNewSchedulePlanHref({
+      query: "博西",
+      status: "draft",
+    }),
+    "/schedule-plans/new?query=%E5%8D%9A%E8%A5%BF&status=draft",
+  );
+
+  assert.equal(
+    buildPlanEditHref("plan-a", {
+      from: "schedule-risks",
+      query: "高风险",
+      status: "active",
+      date: "2026-05-11",
+      project: "博西客服",
+      site: "上海职场",
+      intervalStart: "09:30",
+      intervalEnd: "10:00",
+    }),
+    "/schedule-plans/plan-a/edit?from=schedule-risks&query=%E9%AB%98%E9%A3%8E%E9%99%A9&status=active&date=2026-05-11&project=%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&site=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA&intervalStart=09%3A30&intervalEnd=10%3A00",
+  );
+});
+
 test("review back-link builder supports schedule-plans as the source page", () => {
   assert.deepEqual(
     buildReviewBackLink(
@@ -584,6 +620,44 @@ test("schedule plan list exposes review continuation actions beyond the detail e
   assert.match(source, /buildScheduleRisksHref/);
   assert.match(source, /buildShiftDetailsHref/);
   assert.match(source, /buildUnavailabilityHref/);
+});
+
+test("schedule plan draft pages and actions preserve return context", async () => {
+  const listSource = await readFile(
+    new URL("../../app/schedule-plans/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const newPageSource = await readFile(
+    new URL("../../app/schedule-plans/new/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const newActionSource = await readFile(
+    new URL("../../app/schedule-plans/new/actions.ts", import.meta.url),
+    "utf8",
+  );
+  const detailSource = await readFile(
+    new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const editPageSource = await readFile(
+    new URL("../../app/schedule-plans/[planId]/edit/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const editActionSource = await readFile(
+    new URL("../../app/schedule-plans/[planId]/edit/actions.ts", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(listSource, /buildNewSchedulePlanHref/);
+  assert.match(newPageSource, /buildSchedulePlansHref/);
+  assert.match(newPageSource, /name="query"/);
+  assert.match(newPageSource, /name="status"/);
+  assert.match(newActionSource, /buildSchedulePlansHref/);
+  assert.match(newActionSource, /buildPlanDetailHref/);
+  assert.match(detailSource, /buildPlanEditHref/);
+  assert.match(editPageSource, /buildPlanDetailHref/);
+  assert.match(editPageSource, /name="from"/);
+  assert.match(editActionSource, /buildPlanDetailHref/);
 });
 
 test("schedule plan detail page exposes a wide-screen review rail", async () => {

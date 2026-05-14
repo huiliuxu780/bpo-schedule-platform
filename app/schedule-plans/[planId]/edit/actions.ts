@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation"
 
+import { buildPlanDetailHref } from "@/lib/review-navigation"
 import {
   updateSchedulePlanDraft,
   type SchedulePlanDraftPayload,
@@ -19,6 +20,16 @@ function formNumber(formData: FormData, key: string) {
 
 export async function updateDraftAction(formData: FormData) {
   const planId = formText(formData, "plan_id")
+  const scope = {
+    from: formText(formData, "from") || undefined,
+    query: formText(formData, "query") || undefined,
+    status: formText(formData, "status") || undefined,
+    date: formText(formData, "date") || undefined,
+    project: formText(formData, "project") || undefined,
+    site: formText(formData, "site") || undefined,
+    intervalStart: formText(formData, "intervalStart") || undefined,
+    intervalEnd: formText(formData, "intervalEnd") || undefined,
+  }
   const intervalCount = formNumber(formData, "interval_count")
   const intervals: SchedulePlanIntervalInput[] = Array.from(
     { length: intervalCount },
@@ -42,8 +53,8 @@ export async function updateDraftAction(formData: FormData) {
   const updated = await updateSchedulePlanDraft(planId, payload)
 
   if (!updated) {
-    redirect(`/schedule-plans/${planId}?draft=failed`)
+    redirect(buildPlanDetailHref(planId, { ...scope, draft: "failed" }))
   }
 
-  redirect(`/schedule-plans/${updated.summary.id}`)
+  redirect(buildPlanDetailHref(updated.summary.id, scope))
 }

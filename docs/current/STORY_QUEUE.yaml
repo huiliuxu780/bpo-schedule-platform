@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: "US134"
-    requirement_ids: ["R122"]
-    task_ids: ["F092", "F093", "Q027"]
-    status: "in_progress"
-    summary: "Preserve schedule-plan draft entry and return context across list, detail, new, and edit routes."
+stories: []

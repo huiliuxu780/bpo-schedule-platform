@@ -5,6 +5,7 @@ import { AppShell } from "@/components/app-shell"
 import { MvpFlowSummary } from "@/components/mvp-flow-summary"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
+import { buildNewSchedulePlanHref } from "@/lib/review-navigation"
 import {
   formatCoverageRate,
   getSchedulePlansWithFilters,
@@ -91,7 +92,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             </p>
           </div>
           <Button asChild size="sm">
-            <Link href="/schedule-plans/new">新建草稿</Link>
+            <Link href={buildNewSchedulePlanHref({ query, status })}>新建草稿</Link>
           </Button>
         </div>
         <section className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3">

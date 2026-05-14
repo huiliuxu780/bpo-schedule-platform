@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: BATCH-PLAN-DRAFT-RETURN-001
-  in_progress_task: F092
-  ready_tasks: [F093, Q027]
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -18,7 +18,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-The current active product batch is `US134 / F092-F093 / Q027` on branch `codex/f073-review-checklist-h032`. It closes the remaining schedule-plan draft workflow context gap: entering `new/edit` from the plan list or plan detail must preserve list filters, source page, cancel/back actions, and post-submit return targets instead of falling back to bare routes.
+The latest completed product batch is `US134 / F092-F093 / Q027` on branch `codex/f073-review-checklist-h032`. It closes the remaining schedule-plan draft workflow context gap: entering `new/edit` from the plan list or plan detail now preserves list filters, source page, cancel/back actions, and post-submit return targets instead of falling back to bare routes.
 
 The latest completed product batch is `US130 / F085 / Q023` on branch `codex/f073-review-checklist-h032`. It closes the remaining scoped plan-link gap inside the unavailability impact shift table so row-level plan actions preserve the same review source and scope instead of dropping back to a bare plan detail route.
 
@@ -77,4 +77,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The current active product batch is `US134 / F092-F093 / Q027` on branch `codex/f073-review-checklist-h032`. It extends the same no-database review continuity into the draft workflow so the schedule-plan list and plan detail do not lose context when users create or edit a draft and return.
+The latest completed product batch is `US134 / F092-F093 / Q027` on branch `codex/f073-review-checklist-h032`. It extends the same no-database review continuity into the draft workflow so the schedule-plan list and plan detail do not lose context when users create or edit a draft and return.

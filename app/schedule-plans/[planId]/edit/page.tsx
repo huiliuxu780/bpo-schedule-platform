@@ -5,6 +5,10 @@ import { updateDraftAction } from "./actions"
 import { AppShell } from "@/components/app-shell"
 import { Button } from "@/components/ui/button"
 import {
+  buildPlanDetailHref,
+  buildSchedulePlansHref,
+} from "@/lib/review-navigation"
+import {
   Card,
   CardContent,
   CardDescription,
@@ -18,10 +22,26 @@ type PageProps = {
   params: Promise<{
     planId: string
   }>
+  searchParams: Promise<{
+    from?: string
+    query?: string
+    status?: string
+    date?: string
+    project?: string
+    site?: string
+    intervalStart?: string
+    intervalEnd?: string
+    startTime?: string
+    endTime?: string
+  }>
 }
 
-export default async function EditSchedulePlanPage({ params }: PageProps) {
+export default async function EditSchedulePlanPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { planId } = await params
+  const scopeParams = await searchParams
   const plan = await getSchedulePlan(planId)
 
   if (!plan) {
@@ -29,6 +49,20 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
   }
 
   const isDraft = plan.summary.status === "draft"
+  const detailHref = buildPlanDetailHref(plan.summary.id, {
+    from: scopeParams.from,
+    query: scopeParams.query,
+    status: scopeParams.status,
+    date: scopeParams.date ?? plan.summary.plan_date,
+    project: scopeParams.project ?? plan.summary.project_name,
+    site: scopeParams.site ?? plan.summary.site_name,
+    intervalStart: scopeParams.intervalStart ?? scopeParams.startTime,
+    intervalEnd: scopeParams.intervalEnd ?? scopeParams.endTime,
+  })
+  const listHref = buildSchedulePlansHref({
+    query: scopeParams.query,
+    status: scopeParams.status,
+  })
 
   return (
     <AppShell title="编辑排班草稿" searchPlaceholder="搜索计划、项目或职场">
@@ -42,7 +76,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href={`/schedule-plans/${plan.summary.id}`}>返回详情</Link>
+            <Link href={detailHref}>返回详情</Link>
           </Button>
         </div>
 
@@ -57,7 +91,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <Button asChild variant="outline">
-                <Link href="/schedule-plans">返回列表</Link>
+                <Link href={scopeParams.from ? detailHref : listHref}>返回列表</Link>
               </Button>
             </CardContent>
           </Card>
@@ -68,6 +102,34 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
               type="hidden"
               name="interval_count"
               value={`${plan.intervals.length}`}
+            />
+            <input type="hidden" name="from" value={scopeParams.from ?? ""} />
+            <input type="hidden" name="query" value={scopeParams.query ?? ""} />
+            <input type="hidden" name="status" value={scopeParams.status ?? ""} />
+            <input
+              type="hidden"
+              name="date"
+              value={scopeParams.date ?? plan.summary.plan_date}
+            />
+            <input
+              type="hidden"
+              name="project"
+              value={scopeParams.project ?? plan.summary.project_name}
+            />
+            <input
+              type="hidden"
+              name="site"
+              value={scopeParams.site ?? plan.summary.site_name}
+            />
+            <input
+              type="hidden"
+              name="intervalStart"
+              value={scopeParams.intervalStart ?? scopeParams.startTime ?? ""}
+            />
+            <input
+              type="hidden"
+              name="intervalEnd"
+              value={scopeParams.intervalEnd ?? scopeParams.endTime ?? ""}
             />
             <Card>
               <CardHeader>
@@ -159,7 +221,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
 
             <div className="flex justify-end gap-2">
               <Button asChild variant="outline">
-                <Link href={`/schedule-plans/${plan.summary.id}`}>取消</Link>
+                <Link href={detailHref}>取消</Link>
               </Button>
               <Button type="submit">保存草稿</Button>
             </div>

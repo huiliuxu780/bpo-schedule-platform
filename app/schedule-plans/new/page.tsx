@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { buildSchedulePlansHref } from "@/lib/review-navigation"
 
 const defaultSlots = [
   ["09:00", "09:30", 16, 15, "早高峰缺口待补"],
@@ -19,7 +20,20 @@ const defaultSlots = [
   ["10:30", "11:00", 17, 16, "临时请假待复核"],
 ] as const
 
-export default function NewSchedulePlanPage() {
+type PageProps = {
+  searchParams: Promise<{
+    query?: string
+    status?: string
+  }>
+}
+
+export default async function NewSchedulePlanPage({ searchParams }: PageProps) {
+  const scopeParams = await searchParams
+  const backHref = buildSchedulePlansHref({
+    query: scopeParams.query,
+    status: scopeParams.status,
+  })
+
   return (
     <AppShell title="新建排班草稿" searchPlaceholder="搜索计划、项目或职场">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
@@ -31,11 +45,13 @@ export default function NewSchedulePlanPage() {
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href="/schedule-plans">返回列表</Link>
+            <Link href={backHref}>返回列表</Link>
           </Button>
         </div>
 
         <form action={createDraftAction} className="flex flex-col gap-4">
+          <input type="hidden" name="query" value={scopeParams.query ?? ""} />
+          <input type="hidden" name="status" value={scopeParams.status ?? ""} />
           <Card>
             <CardHeader>
               <CardTitle>计划信息</CardTitle>
@@ -116,7 +132,7 @@ export default function NewSchedulePlanPage() {
 
           <div className="flex justify-end gap-2">
             <Button asChild variant="outline">
-              <Link href="/schedule-plans">取消</Link>
+              <Link href={backHref}>取消</Link>
             </Button>
             <Button type="submit">创建草稿</Button>
           </div>
