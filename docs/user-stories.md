@@ -2290,5 +2290,5 @@ acceptance:
   - "风险明细页的不可用表提供 scoped continuation actions，并保留当前风险来源页与范围。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "split"
+status: "done"
 ```

@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { ArrowUpDown } from "lucide-react"
 import {
   type ColumnDef,
@@ -13,6 +14,10 @@ import * as React from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  buildPlanDetailHref,
+  buildShiftDetailsHref,
+} from "@/lib/review-navigation"
 import {
   Table,
   TableBody,
@@ -34,154 +39,199 @@ const statusRank: Record<SchedulePlanStatus, number> = {
   published: 2,
 }
 
-const columns: ColumnDef<ShiftDetailRow>[] = [
-  {
-    accessorKey: "plan_id",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        计划
-        <ArrowUpDown data-icon="inline-end" />
-      </Button>
-    ),
-    cell: ({ row }) => <span className="font-medium">{row.original.plan_id}</span>,
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        状态
-        <ArrowUpDown data-icon="inline-end" />
-      </Button>
-    ),
-    sortingFn: (left, right) =>
-      statusRank[left.original.status] - statusRank[right.original.status],
-    cell: ({ row }) => (
-      <Badge variant="outline">
-        {schedulePlanStatusLabel(row.original.status)}
-      </Badge>
-    ),
-  },
-  {
-    id: "interval",
-    accessorFn: (row) => `${row.interval_start}-${row.interval_end}`,
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        时段
-        <ArrowUpDown data-icon="inline-end" />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <span className="font-mono text-xs">
-        {row.original.interval_start}-{row.original.interval_end}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "forecast_agents",
-    header: ({ column }) => (
-      <div className="flex justify-end">
+function getColumns(scope: { sourceFrom?: string }): ColumnDef<ShiftDetailRow>[] {
+  return [
+    {
+      accessorKey: "plan_id",
+      header: ({ column }) => (
         <Button
           variant="ghost"
           size="sm"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          预测
+          计划
           <ArrowUpDown data-icon="inline-end" />
         </Button>
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="text-right tabular-nums">
-        {row.original.forecast_agents}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "scheduled_agents",
-    header: ({ column }) => (
-      <div className="flex justify-end">
+      ),
+      cell: ({ row }) => <span className="font-medium">{row.original.plan_id}</span>,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
         <Button
           variant="ghost"
           size="sm"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          已排
+          状态
           <ArrowUpDown data-icon="inline-end" />
         </Button>
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="text-right tabular-nums">
-        {row.original.scheduled_agents}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "gap_agents",
-    header: ({ column }) => (
-      <div className="flex justify-end">
+      ),
+      sortingFn: (left, right) =>
+        statusRank[left.original.status] - statusRank[right.original.status],
+      cell: ({ row }) => (
+        <Badge variant="outline">
+          {schedulePlanStatusLabel(row.original.status)}
+        </Badge>
+      ),
+    },
+    {
+      id: "interval",
+      accessorFn: (row) => `${row.interval_start}-${row.interval_end}`,
+      header: ({ column }) => (
         <Button
           variant="ghost"
           size="sm"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          缺口
+          时段
           <ArrowUpDown data-icon="inline-end" />
         </Button>
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="text-right tabular-nums">{row.original.gap_agents}</div>
-    ),
-  },
-  {
-    accessorKey: "coverage_rate",
-    header: ({ column }) => (
-      <div className="flex justify-end">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          覆盖率
-          <ArrowUpDown data-icon="inline-end" />
-        </Button>
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="text-right tabular-nums">
-        {formatCoverageRate(row.original.coverage_rate)}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "note",
-    header: "备注",
-  },
-]
+      ),
+      cell: ({ row }) => (
+        <span className="font-mono text-xs">
+          {row.original.interval_start}-{row.original.interval_end}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "forecast_agents",
+      header: ({ column }) => (
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            预测
+            <ArrowUpDown data-icon="inline-end" />
+          </Button>
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right tabular-nums">
+          {row.original.forecast_agents}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "scheduled_agents",
+      header: ({ column }) => (
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            已排
+            <ArrowUpDown data-icon="inline-end" />
+          </Button>
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right tabular-nums">
+          {row.original.scheduled_agents}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "gap_agents",
+      header: ({ column }) => (
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            缺口
+            <ArrowUpDown data-icon="inline-end" />
+          </Button>
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right tabular-nums">{row.original.gap_agents}</div>
+      ),
+    },
+    {
+      accessorKey: "coverage_rate",
+      header: ({ column }) => (
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            覆盖率
+            <ArrowUpDown data-icon="inline-end" />
+          </Button>
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right tabular-nums">
+          {formatCoverageRate(row.original.coverage_rate)}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "note",
+      header: "备注",
+    },
+    {
+      id: "actions",
+      header: () => <div className="text-right">操作</div>,
+      cell: ({ row }) => (
+        <div className="flex justify-end gap-2">
+          <Button asChild variant="outline" size="sm">
+            <Link
+              href={buildPlanDetailHref(row.original.plan_id, {
+                from: scope.sourceFrom || "schedule-risks",
+                project: row.original.project_name,
+                site: row.original.site_name,
+                date: row.original.plan_date,
+                intervalStart: row.original.interval_start,
+                intervalEnd: row.original.interval_end,
+              })}
+            >
+              计划
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
+            <Link
+              href={buildShiftDetailsHref({
+                from: scope.sourceFrom || "schedule-risks",
+                planId: row.original.plan_id,
+                project: row.original.project_name,
+                site: row.original.site_name,
+                date: row.original.plan_date,
+                intervalStart: row.original.interval_start,
+                intervalEnd: row.original.interval_end,
+              })}
+            >
+              班次
+            </Link>
+          </Button>
+        </div>
+      ),
+    },
+  ]
+}
 
 export function ScheduleRiskShiftTable({
   rows,
+  sourceFrom,
 }: {
   rows: ShiftDetailRow[]
+  sourceFrom?: string
 }) {
   "use no memo"
 
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "plan_id", desc: false },
   ])
+  const columns = React.useMemo(
+    () => getColumns({ sourceFrom }),
+    [sourceFrom]
+  )
   // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

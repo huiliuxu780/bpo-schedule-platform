@@ -96,6 +96,7 @@ Current invariants:
 - `F080-F082/Q021/US128` closed the remaining plan-origin gap: when review drilldown starts from plan detail, shift/risk/unavailability pages now preserve `schedule-plans` as the source page and return to the current plan detail instead of broad lists; current queue returned to empty after QA closeout.
 - `F083-F084/Q022/US129` closed the last plan-origin row-action gap: plan-detail interval-table actions now preserve `schedule-plans`, and shift-details table actions now use review helpers instead of raw hrefs so row-level drilldown keeps the same plan-origin context; current queue returned to empty after QA closeout.
 - `F085/Q023/US130` closed the remaining scoped plan-link gap inside the unavailability impact shift table: impacted-shift row actions now preserve the same unavailability review source and scope instead of dropping to a bare plan detail route; current queue returned to empty after QA closeout.
+- `F086-F087/Q024/US131` closed the remaining risk-detail auxiliary-table gap: related shift and unavailability tables inside risk detail now expose scoped continuation actions so continuation drilldown can keep moving inside the same local review context; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

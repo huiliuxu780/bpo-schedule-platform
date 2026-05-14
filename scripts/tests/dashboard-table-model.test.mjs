@@ -524,6 +524,38 @@ test("unavailability impact shift table preserves scoped plan links", async () =
   assert.doesNotMatch(source, /href=\{`\/schedule-plans\/\$\{row\.original\.plan_id\}`\}/);
 });
 
+test("schedule risk shift table exposes scoped continuation actions", async () => {
+  const componentSource = await readFile(
+    new URL("../../components/schedule-risk-shift-table.tsx", import.meta.url),
+    "utf8",
+  );
+  const pageSource = await readFile(
+    new URL("../../app/schedule-risks/[riskId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(componentSource, /buildPlanDetailHref/);
+  assert.match(componentSource, /buildShiftDetailsHref/);
+  assert.match(componentSource, /sourceFrom/);
+  assert.match(pageSource, /sourceFrom=\{sourceFrom\}/);
+});
+
+test("schedule risk unavailability table exposes scoped continuation actions", async () => {
+  const componentSource = await readFile(
+    new URL("../../components/schedule-risk-unavailability-table.tsx", import.meta.url),
+    "utf8",
+  );
+  const pageSource = await readFile(
+    new URL("../../app/schedule-risks/[riskId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(componentSource, /buildUnavailabilityDetailHref/);
+  assert.match(componentSource, /buildShiftDetailsHref/);
+  assert.match(componentSource, /sourceFrom/);
+  assert.match(pageSource, /sourceFrom=\{sourceFrom\}/);
+});
+
 test("schedule plan detail page exposes a wide-screen review rail", async () => {
   const source = await readFile(
     new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),

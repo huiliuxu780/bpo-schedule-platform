@@ -219,7 +219,10 @@ export default async function ScheduleRiskDetailPage({
                 </Button>
               </CardHeader>
               <CardContent>
-                <ScheduleRiskShiftTable rows={relatedShiftDetails} />
+                <ScheduleRiskShiftTable
+                  rows={relatedShiftDetails}
+                  sourceFrom={sourceFrom}
+                />
               </CardContent>
             </Card>
 
@@ -236,7 +239,10 @@ export default async function ScheduleRiskDetailPage({
                 </Button>
               </CardHeader>
               <CardContent>
-                <ScheduleRiskUnavailabilityTable rows={relatedUnavailabilityRows} />
+                <ScheduleRiskUnavailabilityTable
+                  rows={relatedUnavailabilityRows}
+                  sourceFrom={sourceFrom}
+                />
               </CardContent>
             </Card>
           </div>

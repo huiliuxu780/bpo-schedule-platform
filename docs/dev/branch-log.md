@@ -925,3 +925,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit; branch push is separately blocked by local approval timeout`
 - blocked_reason: `git push escalation timed out twice locally; code path and verification remain green`
+
+### F086-F087 Risk Detail Auxiliary-Table Continuation Closure
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `fc81a94`
+- remote_status: `push still pending local approval timeout; branch continues locally from the same verified line`
+- scope: scoped continuation actions for risk detail related shift/unavailability tables, focused regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `app/schedule-risks/[riskId]/page.tsx`, `components/schedule-risk-shift-table.tsx`, `components/schedule-risk-unavailability-table.tsx`, `lib/**`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `components/schedule-risk-shift-table.tsx`, `components/schedule-risk-unavailability-table.tsx`, `app/schedule-risks/[riskId]/page.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing tests first verified the missing helper-driven continuation actions in the two risk-detail auxiliary tables; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 31 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --strict --diff=staged` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit; branch push is separately blocked by local approval timeout`
+- blocked_reason: `git push escalation timed out locally; code path and verification remain green`

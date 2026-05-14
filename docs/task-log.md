@@ -1025,3 +1025,21 @@
 - action: 收口 unavailability impact shift-table scoped plan-link QA。
 - status: `done`
 - notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 29 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F086-F087`
+- source_ids:
+  - `R119`
+- story_ids:
+  - `US131`
+- action: 完成风险明细辅表 continuation actions 收口，给关联班次表与不可用表补齐 scoped 行级动作。
+- status: `done`
+- notes: `ScheduleRiskShiftTable` 现在提供 helper 驱动的 计划 / 班次 动作，`ScheduleRiskUnavailabilityTable` 现在提供 helper 驱动的 影响 / 班次 动作；风险明细页把 `sourceFrom` 透传给两张辅表，因此 detail 页内继续钻取不再停在只读表；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q024`
+- source_ids:
+  - `R119`
+- story_ids:
+  - `US131`
+- action: 收口风险明细辅表 continuation actions QA。
+- status: `done`
+- notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 31 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

@@ -4396,7 +4396,7 @@ tasks:
   - id: F086
     title: "risk detail related shift table scoped continuation actions"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-risks/[riskId]/page.tsx"
@@ -4426,7 +4426,7 @@ tasks:
   - id: F087
     title: "risk detail unavailability table scoped continuation actions"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-risks/[riskId]/page.tsx"
@@ -4456,7 +4456,7 @@ tasks:
   - id: Q024
     title: "risk detail auxiliary-table continuation QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-risks/[riskId]/page.tsx"
