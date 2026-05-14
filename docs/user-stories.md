@@ -50,6 +50,25 @@ dependencies:
 status: "done"
 ```
 
+### US128 - Plan-origin review back-link closure
+
+```yaml
+id: US128
+requirement_ids:
+  - R116
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望从计划详情进入班次、风险和不可用后仍能返回当前计划详情，这样我不会在 review drilldown 中丢失计划上下文。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "schedule-plans 作为来源页时，risk / unavailability detail 的返回动作回到当前计划详情。"
+  - "shift-details 从计划详情进入后，页面和后续动作继续保留 plan-origin review context。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```
+
 ### US073-US082 - Dashboard 本地 parity 连续增强
 
 ```yaml

@@ -4123,6 +4123,133 @@ tasks:
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F080
+    title: "schedule-plans source-aware back-link helper"
+    priority: P1
+    status: in_progress
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/shift-details/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "review-navigation helper 把 schedule-plans 识别为一等来源页。"
+      - "计划来源的返回 href 不再回退到宽泛列表。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F081
+    title: "risk and unavailability detail return to current plan"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/shift-details/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "从计划详情进入 risk / unavailability detail 后，返回动作回到当前计划详情。"
+      - "detail 页内继续查看计划时仍保留当前来源页上下文。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F082
+    title: "shift-details preserve plan-origin review context"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/shift-details/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "从计划详情进入 shift-details 后，页面提供回到当前计划详情的动作。"
+      - "shift-details 再继续查看风险或不可用时，来源页上下文仍保留为 schedule-plans。"
+      - "不新增依赖、不改后端契约、不接数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q021
+    title: "plan-origin review closure QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/schedule-plans/**"
+      - "app/schedule-risks/**"
+      - "app/shift-details/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "从计划详情进入班次、风险、不可用后的返回链路保持一致。"
+      - "严格状态、lint、typecheck、build 和后端 unittest 继续通过。"
+      - "current queue 与 active tasks 在 closeout 后清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: F074
     title: "checklist 当前步骤与下一步提示"
     priority: P1

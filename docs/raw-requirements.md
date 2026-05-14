@@ -1183,3 +1183,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 route、navigation helper、表格链接、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R116 - plan-origin review back-link closure
+
+```yaml
+id: R116
+module: "排班与风险联动"
+description: "从计划详情进入班次、风险、不可用 drilldown 后，返回动作和后续页面动作仍需认得 schedule-plans 是来源页，避免掉回全量列表。"
+source: "Story Runner continuation after US127 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 route、review helper、页面返回动作、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

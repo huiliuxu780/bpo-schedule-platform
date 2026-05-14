@@ -5,4 +5,9 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US128
+    title: "Plan-origin review back-link closure"
+    status: in_progress
+    requirement_ids: [R116]
+    task_ids: [F080, F081, F082, Q021]

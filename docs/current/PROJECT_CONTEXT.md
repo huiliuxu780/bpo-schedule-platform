@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-PLAN-ORIGIN-REVIEW-001
+  in_progress_task: F080
+  ready_tasks: [F081, F082, Q021]
 ```
 
 ## Current Stage
@@ -18,7 +18,9 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-The latest completed product batch is `US127 / F077-F079 / Q020` on branch `codex/f073-review-checklist-h032`. It keeps scoped detail navigation coherent across risk, plan, and unavailability review drilldown: detail links now preserve scope and source-page context, and the detail-page back links plus related-plan links no longer drop back to full lists.
+The current product batch is `US128` on branch `codex/f073-review-checklist-h032`. It closes the remaining `schedule-plans` source-page gap: when review drilldown starts from plan detail, shift/risk/unavailability pages must carry that source all the way through and return to the current plan detail instead of falling back to broad list pages.
+
+The latest completed product batch before that is `US127 / F077-F079 / Q020` on branch `codex/f073-review-checklist-h032`. It keeps scoped detail navigation coherent across risk, plan, and unavailability review drilldown: detail links now preserve scope and source-page context, and the detail-page back links plus related-plan links no longer drop back to full lists.
 
 The latest completed product batch before that was `US124 / F073-F076 / Q019` on branch `codex/f073-review-checklist-h032`. It replaced the duplicated right-side `复核任务` blocks across risk/plan/shift/unavailability pages with one shared local review checklist rail that carries summary metrics, current step, next step, scoped actions, and stable back links.
 
@@ -69,4 +71,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Current is idle again. The next step is to seed the next no-database review story or another local frontend/local-contract slice before resuming Story Runner. Database work stays deferred.
+The next product batch has been seeded into current. Keep work inside the same no-database review workflow, close the plan-origin back-link gap across shift/risk/unavailability drilldown, then return current to empty before seeding another story. Database work stays deferred.
