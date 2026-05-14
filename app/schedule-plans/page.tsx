@@ -5,7 +5,10 @@ import { AppShell } from "@/components/app-shell"
 import { MvpFlowSummary } from "@/components/mvp-flow-summary"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
-import { buildNewSchedulePlanHref } from "@/lib/review-navigation"
+import {
+  buildNewSchedulePlanHref,
+  buildScheduleRisksHref,
+} from "@/lib/review-navigation"
 import {
   formatCoverageRate,
   getSchedulePlansWithFilters,
@@ -175,14 +178,25 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
                 {highRiskCount} 条高风险
               </Badge>
               <Button asChild variant="outline" size="sm">
-                <Link href={`/schedule-risks${query ? `?query=${encodeURIComponent(query)}` : ""}`}>
+                <Link
+                  href={buildScheduleRisksHref({
+                    from: "schedule-plans-list",
+                    query,
+                    status,
+                  })}
+                >
                   查看全部
                 </Link>
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <ScheduleRiskTable risks={risks.slice(0, 5)} />
+            <ScheduleRiskTable
+              risks={risks.slice(0, 5)}
+              sourceFrom="schedule-plans-list"
+              query={query}
+              status={status}
+            />
           </CardContent>
         </Card>
         <SchedulePlanTable

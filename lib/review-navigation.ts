@@ -90,6 +90,7 @@ export function buildScheduleRisksHref(scope: ReviewScopeParams = {}) {
 
   setIfPresent(searchParams, "from", scope.from)
   setIfPresent(searchParams, "query", scope.query)
+  setIfPresent(searchParams, "status", scope.status)
   setIfPresent(searchParams, "planId", scope.planId)
   setIfPresent(searchParams, "date", scope.date)
   setIfPresent(searchParams, "project", scope.project)

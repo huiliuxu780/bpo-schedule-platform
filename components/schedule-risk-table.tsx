@@ -64,7 +64,12 @@ const riskLevelRank: Record<ScheduleRiskRow["risk_level"], number> = {
   low: 2,
 }
 
-const columns: ColumnDef<ScheduleRiskRow>[] = [
+function getColumns(scope: {
+  sourceFrom?: string
+  query?: string
+  status?: string
+}): ColumnDef<ScheduleRiskRow>[] {
+  return [
   {
     accessorKey: "risk_level",
     header: ({ column }) => (
@@ -179,8 +184,10 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
         <Button asChild variant="outline" size="sm">
           <Link
             href={buildScheduleRiskDetailHref(row.original.risk_id, {
-              from: "schedule-risks",
+              from: scope.sourceFrom || "schedule-risks",
               planId: row.original.plan_id,
+              query: scope.query,
+              status: scope.status,
               project: row.original.project_name,
               site: row.original.site_name,
               date: row.original.plan_date,
@@ -194,7 +201,9 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
         <Button asChild variant="ghost" size="sm">
           <Link
             href={buildShiftDetailsHref({
-              from: "schedule-risks",
+              from: scope.sourceFrom || "schedule-risks",
+              query: scope.query,
+              status: scope.status,
               planId: row.original.plan_id,
               project: row.original.project_name,
               site: row.original.site_name,
@@ -209,7 +218,9 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
         <Button asChild variant="ghost" size="sm">
           <Link
             href={buildPlanDetailHref(row.original.plan_id, {
-              from: "schedule-risks",
+              from: scope.sourceFrom || "schedule-risks",
+              query: scope.query,
+              status: scope.status,
               project: row.original.project_name,
               site: row.original.site_name,
               date: row.original.plan_date,
@@ -223,7 +234,8 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
         <Button asChild variant="ghost" size="sm">
           <Link
             href={buildUnavailabilityHref({
-              from: "schedule-risks",
+              from: scope.sourceFrom || "schedule-risks",
+              query: scope.query,
               project: row.original.project_name,
               site: row.original.site_name,
               date: row.original.plan_date,
@@ -239,10 +251,30 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
     ),
   },
 ]
+}
 
-export function ScheduleRiskTable({ risks }: { risks: ScheduleRiskRow[] }) {
+export function ScheduleRiskTable({
+  risks,
+  sourceFrom,
+  query,
+  status,
+}: {
+  risks: ScheduleRiskRow[]
+  sourceFrom?: string
+  query?: string
+  status?: string
+}) {
   "use no memo"
 
+  const columns = React.useMemo(
+    () =>
+      getColumns({
+        sourceFrom,
+        query,
+        status,
+      }),
+    [query, sourceFrom, status]
+  )
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "risk_level", desc: false },
   ])

@@ -30,6 +30,7 @@ type PageProps = {
   searchParams: Promise<{
     from?: string
     query?: string
+    status?: string
     planId?: string
     date?: string
     project?: string
@@ -92,6 +93,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const sourceFrom = params.from?.trim() ?? ""
+  const status = params.status?.trim() ?? ""
   const planId = params.planId?.trim() ?? ""
   const date = params.date?.trim() ?? ""
   const project = params.project?.trim() ?? ""
@@ -124,6 +126,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
   const shiftHref = buildShiftDetailsHref({
     from: sourceFrom || "schedule-risks",
     query,
+    status,
     planId,
     date,
     project,
@@ -145,7 +148,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
   const planHref = buildPlanDetailHref(planId, {
     from: sourceFrom || "schedule-risks",
     query,
-    status: undefined,
+    status,
     date,
     project,
     site,
@@ -156,6 +159,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
     {
       from: sourceFrom || undefined,
       query,
+      status,
       planId,
       date,
       project,
@@ -164,7 +168,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
       intervalEnd,
     },
     {
-      href: buildSchedulePlansHref({ query }),
+      href: buildSchedulePlansHref({ query, status }),
       label: "回到全部风险",
     },
   )
@@ -230,7 +234,12 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
                 </Badge>
               </CardHeader>
               <CardContent>
-                <ScheduleRiskTable risks={scopedRisks} />
+                <ScheduleRiskTable
+                  risks={scopedRisks}
+                  sourceFrom={sourceFrom}
+                  query={query}
+                  status={status}
+                />
               </CardContent>
             </Card>
           </div>

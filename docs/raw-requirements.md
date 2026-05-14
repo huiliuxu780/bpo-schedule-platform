@@ -1336,6 +1336,6 @@ description: "排班计划页中的风险总览入口和内嵌风险预览表仍
 source: "Story Runner continuation after US138 closeout on 2026-05-14"
 submitted_at: "2026-05-14"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "只改本地前端 helper、计划页、风险页、风险表、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```

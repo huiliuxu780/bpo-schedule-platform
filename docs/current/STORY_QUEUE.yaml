@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: "US139"
-    requirement_ids: ["R127"]
-    task_ids: ["F102", "F103", "Q032"]
-    status: "in_progress"
-    summary: "计划页风险总览入口和内嵌风险表需要保留 plan-list review context。"
+stories: []

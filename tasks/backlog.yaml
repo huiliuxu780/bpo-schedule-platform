@@ -5089,7 +5089,7 @@ tasks:
   - id: F102
     title: "计划页风险总览入口上下文透传"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -5118,7 +5118,7 @@ tasks:
   - id: F103
     title: "计划页风险预览表 plan-list review context 对齐"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -5147,7 +5147,7 @@ tasks:
   - id: Q032
     title: "schedule plan risk-entry context QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/page.tsx"

@@ -1169,3 +1169,21 @@
 - action: 收口 schedule plan list-origin review return QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F102-F103`
+- source_ids:
+  - `R127`
+- story_ids:
+  - `US139`
+- action: 完成 schedule plan risk-entry context 收口，补齐计划页风险总览入口和内嵌风险预览表的 plan-list review 上下文透传。
+- status: `done`
+- notes: 计划页风险总览卡片的 `查看全部` 动作现在保留 `from=schedule-plans-list`、`query` 和 `status`；计划页内嵌风险预览表的 row actions 也会保留同一 plan-list source 与筛选上下文；风险页识别该上下文后，后续 continuation actions 与回退目标会稳定指向当前筛选计划列表；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 44 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q032`
+- source_ids:
+  - `R127`
+- story_ids:
+  - `US139`
+- action: 收口 schedule plan risk-entry context QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

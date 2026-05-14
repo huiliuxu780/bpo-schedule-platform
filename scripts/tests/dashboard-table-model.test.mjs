@@ -29,6 +29,7 @@ import {
   buildReviewBackLink,
   buildPlanDetailHref,
   buildSchedulePlansHref,
+  buildScheduleRisksHref,
   buildScheduleRiskDetailHref,
   buildUnavailabilityDetailHref,
 } from "../../lib/review-navigation.ts";
@@ -884,4 +885,45 @@ test("plan-list review actions preserve list-origin source and filtered return c
   assert.match(riskPageSource, /返回计划列表/);
   assert.match(unavailabilityPageSource, /buildReviewBackLink/);
   assert.match(unavailabilityPageSource, /返回计划列表/);
+});
+
+test("schedule-plans risk summary entry preserves plan-list source and status context", async () => {
+  const listPageSource = await readFile(
+    new URL("../../app/schedule-plans/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const riskPageSource = await readFile(
+    new URL("../../app/schedule-risks/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(listPageSource, /buildScheduleRisksHref/);
+  assert.match(listPageSource, /from: "schedule-plans-list"/);
+  assert.match(listPageSource, /status,/);
+  assert.match(riskPageSource, /status\?: string/);
+  assert.match(riskPageSource, /const status = params\.status/);
+  assert.match(riskPageSource, /buildSchedulePlansHref\(\{ query, status \}\)/);
+});
+
+test("schedule risk table can preserve schedule-plans list review context", async () => {
+  const source = await readFile(
+    new URL("../../components/schedule-risk-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /sourceFrom/);
+  assert.match(source, /query\?: string/);
+  assert.match(source, /status\?: string/);
+  assert.match(source, /from: scope\.sourceFrom \|\| "schedule-risks"/);
+});
+
+test("review-navigation keeps status when risk entry starts from schedule-plans list", () => {
+  assert.equal(
+    buildScheduleRisksHref({
+      from: "schedule-plans-list",
+      query: "上海",
+      status: "review_ready",
+    }),
+    "/schedule-risks?from=schedule-plans-list&query=%E4%B8%8A%E6%B5%B7&status=review_ready",
+  );
 });
