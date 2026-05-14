@@ -874,3 +874,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F080-F082 Plan-Origin Review Closure
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `31de26c`
+- remote_status: `active tracked branch continuation after pushing 31de26c`
+- scope: schedule-plans source-aware back-link helper, plan-origin context propagation across shift/risk/unavailability pages, focused regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `app/schedule-plans/**`, `app/schedule-risks/**`, `app/shift-details/**`, `app/unavailability/**`, `components/**`, `lib/**`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `lib/review-navigation.ts`, `app/schedule-risks/[riskId]/page.tsx`, `app/shift-details/page.tsx`, `app/unavailability/[unavailabilityId]/page.tsx`, `components/unavailability-impact-risk-table.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 26 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

@@ -91,8 +91,9 @@ export default async function UnavailabilityImpactPage({
     startTime: record.start_time,
     endTime: record.end_time,
   })
+  const sourceFrom = scopeParams.from ?? "unavailability"
   const shiftHref = buildShiftDetailsHref({
-    from: "unavailability",
+    from: sourceFrom,
     project: record.project_name,
     site: record.site_name,
     date: record.unavailable_date,
@@ -100,7 +101,7 @@ export default async function UnavailabilityImpactPage({
     intervalEnd: record.end_time,
   })
   const riskHref = buildScheduleRisksHref({
-    from: "unavailability",
+    from: sourceFrom,
     project: record.project_name,
     site: record.site_name,
     date: record.unavailable_date,
@@ -108,7 +109,7 @@ export default async function UnavailabilityImpactPage({
     intervalEnd: record.end_time,
   })
   const planHref = buildPlanDetailHref(primaryPlanId, {
-    from: scopeParams.from ?? "unavailability",
+    from: sourceFrom,
     project: record.project_name,
     site: record.site_name,
     date: record.unavailable_date,
@@ -116,7 +117,7 @@ export default async function UnavailabilityImpactPage({
     endTime: record.end_time,
   })
   const listHref = buildUnavailabilityHref({
-    from: "unavailability",
+    from: sourceFrom,
     query: scopeParams.query,
     status: scopeParams.status ?? record.status,
     project: record.project_name,
@@ -243,7 +244,10 @@ export default async function UnavailabilityImpactPage({
                 </Button>
               </CardHeader>
               <CardContent>
-                <UnavailabilityImpactRiskTable rows={relatedRisks} />
+                <UnavailabilityImpactRiskTable
+                  rows={relatedRisks}
+                  sourceFrom={sourceFrom}
+                />
               </CardContent>
             </Card>
           </div>

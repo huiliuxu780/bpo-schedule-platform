@@ -38,7 +38,8 @@ const riskLevelRank: Record<ScheduleRiskRow["risk_level"], number> = {
   low: 2,
 }
 
-const columns: ColumnDef<ScheduleRiskRow>[] = [
+function getColumns(sourceFrom: string): ColumnDef<ScheduleRiskRow>[] {
+  return [
   {
     accessorKey: "risk_level",
     header: ({ column }) => (
@@ -135,7 +136,7 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
         <Button asChild variant="outline" size="sm">
           <Link
             href={buildScheduleRiskDetailHref(row.original.risk_id, {
-              from: "unavailability",
+              from: sourceFrom,
               planId: row.original.plan_id,
               project: row.original.project_name,
               site: row.original.site_name,
@@ -150,6 +151,7 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
         <Button asChild variant="ghost" size="sm">
           <Link
             href={buildShiftDetailsHref({
+              from: sourceFrom,
               planId: row.original.plan_id,
               project: row.original.project_name,
               site: row.original.site_name,
@@ -164,7 +166,7 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
         <Button asChild variant="ghost" size="sm">
           <Link
             href={buildPlanDetailHref(row.original.plan_id, {
-              from: "unavailability",
+              from: sourceFrom,
               project: row.original.project_name,
               site: row.original.site_name,
               date: row.original.plan_date,
@@ -178,18 +180,22 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
       </div>
     ),
   },
-]
+  ]
+}
 
 export function UnavailabilityImpactRiskTable({
   rows,
+  sourceFrom = "unavailability",
 }: {
   rows: ScheduleRiskRow[]
+  sourceFrom?: string
 }) {
   "use no memo"
 
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "risk_level", desc: false },
   ])
+  const columns = React.useMemo(() => getColumns(sourceFrom), [sourceFrom])
   // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

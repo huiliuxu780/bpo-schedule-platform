@@ -4126,7 +4126,7 @@ tasks:
   - id: F080
     title: "schedule-plans source-aware back-link helper"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -4158,7 +4158,7 @@ tasks:
   - id: F081
     title: "risk and unavailability detail return to current plan"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -4190,7 +4190,7 @@ tasks:
   - id: F082
     title: "shift-details preserve plan-origin review context"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -4222,7 +4222,7 @@ tasks:
   - id: Q021
     title: "plan-origin review closure QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/**"

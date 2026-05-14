@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
+  buildPlanDetailHref,
+  buildReviewBackLink,
   buildReviewScopeLabel,
   buildScheduleRisksHref,
   buildUnavailabilityHref,
@@ -36,6 +38,7 @@ const statusOptions: { label: string; value?: SchedulePlanStatus }[] = [
 
 type PageProps = {
   searchParams: Promise<{
+    from?: string
     query?: string
     status?: string
     planId?: string
@@ -94,6 +97,7 @@ function statusHref(
 
 export default async function ShiftDetailsPage({ searchParams }: PageProps) {
   const params = await searchParams
+  const sourceFrom = params.from?.trim() ?? ""
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
   const planId = params.planId?.trim() ?? ""
@@ -130,6 +134,7 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
   const coverageRate =
     rows.length === 0 ? 0 : totalForecast === 0 ? 1 : totalScheduled / totalForecast
   const riskHref = buildScheduleRisksHref({
+    from: sourceFrom || "shift-details",
     query,
     planId,
     date,
@@ -139,6 +144,7 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
     intervalEnd,
   })
   const unavailabilityHref = buildUnavailabilityHref({
+    from: sourceFrom || "shift-details",
     query,
     project,
     site,
@@ -148,6 +154,33 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
     status:
       project || site || date || intervalStart || intervalEnd ? "active" : undefined,
   })
+  const planHref = buildPlanDetailHref(planId, {
+    from: sourceFrom || "shift-details",
+    query,
+    status,
+    date,
+    project,
+    site,
+    intervalStart,
+    intervalEnd,
+  })
+  const backLink = buildReviewBackLink(
+    {
+      from: sourceFrom || undefined,
+      query,
+      status,
+      planId,
+      date,
+      project,
+      site,
+      intervalStart,
+      intervalEnd,
+    },
+    {
+      href: "/shift-details",
+      label: "回到全部班次",
+    },
+  )
 
   return (
     <AppShell title="班次明细" searchPlaceholder="搜索班次、计划或备注">
@@ -159,9 +192,18 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
               按 0.5h 时段查看预测、已排、缺口和备注
             </p>
           </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/schedule-plans">返回排班计划</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {planId ? (
+              <Button asChild variant="outline" size="sm">
+                <Link href={planHref}>查看计划详情</Link>
+              </Button>
+            ) : null}
+            <Button asChild variant="outline" size="sm">
+              <Link href={backLink.href}>
+                {sourceFrom === "schedule-plans" ? "返回计划详情" : backLink.label}
+              </Link>
+            </Button>
+          </div>
         </div>
 
         {hasScope ? (
@@ -174,6 +216,11 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
             <Button asChild variant="ghost" size="sm">
               <Link href={unavailabilityHref}>查看不可用</Link>
             </Button>
+            {planId ? (
+              <Button asChild variant="ghost" size="sm">
+                <Link href={planHref}>返回计划详情</Link>
+              </Button>
+            ) : null}
             <Button asChild variant="ghost" size="sm">
               <Link href="/shift-details">清空范围</Link>
             </Button>
@@ -284,9 +331,10 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
             actions={[
               { label: "查看风险", href: riskHref },
               { label: "查看不可用", href: unavailabilityHref },
+              ...(planId ? [{ label: "查看计划", href: planHref }] : []),
             ]}
-            backHref="/shift-details"
-            backLabel="回到全部班次"
+            backHref={backLink.href}
+            backLabel={sourceFrom === "schedule-plans" ? "返回计划详情" : backLink.label}
           />
         </div>
       </main>

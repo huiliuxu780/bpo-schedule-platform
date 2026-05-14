@@ -66,7 +66,7 @@ acceptance:
   - "shift-details 从计划详情进入后，页面和后续动作继续保留 plan-origin review context。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US073-US082 - Dashboard 本地 parity 连续增强

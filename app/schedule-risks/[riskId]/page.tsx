@@ -84,8 +84,9 @@ export default async function ScheduleRiskDetailPage({
     intervalStart: risk.interval_start,
     intervalEnd: risk.interval_end,
   })
+  const sourceFrom = scopeParams.from ?? "schedule-risks"
   const planHref = buildPlanDetailHref(risk.plan_id, {
-    from: scopeParams.from ?? "schedule-risks",
+    from: sourceFrom,
     project: risk.project_name,
     site: risk.site_name,
     date: risk.plan_date,
@@ -117,7 +118,7 @@ export default async function ScheduleRiskDetailPage({
     },
   )
   const shiftHref = buildShiftDetailsHref({
-    from: "schedule-risks",
+    from: sourceFrom,
     planId: risk.plan_id,
     project: risk.project_name,
     site: risk.site_name,
@@ -126,7 +127,7 @@ export default async function ScheduleRiskDetailPage({
     intervalEnd: risk.interval_end,
   })
   const unavailabilityHref = buildUnavailabilityHref({
-    from: "schedule-risks",
+    from: sourceFrom,
     project: risk.project_name,
     site: risk.site_name,
     date: risk.plan_date,

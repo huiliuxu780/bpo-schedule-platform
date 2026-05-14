@@ -971,3 +971,21 @@
 - action: 收口 scoped detail navigation QA。
 - status: `done`
 - notes: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`bash scripts/check-state.sh --strict --diff=working`、`git diff --check` 和 `bash scripts/check.sh` 通过；严格状态、state/commit-message 回归、lint、typecheck、Next build 和后端 19 个 unittest 继续通过；current queue 与 active tasks 已清空。
+
+- task_id: `F080-F082`
+- source_ids:
+  - `R116`
+- story_ids:
+  - `US128`
+- action: 完成 plan-origin review closure 批次，补齐从计划详情进入班次、风险、不可用后的返回闭环和来源页透传。
+- status: `done`
+- notes: `buildReviewBackLink` 现已支持 `schedule-plans`；风险明细、不可用影响定位和班次明细会把计划详情作为来源页透传到后续动作；不可用影响关联风险表里的继续查看动作也保留同一来源页；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q021`
+- source_ids:
+  - `R116`
+- story_ids:
+  - `US128`
+- action: 收口 plan-origin review closure QA。
+- status: `done`
+- notes: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`bash scripts/check-state.sh --strict --diff=working`、`git diff --check` 和 `bash scripts/check.sh` 通过；严格状态、state/commit-message 回归、lint、typecheck、Next build 和后端 19 个 unittest 继续通过；current queue 与 active tasks 已清空。

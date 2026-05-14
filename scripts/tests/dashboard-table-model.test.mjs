@@ -24,6 +24,7 @@ import {
 } from "../../lib/schedule-plans.ts";
 import { filterUnavailabilityRowsByScope } from "../../lib/unavailability.ts";
 import {
+  buildReviewBackLink,
   buildPlanDetailHref,
   buildScheduleRiskDetailHref,
   buildUnavailabilityDetailHref,
@@ -441,6 +442,30 @@ test("review-navigation detail builders preserve scoped source context", () => {
   );
 });
 
+test("review back-link builder supports schedule-plans as the source page", () => {
+  assert.deepEqual(
+    buildReviewBackLink(
+      {
+        from: "schedule-plans",
+        planId: "plan-a",
+        date: "2026-05-11",
+        project: "博西客服",
+        site: "上海职场",
+        intervalStart: "09:30",
+        intervalEnd: "10:00",
+      },
+      {
+        href: "/fallback",
+        label: "fallback",
+      },
+    ),
+    {
+      href: "/schedule-plans/plan-a?from=schedule-plans&date=2026-05-11&project=%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&site=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA&intervalStart=09%3A30&intervalEnd=10%3A00",
+      label: "返回计划详情",
+    },
+  );
+});
+
 test("shift details page exposes a wide-screen review rail", async () => {
   const source = await readFile(new URL("../../app/shift-details/page.tsx", import.meta.url), "utf8");
 
@@ -565,4 +590,18 @@ test("detail pages preserve scoped back navigation", async () => {
   assert.match(planDetailSource, /buildReviewBackLink/);
   assert.match(riskDetailSource, /buildReviewBackLink/);
   assert.match(unavailabilityDetailSource, /buildReviewBackLink/);
+  assert.match(riskDetailSource, /scopeParams\.from \?\? "schedule-risks"/);
+  assert.match(unavailabilityDetailSource, /scopeParams\.from \?\? "unavailability"/);
+});
+
+test("shift details page preserves schedule-plans review context", async () => {
+  const shiftDetailsSource = await readFile(
+    new URL("../../app/shift-details/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(shiftDetailsSource, /buildPlanDetailHref/);
+  assert.match(shiftDetailsSource, /sourceFrom === "schedule-plans"/);
+  assert.match(shiftDetailsSource, /buildReviewBackLink/);
+  assert.match(shiftDetailsSource, /返回计划详情/);
 });
