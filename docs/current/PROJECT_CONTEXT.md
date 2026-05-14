@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-REVIEW-LIST-ACTIONS-001
+  in_progress_task: F088
+  ready_tasks: [F089, Q025]
 ```
 
 ## Current Stage
@@ -75,4 +75,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The latest completed product batch is `US131 / F086-F087 / Q024` on branch `codex/f073-review-checklist-h032`. It closes the remaining risk-detail auxiliary-table gap: the related shift table and related unavailability table inside risk detail now expose scoped continuation actions, so review can continue from detail auxiliaries into plan, shift, and impact pages without dropping context.
+Current active batch is `US132 / F088-F089 / Q025` on branch `codex/f073-review-checklist-h032`. It closes the remaining list-page row-action parity gap: the risk list and unavailability list still expose fewer continuation actions than the surrounding review rail, so row-level review can still stall or force a detour through broader pages.

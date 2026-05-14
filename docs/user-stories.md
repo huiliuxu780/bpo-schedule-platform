@@ -2292,3 +2292,22 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US132 - Review list row-action parity closure
+
+```yaml
+id: US132
+requirement_ids:
+  - R120
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望在风险列表和不可用列表里就能继续跳到计划、班次、风险或影响页，这样我不必先进入 detail 页才能完成后续复核动作。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "风险列表行级动作补齐到与当前 review chain 相匹配的 scoped continuation surface。"
+  - "不可用列表行级动作补齐到与当前 review chain 相匹配的 scoped continuation surface。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "split"
+```

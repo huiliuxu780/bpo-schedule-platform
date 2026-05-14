@@ -1235,3 +1235,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 table action、风险明细调用页、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R120 - review list row-action parity closure
+
+```yaml
+id: R120
+module: "排班与风险联动"
+description: "风险列表和不可用列表的行级动作仍少于周边 review rail 提供的 continuation surface，需要补齐 scoped row actions，避免从列表复核时被迫绕行。"
+source: "Story Runner continuation after US131 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 table action、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
