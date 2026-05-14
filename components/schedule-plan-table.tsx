@@ -70,6 +70,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
+  buildPlanDetailHref,
   buildScheduleRisksHref,
   buildShiftDetailsHref,
   buildUnavailabilityHref,
@@ -105,8 +106,15 @@ const columnLabels: Record<string, string> = {
   scheduled_agents: "已排",
 }
 
-const columns: ColumnDef<SchedulePlanSummary>[] = [
-  {
+function createColumns({
+  query,
+  status,
+}: {
+  query?: string
+  status?: SchedulePlanStatus
+}): ColumnDef<SchedulePlanSummary>[] {
+  return [
+    {
     accessorKey: "plan_date",
     header: ({ column }) => (
       <Button
@@ -122,7 +130,7 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
       <span className="whitespace-nowrap">{row.original.plan_date}</span>
     ),
   },
-  {
+    {
     accessorKey: "project_name",
     header: ({ column }) => (
       <Button
@@ -138,7 +146,7 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
       <span className="font-medium">{row.original.project_name}</span>
     ),
   },
-  {
+    {
     accessorKey: "site_name",
     header: ({ column }) => (
       <Button
@@ -151,7 +159,7 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
       </Button>
     ),
   },
-  {
+    {
     accessorKey: "status",
     header: ({ column }) => (
       <Button
@@ -171,7 +179,7 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
       </Badge>
     ),
   },
-  {
+    {
     accessorKey: "gap_agents",
     header: ({ column }) => (
       <div className="flex justify-end">
@@ -189,7 +197,7 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
       <div className="text-right tabular-nums">{row.original.gap_agents}</div>
     ),
   },
-  {
+    {
     accessorKey: "coverage_rate",
     header: ({ column }) => (
       <div className="flex justify-end">
@@ -209,11 +217,11 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
       </div>
     ),
   },
-  {
+    {
     accessorKey: "version",
     header: "版本",
   },
-  {
+    {
     accessorKey: "forecast_agents",
     header: () => <div className="text-right">预测</div>,
     cell: ({ row }) => (
@@ -222,7 +230,7 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
       </div>
     ),
   },
-  {
+    {
     accessorKey: "scheduled_agents",
     header: () => <div className="text-right">已排</div>,
     cell: ({ row }) => (
@@ -231,14 +239,25 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
       </div>
     ),
   },
-  {
+    {
     id: "actions",
     enableHiding: false,
     header: () => <div className="text-right">操作</div>,
     cell: ({ row }) => (
       <div className="flex flex-wrap justify-end gap-2">
         <Button asChild variant="outline" size="sm">
-          <Link href={`/schedule-plans/${row.original.id}`}>查看</Link>
+          <Link
+            href={buildPlanDetailHref(row.original.id, {
+              from: "schedule-plans",
+              query,
+              status,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+            })}
+          >
+            查看
+          </Link>
         </Button>
         <Button asChild variant="ghost" size="sm">
           <Link
@@ -280,18 +299,27 @@ const columns: ColumnDef<SchedulePlanSummary>[] = [
         </Button>
       </div>
     ),
-  },
-]
+    },
+  ]
+}
 
 export function SchedulePlanTable({
   plans,
   filterLabel,
+  query,
+  status,
 }: {
   plans: SchedulePlanSummary[]
   filterLabel?: string
+  query?: string
+  status?: SchedulePlanStatus
 }) {
   "use no memo"
 
+  const columns = React.useMemo(
+    () => createColumns({ query, status }),
+    [query, status]
+  )
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "plan_date", desc: false },
   ])

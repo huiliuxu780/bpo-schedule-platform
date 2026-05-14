@@ -815,3 +815,26 @@ test("shift details page preserves schedule-plans review context", async () => {
   assert.match(shiftDetailsSource, /buildReviewBackLink/);
   assert.match(shiftDetailsSource, /返回计划详情/);
 });
+
+test("schedule plan list view action preserves list filter and source context", async () => {
+  const listPageSource = await readFile(
+    new URL("../../app/schedule-plans/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const tableSource = await readFile(
+    new URL("../../components/schedule-plan-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(listPageSource, /<SchedulePlanTable/);
+  assert.match(listPageSource, /query=\{query\}/);
+  assert.match(listPageSource, /status=\{status\}/);
+  assert.match(tableSource, /buildPlanDetailHref/);
+  assert.match(tableSource, /from: "schedule-plans"/);
+  assert.match(tableSource, /query,/);
+  assert.match(tableSource, /status,/);
+  assert.doesNotMatch(
+    tableSource,
+    /<Link href=\{`\/schedule-plans\/\$\{row\.original\.id\}`\}>查看<\/Link>/,
+  );
+});

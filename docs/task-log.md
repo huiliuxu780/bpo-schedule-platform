@@ -1133,3 +1133,21 @@
 - action: 收口 schedule plan draft success feedback QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F098-F099`
+- source_ids:
+  - `R125`
+- story_ids:
+  - `US137`
+- action: 完成 schedule plan list detail-context 收口，补齐计划列表进入 detail 的来源页与筛选上下文透传。
+- status: `done`
+- notes: 计划列表表格中的 `查看` 动作现在保留 `query`、`status` 和 `from=schedule-plans`；从该入口进入的计划详情返回动作会回到同一筛选列表，不再退化成裸详情或无筛选列表；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 39 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q030`
+- source_ids:
+  - `R125`
+- story_ids:
+  - `US137`
+- action: 收口 schedule plan list detail-context QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

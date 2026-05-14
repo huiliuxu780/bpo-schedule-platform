@@ -4920,7 +4920,7 @@ tasks:
   - id: F098
     title: "计划列表 detail 入口上下文透传"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -4947,7 +4947,7 @@ tasks:
   - id: F099
     title: "计划列表 review source 回退稳定化"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -4974,7 +4974,7 @@ tasks:
   - id: Q030
     title: "schedule plan list detail-context QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/page.tsx"

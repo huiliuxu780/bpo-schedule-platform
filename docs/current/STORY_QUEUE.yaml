@@ -5,12 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: "US137"
-    title: "Schedule plan list detail-context closure"
-    status: "in_progress"
-    task_ids: ["F098", "F099", "Q030"]
-    requirement_ids: ["R125"]
-    gate: "frontend-scaffold"
-    branch: "codex/f073-review-checklist-h032"
-    acceptance_ref: "docs/user-stories.md#US137"
+stories: []

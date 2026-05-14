@@ -102,6 +102,7 @@ Current invariants:
 - `F092-F093/Q027/US134` closed the remaining schedule-plan draft workflow context gap: plan-list `new` and plan-detail `edit` now preserve list filters, source page, cancel/back actions, and post-submit return targets, so draft work no longer breaks the local review chain; current queue returned to empty after QA closeout.
 - `F094-F095/Q028/US135` closed the remaining schedule-plan draft failure-feedback gap: when local draft create/save fails and redirects back with `draft=failed`, the plan list and plan detail now surface visible feedback instead of leaving the signal hidden in the URL; current queue returned to empty after QA closeout.
 - `F096-F097/Q029/US136` closed the remaining schedule-plan draft success-feedback gap: when local draft create/save succeeds, plan detail now surfaces visible created/updated feedback instead of relying on route change alone; current queue returned to empty after QA closeout.
+- `F098-F099/Q030/US137` closed the remaining schedule-plan list detail-context gap: the plan-list `查看` action now preserves `query`、`status` and `from=schedule-plans`, so users can return from detail to the same filtered list instead of falling back to a bare list route; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

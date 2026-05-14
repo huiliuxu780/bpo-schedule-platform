@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: BATCH-PLAN-LIST-DETAIL-CONTEXT-001
-  in_progress_task: F098
-  ready_tasks: [F099, Q030]
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -18,7 +18,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-The current active product batch is `US137 / F098-F099 / Q030` on branch `codex/f073-review-checklist-h032`. It closes the remaining schedule-plan list detail-link gap: when a user clicks `查看` from the plan list, the detail page should preserve the current list filter and source-page context instead of dropping into a bare detail route.
+The latest completed product batch is `US137 / F098-F099 / Q030` on branch `codex/f073-review-checklist-h032`. It closes the remaining schedule-plan list detail-link gap: when a user clicks `查看` from the plan list, the detail page now preserves the current list filter and source-page context instead of dropping into a bare detail route.
 
 The latest completed product batch is `US136 / F096-F097 / Q029` on branch `codex/f073-review-checklist-h032`. It closes the remaining draft success-feedback gap: after local draft create/save redirects to plan detail, the page now shows whether the draft was newly created or updated instead of only changing routes.
 
@@ -79,4 +79,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Continue `US137 / F098-F099 / Q030` on branch `codex/f073-review-checklist-h032`. It keeps the same no-database schedule-plan review chain coherent by preserving list-level context when entering plan detail from the table.
+The latest completed product batch is `US137 / F098-F099 / Q030` on branch `codex/f073-review-checklist-h032`. It keeps the same no-database schedule-plan review chain coherent by preserving list-level context when entering plan detail from the table.

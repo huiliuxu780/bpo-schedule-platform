@@ -187,6 +187,8 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
         </Card>
         <SchedulePlanTable
           plans={plans}
+          query={query}
+          status={status}
           filterLabel={
             status ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}` : query
           }
