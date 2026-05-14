@@ -2311,3 +2311,22 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US133 - Schedule plan list review parity closure
+
+```yaml
+id: US133
+requirement_ids:
+  - R121
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望在排班计划列表行里就能继续进入风险、班次和不可用链路，这样计划列表也能直接作为 review chain 的起点。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "排班计划列表行级动作补齐到与当前 review chain 相匹配的 continuation surface。"
+  - "新增动作保留当前计划维度下的本地 scope。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "split"
+```

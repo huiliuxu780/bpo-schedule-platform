@@ -1248,3 +1248,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 table action、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R121 - schedule plan list review parity closure
+
+```yaml
+id: R121
+module: "排班与风险联动"
+description: "排班计划列表的行级动作仍只有单一 detail 入口，需要补齐到风险、班次和不可用的本地 continuation surface，避免计划列表成为 review chain 的断点。"
+source: "Story Runner continuation after US132 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 table action、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
