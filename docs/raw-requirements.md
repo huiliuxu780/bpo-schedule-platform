@@ -1378,3 +1378,16 @@ version: "1.0"
 status: "done"
 notes: "只改本地前端需求页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R131 - risk workbench clear-scope CTA context closure
+
+```yaml
+id: R131
+module: "排班与风险联动"
+description: "风险工作台在带有 plan/date/site drilldown 与 query/status 上下文时，`查看全部` 仍使用裸 `/schedule-risks`，会把 query/status 一起清掉；需要让它只清 scope，不清当前列表上下文。"
+source: "Story Runner continuation after US142 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "ready"
+notes: "只改本地前端风险页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

@@ -2503,3 +2503,21 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US143 - Risk workbench clear-scope CTA context closure
+
+```yaml
+id: US143
+requirement_ids:
+  - R131
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望风险工作台里的 `查看全部` 在清掉 drilldown 范围时还能保留当前 query 和 status，这样我从局部范围回到风险列表时不会丢掉正在用的筛选上下文。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "风险工作台 scoped `查看全部` 不再使用裸 `/schedule-risks`，而是保留当前 query/status。"
+  - "改动只限本地前端风险页、轻量测试和追溯；不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```
