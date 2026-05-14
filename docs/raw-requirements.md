@@ -1352,3 +1352,16 @@ version: "1.0"
 status: "done"
 notes: "只改本地前端 summary 组件、计划页、轻量 helper、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R129 - risk workbench unavailability CTA context closure
+
+```yaml
+id: R129
+module: "排班与风险联动"
+description: "风险工作台头部的 `不可用管理` 仍使用裸跳转，且无来源时的默认回退目标也指向了错误页面；需要把这两个 CTA 收口到与当前 review chain 一致的上下文 helper routing。"
+source: "Story Runner continuation after US140 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "ready"
+notes: "只改本地前端风险页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

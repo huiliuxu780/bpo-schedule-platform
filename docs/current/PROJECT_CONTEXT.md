@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-RISK-WORKBENCH-UNAVAILABILITY-CTA-001
+  in_progress_task: F106
+  ready_tasks: [F107, Q034]
 ```
 
 ## Current Stage
@@ -17,6 +17,8 @@ Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governe
 The project is in No Database MVP Mode. Product work may continue only through confirmed local frontend stories, local FastAPI seed/process-memory contracts, and verification tasks. The project must not connect or prepare a production database before PM confirms a later database Gate and provides an environment.
 
 ## Default Next Step
+
+The active product batch is `US141 / F106-F107 / Q034` on branch `codex/f073-review-checklist-h032`. It targets the remaining schedule-plans-origin risk-workbench CTA gap: the top-level `不可用管理` action on the risk workbench still uses a bare route, and the default risk-page back-link fallback still points at the wrong destination when no upstream source is present.
 
 The latest completed product batch is `US140 / F104-F105 / Q033` on branch `codex/f073-review-checklist-h032`. It closes the remaining schedule-plans summary CTA context gap: the local MVP flow summary on the schedule-plans page no longer uses hardcoded cross-page links and now preserves `schedule-plans-list`, `query`, and `status` where the CTA continues the current review chain.
 

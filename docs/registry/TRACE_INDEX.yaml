@@ -1,5 +1,5 @@
 version: 1
-updated_at: "2026-05-13"
+updated_at: "2026-05-14"
 rules:
   - "This registry stores IDs, paths, and relationships only."
   - "Do not store lifecycle state in this file."
@@ -126,6 +126,7 @@ stories:
   US138: {file: "docs/user-stories.md", requirement_ids: ["R126"], task_ids: ["F100", "F101", "Q031"], archive_refs: []}
   US139: {file: "docs/user-stories.md", requirement_ids: ["R127"], task_ids: ["F102", "F103", "Q032"], archive_refs: []}
   US140: {file: "docs/user-stories.md", requirement_ids: ["R128"], task_ids: ["F104", "F105", "Q033"], archive_refs: []}
+  US141: {file: "docs/user-stories.md", requirement_ids: ["R129"], task_ids: ["F106", "F107", "Q034"], archive_refs: []}
 tasks:
   H024: {file: "tasks/backlog.yaml", story_ids: ["US065"], gate: "state-hygiene"}
   H025: {file: "tasks/backlog.yaml", story_ids: ["US066"], gate: "state-hygiene"}
@@ -278,6 +279,9 @@ tasks:
   F104: {file: "tasks/backlog.yaml", story_ids: ["US140"], gate: "frontend-scaffold"}
   F105: {file: "tasks/backlog.yaml", story_ids: ["US140"], gate: "frontend-scaffold"}
   Q033: {file: "tasks/backlog.yaml", story_ids: ["US140"], gate: "qa"}
+  F106: {file: "tasks/backlog.yaml", story_ids: ["US141"], gate: "frontend-scaffold"}
+  F107: {file: "tasks/backlog.yaml", story_ids: ["US141"], gate: "frontend-scaffold"}
+  Q034: {file: "tasks/backlog.yaml", story_ids: ["US141"], gate: "qa"}
 requirements:
   R051: {file: "docs/raw-requirements.md", story_ids: ["US063"], task_ids: ["H022"]}
   R052: {file: "docs/raw-requirements.md", story_ids: ["US064"], task_ids: ["H023"]}

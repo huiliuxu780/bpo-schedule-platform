@@ -2466,3 +2466,22 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US141 - Risk workbench unavailability CTA context closure
+
+```yaml
+id: US141
+requirement_ids:
+  - R129
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望从计划列表链路进入风险工作台后，头部的 `不可用管理` 和默认回退 CTA 也保留同一 review context，这样我继续跨页检查时不会掉进裸列表或错误页面。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "风险工作台头部 `不可用管理` 不再使用裸 `/unavailability`，而是保留当前来源页和范围上下文。"
+  - "风险工作台在无上游来源时，默认回退 CTA 仍停留在风险工作台，不跳回排班计划页。"
+  - "改动只限本地前端风险页、轻量测试和追溯；不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```
