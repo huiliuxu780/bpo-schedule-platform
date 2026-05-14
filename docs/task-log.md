@@ -953,3 +953,21 @@
 - action: 收口共享 review checklist rail 的 QA。
 - status: `done`
 - notes: 严格状态、状态回归、commit-message 回归、lint、typecheck、Next build 和后端 19 个 unittest 全部通过；current queue 与 active tasks 已清空。
+
+- task_id: `F077-F079`
+- source_ids:
+  - `R115`
+- story_ids:
+  - `US127`
+- action: 完成 scoped detail navigation 批次，统一 risk / unavailability / 关联风险表进入 detail 页的 scoped URL，并补齐 detail 页回退与相关计划跳转的保参逻辑。
+- status: `done`
+- notes: `lib/review-navigation.ts` 新增 scoped detail href builder 与回退 helper；风险表、不可用表、不可用影响关联风险表进入 detail 页时保留 scope 与来源页；计划详情、风险明细、不可用影响定位页的返回动作和相关计划跳转不再掉回全量列表；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q020`
+- source_ids:
+  - `R115`
+- story_ids:
+  - `US127`
+- action: 收口 scoped detail navigation QA。
+- status: `done`
+- notes: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`bash scripts/check-state.sh --strict --diff=working`、`git diff --check` 和 `bash scripts/check.sh` 通过；严格状态、state/commit-message 回归、lint、typecheck、Next build 和后端 19 个 unittest 继续通过；current queue 与 active tasks 已清空。

@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   buildPlanDetailHref,
+  buildScheduleRiskDetailHref,
   buildShiftDetailsHref,
 } from "@/lib/review-navigation"
 import {
@@ -132,7 +133,17 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
     cell: ({ row }) => (
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm">
-          <Link href={`/schedule-risks/${encodeURIComponent(row.original.risk_id)}`}>
+          <Link
+            href={buildScheduleRiskDetailHref(row.original.risk_id, {
+              from: "unavailability",
+              planId: row.original.plan_id,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+              intervalStart: row.original.interval_start,
+              intervalEnd: row.original.interval_end,
+            })}
+          >
             查看风险
           </Link>
         </Button>
@@ -151,7 +162,18 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
           </Link>
         </Button>
         <Button asChild variant="ghost" size="sm">
-          <Link href={buildPlanDetailHref(row.original.plan_id)}>查看计划</Link>
+          <Link
+            href={buildPlanDetailHref(row.original.plan_id, {
+              from: "unavailability",
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+              intervalStart: row.original.interval_start,
+              intervalEnd: row.original.interval_end,
+            })}
+          >
+            查看计划
+          </Link>
         </Button>
       </div>
     ),

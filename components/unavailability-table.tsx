@@ -61,6 +61,10 @@ import {
   type UnavailabilityRow,
   type UnavailabilityStatus,
 } from "@/lib/unavailability"
+import {
+  buildShiftDetailsHref,
+  buildUnavailabilityDetailHref,
+} from "@/lib/review-navigation"
 
 const statusRank: Record<UnavailabilityStatus, number> = {
   active: 0,
@@ -209,14 +213,29 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm">
           <Link
-            href={`/unavailability/${encodeURIComponent(row.original.unavailability_id)}`}
+            href={buildUnavailabilityDetailHref(row.original.unavailability_id, {
+              from: "unavailability",
+              status: row.original.status,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.unavailable_date,
+              startTime: row.original.start_time,
+              endTime: row.original.end_time,
+            })}
           >
             影响
           </Link>
         </Button>
         <Button asChild variant="ghost" size="sm">
           <Link
-            href={`/shift-details?project=${encodeURIComponent(row.original.project_name)}&site=${encodeURIComponent(row.original.site_name)}&date=${encodeURIComponent(row.original.unavailable_date)}&intervalStart=${encodeURIComponent(row.original.start_time)}&intervalEnd=${encodeURIComponent(row.original.end_time)}`}
+            href={buildShiftDetailsHref({
+              from: "unavailability",
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.unavailable_date,
+              intervalStart: row.original.start_time,
+              intervalEnd: row.original.end_time,
+            })}
           >
             班次
           </Link>

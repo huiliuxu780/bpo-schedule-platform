@@ -1231,6 +1231,26 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、两组 node 回归、lint、typecheck、Next build 和后端 19 个 unittest。
 
+### 2026-05-14 - Scoped Detail Navigation Across Review Drilldown
+
+#### 审计结论
+
+- `F077-F079/Q020/US127` 已把 risk / unavailability / 关联风险表进入 detail 页的 scoped 链路补齐到统一 helper：detail URL 现在保留当前 review scope 和来源页，不再回退到无 scope 的 detail 页面。
+- `排班计划详情`、`风险明细`、`不可用影响定位` 三个 detail 页现在使用统一的 scoped back-link 逻辑；detail 页内的相关计划跳转也会保留来源页和当前 scope，不再把用户扔回全量列表。
+- 本轮仍然只停留在本地前端和本地 seed 契约层，没有引入数据库、依赖、后端契约、审批、导出、批量、权限或生产公式。
+
+#### 风险
+
+- 当前 scoped navigation 仍然建立在本地 query 参数与本地过滤之上，不等同于服务端分页、服务端过滤或用户级持久化返回态；后续如果接入真实查询契约，需要单独过 Gate。
+- 本轮验证以源码回归、strict state、lint/typecheck/build 和后端回归为主，没有补视觉截图审计；如果后续要补视觉级证据，应单独做 browser smoke。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，24 个测试通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

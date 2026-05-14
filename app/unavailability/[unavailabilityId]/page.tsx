@@ -24,6 +24,7 @@ import {
 } from "@/lib/unavailability"
 import {
   buildPlanDetailHref,
+  buildReviewBackLink,
   buildReviewScopeLabel,
   buildScheduleRisksHref,
   buildShiftDetailsHref,
@@ -34,10 +35,24 @@ type PageProps = {
   params: Promise<{
     unavailabilityId: string
   }>
+  searchParams: Promise<{
+    from?: string
+    query?: string
+    status?: string
+    project?: string
+    site?: string
+    date?: string
+    startTime?: string
+    endTime?: string
+  }>
 }
 
-export default async function UnavailabilityImpactPage({ params }: PageProps) {
+export default async function UnavailabilityImpactPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { unavailabilityId } = await params
+  const scopeParams = await searchParams
   const record = await getUnavailabilityRecord(decodeURIComponent(unavailabilityId))
 
   if (!record) {
@@ -77,6 +92,7 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
     endTime: record.end_time,
   })
   const shiftHref = buildShiftDetailsHref({
+    from: "unavailability",
     project: record.project_name,
     site: record.site_name,
     date: record.unavailable_date,
@@ -84,14 +100,47 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
     intervalEnd: record.end_time,
   })
   const riskHref = buildScheduleRisksHref({
+    from: "unavailability",
     project: record.project_name,
     site: record.site_name,
     date: record.unavailable_date,
     intervalStart: record.start_time,
     intervalEnd: record.end_time,
   })
-  const planHref = buildPlanDetailHref(primaryPlanId)
-  const listHref = buildUnavailabilityHref()
+  const planHref = buildPlanDetailHref(primaryPlanId, {
+    from: scopeParams.from ?? "unavailability",
+    project: record.project_name,
+    site: record.site_name,
+    date: record.unavailable_date,
+    startTime: record.start_time,
+    endTime: record.end_time,
+  })
+  const listHref = buildUnavailabilityHref({
+    from: "unavailability",
+    query: scopeParams.query,
+    status: scopeParams.status ?? record.status,
+    project: record.project_name,
+    site: record.site_name,
+    date: record.unavailable_date,
+    startTime: record.start_time,
+    endTime: record.end_time,
+  })
+  const backLink = buildReviewBackLink(
+    {
+      from: scopeParams.from,
+      query: scopeParams.query,
+      status: scopeParams.status ?? record.status,
+      project: scopeParams.project ?? record.project_name,
+      site: scopeParams.site ?? record.site_name,
+      date: scopeParams.date ?? record.unavailable_date,
+      startTime: scopeParams.startTime ?? record.start_time,
+      endTime: scopeParams.endTime ?? record.end_time,
+    },
+    {
+      href: listHref,
+      label: "返回不可用",
+    },
+  )
 
   return (
     <AppShell title="不可用影响定位" searchPlaceholder="搜索不可用、班次或风险">
@@ -114,7 +163,7 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
               </Button>
             ) : null}
             <Button asChild variant="outline" size="sm">
-              <Link href={listHref}>返回不可用</Link>
+              <Link href={backLink.href}>{backLink.label}</Link>
             </Button>
           </div>
         </div>
@@ -216,8 +265,8 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
               { label: "查看风险", href: riskHref },
               { label: "查看计划", href: planHref },
             ]}
-            backHref={listHref}
-            backLabel="回到全部不可用"
+            backHref={backLink.href}
+            backLabel={backLink.label}
           />
         </div>
       </main>

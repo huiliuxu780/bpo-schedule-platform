@@ -1,4 +1,5 @@
 type ReviewScopeParams = {
+  from?: string
   query?: string
   planId?: string
   date?: string
@@ -48,6 +49,7 @@ export function buildReviewScopeLabel(scope: {
 export function buildShiftDetailsHref(scope: ReviewScopeParams = {}) {
   const searchParams = new URLSearchParams()
 
+  setIfPresent(searchParams, "from", scope.from)
   setIfPresent(searchParams, "query", scope.query)
   setIfPresent(searchParams, "status", scope.status)
   setIfPresent(searchParams, "planId", scope.planId)
@@ -64,6 +66,7 @@ export function buildShiftDetailsHref(scope: ReviewScopeParams = {}) {
 export function buildScheduleRisksHref(scope: ReviewScopeParams = {}) {
   const searchParams = new URLSearchParams()
 
+  setIfPresent(searchParams, "from", scope.from)
   setIfPresent(searchParams, "query", scope.query)
   setIfPresent(searchParams, "planId", scope.planId)
   setIfPresent(searchParams, "date", scope.date)
@@ -79,6 +82,7 @@ export function buildScheduleRisksHref(scope: ReviewScopeParams = {}) {
 export function buildUnavailabilityHref(scope: ReviewScopeParams = {}) {
   const searchParams = new URLSearchParams()
 
+  setIfPresent(searchParams, "from", scope.from)
   setIfPresent(searchParams, "query", scope.query)
   setIfPresent(searchParams, "status", scope.status)
   setIfPresent(searchParams, "project", scope.project)
@@ -91,9 +95,95 @@ export function buildUnavailabilityHref(scope: ReviewScopeParams = {}) {
   return `/unavailability${suffix ? `?${suffix}` : ""}`
 }
 
-export function buildPlanDetailHref(planId?: string) {
+export function buildPlanDetailHref(
+  planId?: string,
+  scope: ReviewScopeParams = {},
+) {
   const normalizedPlanId = planId?.trim()
-  return normalizedPlanId
-    ? `/schedule-plans/${encodeURIComponent(normalizedPlanId)}`
-    : "/schedule-plans"
+  if (!normalizedPlanId) {
+    return "/schedule-plans"
+  }
+
+  const searchParams = new URLSearchParams()
+
+  setIfPresent(searchParams, "from", scope.from)
+  setIfPresent(searchParams, "query", scope.query)
+  setIfPresent(searchParams, "date", scope.date)
+  setIfPresent(searchParams, "project", scope.project)
+  setIfPresent(searchParams, "site", scope.site)
+  setIfPresent(searchParams, "intervalStart", scope.intervalStart ?? scope.startTime)
+  setIfPresent(searchParams, "intervalEnd", scope.intervalEnd ?? scope.endTime)
+
+  const suffix = searchParams.toString()
+  return `/schedule-plans/${encodeURIComponent(normalizedPlanId)}${
+    suffix ? `?${suffix}` : ""
+  }`
+}
+
+export function buildScheduleRiskDetailHref(
+  riskId: string,
+  scope: ReviewScopeParams = {},
+) {
+  const normalizedRiskId = riskId.trim()
+  const searchParams = new URLSearchParams()
+
+  setIfPresent(searchParams, "from", scope.from)
+  setIfPresent(searchParams, "planId", scope.planId)
+  setIfPresent(searchParams, "date", scope.date)
+  setIfPresent(searchParams, "project", scope.project)
+  setIfPresent(searchParams, "site", scope.site)
+  setIfPresent(searchParams, "intervalStart", scope.intervalStart ?? scope.startTime)
+  setIfPresent(searchParams, "intervalEnd", scope.intervalEnd ?? scope.endTime)
+
+  const suffix = searchParams.toString()
+  return `/schedule-risks/${encodeURIComponent(normalizedRiskId)}${
+    suffix ? `?${suffix}` : ""
+  }`
+}
+
+export function buildUnavailabilityDetailHref(
+  unavailabilityId: string,
+  scope: ReviewScopeParams = {},
+) {
+  const normalizedId = unavailabilityId.trim()
+  const searchParams = new URLSearchParams()
+
+  setIfPresent(searchParams, "from", scope.from)
+  setIfPresent(searchParams, "query", scope.query)
+  setIfPresent(searchParams, "status", scope.status)
+  setIfPresent(searchParams, "date", scope.date)
+  setIfPresent(searchParams, "project", scope.project)
+  setIfPresent(searchParams, "site", scope.site)
+  setIfPresent(searchParams, "startTime", scope.startTime ?? scope.intervalStart)
+  setIfPresent(searchParams, "endTime", scope.endTime ?? scope.intervalEnd)
+
+  const suffix = searchParams.toString()
+  return `/unavailability/${encodeURIComponent(normalizedId)}${
+    suffix ? `?${suffix}` : ""
+  }`
+}
+
+export function buildReviewBackLink(
+  scope: ReviewScopeParams,
+  fallback: { href: string; label: string },
+) {
+  switch (scope.from) {
+    case "schedule-risks":
+      return {
+        href: buildScheduleRisksHref(scope),
+        label: "返回风险列表",
+      }
+    case "unavailability":
+      return {
+        href: buildUnavailabilityHref(scope),
+        label: "返回不可用",
+      }
+    case "shift-details":
+      return {
+        href: buildShiftDetailsHref(scope),
+        label: "返回班次",
+      }
+    default:
+      return fallback
+  }
 }

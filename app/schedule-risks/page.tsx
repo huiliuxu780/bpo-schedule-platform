@@ -18,6 +18,11 @@ import {
   type ScheduleRiskRow,
   scheduleRiskLevelLabel,
 } from "@/lib/schedule-plans"
+import {
+  buildPlanDetailHref,
+  buildShiftDetailsHref,
+  buildUnavailabilityHref,
+} from "@/lib/review-navigation"
 
 type PageProps = {
   searchParams: Promise<{
@@ -112,35 +117,36 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
   const hasPrefilter = Boolean(
     query || planId || date || project || site || intervalStart || intervalEnd
   )
-  const shiftSearchParams = new URLSearchParams()
-  if (query) shiftSearchParams.set("query", query)
-  if (planId) shiftSearchParams.set("planId", planId)
-  if (date) shiftSearchParams.set("date", date)
-  if (project) shiftSearchParams.set("project", project)
-  if (site) shiftSearchParams.set("site", site)
-  if (intervalStart) shiftSearchParams.set("intervalStart", intervalStart)
-  if (intervalEnd) shiftSearchParams.set("intervalEnd", intervalEnd)
-  const shiftHref = `/shift-details${
-    shiftSearchParams.toString() ? `?${shiftSearchParams.toString()}` : ""
-  }`
-  const unavailabilitySearchParams = new URLSearchParams()
-  if (query) unavailabilitySearchParams.set("query", query)
-  if (project) unavailabilitySearchParams.set("project", project)
-  if (site) unavailabilitySearchParams.set("site", site)
-  if (date) unavailabilitySearchParams.set("date", date)
-  if (intervalStart) unavailabilitySearchParams.set("startTime", intervalStart)
-  if (intervalEnd) unavailabilitySearchParams.set("endTime", intervalEnd)
-  if (project || site || date || intervalStart || intervalEnd) {
-    unavailabilitySearchParams.set("status", "active")
-  }
-  const unavailabilityHref = `/unavailability${
-    unavailabilitySearchParams.toString()
-      ? `?${unavailabilitySearchParams.toString()}`
-      : ""
-  }`
-  const planHref = planId
-    ? `/schedule-plans/${encodeURIComponent(planId)}`
-    : "/schedule-plans"
+  const shiftHref = buildShiftDetailsHref({
+    from: "schedule-risks",
+    query,
+    planId,
+    date,
+    project,
+    site,
+    intervalStart,
+    intervalEnd,
+  })
+  const unavailabilityHref = buildUnavailabilityHref({
+    from: "schedule-risks",
+    query,
+    project,
+    site,
+    date,
+    startTime: intervalStart,
+    endTime: intervalEnd,
+    status:
+      project || site || date || intervalStart || intervalEnd ? "active" : undefined,
+  })
+  const planHref = buildPlanDetailHref(planId, {
+    from: "schedule-risks",
+    query,
+    date,
+    project,
+    site,
+    intervalStart,
+    intervalEnd,
+  })
 
   return (
     <AppShell title="风险提示" searchPlaceholder="搜索风险、计划或职场">

@@ -21,6 +21,7 @@ import {
 } from "@/lib/schedule-plans"
 import {
   buildPlanDetailHref,
+  buildReviewBackLink,
   buildReviewScopeLabel,
   buildScheduleRisksHref,
   buildUnavailabilityHref,
@@ -34,10 +35,23 @@ type PageProps = {
   params: Promise<{
     riskId: string
   }>
+  searchParams: Promise<{
+    from?: string
+    planId?: string
+    date?: string
+    project?: string
+    site?: string
+    intervalStart?: string
+    intervalEnd?: string
+  }>
 }
 
-export default async function ScheduleRiskDetailPage({ params }: PageProps) {
+export default async function ScheduleRiskDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { riskId } = await params
+  const scopeParams = await searchParams
   const risk = await getScheduleRisk(decodeURIComponent(riskId))
 
   if (!risk) {
@@ -70,8 +84,16 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
     intervalStart: risk.interval_start,
     intervalEnd: risk.interval_end,
   })
-  const planHref = buildPlanDetailHref(risk.plan_id)
+  const planHref = buildPlanDetailHref(risk.plan_id, {
+    from: scopeParams.from ?? "schedule-risks",
+    project: risk.project_name,
+    site: risk.site_name,
+    date: risk.plan_date,
+    intervalStart: risk.interval_start,
+    intervalEnd: risk.interval_end,
+  })
   const riskListHref = buildScheduleRisksHref({
+    from: "schedule-risks",
     planId: risk.plan_id,
     project: risk.project_name,
     site: risk.site_name,
@@ -79,7 +101,23 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
     intervalStart: risk.interval_start,
     intervalEnd: risk.interval_end,
   })
+  const backLink = buildReviewBackLink(
+    {
+      from: scopeParams.from,
+      planId: scopeParams.planId ?? risk.plan_id,
+      project: scopeParams.project ?? risk.project_name,
+      site: scopeParams.site ?? risk.site_name,
+      date: scopeParams.date ?? risk.plan_date,
+      intervalStart: scopeParams.intervalStart ?? risk.interval_start,
+      intervalEnd: scopeParams.intervalEnd ?? risk.interval_end,
+    },
+    {
+      href: riskListHref,
+      label: "返回风险列表",
+    },
+  )
   const shiftHref = buildShiftDetailsHref({
+    from: "schedule-risks",
     planId: risk.plan_id,
     project: risk.project_name,
     site: risk.site_name,
@@ -88,6 +126,7 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
     intervalEnd: risk.interval_end,
   })
   const unavailabilityHref = buildUnavailabilityHref({
+    from: "schedule-risks",
     project: risk.project_name,
     site: risk.site_name,
     date: risk.plan_date,
@@ -112,7 +151,7 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
               <Link href={planHref}>计划详情</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
-              <Link href={riskListHref}>返回风险列表</Link>
+              <Link href={backLink.href}>{backLink.label}</Link>
             </Button>
           </div>
         </div>
@@ -218,8 +257,8 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
               { label: "查看班次", href: shiftHref },
               { label: "查看不可用", href: unavailabilityHref },
             ]}
-            backHref="/schedule-risks"
-            backLabel="回到全部风险"
+            backHref={backLink.href}
+            backLabel={backLink.label}
           />
         </div>
       </main>

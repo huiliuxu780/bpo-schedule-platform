@@ -92,12 +92,13 @@ Current invariants:
 - `H033/US125` closed the startup-state self-lock: a new product batch can now seed limited current/registry startup diff and pass strict state checks before business code starts, without reopening current/registry writes for ordinary product edits.
 - `H034/US126` closed the last product closeout self-lock: same-commit product closeout now passes both strict state checks and commit-message validation, so a verified frontend batch can return current to empty and still commit with its active task id.
 - `F073-F076/Q019/US124` replaced duplicated right-side review cards across risk/plan/shift/unavailability pages with one shared `ReviewChecklistRail`, keeping summary metrics, current/next steps, scoped actions, and stable back links aligned while staying inside the no-database local review workflow.
+- `F077-F079/Q020/US127` completed the next review slice: risk, unavailability, and related-risk drilldown tables now preserve scoped detail URLs; plan/risk/unavailability detail pages use scoped back-link logic and keep related-plan navigation inside the same review context; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
 Near-term product work should remain inside the no-database local MVP boundary.
 
-Recommended order after F060/Q015/F061-F064/Q016/F065-F068/Q017/F069-F072/Q018:
+Recommended order after F060/Q015/F061-F064/Q016/F065-F068/Q017/F069-F072/Q018/F073-F076/Q019/F077-F079/Q020:
 
 1. Seed the next ready story in current state before execution.
 2. Continue the next narrow risk/unavailability workflow slice or another frontend/local-contract story.

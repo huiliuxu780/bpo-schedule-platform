@@ -5,6 +5,7 @@ import { AppShell } from "@/components/app-shell"
 import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-table"
 import {
+  buildReviewBackLink,
   buildReviewScopeLabel,
   buildScheduleRisksHref,
   buildShiftDetailsHref,
@@ -31,10 +32,26 @@ type PageProps = {
   params: Promise<{
     planId: string
   }>
+  searchParams: Promise<{
+    from?: string
+    query?: string
+    date?: string
+    project?: string
+    site?: string
+    intervalStart?: string
+    intervalEnd?: string
+    startTime?: string
+    endTime?: string
+    status?: string
+  }>
 }
 
-export default async function SchedulePlanDetailPage({ params }: PageProps) {
+export default async function SchedulePlanDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { planId } = await params
+  const scopeParams = await searchParams
   const plan = await getSchedulePlan(planId)
 
   if (!plan) {
@@ -58,29 +75,60 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
       row.unavailable_date === plan.summary.plan_date
   )
   const shiftHref = buildShiftDetailsHref({
+    from: "schedule-plans",
     planId: plan.summary.id,
-    date: plan.summary.plan_date,
-    project: plan.summary.project_name,
-    site: plan.summary.site_name,
+    date: scopeParams.date ?? plan.summary.plan_date,
+    project: scopeParams.project ?? plan.summary.project_name,
+    site: scopeParams.site ?? plan.summary.site_name,
+    intervalStart: scopeParams.intervalStart ?? scopeParams.startTime,
+    intervalEnd: scopeParams.intervalEnd ?? scopeParams.endTime,
   })
   const riskHref = buildScheduleRisksHref({
+    from: "schedule-plans",
     planId: plan.summary.id,
-    project: plan.summary.project_name,
-    site: plan.summary.site_name,
-    date: plan.summary.plan_date,
+    project: scopeParams.project ?? plan.summary.project_name,
+    site: scopeParams.site ?? plan.summary.site_name,
+    date: scopeParams.date ?? plan.summary.plan_date,
+    intervalStart: scopeParams.intervalStart ?? scopeParams.startTime,
+    intervalEnd: scopeParams.intervalEnd ?? scopeParams.endTime,
   })
   const unavailabilityHref = buildUnavailabilityHref({
-    project: plan.summary.project_name,
-    site: plan.summary.site_name,
-    date: plan.summary.plan_date,
-    status: "active",
+    from: "schedule-plans",
+    query: scopeParams.query,
+    project: scopeParams.project ?? plan.summary.project_name,
+    site: scopeParams.site ?? plan.summary.site_name,
+    date: scopeParams.date ?? plan.summary.plan_date,
+    startTime: scopeParams.startTime ?? scopeParams.intervalStart,
+    endTime: scopeParams.endTime ?? scopeParams.intervalEnd,
+    status: scopeParams.status ?? "active",
   })
   const scopeLabel = buildReviewScopeLabel({
     planId: plan.summary.id,
-    date: plan.summary.plan_date,
-    project: plan.summary.project_name,
-    site: plan.summary.site_name,
+    date: scopeParams.date ?? plan.summary.plan_date,
+    project: scopeParams.project ?? plan.summary.project_name,
+    site: scopeParams.site ?? plan.summary.site_name,
+    intervalStart: scopeParams.intervalStart ?? scopeParams.startTime,
+    intervalEnd: scopeParams.intervalEnd ?? scopeParams.endTime,
   })
+  const backLink = buildReviewBackLink(
+    {
+      from: scopeParams.from,
+      query: scopeParams.query,
+      status: scopeParams.status,
+      planId: plan.summary.id,
+      project: scopeParams.project ?? plan.summary.project_name,
+      site: scopeParams.site ?? plan.summary.site_name,
+      date: scopeParams.date ?? plan.summary.plan_date,
+      intervalStart: scopeParams.intervalStart ?? scopeParams.startTime,
+      intervalEnd: scopeParams.intervalEnd ?? scopeParams.endTime,
+      startTime: scopeParams.startTime,
+      endTime: scopeParams.endTime,
+    },
+    {
+      href: "/schedule-plans",
+      label: "返回列表",
+    },
+  )
 
   return (
     <AppShell title="排班计划详情" searchPlaceholder="搜索计划、项目或职场">
@@ -102,7 +150,7 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
               </Button>
             ) : null}
             <Button asChild variant="outline" size="sm">
-              <Link href="/schedule-plans">返回列表</Link>
+              <Link href={backLink.href}>{backLink.label}</Link>
             </Button>
           </div>
         </div>
@@ -206,8 +254,8 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
               { label: "查看风险", href: riskHref },
               { label: "查看不可用", href: unavailabilityHref },
             ]}
-            backHref="/schedule-plans"
-            backLabel="回到全部计划"
+            backHref={backLink.href}
+            backLabel={backLink.label}
           />
         </div>
       </main>

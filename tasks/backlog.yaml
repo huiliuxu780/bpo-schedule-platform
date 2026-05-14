@@ -4003,7 +4003,7 @@ tasks:
   - id: F077
     title: "scoped detail href builder"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -4034,7 +4034,7 @@ tasks:
   - id: F078
     title: "drilldown tables preserve scoped detail URLs"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -4065,7 +4065,7 @@ tasks:
   - id: F079
     title: "detail page scoped back links"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -4096,7 +4096,7 @@ tasks:
   - id: Q020
     title: "scoped detail navigation QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/**"

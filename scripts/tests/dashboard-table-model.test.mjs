@@ -23,6 +23,11 @@ import {
   scheduleRiskLevelLabel,
 } from "../../lib/schedule-plans.ts";
 import { filterUnavailabilityRowsByScope } from "../../lib/unavailability.ts";
+import {
+  buildPlanDetailHref,
+  buildScheduleRiskDetailHref,
+  buildUnavailabilityDetailHref,
+} from "../../lib/review-navigation.ts";
 
 const anomaly = {
   id: "ANM-202605-001",
@@ -396,6 +401,46 @@ test("unavailability scope filters preserve overlapping drilldown context", () =
   );
 });
 
+test("review-navigation detail builders preserve scoped source context", () => {
+  assert.equal(
+    buildScheduleRiskDetailHref("risk-a", {
+      from: "schedule-risks",
+      planId: "plan-a",
+      project: "博西客服",
+      site: "上海职场",
+      date: "2026-05-11",
+      intervalStart: "09:30",
+      intervalEnd: "10:00",
+    }),
+    "/schedule-risks/risk-a?from=schedule-risks&planId=plan-a&date=2026-05-11&project=%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&site=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA&intervalStart=09%3A30&intervalEnd=10%3A00",
+  );
+
+  assert.equal(
+    buildUnavailabilityDetailHref("unavail-a", {
+      from: "unavailability",
+      project: "博西客服",
+      site: "上海职场",
+      date: "2026-05-11",
+      startTime: "09:30",
+      endTime: "10:30",
+      status: "active",
+    }),
+    "/unavailability/unavail-a?from=unavailability&status=active&date=2026-05-11&project=%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&site=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA&startTime=09%3A30&endTime=10%3A30",
+  );
+
+  assert.equal(
+    buildPlanDetailHref("plan-a", {
+      from: "schedule-risks",
+      project: "博西客服",
+      site: "上海职场",
+      date: "2026-05-11",
+      intervalStart: "09:30",
+      intervalEnd: "10:00",
+    }),
+    "/schedule-plans/plan-a?from=schedule-risks&date=2026-05-11&project=%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&site=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA&intervalStart=09%3A30&intervalEnd=10%3A00",
+  );
+});
+
 test("shift details page exposes a wide-screen review rail", async () => {
   const source = await readFile(new URL("../../app/shift-details/page.tsx", import.meta.url), "utf8");
 
@@ -482,4 +527,42 @@ test("review workflow pages use the shared review checklist rail", async () => {
     const source = await readFile(new URL(pagePath, import.meta.url), "utf8");
     assert.match(source, /ReviewChecklistRail/);
   }
+});
+
+test("risk and unavailability tables use scoped detail href builders", async () => {
+  const riskTableSource = await readFile(
+    new URL("../../components/schedule-risk-table.tsx", import.meta.url),
+    "utf8",
+  );
+  const unavailabilityTableSource = await readFile(
+    new URL("../../components/unavailability-table.tsx", import.meta.url),
+    "utf8",
+  );
+  const impactRiskTableSource = await readFile(
+    new URL("../../components/unavailability-impact-risk-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(riskTableSource, /buildScheduleRiskDetailHref/);
+  assert.match(unavailabilityTableSource, /buildUnavailabilityDetailHref/);
+  assert.match(impactRiskTableSource, /buildScheduleRiskDetailHref/);
+});
+
+test("detail pages preserve scoped back navigation", async () => {
+  const planDetailSource = await readFile(
+    new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const riskDetailSource = await readFile(
+    new URL("../../app/schedule-risks/[riskId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const unavailabilityDetailSource = await readFile(
+    new URL("../../app/unavailability/[unavailabilityId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(planDetailSource, /buildReviewBackLink/);
+  assert.match(riskDetailSource, /buildReviewBackLink/);
+  assert.match(unavailabilityDetailSource, /buildReviewBackLink/);
 });

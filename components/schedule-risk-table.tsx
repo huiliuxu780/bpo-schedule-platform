@@ -51,6 +51,10 @@ import {
   scheduleRiskLevelLabel,
   type ScheduleRiskRow,
 } from "@/lib/schedule-plans"
+import {
+  buildScheduleRiskDetailHref,
+  buildShiftDetailsHref,
+} from "@/lib/review-navigation"
 
 const riskLevelRank: Record<ScheduleRiskRow["risk_level"], number> = {
   high: 0,
@@ -172,14 +176,30 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm">
           <Link
-            href={`/schedule-risks/${encodeURIComponent(row.original.risk_id)}`}
+            href={buildScheduleRiskDetailHref(row.original.risk_id, {
+              from: "schedule-risks",
+              planId: row.original.plan_id,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+              intervalStart: row.original.interval_start,
+              intervalEnd: row.original.interval_end,
+            })}
           >
             明细
           </Link>
         </Button>
         <Button asChild variant="ghost" size="sm">
           <Link
-            href={`/shift-details?planId=${encodeURIComponent(row.original.plan_id)}&project=${encodeURIComponent(row.original.project_name)}&site=${encodeURIComponent(row.original.site_name)}&date=${encodeURIComponent(row.original.plan_date)}&intervalStart=${encodeURIComponent(row.original.interval_start)}&intervalEnd=${encodeURIComponent(row.original.interval_end)}`}
+            href={buildShiftDetailsHref({
+              from: "schedule-risks",
+              planId: row.original.plan_id,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+              intervalStart: row.original.interval_start,
+              intervalEnd: row.original.interval_end,
+            })}
           >
             班次
           </Link>
