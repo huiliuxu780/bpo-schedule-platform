@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-SHIFT-UNAVAILABILITY-CLEAR-CTA-001
+  in_progress_task: F110
+  ready_tasks: [F111, Q037]
 ```
 
 ## Current Stage
@@ -91,4 +91,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-The latest completed product batch is `US143 / F109 / Q036` on branch `codex/f073-review-checklist-h032`. It keeps the same no-database risk review chain coherent by making the scoped `查看全部` CTA clear only the drilldown scope while preserving the active list query and status context.
+The active product batch is `US144 / F110-F111 / Q037` on branch `codex/f073-review-checklist-h032`. It targets the remaining clear-scope and clear-filter CTA context gaps on `shift-details` and `unavailability`: scope-clearing actions should drop only drilldown parameters, while list-level clear actions should reset local filters without dropping the active review source.

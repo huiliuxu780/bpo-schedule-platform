@@ -5,4 +5,7 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US144
+    status: in_progress
+    task_ids: [F110, F111, Q037]

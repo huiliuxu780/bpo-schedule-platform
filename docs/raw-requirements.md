@@ -1391,3 +1391,16 @@ version: "1.0"
 status: "done"
 notes: "只改本地前端风险页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R132 - shift and unavailability clear CTA context closure
+
+```yaml
+id: R132
+module: "排班与风险联动"
+description: "班次明细与不可用管理页里的 `清空范围` 和 `清空` 仍使用裸列表链接，scope drilldown 与上游 review source 容易一起丢失；需要把这组 CTA 收口到 helper-driven clear 行为：清范围只去掉 drilldown，清空筛选只清本页列表过滤。"
+source: "Story Runner continuation after US143 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端班次页、不可用页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

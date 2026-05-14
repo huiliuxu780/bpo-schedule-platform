@@ -2521,3 +2521,24 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US144 - Shift and unavailability clear CTA context closure
+
+```yaml
+id: US144
+requirement_ids:
+  - R132
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望班次明细和不可用管理里的 `清空范围`、`清空` 只清掉当前层级该清的参数，而不是把来源页和正在用的列表上下文一起丢掉，这样我在 review chain 里切回列表态时仍然稳定。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "班次明细 scoped `清空范围` 清掉 drilldown 参数时，保留当前 source、query 和 status。"
+  - "班次明细列表 `清空` 清掉 query/status 时，仍保留当前 source。"
+  - "不可用管理 scoped `清空范围` 清掉 drilldown 参数时，保留当前 source、query 和 status。"
+  - "不可用管理列表 `清空` 清掉 query/status 时，仍保留当前 source。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```
