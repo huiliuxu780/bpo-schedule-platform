@@ -2426,3 +2426,23 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US139 - Schedule plan risk-entry context closure
+
+```yaml
+id: US139
+requirement_ids:
+  - R127
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望从排班计划页的风险总览入口或内嵌风险预览表进入风险工作台后，仍能保留当前计划列表的 query、status 和来源页，这样我继续查看风险、班次和计划时不会丢掉原来的计划列表上下文。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "计划页风险总览卡片的 `查看全部` 动作保留当前 query、status 和 `from=schedule-plans-list`。"
+  - "计划页内嵌风险预览表的 row actions 保留同一 plan-list source 和筛选上下文。"
+  - "风险页识别该上下文，并把后续 continuation actions 与回退目标稳定指向当前筛选计划列表。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "in_progress"
+```

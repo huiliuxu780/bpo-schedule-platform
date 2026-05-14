@@ -1326,3 +1326,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 helper、列表动作、workbench 返回态、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R127 - schedule plan risk-entry context closure
+
+```yaml
+id: R127
+module: "排班与风险联动"
+description: "排班计划页中的风险总览入口和内嵌风险预览表仍会把用户带到泛化的风险工作台，缺少 plan-list source、query 和 status 的稳定透传；需要把这条入口补成完整的计划列表发起 review chain。"
+source: "Story Runner continuation after US138 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 helper、计划页、风险页、风险表、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
