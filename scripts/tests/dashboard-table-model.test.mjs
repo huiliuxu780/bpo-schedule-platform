@@ -963,3 +963,14 @@ test("risk workbench header CTA and fallback stay inside context-aware routes", 
     /href: buildScheduleRisksHref\(\{ query, status \}\),\s+label: "回到全部风险"/,
   );
 });
+
+test("demand-plans CTA into schedule-plans preserves the active query", async () => {
+  const demandPlansSource = await readFile(
+    new URL("../../app/demand-plans/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(demandPlansSource, /buildSchedulePlansHref/);
+  assert.match(demandPlansSource, /<Link href=\{buildSchedulePlansHref\(\{ query \}\)\}>查看排班计划<\/Link>/);
+  assert.doesNotMatch(demandPlansSource, /<Link href="\/schedule-plans">查看排班计划<\/Link>/);
+});

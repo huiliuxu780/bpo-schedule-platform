@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { buildSchedulePlansHref } from "@/lib/review-navigation"
 import { getDemandPlans, type DemandPlanRow } from "@/lib/schedule-plans"
 
 type PageProps = {
@@ -44,7 +45,7 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href="/schedule-plans">查看排班计划</Link>
+            <Link href={buildSchedulePlansHref({ query })}>查看排班计划</Link>
           </Button>
         </div>
 

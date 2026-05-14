@@ -1375,6 +1375,6 @@ description: "需求计划页头部的 `查看排班计划` 仍使用裸 `/sched
 source: "Story Runner continuation after US141 closeout on 2026-05-14"
 submitted_at: "2026-05-14"
 version: "1.0"
-status: "ready"
+status: "done"
 notes: "只改本地前端需求页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```

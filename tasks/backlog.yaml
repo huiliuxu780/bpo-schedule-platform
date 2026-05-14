@@ -5333,7 +5333,7 @@ tasks:
   - id: F108
     title: "需求页到排班页 CTA query 上下文对齐"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/demand-plans/page.tsx"
@@ -5358,7 +5358,7 @@ tasks:
   - id: Q035
     title: "demand plan CTA context QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/demand-plans/page.tsx"

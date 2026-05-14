@@ -1112,3 +1112,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F108 Demand Plan Schedule CTA Context Closure
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `807c5e3`
+- remote_status: `active tracked branch continuation after pushing 807c5e3`
+- scope: demand-plan to schedule-plan CTA query preservation, focused regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `app/demand-plans/page.tsx`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `app/demand-plans/page.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing tests first verified that the demand-plans CTA still used a bare `/schedule-plans` route and dropped the active query before handoff; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 47 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --strict --diff=staged` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

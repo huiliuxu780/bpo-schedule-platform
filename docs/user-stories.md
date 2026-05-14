@@ -2501,5 +2501,5 @@ acceptance:
   - "需求计划页头部 `查看排班计划` 不再使用裸 `/schedule-plans`，而是保留当前 query。"
   - "改动只限本地前端需求页、轻量测试和追溯；不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "in_progress"
+status: "done"
 ```

@@ -1223,3 +1223,21 @@
 - action: 收口 risk workbench CTA context QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F108`
+- source_ids:
+  - `R130`
+- story_ids:
+  - `US142`
+- action: 完成 demand plan to schedule plan CTA context 收口，补齐需求页进入排班页的 query 上下文透传。
+- status: `done`
+- notes: 需求计划页头部 `查看排班计划` 不再使用裸 `/schedule-plans`，而是通过 `buildSchedulePlansHref({ query })` 保留当前 demand query；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 47 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q035`
+- source_ids:
+  - `R130`
+- story_ids:
+  - `US142`
+- action: 收口 demand plan CTA context QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
