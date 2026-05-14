@@ -1241,3 +1241,21 @@
 - action: 收口 demand plan CTA context QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F109`
+- source_ids:
+  - `R131`
+- story_ids:
+  - `US143`
+- action: 完成 risk workbench clear-scope CTA context 收口，补齐风险工作台 `查看全部` 的 query/status 保留。
+- status: `done`
+- notes: 风险工作台在有 scope drilldown 时，`查看全部` 不再使用裸 `/schedule-risks`，而是通过 `buildScheduleRisksHref({ query, status })` 只清 scope、不清当前列表上下文；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 48 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q036`
+- source_ids:
+  - `R131`
+- story_ids:
+  - `US143`
+- action: 收口 risk workbench clear-scope CTA QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

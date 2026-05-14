@@ -201,7 +201,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
             {scopeLabel ? <span>{scopeLabel}</span> : null}
             {query ? <span className="text-muted-foreground">关键词 {query}</span> : null}
             <Button asChild variant="ghost" size="sm">
-              <Link href="/schedule-risks">查看全部</Link>
+              <Link href={buildScheduleRisksHref({ query, status })}>查看全部</Link>
             </Button>
           </section>
         ) : null}

@@ -974,3 +974,13 @@ test("demand-plans CTA into schedule-plans preserves the active query", async ()
   assert.match(demandPlansSource, /<Link href=\{buildSchedulePlansHref\(\{ query \}\)\}>查看排班计划<\/Link>/);
   assert.doesNotMatch(demandPlansSource, /<Link href="\/schedule-plans">查看排班计划<\/Link>/);
 });
+
+test("risk workbench scoped `查看全部` preserves query and status while clearing drilldown scope", async () => {
+  const riskPageSource = await readFile(
+    new URL("../../app/schedule-risks/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(riskPageSource, /<Link href=\{buildScheduleRisksHref\(\{ query, status \}\)\}>查看全部<\/Link>/);
+  assert.doesNotMatch(riskPageSource, /<Link href="\/schedule-risks">查看全部<\/Link>/);
+});

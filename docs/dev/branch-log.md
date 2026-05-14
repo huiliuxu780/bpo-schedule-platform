@@ -1129,3 +1129,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F109 Risk Workbench Clear-Scope CTA Context Closure
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `65e0f6c`
+- remote_status: `active tracked branch continuation after pushing 65e0f6c`
+- scope: risk-workbench scoped `查看全部` query/status preservation, focused regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `app/schedule-risks/page.tsx`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `app/schedule-risks/page.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing tests first verified that the scoped `查看全部` CTA still used a bare `/schedule-risks` route and dropped active query/status context when clearing drilldown scope; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 48 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --strict --diff=staged` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
