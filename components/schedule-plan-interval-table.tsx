@@ -194,6 +194,7 @@ export function SchedulePlanIntervalTable({
         ...interval,
         actions: {
           riskHref: buildScheduleRisksHref({
+            from: "schedule-plans",
             planId,
             date: planDate,
             project: projectName,
@@ -202,6 +203,7 @@ export function SchedulePlanIntervalTable({
             intervalEnd: interval.interval_end,
           }),
           shiftHref: buildShiftDetailsHref({
+            from: "schedule-plans",
             planId,
             date: planDate,
             project: projectName,
@@ -210,6 +212,7 @@ export function SchedulePlanIntervalTable({
             intervalEnd: interval.interval_end,
           }),
           unavailabilityHref: buildUnavailabilityHref({
+            from: "schedule-plans",
             project: projectName,
             site: siteName,
             date: planDate,

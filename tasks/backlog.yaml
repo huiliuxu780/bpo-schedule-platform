@@ -4253,7 +4253,7 @@ tasks:
   - id: F083
     title: "plan detail interval table keeps plan-origin actions"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "components/schedule-plan-interval-table.tsx"
@@ -4282,7 +4282,7 @@ tasks:
   - id: F084
     title: "shift-details row actions preserve scoped review context"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "components/schedule-plan-interval-table.tsx"
@@ -4311,7 +4311,7 @@ tasks:
   - id: Q022
     title: "plan-origin row-action closure QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "components/schedule-plan-interval-table.tsx"

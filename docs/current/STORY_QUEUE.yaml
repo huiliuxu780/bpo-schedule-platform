@@ -5,12 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US129
-    title: "Plan-origin row-action context closure"
-    status: in_progress
-    task_ids:
-      - F083
-      - F084
-      - Q022
-    gate: frontend-scaffold
+stories: []

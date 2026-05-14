@@ -1271,6 +1271,27 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-14 - Plan-Origin Row-Action Context Closure
+
+#### 审计结论
+
+- `F083-F084/Q022/US129` 已把剩余的 plan-origin 缺口从 detail 页继续收到了表格行级动作：计划详情时段表里的 风险 / 班次 / 不可用 按钮现在显式保留 `schedule-plans` 作为来源页。
+- `班次明细表` 不再使用裸 href 拼接计划/风险链接，而是统一改为 review helper，并从当前 URL 读取来源页上下文；因此从计划详情进入班次明细后，再从表格行继续钻取，也不会丢失当前计划的复核来源。
+- 本轮仍然只停留在本地前端和本地 seed 契约层，没有引入数据库、依赖、后端契约、审批、导出、批量、权限或生产公式。
+
+#### 风险
+
+- 本轮保参仍建立在本地 query 参数和本地 helper 之上，不等同于服务端 session 或用户级持久化返回态；后续若接入真实状态保持，需要单独过 Gate。
+- 本轮已经成功启动本地 dev server，但 cross-sandbox localhost smoke 因审批超时未纳入最终证据；当前验收主要依赖失败测试先验、源码断言、strict state 和全量 `check.sh`。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，28 个测试通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check-state.sh --strict --diff=staged`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

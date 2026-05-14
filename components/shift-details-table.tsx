@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { ArrowUpDown } from "lucide-react"
 import {
   type ColumnDef,
@@ -14,6 +15,10 @@ import * as React from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  buildPlanDetailHref,
+  buildScheduleRisksHref,
+} from "@/lib/review-navigation"
 import {
   Table,
   TableBody,
@@ -35,7 +40,8 @@ const statusRank: Record<SchedulePlanStatus, number> = {
   published: 2,
 }
 
-const columns: ColumnDef<ShiftDetailRow>[] = [
+function getColumns(sourceFrom?: string): ColumnDef<ShiftDetailRow>[] {
+  return [
   {
     accessorKey: "plan_date",
     header: ({ column }) => (
@@ -208,11 +214,30 @@ const columns: ColumnDef<ShiftDetailRow>[] = [
     cell: ({ row }) => (
       <div className="flex justify-end gap-2">
         <Button asChild variant="outline" size="sm">
-          <Link href={`/schedule-plans/${row.original.plan_id}`}>计划</Link>
+          <Link
+            href={buildPlanDetailHref(row.original.plan_id, {
+              from: sourceFrom || "shift-details",
+              date: row.original.plan_date,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              intervalStart: row.original.interval_start,
+              intervalEnd: row.original.interval_end,
+            })}
+          >
+            计划
+          </Link>
         </Button>
         <Button asChild variant="ghost" size="sm">
           <Link
-            href={`/schedule-risks?planId=${encodeURIComponent(row.original.plan_id)}&project=${encodeURIComponent(row.original.project_name)}&site=${encodeURIComponent(row.original.site_name)}&date=${encodeURIComponent(row.original.plan_date)}&intervalStart=${encodeURIComponent(row.original.interval_start)}&intervalEnd=${encodeURIComponent(row.original.interval_end)}`}
+            href={buildScheduleRisksHref({
+              from: sourceFrom || "shift-details",
+              planId: row.original.plan_id,
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+              intervalStart: row.original.interval_start,
+              intervalEnd: row.original.interval_end,
+            })}
           >
             风险
           </Link>
@@ -221,13 +246,17 @@ const columns: ColumnDef<ShiftDetailRow>[] = [
     ),
   },
 ]
+}
 
 export function ShiftDetailsTable({ rows }: { rows: ShiftDetailRow[] }) {
   "use no memo"
 
+  const searchParams = useSearchParams()
+  const sourceFrom = searchParams.get("from")?.trim() ?? ""
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "plan_date", desc: false },
   ])
+  const columns = React.useMemo(() => getColumns(sourceFrom), [sourceFrom])
   // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

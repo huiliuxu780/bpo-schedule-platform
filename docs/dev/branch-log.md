@@ -891,3 +891,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F083-F084 Plan-Origin Row-Action Closure
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `f2ea69e`
+- remote_status: `active tracked branch continuation after pushing 31de26c`
+- scope: plan detail interval-table source propagation, shift-details row-action helper alignment, focused regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `components/schedule-plan-interval-table.tsx`, `components/shift-details-table.tsx`, `lib/**`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `components/schedule-plan-interval-table.tsx`, `components/shift-details-table.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing tests first verified the missing `schedule-plans` row-action source and raw shift-details hrefs; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 28 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --strict --diff=staged` passed; `git diff --check` passed; `bash scripts/check.sh` passed. Local dev server started on `http://localhost:3014`, but cross-sandbox localhost smoke timed out on approval and was not used as final evidence.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

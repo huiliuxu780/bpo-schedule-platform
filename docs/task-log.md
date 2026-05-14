@@ -989,3 +989,21 @@
 - action: 收口 plan-origin review closure QA。
 - status: `done`
 - notes: `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`bash scripts/check-state.sh --strict --diff=working`、`git diff --check` 和 `bash scripts/check.sh` 通过；严格状态、state/commit-message 回归、lint、typecheck、Next build 和后端 19 个 unittest 继续通过；current queue 与 active tasks 已清空。
+
+- task_id: `F083-F084`
+- source_ids:
+  - `R117`
+- story_ids:
+  - `US129`
+- action: 完成 plan-origin row-action context 批次，补齐计划详情时段表与班次明细表的行级动作保参。
+- status: `done`
+- notes: 计划详情时段表里的 风险 / 班次 / 不可用 行级动作现在显式透传 `from=schedule-plans`；班次明细表不再使用裸 href，而是通过 review helper 构造计划/风险链接并从 URL 读取来源页上下文；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q022`
+- source_ids:
+  - `R117`
+- story_ids:
+  - `US129`
+- action: 收口 plan-origin row-action context QA。
+- status: `done`
+- notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 28 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；本地 dev server 可在 `http://localhost:3014` 启动，但 cross-sandbox localhost smoke 因审批超时未追加为最终证据；current queue 与 active tasks 已清空。

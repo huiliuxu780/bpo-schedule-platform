@@ -490,6 +490,18 @@ test("schedule plan interval table exposes continuation actions", async () => {
   assert.match(source, /查看不可用/);
 });
 
+test("schedule plan interval table keeps schedule-plans as the row-action source", async () => {
+  const source = await readFile(
+    new URL("../../components/schedule-plan-interval-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /buildScheduleRisksHref/);
+  assert.match(source, /buildShiftDetailsHref/);
+  assert.match(source, /buildUnavailabilityHref/);
+  assert.match(source, /from: "schedule-plans"/);
+});
+
 test("unavailability impact risk table exposes scoped continuation actions", async () => {
   const source = await readFile(
     new URL("../../components/unavailability-impact-risk-table.tsx", import.meta.url),
@@ -508,6 +520,19 @@ test("schedule plan detail page exposes a wide-screen review rail", async () => 
   );
 
   assert.match(source, /ReviewChecklistRail/);
+});
+
+test("shift details table preserves scoped row actions instead of raw routes", async () => {
+  const source = await readFile(
+    new URL("../../components/shift-details-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /buildPlanDetailHref/);
+  assert.match(source, /buildScheduleRisksHref/);
+  assert.doesNotMatch(source, /href=`\/schedule-plans\/\$\{row\.original\.plan_id\}`/);
+  assert.doesNotMatch(source, /href=`\/schedule-risks\?/);
+  assert.match(source, /sourceFrom/);
 });
 
 test("schedule risk detail page exposes a wide-screen review rail", async () => {
