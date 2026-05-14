@@ -838,3 +838,50 @@ test("schedule plan list view action preserves list filter and source context", 
     /<Link href=\{`\/schedule-plans\/\$\{row\.original\.id\}`\}>查看<\/Link>/,
   );
 });
+
+test("review-navigation supports schedule-plans-list as a distinct source", async () => {
+  const { buildReviewBackLink } = await import("../../lib/review-navigation.ts");
+
+  assert.deepEqual(
+    buildReviewBackLink(
+      {
+        from: "schedule-plans-list",
+        query: "上海",
+        status: "review_ready",
+      },
+      { href: "/fallback", label: "fallback" },
+    ),
+    {
+      href: "/schedule-plans?query=%E4%B8%8A%E6%B5%B7&status=review_ready",
+      label: "返回计划列表",
+    },
+  );
+});
+
+test("plan-list review actions preserve list-origin source and filtered return context", async () => {
+  const tableSource = await readFile(
+    new URL("../../components/schedule-plan-table.tsx", import.meta.url),
+    "utf8",
+  );
+  const shiftPageSource = await readFile(
+    new URL("../../app/shift-details/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const riskPageSource = await readFile(
+    new URL("../../app/schedule-risks/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const unavailabilityPageSource = await readFile(
+    new URL("../../app/unavailability/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(tableSource, /from: "schedule-plans-list"/);
+  assert.match(tableSource, /query,/);
+  assert.match(tableSource, /status,/);
+  assert.match(shiftPageSource, /schedule-plans-list/);
+  assert.match(riskPageSource, /buildReviewBackLink/);
+  assert.match(riskPageSource, /返回计划列表/);
+  assert.match(unavailabilityPageSource, /buildReviewBackLink/);
+  assert.match(unavailabilityPageSource, /返回计划列表/);
+});

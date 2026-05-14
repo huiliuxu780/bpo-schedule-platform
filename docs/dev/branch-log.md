@@ -1044,3 +1044,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F100-F101 Schedule Plan List-Origin Review Return Closure
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `b7c0038`
+- remote_status: `active tracked branch continuation after pushing b7c0038`
+- scope: schedule-plan list-origin review return preservation across helper routing, list actions, workbench back links, focused regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `app/schedule-risks/page.tsx`, `app/shift-details/page.tsx`, `app/unavailability/page.tsx`, `components/schedule-plan-table.tsx`, `lib/review-navigation.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `app/schedule-risks/page.tsx`, `app/shift-details/page.tsx`, `app/unavailability/page.tsx`, `components/schedule-plan-table.tsx`, `lib/review-navigation.ts`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: failing tests first verified that plan-list-origin actions still reused the plan-detail source and lacked a stable filtered-list return path; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 41 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --strict --diff=staged` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

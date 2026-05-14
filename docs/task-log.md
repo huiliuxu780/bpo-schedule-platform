@@ -1151,3 +1151,21 @@
 - action: 收口 schedule plan list detail-context QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F100-F101`
+- source_ids:
+  - `R126`
+- story_ids:
+  - `US138`
+- action: 完成 schedule plan list-origin review return 收口，拆分计划列表来源页并稳定保留列表筛选回退目标。
+- status: `done`
+- notes: 计划列表中的 `风险`、`班次`、`不可用` 动作现在使用独立的 `schedule-plans-list` source，并保留当前 `query/status`；风险、班次、不可用页识别该来源后会回到同一筛选计划列表，而不是误判成计划详情 drilldown；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 41 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q031`
+- source_ids:
+  - `R126`
+- story_ids:
+  - `US138`
+- action: 收口 schedule plan list-origin review return QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

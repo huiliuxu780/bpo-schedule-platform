@@ -218,7 +218,9 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
             </Button>
             {planId ? (
               <Button asChild variant="ghost" size="sm">
-                <Link href={planHref}>返回计划详情</Link>
+                <Link href={sourceFrom === "schedule-plans-list" ? backLink.href : planHref}>
+                  {sourceFrom === "schedule-plans-list" ? "返回计划列表" : "返回计划详情"}
+                </Link>
               </Button>
             ) : null}
             <Button asChild variant="ghost" size="sm">

@@ -15,7 +15,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
+  buildReviewBackLink,
   buildReviewScopeLabel,
+  buildSchedulePlansHref,
   buildScheduleRisksHref,
   buildShiftDetailsHref,
 } from "@/lib/review-navigation"
@@ -34,6 +36,7 @@ const statusOptions: { label: string; value?: UnavailabilityStatus }[] = [
 
 type PageProps = {
   searchParams: Promise<{
+    from?: string
     query?: string
     status?: string
     project?: string
@@ -86,6 +89,7 @@ function statusHref(
 export default async function UnavailabilityPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
+  const sourceFrom = params.from?.trim() ?? ""
   const status = parseStatus(params.status)
   const project = params.project?.trim() ?? ""
   const site = params.site?.trim() ?? ""
@@ -120,6 +124,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   const teamCount = new Set(rows.map((row) => row.team_name)).size
   const siteCount = new Set(rows.map((row) => row.site_name)).size
   const riskHref = buildScheduleRisksHref({
+    from: sourceFrom || "unavailability",
     query,
     project,
     site,
@@ -128,13 +133,33 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
     endTime,
   })
   const shiftHref = buildShiftDetailsHref({
+    from: sourceFrom || "unavailability",
     query,
+    status,
     project,
     site,
     date,
     startTime,
     endTime,
   })
+  const backLink = buildReviewBackLink(
+    {
+      from: sourceFrom || undefined,
+      query,
+      status,
+      project,
+      site,
+      date,
+      startTime,
+      endTime,
+    },
+    {
+      href: buildSchedulePlansHref({ query, status: undefined }),
+      label: "回到全部不可用",
+    },
+  )
+  const backLabel =
+    sourceFrom === "schedule-plans-list" ? "返回计划列表" : backLink.label
 
   return (
     <AppShell title="不可用管理" searchPlaceholder="搜索人员、团队或原因">
@@ -147,7 +172,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href="/schedule-plans">查看排班计划</Link>
+            <Link href={backLink.href}>{backLink.label}</Link>
           </Button>
         </div>
 
@@ -266,8 +291,8 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
               { label: "查看风险", href: riskHref },
               { label: "查看班次", href: shiftHref },
             ]}
-            backHref="/unavailability"
-            backLabel="回到全部不可用"
+            backHref={backLink.href}
+            backLabel={backLabel}
           />
         </div>
       </main>

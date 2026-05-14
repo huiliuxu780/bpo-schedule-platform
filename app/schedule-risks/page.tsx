@@ -20,12 +20,15 @@ import {
 } from "@/lib/schedule-plans"
 import {
   buildPlanDetailHref,
+  buildReviewBackLink,
+  buildSchedulePlansHref,
   buildShiftDetailsHref,
   buildUnavailabilityHref,
 } from "@/lib/review-navigation"
 
 type PageProps = {
   searchParams: Promise<{
+    from?: string
     query?: string
     planId?: string
     date?: string
@@ -88,6 +91,7 @@ function buildScopeLabel({
 export default async function ScheduleRisksPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
+  const sourceFrom = params.from?.trim() ?? ""
   const planId = params.planId?.trim() ?? ""
   const date = params.date?.trim() ?? ""
   const project = params.project?.trim() ?? ""
@@ -118,7 +122,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
     query || planId || date || project || site || intervalStart || intervalEnd
   )
   const shiftHref = buildShiftDetailsHref({
-    from: "schedule-risks",
+    from: sourceFrom || "schedule-risks",
     query,
     planId,
     date,
@@ -128,7 +132,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
     intervalEnd,
   })
   const unavailabilityHref = buildUnavailabilityHref({
-    from: "schedule-risks",
+    from: sourceFrom || "schedule-risks",
     query,
     project,
     site,
@@ -139,14 +143,33 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
       project || site || date || intervalStart || intervalEnd ? "active" : undefined,
   })
   const planHref = buildPlanDetailHref(planId, {
-    from: "schedule-risks",
+    from: sourceFrom || "schedule-risks",
     query,
+    status: undefined,
     date,
     project,
     site,
     intervalStart,
     intervalEnd,
   })
+  const backLink = buildReviewBackLink(
+    {
+      from: sourceFrom || undefined,
+      query,
+      planId,
+      date,
+      project,
+      site,
+      intervalStart,
+      intervalEnd,
+    },
+    {
+      href: buildSchedulePlansHref({ query }),
+      label: "回到全部风险",
+    },
+  )
+  const backLabel =
+    sourceFrom === "schedule-plans-list" ? "返回计划列表" : backLink.label
 
   return (
     <AppShell title="风险提示" searchPlaceholder="搜索风险、计划或职场">
@@ -160,7 +183,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline" size="sm">
-              <Link href="/schedule-plans">排班计划</Link>
+              <Link href={backLink.href}>{backLink.label}</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/unavailability">不可用管理</Link>
@@ -229,8 +252,8 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
               { label: "查看不可用", href: unavailabilityHref },
               { label: "查看计划", href: planHref },
             ]}
-            backHref="/schedule-risks"
-            backLabel="回到全部风险"
+            backHref={backLink.href}
+            backLabel={backLabel}
           />
         </div>
       </main>

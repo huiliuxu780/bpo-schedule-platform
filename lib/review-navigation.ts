@@ -218,6 +218,11 @@ export function buildReviewBackLink(
   fallback: { href: string; label: string },
 ) {
   switch (scope.from) {
+    case "schedule-plans-list":
+      return {
+        href: buildSchedulePlansHref(scope),
+        label: "返回计划列表",
+      }
     case "schedule-plans":
       return {
         href: buildPlanDetailHref(scope.planId, scope),
