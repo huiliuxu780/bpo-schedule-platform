@@ -62,6 +62,7 @@ import {
   type UnavailabilityStatus,
 } from "@/lib/unavailability"
 import {
+  buildScheduleRisksHref,
   buildShiftDetailsHref,
   buildUnavailabilityDetailHref,
 } from "@/lib/review-navigation"
@@ -210,7 +211,7 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
     enableHiding: false,
     header: () => <div className="text-right">操作</div>,
     cell: ({ row }) => (
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-wrap justify-end gap-2">
         <Button asChild variant="outline" size="sm">
           <Link
             href={buildUnavailabilityDetailHref(row.original.unavailability_id, {
@@ -238,6 +239,20 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
             })}
           >
             班次
+          </Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link
+            href={buildScheduleRisksHref({
+              from: "unavailability",
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.unavailable_date,
+              intervalStart: row.original.start_time,
+              intervalEnd: row.original.end_time,
+            })}
+          >
+            风险
           </Link>
         </Button>
       </div>

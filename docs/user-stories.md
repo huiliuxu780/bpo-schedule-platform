@@ -2309,5 +2309,5 @@ acceptance:
   - "不可用列表行级动作补齐到与当前 review chain 相匹配的 scoped continuation surface。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "split"
+status: "done"
 ```

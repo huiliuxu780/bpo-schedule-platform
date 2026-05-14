@@ -4485,7 +4485,7 @@ tasks:
   - id: F088
     title: "schedule risk list scoped row-action parity"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "components/schedule-risk-table.tsx"
@@ -4514,7 +4514,7 @@ tasks:
   - id: F089
     title: "unavailability list scoped row-action parity"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "components/schedule-risk-table.tsx"
@@ -4543,7 +4543,7 @@ tasks:
   - id: Q025
     title: "review list row-action parity QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "components/schedule-risk-table.tsx"

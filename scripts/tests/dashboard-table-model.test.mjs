@@ -556,6 +556,25 @@ test("schedule risk unavailability table exposes scoped continuation actions", a
   assert.match(pageSource, /sourceFrom=\{sourceFrom\}/);
 });
 
+test("schedule risk list exposes row-action parity with plan and unavailability links", async () => {
+  const source = await readFile(
+    new URL("../../components/schedule-risk-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /buildPlanDetailHref/);
+  assert.match(source, /buildUnavailabilityHref/);
+});
+
+test("unavailability list exposes row-action parity with risk links", async () => {
+  const source = await readFile(
+    new URL("../../components/unavailability-table.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /buildScheduleRisksHref/);
+});
+
 test("schedule plan detail page exposes a wide-screen review rail", async () => {
   const source = await readFile(
     new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),

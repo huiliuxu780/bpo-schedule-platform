@@ -52,8 +52,10 @@ import {
   type ScheduleRiskRow,
 } from "@/lib/schedule-plans"
 import {
+  buildPlanDetailHref,
   buildScheduleRiskDetailHref,
   buildShiftDetailsHref,
+  buildUnavailabilityHref,
 } from "@/lib/review-navigation"
 
 const riskLevelRank: Record<ScheduleRiskRow["risk_level"], number> = {
@@ -173,7 +175,7 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
     id: "actions",
     header: () => <div className="text-right">操作</div>,
     cell: ({ row }) => (
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-wrap justify-end gap-2">
         <Button asChild variant="outline" size="sm">
           <Link
             href={buildScheduleRiskDetailHref(row.original.risk_id, {
@@ -202,6 +204,35 @@ const columns: ColumnDef<ScheduleRiskRow>[] = [
             })}
           >
             班次
+          </Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link
+            href={buildPlanDetailHref(row.original.plan_id, {
+              from: "schedule-risks",
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+              intervalStart: row.original.interval_start,
+              intervalEnd: row.original.interval_end,
+            })}
+          >
+            计划
+          </Link>
+        </Button>
+        <Button asChild variant="ghost" size="sm">
+          <Link
+            href={buildUnavailabilityHref({
+              from: "schedule-risks",
+              project: row.original.project_name,
+              site: row.original.site_name,
+              date: row.original.plan_date,
+              startTime: row.original.interval_start,
+              endTime: row.original.interval_end,
+              status: "active",
+            })}
+          >
+            不可用
           </Link>
         </Button>
       </div>

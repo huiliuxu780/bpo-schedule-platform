@@ -1043,3 +1043,21 @@
 - action: 收口风险明细辅表 continuation actions QA。
 - status: `done`
 - notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 31 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F088-F089`
+- source_ids:
+  - `R120`
+- story_ids:
+  - `US132`
+- action: 完成 review list row-action parity 收口，补齐风险列表与不可用列表的 scoped continuation actions。
+- status: `done`
+- notes: `ScheduleRiskTable` 现在补齐到 明细 / 班次 / 计划 / 不可用，`UnavailabilityTable` 现在补齐到 影响 / 班次 / 风险；row-level review 不再依赖先进入 detail 页才能继续下钻；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q025`
+- source_ids:
+  - `R120`
+- story_ids:
+  - `US132`
+- action: 收口 review list row-action parity QA。
+- status: `done`
+- notes: 先验证失败用例，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 33 个测试通过；`bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

@@ -942,3 +942,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit; branch push is separately blocked by local approval timeout`
 - blocked_reason: `git push escalation timed out locally; code path and verification remain green`
+
+### F088-F089 Review List Row-Action Parity Closure
+
+- branch_name: `codex/f073-review-checklist-h032`
+- base_main_commit: `05c3365`
+- remote_status: `push still pending local approval timeout; branch continues locally from the same verified line`
+- scope: scoped row-action parity for risk and unavailability list tables, focused regression tests, current-state closeout, and traceability updates only.
+- allowed_files_check: `components/schedule-risk-table.tsx`, `components/unavailability-table.tsx`, `lib/**`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `components/schedule-risk-table.tsx`, `components/unavailability-table.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing tests first verified the missing helper-driven row-action parity in the two list tables; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 33 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --strict --diff=staged` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit; branch push is separately blocked by local approval timeout`
+- blocked_reason: `git push escalation timed out locally; code path and verification remain green`
