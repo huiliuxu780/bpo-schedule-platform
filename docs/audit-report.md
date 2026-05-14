@@ -1397,6 +1397,27 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+### 2026-05-14 - Schedule Plan Draft Failure Feedback Closure
+
+#### 审计结论
+
+- `F094-F095/Q028/US135` 已把排班计划 draft 工作流剩余的失败反馈缺口补齐：当 `new/edit` 因本地失败带着 `draft=failed` 回跳时，计划列表和计划详情都会显示可见提示。
+- 这让 draft 回跳不再把失败结果藏在 URL 参数里，用户在当前列表或详情上下文内就能立即知道刚才的本地操作没有完成。
+- 本轮仍然只停留在本地前端和本地 seed 契约层，没有引入数据库、依赖、后端契约、审批、导出、批量、权限或生产公式。
+
+#### 风险
+
+- 本轮失败提示仍建立在本地 query 参数和本地页面文案之上，不等同于后端错误分类或持久化操作日志；后续若接入真实错误通道，需要单独过 Gate。
+- 本轮没有追加新的 browser smoke；当前验收依赖失败测试先验、源码断言、strict state 和全量 `check.sh`。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，37 个测试通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check-state.sh --strict --diff=staged`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

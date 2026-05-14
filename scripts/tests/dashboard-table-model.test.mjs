@@ -660,6 +660,22 @@ test("schedule plan draft pages and actions preserve return context", async () =
   assert.match(editActionSource, /buildPlanDetailHref/);
 });
 
+test("schedule plan list and detail pages surface visible draft failure feedback", async () => {
+  const listSource = await readFile(
+    new URL("../../app/schedule-plans/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const detailSource = await readFile(
+    new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(listSource, /draft === "failed"/);
+  assert.match(listSource, /草稿操作失败/);
+  assert.match(detailSource, /draft === "failed"/);
+  assert.match(detailSource, /草稿操作失败/);
+});
+
 test("schedule plan detail page exposes a wide-screen review rail", async () => {
   const source = await readFile(
     new URL("../../app/schedule-plans/[planId]/page.tsx", import.meta.url),

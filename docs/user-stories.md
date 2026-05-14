@@ -2367,5 +2367,5 @@ acceptance:
   - "计划详情在 `draft=failed` 时显示可见失败提示。"
   - "提示不引入数据库、依赖、后端契约或生产工作流能力。"
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
-status: "split"
+status: "done"
 ```

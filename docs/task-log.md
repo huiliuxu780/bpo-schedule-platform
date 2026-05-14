@@ -1097,3 +1097,21 @@
 - action: 收口 schedule plan draft flow context QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F094-F095`
+- source_ids:
+  - `R123`
+- story_ids:
+  - `US135`
+- action: 完成 schedule plan draft failure feedback 收口，在计划列表和计划详情补齐可见失败提示。
+- status: `done`
+- notes: 当 `draft=failed` 回跳到计划列表或计划详情时，页面现在会显示明确失败提示，不再把失败结果只留在 URL 参数里；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 37 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q028`
+- source_ids:
+  - `R123`
+- story_ids:
+  - `US135`
+- action: 收口 schedule plan draft failure feedback QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。

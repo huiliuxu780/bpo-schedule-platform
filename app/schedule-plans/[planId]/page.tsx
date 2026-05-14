@@ -37,6 +37,7 @@ type PageProps = {
   searchParams: Promise<{
     from?: string
     query?: string
+    draft?: string
     date?: string
     project?: string
     site?: string
@@ -54,6 +55,7 @@ export default async function SchedulePlanDetailPage({
 }: PageProps) {
   const { planId } = await params
   const scopeParams = await searchParams
+  const draft = scopeParams.draft?.trim() ?? ""
   const plan = await getSchedulePlan(planId)
 
   if (!plan) {
@@ -173,6 +175,16 @@ export default async function SchedulePlanDetailPage({
 
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
           <div className="grid gap-4">
+            {draft === "failed" ? (
+              <Card className="border-destructive/40 bg-destructive/5">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">草稿操作失败</CardTitle>
+                  <CardDescription>
+                    本地 draft 保存未完成，请检查当前输入后重试。
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            ) : null}
             <section className="grid gap-4 md:grid-cols-4">
               <DetailCard title="状态" value={schedulePlanStatusLabel(plan.summary.status)} />
               <DetailCard title="预测人次" value={`${plan.summary.forecast_agents}`} />

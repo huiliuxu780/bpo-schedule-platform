@@ -35,6 +35,7 @@ type PageProps = {
   searchParams: Promise<{
     query?: string
     status?: string
+    draft?: string
   }>
 }
 
@@ -69,6 +70,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const params = await searchParams
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
+  const draft = params.draft?.trim() ?? ""
   const plans = await getSchedulePlansWithFilters({ query, status })
   const risks = await getScheduleRisks(query)
   const totalForecast = plans.reduce((sum, plan) => sum + plan.forecast_agents, 0)
@@ -95,6 +97,16 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             <Link href={buildNewSchedulePlanHref({ query, status })}>新建草稿</Link>
           </Button>
         </div>
+        {draft === "failed" ? (
+          <Card className="border-destructive/40 bg-destructive/5">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">草稿操作失败</CardTitle>
+              <CardDescription>
+                本地 draft 创建未完成，请检查输入后重试。
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        ) : null}
         <section className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3">
           <form className="flex min-w-64 flex-1 items-center gap-2">
             <div className="flex flex-1 items-center gap-2 rounded-md border bg-background px-2">

@@ -4751,7 +4751,7 @@ tasks:
   - id: F094
     title: "schedule plan draft failure alert on list page"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -4779,7 +4779,7 @@ tasks:
   - id: F095
     title: "schedule plan draft failure alert on detail page"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/page.tsx"
@@ -4807,7 +4807,7 @@ tasks:
   - id: Q028
     title: "schedule plan draft failure feedback QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/page.tsx"
