@@ -1222,3 +1222,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 table action、调用页传参、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R119 - risk detail auxiliary-table continuation closure
+
+```yaml
+id: R119
+module: "排班与风险联动"
+description: "风险明细页里的关联班次表和不可用表仍缺少 scoped continuation actions，需要补齐到计划、班次和影响页的稳定钻取，避免复核停留在只读 detail 辅表。"
+source: "Story Runner continuation after US130 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端 table action、风险明细调用页、测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

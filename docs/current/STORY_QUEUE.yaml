@@ -5,4 +5,11 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: "US131"
+    requirement_ids: ["R119"]
+    task_ids: ["F086", "F087", "Q024"]
+    status: "in_progress"
+    gate: "frontend-scaffold"
+    branch: "codex/f073-review-checklist-h032"
+    acceptance_ref: "docs/user-stories.md#US131"

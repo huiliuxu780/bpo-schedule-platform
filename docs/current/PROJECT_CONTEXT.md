@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-RISK-DETAIL-AUX-001
+  in_progress_task: F086
+  ready_tasks: [F087, Q024]
 ```
 
 ## Current Stage
@@ -75,4 +75,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Current is idle again. The next step is to seed the next no-database review story or another local frontend/local-contract slice before resuming Story Runner. Database work stays deferred.
+Current active batch is `US131 / F086-F087 / Q024` on branch `codex/f073-review-checklist-h032`. It closes the remaining risk-detail auxiliary-table gap: the related shift table and related unavailability table inside risk detail still lack scoped continuation actions, so review flow can stall inside the detail page instead of continuing to plan, shift, and impact pages with preserved context.
