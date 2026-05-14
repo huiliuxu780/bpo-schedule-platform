@@ -2369,3 +2369,22 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US136 - Schedule plan draft success feedback closure
+
+```yaml
+id: US136
+requirement_ids:
+  - R124
+module: "排班与风险联动"
+role: "复核人员"
+story: "作为复核人员，我希望当本地新建或保存草稿成功后，计划详情能直接显示成功提示，这样我不用靠页面跳转去猜测刚才的操作是否已经完成。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新建草稿成功回跳到计划详情时显示可见成功提示。"
+  - "保存草稿成功回跳到计划详情时显示可见成功提示。"
+  - "提示不引入数据库、依赖、后端契约或生产工作流能力。"
+  - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+status: "split"
+```

@@ -1287,3 +1287,16 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端页面、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R124 - schedule plan draft success feedback closure
+
+```yaml
+id: R124
+module: "排班与风险联动"
+description: "当本地新建或保存草稿成功并跳回计划详情时，页面需要给出可见成功提示，不能让用户只靠路由变化推断操作结果。"
+source: "Story Runner continuation after US135 closeout on 2026-05-14"
+submitted_at: "2026-05-14"
+version: "1.0"
+status: "split"
+notes: "只改本地前端页面、server action、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
