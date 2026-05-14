@@ -5433,7 +5433,7 @@ tasks:
   - id: F110
     title: "班次明细 clear CTA 上下文对齐"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/shift-details/page.tsx"
@@ -5459,7 +5459,7 @@ tasks:
   - id: F111
     title: "不可用管理 clear CTA 上下文对齐"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/unavailability/page.tsx"
@@ -5485,7 +5485,7 @@ tasks:
   - id: Q037
     title: "shift-details / unavailability clear CTA QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/shift-details/page.tsx"

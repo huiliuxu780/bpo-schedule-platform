@@ -984,3 +984,39 @@ test("risk workbench scoped `查看全部` preserves query and status while clea
   assert.match(riskPageSource, /<Link href=\{buildScheduleRisksHref\(\{ query, status \}\)\}>查看全部<\/Link>/);
   assert.doesNotMatch(riskPageSource, /<Link href="\/schedule-risks">查看全部<\/Link>/);
 });
+
+test("shift details clear actions preserve source-aware list context", async () => {
+  const shiftPageSource = await readFile(
+    new URL("../../app/shift-details/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(
+    shiftPageSource,
+    /<Link[\s\S]*?href=\{buildShiftDetailsHref\(\{[\s\S]*?from: sourceFrom \|\| undefined,[\s\S]*?query,[\s\S]*?status,[\s\S]*?\}\)\}[\s\S]*?>[\s\S]*?清空范围[\s\S]*?<\/Link>/,
+  );
+  assert.match(
+    shiftPageSource,
+    /<Link[\s\S]*?href=\{buildShiftDetailsHref\(\{ from: sourceFrom \|\| undefined \}\)\}[\s\S]*?>[\s\S]*?清空[\s\S]*?<\/Link>/,
+  );
+  assert.doesNotMatch(shiftPageSource, /<Link href="\/shift-details">清空范围<\/Link>/);
+  assert.doesNotMatch(shiftPageSource, /<Link href="\/shift-details">清空<\/Link>/);
+});
+
+test("unavailability clear actions preserve source-aware list context", async () => {
+  const unavailabilityPageSource = await readFile(
+    new URL("../../app/unavailability/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(
+    unavailabilityPageSource,
+    /<Link[\s\S]*?href=\{buildUnavailabilityHref\(\{[\s\S]*?from: sourceFrom \|\| undefined,[\s\S]*?query,[\s\S]*?status,[\s\S]*?\}\)\}[\s\S]*?>[\s\S]*?清空范围[\s\S]*?<\/Link>/,
+  );
+  assert.match(
+    unavailabilityPageSource,
+    /<Link[\s\S]*?href=\{buildUnavailabilityHref\(\{ from: sourceFrom \|\| undefined \}\)\}[\s\S]*?>[\s\S]*?清空[\s\S]*?<\/Link>/,
+  );
+  assert.doesNotMatch(unavailabilityPageSource, /<Link href="\/unavailability">清空范围<\/Link>/);
+  assert.doesNotMatch(unavailabilityPageSource, /<Link href="\/unavailability">清空<\/Link>/);
+});

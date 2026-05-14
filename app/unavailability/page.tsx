@@ -20,6 +20,7 @@ import {
   buildSchedulePlansHref,
   buildScheduleRisksHref,
   buildShiftDetailsHref,
+  buildUnavailabilityHref,
 } from "@/lib/review-navigation"
 import {
   filterUnavailabilityRowsByScope,
@@ -187,7 +188,15 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
               <Link href={shiftHref}>查看班次</Link>
             </Button>
             <Button asChild variant="ghost" size="sm">
-              <Link href="/unavailability">清空范围</Link>
+              <Link
+                href={buildUnavailabilityHref({
+                  from: sourceFrom || undefined,
+                  query,
+                  status,
+                })}
+              >
+                清空范围
+              </Link>
             </Button>
           </section>
         ) : null}
@@ -241,7 +250,9 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
           </div>
           {query || status ? (
             <Button asChild variant="ghost" size="sm">
-              <Link href="/unavailability">清空</Link>
+              <Link href={buildUnavailabilityHref({ from: sourceFrom || undefined })}>
+                清空
+              </Link>
             </Button>
           ) : null}
         </section>

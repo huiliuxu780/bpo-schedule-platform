@@ -109,6 +109,7 @@ Current invariants:
 - `F106-F107/Q034/US141` closed the remaining risk-workbench CTA context gap that still affected the schedule-plans review chain: the risk-workbench header `不可用管理` action now preserves active review context instead of using a bare route, and the no-source default back-link fallback now stays inside the risk workbench instead of misrouting to schedule-plans; current queue returned to empty after QA closeout.
 - `F108/Q035/US142` closed the remaining demand-plan to schedule-plan CTA gap: the demand-plans page header CTA now preserves the current demand query before entering schedule-plans, so users do not lose the active demand filter at the handoff into the schedule review flow; current queue returned to empty after QA closeout.
 - `F109/Q036/US143` closed the remaining risk-workbench clear-scope CTA gap: when the risk workbench clears plan/date/site drilldown, it now preserves the active query/status context instead of dropping back to a completely bare risk page; current queue returned to empty after QA closeout.
+- `F110-F111/Q037/US144` closed the remaining clear CTA context gaps on `shift-details` and `unavailability`: scoped clear actions now drop only drilldown parameters, while list-level clear actions reset local filters without dropping the active review source; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

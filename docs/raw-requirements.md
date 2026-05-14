@@ -1401,6 +1401,6 @@ description: "班次明细与不可用管理页里的 `清空范围` 和 `清空
 source: "Story Runner continuation after US143 closeout on 2026-05-14"
 submitted_at: "2026-05-14"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "只改本地前端班次页、不可用页、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```

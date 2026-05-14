@@ -19,6 +19,7 @@ import {
   buildReviewBackLink,
   buildReviewScopeLabel,
   buildScheduleRisksHref,
+  buildShiftDetailsHref,
   buildUnavailabilityHref,
 } from "@/lib/review-navigation"
 import {
@@ -224,7 +225,15 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
               </Button>
             ) : null}
             <Button asChild variant="ghost" size="sm">
-              <Link href="/shift-details">清空范围</Link>
+              <Link
+                href={buildShiftDetailsHref({
+                  from: sourceFrom || undefined,
+                  query,
+                  status,
+                })}
+              >
+                清空范围
+              </Link>
             </Button>
           </section>
         ) : null}
@@ -284,7 +293,9 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
           </div>
           {query || status ? (
             <Button asChild variant="ghost" size="sm">
-              <Link href="/shift-details">清空</Link>
+              <Link href={buildShiftDetailsHref({ from: sourceFrom || undefined })}>
+                清空
+              </Link>
             </Button>
           ) : null}
         </section>

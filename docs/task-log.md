@@ -1259,3 +1259,21 @@
 - action: 收口 risk workbench clear-scope CTA QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F110-F111`
+- source_ids:
+  - `R132`
+- story_ids:
+  - `US144`
+- action: 完成 shift-details 与 unavailability clear CTA context 收口，补齐 scoped `清空范围` 和列表 `清空` 的 source/query/status 保留规则。
+- status: `done`
+- notes: `shift-details` 与 `unavailability` 的 scoped `清空范围` 现在只清 drilldown 参数，同时保留当前 source、query 和 status；两页列表层 `清空` 现在清掉本页 query/status，但保留当前 source，避免 review chain 回退目标丢失；先验证失败测试，再通过 `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 收口到 50 个测试通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `Q037`
+- source_ids:
+  - `R132`
+- story_ids:
+  - `US144`
+- action: 收口 shift-details / unavailability clear CTA QA。
+- status: `done`
+- notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
