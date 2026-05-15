@@ -2,15 +2,15 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
+  queue_state: active
   active_batch_id: null
-  in_progress_task: null
+  in_progress_task: R005
   ready_tasks: []
 ```
 
 ## Current Stage
 
-本地验收版准备期。项目已有前端 dashboard scaffold、本地 schedule-plan MVP vertical、local FastAPI/seed contract、state-governed Lightweight Harness；当前不接数据库。
+本地验收版准备期。项目已有前端 dashboard scaffold、本地 schedule-plan MVP vertical、local FastAPI/seed contract、demo startup、core E2E baseline、state-governed Lightweight Harness；当前不接数据库。
 
 ## Current Core Capabilities
 
@@ -21,8 +21,7 @@ current_summary:
 
 ## Current P0 Gaps
 
-- Test-environment deployment/runbook is not yet complete.
-- Core demo path still needs a short release-smoke script or documented acceptance path.
+- Test-environment/local acceptance runbook is in progress as `R005`.
 - Known issues and local acceptance evidence need a lightweight current summary before test-environment release.
 
 ## Current P1 Gaps
@@ -40,7 +39,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Continue to `R005` test-environment/local acceptance runbook. Keep database work deferred until PM confirms a database Gate and provides an environment.
+Complete `R005` local acceptance/test-environment readiness runbook, then decide whether to push and mark the project as a Local Acceptance Candidate.
 
 ## Default Execution
 

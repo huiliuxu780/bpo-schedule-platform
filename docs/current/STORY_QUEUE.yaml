@@ -1,8 +1,13 @@
 version: 1
-updated_at: "2026-05-14"
+updated_at: "2026-05-15"
 source_of_truth: "current_story_queue"
 notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US-R005
+    title: "Local acceptance and staging readiness runbook"
+    status: in_progress
+    task_ids: [R005]
+    requirement_ids: [REQ-R005]
