@@ -1241,7 +1241,7 @@
 - allowed_files_check: `backend/**`, `app/demo-imports/**`, `app/dashboard/**`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no package/lockfile, database, ORM, migration, schema, real integration, auth, permissions, approval, export, batch operation, production formula, settlement, or charge-factor files.
 - scope_diff_check: `backend/app/demo_imports.py`, `backend/app/main.py`, `backend/app/models.py`, `backend/tests/test_schedule_plans.py`, `app/demo-imports/**`, `app/dashboard/page.tsx`, `components/app-sidebar.tsx`, `components/dashboard-client.tsx`, `components/data-sync-status.tsx`, `components/data-table.tsx`, `lib/demo-imports.ts`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
 - check_result: seed-only staged strict state check passed before product work; failing backend unittest first verified the demo import service did not exist; backend unittest then passed with 22 tests; browser smoke verified `/demo-imports` import entry, imported batch feedback, dashboard import status, and table row local review action with 4 E2E tests passing; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 52 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict --diff=working` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
-- local_commit_sha: `pending final local commit`
+- local_commit_sha: `f21aa7b`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
