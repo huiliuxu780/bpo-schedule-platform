@@ -1443,3 +1443,29 @@ version: "1.0"
 status: "split"
 notes: "只改本地前端 demand-plans 页面、轻量测试和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R136 - schedule plan draft edit route E2E reinforcement
+
+```yaml
+id: R136
+module: "本地验收与排班草稿"
+description: "PM 要求继续下一批本地 P1，优先补 draft edit 路径的浏览器级 E2E，覆盖筛选后的排班计划列表进入 draft 计划详情、编辑页，并验证取消/返回仍保留当前上下文。"
+source: "PM continuation request after pushing codex/f-batch-001-local-p0-p1 on 2026-05-15"
+submitted_at: "2026-05-15"
+version: "1.0"
+status: "split"
+notes: "只补本地 E2E/必要前端小修和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```
+
+### R137 - local table parity E2E QA reinforcement
+
+```yaml
+id: R137
+module: "本地验收与 table parity"
+description: "PM 要求继续 table parity 局部补强，在本地 E2E 中补充排班计划列表可见 table parity 控制的验收覆盖，并记录 no-database 边界。"
+source: "PM continuation request after pushing codex/f-batch-001-local-p0-p1 on 2026-05-15"
+submitted_at: "2026-05-15"
+version: "1.0"
+status: "split"
+notes: "只补本地 E2E/QA 证据和必要轻量断言；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
+```

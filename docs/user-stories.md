@@ -2599,3 +2599,41 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US148 - Schedule plan draft edit route E2E reinforcement
+
+```yaml
+id: US148
+requirement_ids:
+  - R136
+module: "本地验收与排班草稿"
+role: "复核人员"
+story: "作为复核人员，我希望浏览器级 E2E 覆盖从筛选后的排班计划列表进入 draft 详情和编辑页，并确认取消/返回仍保留上下文，这样 draft edit 路径不只停留在源码断言层。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "E2E 从 `/schedule-plans?query=苏州&status=draft` 找到 draft 计划并进入详情。"
+  - "详情页 `编辑草稿` 链接保留当前来源、query/status 和计划范围上下文。"
+  - "编辑页 `取消` 或 `返回详情` 回到同一计划详情，并保留来源上下文。"
+  - "不新增依赖、不改后端契约、不接数据库。"
+  - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+status: "ready"
+```
+
+### US149 - Local table parity E2E QA reinforcement
+
+```yaml
+id: US149
+requirement_ids:
+  - R137
+module: "本地验收与 table parity"
+role: "QA"
+story: "作为 QA，我希望核心 E2E 覆盖排班计划列表的可见 table parity 控制，这样本地验收能证明当前 schedule-plan table parity 不只是模型测试通过。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 在排班计划列表页面确认本地筛选、分页或列控制等 table parity 控制可见。"
+  - "QA 记录明确本批只补本地浏览器级验收，不引入数据库、后端契约、依赖或生产工作流能力。"
+  - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+status: "ready"
+```
