@@ -39,6 +39,7 @@ type PageProps = {
     from?: string
     query?: string
     status?: string
+    planId?: string
     project?: string
     site?: string
     date?: string
@@ -84,7 +85,9 @@ export default async function UnavailabilityImpactPage({
     0
   )
   const primaryPlanId = impactedShiftDetails[0]?.plan_id
+  const scopedPlanId = scopeParams.planId?.trim() || primaryPlanId
   const scopeLabel = buildReviewScopeLabel({
+    planId: scopedPlanId,
     project: record.project_name,
     site: record.site_name,
     date: record.unavailable_date,
@@ -94,6 +97,7 @@ export default async function UnavailabilityImpactPage({
   const sourceFrom = scopeParams.from ?? "unavailability"
   const shiftHref = buildShiftDetailsHref({
     from: sourceFrom,
+    planId: scopedPlanId,
     project: record.project_name,
     site: record.site_name,
     date: record.unavailable_date,
@@ -102,13 +106,14 @@ export default async function UnavailabilityImpactPage({
   })
   const riskHref = buildScheduleRisksHref({
     from: sourceFrom,
+    planId: scopedPlanId,
     project: record.project_name,
     site: record.site_name,
     date: record.unavailable_date,
     intervalStart: record.start_time,
     intervalEnd: record.end_time,
   })
-  const planHref = buildPlanDetailHref(primaryPlanId, {
+  const planHref = buildPlanDetailHref(scopedPlanId, {
     from: sourceFrom,
     project: record.project_name,
     site: record.site_name,
@@ -120,6 +125,7 @@ export default async function UnavailabilityImpactPage({
     from: sourceFrom,
     query: scopeParams.query,
     status: scopeParams.status ?? record.status,
+    planId: scopedPlanId,
     project: record.project_name,
     site: record.site_name,
     date: record.unavailable_date,
@@ -131,6 +137,7 @@ export default async function UnavailabilityImpactPage({
       from: scopeParams.from,
       query: scopeParams.query,
       status: scopeParams.status ?? record.status,
+      planId: scopedPlanId,
       project: scopeParams.project ?? record.project_name,
       site: scopeParams.site ?? record.site_name,
       date: scopeParams.date ?? record.unavailable_date,
@@ -158,7 +165,7 @@ export default async function UnavailabilityImpactPage({
             <Button asChild variant="outline" size="sm">
               <Link href={shiftHref}>查看班次</Link>
             </Button>
-            {primaryPlanId ? (
+            {scopedPlanId ? (
               <Button asChild variant="outline" size="sm">
                 <Link href={planHref}>计划详情</Link>
               </Button>

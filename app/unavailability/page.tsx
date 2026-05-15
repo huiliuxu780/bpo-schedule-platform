@@ -40,6 +40,7 @@ type PageProps = {
     from?: string
     query?: string
     status?: string
+    planId?: string
     project?: string
     site?: string
     date?: string
@@ -63,6 +64,7 @@ function statusHref(
     project?: string
     site?: string
     date?: string
+    planId?: string
     startTime?: string
     endTime?: string
   }
@@ -77,6 +79,7 @@ function statusHref(
     searchParams.set("status", status)
   }
 
+  if (scope.planId) searchParams.set("planId", scope.planId)
   if (scope.project) searchParams.set("project", scope.project)
   if (scope.site) searchParams.set("site", scope.site)
   if (scope.date) searchParams.set("date", scope.date)
@@ -92,6 +95,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   const query = params.query?.trim() ?? ""
   const sourceFrom = params.from?.trim() ?? ""
   const status = parseStatus(params.status)
+  const planId = params.planId?.trim() ?? ""
   const project = params.project?.trim() ?? ""
   const site = params.site?.trim() ?? ""
   const date = params.date?.trim() ?? ""
@@ -113,6 +117,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
     project,
     site,
     date,
+    planId,
     startTime,
     endTime,
   })
@@ -127,6 +132,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   const riskHref = buildScheduleRisksHref({
     from: sourceFrom || "unavailability",
     query,
+    planId,
     project,
     site,
     date,
@@ -137,6 +143,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
     from: sourceFrom || "unavailability",
     query,
     status,
+    planId,
     project,
     site,
     date,
@@ -148,6 +155,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
       from: sourceFrom || undefined,
       query,
       status,
+      planId,
       project,
       site,
       date,
@@ -235,6 +243,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
                 >
                   <Link
                     href={statusHref(option.value, query, {
+                      planId,
                       project,
                       site,
                       date,
@@ -281,7 +290,21 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
                 <Badge variant="outline">B006 不可用</Badge>
               </CardHeader>
               <CardContent>
-                <UnavailabilityTable rows={rows} />
+                <UnavailabilityTable
+                  rows={rows.map((row) => ({
+                    ...row,
+                    plan_id: planId || undefined,
+                  }))}
+                  from={sourceFrom || undefined}
+                  query={query}
+                  status={status}
+                  planId={planId}
+                  project={project}
+                  site={site}
+                  date={date}
+                  startTime={startTime}
+                  endTime={endTime}
+                />
               </CardContent>
             </Card>
           </div>

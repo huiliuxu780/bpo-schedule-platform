@@ -70,6 +70,11 @@ test("core local review path keeps plan detail context", async ({ page }) => {
     page.getByRole("main").locator("h1", { hasText: "不可用管理" }),
   ).toBeVisible()
   await expect(page.getByText("上下文 drilldown")).toBeVisible()
-  await page.goBack()
+  await navigateByMainLink(page, "影响", /^\/unavailability\//)
+  await expect(page).toHaveURL(/\/unavailability\/[^?]+\?.*planId=/)
+  await expect(
+    page.getByRole("main").locator("h1", { hasText: "不可用影响定位" }),
+  ).toBeVisible()
+  await navigateByMainLink(page, "返回计划详情", /^\/schedule-plans\//)
   await expectPlanDetail(page, detailPath)
 })

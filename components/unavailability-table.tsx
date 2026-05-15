@@ -85,7 +85,26 @@ const columnLabels: Record<string, string> = {
   note: "备注",
 }
 
-const columns: ColumnDef<UnavailabilityRow>[] = [
+type UnavailabilityTableScope = {
+  from?: string
+  query?: string
+  status?: UnavailabilityStatus
+  planId?: string
+  project?: string
+  site?: string
+  date?: string
+  startTime?: string
+  endTime?: string
+}
+
+type ScopedUnavailabilityRow = UnavailabilityRow & {
+  plan_id?: string
+}
+
+function getColumns(
+  scope: UnavailabilityTableScope
+): ColumnDef<ScopedUnavailabilityRow>[] {
+  return [
   {
     accessorKey: "unavailable_date",
     header: ({ column }) => (
@@ -215,8 +234,10 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
         <Button asChild variant="outline" size="sm">
           <Link
             href={buildUnavailabilityDetailHref(row.original.unavailability_id, {
-              from: "unavailability",
+              from: scope.from || "unavailability",
+              query: scope.query,
               status: row.original.status,
+              planId: row.original.plan_id ?? scope.planId,
               project: row.original.project_name,
               site: row.original.site_name,
               date: row.original.unavailable_date,
@@ -230,7 +251,10 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
         <Button asChild variant="ghost" size="sm">
           <Link
             href={buildShiftDetailsHref({
-              from: "unavailability",
+              from: scope.from || "unavailability",
+              query: scope.query,
+              status: scope.status,
+              planId: row.original.plan_id ?? scope.planId,
               project: row.original.project_name,
               site: row.original.site_name,
               date: row.original.unavailable_date,
@@ -244,7 +268,10 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
         <Button asChild variant="ghost" size="sm">
           <Link
             href={buildScheduleRisksHref({
-              from: "unavailability",
+              from: scope.from || "unavailability",
+              query: scope.query,
+              status: scope.status,
+              planId: row.original.plan_id ?? scope.planId,
               project: row.original.project_name,
               site: row.original.site_name,
               date: row.original.unavailable_date,
@@ -258,9 +285,32 @@ const columns: ColumnDef<UnavailabilityRow>[] = [
       </div>
     ),
   },
-]
+  ]
+}
 
-export function UnavailabilityTable({ rows }: { rows: UnavailabilityRow[] }) {
+export function UnavailabilityTable({
+  rows,
+  from,
+  query,
+  status,
+  planId,
+  project,
+  site,
+  date,
+  startTime,
+  endTime,
+}: {
+  rows: ScopedUnavailabilityRow[]
+  from?: string
+  query?: string
+  status?: UnavailabilityStatus
+  planId?: string
+  project?: string
+  site?: string
+  date?: string
+  startTime?: string
+  endTime?: string
+}) {
   "use no memo"
 
   const [sorting, setSorting] = React.useState<SortingState>([
@@ -275,6 +325,31 @@ export function UnavailabilityTable({ rows }: { rows: UnavailabilityRow[] }) {
     pageIndex: 0,
     pageSize: 5,
   })
+  const columns = React.useMemo(
+    () =>
+      getColumns({
+        from,
+        query,
+        status,
+        planId,
+        project,
+        site,
+        date,
+        startTime,
+        endTime,
+      }),
+    [
+      date,
+      endTime,
+      from,
+      planId,
+      project,
+      query,
+      site,
+      startTime,
+      status,
+    ]
+  )
   const filteredRows = React.useMemo(
     () =>
       filterUnavailabilityRows(rows, {

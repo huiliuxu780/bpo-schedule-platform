@@ -213,6 +213,7 @@ export function SchedulePlanIntervalTable({
           }),
           unavailabilityHref: buildUnavailabilityHref({
             from: "schedule-plans",
+            planId,
             project: projectName,
             site: siteName,
             date: planDate,
