@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: active
+  queue_state: idle
   active_batch_id: null
-  in_progress_task: H001
+  in_progress_task: null
   ready_tasks: []
 ```
 
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Complete `H001` Harness Slimdown, then return current to idle. After that, prioritize the smallest local acceptance/release-prep task before adding more product scope.
+Prioritize the smallest local acceptance/release-prep task before adding more product scope. The likely next task is a compact test-environment readiness runbook plus core demo smoke path, without database work.
 
 ## Default Execution
 
