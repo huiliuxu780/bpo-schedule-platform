@@ -25,6 +25,7 @@ Excluded:
 ## Endpoints
 
 ```txt
+GET /health
 GET /api/v1/schedule-plans
 GET /api/v1/schedule-plans/{plan_id}
 POST /api/v1/schedule-plans/drafts
@@ -56,5 +57,11 @@ Start the API:
 Or start the first frontend + backend vertical together from the project root:
 
 ```bash
-bash scripts/dev.sh
+bash scripts/start-demo.sh
+```
+
+Health check:
+
+```txt
+http://127.0.0.1:8000/health
 ```

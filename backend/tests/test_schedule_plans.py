@@ -6,6 +6,7 @@ from backend.app.main import (
     app,
     create_schedule_plan_draft,
     get_schedule_plan,
+    health_check,
     list_demand_plans,
     list_shift_details,
     list_schedule_plans,
@@ -27,6 +28,16 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/unavailability", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
+        self.assertIn(("/health", "GET"), routes)
+
+    def test_health_check_returns_project_status(self) -> None:
+        self.assertEqual(
+            health_check(),
+            {
+                "project": "bpo-schedule-platform",
+                "status": "ok",
+            },
+        )
 
     def test_list_schedule_plans_returns_required_summary_fields(self) -> None:
         response = list_schedule_plans()

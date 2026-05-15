@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US-R003
-    title: "Demo Startup Entry + Health Check"
-    status: in_progress
-    requirement_ids: [REQ-R003]
-    task_ids: [R003]
+stories: []

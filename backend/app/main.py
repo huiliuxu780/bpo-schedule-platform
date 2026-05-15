@@ -29,6 +29,14 @@ app = FastAPI(
 )
 
 
+@app.get("/health")
+def health_check() -> dict[str, str]:
+    return {
+        "project": "bpo-schedule-platform",
+        "status": "ok",
+    }
+
+
 @app.get("/api/v1/schedule-plans", response_model=SchedulePlanListResponse)
 def list_schedule_plans(
     status: SchedulePlanStatus | None = None,

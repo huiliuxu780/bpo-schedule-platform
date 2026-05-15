@@ -77,19 +77,29 @@ http://localhost:3000/dashboard
 http://localhost:3000/schedule-plans
 ```
 
-启动第一条前后端纵切联调：
+启动本地验收 demo：
 
 ```bash
-bash scripts/dev.sh
+bash scripts/start-demo.sh
 ```
 
-默认 API base：
+默认地址：
 
 ```txt
-http://127.0.0.1:8000
+Frontend: http://localhost:3000
+Backend:  http://127.0.0.1:8000
+Health:   http://127.0.0.1:8000/health
 ```
 
-可通过 `BPO_API_BASE_URL` 覆盖。
+`scripts/start-demo.sh` 会检查 Node.js 22 和 Python 3.12 后端运行时，启动 FastAPI 和 Next.js，并输出本地访问地址。
+
+运行轻量 smoke：
+
+```bash
+bash scripts/smoke-demo.sh
+```
+
+Smoke 只检查 backend health endpoint 和 frontend 端口可访问性；它不是完整 E2E。更多说明见 `docs/local-demo.md`。
 
 ## Verify
 

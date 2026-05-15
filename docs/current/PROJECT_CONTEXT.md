@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: active
+  queue_state: idle
   active_batch_id: null
-  in_progress_task: R003
+  in_progress_task: null
   ready_tasks: []
 ```
 
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Complete `R003` demo startup entry and health check, then return current to idle. After that, continue to core path E2E and test-environment runbook work.
+Continue to `R004` core path E2E, then `R005` test-environment runbook. Keep database work deferred until PM confirms a database Gate and provides an environment.
 
 ## Default Execution
 
