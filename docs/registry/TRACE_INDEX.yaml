@@ -47,6 +47,7 @@ stories:
   US-F001: {file: "docs/known-issues.md", requirement_ids: ["REQ-F001"], task_ids: ["F001"], archive_refs: []}
   US-R006: {file: "docs/cloud-staging-options.md", requirement_ids: ["REQ-R006"], task_ids: ["R006"], archive_refs: []}
   US-H002: {file: "docs/harness-operating-model.md", requirement_ids: ["REQ-H002"], task_ids: ["H002"], archive_refs: []}
+  US148: {file: "docs/requirements-inventory.md", requirement_ids: ["R136"], task_ids: ["F115"], archive_refs: []}
 tasks:
   R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], gate: "qa"}
   H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], gate: "state-hygiene"}
@@ -57,6 +58,7 @@ tasks:
   F001: {file: "docs/known-issues.md", story_ids: ["US-F001"], gate: "frontend-scaffold"}
   R006: {file: "docs/cloud-staging-options.md", story_ids: ["US-R006"], gate: "qa"}
   H002: {file: "docs/harness-operating-model.md", story_ids: ["US-H002"], gate: "state-hygiene"}
+  F115: {file: "docs/requirements-inventory.md", story_ids: ["US148"], gate: "frontend-scaffold"}
 requirements:
   REQ-R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], task_ids: ["R001"]}
   REQ-H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], task_ids: ["H001"]}
@@ -67,6 +69,7 @@ requirements:
   REQ-F001: {file: "docs/known-issues.md", story_ids: ["US-F001"], task_ids: ["F001"]}
   REQ-R006: {file: "docs/cloud-staging-options.md", story_ids: ["US-R006"], task_ids: ["R006"]}
   REQ-H002: {file: "docs/harness-operating-model.md", story_ids: ["US-H002"], task_ids: ["H002"]}
+  R136: {file: "docs/requirements-inventory.md", story_ids: ["US148"], task_ids: ["F115"]}
 legacy_reference:
   requirements: "docs/raw-requirements.md"
   stories: "docs/user-stories.md"

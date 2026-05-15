@@ -6,4 +6,52 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+tasks:
+  - id: F115
+    story_ids: [US148]
+    status: in_progress
+    gate: frontend-scaffold
+    branch: codex/f-batch-001-local-p0-p1
+    allowed_files:
+      - "components/schedule-plan-table.tsx"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/known-issues.md"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+    traceability_files:
+      - "docs/requirements-inventory.md"
+      - "docs/roadmap.md"
+      - "docs/known-issues.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+    forbidden_files:
+      - "app/**"
+      - "backend/**"
+      - "components/app-sidebar.tsx"
+      - "components/review-checklist-rail.tsx"
+      - "components/shift-details-table.tsx"
+      - "components/unavailability-table.tsx"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "playwright.config.ts"
+      - "docs/cloud-staging-options.md"
+      - "docs/deploy-test-env.md"
+      - "tasks/backlog.yaml"
+      - "docs/user-stories.md"
+      - "docs/raw-requirements.md"
+    stop_conditions:
+      - "需要云部署、创建云资源或购买服务"
+      - "需要数据库、真实外部集成、auth、permission、approval、export、batch operation、生产公式、结算规则或收费因子"
+      - "需要修改 package 或 lockfile"
+      - "需要大重构或扩大 harness"
+      - "最终验证失败"
+    acceptance_ref: "docs/requirements-inventory.md#Review Navigation"
+    verification:
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+      - "bash scripts/smoke-demo.sh"
+      - "npm run e2e:smoke"
+    evidence_expected:
+      - "Schedule-plans list unavailability navigation preserves planId context"
+      - "Core local E2E covers the list-to-unavailability return path"
