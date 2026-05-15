@@ -5,10 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US-R006
-    title: "Cloud staging option"
-    status: in_progress
-    task_ids: [R006]
-    requirement_ids: [REQ-R006]
-    gate: qa
+stories: []
