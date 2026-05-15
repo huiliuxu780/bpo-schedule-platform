@@ -5,10 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US-H002
-    title: "TRACE_INDEX windowing"
-    status: in_progress
-    task_ids: [H002]
-    requirement_ids: [REQ-H002]
-    gate: state-hygiene
+stories: []
