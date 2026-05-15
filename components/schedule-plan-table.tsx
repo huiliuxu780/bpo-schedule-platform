@@ -448,8 +448,12 @@ export function SchedulePlanTable({
               table.setPageIndex(0)
             }}
           >
-            <SelectTrigger size="sm" className="w-28">
-              <SelectValue aria-label="计划状态筛选" />
+            <SelectTrigger
+              aria-label="计划状态筛选"
+              size="sm"
+              className="w-28"
+            >
+              <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
               <SelectItem value="all">全部状态</SelectItem>
@@ -465,8 +469,12 @@ export function SchedulePlanTable({
               table.setPageIndex(0)
             }}
           >
-            <SelectTrigger size="sm" className="w-28">
-              <SelectValue aria-label="缺口筛选" />
+            <SelectTrigger
+              aria-label="缺口筛选"
+              size="sm"
+              className="w-28"
+            >
+              <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
               <SelectItem value="all">全部缺口</SelectItem>
@@ -481,8 +489,12 @@ export function SchedulePlanTable({
               table.setPageIndex(0)
             }}
           >
-            <SelectTrigger size="sm" className="w-28">
-              <SelectValue aria-label={`${pagination.pageSize} 条/页`} />
+            <SelectTrigger
+              aria-label={`${pagination.pageSize} 条/页`}
+              size="sm"
+              className="w-28"
+            >
+              <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
               {[5, 10, 20].map((pageSize) => (

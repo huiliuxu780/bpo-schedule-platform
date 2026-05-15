@@ -113,6 +113,7 @@ Current invariants:
 - `F112/Q038/US145` closed the remaining schedule-plans draft feedback context gap: list-level search, status switching, and clear-filter actions now preserve local draft feedback until the user leaves the page; current queue returned to empty after QA closeout.
 - `F113/Q039/US146` closed the remaining schedule-plans same-page dismiss gap: the local draft failure banner now exposes a `关闭` action that removes only `draft` and preserves the active query/status list context; current queue returned to empty after QA closeout.
 - `F114/Q040/US147` closed the remaining demand-plans clear CTA consistency gap: the local `清空` action now routes through `buildDemandPlansHref()` instead of a bare `/demand-plans` link; current queue returned to empty after QA closeout.
+- `F115/Q041/US148-US149` closed the local P1 E2E reinforcement slice: core smoke now covers filtered schedule-plan list table controls, draft detail entry, draft edit route, and cancel/back context; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

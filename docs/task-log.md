@@ -1331,3 +1331,21 @@
 - action: 收口 demand-plans clear CTA QA。
 - status: `done`
 - notes: `bash scripts/check-state.sh --strict --diff=working`、`bash scripts/check-state.sh --strict --diff=staged`、`git diff --check` 和 `bash scripts/check.sh` 通过；current queue 与 active tasks 已清空。
+
+- task_id: `F115`
+- source_ids:
+  - `R136`
+- story_ids:
+  - `US148`
+- action: 完成 schedule-plan draft edit 路径 E2E 补强。
+- status: `done`
+- notes: 新增浏览器级 smoke 覆盖 `/schedule-plans?query=苏州&status=draft` 进入 draft 计划详情、编辑草稿页，并验证取消/返回保留来源、query/status 和计划详情上下文；同时修正计划详情从列表进入时的返回文案，避免误显示为“返回计划详情”。
+
+- task_id: `Q041`
+- source_ids:
+  - `R137`
+- story_ids:
+  - `US149`
+- action: 收口 table parity 本地 E2E QA 补强。
+- status: `done`
+- notes: E2E 已确认排班计划列表的列控制、状态筛选、缺口筛选和分页大小控制具备可访问名称；`npm run e2e:smoke` 3 条通过、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 52 条通过、`bash scripts/check.sh` 通过；保持 no-database、no-dependency、no-backend-contract 边界。

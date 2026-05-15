@@ -5792,7 +5792,7 @@ tasks:
   - id: F115
     title: "排班计划 draft edit 路径 E2E 补强"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -5822,7 +5822,7 @@ tasks:
   - id: Q041
     title: "table parity 本地 E2E QA 补强"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/**"

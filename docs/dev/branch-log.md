@@ -1214,3 +1214,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F115-Q041 Local P1 E2E Parity Reinforcement
+
+- branch_name: `codex/f-batch-002-local-p1-e2e-parity-chain`
+- base_main_commit: `d44e82a`
+- remote_status: `continuation branch created from pushed codex/f-batch-001-local-p0-p1 because main has not integrated the local acceptance chain yet`
+- scope: draft edit route E2E, schedule-plan table parity accessibility reinforcement, focused smoke coverage, current-state closeout, and traceability updates only.
+- allowed_files_check: `app/schedule-plans/**`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
+- scope_diff_check: `app/schedule-plans/[planId]/page.tsx`, `components/schedule-plan-table.tsx`, `lib/review-navigation.ts`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing E2E first verified missing accessible names on schedule-plan table controls and then exposed list-origin draft-detail back-link labeling; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed with 3 tests; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 52 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

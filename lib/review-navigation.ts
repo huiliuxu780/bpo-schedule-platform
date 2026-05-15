@@ -237,6 +237,13 @@ export function buildReviewBackLink(
         label: "返回计划列表",
       }
     case "schedule-plans":
+      if (!scope.planId?.trim()) {
+        return {
+          href: buildSchedulePlansHref(scope),
+          label: "返回列表",
+        }
+      }
+
       return {
         href: buildPlanDetailHref(scope.planId, scope),
         label: "返回计划详情",

@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: BATCH-F115-Q041
-  in_progress_task: F115
-  ready_tasks: [Q041]
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Current active task is `F115/Q041`, a local P1 batch for draft edit route E2E and table parity local QA reinforcement. Keep database work deferred until PM confirms a database Gate and provides an environment.
+Next recommended task is `R007` selected cloud staging implementation, but only after PM confirms the platform choice. Keep database work deferred until PM confirms a database Gate and provides an environment.
 
 ## Default Execution
 

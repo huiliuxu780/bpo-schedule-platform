@@ -120,7 +120,7 @@ export default async function SchedulePlanDetailPage({
       from: scopeParams.from,
       query: scopeParams.query,
       status: scopeParams.status,
-      planId: plan.summary.id,
+      planId: scopeParams.from === "schedule-plans" ? undefined : plan.summary.id,
       project: scopeParams.project ?? plan.summary.project_name,
       site: scopeParams.site ?? plan.summary.site_name,
       date: scopeParams.date ?? plan.summary.plan_date,

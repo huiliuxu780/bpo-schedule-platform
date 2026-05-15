@@ -169,7 +169,7 @@ description: "运营排班人员需要在排班计划列表中进入新建草稿
 source: "PM continuous delivery instruction"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "F006 只做最小创建入口，通过 Next server action 调用 B002；不做完整编辑器、发布、审批、导出、批量、数据库或权限。"
 ```
 
@@ -182,7 +182,7 @@ description: "运营排班人员需要从 draft 排班计划详情进入编辑�
 source: "PM continuous delivery instruction"
 submitted_at: "2026-05-11"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "F007 只允许编辑 draft 状态计划，通过 Next server action 调用 B002 PUT；不做发布、审批、导出、批量、权限、数据库或人员级排班。"
 ```
 
@@ -1453,7 +1453,7 @@ description: "PM 要求继续下一批本地 P1，优先补 draft edit 路径的
 source: "PM continuation request after pushing codex/f-batch-001-local-p0-p1 on 2026-05-15"
 submitted_at: "2026-05-15"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "只补本地 E2E/必要前端小修和追溯；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
 
@@ -1466,6 +1466,6 @@ description: "PM 要求继续 table parity 局部补强，在本地 E2E 中补�
 source: "PM continuation request after pushing codex/f-batch-001-local-p0-p1 on 2026-05-15"
 submitted_at: "2026-05-15"
 version: "1.0"
-status: "split"
+status: "done"
 notes: "只补本地 E2E/QA 证据和必要轻量断言；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```

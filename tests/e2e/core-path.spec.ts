@@ -108,3 +108,68 @@ test("schedule plan list unavailability action keeps plan context", async ({
   await navigateByMainLink(page, "计划详情", /^\/schedule-plans\//)
   await expectPlanDetail(page, planPath)
 })
+
+test("schedule plan draft edit route keeps list context and table controls accessible", async ({
+  page,
+}) => {
+  await page.goto("/schedule-plans?query=苏州&status=draft")
+  const scheduleMain = page.getByRole("main")
+
+  await expect(scheduleMain.locator("h1", { hasText: "排班计划" })).toBeVisible()
+  await expect(scheduleMain.getByText("本地筛选计划摘要与缺口风险")).toBeVisible()
+  await expect(scheduleMain.getByRole("button", { name: "列控制" })).toBeVisible()
+  await expect(
+    scheduleMain.getByRole("combobox", { name: "计划状态筛选" }),
+  ).toBeVisible()
+  await expect(
+    scheduleMain.getByRole("combobox", { name: "缺口筛选" }),
+  ).toBeVisible()
+  await expect(
+    scheduleMain.getByRole("combobox", { name: "5 条/页" }),
+  ).toBeVisible()
+
+  const draftDetailLink = scheduleMain
+    .locator('a[href^="/schedule-plans/"]')
+    .filter({ hasText: /^查看$/ })
+    .first()
+  const detailHref = await draftDetailLink.getAttribute("href")
+  expect(detailHref).toContain("from=schedule-plans")
+  expect(detailHref).toContain("query=%E8%8B%8F%E5%B7%9E")
+  expect(detailHref).toContain("status=draft")
+
+  await page.goto(detailHref!)
+  const detailUrl = new URL(page.url())
+  const detailPath = detailUrl.pathname
+  await expect(page.getByText("复核链路")).toBeVisible()
+  await expect(
+    page.getByRole("main").getByRole("link", { name: "返回列表" }).first(),
+  ).toHaveAttribute(
+    "href",
+    "/schedule-plans?query=%E8%8B%8F%E5%B7%9E&status=draft",
+  )
+
+  const editHref = await page
+    .getByRole("link", { name: "编辑草稿" })
+    .getAttribute("href")
+  expect(editHref).toContain("from=schedule-plans")
+  expect(editHref).toContain("query=%E8%8B%8F%E5%B7%9E")
+  expect(editHref).toContain("status=draft")
+
+  await page.goto(editHref!)
+  const editMain = page.getByRole("main")
+  await expect(
+    editMain.getByRole("heading", { name: "编辑排班草稿" }),
+  ).toBeVisible()
+  await expect(editMain.getByLabel("职场")).toHaveValue("苏州职场")
+
+  const cancelHref = await editMain
+    .getByRole("link", { name: "取消" })
+    .getAttribute("href")
+  expect(cancelHref).toContain(detailPath)
+  expect(cancelHref).toContain("from=schedule-plans")
+  expect(cancelHref).toContain("query=%E8%8B%8F%E5%B7%9E")
+  expect(cancelHref).toContain("status=draft")
+
+  await page.goto(cancelHref!)
+  await expectPlanDetail(page, detailPath)
+})

@@ -1670,6 +1670,28 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 
+## 2026-05-15 - Local P1 E2E And Table Parity Reinforcement
+
+#### 审计结论
+
+- `F115/Q041/US148-US149` 已补浏览器级本地 smoke：从筛选后的排班计划列表进入 draft 计划详情和编辑页，并验证取消/返回仍保留当前 list context。
+- 排班计划表的状态筛选、缺口筛选和分页大小 Select trigger 已补可访问名称，E2E 能通过 role/name 识别这些 table parity 控制。
+- 计划详情页从列表进入时的返回入口现在显示为“返回列表”并保留当前 `query/status`，不再被误判为“返回计划详情”。
+- 本轮仍然只停留在本地前端、E2E 和追溯证据层，没有引入数据库、依赖、后端契约、审批、导出、批量、权限或生产公式。
+
+#### 风险
+
+- 该 E2E 仍依赖本地 demo server 和本机 Chrome；远程测试环境、跨浏览器矩阵和视觉回归尚未纳入本批。
+- draft 保存提交的成功/失败路径仍由既有本地 API/源码断言覆盖，本批 E2E 只覆盖 route/context，不扩大为生产草稿工作流。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，3 条 E2E 通过。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，52 个模型/源码断言测试通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 20 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

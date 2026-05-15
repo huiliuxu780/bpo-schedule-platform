@@ -2617,7 +2617,7 @@ acceptance:
   - "编辑页 `取消` 或 `返回详情` 回到同一计划详情，并保留来源上下文。"
   - "不新增依赖、不改后端契约、不接数据库。"
   - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```
 
 ### US149 - Local table parity E2E QA reinforcement
@@ -2635,5 +2635,5 @@ acceptance:
   - "E2E 在排班计划列表页面确认本地筛选、分页或列控制等 table parity 控制可见。"
   - "QA 记录明确本批只补本地浏览器级验收，不引入数据库、后端契约、依赖或生产工作流能力。"
   - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```
