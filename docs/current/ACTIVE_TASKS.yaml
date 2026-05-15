@@ -6,4 +6,47 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+tasks:
+  - id: H001
+    story_ids: [US-H001]
+    status: in_progress
+    gate: state-hygiene
+    branch: codex/f073-review-checklist-h032
+    allowed_files:
+      - "AGENTS.md"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/BLOCKERS.md"
+      - "docs/harness-operating-model.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+    traceability_files:
+      - "docs/harness-operating-model.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+    forbidden_files:
+      - "app/**"
+      - "backend/**"
+      - "components/**"
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/**"
+      - "docs/task-log.md"
+      - "docs/dev/branch-log.md"
+      - "docs/audit-report.md"
+      - "docs/user-stories.md"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"
+    stop_conditions:
+      - "需要修改业务代码、核心业务逻辑、UI 或 E2E"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要大规模重写 trace/index 或迁移 legacy 历史"
+      - "最终验证失败"
+    acceptance_ref: "docs/harness-operating-model.md#H001"
+    verification:
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "Default startup set stays at six current Harness files"
+      - "Requirements inventory and roadmap are on-demand planning references"
+      - "Current layer returns to idle after H001"

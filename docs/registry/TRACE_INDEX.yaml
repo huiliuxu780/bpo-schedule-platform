@@ -4,6 +4,8 @@ rules:
   - "This registry stores IDs, paths, and relationships only."
   - "Do not store lifecycle state in this file."
   - "Use current files as execution sources and archive files as historical references only."
+  - "Keep active/current entries to the recent execution window; legacy files remain lookup references."
+  - "Do not copy full acceptance, audit, or branch-log prose into this index."
 current_files:
   project_context: "docs/current/PROJECT_CONTEXT.md"
   story_queue: "docs/current/STORY_QUEUE.yaml"
@@ -133,7 +135,9 @@ stories:
   US145: {file: "docs/user-stories.md", requirement_ids: ["R133"], task_ids: ["F112", "Q038"], archive_refs: []}
   US146: {file: "docs/user-stories.md", requirement_ids: ["R134"], task_ids: ["F113", "Q039"], archive_refs: []}
   US147: {file: "docs/user-stories.md", requirement_ids: ["R135"], task_ids: ["F114", "Q040"], archive_refs: []}
+  US-H001: {file: "docs/harness-operating-model.md", requirement_ids: ["R-H001"], task_ids: ["H001"], archive_refs: []}
 tasks:
+  H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], gate: "state-hygiene"}
   H024: {file: "tasks/backlog.yaml", story_ids: ["US065"], gate: "state-hygiene"}
   H025: {file: "tasks/backlog.yaml", story_ids: ["US066"], gate: "state-hygiene"}
   H026: {file: "tasks/backlog.yaml", story_ids: ["US067"], gate: "state-hygiene"}
@@ -412,6 +416,7 @@ requirements:
   R133: {file: "docs/raw-requirements.md", story_ids: ["US145"], task_ids: ["F112", "Q038"]}
   R134: {file: "docs/raw-requirements.md", story_ids: ["US146"], task_ids: ["F113", "Q039"]}
   R135: {file: "docs/raw-requirements.md", story_ids: ["US147"], task_ids: ["F114", "Q040"]}
+  R-H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], task_ids: ["H001"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

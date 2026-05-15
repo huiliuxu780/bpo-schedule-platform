@@ -42,7 +42,10 @@ Before every non-trivial task, Codex must read the default current-state set:
 4. `docs/current/ACTIVE_TASKS.yaml`
 5. `docs/current/BLOCKERS.md`
 6. `docs/quality/GATE_REGISTRY.md`
-7. Current task files
+
+Task-specific files are read only after the current Harness queue or task contract names them. They are not part of the default startup set.
+
+`docs/requirements-inventory.md` and `docs/roadmap.md` are planning references, not default startup context. Read them on demand only when planning, doing requirements inventory, choosing the next stage, preparing release/test-environment work, or when the PM asks "现在做到哪里" or "还差什么能验收/发布".
 
 Legacy files such as `tasks/backlog.yaml`, `docs/user-stories.md`, `docs/raw-requirements.md`, `docs/audit-report.md`, `docs/task-log.md`, and `docs/dev/branch-log.md` are not default startup context after the current layer exists.
 
