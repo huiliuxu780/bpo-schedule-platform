@@ -867,7 +867,7 @@
 - allowed_files_check: `app/schedule-plans/**`, `app/schedule-risks/**`, `app/unavailability/**`, `components/**`, `lib/**`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - scope_diff_check: `lib/review-navigation.ts`, `components/schedule-risk-table.tsx`, `components/unavailability-table.tsx`, `components/unavailability-impact-risk-table.tsx`, `app/schedule-plans/[planId]/page.tsx`, `app/schedule-risks/page.tsx`, `app/schedule-risks/[riskId]/page.tsx`, `app/unavailability/[unavailabilityId]/page.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
 - check_result: seed-only staged strict state check passed before product work; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 24 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
-- local_commit_sha: `pending final local commit`
+- local_commit_sha: `4c4969cf234ae5aeabb42f3ae9eebbbb0901c9dc`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
