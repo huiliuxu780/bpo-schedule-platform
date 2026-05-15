@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
+  queue_state: active
   active_batch_id: null
-  in_progress_task: null
+  in_progress_task: R003
   ready_tasks: []
 ```
 
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Prioritize the smallest local acceptance/release-prep task before adding more product scope. The likely next task is a compact test-environment readiness runbook plus core demo smoke path, without database work.
+Complete `R003` demo startup entry and health check, then return current to idle. After that, continue to core path E2E and test-environment runbook work.
 
 ## Default Execution
 

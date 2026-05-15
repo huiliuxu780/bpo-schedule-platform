@@ -136,8 +136,10 @@ stories:
   US146: {file: "docs/user-stories.md", requirement_ids: ["R134"], task_ids: ["F113", "Q039"], archive_refs: []}
   US147: {file: "docs/user-stories.md", requirement_ids: ["R135"], task_ids: ["F114", "Q040"], archive_refs: []}
   US-H001: {file: "docs/harness-operating-model.md", requirement_ids: ["R-H001"], task_ids: ["H001"], archive_refs: []}
+  US-R003: {file: "docs/local-demo.md", requirement_ids: ["REQ-R003"], task_ids: ["R003"], archive_refs: []}
 tasks:
   H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], gate: "state-hygiene"}
+  R003: {file: "docs/local-demo.md", story_ids: ["US-R003"], gate: "backend-mvp"}
   H024: {file: "tasks/backlog.yaml", story_ids: ["US065"], gate: "state-hygiene"}
   H025: {file: "tasks/backlog.yaml", story_ids: ["US066"], gate: "state-hygiene"}
   H026: {file: "tasks/backlog.yaml", story_ids: ["US067"], gate: "state-hygiene"}
@@ -417,6 +419,7 @@ requirements:
   R134: {file: "docs/raw-requirements.md", story_ids: ["US146"], task_ids: ["F113", "Q039"]}
   R135: {file: "docs/raw-requirements.md", story_ids: ["US147"], task_ids: ["F114", "Q040"]}
   R-H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], task_ids: ["H001"]}
+  REQ-R003: {file: "docs/local-demo.md", story_ids: ["US-R003"], task_ids: ["R003"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
