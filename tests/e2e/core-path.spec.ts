@@ -78,3 +78,33 @@ test("core local review path keeps plan detail context", async ({ page }) => {
   await navigateByMainLink(page, "返回计划详情", /^\/schedule-plans\//)
   await expectPlanDetail(page, detailPath)
 })
+
+test("schedule plan list unavailability action keeps plan context", async ({
+  page,
+}) => {
+  await page.goto("/schedule-plans")
+  const scheduleMain = page.getByRole("main")
+  await expect(scheduleMain.locator("h1", { hasText: "排班计划" })).toBeVisible()
+
+  const firstPlanLink = scheduleMain
+    .locator('a[href^="/schedule-plans/"]')
+    .filter({ hasText: /^查看$/ })
+    .first()
+  const planHref = await firstPlanLink.getAttribute("href")
+  expect(planHref).toMatch(/^\/schedule-plans\/[^/?]+/)
+  const planPath = new URL(planHref!, "http://localhost").pathname
+  const planId = planPath.split("/").pop()
+  expect(planId).toBeTruthy()
+
+  const planRow = firstPlanLink.locator("xpath=ancestor::tr")
+  const unavailabilityLink = planRow.getByRole("link", { name: "不可用" })
+  const unavailabilityHref = await unavailabilityLink.getAttribute("href")
+  expect(unavailabilityHref).toContain(`planId=${planId}`)
+  await page.goto(unavailabilityHref!)
+
+  await expect(page).toHaveURL(/\/unavailability\?.*planId=/)
+  await navigateByMainLink(page, "影响", /^\/unavailability\//)
+  await expect(page).toHaveURL(/\/unavailability\/[^?]+\?.*planId=/)
+  await navigateByMainLink(page, "计划详情", /^\/schedule-plans\//)
+  await expectPlanDetail(page, planPath)
+})

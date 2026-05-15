@@ -295,6 +295,7 @@ function createColumns({
               from: "schedule-plans-list",
               query,
               status,
+              planId: row.original.id,
               project: row.original.project_name,
               site: row.original.site_name,
               date: row.original.plan_date,
