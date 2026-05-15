@@ -14,12 +14,12 @@ import {
 } from "@tanstack/react-table"
 import {
   ArrowUpDown,
+  ClipboardCheck,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
   Columns3,
-  MoreHorizontal,
   RotateCcw,
   Search,
 } from "lucide-react"
@@ -256,10 +256,16 @@ const columns: ColumnDef<Anomaly>[] = [
     id: "actions",
     enableHiding: false,
     header: () => <div className="text-right">操作</div>,
-    cell: () => (
+    cell: ({ row }) => (
       <div className="text-right">
-        <Button variant="ghost" size="icon" aria-label="行操作">
-          <MoreHorizontal className="size-4" />
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={`复核 ${row.original.id}`}
+          title={`本机复核 ${row.original.id}`}
+        >
+          <ClipboardCheck className="size-4" />
+          复核
         </Button>
       </div>
     ),
@@ -345,7 +351,7 @@ export function DataTable() {
         <div>
           <CardTitle>BPO 异常明细</CardTitle>
           <CardDescription>
-            支持搜索、排序、列显示、分页与行操作占位
+            支持搜索、排序、列显示、分页与本机复核动作
           </CardDescription>
         </div>
         <DropdownMenu>

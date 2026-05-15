@@ -1692,6 +1692,30 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、25 个 state-check 回归测试、7 个 commit-message 回归测试、frontend lint、typecheck、Next build 和 20 个后端 unittest。
 
+## 2026-05-16 - Local Demo Import And Placeholder Cleanup
+
+#### 审计结论
+
+- `B008/F116/Q042/US150-US152` 已提供本机演示数据导入口：坐席主数据、坐席状态数据、登录数据支持 CSV 文本或文件输入，返回导入批次、成功/失败行数和错误明细。
+- 侧边栏 `文件导入`、`接入批次`、`数据源管理` 已指向 `/demo-imports`，dashboard 数据接入状态能读取本机导入批次，异常明细行操作从纯图标占位改成本机复核动作。
+- 本轮仍然只停留在 localhost 本机演示和进程内存状态层，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子。
+
+#### 风险
+
+- 导入数据是本机运行态进程内存，不是跨重启持久化；这符合当前本机演示边界，但不等同于生产数据接入。
+- 当前 imported data 主要驱动导入批次状态和演示 traceability；dashboard 顶部筛选和 KPI 公式仍是下一批本地 demo preview 范围，不应被视为生产计算。
+
+#### 验证
+
+- `python3 -m unittest backend.tests.test_schedule_plans`：通过，22 个后端 unittest 通过。
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，4 条 E2E 通过。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，52 个模型/源码断言测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 22 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

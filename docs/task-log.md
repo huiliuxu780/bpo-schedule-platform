@@ -1349,3 +1349,30 @@
 - action: 收口 table parity 本地 E2E QA 补强。
 - status: `done`
 - notes: E2E 已确认排班计划列表的列控制、状态筛选、缺口筛选和分页大小控制具备可访问名称；`npm run e2e:smoke` 3 条通过、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 52 条通过、`bash scripts/check.sh` 通过；保持 no-database、no-dependency、no-backend-contract 边界。
+
+- task_id: `B008`
+- source_ids:
+  - `R138`
+- story_ids:
+  - `US150`
+- action: 完成本机演示坐席主数据、状态数据和登录数据 CSV 导入闭环。
+- status: `done`
+- notes: 新增本机 demo import 服务与 `/api/v1/demo-imports/{kind}`、`/api/v1/demo-imports/batches` 路由，支持三类 CSV 文本/文件导入、字段校验、批次号、成功/失败行数和错误明细；导入状态只保存在本地进程内存中，不接数据库、ORM、migration、真实外部系统或新增依赖。
+
+- task_id: `F116`
+- source_ids:
+  - `R139`
+- story_ids:
+  - `US151`
+- action: 完成本机演示页面占位清零。
+- status: `done`
+- notes: 新增 `/demo-imports` 页面，侧边栏 `文件导入`、`接入批次`、`数据源管理` 均进入本机导入/批次状态页面；dashboard 数据接入状态可读取本机导入批次；异常明细行操作改为可解释的本机复核动作，不再是纯图标占位。
+
+- task_id: `Q042`
+- source_ids:
+  - `R140`
+- story_ids:
+  - `US152`
+- action: 收口本机导入演示闭环 QA。
+- status: `done`
+- notes: 已用后端 unittest、前端 lint/typecheck、源码模型测试和浏览器 smoke 覆盖导入入口、导入结果、dashboard 批次状态和行复核动作；本批保持 localhost-only、no-database、no-real-integration、no-package-change。

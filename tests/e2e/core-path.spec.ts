@@ -173,3 +173,48 @@ test("schedule plan draft edit route keeps list context and table controls acces
   await page.goto(cancelHref!)
   await expectPlanDetail(page, detailPath)
 })
+
+test("local demo import entry drives batch status placeholders", async ({ page }) => {
+  await page.goto("/demo-imports")
+  const importMain = page.getByRole("main")
+
+  await expect(
+    importMain.getByRole("heading", { name: "本机演示数据导入" }),
+  ).toBeVisible()
+  await expect(
+    importMain.getByRole("heading", { name: "坐席主数据" }),
+  ).toBeVisible()
+  await expect(
+    importMain.getByRole("heading", { name: "坐席状态数据" }),
+  ).toBeVisible()
+  await expect(
+    importMain.getByRole("heading", { name: "登录数据" }),
+  ).toBeVisible()
+  await expect(importMain.getByText("不接数据库")).toBeVisible()
+
+  const staffImportForm = importMain.locator(
+    'form:has(input[name="kind"][value="staff_master"])',
+  )
+  await staffImportForm.locator('input[type="file"]').setInputFiles({
+    name: "staff-master-demo.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(
+      "staff_id,name,team,site,vendor,role,status\nA009,王晨,华东一组,上海职场,供应商A,客服,在线",
+    ),
+  })
+  await staffImportForm.getByRole("button", { name: "导入坐席主数据" }).click()
+  await expect(page).toHaveURL(/\/demo-imports\?.*kind=staff_master/)
+  await expect(importMain.getByText("成功 1 行")).toBeVisible()
+  await expect(importMain.getByText("失败 0 行")).toBeVisible()
+  await expect(importMain.getByText("已同步").first()).toBeVisible()
+
+  await page.goto("/dashboard")
+  const dashboardMain = page.getByRole("main")
+
+  await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
+  await expect(dashboardMain.getByText("本机导入数据最近批次")).toBeVisible()
+  await expect(dashboardMain.getByText("坐席主数据").first()).toBeVisible()
+  await expect(
+    dashboardMain.getByRole("button", { name: "复核 ANM-202605-001" }),
+  ).toBeVisible()
+})

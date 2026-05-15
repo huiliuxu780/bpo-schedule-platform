@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: BATCH-B008-F116-Q042
-  in_progress_task: B008
-  ready_tasks: [F116, Q042]
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -16,7 +16,7 @@ current_summary:
 
 - Dashboard, demand plans, schedule plans, plan detail/edit, risks, shift details, unavailability, and review navigation use local/demo data and scoped review context.
 - Frontend build/check path exists through `bash scripts/check.sh`.
-- Backend local unittest path exists, but production API/database integration is not in scope.
+- Backend local unittest path exists, and localhost-only demo import endpoints exist for staff master, staff status, and login CSV data; production API/database integration is not in scope.
 - Harness current queue, active task contract, trace index, state check, and git hooks exist.
 
 ## Current P0 Gaps
@@ -29,6 +29,7 @@ current_summary:
 - Table parity is only partially migrated.
 - E2E/browser route smoke coverage is still limited.
 - Table parity is still partial and should be handled only after local acceptance or explicit PM priority.
+- Dashboard top-level filters and KPI formulas are still demo/static; imported data currently drives local import status and demo traceability, not production metrics.
 - Release readiness and requirements inventory remain on-demand planning references.
 
 ## Current Forbidden Items
@@ -40,7 +41,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Next recommended task is the active `BATCH-B008-F116-Q042` local demo import and placeholder cleanup batch. Keep it local-only: no cloud publishing, no database, no real external integration, no package or lockfile changes.
+Next recommended task is a narrow local demo follow-up for dashboard top filters and imported-data KPI preview, still no database, no real external integration, no package or lockfile changes. Do not start it without a new current queue entry and Gate Plan.
 
 ## Default Execution
 

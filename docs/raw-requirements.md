@@ -1479,8 +1479,8 @@ description: "PM 明确当前只需要本机演示，不上云测试环境；为
 source: "PM clarification on 2026-05-16: only local demo, with real staff master/status/login data import entry"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只做 localhost 本机演示导入闭环；不接数据库、不做 ORM/migration/schema、不接真实 CORN/HR/WFM API、不新增依赖、不改 package/lockfile。"
+status: "done"
+notes: "已提供 localhost 本机演示导入闭环；不接数据库、不做 ORM/migration/schema、不接真实 CORN/HR/WFM API、不新增依赖、不改 package/lockfile。"
 ```
 
 ### R139 - local demo visible placeholder cleanup
@@ -1492,8 +1492,8 @@ description: "页面上的文件导入、接入批次、数据接入状态、异
 source: "PM approval on 2026-05-16 to proceed with local demo placeholder cleanup"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只补本机演示路径和局部占位闭环；不做审批、导出、批量操作、权限、生产公式、结算规则或收费因子。"
+status: "done"
+notes: "已补本机演示路径和局部占位闭环；不做审批、导出、批量操作、权限、生产公式、结算规则或收费因子。"
 ```
 
 ### R140 - local demo import acceptance evidence
@@ -1505,6 +1505,6 @@ description: "本机导入闭环和页面占位清零完成后，需要补充浏
 source: "PM-approved local demo import and placeholder cleanup batch on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 只覆盖本机演示闭环，不扩大到云发布、数据库或生产化能力。"
+status: "done"
+notes: "QA 已覆盖本机演示闭环，不扩大到云发布、数据库或生产化能力。"
 ```

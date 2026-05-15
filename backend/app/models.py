@@ -7,6 +7,7 @@ SchedulePlanStatus = Literal["draft", "review_ready", "published"]
 DemandPlanStatus = Literal["imported", "mapped"]
 UnavailabilityStatus = Literal["active", "resolved"]
 ScheduleRiskLevel = Literal["high", "medium", "low"]
+DemoImportKind = Literal["staff_master", "status_log", "login_log"]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -139,3 +140,31 @@ class ApiError(BaseModel):
 
 class ApiErrorResponse(BaseModel):
     error: ApiError
+
+
+class DemoImportRequest(BaseModel):
+    csv_text: str
+
+
+class DemoImportRowError(BaseModel):
+    row_number: int = Field(ge=1)
+    message: str
+
+
+class DemoImportBatchSummary(BaseModel):
+    batch_id: str
+    kind: DemoImportKind
+    source_name: str
+    status: Literal["imported", "needs_attention"]
+    success_rows: int = Field(ge=0)
+    failed_rows: int = Field(ge=0)
+    imported_at: str
+
+
+class DemoImportResponse(BaseModel):
+    batch: DemoImportBatchSummary
+    errors: list[DemoImportRowError]
+
+
+class DemoImportBatchListResponse(BaseModel):
+    items: list[DemoImportBatchSummary]

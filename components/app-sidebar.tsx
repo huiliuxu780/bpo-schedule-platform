@@ -85,9 +85,9 @@ const nav: NavGroup[] = [
     title: "数据与集成",
     icon: Database,
     items: [
-      { title: "数据源管理", href: "/dashboard" },
-      { title: "文件导入", href: "/dashboard" },
-      { title: "接入批次", href: "/dashboard" },
+      { title: "数据源管理", href: "/demo-imports", activeMatch: "exact" },
+      { title: "文件导入", href: "/demo-imports", activeMatch: "exact" },
+      { title: "接入批次", href: "/demo-imports", activeMatch: "exact" },
       { title: "CORN 状态日志", href: "/dashboard" },
       { title: "字段映射", href: "/dashboard", tag: "P1" },
       { title: "接口集成", href: "/dashboard", tag: "P1" },

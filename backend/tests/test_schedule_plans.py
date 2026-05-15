@@ -5,6 +5,8 @@ from fastapi import HTTPException
 from backend.app.main import (
     app,
     create_schedule_plan_draft,
+    import_demo_csv,
+    list_demo_import_batches,
     get_schedule_plan,
     health_check,
     list_demand_plans,
@@ -15,9 +17,13 @@ from backend.app.main import (
     update_schedule_plan_draft,
 )
 from backend.app.models import SchedulePlanDraftRequest, SchedulePlanIntervalInput
+from backend.app.demo_imports import clear_demo_import_state
 
 
 class SchedulePlansApiTest(unittest.TestCase):
+    def setUp(self) -> None:
+        clear_demo_import_state()
+
     def test_schedule_plan_list_route_is_registered(self) -> None:
         routes = {(route.path, ",".join(sorted(route.methods))) for route in app.routes}
 
@@ -28,7 +34,52 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/unavailability", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
+        self.assertIn(("/api/v1/demo-imports/{kind}", "POST"), routes)
+        self.assertIn(("/api/v1/demo-imports/batches", "GET"), routes)
         self.assertIn(("/health", "GET"), routes)
+
+    def test_import_demo_csv_returns_batch_summary(self) -> None:
+        response = import_demo_csv(
+            "staff_master",
+            {
+                "csv_text": "\n".join(
+                    [
+                        "staff_id,name,team,site,vendor,role,status",
+                        "A001,张敏,华东一组,上海职场,供应商A,客服,在线",
+                        "A002,李想,华南二组,苏州职场,供应商B,客服,培训",
+                    ]
+                )
+            },
+        )
+
+        self.assertEqual(response.batch.kind, "staff_master")
+        self.assertEqual(response.batch.success_rows, 2)
+        self.assertEqual(response.batch.failed_rows, 0)
+        self.assertEqual(response.errors, [])
+
+        batches = list_demo_import_batches()
+        self.assertEqual(len(batches.items), 1)
+        self.assertEqual(batches.items[0].source_name, "坐席主数据")
+
+    def test_import_demo_csv_reports_missing_required_fields(self) -> None:
+        response = import_demo_csv(
+            "login_log",
+            {
+                "csv_text": "\n".join(
+                    [
+                        "staff_id,date,planned_login,actual_login,actual_logout,online_minutes",
+                        "A001,2026-05-11,09:00,09:08,17:30,510",
+                        "A002,2026-05-11,09:00,,17:00,480",
+                    ]
+                )
+            },
+        )
+
+        self.assertEqual(response.batch.kind, "login_log")
+        self.assertEqual(response.batch.success_rows, 1)
+        self.assertEqual(response.batch.failed_rows, 1)
+        self.assertEqual(response.errors[0].row_number, 3)
+        self.assertIn("actual_login", response.errors[0].message)
 
     def test_health_check_returns_project_status(self) -> None:
         self.assertEqual(

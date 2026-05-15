@@ -1,6 +1,10 @@
 from fastapi import FastAPI, HTTPException
 
 from backend.app.models import (
+    DemoImportBatchListResponse,
+    DemoImportKind,
+    DemoImportRequest,
+    DemoImportResponse,
     DemandPlanListResponse,
     ScheduleRiskListResponse,
     SchedulePlanDetail,
@@ -10,6 +14,10 @@ from backend.app.models import (
     ShiftDetailListResponse,
     UnavailabilityListResponse,
     UnavailabilityStatus,
+)
+from backend.app.demo_imports import (
+    import_demo_csv as import_demo_csv_text,
+    list_demo_import_batches as list_demo_import_batch_summaries,
 )
 from backend.app.repository import (
     create_plan_draft,
@@ -35,6 +43,20 @@ def health_check() -> dict[str, str]:
         "project": "bpo-schedule-platform",
         "status": "ok",
     }
+
+
+@app.post("/api/v1/demo-imports/{kind}", response_model=DemoImportResponse)
+def import_demo_csv(
+    kind: DemoImportKind,
+    request: DemoImportRequest | dict[str, str],
+) -> DemoImportResponse:
+    csv_text = request.get("csv_text", "") if isinstance(request, dict) else request.csv_text
+    return import_demo_csv_text(kind, csv_text)
+
+
+@app.get("/api/v1/demo-imports/batches", response_model=DemoImportBatchListResponse)
+def list_demo_import_batches() -> DemoImportBatchListResponse:
+    return list_demo_import_batch_summaries()
 
 
 @app.get("/api/v1/schedule-plans", response_model=SchedulePlanListResponse)

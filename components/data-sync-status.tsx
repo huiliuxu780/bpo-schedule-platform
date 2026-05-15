@@ -120,18 +120,23 @@ const columns: ColumnDef<DashboardSyncStatusRow>[] = [
   },
 ]
 
-export function DataSyncStatus() {
+type DataSyncStatusProps = {
+  rows?: DashboardSyncStatusRow[]
+}
+
+export function DataSyncStatus({ rows: importedRows = [] }: DataSyncStatusProps) {
   "use no memo"
 
   const [statusFilter, setStatusFilter] = React.useState("all")
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "status", desc: false },
   ])
+  const sourceRows = importedRows.length > 0 ? importedRows : syncStatus
   const rows = React.useMemo(
-    () => filterSyncStatusRows(syncStatus, statusFilter),
-    [statusFilter]
+    () => filterSyncStatusRows(sourceRows, statusFilter),
+    [sourceRows, statusFilter]
   )
-  const summary = summarizeSyncStatusRows(syncStatus)
+  const summary = summarizeSyncStatusRows(sourceRows)
 
   // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -149,7 +154,11 @@ export function DataSyncStatus() {
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
           <CardTitle>数据接入状态</CardTitle>
-          <CardDescription>核心数据源最近批次与同步状态</CardDescription>
+          <CardDescription>
+            {importedRows.length > 0
+              ? "本机导入数据最近批次与同步状态"
+              : "核心数据源最近批次与同步状态"}
+          </CardDescription>
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger size="sm" className="w-28">
@@ -158,8 +167,8 @@ export function DataSyncStatus() {
           <SelectContent align="end">
             <SelectItem value="all">全部状态</SelectItem>
             <SelectItem value="已同步">已同步</SelectItem>
-            <SelectItem value="处理中">处理中</SelectItem>
             <SelectItem value="需关注">需关注</SelectItem>
+            <SelectItem value="处理中">处理中</SelectItem>
           </SelectContent>
         </Select>
       </CardHeader>
@@ -167,8 +176,8 @@ export function DataSyncStatus() {
         <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <Badge variant="outline">全部 {summary.total}</Badge>
           <span>已同步 {summary.synced}</span>
-          <span>处理中 {summary.processing}</span>
           <span>需关注 {summary.attention}</span>
+          <span>处理中 {summary.processing}</span>
         </div>
         <Table>
           <TableHeader>

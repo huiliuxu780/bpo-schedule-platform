@@ -2655,7 +2655,7 @@ acceptance:
   - "导入状态保留在本机演示运行态或本地临时文件中，不使用数据库、ORM、migration 或生产持久化配置。"
   - "不新增依赖、不改 package/lockfile、不接真实 CORN/HR/WFM API。"
   - "`python3 -m unittest backend.tests.test_schedule_plans`、`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```
 
 ### US151 - Local demo visible placeholder cleanup
@@ -2675,7 +2675,7 @@ acceptance:
   - "异常明细行操作不再只是图标占位，而是提供本机复核/详情上下文入口或可解释动作。"
   - "不做审批、导出、批量操作、权限、生产公式、结算规则或收费因子。"
   - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```
 
 ### US152 - Local demo import acceptance evidence
@@ -2694,5 +2694,5 @@ acceptance:
   - "E2E 或 smoke 覆盖 dashboard 数据接入状态中出现本机导入批次信息。"
   - "QA 记录明确本批仍是 localhost-only、no-database、no-real-integration、no-package-change。"
   - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```
