@@ -2,15 +2,15 @@
 
 ```yaml
 current_summary:
-  queue_state: active
+  queue_state: idle
   active_batch_id: null
-  in_progress_task: R005
+  in_progress_task: null
   ready_tasks: []
 ```
 
 ## Current Stage
 
-本地验收版准备期。项目已有前端 dashboard scaffold、本地 schedule-plan MVP vertical、local FastAPI/seed contract、demo startup、core E2E baseline、state-governed Lightweight Harness；当前不接数据库。
+本地验收候选版。项目已有前端 dashboard scaffold、本地 schedule-plan MVP vertical、local FastAPI/seed contract、demo startup、core E2E baseline、本地验收 runbook、state-governed Lightweight Harness；当前不接数据库。
 
 ## Current Core Capabilities
 
@@ -21,14 +21,15 @@ current_summary:
 
 ## Current P0 Gaps
 
-- Test-environment/local acceptance runbook is in progress as `R005`.
-- Known issues and local acceptance evidence need a lightweight current summary before test-environment release.
+- Cloud test-environment platform, remote URLs, and remote environment variables are not configured.
+- Remote health/smoke/E2E have not been verified because no cloud environment exists.
 
 ## Current P1 Gaps
 
 - Table parity is only partially migrated.
 - E2E/browser route smoke coverage is still limited.
-- Release readiness and requirements inventory are available only as on-demand planning references.
+- Table parity is still partial and should be handled only after local acceptance or explicit PM priority.
+- Release readiness and requirements inventory remain on-demand planning references.
 
 ## Current Forbidden Items
 
@@ -39,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Complete `R005` local acceptance/test-environment readiness runbook, then decide whether to push and mark the project as a Local Acceptance Candidate.
+Next recommended task is `R006` cloud staging preparation decision, or a small P1 fix for the unavailability detail return link if PM wants to improve local acceptance polish first.
 
 ## Default Execution
 

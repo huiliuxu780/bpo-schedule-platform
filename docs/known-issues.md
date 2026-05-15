@@ -1,0 +1,9 @@
+# Known Issues
+
+当前列表记录不阻塞本地验收、但需要后续处理的问题。
+
+| ID | 问题 | 级别 | 是否阻塞本地验收 | 建议处理阶段 |
+| --- | --- | --- | --- | --- |
+| KI-001 | `unavailability` detail 的返回计划详情链接未携带 `planId`，当前 E2E 使用 browser history 返回。 | P1 | 否 | 本地验收后的小修复 |
+| KI-002 | 云测试环境尚未配置，当前只有本地验收能力。 | P0 for cloud staging | 否 | R006 或云部署准备阶段 |
+| KI-003 | `docs/registry/TRACE_INDEX.yaml` 已超过 warning budget，但未超过 strict fail。 | P2 | 否 | 后续 trace 瘦身或归档窗口 |

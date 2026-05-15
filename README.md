@@ -109,6 +109,16 @@ BPO_WEB_URL=http://localhost:3000 npm run e2e:smoke
 
 E2E 覆盖 dashboard、demand plans、schedule plans、plan detail、risk、shift、unavailability 和返回上下文。更多说明见 `docs/e2e-smoke.md`。
 
+## Local Acceptance
+
+本地验收入口：
+
+- `docs/local-demo.md`: demo 启动、health 和 smoke。
+- `docs/e2e-smoke.md`: 核心路径 E2E baseline。
+- `docs/local-acceptance.md`: 本地验收版交付说明。
+- `docs/deploy-test-env.md`: 测试环境准备说明。
+- `docs/known-issues.md`: 当前已知问题。
+
 ## Verify
 
 交付前运行：

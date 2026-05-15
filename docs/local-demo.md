@@ -81,3 +81,7 @@ BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke
 ```
 
 Details are in `docs/e2e-smoke.md`.
+
+## Local Acceptance
+
+Use `docs/local-acceptance.md` as the local acceptance runbook. It links the startup, health, smoke, E2E, full check, acceptance path, and known-issues criteria for the current local candidate.

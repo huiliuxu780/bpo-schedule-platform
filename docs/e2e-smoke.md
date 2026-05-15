@@ -80,3 +80,5 @@ npm run e2e
 - Visual regression.
 - Exhaustive table sorting/filtering coverage.
 - Unavailability page's own return link to plan detail; current smoke uses browser history for that return because the page-level link does not carry `planId`.
+
+Known E2E-related gaps are tracked in `docs/known-issues.md`.

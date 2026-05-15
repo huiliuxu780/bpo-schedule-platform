@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US-R005
-    title: "Local acceptance and staging readiness runbook"
-    status: in_progress
-    task_ids: [R005]
-    requirement_ids: [REQ-R005]
+stories: []
