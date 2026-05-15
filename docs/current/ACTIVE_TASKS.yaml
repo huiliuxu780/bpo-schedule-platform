@@ -6,4 +6,51 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+tasks:
+  - id: F001
+    story_ids: [US-F001]
+    status: in_progress
+    gate: frontend-scaffold
+    branch: codex/f001-fix-unavailability-return-link
+    allowed_files:
+      - "app/**"
+      - "components/schedule-plan-interval-table.tsx"
+      - "components/unavailability-table.tsx"
+      - "tests/e2e/**"
+      - "lib/review-navigation.ts"
+      - "docs/known-issues.md"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+    traceability_files:
+      - "docs/known-issues.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - "playwright.config.ts"
+      - "docs/local-acceptance.md"
+      - "docs/deploy-test-env.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/dev/branch-log.md"
+      - "docs/audit-report.md"
+      - "docs/user-stories.md"
+      - "docs/raw-requirements.md"
+    stop_conditions:
+      - "需要新增业务功能、重构 UI、后端接口、脚本逻辑或依赖"
+      - "需要修改 package/lockfile 或 Playwright 配置"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出或批量能力"
+      - "最终验证失败"
+    acceptance_ref: "docs/known-issues.md#KI-001"
+    verification:
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+      - "bash scripts/smoke-demo.sh"
+      - "npm run e2e:smoke"
+    evidence_expected:
+      - "Unavailability detail page link returns to the matching schedule plan detail when planId is present"
+      - "Core E2E clicks the page-level return link instead of relying on browser history"
+      - "KI-001 is marked fixed"

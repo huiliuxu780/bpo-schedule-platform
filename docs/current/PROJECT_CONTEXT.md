@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
+  queue_state: active
   active_batch_id: null
-  in_progress_task: null
+  in_progress_task: F001
   ready_tasks: []
 ```
 
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Next recommended task is `R006` cloud staging preparation decision, or a small P1 fix for the unavailability detail return link if PM wants to improve local acceptance polish first.
+Current task is `F001` to fix the unavailability detail return link. After closeout, return to `R006` cloud staging preparation decision.
 
 ## Default Execution
 
