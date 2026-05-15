@@ -5,10 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US148
-    title: "Local P0/P1 review navigation and E2E coverage"
-    status: in_progress
-    task_ids: [F115]
-    requirement_ids: [R136]
-    gate: frontend-scaffold
+stories: []
