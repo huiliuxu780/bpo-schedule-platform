@@ -101,6 +101,14 @@ bash scripts/smoke-demo.sh
 
 Smoke 只检查 backend health endpoint 和 frontend 端口可访问性；它不是完整 E2E。更多说明见 `docs/local-demo.md`。
 
+运行核心路径 E2E baseline：
+
+```bash
+BPO_WEB_URL=http://localhost:3000 npm run e2e:smoke
+```
+
+E2E 覆盖 dashboard、demand plans、schedule plans、plan detail、risk、shift、unavailability 和返回上下文。更多说明见 `docs/e2e-smoke.md`。
+
 ## Verify
 
 交付前运行：

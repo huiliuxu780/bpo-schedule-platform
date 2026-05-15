@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: active
+  queue_state: idle
   active_batch_id: null
-  in_progress_task: R004
+  in_progress_task: null
   ready_tasks: []
 ```
 
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Complete `R004` core path E2E baseline, then return current to idle. After that, continue to `R005` test-environment/local acceptance runbook.
+Continue to `R005` test-environment/local acceptance runbook. Keep database work deferred until PM confirms a database Gate and provides an environment.
 
 ## Default Execution
 

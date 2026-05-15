@@ -10,6 +10,8 @@
     "lint": "eslint",
     "verify:dev-runtime": "node scripts/verify-frontend-native-runtime.mjs",
     "test:dev-runtime": "node --test scripts/tests/verify-frontend-native-runtime.test.mjs",
+    "e2e": "playwright test",
+    "e2e:smoke": "playwright test tests/e2e/core-path.spec.ts",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit"
   },
@@ -36,6 +38,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",

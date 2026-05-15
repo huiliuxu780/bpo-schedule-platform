@@ -65,3 +65,19 @@ BPO_API_BASE_URL=http://127.0.0.1:8010 BPO_WEB_URL=http://localhost:3015 bash sc
 - Python is not version 3.12: set `BPO_BACKEND_PYTHON` or `BPO_PYTHON312_BIN`.
 - Backend dependencies are missing: install `backend/requirements.txt` in the selected Python environment.
 - Smoke fails with connection refused: run `bash scripts/start-demo.sh` first and wait for both servers to finish starting.
+
+## E2E Baseline
+
+With the demo running, run the core browser smoke:
+
+```bash
+BPO_WEB_URL=http://localhost:3000 npm run e2e:smoke
+```
+
+For temporary ports:
+
+```bash
+BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke
+```
+
+Details are in `docs/e2e-smoke.md`.
