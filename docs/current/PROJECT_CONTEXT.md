@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
+  queue_state: active
   active_batch_id: null
-  in_progress_task: null
+  in_progress_task: H002
   ready_tasks: []
 ```
 
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Next recommended task is `R007` selected cloud staging implementation, but only after PM confirms the platform choice. Keep database work deferred until PM confirms a database Gate and provides an environment.
+Current task is `H002` trace index windowing. It compresses `TRACE_INDEX.yaml` before R007 so future cloud staging work has enough trace budget. Keep database work deferred until PM confirms a database Gate and provides an environment.
 
 ## Default Execution
 

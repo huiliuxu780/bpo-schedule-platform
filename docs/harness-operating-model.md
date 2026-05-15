@@ -1,8 +1,8 @@
 # Harness Operating Model
 
-## H001
+## H001 / H002
 
-H001 keeps the Harness useful while reducing default context. It is a docs-only state-hygiene task: no business code, UI, E2E, dependencies, database, integrations, auth, approval, export, production formulas, settlement rules, or charge factors.
+H001 keeps the Harness useful while reducing default context. H002 keeps `TRACE_INDEX.yaml` windowed so the index stays below warning budget. These are docs-only state-hygiene tasks: no business code, UI, E2E, dependencies, database, integrations, auth, approval, export, production formulas, settlement rules, or charge factors.
 
 ## Goal
 
@@ -57,6 +57,8 @@ Small tasks record only the current story/task contract, minimal trace/index ent
 Large tasks or coherent batches may add a compact current batch contract and a short closeout summary. Do not copy full acceptance text, audit text, or branch-log prose into current files.
 
 Update `docs/registry/TRACE_INDEX.yaml` when a current story, task, requirement, archive reference, or lookup path changes. Keep entries ID-based and compact.
+
+`TRACE_INDEX.yaml` keeps only the current/recent execution window. Historical trace remains in legacy/reference documents and is read on demand through exact legacy sections. Small tasks use short evidence entries only; do not append long closeout, acceptance, audit, or branch-log prose to trace.
 
 Use a short log only when the task does not change current execution state, registry relationships, or historical lookup paths.
 

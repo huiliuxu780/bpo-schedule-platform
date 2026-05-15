@@ -6,4 +6,46 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+tasks:
+  - id: H002
+    story_ids: [US-H002]
+    status: in_progress
+    gate: state-hygiene
+    branch: codex/h002-trace-index-windowing
+    allowed_files:
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/harness-operating-model.md"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "AGENTS.md"
+    traceability_files:
+      - "docs/registry/TRACE_INDEX.yaml"
+    forbidden_files:
+      - "app/**"
+      - "backend/**"
+      - "components/**"
+      - "scripts/**"
+      - "tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "playwright.config.ts"
+      - "README.md"
+      - "docs/cloud-staging-options.md"
+      - "docs/deploy-test-env.md"
+      - "docs/user-stories.md"
+      - "docs/raw-requirements.md"
+      - "tasks/backlog.yaml"
+    stop_conditions:
+      - "需要修改业务代码、UI、测试、部署方案、脚本、package 或 lockfile"
+      - "需要删除历史文档或迁移大型 legacy 内容"
+      - "压缩后 TRACE_INDEX.yaml 仍高于 warning budget"
+      - "最终验证失败"
+    acceptance_ref: "docs/harness-operating-model.md#H002"
+    verification:
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "TRACE_INDEX.yaml is below warning budget"
+      - "Recent/current trace entries remain available"

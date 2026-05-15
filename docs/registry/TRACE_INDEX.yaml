@@ -1,445 +1,86 @@
-version: 1
-updated_at: "2026-05-14"
+version: 2
+updated_at: "2026-05-15"
 rules:
   - "This registry stores IDs, paths, and relationships only."
   - "Do not store lifecycle state in this file."
   - "Use current files as execution sources and archive files as historical references only."
-  - "Keep active/current entries to the recent execution window; legacy files remain lookup references."
-  - "Do not copy full acceptance, audit, or branch-log prose into this index."
+  - "Keep only the current and recent execution window here."
+  - "Use legacy_reference for older lookup sources instead of copying old task rows."
+  - "Do not copy full acceptance, audit, branch-log, or closeout prose into this index."
+budgets:
+  warning_lines: 420
+  strict_lines: 480
+window:
+  retained:
+    - "R001"
+    - "H001"
+    - "C001"
+    - "R003"
+    - "R004"
+    - "R005"
+    - "F001"
+    - "R006"
+    - "H002"
+  legacy_lookup_order:
+    - "docs/requirements-inventory.md"
+    - "docs/roadmap.md"
+    - "docs/reference/healthcheck-2026-05-15/status.md"
+    - "docs/reference/healthcheck-2026-05-15/release-readiness.md"
+    - "docs/reference/healthcheck-2026-05-15/harness-audit.md"
+    - "docs/user-stories.md"
+    - "tasks/backlog.yaml"
+    - "docs/raw-requirements.md"
+    - "docs/task-log.md"
+    - "docs/dev/branch-log.md"
 current_files:
   project_context: "docs/current/PROJECT_CONTEXT.md"
   story_queue: "docs/current/STORY_QUEUE.yaml"
   active_tasks: "docs/current/ACTIVE_TASKS.yaml"
   blockers: "docs/current/BLOCKERS.md"
 stories:
-  US065: {file: "docs/user-stories.md", requirement_ids: ["R053"], task_ids: ["H024"], archive_refs: []}
-  US066: {file: "docs/user-stories.md", requirement_ids: ["R054"], task_ids: ["H025"], archive_refs: []}
-  US067: {file: "docs/user-stories.md", requirement_ids: ["R055"], task_ids: ["H026"], archive_refs: []}
-  US068: {file: "docs/user-stories.md", requirement_ids: ["R056"], task_ids: ["H027"], archive_refs: []}
-  US069: {file: "docs/user-stories.md", requirement_ids: ["R057"], task_ids: ["H028"], archive_refs: []}
-  US070: {file: "docs/user-stories.md", requirement_ids: ["R058"], task_ids: ["F030"], archive_refs: []}
-  US071: {file: "docs/user-stories.md", requirement_ids: ["R059"], task_ids: ["F031"], archive_refs: []}
-  US072: {file: "docs/user-stories.md", requirement_ids: ["R060"], task_ids: ["Q012"], archive_refs: []}
-  US073:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R061"]
-    task_ids: ["F032"]
-    archive_refs: []
-  US074:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R062"]
-    task_ids: ["F033"]
-    archive_refs: []
-  US075:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R063"]
-    task_ids: ["F034"]
-    archive_refs: []
-  US076:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R064"]
-    task_ids: ["F035"]
-    archive_refs: []
-  US077:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R065"]
-    task_ids: ["F036"]
-    archive_refs: []
-  US078:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R066"]
-    task_ids: ["F037"]
-    archive_refs: []
-  US079:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R067"]
-    task_ids: ["F038"]
-    archive_refs: []
-  US080:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R068"]
-    task_ids: ["F039"]
-    archive_refs: []
-  US081:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R069"]
-    task_ids: ["F040"]
-    archive_refs: []
-  US082:
-    file: "docs/user-stories.md"
-    requirement_ids: ["R070"]
-    task_ids: ["Q013"]
-    archive_refs: []
-  US083: {file: "docs/user-stories.md", requirement_ids: ["R071"], task_ids: ["F041"], archive_refs: []}
-  US084: {file: "docs/user-stories.md", requirement_ids: ["R072"], task_ids: ["F042"], archive_refs: []}
-  US085: {file: "docs/user-stories.md", requirement_ids: ["R073"], task_ids: ["F043"], archive_refs: []}
-  US086: {file: "docs/user-stories.md", requirement_ids: ["R074"], task_ids: ["F044"], archive_refs: []}
-  US087: {file: "docs/user-stories.md", requirement_ids: ["R075"], task_ids: ["F045"], archive_refs: []}
-  US088: {file: "docs/user-stories.md", requirement_ids: ["R076"], task_ids: ["F046"], archive_refs: []}
-  US089: {file: "docs/user-stories.md", requirement_ids: ["R077"], task_ids: ["F047"], archive_refs: []}
-  US090: {file: "docs/user-stories.md", requirement_ids: ["R078"], task_ids: ["F048"], archive_refs: []}
-  US091: {file: "docs/user-stories.md", requirement_ids: ["R079"], task_ids: ["F049"], archive_refs: []}
-  US092: {file: "docs/user-stories.md", requirement_ids: ["R080"], task_ids: ["F050"], archive_refs: []}
-  US093: {file: "docs/user-stories.md", requirement_ids: ["R081"], task_ids: ["F051"], archive_refs: []}
-  US094: {file: "docs/user-stories.md", requirement_ids: ["R082"], task_ids: ["F052"], archive_refs: []}
-  US095: {file: "docs/user-stories.md", requirement_ids: ["R083"], task_ids: ["F053"], archive_refs: []}
-  US096: {file: "docs/user-stories.md", requirement_ids: ["R084"], task_ids: ["F054"], archive_refs: []}
-  US097: {file: "docs/user-stories.md", requirement_ids: ["R085"], task_ids: ["F055"], archive_refs: []}
-  US098: {file: "docs/user-stories.md", requirement_ids: ["R086"], task_ids: ["F056"], archive_refs: []}
-  US099: {file: "docs/user-stories.md", requirement_ids: ["R087"], task_ids: ["F057"], archive_refs: []}
-  US100: {file: "docs/user-stories.md", requirement_ids: ["R088"], task_ids: ["F058"], archive_refs: []}
-  US101: {file: "docs/user-stories.md", requirement_ids: ["R089"], task_ids: ["F059"], archive_refs: []}
-  US102: {file: "docs/user-stories.md", requirement_ids: ["R090"], task_ids: ["Q014"], archive_refs: []}
-  US103: {file: "docs/user-stories.md", requirement_ids: ["R091"], task_ids: ["H029"], archive_refs: []}
-  US104: {file: "docs/user-stories.md", requirement_ids: ["R092"], task_ids: ["F060"], archive_refs: []}
-  US105: {file: "docs/user-stories.md", requirement_ids: ["R093"], task_ids: ["Q015"], archive_refs: []}
-  US106: {file: "docs/user-stories.md", requirement_ids: ["R094"], task_ids: ["F061"], archive_refs: []}
-  US107: {file: "docs/user-stories.md", requirement_ids: ["R095"], task_ids: ["F062"], archive_refs: []}
-  US108: {file: "docs/user-stories.md", requirement_ids: ["R096"], task_ids: ["F063"], archive_refs: []}
-  US109: {file: "docs/user-stories.md", requirement_ids: ["R097"], task_ids: ["F064"], archive_refs: []}
-  US110: {file: "docs/user-stories.md", requirement_ids: ["R098"], task_ids: ["Q016"], archive_refs: []}
-  US111: {file: "docs/user-stories.md", requirement_ids: ["R099"], task_ids: ["F065"], archive_refs: []}
-  US112: {file: "docs/user-stories.md", requirement_ids: ["R100"], task_ids: ["F066"], archive_refs: []}
-  US113: {file: "docs/user-stories.md", requirement_ids: ["R101"], task_ids: ["F067"], archive_refs: []}
-  US114: {file: "docs/user-stories.md", requirement_ids: ["R102"], task_ids: ["F068"], archive_refs: []}
-  US115: {file: "docs/user-stories.md", requirement_ids: ["R103"], task_ids: ["Q017"], archive_refs: []}
-  US116: {file: "docs/user-stories.md", requirement_ids: ["R104"], task_ids: ["F069"], archive_refs: []}
-  US117: {file: "docs/user-stories.md", requirement_ids: ["R105"], task_ids: ["F070"], archive_refs: []}
-  US118: {file: "docs/user-stories.md", requirement_ids: ["R106"], task_ids: ["F071"], archive_refs: []}
-  US119: {file: "docs/user-stories.md", requirement_ids: ["R107"], task_ids: ["F072"], archive_refs: []}
-  US120: {file: "docs/user-stories.md", requirement_ids: ["R108"], task_ids: ["Q018"], archive_refs: []}
-  US121: {file: "docs/user-stories.md", requirement_ids: ["R109"], task_ids: ["H030"], archive_refs: []}
-  US122: {file: "docs/user-stories.md", requirement_ids: ["R110"], task_ids: ["H031"], archive_refs: []}
-  US123: {file: "docs/user-stories.md", requirement_ids: ["R111"], task_ids: ["H032"], archive_refs: []}
-  US124: {file: "docs/user-stories.md", requirement_ids: ["R112"], task_ids: ["F073", "F074", "F075", "F076", "Q019"], archive_refs: []}
-  US125: {file: "docs/user-stories.md", requirement_ids: ["R113"], task_ids: ["H033"], archive_refs: []}
-  US126: {file: "docs/user-stories.md", requirement_ids: ["R114"], task_ids: ["H034"], archive_refs: []}
-  US127: {file: "docs/user-stories.md", requirement_ids: ["R115"], task_ids: ["F077", "F078", "F079", "Q020"], archive_refs: []}
-  US128: {file: "docs/user-stories.md", requirement_ids: ["R116"], task_ids: ["F080", "F081", "F082", "Q021"], archive_refs: []}
-  US129: {file: "docs/user-stories.md", requirement_ids: ["R117"], task_ids: ["F083", "F084", "Q022"], archive_refs: []}
-  US130: {file: "docs/user-stories.md", requirement_ids: ["R118"], task_ids: ["F085", "Q023"], archive_refs: []}
-  US131: {file: "docs/user-stories.md", requirement_ids: ["R119"], task_ids: ["F086", "F087", "Q024"], archive_refs: []}
-  US132: {file: "docs/user-stories.md", requirement_ids: ["R120"], task_ids: ["F088", "F089", "Q025"], archive_refs: []}
-  US133: {file: "docs/user-stories.md", requirement_ids: ["R121"], task_ids: ["F090", "F091", "Q026"], archive_refs: []}
-  US134: {file: "docs/user-stories.md", requirement_ids: ["R122"], task_ids: ["F092", "F093", "Q027"], archive_refs: []}
-  US135: {file: "docs/user-stories.md", requirement_ids: ["R123"], task_ids: ["F094", "F095", "Q028"], archive_refs: []}
-  US136: {file: "docs/user-stories.md", requirement_ids: ["R124"], task_ids: ["F096", "F097", "Q029"], archive_refs: []}
-  US137: {file: "docs/user-stories.md", requirement_ids: ["R125"], task_ids: ["F098", "F099", "Q030"], archive_refs: []}
-  US138: {file: "docs/user-stories.md", requirement_ids: ["R126"], task_ids: ["F100", "F101", "Q031"], archive_refs: []}
-  US139: {file: "docs/user-stories.md", requirement_ids: ["R127"], task_ids: ["F102", "F103", "Q032"], archive_refs: []}
-  US140: {file: "docs/user-stories.md", requirement_ids: ["R128"], task_ids: ["F104", "F105", "Q033"], archive_refs: []}
-  US141: {file: "docs/user-stories.md", requirement_ids: ["R129"], task_ids: ["F106", "F107", "Q034"], archive_refs: []}
-  US142: {file: "docs/user-stories.md", requirement_ids: ["R130"], task_ids: ["F108", "Q035"], archive_refs: []}
-  US143: {file: "docs/user-stories.md", requirement_ids: ["R131"], task_ids: ["F109", "Q036"], archive_refs: []}
-  US144: {file: "docs/user-stories.md", requirement_ids: ["R132"], task_ids: ["F110", "F111", "Q037"], archive_refs: []}
-  US145: {file: "docs/user-stories.md", requirement_ids: ["R133"], task_ids: ["F112", "Q038"], archive_refs: []}
-  US146: {file: "docs/user-stories.md", requirement_ids: ["R134"], task_ids: ["F113", "Q039"], archive_refs: []}
-  US147: {file: "docs/user-stories.md", requirement_ids: ["R135"], task_ids: ["F114", "Q040"], archive_refs: []}
-  US-H001: {file: "docs/harness-operating-model.md", requirement_ids: ["R-H001"], task_ids: ["H001"], archive_refs: []}
+  US-R001: {file: "docs/requirements-inventory.md", requirement_ids: ["REQ-R001"], task_ids: ["R001"], archive_refs: []}
+  US-H001: {file: "docs/harness-operating-model.md", requirement_ids: ["REQ-H001"], task_ids: ["H001"], archive_refs: []}
+  US-C001: {file: "docs/reference/healthcheck-2026-05-15/status.md", requirement_ids: ["REQ-C001"], task_ids: ["C001"], archive_refs: ["docs/reference/healthcheck-2026-05-15/status.md", "docs/reference/healthcheck-2026-05-15/release-readiness.md", "docs/reference/healthcheck-2026-05-15/harness-audit.md"]}
   US-R003: {file: "docs/local-demo.md", requirement_ids: ["REQ-R003"], task_ids: ["R003"], archive_refs: []}
   US-R004: {file: "docs/e2e-smoke.md", requirement_ids: ["REQ-R004"], task_ids: ["R004"], archive_refs: []}
   US-R005: {file: "docs/local-acceptance.md", requirement_ids: ["REQ-R005"], task_ids: ["R005"], archive_refs: []}
   US-F001: {file: "docs/known-issues.md", requirement_ids: ["REQ-F001"], task_ids: ["F001"], archive_refs: []}
   US-R006: {file: "docs/cloud-staging-options.md", requirement_ids: ["REQ-R006"], task_ids: ["R006"], archive_refs: []}
+  US-H002: {file: "docs/harness-operating-model.md", requirement_ids: ["REQ-H002"], task_ids: ["H002"], archive_refs: []}
 tasks:
+  R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], gate: "qa"}
   H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], gate: "state-hygiene"}
+  C001: {file: "docs/reference/healthcheck-2026-05-15/status.md", story_ids: ["US-C001"], gate: "qa"}
   R003: {file: "docs/local-demo.md", story_ids: ["US-R003"], gate: "backend-mvp"}
   R004: {file: "docs/e2e-smoke.md", story_ids: ["US-R004"], gate: "frontend-scaffold"}
   R005: {file: "docs/local-acceptance.md", story_ids: ["US-R005"], gate: "qa"}
   F001: {file: "docs/known-issues.md", story_ids: ["US-F001"], gate: "frontend-scaffold"}
   R006: {file: "docs/cloud-staging-options.md", story_ids: ["US-R006"], gate: "qa"}
-  H024: {file: "tasks/backlog.yaml", story_ids: ["US065"], gate: "state-hygiene"}
-  H025: {file: "tasks/backlog.yaml", story_ids: ["US066"], gate: "state-hygiene"}
-  H026: {file: "tasks/backlog.yaml", story_ids: ["US067"], gate: "state-hygiene"}
-  H027: {file: "tasks/backlog.yaml", story_ids: ["US068"], gate: "state-hygiene"}
-  H028: {file: "tasks/backlog.yaml", story_ids: ["US069"], gate: "state-hygiene"}
-  F030:
-    file: "tasks/backlog.yaml"
-    story_ids:
-      - "US070"
-    gate: "frontend-scaffold"
-  F031:
-    file: "tasks/backlog.yaml"
-    story_ids:
-      - "US071"
-    gate: "frontend-scaffold"
-  Q012:
-    file: "tasks/backlog.yaml"
-    story_ids:
-      - "US072"
-    gate: "qa"
-  F032:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US073"]
-    gate: "frontend-scaffold"
-  F033:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US074"]
-    gate: "frontend-scaffold"
-  F034:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US075"]
-    gate: "frontend-scaffold"
-  F035:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US076"]
-    gate: "frontend-scaffold"
-  F036:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US077"]
-    gate: "frontend-scaffold"
-  F037:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US078"]
-    gate: "frontend-scaffold"
-  F038:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US079"]
-    gate: "frontend-scaffold"
-  F039:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US080"]
-    gate: "frontend-scaffold"
-  F040:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US081"]
-    gate: "frontend-scaffold"
-  Q013:
-    file: "tasks/backlog.yaml"
-    story_ids: ["US082"]
-    gate: "qa"
-  F041: {file: "tasks/backlog.yaml", story_ids: ["US083"], gate: "frontend-scaffold"}
-  F042: {file: "tasks/backlog.yaml", story_ids: ["US084"], gate: "frontend-scaffold"}
-  F043: {file: "tasks/backlog.yaml", story_ids: ["US085"], gate: "frontend-scaffold"}
-  F044: {file: "tasks/backlog.yaml", story_ids: ["US086"], gate: "frontend-scaffold"}
-  F045: {file: "tasks/backlog.yaml", story_ids: ["US087"], gate: "frontend-scaffold"}
-  F046: {file: "tasks/backlog.yaml", story_ids: ["US088"], gate: "frontend-scaffold"}
-  F047: {file: "tasks/backlog.yaml", story_ids: ["US089"], gate: "frontend-scaffold"}
-  F048: {file: "tasks/backlog.yaml", story_ids: ["US090"], gate: "frontend-scaffold"}
-  F049: {file: "tasks/backlog.yaml", story_ids: ["US091"], gate: "frontend-scaffold"}
-  F050: {file: "tasks/backlog.yaml", story_ids: ["US092"], gate: "frontend-scaffold"}
-  F051: {file: "tasks/backlog.yaml", story_ids: ["US093"], gate: "frontend-scaffold"}
-  F052: {file: "tasks/backlog.yaml", story_ids: ["US094"], gate: "frontend-scaffold"}
-  F053: {file: "tasks/backlog.yaml", story_ids: ["US095"], gate: "frontend-scaffold"}
-  F054: {file: "tasks/backlog.yaml", story_ids: ["US096"], gate: "frontend-scaffold"}
-  F055: {file: "tasks/backlog.yaml", story_ids: ["US097"], gate: "frontend-scaffold"}
-  F056: {file: "tasks/backlog.yaml", story_ids: ["US098"], gate: "frontend-scaffold"}
-  F057: {file: "tasks/backlog.yaml", story_ids: ["US099"], gate: "frontend-scaffold"}
-  F058: {file: "tasks/backlog.yaml", story_ids: ["US100"], gate: "frontend-scaffold"}
-  F059: {file: "tasks/backlog.yaml", story_ids: ["US101"], gate: "frontend-scaffold"}
-  Q014: {file: "tasks/backlog.yaml", story_ids: ["US102"], gate: "qa"}
-  H029: {file: "tasks/backlog.yaml", story_ids: ["US103"], gate: "state-hygiene"}
-  F060: {file: "tasks/backlog.yaml", story_ids: ["US104"], gate: "frontend-scaffold"}
-  Q015: {file: "tasks/backlog.yaml", story_ids: ["US105"], gate: "qa"}
-  F061: {file: "tasks/backlog.yaml", story_ids: ["US106"], gate: "frontend-scaffold"}
-  F062: {file: "tasks/backlog.yaml", story_ids: ["US107"], gate: "frontend-scaffold"}
-  F063: {file: "tasks/backlog.yaml", story_ids: ["US108"], gate: "frontend-scaffold"}
-  F064: {file: "tasks/backlog.yaml", story_ids: ["US109"], gate: "frontend-scaffold"}
-  Q016: {file: "tasks/backlog.yaml", story_ids: ["US110"], gate: "qa"}
-  F065: {file: "tasks/backlog.yaml", story_ids: ["US111"], gate: "frontend-scaffold"}
-  F066: {file: "tasks/backlog.yaml", story_ids: ["US112"], gate: "frontend-scaffold"}
-  F067: {file: "tasks/backlog.yaml", story_ids: ["US113"], gate: "frontend-scaffold"}
-  F068: {file: "tasks/backlog.yaml", story_ids: ["US114"], gate: "frontend-scaffold"}
-  Q017: {file: "tasks/backlog.yaml", story_ids: ["US115"], gate: "qa"}
-  F069: {file: "tasks/backlog.yaml", story_ids: ["US116"], gate: "frontend-scaffold"}
-  F070: {file: "tasks/backlog.yaml", story_ids: ["US117"], gate: "frontend-scaffold"}
-  F098: {file: "tasks/backlog.yaml", story_ids: ["US137"], gate: "frontend-scaffold"}
-  F099: {file: "tasks/backlog.yaml", story_ids: ["US137"], gate: "frontend-scaffold"}
-  Q030: {file: "tasks/backlog.yaml", story_ids: ["US137"], gate: "qa"}
-  F100: {file: "tasks/backlog.yaml", story_ids: ["US138"], gate: "frontend-scaffold"}
-  F101: {file: "tasks/backlog.yaml", story_ids: ["US138"], gate: "frontend-scaffold"}
-  Q031: {file: "tasks/backlog.yaml", story_ids: ["US138"], gate: "qa"}
-  F071: {file: "tasks/backlog.yaml", story_ids: ["US118"], gate: "frontend-scaffold"}
-  F072: {file: "tasks/backlog.yaml", story_ids: ["US119"], gate: "frontend-scaffold"}
-  Q018: {file: "tasks/backlog.yaml", story_ids: ["US120"], gate: "qa"}
-  H030: {file: "tasks/backlog.yaml", story_ids: ["US121"], gate: "state-hygiene"}
-  H031: {file: "tasks/backlog.yaml", story_ids: ["US122"], gate: "state-hygiene"}
-  H032: {file: "tasks/backlog.yaml", story_ids: ["US123"], gate: "state-hygiene"}
-  H033: {file: "tasks/backlog.yaml", story_ids: ["US125"], gate: "state-hygiene"}
-  H034: {file: "tasks/backlog.yaml", story_ids: ["US126"], gate: "state-hygiene"}
-  F073: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
-  F077: {file: "tasks/backlog.yaml", story_ids: ["US127"], gate: "frontend-scaffold"}
-  F078: {file: "tasks/backlog.yaml", story_ids: ["US127"], gate: "frontend-scaffold"}
-  F079: {file: "tasks/backlog.yaml", story_ids: ["US127"], gate: "frontend-scaffold"}
-  F080: {file: "tasks/backlog.yaml", story_ids: ["US128"], gate: "frontend-scaffold"}
-  F081: {file: "tasks/backlog.yaml", story_ids: ["US128"], gate: "frontend-scaffold"}
-  F082: {file: "tasks/backlog.yaml", story_ids: ["US128"], gate: "frontend-scaffold"}
-  F083: {file: "tasks/backlog.yaml", story_ids: ["US129"], gate: "frontend-scaffold"}
-  F084: {file: "tasks/backlog.yaml", story_ids: ["US129"], gate: "frontend-scaffold"}
-  F085: {file: "tasks/backlog.yaml", story_ids: ["US130"], gate: "frontend-scaffold"}
-  F086: {file: "tasks/backlog.yaml", story_ids: ["US131"], gate: "frontend-scaffold"}
-  F087: {file: "tasks/backlog.yaml", story_ids: ["US131"], gate: "frontend-scaffold"}
-  F088: {file: "tasks/backlog.yaml", story_ids: ["US132"], gate: "frontend-scaffold"}
-  F089: {file: "tasks/backlog.yaml", story_ids: ["US132"], gate: "frontend-scaffold"}
-  F090: {file: "tasks/backlog.yaml", story_ids: ["US133"], gate: "frontend-scaffold"}
-  F091: {file: "tasks/backlog.yaml", story_ids: ["US133"], gate: "frontend-scaffold"}
-  F092: {file: "tasks/backlog.yaml", story_ids: ["US134"], gate: "frontend-scaffold"}
-  F093: {file: "tasks/backlog.yaml", story_ids: ["US134"], gate: "frontend-scaffold"}
-  F094: {file: "tasks/backlog.yaml", story_ids: ["US135"], gate: "frontend-scaffold"}
-  F095: {file: "tasks/backlog.yaml", story_ids: ["US135"], gate: "frontend-scaffold"}
-  F096: {file: "tasks/backlog.yaml", story_ids: ["US136"], gate: "frontend-scaffold"}
-  F097: {file: "tasks/backlog.yaml", story_ids: ["US136"], gate: "frontend-scaffold"}
-  F074: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
-  F075: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
-  F076: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "frontend-scaffold"}
-  Q019: {file: "tasks/backlog.yaml", story_ids: ["US124"], gate: "qa"}
-  Q020: {file: "tasks/backlog.yaml", story_ids: ["US127"], gate: "qa"}
-  Q021: {file: "tasks/backlog.yaml", story_ids: ["US128"], gate: "qa"}
-  Q022: {file: "tasks/backlog.yaml", story_ids: ["US129"], gate: "qa"}
-  Q023: {file: "tasks/backlog.yaml", story_ids: ["US130"], gate: "qa"}
-  Q024: {file: "tasks/backlog.yaml", story_ids: ["US131"], gate: "qa"}
-  Q025: {file: "tasks/backlog.yaml", story_ids: ["US132"], gate: "qa"}
-  Q026: {file: "tasks/backlog.yaml", story_ids: ["US133"], gate: "qa"}
-  Q027: {file: "tasks/backlog.yaml", story_ids: ["US134"], gate: "qa"}
-  Q028: {file: "tasks/backlog.yaml", story_ids: ["US135"], gate: "qa"}
-  Q029: {file: "tasks/backlog.yaml", story_ids: ["US136"], gate: "qa"}
-  F102: {file: "tasks/backlog.yaml", story_ids: ["US139"], gate: "frontend-scaffold"}
-  F103: {file: "tasks/backlog.yaml", story_ids: ["US139"], gate: "frontend-scaffold"}
-  Q032: {file: "tasks/backlog.yaml", story_ids: ["US139"], gate: "qa"}
-  F104: {file: "tasks/backlog.yaml", story_ids: ["US140"], gate: "frontend-scaffold"}
-  F105: {file: "tasks/backlog.yaml", story_ids: ["US140"], gate: "frontend-scaffold"}
-  Q033: {file: "tasks/backlog.yaml", story_ids: ["US140"], gate: "qa"}
-  F106: {file: "tasks/backlog.yaml", story_ids: ["US141"], gate: "frontend-scaffold"}
-  F107: {file: "tasks/backlog.yaml", story_ids: ["US141"], gate: "frontend-scaffold"}
-  Q034: {file: "tasks/backlog.yaml", story_ids: ["US141"], gate: "qa"}
-  F108: {file: "tasks/backlog.yaml", story_ids: ["US142"], gate: "frontend-scaffold"}
-  Q035: {file: "tasks/backlog.yaml", story_ids: ["US142"], gate: "qa"}
-  F109: {file: "tasks/backlog.yaml", story_ids: ["US143"], gate: "frontend-scaffold"}
-  Q036: {file: "tasks/backlog.yaml", story_ids: ["US143"], gate: "qa"}
-  F110: {file: "tasks/backlog.yaml", story_ids: ["US144"], gate: "frontend-scaffold"}
-  F111: {file: "tasks/backlog.yaml", story_ids: ["US144"], gate: "frontend-scaffold"}
-  Q037: {file: "tasks/backlog.yaml", story_ids: ["US144"], gate: "qa"}
-  F112: {file: "tasks/backlog.yaml", story_ids: ["US145"], gate: "frontend-scaffold"}
-  Q038: {file: "tasks/backlog.yaml", story_ids: ["US145"], gate: "qa"}
-  F113: {file: "tasks/backlog.yaml", story_ids: ["US146"], gate: "frontend-scaffold"}
-  Q039: {file: "tasks/backlog.yaml", story_ids: ["US146"], gate: "qa"}
-  F114: {file: "tasks/backlog.yaml", story_ids: ["US147"], gate: "frontend-scaffold"}
-  Q040: {file: "tasks/backlog.yaml", story_ids: ["US147"], gate: "qa"}
+  H002: {file: "docs/harness-operating-model.md", story_ids: ["US-H002"], gate: "state-hygiene"}
 requirements:
-  R051: {file: "docs/raw-requirements.md", story_ids: ["US063"], task_ids: ["H022"]}
-  R052: {file: "docs/raw-requirements.md", story_ids: ["US064"], task_ids: ["H023"]}
-  R053: {file: "docs/raw-requirements.md", story_ids: ["US065"], task_ids: ["H024"]}
-  R054: {file: "docs/raw-requirements.md", story_ids: ["US066"], task_ids: ["H025"]}
-  R055: {file: "docs/raw-requirements.md", story_ids: ["US067"], task_ids: ["H026"]}
-  R056: {file: "docs/raw-requirements.md", story_ids: ["US068"], task_ids: ["H027"]}
-  R057: {file: "docs/raw-requirements.md", story_ids: ["US069"], task_ids: ["H028"]}
-  R058: {file: "docs/raw-requirements.md", story_ids: ["US070"], task_ids: ["F030"]}
-  R059: {file: "docs/raw-requirements.md", story_ids: ["US071"], task_ids: ["F031"]}
-  R060: {file: "docs/raw-requirements.md", story_ids: ["US072"], task_ids: ["Q012"]}
-  R061:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US073"]
-    task_ids: ["F032"]
-  R062:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US074"]
-    task_ids: ["F033"]
-  R063:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US075"]
-    task_ids: ["F034"]
-  R064:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US076"]
-    task_ids: ["F035"]
-  R065:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US077"]
-    task_ids: ["F036"]
-  R066:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US078"]
-    task_ids: ["F037"]
-  R067:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US079"]
-    task_ids: ["F038"]
-  R068:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US080"]
-    task_ids: ["F039"]
-  R069:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US081"]
-    task_ids: ["F040"]
-  R070:
-    file: "docs/raw-requirements.md"
-    story_ids: ["US082"]
-    task_ids: ["Q013"]
-  R071: {file: "docs/raw-requirements.md", story_ids: ["US083"], task_ids: ["F041"]}
-  R072: {file: "docs/raw-requirements.md", story_ids: ["US084"], task_ids: ["F042"]}
-  R073: {file: "docs/raw-requirements.md", story_ids: ["US085"], task_ids: ["F043"]}
-  R074: {file: "docs/raw-requirements.md", story_ids: ["US086"], task_ids: ["F044"]}
-  R075: {file: "docs/raw-requirements.md", story_ids: ["US087"], task_ids: ["F045"]}
-  R076: {file: "docs/raw-requirements.md", story_ids: ["US088"], task_ids: ["F046"]}
-  R077: {file: "docs/raw-requirements.md", story_ids: ["US089"], task_ids: ["F047"]}
-  R078: {file: "docs/raw-requirements.md", story_ids: ["US090"], task_ids: ["F048"]}
-  R079: {file: "docs/raw-requirements.md", story_ids: ["US091"], task_ids: ["F049"]}
-  R080: {file: "docs/raw-requirements.md", story_ids: ["US092"], task_ids: ["F050"]}
-  R081: {file: "docs/raw-requirements.md", story_ids: ["US093"], task_ids: ["F051"]}
-  R082: {file: "docs/raw-requirements.md", story_ids: ["US094"], task_ids: ["F052"]}
-  R083: {file: "docs/raw-requirements.md", story_ids: ["US095"], task_ids: ["F053"]}
-  R084: {file: "docs/raw-requirements.md", story_ids: ["US096"], task_ids: ["F054"]}
-  R085: {file: "docs/raw-requirements.md", story_ids: ["US097"], task_ids: ["F055"]}
-  R086: {file: "docs/raw-requirements.md", story_ids: ["US098"], task_ids: ["F056"]}
-  R087: {file: "docs/raw-requirements.md", story_ids: ["US099"], task_ids: ["F057"]}
-  R088: {file: "docs/raw-requirements.md", story_ids: ["US100"], task_ids: ["F058"]}
-  R089: {file: "docs/raw-requirements.md", story_ids: ["US101"], task_ids: ["F059"]}
-  R090: {file: "docs/raw-requirements.md", story_ids: ["US102"], task_ids: ["Q014"]}
-  R091: {file: "docs/raw-requirements.md", story_ids: ["US103"], task_ids: ["H029"]}
-  R092: {file: "docs/raw-requirements.md", story_ids: ["US104"], task_ids: ["F060"]}
-  R093: {file: "docs/raw-requirements.md", story_ids: ["US105"], task_ids: ["Q015"]}
-  R094: {file: "docs/raw-requirements.md", story_ids: ["US106"], task_ids: ["F061"]}
-  R095: {file: "docs/raw-requirements.md", story_ids: ["US107"], task_ids: ["F062"]}
-  R096: {file: "docs/raw-requirements.md", story_ids: ["US108"], task_ids: ["F063"]}
-  R097: {file: "docs/raw-requirements.md", story_ids: ["US109"], task_ids: ["F064"]}
-  R098: {file: "docs/raw-requirements.md", story_ids: ["US110"], task_ids: ["Q016"]}
-  R099: {file: "docs/raw-requirements.md", story_ids: ["US111"], task_ids: ["F065"]}
-  R100: {file: "docs/raw-requirements.md", story_ids: ["US112"], task_ids: ["F066"]}
-  R101: {file: "docs/raw-requirements.md", story_ids: ["US113"], task_ids: ["F067"]}
-  R102: {file: "docs/raw-requirements.md", story_ids: ["US114"], task_ids: ["F068"]}
-  R103: {file: "docs/raw-requirements.md", story_ids: ["US115"], task_ids: ["Q017"]}
-  R104: {file: "docs/raw-requirements.md", story_ids: ["US116"], task_ids: ["F069"]}
-  R105: {file: "docs/raw-requirements.md", story_ids: ["US117"], task_ids: ["F070"]}
-  R106: {file: "docs/raw-requirements.md", story_ids: ["US118"], task_ids: ["F071"]}
-  R107: {file: "docs/raw-requirements.md", story_ids: ["US119"], task_ids: ["F072"]}
-  R108: {file: "docs/raw-requirements.md", story_ids: ["US120"], task_ids: ["Q018"]}
-  R109: {file: "docs/raw-requirements.md", story_ids: ["US121"], task_ids: ["H030"]}
-  R110: {file: "docs/raw-requirements.md", story_ids: ["US122"], task_ids: ["H031"]}
-  R111: {file: "docs/raw-requirements.md", story_ids: ["US123"], task_ids: ["H032"]}
-  R112: {file: "docs/raw-requirements.md", story_ids: ["US124"], task_ids: ["F073", "F074", "F075", "F076", "Q019"]}
-  R113: {file: "docs/raw-requirements.md", story_ids: ["US125"], task_ids: ["H033"]}
-  R114: {file: "docs/raw-requirements.md", story_ids: ["US126"], task_ids: ["H034"]}
-  R115: {file: "docs/raw-requirements.md", story_ids: ["US127"], task_ids: ["F077", "F078", "F079", "Q020"]}
-  R116: {file: "docs/raw-requirements.md", story_ids: ["US128"], task_ids: ["F080", "F081", "F082", "Q021"]}
-  R117: {file: "docs/raw-requirements.md", story_ids: ["US129"], task_ids: ["F083", "F084", "Q022"]}
-  R118: {file: "docs/raw-requirements.md", story_ids: ["US130"], task_ids: ["F085", "Q023"]}
-  R119: {file: "docs/raw-requirements.md", story_ids: ["US131"], task_ids: ["F086", "F087", "Q024"]}
-  R120: {file: "docs/raw-requirements.md", story_ids: ["US132"], task_ids: ["F088", "F089", "Q025"]}
-  R121: {file: "docs/raw-requirements.md", story_ids: ["US133"], task_ids: ["F090", "F091", "Q026"]}
-  R122: {file: "docs/raw-requirements.md", story_ids: ["US134"], task_ids: ["F092", "F093", "Q027"]}
-  R123: {file: "docs/raw-requirements.md", story_ids: ["US135"], task_ids: ["F094", "F095", "Q028"]}
-  R124: {file: "docs/raw-requirements.md", story_ids: ["US136"], task_ids: ["F096", "F097", "Q029"]}
-  R128: {file: "docs/raw-requirements.md", story_ids: ["US140"], task_ids: ["F104", "F105", "Q033"]}
-  R127: {file: "docs/raw-requirements.md", story_ids: ["US139"], task_ids: ["F102", "F103", "Q032"]}
-  R132: {file: "docs/raw-requirements.md", story_ids: ["US144"], task_ids: ["F110", "F111", "Q037"]}
-  R133: {file: "docs/raw-requirements.md", story_ids: ["US145"], task_ids: ["F112", "Q038"]}
-  R134: {file: "docs/raw-requirements.md", story_ids: ["US146"], task_ids: ["F113", "Q039"]}
-  R135: {file: "docs/raw-requirements.md", story_ids: ["US147"], task_ids: ["F114", "Q040"]}
-  R-H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], task_ids: ["H001"]}
+  REQ-R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], task_ids: ["R001"]}
+  REQ-H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], task_ids: ["H001"]}
+  REQ-C001: {file: "docs/reference/healthcheck-2026-05-15/status.md", story_ids: ["US-C001"], task_ids: ["C001"]}
   REQ-R003: {file: "docs/local-demo.md", story_ids: ["US-R003"], task_ids: ["R003"]}
   REQ-R004: {file: "docs/e2e-smoke.md", story_ids: ["US-R004"], task_ids: ["R004"]}
   REQ-R005: {file: "docs/local-acceptance.md", story_ids: ["US-R005"], task_ids: ["R005"]}
   REQ-F001: {file: "docs/known-issues.md", story_ids: ["US-F001"], task_ids: ["F001"]}
   REQ-R006: {file: "docs/cloud-staging-options.md", story_ids: ["US-R006"], task_ids: ["R006"]}
+  REQ-H002: {file: "docs/harness-operating-model.md", story_ids: ["US-H002"], task_ids: ["H002"]}
+legacy_reference:
+  requirements: "docs/raw-requirements.md"
+  stories: "docs/user-stories.md"
+  backlog: "tasks/backlog.yaml"
+  task_log: "docs/task-log.md"
+  branch_log: "docs/dev/branch-log.md"
+  audit: "docs/audit-report.md"
+  healthcheck_snapshot: "docs/reference/healthcheck-2026-05-15/"
 decisions:
   - "D-2026-05-12-state-governance-v3"
-  - "D-2026-05-12-check-state-warning-only"
-  - "D-2026-05-12-current-queue-smoke"
-  - "D-2026-05-12-current-done-history-invariant"
-  - "D-2026-05-12-strict-state-check-default"
-  - "D-2026-05-13-trace-current-files-path-check"
   - "D-2026-05-13-codex-plan-boundary"
-  - "D-2026-05-13-current-state-closeout"
-  - "D-2026-05-13-harness-hook-guard"
-archive_refs: []
+  - "D-2026-05-15-local-acceptance-candidate"
+  - "D-2026-05-15-trace-index-windowing"
+archive_refs:
+  - "docs/reference/healthcheck-2026-05-15/status.md"
+  - "docs/reference/healthcheck-2026-05-15/release-readiness.md"
+  - "docs/reference/healthcheck-2026-05-15/harness-audit.md"
