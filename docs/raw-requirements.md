@@ -1469,3 +1469,42 @@ version: "1.0"
 status: "done"
 notes: "只补本地 E2E/QA 证据和必要轻量断言；不改依赖、不改 package/lockfile、不接数据库、不改后端契约。"
 ```
+
+### R138 - local demo staff/status/login import loop
+
+```yaml
+id: R138
+module: "本机演示数据导入"
+description: "PM 明确当前只需要本机演示，不上云测试环境；为演示真实坐席主数据、状态数据和登录数据，需要提供一个本机导入口子，导入后驱动本地 dashboard 和数据接入状态。"
+source: "PM clarification on 2026-05-16: only local demo, with real staff master/status/login data import entry"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只做 localhost 本机演示导入闭环；不接数据库、不做 ORM/migration/schema、不接真实 CORN/HR/WFM API、不新增依赖、不改 package/lockfile。"
+```
+
+### R139 - local demo visible placeholder cleanup
+
+```yaml
+id: R139
+module: "本机演示占位清零"
+description: "页面上的文件导入、接入批次、数据接入状态、异常行操作等占位需要在本机演示中可点击、可解释，并优先关联本机导入数据，而不是继续指向 dashboard 或纯静态占位。"
+source: "PM approval on 2026-05-16 to proceed with local demo placeholder cleanup"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只补本机演示路径和局部占位闭环；不做审批、导出、批量操作、权限、生产公式、结算规则或收费因子。"
+```
+
+### R140 - local demo import acceptance evidence
+
+```yaml
+id: R140
+module: "本机演示验收"
+description: "本机导入闭环和页面占位清零完成后，需要补充浏览器级 smoke/E2E 与审计证据，证明演示链路可点通且边界仍然是 no-database/no-real-integration。"
+source: "PM-approved local demo import and placeholder cleanup batch on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只覆盖本机演示闭环，不扩大到云发布、数据库或生产化能力。"
+```

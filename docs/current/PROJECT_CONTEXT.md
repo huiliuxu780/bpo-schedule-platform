@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-B008-F116-Q042
+  in_progress_task: B008
+  ready_tasks: [F116, Q042]
 ```
 
 ## Current Stage
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Next recommended task is `R007` selected cloud staging implementation, but only after PM confirms the platform choice. Keep database work deferred until PM confirms a database Gate and provides an environment.
+Next recommended task is the active `BATCH-B008-F116-Q042` local demo import and placeholder cleanup batch. Keep it local-only: no cloud publishing, no database, no real external integration, no package or lockfile changes.
 
 ## Default Execution
 

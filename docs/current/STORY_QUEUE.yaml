@@ -1,8 +1,29 @@
 version: 1
-updated_at: "2026-05-15"
+updated_at: "2026-05-16"
 source_of_truth: "current_story_queue"
 notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US150
+    requirement_ids: [R138]
+    task_ids: [B008]
+    status: in_progress
+    priority: P1
+    module: "本机演示数据导入"
+    summary: "提供本机演示用坐席主数据、状态数据、登录数据导入闭环，不接数据库或真实外部系统。"
+  - id: US151
+    requirement_ids: [R139]
+    task_ids: [F116]
+    status: ready
+    priority: P1
+    module: "本机演示占位清零"
+    summary: "把文件导入、接入批次、数据接入状态和关键行操作占位改成本机演示可点击可解释。"
+  - id: US152
+    requirement_ids: [R140]
+    task_ids: [Q042]
+    status: ready
+    priority: P1
+    module: "本机演示验收"
+    summary: "为导入闭环与占位清零补充本地 smoke/E2E 和 no-database 验收证据。"

@@ -3283,7 +3283,7 @@ tasks:
       - "docs/**"
       - "tasks/backlog.yaml"
       - "next-env.d.ts"
-    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
     acceptance:
       - "班次明细支持 plan/date/project/site/interval 级别的本地上下文过滤。"
       - "从计划详情、风险明细和不可用影响定位进入班次页时，范围能正确收敛。"
@@ -3316,7 +3316,7 @@ tasks:
       - "docs/**"
       - "tasks/backlog.yaml"
       - "next-env.d.ts"
-    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
     acceptance:
       - "不可用列表支持 project/site/date/time 级别的本地上下文过滤。"
       - "从计划详情和风险明细进入不可用页时，范围能正确收敛。"
@@ -5846,5 +5846,95 @@ tasks:
       - "需要后端接口、真实数据源、数据库、认证或权限"
       - "需要审批、导出、批量调班、自动排班或生产工作流能力"
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: B008
+    title: "本机演示坐席/状态/登录数据导入闭环"
+    priority: P1
+    status: ready
+    required_workflow: backend-mvp
+    allowed_files:
+      - "backend/**"
+      - "app/demo-imports/**"
+      - "app/dashboard/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "支持坐席主数据、状态数据、登录数据三类本机 CSV 导入。"
+      - "导入结果返回批次、成功/失败行数和错误明细。"
+      - "导入数据只用于 localhost 本机演示，不使用数据库、ORM、migration、真实外部系统或新增依赖。"
+      - "`python3 -m unittest backend.tests.test_schedule_plans`、`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实 CORN/HR/WFM/第三方 API 集成"
+      - "需要认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: F116
+    title: "本机演示页面占位清零"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/demo-imports/**"
+      - "app/dashboard/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "侧边栏文件导入、接入批次、数据源管理不再全部指向 dashboard。"
+      - "dashboard 数据接入状态展示本机导入批次状态。"
+      - "关键行操作不再是不可解释占位。"
+      - "不做审批、导出、批量、权限、生产公式、结算规则或收费因子。"
+      - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q042
+    title: "本机导入演示闭环 QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/demo-imports/**"
+      - "app/dashboard/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "E2E/smoke 覆盖本机导入入口和导入批次状态。"
+      - "QA 证据明确 localhost-only、no-database、no-real-integration、no-package-change。"
+      - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true

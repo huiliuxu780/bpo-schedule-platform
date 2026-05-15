@@ -1231,3 +1231,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### B008-F116-Q042 Local Demo Import And Placeholder Cleanup
+
+- branch_name: `codex/f-batch-003-local-demo-import-placeholders`
+- base_main_commit: `868f2b5aee02273c06be82be48b4e0815922ab1b`
+- remote_status: `local continuation branch created from codex/f-batch-002-local-p1-e2e-parity-chain because PM asked to continue the local demo chain before push`
+- scope: localhost-only staff master/status/login CSV import loop, local import batch status, visible placeholder cleanup for file import/data-source/sidebar/dashboard row actions, smoke coverage, and traceability updates.
+- allowed_files_check: `backend/**`, `app/demo-imports/**`, `app/dashboard/**`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no package/lockfile, database, ORM, migration, schema, real integration, auth, permissions, approval, export, batch operation, production formula, settlement, or charge-factor files.
+- scope_diff_check: pending product implementation after seed commit.
+- check_result: pending seed strict-state check.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

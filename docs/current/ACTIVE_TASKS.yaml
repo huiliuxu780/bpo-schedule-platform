@@ -1,9 +1,147 @@
 version: 1
-updated_at: "2026-05-15"
+updated_at: "2026-05-16"
 source_of_truth: "current_active_tasks"
 notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+batch:
+  id: BATCH-B008-F116-Q042
+  branch: codex/f-batch-003-local-demo-import-placeholders
+  task_ids: [B008, F116, Q042]
+  scope_reason: "The tasks form one local-only demo slice: import demo files, wire visible placeholders to that local import state, and verify the browser-facing demo. They intentionally avoid database, real external integrations, package changes, auth, approval, export, batch operations, and production formulas."
+  allowed_gate_combo: [backend-mvp, frontend-scaffold, qa]
+tasks:
+  - id: B008
+    story_ids: [US150]
+    status: in_progress
+    gate: backend-mvp
+    branch: codex/f-batch-003-local-demo-import-placeholders
+    allowed_files:
+      - "backend/**"
+      - "app/demo-imports/**"
+      - "app/dashboard/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/superpowers/plans/2026-05-16-local-demo-import-placeholders.md"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "Needs a new dependency or package/lockfile change, including XLSX parsing packages."
+      - "Needs database persistence, ORM, migration, schema implementation, or production persistence config."
+      - "Needs real CORN, HR, WFM, or third-party integration."
+      - "Needs auth, permissions, approval, export, batch operation, production formula, settlement, or charge-factor work."
+      - "Final verification fails."
+    acceptance_ref: "docs/user-stories.md#US150"
+    verification:
+      - "python3 -m unittest backend.tests.test_schedule_plans"
+      - "npm run e2e:smoke"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "git diff --check"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "Local demo import supports staff master, status log, and login log CSV text/file input with validation feedback."
+      - "Imported demo state is local-only and does not use database, ORM, migration, real integration, package, or lockfile changes."
+  - id: F116
+    story_ids: [US151]
+    status: ready
+    gate: frontend-scaffold
+    branch: codex/f-batch-003-local-demo-import-placeholders
+    allowed_files:
+      - "app/demo-imports/**"
+      - "app/dashboard/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "Needs a new dependency or package/lockfile change."
+      - "Needs database, real integration, auth, permission, approval, export, batch operation, production formula, settlement, or charge-factor work."
+      - "Final verification fails."
+    acceptance_ref: "docs/user-stories.md#US151"
+    verification:
+      - "npm run e2e:smoke"
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "git diff --check"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "Sidebar file import and batch/status placeholders route to real local demo pages or local import status."
+      - "Dashboard data-source status and key row actions are explainable and clickable for local demo."
+  - id: Q042
+    story_ids: [US152]
+    status: ready
+    gate: qa
+    branch: codex/f-batch-003-local-demo-import-placeholders
+    allowed_files:
+      - "app/demo-imports/**"
+      - "app/dashboard/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "Needs product behavior outside the active local demo acceptance scope."
+      - "Needs database, real integration, auth, permission, approval, export, batch operation, production formula, settlement, or charge-factor work."
+      - "Final verification fails."
+    acceptance_ref: "docs/user-stories.md#US152"
+    verification:
+      - "npm run e2e:smoke"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "git diff --check"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "Browser smoke covers the local import entry and imported batch status surfaces."
+      - "QA evidence records localhost-only, no-database, no-real-integration boundaries."

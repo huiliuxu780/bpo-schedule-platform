@@ -2637,3 +2637,62 @@ acceptance:
   - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US150 - Local demo staff/status/login import loop
+
+```yaml
+id: US150
+requirement_ids:
+  - R138
+module: "本机演示数据导入"
+role: "演示人员"
+story: "作为演示人员，我希望能在本机导入真实坐席主数据、状态数据和登录数据，这样 dashboard 和数据接入状态可以基于我上传的演示数据说明业务流程。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "提供本机导入入口，支持坐席主数据、状态数据、登录数据三类 CSV 文本或文件输入。"
+  - "导入后返回批次号、成功行数、失败行数和错误行明细。"
+  - "导入状态保留在本机演示运行态或本地临时文件中，不使用数据库、ORM、migration 或生产持久化配置。"
+  - "不新增依赖、不改 package/lockfile、不接真实 CORN/HR/WFM API。"
+  - "`python3 -m unittest backend.tests.test_schedule_plans`、`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+status: "ready"
+```
+
+### US151 - Local demo visible placeholder cleanup
+
+```yaml
+id: US151
+requirement_ids:
+  - R139
+module: "本机演示占位清零"
+role: "演示人员"
+story: "作为演示人员，我希望页面上的文件导入、接入批次、数据接入状态和关键行操作都能在本机演示中点通，这样演示时不会暴露明显占位。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "侧边栏 `文件导入`、`接入批次`、`数据源管理` 指向本机导入/批次状态页面，不再全部裸指 dashboard。"
+  - "dashboard 数据接入状态显示坐席主数据、状态数据、登录数据的本机导入批次状态。"
+  - "异常明细行操作不再只是图标占位，而是提供本机复核/详情上下文入口或可解释动作。"
+  - "不做审批、导出、批量操作、权限、生产公式、结算规则或收费因子。"
+  - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+status: "ready"
+```
+
+### US152 - Local demo import acceptance evidence
+
+```yaml
+id: US152
+requirement_ids:
+  - R140
+module: "本机演示验收"
+role: "QA"
+story: "作为 QA，我希望本机导入入口、导入批次状态和占位清零入口有浏览器级 smoke 覆盖，这样能证明演示链路不是静态说明。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 覆盖进入本机导入入口、查看三类导入模板或输入区、查看导入批次状态。"
+  - "E2E 或 smoke 覆盖 dashboard 数据接入状态中出现本机导入批次信息。"
+  - "QA 记录明确本批仍是 localhost-only、no-database、no-real-integration、no-package-change。"
+  - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+status: "ready"
+```
