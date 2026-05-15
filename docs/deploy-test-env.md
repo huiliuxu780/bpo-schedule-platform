@@ -6,6 +6,8 @@
 
 本文件是测试环境准备说明，不是云部署完成说明。
 
+R006 已完成云测试环境方案选择：第一选择是 `Vercel frontend + Render/Railway/Fly.io backend`，备选是单 VPS 或企业内部服务器。R006 不代表已经 Cloud Staging Ready；实际部署应由 R007 执行。
+
 ## 当前状态
 
 | 项目 | 状态 |
@@ -114,7 +116,7 @@ BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke
 
 ## 未来云部署待定项
 
-- 选择测试环境平台：Vercel / Railway / Render / VPS / 企业服务器。
+- PM 确认 R007 的具体平台：Vercel + Render/Railway/Fly.io、单 VPS、或企业内部服务器。
 - 确认前后端是否同平台部署。
 - 确认 backend URL 如何暴露给 frontend。
 - 确认远程 health check 地址。
@@ -124,7 +126,7 @@ BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke
 
 ## 上云前 Blocker
 
-- 未选择云测试环境平台。
+- 已有推荐方案，但尚未确认和实施云测试环境平台。
 - 未配置远程 frontend/backend 地址。
 - 未配置远程环境变量。
 - 未验证远程 `/health`。

@@ -117,6 +117,7 @@ E2E 覆盖 dashboard、demand plans、schedule plans、plan detail、risk、shif
 - `docs/e2e-smoke.md`: 核心路径 E2E baseline。
 - `docs/local-acceptance.md`: 本地验收版交付说明。
 - `docs/deploy-test-env.md`: 测试环境准备说明。
+- `docs/cloud-staging-options.md`: 云测试环境方案选择和 R007 草案。
 - `docs/known-issues.md`: 当前已知问题。
 
 ## Verify

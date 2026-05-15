@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
+  queue_state: active
   active_batch_id: null
-  in_progress_task: null
+  in_progress_task: R006
   ready_tasks: []
 ```
 
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Next recommended task is `R006` cloud staging preparation decision. Keep database work deferred until PM confirms a database Gate and provides an environment.
+Current task is `R006` cloud staging option. It selects a cloud staging path and follow-up plan without deploying or changing code. Keep database work deferred until PM confirms a database Gate and provides an environment.
 
 ## Default Execution
 

@@ -171,7 +171,7 @@ bash scripts/check.sh
 
 当前已知问题维护在 `docs/known-issues.md`。本地验收时重点关注：
 
-- `KI-001`: unavailability detail 的返回计划详情链接未携带 `planId`，当前 E2E 使用 browser history 返回。
+- `KI-001`: 已在 F001 修复，unavailability detail 的页面内返回链接可回到对应 plan detail。
 - `KI-002`: 云测试环境尚未配置。
 - `KI-003`: `TRACE_INDEX.yaml` 已超过 warning budget，但未超过 strict fail。
 

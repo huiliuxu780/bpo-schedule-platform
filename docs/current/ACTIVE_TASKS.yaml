@@ -6,4 +6,47 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+tasks:
+  - id: R006
+    story_ids: [US-R006]
+    status: in_progress
+    gate: qa
+    branch: codex/r006-cloud-staging-option
+    allowed_files:
+      - "docs/cloud-staging-options.md"
+      - "docs/deploy-test-env.md"
+      - "docs/local-acceptance.md"
+      - "docs/known-issues.md"
+      - "README.md"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+    traceability_files:
+      - "docs/registry/TRACE_INDEX.yaml"
+    forbidden_files:
+      - "app/**"
+      - "backend/**"
+      - "components/**"
+      - "scripts/**"
+      - "tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "playwright.config.ts"
+      - "tasks/backlog.yaml"
+      - "docs/user-stories.md"
+      - "docs/raw-requirements.md"
+      - "docs/audit-report.md"
+      - "docs/task-log.md"
+      - "docs/dev/branch-log.md"
+    stop_conditions:
+      - "需要直接部署、购买服务或创建云资源"
+      - "需要修改业务代码、UI、E2E、脚本、package 或 lockfile"
+      - "需要数据库、真实外部集成、auth、permission、approval、export、batch operation、生产公式、结算规则或收费因子"
+      - "最终验证失败"
+    acceptance_ref: "docs/cloud-staging-options.md#R006"
+    verification:
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "Cloud staging options compared without deployment"
+      - "Recommended staging path and R007 draft recorded"
