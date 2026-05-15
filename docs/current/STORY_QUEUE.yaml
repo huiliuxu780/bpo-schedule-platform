@@ -5,4 +5,9 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US-R004
+    title: "Core Path E2E Baseline"
+    status: in_progress
+    requirement_ids: [REQ-R004]
+    task_ids: [R004]
