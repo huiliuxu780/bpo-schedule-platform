@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: active
+  queue_state: idle
   active_batch_id: null
-  in_progress_task: F001
+  in_progress_task: null
   ready_tasks: []
 ```
 
@@ -40,7 +40,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Current task is `F001` to fix the unavailability detail return link. After closeout, return to `R006` cloud staging preparation decision.
+Next recommended task is `R006` cloud staging preparation decision. Keep database work deferred until PM confirms a database Gate and provides an environment.
 
 ## Default Execution
 

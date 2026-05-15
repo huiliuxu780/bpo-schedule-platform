@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US-F001
-    title: "Fix unavailability detail return link to plan detail"
-    status: in_progress
-    task_ids: [F001]
-    requirement_ids: [REQ-F001]
+stories: []
