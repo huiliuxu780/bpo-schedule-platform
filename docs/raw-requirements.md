@@ -1729,3 +1729,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入状态数据后进入 agent-status-trace 并看到 records 摘要；QA 不扩大到实时流、生产公式、数据库、真实集成或生产工作流。"
 ```
+
+### R158 - fulfillment exceptions reads imported records
+
+```yaml
+id: R158
+module: "履约监控"
+description: "异常管理需要做本机最小切片，读取已导入的坐席状态数据和登录数据 records，展示可复核的本机异常线索和样本。"
+source: "PM continuation on 2026-05-16: 持续补完履约监控占位功能"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只做 status_log/login_log records 读取和展示；不做实时流、生产异常判定、遵守率公式、处罚规则、数据库、真实集成、审批、导出、批量或结算。"
+```
+
+### R159 - fulfillment exceptions navigation entry
+
+```yaml
+id: R159
+module: "导航可信度"
+description: "异常管理页面完成后，侧边栏 `异常管理` 应从 `开发中` 改为真实可点击入口，实时遵守率和异常复核继续标注 `开发中`。"
+source: "F122 fulfillment exceptions minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只开放已实现的异常管理本机入口；不把实时遵守率或异常复核伪装为已开放。"
+```
+
+### R160 - fulfillment exceptions imported records QA
+
+```yaml
+id: R160
+module: "履约监控验收"
+description: "异常管理读取 status_log/login_log records 后，需要补充浏览器 smoke 证据，证明导入后现有履约入口能看到处理结果。"
+source: "F122 fulfillment exceptions minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只验证本机 records 进入异常管理页面，不扩大到实时流、生产异常规则、数据库、真实集成或生产工作流。"
+```

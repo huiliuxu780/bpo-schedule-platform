@@ -67,6 +67,61 @@ acceptance:
 status: "done"
 ```
 
+### US170 - Fulfillment exceptions reads imported records
+
+```yaml
+id: US170
+requirement_ids:
+  - R158
+module: "履约监控"
+role: "演示人员"
+story: "作为演示人员，我希望异常管理页能展示本机导入的状态和登录 records，这样可以演示异常线索来自现有导入处理结果。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/fulfillment-exceptions` 页面。"
+  - "页面读取 processed records 中的 status_log 和 login_log，并展示 `异常线索 records` 摘要。"
+  - "页面展示状态数据行数、登录数据行数、线索状态和样本 records。"
+  - "不做实时流、不做生产异常判定或遵守率公式、不接数据库、不做真实集成、审批、导出、批量或结算。"
+status: "ready"
+```
+
+### US171 - Fulfillment exceptions navigation entry
+
+```yaml
+id: US171
+requirement_ids:
+  - R159
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏异常管理成为可点击入口，这样履约监控的第三个模块不再只是占位。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`履约监控 > 异常管理` 链接到 `/fulfillment-exceptions`。"
+  - "实时遵守率和异常复核继续显示 `开发中` 且不可点击。"
+  - "导航 active 状态能识别 `/fulfillment-exceptions`。"
+status: "ready"
+```
+
+### US172 - Fulfillment exceptions imported records QA
+
+```yaml
+id: US172
+requirement_ids:
+  - R160
+module: "履约监控验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入状态和登录数据后进入异常管理页，这样能证明异常管理入口读到了导入处理结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席状态和登录数据后，fulfillment-exceptions 出现 `异常线索 records` 摘要。"
+  - "E2E 确认异常管理是可点击 link，实时遵守率仍是 `开发中`。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula、no-production-exception-rule。"
+status: "ready"
+```
+
 ### US001 - 运营负责人查看 Dashboard 总览
 
 ```yaml
