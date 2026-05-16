@@ -1428,7 +1428,7 @@
 - allowed_files_check: `app/corn-status-log/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, realtime status stream, production status-code finalization, status writeback, settlement rule, or charge-factor files.
 - scope_diff_check: `app/corn-status-log/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
 - check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeCornStatusLogRecords` was missing; model tests then passed with 61 tests; typecheck passed; backend health and frontend `/corn-status-log` returned 200 after restarting local demo outside sandbox; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed outside sandbox with 5 tests and verified corn-status-log records summaries plus CORN status log sidebar link; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 23 backend unittest.
-- local_commit_sha: `pending final local commit`
+- local_commit_sha: `a00d6a4e53321952e0f7338c9828a548c73f4d76`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
