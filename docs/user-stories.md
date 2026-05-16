@@ -3290,3 +3290,58 @@ acceptance:
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-corn-integration、no-realtime-stream、no-status-writeback、no-production-status-code。"
 status: "done"
 ```
+
+### US185 - Field mapping reads imported sample fields
+
+```yaml
+id: US185
+requirement_ids:
+  - R173
+module: "数据与集成"
+role: "演示人员"
+story: "作为演示人员，我希望字段映射页能展示本机导入 records 的字段覆盖，这样可以说明导入数据被识别后如何进入产品字段。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/field-mapping` 页面。"
+  - "页面读取 processed records 中的 staff_master/status_log/login_log 样本字段，并展示 `字段映射 records` 摘要。"
+  - "页面展示三类数据的已识别字段、缺失字段、最近批次和本机只读状态。"
+  - "不做字段映射写回、不保存配置、不做真实接口检查、不接数据库、不做跨系统对账、审批、导出、批量或结算。"
+status: "in_progress"
+```
+
+### US186 - Field mapping navigation entry
+
+```yaml
+id: US186
+requirement_ids:
+  - R174
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏字段映射成为可点击入口，这样数据与集成模块的导入后处理链路不再遗漏字段识别。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`数据与集成 > 字段映射` 链接到 `/field-mapping`。"
+  - "接口集成继续显示 `开发中` 且不可点击。"
+  - "导航 active 状态能识别 `/field-mapping`。"
+status: "in_progress"
+```
+
+### US187 - Field mapping imported records QA
+
+```yaml
+id: US187
+requirement_ids:
+  - R175
+module: "数据与集成验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入三类数据后进入字段映射页，这样能证明字段映射入口读到了导入处理结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入三类 CSV 后，field-mapping 出现 `字段映射 records` 摘要。"
+  - "E2E 覆盖字段映射导航可点击，接口集成仍是 `开发中`。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-field-mapping-writeback、no-saved-config。"
+status: "ready"
+```

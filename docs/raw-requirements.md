@@ -1924,3 +1924,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入状态 CSV 后进入 corn-status-log 并看到 CORN 状态日志 records 摘要；QA 不扩大到真实 CORN 集成、实时流、生产状态码、状态写回、数据库或真实接口检查。"
 ```
+
+### R173 - field mapping reads imported sample fields
+
+```yaml
+id: R173
+module: "数据与集成"
+description: "字段映射需要做本机只读预览最小切片，读取已导入的 staff_master/status_log/login_log records 样本字段，展示字段覆盖、缺失字段和最近批次。"
+source: "PM continuation on 2026-05-16: 功能全部不要遗漏"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "仅做 localhost-only processed records 字段覆盖预览；不做字段映射写回、保存配置、真实接口检查、跨系统对账、数据库或真实集成。"
+```
+
+### R174 - field mapping navigation entry
+
+```yaml
+id: R174
+module: "导航可信度"
+description: "字段映射页面完成后，侧边栏 `字段映射` 应从 `开发中` 改为真实可点击入口。"
+source: "F127 field mapping minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "导航入口只指向本机只读字段映射预览页，不代表字段映射配置保存或写回能力已经完成。"
+```
+
+### R175 - field mapping imported records QA
+
+```yaml
+id: R175
+module: "数据与集成验收"
+description: "字段映射只读预览读取三类 processed records 后，需要补充浏览器 smoke 证据，证明导入后数据与集成入口能看到字段覆盖结果。"
+source: "F127 field mapping minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 不扩大到字段映射写回、保存配置、真实接口检查、跨系统对账、数据库或真实集成。"
+```
