@@ -1452,3 +1452,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F128-Q055 Organization People Imported Records
+
+- branch_name: `codex/f-batch-016-organization-people-preview`
+- base_main_commit: `c0cc27584edd30a8aa82e7179106ac8fff8045a9`
+- remote_status: `local continuation branch created from pushed codex/f-batch-015-field-mapping-preview because PM asked to continue filling all planned functions without omission`
+- scope: organization-people local page, organization people navigation entry, staff_master processed records preview summary, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/organization-people/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, organization tree maintenance, staff master writeback, user management, role assignment, production audit, settlement rule, or charge-factor files.
+- scope_diff_check: `app/organization-people/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeOrganizationPeopleRecords` was missing; model tests then passed with 63 tests; typecheck passed; frontend `/organization-people` returned 200; `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 5 tests and verified organization-people records summaries plus organization people sidebar link; final `bash scripts/check.sh` pending closeout verification.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

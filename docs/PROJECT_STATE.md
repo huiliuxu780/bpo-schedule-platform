@@ -26,7 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
 - Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
-- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, and field mapping module pages.
+- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, and organization people module pages.
 
 The project does not contain:
 
@@ -129,6 +129,7 @@ Current invariants:
 - `F125/Q052/US179-US181` opened the数据质量 slice: `数据质量` now links to `/data-quality`, which reads local staff/status/login records and shows本机质量预览 without production data-quality rules, auto-fix, field-mapping writeback, database, or real integrations; current queue returned to empty after QA closeout.
 - `F126/Q053/US182-US184` opened theCORN 状态日志 slice: `CORN 状态日志` now links to `/corn-status-log`, which reads local status_log records and shows本机状态日志覆盖、状态分布和样本 without real CORN integration, realtime streams, production status-code finalization, status writeback, database, or real interface checks; current queue returned to empty after QA closeout.
 - `F127/Q054/US185-US187` opened the字段映射 slice: `字段映射` now links to `/field-mapping`, which reads local staff/status/login sample fields and shows本机字段覆盖、缺失字段和额外字段 without field-mapping writeback, saved config, real interface checks, cross-system reconciliation, database, or real integrations; current queue returned to empty after QA closeout.
+- `F128/Q055/US188-US190` opened the组织与人员 slice: `组织与人员` now links to `/organization-people`, which reads local staff_master records and shows人员样本、团队/职场/供应商分布 without account login, permission management, organization maintenance, staff writeback, database, real integrations, or production audit; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

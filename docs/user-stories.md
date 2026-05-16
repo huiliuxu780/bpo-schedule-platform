@@ -3362,7 +3362,7 @@ acceptance:
   - "页面读取 processed records 中的 staff_master，并展示 `组织与人员 records` 摘要。"
   - "页面展示人员行数、最近批次、团队/职场/供应商分布和样本 records。"
   - "不做账号登录、权限、组织架构维护、主数据写回、数据库、真实 HR/CORN/WFM 集成、审批、导出、批量或生产审计。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US189 - Organization people navigation entry
@@ -3380,7 +3380,7 @@ acceptance:
   - "`系统管理 > 组织与人员` 链接到 `/organization-people`。"
   - "供应商管理、规则配置、权限管理和操作审计继续显示 `开发中` 且不可点击。"
   - "导航 active 状态能识别 `/organization-people`。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US190 - Organization people imported records QA
@@ -3398,5 +3398,5 @@ acceptance:
   - "E2E 导入坐席主数据后，organization-people 出现 `组织与人员 records` 摘要。"
   - "E2E 覆盖组织与人员导航可点击，权限管理和操作审计仍是 `开发中`。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-writeback。"
-status: "ready"
+status: "done"
 ```

@@ -1614,3 +1614,23 @@
 - action: 收口字段映射 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖导入三类 CSV 后进入字段映射，确认 records 摘要、三类数据源和本机字段映射预览可见；模型测试 62 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F128`
+- source_ids:
+  - `R176`
+  - `R177`
+- story_ids:
+  - `US188`
+  - `US189`
+- action: 完成组织与人员本机 staff records 预览切片。
+- status: `done`
+- notes: 新增 `/organization-people` 页面，读取本机 `staff_master` processed records，展示 `组织与人员 records`、人员主数据样本、团队/职场/供应商分布和本机只读边界；侧边栏 `组织与人员` 改为真实入口，供应商管理、规则配置、权限管理和操作审计继续 `开发中`。
+
+- task_id: `Q055`
+- source_ids:
+  - `R178`
+- story_ids:
+  - `US190`
+- action: 收口组织与人员 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖本机导入 staff_master 后进入组织与人员，确认 records 摘要、人员样本、组织分布和系统管理边界可见；模型测试 63 条通过，浏览器 smoke 5 条通过。

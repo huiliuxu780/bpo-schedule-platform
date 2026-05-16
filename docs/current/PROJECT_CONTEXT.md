@@ -2,11 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
+  queue_state: idle
   active_batch_id: null
-  in_progress_task: F128
-  ready_tasks:
-    - Q055
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -18,7 +17,7 @@ current_summary:
 - Dashboard, demand plans, schedule plans, plan detail/edit, risks, shift details, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, organization people preview, and review navigation use local/demo data and scoped review context.
 - Frontend build/check path exists through `bash scripts/check.sh`.
 - Backend local unittest path exists, and localhost-only demo import endpoints exist for staff master, staff status, and login CSV data; production API/database integration is not in scope.
-- Imported demo rows are exposed through localhost-only processed records and are now consumed by dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, and field mapping for module-level demo summaries.
+- Imported demo rows are exposed through localhost-only processed records and are now consumed by dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, and organization people for module-level demo summaries.
 - Harness current queue, active task contract, trace index, state check, and git hooks exist.
 
 ## Current P0 Gaps

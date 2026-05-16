@@ -1973,8 +1973,8 @@ description: "组织与人员需要做本机只读预览最小切片，读取已
 source: "PM continuation on 2026-05-16: 功能全部不要遗漏"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做组织与人员的本机只读 records 预览；不做账号登录、权限、组织架构维护、主数据写回、数据库或真实 HR/CORN/WFM 集成。"
+status: "done"
+notes: "已新增 `/organization-people` 页面读取 staff_master records，展示人员覆盖、团队/职场/供应商分布和样本；不做账号登录、权限、组织架构维护、主数据写回、数据库或真实 HR/CORN/WFM 集成。"
 ```
 
 ### R177 - organization people navigation entry
@@ -1986,8 +1986,8 @@ description: "组织与人员页面完成后，侧边栏 `系统管理 > 组织�
 source: "F128 organization people minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "仅开放本机只读组织与人员入口；供应商管理、规则配置、权限管理和操作审计仍保持开发中。"
+status: "done"
+notes: "侧边栏 `系统管理 > 组织与人员` 已链接到 `/organization-people`；供应商管理、规则配置、权限管理和操作审计仍保持开发中。"
 ```
 
 ### R178 - organization people imported records QA
@@ -1999,6 +1999,6 @@ description: "组织与人员读取 staff_master records 后，需要补充浏�
 source: "F128 organization people minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到数据库、真实集成、登录账号、权限、组织架构维护、导出、批量或生产审计。"
+status: "done"
+notes: "E2E 已覆盖导入坐席主数据后进入 organization-people 并看到组织与人员 records 摘要；QA 不扩大到数据库、真实集成、登录账号、权限、组织架构维护、导出、批量或生产审计。"
 ```
