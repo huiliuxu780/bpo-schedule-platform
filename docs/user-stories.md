@@ -2977,7 +2977,7 @@ acceptance:
   - "页面读取 processed records 中的 status_log，并展示 `状态轨迹 records` 摘要。"
   - "页面展示状态数据行数、状态分布和样本轨迹。"
   - "不做实时流、不做生产遵守率公式、不接数据库、不做真实集成、审批、导出、批量或结算。"
-status: "ready"
+status: "done"
 ```
 
 ### US168 - Agent status trace navigation entry
@@ -2995,7 +2995,7 @@ acceptance:
   - "`履约监控 > 坐席状态轨迹` 链接到 `/agent-status-trace`。"
   - "异常管理、实时遵守率和异常复核继续显示 `开发中` 且不可点击。"
   - "导航 active 状态能识别 `/agent-status-trace`。"
-status: "ready"
+status: "done"
 ```
 
 ### US169 - Agent status trace imported records QA
@@ -3013,5 +3013,5 @@ acceptance:
   - "E2E 导入坐席状态数据后，agent-status-trace 出现 `状态轨迹 records` 摘要。"
   - "E2E 确认坐席状态轨迹是可点击 link，异常管理仍是 `开发中`。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
-status: "ready"
+status: "done"
 ```

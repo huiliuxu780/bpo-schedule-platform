@@ -1474,3 +1474,23 @@
 - action: 收口履约监控 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖导入状态/登录数据后进入履约监控，确认 records 摘要、状态数据、登录数据和样本可见；模型测试 55 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F121`
+- source_ids:
+  - `R155`
+  - `R156`
+- story_ids:
+  - `US167`
+  - `US168`
+- action: 完成坐席状态轨迹本机 records 最小切片。
+- status: `done`
+- notes: 新增 `/agent-status-trace` 页面，读取本机 `status_log` processed records，展示 `状态轨迹 records`、状态数据、状态类型、状态分布和状态日志样本；侧边栏 `坐席状态轨迹` 改为真实入口，异常管理、实时遵守率、异常复核继续 `开发中`。
+
+- task_id: `Q048`
+- source_ids:
+  - `R157`
+- story_ids:
+  - `US169`
+- action: 收口坐席状态轨迹 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖导入状态数据后进入坐席状态轨迹，确认 records 摘要、状态数据、状态分布和样本可见；模型测试 56 条通过，浏览器 smoke 5 条通过。

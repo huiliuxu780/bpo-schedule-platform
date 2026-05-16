@@ -6235,7 +6235,7 @@ tasks:
   - id: F121
     title: "坐席状态轨迹读取本机状态 records"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/agent-status-trace/**"
@@ -6267,7 +6267,7 @@ tasks:
   - id: Q048
     title: "坐席状态轨迹 records 读取 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/agent-status-trace/**"

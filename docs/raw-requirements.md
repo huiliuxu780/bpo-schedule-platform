@@ -1700,8 +1700,8 @@ description: "坐席状态轨迹需要做本机最小切片，读取已导入的
 source: "PM continuation on 2026-05-16: 继续补完履约监控功能"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只做 status_log records 读取和展示；不做实时流、生产遵守率公式、数据库、真实集成、审批、导出、批量或结算。"
+status: "done"
+notes: "已新增 `/agent-status-trace` 页面读取 status_log records，展示状态覆盖、状态分布和样本轨迹；不做实时流、生产遵守率公式、数据库、真实集成、审批、导出、批量或结算。"
 ```
 
 ### R156 - agent status trace navigation entry
@@ -1713,8 +1713,8 @@ description: "坐席状态轨迹页面完成后，侧边栏 `坐席状态轨迹`
 source: "F121 agent status trace minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只开放一个已实现入口；不把异常管理、实时遵守率或异常复核伪装为已开放。"
+status: "done"
+notes: "侧边栏 `坐席状态轨迹` 已链接到 `/agent-status-trace`；异常管理、实时遵守率和异常复核继续显示 `开发中`。"
 ```
 
 ### R157 - agent status trace imported records QA
@@ -1726,6 +1726,6 @@ description: "坐席状态轨迹读取 status_log records 后，需要补充浏�
 source: "F121 agent status trace minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 只验证本机 status records 进入坐席状态轨迹页面，不扩大到实时流、生产公式、数据库、真实集成或生产工作流。"
+status: "done"
+notes: "E2E 已覆盖导入状态数据后进入 agent-status-trace 并看到 records 摘要；QA 不扩大到实时流、生产公式、数据库、真实集成或生产工作流。"
 ```

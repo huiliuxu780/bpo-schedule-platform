@@ -1825,6 +1825,30 @@
 - `git diff --check`：通过。
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 
+## 2026-05-16 - Agent Status Trace Imported Records
+
+#### 审计结论
+
+- `F121/Q048/US167-US169` 已开放第二个履约监控最小切片：`履约监控 > 坐席状态轨迹` 链接到 `/agent-status-trace`，不再是占位。
+- 新页面读取既有 processed records 中的 `status_log`，并展示 `状态轨迹 records`、状态数据行数、状态类型、状态分布和样本轨迹，证明状态导入结果进入现有履约模块。
+- 异常管理、实时遵守率和异常复核仍显示 `开发中` 且不可点击，避免把未完成能力伪装为已开放。
+- 本轮没有新增后端契约，没有修改 backend，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子。
+
+#### 风险
+
+- 当前只是本机状态轨迹覆盖展示，不等同于实时状态流、生产遵守率、异常处罚、薪资结算或供应商考核。
+- status_log records 仍来自本机进程内存，服务重启后清空；这符合当前本机演示边界。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖导入状态数据后坐席状态轨迹 records 摘要。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，56 个模型/源码断言测试通过。
+- `npm run typecheck`：通过。
+- in-app browser 可视化检查：`http://localhost:3015/agent-status-trace` 打开成功，页面标题和 `状态轨迹 records` 可见。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 23 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
