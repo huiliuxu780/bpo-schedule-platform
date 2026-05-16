@@ -6928,3 +6928,101 @@ tasks:
       - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F132
+    title: "报表中心本机只读汇总预览"
+    priority: P1
+    status: in_progress
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/report-center/**"
+      - "app/supplier-review/**"
+      - "components/app-sidebar.tsx"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/report-center` 页面，读取 processed records 并展示 `报表中心 records` 摘要。"
+      - "页面展示导入覆盖、模块成果、最近批次和本机只读边界。"
+      - "`结算复盘 > 报表中心` 链接到 `/report-center`。"
+      - "本批不做导出、生产报表、结算公式、收费因子、审批、批量、数据库或真实集成。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run typecheck`、`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实 CORN/HR/WFM/第三方 API 集成"
+      - "需要认证、权限、审批、导出、批量操作、自动排班、生产公式、生产结算规则或收费因子"
+      - "需要生成生产报表、下载文件、账单金额、锁账或供应商考核写回"
+      - "验证失败"
+    commit_after_done: true
+  - id: F133
+    title: "供应商复盘本机只读汇总预览"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/report-center/**"
+      - "app/supplier-review/**"
+      - "components/app-sidebar.tsx"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/supplier-review` 页面，读取 processed records 并展示 `供应商复盘 records` 摘要。"
+      - "页面展示供应商覆盖、履约覆盖、排班覆盖、最近批次和本机只读边界。"
+      - "`结算复盘 > 供应商复盘` 链接到 `/supplier-review`，结算锁账继续显示 `开发中`。"
+      - "本批不做供应商写回、账单金额、锁账、导出、审批、批量、数据库或真实集成。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run typecheck`、`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实 CORN/HR/WFM/第三方 API 集成"
+      - "需要认证、权限、审批、导出、批量操作、自动排班、生产公式、生产结算规则或收费因子"
+      - "需要供应商考核写回、供应商结算金额、账单或锁账"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q059
+    title: "报表中心与供应商复盘 QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/report-center/**"
+      - "app/supplier-review/**"
+      - "components/app-sidebar.tsx"
+      - "components/**"
+      - "lib/**"
+      - "scripts/tests/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "E2E 导入本机 CSV 后 report-center 和 supplier-review 出现 records 摘要。"
+      - "E2E 覆盖报表中心、供应商复盘导航可点击，结算锁账仍为开发中。"
+      - "QA 证据明确 localhost-only、process-memory、no-database、no-real-integration、no-export、no-batch、no-lock、no-charge-factor。"
+      - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

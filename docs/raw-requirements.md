@@ -2132,3 +2132,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入本机 CSV 后 monthly-settlement 出现 `结算复盘 records` 摘要，并确认月度结算导航可点击、报表中心/供应商复盘/结算锁账仍为开发中；QA 不扩大到数据库、真实集成、审批、导出、批量、生产结算公式、锁账或收费因子。"
 ```
+
+### R189 - report center local preview
+
+```yaml
+id: R189
+module: "结算复盘"
+description: "报表中心需要开放一个本机只读汇总页，读取已导入 records 和本地模块成果，展示可演示的报表覆盖、最近批次和边界，但不生成生产报表或导出文件。"
+source: "PM approved continuation on 2026-05-17: 报表中心/供应商复盘只读汇总"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "in_progress"
+notes: "本批只做 `/report-center` 本机只读报表汇总；不做导出、生产报表、结算公式、收费因子、审批、批量、数据库或真实集成。"
+```
+
+### R190 - supplier review local preview
+
+```yaml
+id: R190
+module: "结算复盘"
+description: "供应商复盘需要开放一个本机只读汇总页，读取供应商主数据、履约覆盖和排班覆盖，展示供应商视角复盘摘要，但不做供应商考核写回或结算金额。"
+source: "PM approved continuation on 2026-05-17: 报表中心/供应商复盘只读汇总"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "本批只做 `/supplier-review` 本机只读供应商复盘；不做供应商写回、账单金额、锁账、导出、审批、批量、数据库或真实集成。"
+```
+
+### R191 - report and supplier review QA
+
+```yaml
+id: R191
+module: "本机验收"
+description: "报表中心和供应商复盘开放后，需要补充 E2E 证据，证明导航可达、records 摘要可见，并且结算锁账仍保持开发中。"
+source: "F132/F133 report center and supplier review local preview on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "QA 不扩大到数据库、真实集成、审批、导出、批量、生产结算公式、锁账、供应商考核写回或收费因子。"
+```
