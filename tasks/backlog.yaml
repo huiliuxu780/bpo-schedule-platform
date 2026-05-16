@@ -6296,7 +6296,7 @@ tasks:
   - id: F122
     title: "异常管理读取本机履约 records"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/fulfillment-exceptions/**"
@@ -6329,7 +6329,7 @@ tasks:
   - id: Q049
     title: "异常管理 records 读取 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/fulfillment-exceptions/**"

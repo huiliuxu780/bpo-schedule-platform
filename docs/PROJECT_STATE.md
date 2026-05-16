@@ -26,7 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
 - Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
-- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, and agent status trace module pages.
+- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, and fulfillment exceptions module pages.
 
 The project does not contain:
 
@@ -123,6 +123,7 @@ Current invariants:
 - `F119/Q046/US161-US163` extended processed records consumption into risk and unavailability pages: schedule-risks and unavailability now show records summaries after local import, and current queue returned to empty after QA closeout.
 - `F120/Q047/US164-US166` opened the first fulfillment monitoring slice: `工时核验` now links to `/fulfillment-monitoring`, which reads local status/login records and shows履约核验 coverage without production formulas; current queue returned to empty after QA closeout.
 - `F121/Q048/US167-US169` opened the坐席状态轨迹 slice: `坐席状态轨迹` now links to `/agent-status-trace`, which reads local status_log records and shows状态覆盖、状态分布和样本轨迹 without realtime streams or production adherence formulas; current queue returned to empty after QA closeout.
+- `F122/Q049/US170-US172` opened the异常管理 slice: `异常管理` now links to `/fulfillment-exceptions`, which reads local status/login records and shows本机异常线索 without realtime streams, production exception rules, or adherence formulas; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

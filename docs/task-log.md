@@ -1494,3 +1494,23 @@
 - action: 收口坐席状态轨迹 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖导入状态数据后进入坐席状态轨迹，确认 records 摘要、状态数据、状态分布和样本可见；模型测试 56 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F122`
+- source_ids:
+  - `R158`
+  - `R159`
+- story_ids:
+  - `US170`
+  - `US171`
+- action: 完成异常管理本机 records 最小切片。
+- status: `done`
+- notes: 新增 `/fulfillment-exceptions` 页面，读取本机 `status_log` 与 `login_log` processed records，展示 `异常线索 records`、状态/登录覆盖、本机异常线索样本和登录数据样本；侧边栏 `异常管理` 改为真实入口，实时遵守率和异常复核继续 `开发中`。
+
+- task_id: `Q049`
+- source_ids:
+  - `R160`
+- story_ids:
+  - `US172`
+- action: 收口异常管理 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖导入状态/登录数据后进入异常管理，确认 records 摘要、状态数据、登录数据和本机异常线索样本可见；模型测试 57 条通过，浏览器 smoke 5 条通过。

@@ -83,7 +83,7 @@ acceptance:
   - "页面读取 processed records 中的 status_log 和 login_log，并展示 `异常线索 records` 摘要。"
   - "页面展示状态数据行数、登录数据行数、线索状态和样本 records。"
   - "不做实时流、不做生产异常判定或遵守率公式、不接数据库、不做真实集成、审批、导出、批量或结算。"
-status: "ready"
+status: "done"
 ```
 
 ### US171 - Fulfillment exceptions navigation entry
@@ -101,7 +101,7 @@ acceptance:
   - "`履约监控 > 异常管理` 链接到 `/fulfillment-exceptions`。"
   - "实时遵守率和异常复核继续显示 `开发中` 且不可点击。"
   - "导航 active 状态能识别 `/fulfillment-exceptions`。"
-status: "ready"
+status: "done"
 ```
 
 ### US172 - Fulfillment exceptions imported records QA
@@ -119,7 +119,7 @@ acceptance:
   - "E2E 导入坐席状态和登录数据后，fulfillment-exceptions 出现 `异常线索 records` 摘要。"
   - "E2E 确认异常管理是可点击 link，实时遵守率仍是 `开发中`。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula、no-production-exception-rule。"
-status: "ready"
+status: "done"
 ```
 
 ### US001 - 运营负责人查看 Dashboard 总览

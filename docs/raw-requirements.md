@@ -1739,8 +1739,8 @@ description: "异常管理需要做本机最小切片，读取已导入的坐席
 source: "PM continuation on 2026-05-16: 持续补完履约监控占位功能"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只做 status_log/login_log records 读取和展示；不做实时流、生产异常判定、遵守率公式、处罚规则、数据库、真实集成、审批、导出、批量或结算。"
+status: "done"
+notes: "已新增 `/fulfillment-exceptions` 页面读取 status_log/login_log records，展示本机异常线索、覆盖和样本；不做实时流、生产异常判定、遵守率公式、处罚规则、数据库、真实集成、审批、导出、批量或结算。"
 ```
 
 ### R159 - fulfillment exceptions navigation entry
@@ -1752,8 +1752,8 @@ description: "异常管理页面完成后，侧边栏 `异常管理` 应从 `开
 source: "F122 fulfillment exceptions minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只开放已实现的异常管理本机入口；不把实时遵守率或异常复核伪装为已开放。"
+status: "done"
+notes: "侧边栏 `异常管理` 已链接到 `/fulfillment-exceptions`；实时遵守率和异常复核继续显示 `开发中`。"
 ```
 
 ### R160 - fulfillment exceptions imported records QA
@@ -1765,6 +1765,6 @@ description: "异常管理读取 status_log/login_log records 后，需要补充
 source: "F122 fulfillment exceptions minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 只验证本机 records 进入异常管理页面，不扩大到实时流、生产异常规则、数据库、真实集成或生产工作流。"
+status: "done"
+notes: "E2E 已覆盖导入状态/登录数据后进入 fulfillment-exceptions 并看到 records 摘要；QA 不扩大到实时流、生产异常规则、数据库、真实集成或生产工作流。"
 ```
