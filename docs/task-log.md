@@ -1696,3 +1696,30 @@
 - action: 收口月度结算本机只读复盘 QA。
 - status: `done`
 - notes: 模型测试 69 条通过，E2E smoke 5 条通过并覆盖导入本机 CSV 后 `/monthly-settlement` 的 `结算复盘 records` 摘要、月度结算导航链接和其他结算复盘条目的开发中边界；最终 check 通过。
+
+- task_id: `F132`
+- source_ids:
+  - `R189`
+- story_ids:
+  - `US201`
+- action: 完成报表中心本机只读汇总预览。
+- status: `done`
+- notes: 新增 `/report-center` 页面，读取本机 processed records，展示 `报表中心 records`、导入来源、报表分区、模块成果和最近批次；侧边栏 `结算复盘 > 报表中心` 改为真实入口，不生成生产报表或导出文件。
+
+- task_id: `F133`
+- source_ids:
+  - `R190`
+- story_ids:
+  - `US202`
+- action: 完成供应商复盘本机只读汇总预览。
+- status: `done`
+- notes: 新增 `/supplier-review` 页面，读取本机 processed records，展示 `供应商复盘 records`、供应商覆盖、履约覆盖、排班覆盖和供应商主数据样本；侧边栏 `结算复盘 > 供应商复盘` 改为真实入口，不做供应商考核写回、账单金额或锁账。
+
+- task_id: `Q059`
+- source_ids:
+  - `R191`
+- story_ids:
+  - `US203`
+- action: 收口报表中心与供应商复盘 QA。
+- status: `done`
+- notes: 模型测试 71 条通过，E2E smoke 5 条通过并覆盖导入本机 CSV 后 `/report-center` 与 `/supplier-review` 的 records 摘要、导航链接和 `结算锁账` 开发中边界；最终 check 通过。

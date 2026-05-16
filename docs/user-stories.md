@@ -3599,7 +3599,7 @@ acceptance:
   - "页面读取 processed records，并展示 `报表中心 records`、导入覆盖、模块成果和本机边界。"
   - "`结算复盘 > 报表中心` 链接到 `/report-center`。"
   - "本批不做导出、生产报表、结算公式、收费因子、审批、批量、数据库或真实集成。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US202 - Supplier review local preview
@@ -3619,7 +3619,7 @@ acceptance:
   - "`结算复盘 > 供应商复盘` 链接到 `/supplier-review`。"
   - "结算锁账继续显示 `开发中` 且不可点击。"
   - "本批不做供应商写回、账单金额、锁账、导出、审批、批量、数据库或真实集成。"
-status: "ready"
+status: "done"
 ```
 
 ### US203 - Report and supplier review QA
@@ -3637,5 +3637,5 @@ acceptance:
   - "E2E 导入本机 CSV 后，report-center 和 supplier-review 出现 records 摘要。"
   - "E2E 覆盖报表中心、供应商复盘导航可点击，结算锁账仍是 `开发中`。"
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-export、no-batch、no-lock、no-charge-factor。"
-status: "ready"
+status: "done"
 ```

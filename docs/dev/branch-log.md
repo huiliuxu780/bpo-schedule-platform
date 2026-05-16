@@ -1520,3 +1520,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F132-F133-Q059 Report Center And Supplier Review Local Preview
+
+- branch_name: `codex/f-batch-020-reporting-vendor-review`
+- base_main_commit: `fe5ab229df3428da02ea1edd40a56ae9ab0c4d97`
+- remote_status: `local continuation branch created from pushed codex/f-batch-019-settlement-preview because PM asked to keep filling planned functions`
+- scope: report-center local read-only page, supplier-review local read-only page, settlement review navigation entries, imported records reporting/vendor review summaries, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/report-center/**`, `app/supplier-review/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `scripts/tests/**`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production report generation, production settlement formula, charge factor, bill amount, lock, or supplier writeback files.
+- scope_diff_check: `app/report-center/page.tsx`, `app/supplier-review/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeReportCenterRecords` was missing; model tests then passed with 71 tests; typecheck and lint passed; frontend `/report-center` and `/supplier-review` returned 200; first two E2E runs exposed over-broad heading/text locators caused by duplicate visible copy, then `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 5 tests and verified report-center/supplier-review records plus settlement sidebar boundaries; `BPO_WEB_URL=http://localhost:3015/dashboard BPO_API_BASE_URL=http://127.0.0.1:8000 bash scripts/smoke-demo.sh` passed; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
+- local_commit_sha: `9db94d252013b889dc20e035e6dcc313ad8ae637`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

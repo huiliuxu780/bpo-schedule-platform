@@ -2070,6 +2070,34 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-17 - Report Center And Supplier Review Local Preview
+
+#### 审计结论
+
+- `F132/F133/Q059/US201-US203` 已开放 `结算复盘 > 报表中心` 和 `结算复盘 > 供应商复盘`：侧边栏链接分别指向 `/report-center` 和 `/supplier-review`，不再是 dashboard 占位。
+- `/report-center` 读取本机 processed records，展示 `报表中心 records`、导入来源、报表分区、模块成果和最近批次。
+- `/supplier-review` 读取本机 processed records，展示 `供应商复盘 records`、供应商覆盖、履约覆盖、排班覆盖和供应商主数据样本。
+- `结算锁账` 仍保持 `开发中` 且不可点击。
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、自动排班、生产结算公式、收费因子、锁账、账单金额或供应商考核写回。
+
+#### 风险
+
+- 当前报表中心和供应商复盘只是本机只读预览入口，不等同于生产报表生成、导出、供应商考核写回、结算金额或锁账能力。
+- processed records 仍来自本机 process-memory；服务重启后清空，符合当前本机演示边界。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，71 个模型/源码断言测试通过，包含报表中心和供应商复盘 helper 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖 report-center/supplier-review records 摘要、两项导航链接和 `结算锁账` 开发中边界。
+- `BPO_WEB_URL=http://localhost:3015/dashboard BPO_API_BASE_URL=http://127.0.0.1:8000 bash scripts/smoke-demo.sh`：通过，backend health 与 dashboard reachable。
+- `curl -fsS http://localhost:3015/report-center`：通过，新增页面可返回 HTML。
+- `curl -fsS http://localhost:3015/supplier-review`：通过，新增页面可返回 HTML。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

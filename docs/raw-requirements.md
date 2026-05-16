@@ -2142,8 +2142,8 @@ description: "报表中心需要开放一个本机只读汇总页，读取已导
 source: "PM approved continuation on 2026-05-17: 报表中心/供应商复盘只读汇总"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做 `/report-center` 本机只读报表汇总；不做导出、生产报表、结算公式、收费因子、审批、批量、数据库或真实集成。"
+status: "done"
+notes: "已新增 `/report-center` 本机只读报表汇总页，读取 processed records 并展示报表中心 records、导入覆盖、模块成果、最近批次和边界；不做导出、生产报表、结算公式、收费因子、审批、批量、数据库或真实集成。"
 ```
 
 ### R190 - supplier review local preview
@@ -2155,8 +2155,8 @@ description: "供应商复盘需要开放一个本机只读汇总页，读取供
 source: "PM approved continuation on 2026-05-17: 报表中心/供应商复盘只读汇总"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "本批只做 `/supplier-review` 本机只读供应商复盘；不做供应商写回、账单金额、锁账、导出、审批、批量、数据库或真实集成。"
+status: "done"
+notes: "已新增 `/supplier-review` 本机只读供应商复盘页，读取 processed records 并展示供应商复盘 records、供应商覆盖、履约覆盖、排班覆盖和边界；不做供应商写回、账单金额、锁账、导出、审批、批量、数据库或真实集成。"
 ```
 
 ### R191 - report and supplier review QA
@@ -2168,6 +2168,6 @@ description: "报表中心和供应商复盘开放后，需要补充 E2E 证据�
 source: "F132/F133 report center and supplier review local preview on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到数据库、真实集成、审批、导出、批量、生产结算公式、锁账、供应商考核写回或收费因子。"
+status: "done"
+notes: "E2E 已覆盖导入本机 CSV 后 report-center 和 supplier-review 出现 records 摘要，并确认报表中心/供应商复盘导航可点击、结算锁账仍为开发中；QA 不扩大到数据库、真实集成、审批、导出、批量、生产结算公式、锁账、供应商考核写回或收费因子。"
 ```

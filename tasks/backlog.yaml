@@ -6931,7 +6931,7 @@ tasks:
   - id: F132
     title: "报表中心本机只读汇总预览"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/report-center/**"
@@ -6965,7 +6965,7 @@ tasks:
   - id: F133
     title: "供应商复盘本机只读汇总预览"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/report-center/**"
@@ -6999,7 +6999,7 @@ tasks:
   - id: Q059
     title: "报表中心与供应商复盘 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/report-center/**"
