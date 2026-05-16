@@ -92,7 +92,7 @@ const nav: NavGroup[] = [
       { title: "CORN 状态日志", development: true },
       { title: "字段映射", development: true },
       { title: "接口集成", development: true },
-      { title: "数据质量", development: true },
+      { title: "数据质量", href: "/data-quality", activeMatch: "exact", tag: "P1" },
     ],
   },
   {

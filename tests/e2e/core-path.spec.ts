@@ -343,6 +343,21 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     adherenceMain.getByRole("heading", { name: "本机遵守率预览样本" }),
   ).toBeVisible()
+
+  await page.goto("/data-quality")
+  const dataQualityMain = page.getByRole("main")
+  await expect(
+    dataQualityMain.locator("h1", { hasText: "数据质量" }),
+  ).toBeVisible()
+  await expect(
+    dataQualityMain.getByText(/数据质量 records \d+ 行/),
+  ).toBeVisible()
+  await expect(dataQualityMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+  await expect(dataQualityMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
+  await expect(dataQualityMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
+  await expect(
+    dataQualityMain.getByRole("heading", { name: "本机质量预览明细" }),
+  ).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -377,6 +392,18 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(
     sidebar.getByRole("link", { name: /文件导入/ }),
   ).toHaveAttribute("href", "/demo-imports")
+
+  await expect(
+    sidebar.getByRole("link", { name: /数据质量/ }),
+  ).toHaveAttribute("href", "/data-quality")
+
+  const fieldMappingItem = sidebar
+    .locator('[data-development-nav-item="true"]')
+    .filter({ hasText: "字段映射" })
+
+  await expect(fieldMappingItem).toBeVisible()
+  await expect(fieldMappingItem).toHaveAttribute("aria-disabled", "true")
+  await expect(fieldMappingItem.getByText("开发中")).toBeVisible()
 
   await sidebar.getByRole("button", { name: "结算复盘" }).click()
   const settlementItem = sidebar

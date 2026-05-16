@@ -108,6 +108,23 @@ export type AdherenceMonitoringRecordsPreview = {
   statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "本机预览"
 }
 
+export type DataQualityRecordsPreview = {
+  importedSources: number
+  importedRows: number
+  staffRows: number
+  statusRows: number
+  loginRows: number
+  sampleRows: number
+  latestBatch: string
+  latestSource: string
+  statusLabel:
+    | "等待导入"
+    | "缺少主数据"
+    | "缺少状态数据"
+    | "缺少登录数据"
+    | "本机预览"
+}
+
 export type DashboardFilterState = {
   date: string
   site: string
@@ -555,6 +572,57 @@ export function summarizeAdherenceMonitoringRecords(
         : loginRows === 0
           ? "缺少登录数据"
           : "本机预览",
+  }
+}
+
+export function summarizeDataQualityRecords(
+  records: DashboardImportRecordSummary[]
+): DataQualityRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedSources: 0,
+      importedRows: 0,
+      staffRows: 0,
+      statusRows: 0,
+      loginRows: 0,
+      sampleRows: 0,
+      latestBatch: "暂无数据质量 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const staffRecord = records.find((record) => record.kind === "staff_master")
+  const statusRecord = records.find((record) => record.kind === "status_log")
+  const loginRecord = records.find((record) => record.kind === "login_log")
+  const staffRows = staffRecord?.total_rows ?? 0
+  const statusRows = statusRecord?.total_rows ?? 0
+  const loginRows = loginRecord?.total_rows ?? 0
+  const sampleRows = records.reduce(
+    (total, record) => total + record.sample_rows.length,
+    0
+  )
+
+  return {
+    importedSources: records.length,
+    importedRows: staffRows + statusRows + loginRows,
+    staffRows,
+    statusRows,
+    loginRows,
+    sampleRows,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      staffRows === 0
+        ? "缺少主数据"
+        : statusRows === 0
+          ? "缺少状态数据"
+          : loginRows === 0
+            ? "缺少登录数据"
+            : "本机预览",
   }
 }
 
