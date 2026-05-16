@@ -304,6 +304,18 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(statusTraceMain.getByText("状态分布")).toBeVisible()
   await expect(statusTraceMain.getByText("状态日志样本")).toBeVisible()
 
+  await page.goto("/corn-status-log")
+  const cornStatusMain = page.getByRole("main")
+  await expect(
+    cornStatusMain.locator("h1", { hasText: "CORN 状态日志" }),
+  ).toBeVisible()
+  await expect(
+    cornStatusMain.getByText(/CORN 状态日志 records \d+ 行/),
+  ).toBeVisible()
+  await expect(cornStatusMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
+  await expect(cornStatusMain.getByText("状态日志分布")).toBeVisible()
+  await expect(cornStatusMain.getByText("CORN 状态日志样本")).toBeVisible()
+
   await page.goto("/fulfillment-exceptions")
   const exceptionMain = page.getByRole("main")
   await expect(
@@ -396,6 +408,10 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(
     sidebar.getByRole("link", { name: /数据质量/ }),
   ).toHaveAttribute("href", "/data-quality")
+
+  await expect(
+    sidebar.getByRole("link", { name: /CORN 状态日志/ }),
+  ).toHaveAttribute("href", "/corn-status-log")
 
   const fieldMappingItem = sidebar
     .locator('[data-development-nav-item="true"]')

@@ -15,6 +15,7 @@ import {
   summarizeDashboardImportKpiPreview,
   summarizeDashboardImportRecords,
   summarizeAgentStatusTraceRecords,
+  summarizeCornStatusLogRecords,
   summarizeAdherenceMonitoringRecords,
   summarizeDataQualityRecords,
   summarizeFulfillmentExceptionRecords,
@@ -247,6 +248,40 @@ test("agent status trace records summarize imported status coverage", () => {
     latestBatch: "status_log-20260516094000-001",
     latestSource: "坐席状态数据",
     statusLabel: "已接入",
+  });
+});
+
+test("corn status log records summarize local status coverage", () => {
+  const summary = summarizeCornStatusLogRecords([
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 5,
+      latest_batch_id: "status_log-20260516094000-001",
+      updated_at: "2026-05-16T09:40:00+08:00",
+      sample_rows: [
+        { staff_id: "A001", status: "在线" },
+        { staff_id: "A002", status: "离线" },
+        { staff_id: "A003", status: "在线" },
+      ],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 2,
+      latest_batch_id: "login_log-20260516095000-001",
+      updated_at: "2026-05-16T09:50:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    statusRows: 5,
+    statusTypes: 2,
+    sampleRows: 3,
+    latestBatch: "status_log-20260516094000-001",
+    latestSource: "坐席状态数据",
+    statusLabel: "本机预览",
   });
 });
 

@@ -78,6 +78,15 @@ export type AgentStatusTraceRecordsPreview = {
   statusLabel: "等待导入" | "已接入"
 }
 
+export type CornStatusLogRecordsPreview = {
+  statusRows: number
+  statusTypes: number
+  sampleRows: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "本机预览"
+}
+
 export type FulfillmentExceptionRecordsPreview = {
   importedRows: number
   statusRows: number
@@ -424,6 +433,36 @@ export function summarizeAgentStatusTraceRecords(
     latestBatch: statusRecord.latest_batch_id,
     latestSource: statusRecord.source_name,
     statusLabel: "已接入",
+  }
+}
+
+export function summarizeCornStatusLogRecords(
+  records: DashboardImportRecordSummary[]
+): CornStatusLogRecordsPreview {
+  const statusRecord = records.find((record) => record.kind === "status_log")
+
+  if (!statusRecord) {
+    return {
+      statusRows: 0,
+      statusTypes: 0,
+      sampleRows: 0,
+      latestBatch: "暂无 CORN 状态日志 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const statusTypes = new Set(
+    statusRecord.sample_rows.map((row) => row.status?.trim() || "未标注")
+  ).size
+
+  return {
+    statusRows: statusRecord.total_rows,
+    statusTypes,
+    sampleRows: statusRecord.sample_rows.length,
+    latestBatch: statusRecord.latest_batch_id,
+    latestSource: statusRecord.source_name,
+    statusLabel: "本机预览",
   }
 }
 
