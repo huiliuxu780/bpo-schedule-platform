@@ -61,6 +61,15 @@ export type DashboardImportRecordsPreview = {
   statusLabel: "等待导入" | "已处理"
 }
 
+export type FulfillmentImportRecordsPreview = {
+  importedRows: number
+  statusRows: number
+  loginRows: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "可核验"
+}
+
 export type DashboardFilterState = {
   date: string
   site: string
@@ -279,6 +288,57 @@ export function summarizeDashboardImportRecords(
     statusRows: rowsByKind.status_log,
     loginRows: rowsByKind.login_log,
     statusLabel: "已处理",
+  }
+}
+
+export function summarizeFulfillmentImportRecords(
+  records: DashboardImportRecordSummary[]
+): FulfillmentImportRecordsPreview {
+  const fulfillmentRecords = records.filter(
+    (record) => record.kind === "status_log" || record.kind === "login_log"
+  )
+
+  if (fulfillmentRecords.length === 0) {
+    return {
+      importedRows: 0,
+      statusRows: 0,
+      loginRows: 0,
+      latestBatch: "暂无履约 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = fulfillmentRecords.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const rowsByKind = fulfillmentRecords.reduce(
+    (summary, record) => {
+      if (record.kind === "status_log") {
+        summary.status_log = record.total_rows
+      } else if (record.kind === "login_log") {
+        summary.login_log = record.total_rows
+      }
+
+      return summary
+    },
+    { status_log: 0, login_log: 0 }
+  )
+  const statusRows = rowsByKind.status_log
+  const loginRows = rowsByKind.login_log
+
+  return {
+    importedRows: statusRows + loginRows,
+    statusRows,
+    loginRows,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      statusRows === 0
+        ? "缺少状态数据"
+        : loginRows === 0
+          ? "缺少登录数据"
+          : "可核验",
   }
 }
 

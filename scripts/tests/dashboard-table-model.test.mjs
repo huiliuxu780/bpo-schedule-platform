@@ -14,6 +14,7 @@ import {
   summarizeHeatmapRows,
   summarizeDashboardImportKpiPreview,
   summarizeDashboardImportRecords,
+  summarizeFulfillmentImportRecords,
   summarizeSchedulePlanRows,
   summarizeScheduleRiskRows,
   summarizeSyncStatusRows,
@@ -170,6 +171,44 @@ test("dashboard import records preview summarizes processed rows", () => {
     statusRows: 0,
     loginRows: 1,
     statusLabel: "已处理",
+  });
+});
+
+test("fulfillment import records summarize status and login coverage", () => {
+  const summary = summarizeFulfillmentImportRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 2,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", name: "张敏" }],
+    },
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 3,
+      latest_batch_id: "status_log-20260516094000-001",
+      updated_at: "2026-05-16T09:40:00+08:00",
+      sample_rows: [{ staff_id: "A001", status: "在线" }],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 1,
+      latest_batch_id: "login_log-20260516095000-001",
+      updated_at: "2026-05-16T09:50:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedRows: 4,
+    statusRows: 3,
+    loginRows: 1,
+    latestBatch: "login_log-20260516095000-001",
+    latestSource: "登录数据",
+    statusLabel: "可核验",
   });
 });
 

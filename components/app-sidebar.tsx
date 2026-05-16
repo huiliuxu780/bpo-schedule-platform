@@ -65,7 +65,7 @@ const nav: NavGroup[] = [
     title: "履约监控",
     icon: ClipboardCheck,
     items: [
-      { title: "工时核验", development: true },
+      { title: "工时核验", href: "/fulfillment-monitoring", activeMatch: "exact", tag: "P1" },
       { title: "坐席状态轨迹", development: true },
       { title: "异常管理", development: true },
       { title: "实时遵守率", development: true },

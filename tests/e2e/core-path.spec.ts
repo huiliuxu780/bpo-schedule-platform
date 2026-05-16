@@ -208,6 +208,34 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(importMain.getByText("失败 0 行")).toBeVisible()
   await expect(importMain.getByText("已同步").first()).toBeVisible()
 
+  const statusImportForm = importMain.locator(
+    'form:has(input[name="kind"][value="status_log"])',
+  )
+  await statusImportForm.locator('input[type="file"]').setInputFiles({
+    name: "status-log-demo.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(
+      "staff_id,date,start_time,end_time,status\nA009,2026-05-11,09:00,12:00,在线",
+    ),
+  })
+  await statusImportForm.getByRole("button", { name: "导入坐席状态数据" }).click()
+  await expect(page).toHaveURL(/\/demo-imports\?.*kind=status_log/)
+  await expect(importMain.getByText("成功 1 行")).toBeVisible()
+
+  const loginImportForm = importMain.locator(
+    'form:has(input[name="kind"][value="login_log"])',
+  )
+  await loginImportForm.locator('input[type="file"]').setInputFiles({
+    name: "login-log-demo.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(
+      "staff_id,date,planned_login,actual_login,actual_logout,online_minutes\nA009,2026-05-11,09:00,09:08,17:30,510",
+    ),
+  })
+  await loginImportForm.getByRole("button", { name: "导入登录数据" }).click()
+  await expect(page).toHaveURL(/\/demo-imports\?.*kind=login_log/)
+  await expect(importMain.getByText("成功 1 行")).toBeVisible()
+
   await page.goto("/dashboard")
   const dashboardMain = page.getByRole("main")
 
@@ -250,23 +278,40 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     unavailabilityMain.getByText(/不可用核对 records \d+ 行/),
   ).toBeVisible()
   await expect(unavailabilityMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+
+  await page.goto("/fulfillment-monitoring")
+  const fulfillmentMain = page.getByRole("main")
+  await expect(
+    fulfillmentMain.locator("h1", { hasText: "履约监控" }),
+  ).toBeVisible()
+  await expect(
+    fulfillmentMain.getByText(/履约核验 records \d+ 行/),
+  ).toBeVisible()
+  await expect(fulfillmentMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
+  await expect(fulfillmentMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
+  await expect(fulfillmentMain.getByText("状态日志样本")).toBeVisible()
+  await expect(fulfillmentMain.getByText("登录数据样本")).toBeVisible()
 })
 
-test("unavailable sidebar modules are marked as development", async ({ page }) => {
+test("sidebar distinguishes opened and development modules", async ({ page }) => {
   await page.goto("/dashboard")
   await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
 
   const sidebar = page.locator("aside")
   await sidebar.getByRole("button", { name: "履约监控" }).click()
 
-  const workHoursItem = sidebar
-    .locator('[data-development-nav-item="true"]')
-    .filter({ hasText: "工时核验" })
+  await expect(
+    sidebar.getByRole("link", { name: /工时核验/ }),
+  ).toHaveAttribute("href", "/fulfillment-monitoring")
 
-  await expect(workHoursItem).toBeVisible()
-  await expect(workHoursItem).toHaveAttribute("aria-disabled", "true")
-  await expect(workHoursItem.getByText("开发中")).toBeVisible()
-  await expect(sidebar.getByRole("link", { name: /工时核验/ })).toHaveCount(0)
+  const statusTrailItem = sidebar
+    .locator('[data-development-nav-item="true"]')
+    .filter({ hasText: "坐席状态轨迹" })
+
+  await expect(statusTrailItem).toBeVisible()
+  await expect(statusTrailItem).toHaveAttribute("aria-disabled", "true")
+  await expect(statusTrailItem.getByText("开发中")).toBeVisible()
+  await expect(sidebar.getByRole("link", { name: /坐席状态轨迹/ })).toHaveCount(0)
   await expect(page).toHaveURL(/\/dashboard(?:\?.*)?$/)
 
   await sidebar.getByRole("button", { name: "数据与集成" }).click()
