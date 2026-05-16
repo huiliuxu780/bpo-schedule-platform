@@ -2922,7 +2922,7 @@ acceptance:
   - "页面读取 processed records，并展示 `履约核验 records` 摘要。"
   - "页面明确展示状态数据和登录数据覆盖行数。"
   - "不做生产遵守率公式、不接数据库、不做真实集成、审批、导出、批量或结算。"
-status: "ready"
+status: "done"
 ```
 
 ### US165 - Work-hours verification navigation entry
@@ -2940,7 +2940,7 @@ acceptance:
   - "`履约监控 > 工时核验` 链接到 `/fulfillment-monitoring`。"
   - "其他未实现履约监控入口继续显示 `开发中` 且不可点击。"
   - "导航 active 状态能识别 `/fulfillment-monitoring`。"
-status: "ready"
+status: "done"
 ```
 
 ### US166 - Fulfillment monitoring imported records QA
@@ -2958,5 +2958,5 @@ acceptance:
   - "E2E 导入坐席状态数据和登录数据后，fulfillment-monitoring 出现 `履约核验 records` 摘要。"
   - "E2E 确认工时核验是可点击 link，坐席状态轨迹仍是 `开发中`。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
-status: "ready"
+status: "done"
 ```

@@ -1316,3 +1316,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F120-Q047 Fulfillment Monitoring Imported Records
+
+- branch_name: `codex/f-batch-008-fulfillment-monitoring-imports`
+- base_main_commit: `f92f466`
+- remote_status: `local continuation branch created from pushed codex/f-batch-007-import-records-risk-unavailability because main has not integrated the local demo chain yet`
+- scope: first fulfillment-monitoring local page, work-hours navigation entry, status/login processed records summary, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/fulfillment-monitoring/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `app/fulfillment-monitoring/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; model tests passed with 55 tests; typecheck passed; first E2E attempt failed because the local frontend 3015 server was not running, second attempt exposed a stale/unreachable backend 8000 import API, then backend/frontend were restarted and `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed with 5 tests and verified fulfillment-monitoring records summaries.
+- local_commit_sha: `1a71fdc`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

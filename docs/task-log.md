@@ -1454,3 +1454,23 @@
 - action: 收口风险与不可用 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖导入坐席主数据后 dashboard、shift-details、schedule-risks 与 unavailability 均出现 records 摘要；模型测试 54 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F120`
+- source_ids:
+  - `R152`
+  - `R153`
+- story_ids:
+  - `US164`
+  - `US165`
+- action: 完成履约监控本机 records 最小切片。
+- status: `done`
+- notes: 新增 `/fulfillment-monitoring` 页面，读取本机状态数据和登录数据 processed records，展示 `履约核验 records`、状态/登录覆盖和样本；侧边栏 `工时核验` 改为真实入口，其他未实现履约项继续 `开发中`。
+
+- task_id: `Q047`
+- source_ids:
+  - `R154`
+- story_ids:
+  - `US166`
+- action: 收口履约监控 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖导入状态/登录数据后进入履约监控，确认 records 摘要、状态数据、登录数据和样本可见；模型测试 55 条通过，浏览器 smoke 5 条通过。

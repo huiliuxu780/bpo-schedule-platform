@@ -6174,7 +6174,7 @@ tasks:
   - id: F120
     title: "履约监控读取本机状态与登录 records"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/fulfillment-monitoring/**"
@@ -6206,7 +6206,7 @@ tasks:
   - id: Q047
     title: "履约监控 records 读取 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/fulfillment-monitoring/**"

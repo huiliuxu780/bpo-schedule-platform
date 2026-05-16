@@ -1803,6 +1803,28 @@
 - `git diff --check`：通过。
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 
+## 2026-05-16 - Fulfillment Monitoring Imported Records
+
+#### 审计结论
+
+- `F120/Q047/US164-US166` 已开放第一个履约监控最小切片：`履约监控 > 工时核验` 链接到 `/fulfillment-monitoring`，不再是占位。
+- 新页面读取既有 processed records，并展示 `履约核验 records`、状态数据、登录数据、最近批次和样本行，证明状态/登录导入结果进入现有履约模块。
+- 其他未实现履约入口仍显示 `开发中` 且不可点击，避免把未完成能力伪装为已开放。
+- 本轮没有新增后端契约，没有修改 backend，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子。
+
+#### 风险
+
+- 当前只是本机履约核验覆盖展示，不等同于生产遵守率、异常处罚、薪资结算或供应商考核。
+- 状态/登录 records 仍来自本机进程内存，服务重启后清空；这符合当前本机演示边界。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖导入状态/登录数据后履约监控 records 摘要。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，55 个模型/源码断言测试通过。
+- `npm run typecheck`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

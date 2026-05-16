@@ -26,7 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
 - Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
-- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, and unavailability module pages.
+- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, unavailability, and fulfillment monitoring module pages.
 
 The project does not contain:
 
@@ -121,6 +121,7 @@ Current invariants:
 - `F118/Q044/US155-US157` closed the navigation truthfulness slice: unopened sidebar modules now show `开发中` and cannot silently route to dashboard placeholders, while opened modules remain navigable.
 - `B009/Q045/US158-US160` closed the processed records handoff slice: local imported staff/status/login rows are exposed through a localhost-only API and consumed by dashboard and shift-details.
 - `F119/Q046/US161-US163` extended processed records consumption into risk and unavailability pages: schedule-risks and unavailability now show records summaries after local import, and current queue returned to empty after QA closeout.
+- `F120/Q047/US164-US166` opened the first fulfillment monitoring slice: `工时核验` now links to `/fulfillment-monitoring`, which reads local status/login records and shows履约核验 coverage without production formulas; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

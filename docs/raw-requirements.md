@@ -1661,8 +1661,8 @@ description: "履约监控需要先做一个本机最小切片，读取已导入
 source: "PM continuation on 2026-05-16: 持续补完功能，演示基于现有导入结果"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只做本机 records 读取和展示；不做生产遵守率公式、数据库、真实集成、审批、导出、批量或结算。"
+status: "done"
+notes: "已新增 `/fulfillment-monitoring`，读取状态和登录 processed records 并展示本机履约核验摘要；不做生产遵守率公式、数据库、真实集成、审批、导出、批量或结算。"
 ```
 
 ### R153 - work-hours verification navigation entry
@@ -1674,8 +1674,8 @@ description: "当履约监控最小页面完成后，侧边栏 `工时核验` �
 source: "F120 fulfillment monitoring minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只开放一个已实现入口；不把其他未实现模块伪装为已开放。"
+status: "done"
+notes: "`工时核验` 已链接到 `/fulfillment-monitoring`；其他未实现履约入口继续显示 `开发中`。"
 ```
 
 ### R154 - fulfillment monitoring imported records QA
@@ -1687,6 +1687,6 @@ description: "履约监控读取状态/登录 records 后，需要补充浏览�
 source: "F120 fulfillment monitoring minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 只验证本机 records 进入履约监控页面，不扩大到生产公式、数据库、真实集成或生产工作流。"
+status: "done"
+notes: "E2E 已覆盖导入状态和登录数据后履约监控出现 records 摘要；QA 不扩大到生产公式、数据库、真实集成或生产工作流。"
 ```
