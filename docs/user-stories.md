@@ -67,6 +67,61 @@ acceptance:
 status: "done"
 ```
 
+### US179 - Data quality reads imported records
+
+```yaml
+id: US179
+requirement_ids:
+  - R167
+module: "数据与集成"
+role: "演示人员"
+story: "作为演示人员，我希望数据质量页能展示本机导入的主数据、状态和登录 records 覆盖，这样可以演示导入结果已经进入数据治理入口。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/data-quality` 页面。"
+  - "页面读取 processed records 中的 staff_master、status_log 和 login_log，并展示 `数据质量 records` 摘要。"
+  - "页面展示三类数据行数、样本覆盖、最近批次和本机质量预览状态。"
+  - "不做生产数据质量规则、自动修复、字段映射写回、真实接口检查、跨系统对账、不接数据库、不做真实集成、审批、导出、批量或结算。"
+status: "ready"
+```
+
+### US180 - Data quality navigation entry
+
+```yaml
+id: US180
+requirement_ids:
+  - R168
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏数据质量成为可点击入口，这样数据与集成导航不再保留该占位。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`数据与集成 > 数据质量` 链接到 `/data-quality`。"
+  - "页面和文案明确这是本机 records 质量预览，不是生产数据质量规则或真实接口检查。"
+  - "导航 active 状态能识别 `/data-quality`。"
+status: "ready"
+```
+
+### US181 - Data quality imported records QA
+
+```yaml
+id: US181
+requirement_ids:
+  - R169
+module: "数据与集成验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入三类 CSV 后进入数据质量页，这样能证明该入口读到了导入处理结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席主数据、状态数据和登录数据后，data-quality 出现 `数据质量 records` 摘要。"
+  - "E2E 确认数据质量是可点击 link。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-quality-rule、no-auto-fix、no-field-mapping-writeback。"
+status: "ready"
+```
+
 ### US177 - Adherence monitoring navigation entry
 
 ```yaml

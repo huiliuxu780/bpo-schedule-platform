@@ -1846,3 +1846,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入状态/登录数据后进入 adherence-monitoring 并看到遵守率预览 records 摘要；QA 不扩大到生产公式、实时流、状态写回、数据库或真实集成。"
 ```
+
+### R167 - data quality reads imported records
+
+```yaml
+id: R167
+module: "数据与集成"
+description: "数据质量需要做本机预览最小切片，读取已导入的坐席主数据、坐席状态数据和登录数据 records，展示覆盖、样本和基础质量预览状态。"
+source: "PM continuation on 2026-05-16: 持续补完未开放功能"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只做本机 records 覆盖、样本和基础缺口提示；不做生产数据质量规则、自动修复、字段映射写回、真实接口检查、跨系统对账、数据库或真实集成。"
+```
+
+### R168 - data quality navigation entry
+
+```yaml
+id: R168
+module: "导航可信度"
+description: "数据质量页面完成后，侧边栏 `数据质量` 应从 `开发中` 改为真实可点击入口。"
+source: "F125 data quality minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只开放本机预览入口；不声称生产数据质量规则、真实接口检查或跨系统对账能力已经完成。"
+```
+
+### R169 - data quality imported records QA
+
+```yaml
+id: R169
+module: "数据与集成验收"
+description: "数据质量本机预览读取 staff_master/status_log/login_log records 后，需要补充浏览器 smoke 证据，证明导入后现有数据与集成入口能看到 records 覆盖。"
+source: "F125 data quality minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只验证本机 records 进入数据质量预览页面，不扩大到生产质量规则、自动修复、字段映射写回、数据库或真实集成。"
+```
