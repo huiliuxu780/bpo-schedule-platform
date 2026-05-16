@@ -315,6 +315,20 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(exceptionMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
   await expect(exceptionMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
   await expect(exceptionMain.getByText("本机异常线索样本")).toBeVisible()
+
+  await page.goto("/exception-review")
+  const reviewMain = page.getByRole("main")
+  await expect(
+    reviewMain.locator("h1", { hasText: "异常复核" }),
+  ).toBeVisible()
+  await expect(
+    reviewMain.getByText(/复核队列 records \d+ 行/),
+  ).toBeVisible()
+  await expect(reviewMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
+  await expect(reviewMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
+  await expect(
+    reviewMain.getByRole("heading", { name: "只读复核队列" }),
+  ).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -344,6 +358,10 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(adherenceItem).toHaveAttribute("aria-disabled", "true")
   await expect(adherenceItem.getByText("开发中")).toBeVisible()
   await expect(sidebar.getByRole("link", { name: /实时遵守率/ })).toHaveCount(0)
+
+  await expect(
+    sidebar.getByRole("link", { name: /异常复核/ }),
+  ).toHaveAttribute("href", "/exception-review")
   await expect(page).toHaveURL(/\/dashboard(?:\?.*)?$/)
 
   await sidebar.getByRole("button", { name: "数据与集成" }).click()

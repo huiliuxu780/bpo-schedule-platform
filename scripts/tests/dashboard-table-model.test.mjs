@@ -16,6 +16,7 @@ import {
   summarizeDashboardImportRecords,
   summarizeAgentStatusTraceRecords,
   summarizeFulfillmentExceptionRecords,
+  summarizeExceptionReviewRecords,
   summarizeFulfillmentImportRecords,
   summarizeSchedulePlanRows,
   summarizeScheduleRiskRows,
@@ -275,6 +276,40 @@ test("fulfillment exception records summarize imported review leads", () => {
     latestBatch: "login_log-20260516095000-001",
     latestSource: "登录数据",
     statusLabel: "可复核",
+  });
+});
+
+test("exception review records summarize read-only review queue", () => {
+  const summary = summarizeExceptionReviewRecords([
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 4,
+      latest_batch_id: "status_log-20260516094000-001",
+      updated_at: "2026-05-16T09:40:00+08:00",
+      sample_rows: [
+        { staff_id: "A001", status: "离线" },
+        { staff_id: "A002", status: "在线" },
+      ],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 3,
+      latest_batch_id: "login_log-20260516095000-001",
+      updated_at: "2026-05-16T09:50:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedRows: 7,
+    statusRows: 4,
+    loginRows: 3,
+    reviewQueueRows: 2,
+    latestBatch: "login_log-20260516095000-001",
+    latestSource: "登录数据",
+    statusLabel: "只读待复核",
   });
 });
 

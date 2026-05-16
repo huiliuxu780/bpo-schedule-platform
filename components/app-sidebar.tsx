@@ -69,7 +69,7 @@ const nav: NavGroup[] = [
       { title: "坐席状态轨迹", href: "/agent-status-trace", activeMatch: "exact", tag: "P1" },
       { title: "异常管理", href: "/fulfillment-exceptions", activeMatch: "exact", tag: "P1" },
       { title: "实时遵守率", development: true },
-      { title: "异常复核", development: true },
+      { title: "异常复核", href: "/exception-review", activeMatch: "exact", tag: "P1" },
     ],
   },
   {

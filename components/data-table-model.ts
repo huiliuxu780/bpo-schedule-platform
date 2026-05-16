@@ -88,6 +88,16 @@ export type FulfillmentExceptionRecordsPreview = {
   statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "可复核"
 }
 
+export type ExceptionReviewRecordsPreview = {
+  importedRows: number
+  statusRows: number
+  loginRows: number
+  reviewQueueRows: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "只读待复核"
+}
+
 export type DashboardFilterState = {
   date: string
   site: string
@@ -433,6 +443,57 @@ export function summarizeFulfillmentExceptionRecords(
         : loginRows === 0
           ? "缺少登录数据"
           : "可复核",
+  }
+}
+
+export function summarizeExceptionReviewRecords(
+  records: DashboardImportRecordSummary[]
+): ExceptionReviewRecordsPreview {
+  const fulfillmentRecords = records.filter(
+    (record) => record.kind === "status_log" || record.kind === "login_log"
+  )
+
+  if (fulfillmentRecords.length === 0) {
+    return {
+      importedRows: 0,
+      statusRows: 0,
+      loginRows: 0,
+      reviewQueueRows: 0,
+      latestBatch: "暂无复核队列 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = fulfillmentRecords.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const statusRecord = fulfillmentRecords.find(
+    (record) => record.kind === "status_log"
+  )
+  const loginRecord = fulfillmentRecords.find(
+    (record) => record.kind === "login_log"
+  )
+  const statusRows = statusRecord?.total_rows ?? 0
+  const loginRows = loginRecord?.total_rows ?? 0
+  const reviewQueueRows =
+    statusRows === 0 || loginRows === 0
+      ? 0
+      : Math.max(statusRecord?.sample_rows.length ?? 0, loginRecord?.sample_rows.length ?? 0)
+
+  return {
+    importedRows: statusRows + loginRows,
+    statusRows,
+    loginRows,
+    reviewQueueRows,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      statusRows === 0
+        ? "缺少状态数据"
+        : loginRows === 0
+          ? "缺少登录数据"
+          : "只读待复核",
   }
 }
 
