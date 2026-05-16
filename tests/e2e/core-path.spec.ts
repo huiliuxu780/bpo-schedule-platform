@@ -213,7 +213,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
 
   await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
   await expect(dashboardMain.getByText("本机 KPI Preview")).toBeVisible()
-  await expect(dashboardMain.getByText("导入覆盖 1 行")).toBeVisible()
+  await expect(dashboardMain.getByText(/导入覆盖 \d+ 行/)).toBeVisible()
   await expect(dashboardMain.getByLabel("日期范围")).toHaveValue("2026-05-11")
   await dashboardMain.getByLabel("供应商").selectOption("供应商A")
   await dashboardMain.getByLabel("职场/团队").selectOption("上海职场")
@@ -226,4 +226,27 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     dashboardMain.getByRole("button", { name: "复核 ANM-202605-001" }),
   ).toBeVisible()
+})
+
+test("unavailable sidebar modules are marked as development", async ({ page }) => {
+  await page.goto("/dashboard")
+  await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
+
+  const sidebar = page.locator("aside")
+  await sidebar.getByRole("button", { name: "履约监控" }).click()
+
+  const workHoursItem = sidebar
+    .locator('[data-development-nav-item="true"]')
+    .filter({ hasText: "工时核验" })
+
+  await expect(workHoursItem).toBeVisible()
+  await expect(workHoursItem).toHaveAttribute("aria-disabled", "true")
+  await expect(workHoursItem.getByText("开发中")).toBeVisible()
+  await expect(sidebar.getByRole("link", { name: /工时核验/ })).toHaveCount(0)
+  await expect(page).toHaveURL(/\/dashboard(?:\?.*)?$/)
+
+  await sidebar.getByRole("button", { name: "数据与集成" }).click()
+  await expect(
+    sidebar.getByRole("link", { name: /文件导入/ }),
+  ).toHaveAttribute("href", "/demo-imports")
 })

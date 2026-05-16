@@ -19,11 +19,12 @@ import { cn } from "@/lib/utils"
 
 type NavItem = {
   title: string
-  href: string
+  href?: string
   activeMatch?: "exact" | "prefix"
   active?: boolean
   badge?: string
   tag?: string
+  development?: boolean
 }
 
 type NavGroup = {
@@ -43,9 +44,9 @@ const nav: NavGroup[] = [
     icon: LayoutDashboard,
     items: [
       { title: "经营总览", href: "/dashboard", activeMatch: "exact" },
-      { title: "今日履约", href: "/dashboard" },
-      { title: "异常预警", href: "/dashboard", badge: "12" },
-      { title: "时段缺口热力图", href: "/dashboard" },
+      { title: "今日履约", development: true },
+      { title: "异常预警", development: true },
+      { title: "时段缺口热力图", development: true },
     ],
   },
   {
@@ -57,28 +58,28 @@ const nav: NavGroup[] = [
       { title: "风险提示", href: "/schedule-risks", activeMatch: "prefix" },
       { title: "班次明细", href: "/shift-details", activeMatch: "exact" },
       { title: "不可用管理", href: "/unavailability", activeMatch: "exact", tag: "P1" },
-      { title: "智能排班", href: "/schedule-plans", tag: "Beta" },
+      { title: "智能排班", development: true },
     ],
   },
   {
     title: "履约监控",
     icon: ClipboardCheck,
     items: [
-      { title: "工时核验", href: "/dashboard" },
-      { title: "坐席状态轨迹", href: "/dashboard" },
-      { title: "异常管理", href: "/dashboard", badge: "12" },
-      { title: "实时遵守率", href: "/dashboard", tag: "P1" },
-      { title: "异常复核", href: "/dashboard", tag: "P1" },
+      { title: "工时核验", development: true },
+      { title: "坐席状态轨迹", development: true },
+      { title: "异常管理", development: true },
+      { title: "实时遵守率", development: true },
+      { title: "异常复核", development: true },
     ],
   },
   {
     title: "结算复盘",
     icon: BarChart3,
     items: [
-      { title: "月度结算", href: "/dashboard" },
-      { title: "报表中心", href: "/dashboard" },
-      { title: "供应商复盘", href: "/dashboard", tag: "P1" },
-      { title: "结算锁账", href: "/dashboard", tag: "P1" },
+      { title: "月度结算", development: true },
+      { title: "报表中心", development: true },
+      { title: "供应商复盘", development: true },
+      { title: "结算锁账", development: true },
     ],
   },
   {
@@ -88,21 +89,21 @@ const nav: NavGroup[] = [
       { title: "数据源管理", href: "/demo-imports", activeMatch: "exact" },
       { title: "文件导入", href: "/demo-imports", activeMatch: "exact" },
       { title: "接入批次", href: "/demo-imports", activeMatch: "exact" },
-      { title: "CORN 状态日志", href: "/dashboard" },
-      { title: "字段映射", href: "/dashboard", tag: "P1" },
-      { title: "接口集成", href: "/dashboard", tag: "P1" },
-      { title: "数据质量", href: "/dashboard", tag: "P1" },
+      { title: "CORN 状态日志", development: true },
+      { title: "字段映射", development: true },
+      { title: "接口集成", development: true },
+      { title: "数据质量", development: true },
     ],
   },
   {
     title: "系统管理",
     icon: Settings,
     items: [
-      { title: "组织与人员", href: "/dashboard" },
-      { title: "供应商管理", href: "/dashboard" },
-      { title: "规则配置", href: "/dashboard" },
-      { title: "权限管理", href: "/dashboard", tag: "P1" },
-      { title: "操作审计", href: "/dashboard", tag: "P1" },
+      { title: "组织与人员", development: true },
+      { title: "供应商管理", development: true },
+      { title: "规则配置", development: true },
+      { title: "权限管理", development: true },
+      { title: "操作审计", development: true },
     ],
   },
 ]
@@ -129,6 +130,10 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   const pathname = usePathname()
   const isActiveItem = React.useCallback(
     (item: NavItem) => {
+      if (!item.href) {
+        return false
+      }
+
       if (item.activeMatch === "exact") {
         return pathname === item.href
       }
@@ -237,33 +242,70 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
             {!collapsed &&
             (expandedGroups.has(group.title) || group.title === activeGroupTitle) ? (
               <div className="mt-1 grid gap-1 pl-7">
-                {group.items.map((item) => (
-                  <Link
-                    key={item.title}
-                    href={item.href}
-                    className={cn(
-                      "grid min-h-8 grid-cols-[1fr_auto] items-center gap-2 rounded-md px-2 text-sm",
-                      isActiveItem(item)
+                {group.items.map((item) => {
+                  const itemClassName = cn(
+                    "grid min-h-8 grid-cols-[1fr_auto] items-center gap-2 rounded-md px-2 text-sm",
+                    item.development
+                      ? "cursor-not-allowed text-muted-foreground/60"
+                      : isActiveItem(item)
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                    )}
-                  >
-                    <span className="truncate">{item.title}</span>
-                    {item.badge ? (
-                      <Badge
-                        variant={item.active ? "secondary" : "outline"}
-                        className="h-5 px-1.5"
+                  )
+                  const content = (
+                    <>
+                      <span className="truncate">{item.title}</span>
+                      {item.development ? (
+                        <Badge
+                          variant="outline"
+                          className="h-5 border-dashed px-1.5 text-[10px] text-muted-foreground"
+                        >
+                          开发中
+                        </Badge>
+                      ) : null}
+                      {!item.development && item.badge ? (
+                        <Badge
+                          variant={item.active ? "secondary" : "outline"}
+                          className="h-5 px-1.5"
+                        >
+                          {item.badge}
+                        </Badge>
+                      ) : null}
+                      {!item.development && item.tag ? (
+                        <Badge variant="outline" className="h-5 px-1.5">
+                          {item.tag}
+                        </Badge>
+                      ) : null}
+                    </>
+                  )
+
+                  if (item.development) {
+                    return (
+                      <div
+                        key={item.title}
+                        aria-disabled="true"
+                        data-development-nav-item="true"
+                        title={`${item.title} 开发中`}
+                        className={itemClassName}
                       >
-                        {item.badge}
-                      </Badge>
-                    ) : null}
-                    {item.tag ? (
-                      <Badge variant="outline" className="h-5 px-1.5">
-                        {item.tag}
-                      </Badge>
-                    ) : null}
-                  </Link>
-                ))}
+                        {content}
+                      </div>
+                    )
+                  }
+
+                  if (!item.href) {
+                    return null
+                  }
+
+                  return (
+                    <Link
+                      key={item.title}
+                      href={item.href}
+                      className={itemClassName}
+                    >
+                      {content}
+                    </Link>
+                  )
+                })}
               </div>
             ) : null}
           </div>
