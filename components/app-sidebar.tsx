@@ -58,7 +58,7 @@ const nav: NavGroup[] = [
       { title: "风险提示", href: "/schedule-risks", activeMatch: "prefix" },
       { title: "班次明细", href: "/shift-details", activeMatch: "exact" },
       { title: "不可用管理", href: "/unavailability", activeMatch: "exact", tag: "P1" },
-      { title: "智能排班", development: true },
+      { title: "智能排班", href: "/smart-scheduling", activeMatch: "exact", tag: "P1" },
     ],
   },
   {
@@ -91,7 +91,7 @@ const nav: NavGroup[] = [
       { title: "接入批次", href: "/demo-imports", activeMatch: "exact" },
       { title: "CORN 状态日志", href: "/corn-status-log", activeMatch: "exact", tag: "P1" },
       { title: "字段映射", href: "/field-mapping", activeMatch: "exact", tag: "P1" },
-      { title: "接口集成", development: true },
+      { title: "接口集成", href: "/interface-integration", activeMatch: "exact", tag: "P1" },
       { title: "数据质量", href: "/data-quality", activeMatch: "exact", tag: "P1" },
     ],
   },

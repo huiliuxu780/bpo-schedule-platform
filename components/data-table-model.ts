@@ -258,6 +258,37 @@ export type SupplierReviewRecordsPreview = {
     | "本机供应商复盘"
 }
 
+export type SmartSchedulingRecordsPreview = {
+  importedRows: number
+  sourceCount: number
+  staffRows: number
+  fulfillmentRows: number
+  scheduleRows: number
+  planCount: number
+  recommendationSignals: number
+  latestBatch: string
+  latestSource: string
+  statusLabel:
+    | "等待导入"
+    | "缺少主数据"
+    | "缺少履约数据"
+    | "缺少排班数据"
+    | "本机建议预览"
+}
+
+export type InterfaceIntegrationRecordsPreview = {
+  importedRows: number
+  sourceCount: number
+  mappedFields: number
+  missingFields: number
+  statusRows: number
+  cornStatusTypes: number
+  readinessSignals: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "缺少字段" | "缺少状态日志" | "本机接入预览"
+}
+
 export type FieldMappingSpec = {
   kind: "staff_master" | "status_log" | "login_log"
   title: string
@@ -726,6 +757,124 @@ export function summarizeSupplierReviewRecords(
           : scheduleRows === 0
             ? "缺少排班数据"
             : "本机供应商复盘",
+  }
+}
+
+export function summarizeSmartSchedulingRecords(
+  records: DashboardImportRecordSummary[]
+): SmartSchedulingRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedRows: 0,
+      sourceCount: 0,
+      staffRows: 0,
+      fulfillmentRows: 0,
+      scheduleRows: 0,
+      planCount: 0,
+      recommendationSignals: 0,
+      latestBatch: "暂无智能排班 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const staffRows =
+    records.find((record) => record.kind === "staff_master")?.total_rows ?? 0
+  const statusRows =
+    records.find((record) => record.kind === "status_log")?.total_rows ?? 0
+  const loginRows =
+    records.find((record) => record.kind === "login_log")?.total_rows ?? 0
+  const scheduleRecord = records.find((record) => record.kind === "schedule_plan")
+  const scheduleRows = scheduleRecord?.total_rows ?? 0
+  const fulfillmentRows = statusRows + loginRows
+  const planCount = new Set(
+    (scheduleRecord?.sample_rows ?? [])
+      .map((row) => row.plan_id?.trim())
+      .filter((planId): planId is string => Boolean(planId))
+  ).size
+  const recommendationSignals = [staffRows, fulfillmentRows, scheduleRows].filter(
+    (value) => value > 0
+  ).length
+
+  return {
+    importedRows: records.reduce((total, record) => total + record.total_rows, 0),
+    sourceCount: records.length,
+    staffRows,
+    fulfillmentRows,
+    scheduleRows,
+    planCount,
+    recommendationSignals,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      staffRows === 0
+        ? "缺少主数据"
+        : fulfillmentRows === 0
+          ? "缺少履约数据"
+          : scheduleRows === 0
+            ? "缺少排班数据"
+            : "本机建议预览",
+  }
+}
+
+export function summarizeInterfaceIntegrationRecords(
+  records: DashboardImportRecordSummary[]
+): InterfaceIntegrationRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedRows: 0,
+      sourceCount: 0,
+      mappedFields: 0,
+      missingFields: fieldMappingSpecs.reduce(
+        (total, spec) => total + spec.expectedFields.length,
+        0
+      ),
+      statusRows: 0,
+      cornStatusTypes: 0,
+      readinessSignals: 0,
+      latestBatch: "暂无接口集成 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const fieldSummary = summarizeFieldMappingRecords(records)
+  const statusRecord = records.find((record) => record.kind === "status_log")
+  const scheduleRows =
+    records.find((record) => record.kind === "schedule_plan")?.total_rows ?? 0
+  const statusRows = statusRecord?.total_rows ?? 0
+  const cornStatusTypes = new Set(
+    (statusRecord?.sample_rows ?? []).map((row) => row.status?.trim() || "未标注")
+  ).size
+  const readinessSignals = [
+    records.length,
+    fieldSummary.missingFields === 0 ? 1 : 0,
+    statusRows,
+    scheduleRows,
+  ].filter((value) => value > 0).length
+
+  return {
+    importedRows: records.reduce((total, record) => total + record.total_rows, 0),
+    sourceCount: records.length,
+    mappedFields: fieldSummary.mappedFields,
+    missingFields: fieldSummary.missingFields,
+    statusRows,
+    cornStatusTypes,
+    readinessSignals,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      fieldSummary.missingFields > 0
+        ? "缺少字段"
+        : statusRows === 0
+          ? "缺少状态日志"
+          : "本机接入预览",
   }
 }
 

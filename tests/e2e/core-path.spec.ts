@@ -556,6 +556,44 @@ test("local demo import entry drives batch status placeholders", async ({ page }
       exact: true,
     }),
   ).toBeVisible()
+
+  await gotoAppPage(page, "/smart-scheduling")
+  const smartSchedulingMain = page.getByRole("main")
+  await expect(
+    smartSchedulingMain.locator("h1", { hasText: "智能排班" }),
+  ).toBeVisible()
+  await expect(
+    smartSchedulingMain.getByText(/智能排班 records \d+ 行/),
+  ).toBeVisible()
+  await expect(
+    smartSchedulingMain.getByRole("heading", {
+      name: "本机排班建议",
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect(
+    smartSchedulingMain.getByText("不自动生成或发布排班。", { exact: true }),
+  ).toBeVisible()
+
+  await gotoAppPage(page, "/interface-integration")
+  const interfaceIntegrationMain = page.getByRole("main")
+  await expect(
+    interfaceIntegrationMain.locator("h1", { hasText: "接口集成" }),
+  ).toBeVisible()
+  await expect(
+    interfaceIntegrationMain.getByText(/接口集成 records \d+ 行/),
+  ).toBeVisible()
+  await expect(
+    interfaceIntegrationMain.getByRole("heading", {
+      name: "本机接入 readiness",
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect(
+    interfaceIntegrationMain.getByText("不连接真实接口或配置接口凭证。", {
+      exact: true,
+    }),
+  ).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -623,6 +661,11 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
     await expect(developmentItem.getByText("开发中")).toBeVisible()
   }
 
+  await gotoAppPage(page, "/smart-scheduling")
+  await expect(
+    sidebar.getByRole("link", { name: /智能排班/ }),
+  ).toHaveAttribute("href", "/smart-scheduling")
+
   await gotoAppPage(page, "/data-quality")
   await expect(
     sidebar.getByRole("link", { name: /文件导入/ }),
@@ -640,13 +683,9 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
     sidebar.getByRole("link", { name: /字段映射/ }),
   ).toHaveAttribute("href", "/field-mapping")
 
-  const integrationItem = sidebar
-    .locator('[data-development-nav-item="true"]')
-    .filter({ hasText: "接口集成" })
-
-  await expect(integrationItem).toBeVisible()
-  await expect(integrationItem).toHaveAttribute("aria-disabled", "true")
-  await expect(integrationItem.getByText("开发中")).toBeVisible()
+  await expect(
+    sidebar.getByRole("link", { name: /接口集成/ }),
+  ).toHaveAttribute("href", "/interface-integration")
 
   await gotoAppPage(page, "/organization-people")
   await expect(
@@ -668,4 +707,12 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(permissionItem).toBeVisible()
   await expect(permissionItem).toHaveAttribute("aria-disabled", "true")
   await expect(permissionItem.getByText("开发中")).toBeVisible()
+
+  const operationAuditItem = sidebar
+    .locator('[data-development-nav-item="true"]')
+    .filter({ hasText: "操作审计" })
+
+  await expect(operationAuditItem).toBeVisible()
+  await expect(operationAuditItem).toHaveAttribute("aria-disabled", "true")
+  await expect(operationAuditItem.getByText("开发中")).toBeVisible()
 })
