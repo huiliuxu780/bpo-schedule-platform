@@ -6734,3 +6734,73 @@ tasks:
       - "需要主数据写回、组织架构维护、用户管理、角色分配或生产审计流"
       - "验证失败"
     commit_after_done: true
+  - id: F129
+    title: "运营工作台与系统管理本机预览页补位"
+    priority: P1
+    status: in_progress
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/today-fulfillment/**"
+      - "app/anomaly-alerts/**"
+      - "app/deficit-heatmap/**"
+      - "app/vendor-management/**"
+      - "app/rule-configuration/**"
+      - "components/app-sidebar.tsx"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/today-fulfillment`、`/anomaly-alerts`、`/deficit-heatmap`、`/vendor-management`、`/rule-configuration` 本机只读预览页。"
+      - "页面分别展示 records 摘要、样本/分布/规则清单和 no-database/no-real-integration 边界。"
+      - "对应侧边栏条目从 `开发中` 改为真实链接；仍不开放智能排班、接口集成、权限管理、操作审计、结算复盘。"
+      - "本批不改后端契约、不接数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+      - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run typecheck`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实 CORN/HR/WFM/第三方 API 集成"
+      - "需要认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "需要供应商写回、规则编辑发布、生产异常规则、生产热力图公式或结算能力"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q056
+    title: "运营工作台与系统管理本机预览页 QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/today-fulfillment/**"
+      - "app/anomaly-alerts/**"
+      - "app/deficit-heatmap/**"
+      - "app/vendor-management/**"
+      - "app/rule-configuration/**"
+      - "components/app-sidebar.tsx"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "E2E 覆盖五个新页面 records 摘要和导航链接。"
+      - "QA 证据明确 no-backend-contract-change、localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-export、no-batch、no-settlement。"
+      - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "需要供应商写回、规则编辑发布、生产异常规则、生产热力图公式或结算能力"
+      - "验证失败"
+    commit_after_done: true

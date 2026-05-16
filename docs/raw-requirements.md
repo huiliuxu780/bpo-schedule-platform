@@ -2002,3 +2002,81 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入坐席主数据后进入 organization-people 并看到组织与人员 records 摘要；QA 不扩大到数据库、真实集成、登录账号、权限、组织架构维护、导出、批量或生产审计。"
 ```
+
+### R179 - today fulfillment local preview
+
+```yaml
+id: R179
+module: "运营工作台"
+description: "今日履约需要做本机只读预览页，读取已导入的 status_log/login_log records 和本地排班上下文，展示今日履约覆盖、登录/状态样本和本机边界。"
+source: "PM explicit continuation on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "只做本机预览；不做生产遵守率公式、实时流、状态写回、结算或审批。"
+```
+
+### R180 - anomaly alerts local preview
+
+```yaml
+id: R180
+module: "运营工作台"
+description: "异常预警需要做本机只读预览页，读取现有 dashboard 异常和导入 records 覆盖，展示预警数量、严重度分布和样本。"
+source: "PM explicit continuation on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "只做本机预警列表和解释；不做生产异常规则、自动派单、审批、导出或批量处理。"
+```
+
+### R181 - deficit heatmap local preview
+
+```yaml
+id: R181
+module: "运营工作台"
+description: "时段缺口热力图需要做本机只读预览页，复用现有 dashboard heatmap 本地数据，展示缺口汇总、严重时段和热力图。"
+source: "PM explicit continuation on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "只做本机展示；不固化生产缺口公式，不做自动排班或调班。"
+```
+
+### R182 - vendor management local preview
+
+```yaml
+id: R182
+module: "系统管理"
+description: "供应商管理需要做本机只读预览页，读取已导入 staff_master records 中的 vendor/site/team 覆盖，展示供应商分布和样本。"
+source: "PM explicit continuation on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "只做本机只读预览；不做供应商主数据维护、写回、权限、结算或合同管理。"
+```
+
+### R183 - rule configuration local preview
+
+```yaml
+id: R183
+module: "系统管理"
+description: "规则配置需要做本机只读预览页，展示当前本机演示边界和规则项清单，说明哪些规则可预览、哪些生产规则仍未开放。"
+source: "PM explicit continuation on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "只做只读规则目录；不做规则编辑、发布、版本化、权限或生产公式。"
+```
+
+### R184 - ops and system preview pages QA
+
+```yaml
+id: R184
+module: "本机预览验收"
+description: "今日履约、异常预警、时段缺口热力图、供应商管理和规则配置开放后，需要补充 E2E 证据，证明导航可达且边界文案明确。"
+source: "F129 ops/system preview batch on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 不扩大到数据库、真实集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

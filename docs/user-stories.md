@@ -3400,3 +3400,110 @@ acceptance:
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-writeback。"
 status: "done"
 ```
+
+### US191 - Today fulfillment local preview
+
+```yaml
+id: US191
+requirement_ids:
+  - R179
+module: "运营工作台"
+role: "演示人员"
+story: "作为演示人员，我希望今日履约页能展示本机导入的状态和登录 records，这样可以说明当天履约结果已经进入运营工作台。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/today-fulfillment` 页面。"
+  - "页面展示 `今日履约 records`、状态/登录覆盖、样本和本机只读边界。"
+  - "`运营工作台 > 今日履约` 链接到 `/today-fulfillment`。"
+status: "in_progress"
+```
+
+### US192 - Anomaly alerts local preview
+
+```yaml
+id: US192
+requirement_ids:
+  - R180
+module: "运营工作台"
+role: "演示人员"
+story: "作为演示人员，我希望异常预警页能展示本机异常和导入覆盖，这样运营工作台不再只有经营总览。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/anomaly-alerts` 页面。"
+  - "页面展示 `异常预警 records`、严重度分布和样本。"
+  - "`运营工作台 > 异常预警` 链接到 `/anomaly-alerts`。"
+status: "in_progress"
+```
+
+### US193 - Deficit heatmap local preview
+
+```yaml
+id: US193
+requirement_ids:
+  - R181
+module: "运营工作台"
+role: "演示人员"
+story: "作为演示人员，我希望时段缺口热力图成为独立页面，这样可以单独演示本机缺口分布。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/deficit-heatmap` 页面。"
+  - "页面展示 `时段缺口 records`、总缺口、严重时段和热力图。"
+  - "`运营工作台 > 时段缺口热力图` 链接到 `/deficit-heatmap`。"
+status: "in_progress"
+```
+
+### US194 - Vendor management local preview
+
+```yaml
+id: US194
+requirement_ids:
+  - R182
+module: "系统管理"
+role: "演示人员"
+story: "作为演示人员，我希望供应商管理页能展示本机导入人员中的供应商覆盖，这样系统管理可以演示供应商视角。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/vendor-management` 页面。"
+  - "页面读取 staff_master records 并展示 `供应商管理 records`、供应商分布和样本。"
+  - "`系统管理 > 供应商管理` 链接到 `/vendor-management`。"
+status: "in_progress"
+```
+
+### US195 - Rule configuration local preview
+
+```yaml
+id: US195
+requirement_ids:
+  - R183
+module: "系统管理"
+role: "演示人员"
+story: "作为演示人员，我希望规则配置页能展示本机只读规则清单，这样可以解释哪些规则仍未开放生产配置。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/rule-configuration` 页面。"
+  - "页面展示 `规则配置 records`、本机预览规则清单和未开放边界。"
+  - "`系统管理 > 规则配置` 链接到 `/rule-configuration`。"
+status: "in_progress"
+```
+
+### US196 - Ops and system preview pages QA
+
+```yaml
+id: US196
+requirement_ids:
+  - R184
+module: "本机预览验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖五个新开放入口，这样能证明它们不是 dashboard 占位跳转。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 覆盖五个新页面标题、records 摘要和导航链接。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-settlement。"
+status: "ready"
+```
