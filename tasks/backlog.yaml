@@ -7029,7 +7029,7 @@ tasks:
   - id: F134
     title: "智能排班本机只读建议预览"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/smart-scheduling/**"
@@ -7063,7 +7063,7 @@ tasks:
   - id: F135
     title: "接口集成本机只读接入状态预览"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/smart-scheduling/**"
@@ -7097,7 +7097,7 @@ tasks:
   - id: Q060
     title: "智能排班与接口集成 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/smart-scheduling/**"

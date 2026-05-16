@@ -1723,3 +1723,30 @@
 - action: 收口报表中心与供应商复盘 QA。
 - status: `done`
 - notes: 模型测试 71 条通过，E2E smoke 5 条通过并覆盖导入本机 CSV 后 `/report-center` 与 `/supplier-review` 的 records 摘要、导航链接和 `结算锁账` 开发中边界；最终 check 通过。
+
+- task_id: `F134`
+- source_ids:
+  - `R192`
+- story_ids:
+  - `US204`
+- action: 完成智能排班本机只读建议预览。
+- status: `done`
+- notes: 新增 `/smart-scheduling` 页面，读取本机 processed records，展示 `智能排班 records`、建议信号、计划覆盖、排班计划样本和最近批次；侧边栏 `计划与排班 > 智能排班` 改为真实入口，不自动生成或发布排班。
+
+- task_id: `F135`
+- source_ids:
+  - `R193`
+- story_ids:
+  - `US205`
+- action: 完成接口集成本机只读接入状态预览。
+- status: `done`
+- notes: 新增 `/interface-integration` 页面，读取本机 processed records，展示 `接口集成 records`、字段 readiness、状态日志、来源覆盖和状态样本；侧边栏 `数据与集成 > 接口集成` 改为真实入口，不连接真实接口、不配置凭证、不写回外部系统。
+
+- task_id: `Q060`
+- source_ids:
+  - `R194`
+- story_ids:
+  - `US206`
+- action: 收口智能排班与接口集成 QA。
+- status: `done`
+- notes: 模型测试 73 条通过，E2E smoke 5 条通过并覆盖导入本机 CSV 后 `/smart-scheduling` 与 `/interface-integration` 的 records/readiness 摘要、导航链接和 `结算锁账`、`权限管理`、`操作审计` 开发中边界；最终 check 通过。

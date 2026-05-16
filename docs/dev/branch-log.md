@@ -1537,3 +1537,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F134-F135-Q060 Smart Scheduling And Interface Integration Local Preview
+
+- branch_name: `codex/f-batch-021-smart-integration-preview`
+- base_main_commit: `7bfdc56`
+- remote_status: `local continuation branch created from pushed codex/f-batch-020-reporting-vendor-review because PM asked to auto-arrange remaining tasks and continue development`
+- scope: smart-scheduling local read-only page, interface-integration local read-only page, navigation entries, imported records smart/integration summaries, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/smart-scheduling/**`, `app/interface-integration/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `scripts/tests/**`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, schedule publishing, production writeback, production formula, settlement rule, lock, credential, or charge-factor files.
+- scope_diff_check: `app/smart-scheduling/page.tsx`, `app/interface-integration/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeInterfaceIntegrationRecords` was missing; model tests then passed with 73 tests; typecheck and lint passed; frontend `/smart-scheduling` and `/interface-integration` returned 200 outside sandbox; first E2E run exposed a sidebar assertion that searched a collapsed nav group, then `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 5 tests and verified smart-scheduling/interface-integration records plus high-risk development boundaries; `BPO_WEB_URL=http://localhost:3015/dashboard BPO_API_BASE_URL=http://127.0.0.1:8000 bash scripts/smoke-demo.sh` passed; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
+- local_commit_sha: `9f1a6a88011e5d50c78a734d5b3d8e4880663bde`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

@@ -2181,8 +2181,8 @@ description: "智能排班需要先开放一个本机只读建议预览页，读
 source: "PM requested automatic continuation on 2026-05-17: 剩余功能持续补齐"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做 `/smart-scheduling` 本机只读建议预览；不做自动排班、发布、人员级调班、生产写回、数据库、真实集成、审批、导出、批量、生产公式、结算或收费因子。"
+status: "done"
+notes: "已新增 `/smart-scheduling` 本机只读建议预览页，读取 processed records 并展示智能排班 records、建议信号、计划覆盖、最近批次和边界；不做自动排班、发布、人员级调班、生产写回、数据库、真实集成、审批、导出、批量、生产公式、结算或收费因子。"
 ```
 
 ### R193 - interface integration local readiness preview
@@ -2194,8 +2194,8 @@ description: "接口集成需要先开放一个本机只读接入状态预览页
 source: "PM requested automatic continuation on 2026-05-17: 剩余功能持续补齐"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "本批只做 `/interface-integration` 本机只读 readiness 预览；不做真实 API、接口凭证、外部系统写回、数据库、认证、权限、审批、导出、批量、生产公式、结算或收费因子。"
+status: "done"
+notes: "已新增 `/interface-integration` 本机只读 readiness 预览页，读取 processed records 并展示接口集成 records、字段 readiness、状态日志、来源覆盖和边界；不做真实 API、接口凭证、外部系统写回、数据库、认证、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
 
 ### R194 - smart scheduling and integration QA
@@ -2207,6 +2207,6 @@ description: "智能排班和接口集成开放后，需要补充 E2E 证据，�
 source: "F134/F135 smart scheduling and integration preview batch on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算、锁账或收费因子。"
+status: "done"
+notes: "E2E 已覆盖导入本机 CSV 后 smart-scheduling 和 interface-integration 出现 records/readiness 摘要，并确认智能排班/接口集成导航可点击、结算锁账/权限管理/操作审计仍为开发中；QA 不扩大到数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算、锁账或收费因子。"
 ```

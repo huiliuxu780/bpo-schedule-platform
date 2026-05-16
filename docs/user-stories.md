@@ -3656,7 +3656,7 @@ acceptance:
   - "页面读取 processed records 或现有本地排班/需求上下文，并展示 `智能排班 records`、建议覆盖、缺口/风险提示和本机边界。"
   - "`计划与排班 > 智能排班` 链接到 `/smart-scheduling`。"
   - "本批不做自动排班、发布、人员级调班、生产写回、数据库、真实集成、审批、导出、批量、生产公式、结算或收费因子。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US205 - Interface integration local readiness preview
@@ -3675,7 +3675,7 @@ acceptance:
   - "页面读取 processed records，并展示 `接口集成 records`、接入来源覆盖、字段/状态 readiness 和本机边界。"
   - "`数据与集成 > 接口集成` 链接到 `/interface-integration`。"
   - "本批不做真实 API、接口凭证、外部系统写回、数据库、认证、权限、审批、导出、批量、生产公式、结算或收费因子。"
-status: "ready"
+status: "done"
 ```
 
 ### US206 - Smart scheduling and integration QA
@@ -3693,5 +3693,5 @@ acceptance:
   - "E2E 导入本机 CSV 后，smart-scheduling 和 interface-integration 出现 records/readiness 摘要。"
   - "E2E 覆盖智能排班、接口集成导航可点击，结算锁账、权限管理、操作审计仍是 `开发中`。"
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-auto-scheduling、no-permission、no-lock、no-export、no-batch。"
-status: "ready"
+status: "done"
 ```

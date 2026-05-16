@@ -18,7 +18,7 @@ This file is now long-term project state only. It must not maintain the ready qu
 The project contains:
 
 - A PM-confirmed shadcn/ui-style BPO WFM dashboard scaffold.
-- Local scheduling-plan MVP verticals backed by local FastAPI seed/process-memory contracts and frontend fallback contracts.
+- Local scheduling-plan MVP verticals and read-only preview surfaces backed by local FastAPI seed/process-memory contracts and frontend fallback contracts.
 - No Database MVP Mode.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
@@ -26,7 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
 - Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
-- Local imported staff/status/login/schedule-plan rows are exposed as processed records and consumed by existing dashboard, schedule plans, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, organization people, today fulfillment, anomaly alerts, vendor management, rule configuration, and monthly settlement module pages.
+- Local imported staff/status/login/schedule-plan rows are exposed as processed records and consumed by existing dashboard, schedule plans, shift-details, schedule-risks, unavailability, smart scheduling, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, interface integration, organization people, today fulfillment, anomaly alerts, vendor management, rule configuration, and monthly settlement module pages.
 
 The project does not contain:
 
@@ -134,6 +134,7 @@ Current invariants:
 - `F130/Q057/US197-US198` opened the排班数据导入 slice: `schedule_plan` CSV can be imported through the localhost demo import contract and `/schedule-plans` now reads schedule_plan processed records to show排班数据 records、计划样本、时段行 and samples without writing production schedule lists, automatic scheduling, database, real integrations, approval/export/batch, settlement, production formulas, or charge factors; current queue returned to empty after QA closeout.
 - `F131/Q058/US199-US200` opened the月度结算只读复盘 slice: `结算复盘 > 月度结算` now links to `/monthly-settlement`, which reads local processed records to show结算复盘 records、主数据/履约/排班复盘信号 and samples without settlement formulas, charge factors, bill amount, lock, approval, export, batch, database, or real integrations; current queue returned to empty after QA closeout.
 - `F132-F133/Q059/US201-US203` opened the报表中心与供应商复盘只读汇总 slice: `结算复盘 > 报表中心` and `结算复盘 > 供应商复盘` now link to `/report-center` and `/supplier-review`, which read local processed records to show report/vendor review records, imported-source coverage, module outcomes, supplier coverage, fulfillment coverage, and schedule coverage without production report generation, export, settlement formulas, charge factors, bill amount, lock, approval, batch, database, real integrations, or supplier writeback; current queue returned to empty after QA closeout.
+- `F134-F135/Q060/US204-US206` opened the智能排班与接口集成本机只读预览 slice: `计划与排班 > 智能排班` and `数据与集成 > 接口集成` now link to `/smart-scheduling` and `/interface-integration`, which read local processed records to show smart recommendation readiness, integration readiness, field coverage, status-log coverage, and sample records without automatic scheduling, publishing, production writeback, real API calls, credentials, auth/permission, approval, export, batch, database, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
@@ -145,9 +146,9 @@ PM clarified on 2026-05-16 that the demo should be based on existing product mod
 import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
 ```
 
-Recommended order after F132-F133/Q059:
+Recommended order after F134-F135/Q060:
 
-1. **继续补齐未开放入口:** keep unopened modules clearly marked `开发中`, and only open them when they can read local imported records or existing seed outcomes.
+1. **操作审计本机只读预览:** only if kept to imported-batch/module-action evidence, without auth, permission, production audit trails, or tamper-proof audit storage.
 2. **Draft edit and review depth:** continue dynamic interval editing, review feedback, and submit/review preparation only as local MVP flows, without approval or production workflow capability.
 3. **本机验收广度补强:** extend route smoke and table parity only for opened modules, prioritizing paths that PM will use in local demos.
 

@@ -2098,6 +2098,36 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-17 - Smart Scheduling And Interface Integration Local Preview
+
+#### 审计结论
+
+- `F134/F135/Q060/US204-US206` 已开放 `计划与排班 > 智能排班` 和 `数据与集成 > 接口集成`：侧边栏链接分别指向 `/smart-scheduling` 和 `/interface-integration`，不再是 dashboard 占位。
+- `/smart-scheduling` 读取本机 processed records，展示 `智能排班 records`、建议信号、计划覆盖、排班计划样本和最近批次。
+- `/interface-integration` 读取本机 processed records，展示 `接口集成 records`、字段 readiness、状态日志、来源覆盖和状态样本。
+- `结算锁账`、`权限管理`、`操作审计` 仍保持 `开发中` 且不可点击。
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、自动排班、排班发布、人员级调班、生产写回、生产公式、结算规则、收费因子、锁账或真实接口凭证。
+
+#### 风险
+
+- 当前智能排班只是本机只读建议 readiness，不等同于自动排班、发布、生产写回或人员级调班能力。
+- 当前接口集成只是本机 readiness 预览，不等同于真实 API 调用、接口凭证管理、外部系统写回或生产同步能力。
+- processed records 仍来自本机 process-memory；服务重启后清空，符合当前本机演示边界。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，73 个模型/源码断言测试通过，包含智能排班和接口集成 helper 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `curl -fsS http://127.0.0.1:8000/health`：通过。
+- `curl -fsS http://localhost:3015/smart-scheduling`：通过，新增页面可返回 HTML。
+- `curl -fsS http://localhost:3015/interface-integration`：通过，新增页面可返回 HTML。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖 smart-scheduling/interface-integration records 摘要、两项导航链接和高风险入口开发中边界。
+- `BPO_WEB_URL=http://localhost:3015/dashboard BPO_API_BASE_URL=http://127.0.0.1:8000 bash scripts/smoke-demo.sh`：通过，backend health 与 dashboard reachable。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
