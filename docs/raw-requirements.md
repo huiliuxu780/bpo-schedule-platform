@@ -1651,3 +1651,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入后 schedule-risks 与 unavailability 出现 records 摘要；QA 不扩大到后端新契约、数据库、真实集成或生产工作流。"
 ```
+
+### R152 - fulfillment monitoring reads status and login records
+
+```yaml
+id: R152
+module: "履约监控"
+description: "履约监控需要先做一个本机最小切片，读取已导入的坐席状态数据和登录数据 records，展示履约核验覆盖，而不是继续保持导航占位。"
+source: "PM continuation on 2026-05-16: 持续补完功能，演示基于现有导入结果"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只做本机 records 读取和展示；不做生产遵守率公式、数据库、真实集成、审批、导出、批量或结算。"
+```
+
+### R153 - work-hours verification navigation entry
+
+```yaml
+id: R153
+module: "导航可信度"
+description: "当履约监控最小页面完成后，侧边栏 `工时核验` 应从 `开发中` 改为真实可点击入口，其他未完成履约项继续标注 `开发中`。"
+source: "F120 fulfillment monitoring minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只开放一个已实现入口；不把其他未实现模块伪装为已开放。"
+```
+
+### R154 - fulfillment monitoring imported records QA
+
+```yaml
+id: R154
+module: "履约监控验收"
+description: "履约监控读取状态/登录 records 后，需要补充浏览器 smoke 证据，证明导入后现有履约入口能看到处理结果。"
+source: "F120 fulfillment monitoring minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只验证本机 records 进入履约监控页面，不扩大到生产公式、数据库、真实集成或生产工作流。"
+```

@@ -5,4 +5,25 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US164
+    requirement_ids: ["R152"]
+    task_ids: ["F120"]
+    status: in_progress
+    priority: P1
+    gate: frontend-scaffold
+    summary: "开放本机履约监控最小页面，读取状态与登录 records。"
+  - id: US165
+    requirement_ids: ["R153"]
+    task_ids: ["F120"]
+    status: in_progress
+    priority: P1
+    gate: frontend-scaffold
+    summary: "侧边栏工时核验从开发中改为真实本机履约入口。"
+  - id: US166
+    requirement_ids: ["R154"]
+    task_ids: ["Q047"]
+    status: ready
+    priority: P1
+    gate: qa
+    summary: "补充履约监控读取状态/登录 records 的浏览器验收证据。"

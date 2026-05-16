@@ -2905,3 +2905,58 @@ acceptance:
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
 status: "done"
 ```
+
+### US164 - Fulfillment monitoring reads status and login records
+
+```yaml
+id: US164
+requirement_ids:
+  - R152
+module: "履约监控"
+role: "演示人员"
+story: "作为演示人员，我希望履约监控页能展示本机导入的状态和登录 records，这样可以演示坐席履约核验已经开始进入产品模块。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/fulfillment-monitoring` 页面。"
+  - "页面读取 processed records，并展示 `履约核验 records` 摘要。"
+  - "页面明确展示状态数据和登录数据覆盖行数。"
+  - "不做生产遵守率公式、不接数据库、不做真实集成、审批、导出、批量或结算。"
+status: "ready"
+```
+
+### US165 - Work-hours verification navigation entry
+
+```yaml
+id: US165
+requirement_ids:
+  - R153
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏工时核验成为可点击入口，这样履约监控不再只是占位。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`履约监控 > 工时核验` 链接到 `/fulfillment-monitoring`。"
+  - "其他未实现履约监控入口继续显示 `开发中` 且不可点击。"
+  - "导航 active 状态能识别 `/fulfillment-monitoring`。"
+status: "ready"
+```
+
+### US166 - Fulfillment monitoring imported records QA
+
+```yaml
+id: US166
+requirement_ids:
+  - R154
+module: "履约监控验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入状态和登录数据后进入履约监控页，这样能证明履约入口读到了导入处理结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席状态数据和登录数据后，fulfillment-monitoring 出现 `履约核验 records` 摘要。"
+  - "E2E 确认工时核验是可点击 link，坐席状态轨迹仍是 `开发中`。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
+status: "ready"
+```
