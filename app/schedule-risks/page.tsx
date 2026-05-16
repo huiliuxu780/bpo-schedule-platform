@@ -1,6 +1,7 @@
 import Link from "next/link"
 
 import { AppShell } from "@/components/app-shell"
+import { ImportedRecordsSummary } from "@/components/imported-records-summary"
 import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
 import { Badge } from "@/components/ui/badge"
@@ -25,6 +26,7 @@ import {
   buildShiftDetailsHref,
   buildUnavailabilityHref,
 } from "@/lib/review-navigation"
+import { getDemoImportRecords } from "@/lib/demo-imports"
 
 type PageProps = {
   searchParams: Promise<{
@@ -101,7 +103,10 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
   const intervalStart = params.intervalStart?.trim() ?? ""
   const intervalEnd = params.intervalEnd?.trim() ?? ""
 
-  const risks = await getScheduleRisks(query)
+  const [risks, importRecords] = await Promise.all([
+    getScheduleRisks(query),
+    getDemoImportRecords(),
+  ])
   const scopedRisks = filterScheduleRiskRowsByScope(risks, {
     query,
     planId,
@@ -218,6 +223,12 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
                 description="重叠生效记录"
               />
             </section>
+
+            <ImportedRecordsSummary
+              records={importRecords}
+              title="风险复核 records"
+              description="从本机导入 processed records 读取风险复核覆盖"
+            />
 
             <Card>
               <CardHeader className="flex flex-row items-start justify-between gap-4">

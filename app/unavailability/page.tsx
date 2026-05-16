@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { ImportedRecordsSummary } from "@/components/imported-records-summary"
 import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { UnavailabilityTable } from "@/components/unavailability-table"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +23,7 @@ import {
   buildShiftDetailsHref,
   buildUnavailabilityHref,
 } from "@/lib/review-navigation"
+import { getDemoImportRecords } from "@/lib/demo-imports"
 import {
   filterUnavailabilityRowsByScope,
   getUnavailability,
@@ -101,8 +103,12 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
   const date = params.date?.trim() ?? ""
   const startTime = params.startTime?.trim() ?? ""
   const endTime = params.endTime?.trim() ?? ""
+  const [unavailabilityRows, importRecords] = await Promise.all([
+    getUnavailability({ query, status }),
+    getDemoImportRecords(),
+  ])
   const rows = filterUnavailabilityRowsByScope(
-    await getUnavailability({ query, status }),
+    unavailabilityRows,
     {
       query,
       status,
@@ -274,6 +280,12 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
               <MetricCard title="影响时段" value={`${affectedIntervals}`} description="按 0.5h 颗粒度" />
               <MetricCard title="涉及团队" value={`${teamCount}`} description={`${siteCount} 个职场`} />
             </section>
+
+            <ImportedRecordsSummary
+              records={importRecords}
+              title="不可用核对 records"
+              description="从本机导入 processed records 读取人员不可用核对覆盖"
+            />
 
             <Card>
               <CardHeader className="flex flex-row items-start justify-between gap-4">

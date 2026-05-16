@@ -234,6 +234,22 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(shiftMain.locator("h1", { hasText: "班次明细" })).toBeVisible()
   await expect(shiftMain.getByText(/班次核对 records \d+ 行/)).toBeVisible()
   await expect(shiftMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+
+  await page.goto("/schedule-risks")
+  const risksMain = page.getByRole("main")
+  await expect(risksMain.locator("h1", { hasText: "风险提示" })).toBeVisible()
+  await expect(risksMain.getByText(/风险复核 records \d+ 行/)).toBeVisible()
+  await expect(risksMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+
+  await page.goto("/unavailability")
+  const unavailabilityMain = page.getByRole("main")
+  await expect(
+    unavailabilityMain.locator("h1", { hasText: "不可用管理" }),
+  ).toBeVisible()
+  await expect(
+    unavailabilityMain.getByText(/不可用核对 records \d+ 行/),
+  ).toBeVisible()
+  await expect(unavailabilityMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
 })
 
 test("unavailable sidebar modules are marked as development", async ({ page }) => {
