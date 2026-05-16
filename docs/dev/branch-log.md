@@ -909,23 +909,6 @@
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
 
-### F125-Q052 Data Quality Imported Records
-
-- branch_name: `codex/f-batch-013-data-quality-imports`
-- base_main_commit: `5bf9eb616030b7ae41dfed3de1cc556c39dc144e`
-- remote_status: `local continuation branch created from pushed codex/f-batch-012-adherence-snapshot-imports because PM agreed to continue filling planned functions`
-- scope: data-quality local page, data-quality navigation entry, staff/status/login processed records quality preview summary, focused model/E2E coverage, current-state closeout, and traceability updates.
-- allowed_files_check: `app/data-quality/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production quality rules, auto-fix, field-mapping writeback, cross-system reconciliation, settlement rule, or charge-factor files.
-- scope_diff_check: `app/data-quality/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
-- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeDataQualityRecords` was missing; model tests then passed with 60 tests; typecheck passed; backend health and frontend `/data-quality` returned 200; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed outside sandbox with 5 tests and verified data-quality records summaries plus data-quality sidebar link; in-app browser opened `/data-quality` and found the heading, `数据质量 records`, `本机质量预览明细`, and no-database/no-production-quality-rule boundary; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 23 backend unittest.
-- local_commit_sha: `pending final local commit`
-- integration_status: `not_started`
-- integration_method: `N/A`
-- integration_commit_sha: `N/A`
-- merge_to_main_commit: `N/A`
-- push_decision: `pending PM decision after verified local commit`
-- blocked_reason: `N/A`
-
 ### F085 Unavailability Impact Shift-Table Scoped Plan-Link Closure
 
 - branch_name: `codex/f073-review-checklist-h032`
@@ -1411,7 +1394,24 @@
 - allowed_files_check: `app/adherence-monitoring/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production adherence formula, realtime stream, status-code finalization, status writeback, settlement rule, or charge-factor files.
 - scope_diff_check: `app/adherence-monitoring/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
 - check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeAdherenceMonitoringRecords` was missing; model tests then passed with 59 tests; typecheck passed; backend health and frontend `/adherence-monitoring` returned 200; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed outside sandbox with 5 tests and verified adherence-monitoring records summaries plus realtime-adherence sidebar link; in-app browser opened `/adherence-monitoring` and found the heading, `遵守率预览 records`, `本机遵守率预览样本`, and no-realtime/no-database boundary; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 23 backend unittest.
-- local_commit_sha: `pending final local commit`
+- local_commit_sha: `14a1dcf99237ddba5ffdb91ad3ebd3b6cb4d94f3`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
+
+### F125-Q052 Data Quality Imported Records
+
+- branch_name: `codex/f-batch-013-data-quality-imports`
+- base_main_commit: `5bf9eb616030b7ae41dfed3de1cc556c39dc144e`
+- remote_status: `local continuation branch created from pushed codex/f-batch-012-adherence-snapshot-imports because PM agreed to continue filling planned functions`
+- scope: data-quality local page, data-quality navigation entry, staff/status/login processed records quality preview summary, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/data-quality/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production quality rules, auto-fix, field-mapping writeback, cross-system reconciliation, settlement rule, or charge-factor files.
+- scope_diff_check: `app/data-quality/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeDataQualityRecords` was missing; model tests then passed with 60 tests; typecheck passed; backend health and frontend `/data-quality` returned 200; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed outside sandbox with 5 tests and verified data-quality records summaries plus data-quality sidebar link; in-app browser opened `/data-quality` and found the heading, `数据质量 records`, `本机质量预览明细`, and no-database/no-production-quality-rule boundary; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 23 backend unittest.
+- local_commit_sha: `a4ca291c01520bb0640124be3a1b94768aba132c`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
