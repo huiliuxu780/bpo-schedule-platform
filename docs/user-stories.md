@@ -3507,3 +3507,40 @@ acceptance:
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-settlement。"
 status: "done"
 ```
+
+### US197 - Schedule plan import records preview
+
+```yaml
+id: US197
+requirement_ids:
+  - R185
+module: "排班计划"
+role: "演示人员"
+story: "作为演示人员，我希望可以导入排班数据 CSV，并在排班计划页看到导入后的 processed records 摘要，这样演示能基于现有排班模块完成。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`/demo-imports` 新增 `排班数据` CSV 导入入口。"
+  - "后端 localhost demo import 接受 `schedule_plan`，并在 processed records 返回 `排班数据`。"
+  - "`/schedule-plans` 读取 schedule_plan records 并展示 `排班数据 records` 摘要、计划样本、时段行和最近批次。"
+  - "本批不把导入结果写入生产排班列表、不做自动排班、不接数据库、真实 WFM/CORN/HR 集成、权限、审批、导出、批量、生产公式、结算规则或收费因子。"
+status: "in_progress"
+```
+
+### US198 - Schedule plan import QA
+
+```yaml
+id: US198
+requirement_ids:
+  - R186
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入 schedule_plan CSV 后进入排班计划页，这样能证明导入结果被现有模块读取。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 在文件导入页确认 `排班数据` 入口可见。"
+  - "E2E 通过 localhost API 导入 schedule_plan CSV 后，排班计划页出现 `排班数据 records` 摘要。"
+  - "QA 记录明确本批是 localhost-only、process-memory、no-database、no-real-integration、no-auto-scheduling。"
+status: "ready"
+```

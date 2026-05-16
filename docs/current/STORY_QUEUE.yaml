@@ -1,9 +1,22 @@
 version: 1
-updated_at: "2026-05-16"
+updated_at: "2026-05-17"
 source_of_truth: "current_story_queue"
 notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  []
+  - id: US197
+    requirement_ids: [R185]
+    task_id: F130
+    status: in_progress
+    priority: P1
+    module: "排班计划"
+    summary: "排班数据 CSV 可在文件导入页导入，并在排班计划页读取本机 processed records 结果。"
+  - id: US198
+    requirement_ids: [R186]
+    task_id: Q057
+    status: ready
+    priority: P1
+    module: "本机验收"
+    summary: "E2E 覆盖排班数据导入后进入排班计划页看到导入处理结果。"
