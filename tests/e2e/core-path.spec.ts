@@ -329,6 +329,20 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     reviewMain.getByRole("heading", { name: "只读复核队列" }),
   ).toBeVisible()
+
+  await page.goto("/adherence-monitoring")
+  const adherenceMain = page.getByRole("main")
+  await expect(
+    adherenceMain.locator("h1", { hasText: "实时遵守率" }),
+  ).toBeVisible()
+  await expect(
+    adherenceMain.getByText(/遵守率预览 records \d+ 行/),
+  ).toBeVisible()
+  await expect(adherenceMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
+  await expect(adherenceMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
+  await expect(
+    adherenceMain.getByRole("heading", { name: "本机遵守率预览样本" }),
+  ).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -350,14 +364,9 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
     sidebar.getByRole("link", { name: /异常管理/ }),
   ).toHaveAttribute("href", "/fulfillment-exceptions")
 
-  const adherenceItem = sidebar
-    .locator('[data-development-nav-item="true"]')
-    .filter({ hasText: "实时遵守率" })
-
-  await expect(adherenceItem).toBeVisible()
-  await expect(adherenceItem).toHaveAttribute("aria-disabled", "true")
-  await expect(adherenceItem.getByText("开发中")).toBeVisible()
-  await expect(sidebar.getByRole("link", { name: /实时遵守率/ })).toHaveCount(0)
+  await expect(
+    sidebar.getByRole("link", { name: /实时遵守率/ }),
+  ).toHaveAttribute("href", "/adherence-monitoring")
 
   await expect(
     sidebar.getByRole("link", { name: /异常复核/ }),
@@ -368,4 +377,13 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(
     sidebar.getByRole("link", { name: /文件导入/ }),
   ).toHaveAttribute("href", "/demo-imports")
+
+  await sidebar.getByRole("button", { name: "结算复盘" }).click()
+  const settlementItem = sidebar
+    .locator('[data-development-nav-item="true"]')
+    .filter({ hasText: "月度结算" })
+
+  await expect(settlementItem).toBeVisible()
+  await expect(settlementItem).toHaveAttribute("aria-disabled", "true")
+  await expect(settlementItem.getByText("开发中")).toBeVisible()
 })

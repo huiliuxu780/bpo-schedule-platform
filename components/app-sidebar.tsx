@@ -68,7 +68,7 @@ const nav: NavGroup[] = [
       { title: "工时核验", href: "/fulfillment-monitoring", activeMatch: "exact", tag: "P1" },
       { title: "坐席状态轨迹", href: "/agent-status-trace", activeMatch: "exact", tag: "P1" },
       { title: "异常管理", href: "/fulfillment-exceptions", activeMatch: "exact", tag: "P1" },
-      { title: "实时遵守率", development: true },
+      { title: "实时遵守率", href: "/adherence-monitoring", activeMatch: "exact", tag: "P1" },
       { title: "异常复核", href: "/exception-review", activeMatch: "exact", tag: "P1" },
     ],
   },

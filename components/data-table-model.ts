@@ -98,6 +98,16 @@ export type ExceptionReviewRecordsPreview = {
   statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "只读待复核"
 }
 
+export type AdherenceMonitoringRecordsPreview = {
+  importedRows: number
+  statusRows: number
+  loginRows: number
+  previewRows: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "本机预览"
+}
+
 export type DashboardFilterState = {
   date: string
   site: string
@@ -494,6 +504,57 @@ export function summarizeExceptionReviewRecords(
         : loginRows === 0
           ? "缺少登录数据"
           : "只读待复核",
+  }
+}
+
+export function summarizeAdherenceMonitoringRecords(
+  records: DashboardImportRecordSummary[]
+): AdherenceMonitoringRecordsPreview {
+  const adherenceRecords = records.filter(
+    (record) => record.kind === "status_log" || record.kind === "login_log"
+  )
+
+  if (adherenceRecords.length === 0) {
+    return {
+      importedRows: 0,
+      statusRows: 0,
+      loginRows: 0,
+      previewRows: 0,
+      latestBatch: "暂无遵守率 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = adherenceRecords.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const statusRecord = adherenceRecords.find(
+    (record) => record.kind === "status_log"
+  )
+  const loginRecord = adherenceRecords.find(
+    (record) => record.kind === "login_log"
+  )
+  const statusRows = statusRecord?.total_rows ?? 0
+  const loginRows = loginRecord?.total_rows ?? 0
+  const previewRows =
+    statusRows === 0 || loginRows === 0
+      ? 0
+      : Math.max(statusRecord?.sample_rows.length ?? 0, loginRecord?.sample_rows.length ?? 0)
+
+  return {
+    importedRows: statusRows + loginRows,
+    statusRows,
+    loginRows,
+    previewRows,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      statusRows === 0
+        ? "缺少状态数据"
+        : loginRows === 0
+          ? "缺少登录数据"
+          : "本机预览",
   }
 }
 
