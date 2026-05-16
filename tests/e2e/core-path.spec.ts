@@ -508,6 +508,19 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     ruleConfigurationMain.getByRole("heading", { name: "本机规则目录" }),
   ).toBeVisible()
   await expect(ruleConfigurationMain.getByText("导入 records 只读展示")).toBeVisible()
+
+  await gotoAppPage(page, "/monthly-settlement")
+  const monthlySettlementMain = page.getByRole("main")
+  await expect(
+    monthlySettlementMain.locator("h1", { hasText: "月度结算" }),
+  ).toBeVisible()
+  await expect(
+    monthlySettlementMain.getByText(/结算复盘 records \d+ 行/),
+  ).toBeVisible()
+  await expect(monthlySettlementMain.getByText("本机复盘预览")).toBeVisible()
+  await expect(
+    monthlySettlementMain.getByText("不计算生产结算金额。", { exact: true }),
+  ).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -551,6 +564,21 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(
     sidebar.getByRole("link", { name: /异常复核/ }),
   ).toHaveAttribute("href", "/exception-review")
+
+  await gotoAppPage(page, "/monthly-settlement")
+  await expect(
+    sidebar.getByRole("link", { name: /月度结算/ }),
+  ).toHaveAttribute("href", "/monthly-settlement")
+
+  for (const itemName of ["报表中心", "供应商复盘", "结算锁账"]) {
+    const developmentItem = sidebar
+      .locator('[data-development-nav-item="true"]')
+      .filter({ hasText: itemName })
+
+    await expect(developmentItem).toBeVisible()
+    await expect(developmentItem).toHaveAttribute("aria-disabled", "true")
+    await expect(developmentItem.getByText("开发中")).toBeVisible()
+  }
 
   await gotoAppPage(page, "/data-quality")
   await expect(

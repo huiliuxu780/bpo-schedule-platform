@@ -76,7 +76,7 @@ const nav: NavGroup[] = [
     title: "结算复盘",
     icon: BarChart3,
     items: [
-      { title: "月度结算", development: true },
+      { title: "月度结算", href: "/monthly-settlement", activeMatch: "exact", tag: "P1" },
       { title: "报表中心", development: true },
       { title: "供应商复盘", development: true },
       { title: "结算锁账", development: true },

@@ -207,6 +207,23 @@ export type RuleConfigurationRecordsPreview = {
   statusLabel: "等待导入" | "本机规则目录"
 }
 
+export type MonthlySettlementRecordsPreview = {
+  importedRows: number
+  sourceCount: number
+  staffRows: number
+  fulfillmentRows: number
+  scheduleRows: number
+  reviewSignals: number
+  latestBatch: string
+  latestSource: string
+  statusLabel:
+    | "等待导入"
+    | "缺少主数据"
+    | "缺少履约数据"
+    | "缺少排班数据"
+    | "本机复盘预览"
+}
+
 export type FieldMappingSpec = {
   kind: "staff_master" | "status_log" | "login_log"
   title: string
@@ -504,6 +521,59 @@ export function summarizeSchedulePlanImportRecords(
     latestBatch: scheduleRecord.latest_batch_id,
     latestSource: scheduleRecord.source_name,
     statusLabel: "本机排班预览",
+  }
+}
+
+export function summarizeMonthlySettlementRecords(
+  records: DashboardImportRecordSummary[]
+): MonthlySettlementRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedRows: 0,
+      sourceCount: 0,
+      staffRows: 0,
+      fulfillmentRows: 0,
+      scheduleRows: 0,
+      reviewSignals: 0,
+      latestBatch: "暂无结算复盘 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const staffRows =
+    records.find((record) => record.kind === "staff_master")?.total_rows ?? 0
+  const statusRows =
+    records.find((record) => record.kind === "status_log")?.total_rows ?? 0
+  const loginRows =
+    records.find((record) => record.kind === "login_log")?.total_rows ?? 0
+  const scheduleRows =
+    records.find((record) => record.kind === "schedule_plan")?.total_rows ?? 0
+  const fulfillmentRows = statusRows + loginRows
+  const reviewSignals = [staffRows, fulfillmentRows, scheduleRows].filter(
+    (value) => value > 0
+  ).length
+
+  return {
+    importedRows: records.reduce((total, record) => total + record.total_rows, 0),
+    sourceCount: records.length,
+    staffRows,
+    fulfillmentRows,
+    scheduleRows,
+    reviewSignals,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      staffRows === 0
+        ? "缺少主数据"
+        : fulfillmentRows === 0
+          ? "缺少履约数据"
+          : scheduleRows === 0
+            ? "缺少排班数据"
+            : "本机复盘预览",
   }
 }
 

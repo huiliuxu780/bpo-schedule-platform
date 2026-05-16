@@ -25,6 +25,7 @@ import {
   summarizeFulfillmentImportRecords,
   summarizeOrganizationPeopleRecords,
   summarizeRuleConfigurationRecords,
+  summarizeMonthlySettlementRecords,
   summarizeSchedulePlanImportRecords,
   summarizeSchedulePlanRows,
   summarizeScheduleRiskRows,
@@ -231,6 +232,55 @@ test("schedule plan import records preview summarizes local schedule rows", () =
     latestBatch: "schedule_plan-20260517093000-001",
     latestSource: "排班数据",
     statusLabel: "本机排班预览",
+  });
+});
+
+test("monthly settlement records summarize local read-only review signals", () => {
+  const summary = summarizeMonthlySettlementRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 2,
+      latest_batch_id: "staff_master-20260517092000-001",
+      updated_at: "2026-05-17T09:20:00+08:00",
+      sample_rows: [{ staff_id: "A001", name: "张敏" }],
+    },
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 3,
+      latest_batch_id: "status_log-20260517093000-001",
+      updated_at: "2026-05-17T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", status: "在线" }],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 2,
+      latest_batch_id: "login_log-20260517094000-001",
+      updated_at: "2026-05-17T09:40:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+    {
+      kind: "schedule_plan",
+      source_name: "排班数据",
+      total_rows: 4,
+      latest_batch_id: "schedule_plan-20260517095000-001",
+      updated_at: "2026-05-17T09:50:00+08:00",
+      sample_rows: [{ plan_id: "SP-20260511-SH", interval_start: "09:00" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedRows: 11,
+    sourceCount: 4,
+    staffRows: 2,
+    fulfillmentRows: 5,
+    scheduleRows: 4,
+    reviewSignals: 3,
+    latestBatch: "schedule_plan-20260517095000-001",
+    latestSource: "排班数据",
+    statusLabel: "本机复盘预览",
   });
 });
 
