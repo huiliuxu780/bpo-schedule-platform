@@ -5994,3 +5994,56 @@ tasks:
       - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F118
+    title: "未开放导航开发中标识与补全顺序收口"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "侧边栏未开放功能显示 `开发中`，并呈现禁用态。"
+      - "未开放功能不再作为可点击 Link 跳转到 dashboard 或其他已开放页面。"
+      - "已开放页面入口继续可点击，包括 dashboard、需求计划、排班计划、风险提示、班次明细、不可用管理和本机导入。"
+      - "docs/PROJECT_STATE.md 记录剩余功能补全顺序：优先导入数据在现有模块中的展示和复核结果，不新增演示中心。"
+      - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要开发未登记的新页面或后端接口"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q044
+    title: "未开放导航开发中标识 QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "E2E 覆盖未开放导航项显示 `开发中` 且不是 link。"
+      - "E2E 覆盖已开放本机导入入口仍是可点击 link。"
+      - "QA 证据明确 no-database、no-real-integration、no-auth、no-approval、no-export、no-batch、no-production-formula、no-settlement。"
+      - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要开发未登记的新页面或后端接口"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

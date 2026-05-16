@@ -5,4 +5,25 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US155
+    requirement_ids: ["R143"]
+    task_ids: ["F118"]
+    status: in_progress
+    priority: P1
+    gate: frontend-scaffold
+    summary: "未开放导航项显示开发中且不可误跳转。"
+  - id: US156
+    requirement_ids: ["R144"]
+    task_ids: ["F118"]
+    status: in_progress
+    priority: P1
+    gate: frontend-scaffold
+    summary: "剩余功能按导入驱动的现有模块链路排期。"
+  - id: US157
+    requirement_ids: ["R145"]
+    task_ids: ["Q044"]
+    status: ready
+    priority: P1
+    gate: qa
+    summary: "补充未开放导航项的本地浏览器验收证据。"

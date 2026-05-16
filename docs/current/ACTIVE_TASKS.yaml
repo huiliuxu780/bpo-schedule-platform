@@ -6,4 +6,97 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+tasks:
+  - id: F118
+    story_ids: ["US155", "US156"]
+    status: in_progress
+    gate: frontend-scaffold
+    branch: "codex/f-batch-005-navigation-dev-badges"
+    batch:
+      id: "BATCH-F118-Q044"
+      reason: "同一批次修正导航开放状态并登记剩余功能补全顺序。"
+      task_ids: ["F118", "Q044"]
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "需要开发未登记的新页面或后端接口"
+      - "验证失败"
+    acceptance_ref: "tasks/backlog.yaml#F118"
+    verification:
+      - "BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke"
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "未开放导航项显示开发中并不可点击。"
+      - "真实可用页面入口仍可导航。"
+      - "docs/PROJECT_STATE.md 记录剩余功能补全顺序。"
+  - id: Q044
+    story_ids: ["US157"]
+    status: ready
+    gate: qa
+    branch: "codex/f-batch-005-navigation-dev-badges"
+    batch:
+      id: "BATCH-F118-Q044"
+      reason: "与 F118 同批完成浏览器验收和追溯收口。"
+      task_ids: ["F118", "Q044"]
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    acceptance_ref: "tasks/backlog.yaml#Q044"
+    verification:
+      - "BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "E2E 覆盖未开放导航项开发中状态。"
+      - "QA 记录明确不扩大到数据库、真实集成、权限、审批、导出、批量、生产公式或结算。"

@@ -1534,3 +1534,42 @@ version: "1.0"
 status: "done"
 notes: "QA 已覆盖本机 dashboard demo preview，不扩大到云发布、数据库或生产化指标体系。"
 ```
+
+### R143 - unavailable navigation development labeling
+
+```yaml
+id: R143
+module: "导航可信度"
+description: "PM 明确侧边栏中没有开放的功能需要标注 `开发中`，不能继续表现为已开放入口或误跳到 dashboard；已开放模块继续保持可点击。"
+source: "PM clarification on 2026-05-16: 没有开放的标注开发中即可"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只处理导航状态和浏览器验收；不开发新页面、不接数据库、不做权限/审批/导出/结算/生产公式。"
+```
+
+### R144 - remaining feature completion sequencing
+
+```yaml
+id: R144
+module: "产品补全排期"
+description: "PM 要求尽快安排补全剩余功能；后续补全应围绕现有功能页和真实导入数据流转，不再新增独立演示中心。"
+source: "PM clarification on 2026-05-16: 尽快安排起来补全功能，补全剩下的功能"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "本批只记录优先级和边界；后续功能仍逐批进入 Story Runner，不一次性扩大到数据库、真实集成或生产工作流。"
+```
+
+### R145 - navigation development labeling acceptance evidence
+
+```yaml
+id: R145
+module: "导航可信度验收"
+description: "未开放导航项改为 `开发中` 后，需要补充浏览器级 smoke 证据，证明用户不会从未开放菜单误跳到 dashboard。"
+source: "F118 navigation development labeling batch on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只验证本地导航可信度，不扩大到新模块开发、数据库、真实集成、权限、审批、导出或结算。"
+```

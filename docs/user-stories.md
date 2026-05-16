@@ -2735,3 +2735,61 @@ acceptance:
   - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
 status: "done"
 ```
+
+### US155 - Unavailable navigation development labeling
+
+```yaml
+id: US155
+requirement_ids:
+  - R143
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏里未开放的功能明确显示为 `开发中`，这样本机演示时不会让观众以为这些模块已经完成。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "未开放导航项不再作为可点击 Link 跳转到 `/dashboard` 或其他已开放页面。"
+  - "未开放导航项显示 `开发中` 标识，并呈现禁用态。"
+  - "已开放页面入口仍可点击，包括 dashboard、需求计划、排班计划、风险提示、班次明细、不可用管理和本机导入。"
+  - "不新增依赖、不开发新页面、不接数据库、不接真实外部系统。"
+  - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+status: "ready"
+```
+
+### US156 - Remaining feature completion sequencing
+
+```yaml
+id: US156
+requirement_ids:
+  - R144
+module: "产品补全排期"
+role: "PM"
+story: "作为 PM，我希望剩余功能补全按现有模块和导入数据流转来排序，这样每一批都能演示真实业务结果，而不是继续堆独立演示页。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "项目状态记录后续功能补全顺序。"
+  - "优先级以 `导入 -> 现有模块读取 -> 结果展示/复核` 为主线。"
+  - "数据库、真实集成、权限、审批、导出、批量、结算和生产公式继续列为后置 Gate。"
+  - "不在本批开发新页面或后端新契约。"
+status: "ready"
+```
+
+### US157 - Navigation development labeling acceptance evidence
+
+```yaml
+id: US157
+requirement_ids:
+  - R145
+module: "导航可信度验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖未开放菜单的 `开发中` 状态，这样可以防止后续导航再次误承诺未完成模块。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 确认至少一个未开放导航项显示 `开发中`。"
+  - "E2E 确认该导航项不是可点击 link。"
+  - "E2E 确认已开放的本机导入入口仍是可导航 link。"
+  - "QA 记录明确本批不扩大到数据库、真实集成、权限、审批、导出、批量、结算或生产公式。"
+status: "ready"
+```

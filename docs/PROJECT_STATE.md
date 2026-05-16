@@ -25,6 +25,7 @@ The project contains:
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
+- Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
 
 The project does not contain:
 
@@ -121,11 +122,21 @@ Current invariants:
 
 Near-term product work should remain inside the no-database local MVP boundary.
 
-Recommended order after F060/Q015/F061-F064/Q016/F065-F068/Q017/F069-F072/Q018/F073-F076/Q019/F077-F079/Q020/F080-F082/Q021/F083-F084/Q022/F085/Q023:
+PM clarified on 2026-05-16 that the demo should be based on existing product modules, not a separate demo center. The operating product loop is:
 
-1. Seed the next ready story in current state before execution.
-2. Continue the next narrow risk/unavailability workflow slice or another frontend/local-contract story.
-3. Continue frontend/local-contract work only when it avoids database, real integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, and charge factors.
+```txt
+import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
+```
+
+Recommended order after F117/Q043:
+
+1. **Navigation truthfulness:** unopened sidebar modules show `开发中` and cannot silently route to `/dashboard`.
+2. **Import-driven existing modules:** make imported staff master, attendance/status/login, and schedule-plan data visible inside existing pages such as dashboard, schedule plans, shift details, risks, and unavailability.
+3. **Draft edit and review depth:** continue dynamic interval editing, review feedback, and submit/review preparation only as local MVP flows, without approval or production workflow capability.
+4. **One fulfillment monitoring slice:** implement the first real `履约监控` page only after imported status/login data can feed it.
+5. **Settlement/system modules last:** keep `结算复盘` and `系统管理` marked `开发中` until core planning, import, fulfillment, and review flows are demonstrable.
+
+Temporarily not recommended: database setup, real CORN/HR/WFM integrations, auth/permissions, approval, export, batch operations, automatic scheduling, production KPI formulas, settlement rules, and charge factors. These still require separate PM-confirmed Gates.
 
 ## Frontend Direction
 
