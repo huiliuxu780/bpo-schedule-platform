@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
+  queue_state: active
   active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  in_progress_task: F134
+  ready_tasks: [F135, Q060]
 ```
 
 ## Current Stage

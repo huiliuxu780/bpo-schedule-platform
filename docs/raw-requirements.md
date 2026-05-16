@@ -2171,3 +2171,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入本机 CSV 后 report-center 和 supplier-review 出现 records 摘要，并确认报表中心/供应商复盘导航可点击、结算锁账仍为开发中；QA 不扩大到数据库、真实集成、审批、导出、批量、生产结算公式、锁账、供应商考核写回或收费因子。"
 ```
+
+### R192 - smart scheduling local preview
+
+```yaml
+id: R192
+module: "计划与排班"
+description: "智能排班需要先开放一个本机只读建议预览页，读取已导入 records 和本地排班/需求上下文，展示可演示的建议覆盖和风险提示，但不自动排班、不发布、不写回生产计划。"
+source: "PM requested automatic continuation on 2026-05-17: 剩余功能持续补齐"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "in_progress"
+notes: "本批只做 `/smart-scheduling` 本机只读建议预览；不做自动排班、发布、人员级调班、生产写回、数据库、真实集成、审批、导出、批量、生产公式、结算或收费因子。"
+```
+
+### R193 - interface integration local readiness preview
+
+```yaml
+id: R193
+module: "数据与集成"
+description: "接口集成需要先开放一个本机只读接入状态预览页，基于本机导入、字段映射和 CORN 状态日志展示 readiness，不连接真实接口、不配置凭证、不写回外部系统。"
+source: "PM requested automatic continuation on 2026-05-17: 剩余功能持续补齐"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "本批只做 `/interface-integration` 本机只读 readiness 预览；不做真实 API、接口凭证、外部系统写回、数据库、认证、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```
+
+### R194 - smart scheduling and integration QA
+
+```yaml
+id: R194
+module: "本机验收"
+description: "智能排班和接口集成开放后，需要补充 E2E 证据，证明导航可达、摘要可见，并且结算锁账、权限管理、操作审计仍保持开发中。"
+source: "F134/F135 smart scheduling and integration preview batch on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "QA 不扩大到数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算、锁账或收费因子。"
+```

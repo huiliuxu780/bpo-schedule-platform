@@ -3639,3 +3639,59 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-export、no-batch、no-lock、no-charge-factor。"
 status: "done"
 ```
+
+### US204 - Smart scheduling local preview
+
+```yaml
+id: US204
+requirement_ids:
+  - R192
+module: "计划与排班"
+role: "演示人员"
+story: "作为演示人员，我希望智能排班页先展示本机导入 records 和排班建议摘要，这样可以演示智能排班入口已基于现有数据链路打开。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/smart-scheduling` 页面。"
+  - "页面读取 processed records 或现有本地排班/需求上下文，并展示 `智能排班 records`、建议覆盖、缺口/风险提示和本机边界。"
+  - "`计划与排班 > 智能排班` 链接到 `/smart-scheduling`。"
+  - "本批不做自动排班、发布、人员级调班、生产写回、数据库、真实集成、审批、导出、批量、生产公式、结算或收费因子。"
+status: "in_progress"
+```
+
+### US205 - Interface integration local readiness preview
+
+```yaml
+id: US205
+requirement_ids:
+  - R193
+module: "数据与集成"
+role: "演示人员"
+story: "作为演示人员，我希望接口集成页展示本机导入、字段和状态日志的接入 readiness，这样可以说明当前能演示哪些接口前置条件。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/interface-integration` 页面。"
+  - "页面读取 processed records，并展示 `接口集成 records`、接入来源覆盖、字段/状态 readiness 和本机边界。"
+  - "`数据与集成 > 接口集成` 链接到 `/interface-integration`。"
+  - "本批不做真实 API、接口凭证、外部系统写回、数据库、认证、权限、审批、导出、批量、生产公式、结算或收费因子。"
+status: "ready"
+```
+
+### US206 - Smart scheduling and integration QA
+
+```yaml
+id: US206
+requirement_ids:
+  - R194
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖智能排班和接口集成入口及高风险入口边界，这样能证明新入口不是 dashboard 占位，也没有误开放生产能力。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入本机 CSV 后，smart-scheduling 和 interface-integration 出现 records/readiness 摘要。"
+  - "E2E 覆盖智能排班、接口集成导航可点击，结算锁账、权限管理、操作审计仍是 `开发中`。"
+  - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-auto-scheduling、no-permission、no-lock、no-export、no-batch。"
+status: "ready"
+```

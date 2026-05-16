@@ -103,6 +103,9 @@ stories:
   US201: {file: "docs/user-stories.md", requirement_ids: ["R189"], task_ids: ["F132"], archive_refs: []}
   US202: {file: "docs/user-stories.md", requirement_ids: ["R190"], task_ids: ["F133"], archive_refs: []}
   US203: {file: "docs/user-stories.md", requirement_ids: ["R191"], task_ids: ["Q059"], archive_refs: []}
+  US204: {file: "docs/user-stories.md", requirement_ids: ["R192"], task_ids: ["F134"], archive_refs: []}
+  US205: {file: "docs/user-stories.md", requirement_ids: ["R193"], task_ids: ["F135"], archive_refs: []}
+  US206: {file: "docs/user-stories.md", requirement_ids: ["R194"], task_ids: ["Q060"], archive_refs: []}
 tasks:
   R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], gate: "qa"}
   H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], gate: "state-hygiene"}
@@ -153,6 +156,9 @@ tasks:
   F132: {file: "tasks/backlog.yaml", story_ids: ["US201"], gate: "frontend-scaffold"}
   F133: {file: "tasks/backlog.yaml", story_ids: ["US202"], gate: "frontend-scaffold"}
   Q059: {file: "tasks/backlog.yaml", story_ids: ["US203"], gate: "qa"}
+  F134: {file: "tasks/backlog.yaml", story_ids: ["US204"], gate: "frontend-scaffold"}
+  F135: {file: "tasks/backlog.yaml", story_ids: ["US205"], gate: "frontend-scaffold"}
+  Q060: {file: "tasks/backlog.yaml", story_ids: ["US206"], gate: "qa"}
 requirements:
   REQ-R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], task_ids: ["R001"]}
   REQ-H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], task_ids: ["H001"]}
@@ -219,6 +225,9 @@ requirements:
   R189: {file: "docs/raw-requirements.md", story_ids: ["US201"], task_ids: ["F132"]}
   R190: {file: "docs/raw-requirements.md", story_ids: ["US202"], task_ids: ["F133"]}
   R191: {file: "docs/raw-requirements.md", story_ids: ["US203"], task_ids: ["Q059"]}
+  R192: {file: "docs/raw-requirements.md", story_ids: ["US204"], task_ids: ["F134"]}
+  R193: {file: "docs/raw-requirements.md", story_ids: ["US205"], task_ids: ["F135"]}
+  R194: {file: "docs/raw-requirements.md", story_ids: ["US206"], task_ids: ["Q060"]}
 legacy_reference:
   requirements: "docs/raw-requirements.md"
   stories: "docs/user-stories.md"
