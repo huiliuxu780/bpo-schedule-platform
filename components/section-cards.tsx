@@ -3,7 +3,9 @@ import { TrendingDown, TrendingUp } from "lucide-react"
 import { metricCards } from "@/app/dashboard/data"
 import {
   summarizeDashboardImportKpiPreview,
+  summarizeDashboardImportRecords,
   type DashboardImportKpiBatch,
+  type DashboardImportRecordSummary,
 } from "@/components/data-table-model"
 import {
   Card,
@@ -17,10 +19,13 @@ import { Badge } from "@/components/ui/badge"
 
 export function SectionCards({
   importBatches = [],
+  importRecords = [],
 }: {
   importBatches?: DashboardImportKpiBatch[]
+  importRecords?: DashboardImportRecordSummary[]
 }) {
   const importPreview = summarizeDashboardImportKpiPreview(importBatches)
+  const recordsPreview = summarizeDashboardImportRecords(importRecords)
 
   return (
     <section className="@container/main px-4 lg:px-6">
@@ -39,6 +44,9 @@ export function SectionCards({
         <CardContent>
           <div className="text-sm font-medium">
             已接入 {importPreview.importedSources} 类数据
+          </div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            records API 已处理 {recordsPreview.importedRows} 行，覆盖 {recordsPreview.importedSources} 类数据源
           </div>
         </CardContent>
         <CardFooter className="text-xs text-muted-foreground">

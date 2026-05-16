@@ -13,6 +13,7 @@ import {
   getDashboardPaginationRange,
   summarizeHeatmapRows,
   summarizeDashboardImportKpiPreview,
+  summarizeDashboardImportRecords,
   summarizeSchedulePlanRows,
   summarizeScheduleRiskRows,
   summarizeSyncStatusRows,
@@ -137,6 +138,38 @@ test("dashboard import KPI preview summarizes local demo batches", () => {
     latestBatch: "login_log-20260516094000-001",
     latestSource: "登录数据",
     statusLabel: "需关注",
+  });
+});
+
+test("dashboard import records preview summarizes processed rows", () => {
+  const summary = summarizeDashboardImportRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 2,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", name: "张敏" }],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 1,
+      latest_batch_id: "login_log-20260516094000-001",
+      updated_at: "2026-05-16T09:40:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedSources: 2,
+    importedRows: 3,
+    latestBatch: "login_log-20260516094000-001",
+    latestSource: "登录数据",
+    staffRows: 2,
+    statusRows: 0,
+    loginRows: 1,
+    statusLabel: "已处理",
   });
 });
 

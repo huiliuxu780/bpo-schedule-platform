@@ -2,6 +2,7 @@ import { DashboardClient } from "@/components/dashboard-client"
 import type { DashboardFilterState } from "@/components/data-table-model"
 import {
   getDemoImportBatches,
+  getDemoImportRecords,
   mapDemoBatchesToSyncStatus,
 } from "@/lib/demo-imports"
 
@@ -20,6 +21,7 @@ function parseDataVersion(value: string | undefined) {
 export default async function DashboardPage({ searchParams }: PageProps) {
   const params = searchParams ? await searchParams : {}
   const importedBatches = await getDemoImportBatches()
+  const importedRecords = await getDemoImportRecords()
   const importedRows = mapDemoBatchesToSyncStatus(importedBatches)
   const filters: DashboardFilterState = {
     date: firstParam(params.date) ?? "2026-05-11",
@@ -32,6 +34,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     <DashboardClient
       filters={filters}
       importBatches={importedBatches}
+      importRecords={importedRecords}
       syncStatusRows={importedRows}
     />
   )

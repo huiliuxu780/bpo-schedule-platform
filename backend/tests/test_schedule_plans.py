@@ -6,6 +6,7 @@ from backend.app.main import (
     app,
     create_schedule_plan_draft,
     import_demo_csv,
+    list_demo_import_records,
     list_demo_import_batches,
     get_schedule_plan,
     health_check,
@@ -36,6 +37,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
         self.assertIn(("/api/v1/demo-imports/{kind}", "POST"), routes)
         self.assertIn(("/api/v1/demo-imports/batches", "GET"), routes)
+        self.assertIn(("/api/v1/demo-imports/records", "GET"), routes)
         self.assertIn(("/health", "GET"), routes)
 
     def test_import_demo_csv_returns_batch_summary(self) -> None:
@@ -80,6 +82,43 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(response.batch.failed_rows, 1)
         self.assertEqual(response.errors[0].row_number, 3)
         self.assertIn("actual_login", response.errors[0].message)
+
+    def test_list_demo_import_records_returns_processed_rows(self) -> None:
+        import_demo_csv(
+            "staff_master",
+            {
+                "csv_text": "\n".join(
+                    [
+                        "staff_id,name,team,site,vendor,role,status",
+                        "A001,张敏,华东一组,上海职场,供应商A,客服,在线",
+                        "A002,李想,华南二组,苏州职场,供应商B,客服,培训",
+                    ]
+                )
+            },
+        )
+        import_demo_csv(
+            "status_log",
+            {
+                "csv_text": "\n".join(
+                    [
+                        "staff_id,date,start_time,end_time,status",
+                        "A001,2026-05-11,09:00,09:30,在线",
+                    ]
+                )
+            },
+        )
+
+        records = list_demo_import_records()
+        self.assertEqual(len(records.items), 2)
+
+        staff_records = next(item for item in records.items if item.kind == "staff_master")
+        self.assertEqual(staff_records.source_name, "坐席主数据")
+        self.assertEqual(staff_records.total_rows, 2)
+        self.assertEqual(staff_records.sample_rows[0]["staff_id"], "A001")
+
+        status_records = next(item for item in records.items if item.kind == "status_log")
+        self.assertEqual(status_records.total_rows, 1)
+        self.assertEqual(status_records.sample_rows[0]["status"], "在线")
 
     def test_health_check_returns_project_status(self) -> None:
         self.assertEqual(

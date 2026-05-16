@@ -214,6 +214,8 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
   await expect(dashboardMain.getByText("本机 KPI Preview")).toBeVisible()
   await expect(dashboardMain.getByText(/导入覆盖 \d+ 行/)).toBeVisible()
+  await expect(dashboardMain.getByText(/本机导入 records \d+ 行/)).toBeVisible()
+  await expect(dashboardMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
   await expect(dashboardMain.getByLabel("日期范围")).toHaveValue("2026-05-11")
   await dashboardMain.getByLabel("供应商").selectOption("供应商A")
   await dashboardMain.getByLabel("职场/团队").selectOption("上海职场")
@@ -226,6 +228,12 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     dashboardMain.getByRole("button", { name: "复核 ANM-202605-001" }),
   ).toBeVisible()
+
+  await page.goto("/shift-details")
+  const shiftMain = page.getByRole("main")
+  await expect(shiftMain.locator("h1", { hasText: "班次明细" })).toBeVisible()
+  await expect(shiftMain.getByText(/班次核对 records \d+ 行/)).toBeVisible()
+  await expect(shiftMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
 })
 
 test("unavailable sidebar modules are marked as development", async ({ page }) => {

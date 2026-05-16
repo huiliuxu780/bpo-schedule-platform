@@ -32,6 +32,15 @@ export type DashboardImportKpiBatch = {
   imported_at: string
 }
 
+export type DashboardImportRecordSummary = {
+  kind: "staff_master" | "status_log" | "login_log"
+  source_name: string
+  total_rows: number
+  latest_batch_id: string
+  updated_at: string
+  sample_rows: Record<string, string>[]
+}
+
 export type DashboardImportKpiPreview = {
   importedSources: number
   importedRows: number
@@ -39,6 +48,17 @@ export type DashboardImportKpiPreview = {
   latestBatch: string
   latestSource: string
   statusLabel: "等待导入" | "已接入" | "需关注"
+}
+
+export type DashboardImportRecordsPreview = {
+  importedSources: number
+  importedRows: number
+  latestBatch: string
+  latestSource: string
+  staffRows: number
+  statusRows: number
+  loginRows: number
+  statusLabel: "等待导入" | "已处理"
 }
 
 export type DashboardFilterState = {
@@ -217,6 +237,48 @@ export function summarizeDashboardImportKpiPreview(
     latestBatch: latest.batch_id,
     latestSource: latest.source_name,
     statusLabel: attentionBatches > 0 ? "需关注" : "已接入",
+  }
+}
+
+export function summarizeDashboardImportRecords(
+  records: DashboardImportRecordSummary[]
+): DashboardImportRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedSources: 0,
+      importedRows: 0,
+      latestBatch: "暂无导入 records",
+      latestSource: "等待导入",
+      staffRows: 0,
+      statusRows: 0,
+      loginRows: 0,
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const rowsByKind = records.reduce(
+    (summary, record) => {
+      summary[record.kind] = record.total_rows
+      return summary
+    },
+    { staff_master: 0, status_log: 0, login_log: 0 } as Record<
+      DashboardImportRecordSummary["kind"],
+      number
+    >
+  )
+
+  return {
+    importedSources: records.length,
+    importedRows: records.reduce((total, record) => total + record.total_rows, 0),
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    staffRows: rowsByKind.staff_master,
+    statusRows: rowsByKind.status_log,
+    loginRows: rowsByKind.login_log,
+    statusLabel: "已处理",
   }
 }
 

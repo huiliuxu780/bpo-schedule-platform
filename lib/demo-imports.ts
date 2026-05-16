@@ -1,4 +1,7 @@
-import type { DashboardSyncStatusRow } from "@/components/data-table-model"
+import type {
+  DashboardImportRecordSummary,
+  DashboardSyncStatusRow,
+} from "@/components/data-table-model"
 
 export type DemoImportKind = "staff_master" | "status_log" | "login_log"
 
@@ -24,6 +27,10 @@ export type DemoImportResponse = {
 
 type DemoImportBatchListResponse = {
   items: DemoImportBatchSummary[]
+}
+
+type DemoImportRecordListResponse = {
+  items: DashboardImportRecordSummary[]
 }
 
 const API_BASE_URL =
@@ -71,6 +78,14 @@ async function writeJson<T>(path: string, payload: unknown): Promise<T | null> {
 export async function getDemoImportBatches() {
   const response = await fetchJson<DemoImportBatchListResponse>(
     "/api/v1/demo-imports/batches"
+  )
+
+  return response?.items ?? []
+}
+
+export async function getDemoImportRecords() {
+  const response = await fetchJson<DemoImportRecordListResponse>(
+    "/api/v1/demo-imports/records"
   )
 
   return response?.items ?? []

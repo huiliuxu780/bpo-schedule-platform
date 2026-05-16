@@ -6,6 +6,8 @@ from backend.app.models import (
     DemoImportBatchListResponse,
     DemoImportBatchSummary,
     DemoImportKind,
+    DemoImportRecordListResponse,
+    DemoImportRecordSummary,
     DemoImportResponse,
     DemoImportRowError,
 )
@@ -105,3 +107,32 @@ def import_demo_csv(kind: DemoImportKind, csv_text: str) -> DemoImportResponse:
 
 def list_demo_import_batches() -> DemoImportBatchListResponse:
     return DemoImportBatchListResponse(items=list(_batches))
+
+
+def list_demo_import_records() -> DemoImportRecordListResponse:
+    items: list[DemoImportRecordSummary] = []
+
+    for kind, source_name in SOURCE_NAMES.items():
+        kind_batches = [batch for batch in _batches if batch.kind == kind]
+        if not kind_batches:
+            continue
+
+        latest_batch = kind_batches[0]
+        rows = [
+            row
+            for batch in kind_batches
+            for row in _batch_rows.get(batch.batch_id, [])
+        ]
+
+        items.append(
+            DemoImportRecordSummary(
+                kind=kind,
+                source_name=source_name,
+                total_rows=len(rows),
+                latest_batch_id=latest_batch.batch_id,
+                updated_at=latest_batch.imported_at,
+                sample_rows=rows[:3],
+            )
+        )
+
+    return DemoImportRecordListResponse(items=items)

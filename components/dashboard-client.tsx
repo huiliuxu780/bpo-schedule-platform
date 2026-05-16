@@ -7,18 +7,21 @@ import { BpoHeatmap } from "@/components/bpo-heatmap"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { DataSyncStatus } from "@/components/data-sync-status"
 import { DataTable } from "@/components/data-table"
+import { ImportedRecordsSummary } from "@/components/imported-records-summary"
 import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
 import { Button } from "@/components/ui/button"
 import type {
   DashboardFilterState,
   DashboardImportKpiBatch,
+  DashboardImportRecordSummary,
   DashboardSyncStatusRow,
 } from "@/components/data-table-model"
 
 type DashboardClientProps = {
   filters: DashboardFilterState
   importBatches: DashboardImportKpiBatch[]
+  importRecords: DashboardImportRecordSummary[]
   syncStatusRows: DashboardSyncStatusRow[]
 }
 
@@ -93,6 +96,7 @@ function GlobalFilterBar({ filters }: { filters: DashboardFilterState }) {
 export function DashboardClient({
   filters,
   importBatches,
+  importRecords,
   syncStatusRows,
 }: DashboardClientProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false)
@@ -107,14 +111,20 @@ export function DashboardClient({
         />
         <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto pb-6">
           <GlobalFilterBar filters={filters} />
-          <SectionCards importBatches={importBatches} />
+          <SectionCards
+            importBatches={importBatches}
+            importRecords={importRecords}
+          />
           <section className="grid gap-4 px-4 lg:grid-cols-[1.25fr_0.75fr] lg:px-6">
             <ChartAreaInteractive />
             <BpoHeatmap />
           </section>
           <section className="grid gap-4 px-4 lg:grid-cols-[1fr_360px] lg:px-6">
             <DataTable />
-            <DataSyncStatus rows={syncStatusRows} />
+            <div className="grid gap-4">
+              <ImportedRecordsSummary records={importRecords} />
+              <DataSyncStatus rows={syncStatusRows} />
+            </div>
           </section>
         </main>
       </div>

@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from backend.app.models import (
     DemoImportBatchListResponse,
     DemoImportKind,
+    DemoImportRecordListResponse,
     DemoImportRequest,
     DemoImportResponse,
     DemandPlanListResponse,
@@ -18,6 +19,7 @@ from backend.app.models import (
 from backend.app.demo_imports import (
     import_demo_csv as import_demo_csv_text,
     list_demo_import_batches as list_demo_import_batch_summaries,
+    list_demo_import_records as list_demo_import_record_summaries,
 )
 from backend.app.repository import (
     create_plan_draft,
@@ -57,6 +59,11 @@ def import_demo_csv(
 @app.get("/api/v1/demo-imports/batches", response_model=DemoImportBatchListResponse)
 def list_demo_import_batches() -> DemoImportBatchListResponse:
     return list_demo_import_batch_summaries()
+
+
+@app.get("/api/v1/demo-imports/records", response_model=DemoImportRecordListResponse)
+def list_demo_import_records() -> DemoImportRecordListResponse:
+    return list_demo_import_record_summaries()
 
 
 @app.get("/api/v1/schedule-plans", response_model=SchedulePlanListResponse)

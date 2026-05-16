@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { ImportedRecordsSummary } from "@/components/imported-records-summary"
 import { ReviewChecklistRail } from "@/components/review-checklist-rail"
 import { ShiftDetailsTable } from "@/components/shift-details-table"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +23,7 @@ import {
   buildShiftDetailsHref,
   buildUnavailabilityHref,
 } from "@/lib/review-navigation"
+import { getDemoImportRecords } from "@/lib/demo-imports"
 import {
   filterShiftDetailRowsByScope,
   formatCoverageRate,
@@ -116,6 +118,7 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
     intervalStart,
     intervalEnd,
   })
+  const importRecords = await getDemoImportRecords()
   const scopeLabel = buildReviewScopeLabel({
     planId,
     date,
@@ -308,6 +311,12 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
               <MetricCard title="最大缺口" value={`${maxGap}`} description="单个时段最大缺口" />
               <MetricCard title="整体覆盖率" value={formatCoverageRate(coverageRate)} description="当前筛选结果" />
             </section>
+
+            <ImportedRecordsSummary
+              records={importRecords}
+              title="班次核对 records"
+              description="从本机导入 processed records 读取坐席、状态和登录覆盖"
+            />
 
             <Card>
               <CardHeader className="flex flex-row items-start justify-between gap-4">

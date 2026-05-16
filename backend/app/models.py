@@ -168,3 +168,16 @@ class DemoImportResponse(BaseModel):
 
 class DemoImportBatchListResponse(BaseModel):
     items: list[DemoImportBatchSummary]
+
+
+class DemoImportRecordSummary(BaseModel):
+    kind: DemoImportKind
+    source_name: str
+    total_rows: int = Field(ge=0)
+    latest_batch_id: str
+    updated_at: str
+    sample_rows: list[dict[str, str]]
+
+
+class DemoImportRecordListResponse(BaseModel):
+    items: list[DemoImportRecordSummary]
