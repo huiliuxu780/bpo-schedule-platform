@@ -64,7 +64,7 @@ acceptance:
   - "页面读取 processed records 中的 status_log 和 login_log，并展示 `遵守率预览 records` 摘要。"
   - "页面展示状态数据行数、登录数据行数、本机预览状态和样本 records。"
   - "不做生产遵守率公式、不接实时流、不固化状态码、不写回状态、不接数据库、不做真实集成、审批、导出、批量或结算。"
-status: "ready"
+status: "done"
 ```
 
 ### US177 - Adherence monitoring navigation entry
@@ -82,7 +82,7 @@ acceptance:
   - "`履约监控 > 实时遵守率` 链接到 `/adherence-monitoring`。"
   - "页面和文案明确这是本机 records 预览，不是生产实时遵守率公式。"
   - "导航 active 状态能识别 `/adherence-monitoring`。"
-status: "ready"
+status: "done"
 ```
 
 ### US178 - Adherence monitoring imported records QA
@@ -100,7 +100,7 @@ acceptance:
   - "E2E 导入坐席状态和登录数据后，adherence-monitoring 出现 `遵守率预览 records` 摘要。"
   - "E2E 确认实时遵守率是可点击 link。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-adherence-formula、no-realtime-stream、no-status-writeback。"
-status: "ready"
+status: "done"
 ```
 
 ### US173 - Exception review reads imported records

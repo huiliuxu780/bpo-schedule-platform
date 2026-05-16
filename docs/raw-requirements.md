@@ -1817,8 +1817,8 @@ description: "实时遵守率需要做本机预览最小切片，读取已导入
 source: "PM continuation on 2026-05-16: 按规划补齐履约监控占位功能"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只做 records 覆盖和样本预览；不做生产遵守率公式、实时流、状态码固化、状态写回、数据库、真实集成、审批、导出、批量或结算。"
+status: "done"
+notes: "已新增 adherence-monitoring 本机 records 预览页面，读取 status_log/login_log 并展示覆盖与样本；未做生产遵守率公式、实时流、状态码固化、状态写回、数据库、真实集成、审批、导出、批量或结算。"
 ```
 
 ### R165 - adherence monitoring navigation entry
@@ -1830,8 +1830,8 @@ description: "实时遵守率页面完成后，侧边栏 `实时遵守率` 应�
 source: "F124 adherence monitoring minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只开放本机预览入口；不声称生产实时遵守率能力已经完成。"
+status: "done"
+notes: "侧边栏 `实时遵守率` 已链接到 `/adherence-monitoring`；页面文案明确只是本机 records 预览，不声称生产实时遵守率能力已经完成。"
 ```
 
 ### R166 - adherence monitoring imported records QA
@@ -1843,6 +1843,6 @@ description: "实时遵守率本机预览读取 status_log/login_log records 后
 source: "F124 adherence monitoring minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 只验证本机 records 进入实时遵守率预览页面，不扩大到生产公式、实时流、状态写回、数据库或真实集成。"
+status: "done"
+notes: "E2E 已覆盖导入状态/登录数据后进入 adherence-monitoring 并看到遵守率预览 records 摘要；QA 不扩大到生产公式、实时流、状态写回、数据库或真实集成。"
 ```

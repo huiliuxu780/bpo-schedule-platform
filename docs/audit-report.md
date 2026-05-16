@@ -1897,6 +1897,30 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 23 个后端 unittest。
 
+## 2026-05-16 - Adherence Monitoring Imported Records
+
+#### 审计结论
+
+- `F124/Q051/US176-US178` 已开放第五个履约监控最小切片：`履约监控 > 实时遵守率` 链接到 `/adherence-monitoring`，不再是占位。
+- 新页面读取既有 processed records 中的 `status_log` 和 `login_log`，并展示 `遵守率预览 records`、状态数据、登录数据、本机预览状态和样本，证明状态/登录导入结果进入实时遵守率入口。
+- 页面文案明确当前是本机 records 预览，不计算生产遵守率，不接实时流。
+- 本轮没有新增后端契约，没有修改 backend，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、自动排班、生产遵守率公式、状态码固化、状态写回、结算规则或收费因子。
+
+#### 风险
+
+- 当前只是本机 records 覆盖预览，不等同于生产级实时遵守率、状态流、状态码体系、异常处罚、薪资结算或供应商考核。
+- status_log/login_log records 仍来自本机进程内存，服务重启后清空；这符合当前本机演示边界。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖导入状态/登录数据后实时遵守率 records 摘要。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，59 个模型/源码断言测试通过。
+- `npm run typecheck`：通过。
+- in-app browser 检查：`http://localhost:3015/adherence-monitoring` 打开成功，页面标题、`遵守率预览 records`、`本机遵守率预览样本` 和本机边界文案可见；截图接口超时，未生成截图。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 23 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

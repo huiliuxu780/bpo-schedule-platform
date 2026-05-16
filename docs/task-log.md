@@ -1534,3 +1534,23 @@
 - action: 收口异常复核 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖导入状态/登录数据后进入异常复核，确认 records 摘要、状态数据、登录数据和只读复核队列可见；模型测试 58 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F124`
+- source_ids:
+  - `R164`
+  - `R165`
+- story_ids:
+  - `US176`
+  - `US177`
+- action: 完成实时遵守率本机 records 预览切片。
+- status: `done`
+- notes: 新增 `/adherence-monitoring` 页面，读取本机 `status_log` 与 `login_log` processed records，展示 `遵守率预览 records`、状态/登录覆盖、本机预览状态和样本；侧边栏 `实时遵守率` 改为真实入口。
+
+- task_id: `Q051`
+- source_ids:
+  - `R166`
+- story_ids:
+  - `US178`
+- action: 收口实时遵守率 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖导入状态/登录数据后进入实时遵守率，确认 records 摘要、状态数据、登录数据和本机遵守率预览样本可见；模型测试 59 条通过，浏览器 smoke 5 条通过。

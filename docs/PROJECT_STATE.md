@@ -26,7 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
 - Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
-- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, and exception review module pages.
+- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, and adherence monitoring module pages.
 
 The project does not contain:
 
@@ -125,6 +125,7 @@ Current invariants:
 - `F121/Q048/US167-US169` opened the坐席状态轨迹 slice: `坐席状态轨迹` now links to `/agent-status-trace`, which reads local status_log records and shows状态覆盖、状态分布和样本轨迹 without realtime streams or production adherence formulas; current queue returned to empty after QA closeout.
 - `F122/Q049/US170-US172` opened the异常管理 slice: `异常管理` now links to `/fulfillment-exceptions`, which reads local status/login records and shows本机异常线索 without realtime streams, production exception rules, or adherence formulas; current queue returned to empty after QA closeout.
 - `F123/Q050/US173-US175` opened the异常复核 slice: `异常复核` now links to `/exception-review`, which reads local status/login records and shows a read-only review queue without approval actions, status writeback, realtime streams, production exception rules, or adherence formulas; current queue returned to empty after QA closeout.
+- `F124/Q051/US176-US178` opened the实时遵守率 slice: `实时遵守率` now links to `/adherence-monitoring`, which reads local status/login records and shows本机遵守率预览 without realtime streams, production adherence formulas, status-code finalization, status writeback, database, or real integrations; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

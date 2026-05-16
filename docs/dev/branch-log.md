@@ -1384,3 +1384,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F124-Q051 Adherence Monitoring Imported Records
+
+- branch_name: `codex/f-batch-012-adherence-snapshot-imports`
+- base_main_commit: `4ed7b029586ae71c183a6bd19df58ba7be866899`
+- remote_status: `local continuation branch created from pushed codex/f-batch-011-exception-review-imports because PM asked to continue filling the planned product functions`
+- scope: adherence-monitoring local page, realtime-adherence navigation entry, status/login processed records preview summary, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/adherence-monitoring/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production adherence formula, realtime stream, status-code finalization, status writeback, settlement rule, or charge-factor files.
+- scope_diff_check: `app/adherence-monitoring/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeAdherenceMonitoringRecords` was missing; model tests then passed with 59 tests; typecheck passed; backend health and frontend `/adherence-monitoring` returned 200; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed outside sandbox with 5 tests and verified adherence-monitoring records summaries plus realtime-adherence sidebar link; in-app browser opened `/adherence-monitoring` and found the heading, `遵守率预览 records`, `本机遵守率预览样本`, and no-realtime/no-database boundary; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 23 backend unittest.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
