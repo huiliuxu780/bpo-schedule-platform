@@ -4,6 +4,22 @@
 
 ## Current Audit
 
+### 2026-05-16 - Field Mapping Imported Records
+
+#### 审计结论
+
+- `F127/Q054` 已新增 `/field-mapping` 本机只读预览页，读取 localhost-only `staff_master`、`status_log` 和 `login_log` processed records 样本字段。
+- 侧边栏 `数据与集成 > 字段映射` 已从 `开发中` 改为真实入口；`接口集成` 继续标注 `开发中`。
+- 页面展示 `字段映射 records`、三类数据源的已识别字段、缺失字段、额外字段和最近批次，不提供保存、发布或写回动作。
+
+#### 风险
+
+- 当前只证明导入样本字段能进入字段映射页面，不代表字段映射配置、写回、真实接口检查或跨系统对账已经完成。
+
+#### 建议
+
+- 后续如果要做可编辑字段映射、接口检查或跨系统对账，必须先开独立 Gate；当前阶段继续优先补本机只读产品页面。
+
 ### 2026-05-16 - CORN Status Log Imported Records
 
 #### 审计结论

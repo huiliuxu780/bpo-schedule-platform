@@ -1934,8 +1934,8 @@ description: "字段映射需要做本机只读预览最小切片，读取已导
 source: "PM continuation on 2026-05-16: 功能全部不要遗漏"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "仅做 localhost-only processed records 字段覆盖预览；不做字段映射写回、保存配置、真实接口检查、跨系统对账、数据库或真实集成。"
+status: "done"
+notes: "已新增 `/field-mapping` 页面读取 staff_master/status_log/login_log records 样本字段，展示字段覆盖、缺失字段和最近批次；未做字段映射写回、保存配置、真实接口检查、跨系统对账、数据库或真实集成。"
 ```
 
 ### R174 - field mapping navigation entry
@@ -1947,8 +1947,8 @@ description: "字段映射页面完成后，侧边栏 `字段映射` 应从 `开
 source: "F127 field mapping minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "导航入口只指向本机只读字段映射预览页，不代表字段映射配置保存或写回能力已经完成。"
+status: "done"
+notes: "侧边栏 `字段映射` 已链接到 `/field-mapping`；页面文案明确只是本机只读字段覆盖预览，不代表字段映射配置保存或写回能力已经完成。"
 ```
 
 ### R175 - field mapping imported records QA
@@ -1960,6 +1960,6 @@ description: "字段映射只读预览读取三类 processed records 后，需�
 source: "F127 field mapping minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到字段映射写回、保存配置、真实接口检查、跨系统对账、数据库或真实集成。"
+status: "done"
+notes: "E2E 已覆盖导入三类 CSV 后进入 field-mapping 并看到字段映射 records 摘要；QA 不扩大到字段映射写回、保存配置、真实接口检查、跨系统对账、数据库或真实集成。"
 ```

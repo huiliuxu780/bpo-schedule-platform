@@ -6611,7 +6611,7 @@ tasks:
   - id: F127
     title: "字段映射本机只读 records 预览"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/field-mapping/**"
@@ -6644,7 +6644,7 @@ tasks:
   - id: Q054
     title: "字段映射本机只读 records 预览 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/field-mapping/**"

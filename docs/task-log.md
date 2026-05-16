@@ -1594,3 +1594,23 @@
 - action: 收口 CORN 状态日志 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖导入状态 CSV 后进入 CORN 状态日志，确认 records 摘要、状态数据、状态日志分布和样本可见；模型测试 61 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F127`
+- source_ids:
+  - `R173`
+  - `R174`
+- story_ids:
+  - `US185`
+  - `US186`
+- action: 完成字段映射本机只读 records 预览切片。
+- status: `done`
+- notes: 新增 `/field-mapping` 页面，读取本机 `staff_master`、`status_log` 与 `login_log` processed records 样本字段，展示 `字段映射 records`、已识别字段、缺失字段、额外字段和最近批次；侧边栏 `字段映射` 改为真实入口，接口集成继续 `开发中`。
+
+- task_id: `Q054`
+- source_ids:
+  - `R175`
+- story_ids:
+  - `US187`
+- action: 收口字段映射 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖导入三类 CSV 后进入字段映射，确认 records 摘要、三类数据源和本机字段映射预览可见；模型测试 62 条通过，浏览器 smoke 5 条通过。
