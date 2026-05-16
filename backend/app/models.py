@@ -7,7 +7,7 @@ SchedulePlanStatus = Literal["draft", "review_ready", "published"]
 DemandPlanStatus = Literal["imported", "mapped"]
 UnavailabilityStatus = Literal["active", "resolved"]
 ScheduleRiskLevel = Literal["high", "medium", "low"]
-DemoImportKind = Literal["staff_master", "status_log", "login_log"]
+DemoImportKind = Literal["staff_master", "status_log", "login_log", "schedule_plan"]
 
 
 class SchedulePlanSummary(BaseModel):

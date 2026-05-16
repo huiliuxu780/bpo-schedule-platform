@@ -25,6 +25,7 @@ import {
   summarizeFulfillmentImportRecords,
   summarizeOrganizationPeopleRecords,
   summarizeRuleConfigurationRecords,
+  summarizeSchedulePlanImportRecords,
   summarizeSchedulePlanRows,
   summarizeScheduleRiskRows,
   summarizeSyncStatusRows,
@@ -183,6 +184,53 @@ test("dashboard import records preview summarizes processed rows", () => {
     statusRows: 0,
     loginRows: 1,
     statusLabel: "已处理",
+  });
+});
+
+test("schedule plan import records preview summarizes local schedule rows", () => {
+  const summary = summarizeSchedulePlanImportRecords([
+    {
+      kind: "schedule_plan",
+      source_name: "排班数据",
+      total_rows: 3,
+      latest_batch_id: "schedule_plan-20260517093000-001",
+      updated_at: "2026-05-17T09:30:00+08:00",
+      sample_rows: [
+        {
+          plan_id: "SP-20260511-SH",
+          plan_date: "2026-05-11",
+          project_name: "博西客服",
+          site_name: "上海职场",
+          interval_start: "09:00",
+          interval_end: "09:30",
+        },
+        {
+          plan_id: "SP-20260511-SH",
+          plan_date: "2026-05-11",
+          project_name: "博西客服",
+          site_name: "上海职场",
+          interval_start: "09:30",
+          interval_end: "10:00",
+        },
+      ],
+    },
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 2,
+      latest_batch_id: "staff_master-20260517092000-001",
+      updated_at: "2026-05-17T09:20:00+08:00",
+      sample_rows: [{ staff_id: "A001", name: "张敏" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedRows: 3,
+    planCount: 1,
+    sampleRows: 2,
+    latestBatch: "schedule_plan-20260517093000-001",
+    latestSource: "排班数据",
+    statusLabel: "本机排班预览",
   });
 });
 

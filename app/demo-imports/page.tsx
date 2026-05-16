@@ -45,6 +45,13 @@ const importCards: {
     template:
       "staff_id,date,planned_login,actual_login,actual_logout,online_minutes\nA001,2026-05-11,09:00,09:08,17:30,510\nA002,2026-05-11,09:00,09:00,17:00,480",
   },
+  {
+    kind: "schedule_plan",
+    title: "排班数据",
+    description: "计划日期、项目、职场、版本、状态和半小时时段。",
+    template:
+      "plan_id,plan_date,project_name,site_name,version,status,interval_start,interval_end,forecast_agents,scheduled_agents,note\nSP-20260511-SH,2026-05-11,博西客服,上海职场,v1,draft,09:00,09:30,12,10,早高峰补人\nSP-20260511-SH,2026-05-11,博西客服,上海职场,v1,draft,09:30,10:00,14,14,覆盖正常",
+  },
 ]
 
 type PageProps = {
@@ -71,7 +78,7 @@ export default async function DemoImportsPage({ searchParams }: PageProps) {
               本机演示数据导入
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              用 CSV 导入坐席主数据、状态数据和登录数据，只服务 localhost 演示。
+              用 CSV 导入坐席主数据、状态数据、登录数据和排班数据，只服务 localhost 演示。
             </p>
           </div>
           <Badge variant="outline">不接数据库</Badge>
@@ -94,7 +101,7 @@ export default async function DemoImportsPage({ searchParams }: PageProps) {
           </Card>
         ) : null}
 
-        <section className="grid gap-4 xl:grid-cols-3">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {importCards.map((card) => (
             <Card key={card.kind}>
               <CardHeader>

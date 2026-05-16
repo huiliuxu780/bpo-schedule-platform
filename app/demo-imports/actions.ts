@@ -5,7 +5,12 @@ import { redirect } from "next/navigation"
 import { importDemoCsv, type DemoImportKind } from "@/lib/demo-imports"
 
 function parseKind(value: FormDataEntryValue | null): DemoImportKind {
-  if (value === "staff_master" || value === "status_log" || value === "login_log") {
+  if (
+    value === "staff_master" ||
+    value === "status_log" ||
+    value === "login_log" ||
+    value === "schedule_plan"
+  ) {
     return value
   }
 

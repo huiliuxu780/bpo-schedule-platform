@@ -209,6 +209,9 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     importMain.getByRole("heading", { name: "登录数据" }),
   ).toBeVisible()
+  await expect(
+    importMain.getByRole("heading", { name: "排班数据" }),
+  ).toBeVisible()
   await expect(importMain.getByText("不接数据库")).toBeVisible()
 
   const importForms = importMain.locator("form")
@@ -258,6 +261,21 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   )
   expect(loginImportResponse.ok()).toBeTruthy()
 
+  const schedulePlanImportForm = importForms.nth(3)
+  await expect(
+    schedulePlanImportForm.getByRole("button", { name: "导入排班数据" }),
+  ).toBeVisible()
+  const schedulePlanImportResponse = await page.request.post(
+    `${apiBaseUrl}/api/v1/demo-imports/schedule_plan`,
+    {
+      data: {
+        csv_text:
+          "plan_id,plan_date,project_name,site_name,version,status,interval_start,interval_end,forecast_agents,scheduled_agents,note\nSP-20260511-SH,2026-05-11,博西客服,上海职场,v1,draft,09:00,09:30,12,10,早高峰补人\nSP-20260511-SH,2026-05-11,博西客服,上海职场,v1,draft,09:30,10:00,14,14,覆盖正常",
+      },
+    },
+  )
+  expect(schedulePlanImportResponse.ok()).toBeTruthy()
+
   await gotoAppPage(page, "/dashboard")
   const dashboardMain = page.getByRole("main")
 
@@ -278,6 +296,14 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     dashboardMain.getByRole("button", { name: "复核 ANM-202605-001" }),
   ).toBeVisible()
+
+  await gotoAppPage(page, "/schedule-plans")
+  const schedulePlansMain = page.getByRole("main")
+  await expect(schedulePlansMain.locator("h1", { hasText: "排班计划" })).toBeVisible()
+  await expect(
+    schedulePlansMain.getByText(/排班数据 records \d+ 行/),
+  ).toBeVisible()
+  await expect(schedulePlansMain.getByText("计划样本")).toBeVisible()
 
   await gotoAppPage(page, "/shift-details")
   const shiftMain = page.getByRole("main")

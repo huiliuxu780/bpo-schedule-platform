@@ -33,7 +33,7 @@ export type DashboardImportKpiBatch = {
 }
 
 export type DashboardImportRecordSummary = {
-  kind: "staff_master" | "status_log" | "login_log"
+  kind: string
   source_name: string
   total_rows: number
   latest_batch_id: string
@@ -59,6 +59,15 @@ export type DashboardImportRecordsPreview = {
   statusRows: number
   loginRows: number
   statusLabel: "等待导入" | "已处理"
+}
+
+export type SchedulePlanImportRecordsPreview = {
+  importedRows: number
+  planCount: number
+  sampleRows: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "本机排班预览"
 }
 
 export type FulfillmentImportRecordsPreview = {
@@ -199,7 +208,7 @@ export type RuleConfigurationRecordsPreview = {
 }
 
 export type FieldMappingSpec = {
-  kind: DashboardImportRecordSummary["kind"]
+  kind: "staff_master" | "status_log" | "login_log"
   title: string
   expectedFields: string[]
 }
@@ -441,13 +450,17 @@ export function summarizeDashboardImportRecords(
   )
   const rowsByKind = records.reduce(
     (summary, record) => {
-      summary[record.kind] = record.total_rows
+      if (
+        record.kind === "staff_master" ||
+        record.kind === "status_log" ||
+        record.kind === "login_log"
+      ) {
+        summary[record.kind] = record.total_rows
+      }
+
       return summary
     },
-    { staff_master: 0, status_log: 0, login_log: 0 } as Record<
-      DashboardImportRecordSummary["kind"],
-      number
-    >
+    { staff_master: 0, status_log: 0, login_log: 0 }
   )
 
   return {
@@ -459,6 +472,38 @@ export function summarizeDashboardImportRecords(
     statusRows: rowsByKind.status_log,
     loginRows: rowsByKind.login_log,
     statusLabel: "已处理",
+  }
+}
+
+export function summarizeSchedulePlanImportRecords(
+  records: DashboardImportRecordSummary[]
+): SchedulePlanImportRecordsPreview {
+  const scheduleRecord = records.find((record) => record.kind === "schedule_plan")
+
+  if (!scheduleRecord) {
+    return {
+      importedRows: 0,
+      planCount: 0,
+      sampleRows: 0,
+      latestBatch: "暂无排班 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const planCount = new Set(
+    scheduleRecord.sample_rows
+      .map((row) => row.plan_id?.trim())
+      .filter((planId): planId is string => Boolean(planId))
+  ).size
+
+  return {
+    importedRows: scheduleRecord.total_rows,
+    planCount,
+    sampleRows: scheduleRecord.sample_rows.length,
+    latestBatch: scheduleRecord.latest_batch_id,
+    latestSource: scheduleRecord.source_name,
+    statusLabel: "本机排班预览",
   }
 }
 

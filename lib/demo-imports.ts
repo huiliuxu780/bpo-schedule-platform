@@ -3,7 +3,11 @@ import type {
   DashboardSyncStatusRow,
 } from "@/components/data-table-model"
 
-export type DemoImportKind = "staff_master" | "status_log" | "login_log"
+export type DemoImportKind =
+  | "staff_master"
+  | "status_log"
+  | "login_log"
+  | "schedule_plan"
 
 export type DemoImportRowError = {
   row_number: number

@@ -23,12 +23,26 @@ REQUIRED_COLUMNS: dict[DemoImportKind, list[str]] = {
         "actual_logout",
         "online_minutes",
     ],
+    "schedule_plan": [
+        "plan_id",
+        "plan_date",
+        "project_name",
+        "site_name",
+        "version",
+        "status",
+        "interval_start",
+        "interval_end",
+        "forecast_agents",
+        "scheduled_agents",
+        "note",
+    ],
 }
 
 SOURCE_NAMES: dict[DemoImportKind, str] = {
     "staff_master": "坐席主数据",
     "status_log": "坐席状态数据",
     "login_log": "登录数据",
+    "schedule_plan": "排班数据",
 }
 
 _batches: list[DemoImportBatchSummary] = []

@@ -2,9 +2,11 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { summarizeSchedulePlanImportRecords } from "@/components/data-table-model"
 import { MvpFlowSummary } from "@/components/mvp-flow-summary"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
+import { getDemoImportRecords } from "@/lib/demo-imports"
 import {
   buildNewSchedulePlanHref,
   buildSchedulePlansHref,
@@ -85,6 +87,11 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const draft = params.draft?.trim() ?? ""
   const plans = await getSchedulePlansWithFilters({ query, status })
   const risks = await getScheduleRisks(query)
+  const importRecords = await getDemoImportRecords()
+  const scheduleImportSummary = summarizeSchedulePlanImportRecords(importRecords)
+  const scheduleImportRecord = importRecords.find(
+    (record) => record.kind === "schedule_plan"
+  )
   const totalForecast = plans.reduce((sum, plan) => sum + plan.forecast_agents, 0)
   const totalScheduled = plans.reduce(
     (sum, plan) => sum + plan.scheduled_agents,
@@ -182,6 +189,70 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
           query={query}
           status={status}
         />
+        <Card>
+          <CardHeader className="flex flex-row items-start justify-between gap-4">
+            <div>
+              <CardTitle>排班数据 records {scheduleImportSummary.importedRows} 行</CardTitle>
+              <CardDescription>
+                从本机 schedule_plan processed records 读取导入覆盖，不写入生产排班列表。
+              </CardDescription>
+            </div>
+            <Badge variant={scheduleImportSummary.importedRows > 0 ? "default" : "outline"}>
+              {scheduleImportSummary.statusLabel}
+            </Badge>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-[240px_1fr]">
+            <div className="grid gap-2 text-sm">
+              <div className="flex items-center justify-between rounded-md border p-2">
+                <span className="text-muted-foreground">计划样本</span>
+                <span className="font-medium tabular-nums">
+                  {scheduleImportSummary.planCount}
+                </span>
+              </div>
+              <div className="flex items-center justify-between rounded-md border p-2">
+                <span className="text-muted-foreground">时段行</span>
+                <span className="font-medium tabular-nums">
+                  {scheduleImportSummary.importedRows}
+                </span>
+              </div>
+              <div className="rounded-md border p-2">
+                <div className="text-muted-foreground">最近批次</div>
+                <div className="mt-1 break-all font-mono text-xs">
+                  {scheduleImportSummary.latestBatch}
+                </div>
+              </div>
+            </div>
+            {scheduleImportRecord ? (
+              <div className="grid gap-2">
+                {scheduleImportRecord.sample_rows.map((row, index) => (
+                  <div
+                    key={`${row.plan_id ?? "plan"}-${row.interval_start ?? index}`}
+                    className="grid gap-2 rounded-md border p-3 text-sm md:grid-cols-[1fr_auto_auto]"
+                  >
+                    <div>
+                      <div className="font-medium">
+                        {row.plan_id ?? "未命名计划"}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {row.project_name ?? "未标注项目"} / {row.site_name ?? "未标注职场"}
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="w-fit">
+                      {row.interval_start ?? "--"}-{row.interval_end ?? "--"}
+                    </Badge>
+                    <div className="text-muted-foreground">
+                      预测 {row.forecast_agents ?? 0} / 已排 {row.scheduled_agents ?? 0}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
+                暂无排班数据导入。可在文件导入页导入 schedule_plan CSV 后回到本页查看。
+              </div>
+            )}
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>

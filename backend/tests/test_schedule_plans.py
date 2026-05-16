@@ -120,6 +120,33 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(status_records.total_rows, 1)
         self.assertEqual(status_records.sample_rows[0]["status"], "在线")
 
+    def test_import_schedule_plan_csv_returns_processed_records(self) -> None:
+        response = import_demo_csv(
+            "schedule_plan",
+            {
+                "csv_text": "\n".join(
+                    [
+                        "plan_id,plan_date,project_name,site_name,version,status,interval_start,interval_end,forecast_agents,scheduled_agents,note",
+                        "SP-20260511-SH,2026-05-11,博西客服,上海职场,v1,draft,09:00,09:30,12,10,早高峰补人",
+                        "SP-20260511-SH,2026-05-11,博西客服,上海职场,v1,draft,09:30,10:00,14,14,覆盖正常",
+                    ]
+                )
+            },
+        )
+
+        self.assertEqual(response.batch.kind, "schedule_plan")
+        self.assertEqual(response.batch.source_name, "排班数据")
+        self.assertEqual(response.batch.success_rows, 2)
+        self.assertEqual(response.errors, [])
+
+        records = list_demo_import_records()
+        schedule_records = next(
+            item for item in records.items if item.kind == "schedule_plan"
+        )
+        self.assertEqual(schedule_records.total_rows, 2)
+        self.assertEqual(schedule_records.sample_rows[0]["plan_id"], "SP-20260511-SH")
+        self.assertEqual(schedule_records.sample_rows[0]["interval_start"], "09:00")
+
     def test_health_check_returns_project_status(self) -> None:
         self.assertEqual(
             health_check(),
