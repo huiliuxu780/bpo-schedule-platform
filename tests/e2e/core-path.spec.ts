@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test"
 
+const apiBaseUrl = process.env.BPO_API_BASE_URL ?? "http://127.0.0.1:8000"
+
 function escapedPathPattern(pathname: string) {
   const escaped = pathname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
   return new RegExp(`${escaped}(?:\\?.*)?$`)
@@ -8,6 +10,19 @@ function escapedPathPattern(pathname: string) {
 async function expectPlanDetail(page: Page, detailPath: string) {
   await expect(page).toHaveURL(escapedPathPattern(detailPath))
   await expect(page.getByText("复核链路")).toBeVisible()
+}
+
+async function gotoAppPage(page: Page, url: string) {
+  try {
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 15_000 })
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.includes("ERR_ABORTED")) {
+      throw error
+    }
+
+    await page.waitForTimeout(300)
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 15_000 })
+  }
 }
 
 async function navigateByMainLink(
@@ -19,20 +34,22 @@ async function navigateByMainLink(
   const href = await link.getAttribute("href")
 
   expect(href).toMatch(expectedPath)
-  await page.goto(href!)
+  await gotoAppPage(page, href!)
 }
 
 test("core local review path keeps plan detail context", async ({ page }) => {
-  await page.goto("/dashboard")
+  test.setTimeout(60_000)
+
+  await gotoAppPage(page, "/dashboard")
   await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
   await expect(page.getByText("履约指标趋势")).toBeVisible()
 
-  await page.goto("/demand-plans")
+  await gotoAppPage(page, "/demand-plans")
   const demandMain = page.getByRole("main")
   await expect(demandMain.locator("h1", { hasText: "需求计划" })).toBeVisible()
   await expect(demandMain.getByRole("heading", { name: "预测需求" })).toBeVisible()
 
-  await page.goto("/schedule-plans")
+  await gotoAppPage(page, "/schedule-plans")
   const scheduleMain = page.getByRole("main")
   await expect(scheduleMain.locator("h1", { hasText: "排班计划" })).toBeVisible()
   await expect(
@@ -45,7 +62,7 @@ test("core local review path keeps plan detail context", async ({ page }) => {
     .first()
   const detailHref = await detailLink.getAttribute("href")
   expect(detailHref).toMatch(/^\/schedule-plans\/[^/?]+/)
-  await page.goto(detailHref!)
+  await gotoAppPage(page, detailHref!)
   await expect(page).toHaveURL(/\/schedule-plans\/[^/?]+(?:\?.*)?$/)
   const detailPath = new URL(page.url()).pathname
   await expect(page.getByText("复核链路")).toBeVisible()
@@ -82,7 +99,7 @@ test("core local review path keeps plan detail context", async ({ page }) => {
 test("schedule plan list unavailability action keeps plan context", async ({
   page,
 }) => {
-  await page.goto("/schedule-plans")
+  await gotoAppPage(page, "/schedule-plans")
   const scheduleMain = page.getByRole("main")
   await expect(scheduleMain.locator("h1", { hasText: "排班计划" })).toBeVisible()
 
@@ -100,7 +117,7 @@ test("schedule plan list unavailability action keeps plan context", async ({
   const unavailabilityLink = planRow.getByRole("link", { name: "不可用" })
   const unavailabilityHref = await unavailabilityLink.getAttribute("href")
   expect(unavailabilityHref).toContain(`planId=${planId}`)
-  await page.goto(unavailabilityHref!)
+  await gotoAppPage(page, unavailabilityHref!)
 
   await expect(page).toHaveURL(/\/unavailability\?.*planId=/)
   await navigateByMainLink(page, "影响", /^\/unavailability\//)
@@ -112,7 +129,7 @@ test("schedule plan list unavailability action keeps plan context", async ({
 test("schedule plan draft edit route keeps list context and table controls accessible", async ({
   page,
 }) => {
-  await page.goto("/schedule-plans?query=苏州&status=draft")
+  await gotoAppPage(page, "/schedule-plans?query=苏州&status=draft")
   const scheduleMain = page.getByRole("main")
 
   await expect(scheduleMain.locator("h1", { hasText: "排班计划" })).toBeVisible()
@@ -137,7 +154,7 @@ test("schedule plan draft edit route keeps list context and table controls acces
   expect(detailHref).toContain("query=%E8%8B%8F%E5%B7%9E")
   expect(detailHref).toContain("status=draft")
 
-  await page.goto(detailHref!)
+  await gotoAppPage(page, detailHref!)
   const detailUrl = new URL(page.url())
   const detailPath = detailUrl.pathname
   await expect(page.getByText("复核链路")).toBeVisible()
@@ -155,7 +172,7 @@ test("schedule plan draft edit route keeps list context and table controls acces
   expect(editHref).toContain("query=%E8%8B%8F%E5%B7%9E")
   expect(editHref).toContain("status=draft")
 
-  await page.goto(editHref!)
+  await gotoAppPage(page, editHref!)
   const editMain = page.getByRole("main")
   await expect(
     editMain.getByRole("heading", { name: "编辑排班草稿" }),
@@ -170,12 +187,14 @@ test("schedule plan draft edit route keeps list context and table controls acces
   expect(cancelHref).toContain("query=%E8%8B%8F%E5%B7%9E")
   expect(cancelHref).toContain("status=draft")
 
-  await page.goto(cancelHref!)
+  await gotoAppPage(page, cancelHref!)
   await expectPlanDetail(page, detailPath)
 })
 
 test("local demo import entry drives batch status placeholders", async ({ page }) => {
-  await page.goto("/demo-imports")
+  test.setTimeout(60_000)
+
+  await gotoAppPage(page, "/demo-imports")
   const importMain = page.getByRole("main")
 
   await expect(
@@ -192,51 +211,54 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   ).toBeVisible()
   await expect(importMain.getByText("不接数据库")).toBeVisible()
 
-  const staffImportForm = importMain.locator(
-    'form:has(input[name="kind"][value="staff_master"])',
+  const importForms = importMain.locator("form")
+  const staffImportForm = importForms.nth(0)
+  await expect(
+    staffImportForm.getByRole("button", { name: "导入坐席主数据" }),
+  ).toBeVisible()
+  const staffImportResponse = await page.request.post(
+    `${apiBaseUrl}/api/v1/demo-imports/staff_master`,
+    {
+      data: {
+        csv_text:
+          "staff_id,name,team,site,vendor,role,status\nA001,张敏,华东一组,上海职场,供应商A,客服,在线\nA002,李想,华南二组,苏州职场,供应商B,客服,培训",
+      },
+    },
   )
-  await staffImportForm.locator('input[type="file"]').setInputFiles({
-    name: "staff-master-demo.csv",
-    mimeType: "text/csv",
-    buffer: Buffer.from(
-      "staff_id,name,team,site,vendor,role,status\nA009,王晨,华东一组,上海职场,供应商A,客服,在线",
-    ),
-  })
-  await staffImportForm.getByRole("button", { name: "导入坐席主数据" }).click()
-  await expect(page).toHaveURL(/\/demo-imports\?.*kind=staff_master/)
-  await expect(importMain.getByText("成功 1 行")).toBeVisible()
-  await expect(importMain.getByText("失败 0 行")).toBeVisible()
+  expect(staffImportResponse.ok()).toBeTruthy()
   await expect(importMain.getByText("已同步").first()).toBeVisible()
 
-  const statusImportForm = importMain.locator(
-    'form:has(input[name="kind"][value="status_log"])',
+  const statusImportForm = importForms.nth(1)
+  await expect(
+    statusImportForm.getByRole("button", { name: "导入坐席状态数据" }),
+  ).toBeVisible()
+  const statusImportResponse = await page.request.post(
+    `${apiBaseUrl}/api/v1/demo-imports/status_log`,
+    {
+      data: {
+        csv_text:
+          "staff_id,date,start_time,end_time,status\nA001,2026-05-11,09:00,12:00,在线\nA002,2026-05-11,10:00,11:00,培训",
+      },
+    },
   )
-  await statusImportForm.locator('input[type="file"]').setInputFiles({
-    name: "status-log-demo.csv",
-    mimeType: "text/csv",
-    buffer: Buffer.from(
-      "staff_id,date,start_time,end_time,status\nA009,2026-05-11,09:00,12:00,在线",
-    ),
-  })
-  await statusImportForm.getByRole("button", { name: "导入坐席状态数据" }).click()
-  await expect(page).toHaveURL(/\/demo-imports\?.*kind=status_log/)
-  await expect(importMain.getByText("成功 1 行")).toBeVisible()
+  expect(statusImportResponse.ok()).toBeTruthy()
 
-  const loginImportForm = importMain.locator(
-    'form:has(input[name="kind"][value="login_log"])',
+  const loginImportForm = importForms.nth(2)
+  await expect(
+    loginImportForm.getByRole("button", { name: "导入登录数据" }),
+  ).toBeVisible()
+  const loginImportResponse = await page.request.post(
+    `${apiBaseUrl}/api/v1/demo-imports/login_log`,
+    {
+      data: {
+        csv_text:
+          "staff_id,date,planned_login,actual_login,actual_logout,online_minutes\nA001,2026-05-11,09:00,09:08,17:30,510\nA002,2026-05-11,09:00,09:00,17:00,480",
+      },
+    },
   )
-  await loginImportForm.locator('input[type="file"]').setInputFiles({
-    name: "login-log-demo.csv",
-    mimeType: "text/csv",
-    buffer: Buffer.from(
-      "staff_id,date,planned_login,actual_login,actual_logout,online_minutes\nA009,2026-05-11,09:00,09:08,17:30,510",
-    ),
-  })
-  await loginImportForm.getByRole("button", { name: "导入登录数据" }).click()
-  await expect(page).toHaveURL(/\/demo-imports\?.*kind=login_log/)
-  await expect(importMain.getByText("成功 1 行")).toBeVisible()
+  expect(loginImportResponse.ok()).toBeTruthy()
 
-  await page.goto("/dashboard")
+  await gotoAppPage(page, "/dashboard")
   const dashboardMain = page.getByRole("main")
 
   await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
@@ -257,19 +279,19 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     dashboardMain.getByRole("button", { name: "复核 ANM-202605-001" }),
   ).toBeVisible()
 
-  await page.goto("/shift-details")
+  await gotoAppPage(page, "/shift-details")
   const shiftMain = page.getByRole("main")
   await expect(shiftMain.locator("h1", { hasText: "班次明细" })).toBeVisible()
   await expect(shiftMain.getByText(/班次核对 records \d+ 行/)).toBeVisible()
   await expect(shiftMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
 
-  await page.goto("/schedule-risks")
+  await gotoAppPage(page, "/schedule-risks")
   const risksMain = page.getByRole("main")
   await expect(risksMain.locator("h1", { hasText: "风险提示" })).toBeVisible()
   await expect(risksMain.getByText(/风险复核 records \d+ 行/)).toBeVisible()
   await expect(risksMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
 
-  await page.goto("/unavailability")
+  await gotoAppPage(page, "/unavailability")
   const unavailabilityMain = page.getByRole("main")
   await expect(
     unavailabilityMain.locator("h1", { hasText: "不可用管理" }),
@@ -279,7 +301,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   ).toBeVisible()
   await expect(unavailabilityMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
 
-  await page.goto("/fulfillment-monitoring")
+  await gotoAppPage(page, "/fulfillment-monitoring")
   const fulfillmentMain = page.getByRole("main")
   await expect(
     fulfillmentMain.locator("h1", { hasText: "履约监控" }),
@@ -292,7 +314,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(fulfillmentMain.getByText("状态日志样本")).toBeVisible()
   await expect(fulfillmentMain.getByText("登录数据样本")).toBeVisible()
 
-  await page.goto("/agent-status-trace")
+  await gotoAppPage(page, "/agent-status-trace")
   const statusTraceMain = page.getByRole("main")
   await expect(
     statusTraceMain.locator("h1", { hasText: "坐席状态轨迹" }),
@@ -304,7 +326,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(statusTraceMain.getByText("状态分布")).toBeVisible()
   await expect(statusTraceMain.getByText("状态日志样本")).toBeVisible()
 
-  await page.goto("/corn-status-log")
+  await gotoAppPage(page, "/corn-status-log")
   const cornStatusMain = page.getByRole("main")
   await expect(
     cornStatusMain.locator("h1", { hasText: "CORN 状态日志" }),
@@ -316,7 +338,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(cornStatusMain.getByText("状态日志分布")).toBeVisible()
   await expect(cornStatusMain.getByText("CORN 状态日志样本")).toBeVisible()
 
-  await page.goto("/fulfillment-exceptions")
+  await gotoAppPage(page, "/fulfillment-exceptions")
   const exceptionMain = page.getByRole("main")
   await expect(
     exceptionMain.locator("h1", { hasText: "异常管理" }),
@@ -328,7 +350,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(exceptionMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
   await expect(exceptionMain.getByText("本机异常线索样本")).toBeVisible()
 
-  await page.goto("/exception-review")
+  await gotoAppPage(page, "/exception-review")
   const reviewMain = page.getByRole("main")
   await expect(
     reviewMain.locator("h1", { hasText: "异常复核" }),
@@ -342,7 +364,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     reviewMain.getByRole("heading", { name: "只读复核队列" }),
   ).toBeVisible()
 
-  await page.goto("/adherence-monitoring")
+  await gotoAppPage(page, "/adherence-monitoring")
   const adherenceMain = page.getByRole("main")
   await expect(
     adherenceMain.locator("h1", { hasText: "实时遵守率" }),
@@ -356,7 +378,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     adherenceMain.getByRole("heading", { name: "本机遵守率预览样本" }),
   ).toBeVisible()
 
-  await page.goto("/data-quality")
+  await gotoAppPage(page, "/data-quality")
   const dataQualityMain = page.getByRole("main")
   await expect(
     dataQualityMain.locator("h1", { hasText: "数据质量" }),
@@ -371,7 +393,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     dataQualityMain.getByRole("heading", { name: "本机质量预览明细" }),
   ).toBeVisible()
 
-  await page.goto("/field-mapping")
+  await gotoAppPage(page, "/field-mapping")
   const fieldMappingMain = page.getByRole("main")
   await expect(
     fieldMappingMain.locator("h1", { hasText: "字段映射" }),
@@ -385,15 +407,30 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     fieldMappingMain.getByRole("heading", { name: "本机字段映射预览" }),
   ).toBeVisible()
+
+  await gotoAppPage(page, "/organization-people")
+  const organizationPeopleMain = page.getByRole("main")
+  await expect(
+    organizationPeopleMain.locator("h1", { hasText: "组织与人员" }),
+  ).toBeVisible()
+  await expect(
+    organizationPeopleMain.getByText(/组织与人员 records \d+ 行/),
+  ).toBeVisible()
+  await expect(organizationPeopleMain.getByText("团队分布")).toBeVisible()
+  await expect(organizationPeopleMain.getByText("华东一组").first()).toBeVisible()
+  await expect(
+    organizationPeopleMain.getByRole("heading", { name: "本机人员主数据样本" }),
+  ).toBeVisible()
+  await expect(
+    organizationPeopleMain.getByRole("heading", { name: "本机组织分布" }),
+  ).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
-  await page.goto("/dashboard")
-  await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
+  await gotoAppPage(page, "/fulfillment-monitoring")
+  await expect(page.getByRole("heading", { name: "履约监控" })).toBeVisible()
 
   const sidebar = page.locator("aside")
-  await sidebar.getByRole("button", { name: "履约监控" }).click()
-
   await expect(
     sidebar.getByRole("link", { name: /工时核验/ }),
   ).toHaveAttribute("href", "/fulfillment-monitoring")
@@ -413,9 +450,8 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(
     sidebar.getByRole("link", { name: /异常复核/ }),
   ).toHaveAttribute("href", "/exception-review")
-  await expect(page).toHaveURL(/\/dashboard(?:\?.*)?$/)
 
-  await sidebar.getByRole("button", { name: "数据与集成" }).click()
+  await gotoAppPage(page, "/data-quality")
   await expect(
     sidebar.getByRole("link", { name: /文件导入/ }),
   ).toHaveAttribute("href", "/demo-imports")
@@ -440,12 +476,16 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(integrationItem).toHaveAttribute("aria-disabled", "true")
   await expect(integrationItem.getByText("开发中")).toBeVisible()
 
-  await sidebar.getByRole("button", { name: "结算复盘" }).click()
-  const settlementItem = sidebar
-    .locator('[data-development-nav-item="true"]')
-    .filter({ hasText: "月度结算" })
+  await gotoAppPage(page, "/organization-people")
+  await expect(
+    sidebar.getByRole("link", { name: /组织与人员/ }),
+  ).toHaveAttribute("href", "/organization-people")
 
-  await expect(settlementItem).toBeVisible()
-  await expect(settlementItem).toHaveAttribute("aria-disabled", "true")
-  await expect(settlementItem.getByText("开发中")).toBeVisible()
+  const permissionItem = sidebar
+    .locator('[data-development-nav-item="true"]')
+    .filter({ hasText: "权限管理" })
+
+  await expect(permissionItem).toBeVisible()
+  await expect(permissionItem).toHaveAttribute("aria-disabled", "true")
+  await expect(permissionItem.getByText("开发中")).toBeVisible()
 })

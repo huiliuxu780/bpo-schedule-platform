@@ -99,7 +99,7 @@ const nav: NavGroup[] = [
     title: "系统管理",
     icon: Settings,
     items: [
-      { title: "组织与人员", development: true },
+      { title: "组织与人员", href: "/organization-people", activeMatch: "exact", tag: "P1" },
       { title: "供应商管理", development: true },
       { title: "规则配置", development: true },
       { title: "权限管理", development: true },

@@ -143,6 +143,17 @@ export type FieldMappingRecordsPreview = {
   statusLabel: "等待导入" | "缺少字段" | "本机只读"
 }
 
+export type OrganizationPeopleRecordsPreview = {
+  staffRows: number
+  teamCount: number
+  siteCount: number
+  vendorCount: number
+  sampleRows: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "本机只读"
+}
+
 export type FieldMappingSpec = {
   kind: DashboardImportRecordSummary["kind"]
   title: string
@@ -759,6 +770,43 @@ export function summarizeFieldMappingRecords(
     latestBatch: latest.latest_batch_id,
     latestSource: latest.source_name,
     statusLabel: missingFields > 0 ? "缺少字段" : "本机只读",
+  }
+}
+
+export function summarizeOrganizationPeopleRecords(
+  records: DashboardImportRecordSummary[]
+): OrganizationPeopleRecordsPreview {
+  const staffRecord = records.find((record) => record.kind === "staff_master")
+
+  if (!staffRecord) {
+    return {
+      staffRows: 0,
+      teamCount: 0,
+      siteCount: 0,
+      vendorCount: 0,
+      sampleRows: 0,
+      latestBatch: "暂无组织与人员 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const getDistinctCount = (field: string) =>
+    new Set(
+      staffRecord.sample_rows
+        .map((row) => row[field]?.trim())
+        .filter((value): value is string => Boolean(value))
+    ).size
+
+  return {
+    staffRows: staffRecord.total_rows,
+    teamCount: getDistinctCount("team"),
+    siteCount: getDistinctCount("site"),
+    vendorCount: getDistinctCount("vendor"),
+    sampleRows: staffRecord.sample_rows.length,
+    latestBatch: staffRecord.latest_batch_id,
+    latestSource: staffRecord.source_name,
+    statusLabel: "本机只读",
   }
 }
 
