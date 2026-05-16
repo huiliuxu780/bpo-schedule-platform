@@ -26,7 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
 - Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
-- Local imported staff/status/login/schedule-plan rows are exposed as processed records and consumed by existing dashboard, schedule plans, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, and organization people module pages.
+- Local imported staff/status/login/schedule-plan rows are exposed as processed records and consumed by existing dashboard, schedule plans, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, organization people, today fulfillment, anomaly alerts, vendor management, rule configuration, and monthly settlement module pages.
 
 The project does not contain:
 
@@ -132,6 +132,7 @@ Current invariants:
 - `F128/Q055/US188-US190` opened the组织与人员 slice: `组织与人员` now links to `/organization-people`, which reads local staff_master records and shows人员样本、团队/职场/供应商分布 without account login, permission management, organization maintenance, staff writeback, database, real integrations, or production audit; current queue returned to empty after QA closeout.
 - `F129/Q056/US191-US196` opened the运营工作台与系统管理预览 slice: `今日履约`、`异常预警`、`时段缺口热力图`、`供应商管理` and `规则配置` now link to local read-only pages that consume existing processed records or dashboard seed data without backend contract changes, database, real integrations, auth/permission, approval/export/batch, supplier writeback, rule publishing, settlement, production formulas, or charge factors; current queue returned to empty after QA closeout.
 - `F130/Q057/US197-US198` opened the排班数据导入 slice: `schedule_plan` CSV can be imported through the localhost demo import contract and `/schedule-plans` now reads schedule_plan processed records to show排班数据 records、计划样本、时段行 and samples without writing production schedule lists, automatic scheduling, database, real integrations, approval/export/batch, settlement, production formulas, or charge factors; current queue returned to empty after QA closeout.
+- `F131/Q058/US199-US200` opened the月度结算只读复盘 slice: `结算复盘 > 月度结算` now links to `/monthly-settlement`, which reads local processed records to show结算复盘 records、主数据/履约/排班复盘信号 and samples without settlement formulas, charge factors, bill amount, lock, approval, export, batch, database, or real integrations; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
@@ -143,12 +144,11 @@ PM clarified on 2026-05-16 that the demo should be based on existing product mod
 import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
 ```
 
-Recommended order after F130/Q057:
+Recommended order after F131/Q058:
 
-1. **结算复盘只读预览边界:** open the first review-only settlement page only as local records/seed summary, without settlement formulas, charge factors, approval, export, or batch actions.
-2. **报表中心/供应商复盘只读汇总:** expose imported records and current local outcomes through existing reporting/vendor review surfaces where they are still placeholders.
-3. **继续补齐未开放入口:** keep unopened modules clearly marked `开发中`, and only open them when they can read local imported records or existing seed outcomes.
-4. **Draft edit and review depth:** continue dynamic interval editing, review feedback, and submit/review preparation only as local MVP flows, without approval or production workflow capability.
+1. **报表中心/供应商复盘只读汇总:** expose imported records and current local outcomes through existing reporting/vendor review surfaces where they are still placeholders.
+2. **继续补齐未开放入口:** keep unopened modules clearly marked `开发中`, and only open them when they can read local imported records or existing seed outcomes.
+3. **Draft edit and review depth:** continue dynamic interval editing, review feedback, and submit/review preparation only as local MVP flows, without approval or production workflow capability.
 
 Temporarily not recommended: database setup, real CORN/HR/WFM integrations, auth/permissions, approval, export, batch operations, automatic scheduling, production KPI formulas, settlement rules, and charge factors. These still require separate PM-confirmed Gates.
 

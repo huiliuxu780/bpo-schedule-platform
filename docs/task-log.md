@@ -1678,3 +1678,21 @@
 - action: 收口排班数据导入到排班计划页 QA。
 - status: `done`
 - notes: 后端 unittest 24 条通过，模型测试 68 条通过，typecheck/lint/build 通过，E2E smoke 5 条通过并覆盖 schedule_plan 导入后排班计划页 `排班数据 records` 摘要；in-app browser 已打开 `/schedule-plans` 并确认记录摘要可见。
+
+- task_id: `F131`
+- source_ids:
+  - `R187`
+- story_ids:
+  - `US199`
+- action: 完成月度结算本机只读复盘预览。
+- status: `done`
+- notes: 新增 `/monthly-settlement` 页面，读取本机 processed records，展示 `结算复盘 records`、导入覆盖、主数据/履约/排班复盘信号、最近批次和本机边界；侧边栏 `结算复盘 > 月度结算` 改为真实入口，报表中心、供应商复盘、结算锁账继续 `开发中`。
+
+- task_id: `Q058`
+- source_ids:
+  - `R188`
+- story_ids:
+  - `US200`
+- action: 收口月度结算本机只读复盘 QA。
+- status: `done`
+- notes: 模型测试 69 条通过，E2E smoke 5 条通过并覆盖导入本机 CSV 后 `/monthly-settlement` 的 `结算复盘 records` 摘要、月度结算导航链接和其他结算复盘条目的开发中边界；最终 check 通过。

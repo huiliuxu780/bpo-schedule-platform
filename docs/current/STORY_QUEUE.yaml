@@ -5,18 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US199
-    requirement_ids: [R187]
-    task_id: F131
-    status: in_progress
-    priority: P1
-    module: "结算复盘"
-    summary: "月度结算入口开放为本机只读复盘页，读取导入 records 和本地排班/履约上下文，不计算生产结算。"
-  - id: US200
-    requirement_ids: [R188]
-    task_id: Q058
-    status: ready
-    priority: P1
-    module: "本机验收"
-    summary: "E2E 覆盖月度结算入口可达、records 摘要可见，其他结算复盘入口仍是开发中。"
+stories: []

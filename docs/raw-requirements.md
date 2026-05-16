@@ -2116,8 +2116,8 @@ description: "月度结算需要开放一个本机只读预览页，读取已导
 source: "PM approved continuation on 2026-05-17: 结算复盘只读预览边界"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做 `/monthly-settlement` 本机只读复盘摘要；不做结算公式、收费因子、锁账、账单金额、审批、导出、批量、数据库或真实集成。"
+status: "done"
+notes: "已新增 `/monthly-settlement` 本机只读复盘页，读取 processed records 并展示结算复盘 records、主数据/履约/排班复盘信号、最近批次和边界；不做结算公式、收费因子、锁账、账单金额、审批、导出、批量、数据库或真实集成。"
 ```
 
 ### R188 - monthly settlement preview QA
@@ -2129,6 +2129,6 @@ description: "月度结算本机只读预览开放后，需要补充 E2E 证据�
 source: "F131 monthly settlement local preview on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到数据库、真实集成、审批、导出、批量、生产结算公式、锁账或收费因子。"
+status: "done"
+notes: "E2E 已覆盖导入本机 CSV 后 monthly-settlement 出现 `结算复盘 records` 摘要，并确认月度结算导航可点击、报表中心/供应商复盘/结算锁账仍为开发中；QA 不扩大到数据库、真实集成、审批、导出、批量、生产结算公式、锁账或收费因子。"
 ```

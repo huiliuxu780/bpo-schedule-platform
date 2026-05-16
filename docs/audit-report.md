@@ -2044,6 +2044,32 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-17 - Monthly Settlement Local Preview
+
+#### 审计结论
+
+- `F131/Q058/US199-US200` 已开放 `结算复盘 > 月度结算`：侧边栏链接到 `/monthly-settlement`，不再是占位。
+- 新页面读取本机 processed records，展示 `结算复盘 records`、导入来源数、主数据/履约/排班复盘信号、最近批次、排班样本、状态样本和登录样本。
+- 报表中心、供应商复盘、结算锁账仍保持 `开发中` 且不可点击。
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、自动排班、生产结算公式、收费因子、锁账、账单金额或供应商考核写回。
+
+#### 风险
+
+- 当前月度结算只是本机只读复盘入口，不等同于生产结算金额、账单生成、锁账或供应商结算能力。
+- processed records 仍来自本机 process-memory；服务重启后清空，符合当前本机演示边界。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，69 个模型/源码断言测试通过，包含月度结算复盘 helper 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖 monthly-settlement records 摘要、月度结算导航链接和其他结算复盘开发中边界。
+- `BPO_WEB_URL=http://localhost:3015/dashboard BPO_API_BASE_URL=http://127.0.0.1:8000 bash scripts/smoke-demo.sh`：通过，backend health 与 dashboard reachable。
+- `curl -fsS http://localhost:3015/monthly-settlement`：通过，新增页面可返回 HTML。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

@@ -1503,3 +1503,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F131-Q058 Monthly Settlement Local Preview
+
+- branch_name: `codex/f-batch-019-settlement-preview`
+- base_main_commit: `0484a95572b80c12fb1e10f929953859d236f71e`
+- remote_status: `local continuation branch created from pushed codex/f-batch-018-schedule-plan-imports because PM approved continuing to settlement review-only preview`
+- scope: monthly-settlement local read-only page, monthly settlement navigation entry, imported records settlement review summary, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/monthly-settlement/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `scripts/tests/**`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production settlement formula, charge factor, bill amount, lock, or supplier writeback files.
+- scope_diff_check: `app/monthly-settlement/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeMonthlySettlementRecords` was missing; model tests then passed with 69 tests; typecheck and lint passed; frontend `/monthly-settlement` returned 200; first E2E run exposed an over-broad text assertion and the root cause was duplicate boundary copy, then `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 5 tests and verified monthly-settlement records plus settlement sidebar boundaries; `BPO_WEB_URL=http://localhost:3015/dashboard BPO_API_BASE_URL=http://127.0.0.1:8000 bash scripts/smoke-demo.sh` passed; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
+- local_commit_sha: `7ec4c5e02cc69156b04a0081d1b91b0688ecba8c`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

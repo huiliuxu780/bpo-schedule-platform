@@ -3562,7 +3562,7 @@ acceptance:
   - "`结算复盘 > 月度结算` 链接到 `/monthly-settlement`。"
   - "报表中心、供应商复盘、结算锁账继续显示 `开发中` 且不可点击。"
   - "本批不做结算公式、收费因子、锁账、账单金额、审批、导出、批量、数据库或真实集成。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US200 - Monthly settlement local preview QA
@@ -3580,5 +3580,5 @@ acceptance:
   - "E2E 导入本机 CSV 后，monthly-settlement 出现 `结算复盘 records` 摘要。"
   - "E2E 覆盖月度结算导航可点击，报表中心、供应商复盘、结算锁账仍是 `开发中`。"
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-settlement-formula、no-charge-factor、no-lock、no-export、no-batch。"
-status: "ready"
+status: "done"
 ```
