@@ -6047,3 +6047,66 @@ tasks:
       - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: B009
+    title: "本机导入 records 现有模块读取切片"
+    priority: P1
+    status: ready
+    required_workflow: backend-mvp
+    allowed_files:
+      - "backend/**"
+      - "app/dashboard/**"
+      - "app/shift-details/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "后端提供 `/api/v1/demo-imports/records`，按导入类型返回总行数、最近批次、更新时间和样本行。"
+      - "dashboard 读取 processed records 并展示本机导入 records 摘要。"
+      - "shift-details 读取 processed records 并展示班次核对相关的本机导入覆盖摘要。"
+      - "本批不新增演示中心，不接数据库、ORM、migration、schema、真实外部集成、权限、审批、导出、批量、生产公式或结算。"
+      - "`python3 -m unittest backend.tests.test_schedule_plans`、`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实 CORN/HR/WFM/第三方 API 集成"
+      - "需要认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q045
+    title: "本机导入 records 现有模块读取 QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "backend/**"
+      - "app/dashboard/**"
+      - "app/shift-details/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "E2E 覆盖导入后 dashboard 出现 processed records 摘要。"
+      - "E2E 覆盖导入后 shift-details 出现本机导入 records 覆盖摘要。"
+      - "QA 证据明确 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-approval、no-export、no-batch、no-production-formula、no-settlement。"
+      - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

@@ -5,4 +5,25 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US158
+    requirement_ids: ["R146"]
+    task_ids: ["B009"]
+    status: in_progress
+    priority: P1
+    gate: backend-mvp
+    summary: "本机导入成功行以 processed records API 暴露给现有模块。"
+  - id: US159
+    requirement_ids: ["R147"]
+    task_ids: ["B009"]
+    status: in_progress
+    priority: P1
+    gate: backend-mvp
+    summary: "dashboard 和班次明细读取导入 records 并展示业务结果摘要。"
+  - id: US160
+    requirement_ids: ["R148"]
+    task_ids: ["Q045"]
+    status: ready
+    priority: P1
+    gate: qa
+    summary: "补充导入 records 被现有模块读取的验收证据。"

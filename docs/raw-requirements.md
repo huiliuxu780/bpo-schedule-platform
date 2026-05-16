@@ -1573,3 +1573,42 @@ version: "1.0"
 status: "done"
 notes: "QA 已覆盖本地导航可信度，不扩大到新模块开发、数据库、真实集成、权限、审批、导出或结算。"
 ```
+
+### R146 - local demo processed import records API
+
+```yaml
+id: R146
+module: "本机演示数据导入"
+description: "本机导入成功行需要被后端作为 processed records 暴露给现有模块读取，而不是只停留在导入页或 batch summary。"
+source: "PM continuation on 2026-05-16 after navigation development labeling push"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只增加 localhost-only/process-memory 只读 API；不接数据库、不做 ORM/migration/schema、不接真实 CORN/HR/WFM API。"
+```
+
+### R147 - existing modules read imported records
+
+```yaml
+id: R147
+module: "导入数据现有模块消费"
+description: "dashboard 和班次明细等现有页面需要读取后端处理后的导入 records，并展示可解释的覆盖摘要或样本，证明导入结果进入业务模块。"
+source: "PM direction on 2026-05-16: 演示基于现有功能，导入后在各模块页面展示结果"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "本批只做 dashboard 与 shift-details 的首个读取切片；不新增演示中心、不做生产 KPI/公式。"
+```
+
+### R148 - imported records module-read QA evidence
+
+```yaml
+id: R148
+module: "导入数据现有模块验收"
+description: "导入 records 被现有模块读取后，需要补充后端 unittest 和浏览器 smoke 证据，证明导入后 dashboard 与 shift-details 能看到处理结果。"
+source: "B009 imported records existing-module batch on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只验证本机导入数据流转，不扩大到数据库、真实集成、权限、审批、导出、批量或结算。"
+```

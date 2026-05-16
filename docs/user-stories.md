@@ -2793,3 +2793,59 @@ acceptance:
   - "QA 记录明确本批不扩大到数据库、真实集成、权限、审批、导出、批量、结算或生产公式。"
 status: "done"
 ```
+
+### US158 - Local demo processed import records API
+
+```yaml
+id: US158
+requirement_ids:
+  - R146
+module: "本机演示数据导入"
+role: "演示人员"
+story: "作为演示人员，我希望导入成功的坐席、状态和登录行能作为后端处理后的 records 被读取，这样模块页展示的是接口结果，而不是前端临时映射。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "后端提供 `/api/v1/demo-imports/records` 只读接口。"
+  - "接口按导入类型返回总行数、最近批次、更新时间和样本行。"
+  - "接口只读取本机进程内存，不使用数据库、ORM、migration、schema 或真实外部集成。"
+  - "`python3 -m unittest backend.tests.test_schedule_plans` 和 `bash scripts/check.sh` 通过。"
+status: "ready"
+```
+
+### US159 - Existing modules read imported records
+
+```yaml
+id: US159
+requirement_ids:
+  - R147
+module: "导入数据现有模块消费"
+role: "演示人员"
+story: "作为演示人员，我希望 dashboard 和班次明细能展示导入 records 的覆盖摘要，这样演示时可以说明数据已经进入现有业务模块。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "dashboard 读取 processed records，并展示导入 records 摘要。"
+  - "shift-details 读取 processed records，并展示与班次核对相关的本机导入覆盖摘要。"
+  - "没有导入 records 时页面显示明确空态，不伪造业务数据。"
+  - "不新增演示中心、不固化生产 KPI/公式、不做审批、导出、批量或结算能力。"
+status: "ready"
+```
+
+### US160 - Imported records module-read acceptance evidence
+
+```yaml
+id: US160
+requirement_ids:
+  - R148
+module: "导入数据现有模块验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入后 dashboard 和 shift-details 的 records 展示，这样能证明导入数据被现有模块读到了。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席主数据后，dashboard 出现 processed records 摘要。"
+  - "E2E 进入 shift-details 后，能看到本机导入 records 覆盖摘要。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
+status: "ready"
+```
