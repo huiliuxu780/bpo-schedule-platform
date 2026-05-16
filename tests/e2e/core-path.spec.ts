@@ -521,6 +521,41 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     monthlySettlementMain.getByText("不计算生产结算金额。", { exact: true }),
   ).toBeVisible()
+
+  await gotoAppPage(page, "/report-center")
+  const reportCenterMain = page.getByRole("main")
+  await expect(
+    reportCenterMain.locator("h1", { hasText: "报表中心" }),
+  ).toBeVisible()
+  await expect(
+    reportCenterMain.getByText(/报表中心 records \d+ 行/),
+  ).toBeVisible()
+  await expect(
+    reportCenterMain.getByRole("heading", { name: "本机报表预览" }),
+  ).toBeVisible()
+  await expect(
+    reportCenterMain.getByText("不生成生产报表或导出文件。", { exact: true }),
+  ).toBeVisible()
+
+  await gotoAppPage(page, "/supplier-review")
+  const supplierReviewMain = page.getByRole("main")
+  await expect(
+    supplierReviewMain.locator("h1", { hasText: "供应商复盘" }),
+  ).toBeVisible()
+  await expect(
+    supplierReviewMain.getByText(/供应商复盘 records \d+ 行/),
+  ).toBeVisible()
+  await expect(
+    supplierReviewMain.getByRole("heading", {
+      name: "本机供应商复盘",
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect(
+    supplierReviewMain.getByText("不做供应商考核写回或结算金额。", {
+      exact: true,
+    }),
+  ).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -570,7 +605,15 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
     sidebar.getByRole("link", { name: /月度结算/ }),
   ).toHaveAttribute("href", "/monthly-settlement")
 
-  for (const itemName of ["报表中心", "供应商复盘", "结算锁账"]) {
+  await expect(
+    sidebar.getByRole("link", { name: /报表中心/ }),
+  ).toHaveAttribute("href", "/report-center")
+
+  await expect(
+    sidebar.getByRole("link", { name: /供应商复盘/ }),
+  ).toHaveAttribute("href", "/supplier-review")
+
+  for (const itemName of ["结算锁账"]) {
     const developmentItem = sidebar
       .locator('[data-development-nav-item="true"]')
       .filter({ hasText: itemName })

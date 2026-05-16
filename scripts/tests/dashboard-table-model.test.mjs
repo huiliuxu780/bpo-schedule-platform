@@ -26,9 +26,11 @@ import {
   summarizeOrganizationPeopleRecords,
   summarizeRuleConfigurationRecords,
   summarizeMonthlySettlementRecords,
+  summarizeReportCenterRecords,
   summarizeSchedulePlanImportRecords,
   summarizeSchedulePlanRows,
   summarizeScheduleRiskRows,
+  summarizeSupplierReviewRecords,
   summarizeSyncStatusRows,
   summarizeTodayFulfillmentRecords,
   summarizeUnavailabilityRows,
@@ -281,6 +283,108 @@ test("monthly settlement records summarize local read-only review signals", () =
     latestBatch: "schedule_plan-20260517095000-001",
     latestSource: "排班数据",
     statusLabel: "本机复盘预览",
+  });
+});
+
+test("report center records summarize imported module outcomes", () => {
+  const summary = summarizeReportCenterRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 2,
+      latest_batch_id: "staff_master-20260517092000-001",
+      updated_at: "2026-05-17T09:20:00+08:00",
+      sample_rows: [{ staff_id: "A001", vendor: "供应商A" }],
+    },
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 3,
+      latest_batch_id: "status_log-20260517093000-001",
+      updated_at: "2026-05-17T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", status: "在线" }],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 2,
+      latest_batch_id: "login_log-20260517094000-001",
+      updated_at: "2026-05-17T09:40:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+    {
+      kind: "schedule_plan",
+      source_name: "排班数据",
+      total_rows: 4,
+      latest_batch_id: "schedule_plan-20260517095000-001",
+      updated_at: "2026-05-17T09:50:00+08:00",
+      sample_rows: [{ plan_id: "SP-20260511-SH", interval_start: "09:00" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedRows: 11,
+    sourceCount: 4,
+    reportSections: 4,
+    staffRows: 2,
+    fulfillmentRows: 5,
+    scheduleRows: 4,
+    latestBatch: "schedule_plan-20260517095000-001",
+    latestSource: "排班数据",
+    statusLabel: "本机报表预览",
+  });
+});
+
+test("supplier review records summarize vendor and operations coverage", () => {
+  const summary = summarizeSupplierReviewRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 4,
+      latest_batch_id: "staff_master-20260517092000-001",
+      updated_at: "2026-05-17T09:20:00+08:00",
+      sample_rows: [
+        { staff_id: "A001", vendor: "供应商A", site: "上海职场" },
+        { staff_id: "A002", vendor: "供应商B", site: "苏州职场" },
+        { staff_id: "A003", vendor: "供应商A", site: "上海职场" },
+      ],
+    },
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 3,
+      latest_batch_id: "status_log-20260517093000-001",
+      updated_at: "2026-05-17T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", status: "在线" }],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 2,
+      latest_batch_id: "login_log-20260517094000-001",
+      updated_at: "2026-05-17T09:40:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+    {
+      kind: "schedule_plan",
+      source_name: "排班数据",
+      total_rows: 4,
+      latest_batch_id: "schedule_plan-20260517095000-001",
+      updated_at: "2026-05-17T09:50:00+08:00",
+      sample_rows: [{ plan_id: "SP-20260511-SH", interval_start: "09:00" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    staffRows: 4,
+    vendorCount: 2,
+    largestVendor: "供应商A",
+    fulfillmentRows: 5,
+    scheduleRows: 4,
+    reviewSignals: 3,
+    latestBatch: "schedule_plan-20260517095000-001",
+    latestSource: "排班数据",
+    statusLabel: "本机供应商复盘",
   });
 });
 

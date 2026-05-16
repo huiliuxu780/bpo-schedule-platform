@@ -224,6 +224,40 @@ export type MonthlySettlementRecordsPreview = {
     | "本机复盘预览"
 }
 
+export type ReportCenterRecordsPreview = {
+  importedRows: number
+  sourceCount: number
+  reportSections: number
+  staffRows: number
+  fulfillmentRows: number
+  scheduleRows: number
+  latestBatch: string
+  latestSource: string
+  statusLabel:
+    | "等待导入"
+    | "缺少主数据"
+    | "缺少履约数据"
+    | "缺少排班数据"
+    | "本机报表预览"
+}
+
+export type SupplierReviewRecordsPreview = {
+  staffRows: number
+  vendorCount: number
+  largestVendor: string
+  fulfillmentRows: number
+  scheduleRows: number
+  reviewSignals: number
+  latestBatch: string
+  latestSource: string
+  statusLabel:
+    | "等待导入"
+    | "缺少供应商主数据"
+    | "缺少履约数据"
+    | "缺少排班数据"
+    | "本机供应商复盘"
+}
+
 export type FieldMappingSpec = {
   kind: "staff_master" | "status_log" | "login_log"
   title: string
@@ -574,6 +608,124 @@ export function summarizeMonthlySettlementRecords(
           : scheduleRows === 0
             ? "缺少排班数据"
             : "本机复盘预览",
+  }
+}
+
+export function summarizeReportCenterRecords(
+  records: DashboardImportRecordSummary[]
+): ReportCenterRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedRows: 0,
+      sourceCount: 0,
+      reportSections: 0,
+      staffRows: 0,
+      fulfillmentRows: 0,
+      scheduleRows: 0,
+      latestBatch: "暂无报表中心 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const staffRows =
+    records.find((record) => record.kind === "staff_master")?.total_rows ?? 0
+  const statusRows =
+    records.find((record) => record.kind === "status_log")?.total_rows ?? 0
+  const loginRows =
+    records.find((record) => record.kind === "login_log")?.total_rows ?? 0
+  const scheduleRows =
+    records.find((record) => record.kind === "schedule_plan")?.total_rows ?? 0
+  const fulfillmentRows = statusRows + loginRows
+  const reportSections = [staffRows, statusRows, loginRows, scheduleRows].filter(
+    (value) => value > 0
+  ).length
+
+  return {
+    importedRows: records.reduce((total, record) => total + record.total_rows, 0),
+    sourceCount: records.length,
+    reportSections,
+    staffRows,
+    fulfillmentRows,
+    scheduleRows,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      staffRows === 0
+        ? "缺少主数据"
+        : fulfillmentRows === 0
+          ? "缺少履约数据"
+          : scheduleRows === 0
+            ? "缺少排班数据"
+            : "本机报表预览",
+  }
+}
+
+export function summarizeSupplierReviewRecords(
+  records: DashboardImportRecordSummary[]
+): SupplierReviewRecordsPreview {
+  const staffRecord = records.find((record) => record.kind === "staff_master")
+
+  if (!staffRecord) {
+    return {
+      staffRows: 0,
+      vendorCount: 0,
+      largestVendor: "等待导入",
+      fulfillmentRows: 0,
+      scheduleRows: 0,
+      reviewSignals: 0,
+      latestBatch: "暂无供应商复盘 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const vendorCounts = new Map<string, number>()
+
+  for (const row of staffRecord.sample_rows) {
+    const vendor = row.vendor?.trim() || "未标注"
+    vendorCounts.set(vendor, (vendorCounts.get(vendor) ?? 0) + 1)
+  }
+
+  const largestVendor =
+    Array.from(vendorCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ??
+    "未标注"
+  const statusRows =
+    records.find((record) => record.kind === "status_log")?.total_rows ?? 0
+  const loginRows =
+    records.find((record) => record.kind === "login_log")?.total_rows ?? 0
+  const scheduleRows =
+    records.find((record) => record.kind === "schedule_plan")?.total_rows ?? 0
+  const fulfillmentRows = statusRows + loginRows
+  const reviewSignals = [
+    staffRecord.total_rows,
+    fulfillmentRows,
+    scheduleRows,
+  ].filter((value) => value > 0).length
+
+  return {
+    staffRows: staffRecord.total_rows,
+    vendorCount: vendorCounts.size,
+    largestVendor,
+    fulfillmentRows,
+    scheduleRows,
+    reviewSignals,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      vendorCounts.size === 0
+        ? "缺少供应商主数据"
+        : fulfillmentRows === 0
+          ? "缺少履约数据"
+          : scheduleRows === 0
+            ? "缺少排班数据"
+            : "本机供应商复盘",
   }
 }
 
