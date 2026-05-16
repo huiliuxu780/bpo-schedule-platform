@@ -48,6 +48,61 @@ acceptance:
 status: "done"
 ```
 
+### US173 - Exception review reads imported records
+
+```yaml
+id: US173
+requirement_ids:
+  - R161
+module: "履约监控"
+role: "演示人员"
+story: "作为演示人员，我希望异常复核页能只读展示本机导入的状态和登录 records，这样可以演示复核入口基于现有导入处理结果。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/exception-review` 页面。"
+  - "页面读取 processed records 中的 status_log 和 login_log，并展示 `复核队列 records` 摘要。"
+  - "页面展示只读复核队列、状态数据行数、登录数据行数和样本 records。"
+  - "不做审批动作、不写回状态、不做实时流、不做生产异常判定或遵守率公式、不接数据库、不做真实集成、导出、批量或结算。"
+status: "ready"
+```
+
+### US174 - Exception review navigation entry
+
+```yaml
+id: US174
+requirement_ids:
+  - R162
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏异常复核成为可点击入口，这样履约监控的复核入口不再只是占位。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`履约监控 > 异常复核` 链接到 `/exception-review`。"
+  - "实时遵守率继续显示 `开发中` 且不可点击。"
+  - "导航 active 状态能识别 `/exception-review`。"
+status: "ready"
+```
+
+### US175 - Exception review imported records QA
+
+```yaml
+id: US175
+requirement_ids:
+  - R163
+module: "履约监控验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入状态和登录数据后进入异常复核页，这样能证明异常复核入口读到了导入处理结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席状态和登录数据后，exception-review 出现 `复核队列 records` 摘要。"
+  - "E2E 确认异常复核是可点击 link，实时遵守率仍是 `开发中`。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-status-writeback、no-production-exception-rule。"
+status: "ready"
+```
+
 ### US129 - Plan-origin row-action context closure
 
 ```yaml

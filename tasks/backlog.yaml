@@ -6356,3 +6356,66 @@ tasks:
       - "需要生产异常判定、实时遵守率或处罚规则"
       - "验证失败"
     commit_after_done: true
+  - id: F123
+    title: "异常复核读取本机履约 records"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/exception-review/**"
+      - "components/app-sidebar.tsx"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/exception-review` 页面，读取 processed records 中的 status_log/login_log 并展示 `复核队列 records` 摘要。"
+      - "页面展示只读复核队列、状态数据行数、登录数据行数、最近批次和样本 records，不提供审批、通过、驳回、写回或批量处理。"
+      - "`履约监控 > 异常复核` 链接到 `/exception-review`，实时遵守率继续显示 `开发中`。"
+      - "本批不改后端契约、不接数据库、真实集成、权限、审批、导出、批量、自动排班、生产公式、异常处罚规则或结算。"
+      - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run typecheck`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实 CORN/HR/WFM/第三方 API 集成"
+      - "需要认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "需要复核审批动作、状态写回、生产异常判定、实时遵守率或处罚规则"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q050
+    title: "异常复核 records 读取 QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/exception-review/**"
+      - "components/app-sidebar.tsx"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "E2E 覆盖导入状态和登录数据后 exception-review 出现 `复核队列 records` 摘要。"
+      - "E2E 覆盖异常复核导航可点击，实时遵守率仍是开发中。"
+      - "QA 证据明确 no-backend-contract-change、localhost-only、process-memory、no-database、no-real-integration、no-auth、no-approval、no-status-writeback、no-export、no-batch、no-production-formula、no-production-exception-rule、no-settlement。"
+      - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "需要复核审批动作、状态写回、生产异常判定、实时遵守率或处罚规则"
+      - "验证失败"
+    commit_after_done: true

@@ -1768,3 +1768,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入状态/登录数据后进入 fulfillment-exceptions 并看到 records 摘要；QA 不扩大到实时流、生产异常规则、数据库、真实集成或生产工作流。"
 ```
+
+### R161 - exception review reads imported records
+
+```yaml
+id: R161
+module: "履约监控"
+description: "异常复核需要做本机只读最小切片，读取已导入的坐席状态数据和登录数据 records，展示待人工查看的复核队列和样本。"
+source: "PM continuation on 2026-05-16: 持续补完履约监控占位功能"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只做只读复核队列展示；不做复核审批动作、状态写回、实时流、生产异常判定、遵守率公式、处罚规则、数据库、真实集成、导出、批量或结算。"
+```
+
+### R162 - exception review navigation entry
+
+```yaml
+id: R162
+module: "导航可信度"
+description: "异常复核页面完成后，侧边栏 `异常复核` 应从 `开发中` 改为真实可点击入口，实时遵守率继续标注 `开发中`。"
+source: "F123 exception review minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只开放已实现的异常复核只读入口；不把实时遵守率伪装为已开放。"
+```
+
+### R163 - exception review imported records QA
+
+```yaml
+id: R163
+module: "履约监控验收"
+description: "异常复核读取 status_log/login_log records 后，需要补充浏览器 smoke 证据，证明导入后现有履约入口能看到只读复核结果。"
+source: "F123 exception review minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只验证本机 records 进入异常复核页面，不扩大到审批、状态写回、实时流、生产异常规则、数据库或真实集成。"
+```

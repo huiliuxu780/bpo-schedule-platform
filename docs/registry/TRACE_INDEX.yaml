@@ -72,6 +72,9 @@ stories:
   US170: {file: "docs/user-stories.md", requirement_ids: ["R158"], task_ids: ["F122"], archive_refs: []}
   US171: {file: "docs/user-stories.md", requirement_ids: ["R159"], task_ids: ["F122"], archive_refs: []}
   US172: {file: "docs/user-stories.md", requirement_ids: ["R160"], task_ids: ["Q049"], archive_refs: []}
+  US173: {file: "docs/user-stories.md", requirement_ids: ["R161"], task_ids: ["F123"], archive_refs: []}
+  US174: {file: "docs/user-stories.md", requirement_ids: ["R162"], task_ids: ["F123"], archive_refs: []}
+  US175: {file: "docs/user-stories.md", requirement_ids: ["R163"], task_ids: ["Q050"], archive_refs: []}
 tasks:
   R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], gate: "qa"}
   H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], gate: "state-hygiene"}
@@ -101,6 +104,8 @@ tasks:
   Q048: {file: "tasks/backlog.yaml", story_ids: ["US169"], gate: "qa"}
   F122: {file: "tasks/backlog.yaml", story_ids: ["US170", "US171"], gate: "frontend-scaffold"}
   Q049: {file: "tasks/backlog.yaml", story_ids: ["US172"], gate: "qa"}
+  F123: {file: "tasks/backlog.yaml", story_ids: ["US173", "US174"], gate: "frontend-scaffold"}
+  Q050: {file: "tasks/backlog.yaml", story_ids: ["US175"], gate: "qa"}
 requirements:
   REQ-R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], task_ids: ["R001"]}
   REQ-H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], task_ids: ["H001"]}
@@ -136,6 +141,9 @@ requirements:
   R158: {file: "docs/raw-requirements.md", story_ids: ["US170"], task_ids: ["F122"]}
   R159: {file: "docs/raw-requirements.md", story_ids: ["US171"], task_ids: ["F122"]}
   R160: {file: "docs/raw-requirements.md", story_ids: ["US172"], task_ids: ["Q049"]}
+  R161: {file: "docs/raw-requirements.md", story_ids: ["US173"], task_ids: ["F123"]}
+  R162: {file: "docs/raw-requirements.md", story_ids: ["US174"], task_ids: ["F123"]}
+  R163: {file: "docs/raw-requirements.md", story_ids: ["US175"], task_ids: ["Q050"]}
 legacy_reference:
   requirements: "docs/raw-requirements.md"
   stories: "docs/user-stories.md"

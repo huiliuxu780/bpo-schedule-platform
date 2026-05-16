@@ -5,4 +5,25 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US173
+    requirement_ids: ["R161"]
+    task_ids: ["F123"]
+    status: in_progress
+    priority: P1
+    gate: frontend-scaffold
+    summary: "开放异常复核只读页面，读取 status_log/login_log records。"
+  - id: US174
+    requirement_ids: ["R162"]
+    task_ids: ["F123"]
+    status: in_progress
+    priority: P1
+    gate: frontend-scaffold
+    summary: "侧边栏异常复核从开发中改为真实本机入口。"
+  - id: US175
+    requirement_ids: ["R163"]
+    task_ids: ["Q050"]
+    status: ready
+    priority: P1
+    gate: qa
+    summary: "补充异常复核只读 records 的浏览器验收证据。"
