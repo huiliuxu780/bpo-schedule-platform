@@ -1486,3 +1486,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F130-Q057 Schedule Plan Import Records Preview
+
+- branch_name: `codex/f-batch-018-schedule-plan-imports`
+- base_main_commit: `5d8c10ef01360012a07599cdde91c39e1ee6c7aa`
+- remote_status: `local continuation branch created from pushed codex/f-batch-017-ops-system-preview-pages because PM clarified demo data should enter existing modules`
+- scope: schedule_plan localhost CSV import contract, demo-imports schedule data card, schedule-plans processed records summary, focused backend/model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `backend/app/demo_imports.py`, `backend/app/models.py`, `backend/tests/test_schedule_plans.py`, `app/demo-imports/**`, `app/schedule-plans/**`, `components/**`, `lib/**`, `scripts/tests/**`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `backend/app/demo_imports.py`, `backend/app/models.py`, `backend/tests/test_schedule_plans.py`, `app/demo-imports/actions.ts`, `app/demo-imports/page.tsx`, `app/schedule-plans/page.tsx`, `components/data-table-model.ts`, `lib/demo-imports.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing backend test first verified `schedule_plan` import was missing and failing model test first verified `summarizeSchedulePlanImportRecords` was missing; backend unittest then passed with 24 tests, model tests passed with 68 tests, typecheck and lint passed, `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 5 tests and verified schedule_plan import into schedule-plans; in-app browser opened `/schedule-plans` and found `排班数据 records`; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
+- local_commit_sha: `4a0823d1415765f5c965803f77a2860b967eb8d7`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

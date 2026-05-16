@@ -6807,7 +6807,7 @@ tasks:
   - id: F130
     title: "排班数据本机导入与排班计划 records 摘要"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: backend-mvp
     allowed_files:
       - "backend/app/demo_imports.py"
@@ -6843,7 +6843,7 @@ tasks:
   - id: Q057
     title: "排班数据导入到排班计划页 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "backend/tests/test_schedule_plans.py"

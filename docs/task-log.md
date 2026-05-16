@@ -1660,3 +1660,21 @@
 - action: 收口运营工作台与系统管理本机预览页 QA。
 - status: `done`
 - notes: E2E 覆盖本机导入三类 CSV 后进入五个新页面，确认 records 摘要、样本/热力图/供应商分布/规则目录可见；模型测试 67 条通过，浏览器 smoke 5 条通过，in-app browser 已打开 `/rule-configuration` 并确认关键文案。
+
+- task_id: `F130`
+- source_ids:
+  - `R185`
+- story_ids:
+  - `US197`
+- action: 完成排班数据本机导入与排班计划 records 摘要。
+- status: `done`
+- notes: 后端 demo import 新增 `schedule_plan` CSV 契约，`/demo-imports` 新增排班数据导入入口，`/schedule-plans` 读取本机 schedule_plan processed records 并展示 `排班数据 records`、计划样本、时段行、最近批次和样本时段；不写入生产排班列表，不做自动排班或数据库持久化。
+
+- task_id: `Q057`
+- source_ids:
+  - `R186`
+- story_ids:
+  - `US198`
+- action: 收口排班数据导入到排班计划页 QA。
+- status: `done`
+- notes: 后端 unittest 24 条通过，模型测试 68 条通过，typecheck/lint/build 通过，E2E smoke 5 条通过并覆盖 schedule_plan 导入后排班计划页 `排班数据 records` 摘要；in-app browser 已打开 `/schedule-plans` 并确认记录摘要可见。

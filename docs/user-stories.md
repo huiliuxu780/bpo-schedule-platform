@@ -3524,7 +3524,7 @@ acceptance:
   - "后端 localhost demo import 接受 `schedule_plan`，并在 processed records 返回 `排班数据`。"
   - "`/schedule-plans` 读取 schedule_plan records 并展示 `排班数据 records` 摘要、计划样本、时段行和最近批次。"
   - "本批不把导入结果写入生产排班列表、不做自动排班、不接数据库、真实 WFM/CORN/HR 集成、权限、审批、导出、批量、生产公式、结算规则或收费因子。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US198 - Schedule plan import QA
@@ -3542,5 +3542,5 @@ acceptance:
   - "E2E 在文件导入页确认 `排班数据` 入口可见。"
   - "E2E 通过 localhost API 导入 schedule_plan CSV 后，排班计划页出现 `排班数据 records` 摘要。"
   - "QA 记录明确本批是 localhost-only、process-memory、no-database、no-real-integration、no-auto-scheduling。"
-status: "ready"
+status: "done"
 ```

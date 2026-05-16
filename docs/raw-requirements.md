@@ -2090,8 +2090,8 @@ description: "排班数据需要支持本机 CSV 导入，并在排班计划页�
 source: "PM correction on 2026-05-17: 坐席主数据、考勤数据、排班数据都可以导入，并在各模块页面展示导入后数据跑的结果"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做 localhost-only process-memory import records 和排班计划页只读摘要；不写入生产排班列表、不做自动排班、不接数据库、真实 WFM/CORN/HR 集成、审批、导出、批量、生产公式、结算或收费因子。"
+status: "done"
+notes: "已新增 schedule_plan 本机 CSV 导入契约和 `/schedule-plans` 排班数据 records 摘要；导入结果只作为 processed records 只读预览，不写入生产排班列表、不做自动排班、不接数据库、真实 WFM/CORN/HR 集成、审批、导出、批量、生产公式、结算或收费因子。"
 ```
 
 ### R186 - schedule plan import QA
@@ -2103,6 +2103,6 @@ description: "排班数据导入后，需要补充 E2E 证据，证明用户可�
 source: "F130 schedule plan import records preview on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到数据库、真实集成、自动排班、审批、导出、批量、生产公式、结算或收费因子。"
+status: "done"
+notes: "E2E 已覆盖文件导入页排班数据入口、schedule_plan CSV 导入和排班计划页 `排班数据 records` 摘要；QA 不扩大到数据库、真实集成、自动排班、审批、导出、批量、生产公式、结算或收费因子。"
 ```

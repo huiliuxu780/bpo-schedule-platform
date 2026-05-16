@@ -2018,6 +2018,32 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 23 个后端 unittest。
 
+## 2026-05-17 - Schedule Plan Import Records Preview
+
+#### 审计结论
+
+- `F130/Q057/US197-US198` 已把排班数据纳入本机导入链路：localhost demo import 支持 `schedule_plan` CSV，`/demo-imports` 新增 `排班数据` 导入入口。
+- `/schedule-plans` 读取 processed records 中的 `schedule_plan`，展示 `排班数据 records`、计划样本、时段行、最近批次和样本时段，演示基于现有排班模块完成，不再另建演示中心。
+- 本轮没有把导入结果写入生产排班列表，没有新增数据库、ORM、migration、schema、真实 WFM/CORN/HR 集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。
+
+#### 风险
+
+- 当前 schedule_plan rows 仍来自本机 process-memory；服务重启会清空，符合本机演示边界。
+- 页面只展示导入 records 摘要，不等同于生产排班生效、自动排班、审批发布或排班公式固化。
+
+#### 验证
+
+- `python3 -m unittest backend.tests.test_schedule_plans -v`：通过，24 条后端 unittest 通过，包含 schedule_plan CSV 导入和 processed records 断言。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，68 个模型/源码断言测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖排班数据入口、schedule_plan 导入和排班计划页 records 摘要。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 bash scripts/smoke-demo.sh`：通过，backend health 与 frontend reachable。
+- in-app browser 检查：`http://localhost:3015/schedule-plans` 打开成功，`排班数据 records`、计划样本、时段行和样本计划可见。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

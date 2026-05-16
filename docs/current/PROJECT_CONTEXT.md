@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
+  queue_state: idle
   active_batch_id: null
-  in_progress_task: F130
-  ready_tasks: [Q057]
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -16,8 +16,8 @@ current_summary:
 
 - Dashboard, demand plans, schedule plans, plan detail/edit, risks, shift details, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, organization people, today fulfillment, anomaly alerts, deficit heatmap, vendor management, rule configuration, and review navigation use local/demo data and scoped review context.
 - Frontend build/check path exists through `bash scripts/check.sh`.
-- Backend local unittest path exists, and localhost-only demo import endpoints exist for staff master, staff status, and login CSV data; production API/database integration is not in scope.
-- Imported demo rows are exposed through localhost-only processed records and are now consumed by dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, organization people, today fulfillment, anomaly alerts, vendor management, and rule configuration for module-level demo summaries.
+- Backend local unittest path exists, and localhost-only demo import endpoints exist for staff master, staff status, login, and schedule-plan CSV data; production API/database integration is not in scope.
+- Imported demo rows are exposed through localhost-only processed records and are now consumed by dashboard, schedule plans, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, organization people, today fulfillment, anomaly alerts, vendor management, and rule configuration for module-level demo summaries.
 - Harness current queue, active task contract, trace index, state check, and git hooks exist.
 
 ## Current P0 Gaps
