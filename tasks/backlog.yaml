@@ -6113,7 +6113,7 @@ tasks:
   - id: F119
     title: "风险与不可用读取本机导入 records"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-risks/**"
@@ -6145,7 +6145,7 @@ tasks:
   - id: Q046
     title: "风险与不可用 records 读取 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-risks/**"

@@ -1782,6 +1782,27 @@
 - `git diff --check`：通过。
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 
+## 2026-05-16 - Risk And Unavailability Imported Records
+
+#### 审计结论
+
+- `F119/Q046/US161-US163` 已继续把本机导入 processed records 推进到现有模块：schedule-risks 展示 `风险复核 records`，unavailability 展示 `不可用核对 records`。
+- 两个页面复用既有 `/api/v1/demo-imports/records` 读取结果，没有新增后端契约，没有修改 backend，也没有新增独立演示中心。
+- 本轮仍然只使用 localhost 本机运行态和进程内存，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子。
+
+#### 风险
+
+- records 摘要证明导入结果进入现有模块，但尚未把导入坐席/状态/登录数据纳入生产级风险计算或不可用规则；生产公式必须单独过 Gate。
+- processed records 仍是本机运行态结果，服务重启后会清空；这符合当前本机演示边界。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖导入后 dashboard、shift-details、schedule-risks 和 unavailability records 摘要。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，54 个模型/源码断言测试通过。
+- `npm run typecheck`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

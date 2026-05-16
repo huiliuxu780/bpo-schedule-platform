@@ -1299,3 +1299,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F119-Q046 Risk And Unavailability Imported Records
+
+- branch_name: `codex/f-batch-007-import-records-risk-unavailability`
+- base_main_commit: `a8763f8`
+- remote_status: `local continuation branch created from pushed codex/f-batch-006-import-records-existing-modules because main has not integrated the local demo chain yet`
+- scope: schedule-risks/unavailability processed records consumption, focused E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/schedule-risks/**`, `app/unavailability/**`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `app/schedule-risks/page.tsx`, `app/unavailability/page.tsx`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; model tests passed with 54 tests; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` first failed in sandbox at Chrome launch with `kill EPERM`, then passed outside sandbox with 5 tests and verified dashboard/shift-details/schedule-risks/unavailability records summaries; `npm run typecheck` passed; `git diff --check` passed; `bash scripts/check-state.sh --strict --diff=working` passed.
+- local_commit_sha: `b6496e4`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

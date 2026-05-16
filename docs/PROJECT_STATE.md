@@ -26,7 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
 - Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
-- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard and shift-details module pages.
+- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, and unavailability module pages.
 
 The project does not contain:
 
@@ -118,6 +118,9 @@ Current invariants:
 - `F115/Q041/US148-US149` closed the local P1 E2E reinforcement slice: core smoke now covers filtered schedule-plan list table controls, draft detail entry, draft edit route, and cancel/back context; current queue returned to empty after QA closeout.
 - `B008/F116/Q042/US150-US152` closed the localhost-only demo import and placeholder cleanup slice: staff master/status/login CSV import now has a local entry point and batch status, visible sidebar/data-source/action placeholders route to explainable local demo surfaces, and current queue returned to empty after QA closeout.
 - `F117/Q043/US153-US154` closed the local dashboard KPI filter slice: dashboard top filters now preserve demo context through query params, imported demo batches drive a local KPI preview, and current queue returned to empty after QA closeout.
+- `F118/Q044/US155-US157` closed the navigation truthfulness slice: unopened sidebar modules now show `开发中` and cannot silently route to dashboard placeholders, while opened modules remain navigable.
+- `B009/Q045/US158-US160` closed the processed records handoff slice: local imported staff/status/login rows are exposed through a localhost-only API and consumed by dashboard and shift-details.
+- `F119/Q046/US161-US163` extended processed records consumption into risk and unavailability pages: schedule-risks and unavailability now show records summaries after local import, and current queue returned to empty after QA closeout.
 
 ## Product Direction
 

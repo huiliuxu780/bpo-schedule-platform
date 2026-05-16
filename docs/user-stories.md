@@ -2866,7 +2866,7 @@ acceptance:
   - "页面展示 `风险复核 records` 摘要，包含坐席主数据、状态数据和登录数据覆盖行数。"
   - "无导入 records 时显示等待导入空态，不伪造生产数据。"
   - "不改后端契约、不接数据库、不固化生产风险公式。"
-status: "ready"
+status: "done"
 ```
 
 ### US162 - Unavailability reads imported records
@@ -2885,7 +2885,7 @@ acceptance:
   - "页面展示 `不可用核对 records` 摘要，包含坐席主数据、状态数据和登录数据覆盖行数。"
   - "无导入 records 时显示等待导入空态，不伪造生产数据。"
   - "不改后端契约、不接数据库、不做权限、审批、导出或批量。"
-status: "ready"
+status: "done"
 ```
 
 ### US163 - Risk and unavailability imported records QA
@@ -2903,5 +2903,5 @@ acceptance:
   - "E2E 导入坐席主数据后，schedule-risks 出现 `风险复核 records` 摘要。"
   - "E2E 导入坐席主数据后，unavailability 出现 `不可用核对 records` 摘要。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
-status: "ready"
+status: "done"
 ```

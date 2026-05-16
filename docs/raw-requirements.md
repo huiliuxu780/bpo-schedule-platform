@@ -1622,8 +1622,8 @@ description: "风险提示页需要读取后端 processed records，并展示本
 source: "PM continuation on 2026-05-16 after imported records module-read push"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只做现有页面读取 records；不改后端契约、不接数据库、不做生产风险公式。"
+status: "done"
+notes: "schedule-risks 已读取 processed records 并展示 `风险复核 records` 摘要；不改后端契约、不接数据库、不做生产风险公式。"
 ```
 
 ### R150 - unavailability reads imported records
@@ -1635,8 +1635,8 @@ description: "不可用管理页需要读取后端 processed records，并展示
 source: "PM continuation on 2026-05-16 after imported records module-read push"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只做现有页面读取 records；不改后端契约、不接数据库、不做权限、审批、导出或批量。"
+status: "done"
+notes: "unavailability 已读取 processed records 并展示 `不可用核对 records` 摘要；不改后端契约、不接数据库、不做权限、审批、导出或批量。"
 ```
 
 ### R151 - risk and unavailability imported records QA
@@ -1648,6 +1648,6 @@ description: "风险提示和不可用管理读取 records 后，需要补充浏
 source: "F119 risk/unavailability imported records batch on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 只验证本机 records 进入现有页面，不扩大到后端新契约、数据库、真实集成或生产工作流。"
+status: "done"
+notes: "E2E 已覆盖导入后 schedule-risks 与 unavailability 出现 records 摘要；QA 不扩大到后端新契约、数据库、真实集成或生产工作流。"
 ```

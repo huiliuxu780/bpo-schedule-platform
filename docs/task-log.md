@@ -1434,3 +1434,23 @@
 - action: 收口本机导入 records 现有模块读取 QA。
 - status: `done`
 - notes: 后端 unittest 覆盖 processed records API；E2E 覆盖导入坐席主数据后 dashboard 与 shift-details 均出现 records 摘要；模型测试覆盖 records 汇总逻辑。
+
+- task_id: `F119`
+- source_ids:
+  - `R149`
+  - `R150`
+- story_ids:
+  - `US161`
+  - `US162`
+- action: 完成风险提示与不可用管理读取本机导入 records。
+- status: `done`
+- notes: schedule-risks 与 unavailability 读取同一 processed records API，并分别展示 `风险复核 records`、`不可用核对 records` 摘要；保持 no-backend-contract-change、localhost-only、process-memory、no-database 边界。
+
+- task_id: `Q046`
+- source_ids:
+  - `R151`
+- story_ids:
+  - `US163`
+- action: 收口风险与不可用 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖导入坐席主数据后 dashboard、shift-details、schedule-risks 与 unavailability 均出现 records 摘要；模型测试 54 条通过，浏览器 smoke 5 条通过。
