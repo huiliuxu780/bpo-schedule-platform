@@ -5,4 +5,25 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US161
+    requirement_ids: ["R149"]
+    task_ids: ["F119"]
+    status: in_progress
+    priority: P1
+    gate: frontend-scaffold
+    summary: "风险提示页读取本机导入 processed records 并展示复核摘要。"
+  - id: US162
+    requirement_ids: ["R150"]
+    task_ids: ["F119"]
+    status: in_progress
+    priority: P1
+    gate: frontend-scaffold
+    summary: "不可用管理页读取本机导入 processed records 并展示核对摘要。"
+  - id: US163
+    requirement_ids: ["R151"]
+    task_ids: ["Q046"]
+    status: ready
+    priority: P1
+    gate: qa
+    summary: "补充风险与不可用读取 imported records 的浏览器验收证据。"

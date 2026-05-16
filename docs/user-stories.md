@@ -2849,3 +2849,59 @@ acceptance:
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
 status: "done"
 ```
+
+### US161 - Schedule risks read imported records
+
+```yaml
+id: US161
+requirement_ids:
+  - R149
+module: "导入数据现有模块消费"
+role: "演示人员"
+story: "作为演示人员，我希望风险提示页能展示本机导入 records 的覆盖摘要，这样风险复核不是只看静态 seed 数据。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "schedule-risks 页面读取 processed records。"
+  - "页面展示 `风险复核 records` 摘要，包含坐席主数据、状态数据和登录数据覆盖行数。"
+  - "无导入 records 时显示等待导入空态，不伪造生产数据。"
+  - "不改后端契约、不接数据库、不固化生产风险公式。"
+status: "ready"
+```
+
+### US162 - Unavailability reads imported records
+
+```yaml
+id: US162
+requirement_ids:
+  - R150
+module: "导入数据现有模块消费"
+role: "演示人员"
+story: "作为演示人员，我希望不可用管理页能展示本机导入 records 的覆盖摘要，这样人员不可用核对也能说明导入数据已经进入模块。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "unavailability 页面读取 processed records。"
+  - "页面展示 `不可用核对 records` 摘要，包含坐席主数据、状态数据和登录数据覆盖行数。"
+  - "无导入 records 时显示等待导入空态，不伪造生产数据。"
+  - "不改后端契约、不接数据库、不做权限、审批、导出或批量。"
+status: "ready"
+```
+
+### US163 - Risk and unavailability imported records QA
+
+```yaml
+id: US163
+requirement_ids:
+  - R151
+module: "导入数据现有模块验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入后风险提示和不可用管理页的 records 摘要，这样能证明 records 正在继续进入现有模块。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席主数据后，schedule-risks 出现 `风险复核 records` 摘要。"
+  - "E2E 导入坐席主数据后，unavailability 出现 `不可用核对 records` 摘要。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
+status: "ready"
+```

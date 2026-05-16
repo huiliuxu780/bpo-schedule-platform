@@ -6110,3 +6110,64 @@ tasks:
       - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F119
+    title: "风险与不可用读取本机导入 records"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/schedule-risks/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "schedule-risks 页面读取 processed records 并展示 `风险复核 records` 摘要。"
+      - "unavailability 页面读取 processed records 并展示 `不可用核对 records` 摘要。"
+      - "无导入 records 时显示等待导入空态，不伪造生产数据。"
+      - "本批不改后端契约、不接数据库、真实集成、权限、审批、导出、批量、自动排班、生产公式或结算。"
+      - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run typecheck`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实 CORN/HR/WFM/第三方 API 集成"
+      - "需要认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q046
+    title: "风险与不可用 records 读取 QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/schedule-risks/**"
+      - "app/unavailability/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "E2E 覆盖导入后 schedule-risks 出现 `风险复核 records` 摘要。"
+      - "E2E 覆盖导入后 unavailability 出现 `不可用核对 records` 摘要。"
+      - "QA 证据明确 no-backend-contract-change、localhost-only、process-memory、no-database、no-real-integration、no-auth、no-approval、no-export、no-batch、no-production-formula、no-settlement。"
+      - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

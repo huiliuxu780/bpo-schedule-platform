@@ -1612,3 +1612,42 @@ version: "1.0"
 status: "done"
 notes: "QA 已覆盖本机导入数据进入现有模块的读取结果，不扩大到数据库、真实集成、权限、审批、导出、批量或结算。"
 ```
+
+### R149 - schedule risks read imported records
+
+```yaml
+id: R149
+module: "导入数据现有模块消费"
+description: "风险提示页需要读取后端 processed records，并展示本机导入数据对风险复核的覆盖摘要，避免风险页仍像静态 seed 页面。"
+source: "PM continuation on 2026-05-16 after imported records module-read push"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只做现有页面读取 records；不改后端契约、不接数据库、不做生产风险公式。"
+```
+
+### R150 - unavailability reads imported records
+
+```yaml
+id: R150
+module: "导入数据现有模块消费"
+description: "不可用管理页需要读取后端 processed records，并展示本机导入数据对人员不可用核对的覆盖摘要，继续让导入结果进入现有模块。"
+source: "PM continuation on 2026-05-16 after imported records module-read push"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只做现有页面读取 records；不改后端契约、不接数据库、不做权限、审批、导出或批量。"
+```
+
+### R151 - risk and unavailability imported records QA
+
+```yaml
+id: R151
+module: "导入数据现有模块验收"
+description: "风险提示和不可用管理读取 records 后，需要补充浏览器 smoke 证据，证明导入后两个现有页面都能看到处理结果。"
+source: "F119 risk/unavailability imported records batch on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只验证本机 records 进入现有页面，不扩大到后端新契约、数据库、真实集成或生产工作流。"
+```
