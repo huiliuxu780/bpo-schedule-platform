@@ -5938,3 +5938,59 @@ tasks:
       - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F117
+    title: "本机 dashboard 筛选和 KPI preview"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/dashboard/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "dashboard 顶部筛选在本机演示中可点击、可解释，并保留当前筛选上下文。"
+      - "导入批次能驱动 dashboard KPI preview 或数据覆盖说明，不再只是静态占位。"
+      - "本批不固化生产 KPI 公式、状态码、结算规则或收费因子。"
+      - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
+      - "需要固化生产 KPI 公式、状态码、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q043
+    title: "本机 dashboard KPI preview QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/dashboard/**"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "E2E/smoke 覆盖本机 dashboard 筛选和 KPI preview。"
+      - "QA 证据明确 localhost-only、no-database、no-real-integration、no-production-formula、no-package-change。"
+      - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

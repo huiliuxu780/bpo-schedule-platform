@@ -1248,3 +1248,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F117-Q043 Local Dashboard KPI Filters
+
+- branch_name: `codex/f-batch-004-local-demo-kpi-filters`
+- base_main_commit: `f28e80f`
+- remote_status: `local continuation branch created from pushed codex/f-batch-003-local-demo-import-placeholders because main has not integrated the local demo chain yet`
+- scope: localhost-only dashboard top filters, imported demo batch KPI preview, smoke coverage, and traceability updates.
+- allowed_files_check: `app/dashboard/**`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, real integration, auth, permissions, approval, export, batch operation, production formula, settlement, or charge-factor files.
+- scope_diff_check: pending product implementation after seed commit.
+- check_result: pending seed strict-state check.
+- local_commit_sha: `pending final local commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

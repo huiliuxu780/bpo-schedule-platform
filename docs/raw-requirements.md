@@ -1508,3 +1508,29 @@ version: "1.0"
 status: "done"
 notes: "QA 已覆盖本机演示闭环，不扩大到云发布、数据库或生产化能力。"
 ```
+
+### R141 - local dashboard filters and KPI preview
+
+```yaml
+id: R141
+module: "本机 dashboard 演示筛选"
+description: "PM 同意继续本机演示链路后，dashboard 顶部筛选和 KPI 需要从静态占位推进到本机可点击、可解释的 preview；导入批次可用于说明数据版本和覆盖量，但不固化生产 KPI 公式。"
+source: "PM approval on 2026-05-16 after local demo import branch push"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只做 localhost 本机 demo preview；不接数据库、不接真实 API、不新增依赖、不改 package/lockfile、不做生产公式、结算规则或收费因子。"
+```
+
+### R142 - local dashboard KPI preview acceptance evidence
+
+```yaml
+id: R142
+module: "本机 dashboard KPI preview 验收"
+description: "本机 dashboard 筛选和 imported-data KPI preview 完成后，需要补充浏览器级 smoke 和审计证据，证明演示链路可点通且仍然是 no-database/no-real-integration/no-production-formula。"
+source: "PM-approved continuation after BATCH-B008-F116-Q042 on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只覆盖本机 dashboard demo preview，不扩大到云发布、数据库或生产化指标体系。"
+```

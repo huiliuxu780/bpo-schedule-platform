@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: BATCH-F117-Q043
+  in_progress_task: F117
+  ready_tasks: [Q043]
 ```
 
 ## Current Stage
@@ -41,7 +41,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Next recommended task is a narrow local demo follow-up for dashboard top filters and imported-data KPI preview, still no database, no real external integration, no package or lockfile changes. Do not start it without a new current queue entry and Gate Plan.
+Next recommended task is the active `BATCH-F117-Q043` local dashboard filters and imported-data KPI preview batch. Keep it local-only: no database, no real external integration, no package or lockfile changes, and no production KPI formula finalization.
 
 ## Default Execution
 
