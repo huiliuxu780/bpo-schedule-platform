@@ -64,7 +64,7 @@ acceptance:
   - "页面读取 processed records 中的 status_log 和 login_log，并展示 `复核队列 records` 摘要。"
   - "页面展示只读复核队列、状态数据行数、登录数据行数和样本 records。"
   - "不做审批动作、不写回状态、不做实时流、不做生产异常判定或遵守率公式、不接数据库、不做真实集成、导出、批量或结算。"
-status: "ready"
+status: "done"
 ```
 
 ### US174 - Exception review navigation entry
@@ -82,7 +82,7 @@ acceptance:
   - "`履约监控 > 异常复核` 链接到 `/exception-review`。"
   - "实时遵守率继续显示 `开发中` 且不可点击。"
   - "导航 active 状态能识别 `/exception-review`。"
-status: "ready"
+status: "done"
 ```
 
 ### US175 - Exception review imported records QA
@@ -100,7 +100,7 @@ acceptance:
   - "E2E 导入坐席状态和登录数据后，exception-review 出现 `复核队列 records` 摘要。"
   - "E2E 确认异常复核是可点击 link，实时遵守率仍是 `开发中`。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-status-writeback、no-production-exception-rule。"
-status: "ready"
+status: "done"
 ```
 
 ### US129 - Plan-origin row-action context closure

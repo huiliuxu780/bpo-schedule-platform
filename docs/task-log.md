@@ -1514,3 +1514,23 @@
 - action: 收口异常管理 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖导入状态/登录数据后进入异常管理，确认 records 摘要、状态数据、登录数据和本机异常线索样本可见；模型测试 57 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F123`
+- source_ids:
+  - `R161`
+  - `R162`
+- story_ids:
+  - `US173`
+  - `US174`
+- action: 完成异常复核本机 records 只读切片。
+- status: `done`
+- notes: 新增 `/exception-review` 页面，读取本机 `status_log` 与 `login_log` processed records，展示 `复核队列 records`、状态/登录覆盖和只读复核队列；侧边栏 `异常复核` 改为真实入口，实时遵守率继续 `开发中`。
+
+- task_id: `Q050`
+- source_ids:
+  - `R163`
+- story_ids:
+  - `US175`
+- action: 收口异常复核 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖导入状态/登录数据后进入异常复核，确认 records 摘要、状态数据、登录数据和只读复核队列可见；模型测试 58 条通过，浏览器 smoke 5 条通过。

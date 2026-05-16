@@ -1873,6 +1873,30 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 23 个后端 unittest。
 
+## 2026-05-16 - Exception Review Imported Records
+
+#### 审计结论
+
+- `F123/Q050/US173-US175` 已开放第四个履约监控最小切片：`履约监控 > 异常复核` 链接到 `/exception-review`，不再是占位。
+- 新页面读取既有 processed records 中的 `status_log` 和 `login_log`，并展示 `复核队列 records`、状态数据、登录数据和只读复核队列，证明状态/登录导入结果进入异常复核模块。
+- 实时遵守率仍显示 `开发中` 且不可点击，避免把生产公式类能力伪装为已开放。
+- 本轮没有新增后端契约，没有修改 backend，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、自动排班、生产公式、复核审批动作、状态写回、生产异常判定、处罚规则、结算规则或收费因子。
+
+#### 风险
+
+- 当前只是本机只读复核队列，不等同于审批流、状态流转、生产异常判定、实时遵守率、处罚、薪资结算或供应商考核。
+- status_log/login_log records 仍来自本机进程内存，服务重启后清空；这符合当前本机演示边界。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖导入状态/登录数据后异常复核 records 摘要。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，58 个模型/源码断言测试通过。
+- `npm run typecheck`：通过。
+- in-app browser 可视化检查：`http://localhost:3015/exception-review` 打开成功，页面标题和 `复核队列 records` 可见。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 23 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

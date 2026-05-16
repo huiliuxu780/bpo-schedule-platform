@@ -1367,3 +1367,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F123-Q050 Exception Review Imported Records
+
+- branch_name: `codex/f-batch-011-exception-review-imports`
+- base_main_commit: `2a2bd65`
+- remote_status: `local continuation branch created from pushed codex/f-batch-010-fulfillment-exceptions-imports because PM asked to continue filling the fulfillment-monitoring placeholders`
+- scope: exception-review local page, exception-review navigation entry, status/login processed records read-only review queue, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/exception-review/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production formula, production exception rule, status writeback, settlement rule, or charge-factor files.
+- scope_diff_check: `app/exception-review/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeExceptionReviewRecords` was missing; model tests then passed with 58 tests; typecheck passed; first E2E attempt exposed an ambiguous `只读复核队列` text locator, then `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed outside sandbox with 5 tests; in-app browser opened `/exception-review` and found the heading plus `复核队列 records`; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 23 backend unittest.
+- local_commit_sha: `a996b0f`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
