@@ -2960,3 +2960,58 @@ acceptance:
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
 status: "done"
 ```
+
+### US167 - Agent status trace reads status records
+
+```yaml
+id: US167
+requirement_ids:
+  - R155
+module: "履约监控"
+role: "演示人员"
+story: "作为演示人员，我希望坐席状态轨迹页能展示本机导入的状态 records，这样可以演示状态数据已经进入履约监控模块。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/agent-status-trace` 页面。"
+  - "页面读取 processed records 中的 status_log，并展示 `状态轨迹 records` 摘要。"
+  - "页面展示状态数据行数、状态分布和样本轨迹。"
+  - "不做实时流、不做生产遵守率公式、不接数据库、不做真实集成、审批、导出、批量或结算。"
+status: "ready"
+```
+
+### US168 - Agent status trace navigation entry
+
+```yaml
+id: US168
+requirement_ids:
+  - R156
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏坐席状态轨迹成为可点击入口，这样履约监控的第二个模块不再只是占位。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`履约监控 > 坐席状态轨迹` 链接到 `/agent-status-trace`。"
+  - "异常管理、实时遵守率和异常复核继续显示 `开发中` 且不可点击。"
+  - "导航 active 状态能识别 `/agent-status-trace`。"
+status: "ready"
+```
+
+### US169 - Agent status trace imported records QA
+
+```yaml
+id: US169
+requirement_ids:
+  - R157
+module: "履约监控验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入状态数据后进入坐席状态轨迹页，这样能证明状态轨迹入口读到了导入处理结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席状态数据后，agent-status-trace 出现 `状态轨迹 records` 摘要。"
+  - "E2E 确认坐席状态轨迹是可点击 link，异常管理仍是 `开发中`。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
+status: "ready"
+```
