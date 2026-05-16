@@ -1993,6 +1993,31 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 23 个后端 unittest。
 
+## 2026-05-16 - Ops And System Preview Pages
+
+#### 审计结论
+
+- `F129/Q056/US191-US196` 已开放五个本机只读预览入口：`今日履约`、`异常预警`、`时段缺口热力图`、`供应商管理` 和 `规则配置` 不再是 dashboard 占位跳转。
+- 新页面分别读取既有 processed records 或 dashboard seed：今日履约读取 staff/status/login，异常预警读取本机异常 seed 和导入覆盖，时段缺口热力图复用 heatmap seed，供应商管理读取 staff_master vendor 分布，规则配置展示本机规则目录。
+- 侧边栏对应条目已变为真实链接；智能排班、接口集成、权限管理、操作审计和结算复盘仍保持未开放/开发中边界。
+- 本轮没有新增后端契约，没有修改 backend，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、自动排班、生产公式、规则发布、供应商写回、结算规则或收费因子。
+
+#### 风险
+
+- 当前仍是本机演示预览，不等同于生产今日履约计算、生产异常规则、真实排班缺口公式、供应商主数据维护或规则发布能力。
+- processed records 仍来自本机进程内存，服务重启后清空；这符合当前本机演示边界。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，67 个模型/源码断言测试通过，包含新增预览 helper 的 RED/GREEN 证据。
+- `npm run typecheck`：通过。
+- `BPO_API_BASE_URL=http://127.0.0.1:8000 BPO_WEB_URL=http://localhost:3015 bash scripts/smoke-demo.sh`：通过，backend health 与 frontend reachable。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖五个新页面和 sidebar 链接。
+- in-app browser 检查：`http://localhost:3015/rule-configuration` 打开成功，页面标题、`规则配置 records`、`本机规则目录` 和 `导入 records 只读展示` 可见。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 23 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

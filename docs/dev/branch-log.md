@@ -1469,3 +1469,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F129-Q056 Ops System Preview Pages
+
+- branch_name: `codex/f-batch-017-ops-system-preview-pages`
+- base_main_commit: `e78281513048817dbfbe9fb77b529b55f5030f9b`
+- remote_status: `local continuation branch created from pushed codex/f-batch-016-organization-people-preview because PM asked to continue filling 今日履约、异常预警、时段缺口热力图、供应商管理 and 规则配置`
+- scope: today-fulfillment, anomaly-alerts, deficit-heatmap, vendor-management, rule-configuration local read-only pages, navigation links, local preview summaries, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/today-fulfillment/**`, `app/anomaly-alerts/**`, `app/deficit-heatmap/**`, `app/vendor-management/**`, `app/rule-configuration/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production formula, supplier writeback, rule editing/publishing, settlement rule, or charge-factor files.
+- scope_diff_check: five new `app/**/page.tsx` files, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified the new preview summary exports were missing; model tests then passed with 67 tests; typecheck passed; backend health/frontend smoke passed; `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 5 tests and verified five new routes plus sidebar links; in-app browser opened `/rule-configuration` and found the heading, `规则配置 records`, `本机规则目录`, and `导入 records 只读展示`; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 23 backend unittest.
+- local_commit_sha: `5e22847375d1c3409d0a222d18af770ae2caaf94`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

@@ -1634,3 +1634,29 @@
 - action: 收口组织与人员 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖本机导入 staff_master 后进入组织与人员，确认 records 摘要、人员样本、组织分布和系统管理边界可见；模型测试 63 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F129`
+- source_ids:
+  - `R179`
+  - `R180`
+  - `R181`
+  - `R182`
+  - `R183`
+- story_ids:
+  - `US191`
+  - `US192`
+  - `US193`
+  - `US194`
+  - `US195`
+- action: 完成运营工作台与系统管理本机预览页补位。
+- status: `done`
+- notes: 新增 `/today-fulfillment`、`/anomaly-alerts`、`/deficit-heatmap`、`/vendor-management`、`/rule-configuration` 五个只读预览页；侧边栏对应条目改为真实入口，智能排班、接口集成、权限管理、操作审计、结算复盘仍不开放。
+
+- task_id: `Q056`
+- source_ids:
+  - `R184`
+- story_ids:
+  - `US196`
+- action: 收口运营工作台与系统管理本机预览页 QA。
+- status: `done`
+- notes: E2E 覆盖本机导入三类 CSV 后进入五个新页面，确认 records 摘要、样本/热力图/供应商分布/规则目录可见；模型测试 67 条通过，浏览器 smoke 5 条通过，in-app browser 已打开 `/rule-configuration` 并确认关键文案。

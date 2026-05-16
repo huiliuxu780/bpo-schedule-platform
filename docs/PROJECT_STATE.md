@@ -130,6 +130,7 @@ Current invariants:
 - `F126/Q053/US182-US184` opened theCORN 状态日志 slice: `CORN 状态日志` now links to `/corn-status-log`, which reads local status_log records and shows本机状态日志覆盖、状态分布和样本 without real CORN integration, realtime streams, production status-code finalization, status writeback, database, or real interface checks; current queue returned to empty after QA closeout.
 - `F127/Q054/US185-US187` opened the字段映射 slice: `字段映射` now links to `/field-mapping`, which reads local staff/status/login sample fields and shows本机字段覆盖、缺失字段和额外字段 without field-mapping writeback, saved config, real interface checks, cross-system reconciliation, database, or real integrations; current queue returned to empty after QA closeout.
 - `F128/Q055/US188-US190` opened the组织与人员 slice: `组织与人员` now links to `/organization-people`, which reads local staff_master records and shows人员样本、团队/职场/供应商分布 without account login, permission management, organization maintenance, staff writeback, database, real integrations, or production audit; current queue returned to empty after QA closeout.
+- `F129/Q056/US191-US196` opened the运营工作台与系统管理预览 slice: `今日履约`、`异常预警`、`时段缺口热力图`、`供应商管理` and `规则配置` now link to local read-only pages that consume existing processed records or dashboard seed data without backend contract changes, database, real integrations, auth/permission, approval/export/batch, supplier writeback, rule publishing, settlement, production formulas, or charge factors; current queue returned to empty after QA closeout.
 
 ## Product Direction
 

@@ -2012,8 +2012,8 @@ description: "今日履约需要做本机只读预览页，读取已导入的 st
 source: "PM explicit continuation on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "只做本机预览；不做生产遵守率公式、实时流、状态写回、结算或审批。"
+status: "done"
+notes: "已新增 `/today-fulfillment`，读取本机 staff/status/login processed records 并展示今日履约 records、状态/登录样本和 no-database/no-production-formula 边界。"
 ```
 
 ### R180 - anomaly alerts local preview
@@ -2025,8 +2025,8 @@ description: "异常预警需要做本机只读预览页，读取现有 dashboar
 source: "PM explicit continuation on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "只做本机预警列表和解释；不做生产异常规则、自动派单、审批、导出或批量处理。"
+status: "done"
+notes: "已新增 `/anomaly-alerts`，读取 dashboard 本机 seed 异常和导入 records 覆盖并展示异常预警 records、严重度、待复核和只读边界。"
 ```
 
 ### R181 - deficit heatmap local preview
@@ -2038,8 +2038,8 @@ description: "时段缺口热力图需要做本机只读预览页，复用现有
 source: "PM explicit continuation on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "只做本机展示；不固化生产缺口公式，不做自动排班或调班。"
+status: "done"
+notes: "已新增 `/deficit-heatmap`，复用 dashboard 本机 heatmap seed 展示时段缺口 records、严重时段清单和热力图边界。"
 ```
 
 ### R182 - vendor management local preview
@@ -2051,8 +2051,8 @@ description: "供应商管理需要做本机只读预览页，读取已导入 st
 source: "PM explicit continuation on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "只做本机只读预览；不做供应商主数据维护、写回、权限、结算或合同管理。"
+status: "done"
+notes: "已新增 `/vendor-management`，读取 staff_master vendor/site/team 样本并展示供应商管理 records、供应商分布和 no-writeback/no-settlement 边界。"
 ```
 
 ### R183 - rule configuration local preview
@@ -2064,8 +2064,8 @@ description: "规则配置需要做本机只读预览页，展示当前本机演
 source: "PM explicit continuation on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "只做只读规则目录；不做规则编辑、发布、版本化、权限或生产公式。"
+status: "done"
+notes: "已新增 `/rule-configuration`，展示规则配置 records、本机规则目录和开发中规则边界；不做规则编辑发布或生产公式。"
 ```
 
 ### R184 - ops and system preview pages QA
@@ -2077,6 +2077,6 @@ description: "今日履约、异常预警、时段缺口热力图、供应商管
 source: "F129 ops/system preview batch on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到数据库、真实集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "E2E 已覆盖五个新页面的标题、records 摘要、导航链接和开发中边界；QA 不扩大到数据库、真实集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```

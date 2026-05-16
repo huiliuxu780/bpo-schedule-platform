@@ -3416,7 +3416,7 @@ acceptance:
   - "新增 `/today-fulfillment` 页面。"
   - "页面展示 `今日履约 records`、状态/登录覆盖、样本和本机只读边界。"
   - "`运营工作台 > 今日履约` 链接到 `/today-fulfillment`。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US192 - Anomaly alerts local preview
@@ -3434,7 +3434,7 @@ acceptance:
   - "新增 `/anomaly-alerts` 页面。"
   - "页面展示 `异常预警 records`、严重度分布和样本。"
   - "`运营工作台 > 异常预警` 链接到 `/anomaly-alerts`。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US193 - Deficit heatmap local preview
@@ -3452,7 +3452,7 @@ acceptance:
   - "新增 `/deficit-heatmap` 页面。"
   - "页面展示 `时段缺口 records`、总缺口、严重时段和热力图。"
   - "`运营工作台 > 时段缺口热力图` 链接到 `/deficit-heatmap`。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US194 - Vendor management local preview
@@ -3470,7 +3470,7 @@ acceptance:
   - "新增 `/vendor-management` 页面。"
   - "页面读取 staff_master records 并展示 `供应商管理 records`、供应商分布和样本。"
   - "`系统管理 > 供应商管理` 链接到 `/vendor-management`。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US195 - Rule configuration local preview
@@ -3488,7 +3488,7 @@ acceptance:
   - "新增 `/rule-configuration` 页面。"
   - "页面展示 `规则配置 records`、本机预览规则清单和未开放边界。"
   - "`系统管理 > 规则配置` 链接到 `/rule-configuration`。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US196 - Ops and system preview pages QA
@@ -3505,5 +3505,5 @@ priority: "P1"
 acceptance:
   - "E2E 覆盖五个新页面标题、records 摘要和导航链接。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-settlement。"
-status: "ready"
+status: "done"
 ```
