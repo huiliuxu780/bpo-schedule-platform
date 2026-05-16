@@ -2106,3 +2106,29 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖文件导入页排班数据入口、schedule_plan CSV 导入和排班计划页 `排班数据 records` 摘要；QA 不扩大到数据库、真实集成、自动排班、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R187 - monthly settlement local preview
+
+```yaml
+id: R187
+module: "结算复盘"
+description: "月度结算需要开放一个本机只读预览页，读取已导入 records 和本地排班/履约上下文，展示可复盘的数据覆盖和风险提示，但不计算生产结算。"
+source: "PM approved continuation on 2026-05-17: 结算复盘只读预览边界"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "in_progress"
+notes: "本批只做 `/monthly-settlement` 本机只读复盘摘要；不做结算公式、收费因子、锁账、账单金额、审批、导出、批量、数据库或真实集成。"
+```
+
+### R188 - monthly settlement preview QA
+
+```yaml
+id: R188
+module: "本机验收"
+description: "月度结算本机只读预览开放后，需要补充 E2E 证据，证明导航可达、records 摘要可见，并且其他结算复盘能力仍保持开发中。"
+source: "F131 monthly settlement local preview on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "QA 不扩大到数据库、真实集成、审批、导出、批量、生产结算公式、锁账或收费因子。"
+```

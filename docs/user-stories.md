@@ -3544,3 +3544,41 @@ acceptance:
   - "QA 记录明确本批是 localhost-only、process-memory、no-database、no-real-integration、no-auto-scheduling。"
 status: "done"
 ```
+
+### US199 - Monthly settlement local preview
+
+```yaml
+id: US199
+requirement_ids:
+  - R187
+module: "结算复盘"
+role: "演示人员"
+story: "作为演示人员，我希望月度结算页能展示本机导入 records 和排班/履约复盘摘要，这样可以演示结算复盘入口已基于现有数据链路打开。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/monthly-settlement` 页面。"
+  - "页面读取 processed records，并展示 `结算复盘 records`、导入覆盖、计划/履约信号和本机边界。"
+  - "`结算复盘 > 月度结算` 链接到 `/monthly-settlement`。"
+  - "报表中心、供应商复盘、结算锁账继续显示 `开发中` 且不可点击。"
+  - "本批不做结算公式、收费因子、锁账、账单金额、审批、导出、批量、数据库或真实集成。"
+status: "in_progress"
+```
+
+### US200 - Monthly settlement local preview QA
+
+```yaml
+id: US200
+requirement_ids:
+  - R188
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖月度结算入口和开发中边界，这样能证明结算复盘不是 dashboard 占位，也没有误开放生产结算能力。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入本机 CSV 后，monthly-settlement 出现 `结算复盘 records` 摘要。"
+  - "E2E 覆盖月度结算导航可点击，报表中心、供应商复盘、结算锁账仍是 `开发中`。"
+  - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-settlement-formula、no-charge-factor、no-lock、no-export、no-batch。"
+status: "ready"
+```
