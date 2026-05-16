@@ -14,6 +14,7 @@ import {
   summarizeHeatmapRows,
   summarizeDashboardImportKpiPreview,
   summarizeDashboardImportRecords,
+  summarizeAnomalyAlertRecords,
   summarizeAgentStatusTraceRecords,
   summarizeCornStatusLogRecords,
   summarizeAdherenceMonitoringRecords,
@@ -23,10 +24,13 @@ import {
   summarizeFieldMappingRecords,
   summarizeFulfillmentImportRecords,
   summarizeOrganizationPeopleRecords,
+  summarizeRuleConfigurationRecords,
   summarizeSchedulePlanRows,
   summarizeScheduleRiskRows,
   summarizeSyncStatusRows,
+  summarizeTodayFulfillmentRecords,
   summarizeUnavailabilityRows,
+  summarizeVendorManagementRecords,
 } from "../../components/data-table-model.ts";
 import {
   filterShiftDetailRowsByScope,
@@ -217,6 +221,85 @@ test("fulfillment import records summarize status and login coverage", () => {
     latestBatch: "login_log-20260516095000-001",
     latestSource: "登录数据",
     statusLabel: "可核验",
+  });
+});
+
+test("today fulfillment records summarize local status and login readiness", () => {
+  const summary = summarizeTodayFulfillmentRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 2,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", name: "张敏" }],
+    },
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 5,
+      latest_batch_id: "status_log-20260516094000-001",
+      updated_at: "2026-05-16T09:40:00+08:00",
+      sample_rows: [
+        { staff_id: "A001", status: "在线" },
+        { staff_id: "A002", status: "培训" },
+      ],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 3,
+      latest_batch_id: "login_log-20260516095000-001",
+      updated_at: "2026-05-16T09:50:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedRows: 10,
+    staffRows: 2,
+    statusRows: 5,
+    loginRows: 3,
+    readySignals: 3,
+    latestBatch: "login_log-20260516095000-001",
+    latestSource: "登录数据",
+    statusLabel: "本机履约预览",
+  });
+});
+
+test("anomaly alert records combine seeded anomalies with imported coverage", () => {
+  const summary = summarizeAnomalyAlertRecords(
+    [
+      anomaly,
+      { ...anomaly, id: "ANM-2", severity: "中", status: "已确认" },
+      { ...anomaly, id: "ANM-3", severity: "低", status: "已忽略" },
+    ],
+    [
+      {
+        kind: "status_log",
+        source_name: "坐席状态数据",
+        total_rows: 5,
+        latest_batch_id: "status_log-20260516094000-001",
+        updated_at: "2026-05-16T09:40:00+08:00",
+        sample_rows: [{ staff_id: "A001", status: "在线" }],
+      },
+      {
+        kind: "login_log",
+        source_name: "登录数据",
+        total_rows: 3,
+        latest_batch_id: "login_log-20260516095000-001",
+        updated_at: "2026-05-16T09:50:00+08:00",
+        sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+      },
+    ],
+  );
+
+  assert.deepEqual(summary, {
+    alertRows: 3,
+    highSeverity: 1,
+    pendingReview: 1,
+    importedRows: 8,
+    statusLabel: "本机预警预览",
   });
 });
 
@@ -551,6 +634,96 @@ test("organization people records summarize staff master coverage", () => {
     latestBatch: "staff_master-20260516093000-001",
     latestSource: "坐席主数据",
     statusLabel: "本机只读",
+  });
+});
+
+test("vendor management records summarize staff vendor coverage", () => {
+  const summary = summarizeVendorManagementRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 4,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [
+        {
+          staff_id: "A001",
+          name: "张敏",
+          team: "华东一组",
+          site: "上海职场",
+          vendor: "供应商A",
+          role: "客服",
+          status: "在线",
+        },
+        {
+          staff_id: "A002",
+          name: "李娜",
+          team: "华东二组",
+          site: "上海职场",
+          vendor: "供应商B",
+          role: "组长",
+          status: "培训",
+        },
+        {
+          staff_id: "A003",
+          name: "王晨",
+          team: "华东一组",
+          site: "苏州职场",
+          vendor: "供应商A",
+          role: "客服",
+          status: "在线",
+        },
+      ],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    staffRows: 4,
+    vendorCount: 2,
+    sampleRows: 3,
+    largestVendor: "供应商A",
+    latestBatch: "staff_master-20260516093000-001",
+    latestSource: "坐席主数据",
+    statusLabel: "本机供应商预览",
+  });
+});
+
+test("rule configuration records summarize local read-only rule readiness", () => {
+  const summary = summarizeRuleConfigurationRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 4,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", vendor: "供应商A" }],
+    },
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 5,
+      latest_batch_id: "status_log-20260516094000-001",
+      updated_at: "2026-05-16T09:40:00+08:00",
+      sample_rows: [{ staff_id: "A001", status: "在线" }],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 3,
+      latest_batch_id: "login_log-20260516095000-001",
+      updated_at: "2026-05-16T09:50:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedSources: 3,
+    importedRows: 12,
+    enabledPreviewRules: 4,
+    deferredRules: 5,
+    latestBatch: "login_log-20260516095000-001",
+    latestSource: "登录数据",
+    statusLabel: "本机规则目录",
   });
 });
 

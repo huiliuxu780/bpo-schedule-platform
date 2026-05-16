@@ -44,9 +44,9 @@ const nav: NavGroup[] = [
     icon: LayoutDashboard,
     items: [
       { title: "经营总览", href: "/dashboard", activeMatch: "exact" },
-      { title: "今日履约", development: true },
-      { title: "异常预警", development: true },
-      { title: "时段缺口热力图", development: true },
+      { title: "今日履约", href: "/today-fulfillment", activeMatch: "exact", tag: "P1" },
+      { title: "异常预警", href: "/anomaly-alerts", activeMatch: "exact", tag: "P1" },
+      { title: "时段缺口热力图", href: "/deficit-heatmap", activeMatch: "exact", tag: "P1" },
     ],
   },
   {
@@ -100,8 +100,8 @@ const nav: NavGroup[] = [
     icon: Settings,
     items: [
       { title: "组织与人员", href: "/organization-people", activeMatch: "exact", tag: "P1" },
-      { title: "供应商管理", development: true },
-      { title: "规则配置", development: true },
+      { title: "供应商管理", href: "/vendor-management", activeMatch: "exact", tag: "P1" },
+      { title: "规则配置", href: "/rule-configuration", activeMatch: "exact", tag: "P1" },
       { title: "权限管理", development: true },
       { title: "操作审计", development: true },
     ],

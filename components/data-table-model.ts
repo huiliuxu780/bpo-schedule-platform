@@ -154,6 +154,50 @@ export type OrganizationPeopleRecordsPreview = {
   statusLabel: "等待导入" | "本机只读"
 }
 
+export type TodayFulfillmentRecordsPreview = {
+  importedRows: number
+  staffRows: number
+  statusRows: number
+  loginRows: number
+  readySignals: number
+  latestBatch: string
+  latestSource: string
+  statusLabel:
+    | "等待导入"
+    | "缺少主数据"
+    | "缺少状态数据"
+    | "缺少登录数据"
+    | "本机履约预览"
+}
+
+export type AnomalyAlertRecordsPreview = {
+  alertRows: number
+  highSeverity: number
+  pendingReview: number
+  importedRows: number
+  statusLabel: "等待导入" | "本机预警预览"
+}
+
+export type VendorManagementRecordsPreview = {
+  staffRows: number
+  vendorCount: number
+  sampleRows: number
+  largestVendor: string
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "本机供应商预览"
+}
+
+export type RuleConfigurationRecordsPreview = {
+  importedSources: number
+  importedRows: number
+  enabledPreviewRules: number
+  deferredRules: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "本机规则目录"
+}
+
 export type FieldMappingSpec = {
   kind: DashboardImportRecordSummary["kind"]
   title: string
@@ -184,6 +228,18 @@ export const fieldMappingSpecs: FieldMappingSpec[] = [
     ],
   },
 ]
+
+export const ruleConfigurationPreviewItems = [
+  { title: "导入 records 只读展示", status: "enabled" },
+  { title: "Dashboard 本机筛选", status: "enabled" },
+  { title: "异常预警 seed 预览", status: "enabled" },
+  { title: "时段缺口 seed 预览", status: "enabled" },
+  { title: "真实接口规则", status: "deferred" },
+  { title: "权限边界规则", status: "deferred" },
+  { title: "规则编辑发布", status: "deferred" },
+  { title: "结算规则", status: "deferred" },
+  { title: "收费因子", status: "deferred" },
+] as const
 
 export type DashboardFilterState = {
   date: string
@@ -807,6 +863,154 @@ export function summarizeOrganizationPeopleRecords(
     latestBatch: staffRecord.latest_batch_id,
     latestSource: staffRecord.source_name,
     statusLabel: "本机只读",
+  }
+}
+
+export function summarizeTodayFulfillmentRecords(
+  records: DashboardImportRecordSummary[]
+): TodayFulfillmentRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedRows: 0,
+      staffRows: 0,
+      statusRows: 0,
+      loginRows: 0,
+      readySignals: 0,
+      latestBatch: "暂无今日履约 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const staffRows =
+    records.find((record) => record.kind === "staff_master")?.total_rows ?? 0
+  const statusRows =
+    records.find((record) => record.kind === "status_log")?.total_rows ?? 0
+  const loginRows =
+    records.find((record) => record.kind === "login_log")?.total_rows ?? 0
+  const readySignals = [staffRows, statusRows, loginRows].filter(
+    (value) => value > 0
+  ).length
+
+  return {
+    importedRows: staffRows + statusRows + loginRows,
+    staffRows,
+    statusRows,
+    loginRows,
+    readySignals,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      staffRows === 0
+        ? "缺少主数据"
+        : statusRows === 0
+          ? "缺少状态数据"
+          : loginRows === 0
+            ? "缺少登录数据"
+            : "本机履约预览",
+  }
+}
+
+export function summarizeAnomalyAlertRecords(
+  rows: Anomaly[],
+  records: DashboardImportRecordSummary[]
+): AnomalyAlertRecordsPreview {
+  if (rows.length === 0 && records.length === 0) {
+    return {
+      alertRows: 0,
+      highSeverity: 0,
+      pendingReview: 0,
+      importedRows: 0,
+      statusLabel: "等待导入",
+    }
+  }
+
+  return {
+    alertRows: rows.length,
+    highSeverity: rows.filter((row) => row.severity === "高").length,
+    pendingReview: rows.filter((row) => row.status === "待复核").length,
+    importedRows: records.reduce((total, record) => total + record.total_rows, 0),
+    statusLabel: "本机预警预览",
+  }
+}
+
+export function summarizeVendorManagementRecords(
+  records: DashboardImportRecordSummary[]
+): VendorManagementRecordsPreview {
+  const staffRecord = records.find((record) => record.kind === "staff_master")
+
+  if (!staffRecord) {
+    return {
+      staffRows: 0,
+      vendorCount: 0,
+      sampleRows: 0,
+      largestVendor: "等待导入",
+      latestBatch: "暂无供应商 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const vendorCounts = new Map<string, number>()
+
+  for (const row of staffRecord.sample_rows) {
+    const vendor = row.vendor?.trim() || "未标注"
+    vendorCounts.set(vendor, (vendorCounts.get(vendor) ?? 0) + 1)
+  }
+
+  const largestVendor =
+    Array.from(vendorCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ??
+    "未标注"
+
+  return {
+    staffRows: staffRecord.total_rows,
+    vendorCount: vendorCounts.size,
+    sampleRows: staffRecord.sample_rows.length,
+    largestVendor,
+    latestBatch: staffRecord.latest_batch_id,
+    latestSource: staffRecord.source_name,
+    statusLabel: "本机供应商预览",
+  }
+}
+
+export function summarizeRuleConfigurationRecords(
+  records: DashboardImportRecordSummary[]
+): RuleConfigurationRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedSources: 0,
+      importedRows: 0,
+      enabledPreviewRules: ruleConfigurationPreviewItems.filter(
+        (item) => item.status === "enabled"
+      ).length,
+      deferredRules: ruleConfigurationPreviewItems.filter(
+        (item) => item.status === "deferred"
+      ).length,
+      latestBatch: "暂无规则配置 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+
+  return {
+    importedSources: records.length,
+    importedRows: records.reduce((total, record) => total + record.total_rows, 0),
+    enabledPreviewRules: ruleConfigurationPreviewItems.filter(
+      (item) => item.status === "enabled"
+    ).length,
+    deferredRules: ruleConfigurationPreviewItems.filter(
+      (item) => item.status === "deferred"
+    ).length,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel: "本机规则目录",
   }
 }
 

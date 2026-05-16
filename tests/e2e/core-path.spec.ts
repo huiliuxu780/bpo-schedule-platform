@@ -14,14 +14,14 @@ async function expectPlanDetail(page: Page, detailPath: string) {
 
 async function gotoAppPage(page: Page, url: string) {
   try {
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 15_000 })
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30_000 })
   } catch (error) {
     if (!(error instanceof Error) || !error.message.includes("ERR_ABORTED")) {
       throw error
     }
 
     await page.waitForTimeout(300)
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 15_000 })
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30_000 })
   }
 }
 
@@ -192,7 +192,7 @@ test("schedule plan draft edit route keeps list context and table controls acces
 })
 
 test("local demo import entry drives batch status placeholders", async ({ page }) => {
-  test.setTimeout(60_000)
+  test.setTimeout(120_000)
 
   await gotoAppPage(page, "/demo-imports")
   const importMain = page.getByRole("main")
@@ -424,13 +424,88 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     organizationPeopleMain.getByRole("heading", { name: "本机组织分布" }),
   ).toBeVisible()
+
+  await gotoAppPage(page, "/today-fulfillment")
+  const todayFulfillmentMain = page.getByRole("main")
+  await expect(
+    todayFulfillmentMain.locator("h1", { hasText: "今日履约" }),
+  ).toBeVisible()
+  await expect(
+    todayFulfillmentMain.getByText(/今日履约 records \d+ 行/),
+  ).toBeVisible()
+  await expect(todayFulfillmentMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+  await expect(todayFulfillmentMain.getByText("今日状态样本")).toBeVisible()
+  await expect(todayFulfillmentMain.getByText("今日登录样本")).toBeVisible()
+
+  await gotoAppPage(page, "/anomaly-alerts")
+  const anomalyAlertsMain = page.getByRole("main")
+  await expect(
+    anomalyAlertsMain.locator("h1", { hasText: "异常预警" }),
+  ).toBeVisible()
+  await expect(
+    anomalyAlertsMain.getByText(/异常预警 records \d+ 行/),
+  ).toBeVisible()
+  await expect(anomalyAlertsMain.getByText("本机异常预警队列")).toBeVisible()
+  await expect(anomalyAlertsMain.getByText("ANM-202605-001")).toBeVisible()
+
+  await gotoAppPage(page, "/deficit-heatmap")
+  const deficitHeatmapMain = page.getByRole("main")
+  await expect(
+    deficitHeatmapMain.locator("h1", { hasText: "时段缺口热力图" }),
+  ).toBeVisible()
+  await expect(
+    deficitHeatmapMain.getByText("时段缺口 records"),
+  ).toBeVisible()
+  await expect(deficitHeatmapMain.getByText("严重时段清单")).toBeVisible()
+  await expect(deficitHeatmapMain.getByText("时段人力缺口")).toBeVisible()
+
+  await gotoAppPage(page, "/vendor-management")
+  const vendorManagementMain = page.getByRole("main")
+  await expect(
+    vendorManagementMain.locator("h1", { hasText: "供应商管理" }),
+  ).toBeVisible()
+  await expect(
+    vendorManagementMain.getByText(/供应商管理 records \d+ 行/),
+  ).toBeVisible()
+  await expect(vendorManagementMain.getByText("本机供应商分布")).toBeVisible()
+  await expect(vendorManagementMain.getByText("供应商A").first()).toBeVisible()
+
+  await gotoAppPage(page, "/rule-configuration")
+  const ruleConfigurationMain = page.getByRole("main")
+  await expect(
+    ruleConfigurationMain.locator("h1", { hasText: "规则配置" }),
+  ).toBeVisible()
+  await expect(
+    ruleConfigurationMain.getByText(/规则配置 records \d+ 行/),
+  ).toBeVisible()
+  await expect(
+    ruleConfigurationMain.getByRole("heading", { name: "本机规则目录" }),
+  ).toBeVisible()
+  await expect(ruleConfigurationMain.getByText("导入 records 只读展示")).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
+  await gotoAppPage(page, "/today-fulfillment")
+  await expect(
+    page.getByRole("main").locator("h1", { hasText: "今日履约" }),
+  ).toBeVisible()
+
+  const sidebar = page.locator("aside")
+  await expect(
+    sidebar.getByRole("link", { name: /今日履约/ }),
+  ).toHaveAttribute("href", "/today-fulfillment")
+
+  await expect(
+    sidebar.getByRole("link", { name: /异常预警/ }),
+  ).toHaveAttribute("href", "/anomaly-alerts")
+
+  await expect(
+    sidebar.getByRole("link", { name: /时段缺口热力图/ }),
+  ).toHaveAttribute("href", "/deficit-heatmap")
+
   await gotoAppPage(page, "/fulfillment-monitoring")
   await expect(page.getByRole("heading", { name: "履约监控" })).toBeVisible()
 
-  const sidebar = page.locator("aside")
   await expect(
     sidebar.getByRole("link", { name: /工时核验/ }),
   ).toHaveAttribute("href", "/fulfillment-monitoring")
@@ -480,6 +555,14 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(
     sidebar.getByRole("link", { name: /组织与人员/ }),
   ).toHaveAttribute("href", "/organization-people")
+
+  await expect(
+    sidebar.getByRole("link", { name: /供应商管理/ }),
+  ).toHaveAttribute("href", "/vendor-management")
+
+  await expect(
+    sidebar.getByRole("link", { name: /规则配置/ }),
+  ).toHaveAttribute("href", "/rule-configuration")
 
   const permissionItem = sidebar
     .locator('[data-development-nav-item="true"]')
