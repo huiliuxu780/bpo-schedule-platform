@@ -1544,8 +1544,8 @@ description: "PM 明确侧边栏中没有开放的功能需要标注 `开发中`
 source: "PM clarification on 2026-05-16: 没有开放的标注开发中即可"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只处理导航状态和浏览器验收；不开发新页面、不接数据库、不做权限/审批/导出/结算/生产公式。"
+status: "done"
+notes: "已把未开放导航项标为 `开发中` 且不再作为 Link 跳转；不开发新页面、不接数据库、不做权限/审批/导出/结算/生产公式。"
 ```
 
 ### R144 - remaining feature completion sequencing
@@ -1557,8 +1557,8 @@ description: "PM 要求尽快安排补全剩余功能；后续补全应围绕现
 source: "PM clarification on 2026-05-16: 尽快安排起来补全功能，补全剩下的功能"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "本批只记录优先级和边界；后续功能仍逐批进入 Story Runner，不一次性扩大到数据库、真实集成或生产工作流。"
+status: "done"
+notes: "已在项目状态记录后续补全顺序；后续功能仍逐批进入 Story Runner，不一次性扩大到数据库、真实集成或生产工作流。"
 ```
 
 ### R145 - navigation development labeling acceptance evidence
@@ -1570,6 +1570,6 @@ description: "未开放导航项改为 `开发中` 后，需要补充浏览器�
 source: "F118 navigation development labeling batch on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 只验证本地导航可信度，不扩大到新模块开发、数据库、真实集成、权限、审批、导出或结算。"
+status: "done"
+notes: "QA 已覆盖本地导航可信度，不扩大到新模块开发、数据库、真实集成、权限、审批、导出或结算。"
 ```

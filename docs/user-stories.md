@@ -2753,7 +2753,7 @@ acceptance:
   - "已开放页面入口仍可点击，包括 dashboard、需求计划、排班计划、风险提示、班次明细、不可用管理和本机导入。"
   - "不新增依赖、不开发新页面、不接数据库、不接真实外部系统。"
   - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```
 
 ### US156 - Remaining feature completion sequencing
@@ -2772,7 +2772,7 @@ acceptance:
   - "优先级以 `导入 -> 现有模块读取 -> 结果展示/复核` 为主线。"
   - "数据库、真实集成、权限、审批、导出、批量、结算和生产公式继续列为后置 Gate。"
   - "不在本批开发新页面或后端新契约。"
-status: "ready"
+status: "done"
 ```
 
 ### US157 - Navigation development labeling acceptance evidence
@@ -2791,5 +2791,5 @@ acceptance:
   - "E2E 确认该导航项不是可点击 link。"
   - "E2E 确认已开放的本机导入入口仍是可导航 link。"
   - "QA 记录明确本批不扩大到数据库、真实集成、权限、审批、导出、批量、结算或生产公式。"
-status: "ready"
+status: "done"
 ```

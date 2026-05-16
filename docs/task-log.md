@@ -1394,3 +1394,23 @@
 - action: 收口本机 dashboard KPI preview QA。
 - status: `done`
 - notes: E2E 覆盖 CSV 文件导入后进入 dashboard，确认本机 KPI Preview、导入覆盖行数、筛选控件可交互并保留 URL/query；模型断言覆盖 imported batch 到 KPI preview 的汇总；`npm run e2e:smoke` 4 条通过，模型测试 53 条通过。
+
+- task_id: `F118`
+- source_ids:
+  - `R143`
+  - `R144`
+- story_ids:
+  - `US155`
+  - `US156`
+- action: 完成未开放导航开发中标识与剩余功能补全顺序收口。
+- status: `done`
+- notes: 侧边栏未开放功能现在统一显示 `开发中` 且不再作为 Link 跳转到 dashboard；已开放入口继续保留真实链接；`docs/PROJECT_STATE.md` 已记录后续按 `导入 -> 现有模块读取 -> 结果展示/复核` 的补全顺序。
+
+- task_id: `Q044`
+- source_ids:
+  - `R145`
+- story_ids:
+  - `US157`
+- action: 收口未开放导航开发中标识 QA。
+- status: `done`
+- notes: E2E 覆盖 `工时核验` 显示 `开发中`、具备禁用态且不是 link，同时确认 `文件导入` 仍链接到 `/demo-imports`；保持 no-database、no-real-integration、no-auth、no-approval、no-export、no-batch、no-production-formula、no-settlement 边界。

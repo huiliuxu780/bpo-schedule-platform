@@ -1739,6 +1739,27 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 22 个后端 unittest。
 
+## 2026-05-16 - Navigation Development Badges
+
+#### 审计结论
+
+- `F118/Q044/US155-US157` 已修正导航可信度：未开放功能统一显示 `开发中`，并从可点击 Link 改为禁用展示态，不再误跳 `/dashboard`。
+- 已开放入口继续保持可导航，包括 dashboard、需求计划、排班计划、风险提示、班次明细、不可用管理和本机导入。
+- 产品补全顺序已固化为围绕现有模块推进：本机导入数据先被处理并存入本地运行态，再由 dashboard、排班、班次、风险、不可用和后续履约页读取展示结果；不再新增独立演示中心。
+- 本轮没有引入数据库、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子。
+
+#### 风险
+
+- `开发中` 只是导航诚实性处理，不等同于这些模块已经实现；后续仍需逐批开发履约监控、结算复盘和系统管理等页面。
+- 当前补全顺序仍保持 no-database local MVP 边界；如果后续需要生产持久化、真实集成或权限体系，必须单独过 Gate。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，5 条 E2E 通过。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，53 个模型/源码断言测试通过。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

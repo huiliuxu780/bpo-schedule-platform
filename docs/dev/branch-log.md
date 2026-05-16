@@ -1265,3 +1265,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F118-Q044 Navigation Development Badges And Feature Completion Order
+
+- branch_name: `codex/f-batch-005-navigation-dev-badges`
+- base_main_commit: `3b7e843`
+- remote_status: `local continuation branch created from pushed codex/f-batch-004-local-demo-kpi-filters because main has not integrated the local demo chain yet`
+- scope: sidebar unavailable-module development labels, focused smoke coverage, product feature-completion sequence, current-state closeout, and traceability updates.
+- allowed_files_check: `components/app-sidebar.tsx`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, real integration, auth, permissions, approval, export, batch operation, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `components/app-sidebar.tsx`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; browser smoke first exposed that imported batch counts can accumulate in the reused local process, then passed after the assertion accepted the dynamic imported-row count; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed with 5 tests; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 53 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `git diff --check` passed.
+- local_commit_sha: `fe5edb9`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
