@@ -1885,3 +1885,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入三类 CSV 后进入 data-quality 并看到数据质量 records 摘要；QA 不扩大到生产质量规则、自动修复、字段映射写回、数据库或真实集成。"
 ```
+
+### R170 - CORN status log reads imported records
+
+```yaml
+id: R170
+module: "数据与集成"
+description: "CORN 状态日志需要做本机预览最小切片，读取已导入的坐席状态数据 status_log records，展示状态覆盖、最近批次、状态分布和样本。"
+source: "PM continuation on 2026-05-16: 持续补完未开放功能"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "仅做 localhost-only processed records 消费；不接真实 CORN API，不做实时流、生产状态码固化、状态写回、数据库或真实接口检查。"
+```
+
+### R171 - CORN status log navigation entry
+
+```yaml
+id: R171
+module: "导航可信度"
+description: "CORN 状态日志页面完成后，侧边栏 `CORN 状态日志` 应从 `开发中` 改为真实可点击入口。"
+source: "F126 CORN status log minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "导航入口只指向本机 records 预览页，不代表真实 CORN 接口集成已经完成。"
+```
+
+### R172 - CORN status log imported records QA
+
+```yaml
+id: R172
+module: "数据与集成验收"
+description: "CORN 状态日志本机预览读取 status_log records 后，需要补充浏览器 smoke 证据，证明导入后数据与集成入口能看到状态日志处理结果。"
+source: "F126 CORN status log minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 不扩大到真实 CORN 集成、实时流、生产状态码、状态写回、数据库或真实接口检查。"
+```

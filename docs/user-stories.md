@@ -3235,3 +3235,58 @@ acceptance:
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
 status: "done"
 ```
+
+### US182 - CORN status log reads status records
+
+```yaml
+id: US182
+requirement_ids:
+  - R170
+module: "数据与集成"
+role: "演示人员"
+story: "作为演示人员，我希望 CORN 状态日志页能展示本机导入的状态 records，这样可以演示状态日志数据已经进入数据与集成模块。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/corn-status-log` 页面。"
+  - "页面读取 processed records 中的 status_log，并展示 `CORN 状态日志 records` 摘要。"
+  - "页面展示状态数据行数、最近批次、状态分布和样本 records。"
+  - "不接真实 CORN API、不做实时流、不做生产状态码固化、不接数据库、不做状态写回、真实接口检查、审批、导出、批量或结算。"
+status: "in_progress"
+```
+
+### US183 - CORN status log navigation entry
+
+```yaml
+id: US183
+requirement_ids:
+  - R171
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏 CORN 状态日志成为可点击入口，这样数据与集成模块不再只停留在导入和数据质量。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`数据与集成 > CORN 状态日志` 链接到 `/corn-status-log`。"
+  - "字段映射和接口集成继续显示 `开发中` 且不可点击。"
+  - "导航 active 状态能识别 `/corn-status-log`。"
+status: "in_progress"
+```
+
+### US184 - CORN status log imported records QA
+
+```yaml
+id: US184
+requirement_ids:
+  - R172
+module: "数据与集成验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入状态数据后进入 CORN 状态日志页，这样能证明状态日志入口读到了导入处理结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席状态数据后，corn-status-log 出现 `CORN 状态日志 records` 摘要。"
+  - "E2E 覆盖 CORN 状态日志导航可点击，字段映射和接口集成仍是 `开发中`。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-corn-integration、no-realtime-stream、no-status-writeback、no-production-status-code。"
+status: "ready"
+```
