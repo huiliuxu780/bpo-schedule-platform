@@ -3345,3 +3345,58 @@ acceptance:
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-field-mapping-writeback、no-saved-config。"
 status: "done"
 ```
+
+### US188 - Organization people reads staff records
+
+```yaml
+id: US188
+requirement_ids:
+  - R176
+module: "系统管理"
+role: "演示人员"
+story: "作为演示人员，我希望组织与人员页能展示本机导入的坐席主数据 records，这样可以演示系统管理入口已经能读取人员主数据。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/organization-people` 页面。"
+  - "页面读取 processed records 中的 staff_master，并展示 `组织与人员 records` 摘要。"
+  - "页面展示人员行数、最近批次、团队/职场/供应商分布和样本 records。"
+  - "不做账号登录、权限、组织架构维护、主数据写回、数据库、真实 HR/CORN/WFM 集成、审批、导出、批量或生产审计。"
+status: "in_progress"
+```
+
+### US189 - Organization people navigation entry
+
+```yaml
+id: US189
+requirement_ids:
+  - R177
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏组织与人员成为可点击入口，这样系统管理模块不再全部停留在占位。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`系统管理 > 组织与人员` 链接到 `/organization-people`。"
+  - "供应商管理、规则配置、权限管理和操作审计继续显示 `开发中` 且不可点击。"
+  - "导航 active 状态能识别 `/organization-people`。"
+status: "in_progress"
+```
+
+### US190 - Organization people imported records QA
+
+```yaml
+id: US190
+requirement_ids:
+  - R178
+module: "系统管理验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入坐席主数据后进入组织与人员页，这样能证明系统管理入口读到了导入处理结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席主数据后，organization-people 出现 `组织与人员 records` 摘要。"
+  - "E2E 覆盖组织与人员导航可点击，权限管理和操作审计仍是 `开发中`。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-writeback。"
+status: "ready"
+```

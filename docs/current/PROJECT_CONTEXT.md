@@ -2,10 +2,11 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
+  queue_state: active
   active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  in_progress_task: F128
+  ready_tasks:
+    - Q055
 ```
 
 ## Current Stage
@@ -14,7 +15,7 @@ current_summary:
 
 ## Current Core Capabilities
 
-- Dashboard, demand plans, schedule plans, plan detail/edit, risks, shift details, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, and review navigation use local/demo data and scoped review context.
+- Dashboard, demand plans, schedule plans, plan detail/edit, risks, shift details, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, organization people preview, and review navigation use local/demo data and scoped review context.
 - Frontend build/check path exists through `bash scripts/check.sh`.
 - Backend local unittest path exists, and localhost-only demo import endpoints exist for staff master, staff status, and login CSV data; production API/database integration is not in scope.
 - Imported demo rows are exposed through localhost-only processed records and are now consumed by dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, and field mapping for module-level demo summaries.

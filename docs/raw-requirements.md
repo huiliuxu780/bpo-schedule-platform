@@ -1963,3 +1963,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入三类 CSV 后进入 field-mapping 并看到字段映射 records 摘要；QA 不扩大到字段映射写回、保存配置、真实接口检查、跨系统对账、数据库或真实集成。"
 ```
+
+### R176 - organization people reads staff master records
+
+```yaml
+id: R176
+module: "系统管理"
+description: "组织与人员需要做本机只读预览最小切片，读取已导入的 staff_master records，展示人员覆盖、团队/职场/供应商分布和样本。"
+source: "PM continuation on 2026-05-16: 功能全部不要遗漏"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "本批只做组织与人员的本机只读 records 预览；不做账号登录、权限、组织架构维护、主数据写回、数据库或真实 HR/CORN/WFM 集成。"
+```
+
+### R177 - organization people navigation entry
+
+```yaml
+id: R177
+module: "导航可信度"
+description: "组织与人员页面完成后，侧边栏 `系统管理 > 组织与人员` 应从 `开发中` 改为真实可点击入口，其他未实现系统管理项继续标注 `开发中`。"
+source: "F128 organization people minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "in_progress"
+notes: "仅开放本机只读组织与人员入口；供应商管理、规则配置、权限管理和操作审计仍保持开发中。"
+```
+
+### R178 - organization people imported records QA
+
+```yaml
+id: R178
+module: "系统管理验收"
+description: "组织与人员读取 staff_master records 后，需要补充浏览器 smoke 证据，证明导入后系统管理入口能看到人员主数据处理结果。"
+source: "F128 organization people minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 不扩大到数据库、真实集成、登录账号、权限、组织架构维护、导出、批量或生产审计。"
+```
