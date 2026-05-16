@@ -48,6 +48,61 @@ acceptance:
 status: "done"
 ```
 
+### US176 - Adherence monitoring reads imported records
+
+```yaml
+id: US176
+requirement_ids:
+  - R164
+module: "履约监控"
+role: "演示人员"
+story: "作为演示人员，我希望实时遵守率页能展示本机导入的状态和登录 records 覆盖，这样可以演示该入口已经接入导入处理结果。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/adherence-monitoring` 页面。"
+  - "页面读取 processed records 中的 status_log 和 login_log，并展示 `遵守率预览 records` 摘要。"
+  - "页面展示状态数据行数、登录数据行数、本机预览状态和样本 records。"
+  - "不做生产遵守率公式、不接实时流、不固化状态码、不写回状态、不接数据库、不做真实集成、审批、导出、批量或结算。"
+status: "ready"
+```
+
+### US177 - Adherence monitoring navigation entry
+
+```yaml
+id: US177
+requirement_ids:
+  - R165
+module: "导航可信度"
+role: "演示人员"
+story: "作为演示人员，我希望侧边栏实时遵守率成为可点击入口，这样履约监控导航不再保留该占位。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`履约监控 > 实时遵守率` 链接到 `/adherence-monitoring`。"
+  - "页面和文案明确这是本机 records 预览，不是生产实时遵守率公式。"
+  - "导航 active 状态能识别 `/adherence-monitoring`。"
+status: "ready"
+```
+
+### US178 - Adherence monitoring imported records QA
+
+```yaml
+id: US178
+requirement_ids:
+  - R166
+module: "履约监控验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖导入状态和登录数据后进入实时遵守率页，这样能证明该入口读到了导入处理结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入坐席状态和登录数据后，adherence-monitoring 出现 `遵守率预览 records` 摘要。"
+  - "E2E 确认实时遵守率是可点击 link。"
+  - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-adherence-formula、no-realtime-stream、no-status-writeback。"
+status: "ready"
+```
+
 ### US173 - Exception review reads imported records
 
 ```yaml

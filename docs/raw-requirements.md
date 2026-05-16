@@ -1807,3 +1807,42 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入状态/登录数据后进入 exception-review 并看到复核队列 records 摘要；QA 不扩大到审批、状态写回、实时流、生产异常规则、数据库或真实集成。"
 ```
+
+### R164 - adherence monitoring reads imported records
+
+```yaml
+id: R164
+module: "履约监控"
+description: "实时遵守率需要做本机预览最小切片，读取已导入的坐席状态数据和登录数据 records，展示本机覆盖和样本，不计算生产遵守率。"
+source: "PM continuation on 2026-05-16: 按规划补齐履约监控占位功能"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只做 records 覆盖和样本预览；不做生产遵守率公式、实时流、状态码固化、状态写回、数据库、真实集成、审批、导出、批量或结算。"
+```
+
+### R165 - adherence monitoring navigation entry
+
+```yaml
+id: R165
+module: "导航可信度"
+description: "实时遵守率页面完成后，侧边栏 `实时遵守率` 应从 `开发中` 改为真实可点击入口。"
+source: "F124 adherence monitoring minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "只开放本机预览入口；不声称生产实时遵守率能力已经完成。"
+```
+
+### R166 - adherence monitoring imported records QA
+
+```yaml
+id: R166
+module: "履约监控验收"
+description: "实时遵守率本机预览读取 status_log/login_log records 后，需要补充浏览器 smoke 证据，证明导入后现有履约入口能看到 records 覆盖。"
+source: "F124 adherence monitoring minimum slice on 2026-05-16"
+submitted_at: "2026-05-16"
+version: "1.0"
+status: "ready"
+notes: "QA 只验证本机 records 进入实时遵守率预览页面，不扩大到生产公式、实时流、状态写回、数据库或真实集成。"
+```

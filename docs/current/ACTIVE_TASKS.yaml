@@ -6,4 +6,101 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+tasks:
+  - id: F124
+    story_ids: ["US176", "US177"]
+    status: in_progress
+    gate: frontend-scaffold
+    branch: "codex/f-batch-012-adherence-snapshot-imports"
+    allowed_files:
+      - "app/adherence-monitoring/**"
+      - "components/app-sidebar.tsx"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实 CORN/HR/WFM/第三方 API 集成"
+      - "需要认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "需要生产遵守率公式、实时流、状态码固化或状态写回"
+      - "验证失败"
+    acceptance_ref: "tasks/backlog.yaml#F124"
+    verification:
+      - "BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke"
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "npm run typecheck"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "adherence-monitoring 展示本机 status_log/login_log records 覆盖与样本。"
+      - "实时遵守率导航入口可进入页面。"
+      - "仍保持 no-production-adherence-formula、no-realtime-stream、localhost-only、no-database 边界。"
+  - id: Q051
+    story_ids: ["US178"]
+    status: ready
+    gate: qa
+    branch: "codex/f-batch-012-adherence-snapshot-imports"
+    allowed_files:
+      - "app/adherence-monitoring/**"
+      - "components/app-sidebar.tsx"
+      - "components/**"
+      - "lib/**"
+      - "tests/e2e/core-path.spec.ts"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、真实外部集成、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子"
+      - "需要生产遵守率公式、实时流、状态码固化或状态写回"
+      - "验证失败"
+    acceptance_ref: "tasks/backlog.yaml#Q051"
+    verification:
+      - "BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "E2E 覆盖导入状态/登录数据后 adherence-monitoring 出现 records 摘要。"
+      - "QA 记录明确不扩大到生产遵守率公式、实时流、状态写回、数据库或真实集成。"
