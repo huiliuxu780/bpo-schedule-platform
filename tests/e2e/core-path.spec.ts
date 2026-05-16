@@ -303,6 +303,18 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(statusTraceMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
   await expect(statusTraceMain.getByText("状态分布")).toBeVisible()
   await expect(statusTraceMain.getByText("状态日志样本")).toBeVisible()
+
+  await page.goto("/fulfillment-exceptions")
+  const exceptionMain = page.getByRole("main")
+  await expect(
+    exceptionMain.locator("h1", { hasText: "异常管理" }),
+  ).toBeVisible()
+  await expect(
+    exceptionMain.getByText(/异常线索 records \d+ 行/),
+  ).toBeVisible()
+  await expect(exceptionMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
+  await expect(exceptionMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
+  await expect(exceptionMain.getByText("本机异常线索样本")).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -320,14 +332,18 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
     sidebar.getByRole("link", { name: /坐席状态轨迹/ }),
   ).toHaveAttribute("href", "/agent-status-trace")
 
-  const exceptionItem = sidebar
-    .locator('[data-development-nav-item="true"]')
-    .filter({ hasText: "异常管理" })
+  await expect(
+    sidebar.getByRole("link", { name: /异常管理/ }),
+  ).toHaveAttribute("href", "/fulfillment-exceptions")
 
-  await expect(exceptionItem).toBeVisible()
-  await expect(exceptionItem).toHaveAttribute("aria-disabled", "true")
-  await expect(exceptionItem.getByText("开发中")).toBeVisible()
-  await expect(sidebar.getByRole("link", { name: /异常管理/ })).toHaveCount(0)
+  const adherenceItem = sidebar
+    .locator('[data-development-nav-item="true"]')
+    .filter({ hasText: "实时遵守率" })
+
+  await expect(adherenceItem).toBeVisible()
+  await expect(adherenceItem).toHaveAttribute("aria-disabled", "true")
+  await expect(adherenceItem.getByText("开发中")).toBeVisible()
+  await expect(sidebar.getByRole("link", { name: /实时遵守率/ })).toHaveCount(0)
   await expect(page).toHaveURL(/\/dashboard(?:\?.*)?$/)
 
   await sidebar.getByRole("button", { name: "数据与集成" }).click()

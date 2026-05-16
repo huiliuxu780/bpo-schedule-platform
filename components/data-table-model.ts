@@ -78,6 +78,16 @@ export type AgentStatusTraceRecordsPreview = {
   statusLabel: "等待导入" | "已接入"
 }
 
+export type FulfillmentExceptionRecordsPreview = {
+  importedRows: number
+  statusRows: number
+  loginRows: number
+  reviewLeadRows: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "可复核"
+}
+
 export type DashboardFilterState = {
   date: string
   site: string
@@ -377,6 +387,52 @@ export function summarizeAgentStatusTraceRecords(
     latestBatch: statusRecord.latest_batch_id,
     latestSource: statusRecord.source_name,
     statusLabel: "已接入",
+  }
+}
+
+export function summarizeFulfillmentExceptionRecords(
+  records: DashboardImportRecordSummary[]
+): FulfillmentExceptionRecordsPreview {
+  const fulfillmentRecords = records.filter(
+    (record) => record.kind === "status_log" || record.kind === "login_log"
+  )
+
+  if (fulfillmentRecords.length === 0) {
+    return {
+      importedRows: 0,
+      statusRows: 0,
+      loginRows: 0,
+      reviewLeadRows: 0,
+      latestBatch: "暂无异常线索 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = fulfillmentRecords.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const statusRows =
+    fulfillmentRecords.find((record) => record.kind === "status_log")
+      ?.total_rows ?? 0
+  const loginRows =
+    fulfillmentRecords.find((record) => record.kind === "login_log")
+      ?.total_rows ?? 0
+  const reviewLeadRows = Math.min(statusRows, loginRows)
+
+  return {
+    importedRows: statusRows + loginRows,
+    statusRows,
+    loginRows,
+    reviewLeadRows,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      statusRows === 0
+        ? "缺少状态数据"
+        : loginRows === 0
+          ? "缺少登录数据"
+          : "可复核",
   }
 }
 
