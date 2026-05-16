@@ -83,7 +83,7 @@ acceptance:
   - "页面读取 processed records 中的 staff_master、status_log 和 login_log，并展示 `数据质量 records` 摘要。"
   - "页面展示三类数据行数、样本覆盖、最近批次和本机质量预览状态。"
   - "不做生产数据质量规则、自动修复、字段映射写回、真实接口检查、跨系统对账、不接数据库、不做真实集成、审批、导出、批量或结算。"
-status: "ready"
+status: "done"
 ```
 
 ### US180 - Data quality navigation entry
@@ -101,7 +101,7 @@ acceptance:
   - "`数据与集成 > 数据质量` 链接到 `/data-quality`。"
   - "页面和文案明确这是本机 records 质量预览，不是生产数据质量规则或真实接口检查。"
   - "导航 active 状态能识别 `/data-quality`。"
-status: "ready"
+status: "done"
 ```
 
 ### US181 - Data quality imported records QA
@@ -119,7 +119,7 @@ acceptance:
   - "E2E 导入坐席主数据、状态数据和登录数据后，data-quality 出现 `数据质量 records` 摘要。"
   - "E2E 确认数据质量是可点击 link。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-quality-rule、no-auto-fix、no-field-mapping-writeback。"
-status: "ready"
+status: "done"
 ```
 
 ### US177 - Adherence monitoring navigation entry

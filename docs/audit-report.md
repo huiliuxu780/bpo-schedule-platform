@@ -1921,6 +1921,30 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 23 个后端 unittest。
 
+## 2026-05-16 - Data Quality Imported Records
+
+#### 审计结论
+
+- `F125/Q052/US179-US181` 已开放第一个数据与集成治理切片：`数据与集成 > 数据质量` 链接到 `/data-quality`，不再是占位。
+- 新页面读取既有 processed records 中的 `staff_master`、`status_log` 和 `login_log`，并展示 `数据质量 records`、三类数据行数、样本覆盖、最近批次和本机质量预览状态，证明导入结果进入数据质量入口。
+- 页面文案明确当前是本机 records 质量预览，不执行生产数据质量规则、真实接口检查或跨系统对账。
+- 本轮没有新增后端契约，没有修改 backend，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、自动排班、生产数据质量规则、自动修复、字段映射写回、跨系统对账、结算规则或收费因子。
+
+#### 风险
+
+- 当前只是本机 records 覆盖和样本预览，不等同于生产级数据质量规则、真实接口检查、字段映射治理、自动修复或跨系统对账。
+- processed records 仍来自本机进程内存，服务重启后清空；这符合当前本机演示边界。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖导入三类 CSV 后数据质量 records 摘要。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，60 个模型/源码断言测试通过。
+- `npm run typecheck`：通过。
+- in-app browser 检查：`http://localhost:3015/data-quality` 打开成功，页面标题、`数据质量 records`、`本机质量预览明细` 和 no-database/no-production-quality-rule 边界文案可见。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 23 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

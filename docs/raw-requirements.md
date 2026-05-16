@@ -1856,8 +1856,8 @@ description: "数据质量需要做本机预览最小切片，读取已导入的
 source: "PM continuation on 2026-05-16: 持续补完未开放功能"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只做本机 records 覆盖、样本和基础缺口提示；不做生产数据质量规则、自动修复、字段映射写回、真实接口检查、跨系统对账、数据库或真实集成。"
+status: "done"
+notes: "已新增 `/data-quality` 页面读取 staff_master/status_log/login_log records，展示覆盖、样本和基础缺口提示；不做生产数据质量规则、自动修复、字段映射写回、真实接口检查、跨系统对账、数据库或真实集成。"
 ```
 
 ### R168 - data quality navigation entry
@@ -1869,8 +1869,8 @@ description: "数据质量页面完成后，侧边栏 `数据质量` 应从 `开
 source: "F125 data quality minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只开放本机预览入口；不声称生产数据质量规则、真实接口检查或跨系统对账能力已经完成。"
+status: "done"
+notes: "侧边栏 `数据质量` 已链接到 `/data-quality`；页面文案明确只是本机 records 质量预览，不声称生产数据质量规则、真实接口检查或跨系统对账能力已经完成。"
 ```
 
 ### R169 - data quality imported records QA
@@ -1882,6 +1882,6 @@ description: "数据质量本机预览读取 staff_master/status_log/login_log r
 source: "F125 data quality minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 只验证本机 records 进入数据质量预览页面，不扩大到生产质量规则、自动修复、字段映射写回、数据库或真实集成。"
+status: "done"
+notes: "E2E 已覆盖导入三类 CSV 后进入 data-quality 并看到数据质量 records 摘要；QA 不扩大到生产质量规则、自动修复、字段映射写回、数据库或真实集成。"
 ```

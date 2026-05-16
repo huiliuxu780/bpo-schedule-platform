@@ -1554,3 +1554,23 @@
 - action: 收口实时遵守率 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖导入状态/登录数据后进入实时遵守率，确认 records 摘要、状态数据、登录数据和本机遵守率预览样本可见；模型测试 59 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F125`
+- source_ids:
+  - `R167`
+  - `R168`
+- story_ids:
+  - `US179`
+  - `US180`
+- action: 完成数据质量本机 records 预览切片。
+- status: `done`
+- notes: 新增 `/data-quality` 页面，读取本机 `staff_master`、`status_log` 与 `login_log` processed records，展示 `数据质量 records`、三类数据覆盖、样本和本机质量预览状态；侧边栏 `数据质量` 改为真实入口。
+
+- task_id: `Q052`
+- source_ids:
+  - `R169`
+- story_ids:
+  - `US181`
+- action: 收口数据质量 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖导入三类 CSV 后进入数据质量，确认 records 摘要、主数据、状态数据、登录数据和本机质量预览明细可见；模型测试 60 条通过，浏览器 smoke 5 条通过。

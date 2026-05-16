@@ -901,6 +901,23 @@
 - allowed_files_check: `components/schedule-plan-interval-table.tsx`, `components/shift-details-table.tsx`, `lib/**`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, or production formula files.
 - scope_diff_check: `components/schedule-plan-interval-table.tsx`, `components/shift-details-table.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, current-state closeout files, and traceability docs only.
 - check_result: seed-only staged strict state check passed before product work; failing tests first verified the missing `schedule-plans` row-action source and raw shift-details hrefs; `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` passed with 28 tests; `bash scripts/check-state.sh --strict --diff=working` passed; `bash scripts/check-state.sh --strict --diff=staged` passed; `git diff --check` passed; `bash scripts/check.sh` passed. Local dev server started on `http://localhost:3014`, but cross-sandbox localhost smoke timed out on approval and was not used as final evidence.
+- local_commit_sha: `14a1dcf99237ddba5ffdb91ad3ebd3b6cb4d94f3`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
+
+### F125-Q052 Data Quality Imported Records
+
+- branch_name: `codex/f-batch-013-data-quality-imports`
+- base_main_commit: `5bf9eb616030b7ae41dfed3de1cc556c39dc144e`
+- remote_status: `local continuation branch created from pushed codex/f-batch-012-adherence-snapshot-imports because PM agreed to continue filling planned functions`
+- scope: data-quality local page, data-quality navigation entry, staff/status/login processed records quality preview summary, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `app/data-quality/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production quality rules, auto-fix, field-mapping writeback, cross-system reconciliation, settlement rule, or charge-factor files.
+- scope_diff_check: `app/data-quality/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeDataQualityRecords` was missing; model tests then passed with 60 tests; typecheck passed; backend health and frontend `/data-quality` returned 200; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed outside sandbox with 5 tests and verified data-quality records summaries plus data-quality sidebar link; in-app browser opened `/data-quality` and found the heading, `数据质量 records`, `本机质量预览明细`, and no-database/no-production-quality-rule boundary; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 23 backend unittest.
 - local_commit_sha: `pending final local commit`
 - integration_status: `not_started`
 - integration_method: `N/A`
