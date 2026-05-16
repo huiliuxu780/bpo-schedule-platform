@@ -1376,3 +1376,21 @@
 - action: 收口本机导入演示闭环 QA。
 - status: `done`
 - notes: 已用后端 unittest、前端 lint/typecheck、源码模型测试和浏览器 smoke 覆盖导入入口、导入结果、dashboard 批次状态和行复核动作；本批保持 localhost-only、no-database、no-real-integration、no-package-change。
+
+- task_id: `F117`
+- source_ids:
+  - `R141`
+- story_ids:
+  - `US153`
+- action: 完成本机 dashboard 筛选和 imported-data KPI preview。
+- status: `done`
+- notes: dashboard 顶部日期、职场/团队、供应商、数据版本筛选已改为可提交控件并通过 URL/query 保留；导入批次现在汇总为本机 KPI Preview，展示导入覆盖行数、接入数据源数、最新批次和需关注状态；保持 no-database、no-real-integration、no-production-formula 边界。
+
+- task_id: `Q043`
+- source_ids:
+  - `R142`
+- story_ids:
+  - `US154`
+- action: 收口本机 dashboard KPI preview QA。
+- status: `done`
+- notes: E2E 覆盖 CSV 文件导入后进入 dashboard，确认本机 KPI Preview、导入覆盖行数、筛选控件可交互并保留 URL/query；模型断言覆盖 imported batch 到 KPI preview 的汇总；`npm run e2e:smoke` 4 条通过，模型测试 53 条通过。

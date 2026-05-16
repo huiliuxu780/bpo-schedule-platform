@@ -5,18 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US153
-    requirement_ids: [R141]
-    task_ids: [F117]
-    status: in_progress
-    priority: P1
-    module: "本机 dashboard 演示筛选"
-    summary: "把 dashboard 顶部筛选改成本机演示可点击可解释，并用 URL/query 保留本地筛选状态。"
-  - id: US154
-    requirement_ids: [R142]
-    task_ids: [Q043]
-    status: ready
-    priority: P1
-    module: "本机 dashboard KPI preview 验收"
-    summary: "补充本机筛选和导入批次 KPI preview 的浏览器级 smoke 与审计证据。"
+stories: []

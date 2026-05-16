@@ -12,6 +12,7 @@ import {
   filterUnavailabilityRows,
   getDashboardPaginationRange,
   summarizeHeatmapRows,
+  summarizeDashboardImportKpiPreview,
   summarizeSchedulePlanRows,
   summarizeScheduleRiskRows,
   summarizeSyncStatusRows,
@@ -106,6 +107,36 @@ test("sync status helpers filter rows and summarize state counts", () => {
     synced: 1,
     processing: 1,
     attention: 1,
+  });
+});
+
+test("dashboard import KPI preview summarizes local demo batches", () => {
+  const summary = summarizeDashboardImportKpiPreview([
+    {
+      source_name: "坐席主数据",
+      batch_id: "staff_master-20260516093000-001",
+      status: "imported",
+      success_rows: 2,
+      failed_rows: 0,
+      imported_at: "2026-05-16T09:30:00+08:00",
+    },
+    {
+      source_name: "登录数据",
+      batch_id: "login_log-20260516094000-001",
+      status: "needs_attention",
+      success_rows: 1,
+      failed_rows: 1,
+      imported_at: "2026-05-16T09:40:00+08:00",
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedSources: 2,
+    importedRows: 3,
+    attentionBatches: 1,
+    latestBatch: "login_log-20260516094000-001",
+    latestSource: "登录数据",
+    statusLabel: "需关注",
   });
 });
 

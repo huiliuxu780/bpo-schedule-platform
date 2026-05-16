@@ -2714,7 +2714,7 @@ acceptance:
   - "已导入批次能驱动本机 KPI preview 或导入覆盖说明；无导入时显示明确空态。"
   - "KPI preview 明确标注本机演示口径，不固化生产公式、状态码、结算规则或收费因子。"
   - "`npm run e2e:smoke`、`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```
 
 ### US154 - Local dashboard KPI preview acceptance evidence
@@ -2733,5 +2733,5 @@ acceptance:
   - "E2E 覆盖导入批次后 dashboard KPI preview 或数据覆盖说明发生可见变化。"
   - "QA 记录明确本批仍是 localhost-only、no-database、no-real-integration、no-production-formula、no-package-change。"
   - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```

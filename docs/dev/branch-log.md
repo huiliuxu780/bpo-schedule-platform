@@ -1256,8 +1256,8 @@
 - remote_status: `local continuation branch created from pushed codex/f-batch-003-local-demo-import-placeholders because main has not integrated the local demo chain yet`
 - scope: localhost-only dashboard top filters, imported demo batch KPI preview, smoke coverage, and traceability updates.
 - allowed_files_check: `app/dashboard/**`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, real integration, auth, permissions, approval, export, batch operation, production formula, settlement, or charge-factor files.
-- scope_diff_check: pending product implementation after seed commit.
-- check_result: pending seed strict-state check.
+- scope_diff_check: `app/dashboard/page.tsx`, `components/dashboard-client.tsx`, `components/section-cards.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeDashboardImportKpiPreview` was missing; model test then passed with 53 tests; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed with 4 E2E tests and verified imported-data KPI preview plus dashboard filter URL state; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict --diff=working` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
 - local_commit_sha: `pending final local commit`
 - integration_status: `not_started`
 - integration_method: `N/A`

@@ -1716,6 +1716,29 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 22 个后端 unittest。
 
+## 2026-05-16 - Local Dashboard KPI Filters
+
+#### 审计结论
+
+- `F117/Q043/US153-US154` 已把 dashboard 顶部筛选从静态按钮推进为本机可提交控件：日期、职场/团队、供应商和数据版本通过 URL/query 保留演示上下文。
+- dashboard 新增 `本机 KPI Preview`，基于本机导入批次汇总导入覆盖行数、接入数据源数、最新批次和需关注批次数，用于演示数据覆盖，不作为生产 KPI 公式。
+- 本轮仍然只停留在 localhost 本机演示和已有导入批次摘要层，没有引入数据库、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子。
+
+#### 风险
+
+- KPI preview 使用导入批次摘要，不等同于人员级排班实现率、结算或生产履约公式；后续如需生产计算必须单独过 Gate。
+- 当前筛选只保留演示上下文和 URL 状态，不驱动真实跨系统查询或数据库筛选。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，4 条 E2E 通过。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，53 个模型/源码断言测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check 回归、commit-message 回归、frontend lint、typecheck、Next build 和 22 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

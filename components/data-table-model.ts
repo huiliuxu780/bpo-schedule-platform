@@ -23,6 +23,31 @@ export type DashboardSyncStatusRow = {
   syncedAt: string
 }
 
+export type DashboardImportKpiBatch = {
+  source_name: string
+  batch_id: string
+  status: "imported" | "needs_attention"
+  success_rows: number
+  failed_rows: number
+  imported_at: string
+}
+
+export type DashboardImportKpiPreview = {
+  importedSources: number
+  importedRows: number
+  attentionBatches: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "已接入" | "需关注"
+}
+
+export type DashboardFilterState = {
+  date: string
+  site: string
+  vendor: string
+  dataVersion: "imported" | "effective"
+}
+
 export type DashboardHeatmapRow = {
   day: string
   slots: number[]
@@ -158,6 +183,41 @@ export function summarizeSyncStatusRows(rows: DashboardSyncStatusRow[]) {
     },
     { total: 0, synced: 0, processing: 0, attention: 0 }
   )
+}
+
+export function summarizeDashboardImportKpiPreview(
+  batches: DashboardImportKpiBatch[]
+): DashboardImportKpiPreview {
+  if (batches.length === 0) {
+    return {
+      importedSources: 0,
+      importedRows: 0,
+      attentionBatches: 0,
+      latestBatch: "暂无导入批次",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = batches.reduce((current, batch) =>
+    batch.imported_at > current.imported_at ? batch : current
+  )
+  const importedRows = batches.reduce(
+    (total, batch) => total + batch.success_rows,
+    0
+  )
+  const attentionBatches = batches.filter(
+    (batch) => batch.status === "needs_attention" || batch.failed_rows > 0
+  ).length
+
+  return {
+    importedSources: new Set(batches.map((batch) => batch.source_name)).size,
+    importedRows,
+    attentionBatches,
+    latestBatch: latest.batch_id,
+    latestSource: latest.source_name,
+    statusLabel: attentionBatches > 0 ? "需关注" : "已接入",
+  }
 }
 
 export function summarizeHeatmapRows(

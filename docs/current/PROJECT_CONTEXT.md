@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: BATCH-F117-Q043
-  in_progress_task: F117
-  ready_tasks: [Q043]
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -29,7 +29,7 @@ current_summary:
 - Table parity is only partially migrated.
 - E2E/browser route smoke coverage is still limited.
 - Table parity is still partial and should be handled only after local acceptance or explicit PM priority.
-- Dashboard top-level filters and KPI formulas are still demo/static; imported data currently drives local import status and demo traceability, not production metrics.
+- Dashboard top-level filters and imported-data KPI preview are local-demo capable; production KPI formulas remain deferred.
 - Release readiness and requirements inventory remain on-demand planning references.
 
 ## Current Forbidden Items
@@ -41,7 +41,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Next recommended task is the active `BATCH-F117-Q043` local dashboard filters and imported-data KPI preview batch. Keep it local-only: no database, no real external integration, no package or lockfile changes, and no production KPI formula finalization.
+Next recommended task should be chosen from local acceptance priorities after PM review. Keep it local-only unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, approval, export, batch, or production formula work.
 
 ## Default Execution
 

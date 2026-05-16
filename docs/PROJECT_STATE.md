@@ -115,6 +115,7 @@ Current invariants:
 - `F114/Q040/US147` closed the remaining demand-plans clear CTA consistency gap: the local `清空` action now routes through `buildDemandPlansHref()` instead of a bare `/demand-plans` link; current queue returned to empty after QA closeout.
 - `F115/Q041/US148-US149` closed the local P1 E2E reinforcement slice: core smoke now covers filtered schedule-plan list table controls, draft detail entry, draft edit route, and cancel/back context; current queue returned to empty after QA closeout.
 - `B008/F116/Q042/US150-US152` closed the localhost-only demo import and placeholder cleanup slice: staff master/status/login CSV import now has a local entry point and batch status, visible sidebar/data-source/action placeholders route to explainable local demo surfaces, and current queue returned to empty after QA closeout.
+- `F117/Q043/US153-US154` closed the local dashboard KPI filter slice: dashboard top filters now preserve demo context through query params, imported demo batches drive a local KPI preview, and current queue returned to empty after QA closeout.
 
 ## Product Direction
 

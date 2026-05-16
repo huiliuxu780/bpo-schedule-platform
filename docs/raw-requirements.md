@@ -1518,8 +1518,8 @@ description: "PM 同意继续本机演示链路后，dashboard 顶部筛选和 K
 source: "PM approval on 2026-05-16 after local demo import branch push"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "只做 localhost 本机 demo preview；不接数据库、不接真实 API、不新增依赖、不改 package/lockfile、不做生产公式、结算规则或收费因子。"
+status: "done"
+notes: "已完成 localhost 本机 demo preview；不接数据库、不接真实 API、不新增依赖、不改 package/lockfile、不做生产公式、结算规则或收费因子。"
 ```
 
 ### R142 - local dashboard KPI preview acceptance evidence
@@ -1531,6 +1531,6 @@ description: "本机 dashboard 筛选和 imported-data KPI preview 完成后，�
 source: "PM-approved continuation after BATCH-B008-F116-Q042 on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 只覆盖本机 dashboard demo preview，不扩大到云发布、数据库或生产化指标体系。"
+status: "done"
+notes: "QA 已覆盖本机 dashboard demo preview，不扩大到云发布、数据库或生产化指标体系。"
 ```

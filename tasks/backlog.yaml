@@ -5941,7 +5941,7 @@ tasks:
   - id: F117
     title: "本机 dashboard 筛选和 KPI preview"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/dashboard/**"
@@ -5970,7 +5970,7 @@ tasks:
   - id: Q043
     title: "本机 dashboard KPI preview QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/dashboard/**"

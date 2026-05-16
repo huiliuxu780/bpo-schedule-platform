@@ -2,6 +2,10 @@ import { TrendingDown, TrendingUp } from "lucide-react"
 
 import { metricCards } from "@/app/dashboard/data"
 import {
+  summarizeDashboardImportKpiPreview,
+  type DashboardImportKpiBatch,
+} from "@/components/data-table-model"
+import {
   Card,
   CardContent,
   CardFooter,
@@ -11,9 +15,36 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-export function SectionCards() {
+export function SectionCards({
+  importBatches = [],
+}: {
+  importBatches?: DashboardImportKpiBatch[]
+}) {
+  const importPreview = summarizeDashboardImportKpiPreview(importBatches)
+
   return (
     <section className="@container/main px-4 lg:px-6">
+      <Card className="mb-4 overflow-hidden border-dashed bg-muted/20">
+        <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
+          <div className="grid gap-1">
+            <CardDescription>本机 KPI Preview</CardDescription>
+            <CardTitle className="text-[24px] leading-8 font-semibold tabular-nums">
+              导入覆盖 {importPreview.importedRows} 行
+            </CardTitle>
+          </div>
+          <Badge variant={importPreview.attentionBatches > 0 ? "destructive" : "outline"}>
+            {importPreview.statusLabel}
+          </Badge>
+        </CardHeader>
+        <CardContent>
+          <div className="text-sm font-medium">
+            已接入 {importPreview.importedSources} 类数据
+          </div>
+        </CardContent>
+        <CardFooter className="text-xs text-muted-foreground">
+          最新批次：{importPreview.latestSource} / {importPreview.latestBatch}。仅用于本机演示口径。
+        </CardFooter>
+      </Card>
       <div className="grid gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       {metricCards.map((item) => {
         const positive = item.change.startsWith("+")

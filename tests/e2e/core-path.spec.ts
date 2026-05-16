@@ -212,6 +212,15 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   const dashboardMain = page.getByRole("main")
 
   await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
+  await expect(dashboardMain.getByText("本机 KPI Preview")).toBeVisible()
+  await expect(dashboardMain.getByText("导入覆盖 1 行")).toBeVisible()
+  await expect(dashboardMain.getByLabel("日期范围")).toHaveValue("2026-05-11")
+  await dashboardMain.getByLabel("供应商").selectOption("供应商A")
+  await dashboardMain.getByLabel("职场/团队").selectOption("上海职场")
+  await dashboardMain.getByLabel("数据版本").selectOption("imported")
+  await dashboardMain.getByRole("button", { name: "应用筛选" }).click()
+  await expect(page).toHaveURL(/\/dashboard\?.*vendor=%E4%BE%9B%E5%BA%94%E5%95%86A/)
+  await expect(page).toHaveURL(/\/dashboard\?.*site=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA/)
   await expect(dashboardMain.getByText("本机导入数据最近批次")).toBeVisible()
   await expect(dashboardMain.getByText("坐席主数据").first()).toBeVisible()
   await expect(
