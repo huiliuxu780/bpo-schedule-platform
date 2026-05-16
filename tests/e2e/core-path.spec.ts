@@ -370,6 +370,21 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     dataQualityMain.getByRole("heading", { name: "本机质量预览明细" }),
   ).toBeVisible()
+
+  await page.goto("/field-mapping")
+  const fieldMappingMain = page.getByRole("main")
+  await expect(
+    fieldMappingMain.locator("h1", { hasText: "字段映射" }),
+  ).toBeVisible()
+  await expect(
+    fieldMappingMain.getByText(/字段映射 records \d+ 行/),
+  ).toBeVisible()
+  await expect(fieldMappingMain.getByText("坐席主数据").first()).toBeVisible()
+  await expect(fieldMappingMain.getByText("坐席状态数据").first()).toBeVisible()
+  await expect(fieldMappingMain.getByText("登录数据").first()).toBeVisible()
+  await expect(
+    fieldMappingMain.getByRole("heading", { name: "本机字段映射预览" }),
+  ).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -413,13 +428,17 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
     sidebar.getByRole("link", { name: /CORN 状态日志/ }),
   ).toHaveAttribute("href", "/corn-status-log")
 
-  const fieldMappingItem = sidebar
-    .locator('[data-development-nav-item="true"]')
-    .filter({ hasText: "字段映射" })
+  await expect(
+    sidebar.getByRole("link", { name: /字段映射/ }),
+  ).toHaveAttribute("href", "/field-mapping")
 
-  await expect(fieldMappingItem).toBeVisible()
-  await expect(fieldMappingItem).toHaveAttribute("aria-disabled", "true")
-  await expect(fieldMappingItem.getByText("开发中")).toBeVisible()
+  const integrationItem = sidebar
+    .locator('[data-development-nav-item="true"]')
+    .filter({ hasText: "接口集成" })
+
+  await expect(integrationItem).toBeVisible()
+  await expect(integrationItem).toHaveAttribute("aria-disabled", "true")
+  await expect(integrationItem.getByText("开发中")).toBeVisible()
 
   await sidebar.getByRole("button", { name: "结算复盘" }).click()
   const settlementItem = sidebar

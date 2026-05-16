@@ -90,7 +90,7 @@ const nav: NavGroup[] = [
       { title: "文件导入", href: "/demo-imports", activeMatch: "exact" },
       { title: "接入批次", href: "/demo-imports", activeMatch: "exact" },
       { title: "CORN 状态日志", href: "/corn-status-log", activeMatch: "exact", tag: "P1" },
-      { title: "字段映射", development: true },
+      { title: "字段映射", href: "/field-mapping", activeMatch: "exact", tag: "P1" },
       { title: "接口集成", development: true },
       { title: "数据质量", href: "/data-quality", activeMatch: "exact", tag: "P1" },
     ],

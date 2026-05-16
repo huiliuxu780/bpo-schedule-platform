@@ -20,6 +20,7 @@ import {
   summarizeDataQualityRecords,
   summarizeFulfillmentExceptionRecords,
   summarizeExceptionReviewRecords,
+  summarizeFieldMappingRecords,
   summarizeFulfillmentImportRecords,
   summarizeSchedulePlanRows,
   summarizeScheduleRiskRows,
@@ -425,6 +426,70 @@ test("data quality records summarize local imported source coverage", () => {
     latestBatch: "login_log-20260516095000-001",
     latestSource: "登录数据",
     statusLabel: "本机预览",
+  });
+});
+
+test("field mapping records summarize sample field coverage", () => {
+  const summary = summarizeFieldMappingRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 2,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [
+        {
+          staff_id: "A001",
+          name: "张敏",
+          team: "华东一组",
+          site: "上海职场",
+          vendor: "供应商A",
+          role: "客服",
+          status: "在线",
+        },
+      ],
+    },
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 4,
+      latest_batch_id: "status_log-20260516094000-001",
+      updated_at: "2026-05-16T09:40:00+08:00",
+      sample_rows: [
+        {
+          staff_id: "A001",
+          date: "2026-05-11",
+          start_time: "09:00",
+          end_time: "12:00",
+          status: "在线",
+        },
+      ],
+    },
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 3,
+      latest_batch_id: "login_log-20260516095000-001",
+      updated_at: "2026-05-16T09:50:00+08:00",
+      sample_rows: [
+        {
+          staff_id: "A001",
+          date: "2026-05-11",
+          planned_login: "09:00",
+          actual_login: "09:08",
+          actual_logout: "17:30",
+        },
+      ],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedSources: 3,
+    mappedFields: 17,
+    missingFields: 1,
+    latestBatch: "login_log-20260516095000-001",
+    latestSource: "登录数据",
+    statusLabel: "缺少字段",
   });
 });
 

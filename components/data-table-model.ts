@@ -134,6 +134,46 @@ export type DataQualityRecordsPreview = {
     | "本机预览"
 }
 
+export type FieldMappingRecordsPreview = {
+  importedSources: number
+  mappedFields: number
+  missingFields: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "缺少字段" | "本机只读"
+}
+
+export type FieldMappingSpec = {
+  kind: DashboardImportRecordSummary["kind"]
+  title: string
+  expectedFields: string[]
+}
+
+export const fieldMappingSpecs: FieldMappingSpec[] = [
+  {
+    kind: "staff_master",
+    title: "坐席主数据",
+    expectedFields: ["staff_id", "name", "team", "site", "vendor", "role", "status"],
+  },
+  {
+    kind: "status_log",
+    title: "坐席状态数据",
+    expectedFields: ["staff_id", "date", "start_time", "end_time", "status"],
+  },
+  {
+    kind: "login_log",
+    title: "登录数据",
+    expectedFields: [
+      "staff_id",
+      "date",
+      "planned_login",
+      "actual_login",
+      "actual_logout",
+      "online_minutes",
+    ],
+  },
+]
+
 export type DashboardFilterState = {
   date: string
   site: string
@@ -662,6 +702,63 @@ export function summarizeDataQualityRecords(
           : loginRows === 0
             ? "缺少登录数据"
             : "本机预览",
+  }
+}
+
+export function getRecordFieldNames(record: DashboardImportRecordSummary | undefined) {
+  const fields = new Set<string>()
+
+  for (const row of record?.sample_rows ?? []) {
+    Object.keys(row).forEach((key) => fields.add(key))
+  }
+
+  return Array.from(fields).sort()
+}
+
+export function summarizeFieldMappingRecords(
+  records: DashboardImportRecordSummary[]
+): FieldMappingRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedSources: 0,
+      mappedFields: 0,
+      missingFields: fieldMappingSpecs.reduce(
+        (total, spec) => total + spec.expectedFields.length,
+        0
+      ),
+      latestBatch: "暂无字段映射 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+
+  let mappedFields = 0
+  let missingFields = 0
+
+  for (const spec of fieldMappingSpecs) {
+    const record = records.find((item) => item.kind === spec.kind)
+    const fieldNames = new Set(getRecordFieldNames(record))
+
+    for (const field of spec.expectedFields) {
+      if (fieldNames.has(field)) {
+        mappedFields += 1
+      } else {
+        missingFields += 1
+      }
+    }
+  }
+
+  return {
+    importedSources: records.length,
+    mappedFields,
+    missingFields,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel: missingFields > 0 ? "缺少字段" : "本机只读",
   }
 }
 
