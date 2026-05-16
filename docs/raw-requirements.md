@@ -1895,8 +1895,8 @@ description: "CORN 状态日志需要做本机预览最小切片，读取已导�
 source: "PM continuation on 2026-05-16: 持续补完未开放功能"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "仅做 localhost-only processed records 消费；不接真实 CORN API，不做实时流、生产状态码固化、状态写回、数据库或真实接口检查。"
+status: "done"
+notes: "已新增 `/corn-status-log` 页面读取 status_log records，展示状态覆盖、最近批次、状态分布和样本；未接真实 CORN API、实时流、生产状态码固化、状态写回、数据库或真实接口检查。"
 ```
 
 ### R171 - CORN status log navigation entry
@@ -1908,8 +1908,8 @@ description: "CORN 状态日志页面完成后，侧边栏 `CORN 状态日志` �
 source: "F126 CORN status log minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "in_progress"
-notes: "导航入口只指向本机 records 预览页，不代表真实 CORN 接口集成已经完成。"
+status: "done"
+notes: "侧边栏 `CORN 状态日志` 已链接到 `/corn-status-log`；页面文案明确只是本机 records 预览，不声称真实 CORN 接口集成已经完成。"
 ```
 
 ### R172 - CORN status log imported records QA
@@ -1921,6 +1921,6 @@ description: "CORN 状态日志本机预览读取 status_log records 后，需�
 source: "F126 CORN status log minimum slice on 2026-05-16"
 submitted_at: "2026-05-16"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到真实 CORN 集成、实时流、生产状态码、状态写回、数据库或真实接口检查。"
+status: "done"
+notes: "E2E 已覆盖导入状态 CSV 后进入 corn-status-log 并看到 CORN 状态日志 records 摘要；QA 不扩大到真实 CORN 集成、实时流、生产状态码、状态写回、数据库或真实接口检查。"
 ```

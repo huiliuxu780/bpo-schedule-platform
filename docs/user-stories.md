@@ -3252,7 +3252,7 @@ acceptance:
   - "页面读取 processed records 中的 status_log，并展示 `CORN 状态日志 records` 摘要。"
   - "页面展示状态数据行数、最近批次、状态分布和样本 records。"
   - "不接真实 CORN API、不做实时流、不做生产状态码固化、不接数据库、不做状态写回、真实接口检查、审批、导出、批量或结算。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US183 - CORN status log navigation entry
@@ -3270,7 +3270,7 @@ acceptance:
   - "`数据与集成 > CORN 状态日志` 链接到 `/corn-status-log`。"
   - "字段映射和接口集成继续显示 `开发中` 且不可点击。"
   - "导航 active 状态能识别 `/corn-status-log`。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US184 - CORN status log imported records QA
@@ -3288,5 +3288,5 @@ acceptance:
   - "E2E 导入坐席状态数据后，corn-status-log 出现 `CORN 状态日志 records` 摘要。"
   - "E2E 覆盖 CORN 状态日志导航可点击，字段映射和接口集成仍是 `开发中`。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-corn-integration、no-realtime-stream、no-status-writeback、no-production-status-code。"
-status: "ready"
+status: "done"
 ```

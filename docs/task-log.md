@@ -1574,3 +1574,23 @@
 - action: 收口数据质量 records 读取 QA。
 - status: `done`
 - notes: E2E 覆盖导入三类 CSV 后进入数据质量，确认 records 摘要、主数据、状态数据、登录数据和本机质量预览明细可见；模型测试 60 条通过，浏览器 smoke 5 条通过。
+
+- task_id: `F126`
+- source_ids:
+  - `R170`
+  - `R171`
+- story_ids:
+  - `US182`
+  - `US183`
+- action: 完成 CORN 状态日志本机 records 预览切片。
+- status: `done`
+- notes: 新增 `/corn-status-log` 页面，读取本机 `status_log` processed records，展示 `CORN 状态日志 records`、状态覆盖、最近批次、状态分布和样本；侧边栏 `CORN 状态日志` 改为真实入口，字段映射和接口集成继续 `开发中`。
+
+- task_id: `Q053`
+- source_ids:
+  - `R172`
+- story_ids:
+  - `US184`
+- action: 收口 CORN 状态日志 records 读取 QA。
+- status: `done`
+- notes: E2E 覆盖导入状态 CSV 后进入 CORN 状态日志，确认 records 摘要、状态数据、状态日志分布和样本可见；模型测试 61 条通过，浏览器 smoke 5 条通过。

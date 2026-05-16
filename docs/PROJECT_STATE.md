@@ -26,7 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
 - Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
-- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, and data quality module pages.
+- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard, shift-details, schedule-risks, unavailability, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, and CORN status log module pages.
 
 The project does not contain:
 
@@ -127,6 +127,7 @@ Current invariants:
 - `F123/Q050/US173-US175` opened the异常复核 slice: `异常复核` now links to `/exception-review`, which reads local status/login records and shows a read-only review queue without approval actions, status writeback, realtime streams, production exception rules, or adherence formulas; current queue returned to empty after QA closeout.
 - `F124/Q051/US176-US178` opened the实时遵守率 slice: `实时遵守率` now links to `/adherence-monitoring`, which reads local status/login records and shows本机遵守率预览 without realtime streams, production adherence formulas, status-code finalization, status writeback, database, or real integrations; current queue returned to empty after QA closeout.
 - `F125/Q052/US179-US181` opened the数据质量 slice: `数据质量` now links to `/data-quality`, which reads local staff/status/login records and shows本机质量预览 without production data-quality rules, auto-fix, field-mapping writeback, database, or real integrations; current queue returned to empty after QA closeout.
+- `F126/Q053/US182-US184` opened theCORN 状态日志 slice: `CORN 状态日志` now links to `/corn-status-log`, which reads local status_log records and shows本机状态日志覆盖、状态分布和样本 without real CORN integration, realtime streams, production status-code finalization, status writeback, database, or real interface checks; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
