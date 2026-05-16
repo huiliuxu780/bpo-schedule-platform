@@ -291,6 +291,18 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(fulfillmentMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
   await expect(fulfillmentMain.getByText("状态日志样本")).toBeVisible()
   await expect(fulfillmentMain.getByText("登录数据样本")).toBeVisible()
+
+  await page.goto("/agent-status-trace")
+  const statusTraceMain = page.getByRole("main")
+  await expect(
+    statusTraceMain.locator("h1", { hasText: "坐席状态轨迹" }),
+  ).toBeVisible()
+  await expect(
+    statusTraceMain.getByText(/状态轨迹 records \d+ 行/),
+  ).toBeVisible()
+  await expect(statusTraceMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
+  await expect(statusTraceMain.getByText("状态分布")).toBeVisible()
+  await expect(statusTraceMain.getByText("状态日志样本")).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -304,14 +316,18 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
     sidebar.getByRole("link", { name: /工时核验/ }),
   ).toHaveAttribute("href", "/fulfillment-monitoring")
 
-  const statusTrailItem = sidebar
-    .locator('[data-development-nav-item="true"]')
-    .filter({ hasText: "坐席状态轨迹" })
+  await expect(
+    sidebar.getByRole("link", { name: /坐席状态轨迹/ }),
+  ).toHaveAttribute("href", "/agent-status-trace")
 
-  await expect(statusTrailItem).toBeVisible()
-  await expect(statusTrailItem).toHaveAttribute("aria-disabled", "true")
-  await expect(statusTrailItem.getByText("开发中")).toBeVisible()
-  await expect(sidebar.getByRole("link", { name: /坐席状态轨迹/ })).toHaveCount(0)
+  const exceptionItem = sidebar
+    .locator('[data-development-nav-item="true"]')
+    .filter({ hasText: "异常管理" })
+
+  await expect(exceptionItem).toBeVisible()
+  await expect(exceptionItem).toHaveAttribute("aria-disabled", "true")
+  await expect(exceptionItem.getByText("开发中")).toBeVisible()
+  await expect(sidebar.getByRole("link", { name: /异常管理/ })).toHaveCount(0)
   await expect(page).toHaveURL(/\/dashboard(?:\?.*)?$/)
 
   await sidebar.getByRole("button", { name: "数据与集成" }).click()

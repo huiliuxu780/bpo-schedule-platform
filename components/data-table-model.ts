@@ -70,6 +70,14 @@ export type FulfillmentImportRecordsPreview = {
   statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "可核验"
 }
 
+export type AgentStatusTraceRecordsPreview = {
+  statusRows: number
+  statusTypes: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "已接入"
+}
+
 export type DashboardFilterState = {
   date: string
   site: string
@@ -339,6 +347,36 @@ export function summarizeFulfillmentImportRecords(
         : loginRows === 0
           ? "缺少登录数据"
           : "可核验",
+  }
+}
+
+export function summarizeAgentStatusTraceRecords(
+  records: DashboardImportRecordSummary[]
+): AgentStatusTraceRecordsPreview {
+  const statusRecord = records.find((record) => record.kind === "status_log")
+
+  if (!statusRecord) {
+    return {
+      statusRows: 0,
+      statusTypes: 0,
+      latestBatch: "暂无状态 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const statusTypes = new Set(
+    statusRecord.sample_rows
+      .map((row) => row.status?.trim())
+      .filter((status): status is string => Boolean(status))
+  ).size
+
+  return {
+    statusRows: statusRecord.total_rows,
+    statusTypes,
+    latestBatch: statusRecord.latest_batch_id,
+    latestSource: statusRecord.source_name,
+    statusLabel: "已接入",
   }
 }
 
