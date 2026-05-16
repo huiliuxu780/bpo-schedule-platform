@@ -1282,3 +1282,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### B009-Q045 Imported Records Existing Module Read
+
+- branch_name: `codex/f-batch-006-import-records-existing-modules`
+- base_main_commit: `0c14e91`
+- remote_status: `local continuation branch created from pushed codex/f-batch-005-navigation-dev-badges because main has not integrated the local demo chain yet`
+- scope: localhost-only processed import records API, dashboard/shift-details module consumption, focused backend/model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `backend/**`, `app/dashboard/**`, `app/shift-details/**`, `components/**`, `lib/**`, `tests/e2e/core-path.spec.ts`, `scripts/tests/**`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `backend/app/demo_imports.py`, `backend/app/main.py`, `backend/app/models.py`, `backend/tests/test_schedule_plans.py`, `app/dashboard/page.tsx`, `app/shift-details/page.tsx`, `components/dashboard-client.tsx`, `components/data-table-model.ts`, `components/imported-records-summary.tsx`, `components/section-cards.tsx`, `lib/demo-imports.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; backend unittest passed with 23 tests; model tests passed with 54 tests; `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke` passed with 5 tests and verified dashboard/shift-details records summaries.
+- local_commit_sha: `9273283`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

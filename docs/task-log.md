@@ -1414,3 +1414,23 @@
 - action: 收口未开放导航开发中标识 QA。
 - status: `done`
 - notes: E2E 覆盖 `工时核验` 显示 `开发中`、具备禁用态且不是 link，同时确认 `文件导入` 仍链接到 `/demo-imports`；保持 no-database、no-real-integration、no-auth、no-approval、no-export、no-batch、no-production-formula、no-settlement 边界。
+
+- task_id: `B009`
+- source_ids:
+  - `R146`
+  - `R147`
+- story_ids:
+  - `US158`
+  - `US159`
+- action: 完成本机导入 processed records API 与现有模块读取切片。
+- status: `done`
+- notes: 后端新增 `/api/v1/demo-imports/records`，按导入类型返回总行数、最近批次、更新时间和样本行；dashboard 与 shift-details 读取同一 processed records 结果并显示模块级摘要；保持 localhost-only、process-memory、no-database 边界。
+
+- task_id: `Q045`
+- source_ids:
+  - `R148`
+- story_ids:
+  - `US160`
+- action: 收口本机导入 records 现有模块读取 QA。
+- status: `done`
+- notes: 后端 unittest 覆盖 processed records API；E2E 覆盖导入坐席主数据后 dashboard 与 shift-details 均出现 records 摘要；模型测试覆盖 records 汇总逻辑。

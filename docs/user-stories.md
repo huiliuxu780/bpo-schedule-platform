@@ -2810,7 +2810,7 @@ acceptance:
   - "接口按导入类型返回总行数、最近批次、更新时间和样本行。"
   - "接口只读取本机进程内存，不使用数据库、ORM、migration、schema 或真实外部集成。"
   - "`python3 -m unittest backend.tests.test_schedule_plans` 和 `bash scripts/check.sh` 通过。"
-status: "ready"
+status: "done"
 ```
 
 ### US159 - Existing modules read imported records
@@ -2829,7 +2829,7 @@ acceptance:
   - "shift-details 读取 processed records，并展示与班次核对相关的本机导入覆盖摘要。"
   - "没有导入 records 时页面显示明确空态，不伪造业务数据。"
   - "不新增演示中心、不固化生产 KPI/公式、不做审批、导出、批量或结算能力。"
-status: "ready"
+status: "done"
 ```
 
 ### US160 - Imported records module-read acceptance evidence
@@ -2847,5 +2847,5 @@ acceptance:
   - "E2E 导入坐席主数据后，dashboard 出现 processed records 摘要。"
   - "E2E 进入 shift-details 后，能看到本机导入 records 覆盖摘要。"
   - "QA 记录明确本批仍是 localhost-only、process-memory、no-database、no-real-integration、no-production-formula。"
-status: "ready"
+status: "done"
 ```

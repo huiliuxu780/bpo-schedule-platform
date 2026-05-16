@@ -6050,7 +6050,7 @@ tasks:
   - id: B009
     title: "本机导入 records 现有模块读取切片"
     priority: P1
-    status: ready
+    status: done
     required_workflow: backend-mvp
     allowed_files:
       - "backend/**"
@@ -6083,7 +6083,7 @@ tasks:
   - id: Q045
     title: "本机导入 records 现有模块读取 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "backend/**"

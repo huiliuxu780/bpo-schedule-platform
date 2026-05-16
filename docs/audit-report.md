@@ -1760,6 +1760,28 @@
 - `git diff --check`：通过。
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 
+## 2026-05-16 - Imported Records Existing Module Read
+
+#### 审计结论
+
+- `B009/Q045/US158-US160` 已把本机导入成功行从 batch summary 推进到 processed records：后端新增 `/api/v1/demo-imports/records`，返回每类导入数据的总行数、最近批次、更新时间和样本行。
+- dashboard 与 shift-details 现在读取同一个 processed records 结果，并展示 `本机导入 records` / `班次核对 records` 摘要，证明导入结果进入现有模块页，而不是停留在独立导入页。
+- 本轮仍然只使用 localhost 本机运行态和进程内存，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量操作、自动排班、生产公式、结算规则或收费因子。
+
+#### 风险
+
+- processed records 是本机运行态结果，服务重启后会清空；这符合当前本机演示边界，不等同于生产数据存储。
+- 当前只接入 dashboard 与 shift-details 两个现有模块；风险、不可用和后续履约监控页仍需后续批次继续消费 records。
+
+#### 验证
+
+- `python3 -m unittest backend.tests.test_schedule_plans`：通过，23 个后端 unittest 通过。
+- `BPO_WEB_URL=http://localhost:3015 npm run e2e:smoke`：通过，5 条 E2E 通过。
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，54 个模型/源码断言测试通过。
+- `npm run typecheck`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

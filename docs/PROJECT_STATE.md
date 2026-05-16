@@ -26,6 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - A documentation-first Lightweight Harness with current/registry state governance.
 - Sidebar navigation now distinguishes opened modules from planned modules: unopened entries are marked `开发中` instead of linking to dashboard placeholders.
+- Local imported staff/status/login rows are exposed as processed records and consumed by existing dashboard and shift-details module pages.
 
 The project does not contain:
 
