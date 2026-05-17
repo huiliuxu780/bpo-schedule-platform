@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: F139-Q065-import-summary-table-parity
-  in_progress_task: F139
-  ready_tasks: [Q065]
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -42,7 +42,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Execute F139/Q065 as the next local-only table/empty-state parity slice: add a compact source table and empty-state to the shared imported records summary, then cover it with model and E2E evidence. Keep the batch readonly and local-only; do not add cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
+Plan the next local-only table/empty-state parity slice for opened modules, or tighten the local demo runbook around the exact pages PM will demonstrate. Keep the next batch readonly and local-only; do not add cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
 
 ## Default Execution
 

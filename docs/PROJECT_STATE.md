@@ -139,6 +139,7 @@ Current invariants:
 - `F137/Q062/US209-US210` opened the排班草稿复核准备 slice: `/schedule-plans/[planId]` now shows `复核准备` readiness based on gap intervals, high risks, and same-site active unavailability, with explicit no-approval, no-publish, no-auto-scheduling, and no-production-writeback boundaries; current queue returned to empty after QA closeout.
 - `F138/Q063/US211-US212` closed the本机导入 records 摘要 parity slice: the common `ImportedRecordsSummary` now shows staff, status, login, and schedule-plan row counts, so imported schedule data is visible in shared module summaries without database, real integration, approval, publish, export, batch, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `Q064/US213` closed the已开放模块 route smoke slice: E2E now verifies 10 local demo module routes render real module pages and not dashboard placeholders, without changing product code or opening database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
+- `F139/Q065/US214-US215` closed the本机导入 records 来源表格 parity slice: the common `ImportedRecordsSummary` now shows a compact source table and empty state with data source, row count, sample count, and latest batch, so local imported records are more explainable across dashboard and opened modules without database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
@@ -150,7 +151,7 @@ PM clarified on 2026-05-16 that the demo should be based on existing product mod
 import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
 ```
 
-Recommended order after Q064:
+Recommended order after Q065:
 
 1. **表格/空态 parity 补强:** continue table controls, empty-state, and readonly sample parity only for opened modules.
 2. **本机演示脚本/runbook 收口:** tighten local demo startup and smoke instructions for the exact pages PM will demonstrate.

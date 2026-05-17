@@ -3843,7 +3843,7 @@ acceptance:
   - "无导入 records 时展示清晰空态。"
   - "文案继续明确仅读取本机运行态导入结果，不使用数据库或生产公式。"
   - "本批不接数据库、真实集成、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US215 - Imported records source table QA
@@ -3861,5 +3861,5 @@ acceptance:
   - "模型测试覆盖来源表格 rows 的排序、行数、样本和最新批次。"
   - "E2E 导入本机 CSV 后，在 dashboard 共用摘要看到表格列和 `排班数据` 行。"
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
-status: "ready"
+status: "done"
 ```

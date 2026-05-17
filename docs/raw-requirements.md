@@ -2311,8 +2311,8 @@ description: "共用的本机导入 records 摘要需要补齐可扫描的来源
 source: "Current P1 table parity gap on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做本机只读 UI 与模型整理，不接数据库、真实集成、认证、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+status: "done"
+notes: "共用 `ImportedRecordsSummary` 已新增来源表格和空态，展示数据源、行数、样本和最新批次；本批只做本机只读 UI 与模型整理，不接数据库、真实集成、认证、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
 ```
 
 ### R203 - imported records summary table parity QA
@@ -2324,6 +2324,6 @@ description: "导入 records 摘要表格补齐后，需要补充模型测试和
 source: "F139 imported records summary table parity batch on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "ready"
-notes: "QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
+status: "done"
+notes: "模型测试已覆盖来源表格 rows 的排序、行数、样本和最新批次；E2E 已覆盖本机 CSV 导入后 dashboard 共用摘要表格列、`排班数据` 行和 `schedule_plan` 最新批次可见；QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch。"
 ```

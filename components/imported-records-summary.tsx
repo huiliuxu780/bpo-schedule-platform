@@ -1,4 +1,5 @@
 import {
+  buildImportedRecordSourceRows,
   summarizeDashboardImportRecords,
   type DashboardImportRecordSummary,
 } from "@/components/data-table-model"
@@ -11,6 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 type ImportedRecordsSummaryProps = {
   records: DashboardImportRecordSummary[]
@@ -24,6 +33,7 @@ export function ImportedRecordsSummary({
   description = "后端 processed records API 返回的本机导入结果",
 }: ImportedRecordsSummaryProps) {
   const summary = summarizeDashboardImportRecords(records)
+  const sourceRows = buildImportedRecordSourceRows(records)
 
   return (
     <Card className="border-dashed bg-muted/20">
@@ -39,7 +49,7 @@ export function ImportedRecordsSummary({
         </Badge>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-2 text-sm">
+        <div className="grid gap-3 text-sm">
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline">坐席主数据 {summary.staffRows} 行</Badge>
             <Badge variant="outline">状态数据 {summary.statusRows} 行</Badge>
@@ -49,6 +59,45 @@ export function ImportedRecordsSummary({
           <div className="text-xs text-muted-foreground">
             已处理 {summary.importedSources} 类数据源；最新：
             {summary.latestSource} / {summary.latestBatch}
+          </div>
+          <div className="rounded-md border bg-background/60">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>数据源</TableHead>
+                  <TableHead className="text-right">行数</TableHead>
+                  <TableHead className="text-right">样本</TableHead>
+                  <TableHead>最新批次</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sourceRows.length > 0 ? (
+                  sourceRows.map((row) => (
+                    <TableRow key={row.kind}>
+                      <TableCell className="font-medium">{row.label}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {row.totalRows}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {row.sampleRows}
+                      </TableCell>
+                      <TableCell className="max-w-[220px] truncate text-xs text-muted-foreground">
+                        {row.latestBatch}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      className="h-16 text-center text-muted-foreground"
+                    >
+                      暂无导入 records。请先在文件导入页导入 CSV。
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </CardContent>

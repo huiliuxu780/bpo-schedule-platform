@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
+  buildImportedRecordSourceRows,
   clampDashboardPageIndex,
   dashboardAnomalyMatchesQuery,
   filterDashboardAnomalies,
@@ -201,6 +202,64 @@ test("dashboard import records preview summarizes processed rows", () => {
     scheduleRows: 4,
     statusLabel: "已处理",
   });
+});
+
+test("imported record source rows order sources and expose table fields", () => {
+  const rows = buildImportedRecordSourceRows([
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 2,
+      latest_batch_id: "login_log-20260516094000-001",
+      updated_at: "2026-05-16T09:40:00+08:00",
+      sample_rows: [
+        { staff_id: "A001", actual_login: "09:08" },
+        { staff_id: "A002", actual_login: "09:00" },
+      ],
+    },
+    {
+      kind: "schedule_plan",
+      source_name: "排班数据",
+      total_rows: 4,
+      latest_batch_id: "schedule_plan-20260517093000-001",
+      updated_at: "2026-05-17T09:30:00+08:00",
+      sample_rows: [{ plan_id: "SP-20260511-SH", site_name: "上海职场" }],
+    },
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 3,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", name: "张敏" }],
+    },
+  ]);
+
+  assert.deepEqual(rows, [
+    {
+      kind: "staff_master",
+      label: "坐席主数据",
+      totalRows: 3,
+      sampleRows: 1,
+      latestBatch: "staff_master-20260516093000-001",
+    },
+    {
+      kind: "login_log",
+      label: "登录数据",
+      totalRows: 2,
+      sampleRows: 2,
+      latestBatch: "login_log-20260516094000-001",
+    },
+    {
+      kind: "schedule_plan",
+      label: "排班数据",
+      totalRows: 4,
+      sampleRows: 1,
+      latestBatch: "schedule_plan-20260517093000-001",
+    },
+  ]);
+
+  assert.deepEqual(buildImportedRecordSourceRows([]), []);
 });
 
 test("schedule plan import records preview summarizes local schedule rows", () => {

@@ -62,6 +62,14 @@ export type DashboardImportRecordsPreview = {
   statusLabel: "等待导入" | "已处理"
 }
 
+export type ImportedRecordSourceRow = {
+  kind: string
+  label: string
+  totalRows: number
+  sampleRows: number
+  latestBatch: string
+}
+
 export type SchedulePlanImportRecordsPreview = {
   importedRows: number
   planCount: number
@@ -576,6 +584,74 @@ export function summarizeDashboardImportRecords(
     scheduleRows: rowsByKind.schedule_plan,
     statusLabel: "已处理",
   }
+}
+
+const importedRecordKindLabels: Record<string, string> = {
+  staff_master: "坐席主数据",
+  status_log: "状态数据",
+  login_log: "登录数据",
+  schedule_plan: "排班数据",
+}
+
+const importedRecordKindOrder = [
+  "staff_master",
+  "status_log",
+  "login_log",
+  "schedule_plan",
+]
+
+export function buildImportedRecordSourceRows(
+  records: DashboardImportRecordSummary[]
+): ImportedRecordSourceRow[] {
+  const rowsByKind = records.reduce((rows, record) => {
+    const current = rows.get(record.kind)
+    const label = importedRecordKindLabels[record.kind] ?? record.source_name
+
+    if (!current) {
+      rows.set(record.kind, {
+        kind: record.kind,
+        label,
+        totalRows: record.total_rows,
+        sampleRows: record.sample_rows.length,
+        latestBatch: record.latest_batch_id,
+        latestUpdatedAt: record.updated_at,
+      })
+      return rows
+    }
+
+    current.totalRows += record.total_rows
+    current.sampleRows += record.sample_rows.length
+
+    if (record.updated_at > current.latestUpdatedAt) {
+      current.latestBatch = record.latest_batch_id
+      current.latestUpdatedAt = record.updated_at
+    }
+
+    return rows
+  }, new Map<string, ImportedRecordSourceRow & { latestUpdatedAt: string }>())
+
+  return [...rowsByKind.values()]
+    .sort((a, b) => {
+      const priorityA = importedRecordKindOrder.indexOf(a.kind)
+      const priorityB = importedRecordKindOrder.indexOf(b.kind)
+      const safePriorityA =
+        priorityA >= 0 ? priorityA : importedRecordKindOrder.length
+      const safePriorityB =
+        priorityB >= 0 ? priorityB : importedRecordKindOrder.length
+
+      if (safePriorityA !== safePriorityB) {
+        return safePriorityA - safePriorityB
+      }
+
+      return a.label.localeCompare(b.label)
+    })
+    .map((row) => ({
+      kind: row.kind,
+      label: row.label,
+      totalRows: row.totalRows,
+      sampleRows: row.sampleRows,
+      latestBatch: row.latestBatch,
+    }))
 }
 
 export function summarizeSchedulePlanImportRecords(

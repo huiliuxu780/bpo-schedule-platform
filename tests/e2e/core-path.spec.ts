@@ -296,6 +296,16 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(dashboardMain.getByText(/本机导入 records \d+ 行/)).toBeVisible()
   await expect(dashboardMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
   await expect(dashboardMain.getByText(/排班数据 \d+ 行/)).toBeVisible()
+  await expect(
+    dashboardMain.getByRole("columnheader", { name: "数据源" }).first(),
+  ).toBeVisible()
+  await expect(
+    dashboardMain.getByRole("columnheader", { name: "最新批次" }).first(),
+  ).toBeVisible()
+  await expect(dashboardMain.getByText("排班数据").first()).toBeVisible()
+  await expect(
+    dashboardMain.getByRole("cell", { name: /schedule_plan-\d{14}-\d+/ }).first(),
+  ).toBeVisible()
   await expect(dashboardMain.getByLabel("日期范围")).toHaveValue("2026-05-11")
   await dashboardMain.getByLabel("供应商").selectOption("供应商A")
   await dashboardMain.getByLabel("职场/团队").selectOption("上海职场")

@@ -2225,6 +2225,31 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-18 - Imported Records Source Table Parity
+
+#### 审计结论
+
+- `F139/Q065/US214-US215` 已补齐共用 `ImportedRecordsSummary` 的来源表格和空态。
+- 表格展示 `数据源`、`行数`、`样本` 和 `最新批次`，按坐席主数据、状态数据、登录数据、排班数据排序。
+- 无导入 records 时展示 `暂无导入 records。请先在文件导入页导入 CSV。`
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、排班发布、自动排班、生产写回、生产公式、结算规则、收费因子或锁账。
+
+#### 风险
+
+- 当前表格只展示 localhost-only processed records 的本机运行态结果，不等同于跨进程持久化、生产数据质量规则或正式报表。
+- Playwright 首次在沙箱内运行时 Chrome 启动被系统权限拦截，表现为 6 个用例均在 0ms 左右 `SIGABRT/EPERM`；按权限规则在沙箱外重跑后 E2E 通过。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，76 个模型/源码断言测试通过，包含 `buildImportedRecordSourceRows` 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，6 条 E2E 通过，覆盖本机 CSV 导入后 dashboard 共用摘要表格列、`排班数据` 行和 `schedule_plan` 最新批次。
+- Browser 可视化检查：`/dashboard` 可见 `经营总览`、`数据源`、`最新批次` 和 `排班数据`。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

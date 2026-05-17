@@ -5,18 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US214
-    requirement_ids: ["R202"]
-    status: in_progress
-    task_ids: ["F139"]
-    priority: P1
-    module: "本机验收"
-    summary: "共用导入 records 摘要需要补齐表格和空态，方便演示人员在 dashboard 和已开放模块中扫描来源、行数、样本和最新批次。"
-  - id: US215
-    requirement_ids: ["R203"]
-    status: ready
-    task_ids: ["Q065"]
-    priority: P1
-    module: "本机验收"
-    summary: "导入 records 摘要表格补齐后，需要模型和 E2E 证据证明表格字段可见、空态边界仍是本机只读。"
+stories: []

@@ -1622,3 +1622,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F139-Q065 Imported Records Source Table Parity
+
+- branch_name: `codex/f-batch-026-import-summary-table-parity`
+- base_main_commit: `2649266`
+- remote_status: `local continuation branch created from pushed codex/f-batch-025-opened-route-smoke because PM asked to continue the next batch after each completed batch`
+- scope: common imported records source table parity, empty-state rendering, focused model/E2E coverage, current-state closeout, and traceability updates.
+- allowed_files_check: `components/imported-records-summary.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, schedule publishing, automatic scheduling, production writeback, production formula, settlement rule, lock, or charge-factor files.
+- scope_diff_check: `components/data-table-model.ts`, `components/imported-records-summary.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified `buildImportedRecordSourceRows` was missing; model tests then passed with 76 tests; typecheck and lint passed; first E2E attempt in sandbox failed before page logic because Chrome launch hit `SIGABRT/EPERM`, then `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 6 tests and verified dashboard source table columns, `排班数据`, and latest schedule batch; in-app Browser confirmed `/dashboard` shows `经营总览`, `数据源`, `最新批次`, and `排班数据`; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
+- local_commit_sha: `pending final verified commit`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
