@@ -58,6 +58,7 @@ export type DashboardImportRecordsPreview = {
   staffRows: number
   statusRows: number
   loginRows: number
+  scheduleRows: number
   statusLabel: "等待导入" | "已处理"
 }
 
@@ -540,6 +541,7 @@ export function summarizeDashboardImportRecords(
       staffRows: 0,
       statusRows: 0,
       loginRows: 0,
+      scheduleRows: 0,
       statusLabel: "等待导入",
     }
   }
@@ -552,14 +554,15 @@ export function summarizeDashboardImportRecords(
       if (
         record.kind === "staff_master" ||
         record.kind === "status_log" ||
-        record.kind === "login_log"
+        record.kind === "login_log" ||
+        record.kind === "schedule_plan"
       ) {
         summary[record.kind] = record.total_rows
       }
 
       return summary
     },
-    { staff_master: 0, status_log: 0, login_log: 0 }
+    { staff_master: 0, status_log: 0, login_log: 0, schedule_plan: 0 }
   )
 
   return {
@@ -570,6 +573,7 @@ export function summarizeDashboardImportRecords(
     staffRows: rowsByKind.staff_master,
     statusRows: rowsByKind.status_log,
     loginRows: rowsByKind.login_log,
+    scheduleRows: rowsByKind.schedule_plan,
     statusLabel: "已处理",
   }
 }

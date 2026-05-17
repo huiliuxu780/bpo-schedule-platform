@@ -180,16 +180,25 @@ test("dashboard import records preview summarizes processed rows", () => {
       updated_at: "2026-05-16T09:40:00+08:00",
       sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
     },
+    {
+      kind: "schedule_plan",
+      source_name: "排班数据",
+      total_rows: 4,
+      latest_batch_id: "schedule_plan-20260517093000-001",
+      updated_at: "2026-05-17T09:30:00+08:00",
+      sample_rows: [{ plan_id: "SP-20260511-SH", site_name: "上海职场" }],
+    },
   ]);
 
   assert.deepEqual(summary, {
-    importedSources: 2,
-    importedRows: 3,
-    latestBatch: "login_log-20260516094000-001",
-    latestSource: "登录数据",
+    importedSources: 3,
+    importedRows: 7,
+    latestBatch: "schedule_plan-20260517093000-001",
+    latestSource: "排班数据",
     staffRows: 2,
     statusRows: 0,
     loginRows: 1,
+    scheduleRows: 4,
     statusLabel: "已处理",
   });
 });

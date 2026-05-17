@@ -44,6 +44,7 @@ export function ImportedRecordsSummary({
             <Badge variant="outline">坐席主数据 {summary.staffRows} 行</Badge>
             <Badge variant="outline">状态数据 {summary.statusRows} 行</Badge>
             <Badge variant="outline">登录数据 {summary.loginRows} 行</Badge>
+            <Badge variant="outline">排班数据 {summary.scheduleRows} 行</Badge>
           </div>
           <div className="text-xs text-muted-foreground">
             已处理 {summary.importedSources} 类数据源；最新：
