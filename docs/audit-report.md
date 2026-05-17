@@ -2204,6 +2204,27 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-17 - Opened Module Route Smoke Reinforcement
+
+#### 审计结论
+
+- `Q064/US213` 已新增已开放模块 route smoke E2E。
+- 新用例覆盖 10 个本机演示常用模块：今日履约、异常预警、时段缺口热力图、供应商管理、规则配置、报表中心、供应商复盘、操作审计、智能排班和接口集成。
+- 用例验证每个页面的真实模块标题和模块 marker 可见，并断言不是 dashboard 占位。
+- 本轮只修改 E2E 和 Harness 文档，没有修改 app/components/lib/backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、排班发布、自动排班、生产写回、生产公式、结算规则、收费因子或锁账。
+
+#### 风险
+
+- 当前 route smoke 证明页面可达和不是占位，不等同于生产流程验收、性能测试或权限边界验收。
+- 仍然只覆盖本机 localhost 演示路径；云测试环境和远端部署仍是后续单独 Gate。
+
+#### 验证
+
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，6 条 E2E 通过，包含新增已开放模块 route smoke。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

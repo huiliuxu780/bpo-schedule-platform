@@ -138,6 +138,7 @@ Current invariants:
 - `F136/Q061/US207-US208` opened the操作审计本机只读预览 slice: `系统管理 > 操作审计` now links to `/operation-audit`, which reads local processed records to show operation audit records, imported batches, module evidence, audit samples, and latest batch without account login, authentication, permission, role management, production audit logs, tamper-proof audit storage, approval, export, batch, database, real integrations, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `F137/Q062/US209-US210` opened the排班草稿复核准备 slice: `/schedule-plans/[planId]` now shows `复核准备` readiness based on gap intervals, high risks, and same-site active unavailability, with explicit no-approval, no-publish, no-auto-scheduling, and no-production-writeback boundaries; current queue returned to empty after QA closeout.
 - `F138/Q063/US211-US212` closed the本机导入 records 摘要 parity slice: the common `ImportedRecordsSummary` now shows staff, status, login, and schedule-plan row counts, so imported schedule data is visible in shared module summaries without database, real integration, approval, publish, export, batch, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
+- `Q064/US213` closed the已开放模块 route smoke slice: E2E now verifies 10 local demo module routes render real module pages and not dashboard placeholders, without changing product code or opening database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
@@ -149,10 +150,10 @@ PM clarified on 2026-05-16 that the demo should be based on existing product mod
 import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
 ```
 
-Recommended order after F138/Q063:
+Recommended order after Q064:
 
-1. **已开放模块 route smoke 补强:** extend browser smoke for the modules PM will click during local demos, especially imported-records pages not yet checked beyond summary text.
-2. **表格/空态 parity 补强:** continue table controls, empty-state, and readonly sample parity only for opened modules.
+1. **表格/空态 parity 补强:** continue table controls, empty-state, and readonly sample parity only for opened modules.
+2. **本机演示脚本/runbook 收口:** tighten local demo startup and smoke instructions for the exact pages PM will demonstrate.
 3. **高风险功能 Gate 拆解:** plan `权限管理` and `结算锁账` as future separate Gates, but keep implementation deferred until PM explicitly opens auth/permission or settlement-lock scope.
 
 Temporarily not recommended: database setup, real CORN/HR/WFM integrations, auth/permissions, approval, export, batch operations, automatic scheduling, production KPI formulas, settlement rules, and charge factors. These still require separate PM-confirmed Gates.

@@ -2298,6 +2298,6 @@ description: "已开放模块数量增加后，需要补一条轻量 route smoke
 source: "PM requested continuous completion on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "QA-only；不修改产品代码，不扩大到数据库、真实集成、认证、权限、审批、导出、批量、发布、自动排班、生产公式、结算规则或收费因子。"
+status: "done"
+notes: "已新增 E2E route smoke 覆盖 10 个本机演示常用已开放模块，验证页面主标题、模块 marker 可见，并断言不是 dashboard 占位；未修改产品代码，不扩大到数据库、真实集成、认证、权限、审批、导出、批量、发布、自动排班、生产公式、结算规则或收费因子。"
 ```

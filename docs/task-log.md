@@ -1804,3 +1804,12 @@
 - action: 收口本机导入 records 摘要 parity QA。
 - status: `done`
 - notes: 模型测试 75 条通过，E2E smoke 5 条通过并覆盖本机 CSV 导入后 dashboard 共用摘要展示 `排班数据` 行数；最终 `bash scripts/check.sh` 通过。
+
+- task_id: `Q064`
+- source_ids:
+  - `R201`
+- story_ids:
+  - `US213`
+- action: 收口已开放模块 route smoke 补强。
+- status: `done`
+- notes: E2E smoke 已增至 6 条，通过新增 `opened local module routes render real module pages` 用例覆盖今日履约、异常预警、时段缺口热力图、供应商管理、规则配置、报表中心、供应商复盘、操作审计、智能排班和接口集成 10 个模块，断言页面不是 dashboard 占位；最终 `bash scripts/check.sh` 通过。

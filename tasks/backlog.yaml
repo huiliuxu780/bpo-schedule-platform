@@ -7304,7 +7304,7 @@ tasks:
   - id: Q064
     title: "已开放模块 route smoke 补强"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "tests/e2e/core-path.spec.ts"

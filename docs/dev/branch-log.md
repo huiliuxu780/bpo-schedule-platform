@@ -1605,3 +1605,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### Q064 Opened Module Route Smoke Reinforcement
+
+- branch_name: `codex/f-batch-025-opened-route-smoke`
+- base_main_commit: `64ce579`
+- remote_status: `local continuation branch created from pushed codex/f-batch-024-import-summary-parity because PM asked to continue the next batch after each completed batch`
+- scope: opened module route smoke E2E, no-dashboard-placeholder assertions, current-state closeout, and traceability updates.
+- allowed_files_check: `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no app, components, lib, backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, schedule publishing, automatic scheduling, production writeback, production formula, settlement rule, lock, or charge-factor files.
+- scope_diff_check: `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before QA work; E2E smoke passed outside sandbox with 6 tests and verified 10 opened local module routes render real pages rather than dashboard placeholders; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
