@@ -2154,6 +2154,32 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-17 - Draft Review Readiness Summary
+
+#### 审计结论
+
+- `F137/Q062/US209-US210` 已在 `/schedule-plans/[planId]` 增加 `复核准备` 本机只读摘要。
+- 详情页基于当前计划缺口时段、关联高风险和同日同职场生效不可用，给出本机下一步复核建议。
+- 页面明确不提交审批、不发布排班、不做自动排班或生产写回。
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、排班发布、自动排班、生产写回、生产公式、结算规则、收费因子或锁账。
+
+#### 风险
+
+- 当前复核准备只是草稿详情的本机只读 readiness，不等同于审批流、发布流、自动排班、生产写回或正式复核工作流。
+- 缺口、风险和不可用证据仍来自本机 demo/processed 数据与现有本地接口；符合当前本机演示边界。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，75 个模型/源码断言测试通过，包含 draft review readiness helper 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `curl -fsS http://127.0.0.1:8000/health`：通过。
+- `curl -fsS http://localhost:3015/schedule-plans/plan-20260511-suzhou-bosch-v1?from=schedule-plans&query=%E8%8B%8F%E5%B7%9E&status=draft`：通过，详情页返回 `复核准备` 内容。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖 draft 详情页 readiness 和生产动作边界。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

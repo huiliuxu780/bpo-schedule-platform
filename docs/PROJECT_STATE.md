@@ -136,6 +136,7 @@ Current invariants:
 - `F132-F133/Q059/US201-US203` opened the报表中心与供应商复盘只读汇总 slice: `结算复盘 > 报表中心` and `结算复盘 > 供应商复盘` now link to `/report-center` and `/supplier-review`, which read local processed records to show report/vendor review records, imported-source coverage, module outcomes, supplier coverage, fulfillment coverage, and schedule coverage without production report generation, export, settlement formulas, charge factors, bill amount, lock, approval, batch, database, real integrations, or supplier writeback; current queue returned to empty after QA closeout.
 - `F134-F135/Q060/US204-US206` opened the智能排班与接口集成本机只读预览 slice: `计划与排班 > 智能排班` and `数据与集成 > 接口集成` now link to `/smart-scheduling` and `/interface-integration`, which read local processed records to show smart recommendation readiness, integration readiness, field coverage, status-log coverage, and sample records without automatic scheduling, publishing, production writeback, real API calls, credentials, auth/permission, approval, export, batch, database, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `F136/Q061/US207-US208` opened the操作审计本机只读预览 slice: `系统管理 > 操作审计` now links to `/operation-audit`, which reads local processed records to show operation audit records, imported batches, module evidence, audit samples, and latest batch without account login, authentication, permission, role management, production audit logs, tamper-proof audit storage, approval, export, batch, database, real integrations, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
+- `F137/Q062/US209-US210` opened the排班草稿复核准备 slice: `/schedule-plans/[planId]` now shows `复核准备` readiness based on gap intervals, high risks, and same-site active unavailability, with explicit no-approval, no-publish, no-auto-scheduling, and no-production-writeback boundaries; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
@@ -147,10 +148,10 @@ PM clarified on 2026-05-16 that the demo should be based on existing product mod
 import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
 ```
 
-Recommended order after F136/Q061:
+Recommended order after F137/Q062:
 
-1. **Draft edit and review depth:** continue dynamic interval editing, review feedback, and submit/review preparation only as local MVP flows, without approval or production workflow capability.
-2. **本机验收广度补强:** extend route smoke and table parity only for opened modules, prioritizing paths that PM will use in local demos.
+1. **本机验收广度补强:** extend route smoke and table parity only for opened modules, prioritizing paths that PM will use in local demos.
+2. **草稿编辑深度补强:** continue dynamic interval editing and review feedback only as local MVP flows, without approval or production workflow capability.
 3. **高风险功能 Gate 拆解:** plan `权限管理` and `结算锁账` as future separate Gates, but keep implementation deferred until PM explicitly opens auth/permission or settlement-lock scope.
 
 Temporarily not recommended: database setup, real CORN/HR/WFM integrations, auth/permissions, approval, export, batch operations, automatic scheduling, production KPI formulas, settlement rules, and charge factors. These still require separate PM-confirmed Gates.

@@ -2,11 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: F137-Q062-draft-review-readiness
-  in_progress_task: F137
-  ready_tasks:
-    - Q062
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -15,7 +14,7 @@ current_summary:
 
 ## Current Core Capabilities
 
-- Dashboard, demand plans, schedule plans, plan detail/edit, risks, shift details, unavailability, smart scheduling preview, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, interface integration preview, organization people, today fulfillment, anomaly alerts, deficit heatmap, vendor management, rule configuration, operation audit preview, monthly settlement, report center, supplier review, and review navigation use local/demo data and scoped review context.
+- Dashboard, demand plans, schedule plans, plan detail/edit, draft review readiness, risks, shift details, unavailability, smart scheduling preview, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, interface integration preview, organization people, today fulfillment, anomaly alerts, deficit heatmap, vendor management, rule configuration, operation audit preview, monthly settlement, report center, supplier review, and review navigation use local/demo data and scoped review context.
 - Frontend build/check path exists through `bash scripts/check.sh`.
 - Backend local unittest path exists, and localhost-only demo import endpoints exist for staff master, staff status, login, and schedule-plan CSV data; production API/database integration is not in scope.
 - Imported demo rows are exposed through localhost-only processed records and are now consumed by dashboard, schedule plans, shift-details, schedule-risks, unavailability, smart scheduling, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, interface integration, organization people, today fulfillment, anomaly alerts, vendor management, rule configuration, operation audit, monthly settlement, report center, and supplier review for module-level demo summaries.
@@ -43,7 +42,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Execute F137/Q062 as a local-only draft review readiness enhancement. Keep it to read-only readiness summary and scoped review navigation unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, or production formula work.
+Plan the next local-only acceptance breadth and table parity slice for opened modules. Keep the next batch to route smoke, table controls, and readonly module parity unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
 
 ## Default Execution
 

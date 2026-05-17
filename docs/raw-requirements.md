@@ -2246,8 +2246,8 @@ description: "排班草稿保存后，详情页需要给出演示人员可理解
 source: "PM approved continued development on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "本批只允许在现有排班计划详情页增加本机只读 readiness；不扩大到审批、发布、自动排班、生产写回、数据库、真实集成、权限、导出、批量、结算规则或收费因子。"
+status: "done"
+notes: "已在 `/schedule-plans/[planId]` 增加 `复核准备` 本机只读 readiness 摘要，汇总缺口时段、高风险和同日同职场生效不可用，并给出下一步复核建议；不提交审批、不发布排班、不自动排班、不生产写回、不接数据库或真实集成。"
 ```
 
 ### R198 - draft review readiness QA
@@ -2259,6 +2259,6 @@ description: "排班草稿复核准备摘要开放后，需要补充 E2E 证据�
 source: "F137 draft review readiness batch on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到审批、发布、自动排班、生产写回、数据库、真实集成、权限、导出、批量、结算规则或收费因子。"
+status: "done"
+notes: "E2E 已覆盖 draft 排班计划详情页的 `复核准备` 摘要、缺口下一步建议和 no-approval/no-publish/no-auto-scheduling/no-production-writeback 边界；QA 不扩大到数据库、真实集成、权限、导出、批量、结算规则或收费因子。"
 ```

@@ -3750,7 +3750,7 @@ acceptance:
   - "摘要读取当前计划的缺口时段、关联风险和生效不可用，给出本机下一步建议。"
   - "页面明确本批不提交审批、不发布排班、不做自动排班或生产写回。"
   - "本批不改后端契约、不接数据库、真实集成、权限、审批、导出、批量、发布、自动排班、生产公式、结算规则或收费因子。"
-status: "ready"
+status: "done"
 ```
 
 ### US210 - Draft review readiness QA
@@ -3768,5 +3768,5 @@ acceptance:
   - "E2E 进入 draft 排班计划详情页后看到 `复核准备` 摘要。"
   - "E2E 覆盖 no-approval、no-publish、no-auto-scheduling、no-production-writeback 边界文案。"
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-export、no-batch。"
-status: "ready"
+status: "done"
 ```

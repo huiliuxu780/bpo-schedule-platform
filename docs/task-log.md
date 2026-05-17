@@ -1768,3 +1768,21 @@
 - action: 收口操作审计本机预览 QA。
 - status: `done`
 - notes: 模型测试 74 条通过，E2E smoke 5 条通过并覆盖导入本机 CSV 后 `/operation-audit` 的 records 摘要、操作审计导航链接、`权限管理` 和 `结算锁账` 开发中边界；最终 check 通过。
+
+- task_id: `F137`
+- source_ids:
+  - `R197`
+- story_ids:
+  - `US209`
+- action: 完成排班草稿复核准备摘要。
+- status: `done`
+- notes: `/schedule-plans/[planId]` 已新增 `复核准备` 本机只读卡片，汇总当前草稿缺口时段、高风险和同日同职场生效不可用，并给出本机下一步复核建议；不提交审批、不发布排班、不自动排班、不生产写回。
+
+- task_id: `Q062`
+- source_ids:
+  - `R198`
+- story_ids:
+  - `US210`
+- action: 收口排班草稿复核准备 QA。
+- status: `done`
+- notes: 模型测试 75 条通过，E2E smoke 5 条通过并覆盖 draft 详情页 `复核准备` 摘要、缺口下一步建议和 no-approval/no-publish/no-auto-scheduling/no-production-writeback 边界；最终 `bash scripts/check.sh` 通过。

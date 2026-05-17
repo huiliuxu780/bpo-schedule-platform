@@ -7188,7 +7188,7 @@ tasks:
   - id: F137
     title: "排班草稿复核准备摘要"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/schedule-plans/**"
@@ -7219,7 +7219,7 @@ tasks:
   - id: Q062
     title: "排班草稿复核准备 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/schedule-plans/**"
