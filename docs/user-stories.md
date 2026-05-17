@@ -3902,3 +3902,42 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
 status: "done"
 ```
+
+### US218 - Operations table parity
+
+```yaml
+id: US218
+requirement_ids:
+  - R206
+module: "运营工作台"
+role: "演示人员"
+story: "作为演示人员，我希望今日履约和异常预警页面用表格展示本机输入和预警队列，这样演示时能快速说明导入数据已经进入运营页面。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`今日履约` 展示模块内履约输入表格，包含 `数据源`、`行数`、`最新批次` 和 `状态`。"
+  - "`异常预警` 展示本机异常预警表格，包含 `异常`、`团队`、`时段`、`影响`、`级别` 和 `状态`。"
+  - "无 records 或无异常队列时展示清晰空态。"
+  - "页面继续明确 localhost-only、本机运行态、不接数据库。"
+  - "本批不改后端契约、不接数据库、真实集成、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+status: "in_progress"
+```
+
+### US219 - Operations table parity QA
+
+```yaml
+id: US219
+requirement_ids:
+  - R207
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望模型、E2E 和 Browser 覆盖运营页面表格，这样能证明导入结果被现有运营模块读取并以表格呈现。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "模型测试覆盖今日履约输入 rows 和异常预警 rows 的字段整理。"
+  - "E2E 导入本机 CSV 后，在 `今日履约` 和 `异常预警` 看到表格字段。"
+  - "Browser 检查确认两个页面可见表格列和本机只读边界。"
+  - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
+status: "ready"
+```

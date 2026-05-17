@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: F141-Q067-ops-table-parity
+  in_progress_task: F141
+  ready_tasks: [Q067]
 ```
 
 ## Current Stage
@@ -42,7 +42,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Plan the next local-only table/empty-state parity slice from `docs/requirements-inventory.md` and the PM-confirmed opened-module gaps. Keep it readonly and local-only; do not add cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
+Execute F141/Q067 as the next local-only table/empty-state parity slice: make `今日履约` and `异常预警` expose module-specific table rows and empty states that explain local imported records and seed anomaly queues. Keep the batch readonly and local-only; do not add cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
 
 ## Default Execution
 

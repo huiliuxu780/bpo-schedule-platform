@@ -2353,3 +2353,29 @@ version: "1.0"
 status: "done"
 notes: "模型测试覆盖最近批次 rows；E2E 覆盖本机 CSV 导入后 `/demo-imports` 最近导入批次表格、processed records 来源表格和 dashboard 读取结果；Browser 检查确认表格列、本机只读边界和侧边栏可见。QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch。"
 ```
+
+### R206 - operations table parity
+
+```yaml
+id: R206
+module: "运营工作台"
+description: "`今日履约` 和 `异常预警` 已经能读取本机导入 records 或 seed 异常，但模块内仍偏卡片展示，需要补齐可扫描表格和空态，让演示人员能说明导入结果如何进入运营页面。"
+source: "Current P1 table parity gap after Q066 on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "in_progress"
+notes: "本批只做今日履约/异常预警的本机只读表格和空态，不改后端契约、不接数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+```
+
+### R207 - operations table parity QA
+
+```yaml
+id: R207
+module: "本机验收"
+description: "运营页面表格补齐后，需要补充模型、E2E 和 Browser 证据，证明 CSV 导入后 `今日履约` 和 `异常预警` 能显示模块内表格字段和本机只读边界。"
+source: "F141 operations table parity batch on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "ready"
+notes: "QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
+```
