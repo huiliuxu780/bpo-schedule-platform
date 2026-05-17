@@ -2262,3 +2262,29 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖 draft 排班计划详情页的 `复核准备` 摘要、缺口下一步建议和 no-approval/no-publish/no-auto-scheduling/no-production-writeback 边界；QA 不扩大到数据库、真实集成、权限、导出、批量、结算规则或收费因子。"
 ```
+
+### R199 - imported records summary parity
+
+```yaml
+id: R199
+module: "本机验收"
+description: "已开放模块共用的本机导入 records 摘要需要同时展示坐席主数据、状态/考勤数据、登录数据和排班数据覆盖，避免排班数据导入后只在局部页面可见。"
+source: "PM requested continuous completion on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "本批只允许增强共用 imported records 摘要和本机 E2E 证据；不扩大到数据库、真实集成、权限、审批、发布、导出、批量、生产公式、结算规则或收费因子。"
+```
+
+### R200 - imported records summary parity QA
+
+```yaml
+id: R200
+module: "本机验收"
+description: "共用导入 records 摘要补齐后，需要补充模型和 E2E 证据，证明排班数据导入后在已开放模块摘要中可见。"
+source: "F138 imported records summary parity batch on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "QA 明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
+```

@@ -3770,3 +3770,40 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-export、no-batch。"
 status: "done"
 ```
+
+### US211 - Imported records summary parity
+
+```yaml
+id: US211
+requirement_ids:
+  - R199
+module: "本机验收"
+role: "演示人员"
+story: "作为演示人员，我希望共用的本机导入 records 摘要同时展示主数据、状态/考勤、登录和排班数据覆盖，这样在各模块演示导入结果时不需要跳回单独页面解释。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "共用 `ImportedRecordsSummary` 展示 `坐席主数据`、`状态数据`、`登录数据` 和 `排班数据` 行数。"
+  - "模型 summary 返回 `scheduleRows`，并保持现有 staff/status/login 统计。"
+  - "文案继续明确仅读取本机运行态导入结果，不使用数据库或生产公式。"
+  - "本批不接数据库、真实集成、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+status: "ready"
+```
+
+### US212 - Imported records summary parity QA
+
+```yaml
+id: US212
+requirement_ids:
+  - R200
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望模型和 E2E 覆盖共用导入 records 摘要的排班数据可见性，这样能证明排班 CSV 导入结果已经进入已开放模块摘要。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "模型测试覆盖 `schedule_plan` records 会计入 `scheduleRows`。"
+  - "E2E 导入本机 CSV 后，在使用共用摘要的页面看到 `排班数据` 行数。"
+  - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
+status: "ready"
+```

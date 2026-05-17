@@ -6,4 +6,101 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-tasks: []
+tasks:
+  - id: F138
+    story_ids: ["US211"]
+    status: in_progress
+    gate: frontend-scaffold
+    branch: codex/f-batch-024-import-summary-parity
+    allowed_files:
+      - "components/imported-records-summary.tsx"
+      - "components/data-table-model.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实外部集成、认证、权限、审批、导出、批量操作、排班发布、自动排班或生产写回"
+      - "需要生产公式、结算规则、锁账或收费因子"
+      - "验证失败"
+    acceptance_ref: docs/user-stories.md#US211
+    verification:
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "npm run typecheck"
+      - "npm run e2e:smoke"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "common imported-records summary exposes staff, status, login, and schedule-plan rows"
+      - "opened modules can explain imported records coverage without production actions"
+      - "no database, real integration, approval, publish, export, batch, or production writeback capability"
+  - id: Q063
+    story_ids: ["US212"]
+    status: ready
+    gate: qa
+    branch: codex/f-batch-024-import-summary-parity
+    allowed_files:
+      - "components/imported-records-summary.tsx"
+      - "components/data-table-model.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、发布、自动排班、生产写回、结算规则或收费因子"
+      - "验证失败"
+    acceptance_ref: docs/user-stories.md#US212
+    verification:
+      - "npm run e2e:smoke"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "E2E verifies imported summary shows schedule-plan rows after local CSV import"
+      - "QA evidence records localhost-only, process-memory, no-database, no-real-integration, no-export, no-batch"
+batch:
+  id: F138-Q063-import-summary-parity
+  task_ids: ["F138", "Q063"]
+  branch: codex/f-batch-024-import-summary-parity
+  scope_reason: "same local-only imported records summary parity enhancement and QA closure"
+  allowed_gate_combo: [frontend-scaffold, qa]
