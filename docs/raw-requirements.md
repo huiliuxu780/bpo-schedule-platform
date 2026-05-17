@@ -2288,3 +2288,16 @@ version: "1.0"
 status: "done"
 notes: "模型测试已覆盖 `schedule_plan` records 计入 `scheduleRows`；E2E 已覆盖本机 CSV 导入后 dashboard 共用摘要展示 `排班数据` 行数；QA 明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
 ```
+
+### R201 - opened module route smoke reinforcement
+
+```yaml
+id: R201
+module: "本机验收"
+description: "已开放模块数量增加后，需要补一条轻量 route smoke，证明本机演示会点击的模块页面可达、不是 dashboard 占位，并保留只读边界。"
+source: "PM requested continuous completion on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "QA-only；不修改产品代码，不扩大到数据库、真实集成、认证、权限、审批、导出、批量、发布、自动排班、生产公式、结算规则或收费因子。"
+```

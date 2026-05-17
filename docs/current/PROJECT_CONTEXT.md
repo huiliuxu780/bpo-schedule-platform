@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
+  queue_state: active
   active_batch_id: null
-  in_progress_task: null
+  in_progress_task: Q064
   ready_tasks: []
 ```
 
@@ -42,7 +42,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Plan the next local-only opened-module acceptance breadth slice. Prioritize route smoke and readonly summary parity for modules PM will demo, unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
+Execute Q064 as a local-only opened-module route smoke reinforcement. Keep the batch to browser acceptance evidence unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
 
 ## Default Execution
 

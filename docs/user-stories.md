@@ -3807,3 +3807,21 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
 status: "done"
 ```
+
+### US213 - Opened module route smoke reinforcement
+
+```yaml
+id: US213
+requirement_ids:
+  - R201
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖已开放模块的轻量 route smoke，这样能证明演示路径进入真实模块页面，而不是回到 dashboard 占位。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 访问本机演示常用的已开放模块页面，并验证页面主标题或 records 摘要可见。"
+  - "E2E 断言这些页面不是 dashboard 占位。"
+  - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
+status: "ready"
+```

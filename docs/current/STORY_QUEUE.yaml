@@ -5,4 +5,10 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US213
+    task_id: Q064
+    status: in_progress
+    priority: P1
+    gate: qa
+    summary: "已开放模块 route smoke 补强"
