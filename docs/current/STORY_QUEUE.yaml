@@ -5,4 +5,16 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US207
+    task_id: F136
+    status: in_progress
+    priority: P1
+    gate: frontend-scaffold
+    summary: "操作审计本机只读预览"
+  - id: US208
+    task_id: Q061
+    status: ready
+    priority: P1
+    gate: qa
+    summary: "操作审计本机预览 QA 收口"

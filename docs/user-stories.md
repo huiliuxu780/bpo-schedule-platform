@@ -3695,3 +3695,41 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-auto-scheduling、no-permission、no-lock、no-export、no-batch。"
 status: "done"
 ```
+
+### US207 - Operation audit local preview
+
+```yaml
+id: US207
+requirement_ids:
+  - R195
+module: "系统管理"
+role: "演示人员"
+story: "作为演示人员，我希望操作审计页先展示本机导入批次和模块证据摘要，这样可以说明当前演示链路哪些操作可追溯，同时不声称具备生产审计能力。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "新增 `/operation-audit` 页面。"
+  - "页面读取 processed records，并展示 `操作审计 records`、导入批次、模块证据和本机边界。"
+  - "`系统管理 > 操作审计` 链接到 `/operation-audit`。"
+  - "权限管理继续显示 `开发中` 且不可点击。"
+  - "本批不做账号登录、认证、权限、角色管理、生产审计日志、不可篡改存储、数据库、真实集成、审批、导出、批量、锁账、结算规则或收费因子。"
+status: "ready"
+```
+
+### US208 - Operation audit preview QA
+
+```yaml
+id: US208
+requirement_ids:
+  - R196
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖操作审计入口及高风险边界，这样能证明它只是本机只读预览，没有误开放权限或生产审计能力。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 导入本机 CSV 后，operation-audit 出现 records 摘要。"
+  - "E2E 覆盖操作审计导航可点击，权限管理和结算锁账仍是 `开发中`。"
+  - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-production-audit、no-export、no-batch。"
+status: "ready"
+```

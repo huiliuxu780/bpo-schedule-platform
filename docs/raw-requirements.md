@@ -2210,3 +2210,29 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入本机 CSV 后 smart-scheduling 和 interface-integration 出现 records/readiness 摘要，并确认智能排班/接口集成导航可点击、结算锁账/权限管理/操作审计仍为开发中；QA 不扩大到数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算、锁账或收费因子。"
 ```
+
+### R195 - operation audit local preview
+
+```yaml
+id: R195
+module: "系统管理"
+description: "操作审计需要先开放一个本机只读预览页，基于本机导入批次和现有模块入口展示可演示的操作证据口径，但不做账号登录、权限边界、生产审计链或不可篡改存储。"
+source: "PM requested continued placeholder completion on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "本批只允许本机只读展示 imported records、模块证据和边界；不扩大到数据库、真实集成、认证、权限、角色、审批、导出、批量、生产审计、锁账、结算规则或收费因子。"
+```
+
+### R196 - operation audit preview QA
+
+```yaml
+id: R196
+module: "本机验收"
+description: "操作审计本机只读预览开放后，需要补充 E2E 证据，证明导航可达、records 摘要可见，并且权限管理和结算锁账仍保持开发中。"
+source: "F136 operation audit local preview on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "QA 不扩大到数据库、真实集成、认证、权限、角色管理、审批、导出、批量、生产审计、不可篡改存储、锁账、结算规则或收费因子。"
+```
