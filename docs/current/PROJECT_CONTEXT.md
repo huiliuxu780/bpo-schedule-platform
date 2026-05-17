@@ -2,10 +2,11 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: F137-Q062-draft-review-readiness
+  in_progress_task: F137
+  ready_tasks:
+    - Q062
 ```
 
 ## Current Stage
@@ -42,7 +43,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Next recommended task should be chosen from local acceptance priorities after PM review. Keep it local-only unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, or production formula work.
+Execute F137/Q062 as a local-only draft review readiness enhancement. Keep it to read-only readiness summary and scoped review navigation unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, or production formula work.
 
 ## Default Execution
 

@@ -2236,3 +2236,29 @@ version: "1.0"
 status: "done"
 notes: "E2E 已覆盖导入本机 CSV 后 operation-audit 出现 records 摘要，并确认操作审计导航可点击、权限管理和结算锁账仍为开发中；QA 不扩大到数据库、真实集成、认证、权限、角色管理、审批、导出、批量、生产审计、不可篡改存储、锁账、结算规则或收费因子。"
 ```
+
+### R197 - draft review readiness summary
+
+```yaml
+id: R197
+module: "计划与排班"
+description: "排班草稿保存后，详情页需要给出演示人员可理解的本机复核准备摘要，说明当前缺口、风险和不可用是否还需要继续复核，但不提交审批、不发布排班。"
+source: "PM approved continued development on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "本批只允许在现有排班计划详情页增加本机只读 readiness；不扩大到审批、发布、自动排班、生产写回、数据库、真实集成、权限、导出、批量、结算规则或收费因子。"
+```
+
+### R198 - draft review readiness QA
+
+```yaml
+id: R198
+module: "本机验收"
+description: "排班草稿复核准备摘要开放后，需要补充 E2E 证据，证明草稿详情页展示 readiness 和无生产动作边界。"
+source: "F137 draft review readiness batch on 2026-05-17"
+submitted_at: "2026-05-17"
+version: "1.0"
+status: "ready"
+notes: "QA 不扩大到审批、发布、自动排班、生产写回、数据库、真实集成、权限、导出、批量、结算规则或收费因子。"
+```

@@ -3733,3 +3733,40 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-production-audit、no-export、no-batch。"
 status: "done"
 ```
+
+### US209 - Draft review readiness summary
+
+```yaml
+id: US209
+requirement_ids:
+  - R197
+module: "计划与排班"
+role: "演示人员"
+story: "作为演示人员，我希望排班草稿详情页显示本机复核准备摘要，这样保存草稿后能继续解释哪些缺口、风险和不可用还需要复核。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "排班计划详情页展示 `复核准备` 摘要。"
+  - "摘要读取当前计划的缺口时段、关联风险和生效不可用，给出本机下一步建议。"
+  - "页面明确本批不提交审批、不发布排班、不做自动排班或生产写回。"
+  - "本批不改后端契约、不接数据库、真实集成、权限、审批、导出、批量、发布、自动排班、生产公式、结算规则或收费因子。"
+status: "ready"
+```
+
+### US210 - Draft review readiness QA
+
+```yaml
+id: US210
+requirement_ids:
+  - R198
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖草稿详情页的复核准备摘要，这样能证明它只是本机只读 readiness，没有误开放审批或发布能力。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "E2E 进入 draft 排班计划详情页后看到 `复核准备` 摘要。"
+  - "E2E 覆盖 no-approval、no-publish、no-auto-scheduling、no-production-writeback 边界文案。"
+  - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-export、no-batch。"
+status: "ready"
+```
