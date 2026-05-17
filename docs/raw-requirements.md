@@ -2272,8 +2272,8 @@ description: "已开放模块共用的本机导入 records 摘要需要同时展
 source: "PM requested continuous completion on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "本批只允许增强共用 imported records 摘要和本机 E2E 证据；不扩大到数据库、真实集成、权限、审批、发布、导出、批量、生产公式、结算规则或收费因子。"
+status: "done"
+notes: "共用 `ImportedRecordsSummary` 已展示坐席主数据、状态数据、登录数据和排班数据行数；模型 summary 已新增 `scheduleRows`，不接数据库、真实集成、权限、审批、发布、导出、批量、生产公式、结算规则或收费因子。"
 ```
 
 ### R200 - imported records summary parity QA
@@ -2285,6 +2285,6 @@ description: "共用导入 records 摘要补齐后，需要补充模型和 E2E �
 source: "F138 imported records summary parity batch on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "QA 明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
+status: "done"
+notes: "模型测试已覆盖 `schedule_plan` records 计入 `scheduleRows`；E2E 已覆盖本机 CSV 导入后 dashboard 共用摘要展示 `排班数据` 行数；QA 明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
 ```

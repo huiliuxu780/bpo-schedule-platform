@@ -2180,6 +2180,30 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-17 - Imported Records Summary Parity
+
+#### 审计结论
+
+- `F138/Q063/US211-US212` 已补齐共用 `ImportedRecordsSummary` 的本机导入 records 摘要 parity。
+- 共用摘要现在同时展示 `坐席主数据`、`状态数据`、`登录数据` 和 `排班数据` 行数。
+- `summarizeDashboardImportRecords` 已返回 `scheduleRows`，保持现有 staff/status/login 统计。
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、排班发布、自动排班、生产写回、生产公式、结算规则、收费因子或锁账。
+
+#### 风险
+
+- 当前摘要只说明本机 process-memory records 是否进入页面，不等同于真实数据源接入、跨进程持久化、生产数据质量规则或发布能力。
+- 导入记录仍来自 localhost-only demo import API；服务重启后清空，符合当前本机演示边界。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，75 个模型/源码断言测试通过，包含 `scheduleRows` 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖本机 CSV 导入后 dashboard 共用摘要展示 `排班数据` 行数。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

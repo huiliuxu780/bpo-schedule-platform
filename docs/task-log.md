@@ -1786,3 +1786,21 @@
 - action: 收口排班草稿复核准备 QA。
 - status: `done`
 - notes: 模型测试 75 条通过，E2E smoke 5 条通过并覆盖 draft 详情页 `复核准备` 摘要、缺口下一步建议和 no-approval/no-publish/no-auto-scheduling/no-production-writeback 边界；最终 `bash scripts/check.sh` 通过。
+
+- task_id: `F138`
+- source_ids:
+  - `R199`
+- story_ids:
+  - `US211`
+- action: 完成本机导入 records 摘要 parity。
+- status: `done`
+- notes: 共用 `ImportedRecordsSummary` 已展示坐席主数据、状态数据、登录数据和排班数据行数；模型 summary 新增 `scheduleRows`，让排班数据导入后能在已开放模块共用摘要中解释。
+
+- task_id: `Q063`
+- source_ids:
+  - `R200`
+- story_ids:
+  - `US212`
+- action: 收口本机导入 records 摘要 parity QA。
+- status: `done`
+- notes: 模型测试 75 条通过，E2E smoke 5 条通过并覆盖本机 CSV 导入后 dashboard 共用摘要展示 `排班数据` 行数；最终 `bash scripts/check.sh` 通过。

@@ -2,11 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: F138-Q063-import-summary-parity
-  in_progress_task: F138
-  ready_tasks:
-    - Q063
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -43,7 +42,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Execute F138/Q063 as a local-only imported records summary parity slice. Keep the batch to common processed-records visibility and E2E evidence unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
+Plan the next local-only opened-module acceptance breadth slice. Prioritize route smoke and readonly summary parity for modules PM will demo, unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
 
 ## Default Execution
 

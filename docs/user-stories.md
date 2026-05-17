@@ -3787,7 +3787,7 @@ acceptance:
   - "模型 summary 返回 `scheduleRows`，并保持现有 staff/status/login 统计。"
   - "文案继续明确仅读取本机运行态导入结果，不使用数据库或生产公式。"
   - "本批不接数据库、真实集成、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
-status: "ready"
+status: "done"
 ```
 
 ### US212 - Imported records summary parity QA
@@ -3805,5 +3805,5 @@ acceptance:
   - "模型测试覆盖 `schedule_plan` records 会计入 `scheduleRows`。"
   - "E2E 导入本机 CSV 后，在使用共用摘要的页面看到 `排班数据` 行数。"
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
-status: "ready"
+status: "done"
 ```
