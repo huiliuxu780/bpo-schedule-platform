@@ -1598,7 +1598,7 @@
 - allowed_files_check: `components/imported-records-summary.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, schedule publishing, automatic scheduling, production writeback, production formula, settlement rule, lock, or charge-factor files.
 - scope_diff_check: `components/data-table-model.ts`, `components/imported-records-summary.tsx`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
 - check_result: seed-only staged strict state check passed before product work; failing model test first verified `scheduleRows` was missing from `summarizeDashboardImportRecords`; model tests then passed with 75 tests; typecheck and lint passed; `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 5 tests and verified dashboard common summary shows `排班数据` after local CSV import; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
-- local_commit_sha: `pending`
+- local_commit_sha: `a9f0a0b`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
