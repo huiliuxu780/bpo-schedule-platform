@@ -2,6 +2,7 @@ import { Upload } from "lucide-react"
 
 import { importDemoCsvAction } from "@/app/demo-imports/actions"
 import { AppShell } from "@/components/app-shell"
+import { buildImportedRecordSourceRows } from "@/components/data-table-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,8 +14,17 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  buildDemoImportBatchRows,
   getDemoImportBatches,
-  demoImportBatchStatusLabel,
+  getDemoImportRecords,
   type DemoImportKind,
 } from "@/lib/demo-imports"
 
@@ -67,6 +77,9 @@ type PageProps = {
 export default async function DemoImportsPage({ searchParams }: PageProps) {
   const params = await searchParams
   const batches = await getDemoImportBatches()
+  const records = await getDemoImportRecords()
+  const batchRows = buildDemoImportBatchRows(batches)
+  const sourceRows = buildImportedRecordSourceRows(records)
   const showResult = params.success || params.failed || params.error
 
   return (
@@ -133,46 +146,121 @@ export default async function DemoImportsPage({ searchParams }: PageProps) {
           ))}
         </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>接入批次</CardTitle>
-            <CardDescription>
-              本机运行期间最近导入的演示数据批次。
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {batches.length > 0 ? (
-              <div className="grid gap-2">
-                {batches.map((batch) => (
-                  <div
-                    key={batch.batch_id}
-                    className="grid gap-2 rounded-md border p-3 text-sm md:grid-cols-[1fr_auto_auto]"
-                  >
-                    <div>
-                      <div className="font-medium">{batch.source_name}</div>
-                      <div className="font-mono text-xs text-muted-foreground">
-                        {batch.batch_id}
-                      </div>
-                    </div>
-                    <Badge
-                      variant={batch.status === "imported" ? "outline" : "destructive"}
-                      className="w-fit"
-                    >
-                      {demoImportBatchStatusLabel(batch.status)}
-                    </Badge>
-                    <div className="text-muted-foreground">
-                      成功 {batch.success_rows} / 失败 {batch.failed_rows}
-                    </div>
-                  </div>
-                ))}
+        <section className="grid gap-4 xl:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>最近导入批次</CardTitle>
+              <CardDescription>
+                本机运行期间最近导入的演示数据批次。
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>数据源</TableHead>
+                      <TableHead>状态</TableHead>
+                      <TableHead className="text-right">成功</TableHead>
+                      <TableHead className="text-right">失败</TableHead>
+                      <TableHead>批次</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {batchRows.length > 0 ? (
+                      batchRows.map((row) => (
+                        <TableRow key={row.batchId}>
+                          <TableCell className="font-medium">
+                            {row.sourceName}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                row.failedRows === 0 ? "outline" : "destructive"
+                              }
+                            >
+                              {row.statusLabel}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {row.successRows}
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {row.failedRows}
+                          </TableCell>
+                          <TableCell className="max-w-[220px] truncate font-mono text-xs text-muted-foreground">
+                            {row.batchId}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={5}
+                          className="h-16 text-center text-muted-foreground"
+                        >
+                          暂无导入批次。先导入任意一类 CSV，dashboard 的数据接入状态会显示本机批次。
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
               </div>
-            ) : (
-              <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
-                暂无导入批次。先导入任意一类 CSV，dashboard 的数据接入状态会显示本机批次。
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>processed records 来源</CardTitle>
+              <CardDescription>
+                后端本机运行态已经处理并提供给业务模块读取的数据源。
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>数据源</TableHead>
+                      <TableHead className="text-right">行数</TableHead>
+                      <TableHead className="text-right">样本</TableHead>
+                      <TableHead>最新批次</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sourceRows.length > 0 ? (
+                      sourceRows.map((row) => (
+                        <TableRow key={row.kind}>
+                          <TableCell className="font-medium">
+                            {row.label}
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {row.totalRows}
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {row.sampleRows}
+                          </TableCell>
+                          <TableCell className="max-w-[220px] truncate font-mono text-xs text-muted-foreground">
+                            {row.latestBatch}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          className="h-16 text-center text-muted-foreground"
+                        >
+                          暂无 processed records。导入 CSV 后，本机接口会把处理结果提供给 dashboard 和各模块页面读取。
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </section>
       </main>
     </AppShell>
   )

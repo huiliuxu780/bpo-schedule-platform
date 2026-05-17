@@ -1831,3 +1831,21 @@
 - action: 收口本机导入 records 来源表格 QA。
 - status: `done`
 - notes: 模型测试 76 条通过，E2E smoke 6 条通过并覆盖本机 CSV 导入后 dashboard 共用摘要表格列、`排班数据` 行和 `schedule_plan` 最新批次；Browser 可视化确认 dashboard 表格字段可见，最终 `bash scripts/check.sh` 通过。
+
+- task_id: `F140`
+- source_ids:
+  - `R204`
+- story_ids:
+  - `US216`
+- action: 完成文件导入页表格与空态 parity。
+- status: `done`
+- notes: `/demo-imports` 已新增 `最近导入批次` 表格和 `processed records 来源` 表格，分别展示数据源、状态、成功、失败、批次，以及数据源、行数、样本、最新批次；无数据时展示清晰空态，并继续标注本机运行态、不接数据库。
+
+- task_id: `Q066`
+- source_ids:
+  - `R205`
+- story_ids:
+  - `US217`
+- action: 收口文件导入页表格 parity QA。
+- status: `done`
+- notes: 模型测试 77 条通过，E2E smoke 6 条通过并覆盖本机 CSV 导入后 `/demo-imports` 最近导入批次表格、processed records 来源表格和 dashboard 读取结果；Browser 检查确认 `/demo-imports` 表格列、本机只读边界和桌面侧边栏可见，最终 `bash scripts/check.sh` 通过。

@@ -29,6 +29,15 @@ export type DemoImportResponse = {
   errors: DemoImportRowError[]
 }
 
+export type DemoImportBatchTableRow = {
+  sourceName: string
+  batchId: string
+  statusLabel: string
+  successRows: number
+  failedRows: number
+  importedAt: string
+}
+
 type DemoImportBatchListResponse = {
   items: DemoImportBatchSummary[]
 }
@@ -105,6 +114,21 @@ export function demoImportBatchStatusLabel(
   status: DemoImportBatchSummary["status"]
 ) {
   return status === "imported" ? "已同步" : "需关注"
+}
+
+export function buildDemoImportBatchRows(
+  batches: DemoImportBatchSummary[]
+): DemoImportBatchTableRow[] {
+  return [...batches]
+    .sort((a, b) => b.imported_at.localeCompare(a.imported_at))
+    .map((batch) => ({
+      sourceName: batch.source_name,
+      batchId: batch.batch_id,
+      statusLabel: demoImportBatchStatusLabel(batch.status),
+      successRows: batch.success_rows,
+      failedRows: batch.failed_rows,
+      importedAt: batch.imported_at,
+    }))
 }
 
 export function mapDemoBatchesToSyncStatus(

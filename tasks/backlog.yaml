@@ -7386,7 +7386,7 @@ tasks:
   - id: F140
     title: "文件导入页表格与空态 parity"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/demo-imports/**"
@@ -7419,7 +7419,7 @@ tasks:
   - id: Q066
     title: "文件导入页表格 parity QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/demo-imports/**"

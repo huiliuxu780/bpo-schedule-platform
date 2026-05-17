@@ -2337,8 +2337,8 @@ description: "`/demo-imports` 作为本机演示上传入口，需要用表格�
 source: "Current P1 table parity gap on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做导入入口的本机只读表格和空态，不新增上传类型、不改后端契约、不接数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+status: "done"
+notes: "`/demo-imports` 已用表格展示最近导入批次和 processed records 来源结果；页面继续明确 localhost-only、本机运行态、不接数据库。本批没有新增上传类型、后端契约、数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
 ```
 
 ### R205 - demo imports table parity QA
@@ -2350,6 +2350,6 @@ description: "导入入口表格补齐后，需要补充模型、E2E 和 Browser
 source: "F140 demo imports table parity batch on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "ready"
-notes: "QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
+status: "done"
+notes: "模型测试覆盖最近批次 rows；E2E 覆盖本机 CSV 导入后 `/demo-imports` 最近导入批次表格、processed records 来源表格和 dashboard 读取结果；Browser 检查确认表格列、本机只读边界和侧边栏可见。QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch。"
 ```

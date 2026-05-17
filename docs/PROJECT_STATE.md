@@ -140,6 +140,7 @@ Current invariants:
 - `F138/Q063/US211-US212` closed the本机导入 records 摘要 parity slice: the common `ImportedRecordsSummary` now shows staff, status, login, and schedule-plan row counts, so imported schedule data is visible in shared module summaries without database, real integration, approval, publish, export, batch, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `Q064/US213` closed the已开放模块 route smoke slice: E2E now verifies 10 local demo module routes render real module pages and not dashboard placeholders, without changing product code or opening database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `F139/Q065/US214-US215` closed the本机导入 records 来源表格 parity slice: the common `ImportedRecordsSummary` now shows a compact source table and empty state with data source, row count, sample count, and latest batch, so local imported records are more explainable across dashboard and opened modules without database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
+- `F140/Q066/US216-US217` closed the文件导入页表格 parity slice: `/demo-imports` now shows recent import batches and processed records source rows with clear empty states, so the upload entry itself explains which local CSV results have been processed and are read by existing modules; sidebar desktop visibility was stabilized for the opened-module E2E path; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
@@ -151,7 +152,7 @@ PM clarified on 2026-05-16 that the demo should be based on existing product mod
 import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
 ```
 
-Recommended order after Q065:
+Recommended order after Q066:
 
 1. **表格/空态 parity 补强:** continue table controls, empty-state, and readonly sample parity only for opened modules.
 2. **本机演示脚本/runbook 收口:** tighten local demo startup and smoke instructions for the exact pages PM will demonstrate.

@@ -2250,6 +2250,32 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-18 - Demo Imports Table Parity
+
+#### 审计结论
+
+- `F140/Q066/US216-US217` 已补齐 `/demo-imports` 的最近导入批次表格、processed records 来源表格和空态。
+- 最近导入批次表格展示 `数据源`、`状态`、`成功`、`失败` 和 `批次`。
+- processed records 来源表格展示 `数据源`、`行数`、`样本` 和 `最新批次`，复用本机 processed records 结果。
+- 侧边栏桌面显示修正为默认显示、移动端隐藏，避免 `hidden md:block` 在当前 Tailwind/Next 输出中偶发未覆盖导致 E2E 读取不到已开放模块导航。
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、排班发布、自动排班、生产写回、生产公式、结算规则、收费因子或锁账。
+
+#### 风险
+
+- 当前表格只展示 localhost-only process-memory 导入结果，不等同于跨进程持久化、生产数据质量规则或正式接口接入。
+- 本机 E2E 需要前端 3015 和后端 8000 同时在线；若服务进程被停止，导入用例会出现 `ECONNREFUSED`，属于环境前置条件问题。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，77 个模型/源码断言测试通过，包含 `buildDemoImportBatchRows` 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，6 条 E2E 通过，覆盖本机 CSV 导入后 `/demo-imports` 两张表格、dashboard 读取结果和 sidebar 导航。
+- Browser 检查：`/demo-imports` 可见 `最近导入批次`、`processed records 来源`、`批次`、`最新批次` 和 `不接数据库`；桌面侧边栏 `display:block`。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

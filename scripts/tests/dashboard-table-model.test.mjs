@@ -47,6 +47,7 @@ import {
   summarizeDraftReviewReadiness,
 } from "../../lib/schedule-plans.ts";
 import { filterUnavailabilityRowsByScope } from "../../lib/unavailability.ts";
+import { buildDemoImportBatchRows } from "../../lib/demo-imports.ts";
 import {
   buildDemandPlansHref,
   buildNewSchedulePlanHref,
@@ -260,6 +261,50 @@ test("imported record source rows order sources and expose table fields", () => 
   ]);
 
   assert.deepEqual(buildImportedRecordSourceRows([]), []);
+});
+
+test("demo import batch rows sort newest first and expose table fields", () => {
+  const rows = buildDemoImportBatchRows([
+    {
+      batch_id: "staff_master-20260516093000-001",
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      status: "imported",
+      success_rows: 2,
+      failed_rows: 0,
+      imported_at: "2026-05-16T09:30:00+08:00",
+    },
+    {
+      batch_id: "login_log-20260516094000-001",
+      kind: "login_log",
+      source_name: "登录数据",
+      status: "needs_attention",
+      success_rows: 1,
+      failed_rows: 1,
+      imported_at: "2026-05-16T09:40:00+08:00",
+    },
+  ]);
+
+  assert.deepEqual(rows, [
+    {
+      sourceName: "登录数据",
+      batchId: "login_log-20260516094000-001",
+      statusLabel: "需关注",
+      successRows: 1,
+      failedRows: 1,
+      importedAt: "2026-05-16T09:40:00+08:00",
+    },
+    {
+      sourceName: "坐席主数据",
+      batchId: "staff_master-20260516093000-001",
+      statusLabel: "已同步",
+      successRows: 2,
+      failedRows: 0,
+      importedAt: "2026-05-16T09:30:00+08:00",
+    },
+  ]);
+
+  assert.deepEqual(buildDemoImportBatchRows([]), []);
 });
 
 test("schedule plan import records preview summarizes local schedule rows", () => {

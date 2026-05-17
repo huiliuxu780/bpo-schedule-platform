@@ -170,7 +170,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   return (
     <aside
       className={cn(
-        "hidden h-svh shrink-0 border-r bg-sidebar text-sidebar-foreground transition-[width] duration-200 md:block",
+        "h-svh shrink-0 border-r bg-sidebar text-sidebar-foreground transition-[width] duration-200 max-md:hidden",
         collapsed ? "w-16" : "w-72"
       )}
     >

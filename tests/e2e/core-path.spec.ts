@@ -240,7 +240,6 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     },
   )
   expect(staffImportResponse.ok()).toBeTruthy()
-  await expect(importMain.getByText("已同步").first()).toBeVisible()
 
   const statusImportForm = importForms.nth(1)
   await expect(
@@ -286,6 +285,34 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     },
   )
   expect(schedulePlanImportResponse.ok()).toBeTruthy()
+
+  await gotoAppPage(page, "/demo-imports")
+  const refreshedImportMain = page.getByRole("main")
+  await expect(
+    refreshedImportMain.getByRole("heading", { name: "最近导入批次" }),
+  ).toBeVisible()
+  await expect(
+    refreshedImportMain.getByRole("heading", {
+      name: "processed records 来源",
+    }),
+  ).toBeVisible()
+  await expect(
+    refreshedImportMain.getByRole("columnheader", { name: "状态" }).first(),
+  ).toBeVisible()
+  await expect(
+    refreshedImportMain.getByRole("columnheader", { name: "批次" }).first(),
+  ).toBeVisible()
+  await expect(
+    refreshedImportMain.getByRole("columnheader", { name: "最新批次" }).first(),
+  ).toBeVisible()
+  await expect(refreshedImportMain.getByText("已同步").first()).toBeVisible()
+  await expect(
+    refreshedImportMain
+      .getByRole("cell", { name: /schedule_plan-\d{14}-\d+/ })
+      .first(),
+  ).toBeVisible()
+  await expect(refreshedImportMain.getByText("排班数据").first()).toBeVisible()
+  await expect(refreshedImportMain.getByText("不接数据库")).toBeVisible()
 
   await gotoAppPage(page, "/dashboard")
   const dashboardMain = page.getByRole("main")
