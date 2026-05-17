@@ -7390,6 +7390,7 @@ tasks:
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/demo-imports/**"
+      - "components/app-sidebar.tsx"
       - "lib/demo-imports.ts"
       - "components/data-table-model.ts"
       - "scripts/tests/dashboard-table-model.test.mjs"
@@ -7422,6 +7423,7 @@ tasks:
     required_workflow: qa
     allowed_files:
       - "app/demo-imports/**"
+      - "components/app-sidebar.tsx"
       - "lib/demo-imports.ts"
       - "components/data-table-model.ts"
       - "scripts/tests/dashboard-table-model.test.mjs"

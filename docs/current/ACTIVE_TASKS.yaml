@@ -20,6 +20,7 @@ tasks:
     branch: "codex/f-batch-027-demo-imports-table-parity"
     allowed_files:
       - "app/demo-imports/**"
+      - "components/app-sidebar.tsx"
       - "lib/demo-imports.ts"
       - "components/data-table-model.ts"
       - "scripts/tests/dashboard-table-model.test.mjs"
@@ -70,6 +71,7 @@ tasks:
     branch: "codex/f-batch-027-demo-imports-table-parity"
     allowed_files:
       - "app/demo-imports/**"
+      - "components/app-sidebar.tsx"
       - "lib/demo-imports.ts"
       - "components/data-table-model.ts"
       - "scripts/tests/dashboard-table-model.test.mjs"
