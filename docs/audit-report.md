@@ -2128,6 +2128,32 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-17 - Operation Audit Local Preview
+
+#### 审计结论
+
+- `F136/Q061/US207-US208` 已开放 `系统管理 > 操作审计`：侧边栏链接指向 `/operation-audit`，不再是 dashboard 占位。
+- `/operation-audit` 读取本机 processed records，展示 `操作审计 records`、导入批次、模块证据、审计样本和最近批次。
+- `权限管理` 和 `结算锁账` 仍保持 `开发中` 且不可点击。
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、账号登录、认证、权限、角色管理、审批、导出、批量、生产审计日志、不可篡改审计存储、生产公式、结算规则、收费因子或锁账。
+
+#### 风险
+
+- 当前操作审计只是本机只读证据预览，不等同于生产审计日志、权限审计、不可篡改审计存储或合规审计链路。
+- processed records 仍来自本机 process-memory；服务重启后清空，符合当前本机演示边界。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，74 个模型/源码断言测试通过，包含操作审计 helper 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `curl -fsS http://127.0.0.1:8000/health`：通过。
+- `curl -fsS http://localhost:3015/operation-audit`：通过，新增页面可返回 HTML。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，5 条 E2E 通过，覆盖 operation-audit records 摘要、操作审计导航链接和高风险入口开发中边界。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

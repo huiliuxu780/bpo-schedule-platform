@@ -3713,7 +3713,7 @@ acceptance:
   - "`系统管理 > 操作审计` 链接到 `/operation-audit`。"
   - "权限管理继续显示 `开发中` 且不可点击。"
   - "本批不做账号登录、认证、权限、角色管理、生产审计日志、不可篡改存储、数据库、真实集成、审批、导出、批量、锁账、结算规则或收费因子。"
-status: "ready"
+status: "done"
 ```
 
 ### US208 - Operation audit preview QA
@@ -3731,5 +3731,5 @@ acceptance:
   - "E2E 导入本机 CSV 后，operation-audit 出现 records 摘要。"
   - "E2E 覆盖操作审计导航可点击，权限管理和结算锁账仍是 `开发中`。"
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-auth、no-permission、no-production-audit、no-export、no-batch。"
-status: "ready"
+status: "done"
 ```

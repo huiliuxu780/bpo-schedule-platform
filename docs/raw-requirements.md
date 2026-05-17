@@ -2220,8 +2220,8 @@ description: "操作审计需要先开放一个本机只读预览页，基于本
 source: "PM requested continued placeholder completion on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "本批只允许本机只读展示 imported records、模块证据和边界；不扩大到数据库、真实集成、认证、权限、角色、审批、导出、批量、生产审计、锁账、结算规则或收费因子。"
+status: "done"
+notes: "已新增 `/operation-audit` 本机只读预览页，读取 processed records 并展示操作审计 records、导入批次、模块证据、最近批次和边界；不做账号登录、认证、权限、角色管理、生产审计日志、不可篡改存储、数据库、真实集成、审批、导出、批量、锁账、结算规则或收费因子。"
 ```
 
 ### R196 - operation audit preview QA
@@ -2233,6 +2233,6 @@ description: "操作审计本机只读预览开放后，需要补充 E2E 证据�
 source: "F136 operation audit local preview on 2026-05-17"
 submitted_at: "2026-05-17"
 version: "1.0"
-status: "ready"
-notes: "QA 不扩大到数据库、真实集成、认证、权限、角色管理、审批、导出、批量、生产审计、不可篡改存储、锁账、结算规则或收费因子。"
+status: "done"
+notes: "E2E 已覆盖导入本机 CSV 后 operation-audit 出现 records 摘要，并确认操作审计导航可点击、权限管理和结算锁账仍为开发中；QA 不扩大到数据库、真实集成、认证、权限、角色管理、审批、导出、批量、生产审计、不可篡改存储、锁账、结算规则或收费因子。"
 ```

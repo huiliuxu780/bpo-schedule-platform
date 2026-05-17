@@ -2,11 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: F136-Q061-operation-audit-preview
-  in_progress_task: F136
-  ready_tasks:
-    - Q061
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -18,7 +17,7 @@ current_summary:
 - Dashboard, demand plans, schedule plans, plan detail/edit, risks, shift details, unavailability, smart scheduling preview, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, interface integration preview, organization people, today fulfillment, anomaly alerts, deficit heatmap, vendor management, rule configuration, operation audit preview, monthly settlement, report center, supplier review, and review navigation use local/demo data and scoped review context.
 - Frontend build/check path exists through `bash scripts/check.sh`.
 - Backend local unittest path exists, and localhost-only demo import endpoints exist for staff master, staff status, login, and schedule-plan CSV data; production API/database integration is not in scope.
-- Imported demo rows are exposed through localhost-only processed records and are now consumed by dashboard, schedule plans, shift-details, schedule-risks, unavailability, smart scheduling, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, interface integration, organization people, today fulfillment, anomaly alerts, vendor management, rule configuration, monthly settlement, report center, and supplier review for module-level demo summaries.
+- Imported demo rows are exposed through localhost-only processed records and are now consumed by dashboard, schedule plans, shift-details, schedule-risks, unavailability, smart scheduling, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, interface integration, organization people, today fulfillment, anomaly alerts, vendor management, rule configuration, operation audit, monthly settlement, report center, and supplier review for module-level demo summaries.
 - Harness current queue, active task contract, trace index, state check, and git hooks exist.
 
 ## Current P0 Gaps
@@ -43,7 +42,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Execute F136/Q061 as a local-only operation audit preview. Keep it to imported-batch/module evidence and visible no-production-audit boundaries unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, or production audit work.
+Next recommended task should be chosen from local acceptance priorities after PM review. Keep it local-only unless a new Gate explicitly allows cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, or production formula work.
 
 ## Default Execution
 

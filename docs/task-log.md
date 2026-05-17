@@ -1750,3 +1750,21 @@
 - action: 收口智能排班与接口集成 QA。
 - status: `done`
 - notes: 模型测试 73 条通过，E2E smoke 5 条通过并覆盖导入本机 CSV 后 `/smart-scheduling` 与 `/interface-integration` 的 records/readiness 摘要、导航链接和 `结算锁账`、`权限管理`、`操作审计` 开发中边界；最终 check 通过。
+
+- task_id: `F136`
+- source_ids:
+  - `R195`
+- story_ids:
+  - `US207`
+- action: 完成操作审计本机只读预览。
+- status: `done`
+- notes: 新增 `/operation-audit` 页面，读取本机 processed records，展示 `操作审计 records`、导入批次、模块证据、审计样本和最近批次；侧边栏 `系统管理 > 操作审计` 改为真实入口，不做账号登录、认证、权限或生产审计日志。
+
+- task_id: `Q061`
+- source_ids:
+  - `R196`
+- story_ids:
+  - `US208`
+- action: 收口操作审计本机预览 QA。
+- status: `done`
+- notes: 模型测试 74 条通过，E2E smoke 5 条通过并覆盖导入本机 CSV 后 `/operation-audit` 的 records 摘要、操作审计导航链接、`权限管理` 和 `结算锁账` 开发中边界；最终 check 通过。
