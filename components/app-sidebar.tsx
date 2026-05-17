@@ -103,7 +103,7 @@ const nav: NavGroup[] = [
       { title: "供应商管理", href: "/vendor-management", activeMatch: "exact", tag: "P1" },
       { title: "规则配置", href: "/rule-configuration", activeMatch: "exact", tag: "P1" },
       { title: "权限管理", development: true },
-      { title: "操作审计", development: true },
+      { title: "操作审计", href: "/operation-audit", activeMatch: "exact", tag: "P1" },
     ],
   },
 ]

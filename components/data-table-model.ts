@@ -289,6 +289,23 @@ export type InterfaceIntegrationRecordsPreview = {
   statusLabel: "等待导入" | "缺少字段" | "缺少状态日志" | "本机接入预览"
 }
 
+export type OperationAuditRecordsPreview = {
+  importedRows: number
+  sourceCount: number
+  batchCount: number
+  staffRows: number
+  workflowRows: number
+  auditSignals: number
+  latestBatch: string
+  latestSource: string
+  statusLabel:
+    | "等待导入"
+    | "缺少主数据"
+    | "缺少履约数据"
+    | "缺少排班数据"
+    | "本机审计预览"
+}
+
 export type FieldMappingSpec = {
   kind: "staff_master" | "status_log" | "login_log"
   title: string
@@ -875,6 +892,59 @@ export function summarizeInterfaceIntegrationRecords(
         : statusRows === 0
           ? "缺少状态日志"
           : "本机接入预览",
+  }
+}
+
+export function summarizeOperationAuditRecords(
+  records: DashboardImportRecordSummary[]
+): OperationAuditRecordsPreview {
+  if (records.length === 0) {
+    return {
+      importedRows: 0,
+      sourceCount: 0,
+      batchCount: 0,
+      staffRows: 0,
+      workflowRows: 0,
+      auditSignals: 0,
+      latestBatch: "暂无操作审计 records",
+      latestSource: "等待导入",
+      statusLabel: "等待导入",
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+  const staffRows =
+    records.find((record) => record.kind === "staff_master")?.total_rows ?? 0
+  const statusRows =
+    records.find((record) => record.kind === "status_log")?.total_rows ?? 0
+  const loginRows =
+    records.find((record) => record.kind === "login_log")?.total_rows ?? 0
+  const scheduleRows =
+    records.find((record) => record.kind === "schedule_plan")?.total_rows ?? 0
+  const workflowRows = statusRows + loginRows + scheduleRows
+  const auditSignals = [staffRows, statusRows, loginRows, scheduleRows].filter(
+    (value) => value > 0
+  ).length
+
+  return {
+    importedRows: records.reduce((total, record) => total + record.total_rows, 0),
+    sourceCount: records.length,
+    batchCount: new Set(records.map((record) => record.latest_batch_id)).size,
+    staffRows,
+    workflowRows,
+    auditSignals,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel:
+      staffRows === 0
+        ? "缺少主数据"
+        : statusRows + loginRows === 0
+          ? "缺少履约数据"
+          : scheduleRows === 0
+            ? "缺少排班数据"
+            : "本机审计预览",
   }
 }
 

@@ -594,6 +594,26 @@ test("local demo import entry drives batch status placeholders", async ({ page }
       exact: true,
     }),
   ).toBeVisible()
+
+  await gotoAppPage(page, "/operation-audit")
+  const operationAuditMain = page.getByRole("main")
+  await expect(
+    operationAuditMain.locator("h1", { hasText: "操作审计" }),
+  ).toBeVisible()
+  await expect(
+    operationAuditMain.getByText(/操作审计 records \d+ 行/),
+  ).toBeVisible()
+  await expect(
+    operationAuditMain.getByRole("heading", {
+      name: "本机审计证据",
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect(
+    operationAuditMain.getByText("不生成生产审计日志或不可篡改审计存储。", {
+      exact: true,
+    }),
+  ).toBeVisible()
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
@@ -708,11 +728,7 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
   await expect(permissionItem).toHaveAttribute("aria-disabled", "true")
   await expect(permissionItem.getByText("开发中")).toBeVisible()
 
-  const operationAuditItem = sidebar
-    .locator('[data-development-nav-item="true"]')
-    .filter({ hasText: "操作审计" })
-
-  await expect(operationAuditItem).toBeVisible()
-  await expect(operationAuditItem).toHaveAttribute("aria-disabled", "true")
-  await expect(operationAuditItem.getByText("开发中")).toBeVisible()
+  await expect(
+    sidebar.getByRole("link", { name: /操作审计/ }),
+  ).toHaveAttribute("href", "/operation-audit")
 })
