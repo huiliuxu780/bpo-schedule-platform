@@ -5,4 +5,18 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US216
+    requirement_ids: ["R204"]
+    status: in_progress
+    task_ids: ["F140"]
+    priority: P1
+    module: "本机验收"
+    summary: "`/demo-imports` 需要用表格展示最近导入批次和 processed records 来源，让导入入口本身能解释处理后的数据结果。"
+  - id: US217
+    requirement_ids: ["R205"]
+    status: ready
+    task_ids: ["Q066"]
+    priority: P1
+    module: "本机验收"
+    summary: "导入入口表格补齐后，需要模型、E2E 和 Browser 证据证明表格列、空态和本机只读边界可见。"

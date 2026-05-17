@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: F140-Q066-demo-imports-table-parity
+  in_progress_task: F140
+  ready_tasks: [Q066]
 ```
 
 ## Current Stage
@@ -42,7 +42,7 @@ current_summary:
 
 ## Next Recommended Task
 
-Plan the next local-only table/empty-state parity slice for opened modules, or tighten the local demo runbook around the exact pages PM will demonstrate. Keep the next batch readonly and local-only; do not add cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
+Execute F140/Q066 as the next local-only table/empty-state parity slice: make `/demo-imports` show recent batch rows and processed records source rows with clear empty states. Keep the batch readonly and local-only; do not add cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
 
 ## Default Execution
 

@@ -7383,3 +7383,64 @@ tasks:
       - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、发布、自动排班、生产写回、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F140
+    title: "文件导入页表格与空态 parity"
+    priority: P1
+    status: in_progress
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/demo-imports/**"
+      - "lib/demo-imports.ts"
+      - "components/data-table-model.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "`/demo-imports` 展示最近导入批次表格，包含 `数据源`、`状态`、`成功`、`失败` 和 `批次`。"
+      - "`/demo-imports` 展示 processed records 来源表格，包含 `数据源`、`行数`、`样本` 和 `最新批次`。"
+      - "无导入批次或 records 时展示清晰空态。"
+      - "页面继续明确 localhost-only、本机运行态、不接数据库。"
+      - "本批不新增上传类型、不改后端契约、不接数据库、真实集成、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+      - "`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`、`npm run typecheck`、`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实 CORN/HR/WFM/第三方 API 集成"
+      - "需要认证、权限、审批、导出、批量操作、排班发布、自动排班、生产写回、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q066
+    title: "文件导入页表格 parity QA 收口"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    allowed_files:
+      - "app/demo-imports/**"
+      - "lib/demo-imports.ts"
+      - "components/data-table-model.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型测试覆盖最近批次表格 rows 的排序、状态标签和行数。"
+      - "E2E 导入本机 CSV 后，在 `/demo-imports` 看到最近导入批次表格和 processed records 来源表格。"
+      - "Browser 检查确认 `/demo-imports` 可见表格列和本机只读边界。"
+      - "QA 证据明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
+      - "`npm run e2e:smoke`、`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、发布、自动排班、生产写回、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

@@ -2327,3 +2327,29 @@ version: "1.0"
 status: "done"
 notes: "模型测试已覆盖来源表格 rows 的排序、行数、样本和最新批次；E2E 已覆盖本机 CSV 导入后 dashboard 共用摘要表格列、`排班数据` 行和 `schedule_plan` 最新批次可见；QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch。"
 ```
+
+### R204 - demo imports table parity
+
+```yaml
+id: R204
+module: "数据与集成"
+description: "`/demo-imports` 作为本机演示上传入口，需要用表格展示最近导入批次和 processed records 来源结果，让演示人员能在导入入口说明哪些数据已经被处理并被模块读取。"
+source: "Current P1 table parity gap on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "in_progress"
+notes: "本批只做导入入口的本机只读表格和空态，不新增上传类型、不改后端契约、不接数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+```
+
+### R205 - demo imports table parity QA
+
+```yaml
+id: R205
+module: "本机验收"
+description: "导入入口表格补齐后，需要补充模型、E2E 和 Browser 证据，证明 CSV 导入后 `/demo-imports` 能显示批次表格、records 来源表格和本机只读边界。"
+source: "F140 demo imports table parity batch on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "ready"
+notes: "QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
+```

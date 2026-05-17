@@ -3863,3 +3863,42 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
 status: "done"
 ```
+
+### US216 - Demo imports table parity
+
+```yaml
+id: US216
+requirement_ids:
+  - R204
+module: "数据与集成"
+role: "演示人员"
+story: "作为演示人员，我希望文件导入页用表格展示最近导入批次和 processed records 来源结果，这样本机演示时能在导入入口直接说明上传数据已经被处理。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`/demo-imports` 展示最近导入批次表格，包含 `数据源`、`状态`、`成功`、`失败` 和 `批次`。"
+  - "`/demo-imports` 展示 processed records 来源表格，包含 `数据源`、`行数`、`样本` 和 `最新批次`。"
+  - "无导入批次或 records 时展示清晰空态。"
+  - "页面继续明确 localhost-only、本机运行态、不接数据库。"
+  - "本批不新增上传类型、不改后端契约、不接数据库、真实集成、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+status: "in_progress"
+```
+
+### US217 - Demo imports table parity QA
+
+```yaml
+id: US217
+requirement_ids:
+  - R205
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望模型、E2E 和 Browser 覆盖文件导入页表格，这样能证明导入结果在上传入口和业务模块之间保持一致。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "模型测试覆盖最近批次表格 rows 的排序、状态标签和行数。"
+  - "E2E 导入本机 CSV 后，在 `/demo-imports` 看到最近导入批次表格和 processed records 来源表格。"
+  - "Browser 检查确认 `/demo-imports` 可见表格列和本机只读边界。"
+  - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
+status: "ready"
+```
