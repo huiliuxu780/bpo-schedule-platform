@@ -1564,7 +1564,7 @@
 - allowed_files_check: `app/operation-audit/**`, `components/app-sidebar.tsx`, `components/**`, `lib/**`, `scripts/tests/**`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, role management, approval, export, batch operation, production audit log, tamper-proof audit storage, settlement rule, lock, or charge-factor files.
 - scope_diff_check: `app/operation-audit/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
 - check_result: seed-only staged strict state check passed before product work; failing model test first verified `summarizeOperationAuditRecords` was missing; model tests then passed with 74 tests; typecheck and lint passed; frontend `/operation-audit` returned 200 outside sandbox; `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 5 tests and verified operation-audit records plus high-risk development boundaries; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
-- local_commit_sha: `pending final closeout commit`
+- local_commit_sha: `5a57301`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
