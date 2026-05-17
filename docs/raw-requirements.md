@@ -2301,3 +2301,29 @@ version: "1.0"
 status: "done"
 notes: "已新增 E2E route smoke 覆盖 10 个本机演示常用已开放模块，验证页面主标题、模块 marker 可见，并断言不是 dashboard 占位；未修改产品代码，不扩大到数据库、真实集成、认证、权限、审批、导出、批量、发布、自动排班、生产公式、结算规则或收费因子。"
 ```
+
+### R202 - imported records summary table parity
+
+```yaml
+id: R202
+module: "本机验收"
+description: "共用的本机导入 records 摘要需要补齐可扫描的来源表格和无数据空态，展示数据源、行数、样本和最新批次，方便演示人员在 dashboard 和已开放模块中解释导入结果。"
+source: "Current P1 table parity gap on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "in_progress"
+notes: "本批只做本机只读 UI 与模型整理，不接数据库、真实集成、认证、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+```
+
+### R203 - imported records summary table parity QA
+
+```yaml
+id: R203
+module: "本机验收"
+description: "导入 records 摘要表格补齐后，需要补充模型测试和 E2E 证据，证明 CSV 导入后的来源表格字段可见，并且空态/边界仍保持本机只读。"
+source: "F139 imported records summary table parity batch on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "ready"
+notes: "QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
+```

@@ -3825,3 +3825,41 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
 status: "done"
 ```
+
+### US214 - Imported records source table parity
+
+```yaml
+id: US214
+requirement_ids:
+  - R202
+module: "本机验收"
+role: "演示人员"
+story: "作为演示人员，我希望共用导入 records 摘要展示来源表格和空态，这样在各模块演示导入结果时能直接说明每类数据的行数、样本和最新批次。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "共用 `ImportedRecordsSummary` 展示 `数据源`、`行数`、`样本` 和 `最新批次` 表格列。"
+  - "表格覆盖 `坐席主数据`、`状态数据`、`登录数据` 和 `排班数据`，并展示最新批次。"
+  - "无导入 records 时展示清晰空态。"
+  - "文案继续明确仅读取本机运行态导入结果，不使用数据库或生产公式。"
+  - "本批不接数据库、真实集成、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+status: "in_progress"
+```
+
+### US215 - Imported records source table QA
+
+```yaml
+id: US215
+requirement_ids:
+  - R203
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望模型和 E2E 覆盖导入 records 来源表格，这样能证明导入结果不是只映射在局部页面，而是被处理后通过接口读出并进入公共摘要。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "模型测试覆盖来源表格 rows 的排序、行数、样本和最新批次。"
+  - "E2E 导入本机 CSV 后，在 dashboard 共用摘要看到表格列和 `排班数据` 行。"
+  - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
+status: "ready"
+```
