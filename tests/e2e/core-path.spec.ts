@@ -628,6 +628,31 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   ).toBeVisible()
 })
 
+test("opened local module routes render real module pages", async ({ page }) => {
+  const routes = [
+    { path: "/today-fulfillment", heading: "今日履约", marker: "今日履约边界" },
+    { path: "/anomaly-alerts", heading: "异常预警", marker: "异常预警边界" },
+    { path: "/deficit-heatmap", heading: "时段缺口热力图", marker: "缺口热力图边界" },
+    { path: "/vendor-management", heading: "供应商管理", marker: "供应商管理 records" },
+    { path: "/rule-configuration", heading: "规则配置", marker: "规则配置边界" },
+    { path: "/report-center", heading: "报表中心", marker: "报表中心 records" },
+    { path: "/supplier-review", heading: "供应商复盘", marker: "供应商复盘 records" },
+    { path: "/operation-audit", heading: "操作审计", marker: "操作审计 records" },
+    { path: "/smart-scheduling", heading: "智能排班", marker: "智能排班 records" },
+    { path: "/interface-integration", heading: "接口集成", marker: "接口集成 records" },
+  ]
+
+  for (const route of routes) {
+    await gotoAppPage(page, route.path)
+
+    const main = page.getByRole("main")
+    await expect(page).toHaveURL(escapedPathPattern(route.path))
+    await expect(main.locator("h1", { hasText: route.heading })).toBeVisible()
+    await expect(main.locator("h1", { hasText: "经营总览" })).toHaveCount(0)
+    await expect(main.getByText(route.marker).first()).toBeVisible()
+  }
+})
+
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
   await gotoAppPage(page, "/today-fulfillment")
   await expect(
