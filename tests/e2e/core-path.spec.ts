@@ -158,8 +158,19 @@ test("schedule plan draft edit route keeps list context and table controls acces
   const detailUrl = new URL(page.url())
   const detailPath = detailUrl.pathname
   await expect(page.getByText("复核链路")).toBeVisible()
+  const detailMain = page.getByRole("main")
   await expect(
-    page.getByRole("main").getByRole("link", { name: "返回列表" }).first(),
+    detailMain.getByRole("heading", { name: "复核准备" }),
+  ).toBeVisible()
+  await expect(detailMain.getByText("需补齐缺口")).toBeVisible()
+  await expect(
+    detailMain.getByText("先补齐缺口时段，再复核风险和不可用。"),
+  ).toBeVisible()
+  await expect(
+    detailMain.getByText("不提交审批、不发布排班、不做自动排班或生产写回。"),
+  ).toBeVisible()
+  await expect(
+    detailMain.getByRole("link", { name: "返回列表" }).first(),
   ).toHaveAttribute(
     "href",
     "/schedule-plans?query=%E8%8B%8F%E5%B7%9E&status=draft",

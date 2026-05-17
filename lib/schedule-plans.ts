@@ -1,3 +1,5 @@
+import type { UnavailabilityRow } from "@/lib/unavailability"
+
 export type SchedulePlanStatus = "draft" | "review_ready" | "published"
 
 export type SchedulePlanSummary = {
@@ -109,6 +111,19 @@ export type SchedulePlanDraftPayload = {
   site_name: string
   version: string
   intervals: SchedulePlanIntervalInput[]
+}
+
+export type DraftReviewReadinessSummary = {
+  gapIntervals: number
+  highRiskCount: number
+  activeUnavailabilityCount: number
+  readinessSignals: number
+  statusLabel:
+    | "非草稿计划"
+    | "需补齐缺口"
+    | "需复核风险"
+    | "可进入复核准备"
+  nextStep: string
 }
 
 type SchedulePlanListResponse = {
@@ -427,6 +442,65 @@ export function scheduleRiskLevelLabel(level: ScheduleRiskLevel) {
   }
 
   return labels[level]
+}
+
+export function summarizeDraftReviewReadiness(
+  plan: SchedulePlanDetail,
+  risks: ScheduleRiskRow[],
+  unavailableRows: UnavailabilityRow[]
+): DraftReviewReadinessSummary {
+  const gapIntervals = plan.intervals.filter((item) => item.gap_agents > 0).length
+  const highRiskCount = risks.filter((risk) => risk.risk_level === "high").length
+  const activeUnavailabilityCount = unavailableRows.filter(
+    (row) => row.status === "active"
+  ).length
+  const readinessSignals = [
+    gapIntervals,
+    highRiskCount,
+    activeUnavailabilityCount,
+  ].filter((value) => value > 0).length
+
+  if (plan.summary.status !== "draft") {
+    return {
+      gapIntervals,
+      highRiskCount,
+      activeUnavailabilityCount,
+      readinessSignals,
+      statusLabel: "非草稿计划",
+      nextStep: "当前计划不是草稿，只做只读复核，不开放提交审批或发布。",
+    }
+  }
+
+  if (gapIntervals > 0) {
+    return {
+      gapIntervals,
+      highRiskCount,
+      activeUnavailabilityCount,
+      readinessSignals,
+      statusLabel: "需补齐缺口",
+      nextStep: "先补齐缺口时段，再复核风险和不可用。",
+    }
+  }
+
+  if (highRiskCount > 0 || activeUnavailabilityCount > 0) {
+    return {
+      gapIntervals,
+      highRiskCount,
+      activeUnavailabilityCount,
+      readinessSignals,
+      statusLabel: "需复核风险",
+      nextStep: "继续复核高风险和生效不可用，确认后再准备下一步。",
+    }
+  }
+
+  return {
+    gapIntervals,
+    highRiskCount,
+    activeUnavailabilityCount,
+    readinessSignals,
+    statusLabel: "可进入复核准备",
+    nextStep: "当前本机数据可进入复核准备，但不提交审批或发布排班。",
+  }
 }
 
 function normalizeScopeValue(value?: string) {

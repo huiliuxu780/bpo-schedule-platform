@@ -18,6 +18,7 @@ import {
   getSchedulePlan,
   getScheduleRisks,
   schedulePlanStatusLabel,
+  summarizeDraftReviewReadiness,
 } from "@/lib/schedule-plans"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -77,6 +78,11 @@ export default async function SchedulePlanDetailPage({
       row.project_name === plan.summary.project_name &&
       row.site_name === plan.summary.site_name &&
       row.unavailable_date === plan.summary.plan_date
+  )
+  const reviewReadiness = summarizeDraftReviewReadiness(
+    plan,
+    relatedRisks,
+    relatedUnavailability
   )
   const shiftHref = buildShiftDetailsHref({
     from: "schedule-plans",
@@ -206,6 +212,47 @@ export default async function SchedulePlanDetailPage({
                 </CardHeader>
               </Card>
             ) : null}
+            <Card>
+              <CardHeader className="flex flex-row items-start justify-between gap-4">
+                <div>
+                  <CardTitle>复核准备</CardTitle>
+                  <CardDescription>
+                    基于当前草稿缺口、关联风险和生效不可用给出本机下一步。
+                  </CardDescription>
+                </div>
+                <Badge variant="outline">{reviewReadiness.statusLabel}</Badge>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-3 md:grid-cols-4">
+                  <DetailCard
+                    title="缺口时段"
+                    value={`${reviewReadiness.gapIntervals}`}
+                    description="需要先补齐"
+                  />
+                  <DetailCard
+                    title="高风险"
+                    value={`${reviewReadiness.highRiskCount}`}
+                    description="需要继续复核"
+                  />
+                  <DetailCard
+                    title="生效不可用"
+                    value={`${reviewReadiness.activeUnavailabilityCount}`}
+                    description="同日期同职场"
+                  />
+                  <DetailCard
+                    title="准备信号"
+                    value={`${reviewReadiness.readinessSignals}/3`}
+                    description="本机 readiness"
+                  />
+                </div>
+                <div className="rounded-md border bg-muted/20 p-3 text-sm">
+                  <p className="font-medium">{reviewReadiness.nextStep}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    不提交审批、不发布排班、不做自动排班或生产写回。
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
             <section className="grid gap-4 md:grid-cols-4">
               <DetailCard title="状态" value={schedulePlanStatusLabel(plan.summary.status)} />
               <DetailCard title="预测人次" value={`${plan.summary.forecast_agents}`} />

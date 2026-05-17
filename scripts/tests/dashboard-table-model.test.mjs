@@ -43,6 +43,7 @@ import {
   filterShiftDetailRowsByScope,
   filterScheduleRiskRowsByScope,
   scheduleRiskLevelLabel,
+  summarizeDraftReviewReadiness,
 } from "../../lib/schedule-plans.ts";
 import { filterUnavailabilityRowsByScope } from "../../lib/unavailability.ts";
 import {
@@ -1183,6 +1184,87 @@ test("schedule plan helpers filter rows and summarize plan coverage", () => {
     totalScheduled: 28,
     totalGap: 2,
     coverageRate: 0.9333333333333333,
+  });
+});
+
+test("draft review readiness summarizes gaps, risks, and unavailable evidence", () => {
+  const summary = summarizeDraftReviewReadiness(
+    {
+      summary: {
+        id: "plan-draft",
+        plan_date: "2026-05-11",
+        project_name: "博西客服",
+        site_name: "苏州职场",
+        version: "v1",
+        status: "draft",
+        forecast_agents: 29,
+        scheduled_agents: 26,
+        gap_agents: 3,
+        coverage_rate: 0.897,
+        updated_at: "2026-05-11T09:30:00+08:00",
+      },
+      intervals: [
+        {
+          interval_start: "09:00",
+          interval_end: "09:30",
+          forecast_agents: 14,
+          scheduled_agents: 14,
+          gap_agents: 0,
+          coverage_rate: 1,
+          note: "覆盖正常",
+        },
+        {
+          interval_start: "10:00",
+          interval_end: "10:30",
+          forecast_agents: 15,
+          scheduled_agents: 12,
+          gap_agents: 3,
+          coverage_rate: 0.8,
+          note: "培训占用导致缺口",
+        },
+      ],
+    },
+    [
+      {
+        risk_id: "risk-a",
+        plan_id: "plan-draft",
+        plan_date: "2026-05-11",
+        project_name: "博西客服",
+        site_name: "苏州职场",
+        interval_start: "10:00",
+        interval_end: "10:30",
+        risk_level: "high",
+        gap_agents: 3,
+        affected_unavailability: 1,
+        reason: "缺口 3 人",
+        recommendation: "优先复核不可用",
+      },
+    ],
+    [
+      {
+        unavailability_id: "unavail-a",
+        staff_name: "李想",
+        team_name: "一线客服 B 组",
+        project_name: "博西客服",
+        site_name: "苏州职场",
+        unavailable_date: "2026-05-11",
+        start_time: "10:00",
+        end_time: "10:30",
+        reason: "培训占用",
+        status: "active",
+        affected_intervals: 1,
+        note: "影响覆盖率",
+      },
+    ],
+  );
+
+  assert.deepEqual(summary, {
+    gapIntervals: 1,
+    highRiskCount: 1,
+    activeUnavailabilityCount: 1,
+    readinessSignals: 3,
+    statusLabel: "需补齐缺口",
+    nextStep: "先补齐缺口时段，再复核风险和不可用。",
   });
 });
 
