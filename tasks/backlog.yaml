@@ -3214,7 +3214,7 @@ tasks:
   - id: B007
     title: "人员级排班合同与时段展开"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-mvp
     allowed_files:
       - "backend/**"

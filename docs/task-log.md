@@ -44,6 +44,15 @@
 - status: `done`
 - notes: 新增本地只读 `/api/v1/master-data/import-contract` 合同，覆盖坐席、职场、供应商、项目、绑定关系和班次类型的字段、主键、必填字段、外键、校验规则、批次字段、失败行字段和数据质量错误码；不做真实文件导入、不接数据库、不接真实外部系统。
 
+### 2026-05-18
+
+- task_id: `B007`
+- source_ids: [`R093`]
+- story_ids: [`US105`]
+- action: 新增生产雏形人员级排班合同与 0.5h 展开口径。
+- status: `done`
+- notes: 新增本地只读 `/api/v1/personnel-schedules/import-contract` 合同，覆盖人员级排班字段、必填字段、生成字段、校验规则，以及从人员排班展开到 0.5h `interval_schedule` 的 group_by、目标字段和追溯字段；不做真实排班导入、不接数据库、不实现自动排班。
+
 ### 2026-05-12
 
 - task_id: `F018`

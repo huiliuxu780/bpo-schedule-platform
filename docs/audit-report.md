@@ -66,6 +66,28 @@
 - `python -m unittest discover -s backend/tests -v`：通过，21 个后端测试通过。
 - `bash scripts/check.sh`：通过。
 
+### 2026-05-18 - B007 人员级排班合同与时段展开审计
+
+#### 审计结论
+
+- 已新增本地只读 `/api/v1/personnel-schedules/import-contract` 合同端点。
+- 合同覆盖人员级排班字段、主键、必填字段、生成字段和校验规则。
+- 合同明确人员级排班到 0.5h `interval_schedule` 的展开规则：30 分钟粒度、group_by 维度、目标字段和追溯字段。
+- 本轮只做本地合同能力，不做真实排班导入、自动排班、数据库持久化、ORM、迁移、权限、审批、导出、批量或生产公式。
+
+#### 风险
+
+- 该端点是生产雏形本地合同，不代表真实排班导入处理器或可编辑人员排班界面已实现。
+- 跨天、休息/饭点和业务日规则已进入合同口径，但实际计算仍需后续单独实现和测试。
+
+#### 验证
+
+- `python -m unittest ...test_personnel_schedule_import_contract...`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `python -m unittest discover -s backend/tests -v`：通过，23 个后端测试通过。
+- `bash scripts/check.sh`：通过。
+
 ### 2026-05-12 - F018 风险提示表局部 table parity 迁移审计
 
 #### 审计结论

@@ -8,6 +8,7 @@ from backend.app.main import (
     get_schedule_plan,
     list_demand_plans,
     list_master_data_import_contract,
+    list_personnel_schedule_import_contract,
     list_shift_details,
     list_schedule_plans,
     list_schedule_risks,
@@ -27,6 +28,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/schedule-risks", "GET"), routes)
         self.assertIn(("/api/v1/unavailability", "GET"), routes)
         self.assertIn(("/api/v1/master-data/import-contract", "GET"), routes)
+        self.assertIn(("/api/v1/personnel-schedules/import-contract", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
 
@@ -63,6 +65,30 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn("employee_id", binding_contract.foreign_keys)
         self.assertIn("counts_as_scheduled", shift_type_contract.fields)
         self.assertIn("duplicate_primary_key", binding_contract.validation_rules)
+
+    def test_personnel_schedule_import_contract_defines_schedule_detail_fields(self) -> None:
+        response = list_personnel_schedule_import_contract()
+
+        self.assertEqual(response.version, "production-mvp-v1")
+        self.assertEqual(response.entity, "personnel_schedule")
+        self.assertEqual(response.primary_key, ["schedule_detail_id"])
+        self.assertIn("employee_id", response.fields)
+        self.assertIn("shift_type_id", response.fields)
+        self.assertIn("break_windows", response.fields)
+        self.assertIn("meal_windows", response.fields)
+        self.assertIn("expanded_interval_ids", response.generated_fields)
+
+    def test_personnel_schedule_import_contract_defines_half_hour_expansion(self) -> None:
+        response = list_personnel_schedule_import_contract()
+
+        self.assertEqual(response.expansion.interval_minutes, 30)
+        self.assertEqual(response.expansion.source_entity, "personnel_schedule")
+        self.assertEqual(response.expansion.target_entity, "interval_schedule")
+        self.assertIn("business_date", response.expansion.group_by)
+        self.assertIn("workplace_id", response.expansion.group_by)
+        self.assertIn("employee_ids", response.expansion.target_fields)
+        self.assertIn("invalid_time_range", response.validation_rules)
+        self.assertIn("cross_day_without_business_date", response.validation_rules)
 
     def test_list_schedule_plans_returns_required_summary_fields(self) -> None:
         response = list_schedule_plans()

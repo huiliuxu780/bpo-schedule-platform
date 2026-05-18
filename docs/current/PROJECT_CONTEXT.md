@@ -10,7 +10,7 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-Production MVP first-batch planning is queued from `docs/production-mvp-prd.md`. `US104/B006` completed the local master-data import contract. The current ready stories are `US105/B007` and `US106/B008`; both are local/no-database contract work for personnel schedule detail, half-hour interval expansion, demand forecast, login/status logs, and comparison semantics.
+Production MVP first-batch planning is queued from `docs/production-mvp-prd.md`. `US104/B006` completed the local master-data import contract, and `US105/B007` completed the personnel schedule import contract with 0.5h interval expansion semantics. The current ready story is `US106/B008`, local/no-database contract work for demand forecast, login/status logs, and comparison semantics.
 
 The last completed product chain was `US083/F041 -> ... -> US102/Q014`, which extended local table parity across schedule plans, schedule risks, and unavailability tables without database, package, backend contract, approval, export, batch, permission, or production formula work.
 
@@ -55,4 +55,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Execute `US105/B007`, then `US106/B008` on `codex/production-mvp-first-batch` if no stop condition is hit. Keep the scope local-contract only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.
+Execute `US106/B008` on `codex/production-mvp-first-batch` if no stop condition is hit. Keep the scope local-contract only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.

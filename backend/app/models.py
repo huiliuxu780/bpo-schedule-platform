@@ -79,6 +79,26 @@ class MasterDataImportContractResponse(BaseModel):
     quality_error_codes: list[str]
 
 
+class IntervalExpansionContract(BaseModel):
+    source_entity: str
+    target_entity: str
+    interval_minutes: int = Field(gt=0)
+    group_by: list[str]
+    target_fields: list[str]
+    traceability_fields: list[str]
+
+
+class PersonnelScheduleImportContractResponse(BaseModel):
+    version: str
+    entity: str
+    primary_key: list[str]
+    fields: list[str]
+    required_fields: list[str]
+    generated_fields: list[str]
+    validation_rules: list[str]
+    expansion: IntervalExpansionContract
+
+
 class UnavailabilityRow(BaseModel):
     unavailability_id: str
     staff_name: str

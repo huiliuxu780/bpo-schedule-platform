@@ -1753,7 +1753,7 @@ stories:
     story: "作为排班运营，我希望人员级排班合同能明确员工、日期、职场、供应商、班次、休息/饭点和 0.5h 展开结果，以便后续排班导入和时段汇总可以对齐。"
     task_type: "backend-mvp"
     priority: "P0"
-    status: "ready"
+    status: "done"
   - id: US106
     requirement_ids: [R094, R095]
     task_ids: [B008]

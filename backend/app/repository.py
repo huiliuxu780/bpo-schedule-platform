@@ -4,6 +4,8 @@ from backend.app.models import (
     DemandPlanRow,
     MasterDataEntityContract,
     MasterDataImportContractResponse,
+    IntervalExpansionContract,
+    PersonnelScheduleImportContractResponse,
     ScheduleRiskLevel,
     ScheduleRiskRow,
     SchedulePlanDetail,
@@ -226,6 +228,85 @@ MASTER_DATA_IMPORT_CONTRACT = MasterDataImportContractResponse(
         "invalid_timezone",
         "invalid_boolean_value",
     ],
+)
+
+PERSONNEL_SCHEDULE_IMPORT_CONTRACT = PersonnelScheduleImportContractResponse(
+    version="production-mvp-v1",
+    entity="personnel_schedule",
+    primary_key=["schedule_detail_id"],
+    fields=[
+        "schedule_detail_id",
+        "schedule_version_id",
+        "employee_id",
+        "schedule_date",
+        "business_date",
+        "workplace_id",
+        "supplier_id",
+        "project_id",
+        "skill_group",
+        "skill_level",
+        "shift_type_id",
+        "start_at",
+        "end_at",
+        "break_windows",
+        "meal_windows",
+        "status",
+    ],
+    required_fields=[
+        "schedule_detail_id",
+        "schedule_version_id",
+        "employee_id",
+        "business_date",
+        "workplace_id",
+        "supplier_id",
+        "project_id",
+        "shift_type_id",
+        "start_at",
+        "end_at",
+        "status",
+    ],
+    generated_fields=["expanded_interval_ids"],
+    validation_rules=[
+        "missing_required_field",
+        "duplicate_primary_key",
+        "unknown_employee_id",
+        "unknown_shift_type_id",
+        "invalid_time_range",
+        "cross_day_without_business_date",
+        "break_or_meal_outside_shift",
+    ],
+    expansion=IntervalExpansionContract(
+        source_entity="personnel_schedule",
+        target_entity="interval_schedule",
+        interval_minutes=30,
+        group_by=[
+            "schedule_version_id",
+            "business_date",
+            "workplace_id",
+            "project_id",
+            "skill_group",
+            "skill_level",
+            "interval_start",
+            "interval_end",
+        ],
+        target_fields=[
+            "interval_schedule_id",
+            "schedule_version_id",
+            "business_date",
+            "workplace_id",
+            "project_id",
+            "interval_start",
+            "interval_end",
+            "scheduled_agents",
+            "employee_ids",
+            "generated_from",
+        ],
+        traceability_fields=[
+            "schedule_detail_id",
+            "expanded_interval_ids",
+            "generated_from",
+        ],
+    ),
 )
 
 
@@ -461,6 +542,10 @@ def list_plan_summaries(
 
 def get_master_data_import_contract() -> MasterDataImportContractResponse:
     return MASTER_DATA_IMPORT_CONTRACT
+
+
+def get_personnel_schedule_import_contract() -> PersonnelScheduleImportContractResponse:
+    return PERSONNEL_SCHEDULE_IMPORT_CONTRACT
 
 
 def list_shift_detail_rows(

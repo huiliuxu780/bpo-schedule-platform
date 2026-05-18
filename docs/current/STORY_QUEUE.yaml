@@ -6,15 +6,6 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: "US105"
-    requirement_ids:
-      - "R093"
-    task_ids:
-      - "B007"
-    status: "ready"
-    priority: "P0"
-    module: "排班"
-    summary: "定义人员级排班合同和 0.5h 时段展开口径。"
   - id: "US106"
     requirement_ids:
       - "R094"
