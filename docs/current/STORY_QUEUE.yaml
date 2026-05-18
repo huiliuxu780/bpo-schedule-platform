@@ -5,9 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US222
-    status: in_progress
-    priority: P1
-    task_ids: ["F143"]
-    acceptance_ref: "docs/user-stories.md#US222"
+stories: []

@@ -2327,6 +2327,27 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-18 - Frontend Tailwind Source Scope Repair
+
+#### 审计结论
+
+- `F143/US222` 已修复本机前端样式退化问题。
+- 故障复现时，dashboard 的 `--background`、`--foreground` 和 `--border` 主题变量为空，浏览器解析到的 dev CSS 中混入 `self.__next_f.push(...)` 片段。
+- 根因是 Tailwind dev source 扫描把 `.next` 生成物中的 Next RSC 脚本片段误识别为 class，生成异常选择器后导致后续主题规则无法被浏览器解析。
+- `app/globals.css` 已显式排除 `.next` 和 `test-results` source；修复不改业务页面逻辑、不改后端、不接数据库、不加依赖。
+
+#### 风险
+
+- 这是前端 dev/build source scope 修复，不代表新增任何业务能力。
+- 若以后新增其他生成目录并被 Tailwind 自动扫描，仍需要同样排除。
+
+#### 验证
+
+- Browser 复现：修复前 dashboard 视觉退化为裸黑白样式，CSSOM 中 `rootVars.background/foreground/border` 为空，样式表尾部存在 `__next_f` 片段。
+- CSS 响应检查：修复后 `layout.css` 不再包含 `__next_f` 或 `<script>` 污染片段，仍包含 `:root`、`.dark` 和 `--background`。
+- Browser 复验：dashboard 主题变量恢复为 `oklch(0.145 0 0)`、`oklch(0.985 0 0)` 和 `oklch(1 0 0 / 10%)`，视觉恢复为 shadcn dashboard 样式。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

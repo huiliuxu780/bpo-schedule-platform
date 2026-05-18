@@ -1885,3 +1885,12 @@
 - action: 收口管理页面表格 parity QA。
 - status: `done`
 - notes: 模型测试 82 条通过，E2E smoke 6 条通过并覆盖本机导入链后 `/deficit-heatmap`、`/vendor-management` 和 `/rule-configuration` 的表格字段；Browser 检查确认三个页面表格列、本机只读边界和桌面侧边栏可见，最终 `bash scripts/check.sh` 通过。
+
+- task_id: `F143`
+- source_ids:
+  - `R210`
+- story_ids:
+  - `US222`
+- action: 修复前端 Tailwind source scope，避免 `.next` 生成物污染 dev CSS。
+- status: `done`
+- notes: Browser 复现 dashboard 样式退化，CSS 中存在 `__next_f`/Next RSC 片段导致主题变量未生效；`app/globals.css` 已排除 `.next` 和 `test-results` source，Browser 验证主题变量恢复且 CSS 污染片段消失。本批不改业务页面逻辑、后端、数据库、依赖或生产规则。
