@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: F142-Q068-admin-table-parity
+  in_progress_task: F142
+  ready_tasks: [Q068]
 ```
 
 ## Current Stage
@@ -42,7 +42,7 @@ current_summary:
 
 ## Next Recommended Task
 
-No active task is queued. If PM asks to continue, choose the next smallest local-only table/empty-state parity slice from the opened modules or prepare a local demo runbook; keep the work readonly and local-only, and do not add cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work without a new Gate.
+Execute F142/Q068 as the next local-only table/empty-state parity slice: make `时段缺口热力图`、`供应商管理` and `规则配置` expose module-specific table rows and empty states that explain local seed/imported records. Keep the batch readonly and local-only; do not add cloud, database, real integration, package/lockfile, auth, permission, approval, export, batch, production audit, publishing, settlement lock, or production formula work.
 
 ## Default Execution
 

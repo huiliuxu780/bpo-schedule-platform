@@ -3941,3 +3941,43 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
 status: "done"
 ```
+
+### US220 - Admin table parity
+
+```yaml
+id: US220
+requirement_ids:
+  - R208
+module: "运营工作台 / 系统管理"
+role: "演示人员"
+story: "作为演示人员，我希望时段缺口热力图、供应商管理和规则配置页面用表格展示本机缺口、供应商和规则目录，这样演示时能快速扫描这些已开放模块的结果。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`时段缺口热力图` 展示严重缺口表格，包含 `日期`、`时段` 和 `缺口`。"
+  - "`供应商管理` 展示供应商分布表格，包含 `供应商`、`样本坐席数` 和 `状态`。"
+  - "`规则配置` 展示规则目录表格，包含 `规则`、`状态` 和 `说明`。"
+  - "无 seed/imported rows 时展示清晰空态。"
+  - "页面继续明确 localhost-only、本机运行态、不接数据库。"
+  - "本批不改后端契约、不接数据库、真实集成、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+status: "in_progress"
+```
+
+### US221 - Admin table parity QA
+
+```yaml
+id: US221
+requirement_ids:
+  - R209
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望模型、E2E 和 Browser 覆盖管理/运营页面表格，这样能证明这些已开放模块不是占位，而是有可扫描的本机只读结果。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "模型测试覆盖严重缺口 rows、供应商分布 rows 和规则目录 rows 的字段整理。"
+  - "E2E 进入三个页面后能看到表格字段。"
+  - "Browser 检查确认三个页面可见表格列和本机只读边界。"
+  - "QA 记录明确 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
+status: "ready"
+```

@@ -2379,3 +2379,29 @@ version: "1.0"
 status: "done"
 notes: "模型测试覆盖今日履约输入 rows 和异常预警 rows；E2E 覆盖本机 CSV 导入后 `今日履约` 与 `异常预警` 表格列和批次字段；Browser 检查确认两个页面的表格列、本机只读边界和桌面侧边栏可见。QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
 ```
+
+### R208 - admin table parity
+
+```yaml
+id: R208
+module: "运营工作台 / 系统管理"
+description: "`时段缺口热力图`、`供应商管理` 和 `规则配置` 已经开放本机只读页面，但局部内容仍偏卡片/列表展示，需要补齐可扫描表格和空态，让演示人员能说明 seed/imported records 如何进入这些页面。"
+source: "Current P1 table parity gap after Q067 on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "in_progress"
+notes: "本批只做三个已开放页面的本机只读表格和空态，不改后端契约、不接数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+```
+
+### R209 - admin table parity QA
+
+```yaml
+id: R209
+module: "本机验收"
+description: "管理/运营页面表格补齐后，需要补充模型、E2E 和 Browser 证据，证明 `时段缺口热力图`、`供应商管理` 和 `规则配置` 能显示模块内表格字段和本机只读边界。"
+source: "F142 admin table parity batch on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "ready"
+notes: "QA 限定在 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
+```
