@@ -3999,3 +3999,41 @@ acceptance:
   - "修复不改业务页面逻辑、不接数据库、不改后端、不引入新依赖。"
 status: "done"
 ```
+
+### US223 - Development entry readonly previews
+
+```yaml
+id: US223
+requirement_ids:
+  - R211
+module: "系统管理 / 结算管理"
+role: "演示人员"
+story: "作为演示人员，我希望权限管理和结算锁账不再只是导航占位，而是能打开本机只读预览页，这样演示时能说明当前已开放内容和后续 Gate 边界。"
+task_type: "feature"
+priority: "P1"
+acceptance:
+  - "`权限管理` 侧边栏入口可点击，打开 `/permission-management`。"
+  - "`结算锁账` 侧边栏入口可点击，打开 `/settlement-lock`。"
+  - "两个页面展示本机只读能力表格、数据来源摘要和需后续 Gate 的生产能力。"
+  - "页面明确不做真实登录、认证、授权、权限判定、锁账动作、结算公式、收费因子、账单、审批、导出、批量、数据库、真实接口或生产写回。"
+status: "in_progress"
+```
+
+### US224 - Development entry previews QA
+
+```yaml
+id: US224
+requirement_ids:
+  - R212
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望模型、E2E 和 Browser 覆盖新开放的权限管理和结算锁账入口，这样能证明它们不是占位，同时没有越界实现生产能力。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "模型测试覆盖权限管理和结算锁账预览 rows 与摘要。"
+  - "E2E 覆盖两个路由渲染和侧边栏入口不再是 `data-development-nav-item`。"
+  - "Browser 检查确认两个页面可见，表格和本机只读边界没有样式退化。"
+  - "QA 记录明确 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-auth、no-permission-enforcement、no-approval、no-export、no-batch、no-production-settlement、no-real-lock。"
+status: "ready"
+```

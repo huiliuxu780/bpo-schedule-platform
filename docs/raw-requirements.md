@@ -2418,3 +2418,29 @@ version: "1.0"
 status: "done"
 notes: "`app/globals.css` 已显式排除 `.next` 和 `test-results` source；Browser 验证 CSS 不再包含 `__next_f` 片段，主题变量恢复。本批不改业务页面逻辑、后端、数据库、真实集成、认证、权限、审批、导出、批量、生产公式、结算规则或收费因子。"
 ```
+
+### R211 - development entry readonly previews
+
+```yaml
+id: R211
+module: "系统管理 / 结算管理"
+description: "导航里仍有 `权限管理` 和 `结算锁账` 以开发中占位出现，需要先开放成本机只读预览页，让演示人员能说明哪些能力已可查看、哪些生产能力必须后续 Gate。"
+source: "PM request to continue filling undeveloped navigation items on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "in_progress"
+notes: "本批只做本机只读页面和路由开放；不实现账号登录、认证、授权、权限判定、用户角色维护、真实锁账、结算公式、收费因子、账单、审批、导出、批量、数据库、真实接口或生产写回。"
+```
+
+### R212 - development entry previews QA
+
+```yaml
+id: R212
+module: "本机验收"
+description: "开放 `权限管理` 和 `结算锁账` 后，需要补充模型、E2E 和 Browser 证据，证明两个入口可点击、页面可见，并且边界仍是本机只读。"
+source: "F144 development entry readonly preview batch on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "ready"
+notes: "QA 只验证本机只读预览、路由、表格和边界文案；不验证真实权限、锁账、结算公式、收费因子、审批、导出、批量、数据库或生产写回。"
+```

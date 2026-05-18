@@ -6,5 +6,101 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
-batch: null
-tasks: []
+batch:
+  id: batch-031-dev-entry-previews
+  branch: codex/f-batch-031-dev-entry-previews
+  task_ids: ["F144", "Q069"]
+  allowed_gate_combo: ["frontend-scaffold", "qa"]
+  scope_reason: "F144 and Q069 share the same readonly navigation-preview scope, files, branch, and verification path."
+  scope: "本机只读开发中入口开放；不做权限/锁账生产能力。"
+  risk: low
+tasks:
+  - id: F144
+    story_ids: ["US223"]
+    status: in_progress
+    gate: frontend-scaffold
+    branch: codex/f-batch-031-dev-entry-previews
+    allowed_files:
+      - "app/permission-management/**"
+      - "app/settlement-lock/**"
+      - "components/app-sidebar.tsx"
+      - "components/data-table-model.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实外部集成、认证、权限、审批、导出、批量、生产写回、生产公式、结算规则、收费因子或真实锁账"
+      - "验证失败"
+    acceptance_ref: tasks/backlog.yaml#F144
+    verification:
+      - "node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs"
+      - "npm run typecheck"
+      - "npm run e2e:smoke"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "权限管理和结算锁账都有真实路由和本机只读页面。"
+      - "侧边栏两个入口不再显示开发中 badge，且可点击。"
+      - "页面明确不做真实权限、锁账、公式、收费因子、审批、导出、批量、数据库或生产写回。"
+  - id: Q069
+    story_ids: ["US224"]
+    status: ready
+    gate: qa
+    branch: codex/f-batch-031-dev-entry-previews
+    allowed_files:
+      - "app/permission-management/**"
+      - "app/settlement-lock/**"
+      - "components/app-sidebar.tsx"
+      - "components/data-table-model.ts"
+      - "scripts/tests/dashboard-table-model.test.mjs"
+      - "tests/e2e/core-path.spec.ts"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要数据库、真实外部集成、认证、权限、审批、导出、批量、生产公式、结算规则、收费因子或真实锁账"
+      - "验证失败"
+    acceptance_ref: tasks/backlog.yaml#Q069
+    verification:
+      - "npm run e2e:smoke"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "模型测试覆盖两个预览页的 rows 和摘要。"
+      - "E2E 覆盖两个路由和侧边栏入口。"
+      - "Browser 检查确认页面可见并保持本机只读边界。"

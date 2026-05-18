@@ -122,6 +122,8 @@ stories:
   US220: {file: "docs/user-stories.md", requirement_ids: ["R208"], task_ids: ["F142"], archive_refs: []}
   US221: {file: "docs/user-stories.md", requirement_ids: ["R209"], task_ids: ["Q068"], archive_refs: []}
   US222: {file: "docs/user-stories.md", requirement_ids: ["R210"], task_ids: ["F143"], archive_refs: []}
+  US223: {file: "docs/user-stories.md", requirement_ids: ["R211"], task_ids: ["F144"], archive_refs: []}
+  US224: {file: "docs/user-stories.md", requirement_ids: ["R212"], task_ids: ["Q069"], archive_refs: []}
 tasks:
   R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], gate: "qa"}
   H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], gate: "state-hygiene"}
@@ -191,6 +193,8 @@ tasks:
   F142: {file: "tasks/backlog.yaml", story_ids: ["US220"], gate: "frontend-scaffold"}
   Q068: {file: "tasks/backlog.yaml", story_ids: ["US221"], gate: "qa"}
   F143: {file: "tasks/backlog.yaml", story_ids: ["US222"], gate: "frontend-scaffold"}
+  F144: {file: "tasks/backlog.yaml", story_ids: ["US223"], gate: "frontend-scaffold"}
+  Q069: {file: "tasks/backlog.yaml", story_ids: ["US224"], gate: "qa"}
 requirements:
   REQ-R001: {file: "docs/requirements-inventory.md", story_ids: ["US-R001"], task_ids: ["R001"]}
   REQ-H001: {file: "docs/harness-operating-model.md", story_ids: ["US-H001"], task_ids: ["H001"]}
@@ -276,6 +280,8 @@ requirements:
   R208: {file: "docs/raw-requirements.md", story_ids: ["US220"], task_ids: ["F142"]}
   R209: {file: "docs/raw-requirements.md", story_ids: ["US221"], task_ids: ["Q068"]}
   R210: {file: "docs/raw-requirements.md", story_ids: ["US222"], task_ids: ["F143"]}
+  R211: {file: "docs/raw-requirements.md", story_ids: ["US223"], task_ids: ["F144"]}
+  R212: {file: "docs/raw-requirements.md", story_ids: ["US224"], task_ids: ["Q069"]}
 legacy_reference:
   requirements: "docs/raw-requirements.md"
   stories: "docs/user-stories.md"
