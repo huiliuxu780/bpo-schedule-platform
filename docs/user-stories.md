@@ -4054,7 +4054,8 @@ acceptance:
   - "核心业务页不再把 `本机只读`、`localhost-only`、`不接数据库`、`readiness` 作为功能内容。"
   - "导入、批次和验收边界信息保留在 `/demo-imports`、审计或 QA 文档。"
   - "业务页面仍能读取现有数据并展示业务对象、业务状态和业务入口。"
-status: "in_progress"
+status: "done"
+notes: "业务页面已从导入/演示/验收口径恢复为业务对象、业务状态、能力清单和业务入口表达；导入/批次/本机边界保留在 `/demo-imports` 与 QA/审计记录中。"
 ```
 
 ### US226 - Product page semantics cleanup QA
@@ -4072,5 +4073,5 @@ acceptance:
   - "E2E 不再断言核心业务页的 `records` marker。"
   - "E2E 覆盖班次、履约、权限、结算等页面的业务标题和业务表格。"
   - "审计记录说明导入/演示语义已从业务页面剥离。"
-status: "ready"
+status: "done"
 ```

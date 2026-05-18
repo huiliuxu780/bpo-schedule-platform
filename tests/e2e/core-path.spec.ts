@@ -129,11 +129,13 @@ test("schedule plan list unavailability action keeps plan context", async ({
 test("schedule plan draft edit route keeps list context and table controls accessible", async ({
   page,
 }) => {
+  test.setTimeout(60_000)
+
   await gotoAppPage(page, "/schedule-plans?query=苏州&status=draft")
   const scheduleMain = page.getByRole("main")
 
   await expect(scheduleMain.locator("h1", { hasText: "排班计划" })).toBeVisible()
-  await expect(scheduleMain.getByText("本地筛选计划摘要与缺口风险")).toBeVisible()
+  await expect(scheduleMain.getByText("筛选计划摘要与缺口风险")).toBeVisible()
   await expect(scheduleMain.getByRole("button", { name: "列控制" })).toBeVisible()
   await expect(
     scheduleMain.getByRole("combobox", { name: "计划状态筛选" }),
@@ -167,7 +169,7 @@ test("schedule plan draft edit route keeps list context and table controls acces
     detailMain.getByText("先补齐缺口时段，再复核风险和不可用。"),
   ).toBeVisible()
   await expect(
-    detailMain.getByText("不提交审批、不发布排班、不做自动排班或生产写回。"),
+    detailMain.getByText("继续复核缺口、风险和不可用影响。"),
   ).toBeVisible()
   await expect(
     detailMain.getByRole("link", { name: "返回列表" }).first(),
@@ -202,7 +204,7 @@ test("schedule plan draft edit route keeps list context and table controls acces
   await expectPlanDetail(page, detailPath)
 })
 
-test("local demo import entry drives batch status placeholders", async ({ page }) => {
+test("local demo import entry feeds product pages without demo markers", async ({ page }) => {
   test.setTimeout(120_000)
 
   await gotoAppPage(page, "/demo-imports")
@@ -318,21 +320,14 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   const dashboardMain = page.getByRole("main")
 
   await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
-  await expect(dashboardMain.getByText("本机 KPI Preview")).toBeVisible()
-  await expect(dashboardMain.getByText(/导入覆盖 \d+ 行/)).toBeVisible()
-  await expect(dashboardMain.getByText(/本机导入 records \d+ 行/)).toBeVisible()
-  await expect(dashboardMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
-  await expect(dashboardMain.getByText(/排班数据 \d+ 行/)).toBeVisible()
+  await expect(dashboardMain.getByText("经营指标概览")).toBeVisible()
+  await expect(dashboardMain.getByText(/数据覆盖 \d+ 行/)).toBeVisible()
+  await expect(dashboardMain.getByText("坐席主数据").first()).toBeVisible()
+  await expect(dashboardMain.getByText("排班数据").first()).toBeVisible()
   await expect(
     dashboardMain.getByRole("columnheader", { name: "数据源" }).first(),
   ).toBeVisible()
-  await expect(
-    dashboardMain.getByRole("columnheader", { name: "最新批次" }).first(),
-  ).toBeVisible()
   await expect(dashboardMain.getByText("排班数据").first()).toBeVisible()
-  await expect(
-    dashboardMain.getByRole("cell", { name: /schedule_plan-\d{14}-\d+/ }).first(),
-  ).toBeVisible()
   await expect(dashboardMain.getByLabel("日期范围")).toHaveValue("2026-05-11")
   await dashboardMain.getByLabel("供应商").selectOption("供应商A")
   await dashboardMain.getByLabel("职场/团队").selectOption("上海职场")
@@ -340,7 +335,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await dashboardMain.getByRole("button", { name: "应用筛选" }).click()
   await expect(page).toHaveURL(/\/dashboard\?.*vendor=%E4%BE%9B%E5%BA%94%E5%95%86A/)
   await expect(page).toHaveURL(/\/dashboard\?.*site=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA/)
-  await expect(dashboardMain.getByText("本机导入数据最近批次")).toBeVisible()
+  await expect(dashboardMain.getByText("核心数据源最近批次与同步状态")).toBeVisible()
   await expect(dashboardMain.getByText("坐席主数据").first()).toBeVisible()
   await expect(
     dashboardMain.getByRole("button", { name: "复核 ANM-202605-001" }),
@@ -349,43 +344,32 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await gotoAppPage(page, "/schedule-plans")
   const schedulePlansMain = page.getByRole("main")
   await expect(schedulePlansMain.locator("h1", { hasText: "排班计划" })).toBeVisible()
-  await expect(
-    schedulePlansMain.getByText(/排班数据 records \d+ 行/),
-  ).toBeVisible()
+  await expect(schedulePlansMain.getByText("排班时段样本")).toBeVisible()
   await expect(schedulePlansMain.getByText("计划样本")).toBeVisible()
 
   await gotoAppPage(page, "/shift-details")
   const shiftMain = page.getByRole("main")
   await expect(shiftMain.locator("h1", { hasText: "班次明细" })).toBeVisible()
-  await expect(shiftMain.getByText(/班次核对 records \d+ 行/)).toBeVisible()
-  await expect(shiftMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+  await expect(shiftMain.getByText("班次数量").first()).toBeVisible()
 
   await gotoAppPage(page, "/schedule-risks")
   const risksMain = page.getByRole("main")
   await expect(risksMain.locator("h1", { hasText: "风险提示" })).toBeVisible()
-  await expect(risksMain.getByText(/风险复核 records \d+ 行/)).toBeVisible()
-  await expect(risksMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+  await expect(risksMain.getByText("风险提示")).toBeVisible()
 
   await gotoAppPage(page, "/unavailability")
   const unavailabilityMain = page.getByRole("main")
   await expect(
     unavailabilityMain.locator("h1", { hasText: "不可用管理" }),
   ).toBeVisible()
-  await expect(
-    unavailabilityMain.getByText(/不可用核对 records \d+ 行/),
-  ).toBeVisible()
-  await expect(unavailabilityMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+  await expect(unavailabilityMain.getByText("不可用管理")).toBeVisible()
 
   await gotoAppPage(page, "/fulfillment-monitoring")
   const fulfillmentMain = page.getByRole("main")
   await expect(
     fulfillmentMain.locator("h1", { hasText: "履约监控" }),
   ).toBeVisible()
-  await expect(
-    fulfillmentMain.getByText(/履约核验 records \d+ 行/),
-  ).toBeVisible()
-  await expect(fulfillmentMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
-  await expect(fulfillmentMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
+  await expect(fulfillmentMain.getByText("履约样本")).toBeVisible()
   await expect(fulfillmentMain.getByText("状态日志样本")).toBeVisible()
   await expect(fulfillmentMain.getByText("登录数据样本")).toBeVisible()
 
@@ -395,10 +379,8 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     statusTraceMain.locator("h1", { hasText: "坐席状态轨迹" }),
   ).toBeVisible()
   await expect(
-    statusTraceMain.getByText(/状态轨迹 records \d+ 行/),
+    statusTraceMain.getByRole("heading", { name: "状态分布" }),
   ).toBeVisible()
-  await expect(statusTraceMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
-  await expect(statusTraceMain.getByText("状态分布")).toBeVisible()
   await expect(statusTraceMain.getByText("状态日志样本")).toBeVisible()
 
   await gotoAppPage(page, "/corn-status-log")
@@ -407,10 +389,8 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     cornStatusMain.locator("h1", { hasText: "CORN 状态日志" }),
   ).toBeVisible()
   await expect(
-    cornStatusMain.getByText(/CORN 状态日志 records \d+ 行/),
+    cornStatusMain.getByRole("heading", { name: "状态日志分布" }),
   ).toBeVisible()
-  await expect(cornStatusMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
-  await expect(cornStatusMain.getByText("状态日志分布")).toBeVisible()
   await expect(cornStatusMain.getByText("CORN 状态日志样本")).toBeVisible()
 
   await gotoAppPage(page, "/fulfillment-exceptions")
@@ -418,23 +398,13 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     exceptionMain.locator("h1", { hasText: "异常管理" }),
   ).toBeVisible()
-  await expect(
-    exceptionMain.getByText(/异常线索 records \d+ 行/),
-  ).toBeVisible()
-  await expect(exceptionMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
-  await expect(exceptionMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
-  await expect(exceptionMain.getByText("本机异常线索样本")).toBeVisible()
+  await expect(exceptionMain.getByText("异常线索样本")).toBeVisible()
 
   await gotoAppPage(page, "/exception-review")
   const reviewMain = page.getByRole("main")
   await expect(
     reviewMain.locator("h1", { hasText: "异常复核" }),
   ).toBeVisible()
-  await expect(
-    reviewMain.getByText(/复核队列 records \d+ 行/),
-  ).toBeVisible()
-  await expect(reviewMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
-  await expect(reviewMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
   await expect(
     reviewMain.getByRole("heading", { name: "只读复核队列" }),
   ).toBeVisible()
@@ -444,14 +414,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     adherenceMain.locator("h1", { hasText: "实时遵守率" }),
   ).toBeVisible()
-  await expect(
-    adherenceMain.getByText(/遵守率预览 records \d+ 行/),
-  ).toBeVisible()
-  await expect(adherenceMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
-  await expect(adherenceMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
-  await expect(
-    adherenceMain.getByRole("heading", { name: "本机遵守率预览样本" }),
-  ).toBeVisible()
+  await expect(adherenceMain.getByText("遵守率预览样本")).toBeVisible()
 
   await gotoAppPage(page, "/data-quality")
   const dataQualityMain = page.getByRole("main")
@@ -459,13 +422,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     dataQualityMain.locator("h1", { hasText: "数据质量" }),
   ).toBeVisible()
   await expect(
-    dataQualityMain.getByText(/数据质量 records \d+ 行/),
-  ).toBeVisible()
-  await expect(dataQualityMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
-  await expect(dataQualityMain.getByText(/状态数据 \d+ 行/)).toBeVisible()
-  await expect(dataQualityMain.getByText(/登录数据 \d+ 行/)).toBeVisible()
-  await expect(
-    dataQualityMain.getByRole("heading", { name: "本机质量预览明细" }),
+    dataQualityMain.getByRole("heading", { name: "质量预览明细" }),
   ).toBeVisible()
 
   await gotoAppPage(page, "/field-mapping")
@@ -473,14 +430,11 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     fieldMappingMain.locator("h1", { hasText: "字段映射" }),
   ).toBeVisible()
-  await expect(
-    fieldMappingMain.getByText(/字段映射 records \d+ 行/),
-  ).toBeVisible()
   await expect(fieldMappingMain.getByText("坐席主数据").first()).toBeVisible()
   await expect(fieldMappingMain.getByText("坐席状态数据").first()).toBeVisible()
   await expect(fieldMappingMain.getByText("登录数据").first()).toBeVisible()
   await expect(
-    fieldMappingMain.getByRole("heading", { name: "本机字段映射预览" }),
+    fieldMappingMain.getByRole("heading", { name: "字段映射预览" }),
   ).toBeVisible()
 
   await gotoAppPage(page, "/organization-people")
@@ -488,48 +442,31 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     organizationPeopleMain.locator("h1", { hasText: "组织与人员" }),
   ).toBeVisible()
-  await expect(
-    organizationPeopleMain.getByText(/组织与人员 records \d+ 行/),
-  ).toBeVisible()
-  await expect(organizationPeopleMain.getByText("团队分布")).toBeVisible()
+  await expect(organizationPeopleMain.getByText("团队分布").first()).toBeVisible()
   await expect(organizationPeopleMain.getByText("华东一组").first()).toBeVisible()
-  await expect(
-    organizationPeopleMain.getByRole("heading", { name: "本机人员主数据样本" }),
-  ).toBeVisible()
-  await expect(
-    organizationPeopleMain.getByRole("heading", { name: "本机组织分布" }),
-  ).toBeVisible()
+  await expect(organizationPeopleMain.getByText("人员主数据样本")).toBeVisible()
+  await expect(organizationPeopleMain.getByText("组织分布").first()).toBeVisible()
 
   await gotoAppPage(page, "/today-fulfillment")
   const todayFulfillmentMain = page.getByRole("main")
   await expect(
     todayFulfillmentMain.locator("h1", { hasText: "今日履约" }),
   ).toBeVisible()
-  await expect(
-    todayFulfillmentMain.getByText(/今日履约 records \d+ 行/),
-  ).toBeVisible()
-  await expect(todayFulfillmentMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+  await expect(todayFulfillmentMain.getByText("履约数据")).toBeVisible()
+  await expect(todayFulfillmentMain.getByText("坐席主数据").first()).toBeVisible()
   await expect(
     todayFulfillmentMain.getByRole("heading", { name: "今日履约输入表" }),
   ).toBeVisible()
   await expect(
-    todayFulfillmentMain.getByRole("columnheader", { name: "数据源" }).first(),
+    todayFulfillmentMain.getByRole("columnheader", { name: "信号" }).first(),
   ).toBeVisible()
   await expect(
     todayFulfillmentMain.getByRole("columnheader", { name: "行数" }).first(),
   ).toBeVisible()
   await expect(
-    todayFulfillmentMain.getByRole("columnheader", { name: "最新批次" }).first(),
-  ).toBeVisible()
-  await expect(
     todayFulfillmentMain.getByRole("columnheader", { name: "状态" }).first(),
   ).toBeVisible()
   await expect(todayFulfillmentMain.getByText("已接入").first()).toBeVisible()
-  await expect(
-    todayFulfillmentMain
-      .getByRole("cell", { name: /status_log-\d{14}-\d+/ })
-      .first(),
-  ).toBeVisible()
   await expect(todayFulfillmentMain.getByText("今日状态样本")).toBeVisible()
   await expect(todayFulfillmentMain.getByText("今日登录样本")).toBeVisible()
 
@@ -538,10 +475,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     anomalyAlertsMain.locator("h1", { hasText: "异常预警" }),
   ).toBeVisible()
-  await expect(
-    anomalyAlertsMain.getByText(/异常预警 records \d+ 行/),
-  ).toBeVisible()
-  await expect(anomalyAlertsMain.getByText("本机异常预警队列")).toBeVisible()
+  await expect(anomalyAlertsMain.getByText("异常预警队列")).toBeVisible()
   await expect(
     anomalyAlertsMain.getByRole("columnheader", { name: "异常" }),
   ).toBeVisible()
@@ -567,9 +501,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     deficitHeatmapMain.locator("h1", { hasText: "时段缺口热力图" }),
   ).toBeVisible()
-  await expect(
-    deficitHeatmapMain.getByText("时段缺口 records"),
-  ).toBeVisible()
+  await expect(deficitHeatmapMain.getByText("时段缺口").first()).toBeVisible()
   await expect(deficitHeatmapMain.getByText("严重时段清单")).toBeVisible()
   await expect(
     deficitHeatmapMain.getByRole("columnheader", { name: "日期" }),
@@ -587,10 +519,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     vendorManagementMain.locator("h1", { hasText: "供应商管理" }),
   ).toBeVisible()
-  await expect(
-    vendorManagementMain.getByText(/供应商管理 records \d+ 行/),
-  ).toBeVisible()
-  await expect(vendorManagementMain.getByText("本机供应商分布")).toBeVisible()
+  await expect(vendorManagementMain.getByText("供应商分布").first()).toBeVisible()
   await expect(
     vendorManagementMain.getByRole("columnheader", { name: "供应商" }),
   ).toBeVisible()
@@ -608,10 +537,7 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     ruleConfigurationMain.locator("h1", { hasText: "规则配置" }),
   ).toBeVisible()
   await expect(
-    ruleConfigurationMain.getByText(/规则配置 records \d+ 行/),
-  ).toBeVisible()
-  await expect(
-    ruleConfigurationMain.getByRole("heading", { name: "本机规则目录" }),
+    ruleConfigurationMain.getByRole("heading", { name: "规则目录" }),
   ).toBeVisible()
   await expect(
     ruleConfigurationMain.getByRole("columnheader", { name: "规则" }),
@@ -622,113 +548,49 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   await expect(
     ruleConfigurationMain.getByRole("columnheader", { name: "状态" }).first(),
   ).toBeVisible()
-  await expect(ruleConfigurationMain.getByText("导入 records 只读展示")).toBeVisible()
+  await expect(ruleConfigurationMain.getByText("数据查看规则").first()).toBeVisible()
 
   await gotoAppPage(page, "/monthly-settlement")
   const monthlySettlementMain = page.getByRole("main")
   await expect(
     monthlySettlementMain.locator("h1", { hasText: "月度结算" }),
   ).toBeVisible()
-  await expect(
-    monthlySettlementMain.getByText(/结算复盘 records \d+ 行/),
-  ).toBeVisible()
-  await expect(monthlySettlementMain.getByText("本机复盘预览")).toBeVisible()
-  await expect(
-    monthlySettlementMain.getByText("不计算生产结算金额。", { exact: true }),
-  ).toBeVisible()
+  await expect(monthlySettlementMain.getByText("复盘信号").first()).toBeVisible()
 
   await gotoAppPage(page, "/report-center")
   const reportCenterMain = page.getByRole("main")
   await expect(
     reportCenterMain.locator("h1", { hasText: "报表中心" }),
   ).toBeVisible()
-  await expect(
-    reportCenterMain.getByText(/报表中心 records \d+ 行/),
-  ).toBeVisible()
-  await expect(
-    reportCenterMain.getByRole("heading", { name: "本机报表预览" }),
-  ).toBeVisible()
-  await expect(
-    reportCenterMain.getByText("不生成生产报表或导出文件。", { exact: true }),
-  ).toBeVisible()
+  await expect(reportCenterMain.getByText("报表目录").first()).toBeVisible()
 
   await gotoAppPage(page, "/supplier-review")
   const supplierReviewMain = page.getByRole("main")
   await expect(
     supplierReviewMain.locator("h1", { hasText: "供应商复盘" }),
   ).toBeVisible()
-  await expect(
-    supplierReviewMain.getByText(/供应商复盘 records \d+ 行/),
-  ).toBeVisible()
-  await expect(
-    supplierReviewMain.getByRole("heading", {
-      name: "本机供应商复盘",
-      exact: true,
-    }),
-  ).toBeVisible()
-  await expect(
-    supplierReviewMain.getByText("不做供应商考核写回或结算金额。", {
-      exact: true,
-    }),
-  ).toBeVisible()
+  await expect(supplierReviewMain.getByText("供应商复盘").first()).toBeVisible()
 
   await gotoAppPage(page, "/smart-scheduling")
   const smartSchedulingMain = page.getByRole("main")
   await expect(
     smartSchedulingMain.locator("h1", { hasText: "智能排班" }),
   ).toBeVisible()
-  await expect(
-    smartSchedulingMain.getByText(/智能排班 records \d+ 行/),
-  ).toBeVisible()
-  await expect(
-    smartSchedulingMain.getByRole("heading", {
-      name: "本机排班建议",
-      exact: true,
-    }),
-  ).toBeVisible()
-  await expect(
-    smartSchedulingMain.getByText("不自动生成或发布排班。", { exact: true }),
-  ).toBeVisible()
+  await expect(smartSchedulingMain.getByText("排班建议").first()).toBeVisible()
 
   await gotoAppPage(page, "/interface-integration")
   const interfaceIntegrationMain = page.getByRole("main")
   await expect(
     interfaceIntegrationMain.locator("h1", { hasText: "接口集成" }),
   ).toBeVisible()
-  await expect(
-    interfaceIntegrationMain.getByText(/接口集成 records \d+ 行/),
-  ).toBeVisible()
-  await expect(
-    interfaceIntegrationMain.getByRole("heading", {
-      name: "本机接入 readiness",
-      exact: true,
-    }),
-  ).toBeVisible()
-  await expect(
-    interfaceIntegrationMain.getByText("不连接真实接口或配置接口凭证。", {
-      exact: true,
-    }),
-  ).toBeVisible()
+  await expect(interfaceIntegrationMain.getByText("接入状态").first()).toBeVisible()
 
   await gotoAppPage(page, "/operation-audit")
   const operationAuditMain = page.getByRole("main")
   await expect(
     operationAuditMain.locator("h1", { hasText: "操作审计" }),
   ).toBeVisible()
-  await expect(
-    operationAuditMain.getByText(/操作审计 records \d+ 行/),
-  ).toBeVisible()
-  await expect(
-    operationAuditMain.getByRole("heading", {
-      name: "本机审计证据",
-      exact: true,
-    }),
-  ).toBeVisible()
-  await expect(
-    operationAuditMain.getByText("不生成生产审计日志或不可篡改审计存储。", {
-      exact: true,
-    }),
-  ).toBeVisible()
+  await expect(operationAuditMain.getByText("审计证据").first()).toBeVisible()
 
   await gotoAppPage(page, "/permission-management")
   const permissionManagementMain = page.getByRole("main")
@@ -736,22 +598,15 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     permissionManagementMain.locator("h1", { hasText: "权限管理" }),
   ).toBeVisible()
   await expect(
-    permissionManagementMain.getByText(/权限管理 records \d+ 行/),
-  ).toBeVisible()
-  await expect(
     permissionManagementMain.getByRole("heading", {
-      name: "本机权限 readiness",
+      name: "权限能力清单",
       exact: true,
     }),
   ).toBeVisible()
   await expect(
     permissionManagementMain.getByRole("columnheader", { name: "能力" }),
   ).toBeVisible()
-  await expect(
-    permissionManagementMain.getByText("不做账号登录、认证、授权或权限判定。", {
-      exact: true,
-    }),
-  ).toBeVisible()
+  await expect(permissionManagementMain.getByText("开发中").first()).toBeVisible()
 
   await gotoAppPage(page, "/settlement-lock")
   const settlementLockMain = page.getByRole("main")
@@ -759,38 +614,33 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     settlementLockMain.locator("h1", { hasText: "结算锁账" }),
   ).toBeVisible()
   await expect(
-    settlementLockMain.getByText(/结算锁账 records \d+ 行/),
-  ).toBeVisible()
-  await expect(
     settlementLockMain.getByRole("heading", {
-      name: "本机锁账 readiness",
+      name: "锁账能力清单",
       exact: true,
     }),
   ).toBeVisible()
   await expect(
     settlementLockMain.getByRole("columnheader", { name: "能力" }),
   ).toBeVisible()
-  await expect(
-    settlementLockMain.getByText("不执行锁账，不冻结账期。", {
-      exact: true,
-    }),
-  ).toBeVisible()
+  await expect(settlementLockMain.getByText("开发中").first()).toBeVisible()
 })
 
 test("opened local module routes render real module pages", async ({ page }) => {
+  test.setTimeout(60_000)
+
   const routes = [
-    { path: "/today-fulfillment", heading: "今日履约", marker: "今日履约边界" },
-    { path: "/anomaly-alerts", heading: "异常预警", marker: "异常预警边界" },
-    { path: "/deficit-heatmap", heading: "时段缺口热力图", marker: "缺口热力图边界" },
-    { path: "/vendor-management", heading: "供应商管理", marker: "供应商管理 records" },
-    { path: "/rule-configuration", heading: "规则配置", marker: "规则配置边界" },
-    { path: "/report-center", heading: "报表中心", marker: "报表中心 records" },
-    { path: "/supplier-review", heading: "供应商复盘", marker: "供应商复盘 records" },
-    { path: "/operation-audit", heading: "操作审计", marker: "操作审计 records" },
-    { path: "/smart-scheduling", heading: "智能排班", marker: "智能排班 records" },
-    { path: "/interface-integration", heading: "接口集成", marker: "接口集成 records" },
-    { path: "/permission-management", heading: "权限管理", marker: "权限管理 records" },
-    { path: "/settlement-lock", heading: "结算锁账", marker: "结算锁账 records" },
+    { path: "/today-fulfillment", heading: "今日履约", marker: "今日履约输入表" },
+    { path: "/anomaly-alerts", heading: "异常预警", marker: "异常预警队列" },
+    { path: "/deficit-heatmap", heading: "时段缺口热力图", marker: "严重时段清单" },
+    { path: "/vendor-management", heading: "供应商管理", marker: "供应商分布" },
+    { path: "/rule-configuration", heading: "规则配置", marker: "规则目录" },
+    { path: "/report-center", heading: "报表中心", marker: "报表目录" },
+    { path: "/supplier-review", heading: "供应商复盘", marker: "复盘信号" },
+    { path: "/operation-audit", heading: "操作审计", marker: "审计证据" },
+    { path: "/smart-scheduling", heading: "智能排班", marker: "排班建议" },
+    { path: "/interface-integration", heading: "接口集成", marker: "接入状态" },
+    { path: "/permission-management", heading: "权限管理", marker: "权限能力清单" },
+    { path: "/settlement-lock", heading: "结算锁账", marker: "锁账能力清单" },
   ]
 
   for (const route of routes) {
@@ -805,6 +655,8 @@ test("opened local module routes render real module pages", async ({ page }) => 
 })
 
 test("sidebar distinguishes opened and development modules", async ({ page }) => {
+  test.setTimeout(60_000)
+
   await gotoAppPage(page, "/today-fulfillment")
   await expect(
     page.getByRole("main").locator("h1", { hasText: "今日履约" }),

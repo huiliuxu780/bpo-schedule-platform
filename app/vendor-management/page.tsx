@@ -40,15 +40,15 @@ export default async function VendorManagementPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">供应商管理</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机坐席主数据中的 vendor 字段展示供应商覆盖，不维护合同或结算。
+              展示供应商人员覆盖、样本分布和管理入口状态。
             </p>
           </div>
-          <Badge variant="outline">本机供应商预览</Badge>
+          <Badge variant="outline">供应商概览</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="供应商管理 records"
+            title="供应商坐席"
             value={`${summary.staffRows}`}
             description="来自坐席主数据"
           />
@@ -80,9 +80,9 @@ export default async function VendorManagementPage() {
         <section className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
           <Card>
             <CardHeader>
-              <CardTitle>本机供应商分布</CardTitle>
+              <CardTitle>供应商分布</CardTitle>
               <CardDescription>
-                按样本 vendor 字段聚合，仅用于演示供应商入口已开放。
+                按供应商字段聚合人员覆盖，辅助查看供应商分布。
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -128,9 +128,9 @@ export default async function VendorManagementPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>本机供应商样本</CardTitle>
+              <CardTitle>供应商样本</CardTitle>
               <CardDescription>
-                只读展示人员主数据样本，不提供供应商新增、编辑或写回。
+                展示人员主数据中的供应商样本。
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -151,19 +151,6 @@ export default async function VendorManagementPage() {
           </Card>
         </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>供应商管理边界</CardTitle>
-            <CardDescription>
-              当前只证明供应商字段能进入系统管理页面。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <p>不接数据库，不维护供应商合同、结算、收费因子或 KPI 规则。</p>
-            <p>不做供应商写回、批量操作、审批、导出或权限配置。</p>
-            <p>后续若要真实供应商主数据，必须单独过数据库和权限 Gate。</p>
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

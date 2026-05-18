@@ -7659,7 +7659,7 @@ tasks:
   - id: F145
     title: "业务页面产品语义纠偏"
     priority: P0
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/**"
@@ -7688,7 +7688,7 @@ tasks:
   - id: Q070
     title: "业务页面产品语义纠偏 QA"
     priority: P0
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/**"

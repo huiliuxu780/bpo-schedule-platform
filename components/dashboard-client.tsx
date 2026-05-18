@@ -82,7 +82,7 @@ function GlobalFilterBar({ filters }: { filters: DashboardFilterState }) {
           defaultValue={filters.dataVersion}
           name="dataVersion"
         >
-          <option value="imported">本机导入版本</option>
+          <option value="imported">导入版本</option>
           <option value="effective">生效版本</option>
         </select>
       </label>

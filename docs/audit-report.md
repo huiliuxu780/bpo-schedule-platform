@@ -2373,6 +2373,27 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-18 - Product Page Semantics Cleanup
+
+#### 审计结论
+
+- `F145/Q070/US225-US226` 已纠正业务页面被导入/演示/QA 语言污染的问题。
+- `ImportedRecordsSummary` 不再在业务页面输出可见记录汇总块；导入、批次和 processed records 说明保留在 `/demo-imports`。
+- Dashboard、班次明细、排班计划、履约监控、今日履约、异常预警、时段缺口、供应商管理、规则配置、月度结算、报表中心、供应商复盘、智能排班、接口集成、操作审计、权限管理和结算锁账等页面已改为业务标签、业务样本、能力清单或模块状态表达。
+- 本批未新增后端契约、数据库、真实集成、认证、权限实现、审批、导出、批量、生产公式、结算规则、收费因子或真实锁账。
+
+#### 风险
+
+- 导入数据仍是本机演示数据源，但业务页面不再把数据来源当成功能内容。
+- E2E 需要前端 3015 和后端 8000 在线；普通沙箱下 Chrome 仍会因 `SIGABRT/EPERM` 启动失败，需在本机提权环境运行。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，86 个模型/源码断言测试通过。
+- `npm run typecheck`：通过。
+- Browser 检查：27 个已开放业务路由中，除 `/demo-imports` 外未发现可见 `本机`、`records`、`readiness`、`不接数据库`、`演示`、`localhost`、`边界`、`本地 MVP` 语义。
+- `BPO_WEB_URL=http://127.0.0.1:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：提权运行通过，6 条 E2E 通过。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

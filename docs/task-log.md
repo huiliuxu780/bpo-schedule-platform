@@ -1912,3 +1912,21 @@
 - action: 收口开发中入口开放 QA。
 - status: `done`
 - notes: 模型测试 86 条通过，E2E smoke 6 条通过并覆盖 `/permission-management`、`/settlement-lock` 两个路由、表格字段和侧边栏入口不再是开发中；本机 HTML/Browser 检查确认两个页面可见且保留本机只读边界；最终 `bash scripts/check.sh` 通过。
+
+- task_id: `F145`
+- source_ids:
+  - `R213`
+- story_ids:
+  - `US225`
+- action: 完成业务页面产品语义纠偏。
+- status: `done`
+- notes: 已开放业务页面已从导入/演示/验收口径恢复为业务对象、业务状态、能力清单和业务入口表达；`/demo-imports` 继续保留 CSV 导入、批次和 processed records 证据。本批未实现后端新契约、数据库、真实集成、权限实现、真实锁账、生产公式、收费因子、审批、导出或批量能力。
+
+- task_id: `Q070`
+- source_ids:
+  - `R214`
+- story_ids:
+  - `US226`
+- action: 收口业务页面产品语义纠偏 QA。
+- status: `done`
+- notes: 模型测试 86 条通过，typecheck 通过；Browser 扫描 27 个已开放业务路由，除 `/demo-imports` 外未发现可见 `本机`、`records`、`readiness`、`不接数据库`、`演示`、`localhost`、`边界`、`本地 MVP` 语义；提权 `npm run e2e:smoke` 6 条通过。普通沙箱下 Chrome 仍会因 `SIGABRT/EPERM` 启动失败，E2E 需在本机提权环境运行。

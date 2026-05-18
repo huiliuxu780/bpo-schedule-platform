@@ -187,7 +187,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
           <div>
             <h1 className="text-lg font-semibold">风险提示</h1>
             <p className="text-sm text-muted-foreground">
-              统一复核缺口、不可用影响和建议动作，不接数据库
+              统一复核缺口、不可用影响和建议动作。
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -216,7 +216,7 @@ export default async function ScheduleRisksPage({ searchParams }: PageProps) {
             <section className="grid gap-4 md:grid-cols-4">
               <SummaryCard title="风险条数" value={`${summary.total}`} description="当前工作台范围" />
               <SummaryCard title="高风险" value={`${summary.high}`} description="需优先复核" />
-              <SummaryCard title="缺口合计" value={`${summary.totalGap}`} description="本地缺口口径" />
+              <SummaryCard title="缺口合计" value={`${summary.totalGap}`} description="缺口口径" />
               <SummaryCard
                 title="不可用影响"
                 value={`${summary.affectedUnavailability}`}

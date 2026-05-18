@@ -4,7 +4,6 @@ import {
   permissionManagementPreviewItems,
   summarizePermissionManagementRecords,
 } from "@/components/data-table-model"
-import { ImportedRecordsSummary } from "@/components/imported-records-summary"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -29,53 +28,46 @@ export default async function PermissionManagementPage() {
   const rows = buildPermissionManagementTableRows(permissionManagementPreviewItems)
 
   return (
-    <AppShell title="权限管理" searchPlaceholder="搜索权限能力、数据源或批次">
+    <AppShell title="权限管理" searchPlaceholder="搜索权限能力或状态">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <section className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-xl font-semibold tracking-normal">权限管理</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              展示本机只读权限 readiness 和后续 Gate 边界，不做登录、授权或权限判定。
+              查看权限相关能力的开放状态，区分已可查看的管理入口和仍在开发的权限能力。
             </p>
           </div>
-          <Badge variant="outline">本机只读</Badge>
+          <Badge variant="outline">功能状态</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="权限管理 records"
-            value={`${summary.importedRows}`}
-            description={`${summary.sourceCount} 类本机来源`}
+            title="能力项"
+            value={`${summary.readonlyItems + summary.deferredItems}`}
+            description="权限模块范围"
           />
           <MetricCard
-            title="本机只读项"
+            title="已开放"
             value={`${summary.readonlyItems}`}
-            description="可用于演示说明"
+            description="可查看的管理入口"
           />
           <MetricCard
-            title="需后续 Gate"
+            title="开发中"
             value={`${summary.deferredItems}`}
             description="账号、角色、授权"
           />
           <MetricCard
-            title="最近批次"
-            value={summary.latestBatch}
-            description={summary.latestSource}
-            compact
+            title="关联数据"
+            value={`${summary.sourceCount}`}
+            description="组织、审计等上下文"
           />
         </section>
 
-        <ImportedRecordsSummary
-          records={records}
-          title="权限管理 records"
-          description="从本机 processed records 读取权限 readiness 的来源覆盖"
-        />
-
         <Card>
           <CardHeader>
-            <CardTitle>本机权限 readiness</CardTitle>
+            <CardTitle>权限能力清单</CardTitle>
             <CardDescription>
-              当前只读展示哪些权限相关能力可解释，生产权限能力统一进入后续 Gate。
+              展示权限模块能力状态；账号、角色和授权策略仍标记开发中。
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -98,7 +90,7 @@ export default async function PermissionManagementPage() {
                       <TableCell>
                         <Badge
                           variant={
-                            row.statusLabel === "本机只读"
+                            row.statusLabel === "已开放"
                               ? "outline"
                               : "secondary"
                           }
@@ -113,16 +105,6 @@ export default async function PermissionManagementPage() {
             </div>
           </CardContent>
         </Card>
-
-        <BoundaryCard
-          title="权限管理边界"
-          description="当前只证明权限管理入口已开放并能解释演示范围。"
-          lines={[
-            "不做账号登录、认证、授权或权限判定。",
-            "不维护用户、角色或生产权限边界。",
-            "不接数据库、真实接口、审批、导出、批量或生产审计存储。",
-          ]}
-        />
       </main>
     </AppShell>
   )
@@ -132,53 +114,23 @@ function MetricCard({
   title,
   value,
   description,
-  compact = false,
 }: {
   title: string
   value: string
   description: string
-  compact?: boolean
 }) {
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardDescription>{title}</CardDescription>
         <CardTitle
-          className={
-            compact
-              ? "break-all text-sm font-semibold leading-5"
-              : "text-2xl font-semibold tabular-nums"
-          }
+          className="text-2xl font-semibold tabular-nums"
         >
           {value}
         </CardTitle>
       </CardHeader>
       <CardContent className="text-xs text-muted-foreground">
         {description}
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryCard({
-  title,
-  description,
-  lines,
-}: {
-  title: string
-  description: string
-  lines: string[]
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-sm text-muted-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
       </CardContent>
     </Card>
   )

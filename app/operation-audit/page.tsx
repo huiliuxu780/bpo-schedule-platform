@@ -40,22 +40,22 @@ export default async function OperationAuditPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">操作审计</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机导入 records 展示只读操作证据口径，不做生产审计日志。
+              展示操作审计证据、来源范围和可追溯数据覆盖。
             </p>
           </div>
-          <Badge variant="outline">本机审计预览</Badge>
+          <Badge variant="outline">审计证据</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="操作审计 records"
+            title="审计数据"
             value={`${summary.importedRows}`}
-            description={`${summary.sourceCount} 类本机来源`}
+            description={`${summary.sourceCount} 类数据来源`}
           />
           <MetricCard
             title="导入批次"
             value={`${summary.batchCount}`}
-            description="可追溯的本机批次"
+            description="可追溯的数据批次"
           />
           <MetricCard
             title="模块证据"
@@ -79,9 +79,9 @@ export default async function OperationAuditPage() {
         <section className="grid gap-4 xl:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>本机审计证据</CardTitle>
+              <CardTitle>审计证据</CardTitle>
               <CardDescription>
-                只读展示当前演示链路可解释的来源，不创建生产审计链。
+                展示当前链路可追溯的数据来源。
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-2 text-sm">
@@ -110,19 +110,10 @@ export default async function OperationAuditPage() {
             title="审计样本"
             description={staffRecord?.latest_batch_id ?? "等待导入坐席主数据"}
             rows={sampleRows(staffRecord)}
-            emptyText="暂无审计样本。请先在文件导入页导入本机 CSV。"
+            emptyText="暂无审计样本。"
           />
         </section>
 
-        <BoundaryCard
-          title="操作审计边界"
-          description="当前只证明本机演示链路可以被解释。"
-          lines={[
-            "不做账号登录、认证、权限或角色管理。",
-            "不生成生产审计日志或不可篡改审计存储。",
-            "不做审批、导出、批量操作、数据库持久化、真实接口或锁账。",
-          ]}
-        />
       </main>
     </AppShell>
   )
@@ -221,30 +212,6 @@ function RecordSampleCard({
             {emptyText}
           </div>
         )}
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryCard({
-  title,
-  description,
-  lines,
-}: {
-  title: string
-  description: string
-  lines: string[]
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-sm text-muted-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
       </CardContent>
     </Card>
   )

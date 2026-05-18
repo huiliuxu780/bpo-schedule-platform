@@ -398,7 +398,7 @@ export function SchedulePlanTable({
         <div>
           <CardTitle>排班计划</CardTitle>
           <CardDescription>
-            本地筛选计划摘要与缺口风险
+            筛选计划摘要与缺口风险
             {filterLabel ? ` / 当前筛选：${filterLabel}` : ""}
           </CardDescription>
         </div>

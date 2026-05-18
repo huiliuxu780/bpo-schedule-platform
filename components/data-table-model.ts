@@ -102,7 +102,7 @@ export type CornStatusLogRecordsPreview = {
   sampleRows: number
   latestBatch: string
   latestSource: string
-  statusLabel: "等待导入" | "本机预览"
+  statusLabel: "等待导入" | "可查看"
 }
 
 export type FulfillmentExceptionRecordsPreview = {
@@ -132,7 +132,7 @@ export type AdherenceMonitoringRecordsPreview = {
   previewRows: number
   latestBatch: string
   latestSource: string
-  statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "本机预览"
+  statusLabel: "等待导入" | "缺少状态数据" | "缺少登录数据" | "可查看"
 }
 
 export type DataQualityRecordsPreview = {
@@ -149,7 +149,7 @@ export type DataQualityRecordsPreview = {
     | "缺少主数据"
     | "缺少状态数据"
     | "缺少登录数据"
-    | "本机预览"
+    | "质量可查看"
 }
 
 export type FieldMappingRecordsPreview = {
@@ -158,7 +158,7 @@ export type FieldMappingRecordsPreview = {
   missingFields: number
   latestBatch: string
   latestSource: string
-  statusLabel: "等待导入" | "缺少字段" | "本机只读"
+  statusLabel: "等待导入" | "缺少字段" | "字段可查看"
 }
 
 export type OrganizationPeopleRecordsPreview = {
@@ -169,7 +169,7 @@ export type OrganizationPeopleRecordsPreview = {
   sampleRows: number
   latestBatch: string
   latestSource: string
-  statusLabel: "等待导入" | "本机只读"
+  statusLabel: "等待导入" | "人员可查看"
 }
 
 export type TodayFulfillmentRecordsPreview = {
@@ -185,7 +185,7 @@ export type TodayFulfillmentRecordsPreview = {
     | "缺少主数据"
     | "缺少状态数据"
     | "缺少登录数据"
-    | "本机履约预览"
+    | "履约可查看"
 }
 
 export type TodayFulfillmentInputRow = {
@@ -201,7 +201,7 @@ export type AnomalyAlertRecordsPreview = {
   highSeverity: number
   pendingReview: number
   importedRows: number
-  statusLabel: "等待导入" | "本机预警预览"
+  statusLabel: "等待导入" | "预警可查看"
 }
 
 export type AnomalyAlertTableRow = {
@@ -237,12 +237,12 @@ export type RuleConfigurationRecordsPreview = {
   deferredRules: number
   latestBatch: string
   latestSource: string
-  statusLabel: "等待导入" | "本机规则目录"
+  statusLabel: "等待导入" | "规则目录"
 }
 
 export type RuleConfigurationTableRow = {
   rule: string
-  statusLabel: "本机只读" | "开发中"
+  statusLabel: "已开放" | "开发中"
   description: string
 }
 
@@ -258,12 +258,12 @@ export type PermissionManagementRecordsPreview = {
   deferredItems: number
   latestBatch: string
   latestSource: string
-  statusLabel: "等待导入" | "本机只读"
+  statusLabel: "待补齐" | "已开放"
 }
 
 export type PermissionManagementTableRow = {
   item: string
-  statusLabel: "本机只读" | "需后续 Gate"
+  statusLabel: "已开放" | "开发中"
   description: string
 }
 
@@ -274,12 +274,12 @@ export type SettlementLockRecordsPreview = {
   deferredItems: number
   latestBatch: string
   latestSource: string
-  statusLabel: "等待导入" | "本机只读"
+  statusLabel: "待补齐" | "已开放"
 }
 
 export type SettlementLockTableRow = {
   item: string
-  statusLabel: "本机只读" | "需后续 Gate"
+  statusLabel: "已开放" | "开发中"
   description: string
 }
 
@@ -297,7 +297,7 @@ export type MonthlySettlementRecordsPreview = {
     | "缺少主数据"
     | "缺少履约数据"
     | "缺少排班数据"
-    | "本机复盘预览"
+    | "复盘可查看"
 }
 
 export type ReportCenterRecordsPreview = {
@@ -314,7 +314,7 @@ export type ReportCenterRecordsPreview = {
     | "缺少主数据"
     | "缺少履约数据"
     | "缺少排班数据"
-    | "本机报表预览"
+    | "报表可查看"
 }
 
 export type SupplierReviewRecordsPreview = {
@@ -331,7 +331,7 @@ export type SupplierReviewRecordsPreview = {
     | "缺少供应商主数据"
     | "缺少履约数据"
     | "缺少排班数据"
-    | "本机供应商复盘"
+    | "复盘可查看"
 }
 
 export type SmartSchedulingRecordsPreview = {
@@ -349,7 +349,7 @@ export type SmartSchedulingRecordsPreview = {
     | "缺少主数据"
     | "缺少履约数据"
     | "缺少排班数据"
-    | "本机建议预览"
+    | "建议就绪"
 }
 
 export type InterfaceIntegrationRecordsPreview = {
@@ -362,7 +362,7 @@ export type InterfaceIntegrationRecordsPreview = {
   readinessSignals: number
   latestBatch: string
   latestSource: string
-  statusLabel: "等待导入" | "缺少字段" | "缺少状态日志" | "本机接入预览"
+  statusLabel: "等待导入" | "缺少字段" | "缺少状态日志" | "接入就绪"
 }
 
 export type OperationAuditRecordsPreview = {
@@ -379,7 +379,7 @@ export type OperationAuditRecordsPreview = {
     | "缺少主数据"
     | "缺少履约数据"
     | "缺少排班数据"
-    | "本机审计预览"
+    | "审计可查看"
 }
 
 export type FieldMappingSpec = {
@@ -414,20 +414,20 @@ export const fieldMappingSpecs: FieldMappingSpec[] = [
 ]
 
 export const ruleConfigurationPreviewItems = [
-  { title: "导入 records 只读展示", status: "enabled" },
-  { title: "Dashboard 本机筛选", status: "enabled" },
-  { title: "异常预警 seed 预览", status: "enabled" },
-  { title: "时段缺口 seed 预览", status: "enabled" },
+  { title: "数据查看规则", status: "enabled" },
+  { title: "Dashboard 筛选规则", status: "enabled" },
+  { title: "异常预警规则", status: "enabled" },
+  { title: "时段缺口规则", status: "enabled" },
   { title: "真实接口规则", status: "deferred" },
-  { title: "权限边界规则", status: "deferred" },
+  { title: "权限策略规则", status: "deferred" },
   { title: "规则编辑发布", status: "deferred" },
   { title: "结算规则", status: "deferred" },
   { title: "收费因子", status: "deferred" },
 ] as const
 
 export const permissionManagementPreviewItems = [
-  { title: "导入 records 权限上下文", status: "enabled" },
-  { title: "操作审计证据预览", status: "enabled" },
+  { title: "组织与人员查看", status: "enabled" },
+  { title: "操作审计查看", status: "enabled" },
   { title: "账号登录与认证", status: "deferred" },
   { title: "用户与角色维护", status: "deferred" },
   { title: "权限判定与授权策略", status: "deferred" },
@@ -435,7 +435,7 @@ export const permissionManagementPreviewItems = [
 ] as const
 
 export const settlementLockPreviewItems = [
-  { title: "月度 records 只读复盘", status: "enabled" },
+  { title: "月度复盘查看", status: "enabled" },
   { title: "结算输入覆盖检查", status: "enabled" },
   { title: "锁账动作", status: "deferred" },
   { title: "结算公式", status: "deferred" },
@@ -828,7 +828,7 @@ export function summarizeMonthlySettlementRecords(
           ? "缺少履约数据"
           : scheduleRows === 0
             ? "缺少排班数据"
-            : "本机复盘预览",
+            : "复盘可查看",
   }
 }
 
@@ -881,7 +881,7 @@ export function summarizeReportCenterRecords(
           ? "缺少履约数据"
           : scheduleRows === 0
             ? "缺少排班数据"
-            : "本机报表预览",
+            : "报表可查看",
   }
 }
 
@@ -946,7 +946,7 @@ export function summarizeSupplierReviewRecords(
           ? "缺少履约数据"
           : scheduleRows === 0
             ? "缺少排班数据"
-            : "本机供应商复盘",
+            : "复盘可查看",
   }
 }
 
@@ -1006,7 +1006,7 @@ export function summarizeSmartSchedulingRecords(
           ? "缺少履约数据"
           : scheduleRows === 0
             ? "缺少排班数据"
-            : "本机建议预览",
+            : "建议就绪",
   }
 }
 
@@ -1064,7 +1064,7 @@ export function summarizeInterfaceIntegrationRecords(
         ? "缺少字段"
         : statusRows === 0
           ? "缺少状态日志"
-          : "本机接入预览",
+          : "接入就绪",
   }
 }
 
@@ -1117,7 +1117,7 @@ export function summarizeOperationAuditRecords(
           ? "缺少履约数据"
           : scheduleRows === 0
             ? "缺少排班数据"
-            : "本机审计预览",
+            : "审计可查看",
   }
 }
 
@@ -1228,7 +1228,7 @@ export function summarizeCornStatusLogRecords(
     sampleRows: statusRecord.sample_rows.length,
     latestBatch: statusRecord.latest_batch_id,
     latestSource: statusRecord.source_name,
-    statusLabel: "本机预览",
+    statusLabel: "可查看",
   }
 }
 
@@ -1376,7 +1376,7 @@ export function summarizeAdherenceMonitoringRecords(
         ? "缺少状态数据"
         : loginRows === 0
           ? "缺少登录数据"
-          : "本机预览",
+          : "可查看",
   }
 }
 
@@ -1427,7 +1427,7 @@ export function summarizeDataQualityRecords(
           ? "缺少状态数据"
           : loginRows === 0
             ? "缺少登录数据"
-            : "本机预览",
+            : "质量可查看",
   }
 }
 
@@ -1484,7 +1484,7 @@ export function summarizeFieldMappingRecords(
     missingFields,
     latestBatch: latest.latest_batch_id,
     latestSource: latest.source_name,
-    statusLabel: missingFields > 0 ? "缺少字段" : "本机只读",
+    statusLabel: missingFields > 0 ? "缺少字段" : "字段可查看",
   }
 }
 
@@ -1521,7 +1521,7 @@ export function summarizeOrganizationPeopleRecords(
     sampleRows: staffRecord.sample_rows.length,
     latestBatch: staffRecord.latest_batch_id,
     latestSource: staffRecord.source_name,
-    statusLabel: "本机只读",
+    statusLabel: "人员可查看",
   }
 }
 
@@ -1569,7 +1569,7 @@ export function summarizeTodayFulfillmentRecords(
           ? "缺少状态数据"
           : loginRows === 0
             ? "缺少登录数据"
-            : "本机履约预览",
+            : "履约可查看",
   }
 }
 
@@ -1613,7 +1613,7 @@ export function summarizeAnomalyAlertRecords(
     highSeverity: rows.filter((row) => row.severity === "高").length,
     pendingReview: rows.filter((row) => row.status === "待复核").length,
     importedRows: records.reduce((total, record) => total + record.total_rows, 0),
-    statusLabel: "本机预警预览",
+    statusLabel: "预警可查看",
   }
 }
 
@@ -1723,7 +1723,7 @@ export function summarizeRuleConfigurationRecords(
     ).length,
     latestBatch: latest.latest_batch_id,
     latestSource: latest.source_name,
-    statusLabel: "本机规则目录",
+    statusLabel: "规则目录",
   }
 }
 
@@ -1732,11 +1732,11 @@ export function buildRuleConfigurationTableRows(
 ): RuleConfigurationTableRow[] {
   return items.map((item) => ({
     rule: item.title,
-    statusLabel: item.status === "enabled" ? "本机只读" : "开发中",
+    statusLabel: item.status === "enabled" ? "已开放" : "开发中",
     description:
       item.status === "enabled"
-        ? "本机演示已开放，只读展示不写回生产。"
-        : "需要后续独立 Gate，当前不提供编辑、发布或写回。",
+        ? "当前可查看规则范围和状态。"
+        : "规则编辑、发布或写回能力尚未开放。",
   }))
 }
 
@@ -1756,7 +1756,7 @@ function summarizeReadonlyGatePreview(
       deferredItems,
       latestBatch: emptyLatestBatch,
       latestSource: "等待导入",
-      statusLabel: "等待导入" as const,
+      statusLabel: "待补齐" as const,
     }
   }
 
@@ -1771,7 +1771,7 @@ function summarizeReadonlyGatePreview(
     deferredItems,
     latestBatch: latest.latest_batch_id,
     latestSource: latest.source_name,
-    statusLabel: "本机只读" as const,
+    statusLabel: "已开放" as const,
   }
 }
 
@@ -1781,7 +1781,7 @@ export function summarizePermissionManagementRecords(
   return summarizeReadonlyGatePreview(
     records,
     permissionManagementPreviewItems,
-    "暂无权限管理 records"
+    "暂无权限管理数据"
   )
 }
 
@@ -1790,11 +1790,11 @@ export function buildPermissionManagementTableRows(
 ): PermissionManagementTableRow[] {
   return items.map((item) => ({
     item: item.title,
-    statusLabel: item.status === "enabled" ? "本机只读" : "需后续 Gate",
+    statusLabel: item.status === "enabled" ? "已开放" : "开发中",
     description:
       item.status === "enabled"
-        ? "只展示本机导入 records 的查看上下文，不做登录、授权或权限判定。"
-        : "需要后续独立 Gate，当前不提供账号、角色、授权或生产权限边界。",
+        ? "可查看组织、人员和审计等管理上下文。"
+        : "账号、角色和授权策略尚未开放。",
   }))
 }
 
@@ -1804,7 +1804,7 @@ export function summarizeSettlementLockRecords(
   return summarizeReadonlyGatePreview(
     records,
     settlementLockPreviewItems,
-    "暂无结算锁账 records"
+    "暂无结算锁账数据"
   )
 }
 
@@ -1813,11 +1813,11 @@ export function buildSettlementLockTableRows(
 ): SettlementLockTableRow[] {
   return items.map((item) => ({
     item: item.title,
-    statusLabel: item.status === "enabled" ? "本机只读" : "需后续 Gate",
+    statusLabel: item.status === "enabled" ? "已开放" : "开发中",
     description:
       item.status === "enabled"
-        ? "只展示本机导入 records 的复盘输入，不冻结账期或计算结算金额。"
-        : "需要后续独立 Gate，当前不提供锁账、结算公式、收费因子、审批或导出。",
+        ? "可查看月度复盘和结算输入覆盖。"
+        : "锁账动作、结算公式、收费因子、账单审批和导出尚未开放。",
   }))
 }
 

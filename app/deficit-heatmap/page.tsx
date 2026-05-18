@@ -33,15 +33,15 @@ export default function DeficitHeatmapPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">时段缺口热力图</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              复用 dashboard 本机 seed 缺口热力图，展示时段缺口分布和严重时段。
+              展示时段缺口分布和严重缺口时段，辅助定位排班供需不平衡。
             </p>
           </div>
-          <Badge variant="outline">本机热力图预览</Badge>
+          <Badge variant="outline">缺口热力图</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="时段缺口 records"
+            title="时段缺口"
             value={`${summary.totalDeficit}`}
             description="缺口人次合计"
           />
@@ -71,7 +71,7 @@ export default function DeficitHeatmapPage() {
             <CardHeader>
               <CardTitle>严重时段清单</CardTitle>
               <CardDescription>
-                从本机 seed 热力图中筛出，当前不触发自动排班。
+                从缺口热力图中筛出严重时段，辅助人工复核。
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -107,7 +107,7 @@ export default function DeficitHeatmapPage() {
                           colSpan={4}
                           className="h-16 text-center text-muted-foreground"
                         >
-                          暂无严重缺口时段。本机 seed 缺口恢复后会在这里展示。
+                          暂无严重缺口时段。
                         </TableCell>
                       </TableRow>
                     )}
@@ -117,19 +117,6 @@ export default function DeficitHeatmapPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>缺口热力图边界</CardTitle>
-              <CardDescription>
-                当前只证明时段缺口页面已经开放。
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-2 text-sm text-muted-foreground">
-              <p>不接数据库，不接真实预测、排班或 CORN 数据源。</p>
-              <p>不执行自动排班、补班派发、审批或批量处理。</p>
-              <p>不固化生产缺口公式、结算口径或收费因子。</p>
-            </CardContent>
-          </Card>
         </section>
       </main>
     </AppShell>

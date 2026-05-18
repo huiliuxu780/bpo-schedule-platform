@@ -41,7 +41,7 @@ export default async function NewSchedulePlanPage({ searchParams }: PageProps) {
           <div>
             <h1 className="text-lg font-semibold">新建排班草稿</h1>
             <p className="text-sm text-muted-foreground">
-              本地 MVP：创建 draft 计划，不发布、不审批、不导出
+              创建 draft 计划，保存后进入排班复核。
             </p>
           </div>
           <Button asChild variant="outline" size="sm">

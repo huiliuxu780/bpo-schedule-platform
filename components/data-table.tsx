@@ -262,7 +262,7 @@ const columns: ColumnDef<Anomaly>[] = [
           variant="ghost"
           size="sm"
           aria-label={`复核 ${row.original.id}`}
-          title={`本机复核 ${row.original.id}`}
+          title={`复核 ${row.original.id}`}
         >
           <ClipboardCheck className="size-4" />
           复核
@@ -351,7 +351,7 @@ export function DataTable() {
         <div>
           <CardTitle>BPO 异常明细</CardTitle>
           <CardDescription>
-            支持搜索、排序、列显示、分页与本机复核动作
+            支持搜索、排序、列显示、分页与复核动作
           </CardDescription>
         </div>
         <DropdownMenu>

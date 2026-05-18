@@ -40,15 +40,15 @@ export default async function SupplierReviewPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">供应商复盘</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              读取本机供应商主数据、履约覆盖和排班覆盖，展示只读供应商复盘摘要。
+              汇总供应商主数据、履约覆盖和排班覆盖，展示供应商复盘摘要。
             </p>
           </div>
-          <Badge variant="outline">本机供应商复盘</Badge>
+          <Badge variant="outline">供应商复盘</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="供应商复盘 records"
+            title="供应商数据"
             value={`${summary.staffRows + summary.fulfillmentRows + summary.scheduleRows}`}
             description={`${summary.reviewSignals}/3 类复盘信号`}
           />
@@ -79,9 +79,9 @@ export default async function SupplierReviewPage() {
         <section className="grid gap-4 xl:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>本机供应商复盘信号</CardTitle>
+              <CardTitle>供应商复盘信号</CardTitle>
               <CardDescription>
-                只读核对供应商视角是否具备主数据、履约和排班覆盖。
+                核对供应商视角是否具备主数据、履约和排班覆盖。
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-2 text-sm">
@@ -114,15 +114,6 @@ export default async function SupplierReviewPage() {
           />
         </section>
 
-        <BoundaryCard
-          title="供应商复盘边界"
-          description="当前只证明供应商视角复盘入口已读取本机导入结果。"
-          lines={[
-            "不做供应商考核写回或结算金额。",
-            "不生成供应商账单、锁账或生产结算规则。",
-            "不做审批、导出、批量操作、数据库持久化或真实接口写回。",
-          ]}
-        />
       </main>
     </AppShell>
   )
@@ -221,30 +212,6 @@ function RecordSampleCard({
             {emptyText}
           </div>
         )}
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryCard({
-  title,
-  description,
-  lines,
-}: {
-  title: string
-  description: string
-  lines: string[]
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-sm text-muted-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
       </CardContent>
     </Card>
   )

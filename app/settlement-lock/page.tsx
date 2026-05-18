@@ -4,7 +4,6 @@ import {
   settlementLockPreviewItems,
   summarizeSettlementLockRecords,
 } from "@/components/data-table-model"
-import { ImportedRecordsSummary } from "@/components/imported-records-summary"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -29,53 +28,46 @@ export default async function SettlementLockPage() {
   const rows = buildSettlementLockTableRows(settlementLockPreviewItems)
 
   return (
-    <AppShell title="结算锁账" searchPlaceholder="搜索锁账能力、数据源或批次">
+    <AppShell title="结算锁账" searchPlaceholder="搜索锁账能力或状态">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <section className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-xl font-semibold tracking-normal">结算锁账</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              展示本机只读锁账 readiness 和后续 Gate 边界，不执行锁账或结算计算。
+              查看月度结算锁定相关能力状态，区分复盘输入、锁账动作和账单流程。
             </p>
           </div>
-          <Badge variant="outline">本机只读</Badge>
+          <Badge variant="outline">功能状态</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="结算锁账 records"
-            value={`${summary.importedRows}`}
-            description={`${summary.sourceCount} 类本机来源`}
+            title="能力项"
+            value={`${summary.readonlyItems + summary.deferredItems}`}
+            description="锁账模块范围"
           />
           <MetricCard
-            title="本机只读项"
+            title="已开放"
             value={`${summary.readonlyItems}`}
-            description="复盘输入覆盖"
+            description="复盘输入查看"
           />
           <MetricCard
-            title="需后续 Gate"
+            title="开发中"
             value={`${summary.deferredItems}`}
             description="锁账、公式、账单"
           />
           <MetricCard
-            title="最近批次"
-            value={summary.latestBatch}
-            description={summary.latestSource}
-            compact
+            title="关联数据"
+            value={`${summary.sourceCount}`}
+            description="复盘与履约上下文"
           />
         </section>
 
-        <ImportedRecordsSummary
-          records={records}
-          title="结算锁账 records"
-          description="从本机 processed records 读取锁账 readiness 的来源覆盖"
-        />
-
         <Card>
           <CardHeader>
-            <CardTitle>本机锁账 readiness</CardTitle>
+            <CardTitle>锁账能力清单</CardTitle>
             <CardDescription>
-              当前只读展示锁账前置输入覆盖，生产锁账能力统一进入后续 Gate。
+              展示结算锁账模块能力状态；锁账动作、公式、账单和审批仍标记开发中。
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -98,7 +90,7 @@ export default async function SettlementLockPage() {
                       <TableCell>
                         <Badge
                           variant={
-                            row.statusLabel === "本机只读"
+                            row.statusLabel === "已开放"
                               ? "outline"
                               : "secondary"
                           }
@@ -113,16 +105,6 @@ export default async function SettlementLockPage() {
             </div>
           </CardContent>
         </Card>
-
-        <BoundaryCard
-          title="结算锁账边界"
-          description="当前只证明结算锁账入口已开放并能解释演示范围。"
-          lines={[
-            "不执行锁账，不冻结账期。",
-            "不计算结算金额、结算公式、收费因子或账单。",
-            "不做审批、导出、批量、数据库或真实接口写回。",
-          ]}
-        />
       </main>
     </AppShell>
   )
@@ -132,53 +114,23 @@ function MetricCard({
   title,
   value,
   description,
-  compact = false,
 }: {
   title: string
   value: string
   description: string
-  compact?: boolean
 }) {
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardDescription>{title}</CardDescription>
         <CardTitle
-          className={
-            compact
-              ? "break-all text-sm font-semibold leading-5"
-              : "text-2xl font-semibold tabular-nums"
-          }
+          className="text-2xl font-semibold tabular-nums"
         >
           {value}
         </CardTitle>
       </CardHeader>
       <CardContent className="text-xs text-muted-foreground">
         {description}
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryCard({
-  title,
-  description,
-  lines,
-}: {
-  title: string
-  description: string
-  lines: string[]
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-sm text-muted-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
       </CardContent>
     </Card>
   )

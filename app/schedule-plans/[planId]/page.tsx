@@ -187,7 +187,7 @@ export default async function SchedulePlanDetailPage({
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base">草稿操作失败</CardTitle>
                   <CardDescription>
-                    本地 draft 保存未完成，请检查当前输入后重试。
+                    draft 保存未完成，请检查当前输入后重试。
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -197,7 +197,7 @@ export default async function SchedulePlanDetailPage({
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base">草稿已创建</CardTitle>
                   <CardDescription>
-                    本地 draft 已创建完成，可以继续复核时段、风险和不可用。
+                    draft 已创建完成，可以继续复核时段、风险和不可用。
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -207,7 +207,7 @@ export default async function SchedulePlanDetailPage({
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base">草稿已保存</CardTitle>
                   <CardDescription>
-                    本地 draft 已保存完成，可以继续沿当前上下文复核。
+                    draft 已保存完成，可以继续沿当前上下文复核。
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -217,7 +217,7 @@ export default async function SchedulePlanDetailPage({
                 <div>
                   <CardTitle>复核准备</CardTitle>
                   <CardDescription>
-                    基于当前草稿缺口、关联风险和生效不可用给出本机下一步。
+                    基于当前草稿缺口、关联风险和生效不可用给出下一步。
                   </CardDescription>
                 </div>
                 <Badge variant="outline">{reviewReadiness.statusLabel}</Badge>
@@ -242,13 +242,13 @@ export default async function SchedulePlanDetailPage({
                   <DetailCard
                     title="准备信号"
                     value={`${reviewReadiness.readinessSignals}/3`}
-                    description="本机 readiness"
+                    description="复核准备度"
                   />
                 </div>
                 <div className="rounded-md border bg-muted/20 p-3 text-sm">
                   <p className="font-medium">{reviewReadiness.nextStep}</p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    不提交审批、不发布排班、不做自动排班或生产写回。
+                    继续复核缺口、风险和不可用影响。
                   </p>
                 </div>
               </CardContent>
@@ -269,10 +269,10 @@ export default async function SchedulePlanDetailPage({
                 <div>
                   <CardTitle>复核链路</CardTitle>
                   <CardDescription>
-                    在本地 MVP 内继续检查班次、风险和不可用，不接数据库
+                    继续检查班次、风险和不可用，完成当前计划复核。
                   </CardDescription>
                 </div>
-                <Badge variant="outline">No Database</Badge>
+                <Badge variant="outline">计划复核</Badge>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
                 <div className="grid gap-3 md:grid-cols-4">
@@ -289,7 +289,7 @@ export default async function SchedulePlanDetailPage({
                   <DetailCard
                     title="关联风险"
                     value={`${relatedRisks.length}`}
-                    description="同计划本地风险提示"
+                    description="同计划风险提示"
                   />
                   <DetailCard
                     title="生效不可用"

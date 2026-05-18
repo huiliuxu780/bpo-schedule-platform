@@ -109,7 +109,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
           <div>
             <h1 className="text-lg font-semibold">排班计划</h1>
             <p className="text-sm text-muted-foreground">
-              查看计划列表，并创建本地 draft 草稿
+              查看计划列表，并创建 draft 草稿
             </p>
           </div>
           <Button asChild size="sm">
@@ -122,7 +122,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
               <div className="space-y-1">
                 <CardTitle className="text-base">草稿操作失败</CardTitle>
                 <CardDescription>
-                  本地 draft 创建未完成，请检查输入后重试。
+                  draft 创建未完成，请检查输入后重试。
                 </CardDescription>
               </div>
               <Button asChild variant="ghost" size="sm">
@@ -173,7 +173,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
           ) : null}
         </section>
         <section className="grid gap-4 md:grid-cols-4">
-          <SummaryCard title="计划数量" value={`${plans.length}`} description="本地计划基线" />
+          <SummaryCard title="计划数量" value={`${plans.length}`} description="计划基线" />
           <SummaryCard title="预测人次" value={`${totalForecast}`} description="0.5h 时段汇总" />
           <SummaryCard title="已排人次" value={`${totalScheduled}`} description="种子数据回传" />
           <SummaryCard
@@ -192,13 +192,13 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
-              <CardTitle>排班数据 records {scheduleImportSummary.importedRows} 行</CardTitle>
+              <CardTitle>排班时段样本</CardTitle>
               <CardDescription>
-                从本机 schedule_plan processed records 读取导入覆盖，不写入生产排班列表。
+                展示计划时段的预测人数、已排人数和覆盖情况。
               </CardDescription>
             </div>
             <Badge variant={scheduleImportSummary.importedRows > 0 ? "default" : "outline"}>
-              {scheduleImportSummary.statusLabel}
+              {scheduleImportSummary.importedRows > 0 ? "可复核" : "待补齐"}
             </Badge>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-[240px_1fr]">
@@ -210,15 +210,17 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
                 </span>
               </div>
               <div className="flex items-center justify-between rounded-md border p-2">
-                <span className="text-muted-foreground">时段行</span>
+                <span className="text-muted-foreground">时段数量</span>
                 <span className="font-medium tabular-nums">
                   {scheduleImportSummary.importedRows}
                 </span>
               </div>
               <div className="rounded-md border p-2">
-                <div className="text-muted-foreground">最近批次</div>
-                <div className="mt-1 break-all font-mono text-xs">
-                  {scheduleImportSummary.latestBatch}
+                <div className="text-muted-foreground">覆盖状态</div>
+                <div className="mt-1 text-sm font-medium">
+                  {scheduleImportSummary.importedRows > 0
+                    ? "已有排班时段"
+                    : "待补齐排班时段"}
                 </div>
               </div>
             </div>
@@ -248,7 +250,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
               </div>
             ) : (
               <div className="rounded-md border border-dashed p-6 text-sm text-muted-foreground">
-                暂无排班数据导入。可在文件导入页导入 schedule_plan CSV 后回到本页查看。
+                暂无排班时段。补齐排班数据后可在这里查看计划覆盖情况。
               </div>
             )}
           </CardContent>
@@ -258,7 +260,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             <div>
               <CardTitle>排班风险提示</CardTitle>
               <CardDescription>
-                缺口与不可用记录的本地 MVP 联动提示
+                缺口与不可用记录的联动提示
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">

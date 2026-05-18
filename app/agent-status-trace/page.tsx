@@ -52,10 +52,10 @@ export default async function AgentStatusTracePage() {
               坐席状态轨迹
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机导入的坐席状态数据展示最小轨迹覆盖，不接实时流或生产遵守率公式。
+              展示坐席状态轨迹覆盖，辅助查看在线、培训、离线等状态分布。
             </p>
           </div>
-          <Badge variant="outline">本机状态 records</Badge>
+          <Badge variant="outline">状态轨迹</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
@@ -78,7 +78,7 @@ export default async function AgentStatusTracePage() {
           <MetricCard
             title="轨迹状态"
             value={summary.statusLabel}
-            description="本机导入读取"
+            description="状态数据覆盖"
           />
         </section>
 
@@ -120,19 +120,6 @@ export default async function AgentStatusTracePage() {
           />
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>本机轨迹边界</CardTitle>
-            <CardDescription>
-              当前只证明状态导入结果进入坐席状态轨迹页面。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <p>不接数据库，不接真实 CORN/HR/WFM API。</p>
-            <p>不接实时状态流，不固化生产实时遵守率或异常判定公式。</p>
-            <p>不涉及审批、导出、批量操作、结算规则或收费因子。</p>
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

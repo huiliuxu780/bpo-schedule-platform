@@ -32,9 +32,9 @@ export function SectionCards({
       <Card className="mb-4 overflow-hidden border-dashed bg-muted/20">
         <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
           <div className="grid gap-1">
-            <CardDescription>本机 KPI Preview</CardDescription>
+            <CardDescription>经营指标概览</CardDescription>
             <CardTitle className="text-[24px] leading-8 font-semibold tabular-nums">
-              导入覆盖 {importPreview.importedRows} 行
+              数据覆盖 {importPreview.importedRows} 行
             </CardTitle>
           </div>
           <Badge variant={importPreview.attentionBatches > 0 ? "destructive" : "outline"}>
@@ -46,11 +46,11 @@ export function SectionCards({
             已接入 {importPreview.importedSources} 类数据
           </div>
           <div className="mt-1 text-xs text-muted-foreground">
-            records API 已处理 {recordsPreview.importedRows} 行，覆盖 {recordsPreview.importedSources} 类数据源
+            业务数据已覆盖 {recordsPreview.importedRows} 行，包含 {recordsPreview.importedSources} 类数据源
           </div>
         </CardContent>
         <CardFooter className="text-xs text-muted-foreground">
-          最新批次：{importPreview.latestSource} / {importPreview.latestBatch}。仅用于本机演示口径。
+          最新数据：{importPreview.latestSource} / {importPreview.latestBatch}
         </CardFooter>
       </Card>
       <div className="grid gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">

@@ -51,15 +51,15 @@ export default async function OrganizationPeoplePage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">组织与人员</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机 staff_master processed records 展示人员主数据覆盖，不维护账号或权限。
+              展示人员主数据、团队分布、职场分布和供应商归属。
             </p>
           </div>
-          <Badge variant="outline">本机只读预览</Badge>
+          <Badge variant="outline">人员主数据</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="组织与人员 records"
+            title="人员数量"
             value={`${summary.staffRows}`}
             description={`${summary.sampleRows} 条样本`}
           />
@@ -90,7 +90,7 @@ export default async function OrganizationPeoplePage() {
         <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
           <Card>
             <CardHeader>
-              <CardTitle>本机人员主数据样本</CardTitle>
+              <CardTitle>人员主数据样本</CardTitle>
               <CardDescription>
                 只展示导入样本，不提供新增、编辑、停用、账号或权限动作。
               </CardDescription>
@@ -128,9 +128,9 @@ export default async function OrganizationPeoplePage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>本机组织分布</CardTitle>
+              <CardTitle>组织分布</CardTitle>
               <CardDescription>
-                按样本字段聚合，用于演示主数据已进入系统管理页面。
+                按团队、职场和供应商字段聚合人员覆盖。
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
@@ -160,19 +160,6 @@ export default async function OrganizationPeoplePage() {
           </Card>
         </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>本机系统管理边界</CardTitle>
-            <CardDescription>
-              当前只证明坐席主数据能进入组织与人员页面。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <p>不接数据库，不接真实 HR/CORN/WFM API，不做主数据写回。</p>
-            <p>不做账号登录、权限管理、角色分配、组织架构维护或生产审计流。</p>
-            <p>不执行导出、批量处理、审批、结算规则或收费因子。</p>
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

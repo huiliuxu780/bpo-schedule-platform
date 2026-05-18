@@ -44,7 +44,7 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
           <div>
             <h1 className="text-lg font-semibold">需求计划</h1>
             <p className="text-sm text-muted-foreground">
-              查看本地预测需求，作为排班计划输入
+              查看预测需求，作为排班计划输入
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
@@ -77,7 +77,7 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard title="需求时段" value={`${rows.length}`} description="0.5h 颗粒度" />
           <MetricCard title="预测人次" value={`${totalForecast}`} description="当前筛选汇总" />
-          <MetricCard title="覆盖职场" value={`${siteCount}`} description="本地需求来源" />
+          <MetricCard title="覆盖职场" value={`${siteCount}`} description="需求来源" />
           <MetricCard
             title="峰值需求"
             value={peak ? `${peak.forecast_agents}` : "0"}

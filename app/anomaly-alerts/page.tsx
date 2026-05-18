@@ -35,17 +35,17 @@ export default async function AnomalyAlertsPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">异常预警</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于 dashboard 本机 seed 异常和导入 records 展示只读预警队列。
+              汇总异常线索、影响时段和待处理状态，支持快速定位履约风险。
             </p>
           </div>
-          <Badge variant="outline">本机预警预览</Badge>
+          <Badge variant="outline">预警队列</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="异常预警 records"
+            title="异常预警"
             value={`${summary.alertRows}`}
-            description="本机 seed 预警"
+            description="待处理预警"
           />
           <MetricCard
             title="高优先级"
@@ -72,9 +72,9 @@ export default async function AnomalyAlertsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>本机异常预警队列</CardTitle>
+            <CardTitle>异常预警队列</CardTitle>
             <CardDescription>
-              只读展示 dashboard seed 异常，不提供确认、忽略、派单或审批动作。
+              展示当前待关注异常、影响范围和处理状态。
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -125,7 +125,7 @@ export default async function AnomalyAlertsPage() {
                         colSpan={6}
                         className="h-16 text-center text-muted-foreground"
                       >
-                        暂无异常预警队列。本机 seed 异常恢复后会在这里展示只读预警。
+                        暂无异常预警队列。
                       </TableCell>
                     </TableRow>
                   )}
@@ -135,19 +135,6 @@ export default async function AnomalyAlertsPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>异常预警边界</CardTitle>
-            <CardDescription>
-              当前只证明异常入口已开放并可展示本机数据。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <p>不固化生产异常规则、处罚规则或结算口径。</p>
-            <p>不接真实 CORN/HR/WFM API，不做告警推送或自动处理。</p>
-            <p>不提供审批、导出、批量确认或权限边界。</p>
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

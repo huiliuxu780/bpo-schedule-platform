@@ -40,15 +40,15 @@ export default async function SmartSchedulingPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">智能排班</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机导入 records 展示只读排班建议 readiness，不自动生成或发布排班。
+              汇总主数据、履约和排班覆盖，展示智能排班建议准备状态。
             </p>
           </div>
-          <Badge variant="outline">本机建议预览</Badge>
+          <Badge variant="outline">建议状态</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="智能排班 records"
+            title="排班输入"
             value={`${summary.importedRows}`}
             description={`${summary.sourceCount} 类导入数据`}
           />
@@ -79,9 +79,9 @@ export default async function SmartSchedulingPage() {
         <section className="grid gap-4 xl:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>本机排班建议</CardTitle>
+              <CardTitle>排班建议</CardTitle>
               <CardDescription>
-                只读核对是否具备生成建议所需的数据输入，不执行自动排班。
+                核对是否具备生成排班建议所需的数据输入。
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-2 text-sm">
@@ -114,15 +114,6 @@ export default async function SmartSchedulingPage() {
           />
         </section>
 
-        <BoundaryCard
-          title="智能排班边界"
-          description="当前只证明建议入口可以读取本机导入结果。"
-          lines={[
-            "不自动生成或发布排班。",
-            "不做人员级调班、生产计划写回或审批流。",
-            "不做导出、批量操作、数据库持久化或真实接口写回。",
-          ]}
-        />
       </main>
     </AppShell>
   )
@@ -221,30 +212,6 @@ function RecordSampleCard({
             {emptyText}
           </div>
         )}
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryCard({
-  title,
-  description,
-  lines,
-}: {
-  title: string
-  description: string
-  lines: string[]
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-sm text-muted-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
       </CardContent>
     </Card>
   )

@@ -169,7 +169,7 @@ export default async function EditSchedulePlanPage({
               <CardHeader>
                 <CardTitle>0.5h 时段</CardTitle>
                 <CardDescription>
-                  当前保存整份草稿明细，不做人员级排班
+                  按 0.5h 时段维护草稿明细
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-3">

@@ -59,10 +59,10 @@ export default async function FulfillmentExceptionsPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">异常管理</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机导入的状态和登录 records 展示可复核线索，不启用生产异常规则。
+              汇总状态和登录数据，展示可复核异常线索。
             </p>
           </div>
-          <Badge variant="outline">本机异常线索</Badge>
+          <Badge variant="outline">异常线索</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
@@ -74,12 +74,12 @@ export default async function FulfillmentExceptionsPage() {
           <MetricCard
             title="状态数据"
             value={`${summary.statusRows}`}
-            description="status_log records"
+            description="状态数据"
           />
           <MetricCard
             title="登录数据"
             value={`${summary.loginRows}`}
-            description="login_log records"
+            description="登录数据"
           />
           <MetricCard
             title="线索状态"
@@ -104,19 +104,6 @@ export default async function FulfillmentExceptionsPage() {
           />
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>本机异常边界</CardTitle>
-            <CardDescription>
-              当前只证明导入结果进入异常管理页面。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <p>不接数据库，不接真实 CORN/HR/WFM API。</p>
-            <p>不接实时流，不固化生产异常判定、实时遵守率或处罚规则。</p>
-            <p>不涉及审批、导出、批量操作、结算规则或收费因子。</p>
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )
@@ -150,9 +137,9 @@ function ReviewLeadCard({ rows }: { rows: Record<string, string>[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>本机异常线索样本</CardTitle>
+        <CardTitle>异常线索样本</CardTitle>
         <CardDescription>
-          按导入样本对齐状态与登录 records，仅作为人工复核入口提示。
+          对齐状态与登录样本，作为人工复核入口提示。
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -40,15 +40,15 @@ export default async function MonthlySettlementPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">月度结算</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机导入 records 做只读复盘，不计算生产结算金额。
+              汇总月度结算复盘所需的人员、履约和排班输入。
             </p>
           </div>
-          <Badge variant="outline">本机只读复盘</Badge>
+          <Badge variant="outline">结算复盘</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="结算复盘 records"
+            title="结算输入"
             value={`${summary.importedRows}`}
             description={`${summary.sourceCount} 类导入数据`}
           />
@@ -79,9 +79,9 @@ export default async function MonthlySettlementPage() {
         <section className="grid gap-4 xl:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>本机复盘信号</CardTitle>
+              <CardTitle>复盘信号</CardTitle>
               <CardDescription>
-                只读核对当前导入数据是否足够支撑演示级月度复盘。
+                核对当前数据是否足够支撑月度结算复盘。
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-2 text-sm">
@@ -129,15 +129,6 @@ export default async function MonthlySettlementPage() {
           />
         </section>
 
-        <BoundaryCard
-          title="月度结算边界"
-          description="当前只证明导入结果能进入结算复盘页面。"
-          lines={[
-            "不计算生产结算金额。",
-            "不固化结算公式、收费因子或供应商账单口径。",
-            "不做锁账、审批、导出、批量操作或真实接口写回。",
-          ]}
-        />
       </main>
     </AppShell>
   )
@@ -236,30 +227,6 @@ function RecordSampleCard({
             {emptyText}
           </div>
         )}
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryCard({
-  title,
-  description,
-  lines,
-}: {
-  title: string
-  description: string
-  lines: string[]
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-sm text-muted-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
       </CardContent>
     </Card>
   )

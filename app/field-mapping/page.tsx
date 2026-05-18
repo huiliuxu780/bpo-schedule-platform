@@ -33,7 +33,7 @@ function buildMappingRows(records: DashboardImportRecordSummary[]) {
       statusLabel: record
         ? missingFields.length > 0
           ? "缺少字段"
-          : "本机只读"
+          : "可查看"
         : "等待导入",
     }
   })
@@ -51,27 +51,27 @@ export default async function FieldMappingPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">字段映射</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机 processed records 样本展示字段识别覆盖，不保存配置、不写回映射。
+              展示字段识别覆盖、缺失字段和映射样本。
             </p>
           </div>
-          <Badge variant="outline">本机只读预览</Badge>
+          <Badge variant="outline">字段覆盖</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="字段映射 records"
+            title="字段覆盖"
             value={`${summary.mappedFields}`}
             description={`${summary.importedSources} 类数据源`}
           />
           <MetricCard
             title="缺失字段"
             value={`${summary.missingFields}`}
-            description="按本机预期字段检查"
+            description="按预期字段检查"
           />
           <MetricCard
             title="映射状态"
             value={summary.statusLabel}
-            description="只读覆盖预览"
+            description="字段覆盖预览"
           />
           <MetricCard
             title="最近批次"
@@ -89,7 +89,7 @@ export default async function FieldMappingPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>本机字段映射预览</CardTitle>
+            <CardTitle>字段映射预览</CardTitle>
             <CardDescription>
               展示已识别字段、缺失字段和额外字段；当前不提供保存、发布或写回动作。
             </CardDescription>
@@ -129,19 +129,6 @@ export default async function FieldMappingPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>本机映射边界</CardTitle>
-            <CardDescription>
-              当前只证明导入样本字段能进入字段映射页面。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <p>不接数据库，不保存字段映射配置，不做字段映射写回。</p>
-            <p>不接真实 CORN/HR/WFM API，不做真实接口检查或跨系统对账。</p>
-            <p>不执行导出、批量处理、审批、结算规则或收费因子。</p>
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

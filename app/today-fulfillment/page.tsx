@@ -4,7 +4,6 @@ import {
   summarizeTodayFulfillmentRecords,
   type DashboardImportRecordSummary,
 } from "@/components/data-table-model"
-import { ImportedRecordsSummary } from "@/components/imported-records-summary"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -42,21 +41,21 @@ export default async function TodayFulfillmentPage() {
   const loginRecord = findRecord(records, "login_log")
 
   return (
-    <AppShell title="今日履约" searchPlaceholder="搜索今日履约、坐席或批次">
+    <AppShell title="今日履约" searchPlaceholder="搜索今日履约、坐席或状态">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <section className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-xl font-semibold tracking-normal">今日履约</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              读取本机导入后的坐席主数据、状态数据和登录数据，展示今日履约演示口径。
+              汇总今日坐席主数据、状态数据和登录数据，展示履约覆盖与待关注信号。
             </p>
           </div>
-          <Badge variant="outline">本机只读预览</Badge>
+          <Badge variant="outline">履约概览</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="今日履约 records"
+            title="履约数据"
             value={`${summary.importedRows}`}
             description={`${summary.readySignals}/3 类信号已接入`}
           />
@@ -73,22 +72,16 @@ export default async function TodayFulfillmentPage() {
           <MetricCard
             title="履约状态"
             value={summary.statusLabel}
-            description={summary.latestBatch}
+            description="今日履约口径"
             compact
           />
         </section>
-
-        <ImportedRecordsSummary
-          records={records}
-          title="今日履约 records"
-          description="从本机 processed records 读取今日履约输入覆盖"
-        />
 
         <Card>
           <CardHeader>
             <CardTitle>今日履约输入表</CardTitle>
             <CardDescription>
-              只读展示进入今日履约页面的本机 processed records。
+              展示今日履约需要的主数据、状态和登录信号。
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -96,9 +89,8 @@ export default async function TodayFulfillmentPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>数据源</TableHead>
+                    <TableHead>信号</TableHead>
                     <TableHead className="text-right">行数</TableHead>
-                    <TableHead>最新批次</TableHead>
                     <TableHead>状态</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -112,9 +104,6 @@ export default async function TodayFulfillmentPage() {
                         <TableCell className="text-right tabular-nums">
                           {row.totalRows}
                         </TableCell>
-                        <TableCell className="max-w-[260px] truncate font-mono text-xs text-muted-foreground">
-                          {row.latestBatch}
-                        </TableCell>
                         <TableCell>
                           <Badge variant="outline">{row.statusLabel}</Badge>
                         </TableCell>
@@ -123,10 +112,10 @@ export default async function TodayFulfillmentPage() {
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={4}
+                        colSpan={3}
                         className="h-16 text-center text-muted-foreground"
                       >
-                        暂无履约输入 records。请先在文件导入页导入坐席主数据、状态数据和登录数据 CSV。
+                        暂无履约输入。补齐坐席主数据、状态数据和登录数据后可查看。
                       </TableCell>
                     </TableRow>
                   )}
@@ -139,27 +128,17 @@ export default async function TodayFulfillmentPage() {
         <section className="grid gap-4 xl:grid-cols-2">
           <RecordSampleCard
             title="今日状态样本"
-            description={statusRecord?.latest_batch_id ?? "等待导入坐席状态数据"}
+            description="按坐席状态记录核对在线、培训和离线时段"
             rows={sampleRows(statusRecord)}
-            emptyText="暂无状态数据。请先在文件导入页导入坐席状态 CSV。"
+            emptyText="暂无状态数据。"
           />
           <RecordSampleCard
             title="今日登录样本"
-            description={loginRecord?.latest_batch_id ?? "等待导入登录数据"}
+            description="对比计划登录、实际登录和在线时长"
             rows={sampleRows(loginRecord)}
-            emptyText="暂无登录数据。请先在文件导入页导入登录 CSV。"
+            emptyText="暂无登录数据。"
           />
         </section>
-
-        <BoundaryCard
-          title="今日履约边界"
-          description="当前只证明导入结果能被履约页面读取。"
-          lines={[
-            "不接数据库，不接真实 CORN/HR/WFM API。",
-            "不固化生产履约公式、结算规则、处罚规则或收费因子。",
-            "不提供审批、导出、批量处理或自动排班动作。",
-          ]}
-        />
       </main>
     </AppShell>
   )
@@ -236,30 +215,6 @@ function RecordSampleCard({
             {emptyText}
           </div>
         )}
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryCard({
-  title,
-  description,
-  lines,
-}: {
-  title: string
-  description: string
-  lines: string[]
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-sm text-muted-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
       </CardContent>
     </Card>
   )

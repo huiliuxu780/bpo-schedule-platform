@@ -40,20 +40,20 @@ export default async function InterfaceIntegrationPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">接口集成</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机导入 records 展示接入 readiness，不连接真实接口或配置接口凭证。
+              展示接口接入前置数据、字段覆盖和连接能力状态。
             </p>
           </div>
-          <Badge variant="outline">本机接入预览</Badge>
+          <Badge variant="outline">接入状态</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="接口集成 records"
+            title="接入数据"
             value={`${summary.importedRows}`}
-            description={`${summary.sourceCount} 类本机来源`}
+            description={`${summary.sourceCount} 类数据来源`}
           />
           <MetricCard
-            title="字段 readiness"
+            title="字段覆盖"
             value={`${summary.mappedFields}/${summary.mappedFields + summary.missingFields}`}
             description={`${summary.missingFields} 个字段待补齐`}
           />
@@ -79,9 +79,9 @@ export default async function InterfaceIntegrationPage() {
         <section className="grid gap-4 xl:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>本机接入 readiness</CardTitle>
+            <CardTitle>接口接入状态</CardTitle>
               <CardDescription>
-                只读核对当前演示链路能解释的数据来源，不创建真实外部连接。
+                核对当前接口接入所需的数据来源和字段覆盖状态。
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-2 text-sm">
@@ -114,15 +114,6 @@ export default async function InterfaceIntegrationPage() {
           />
         </section>
 
-        <BoundaryCard
-          title="接口集成边界"
-          description="当前只证明接口前置数据 readiness。"
-          lines={[
-            "不连接真实接口或配置接口凭证。",
-            "不写回 CORN、HR、WFM 或任何第三方系统。",
-            "不做认证、权限、审批、导出、批量操作、数据库持久化或生产同步。",
-          ]}
-        />
       </main>
     </AppShell>
   )
@@ -221,30 +212,6 @@ function RecordSampleCard({
             {emptyText}
           </div>
         )}
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryCard({
-  title,
-  description,
-  lines,
-}: {
-  title: string
-  description: string
-  lines: string[]
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-sm text-muted-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
       </CardContent>
     </Card>
   )

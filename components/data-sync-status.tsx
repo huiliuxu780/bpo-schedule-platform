@@ -154,11 +154,7 @@ export function DataSyncStatus({ rows: importedRows = [] }: DataSyncStatusProps)
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
           <CardTitle>数据接入状态</CardTitle>
-          <CardDescription>
-            {importedRows.length > 0
-              ? "本机导入数据最近批次与同步状态"
-              : "核心数据源最近批次与同步状态"}
-          </CardDescription>
+          <CardDescription>核心数据源最近批次与同步状态</CardDescription>
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger size="sm" className="w-28">

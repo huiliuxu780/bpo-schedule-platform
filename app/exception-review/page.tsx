@@ -40,8 +40,8 @@ function buildReviewRows(
     return {
       staff_id: statusRow?.staff_id ?? loginRow?.staff_id ?? "-",
       date: statusRow?.date ?? loginRow?.date ?? "-",
-      status: statusRow?.status ?? "等待状态 records",
-      actual_login: loginRow?.actual_login ?? "等待登录 records",
+      status: statusRow?.status ?? "等待状态数据",
+      actual_login: loginRow?.actual_login ?? "等待登录数据",
       queue_status: "只读待复核",
     }
   })
@@ -64,10 +64,10 @@ export default async function ExceptionReviewPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">异常复核</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机导入 records 展示只读复核队列，不提供审批、写回或批量处理。
+              展示异常复核队列、状态线索和登录线索。
             </p>
           </div>
-          <Badge variant="outline">只读本机复核</Badge>
+          <Badge variant="outline">复核队列</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
@@ -79,12 +79,12 @@ export default async function ExceptionReviewPage() {
           <MetricCard
             title="状态数据"
             value={`${summary.statusRows}`}
-            description="status_log records"
+            description="状态数据"
           />
           <MetricCard
             title="登录数据"
             value={`${summary.loginRows}`}
-            description="login_log records"
+            description="登录数据"
           />
           <MetricCard
             title="复核状态"
@@ -136,19 +136,6 @@ export default async function ExceptionReviewPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>本机复核边界</CardTitle>
-            <CardDescription>
-              当前只证明导入结果进入异常复核页面。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <p>不接数据库，不接真实 CORN/HR/WFM API。</p>
-            <p>不做通过、驳回、派单、状态写回、导出或批量处理。</p>
-            <p>不固化生产异常判定、实时遵守率、处罚规则、结算规则或收费因子。</p>
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

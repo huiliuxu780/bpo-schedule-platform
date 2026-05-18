@@ -76,14 +76,14 @@ export function MvpFlowSummary({
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
-          <CardTitle>本地 MVP 链路</CardTitle>
+          <CardTitle>模块链路</CardTitle>
           <CardDescription>
-            当前仅使用本地接口、种子数据和前端 fallback，不接数据库
+            当前展示已开放模块的页面覆盖。
           </CardDescription>
         </div>
         <Badge variant="outline" className="gap-1">
           <DatabaseZap data-icon="inline-start" />
-          No Database
+          模块覆盖
         </Badge>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

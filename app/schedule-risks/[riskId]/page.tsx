@@ -168,7 +168,7 @@ export default async function ScheduleRiskDetailPage({
               <MetricCard
                 title="排班缺口"
                 value={`${risk.gap_agents}`}
-                description="本地 MVP 展示口径"
+                description="风险评估口径"
               />
               <MetricCard
                 title="不可用影响"
@@ -187,7 +187,7 @@ export default async function ScheduleRiskDetailPage({
                 <div>
                   <CardTitle>复核建议</CardTitle>
                   <CardDescription>
-                    本页只做本地展示，不触发审批、批量调班或自动排班
+                    本页展示风险定位与复核线索
                   </CardDescription>
                 </div>
                 <Badge variant={risk.risk_level === "high" ? "default" : "outline"}>

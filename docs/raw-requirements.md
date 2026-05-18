@@ -2454,7 +2454,7 @@ description: "PM 指出业务页面被导入/演示/验收语言污染，真实�
 source: "PM corrective feedback on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "in_progress"
+status: "done"
 notes: "导入数据只作为数据来源；业务页面只展示业务对象、业务指标、业务状态和操作入口。导入/批次/localhost/no-database/QA 边界信息保留在 `/demo-imports`、审计或 QA 文档。"
 ```
 
@@ -2467,6 +2467,6 @@ description: "产品语义纠偏后，需要补充 E2E 和审计证据，证明�
 source: "F145 product page semantics cleanup batch on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "ready"
+status: "done"
 notes: "QA 验证真实业务 marker，而不是 records 或 readiness marker；不新增后端、数据库、真实集成、权限实现、真实锁账、公式、收费因子、审批、导出或批量能力。"
 ```

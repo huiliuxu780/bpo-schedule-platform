@@ -36,15 +36,15 @@ export default async function ReportCenterPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">报表中心</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机导入 records 汇总可演示报表覆盖，不生成生产报表或导出文件。
+              汇总人员、履约、登录和排班数据，展示报表目录与覆盖情况。
             </p>
           </div>
-          <Badge variant="outline">本机报表预览</Badge>
+          <Badge variant="outline">报表目录</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="报表中心 records"
+            title="报表数据"
             value={`${summary.importedRows}`}
             description={`${summary.sourceCount} 类导入数据`}
           />
@@ -74,9 +74,9 @@ export default async function ReportCenterPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>本机报表目录</CardTitle>
+            <CardTitle>报表目录</CardTitle>
             <CardDescription>
-              只读展示当前演示可以解释的数据覆盖，不提供文件下载或生产报表生成。
+              展示当前报表分区的数据覆盖情况。
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-2 md:grid-cols-2">
@@ -103,15 +103,6 @@ export default async function ReportCenterPage() {
           </CardContent>
         </Card>
 
-        <BoundaryCard
-          title="报表中心边界"
-          description="当前只证明模块数据能汇总到报表入口。"
-          lines={[
-            "不生成生产报表或导出文件。",
-            "不固化生产 KPI 公式、结算公式或收费因子。",
-            "不做审批、批量操作、数据库持久化或真实接口写回。",
-          ]}
-        />
       </main>
     </AppShell>
   )
@@ -168,29 +159,5 @@ function SignalRow({
       </div>
       <Badge variant="outline">{value}</Badge>
     </div>
-  )
-}
-
-function BoundaryCard({
-  title,
-  description,
-  lines,
-}: {
-  title: string
-  description: string
-  lines: string[]
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-2 text-sm text-muted-foreground">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
-      </CardContent>
-    </Card>
   )
 }

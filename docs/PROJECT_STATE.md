@@ -145,6 +145,7 @@ Current invariants:
 - `F142/Q068/US220-US221` closed the管理页面表格 parity slice: `时段缺口热力图` now shows a severe-slot table, `供应商管理` now shows a vendor distribution table, and `规则配置` now shows a rule directory table, with focused model/E2E/Browser evidence and no database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `F143/US222` fixed the frontend Tailwind source scope regression: `.next` and `test-results` generated directories are explicitly excluded from Tailwind source scanning, preventing Next RSC script fragments such as `__next_f` from polluting dev CSS and breaking shadcn theme variables; current queue remains empty after bugfix closeout.
 - `F144/Q069/US223-US224` opened the开发中入口本机只读预览 slice: `系统管理 > 权限管理` now links to `/permission-management` and `结算复盘 > 结算锁账` now links to `/settlement-lock`; both pages read local processed records, show readiness tables and future Gate boundaries without real login, auth, permission enforcement, user/role maintenance, real settlement lock, formulas, charge factors, bills, approval, export, batch, database, real integrations, or production writeback; current queue returned to empty after QA closeout.
+- `F145/Q070/US225-US226` corrected product-page semantics after PM feedback: business pages no longer surface import/demo/QA markers such as records, processed records, localhost-only, no-database, or readiness as visible product content; dashboard, shift details, fulfillment, today fulfillment, rule configuration, permission management, settlement lock, and related opened modules now use business labels, capability lists, samples, and module status. `/demo-imports` remains the place for CSV import, batch, and processed-records evidence. Current queue returned to empty after QA closeout.
 
 ## Product Direction
 
@@ -156,7 +157,7 @@ PM clarified on 2026-05-16 that the demo should be based on existing product mod
 import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
 ```
 
-Recommended order after Q069:
+Recommended order after Q070:
 
 1. **本机演示脚本/runbook 收口:** tighten local demo startup, CSV import sequence, and smoke instructions for the exact pages PM will demonstrate.
 2. **剩余开放模块表格控件补强:** add table controls such as lightweight sorting/filter summaries only where existing opened modules still need it and the data is already local/read-only.

@@ -32,7 +32,7 @@ function buildQualityRows(records: DashboardImportRecordSummary[]) {
       rows: record?.total_rows ?? 0,
       samples: record?.sample_rows.length ?? 0,
       latestBatch: record?.latest_batch_id ?? "等待导入",
-      qualityStatus: record ? "本机预览" : "待补齐",
+      qualityStatus: record ? "可查看" : "待补齐",
       sampleRows: record?.sample_rows.slice(0, 2) ?? [],
     }
   })
@@ -50,22 +50,22 @@ export default async function DataQualityPage() {
           <div>
             <h1 className="text-xl font-semibold tracking-normal">数据质量</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              基于本机 processed records 展示导入覆盖、样本和基础缺口提示，不执行生产质量规则。
+              展示主数据、状态数据和登录数据的覆盖、样本和基础缺口提示。
             </p>
           </div>
-          <Badge variant="outline">本机质量预览</Badge>
+          <Badge variant="outline">质量概览</Badge>
         </section>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard
-            title="数据质量 records"
+            title="数据覆盖"
             value={`${summary.importedRows}`}
             description={`${summary.importedSources} 类数据源`}
           />
           <MetricCard
             title="坐席主数据"
             value={`${summary.staffRows}`}
-            description="staff_master records"
+            description="坐席主数据"
           />
           <MetricCard
             title="状态/登录"
@@ -87,9 +87,9 @@ export default async function DataQualityPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>本机质量预览明细</CardTitle>
+            <CardTitle>质量预览明细</CardTitle>
             <CardDescription>
-              只展示导入覆盖和样本，不做自动修复、字段映射写回或跨系统对账。
+              展示数据覆盖、样本字段和质量关注点。
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -141,19 +141,6 @@ export default async function DataQualityPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>本机质量边界</CardTitle>
-            <CardDescription>
-              当前只证明导入结果进入数据质量页面。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2 text-sm text-muted-foreground">
-            <p>不接数据库，不接真实 CORN/HR/WFM API。</p>
-            <p>不执行生产数据质量规则、真实接口检查或跨系统对账。</p>
-            <p>不做自动修复、字段映射写回、导出、批量处理、审批或结算。</p>
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

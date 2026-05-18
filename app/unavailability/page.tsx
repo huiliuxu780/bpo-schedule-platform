@@ -283,8 +283,8 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
 
             <ImportedRecordsSummary
               records={importRecords}
-              title="不可用核对 records"
-              description="从本机导入 processed records 读取人员不可用核对覆盖"
+              title="不可用核对"
+              description="读取人员不可用核对覆盖"
             />
 
             <Card>

@@ -408,7 +408,7 @@ test("monthly settlement records summarize local read-only review signals", () =
     reviewSignals: 3,
     latestBatch: "schedule_plan-20260517095000-001",
     latestSource: "排班数据",
-    statusLabel: "本机复盘预览",
+    statusLabel: "复盘可查看",
   });
 });
 
@@ -457,7 +457,7 @@ test("report center records summarize imported module outcomes", () => {
     scheduleRows: 4,
     latestBatch: "schedule_plan-20260517095000-001",
     latestSource: "排班数据",
-    statusLabel: "本机报表预览",
+    statusLabel: "报表可查看",
   });
 });
 
@@ -510,7 +510,7 @@ test("supplier review records summarize vendor and operations coverage", () => {
     reviewSignals: 3,
     latestBatch: "schedule_plan-20260517095000-001",
     latestSource: "排班数据",
-    statusLabel: "本机供应商复盘",
+    statusLabel: "复盘可查看",
   });
 });
 
@@ -563,7 +563,7 @@ test("smart scheduling records summarize local suggestion readiness", () => {
     recommendationSignals: 3,
     latestBatch: "schedule_plan-20260517095000-001",
     latestSource: "排班数据",
-    statusLabel: "本机建议预览",
+    statusLabel: "建议就绪",
   });
 });
 
@@ -647,7 +647,7 @@ test("interface integration records summarize local readiness coverage", () => {
     readinessSignals: 4,
     latestBatch: "schedule_plan-20260517095000-001",
     latestSource: "排班数据",
-    statusLabel: "本机接入预览",
+    statusLabel: "接入就绪",
   });
 });
 
@@ -696,7 +696,7 @@ test("operation audit records summarize local evidence coverage", () => {
     auditSignals: 4,
     latestBatch: "schedule_plan-20260517095000-001",
     latestSource: "排班数据",
-    statusLabel: "本机审计预览",
+    statusLabel: "审计可查看",
   });
 });
 
@@ -777,7 +777,7 @@ test("today fulfillment records summarize local status and login readiness", () 
     readySignals: 3,
     latestBatch: "login_log-20260516095000-001",
     latestSource: "登录数据",
-    statusLabel: "本机履约预览",
+    statusLabel: "履约可查看",
   });
 });
 
@@ -861,7 +861,7 @@ test("anomaly alert records combine seeded anomalies with imported coverage", ()
     highSeverity: 1,
     pendingReview: 1,
     importedRows: 8,
-    statusLabel: "本机预警预览",
+    statusLabel: "预警可查看",
   });
 });
 
@@ -967,7 +967,7 @@ test("corn status log records summarize local status coverage", () => {
     sampleRows: 3,
     latestBatch: "status_log-20260516094000-001",
     latestSource: "坐席状态数据",
-    statusLabel: "本机预览",
+    statusLabel: "可查看",
   });
 });
 
@@ -1066,7 +1066,7 @@ test("adherence monitoring records summarize local status and login preview", ()
     previewRows: 2,
     latestBatch: "login_log-20260516095000-001",
     latestSource: "登录数据",
-    statusLabel: "本机预览",
+    statusLabel: "可查看",
   });
 });
 
@@ -1110,7 +1110,7 @@ test("data quality records summarize local imported source coverage", () => {
     sampleRows: 4,
     latestBatch: "login_log-20260516095000-001",
     latestSource: "登录数据",
-    statusLabel: "本机预览",
+    statusLabel: "质量可查看",
   });
 });
 
@@ -1234,7 +1234,7 @@ test("organization people records summarize staff master coverage", () => {
     sampleRows: 3,
     latestBatch: "staff_master-20260516093000-001",
     latestSource: "坐席主数据",
-    statusLabel: "本机只读",
+    statusLabel: "人员可查看",
   });
 });
 
@@ -1313,7 +1313,7 @@ test("vendor distribution table rows expose staff sample fields", () => {
   assert.deepEqual(buildVendorDistributionTableRows(undefined), []);
 });
 
-test("rule configuration records summarize local read-only rule readiness", () => {
+test("rule configuration records summarize rule directory status", () => {
   const summary = summarizeRuleConfigurationRecords([
     {
       kind: "staff_master",
@@ -1348,33 +1348,33 @@ test("rule configuration records summarize local read-only rule readiness", () =
     deferredRules: 5,
     latestBatch: "login_log-20260516095000-001",
     latestSource: "登录数据",
-    statusLabel: "本机规则目录",
+    statusLabel: "规则目录",
   });
 });
 
 test("rule configuration table rows expose rule status and descriptions", () => {
   const rows = buildRuleConfigurationTableRows([
-    { title: "导入 records 只读展示", status: "enabled" },
+    { title: "数据查看规则", status: "enabled" },
     { title: "规则编辑发布", status: "deferred" },
   ]);
 
   assert.deepEqual(rows, [
     {
-      rule: "导入 records 只读展示",
-      statusLabel: "本机只读",
-      description: "本机演示已开放，只读展示不写回生产。",
+      rule: "数据查看规则",
+      statusLabel: "已开放",
+      description: "当前可查看规则范围和状态。",
     },
     {
       rule: "规则编辑发布",
       statusLabel: "开发中",
-      description: "需要后续独立 Gate，当前不提供编辑、发布或写回。",
+      description: "规则编辑、发布或写回能力尚未开放。",
     },
   ]);
 
   assert.deepEqual(buildRuleConfigurationTableRows([]), []);
 });
 
-test("permission management records summarize readonly preview readiness", () => {
+test("permission management records summarize capability status", () => {
   const summary = summarizePermissionManagementRecords([
     {
       kind: "staff_master",
@@ -1401,31 +1401,31 @@ test("permission management records summarize readonly preview readiness", () =>
     deferredItems: 4,
     latestBatch: "status_log-20260516094000-001",
     latestSource: "坐席状态数据",
-    statusLabel: "本机只读",
+    statusLabel: "已开放",
   });
 });
 
-test("permission management table rows expose readonly and gated items", () => {
+test("permission management table rows expose opened and developing items", () => {
   const rows = buildPermissionManagementTableRows([
-    { title: "导入 records 权限上下文", status: "enabled" },
+    { title: "组织与人员查看", status: "enabled" },
     { title: "账号登录与认证", status: "deferred" },
   ]);
 
   assert.deepEqual(rows, [
     {
-      item: "导入 records 权限上下文",
-      statusLabel: "本机只读",
-      description: "只展示本机导入 records 的查看上下文，不做登录、授权或权限判定。",
+      item: "组织与人员查看",
+      statusLabel: "已开放",
+      description: "可查看组织、人员和审计等管理上下文。",
     },
     {
       item: "账号登录与认证",
-      statusLabel: "需后续 Gate",
-      description: "需要后续独立 Gate，当前不提供账号、角色、授权或生产权限边界。",
+      statusLabel: "开发中",
+      description: "账号、角色和授权策略尚未开放。",
     },
   ]);
 });
 
-test("settlement lock records summarize readonly preview readiness", () => {
+test("settlement lock records summarize capability status", () => {
   const summary = summarizeSettlementLockRecords([
     {
       kind: "staff_master",
@@ -1452,26 +1452,26 @@ test("settlement lock records summarize readonly preview readiness", () => {
     deferredItems: 5,
     latestBatch: "schedule_plan-20260516095500-001",
     latestSource: "排班数据",
-    statusLabel: "本机只读",
+    statusLabel: "已开放",
   });
 });
 
-test("settlement lock table rows expose readonly and gated items", () => {
+test("settlement lock table rows expose opened and developing items", () => {
   const rows = buildSettlementLockTableRows([
-    { title: "月度 records 只读复盘", status: "enabled" },
+    { title: "月度复盘查看", status: "enabled" },
     { title: "锁账动作", status: "deferred" },
   ]);
 
   assert.deepEqual(rows, [
     {
-      item: "月度 records 只读复盘",
-      statusLabel: "本机只读",
-      description: "只展示本机导入 records 的复盘输入，不冻结账期或计算结算金额。",
+      item: "月度复盘查看",
+      statusLabel: "已开放",
+      description: "可查看月度复盘和结算输入覆盖。",
     },
     {
       item: "锁账动作",
-      statusLabel: "需后续 Gate",
-      description: "需要后续独立 Gate，当前不提供锁账、结算公式、收费因子、审批或导出。",
+      statusLabel: "开发中",
+      description: "锁账动作、结算公式、收费因子、账单审批和导出尚未开放。",
     },
   ]);
 });

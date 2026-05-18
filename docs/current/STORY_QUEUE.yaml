@@ -5,18 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US225
-    requirement_ids: ["R213"]
-    task_ids: ["F145"]
-    status: in_progress
-    priority: P0
-    module: "产品体验"
-    summary: "清理业务页面中的导入/演示/验收痕迹，恢复真实功能表达。"
-  - id: US226
-    requirement_ids: ["R214"]
-    task_ids: ["Q070"]
-    status: ready
-    priority: P0
-    module: "本机验收"
-    summary: "补充语义纠偏后的 E2E 和审计证据。"
+stories: []
