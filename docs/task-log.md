@@ -53,6 +53,15 @@
 - status: `done`
 - notes: 新增本地只读 `/api/v1/personnel-schedules/import-contract` 合同，覆盖人员级排班字段、必填字段、生成字段、校验规则，以及从人员排班展开到 0.5h `interval_schedule` 的 group_by、目标字段和追溯字段；不做真实排班导入、不接数据库、不实现自动排班。
 
+### 2026-05-18
+
+- task_id: `B008`
+- source_ids: [`R094`, `R095`]
+- story_ids: [`US106`]
+- action: 新增生产雏形预测、排班、登录和状态对比合同。
+- status: `done`
+- notes: 新增本地只读 `/api/v1/fulfillment-comparison/contract` 合同，覆盖需求预测、人员排班、登录日志、状态日志四类来源、对齐键、人员级键、状态字典字段、异常规则和复核字段；不做真实对比计算、不接数据库、不实现生产公式。
+
 ### 2026-05-12
 
 - task_id: `F018`

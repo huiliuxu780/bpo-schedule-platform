@@ -2,6 +2,9 @@ from datetime import datetime, timedelta, timezone
 
 from backend.app.models import (
     DemandPlanRow,
+    AnomalyRuleContract,
+    ComparisonSourceContract,
+    FulfillmentComparisonContractResponse,
     MasterDataEntityContract,
     MasterDataImportContractResponse,
     IntervalExpansionContract,
@@ -309,6 +312,177 @@ PERSONNEL_SCHEDULE_IMPORT_CONTRACT = PersonnelScheduleImportContractResponse(
     ),
 )
 
+FULFILLMENT_COMPARISON_CONTRACT = FulfillmentComparisonContractResponse(
+    version="production-mvp-v1",
+    sources=[
+        ComparisonSourceContract(
+            source="demand_forecast",
+            grain="0.5h interval",
+            fields=[
+                "forecast_id",
+                "forecast_version_id",
+                "business_date",
+                "workplace_id",
+                "project_id",
+                "interval_start",
+                "interval_end",
+                "forecast_agents",
+                "skill_group",
+                "skill_level",
+            ],
+            required_fields=[
+                "forecast_id",
+                "forecast_version_id",
+                "business_date",
+                "workplace_id",
+                "project_id",
+                "interval_start",
+                "interval_end",
+                "forecast_agents",
+            ],
+        ),
+        ComparisonSourceContract(
+            source="personnel_schedule",
+            grain="person shift detail and generated 0.5h interval",
+            fields=[
+                "schedule_detail_id",
+                "schedule_version_id",
+                "employee_id",
+                "business_date",
+                "workplace_id",
+                "project_id",
+                "interval_start",
+                "interval_end",
+                "scheduled_agents",
+                "employee_ids",
+            ],
+            required_fields=[
+                "schedule_detail_id",
+                "schedule_version_id",
+                "employee_id",
+                "business_date",
+                "workplace_id",
+                "project_id",
+                "interval_start",
+                "interval_end",
+            ],
+        ),
+        ComparisonSourceContract(
+            source="login_log",
+            grain="employee login session",
+            fields=[
+                "login_event_id",
+                "employee_id",
+                "external_employee_id",
+                "login_at",
+                "logout_at",
+                "workplace_id",
+                "project_id",
+            ],
+            required_fields=[
+                "login_event_id",
+                "employee_id",
+                "login_at",
+                "workplace_id",
+                "project_id",
+            ],
+        ),
+        ComparisonSourceContract(
+            source="status_log",
+            grain="employee status interval",
+            fields=[
+                "status_event_id",
+                "employee_id",
+                "status_type",
+                "status_start_at",
+                "status_end_at",
+                "workplace_id",
+                "project_id",
+                "counts_as_productive",
+            ],
+            required_fields=[
+                "status_event_id",
+                "employee_id",
+                "status_type",
+                "status_start_at",
+                "status_end_at",
+            ],
+        ),
+    ],
+    comparison_keys=[
+        "business_date",
+        "workplace_id",
+        "project_id",
+        "interval_start",
+        "interval_end",
+    ],
+    person_level_keys=[
+        "employee_id",
+        "business_date",
+        "schedule_detail_id",
+        "login_event_id",
+        "status_event_id",
+    ],
+    status_dictionary_fields=[
+        "status_type",
+        "counts_as_productive",
+        "productive_category",
+    ],
+    anomaly_rules=[
+        AnomalyRuleContract(
+            code="forecast_shortage",
+            compares=["demand_forecast", "interval_schedule"],
+            condition="forecast_agents > scheduled_agents",
+            review_owner="排班运营",
+        ),
+        AnomalyRuleContract(
+            code="forecast_overstaffed",
+            compares=["demand_forecast", "interval_schedule"],
+            condition="scheduled_agents > forecast_agents",
+            review_owner="排班运营",
+        ),
+        AnomalyRuleContract(
+            code="no_login",
+            compares=["personnel_schedule", "login_log"],
+            condition="scheduled employee has no login session",
+            review_owner="现场主管",
+        ),
+        AnomalyRuleContract(
+            code="late_login",
+            compares=["personnel_schedule", "login_log"],
+            condition="login_at > scheduled start_at",
+            review_owner="现场主管",
+        ),
+        AnomalyRuleContract(
+            code="early_logout",
+            compares=["personnel_schedule", "login_log"],
+            condition="logout_at < scheduled end_at",
+            review_owner="现场主管",
+        ),
+        AnomalyRuleContract(
+            code="unscheduled_login",
+            compares=["login_log", "personnel_schedule"],
+            condition="login session has no matching personnel schedule",
+            review_owner="现场主管",
+        ),
+        AnomalyRuleContract(
+            code="non_productive_status",
+            compares=["personnel_schedule", "status_log"],
+            condition="scheduled interval is covered by non-productive status",
+            review_owner="运营负责人",
+        ),
+    ],
+    review_fields=[
+        "anomaly_id",
+        "anomaly_code",
+        "review_result",
+        "root_cause",
+        "reviewer",
+        "reviewed_at",
+        "review_note",
+    ],
+)
+
 
 def _coverage_rate(scheduled_agents: int, forecast_agents: int) -> float:
     if forecast_agents == 0:
@@ -546,6 +720,10 @@ def get_master_data_import_contract() -> MasterDataImportContractResponse:
 
 def get_personnel_schedule_import_contract() -> PersonnelScheduleImportContractResponse:
     return PERSONNEL_SCHEDULE_IMPORT_CONTRACT
+
+
+def get_fulfillment_comparison_contract() -> FulfillmentComparisonContractResponse:
+    return FULFILLMENT_COMPARISON_CONTRACT
 
 
 def list_shift_detail_rows(

@@ -15,6 +15,12 @@ MasterDataEntity = Literal[
     "agent_binding",
     "shift_type",
 ]
+ComparisonSource = Literal[
+    "demand_forecast",
+    "personnel_schedule",
+    "login_log",
+    "status_log",
+]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -97,6 +103,30 @@ class PersonnelScheduleImportContractResponse(BaseModel):
     generated_fields: list[str]
     validation_rules: list[str]
     expansion: IntervalExpansionContract
+
+
+class ComparisonSourceContract(BaseModel):
+    source: ComparisonSource
+    fields: list[str]
+    required_fields: list[str]
+    grain: str
+
+
+class AnomalyRuleContract(BaseModel):
+    code: str
+    compares: list[str]
+    condition: str
+    review_owner: str
+
+
+class FulfillmentComparisonContractResponse(BaseModel):
+    version: str
+    sources: list[ComparisonSourceContract]
+    comparison_keys: list[str]
+    person_level_keys: list[str]
+    status_dictionary_fields: list[str]
+    anomaly_rules: list[AnomalyRuleContract]
+    review_fields: list[str]
 
 
 class UnavailabilityRow(BaseModel):

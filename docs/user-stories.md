@@ -1762,7 +1762,7 @@ stories:
     story: "作为现场主管，我希望需求预测、人员排班、登录日志和状态日志有统一对比口径，以便识别缺口、未登录、迟到、早退和非有效产能。"
     task_type: "backend-mvp"
     priority: "P0"
-    status: "ready"
+    status: "done"
   - id: US107
     requirement_ids: [R096]
     task_ids: [F060]

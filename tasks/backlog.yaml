@@ -3243,7 +3243,7 @@ tasks:
   - id: B008
     title: "预测排班登录状态对比合同"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-mvp
     allowed_files:
       - "backend/**"

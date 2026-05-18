@@ -70,6 +70,23 @@
 - push_decision: `continuous PM instruction to keep developing; push after verified coherent block`
 - blocked_reason: `N/A`
 
+### B008 Fulfillment Comparison Contract
+
+- branch_name: `codex/production-mvp-first-batch`
+- base_main_commit: `64388bc`
+- remote_status: `local continuation on production MVP first-batch branch`.
+- scope: local backend contract endpoint, model/repository contract data, backend unittest, current queue cleanup, and traceability records for forecast/schedule/login/status comparison contract only.
+- allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/repository.py`, `backend/tests/test_schedule_plans.py`, `docs/current/**`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, `docs/user-stories.md`, and `tasks/backlog.yaml`; no package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/repository.py`, `backend/tests/test_schedule_plans.py`, `docs/current/PROJECT_CONTEXT.md`, `docs/current/STORY_QUEUE.yaml`, `docs/current/ACTIVE_TASKS.yaml`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, `docs/user-stories.md`, and `tasks/backlog.yaml`; no package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement, or charge-factor files.
+- check_result: `python -m unittest ...test_fulfillment_comparison_contract...` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `python -m unittest discover -s backend/tests -v` passed with 25 tests; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing; push after verified coherent block`
+- blocked_reason: `N/A`
+
 ## 2026-05-10
 
 ### Clean Harness Initialization

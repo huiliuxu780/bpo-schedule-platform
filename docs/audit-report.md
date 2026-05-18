@@ -88,6 +88,29 @@
 - `python -m unittest discover -s backend/tests -v`：通过，23 个后端测试通过。
 - `bash scripts/check.sh`：通过。
 
+### 2026-05-18 - B008 预测排班登录状态对比合同审计
+
+#### 审计结论
+
+- 已新增本地只读 `/api/v1/fulfillment-comparison/contract` 合同端点。
+- 合同覆盖 `demand_forecast`、`personnel_schedule`、`login_log`、`status_log` 四类来源。
+- 合同明确时段级对齐键、人员级键、状态字典字段、异常规则和复核字段。
+- 异常规则覆盖预测缺口、超排、未登录、迟到、早退、未排班登录和非有效产能。
+- 本轮只做本地合同能力，不做真实对比计算、数据库持久化、ORM、迁移、权限、审批、导出、批量或生产公式。
+
+#### 风险
+
+- 该端点是生产雏形本地合同，不代表真实预测导入、登录/状态导入或异常计算器已实现。
+- 状态字典和异常条件已经具备产品口径，但阈值配置、业务日切分和真实计算仍需后续单独实现。
+
+#### 验证
+
+- `python -m unittest ...test_fulfillment_comparison_contract...`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `python -m unittest discover -s backend/tests -v`：通过，25 个后端测试通过。
+- `bash scripts/check.sh`：通过。
+
 ### 2026-05-12 - F018 风险提示表局部 table parity 迁移审计
 
 #### 审计结论

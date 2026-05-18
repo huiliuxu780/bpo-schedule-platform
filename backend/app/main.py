@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 
 from backend.app.models import (
     DemandPlanListResponse,
+    FulfillmentComparisonContractResponse,
     MasterDataImportContractResponse,
     PersonnelScheduleImportContractResponse,
     ScheduleRiskListResponse,
@@ -15,6 +16,7 @@ from backend.app.models import (
 )
 from backend.app.repository import (
     create_plan_draft,
+    get_fulfillment_comparison_contract,
     get_master_data_import_contract,
     get_personnel_schedule_import_contract,
     find_plan_detail,
@@ -62,6 +64,14 @@ def list_master_data_import_contract() -> MasterDataImportContractResponse:
 )
 def list_personnel_schedule_import_contract() -> PersonnelScheduleImportContractResponse:
     return get_personnel_schedule_import_contract()
+
+
+@app.get(
+    "/api/v1/fulfillment-comparison/contract",
+    response_model=FulfillmentComparisonContractResponse,
+)
+def list_fulfillment_comparison_contract() -> FulfillmentComparisonContractResponse:
+    return get_fulfillment_comparison_contract()
 
 
 @app.get("/api/v1/shift-details", response_model=ShiftDetailListResponse)

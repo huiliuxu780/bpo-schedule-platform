@@ -7,6 +7,7 @@ from backend.app.main import (
     create_schedule_plan_draft,
     get_schedule_plan,
     list_demand_plans,
+    list_fulfillment_comparison_contract,
     list_master_data_import_contract,
     list_personnel_schedule_import_contract,
     list_shift_details,
@@ -29,6 +30,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/unavailability", "GET"), routes)
         self.assertIn(("/api/v1/master-data/import-contract", "GET"), routes)
         self.assertIn(("/api/v1/personnel-schedules/import-contract", "GET"), routes)
+        self.assertIn(("/api/v1/fulfillment-comparison/contract", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
 
@@ -89,6 +91,42 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn("employee_ids", response.expansion.target_fields)
         self.assertIn("invalid_time_range", response.validation_rules)
         self.assertIn("cross_day_without_business_date", response.validation_rules)
+
+    def test_fulfillment_comparison_contract_defines_sources_and_keys(self) -> None:
+        response = list_fulfillment_comparison_contract()
+
+        source_names = {source.source for source in response.sources}
+
+        self.assertEqual(
+            source_names,
+            {"demand_forecast", "personnel_schedule", "login_log", "status_log"},
+        )
+        self.assertEqual(
+            response.comparison_keys,
+            ["business_date", "workplace_id", "project_id", "interval_start", "interval_end"],
+        )
+        self.assertIn("employee_id", response.person_level_keys)
+        self.assertIn("status_type", response.status_dictionary_fields)
+
+    def test_fulfillment_comparison_contract_defines_anomalies(self) -> None:
+        response = list_fulfillment_comparison_contract()
+
+        anomaly_codes = {item.code for item in response.anomaly_rules}
+
+        self.assertTrue(
+            {
+                "forecast_shortage",
+                "forecast_overstaffed",
+                "no_login",
+                "late_login",
+                "early_logout",
+                "unscheduled_login",
+                "non_productive_status",
+            }.issubset(anomaly_codes)
+        )
+        shortage = next(item for item in response.anomaly_rules if item.code == "forecast_shortage")
+        self.assertEqual(shortage.compares, ["demand_forecast", "interval_schedule"])
+        self.assertIn("review_result", response.review_fields)
 
     def test_list_schedule_plans_returns_required_summary_fields(self) -> None:
         response = list_schedule_plans()
