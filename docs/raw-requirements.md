@@ -887,3 +887,26 @@ version: "1.0"
 status: "split"
 notes: "本组只安排生产雏形第一批需求。后续实现仍必须保持 no-database/local MVP 边界；不授权数据库、真实外部集成、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
 ```
+
+### R097-R100 - 生产雏形合同前端演示入口
+
+```yaml
+requirements:
+  - id: R097
+    module: "生产雏形"
+    description: "前端需要本地合同客户端和模型测试，能汇总主数据、人员级排班、履约对比三个生产雏形合同。"
+  - id: R098
+    module: "生产雏形"
+    description: "新增生产雏形合同页，用于展示第一批合同覆盖范围、数据来源、异常口径和 no-database 边界。"
+  - id: R099
+    module: "导航"
+    description: "侧边栏需要一个生产雏形入口，方便 PM 从本地演示页直接查看合同覆盖情况。"
+  - id: R100
+    module: "质量与交付"
+    description: "对生产雏形合同前端演示入口做 QA 收口，确认页面、导航、测试和边界追溯均可验证。"
+source: "PM requested multiple continued production MVP tasks on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "split"
+notes: "本组只做前端本地演示入口和合同摘要，不做真实导入、真实计算、数据库、权限、审批、导出、批量或生产公式。"
+```

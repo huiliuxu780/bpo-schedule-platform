@@ -87,6 +87,23 @@
 - push_decision: `continuous PM instruction to keep developing; push after verified coherent block`
 - blocked_reason: `N/A`
 
+### F061-F063/Q016 Production MVP Contract Demo Batch
+
+- branch_name: `codex/production-mvp-contract-demo`
+- base_main_commit: `fc71b28`
+- remote_status: `local branch created from pushed production MVP first-batch head`.
+- scope: current queue seeding for frontend contract client, contract page, sidebar entry, and QA closeout.
+- allowed_files_check: `app/**`, `components/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `lib/production-mvp-contracts.ts`, `app/production-mvp/page.tsx`, `components/app-sidebar.tsx`, `scripts/tests/production-mvp-contracts.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, or production formula files.
+- check_result: `node --experimental-strip-types --test scripts/tests/production-mvp-contracts.test.mjs` passed with 2 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing; push after verified coherent block`
+- blocked_reason: `N/A`
+
 ## 2026-05-10
 
 ### Clean Harness Initialization
@@ -739,4 +756,21 @@
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
 - push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
+### F061-F063 Production MVP Contract Demo Block
+
+- branch_name: `codex/production-mvp-contract-demo`
+- base_main_commit: `fc71b28`
+- remote_status: `local branch created from prior pushed production MVP first-batch head because main has not yet integrated the production MVP chain`
+- scope: production MVP local frontend contract client, model test, `/production-mvp` page, sidebar entry, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, or production formula files.
+- scope_diff_check: pending final diff review.
+- check_result: pending final verification.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`

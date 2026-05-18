@@ -1787,3 +1787,50 @@ acceptance:
   - "生产权限、审批、导出、批量、自动排班、生产公式、结算规则和收费因子继续作为后续能力。"
   - "`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US109-US112 - 生产雏形合同前端演示入口
+
+```yaml
+stories:
+  - id: US109
+    requirement_ids: [R097]
+    task_ids: [F061]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望前端有生产雏形合同客户端和模型测试，能汇总三类合同覆盖范围，以便确认后续页面展示不是硬编码猜测。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US110
+    requirement_ids: [R098]
+    task_ids: [F062]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望有一个生产雏形合同页，集中查看主数据、人员排班、预测/登录/状态对比合同和暂不实现边界。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US111
+    requirement_ids: [R099]
+    task_ids: [F063]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏能直接进入生产雏形合同页，以便本地验收时不用记住 URL。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US112
+    requirement_ids: [R100]
+    task_ids: [Q016]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望对生产雏形合同演示入口做验收收口，确认页面可构建、导航可达、边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "页面展示来自本地合同客户端和 fallback，不接真实外部数据。"
+  - "页面明确 no-database、无真实导入、无权限审批导出批量、无生产公式。"
+  - "侧边栏有生产雏形入口并能高亮。"
+  - "`node --experimental-strip-types --test scripts/tests/production-mvp-contracts.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

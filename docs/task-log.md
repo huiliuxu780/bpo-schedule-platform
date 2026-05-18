@@ -62,6 +62,15 @@
 - status: `done`
 - notes: 新增本地只读 `/api/v1/fulfillment-comparison/contract` 合同，覆盖需求预测、人员排班、登录日志、状态日志四类来源、对齐键、人员级键、状态字典字段、异常规则和复核字段；不做真实对比计算、不接数据库、不实现生产公式。
 
+### 2026-05-18
+
+- task_id: `F061-F063/Q016`
+- source_ids: [`R097`, `R098`, `R099`, `R100`]
+- story_ids: [`US109`, `US110`, `US111`, `US112`]
+- action: 安排生产雏形合同前端演示入口连续任务。
+- status: `in_progress`
+- notes: 已将合同客户端、合同展示页、导航入口和 QA 收口放入 current ready queue；本批只做本地前端合同展示，不接真实数据、不改依赖、不接数据库。
+
 ### 2026-05-12
 
 - task_id: `F018`
@@ -832,3 +841,25 @@
 - action: 执行 F041-F059 20-task table parity QA 收口。
 - status: `done`
 - notes: 模型测试覆盖三张表的本地筛选与统计；未新增依赖、未改后端契约、未接数据库、未引入审批、导出、批量、权限或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-18
+
+- task_id: `F061-F063`
+- source_ids:
+  - `R097-R099`
+- story_ids:
+  - `US109-US111`
+- action: 完成生产雏形合同前端演示入口。
+- status: `done`
+- notes: 新增本地生产雏形合同客户端、fallback、摘要模型和模型测试；新增 `/production-mvp` 页面展示主数据、人员级排班、0.5h 时段汇总、预测/排班/登录/状态对比和延期生产能力边界；侧边栏已增加生产雏形入口。
+
+### 2026-05-18
+
+- task_id: `Q016`
+- source_ids:
+  - `R100`
+- story_ids:
+  - `US112`
+- action: 执行生产雏形合同演示入口 QA 收口。
+- status: `done`
+- notes: targeted model test、lint、typecheck、strict state check、diff check 和标准 check 已纳入验收；本批未新增依赖、未改后端契约、未接数据库、未引入真实外部集成、权限、审批、导出、批量、自动排班或生产公式；current queue 与 active tasks 已清空。

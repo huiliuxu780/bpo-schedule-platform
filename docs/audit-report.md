@@ -111,6 +111,20 @@
 - `python -m unittest discover -s backend/tests -v`：通过，25 个后端测试通过。
 - `bash scripts/check.sh`：通过。
 
+### 2026-05-18 - F061-F063/Q016 生产雏形合同演示入口安排审计
+
+#### 审计结论
+
+- 已新增 `R097-R100` 和 `US109-US112`，并将 F061-F063/Q016 放入 current ready queue。
+- 本批范围是前端本地合同客户端、生产雏形合同页、侧边栏入口和 QA 收口。
+- 本批不允许真实外部数据、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- 待最终验证：`bash scripts/check-state.sh --strict`。
+- 待最终验证：`git diff --check`。
+- 待最终验证：`bash scripts/check.sh`。
+
 ### 2026-05-12 - F018 风险提示表局部 table parity 迁移审计
 
 #### 审计结论
@@ -1094,6 +1108,29 @@
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 19 个后端 unittest。
 - `curl -fsS http://127.0.0.1:3015/schedule-plans`：通过，页面包含排班计划表和风险提示表关键文本。
 - `curl -fsS http://127.0.0.1:3015/unavailability`：通过，页面包含不可用表关键文本。
+
+### 2026-05-18 - Production MVP contract demo slice
+
+#### 审计结论
+
+- `F061/US109` 已新增本地生产雏形合同客户端、fallback 和摘要模型，页面展示不依赖真实外部数据。
+- `F062/US110` 已新增 `/production-mvp` 页面，集中展示主数据导入、人员级排班、0.5h 时段汇总、预测/排班/登录/状态对比和延期生产能力边界。
+- `F063/US111` 已在侧边栏新增生产雏形入口，并使用 `/production-mvp` exact active match。
+- `Q016/US112` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+
+#### 风险
+
+- 本轮只做本地前端合同演示入口；合同数据来自本地 API 或前端 fallback，不代表真实生产数据库、真实导入、外部系统接入或自动计算能力。
+- 权限、审批、导出、批量、自动排班、生产公式、结算规则和 charge factor 仍未实现，后续必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/production-mvp-contracts.test.mjs`：通过，2 个 production MVP contract model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
 ## Historical Audit Snapshots
 
