@@ -4037,3 +4037,40 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-auth、no-permission-enforcement、no-approval、no-export、no-batch、no-production-settlement、no-real-lock。"
 status: "done"
 ```
+
+### US225 - Product page semantics cleanup
+
+```yaml
+id: US225
+requirement_ids:
+  - R213
+module: "产品体验"
+role: "演示人员"
+story: "作为演示人员，我希望业务页面展示真实业务功能和业务结果，而不是导入/演示/验收说明，这样演示时可以按产品模块自然讲解。"
+task_type: "bugfix"
+priority: "P0"
+acceptance:
+  - "核心业务页不再用 `records`、`processed records` 作为主标题、主指标或模块 marker。"
+  - "核心业务页不再把 `本机只读`、`localhost-only`、`不接数据库`、`readiness` 作为功能内容。"
+  - "导入、批次和验收边界信息保留在 `/demo-imports`、审计或 QA 文档。"
+  - "业务页面仍能读取现有数据并展示业务对象、业务状态和业务入口。"
+status: "in_progress"
+```
+
+### US226 - Product page semantics cleanup QA
+
+```yaml
+id: US226
+requirement_ids:
+  - R214
+module: "本机验收"
+role: "QA"
+story: "作为 QA，我希望 E2E 覆盖语义纠偏后的真实业务 marker，这样能证明演示数据没有继续污染功能展示。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "E2E 不再断言核心业务页的 `records` marker。"
+  - "E2E 覆盖班次、履约、权限、结算等页面的业务标题和业务表格。"
+  - "审计记录说明导入/演示语义已从业务页面剥离。"
+status: "ready"
+```

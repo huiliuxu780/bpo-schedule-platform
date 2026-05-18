@@ -2444,3 +2444,29 @@ version: "1.0"
 status: "done"
 notes: "模型测试覆盖权限管理和结算锁账的 summary/table rows；E2E 覆盖两个路由、表格字段和侧边栏入口不再是开发中；本机 HTML/Browser 证据确认页面与边界文案可见。QA 不验证真实权限、锁账、结算公式、收费因子、审批、导出、批量、数据库或生产写回。"
 ```
+
+### R213 - product page semantics cleanup
+
+```yaml
+id: R213
+module: "产品体验"
+description: "PM 指出业务页面被导入/演示/验收语言污染，真实功能展示被 `records`、`本机只读`、`readiness`、`不接数据库` 等工程痕迹打断，需要恢复业务页面的产品语义。"
+source: "PM corrective feedback on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "in_progress"
+notes: "导入数据只作为数据来源；业务页面只展示业务对象、业务指标、业务状态和操作入口。导入/批次/localhost/no-database/QA 边界信息保留在 `/demo-imports`、审计或 QA 文档。"
+```
+
+### R214 - product page semantics cleanup QA
+
+```yaml
+id: R214
+module: "本机验收"
+description: "产品语义纠偏后，需要补充 E2E 和审计证据，证明核心业务页面不再把导入/演示/验收痕迹当成功能内容。"
+source: "F145 product page semantics cleanup batch on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "ready"
+notes: "QA 验证真实业务 marker，而不是 records 或 readiness marker；不新增后端、数据库、真实集成、权限实现、真实锁账、公式、收费因子、审批、导出或批量能力。"
+```

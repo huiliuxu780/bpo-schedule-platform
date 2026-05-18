@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
-  active_batch_id: null
-  in_progress_task: null
-  ready_tasks: []
+  queue_state: active
+  active_batch_id: "batch-032-product-semantics-cleanup"
+  in_progress_task: "F145"
+  ready_tasks: ["Q070"]
 ```
 
 ## Current Stage
@@ -40,9 +40,9 @@ current_summary:
 - Do not modify package or lockfiles unless a PM-confirmed dependency Gate allows it.
 - Do not execute from legacy or archive queues.
 
-## Next Recommended Task
+## Current Execution Focus
 
-No active task is queued. If PM asks to continue, choose the next smallest local-only acceptance slice from remaining opened-module table controls or local demo runbook hardening; keep the work readonly and local-only, and do not add cloud, database, real integration, package/lockfile, auth, permission enforcement, approval, export, batch, production audit, publishing, settlement lock action, settlement formula, charge factor, or production writeback without a new Gate.
+F145/Q070：纠正业务页面被导入/演示/验收语言污染的问题。导入数据只能作为数据来源，业务页面必须展示真实业务功能和业务结果；`records`、`processed records`、`localhost-only`、`不接数据库`、`本机只读 readiness` 等验收痕迹只应保留在 `/demo-imports`、QA 文档或审计记录中。本批不改后端契约、数据库、真实集成、权限实现、锁账动作、结算公式、收费因子、审批、导出或批量能力。
 
 ## Default Execution
 
