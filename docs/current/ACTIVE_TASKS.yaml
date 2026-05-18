@@ -7,4 +7,45 @@ notes:
   - "Done task history stays in legacy files or archive during the transition."
   - "Each active task keeps only the minimum execution contract: id, story_ids, status, gate, branch, allowed_files, traceability_files, forbidden_files, stop_conditions, acceptance_ref, verification, evidence_expected."
 batch: null
-tasks: []
+tasks:
+  - id: F143
+    story_ids: ["US222"]
+    status: in_progress
+    gate: frontend-scaffold
+    branch: codex/f-batch-030-style-source-scope
+    allowed_files:
+      - "app/globals.css"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    traceability_files:
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要业务页面逻辑、后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
+      - "验证失败"
+    acceptance_ref: "docs/user-stories.md#US222"
+    verification:
+      - "Browser visual/style check"
+      - "git diff --check"
+      - "bash scripts/check-state.sh --strict --diff=working"
+      - "bash scripts/check.sh"
+    evidence_expected:
+      - "CSS response does not contain __next_f or script fragments"
+      - "Dashboard theme variables are populated"
+      - "Full local check passes"

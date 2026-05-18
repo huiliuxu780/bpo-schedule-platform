@@ -7571,3 +7571,28 @@ tasks:
       - "需要数据库、真实外部集成、认证、权限、审批、导出、批量操作、发布、自动排班、生产写回、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: F143
+    title: "前端 Tailwind source scope 修复"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/globals.css"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "next-env.d.ts"
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "Tailwind source 显式排除 `.next` 生成目录，避免 Next RSC 脚本片段进入生成 CSS。"
+      - "Browser 验证 dashboard 主题变量恢复，CSS 中不再包含 `__next_f` 污染片段。"
+      - "修复不改业务页面逻辑、不接数据库、不改后端、不引入新依赖。"
+      - "`git diff --check`、`bash scripts/check-state.sh --strict --diff=working` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要业务页面逻辑、后端新契约、数据库、ORM、migration、schema 或生产持久化配置"
+      - "需要真实外部集成、认证、权限、审批、导出、批量操作、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

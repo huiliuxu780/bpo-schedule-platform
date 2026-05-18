@@ -2405,3 +2405,16 @@ version: "1.0"
 status: "done"
 notes: "模型测试覆盖严重缺口 rows、供应商分布 rows 和规则目录 rows；E2E 覆盖本机导入链后三个页面的表格列；Browser 检查确认三个页面的表格列、本机只读边界和桌面侧边栏可见。QA 限定在 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
 ```
+
+### R210 - frontend Tailwind source scope repair
+
+```yaml
+id: R210
+module: "前端基础样式"
+description: "本机前端页面出现样式退化，需要修复 Tailwind dev CSS 的 source 扫描范围，避免 `.next` 生成物中的 Next RSC 脚本片段被误识别为 class 并污染样式表。"
+source: "PM visual bug report on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "done"
+notes: "`app/globals.css` 已显式排除 `.next` 和 `test-results` source；Browser 验证 CSS 不再包含 `__next_f` 片段，主题变量恢复。本批不改业务页面逻辑、后端、数据库、真实集成、认证、权限、审批、导出、批量、生产公式、结算规则或收费因子。"
+```

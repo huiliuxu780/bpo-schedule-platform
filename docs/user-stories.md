@@ -3981,3 +3981,21 @@ acceptance:
   - "QA 记录明确 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
 status: "done"
 ```
+
+### US222 - Frontend Tailwind source scope repair
+
+```yaml
+id: US222
+requirement_ids:
+  - R210
+module: "前端基础样式"
+role: "演示人员"
+story: "作为演示人员，我希望本机前端样式稳定加载，这样打开 dashboard 和已开放模块时不会因为 Tailwind 扫描生成目录而出现裸黑白退化。"
+task_type: "bugfix"
+priority: "P1"
+acceptance:
+  - "Tailwind source 明确排除 `.next` 生成目录，避免 Next RSC 脚本片段进入生成 CSS。"
+  - "Browser 验证 dashboard 主题变量生效，CSS 中不再包含 `__next_f` 污染片段。"
+  - "修复不改业务页面逻辑、不接数据库、不改后端、不引入新依赖。"
+status: "done"
+```
