@@ -5,18 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US220
-    requirement_ids: ["R208"]
-    status: in_progress
-    task_ids: ["F142"]
-    priority: P1
-    module: "运营工作台 / 系统管理"
-    summary: "`时段缺口热力图`、`供应商管理` 和 `规则配置` 需要补齐模块内表格/空态，让本机 seed 和导入 records 更易扫描。"
-  - id: US221
-    requirement_ids: ["R209"]
-    status: ready
-    task_ids: ["Q068"]
-    priority: P1
-    module: "本机验收"
-    summary: "管理页面表格 parity 补齐后，需要模型、E2E 和 Browser 证据证明表格列、空态和本机只读边界可见。"
+stories: []

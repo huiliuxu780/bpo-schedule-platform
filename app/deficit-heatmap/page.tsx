@@ -1,7 +1,10 @@
 import { heatmapRows, heatmapSlots } from "@/app/dashboard/data"
 import { AppShell } from "@/components/app-shell"
 import { BpoHeatmap } from "@/components/bpo-heatmap"
-import { summarizeHeatmapRows } from "@/components/data-table-model"
+import {
+  buildDeficitHeatmapTableRows,
+  summarizeHeatmapRows,
+} from "@/components/data-table-model"
 import { Badge } from "@/components/ui/badge"
 import {
   Card,
@@ -10,22 +13,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-
-function getSevereSlots() {
-  return heatmapRows.flatMap((row) =>
-    row.slots
-      .map((value, index) => ({
-        day: row.day,
-        slot: heatmapSlots[index] ?? "",
-        value,
-      }))
-      .filter((item) => item.value <= -6)
-  )
-}
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 export default function DeficitHeatmapPage() {
   const summary = summarizeHeatmapRows(heatmapRows, heatmapSlots)
-  const severeSlots = getSevereSlots()
+  const severeSlots = buildDeficitHeatmapTableRows(heatmapRows, heatmapSlots)
 
   return (
     <AppShell title="时段缺口热力图" searchPlaceholder="搜索职场、日期或时段">
@@ -76,16 +75,44 @@ export default function DeficitHeatmapPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-2">
-                {severeSlots.map((slot) => (
-                  <div
-                    key={`${slot.day}-${slot.slot}`}
-                    className="flex items-center justify-between rounded-md border bg-muted/20 px-3 py-2 text-sm"
-                  >
-                    <span>{slot.day} {slot.slot}</span>
-                    <Badge variant="destructive">{slot.value}</Badge>
-                  </div>
-                ))}
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>日期</TableHead>
+                      <TableHead>时段</TableHead>
+                      <TableHead className="text-right">缺口</TableHead>
+                      <TableHead>状态</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {severeSlots.length > 0 ? (
+                      severeSlots.map((slot) => (
+                        <TableRow key={`${slot.day}-${slot.slot}`}>
+                          <TableCell>{slot.day}</TableCell>
+                          <TableCell>{slot.slot}</TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {slot.deficit}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="destructive">
+                              {slot.statusLabel}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          className="h-16 text-center text-muted-foreground"
+                        >
+                          暂无严重缺口时段。本机 seed 缺口恢复后会在这里展示。
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>

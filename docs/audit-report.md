@@ -2301,6 +2301,32 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-18 - Admin Table Parity
+
+#### 审计结论
+
+- `F142/Q068/US220-US221` 已补齐 `时段缺口热力图`、`供应商管理` 和 `规则配置` 的模块内表格/空态。
+- `时段缺口热力图` 现在展示严重缺口表格，包含 `日期`、`时段`、`缺口` 和 `状态`，继续只使用 dashboard seed 热力图。
+- `供应商管理` 现在展示供应商分布表格，包含 `供应商`、`样本坐席数` 和 `状态`，继续只读取本机 staff_master sample rows。
+- `规则配置` 现在展示规则目录表格，包含 `规则`、`说明` 和 `状态`，继续标注本机只读/开发中边界。
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、排班发布、自动排班、生产写回、生产公式、结算规则、收费因子或锁账。
+
+#### 风险
+
+- 当前表格仍是 localhost-only process-memory/seed-only 只读展示，不等同于生产持久化、正式缺口公式、真实供应商主数据、规则编辑发布或跨系统接口接入。
+- 本机 E2E 需要前端 3015 和后端 8000 同时在线；服务停止会导致导入路径失败，属于环境前置条件。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，82 个模型/源码断言测试通过，包含 `buildDeficitHeatmapTableRows`、`buildVendorDistributionTableRows` 和 `buildRuleConfigurationTableRows` 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，6 条 E2E 通过，覆盖本机导入链后三个页面的表格字段。
+- Browser 检查：`/deficit-heatmap`、`/vendor-management`、`/rule-configuration` 均可见表格列和本机只读边界。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

@@ -224,6 +224,12 @@ export type VendorManagementRecordsPreview = {
   statusLabel: "等待导入" | "本机供应商预览"
 }
 
+export type VendorDistributionTableRow = {
+  vendor: string
+  sampleAgents: number
+  statusLabel: "已接入"
+}
+
 export type RuleConfigurationRecordsPreview = {
   importedSources: number
   importedRows: number
@@ -232,6 +238,12 @@ export type RuleConfigurationRecordsPreview = {
   latestBatch: string
   latestSource: string
   statusLabel: "等待导入" | "本机规则目录"
+}
+
+export type RuleConfigurationTableRow = {
+  rule: string
+  statusLabel: "本机只读" | "开发中"
+  description: string
 }
 
 export type MonthlySettlementRecordsPreview = {
@@ -386,6 +398,13 @@ export type DashboardFilterState = {
 export type DashboardHeatmapRow = {
   day: string
   slots: number[]
+}
+
+export type DeficitHeatmapTableRow = {
+  day: string
+  slot: string
+  deficit: number
+  statusLabel: "严重缺口"
 }
 
 export type DashboardHeatmapSummary = {
@@ -1595,6 +1614,25 @@ export function summarizeVendorManagementRecords(
   }
 }
 
+export function buildVendorDistributionTableRows(
+  staffRecord: DashboardImportRecordSummary | undefined
+): VendorDistributionTableRow[] {
+  const vendorCounts = new Map<string, number>()
+
+  for (const row of staffRecord?.sample_rows ?? []) {
+    const vendor = row.vendor?.trim() || "未标注"
+    vendorCounts.set(vendor, (vendorCounts.get(vendor) ?? 0) + 1)
+  }
+
+  return Array.from(vendorCounts.entries())
+    .map(([vendor, sampleAgents]) => ({
+      vendor,
+      sampleAgents,
+      statusLabel: "已接入" as const,
+    }))
+    .sort((a, b) => b.sampleAgents - a.sampleAgents)
+}
+
 export function summarizeRuleConfigurationRecords(
   records: DashboardImportRecordSummary[]
 ): RuleConfigurationRecordsPreview {
@@ -1631,6 +1669,36 @@ export function summarizeRuleConfigurationRecords(
     latestSource: latest.source_name,
     statusLabel: "本机规则目录",
   }
+}
+
+export function buildRuleConfigurationTableRows(
+  items: ReadonlyArray<{ title: string; status: "enabled" | "deferred" }>
+): RuleConfigurationTableRow[] {
+  return items.map((item) => ({
+    rule: item.title,
+    statusLabel: item.status === "enabled" ? "本机只读" : "开发中",
+    description:
+      item.status === "enabled"
+        ? "本机演示已开放，只读展示不写回生产。"
+        : "需要后续独立 Gate，当前不提供编辑、发布或写回。",
+  }))
+}
+
+export function buildDeficitHeatmapTableRows(
+  rows: DashboardHeatmapRow[],
+  slots: string[]
+): DeficitHeatmapTableRow[] {
+  return rows
+    .flatMap((row) =>
+      row.slots.map((value, index) => ({
+        day: row.day,
+        slot: slots[index] ?? "",
+        deficit: value,
+        statusLabel: "严重缺口" as const,
+      }))
+    )
+    .filter((row) => row.deficit <= -6)
+    .sort((a, b) => a.deficit - b.deficit)
 }
 
 export function summarizeHeatmapRows(

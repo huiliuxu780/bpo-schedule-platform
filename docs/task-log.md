@@ -1867,3 +1867,21 @@
 - action: 收口运营页面表格 parity QA。
 - status: `done`
 - notes: 模型测试 79 条通过，E2E smoke 6 条通过并覆盖本机 CSV 导入后 `/today-fulfillment` 和 `/anomaly-alerts` 的表格字段、批次字段和 seed 异常队列；Browser 检查确认两个页面表格列、本机只读边界和桌面侧边栏可见，最终 `bash scripts/check.sh` 通过。
+
+- task_id: `F142`
+- source_ids:
+  - `R208`
+- story_ids:
+  - `US220`
+- action: 完成管理页面表格与空态 parity。
+- status: `done`
+- notes: `时段缺口热力图` 已新增严重缺口表格，展示日期、时段、缺口和状态；`供应商管理` 已新增供应商分布表格，展示供应商、样本坐席数和状态；`规则配置` 已新增规则目录表格，展示规则、说明和状态；三个页面均保留本机只读和 no-database 边界。
+
+- task_id: `Q068`
+- source_ids:
+  - `R209`
+- story_ids:
+  - `US221`
+- action: 收口管理页面表格 parity QA。
+- status: `done`
+- notes: 模型测试 82 条通过，E2E smoke 6 条通过并覆盖本机导入链后 `/deficit-heatmap`、`/vendor-management` 和 `/rule-configuration` 的表格字段；Browser 检查确认三个页面表格列、本机只读边界和桌面侧边栏可见，最终 `bash scripts/check.sh` 通过。

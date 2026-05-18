@@ -5,7 +5,10 @@ import test from "node:test";
 import {
   buildImportedRecordSourceRows,
   buildAnomalyAlertTableRows,
+  buildDeficitHeatmapTableRows,
+  buildRuleConfigurationTableRows,
   buildTodayFulfillmentInputRows,
+  buildVendorDistributionTableRows,
   clampDashboardPageIndex,
   dashboardAnomalyMatchesQuery,
   filterDashboardAnomalies,
@@ -1282,6 +1285,30 @@ test("vendor management records summarize staff vendor coverage", () => {
   });
 });
 
+test("vendor distribution table rows expose staff sample fields", () => {
+  const rows = buildVendorDistributionTableRows({
+    kind: "staff_master",
+    source_name: "坐席主数据",
+    total_rows: 4,
+    latest_batch_id: "staff_master-20260516093000-001",
+    updated_at: "2026-05-16T09:30:00+08:00",
+    sample_rows: [
+      { staff_id: "A001", vendor: "供应商甲" },
+      { staff_id: "A002", vendor: "供应商乙" },
+      { staff_id: "A003", vendor: "供应商甲" },
+      { staff_id: "A004", vendor: "" },
+    ],
+  });
+
+  assert.deepEqual(rows, [
+    { vendor: "供应商甲", sampleAgents: 2, statusLabel: "已接入" },
+    { vendor: "供应商乙", sampleAgents: 1, statusLabel: "已接入" },
+    { vendor: "未标注", sampleAgents: 1, statusLabel: "已接入" },
+  ]);
+
+  assert.deepEqual(buildVendorDistributionTableRows(undefined), []);
+});
+
 test("rule configuration records summarize local read-only rule readiness", () => {
   const summary = summarizeRuleConfigurationRecords([
     {
@@ -1319,6 +1346,67 @@ test("rule configuration records summarize local read-only rule readiness", () =
     latestSource: "登录数据",
     statusLabel: "本机规则目录",
   });
+});
+
+test("rule configuration table rows expose rule status and descriptions", () => {
+  const rows = buildRuleConfigurationTableRows([
+    { title: "导入 records 只读展示", status: "enabled" },
+    { title: "规则编辑发布", status: "deferred" },
+  ]);
+
+  assert.deepEqual(rows, [
+    {
+      rule: "导入 records 只读展示",
+      statusLabel: "本机只读",
+      description: "本机演示已开放，只读展示不写回生产。",
+    },
+    {
+      rule: "规则编辑发布",
+      statusLabel: "开发中",
+      description: "需要后续独立 Gate，当前不提供编辑、发布或写回。",
+    },
+  ]);
+
+  assert.deepEqual(buildRuleConfigurationTableRows([]), []);
+});
+
+test("deficit heatmap table rows expose severe slot fields", () => {
+  const rows = buildDeficitHeatmapTableRows(
+    [
+      { day: "周一", slots: [-1, -6, -8] },
+      { day: "周二", slots: [0, -7, -2] },
+    ],
+    ["09:00", "10:00", "11:00"],
+  );
+
+  assert.deepEqual(rows, [
+    {
+      day: "周一",
+      slot: "11:00",
+      deficit: -8,
+      statusLabel: "严重缺口",
+    },
+    {
+      day: "周二",
+      slot: "10:00",
+      deficit: -7,
+      statusLabel: "严重缺口",
+    },
+    {
+      day: "周一",
+      slot: "10:00",
+      deficit: -6,
+      statusLabel: "严重缺口",
+    },
+  ]);
+
+  assert.deepEqual(
+    buildDeficitHeatmapTableRows(
+      [{ day: "周三", slots: [0, -1] }],
+      ["09:00", "10:00"],
+    ),
+    [],
+  );
 });
 
 test("heatmap summary reports total deficit, severe slots, and peak shortage", () => {

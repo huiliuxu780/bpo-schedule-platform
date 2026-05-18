@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/app-shell"
 import {
+  buildVendorDistributionTableRows,
   summarizeVendorManagementRecords,
   type DashboardImportRecordSummary,
 } from "@/components/data-table-model"
@@ -12,30 +13,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { getDemoImportRecords } from "@/lib/demo-imports"
 
 function getStaffRecord(records: DashboardImportRecordSummary[]) {
   return records.find((record) => record.kind === "staff_master")
 }
 
-function buildVendorRows(staffRecord: DashboardImportRecordSummary | undefined) {
-  const counts = new Map<string, number>()
-
-  for (const row of staffRecord?.sample_rows ?? []) {
-    const vendor = row.vendor?.trim() || "未标注"
-    counts.set(vendor, (counts.get(vendor) ?? 0) + 1)
-  }
-
-  return Array.from(counts.entries())
-    .map(([vendor, count]) => ({ vendor, count }))
-    .sort((a, b) => b.count - a.count)
-}
-
 export default async function VendorManagementPage() {
   const records = await getDemoImportRecords()
   const staffRecord = getStaffRecord(records)
   const summary = summarizeVendorManagementRecords(records)
-  const vendorRows = buildVendorRows(staffRecord)
+  const vendorRows = buildVendorDistributionTableRows(staffRecord)
 
   return (
     <AppShell title="供应商管理" searchPlaceholder="搜索供应商、团队或批次">
@@ -89,22 +85,44 @@ export default async function VendorManagementPage() {
                 按样本 vendor 字段聚合，仅用于演示供应商入口已开放。
               </CardDescription>
             </CardHeader>
-            <CardContent className="grid gap-2">
-              {vendorRows.length > 0 ? (
-                vendorRows.map((row) => (
-                  <div
-                    key={row.vendor}
-                    className="flex items-center justify-between rounded-md border bg-muted/20 px-3 py-2 text-sm"
-                  >
-                    <span>{row.vendor}</span>
-                    <Badge variant="outline">{row.count}</Badge>
-                  </div>
-                ))
-              ) : (
-                <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-                  暂无供应商样本。请先在文件导入页导入坐席主数据 CSV。
-                </div>
-              )}
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>供应商</TableHead>
+                      <TableHead className="text-right">样本坐席数</TableHead>
+                      <TableHead>状态</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {vendorRows.length > 0 ? (
+                      vendorRows.map((row) => (
+                        <TableRow key={row.vendor}>
+                          <TableCell className="font-medium">
+                            {row.vendor}
+                          </TableCell>
+                          <TableCell className="text-right tabular-nums">
+                            {row.sampleAgents}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{row.statusLabel}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={3}
+                          className="h-16 text-center text-muted-foreground"
+                        >
+                          暂无供应商样本。请先在文件导入页导入坐席主数据 CSV。
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
 

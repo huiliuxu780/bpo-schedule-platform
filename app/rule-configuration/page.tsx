@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/app-shell"
 import {
+  buildRuleConfigurationTableRows,
   ruleConfigurationPreviewItems,
   summarizeRuleConfigurationRecords,
 } from "@/components/data-table-model"
@@ -12,11 +13,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { getDemoImportRecords } from "@/lib/demo-imports"
 
 export default async function RuleConfigurationPage() {
   const records = await getDemoImportRecords()
   const summary = summarizeRuleConfigurationRecords(records)
+  const ruleRows = buildRuleConfigurationTableRows(ruleConfigurationPreviewItems)
 
   return (
     <AppShell title="规则配置" searchPlaceholder="搜索规则、数据源或批次">
@@ -69,20 +79,50 @@ export default async function RuleConfigurationPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-2 md:grid-cols-2">
-              {ruleConfigurationPreviewItems.map((item) => (
-                <div
-                  key={item.title}
-                  className="flex items-center justify-between rounded-md border bg-muted/20 px-3 py-2 text-sm"
-                >
-                  <span>{item.title}</span>
-                  <Badge
-                    variant={item.status === "enabled" ? "outline" : "secondary"}
-                  >
-                    {item.status === "enabled" ? "本机只读" : "开发中"}
-                  </Badge>
-                </div>
-              ))}
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>规则</TableHead>
+                    <TableHead>说明</TableHead>
+                    <TableHead>状态</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {ruleRows.length > 0 ? (
+                    ruleRows.map((row) => (
+                      <TableRow key={row.rule}>
+                        <TableCell className="font-medium">
+                          {row.rule}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {row.description}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              row.statusLabel === "本机只读"
+                                ? "outline"
+                                : "secondary"
+                            }
+                          >
+                            {row.statusLabel}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={3}
+                        className="h-16 text-center text-muted-foreground"
+                      >
+                        暂无规则目录。本机规则预览恢复后会在这里展示。
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           </CardContent>
         </Card>

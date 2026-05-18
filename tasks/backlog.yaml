@@ -7510,7 +7510,7 @@ tasks:
   - id: F142
     title: "管理页面表格与空态 parity"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/deficit-heatmap/**"
@@ -7544,7 +7544,7 @@ tasks:
   - id: Q068
     title: "管理页面表格 parity QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/deficit-heatmap/**"

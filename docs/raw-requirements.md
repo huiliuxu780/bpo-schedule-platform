@@ -2389,8 +2389,8 @@ description: "`时段缺口热力图`、`供应商管理` 和 `规则配置` 已
 source: "Current P1 table parity gap after Q067 on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做三个已开放页面的本机只读表格和空态，不改后端契约、不接数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+status: "done"
+notes: "`时段缺口热力图` 已新增严重缺口表格，展示日期、时段、缺口和状态；`供应商管理` 已新增供应商分布表格，展示供应商、样本坐席数和状态；`规则配置` 已新增规则目录表格，展示规则、说明和状态。本批未改后端契约，未接数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
 ```
 
 ### R209 - admin table parity QA
@@ -2402,6 +2402,6 @@ description: "管理/运营页面表格补齐后，需要补充模型、E2E 和 
 source: "F142 admin table parity batch on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "ready"
-notes: "QA 限定在 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
+status: "done"
+notes: "模型测试覆盖严重缺口 rows、供应商分布 rows 和规则目录 rows；E2E 覆盖本机导入链后三个页面的表格列；Browser 检查确认三个页面的表格列、本机只读边界和桌面侧边栏可见。QA 限定在 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
 ```

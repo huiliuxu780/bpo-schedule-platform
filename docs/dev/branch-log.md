@@ -1673,3 +1673,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after verified local commit`
 - blocked_reason: `N/A`
+
+### F142-Q068 Admin Table Parity
+
+- branch_name: `codex/f-batch-029-admin-table-parity`
+- base_main_commit: `9001f64`
+- remote_status: `local continuation branch created from pushed codex/f-batch-028-ops-table-parity because PM asked to continue the next batch`
+- scope: deficit-heatmap severe-slot table, vendor-management distribution table, rule-configuration directory table, empty-state rendering, focused model/E2E/Browser coverage, current-state closeout, traceability updates, and no-database boundary evidence.
+- allowed_files_check: `app/deficit-heatmap/**`, `app/vendor-management/**`, `app/rule-configuration/**`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, schedule publishing, automatic scheduling, production writeback, production formula, settlement rule, lock, or charge-factor files.
+- scope_diff_check: `app/deficit-heatmap/page.tsx`, `app/vendor-management/page.tsx`, `app/rule-configuration/page.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified the new table row exports were missing; model tests then passed with 82 tests; lint and typecheck passed; `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 6 tests and verified deficit-heatmap/vendor-management/rule-configuration table fields; Browser confirmed all three pages show table columns and local-only boundaries; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
+- local_commit_sha: `TBD`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`

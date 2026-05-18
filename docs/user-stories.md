@@ -3960,7 +3960,7 @@ acceptance:
   - "无 seed/imported rows 时展示清晰空态。"
   - "页面继续明确 localhost-only、本机运行态、不接数据库。"
   - "本批不改后端契约、不接数据库、真实集成、权限、审批、发布、导出、批量、自动排班、生产公式、结算规则或收费因子。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US221 - Admin table parity QA
@@ -3979,5 +3979,5 @@ acceptance:
   - "E2E 进入三个页面后能看到表格字段。"
   - "Browser 检查确认三个页面可见表格列和本机只读边界。"
   - "QA 记录明确 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-approval、no-publish、no-export、no-batch。"
-status: "ready"
+status: "done"
 ```

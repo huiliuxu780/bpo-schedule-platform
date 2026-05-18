@@ -571,6 +571,15 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     deficitHeatmapMain.getByText("时段缺口 records"),
   ).toBeVisible()
   await expect(deficitHeatmapMain.getByText("严重时段清单")).toBeVisible()
+  await expect(
+    deficitHeatmapMain.getByRole("columnheader", { name: "日期" }),
+  ).toBeVisible()
+  await expect(
+    deficitHeatmapMain.getByRole("columnheader", { name: "时段" }),
+  ).toBeVisible()
+  await expect(
+    deficitHeatmapMain.getByRole("columnheader", { name: "缺口" }),
+  ).toBeVisible()
   await expect(deficitHeatmapMain.getByText("时段人力缺口")).toBeVisible()
 
   await gotoAppPage(page, "/vendor-management")
@@ -582,6 +591,15 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     vendorManagementMain.getByText(/供应商管理 records \d+ 行/),
   ).toBeVisible()
   await expect(vendorManagementMain.getByText("本机供应商分布")).toBeVisible()
+  await expect(
+    vendorManagementMain.getByRole("columnheader", { name: "供应商" }),
+  ).toBeVisible()
+  await expect(
+    vendorManagementMain.getByRole("columnheader", { name: "样本坐席数" }),
+  ).toBeVisible()
+  await expect(
+    vendorManagementMain.getByRole("columnheader", { name: "状态" }).first(),
+  ).toBeVisible()
   await expect(vendorManagementMain.getByText("供应商A").first()).toBeVisible()
 
   await gotoAppPage(page, "/rule-configuration")
@@ -594,6 +612,15 @@ test("local demo import entry drives batch status placeholders", async ({ page }
   ).toBeVisible()
   await expect(
     ruleConfigurationMain.getByRole("heading", { name: "本机规则目录" }),
+  ).toBeVisible()
+  await expect(
+    ruleConfigurationMain.getByRole("columnheader", { name: "规则" }),
+  ).toBeVisible()
+  await expect(
+    ruleConfigurationMain.getByRole("columnheader", { name: "说明" }),
+  ).toBeVisible()
+  await expect(
+    ruleConfigurationMain.getByRole("columnheader", { name: "状态" }).first(),
   ).toBeVisible()
   await expect(ruleConfigurationMain.getByText("导入 records 只读展示")).toBeVisible()
 
