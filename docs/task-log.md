@@ -874,3 +874,14 @@
 - action: 安排异常复核只读入口连续开发批次。
 - status: `done`
 - notes: 新增本地异常复核模型、fallback、筛选/摘要测试、`/anomaly-review` 只读页和侧边栏入口；本批不做真实异常计算、复核提交、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-19
+
+- task_id: `F067-F075/Q018`
+- source_ids:
+  - `R105-R114`
+- story_ids:
+  - `US117-US126`
+- action: 连续完成导入合同 drilldown 与数据质量中心 10-task 展示批次。
+- status: `done`
+- notes: 新增导入合同 drilldown 模型与测试、数据质量模型与测试、三个生产雏形合同 drilldown 页面、`/data-quality`、`/data-quality/[issueId]` 和侧边栏数据质量入口；本批不做真实导入、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

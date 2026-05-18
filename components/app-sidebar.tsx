@@ -86,12 +86,12 @@ const nav: NavGroup[] = [
     items: [
       { title: "数据源管理", href: "/dashboard" },
       { title: "文件导入", href: "/dashboard" },
-      { title: "生产雏形", href: "/production-mvp", activeMatch: "exact", tag: "新" },
+      { title: "生产雏形", href: "/production-mvp", activeMatch: "prefix", tag: "新" },
       { title: "接入批次", href: "/dashboard" },
       { title: "CORN 状态日志", href: "/dashboard" },
       { title: "字段映射", href: "/dashboard", tag: "P1" },
       { title: "接口集成", href: "/dashboard", tag: "P1" },
-      { title: "数据质量", href: "/dashboard", tag: "P1" },
+      { title: "数据质量", href: "/data-quality", activeMatch: "prefix", tag: "新" },
     ],
   },
   {

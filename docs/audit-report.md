@@ -1157,6 +1157,31 @@
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 - `curl -fsS http://127.0.0.1:3016/anomaly-review | rg ...`：通过，页面包含异常复核、只读演示、待复核优先项、无复核提交等关键文本，侧边栏异常复核入口高亮。
 
+### 2026-05-19 - Import drilldown and data quality center slice
+
+#### 审计结论
+
+- `F067/US117` 已新增导入合同 drilldown 模型和测试，三个合同入口来自本地生产雏形合同。
+- `F068-F071/US118-US121` 已新增主数据、人员级排班、履约对比三个生产雏形合同 drilldown 页面，并在 `/production-mvp` 总览页挂载入口。
+- `F072-F074/US122-US124` 已新增数据质量模型、测试、`/data-quality` 中心页和 `/data-quality/[issueId]` 详情页。
+- `F075/US125` 已将侧边栏数据质量入口指向 `/data-quality`，并让生产雏形和数据质量子路由保持高亮。
+- `Q018/US126` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实导入、真实修复、数据库、审批、权限、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做本地只读入口；数据质量问题来自前端 fallback，不代表真实导入校验器、修复流、批量处理或权限边界。
+- 后续如果要做真实导入、数据修复、审批、权限、导出、批量或生产异常计算，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/import-drilldown.test.mjs`：通过，3 个 import drilldown model 测试通过。
+- `node --experimental-strip-types --test scripts/tests/data-quality.test.mjs`：通过，3 个 data quality model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+- 本地 HTTP smoke：`/production-mvp`、`/production-mvp/master-data`、`/production-mvp/personnel-schedules`、`/production-mvp/fulfillment-comparison`、`/data-quality`、`/data-quality/DQ-202605-004` 均返回 200。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

@@ -3499,3 +3499,297 @@ tasks:
       - "需要后端契约变更、数据库或真实外部集成"
       - "需要权限、审批、导出、批量或生产公式"
     commit_after_done: true
+  - id: F067
+    title: "导入合同 drilldown 模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增导入合同 drilldown 本地模型。"
+      - "模型测试覆盖三个合同 drilldown、字段统计、必填统计和路由。"
+      - "不接真实外部数据、不改依赖。"
+      - "`node --experimental-strip-types --test scripts/tests/import-drilldown.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F068
+    title: "主数据导入合同 drilldown 页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/production-mvp/master-data` 只读页。"
+      - "页面展示主数据对象、主键、字段、必填、外键和质量错误码。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F069
+    title: "人员级排班合同 drilldown 页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/production-mvp/personnel-schedules` 只读页。"
+      - "页面展示人员排班字段、必填字段、校验规则和 0.5h 展开结果。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F070
+    title: "履约对比合同 drilldown 页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/production-mvp/fulfillment-comparison` 只读页。"
+      - "页面展示四类来源、对齐键、人员级追溯键、状态字典字段和异常规则。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F071
+    title: "生产雏形总览挂载 drilldown 入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/production-mvp/page.tsx"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/production-mvp` 总览页提供三个合同 drilldown 入口。"
+      - "入口文案明确本地只读合同边界。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F072
+    title: "数据质量本地模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增数据质量本地类型、fallback、筛选和摘要模型。"
+      - "模型测试覆盖问题数量、未解决数量、高严重度、来源统计和筛选。"
+      - "不接真实外部数据、不改依赖。"
+      - "`node --experimental-strip-types --test scripts/tests/data-quality.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F073
+    title: "数据质量中心只读页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/data-quality` 只读页。"
+      - "页面展示问题摘要、来源分布、未解决问题和数据质量列表。"
+      - "页面明确暂不实现真实修复、审批、权限、导出和批量。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F074
+    title: "数据质量问题详情页"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/data-quality/[issueId]` 只读详情页。"
+      - "详情页展示错误码、字段、原值、建议处理、状态和暂不实现动作。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F075
+    title: "数据质量导航入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "侧边栏数据质量入口进入 `/data-quality`。"
+      - "`/data-quality` 路由 active 状态可识别。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q018
+    title: "导入 drilldown 与数据质量批次 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "导入 drilldown 和数据质量页面构建通过。"
+      - "模型测试和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+    commit_after_done: true

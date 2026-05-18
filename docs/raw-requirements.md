@@ -933,3 +933,44 @@ version: "1.0"
 status: "split"
 notes: "本组只做本地前端只读入口和模型摘要，不实现真实异常计算、复核提交、审批、权限、导出、批量或生产公式。"
 ```
+
+### R105-R114 - 导入合同 drilldown 与数据质量中心
+
+```yaml
+requirements:
+  - id: R105
+    module: "生产雏形"
+    description: "生产雏形合同页需要可复用的导入合同 drilldown 模型和测试，把主数据、人员排班、履约对比拆成可点击、可验收的合同块。"
+  - id: R106
+    module: "主数据"
+    description: "主数据导入合同需要独立只读 drilldown 页，展示对象、主键、字段、必填、外键、质量错误码和暂不实现边界。"
+  - id: R107
+    module: "排班"
+    description: "人员级排班合同需要独立只读 drilldown 页，展示人员排班字段、必填、校验规则和 0.5h 展开结果。"
+  - id: R108
+    module: "履约对比"
+    description: "预测、排班、登录和状态对比合同需要独立只读 drilldown 页，展示来源、对齐键、人员级追溯键和异常规则。"
+  - id: R109
+    module: "生产雏形"
+    description: "生产雏形总览页需要挂载三个 drilldown 入口，方便 PM 从总览进入具体合同验收。"
+  - id: R110
+    module: "数据质量"
+    description: "数据质量中心需要本地问题模型和测试，覆盖缺字段、重复主键、外键缺失、时间范围、状态重叠和主数据缺失等导入问题。"
+  - id: R111
+    module: "数据质量"
+    description: "数据质量中心需要只读列表页，展示问题摘要、来源分布、未解决问题和 no-action 边界。"
+  - id: R112
+    module: "数据质量"
+    description: "数据质量问题需要只读详情页，展示字段、错误码、来源对象、建议处理和暂不实现动作。"
+  - id: R113
+    module: "导航"
+    description: "侧边栏数据质量入口需要指向数据质量中心，方便本地验收时直接进入。"
+  - id: R114
+    module: "质量与交付"
+    description: "导入合同 drilldown 与数据质量中心完成后需要 QA 收口，确认模型测试、页面、导航、current 清理和 no-database 边界均可验证。"
+source: "PM requested 10-task continuous development on 2026-05-19"
+submitted_at: "2026-05-19"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示层和模型测试；不实现真实导入、数据库、权限、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```

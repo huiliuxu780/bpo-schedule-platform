@@ -59,4 +59,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US113/F064 -> US116/Q017` completed the anomaly review read-only slice: local anomaly review model, model test, `/anomaly-review` page, sidebar entry, and QA closeout. Current queue is empty again.
 
-Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from import-contract drilldown, personal timeline read-only views, or data quality center entry. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.
+`US117/F067 -> US126/Q018` completed the import-contract drilldown and data-quality center slice: local drilldown model, data-quality model, three production MVP contract drilldown pages, `/data-quality`, `/data-quality/[issueId]`, sidebar entry, and QA closeout. Current queue is empty again.
+
+Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from personal timeline read-only views, demand forecast import drilldown, or master-data relationship map. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.

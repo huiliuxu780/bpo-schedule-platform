@@ -1,5 +1,8 @@
+import Link from "next/link"
+
 import { AppShell } from "@/components/app-shell"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -23,10 +26,12 @@ import {
   type MasterDataImportContract,
   type PersonnelScheduleImportContract,
 } from "@/lib/production-mvp-contracts"
+import { getImportContractDrilldowns } from "@/lib/import-drilldown"
 
 export default async function ProductionMvpPage() {
   const contracts = await getProductionMvpContracts()
   const summary = summarizeProductionMvpContracts(contracts)
+  const drilldowns = getImportContractDrilldowns(contracts)
 
   return (
     <AppShell title="生产雏形" searchPlaceholder="搜索合同、字段或异常规则">
@@ -67,6 +72,40 @@ export default async function ProductionMvpPage() {
             }
           />
         </section>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex flex-col gap-1">
+                <CardTitle>合同 drilldown</CardTitle>
+                <CardDescription>
+                  从总览进入具体合同验收；均为本地只读展示，不执行真实导入。
+                </CardDescription>
+              </div>
+              <Badge variant="outline">3 个入口</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-3 lg:grid-cols-3">
+            {drilldowns.map((row) => (
+              <div key={row.id} className="rounded-lg border p-3">
+                <div className="flex min-h-24 flex-col justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-medium">{row.title}</div>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {row.description}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <Badge variant="secondary">{row.grain}</Badge>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={row.href}>查看详情</Link>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
         <section className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
           <MasterDataCard contract={contracts.masterData} />

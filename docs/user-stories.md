@@ -1881,3 +1881,104 @@ acceptance:
   - "侧边栏异常复核入口能进入新页面并高亮。"
   - "`node --experimental-strip-types --test scripts/tests/anomaly-review.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US117-US126 - 导入合同 drilldown 与数据质量中心
+
+```yaml
+stories:
+  - id: US117
+    requirement_ids: [R105]
+    task_ids: [F067]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形合同有可复用 drilldown 模型和测试，以便总览页的入口能追溯到真实本地合同字段。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US118
+    requirement_ids: [R106]
+    task_ids: [F068]
+    module: "主数据"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望进入主数据导入合同详情，查看对象、字段、主键、外键和质量错误码。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US119
+    requirement_ids: [R107]
+    task_ids: [F069]
+    module: "排班"
+    role: "排班运营"
+    story: "作为排班运营，我希望进入人员级排班合同详情，查看人员明细字段和 0.5h 展开口径。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US120
+    requirement_ids: [R108]
+    task_ids: [F070]
+    module: "履约对比"
+    role: "现场主管"
+    story: "作为现场主管，我希望进入履约对比合同详情，查看预测、排班、登录和状态如何对齐并产生异常规则。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US121
+    requirement_ids: [R109]
+    task_ids: [F071]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总览页直接提供三个合同 drilldown 入口，以便验收时不需要记 URL。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US122
+    requirement_ids: [R110]
+    task_ids: [F072]
+    module: "数据质量"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望数据质量问题有本地模型和测试，以便后续导入失败、异常识别和主数据问题能统一展示。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US123
+    requirement_ids: [R111]
+    task_ids: [F073]
+    module: "数据质量"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望有数据质量中心只读页，查看问题总量、未解决问题、来源分布和列表。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US124
+    requirement_ids: [R112]
+    task_ids: [F074]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望能打开单个数据质量问题详情，查看错误码、字段、原值、建议处理和暂不实现动作。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US125
+    requirement_ids: [R113]
+    task_ids: [F075]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏数据质量入口进入新的只读中心，以便本地验收路径清晰。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US126
+    requirement_ids: [R114]
+    task_ids: [Q018]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望对导入合同 drilldown 与数据质量中心做验收收口，确认页面、导航、测试和边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "导入合同 drilldown 展示来自本地生产雏形合同模型，不接真实外部导入。"
+  - "数据质量中心展示来自本地 fallback 模型，不接数据库或真实接口。"
+  - "页面明确无真实修复、无审批、无权限、无导出、无批量、无生产公式。"
+  - "`node --experimental-strip-types --test scripts/tests/import-drilldown.test.mjs`、`node --experimental-strip-types --test scripts/tests/data-quality.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
