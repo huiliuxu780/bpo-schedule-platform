@@ -7,6 +7,14 @@ SchedulePlanStatus = Literal["draft", "review_ready", "published"]
 DemandPlanStatus = Literal["imported", "mapped"]
 UnavailabilityStatus = Literal["active", "resolved"]
 ScheduleRiskLevel = Literal["high", "medium", "low"]
+MasterDataEntity = Literal[
+    "agent",
+    "workplace",
+    "supplier",
+    "project",
+    "agent_binding",
+    "shift_type",
+]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -52,6 +60,23 @@ class DemandPlanRow(BaseModel):
 
 class DemandPlanListResponse(BaseModel):
     items: list[DemandPlanRow]
+
+
+class MasterDataEntityContract(BaseModel):
+    entity: MasterDataEntity
+    primary_key: list[str]
+    fields: list[str]
+    required_fields: list[str]
+    foreign_keys: list[str] = []
+    validation_rules: list[str]
+
+
+class MasterDataImportContractResponse(BaseModel):
+    version: str
+    entities: list[MasterDataEntityContract]
+    batch_fields: list[str]
+    failure_row_fields: list[str]
+    quality_error_codes: list[str]
 
 
 class UnavailabilityRow(BaseModel):

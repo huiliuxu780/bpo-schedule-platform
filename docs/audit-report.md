@@ -44,6 +44,28 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过。
 
+### 2026-05-18 - B006 主数据导入合同审计
+
+#### 审计结论
+
+- 已新增本地只读 `/api/v1/master-data/import-contract` 合同端点。
+- 合同覆盖 `agent`、`workplace`、`supplier`、`project`、`agent_binding` 和 `shift_type` 六类主数据。
+- 合同明确每类实体的字段、主键、必填字段、外键和校验规则，并提供批次字段、失败行字段和数据质量错误码。
+- 本轮只做本地合同能力，不做真实文件上传、真实外部导入、数据库持久化、ORM、迁移、权限、审批、导出、批量或生产公式。
+
+#### 风险
+
+- 该端点是生产雏形本地合同，不代表真实导入处理器或生产数据库 schema 已实现。
+- 后续如果要处理真实 Excel/CORN/HR/WFM 数据，需要单独 Gate。
+
+#### 验证
+
+- `python -m unittest ...test_master_data_import_contract...`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `python -m unittest discover -s backend/tests -v`：通过，21 个后端测试通过。
+- `bash scripts/check.sh`：通过。
+
 ### 2026-05-12 - F018 风险提示表局部 table parity 迁移审计
 
 #### 审计结论

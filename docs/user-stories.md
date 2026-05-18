@@ -1744,7 +1744,7 @@ stories:
     story: "作为数据管理员，我希望先有主数据导入合同，明确坐席、职场、供应商、项目、绑定关系和班次类型的字段、主键、校验、批次和失败行口径。"
     task_type: "backend-mvp"
     priority: "P0"
-    status: "ready"
+    status: "done"
   - id: US105
     requirement_ids: [R093]
     task_ids: [B007]

@@ -3185,7 +3185,7 @@ tasks:
   - id: B006
     title: "主数据导入合同"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-mvp
     allowed_files:
       - "backend/**"

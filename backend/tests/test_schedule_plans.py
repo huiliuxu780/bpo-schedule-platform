@@ -7,6 +7,7 @@ from backend.app.main import (
     create_schedule_plan_draft,
     get_schedule_plan,
     list_demand_plans,
+    list_master_data_import_contract,
     list_shift_details,
     list_schedule_plans,
     list_schedule_risks,
@@ -25,8 +26,43 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/shift-details", "GET"), routes)
         self.assertIn(("/api/v1/schedule-risks", "GET"), routes)
         self.assertIn(("/api/v1/unavailability", "GET"), routes)
+        self.assertIn(("/api/v1/master-data/import-contract", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
+
+    def test_master_data_import_contract_defines_required_entities(self) -> None:
+        response = list_master_data_import_contract()
+
+        entity_names = {entity.entity for entity in response.entities}
+
+        self.assertEqual(
+            entity_names,
+            {
+                "agent",
+                "workplace",
+                "supplier",
+                "project",
+                "agent_binding",
+                "shift_type",
+            },
+        )
+        self.assertIn("batch_id", response.batch_fields)
+        self.assertIn("failed_row_number", response.failure_row_fields)
+        self.assertIn("missing_required_field", response.quality_error_codes)
+
+    def test_master_data_import_contract_tracks_keys_and_validation(self) -> None:
+        response = list_master_data_import_contract()
+
+        contracts = {entity.entity: entity for entity in response.entities}
+        agent_contract = contracts["agent"]
+        binding_contract = contracts["agent_binding"]
+        shift_type_contract = contracts["shift_type"]
+
+        self.assertEqual(agent_contract.primary_key, ["employee_id"])
+        self.assertIn("external_employee_id", agent_contract.fields)
+        self.assertIn("employee_id", binding_contract.foreign_keys)
+        self.assertIn("counts_as_scheduled", shift_type_contract.fields)
+        self.assertIn("duplicate_primary_key", binding_contract.validation_rules)
 
     def test_list_schedule_plans_returns_required_summary_fields(self) -> None:
         response = list_schedule_plans()

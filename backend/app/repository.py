@@ -2,6 +2,8 @@ from datetime import datetime, timedelta, timezone
 
 from backend.app.models import (
     DemandPlanRow,
+    MasterDataEntityContract,
+    MasterDataImportContractResponse,
     ScheduleRiskLevel,
     ScheduleRiskRow,
     SchedulePlanDetail,
@@ -59,6 +61,172 @@ UNAVAILABILITY_ROWS = [
         note="已调整排班",
     ),
 ]
+
+MASTER_DATA_IMPORT_CONTRACT = MasterDataImportContractResponse(
+    version="production-mvp-v1",
+    entities=[
+        MasterDataEntityContract(
+            entity="agent",
+            primary_key=["employee_id"],
+            fields=[
+                "employee_id",
+                "external_employee_id",
+                "employee_name",
+                "supplier_id",
+                "workplace_id",
+                "project_id",
+                "skill_group",
+                "skill_level",
+                "status",
+                "effective_from",
+                "effective_to",
+            ],
+            required_fields=[
+                "employee_id",
+                "employee_name",
+                "supplier_id",
+                "workplace_id",
+                "project_id",
+                "status",
+            ],
+            foreign_keys=["supplier_id", "workplace_id", "project_id"],
+            validation_rules=[
+                "missing_required_field",
+                "duplicate_primary_key",
+                "unknown_foreign_key",
+                "invalid_effective_range",
+            ],
+        ),
+        MasterDataEntityContract(
+            entity="workplace",
+            primary_key=["workplace_id"],
+            fields=["workplace_id", "workplace_name", "city", "timezone", "status"],
+            required_fields=["workplace_id", "workplace_name", "timezone", "status"],
+            validation_rules=[
+                "missing_required_field",
+                "duplicate_primary_key",
+                "invalid_timezone",
+            ],
+        ),
+        MasterDataEntityContract(
+            entity="supplier",
+            primary_key=["supplier_id"],
+            fields=["supplier_id", "supplier_name", "status", "effective_from", "effective_to"],
+            required_fields=["supplier_id", "supplier_name", "status"],
+            validation_rules=[
+                "missing_required_field",
+                "duplicate_primary_key",
+                "invalid_effective_range",
+            ],
+        ),
+        MasterDataEntityContract(
+            entity="project",
+            primary_key=["project_id"],
+            fields=["project_id", "project_name", "status", "effective_from", "effective_to"],
+            required_fields=["project_id", "project_name", "status"],
+            validation_rules=[
+                "missing_required_field",
+                "duplicate_primary_key",
+                "invalid_effective_range",
+            ],
+        ),
+        MasterDataEntityContract(
+            entity="agent_binding",
+            primary_key=["binding_id"],
+            fields=[
+                "binding_id",
+                "employee_id",
+                "supplier_id",
+                "workplace_id",
+                "project_id",
+                "skill_group",
+                "skill_level",
+                "effective_from",
+                "effective_to",
+                "status",
+            ],
+            required_fields=[
+                "binding_id",
+                "employee_id",
+                "supplier_id",
+                "workplace_id",
+                "project_id",
+                "effective_from",
+                "status",
+            ],
+            foreign_keys=["employee_id", "supplier_id", "workplace_id", "project_id"],
+            validation_rules=[
+                "missing_required_field",
+                "duplicate_primary_key",
+                "unknown_foreign_key",
+                "overlapping_effective_range",
+                "invalid_effective_range",
+            ],
+        ),
+        MasterDataEntityContract(
+            entity="shift_type",
+            primary_key=["shift_type_id"],
+            fields=[
+                "shift_type_id",
+                "shift_type_name",
+                "start_time",
+                "end_time",
+                "break_windows",
+                "meal_windows",
+                "counts_as_scheduled",
+                "status",
+            ],
+            required_fields=[
+                "shift_type_id",
+                "shift_type_name",
+                "start_time",
+                "end_time",
+                "counts_as_scheduled",
+                "status",
+            ],
+            validation_rules=[
+                "missing_required_field",
+                "duplicate_primary_key",
+                "invalid_time_range",
+                "invalid_boolean_value",
+            ],
+        ),
+    ],
+    batch_fields=[
+        "batch_id",
+        "file_name",
+        "entity",
+        "uploaded_by",
+        "uploaded_at",
+        "business_date_from",
+        "business_date_to",
+        "status",
+        "total_rows",
+        "success_rows",
+        "failed_rows",
+        "warning_rows",
+        "version",
+    ],
+    failure_row_fields=[
+        "batch_id",
+        "entity",
+        "failed_row_number",
+        "field_name",
+        "error_code",
+        "error_message",
+        "raw_value",
+    ],
+    quality_error_codes=[
+        "missing_required_field",
+        "duplicate_primary_key",
+        "unknown_foreign_key",
+        "invalid_effective_range",
+        "overlapping_effective_range",
+        "invalid_time_range",
+        "invalid_timezone",
+        "invalid_boolean_value",
+    ],
+)
 
 
 def _coverage_rate(scheduled_agents: int, forecast_agents: int) -> float:
@@ -289,6 +457,10 @@ def list_plan_summaries(
         summaries = [summary for summary in summaries if _matches_query(summary, query)]
 
     return summaries
+
+
+def get_master_data_import_contract() -> MasterDataImportContractResponse:
+    return MASTER_DATA_IMPORT_CONTRACT
 
 
 def list_shift_detail_rows(

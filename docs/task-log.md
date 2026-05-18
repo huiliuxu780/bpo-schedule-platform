@@ -35,6 +35,15 @@
 - status: `done`
 - notes: 从 `docs/production-mvp-prd.md` 拆出第一批生产雏形需求，并将 `US104/B006`、`US105/B007`、`US106/B008` 放入 current ready queue；后续执行保持 no-database/local MVP 边界，不授权真实集成、权限、审批、导出、批量、自动排班或生产公式。
 
+### 2026-05-18
+
+- task_id: `B006`
+- source_ids: [`R092`]
+- story_ids: [`US104`]
+- action: 新增生产雏形主数据导入合同。
+- status: `done`
+- notes: 新增本地只读 `/api/v1/master-data/import-contract` 合同，覆盖坐席、职场、供应商、项目、绑定关系和班次类型的字段、主键、必填字段、外键、校验规则、批次字段、失败行字段和数据质量错误码；不做真实文件导入、不接数据库、不接真实外部系统。
+
 ### 2026-05-12
 
 - task_id: `F018`
