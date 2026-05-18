@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: idle
+  queue_state: active
   active_batch_id: null
-  in_progress_task: null
+  in_progress_task: F145
   ready_tasks: []
 ```
 
@@ -17,7 +17,7 @@ current_summary:
 - Dashboard, demand plans, schedule plans, plan detail/edit, draft review readiness, risks, shift details, unavailability, smart scheduling preview, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, interface integration preview, organization people, today fulfillment, anomaly alerts, deficit heatmap, vendor management, rule configuration, operation audit preview, monthly settlement, report center, supplier review, and review navigation use local/demo data and scoped review context.
 - Frontend build/check path exists through `bash scripts/check.sh`.
 - Backend local unittest path exists, and localhost-only demo import endpoints exist for staff master, staff status, login, and schedule-plan CSV data; production API/database integration is not in scope.
-- Imported demo rows are exposed through localhost-only processed records and are now consumed by dashboard, schedule plans, shift-details, schedule-risks, unavailability, smart scheduling, fulfillment monitoring, agent status trace, fulfillment exceptions, exception review, adherence monitoring, data quality, CORN status log, field mapping, interface integration, organization people, today fulfillment, anomaly alerts, vendor management, rule configuration, operation audit, monthly settlement, report center, and supplier review for module-level demo summaries.
+- Imported demo rows are exposed through localhost-only processed records and are consumed by `/demo-imports` plus module pages where the user explicitly demonstrates uploaded data results. Dashboard/经营总览 is kept as a business overview and no longer renders import evidence, batch status, processed-record summaries, or data-source status.
 - Harness current queue, active task contract, trace index, state check, and git hooks exist.
 
 ## Current P0 Gaps
@@ -42,7 +42,7 @@ current_summary:
 
 ## Current Execution Focus
 
-当前队列为空。上一批 F145/Q070 已完成业务页面产品语义纠偏：导入数据只作为数据来源，真实业务页面改为展示业务对象、业务状态、能力清单和业务入口；`records`、`processed records`、`localhost-only`、`不接数据库`、`本机只读 readiness` 等验收痕迹只保留在 `/demo-imports`、QA 文档或审计记录中。本批未改后端契约、数据库、真实集成、权限实现、锁账动作、结算公式、收费因子、审批、导出或批量能力。
+当前追加执行 F145 经营总览解耦：`/dashboard` 不再展示导入版本、导入批次、数据源、数据接入状态或 processed-record 证据；`/demo-imports` 继续保留 CSV 导入、批次和 processed records 说明。本批不改后端契约、数据库、真实集成、权限实现、锁账动作、结算公式、收费因子、审批、导出或批量能力。
 
 ## Default Execution
 

@@ -5,4 +5,13 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US225
+    requirement_ids:
+      - R213
+    task_id: F145
+    status: in_progress
+    priority: P0
+    module: "产品体验"
+    summary: "经营总览从导入链路解耦，只展示经营业务内容。"
+    acceptance_ref: "docs/user-stories.md#US225"
