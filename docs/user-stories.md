@@ -1722,3 +1722,68 @@ acceptance:
   - "本地筛选和统计模型有回归测试覆盖。"
   - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
 ```
+
+### US103-US108 - 生产雏形第一批需求
+
+```yaml
+stories:
+  - id: US103
+    requirement_ids: [R091]
+    task_ids: [H030]
+    module: "Harness"
+    role: "PM"
+    story: "作为 PM，我希望把生产雏形大 PRD 拆成第一批可执行需求和 current ready queue，以便后续开发不再停留在大文档层。"
+    task_type: "harness"
+    priority: "P0"
+    status: "done"
+  - id: US104
+    requirement_ids: [R092]
+    task_ids: [B006]
+    module: "主数据"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望先有主数据导入合同，明确坐席、职场、供应商、项目、绑定关系和班次类型的字段、主键、校验、批次和失败行口径。"
+    task_type: "backend-mvp"
+    priority: "P0"
+    status: "ready"
+  - id: US105
+    requirement_ids: [R093]
+    task_ids: [B007]
+    module: "排班"
+    role: "排班运营"
+    story: "作为排班运营，我希望人员级排班合同能明确员工、日期、职场、供应商、班次、休息/饭点和 0.5h 展开结果，以便后续排班导入和时段汇总可以对齐。"
+    task_type: "backend-mvp"
+    priority: "P0"
+    status: "ready"
+  - id: US106
+    requirement_ids: [R094, R095]
+    task_ids: [B008]
+    module: "预测与实际对比"
+    role: "现场主管"
+    story: "作为现场主管，我希望需求预测、人员排班、登录日志和状态日志有统一对比口径，以便识别缺口、未登录、迟到、早退和非有效产能。"
+    task_type: "backend-mvp"
+    priority: "P0"
+    status: "ready"
+  - id: US107
+    requirement_ids: [R096]
+    task_ids: [F060]
+    module: "异常闭环"
+    role: "运营负责人"
+    story: "作为运营负责人，我希望异常识别和复核结果有统一字段和展示入口，以便把异常归因到排班、人员、主数据、导入、预测或状态源问题。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "planned"
+  - id: US108
+    requirement_ids: [R092, R093, R094, R095, R096]
+    task_ids: [Q015]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望对生产雏形第一批本地合同和展示入口做验收收口，确认 no-database 边界、PRD 追溯和验收口径一致。"
+    task_type: "qa"
+    priority: "P1"
+    status: "planned"
+acceptance:
+  - "第一批 ready stories 必须有匹配 active task。"
+  - "第一批只允许本地合同、seed/process-memory 或前端展示层；不接数据库、不接真实外部数据。"
+  - "生产权限、审批、导出、批量、自动排班、生产公式、结算规则和收费因子继续作为后续能力。"
+  - "`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+```

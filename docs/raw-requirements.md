@@ -858,3 +858,32 @@ version: "1.0"
 status: "split"
 notes: "本组只做本地前端表格展示层 parity；不新增依赖、不改后端契约、不接数据库、不做审批、导出、批量、权限或生产公式。"
 ```
+
+### R091-R096 - 生产雏形第一批需求安排
+
+```yaml
+requirements:
+  - id: R091
+    module: "生产雏形"
+    description: "把 `docs/production-mvp-prd.md` 中的第一阶段范围拆成可执行的第一批 raw requirements、user stories、backlog tasks 和 current ready queue。"
+  - id: R092
+    module: "主数据"
+    description: "生产雏形需要主数据导入合同，覆盖坐席、职场、供应商、项目、绑定关系和班次类型的字段、主键、校验、批次和失败行口径。"
+  - id: R093
+    module: "排班"
+    description: "生产雏形需要人员级排班数据合同，并明确如何展开为 0.5h 时段汇总。"
+  - id: R094
+    module: "需求预测"
+    description: "生产雏形需要独立需求预测导入合同，按日期、职场、项目、时段、技能组和等级对齐排班。"
+  - id: R095
+    module: "登录与状态"
+    description: "生产雏形需要登录日志、状态日志和人员级排班的对比口径，支持未登录、迟到、早退、非有效产能等异常识别。"
+  - id: R096
+    module: "异常闭环"
+    description: "生产雏形需要异常识别与复核闭环口径，定义异常类型、归因、复核结果、审计字段和后续处理状态。"
+source: "Production MVP PRD approved by PM on 2026-05-18"
+submitted_at: "2026-05-18"
+version: "1.0"
+status: "split"
+notes: "本组只安排生产雏形第一批需求。后续实现仍必须保持 no-database/local MVP 边界；不授权数据库、真实外部集成、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+```

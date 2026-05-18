@@ -26,6 +26,15 @@
 - status: `done`
 - notes: 新增 `docs/production-mvp-prd.md`，将本地演示版到生产雏形的产品口径、数据对象、导入规则、排班粒度、对比口径、异常闭环、页面模块和后续生产化边界整理为单份大 PRD；本轮不拆用户故事、不改 current queue、不实现代码。
 
+### 2026-05-18
+
+- task_id: `H030`
+- source_ids: [`R091`, `R092`, `R093`, `R094`, `R095`, `R096`]
+- story_ids: [`US103`, `US104`, `US105`, `US106`, `US107`, `US108`]
+- action: 安排生产雏形第一批需求。
+- status: `done`
+- notes: 从 `docs/production-mvp-prd.md` 拆出第一批生产雏形需求，并将 `US104/B006`、`US105/B007`、`US106/B008` 放入 current ready queue；后续执行保持 no-database/local MVP 边界，不授权真实集成、权限、审批、导出、批量、自动排班或生产公式。
+
 ### 2026-05-12
 
 - task_id: `F018`

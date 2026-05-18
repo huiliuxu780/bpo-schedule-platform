@@ -19,6 +19,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### H030 Production MVP First Batch Seeding
+
+- branch_name: `codex/production-mvp-prd`
+- base_main_commit: `a3a134c`
+- remote_status: `codex/production-mvp-prd` pushed to origin before H030 continuation.
+- scope: arrange production MVP first-batch raw requirements, user stories, backlog entries, current ready queue, active task contracts, TRACE_INDEX pointers, and traceability logs only.
+- allowed_files_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/raw-requirements.md`, `docs/user-stories.md`, `tasks/backlog.yaml`, `docs/task-log.md`, `docs/audit-report.md`, and `docs/dev/branch-log.md`; no frontend, backend, package, lockfile, database, permission, approval, export, batch, real integration, production formula, settlement, or charge-factor files.
+- scope_diff_check: `docs/current/PROJECT_CONTEXT.md`, `docs/current/STORY_QUEUE.yaml`, `docs/current/ACTIVE_TASKS.yaml`, `docs/registry/TRACE_INDEX.yaml`, `docs/raw-requirements.md`, `docs/user-stories.md`, `tasks/backlog.yaml`, `docs/task-log.md`, `docs/audit-report.md`, and `docs/dev/branch-log.md`; no frontend, backend, package, lockfile, database, permission, approval, export, batch, real integration, production formula, settlement, or charge-factor files.
+- check_result: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing; push after verified coherent block`
+- blocked_reason: `N/A`
+
 ## 2026-05-10
 
 ### Clean Harness Initialization

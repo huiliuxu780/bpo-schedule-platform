@@ -24,6 +24,26 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `bash scripts/check.sh`：通过。首次受限网络环境下 Next build 无法访问 `fonts.googleapis.com`，授权网络后完整检查通过；过程中清理了 Git 忽略的 `.next` 生成缓存，移除跨分支残留类型。
 
+### 2026-05-18 - H030 生产雏形第一批需求安排审计
+
+#### 审计结论
+
+- 已将 `docs/production-mvp-prd.md` 拆出 `R091-R096` 和 `US103-US108`。
+- 已将 `US104/B006`、`US105/B007`、`US106/B008` 放入 current ready queue 和 active task contract。
+- 第一批执行顺序为：主数据导入合同、人员级排班合同与 0.5h 展开、预测/排班/登录状态对比合同。
+- 本轮只安排需求和 current 状态，不修改前端、后端、依赖、package/lockfile、数据库、真实集成、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- B006-B008 后续虽然允许本地 backend-mvp 合同或 seed/process-memory 工作，但不得进入数据库持久化、真实外部导入、权限、审批、导出、批量或生产公式。
+- 如果实现过程中发现需要 package/lockfile、真实 Excel/CORN/HR/WFM 集成或生产 schema，必须停下来重新 Gate。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过。
+
 ### 2026-05-12 - F018 风险提示表局部 table parity 迁移审计
 
 #### 审计结论

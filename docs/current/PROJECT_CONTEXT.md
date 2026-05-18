@@ -10,7 +10,9 @@ The project is in No Database MVP Mode. Product work may continue only through c
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed product chain was `US083/F041 -> ... -> US102/Q014`, which extended local table parity across schedule plans, schedule risks, and unavailability tables without database, package, backend contract, approval, export, batch, permission, or production formula work.
+Production MVP first-batch planning is now queued from `docs/production-mvp-prd.md`. The current ready stories are `US104/B006`, `US105/B007`, and `US106/B008`; all are local/no-database contract work for master data, personnel schedule detail, half-hour interval expansion, demand forecast, login/status logs, and comparison semantics.
+
+The last completed product chain was `US083/F041 -> ... -> US102/Q014`, which extended local table parity across schedule plans, schedule risks, and unavailability tables without database, package, backend contract, approval, export, batch, permission, or production formula work.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +55,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-After this state-governance layer is verified, seed the next ready story explicitly before returning to product development. The recommended product order remains: risk detail drilldown follow-ups only if needed, unavailability impact locator follow-ups only if needed, then table parity slices. Database work stays deferred.
+Execute `US104/B006` first, then `US105/B007`, then `US106/B008` on `codex/production-mvp-first-batch` if no stop condition is hit. Keep the scope local-contract only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.

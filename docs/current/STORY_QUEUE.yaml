@@ -1,8 +1,36 @@
 version: 1
-updated_at: "2026-05-13"
+updated_at: "2026-05-18"
 source_of_truth: "current_story_queue"
 notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: "US104"
+    requirement_ids:
+      - "R092"
+    task_ids:
+      - "B006"
+    status: "ready"
+    priority: "P0"
+    module: "主数据"
+    summary: "定义生产雏形主数据导入合同。"
+  - id: "US105"
+    requirement_ids:
+      - "R093"
+    task_ids:
+      - "B007"
+    status: "ready"
+    priority: "P0"
+    module: "排班"
+    summary: "定义人员级排班合同和 0.5h 时段展开口径。"
+  - id: "US106"
+    requirement_ids:
+      - "R094"
+      - "R095"
+    task_ids:
+      - "B008"
+    status: "ready"
+    priority: "P0"
+    module: "预测与实际对比"
+    summary: "定义预测、排班、登录和状态日志对比合同。"
