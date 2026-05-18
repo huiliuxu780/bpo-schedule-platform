@@ -4,6 +4,26 @@
 
 ## Current Audit
 
+### 2026-05-18 - H029 生产雏形大 PRD 整理审计
+
+#### 审计结论
+
+- 已新增 `docs/production-mvp-prd.md`，作为从本地演示版升级到生产雏形的产品需求定义。
+- 文档明确生产雏形第一阶段覆盖主数据导入、人员级排班、0.5h 时段汇总、需求预测、登录日志、状态日志、差异对比、异常识别和复核闭环。
+- 文档将数据库、权限、审批、导出、批量、真实集成、生产公式、结算规则和收费因子标注为后续生产化能力，不作为本轮实现范围。
+- 本轮未修改 `docs/current/**`，未拆 raw requirements 或 user stories，未修改前端、后端、依赖、package/lockfile、数据库或真实集成文件。
+
+#### 风险
+
+- 该 PRD 是规划文档，不是执行队列；后续开发前仍必须按 Harness 流程拆 raw requirements、user stories、Gate Plan 和 active tasks。
+- 文档中描述的数据库、权限、审批、导出、批量和生产规则不能被理解为已授权实现。
+
+#### 验证
+
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `bash scripts/check.sh`：通过。首次受限网络环境下 Next build 无法访问 `fonts.googleapis.com`，授权网络后完整检查通过；过程中清理了 Git 忽略的 `.next` 生成缓存，移除跨分支残留类型。
+
 ### 2026-05-12 - F018 风险提示表局部 table parity 迁移审计
 
 #### 审计结论

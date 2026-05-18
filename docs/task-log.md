@@ -17,6 +17,15 @@
 
 ## Log
 
+### 2026-05-18
+
+- task_id: `H029`
+- source_ids: []
+- story_ids: []
+- action: 整理生产雏形大 PRD。
+- status: `done`
+- notes: 新增 `docs/production-mvp-prd.md`，将本地演示版到生产雏形的产品口径、数据对象、导入规则、排班粒度、对比口径、异常闭环、页面模块和后续生产化边界整理为单份大 PRD；本轮不拆用户故事、不改 current queue、不实现代码。
+
 ### 2026-05-12
 
 - task_id: `F018`

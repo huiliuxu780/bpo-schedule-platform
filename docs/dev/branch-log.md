@@ -1,5 +1,24 @@
 # Branch Log
 
+## 2026-05-18
+
+### H029 Production MVP PRD
+
+- branch_name: `codex/production-mvp-prd`
+- base_main_commit: `a3a134c`
+- remote_status: `main` was up to date with local `origin/main` before branch creation.
+- scope: documentation-only production MVP PRD and minimal Harness traceability records.
+- allowed_files_check: `docs/production-mvp-prd.md`, `docs/PROJECT_STATE.md`, `docs/task-log.md`, `docs/audit-report.md`, and `docs/dev/branch-log.md`; no current queue, frontend, backend, package, lockfile, database, permission, approval, export, batch, real integration, production formula, settlement, or charge-factor files.
+- scope_diff_check: `docs/production-mvp-prd.md`, `docs/PROJECT_STATE.md`, `docs/task-log.md`, `docs/audit-report.md`, and `docs/dev/branch-log.md`; no current queue, frontend, backend, package, lockfile, database, permission, approval, export, batch, real integration, production formula, settlement, or charge-factor files.
+- check_result: `git diff --check` passed; `bash scripts/check-state.sh --strict` passed; `bash scripts/check.sh` passed after clearing ignored `.next` generated cache and rerunning with network access for Next font fetch.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ## 2026-05-10
 
 ### Clean Harness Initialization

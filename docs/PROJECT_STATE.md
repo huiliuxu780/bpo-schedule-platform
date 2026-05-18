@@ -85,6 +85,8 @@ Current invariants:
 
 Near-term product work should remain inside the no-database local MVP boundary.
 
+`docs/production-mvp-prd.md` records the product definition for the next production MVP shape. It is a planning document only: it does not seed the current queue, does not authorize implementation, and does not override No Database MVP Mode or the stop conditions in `AGENTS.md`.
+
 Recommended order after state governance:
 
 1. Seed the next ready story in current state before execution.
