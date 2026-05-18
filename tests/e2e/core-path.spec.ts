@@ -25,6 +25,26 @@ async function gotoAppPage(page: Page, url: string) {
   }
 }
 
+async function expectDashboardNoImportEvidence(page: Page) {
+  const dashboardText = await page.getByRole("main").innerText()
+  const forbiddenTerms = [
+    "导入",
+    "批次",
+    "数据源",
+    "数据接入",
+    "processed records",
+    "records",
+    "本机",
+    "演示",
+    "localhost",
+    "不接数据库",
+  ]
+
+  for (const term of forbiddenTerms) {
+    expect(dashboardText).not.toContain(term)
+  }
+}
+
 async function navigateByMainLink(
   page: Page,
   name: string,
@@ -43,6 +63,7 @@ test("core local review path keeps plan detail context", async ({ page }) => {
   await gotoAppPage(page, "/dashboard")
   await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
   await expect(page.getByText("履约指标趋势")).toBeVisible()
+  await expectDashboardNoImportEvidence(page)
 
   await gotoAppPage(page, "/demand-plans")
   const demandMain = page.getByRole("main")
@@ -320,23 +341,19 @@ test("local demo import entry feeds product pages without demo markers", async (
   const dashboardMain = page.getByRole("main")
 
   await expect(page.getByRole("heading", { name: "经营总览" })).toBeVisible()
-  await expect(dashboardMain.getByText("经营指标概览")).toBeVisible()
-  await expect(dashboardMain.getByText(/数据覆盖 \d+ 行/)).toBeVisible()
-  await expect(dashboardMain.getByText("坐席主数据").first()).toBeVisible()
-  await expect(dashboardMain.getByText("排班数据").first()).toBeVisible()
-  await expect(
-    dashboardMain.getByRole("columnheader", { name: "数据源" }).first(),
-  ).toBeVisible()
-  await expect(dashboardMain.getByText("排班数据").first()).toBeVisible()
+  await expect(dashboardMain.getByText("履约指标趋势")).toBeVisible()
+  await expect(dashboardMain.getByText("时段人力缺口")).toBeVisible()
+  await expect(dashboardMain.getByText("BPO 异常明细")).toBeVisible()
+  await expect(dashboardMain.getByText("排班实现率").first()).toBeVisible()
+  await expect(dashboardMain.getByText("排班拟合度").first()).toBeVisible()
   await expect(dashboardMain.getByLabel("日期范围")).toHaveValue("2026-05-11")
   await dashboardMain.getByLabel("供应商").selectOption("供应商A")
   await dashboardMain.getByLabel("职场/团队").selectOption("上海职场")
-  await dashboardMain.getByLabel("数据版本").selectOption("imported")
   await dashboardMain.getByRole("button", { name: "应用筛选" }).click()
   await expect(page).toHaveURL(/\/dashboard\?.*vendor=%E4%BE%9B%E5%BA%94%E5%95%86A/)
   await expect(page).toHaveURL(/\/dashboard\?.*site=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA/)
-  await expect(dashboardMain.getByText("核心数据源最近批次与同步状态")).toBeVisible()
-  await expect(dashboardMain.getByText("坐席主数据").first()).toBeVisible()
+  await expect(dashboardMain.getByLabel("数据版本")).toHaveCount(0)
+  await expectDashboardNoImportEvidence(page)
   await expect(
     dashboardMain.getByRole("button", { name: "复核 ANM-202605-001" }),
   ).toBeVisible()

@@ -2,9 +2,9 @@
 
 ```yaml
 current_summary:
-  queue_state: active
+  queue_state: idle
   active_batch_id: null
-  in_progress_task: F145
+  in_progress_task: null
   ready_tasks: []
 ```
 
@@ -42,7 +42,7 @@ current_summary:
 
 ## Current Execution Focus
 
-当前追加执行 F145 经营总览解耦：`/dashboard` 不再展示导入版本、导入批次、数据源、数据接入状态或 processed-record 证据；`/demo-imports` 继续保留 CSV 导入、批次和 processed records 说明。本批不改后端契约、数据库、真实集成、权限实现、锁账动作、结算公式、收费因子、审批、导出或批量能力。
+当前队列为空。F145 已追加完成经营总览解耦：`/dashboard` 不再展示导入版本、导入批次、数据源、数据接入状态或 processed-record 证据；`/demo-imports` 继续保留 CSV 导入、批次和 processed records 说明。本批未改后端契约、数据库、真实集成、权限实现、锁账动作、结算公式、收费因子、审批、导出或批量能力。
 
 ## Default Execution
 

@@ -1930,3 +1930,12 @@
 - action: 收口业务页面产品语义纠偏 QA。
 - status: `done`
 - notes: 模型测试 86 条通过，typecheck 通过；Browser 扫描 27 个已开放业务路由，除 `/demo-imports` 外未发现可见 `本机`、`records`、`readiness`、`不接数据库`、`演示`、`localhost`、`边界`、`本地 MVP` 语义；提权 `npm run e2e:smoke` 6 条通过。普通沙箱下 Chrome 仍会因 `SIGABRT/EPERM` 启动失败，E2E 需在本机提权环境运行。
+
+- task_id: `F145`
+- source_ids:
+  - `R213`
+- story_ids:
+  - `US225`
+- action: 追加经营总览导入链路解耦。
+- status: `done`
+- notes: `/dashboard` 已移除导入版本筛选、导入批次读取、processed records 摘要和数据接入状态卡；经营总览只保留业务 KPI、履约趋势、时段缺口和异常明细。`/demo-imports` 继续保留 CSV 导入、批次和 processed records 证据。

@@ -2379,6 +2379,7 @@
 
 - `F145/Q070/US225-US226` 已纠正业务页面被导入/演示/QA 语言污染的问题。
 - `ImportedRecordsSummary` 不再在业务页面输出可见记录汇总块；导入、批次和 processed records 说明保留在 `/demo-imports`。
+- `/dashboard` 经营总览已从导入链路解耦，不再读取或渲染导入批次、数据源状态、processed records 摘要或导入版本筛选。
 - Dashboard、班次明细、排班计划、履约监控、今日履约、异常预警、时段缺口、供应商管理、规则配置、月度结算、报表中心、供应商复盘、智能排班、接口集成、操作审计、权限管理和结算锁账等页面已改为业务标签、业务样本、能力清单或模块状态表达。
 - 本批未新增后端契约、数据库、真实集成、认证、权限实现、审批、导出、批量、生产公式、结算规则、收费因子或真实锁账。
 
@@ -2392,6 +2393,7 @@
 - `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，86 个模型/源码断言测试通过。
 - `npm run typecheck`：通过。
 - Browser 检查：27 个已开放业务路由中，除 `/demo-imports` 外未发现可见 `本机`、`records`、`readiness`、`不接数据库`、`演示`、`localhost`、`边界`、`本地 MVP` 语义。
+- Browser 检查：`/dashboard` 主内容未发现可见 `导入`、`批次`、`数据源`、`数据接入`、`processed records`、`records`、`本机`、`演示`、`localhost`、`不接数据库` 语义，且保留业务 KPI、趋势、时段缺口和异常明细。
 - `BPO_WEB_URL=http://127.0.0.1:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：提权运行通过，6 条 E2E 通过。
 
 ## Historical Audit Snapshots

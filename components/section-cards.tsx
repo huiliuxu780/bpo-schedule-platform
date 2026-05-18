@@ -2,12 +2,6 @@ import { TrendingDown, TrendingUp } from "lucide-react"
 
 import { metricCards } from "@/app/dashboard/data"
 import {
-  summarizeDashboardImportKpiPreview,
-  summarizeDashboardImportRecords,
-  type DashboardImportKpiBatch,
-  type DashboardImportRecordSummary,
-} from "@/components/data-table-model"
-import {
   Card,
   CardContent,
   CardFooter,
@@ -17,42 +11,9 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-export function SectionCards({
-  importBatches = [],
-  importRecords = [],
-}: {
-  importBatches?: DashboardImportKpiBatch[]
-  importRecords?: DashboardImportRecordSummary[]
-}) {
-  const importPreview = summarizeDashboardImportKpiPreview(importBatches)
-  const recordsPreview = summarizeDashboardImportRecords(importRecords)
-
+export function SectionCards() {
   return (
     <section className="@container/main px-4 lg:px-6">
-      <Card className="mb-4 overflow-hidden border-dashed bg-muted/20">
-        <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
-          <div className="grid gap-1">
-            <CardDescription>经营指标概览</CardDescription>
-            <CardTitle className="text-[24px] leading-8 font-semibold tabular-nums">
-              数据覆盖 {importPreview.importedRows} 行
-            </CardTitle>
-          </div>
-          <Badge variant={importPreview.attentionBatches > 0 ? "destructive" : "outline"}>
-            {importPreview.statusLabel}
-          </Badge>
-        </CardHeader>
-        <CardContent>
-          <div className="text-sm font-medium">
-            已接入 {importPreview.importedSources} 类数据
-          </div>
-          <div className="mt-1 text-xs text-muted-foreground">
-            业务数据已覆盖 {recordsPreview.importedRows} 行，包含 {recordsPreview.importedSources} 类数据源
-          </div>
-        </CardContent>
-        <CardFooter className="text-xs text-muted-foreground">
-          最新数据：{importPreview.latestSource} / {importPreview.latestBatch}
-        </CardFooter>
-      </Card>
       <div className="grid gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       {metricCards.map((item) => {
         const positive = item.change.startsWith("+")

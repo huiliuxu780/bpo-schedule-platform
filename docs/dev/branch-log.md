@@ -1730,10 +1730,10 @@
 - branch_name: `codex/f-batch-032-product-semantics-cleanup`
 - base_main_commit: `5622db4`
 - remote_status: `local continuation branch created after PM rejected demo/import wording leaking into business pages`
-- scope: remove visible import/demo/QA semantics from business pages, keep CSV import and processed-record evidence in `/demo-imports`, update E2E/business markers, update model labels, and close out current state.
+- scope: remove visible import/demo/QA semantics from business pages, decouple dashboard from import evidence, keep CSV import and processed-record evidence in `/demo-imports`, update E2E/business markers, update model labels, and close out current state.
 - allowed_files_check: `app/**`, `components/**`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission enforcement, approval, export, batch operation, schedule publishing, automatic scheduling, production writeback, production formula, settlement rule, real lock, or charge-factor files.
-- scope_diff_check: product page copy/components, model labels/tests, E2E business markers, current-state closeout files, and traceability docs only.
-- check_result: model tests passed with 86 tests; typecheck passed; Browser checked 27 opened business routes and found no visible `本机`/`records`/`readiness`/`不接数据库`/`演示`/`localhost`/`边界`/`本地 MVP` terms outside `/demo-imports`; elevated `npm run e2e:smoke` passed with 6 tests, while non-elevated Chrome still fails with `SIGABRT/EPERM`.
+- scope_diff_check: dashboard import-evidence removal, product page copy/components, model labels/tests, E2E business markers, current-state closeout files, and traceability docs only.
+- check_result: model tests passed with 86 tests; typecheck passed; Browser checked 27 opened business routes and found no visible `本机`/`records`/`readiness`/`不接数据库`/`演示`/`localhost`/`边界`/`本地 MVP` terms outside `/demo-imports`; dashboard-specific Browser check found no visible `导入`/`批次`/`数据源`/`数据接入` terms in main content; elevated `npm run e2e:smoke` passed with 6 tests, while non-elevated Chrome still fails with `SIGABRT/EPERM`.
 - local_commit_sha: `pending local commit`
 - integration_status: `not_started`
 - integration_method: `N/A`
