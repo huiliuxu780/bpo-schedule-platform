@@ -6,7 +6,9 @@ import {
   buildImportedRecordSourceRows,
   buildAnomalyAlertTableRows,
   buildDeficitHeatmapTableRows,
+  buildPermissionManagementTableRows,
   buildRuleConfigurationTableRows,
+  buildSettlementLockTableRows,
   buildTodayFulfillmentInputRows,
   buildVendorDistributionTableRows,
   clampDashboardPageIndex,
@@ -30,7 +32,9 @@ import {
   summarizeFieldMappingRecords,
   summarizeFulfillmentImportRecords,
   summarizeOrganizationPeopleRecords,
+  summarizePermissionManagementRecords,
   summarizeRuleConfigurationRecords,
+  summarizeSettlementLockRecords,
   summarizeMonthlySettlementRecords,
   summarizeOperationAuditRecords,
   summarizeReportCenterRecords,
@@ -1368,6 +1372,108 @@ test("rule configuration table rows expose rule status and descriptions", () => 
   ]);
 
   assert.deepEqual(buildRuleConfigurationTableRows([]), []);
+});
+
+test("permission management records summarize readonly preview readiness", () => {
+  const summary = summarizePermissionManagementRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 4,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", name: "张敏" }],
+    },
+    {
+      kind: "status_log",
+      source_name: "坐席状态数据",
+      total_rows: 5,
+      latest_batch_id: "status_log-20260516094000-001",
+      updated_at: "2026-05-16T09:40:00+08:00",
+      sample_rows: [{ staff_id: "A001", status: "在线" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedRows: 9,
+    sourceCount: 2,
+    readonlyItems: 2,
+    deferredItems: 4,
+    latestBatch: "status_log-20260516094000-001",
+    latestSource: "坐席状态数据",
+    statusLabel: "本机只读",
+  });
+});
+
+test("permission management table rows expose readonly and gated items", () => {
+  const rows = buildPermissionManagementTableRows([
+    { title: "导入 records 权限上下文", status: "enabled" },
+    { title: "账号登录与认证", status: "deferred" },
+  ]);
+
+  assert.deepEqual(rows, [
+    {
+      item: "导入 records 权限上下文",
+      statusLabel: "本机只读",
+      description: "只展示本机导入 records 的查看上下文，不做登录、授权或权限判定。",
+    },
+    {
+      item: "账号登录与认证",
+      statusLabel: "需后续 Gate",
+      description: "需要后续独立 Gate，当前不提供账号、角色、授权或生产权限边界。",
+    },
+  ]);
+});
+
+test("settlement lock records summarize readonly preview readiness", () => {
+  const summary = summarizeSettlementLockRecords([
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 4,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", name: "张敏" }],
+    },
+    {
+      kind: "schedule_plan",
+      source_name: "排班数据",
+      total_rows: 6,
+      latest_batch_id: "schedule_plan-20260516095500-001",
+      updated_at: "2026-05-16T09:55:00+08:00",
+      sample_rows: [{ plan_id: "SP-001" }],
+    },
+  ]);
+
+  assert.deepEqual(summary, {
+    importedRows: 10,
+    sourceCount: 2,
+    readonlyItems: 2,
+    deferredItems: 5,
+    latestBatch: "schedule_plan-20260516095500-001",
+    latestSource: "排班数据",
+    statusLabel: "本机只读",
+  });
+});
+
+test("settlement lock table rows expose readonly and gated items", () => {
+  const rows = buildSettlementLockTableRows([
+    { title: "月度 records 只读复盘", status: "enabled" },
+    { title: "锁账动作", status: "deferred" },
+  ]);
+
+  assert.deepEqual(rows, [
+    {
+      item: "月度 records 只读复盘",
+      statusLabel: "本机只读",
+      description: "只展示本机导入 records 的复盘输入，不冻结账期或计算结算金额。",
+    },
+    {
+      item: "锁账动作",
+      statusLabel: "需后续 Gate",
+      description: "需要后续独立 Gate，当前不提供锁账、结算公式、收费因子、审批或导出。",
+    },
+  ]);
 });
 
 test("deficit heatmap table rows expose severe slot fields", () => {

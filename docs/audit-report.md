@@ -2348,6 +2348,31 @@
 - Browser 复验：dashboard 主题变量恢复为 `oklch(0.145 0 0)`、`oklch(0.985 0 0)` 和 `oklch(1 0 0 / 10%)`，视觉恢复为 shadcn dashboard 样式。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-18 - Development Entry Readonly Previews
+
+#### 审计结论
+
+- `F144/Q069/US223-US224` 已将 `权限管理` 和 `结算锁账` 从侧边栏“开发中”占位改为本机只读预览页。
+- `权限管理` 现在链接到 `/permission-management`，展示权限管理 records、本机权限 readiness 表格、本机只读项和需后续 Gate 项。
+- `结算锁账` 现在链接到 `/settlement-lock`，展示结算锁账 records、本机锁账 readiness 表格、本机只读项和需后续 Gate 项。
+- 两个页面继续读取 localhost-only processed records，不实现真实登录、认证、授权、权限判定、用户角色维护、真实锁账、结算公式、收费因子、账单、审批、导出、批量、数据库、真实接口或生产写回。
+
+#### 风险
+
+- 当前页面是本机只读 readiness，不等同于生产权限系统、生产审计、正式锁账流程或结算引擎。
+- 本机 E2E 仍依赖前端 3015 和后端 8000 在线；沙箱内 curl/端口监听会被 macOS sandbox 拒绝，需在本机权限环境下验证。
+
+#### 验证
+
+- RED：`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 首次失败，原因为缺少 `buildPermissionManagementTableRows` 导出。
+- GREEN：`node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs` 通过，86 个模型/源码断言测试通过。
+- `npm run typecheck`：通过。
+- 本机 HTML/Browser 检查：`/permission-management` 和 `/settlement-lock` 均返回 200，可见 readiness 表格、侧边栏 href 和本机只读边界；`data-development-nav-item` 不再用于这两个入口。
+- `BPO_WEB_URL=http://127.0.0.1:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，6 条 E2E 通过。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

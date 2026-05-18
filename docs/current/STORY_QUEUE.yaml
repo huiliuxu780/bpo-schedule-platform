@@ -5,18 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US223
-    requirement_ids: ["R211"]
-    task_ids: ["F144"]
-    status: in_progress
-    priority: P1
-    module: "系统管理 / 结算管理"
-    summary: "将权限管理和结算锁账导航占位改成本机只读预览页。"
-  - id: US224
-    requirement_ids: ["R212"]
-    task_ids: ["Q069"]
-    status: ready
-    priority: P1
-    module: "本机验收"
-    summary: "补齐开发中入口开放后的模型、E2E 和 Browser 验收证据。"
+stories: []

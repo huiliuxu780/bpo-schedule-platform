@@ -1894,3 +1894,21 @@
 - action: 修复前端 Tailwind source scope，避免 `.next` 生成物污染 dev CSS。
 - status: `done`
 - notes: Browser 复现 dashboard 样式退化，CSS 中存在 `__next_f`/Next RSC 片段导致主题变量未生效；`app/globals.css` 已排除 `.next` 和 `test-results` source，Browser 验证主题变量恢复且 CSS 污染片段消失。本批不改业务页面逻辑、后端、数据库、依赖或生产规则。
+
+- task_id: `F144`
+- source_ids:
+  - `R211`
+- story_ids:
+  - `US223`
+- action: 将权限管理和结算锁账从导航开发中入口开放成本机只读预览页。
+- status: `done`
+- notes: `权限管理` 已新增 `/permission-management`，展示权限管理 records、本机权限 readiness 表格和 no-auth/no-permission-enforcement 边界；`结算锁账` 已新增 `/settlement-lock`，展示结算锁账 records、本机锁账 readiness 表格和 no-real-lock/no-settlement-formula 边界；侧边栏两个入口已改为可点击 P1 链接。
+
+- task_id: `Q069`
+- source_ids:
+  - `R212`
+- story_ids:
+  - `US224`
+- action: 收口开发中入口开放 QA。
+- status: `done`
+- notes: 模型测试 86 条通过，E2E smoke 6 条通过并覆盖 `/permission-management`、`/settlement-lock` 两个路由、表格字段和侧边栏入口不再是开发中；本机 HTML/Browser 检查确认两个页面可见且保留本机只读边界；最终 `bash scripts/check.sh` 通过。

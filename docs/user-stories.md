@@ -4016,7 +4016,7 @@ acceptance:
   - "`结算锁账` 侧边栏入口可点击，打开 `/settlement-lock`。"
   - "两个页面展示本机只读能力表格、数据来源摘要和需后续 Gate 的生产能力。"
   - "页面明确不做真实登录、认证、授权、权限判定、锁账动作、结算公式、收费因子、账单、审批、导出、批量、数据库、真实接口或生产写回。"
-status: "in_progress"
+status: "done"
 ```
 
 ### US224 - Development entry previews QA
@@ -4035,5 +4035,5 @@ acceptance:
   - "E2E 覆盖两个路由渲染和侧边栏入口不再是 `data-development-nav-item`。"
   - "Browser 检查确认两个页面可见，表格和本机只读边界没有样式退化。"
   - "QA 记录明确 localhost-only、process-memory/seed-only、no-database、no-real-integration、no-auth、no-permission-enforcement、no-approval、no-export、no-batch、no-production-settlement、no-real-lock。"
-status: "ready"
+status: "done"
 ```

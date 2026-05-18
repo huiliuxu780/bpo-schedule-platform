@@ -2428,8 +2428,8 @@ description: "导航里仍有 `权限管理` 和 `结算锁账` 以开发中占�
 source: "PM request to continue filling undeveloped navigation items on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做本机只读页面和路由开放；不实现账号登录、认证、授权、权限判定、用户角色维护、真实锁账、结算公式、收费因子、账单、审批、导出、批量、数据库、真实接口或生产写回。"
+status: "done"
+notes: "`权限管理` 已开放 `/permission-management`，`结算锁账` 已开放 `/settlement-lock`；两个页面展示本机只读 readiness、导入 records 摘要、能力表格和后续 Gate 边界。本批未实现账号登录、认证、授权、权限判定、用户角色维护、真实锁账、结算公式、收费因子、账单、审批、导出、批量、数据库、真实接口或生产写回。"
 ```
 
 ### R212 - development entry previews QA
@@ -2441,6 +2441,6 @@ description: "开放 `权限管理` 和 `结算锁账` 后，需要补充模型�
 source: "F144 development entry readonly preview batch on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "ready"
-notes: "QA 只验证本机只读预览、路由、表格和边界文案；不验证真实权限、锁账、结算公式、收费因子、审批、导出、批量、数据库或生产写回。"
+status: "done"
+notes: "模型测试覆盖权限管理和结算锁账的 summary/table rows；E2E 覆盖两个路由、表格字段和侧边栏入口不再是开发中；本机 HTML/Browser 证据确认页面与边界文案可见。QA 不验证真实权限、锁账、结算公式、收费因子、审批、导出、批量、数据库或生产写回。"
 ```

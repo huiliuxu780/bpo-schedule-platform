@@ -729,6 +729,52 @@ test("local demo import entry drives batch status placeholders", async ({ page }
       exact: true,
     }),
   ).toBeVisible()
+
+  await gotoAppPage(page, "/permission-management")
+  const permissionManagementMain = page.getByRole("main")
+  await expect(
+    permissionManagementMain.locator("h1", { hasText: "权限管理" }),
+  ).toBeVisible()
+  await expect(
+    permissionManagementMain.getByText(/权限管理 records \d+ 行/),
+  ).toBeVisible()
+  await expect(
+    permissionManagementMain.getByRole("heading", {
+      name: "本机权限 readiness",
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect(
+    permissionManagementMain.getByRole("columnheader", { name: "能力" }),
+  ).toBeVisible()
+  await expect(
+    permissionManagementMain.getByText("不做账号登录、认证、授权或权限判定。", {
+      exact: true,
+    }),
+  ).toBeVisible()
+
+  await gotoAppPage(page, "/settlement-lock")
+  const settlementLockMain = page.getByRole("main")
+  await expect(
+    settlementLockMain.locator("h1", { hasText: "结算锁账" }),
+  ).toBeVisible()
+  await expect(
+    settlementLockMain.getByText(/结算锁账 records \d+ 行/),
+  ).toBeVisible()
+  await expect(
+    settlementLockMain.getByRole("heading", {
+      name: "本机锁账 readiness",
+      exact: true,
+    }),
+  ).toBeVisible()
+  await expect(
+    settlementLockMain.getByRole("columnheader", { name: "能力" }),
+  ).toBeVisible()
+  await expect(
+    settlementLockMain.getByText("不执行锁账，不冻结账期。", {
+      exact: true,
+    }),
+  ).toBeVisible()
 })
 
 test("opened local module routes render real module pages", async ({ page }) => {
@@ -743,6 +789,8 @@ test("opened local module routes render real module pages", async ({ page }) => 
     { path: "/operation-audit", heading: "操作审计", marker: "操作审计 records" },
     { path: "/smart-scheduling", heading: "智能排班", marker: "智能排班 records" },
     { path: "/interface-integration", heading: "接口集成", marker: "接口集成 records" },
+    { path: "/permission-management", heading: "权限管理", marker: "权限管理 records" },
+    { path: "/settlement-lock", heading: "结算锁账", marker: "结算锁账 records" },
   ]
 
   for (const route of routes) {
@@ -811,15 +859,14 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
     sidebar.getByRole("link", { name: /供应商复盘/ }),
   ).toHaveAttribute("href", "/supplier-review")
 
-  for (const itemName of ["结算锁账"]) {
-    const developmentItem = sidebar
-      .locator('[data-development-nav-item="true"]')
-      .filter({ hasText: itemName })
-
-    await expect(developmentItem).toBeVisible()
-    await expect(developmentItem).toHaveAttribute("aria-disabled", "true")
-    await expect(developmentItem.getByText("开发中")).toBeVisible()
-  }
+  await expect(
+    sidebar.getByRole("link", { name: /结算锁账/ }),
+  ).toHaveAttribute("href", "/settlement-lock")
+  await expect(
+    sidebar.locator('[data-development-nav-item="true"]').filter({
+      hasText: "结算锁账",
+    }),
+  ).toHaveCount(0)
 
   await gotoAppPage(page, "/smart-scheduling")
   await expect(
@@ -860,13 +907,14 @@ test("sidebar distinguishes opened and development modules", async ({ page }) =>
     sidebar.getByRole("link", { name: /规则配置/ }),
   ).toHaveAttribute("href", "/rule-configuration")
 
-  const permissionItem = sidebar
-    .locator('[data-development-nav-item="true"]')
-    .filter({ hasText: "权限管理" })
-
-  await expect(permissionItem).toBeVisible()
-  await expect(permissionItem).toHaveAttribute("aria-disabled", "true")
-  await expect(permissionItem.getByText("开发中")).toBeVisible()
+  await expect(
+    sidebar.getByRole("link", { name: /权限管理/ }),
+  ).toHaveAttribute("href", "/permission-management")
+  await expect(
+    sidebar.locator('[data-development-nav-item="true"]').filter({
+      hasText: "权限管理",
+    }),
+  ).toHaveCount(0)
 
   await expect(
     sidebar.getByRole("link", { name: /操作审计/ }),

@@ -7599,7 +7599,7 @@ tasks:
   - id: F144
     title: "开发中入口本机只读预览页"
     priority: P1
-    status: in_progress
+    status: done
     required_workflow: frontend-scaffold
     allowed_files:
       - "app/permission-management/**"
@@ -7630,7 +7630,7 @@ tasks:
   - id: Q069
     title: "开发中入口开放 QA 收口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files:
       - "app/permission-management/**"

@@ -246,6 +246,43 @@ export type RuleConfigurationTableRow = {
   description: string
 }
 
+export type ReadonlyGatePreviewItem = {
+  title: string
+  status: "enabled" | "deferred"
+}
+
+export type PermissionManagementRecordsPreview = {
+  importedRows: number
+  sourceCount: number
+  readonlyItems: number
+  deferredItems: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "本机只读"
+}
+
+export type PermissionManagementTableRow = {
+  item: string
+  statusLabel: "本机只读" | "需后续 Gate"
+  description: string
+}
+
+export type SettlementLockRecordsPreview = {
+  importedRows: number
+  sourceCount: number
+  readonlyItems: number
+  deferredItems: number
+  latestBatch: string
+  latestSource: string
+  statusLabel: "等待导入" | "本机只读"
+}
+
+export type SettlementLockTableRow = {
+  item: string
+  statusLabel: "本机只读" | "需后续 Gate"
+  description: string
+}
+
 export type MonthlySettlementRecordsPreview = {
   importedRows: number
   sourceCount: number
@@ -386,6 +423,25 @@ export const ruleConfigurationPreviewItems = [
   { title: "规则编辑发布", status: "deferred" },
   { title: "结算规则", status: "deferred" },
   { title: "收费因子", status: "deferred" },
+] as const
+
+export const permissionManagementPreviewItems = [
+  { title: "导入 records 权限上下文", status: "enabled" },
+  { title: "操作审计证据预览", status: "enabled" },
+  { title: "账号登录与认证", status: "deferred" },
+  { title: "用户与角色维护", status: "deferred" },
+  { title: "权限判定与授权策略", status: "deferred" },
+  { title: "生产权限审计存储", status: "deferred" },
+] as const
+
+export const settlementLockPreviewItems = [
+  { title: "月度 records 只读复盘", status: "enabled" },
+  { title: "结算输入覆盖检查", status: "enabled" },
+  { title: "锁账动作", status: "deferred" },
+  { title: "结算公式", status: "deferred" },
+  { title: "收费因子", status: "deferred" },
+  { title: "账单审批", status: "deferred" },
+  { title: "导出与批量写回", status: "deferred" },
 ] as const
 
 export type DashboardFilterState = {
@@ -1681,6 +1737,87 @@ export function buildRuleConfigurationTableRows(
       item.status === "enabled"
         ? "本机演示已开放，只读展示不写回生产。"
         : "需要后续独立 Gate，当前不提供编辑、发布或写回。",
+  }))
+}
+
+function summarizeReadonlyGatePreview(
+  records: DashboardImportRecordSummary[],
+  items: readonly ReadonlyGatePreviewItem[],
+  emptyLatestBatch: string
+) {
+  const readonlyItems = items.filter((item) => item.status === "enabled").length
+  const deferredItems = items.filter((item) => item.status === "deferred").length
+
+  if (records.length === 0) {
+    return {
+      importedRows: 0,
+      sourceCount: 0,
+      readonlyItems,
+      deferredItems,
+      latestBatch: emptyLatestBatch,
+      latestSource: "等待导入",
+      statusLabel: "等待导入" as const,
+    }
+  }
+
+  const latest = records.reduce((current, record) =>
+    record.updated_at > current.updated_at ? record : current
+  )
+
+  return {
+    importedRows: records.reduce((total, record) => total + record.total_rows, 0),
+    sourceCount: records.length,
+    readonlyItems,
+    deferredItems,
+    latestBatch: latest.latest_batch_id,
+    latestSource: latest.source_name,
+    statusLabel: "本机只读" as const,
+  }
+}
+
+export function summarizePermissionManagementRecords(
+  records: DashboardImportRecordSummary[]
+): PermissionManagementRecordsPreview {
+  return summarizeReadonlyGatePreview(
+    records,
+    permissionManagementPreviewItems,
+    "暂无权限管理 records"
+  )
+}
+
+export function buildPermissionManagementTableRows(
+  items: readonly ReadonlyGatePreviewItem[]
+): PermissionManagementTableRow[] {
+  return items.map((item) => ({
+    item: item.title,
+    statusLabel: item.status === "enabled" ? "本机只读" : "需后续 Gate",
+    description:
+      item.status === "enabled"
+        ? "只展示本机导入 records 的查看上下文，不做登录、授权或权限判定。"
+        : "需要后续独立 Gate，当前不提供账号、角色、授权或生产权限边界。",
+  }))
+}
+
+export function summarizeSettlementLockRecords(
+  records: DashboardImportRecordSummary[]
+): SettlementLockRecordsPreview {
+  return summarizeReadonlyGatePreview(
+    records,
+    settlementLockPreviewItems,
+    "暂无结算锁账 records"
+  )
+}
+
+export function buildSettlementLockTableRows(
+  items: readonly ReadonlyGatePreviewItem[]
+): SettlementLockTableRow[] {
+  return items.map((item) => ({
+    item: item.title,
+    statusLabel: item.status === "enabled" ? "本机只读" : "需后续 Gate",
+    description:
+      item.status === "enabled"
+        ? "只展示本机导入 records 的复盘输入，不冻结账期或计算结算金额。"
+        : "需要后续独立 Gate，当前不提供锁账、结算公式、收费因子、审批或导出。",
   }))
 }
 

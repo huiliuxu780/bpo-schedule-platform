@@ -1700,6 +1700,23 @@
 - allowed_files_check: `app/globals.css`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission, approval, export, batch operation, schedule publishing, automatic scheduling, production writeback, production formula, settlement rule, lock, or charge-factor files.
 - scope_diff_check: `app/globals.css`, traceability docs, and backlog metadata only.
 - check_result: Browser reproduced dashboard style regression with empty theme variables and `__next_f` pollution in parsed dev CSS; `app/globals.css` now excludes `.next` and `test-results` sources; CSS response no longer contains `__next_f` or `<script>` fragments; Browser confirmed dashboard theme variables and visual styling recovered; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
+- local_commit_sha: `f94cc3e`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after verified local commit`
+- blocked_reason: `N/A`
+
+### F144-Q069 Development Entry Readonly Previews
+
+- branch_name: `codex/f-batch-031-dev-entry-previews`
+- base_main_commit: `f94cc3e`
+- remote_status: `local continuation branch created from pushed codex/f-batch-030-style-source-scope because PM asked to continue filling undeveloped functions`
+- scope: permission-management readonly preview, settlement-lock readonly preview, sidebar link opening, focused model/E2E/Browser coverage, current-state closeout, traceability updates, and no-database/no-production-permission/no-real-lock boundary evidence.
+- allowed_files_check: `app/permission-management/**`, `app/settlement-lock/**`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, `docs/**`, `tasks/backlog.yaml`, and `next-env.d.ts`; no backend, package/lockfile, database, ORM, migration, schema, real integration, auth, permission enforcement, approval, export, batch operation, schedule publishing, automatic scheduling, production writeback, production formula, settlement rule, real lock, or charge-factor files.
+- scope_diff_check: `app/permission-management/page.tsx`, `app/settlement-lock/page.tsx`, `components/app-sidebar.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, `tests/e2e/core-path.spec.ts`, current-state closeout files, and traceability docs only.
+- check_result: seed-only staged strict state check passed before product work; failing model test first verified the new permission-management table export was missing; model tests then passed with 86 tests; typecheck passed; sandbox port access failed with `EPERM`, existing local services on 3015/8000 were verified with elevated curl; direct node_repl Chrome launch still failed with `SIGABRT/EPERM`, but `BPO_WEB_URL=http://127.0.0.1:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke` passed outside sandbox with 6 tests and verified the two new routes and sidebar entries; final `bash scripts/check.sh` passed with strict state, state-check tests, commit-message tests, frontend lint, typecheck, Next build, and 24 backend unittest.
 - local_commit_sha: `pending local commit`
 - integration_status: `not_started`
 - integration_method: `N/A`

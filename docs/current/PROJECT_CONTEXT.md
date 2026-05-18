@@ -2,10 +2,10 @@
 
 ```yaml
 current_summary:
-  queue_state: active
-  active_batch_id: "batch-031-dev-entry-previews"
-  in_progress_task: "F144"
-  ready_tasks: ["Q069"]
+  queue_state: idle
+  active_batch_id: null
+  in_progress_task: null
+  ready_tasks: []
 ```
 
 ## Current Stage
@@ -40,9 +40,9 @@ current_summary:
 - Do not modify package or lockfiles unless a PM-confirmed dependency Gate allows it.
 - Do not execute from legacy or archive queues.
 
-## Current Execution Focus
+## Next Recommended Task
 
-F144/Q069：将 `权限管理` 和 `结算锁账` 从导航“开发中”入口改为本机只读预览页，并补齐模型测试、E2E 路由覆盖和 Browser 证据。页面只能展示导入/seed 结果和后续 Gate 边界，不实现真实登录、认证、授权、权限判定、锁账动作、结算公式、收费因子、账单、审批、导出、批量、数据库、真实接口或生产写回。
+No active task is queued. If PM asks to continue, choose the next smallest local-only acceptance slice from remaining opened-module table controls or local demo runbook hardening; keep the work readonly and local-only, and do not add cloud, database, real integration, package/lockfile, auth, permission enforcement, approval, export, batch, production audit, publishing, settlement lock action, settlement formula, charge factor, or production writeback without a new Gate.
 
 ## Default Execution
 

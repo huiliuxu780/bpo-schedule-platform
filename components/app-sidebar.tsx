@@ -79,7 +79,7 @@ const nav: NavGroup[] = [
       { title: "月度结算", href: "/monthly-settlement", activeMatch: "exact", tag: "P1" },
       { title: "报表中心", href: "/report-center", activeMatch: "exact", tag: "P1" },
       { title: "供应商复盘", href: "/supplier-review", activeMatch: "exact", tag: "P1" },
-      { title: "结算锁账", development: true },
+      { title: "结算锁账", href: "/settlement-lock", activeMatch: "exact", tag: "P1" },
     ],
   },
   {
@@ -102,7 +102,7 @@ const nav: NavGroup[] = [
       { title: "组织与人员", href: "/organization-people", activeMatch: "exact", tag: "P1" },
       { title: "供应商管理", href: "/vendor-management", activeMatch: "exact", tag: "P1" },
       { title: "规则配置", href: "/rule-configuration", activeMatch: "exact", tag: "P1" },
-      { title: "权限管理", development: true },
+      { title: "权限管理", href: "/permission-management", activeMatch: "exact", tag: "P1" },
       { title: "操作审计", href: "/operation-audit", activeMatch: "exact", tag: "P1" },
     ],
   },

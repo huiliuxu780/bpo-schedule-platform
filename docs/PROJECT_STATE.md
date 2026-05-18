@@ -144,6 +144,7 @@ Current invariants:
 - `F141/Q067/US218-US219` closed the运营页面表格 parity slice: `今日履约` now shows a module input table for local processed records, and `异常预警` now shows a table queue for seed anomaly alerts, with focused model/E2E/Browser evidence and no database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `F142/Q068/US220-US221` closed the管理页面表格 parity slice: `时段缺口热力图` now shows a severe-slot table, `供应商管理` now shows a vendor distribution table, and `规则配置` now shows a rule directory table, with focused model/E2E/Browser evidence and no database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `F143/US222` fixed the frontend Tailwind source scope regression: `.next` and `test-results` generated directories are explicitly excluded from Tailwind source scanning, preventing Next RSC script fragments such as `__next_f` from polluting dev CSS and breaking shadcn theme variables; current queue remains empty after bugfix closeout.
+- `F144/Q069/US223-US224` opened the开发中入口本机只读预览 slice: `系统管理 > 权限管理` now links to `/permission-management` and `结算复盘 > 结算锁账` now links to `/settlement-lock`; both pages read local processed records, show readiness tables and future Gate boundaries without real login, auth, permission enforcement, user/role maintenance, real settlement lock, formulas, charge factors, bills, approval, export, batch, database, real integrations, or production writeback; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
@@ -155,11 +156,11 @@ PM clarified on 2026-05-16 that the demo should be based on existing product mod
 import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
 ```
 
-Recommended order after Q068:
+Recommended order after Q069:
 
 1. **本机演示脚本/runbook 收口:** tighten local demo startup, CSV import sequence, and smoke instructions for the exact pages PM will demonstrate.
 2. **剩余开放模块表格控件补强:** add table controls such as lightweight sorting/filter summaries only where existing opened modules still need it and the data is already local/read-only.
-3. **高风险功能 Gate 拆解:** plan `权限管理` and `结算锁账` as future separate Gates, but keep implementation deferred until PM explicitly opens auth/permission or settlement-lock scope.
+3. **高风险生产能力 Gate 拆解:** plan real auth/permission enforcement, real settlement lock, formulas, charge factors, approval/export/batch, and production persistence as future separate Gates; keep them deferred until PM explicitly opens those scopes.
 
 Temporarily not recommended: database setup, real CORN/HR/WFM integrations, auth/permissions, approval, export, batch operations, automatic scheduling, production KPI formulas, settlement rules, and charge factors. These still require separate PM-confirmed Gates.
 
