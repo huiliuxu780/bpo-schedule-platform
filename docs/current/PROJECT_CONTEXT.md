@@ -55,6 +55,8 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US109/F061 -> US112/Q016` completed the production MVP contract demo slice: local frontend contract client, model test, `/production-mvp` page, sidebar entry, and QA closeout. Current queue is empty again.
+`US109/F061 -> US112/Q016` completed the production MVP contract demo slice: local frontend contract client, model test, `/production-mvp` page, sidebar entry, and QA closeout.
 
-Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from the remaining PRD gaps, preferably abnormal review entry, import-contract drilldown, or personal timeline read-only views. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.
+`US113/F064 -> US116/Q017` completed the anomaly review read-only slice: local anomaly review model, model test, `/anomaly-review` page, sidebar entry, and QA closeout. Current queue is empty again.
+
+Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from import-contract drilldown, personal timeline read-only views, or data quality center entry. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.

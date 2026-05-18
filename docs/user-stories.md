@@ -1834,3 +1834,50 @@ acceptance:
   - "侧边栏有生产雏形入口并能高亮。"
   - "`node --experimental-strip-types --test scripts/tests/production-mvp-contracts.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US113-US116 - 异常复核只读入口
+
+```yaml
+stories:
+  - id: US113
+    requirement_ids: [R101]
+    task_ids: [F064]
+    module: "异常闭环"
+    role: "运营负责人"
+    story: "作为运营负责人，我希望前端有异常复核本地模型和测试，能统计异常数量、待复核数量、严重度、归因和负责人，以便页面不是硬编码堆文案。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US114
+    requirement_ids: [R102]
+    task_ids: [F065]
+    module: "异常闭环"
+    role: "现场主管"
+    story: "作为现场主管，我希望有一个异常复核只读页，集中查看异常清单、来源、归因、复核建议和暂不处理边界。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US115
+    requirement_ids: [R103]
+    task_ids: [F066]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏异常复核入口进入新的只读页，以便本地验收时不用从 dashboard 间接查找。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US116
+    requirement_ids: [R104]
+    task_ids: [Q017]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望对异常复核只读入口做验收收口，确认页面可构建、导航可达、边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "页面展示来自本地异常复核模型和 fallback，不接真实外部数据。"
+  - "页面明确不做复核提交、审批、权限、导出、批量、真实异常计算或生产公式。"
+  - "侧边栏异常复核入口能进入新页面并高亮。"
+  - "`node --experimental-strip-types --test scripts/tests/anomaly-review.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

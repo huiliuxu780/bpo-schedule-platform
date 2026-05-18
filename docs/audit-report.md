@@ -1132,6 +1132,31 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
+### 2026-05-19 - Anomaly review read-only entry slice
+
+#### 审计结论
+
+- `F064/US113` 已新增本地异常复核模型、fallback、筛选和摘要测试。
+- `F065/US114` 已新增 `/anomaly-review` 只读页面，展示异常总览、来源分布、待复核优先项、复核清单和暂不实现动作。
+- `F066/US115` 已将侧边栏异常复核入口指向 `/anomaly-review` 并使用 exact active match。
+- `Q017/US116` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实异常计算、复核提交、审批、权限、导出、批量或生产公式。
+
+#### 风险
+
+- 本轮只做本地只读入口；异常数据来自前端 fallback，不代表真实异常计算器、复核提交、审批流或权限边界。
+- 后续如果要做真实复核动作、批量处理、导出、权限或生产异常计算，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/anomaly-review.test.mjs`：通过，3 个 anomaly review model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+- `curl -fsS http://127.0.0.1:3016/anomaly-review | rg ...`：通过，页面包含异常复核、只读演示、待复核优先项、无复核提交等关键文本，侧边栏异常复核入口高亮。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

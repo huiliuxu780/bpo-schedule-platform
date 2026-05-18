@@ -67,7 +67,7 @@ const nav: NavGroup[] = [
       { title: "坐席状态轨迹", href: "/dashboard" },
       { title: "异常管理", href: "/dashboard", badge: "12" },
       { title: "实时遵守率", href: "/dashboard", tag: "P1" },
-      { title: "异常复核", href: "/dashboard", tag: "P1" },
+      { title: "异常复核", href: "/anomaly-review", activeMatch: "exact", tag: "新" },
     ],
   },
   {

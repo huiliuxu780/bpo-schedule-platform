@@ -910,3 +910,26 @@ version: "1.0"
 status: "split"
 notes: "本组只做前端本地演示入口和合同摘要，不做真实导入、真实计算、数据库、权限、审批、导出、批量或生产公式。"
 ```
+
+### R101-R104 - 异常复核只读入口
+
+```yaml
+requirements:
+  - id: R101
+    module: "异常闭环"
+    description: "前端需要本地异常复核模型和测试，能按异常状态、严重度、归因、负责人统计第一阶段异常。"
+  - id: R102
+    module: "异常闭环"
+    description: "新增异常复核只读页，用于展示异常列表、复核口径、归因分布和本地 no-action 边界。"
+  - id: R103
+    module: "导航"
+    description: "侧边栏需要将异常复核入口指向新的只读页，方便 PM 从履约监控直接验收异常闭环方向。"
+  - id: R104
+    module: "质量与交付"
+    description: "对异常复核只读入口做 QA 收口，确认页面、导航、模型测试和边界追溯均可验证。"
+source: "PM said start after production MVP contract demo recommendation on 2026-05-19"
+submitted_at: "2026-05-19"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读入口和模型摘要，不实现真实异常计算、复核提交、审批、权限、导出、批量或生产公式。"
+```

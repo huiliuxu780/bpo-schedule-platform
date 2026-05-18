@@ -765,6 +765,23 @@
 - remote_status: `local branch created from prior pushed production MVP first-batch head because main has not yet integrated the production MVP chain`
 - scope: production MVP local frontend contract client, model test, `/production-mvp` page, sidebar entry, QA traceability, and state cleanup.
 - allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, or production formula files.
+- scope_diff_check: `lib/anomaly-review.ts`, `app/anomaly-review/page.tsx`, `components/app-sidebar.tsx`, `scripts/tests/anomaly-review.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, anomaly action submission, or production formula files.
+- check_result: `node --experimental-strip-types --test scripts/tests/anomaly-review.test.mjs` passed with 3 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed; local HTTP smoke passed for `/anomaly-review`.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`
+
+### F064-F066 Anomaly Review Entry Block
+
+- branch_name: `codex/f064-anomaly-review-entry`
+- base_main_commit: `b283414`
+- remote_status: `local branch created from pushed production MVP contract demo head because main has not yet integrated the production MVP chain`
+- scope: anomaly review local frontend model, model test, read-only `/anomaly-review` page, sidebar entry, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, anomaly action submission, or production formula files.
 - scope_diff_check: pending final diff review.
 - check_result: pending final verification.
 - local_commit_sha: to be reported in Done Report after local commit creation.

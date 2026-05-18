@@ -81,6 +81,7 @@ Current invariants:
 - `H028/US069` fixed the Codex Plan boundary: the Plan panel is only a session projection and must never override Harness current/registry state.
 - `F041-F059/Q014` completed a 20-task local frontend parity block across schedule plans, schedule risks, and unavailability tables, then returned current queue and active tasks to empty.
 - `F061-F063/Q016` completed a production MVP contract demo slice: local contract client, model test, `/production-mvp` page, sidebar entry, and QA closeout. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F064-F066/Q017` completed an anomaly review read-only slice: local anomaly review model, model test, `/anomaly-review` page, sidebar entry, and QA closeout. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

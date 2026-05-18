@@ -386,6 +386,10 @@ requirements:
   R098: {file: "docs/raw-requirements.md", story_ids: ["US110"], task_ids: ["F062"]}
   R099: {file: "docs/raw-requirements.md", story_ids: ["US111"], task_ids: ["F063"]}
   R100: {file: "docs/raw-requirements.md", story_ids: ["US112"], task_ids: ["Q016"]}
+  R101: {file: "docs/raw-requirements.md", story_ids: ["US113"], task_ids: ["F064"]}
+  R102: {file: "docs/raw-requirements.md", story_ids: ["US114"], task_ids: ["F065"]}
+  R103: {file: "docs/raw-requirements.md", story_ids: ["US115"], task_ids: ["F066"]}
+  R104: {file: "docs/raw-requirements.md", story_ids: ["US116"], task_ids: ["Q017"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

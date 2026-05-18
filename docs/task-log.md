@@ -863,3 +863,14 @@
 - action: 执行生产雏形合同演示入口 QA 收口。
 - status: `done`
 - notes: targeted model test、lint、typecheck、strict state check、diff check 和标准 check 已纳入验收；本批未新增依赖、未改后端契约、未接数据库、未引入真实外部集成、权限、审批、导出、批量、自动排班或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-19
+
+- task_id: `F064-F066/Q017`
+- source_ids:
+  - `R101-R104`
+- story_ids:
+  - `US113-US116`
+- action: 安排异常复核只读入口连续开发批次。
+- status: `done`
+- notes: 新增本地异常复核模型、fallback、筛选/摘要测试、`/anomaly-review` 只读页和侧边栏入口；本批不做真实异常计算、复核提交、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
