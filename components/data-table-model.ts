@@ -188,12 +188,30 @@ export type TodayFulfillmentRecordsPreview = {
     | "本机履约预览"
 }
 
+export type TodayFulfillmentInputRow = {
+  kind: string
+  sourceName: string
+  totalRows: number
+  latestBatch: string
+  statusLabel: "已接入"
+}
+
 export type AnomalyAlertRecordsPreview = {
   alertRows: number
   highSeverity: number
   pendingReview: number
   importedRows: number
   statusLabel: "等待导入" | "本机预警预览"
+}
+
+export type AnomalyAlertTableRow = {
+  id: string
+  type: string
+  team: string
+  shiftTime: string
+  impactedHours: string
+  severity: Anomaly["severity"]
+  status: Anomaly["status"]
 }
 
 export type VendorManagementRecordsPreview = {
@@ -1480,6 +1498,27 @@ export function summarizeTodayFulfillmentRecords(
   }
 }
 
+const todayFulfillmentSourceOrder = ["staff_master", "status_log", "login_log"]
+
+export function buildTodayFulfillmentInputRows(
+  records: DashboardImportRecordSummary[]
+): TodayFulfillmentInputRow[] {
+  return [...records]
+    .filter((record) => todayFulfillmentSourceOrder.includes(record.kind))
+    .sort(
+      (a, b) =>
+        todayFulfillmentSourceOrder.indexOf(a.kind) -
+        todayFulfillmentSourceOrder.indexOf(b.kind)
+    )
+    .map((record) => ({
+      kind: record.kind,
+      sourceName: record.source_name,
+      totalRows: record.total_rows,
+      latestBatch: record.latest_batch_id,
+      statusLabel: "已接入",
+    }))
+}
+
 export function summarizeAnomalyAlertRecords(
   rows: Anomaly[],
   records: DashboardImportRecordSummary[]
@@ -1501,6 +1540,20 @@ export function summarizeAnomalyAlertRecords(
     importedRows: records.reduce((total, record) => total + record.total_rows, 0),
     statusLabel: "本机预警预览",
   }
+}
+
+export function buildAnomalyAlertTableRows(
+  rows: Anomaly[]
+): AnomalyAlertTableRow[] {
+  return rows.map((row) => ({
+    id: row.id,
+    type: row.type,
+    team: row.team,
+    shiftTime: row.shiftTime,
+    impactedHours: row.impactedHours,
+    severity: row.severity,
+    status: row.status,
+  }))
 }
 
 export function summarizeVendorManagementRecords(

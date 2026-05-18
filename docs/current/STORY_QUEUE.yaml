@@ -5,18 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US218
-    requirement_ids: ["R206"]
-    status: in_progress
-    task_ids: ["F141"]
-    priority: P1
-    module: "运营工作台"
-    summary: "`今日履约` 和 `异常预警` 需要补齐模块内表格/空态，让本机导入 records 和 seed 异常队列更易扫描。"
-  - id: US219
-    requirement_ids: ["R207"]
-    status: ready
-    task_ids: ["Q067"]
-    priority: P1
-    module: "本机验收"
-    summary: "运营页面表格 parity 补齐后，需要模型、E2E 和 Browser 证据证明表格列、空态和本机只读边界可见。"
+stories: []

@@ -4,6 +4,8 @@ import test from "node:test";
 
 import {
   buildImportedRecordSourceRows,
+  buildAnomalyAlertTableRows,
+  buildTodayFulfillmentInputRows,
   clampDashboardPageIndex,
   dashboardAnomalyMatchesQuery,
   filterDashboardAnomalies,
@@ -772,6 +774,54 @@ test("today fulfillment records summarize local status and login readiness", () 
   });
 });
 
+test("today fulfillment input rows expose module table fields", () => {
+  const rows = buildTodayFulfillmentInputRows([
+    {
+      kind: "login_log",
+      source_name: "登录数据",
+      total_rows: 3,
+      latest_batch_id: "login_log-20260516095000-001",
+      updated_at: "2026-05-16T09:50:00+08:00",
+      sample_rows: [{ staff_id: "A001", actual_login: "09:08" }],
+    },
+    {
+      kind: "staff_master",
+      source_name: "坐席主数据",
+      total_rows: 2,
+      latest_batch_id: "staff_master-20260516093000-001",
+      updated_at: "2026-05-16T09:30:00+08:00",
+      sample_rows: [{ staff_id: "A001", name: "张敏" }],
+    },
+    {
+      kind: "schedule_plan",
+      source_name: "排班数据",
+      total_rows: 4,
+      latest_batch_id: "schedule_plan-20260517093000-001",
+      updated_at: "2026-05-17T09:30:00+08:00",
+      sample_rows: [{ plan_id: "SP-20260511-SH" }],
+    },
+  ]);
+
+  assert.deepEqual(rows, [
+    {
+      kind: "staff_master",
+      sourceName: "坐席主数据",
+      totalRows: 2,
+      latestBatch: "staff_master-20260516093000-001",
+      statusLabel: "已接入",
+    },
+    {
+      kind: "login_log",
+      sourceName: "登录数据",
+      totalRows: 3,
+      latestBatch: "login_log-20260516095000-001",
+      statusLabel: "已接入",
+    },
+  ]);
+
+  assert.deepEqual(buildTodayFulfillmentInputRows([]), []);
+});
+
 test("anomaly alert records combine seeded anomalies with imported coverage", () => {
   const summary = summarizeAnomalyAlertRecords(
     [
@@ -806,6 +856,45 @@ test("anomaly alert records combine seeded anomalies with imported coverage", ()
     importedRows: 8,
     statusLabel: "本机预警预览",
   });
+});
+
+test("anomaly alert table rows expose visible queue fields", () => {
+  const rows = buildAnomalyAlertTableRows([
+    anomaly,
+    {
+      ...anomaly,
+      id: "ANM-2",
+      type: "登录偏差",
+      team: "华南二组",
+      shiftTime: "05-11 09:00-10:00",
+      impactedHours: "4.0h",
+      severity: "中",
+      status: "已确认",
+    },
+  ]);
+
+  assert.deepEqual(rows, [
+    {
+      id: "ANM-202605-001",
+      type: "实际有效在线不足",
+      team: "华东一组",
+      shiftTime: "05-11 12:00-14:00",
+      impactedHours: "18.0h",
+      severity: "高",
+      status: "待复核",
+    },
+    {
+      id: "ANM-2",
+      type: "登录偏差",
+      team: "华南二组",
+      shiftTime: "05-11 09:00-10:00",
+      impactedHours: "4.0h",
+      severity: "中",
+      status: "已确认",
+    },
+  ]);
+
+  assert.deepEqual(buildAnomalyAlertTableRows([]), []);
 });
 
 test("agent status trace records summarize imported status coverage", () => {

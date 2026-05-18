@@ -2363,8 +2363,8 @@ description: "`今日履约` 和 `异常预警` 已经能读取本机导入 reco
 source: "Current P1 table parity gap after Q066 on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "in_progress"
-notes: "本批只做今日履约/异常预警的本机只读表格和空态，不改后端契约、不接数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
+status: "done"
+notes: "`今日履约` 已新增履约输入表格，展示本机 processed records 的数据源、行数、最新批次和状态；`异常预警` 已新增本机异常预警队列表格，展示异常、团队、时段、影响、级别和状态；无数据时保留清晰空态。本批未改后端契约，未接数据库、真实集成、认证、权限、审批、导出、批量、自动排班、生产公式、结算规则或收费因子。"
 ```
 
 ### R207 - operations table parity QA
@@ -2376,6 +2376,6 @@ description: "运营页面表格补齐后，需要补充模型、E2E 和 Browser
 source: "F141 operations table parity batch on 2026-05-18"
 submitted_at: "2026-05-18"
 version: "1.0"
-status: "ready"
-notes: "QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
+status: "done"
+notes: "模型测试覆盖今日履约输入 rows 和异常预警 rows；E2E 覆盖本机 CSV 导入后 `今日履约` 与 `异常预警` 表格列和批次字段；Browser 检查确认两个页面的表格列、本机只读边界和桌面侧边栏可见。QA 限定在 localhost-only、process-memory、no-database、no-real-integration、no-approval、no-export、no-batch；不扩大到生产公式、结算规则或收费因子。"
 ```

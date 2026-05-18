@@ -2276,6 +2276,31 @@
 - `bash scripts/check-state.sh --strict --diff=working`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
 
+## 2026-05-18 - Operations Table Parity
+
+#### 审计结论
+
+- `F141/Q067/US218-US219` 已补齐 `今日履约` 和 `异常预警` 的模块内表格/空态。
+- `今日履约` 现在展示 `今日履约输入表`，从本机 processed records 读取坐席主数据、状态数据和登录数据，展示 `数据源`、`行数`、`最新批次` 和 `状态`。
+- `异常预警` 现在展示本机异常预警队列表格，展示 `异常`、`团队`、`时段`、`影响`、`级别` 和 `状态`，保留 seed 异常队列的只读演示定位。
+- 本轮没有修改 backend，没有新增后端契约，没有引入数据库、ORM、migration、schema、真实外部集成、新依赖、package/lockfile、认证、权限、审批、导出、批量、排班发布、自动排班、生产写回、生产公式、结算规则、收费因子或锁账。
+
+#### 风险
+
+- 当前表格仍是 localhost-only process-memory/read-only 展示，不等同于生产持久化、实时异常规则、正式履约公式或跨系统接口接入。
+- 本机 E2E 需要前端 3015 和后端 8000 同时在线；服务停止会导致导入路径失败，属于环境前置条件。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/dashboard-table-model.test.mjs`：通过，79 个模型/源码断言测试通过，包含 `buildTodayFulfillmentInputRows` 和 `buildAnomalyAlertTableRows` 的 RED/GREEN 证据。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `BPO_WEB_URL=http://localhost:3015 BPO_API_BASE_URL=http://127.0.0.1:8000 npm run e2e:smoke`：通过，6 条 E2E 通过，覆盖本机 CSV 导入后 `/today-fulfillment` 和 `/anomaly-alerts` 的表格字段。
+- Browser 检查：`/today-fulfillment` 可见 `今日履约输入表`、`数据源`、`最新批次`、`已接入` 和 `不接数据库`；`/anomaly-alerts` 可见 `本机异常预警队列`、`异常`、`团队`、`时段`、`级别`、`ANM-202605-001` 和 `不固化生产异常规则`；桌面侧边栏 `display:block`。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict --diff=working`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state、state-check tests、commit-message tests、frontend lint、typecheck、Next build 和 24 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

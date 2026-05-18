@@ -509,6 +509,27 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     todayFulfillmentMain.getByText(/今日履约 records \d+ 行/),
   ).toBeVisible()
   await expect(todayFulfillmentMain.getByText(/坐席主数据 \d+ 行/)).toBeVisible()
+  await expect(
+    todayFulfillmentMain.getByRole("heading", { name: "今日履约输入表" }),
+  ).toBeVisible()
+  await expect(
+    todayFulfillmentMain.getByRole("columnheader", { name: "数据源" }).first(),
+  ).toBeVisible()
+  await expect(
+    todayFulfillmentMain.getByRole("columnheader", { name: "行数" }).first(),
+  ).toBeVisible()
+  await expect(
+    todayFulfillmentMain.getByRole("columnheader", { name: "最新批次" }).first(),
+  ).toBeVisible()
+  await expect(
+    todayFulfillmentMain.getByRole("columnheader", { name: "状态" }).first(),
+  ).toBeVisible()
+  await expect(todayFulfillmentMain.getByText("已接入").first()).toBeVisible()
+  await expect(
+    todayFulfillmentMain
+      .getByRole("cell", { name: /status_log-\d{14}-\d+/ })
+      .first(),
+  ).toBeVisible()
   await expect(todayFulfillmentMain.getByText("今日状态样本")).toBeVisible()
   await expect(todayFulfillmentMain.getByText("今日登录样本")).toBeVisible()
 
@@ -521,6 +542,24 @@ test("local demo import entry drives batch status placeholders", async ({ page }
     anomalyAlertsMain.getByText(/异常预警 records \d+ 行/),
   ).toBeVisible()
   await expect(anomalyAlertsMain.getByText("本机异常预警队列")).toBeVisible()
+  await expect(
+    anomalyAlertsMain.getByRole("columnheader", { name: "异常" }),
+  ).toBeVisible()
+  await expect(
+    anomalyAlertsMain.getByRole("columnheader", { name: "团队" }),
+  ).toBeVisible()
+  await expect(
+    anomalyAlertsMain.getByRole("columnheader", { name: "时段" }),
+  ).toBeVisible()
+  await expect(
+    anomalyAlertsMain.getByRole("columnheader", { name: "影响" }),
+  ).toBeVisible()
+  await expect(
+    anomalyAlertsMain.getByRole("columnheader", { name: "级别" }),
+  ).toBeVisible()
+  await expect(
+    anomalyAlertsMain.getByRole("columnheader", { name: "状态" }).first(),
+  ).toBeVisible()
   await expect(anomalyAlertsMain.getByText("ANM-202605-001")).toBeVisible()
 
   await gotoAppPage(page, "/deficit-heatmap")

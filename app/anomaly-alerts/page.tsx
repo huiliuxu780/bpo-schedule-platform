@@ -1,6 +1,9 @@
 import { anomalies } from "@/app/dashboard/data"
 import { AppShell } from "@/components/app-shell"
-import { summarizeAnomalyAlertRecords } from "@/components/data-table-model"
+import {
+  buildAnomalyAlertTableRows,
+  summarizeAnomalyAlertRecords,
+} from "@/components/data-table-model"
 import { ImportedRecordsSummary } from "@/components/imported-records-summary"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -10,11 +13,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { getDemoImportRecords } from "@/lib/demo-imports"
 
 export default async function AnomalyAlertsPage() {
   const records = await getDemoImportRecords()
   const summary = summarizeAnomalyAlertRecords(anomalies, records)
+  const alertRows = buildAnomalyAlertTableRows(anomalies)
 
   return (
     <AppShell title="异常预警" searchPlaceholder="搜索异常、团队或批次">
@@ -66,31 +78,59 @@ export default async function AnomalyAlertsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-2">
-              {anomalies.map((row) => (
-                <div
-                  key={row.id}
-                  className="grid gap-3 rounded-md border bg-muted/20 p-3 text-sm lg:grid-cols-[10rem_1fr_auto]"
-                >
-                  <div className="grid gap-1">
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {row.id}
-                    </span>
-                    <span className="font-medium">{row.type}</span>
-                  </div>
-                  <div className="grid gap-2 sm:grid-cols-3">
-                    <SampleField label="团队" value={row.team} />
-                    <SampleField label="时段" value={row.shiftTime} />
-                    <SampleField label="影响" value={row.impactedHours} />
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant={row.severity === "高" ? "destructive" : "outline"}>
-                      {row.severity}
-                    </Badge>
-                    <Badge variant="outline">{row.status}</Badge>
-                  </div>
-                </div>
-              ))}
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>异常</TableHead>
+                    <TableHead>团队</TableHead>
+                    <TableHead>时段</TableHead>
+                    <TableHead>影响</TableHead>
+                    <TableHead>级别</TableHead>
+                    <TableHead>状态</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {alertRows.length > 0 ? (
+                    alertRows.map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell>
+                          <div className="grid gap-1">
+                            <span className="font-medium">{row.type}</span>
+                            <span className="font-mono text-xs text-muted-foreground">
+                              {row.id}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{row.team}</TableCell>
+                        <TableCell>{row.shiftTime}</TableCell>
+                        <TableCell>{row.impactedHours}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              row.severity === "高" ? "destructive" : "outline"
+                            }
+                          >
+                            {row.severity}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{row.status}</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={6}
+                        className="h-16 text-center text-muted-foreground"
+                      >
+                        暂无异常预警队列。本机 seed 异常恢复后会在这里展示只读预警。
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           </CardContent>
         </Card>
@@ -134,14 +174,5 @@ function MetricCard({
         {description}
       </CardContent>
     </Card>
-  )
-}
-
-function SampleField({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grid gap-1">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="truncate">{value}</span>
-    </div>
   )
 }

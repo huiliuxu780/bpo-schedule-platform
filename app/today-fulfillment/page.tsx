@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/app-shell"
 import {
+  buildTodayFulfillmentInputRows,
   summarizeTodayFulfillmentRecords,
   type DashboardImportRecordSummary,
 } from "@/components/data-table-model"
@@ -12,6 +13,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { getDemoImportRecords } from "@/lib/demo-imports"
 
 function findRecord(
@@ -28,6 +37,7 @@ function sampleRows(record: DashboardImportRecordSummary | undefined) {
 export default async function TodayFulfillmentPage() {
   const records = await getDemoImportRecords()
   const summary = summarizeTodayFulfillmentRecords(records)
+  const inputRows = buildTodayFulfillmentInputRows(records)
   const statusRecord = findRecord(records, "status_log")
   const loginRecord = findRecord(records, "login_log")
 
@@ -73,6 +83,58 @@ export default async function TodayFulfillmentPage() {
           title="今日履约 records"
           description="从本机 processed records 读取今日履约输入覆盖"
         />
+
+        <Card>
+          <CardHeader>
+            <CardTitle>今日履约输入表</CardTitle>
+            <CardDescription>
+              只读展示进入今日履约页面的本机 processed records。
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>数据源</TableHead>
+                    <TableHead className="text-right">行数</TableHead>
+                    <TableHead>最新批次</TableHead>
+                    <TableHead>状态</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {inputRows.length > 0 ? (
+                    inputRows.map((row) => (
+                      <TableRow key={row.kind}>
+                        <TableCell className="font-medium">
+                          {row.sourceName}
+                        </TableCell>
+                        <TableCell className="text-right tabular-nums">
+                          {row.totalRows}
+                        </TableCell>
+                        <TableCell className="max-w-[260px] truncate font-mono text-xs text-muted-foreground">
+                          {row.latestBatch}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{row.statusLabel}</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={4}
+                        className="h-16 text-center text-muted-foreground"
+                      >
+                        暂无履约输入 records。请先在文件导入页导入坐席主数据、状态数据和登录数据 CSV。
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
 
         <section className="grid gap-4 xl:grid-cols-2">
           <RecordSampleCard

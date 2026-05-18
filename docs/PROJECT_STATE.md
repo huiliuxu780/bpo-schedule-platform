@@ -141,6 +141,7 @@ Current invariants:
 - `Q064/US213` closed the已开放模块 route smoke slice: E2E now verifies 10 local demo module routes render real module pages and not dashboard placeholders, without changing product code or opening database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `F139/Q065/US214-US215` closed the本机导入 records 来源表格 parity slice: the common `ImportedRecordsSummary` now shows a compact source table and empty state with data source, row count, sample count, and latest batch, so local imported records are more explainable across dashboard and opened modules without database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 - `F140/Q066/US216-US217` closed the文件导入页表格 parity slice: `/demo-imports` now shows recent import batches and processed records source rows with clear empty states, so the upload entry itself explains which local CSV results have been processed and are read by existing modules; sidebar desktop visibility was stabilized for the opened-module E2E path; current queue returned to empty after QA closeout.
+- `F141/Q067/US218-US219` closed the运营页面表格 parity slice: `今日履约` now shows a module input table for local processed records, and `异常预警` now shows a table queue for seed anomaly alerts, with focused model/E2E/Browser evidence and no database, real integration, auth/permission, approval, export, batch, publishing, automatic scheduling, production formulas, settlement rules, locks, or charge factors; current queue returned to empty after QA closeout.
 
 ## Product Direction
 
@@ -152,9 +153,9 @@ PM clarified on 2026-05-16 that the demo should be based on existing product mod
 import local CSV -> backend validates and normalizes -> local process-memory store -> existing module APIs/pages read the result -> dashboard/scheduling/monitoring pages show business outcomes
 ```
 
-Recommended order after Q066:
+Recommended order after Q067:
 
-1. **表格/空态 parity 补强:** continue table controls, empty-state, and readonly sample parity only for opened modules.
+1. **剩余开放模块表格/空态 parity:** continue readonly table/empty-state parity for `时段缺口热力图`、`供应商管理`、`规则配置` 等已开放模块，优先让演示页面都能用表格说明导入结果。
 2. **本机演示脚本/runbook 收口:** tighten local demo startup and smoke instructions for the exact pages PM will demonstrate.
 3. **高风险功能 Gate 拆解:** plan `权限管理` and `结算锁账` as future separate Gates, but keep implementation deferred until PM explicitly opens auth/permission or settlement-lock scope.
 

@@ -1849,3 +1849,21 @@
 - action: 收口文件导入页表格 parity QA。
 - status: `done`
 - notes: 模型测试 77 条通过，E2E smoke 6 条通过并覆盖本机 CSV 导入后 `/demo-imports` 最近导入批次表格、processed records 来源表格和 dashboard 读取结果；Browser 检查确认 `/demo-imports` 表格列、本机只读边界和桌面侧边栏可见，最终 `bash scripts/check.sh` 通过。
+
+- task_id: `F141`
+- source_ids:
+  - `R206`
+- story_ids:
+  - `US218`
+- action: 完成运营页面表格与空态 parity。
+- status: `done`
+- notes: `今日履约` 已新增 `今日履约输入表`，展示本机 processed records 的数据源、行数、最新批次和状态；`异常预警` 已从卡片队列调整为表格队列，展示异常、团队、时段、影响、级别和状态；两个页面均保留本机只读和 no-database 边界。
+
+- task_id: `Q067`
+- source_ids:
+  - `R207`
+- story_ids:
+  - `US219`
+- action: 收口运营页面表格 parity QA。
+- status: `done`
+- notes: 模型测试 79 条通过，E2E smoke 6 条通过并覆盖本机 CSV 导入后 `/today-fulfillment` 和 `/anomaly-alerts` 的表格字段、批次字段和 seed 异常队列；Browser 检查确认两个页面表格列、本机只读边界和桌面侧边栏可见，最终 `bash scripts/check.sh` 通过。
