@@ -995,3 +995,14 @@
 - action: 连续完成发布冻结与权限审计边界准备 10-task 展示批次。
 - status: `done`
 - notes: 新增发布冻结与权限审计边界准备本地模型和测试，新增 `/production-mvp/governance-readiness`、`/production-mvp/governance-readiness/[stepId]`，并在排班发布审批缺口、权限审计缺口、人员排班验收、主数据验收、缺口路线图、生产雏形总览、总进度和侧边栏挂载入口；本批不做真实发布、审批、权限、审计写入、导出、批量、数据库、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-20
+
+- task_id: `F166`
+- source_ids:
+  - `R215`
+- story_ids:
+  - `US227`
+- action: 修复产品语义回归，移除 `/dashboard` 上遗留的数据接入状态面板和数据版本筛选，并删除 `/production-mvp/**` 内部规划页面路由。
+- status: `done`
+- notes: 根因是需求治理记录被错误产品化：`/dashboard` 重新 import 并渲染 `DataSyncStatus`，侧边栏还暴露生产雏形、准备、缺口、验收等内部页面。已新增 `dashboard-business-only` 与 `product-navigation-business-only` 回归测试；本次不删除数据接入组件，不改 `/demo-imports`，不做真实数据接入、数据库、权限、审批、导出或批量。

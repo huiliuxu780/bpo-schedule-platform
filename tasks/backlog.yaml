@@ -2,6 +2,53 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F166
+    title: "经营总览与产品导航移除内部记录页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/dashboard/page.tsx"
+      - "components/app-sidebar.tsx"
+      - "app/production-mvp/**"
+      - "app/anomaly-review/**"
+      - "app/import-batches/**"
+      - "app/data-quality/**"
+      - "app/shift-types/**"
+      - "app/field-mapping/**"
+      - "lib/import-drilldown.ts"
+      - "lib/production-mvp-*.ts"
+      - "scripts/tests/dashboard-business-only.test.mjs"
+      - "scripts/tests/product-navigation-business-only.test.mjs"
+      - "scripts/tests/import-drilldown.test.mjs"
+      - "scripts/tests/production-mvp-*.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "app/demo-imports/**"
+      - "components/data-sync-status.tsx"
+      - "components/data-table-model.ts"
+    acceptance:
+      - "`/dashboard` 不再 import 或渲染 `DataSyncStatus`。"
+      - "`/dashboard` 不出现“数据接入状态”或“数据版本”。"
+      - "侧边栏不再暴露生产雏形、准备、缺口、验收清单等内部记录页。"
+      - "`app/production-mvp/**` 内部页面路由被删除，业务链接改回真实业务页面。"
+      - "新增回归测试防止经营总览再次混入数据接入证据。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端、数据库或真实外部数据接入"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
   - id: H001
     title: "最小 Harness 初始化"
     priority: P0

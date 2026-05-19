@@ -45,7 +45,7 @@ export default function DataQualityPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">数据质量</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读中心，用于查看生产雏形导入、主数据、排班、预测、登录和状态日志的数据问题。
+              本地只读中心，用于查看导入、主数据、排班、预测、登录和状态日志的数据问题。
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -67,7 +67,7 @@ export default function DataQualityPage() {
           <Card>
             <CardHeader>
               <CardTitle>来源分布</CardTitle>
-              <CardDescription>对应生产雏形导入合同和异常识别的数据源。</CardDescription>
+              <CardDescription>对应导入规则和异常识别的数据源。</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-3">
               {Object.entries(summary.sourceCounts).map(([source, count]) => (

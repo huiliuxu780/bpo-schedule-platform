@@ -34,7 +34,7 @@ export default function FieldMappingPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">字段映射预览</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读入口，用于查看模板字段如何映射到生产雏形对象，不保存映射、不执行转换。
+              本地只读入口，用于查看模板字段如何映射到业务对象，不保存映射、不执行转换。
             </p>
           </div>
           <Badge variant="outline">预览</Badge>

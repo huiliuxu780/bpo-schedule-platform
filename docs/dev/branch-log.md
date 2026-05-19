@@ -978,3 +978,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
+
+### F166 Product UI Business-Only Regression Fix
+
+- branch_name: `codex/f166-dashboard-business-only`
+- base_main_commit: `a3a134c`
+- remote_status: `local branch created from pushed governance readiness head because main has not yet integrated the production MVP chain`
+- scope: urgent product UI semantics regression fix: remove `DataSyncStatus` and data-version filter from `/dashboard`, remove internal `/production-mvp/**` planning routes from product UI, route remaining links to real business pages, add business-only regression tests, and update traceability.
+- allowed_files_check: `app/dashboard/page.tsx`, `components/app-sidebar.tsx`, `app/production-mvp/**`, selected business pages linking to internal planning routes, `lib/import-drilldown.ts`, internal production-mvp planning models/tests, `scripts/tests/*business-only*`, `scripts/tests/import-drilldown.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, `/demo-imports`, data-sync component deletion, permission, approval, export, batch, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: removes `app/production-mvp/**` internal planning routes and planning-only model/test files; updates `/dashboard`, sidebar, anomaly/import/data-quality/shift/field-mapping UI copy, import drilldown business links, regression tests, and traceability docs; no backend, package, lockfile, database, `/demo-imports`, data-sync component deletion, real integration, permission, approval, export, batch, production formula, settlement rule, or charge-factor files.
+- check_result: target business-only tests, strict state check, diff whitespace check, Node 22 typecheck, Node 22 Next build, in-app browser smoke, and final `bash scripts/check.sh` passed; Next route list no longer contains `/production-mvp/**`.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM escalation requires immediate verified fix; push after green local gate`
+- blocked_reason: `N/A`

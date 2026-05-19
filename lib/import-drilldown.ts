@@ -74,7 +74,7 @@ function masterDataDrilldown(
   return {
     id: "master-data",
     title: "主数据导入合同",
-    href: "/production-mvp/master-data",
+    href: "/master-data-relations",
     description: "坐席、职场、供应商、项目、绑定关系和班次类型的导入字段口径。",
     grain: "主数据对象",
     entityCount: contract.entities.length,
@@ -102,7 +102,7 @@ function personnelScheduleDrilldown(
   return {
     id: "personnel-schedules",
     title: "人员级排班合同",
-    href: "/production-mvp/personnel-schedules",
+    href: "/shift-details",
     description: "人员级排班明细、班次时间、休息饭点和 0.5h 时段展开结果。",
     grain: "人员排班明细",
     entityCount: 1,
@@ -126,7 +126,7 @@ function fulfillmentComparisonDrilldown(
   return {
     id: "fulfillment-comparison",
     title: "履约对比合同",
-    href: "/production-mvp/fulfillment-comparison",
+    href: "/anomaly-review",
     description: "需求预测、人员排班、登录日志和状态日志按 0.5h 时段对齐。",
     grain: "0.5h 时段汇总 + 人员级追溯",
     entityCount: contract.sources.length,

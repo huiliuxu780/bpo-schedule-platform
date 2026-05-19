@@ -64,7 +64,7 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
           <Card>
             <CardHeader>
               <CardTitle>影响对象</CardTitle>
-              <CardDescription>本批次可能影响的生产雏形对象。</CardDescription>
+              <CardDescription>本批次可能影响的业务对象。</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               {batch.affectedObjects.map((item) => (

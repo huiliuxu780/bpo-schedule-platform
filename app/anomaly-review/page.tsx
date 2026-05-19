@@ -47,7 +47,7 @@ export default function AnomalyReviewPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">异常复核</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读入口，用于查看生产雏形第一阶段异常、归因、负责人和复核口径。
+              本地只读入口，用于查看异常、归因、负责人和复核口径。
             </p>
           </div>
           <Badge variant="outline">只读演示</Badge>
@@ -86,12 +86,6 @@ export default function AnomalyReviewPage() {
                     className="text-sm font-medium text-primary underline-offset-4 hover:underline"
                   >
                     状态时间线
-                  </Link>
-                  <Link
-                    href="/production-mvp/anomaly-triage-readiness"
-                    className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-                  >
-                    准备口径
                   </Link>
                 </div>
               </div>

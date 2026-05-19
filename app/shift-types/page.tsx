@@ -110,7 +110,7 @@ export default function ShiftTypesPage() {
           <CardHeader>
             <CardTitle>暂不实现动作</CardTitle>
             <CardDescription>
-              本页只确认生产雏形需要的班次类型可视范围。
+              本页只确认排班业务需要的班次类型可视范围。
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">

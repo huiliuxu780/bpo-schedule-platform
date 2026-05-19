@@ -8,7 +8,7 @@ import {
 } from "../../lib/import-drilldown.ts";
 import { fallbackProductionMvpContracts } from "../../lib/production-mvp-contracts.ts";
 
-test("import contract drilldowns expose the three production MVP contract routes", () => {
+test("import contract drilldowns expose business routes instead of internal PRD pages", () => {
   const rows = getImportContractDrilldowns(fallbackProductionMvpContracts);
 
   assert.equal(rows.length, 3);
@@ -19,9 +19,9 @@ test("import contract drilldowns expose the three production MVP contract routes
   assert.deepEqual(
     rows.map((row) => row.href),
     [
-      "/production-mvp/master-data",
-      "/production-mvp/personnel-schedules",
-      "/production-mvp/fulfillment-comparison",
+      "/master-data-relations",
+      "/shift-details",
+      "/anomaly-review",
     ]
   );
 });
@@ -44,6 +44,6 @@ test("import contract drilldown lookup returns the personnel schedule expansion"
   );
 
   assert.equal(row?.title, "人员级排班合同");
-  assert.equal(row?.href, "/production-mvp/personnel-schedules");
+  assert.equal(row?.href, "/shift-details");
   assert.equal(row?.highlights.includes("0.5h 展开"), true);
 });

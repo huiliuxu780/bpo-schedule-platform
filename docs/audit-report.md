@@ -1427,6 +1427,32 @@
 - Local HTTP smoke：`/production-mvp/governance-readiness`、`/production-mvp/governance-readiness/schedule-release-state-readiness`、`/production-mvp/gaps/schedule-publish-approval`、`/production-mvp/gaps/permission-audit-boundary`、`/production-mvp/acceptance-checklist/personnel-schedule`、`/production-mvp/acceptance-checklist/master-data`、`/production-mvp/gaps`、`/production-mvp`、`/production-mvp/progress` 均返回 200 并显示预期文案，未出现页面错误。
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/governance-readiness` 和 `/production-mvp/governance-readiness/[stepId]`）和 25 个后端 unittest。
 
+### 2026-05-20 - Product UI business-only regression fix
+
+#### 审计结论
+
+- `F166/US227` 已修复产品语义回归：`/dashboard` 不再 import 或渲染 `DataSyncStatus`。
+- `/dashboard` 已移除“数据接入状态”面板和“数据版本”筛选，保留经营指标卡、趋势、热力图和异常表。
+- 侧边栏已移除生产雏形、总进度、生产缺口、数据底座准备、预测实际对齐、异常识别准备、治理边界准备和验收清单等内部记录入口。
+- 已删除 `/production-mvp/**` 内部规划页面路由；导入 drilldown、异常页等入口改回真实业务页面。
+- 新增 `scripts/tests/dashboard-business-only.test.mjs`，防止经营总览再次出现数据接入证据面板。
+- 新增 `scripts/tests/product-navigation-business-only.test.mjs`，防止产品导航再次暴露内部规划页面。
+- 本次没有删除 `components/data-sync-status.tsx`，没有改 `/demo-imports`，没有实现真实数据接入、数据库、权限、审批、导出或批量。
+
+#### 风险
+
+- 这是产品界面语义修复，不代表数据接入专门页面、导入批次、字段映射、数据质量等业务页被删除。
+- 后续若要重构数据接入中心、侧边栏数据源入口或真实接入流程，必须另开 Gate。
+
+#### 验证
+
+- `node --test scripts/tests/dashboard-business-only.test.mjs`：通过，1 个 dashboard business-only 回归测试通过。
+- `node --test scripts/tests/product-navigation-business-only.test.mjs scripts/tests/import-drilldown.test.mjs`：通过，产品导航和业务链接回归测试通过。
+- Local HTTP smoke：`/dashboard` 不包含“数据接入状态”、`DataSyncStatus`、“数据版本”、生产雏形、总进度、生产缺口、数据底座准备、预测实际对齐、异常识别准备、治理边界准备或验收清单；`/production-mvp` 返回 404。
+- In-app browser smoke：已切到 `http://127.0.0.1:3020/dashboard`，可见页面不再暴露上述内部入口。
+- `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`：通过，Next route list 已不包含 `/production-mvp/**`。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build（路由列表不包含 `/production-mvp/**`）和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

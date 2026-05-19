@@ -17,6 +17,19 @@
 
 ## Requirements
 
+### R215 - 经营总览移除数据接入状态遗留
+
+```yaml
+id: R215
+module: "运营工作台"
+description: "经营总览和产品导航必须保持业务功能语义，不得继续展示数据接入状态、数据版本或把 PRD/验收/准备/缺口/治理记录开发成产品页面。"
+source: "PM escalation on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本需求是产品语义回归修复；移除 `/dashboard` 上的接入证据展示，删除 `/production-mvp/**` 这类内部规划页面路由，并把仍有价值的入口改回真实业务页面；不删除数据接入组件本身，不改 `/demo-imports`，不接真实数据源。"
+```
+
 ### R001 - BPO WFM Dashboard 静态首页
 
 ```yaml

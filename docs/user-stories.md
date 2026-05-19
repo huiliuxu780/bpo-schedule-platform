@@ -29,6 +29,31 @@
 
 ## Stories
 
+### US227 - 经营总览移除数据接入状态遗留
+
+```yaml
+id: US227
+requirement_ids:
+  - R215
+task_ids:
+  - F166
+module: "运营工作台"
+role: "运营负责人"
+story: "作为运营负责人，我希望经营总览和侧边栏只出现业务功能，不再展示数据接入状态、数据版本或 PRD/验收/准备/缺口/治理页面，以便产品界面不混入执行记录。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "`/dashboard` 不 import 或渲染 `DataSyncStatus`。"
+  - "`/dashboard` 主页面不出现“数据接入状态”或“数据版本”。"
+  - "侧边栏不出现生产雏形、总进度、生产缺口、数据底座准备、预测实际对齐、异常识别准备、治理边界准备或验收清单。"
+  - "`app/production-mvp/**` 内部规划页面路由被删除，业务链接改回真实业务页面。"
+  - "数据接入组件和专门页面不被删除或改坏。"
+  - "`node --test scripts/tests/dashboard-business-only.test.mjs scripts/tests/product-navigation-business-only.test.mjs` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "F145"
+status: "done"
+```
+
 ### US001 - 运营负责人查看 Dashboard 总览
 
 ```yaml
