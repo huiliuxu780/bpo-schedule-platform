@@ -91,6 +91,7 @@ const nav: NavGroup[] = [
       { title: "数据源管理", href: "/dashboard" },
       { title: "文件导入", href: "/dashboard" },
       { title: "生产雏形", href: "/production-mvp", activeMatch: "exact", tag: "新" },
+      { title: "总进度", href: "/production-mvp/progress", activeMatch: "exact", tag: "新" },
       { title: "验收清单", href: "/production-mvp/acceptance-checklist", activeMatch: "exact", tag: "新" },
       { title: "接入批次", href: "/import-batches", activeMatch: "prefix", tag: "新" },
       { title: "CORN 状态日志", href: "/dashboard" },

@@ -724,6 +724,23 @@
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
 
+### F112-F120 Quality Progress Drilldown Block
+
+- branch_name: `codex/f112-quality-progress-drilldown`
+- base_main_commit: `a3a134c`
+- remote_status: `local branch created from pushed data quality group and acceptance checklist head because main has not yet integrated the production MVP chain`
+- scope: 10-task local frontend continuation: data quality issue-to-group reverse lookup model, data quality issue group links, data quality group coverage summary, acceptance checklist item lookup and detail route, production MVP progress model and route, production MVP overview link, sidebar entry, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `lib/data-quality-groups.ts`, `lib/production-mvp-acceptance.ts`, `lib/production-mvp-progress.ts`, `app/data-quality/**`, `app/production-mvp/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `node --experimental-strip-types --test scripts/tests/data-quality-group-links.test.mjs` passed with 3 tests; `node --experimental-strip-types --test scripts/tests/production-mvp-acceptance.test.mjs` passed with 4 tests; `node --experimental-strip-types --test scripts/tests/production-mvp-progress.test.mjs` passed with 2 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check.sh` passed; Browser smoke opened `/data-quality/DQ-202605-005`, `/production-mvp/acceptance-checklist/upload-import`, `/production-mvp/progress`, and `/production-mvp`.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`
+
 ### F103-F111 Data Quality Group And Acceptance Checklist Block
 
 - branch_name: `codex/f103-quality-group-acceptance-checklist`

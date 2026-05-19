@@ -18,7 +18,13 @@ export type DataQualityGroupSummary = {
   totalIssues: number
   highRiskGroups: number
   sourceTemplateCount: number
+  groupedIssueCount: number
   deferredActions: string[]
+}
+
+export type DataQualityIssueGroupCoverage = {
+  issueId: string
+  groups: DataQualityGroup[]
 }
 
 export const deferredDataQualityGroupActions = [
@@ -96,6 +102,7 @@ export function summarizeDataQualityGroups(
     totalIssues: groups.reduce((total, group) => total + group.issueIds.length, 0),
     highRiskGroups: groups.filter((group) => group.risk === "high").length,
     sourceTemplateCount: templates.size,
+    groupedIssueCount: getGroupedIssueIds(groups).length,
     deferredActions: deferredDataQualityGroupActions,
   }
 }
@@ -104,10 +111,37 @@ export function getDataQualityGroup(id: string) {
   return fallbackDataQualityGroups.find((group) => group.id === id)
 }
 
+export function getDataQualityGroupsForIssue(issueId: string) {
+  return fallbackDataQualityGroups.filter((group) => group.issueIds.includes(issueId))
+}
+
+export function getDataQualityIssueGroupCoverage(
+  issueIds: string[],
+  groups = fallbackDataQualityGroups
+): DataQualityIssueGroupCoverage[] {
+  return issueIds.map((issueId) => ({
+    issueId,
+    groups: groups.filter((group) => group.issueIds.includes(issueId)),
+  }))
+}
+
+export function getUngroupedDataQualityIssueIds(
+  issueIds: string[],
+  groups = fallbackDataQualityGroups
+) {
+  const groupedIssueIds = new Set(getGroupedIssueIds(groups))
+
+  return issueIds.filter((issueId) => !groupedIssueIds.has(issueId))
+}
+
 export function dataQualityGroupRiskLabel(risk: DataQualityGroupRisk) {
   return {
     high: "高风险",
     medium: "中风险",
     low: "低风险",
   }[risk]
+}
+
+function getGroupedIssueIds(groups: DataQualityGroup[]) {
+  return Array.from(new Set(groups.flatMap((group) => group.issueIds)))
 }

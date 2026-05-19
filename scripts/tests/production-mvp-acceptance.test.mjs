@@ -2,6 +2,8 @@ import assert from "node:assert/strict"
 import test from "node:test"
 
 import {
+  getProductionMvpAcceptanceGapCount,
+  getProductionMvpAcceptanceItem,
   productionMvpAcceptanceItems,
   summarizeProductionMvpAcceptance,
 } from "../../lib/production-mvp-acceptance.ts"
@@ -36,4 +38,12 @@ test("production MVP acceptance keeps deferred production capabilities explicit"
   assert.ok(summary.deferredCapabilities.includes("自动排班"))
   assert.ok(summary.deferredCapabilities.includes("审批流"))
   assert.ok(summary.deferredCapabilities.includes("状态规则公式"))
+})
+
+test("production MVP acceptance items expose drilldown gaps", () => {
+  const uploadItem = getProductionMvpAcceptanceItem("upload-import")
+
+  assert.ok(uploadItem)
+  assert.ok(uploadItem.followUpGaps.includes("上传入口"))
+  assert.equal(getProductionMvpAcceptanceGapCount(productionMvpAcceptanceItems), 18)
 })

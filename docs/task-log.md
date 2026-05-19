@@ -929,3 +929,14 @@
 - action: 连续完成数据质量分组、导入批次问题钻取和生产雏形验收清单 10-task 展示批次。
 - status: `done`
 - notes: 新增数据质量分组模型与测试、`/data-quality/groups`、`/data-quality/groups/[groupId]`、导入批次详情质量问题链接、生产雏形验收清单模型与测试、`/production-mvp/acceptance-checklist` 和侧边栏入口；本批不做真实上传/导入、真实修复、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-19
+
+- task_id: `F112-F120/Q023`
+- source_ids:
+  - `R155-R164`
+- story_ids:
+  - `US167-US176`
+- action: 连续完成质量问题反查分组、验收清单单项详情和生产雏形总进度 10-task 展示批次。
+- status: `done`
+- notes: 新增质量问题到分组的反查模型与测试，数据质量详情展示所属分组，数据质量中心展示分组覆盖摘要；新增验收清单单项详情、生产雏形总进度模型与测试、`/production-mvp/progress` 和侧边栏入口；本批不做真实上传/导入、真实修复、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

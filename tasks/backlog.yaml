@@ -4251,6 +4251,155 @@ tasks:
     conflict_risk: low
     stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式"]
     commit_after_done: true
+  - id: F112
+    title: "数据质量问题反查分组模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增质量问题反查所属分组的本地模型能力。"
+      - "模型测试覆盖 issueId 到 group 的映射、覆盖率和缺失处理。"
+      - "不执行真实修复、审批、权限、导出或批量。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F113
+    title: "数据质量详情展示所属分组"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/data-quality/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "`/data-quality/[issueId]` 展示所属分组、风险和分组入口。"
+      - "页面不执行真实修复、审批、权限、导出或批量。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F114
+    title: "数据质量中心展示分组覆盖摘要"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/data-quality/page.tsx", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "`/data-quality` 展示问题被分组覆盖的摘要和分组入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F115
+    title: "验收清单单项 lookup 与缺口摘要模型"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "验收清单模型支持按 itemId lookup。"
+      - "模型输出单项后续开发缺口和暂缓生产能力。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F116
+    title: "验收清单单项详情页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/production-mvp/acceptance-checklist/[itemId]` 只读详情页。"
+      - "详情页展示验收证据、暂缓能力和后续开发缺口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F117
+    title: "验收清单总览挂载单项详情入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/acceptance-checklist/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "`/production-mvp/acceptance-checklist` 每个业务主线可进入详情。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F118
+    title: "生产雏形总进度模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增生产雏形总进度本地模型，集中展示本地入口、覆盖状态和仍缺能力。"
+      - "模型测试覆盖完成入口数量、部分覆盖能力和暂缓能力。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F119
+    title: "生产雏形总进度只读页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/production-mvp/progress` 只读页。"
+      - "生产雏形总览页挂载总进度入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F120
+    title: "生产雏形总进度导航入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["components/app-sidebar.tsx", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "侧边栏数据与集成区域可进入 `/production-mvp/progress`。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q023
+    title: "质量反查、验收缺口和总进度 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "质量问题反查、验收单项详情和生产雏形总进度页面构建通过。"
+      - "模型测试和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
   - id: F103
     title: "数据质量分组模型与测试"
     priority: P0

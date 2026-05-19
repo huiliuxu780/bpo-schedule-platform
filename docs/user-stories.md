@@ -2147,3 +2147,104 @@ acceptance:
   - "生产雏形验收清单覆盖第一阶段业务主线，并明确暂缓能力。"
   - "`node --experimental-strip-types --test scripts/tests/data-quality-groups.test.mjs`、`node --experimental-strip-types --test scripts/tests/production-mvp-acceptance.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US167-US176 - 质量反查、验收缺口 drilldown 和生产雏形总进度
+
+```yaml
+stories:
+  - id: US167
+    requirement_ids: [R155]
+    task_ids: [F112]
+    module: "数据质量"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望单个质量问题能反查所属分组，以便从问题详情回到业务原因视角。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US168
+    requirement_ids: [R156]
+    task_ids: [F113]
+    module: "数据质量"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望数据质量详情页展示所属分组和分组入口，以便定位同类问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US169
+    requirement_ids: [R157]
+    task_ids: [F114]
+    module: "数据质量"
+    role: "PM"
+    story: "作为 PM，我希望数据质量中心能显示分组覆盖摘要，以便知道问题清单是否已被业务原因覆盖。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US170
+    requirement_ids: [R158]
+    task_ids: [F115]
+    module: "生产雏形"
+    role: "QA"
+    story: "作为 QA，我希望验收清单支持单项 lookup 和缺口摘要，以便从总览进入具体业务主线。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US171
+    requirement_ids: [R159]
+    task_ids: [F116]
+    module: "生产雏形"
+    role: "QA"
+    story: "作为 QA，我希望进入验收清单单项详情，查看验收证据、暂缓能力和后续开发缺口。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US172
+    requirement_ids: [R160]
+    task_ids: [F117]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望验收清单总览的每项都能跳到详情页，以便逐条验收。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US173
+    requirement_ids: [R161]
+    task_ids: [F118]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总进度有本地模型和测试，以便集中查看已完成入口和仍缺能力。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US174
+    requirement_ids: [R162]
+    task_ids: [F119]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望有生产雏形总进度只读页，并能从生产雏形总览进入。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US175
+    requirement_ids: [R163]
+    task_ids: [F120]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏能直接进入生产雏形总进度，以便连续验收不需要记 URL。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US176
+    requirement_ids: [R164]
+    task_ids: [Q023]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望对质量问题反查分组、验收单项详情和生产雏形总进度做收口，确认页面、导航、测试和边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量详情能展示所属分组，并可跳回分组详情。"
+  - "验收清单总览能进入单项详情，详情展示证据页、暂缓能力和后续缺口。"
+  - "生产雏形总进度集中展示已完成本地入口和仍缺生产能力。"
+  - "`node --experimental-strip-types --test scripts/tests/data-quality-group-links.test.mjs`、`node --experimental-strip-types --test scripts/tests/production-mvp-progress.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

@@ -45,6 +45,9 @@ export default async function ProductionMvpPage() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/progress">总进度</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
               <Link href="/production-mvp/acceptance-checklist">验收清单</Link>
             </Button>
             <Badge variant="outline">本地只读合同</Badge>

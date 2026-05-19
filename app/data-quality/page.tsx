@@ -25,10 +25,17 @@ import {
   fallbackDataQualityIssues,
   summarizeDataQualityIssues,
 } from "@/lib/data-quality"
+import {
+  fallbackDataQualityGroups,
+  getUngroupedDataQualityIssueIds,
+  summarizeDataQualityGroups,
+} from "@/lib/data-quality-groups"
 
 export default function DataQualityPage() {
   const rows = fallbackDataQualityIssues
   const summary = summarizeDataQualityIssues(rows)
+  const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
+  const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
 
   return (
@@ -56,7 +63,7 @@ export default function DataQualityPage() {
           <Metric title="阻断行数" value={`${summary.blockedRows}`} description="样例行数" />
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+        <section className="grid gap-4 lg:grid-cols-[1fr_1fr_1fr]">
           <Card>
             <CardHeader>
               <CardTitle>来源分布</CardTitle>
@@ -77,6 +84,25 @@ export default function DataQualityPage() {
                   <Badge variant="secondary">{count}</Badge>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>分组覆盖</CardTitle>
+              <CardDescription>
+                质量问题按业务原因分组，便于从字段问题回到主数据、排班和实际日志。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              <div className="grid grid-cols-3 gap-3">
+                <Detail label="分组" value={`${groupSummary.totalGroups}`} />
+                <Detail label="已覆盖" value={`${groupSummary.groupedIssueCount}`} />
+                <Detail label="未分组" value={`${ungroupedIssueIds.length}`} />
+              </div>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/data-quality/groups">查看分组覆盖</Link>
+              </Button>
             </CardContent>
           </Card>
 
@@ -180,6 +206,15 @@ export default function DataQualityPage() {
         </Card>
       </main>
     </AppShell>
+  )
+}
+
+function Detail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 text-sm font-medium tabular-nums">{value}</div>
+    </div>
   )
 }
 

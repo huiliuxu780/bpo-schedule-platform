@@ -84,6 +84,13 @@ export default function ProductionMvpAcceptanceChecklistPage() {
                     </Badge>
                   ))}
                 </div>
+                <div className="flex justify-end">
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/production-mvp/acceptance-checklist/${item.id}`}>
+                      查看单项详情
+                    </Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

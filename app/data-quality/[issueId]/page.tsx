@@ -19,6 +19,10 @@ import {
   fallbackDataQualityIssues,
   getDataQualityIssue,
 } from "@/lib/data-quality"
+import {
+  dataQualityGroupRiskLabel,
+  getDataQualityGroupsForIssue,
+} from "@/lib/data-quality-groups"
 
 type PageProps = {
   params: Promise<{
@@ -39,6 +43,8 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
   if (!issue) {
     notFound()
   }
+
+  const groups = getDataQualityGroupsForIssue(issue.id)
 
   return (
     <AppShell title="数据质量详情" searchPlaceholder="搜索错误码、字段或来源">
@@ -89,6 +95,40 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">{issue.recommendation}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>所属质量分组</CardTitle>
+            <CardDescription>
+              从单个问题回到业务原因分组，查看同类问题和来源模板。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-3 lg:grid-cols-2">
+            {groups.map((group) => (
+              <div key={group.id} className="rounded-lg border p-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium">{group.title}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {group.owner} / {group.issueIds.length} 个问题
+                    </div>
+                  </div>
+                  <Badge variant={group.risk === "high" ? "destructive" : "secondary"}>
+                    {dataQualityGroupRiskLabel(group.risk)}
+                  </Badge>
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {group.recommendedReview}
+                </p>
+                <div className="mt-3 flex justify-end">
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/data-quality/groups/${group.id}`}>查看分组</Link>
+                  </Button>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
 

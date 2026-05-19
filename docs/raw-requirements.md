@@ -1098,3 +1098,44 @@ version: "1.0"
 status: "split"
 notes: "本组只做本地前端只读展示层和模型测试；不实现真实上传、真实导入、真实修复、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
 ```
+
+### R155-R164 - 质量反查、验收缺口 drilldown 和生产雏形总进度
+
+```yaml
+requirements:
+  - id: R155
+    module: "数据质量"
+    description: "生产雏形需要单个质量问题反查所属分组的本地模型和测试，保证问题详情能回到业务原因分组。"
+  - id: R156
+    module: "数据质量"
+    description: "数据质量详情页需要展示所属质量分组、分组风险和分组入口。"
+  - id: R157
+    module: "数据质量"
+    description: "数据质量中心需要展示分组覆盖摘要，说明问题清单是否已被业务原因覆盖。"
+  - id: R158
+    module: "生产雏形"
+    description: "生产雏形验收清单需要支持单项 lookup、缺口摘要和后续开发能力列表。"
+  - id: R159
+    module: "生产雏形"
+    description: "需要验收清单单项详情页，展示验收证据、暂缓能力和后续开发缺口。"
+  - id: R160
+    module: "生产雏形"
+    description: "验收清单总览页每个业务主线需要能跳到对应详情页。"
+  - id: R161
+    module: "生产雏形"
+    description: "生产雏形需要总进度本地模型和测试，集中查看已完成本地入口、部分覆盖能力和仍缺生产能力。"
+  - id: R162
+    module: "生产雏形"
+    description: "需要生产雏形总进度只读页，并从生产雏形总览页挂载入口。"
+  - id: R163
+    module: "导航"
+    description: "侧边栏需要生产雏形总进度入口，方便本地连续验收。"
+  - id: R164
+    module: "质量与交付"
+    description: "质量问题反查分组、验收单项详情和生产雏形总进度完成后需要 QA 收口，确认测试、页面、导航、current 清理和 no-database 边界均可验证。"
+source: "PM requested continued production MVP development on 2026-05-19"
+submitted_at: "2026-05-19"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示层和模型测试；不实现真实上传、真实导入、真实修复、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```

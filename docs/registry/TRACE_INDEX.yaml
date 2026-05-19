@@ -196,6 +196,16 @@ stories:
   US164: {file: "docs/user-stories.md", requirement_ids: ["R152"], task_ids: ["F110"], archive_refs: []}
   US165: {file: "docs/user-stories.md", requirement_ids: ["R153"], task_ids: ["F111"], archive_refs: []}
   US166: {file: "docs/user-stories.md", requirement_ids: ["R154"], task_ids: ["Q022"], archive_refs: []}
+  US167: {file: "docs/user-stories.md", requirement_ids: ["R155"], task_ids: ["F112"], archive_refs: []}
+  US168: {file: "docs/user-stories.md", requirement_ids: ["R156"], task_ids: ["F113"], archive_refs: []}
+  US169: {file: "docs/user-stories.md", requirement_ids: ["R157"], task_ids: ["F114"], archive_refs: []}
+  US170: {file: "docs/user-stories.md", requirement_ids: ["R158"], task_ids: ["F115"], archive_refs: []}
+  US171: {file: "docs/user-stories.md", requirement_ids: ["R159"], task_ids: ["F116"], archive_refs: []}
+  US172: {file: "docs/user-stories.md", requirement_ids: ["R160"], task_ids: ["F117"], archive_refs: []}
+  US173: {file: "docs/user-stories.md", requirement_ids: ["R161"], task_ids: ["F118"], archive_refs: []}
+  US174: {file: "docs/user-stories.md", requirement_ids: ["R162"], task_ids: ["F119"], archive_refs: []}
+  US175: {file: "docs/user-stories.md", requirement_ids: ["R163"], task_ids: ["F120"], archive_refs: []}
+  US176: {file: "docs/user-stories.md", requirement_ids: ["R164"], task_ids: ["Q023"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -355,6 +365,16 @@ tasks:
   F110: {file: "tasks/backlog.yaml", story_ids: ["US164"], gate: "frontend-scaffold"}
   F111: {file: "tasks/backlog.yaml", story_ids: ["US165"], gate: "frontend-scaffold"}
   Q022: {file: "tasks/backlog.yaml", story_ids: ["US166"], gate: "qa"}
+  F112: {file: "tasks/backlog.yaml", story_ids: ["US167"], gate: "frontend-scaffold"}
+  F113: {file: "tasks/backlog.yaml", story_ids: ["US168"], gate: "frontend-scaffold"}
+  F114: {file: "tasks/backlog.yaml", story_ids: ["US169"], gate: "frontend-scaffold"}
+  F115: {file: "tasks/backlog.yaml", story_ids: ["US170"], gate: "frontend-scaffold"}
+  F116: {file: "tasks/backlog.yaml", story_ids: ["US171"], gate: "frontend-scaffold"}
+  F117: {file: "tasks/backlog.yaml", story_ids: ["US172"], gate: "frontend-scaffold"}
+  F118: {file: "tasks/backlog.yaml", story_ids: ["US173"], gate: "frontend-scaffold"}
+  F119: {file: "tasks/backlog.yaml", story_ids: ["US174"], gate: "frontend-scaffold"}
+  F120: {file: "tasks/backlog.yaml", story_ids: ["US175"], gate: "frontend-scaffold"}
+  Q023: {file: "tasks/backlog.yaml", story_ids: ["US176"], gate: "qa"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -540,6 +560,16 @@ requirements:
   R152: {file: "docs/raw-requirements.md", story_ids: ["US164"], task_ids: ["F110"]}
   R153: {file: "docs/raw-requirements.md", story_ids: ["US165"], task_ids: ["F111"]}
   R154: {file: "docs/raw-requirements.md", story_ids: ["US166"], task_ids: ["Q022"]}
+  R155: {file: "docs/raw-requirements.md", story_ids: ["US167"], task_ids: ["F112"]}
+  R156: {file: "docs/raw-requirements.md", story_ids: ["US168"], task_ids: ["F113"]}
+  R157: {file: "docs/raw-requirements.md", story_ids: ["US169"], task_ids: ["F114"]}
+  R158: {file: "docs/raw-requirements.md", story_ids: ["US170"], task_ids: ["F115"]}
+  R159: {file: "docs/raw-requirements.md", story_ids: ["US171"], task_ids: ["F116"]}
+  R160: {file: "docs/raw-requirements.md", story_ids: ["US172"], task_ids: ["F117"]}
+  R161: {file: "docs/raw-requirements.md", story_ids: ["US173"], task_ids: ["F118"]}
+  R162: {file: "docs/raw-requirements.md", story_ids: ["US174"], task_ids: ["F119"]}
+  R163: {file: "docs/raw-requirements.md", story_ids: ["US175"], task_ids: ["F120"]}
+  R164: {file: "docs/raw-requirements.md", story_ids: ["US176"], task_ids: ["Q023"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

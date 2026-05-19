@@ -9,6 +9,7 @@ export type ProductionMvpAcceptanceItem = {
   acceptance: string[]
   evidenceRoutes: string[]
   deferredCapabilities: string[]
+  followUpGaps: string[]
 }
 
 export type ProductionMvpAcceptanceSummary = {
@@ -34,6 +35,7 @@ export const productionMvpAcceptanceItems: ProductionMvpAcceptanceItem[] = [
     ],
     evidenceRoutes: ["/import-templates", "/import-batches", "/field-mapping"],
     deferredCapabilities: ["真实上传", "批量导入", "字段映射保存", "失败行写库"],
+    followUpGaps: ["上传入口", "导入执行服务", "失败行修复队列"],
   },
   {
     id: "master-data",
@@ -48,6 +50,7 @@ export const productionMvpAcceptanceItems: ProductionMvpAcceptanceItem[] = [
     ],
     evidenceRoutes: ["/production-mvp/master-data", "/master-data-relations", "/shift-types"],
     deferredCapabilities: ["主数据 CRUD", "冻结解冻", "主数据权限"],
+    followUpGaps: ["坐席主数据编辑", "职场/供应商维护", "绑定关系冻结解冻"],
   },
   {
     id: "personnel-schedule",
@@ -62,6 +65,7 @@ export const productionMvpAcceptanceItems: ProductionMvpAcceptanceItem[] = [
     ],
     evidenceRoutes: ["/production-mvp/personnel-schedules", "/shift-details", "/person-timeline"],
     deferredCapabilities: ["自动排班", "正式发布审批", "排班批量编辑"],
+    followUpGaps: ["排班发布态", "批量调整", "自动排班规则"],
   },
   {
     id: "demand-forecast",
@@ -76,6 +80,7 @@ export const productionMvpAcceptanceItems: ProductionMvpAcceptanceItem[] = [
     ],
     evidenceRoutes: ["/production-mvp/demand-forecast", "/demand-plans"],
     deferredCapabilities: ["预测模型接入", "真实预测导入", "生产级预测调整"],
+    followUpGaps: ["预测导入执行", "技能/等级调整", "预测版本管理"],
   },
   {
     id: "actual-status",
@@ -90,6 +95,7 @@ export const productionMvpAcceptanceItems: ProductionMvpAcceptanceItem[] = [
     ],
     evidenceRoutes: ["/person-timeline", "/data-quality", "/data-quality/groups/time-validity"],
     deferredCapabilities: ["真实登录系统接入", "状态码生产映射", "状态规则公式"],
+    followUpGaps: ["登录日志接口", "状态日志接口", "生产状态码映射"],
   },
   {
     id: "comparison-anomaly",
@@ -104,6 +110,7 @@ export const productionMvpAcceptanceItems: ProductionMvpAcceptanceItem[] = [
     ],
     evidenceRoutes: ["/production-mvp/fulfillment-comparison", "/anomaly-review", "/anomaly-review/sources"],
     deferredCapabilities: ["真实复核提交", "审批流", "导出", "批量处理"],
+    followUpGaps: ["复核提交", "异常关闭", "差异结果导出"],
   },
 ]
 
@@ -141,4 +148,14 @@ export function productionMvpAcceptanceStatusLabel(
     partial: "部分覆盖",
     deferred: "暂缓",
   }[status]
+}
+
+export function getProductionMvpAcceptanceItem(id: string) {
+  return productionMvpAcceptanceItems.find((item) => item.id === id)
+}
+
+export function getProductionMvpAcceptanceGapCount(
+  items: ProductionMvpAcceptanceItem[]
+) {
+  return items.reduce((total, item) => total + item.followUpGaps.length, 0)
 }
