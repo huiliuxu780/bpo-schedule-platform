@@ -907,3 +907,14 @@
 - action: 连续完成班次类型、导入模板和异常来源 10-task 展示批次。
 - status: `done`
 - notes: 新增班次类型模型与测试、导入模板模型与测试、异常来源模型与测试、`/shift-types`、`/import-templates`、`/anomaly-review/sources`、`/anomaly-review/sources/[sourceId]` 和侧边栏入口；本批不做真实导入、数据库、主数据 CRUD、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-19
+
+- task_id: `F094-F102/Q021`
+- source_ids:
+  - `R135-R144`
+- story_ids:
+  - `US147-US156`
+- action: 连续完成导入批次、字段映射和复核时间线 10-task 展示批次。
+- status: `done`
+- notes: 新增导入批次历史模型与测试、字段映射预览模型与测试、异常复核状态时间线模型与测试、`/import-batches`、`/import-batches/[batchId]`、`/field-mapping`、`/anomaly-review/timeline` 和侧边栏入口；本批不做真实上传/导入、字段映射保存、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

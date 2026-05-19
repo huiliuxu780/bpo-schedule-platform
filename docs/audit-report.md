@@ -1234,6 +1234,32 @@
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 - 本地 HTTP smoke：`/shift-types`、`/import-templates`、`/anomaly-review/sources`、`/anomaly-review/sources/schedule_login`、`/anomaly-review` 均返回 200。
 
+### 2026-05-19 - Import batch, field mapping, and review timeline slice
+
+#### 审计结论
+
+- `F094/US147` 已新增导入批次历史本地模型和测试，覆盖批次状态、成功/失败行、错误码、质量问题追溯和暂不实现动作。
+- `F095-F096/US148-US149` 已新增 `/import-batches`、`/import-batches/[batchId]` 和侧边栏入口。
+- `F097-F099/US150-US152` 已新增字段映射预览模型、测试、`/field-mapping` 页面和侧边栏入口。
+- `F100-F102/US153-US155` 已新增异常复核状态时间线模型、测试、`/anomaly-review/timeline` 页面，并在异常复核页挂载时间线入口。
+- `Q021/US156` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实上传/导入、字段映射保存、数据库、审批、权限、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做本地只读入口；导入批次、字段映射和复核时间线来自前端本地模型，不代表真实导入服务、字段转换器、状态写回、审批流或权限边界。
+- 后续如果要做真实上传/导入、字段映射保存、失败行修复、审批、权限、导出、批量或生产异常计算，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/import-batch-history.test.mjs`：通过，2 个 import batch history model 测试通过。
+- `node --experimental-strip-types --test scripts/tests/field-mapping-preview.test.mjs`：通过，2 个 field mapping preview model 测试通过。
+- `node --experimental-strip-types --test scripts/tests/review-status-timeline.test.mjs`：通过，2 个 review status timeline model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+- 本地 HTTP smoke：`/import-batches`、`/import-batches/BATCH-20260519-002`、`/field-mapping`、`/anomaly-review/timeline`、`/anomaly-review` 均返回 200。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

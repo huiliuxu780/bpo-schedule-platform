@@ -842,3 +842,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
+
+### F094-F102 Import Batch Field Timeline Block
+
+- branch_name: `codex/f094-import-batch-field-timeline`
+- base_main_commit: `996e81e`
+- remote_status: `local branch created from pushed shift template anomaly source head because main has not yet integrated the production MVP chain`
+- scope: 10-task local frontend continuation: import batch history model and routes, field mapping preview model and route, review status timeline model and route, sidebar entries, anomaly review timeline link, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `lib/import-batch-history.ts`, `lib/field-mapping-preview.ts`, `lib/review-status-timeline.ts`, `app/import-batches/**`, `app/field-mapping/**`, `app/anomaly-review/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `node --experimental-strip-types --test scripts/tests/import-batch-history.test.mjs` passed with 2 tests; `node --experimental-strip-types --test scripts/tests/field-mapping-preview.test.mjs` passed with 2 tests; `node --experimental-strip-types --test scripts/tests/review-status-timeline.test.mjs` passed with 2 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check.sh` passed; local HTTP smoke returned 200 for `/import-batches`, `/import-batches/BATCH-20260519-002`, `/field-mapping`, `/anomaly-review/timeline`, and `/anomaly-review`.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`

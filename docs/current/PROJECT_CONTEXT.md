@@ -65,4 +65,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US137/F085 -> US146/Q020` completed the shift type, import template, and anomaly source slice: local model tests, `/shift-types`, `/import-templates`, `/anomaly-review/sources`, `/anomaly-review/sources/[sourceId]`, sidebar entries, anomaly review source link, route smoke, and QA closeout. Current queue is empty again.
 
-Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from import batch history, template field mapping preview, or exception review status timeline. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.
+`US147/F094 -> US156/Q021` completed the import batch history, field mapping preview, and review status timeline slice: local model tests, `/import-batches`, `/import-batches/[batchId]`, `/field-mapping`, `/anomaly-review/timeline`, sidebar entries, anomaly review timeline link, route smoke, and QA closeout. Current queue is empty again.
+
+Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from data-quality issue grouping, import-batch to issue drilldown links, or production MVP acceptance checklist. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.

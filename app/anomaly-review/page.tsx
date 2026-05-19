@@ -74,12 +74,20 @@ export default function AnomalyReviewPage() {
                     对应 PRD 中预测、排班、登录、状态、主数据和数据质量口径。
                   </CardDescription>
                 </div>
-                <Link
-                  href="/anomaly-review/sources"
-                  className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-                >
-                  查看来源
-                </Link>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/anomaly-review/sources"
+                    className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  >
+                    查看来源
+                  </Link>
+                  <Link
+                    href="/anomaly-review/timeline"
+                    className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  >
+                    状态时间线
+                  </Link>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">

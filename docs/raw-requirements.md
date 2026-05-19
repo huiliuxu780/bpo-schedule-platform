@@ -1036,3 +1036,24 @@ version: "1.0"
 status: "split"
 notes: "本组只做本地前端只读展示层和模型测试；不实现真实导入、数据库、主数据 CRUD、班次规则计算、权限、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
 ```
+
+### R135-R144 - 导入批次、字段映射和复核时间线
+
+```yaml
+requirements:
+  - {id: R135, module: "导入批次", description: "生产雏形需要导入批次历史本地模型和测试，展示批次、来源模板、状态、成功/失败行、错误分布和影响对象。"}
+  - {id: R136, module: "导入批次", description: "需要导入批次历史只读页，用于验收上传/导入结果如何被查看和追溯。"}
+  - {id: R137, module: "导航", description: "侧边栏需要导入批次入口，方便本地验收导入历史。"}
+  - {id: R138, module: "字段映射", description: "生产雏形需要字段映射预览本地模型和测试，展示源字段、目标字段、必填、转换说明和校验状态。"}
+  - {id: R139, module: "字段映射", description: "需要字段映射预览只读页，用于验收模板字段如何映射到生产雏形对象。"}
+  - {id: R140, module: "导航", description: "侧边栏字段映射入口需要指向字段映射预览页。"}
+  - {id: R141, module: "异常闭环", description: "生产雏形需要异常复核状态时间线本地模型和测试，展示异常从识别、分派、复核到关闭的本地状态流。"}
+  - {id: R142, module: "异常闭环", description: "需要异常复核状态时间线只读页，用于验收异常闭环状态解释。"}
+  - {id: R143, module: "异常闭环", description: "异常复核页需要挂载状态时间线入口，方便 PM 从复核总览进入闭环解释。"}
+  - {id: R144, module: "质量与交付", description: "导入批次、字段映射和复核时间线完成后需要 QA 收口，确认模型测试、页面、导航、current 清理和 no-database 边界均可验证。"}
+source: "PM requested continued production MVP development on 2026-05-19"
+submitted_at: "2026-05-19"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示层和模型测试；不实现真实上传/导入、字段映射保存、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```

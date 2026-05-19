@@ -2025,3 +2025,24 @@ acceptance:
   - "异常来源展示本地解释和追溯键，不执行真实异常计算、复核提交、审批或权限。"
   - "`node --experimental-strip-types --test scripts/tests/shift-type-catalog.test.mjs`、`node --experimental-strip-types --test scripts/tests/import-template-guide.test.mjs`、`node --experimental-strip-types --test scripts/tests/anomaly-source-drilldown.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US147-US156 - 导入批次、字段映射和复核时间线
+
+```yaml
+stories:
+  - {id: US147, requirement_ids: [R135], task_ids: [F094], module: "导入批次", role: "数据管理员", story: "作为数据管理员，我希望导入批次历史有本地模型和测试，以便查看批次状态、成功/失败行和错误分布。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US148, requirement_ids: [R136], task_ids: [F095], module: "导入批次", role: "数据管理员", story: "作为数据管理员，我希望有导入批次历史只读页，查看上传/导入结果如何被追溯。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US149, requirement_ids: [R137], task_ids: [F096], module: "导航", role: "PM", story: "作为 PM，我希望侧边栏能直接进入导入批次历史，以便本地验收时不用记 URL。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US150, requirement_ids: [R138], task_ids: [F097], module: "字段映射", role: "数据管理员", story: "作为数据管理员，我希望字段映射预览有本地模型和测试，以便确认模板字段如何映射到生产雏形对象。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US151, requirement_ids: [R139], task_ids: [F098], module: "字段映射", role: "数据管理员", story: "作为数据管理员，我希望有字段映射预览只读页，查看源字段、目标字段、转换说明和校验状态。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US152, requirement_ids: [R140], task_ids: [F099], module: "导航", role: "PM", story: "作为 PM，我希望侧边栏字段映射入口进入预览页，以便验收导入准备口径。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US153, requirement_ids: [R141], task_ids: [F100], module: "异常闭环", role: "现场主管", story: "作为现场主管，我希望异常复核状态时间线有本地模型和测试，以便理解异常闭环状态流。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US154, requirement_ids: [R142], task_ids: [F101], module: "异常闭环", role: "现场主管", story: "作为现场主管，我希望有异常复核状态时间线只读页，查看异常从识别到关闭的状态解释。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US155, requirement_ids: [R143], task_ids: [F102], module: "异常闭环", role: "PM", story: "作为 PM，我希望异常复核页能进入状态时间线，以便从复核总览查看闭环解释。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US156, requirement_ids: [R144], task_ids: [Q021], module: "质量与交付", role: "QA", story: "作为 QA，我希望对导入批次、字段映射和复核时间线做验收收口，确认页面、导航、测试和边界未越界。", task_type: "qa", priority: "P1", status: "done"}
+acceptance:
+  - "导入批次展示来自本地模型，不执行真实上传、导入、批量或失败行写库。"
+  - "字段映射展示本地预览，不执行保存、转换、权限或审批。"
+  - "复核时间线展示本地状态解释，不执行真实复核提交、审批、权限或生产公式。"
+  - "`node --experimental-strip-types --test scripts/tests/import-batch-history.test.mjs`、`node --experimental-strip-types --test scripts/tests/field-mapping-preview.test.mjs`、`node --experimental-strip-types --test scripts/tests/review-status-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

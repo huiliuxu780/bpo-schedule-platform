@@ -4251,3 +4251,166 @@ tasks:
     conflict_risk: low
     stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式"]
     commit_after_done: true
+  - id: F094
+    title: "导入批次历史本地模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增导入批次历史本地模型，覆盖批次、来源模板、状态、成功/失败行、错误分布和影响对象。"
+      - "模型测试覆盖批次摘要、失败率和数据质量问题引用。"
+      - "不执行真实上传、导入、批量或失败行写库。"
+      - "`node --experimental-strip-types --test scripts/tests/import-batch-history.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F095
+    title: "导入批次历史只读页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/import-batches` 只读页。"
+      - "页面展示批次状态、来源模板、成功/失败行、错误分布和 no-action 边界。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F096
+    title: "导入批次导航入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["components/app-sidebar.tsx", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "侧边栏数据与集成区域能进入 `/import-batches`。"
+      - "`/import-batches` 路由 active 状态可识别。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F097
+    title: "字段映射预览本地模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增字段映射预览本地模型，覆盖源字段、目标字段、必填、转换说明和校验状态。"
+      - "模型测试覆盖映射摘要、缺失映射和模板分组。"
+      - "不保存字段映射、不执行真实转换或权限审批。"
+      - "`node --experimental-strip-types --test scripts/tests/field-mapping-preview.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F098
+    title: "字段映射预览只读页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/field-mapping` 只读页。"
+      - "页面展示字段映射摘要、模板分组、缺失映射和 no-action 边界。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F099
+    title: "字段映射导航入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["components/app-sidebar.tsx", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "侧边栏字段映射入口进入 `/field-mapping`。"
+      - "`/field-mapping` 路由 active 状态可识别。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F100
+    title: "异常复核状态时间线模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增异常复核状态时间线本地模型，覆盖识别、分派、复核、确认和关闭状态。"
+      - "模型测试覆盖状态顺序、责任人和 deferred actions。"
+      - "不执行真实复核提交、审批、权限或生产公式。"
+      - "`node --experimental-strip-types --test scripts/tests/review-status-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F101
+    title: "异常复核状态时间线只读页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/anomaly-review/timeline` 只读页。"
+      - "页面展示异常闭环状态、责任角色、进入条件和暂不实现动作。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F102
+    title: "异常复核页挂载时间线入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/anomaly-review/page.tsx", "components/app-sidebar.tsx", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "异常复核页提供状态时间线入口。"
+      - "侧边栏履约监控区域可进入 `/anomaly-review/timeline`。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q021
+    title: "导入批次、字段映射和复核时间线 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "导入批次、字段映射和复核时间线页面构建通过。"
+      - "三组模型测试和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
