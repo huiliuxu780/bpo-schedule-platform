@@ -2,6 +2,7 @@ import Link from "next/link"
 
 import { AppShell } from "@/components/app-shell"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -28,7 +29,14 @@ export default function AnomalySourcesPage() {
               本地只读 drilldown，拆解预测排班、排班登录、排班状态、主数据和数据质量来源。
             </p>
           </div>
-          <Badge variant="outline">无真实异常计算</Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/anomaly-triage-readiness">
+                准备口径
+              </Link>
+            </Button>
+            <Badge variant="outline">无真实异常计算</Badge>
+          </div>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">

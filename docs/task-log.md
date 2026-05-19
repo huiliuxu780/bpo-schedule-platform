@@ -973,3 +973,14 @@
 - action: 连续完成预测版本与实际日志对齐准备 10-task 展示批次。
 - status: `done`
 - notes: 新增预测与实际对齐准备本地模型和测试，新增 `/production-mvp/alignment-readiness`、`/production-mvp/alignment-readiness/[stepId]`，并在需求预测、登录/状态、差异对比验收详情、缺口路线图、生产雏形总览、总进度和侧边栏挂载入口；本批不做真实预测导入、真实登录/状态接口、状态码生产映射、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-20
+
+- task_id: `F148-F156/Q027`
+- source_ids:
+  - `R195-R204`
+- story_ids:
+  - `US207-US216`
+- action: 连续完成异常识别与复核准备 10-task 展示批次。
+- status: `done`
+- notes: 新增异常识别与复核准备本地模型和测试，新增 `/production-mvp/anomaly-triage-readiness`、`/production-mvp/anomaly-triage-readiness/[stepId]`，并在异常识别验收详情、异常复核总览、异常来源页、缺口路线图、生产雏形总览、总进度和侧边栏挂载入口；本批不做真实规则引擎、真实复核提交、审批、权限、导出、批量、数据库、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

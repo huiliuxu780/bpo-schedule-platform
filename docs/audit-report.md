@@ -1381,6 +1381,29 @@
 - Browser smoke：`/production-mvp/alignment-readiness`、`/production-mvp/alignment-readiness/forecast-version-readiness`、`/production-mvp/acceptance-checklist/demand-forecast`、`/production-mvp/acceptance-checklist/actual-status`、`/production-mvp/acceptance-checklist/comparison-anomaly`、`/production-mvp/gaps`、`/production-mvp` 均能打开并显示预期主标题，未出现页面错误。
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/alignment-readiness` 和 `/production-mvp/alignment-readiness/[stepId]`）和 25 个后端 unittest。
 
+### 2026-05-20 - Anomaly triage readiness slice
+
+#### 审计结论
+
+- `F148/US207` 已新增异常识别与复核准备本地模型和测试，覆盖异常类型目录、来源证据、分派归因、复核工作流和关闭审计准备步骤。
+- `F149-F150/US208-US209` 已新增 `/production-mvp/anomaly-triage-readiness` 和 `/production-mvp/anomaly-triage-readiness/[stepId]`，展示输入对象、输出物、触发口径、复核字段、依赖、关联缺口、验收主线、证据页、暂缓能力和边界。
+- `F151-F153/US210-US212` 已在异常识别验收详情、异常复核总览和异常来源页挂载异常识别与复核准备入口。
+- `F154-F156/US213-US215` 已在缺口路线图、生产雏形总览、总进度和侧边栏挂载异常识别与复核准备入口。
+- `Q027/US216` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实规则引擎、真实复核提交、审批、权限、导出、批量、数据库、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做准备视图；异常识别与复核步骤来自前端本地模型，不代表真实异常规则引擎、复核工作流、审批权限或审计导出已经上线。
+- 后续如果要做真实异常计算、真实复核提交、审批、权限、导出、批量、数据库、状态规则公式、结算规则或 charge factor，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/production-mvp-anomaly-triage-readiness.test.mjs`：通过，3 个 production MVP anomaly triage readiness model 测试通过。
+- `npm run typecheck`：通过。
+- Local HTTP smoke：`/production-mvp/anomaly-triage-readiness`、`/production-mvp/anomaly-triage-readiness/anomaly-taxonomy-readiness`、`/production-mvp/acceptance-checklist/comparison-anomaly`、`/anomaly-review`、`/anomaly-review/sources`、`/production-mvp/gaps`、`/production-mvp`、`/production-mvp/progress` 均返回 200 并显示预期文案，未出现页面错误。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/anomaly-triage-readiness` 和 `/production-mvp/anomaly-triage-readiness/[stepId]`）和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

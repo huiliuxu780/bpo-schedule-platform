@@ -87,6 +87,12 @@ export default function AnomalyReviewPage() {
                   >
                     状态时间线
                   </Link>
+                  <Link
+                    href="/production-mvp/anomaly-triage-readiness"
+                    className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                  >
+                    准备口径
+                  </Link>
                 </div>
               </div>
             </CardHeader>

@@ -2551,3 +2551,104 @@ acceptance:
   - "缺口路线图展示推荐批次、依赖和暂不建议事项。"
   - "`node --experimental-strip-types --test scripts/tests/production-mvp-gap-roadmap.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US207-US216 - 异常识别与复核准备
+
+```yaml
+stories:
+  - id: US207
+    requirement_ids: [R195]
+    task_ids: [F148]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望异常识别与复核准备有本地模型和测试，以便把异常类型、触发条件、归因字段和复核状态拆成可验收准备步骤。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US208
+    requirement_ids: [R196]
+    task_ids: [F149]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望有异常识别与复核准备总览页，查看各类异常准备事项、推荐顺序和硬边界。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US209
+    requirement_ids: [R197]
+    task_ids: [F150]
+    module: "生产雏形"
+    role: "运营专员"
+    story: "作为运营专员，我希望进入单个异常准备步骤，查看输入、输出、触发口径、复核字段、证据页和暂缓能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US210
+    requirement_ids: [R198]
+    task_ids: [F151]
+    module: "生产雏形"
+    role: "QA"
+    story: "作为 QA，我希望异常识别验收详情能进入异常识别与复核准备步骤，以便从验收项进入后续开发线索。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US211
+    requirement_ids: [R199]
+    task_ids: [F152]
+    module: "异常闭环"
+    role: "运营专员"
+    story: "作为运营专员，我希望异常复核总览页能进入异常识别与复核准备页，以便从当前复核演示进入生产雏形准备口径。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US212
+    requirement_ids: [R200]
+    task_ids: [F153]
+    module: "异常闭环"
+    role: "运营专员"
+    story: "作为运营专员，我希望异常来源页能进入异常识别与复核准备页，以便理解来源链路如何支撑异常归因。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US213
+    requirement_ids: [R201]
+    task_ids: [F154]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望缺口路线图第三批能进入异常识别与复核准备页，以便从路线图继续推进下一批。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US214
+    requirement_ids: [R202]
+    task_ids: [F155]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总览和总进度能进入异常识别与复核准备页，以便从总览视角进入第三批准备。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US215
+    requirement_ids: [R203]
+    task_ids: [F156]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏能直接进入异常识别与复核准备页，以便连续验收不用记 URL。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US216
+    requirement_ids: [R204]
+    task_ids: [Q027]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望异常识别与复核准备批次做收口，确认页面、导航、测试和 no-approval/no-formula 边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常识别与复核准备模型只定义准备步骤，不执行真实规则识别、复核提交、审批或生产公式。"
+  - "总览和步骤详情能说明异常类型、触发口径、复核字段、证据页和暂缓能力。"
+  - "异常识别验收详情、异常复核总览、异常来源页、缺口路线图、生产雏形总览、总进度和侧边栏能进入准备页。"
+  - "`node --experimental-strip-types --test scripts/tests/production-mvp-anomaly-triage-readiness.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

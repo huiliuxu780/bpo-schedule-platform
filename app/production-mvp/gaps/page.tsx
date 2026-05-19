@@ -108,6 +108,13 @@ export default function ProductionMvpGapsPage() {
                       </Link>
                     </Button>
                   ) : null}
+                  {batch.id === "batch-03-workflow-controls" ? (
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="/production-mvp/anomaly-triage-readiness">
+                        异常准备
+                      </Link>
+                    </Button>
+                  ) : null}
                   {batch.dependsOnBatchIds.length > 0 ? (
                     batch.dependsOnBatchIds.map((dependency) => (
                       <Badge key={dependency} variant="secondary">

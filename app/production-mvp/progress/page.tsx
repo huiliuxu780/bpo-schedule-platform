@@ -43,6 +43,11 @@ export default function ProductionMvpProgressPage() {
               </Link>
             </Button>
             <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/anomaly-triage-readiness">
+                异常识别准备
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
               <Link href="/production-mvp/data-foundation">数据底座准备</Link>
             </Button>
             <Button asChild size="sm" variant="outline">

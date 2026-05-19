@@ -944,3 +944,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
+
+### F148-F156 Anomaly Triage Readiness Block
+
+- branch_name: `codex/f148-anomaly-triage-readiness`
+- base_main_commit: `a3a134c`
+- remote_status: `local branch created from pushed forecast actual alignment readiness head because main has not yet integrated the production MVP chain`
+- scope: 10-task local frontend continuation: production MVP anomaly triage readiness model and tests, anomaly readiness overview route, anomaly readiness step detail route, acceptance detail link, anomaly review/source links, gap roadmap/overview/progress/sidebar entries, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, real anomaly rules engine, real review submission, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `lib/production-mvp-anomaly-triage-readiness.ts`, `app/production-mvp/anomaly-triage-readiness/**`, `app/production-mvp/**`, `app/anomaly-review/**`, `components/app-sidebar.tsx`, `scripts/tests/production-mvp-anomaly-triage-readiness.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, real anomaly rules engine, real review submission, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `node --experimental-strip-types --test scripts/tests/production-mvp-anomaly-triage-readiness.test.mjs` passed with 3 tests; `npm run typecheck` passed; local HTTP smoke passed for `/production-mvp/anomaly-triage-readiness`, `/production-mvp/anomaly-triage-readiness/anomaly-taxonomy-readiness`, `/production-mvp/acceptance-checklist/comparison-anomaly`, `/anomaly-review`, `/anomaly-review/sources`, `/production-mvp/gaps`, `/production-mvp`, and `/production-mvp/progress`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed, including strict state check, state-check regression tests, frontend lint, typecheck, Next build with `/production-mvp/anomaly-triage-readiness` and `/production-mvp/anomaly-triage-readiness/[stepId]`, and 25 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`

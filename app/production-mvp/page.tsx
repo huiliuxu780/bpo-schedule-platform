@@ -59,6 +59,11 @@ export default async function ProductionMvpPage() {
               </Link>
             </Button>
             <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/anomaly-triage-readiness">
+                异常识别准备
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
               <Link href="/production-mvp/acceptance-checklist">验收清单</Link>
             </Button>
             <Badge variant="outline">本地只读合同</Badge>
