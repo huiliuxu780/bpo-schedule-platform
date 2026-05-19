@@ -2248,3 +2248,104 @@ acceptance:
   - "生产雏形总进度集中展示已完成本地入口和仍缺生产能力。"
   - "`node --experimental-strip-types --test scripts/tests/data-quality-group-links.test.mjs`、`node --experimental-strip-types --test scripts/tests/production-mvp-progress.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US177-US186 - 缺口优先级和后续批次路线图
+
+```yaml
+stories:
+  - id: US177
+    requirement_ids: [R165]
+    task_ids: [F121]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形缺口有优先级模型和测试，以便把仍缺能力按业务价值和风险排序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US178
+    requirement_ids: [R166]
+    task_ids: [F122]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望有生产雏形缺口总览页，查看每个缺口的优先级、原因和验收入口。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US179
+    requirement_ids: [R167]
+    task_ids: [F123]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望进入单个缺口详情，查看业务目的、后续验收口径和暂不实现边界。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US180
+    requirement_ids: [R168]
+    task_ids: [F124]
+    module: "生产雏形"
+    role: "QA"
+    story: "作为 QA，我希望验收清单详情能跳到相关缺口，以便从验收问题进入后续开发线索。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US181
+    requirement_ids: [R169]
+    task_ids: [F125]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总进度能挂载缺口总览入口，以便从进度页进入后续拆批视角。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US182
+    requirement_ids: [R170]
+    task_ids: [F126]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望后续开发批次建议有本地模型和测试，以便把缺口组织成可执行顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US183
+    requirement_ids: [R171]
+    task_ids: [F127]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望缺口路线图展示推荐批次、依赖和暂不建议事项。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US184
+    requirement_ids: [R172]
+    task_ids: [F128]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏能直接进入生产雏形缺口总览，以便连续验收不需要记 URL。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US185
+    requirement_ids: [R173]
+    task_ids: [F129]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总览页挂载缺口总览入口，以便从合同总览进入后续开发视角。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US186
+    requirement_ids: [R174]
+    task_ids: [Q024]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望对缺口优先级、缺口详情和后续批次路线图做收口，确认页面、导航、测试和边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "缺口总览和详情来自本地模型，不创建真实工单或生产任务。"
+  - "验收清单详情和总进度页能进入相关缺口。"
+  - "缺口路线图展示推荐批次、依赖和暂不建议事项。"
+  - "`node --experimental-strip-types --test scripts/tests/production-mvp-gap-roadmap.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

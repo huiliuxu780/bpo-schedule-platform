@@ -16,6 +16,10 @@ import {
   productionMvpAcceptanceItems,
   productionMvpAcceptanceStatusLabel,
 } from "@/lib/production-mvp-acceptance"
+import {
+  getProductionMvpGapsForAcceptanceItem,
+  productionMvpGapStatusLabel,
+} from "@/lib/production-mvp-gap-roadmap"
 
 type PageProps = {
   params: Promise<{
@@ -38,6 +42,8 @@ export default async function ProductionMvpAcceptanceItemPage({
   if (!item) {
     notFound()
   }
+
+  const relatedGaps = getProductionMvpGapsForAcceptanceItem(item.id)
 
   return (
     <AppShell title={item.title} searchPlaceholder="搜索验收证据或后续缺口">
@@ -125,6 +131,50 @@ export default async function ProductionMvpAcceptanceItemPage({
             </CardContent>
           </Card>
         </section>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex flex-col gap-1">
+                <CardTitle>关联生产缺口</CardTitle>
+                <CardDescription>
+                  这些缺口进入路线图排序，不代表当前批次已经实现。
+                </CardDescription>
+              </div>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/production-mvp/gaps">查看路线图</Link>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-3 lg:grid-cols-2">
+            {relatedGaps.map((gap) => (
+              <div key={gap.id} className="rounded-lg border p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <div className="text-xs text-muted-foreground">
+                      {gap.lane}
+                    </div>
+                    <div className="mt-1 text-sm font-medium">{gap.title}</div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant={gap.priority === "P0" ? "default" : "outline"}>
+                      {gap.priority}
+                    </Badge>
+                    <Badge variant="secondary">
+                      {productionMvpGapStatusLabel(gap.status)}
+                    </Badge>
+                  </div>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {gap.businessPurpose}
+                </p>
+                <Button asChild className="mt-3" size="sm" variant="outline">
+                  <Link href={`/production-mvp/gaps/${gap.id}`}>查看缺口</Link>
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </main>
     </AppShell>
   )

@@ -36,7 +36,12 @@ export default function ProductionMvpProgressPage() {
               集中查看本地已完成入口、验收覆盖状态和仍缺的生产能力。这里仍是只读验收视图，不代表真实生产能力已上线。
             </p>
           </div>
-          <Badge variant="outline">本地进度视图</Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/gaps">生产缺口</Link>
+            </Button>
+            <Badge variant="outline">本地进度视图</Badge>
+          </div>
         </div>
 
         <section className="grid gap-4 md:grid-cols-5">

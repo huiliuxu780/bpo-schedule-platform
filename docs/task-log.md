@@ -940,3 +940,14 @@
 - action: 连续完成质量问题反查分组、验收清单单项详情和生产雏形总进度 10-task 展示批次。
 - status: `done`
 - notes: 新增质量问题到分组的反查模型与测试，数据质量详情展示所属分组，数据质量中心展示分组覆盖摘要；新增验收清单单项详情、生产雏形总进度模型与测试、`/production-mvp/progress` 和侧边栏入口；本批不做真实上传/导入、真实修复、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-19
+
+- task_id: `F121-F129/Q024`
+- source_ids:
+  - `R165-R174`
+- story_ids:
+  - `US177-US186`
+- action: 连续完成生产雏形缺口优先级和后续批次路线图 10-task 展示批次。
+- status: `done`
+- notes: 新增生产雏形缺口优先级与批次路线图本地模型和测试，新增 `/production-mvp/gaps`、`/production-mvp/gaps/[gapId]`，并在验收清单详情、生产雏形总进度、生产雏形总览和侧边栏挂载缺口入口；本批不做真实缺口工单、真实上传/导入、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

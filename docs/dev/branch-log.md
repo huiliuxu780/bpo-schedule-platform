@@ -893,3 +893,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
+
+### F121-F129 Gap Priority Roadmap Block
+
+- branch_name: `codex/f121-gap-priority-roadmap`
+- base_main_commit: `a3a134c`
+- remote_status: `local branch created from pushed quality progress drilldown head because main has not yet integrated the production MVP chain`
+- scope: 10-task local frontend continuation: production MVP gap priority model and tests, gap overview route, gap detail route, acceptance detail gap links, progress/overview/sidebar entries, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `lib/production-mvp-gap-roadmap.ts`, `app/production-mvp/gaps/**`, `app/production-mvp/**`, `components/app-sidebar.tsx`, `scripts/tests/production-mvp-gap-roadmap.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `node --experimental-strip-types --test scripts/tests/production-mvp-gap-roadmap.test.mjs` passed with 3 tests; `npm run typecheck` passed; Browser smoke passed for `/production-mvp/gaps`, `/production-mvp/gaps/upload-import-execution`, `/production-mvp/acceptance-checklist/upload-import`, and `/production-mvp`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed, including strict state check, state-check regression tests, frontend lint, typecheck, Next build with `/production-mvp/gaps` and `/production-mvp/gaps/[gapId]`, and 25 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`

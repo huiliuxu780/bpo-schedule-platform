@@ -4251,6 +4251,153 @@ tasks:
     conflict_risk: low
     stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式"]
     commit_after_done: true
+  - id: F121
+    title: "生产雏形缺口优先级模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增生产雏形缺口优先级本地模型，覆盖业务价值、依赖、实现风险和边界。"
+      - "模型测试覆盖优先级排序、关联验收项和推荐批次。"
+      - "不创建真实缺口工单或生产任务。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F122
+    title: "生产雏形缺口总览页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/production-mvp/gaps` 只读页。"
+      - "页面展示缺口优先级、业务原因、关联验收项和暂不实现边界。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F123
+    title: "生产雏形缺口详情页"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/production-mvp/gaps/[gapId]` 只读详情页。"
+      - "详情页展示业务目的、后续验收口径、依赖和暂缓能力。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F124
+    title: "验收清单详情挂载相关缺口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/acceptance-checklist/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "验收清单详情页展示相关缺口入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F125
+    title: "总进度页挂载缺口总览入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/progress/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "生产雏形总进度页提供 `/production-mvp/gaps` 入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F126
+    title: "后续开发批次建议模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增后续开发批次建议模型，按依赖和业务价值组织缺口。"
+      - "模型测试覆盖批次数量、依赖顺序和暂不建议事项。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F127
+    title: "缺口路线图只读页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "`/production-mvp/gaps` 展示推荐批次、依赖和暂不建议事项。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F128
+    title: "生产雏形缺口导航入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["components/app-sidebar.tsx", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "侧边栏数据与集成区域可进入 `/production-mvp/gaps`。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F129
+    title: "生产雏形总览挂载缺口入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/page.tsx", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "生产雏形总览页提供缺口总览入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q024
+    title: "缺口优先级和路线图 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "缺口总览、缺口详情和路线图页面构建通过。"
+      - "模型测试和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
   - id: F112
     title: "数据质量问题反查分组模型与测试"
     priority: P0

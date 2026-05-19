@@ -1311,6 +1311,30 @@
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 - Browser smoke：`/data-quality/DQ-202605-005`、`/production-mvp/acceptance-checklist/upload-import`、`/production-mvp/progress`、`/production-mvp` 均能打开并显示预期主标题。
 
+### 2026-05-19 - Production MVP gap priority and roadmap slice
+
+#### 审计结论
+
+- `F121/US177` 已新增生产雏形缺口优先级本地模型和测试，覆盖 P0/P1/P2、风险、状态、验收关联和高风险缺口。
+- `F122-F123/US178-US179` 已新增 `/production-mvp/gaps` 和 `/production-mvp/gaps/[gapId]`，展示缺口目的、优先级、风险、推荐批次、证据页、暂缓能力和硬边界。
+- `F124/US180` 已在验收清单单项详情挂载关联生产缺口入口。
+- `F125-F129/US181-US185` 已在生产雏形总进度、生产雏形总览和侧边栏挂载生产缺口入口。
+- `F126-F127/US182-US183` 已新增后续批次路线图，推荐先做数据导入与主数据闭环，再做预测版本与实际日志对齐，最后进入发布、复核、导出与治理边界。
+- `Q024/US186` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实缺口工单、真实上传/导入、数据库、审批、权限、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做路线图和只读入口；缺口优先级、推荐批次和验收关联来自前端本地模型，不代表真实缺口管理系统或生产任务已创建。
+- 后续如果要做真实上传/导入、字段映射保存、主数据 CRUD、真实登录/状态接口、审批、权限、导出、批量、状态规则公式或生产异常计算，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/production-mvp-gap-roadmap.test.mjs`：通过，3 个 production MVP gap roadmap model 测试通过。
+- `npm run typecheck`：通过。
+- Browser smoke：`/production-mvp/gaps`、`/production-mvp/gaps/upload-import-execution`、`/production-mvp/acceptance-checklist/upload-import`、`/production-mvp` 均能打开并显示预期主标题，未出现页面错误。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/gaps` 和 `/production-mvp/gaps/[gapId]`）和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

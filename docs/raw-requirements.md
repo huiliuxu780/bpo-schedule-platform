@@ -1099,6 +1099,47 @@ status: "split"
 notes: "本组只做本地前端只读展示层和模型测试；不实现真实上传、真实导入、真实修复、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
 ```
 
+### R165-R174 - 缺口优先级和后续批次路线图
+
+```yaml
+requirements:
+  - id: R165
+    module: "生产雏形"
+    description: "生产雏形需要缺口优先级本地模型和测试，按业务价值、依赖和实现风险整理仍缺能力。"
+  - id: R166
+    module: "生产雏形"
+    description: "需要生产雏形缺口总览页，展示缺口优先级、业务原因、关联验收项和暂不实现边界。"
+  - id: R167
+    module: "生产雏形"
+    description: "需要生产雏形缺口详情页，展示单个缺口的业务目的、后续验收口径、依赖和暂缓能力。"
+  - id: R168
+    module: "生产雏形"
+    description: "验收清单详情页需要挂载相关缺口入口，使验收问题可进入后续开发线索。"
+  - id: R169
+    module: "生产雏形"
+    description: "生产雏形总进度页需要挂载缺口总览入口，使进度页能进入后续拆批视角。"
+  - id: R170
+    module: "生产雏形"
+    description: "生产雏形需要后续开发批次建议本地模型和测试，把缺口组织成推荐开发顺序。"
+  - id: R171
+    module: "生产雏形"
+    description: "需要缺口路线图只读页面，展示推荐批次、依赖、包含缺口和暂不建议事项。"
+  - id: R172
+    module: "导航"
+    description: "侧边栏需要生产雏形缺口总览入口，方便本地连续验收。"
+  - id: R173
+    module: "生产雏形"
+    description: "生产雏形总览页需要挂载缺口总览入口，方便从合同总览进入后续开发视角。"
+  - id: R174
+    module: "质量与交付"
+    description: "缺口优先级、缺口详情和后续批次路线图完成后需要 QA 收口，确认测试、页面、导航、current 清理和 no-database 边界均可验证。"
+source: "PM requested continued production MVP development on 2026-05-19"
+submitted_at: "2026-05-19"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示层和模型测试；不创建真实缺口工单，不实现真实上传/导入、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R155-R164 - 质量反查、验收缺口 drilldown 和生产雏形总进度
 
 ```yaml
