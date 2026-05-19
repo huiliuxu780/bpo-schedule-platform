@@ -2004,3 +2004,24 @@ acceptance:
   - "页面明确无真实修复、无审批、无权限、无导出、无批量、无生产公式。"
   - "`node --experimental-strip-types --test scripts/tests/person-timeline.test.mjs`、`node --experimental-strip-types --test scripts/tests/demand-forecast-contract.test.mjs`、`node --experimental-strip-types --test scripts/tests/master-data-relations.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US137-US146 - 班次类型、导入模板和异常来源 drilldown
+
+```yaml
+stories:
+  - {id: US137, requirement_ids: [R125], task_ids: [F085], module: "班次类型", role: "排班运营", story: "作为排班运营，我希望班次类型有本地模型和测试，以便确认人员级排班如何引用班次代码、休息和饭点。", task_type: "frontend", priority: "P0", status: "ready"}
+  - {id: US138, requirement_ids: [R126], task_ids: [F086], module: "班次类型", role: "排班运营", story: "作为排班运营，我希望有班次类型只读页，查看班次字段、适用项目、时长和暂不实现边界。", task_type: "frontend", priority: "P0", status: "ready"}
+  - {id: US139, requirement_ids: [R127], task_ids: [F087], module: "导航", role: "PM", story: "作为 PM，我希望侧边栏能直接进入班次类型，以便本地验收时不需要记 URL。", task_type: "frontend", priority: "P1", status: "ready"}
+  - {id: US140, requirement_ids: [R128], task_ids: [F088], module: "导入模板", role: "数据管理员", story: "作为数据管理员，我希望导入模板有本地模型和测试，以便确认第一期到底要上传哪些表。", task_type: "frontend", priority: "P0", status: "ready"}
+  - {id: US141, requirement_ids: [R129], task_ids: [F089], module: "导入模板", role: "数据管理员", story: "作为数据管理员，我希望有导入模板只读页，查看每张模板的字段、主键、校验和暂不实现动作。", task_type: "frontend", priority: "P0", status: "ready"}
+  - {id: US142, requirement_ids: [R130], task_ids: [F090], module: "导航", role: "PM", story: "作为 PM，我希望侧边栏能直接进入导入模板，以便验收上传/导入准备口径。", task_type: "frontend", priority: "P1", status: "ready"}
+  - {id: US143, requirement_ids: [R131], task_ids: [F091], module: "异常闭环", role: "现场主管", story: "作为现场主管，我希望异常来源有本地模型和测试，以便知道每类异常来自哪些输入和对齐键。", task_type: "frontend", priority: "P0", status: "ready"}
+  - {id: US144, requirement_ids: [R132], task_ids: [F092], module: "异常闭环", role: "现场主管", story: "作为现场主管，我希望有异常来源总览页，按来源查看触发条件、追溯键和处理边界。", task_type: "frontend", priority: "P0", status: "ready"}
+  - {id: US145, requirement_ids: [R133], task_ids: [F093], module: "异常闭环", role: "PM", story: "作为 PM，我希望能从异常复核页进入异常来源详情，查看来源解释和暂不实现范围。", task_type: "frontend", priority: "P1", status: "ready"}
+  - {id: US146, requirement_ids: [R134], task_ids: [Q020], module: "质量与交付", role: "QA", story: "作为 QA，我希望对班次类型、导入模板和异常来源做验收收口，确认页面、导航、测试和边界未越界。", task_type: "qa", priority: "P1", status: "ready"}
+acceptance:
+  - "班次类型展示来自本地模型，不执行班次规则计算、排班生成或主数据 CRUD。"
+  - "导入模板展示本地字段和校验口径，不执行真实上传、导入、批量或修复。"
+  - "异常来源展示本地解释和追溯键，不执行真实异常计算、复核提交、审批或权限。"
+  - "`node --experimental-strip-types --test scripts/tests/shift-type-catalog.test.mjs`、`node --experimental-strip-types --test scripts/tests/import-template-guide.test.mjs`、`node --experimental-strip-types --test scripts/tests/anomaly-source-drilldown.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

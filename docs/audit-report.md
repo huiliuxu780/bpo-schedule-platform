@@ -1208,6 +1208,32 @@
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 - 本地 HTTP smoke：`/person-timeline`、`/person-timeline/A-1002`、`/production-mvp/demand-forecast`、`/master-data-relations`、`/production-mvp` 均返回 200。
 
+### 2026-05-19 - Shift type, import template, and anomaly source slice
+
+#### 审计结论
+
+- `F085/US137` 已新增班次类型本地模型和测试，覆盖班次代码、时长、休息/饭点、适用范围和状态。
+- `F086-F087/US138-US139` 已新增 `/shift-types` 只读页面和侧边栏入口。
+- `F088-F090/US140-US142` 已新增导入模板模型、测试、`/import-templates` 页面和侧边栏入口。
+- `F091-F093/US143-US145` 已新增异常来源模型、测试、`/anomaly-review/sources` 总览页、`/anomaly-review/sources/[sourceId]` 详情页，并在异常复核页挂载来源入口。
+- `Q020/US146` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实导入、数据库、主数据 CRUD、班次规则计算、审批、权限、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做本地只读入口；班次类型、导入模板和异常来源来自前端本地模型，不代表真实导入模板下载、导入校验器、数据库关系、班次规则引擎或异常计算器。
+- 后续如果要做真实上传/导入、字段映射保存、主数据 CRUD、班次规则、审批、权限、导出、批量或生产异常计算，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/shift-type-catalog.test.mjs`：通过，3 个 shift type catalog model 测试通过。
+- `node --experimental-strip-types --test scripts/tests/import-template-guide.test.mjs`：通过，3 个 import template guide model 测试通过。
+- `node --experimental-strip-types --test scripts/tests/anomaly-source-drilldown.test.mjs`：通过，2 个 anomaly source drilldown model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+- 本地 HTTP smoke：`/shift-types`、`/import-templates`、`/anomaly-review/sources`、`/anomaly-review/sources/schedule_login`、`/anomaly-review` 均返回 200。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

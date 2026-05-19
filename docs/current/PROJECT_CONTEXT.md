@@ -63,4 +63,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US127/F076 -> US136/Q019` completed the personnel timeline, demand forecast contract, and master-data relationship slice: local model tests, `/person-timeline`, `/person-timeline/[employeeId]`, `/production-mvp/demand-forecast`, `/master-data-relations`, sidebar entries, production MVP overview links, route smoke, and QA closeout. Current queue is empty again.
 
-Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from shift type configuration visibility, data import template guidance, or anomaly source drilldown. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.
+`US137/F085 -> US146/Q020` completed the shift type, import template, and anomaly source slice: local model tests, `/shift-types`, `/import-templates`, `/anomaly-review/sources`, `/anomaly-review/sources/[sourceId]`, sidebar entries, anomaly review source link, route smoke, and QA closeout. Current queue is empty again.
+
+Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from import batch history, template field mapping preview, or exception review status timeline. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.

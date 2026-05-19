@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import { AppShell } from "@/components/app-shell"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -65,10 +67,20 @@ export default function AnomalyReviewPage() {
         <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
           <Card>
             <CardHeader>
-              <CardTitle>异常来源分布</CardTitle>
-              <CardDescription>
-                对应 PRD 中预测、排班、登录、状态、主数据和数据质量口径。
-              </CardDescription>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="flex flex-col gap-1">
+                  <CardTitle>异常来源分布</CardTitle>
+                  <CardDescription>
+                    对应 PRD 中预测、排班、登录、状态、主数据和数据质量口径。
+                  </CardDescription>
+                </div>
+                <Link
+                  href="/anomaly-review/sources"
+                  className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+                >
+                  查看来源
+                </Link>
+              </div>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
               {Object.entries(summary.sourceCounts).map(([source, count]) => (

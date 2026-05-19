@@ -84,6 +84,7 @@ Current invariants:
 - `F064-F066/Q017` completed an anomaly review read-only slice: local anomaly review model, model test, `/anomaly-review` page, sidebar entry, and QA closeout. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F067-F075/Q018` completed an import-contract drilldown and data-quality center slice: three production MVP contract drilldown pages, local data-quality model, `/data-quality`, `/data-quality/[issueId]`, sidebar entry, and QA closeout. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F076-F084/Q019` completed a personnel timeline, demand forecast contract, and master-data relationship slice: local model tests, `/person-timeline`, `/person-timeline/[employeeId]`, `/production-mvp/demand-forecast`, `/master-data-relations`, sidebar entries, route smoke, and QA closeout. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F085-F093/Q020` completed a shift type, import template, and anomaly source slice: local model tests, `/shift-types`, `/import-templates`, `/anomaly-review/sources`, `/anomaly-review/sources/[sourceId]`, sidebar entries, anomaly review source link, route smoke, and QA closeout. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

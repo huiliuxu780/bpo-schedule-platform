@@ -1015,3 +1015,24 @@ version: "1.0"
 status: "split"
 notes: "本组只做本地前端只读展示层和模型测试；不实现真实导入、数据库、权限、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
 ```
+
+### R125-R134 - 班次类型、导入模板和异常来源 drilldown
+
+```yaml
+requirements:
+  - {id: R125, module: "班次类型", description: "生产雏形需要班次类型本地模型和测试，展示班次代码、时长、休息/饭点、适用项目和状态。"}
+  - {id: R126, module: "班次类型", description: "需要班次类型只读页，用于验收人员级排班如何引用班次类型。"}
+  - {id: R127, module: "导航", description: "侧边栏需要班次类型入口，方便从计划与排班直接验收。"}
+  - {id: R128, module: "导入模板", description: "生产雏形需要导入模板本地模型和测试，覆盖主数据、人员排班、需求预测、登录日志和状态日志模板。"}
+  - {id: R129, module: "导入模板", description: "需要导入模板只读页，展示模板字段、主键、校验和暂不实现动作。"}
+  - {id: R130, module: "导航", description: "侧边栏需要导入模板入口，方便本地验收上传/导入准备情况。"}
+  - {id: R131, module: "异常闭环", description: "生产雏形需要异常来源 drilldown 本地模型和测试，按预测排班、排班登录、排班状态、主数据和数据质量拆解。"}
+  - {id: R132, module: "异常闭环", description: "需要异常来源总览页，展示每类来源的触发条件、输入对象、追溯键和暂不实现边界。"}
+  - {id: R133, module: "异常闭环", description: "需要异常来源详情页，并从异常复核页挂载入口，方便 PM 查看来源解释。"}
+  - {id: R134, module: "质量与交付", description: "班次类型、导入模板和异常来源完成后需要 QA 收口，确认模型测试、页面、导航、current 清理和 no-database 边界均可验证。"}
+source: "PM requested continued production MVP development on 2026-05-19"
+submitted_at: "2026-05-19"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示层和模型测试；不实现真实导入、数据库、主数据 CRUD、班次规则计算、权限、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```

@@ -896,3 +896,14 @@
 - action: 连续完成人员时间轴、需求预测合同和主数据关系 10-task 展示批次。
 - status: `done`
 - notes: 新增人员双时间轴模型与测试、需求预测合同模型与测试、主数据关系模型与测试、`/person-timeline`、`/person-timeline/[employeeId]`、`/production-mvp/demand-forecast`、`/master-data-relations` 和侧边栏入口；本批不做真实导入、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-19
+
+- task_id: `F085-F093/Q020`
+- source_ids:
+  - `R125-R134`
+- story_ids:
+  - `US137-US146`
+- action: 连续完成班次类型、导入模板和异常来源 10-task 展示批次。
+- status: `done`
+- notes: 新增班次类型模型与测试、导入模板模型与测试、异常来源模型与测试、`/shift-types`、`/import-templates`、`/anomaly-review/sources`、`/anomaly-review/sources/[sourceId]` 和侧边栏入口；本批不做真实导入、数据库、主数据 CRUD、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

@@ -825,3 +825,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
+
+### F085-F093 Shift Template Anomaly Source Block
+
+- branch_name: `codex/f085-shift-template-anomaly-source`
+- base_main_commit: `f001871`
+- remote_status: `local branch created from pushed personnel timeline demand relations head because main has not yet integrated the production MVP chain`
+- scope: 10-task local frontend continuation: shift type model and route, import template model and route, anomaly source model and routes, sidebar entries, anomaly review source link, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `lib/shift-type-catalog.ts`, `lib/import-template-guide.ts`, `lib/anomaly-source-drilldown.ts`, `app/shift-types/**`, `app/import-templates/**`, `app/anomaly-review/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `node --experimental-strip-types --test scripts/tests/shift-type-catalog.test.mjs` passed with 3 tests; `node --experimental-strip-types --test scripts/tests/import-template-guide.test.mjs` passed with 3 tests; `node --experimental-strip-types --test scripts/tests/anomaly-source-drilldown.test.mjs` passed with 2 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check.sh` passed; local HTTP smoke returned 200 for `/shift-types`, `/import-templates`, `/anomaly-review/sources`, `/anomaly-review/sources/schedule_login`, and `/anomaly-review`.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`
