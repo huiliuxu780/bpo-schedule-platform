@@ -1099,6 +1099,47 @@ status: "split"
 notes: "本组只做本地前端只读展示层和模型测试；不实现真实上传、真实导入、真实修复、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
 ```
 
+### R175-R184 - 数据导入与主数据闭环准备
+
+```yaml
+requirements:
+  - id: R175
+    module: "生产雏形"
+    description: "生产雏形需要数据底座准备本地模型和测试，把上传/导入、字段映射和主数据闭环拆成可验收准备步骤。"
+  - id: R176
+    module: "生产雏形"
+    description: "需要数据底座准备总览页，展示第一批数据闭环准备事项、推荐顺序、依赖和硬边界。"
+  - id: R177
+    module: "生产雏形"
+    description: "需要数据底座准备步骤详情页，展示单个步骤的输入、输出、依赖、验收口径、证据页和暂缓能力。"
+  - id: R178
+    module: "生产雏形"
+    description: "上传/导入验收详情需要进入数据底座准备步骤，承接下一批数据导入准备范围。"
+  - id: R179
+    module: "生产雏形"
+    description: "主数据验收详情需要进入数据底座准备步骤，说明坐席、职场、供应商和绑定关系闭环前置条件。"
+  - id: R180
+    module: "生产雏形"
+    description: "缺口路线图的推荐下一批需要进入数据底座准备页，帮助从缺口优先级进入执行准备视角。"
+  - id: R181
+    module: "生产雏形"
+    description: "生产雏形总览页需要挂载数据底座准备入口，帮助从合同总览进入第一批数据闭环准备。"
+  - id: R182
+    module: "生产雏形"
+    description: "生产雏形总进度页需要挂载数据底座准备入口，帮助从进度视图进入推荐下一批。"
+  - id: R183
+    module: "导航"
+    description: "侧边栏需要数据底座准备入口，方便本地连续验收。"
+  - id: R184
+    module: "质量与交付"
+    description: "数据底座准备批次完成后需要 QA 收口，确认测试、页面、导航、current 清理和 no-database 边界均可验证。"
+source: "PM approved continuing the recommended production MVP roadmap batch on 2026-05-19"
+submitted_at: "2026-05-19"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示层和模型测试；不实现真实上传/导入、字段映射保存、主数据 CRUD、冻结解冻、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R165-R174 - 缺口优先级和后续批次路线图
 
 ```yaml

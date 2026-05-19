@@ -38,6 +38,9 @@ export default function ProductionMvpProgressPage() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/data-foundation">数据底座准备</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
               <Link href="/production-mvp/gaps">生产缺口</Link>
             </Button>
             <Badge variant="outline">本地进度视图</Badge>

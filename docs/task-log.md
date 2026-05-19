@@ -951,3 +951,14 @@
 - action: 连续完成生产雏形缺口优先级和后续批次路线图 10-task 展示批次。
 - status: `done`
 - notes: 新增生产雏形缺口优先级与批次路线图本地模型和测试，新增 `/production-mvp/gaps`、`/production-mvp/gaps/[gapId]`，并在验收清单详情、生产雏形总进度、生产雏形总览和侧边栏挂载缺口入口；本批不做真实缺口工单、真实上传/导入、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-19
+
+- task_id: `F130-F138/Q025`
+- source_ids:
+  - `R175-R184`
+- story_ids:
+  - `US187-US196`
+- action: 连续完成数据导入与主数据闭环准备 10-task 展示批次。
+- status: `done`
+- notes: 新增数据底座准备本地模型和测试，新增 `/production-mvp/data-foundation`、`/production-mvp/data-foundation/[stepId]`，并在上传/导入验收详情、主数据验收详情、缺口路线图、生产雏形总览、生产雏形总进度和侧边栏挂载入口；本批不做真实上传/导入、字段映射保存、主数据 CRUD、冻结解冻、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

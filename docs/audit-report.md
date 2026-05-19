@@ -1335,6 +1335,29 @@
 - Browser smoke：`/production-mvp/gaps`、`/production-mvp/gaps/upload-import-execution`、`/production-mvp/acceptance-checklist/upload-import`、`/production-mvp` 均能打开并显示预期主标题，未出现页面错误。
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/gaps` 和 `/production-mvp/gaps/[gapId]`）和 25 个后端 unittest。
 
+### 2026-05-19 - Data foundation readiness slice
+
+#### 审计结论
+
+- `F130/US187` 已新增数据底座准备本地模型和测试，覆盖导入执行、字段映射、主数据维护、绑定关系冻结解冻和数据质量追溯准备步骤。
+- `F131-F132/US188-US189` 已新增 `/production-mvp/data-foundation` 和 `/production-mvp/data-foundation/[stepId]`，展示输入对象、输出物、依赖、关联缺口、验收主线、证据页、暂缓能力和边界。
+- `F133-F134/US190-US191` 已在上传/导入验收详情和主数据验收详情挂载相关数据底座准备步骤。
+- `F135-F138/US192-US195` 已在缺口路线图、生产雏形总览、生产雏形总进度和侧边栏挂载数据底座准备入口。
+- `Q025/US196` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实上传/导入、字段映射保存、主数据 CRUD、冻结解冻、数据库、审批、权限、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做准备视图；数据底座步骤来自前端本地模型，不代表真实上传服务、导入执行器、字段映射持久化、主数据维护或冻结解冻已经上线。
+- 后续如果要做真实上传/导入、失败行修复、字段映射保存、主数据 CRUD、冻结解冻、数据库、权限、审批、导出、批量、状态规则公式或生产异常计算，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/production-mvp-data-foundation.test.mjs`：通过，3 个 production MVP data foundation model 测试通过。
+- `npm run typecheck`：通过。
+- Browser smoke：`/production-mvp/data-foundation`、`/production-mvp/data-foundation/import-execution-readiness`、`/production-mvp/acceptance-checklist/upload-import`、`/production-mvp/acceptance-checklist/master-data`、`/production-mvp/gaps`、`/production-mvp` 均能打开并显示预期主标题，未出现页面错误。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/data-foundation` 和 `/production-mvp/data-foundation/[stepId]`）和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

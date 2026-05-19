@@ -2249,6 +2249,107 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/data-quality-group-links.test.mjs`、`node --experimental-strip-types --test scripts/tests/production-mvp-progress.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
 
+### US187-US196 - 数据导入与主数据闭环准备
+
+```yaml
+stories:
+  - id: US187
+    requirement_ids: [R175]
+    task_ids: [F130]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望数据底座准备有本地模型和测试，以便把上传/导入、字段映射和主数据闭环拆成可验收准备步骤。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US188
+    requirement_ids: [R176]
+    task_ids: [F131]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望有数据底座准备总览页，查看第一批数据闭环准备事项、顺序和硬边界。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US189
+    requirement_ids: [R177]
+    task_ids: [F132]
+    module: "生产雏形"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望进入单个数据底座准备步骤，查看输入、输出、依赖、验收口径和暂缓能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US190
+    requirement_ids: [R178]
+    task_ids: [F133]
+    module: "生产雏形"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望上传/导入验收详情能进入数据底座准备步骤，以便从验收项进入下一批准备范围。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US191
+    requirement_ids: [R179]
+    task_ids: [F134]
+    module: "生产雏形"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望主数据验收详情能进入数据底座准备步骤，以便确认坐席、职场、供应商和绑定关系的闭环前置条件。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US192
+    requirement_ids: [R180]
+    task_ids: [F135]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望缺口路线图的推荐下一批能进入数据底座准备页，以便从路线图进入执行准备视角。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US193
+    requirement_ids: [R181]
+    task_ids: [F136]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总览页能进入数据底座准备页，以便从合同总览进入第一批数据闭环准备。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US194
+    requirement_ids: [R182]
+    task_ids: [F137]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总进度页能进入数据底座准备页，以便从进度视图进入推荐下一批。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US195
+    requirement_ids: [R183]
+    task_ids: [F138]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏能直接进入数据底座准备页，以便连续验收不用记 URL。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US196
+    requirement_ids: [R184]
+    task_ids: [Q025]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望数据底座准备批次做收口，确认页面、导航、测试和 no-database 边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据底座准备模型只定义后续准备步骤，不执行真实上传、导入、CRUD、冻结解冻或写库。"
+  - "总览和步骤详情能说明输入、输出、依赖、验收口径、证据页和暂缓能力。"
+  - "上传/导入验收详情、主数据验收详情、缺口路线图、生产雏形总览、总进度和侧边栏能进入数据底座准备页。"
+  - "`node --experimental-strip-types --test scripts/tests/production-mvp-data-foundation.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US177-US186 - 缺口优先级和后续批次路线图
 
 ```yaml

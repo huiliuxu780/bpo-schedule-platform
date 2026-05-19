@@ -51,6 +51,9 @@ export default async function ProductionMvpPage() {
               <Link href="/production-mvp/gaps">生产缺口</Link>
             </Button>
             <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/data-foundation">数据底座准备</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
               <Link href="/production-mvp/acceptance-checklist">验收清单</Link>
             </Button>
             <Badge variant="outline">本地只读合同</Badge>

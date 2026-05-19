@@ -59,7 +59,12 @@ export default function ProductionMvpGapsPage() {
                 <CardTitle>推荐下一批</CardTitle>
                 <CardDescription>{nextBatch.recommendedReason}</CardDescription>
               </div>
-              <Badge variant="secondary">{nextBatch.title}</Badge>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/production-mvp/data-foundation">数据底座准备</Link>
+                </Button>
+                <Badge variant="secondary">{nextBatch.title}</Badge>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="grid gap-3 lg:grid-cols-3">
