@@ -3793,3 +3793,297 @@ tasks:
       - "需要后端契约变更、数据库或真实外部集成"
       - "需要权限、审批、导出、批量或生产公式"
     commit_after_done: true
+  - id: F076
+    title: "人员双时间轴本地模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增人员时间轴本地类型、fallback、筛选和摘要模型。"
+      - "模型测试覆盖人员数量、异常数量、登录缺口和事件筛选。"
+      - "不接真实登录、状态系统或数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F077
+    title: "人员时间轴总览只读页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/person-timeline` 只读页。"
+      - "页面展示员工时间轴摘要、异常数量、排班/登录/状态时长和 no-action 边界。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F078
+    title: "人员时间轴详情页"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/person-timeline/[employeeId]` 只读详情页。"
+      - "详情页展示单个员工的排班、登录、状态事件和异常标记。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F079
+    title: "人员时间轴导航入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "侧边栏人员时间轴入口进入 `/person-timeline`。"
+      - "`/person-timeline` 路由 active 状态可识别。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F080
+    title: "需求预测导入合同模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增需求预测导入合同本地模型。"
+      - "模型测试覆盖 0.5h 粒度、字段、必填字段、校验规则和 deferred actions。"
+      - "不接真实预测系统或导入服务。"
+      - "`node --experimental-strip-types --test scripts/tests/demand-forecast-contract.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F081
+    title: "需求预测导入合同 drilldown 页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/production-mvp/demand-forecast` 只读页。"
+      - "页面展示预测字段、主键、校验规则、技能组/等级和暂不实现动作。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F082
+    title: "生产雏形总览挂载需求预测入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/production-mvp/page.tsx"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/production-mvp` 总览页提供需求预测合同入口。"
+      - "入口文案明确本地只读预测合同边界。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F083
+    title: "主数据关系本地模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "lib/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增主数据关系本地节点、边、摘要模型。"
+      - "模型测试覆盖节点数、绑定关系、缺失关系和支撑业务流。"
+      - "不实现主数据 CRUD、冻结解冻或数据库。"
+      - "`node --experimental-strip-types --test scripts/tests/master-data-relations.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: F084
+    title: "主数据关系只读页与导航入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files:
+      - "app/**"
+      - "components/app-sidebar.tsx"
+      - "lib/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/master-data-relations` 只读页。"
+      - "侧边栏主数据关系入口进入新页面并可高亮。"
+      - "页面明确不做主数据 CRUD、冻结解冻、审批、导出或批量。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+      - "验证失败"
+    commit_after_done: true
+  - id: Q019
+    title: "人员时间轴、预测合同和主数据关系 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "人员时间轴、需求预测合同和主数据关系页面构建通过。"
+      - "三组模型测试和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端契约变更、数据库或真实外部集成"
+      - "需要权限、审批、导出、批量或生产公式"
+    commit_after_done: true

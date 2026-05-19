@@ -104,6 +104,22 @@ export default async function ProductionMvpPage() {
                 </div>
               </div>
             ))}
+            <div className="rounded-lg border border-dashed p-3">
+              <div className="flex min-h-24 flex-col justify-between gap-3">
+                <div>
+                  <div className="text-sm font-medium">需求预测导入合同</div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    独立验收 0.5h 预测需求、技能组、等级和预测人数口径。
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <Badge variant="secondary">0.5h 预测需求</Badge>
+                  <Button asChild size="sm" variant="outline">
+                    <Link href="/production-mvp/demand-forecast">查看详情</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

@@ -885,3 +885,14 @@
 - action: 连续完成导入合同 drilldown 与数据质量中心 10-task 展示批次。
 - status: `done`
 - notes: 新增导入合同 drilldown 模型与测试、数据质量模型与测试、三个生产雏形合同 drilldown 页面、`/data-quality`、`/data-quality/[issueId]` 和侧边栏数据质量入口；本批不做真实导入、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-19
+
+- task_id: `F076-F084/Q019`
+- source_ids:
+  - `R115-R124`
+- story_ids:
+  - `US127-US136`
+- action: 连续完成人员时间轴、需求预测合同和主数据关系 10-task 展示批次。
+- status: `done`
+- notes: 新增人员双时间轴模型与测试、需求预测合同模型与测试、主数据关系模型与测试、`/person-timeline`、`/person-timeline/[employeeId]`、`/production-mvp/demand-forecast`、`/master-data-relations` 和侧边栏入口；本批不做真实导入、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

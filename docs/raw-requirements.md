@@ -974,3 +974,44 @@ version: "1.0"
 status: "split"
 notes: "本组只做本地前端只读展示层和模型测试；不实现真实导入、数据库、权限、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
 ```
+
+### R115-R124 - 人员时间轴、需求预测合同和主数据关系
+
+```yaml
+requirements:
+  - id: R115
+    module: "人员时间轴"
+    description: "生产雏形需要人员级双时间轴本地模型和测试，能并列展示人员排班、登录会话、状态日志和异常标记。"
+  - id: R116
+    module: "人员时间轴"
+    description: "需要人员时间轴总览只读页，按员工展示计划时长、登录时长、状态时长和异常数量。"
+  - id: R117
+    module: "人员时间轴"
+    description: "需要人员时间轴详情页，展示单个员工的排班、登录和状态事件，并说明 no-action 边界。"
+  - id: R118
+    module: "导航"
+    description: "侧边栏需要人员时间轴入口，方便从履约监控直接验收人员级对齐。"
+  - id: R119
+    module: "需求预测"
+    description: "需要独立需求预测导入合同模型和测试，覆盖 0.5h 时段、职场、项目、技能组、等级和预测人数。"
+  - id: R120
+    module: "需求预测"
+    description: "需要需求预测导入合同只读 drilldown 页，展示字段、主键、校验规则和暂不实现范围。"
+  - id: R121
+    module: "生产雏形"
+    description: "生产雏形总览页需要挂载需求预测合同入口，使预测需求不再只隐藏在履约对比合同中。"
+  - id: R122
+    module: "主数据"
+    description: "需要主数据关系本地模型和测试，展示坐席、供应商、职场、项目、绑定关系和班次类型之间的依赖。"
+  - id: R123
+    module: "主数据"
+    description: "需要主数据关系只读页和导航入口，用于验收绑定关系如何支撑排班、预测和履约对比。"
+  - id: R124
+    module: "质量与交付"
+    description: "人员时间轴、需求预测合同和主数据关系完成后需要 QA 收口，确认模型测试、页面、导航、current 清理和 no-database 边界均可验证。"
+source: "PM requested continued production MVP development on 2026-05-19"
+submitted_at: "2026-05-19"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示层和模型测试；不实现真实导入、数据库、权限、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```

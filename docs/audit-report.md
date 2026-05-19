@@ -1182,6 +1182,32 @@
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 - 本地 HTTP smoke：`/production-mvp`、`/production-mvp/master-data`、`/production-mvp/personnel-schedules`、`/production-mvp/fulfillment-comparison`、`/data-quality`、`/data-quality/DQ-202605-004` 均返回 200。
 
+### 2026-05-19 - Personnel timeline, demand forecast, and master-data relations slice
+
+#### 审计结论
+
+- `F076/US127` 已新增人员双时间轴本地模型和测试，覆盖人员级排班、登录、状态和异常事件汇总。
+- `F077-F079/US128-US130` 已新增 `/person-timeline` 总览页、`/person-timeline/[employeeId]` 详情页和侧边栏入口。
+- `F080-F082/US131-US133` 已新增需求预测合同模型、测试、`/production-mvp/demand-forecast` 页面，并在 `/production-mvp` 总览页挂载入口。
+- `F083-F084/US134-US135` 已新增主数据关系模型、测试、`/master-data-relations` 页面和侧边栏入口。
+- `Q019/US136` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实导入、数据库、审批、权限、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做本地只读入口；人员时间轴、需求预测和主数据关系来自前端本地模型，不代表真实导入校验、数据库关系、排班计算、复核提交或权限边界。
+- 后续如果要做真实导入、主数据 CRUD、班次规则、审批、权限、导出、批量或生产异常计算，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/person-timeline.test.mjs`：通过，3 个 personnel timeline model 测试通过。
+- `node --experimental-strip-types --test scripts/tests/demand-forecast-contract.test.mjs`：通过，2 个 demand forecast contract model 测试通过。
+- `node --experimental-strip-types --test scripts/tests/master-data-relations.test.mjs`：通过，2 个 master-data relations model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+- 本地 HTTP smoke：`/person-timeline`、`/person-timeline/A-1002`、`/production-mvp/demand-forecast`、`/master-data-relations`、`/production-mvp` 均返回 200。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

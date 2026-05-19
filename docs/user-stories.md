@@ -1982,3 +1982,25 @@ acceptance:
   - "页面明确无真实修复、无审批、无权限、无导出、无批量、无生产公式。"
   - "`node --experimental-strip-types --test scripts/tests/import-drilldown.test.mjs`、`node --experimental-strip-types --test scripts/tests/data-quality.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US127-US136 - 人员时间轴、需求预测合同和主数据关系
+
+```yaml
+stories:
+  - {id: US127, requirement_ids: [R115], task_ids: [F076], module: "人员时间轴", role: "现场主管", story: "作为现场主管，我希望人员级双时间轴有本地模型和测试，以便能对齐排班、登录、状态和异常。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US128, requirement_ids: [R116], task_ids: [F077], module: "人员时间轴", role: "现场主管", story: "作为现场主管，我希望有人员时间轴总览只读页，查看每个员工的计划时长、登录时长、状态时长和异常数量。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US129, requirement_ids: [R117], task_ids: [F078], module: "人员时间轴", role: "现场主管", story: "作为现场主管，我希望进入单个员工时间轴详情，查看排班、登录和状态事件的对齐情况。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US130, requirement_ids: [R118], task_ids: [F079], module: "导航", role: "PM", story: "作为 PM，我希望侧边栏能直接进入人员时间轴，以便验收人员级对齐能力。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US131, requirement_ids: [R119], task_ids: [F080], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望需求预测导入合同有本地模型和测试，明确 0.5h 时段、技能组和等级字段。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US132, requirement_ids: [R120], task_ids: [F081], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望进入需求预测导入合同页，查看字段、主键、校验规则和暂不实现范围。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US133, requirement_ids: [R121], task_ids: [F082], module: "生产雏形", role: "PM", story: "作为 PM，我希望生产雏形总览页直接提供需求预测合同入口，以便预测需求可以独立验收。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US134, requirement_ids: [R122], task_ids: [F083], module: "主数据", role: "数据管理员", story: "作为数据管理员，我希望主数据关系有本地模型和测试，确认坐席、供应商、职场、项目、绑定和班次类型的依赖。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US135, requirement_ids: [R123], task_ids: [F084], module: "主数据", role: "数据管理员", story: "作为数据管理员，我希望有主数据关系只读页和入口，以便验收主数据如何支撑排班和履约对比。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US136, requirement_ids: [R124], task_ids: [Q019], module: "质量与交付", role: "QA", story: "作为 QA，我希望对人员时间轴、需求预测合同和主数据关系做验收收口，确认页面、导航、测试和边界未越界。", task_type: "qa", priority: "P1", status: "done"}
+acceptance:
+  - "人员时间轴展示来自本地 fallback 模型，不接真实登录或状态系统。"
+  - "需求预测合同展示本地导入字段和校验规则，不执行真实导入。"
+  - "主数据关系展示本地关系图谱，不执行主数据 CRUD 或冻结解冻。"
+  - "页面明确无真实修复、无审批、无权限、无导出、无批量、无生产公式。"
+  - "`node --experimental-strip-types --test scripts/tests/person-timeline.test.mjs`、`node --experimental-strip-types --test scripts/tests/demand-forecast-contract.test.mjs`、`node --experimental-strip-types --test scripts/tests/master-data-relations.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

@@ -808,3 +808,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
+
+### F076-F084 Personnel Timeline Demand Relations Block
+
+- branch_name: `codex/f076-timeline-demand-relations`
+- base_main_commit: `3d2a717`
+- remote_status: `local branch created from pushed import drilldown and data quality head because main has not yet integrated the production MVP chain`
+- scope: 10-task local frontend continuation: personnel timeline model and routes, demand forecast contract model and route, production MVP overview link, master-data relations model and route, sidebar entries, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `lib/person-timeline.ts`, `lib/demand-forecast-contract.ts`, `lib/master-data-relations.ts`, `app/person-timeline/**`, `app/production-mvp/demand-forecast/**`, `app/master-data-relations/**`, `app/production-mvp/page.tsx`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `node --experimental-strip-types --test scripts/tests/person-timeline.test.mjs` passed with 3 tests; `node --experimental-strip-types --test scripts/tests/demand-forecast-contract.test.mjs` passed with 2 tests; `node --experimental-strip-types --test scripts/tests/master-data-relations.test.mjs` passed with 2 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check.sh` passed; local HTTP smoke returned 200 for `/person-timeline`, `/person-timeline/A-1002`, `/production-mvp/demand-forecast`, `/master-data-relations`, and `/production-mvp`.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`

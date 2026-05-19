@@ -68,6 +68,7 @@ const nav: NavGroup[] = [
       { title: "异常管理", href: "/dashboard", badge: "12" },
       { title: "实时遵守率", href: "/dashboard", tag: "P1" },
       { title: "异常复核", href: "/anomaly-review", activeMatch: "exact", tag: "新" },
+      { title: "人员时间轴", href: "/person-timeline", activeMatch: "prefix", tag: "新" },
     ],
   },
   {
@@ -92,6 +93,7 @@ const nav: NavGroup[] = [
       { title: "字段映射", href: "/dashboard", tag: "P1" },
       { title: "接口集成", href: "/dashboard", tag: "P1" },
       { title: "数据质量", href: "/data-quality", activeMatch: "prefix", tag: "新" },
+      { title: "主数据关系", href: "/master-data-relations", activeMatch: "exact", tag: "新" },
     ],
   },
   {

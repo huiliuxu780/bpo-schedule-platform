@@ -61,4 +61,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US117/F067 -> US126/Q018` completed the import-contract drilldown and data-quality center slice: local drilldown model, data-quality model, three production MVP contract drilldown pages, `/data-quality`, `/data-quality/[issueId]`, sidebar entry, and QA closeout. Current queue is empty again.
 
-Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from personal timeline read-only views, demand forecast import drilldown, or master-data relationship map. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.
+`US127/F076 -> US136/Q019` completed the personnel timeline, demand forecast contract, and master-data relationship slice: local model tests, `/person-timeline`, `/person-timeline/[employeeId]`, `/production-mvp/demand-forecast`, `/master-data-relations`, sidebar entries, production MVP overview links, route smoke, and QA closeout. Current queue is empty again.
+
+Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from shift type configuration visibility, data import template guidance, or anomaly source drilldown. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.
