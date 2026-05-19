@@ -1358,6 +1358,29 @@
 - Browser smoke：`/production-mvp/data-foundation`、`/production-mvp/data-foundation/import-execution-readiness`、`/production-mvp/acceptance-checklist/upload-import`、`/production-mvp/acceptance-checklist/master-data`、`/production-mvp/gaps`、`/production-mvp` 均能打开并显示预期主标题，未出现页面错误。
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/data-foundation` 和 `/production-mvp/data-foundation/[stepId]`）和 25 个后端 unittest。
 
+### 2026-05-20 - Forecast and actual alignment readiness slice
+
+#### 审计结论
+
+- `F139/US197` 已新增预测与实际对齐准备本地模型和测试，覆盖预测版本、登录日志、状态日志、状态码映射和对比基准准备步骤。
+- `F140-F141/US198-US199` 已新增 `/production-mvp/alignment-readiness` 和 `/production-mvp/alignment-readiness/[stepId]`，展示输入对象、输出物、依赖、关联缺口、验收主线、证据页、暂缓能力和边界。
+- `F142-F144/US200-US202` 已在需求预测、登录/状态、差异对比验收详情挂载相关对齐准备步骤。
+- `F145-F147/US203-US205` 已在缺口路线图、生产雏形总览、总进度和侧边栏挂载预测与实际对齐准备入口。
+- `Q026/US206` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实预测导入、真实登录/状态接口、状态码生产映射、数据库、审批、权限、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做准备视图；预测与实际对齐步骤来自前端本地模型，不代表真实预测导入、登录/状态系统接入、生产状态码映射或异常计算已经上线。
+- 后续如果要做真实预测导入、真实登录/状态接口、状态码映射、状态规则公式、数据库、权限、审批、导出、批量或生产异常计算，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/production-mvp-alignment-readiness.test.mjs`：通过，3 个 production MVP alignment readiness model 测试通过。
+- `npm run typecheck`：通过。
+- Browser smoke：`/production-mvp/alignment-readiness`、`/production-mvp/alignment-readiness/forecast-version-readiness`、`/production-mvp/acceptance-checklist/demand-forecast`、`/production-mvp/acceptance-checklist/actual-status`、`/production-mvp/acceptance-checklist/comparison-anomaly`、`/production-mvp/gaps`、`/production-mvp` 均能打开并显示预期主标题，未出现页面错误。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/alignment-readiness` 和 `/production-mvp/alignment-readiness/[stepId]`）和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

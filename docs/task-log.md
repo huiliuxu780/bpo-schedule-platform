@@ -962,3 +962,14 @@
 - action: 连续完成数据导入与主数据闭环准备 10-task 展示批次。
 - status: `done`
 - notes: 新增数据底座准备本地模型和测试，新增 `/production-mvp/data-foundation`、`/production-mvp/data-foundation/[stepId]`，并在上传/导入验收详情、主数据验收详情、缺口路线图、生产雏形总览、生产雏形总进度和侧边栏挂载入口；本批不做真实上传/导入、字段映射保存、主数据 CRUD、冻结解冻、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-20
+
+- task_id: `F139-F147/Q026`
+- source_ids:
+  - `R185-R194`
+- story_ids:
+  - `US197-US206`
+- action: 连续完成预测版本与实际日志对齐准备 10-task 展示批次。
+- status: `done`
+- notes: 新增预测与实际对齐准备本地模型和测试，新增 `/production-mvp/alignment-readiness`、`/production-mvp/alignment-readiness/[stepId]`，并在需求预测、登录/状态、差异对比验收详情、缺口路线图、生产雏形总览、总进度和侧边栏挂载入口；本批不做真实预测导入、真实登录/状态接口、状态码生产映射、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

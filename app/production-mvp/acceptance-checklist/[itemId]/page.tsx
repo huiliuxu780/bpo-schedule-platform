@@ -24,6 +24,10 @@ import {
   getProductionMvpDataFoundationStepsForAcceptanceItem,
   productionMvpDataFoundationStatusLabel,
 } from "@/lib/production-mvp-data-foundation"
+import {
+  getProductionMvpAlignmentReadinessStepsForAcceptanceItem,
+  productionMvpAlignmentReadinessStatusLabel,
+} from "@/lib/production-mvp-alignment-readiness"
 
 type PageProps = {
   params: Promise<{
@@ -50,6 +54,8 @@ export default async function ProductionMvpAcceptanceItemPage({
   const relatedGaps = getProductionMvpGapsForAcceptanceItem(item.id)
   const dataFoundationSteps =
     getProductionMvpDataFoundationStepsForAcceptanceItem(item.id)
+  const alignmentReadinessSteps =
+    getProductionMvpAlignmentReadinessStepsForAcceptanceItem(item.id)
 
   return (
     <AppShell title={item.title} searchPlaceholder="搜索验收证据或后续缺口">
@@ -224,6 +230,59 @@ export default async function ProductionMvpAcceptanceItemPage({
                   </p>
                   <Button asChild className="mt-3" size="sm" variant="outline">
                     <Link href={`/production-mvp/data-foundation/${step.id}`}>
+                      查看步骤
+                    </Link>
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {alignmentReadinessSteps.length > 0 ? (
+          <Card>
+            <CardHeader>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="flex flex-col gap-1">
+                  <CardTitle>预测与实际对齐准备</CardTitle>
+                  <CardDescription>
+                    这些准备步骤承接路线图第二批，当前仍不接真实接口。
+                  </CardDescription>
+                </div>
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/production-mvp/alignment-readiness">
+                    查看准备总览
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-3 lg:grid-cols-2">
+              {alignmentReadinessSteps.map((step) => (
+                <div key={step.id} className="rounded-lg border p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <div className="text-xs text-muted-foreground">
+                        Step {step.sequence} · {step.lane}
+                      </div>
+                      <div className="mt-1 text-sm font-medium">
+                        {step.title}
+                      </div>
+                    </div>
+                    <Badge
+                      variant={
+                        step.status === "ready_to_plan"
+                          ? "secondary"
+                          : "outline"
+                      }
+                    >
+                      {productionMvpAlignmentReadinessStatusLabel(step.status)}
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {step.goal}
+                  </p>
+                  <Button asChild className="mt-3" size="sm" variant="outline">
+                    <Link href={`/production-mvp/alignment-readiness/${step.id}`}>
                       查看步骤
                     </Link>
                   </Button>

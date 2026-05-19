@@ -54,6 +54,11 @@ export default async function ProductionMvpPage() {
               <Link href="/production-mvp/data-foundation">数据底座准备</Link>
             </Button>
             <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/alignment-readiness">
+                预测与实际对齐
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
               <Link href="/production-mvp/acceptance-checklist">验收清单</Link>
             </Button>
             <Badge variant="outline">本地只读合同</Badge>

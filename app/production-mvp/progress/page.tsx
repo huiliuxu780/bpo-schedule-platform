@@ -38,6 +38,11 @@ export default function ProductionMvpProgressPage() {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/alignment-readiness">
+                预测与实际对齐
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
               <Link href="/production-mvp/data-foundation">数据底座准备</Link>
             </Button>
             <Button asChild size="sm" variant="outline">

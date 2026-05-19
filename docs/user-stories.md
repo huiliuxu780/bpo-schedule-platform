@@ -2249,6 +2249,107 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/data-quality-group-links.test.mjs`、`node --experimental-strip-types --test scripts/tests/production-mvp-progress.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
 
+### US197-US206 - 预测版本与实际日志对齐准备
+
+```yaml
+stories:
+  - id: US197
+    requirement_ids: [R185]
+    task_ids: [F139]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望预测版本与实际日志对齐有本地模型和测试，以便把第二批对齐准备拆成可验收步骤。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US198
+    requirement_ids: [R186]
+    task_ids: [F140]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望有预测与实际对齐准备总览页，查看预测版本、登录日志、状态日志和对比基准的准备顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US199
+    requirement_ids: [R187]
+    task_ids: [F141]
+    module: "生产雏形"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望进入单个对齐准备步骤，查看输入、输出、依赖、验收口径和暂缓能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US200
+    requirement_ids: [R188]
+    task_ids: [F142]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望需求预测验收详情能进入对齐准备步骤，以便确认预测版本和调整记录前置条件。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US201
+    requirement_ids: [R189]
+    task_ids: [F143]
+    module: "生产雏形"
+    role: "现场主管"
+    story: "作为现场主管，我希望登录/状态验收详情能进入对齐准备步骤，以便确认实际日志接入和状态映射边界。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US202
+    requirement_ids: [R190]
+    task_ids: [F144]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望差异对比验收详情能进入对齐准备步骤，以便从异常识别回到预测、排班、登录和状态的基准条件。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US203
+    requirement_ids: [R191]
+    task_ids: [F145]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望缺口路线图第二批能进入对齐准备页，以便从路线图继续推进下一批。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US204
+    requirement_ids: [R192]
+    task_ids: [F146]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总览和总进度能进入对齐准备页，以便从总览视角进入第二批准备。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US205
+    requirement_ids: [R193]
+    task_ids: [F147]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏能直接进入预测与实际对齐准备页，以便连续验收不用记 URL。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US206
+    requirement_ids: [R194]
+    task_ids: [Q026]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望预测与实际对齐准备批次做收口，确认页面、导航、测试和 no-integration 边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "预测与实际对齐准备模型只定义准备步骤，不接真实预测、登录或状态接口。"
+  - "总览和步骤详情能说明输入、输出、依赖、验收口径、证据页和暂缓能力。"
+  - "需求预测、登录/状态、差异对比验收详情、缺口路线图、生产雏形总览、总进度和侧边栏能进入对齐准备页。"
+  - "`node --experimental-strip-types --test scripts/tests/production-mvp-alignment-readiness.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US187-US196 - 数据导入与主数据闭环准备
 
 ```yaml

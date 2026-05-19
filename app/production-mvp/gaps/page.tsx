@@ -101,6 +101,13 @@ export default function ProductionMvpGapsPage() {
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">{batch.goal}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
+                  {batch.id === "batch-02-actual-alignment" ? (
+                    <Button asChild size="sm" variant="outline">
+                      <Link href="/production-mvp/alignment-readiness">
+                        对齐准备
+                      </Link>
+                    </Button>
+                  ) : null}
                   {batch.dependsOnBatchIds.length > 0 ? (
                     batch.dependsOnBatchIds.map((dependency) => (
                       <Badge key={dependency} variant="secondary">

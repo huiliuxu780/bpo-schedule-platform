@@ -4251,6 +4251,153 @@ tasks:
     conflict_risk: low
     stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量或生产公式"]
     commit_after_done: true
+  - id: F139
+    title: "预测与实际对齐准备模型与测试"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增预测与实际对齐准备本地模型，覆盖预测版本、登录日志、状态日志、对比基准和质量追溯步骤。"
+      - "模型测试覆盖步骤顺序、关联验收项、暂缓能力和 no-integration 边界。"
+      - "不接真实预测、登录或状态接口，不实现状态码生产映射或公式。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F140
+    title: "预测与实际对齐准备总览页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/production-mvp/alignment-readiness` 只读页。"
+      - "页面展示预测版本、登录日志、状态日志和对比基准准备步骤。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F141
+    title: "预测与实际对齐准备步骤详情页"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "新增 `/production-mvp/alignment-readiness/[stepId]` 只读详情页。"
+      - "详情页展示输入、输出、依赖、验收口径、证据页和暂缓能力。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F142
+    title: "需求预测验收详情挂载对齐准备"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/acceptance-checklist/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "需求预测验收详情页展示相关对齐准备步骤入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F143
+    title: "登录状态验收详情挂载对齐准备"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/acceptance-checklist/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "登录/状态验收详情页展示相关对齐准备步骤入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F144
+    title: "差异对比验收详情挂载对齐准备"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/acceptance-checklist/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "差异对比验收详情页展示相关对齐准备步骤入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F145
+    title: "缺口路线图挂载第二批对齐准备入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/gaps/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "缺口路线图第二批区域提供 `/production-mvp/alignment-readiness` 入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F146
+    title: "生产雏形总览和总进度挂载对齐准备入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/production-mvp/page.tsx", "app/production-mvp/progress/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "生产雏形总览和总进度页提供预测与实际对齐准备入口。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F147
+    title: "预测与实际对齐准备导航入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["components/app-sidebar.tsx", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "侧边栏数据与集成区域可进入 `/production-mvp/alignment-readiness`。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q026
+    title: "预测与实际对齐准备 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "预测与实际对齐准备总览、步骤详情和入口构建通过。"
+      - "模型测试和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要真实预测导入、登录/状态接口、状态码生产映射或公式实现", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
+
   - id: F130
     title: "数据底座准备模型与测试"
     priority: P0
