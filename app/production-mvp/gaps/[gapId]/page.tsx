@@ -17,6 +17,10 @@ import {
   productionMvpGapStatusLabel,
   productionMvpGaps,
 } from "@/lib/production-mvp-gap-roadmap"
+import {
+  getProductionMvpGovernanceReadinessStepsForGap,
+  productionMvpGovernanceReadinessStatusLabel,
+} from "@/lib/production-mvp-governance-readiness"
 
 type PageProps = {
   params: Promise<{
@@ -39,6 +43,8 @@ export default async function ProductionMvpGapPage({ params }: PageProps) {
   }
 
   const batch = getRoadmapBatch(gap.proposedBatchId)
+  const governanceReadinessSteps =
+    getProductionMvpGovernanceReadinessStepsForGap(gap.id)
 
   return (
     <AppShell title={gap.title} searchPlaceholder="搜索缺口、验收项或边界">
@@ -121,6 +127,59 @@ export default async function ProductionMvpGapPage({ params }: PageProps) {
           <TagCard title="证据页" values={gap.evidenceRoutes} routePrefix="" />
           <TagCard title="暂缓能力" values={gap.deferredCapabilities} />
         </section>
+
+        {governanceReadinessSteps.length > 0 ? (
+          <Card>
+            <CardHeader>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="flex flex-col gap-1">
+                  <CardTitle>治理边界准备</CardTitle>
+                  <CardDescription>
+                    这些准备步骤说明该缺口进入生产治理前还需要哪些独立 Gate。
+                  </CardDescription>
+                </div>
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/production-mvp/governance-readiness">
+                    查看准备总览
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-3 lg:grid-cols-2">
+              {governanceReadinessSteps.map((step) => (
+                <div key={step.id} className="rounded-lg border p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <div className="text-xs text-muted-foreground">
+                        Step {step.sequence} · {step.lane}
+                      </div>
+                      <div className="mt-1 text-sm font-medium">
+                        {step.title}
+                      </div>
+                    </div>
+                    <Badge
+                      variant={
+                        step.status === "ready_to_plan"
+                          ? "secondary"
+                          : "outline"
+                      }
+                    >
+                      {productionMvpGovernanceReadinessStatusLabel(step.status)}
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {step.goal}
+                  </p>
+                  <Button asChild className="mt-3" size="sm" variant="outline">
+                    <Link href={`/production-mvp/governance-readiness/${step.id}`}>
+                      查看步骤
+                    </Link>
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        ) : null}
       </main>
     </AppShell>
   )

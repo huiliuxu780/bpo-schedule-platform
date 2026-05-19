@@ -2652,3 +2652,104 @@ acceptance:
   - "异常识别验收详情、异常复核总览、异常来源页、缺口路线图、生产雏形总览、总进度和侧边栏能进入准备页。"
   - "`node --experimental-strip-types --test scripts/tests/production-mvp-anomaly-triage-readiness.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US217-US226 - 发布冻结与权限审计边界准备
+
+```yaml
+stories:
+  - id: US217
+    requirement_ids: [R205]
+    task_ids: [F157]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望发布冻结与权限审计边界准备有本地模型和测试，以便把发布态、冻结解冻、权限边界、审计留痕和导出批量暂缓拆成可验收准备步骤。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US218
+    requirement_ids: [R206]
+    task_ids: [F158]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望有发布冻结与权限审计边界准备总览页，查看治理边界准备事项、推荐顺序和硬停条件。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US219
+    requirement_ids: [R207]
+    task_ids: [F159]
+    module: "生产雏形"
+    role: "运营负责人"
+    story: "作为运营负责人，我希望进入单个治理准备步骤，查看输入、输出、触发条件、控制字段、证据页和暂缓能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US220
+    requirement_ids: [R208]
+    task_ids: [F160]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望排班发布审批缺口详情能进入治理边界准备步骤，以便从缺口进入发布态和冻结口径准备。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US221
+    requirement_ids: [R209]
+    task_ids: [F161]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望权限审计缺口详情能进入治理边界准备步骤，以便清楚权限、审计、导出和批量硬边界。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US222
+    requirement_ids: [R210]
+    task_ids: [F162]
+    module: "生产雏形"
+    role: "QA"
+    story: "作为 QA，我希望人员排班和主数据验收详情能进入治理边界准备页，以便确认发布、冻结和有效期能力仍是后续 Gate。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US223
+    requirement_ids: [R211]
+    task_ids: [F163]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望缺口路线图第三批能进入发布冻结与权限审计边界准备页，以便从路线图继续推进治理边界。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US224
+    requirement_ids: [R212]
+    task_ids: [F164]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总览和总进度能进入治理边界准备页，以便从总览视角进入后续治理能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US225
+    requirement_ids: [R213]
+    task_ids: [F165]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏能直接进入发布冻结与权限审计边界准备页，以便连续验收不用记 URL。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US226
+    requirement_ids: [R214]
+    task_ids: [Q028]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望发布冻结与权限审计边界准备批次做收口，确认页面、导航、测试和 no-approval/no-permission/no-export 边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "治理准备模型只定义准备步骤，不执行真实发布、审批、权限、审计写入、导出或批量。"
+  - "总览和步骤详情能说明触发条件、控制字段、证据页、暂缓能力和硬停边界。"
+  - "发布审批缺口、权限审计缺口、人员排班验收、主数据验收、缺口路线图、生产雏形总览、总进度和侧边栏能进入准备页。"
+  - "`node --experimental-strip-types --test scripts/tests/production-mvp-governance-readiness.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

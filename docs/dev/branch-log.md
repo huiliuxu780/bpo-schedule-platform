@@ -961,3 +961,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
+
+### F157-F165 Governance Readiness Block
+
+- branch_name: `codex/f157-governance-readiness`
+- base_main_commit: `a3a134c`
+- remote_status: `local branch created from pushed anomaly triage readiness head because main has not yet integrated the production MVP chain`
+- scope: 10-task local frontend continuation: production MVP governance readiness model and tests, governance overview route, governance step detail route, gap detail links, acceptance detail links, gap roadmap/overview/progress/sidebar entries, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, real release, approval, permission implementation, audit writing, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `lib/production-mvp-governance-readiness.ts`, `app/production-mvp/governance-readiness/**`, `app/production-mvp/**`, `components/app-sidebar.tsx`, `scripts/tests/production-mvp-governance-readiness.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, real release, approval, permission implementation, audit writing, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `bash scripts/check.sh` passed; includes strict state check, state-check regression tests, frontend lint, typecheck, Next build with `/production-mvp/governance-readiness` routes, and backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`

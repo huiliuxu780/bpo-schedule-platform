@@ -984,3 +984,14 @@
 - action: 连续完成异常识别与复核准备 10-task 展示批次。
 - status: `done`
 - notes: 新增异常识别与复核准备本地模型和测试，新增 `/production-mvp/anomaly-triage-readiness`、`/production-mvp/anomaly-triage-readiness/[stepId]`，并在异常识别验收详情、异常复核总览、异常来源页、缺口路线图、生产雏形总览、总进度和侧边栏挂载入口；本批不做真实规则引擎、真实复核提交、审批、权限、导出、批量、数据库、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-20
+
+- task_id: `F157-F165/Q028`
+- source_ids:
+  - `R205-R214`
+- story_ids:
+  - `US217-US226`
+- action: 连续完成发布冻结与权限审计边界准备 10-task 展示批次。
+- status: `done`
+- notes: 新增发布冻结与权限审计边界准备本地模型和测试，新增 `/production-mvp/governance-readiness`、`/production-mvp/governance-readiness/[stepId]`，并在排班发布审批缺口、权限审计缺口、人员排班验收、主数据验收、缺口路线图、生产雏形总览、总进度和侧边栏挂载入口；本批不做真实发布、审批、权限、审计写入、导出、批量、数据库、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

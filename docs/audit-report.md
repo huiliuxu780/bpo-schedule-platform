@@ -1404,6 +1404,29 @@
 - Local HTTP smoke：`/production-mvp/anomaly-triage-readiness`、`/production-mvp/anomaly-triage-readiness/anomaly-taxonomy-readiness`、`/production-mvp/acceptance-checklist/comparison-anomaly`、`/anomaly-review`、`/anomaly-review/sources`、`/production-mvp/gaps`、`/production-mvp`、`/production-mvp/progress` 均返回 200 并显示预期文案，未出现页面错误。
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/anomaly-triage-readiness` 和 `/production-mvp/anomaly-triage-readiness/[stepId]`）和 25 个后端 unittest。
 
+### 2026-05-20 - Governance readiness slice
+
+#### 审计结论
+
+- `F157/US217` 已新增发布冻结与权限审计边界准备本地模型和测试，覆盖排班发布态、冻结解冻、权限边界、审计留痕、导出批量暂缓准备步骤。
+- `F158-F159/US218-US219` 已新增 `/production-mvp/governance-readiness` 和 `/production-mvp/governance-readiness/[stepId]`，展示输入对象、输出物、触发条件、控制字段、依赖、关联缺口、验收主线、证据页、暂缓能力和边界。
+- `F160-F162/US220-US222` 已在排班发布审批缺口、权限审计缺口、人员排班验收和主数据验收详情挂载治理边界准备入口。
+- `F163-F165/US223-US225` 已在缺口路线图、生产雏形总览、总进度和侧边栏挂载治理边界准备入口。
+- `Q028/US226` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实发布、审批、权限、审计写入、导出、批量、数据库、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做准备视图；治理步骤来自前端本地模型，不代表真实发布流、审批流、权限体系、审计写入、导出或批量能力已经上线。
+- 后续如果要做真实发布、审批、权限、审计写入、导出、批量、数据库、状态规则公式、结算规则或 charge factor，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/production-mvp-governance-readiness.test.mjs`：通过，3 个 production MVP governance readiness model 测试通过。
+- `npm run typecheck`：通过。
+- Local HTTP smoke：`/production-mvp/governance-readiness`、`/production-mvp/governance-readiness/schedule-release-state-readiness`、`/production-mvp/gaps/schedule-publish-approval`、`/production-mvp/gaps/permission-audit-boundary`、`/production-mvp/acceptance-checklist/personnel-schedule`、`/production-mvp/acceptance-checklist/master-data`、`/production-mvp/gaps`、`/production-mvp`、`/production-mvp/progress` 均返回 200 并显示预期文案，未出现页面错误。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build（含 `/production-mvp/governance-readiness` 和 `/production-mvp/governance-readiness/[stepId]`）和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

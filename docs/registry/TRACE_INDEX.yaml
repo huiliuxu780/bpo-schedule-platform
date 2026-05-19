@@ -670,6 +670,16 @@ requirements:
   R202: {file: "docs/raw-requirements.md", story_ids: ["US214"], task_ids: ["F155"]}
   R203: {file: "docs/raw-requirements.md", story_ids: ["US215"], task_ids: ["F156"]}
   R204: {file: "docs/raw-requirements.md", story_ids: ["US216"], task_ids: ["Q027"]}
+  R205: {file: "docs/raw-requirements.md", story_ids: ["US217"], task_ids: ["F157"]}
+  R206: {file: "docs/raw-requirements.md", story_ids: ["US218"], task_ids: ["F158"]}
+  R207: {file: "docs/raw-requirements.md", story_ids: ["US219"], task_ids: ["F159"]}
+  R208: {file: "docs/raw-requirements.md", story_ids: ["US220"], task_ids: ["F160"]}
+  R209: {file: "docs/raw-requirements.md", story_ids: ["US221"], task_ids: ["F161"]}
+  R210: {file: "docs/raw-requirements.md", story_ids: ["US222"], task_ids: ["F162"]}
+  R211: {file: "docs/raw-requirements.md", story_ids: ["US223"], task_ids: ["F163"]}
+  R212: {file: "docs/raw-requirements.md", story_ids: ["US224"], task_ids: ["F164"]}
+  R213: {file: "docs/raw-requirements.md", story_ids: ["US225"], task_ids: ["F165"]}
+  R214: {file: "docs/raw-requirements.md", story_ids: ["US226"], task_ids: ["Q028"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

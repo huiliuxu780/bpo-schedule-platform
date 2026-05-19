@@ -32,6 +32,10 @@ import {
   getProductionMvpAnomalyTriageReadinessStepsForAcceptanceItem,
   productionMvpAnomalyTriageReadinessStatusLabel,
 } from "@/lib/production-mvp-anomaly-triage-readiness"
+import {
+  getProductionMvpGovernanceReadinessStepsForAcceptanceItem,
+  productionMvpGovernanceReadinessStatusLabel,
+} from "@/lib/production-mvp-governance-readiness"
 
 type PageProps = {
   params: Promise<{
@@ -62,6 +66,8 @@ export default async function ProductionMvpAcceptanceItemPage({
     getProductionMvpAlignmentReadinessStepsForAcceptanceItem(item.id)
   const anomalyTriageReadinessSteps =
     getProductionMvpAnomalyTriageReadinessStepsForAcceptanceItem(item.id)
+  const governanceReadinessSteps =
+    getProductionMvpGovernanceReadinessStepsForAcceptanceItem(item.id)
 
   return (
     <AppShell title={item.title} searchPlaceholder="搜索验收证据或后续缺口">
@@ -346,6 +352,59 @@ export default async function ProductionMvpAcceptanceItemPage({
                     <Link
                       href={`/production-mvp/anomaly-triage-readiness/${step.id}`}
                     >
+                      查看步骤
+                    </Link>
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {governanceReadinessSteps.length > 0 ? (
+          <Card>
+            <CardHeader>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="flex flex-col gap-1">
+                  <CardTitle>治理边界准备</CardTitle>
+                  <CardDescription>
+                    这些准备步骤承接发布、冻结、权限和审计边界，当前仍不执行真实治理动作。
+                  </CardDescription>
+                </div>
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/production-mvp/governance-readiness">
+                    查看准备总览
+                  </Link>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-3 lg:grid-cols-2">
+              {governanceReadinessSteps.map((step) => (
+                <div key={step.id} className="rounded-lg border p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <div className="text-xs text-muted-foreground">
+                        Step {step.sequence} · {step.lane}
+                      </div>
+                      <div className="mt-1 text-sm font-medium">
+                        {step.title}
+                      </div>
+                    </div>
+                    <Badge
+                      variant={
+                        step.status === "ready_to_plan"
+                          ? "secondary"
+                          : "outline"
+                      }
+                    >
+                      {productionMvpGovernanceReadinessStatusLabel(step.status)}
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {step.goal}
+                  </p>
+                  <Button asChild className="mt-3" size="sm" variant="outline">
+                    <Link href={`/production-mvp/governance-readiness/${step.id}`}>
                       查看步骤
                     </Link>
                   </Button>

@@ -48,6 +48,11 @@ export default function ProductionMvpProgressPage() {
               </Link>
             </Button>
             <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/governance-readiness">
+                治理边界准备
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
               <Link href="/production-mvp/data-foundation">数据底座准备</Link>
             </Button>
             <Button asChild size="sm" variant="outline">
