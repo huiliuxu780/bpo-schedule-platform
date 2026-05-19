@@ -681,6 +681,7 @@ requirements:
   R213: {file: "docs/raw-requirements.md", story_ids: ["US225"], task_ids: ["F165"]}
   R214: {file: "docs/raw-requirements.md", story_ids: ["US226"], task_ids: ["Q028"]}
   R215: {file: "docs/raw-requirements.md", story_ids: ["US227"], task_ids: ["F166"]}
+  R216: {file: "docs/raw-requirements.md", story_ids: ["US228"], task_ids: ["F167"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

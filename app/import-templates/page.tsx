@@ -32,16 +32,16 @@ export default function ImportTemplatesPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">导入模板</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读入口，用于回答第一期到底要上传哪些表、每张表有哪些字段和校验口径。
+              统一查看导入对象、字段、主键和校验规则，支撑批次导入前的模板检查。
             </p>
           </div>
-          <Badge variant="outline">无真实上传</Badge>
+          <Badge variant="outline">模板规范</Badge>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
-          <Metric title="模板数" value={`${summary.total}`} description="第一阶段上传对象" />
+          <Metric title="模板数" value={`${summary.total}`} description="上传对象" />
           <Metric title="必填字段" value={`${summary.totalRequiredFields}`} description="跨模板合计" />
-          <Metric title="校验规则" value={`${summary.totalValidationRules}`} description="本地说明口径" />
+          <Metric title="校验规则" value={`${summary.totalValidationRules}`} description="字段规则" />
           <Metric title="模板类型" value={`${summary.templateKinds.length}`} description="稳定 kind key" />
         </section>
 
@@ -97,21 +97,6 @@ export default function ImportTemplatesPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-            <CardDescription>
-              本页不触发上传、导入、修复、审批或权限流程。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {summary.deferredActions.map((item) => (
-              <Badge key={item} variant="secondary">
-                {item}
-              </Badge>
-            ))}
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

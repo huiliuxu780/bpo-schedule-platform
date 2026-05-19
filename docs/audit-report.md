@@ -1453,6 +1453,28 @@
 - `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`：通过，Next route list 已不包含 `/production-mvp/**`。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build（路由列表不包含 `/production-mvp/**`）和 25 个后端 unittest。
 
+### 2026-05-20 - Product UI copy and person timeline fix
+
+#### 审计结论
+
+- `F167/US228` 已完成全量产品页面文案审计，`app/**` 和 `components/**` 不再暴露暂不实现、待开发动作、本地只读、只读演示、无真实、PRD、验收、Gate、No Database 等内部执行口径。
+- 已清理异常复核、异常来源、复核时间线、数据质量、质量分组、质量问题详情、导入批次详情、排班计划详情、风险详情、不可用详情和复核链路组件中的内部记录式文案。
+- 人员时间轴列表已改为人员日历入口；人员详情页已改为某员工某天的排班、登录、状态三条横向甘特式轨道。
+- 本次没有新增页面，没有改 `/production-mvp/**`，没有新增依赖、后端、数据库、真实外部数据接入、权限、审批、导出、批量或生产公式。
+
+#### 风险
+
+- 这次是产品语义和信息架构修复，不代表真实登录系统、状态系统、复核提交流程或生产异常规则已经上线。
+- 后续新增页面必须先确认 UI 方案或由 PM 提供设计稿，再进入用户故事和 Gate。
+
+#### 验证
+
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/person-timeline.test.mjs`：通过，6 个测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- In-app browser smoke：`/dashboard`、`/anomaly-review`、`/person-timeline`、`/person-timeline/A-1001?date=2026-05-11` 均加载成功，未出现内部执行口径；人员详情页包含排班轨道、登录轨道和状态轨道。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

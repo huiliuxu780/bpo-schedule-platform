@@ -47,14 +47,14 @@ export default function AnomalyReviewPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">异常复核</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读入口，用于查看异常、归因、负责人和复核口径。
+              查看异常、归因、负责人和复核进度，优先处理影响履约的异常。
             </p>
           </div>
-          <Badge variant="outline">只读演示</Badge>
+          <Badge variant="outline">复核队列</Badge>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
-          <SummaryCard title="异常总数" value={`${summary.total}`} description="本地样例口径" />
+          <SummaryCard title="异常总数" value={`${summary.total}`} description="当前范围" />
           <SummaryCard title="待复核" value={`${summary.pending}`} description="需要人工确认" />
           <SummaryCard title="高严重度" value={`${summary.highSeverity}`} description="优先处理池" />
           <SummaryCard
@@ -64,14 +64,14 @@ export default function AnomalyReviewPage() {
           />
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+        <section className="grid gap-4">
           <Card>
             <CardHeader>
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex flex-col gap-1">
                   <CardTitle>异常来源分布</CardTitle>
                   <CardDescription>
-                    对应 PRD 中预测、排班、登录、状态、主数据和数据质量口径。
+                    按预测排班、排班登录、排班状态、主数据和数据质量归类。
                   </CardDescription>
                 </div>
                 <div className="flex flex-wrap gap-3">
@@ -109,18 +109,6 @@ export default function AnomalyReviewPage() {
               ))}
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>暂不实现动作</CardTitle>
-              <CardDescription>
-                本批只提供复核视图，不产生处理流、权限边界或生产计算结果。
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <BadgeList values={summary.deferredActions} />
-            </CardContent>
-          </Card>
         </section>
 
         <Card>
@@ -129,7 +117,7 @@ export default function AnomalyReviewPage() {
               <div className="flex flex-col gap-1">
                 <CardTitle>待复核优先项</CardTitle>
                 <CardDescription>
-                  先暴露异常解释和建议，不实现提交、批量处理或审批。
+                  按影响范围和严重度排序，方便运营优先处理。
                 </CardDescription>
               </div>
               <Badge variant="secondary">{pendingRows.length} 条</Badge>
@@ -249,18 +237,6 @@ function MiniMetric({ label, value }: { label: string; value: string }) {
     <div>
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="mt-1 break-words text-sm font-medium">{value}</div>
-    </div>
-  )
-}
-
-function BadgeList({ values }: { values: string[] }) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {values.map((value) => (
-        <Badge key={value} variant="outline" className="max-w-full break-all">
-          {value}
-        </Badge>
-      ))}
     </div>
   )
 }

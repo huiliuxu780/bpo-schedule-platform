@@ -45,7 +45,7 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
             </div>
             <h1 className="text-lg font-semibold">{batch.templateName}</h1>
             <p className="text-sm text-muted-foreground">
-              批次详情只展示上传结果和数据质量关联，不执行重导、修复或写库。
+              展示上传结果、质量问题和影响对象。
             </p>
           </div>
           <Badge variant={batch.status === "failed" ? "destructive" : "secondary"}>
@@ -55,7 +55,7 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
 
         <section className="grid gap-4 md:grid-cols-4">
           <Metric title="总行数" value={`${batch.totalRows}`} description={batch.sourceFile} />
-          <Metric title="成功行" value={`${batch.successRows}`} description="本地样例结果" />
+          <Metric title="成功行" value={`${batch.successRows}`} description="处理结果" />
           <Metric title="失败行" value={`${batch.failedRows}`} description="仅追溯展示" />
           <Metric title="警告行" value={`${batch.warningRows}`} description="需要人工查看" />
         </section>
@@ -64,7 +64,7 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
           <Card>
             <CardHeader>
               <CardTitle>影响对象</CardTitle>
-              <CardDescription>本批次可能影响的业务对象。</CardDescription>
+              <CardDescription>该批次可能影响的业务对象。</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               {batch.affectedObjects.map((item) => (
@@ -109,7 +109,7 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
         <Card>
           <CardHeader>
             <CardTitle>批次说明</CardTitle>
-            <CardDescription>本地样例备注，不代表生产处理结果。</CardDescription>
+            <CardDescription>记录批次来源、错误概况和处理提示。</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
             {batch.note}

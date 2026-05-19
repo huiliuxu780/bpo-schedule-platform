@@ -32,10 +32,10 @@ export default function ShiftTypesPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">班次类型</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读视图，用于验收人员级排班如何引用班次代码、休息、饭点和 0.5h 展开口径。
+              管理排班引用的班次代码、开始结束时间、休息饭点和 0.5h 展开口径。
             </p>
           </div>
-          <Badge variant="outline">只读演示</Badge>
+          <Badge variant="outline">班次目录</Badge>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
@@ -49,7 +49,7 @@ export default function ShiftTypesPage() {
           <CardHeader>
             <CardTitle>班次目录</CardTitle>
             <CardDescription>
-              展示班次类型最低字段，不执行规则计算、排班生成或主数据写入。
+              展示班次类型、适用范围、引用人数和当前启用状态。
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -106,21 +106,6 @@ export default function ShiftTypesPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-            <CardDescription>
-              本页只确认排班业务需要的班次类型可视范围。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {summary.deferredActions.map((item) => (
-              <Badge key={item} variant="secondary">
-                {item}
-              </Badge>
-            ))}
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

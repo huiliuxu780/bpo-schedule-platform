@@ -29,6 +29,30 @@
 
 ## Stories
 
+### US228 - 全量清理产品 UI 内部口径并重做人员时间轴
+
+```yaml
+id: US228
+requirement_ids:
+  - R216
+task_ids:
+  - F167
+module: "产品体验"
+role: "运营负责人"
+story: "作为运营负责人，我希望产品页面只展示业务语言，并且人员时间轴按个人日历和某天三条横向轨道查看，以便能直接用于排班履约分析。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "全量产品页面不出现暂不实现动作、待开发动作、本地只读、只读演示、无真实、PRD、验收、Gate、No Database 等内部执行口径。"
+  - "不新增页面；只修正已有页面和已有入口。"
+  - "人员时间轴列表页呈现员工日历入口。"
+  - "人员时间轴详情页呈现某员工某一天的排班、登录、状态三条横向甘特式时间轴。"
+  - "`node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "F166"
+status: "done"
+```
+
 ### US227 - 经营总览移除数据接入状态遗留
 
 ```yaml

@@ -34,15 +34,15 @@ export default function ImportBatchesPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">导入批次</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读入口，用于查看上传/导入批次状态、成功/失败行和数据质量问题追溯。
+              查看上传批次状态、成功/失败行、错误码和数据质量问题追溯。
             </p>
           </div>
-          <Badge variant="outline">无真实导入</Badge>
+          <Badge variant="outline">批次追踪</Badge>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
           <Metric title="批次数" value={`${summary.total}`} description={`${summary.completed} 个已完成`} />
-          <Metric title="总行数" value={`${summary.totalRows}`} description="本地样例合计" />
+          <Metric title="总行数" value={`${summary.totalRows}`} description="跨批次合计" />
           <Metric title="失败行" value={`${summary.failedRows}`} description={`失败率 ${(summary.failureRate * 100).toFixed(1)}%`} />
           <Metric title="待复核" value={`${summary.pendingReview}`} description={`${summary.warningRows} 行警告`} />
         </section>
@@ -51,7 +51,7 @@ export default function ImportBatchesPage() {
           <CardHeader>
             <CardTitle>批次历史</CardTitle>
             <CardDescription>
-              只展示批次结果和追溯关系，不写入失败行、不触发修复或审批。
+              按批次追踪模板、行数、错误码、质量问题和处理状态。
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -105,19 +105,6 @@ export default function ImportBatchesPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-            <CardDescription>本页只提供验收视图，不执行生产导入。</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {summary.deferredActions.map((item) => (
-              <Badge key={item} variant="secondary">
-                {item}
-              </Badge>
-            ))}
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

@@ -995,3 +995,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `PM escalation requires immediate verified fix; push after green local gate`
 - blocked_reason: `N/A`
+
+### F167 Product UI Copy And Person Timeline Fix
+
+- branch_name: `codex/f167-product-ui-copy-timeline`
+- base_main_commit: `a3a134c`
+- remote_status: `local branch created from pushed dashboard business-only fix because main has not yet integrated the product UI cleanup chain`
+- scope: urgent product UI cleanup: audit all existing product pages for internal execution language, remove internal/deferred-action cards and labels, redesign existing personnel timeline pages into personnel calendar and one-day three-track horizontal timeline, add regression tests, and update traceability.
+- allowed_files_check: `app/**`, `components/**`, `lib/person-timeline.ts`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, production formula, settlement rule, charge-factor files, or new product pages.
+- scope_diff_check: updates existing anomaly review, data quality, import batch, schedule plan, risk, unavailability, person timeline, and summary component UI copy; updates `lib/person-timeline.ts`; adds `scripts/tests/product-ui-copy-audit.test.mjs`; updates `scripts/tests/person-timeline.test.mjs`; updates current and legacy traceability docs; no `/production-mvp/**`, backend, package, lockfile, database, real integration, permission, approval, export, batch, production formula, settlement rule, or charge-factor files.
+- check_result: `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/person-timeline.test.mjs` passed with 6 tests; `npm run lint` passed; `npm run typecheck` passed; in-app browser smoke passed for `/dashboard`, `/anomaly-review`, `/person-timeline`, and `/person-timeline/A-1001?date=2026-05-11`; final `bash scripts/check.sh` passed, including strict state check, state-check regression tests, frontend lint, typecheck, Next build, and 25 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM escalation requires immediate verified fix; push after green local gate`
+- blocked_reason: `N/A`

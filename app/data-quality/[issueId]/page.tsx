@@ -15,7 +15,6 @@ import {
   dataQualitySeverityLabel,
   dataQualitySourceLabels,
   dataQualityStatusLabel,
-  deferredDataQualityActions,
   fallbackDataQualityIssues,
   getDataQualityIssue,
 } from "@/lib/data-quality"
@@ -74,7 +73,7 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
               <div className="flex flex-col gap-1">
                 <CardTitle>{issue.title}</CardTitle>
                 <CardDescription>
-                  只读定位视图，不执行真实修复、回写、审批或批量处理。
+                  定位字段、原值、建议处理和影响范围。
                 </CardDescription>
               </div>
               <Badge variant="outline">{issue.code}</Badge>
@@ -91,7 +90,7 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
         <Card>
           <CardHeader>
             <CardTitle>建议处理</CardTitle>
-            <CardDescription>后续真实修复仍需单独 Gate，本页仅展示建议。</CardDescription>
+            <CardDescription>用于运营复核和数据修正排期。</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">{issue.recommendation}</p>
@@ -129,21 +128,6 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
                 </div>
               </div>
             ))}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {deferredDataQualityActions.map((item) => (
-                <Badge key={item} variant="outline">
-                  {item}
-                </Badge>
-              ))}
-            </div>
           </CardContent>
         </Card>
       </main>

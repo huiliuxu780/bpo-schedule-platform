@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table"
 import {
   fallbackPersonTimelines,
+  getPersonTimelineAvailableDates,
   summarizePersonTimelines,
 } from "@/lib/person-timeline"
 
@@ -34,24 +35,24 @@ export default function PersonTimelinePage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">人员时间轴</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读视图，并列查看人员排班、实际登录、状态日志和异常标记。
+              先按人员查看日历，再进入某一天对齐排班、登录和状态轨道。
             </p>
           </div>
-          <Badge variant="outline">只读演示</Badge>
+          <Badge variant="outline">人员日历</Badge>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
-          <Metric title="人员" value={`${summary.totalPeople}`} description="本地样例" />
+          <Metric title="人员" value={`${summary.totalPeople}`} description="当前范围" />
           <Metric title="有异常" value={`${summary.peopleWithAnomalies}`} description="需要复核" />
           <Metric title="计划工时" value={`${summary.scheduledHours.toFixed(1)}h`} description="排班轨道" />
           <Metric title="登录工时" value={`${summary.loginHours.toFixed(1)}h`} description="登录轨道" />
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-[1fr_0.8fr]">
+        <section className="grid gap-4">
           <Card>
             <CardHeader>
-              <CardTitle>人员清单</CardTitle>
-              <CardDescription>查看员工级排班、登录和状态轨道摘要。</CardDescription>
+              <CardTitle>人员日历</CardTitle>
+              <CardDescription>选择员工和日期，进入当天的三轨时间轴。</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -60,55 +61,53 @@ export default function PersonTimelinePage() {
                     <TableHead>员工</TableHead>
                     <TableHead>职场</TableHead>
                     <TableHead>供应商</TableHead>
+                    <TableHead>日期</TableHead>
                     <TableHead>事件</TableHead>
                     <TableHead>异常</TableHead>
-                    <TableHead>操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.employeeId}>
-                      <TableCell>
-                        <div className="flex min-w-36 flex-col gap-1">
-                          <span className="font-medium">{row.employeeName}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {row.employeeId}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{row.workplace}</TableCell>
-                      <TableCell>{row.supplier}</TableCell>
-                      <TableCell>
-                        {row.tracks.schedule.length + row.tracks.login.length + row.tracks.status.length}
-                      </TableCell>
-                      <TableCell>{row.anomalies.length}</TableCell>
-                      <TableCell>
-                        <Button asChild size="sm" variant="outline">
-                          <Link href={`/person-timeline/${row.employeeId}`}>详情</Link>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {rows.map((row) => {
+                    const days = getPersonTimelineAvailableDates(row)
+
+                    return (
+                      <TableRow key={row.employeeId}>
+                        <TableCell>
+                          <div className="flex min-w-36 flex-col gap-1">
+                            <span className="font-medium">{row.employeeName}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {row.employeeId}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{row.workplace}</TableCell>
+                        <TableCell>{row.supplier}</TableCell>
+                        <TableCell>
+                          <div className="flex min-w-40 flex-wrap gap-2">
+                            {days.map((day) => (
+                              <Button
+                                key={day.date}
+                                asChild
+                                size="sm"
+                                variant={day.anomalyCount > 0 ? "default" : "outline"}
+                              >
+                                <Link href={`/person-timeline/${row.employeeId}?date=${day.date}`}>
+                                  {day.label}
+                                  {day.anomalyCount > 0 ? ` (${day.anomalyCount})` : ""}
+                                </Link>
+                              </Button>
+                            ))}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {row.tracks.schedule.length + row.tracks.login.length + row.tracks.status.length}
+                        </TableCell>
+                        <TableCell>{row.anomalies.length}</TableCell>
+                      </TableRow>
+                    )
+                  })}
                 </TableBody>
               </Table>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>暂不实现动作</CardTitle>
-              <CardDescription>
-                本批只做查看和定位，不触发真实状态回写或复核流程。
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {summary.deferredActions.map((item) => (
-                  <Badge key={item} variant="outline">
-                    {item}
-                  </Badge>
-                ))}
-              </div>
             </CardContent>
           </Card>
         </section>

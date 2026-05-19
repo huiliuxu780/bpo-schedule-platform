@@ -13,13 +13,19 @@ import {
 } from "@/components/ui/card"
 import {
   fallbackPersonTimelines,
+  getPersonTimelineAvailableDates,
+  getPersonTimelineDailyView,
   getPersonTimeline,
+  getTimelineEventPosition,
   type TimelineEvent,
 } from "@/lib/person-timeline"
 
 type PageProps = {
   params: Promise<{
     employeeId: string
+  }>
+  searchParams?: Promise<{
+    date?: string
   }>
 }
 
@@ -29,13 +35,20 @@ export function generateStaticParams() {
   }))
 }
 
-export default async function PersonTimelineDetailPage({ params }: PageProps) {
+export default async function PersonTimelineDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { employeeId } = await params
+  const { date } = (await searchParams) ?? {}
   const row = getPersonTimeline(decodeURIComponent(employeeId))
 
   if (!row) {
     notFound()
   }
+
+  const days = getPersonTimelineAvailableDates(row)
+  const dailyView = getPersonTimelineDailyView(row, date)
 
   return (
     <AppShell title="人员时间轴详情" searchPlaceholder="搜索时间轴事件">
@@ -44,7 +57,7 @@ export default async function PersonTimelineDetailPage({ params }: PageProps) {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">{row.employeeName} 时间轴</h1>
             <p className="text-sm text-muted-foreground">
-              {row.employeeId} / {row.workplace} / {row.supplier} / {row.project}
+              {row.employeeId} / {row.workplace} / {row.supplier} / {row.project} / {dailyView.date}
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
@@ -53,32 +66,67 @@ export default async function PersonTimelineDetailPage({ params }: PageProps) {
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
-          <Metric title="排班事件" value={`${row.tracks.schedule.length}`} />
-          <Metric title="登录事件" value={`${row.tracks.login.length}`} />
-          <Metric title="状态事件" value={`${row.tracks.status.length}`} />
-          <Metric title="异常" value={`${row.anomalies.length}`} />
+          <Metric title="排班工时" value={`${dailyView.scheduledHours.toFixed(1)}h`} />
+          <Metric title="登录工时" value={`${dailyView.loginHours.toFixed(1)}h`} />
+          <Metric title="状态工时" value={`${dailyView.statusHours.toFixed(1)}h`} />
+          <Metric title="异常" value={`${dailyView.anomalies.length}`} />
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-3">
-          <TrackCard title="排班轨道" rows={row.tracks.schedule} />
-          <TrackCard title="登录轨道" rows={row.tracks.login} />
-          <TrackCard title="状态轨道" rows={row.tracks.status} />
-        </section>
+        <Card>
+          <CardHeader>
+            <CardTitle>人员日历</CardTitle>
+            <CardDescription>切换日期查看当天排班、登录和状态对齐结果。</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            {days.map((day) => (
+              <Button
+                key={day.date}
+                asChild
+                size="sm"
+                variant={day.date === dailyView.date ? "default" : "outline"}
+              >
+                <Link href={`/person-timeline/${row.employeeId}?date=${day.date}`}>
+                  {day.label} {day.weekday}
+                  {day.anomalyCount > 0 ? ` (${day.anomalyCount})` : ""}
+                </Link>
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>当天时间轴</CardTitle>
+            <CardDescription>
+              三条横向轨道对齐展示当天排班、登录和状态切片。
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <div className="min-w-[760px]">
+                <TimelineScale />
+                <TimelineTrack title="排班轨道" rows={dailyView.tracks.schedule} tone="schedule" />
+                <TimelineTrack title="登录轨道" rows={dailyView.tracks.login} tone="login" />
+                <TimelineTrack title="状态轨道" rows={dailyView.tracks.status} tone="status" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
             <CardTitle>异常标记</CardTitle>
             <CardDescription>
-              只展示本地识别结果，不提交复核、不回写状态、不触发审批。
+              展示当天需要复核的异常原因和严重度。
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 lg:grid-cols-2">
-            {row.anomalies.length === 0 ? (
+            {dailyView.anomalies.length === 0 ? (
               <div className="rounded-lg border p-3 text-sm text-muted-foreground">
-                当前样例没有异常标记。
+                当天没有异常标记。
               </div>
             ) : (
-              row.anomalies.map((anomaly) => (
+              dailyView.anomalies.map((anomaly) => (
                 <div key={anomaly.code} className="rounded-lg border p-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="text-sm font-medium">{anomaly.title}</div>
@@ -108,26 +156,74 @@ function Metric({ title, value }: { title: string; value: string }) {
   )
 }
 
-function TrackCard({ title, rows }: { title: string; rows: TimelineEvent[] }) {
+function TimelineScale() {
+  const hours = ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"]
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="grid gap-3">
-        {rows.map((item) => (
-          <div key={item.id} className="rounded-lg border p-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="text-sm font-medium">{item.label}</div>
-              <Badge variant="secondary">{item.durationHours.toFixed(1)}h</Badge>
-            </div>
-            <div className="mt-2 text-xs text-muted-foreground">
-              {item.start}-{item.end}
-              {item.status ? ` / ${item.status}` : ""}
-            </div>
-          </div>
+    <div className="grid grid-cols-[96px_1fr] gap-3 border-b pb-2 text-xs text-muted-foreground">
+      <div>时间</div>
+      <div className="relative h-5">
+        {hours.map((hour, index) => (
+          <span
+            key={hour}
+            className="absolute top-0 -translate-x-1/2"
+            style={{ left: `${(index / (hours.length - 1)) * 100}%` }}
+          >
+            {hour}
+          </span>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
+}
+
+function TimelineTrack({
+  title,
+  rows,
+  tone,
+}: {
+  title: string
+  rows: TimelineEvent[]
+  tone: "schedule" | "login" | "status"
+}) {
+  return (
+    <div className="grid grid-cols-[96px_1fr] gap-3 border-b py-4 last:border-b-0">
+      <div className="pt-2 text-sm font-medium">{title}</div>
+      <div className="relative h-16 rounded-md bg-muted/50">
+        {rows.length === 0 ? (
+          <div className="flex h-full items-center px-3 text-sm text-muted-foreground">
+            当天没有记录
+          </div>
+        ) : (
+          rows.map((item) => {
+            const position = getTimelineEventPosition(item)
+
+            return (
+              <div
+                key={item.id}
+                className={`absolute top-3 flex h-10 min-w-16 flex-col justify-center rounded-md border px-2 text-xs shadow-sm ${timelineToneClass[tone]}`}
+                style={{
+                  left: `${position.leftPercent}%`,
+                  width: `${position.widthPercent}%`,
+                }}
+                title={`${item.label} ${item.start}-${item.end}`}
+              >
+                <span className="truncate font-medium">{item.label}</span>
+                <span className="truncate opacity-80">
+                  {item.start}-{item.end}
+                  {item.status ? ` / ${item.status}` : ""}
+                </span>
+              </div>
+            )
+          })
+        )}
+      </div>
+    </div>
+  )
+}
+
+const timelineToneClass = {
+  schedule: "border-sky-300 bg-sky-100 text-sky-950 dark:border-sky-800 dark:bg-sky-950 dark:text-sky-100",
+  login: "border-emerald-300 bg-emerald-100 text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100",
+  status: "border-amber-300 bg-amber-100 text-amber-950 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100",
 }

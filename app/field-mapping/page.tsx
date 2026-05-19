@@ -34,7 +34,7 @@ export default function FieldMappingPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">字段映射预览</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读入口，用于查看模板字段如何映射到业务对象，不保存映射、不执行转换。
+              查看模板字段如何映射到业务对象，快速发现缺失字段、转换规则和校验风险。
             </p>
           </div>
           <Badge variant="outline">预览</Badge>
@@ -55,7 +55,7 @@ export default function FieldMappingPage() {
                   <div className="flex flex-col gap-1">
                     <CardTitle>{templateName}</CardTitle>
                     <CardDescription>
-                      {mappings.length} 个字段映射，全部为本地预览口径。
+                      {mappings.length} 个字段映射，覆盖源字段、目标字段、转换和校验。
                     </CardDescription>
                   </div>
                   <Badge variant="secondary">{mappings[0]?.templateId}</Badge>
@@ -100,19 +100,6 @@ export default function FieldMappingPage() {
           ))}
         </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-            <CardDescription>后续保存映射或执行转换必须另开 Gate。</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {summary.deferredActions.map((item) => (
-              <Badge key={item} variant="secondary">
-                {item}
-              </Badge>
-            ))}
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

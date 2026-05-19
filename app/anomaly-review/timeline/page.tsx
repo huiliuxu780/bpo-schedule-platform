@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import {
   fallbackReviewTimelineSteps,
   summarizeReviewTimeline,
@@ -29,14 +28,14 @@ export default function ReviewTimelinePage() {
             </div>
             <h1 className="text-lg font-semibold">异常复核状态时间线</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读状态流，用于解释异常从识别、分派、复核到关闭的闭环边界。
+              展示异常从识别、分派、复核到关闭的状态流。
             </p>
           </div>
-          <Badge variant="outline">无提交动作</Badge>
+          <Badge variant="outline">状态跟踪</Badge>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
-          <Metric title="状态数" value={`${summary.totalSteps}`} description="本地闭环状态" />
+          <Metric title="状态数" value={`${summary.totalSteps}`} description="闭环状态" />
           <Metric title="证据项" value={`${summary.totalEvidenceItems}`} description="用于复核说明" />
           <Metric title="样例异常" value={`${summary.totalExampleCases}`} description="复核页样例引用" />
           <Metric title="责任角色" value={`${summary.owners.length}`} description="跨运营、现场、数据" />
@@ -79,26 +78,6 @@ export default function ReviewTimelinePage() {
             </Card>
           ))}
         </section>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-            <CardDescription>本页只说明状态流，不写生产状态。</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {summary.deferredActions.map((item) => (
-                <Badge key={item} variant="secondary">
-                  {item}
-                </Badge>
-              ))}
-            </div>
-            <Separator className="my-4" />
-            <p className="text-xs text-muted-foreground">
-              真实提交、审批、通知、权限隔离和生产状态写回必须单独 Gate。
-            </p>
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

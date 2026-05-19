@@ -92,11 +92,11 @@ export default async function DataQualityGroupDetailPage({ params }: PageProps) 
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>关联质量问题</CardTitle>
-            <CardDescription>
-              可进入单个问题查看字段、原值和建议处理。本页不执行真实修复。
-            </CardDescription>
+            <CardHeader>
+              <CardTitle>关联质量问题</CardTitle>
+              <CardDescription>
+              可进入单个问题查看字段、原值和建议处理。
+              </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 lg:grid-cols-2">
             {issues.map((issue) => (
@@ -125,23 +125,10 @@ export default async function DataQualityGroupDetailPage({ params }: PageProps) 
         <Card>
           <CardHeader>
             <CardTitle>建议复核</CardTitle>
-            <CardDescription>真实处理仍需后续单独 Gate。</CardDescription>
+            <CardDescription>用于现场主管和数据管理员协同判断处理优先级。</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">{group.recommendedReview}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {group.deferredActions.map((item) => (
-              <Badge key={item} variant="outline">
-                {item}
-              </Badge>
-            ))}
           </CardContent>
         </Card>
       </main>

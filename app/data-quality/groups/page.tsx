@@ -33,7 +33,7 @@ export default function DataQualityGroupsPage() {
               按业务原因聚合同类质量问题，用于从导入批次追溯到主数据、排班、预测和实际日志的影响面。
             </p>
           </div>
-          <Badge variant="outline">只读分组</Badge>
+          <Badge variant="outline">问题分组</Badge>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
@@ -79,20 +79,6 @@ export default function DataQualityGroupsPage() {
             </Card>
           ))}
         </section>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-            <CardDescription>本页只解释分组和追溯关系，不执行生产修复动作。</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {summary.deferredActions.map((item) => (
-              <Badge key={item} variant="secondary">
-                {item}
-              </Badge>
-            ))}
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

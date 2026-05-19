@@ -25,17 +25,17 @@ export default function AnomalySourcesPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">异常来源</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读 drilldown，拆解预测排班、排班登录、排班状态、主数据和数据质量来源。
+              拆解预测排班、排班登录、排班状态、主数据和数据质量来源。
             </p>
           </div>
-          <Badge variant="outline">无真实异常计算</Badge>
+          <Badge variant="outline">来源分析</Badge>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
           <Metric title="来源类型" value={`${summary.totalSources}`} description="第一阶段来源" />
-          <Metric title="示例异常" value={`${summary.totalExamples}`} description="来自异常复核样例" />
-          <Metric title="触发条件" value={`${summary.totalTriggerConditions}`} description="本地说明口径" />
-          <Metric title="待开发动作" value={`${summary.deferredActions.length}`} description="全部暂缓" />
+          <Metric title="示例异常" value={`${summary.totalExamples}`} description="来自异常复核清单" />
+          <Metric title="触发条件" value={`${summary.totalTriggerConditions}`} description="业务判断条件" />
+          <Metric title="追溯字段" value={`${rows.reduce((total, row) => total + row.traceKeys.length, 0)}`} description="定位明细" />
         </section>
 
         <section className="grid gap-4 lg:grid-cols-2">
@@ -67,22 +67,6 @@ export default function AnomalySourcesPage() {
             </Link>
           ))}
         </section>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-            <CardDescription>
-              本页只解释异常来源，不提交复核、不产生生产计算结果。
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            {summary.deferredActions.map((item) => (
-              <Badge key={item} variant="secondary">
-                {item}
-              </Badge>
-            ))}
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

@@ -45,25 +45,25 @@ export default function DataQualityPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">数据质量</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读中心，用于查看导入、主数据、排班、预测、登录和状态日志的数据问题。
+              集中查看导入、主数据、排班、预测、登录和状态日志的数据问题。
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Button asChild size="sm" variant="outline">
               <Link href="/data-quality/groups">查看质量分组</Link>
             </Button>
-            <Badge variant="outline">只读演示</Badge>
+            <Badge variant="outline">质量监控</Badge>
           </div>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
-          <Metric title="问题总数" value={`${summary.total}`} description="本地样例" />
+          <Metric title="问题总数" value={`${summary.total}`} description="当前范围" />
           <Metric title="未解决" value={`${summary.open}`} description="需要复核" />
           <Metric title="高严重度" value={`${summary.highSeverity}`} description="阻断风险" />
           <Metric title="阻断行数" value={`${summary.blockedRows}`} description="样例行数" />
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-[1fr_1fr_1fr]">
+        <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
           <Card>
             <CardHeader>
               <CardTitle>来源分布</CardTitle>
@@ -103,24 +103,6 @@ export default function DataQualityPage() {
               <Button asChild size="sm" variant="outline">
                 <Link href="/data-quality/groups">查看分组覆盖</Link>
               </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>暂不实现动作</CardTitle>
-              <CardDescription>
-                本批只提供查看和定位，不产生真实修复、审批、权限或批量能力。
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {summary.deferredActions.map((item) => (
-                  <Badge key={item} variant="outline">
-                    {item}
-                  </Badge>
-                ))}
-              </div>
             </CardContent>
           </Card>
         </section>

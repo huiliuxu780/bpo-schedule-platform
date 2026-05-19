@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowRight, DatabaseZap } from "lucide-react"
+import { ArrowRight, Workflow } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -53,14 +53,14 @@ export function MvpFlowSummary({
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
-          <CardTitle>本地 MVP 链路</CardTitle>
+          <CardTitle>排班复核链路</CardTitle>
           <CardDescription>
-            当前仅使用本地接口、种子数据和前端 fallback，不接数据库
+            从需求计划、排班计划、风险、不可用和班次明细连续复核
           </CardDescription>
         </div>
         <Badge variant="outline" className="gap-1">
-          <DatabaseZap data-icon="inline-start" />
-          No Database
+          <Workflow data-icon="inline-start" />
+          业务链路
         </Badge>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

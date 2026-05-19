@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import {
   fallbackAnomalySources,
   getAnomalySourceById,
@@ -44,7 +43,7 @@ export default async function AnomalySourceDetailPage({ params }: PageProps) {
             </div>
             <h1 className="text-lg font-semibold">{source.label}</h1>
             <p className="text-sm text-muted-foreground">
-              解释该异常来源需要哪些输入、用哪些键对齐、如何追溯，不执行真实异常计算。
+              说明该异常来源需要哪些输入、对齐键和追溯字段。
             </p>
           </div>
           <Badge variant="outline">{source.owner}</Badge>
@@ -54,7 +53,7 @@ export default async function AnomalySourceDetailPage({ params }: PageProps) {
           <Card>
             <CardHeader>
               <CardTitle>输入对象</CardTitle>
-              <CardDescription>异常识别需要同时拿到的本地对象。</CardDescription>
+              <CardDescription>异常识别需要同时拿到的业务对象。</CardDescription>
             </CardHeader>
             <CardContent>
               <BadgeList values={source.inputObjects} />
@@ -73,11 +72,9 @@ export default async function AnomalySourceDetailPage({ params }: PageProps) {
         </section>
 
         <Card>
-          <CardHeader>
-            <CardTitle>触发条件</CardTitle>
-            <CardDescription>
-              本地解释口径，不代表生产阈值、公式或自动处理规则。
-            </CardDescription>
+            <CardHeader>
+              <CardTitle>触发条件</CardTitle>
+            <CardDescription>用于识别异常的业务条件。</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
             {source.triggerConditions.map((condition) => (
@@ -106,23 +103,9 @@ export default async function AnomalySourceDetailPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <BadgeList values={source.exampleCaseIds} />
-              <Separator className="my-4" />
-              <div className="text-xs text-muted-foreground">
-                本页不做复核提交、审批、导出、批量或生产公式。
-              </div>
             </CardContent>
           </Card>
         </section>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>暂不实现动作</CardTitle>
-            <CardDescription>后续开发必须单独 Gate。</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <BadgeList values={source.deferredActions} />
-          </CardContent>
-        </Card>
       </main>
     </AppShell>
   )

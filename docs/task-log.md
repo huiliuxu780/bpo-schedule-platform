@@ -1006,3 +1006,14 @@
 - action: 修复产品语义回归，移除 `/dashboard` 上遗留的数据接入状态面板和数据版本筛选，并删除 `/production-mvp/**` 内部规划页面路由。
 - status: `done`
 - notes: 根因是需求治理记录被错误产品化：`/dashboard` 重新 import 并渲染 `DataSyncStatus`，侧边栏还暴露生产雏形、准备、缺口、验收等内部页面。已新增 `dashboard-business-only` 与 `product-navigation-business-only` 回归测试；本次不删除数据接入组件，不改 `/demo-imports`，不做真实数据接入、数据库、权限、审批、导出或批量。
+
+### 2026-05-20
+
+- task_id: `F167`
+- source_ids:
+  - `R216`
+- story_ids:
+  - `US228`
+- action: 全量清理产品 UI 内部执行口径，并将人员时间轴重做为人员日历和单日三轨横向时间轴。
+- status: `done`
+- notes: 新增产品 UI 文案审计测试，覆盖 `app/**` 和 `components/**` 禁止出现暂不实现、待开发动作、本地只读、只读演示、无真实、PRD、验收、Gate、No Database 等内部口径；清理异常复核、异常来源、复核时间线、数据质量、导入批次、排班计划、风险、不可用和复核链路组件中的内部文案；人员时间轴列表改为人员日历入口，详情页按员工日期展示排班、登录、状态三条横向轨道；本次未新增页面、依赖、后端、数据库、权限、审批、导出或批量能力；current queue 与 active tasks 已清空。

@@ -23,10 +23,10 @@ export default function MasterDataRelationsPage() {
           <div className="flex max-w-3xl flex-col gap-1">
             <h1 className="text-lg font-semibold">主数据关系</h1>
             <p className="text-sm text-muted-foreground">
-              本地只读关系图，展示坐席、供应商、职场、项目、绑定关系和班次类型如何支撑排班与履约对比。
+              展示坐席、供应商、职场、项目、绑定关系和班次类型如何支撑排班与履约对比。
             </p>
           </div>
-          <Badge variant="outline">只读演示</Badge>
+          <Badge variant="outline">关系图</Badge>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
@@ -40,7 +40,7 @@ export default function MasterDataRelationsPage() {
           <Card>
             <CardHeader>
               <CardTitle>主数据对象</CardTitle>
-              <CardDescription>对象状态来自本地样例，不代表真实主数据治理结果。</CardDescription>
+              <CardDescription>对象状态用于判断排班和履约对比是否具备基础关系。</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-3 lg:grid-cols-2">
               {relations.nodes.map((node) => (
@@ -64,21 +64,6 @@ export default function MasterDataRelationsPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>暂不实现动作</CardTitle>
-              <CardDescription>本批只展示关系，不做主数据维护动作。</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {summary.deferredActions.map((item) => (
-                  <Badge key={item} variant="outline">
-                    {item}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </section>
 
         <Card>

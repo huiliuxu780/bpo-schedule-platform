@@ -93,10 +93,10 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
             <div>
               <CardTitle>复核链路</CardTitle>
               <CardDescription>
-                在本地 MVP 内继续检查班次、风险和不可用，不接数据库
+                从排班计划继续检查班次、风险和不可用影响
               </CardDescription>
             </div>
-            <Badge variant="outline">No Database</Badge>
+            <Badge variant="outline">计划详情</Badge>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="grid gap-3 md:grid-cols-4">
