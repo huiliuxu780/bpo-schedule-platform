@@ -2046,3 +2046,104 @@ acceptance:
   - "复核时间线展示本地状态解释，不执行真实复核提交、审批、权限或生产公式。"
   - "`node --experimental-strip-types --test scripts/tests/import-batch-history.test.mjs`、`node --experimental-strip-types --test scripts/tests/field-mapping-preview.test.mjs`、`node --experimental-strip-types --test scripts/tests/review-status-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
+
+### US157-US166 - 数据质量分组、导入问题钻取和生产雏形验收清单
+
+```yaml
+stories:
+  - id: US157
+    requirement_ids: [R145]
+    task_ids: [F103]
+    module: "数据质量"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望数据质量问题可按业务原因分组，以便从导入批次快速定位一类问题的影响面。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US158
+    requirement_ids: [R146]
+    task_ids: [F104]
+    module: "数据质量"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望有数据质量分组总览页，查看每组问题数量、风险等级和责任角色。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US159
+    requirement_ids: [R147]
+    task_ids: [F105]
+    module: "数据质量"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望进入单个质量分组详情，查看关联问题、来源模板和处理边界。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US160
+    requirement_ids: [R148]
+    task_ids: [F106]
+    module: "数据质量"
+    role: "PM"
+    story: "作为 PM，我希望数据质量中心能进入分组视图，以便按业务原因验收问题定位能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US161
+    requirement_ids: [R149]
+    task_ids: [F107]
+    module: "导入批次"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望导入批次详情中的质量问题可以钻取到数据质量详情，以便追溯失败行原因。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US162
+    requirement_ids: [R150]
+    task_ids: [F108]
+    module: "生产雏形"
+    role: "QA"
+    story: "作为 QA，我希望生产雏形验收清单有本地模型和测试，以便确认第一阶段可导入、可查看、可对比、可定位异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US163
+    requirement_ids: [R151]
+    task_ids: [F109]
+    module: "生产雏形"
+    role: "QA"
+    story: "作为 QA，我希望有生产雏形验收清单只读页，按业务主线查看已覆盖、部分覆盖和暂缓能力。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US164
+    requirement_ids: [R152]
+    task_ids: [F110]
+    module: "生产雏形"
+    role: "PM"
+    story: "作为 PM，我希望生产雏形总览页提供验收清单入口，以便从生产雏形合同直接进入阶段验收。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US165
+    requirement_ids: [R153]
+    task_ids: [F111]
+    module: "导航"
+    role: "PM"
+    story: "作为 PM，我希望侧边栏能直接进入生产雏形验收清单，以便本地验收时不需要记 URL。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US166
+    requirement_ids: [R154]
+    task_ids: [Q022]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望对数据质量分组、导入批次钻取和生产雏形验收清单做收口，确认页面、导航、测试和边界未越界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量分组展示来自本地模型，不执行真实修复、审批、权限、导出或批量。"
+  - "导入批次详情能从质量问题 ID 链接到数据质量详情。"
+  - "生产雏形验收清单覆盖第一阶段业务主线，并明确暂缓能力。"
+  - "`node --experimental-strip-types --test scripts/tests/data-quality-groups.test.mjs`、`node --experimental-strip-types --test scripts/tests/production-mvp-acceptance.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```

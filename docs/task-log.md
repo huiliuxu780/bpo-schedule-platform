@@ -918,3 +918,14 @@
 - action: 连续完成导入批次、字段映射和复核时间线 10-task 展示批次。
 - status: `done`
 - notes: 新增导入批次历史模型与测试、字段映射预览模型与测试、异常复核状态时间线模型与测试、`/import-batches`、`/import-batches/[batchId]`、`/field-mapping`、`/anomaly-review/timeline` 和侧边栏入口；本批不做真实上传/导入、字段映射保存、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。
+
+### 2026-05-19
+
+- task_id: `F103-F111/Q022`
+- source_ids:
+  - `R145-R154`
+- story_ids:
+  - `US157-US166`
+- action: 连续完成数据质量分组、导入批次问题钻取和生产雏形验收清单 10-task 展示批次。
+- status: `done`
+- notes: 新增数据质量分组模型与测试、`/data-quality/groups`、`/data-quality/groups/[groupId]`、导入批次详情质量问题链接、生产雏形验收清单模型与测试、`/production-mvp/acceptance-checklist` 和侧边栏入口；本批不做真实上传/导入、真实修复、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor；current queue 与 active tasks 已清空。

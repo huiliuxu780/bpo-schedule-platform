@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -86,7 +87,20 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
               </div>
               <div>
                 <div className="text-xs text-muted-foreground">数据质量问题</div>
-                <div className="mt-1">{batch.qualityIssueIds.length > 0 ? batch.qualityIssueIds.join(", ") : "无"}</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {batch.qualityIssueIds.length > 0
+                    ? batch.qualityIssueIds.map((issueId) => (
+                        <Button
+                          key={issueId}
+                          asChild
+                          size="sm"
+                          variant="outline"
+                        >
+                          <Link href={`/data-quality/${issueId}`}>{issueId}</Link>
+                        </Button>
+                      ))
+                    : "无"}
+                </div>
               </div>
             </CardContent>
           </Card>

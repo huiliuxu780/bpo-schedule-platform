@@ -1057,3 +1057,44 @@ version: "1.0"
 status: "split"
 notes: "本组只做本地前端只读展示层和模型测试；不实现真实上传/导入、字段映射保存、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
 ```
+
+### R145-R154 - 数据质量分组、导入问题钻取和生产雏形验收清单
+
+```yaml
+requirements:
+  - id: R145
+    module: "数据质量"
+    description: "生产雏形需要数据质量分组本地模型和测试，按缺失必填、时间有效性、主数据引用和排班准备度聚合同类问题。"
+  - id: R146
+    module: "数据质量"
+    description: "需要数据质量分组总览只读页，展示每组问题数量、风险等级、责任角色和暂不实现动作。"
+  - id: R147
+    module: "数据质量"
+    description: "需要数据质量分组详情页，展示关联问题、来源模板、追溯键和处理边界。"
+  - id: R148
+    module: "数据质量"
+    description: "数据质量中心需要挂载分组视图入口，方便从问题清单进入业务原因分组。"
+  - id: R149
+    module: "导入批次"
+    description: "导入批次详情需要把质量问题 ID 变成可钻取链接，进入数据质量详情页追溯失败原因。"
+  - id: R150
+    module: "生产雏形"
+    description: "生产雏形需要验收清单本地模型和测试，覆盖上传/导入、主数据、人员排班、需求预测、登录/状态、差异对比和异常识别。"
+  - id: R151
+    module: "生产雏形"
+    description: "需要生产雏形验收清单只读页，按业务主线展示已覆盖、部分覆盖和暂缓能力。"
+  - id: R152
+    module: "生产雏形"
+    description: "生产雏形总览页需要验收清单入口，使阶段验收不只依赖合同块。"
+  - id: R153
+    module: "导航"
+    description: "侧边栏需要生产雏形验收清单入口，方便本地验收时直接进入。"
+  - id: R154
+    module: "质量与交付"
+    description: "数据质量分组、导入问题钻取和生产雏形验收清单完成后需要 QA 收口，确认测试、页面、导航、current 清理和 no-database 边界均可验证。"
+source: "PM requested continued production MVP development on 2026-05-19"
+submitted_at: "2026-05-19"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示层和模型测试；不实现真实上传、真实导入、真实修复、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```

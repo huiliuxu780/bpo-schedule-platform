@@ -43,7 +43,12 @@ export default async function ProductionMvpPage() {
               汇总生产雏形第一批本地合同：主数据、人员级排班、0.5h 时段汇总，以及预测/排班/登录/状态对比。
             </p>
           </div>
-          <Badge variant="outline">本地只读合同</Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/production-mvp/acceptance-checklist">验收清单</Link>
+            </Button>
+            <Badge variant="outline">本地只读合同</Badge>
+          </div>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">

@@ -1260,6 +1260,31 @@
 - `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 - 本地 HTTP smoke：`/import-batches`、`/import-batches/BATCH-20260519-002`、`/field-mapping`、`/anomaly-review/timeline`、`/anomaly-review` 均返回 200。
 
+### 2026-05-19 - Data quality group and production MVP acceptance checklist slice
+
+#### 审计结论
+
+- `F103/US157` 已新增数据质量分组本地模型和测试，按身份与主键完整性、时间有效性、排班准备度、实际日志引用聚合同类问题。
+- `F104-F106/US158-US160` 已新增 `/data-quality/groups`、`/data-quality/groups/[groupId]`，并在数据质量中心挂载分组入口。
+- `F107/US161` 已把导入批次详情中的质量问题 ID 改为可钻取链接，进入 `/data-quality/[issueId]`。
+- `F108-F111/US162-US165` 已新增生产雏形验收清单模型、测试、`/production-mvp/acceptance-checklist`、生产雏形总览入口和侧边栏入口。
+- `Q022/US166` 已完成 QA 收口，current queue 和 active tasks 已恢复为空，不保留 done 历史。
+- 本批只允许本地前端展示层和模型测试，不实现真实上传/导入、真实修复、数据库、审批、权限、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做本地只读入口；质量分组、批次钻取和验收清单来自前端本地模型，不代表真实数据质量规则引擎、导入服务、修复提交、审批流或权限边界。
+- 后续如果要做真实上传/导入、失败行修复、主数据 CRUD、权限、审批、导出、批量、状态规则公式或生产异常计算，必须另开 Gate。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/data-quality-groups.test.mjs`：通过，2 个 data quality groups model 测试通过。
+- `node --experimental-strip-types --test scripts/tests/production-mvp-acceptance.test.mjs`：通过，3 个 production MVP acceptance model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、8 个 state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+- Browser smoke：`/data-quality/groups`、`/data-quality/groups/time-validity`、`/import-batches/BATCH-20260519-002`、`/production-mvp/acceptance-checklist` 均能打开并显示预期主标题。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

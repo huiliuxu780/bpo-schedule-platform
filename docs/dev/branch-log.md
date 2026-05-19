@@ -724,6 +724,23 @@
 - push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
 - blocked_reason: `N/A`
 
+### F103-F111 Data Quality Group And Acceptance Checklist Block
+
+- branch_name: `codex/f103-quality-group-acceptance-checklist`
+- base_main_commit: `a3a134c`
+- remote_status: `local branch created from pushed import batch field timeline head because main has not yet integrated the production MVP chain`
+- scope: 10-task local frontend continuation: data quality group model and routes, data quality center group link, import batch quality issue drilldown links, production MVP acceptance checklist model and route, production MVP overview link, sidebar entry, QA traceability, and state cleanup.
+- allowed_files_check: `lib/**`, `app/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `lib/data-quality-groups.ts`, `lib/production-mvp-acceptance.ts`, `app/data-quality/**`, `app/import-batches/[batchId]/page.tsx`, `app/production-mvp/**`, `components/app-sidebar.tsx`, `scripts/tests/**`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, approval, export, batch, permission, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `node --experimental-strip-types --test scripts/tests/data-quality-groups.test.mjs` passed with 2 tests; `node --experimental-strip-types --test scripts/tests/production-mvp-acceptance.test.mjs` passed with 3 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check.sh` passed; Browser smoke opened `/data-quality/groups`, `/data-quality/groups/time-validity`, `/import-batches/BATCH-20260519-002`, and `/production-mvp/acceptance-checklist`.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `continuous PM instruction to keep developing and push after verified coherent block`
+- blocked_reason: `N/A`
+
 ### F032-F040 Dashboard Continuation Block
 
 - branch_name: `codex/f032-dashboard-continuation`

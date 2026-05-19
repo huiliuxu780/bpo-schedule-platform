@@ -41,7 +41,12 @@ export default function DataQualityPage() {
               本地只读中心，用于查看生产雏形导入、主数据、排班、预测、登录和状态日志的数据问题。
             </p>
           </div>
-          <Badge variant="outline">只读演示</Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/data-quality/groups">查看质量分组</Link>
+            </Button>
+            <Badge variant="outline">只读演示</Badge>
+          </div>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
