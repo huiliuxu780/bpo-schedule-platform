@@ -17,6 +17,7 @@ import {
   getFulfillmentCalendar,
   getFulfillmentGroupMemberWeekMatrix,
   getFulfillmentMatrix,
+  getFulfillmentMatrixExceptionQueueCursor,
   getFulfillmentTeam,
   getTimelineEventPosition,
   type FulfillmentCalendarSummary,
@@ -24,6 +25,7 @@ import {
   type FulfillmentGroupMatrix,
   type FulfillmentGroupMemberWeekMatrix,
   type FulfillmentGroupMemberWeekMatrixMember,
+  type FulfillmentMatrixExceptionQueueCursor,
   type FulfillmentMatrixExceptionQueueItem,
   type FulfillmentMatrixMember,
   type FulfillmentTeamWeek,
@@ -363,7 +365,8 @@ function MemberMatrixSection({
   queueFilter: MatrixQueueFilter
 }) {
   const visibleQueue = getVisibleMatrixExceptionQueue(matrix, queueFilter)
-  const selectedException = getSelectedMatrixException(visibleQueue, selectedExceptionKey)
+  const queueCursor = getFulfillmentMatrixExceptionQueueCursor(visibleQueue, selectedExceptionKey)
+  const selectedException = queueCursor.selected
 
   return (
     <Card>
@@ -400,7 +403,7 @@ function MemberMatrixSection({
             </div>
           </div>
           <MatrixExceptionPanel
-            selected={selectedException}
+            cursor={queueCursor}
             matrix={matrix}
             visibleQueue={visibleQueue}
             queueFilter={queueFilter}
@@ -438,38 +441,24 @@ function getVisibleMatrixExceptionQueue(
   return matrix.exceptionQueue
 }
 
-function getSelectedMatrixException(
-  visibleQueue: FulfillmentMatrixExceptionQueueItem[],
-  selectedExceptionKey?: string
-) {
-  return (
-    visibleQueue.find((item) => item.key === selectedExceptionKey) ??
-    visibleQueue[0]
-  )
-}
-
 function MatrixExceptionPanel({
-  selected,
+  cursor,
   matrix,
   visibleQueue,
   queueFilter,
 }: {
-  selected?: FulfillmentMatrixExceptionQueueItem
+  cursor: FulfillmentMatrixExceptionQueueCursor
   matrix: FulfillmentGroupMatrix
   visibleQueue: FulfillmentMatrixExceptionQueueItem[]
   queueFilter: MatrixQueueFilter
 }) {
-  if (!selected) {
-    return (
-      <div className="rounded-lg border p-3 text-sm text-muted-foreground">
-        当天没有需要解释的异常。
-      </div>
-    )
-  }
+  const selected = cursor.selected
 
-  const detailHref = `/person-timeline/${selected.employeeId}?date=${selected.detailDate}&team=${encodeScopeId(
-    matrix.team.id
-  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${selected.detailDate}`
+  const detailHref = selected
+    ? `/person-timeline/${selected.employeeId}?date=${selected.detailDate}&team=${encodeScopeId(
+        matrix.team.id
+      )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${selected.detailDate}`
+    : ""
 
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
@@ -510,16 +499,43 @@ function MatrixExceptionPanel({
           <div className="text-sm font-medium">待关注异常</div>
           <Badge variant="outline">{visibleQueue.length} 项</Badge>
         </div>
-        <div className="grid gap-2">
+        {selected ? (
+          <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium">处理进度</span>
+              <span className="text-muted-foreground">
+                第 {cursor.selectedIndex} / {cursor.totalCount} 项
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <QueueCursorButton
+                label="上一项"
+                item={cursor.previous}
+                matrix={matrix}
+                queueFilter={queueFilter}
+              />
+              <QueueCursorButton
+                label="下一项"
+                item={cursor.next}
+                matrix={matrix}
+                queueFilter={queueFilter}
+              />
+            </div>
+          </div>
+        ) : null}
+        {visibleQueue.length === 0 ? (
+          <div className="rounded-md border bg-muted/30 p-3 text-xs text-muted-foreground">
+            当前筛选没有待关注异常，可切换全部查看当天其他异常。
+          </div>
+        ) : (
+          <div className="grid gap-2">
           {visibleQueue.map((item) => (
             <Link
               key={item.key}
-              href={`/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(
-                matrix.group.id
-              )}&date=${matrix.date}&queue=${queueFilter}&exception=${encodeScopeId(item.key)}`}
+              href={matrixQueueItemHref(matrix, queueFilter, item.key)}
               className={cn(
                 "grid gap-1 rounded-md border p-2 text-xs transition-colors hover:bg-muted",
-                item.key === selected.key ? "border-primary bg-primary/10" : "border-border"
+                selected && item.key === selected.key ? "border-primary bg-primary/10" : "border-border"
               )}
             >
               <div className="flex items-center justify-between gap-2">
@@ -536,36 +552,77 @@ function MatrixExceptionPanel({
               <div className="text-muted-foreground">影响 {item.impactHours.toFixed(1)}h</div>
             </Link>
           ))}
-        </div>
-      </div>
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <div className="text-sm font-medium">当前异常解释</div>
-          <div className="text-xs text-muted-foreground">
-            {selected.employeeId} {selected.employeeName}
           </div>
-        </div>
-        <Badge variant={selected.priority === "high" ? "destructive" : "outline"}>
-          {priorityLabel[selected.priority]}
-        </Badge>
+        )}
       </div>
-      <div className="grid gap-2 text-sm">
-        <div className="font-medium">
-          {selected.start}-{selected.end} / {selected.type}
-        </div>
-        <div className="text-xs text-muted-foreground">{selected.title}</div>
-      </div>
-      <div className="grid gap-2 text-xs text-muted-foreground">
-        <div>涉及轨道：{selected.involvedTracks.map((track) => trackLabel[track]).join(" / ")}</div>
-        <div>影响时长：{selected.impactHours.toFixed(1)}h</div>
-        <div>证据：{selected.evidence}</div>
-        <div>建议动作：{selected.supervisorAction}</div>
-      </div>
-      <Button asChild size="sm" variant="outline">
-        <Link href={detailHref}>查看个人详情</Link>
-      </Button>
+      {selected ? (
+        <>
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <div className="text-sm font-medium">当前异常解释</div>
+              <div className="text-xs text-muted-foreground">
+                {selected.employeeId} {selected.employeeName}
+              </div>
+            </div>
+            <Badge variant={selected.priority === "high" ? "destructive" : "outline"}>
+              {priorityLabel[selected.priority]}
+            </Badge>
+          </div>
+          <div className="grid gap-2 text-sm">
+            <div className="font-medium">
+              {selected.start}-{selected.end} / {selected.type}
+            </div>
+            <div className="text-xs text-muted-foreground">{selected.title}</div>
+          </div>
+          <div className="grid gap-2 text-xs text-muted-foreground">
+            <div>涉及轨道：{selected.involvedTracks.map((track) => trackLabel[track]).join(" / ")}</div>
+            <div>影响时长：{selected.impactHours.toFixed(1)}h</div>
+            <div>证据：{selected.evidence}</div>
+            <div>建议动作：{selected.supervisorAction}</div>
+          </div>
+          <Button asChild size="sm" variant="outline">
+            <Link href={detailHref}>查看个人详情</Link>
+          </Button>
+        </>
+      ) : null}
     </aside>
   )
+}
+
+function QueueCursorButton({
+  label,
+  item,
+  matrix,
+  queueFilter,
+}: {
+  label: string
+  item?: FulfillmentMatrixExceptionQueueItem
+  matrix: FulfillmentGroupMatrix
+  queueFilter: MatrixQueueFilter
+}) {
+  if (!item) {
+    return (
+      <Button size="sm" variant="outline" disabled className="h-8 text-xs">
+        {label}
+      </Button>
+    )
+  }
+
+  return (
+    <Button asChild size="sm" variant="outline" className="h-8 text-xs">
+      <Link href={matrixQueueItemHref(matrix, queueFilter, item.key)}>{label}</Link>
+    </Button>
+  )
+}
+
+function matrixQueueItemHref(
+  matrix: FulfillmentGroupMatrix,
+  queueFilter: MatrixQueueFilter,
+  exceptionKey: string
+) {
+  return `/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(
+    matrix.group.id
+  )}&date=${matrix.date}&queue=${queueFilter}&exception=${encodeScopeId(exceptionKey)}`
 }
 
 function WeekCard({

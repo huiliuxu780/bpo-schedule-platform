@@ -17,6 +17,26 @@
 
 ## Requirements
 
+### R242-R244 - 小组异常队列处理光标
+
+```yaml
+requirements:
+  - id: R242
+    module: "履约日历"
+    description: "小组成员单日矩阵的异常队列需要展示当前选中异常在筛选队列中的位置，帮助主管知道处理进度。"
+  - id: R243
+    module: "履约日历"
+    description: "小组异常队列需要支持在当前筛选结果中上一项、下一项查看，便于主管逐项核对。"
+  - id: R244
+    module: "履约日历"
+    description: "当筛选结果没有待关注异常时，页面需要给出业务空态，不显示内部执行或开发过程语言。"
+source: "PM requested continuous supervisor handling flow on 2026-05-21"
+submitted_at: "2026-05-21"
+version: "1.0"
+status: "split"
+notes: "本组只增强现有小组单日矩阵的显示型处理路径；不新增页面路由或左侧入口，不新增依赖，不实现数据库、权限、审批、处理提交、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R239-R241 - 小组异常矩阵定位
 
 ```yaml

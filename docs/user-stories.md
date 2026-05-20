@@ -29,6 +29,46 @@
 
 ## Stories
 
+### US254-US256 - 小组异常队列处理光标
+
+```yaml
+stories:
+  - id: US254
+    requirement_ids: [R242]
+    task_ids: [F193]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常面板显示当前异常在队列中的处理进度，以便知道还剩多少项需要核对。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US255
+    requirement_ids: [R243]
+    task_ids: [F194]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望能在当前筛选的异常队列中上一项和下一项切换，以便逐项处理当天问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US256
+    requirement_ids: [R244]
+    task_ids: [F195]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望筛选结果为空时看到业务空态，以便确认当前口径下没有待关注异常。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常队列光标能返回当前选中项、当前位置、总数、上一项和下一项。"
+  - "小组成员单日矩阵右侧面板展示处理进度。"
+  - "上一项/下一项切换保留当前团队、小组、日期和筛选口径。"
+  - "筛选结果为空时显示业务空态，不出现内部过程词。"
+  - "不做审批、处理提交、权限、数据库、真实接口、导出、批量、自动排班或生产公式。"
+  - "不新增页面路由、不新增左侧入口。"
+```
+
 ### US251-US253 - 小组异常矩阵定位
 
 ```yaml

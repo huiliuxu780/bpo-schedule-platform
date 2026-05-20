@@ -189,6 +189,14 @@ export type FulfillmentMatrixExceptionQueueSummary = {
   totalImpactHours: number
 }
 
+export type FulfillmentMatrixExceptionQueueCursor = {
+  selected?: FulfillmentMatrixExceptionQueueItem
+  selectedIndex: number
+  totalCount: number
+  previous?: FulfillmentMatrixExceptionQueueItem
+  next?: FulfillmentMatrixExceptionQueueItem
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
@@ -641,6 +649,31 @@ export function getFulfillmentGroupMemberWeekMatrix(
     ),
     riskSummary: buildGroupMemberWeekRiskSummary(members),
     members,
+  }
+}
+
+export function getFulfillmentMatrixExceptionQueueCursor(
+  visibleQueue: FulfillmentMatrixExceptionQueueItem[],
+  selectedExceptionKey?: string
+): FulfillmentMatrixExceptionQueueCursor {
+  if (visibleQueue.length === 0) {
+    return {
+      selectedIndex: 0,
+      totalCount: 0,
+    }
+  }
+
+  const selectedIndex = Math.max(
+    visibleQueue.findIndex((item) => item.key === selectedExceptionKey),
+    0
+  )
+
+  return {
+    selected: visibleQueue[selectedIndex],
+    selectedIndex: selectedIndex + 1,
+    totalCount: visibleQueue.length,
+    previous: visibleQueue[selectedIndex - 1],
+    next: visibleQueue[selectedIndex + 1],
   }
 }
 

@@ -8,6 +8,7 @@ import {
   getFulfillmentGroup,
   getFulfillmentGroupMemberWeekMatrix,
   getFulfillmentMatrix,
+  getFulfillmentMatrixExceptionQueueCursor,
   getFulfillmentTeam,
   getPersonTimeline,
   getPersonTimelineAvailableDates,
@@ -332,4 +333,39 @@ test("fulfillment group member week matrix exposes member day cells", () => {
     gapHours: 0.5,
     anomalyCount: 1,
   });
+});
+
+test("fulfillment matrix exception queue cursor exposes supervisor review position", () => {
+  const calendar = getFulfillmentCalendar(fallbackPersonTimelines);
+  const team = calendar.teams.find((item) => item.workplace === "上海职场");
+  assert.ok(team);
+  const group = team.groups.find((item) => item.supplier === "供应商 A");
+  assert.ok(group);
+
+  const matrix = getFulfillmentMatrix(team.id, group.id, "2026-05-11", fallbackPersonTimelines);
+  assert.ok(matrix);
+
+  const defaultCursor = getFulfillmentMatrixExceptionQueueCursor(matrix.exceptionQueue);
+  assert.equal(defaultCursor.selected?.key, "A-1002::late_login");
+  assert.equal(defaultCursor.selectedIndex, 1);
+  assert.equal(defaultCursor.totalCount, 2);
+  assert.equal(defaultCursor.previous, undefined);
+  assert.equal(defaultCursor.next?.key, "A-1001::no_login");
+
+  const secondCursor = getFulfillmentMatrixExceptionQueueCursor(
+    matrix.exceptionQueue,
+    "A-1001::no_login"
+  );
+  assert.equal(secondCursor.selected?.key, "A-1001::no_login");
+  assert.equal(secondCursor.selectedIndex, 2);
+  assert.equal(secondCursor.totalCount, 2);
+  assert.equal(secondCursor.previous?.key, "A-1002::late_login");
+  assert.equal(secondCursor.next, undefined);
+
+  const emptyCursor = getFulfillmentMatrixExceptionQueueCursor([], "missing");
+  assert.equal(emptyCursor.selected, undefined);
+  assert.equal(emptyCursor.selectedIndex, 0);
+  assert.equal(emptyCursor.totalCount, 0);
+  assert.equal(emptyCursor.previous, undefined);
+  assert.equal(emptyCursor.next, undefined);
 });
