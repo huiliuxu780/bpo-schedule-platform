@@ -64,14 +64,10 @@ const nav: NavGroup[] = [
     title: "履约监控",
     icon: ClipboardCheck,
     items: [
-      { title: "工时核验", href: "/dashboard" },
-      { title: "坐席状态轨迹", href: "/dashboard" },
-      { title: "异常管理", href: "/dashboard", badge: "12" },
-      { title: "实时遵守率", href: "/dashboard", tag: "P1" },
+      { title: "履约日历", href: "/person-timeline", activeMatch: "prefix", tag: "新" },
       { title: "异常复核", href: "/anomaly-review", activeMatch: "exact", tag: "新" },
       { title: "异常来源", href: "/anomaly-review/sources", activeMatch: "prefix", tag: "新" },
       { title: "复核时间线", href: "/anomaly-review/timeline", activeMatch: "exact", tag: "新" },
-      { title: "人员时间轴", href: "/person-timeline", activeMatch: "prefix", tag: "新" },
     ],
   },
   {
@@ -91,7 +87,6 @@ const nav: NavGroup[] = [
       { title: "数据源管理", href: "/dashboard" },
       { title: "文件导入", href: "/import-batches", activeMatch: "prefix", tag: "新" },
       { title: "接入批次", href: "/import-batches", activeMatch: "prefix", tag: "新" },
-      { title: "CORN 状态日志", href: "/dashboard" },
       { title: "字段映射", href: "/field-mapping", activeMatch: "exact", tag: "新" },
       { title: "接口集成", href: "/dashboard", tag: "P1" },
       { title: "导入模板", href: "/import-templates", activeMatch: "exact", tag: "新" },

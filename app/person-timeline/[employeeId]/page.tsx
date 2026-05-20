@@ -59,7 +59,7 @@ export default async function PersonTimelineDetailPage({
     team && group ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}` : ""
 
   return (
-    <AppShell title="个人单日三轨详情" searchPlaceholder="搜索人员、职场或状态">
+    <AppShell title="个人单日三轨详情" searchPlaceholder="搜索团队、小组、人员或状态异常">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex max-w-3xl flex-col gap-1">

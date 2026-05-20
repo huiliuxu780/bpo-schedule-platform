@@ -13,6 +13,8 @@
 - 履约日历支持团队周视图、小组周视图、小组成员单日矩阵和个人单日三轨详情。
 - 下钻采用单层展示：团队层、小组层、成员矩阵层不会堆叠在同一个页面上。
 - 小组成员矩阵每个成员默认展示排班、登录、状态三条横向子轨，异常可以进入个人详情解释。
+- 侧边栏履约监控入口已统一为“履约日历”，不再暴露“人员时间轴”或“坐席状态轨迹”作为独立入口。
+- 履约监控下不再保留跳转 `/dashboard` 的伪业务入口；CORN 状态日志未作为 `/dashboard` 占位入口展示。
 - 产品 UI 继续避免暴露 PRD、Gate、验收清单、暂不实现、准备状态、数据接入状态等内部执行口径。
 - 本次没有新增依赖、后端、数据库、真实外部接口、权限、审批、导出、批量、自动排班或生产公式。
 
@@ -23,12 +25,12 @@
 
 #### 验证
 
-- `node --experimental-strip-types --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs`：通过，9 个测试通过。
+- `node --test scripts/tests/product-navigation-business-only.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/person-timeline.test.mjs`：通过，13 个测试通过。
 - `bash scripts/check-state.sh --strict`：通过。
 - `npm run lint`：通过。
 - `npm run typecheck`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
-- In-app browser smoke：`/person-timeline` 显示履约日历和团队周视图；`?team=上海职场||博西客服` 显示小组周视图；`?team=上海职场||博西客服&group=上海职场||博西客服||供应商 A&date=2026-05-11` 显示小组成员单日矩阵；`/person-timeline/A-1001?date=2026-05-11&team=...&group=...` 显示个人单日三轨详情和返回小组矩阵。
+- In-app browser smoke：`/person-timeline` 显示履约日历和团队周视图；`?team=上海职场||博西客服` 显示小组周视图；`?team=上海职场||博西客服&group=上海职场||博西客服||供应商 A&date=2026-05-11` 显示小组成员单日矩阵且不暴露旧导航名；`/person-timeline/A-1001?date=2026-05-11&team=...&group=...` 显示个人单日三轨详情和返回小组矩阵。
 
 ### 2026-05-18 - H029 生产雏形大 PRD 整理审计
 

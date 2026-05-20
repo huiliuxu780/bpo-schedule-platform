@@ -18,6 +18,8 @@ const bannedTerms = [
   "Gate",
   "No Database",
   "MVP 链路",
+  "人员时间轴",
+  "坐席状态轨迹",
 ];
 
 const files = [
