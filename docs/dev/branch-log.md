@@ -1029,3 +1029,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F169 Fulfillment Calendar Drilldown
+
+- branch_name: `codex/f169-fulfillment-calendar`
+- base_main_commit: `a3a134c`
+- remote_status: `local branch created from F168 personnel schedule detail head because main has not yet integrated the product chain`
+- scope: frontend local business function: upgrade `/person-timeline` into fulfillment calendar, add local aggregation for team week, group week, member day matrix, preserve personal day three-track detail, and update focused tests and traceability.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `scripts/tests/product-ui-copy-audit.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing person timeline route and model, updates focused model/UI copy tests and traceability docs; no new `/production-mvp/**` routes, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target tests, product UI copy audit, strict state check, lint, typecheck, in-app browser smoke, and final `bash scripts/check.sh` passed; final check included strict state check, state-check regression tests, frontend lint, typecheck, Next build with `/person-timeline` dynamic routes, and 25 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

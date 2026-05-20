@@ -26,6 +26,8 @@ type PageProps = {
   }>
   searchParams?: Promise<{
     date?: string
+    team?: string
+    group?: string
   }>
 }
 
@@ -40,7 +42,7 @@ export default async function PersonTimelineDetailPage({
   searchParams,
 }: PageProps) {
   const { employeeId } = await params
-  const { date } = (await searchParams) ?? {}
+  const { date, team, group } = (await searchParams) ?? {}
   const row = getPersonTimeline(decodeURIComponent(employeeId))
 
   if (!row) {
@@ -49,19 +51,25 @@ export default async function PersonTimelineDetailPage({
 
   const days = getPersonTimelineAvailableDates(row)
   const dailyView = getPersonTimelineDailyView(row, date)
+  const returnHref =
+    team && group
+      ? `/person-timeline?team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&date=${dailyView.date}`
+      : "/person-timeline"
+  const detailQuery =
+    team && group ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}` : ""
 
   return (
-    <AppShell title="人员时间轴详情" searchPlaceholder="搜索时间轴事件">
+    <AppShell title="个人单日三轨详情" searchPlaceholder="搜索人员、职场或状态">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex max-w-3xl flex-col gap-1">
-            <h1 className="text-lg font-semibold">{row.employeeName} 时间轴</h1>
+            <h1 className="text-lg font-semibold">{row.employeeName} 单日三轨详情</h1>
             <p className="text-sm text-muted-foreground">
               {row.employeeId} / {row.workplace} / {row.supplier} / {row.project} / {dailyView.date}
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href="/person-timeline">返回人员时间轴</Link>
+            <Link href={returnHref}>{team && group ? "返回小组矩阵" : "返回履约日历"}</Link>
           </Button>
         </div>
 
@@ -85,7 +93,7 @@ export default async function PersonTimelineDetailPage({
                 size="sm"
                 variant={day.date === dailyView.date ? "default" : "outline"}
               >
-                <Link href={`/person-timeline/${row.employeeId}?date=${day.date}`}>
+                <Link href={`/person-timeline/${row.employeeId}?date=${day.date}${detailQuery}`}>
                   {day.label} {day.weekday}
                   {day.anomalyCount > 0 ? ` (${day.anomalyCount})` : ""}
                 </Link>
@@ -96,7 +104,7 @@ export default async function PersonTimelineDetailPage({
 
         <Card>
           <CardHeader>
-            <CardTitle>当天时间轴</CardTitle>
+            <CardTitle>当天三轨时间轴</CardTitle>
             <CardDescription>
               三条横向轨道对齐展示当天排班、登录和状态切片。
             </CardDescription>
@@ -115,9 +123,9 @@ export default async function PersonTimelineDetailPage({
 
         <Card>
           <CardHeader>
-            <CardTitle>异常标记</CardTitle>
+            <CardTitle>异常说明</CardTitle>
             <CardDescription>
-              展示当天需要复核的异常原因和严重度。
+              展示当天排班、登录和状态对齐后的异常原因。
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 lg:grid-cols-2">
@@ -133,7 +141,7 @@ export default async function PersonTimelineDetailPage({
                     <Badge variant="outline">{anomaly.severity}</Badge>
                   </div>
                   <div className="mt-2 text-xs text-muted-foreground">
-                    {anomaly.code}
+                    {severityLabel[anomaly.severity]}
                   </div>
                 </div>
               ))
@@ -211,7 +219,6 @@ function TimelineTrack({
                 <span className="truncate font-medium">{item.label}</span>
                 <span className="truncate opacity-80">
                   {item.start}-{item.end}
-                  {item.status ? ` / ${item.status}` : ""}
                 </span>
               </div>
             )
@@ -226,4 +233,10 @@ const timelineToneClass = {
   schedule: "border-sky-300 bg-sky-100 text-sky-950 dark:border-sky-800 dark:bg-sky-950 dark:text-sky-100",
   login: "border-emerald-300 bg-emerald-100 text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100",
   status: "border-amber-300 bg-amber-100 text-amber-950 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100",
+}
+
+const severityLabel = {
+  high: "高优先级",
+  medium: "中优先级",
+  low: "低优先级",
 }

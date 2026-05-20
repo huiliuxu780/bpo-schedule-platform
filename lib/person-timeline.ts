@@ -68,8 +68,73 @@ export type PersonTimelineDailyView = {
   statusHours: number
 }
 
+export type FulfillmentDayMetrics = {
+  date: string
+  label: string
+  weekday: string
+  plannedPeople: number
+  loginPeople: number
+  gapPeople: number
+  anomalyPeople: number
+}
+
+export type FulfillmentCalendarSummary = {
+  plannedPeople: number
+  loginPeople: number
+  gapPeople: number
+  anomalyPeople: number
+}
+
+export type FulfillmentGroupWeek = {
+  id: string
+  teamId: string
+  supplier: string
+  days: FulfillmentDayMetrics[]
+  summary: FulfillmentCalendarSummary
+  members: PersonTimeline[]
+}
+
+export type FulfillmentTeamWeek = {
+  id: string
+  workplace: string
+  project: string
+  days: FulfillmentDayMetrics[]
+  summary: FulfillmentCalendarSummary
+  groups: FulfillmentGroupWeek[]
+}
+
+export type FulfillmentCalendar = {
+  weekStart: string
+  weekEnd: string
+  weekDays: FulfillmentDayMetrics[]
+  summary: FulfillmentCalendarSummary
+  teams: FulfillmentTeamWeek[]
+}
+
+export type FulfillmentMatrixMember = {
+  employeeId: string
+  employeeName: string
+  workplace: string
+  supplier: string
+  project: string
+  tracks: PersonTimeline["tracks"]
+  anomalies: TimelineAnomaly[]
+  scheduledHours: number
+  loginHours: number
+  statusHours: number
+}
+
+export type FulfillmentGroupMatrix = {
+  date: string
+  team: FulfillmentTeamWeek
+  group: FulfillmentGroupWeek
+  summary: FulfillmentCalendarSummary
+  members: FulfillmentMatrixMember[]
+}
+
 export const timelineWorkdayStartMinutes = 8 * 60
 export const timelineWorkdayEndMinutes = 20 * 60
+export const fulfillmentDefaultWeekStart = "2026-05-11"
 
 export const fallbackPersonTimelines: PersonTimeline[] = [
   person("A-1001", "刘晨", "上海职场", "供应商 A", "博西客服", "现场主管", [
@@ -98,6 +163,16 @@ export const fallbackPersonTimelines: PersonTimeline[] = [
   ], [
     { code: "late_login", date: "2026-05-11", title: "迟到 21 分钟", severity: "high" },
   ]),
+  person("A-1005", "赵岩", "上海职场", "供应商 B", "博西客服", "现场主管", [
+    event("SCH-1005-1", "schedule", "2026-05-11", "标准班", "09:00", "18:00", 8),
+    event("SCH-1005-2", "schedule", "2026-05-12", "早班", "09:00", "17:00", 8),
+  ], [
+    event("LOG-1005-1", "login", "2026-05-11", "CORN 登录", "09:00", "18:00", 8),
+    event("LOG-1005-2", "login", "2026-05-12", "CORN 登录", "09:10", "17:00", 7),
+  ], [
+    event("STA-1005-1", "status", "2026-05-11", "在线", "09:00", "18:00", 8, "productive"),
+    event("STA-1005-2", "status", "2026-05-12", "在线", "09:10", "17:00", 7, "productive"),
+  ], []),
   person("A-1003", "张琳", "苏州职场", "供应商 B", "博西客服", "排班运营", [
     event("SCH-1003-1", "schedule", "2026-05-11", "晚班", "12:00", "20:00", 8),
   ], [
@@ -237,6 +312,123 @@ export function getTimelineEventPosition(
   }
 }
 
+export function getFulfillmentCalendar(
+  rows = fallbackPersonTimelines,
+  weekStart = fulfillmentDefaultWeekStart
+): FulfillmentCalendar {
+  const weekDays = buildWeekDays(weekStart)
+  const teams = Array.from(groupBy(rows, teamKey).entries())
+    .map(([id, members]) => {
+      const [workplace = "", project = ""] = id.split("||")
+      const groups = Array.from(groupBy(members, groupKey).entries())
+        .map(([supplier, groupMembers]) => {
+          const groupDays = weekDays.map((day) => buildDayMetrics(day.date, groupMembers))
+          return {
+            id: `${id}||${supplier}`,
+            teamId: id,
+            supplier,
+            days: groupDays,
+            summary: summarizeDayMetrics(groupDays),
+            members: groupMembers,
+          }
+        })
+        .sort(compareFulfillmentRisk)
+
+      const days = weekDays.map((day) => buildDayMetrics(day.date, members))
+      return {
+        id,
+        workplace,
+        project,
+        days,
+        summary: summarizeDayMetrics(days),
+        groups,
+      }
+    })
+    .sort(compareFulfillmentRisk)
+
+  const summary = summarizeDayMetrics(teams.flatMap((team) => team.days))
+
+  return {
+    weekStart,
+    weekEnd: weekDays[weekDays.length - 1]?.date ?? weekStart,
+    weekDays,
+    summary,
+    teams,
+  }
+}
+
+export function getFulfillmentTeam(
+  teamId: string | undefined,
+  rows = fallbackPersonTimelines,
+  weekStart = fulfillmentDefaultWeekStart
+) {
+  const calendar = getFulfillmentCalendar(rows, weekStart)
+  return calendar.teams.find((team) => team.id === decodeScopeId(teamId))
+}
+
+export function getFulfillmentGroup(
+  teamId: string | undefined,
+  groupId: string | undefined,
+  rows = fallbackPersonTimelines,
+  weekStart = fulfillmentDefaultWeekStart
+) {
+  const team = getFulfillmentTeam(teamId, rows, weekStart)
+  return team?.groups.find((group) => group.id === decodeScopeId(groupId))
+}
+
+export function getFulfillmentMatrix(
+  teamId: string | undefined,
+  groupId: string | undefined,
+  date: string | undefined,
+  rows = fallbackPersonTimelines,
+  weekStart = fulfillmentDefaultWeekStart
+): FulfillmentGroupMatrix | undefined {
+  const team = getFulfillmentTeam(teamId, rows, weekStart)
+  if (!team) {
+    return undefined
+  }
+
+  const group = team.groups.find((item) => item.id === decodeScopeId(groupId))
+  if (!group) {
+    return undefined
+  }
+
+  const selectedDate = date && group.days.some((day) => day.date === date) ? date : weekStart
+  const members = group.members
+    .map((member) => {
+      const dailyView = getPersonTimelineDailyView(member, selectedDate)
+      return {
+        employeeId: member.employeeId,
+        employeeName: member.employeeName,
+        workplace: member.workplace,
+        supplier: member.supplier,
+        project: member.project,
+        tracks: dailyView.tracks,
+        anomalies: dailyView.anomalies,
+        scheduledHours: dailyView.scheduledHours,
+        loginHours: dailyView.loginHours,
+        statusHours: dailyView.statusHours,
+      }
+    })
+    .sort((a, b) => {
+      const riskA = Number(a.scheduledHours > a.loginHours) + a.anomalies.length
+      const riskB = Number(b.scheduledHours > b.loginHours) + b.anomalies.length
+      return riskB - riskA || a.employeeId.localeCompare(b.employeeId)
+    })
+
+  return {
+    date: selectedDate,
+    team,
+    group,
+    summary: buildDayMetrics(selectedDate, group.members),
+    members,
+  }
+}
+
+export function encodeScopeId(value: string) {
+  return encodeURIComponent(value)
+}
+
 function sumTrack(rows: PersonTimeline[], type: TimelineEventType) {
   return rows.reduce(
     (total, row) =>
@@ -255,6 +447,108 @@ function filterTracksByDate(row: PersonTimeline, date: string) {
 
 function sumEvents(events: TimelineEvent[]) {
   return events.reduce((total, eventItem) => total + eventItem.durationHours, 0)
+}
+
+function buildWeekDays(weekStart: string): FulfillmentDayMetrics[] {
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = addDays(weekStart, index)
+    return {
+      date,
+      label: formatDateLabel(date),
+      weekday: formatWeekday(date),
+      plannedPeople: 0,
+      loginPeople: 0,
+      gapPeople: 0,
+      anomalyPeople: 0,
+    }
+  })
+}
+
+function buildDayMetrics(date: string, rows: PersonTimeline[]): FulfillmentDayMetrics {
+  const plannedPeople = rows.filter((row) => sumEvents(filterTracksByDate(row, date).schedule) > 0)
+    .length
+  const loginPeople = rows.filter((row) => sumEvents(filterTracksByDate(row, date).login) > 0).length
+  const gapPeople = rows.filter((row) => {
+    const dailyTracks = filterTracksByDate(row, date)
+    return sumEvents(dailyTracks.schedule) > sumEvents(dailyTracks.login)
+  }).length
+  const anomalyPeople = rows.filter((row) =>
+    row.anomalies.some((anomaly) => anomaly.date === date)
+  ).length
+
+  return {
+    date,
+    label: formatDateLabel(date),
+    weekday: formatWeekday(date),
+    plannedPeople,
+    loginPeople,
+    gapPeople,
+    anomalyPeople,
+  }
+}
+
+function summarizeDayMetrics(days: FulfillmentDayMetrics[]): FulfillmentCalendarSummary {
+  return days.reduce(
+    (summary, day) => ({
+      plannedPeople: summary.plannedPeople + day.plannedPeople,
+      loginPeople: summary.loginPeople + day.loginPeople,
+      gapPeople: summary.gapPeople + day.gapPeople,
+      anomalyPeople: summary.anomalyPeople + day.anomalyPeople,
+    }),
+    {
+      plannedPeople: 0,
+      loginPeople: 0,
+      gapPeople: 0,
+      anomalyPeople: 0,
+    }
+  )
+}
+
+function compareFulfillmentRisk(
+  a: { summary: FulfillmentCalendarSummary },
+  b: { summary: FulfillmentCalendarSummary }
+) {
+  return (
+    b.summary.gapPeople - a.summary.gapPeople ||
+    b.summary.anomalyPeople - a.summary.anomalyPeople ||
+    b.summary.plannedPeople - a.summary.plannedPeople
+  )
+}
+
+function teamKey(row: PersonTimeline) {
+  return `${row.workplace}||${row.project}`
+}
+
+function groupKey(row: PersonTimeline) {
+  return row.supplier
+}
+
+function groupBy<T>(rows: T[], getKey: (row: T) => string) {
+  return rows.reduce((groups, row) => {
+    const key = getKey(row)
+    const group = groups.get(key) ?? []
+    group.push(row)
+    groups.set(key, group)
+    return groups
+  }, new Map<string, T[]>())
+}
+
+function decodeScopeId(value: string | undefined) {
+  if (!value) {
+    return ""
+  }
+
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return value
+  }
+}
+
+function addDays(date: string, offset: number) {
+  const [year = "0", month = "1", day = "1"] = date.split("-")
+  const nextDate = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day) + offset))
+  return nextDate.toISOString().slice(0, 10)
 }
 
 function person(

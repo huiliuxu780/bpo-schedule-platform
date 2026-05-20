@@ -2726,6 +2726,27 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/production-mvp-anomaly-triage-readiness.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
 
+### US230 - 履约日历团队小组个人下钻
+
+```yaml
+stories:
+  - id: US230
+    requirement_ids: [R218]
+    task_ids: [F169]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望从履约日历查看团队周履约、小组周履约和小组成员单日三轨矩阵，以便定位具体人员、日期和时段的排班、登录、状态不一致。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+acceptance:
+  - "`/person-timeline` 首屏标题为履约日历，并展示团队周视图、本周概览和业务筛选口径。"
+  - "团队周视图可以下钻到小组周视图，小组某天可以下钻到成员单日矩阵。"
+  - "成员矩阵默认按人员展示排班、登录、状态三条横向子轨，并能进入个人单日三轨详情。"
+  - "产品 UI 不出现 PRD、Gate、验收清单、暂不实现、准备状态、数据接入状态等内部执行口径。"
+  - "`node --experimental-strip-types --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US217-US226 - 发布冻结与权限审计边界准备
 
 ```yaml
