@@ -1012,3 +1012,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `PM escalation requires immediate verified fix; push after green local gate`
 - blocked_reason: `N/A`
+
+### F168 Personnel Schedule Detail Closure
+
+- branch_name: `codex/f168-personnel-schedule-detail`
+- base_main_commit: `a3a134c`
+- remote_status: `local branch created from pushed F167 product UI cleanup head because main has not yet integrated the product chain`
+- scope: frontend local business function: add personnel-level schedule detail model, table, tests, and mount it on existing schedule plan detail so interval summary can trace to employees and personal timeline.
+- allowed_files_check: `app/schedule-plans/[planId]/page.tsx`, `components/personnel-schedule-detail-table.tsx`, `lib/personnel-schedule-details.ts`, `scripts/tests/personnel-schedule-details.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, charge-factor files, or new product pages.
+- scope_diff_check: adds local personnel schedule detail model and table, updates existing schedule plan detail page, adds focused model test, updates current and legacy traceability docs; no `/production-mvp/**`, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target tests, product UI copy audit, lint, typecheck, in-app browser smoke, and final `bash scripts/check.sh` passed; final check included strict state check, state-check regression tests, frontend lint, typecheck, Next build, and 25 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

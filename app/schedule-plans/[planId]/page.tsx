@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
+import { PersonnelScheduleDetailTable } from "@/components/personnel-schedule-detail-table"
 import { SchedulePlanIntervalTable } from "@/components/schedule-plan-interval-table"
 import {
   formatCoverageRate,
@@ -9,6 +10,11 @@ import {
   getScheduleRisks,
   schedulePlanStatusLabel,
 } from "@/lib/schedule-plans"
+import {
+  getPersonnelScheduleDetails,
+  getPersonnelScheduleDetailsForInterval,
+  summarizePersonnelScheduleDetails,
+} from "@/lib/personnel-schedule-details"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -39,6 +45,8 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
     getUnavailability({ query: plan.summary.site_name, status: "active" }),
   ])
   const gapIntervals = plan.intervals.filter((item) => item.gap_agents > 0)
+  const personnelRows = getPersonnelScheduleDetails(plan.summary.id)
+  const personnelSummary = summarizePersonnelScheduleDetails(personnelRows)
   const relatedRisks = risks.filter(
     (risk) =>
       risk.plan_id === plan.summary.id &&
@@ -161,6 +169,76 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
           </CardHeader>
           <CardContent>
             <SchedulePlanIntervalTable intervals={plan.intervals} />
+          </CardContent>
+        </Card>
+
+        <Card id="personnel-schedule-details">
+          <CardHeader className="flex flex-row items-start justify-between gap-4">
+            <div>
+              <CardTitle>人员级排班明细</CardTitle>
+              <CardDescription>
+                从当前计划追溯到员工、班次、技能和 0.5h 展开结果
+              </CardDescription>
+            </div>
+            <Badge variant="outline">{personnelSummary.peopleCount} 人</Badge>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="grid gap-3 md:grid-cols-4">
+              <DetailCard
+                title="人员"
+                value={`${personnelSummary.peopleCount}`}
+                description="当前计划明细"
+              />
+              <DetailCard
+                title="计划工时"
+                value={`${personnelSummary.totalScheduledHours.toFixed(1)}h`}
+                description="人员级合计"
+              />
+              <DetailCard
+                title="异常人员"
+                value={`${personnelSummary.peopleWithAnomalies}`}
+                description="可进入个人时间轴复核"
+              />
+              <DetailCard
+                title="覆盖时段"
+                value={`${personnelSummary.intervalCount}`}
+                description="0.5h 展开结果"
+              />
+            </div>
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {plan.intervals.slice(0, 4).map((intervalItem) => {
+                const rows = getPersonnelScheduleDetailsForInterval(
+                  plan.summary.id,
+                  intervalItem.interval_start,
+                  intervalItem.interval_end
+                )
+
+                return (
+                  <div
+                    key={`${intervalItem.interval_start}-${intervalItem.interval_end}`}
+                    className="rounded-lg border p-3"
+                  >
+                    <div className="text-xs text-muted-foreground">
+                      {intervalItem.interval_start}-{intervalItem.interval_end}
+                    </div>
+                    <div className="mt-2 text-sm font-medium">
+                      {rows.length} 人已排
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {rows.slice(0, 4).map((row) => (
+                        <Badge key={row.scheduleDetailId} variant="secondary">
+                          {row.employeeName}
+                        </Badge>
+                      ))}
+                      {rows.length > 4 ? (
+                        <Badge variant="outline">+{rows.length - 4}</Badge>
+                      ) : null}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <PersonnelScheduleDetailTable rows={personnelRows} />
           </CardContent>
         </Card>
       </main>

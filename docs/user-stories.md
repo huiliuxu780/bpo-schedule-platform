@@ -29,6 +29,30 @@
 
 ## Stories
 
+### US229 - 排班计划挂载人员级排班明细
+
+```yaml
+id: US229
+requirement_ids:
+  - R217
+task_ids:
+  - F168
+module: "排班计划"
+role: "排班运营"
+story: "作为排班运营，我希望在排班计划详情里看到人员级排班明细，并能跳到个人当天时间轴，以便从时段汇总追溯到具体人员。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "排班计划详情展示人员级排班明细，包含员工、供应商、职场、班次、开始结束、技能组、等级和异常标记。"
+  - "人员明细展示对应的 0.5h 展开时段。"
+  - "人员明细提供进入 `/person-timeline/[employeeId]?date=YYYY-MM-DD` 的链接。"
+  - "不新增页面，不新增依赖，不改后端、数据库、真实导入、权限、审批、导出、批量、自动排班或生产公式。"
+  - "`node --test scripts/tests/personnel-schedule-details.test.mjs` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "F167"
+status: "done"
+```
+
 ### US228 - 全量清理产品 UI 内部口径并重做人员时间轴
 
 ```yaml

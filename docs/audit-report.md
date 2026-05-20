@@ -1475,6 +1475,29 @@
 - In-app browser smoke：`/dashboard`、`/anomaly-review`、`/person-timeline`、`/person-timeline/A-1001?date=2026-05-11` 均加载成功，未出现内部执行口径；人员详情页包含排班轨道、登录轨道和状态轨道。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
+### 2026-05-20 - Personnel schedule detail closure
+
+#### 审计结论
+
+- `F168/US229` 已在现有排班计划详情页挂载人员级排班明细。
+- 新增本地模型 `lib/personnel-schedule-details.ts`，支持按计划查询人员明细、按 0.5h 时段反查人员、汇总人员/工时/异常/覆盖时段，并生成个人当天时间轴链接。
+- 新增 `components/personnel-schedule-detail-table.tsx`，展示员工、供应商、职场、班次、计划时间、技能等级、0.5h 展开和异常标记。
+- `/schedule-plans/plan-20260511-shanghai-bosch-v1` 可以从人员明细进入 `/person-timeline/A-1001?date=2026-05-11`。
+- 本次没有新增页面，没有新增依赖，没有改后端、数据库、真实导入、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍是本地前端模型，不代表真实排班导入、真实排班生成或生产数据库持久化已经上线。
+- 人员明细目前只覆盖已登记的本地样例计划；后续若要支持真实上传/导入或编辑保存，需要单独 Gate。
+
+#### 验证
+
+- `node --test scripts/tests/personnel-schedule-details.test.mjs scripts/tests/product-ui-copy-audit.test.mjs`：通过，5 个测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- In-app browser smoke：`/schedule-plans/plan-20260511-shanghai-bosch-v1` 显示人员级排班明细、刘晨、`09:00-09:30` 时段；点击个人时间轴进入 `/person-timeline/A-1001?date=2026-05-11` 并显示排班、登录、状态三条轨道。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

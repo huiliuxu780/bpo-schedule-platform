@@ -17,6 +17,19 @@
 
 ## Requirements
 
+### R217 - 排班计划挂载人员级排班明细
+
+```yaml
+id: R217
+module: "排班计划"
+description: "排班计划详情不能只停留在 0.5h 汇总，需要展示人员级排班明细，并支持从人员明细进入个人当天时间轴。"
+source: "PM confirmed business function on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本需求只在现有排班计划详情上挂载本地人员级明细，不新增页面，不实现自动排班、真实导入、数据库、权限、审批、导出、批量或生产公式。"
+```
+
 ### R216 - 全量清理产品 UI 内部口径并重做人员时间轴
 
 ```yaml
