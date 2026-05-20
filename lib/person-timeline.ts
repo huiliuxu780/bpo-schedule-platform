@@ -163,12 +163,30 @@ export type FulfillmentMatrixMember = {
   statusHours: number
 }
 
+export type FulfillmentMatrixExceptionQueueItem = {
+  key: string
+  employeeId: string
+  employeeName: string
+  anomalyCode: string
+  type: TimelineExceptionExplanation["type"]
+  title: string
+  priority: TimelineExceptionExplanation["priority"]
+  impactHours: number
+  start: string
+  end: string
+  detailDate: string
+  involvedTracks: TimelineEventType[]
+  evidence: string
+  supervisorAction: string
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
   group: FulfillmentGroupWeek
   summary: FulfillmentCalendarSummary
   members: FulfillmentMatrixMember[]
+  exceptionQueue: FulfillmentMatrixExceptionQueueItem[]
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -539,6 +557,7 @@ export function getFulfillmentMatrix(
       const riskB = Number(b.scheduledHours > b.loginHours) + b.anomalies.length
       return riskB - riskA || a.employeeId.localeCompare(b.employeeId)
     })
+  const exceptionQueue = buildFulfillmentMatrixExceptionQueue(members, selectedDate)
 
   return {
     date: selectedDate,
@@ -546,6 +565,7 @@ export function getFulfillmentMatrix(
     group,
     summary: buildDayMetrics(selectedDate, group.members),
     members,
+    exceptionQueue,
   }
 }
 
@@ -657,6 +677,41 @@ function buildExceptionExplanations(
     })
 }
 
+function buildFulfillmentMatrixExceptionQueue(
+  members: FulfillmentMatrixMember[],
+  date: string
+): FulfillmentMatrixExceptionQueueItem[] {
+  return members
+    .flatMap((member) =>
+      member.exceptionExplanations.map((explanation) => ({
+        key: fulfillmentMatrixExceptionKey(member.employeeId, explanation.anomalyCode),
+        employeeId: member.employeeId,
+        employeeName: member.employeeName,
+        anomalyCode: explanation.anomalyCode,
+        type: explanation.type,
+        title: explanation.title,
+        priority: explanation.priority,
+        impactHours: explanation.impactHours,
+        start: explanation.start,
+        end: explanation.end,
+        detailDate: date,
+        involvedTracks: explanation.involvedTracks,
+        evidence: explanation.evidence,
+        supervisorAction: explanation.supervisorAction,
+      }))
+    )
+    .sort(
+      (a, b) =>
+        priorityRank[b.priority] - priorityRank[a.priority] ||
+        b.impactHours - a.impactHours ||
+        a.employeeId.localeCompare(b.employeeId)
+    )
+}
+
+function fulfillmentMatrixExceptionKey(employeeId: string, anomalyCode: string) {
+  return `${employeeId}::${anomalyCode}`
+}
+
 function buildLateLoginExplanation(
   row: PersonTimeline,
   anomaly: TimelineAnomaly,
@@ -741,6 +796,12 @@ function buildStatusMismatchExplanation(
 
 function exceptionExplanationId(row: PersonTimeline, anomaly: TimelineAnomaly) {
   return `EXP-${row.employeeId}-${anomaly.date}-${anomaly.code}`
+}
+
+const priorityRank = {
+  high: 3,
+  medium: 2,
+  low: 1,
 }
 
 function earliestTime(values: string[]) {

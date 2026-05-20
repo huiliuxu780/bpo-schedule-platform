@@ -17,6 +17,26 @@
 
 ## Requirements
 
+### R233-R235 - 小组异常优先队列
+
+```yaml
+requirements:
+  - id: R233
+    module: "履约日历"
+    description: "小组成员单日矩阵需要汇总当天全部成员异常，形成主管可扫描的待关注异常队列。"
+  - id: R234
+    module: "履约日历"
+    description: "待关注异常队列需要按业务风险排序，优先展示高优先级、影响时长更长的异常。"
+  - id: R235
+    module: "履约日历"
+    description: "待关注异常队列需要能切换当前异常解释，并保留进入个人单日详情的入口。"
+source: "PM requested continuous closeout of supervisor handling flow on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本组只增强现有小组单日矩阵右侧面板；不新增页面路由或左侧入口，不新增依赖，不实现数据库、权限、审批、处理提交、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R230-R232 - 小组异常解释侧栏
 
 ```yaml

@@ -24,10 +24,10 @@ import {
   type FulfillmentGroupMatrix,
   type FulfillmentGroupMemberWeekMatrix,
   type FulfillmentGroupMemberWeekMatrixMember,
+  type FulfillmentMatrixExceptionQueueItem,
   type FulfillmentMatrixMember,
   type FulfillmentTeamWeek,
   type PersonTimelineWeekDay,
-  type TimelineExceptionExplanation,
   type TimelineEvent,
 } from "@/lib/person-timeline"
 
@@ -382,7 +382,7 @@ function MemberMatrixSection({
                   key={member.employeeId}
                   member={member}
                   matrix={matrix}
-                  selectedExceptionKey={selectedException.key}
+                  selectedExceptionKey={selectedException?.key ?? ""}
                 />
               ))}
             </div>
@@ -395,21 +395,9 @@ function MemberMatrixSection({
 }
 
 function getSelectedMatrixException(matrix: FulfillmentGroupMatrix, selectedExceptionKey?: string) {
-  const explanations = matrix.members.flatMap((member) =>
-    member.exceptionExplanations.map((explanation) => ({
-      key: matrixExceptionKey(member.employeeId, explanation.anomalyCode),
-      member,
-      explanation,
-    }))
-  )
-
   return (
-    explanations.find((item) => item.key === selectedExceptionKey) ??
-    explanations[0] ?? {
-      key: "",
-      member: undefined,
-      explanation: undefined,
-    }
+    matrix.exceptionQueue.find((item) => item.key === selectedExceptionKey) ??
+    matrix.exceptionQueue[0]
   )
 }
 
@@ -417,14 +405,10 @@ function MatrixExceptionPanel({
   selected,
   matrix,
 }: {
-  selected: {
-    key: string
-    member?: FulfillmentMatrixMember
-    explanation?: TimelineExceptionExplanation
-  }
+  selected?: FulfillmentMatrixExceptionQueueItem
   matrix: FulfillmentGroupMatrix
 }) {
-  if (!selected.member || !selected.explanation) {
+  if (!selected) {
     return (
       <div className="rounded-lg border p-3 text-sm text-muted-foreground">
         当天没有需要解释的异常。
@@ -432,36 +416,67 @@ function MatrixExceptionPanel({
     )
   }
 
-  const detailHref = `/person-timeline/${selected.member.employeeId}?date=${matrix.date}&team=${encodeScopeId(
+  const detailHref = `/person-timeline/${selected.employeeId}?date=${selected.detailDate}&team=${encodeScopeId(
     matrix.team.id
-  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${matrix.date}`
+  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${selected.detailDate}`
 
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
+      <div className="grid gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-sm font-medium">待关注异常</div>
+          <Badge variant="outline">{matrix.exceptionQueue.length} 项</Badge>
+        </div>
+        <div className="grid gap-2">
+          {matrix.exceptionQueue.map((item) => (
+            <Link
+              key={item.key}
+              href={`/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(
+                matrix.group.id
+              )}&date=${matrix.date}&exception=${encodeScopeId(item.key)}`}
+              className={cn(
+                "grid gap-1 rounded-md border p-2 text-xs transition-colors hover:bg-muted",
+                item.key === selected.key ? "border-primary bg-primary/10" : "border-border"
+              )}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium">
+                  {item.employeeId} {item.employeeName}
+                </span>
+                <Badge variant={item.priority === "high" ? "destructive" : "outline"}>
+                  {priorityLabel[item.priority]}
+                </Badge>
+              </div>
+              <div className="text-muted-foreground">
+                {item.start}-{item.end} / {item.title}
+              </div>
+              <div className="text-muted-foreground">影响 {item.impactHours.toFixed(1)}h</div>
+            </Link>
+          ))}
+        </div>
+      </div>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <div className="text-sm font-medium">当前异常解释</div>
           <div className="text-xs text-muted-foreground">
-            {selected.member.employeeId} {selected.member.employeeName}
+            {selected.employeeId} {selected.employeeName}
           </div>
         </div>
-        <Badge variant={selected.explanation.priority === "high" ? "destructive" : "outline"}>
-          {priorityLabel[selected.explanation.priority]}
+        <Badge variant={selected.priority === "high" ? "destructive" : "outline"}>
+          {priorityLabel[selected.priority]}
         </Badge>
       </div>
       <div className="grid gap-2 text-sm">
         <div className="font-medium">
-          {selected.explanation.start}-{selected.explanation.end} / {selected.explanation.type}
+          {selected.start}-{selected.end} / {selected.type}
         </div>
-        <div className="text-xs text-muted-foreground">{selected.explanation.title}</div>
+        <div className="text-xs text-muted-foreground">{selected.title}</div>
       </div>
       <div className="grid gap-2 text-xs text-muted-foreground">
-        <div>
-          涉及轨道：{selected.explanation.involvedTracks.map((track) => trackLabel[track]).join(" / ")}
-        </div>
-        <div>影响时长：{selected.explanation.impactHours.toFixed(1)}h</div>
-        <div>证据：{selected.explanation.evidence}</div>
-        <div>建议动作：{selected.explanation.supervisorAction}</div>
+        <div>涉及轨道：{selected.involvedTracks.map((track) => trackLabel[track]).join(" / ")}</div>
+        <div>影响时长：{selected.impactHours.toFixed(1)}h</div>
+        <div>证据：{selected.evidence}</div>
+        <div>建议动作：{selected.supervisorAction}</div>
       </div>
       <Button asChild size="sm" variant="outline">
         <Link href={detailHref}>查看个人详情</Link>

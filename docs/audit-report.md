@@ -1665,6 +1665,29 @@
 - In-app browser smoke：打开 `/person-timeline?team=...&group=...&date=2026-05-11&exception=A-1001::no_login`，页面显示“小组成员单日矩阵”“当前异常解释”“A-1001 刘晨”“13:00-18:00 / 状态不一致”“涉及轨道：排班 / 登录 / 状态”“影响时长：5.0h”“中优先级”和“查看个人详情”，且未出现 PRD、Gate、Story、验收清单、待实现、暂不实现、处理提交、审批按钮等内部或越界词。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
+### 2026-05-20 - Group exception priority queue
+
+#### 审计结论
+
+- `F184-F186/US245-US247` 已在小组成员单日矩阵右侧增加待关注异常队列。
+- 小组单日矩阵模型暴露 `exceptionQueue`，按优先级、影响时长、员工号稳定排序。
+- 右侧面板展示全部待关注异常，队列项包含员工、优先级、时间段、异常标题和影响时长。
+- 点击队列项会通过现有 `exception=员工::异常码` 切换当前异常解释，并保留个人详情下钻。
+- 本次没有新增左侧入口，没有新增页面路由，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、处理提交、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍基于本地样例数据和前端聚合解释异常，不代表真实 CORN、HR、WFM 或生产数据库已经接入。
+- 异常队列只用于主管扫描和判断顺序，不代表正式处理流、审批流、考勤定责或结算口径。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，10 个履约日历和人员时间轴模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- In-app browser smoke：打开 `/person-timeline?team=...&group=...&date=2026-05-11&exception=A-1001::no_login`，页面显示“小组成员单日矩阵”“待关注异常”“2 项”“A-1002 王敏”“高优先级”“09:00-09:21 / 迟到 21 分钟”“影响 0.3h”“当前异常解释”“A-1001 刘晨”“13:00-18:00 / 状态不一致”和“查看个人详情”；点击“A-1002 王敏”后 URL 切换为 `exception=A-1002::late_login`，当前异常解释显示“A-1002 王敏”“09:00-09:21 / 登录缺口”“迟到 21 分钟”“高优先级”，且未出现 PRD、Gate、Story、验收清单、待实现、暂不实现、处理提交、审批按钮等内部或越界词。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

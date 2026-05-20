@@ -29,6 +29,46 @@
 
 ## Stories
 
+### US245-US247 - 小组异常优先队列
+
+```yaml
+stories:
+  - id: US245
+    requirement_ids: [R233]
+    task_ids: [F184]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组成员单日矩阵右侧能汇总当天全部异常，以便先扫描需要关注的人和时段。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US246
+    requirement_ids: [R234]
+    task_ids: [F185]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列按优先级和影响时长排序，以便先处理风险更高的履约问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US247
+    requirement_ids: [R235]
+    task_ids: [F186]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望点击异常队列项能切换当前异常解释，并继续下钻到个人详情。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵模型暴露当天全部异常队列。"
+  - "异常队列按优先级、影响时长和员工号稳定排序。"
+  - "右侧面板显示待关注异常队列，选中项高亮，并同步当前异常解释。"
+  - "队列和详情均保留进入个人单日详情的入口。"
+  - "不做审批、处理提交、权限、数据库、真实接口、导出、批量、自动排班或生产公式。"
+  - "不新增页面路由、不新增左侧入口，产品 UI 不出现内部过程词。"
+```
+
 ### US242-US244 - 小组异常解释侧栏
 
 ```yaml

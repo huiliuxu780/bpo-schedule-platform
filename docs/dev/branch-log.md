@@ -1165,3 +1165,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F184-F186 Group Exception Priority Queue
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `a7ed489`
+- remote_status: `continued on pushed supervisor handling branch because this batch extends the same group single-day matrix panel`
+- scope: frontend local business function: expose a sorted group-day exception queue, render a supervisor-facing queue in the existing right-side panel, allow queue item selection through the existing exception query parameter, and keep personal detail drilldown.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, processing submission, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing person timeline route and model, focused model test, current and legacy traceability docs, and implementation plan; no new left sidebar entry, no new page route, no `/production-mvp/**` route, backend, package, lockfile, database, real integration, permission, approval, processing submission, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target model test, lint, typecheck, in-app browser smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

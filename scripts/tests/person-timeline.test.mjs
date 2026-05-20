@@ -213,6 +213,43 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       },
     ]
   );
+  assert.deepEqual(
+    matrix.exceptionQueue.map((item) => ({
+      key: item.key,
+      employeeId: item.employeeId,
+      employeeName: item.employeeName,
+      title: item.title,
+      priority: item.priority,
+      impactHours: item.impactHours,
+      start: item.start,
+      end: item.end,
+      detailDate: item.detailDate,
+    })),
+    [
+      {
+        key: "A-1002::late_login",
+        employeeId: "A-1002",
+        employeeName: "王敏",
+        title: "迟到 21 分钟",
+        priority: "high",
+        impactHours: 0.35,
+        start: "09:00",
+        end: "09:21",
+        detailDate: "2026-05-11",
+      },
+      {
+        key: "A-1001::no_login",
+        employeeId: "A-1001",
+        employeeName: "刘晨",
+        title: "午后状态缺登录切片",
+        priority: "medium",
+        impactHours: 5,
+        start: "13:00",
+        end: "18:00",
+        detailDate: "2026-05-11",
+      },
+    ]
+  );
 });
 
 test("fulfillment group member week matrix exposes member day cells", () => {
