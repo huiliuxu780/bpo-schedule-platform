@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US239-US241 - 履约异常解释卡
+
+```yaml
+stories:
+  - id: US239
+    requirement_ids: [R227]
+    task_ids: [F178]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望个人单日详情能列出当天异常解释，以便知道每个异常落在哪个人、哪天、哪个时段和哪条轨道。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "draft"
+  - id: US240
+    requirement_ids: [R228]
+    task_ids: [F179]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望个人单日三轨下方展示异常解释卡，以便用证据说明和建议动作快速判断现场处理顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "draft"
+  - id: US241
+    requirement_ids: [R229]
+    task_ids: [F180]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望从小组成员单日矩阵点击异常后进入个人详情并看到对应日期异常解释，以便从小组扫描自然下钻到个人判断。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "draft"
+acceptance:
+  - "个人单日详情暴露异常解释列表，每条包含异常类型、时间段、涉及轨道、影响时长、证据说明、建议主管动作和优先级。"
+  - "异常解释卡展示在个人单日三轨时间轴下方，不新增页面路由或左侧入口。"
+  - "小组成员单日矩阵异常标记进入个人单日详情后，个人页显示对应日期异常解释。"
+  - "不做审批、处理提交、权限、数据库、真实接口、导出、批量、自动排班或生产公式。"
+  - "产品 UI 不出现 PRD、Gate、Story、验收清单、待实现、暂不实现等内部过程词。"
+```
+
 ### US236-US238 - 履约日历风险摘要和视图焦点
 
 ```yaml

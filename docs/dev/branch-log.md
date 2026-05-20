@@ -1114,3 +1114,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F178-F180 Exception Explanation Card Design
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `578d35f`
+- remote_status: `local branch created from pushed fulfillment calendar branch because this design depends on the current履约日历 drilldown chain`
+- scope: design and requirement split only for inline personal-day exception explanation cards, focused on supervisor handling context.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no frontend business code, backend, package, lockfile, database, real integration, auth, permission, approval, processing submission, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: adds design spec plus draft raw requirements, draft user stories, draft backlog tasks, trace index mappings, and branch log entry; current story queue and active tasks remain empty pending PM Gate confirmation.
+- check_result: strict state check, diff whitespace check, and final `bash scripts/check.sh` passed; current story queue and active tasks remained empty.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

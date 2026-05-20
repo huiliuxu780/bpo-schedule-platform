@@ -17,6 +17,26 @@
 
 ## Requirements
 
+### R227-R229 - 履约异常解释卡
+
+```yaml
+requirements:
+  - id: R227
+    module: "履约日历"
+    description: "个人单日详情需要提供异常解释数据结构，使异常落到员工、日期、时间段、涉及轨道、影响时长和优先级。"
+  - id: R228
+    module: "履约日历"
+    description: "个人单日三轨详情下方需要展示异常解释卡，用业务语言说明证据和建议主管动作。"
+  - id: R229
+    module: "履约日历"
+    description: "小组成员单日矩阵中的异常标记进入个人单日详情后，需要能看到对应日期的异常解释列表。"
+source: "PM selected inline personal-day exception explanation card option on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本组偏向主管现场处理，只做异常解释和判断辅助；不新增页面路由或左侧入口，不新增依赖，不实现数据库、权限、审批、处理提交、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R224-R226 - 履约日历风险摘要和视图焦点
 
 ```yaml
