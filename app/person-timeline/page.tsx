@@ -35,11 +35,16 @@ type PageProps = {
     team?: string
     group?: string
     date?: string
+    focus?: string
   }>
 }
 
+type GroupWeekFocus = "all" | "gap" | "anomaly"
+
 export default async function PersonTimelinePage({ searchParams }: PageProps) {
-  const { team: teamId, group: groupId, date } = (await searchParams) ?? {}
+  const { team: teamId, group: groupId, date, focus } = (await searchParams) ?? {}
+  const groupWeekFocus: GroupWeekFocus =
+    focus === "gap" || focus === "anomaly" ? focus : "all"
   const calendar = getFulfillmentCalendar(fallbackPersonTimelines)
   const selectedTeam = getFulfillmentTeam(teamId, fallbackPersonTimelines)
   const selectedMatrix =
@@ -75,7 +80,7 @@ export default async function PersonTimelinePage({ searchParams }: PageProps) {
         {selectedMatrix ? (
           <MemberMatrixSection matrix={selectedMatrix} />
         ) : selectedGroupWeekMatrix ? (
-          <GroupMemberWeekMatrixSection matrix={selectedGroupWeekMatrix} />
+          <GroupMemberWeekMatrixSection matrix={selectedGroupWeekMatrix} focus={groupWeekFocus} />
         ) : selectedTeam ? (
           <GroupWeekSection team={selectedTeam} />
         ) : (
@@ -175,7 +180,13 @@ function GroupWeekSection({
   )
 }
 
-function GroupMemberWeekMatrixSection({ matrix }: { matrix: FulfillmentGroupMemberWeekMatrix }) {
+function GroupMemberWeekMatrixSection({
+  matrix,
+  focus,
+}: {
+  matrix: FulfillmentGroupMemberWeekMatrix
+  focus: GroupWeekFocus
+}) {
   return (
     <Card>
       <CardHeader>
@@ -200,6 +211,17 @@ function GroupMemberWeekMatrixSection({ matrix }: { matrix: FulfillmentGroupMemb
           <div>缺口 {matrix.summary.gapHours.toFixed(1)}h</div>
           <div>异常 {matrix.summary.anomalyCount}</div>
         </div>
+        <div className="grid gap-2 rounded-lg border p-3 text-sm md:grid-cols-4">
+          <div>风险成员 {matrix.riskSummary.riskMemberCount} 人</div>
+          <div>最高缺口 {matrix.riskSummary.highestGapMember || "无"}</div>
+          <div>最高异常 {matrix.riskSummary.highestAnomalyMember || "无"}</div>
+          <div>最高缺口日 {matrix.riskSummary.highestGapDate || "无"}</div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <FocusLink matrix={matrix} focus="all" currentFocus={focus} label="全部" />
+          <FocusLink matrix={matrix} focus="gap" currentFocus={focus} label="看缺口" />
+          <FocusLink matrix={matrix} focus="anomaly" currentFocus={focus} label="看异常" />
+        </div>
         <div className="overflow-x-auto">
           <div className="min-w-[1040px] rounded-lg border">
             <div className="grid grid-cols-[160px_repeat(7,minmax(112px,1fr))] border-b bg-muted/30 text-xs text-muted-foreground">
@@ -218,7 +240,7 @@ function GroupMemberWeekMatrixSection({ matrix }: { matrix: FulfillmentGroupMemb
               ))}
             </div>
             {matrix.members.map((member) => (
-              <GroupMemberWeekRow key={member.employeeId} member={member} matrix={matrix} />
+              <GroupMemberWeekRow key={member.employeeId} member={member} matrix={matrix} focus={focus} />
             ))}
           </div>
         </div>
@@ -227,12 +249,36 @@ function GroupMemberWeekMatrixSection({ matrix }: { matrix: FulfillmentGroupMemb
   )
 }
 
+function FocusLink({
+  matrix,
+  focus,
+  currentFocus,
+  label,
+}: {
+  matrix: FulfillmentGroupMemberWeekMatrix
+  focus: GroupWeekFocus
+  currentFocus: GroupWeekFocus
+  label: string
+}) {
+  const href = `/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(matrix.group.id)}${
+    focus === "all" ? "" : `&focus=${focus}`
+  }`
+
+  return (
+    <Button asChild variant={focus === currentFocus ? "default" : "outline"} size="sm">
+      <Link href={href}>{label}</Link>
+    </Button>
+  )
+}
+
 function GroupMemberWeekRow({
   member,
   matrix,
+  focus,
 }: {
   member: FulfillmentGroupMemberWeekMatrixMember
   matrix: FulfillmentGroupMemberWeekMatrix
+  focus: GroupWeekFocus
 }) {
   const weekHref = `/person-timeline/${member.employeeId}?team=${encodeScopeId(
     matrix.team.id
@@ -252,7 +298,7 @@ function GroupMemberWeekRow({
         </div>
       </div>
       {member.days.map((day) => (
-        <GroupMemberWeekCell key={day.date} day={day} member={member} matrix={matrix} />
+        <GroupMemberWeekCell key={day.date} day={day} member={member} matrix={matrix} focus={focus} />
       ))}
     </div>
   )
@@ -262,12 +308,16 @@ function GroupMemberWeekCell({
   day,
   member,
   matrix,
+  focus,
 }: {
   day: PersonTimelineWeekDay
   member: FulfillmentGroupMemberWeekMatrixMember
   matrix: FulfillmentGroupMemberWeekMatrix
+  focus: GroupWeekFocus
 }) {
   const hasRisk = day.gapHours > 0 || day.anomalyCount > 0
+  const focusHit =
+    focus === "all" || (focus === "gap" && day.gapHours > 0) || (focus === "anomaly" && day.anomalyCount > 0)
   const isRestDay = day.scheduledHours === 0 && day.loginHours === 0
   const detailHref = `/person-timeline/${member.employeeId}?date=${day.date}&team=${encodeScopeId(
     matrix.team.id
@@ -277,7 +327,7 @@ function GroupMemberWeekCell({
     <Link
       href={detailHref}
       className={`grid gap-1 border-l p-3 text-xs transition-colors hover:bg-muted ${
-        hasRisk ? "bg-primary/5" : ""
+        focusHit && hasRisk ? "bg-primary/10 ring-1 ring-primary/30" : hasRisk ? "bg-primary/5" : ""
       }`}
     >
       <div className="flex items-center justify-between gap-2">

@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US236-US238 - 履约日历风险摘要和视图焦点
+
+```yaml
+stories:
+  - id: US236
+    requirement_ids: [R224]
+    task_ids: [F175]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组成员周矩阵有风险摘要，以便先知道本组最需要处理的成员和日期。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US237
+    requirement_ids: [R225]
+    task_ids: [F176]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组成员周矩阵可以在全部、缺口、异常视角之间切换，以便按当前处理目标扫描。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US238
+    requirement_ids: [R226]
+    task_ids: [F177]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望缺口或异常视角能强化对应风险单元格，以便一眼定位重点日期。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员周矩阵展示风险成员数、最高缺口成员、最高异常成员和最高缺口日期。"
+  - "小组成员周矩阵支持全部、看缺口、看异常三个视图焦点。"
+  - "缺口视角强化缺口单元格，异常视角强化异常单元格。"
+  - "不新增左侧入口、不新增页面路由、不新增依赖、不改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US233-US235 - 履约日历小组成员周矩阵收口
 
 ```yaml

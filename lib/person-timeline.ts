@@ -176,6 +176,12 @@ export type FulfillmentGroupMemberWeekMatrix = {
     gapHours: number
     anomalyCount: number
   }
+  riskSummary: {
+    riskMemberCount: number
+    highestGapMember: string
+    highestAnomalyMember: string
+    highestGapDate: string
+  }
   members: FulfillmentGroupMemberWeekMatrixMember[]
 }
 
@@ -583,6 +589,7 @@ export function getFulfillmentGroupMemberWeekMatrix(
         anomalyCount: 0,
       }
     ),
+    riskSummary: buildGroupMemberWeekRiskSummary(members),
     members,
   }
 }
@@ -664,6 +671,33 @@ function summarizeDayMetrics(days: FulfillmentDayMetrics[]): FulfillmentCalendar
       anomalyPeople: 0,
     }
   )
+}
+
+function buildGroupMemberWeekRiskSummary(members: FulfillmentGroupMemberWeekMatrixMember[]) {
+  const riskMembers = members.filter(
+    (member) => member.summary.gapHours > 0 || member.summary.anomalyCount > 0
+  )
+  const highestGapMember = [...members].sort(
+    (a, b) => b.summary.gapHours - a.summary.gapHours || a.employeeId.localeCompare(b.employeeId)
+  )[0]
+  const highestAnomalyMember = [...members].sort(
+    (a, b) =>
+      b.summary.anomalyCount - a.summary.anomalyCount || a.employeeId.localeCompare(b.employeeId)
+  )[0]
+  const highestGapDay = members
+    .flatMap((member) => member.days)
+    .sort((a, b) => b.gapHours - a.gapHours || a.date.localeCompare(b.date))[0]
+
+  return {
+    riskMemberCount: riskMembers.length,
+    highestGapMember: highestGapMember
+      ? `${highestGapMember.employeeId} ${highestGapMember.employeeName}`
+      : "",
+    highestAnomalyMember: highestAnomalyMember
+      ? `${highestAnomalyMember.employeeId} ${highestAnomalyMember.employeeName}`
+      : "",
+    highestGapDate: highestGapDay?.date ?? "",
+  }
 }
 
 function compareFulfillmentRisk(

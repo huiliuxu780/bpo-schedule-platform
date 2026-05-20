@@ -202,6 +202,12 @@ test("fulfillment group member week matrix exposes member day cells", () => {
     gapHours: 1.0499999999999998,
     anomalyCount: 2,
   });
+  assert.deepEqual(weekMatrix.riskSummary, {
+    riskMemberCount: 2,
+    highestGapMember: "A-1002 王敏",
+    highestAnomalyMember: "A-1001 刘晨",
+    highestGapDate: "2026-05-11",
+  });
   assert.equal(weekMatrix.members.length, 2);
   assert.deepEqual(
     weekMatrix.members.map((item) => item.employeeId),

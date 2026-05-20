@@ -1097,3 +1097,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F175-F177 Fulfillment Risk Focus
+
+- branch_name: `codex/f169-fulfillment-calendar`
+- base_main_commit: `a3a134c`
+- remote_status: `continued on pushed F169-F174 fulfillment calendar branch because this batch tightens the same drilldown chain and main has not integrated it`
+- scope: coherent frontend enhancement for group member week matrix: add risk summary, all/gap/anomaly focus controls, matching risk-cell emphasis, browser smoke, and traceability.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing person timeline route and model, focused model test, current and legacy traceability docs, and implementation plan; no new left sidebar entry, no new page route, no `/production-mvp/**` route, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target model test, lint, typecheck, in-app browser smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

@@ -17,6 +17,26 @@
 
 ## Requirements
 
+### R224-R226 - 履约日历风险摘要和视图焦点
+
+```yaml
+requirements:
+  - id: R224
+    module: "履约日历"
+    description: "小组成员周矩阵需要提供风险摘要，展示风险成员数、最高缺口成员、最高异常成员和最高缺口日期。"
+  - id: R225
+    module: "履约日历"
+    description: "小组成员周矩阵需要提供视图焦点切换，使主管能在全部、缺口和异常视角之间切换。"
+  - id: R226
+    module: "履约日历"
+    description: "小组成员周矩阵在不同视图焦点下需要强化对应风险单元格，避免一周矩阵信息过密时难以扫描。"
+source: "PM requested continuous multi-task fulfillment calendar development on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本组只增强现有履约日历矩阵的查看和扫描能力，不新增页面路由或左侧入口，不新增依赖，不实现数据库、权限、审批、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R221-R223 - 履约日历小组成员周矩阵收口
 
 ```yaml

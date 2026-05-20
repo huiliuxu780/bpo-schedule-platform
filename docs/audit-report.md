@@ -1596,6 +1596,29 @@
 - In-app browser smoke：小组成员周矩阵显示成员 2 人、计划 4 人天、缺口 1.0h；日期表头进入 `date=2026-05-11` 单日矩阵；个人周日历从周矩阵进入时返回无 `date` 的周矩阵，从单日来源进入时返回带 `date=2026-05-11` 的单日矩阵。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
+### 2026-05-20 - Fulfillment risk focus
+
+#### 审计结论
+
+- `F175-F177/US236-US238` 已增强小组成员周矩阵的风险聚焦能力。
+- 小组成员周矩阵展示风险成员数、最高缺口成员、最高异常成员和最高缺口日。
+- 小组成员周矩阵支持全部、看缺口、看异常三个视角。
+- 缺口视角强化缺口风险单元格，异常视角强化异常风险单元格，默认全部视角仍保留整体风险提示。
+- 本次没有新增左侧入口，没有新增页面路由，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地样例数据和前端聚合；风险摘要不代表真实生产排班口径、正式状态码或结算口径。
+- 后续若要做跨周切换、真实班组主数据、权限隔离或生产级状态映射，必须另开 Gate。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，10 个履约日历和人员时间轴模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- In-app browser smoke：小组成员周矩阵显示“风险成员 2 人”“最高缺口 A-1002 王敏”“最高异常 A-1001 刘晨”“最高缺口日 2026-05-11”；全部、看缺口、看异常三种视角均可打开，且未出现人员时间轴、坐席状态轨迹、验收清单、待实现、准备状态、暂不实现等内部词。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
