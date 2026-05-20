@@ -17,6 +17,19 @@
 
 ## Requirements
 
+### R219 - 履约日历个人周日历层
+
+```yaml
+id: R219
+module: "履约日历"
+description: "履约日历需要在小组成员矩阵和个人单日三轨详情之间增加个人周日历层，使主管先看到某员工一周履约分布，再进入某一天的排班、登录、状态三轨详情。"
+source: "PM confirmed continuing fulfillment calendar business function on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本需求复用现有 `/person-timeline/[employeeId]` 路由，不新增左侧入口，不新增依赖，不实现正式个人管理、数据库、权限、审批、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R217 - 排班计划挂载人员级排班明细
 
 ```yaml

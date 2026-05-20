@@ -29,6 +29,31 @@
 
 ## Stories
 
+### US231 - 履约日历个人周日历层
+
+```yaml
+id: US231
+requirement_ids:
+  - R219
+task_ids:
+  - F170
+module: "履约日历"
+role: "现场主管"
+story: "作为现场主管，我希望从小组成员矩阵先进入某员工的个人周日历，再选择某一天查看三轨详情，以便先判断这个人的一周履约分布，再定位具体日期异常。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "小组成员矩阵点击员工姓名进入个人周日历，不直接跳到单日详情。"
+  - "个人周日历展示一周七天、每天排班工时、登录工时、异常数和缺口提示。"
+  - "个人周日历点击某天进入个人单日三轨详情。"
+  - "异常标记仍可从小组矩阵直达个人单日三轨详情。"
+  - "不新增左侧入口、不新增依赖、不改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "F169"
+status: "done"
+```
+
 ### US229 - 排班计划挂载人员级排班明细
 
 ```yaml

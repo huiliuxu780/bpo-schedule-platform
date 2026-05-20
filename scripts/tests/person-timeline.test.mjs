@@ -11,6 +11,7 @@ import {
   getPersonTimeline,
   getPersonTimelineAvailableDates,
   getPersonTimelineDailyView,
+  getPersonTimelineWeekView,
   getTimelineEventPosition,
   summarizePersonTimelines,
 } from "../../lib/person-timeline.ts";
@@ -61,6 +62,45 @@ test("person timeline exposes calendar days and a daily three-track view", () =>
   assert.equal(dailyView.tracks.login.length, 1);
   assert.equal(dailyView.tracks.status.length, 2);
   assert.equal(dailyView.anomalies.length, 1);
+});
+
+test("person timeline week view exposes seven days and weekly totals", () => {
+  const row = getPersonTimeline("A-1001");
+  assert.ok(row);
+
+  const weekView = getPersonTimelineWeekView(row, "2026-05-11");
+
+  assert.equal(weekView.employee.employeeId, "A-1001");
+  assert.equal(weekView.weekStart, "2026-05-11");
+  assert.equal(weekView.weekEnd, "2026-05-17");
+  assert.equal(weekView.selectedDate, "2026-05-11");
+  assert.equal(weekView.days.length, 7);
+  assert.deepEqual(
+    weekView.days.map((day) => ({
+      date: day.date,
+      scheduledHours: day.scheduledHours,
+      loginHours: day.loginHours,
+      gapHours: day.gapHours,
+      anomalyCount: day.anomalyCount,
+    })),
+    [
+      { date: "2026-05-11", scheduledHours: 8, loginHours: 7.5, gapHours: 0.5, anomalyCount: 1 },
+      { date: "2026-05-12", scheduledHours: 8, loginHours: 8, gapHours: 0, anomalyCount: 0 },
+      { date: "2026-05-13", scheduledHours: 0, loginHours: 0, gapHours: 0, anomalyCount: 0 },
+      { date: "2026-05-14", scheduledHours: 0, loginHours: 0, gapHours: 0, anomalyCount: 0 },
+      { date: "2026-05-15", scheduledHours: 0, loginHours: 0, gapHours: 0, anomalyCount: 0 },
+      { date: "2026-05-16", scheduledHours: 0, loginHours: 0, gapHours: 0, anomalyCount: 0 },
+      { date: "2026-05-17", scheduledHours: 0, loginHours: 0, gapHours: 0, anomalyCount: 0 },
+    ]
+  );
+  assert.deepEqual(weekView.summary, {
+    scheduledDays: 2,
+    loginDays: 2,
+    scheduledHours: 16,
+    loginHours: 15.5,
+    gapHours: 0.5,
+    anomalyCount: 1,
+  });
 });
 
 test("timeline event positioning maps time ranges to horizontal percentages", () => {

@@ -1526,6 +1526,29 @@
 - In-app browser smoke：`/schedule-plans/plan-20260511-shanghai-bosch-v1` 显示人员级排班明细、刘晨、`09:00-09:30` 时段；点击个人时间轴进入 `/person-timeline/A-1001?date=2026-05-11` 并显示排班、登录、状态三条轨道。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
+### 2026-05-20 - Personal week calendar layer
+
+#### 审计结论
+
+- `F170/US231` 已在履约日历中增加个人周日历层。
+- 小组成员矩阵点击员工姓名进入 `/person-timeline/[employeeId]` 的个人周日历，不再直接跳到某一天详情。
+- 个人周日历展示一周七天、每日排班工时、登录工时、缺口工时和异常数量。
+- 个人周日历点击某天进入个人单日三轨详情；小组矩阵中的异常标记仍可直达对应日期详情。
+- 本次没有新增左侧入口，没有新增页面路由，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地样例数据和前端聚合，不代表真实登录/状态系统、正式组织层级或生产数据库已经上线。
+- 后续如果要做真实周历筛选、跨周切换、权限隔离或真实状态日志接入，必须另开 Gate。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，9 个履约日历和个人时间轴模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- In-app browser smoke：小组成员矩阵点击员工姓名进入个人周日历；个人周日历显示“个人履约日历”“个人周日历”和“缺口工时”；点击日期进入个人单日三轨详情并显示排班轨道、登录轨道、状态轨道；异常链接仍直达 `date=2026-05-11` 单日详情。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

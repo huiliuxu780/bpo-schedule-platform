@@ -260,15 +260,18 @@ function MemberMatrixRow({
   member: FulfillmentMatrixMember
   matrix: FulfillmentGroupMatrix
 }) {
+  const weekHref = `/person-timeline/${member.employeeId}?team=${encodeScopeId(
+    matrix.team.id
+  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${matrix.date}`
   const detailHref = `/person-timeline/${member.employeeId}?date=${matrix.date}&team=${encodeScopeId(
     matrix.team.id
-  )}&group=${encodeScopeId(matrix.group.id)}`
+  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${matrix.date}`
 
   return (
     <div className="grid grid-cols-[144px_1fr] gap-3 border-t p-3">
       <div className="flex flex-col gap-2">
         <Button asChild variant="link" className="h-auto justify-start p-0 text-left">
-          <Link href={detailHref}>
+          <Link href={weekHref}>
             <span className="font-medium">{member.employeeName}</span>
             <span className="ml-1 text-xs text-muted-foreground">{member.employeeId}</span>
           </Link>

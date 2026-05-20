@@ -16,7 +16,10 @@ import {
   getPersonTimelineAvailableDates,
   getPersonTimelineDailyView,
   getPersonTimeline,
+  getPersonTimelineWeekView,
   getTimelineEventPosition,
+  type PersonTimeline,
+  type PersonTimelineWeekView,
   type TimelineEvent,
 } from "@/lib/person-timeline"
 
@@ -28,6 +31,7 @@ type PageProps = {
     date?: string
     team?: string
     group?: string
+    returnDate?: string
   }>
 }
 
@@ -42,21 +46,30 @@ export default async function PersonTimelineDetailPage({
   searchParams,
 }: PageProps) {
   const { employeeId } = await params
-  const { date, team, group } = (await searchParams) ?? {}
+  const { date, team, group, returnDate } = (await searchParams) ?? {}
   const row = getPersonTimeline(decodeURIComponent(employeeId))
 
   if (!row) {
     notFound()
   }
 
+  const weekView = getPersonTimelineWeekView(row, date ?? returnDate)
+  const matrixDate = returnDate ?? date ?? weekView.selectedDate
+  const scopeQuery =
+    team && group
+      ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&returnDate=${matrixDate}`
+      : ""
+
+  if (!date) {
+    return <PersonalWeekCalendar row={row} weekView={weekView} team={team} group={group} returnDate={matrixDate} />
+  }
+
   const days = getPersonTimelineAvailableDates(row)
   const dailyView = getPersonTimelineDailyView(row, date)
   const returnHref =
     team && group
-      ? `/person-timeline?team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&date=${dailyView.date}`
+      ? `/person-timeline?team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&date=${matrixDate}`
       : "/person-timeline"
-  const detailQuery =
-    team && group ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}` : ""
 
   return (
     <AppShell title="个人单日三轨详情" searchPlaceholder="搜索团队、小组、人员或状态异常">
@@ -93,7 +106,7 @@ export default async function PersonTimelineDetailPage({
                 size="sm"
                 variant={day.date === dailyView.date ? "default" : "outline"}
               >
-                <Link href={`/person-timeline/${row.employeeId}?date=${day.date}${detailQuery}`}>
+                <Link href={`/person-timeline/${row.employeeId}?date=${day.date}${scopeQuery}`}>
                   {day.label} {day.weekday}
                   {day.anomalyCount > 0 ? ` (${day.anomalyCount})` : ""}
                 </Link>
@@ -146,6 +159,95 @@ export default async function PersonTimelineDetailPage({
                 </div>
               ))
             )}
+          </CardContent>
+        </Card>
+      </main>
+    </AppShell>
+  )
+}
+
+function PersonalWeekCalendar({
+  row,
+  weekView,
+  team,
+  group,
+  returnDate,
+}: {
+  row: PersonTimeline
+  weekView: PersonTimelineWeekView
+  team?: string
+  group?: string
+  returnDate: string
+}) {
+  const returnHref =
+    team && group
+      ? `/person-timeline?team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&date=${returnDate}`
+      : "/person-timeline"
+  const detailQuery =
+    team && group
+      ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&returnDate=${returnDate}`
+      : ""
+
+  return (
+    <AppShell title="个人履约日历" searchPlaceholder="搜索团队、小组、人员或状态异常">
+      <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex max-w-3xl flex-col gap-1">
+            <h1 className="text-lg font-semibold">{row.employeeName} 个人履约日历</h1>
+            <p className="text-sm text-muted-foreground">
+              {row.employeeId} / {row.workplace} / {row.supplier} / {row.project} / {weekView.weekStart} 至 {weekView.weekEnd}
+            </p>
+          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link href={returnHref}>{team && group ? "返回小组矩阵" : "返回履约日历"}</Link>
+          </Button>
+        </div>
+
+        <section className="grid gap-4 md:grid-cols-4">
+          <Metric title="计划天数" value={`${weekView.summary.scheduledDays}`} />
+          <Metric title="登录天数" value={`${weekView.summary.loginDays}`} />
+          <Metric title="缺口工时" value={`${weekView.summary.gapHours.toFixed(1)}h`} />
+          <Metric title="异常" value={`${weekView.summary.anomalyCount}`} />
+        </section>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>个人周日历</CardTitle>
+            <CardDescription>先看一周履约分布，再选择某一天查看排班、登录和状态三轨详情。</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+              {weekView.days.map((day) => {
+                const hasRisk = day.gapHours > 0 || day.anomalyCount > 0
+                const isRestDay = day.scheduledHours === 0 && day.loginHours === 0
+
+                return (
+                  <Link
+                    key={day.date}
+                    href={`/person-timeline/${row.employeeId}?date=${day.date}${detailQuery}`}
+                    className={`rounded-lg border p-3 text-sm transition-colors hover:bg-muted ${
+                      hasRisk ? "border-primary/50" : "border-border"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <div className="font-medium">{day.weekday}</div>
+                        <div className="text-xs text-muted-foreground">{day.label}</div>
+                      </div>
+                      <Badge variant={hasRisk ? "destructive" : "outline"}>
+                        {isRestDay ? "休" : hasRisk ? "异常" : "正常"}
+                      </Badge>
+                    </div>
+                    <div className="mt-3 grid gap-1 text-xs text-muted-foreground">
+                      <span>排班 {day.scheduledHours.toFixed(1)}h</span>
+                      <span>登录 {day.loginHours.toFixed(1)}h</span>
+                      <span>缺口 {day.gapHours.toFixed(1)}h</span>
+                      <span>异常 {day.anomalyCount}</span>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
           </CardContent>
         </Card>
       </main>

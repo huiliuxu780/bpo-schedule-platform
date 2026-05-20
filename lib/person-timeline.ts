@@ -58,6 +58,28 @@ export type TimelineCalendarDay = {
   anomalyCount: number
 }
 
+export type PersonTimelineWeekDay = TimelineCalendarDay & {
+  gapHours: number
+}
+
+export type PersonTimelineWeekSummary = {
+  scheduledDays: number
+  loginDays: number
+  scheduledHours: number
+  loginHours: number
+  gapHours: number
+  anomalyCount: number
+}
+
+export type PersonTimelineWeekView = {
+  employee: PersonTimeline
+  weekStart: string
+  weekEnd: string
+  selectedDate: string
+  days: PersonTimelineWeekDay[]
+  summary: PersonTimelineWeekSummary
+}
+
 export type PersonTimelineDailyView = {
   date: string
   employee: PersonTimeline
@@ -293,6 +315,58 @@ export function getPersonTimelineDailyView(
     scheduledHours: sumEvents(tracks.schedule),
     loginHours: sumEvents(tracks.login),
     statusHours: sumEvents(tracks.status),
+  }
+}
+
+export function getPersonTimelineWeekView(
+  row: PersonTimeline,
+  requestedDate?: string,
+  weekStart = fulfillmentDefaultWeekStart
+): PersonTimelineWeekView {
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = addDays(weekStart, index)
+    const dailyTracks = filterTracksByDate(row, date)
+    const scheduledHours = sumEvents(dailyTracks.schedule)
+    const loginHours = sumEvents(dailyTracks.login)
+    const statusHours = sumEvents(dailyTracks.status)
+    const anomalyCount = row.anomalies.filter((anomaly) => anomaly.date === date).length
+
+    return {
+      date,
+      label: formatDateLabel(date),
+      weekday: formatWeekday(date),
+      scheduledHours,
+      loginHours,
+      statusHours,
+      gapHours: Math.max(scheduledHours - loginHours, 0),
+      anomalyCount,
+    }
+  })
+
+  return {
+    employee: row,
+    weekStart,
+    weekEnd: days[days.length - 1]?.date ?? weekStart,
+    selectedDate: days.some((day) => day.date === requestedDate) ? requestedDate ?? weekStart : weekStart,
+    days,
+    summary: days.reduce(
+      (summary, day) => ({
+        scheduledDays: summary.scheduledDays + Number(day.scheduledHours > 0),
+        loginDays: summary.loginDays + Number(day.loginHours > 0),
+        scheduledHours: summary.scheduledHours + day.scheduledHours,
+        loginHours: summary.loginHours + day.loginHours,
+        gapHours: summary.gapHours + day.gapHours,
+        anomalyCount: summary.anomalyCount + day.anomalyCount,
+      }),
+      {
+        scheduledDays: 0,
+        loginDays: 0,
+        scheduledHours: 0,
+        loginHours: 0,
+        gapHours: 0,
+        anomalyCount: 0,
+      }
+    ),
   }
 }
 
