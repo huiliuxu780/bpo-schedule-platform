@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US242-US244 - 小组异常解释侧栏
+
+```yaml
+stories:
+  - id: US242
+    requirement_ids: [R230]
+    task_ids: [F181]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组成员单日矩阵能直接提供成员异常解释，以便在小组视角先判断异常证据。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US243
+    requirement_ids: [R231]
+    task_ids: [F182]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组成员单日矩阵右侧展示选中异常解释，以便不用离开小组页面也能判断处理顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US244
+    requirement_ids: [R232]
+    task_ids: [F183]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望点击小组矩阵里的异常标记能更新侧栏，并保留进入个人单日详情的入口。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵模型暴露每个成员当天异常解释。"
+  - "小组成员单日矩阵展示异常解释侧栏，包含时间段、异常类型、涉及轨道、影响时长、证据说明、建议主管动作和优先级。"
+  - "异常标记能选中侧栏解释，并提供进入个人单日详情的入口。"
+  - "不做审批、处理提交、权限、数据库、真实接口、导出、批量、自动排班或生产公式。"
+  - "不新增页面路由、不新增左侧入口，产品 UI 不出现内部过程词。"
+```
+
 ### US239-US241 - 履约异常解释卡
 
 ```yaml

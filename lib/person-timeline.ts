@@ -157,6 +157,7 @@ export type FulfillmentMatrixMember = {
   project: string
   tracks: PersonTimeline["tracks"]
   anomalies: TimelineAnomaly[]
+  exceptionExplanations: TimelineExceptionExplanation[]
   scheduledHours: number
   loginHours: number
   statusHours: number
@@ -527,6 +528,7 @@ export function getFulfillmentMatrix(
         project: member.project,
         tracks: dailyView.tracks,
         anomalies: dailyView.anomalies,
+        exceptionExplanations: dailyView.exceptionExplanations,
         scheduledHours: dailyView.scheduledHours,
         loginHours: dailyView.loginHours,
         statusHours: dailyView.statusHours,

@@ -191,6 +191,28 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
   assert.equal(matrix.members[0].tracks.schedule.length > 0, true);
   assert.equal(matrix.members[0].tracks.login.length > 0, true);
   assert.equal(matrix.members[0].tracks.status.length > 0, true);
+  const liuChen = matrix.members.find((member) => member.employeeId === "A-1001");
+  assert.ok(liuChen);
+  assert.deepEqual(
+    liuChen.exceptionExplanations.map((explanation) => ({
+      anomalyCode: explanation.anomalyCode,
+      type: explanation.type,
+      start: explanation.start,
+      end: explanation.end,
+      impactHours: explanation.impactHours,
+      priority: explanation.priority,
+    })),
+    [
+      {
+        anomalyCode: "no_login",
+        type: "状态不一致",
+        start: "13:00",
+        end: "18:00",
+        impactHours: 5,
+        priority: "medium",
+      },
+    ]
+  );
 });
 
 test("fulfillment group member week matrix exposes member day cells", () => {

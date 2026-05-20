@@ -27,6 +27,7 @@ import {
   type FulfillmentMatrixMember,
   type FulfillmentTeamWeek,
   type PersonTimelineWeekDay,
+  type TimelineExceptionExplanation,
   type TimelineEvent,
 } from "@/lib/person-timeline"
 
@@ -36,13 +37,14 @@ type PageProps = {
     group?: string
     date?: string
     focus?: string
+    exception?: string
   }>
 }
 
 type GroupWeekFocus = "all" | "gap" | "anomaly"
 
 export default async function PersonTimelinePage({ searchParams }: PageProps) {
-  const { team: teamId, group: groupId, date, focus } = (await searchParams) ?? {}
+  const { team: teamId, group: groupId, date, focus, exception } = (await searchParams) ?? {}
   const groupWeekFocus: GroupWeekFocus =
     focus === "gap" || focus === "anomaly" ? focus : "all"
   const calendar = getFulfillmentCalendar(fallbackPersonTimelines)
@@ -78,7 +80,7 @@ export default async function PersonTimelinePage({ searchParams }: PageProps) {
         </section>
 
         {selectedMatrix ? (
-          <MemberMatrixSection matrix={selectedMatrix} />
+          <MemberMatrixSection matrix={selectedMatrix} selectedExceptionKey={exception} />
         ) : selectedGroupWeekMatrix ? (
           <GroupMemberWeekMatrixSection matrix={selectedGroupWeekMatrix} focus={groupWeekFocus} />
         ) : selectedTeam ? (
@@ -343,7 +345,15 @@ function GroupMemberWeekCell({
   )
 }
 
-function MemberMatrixSection({ matrix }: { matrix: FulfillmentGroupMatrix }) {
+function MemberMatrixSection({
+  matrix,
+  selectedExceptionKey,
+}: {
+  matrix: FulfillmentGroupMatrix
+  selectedExceptionKey?: string
+}) {
+  const selectedException = getSelectedMatrixException(matrix, selectedExceptionKey)
+
   return (
     <Card>
       <CardHeader>
@@ -363,16 +373,100 @@ function MemberMatrixSection({ matrix }: { matrix: FulfillmentGroupMatrix }) {
       </CardHeader>
       <CardContent className="grid gap-4">
         <SummaryStrip summary={matrix.summary} />
-        <div className="overflow-x-auto">
-          <div className="min-w-[920px] rounded-lg border">
-            <TimelineScale />
-            {matrix.members.map((member) => (
-              <MemberMatrixRow key={member.employeeId} member={member} matrix={matrix} />
-            ))}
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+          <div className="overflow-x-auto">
+            <div className="min-w-[920px] rounded-lg border">
+              <TimelineScale />
+              {matrix.members.map((member) => (
+                <MemberMatrixRow
+                  key={member.employeeId}
+                  member={member}
+                  matrix={matrix}
+                  selectedExceptionKey={selectedException.key}
+                />
+              ))}
+            </div>
           </div>
+          <MatrixExceptionPanel selected={selectedException} matrix={matrix} />
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+function getSelectedMatrixException(matrix: FulfillmentGroupMatrix, selectedExceptionKey?: string) {
+  const explanations = matrix.members.flatMap((member) =>
+    member.exceptionExplanations.map((explanation) => ({
+      key: matrixExceptionKey(member.employeeId, explanation.anomalyCode),
+      member,
+      explanation,
+    }))
+  )
+
+  return (
+    explanations.find((item) => item.key === selectedExceptionKey) ??
+    explanations[0] ?? {
+      key: "",
+      member: undefined,
+      explanation: undefined,
+    }
+  )
+}
+
+function MatrixExceptionPanel({
+  selected,
+  matrix,
+}: {
+  selected: {
+    key: string
+    member?: FulfillmentMatrixMember
+    explanation?: TimelineExceptionExplanation
+  }
+  matrix: FulfillmentGroupMatrix
+}) {
+  if (!selected.member || !selected.explanation) {
+    return (
+      <div className="rounded-lg border p-3 text-sm text-muted-foreground">
+        当天没有需要解释的异常。
+      </div>
+    )
+  }
+
+  const detailHref = `/person-timeline/${selected.member.employeeId}?date=${matrix.date}&team=${encodeScopeId(
+    matrix.team.id
+  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${matrix.date}`
+
+  return (
+    <aside className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">当前异常解释</div>
+          <div className="text-xs text-muted-foreground">
+            {selected.member.employeeId} {selected.member.employeeName}
+          </div>
+        </div>
+        <Badge variant={selected.explanation.priority === "high" ? "destructive" : "outline"}>
+          {priorityLabel[selected.explanation.priority]}
+        </Badge>
+      </div>
+      <div className="grid gap-2 text-sm">
+        <div className="font-medium">
+          {selected.explanation.start}-{selected.explanation.end} / {selected.explanation.type}
+        </div>
+        <div className="text-xs text-muted-foreground">{selected.explanation.title}</div>
+      </div>
+      <div className="grid gap-2 text-xs text-muted-foreground">
+        <div>
+          涉及轨道：{selected.explanation.involvedTracks.map((track) => trackLabel[track]).join(" / ")}
+        </div>
+        <div>影响时长：{selected.explanation.impactHours.toFixed(1)}h</div>
+        <div>证据：{selected.explanation.evidence}</div>
+        <div>建议动作：{selected.explanation.supervisorAction}</div>
+      </div>
+      <Button asChild size="sm" variant="outline">
+        <Link href={detailHref}>查看个人详情</Link>
+      </Button>
+    </aside>
   )
 }
 
@@ -437,17 +531,15 @@ function SummaryStrip({ summary }: { summary: FulfillmentCalendarSummary }) {
 function MemberMatrixRow({
   member,
   matrix,
+  selectedExceptionKey,
 }: {
   member: FulfillmentMatrixMember
   matrix: FulfillmentGroupMatrix
+  selectedExceptionKey: string
 }) {
   const weekHref = `/person-timeline/${member.employeeId}?team=${encodeScopeId(
     matrix.team.id
   )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${matrix.date}`
-  const detailHref = `/person-timeline/${member.employeeId}?date=${matrix.date}&team=${encodeScopeId(
-    matrix.team.id
-  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${matrix.date}`
-
   return (
     <div className="grid grid-cols-[144px_1fr] gap-3 border-t p-3">
       <div className="flex flex-col gap-2">
@@ -462,11 +554,27 @@ function MemberMatrixRow({
           {member.scheduledHours > member.loginHours ? (
             <Badge variant="destructive">登录缺口</Badge>
           ) : null}
-          {member.anomalies.map((anomaly) => (
-            <Button key={anomaly.code} asChild variant="ghost" size="sm" className="h-6 px-2 text-xs">
-              <Link href={detailHref}>{anomaly.title}</Link>
-            </Button>
-          ))}
+          {member.exceptionExplanations.map((explanation) => {
+            const exceptionKey = matrixExceptionKey(member.employeeId, explanation.anomalyCode)
+
+            return (
+              <Button
+                key={explanation.id}
+                asChild
+                variant={exceptionKey === selectedExceptionKey ? "default" : "ghost"}
+                size="sm"
+                className="h-6 px-2 text-xs"
+              >
+                <Link
+                  href={`/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(
+                    matrix.group.id
+                  )}&date=${matrix.date}&exception=${encodeScopeId(exceptionKey)}`}
+                >
+                  {explanation.title}
+                </Link>
+              </Button>
+            )
+          })}
         </div>
       </div>
       <div className="grid gap-2">
@@ -476,6 +584,10 @@ function MemberMatrixRow({
       </div>
     </div>
   )
+}
+
+function matrixExceptionKey(employeeId: string, anomalyCode: string) {
+  return `${employeeId}::${anomalyCode}`
 }
 
 function TimelineScale() {
@@ -558,4 +670,16 @@ const matrixToneClass = {
   schedule: "border-sky-300 bg-sky-100 text-sky-950 dark:border-sky-800 dark:bg-sky-950 dark:text-sky-100",
   login: "border-emerald-300 bg-emerald-100 text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100",
   status: "border-amber-300 bg-amber-100 text-amber-950 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100",
+}
+
+const priorityLabel = {
+  high: "高优先级",
+  medium: "中优先级",
+  low: "低优先级",
+}
+
+const trackLabel = {
+  schedule: "排班",
+  login: "登录",
+  status: "状态",
 }

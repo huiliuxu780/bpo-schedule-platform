@@ -17,6 +17,26 @@
 
 ## Requirements
 
+### R230-R232 - 小组异常解释侧栏
+
+```yaml
+requirements:
+  - id: R230
+    module: "履约日历"
+    description: "小组成员单日矩阵需要能直接取得成员当天异常解释，避免主管必须先进入个人页才能理解异常证据。"
+  - id: R231
+    module: "履约日历"
+    description: "小组成员单日矩阵需要提供异常解释侧栏，展示选中异常的时间段、类型、涉及轨道、影响时长、证据说明、建议主管动作和优先级。"
+  - id: R232
+    module: "履约日历"
+    description: "小组成员单日矩阵的异常标记需要能选中侧栏解释，并保留进入个人单日详情的入口。"
+source: "PM requested continuous closeout of supervisor handling flow on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本组偏向主管现场处理，只在现有小组单日矩阵内展示异常解释；不新增页面路由或左侧入口，不新增依赖，不实现数据库、权限、审批、处理提交、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R227-R229 - 履约异常解释卡
 
 ```yaml
