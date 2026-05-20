@@ -1710,6 +1710,29 @@
 - In-app browser smoke：打开 `queue=high` 时显示“待关注异常”“1 项”“A-1002 王敏”“高优先级”“09:00-09:21 / 登录缺口”“迟到 21 分钟”和“查看个人详情”；切换到 `queue=status` 时显示“待关注异常”“1 项”“A-1001 刘晨”“13:00-18:00 / 状态不一致”和“午后状态缺登录切片”，且未出现 PRD、Gate、Story、验收清单、待实现、暂不实现、处理提交、审批按钮等内部或越界词。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
+### 2026-05-21 - Group exception matrix focus
+
+#### 审计结论
+
+- `F190-F192/US251-US253` 已在小组成员单日矩阵增加选中异常定位联动。
+- 异常队列项暴露 `focusEventIds`，用于定位相关排班、登录、状态轨道切片。
+- 选中异常后，矩阵高亮对应成员行，并在该成员行显示异常时间窗。
+- 选中异常后，相关排班、登录、状态切片会高亮；切换异常筛选或异常项后定位同步变化。
+- 本次没有新增左侧入口，没有新增页面路由，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、处理提交、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍基于本地样例数据和前端聚合解释异常，不代表真实 CORN、HR、WFM 或生产数据库已经接入。
+- 定位高亮只用于主管扫描和解释，不代表正式处理流、审批流、考勤定责或结算口径。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，10 个履约日历和人员时间轴模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- In-app browser smoke：打开 `queue=status` 时 `A-1001` 成员行、`SCH-1001-2`、`LOG-1001-1`、`STA-1001-2` 被定位；切换到 `queue=high` 时 `A-1002` 成员行、`SCH-1002-1`、`LOG-1002-1` 被定位，且未出现 PRD、Gate、Story、验收清单、待实现、暂不实现、处理提交、审批按钮等内部或越界词。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

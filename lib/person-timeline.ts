@@ -176,6 +176,7 @@ export type FulfillmentMatrixExceptionQueueItem = {
   end: string
   detailDate: string
   involvedTracks: TimelineEventType[]
+  focusEventIds: string[]
   evidence: string
   supervisorAction: string
 }
@@ -706,6 +707,7 @@ function buildFulfillmentMatrixExceptionQueue(
         end: explanation.end,
         detailDate: date,
         involvedTracks: explanation.involvedTracks,
+        focusEventIds: getFocusEventIds(member, explanation),
         evidence: explanation.evidence,
         supervisorAction: explanation.supervisorAction,
       }))
@@ -720,6 +722,29 @@ function buildFulfillmentMatrixExceptionQueue(
 
 function fulfillmentMatrixExceptionKey(employeeId: string, anomalyCode: string) {
   return `${employeeId}::${anomalyCode}`
+}
+
+function getFocusEventIds(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation
+) {
+  return explanation.involvedTracks.flatMap((trackType) =>
+    member.tracks[trackType]
+      .filter((eventItem) => isEventInExceptionWindow(eventItem, explanation))
+      .map((eventItem) => eventItem.id)
+  )
+}
+
+function isEventInExceptionWindow(
+  eventItem: TimelineEvent,
+  explanation: TimelineExceptionExplanation
+) {
+  const eventStart = timeToMinutes(eventItem.start)
+  const eventEnd = timeToMinutes(eventItem.end)
+  const focusStart = timeToMinutes(explanation.start)
+  const focusEnd = timeToMinutes(explanation.end)
+
+  return eventStart <= focusEnd && eventEnd >= focusStart
 }
 
 function summarizeFulfillmentMatrixExceptionQueue(

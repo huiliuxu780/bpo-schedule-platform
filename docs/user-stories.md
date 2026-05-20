@@ -29,6 +29,46 @@
 
 ## Stories
 
+### US251-US253 - 小组异常矩阵定位
+
+```yaml
+stories:
+  - id: US251
+    requirement_ids: [R239]
+    task_ids: [F190]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望选中异常后矩阵能高亮对应成员行，以便立即定位到具体人员。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US252
+    requirement_ids: [R240]
+    task_ids: [F191]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望选中异常后相关排班、登录、状态轨道切片被高亮，以便直接看到证据来源。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US253
+    requirement_ids: [R241]
+    task_ids: [F192]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望矩阵定位能跟随异常队列筛选和选中项变化，以便连续查看不同异常。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常队列项暴露可定位的轨道事件 ID。"
+  - "小组成员单日矩阵高亮当前选中异常对应成员行。"
+  - "小组成员单日矩阵高亮当前选中异常涉及的轨道切片。"
+  - "切换异常队列筛选或异常项后，高亮位置同步变化。"
+  - "不做审批、处理提交、权限、数据库、真实接口、导出、批量、自动排班或生产公式。"
+  - "不新增页面路由、不新增左侧入口，产品 UI 不出现内部过程词。"
+```
+
 ### US248-US250 - 小组异常队列汇总与筛选
 
 ```yaml

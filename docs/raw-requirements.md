@@ -17,6 +17,26 @@
 
 ## Requirements
 
+### R239-R241 - 小组异常矩阵定位
+
+```yaml
+requirements:
+  - id: R239
+    module: "履约日历"
+    description: "小组成员单日矩阵需要把选中异常定位到具体成员行，减少主管在矩阵里重新查找人员的成本。"
+  - id: R240
+    module: "履约日历"
+    description: "选中异常需要高亮相关排班、登录、状态轨道切片，帮助主管直接看到异常证据来源。"
+  - id: R241
+    module: "履约日历"
+    description: "矩阵定位需要跟随异常队列筛选和选中项变化，不新增处理、审批或提交动作。"
+source: "PM requested continuous supervisor handling flow on 2026-05-21"
+submitted_at: "2026-05-21"
+version: "1.0"
+status: "split"
+notes: "本组只增强现有小组单日矩阵的查看定位；不新增页面路由或左侧入口，不新增依赖，不实现数据库、权限、审批、处理提交、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R236-R238 - 小组异常队列汇总与筛选
 
 ```yaml

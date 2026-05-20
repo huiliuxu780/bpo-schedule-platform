@@ -257,6 +257,12 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     statusMismatchCount: 1,
     totalImpactHours: 5.35,
   });
+  const lateLogin = matrix.exceptionQueue.find((item) => item.key === "A-1002::late_login");
+  assert.ok(lateLogin);
+  assert.deepEqual(lateLogin.focusEventIds, ["SCH-1002-1", "LOG-1002-1"]);
+  const statusMismatch = matrix.exceptionQueue.find((item) => item.key === "A-1001::no_login");
+  assert.ok(statusMismatch);
+  assert.deepEqual(statusMismatch.focusEventIds, ["SCH-1001-2", "LOG-1001-1", "STA-1001-2"]);
 });
 
 test("fulfillment group member week matrix exposes member day cells", () => {

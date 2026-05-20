@@ -394,6 +394,7 @@ function MemberMatrixSection({
                   member={member}
                   matrix={matrix}
                   selectedExceptionKey={selectedException?.key ?? ""}
+                  selectedException={selectedException}
                 />
               ))}
             </div>
@@ -629,16 +630,26 @@ function MemberMatrixRow({
   member,
   matrix,
   selectedExceptionKey,
+  selectedException,
 }: {
   member: FulfillmentMatrixMember
   matrix: FulfillmentGroupMatrix
   selectedExceptionKey: string
+  selectedException?: FulfillmentMatrixExceptionQueueItem
 }) {
+  const isSelectedMember = selectedException?.employeeId === member.employeeId
+  const focusEventIds = new Set(isSelectedMember ? selectedException.focusEventIds : [])
   const weekHref = `/person-timeline/${member.employeeId}?team=${encodeScopeId(
     matrix.team.id
   )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${matrix.date}`
   return (
-    <div className="grid grid-cols-[144px_1fr] gap-3 border-t p-3">
+    <div
+      className={cn(
+        "grid grid-cols-[144px_1fr] gap-3 border-t p-3",
+        isSelectedMember ? "bg-primary/5 ring-1 ring-inset ring-primary/30" : ""
+      )}
+      data-focus-member={isSelectedMember ? member.employeeId : undefined}
+    >
       <div className="flex flex-col gap-2">
         <Button asChild variant="link" className="h-auto justify-start p-0 text-left">
           <Link href={weekHref}>
@@ -647,6 +658,11 @@ function MemberMatrixRow({
           </Link>
         </Button>
         <div className="text-xs text-muted-foreground">{member.supplier}</div>
+        {isSelectedMember ? (
+          <Badge variant="outline">
+            定位 {selectedException.start}-{selectedException.end}
+          </Badge>
+        ) : null}
         <div className="flex flex-wrap gap-1">
           {member.scheduledHours > member.loginHours ? (
             <Badge variant="destructive">登录缺口</Badge>
@@ -675,9 +691,9 @@ function MemberMatrixRow({
         </div>
       </div>
       <div className="grid gap-2">
-        <MatrixTrack title="排班" rows={member.tracks.schedule} tone="schedule" />
-        <MatrixTrack title="登录" rows={member.tracks.login} tone="login" />
-        <MatrixTrack title="状态" rows={member.tracks.status} tone="status" />
+        <MatrixTrack title="排班" rows={member.tracks.schedule} tone="schedule" focusEventIds={focusEventIds} />
+        <MatrixTrack title="登录" rows={member.tracks.login} tone="login" focusEventIds={focusEventIds} />
+        <MatrixTrack title="状态" rows={member.tracks.status} tone="status" focusEventIds={focusEventIds} />
       </div>
     </div>
   )
@@ -712,10 +728,12 @@ function MatrixTrack({
   title,
   rows,
   tone,
+  focusEventIds,
 }: {
   title: string
   rows: TimelineEvent[]
   tone: "schedule" | "login" | "status"
+  focusEventIds: Set<string>
 }) {
   return (
     <div className="grid grid-cols-[48px_1fr] gap-2">
@@ -726,10 +744,16 @@ function MatrixTrack({
         ) : (
           rows.map((item) => {
             const position = getTimelineEventPosition(item)
+            const isFocused = focusEventIds.has(item.id)
             return (
               <span
                 key={item.id}
-                className={cn("absolute top-1 h-6 rounded-sm border px-2 text-xs leading-6", matrixToneClass[tone])}
+                className={cn(
+                  "absolute top-1 h-6 rounded-sm border px-2 text-xs leading-6",
+                  matrixToneClass[tone],
+                  isFocused ? "ring-2 ring-primary ring-offset-1 ring-offset-background" : ""
+                )}
+                data-focus-event={isFocused ? item.id : undefined}
                 style={{ left: `${position.leftPercent}%`, width: `${position.widthPercent}%` }}
                 title={`${item.label} ${item.start}-${item.end}`}
               >
