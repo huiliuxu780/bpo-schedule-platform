@@ -6,6 +6,7 @@ import {
   filterPersonTimelines,
   getFulfillmentCalendar,
   getFulfillmentGroup,
+  getFulfillmentGroupMemberWeekMatrix,
   getFulfillmentMatrix,
   getFulfillmentTeam,
   getPersonTimeline,
@@ -174,4 +175,56 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
   assert.equal(matrix.members[0].tracks.schedule.length > 0, true);
   assert.equal(matrix.members[0].tracks.login.length > 0, true);
   assert.equal(matrix.members[0].tracks.status.length > 0, true);
+});
+
+test("fulfillment group member week matrix exposes member day cells", () => {
+  const calendar = getFulfillmentCalendar(fallbackPersonTimelines);
+  const team = calendar.teams.find((item) => item.workplace === "上海职场");
+  assert.ok(team);
+  const group = team.groups.find((item) => item.supplier === "供应商 A");
+  assert.ok(group);
+
+  const weekMatrix = getFulfillmentGroupMemberWeekMatrix(
+    team.id,
+    group.id,
+    fallbackPersonTimelines
+  );
+
+  assert.ok(weekMatrix);
+  assert.equal(weekMatrix.team.id, team.id);
+  assert.equal(weekMatrix.group.id, group.id);
+  assert.equal(weekMatrix.weekStart, "2026-05-11");
+  assert.equal(weekMatrix.weekEnd, "2026-05-17");
+  assert.equal(weekMatrix.members.length, 2);
+  const member = weekMatrix.members.find((item) => item.employeeId === "A-1001");
+  assert.ok(member);
+  assert.equal(member.days.length, 7);
+  assert.deepEqual(
+    {
+      date: member.days[0].date,
+      label: member.days[0].label,
+      weekday: member.days[0].weekday,
+      scheduledHours: member.days[0].scheduledHours,
+      loginHours: member.days[0].loginHours,
+      gapHours: member.days[0].gapHours,
+      anomalyCount: member.days[0].anomalyCount,
+    },
+    {
+    date: "2026-05-11",
+    label: "05/11",
+    weekday: "周一",
+    scheduledHours: 8,
+    loginHours: 7.5,
+    gapHours: 0.5,
+    anomalyCount: 1,
+    }
+  );
+  assert.deepEqual(member.summary, {
+    scheduledDays: 2,
+    loginDays: 2,
+    scheduledHours: 16,
+    loginHours: 15.5,
+    gapHours: 0.5,
+    anomalyCount: 1,
+  });
 });

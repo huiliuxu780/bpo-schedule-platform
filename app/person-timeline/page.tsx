@@ -15,14 +15,18 @@ import {
   encodeScopeId,
   fallbackPersonTimelines,
   getFulfillmentCalendar,
+  getFulfillmentGroupMemberWeekMatrix,
   getFulfillmentMatrix,
   getFulfillmentTeam,
   getTimelineEventPosition,
   type FulfillmentCalendarSummary,
   type FulfillmentDayMetrics,
   type FulfillmentGroupMatrix,
+  type FulfillmentGroupMemberWeekMatrix,
+  type FulfillmentGroupMemberWeekMatrixMember,
   type FulfillmentMatrixMember,
   type FulfillmentTeamWeek,
+  type PersonTimelineWeekDay,
   type TimelineEvent,
 } from "@/lib/person-timeline"
 
@@ -39,13 +43,20 @@ export default async function PersonTimelinePage({ searchParams }: PageProps) {
   const calendar = getFulfillmentCalendar(fallbackPersonTimelines)
   const selectedTeam = getFulfillmentTeam(teamId, fallbackPersonTimelines)
   const selectedMatrix =
-    selectedTeam && groupId
+    selectedTeam && groupId && date
       ? getFulfillmentMatrix(selectedTeam.id, groupId, date, fallbackPersonTimelines)
       : undefined
-  const currentSummary = selectedMatrix?.summary ?? selectedTeam?.summary ?? calendar.summary
+  const selectedGroupWeekMatrix =
+    selectedTeam && groupId && !date
+      ? getFulfillmentGroupMemberWeekMatrix(selectedTeam.id, groupId, fallbackPersonTimelines)
+      : undefined
+  const currentSummary =
+    selectedMatrix?.summary ?? selectedGroupWeekMatrix?.group.summary ?? selectedTeam?.summary ?? calendar.summary
   const currentSummaryLabel = selectedMatrix
     ? "小组当日"
-    : selectedTeam
+    : selectedGroupWeekMatrix
+      ? "小组本周"
+      : selectedTeam
       ? "团队本周"
       : "全部团队本周"
 
@@ -63,6 +74,8 @@ export default async function PersonTimelinePage({ searchParams }: PageProps) {
 
         {selectedMatrix ? (
           <MemberMatrixSection matrix={selectedMatrix} />
+        ) : selectedGroupWeekMatrix ? (
+          <GroupMemberWeekMatrixSection matrix={selectedGroupWeekMatrix} />
         ) : selectedTeam ? (
           <GroupWeekSection team={selectedTeam} />
         ) : (
@@ -153,12 +166,117 @@ function GroupWeekSection({
             description={`成员 ${group.members.length} 人`}
             days={group.days}
             hrefForDay={(day) =>
-              `/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(group.id)}&date=${day.date}`
+              `/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(group.id)}&returnDate=${day.date}`
             }
           />
         ))}
       </CardContent>
     </Card>
+  )
+}
+
+function GroupMemberWeekMatrixSection({ matrix }: { matrix: FulfillmentGroupMemberWeekMatrix }) {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <CardTitle>小组成员周矩阵</CardTitle>
+            <CardDescription>
+              {matrix.team.workplace} / {matrix.team.project} / {matrix.group.supplier} / {matrix.weekStart} 至{" "}
+              {matrix.weekEnd}
+            </CardDescription>
+          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/person-timeline?team=${encodeScopeId(matrix.team.id)}`}>返回小组周</Link>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <div className="overflow-x-auto">
+          <div className="min-w-[1040px] rounded-lg border">
+            <div className="grid grid-cols-[160px_repeat(7,minmax(112px,1fr))] border-b bg-muted/30 text-xs text-muted-foreground">
+              <div className="p-3">成员</div>
+              {matrix.members[0]?.days.map((day) => (
+                <div key={day.date} className="border-l p-3">
+                  <div className="font-medium text-foreground">{day.weekday}</div>
+                  <div>{day.label}</div>
+                </div>
+              ))}
+            </div>
+            {matrix.members.map((member) => (
+              <GroupMemberWeekRow key={member.employeeId} member={member} matrix={matrix} />
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function GroupMemberWeekRow({
+  member,
+  matrix,
+}: {
+  member: FulfillmentGroupMemberWeekMatrixMember
+  matrix: FulfillmentGroupMemberWeekMatrix
+}) {
+  const weekHref = `/person-timeline/${member.employeeId}?team=${encodeScopeId(
+    matrix.team.id
+  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${matrix.weekStart}`
+
+  return (
+    <div className="grid grid-cols-[160px_repeat(7,minmax(112px,1fr))] border-b last:border-b-0">
+      <div className="flex flex-col gap-1 p-3">
+        <Button asChild variant="link" className="h-auto justify-start p-0 text-left">
+          <Link href={weekHref}>
+            <span className="font-medium">{member.employeeName}</span>
+            <span className="ml-1 text-xs text-muted-foreground">{member.employeeId}</span>
+          </Link>
+        </Button>
+        <div className="text-xs text-muted-foreground">
+          排班 {member.summary.scheduledHours.toFixed(1)}h / 缺口 {member.summary.gapHours.toFixed(1)}h
+        </div>
+      </div>
+      {member.days.map((day) => (
+        <GroupMemberWeekCell key={day.date} day={day} member={member} matrix={matrix} />
+      ))}
+    </div>
+  )
+}
+
+function GroupMemberWeekCell({
+  day,
+  member,
+  matrix,
+}: {
+  day: PersonTimelineWeekDay
+  member: FulfillmentGroupMemberWeekMatrixMember
+  matrix: FulfillmentGroupMemberWeekMatrix
+}) {
+  const hasRisk = day.gapHours > 0 || day.anomalyCount > 0
+  const isRestDay = day.scheduledHours === 0 && day.loginHours === 0
+  const detailHref = `/person-timeline/${member.employeeId}?date=${day.date}&team=${encodeScopeId(
+    matrix.team.id
+  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${day.date}`
+
+  return (
+    <Link
+      href={detailHref}
+      className={`grid gap-1 border-l p-3 text-xs transition-colors hover:bg-muted ${
+        hasRisk ? "bg-primary/5" : ""
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-medium">{isRestDay ? "休" : hasRisk ? "需看" : "正常"}</span>
+        {hasRisk ? <Badge variant="destructive">异 {day.anomalyCount}</Badge> : null}
+      </div>
+      <span className="text-muted-foreground">排 {day.scheduledHours.toFixed(1)}h</span>
+      <span className="text-muted-foreground">登 {day.loginHours.toFixed(1)}h</span>
+      <span className={day.gapHours > 0 ? "text-destructive" : "text-muted-foreground"}>
+        缺 {day.gapHours.toFixed(1)}h
+      </span>
+    </Link>
   )
 }
 

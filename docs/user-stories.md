@@ -29,6 +29,31 @@
 
 ## Stories
 
+### US232 - 履约日历小组成员周矩阵
+
+```yaml
+id: US232
+requirement_ids:
+  - R220
+task_ids:
+  - F171
+module: "履约日历"
+role: "现场主管"
+story: "作为现场主管，我希望从小组周视图进入小组成员周矩阵，按成员和日期查看一周排班、登录、缺口和异常，以便先判断小组内哪几个人哪几天有问题。"
+task_type: "frontend"
+priority: "P0"
+acceptance:
+  - "`/person-timeline?team=...&group=...` 展示小组成员周矩阵。"
+  - "`/person-timeline?team=...&group=...&date=...` 继续展示小组成员单日矩阵。"
+  - "小组成员周矩阵按员工为行、周一到周日为列，每格展示排班、登录、缺口和异常。"
+  - "点击员工姓名进入个人周日历，点击某天格子进入个人单日三轨详情。"
+  - "不新增左侧入口、不新增依赖、不改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "F170"
+status: "done"
+```
+
 ### US231 - 履约日历个人周日历层
 
 ```yaml

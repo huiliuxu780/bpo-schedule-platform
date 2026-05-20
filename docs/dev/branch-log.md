@@ -1063,3 +1063,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F171 Group Member Week Matrix
+
+- branch_name: `codex/f169-fulfillment-calendar`
+- base_main_commit: `a3a134c`
+- remote_status: `continued on pushed F169/F170 fulfillment calendar branch because this task extends the same drilldown chain and main has not integrated it`
+- scope: frontend local business function: add a group member week matrix for `team+group` without `date`, preserve group member day matrix for `team+group+date`, link employee names to personal week calendar and week cells to personal day detail, add focused model test, browser smoke, and traceability.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing person timeline route and model, focused model test, current and legacy traceability docs, and implementation plan; no new left sidebar entry, `/production-mvp/**` route, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `node --test scripts/tests/person-timeline.test.mjs` passed with 10 tests; `npm run lint` passed; `npm run typecheck` passed; in-app browser smoke passed for group member week matrix, personal day detail, and existing group member day matrix; final `bash scripts/check.sh` passed, including strict state check, state-check regression tests, frontend lint, typecheck, Next build with `/person-timeline` dynamic routes, and 25 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

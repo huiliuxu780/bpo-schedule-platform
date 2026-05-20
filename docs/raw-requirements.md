@@ -17,6 +17,19 @@
 
 ## Requirements
 
+### R220 - 履约日历小组成员周矩阵
+
+```yaml
+id: R220
+module: "履约日历"
+description: "履约日历需要在小组周视图和小组成员单日矩阵之间增加小组成员周矩阵，使主管先看到小组内每个成员一周每天的排班、登录、缺口和异常，再下钻到某人某天详情。"
+source: "PM confirmed continuing fulfillment calendar business function on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本需求复用现有 `/person-timeline` 路由，不新增左侧入口，不新增依赖，不实现正式小组管理、数据库、权限、审批、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R219 - 履约日历个人周日历层
 
 ```yaml

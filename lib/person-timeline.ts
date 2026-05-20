@@ -154,6 +154,24 @@ export type FulfillmentGroupMatrix = {
   members: FulfillmentMatrixMember[]
 }
 
+export type FulfillmentGroupMemberWeekMatrixMember = {
+  employeeId: string
+  employeeName: string
+  workplace: string
+  supplier: string
+  project: string
+  days: PersonTimelineWeekDay[]
+  summary: PersonTimelineWeekSummary
+}
+
+export type FulfillmentGroupMemberWeekMatrix = {
+  weekStart: string
+  weekEnd: string
+  team: FulfillmentTeamWeek
+  group: FulfillmentGroupWeek
+  members: FulfillmentGroupMemberWeekMatrixMember[]
+}
+
 export const timelineWorkdayStartMinutes = 8 * 60
 export const timelineWorkdayEndMinutes = 20 * 60
 export const fulfillmentDefaultWeekStart = "2026-05-11"
@@ -495,6 +513,53 @@ export function getFulfillmentMatrix(
     team,
     group,
     summary: buildDayMetrics(selectedDate, group.members),
+    members,
+  }
+}
+
+export function getFulfillmentGroupMemberWeekMatrix(
+  teamId: string | undefined,
+  groupId: string | undefined,
+  rows = fallbackPersonTimelines,
+  weekStart = fulfillmentDefaultWeekStart
+): FulfillmentGroupMemberWeekMatrix | undefined {
+  const team = getFulfillmentTeam(teamId, rows, weekStart)
+  if (!team) {
+    return undefined
+  }
+
+  const group = team.groups.find((item) => item.id === decodeScopeId(groupId))
+  if (!group) {
+    return undefined
+  }
+
+  const members = group.members
+    .map((member) => {
+      const weekView = getPersonTimelineWeekView(member, weekStart, weekStart)
+
+      return {
+        employeeId: member.employeeId,
+        employeeName: member.employeeName,
+        workplace: member.workplace,
+        supplier: member.supplier,
+        project: member.project,
+        days: weekView.days,
+        summary: weekView.summary,
+      }
+    })
+    .sort((a, b) => {
+      return (
+        b.summary.gapHours - a.summary.gapHours ||
+        b.summary.anomalyCount - a.summary.anomalyCount ||
+        a.employeeId.localeCompare(b.employeeId)
+      )
+    })
+
+  return {
+    weekStart,
+    weekEnd: addDays(weekStart, 6),
+    team,
+    group,
     members,
   }
 }
