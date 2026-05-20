@@ -2,6 +2,491 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: H031
+    title: "连续大模块迭代池状态修复"
+    priority: P0
+    status: done
+    required_workflow: state-hygiene
+    allowed_files: ["docs/current/**", "docs/registry/**", "docs/raw-requirements.md", "docs/user-stories.md", "docs/task-log.md", "docs/dev/branch-log.md", "docs/audit-report.md", "docs/superpowers/plans/**", "tasks/backlog.yaml"]
+    forbidden_files: ["app/**", "components/**", "hooks/**", "lib/**", "backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "修复 US137-US146 和 F085-F093/Q020 的 ready/done 状态漂移。"
+      - "登记 36 个 planned 故事池，但不写入 current/active。"
+      - "TRACE_INDEX 只登记 ID、路径和关系。"
+      - "`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要修改产品代码", "需要新增依赖或修改 package/lockfile", "需要后端、数据库或真实外部数据接入", "需要权限、审批、处理提交、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F196
+    title: "经营总览业务指标收口"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "scripts/tests/product-ui-copy-audit.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["经营总览只展示履约、供需、异常和质量风险业务指标。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F197
+    title: "侧边栏业务入口收口"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["components/app-sidebar.tsx", "scripts/tests/product-navigation-business-only.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["侧边栏只保留真实业务入口，不暴露内部执行、验收、准备或 Gate 类入口。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F198
+    title: "产品 UI 内部词审计"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/**", "components/**", "scripts/tests/product-ui-copy-audit.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["产品 UI 不出现 PRD、Gate、Story、验收清单、待实现、准备等内部过程词。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F199
+    title: "经营总览业务下钻入口"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["经营总览指标能下钻到履约日历、异常中心和数据质量。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F200
+    title: "经营总览履约风险摘要"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/dashboard/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["经营总览展示今日和本周履约风险摘要。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q029
+    title: "业务界面收口 QA"
+    priority: P1
+    status: planned
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["业务界面收口后，导航、经营总览和产品文案检查通过。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要越界能力"]
+    commit_after_done: true
+  - id: F201
+    title: "小组周风险摘要侧栏"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]
+    acceptance: ["小组周视图展示风险摘要侧栏。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F202
+    title: "小组本周待看清单"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]
+    acceptance: ["小组成员周矩阵展示本周待看清单。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F203
+    title: "异常三轨证据卡"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]
+    acceptance: ["异常队列展示命中的排班、登录、状态事件和时间段。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F204
+    title: "异常排序依据说明"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]
+    acceptance: ["异常队列展示排序依据。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F205
+    title: "个人详情返回队列上下文"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]
+    acceptance: ["个人详情保留从异常队列进入时的返回上下文。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q030
+    title: "履约日历主管处理链路 QA"
+    priority: P1
+    status: planned
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["履约日历下钻、队列、定位和业务文案验证通过。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要越界能力"]
+    commit_after_done: true
+  - id: F206
+    title: "排班计划人员级明细"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["排班计划详情展示人员级排班明细。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F207
+    title: "人员排班明细字段"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["人员排班明细展示员工、供应商、职场、项目、技能、班次和异常标记。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F208
+    title: "时段汇总追溯人员"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/shift-details/**", "app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["0.5h 时段汇总能追溯到对应人员列表。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F209
+    title: "排班明细跳转履约时间轴"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/schedule-plans/**", "app/person-timeline/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["人员排班明细能跳到员工当天履约时间轴。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F210
+    title: "排班缺口人员班次说明"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/schedule-plans/**", "app/schedule-risks/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["排班缺口展示涉及的具体人员和班次。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q031
+    title: "人员级排班追溯 QA"
+    priority: P1
+    status: planned
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["人员级明细、时段汇总和履约下钻链路验证通过。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要越界能力"]
+    commit_after_done: true
+  - id: F211
+    title: "需求预测多维展示"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/demand-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["需求预测按职场、项目、时段、技能组和等级展示。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F212
+    title: "预测排班缺口超排"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/demand-plans/**", "app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["预测 vs 排班对比展示缺口和超排。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F213
+    title: "预测技能组不匹配"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/demand-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["预测 vs 排班对比展示无匹配技能组异常。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F214
+    title: "供需对比下钻人员明细"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/demand-plans/**", "app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["供需对比能下钻到排班人员明细。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F215
+    title: "预测排班版本对齐"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/demand-plans/**", "app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["预测版本和排班版本在只读对齐视图中展示。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q032
+    title: "预测排班对齐 QA"
+    priority: P1
+    status: planned
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["供需指标、版本说明和下钻链路验证通过。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要越界能力"]
+    commit_after_done: true
+  - id: F216
+    title: "导入批次跳转质量问题"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/import-batches/**", "app/data-quality/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["导入批次详情能跳转到相关数据质量问题。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要真实上传、真实导入、数据库、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F217
+    title: "数据质量详情业务字段"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/data-quality/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["数据质量详情展示来源模板、字段、原值、错误码和影响对象。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要真实修复、数据库、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F218
+    title: "数据质量业务原因分组"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/data-quality/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["数据质量问题按业务原因分组。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要真实修复、数据库、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F219
+    title: "质量问题影响链路"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/data-quality/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["质量问题展示影响的排班、预测、登录或状态链路。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要真实修复、数据库、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F220
+    title: "导入失败行业务影响摘要"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/import-batches/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["导入批次展示失败行的业务影响摘要。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要真实上传、真实导入、数据库、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q033
+    title: "导入质量追溯 QA"
+    priority: P1
+    status: planned
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["批次、失败行、质量问题和影响对象链路验证通过。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要越界能力"]
+    commit_after_done: true
+  - id: F221
+    title: "员工主数据绑定展示"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/master-data-relations/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["主数据关系页按员工展示供应商、职场、项目和技能绑定。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要主数据 CRUD、数据库、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F222
+    title: "异常员工反查主数据"
+    priority: P0
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/master-data-relations/**", "app/person-timeline/**", "app/anomaly-review/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["能从异常员工反查主数据绑定关系。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要主数据 CRUD、数据库、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F223
+    title: "班次类型计入口径展示"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/shift-types/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["班次类型展示休息、饭点和计入口径。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要生产公式、主数据 CRUD、数据库、权限、审批、导出或批量", "验证失败"]
+    commit_after_done: true
+  - id: F224
+    title: "主数据缺失异常跳转"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/master-data-relations/**", "app/data-quality/**", "app/anomaly-review/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["主数据缺失异常能跳转到对应关系视图。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要主数据 CRUD、数据库、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F225
+    title: "主数据有效期状态展示"
+    priority: P1
+    status: planned
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/master-data-relations/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["主数据关系展示有效期和状态。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要主数据 CRUD、数据库、权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q034
+    title: "主数据关系闭环 QA"
+    priority: P1
+    status: planned
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["绑定、异常反查、有效期和业务文案验证通过。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要越界能力"]
+    commit_after_done: true
   - id: F193
     title: "异常队列处理进度"
     priority: P0
@@ -4941,7 +5426,7 @@ tasks:
   - id: F085
     title: "班次类型本地模型与测试"
     priority: P0
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -4958,7 +5443,7 @@ tasks:
   - id: F086
     title: "班次类型只读页"
     priority: P0
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -4974,7 +5459,7 @@ tasks:
   - id: F087
     title: "班次类型导航入口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["components/app-sidebar.tsx", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -4990,7 +5475,7 @@ tasks:
   - id: F088
     title: "导入模板本地模型与测试"
     priority: P0
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -5007,7 +5492,7 @@ tasks:
   - id: F089
     title: "导入模板只读页"
     priority: P0
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -5023,7 +5508,7 @@ tasks:
   - id: F090
     title: "导入模板导航入口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["components/app-sidebar.tsx", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -5039,7 +5524,7 @@ tasks:
   - id: F091
     title: "异常来源 drilldown 本地模型与测试"
     priority: P0
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -5056,7 +5541,7 @@ tasks:
   - id: F092
     title: "异常来源总览页"
     priority: P0
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -5072,7 +5557,7 @@ tasks:
   - id: F093
     title: "异常来源详情页与入口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/**", "components/**", "lib/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -5089,7 +5574,7 @@ tasks:
   - id: Q020
     title: "班次类型、导入模板和异常来源 QA"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     allowed_files: ["docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]

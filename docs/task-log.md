@@ -17,6 +17,15 @@
 
 ## Log
 
+### 2026-05-21
+
+- task_id: `H031`
+- source_ids: [`R281`]
+- story_ids: [`US293`]
+- action: 修复大模块迭代池登记前的 Harness 状态漂移，并登记 36 个 planned 业务故事池。
+- status: `done`
+- notes: 已将历史已完成的 `US137-US146`、`F085-F093`、`Q020` 从遗留 ready 状态修正为 done；新增 `R245-R280`、`US257-US292`、`F196-F225`、`Q029-Q034` 作为连续大模块 planned 池，覆盖业务 UI 收口、履约日历主管链路、人员级排班追溯、预测排班对齐、导入质量追溯和主数据关系闭环。planned 池未写入 `docs/current/STORY_QUEUE.yaml` 或 `docs/current/ACTIVE_TASKS.yaml`，本批不实现产品代码、不新增页面、不改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
 ### 2026-05-18
 
 - task_id: `H029`

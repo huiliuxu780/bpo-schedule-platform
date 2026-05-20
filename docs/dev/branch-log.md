@@ -1,5 +1,24 @@
 # Branch Log
 
+## 2026-05-21
+
+### H031 Large Module Iteration Pool
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `705ca45`
+- remote_status: `continued on the existing supervisor handling branch because this batch is Harness/state planning only and prepares the next coherent product iteration pool`
+- scope: Harness state hygiene and planning only: repair stale legacy done/ready drift, register 36 planned business stories and their backlog/trace mappings, and keep current queue plus active tasks empty.
+- allowed_files_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/raw-requirements.md`, `docs/user-stories.md`, `tasks/backlog.yaml`, `docs/task-log.md`, `docs/dev/branch-log.md`, `docs/audit-report.md`, and `docs/superpowers/plans/**`; no product code, frontend routes/components, backend, package, lockfile, database, real integration, auth, permission, approval, processing submission, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates Harness planning, traceability, registry, and branch/audit records only; `docs/current/STORY_QUEUE.yaml` and `docs/current/ACTIVE_TASKS.yaml` remain unchanged and empty after closeout.
+- check_result: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ## 2026-05-18
 
 ### H029 Production MVP PRD

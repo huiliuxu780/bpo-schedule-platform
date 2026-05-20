@@ -29,6 +29,71 @@
 
 ## Stories
 
+### US257-US292 - 连续大模块业务迭代池
+
+```yaml
+stories:
+  - {id: US257, requirement_ids: [R245], task_ids: [F196], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览只展示履约、供需、异常和质量风险业务指标，以便首页不混入内部执行信息。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US258, requirement_ids: [R246], task_ids: [F197], module: "业务界面收口", role: "业务用户", story: "作为业务用户，我希望侧边栏只保留真实业务入口，以便不看到内部执行、验收、准备或 Gate 类入口。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US259, requirement_ids: [R247], task_ids: [F198], module: "业务界面收口", role: "PM", story: "作为 PM，我希望产品 UI 全量审计内部过程词，以便避免再次把项目管理内容做成业务页面。", task_type: "qa", priority: "P0", status: "planned"}
+  - {id: US260, requirement_ids: [R248], task_ids: [F199], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览指标能下钻到履约日历、异常中心和数据质量，以便从汇总进入业务处理链路。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US261, requirement_ids: [R249], task_ids: [F200], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览展示今日和本周履约风险摘要，以便快速判断当前风险。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US262, requirement_ids: [R250], task_ids: [Q029], module: "质量与交付", role: "QA", story: "作为 QA，我希望业务界面收口批次完成后验证页面、导航和文案都只保留业务语言。", task_type: "qa", priority: "P1", status: "planned"}
+  - {id: US263, requirement_ids: [R251], task_ids: [F201], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望小组周视图展示风险摘要侧栏，以便判断哪组、哪天、哪人风险最高。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US264, requirement_ids: [R252], task_ids: [F202], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望小组成员周矩阵展示本周待看清单，以便按缺口和异常连续处理。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US265, requirement_ids: [R253], task_ids: [F203], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望异常队列展示三轨证据卡，以便直接看到命中的排班、登录、状态事件。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US266, requirement_ids: [R254], task_ids: [F204], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望异常队列展示排序依据，以便理解为什么当前异常优先处理。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US267, requirement_ids: [R255], task_ids: [F205], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望个人单日详情保留异常队列返回上下文，以便看完个人证据后回到原队列位置。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US268, requirement_ids: [R256], task_ids: [Q030], module: "质量与交付", role: "QA", story: "作为 QA，我希望履约日历主管处理链路批次完成后验证下钻、队列、定位和业务文案。", task_type: "qa", priority: "P1", status: "planned"}
+  - {id: US269, requirement_ids: [R257], task_ids: [F206], module: "排班计划", role: "排班运营", story: "作为排班运营，我希望排班计划详情展示人员级排班明细，以便从计划看到具体员工。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US270, requirement_ids: [R258], task_ids: [F207], module: "排班计划", role: "排班运营", story: "作为排班运营，我希望人员排班明细展示员工、供应商、职场、项目、技能、班次和异常标记，以便判断问题来源。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US271, requirement_ids: [R259], task_ids: [F208], module: "排班计划", role: "排班运营", story: "作为排班运营，我希望 0.5h 时段汇总能追溯到人员列表，以便从汇总定位具体人。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US272, requirement_ids: [R260], task_ids: [F209], module: "排班计划", role: "排班运营", story: "作为排班运营，我希望人员排班明细能跳到员工当天履约时间轴，以便继续查看登录和状态。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US273, requirement_ids: [R261], task_ids: [F210], module: "排班计划", role: "排班运营", story: "作为排班运营，我希望排班缺口展示涉及的具体人员和班次，以便判断补班方向。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US274, requirement_ids: [R262], task_ids: [Q031], module: "质量与交付", role: "QA", story: "作为 QA，我希望人员级排班与 0.5h 汇总追溯批次完成后验证明细、汇总和下钻链路。", task_type: "qa", priority: "P1", status: "planned"}
+  - {id: US275, requirement_ids: [R263], task_ids: [F211], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望需求预测按职场、项目、时段、技能组和等级展示，以便判断需求结构。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US276, requirement_ids: [R264], task_ids: [F212], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测 vs 排班对比展示缺口和超排，以便优先复核供需异常。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US277, requirement_ids: [R265], task_ids: [F213], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测 vs 排班对比展示无匹配技能组异常，以便定位技能供给问题。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US278, requirement_ids: [R266], task_ids: [F214], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望供需对比能下钻到排班人员明细，以便从缺口追到具体人员。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US279, requirement_ids: [R267], task_ids: [F215], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测版本和排班版本在对齐视图中展示，以便知道对比依据。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US280, requirement_ids: [R268], task_ids: [Q032], module: "质量与交付", role: "QA", story: "作为 QA，我希望预测排班对齐批次完成后验证供需指标、版本说明和下钻链路。", task_type: "qa", priority: "P1", status: "planned"}
+  - {id: US281, requirement_ids: [R269], task_ids: [F216], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望导入批次详情能跳转到相关数据质量问题，以便追溯失败原因。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US282, requirement_ids: [R270], task_ids: [F217], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望数据质量详情展示来源模板、字段、原值、错误码和影响对象，以便判断修复优先级。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US283, requirement_ids: [R271], task_ids: [F218], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望数据质量问题按业务原因分组，以便先处理影响核心对比的问题。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US284, requirement_ids: [R272], task_ids: [F219], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望质量问题展示影响的排班、预测、登录或状态链路，以便看懂业务后果。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US285, requirement_ids: [R273], task_ids: [F220], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望导入批次展示失败行的业务影响摘要，以便判断是否影响当天履约。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US286, requirement_ids: [R274], task_ids: [Q033], module: "质量与交付", role: "QA", story: "作为 QA，我希望导入批次与数据质量追溯批次完成后验证批次、失败行、质量问题和影响对象链路。", task_type: "qa", priority: "P1", status: "planned"}
+  - {id: US287, requirement_ids: [R275], task_ids: [F221], module: "主数据", role: "数据管理员", story: "作为数据管理员，我希望主数据关系页按员工展示供应商、职场、项目和技能绑定，以便定位人员归属。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US288, requirement_ids: [R276], task_ids: [F222], module: "主数据", role: "现场主管", story: "作为现场主管，我希望能从异常员工反查主数据绑定关系，以便判断异常是否来自绑定缺失。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US289, requirement_ids: [R277], task_ids: [F223], module: "主数据", role: "排班运营", story: "作为排班运营，我希望班次类型展示休息、饭点和计入口径，以便理解班次如何影响排班人数。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US290, requirement_ids: [R278], task_ids: [F224], module: "主数据", role: "数据管理员", story: "作为数据管理员，我希望主数据缺失异常能跳转到对应关系视图，以便快速定位缺失字段。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US291, requirement_ids: [R279], task_ids: [F225], module: "主数据", role: "数据管理员", story: "作为数据管理员，我希望主数据关系展示有效期和状态，以便判断绑定是否仍有效。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US292, requirement_ids: [R280], task_ids: [Q034], module: "质量与交付", role: "QA", story: "作为 QA，我希望主数据关系闭环批次完成后验证绑定、异常反查、有效期和业务文案。", task_type: "qa", priority: "P1", status: "planned"}
+acceptance:
+  - "36 个故事只作为后续规划池，不写入 current/active。"
+  - "每个业务批次执行前再选择 3-5 个故事进入 current/active。"
+  - "所有故事保持本地前端或本地模型边界，不实现数据库、真实接口、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### US293 - 大模块迭代池状态修复
+
+```yaml
+stories:
+  - id: US293
+    requirement_ids: [R281]
+    task_ids: [H031]
+    module: "Harness"
+    role: "PM"
+    story: "作为 PM，我希望开始连续大模块迭代前先修复旧批次状态漂移并登记规划池，以便后续 Story Runner 不误执行旧任务。"
+    task_type: "harness"
+    priority: "P0"
+    status: "done"
+acceptance:
+  - "US137-US146 和 F085-F093/Q020 的状态与 PROJECT_CONTEXT 完成记录一致。"
+  - "36 个后续故事登记为 planned，不进入 current/active。"
+  - "TRACE_INDEX 只登记 ID、路径和关系，不写生命周期状态。"
+```
+
 ### US254-US256 - 小组异常队列处理光标
 
 ```yaml
@@ -2449,16 +2514,16 @@ acceptance:
 
 ```yaml
 stories:
-  - {id: US137, requirement_ids: [R125], task_ids: [F085], module: "班次类型", role: "排班运营", story: "作为排班运营，我希望班次类型有本地模型和测试，以便确认人员级排班如何引用班次代码、休息和饭点。", task_type: "frontend", priority: "P0", status: "ready"}
-  - {id: US138, requirement_ids: [R126], task_ids: [F086], module: "班次类型", role: "排班运营", story: "作为排班运营，我希望有班次类型只读页，查看班次字段、适用项目、时长和暂不实现边界。", task_type: "frontend", priority: "P0", status: "ready"}
-  - {id: US139, requirement_ids: [R127], task_ids: [F087], module: "导航", role: "PM", story: "作为 PM，我希望侧边栏能直接进入班次类型，以便本地验收时不需要记 URL。", task_type: "frontend", priority: "P1", status: "ready"}
-  - {id: US140, requirement_ids: [R128], task_ids: [F088], module: "导入模板", role: "数据管理员", story: "作为数据管理员，我希望导入模板有本地模型和测试，以便确认第一期到底要上传哪些表。", task_type: "frontend", priority: "P0", status: "ready"}
-  - {id: US141, requirement_ids: [R129], task_ids: [F089], module: "导入模板", role: "数据管理员", story: "作为数据管理员，我希望有导入模板只读页，查看每张模板的字段、主键、校验和暂不实现动作。", task_type: "frontend", priority: "P0", status: "ready"}
-  - {id: US142, requirement_ids: [R130], task_ids: [F090], module: "导航", role: "PM", story: "作为 PM，我希望侧边栏能直接进入导入模板，以便验收上传/导入准备口径。", task_type: "frontend", priority: "P1", status: "ready"}
-  - {id: US143, requirement_ids: [R131], task_ids: [F091], module: "异常闭环", role: "现场主管", story: "作为现场主管，我希望异常来源有本地模型和测试，以便知道每类异常来自哪些输入和对齐键。", task_type: "frontend", priority: "P0", status: "ready"}
-  - {id: US144, requirement_ids: [R132], task_ids: [F092], module: "异常闭环", role: "现场主管", story: "作为现场主管，我希望有异常来源总览页，按来源查看触发条件、追溯键和处理边界。", task_type: "frontend", priority: "P0", status: "ready"}
-  - {id: US145, requirement_ids: [R133], task_ids: [F093], module: "异常闭环", role: "PM", story: "作为 PM，我希望能从异常复核页进入异常来源详情，查看来源解释和暂不实现范围。", task_type: "frontend", priority: "P1", status: "ready"}
-  - {id: US146, requirement_ids: [R134], task_ids: [Q020], module: "质量与交付", role: "QA", story: "作为 QA，我希望对班次类型、导入模板和异常来源做验收收口，确认页面、导航、测试和边界未越界。", task_type: "qa", priority: "P1", status: "ready"}
+  - {id: US137, requirement_ids: [R125], task_ids: [F085], module: "班次类型", role: "排班运营", story: "作为排班运营，我希望班次类型有本地模型和测试，以便确认人员级排班如何引用班次代码、休息和饭点。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US138, requirement_ids: [R126], task_ids: [F086], module: "班次类型", role: "排班运营", story: "作为排班运营，我希望有班次类型只读页，查看班次字段、适用项目、时长和暂不实现边界。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US139, requirement_ids: [R127], task_ids: [F087], module: "导航", role: "PM", story: "作为 PM，我希望侧边栏能直接进入班次类型，以便本地验收时不需要记 URL。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US140, requirement_ids: [R128], task_ids: [F088], module: "导入模板", role: "数据管理员", story: "作为数据管理员，我希望导入模板有本地模型和测试，以便确认第一期到底要上传哪些表。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US141, requirement_ids: [R129], task_ids: [F089], module: "导入模板", role: "数据管理员", story: "作为数据管理员，我希望有导入模板只读页，查看每张模板的字段、主键、校验和暂不实现动作。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US142, requirement_ids: [R130], task_ids: [F090], module: "导航", role: "PM", story: "作为 PM，我希望侧边栏能直接进入导入模板，以便验收上传/导入准备口径。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US143, requirement_ids: [R131], task_ids: [F091], module: "异常闭环", role: "现场主管", story: "作为现场主管，我希望异常来源有本地模型和测试，以便知道每类异常来自哪些输入和对齐键。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US144, requirement_ids: [R132], task_ids: [F092], module: "异常闭环", role: "现场主管", story: "作为现场主管，我希望有异常来源总览页，按来源查看触发条件、追溯键和处理边界。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US145, requirement_ids: [R133], task_ids: [F093], module: "异常闭环", role: "PM", story: "作为 PM，我希望能从异常复核页进入异常来源详情，查看来源解释和暂不实现范围。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US146, requirement_ids: [R134], task_ids: [Q020], module: "质量与交付", role: "QA", story: "作为 QA，我希望对班次类型、导入模板和异常来源做验收收口，确认页面、导航、测试和边界未越界。", task_type: "qa", priority: "P1", status: "done"}
 acceptance:
   - "班次类型展示来自本地模型，不执行班次规则计算、排班生成或主数据 CRUD。"
   - "导入模板展示本地字段和校验口径，不执行真实上传、导入、批量或修复。"

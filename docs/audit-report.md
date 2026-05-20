@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-21 - H031 Large module iteration pool
+
+#### 结论
+
+- `H031/US293` 已完成大模块迭代池登记前的 Harness 状态修复。
+- 历史已完成的 `US137-US146`、`F085-F093`、`Q020` 已从遗留 `ready` 修正为 `done`，避免 Story Runner 误拿旧任务。
+- 已登记 `R245-R280`、`US257-US292`、`F196-F225`、`Q029-Q034`，共 36 个 planned 业务故事，覆盖业务 UI 收口、履约日历主管链路、人员级排班追溯、预测排班对齐、导入质量追溯和主数据关系闭环。
+- 新增规划池只作为后续 Gate 候选，不写入 `docs/current/STORY_QUEUE.yaml` 或 `docs/current/ACTIVE_TASKS.yaml`，不会被当作当前执行队列。
+- 本批没有修改产品代码，没有新增页面，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- planned 池不是已确认执行范围；后续仍需按每批 1-3 个强相关故事输出 Gate Plan 并确认。
+- 自动审批、处理提交、权限、导出、批量和生产规则仍属于硬停条件，不在本池登记动作中实现。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过，current queue 和 active tasks 未保留 done history，TRACE_INDEX 不含 lifecycle state。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 frontend runtime check、state-check 回归测试、strict state check、backend runtime check、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ### 2026-05-20 - Fulfillment calendar drilldown
 
 #### 审计结论

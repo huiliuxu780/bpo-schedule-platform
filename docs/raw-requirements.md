@@ -17,6 +17,67 @@
 
 ## Requirements
 
+### R245-R280 - 连续大模块业务迭代池
+
+```yaml
+requirements:
+  - {id: R245, module: "业务界面收口", description: "经营总览只展示履约、供需、异常和质量风险业务指标，不混入内部执行信息。"}
+  - {id: R246, module: "业务界面收口", description: "侧边栏只保留业务入口，移除内部执行、验收、准备和 Gate 类入口。"}
+  - {id: R247, module: "业务界面收口", description: "产品 UI 需要全量审计并清理 PRD、Gate、Story、验收清单、待实现、准备等内部词。"}
+  - {id: R248, module: "业务界面收口", description: "经营总览指标需要下钻到履约日历、异常中心和数据质量业务链路。"}
+  - {id: R249, module: "业务界面收口", description: "经营总览需要展示今日和本周履约风险摘要。"}
+  - {id: R250, module: "业务界面收口", description: "业务界面收口批次完成后需要 QA 收口，确认产品 UI 只保留业务语言。"}
+  - {id: R251, module: "履约日历", description: "小组周视图需要展示风险摘要侧栏，帮助主管判断哪组、哪天、哪人风险最高。"}
+  - {id: R252, module: "履约日历", description: "小组成员周矩阵需要展示本周待看清单，承接缺口和异常视图。"}
+  - {id: R253, module: "履约日历", description: "小组异常队列需要展示三轨证据卡，列出命中的排班、登录、状态事件和时间段。"}
+  - {id: R254, module: "履约日历", description: "小组异常队列需要展示排序依据，说明为什么当前异常优先处理。"}
+  - {id: R255, module: "履约日历", description: "个人单日详情需要保留从异常队列进入时的返回上下文。"}
+  - {id: R256, module: "履约日历", description: "履约日历主管处理链路批次完成后需要 QA 收口。"}
+  - {id: R257, module: "排班计划", description: "排班计划详情需要展示人员级排班明细。"}
+  - {id: R258, module: "排班计划", description: "人员级排班明细需要展示员工、供应商、职场、项目、技能、班次和异常标记。"}
+  - {id: R259, module: "排班计划", description: "0.5h 时段汇总需要能追溯到对应人员列表。"}
+  - {id: R260, module: "排班计划", description: "人员级排班明细需要能跳到员工当天履约时间轴。"}
+  - {id: R261, module: "排班计划", description: "排班缺口需要展示涉及的具体人员和班次。"}
+  - {id: R262, module: "排班计划", description: "人员级排班与 0.5h 汇总追溯批次完成后需要 QA 收口。"}
+  - {id: R263, module: "需求预测", description: "需求预测需要按职场、项目、时段、技能组和等级展示。"}
+  - {id: R264, module: "需求预测", description: "预测 vs 排班对比需要展示缺口和超排。"}
+  - {id: R265, module: "需求预测", description: "预测 vs 排班对比需要展示无匹配技能组异常。"}
+  - {id: R266, module: "需求预测", description: "供需对比需要能下钻到排班人员明细。"}
+  - {id: R267, module: "需求预测", description: "预测版本和排班版本需要在只读对齐视图中展示。"}
+  - {id: R268, module: "需求预测", description: "需求预测与排班对齐批次完成后需要 QA 收口。"}
+  - {id: R269, module: "数据质量", description: "导入批次详情需要能跳转到相关数据质量问题。"}
+  - {id: R270, module: "数据质量", description: "数据质量详情需要展示来源模板、字段、原值、错误码和影响对象。"}
+  - {id: R271, module: "数据质量", description: "数据质量问题需要按业务原因分组。"}
+  - {id: R272, module: "数据质量", description: "质量问题需要展示影响的排班、预测、登录或状态链路。"}
+  - {id: R273, module: "数据质量", description: "导入批次需要展示失败行的业务影响摘要。"}
+  - {id: R274, module: "数据质量", description: "导入批次与数据质量追溯批次完成后需要 QA 收口。"}
+  - {id: R275, module: "主数据", description: "主数据关系页需要按员工展示供应商、职场、项目和技能绑定。"}
+  - {id: R276, module: "主数据", description: "主数据关系页需要支持从异常员工反查绑定关系。"}
+  - {id: R277, module: "主数据", description: "班次类型需要展示休息、饭点和计入口径。"}
+  - {id: R278, module: "主数据", description: "主数据缺失异常需要能跳转到对应关系视图。"}
+  - {id: R279, module: "主数据", description: "主数据关系需要展示有效期和状态。"}
+  - {id: R280, module: "主数据", description: "主数据关系闭环批次完成后需要 QA 收口。"}
+source: "PM confirmed continuous large module iteration on 2026-05-21"
+submitted_at: "2026-05-21"
+version: "1.0"
+status: "planned"
+notes: "这些需求组成后续执行池，不直接进入 current/active；每批执行前再按 3-5 个故事进入当前队列。全部保持本地前端或本地模型边界，不实现数据库、真实接口、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R281 - 大模块迭代池状态修复
+
+```yaml
+requirements:
+  - id: R281
+    module: "Harness"
+    description: "开始连续大模块迭代前，需要修复旧批次 ready/done 状态漂移，并登记 36 个规划故事池但不把它们一次性放入 current/active。"
+source: "PM confirmed one-time authorization for large module iteration on 2026-05-21"
+submitted_at: "2026-05-21"
+version: "1.0"
+status: "split"
+notes: "本项只做 Harness/state-hygiene 文档修复和规划登记，不改产品代码。"
+```
+
 ### R242-R244 - 小组异常队列处理光标
 
 ```yaml
