@@ -17,6 +17,26 @@
 
 ## Requirements
 
+### R236-R238 - 小组异常队列汇总与筛选
+
+```yaml
+requirements:
+  - id: R236
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示当天异常队列的汇总指标，帮助主管先判断问题构成。"
+  - id: R237
+    module: "履约日历"
+    description: "小组异常队列需要支持按高优先级、登录缺口、状态不一致进行显示筛选。"
+  - id: R238
+    module: "履约日历"
+    description: "筛选后当前异常解释需要跟随筛选队列变化，并保留个人详情入口。"
+source: "PM requested continuous closeout of supervisor handling flow on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本组只增强现有小组单日矩阵右侧面板；筛选只影响显示和下钻，不实现审批、处理提交、数据库、权限、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R233-R235 - 小组异常优先队列
 
 ```yaml

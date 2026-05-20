@@ -250,6 +250,13 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       },
     ]
   );
+  assert.deepEqual(matrix.exceptionQueueSummary, {
+    totalCount: 2,
+    highPriorityCount: 1,
+    loginGapCount: 1,
+    statusMismatchCount: 1,
+    totalImpactHours: 5.35,
+  });
 });
 
 test("fulfillment group member week matrix exposes member day cells", () => {

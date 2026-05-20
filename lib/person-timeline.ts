@@ -180,6 +180,14 @@ export type FulfillmentMatrixExceptionQueueItem = {
   supervisorAction: string
 }
 
+export type FulfillmentMatrixExceptionQueueSummary = {
+  totalCount: number
+  highPriorityCount: number
+  loginGapCount: number
+  statusMismatchCount: number
+  totalImpactHours: number
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
@@ -187,6 +195,7 @@ export type FulfillmentGroupMatrix = {
   summary: FulfillmentCalendarSummary
   members: FulfillmentMatrixMember[]
   exceptionQueue: FulfillmentMatrixExceptionQueueItem[]
+  exceptionQueueSummary: FulfillmentMatrixExceptionQueueSummary
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -566,6 +575,7 @@ export function getFulfillmentMatrix(
     summary: buildDayMetrics(selectedDate, group.members),
     members,
     exceptionQueue,
+    exceptionQueueSummary: summarizeFulfillmentMatrixExceptionQueue(exceptionQueue),
   }
 }
 
@@ -710,6 +720,18 @@ function buildFulfillmentMatrixExceptionQueue(
 
 function fulfillmentMatrixExceptionKey(employeeId: string, anomalyCode: string) {
   return `${employeeId}::${anomalyCode}`
+}
+
+function summarizeFulfillmentMatrixExceptionQueue(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentMatrixExceptionQueueSummary {
+  return {
+    totalCount: queue.length,
+    highPriorityCount: queue.filter((item) => item.priority === "high").length,
+    loginGapCount: queue.filter((item) => item.type === "登录缺口").length,
+    statusMismatchCount: queue.filter((item) => item.type === "状态不一致").length,
+    totalImpactHours: roundHours(queue.reduce((total, item) => total + item.impactHours, 0)),
+  }
 }
 
 function buildLateLoginExplanation(

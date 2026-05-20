@@ -1182,3 +1182,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F187-F189 Group Exception Queue Summary And Filter
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `64ed484`
+- remote_status: `continued on pushed supervisor handling branch because this batch extends the same group exception queue panel`
+- scope: frontend local business function: expose group-day exception queue summary, render summary metrics and display filters in the existing right-side panel, and keep current explanation plus personal detail drilldown synchronized with the selected filter.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, processing submission, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing person timeline route and model, focused model test, current and legacy traceability docs, and implementation plan; no new left sidebar entry, no new page route, no `/production-mvp/**` route, backend, package, lockfile, database, real integration, permission, approval, processing submission, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target model test, lint, typecheck, in-app browser smoke for `queue=high` and `queue=status`, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

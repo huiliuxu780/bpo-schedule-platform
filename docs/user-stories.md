@@ -29,6 +29,46 @@
 
 ## Stories
 
+### US248-US250 - 小组异常队列汇总与筛选
+
+```yaml
+stories:
+  - id: US248
+    requirement_ids: [R236]
+    task_ids: [F187]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组异常队列先显示异常构成汇总，以便判断当天问题主要来自哪里。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US249
+    requirement_ids: [R237]
+    task_ids: [F188]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望能按高优先级、登录缺口、状态不一致筛选异常队列，以便快速聚焦。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US250
+    requirement_ids: [R238]
+    task_ids: [F189]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望筛选后当前异常解释自动跟随筛选结果，并继续能进入个人详情。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵模型暴露异常队列汇总。"
+  - "右侧面板显示异常总数、高优先级数、登录缺口数、状态不一致数和总影响时长。"
+  - "右侧面板支持全部、高优先级、登录缺口、状态不一致显示筛选。"
+  - "筛选后队列和当前异常解释同步变化，并保留个人详情入口。"
+  - "不做审批、处理提交、权限、数据库、真实接口、导出、批量、自动排班或生产公式。"
+  - "不新增页面路由、不新增左侧入口，产品 UI 不出现内部过程词。"
+```
+
 ### US245-US247 - 小组异常优先队列
 
 ```yaml

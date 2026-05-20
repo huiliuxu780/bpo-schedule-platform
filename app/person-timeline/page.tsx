@@ -38,15 +38,19 @@ type PageProps = {
     date?: string
     focus?: string
     exception?: string
+    queue?: string
   }>
 }
 
 type GroupWeekFocus = "all" | "gap" | "anomaly"
+type MatrixQueueFilter = "all" | "high" | "login" | "status"
 
 export default async function PersonTimelinePage({ searchParams }: PageProps) {
-  const { team: teamId, group: groupId, date, focus, exception } = (await searchParams) ?? {}
+  const { team: teamId, group: groupId, date, focus, exception, queue } =
+    (await searchParams) ?? {}
   const groupWeekFocus: GroupWeekFocus =
     focus === "gap" || focus === "anomaly" ? focus : "all"
+  const queueFilter = getMatrixQueueFilter(queue)
   const calendar = getFulfillmentCalendar(fallbackPersonTimelines)
   const selectedTeam = getFulfillmentTeam(teamId, fallbackPersonTimelines)
   const selectedMatrix =
@@ -80,7 +84,11 @@ export default async function PersonTimelinePage({ searchParams }: PageProps) {
         </section>
 
         {selectedMatrix ? (
-          <MemberMatrixSection matrix={selectedMatrix} selectedExceptionKey={exception} />
+          <MemberMatrixSection
+            matrix={selectedMatrix}
+            selectedExceptionKey={exception}
+            queueFilter={queueFilter}
+          />
         ) : selectedGroupWeekMatrix ? (
           <GroupMemberWeekMatrixSection matrix={selectedGroupWeekMatrix} focus={groupWeekFocus} />
         ) : selectedTeam ? (
@@ -348,11 +356,14 @@ function GroupMemberWeekCell({
 function MemberMatrixSection({
   matrix,
   selectedExceptionKey,
+  queueFilter,
 }: {
   matrix: FulfillmentGroupMatrix
   selectedExceptionKey?: string
+  queueFilter: MatrixQueueFilter
 }) {
-  const selectedException = getSelectedMatrixException(matrix, selectedExceptionKey)
+  const visibleQueue = getVisibleMatrixExceptionQueue(matrix, queueFilter)
+  const selectedException = getSelectedMatrixException(visibleQueue, selectedExceptionKey)
 
   return (
     <Card>
@@ -387,26 +398,65 @@ function MemberMatrixSection({
               ))}
             </div>
           </div>
-          <MatrixExceptionPanel selected={selectedException} matrix={matrix} />
+          <MatrixExceptionPanel
+            selected={selectedException}
+            matrix={matrix}
+            visibleQueue={visibleQueue}
+            queueFilter={queueFilter}
+          />
         </div>
       </CardContent>
     </Card>
   )
 }
 
-function getSelectedMatrixException(matrix: FulfillmentGroupMatrix, selectedExceptionKey?: string) {
+function getMatrixQueueFilter(value?: string): MatrixQueueFilter {
+  if (value === "high" || value === "login" || value === "status") {
+    return value
+  }
+
+  return "all"
+}
+
+function getVisibleMatrixExceptionQueue(
+  matrix: FulfillmentGroupMatrix,
+  queueFilter: MatrixQueueFilter
+) {
+  if (queueFilter === "high") {
+    return matrix.exceptionQueue.filter((item) => item.priority === "high")
+  }
+
+  if (queueFilter === "login") {
+    return matrix.exceptionQueue.filter((item) => item.type === "登录缺口")
+  }
+
+  if (queueFilter === "status") {
+    return matrix.exceptionQueue.filter((item) => item.type === "状态不一致")
+  }
+
+  return matrix.exceptionQueue
+}
+
+function getSelectedMatrixException(
+  visibleQueue: FulfillmentMatrixExceptionQueueItem[],
+  selectedExceptionKey?: string
+) {
   return (
-    matrix.exceptionQueue.find((item) => item.key === selectedExceptionKey) ??
-    matrix.exceptionQueue[0]
+    visibleQueue.find((item) => item.key === selectedExceptionKey) ??
+    visibleQueue[0]
   )
 }
 
 function MatrixExceptionPanel({
   selected,
   matrix,
+  visibleQueue,
+  queueFilter,
 }: {
   selected?: FulfillmentMatrixExceptionQueueItem
   matrix: FulfillmentGroupMatrix
+  visibleQueue: FulfillmentMatrixExceptionQueueItem[]
+  queueFilter: MatrixQueueFilter
 }) {
   if (!selected) {
     return (
@@ -422,18 +472,50 @@ function MatrixExceptionPanel({
 
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="异常" value={`${matrix.exceptionQueueSummary.totalCount}`} />
+        <SummaryMetric label="高优" value={`${matrix.exceptionQueueSummary.highPriorityCount}`} />
+        <SummaryMetric label="登录缺口" value={`${matrix.exceptionQueueSummary.loginGapCount}`} />
+        <SummaryMetric
+          label="状态不一致"
+          value={`${matrix.exceptionQueueSummary.statusMismatchCount}`}
+        />
+        <SummaryMetric
+          label="总影响"
+          value={`${matrix.exceptionQueueSummary.totalImpactHours.toFixed(1)}h`}
+        />
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {queueFilters.map((item) => (
+          <Button
+            key={item.value}
+            asChild
+            size="sm"
+            variant={queueFilter === item.value ? "default" : "outline"}
+            className="h-7 px-2 text-xs"
+          >
+            <Link
+              href={`/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(
+                matrix.group.id
+              )}&date=${matrix.date}&queue=${item.value}`}
+            >
+              {item.label}
+            </Link>
+          </Button>
+        ))}
+      </div>
       <div className="grid gap-2">
         <div className="flex items-center justify-between gap-2">
           <div className="text-sm font-medium">待关注异常</div>
-          <Badge variant="outline">{matrix.exceptionQueue.length} 项</Badge>
+          <Badge variant="outline">{visibleQueue.length} 项</Badge>
         </div>
         <div className="grid gap-2">
-          {matrix.exceptionQueue.map((item) => (
+          {visibleQueue.map((item) => (
             <Link
               key={item.key}
               href={`/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(
                 matrix.group.id
-              )}&date=${matrix.date}&exception=${encodeScopeId(item.key)}`}
+              )}&date=${matrix.date}&queue=${queueFilter}&exception=${encodeScopeId(item.key)}`}
               className={cn(
                 "grid gap-1 rounded-md border p-2 text-xs transition-colors hover:bg-muted",
                 item.key === selected.key ? "border-primary bg-primary/10" : "border-border"
@@ -661,6 +743,15 @@ function MatrixTrack({
   )
 }
 
+function SummaryMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border bg-muted/30 p-2">
+      <div className="text-muted-foreground">{label}</div>
+      <div className="text-sm font-semibold tabular-nums">{value}</div>
+    </div>
+  )
+}
+
 function Metric({
   title,
   value,
@@ -698,3 +789,10 @@ const trackLabel = {
   login: "登录",
   status: "状态",
 }
+
+const queueFilters: Array<{ value: MatrixQueueFilter; label: string }> = [
+  { value: "all", label: "全部" },
+  { value: "high", label: "高优先级" },
+  { value: "login", label: "登录缺口" },
+  { value: "status", label: "状态不一致" },
+]
