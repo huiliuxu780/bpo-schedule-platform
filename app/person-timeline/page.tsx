@@ -42,6 +42,12 @@ export default async function PersonTimelinePage({ searchParams }: PageProps) {
     selectedTeam && groupId
       ? getFulfillmentMatrix(selectedTeam.id, groupId, date, fallbackPersonTimelines)
       : undefined
+  const currentSummary = selectedMatrix?.summary ?? selectedTeam?.summary ?? calendar.summary
+  const currentSummaryLabel = selectedMatrix
+    ? "小组当日"
+    : selectedTeam
+      ? "团队本周"
+      : "全部团队本周"
 
   return (
     <AppShell title="履约日历" searchPlaceholder="搜索职场、项目、供应商或人员">
@@ -49,17 +55,19 @@ export default async function PersonTimelinePage({ searchParams }: PageProps) {
         <PageHeader calendarLabel={`${calendar.weekStart} 至 ${calendar.weekEnd}`} />
 
         <section className="grid gap-4 md:grid-cols-4">
-          <Metric title="计划人数" value={`${calendar.summary.plannedPeople}`} description="一周排班覆盖" />
-          <Metric title="登录人数" value={`${calendar.summary.loginPeople}`} description="一周实际登录" />
-          <Metric title="缺口人数" value={`${calendar.summary.gapPeople}`} description="排班高于登录" />
-          <Metric title="异常人数" value={`${calendar.summary.anomalyPeople}`} description="需定位到人" />
+          <Metric title="计划人数" value={`${currentSummary.plannedPeople}`} description={currentSummaryLabel} />
+          <Metric title="登录人数" value={`${currentSummary.loginPeople}`} description={currentSummaryLabel} />
+          <Metric title="缺口人数" value={`${currentSummary.gapPeople}`} description="排班高于登录" />
+          <Metric title="异常人数" value={`${currentSummary.anomalyPeople}`} description="需定位到人" />
         </section>
 
-        <TeamWeekSection teams={calendar.teams} selectedTeamId={selectedTeam?.id} />
-
-        {selectedTeam ? <GroupWeekSection team={selectedTeam} selectedGroupId={selectedMatrix?.group.id} /> : null}
-
-        {selectedMatrix ? <MemberMatrixSection matrix={selectedMatrix} /> : null}
+        {selectedMatrix ? (
+          <MemberMatrixSection matrix={selectedMatrix} />
+        ) : selectedTeam ? (
+          <GroupWeekSection team={selectedTeam} />
+        ) : (
+          <TeamWeekSection teams={calendar.teams} />
+        )}
       </main>
     </AppShell>
   )
@@ -84,10 +92,8 @@ function PageHeader({ calendarLabel }: { calendarLabel: string }) {
 
 function TeamWeekSection({
   teams,
-  selectedTeamId,
 }: {
   teams: FulfillmentTeamWeek[]
-  selectedTeamId?: string
 }) {
   return (
     <Card>
@@ -112,7 +118,6 @@ function TeamWeekSection({
             description={`小组 ${team.groups.length} 个`}
             days={team.days}
             hrefForDay={(day) => `/person-timeline?team=${encodeScopeId(team.id)}&date=${day.date}`}
-            selected={team.id === selectedTeamId}
           />
         ))}
       </CardContent>
@@ -122,10 +127,8 @@ function TeamWeekSection({
 
 function GroupWeekSection({
   team,
-  selectedGroupId,
 }: {
   team: FulfillmentTeamWeek
-  selectedGroupId?: string
 }) {
   return (
     <Card>
@@ -138,7 +141,7 @@ function GroupWeekSection({
             </CardDescription>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href="/person-timeline">返回团队周视图</Link>
+            <Link href="/person-timeline">返回团队层</Link>
           </Button>
         </div>
       </CardHeader>
@@ -152,7 +155,6 @@ function GroupWeekSection({
             hrefForDay={(day) =>
               `/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(group.id)}&date=${day.date}`
             }
-            selected={group.id === selectedGroupId}
           />
         ))}
       </CardContent>
@@ -173,7 +175,7 @@ function MemberMatrixSection({ matrix }: { matrix: FulfillmentGroupMatrix }) {
           </div>
           <Button asChild variant="outline" size="sm">
             <Link href={`/person-timeline?team=${encodeScopeId(matrix.team.id)}&date=${matrix.date}`}>
-              返回小组周视图
+              返回小组层
             </Link>
           </Button>
         </div>
