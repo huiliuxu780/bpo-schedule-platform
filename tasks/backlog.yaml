@@ -2,6 +2,53 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F172
+    title: "个人周日历来源返回路径"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]
+    acceptance:
+      - "从小组成员周矩阵进入个人周日历时返回周矩阵。"
+      - "从小组成员单日矩阵进入个人周日历时返回单日矩阵。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端、数据库或真实外部数据接入", "需要权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F173
+    title: "小组成员周矩阵日期入口"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]
+    acceptance:
+      - "小组成员周矩阵日期表头可进入该小组当天单日矩阵。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端、数据库或真实外部数据接入", "需要权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F174
+    title: "小组成员周矩阵业务摘要"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]
+    acceptance:
+      - "小组成员周矩阵展示成员数、计划人天、登录人天、缺口工时和异常数。"
+      - "小组成员周矩阵保持风险优先排序。"
+      - "`bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端、数据库或真实外部数据接入", "需要权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
   - id: F171
     title: "履约日历小组成员周矩阵"
     priority: P0

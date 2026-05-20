@@ -61,7 +61,7 @@ export default async function PersonTimelineDetailPage({
       : ""
 
   if (!date) {
-    return <PersonalWeekCalendar row={row} weekView={weekView} team={team} group={group} returnDate={matrixDate} />
+    return <PersonalWeekCalendar row={row} weekView={weekView} team={team} group={group} returnDate={returnDate} />
   }
 
   const days = getPersonTimelineAvailableDates(row)
@@ -177,15 +177,19 @@ function PersonalWeekCalendar({
   weekView: PersonTimelineWeekView
   team?: string
   group?: string
-  returnDate: string
+  returnDate?: string
 }) {
   const returnHref =
-    team && group
+    team && group && returnDate
       ? `/person-timeline?team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&date=${returnDate}`
+      : team && group
+        ? `/person-timeline?team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}`
       : "/person-timeline"
   const detailQuery =
-    team && group
+    team && group && returnDate
       ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&returnDate=${returnDate}`
+      : team && group
+        ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}`
       : ""
 
   return (

@@ -29,6 +29,46 @@
 
 ## Stories
 
+### US233-US235 - 履约日历小组成员周矩阵收口
+
+```yaml
+stories:
+  - id: US233
+    requirement_ids: [R221]
+    task_ids: [F172]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望个人周日历能按来源返回小组成员周矩阵或单日矩阵，以便下钻后能回到正确上下文。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US234
+    requirement_ids: [R222]
+    task_ids: [F173]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组成员周矩阵的日期表头能进入该小组当天单日矩阵，以便从周视角快速切到某天全组明细。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US235
+    requirement_ids: [R223]
+    task_ids: [F174]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组成员周矩阵展示小组级业务摘要并按风险排序，以便优先处理缺口和异常更高的成员。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "个人周日历从小组成员周矩阵进入时，返回到 `/person-timeline?team=...&group=...`。"
+  - "个人周日历从小组成员单日矩阵进入时，返回到 `/person-timeline?team=...&group=...&date=...`。"
+  - "小组成员周矩阵表头日期可进入该小组当天单日矩阵。"
+  - "小组成员周矩阵展示成员数、计划人天、登录人天、缺口工时和异常数。"
+  - "不新增左侧入口、不新增依赖、不改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US232 - 履约日历小组成员周矩阵
 
 ```yaml

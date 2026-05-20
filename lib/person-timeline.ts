@@ -169,6 +169,13 @@ export type FulfillmentGroupMemberWeekMatrix = {
   weekEnd: string
   team: FulfillmentTeamWeek
   group: FulfillmentGroupWeek
+  summary: {
+    memberCount: number
+    scheduledDays: number
+    loginDays: number
+    gapHours: number
+    anomalyCount: number
+  }
   members: FulfillmentGroupMemberWeekMatrixMember[]
 }
 
@@ -560,6 +567,22 @@ export function getFulfillmentGroupMemberWeekMatrix(
     weekEnd: addDays(weekStart, 6),
     team,
     group,
+    summary: members.reduce(
+      (summary, member) => ({
+        memberCount: summary.memberCount,
+        scheduledDays: summary.scheduledDays + member.summary.scheduledDays,
+        loginDays: summary.loginDays + member.summary.loginDays,
+        gapHours: summary.gapHours + member.summary.gapHours,
+        anomalyCount: summary.anomalyCount + member.summary.anomalyCount,
+      }),
+      {
+        memberCount: members.length,
+        scheduledDays: 0,
+        loginDays: 0,
+        gapHours: 0,
+        anomalyCount: 0,
+      }
+    ),
     members,
   }
 }

@@ -239,6 +239,9 @@ stories:
   US230: {file: "docs/user-stories.md", requirement_ids: ["R218"], task_ids: ["F169"], archive_refs: []}
   US231: {file: "docs/user-stories.md", requirement_ids: ["R219"], task_ids: ["F170"], archive_refs: []}
   US232: {file: "docs/user-stories.md", requirement_ids: ["R220"], task_ids: ["F171"], archive_refs: []}
+  US233: {file: "docs/user-stories.md", requirement_ids: ["R221"], task_ids: ["F172"], archive_refs: []}
+  US234: {file: "docs/user-stories.md", requirement_ids: ["R222"], task_ids: ["F173"], archive_refs: []}
+  US235: {file: "docs/user-stories.md", requirement_ids: ["R223"], task_ids: ["F174"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -441,6 +444,9 @@ tasks:
   F169: {file: "tasks/backlog.yaml", story_ids: ["US230"], gate: "frontend-scaffold"}
   F170: {file: "tasks/backlog.yaml", story_ids: ["US231"], gate: "frontend-scaffold"}
   F171: {file: "tasks/backlog.yaml", story_ids: ["US232"], gate: "frontend-scaffold"}
+  F172: {file: "tasks/backlog.yaml", story_ids: ["US233"], gate: "frontend-scaffold"}
+  F173: {file: "tasks/backlog.yaml", story_ids: ["US234"], gate: "frontend-scaffold"}
+  F174: {file: "tasks/backlog.yaml", story_ids: ["US235"], gate: "frontend-scaffold"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -692,6 +698,9 @@ requirements:
   R218: {file: "docs/raw-requirements.md", story_ids: ["US230"], task_ids: ["F169"]}
   R219: {file: "docs/raw-requirements.md", story_ids: ["US231"], task_ids: ["F170"]}
   R220: {file: "docs/raw-requirements.md", story_ids: ["US232"], task_ids: ["F171"]}
+  R221: {file: "docs/raw-requirements.md", story_ids: ["US233"], task_ids: ["F172"]}
+  R222: {file: "docs/raw-requirements.md", story_ids: ["US234"], task_ids: ["F173"]}
+  R223: {file: "docs/raw-requirements.md", story_ids: ["US235"], task_ids: ["F174"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

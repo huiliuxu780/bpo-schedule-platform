@@ -195,7 +195,18 @@ test("fulfillment group member week matrix exposes member day cells", () => {
   assert.equal(weekMatrix.group.id, group.id);
   assert.equal(weekMatrix.weekStart, "2026-05-11");
   assert.equal(weekMatrix.weekEnd, "2026-05-17");
+  assert.deepEqual(weekMatrix.summary, {
+    memberCount: 2,
+    scheduledDays: 4,
+    loginDays: 4,
+    gapHours: 1.0499999999999998,
+    anomalyCount: 2,
+  });
   assert.equal(weekMatrix.members.length, 2);
+  assert.deepEqual(
+    weekMatrix.members.map((item) => item.employeeId),
+    ["A-1002", "A-1001"]
+  );
   const member = weekMatrix.members.find((item) => item.employeeId === "A-1001");
   assert.ok(member);
   assert.equal(member.days.length, 7);

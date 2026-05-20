@@ -1080,3 +1080,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F172-F174 Group Member Week Matrix Closeout
+
+- branch_name: `codex/f169-fulfillment-calendar`
+- base_main_commit: `a3a134c`
+- remote_status: `continued on pushed F169-F171 fulfillment calendar branch because this batch tightens the same drilldown chain and main has not integrated it`
+- scope: coherent frontend closeout for group member week matrix: source-aware personal week return paths, day-header drilldown to group day matrix, group-level week summary, risk-priority ordering test, browser smoke, and traceability.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing person timeline routes and model, focused model test, current and legacy traceability docs, and implementation plan; no new left sidebar entry, `/production-mvp/**` route, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: `node --test scripts/tests/person-timeline.test.mjs` passed with 10 tests; `npm run lint` passed; `npm run typecheck` passed; in-app browser smoke passed for week summary, date-header day matrix drilldown, source-aware personal week return paths; final `bash scripts/check.sh` passed, including strict state check, state-check regression tests, frontend lint, typecheck, Next build with `/person-timeline` dynamic routes, and 25 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

@@ -1572,6 +1572,30 @@
 - In-app browser smoke：`team+group` 显示“小组成员周矩阵”；`team+group+date` 仍显示“小组成员单日矩阵”；日期格进入个人单日三轨详情并显示排班轨道、登录轨道、状态轨道。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
+### 2026-05-20 - Group member week matrix closeout
+
+#### 审计结论
+
+- `F172-F174/US233-US235` 已收口小组成员周矩阵的来源返回、日期入口和业务摘要。
+- 从小组成员周矩阵进入个人周日历时，返回按钮回到小组成员周矩阵。
+- 从小组成员单日矩阵进入个人周日历时，返回按钮回到对应日期的小组成员单日矩阵。
+- 小组成员周矩阵表头日期可进入该小组当天单日矩阵。
+- 小组成员周矩阵展示成员数、计划人天、登录人天、缺口工时和异常数，并保持缺口/异常风险优先排序。
+- 本次没有新增左侧入口，没有新增页面路由，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地样例数据和前端聚合；小组摘要不代表真实生产口径、正式状态码或结算口径。
+- 后续若要做跨周切换、真实组织层级、权限隔离或生产级状态映射，必须另开 Gate。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，10 个履约日历和人员时间轴模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- In-app browser smoke：小组成员周矩阵显示成员 2 人、计划 4 人天、缺口 1.0h；日期表头进入 `date=2026-05-11` 单日矩阵；个人周日历从周矩阵进入时返回无 `date` 的周矩阵，从单日来源进入时返回带 `date=2026-05-11` 的单日矩阵。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

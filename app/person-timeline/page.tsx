@@ -193,15 +193,28 @@ function GroupMemberWeekMatrixSection({ matrix }: { matrix: FulfillmentGroupMemb
         </div>
       </CardHeader>
       <CardContent className="grid gap-4">
+        <div className="grid gap-2 rounded-lg border bg-muted/30 p-3 text-sm md:grid-cols-5">
+          <div>成员 {matrix.summary.memberCount} 人</div>
+          <div>计划 {matrix.summary.scheduledDays} 人天</div>
+          <div>登录 {matrix.summary.loginDays} 人天</div>
+          <div>缺口 {matrix.summary.gapHours.toFixed(1)}h</div>
+          <div>异常 {matrix.summary.anomalyCount}</div>
+        </div>
         <div className="overflow-x-auto">
           <div className="min-w-[1040px] rounded-lg border">
             <div className="grid grid-cols-[160px_repeat(7,minmax(112px,1fr))] border-b bg-muted/30 text-xs text-muted-foreground">
               <div className="p-3">成员</div>
               {matrix.members[0]?.days.map((day) => (
-                <div key={day.date} className="border-l p-3">
+                <Link
+                  key={day.date}
+                  href={`/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(
+                    matrix.group.id
+                  )}&date=${day.date}`}
+                  className="border-l p-3 transition-colors hover:bg-muted"
+                >
                   <div className="font-medium text-foreground">{day.weekday}</div>
                   <div>{day.label}</div>
-                </div>
+                </Link>
               ))}
             </div>
             {matrix.members.map((member) => (
@@ -223,7 +236,7 @@ function GroupMemberWeekRow({
 }) {
   const weekHref = `/person-timeline/${member.employeeId}?team=${encodeScopeId(
     matrix.team.id
-  )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${matrix.weekStart}`
+  )}&group=${encodeScopeId(matrix.group.id)}`
 
   return (
     <div className="grid grid-cols-[160px_repeat(7,minmax(112px,1fr))] border-b last:border-b-0">

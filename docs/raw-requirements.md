@@ -17,6 +17,26 @@
 
 ## Requirements
 
+### R221-R223 - 履约日历小组成员周矩阵收口
+
+```yaml
+requirements:
+  - id: R221
+    module: "履约日历"
+    description: "个人周日历需要根据来源正确返回：从小组成员周矩阵进入时返回周矩阵，从小组成员单日矩阵进入时返回单日矩阵。"
+  - id: R222
+    module: "履约日历"
+    description: "小组成员周矩阵需要提供按日期查看全组当天的入口，使主管能从周视角进入某天的小组成员单日矩阵。"
+  - id: R223
+    module: "履约日历"
+    description: "小组成员周矩阵需要展示小组级业务摘要，包含成员数、计划人天、登录人天、缺口工时和异常数，并保持风险优先排序。"
+source: "PM requested continuous multi-task fulfillment calendar development on 2026-05-20"
+submitted_at: "2026-05-20"
+version: "1.0"
+status: "split"
+notes: "本组只收口履约日历现有链路，不新增左侧入口，不新增依赖，不实现正式小组管理、数据库、权限、审批、导出、批量、真实接口、自动排班或生产公式。"
+```
+
 ### R220 - 履约日历小组成员周矩阵
 
 ```yaml
