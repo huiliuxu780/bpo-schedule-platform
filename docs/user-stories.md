@@ -41,7 +41,7 @@ stories:
     story: "作为现场主管，我希望个人单日详情能列出当天异常解释，以便知道每个异常落在哪个人、哪天、哪个时段和哪条轨道。"
     task_type: "frontend"
     priority: "P0"
-    status: "draft"
+    status: "done"
   - id: US240
     requirement_ids: [R228]
     task_ids: [F179]
@@ -50,7 +50,7 @@ stories:
     story: "作为现场主管，我希望个人单日三轨下方展示异常解释卡，以便用证据说明和建议动作快速判断现场处理顺序。"
     task_type: "frontend"
     priority: "P0"
-    status: "draft"
+    status: "done"
   - id: US241
     requirement_ids: [R229]
     task_ids: [F180]
@@ -59,7 +59,7 @@ stories:
     story: "作为现场主管，我希望从小组成员单日矩阵点击异常后进入个人详情并看到对应日期异常解释，以便从小组扫描自然下钻到个人判断。"
     task_type: "frontend"
     priority: "P1"
-    status: "draft"
+    status: "done"
 acceptance:
   - "个人单日详情暴露异常解释列表，每条包含异常类型、时间段、涉及轨道、影响时长、证据说明、建议主管动作和优先级。"
   - "异常解释卡展示在个人单日三轨时间轴下方，不新增页面路由或左侧入口。"

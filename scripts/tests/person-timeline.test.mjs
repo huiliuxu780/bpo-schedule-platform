@@ -63,6 +63,22 @@ test("person timeline exposes calendar days and a daily three-track view", () =>
   assert.equal(dailyView.tracks.login.length, 1);
   assert.equal(dailyView.tracks.status.length, 2);
   assert.equal(dailyView.anomalies.length, 1);
+  assert.deepEqual(dailyView.exceptionExplanations, [
+    {
+      id: "EXP-A-1001-2026-05-11-no_login",
+      anomalyCode: "no_login",
+      type: "状态不一致",
+      title: "午后状态缺登录切片",
+      date: "2026-05-11",
+      start: "13:00",
+      end: "18:00",
+      involvedTracks: ["schedule", "login", "status"],
+      impactHours: 5,
+      evidence: "该时段有排班和登录记录，但状态轨道为培训，需确认是否符合当班在线要求。",
+      supervisorAction: "先确认培训安排是否已登记；若未登记，联系员工恢复在线或补充原因。",
+      priority: "medium",
+    },
+  ]);
 });
 
 test("person timeline week view exposes seven days and weekly totals", () => {

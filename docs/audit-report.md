@@ -1619,6 +1619,29 @@
 - In-app browser smoke：小组成员周矩阵显示“风险成员 2 人”“最高缺口 A-1002 王敏”“最高异常 A-1001 刘晨”“最高缺口日 2026-05-11”；全部、看缺口、看异常三种视角均可打开，且未出现人员时间轴、坐席状态轨迹、验收清单、待实现、准备状态、暂不实现等内部词。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
+### 2026-05-20 - Exception explanation cards
+
+#### 审计结论
+
+- `F178-F180/US239-US241` 已在个人单日三轨详情中增加主管视角异常解释卡。
+- 个人单日详情模型新增 `exceptionExplanations`，每条解释包含异常类型、时间段、涉及轨道、影响时长、证据说明、建议主管动作和优先级。
+- 个人单日三轨时间轴下方展示异常解释卡，主管可以直接判断异常来自排班、登录还是状态。
+- 小组成员单日矩阵中的异常标记仍进入个人单日详情，并能看到对应日期异常解释。
+- 本次没有新增左侧入口，没有新增页面路由，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、处理提交、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍基于本地样例数据和前端聚合解释异常，不代表真实 CORN、HR、WFM 或生产数据库已经接入。
+- 异常解释卡只辅助主管判断，不代表正式处理流、审批流、考勤定责或结算口径。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，10 个履约日历和人员时间轴模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- In-app browser smoke：从 `/person-timeline?team=...&group=...&date=2026-05-11` 的“小组成员单日矩阵”点击“午后状态缺登录切片”进入 `A-1001` 个人单日详情；页面显示“异常解释”“13:00-18:00 / 状态不一致”“涉及轨道：排班 / 登录 / 状态”“影响时长：5.0h”“中优先级”，且未出现 PRD、Gate、Story、验收清单、待实现、暂不实现、处理提交、审批按钮等内部或越界词。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

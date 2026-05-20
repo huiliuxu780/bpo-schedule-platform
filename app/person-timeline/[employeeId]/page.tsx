@@ -20,6 +20,7 @@ import {
   getTimelineEventPosition,
   type PersonTimeline,
   type PersonTimelineWeekView,
+  type TimelineExceptionExplanation,
   type TimelineEvent,
 } from "@/lib/person-timeline"
 
@@ -136,33 +137,55 @@ export default async function PersonTimelineDetailPage({
 
         <Card>
           <CardHeader>
-            <CardTitle>异常说明</CardTitle>
+            <CardTitle>异常解释</CardTitle>
             <CardDescription>
-              展示当天排班、登录和状态对齐后的异常原因。
+              结合排班、登录和状态轨道，说明异常证据和主管现场判断动作。
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 lg:grid-cols-2">
-            {dailyView.anomalies.length === 0 ? (
+            {dailyView.exceptionExplanations.length === 0 ? (
               <div className="rounded-lg border p-3 text-sm text-muted-foreground">
                 当天没有异常标记。
               </div>
             ) : (
-              dailyView.anomalies.map((anomaly) => (
-                <div key={anomaly.code} className="rounded-lg border p-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="text-sm font-medium">{anomaly.title}</div>
-                    <Badge variant="outline">{anomaly.severity}</Badge>
-                  </div>
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    {severityLabel[anomaly.severity]}
-                  </div>
-                </div>
+              dailyView.exceptionExplanations.map((explanation) => (
+                <ExceptionExplanationCard key={explanation.id} explanation={explanation} />
               ))
             )}
           </CardContent>
         </Card>
       </main>
     </AppShell>
+  )
+}
+
+function ExceptionExplanationCard({
+  explanation,
+}: {
+  explanation: TimelineExceptionExplanation
+}) {
+  return (
+    <div className="rounded-lg border border-primary/20 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="grid gap-1">
+          <div className="text-sm font-medium">
+            {explanation.start}-{explanation.end} / {explanation.type}
+          </div>
+          <div className="text-xs text-muted-foreground">{explanation.title}</div>
+        </div>
+        <Badge variant={explanation.priority === "high" ? "destructive" : "outline"}>
+          {priorityLabel[explanation.priority]}
+        </Badge>
+      </div>
+      <div className="mt-3 grid gap-2 text-xs text-muted-foreground">
+        <div>
+          涉及轨道：{explanation.involvedTracks.map((track) => trackLabel[track]).join(" / ")}
+        </div>
+        <div>影响时长：{explanation.impactHours.toFixed(1)}h</div>
+        <div>证据：{explanation.evidence}</div>
+        <div>建议动作：{explanation.supervisorAction}</div>
+      </div>
+    </div>
   )
 }
 
@@ -341,8 +364,14 @@ const timelineToneClass = {
   status: "border-amber-300 bg-amber-100 text-amber-950 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100",
 }
 
-const severityLabel = {
+const priorityLabel = {
   high: "高优先级",
   medium: "中优先级",
   low: "低优先级",
+}
+
+const trackLabel = {
+  schedule: "排班",
+  login: "登录",
+  status: "状态",
 }

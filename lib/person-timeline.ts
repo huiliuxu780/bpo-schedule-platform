@@ -18,6 +18,21 @@ export type TimelineAnomaly = {
   severity: "high" | "medium" | "low"
 }
 
+export type TimelineExceptionExplanation = {
+  id: string
+  anomalyCode: string
+  type: "登录缺口" | "状态不一致" | "登录不足"
+  title: string
+  date: string
+  start: string
+  end: string
+  involvedTracks: TimelineEventType[]
+  impactHours: number
+  evidence: string
+  supervisorAction: string
+  priority: TimelineAnomaly["severity"]
+}
+
 export type PersonTimeline = {
   employeeId: string
   employeeName: string
@@ -85,6 +100,7 @@ export type PersonTimelineDailyView = {
   employee: PersonTimeline
   tracks: PersonTimeline["tracks"]
   anomalies: TimelineAnomaly[]
+  exceptionExplanations: TimelineExceptionExplanation[]
   scheduledHours: number
   loginHours: number
   statusHours: number
@@ -343,6 +359,7 @@ export function getPersonTimelineDailyView(
     employee: row,
     tracks,
     anomalies: row.anomalies.filter((anomaly) => anomaly.date === date),
+    exceptionExplanations: buildExceptionExplanations(row, date, tracks),
     scheduledHours: sumEvents(tracks.schedule),
     loginHours: sumEvents(tracks.login),
     statusHours: sumEvents(tracks.status),
@@ -616,6 +633,124 @@ function filterTracksByDate(row: PersonTimeline, date: string) {
 
 function sumEvents(events: TimelineEvent[]) {
   return events.reduce((total, eventItem) => total + eventItem.durationHours, 0)
+}
+
+function buildExceptionExplanations(
+  row: PersonTimeline,
+  date: string,
+  tracks: PersonTimeline["tracks"]
+): TimelineExceptionExplanation[] {
+  return row.anomalies
+    .filter((anomaly) => anomaly.date === date)
+    .map((anomaly) => {
+      if (anomaly.code === "late_login") {
+        return buildLateLoginExplanation(row, anomaly, tracks)
+      }
+
+      if (anomaly.code === "early_logout") {
+        return buildEarlyLogoutExplanation(row, anomaly, tracks)
+      }
+
+      return buildStatusMismatchExplanation(row, anomaly, tracks)
+    })
+}
+
+function buildLateLoginExplanation(
+  row: PersonTimeline,
+  anomaly: TimelineAnomaly,
+  tracks: PersonTimeline["tracks"]
+): TimelineExceptionExplanation {
+  const scheduleStart = earliestTime(tracks.schedule.map((item) => item.start))
+  const loginStart = earliestTime(tracks.login.map((item) => item.start))
+  const start = scheduleStart || loginStart || "00:00"
+  const end = loginStart || start
+  const impactHours = roundHours(Math.max(timeToMinutes(end) - timeToMinutes(start), 0) / 60)
+
+  return {
+    id: exceptionExplanationId(row, anomaly),
+    anomalyCode: anomaly.code,
+    type: "登录缺口",
+    title: anomaly.title,
+    date: anomaly.date,
+    start,
+    end,
+    involvedTracks: ["schedule", "login"],
+    impactHours,
+    evidence: `该时段有排班要求，但登录从 ${end} 才开始，需确认是否漏登或迟到。`,
+    supervisorAction: "先联系员工确认到岗时间；如为漏登，补充登录原因。",
+    priority: anomaly.severity,
+  }
+}
+
+function buildEarlyLogoutExplanation(
+  row: PersonTimeline,
+  anomaly: TimelineAnomaly,
+  tracks: PersonTimeline["tracks"]
+): TimelineExceptionExplanation {
+  const loginEnd = latestTime(tracks.login.map((item) => item.end))
+  const scheduleEnd = latestTime(tracks.schedule.map((item) => item.end))
+  const start = loginEnd || scheduleEnd || "00:00"
+  const end = scheduleEnd || start
+  const impactHours = roundHours(Math.max(timeToMinutes(end) - timeToMinutes(start), 0) / 60)
+
+  return {
+    id: exceptionExplanationId(row, anomaly),
+    anomalyCode: anomaly.code,
+    type: "登录不足",
+    title: anomaly.title,
+    date: anomaly.date,
+    start,
+    end,
+    involvedTracks: ["schedule", "login"],
+    impactHours,
+    evidence: `该时段仍有排班要求，但登录在 ${start} 已结束，需确认是否提前离岗。`,
+    supervisorAction: "先确认员工离岗原因；如为系统记录异常，补充说明。",
+    priority: anomaly.severity,
+  }
+}
+
+function buildStatusMismatchExplanation(
+  row: PersonTimeline,
+  anomaly: TimelineAnomaly,
+  tracks: PersonTimeline["tracks"]
+): TimelineExceptionExplanation {
+  const statusIssue =
+    tracks.status.find((item) => item.status !== "productive") ?? tracks.status[0] ?? tracks.schedule[0]
+  const start = statusIssue?.start ?? tracks.schedule[0]?.start ?? "00:00"
+  const end = statusIssue?.end ?? tracks.schedule[0]?.end ?? start
+  const statusLabel = statusIssue?.label ?? "状态异常"
+  const impactHours = roundHours(statusIssue?.durationHours ?? 0)
+
+  return {
+    id: exceptionExplanationId(row, anomaly),
+    anomalyCode: anomaly.code,
+    type: "状态不一致",
+    title: anomaly.title,
+    date: anomaly.date,
+    start,
+    end,
+    involvedTracks: ["schedule", "login", "status"],
+    impactHours,
+    evidence: `该时段有排班和登录记录，但状态轨道为${statusLabel}，需确认是否符合当班在线要求。`,
+    supervisorAction: "先确认培训安排是否已登记；若未登记，联系员工恢复在线或补充原因。",
+    priority: anomaly.severity,
+  }
+}
+
+function exceptionExplanationId(row: PersonTimeline, anomaly: TimelineAnomaly) {
+  return `EXP-${row.employeeId}-${anomaly.date}-${anomaly.code}`
+}
+
+function earliestTime(values: string[]) {
+  return values.filter(Boolean).sort((a, b) => timeToMinutes(a) - timeToMinutes(b))[0] ?? ""
+}
+
+function latestTime(values: string[]) {
+  return values.filter(Boolean).sort((a, b) => timeToMinutes(b) - timeToMinutes(a))[0] ?? ""
+}
+
+function roundHours(value: number) {
+  return Math.round(value * 100) / 100
 }
 
 function buildWeekDays(weekStart: string): FulfillmentDayMetrics[] {
