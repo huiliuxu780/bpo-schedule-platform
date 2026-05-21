@@ -22,7 +22,7 @@ tasks:
   - id: F196
     title: "经营总览业务指标收口"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/dashboard/**", "scripts/tests/product-ui-copy-audit.test.mjs", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -35,7 +35,7 @@ tasks:
   - id: F197
     title: "侧边栏业务入口收口"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["components/app-sidebar.tsx", "scripts/tests/product-navigation-business-only.test.mjs", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -48,7 +48,7 @@ tasks:
   - id: F198
     title: "产品 UI 内部词审计"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/**", "components/**", "scripts/tests/product-ui-copy-audit.test.mjs", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]

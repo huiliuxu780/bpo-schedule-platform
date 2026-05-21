@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F196-F198 Business UI Cleanup
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `df32bc8`
+- remote_status: `continued on existing branch because this batch is the first planned business UI cleanup slice from the confirmed large module pool`
+- scope: frontend local business function and UI-copy QA: clean `/dashboard` metric language, remove sidebar dashboard placeholder entries, remove visible internal/process copy, and add regression coverage for the product UI copy and navigation contract.
+- allowed_files_check: `app/dashboard/**`, `components/app-sidebar.tsx`, `components/data-sync-status.tsx`, `components/data-table.tsx`, `scripts/tests/dashboard-business-only.test.mjs`, `scripts/tests/product-navigation-business-only.test.mjs`, `scripts/tests/product-ui-copy-audit.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing dashboard data/table copy, existing sidebar nav definitions, one dormant data-status component title, regression tests, current state closeout, and traceability docs only; no new route, no new page, no backend, no package or lockfile change.
+- check_result: target red-green tests passed after implementation; in-app browser smoke for `/dashboard` passed after expanding sidebar groups; `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed before traceability closeout and will be rerun after this log update.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### H031 Large Module Iteration Pool
 
 - branch_name: `codex/f178-exception-explanation-card`

@@ -46,6 +46,13 @@ test("data source concepts are not exposed as dashboard placeholders", () => {
   );
 });
 
+test("sidebar does not keep dashboard placeholder business entries", () => {
+  const placeholderPattern = /\{\s*title:\s*"([^"]+)",\s*href:\s*"\/dashboard"(?!,\s*activeMatch:\s*"exact")/g;
+  const placeholders = [...sidebar.matchAll(placeholderPattern)].map((match) => match[1]);
+
+  assert.deepEqual(placeholders, [], `sidebar dashboard placeholders: ${placeholders.join(", ")}`);
+});
+
 test("production MVP planning routes are not product pages", () => {
   assert.throws(
     () => readdirSync(new URL("../../app/production-mvp", import.meta.url)),

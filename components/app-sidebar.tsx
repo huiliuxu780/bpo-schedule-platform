@@ -4,13 +4,11 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  BarChart3,
   CalendarDays,
   ChevronDown,
   ClipboardCheck,
   Database,
   LayoutDashboard,
-  Settings,
   type LucideIcon,
 } from "lucide-react"
 
@@ -43,9 +41,6 @@ const nav: NavGroup[] = [
     icon: LayoutDashboard,
     items: [
       { title: "经营总览", href: "/dashboard", activeMatch: "exact" },
-      { title: "今日履约", href: "/dashboard" },
-      { title: "异常预警", href: "/dashboard", badge: "12" },
-      { title: "时段缺口热力图", href: "/dashboard" },
     ],
   },
   {
@@ -57,7 +52,6 @@ const nav: NavGroup[] = [
       { title: "班次明细", href: "/shift-details", activeMatch: "exact" },
       { title: "班次类型", href: "/shift-types", activeMatch: "exact", tag: "新" },
       { title: "不可用管理", href: "/unavailability", activeMatch: "exact", tag: "P1" },
-      { title: "智能排班", href: "/schedule-plans", tag: "Beta" },
     ],
   },
   {
@@ -71,38 +65,14 @@ const nav: NavGroup[] = [
     ],
   },
   {
-    title: "结算复盘",
-    icon: BarChart3,
-    items: [
-      { title: "月度结算", href: "/dashboard" },
-      { title: "报表中心", href: "/dashboard" },
-      { title: "供应商复盘", href: "/dashboard", tag: "P1" },
-      { title: "结算锁账", href: "/dashboard", tag: "P1" },
-    ],
-  },
-  {
     title: "数据与集成",
     icon: Database,
     items: [
-      { title: "数据源管理", href: "/dashboard" },
-      { title: "文件导入", href: "/import-batches", activeMatch: "prefix", tag: "新" },
       { title: "接入批次", href: "/import-batches", activeMatch: "prefix", tag: "新" },
       { title: "字段映射", href: "/field-mapping", activeMatch: "exact", tag: "新" },
-      { title: "接口集成", href: "/dashboard", tag: "P1" },
       { title: "导入模板", href: "/import-templates", activeMatch: "exact", tag: "新" },
       { title: "数据质量", href: "/data-quality", activeMatch: "prefix", tag: "新" },
       { title: "主数据关系", href: "/master-data-relations", activeMatch: "exact", tag: "新" },
-    ],
-  },
-  {
-    title: "系统管理",
-    icon: Settings,
-    items: [
-      { title: "组织与人员", href: "/dashboard" },
-      { title: "供应商管理", href: "/dashboard" },
-      { title: "规则配置", href: "/dashboard" },
-      { title: "权限管理", href: "/dashboard", tag: "P1" },
-      { title: "操作审计", href: "/dashboard", tag: "P1" },
     ],
   },
 ]

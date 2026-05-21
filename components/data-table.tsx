@@ -19,7 +19,6 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Columns3,
-  MoreHorizontal,
   RotateCcw,
   Search,
 } from "lucide-react"
@@ -252,18 +251,6 @@ const columns: ColumnDef<Anomaly>[] = [
       <span className="whitespace-nowrap">{row.original.shiftTime}</span>
     ),
   },
-  {
-    id: "actions",
-    enableHiding: false,
-    header: () => <div className="text-right">操作</div>,
-    cell: () => (
-      <div className="text-right">
-        <Button variant="ghost" size="icon" aria-label="行操作">
-          <MoreHorizontal className="size-4" />
-        </Button>
-      </div>
-    ),
-  },
 ]
 
 export function DataTable() {
@@ -345,7 +332,7 @@ export function DataTable() {
         <div>
           <CardTitle>BPO 异常明细</CardTitle>
           <CardDescription>
-            支持搜索、排序、列显示、分页与行操作占位
+            支持搜索、排序、列显示和分页查看
           </CardDescription>
         </div>
         <DropdownMenu>

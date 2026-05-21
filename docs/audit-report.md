@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-21 - Business UI cleanup
+
+#### 结论
+
+- `F196-F198/US257-US259` 已完成第一批业务界面收口。
+- 经营总览四个指标已收口为计划覆盖率、登录履约率、供需缺口和质量风险，不再把数据接入、批次证据、实现状态或结算口径写进首页指标。
+- 侧边栏已移除所有跳 `/dashboard` 的伪业务入口，仅保留经营总览和已存在真实页面入口。
+- 产品 UI 审计新增对“数据接入状态”“占位”等内部或伪功能词的回归覆盖；异常表已移除无实际业务动作的行操作列。
+- 本次没有新增页面，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮是前端本地展示收口，不代表真实数据源、数据库或生产权限边界已经实现。
+- 侧边栏被压缩为真实页面入口后，结算、系统管理、接口集成等能力仍未进入产品导航；后续必须有明确业务故事和 Gate 后再恢复。
+
+#### 验证
+
+- 红灯验证：新增目标测试后，`dashboard-business-only`、`product-navigation-business-only`、`product-ui-copy-audit` 能抓到经营总览指标不收口、侧边栏 `/dashboard` 伪入口和“占位”文案。
+- `node --test scripts/tests/dashboard-business-only.test.mjs scripts/tests/product-navigation-business-only.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/person-timeline.test.mjs`：通过，19 个测试通过。
+- In-app browser smoke：打开 `/dashboard` 并展开履约监控、数据与集成后，显示经营总览、计划覆盖率、登录履约率、供需缺口、质量风险、履约日历、异常复核、接入批次和数据质量；未出现数据接入状态、PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、占位、人员时间轴、坐席状态轨迹或行操作。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ### 2026-05-21 - H031 Large module iteration pool
 
 #### 结论
