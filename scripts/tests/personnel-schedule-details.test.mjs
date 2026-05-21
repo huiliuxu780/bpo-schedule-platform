@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   buildPersonTimelineHref,
   buildPersonnelIntervalTrace,
+  buildScheduleGapExplanation,
   fallbackPersonnelScheduleDetails,
   getPersonnelScheduleDetails,
   getPersonnelScheduleDetailsForInterval,
@@ -117,6 +118,60 @@ test("personnel schedule detail rows link to the matching daily timeline", () =>
 
   assert.equal(
     buildPersonTimelineHref(row),
-    "/person-timeline/A-1001?date=2026-05-11"
+    "/person-timeline/A-1001?date=2026-05-11&team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&group=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D%7C%7C%E4%BE%9B%E5%BA%94%E5%95%86%20A&returnDate=2026-05-11"
   );
+});
+
+test("schedule gap explanation exposes involved people and shifts", () => {
+  const explanation = buildScheduleGapExplanation(
+    "plan-20260511-shanghai-bosch-v1",
+    "09:30",
+    "10:00"
+  );
+
+  assert.deepEqual(explanation, {
+    planId: "plan-20260511-shanghai-bosch-v1",
+    intervalStart: "09:30",
+    intervalEnd: "10:00",
+    involvedPeople: [
+      {
+        employeeId: "A-1001",
+        employeeName: "刘晨",
+        supplier: "供应商 A",
+        shiftType: "早班 + 午后班",
+        scheduledWindow: "09:00-18:00",
+        skill: "热线 / L2",
+        timelineHref: "/person-timeline/A-1001?date=2026-05-11&team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&group=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D%7C%7C%E4%BE%9B%E5%BA%94%E5%95%86%20A&returnDate=2026-05-11",
+      },
+      {
+        employeeId: "A-1002",
+        employeeName: "王敏",
+        supplier: "供应商 A",
+        shiftType: "早班",
+        scheduledWindow: "09:00-17:00",
+        skill: "热线 / L2",
+        timelineHref: "/person-timeline/A-1002?date=2026-05-11&team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&group=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D%7C%7C%E4%BE%9B%E5%BA%94%E5%95%86%20A&returnDate=2026-05-11",
+      },
+      {
+        employeeId: "A-1005",
+        employeeName: "赵一",
+        supplier: "供应商 B",
+        shiftType: "支援班",
+        scheduledWindow: "09:30-15:30",
+        skill: "热线 / L1",
+        timelineHref: "/person-timeline/A-1005?date=2026-05-11&team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&group=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D%7C%7C%E4%BE%9B%E5%BA%94%E5%95%86%20B&returnDate=2026-05-11",
+      },
+    ],
+    candidatePeople: [
+      {
+        employeeId: "A-1006",
+        employeeName: "周航",
+        supplier: "供应商 C",
+        shiftType: "午后班",
+        scheduledWindow: "13:00-18:00",
+        skill: "工单 / L1",
+        timelineHref: "/person-timeline/A-1006?date=2026-05-11&team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&group=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D%7C%7C%E4%BE%9B%E5%BA%94%E5%95%86%20C&returnDate=2026-05-11",
+      },
+    ],
+  });
 });

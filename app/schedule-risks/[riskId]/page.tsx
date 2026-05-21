@@ -18,6 +18,7 @@ import {
   getShiftDetails,
   scheduleRiskLevelLabel,
 } from "@/lib/schedule-plans"
+import { buildScheduleGapExplanation } from "@/lib/personnel-schedule-details"
 import {
   getUnavailability,
 } from "@/lib/unavailability"
@@ -53,6 +54,11 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
       row.unavailable_date === risk.plan_date &&
       row.start_time < risk.interval_end &&
       row.end_time > risk.interval_start
+  )
+  const gapExplanation = buildScheduleGapExplanation(
+    risk.plan_id,
+    risk.interval_start,
+    risk.interval_end
   )
 
   return (
@@ -143,6 +149,32 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
+              <CardTitle>缺口涉及人员与班次</CardTitle>
+              <CardDescription>
+                从风险时段继续查看已排人员和可复核班次
+              </CardDescription>
+            </div>
+            <Badge variant="outline">
+              {gapExplanation.intervalStart}-{gapExplanation.intervalEnd}
+            </Badge>
+          </CardHeader>
+          <CardContent className="grid gap-4 lg:grid-cols-2">
+            <RiskGapPersonList
+              title="当前已排"
+              people={gapExplanation.involvedPeople}
+              emptyText="当前样例暂无已排人员"
+            />
+            <RiskGapPersonList
+              title="可复核班次"
+              people={gapExplanation.candidatePeople}
+              emptyText="暂无其他可复核班次"
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-start justify-between gap-4">
+            <div>
               <CardTitle>不可用影响</CardTitle>
               <CardDescription>
                 与风险时段重叠的生效中不可用记录
@@ -160,6 +192,53 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
         </Card>
       </main>
     </AppShell>
+  )
+}
+
+function RiskGapPersonList({
+  title,
+  people,
+  emptyText,
+}: {
+  title: string
+  people: {
+    employeeId: string
+    employeeName: string
+    supplier: string
+    shiftType: string
+    scheduledWindow: string
+    skill: string
+    timelineHref: string
+  }[]
+  emptyText: string
+}) {
+  return (
+    <div className="rounded-lg border bg-background p-3">
+      <p className="text-xs text-muted-foreground">{title}</p>
+      <div className="mt-3 flex flex-col gap-2">
+        {people.length > 0 ? (
+          people.map((person) => (
+            <div key={person.employeeId} className="rounded-md border p-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-sm font-medium">
+                  {person.employeeName} / {person.supplier}
+                </span>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={person.timelineHref}>看履约</Link>
+                </Button>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {person.shiftType} / {person.scheduledWindow} / {person.skill}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">
+            {emptyText}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 

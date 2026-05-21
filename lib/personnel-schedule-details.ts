@@ -54,6 +54,24 @@ export type PersonnelIntervalTrace = {
   assignedPeople: PersonnelIntervalTracePerson[]
 }
 
+export type ScheduleGapPerson = {
+  employeeId: string
+  employeeName: string
+  supplier: string
+  shiftType: string
+  scheduledWindow: string
+  skill: string
+  timelineHref: string
+}
+
+export type ScheduleGapExplanation = {
+  planId: string
+  intervalStart: string
+  intervalEnd: string
+  involvedPeople: ScheduleGapPerson[]
+  candidatePeople: ScheduleGapPerson[]
+}
+
 const anomalyLabel: Record<string, string> = {
   no_login: "状态不一致",
   late_login: "登录迟到",
@@ -206,6 +224,25 @@ export function buildPersonnelIntervalTrace(
   }
 }
 
+export function buildScheduleGapExplanation(
+  planId: string,
+  start: string,
+  end: string
+): ScheduleGapExplanation {
+  const planRows = getPersonnelScheduleDetails(planId)
+  const involvedRows = getPersonnelScheduleDetailsForInterval(planId, start, end)
+  const involvedIds = new Set(involvedRows.map((item) => item.employeeId))
+  const candidateRows = planRows.filter((item) => !involvedIds.has(item.employeeId))
+
+  return {
+    planId,
+    intervalStart: start,
+    intervalEnd: end,
+    involvedPeople: involvedRows.map(toGapPerson),
+    candidatePeople: candidateRows.map(toGapPerson),
+  }
+}
+
 export function summarizePersonnelScheduleDetails(
   rows: PersonnelScheduleDetailRow[]
 ): PersonnelScheduleSummary {
@@ -224,7 +261,28 @@ export function summarizePersonnelScheduleDetails(
 }
 
 export function buildPersonTimelineHref(row: PersonnelScheduleDetailRow) {
-  return `/person-timeline/${row.employeeId}?date=${row.businessDate}`
+  const team = `${row.workplace}||${row.project}`
+  const group = `${row.workplace}||${row.project}||${row.supplier}`
+  const query = [
+    `date=${encodeURIComponent(row.businessDate)}`,
+    `team=${encodeURIComponent(team)}`,
+    `group=${encodeURIComponent(group)}`,
+    `returnDate=${encodeURIComponent(row.businessDate)}`,
+  ].join("&")
+
+  return `/person-timeline/${row.employeeId}?${query}`
+}
+
+function toGapPerson(row: PersonnelScheduleDetailRow): ScheduleGapPerson {
+  return {
+    employeeId: row.employeeId,
+    employeeName: row.employeeName,
+    supplier: row.supplier,
+    shiftType: row.shiftType,
+    scheduledWindow: `${row.startTime}-${row.endTime}`,
+    skill: `${row.skillGroup} / ${row.skillLevel}`,
+    timelineHref: buildPersonTimelineHref(row),
+  }
 }
 
 function row(

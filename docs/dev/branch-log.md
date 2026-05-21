@@ -19,6 +19,23 @@
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
 
+### F209-F210-Q031 Schedule Personnel Drilldown And Gap QA
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `f5f4ec4`
+- remote_status: `continued on existing schedule personnel branch; branch already had two local commits ahead of origin when this batch started`
+- scope: frontend local business function and QA closeout: add personnel schedule drilldown links to fulfillment calendar context, show gap-related people and shifts on schedule plan and risk detail pages, and close the personnel trace QA slice.
+- allowed_files_check: `app/schedule-plans/**`, `app/person-timeline/**`, `app/schedule-risks/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing schedule plan detail page, existing risk detail page, local personnel schedule model/tests, current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red `personnel-schedule-details` tests first caught missing gap explanation helper; target personnel tests, product UI copy/navigation tests, lint, typecheck, and browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q030 Fulfillment Supervisor Flow QA
 
 - branch_name: `codex/f178-exception-explanation-card`

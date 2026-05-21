@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-21 - Schedule personnel drilldown and gap QA
+
+#### 结论
+
+- `F209-F210-Q031/US272-US274` 已完成人员级排班下钻、缺口人员班次说明和 QA 收口。
+- 人员级排班明细现在提供“查看当天履约”下钻，链接保留团队、小组和返回日期上下文。
+- 排班计划详情和风险明细均展示缺口涉及人员、对应班次、计划时间、技能和可复核班次。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据，不代表生产级排班缺口归因、补班推荐、审批或调剂提交已经实现。
+- “可复核班次”用于主管判断补班方向，不代表自动排班、结算规则、责任判定或生产公式。
+
+#### 验证
+
+- 红灯验证：新增 `personnel-schedule-details` 目标测试后，能抓到缺少 `buildScheduleGapExplanation` helper 的问题。
+- `node --test scripts/tests/personnel-schedule-details.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，13 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- `rg` 扫描 `app` 与 `components`：未发现数据接入状态、PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、占位、人员时间轴、坐席状态轨迹、B004 明细或行操作。
+- Browser smoke：`/schedule-plans/plan-20260511-shanghai-bosch-v1` 显示人员级排班明细、查看当天履约、缺口涉及人员与班次、当前已排、可复核班次、刘晨、王敏、赵一、周航和 09:30-10:00；`/schedule-risks/risk-plan-20260511-shanghai-bosch-v1-09%3A30` 显示风险明细、缺口涉及人员与班次、当前已排、可复核班次、刘晨、王敏、赵一、看履约和 09:30-10:00；两个页面的履约链接均保留 `team`、`group` 和 `returnDate` 参数，禁用词均为 0 命中。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Schedule personnel trace
 
 #### 结论

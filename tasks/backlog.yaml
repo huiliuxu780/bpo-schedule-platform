@@ -217,7 +217,7 @@ tasks:
   - id: F209
     title: "排班明细跳转履约时间轴"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/schedule-plans/**", "app/person-timeline/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -230,7 +230,7 @@ tasks:
   - id: F210
     title: "排班缺口人员班次说明"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/schedule-plans/**", "app/schedule-risks/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -243,7 +243,7 @@ tasks:
   - id: Q031
     title: "人员级排班追溯 QA"
     priority: P1
-    status: planned
+    status: done
     required_workflow: qa
     allowed_files: ["docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]

@@ -11,7 +11,9 @@ import {
   schedulePlanStatusLabel,
 } from "@/lib/schedule-plans"
 import {
+  buildPersonTimelineHref,
   buildPersonnelIntervalTrace,
+  buildScheduleGapExplanation,
   getPersonnelScheduleFieldCoverage,
   getPersonnelScheduleDetails,
   summarizePersonnelScheduleDetails,
@@ -51,6 +53,13 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
   const fieldCoverage = getPersonnelScheduleFieldCoverage(personnelRows)
   const intervalTraces = plan.intervals.map((intervalItem) =>
     buildPersonnelIntervalTrace(
+      plan.summary.id,
+      intervalItem.interval_start,
+      intervalItem.interval_end
+    )
+  )
+  const gapExplanations = gapIntervals.map((intervalItem) =>
+    buildScheduleGapExplanation(
       plan.summary.id,
       intervalItem.interval_start,
       intervalItem.interval_end
@@ -251,8 +260,57 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
                       <span>{row.shiftType}</span>
                       <span>{row.skillGroup} / {row.skillLevel}</span>
                     </div>
+                    <Button asChild variant="outline" size="sm" className="mt-3">
+                      <Link href={buildPersonTimelineHref(row)}>查看当天履约</Link>
+                    </Button>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium">缺口涉及人员与班次</div>
+                  <div className="text-xs text-muted-foreground">
+                    对缺口时段展示已在该时段的人，以及同计划可继续复核的班次
+                  </div>
+                </div>
+                <Badge variant="outline">{gapExplanations.length} 个缺口时段</Badge>
+              </div>
+              <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                {gapExplanations.map((gap) => (
+                  <div
+                    key={`${gap.intervalStart}-${gap.intervalEnd}`}
+                    className="rounded-md border bg-muted/20 p-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="text-sm font-medium">
+                        {gap.intervalStart}-{gap.intervalEnd}
+                      </div>
+                      <Badge variant="secondary">
+                        涉及 {gap.involvedPeople.length} 人
+                      </Badge>
+                    </div>
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      <GapPersonList
+                        title="当前已排"
+                        people={gap.involvedPeople}
+                        emptyText="当前样例暂无已排人员"
+                      />
+                      <GapPersonList
+                        title="可复核班次"
+                        people={gap.candidatePeople}
+                        emptyText="暂无其他可复核班次"
+                      />
+                    </div>
+                  </div>
+                ))}
+                {gapExplanations.length === 0 ? (
+                  <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
+                    当前计划暂无缺口时段
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -310,6 +368,53 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
         </Card>
       </main>
     </AppShell>
+  )
+}
+
+function GapPersonList({
+  title,
+  people,
+  emptyText,
+}: {
+  title: string
+  people: {
+    employeeId: string
+    employeeName: string
+    supplier: string
+    shiftType: string
+    scheduledWindow: string
+    skill: string
+    timelineHref: string
+  }[]
+  emptyText: string
+}) {
+  return (
+    <div>
+      <div className="text-xs font-medium text-muted-foreground">{title}</div>
+      <div className="mt-2 flex flex-col gap-2">
+        {people.length > 0 ? (
+          people.map((person) => (
+            <div key={person.employeeId} className="rounded-md border bg-background p-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-sm font-medium">
+                  {person.employeeName} / {person.supplier}
+                </span>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={person.timelineHref}>看履约</Link>
+                </Button>
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                {person.shiftType} / {person.scheduledWindow} / {person.skill}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">
+            {emptyText}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 
