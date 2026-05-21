@@ -2168,6 +2168,26 @@
 - System Chrome smoke：打开 `/schedule-plans/plan-20260511-suzhou-bosch-v1/edit`，页面显示“编辑排班草稿”“人员级排班联动”“汇总 10 人”“明细 1 人”“差异 9 人”和“A-1003 张琳 / 供应商 B”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端等词。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Schedule draft fulfillment-calendar drilldown
+
+#### 结论
+
+- `F244-F246/US318-US320` 已在排班草稿人员联动中增加履约日历个人详情下钻。
+- 人员排班时段追溯模型为每个关联人员提供 `timelineHref`。
+- 草稿页关联人员入口可点击进入对应个人单日三轨详情，并保留日期、团队和小组上下文。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做查看链路下钻，不保存处理动作，不代表异常处理流、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- `node --test scripts/tests/personnel-schedule-details.test.mjs`：通过，9 个人员排班明细、时段追溯和履约日历链接测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：打开 `/schedule-plans/plan-20260511-suzhou-bosch-v1/edit`，A-1003 链接为 `/person-timeline/A-1003?date=2026-05-11&team=...&group=...&returnDate=2026-05-11`；点击后进入个人详情页，页面包含“排班轨道”“登录轨道”“状态轨道”。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

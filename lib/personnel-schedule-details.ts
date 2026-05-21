@@ -47,6 +47,7 @@ export type PersonnelIntervalTracePerson = {
   shiftType: string
   skill: string
   anomalyLabels: string[]
+  timelineHref: string
 }
 
 export type PersonnelIntervalTrace = {
@@ -240,6 +241,7 @@ export function buildPersonnelIntervalTrace(
         shiftType: item.shiftType,
         skill: `${item.skillGroup} / ${item.skillLevel}`,
         anomalyLabels: item.anomalyLabels,
+        timelineHref: buildPersonTimelineHref(item),
       })
     ),
   }

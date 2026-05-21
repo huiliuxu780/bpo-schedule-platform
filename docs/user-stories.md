@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US318-US321 - 排班草稿履约日历下钻
+
+```yaml
+stories:
+  - id: US318
+    requirement_ids: [R306]
+    task_ids: [F244]
+    module: "排班计划"
+    role: "排班运营"
+    story: "作为排班运营，我希望在排班草稿联动核对中点击关联人员进入个人单日三轨详情，以便从排班明细继续核对登录和状态。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US319
+    requirement_ids: [R307]
+    task_ids: [F245]
+    module: "排班计划"
+    role: "现场主管"
+    story: "作为现场主管，我希望人员排班时段追溯模型带有稳定的履约日历链接，以便所有使用该模型的页面都能进入同一解释页。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US320
+    requirement_ids: [R308]
+    task_ids: [F246]
+    module: "排班计划"
+    role: "PM"
+    story: "作为 PM，我希望排班草稿下钻入口保持业务语言，以便页面不暴露内部执行或项目管理口径。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US321
+    requirement_ids: [R309]
+    task_ids: [Q041]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望排班草稿履约日历下钻批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "人员排班时段追溯模型为每个关联人员提供 `timelineHref`。"
+  - "排班草稿编辑页中关联人员可点击进入对应个人单日三轨详情，并保留日期、团队和小组上下文。"
+  - "产品 UI 不新增内部执行词、审批、导出、批量或处理提交入口。"
+  - "`node --test scripts/tests/personnel-schedule-details.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US314-US317 - 排班草稿人员明细联动
 
 ```yaml

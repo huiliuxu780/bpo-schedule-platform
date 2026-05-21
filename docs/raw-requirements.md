@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R306-R309 - 排班草稿履约日历下钻
+
+```yaml
+requirements:
+  - id: R306
+    module: "排班计划"
+    description: "排班草稿人员联动中的关联人员需要能下钻到履约日历个人单日三轨详情，方便从排班差异继续核对登录和状态。"
+  - id: R307
+    module: "排班计划"
+    description: "人员排班时段追溯模型需要为每个关联人员提供稳定的履约日历个人详情链接。"
+  - id: R308
+    module: "排班计划"
+    description: "排班草稿人员联动页面的人员入口需要使用业务文案和普通下钻交互，不暴露内部执行口径。"
+  - id: R309
+    module: "质量与交付"
+    description: "排班草稿履约日历下钻完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued business function development on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端下钻链接和模型测试；不新增页面、导航、数据库、真实接口、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R302-R305 - 排班草稿人员明细联动
 
 ```yaml

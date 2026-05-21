@@ -1543,3 +1543,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F244-F246 Schedule Draft Timeline Links
+
+- branch_name: `codex/f244-schedule-draft-timeline-links`
+- base_main_commit: `d561eff`
+- remote_status: `not_pushed`
+- scope: frontend local business function: add fulfillment calendar personal-detail links to personnel interval trace people, render those links in the schedule draft edit page, and verify the drilldown preserves date, team, and group context.
+- allowed_files_check: `app/schedule-plans/[planId]/edit/page.tsx`, `lib/personnel-schedule-details.ts`, `scripts/tests/personnel-schedule-details.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing schedule draft edit route and personnel schedule model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target model test, product UI copy audit, browser smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

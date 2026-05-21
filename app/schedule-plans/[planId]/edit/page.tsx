@@ -207,14 +207,14 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
                     <div className="mt-3 flex flex-wrap gap-2">
                       {item.assignedPeople.length > 0 ? (
                         item.assignedPeople.map((person) => (
-                          <Badge
+                          <Link
                             key={person.employeeId}
-                            variant="outline"
-                            className="font-normal"
+                            href={person.timelineHref}
+                            className="inline-flex w-fit items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium whitespace-nowrap text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                           >
                             {person.employeeId} {person.employeeName} /{" "}
                             {person.supplier}
-                          </Badge>
+                          </Link>
                         ))
                       ) : (
                         <span className="text-xs text-muted-foreground">

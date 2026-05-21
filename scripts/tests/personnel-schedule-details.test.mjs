@@ -85,6 +85,7 @@ test("half-hour interval trace exposes assigned people and anomaly labels", () =
         shiftType: "早班 + 午后班",
         skill: "热线 / L2",
         anomalyLabels: ["状态不一致"],
+        timelineHref: "/person-timeline/A-1001?date=2026-05-11&team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&group=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D%7C%7C%E4%BE%9B%E5%BA%94%E5%95%86%20A&returnDate=2026-05-11",
       },
       {
         employeeId: "A-1002",
@@ -93,6 +94,7 @@ test("half-hour interval trace exposes assigned people and anomaly labels", () =
         shiftType: "早班",
         skill: "热线 / L2",
         anomalyLabels: ["登录迟到"],
+        timelineHref: "/person-timeline/A-1002?date=2026-05-11&team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&group=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D%7C%7C%E4%BE%9B%E5%BA%94%E5%95%86%20A&returnDate=2026-05-11",
       },
       {
         employeeId: "A-1005",
@@ -101,6 +103,7 @@ test("half-hour interval trace exposes assigned people and anomaly labels", () =
         shiftType: "支援班",
         skill: "热线 / L1",
         anomalyLabels: [],
+        timelineHref: "/person-timeline/A-1005?date=2026-05-11&team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&group=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D%7C%7C%E4%BE%9B%E5%BA%94%E5%95%86%20B&returnDate=2026-05-11",
       },
     ],
   });
@@ -193,6 +196,10 @@ test("personnel schedule interval linkage compares summary count with linked peo
   assert.deepEqual(
     noon?.assignedPeople.map((person) => person.employeeId),
     ["A-1003"]
+  );
+  assert.equal(
+    noon?.assignedPeople[0]?.timelineHref,
+    "/person-timeline/A-1003?date=2026-05-11&team=%E8%8B%8F%E5%B7%9E%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D&group=%E8%8B%8F%E5%B7%9E%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D%7C%7C%E4%BE%9B%E5%BA%94%E5%95%86%20B&returnDate=2026-05-11"
   );
 });
 
