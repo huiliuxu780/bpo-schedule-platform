@@ -4,6 +4,8 @@ import test from "node:test";
 import {
   buildPersonTimelineHref,
   buildPersonnelIntervalTrace,
+  buildPersonnelScheduleIntervalLinkage,
+  summarizePersonnelScheduleIntervalLinkage,
   buildScheduleGapExplanation,
   fallbackPersonnelScheduleDetails,
   getPersonnelScheduleDetails,
@@ -11,6 +13,7 @@ import {
   getPersonnelScheduleFieldCoverage,
   summarizePersonnelScheduleDetails,
 } from "../../lib/personnel-schedule-details.ts";
+import { getSchedulePlan } from "../../lib/schedule-plans.ts";
 
 test("personnel schedule details expose employee-level rows for a plan", () => {
   const rows = getPersonnelScheduleDetails("plan-20260511-shanghai-bosch-v1");
@@ -174,4 +177,32 @@ test("schedule gap explanation exposes involved people and shifts", () => {
       },
     ],
   });
+});
+
+test("personnel schedule interval linkage compares summary count with linked people", async () => {
+  const plan = await getSchedulePlan("plan-20260511-suzhou-bosch-v1");
+  const linkage = buildPersonnelScheduleIntervalLinkage(plan);
+  const noon = linkage.find(
+    (item) => item.intervalStart === "12:00" && item.intervalEnd === "12:30"
+  );
+
+  assert.equal(noon?.scheduledAgents, 10);
+  assert.equal(noon?.linkedPeopleCount, 1);
+  assert.equal(noon?.difference, 9);
+  assert.equal(noon?.status, "需核对");
+  assert.deepEqual(
+    noon?.assignedPeople.map((person) => person.employeeId),
+    ["A-1003"]
+  );
+});
+
+test("personnel schedule linkage summary exposes interval and people coverage", async () => {
+  const plan = await getSchedulePlan("plan-20260511-suzhou-bosch-v1");
+  const summary = summarizePersonnelScheduleIntervalLinkage(
+    buildPersonnelScheduleIntervalLinkage(plan)
+  );
+
+  assert.equal(summary.intervalCount, 8);
+  assert.equal(summary.linkedPeopleCount, 1);
+  assert.equal(summary.intervalsNeedingReview, 8);
 });

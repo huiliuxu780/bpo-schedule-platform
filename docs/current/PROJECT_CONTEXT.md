@@ -81,4 +81,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US310/F238 -> US313/Q039` completed the product semantic cleanup slice: visible product UI no longer exposes local-MVP wording, task IDs, read-only process labels, sidebar priority/new tags, or sample-language labels. Current queue is empty again.
 
-Recommended next production MVP slice: continue with the supervisor closure checklist or start the local action-registration design for exception handling, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US314/F241 -> US317/Q040` completed the schedule draft personnel-linkage slice: the schedule draft edit page now shows personnel-level schedule linkage for each 0.5h interval, including summary count, linked people count, difference, status, and linked people. Current queue is empty again.
+
+Recommended next production MVP slice: continue with supervisor closure checklist or local exception action-registration design, keeping it local/frontend-only unless PM confirms a separate production action Gate.

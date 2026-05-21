@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R302-R305 - 排班草稿人员明细联动
+
+```yaml
+requirements:
+  - id: R302
+    module: "排班计划"
+    description: "排班草稿编辑页需要展示人员级排班明细与 0.5h 汇总的联动关系，让排班运营能看到每个时段已排人数背后的关联人员。"
+  - id: R303
+    module: "排班计划"
+    description: "排班草稿需要按 0.5h 时段核对汇总已排人数和人员明细人数，标出人数不一致的时段。"
+  - id: R304
+    module: "排班计划"
+    description: "排班草稿需要提供人员明细联动摘要，展示关联人员数和需核对时段数。"
+  - id: R305
+    module: "质量与交付"
+    description: "排班草稿人员明细联动完成后需要 QA 收口，确认模型测试、页面文案、no-database/no-approval/no-export 边界和标准检查。"
+source: "PM requested continuous development of remaining business functions on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端排班草稿核对能力和模型测试；不新增数据库、真实接口、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R298-R301 - 产品语义清理
 
 ```yaml

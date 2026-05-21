@@ -29,6 +29,54 @@
 
 ## Stories
 
+### US314-US317 - 排班草稿人员明细联动
+
+```yaml
+stories:
+  - id: US314
+    requirement_ids: [R302]
+    task_ids: [F241]
+    module: "排班计划"
+    role: "排班运营"
+    story: "作为排班运营，我希望在排班草稿中看到每个 0.5h 时段关联的人员明细，以便确认汇总人数背后有可追溯人员。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US315
+    requirement_ids: [R303]
+    task_ids: [F242]
+    module: "排班计划"
+    role: "排班运营"
+    story: "作为排班运营，我希望草稿能标出 0.5h 汇总人数和人员明细人数差异，以便优先核对不一致时段。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US316
+    requirement_ids: [R304]
+    task_ids: [F243]
+    module: "排班计划"
+    role: "现场主管"
+    story: "作为现场主管，我希望在草稿页看到关联人员数和需核对时段数，以便快速判断排班明细是否支撑当天履约。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US317
+    requirement_ids: [R305]
+    task_ids: [Q040]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望排班草稿人员明细联动批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "排班草稿编辑页展示人员级排班联动区域，按 0.5h 时段展示汇总人数、明细人数、差异和关联人员。"
+  - "联动模型能根据计划时段和人员展开结果计算需核对时段数。"
+  - "产品 UI 不出现 PRD、Gate、任务编号、内部执行状态、数据接入状态、审批、导出或批量处理入口。"
+  - "`node --test scripts/tests/personnel-schedule-details.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
+
 ### US310-US313 - 产品语义清理
 
 ```yaml

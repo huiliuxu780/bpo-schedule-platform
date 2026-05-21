@@ -1,3 +1,5 @@
+import type { SchedulePlanDetail } from "./schedule-plans"
+
 export type PersonnelScheduleInterval = {
   start: string
   end: string
@@ -52,6 +54,25 @@ export type PersonnelIntervalTrace = {
   intervalStart: string
   intervalEnd: string
   assignedPeople: PersonnelIntervalTracePerson[]
+}
+
+export type PersonnelScheduleIntervalLinkageStatus = "一致" | "需核对"
+
+export type PersonnelScheduleIntervalLinkage = {
+  planId: string
+  intervalStart: string
+  intervalEnd: string
+  scheduledAgents: number
+  linkedPeopleCount: number
+  difference: number
+  status: PersonnelScheduleIntervalLinkageStatus
+  assignedPeople: PersonnelIntervalTracePerson[]
+}
+
+export type PersonnelScheduleIntervalLinkageSummary = {
+  intervalCount: number
+  linkedPeopleCount: number
+  intervalsNeedingReview: number
 }
 
 export type ScheduleGapPerson = {
@@ -221,6 +242,49 @@ export function buildPersonnelIntervalTrace(
         anomalyLabels: item.anomalyLabels,
       })
     ),
+  }
+}
+
+export function buildPersonnelScheduleIntervalLinkage(
+  plan: SchedulePlanDetail | null
+): PersonnelScheduleIntervalLinkage[] {
+  if (!plan) {
+    return []
+  }
+
+  return plan.intervals.map((item) => {
+    const trace = buildPersonnelIntervalTrace(
+      plan.summary.id,
+      item.interval_start,
+      item.interval_end
+    )
+    const linkedPeopleCount = trace.assignedPeople.length
+    const difference = item.scheduled_agents - linkedPeopleCount
+
+    return {
+      planId: plan.summary.id,
+      intervalStart: item.interval_start,
+      intervalEnd: item.interval_end,
+      scheduledAgents: item.scheduled_agents,
+      linkedPeopleCount,
+      difference,
+      status: difference === 0 ? "一致" : "需核对",
+      assignedPeople: trace.assignedPeople,
+    }
+  })
+}
+
+export function summarizePersonnelScheduleIntervalLinkage(
+  rows: PersonnelScheduleIntervalLinkage[]
+): PersonnelScheduleIntervalLinkageSummary {
+  const linkedEmployeeIds = new Set(
+    rows.flatMap((item) => item.assignedPeople.map((person) => person.employeeId))
+  )
+
+  return {
+    intervalCount: rows.length,
+    linkedPeopleCount: linkedEmployeeIds.size,
+    intervalsNeedingReview: rows.filter((item) => item.status === "需核对").length,
   }
 }
 

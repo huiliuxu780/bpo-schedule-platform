@@ -11,7 +11,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import {
+  buildPersonnelScheduleIntervalLinkage,
+  summarizePersonnelScheduleIntervalLinkage,
+} from "@/lib/personnel-schedule-details"
 import { getSchedulePlan, schedulePlanStatusLabel } from "@/lib/schedule-plans"
 
 type PageProps = {
@@ -29,6 +34,9 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
   }
 
   const isDraft = plan.summary.status === "draft"
+  const personnelLinkage = buildPersonnelScheduleIntervalLinkage(plan)
+  const personnelLinkageSummary =
+    summarizePersonnelScheduleIntervalLinkage(personnelLinkage)
 
   return (
     <AppShell title="编辑排班草稿" searchPlaceholder="搜索计划、项目或职场">
@@ -151,6 +159,69 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
                       <span className="font-medium">备注</span>
                       <Input name={`note_${index}`} defaultValue={item.note} />
                     </label>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card id="personnel-schedule-linkage">
+              <CardHeader className="gap-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <CardTitle>人员级排班联动</CardTitle>
+                    <CardDescription>
+                      按 0.5h 汇总人数核对已关联人员，定位需要补齐的明细
+                    </CardDescription>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline">
+                      {personnelLinkageSummary.linkedPeopleCount} 人
+                    </Badge>
+                    <Badge variant="secondary">
+                      {personnelLinkageSummary.intervalsNeedingReview} 个时段需核对
+                    </Badge>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="grid gap-3 lg:grid-cols-2">
+                {personnelLinkage.map((item) => (
+                  <div
+                    key={`${item.intervalStart}-${item.intervalEnd}`}
+                    className="rounded-md border p-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="font-medium">
+                        {item.intervalStart}-{item.intervalEnd}
+                      </div>
+                      <Badge
+                        variant={item.status === "一致" ? "outline" : "secondary"}
+                      >
+                        {item.status}
+                      </Badge>
+                    </div>
+                    <div className="mt-2 grid gap-2 text-sm text-muted-foreground sm:grid-cols-3">
+                      <span>汇总 {item.scheduledAgents} 人</span>
+                      <span>明细 {item.linkedPeopleCount} 人</span>
+                      <span>差异 {item.difference} 人</span>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {item.assignedPeople.length > 0 ? (
+                        item.assignedPeople.map((person) => (
+                          <Badge
+                            key={person.employeeId}
+                            variant="outline"
+                            className="font-normal"
+                          >
+                            {person.employeeId} {person.employeeName} /{" "}
+                            {person.supplier}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-xs text-muted-foreground">
+                          无关联人员
+                        </span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </CardContent>

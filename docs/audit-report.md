@@ -2147,6 +2147,27 @@
 - In-app browser smoke：打开 `queue=status` 时 `A-1001` 成员行、`SCH-1001-2`、`LOG-1001-1`、`STA-1001-2` 被定位；切换到 `queue=high` 时 `A-1002` 成员行、`SCH-1002-1`、`LOG-1002-1` 被定位，且未出现 PRD、Gate、Story、验收清单、待实现、暂不实现、处理提交、审批按钮等内部或越界词。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
 
+### 2026-05-22 - Schedule draft personnel linkage
+
+#### 结论
+
+- `F241-F243/US314-US316` 已在排班草稿编辑页增加人员级排班联动核对。
+- 联动模型按计划 0.5h 时段返回汇总人数、明细人数、差异、状态和关联人员。
+- 草稿页展示关联人员数和需核对时段数，并在每个时段展示对应人员标签。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮联动仍基于现有本地数据模型，重点是让草稿页能核对人员明细是否支撑汇总人数，不代表正式排班发布、审批或生产持久化已经实现。
+
+#### 验证
+
+- `node --test scripts/tests/personnel-schedule-details.test.mjs`：通过，9 个人员排班明细和联动模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- `npm run typecheck`：通过。
+- System Chrome smoke：打开 `/schedule-plans/plan-20260511-suzhou-bosch-v1/edit`，页面显示“编辑排班草稿”“人员级排班联动”“汇总 10 人”“明细 1 人”“差异 9 人”和“A-1003 张琳 / 供应商 B”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端等词。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

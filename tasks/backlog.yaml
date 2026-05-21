@@ -2,6 +2,70 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F241
+    title: "排班草稿人员明细联动模型"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/personnel-schedule-details.ts", "lib/schedule-plans.ts", "scripts/tests/personnel-schedule-details.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型按计划 0.5h 时段返回汇总人数、明细人数、差异、状态和关联人员。"
+      - "模型摘要返回时段数、关联人员数和需核对时段数。"
+      - "`node --test scripts/tests/personnel-schedule-details.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F242
+    title: "排班草稿人员联动页面"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/schedule-plans/[planId]/edit/page.tsx", "lib/personnel-schedule-details.ts", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "排班草稿编辑页展示人员级排班联动区域。"
+      - "每个时段展示汇总人数、明细人数、差异和关联人员。"
+      - "页面文案使用业务语言，不暴露内部执行口径。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F243
+    title: "排班草稿联动摘要"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/schedule-plans/[planId]/edit/page.tsx", "lib/personnel-schedule-details.ts", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "草稿页展示关联人员数和需核对时段数。"
+      - "摘要从模型计算，不在页面硬编码。"
+      - "`npm run typecheck` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q040
+    title: "排班草稿人员明细联动 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型测试、文案审计、typecheck、浏览器 smoke 和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+      - "确认未新增数据库、真实接口、审批、导出、批量、自动排班或生产公式。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式"]
+    commit_after_done: true
   - id: F238
     title: "产品页面过程词清理"
     priority: P0

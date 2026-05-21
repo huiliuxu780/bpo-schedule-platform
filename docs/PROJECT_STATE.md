@@ -93,6 +93,7 @@ Current invariants:
 - `F232-F234/Q037` completed a data-quality repair-prep read-only slice: fulfillment calendar exception items show data-owner intervention judgment, repair preparation materials, and data-quality impact scope. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F235-F237/Q038` completed a supervisor follow-up summary read-only slice: fulfillment calendar exception items show supervisor follow-up status, follow-up gap lists, and group follow-up rollups. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F238-F240/Q039` completed a product semantic cleanup slice: visible product UI no longer exposes local-MVP wording, task IDs, read-only process labels, sidebar priority/new tags, or sample-language labels. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F241-F243/Q040` completed a schedule draft personnel-linkage slice: the schedule draft edit page shows personnel-level schedule linkage per 0.5h interval, including summary count, linked people count, difference, status, and linked people. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 
