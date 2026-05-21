@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F226-F228-Q035 Supervisor Handling Readonly
+
+- branch_name: `codex/f226-supervisor-handling-readonly`
+- base_main_commit: `4dd8463`
+- remote_status: `new stacked local branch from verified master-data relationship closure HEAD; not pushed`
+- scope: frontend local business function and QA closeout: add supervisor handling suggestions, three-track evidence summaries, read-only handling records, and business-language verification to the fulfillment calendar exception queue.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar page/model/tests plus current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red `person-timeline` target test first caught missing handling guide fields; target tests, lint, typecheck, and browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F221-F225-Q034 Master Data Relationship Closure
 
 - branch_name: `codex/f221-master-data-relations-closure`

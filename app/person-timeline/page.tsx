@@ -637,7 +637,37 @@ function MatrixExceptionPanel({
             <div>影响时长：{selected.impactHours.toFixed(1)}h</div>
             <div>排序依据：{selected.sortReason}</div>
             <div>证据：{selected.evidence}</div>
-            <div>建议动作：{selected.supervisorAction}</div>
+            <div>主管判断：{selected.supervisorAction}</div>
+          </div>
+          <div className="grid gap-2 rounded-md border bg-muted/30 p-2">
+            <div className="text-sm font-medium">处理建议</div>
+            <div className="grid gap-2 text-xs">
+              <div>
+                <div className="font-medium text-foreground">优先核对</div>
+                <div className="mt-1 text-muted-foreground">
+                  {selected.handlingGuide.priorityChecks.join(" / ")}
+                </div>
+              </div>
+              <div>
+                <div className="font-medium text-foreground">需补信息</div>
+                <div className="mt-1 text-muted-foreground">
+                  {selected.handlingGuide.requiredInfo.join(" / ")}
+                </div>
+              </div>
+              <div className="text-muted-foreground">
+                沟通对象：{selected.handlingGuide.communicationTarget}
+              </div>
+              <div className="text-muted-foreground">{selected.handlingGuide.boundary}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">证据汇总</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>{selected.evidenceSummary.schedule}</div>
+              <div>{selected.evidenceSummary.login}</div>
+              <div>{selected.evidenceSummary.status}</div>
+              <div className="pt-1 font-medium text-foreground">{selected.evidenceSummary.conclusion}</div>
+            </div>
           </div>
           <div className="grid gap-2">
             <div className="text-sm font-medium">三轨证据</div>
@@ -650,6 +680,19 @@ function MatrixExceptionPanel({
                 <div className="mt-1 text-muted-foreground">
                   {card.label} {card.start}-{card.end}
                 </div>
+              </div>
+            ))}
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">只读处理记录</div>
+            {selected.handlingRecords.map((record) => (
+              <div key={`${record.recordedAt}-${record.conclusion}`} className="grid gap-1 text-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium">{record.recorder}</span>
+                  <span className="text-muted-foreground">{record.recordedAt}</span>
+                </div>
+                <div className="text-muted-foreground">{record.conclusion}</div>
+                <div className="text-muted-foreground">后续跟进：{record.followUp}</div>
               </div>
             ))}
           </div>

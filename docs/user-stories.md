@@ -75,6 +75,53 @@ acceptance:
   - "所有故事保持本地前端或本地模型边界，不实现数据库、真实接口、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
 
+### US294-US297 - 主管异常处理只读闭环
+
+```yaml
+stories:
+  - id: US294
+    requirement_ids: [R282]
+    task_ids: [F226]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示处理建议分层，以便知道优先核对什么、补什么信息、找谁沟通。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US295
+    requirement_ids: [R283]
+    task_ids: [F227]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示三轨证据汇总，以便快速判断问题来自排班、登录还是状态。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US296
+    requirement_ids: [R284]
+    task_ids: [F228]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示只读处理记录，以便知道样例里已经记录了哪些跟进过程。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US297
+    requirement_ids: [R285]
+    task_ids: [Q035]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管异常处理只读闭环完成后验证建议、证据、记录和 no-submit 边界。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "处理建议只做只读展示，不出现提交、审批、批量或真实写入能力。"
+  - "三轨证据汇总能说明排班、登录、状态分别命中的事件。"
+  - "只读处理记录展示记录人、时间、结论和后续关注点。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US293 - 大模块迭代池状态修复
 
 ```yaml

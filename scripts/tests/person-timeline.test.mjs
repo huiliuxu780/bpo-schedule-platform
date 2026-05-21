@@ -286,6 +286,26 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       { track: "login", eventId: "LOG-1002-1", label: "CORN 登录", start: "09:21", end: "17:00" },
     ]
   );
+  assert.deepEqual(lateLogin.handlingGuide, {
+    priorityChecks: ["核对排班开始时间 09:00", "核对登录开始时间 09:21", "确认员工实际到岗时间"],
+    requiredInfo: ["到岗说明", "迟到或漏登原因", "现场主管确认口径"],
+    communicationTarget: "王敏 / 现场主管",
+    boundary: "当前仅记录跟进过程，处理动作由线下流程完成。",
+  });
+  assert.deepEqual(lateLogin.evidenceSummary, {
+    schedule: "排班 SCH-1002-1：早班 09:00-17:00",
+    login: "登录 LOG-1002-1：CORN 登录 09:21-17:00",
+    status: "状态轨道：无命中记录",
+    conclusion: "09:00-09:21 存在登录缺口，需核对到岗或漏登原因。",
+  });
+  assert.deepEqual(lateLogin.handlingRecords, [
+    {
+      recordedAt: "2026-05-11 09:35",
+      recorder: "现场主管",
+      conclusion: "已联系员工确认到岗时间。",
+      followUp: "等待补充迟到或漏登原因。",
+    },
+  ]);
   const statusMismatch = matrix.exceptionQueue.find((item) => item.key === "A-1001::no_login");
   assert.ok(statusMismatch);
   assert.deepEqual(statusMismatch.focusEventIds, ["SCH-1001-2", "LOG-1001-1", "STA-1001-2"]);
@@ -301,6 +321,18 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       { track: "status", eventId: "STA-1001-2", label: "培训" },
     ]
   );
+  assert.deepEqual(statusMismatch.handlingGuide, {
+    priorityChecks: ["核对状态轨道 培训", "核对排班覆盖 13:00-18:00", "确认培训安排是否登记"],
+    requiredInfo: ["培训安排说明", "在线要求确认", "主管复核结论"],
+    communicationTarget: "刘晨 / 现场主管",
+    boundary: "当前仅记录跟进过程，处理动作由线下流程完成。",
+  });
+  assert.deepEqual(statusMismatch.evidenceSummary, {
+    schedule: "排班 SCH-1001-2：午后班 13:00-18:00",
+    login: "登录 LOG-1001-1：CORN 登录 09:02-18:00",
+    status: "状态 STA-1001-2：培训 13:00-18:00",
+    conclusion: "13:00-18:00 状态为培训，需确认是否符合当班在线要求。",
+  });
 });
 
 test("fulfillment detail links preserve queue return context", () => {

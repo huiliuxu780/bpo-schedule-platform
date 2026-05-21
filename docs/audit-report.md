@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-21 - Supervisor exception handling readonly closure
+
+#### 结论
+
+- `F226-F228/Q035/US294-US297` 已完成主管异常处理只读闭环和 QA 收口。
+- 履约日历小组单日异常队列当前项现在展示处理建议、证据汇总和只读处理记录。
+- 处理建议展示优先核对、需补信息、沟通对象和线下处理边界。
+- 证据汇总按排班、登录、状态分别展示命中事件，并给出主管判断结论。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据和只读记录，不代表真实处理提交、审批流、权限边界或状态写回已经实现。
+- 处理建议用于主管查看和线下跟进，不代表最终生产责任判定、结算规则或自动处理策略。
+
+#### 验证
+
+- 红灯验证：新增 `person-timeline` 目标测试后，能抓到缺少 `handlingGuide`、三轨证据汇总和只读处理记录字段的问题。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- Browser smoke：`/person-timeline?...&queue=high` 显示处理建议、证据汇总、只读处理记录、核对排班开始时间、到岗说明、排班证据、登录证据和线下处理边界；页面未出现 PRD、Gate、Story、验收清单、待实现、暂不实现或准备状态。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Master data relationship closure
 
 #### 结论

@@ -88,6 +88,7 @@ Current invariants:
 - `F094-F102/Q021` completed an import batch history, field mapping preview, and review status timeline slice: local model tests, `/import-batches`, `/import-batches/[batchId]`, `/field-mapping`, `/anomaly-review/timeline`, sidebar entries, anomaly review timeline link, route smoke, and QA closeout. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F216-F220/Q033` completed an import quality traceability slice: import batch details link to related data quality issues, issue details show source template, source field, original value, error code, affected objects, and impact links, and batch details show failure-row business impact summaries. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F221-F225/Q034` completed a master-data relationship closure slice: employee bindings show supplier, workplace, project, skills, validity, status, anomaly/data-quality references, and reverse lookup links; shift types show meal/rest windows and counting policy. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F226-F228/Q035` completed a supervisor exception handling read-only closure slice: fulfillment calendar exception items show handling suggestions, three-track evidence summaries, and read-only handling records. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -194,6 +194,24 @@ export type FulfillmentMatrixExceptionQueueItem = {
   }>
   evidence: string
   supervisorAction: string
+  handlingGuide: {
+    priorityChecks: string[]
+    requiredInfo: string[]
+    communicationTarget: string
+    boundary: string
+  }
+  evidenceSummary: {
+    schedule: string
+    login: string
+    status: string
+    conclusion: string
+  }
+  handlingRecords: Array<{
+    recordedAt: string
+    recorder: string
+    conclusion: string
+    followUp: string
+  }>
 }
 
 export type FulfillmentMatrixExceptionQueueSummary = {
@@ -824,25 +842,36 @@ function buildFulfillmentMatrixExceptionQueue(
 ): FulfillmentMatrixExceptionQueueItem[] {
   return members
     .flatMap((member) =>
-      member.exceptionExplanations.map((explanation) => ({
-        key: fulfillmentMatrixExceptionKey(member.employeeId, explanation.anomalyCode),
-        employeeId: member.employeeId,
-        employeeName: member.employeeName,
-        anomalyCode: explanation.anomalyCode,
-        type: explanation.type,
-        title: explanation.title,
-        priority: explanation.priority,
-        impactHours: explanation.impactHours,
-        start: explanation.start,
-        end: explanation.end,
-        detailDate: date,
-        involvedTracks: explanation.involvedTracks,
-        focusEventIds: getFocusEventIds(member, explanation),
-        sortReason: buildExceptionSortReason(explanation.priority, explanation.impactHours, member.employeeId),
-        evidenceCards: getEvidenceCards(member, explanation),
-        evidence: explanation.evidence,
-        supervisorAction: explanation.supervisorAction,
-      }))
+      member.exceptionExplanations.map((explanation) => {
+        const evidenceCards = getEvidenceCards(member, explanation)
+
+        return {
+          key: fulfillmentMatrixExceptionKey(member.employeeId, explanation.anomalyCode),
+          employeeId: member.employeeId,
+          employeeName: member.employeeName,
+          anomalyCode: explanation.anomalyCode,
+          type: explanation.type,
+          title: explanation.title,
+          priority: explanation.priority,
+          impactHours: explanation.impactHours,
+          start: explanation.start,
+          end: explanation.end,
+          detailDate: date,
+          involvedTracks: explanation.involvedTracks,
+          focusEventIds: evidenceCards.map((card) => card.eventId),
+          sortReason: buildExceptionSortReason(
+            explanation.priority,
+            explanation.impactHours,
+            member.employeeId
+          ),
+          evidenceCards,
+          evidence: explanation.evidence,
+          supervisorAction: explanation.supervisorAction,
+          handlingGuide: buildExceptionHandlingGuide(member, explanation, evidenceCards),
+          evidenceSummary: summarizeExceptionEvidence(explanation, evidenceCards),
+          handlingRecords: getExceptionHandlingRecords(explanation),
+        }
+      })
     )
     .sort(
       (a, b) =>
@@ -881,19 +910,132 @@ function getEvidenceCards(
   )
 }
 
-function fulfillmentMatrixExceptionKey(employeeId: string, anomalyCode: string) {
-  return `${employeeId}::${anomalyCode}`
+function buildExceptionHandlingGuide(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation,
+  evidenceCards: FulfillmentMatrixExceptionQueueItem["evidenceCards"]
+) {
+  const scheduleCard = evidenceCards.find((card) => card.track === "schedule")
+  const loginCard = evidenceCards.find((card) => card.track === "login")
+  const statusCard = evidenceCards.find((card) => card.track === "status")
+  const communicationTarget = `${member.employeeName} / 现场主管`
+  const boundary = "当前仅记录跟进过程，处理动作由线下流程完成。"
+
+  if (explanation.type === "登录缺口") {
+    return {
+      priorityChecks: [
+        `核对排班开始时间 ${scheduleCard?.start ?? explanation.start}`,
+        `核对登录开始时间 ${loginCard?.start ?? explanation.end}`,
+        "确认员工实际到岗时间",
+      ],
+      requiredInfo: ["到岗说明", "迟到或漏登原因", "现场主管确认口径"],
+      communicationTarget,
+      boundary,
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      priorityChecks: [
+        `核对登录结束时间 ${loginCard?.end ?? explanation.start}`,
+        `核对排班结束时间 ${scheduleCard?.end ?? explanation.end}`,
+        "确认员工实际离岗时间",
+      ],
+      requiredInfo: ["离岗说明", "提前离岗或系统记录原因", "现场主管确认口径"],
+      communicationTarget,
+      boundary,
+    }
+  }
+
+  return {
+    priorityChecks: [
+      `核对状态轨道 ${statusCard?.label ?? "状态异常"}`,
+      `核对排班覆盖 ${explanation.start}-${explanation.end}`,
+      "确认培训安排是否登记",
+    ],
+    requiredInfo: ["培训安排说明", "在线要求确认", "主管复核结论"],
+    communicationTarget,
+    boundary,
+  }
 }
 
-function getFocusEventIds(
-  member: FulfillmentMatrixMember,
-  explanation: TimelineExceptionExplanation
+function summarizeExceptionEvidence(
+  explanation: TimelineExceptionExplanation,
+  evidenceCards: FulfillmentMatrixExceptionQueueItem["evidenceCards"]
 ) {
-  return explanation.involvedTracks.flatMap((trackType) =>
-    member.tracks[trackType]
-      .filter((eventItem) => isEventInExceptionWindow(eventItem, explanation))
-      .map((eventItem) => eventItem.id)
-  )
+  const scheduleCard = evidenceCards.find((card) => card.track === "schedule")
+  const loginCard = evidenceCards.find((card) => card.track === "login")
+  const statusCard = evidenceCards.find((card) => card.track === "status")
+
+  return {
+    schedule: formatEvidenceSummaryLine("排班", scheduleCard),
+    login: formatEvidenceSummaryLine("登录", loginCard),
+    status: formatEvidenceSummaryLine("状态", statusCard),
+    conclusion: buildExceptionEvidenceConclusion(explanation, statusCard),
+  }
+}
+
+function formatEvidenceSummaryLine(
+  label: "排班" | "登录" | "状态",
+  card?: FulfillmentMatrixExceptionQueueItem["evidenceCards"][number]
+) {
+  if (!card) {
+    return `${label}轨道：无命中记录`
+  }
+
+  return `${label} ${card.eventId}：${card.label} ${card.start}-${card.end}`
+}
+
+function buildExceptionEvidenceConclusion(
+  explanation: TimelineExceptionExplanation,
+  statusCard?: FulfillmentMatrixExceptionQueueItem["evidenceCards"][number]
+) {
+  if (explanation.type === "登录缺口") {
+    return `${explanation.start}-${explanation.end} 存在登录缺口，需核对到岗或漏登原因。`
+  }
+
+  if (explanation.type === "登录不足") {
+    return `${explanation.start}-${explanation.end} 存在登录不足，需核对离岗或系统记录原因。`
+  }
+
+  return `${explanation.start}-${explanation.end} 状态为${statusCard?.label ?? "异常"}，需确认是否符合当班在线要求。`
+}
+
+function getExceptionHandlingRecords(explanation: TimelineExceptionExplanation) {
+  if (explanation.type === "登录缺口") {
+    return [
+      {
+        recordedAt: `${explanation.date} 09:35`,
+        recorder: "现场主管",
+        conclusion: "已联系员工确认到岗时间。",
+        followUp: "等待补充迟到或漏登原因。",
+      },
+    ]
+  }
+
+  if (explanation.type === "登录不足") {
+    return [
+      {
+        recordedAt: `${explanation.date} 17:45`,
+        recorder: "现场主管",
+        conclusion: "已标记需核对离岗原因。",
+        followUp: "等待员工补充说明。",
+      },
+    ]
+  }
+
+  return [
+    {
+      recordedAt: `${explanation.date} 14:10`,
+      recorder: "现场主管",
+      conclusion: "已核对状态轨道与排班轨道。",
+      followUp: "等待确认培训安排是否登记。",
+    },
+  ]
+}
+
+function fulfillmentMatrixExceptionKey(employeeId: string, anomalyCode: string) {
+  return `${employeeId}::${anomalyCode}`
 }
 
 function isEventInExceptionWindow(

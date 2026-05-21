@@ -64,6 +64,29 @@ status: "planned"
 notes: "这些需求组成后续执行池，不直接进入 current/active；每批执行前再按 3-5 个故事进入当前队列。全部保持本地前端或本地模型边界，不实现数据库、真实接口、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
 
+### R282-R285 - 主管异常处理只读闭环
+
+```yaml
+requirements:
+  - id: R282
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示主管处理建议分层，区分优先核对项、需补充信息和下一步沟通对象。"
+  - id: R283
+    module: "履约日历"
+    description: "异常队列当前项需要展示三轨证据汇总，帮助主管快速判断异常来自排班、登录还是状态。"
+  - id: R284
+    module: "履约日历"
+    description: "异常队列当前项需要展示只读处理记录，用于说明当前样例中已经记录的跟进过程，不执行真实提交。"
+  - id: R285
+    module: "质量与交付"
+    description: "主管异常处理只读闭环完成后需要 QA 收口，确认处理建议、证据汇总、只读记录和 no-submit 边界可验证。"
+source: "PM requested continuing supervisor-oriented business closure on 2026-05-21"
+submitted_at: "2026-05-21"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示和模型测试；不实现处理提交、审批、权限、导出、批量、数据库、真实接口、自动排班、生产公式、结算或收费因子。"
+```
+
 ### R281 - 大模块迭代池状态修复
 
 ```yaml

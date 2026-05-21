@@ -71,4 +71,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US287/F221 -> US292/Q034` completed the master-data relationship closure: employee bindings now show supplier, workplace, project, skills, validity, status, anomaly/data-quality references, and reverse lookup links; shift types now explain meal/rest windows and counting policy. Current queue is empty again.
 
-Recommended next production MVP slice: pick the next tightly related display-only supervisor or data-quality handoff batch, keeping it local/frontend-only.
+`US294/F226 -> US297/Q035` completed the supervisor exception handling read-only closure: fulfillment calendar exception items now show handling suggestions, three-track evidence summaries, and read-only handling records. Current queue is empty again.
+
+Recommended next production MVP slice: pick the next tightly related display-only supervisor handoff or data-quality repair-prep batch, keeping it local/frontend-only.
