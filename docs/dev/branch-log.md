@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F201-F203 Fulfillment Supervisor Risk Evidence
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `190e626`
+- remote_status: `continued on existing fulfillment supervisor branch because this batch extends the same business chain without new routes or backend scope`
+- scope: frontend local business function: add group-week risk summary, group member week watchlist, and selected exception three-track evidence cards in fulfillment calendar supervisor flow.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar page/model/tests plus current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red `person-timeline` tests first caught missing risk summary, watchlist, and evidence cards; target tests passed after implementation; in-app browser smoke passed for group week, group member week, and selected exception evidence pages with no banned internal UI terms; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q029 Business UI Cleanup QA
 
 - branch_name: `codex/f178-exception-explanation-card`

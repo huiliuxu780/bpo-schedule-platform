@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-21 - Fulfillment supervisor risk evidence
+
+#### 结论
+
+- `F201-F203/US263-US265` 已完成履约日历主管链路增强。
+- 小组周视图新增风险摘要侧栏，主管可以看到最高风险小组、最高风险日期、最高风险成员、缺口人数和异常人数。
+- 小组成员周矩阵新增本周待看清单，按成员和日期展示主管优先需要看的异常与缺口。
+- 异常队列新增三轨证据卡，直接展示命中的排班、登录、状态事件编号、标签和时间段。
+- 本批没有新增页面、没有新增导航入口、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据和既有履约日历路由，不代表真实组织主数据、状态日志接入或生产持久化已经实现。
+- 三轨证据卡用于解释异常，不代表审批、处理提交、责任判定或结算口径。
+
+#### 验证
+
+- 红灯验证：新增 `person-timeline` 目标测试后，能抓到缺少小组风险摘要、本周待看清单和异常三轨证据卡。
+- `node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，17 个测试通过。
+- `npm run lint`：通过。
+- `rg` 扫描 `app` 与 `components`：未发现数据接入状态、PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、占位、人员时间轴、坐席状态轨迹或行操作。
+- In-app browser smoke：小组周视图显示小组风险摘要、供应商 A、2026-05-11、A-1002 王敏；小组成员周矩阵显示本周待看清单、王敏周一、刘晨周一和缺口/异常说明；单日异常页显示当前异常解释、三轨证据、SCH-1002-1、LOG-1002-1 和早班 09:00-17:00。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Business UI cleanup QA
 
 #### 结论

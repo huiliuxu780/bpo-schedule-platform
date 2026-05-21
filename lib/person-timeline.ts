@@ -138,6 +138,13 @@ export type FulfillmentTeamWeek = {
   project: string
   days: FulfillmentDayMetrics[]
   summary: FulfillmentCalendarSummary
+  riskSummary: {
+    highestRiskGroup: string
+    highestRiskDate: string
+    highestRiskMember: string
+    gapPeople: number
+    anomalyPeople: number
+  }
   groups: FulfillmentGroupWeek[]
 }
 
@@ -177,6 +184,13 @@ export type FulfillmentMatrixExceptionQueueItem = {
   detailDate: string
   involvedTracks: TimelineEventType[]
   focusEventIds: string[]
+  evidenceCards: Array<{
+    track: TimelineEventType
+    eventId: string
+    label: string
+    start: string
+    end: string
+  }>
   evidence: string
   supervisorAction: string
 }
@@ -217,6 +231,16 @@ export type FulfillmentGroupMemberWeekMatrixMember = {
   summary: PersonTimelineWeekSummary
 }
 
+export type FulfillmentGroupMemberWeekWatchItem = {
+  key: string
+  employeeId: string
+  employeeName: string
+  date: string
+  title: string
+  reason: string
+  priority: TimelineAnomaly["severity"]
+}
+
 export type FulfillmentGroupMemberWeekMatrix = {
   weekStart: string
   weekEnd: string
@@ -235,6 +259,7 @@ export type FulfillmentGroupMemberWeekMatrix = {
     highestAnomalyMember: string
     highestGapDate: string
   }
+  watchlist: FulfillmentGroupMemberWeekWatchItem[]
   members: FulfillmentGroupMemberWeekMatrixMember[]
 }
 
@@ -500,6 +525,7 @@ export function getFulfillmentCalendar(
         project,
         days,
         summary: summarizeDayMetrics(days),
+        riskSummary: buildTeamWeekRiskSummary(groups),
         groups,
       }
     })
@@ -648,6 +674,7 @@ export function getFulfillmentGroupMemberWeekMatrix(
       }
     ),
     riskSummary: buildGroupMemberWeekRiskSummary(members),
+    watchlist: buildGroupMemberWeekWatchlist(members),
     members,
   }
 }
@@ -741,6 +768,7 @@ function buildFulfillmentMatrixExceptionQueue(
         detailDate: date,
         involvedTracks: explanation.involvedTracks,
         focusEventIds: getFocusEventIds(member, explanation),
+        evidenceCards: getEvidenceCards(member, explanation),
         evidence: explanation.evidence,
         supervisorAction: explanation.supervisorAction,
       }))
@@ -751,6 +779,23 @@ function buildFulfillmentMatrixExceptionQueue(
         b.impactHours - a.impactHours ||
         a.employeeId.localeCompare(b.employeeId)
     )
+}
+
+function getEvidenceCards(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation
+) {
+  return explanation.involvedTracks.flatMap((trackType) =>
+    member.tracks[trackType]
+      .filter((eventItem) => isEventInExceptionWindow(eventItem, explanation))
+      .map((eventItem) => ({
+        track: trackType,
+        eventId: eventItem.id,
+        label: eventItem.label,
+        start: eventItem.start,
+        end: eventItem.end,
+      }))
+  )
 }
 
 function fulfillmentMatrixExceptionKey(employeeId: string, anomalyCode: string) {
@@ -975,6 +1020,69 @@ function buildGroupMemberWeekRiskSummary(members: FulfillmentGroupMemberWeekMatr
       ? `${highestAnomalyMember.employeeId} ${highestAnomalyMember.employeeName}`
       : "",
     highestGapDate: highestGapDay?.date ?? "",
+  }
+}
+
+function buildGroupMemberWeekWatchlist(
+  members: FulfillmentGroupMemberWeekMatrixMember[]
+): FulfillmentGroupMemberWeekWatchItem[] {
+  return members
+    .flatMap((member) =>
+      member.days
+        .filter((day) => day.gapHours > 0 || day.anomalyCount > 0)
+        .map((day) => ({
+          key: `${member.employeeId}::${day.date}`,
+          employeeId: member.employeeId,
+          employeeName: member.employeeName,
+          date: day.date,
+          title: `${member.employeeName} ${day.weekday}`,
+          reason: `缺口 ${roundHours(day.gapHours).toFixed(1)}h / 异常 ${day.anomalyCount}`,
+          priority: (day.anomalyCount > 0 && day.gapHours > 0 ? "high" : "medium") as TimelineAnomaly["severity"],
+        }))
+    )
+    .sort(
+      (a, b) =>
+        priorityRank[b.priority] - priorityRank[a.priority] ||
+        b.reason.localeCompare(a.reason) ||
+        a.date.localeCompare(b.date)
+    )
+}
+
+function buildTeamWeekRiskSummary(groups: FulfillmentGroupWeek[]) {
+  const highestRiskGroup = groups[0]
+  const highestRiskDate = groups
+    .flatMap((group) => group.days)
+    .sort(
+      (a, b) =>
+        b.gapPeople - a.gapPeople ||
+        b.anomalyPeople - a.anomalyPeople ||
+        a.date.localeCompare(b.date)
+    )[0]
+  const highestRiskMember = (highestRiskGroup?.members ?? [])
+    .map((member) => {
+      const weekView = getPersonTimelineWeekView(member)
+      return {
+        employeeId: member.employeeId,
+        employeeName: member.employeeName,
+        gapHours: weekView.summary.gapHours,
+        anomalyCount: weekView.summary.anomalyCount,
+      }
+    })
+    .sort(
+      (a, b) =>
+        b.gapHours - a.gapHours ||
+        b.anomalyCount - a.anomalyCount ||
+        a.employeeId.localeCompare(b.employeeId)
+    )[0]
+
+  return {
+    highestRiskGroup: highestRiskGroup?.supplier ?? "",
+    highestRiskDate: highestRiskDate?.date ?? "",
+    highestRiskMember: highestRiskMember
+      ? `${highestRiskMember.employeeId} ${highestRiskMember.employeeName}`
+      : "",
+    gapPeople: highestRiskGroup?.summary.gapPeople ?? 0,
+    anomalyPeople: highestRiskGroup?.summary.anomalyPeople ?? 0,
   }
 }
 

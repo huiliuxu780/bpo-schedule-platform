@@ -168,6 +168,13 @@ test("fulfillment group view sorts groups by business risk", () => {
   const selectedTeam = getFulfillmentTeam(team.id, fallbackPersonTimelines);
   assert.ok(selectedTeam);
   assert.equal(selectedTeam.groups[0].supplier, "供应商 A");
+  assert.deepEqual(selectedTeam.riskSummary, {
+    highestRiskGroup: "供应商 A",
+    highestRiskDate: "2026-05-11",
+    highestRiskMember: "A-1002 王敏",
+    gapPeople: 3,
+    anomalyPeople: 2,
+  });
 
   const group = getFulfillmentGroup(team.id, selectedTeam.groups[0].id, fallbackPersonTimelines);
   assert.ok(group);
@@ -261,9 +268,34 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
   const lateLogin = matrix.exceptionQueue.find((item) => item.key === "A-1002::late_login");
   assert.ok(lateLogin);
   assert.deepEqual(lateLogin.focusEventIds, ["SCH-1002-1", "LOG-1002-1"]);
+  assert.deepEqual(
+    lateLogin.evidenceCards.map((card) => ({
+      track: card.track,
+      eventId: card.eventId,
+      label: card.label,
+      start: card.start,
+      end: card.end,
+    })),
+    [
+      { track: "schedule", eventId: "SCH-1002-1", label: "早班", start: "09:00", end: "17:00" },
+      { track: "login", eventId: "LOG-1002-1", label: "CORN 登录", start: "09:21", end: "17:00" },
+    ]
+  );
   const statusMismatch = matrix.exceptionQueue.find((item) => item.key === "A-1001::no_login");
   assert.ok(statusMismatch);
   assert.deepEqual(statusMismatch.focusEventIds, ["SCH-1001-2", "LOG-1001-1", "STA-1001-2"]);
+  assert.deepEqual(
+    statusMismatch.evidenceCards.map((card) => ({
+      track: card.track,
+      eventId: card.eventId,
+      label: card.label,
+    })),
+    [
+      { track: "schedule", eventId: "SCH-1001-2", label: "午后班" },
+      { track: "login", eventId: "LOG-1001-1", label: "CORN 登录" },
+      { track: "status", eventId: "STA-1001-2", label: "培训" },
+    ]
+  );
 });
 
 test("fulfillment group member week matrix exposes member day cells", () => {
@@ -297,6 +329,42 @@ test("fulfillment group member week matrix exposes member day cells", () => {
     highestAnomalyMember: "A-1001 刘晨",
     highestGapDate: "2026-05-11",
   });
+  assert.deepEqual(
+    weekMatrix.watchlist.map((item) => ({
+      key: item.key,
+      employeeId: item.employeeId,
+      date: item.date,
+      title: item.title,
+      reason: item.reason,
+      priority: item.priority,
+    })),
+    [
+      {
+        key: "A-1002::2026-05-11",
+        employeeId: "A-1002",
+        date: "2026-05-11",
+        title: "王敏 周一",
+        reason: "缺口 0.5h / 异常 1",
+        priority: "high",
+      },
+      {
+        key: "A-1001::2026-05-11",
+        employeeId: "A-1001",
+        date: "2026-05-11",
+        title: "刘晨 周一",
+        reason: "缺口 0.5h / 异常 1",
+        priority: "high",
+      },
+      {
+        key: "A-1002::2026-05-12",
+        employeeId: "A-1002",
+        date: "2026-05-12",
+        title: "王敏 周二",
+        reason: "缺口 0.1h / 异常 0",
+        priority: "medium",
+      },
+    ]
+  );
   assert.equal(weekMatrix.members.length, 2);
   assert.deepEqual(
     weekMatrix.members.map((item) => item.employeeId),

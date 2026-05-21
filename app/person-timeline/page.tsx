@@ -175,20 +175,41 @@ function GroupWeekSection({
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        {team.groups.map((group) => (
-          <WeekCard
-            key={group.id}
-            title={`小组：${group.supplier}`}
-            description={`成员 ${group.members.length} 人`}
-            days={group.days}
-            hrefForDay={(day) =>
-              `/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(group.id)}&returnDate=${day.date}`
-            }
-          />
-        ))}
+      <CardContent className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="grid gap-4">
+          {team.groups.map((group) => (
+            <WeekCard
+              key={group.id}
+              title={`小组：${group.supplier}`}
+              description={`成员 ${group.members.length} 人`}
+              days={group.days}
+              hrefForDay={(day) =>
+                `/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(group.id)}&returnDate=${day.date}`
+              }
+            />
+          ))}
+        </div>
+        <GroupRiskSummaryPanel team={team} />
       </CardContent>
     </Card>
+  )
+}
+
+function GroupRiskSummaryPanel({ team }: { team: FulfillmentTeamWeek }) {
+  return (
+    <aside className="grid content-start gap-3 rounded-lg border p-3">
+      <div>
+        <div className="text-sm font-medium">小组风险摘要</div>
+        <div className="text-xs text-muted-foreground">按缺口、异常和成员风险排序</div>
+      </div>
+      <SummaryMetric label="最高风险小组" value={team.riskSummary.highestRiskGroup || "无"} />
+      <SummaryMetric label="最高风险日期" value={team.riskSummary.highestRiskDate || "无"} />
+      <SummaryMetric label="最高风险成员" value={team.riskSummary.highestRiskMember || "无"} />
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="缺口人数" value={`${team.riskSummary.gapPeople}`} />
+        <SummaryMetric label="异常人数" value={`${team.riskSummary.anomalyPeople}`} />
+      </div>
+    </aside>
   )
 }
 
@@ -228,6 +249,34 @@ function GroupMemberWeekMatrixSection({
           <div>最高缺口 {matrix.riskSummary.highestGapMember || "无"}</div>
           <div>最高异常 {matrix.riskSummary.highestAnomalyMember || "无"}</div>
           <div>最高缺口日 {matrix.riskSummary.highestGapDate || "无"}</div>
+        </div>
+        <div className="grid gap-2 rounded-lg border p-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div className="text-sm font-medium">本周待看清单</div>
+              <div className="text-xs text-muted-foreground">按小组成员缺口和异常优先查看</div>
+            </div>
+            <Badge variant="outline">{matrix.watchlist.length} 项</Badge>
+          </div>
+          <div className="grid gap-2 md:grid-cols-3">
+            {matrix.watchlist.map((item) => (
+              <Link
+                key={item.key}
+                href={`/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(
+                  matrix.group.id
+                )}&date=${item.date}`}
+                className="grid gap-1 rounded-md border p-2 text-xs transition-colors hover:bg-muted"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium">{item.title}</span>
+                  <Badge variant={item.priority === "high" ? "destructive" : "outline"}>
+                    {priorityLabel[item.priority]}
+                  </Badge>
+                </div>
+                <span className="text-muted-foreground">{item.reason}</span>
+              </Link>
+            ))}
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <FocusLink matrix={matrix} focus="all" currentFocus={focus} label="全部" />
@@ -579,6 +628,20 @@ function MatrixExceptionPanel({
             <div>影响时长：{selected.impactHours.toFixed(1)}h</div>
             <div>证据：{selected.evidence}</div>
             <div>建议动作：{selected.supervisorAction}</div>
+          </div>
+          <div className="grid gap-2">
+            <div className="text-sm font-medium">三轨证据</div>
+            {selected.evidenceCards.map((card) => (
+              <div key={card.eventId} className="rounded-md border p-2 text-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium">{trackLabel[card.track]}</span>
+                  <span className="text-muted-foreground">{card.eventId}</span>
+                </div>
+                <div className="mt-1 text-muted-foreground">
+                  {card.label} {card.start}-{card.end}
+                </div>
+              </div>
+            ))}
           </div>
           <Button asChild size="sm" variant="outline">
             <Link href={detailHref}>查看个人详情</Link>

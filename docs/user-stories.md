@@ -39,9 +39,9 @@ stories:
   - {id: US260, requirement_ids: [R248], task_ids: [F199], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览指标能下钻到履约日历、异常中心和数据质量，以便从汇总进入业务处理链路。", task_type: "frontend", priority: "P1", status: "done"}
   - {id: US261, requirement_ids: [R249], task_ids: [F200], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览展示今日和本周履约风险摘要，以便快速判断当前风险。", task_type: "frontend", priority: "P1", status: "done"}
   - {id: US262, requirement_ids: [R250], task_ids: [Q029], module: "质量与交付", role: "QA", story: "作为 QA，我希望业务界面收口批次完成后验证页面、导航和文案都只保留业务语言。", task_type: "qa", priority: "P1", status: "done"}
-  - {id: US263, requirement_ids: [R251], task_ids: [F201], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望小组周视图展示风险摘要侧栏，以便判断哪组、哪天、哪人风险最高。", task_type: "frontend", priority: "P0", status: "planned"}
-  - {id: US264, requirement_ids: [R252], task_ids: [F202], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望小组成员周矩阵展示本周待看清单，以便按缺口和异常连续处理。", task_type: "frontend", priority: "P0", status: "planned"}
-  - {id: US265, requirement_ids: [R253], task_ids: [F203], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望异常队列展示三轨证据卡，以便直接看到命中的排班、登录、状态事件。", task_type: "frontend", priority: "P0", status: "planned"}
+  - {id: US263, requirement_ids: [R251], task_ids: [F201], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望小组周视图展示风险摘要侧栏，以便判断哪组、哪天、哪人风险最高。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US264, requirement_ids: [R252], task_ids: [F202], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望小组成员周矩阵展示本周待看清单，以便按缺口和异常连续处理。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US265, requirement_ids: [R253], task_ids: [F203], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望异常队列展示三轨证据卡，以便直接看到命中的排班、登录、状态事件。", task_type: "frontend", priority: "P0", status: "done"}
   - {id: US266, requirement_ids: [R254], task_ids: [F204], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望异常队列展示排序依据，以便理解为什么当前异常优先处理。", task_type: "frontend", priority: "P1", status: "planned"}
   - {id: US267, requirement_ids: [R255], task_ids: [F205], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望个人单日详情保留异常队列返回上下文，以便看完个人证据后回到原队列位置。", task_type: "frontend", priority: "P1", status: "planned"}
   - {id: US268, requirement_ids: [R256], task_ids: [Q030], module: "质量与交付", role: "QA", story: "作为 QA，我希望履约日历主管处理链路批次完成后验证下钻、队列、定位和业务文案。", task_type: "qa", priority: "P1", status: "planned"}
