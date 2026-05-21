@@ -52,9 +52,46 @@ export type DemandPlanRow = {
   site_name: string
   interval_start: string
   interval_end: string
+  skill_group: string
+  skill_level: string
   forecast_agents: number
+  forecast_version: string
   source: string
   status: "imported" | "mapped"
+}
+
+export type DemandSupplyAlignmentStatus =
+  | "缺口"
+  | "超排"
+  | "平衡"
+  | "技能不匹配"
+
+export type DemandSupplyAlignmentRow = {
+  demandId: string
+  planId: string
+  planDate: string
+  projectName: string
+  siteName: string
+  intervalStart: string
+  intervalEnd: string
+  skillGroup: string
+  skillLevel: string
+  forecastAgents: number
+  scheduledAgents: number
+  shortageAgents: number
+  overstaffedAgents: number
+  alignmentStatus: DemandSupplyAlignmentStatus
+  mismatchReason: string
+  forecastVersion: string
+  scheduleVersion: string
+  personnelDetailHref: string
+}
+
+export type DemandPlanDimensionSummary = {
+  requiredDimensions: string[]
+  siteCount: number
+  skillGroups: string[]
+  skillLevels: string[]
 }
 
 export type ScheduleRiskLevel = "high" | "medium" | "low"
@@ -409,6 +446,88 @@ export function scheduleRiskLevelLabel(level: ScheduleRiskLevel) {
   return labels[level]
 }
 
+export function buildDemandSupplyAlignment(
+  rows = flattenFallbackDemandPlans()
+): DemandSupplyAlignmentRow[] {
+  return rows.flatMap((row) => {
+    const plan = fallbackPlans.find(
+      (item) =>
+        item.summary.plan_date === row.plan_date &&
+        item.summary.project_name === row.project_name &&
+        item.summary.site_name === row.site_name
+    )
+    const intervalItem = plan?.intervals.find(
+      (item) =>
+        item.interval_start === row.interval_start &&
+        item.interval_end === row.interval_end
+    )
+
+    if (!plan || !intervalItem) {
+      return []
+    }
+
+    const hasMatchingSkill = hasMatchingScheduledSkill(
+      plan.summary.id,
+      row.interval_start,
+      row.interval_end,
+      row.skill_group,
+      row.skill_level
+    )
+    const shortageAgents = Math.max(row.forecast_agents - intervalItem.scheduled_agents, 0)
+    const overstaffedAgents = Math.max(intervalItem.scheduled_agents - row.forecast_agents, 0)
+    const hasSkillMismatch = !hasMatchingSkill
+    const alignmentStatus: DemandSupplyAlignmentStatus = hasSkillMismatch
+      ? "技能不匹配"
+      : shortageAgents > 0
+        ? "缺口"
+        : overstaffedAgents > 0
+          ? "超排"
+          : "平衡"
+
+    return [
+      {
+        demandId: row.demand_id,
+        planId: plan.summary.id,
+        planDate: row.plan_date,
+        projectName: row.project_name,
+        siteName: row.site_name,
+        intervalStart: row.interval_start,
+        intervalEnd: row.interval_end,
+        skillGroup: row.skill_group,
+        skillLevel: row.skill_level,
+        forecastAgents: row.forecast_agents,
+        scheduledAgents: intervalItem.scheduled_agents,
+        shortageAgents,
+        overstaffedAgents,
+        alignmentStatus,
+        mismatchReason: hasSkillMismatch
+          ? `当前时段没有匹配 ${row.skill_group} / ${row.skill_level} 的已排人员`
+          : "",
+        forecastVersion: row.forecast_version,
+        scheduleVersion: `排班 ${plan.summary.version}`,
+        personnelDetailHref: `/schedule-plans/${plan.summary.id}#personnel-schedule-details`,
+      },
+    ]
+  })
+}
+
+export function summarizeDemandPlanDimensions(
+  rows: DemandSupplyAlignmentRow[]
+): DemandPlanDimensionSummary {
+  return {
+    requiredDimensions: [
+      "site_name",
+      "project_name",
+      "interval",
+      "skill_group",
+      "skill_level",
+    ],
+    siteCount: new Set(rows.map((row) => row.siteName)).size,
+    skillGroups: Array.from(new Set(rows.map((row) => row.skillGroup))).sort(),
+    skillLevels: Array.from(new Set(rows.map((row) => row.skillLevel))).sort(),
+  }
+}
+
 const fallbackScheduleRisks: ScheduleRiskRow[] = [
   {
     risk_id: "risk-plan-20260511-suzhou-bosch-v1-10:00",
@@ -537,17 +656,70 @@ function filterFallbackShiftDetails(
 
 function flattenFallbackDemandPlans(): DemandPlanRow[] {
   return fallbackPlans.flatMap((plan) =>
-    plan.intervals.map((intervalItem) => ({
-      demand_id: `demand-${plan.summary.plan_date}-${plan.summary.site_name}-${intervalItem.interval_start}`,
-      plan_date: plan.summary.plan_date,
-      project_name: plan.summary.project_name,
-      site_name: plan.summary.site_name,
-      interval_start: intervalItem.interval_start,
-      interval_end: intervalItem.interval_end,
-      forecast_agents: intervalItem.forecast_agents,
-      source: "本地预测需求",
-      status: "mapped" as const,
-    }))
+    plan.intervals.map((intervalItem) => {
+      const skill = demandSkillForInterval(intervalItem.interval_start)
+
+      return {
+        demand_id: `demand-${plan.summary.plan_date}-${plan.summary.site_name}-${intervalItem.interval_start}`,
+        plan_date: plan.summary.plan_date,
+        project_name: plan.summary.project_name,
+        site_name: plan.summary.site_name,
+        interval_start: intervalItem.interval_start,
+        interval_end: intervalItem.interval_end,
+        skill_group: skill.group,
+        skill_level: skill.level,
+        forecast_agents: intervalItem.forecast_agents,
+        forecast_version: `预测 ${plan.summary.version}`,
+        source: "本地预测需求",
+        status: "mapped" as const,
+      }
+    })
+  )
+}
+
+function demandSkillForInterval(start: string) {
+  if (start === "11:30") {
+    return { group: "工单", level: "L2" }
+  }
+
+  if (start === "12:30") {
+    return { group: "热线", level: "L1" }
+  }
+
+  return { group: "热线", level: "L2" }
+}
+
+const fallbackScheduledSkillCoverage = [
+  skillCoverage("plan-20260511-shanghai-bosch-v1", "09:00", "18:00", "热线", "L2"),
+  skillCoverage("plan-20260511-shanghai-bosch-v1", "09:30", "15:30", "热线", "L1"),
+  skillCoverage("plan-20260511-shanghai-bosch-v1", "13:00", "18:00", "工单", "L1"),
+  skillCoverage("plan-20260511-suzhou-bosch-v1", "12:00", "20:00", "热线", "L2"),
+]
+
+function skillCoverage(
+  planId: string,
+  start: string,
+  end: string,
+  skillGroup: string,
+  skillLevel: string
+) {
+  return { planId, start, end, skillGroup, skillLevel }
+}
+
+function hasMatchingScheduledSkill(
+  planId: string,
+  start: string,
+  end: string,
+  skillGroup: string,
+  skillLevel: string
+) {
+  return fallbackScheduledSkillCoverage.some(
+    (item) =>
+      item.planId === planId &&
+      item.skillGroup === skillGroup &&
+      item.skillLevel === skillLevel &&
+      item.start < end &&
+      item.end > start
   )
 }
 
@@ -565,6 +737,9 @@ function filterFallbackDemandPlans(rows: DemandPlanRow[], query: string) {
       row.site_name,
       row.interval_start,
       row.interval_end,
+      row.skill_group,
+      row.skill_level,
+      row.forecast_version,
       row.source,
       row.status,
     ]

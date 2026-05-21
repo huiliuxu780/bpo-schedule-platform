@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F211-F215 Demand Supply Alignment
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `46def95`
+- remote_status: `continued on existing branch; branch already had three local commits ahead of origin when this batch started`
+- scope: frontend local business function and QA closeout: add demand forecast dimensions, forecast-vs-schedule shortage/overstaff comparison, unmatched skill warnings, forecast/schedule version explanation, and schedule personnel detail drilldown.
+- allowed_files_check: `app/demand-plans/**`, `app/schedule-plans/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing demand plan page, local schedule-plan model/tests, current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red `demand-supply-alignment` tests first caught missing alignment helper; target demand tests, product UI copy/navigation tests, lint, typecheck, and browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F206-F208 Schedule Personnel Trace
 
 - branch_name: `codex/f178-exception-explanation-card`

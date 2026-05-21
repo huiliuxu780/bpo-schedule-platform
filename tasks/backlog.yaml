@@ -256,7 +256,7 @@ tasks:
   - id: F211
     title: "需求预测多维展示"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/demand-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -269,7 +269,7 @@ tasks:
   - id: F212
     title: "预测排班缺口超排"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/demand-plans/**", "app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -282,7 +282,7 @@ tasks:
   - id: F213
     title: "预测技能组不匹配"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/demand-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -295,7 +295,7 @@ tasks:
   - id: F214
     title: "供需对比下钻人员明细"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/demand-plans/**", "app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -308,7 +308,7 @@ tasks:
   - id: F215
     title: "预测排班版本对齐"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/demand-plans/**", "app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -321,7 +321,7 @@ tasks:
   - id: Q032
     title: "预测排班对齐 QA"
     priority: P1
-    status: planned
+    status: done
     required_workflow: qa
     allowed_files: ["docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]

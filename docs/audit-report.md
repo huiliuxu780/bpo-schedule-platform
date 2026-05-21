@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-21 - Demand supply alignment
+
+#### 结论
+
+- `F211-F215/Q032/US275-US280` 已完成需求预测多维展示与预测排班对齐 QA。
+- 需求计划页现在按职场、项目、0.5h 时段、技能组和等级展示预测需求。
+- 预测排班对齐区展示缺口、超排、技能不匹配、预测版本、排班版本和排班人员明细下钻。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据和只读对齐口径，不代表真实预测导入、生产调剂、自动排班或处理提交已经实现。
+- 技能不匹配用于定位供给结构问题，不代表最终生产技能规则、等级规则、结算规则或责任判定。
+
+#### 验证
+
+- 红灯验证：新增 `demand-supply-alignment` 目标测试后，能抓到缺少 `buildDemandSupplyAlignment` helper 的问题。
+- `node --test scripts/tests/demand-supply-alignment.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，9 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- `rg` 扫描 `app` 与 `components`：未发现数据接入状态、PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、占位、人员时间轴、坐席状态轨迹、B005 需求或行操作。
+- Browser smoke：`/demand-plans` 显示需求计划、预测维度、职场/项目/0.5h 时段/技能组/等级、热线、工单、预测排班对齐、缺口、超排、技能不匹配、预测 v1、排班 v1 和查看排班人员明细；下钻链接指向 `/schedule-plans/plan-20260511-shanghai-bosch-v1#personnel-schedule-details`；禁用词均为 0 命中。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Schedule personnel drilldown and gap QA
 
 #### 结论

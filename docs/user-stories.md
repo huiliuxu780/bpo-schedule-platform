@@ -51,12 +51,12 @@ stories:
   - {id: US272, requirement_ids: [R260], task_ids: [F209], module: "排班计划", role: "排班运营", story: "作为排班运营，我希望人员排班明细能跳到员工当天履约时间轴，以便继续查看登录和状态。", task_type: "frontend", priority: "P1", status: "done"}
   - {id: US273, requirement_ids: [R261], task_ids: [F210], module: "排班计划", role: "排班运营", story: "作为排班运营，我希望排班缺口展示涉及的具体人员和班次，以便判断补班方向。", task_type: "frontend", priority: "P1", status: "done"}
   - {id: US274, requirement_ids: [R262], task_ids: [Q031], module: "质量与交付", role: "QA", story: "作为 QA，我希望人员级排班与 0.5h 汇总追溯批次完成后验证明细、汇总和下钻链路。", task_type: "qa", priority: "P1", status: "done"}
-  - {id: US275, requirement_ids: [R263], task_ids: [F211], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望需求预测按职场、项目、时段、技能组和等级展示，以便判断需求结构。", task_type: "frontend", priority: "P0", status: "planned"}
-  - {id: US276, requirement_ids: [R264], task_ids: [F212], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测 vs 排班对比展示缺口和超排，以便优先复核供需异常。", task_type: "frontend", priority: "P0", status: "planned"}
-  - {id: US277, requirement_ids: [R265], task_ids: [F213], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测 vs 排班对比展示无匹配技能组异常，以便定位技能供给问题。", task_type: "frontend", priority: "P1", status: "planned"}
-  - {id: US278, requirement_ids: [R266], task_ids: [F214], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望供需对比能下钻到排班人员明细，以便从缺口追到具体人员。", task_type: "frontend", priority: "P1", status: "planned"}
-  - {id: US279, requirement_ids: [R267], task_ids: [F215], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测版本和排班版本在对齐视图中展示，以便知道对比依据。", task_type: "frontend", priority: "P1", status: "planned"}
-  - {id: US280, requirement_ids: [R268], task_ids: [Q032], module: "质量与交付", role: "QA", story: "作为 QA，我希望预测排班对齐批次完成后验证供需指标、版本说明和下钻链路。", task_type: "qa", priority: "P1", status: "planned"}
+  - {id: US275, requirement_ids: [R263], task_ids: [F211], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望需求预测按职场、项目、时段、技能组和等级展示，以便判断需求结构。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US276, requirement_ids: [R264], task_ids: [F212], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测 vs 排班对比展示缺口和超排，以便优先复核供需异常。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US277, requirement_ids: [R265], task_ids: [F213], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测 vs 排班对比展示无匹配技能组异常，以便定位技能供给问题。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US278, requirement_ids: [R266], task_ids: [F214], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望供需对比能下钻到排班人员明细，以便从缺口追到具体人员。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US279, requirement_ids: [R267], task_ids: [F215], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测版本和排班版本在对齐视图中展示，以便知道对比依据。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US280, requirement_ids: [R268], task_ids: [Q032], module: "质量与交付", role: "QA", story: "作为 QA，我希望预测排班对齐批次完成后验证供需指标、版本说明和下钻链路。", task_type: "qa", priority: "P1", status: "done"}
   - {id: US281, requirement_ids: [R269], task_ids: [F216], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望导入批次详情能跳转到相关数据质量问题，以便追溯失败原因。", task_type: "frontend", priority: "P0", status: "planned"}
   - {id: US282, requirement_ids: [R270], task_ids: [F217], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望数据质量详情展示来源模板、字段、原值、错误码和影响对象，以便判断修复优先级。", task_type: "frontend", priority: "P0", status: "planned"}
   - {id: US283, requirement_ids: [R271], task_ids: [F218], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望数据质量问题按业务原因分组，以便先处理影响核心对比的问题。", task_type: "frontend", priority: "P0", status: "planned"}
