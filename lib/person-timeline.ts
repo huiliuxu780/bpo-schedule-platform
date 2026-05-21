@@ -219,6 +219,14 @@ export type FulfillmentMatrixExceptionQueueItem = {
     ownerRole: string
     nextReviewPoint: string
   }
+  resolutionDraft: {
+    suggestedConclusion: string
+    requiredEvidence: string[]
+    communicationTarget: string
+    ownerRole: string
+    nextReviewPoint: string
+    riskIfOpen: string
+  }
   handoffSummary: {
     recipient: string
     summary: string
@@ -923,6 +931,7 @@ function buildFulfillmentMatrixExceptionQueue(
           evidenceSummary: summarizeExceptionEvidence(explanation, evidenceCards),
           handlingRecords: getExceptionHandlingRecords(explanation),
           handlingOutcome: buildExceptionHandlingOutcome(member, explanation, evidenceCards),
+          resolutionDraft: buildExceptionResolutionDraft(member, explanation),
           handoffSummary: buildExceptionHandoffSummary(member, explanation),
           dataCheckReadiness: buildExceptionDataCheckReadiness(explanation, evidenceCards),
           dataQualityRepairPrep: buildDataQualityRepairPrep(explanation),
@@ -1102,6 +1111,42 @@ function buildExceptionHandoffSummary(
     )}h。`,
     openQuestions: ["培训安排是否已登记", "当班在线要求是否允许该状态"],
     nextTouchpoint: "状态轨道复核记录",
+  }
+}
+
+function buildExceptionResolutionDraft(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation
+) {
+  if (explanation.type === "登录缺口") {
+    return {
+      suggestedConclusion: `待确认到岗：${member.employeeName} ${explanation.start}-${explanation.end} 登录缺口，需补到岗说明。`,
+      requiredEvidence: ["员工到岗说明", "迟到或漏登原因", "CORN 原始登录日志截图"],
+      communicationTarget: `${member.employeeName} / 现场主管`,
+      ownerRole: "现场主管",
+      nextReviewPoint: "2026-05-11 10:00",
+      riskIfOpen: "缺少到岗说明会影响当日履约缺口判断。",
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      suggestedConclusion: `待确认离岗：${member.employeeName} ${explanation.start}-${explanation.end} 登录不足，需补离岗说明。`,
+      requiredEvidence: ["员工离岗说明", "早退或漏登原因", "CORN 原始登录日志截图"],
+      communicationTarget: `${member.employeeName} / 现场主管`,
+      ownerRole: "现场主管",
+      nextReviewPoint: "2026-05-11 18:30",
+      riskIfOpen: "缺少离岗说明会影响当日履约缺口判断。",
+    }
+  }
+
+  return {
+    suggestedConclusion: `待确认状态：${member.employeeName} ${explanation.start}-${explanation.end} 状态为培训，需补培训安排说明。`,
+    requiredEvidence: ["培训安排说明", "在线要求确认"],
+    communicationTarget: `${member.employeeName} / 现场主管`,
+    ownerRole: "现场主管",
+    nextReviewPoint: "2026-05-11 15:00",
+    riskIfOpen: "缺少培训安排说明会影响状态是否计入当班履约。",
   }
 }
 

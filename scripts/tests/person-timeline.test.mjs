@@ -312,6 +312,14 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     ownerRole: "现场主管",
     nextReviewPoint: "确认王敏实际到岗时间和迟到原因。",
   });
+  assert.deepEqual(lateLogin.resolutionDraft, {
+    suggestedConclusion: "待确认到岗：王敏 09:00-09:21 登录缺口，需补到岗说明。",
+    requiredEvidence: ["员工到岗说明", "迟到或漏登原因", "CORN 原始登录日志截图"],
+    communicationTarget: "王敏 / 现场主管",
+    ownerRole: "现场主管",
+    nextReviewPoint: "2026-05-11 10:00",
+    riskIfOpen: "缺少到岗说明会影响当日履约缺口判断。",
+  });
   assert.deepEqual(lateLogin.handoffSummary, {
     recipient: "现场主管",
     summary: "王敏 09:00-09:21 登录缺口，影响 0.35h。",
@@ -388,6 +396,14 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     reason: "状态轨道为培训，覆盖 13:00-18:00。",
     ownerRole: "现场主管",
     nextReviewPoint: "确认培训安排是否符合当班在线要求。",
+  });
+  assert.deepEqual(statusMismatch.resolutionDraft, {
+    suggestedConclusion: "待确认状态：刘晨 13:00-18:00 状态为培训，需补培训安排说明。",
+    requiredEvidence: ["培训安排说明", "在线要求确认"],
+    communicationTarget: "刘晨 / 现场主管",
+    ownerRole: "现场主管",
+    nextReviewPoint: "2026-05-11 15:00",
+    riskIfOpen: "缺少培训安排说明会影响状态是否计入当班履约。",
   });
   assert.deepEqual(statusMismatch.dataCheckReadiness.sourceRecords, [
     "SCH-1001-2",

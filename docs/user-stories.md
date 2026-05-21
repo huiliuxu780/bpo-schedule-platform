@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US326-US329 - 主管异常处理结论建议
+
+```yaml
+stories:
+  - id: US326
+    requirement_ids: [R314]
+    task_ids: [F250]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组成员单日矩阵异常侧栏展示处理结论建议，以便根据证据快速判断下一步跟进。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US327
+    requirement_ids: [R315]
+    task_ids: [F251]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列模型给出建议结论、需核材料、沟通对象、负责角色和下一复核点，以便统一现场处理口径。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US328
+    requirement_ids: [R316]
+    task_ids: [F252]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望处理结论建议只作为业务查看信息，以便不误导为已经具备提交、审批或持久化能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US329
+    requirement_ids: [R317]
+    task_ids: [Q043]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管异常处理结论建议批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵异常侧栏展示处理结论建议。"
+  - "异常队列模型返回建议结论、需核材料、沟通对象、负责角色、下一复核点和未闭环风险。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US322-US325 - 个人三轨排班来源反查
 
 ```yaml

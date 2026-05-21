@@ -670,6 +670,19 @@ function MatrixExceptionPanel({
             </div>
           </div>
           <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">处理结论建议</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div className="font-medium text-foreground">
+                {selected.resolutionDraft.suggestedConclusion}
+              </div>
+              <div>需核材料：{selected.resolutionDraft.requiredEvidence.join(" / ")}</div>
+              <div>沟通对象：{selected.resolutionDraft.communicationTarget}</div>
+              <div>负责角色：{selected.resolutionDraft.ownerRole}</div>
+              <div>下一复核：{selected.resolutionDraft.nextReviewPoint}</div>
+              <div>{selected.resolutionDraft.riskIfOpen}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
             <div className="text-sm font-medium">交接摘要</div>
             <div className="grid gap-1 text-xs text-muted-foreground">
               <div>交接对象：{selected.handoffSummary.recipient}</div>

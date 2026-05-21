@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R314-R317 - 主管异常处理结论建议
+
+```yaml
+requirements:
+  - id: R314
+    module: "履约日历"
+    description: "小组成员单日矩阵异常侧栏需要展示处理结论建议，让主管看到建议结论、需核材料和风险提示。"
+  - id: R315
+    module: "履约日历"
+    description: "异常队列模型需要为每个异常生成处理结论建议字段，包含建议结论、需核材料、沟通对象、负责角色、下一复核点和未闭环风险。"
+  - id: R316
+    module: "履约日历"
+    description: "处理结论建议需要保留业务查看口径，不提供提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R317
+    module: "质量与交付"
+    description: "主管异常处理结论建议完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued business function development on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R310-R313 - 个人三轨排班来源反查
 
 ```yaml

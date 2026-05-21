@@ -2208,6 +2208,26 @@
 - Browser smoke：打开 `/person-timeline/A-1003?date=2026-05-11&team=...&group=...&returnDate=2026-05-11`，页面显示“排班草稿来源”“plan-20260511-suzhou-bosch-v1”“班次 晚班”“窗口 12:00-20:00”“明细 PSD-1003-20260511”“12:00-12:30”“汇总 10 人”“明细 1 人”“差异 9 人”，并存在计划入口和草稿入口。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Supervisor resolution draft
+
+#### 结论
+
+- `F250-F252/US326-US328` 已在小组成员单日矩阵异常侧栏增加处理结论建议。
+- 异常队列项新增 `resolutionDraft`，包含建议结论、需核材料、沟通对象、负责角色、下一复核点和未闭环风险。
+- 侧栏只展示业务建议，不提供提交、保存、审批、导出、批量或状态写入入口。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和判断辅助，不代表正式处理结论登记、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：打开 `/person-timeline?...&queue=high`，侧栏显示“处理结论建议”“待确认到岗：王敏 09:00-09:21 登录缺口，需补到岗说明。”“需核材料：员工到岗说明 / 迟到或漏登原因 / CORN 原始登录日志截图”“沟通对象：王敏 / 现场主管”“下一复核：2026-05-11 10:00”，且未出现提交、保存、审批、导出或批量入口。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
