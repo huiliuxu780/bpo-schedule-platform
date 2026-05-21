@@ -61,9 +61,9 @@ tasks:
   - id: F199
     title: "经营总览业务下钻入口"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
-    allowed_files: ["app/dashboard/**", "docs/**", "tasks/backlog.yaml"]
+    allowed_files: ["app/dashboard/**", "scripts/tests/dashboard-business-only.test.mjs", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
     acceptance: ["经营总览指标能下钻到履约日历、异常中心和数据质量。"]
     auto_run: false
@@ -74,9 +74,9 @@ tasks:
   - id: F200
     title: "经营总览履约风险摘要"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
-    allowed_files: ["app/dashboard/**", "docs/**", "tasks/backlog.yaml"]
+    allowed_files: ["app/dashboard/**", "scripts/tests/dashboard-business-only.test.mjs", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
     acceptance: ["经营总览展示今日和本周履约风险摘要。"]
     auto_run: false

@@ -5,6 +5,7 @@ import test from "node:test";
 const dashboardPage = readFileSync(new URL("../../app/dashboard/page.tsx", import.meta.url), "utf8");
 const dashboardData = readFileSync(new URL("../../app/dashboard/data.ts", import.meta.url), "utf8");
 const dashboardTable = readFileSync(new URL("../../components/data-table.tsx", import.meta.url), "utf8");
+const dashboardCards = readFileSync(new URL("../../components/section-cards.tsx", import.meta.url), "utf8");
 
 test("business dashboard does not render data access evidence panels", () => {
   assert.equal(
@@ -32,5 +33,28 @@ test("business dashboard metrics stay in fulfillment and risk language", () => {
   for (const term of ["CORN 状态日志计算", "BPO 生效排班版本", "影响结算口径", "占位", "行操作"]) {
     assert.equal(dashboardData.includes(term), false, `经营总览数据不得暴露 ${term}`);
     assert.equal(dashboardTable.includes(term), false, `经营总览表格不得暴露 ${term}`);
+  }
+});
+
+test("business dashboard metric cards drill into real business routes", () => {
+  for (const href of [
+    "/person-timeline",
+    "/anomaly-review",
+    "/data-quality",
+  ]) {
+    assert.equal(dashboardData.includes(`href: "${href}"`), true, `指标数据必须配置 ${href}`);
+    assert.equal(dashboardCards.includes("Link"), true, "指标卡必须渲染为可下钻链接");
+  }
+
+  assert.equal(
+    dashboardData.includes('href: "/dashboard"'),
+    false,
+    "经营总览指标不得回跳经营总览自身作为伪下钻",
+  );
+});
+
+test("business dashboard exposes fulfillment risk summary", () => {
+  for (const term of ["今日履约风险", "本周履约风险", "高风险小组", "待看异常"]) {
+    assert.equal(dashboardPage.includes(term) || dashboardData.includes(term), true, `经营总览必须展示 ${term}`);
   }
 });

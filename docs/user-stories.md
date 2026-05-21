@@ -36,8 +36,8 @@ stories:
   - {id: US257, requirement_ids: [R245], task_ids: [F196], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览只展示履约、供需、异常和质量风险业务指标，以便首页不混入内部执行信息。", task_type: "frontend", priority: "P0", status: "done"}
   - {id: US258, requirement_ids: [R246], task_ids: [F197], module: "业务界面收口", role: "业务用户", story: "作为业务用户，我希望侧边栏只保留真实业务入口，以便不看到内部执行、验收、准备或 Gate 类入口。", task_type: "frontend", priority: "P0", status: "done"}
   - {id: US259, requirement_ids: [R247], task_ids: [F198], module: "业务界面收口", role: "PM", story: "作为 PM，我希望产品 UI 全量审计内部过程词，以便避免再次把项目管理内容做成业务页面。", task_type: "qa", priority: "P0", status: "done"}
-  - {id: US260, requirement_ids: [R248], task_ids: [F199], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览指标能下钻到履约日历、异常中心和数据质量，以便从汇总进入业务处理链路。", task_type: "frontend", priority: "P1", status: "planned"}
-  - {id: US261, requirement_ids: [R249], task_ids: [F200], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览展示今日和本周履约风险摘要，以便快速判断当前风险。", task_type: "frontend", priority: "P1", status: "planned"}
+  - {id: US260, requirement_ids: [R248], task_ids: [F199], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览指标能下钻到履约日历、异常中心和数据质量，以便从汇总进入业务处理链路。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US261, requirement_ids: [R249], task_ids: [F200], module: "业务界面收口", role: "运营负责人", story: "作为运营负责人，我希望经营总览展示今日和本周履约风险摘要，以便快速判断当前风险。", task_type: "frontend", priority: "P1", status: "done"}
   - {id: US262, requirement_ids: [R250], task_ids: [Q029], module: "质量与交付", role: "QA", story: "作为 QA，我希望业务界面收口批次完成后验证页面、导航和文案都只保留业务语言。", task_type: "qa", priority: "P1", status: "planned"}
   - {id: US263, requirement_ids: [R251], task_ids: [F201], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望小组周视图展示风险摘要侧栏，以便判断哪组、哪天、哪人风险最高。", task_type: "frontend", priority: "P0", status: "planned"}
   - {id: US264, requirement_ids: [R252], task_ids: [F202], module: "履约日历", role: "现场主管", story: "作为现场主管，我希望小组成员周矩阵展示本周待看清单，以便按缺口和异常连续处理。", task_type: "frontend", priority: "P0", status: "planned"}

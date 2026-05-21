@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F199-F200 Dashboard Business Drilldown And Risk Summary
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `621eb54`
+- remote_status: `continued on existing business UI cleanup branch because this batch extends the cleaned dashboard into real business drilldown`
+- scope: frontend local business function: add dashboard metric drilldown links to fulfillment calendar, anomaly review, and data quality; add a dashboard fulfillment risk summary for today and this week; add dashboard regression tests for drilldown and risk summary.
+- allowed_files_check: `app/dashboard/**`, `components/section-cards.tsx`, `scripts/tests/dashboard-business-only.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing dashboard data/page/card rendering, dashboard business-only tests, current state closeout, legacy story/task status, and traceability docs only; no new route, no new page, no sidebar placeholder, no backend, no package or lockfile change.
+- check_result: red tests first caught missing metric drilldown and risk summary; target tests passed after implementation; in-app browser smoke for `/dashboard` passed; `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed before traceability closeout and will be rerun after this log update.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F196-F198 Business UI Cleanup
 
 - branch_name: `codex/f178-exception-explanation-card`

@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-21 - Dashboard business drilldown and risk summary
+
+#### 结论
+
+- `F199-F200/US260-US261` 已完成经营总览业务下钻入口和履约风险摘要。
+- 指标卡现在能进入履约日历、异常复核和数据质量，不再只是静态指标或回跳经营总览自身。
+- 首页新增履约风险摘要，展示今日履约风险、本周履约风险、高风险小组和待看异常。
+- 新增 `dashboard-business-only` 回归覆盖，防止指标下钻缺失或风险摘要被删。
+- 本次没有新增页面，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据和既有路由，不代表真实数据源或生产处理流已经接入。
+- 风险摘要是主管扫描入口，不代表正式审批、处理提交、责任判定或结算口径。
+
+#### 验证
+
+- 红灯验证：新增目标测试后，`dashboard-business-only` 能抓到指标无下钻和缺少履约风险摘要。
+- `node --test scripts/tests/dashboard-business-only.test.mjs scripts/tests/product-navigation-business-only.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/person-timeline.test.mjs`：通过，21 个测试通过。
+- In-app browser smoke：打开 `/dashboard` 后显示计划覆盖率、查看履约日历、查看登录异常、查看异常复核、查看数据质量、履约风险摘要、今日履约风险、本周履约风险、高风险小组和待看异常；未出现数据接入状态、PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、占位、人员时间轴、坐席状态轨迹或行操作。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和 25 个后端 unittest。
+
 ### 2026-05-21 - Business UI cleanup
 
 #### 结论

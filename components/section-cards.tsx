@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { TrendingDown, TrendingUp } from "lucide-react"
 
 import { metricCards } from "@/app/dashboard/data"
@@ -43,7 +44,13 @@ export function SectionCards() {
               <div className="text-sm font-medium">{item.insight}</div>
             </CardContent>
             <CardFooter className="text-xs text-muted-foreground">
-              {item.note}
+              <Link
+                href={item.href}
+                className="inline-flex items-center font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                {item.action}
+              </Link>
+              <span className="ml-2">{item.note}</span>
             </CardFooter>
           </Card>
         )

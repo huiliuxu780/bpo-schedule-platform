@@ -5,6 +5,8 @@ export const metricCards = [
     change: "+1.6%",
     insight: "排班计划基本覆盖本周需求",
     note: "按预测需求与已排班人数对齐",
+    href: "/person-timeline",
+    action: "查看履约日历",
   },
   {
     title: "登录履约率",
@@ -12,6 +14,8 @@ export const metricCards = [
     change: "-2.1%",
     insight: "午间登录履约仍有波动",
     note: "按排班人数与实际登录人数对齐",
+    href: "/person-timeline?focus=anomaly",
+    action: "查看登录异常",
   },
   {
     title: "供需缺口",
@@ -19,6 +23,8 @@ export const metricCards = [
     change: "-5.4%",
     insight: "缺口集中在午后高峰时段",
     note: "按预测需求与时段排班差异汇总",
+    href: "/anomaly-review",
+    action: "查看异常复核",
   },
   {
     title: "质量风险",
@@ -26,6 +32,35 @@ export const metricCards = [
     change: "+3 项",
     insight: "主数据和日志缺失需要优先处理",
     note: "按影响履约判断的数据问题汇总",
+    href: "/data-quality",
+    action: "查看数据质量",
+  },
+]
+
+export const fulfillmentRiskSummary = [
+  {
+    title: "今日履约风险",
+    value: "高",
+    detail: "午间 12:00-14:00 登录履约率低于本周均值",
+    href: "/person-timeline?focus=anomaly",
+  },
+  {
+    title: "本周履约风险",
+    value: "中",
+    detail: "周五午后仍有连续供需缺口",
+    href: "/anomaly-review",
+  },
+  {
+    title: "高风险小组",
+    value: "华东一组",
+    detail: "本周 3 天出现登录缺口和状态不一致",
+    href: "/person-timeline?team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D",
+  },
+  {
+    title: "待看异常",
+    value: "12 项",
+    detail: "优先核对高影响时段和高风险员工",
+    href: "/anomaly-review",
   },
 ]
 
