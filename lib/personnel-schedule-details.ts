@@ -22,6 +22,7 @@ export type PersonnelScheduleDetailRow = {
   scheduledHours: number
   expandedIntervals: PersonnelScheduleInterval[]
   anomalyCodes: string[]
+  anomalyLabels: string[]
 }
 
 export type PersonnelScheduleSummary = {
@@ -29,6 +30,34 @@ export type PersonnelScheduleSummary = {
   totalScheduledHours: number
   peopleWithAnomalies: number
   intervalCount: number
+}
+
+export type PersonnelScheduleFieldCoverage = {
+  requiredFields: string[]
+  completeRows: number
+  totalRows: number
+}
+
+export type PersonnelIntervalTracePerson = {
+  employeeId: string
+  employeeName: string
+  supplier: string
+  shiftType: string
+  skill: string
+  anomalyLabels: string[]
+}
+
+export type PersonnelIntervalTrace = {
+  planId: string
+  intervalStart: string
+  intervalEnd: string
+  assignedPeople: PersonnelIntervalTracePerson[]
+}
+
+const anomalyLabel: Record<string, string> = {
+  no_login: "状态不一致",
+  late_login: "登录迟到",
+  early_logout: "提前离线",
 }
 
 export const fallbackPersonnelScheduleDetails: PersonnelScheduleDetailRow[] = [
@@ -145,6 +174,38 @@ export function getPersonnelScheduleDetailsForInterval(
   )
 }
 
+export function getPersonnelScheduleFieldCoverage(
+  rows: PersonnelScheduleDetailRow[]
+): PersonnelScheduleFieldCoverage {
+  return {
+    requiredFields,
+    completeRows: rows.filter(hasRequiredBusinessFields).length,
+    totalRows: rows.length,
+  }
+}
+
+export function buildPersonnelIntervalTrace(
+  planId: string,
+  start: string,
+  end: string
+): PersonnelIntervalTrace {
+  return {
+    planId,
+    intervalStart: start,
+    intervalEnd: end,
+    assignedPeople: getPersonnelScheduleDetailsForInterval(planId, start, end).map(
+      (item) => ({
+        employeeId: item.employeeId,
+        employeeName: item.employeeName,
+        supplier: item.supplier,
+        shiftType: item.shiftType,
+        skill: `${item.skillGroup} / ${item.skillLevel}`,
+        anomalyLabels: item.anomalyLabels,
+      })
+    ),
+  }
+}
+
 export function summarizePersonnelScheduleDetails(
   rows: PersonnelScheduleDetailRow[]
 ): PersonnelScheduleSummary {
@@ -167,13 +228,38 @@ export function buildPersonTimelineHref(row: PersonnelScheduleDetailRow) {
 }
 
 function row(
-  item: Omit<PersonnelScheduleDetailRow, "expandedIntervals">
+  item: Omit<PersonnelScheduleDetailRow, "expandedIntervals" | "anomalyLabels">
 ): PersonnelScheduleDetailRow {
   return {
     ...item,
     expandedIntervals: expandHalfHourIntervals(item.startTime, item.endTime),
+    anomalyLabels: item.anomalyCodes.map((code) => anomalyLabel[code] ?? code),
   }
 }
+
+function hasRequiredBusinessFields(row: PersonnelScheduleDetailRow) {
+  return requiredFields.every((field) => {
+    const value = row[field as keyof PersonnelScheduleDetailRow]
+
+    if (Array.isArray(value)) {
+      return field === "anomalyLabels" || value.length > 0
+    }
+
+    return Boolean(value)
+  })
+}
+
+const requiredFields = [
+  "employeeId",
+  "employeeName",
+  "supplier",
+  "workplace",
+  "project",
+  "skillGroup",
+  "skillLevel",
+  "shiftType",
+  "anomalyLabels",
+]
 
 function expandHalfHourIntervals(start: string, end: string) {
   const intervals: PersonnelScheduleInterval[] = []

@@ -11,8 +11,9 @@ import {
   schedulePlanStatusLabel,
 } from "@/lib/schedule-plans"
 import {
+  buildPersonnelIntervalTrace,
+  getPersonnelScheduleFieldCoverage,
   getPersonnelScheduleDetails,
-  getPersonnelScheduleDetailsForInterval,
   summarizePersonnelScheduleDetails,
 } from "@/lib/personnel-schedule-details"
 import { Badge } from "@/components/ui/badge"
@@ -47,6 +48,14 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
   const gapIntervals = plan.intervals.filter((item) => item.gap_agents > 0)
   const personnelRows = getPersonnelScheduleDetails(plan.summary.id)
   const personnelSummary = summarizePersonnelScheduleDetails(personnelRows)
+  const fieldCoverage = getPersonnelScheduleFieldCoverage(personnelRows)
+  const intervalTraces = plan.intervals.map((intervalItem) =>
+    buildPersonnelIntervalTrace(
+      plan.summary.id,
+      intervalItem.interval_start,
+      intervalItem.interval_end
+    )
+  )
   const relatedRisks = risks.filter(
     (risk) =>
       risk.plan_id === plan.summary.id &&
@@ -162,7 +171,7 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
             <div>
               <CardTitle>0.5h 时段明细</CardTitle>
               <CardDescription>
-                只读展示预测人数、已排人数、缺口与备注
+                只读展示预测人数、已排人数、缺口与备注，下方可追溯对应人员
               </CardDescription>
             </div>
             <Badge variant="outline">{plan.summary.id}</Badge>
@@ -205,38 +214,96 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
                 description="0.5h 展开结果"
               />
             </div>
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              {plan.intervals.slice(0, 4).map((intervalItem) => {
-                const rows = getPersonnelScheduleDetailsForInterval(
-                  plan.summary.id,
-                  intervalItem.interval_start,
-                  intervalItem.interval_end
-                )
 
-                return (
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium">人员明细字段</div>
+                  <div className="text-xs text-muted-foreground">
+                    员工、供应商、职场、项目、技能、班次和异常标记
+                  </div>
+                </div>
+                <Badge variant="outline">
+                  完整 {fieldCoverage.completeRows}/{fieldCoverage.totalRows}
+                </Badge>
+              </div>
+              <div className="mt-3 grid gap-2 md:grid-cols-2">
+                {personnelRows.map((row) => (
                   <div
-                    key={`${intervalItem.interval_start}-${intervalItem.interval_end}`}
-                    className="rounded-lg border p-3"
+                    key={row.scheduleDetailId}
+                    className="rounded-md border bg-muted/20 p-3"
                   >
-                    <div className="text-xs text-muted-foreground">
-                      {intervalItem.interval_start}-{intervalItem.interval_end}
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="text-sm font-medium">
+                        {row.employeeId} {row.employeeName}
+                      </div>
+                      <Badge
+                        variant={row.anomalyLabels.length > 0 ? "destructive" : "secondary"}
+                      >
+                        {row.anomalyLabels.length > 0
+                          ? row.anomalyLabels.join("、")
+                          : "无异常"}
+                      </Badge>
                     </div>
-                    <div className="mt-2 text-sm font-medium">
-                      {rows.length} 人已排
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {rows.slice(0, 4).map((row) => (
-                        <Badge key={row.scheduleDetailId} variant="secondary">
-                          {row.employeeName}
-                        </Badge>
-                      ))}
-                      {rows.length > 4 ? (
-                        <Badge variant="outline">+{rows.length - 4}</Badge>
-                      ) : null}
+                    <div className="mt-2 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                      <span>{row.supplier} / {row.workplace}</span>
+                      <span>{row.project}</span>
+                      <span>{row.shiftType}</span>
+                      <span>{row.skillGroup} / {row.skillLevel}</span>
                     </div>
                   </div>
-                )
-              })}
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium">0.5h 时段人员追溯</div>
+                  <div className="text-xs text-muted-foreground">
+                    每个时段显示已排人员、供应商、班次、技能和异常标签
+                  </div>
+                </div>
+                <Badge variant="outline">{intervalTraces.length} 个时段</Badge>
+              </div>
+              <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                {intervalTraces.map((trace) => (
+                  <div
+                    key={`${trace.intervalStart}-${trace.intervalEnd}`}
+                    className="rounded-md border bg-muted/20 p-3"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="text-xs text-muted-foreground">
+                        {trace.intervalStart}-{trace.intervalEnd}
+                      </div>
+                      <Badge variant="secondary">
+                        {trace.assignedPeople.length} 人已排
+                      </Badge>
+                    </div>
+                    <div className="mt-2 flex flex-col gap-2">
+                      {trace.assignedPeople.length > 0 ? (
+                        trace.assignedPeople.map((person) => (
+                          <div key={person.employeeId} className="text-xs">
+                            <div className="font-medium">
+                              {person.employeeName} / {person.supplier}
+                            </div>
+                            <div className="text-muted-foreground">
+                              {person.shiftType} / {person.skill}
+                            </div>
+                            {person.anomalyLabels.length > 0 ? (
+                              <Badge variant="destructive" className="mt-1">
+                                {person.anomalyLabels.join("、")}
+                              </Badge>
+                            ) : null}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-xs text-muted-foreground">暂无已排人员</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             <PersonnelScheduleDetailTable rows={personnelRows} />
           </CardContent>

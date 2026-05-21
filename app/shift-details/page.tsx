@@ -19,6 +19,7 @@ import {
   schedulePlanStatusLabel,
   type SchedulePlanStatus,
 } from "@/lib/schedule-plans"
+import { buildPersonnelIntervalTrace } from "@/lib/personnel-schedule-details"
 
 const statusOptions: { label: string; value?: SchedulePlanStatus }[] = [
   { label: "全部" },
@@ -73,6 +74,16 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
   const totalScheduled = rows.reduce((sum, row) => sum + row.scheduled_agents, 0)
   const coverageRate =
     rows.length === 0 ? 0 : totalForecast === 0 ? 1 : totalScheduled / totalForecast
+  const intervalTraces = rows
+    .map((row) => ({
+      row,
+      trace: buildPersonnelIntervalTrace(
+        row.plan_id,
+        row.interval_start,
+        row.interval_end
+      ),
+    }))
+    .filter((item) => item.trace.assignedPeople.length > 0)
 
   return (
     <AppShell title="班次明细" searchPlaceholder="搜索班次、计划或备注">
@@ -140,12 +151,73 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
+              <CardTitle>时段人员追溯</CardTitle>
+              <CardDescription>
+                从 0.5h 班次追溯到对应人员、供应商、班次、技能和异常标签
+              </CardDescription>
+            </div>
+            <Badge variant="outline">{intervalTraces.length} 个可追溯时段</Badge>
+          </CardHeader>
+          <CardContent>
+            {intervalTraces.length > 0 ? (
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {intervalTraces.slice(0, 6).map(({ row, trace }) => (
+                  <div
+                    key={`${row.plan_id}-${row.interval_start}-${row.interval_end}`}
+                    className="rounded-lg border p-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <div className="text-sm font-medium">
+                          {row.interval_start}-{row.interval_end}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {row.site_name} / {row.project_name}
+                        </div>
+                      </div>
+                      <Badge variant="secondary">
+                        {trace.assignedPeople.length} 人已排
+                      </Badge>
+                    </div>
+                    <div className="mt-3 flex flex-col gap-2">
+                      {trace.assignedPeople.map((person) => (
+                        <div key={person.employeeId} className="rounded-md bg-muted/30 p-2 text-xs">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-medium">
+                              {person.employeeName} / {person.supplier}
+                            </span>
+                            {person.anomalyLabels.length > 0 ? (
+                              <Badge variant="destructive">
+                                {person.anomalyLabels.join("、")}
+                              </Badge>
+                            ) : null}
+                          </div>
+                          <div className="mt-1 text-muted-foreground">
+                            {person.shiftType} / {person.skill}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
+                当前筛选结果暂无可追溯人员
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-start justify-between gap-4">
+            <div>
               <CardTitle>班次明细</CardTitle>
               <CardDescription>
                 {status ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}` : query || "全部计划"}
               </CardDescription>
             </div>
-            <Badge variant="outline">B004 明细</Badge>
+            <Badge variant="outline">0.5h 时段</Badge>
           </CardHeader>
           <CardContent>
             <ShiftDetailsTable rows={rows} />

@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F206-F208 Schedule Personnel Trace
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `2ef241b`
+- remote_status: `continued on existing branch after Q030 local closeout; Q030 local commit was not pushed yet when this batch started`
+- scope: frontend local business function: show personnel-level schedule detail, required business fields, anomaly labels, and 0.5h interval-to-person trace from schedule plan and shift detail pages.
+- allowed_files_check: `app/schedule-plans/**`, `app/shift-details/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing schedule plan detail page, existing shift detail page, local personnel schedule model/tests, current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red `personnel-schedule-details` tests first caught missing interval trace helper; target personnel tests, product UI copy/navigation tests, lint, typecheck, and in-app browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q030 Fulfillment Supervisor Flow QA
 
 - branch_name: `codex/f178-exception-explanation-card`

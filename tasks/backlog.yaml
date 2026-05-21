@@ -178,7 +178,7 @@ tasks:
   - id: F206
     title: "排班计划人员级明细"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -191,7 +191,7 @@ tasks:
   - id: F207
     title: "人员排班明细字段"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -204,7 +204,7 @@ tasks:
   - id: F208
     title: "时段汇总追溯人员"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/shift-details/**", "app/schedule-plans/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]

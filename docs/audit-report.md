@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-21 - Schedule personnel trace
+
+#### 结论
+
+- `F206-F208/US269-US271` 已完成排班计划人员级明细和 0.5h 时段人员追溯。
+- 排班计划详情展示人员级排班明细、人员字段完整度、员工/供应商/职场/项目/技能/班次和异常业务标签。
+- 排班计划详情和班次明细页都能从 0.5h 时段追溯到对应人员、供应商、班次、技能和异常标签。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据，不代表生产级人员排班导入、数据库持久化或真实登录/状态日志已经接入。
+- 异常标签用于前端解释和追溯，不代表最终生产异常规则、责任判定、审批或结算口径。
+
+#### 验证
+
+- 红灯验证：新增 `personnel-schedule-details` 目标测试后，能抓到缺少 `buildPersonnelIntervalTrace` helper 的问题。
+- `node --test scripts/tests/personnel-schedule-details.test.mjs`：通过，6 个测试通过。
+- `node --test scripts/tests/product-navigation-business-only.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/person-timeline.test.mjs scripts/tests/personnel-schedule-details.test.mjs`：通过，24 个测试通过。
+- `npm run typecheck`、`npm run lint`：通过。
+- `rg` 扫描 `app` 与 `components`：未发现数据接入状态、PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、占位、人员时间轴、坐席状态轨迹、B004 明细或行操作。
+- In-app browser smoke：`/schedule-plans/plan-20260511-shanghai-bosch-v1` 显示人员级排班明细、人员明细字段、完整 4/4、刘晨、供应商 A、上海职场、博西客服、热线 / L2、早班 + 午后班、状态不一致、0.5h 时段人员追溯、09:30-10:00 和王敏；`/shift-details?query=plan-20260511-shanghai-bosch-v1` 显示时段人员追溯、09:30-10:00、刘晨、王敏、赵一、供应商 B 和 0.5h 时段；上述页面禁用词均为 0 命中。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Fulfillment supervisor flow QA
 
 #### 结论
