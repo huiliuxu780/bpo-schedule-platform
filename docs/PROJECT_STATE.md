@@ -90,6 +90,7 @@ Current invariants:
 - `F221-F225/Q034` completed a master-data relationship closure slice: employee bindings show supplier, workplace, project, skills, validity, status, anomaly/data-quality references, and reverse lookup links; shift types show meal/rest windows and counting policy. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F226-F228/Q035` completed a supervisor exception handling read-only closure slice: fulfillment calendar exception items show handling suggestions, three-track evidence summaries, and read-only handling records. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F229-F231/Q036` completed a supervisor exception handoff read-only closure slice: fulfillment calendar exception items show handling outcome categories, handoff summaries, and data-check readiness hints. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F232-F234/Q037` completed a data-quality repair-prep read-only slice: fulfillment calendar exception items show data-owner intervention judgment, repair preparation materials, and data-quality impact scope. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

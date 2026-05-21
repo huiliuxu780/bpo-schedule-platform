@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R290-R293 - 数据质量修复前置只读视图
+
+```yaml
+requirements:
+  - id: R290
+    module: "履约日历"
+    description: "异常队列当前项需要展示数据质量修复前置判断，说明是否需要数据管理员介入、原因和优先级。"
+  - id: R291
+    module: "履约日历"
+    description: "异常队列当前项需要展示修复准备材料，列出需要准备的记录、字段和说明材料。"
+  - id: R292
+    module: "履约日历"
+    description: "异常队列当前项需要展示影响范围摘要，说明数据问题影响个人、班次、当日矩阵或后续对比。"
+  - id: R293
+    module: "质量与交付"
+    description: "数据质量修复前置只读视图完成后需要 QA 收口，确认判断、准备材料、影响范围和业务文案可验证。"
+source: "PM requested continuing production-MVP local business closure on 2026-05-21"
+submitted_at: "2026-05-21"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示和模型测试；不实现真实修复提交、审批、权限、导出、批量、数据库、真实接口、自动排班、生产公式、结算或收费因子。"
+```
+
 ### R286-R289 - 主管异常交接只读闭环
 
 ```yaml

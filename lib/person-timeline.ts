@@ -229,6 +229,22 @@ export type FulfillmentMatrixExceptionQueueItem = {
     checkFields: string[]
     riskNote: string
   }
+  dataQualityRepairPrep: {
+    needsDataOwner: boolean
+    priority: "高" | "中" | "低"
+    reason: string
+    ownerTeam: string
+  }
+  repairMaterials: {
+    records: string[]
+    fields: string[]
+    supportingNotes: string[]
+  }
+  dataQualityImpactScope: {
+    impactedObjects: string[]
+    impactedComparisons: string[]
+    excludedScope: string
+  }
 }
 
 export type FulfillmentMatrixExceptionQueueSummary = {
@@ -890,6 +906,9 @@ function buildFulfillmentMatrixExceptionQueue(
           handlingOutcome: buildExceptionHandlingOutcome(member, explanation, evidenceCards),
           handoffSummary: buildExceptionHandoffSummary(member, explanation),
           dataCheckReadiness: buildExceptionDataCheckReadiness(explanation, evidenceCards),
+          dataQualityRepairPrep: buildDataQualityRepairPrep(explanation),
+          repairMaterials: buildRepairMaterials(explanation, evidenceCards),
+          dataQualityImpactScope: buildDataQualityImpactScope(member, explanation),
         }
       })
     )
@@ -1080,6 +1099,89 @@ function buildExceptionDataCheckReadiness(
     sourceRecords,
     checkFields: ["排班覆盖时段", "登录覆盖时段", "状态类型", "培训安排说明"],
     riskNote: "若状态记录来自人工标记，需核对状态来源和登记说明。",
+  }
+}
+
+function buildDataQualityRepairPrep(explanation: TimelineExceptionExplanation) {
+  if (explanation.type === "登录缺口") {
+    return {
+      needsDataOwner: true,
+      priority: "高" as const,
+      reason: "登录开始时间晚于排班开始时间，需先确认是否为原始登录日志延迟。",
+      ownerTeam: "数据管理员",
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      needsDataOwner: true,
+      priority: "中" as const,
+      reason: "登录结束时间早于排班结束时间，需核对原始登出日志是否准确。",
+      ownerTeam: "数据管理员",
+    }
+  }
+
+  return {
+    needsDataOwner: false,
+    priority: "中" as const,
+    reason: "状态轨道为培训，优先由现场主管确认培训安排是否登记。",
+    ownerTeam: "现场主管",
+  }
+}
+
+function buildRepairMaterials(
+  explanation: TimelineExceptionExplanation,
+  evidenceCards: FulfillmentMatrixExceptionQueueItem["evidenceCards"]
+) {
+  const records = evidenceCards.map((card) => card.eventId)
+
+  if (explanation.type === "登录缺口") {
+    return {
+      records,
+      fields: ["排班开始时间", "登录开始时间", "员工到岗说明"],
+      supportingNotes: ["员工到岗说明", "CORN 原始登录日志截图", "现场主管确认口径"],
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      records,
+      fields: ["排班结束时间", "登录结束时间", "员工离岗说明"],
+      supportingNotes: ["员工离岗说明", "CORN 原始登出日志截图", "现场主管确认口径"],
+    }
+  }
+
+  return {
+    records,
+    fields: ["排班覆盖时段", "登录覆盖时段", "状态类型", "培训安排说明"],
+    supportingNotes: ["培训安排说明", "状态来源说明", "现场主管复核结论"],
+  }
+}
+
+function buildDataQualityImpactScope(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation
+) {
+  if (explanation.type === "登录缺口") {
+    return {
+      impactedObjects: [member.employeeName, "早班", `${explanation.date} 小组矩阵`],
+      impactedComparisons: ["排班 vs 登录", "当日履约缺口"],
+      excludedScope: "不影响班次类型、供应商绑定和需求预测版本。",
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      impactedObjects: [member.employeeName, "当日班次", `${explanation.date} 小组矩阵`],
+      impactedComparisons: ["排班 vs 登录", "当日履约时长"],
+      excludedScope: "不影响班次类型、供应商绑定和需求预测版本。",
+    }
+  }
+
+  return {
+    impactedObjects: [member.employeeName, "状态轨道", `${explanation.date} 小组矩阵`],
+    impactedComparisons: ["排班 vs 状态", "当日异常人数"],
+    excludedScope: "不影响登录原始时长、班次类型和需求预测版本。",
   }
 }
 

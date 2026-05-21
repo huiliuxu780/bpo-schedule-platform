@@ -29,6 +29,54 @@
 
 ## Stories
 
+### US302-US305 - 数据质量修复前置只读视图
+
+```yaml
+stories:
+  - id: US302
+    requirement_ids: [R290]
+    task_ids: [F232]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示数据质量修复前置判断，以便知道是否需要数据管理员介入。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US303
+    requirement_ids: [R291]
+    task_ids: [F233]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示修复准备材料，以便交接前知道需要哪些记录、字段和说明。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US304
+    requirement_ids: [R292]
+    task_ids: [F234]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示影响范围摘要，以便判断这个数据问题影响个人、班次还是后续对比。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US305
+    requirement_ids: [R293]
+    task_ids: [Q037]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望数据质量修复前置只读视图完成后验证判断、准备材料、影响范围和业务文案。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常当前项展示是否需要数据管理员介入、介入原因和修复优先级。"
+  - "修复准备材料展示记录、字段和说明材料。"
+  - "影响范围摘要展示影响对象、影响链路和排除边界。"
+  - "页面不出现修复提交、审批、批量、数据库或真实写回能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US298-US301 - 主管异常交接只读闭环
 
 ```yaml

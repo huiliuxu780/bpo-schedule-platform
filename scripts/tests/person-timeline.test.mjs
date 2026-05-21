@@ -323,6 +323,22 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     checkFields: ["排班开始时间", "登录开始时间", "员工到岗说明"],
     riskNote: "若登录时间来自系统延迟，需由数据管理员核对原始日志。",
   });
+  assert.deepEqual(lateLogin.dataQualityRepairPrep, {
+    needsDataOwner: true,
+    priority: "高",
+    reason: "登录开始时间晚于排班开始时间，需先确认是否为原始登录日志延迟。",
+    ownerTeam: "数据管理员",
+  });
+  assert.deepEqual(lateLogin.repairMaterials, {
+    records: ["SCH-1002-1", "LOG-1002-1"],
+    fields: ["排班开始时间", "登录开始时间", "员工到岗说明"],
+    supportingNotes: ["员工到岗说明", "CORN 原始登录日志截图", "现场主管确认口径"],
+  });
+  assert.deepEqual(lateLogin.dataQualityImpactScope, {
+    impactedObjects: ["王敏", "早班", "2026-05-11 小组矩阵"],
+    impactedComparisons: ["排班 vs 登录", "当日履约缺口"],
+    excludedScope: "不影响班次类型、供应商绑定和需求预测版本。",
+  });
   const statusMismatch = matrix.exceptionQueue.find((item) => item.key === "A-1001::no_login");
   assert.ok(statusMismatch);
   assert.deepEqual(statusMismatch.focusEventIds, ["SCH-1001-2", "LOG-1001-1", "STA-1001-2"]);
@@ -361,6 +377,12 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     "LOG-1001-1",
     "STA-1001-2",
   ]);
+  assert.deepEqual(statusMismatch.dataQualityRepairPrep, {
+    needsDataOwner: false,
+    priority: "中",
+    reason: "状态轨道为培训，优先由现场主管确认培训安排是否登记。",
+    ownerTeam: "现场主管",
+  });
 });
 
 test("fulfillment detail links preserve queue return context", () => {

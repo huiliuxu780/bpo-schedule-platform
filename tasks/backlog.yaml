@@ -2,6 +2,58 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F232
+    title: "数据质量修复前置判断"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["当前异常展示是否需要数据管理员介入、介入原因和修复优先级。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要修复提交、审批、权限、导出、批量、数据库、真实接口、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F233
+    title: "修复准备材料"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["当前异常展示修复前需要准备的记录、字段和说明材料。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要修复提交、审批、权限、导出、批量、数据库、真实接口、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F234
+    title: "数据问题影响范围摘要"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["当前异常展示影响对象、影响链路和排除边界。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要修复提交、审批、权限、导出、批量、数据库、真实接口、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q037
+    title: "数据质量修复前置视图 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["数据管理员介入判断、修复准备材料、影响范围和业务文案验证通过。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要越界能力"]
+    commit_after_done: true
   - id: F229
     title: "异常处理结果归类"
     priority: P0

@@ -687,6 +687,31 @@ function MatrixExceptionPanel({
             </div>
           </div>
           <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">数据修复前置判断</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>数据管理员介入：{selected.dataQualityRepairPrep.needsDataOwner ? "需要" : "暂不需要"}</div>
+              <div>优先级：{selected.dataQualityRepairPrep.priority}</div>
+              <div>介入原因：{selected.dataQualityRepairPrep.reason}</div>
+              <div>负责团队：{selected.dataQualityRepairPrep.ownerTeam}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">准备材料</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>记录：{selected.repairMaterials.records.join(" / ")}</div>
+              <div>字段：{selected.repairMaterials.fields.join(" / ")}</div>
+              <div>说明：{selected.repairMaterials.supportingNotes.join(" / ")}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">影响范围</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>影响对象：{selected.dataQualityImpactScope.impactedObjects.join(" / ")}</div>
+              <div>影响对比：{selected.dataQualityImpactScope.impactedComparisons.join(" / ")}</div>
+              <div>{selected.dataQualityImpactScope.excludedScope}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
             <div className="text-sm font-medium">证据汇总</div>
             <div className="grid gap-1 text-xs text-muted-foreground">
               <div>{selected.evidenceSummary.schedule}</div>

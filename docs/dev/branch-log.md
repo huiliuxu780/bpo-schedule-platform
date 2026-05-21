@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F232-F234-Q037 Data Quality Repair Prep Readonly
+
+- branch_name: `codex/f232-data-quality-repair-prep`
+- base_main_commit: `e27f7a6`
+- remote_status: `new stacked local branch from verified supervisor handoff readout HEAD; not pushed`
+- scope: frontend local business function and QA closeout: add data-owner intervention judgment, repair preparation materials, data-quality impact scope, and business-language verification to the fulfillment calendar exception queue.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar page/model/tests plus current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red `person-timeline` target test first caught missing data-quality repair-prep fields; target tests, lint, typecheck, and browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F229-F231-Q036 Supervisor Handoff Readonly
 
 - branch_name: `codex/f229-supervisor-handoff-readonly`

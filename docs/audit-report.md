@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-21 - Data quality repair-prep readonly slice
+
+#### 结论
+
+- `F232-F234/Q037/US302-US305` 已完成数据质量修复前置只读视图和 QA 收口。
+- 履约日历小组单日异常队列当前项现在展示数据修复前置判断、准备材料和影响范围。
+- 数据修复前置判断展示是否需要数据管理员介入、优先级、介入原因和负责团队。
+- 准备材料展示相关记录、核对字段和说明材料。
+- 影响范围展示影响对象、影响对比和排除边界。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据和只读提示，不代表真实数据修复、审批流、权限边界、数据库写回或状态写回已经实现。
+- 数据管理员介入判断用于主管查看和线下交接，不代表最终生产修复策略、责任判定或结算规则。
+
+#### 验证
+
+- 红灯验证：新增 `person-timeline` 目标测试后，能抓到缺少 `dataQualityRepairPrep`、准备材料和影响范围字段的问题。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- Browser smoke：`/person-timeline?...&queue=high` 显示数据修复前置判断、数据管理员介入、优先级、介入原因、准备材料、相关记录、字段、说明、影响范围、影响对象和影响对比；页面未出现 PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、审批、批量或修复提交。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Supervisor exception handoff readonly closure
 
 #### 结论
