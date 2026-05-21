@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-21 - Business UI cleanup QA
+
+#### 结论
+
+- `Q029/US262` 已完成业务界面收口 QA。
+- 经营总览已验证只展示业务指标、业务下钻入口和履约风险摘要。
+- 侧边栏已验证只保留真实业务入口，没有恢复跳 `/dashboard` 的伪业务入口。
+- 产品 UI 已验证未出现数据接入状态、PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、占位、人员时间轴、坐席状态轨迹或行操作。
+- 本批没有修改产品代码，没有新增页面，没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮 QA 覆盖的是本地前端展示和现有路由，不代表真实数据接入、权限边界、审批或处理流已经实现。
+- 后续恢复结算、系统管理、接口集成等导航前，仍必须有对应业务故事和 Gate。
+
+#### 验证
+
+- `node --test scripts/tests/dashboard-business-only.test.mjs scripts/tests/product-navigation-business-only.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/person-timeline.test.mjs`：通过，21 个测试通过。
+- `rg` 全量扫描 `app` 与 `components`：未发现数据接入状态、PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、占位、人员时间轴、坐席状态轨迹或行操作。
+- In-app browser smoke：`/dashboard` 显示计划覆盖率、查看履约日历、登录履约率、查看登录异常、供需缺口、查看异常复核、质量风险、查看数据质量、履约风险摘要、今日履约风险、本周履约风险、高风险小组和待看异常；展开履约监控和数据与集成后显示经营总览、履约日历、异常复核、接入批次、字段映射、导入模板、数据质量和主数据关系；未出现上述内部词和伪功能词。
+- 待执行最终 `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`。
+
 ### 2026-05-21 - Dashboard business drilldown and risk summary
 
 #### 结论

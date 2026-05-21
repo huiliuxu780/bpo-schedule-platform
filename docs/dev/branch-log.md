@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### Q029 Business UI Cleanup QA
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `9253f6e`
+- remote_status: `continued on existing business UI cleanup branch to close the module QA slice`
+- scope: QA acceptance only: verify dashboard, sidebar, and product UI copy after F196-F200; update current state, legacy story/task status, task log, branch log, and audit report.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no product code, frontend implementation, backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates current state closeout and traceability docs only; no `app/**`, `components/**`, `lib/**`, backend, package, or lockfile changes.
+- check_result: target product semantic tests passed; full internal-copy scan over `app` and `components` found no banned UI terms; in-app browser smoke for `/dashboard` and expanded sidebar passed; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` to be rerun after this log update.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F199-F200 Dashboard Business Drilldown And Risk Summary
 
 - branch_name: `codex/f178-exception-explanation-card`

@@ -87,7 +87,7 @@ tasks:
   - id: Q029
     title: "业务界面收口 QA"
     priority: P1
-    status: planned
+    status: done
     required_workflow: qa
     allowed_files: ["docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
