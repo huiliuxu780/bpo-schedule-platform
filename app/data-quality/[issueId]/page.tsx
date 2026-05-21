@@ -80,12 +80,67 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
             </div>
           </CardHeader>
           <CardContent className="grid gap-3 lg:grid-cols-2">
-            <Detail label="来源对象" value={`${issue.source} / ${issue.entity}`} />
-            <Detail label="字段" value={issue.fieldName} />
-            <Detail label="原值" value={issue.rawValue || "空值"} />
+            <Detail label="来源模板" value={`${issue.sourceTemplateName} / ${issue.sourceTemplateId}`} />
+            <Detail label="错误码" value={issue.errorCode} />
+            <Detail label="来源对象" value={`${dataQualitySourceLabels[issue.source]} / ${issue.entity}`} />
+            <Detail label="来源字段" value={issue.sourceField} />
+            <Detail label="原值" value={issue.originalValue} />
             <Detail label="发现时间" value={issue.detectedAt} />
           </CardContent>
         </Card>
+
+        <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+          <Card>
+            <CardHeader>
+              <CardTitle>影响对象</CardTitle>
+              <CardDescription>
+                将字段问题落到具体业务对象和影响后果。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              {issue.affectedObjects.map((object) => (
+                <div key={`${object.type}-${object.objectId}`} className="rounded-lg border p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium">{object.label}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {object.type} / {object.objectId}
+                      </div>
+                    </div>
+                    <Badge variant="secondary">{object.type}</Badge>
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {object.businessImpact}
+                  </p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>影响链路</CardTitle>
+              <CardDescription>
+                从质量问题跳转到排班、预测、登录或状态相关视图。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              {issue.impactLinks.map((link) => (
+                <div key={`${link.type}-${link.target}`} className="rounded-lg border p-3">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium">{link.label}</div>
+                      <div className="text-xs text-muted-foreground">{link.description}</div>
+                    </div>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={link.target}>打开</Link>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </section>
 
         <Card>
           <CardHeader>

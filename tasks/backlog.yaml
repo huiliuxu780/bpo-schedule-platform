@@ -334,7 +334,7 @@ tasks:
   - id: F216
     title: "导入批次跳转质量问题"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/import-batches/**", "app/data-quality/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -347,7 +347,7 @@ tasks:
   - id: F217
     title: "数据质量详情业务字段"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/data-quality/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -360,7 +360,7 @@ tasks:
   - id: F218
     title: "数据质量业务原因分组"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/data-quality/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -373,7 +373,7 @@ tasks:
   - id: F219
     title: "质量问题影响链路"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/data-quality/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -386,7 +386,7 @@ tasks:
   - id: F220
     title: "导入失败行业务影响摘要"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/import-batches/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -399,7 +399,7 @@ tasks:
   - id: Q033
     title: "导入质量追溯 QA"
     priority: P1
-    status: planned
+    status: done
     required_workflow: qa
     allowed_files: ["docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]

@@ -1,5 +1,16 @@
 export type ImportBatchStatus = "completed" | "completed_with_errors" | "failed" | "pending_review"
 
+export type ImportBatchQualityIssue = {
+  id: string
+}
+
+export type ImportBatchFailureImpact = {
+  relatedIssueIds: string[]
+  affectedRows: number
+  affectedObjects: string[]
+  businessImpact: string
+}
+
 export type ImportBatch = {
   id: string
   templateId: string
@@ -15,7 +26,13 @@ export type ImportBatch = {
   affectedObjects: string[]
   errorCodes: string[]
   qualityIssueIds: string[]
+  failureImpacts: ImportBatchFailureImpact[]
   note: string
+}
+
+export type ImportBatchFailureImpactSummary = {
+  totalAffectedRows: number
+  items: ImportBatchFailureImpact[]
 }
 
 export type ImportBatchSummary = {
@@ -54,6 +71,20 @@ export const fallbackImportBatches: ImportBatch[] = [
     affectedObjects: ["坐席", "职场", "供应商", "绑定关系"],
     errorCodes: ["missing_required_field", "foreign_key_missing"],
     qualityIssueIds: ["DQ-202605-001", "DQ-202605-004"],
+    failureImpacts: [
+      {
+        relatedIssueIds: ["DQ-202605-001"],
+        affectedRows: 48,
+        affectedObjects: ["坐席"],
+        businessImpact: "坐席姓名缺失会阻断人员识别，影响后续登录与排班归属。",
+      },
+      {
+        relatedIssueIds: ["DQ-202605-004"],
+        affectedRows: 19,
+        affectedObjects: ["人员排班", "0.5h 时段汇总"],
+        businessImpact: "绑定关系缺失会导致排班人员无法进入职场、项目、供应商维度的履约对比。",
+      },
+    ],
     note: "供应商绑定缺失导致部分人员不可用于排班。",
   },
   {
@@ -71,6 +102,20 @@ export const fallbackImportBatches: ImportBatch[] = [
     affectedObjects: ["人员级排班", "0.5h 时段汇总"],
     errorCodes: ["invalid_time_range", "shift_type_missing"],
     qualityIssueIds: ["DQ-202605-002", "DQ-202605-006"],
+    failureImpacts: [
+      {
+        relatedIssueIds: ["DQ-202605-002"],
+        affectedRows: 12,
+        affectedObjects: ["职场", "0.5h 时段汇总"],
+        businessImpact: "职场时区异常会影响排班时间展开和跨职场对齐。",
+      },
+      {
+        relatedIssueIds: ["DQ-202605-006"],
+        affectedRows: 16,
+        affectedObjects: ["人员级排班"],
+        businessImpact: "班次类型不存在会导致人员排班无法解释休息、饭点和计入口径。",
+      },
+    ],
     note: "部分班次类型未启用，等待排班运营复核。",
   },
   {
@@ -88,6 +133,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     affectedObjects: ["需求预测", "履约对比"],
     errorCodes: [],
     qualityIssueIds: [],
+    failureImpacts: [],
     note: "0.5h 预测时段已完整覆盖。",
   },
   {
@@ -105,6 +151,20 @@ export const fallbackImportBatches: ImportBatch[] = [
     affectedObjects: ["状态日志", "人员时间轴"],
     errorCodes: ["duplicate_primary_key", "status_overlap"],
     qualityIssueIds: ["DQ-202605-003", "DQ-202605-008"],
+    failureImpacts: [
+      {
+        relatedIssueIds: ["DQ-202605-003"],
+        affectedRows: 37,
+        affectedObjects: ["供应商", "绑定关系"],
+        businessImpact: "供应商主键重复会让员工归属无法稳定关联到同一供应商。",
+      },
+      {
+        relatedIssueIds: ["DQ-202605-008"],
+        affectedRows: 21,
+        affectedObjects: ["需求预测", "履约对比"],
+        businessImpact: "预测时段断档会让排班和预测对比缺少同一 0.5h 基准。",
+      },
+    ],
     note: "状态时间段重叠，当前只展示失败结果，不做修复提交。",
   },
 ]
@@ -150,6 +210,35 @@ export function summarizeImportBatches(
 
 export function getImportBatchById(id: string) {
   return fallbackImportBatches.find((row) => row.id === id)
+}
+
+export function getImportBatchQualityIssues<TIssue extends ImportBatchQualityIssue>(
+  batchId: string,
+  issueRows: TIssue[]
+) {
+  const batch = getImportBatchById(batchId)
+
+  if (!batch) {
+    return []
+  }
+
+  const issuesById = new Map(issueRows.map((issue) => [issue.id, issue]))
+
+  return batch.qualityIssueIds
+    .map((issueId) => issuesById.get(issueId))
+    .filter((issue) => issue !== undefined)
+}
+
+export function summarizeImportBatchFailureImpacts(
+  batchId: string
+): ImportBatchFailureImpactSummary {
+  const batch = getImportBatchById(batchId)
+  const items = batch?.failureImpacts ?? []
+
+  return {
+    totalAffectedRows: items.reduce((total, item) => total + item.affectedRows, 0),
+    items,
+  }
 }
 
 export function importBatchStatusLabel(status: ImportBatchStatus) {

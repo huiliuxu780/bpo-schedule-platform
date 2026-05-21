@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F216-F220-Q033 Import Quality Traceability
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `91f5700`
+- remote_status: `continued on existing branch; branch already had four local commits ahead of origin when this batch started`
+- scope: frontend local business function and QA closeout: connect import batch details to related data quality issues, expose source template/source field/original value/error code/affected objects/impact links, group issues by business reason, show failure-row business impact summaries, and close import quality traceability QA.
+- allowed_files_check: `app/import-batches/**`, `app/data-quality/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing import batch and data quality pages, local import/data-quality models/tests, current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red import/data-quality target tests first caught missing batch issue resolver, source-template fields, and impact chain fields; target import/data-quality tests, lint, typecheck, and browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F211-F215 Demand Supply Alignment
 
 - branch_name: `codex/f178-exception-explanation-card`

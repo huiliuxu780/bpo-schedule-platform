@@ -37,6 +37,22 @@ test("data quality issue lookup exposes recommendation and deferred actions", ()
 
   assert.equal(row?.entity, "agent_binding");
   assert.equal(row?.fieldName, "employee_id");
+  assert.equal(row?.sourceTemplateId, "TPL-MASTER-DATA");
+  assert.equal(row?.sourceField, "agent_binding.employee_id");
+  assert.equal(row?.originalValue, "A-9931");
+  assert.equal(row?.errorCode, "unknown_foreign_key");
+  assert.ok(row?.affectedObjects.some((object) => object.type === "人员排班"));
+  assert.ok(row?.impactLinks.some((link) => link.target === "/shift-details"));
   assert.equal(row?.recommendation.includes("补齐"), true);
   assert.equal(summary.deferredActions.includes("无真实数据修复"), true);
+});
+
+test("data quality issue detail exposes business impact chain", () => {
+  const row = getDataQualityIssue("DQ-202605-010");
+
+  assert.ok(row);
+  assert.equal(row.sourceTemplateId, "TPL-STATUS-LOG");
+  assert.equal(row.affectedObjects[0].objectId, "A-1002");
+  assert.ok(row.impactLinks.some((link) => link.type === "status_log"));
+  assert.ok(row.impactLinks.some((link) => link.label.includes("个人履约")));
 });

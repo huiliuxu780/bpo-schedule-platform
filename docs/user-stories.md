@@ -57,12 +57,12 @@ stories:
   - {id: US278, requirement_ids: [R266], task_ids: [F214], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望供需对比能下钻到排班人员明细，以便从缺口追到具体人员。", task_type: "frontend", priority: "P1", status: "done"}
   - {id: US279, requirement_ids: [R267], task_ids: [F215], module: "需求预测", role: "排班运营", story: "作为排班运营，我希望预测版本和排班版本在对齐视图中展示，以便知道对比依据。", task_type: "frontend", priority: "P1", status: "done"}
   - {id: US280, requirement_ids: [R268], task_ids: [Q032], module: "质量与交付", role: "QA", story: "作为 QA，我希望预测排班对齐批次完成后验证供需指标、版本说明和下钻链路。", task_type: "qa", priority: "P1", status: "done"}
-  - {id: US281, requirement_ids: [R269], task_ids: [F216], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望导入批次详情能跳转到相关数据质量问题，以便追溯失败原因。", task_type: "frontend", priority: "P0", status: "planned"}
-  - {id: US282, requirement_ids: [R270], task_ids: [F217], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望数据质量详情展示来源模板、字段、原值、错误码和影响对象，以便判断修复优先级。", task_type: "frontend", priority: "P0", status: "planned"}
-  - {id: US283, requirement_ids: [R271], task_ids: [F218], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望数据质量问题按业务原因分组，以便先处理影响核心对比的问题。", task_type: "frontend", priority: "P0", status: "planned"}
-  - {id: US284, requirement_ids: [R272], task_ids: [F219], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望质量问题展示影响的排班、预测、登录或状态链路，以便看懂业务后果。", task_type: "frontend", priority: "P1", status: "planned"}
-  - {id: US285, requirement_ids: [R273], task_ids: [F220], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望导入批次展示失败行的业务影响摘要，以便判断是否影响当天履约。", task_type: "frontend", priority: "P1", status: "planned"}
-  - {id: US286, requirement_ids: [R274], task_ids: [Q033], module: "质量与交付", role: "QA", story: "作为 QA，我希望导入批次与数据质量追溯批次完成后验证批次、失败行、质量问题和影响对象链路。", task_type: "qa", priority: "P1", status: "planned"}
+  - {id: US281, requirement_ids: [R269], task_ids: [F216], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望导入批次详情能跳转到相关数据质量问题，以便追溯失败原因。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US282, requirement_ids: [R270], task_ids: [F217], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望数据质量详情展示来源模板、字段、原值、错误码和影响对象，以便判断修复优先级。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US283, requirement_ids: [R271], task_ids: [F218], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望数据质量问题按业务原因分组，以便先处理影响核心对比的问题。", task_type: "frontend", priority: "P0", status: "done"}
+  - {id: US284, requirement_ids: [R272], task_ids: [F219], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望质量问题展示影响的排班、预测、登录或状态链路，以便看懂业务后果。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US285, requirement_ids: [R273], task_ids: [F220], module: "数据质量", role: "数据管理员", story: "作为数据管理员，我希望导入批次展示失败行的业务影响摘要，以便判断是否影响当天履约。", task_type: "frontend", priority: "P1", status: "done"}
+  - {id: US286, requirement_ids: [R274], task_ids: [Q033], module: "质量与交付", role: "QA", story: "作为 QA，我希望导入批次与数据质量追溯批次完成后验证批次、失败行、质量问题和影响对象链路。", task_type: "qa", priority: "P1", status: "done"}
   - {id: US287, requirement_ids: [R275], task_ids: [F221], module: "主数据", role: "数据管理员", story: "作为数据管理员，我希望主数据关系页按员工展示供应商、职场、项目和技能绑定，以便定位人员归属。", task_type: "frontend", priority: "P0", status: "planned"}
   - {id: US288, requirement_ids: [R276], task_ids: [F222], module: "主数据", role: "现场主管", story: "作为现场主管，我希望能从异常员工反查主数据绑定关系，以便判断异常是否来自绑定缺失。", task_type: "frontend", priority: "P0", status: "planned"}
   - {id: US289, requirement_ids: [R277], task_ids: [F223], module: "主数据", role: "排班运营", story: "作为排班运营，我希望班次类型展示休息、饭点和计入口径，以便理解班次如何影响排班人数。", task_type: "frontend", priority: "P1", status: "planned"}

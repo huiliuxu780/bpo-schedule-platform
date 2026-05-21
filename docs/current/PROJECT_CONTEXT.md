@@ -67,4 +67,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US147/F094 -> US156/Q021` completed the import batch history, field mapping preview, and review status timeline slice: local model tests, `/import-batches`, `/import-batches/[batchId]`, `/field-mapping`, `/anomaly-review/timeline`, sidebar entries, anomaly review timeline link, route smoke, and QA closeout. Current queue is empty again.
 
-Recommended next production MVP slice: pick 2-3 tightly related display-only tasks from data-quality issue grouping, import-batch to issue drilldown links, or production MVP acceptance checklist. Keep the next slice local/frontend only: no database, no real external integration, no auth/permission, no approval/export/batch, no automatic scheduling, and no production formula/settlement/charge-factor work.
+`US281/F216 -> US286/Q033` completed the import quality traceability slice: import batch details now drill into related data quality issues, issue details expose source template, source field, original value, error code, affected objects, impact links, and batch failure impact summaries. Current queue is empty again.
+
+Recommended next production MVP slice: start the master-data relationship closure from `US287/F221 -> US292/Q034`, keeping it display-only and local/frontend-only.

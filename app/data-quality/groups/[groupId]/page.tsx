@@ -75,9 +75,9 @@ export default async function DataQualityGroupDetailPage({ params }: PageProps) 
           <CardHeader>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex flex-col gap-1">
-                <CardTitle>追溯关系</CardTitle>
+                <CardTitle>业务原因追溯</CardTitle>
                 <CardDescription>
-                  展示定位该组问题所需的来源模板和业务追溯键。
+                  展示定位该组问题所需的来源模板、业务追溯键和影响对象。
                 </CardDescription>
               </div>
               <Badge variant={group.risk === "high" ? "destructive" : "secondary"}>
@@ -116,6 +116,12 @@ export default async function DataQualityGroupDetailPage({ params }: PageProps) 
                   <Badge variant="secondary">{dataQualitySeverityLabel(issue.severity)}</Badge>
                   <Badge variant="outline">{dataQualityStatusLabel(issue.status)}</Badge>
                   <Badge variant="outline">阻断 {issue.blockedRows} 行</Badge>
+                </div>
+                <div className="mt-3 grid gap-2 text-xs text-muted-foreground">
+                  <span>{issue.sourceTemplateName} / {issue.sourceField}</span>
+                  <span>
+                    影响对象：{issue.affectedObjects.map((object) => object.label).join("、")}
+                  </span>
                 </div>
               </div>
             ))}

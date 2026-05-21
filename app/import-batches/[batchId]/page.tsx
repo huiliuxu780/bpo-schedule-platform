@@ -12,9 +12,16 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
+  dataQualitySeverityLabel,
+  dataQualitySourceLabels,
+  fallbackDataQualityIssues,
+} from "@/lib/data-quality"
+import {
   fallbackImportBatches,
+  getImportBatchQualityIssues,
   getImportBatchById,
   importBatchStatusLabel,
+  summarizeImportBatchFailureImpacts,
 } from "@/lib/import-batch-history"
 
 type PageProps = {
@@ -34,6 +41,9 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
   if (!batch) {
     notFound()
   }
+
+  const qualityIssues = getImportBatchQualityIssues(batch.id, fallbackDataQualityIssues)
+  const failureImpactSummary = summarizeImportBatchFailureImpacts(batch.id)
 
   return (
     <AppShell title={batch.id} searchPlaceholder="搜索批次字段">
@@ -78,7 +88,7 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
           <Card>
             <CardHeader>
               <CardTitle>错误与质量问题</CardTitle>
-              <CardDescription>用于跳转到数据质量中心的追溯键。</CardDescription>
+              <CardDescription>可从批次直接进入相关数据质量问题。</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-3 text-sm">
               <div>
@@ -88,20 +98,99 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
               <div>
                 <div className="text-xs text-muted-foreground">数据质量问题</div>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {batch.qualityIssueIds.length > 0
-                    ? batch.qualityIssueIds.map((issueId) => (
+                  {qualityIssues.length > 0
+                    ? qualityIssues.map((issue) => (
                         <Button
-                          key={issueId}
+                          key={issue.id}
                           asChild
                           size="sm"
                           variant="outline"
                         >
-                          <Link href={`/data-quality/${issueId}`}>{issueId}</Link>
+                          <Link href={`/data-quality/${issue.id}`}>
+                            {issue.id} {issue.title}
+                          </Link>
                         </Button>
                       ))
                     : "无"}
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+          <Card>
+            <CardHeader>
+              <CardTitle>相关质量问题</CardTitle>
+              <CardDescription>
+                展示来源模板、错误码、字段和可下钻的问题详情。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              {qualityIssues.length > 0 ? (
+                qualityIssues.map((issue) => (
+                  <div key={issue.id} className="rounded-lg border p-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">{issue.title}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {issue.sourceTemplateName} / {issue.errorCode}
+                        </div>
+                      </div>
+                      <Badge variant={issue.severity === "high" ? "destructive" : "secondary"}>
+                        {dataQualitySeverityLabel(issue.severity)}
+                      </Badge>
+                    </div>
+                    <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+                      <span>{dataQualitySourceLabels[issue.source]}</span>
+                      <span>{issue.sourceField}</span>
+                    </div>
+                    <div className="mt-3 flex justify-end">
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/data-quality/${issue.id}`}>查看问题</Link>
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">当前批次未关联质量问题。</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>失败行业务影响</CardTitle>
+              <CardDescription>
+                将失败行折算到受影响对象，辅助判断是否影响当天履约。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              <div className="grid grid-cols-2 gap-3">
+                <Detail label="影响行数" value={`${failureImpactSummary.totalAffectedRows}`} />
+                <Detail label="影响项" value={`${failureImpactSummary.items.length}`} />
+              </div>
+              {failureImpactSummary.items.length > 0 ? (
+                failureImpactSummary.items.map((item) => (
+                  <div key={item.relatedIssueIds.join("-")} className="rounded-lg border p-3">
+                    <div className="flex flex-wrap gap-2">
+                      {item.affectedObjects.map((object) => (
+                        <Badge key={object} variant="secondary">
+                          {object}
+                        </Badge>
+                      ))}
+                    </div>
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      {item.businessImpact}
+                    </p>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      关联问题：{item.relatedIssueIds.join(", ")} / 影响 {item.affectedRows} 行
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">当前批次没有失败行业务影响。</p>
+              )}
             </CardContent>
           </Card>
         </section>
@@ -117,6 +206,15 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
         </Card>
       </main>
     </AppShell>
+  )
+}
+
+function Detail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 text-sm font-medium tabular-nums">{value}</div>
+    </div>
   )
 }
 

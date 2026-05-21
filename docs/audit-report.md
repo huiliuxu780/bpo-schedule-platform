@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-21 - Import quality traceability
+
+#### 结论
+
+- `F216-F220/Q033/US281-US286` 已完成导入质量追溯闭环和 QA 收口。
+- 导入批次详情现在能下钻到相关数据质量问题，并展示来源模板、错误码、来源字段和失败行业务影响摘要。
+- 数据质量详情展示来源模板、来源字段、原值、错误码、影响对象和影响链路。
+- 质量分组详情按业务原因展示来源模板、追溯键、关联质量问题和影响对象。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据，不代表真实上传、失败行写库、自动修复、重导提交或生产数据治理流程已经实现。
+- 影响链路用于业务解释和下钻定位，不代表最终生产责任判定、结算规则、审批或权限边界。
+
+#### 验证
+
+- 红灯验证：新增 import/data-quality 目标测试后，能抓到缺少 `getImportBatchQualityIssues`、来源模板字段和影响链路字段的问题。
+- `node --test scripts/tests/import-batch-history.test.mjs scripts/tests/data-quality.test.mjs scripts/tests/data-quality-groups.test.mjs scripts/tests/data-quality-group-links.test.mjs`：通过，12 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- Browser smoke：`/import-batches/BATCH-20260519-001` 显示相关质量问题、`DQ-202605-004 人员绑定缺失` 和失败行业务影响；`/data-quality/DQ-202605-004` 显示主数据模板、`TPL-MASTER-DATA`、`agent_binding.employee_id`、影响对象和影响链路；`/data-quality/groups/identity-integrity` 显示业务原因追溯、人员绑定缺失、主数据模板和影响对象；上述页面未出现待实现、验收清单、Gate、Story 或 PRD。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Demand supply alignment
 
 #### 结论
