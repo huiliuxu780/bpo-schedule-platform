@@ -339,6 +339,23 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     impactedComparisons: ["排班 vs 登录", "当日履约缺口"],
     excludedScope: "不影响班次类型、供应商绑定和需求预测版本。",
   });
+  assert.deepEqual(lateLogin.supervisorFollowUp, {
+    owner: "现场主管",
+    status: "待补说明",
+    nextCheckAt: "2026-05-11 10:00",
+    currentFocus: "确认王敏实际到岗时间和迟到原因。",
+  });
+  assert.deepEqual(lateLogin.followUpGaps, {
+    missingNotes: ["员工到岗说明", "迟到或漏登原因"],
+    missingRecords: ["CORN 原始登录日志截图"],
+    missingDecisions: ["现场主管确认口径"],
+  });
+  assert.deepEqual(lateLogin.groupFollowUpRollup, {
+    queuePosition: "第 1 / 2 项",
+    sameGroupOpenCount: 2,
+    highPriorityOpenCount: 1,
+    groupRiskNote: "供应商 A 当日仍有 2 项待跟进，其中 1 项为高优先。",
+  });
   const statusMismatch = matrix.exceptionQueue.find((item) => item.key === "A-1001::no_login");
   assert.ok(statusMismatch);
   assert.deepEqual(statusMismatch.focusEventIds, ["SCH-1001-2", "LOG-1001-1", "STA-1001-2"]);
@@ -383,6 +400,8 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     reason: "状态轨道为培训，优先由现场主管确认培训安排是否登记。",
     ownerTeam: "现场主管",
   });
+  assert.deepEqual(statusMismatch.supervisorFollowUp.status, "待主管复核");
+  assert.deepEqual(statusMismatch.followUpGaps.missingNotes, ["培训安排说明", "在线要求确认"]);
 });
 
 test("fulfillment detail links preserve queue return context", () => {

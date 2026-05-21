@@ -77,4 +77,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US302/F232 -> US305/Q037` completed the data-quality repair-prep read-only slice: fulfillment calendar exception items now show data-owner intervention judgment, repair preparation materials, and data-quality impact scope. Current queue is empty again.
 
-Recommended next production MVP slice: pick the next tightly related display-only supervisor follow-up summary or data-quality group handoff batch, keeping it local/frontend-only.
+`US306/F235 -> US309/Q038` completed the supervisor follow-up summary read-only slice: fulfillment calendar exception items now show supervisor follow-up status, follow-up gap lists, and group follow-up rollups. Current queue is empty again.
+
+Recommended next production MVP slice: pick the next tightly related display-only group handoff summary or supervisor closure checklist batch, keeping it local/frontend-only.

@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-22 - Supervisor follow-up summary readonly slice
+
+#### 结论
+
+- `F235-F237/Q038/US306-US309` 已完成主管跟进汇总只读视图和 QA 收口。
+- 履约日历小组单日异常队列当前项现在展示跟进状态、跟进缺口和小组跟进汇总。
+- 跟进状态展示跟进人、状态、下一核对时间和当前重点。
+- 跟进缺口展示还缺的说明、记录和结论。
+- 小组跟进汇总展示队列位置、待跟进数量、高优先数量和小组风险说明。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据和只读提示，不代表真实跟进提交、审批流、权限边界、数据库写回或状态写回已经实现。
+- 跟进状态和缺口清单用于主管查看和线下跟进，不代表最终生产责任判定、结算规则或自动处理策略。
+
+#### 验证
+
+- 红灯验证：新增 `person-timeline` 目标测试后，能抓到缺少 `supervisorFollowUp`、`followUpGaps` 和 `groupFollowUpRollup` 字段的问题。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- Browser smoke：`/person-timeline?...&queue=high` 显示跟进状态、跟进人、状态、下一核对、当前重点、跟进缺口、说明、记录、小组跟进汇总、队列位置和供应商 A 小组风险说明；页面未出现 PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、审批、批量或提交。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Data quality repair-prep readonly slice
 
 #### 结论

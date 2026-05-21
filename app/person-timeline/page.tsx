@@ -712,6 +712,32 @@ function MatrixExceptionPanel({
             </div>
           </div>
           <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">跟进状态</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>跟进人：{selected.supervisorFollowUp.owner}</div>
+              <div>状态：{selected.supervisorFollowUp.status}</div>
+              <div>下一核对：{selected.supervisorFollowUp.nextCheckAt}</div>
+              <div>当前重点：{selected.supervisorFollowUp.currentFocus}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">跟进缺口</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>说明：{selected.followUpGaps.missingNotes.join(" / ")}</div>
+              <div>记录：{selected.followUpGaps.missingRecords.join(" / ")}</div>
+              <div>结论：{selected.followUpGaps.missingDecisions.join(" / ")}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">小组跟进汇总</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>队列位置：{selected.groupFollowUpRollup.queuePosition}</div>
+              <div>待跟进：{selected.groupFollowUpRollup.sameGroupOpenCount} 项</div>
+              <div>高优先：{selected.groupFollowUpRollup.highPriorityOpenCount} 项</div>
+              <div>{selected.groupFollowUpRollup.groupRiskNote}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
             <div className="text-sm font-medium">证据汇总</div>
             <div className="grid gap-1 text-xs text-muted-foreground">
               <div>{selected.evidenceSummary.schedule}</div>

@@ -2,6 +2,58 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F235
+    title: "主管跟进状态"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["当前异常展示跟进人、跟进状态、下一核对时间和当前重点。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要处理提交、审批、权限、导出、批量、数据库、真实接口、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F236
+    title: "跟进缺口清单"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["当前异常展示还缺哪些说明、记录和复核结论。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要处理提交、审批、权限、导出、批量、数据库、真实接口、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F237
+    title: "小组跟进汇总"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["当前异常展示同组待跟进数量、高优先项和当前项在队列中的位置。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要处理提交、审批、权限、导出、批量、数据库、真实接口、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q038
+    title: "主管跟进汇总 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["主管跟进状态、跟进缺口、小组跟进汇总和业务文案验证通过。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要越界能力"]
+    commit_after_done: true
   - id: F232
     title: "数据质量修复前置判断"
     priority: P0

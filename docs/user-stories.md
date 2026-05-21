@@ -29,6 +29,54 @@
 
 ## Stories
 
+### US306-US309 - 主管跟进汇总只读视图
+
+```yaml
+stories:
+  - id: US306
+    requirement_ids: [R294]
+    task_ids: [F235]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示主管跟进状态，以便知道谁在跟、当前卡在哪里、下一次什么时候核对。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US307
+    requirement_ids: [R295]
+    task_ids: [F236]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示跟进缺口清单，以便知道还缺哪些说明、记录和复核结论。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US308
+    requirement_ids: [R296]
+    task_ids: [F237]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示小组跟进汇总，以便判断同组待跟进规模和当前项位置。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US309
+    requirement_ids: [R297]
+    task_ids: [Q038]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管跟进汇总只读视图完成后验证跟进状态、缺口清单、小组汇总和业务文案。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常当前项展示跟进人、跟进状态、下一核对时间和当前重点。"
+  - "跟进缺口清单展示缺少的说明、记录和复核结论。"
+  - "小组跟进汇总展示队列位置、同组待跟进数量和高优先数量。"
+  - "页面不出现处理提交、审批、批量、数据库或真实写回能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US302-US305 - 数据质量修复前置只读视图
 
 ```yaml

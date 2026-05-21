@@ -174,6 +174,7 @@ export type FulfillmentMatrixExceptionQueueItem = {
   key: string
   employeeId: string
   employeeName: string
+  supplier: string
   anomalyCode: string
   type: TimelineExceptionExplanation["type"]
   title: string
@@ -244,6 +245,23 @@ export type FulfillmentMatrixExceptionQueueItem = {
     impactedObjects: string[]
     impactedComparisons: string[]
     excludedScope: string
+  }
+  supervisorFollowUp: {
+    owner: string
+    status: "待补说明" | "待主管复核" | "待数据核对"
+    nextCheckAt: string
+    currentFocus: string
+  }
+  followUpGaps: {
+    missingNotes: string[]
+    missingRecords: string[]
+    missingDecisions: string[]
+  }
+  groupFollowUpRollup: {
+    queuePosition: string
+    sameGroupOpenCount: number
+    highPriorityOpenCount: number
+    groupRiskNote: string
   }
 }
 
@@ -873,7 +891,7 @@ function buildFulfillmentMatrixExceptionQueue(
   members: FulfillmentMatrixMember[],
   date: string
 ): FulfillmentMatrixExceptionQueueItem[] {
-  return members
+  const queue = members
     .flatMap((member) =>
       member.exceptionExplanations.map((explanation) => {
         const evidenceCards = getEvidenceCards(member, explanation)
@@ -882,6 +900,7 @@ function buildFulfillmentMatrixExceptionQueue(
           key: fulfillmentMatrixExceptionKey(member.employeeId, explanation.anomalyCode),
           employeeId: member.employeeId,
           employeeName: member.employeeName,
+          supplier: member.supplier,
           anomalyCode: explanation.anomalyCode,
           type: explanation.type,
           title: explanation.title,
@@ -909,6 +928,14 @@ function buildFulfillmentMatrixExceptionQueue(
           dataQualityRepairPrep: buildDataQualityRepairPrep(explanation),
           repairMaterials: buildRepairMaterials(explanation, evidenceCards),
           dataQualityImpactScope: buildDataQualityImpactScope(member, explanation),
+          supervisorFollowUp: buildSupervisorFollowUp(member, explanation),
+          followUpGaps: buildFollowUpGaps(explanation),
+          groupFollowUpRollup: {
+            queuePosition: "",
+            sameGroupOpenCount: 0,
+            highPriorityOpenCount: 0,
+            groupRiskNote: "",
+          },
         }
       })
     )
@@ -918,6 +945,11 @@ function buildFulfillmentMatrixExceptionQueue(
         b.impactHours - a.impactHours ||
         a.employeeId.localeCompare(b.employeeId)
     )
+
+  return queue.map((item, index) => ({
+    ...item,
+    groupFollowUpRollup: buildGroupFollowUpRollup(queue, index),
+  }))
 }
 
 function buildExceptionSortReason(
@@ -1182,6 +1214,76 @@ function buildDataQualityImpactScope(
     impactedObjects: [member.employeeName, "状态轨道", `${explanation.date} 小组矩阵`],
     impactedComparisons: ["排班 vs 状态", "当日异常人数"],
     excludedScope: "不影响登录原始时长、班次类型和需求预测版本。",
+  }
+}
+
+function buildSupervisorFollowUp(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation
+) {
+  if (explanation.type === "登录缺口") {
+    return {
+      owner: "现场主管",
+      status: "待补说明" as const,
+      nextCheckAt: `${explanation.date} 10:00`,
+      currentFocus: `确认${member.employeeName}实际到岗时间和迟到原因。`,
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      owner: "现场主管",
+      status: "待补说明" as const,
+      nextCheckAt: `${explanation.date} 18:00`,
+      currentFocus: `确认${member.employeeName}实际离岗时间和离岗原因。`,
+    }
+  }
+
+  return {
+    owner: "现场主管",
+    status: "待主管复核" as const,
+    nextCheckAt: `${explanation.date} 15:00`,
+    currentFocus: "确认培训安排是否符合当班在线要求。",
+  }
+}
+
+function buildFollowUpGaps(explanation: TimelineExceptionExplanation) {
+  if (explanation.type === "登录缺口") {
+    return {
+      missingNotes: ["员工到岗说明", "迟到或漏登原因"],
+      missingRecords: ["CORN 原始登录日志截图"],
+      missingDecisions: ["现场主管确认口径"],
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      missingNotes: ["员工离岗说明", "提前离岗或系统记录原因"],
+      missingRecords: ["CORN 原始登出日志截图"],
+      missingDecisions: ["现场主管确认口径"],
+    }
+  }
+
+  return {
+    missingNotes: ["培训安排说明", "在线要求确认"],
+    missingRecords: ["状态来源说明"],
+    missingDecisions: ["主管复核结论"],
+  }
+}
+
+function buildGroupFollowUpRollup(
+  queue: FulfillmentMatrixExceptionQueueItem[],
+  index: number
+) {
+  const sameGroupOpenCount = queue.length
+  const highPriorityOpenCount = queue.filter((item) => item.priority === "high").length
+  const supplier = queue[index]?.supplier ?? "当前小组"
+
+  return {
+    queuePosition: `第 ${index + 1} / ${sameGroupOpenCount} 项`,
+    sameGroupOpenCount,
+    highPriorityOpenCount,
+    groupRiskNote: `${supplier} 当日仍有 ${sameGroupOpenCount} 项待跟进，其中 ${highPriorityOpenCount} 项为高优先。`,
   }
 }
 

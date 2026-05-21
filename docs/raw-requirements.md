@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R294-R297 - 主管跟进汇总只读视图
+
+```yaml
+requirements:
+  - id: R294
+    module: "履约日历"
+    description: "异常队列当前项需要展示主管跟进状态，说明跟进人、跟进状态、下一核对时间和当前重点。"
+  - id: R295
+    module: "履约日历"
+    description: "异常队列当前项需要展示跟进缺口清单，说明还缺哪些说明、记录和复核结论。"
+  - id: R296
+    module: "履约日历"
+    description: "异常队列当前项需要展示小组跟进汇总，说明同组待跟进数量、高优先项和当前异常在队列中的位置。"
+  - id: R297
+    module: "质量与交付"
+    description: "主管跟进汇总只读视图完成后需要 QA 收口，确认跟进状态、缺口清单、小组汇总和业务文案可验证。"
+source: "PM requested continuing supervisor-oriented business closure on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示和模型测试；不实现处理提交、审批、权限、导出、批量、数据库、真实接口、自动排班、生产公式、结算或收费因子。"
+```
+
 ### R290-R293 - 数据质量修复前置只读视图
 
 ```yaml

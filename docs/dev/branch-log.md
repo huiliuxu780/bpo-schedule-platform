@@ -1,5 +1,24 @@
 # Branch Log
 
+## 2026-05-22
+
+### F235-F237-Q038 Supervisor Followup Summary Readonly
+
+- branch_name: `codex/f235-supervisor-followup-summary`
+- base_main_commit: `33e36e6`
+- remote_status: `new stacked local branch from verified data-quality repair-prep HEAD; not pushed`
+- scope: frontend local business function and QA closeout: add supervisor follow-up status, follow-up gap lists, group follow-up rollups, and business-language verification to the fulfillment calendar exception queue.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar page/model/tests plus current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red `person-timeline` target test first caught missing supervisor follow-up fields; target tests, lint, typecheck, and browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ## 2026-05-21
 
 ### F232-F234-Q037 Data Quality Repair Prep Readonly
