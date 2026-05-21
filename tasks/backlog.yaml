@@ -139,7 +139,7 @@ tasks:
   - id: F204
     title: "异常排序依据说明"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]
@@ -152,7 +152,7 @@ tasks:
   - id: F205
     title: "个人详情返回队列上下文"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "app/production-mvp/**"]

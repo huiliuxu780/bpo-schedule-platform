@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildFulfillmentMatrixReturnHref,
+  buildPersonFulfillmentDetailHref,
   fallbackPersonTimelines,
   filterPersonTimelines,
   getFulfillmentCalendar,
@@ -232,6 +234,7 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       start: item.start,
       end: item.end,
       detailDate: item.detailDate,
+      sortReason: item.sortReason,
     })),
     [
       {
@@ -244,6 +247,7 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         start: "09:00",
         end: "09:21",
         detailDate: "2026-05-11",
+        sortReason: "高优先级优先 / 影响 0.35h / 员工 A-1002",
       },
       {
         key: "A-1001::no_login",
@@ -255,6 +259,7 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         start: "13:00",
         end: "18:00",
         detailDate: "2026-05-11",
+        sortReason: "中优先级优先 / 影响 5h / 员工 A-1001",
       },
     ]
   );
@@ -296,6 +301,49 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       { track: "status", eventId: "STA-1001-2", label: "培训" },
     ]
   );
+});
+
+test("fulfillment detail links preserve queue return context", () => {
+  const calendar = getFulfillmentCalendar(fallbackPersonTimelines);
+  const team = calendar.teams.find((item) => item.workplace === "上海职场");
+  assert.ok(team);
+  const group = team.groups.find((item) => item.supplier === "供应商 A");
+  assert.ok(group);
+
+  const detailHref = buildPersonFulfillmentDetailHref({
+    employeeId: "A-1002",
+    date: "2026-05-11",
+    teamId: team.id,
+    groupId: group.id,
+    returnDate: "2026-05-11",
+    queueFilter: "high",
+    exceptionKey: "A-1002::late_login",
+  });
+  const detailUrl = new URL(detailHref, "http://local");
+
+  assert.equal(detailUrl.pathname, "/person-timeline/A-1002");
+  assert.equal(detailUrl.searchParams.get("date"), "2026-05-11");
+  assert.equal(detailUrl.searchParams.get("team"), team.id);
+  assert.equal(detailUrl.searchParams.get("group"), group.id);
+  assert.equal(detailUrl.searchParams.get("returnDate"), "2026-05-11");
+  assert.equal(detailUrl.searchParams.get("queue"), "high");
+  assert.equal(detailUrl.searchParams.get("exception"), "A-1002::late_login");
+
+  const returnHref = buildFulfillmentMatrixReturnHref({
+    teamId: team.id,
+    groupId: group.id,
+    date: "2026-05-11",
+    queueFilter: "high",
+    exceptionKey: "A-1002::late_login",
+  });
+  const returnUrl = new URL(returnHref, "http://local");
+
+  assert.equal(returnUrl.pathname, "/person-timeline");
+  assert.equal(returnUrl.searchParams.get("team"), team.id);
+  assert.equal(returnUrl.searchParams.get("group"), group.id);
+  assert.equal(returnUrl.searchParams.get("date"), "2026-05-11");
+  assert.equal(returnUrl.searchParams.get("queue"), "high");
+  assert.equal(returnUrl.searchParams.get("exception"), "A-1002::late_login");
 });
 
 test("fulfillment group member week matrix exposes member day cells", () => {

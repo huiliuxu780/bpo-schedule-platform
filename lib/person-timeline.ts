@@ -184,6 +184,7 @@ export type FulfillmentMatrixExceptionQueueItem = {
   detailDate: string
   involvedTracks: TimelineEventType[]
   focusEventIds: string[]
+  sortReason: string
   evidenceCards: Array<{
     track: TimelineEventType
     eventId: string
@@ -708,6 +709,75 @@ export function encodeScopeId(value: string) {
   return encodeURIComponent(value)
 }
 
+export function buildPersonFulfillmentDetailHref({
+  employeeId,
+  date,
+  teamId,
+  groupId,
+  returnDate,
+  queueFilter,
+  exceptionKey,
+}: {
+  employeeId: string
+  date: string
+  teamId?: string
+  groupId?: string
+  returnDate?: string
+  queueFilter?: string
+  exceptionKey?: string
+}) {
+  const params = new URLSearchParams({ date })
+
+  if (teamId && groupId) {
+    params.set("team", teamId)
+    params.set("group", groupId)
+  }
+
+  if (returnDate) {
+    params.set("returnDate", returnDate)
+  }
+
+  if (queueFilter) {
+    params.set("queue", queueFilter)
+  }
+
+  if (exceptionKey) {
+    params.set("exception", exceptionKey)
+  }
+
+  return `/person-timeline/${encodeScopeId(employeeId)}?${params.toString()}`
+}
+
+export function buildFulfillmentMatrixReturnHref({
+  teamId,
+  groupId,
+  date,
+  queueFilter,
+  exceptionKey,
+}: {
+  teamId: string
+  groupId: string
+  date: string
+  queueFilter?: string
+  exceptionKey?: string
+}) {
+  const params = new URLSearchParams({
+    team: teamId,
+    group: groupId,
+    date,
+  })
+
+  if (queueFilter) {
+    params.set("queue", queueFilter)
+  }
+
+  if (exceptionKey) {
+    params.set("exception", exceptionKey)
+  }
+
+  return `/person-timeline?${params.toString()}`
+}
+
 function sumTrack(rows: PersonTimeline[], type: TimelineEventType) {
   return rows.reduce(
     (total, row) =>
@@ -768,6 +838,7 @@ function buildFulfillmentMatrixExceptionQueue(
         detailDate: date,
         involvedTracks: explanation.involvedTracks,
         focusEventIds: getFocusEventIds(member, explanation),
+        sortReason: buildExceptionSortReason(explanation.priority, explanation.impactHours, member.employeeId),
         evidenceCards: getEvidenceCards(member, explanation),
         evidence: explanation.evidence,
         supervisorAction: explanation.supervisorAction,
@@ -779,6 +850,18 @@ function buildFulfillmentMatrixExceptionQueue(
         b.impactHours - a.impactHours ||
         a.employeeId.localeCompare(b.employeeId)
     )
+}
+
+function buildExceptionSortReason(
+  priority: TimelineExceptionExplanation["priority"],
+  impactHours: number,
+  employeeId: string
+) {
+  return `${priorityText[priority]}优先 / 影响 ${formatImpactHours(impactHours)}h / 员工 ${employeeId}`
+}
+
+function formatImpactHours(value: number) {
+  return Number.isInteger(value) ? `${value}` : `${value}`
 }
 
 function getEvidenceCards(
@@ -927,6 +1010,12 @@ const priorityRank = {
   high: 3,
   medium: 2,
   low: 1,
+}
+
+const priorityText = {
+  high: "高优先级",
+  medium: "中优先级",
+  low: "低优先级",
 }
 
 function earliestTime(values: string[]) {

@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F204-F205 Fulfillment Queue Sort And Return Context
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `5ebe492`
+- remote_status: `continued on existing fulfillment supervisor branch because this batch completes the same supervisor queue flow`
+- scope: frontend local business function: show queue sort reasons in the fulfillment exception queue and preserve queue/exception return context from personal detail pages.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar page/detail page/model/tests plus current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red `person-timeline` test first caught missing return-context URL helpers; target tests, product UI copy/navigation tests, lint, typecheck, and in-app browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F201-F203 Fulfillment Supervisor Risk Evidence
 
 - branch_name: `codex/f178-exception-explanation-card`

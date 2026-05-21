@@ -12,6 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
+  buildFulfillmentMatrixReturnHref,
+  buildPersonFulfillmentDetailHref,
   fallbackPersonTimelines,
   getPersonTimelineAvailableDates,
   getPersonTimelineDailyView,
@@ -33,6 +35,8 @@ type PageProps = {
     team?: string
     group?: string
     returnDate?: string
+    queue?: string
+    exception?: string
   }>
 }
 
@@ -47,7 +51,7 @@ export default async function PersonTimelineDetailPage({
   searchParams,
 }: PageProps) {
   const { employeeId } = await params
-  const { date, team, group, returnDate } = (await searchParams) ?? {}
+  const { date, team, group, returnDate, queue, exception } = (await searchParams) ?? {}
   const row = getPersonTimeline(decodeURIComponent(employeeId))
 
   if (!row) {
@@ -56,20 +60,31 @@ export default async function PersonTimelineDetailPage({
 
   const weekView = getPersonTimelineWeekView(row, date ?? returnDate)
   const matrixDate = returnDate ?? date ?? weekView.selectedDate
-  const scopeQuery =
-    team && group
-      ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&returnDate=${matrixDate}`
-      : ""
-
   if (!date) {
-    return <PersonalWeekCalendar row={row} weekView={weekView} team={team} group={group} returnDate={returnDate} />
+    return (
+      <PersonalWeekCalendar
+        row={row}
+        weekView={weekView}
+        team={team}
+        group={group}
+        returnDate={returnDate}
+        queue={queue}
+        exception={exception}
+      />
+    )
   }
 
   const days = getPersonTimelineAvailableDates(row)
   const dailyView = getPersonTimelineDailyView(row, date)
   const returnHref =
     team && group
-      ? `/person-timeline?team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&date=${matrixDate}`
+      ? buildFulfillmentMatrixReturnHref({
+          teamId: team,
+          groupId: group,
+          date: matrixDate,
+          queueFilter: queue,
+          exceptionKey: exception,
+        })
       : "/person-timeline"
 
   return (
@@ -83,9 +98,27 @@ export default async function PersonTimelineDetailPage({
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href={returnHref}>{team && group ? "返回小组矩阵" : "返回履约日历"}</Link>
+            <Link href={returnHref}>
+              {team && group && queue ? "返回异常队列" : team && group ? "返回小组矩阵" : "返回履约日历"}
+            </Link>
           </Button>
         </div>
+
+        {team && group && queue ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>返回上下文</CardTitle>
+              <CardDescription>
+                来自小组异常队列，返回后保留当前队列筛选和异常定位。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+              <Badge variant="outline">队列 {queue}</Badge>
+              {exception ? <Badge variant="outline">异常 {exception}</Badge> : null}
+              <span>返回日期 {matrixDate}</span>
+            </CardContent>
+          </Card>
+        ) : null}
 
         <section className="grid gap-4 md:grid-cols-4">
           <Metric title="排班工时" value={`${dailyView.scheduledHours.toFixed(1)}h`} />
@@ -107,7 +140,17 @@ export default async function PersonTimelineDetailPage({
                 size="sm"
                 variant={day.date === dailyView.date ? "default" : "outline"}
               >
-                <Link href={`/person-timeline/${row.employeeId}?date=${day.date}${scopeQuery}`}>
+                <Link
+                  href={buildPersonFulfillmentDetailHref({
+                    employeeId: row.employeeId,
+                    date: day.date,
+                    teamId: team,
+                    groupId: group,
+                    returnDate: returnDate ?? day.date,
+                    queueFilter: queue,
+                    exceptionKey: exception,
+                  })}
+                >
                   {day.label} {day.weekday}
                   {day.anomalyCount > 0 ? ` (${day.anomalyCount})` : ""}
                 </Link>
@@ -195,25 +238,29 @@ function PersonalWeekCalendar({
   team,
   group,
   returnDate,
+  queue,
+  exception,
 }: {
   row: PersonTimeline
   weekView: PersonTimelineWeekView
   team?: string
   group?: string
   returnDate?: string
+  queue?: string
+  exception?: string
 }) {
   const returnHref =
     team && group && returnDate
-      ? `/person-timeline?team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&date=${returnDate}`
+      ? buildFulfillmentMatrixReturnHref({
+          teamId: team,
+          groupId: group,
+          date: returnDate,
+          queueFilter: queue,
+          exceptionKey: exception,
+        })
       : team && group
         ? `/person-timeline?team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}`
       : "/person-timeline"
-  const detailQuery =
-    team && group && returnDate
-      ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}&returnDate=${returnDate}`
-      : team && group
-        ? `&team=${encodeURIComponent(team)}&group=${encodeURIComponent(group)}`
-      : ""
 
   return (
     <AppShell title="个人履约日历" searchPlaceholder="搜索团队、小组、人员或状态异常">
@@ -226,7 +273,9 @@ function PersonalWeekCalendar({
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href={returnHref}>{team && group ? "返回小组矩阵" : "返回履约日历"}</Link>
+            <Link href={returnHref}>
+              {team && group && queue ? "返回异常队列" : team && group ? "返回小组矩阵" : "返回履约日历"}
+            </Link>
           </Button>
         </div>
 
@@ -251,7 +300,15 @@ function PersonalWeekCalendar({
                 return (
                   <Link
                     key={day.date}
-                    href={`/person-timeline/${row.employeeId}?date=${day.date}${detailQuery}`}
+                    href={buildPersonFulfillmentDetailHref({
+                      employeeId: row.employeeId,
+                      date: day.date,
+                      teamId: team,
+                      groupId: group,
+                      returnDate: returnDate ?? day.date,
+                      queueFilter: queue,
+                      exceptionKey: exception,
+                    })}
                     className={`rounded-lg border p-3 text-sm transition-colors hover:bg-muted ${
                       hasRisk ? "border-primary/50" : "border-border"
                     }`}

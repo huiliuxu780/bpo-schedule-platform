@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-21 - Fulfillment queue sort and return context
+
+#### 结论
+
+- `F204-F205/US266-US267` 已完成履约日历主管队列收尾。
+- 异常队列每项和当前异常解释新增排序依据，说明优先级、影响时长和员工编号。
+- 从异常队列进入个人单日详情时，详情页展示返回上下文，并保留队列筛选和异常定位。
+- 返回按钮在队列上下文下显示为“返回异常队列”，回到小组矩阵后仍保留 `queue` 和 `exception` 定位参数。
+- 本批没有新增页面、没有新增导航入口、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据和 URL 上下文，不代表生产级处理状态、审批流或权限边界。
+- 排序依据解释的是当前本地队列排序，不代表最终生产异常优先级规则或结算规则。
+
+#### 验证
+
+- 红灯验证：新增 `person-timeline` 目标测试后，能抓到缺少返回上下文 URL helper 的问题。
+- `node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，18 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- `rg` 扫描 `app` 与 `components`：未发现数据接入状态、PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、占位、人员时间轴、坐席状态轨迹或行操作。
+- In-app browser smoke：小组单日异常队列显示排序依据；个人单日详情显示返回异常队列、返回上下文、队列 high、异常 A-1002::late_login；返回链接保留 `queue=high&exception=A-1002::late_login`。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Fulfillment supervisor risk evidence
 
 #### 结论

@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import {
+  buildFulfillmentMatrixReturnHref,
+  buildPersonFulfillmentDetailHref,
   encodeScopeId,
   fallbackPersonTimelines,
   getFulfillmentCalendar,
@@ -504,9 +506,15 @@ function MatrixExceptionPanel({
   const selected = cursor.selected
 
   const detailHref = selected
-    ? `/person-timeline/${selected.employeeId}?date=${selected.detailDate}&team=${encodeScopeId(
-        matrix.team.id
-      )}&group=${encodeScopeId(matrix.group.id)}&returnDate=${selected.detailDate}`
+    ? buildPersonFulfillmentDetailHref({
+        employeeId: selected.employeeId,
+        date: selected.detailDate,
+        teamId: matrix.team.id,
+        groupId: matrix.group.id,
+        returnDate: selected.detailDate,
+        queueFilter,
+        exceptionKey: selected.key,
+      })
     : ""
 
   return (
@@ -598,6 +606,7 @@ function MatrixExceptionPanel({
               <div className="text-muted-foreground">
                 {item.start}-{item.end} / {item.title}
               </div>
+              <div className="text-muted-foreground">排序依据：{item.sortReason}</div>
               <div className="text-muted-foreground">影响 {item.impactHours.toFixed(1)}h</div>
             </Link>
           ))}
@@ -626,6 +635,7 @@ function MatrixExceptionPanel({
           <div className="grid gap-2 text-xs text-muted-foreground">
             <div>涉及轨道：{selected.involvedTracks.map((track) => trackLabel[track]).join(" / ")}</div>
             <div>影响时长：{selected.impactHours.toFixed(1)}h</div>
+            <div>排序依据：{selected.sortReason}</div>
             <div>证据：{selected.evidence}</div>
             <div>建议动作：{selected.supervisorAction}</div>
           </div>
@@ -683,9 +693,13 @@ function matrixQueueItemHref(
   queueFilter: MatrixQueueFilter,
   exceptionKey: string
 ) {
-  return `/person-timeline?team=${encodeScopeId(matrix.team.id)}&group=${encodeScopeId(
-    matrix.group.id
-  )}&date=${matrix.date}&queue=${queueFilter}&exception=${encodeScopeId(exceptionKey)}`
+  return buildFulfillmentMatrixReturnHref({
+    teamId: matrix.team.id,
+    groupId: matrix.group.id,
+    date: matrix.date,
+    queueFilter,
+    exceptionKey,
+  })
 }
 
 function WeekCard({
