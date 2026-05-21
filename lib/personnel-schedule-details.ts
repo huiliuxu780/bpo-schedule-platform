@@ -76,6 +76,26 @@ export type PersonnelScheduleIntervalLinkageSummary = {
   intervalsNeedingReview: number
 }
 
+export type PersonScheduleSource = {
+  planId: string
+  planHref: string
+  draftHref: string
+  scheduleDetailId: string
+  shiftType: string
+  scheduledWindow: string
+  skill: string
+  linkedIntervalCount: number
+  reviewIntervalCount: number
+  reviewIntervals: Array<{
+    intervalStart: string
+    intervalEnd: string
+    scheduledAgents: number
+    linkedPeopleCount: number
+    difference: number
+    status: PersonnelScheduleIntervalLinkageStatus
+  }>
+}
+
 export type ScheduleGapPerson = {
   employeeId: string
   employeeName: string
@@ -202,6 +222,15 @@ export function getPersonnelScheduleDetails(planId: string) {
   return fallbackPersonnelScheduleDetails.filter((item) => item.planId === planId)
 }
 
+export function getPersonnelScheduleDetailForEmployeeDate(
+  employeeId: string,
+  businessDate: string
+) {
+  return fallbackPersonnelScheduleDetails.find(
+    (item) => item.employeeId === employeeId && item.businessDate === businessDate
+  )
+}
+
 export function getPersonnelScheduleDetailsForInterval(
   planId: string,
   start: string,
@@ -287,6 +316,45 @@ export function summarizePersonnelScheduleIntervalLinkage(
     intervalCount: rows.length,
     linkedPeopleCount: linkedEmployeeIds.size,
     intervalsNeedingReview: rows.filter((item) => item.status === "需核对").length,
+  }
+}
+
+export function buildPersonScheduleSource(
+  row: PersonnelScheduleDetailRow | undefined,
+  plan: SchedulePlanDetail | null
+): PersonScheduleSource | null {
+  if (!row || !plan) {
+    return null
+  }
+
+  const rowIntervals = new Set(
+    row.expandedIntervals.map((interval) => `${interval.start}-${interval.end}`)
+  )
+  const linkedRows = buildPersonnelScheduleIntervalLinkage(plan).filter((item) =>
+    rowIntervals.has(`${item.intervalStart}-${item.intervalEnd}`)
+  )
+  const reviewIntervals = linkedRows
+    .filter((item) => item.status === "需核对")
+    .map((item) => ({
+      intervalStart: item.intervalStart,
+      intervalEnd: item.intervalEnd,
+      scheduledAgents: item.scheduledAgents,
+      linkedPeopleCount: item.linkedPeopleCount,
+      difference: item.difference,
+      status: item.status,
+    }))
+
+  return {
+    planId: row.planId,
+    planHref: `/schedule-plans/${row.planId}`,
+    draftHref: `/schedule-plans/${row.planId}/edit`,
+    scheduleDetailId: row.scheduleDetailId,
+    shiftType: row.shiftType,
+    scheduledWindow: `${row.startTime}-${row.endTime}`,
+    skill: `${row.skillGroup} / ${row.skillLevel}`,
+    linkedIntervalCount: linkedRows.length,
+    reviewIntervalCount: reviewIntervals.length,
+    reviewIntervals,
   }
 }
 

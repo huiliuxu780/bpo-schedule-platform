@@ -3,12 +3,14 @@ import test from "node:test";
 
 import {
   buildPersonTimelineHref,
+  buildPersonScheduleSource,
   buildPersonnelIntervalTrace,
   buildPersonnelScheduleIntervalLinkage,
   summarizePersonnelScheduleIntervalLinkage,
   buildScheduleGapExplanation,
   fallbackPersonnelScheduleDetails,
   getPersonnelScheduleDetails,
+  getPersonnelScheduleDetailForEmployeeDate,
   getPersonnelScheduleDetailsForInterval,
   getPersonnelScheduleFieldCoverage,
   summarizePersonnelScheduleDetails,
@@ -212,4 +214,40 @@ test("personnel schedule linkage summary exposes interval and people coverage", 
   assert.equal(summary.intervalCount, 8);
   assert.equal(summary.linkedPeopleCount, 1);
   assert.equal(summary.intervalsNeedingReview, 8);
+});
+
+test("person schedule source traces a person day back to the schedule draft", async () => {
+  const row = getPersonnelScheduleDetailForEmployeeDate("A-1003", "2026-05-11");
+  const plan = await getSchedulePlan("plan-20260511-suzhou-bosch-v1");
+  const source = buildPersonScheduleSource(row, plan);
+
+  assert.deepEqual(source, {
+    planId: "plan-20260511-suzhou-bosch-v1",
+    planHref: "/schedule-plans/plan-20260511-suzhou-bosch-v1",
+    draftHref: "/schedule-plans/plan-20260511-suzhou-bosch-v1/edit",
+    scheduleDetailId: "PSD-1003-20260511",
+    shiftType: "晚班",
+    scheduledWindow: "12:00-20:00",
+    skill: "热线 / L2",
+    linkedIntervalCount: 2,
+    reviewIntervalCount: 2,
+    reviewIntervals: [
+      {
+        intervalStart: "12:00",
+        intervalEnd: "12:30",
+        scheduledAgents: 10,
+        linkedPeopleCount: 1,
+        difference: 9,
+        status: "需核对",
+      },
+      {
+        intervalStart: "12:30",
+        intervalEnd: "13:00",
+        scheduledAgents: 10,
+        linkedPeopleCount: 1,
+        difference: 9,
+        status: "需核对",
+      },
+    ],
+  });
 });

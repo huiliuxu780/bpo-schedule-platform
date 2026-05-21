@@ -29,6 +29,54 @@
 
 ## Stories
 
+### US322-US325 - 个人三轨排班来源反查
+
+```yaml
+stories:
+  - id: US322
+    requirement_ids: [R310]
+    task_ids: [F247]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望个人单日三轨详情展示排班草稿来源，以便从个人履约问题反查排班计划和人员排班明细。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US323
+    requirement_ids: [R311]
+    task_ids: [F248]
+    module: "履约日历"
+    role: "排班运营"
+    story: "作为排班运营，我希望个人排班来源展示班次窗口、技能、排班明细编号和计划入口，以便核对该人员当日排班依据。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US324
+    requirement_ids: [R312]
+    task_ids: [F249]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望个人排班来源展示相关 0.5h 时段的汇总人数、明细人数和差异，以便定位需核对时段。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US325
+    requirement_ids: [R313]
+    task_ids: [Q042]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望个人三轨排班来源反查批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "个人单日三轨详情页展示排班草稿来源卡。"
+  - "来源卡展示计划入口、草稿入口、班次窗口、技能、排班明细编号和需核对时段。"
+  - "需核对时段展示汇总人数、明细人数和差异。"
+  - "产品 UI 不新增内部执行词、审批、导出、批量或处理提交入口。"
+  - "`node --test scripts/tests/personnel-schedule-details.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US318-US321 - 排班草稿履约日历下钻
 
 ```yaml

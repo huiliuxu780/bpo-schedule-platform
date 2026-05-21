@@ -25,6 +25,11 @@ import {
   type TimelineExceptionExplanation,
   type TimelineEvent,
 } from "@/lib/person-timeline"
+import {
+  buildPersonScheduleSource,
+  getPersonnelScheduleDetailForEmployeeDate,
+} from "@/lib/personnel-schedule-details"
+import { getSchedulePlan } from "@/lib/schedule-plans"
 
 type PageProps = {
   params: Promise<{
@@ -76,6 +81,14 @@ export default async function PersonTimelineDetailPage({
 
   const days = getPersonTimelineAvailableDates(row)
   const dailyView = getPersonTimelineDailyView(row, date)
+  const scheduleDetail = getPersonnelScheduleDetailForEmployeeDate(
+    row.employeeId,
+    dailyView.date
+  )
+  const schedulePlan = scheduleDetail
+    ? await getSchedulePlan(scheduleDetail.planId)
+    : null
+  const scheduleSource = buildPersonScheduleSource(scheduleDetail, schedulePlan)
   const returnHref =
     team && group
       ? buildFulfillmentMatrixReturnHref({
@@ -126,6 +139,72 @@ export default async function PersonTimelineDetailPage({
           <Metric title="状态工时" value={`${dailyView.statusHours.toFixed(1)}h`} />
           <Metric title="异常" value={`${dailyView.anomalies.length}`} />
         </section>
+
+        {scheduleSource ? (
+          <Card>
+            <CardHeader className="gap-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <CardTitle>排班草稿来源</CardTitle>
+                  <CardDescription>
+                    从当前人员排班明细反查对应计划、班次窗口和需核对时段。
+                  </CardDescription>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline">{scheduleSource.linkedIntervalCount} 个时段</Badge>
+                  <Badge variant="secondary">
+                    {scheduleSource.reviewIntervalCount} 个时段需核对
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+              <div className="rounded-md border p-3 text-sm">
+                <div className="font-medium">{scheduleSource.planId}</div>
+                <div className="mt-2 grid gap-1 text-muted-foreground">
+                  <span>班次 {scheduleSource.shiftType}</span>
+                  <span>窗口 {scheduleSource.scheduledWindow}</span>
+                  <span>技能 {scheduleSource.skill}</span>
+                  <span>明细 {scheduleSource.scheduleDetailId}</span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={scheduleSource.planHref}>查看排班计划</Link>
+                  </Button>
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={scheduleSource.draftHref}>查看排班草稿</Link>
+                  </Button>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                {scheduleSource.reviewIntervals.length > 0 ? (
+                  scheduleSource.reviewIntervals.map((item) => (
+                    <div
+                      key={`${item.intervalStart}-${item.intervalEnd}`}
+                      className="rounded-md border p-3 text-sm"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-medium">
+                          {item.intervalStart}-{item.intervalEnd}
+                        </span>
+                        <Badge variant="secondary">{item.status}</Badge>
+                      </div>
+                      <div className="mt-2 grid gap-2 text-muted-foreground sm:grid-cols-3">
+                        <span>汇总 {item.scheduledAgents} 人</span>
+                        <span>明细 {item.linkedPeopleCount} 人</span>
+                        <span>差异 {item.difference} 人</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-md border p-3 text-sm text-muted-foreground">
+                    当前人员排班明细与时段汇总一致。
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
 
         <Card>
           <CardHeader>

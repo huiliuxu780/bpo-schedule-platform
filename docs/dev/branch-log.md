@@ -1560,3 +1560,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F247-F249 Personal Schedule Source Drillback
+
+- branch_name: `codex/f247-person-timeline-schedule-source`
+- base_main_commit: `7204e24`
+- remote_status: `not_pushed`
+- scope: frontend local business function: show schedule draft source on fulfillment calendar personal daily detail, including plan and draft links, shift window, schedule detail ID, and related 0.5h interval count differences.
+- allowed_files_check: `app/person-timeline/[employeeId]/page.tsx`, `lib/personnel-schedule-details.ts`, `scripts/tests/personnel-schedule-details.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing personal timeline route and personnel schedule model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target model test, product UI copy audit, browser smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

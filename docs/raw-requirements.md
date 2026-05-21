@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R310-R313 - 个人三轨排班来源反查
+
+```yaml
+requirements:
+  - id: R310
+    module: "履约日历"
+    description: "个人单日三轨详情需要展示排班草稿来源，让主管能从个人履约问题反查对应排班计划和人员排班明细。"
+  - id: R311
+    module: "履约日历"
+    description: "个人排班来源需要展示班次窗口、技能、排班明细编号和对应计划入口。"
+  - id: R312
+    module: "履约日历"
+    description: "个人排班来源需要展示该人员相关 0.5h 时段的汇总人数、明细人数和差异，帮助定位需核对时段。"
+  - id: R313
+    module: "质量与交付"
+    description: "个人三轨排班来源反查完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued business function development on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R306-R309 - 排班草稿履约日历下钻
 
 ```yaml

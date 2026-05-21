@@ -85,4 +85,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US318/F244 -> US321/Q041` completed the schedule draft fulfillment-calendar drilldown slice: linked people in the schedule draft edit page now route to the matching fulfillment calendar personal daily three-track detail with date, team, and group context preserved. Current queue is empty again.
 
+`US322/F247 -> US325/Q042` completed the personal schedule-source drillback slice: the fulfillment calendar personal daily three-track detail now shows schedule draft source, plan/draft links, shift window, schedule detail ID, and related 0.5h interval count differences. Current queue is empty again.
+
 Recommended next production MVP slice: continue with supervisor closure checklist or local exception action-registration design, keeping it local/frontend-only unless PM confirms a separate production action Gate.

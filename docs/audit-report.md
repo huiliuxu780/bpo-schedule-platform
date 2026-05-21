@@ -2188,6 +2188,26 @@
 - Browser smoke：打开 `/schedule-plans/plan-20260511-suzhou-bosch-v1/edit`，A-1003 链接为 `/person-timeline/A-1003?date=2026-05-11&team=...&group=...&returnDate=2026-05-11`；点击后进入个人详情页，页面包含“排班轨道”“登录轨道”“状态轨道”。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Personal schedule-source drillback
+
+#### 结论
+
+- `F247-F249/US322-US324` 已在个人单日三轨详情中增加排班草稿来源反查。
+- 个人详情页展示计划入口、草稿入口、班次窗口、技能、排班明细编号和需核对时段。
+- 需核对时段展示汇总人数、明细人数和差异，用于从个人履约问题反查排班依据。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做个人详情的查看反查，不保存复核结论，不代表处理流、发布流、审批流或生产持久化已经实现。
+
+#### 验证
+
+- `node --test scripts/tests/personnel-schedule-details.test.mjs`：通过，10 个人员排班明细、时段追溯和排班来源测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：打开 `/person-timeline/A-1003?date=2026-05-11&team=...&group=...&returnDate=2026-05-11`，页面显示“排班草稿来源”“plan-20260511-suzhou-bosch-v1”“班次 晚班”“窗口 12:00-20:00”“明细 PSD-1003-20260511”“12:00-12:30”“汇总 10 人”“明细 1 人”“差异 9 人”，并存在计划入口和草稿入口。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

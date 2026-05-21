@@ -2,6 +2,70 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F247
+    title: "个人三轨排班来源卡"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/[employeeId]/page.tsx", "lib/personnel-schedule-details.ts", "scripts/tests/personnel-schedule-details.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "个人单日三轨详情页展示排班草稿来源卡。"
+      - "来源卡能进入排班计划和排班草稿。"
+      - "`node --test scripts/tests/personnel-schedule-details.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F248
+    title: "个人排班来源模型"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/personnel-schedule-details.ts", "scripts/tests/personnel-schedule-details.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型返回计划入口、草稿入口、班次窗口、技能、排班明细编号和时段差异。"
+      - "页面复用模型结果，不硬编码业务差异。"
+      - "`node --test scripts/tests/personnel-schedule-details.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F249
+    title: "个人排班来源时段差异展示"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/[employeeId]/page.tsx", "lib/personnel-schedule-details.ts", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "来源卡展示相关 0.5h 时段的汇总人数、明细人数和差异。"
+      - "页面文案使用业务语言，不暴露内部执行口径。"
+      - "`node --test scripts/tests/product-ui-copy-audit.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q042
+    title: "个人三轨排班来源反查 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型测试、文案审计、浏览器 smoke 和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+      - "确认未新增页面、导航、数据库、真实接口、审批、导出、批量、自动排班或生产公式。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式"]
+    commit_after_done: true
   - id: F244
     title: "排班草稿关联人员下钻"
     priority: P0
