@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US298-US301 - 主管异常交接只读闭环
+
+```yaml
+stories:
+  - id: US298
+    requirement_ids: [R286]
+    task_ids: [F229]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示处理结果归类，以便判断问题属于到岗、状态还是数据核对。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US299
+    requirement_ids: [R287]
+    task_ids: [F230]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示交接摘要，以便把问题交给合适角色继续核对。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US300
+    requirement_ids: [R288]
+    task_ids: [F231]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望当前异常展示数据核对前置提示，以便知道要看哪些记录和字段。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US301
+    requirement_ids: [R289]
+    task_ids: [Q036]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管异常交接只读闭环完成后验证归类、交接、数据核对提示和业务文案。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常当前项展示处理结果归类、归类原因、负责角色和复核重点。"
+  - "交接摘要展示交接对象、摘要、待核对问题和下一次触点。"
+  - "数据核对提示展示相关记录和字段，不出现审批、提交、批量、真实修复或写回能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US257-US292 - 连续大模块业务迭代池
 
 ```yaml

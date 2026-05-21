@@ -212,6 +212,23 @@ export type FulfillmentMatrixExceptionQueueItem = {
     conclusion: string
     followUp: string
   }>
+  handlingOutcome: {
+    category: "到岗核对" | "状态核对" | "数据核对"
+    reason: string
+    ownerRole: string
+    nextReviewPoint: string
+  }
+  handoffSummary: {
+    recipient: string
+    summary: string
+    openQuestions: string[]
+    nextTouchpoint: string
+  }
+  dataCheckReadiness: {
+    sourceRecords: string[]
+    checkFields: string[]
+    riskNote: string
+  }
 }
 
 export type FulfillmentMatrixExceptionQueueSummary = {
@@ -870,6 +887,9 @@ function buildFulfillmentMatrixExceptionQueue(
           handlingGuide: buildExceptionHandlingGuide(member, explanation, evidenceCards),
           evidenceSummary: summarizeExceptionEvidence(explanation, evidenceCards),
           handlingRecords: getExceptionHandlingRecords(explanation),
+          handlingOutcome: buildExceptionHandlingOutcome(member, explanation, evidenceCards),
+          handoffSummary: buildExceptionHandoffSummary(member, explanation),
+          dataCheckReadiness: buildExceptionDataCheckReadiness(explanation, evidenceCards),
         }
       })
     )
@@ -956,6 +976,110 @@ function buildExceptionHandlingGuide(
     requiredInfo: ["培训安排说明", "在线要求确认", "主管复核结论"],
     communicationTarget,
     boundary,
+  }
+}
+
+function buildExceptionHandlingOutcome(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation,
+  evidenceCards: FulfillmentMatrixExceptionQueueItem["evidenceCards"]
+) {
+  const scheduleCard = evidenceCards.find((card) => card.track === "schedule")
+  const loginCard = evidenceCards.find((card) => card.track === "login")
+  const statusCard = evidenceCards.find((card) => card.track === "status")
+
+  if (explanation.type === "登录缺口") {
+    return {
+      category: "到岗核对" as const,
+      reason: `排班开始 ${scheduleCard?.start ?? explanation.start}，登录开始 ${
+        loginCard?.start ?? explanation.end
+      }。`,
+      ownerRole: "现场主管",
+      nextReviewPoint: `确认${member.employeeName}实际到岗时间和迟到原因。`,
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      category: "到岗核对" as const,
+      reason: `登录结束 ${loginCard?.end ?? explanation.start}，排班结束 ${
+        scheduleCard?.end ?? explanation.end
+      }。`,
+      ownerRole: "现场主管",
+      nextReviewPoint: `确认${member.employeeName}实际离岗时间和离岗原因。`,
+    }
+  }
+
+  return {
+    category: "状态核对" as const,
+    reason: `状态轨道为${statusCard?.label ?? "异常"}，覆盖 ${explanation.start}-${explanation.end}。`,
+    ownerRole: "现场主管",
+    nextReviewPoint: "确认培训安排是否符合当班在线要求。",
+  }
+}
+
+function buildExceptionHandoffSummary(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation
+) {
+  if (explanation.type === "登录缺口") {
+    return {
+      recipient: "现场主管",
+      summary: `${member.employeeName} ${explanation.start}-${explanation.end} 登录缺口，影响 ${formatImpactHours(
+        explanation.impactHours
+      )}h。`,
+      openQuestions: ["是否实际到岗但漏登", "迟到原因是否已说明"],
+      nextTouchpoint: "班前到岗核对记录",
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      recipient: "现场主管",
+      summary: `${member.employeeName} ${explanation.start}-${explanation.end} 登录不足，影响 ${formatImpactHours(
+        explanation.impactHours
+      )}h。`,
+      openQuestions: ["是否提前离岗", "系统登出时间是否准确"],
+      nextTouchpoint: "班后离岗核对记录",
+    }
+  }
+
+  return {
+    recipient: "现场主管",
+    summary: `${member.employeeName} ${explanation.start}-${explanation.end} 状态不一致，影响 ${formatImpactHours(
+      explanation.impactHours
+    )}h。`,
+    openQuestions: ["培训安排是否已登记", "当班在线要求是否允许该状态"],
+    nextTouchpoint: "状态轨道复核记录",
+  }
+}
+
+function buildExceptionDataCheckReadiness(
+  explanation: TimelineExceptionExplanation,
+  evidenceCards: FulfillmentMatrixExceptionQueueItem["evidenceCards"]
+) {
+  const sourceRecords = evidenceCards.map((card) => card.eventId)
+
+  if (explanation.type === "登录缺口") {
+    return {
+      sourceRecords,
+      checkFields: ["排班开始时间", "登录开始时间", "员工到岗说明"],
+      riskNote: "若登录时间来自系统延迟，需由数据管理员核对原始日志。",
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      sourceRecords,
+      checkFields: ["排班结束时间", "登录结束时间", "员工离岗说明"],
+      riskNote: "若登出时间来自系统断连，需由数据管理员核对原始日志。",
+    }
+  }
+
+  return {
+    sourceRecords,
+    checkFields: ["排班覆盖时段", "登录覆盖时段", "状态类型", "培训安排说明"],
+    riskNote: "若状态记录来自人工标记，需核对状态来源和登记说明。",
   }
 }
 

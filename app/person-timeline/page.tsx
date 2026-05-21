@@ -661,6 +661,32 @@ function MatrixExceptionPanel({
             </div>
           </div>
           <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">处理归类</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div className="font-medium text-foreground">{selected.handlingOutcome.category}</div>
+              <div>归类原因：{selected.handlingOutcome.reason}</div>
+              <div>负责角色：{selected.handlingOutcome.ownerRole}</div>
+              <div>复核重点：{selected.handlingOutcome.nextReviewPoint}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">交接摘要</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>交接对象：{selected.handoffSummary.recipient}</div>
+              <div>{selected.handoffSummary.summary}</div>
+              <div>待核对：{selected.handoffSummary.openQuestions.join(" / ")}</div>
+              <div>下一触点：{selected.handoffSummary.nextTouchpoint}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">数据核对提示</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>相关记录：{selected.dataCheckReadiness.sourceRecords.join(" / ")}</div>
+              <div>核对字段：{selected.dataCheckReadiness.checkFields.join(" / ")}</div>
+              <div>{selected.dataCheckReadiness.riskNote}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
             <div className="text-sm font-medium">证据汇总</div>
             <div className="grid gap-1 text-xs text-muted-foreground">
               <div>{selected.evidenceSummary.schedule}</div>

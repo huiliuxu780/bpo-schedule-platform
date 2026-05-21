@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R286-R289 - 主管异常交接只读闭环
+
+```yaml
+requirements:
+  - id: R286
+    module: "履约日历"
+    description: "异常队列当前项需要展示处理结果归类，帮助主管判断问题属于到岗核对、状态核对还是数据核对。"
+  - id: R287
+    module: "履约日历"
+    description: "异常队列当前项需要展示主管交接摘要，说明交接对象、摘要和待核对问题。"
+  - id: R288
+    module: "履约日历"
+    description: "异常队列当前项需要展示数据核对前置提示，列出相关记录和字段，不做真实修复。"
+  - id: R289
+    module: "质量与交付"
+    description: "主管异常交接只读闭环完成后需要 QA 收口，确认归类、交接、数据核对提示和业务文案可验证。"
+source: "PM requested continuing supervisor-oriented business closure on 2026-05-21"
+submitted_at: "2026-05-21"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读展示和模型测试；不实现处理提交、审批、权限、导出、批量、数据库、真实接口、自动排班、生产公式、结算或收费因子。"
+```
+
 ### R245-R280 - 连续大模块业务迭代池
 
 ```yaml

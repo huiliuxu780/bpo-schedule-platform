@@ -73,4 +73,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US294/F226 -> US297/Q035` completed the supervisor exception handling read-only closure: fulfillment calendar exception items now show handling suggestions, three-track evidence summaries, and read-only handling records. Current queue is empty again.
 
-Recommended next production MVP slice: pick the next tightly related display-only supervisor handoff or data-quality repair-prep batch, keeping it local/frontend-only.
+`US298/F229 -> US301/Q036` completed the supervisor exception handoff read-only closure: fulfillment calendar exception items now show handling outcome categories, handoff summaries, and data-check readiness hints. Current queue is empty again.
+
+Recommended next production MVP slice: pick the next tightly related display-only data-quality repair-prep or supervisor follow-up summary batch, keeping it local/frontend-only.

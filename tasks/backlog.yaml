@@ -2,6 +2,58 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F229
+    title: "异常处理结果归类"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["当前异常展示处理结果归类、归类原因、负责角色和复核重点。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要处理提交、审批、权限、导出、批量、数据库、真实接口、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F230
+    title: "主管交接摘要"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["当前异常展示交接对象、交接摘要、待核对问题和下一次触点。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要处理提交、审批、权限、导出、批量、数据库、真实接口、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F231
+    title: "数据核对前置提示"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/**", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["当前异常展示相关记录、字段和核对提示，不提供真实修复动作。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions: ["需要处理提交、审批、权限、导出、批量、数据库、真实接口、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q036
+    title: "主管交接只读闭环 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance: ["处理归类、交接摘要、数据核对提示和业务文案验证通过。"]
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要越界能力"]
+    commit_after_done: true
   - id: F226
     title: "异常处理建议分层"
     priority: P0

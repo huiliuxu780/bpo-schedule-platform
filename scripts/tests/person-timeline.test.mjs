@@ -306,6 +306,23 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       followUp: "等待补充迟到或漏登原因。",
     },
   ]);
+  assert.deepEqual(lateLogin.handlingOutcome, {
+    category: "到岗核对",
+    reason: "排班开始 09:00，登录开始 09:21。",
+    ownerRole: "现场主管",
+    nextReviewPoint: "确认王敏实际到岗时间和迟到原因。",
+  });
+  assert.deepEqual(lateLogin.handoffSummary, {
+    recipient: "现场主管",
+    summary: "王敏 09:00-09:21 登录缺口，影响 0.35h。",
+    openQuestions: ["是否实际到岗但漏登", "迟到原因是否已说明"],
+    nextTouchpoint: "班前到岗核对记录",
+  });
+  assert.deepEqual(lateLogin.dataCheckReadiness, {
+    sourceRecords: ["SCH-1002-1", "LOG-1002-1"],
+    checkFields: ["排班开始时间", "登录开始时间", "员工到岗说明"],
+    riskNote: "若登录时间来自系统延迟，需由数据管理员核对原始日志。",
+  });
   const statusMismatch = matrix.exceptionQueue.find((item) => item.key === "A-1001::no_login");
   assert.ok(statusMismatch);
   assert.deepEqual(statusMismatch.focusEventIds, ["SCH-1001-2", "LOG-1001-1", "STA-1001-2"]);
@@ -333,6 +350,17 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     status: "状态 STA-1001-2：培训 13:00-18:00",
     conclusion: "13:00-18:00 状态为培训，需确认是否符合当班在线要求。",
   });
+  assert.deepEqual(statusMismatch.handlingOutcome, {
+    category: "状态核对",
+    reason: "状态轨道为培训，覆盖 13:00-18:00。",
+    ownerRole: "现场主管",
+    nextReviewPoint: "确认培训安排是否符合当班在线要求。",
+  });
+  assert.deepEqual(statusMismatch.dataCheckReadiness.sourceRecords, [
+    "SCH-1001-2",
+    "LOG-1001-1",
+    "STA-1001-2",
+  ]);
 });
 
 test("fulfillment detail links preserve queue return context", () => {

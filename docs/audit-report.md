@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-21 - Supervisor exception handoff readonly closure
+
+#### 结论
+
+- `F229-F231/Q036/US298-US301` 已完成主管异常交接只读闭环和 QA 收口。
+- 履约日历小组单日异常队列当前项现在展示处理归类、交接摘要和数据核对提示。
+- 处理归类展示业务类别、归类原因、负责角色和复核重点。
+- 交接摘要展示交接对象、摘要、待核对问题和下一触点。
+- 数据核对提示展示相关记录、核对字段和风险提示。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据和只读提示，不代表真实处理提交、审批流、权限边界、质量修复或状态写回已经实现。
+- 处理归类和交接摘要用于主管查看和线下交接，不代表最终生产责任判定、结算规则或自动处理策略。
+
+#### 验证
+
+- 红灯验证：新增 `person-timeline` 目标测试后，能抓到缺少 `handlingOutcome`、交接摘要和数据核对提示字段的问题。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- Browser smoke：`/person-timeline?...&queue=high` 显示处理归类、到岗核对、交接摘要、数据核对提示、相关记录、核对字段和复核重点；页面未出现 PRD、Gate、Story、验收清单、待实现、暂不实现、准备状态、审批或批量。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Supervisor exception handling readonly closure
 
 #### 结论
