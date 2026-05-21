@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### Q030 Fulfillment Supervisor Flow QA
+
+- branch_name: `codex/f178-exception-explanation-card`
+- base_main_commit: `23537e9`
+- remote_status: `continued on existing fulfillment supervisor branch to close the supervisor-flow QA slice`
+- scope: QA acceptance only: verify fulfillment calendar supervisor drilldown, queue cursor, sort reason, three-track evidence, personal detail return context, and product UI business language; update current state, legacy story/task status, task log, branch log, and audit report.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no product code, frontend implementation, backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates current state closeout and traceability docs only; no `app/**`, `components/**`, `lib/**`, backend, package, or lockfile changes.
+- check_result: target fulfillment and product semantic tests passed; full internal-copy scan over `app` and `components` found no banned UI terms; in-app browser smoke passed for team week, group week, member week matrix, selected exception queue, personal detail, and return URL context; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F204-F205 Fulfillment Queue Sort And Return Context
 
 - branch_name: `codex/f178-exception-explanation-card`
