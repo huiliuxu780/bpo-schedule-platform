@@ -2,6 +2,23 @@
 
 ## 2026-05-22
 
+### F238-F240-Q039 Product Semantics Cleanup
+
+- branch_name: `codex/f238-product-semantics-cleanup`
+- base_main_commit: `c93f098`
+- remote_status: `new stacked local branch from verified supervisor follow-up summary HEAD; not pushed`
+- scope: frontend product semantics and QA closeout: remove visible local-MVP wording, task IDs, read-only process labels, sidebar new/priority tags, sample-language labels, and strengthen UI copy regression tests.
+- allowed_files_check: `app/**`, `components/app-sidebar.tsx`, `components/schedule-plan-table.tsx`, `scripts/tests/product-ui-copy-audit.test.mjs`, `scripts/tests/product-navigation-business-only.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing page/sidebar copy and UI copy tests plus current state closeout, legacy story/task status, and traceability docs only; no new route, no dependency, no backend, no package or lockfile change.
+- check_result: red product UI copy/navigation tests first caught local-MVP wording, F007, read-only label, sample anomaly copy, and sidebar tags; target tests, lint, typecheck, and browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F235-F237-Q038 Supervisor Followup Summary Readonly
 
 - branch_name: `codex/f235-supervisor-followup-summary`

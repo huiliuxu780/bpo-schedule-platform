@@ -79,4 +79,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US306/F235 -> US309/Q038` completed the supervisor follow-up summary read-only slice: fulfillment calendar exception items now show supervisor follow-up status, follow-up gap lists, and group follow-up rollups. Current queue is empty again.
 
-Recommended next production MVP slice: pick the next tightly related display-only group handoff summary or supervisor closure checklist batch, keeping it local/frontend-only.
+`US310/F238 -> US313/Q039` completed the product semantic cleanup slice: visible product UI no longer exposes local-MVP wording, task IDs, read-only process labels, sidebar priority/new tags, or sample-language labels. Current queue is empty again.
+
+Recommended next production MVP slice: continue with the supervisor closure checklist or start the local action-registration design for exception handling, keeping it local/frontend-only unless PM confirms a separate production action Gate.

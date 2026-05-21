@@ -33,7 +33,7 @@ export default function AnomalySourcesPage() {
 
         <section className="grid gap-4 md:grid-cols-4">
           <Metric title="来源类型" value={`${summary.totalSources}`} description="第一阶段来源" />
-          <Metric title="示例异常" value={`${summary.totalExamples}`} description="来自异常复核清单" />
+          <Metric title="关联异常" value={`${summary.totalExamples}`} description="来自异常复核清单" />
           <Metric title="触发条件" value={`${summary.totalTriggerConditions}`} description="业务判断条件" />
           <Metric title="追溯字段" value={`${rows.reduce((total, row) => total + row.traceKeys.length, 0)}`} description="定位明细" />
         </section>

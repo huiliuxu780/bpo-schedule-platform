@@ -761,7 +761,7 @@ function MatrixExceptionPanel({
             ))}
           </div>
           <div className="grid gap-2 rounded-md border p-2">
-            <div className="text-sm font-medium">只读处理记录</div>
+            <div className="text-sm font-medium">处理记录</div>
             {selected.handlingRecords.map((record) => (
               <div key={`${record.recordedAt}-${record.conclusion}`} className="grid gap-1 text-xs">
                 <div className="flex items-center justify-between gap-2">

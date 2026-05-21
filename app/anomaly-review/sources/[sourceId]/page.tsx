@@ -98,8 +98,8 @@ export default async function AnomalySourceDetailPage({ params }: PageProps) {
 
           <Card>
             <CardHeader>
-              <CardTitle>样例异常</CardTitle>
-              <CardDescription>对应异常复核页中的本地样例 ID。</CardDescription>
+              <CardTitle>关联异常</CardTitle>
+              <CardDescription>对应异常复核页中的关联编号。</CardDescription>
             </CardHeader>
             <CardContent>
               <BadgeList values={source.exampleCaseIds} />

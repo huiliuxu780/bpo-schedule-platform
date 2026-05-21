@@ -51,8 +51,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
             <CardHeader>
               <CardTitle>当前计划不可编辑</CardTitle>
               <CardDescription>
-                当前状态为 {schedulePlanStatusLabel(plan.summary.status)}，F007
-                仅允许编辑 draft 草稿。
+                当前状态为 {schedulePlanStatusLabel(plan.summary.status)}，仅草稿状态可调整。
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -73,7 +72,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
               <CardHeader>
                 <CardTitle>计划信息</CardTitle>
                 <CardDescription>
-                  保存后由后端重新计算预测、已排、缺口和覆盖率
+                  保存后重新计算预测、已排、缺口和覆盖率
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-3 md:grid-cols-4">
@@ -107,7 +106,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
               <CardHeader>
                 <CardTitle>0.5h 时段</CardTitle>
                 <CardDescription>
-                  当前保存整份草稿明细，不做人员级排班
+                  调整 0.5h 时段后，系统会同步刷新计划摘要
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-3">

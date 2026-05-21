@@ -40,7 +40,7 @@ export default function ShiftTypesPage() {
 
         <section className="grid gap-4 md:grid-cols-4">
           <Metric title="班次类型" value={`${summary.total}`} description={`${summary.active} 个启用`} />
-          <Metric title="排班引用" value={`${summary.totalAssignedPeople}`} description="本地样例人数" />
+          <Metric title="排班引用" value={`${summary.totalAssignedPeople}`} description="当前排班人数" />
           <Metric title="计划工时" value={`${summary.totalScheduledHours.toFixed(1)}h`} description="按班次时长估算" />
           <Metric title="含饭点" value={`${summary.withMealBreak}`} description="用于导入校验" />
         </section>

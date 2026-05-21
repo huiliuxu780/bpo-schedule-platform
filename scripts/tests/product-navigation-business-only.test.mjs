@@ -23,7 +23,7 @@ test("product sidebar does not expose internal production MVP planning pages", (
 test("fulfillment monitoring navigation exposes only real business destinations", () => {
   assert.equal(sidebar.includes('{ title: "履约日历", href: "/person-timeline", activeMatch: "prefix"'), true);
 
-  for (const term of ["人员时间轴", "坐席状态轨迹", "工时核验", "异常管理", "实时遵守率"]) {
+  for (const term of ["人员时间轴", "坐席状态轨迹", "工时核验", "异常管理", "实时遵守率", 'tag: "新"', 'tag: "P1"']) {
     assert.equal(sidebar.includes(term), false, `sidebar must not expose stale fulfillment entry ${term}`);
   }
 

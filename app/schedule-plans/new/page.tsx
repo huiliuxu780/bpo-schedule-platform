@@ -27,7 +27,7 @@ export default function NewSchedulePlanPage() {
           <div>
             <h1 className="text-lg font-semibold">新建排班草稿</h1>
             <p className="text-sm text-muted-foreground">
-              本地 MVP：创建 draft 计划，不发布、不审批、不导出
+              维护排班草稿，先核对计划信息和 0.5h 时段覆盖
             </p>
           </div>
           <Button asChild variant="outline" size="sm">
@@ -40,7 +40,7 @@ export default function NewSchedulePlanPage() {
             <CardHeader>
               <CardTitle>计划信息</CardTitle>
               <CardDescription>
-                创建后由后端计算预测、已排、缺口和覆盖率
+                保存后重新计算预测、已排、缺口和覆盖率
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-3 md:grid-cols-4">
@@ -67,7 +67,7 @@ export default function NewSchedulePlanPage() {
             <CardHeader>
               <CardTitle>0.5h 时段</CardTitle>
               <CardDescription>
-                当前先覆盖 4 个核心时段，后续再扩展为完整编辑器
+                先维护核心时段，便于快速核对供需覆盖
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">

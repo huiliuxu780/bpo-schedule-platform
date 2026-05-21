@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R298-R301 - 产品语义清理
+
+```yaml
+requirements:
+  - id: R298
+    module: "业务界面收口"
+    description: "产品页面需要清理本地 MVP、任务编号、后续扩展、只读处理记录等内部过程词。"
+  - id: R299
+    module: "业务界面收口"
+    description: "侧边栏和页面标签需要清理 P0/P1、新、示例等项目管理或样例口径。"
+  - id: R300
+    module: "排班计划"
+    description: "排班草稿新建和编辑页面需要改为业务语言，避免把当前实现边界写进产品 UI。"
+  - id: R301
+    module: "质量与交付"
+    description: "产品语义清理完成后需要 QA 收口，确认产品 UI 不暴露内部过程词或假功能解释。"
+source: "PM requested rapid cleanup of unfinished or fake-function product semantics on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只清理现有产品 UI 文案和回归测试；不新增页面，不实现真实上传、审批、导出、批量、数据库、权限、真实接口、自动排班、生产公式、结算或收费因子。"
+```
+
 ### R294-R297 - 主管跟进汇总只读视图
 
 ```yaml

@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-22 - Product semantics cleanup
+
+#### 结论
+
+- `F238-F240/Q039/US310-US313` 已完成产品语义清理和 QA 收口。
+- 排班草稿新建/编辑页不再暴露本地 MVP、任务编号、后端说明、后续扩展或不做人员级排班等过程词。
+- 履约日历异常面板不再把记录区写成只读处理记录。
+- 异常来源页不再使用示例异常或本地样例口径。
+- 侧边栏不再展示新/P1 等项目管理标签。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只清理可见产品语义，不代表真实上传、审批、导出、批量、数据库、权限或真实接口已经实现。
+- 后续新增页面或字段时仍需通过产品 UI 文案审计，避免 `deferredActions` 等内部边界字段被直接渲染到产品界面。
+
+#### 验证
+
+- 红灯验证：新增产品 UI 文案和导航回归后，能抓到 `本地 MVP`、`F007`、`只读处理记录`、`不做人员级排班`、`示例异常` 和侧边栏 `新/P1` 标签。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，6 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- Browser smoke：`/schedule-plans/new`、`/schedule-plans/plan-20260512-shanghai-bosch-draft/edit`、`/person-timeline?...&queue=high`、`/anomaly-review/sources` 均未命中本地、后端、本地 MVP、F007、后续再扩展、只读处理记录、不做人员级排班、示例异常或 P1。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-22 - Supervisor follow-up summary readonly slice
 
 #### 结论

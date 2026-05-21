@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US310-US313 - 产品语义清理
+
+```yaml
+stories:
+  - id: US310
+    requirement_ids: [R298]
+    task_ids: [F238]
+    module: "业务界面收口"
+    role: "业务用户"
+    story: "作为业务用户，我希望产品页面不出现本地 MVP、任务编号、后续扩展或只读处理记录等内部过程词，以便界面只表达业务能力。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US311
+    requirement_ids: [R299]
+    task_ids: [F239]
+    module: "业务界面收口"
+    role: "业务用户"
+    story: "作为业务用户，我希望侧边栏和页面指标不出现 P0/P1、新、示例等项目管理或样例口径，以便入口可信。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US312
+    requirement_ids: [R300]
+    task_ids: [F240]
+    module: "排班计划"
+    role: "排班运营"
+    story: "作为排班运营，我希望排班草稿新建和编辑页面使用业务语言说明可做什么，而不是解释当前没做什么。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US313
+    requirement_ids: [R301]
+    task_ids: [Q039]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望产品语义清理完成后验证 UI 不暴露内部过程词或假功能解释。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "产品 UI 不出现本地 MVP、任务编号、后续扩展、只读处理记录、P0/P1、新、示例异常等过程词。"
+  - "排班草稿页面用业务语言说明草稿维护能力。"
+  - "侧边栏仅展示业务入口和业务状态标签。"
+  - "`node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US306-US309 - 主管跟进汇总只读视图
 
 ```yaml

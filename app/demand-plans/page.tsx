@@ -86,7 +86,7 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard title="需求时段" value={`${rows.length}`} description="0.5h 颗粒度" />
           <MetricCard title="预测人次" value={`${totalForecast}`} description="当前筛选汇总" />
-          <MetricCard title="覆盖职场" value={`${siteCount}`} description="本地需求来源" />
+          <MetricCard title="覆盖职场" value={`${siteCount}`} description="当前需求来源" />
           <MetricCard
             title="峰值需求"
             value={peak ? `${peak.forecast_agents}` : "0"}
