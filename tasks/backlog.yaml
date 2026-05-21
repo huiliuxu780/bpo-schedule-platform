@@ -412,7 +412,7 @@ tasks:
   - id: F221
     title: "员工主数据绑定展示"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/master-data-relations/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -425,7 +425,7 @@ tasks:
   - id: F222
     title: "异常员工反查主数据"
     priority: P0
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/master-data-relations/**", "app/person-timeline/**", "app/anomaly-review/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -438,7 +438,7 @@ tasks:
   - id: F223
     title: "班次类型计入口径展示"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/shift-types/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -451,7 +451,7 @@ tasks:
   - id: F224
     title: "主数据缺失异常跳转"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/master-data-relations/**", "app/data-quality/**", "app/anomaly-review/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -464,7 +464,7 @@ tasks:
   - id: F225
     title: "主数据有效期状态展示"
     priority: P1
-    status: planned
+    status: done
     required_workflow: frontend-scaffold
     allowed_files: ["app/master-data-relations/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
@@ -477,7 +477,7 @@ tasks:
   - id: Q034
     title: "主数据关系闭环 QA"
     priority: P1
-    status: planned
+    status: done
     required_workflow: qa
     allowed_files: ["docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]

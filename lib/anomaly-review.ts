@@ -34,6 +34,8 @@ export type AnomalyReviewCase = {
   impactedHours: number
   reviewResult: string
   recommendation: string
+  relatedEmployeeId?: string
+  masterDataRelationTarget?: string
 }
 
 export type AnomalyReviewFilters = {
@@ -182,6 +184,8 @@ export const fallbackAnomalyReviewCases: AnomalyReviewCase[] = [
     impactedHours: 0.5,
     reviewResult: "待复核",
     recommendation: "先补齐员工、供应商、职场和项目绑定关系。",
+    relatedEmployeeId: "A-9931",
+    masterDataRelationTarget: "/master-data-relations#employee-A-9931",
   }),
   anomalyCase({
     id: "AR-202605-008",

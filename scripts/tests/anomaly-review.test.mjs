@@ -46,3 +46,10 @@ test("anomaly review summary keeps deferred action boundaries explicit", () => {
     "无真实异常计算",
   ]);
 });
+
+test("master data anomaly exposes reverse lookup target", () => {
+  const row = fallbackAnomalyReviewCases.find((item) => item.id === "AR-202605-007");
+
+  assert.equal(row?.relatedEmployeeId, "A-9931");
+  assert.equal(row?.masterDataRelationTarget, "/master-data-relations#employee-A-9931");
+});

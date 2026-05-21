@@ -117,9 +117,9 @@ export const fallbackDataQualityIssues: DataQualityIssue[] = [
     impactLinks: [
       {
         type: "schedule_plan",
-        label: "查看排班明细",
-        target: "/shift-details",
-        description: "反查该员工是否已进入人员级排班明细。",
+        label: "查看主数据关系",
+        target: "/master-data-relations#employee-A-9931",
+        description: "反查该员工的供应商、职场、项目和技能绑定。",
       },
       {
         type: "person_timeline",

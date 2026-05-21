@@ -1,5 +1,8 @@
+import Link from "next/link"
+
 import { AppShell } from "@/components/app-shell"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -8,13 +11,18 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
+  employeeMasterDataBindingStatusLabel,
+  fallbackEmployeeMasterDataBindings,
   fallbackMasterDataRelations,
+  getMasterDataBindingTarget,
+  summarizeEmployeeMasterDataBindings,
   summarizeMasterDataRelations,
 } from "@/lib/master-data-relations"
 
 export default function MasterDataRelationsPage() {
   const relations = fallbackMasterDataRelations
   const summary = summarizeMasterDataRelations(relations)
+  const bindingSummary = summarizeEmployeeMasterDataBindings()
 
   return (
     <AppShell title="主数据关系" searchPlaceholder="搜索主数据对象或关系">
@@ -32,8 +40,8 @@ export default function MasterDataRelationsPage() {
         <section className="grid gap-4 md:grid-cols-4">
           <Metric title="对象" value={`${summary.nodeCount}`} />
           <Metric title="关系" value={`${summary.edgeCount}`} />
-          <Metric title="阻断关系" value={`${summary.blockingEdgeCount}`} />
-          <Metric title="支撑流程" value={`${summary.supportedFlows.length}`} />
+          <Metric title="员工绑定" value={`${bindingSummary.total}`} />
+          <Metric title="待复核" value={`${bindingSummary.needsReview}`} />
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[1fr_0.8fr]">
@@ -68,6 +76,61 @@ export default function MasterDataRelationsPage() {
 
         <Card>
           <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex flex-col gap-1">
+                <CardTitle>员工绑定关系</CardTitle>
+                <CardDescription>
+                  按员工展示供应商、职场、项目、技能、有效期和状态，用于异常反查。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {bindingSummary.active} 个有效 / {bindingSummary.expiringSoon} 个即将到期
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-3 lg:grid-cols-2">
+            {fallbackEmployeeMasterDataBindings.map((binding) => (
+              <div
+                key={binding.employeeId}
+                id={`employee-${binding.employeeId}`}
+                className="scroll-mt-24 rounded-lg border p-3"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium">
+                      {binding.employeeId} {binding.employeeName}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {binding.workplace} / {binding.project} / {binding.supplier}
+                    </div>
+                  </div>
+                  <Badge variant={binding.status === "needs_review" ? "destructive" : "secondary"}>
+                    {employeeMasterDataBindingStatusLabel(binding.status)}
+                  </Badge>
+                </div>
+                <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                  <MiniDetail label="技能" value={binding.skills.join("、")} />
+                  <MiniDetail label="有效期" value={`${binding.effectiveFrom} 至 ${binding.effectiveTo}`} />
+                  <MiniDetail
+                    label="关联异常"
+                    value={[...binding.anomalyIds, ...binding.qualityIssueIds].join("、") || "无"}
+                  />
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {binding.businessImpact}
+                </p>
+                <div className="mt-3 flex justify-end">
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={getMasterDataBindingTarget(binding.employeeId)}>定位此员工</Link>
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>关系清单</CardTitle>
             <CardDescription>阻断关系缺失时会影响排班、履约对比或异常归因。</CardDescription>
           </CardHeader>
@@ -89,6 +152,15 @@ export default function MasterDataRelationsPage() {
         </Card>
       </main>
     </AppShell>
+  )
+}
+
+function MiniDetail({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 break-words text-sm font-medium">{value}</div>
+    </div>
   )
 }
 

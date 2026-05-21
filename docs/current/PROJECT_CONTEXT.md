@@ -69,4 +69,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US281/F216 -> US286/Q033` completed the import quality traceability slice: import batch details now drill into related data quality issues, issue details expose source template, source field, original value, error code, affected objects, impact links, and batch failure impact summaries. Current queue is empty again.
 
-Recommended next production MVP slice: start the master-data relationship closure from `US287/F221 -> US292/Q034`, keeping it display-only and local/frontend-only.
+`US287/F221 -> US292/Q034` completed the master-data relationship closure: employee bindings now show supplier, workplace, project, skills, validity, status, anomaly/data-quality references, and reverse lookup links; shift types now explain meal/rest windows and counting policy. Current queue is empty again.
+
+Recommended next production MVP slice: pick the next tightly related display-only supervisor or data-quality handoff batch, keeping it local/frontend-only.

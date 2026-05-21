@@ -228,6 +228,16 @@ function AnomalyReviewCard({ row }: { row: AnomalyReviewCase }) {
         />
       </div>
       <p className="mt-3 text-sm text-muted-foreground">{row.recommendation}</p>
+      {row.masterDataRelationTarget ? (
+        <div className="mt-3 flex justify-end">
+          <Link
+            href={row.masterDataRelationTarget}
+            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+          >
+            反查主数据关系
+          </Link>
+        </div>
+      ) : null}
     </div>
   )
 }

@@ -21,6 +21,27 @@ export type MasterDataRelationEdge = {
   blocking: boolean
 }
 
+export type EmployeeMasterDataBindingStatus =
+  | "active"
+  | "needs_review"
+  | "expiring_soon"
+  | "inactive"
+
+export type EmployeeMasterDataBinding = {
+  employeeId: string
+  employeeName: string
+  supplier: string
+  workplace: string
+  project: string
+  skills: string[]
+  effectiveFrom: string
+  effectiveTo: string
+  status: EmployeeMasterDataBindingStatus
+  anomalyIds: string[]
+  qualityIssueIds: string[]
+  businessImpact: string
+}
+
 export type MasterDataRelations = {
   nodes: MasterDataRelationNode[]
   edges: MasterDataRelationEdge[]
@@ -33,6 +54,14 @@ export type MasterDataRelationSummary = {
   blockingEdgeCount: number
   supportedFlows: string[]
   deferredActions: string[]
+}
+
+export type EmployeeMasterDataBindingSummary = {
+  total: number
+  active: number
+  needsReview: number
+  expiringSoon: number
+  inactive: number
 }
 
 export const fallbackMasterDataRelations: MasterDataRelations = {
@@ -63,6 +92,79 @@ export const fallbackMasterDataRelations: MasterDataRelations = {
   ],
 }
 
+export const fallbackEmployeeMasterDataBindings: EmployeeMasterDataBinding[] = [
+  employeeBinding({
+    employeeId: "A-1001",
+    employeeName: "张三",
+    supplier: "供应商 A",
+    workplace: "上海职场",
+    project: "博西客服",
+    skills: ["热线", "L2"],
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2026-12-31",
+    status: "active",
+    anomalyIds: [],
+    qualityIssueIds: [],
+    businessImpact: "可用于排班、登录和状态三轨履约对齐。",
+  }),
+  employeeBinding({
+    employeeId: "A-1002",
+    employeeName: "李四",
+    supplier: "供应商 A",
+    workplace: "上海职场",
+    project: "博西客服",
+    skills: ["热线", "L1"],
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2026-12-31",
+    status: "active",
+    anomalyIds: ["AR-202605-004"],
+    qualityIssueIds: [],
+    businessImpact: "有履约异常但主数据关系有效，优先回到排班、登录或状态证据。",
+  }),
+  employeeBinding({
+    employeeId: "A-1003",
+    employeeName: "王五",
+    supplier: "供应商 B",
+    workplace: "上海职场",
+    project: "博西客服",
+    skills: ["工单", "L1"],
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2026-12-31",
+    status: "active",
+    anomalyIds: [],
+    qualityIssueIds: [],
+    businessImpact: "可用于小组成员矩阵和需求供给对齐。",
+  }),
+  employeeBinding({
+    employeeId: "A-9931",
+    employeeName: "待补员工",
+    supplier: "未绑定供应商",
+    workplace: "上海职场",
+    project: "博西客服",
+    skills: ["待确认"],
+    effectiveFrom: "2026-05-01",
+    effectiveTo: "2026-05-31",
+    status: "needs_review",
+    anomalyIds: ["AR-202605-007"],
+    qualityIssueIds: ["DQ-202605-004"],
+    businessImpact: "绑定缺失会导致人员排班无法稳定归属到供应商、职场和项目。",
+  }),
+  employeeBinding({
+    employeeId: "A-7788",
+    employeeName: "临时账号",
+    supplier: "供应商 B",
+    workplace: "苏州职场",
+    project: "博西客服",
+    skills: ["热线", "待复核"],
+    effectiveFrom: "2026-05-01",
+    effectiveTo: "2026-05-20",
+    status: "expiring_soon",
+    anomalyIds: [],
+    qualityIssueIds: ["DQ-202605-009"],
+    businessImpact: "有效期临近结束，登录日志若继续出现需要先确认是否续期。",
+  }),
+]
+
 export function summarizeMasterDataRelations(
   relations: MasterDataRelations
 ): MasterDataRelationSummary {
@@ -86,6 +188,39 @@ export function getMasterDataRelationNode(id: MasterDataNodeId) {
   return fallbackMasterDataRelations.nodes.find((node) => node.id === id)
 }
 
+export function summarizeEmployeeMasterDataBindings(
+  rows = fallbackEmployeeMasterDataBindings
+): EmployeeMasterDataBindingSummary {
+  return {
+    total: rows.length,
+    active: rows.filter((row) => row.status === "active").length,
+    needsReview: rows.filter((row) => row.status === "needs_review").length,
+    expiringSoon: rows.filter((row) => row.status === "expiring_soon").length,
+    inactive: rows.filter((row) => row.status === "inactive").length,
+  }
+}
+
+export function getEmployeeMasterDataBinding(employeeId: string) {
+  return fallbackEmployeeMasterDataBindings.find(
+    (row) => row.employeeId === employeeId
+  )
+}
+
+export function getMasterDataBindingTarget(employeeId: string) {
+  return `/master-data-relations#employee-${employeeId}`
+}
+
+export function employeeMasterDataBindingStatusLabel(
+  status: EmployeeMasterDataBindingStatus
+) {
+  return {
+    active: "有效",
+    needs_review: "待复核",
+    expiring_soon: "即将到期",
+    inactive: "已停用",
+  }[status]
+}
+
 function node(
   id: MasterDataNodeId,
   title: string,
@@ -103,4 +238,10 @@ function edge(
   blocking: boolean
 ): MasterDataRelationEdge {
   return { from, to, label, blocking }
+}
+
+function employeeBinding(
+  row: EmployeeMasterDataBinding
+): EmployeeMasterDataBinding {
+  return row
 }

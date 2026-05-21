@@ -42,7 +42,11 @@ test("data quality issue lookup exposes recommendation and deferred actions", ()
   assert.equal(row?.originalValue, "A-9931");
   assert.equal(row?.errorCode, "unknown_foreign_key");
   assert.ok(row?.affectedObjects.some((object) => object.type === "人员排班"));
-  assert.ok(row?.impactLinks.some((link) => link.target === "/shift-details"));
+  assert.ok(
+    row?.impactLinks.some(
+      (link) => link.target === "/master-data-relations#employee-A-9931"
+    )
+  );
   assert.equal(row?.recommendation.includes("补齐"), true);
   assert.equal(summary.deferredActions.includes("无真实数据修复"), true);
 });

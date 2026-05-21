@@ -11,8 +11,12 @@ export type ShiftType = {
   endTime: string
   durationHours: number
   mealBreakMinutes: number
+  mealWindow: string
   restBreakMinutes: number
+  restWindows: string[]
   halfHourIntervals: number
+  payableHours: number
+  countingPolicy: string
   assignedPeople: number
   skillGroups: string[]
   status: ShiftTypeStatus
@@ -50,8 +54,12 @@ export const fallbackShiftTypes: ShiftType[] = [
     endTime: "18:00",
     durationHours: 8,
     mealBreakMinutes: 60,
+    mealWindow: "12:00-13:00",
     restBreakMinutes: 30,
+    restWindows: ["10:30-10:45", "15:30-15:45"],
     halfHourIntervals: 16,
+    payableHours: 7.5,
+    countingPolicy: "饭点不计入有效产能，休息不计入登录缺口",
     assignedPeople: 36,
     skillGroups: ["售前", "中文"],
     status: "active",
@@ -68,8 +76,12 @@ export const fallbackShiftTypes: ShiftType[] = [
     endTime: "20:00",
     durationHours: 8,
     mealBreakMinutes: 60,
+    mealWindow: "15:00-16:00",
     restBreakMinutes: 30,
+    restWindows: ["13:30-13:45", "18:30-18:45"],
     halfHourIntervals: 16,
+    payableHours: 7.5,
+    countingPolicy: "饭点不计入有效产能，休息不计入登录缺口",
     assignedPeople: 28,
     skillGroups: ["售后", "中文"],
     status: "active",
@@ -86,8 +98,12 @@ export const fallbackShiftTypes: ShiftType[] = [
     endTime: "22:00",
     durationHours: 7.5,
     mealBreakMinutes: 30,
+    mealWindow: "18:00-18:30",
     restBreakMinutes: 30,
+    restWindows: ["16:00-16:15", "20:30-20:45"],
     halfHourIntervals: 15,
+    payableHours: 7,
+    countingPolicy: "饭点不计入有效产能，休息不计入登录缺口",
     assignedPeople: 18,
     skillGroups: ["售后", "英文"],
     status: "active",
@@ -104,8 +120,12 @@ export const fallbackShiftTypes: ShiftType[] = [
     endTime: "20:00",
     durationHours: 8,
     mealBreakMinutes: 120,
+    mealWindow: "12:00-13:00 / 17:00-18:00",
     restBreakMinutes: 0,
+    restWindows: [],
     halfHourIntervals: 16,
+    payableHours: 8,
+    countingPolicy: "拆分间隔不计入有效产能，需人工复核登录缺口",
     assignedPeople: 0,
     skillGroups: ["试点"],
     status: "draft",

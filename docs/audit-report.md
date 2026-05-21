@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-21 - Master data relationship closure
+
+#### 结论
+
+- `F221-F225/Q034/US287-US292` 已完成主数据关系闭环和 QA 收口。
+- 主数据关系页现在按员工展示供应商、职场、项目、技能、有效期、状态、异常引用和质量问题引用。
+- 异常复核和数据质量详情可反查到对应员工主数据关系。
+- 班次类型页展示饭点窗口、休息窗口、计入工时和计入口径。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮仍使用本地前端样例数据，不代表主数据 CRUD、冻结解冻、真实导入修复、权限、审批或生产主数据状态流已经实现。
+- 班次计入口径用于页面解释，不代表最终生产公式、结算规则或收费因子。
+
+#### 验证
+
+- 红灯验证：新增 master-data/shift/anomaly/data-quality 目标测试后，能抓到缺少员工绑定 helper、异常反查字段、质量问题反查目标和班次计入口径字段的问题。
+- `node --test scripts/tests/master-data-relations.test.mjs scripts/tests/shift-type-catalog.test.mjs scripts/tests/anomaly-review.test.mjs scripts/tests/data-quality.test.mjs`：通过，15 个测试通过。
+- `npm run lint`、`npm run typecheck`：通过。
+- Browser smoke：`/master-data-relations` 显示员工绑定关系、`A-1001 张三`、供应商 A、博西客服、技能、有效期、待复核、即将到期和 `A-9931`；`/anomaly-review` 显示人员绑定缺失和反查主数据关系，链接到 `/master-data-relations#employee-A-9931`；`/data-quality/DQ-202605-004` 显示查看主数据关系和同一反查链接；`/shift-types` 显示饭点窗口、休息窗口、计入工时和计入口径；上述页面未出现待实现、验收清单、Gate、Story 或 PRD。
+- `bash scripts/check-state.sh --strict`、`git diff --check`、`bash scripts/check.sh`：通过。
+
 ### 2026-05-21 - Import quality traceability
 
 #### 结论

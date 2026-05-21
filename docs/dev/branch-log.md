@@ -2,6 +2,23 @@
 
 ## 2026-05-21
 
+### F221-F225-Q034 Master Data Relationship Closure
+
+- branch_name: `codex/f221-master-data-relations-closure`
+- base_main_commit: `5cb27cd`
+- remote_status: `new stacked local branch from verified import quality traceability HEAD; not pushed`
+- scope: frontend local business function and QA closeout: add employee-level master-data bindings, anomaly/data-quality reverse lookup to employee binding, shift type meal/rest/counting policy display, binding validity/status display, and master-data relationship QA.
+- allowed_files_check: `app/master-data-relations/**`, `app/anomaly-review/**`, `app/data-quality/**`, `app/shift-types/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing master-data, anomaly review, data-quality, and shift-type pages/models/tests plus current state closeout, legacy story/task status, and traceability docs only; no new route, no sidebar entry, no backend, no package or lockfile change.
+- check_result: red target tests first caught missing employee binding helpers, reverse lookup fields, data-quality target, and shift counting fields; target tests, lint, typecheck, and browser smoke passed before traceability closeout; final `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh` passed after traceability closeout.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F216-F220-Q033 Import Quality Traceability
 
 - branch_name: `codex/f178-exception-explanation-card`

@@ -38,4 +38,8 @@ test("shift type lookup exposes schedule reference fields", () => {
   assert.equal(row.code, "MORNING_A")
   assert.equal(row.halfHourIntervals, 16)
   assert.ok(row.skillGroups.includes("售前"))
+  assert.equal(row.mealWindow, "12:00-13:00")
+  assert.equal(row.restWindows.join("、"), "10:30-10:45、15:30-15:45")
+  assert.equal(row.countingPolicy, "饭点不计入有效产能，休息不计入登录缺口")
+  assert.equal(row.payableHours, 7.5)
 })

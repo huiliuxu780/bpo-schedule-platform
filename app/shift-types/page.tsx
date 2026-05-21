@@ -82,9 +82,9 @@ export default function ShiftTypesPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      饭点 {row.mealBreakMinutes}m
+                      饭点 {row.mealWindow}
                       <div className="text-xs text-muted-foreground">
-                        休息 {row.restBreakMinutes}m
+                        休息 {row.restWindows.length > 0 ? row.restWindows.join("、") : "无"}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -93,11 +93,19 @@ export default function ShiftTypesPage() {
                         {row.supplier} / {row.skillGroups.join("、")}
                       </div>
                     </TableCell>
-                    <TableCell>{row.assignedPeople} 人</TableCell>
+                    <TableCell>
+                      {row.assignedPeople} 人
+                      <div className="text-xs text-muted-foreground">
+                        计入 {row.payableHours}h
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <Badge variant={row.status === "active" ? "default" : "secondary"}>
                         {shiftTypeStatusLabel(row.status)}
                       </Badge>
+                      <div className="mt-2 max-w-52 text-xs text-muted-foreground">
+                        {row.countingPolicy}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
