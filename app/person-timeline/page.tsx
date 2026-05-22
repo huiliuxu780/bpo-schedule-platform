@@ -47,7 +47,14 @@ type PageProps = {
 }
 
 type GroupWeekFocus = "all" | "gap" | "anomaly"
-type MatrixQueueFilter = "all" | "high" | "login" | "status"
+type MatrixQueueFilter =
+  | "all"
+  | "high"
+  | "login"
+  | "status"
+  | "missing_material"
+  | "supervisor_judgment"
+  | "data_check"
 
 export default async function PersonTimelinePage({ searchParams }: PageProps) {
   const { team: teamId, group: groupId, date, focus, exception, queue } =
@@ -466,7 +473,14 @@ function MemberMatrixSection({
 }
 
 function getMatrixQueueFilter(value?: string): MatrixQueueFilter {
-  if (value === "high" || value === "login" || value === "status") {
+  if (
+    value === "high" ||
+    value === "login" ||
+    value === "status" ||
+    value === "missing_material" ||
+    value === "supervisor_judgment" ||
+    value === "data_check"
+  ) {
     return value
   }
 
@@ -487,6 +501,14 @@ function getVisibleMatrixExceptionQueue(
 
   if (queueFilter === "status") {
     return matrix.exceptionQueue.filter((item) => item.type === "状态不一致")
+  }
+
+  if (
+    queueFilter === "missing_material" ||
+    queueFilter === "supervisor_judgment" ||
+    queueFilter === "data_check"
+  ) {
+    return matrix.exceptionQueue.filter((item) => item.reviewGroup.code === queueFilter)
   }
 
   return matrix.exceptionQueue
@@ -527,6 +549,12 @@ function MatrixExceptionPanel({
           label="状态不一致"
           value={`${matrix.exceptionQueueSummary.statusMismatchCount}`}
         />
+        <SummaryMetric label="需补材料" value={`${matrix.exceptionQueueSummary.missingMaterialCount}`} />
+        <SummaryMetric
+          label="待主管判断"
+          value={`${matrix.exceptionQueueSummary.supervisorJudgmentCount}`}
+        />
+        <SummaryMetric label="需数据核对" value={`${matrix.exceptionQueueSummary.dataCheckCount}`} />
         <SummaryMetric
           label="总影响"
           value={`${matrix.exceptionQueueSummary.totalImpactHours.toFixed(1)}h`}
@@ -605,6 +633,9 @@ function MatrixExceptionPanel({
               </div>
               <div className="text-muted-foreground">
                 {item.start}-{item.end} / {item.title}
+              </div>
+              <div className="text-muted-foreground">
+                处理分组：{item.reviewGroup.label}，{item.reviewGroup.reason}
               </div>
               <div className="text-muted-foreground">排序依据：{item.sortReason}</div>
               <div className="text-muted-foreground">影响 {item.impactHours.toFixed(1)}h</div>
@@ -1112,4 +1143,7 @@ const queueFilters: Array<{ value: MatrixQueueFilter; label: string }> = [
   { value: "high", label: "高优先级" },
   { value: "login", label: "登录缺口" },
   { value: "status", label: "状态不一致" },
+  { value: "missing_material", label: "需补材料" },
+  { value: "supervisor_judgment", label: "待主管判断" },
+  { value: "data_check", label: "需数据核对" },
 ]

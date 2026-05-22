@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R322-R325 - 主管异常队列分组
+
+```yaml
+requirements:
+  - id: R322
+    module: "履约日历"
+    description: "小组成员单日矩阵异常侧栏需要按主管处理分组展示异常队列，帮助主管先看需补材料、待主管判断和需数据核对的事项。"
+  - id: R323
+    module: "履约日历"
+    description: "异常队列模型需要为每个异常提供主管处理分组，并在队列摘要中统计各分组数量。"
+  - id: R324
+    module: "履约日历"
+    description: "主管处理分组筛选需要复用现有履约日历页面和 URL 参数，不新增页面、导航、提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R325
+    module: "质量与交付"
+    description: "主管异常队列分组完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued business function development on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R318-R321 - 主管异常复核清单
 
 ```yaml

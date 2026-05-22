@@ -2248,6 +2248,26 @@
 - Browser smoke：打开 `/person-timeline?...&queue=high`，侧栏显示“复核清单”“已齐 2 项 / 待补 2 项”“需补到岗说明后再判断当日登录缺口。”“排班记录”“登录记录”“到岗说明”“主管判断”，且未出现提交、保存、审批、导出或批量入口。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Supervisor queue grouping
+
+#### 结论
+
+- `F256-F258/US334-US336` 已在小组成员单日矩阵异常侧栏增加主管处理分组筛选。
+- 异常队列项新增 `reviewGroup`，包含分组编码、分组名称和分组原因。
+- 异常摘要新增需补材料、待主管判断和需数据核对数量；侧栏新增对应筛选入口，并在队列项展示处理分组。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管队列分组和查看筛选，不代表正式处理结论登记、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：打开 `/person-timeline?...&queue=missing_material` 和 `/person-timeline?...&queue=supervisor_judgment`，侧栏显示“需补材料”“待主管判断”“需数据核对”和对应“处理分组”原因，且未出现提交、保存、审批、导出或批量入口。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

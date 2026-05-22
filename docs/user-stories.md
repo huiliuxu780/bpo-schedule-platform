@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US334-US337 - 主管异常队列分组
+
+```yaml
+stories:
+  - id: US334
+    requirement_ids: [R322]
+    task_ids: [F256]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列按需补材料、待主管判断和需数据核对分组，以便先处理最需要现场补充的信息。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US335
+    requirement_ids: [R323]
+    task_ids: [F257]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列模型返回每个异常的处理分组和分组数量，以便判断当天处理负载。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US336
+    requirement_ids: [R324]
+    task_ids: [F258]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望处理分组只作为筛选和查看能力，以便不误导为已经具备处理提交或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US337
+    requirement_ids: [R325]
+    task_ids: [Q045]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管异常队列分组批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵异常侧栏展示主管处理分组筛选。"
+  - "异常队列模型返回每个异常的处理分组，摘要返回需补材料、待主管判断、需数据核对数量。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US330-US333 - 主管异常复核清单
 
 ```yaml

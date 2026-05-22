@@ -230,6 +230,7 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       employeeName: item.employeeName,
       title: item.title,
       priority: item.priority,
+      reviewGroup: item.reviewGroup.label,
       impactHours: item.impactHours,
       start: item.start,
       end: item.end,
@@ -243,6 +244,7 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         employeeName: "王敏",
         title: "迟到 21 分钟",
         priority: "high",
+        reviewGroup: "需补材料",
         impactHours: 0.35,
         start: "09:00",
         end: "09:21",
@@ -255,6 +257,7 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         employeeName: "刘晨",
         title: "午后状态缺登录切片",
         priority: "medium",
+        reviewGroup: "待主管判断",
         impactHours: 5,
         start: "13:00",
         end: "18:00",
@@ -268,10 +271,18 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     highPriorityCount: 1,
     loginGapCount: 1,
     statusMismatchCount: 1,
+    missingMaterialCount: 1,
+    supervisorJudgmentCount: 1,
+    dataCheckCount: 0,
     totalImpactHours: 5.35,
   });
   const lateLogin = matrix.exceptionQueue.find((item) => item.key === "A-1002::late_login");
   assert.ok(lateLogin);
+  assert.deepEqual(lateLogin.reviewGroup, {
+    code: "missing_material",
+    label: "需补材料",
+    reason: "仍缺员工到岗说明、迟到或漏登原因和原始登录记录。",
+  });
   assert.deepEqual(lateLogin.focusEventIds, ["SCH-1002-1", "LOG-1002-1"]);
   assert.deepEqual(
     lateLogin.evidenceCards.map((card) => ({
@@ -397,6 +408,11 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
   });
   const statusMismatch = matrix.exceptionQueue.find((item) => item.key === "A-1001::no_login");
   assert.ok(statusMismatch);
+  assert.deepEqual(statusMismatch.reviewGroup, {
+    code: "supervisor_judgment",
+    label: "待主管判断",
+    reason: "需由现场主管确认培训安排是否符合当班在线要求。",
+  });
   assert.deepEqual(statusMismatch.focusEventIds, ["SCH-1001-2", "LOG-1001-1", "STA-1001-2"]);
   assert.deepEqual(
     statusMismatch.evidenceCards.map((card) => ({

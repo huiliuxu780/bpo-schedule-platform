@@ -179,6 +179,11 @@ export type FulfillmentMatrixExceptionQueueItem = {
   type: TimelineExceptionExplanation["type"]
   title: string
   priority: TimelineExceptionExplanation["priority"]
+  reviewGroup: {
+    code: "missing_material" | "supervisor_judgment" | "data_check"
+    label: "需补材料" | "待主管判断" | "需数据核对"
+    reason: string
+  }
   impactHours: number
   start: string
   end: string
@@ -289,6 +294,9 @@ export type FulfillmentMatrixExceptionQueueSummary = {
   highPriorityCount: number
   loginGapCount: number
   statusMismatchCount: number
+  missingMaterialCount: number
+  supervisorJudgmentCount: number
+  dataCheckCount: number
   totalImpactHours: number
 }
 
@@ -924,6 +932,7 @@ function buildFulfillmentMatrixExceptionQueue(
           type: explanation.type,
           title: explanation.title,
           priority: explanation.priority,
+          reviewGroup: buildExceptionReviewGroup(explanation),
           impactHours: explanation.impactHours,
           start: explanation.start,
           end: explanation.end,
@@ -1551,7 +1560,37 @@ function summarizeFulfillmentMatrixExceptionQueue(
     highPriorityCount: queue.filter((item) => item.priority === "high").length,
     loginGapCount: queue.filter((item) => item.type === "登录缺口").length,
     statusMismatchCount: queue.filter((item) => item.type === "状态不一致").length,
+    missingMaterialCount: queue.filter((item) => item.reviewGroup.code === "missing_material")
+      .length,
+    supervisorJudgmentCount: queue.filter(
+      (item) => item.reviewGroup.code === "supervisor_judgment"
+    ).length,
+    dataCheckCount: queue.filter((item) => item.reviewGroup.code === "data_check").length,
     totalImpactHours: roundHours(queue.reduce((total, item) => total + item.impactHours, 0)),
+  }
+}
+
+function buildExceptionReviewGroup(explanation: TimelineExceptionExplanation) {
+  if (explanation.type === "登录缺口") {
+    return {
+      code: "missing_material" as const,
+      label: "需补材料" as const,
+      reason: "仍缺员工到岗说明、迟到或漏登原因和原始登录记录。",
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      code: "data_check" as const,
+      label: "需数据核对" as const,
+      reason: "需先核对排班结束、登录结束和原始登出记录。",
+    }
+  }
+
+  return {
+    code: "supervisor_judgment" as const,
+    label: "待主管判断" as const,
+    reason: "需由现场主管确认培训安排是否符合当班在线要求。",
   }
 }
 

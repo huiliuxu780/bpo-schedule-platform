@@ -1611,3 +1611,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F256-F258 Supervisor Queue Grouping
+
+- branch_name: `codex/f256-supervisor-queue-grouping`
+- base_main_commit: `5a4fb72`
+- remote_status: `not_pushed`
+- scope: frontend local business function: add supervisor review-group fields to fulfillment exception queue items, summarize missing-material/supervisor-judgment/data-check counts, and expose matching filters in the existing group-day exception panel.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar route and model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target model test, product UI copy audit, browser smoke, strict state check, diff whitespace check, lint, typecheck, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
