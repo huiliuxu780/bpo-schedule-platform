@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-22 - Supervisor follow-up timeline
+
+#### 结论
+
+- `F286-F288/Q055/US374-US377` 已完成主管跟进时间线和 QA 收口。
+- 异常队列项新增 `followUpTimeline`，包含识别、已跟进、当前卡点和下一复核节点。
+- 页面在现有右侧异常详情展示“跟进时间线”，不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看口径，不代表真实通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `followUpTimeline` 为 `undefined`，证明测试覆盖新增模型能力。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“跟进时间线”“2026-05-11 09:22 / 系统识别”“迟到 21 分钟，影响 0.35h。”“已联系员工确认到岗时间。等待补充迟到或漏登原因。”“当前卡点”“待补说明：需补到岗说明、迟到或漏登原因。”“下一复核”和“确认王敏实际到岗时间和迟到原因。”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、通知按钮、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-22 - Supervisor exception communication context
 
 #### 结论

@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US374-US377 - 主管跟进时间线
+
+```yaml
+stories:
+  - id: US374
+    requirement_ids: [R362]
+    task_ids: [F286]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在异常详情中看到跟进时间线，以便知道这条异常已经跟进到哪里、当前卡点是什么。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US375
+    requirement_ids: [R363]
+    task_ids: [F287]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列模型返回识别、已跟进、当前卡点和下一复核节点，以便按时间顺序复盘异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US376
+    requirement_ids: [R364]
+    task_ids: [F288]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望跟进时间线只表达查看口径，以便不误导为已经具备线上流转或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US377
+    requirement_ids: [R365]
+    task_ids: [Q055]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管跟进时间线批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常详情展示主管跟进时间线。"
+  - "模型返回识别、已跟进、当前卡点和下一复核节点。"
+  - "页面不出现通知、提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US370-US373 - 主管异常沟通上下文
 
 ```yaml

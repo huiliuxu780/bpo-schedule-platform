@@ -108,6 +108,7 @@ Current invariants:
 - `F277-F279/Q052` completed a supervisor handoff overview slice: the fulfillment calendar group-day exception panel shows handoff item count, open question count, escalation count, top recipient, next handoff item, and recipient-level handoff distribution. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F280-F282/Q053` completed a team-day risk digest slice: the fulfillment calendar group-day exception panel shows day risk level, risk score, headline, primary risk, next focus item, and risk signals. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F283-F285/Q054` completed a supervisor exception communication context slice: the fulfillment calendar group-day exception panel shows communication audience, purpose, key messages, referenced evidence, open questions, and next conversation point for the selected exception. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F286-F288/Q055` completed a supervisor follow-up timeline slice: the fulfillment calendar group-day exception panel shows detection, completed follow-up, current blocker, and next review nodes for the selected exception. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

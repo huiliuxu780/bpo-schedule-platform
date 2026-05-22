@@ -269,6 +269,13 @@ export type FulfillmentMatrixExceptionQueueItem = {
     openQuestions: string[]
     nextConversation: string
   }
+  followUpTimeline: Array<{
+    stage: "识别" | "已跟进" | "当前卡点" | "下一复核"
+    time: string
+    owner: string
+    summary: string
+    status: "已完成" | "进行中" | "待查看"
+  }>
   dataCheckReadiness: {
     sourceRecords: string[]
     checkFields: string[]
@@ -1189,6 +1196,7 @@ function buildFulfillmentMatrixExceptionQueue(
           closureChecklist: buildExceptionClosureChecklist(explanation),
           handoffSummary: buildExceptionHandoffSummary(member, explanation),
           communicationContext: buildExceptionCommunicationContext(member, explanation, evidenceCards),
+          followUpTimeline: buildExceptionFollowUpTimeline(member, explanation, date),
           dataCheckReadiness: buildExceptionDataCheckReadiness(explanation, evidenceCards),
           dataQualityLinks: buildExceptionDataQualityLinks(explanation, evidenceCards),
           agingEscalation: buildExceptionAgingEscalation(explanation, date),
@@ -1452,6 +1460,69 @@ function buildExceptionCommunicationContext(
     openQuestions: ["培训安排是否已登记", "当班在线要求是否允许该状态"],
     nextConversation: "2026-05-11 15:00 前和现场主管确认培训安排。",
   }
+}
+
+function buildExceptionFollowUpTimeline(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation,
+  date: string
+): FulfillmentMatrixExceptionQueueItem["followUpTimeline"] {
+  const handlingRecords = getExceptionHandlingRecords(explanation)
+  const followUpGaps = buildFollowUpGaps(explanation)
+  const supervisorFollowUp = buildSupervisorFollowUp(member, explanation)
+  const handlingOutcome = buildExceptionHandlingOutcome(member, explanation, [])
+  const detectedAt = buildExceptionAgingEscalation(explanation, date).detectedAt
+  const currentGapSummary = buildFollowUpCurrentGapSummary(explanation, followUpGaps)
+
+  return [
+    {
+      stage: "识别",
+      time: detectedAt,
+      owner: "系统识别",
+      summary: `${explanation.title}，影响 ${formatImpactHours(explanation.impactHours)}h。`,
+      status: "已完成",
+    },
+    ...handlingRecords.map((record) => ({
+      stage: "已跟进" as const,
+      time: record.recordedAt,
+      owner: record.recorder,
+      summary: `${record.conclusion}${record.followUp}`,
+      status: "已完成" as const,
+    })),
+    {
+      stage: "当前卡点",
+      time: handlingRecords.at(-1)?.recordedAt ?? detectedAt,
+      owner: supervisorFollowUp.owner,
+      summary: `${supervisorFollowUp.status}：${currentGapSummary}`,
+      status: "进行中",
+    },
+    {
+      stage: "下一复核",
+      time: supervisorFollowUp.nextCheckAt,
+      owner: supervisorFollowUp.owner,
+      summary: handlingOutcome.nextReviewPoint,
+      status: "待查看",
+    },
+  ]
+}
+
+function buildFollowUpCurrentGapSummary(
+  explanation: TimelineExceptionExplanation,
+  followUpGaps: FulfillmentMatrixExceptionQueueItem["followUpGaps"]
+) {
+  if (explanation.type === "登录缺口") {
+    return "需补到岗说明、迟到或漏登原因。"
+  }
+
+  if (explanation.type === "登录不足") {
+    return "需补离岗说明、早退或漏登原因。"
+  }
+
+  return [
+    ...followUpGaps.missingNotes,
+    ...followUpGaps.missingRecords,
+    ...followUpGaps.missingDecisions,
+  ].join("、")
 }
 
 function buildExceptionResolutionDraft(

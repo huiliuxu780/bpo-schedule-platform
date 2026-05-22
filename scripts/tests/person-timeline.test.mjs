@@ -578,6 +578,36 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     openQuestions: ["是否实际到岗但漏登", "迟到原因是否已说明"],
     nextConversation: "2026-05-11 10:00 前和现场主管确认到岗说明。",
   });
+  assert.deepEqual(lateLogin.followUpTimeline, [
+    {
+      stage: "识别",
+      time: "2026-05-11 09:22",
+      owner: "系统识别",
+      summary: "迟到 21 分钟，影响 0.35h。",
+      status: "已完成",
+    },
+    {
+      stage: "已跟进",
+      time: "2026-05-11 09:35",
+      owner: "现场主管",
+      summary: "已联系员工确认到岗时间。等待补充迟到或漏登原因。",
+      status: "已完成",
+    },
+    {
+      stage: "当前卡点",
+      time: "2026-05-11 09:35",
+      owner: "现场主管",
+      summary: "待补说明：需补到岗说明、迟到或漏登原因。",
+      status: "进行中",
+    },
+    {
+      stage: "下一复核",
+      time: "2026-05-11 10:00",
+      owner: "现场主管",
+      summary: "确认王敏实际到岗时间和迟到原因。",
+      status: "待查看",
+    },
+  ]);
   assert.deepEqual(lateLogin.evidenceSummary, {
     schedule: "排班 SCH-1002-1：早班 09:00-17:00",
     login: "登录 LOG-1002-1：CORN 登录 09:21-17:00",
