@@ -758,6 +758,48 @@ function MatrixExceptionPanel({
             </div>
           </div>
           <div className="grid gap-2 rounded-md border p-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-sm font-medium">关联数据质量</div>
+              <Badge variant="outline">{selected.dataQualityLinks.length} 项</Badge>
+            </div>
+            {selected.dataQualityLinks.length === 0 ? (
+              <div className="text-xs text-muted-foreground">当前异常没有关联的数据质量问题。</div>
+            ) : (
+              <div className="grid gap-2">
+                {selected.dataQualityLinks.map((issue) => (
+                  <div key={issue.issueId} className="grid gap-2 rounded-md border p-2 text-xs">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div>
+                        <div className="font-medium text-foreground">
+                          {issue.issueId} / {issue.title}
+                        </div>
+                        <div className="mt-1 text-muted-foreground">
+                          {issue.sourceLabel} / 负责人：{issue.owner}
+                        </div>
+                      </div>
+                      <Badge variant={issue.severity === "high" ? "destructive" : "secondary"}>
+                        {issue.severity === "high" ? "高" : issue.severity === "medium" ? "中" : "低"}
+                      </Badge>
+                    </div>
+                    <div className="text-muted-foreground">
+                      匹配记录：{issue.matchedRecords.join(" / ") || "无"}
+                    </div>
+                    <div className="text-muted-foreground">
+                      核对字段：{issue.matchedFields.join(" / ")}
+                    </div>
+                    <div className="text-muted-foreground">{issue.reason}</div>
+                    <div className="text-muted-foreground">{issue.recommendation}</div>
+                    <div>
+                      <Button asChild size="sm" variant="outline" className="h-7 px-2 text-xs">
+                        <Link href={issue.href}>查看质量详情</Link>
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
             <div className="text-sm font-medium">数据修复前置判断</div>
             <div className="grid gap-1 text-xs text-muted-foreground">
               <div>数据管理员介入：{selected.dataQualityRepairPrep.needsDataOwner ? "需要" : "暂不需要"}</div>

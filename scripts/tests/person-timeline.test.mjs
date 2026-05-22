@@ -473,6 +473,22 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     checkFields: ["排班开始时间", "登录开始时间", "员工到岗说明"],
     riskNote: "若登录时间来自系统延迟，需由数据管理员核对原始日志。",
   });
+  assert.deepEqual(lateLogin.dataQualityLinks, [
+    {
+      issueId: "DQ-202605-009",
+      title: "登录员工不在主数据",
+      source: "login_log",
+      sourceLabel: "登录日志",
+      severity: "low",
+      status: "ignored",
+      owner: "现场主管",
+      href: "/data-quality/DQ-202605-009",
+      matchedRecords: ["LOG-1002-1"],
+      matchedFields: ["login_log.employee_id", "员工到岗说明"],
+      reason: "登录缺口需要核对登录日志和人员主数据是否能支撑当日履约判断。",
+      recommendation: "确认是否为临时账号；若需要计入履约，先补主数据。",
+    },
+  ]);
   assert.deepEqual(lateLogin.dataQualityRepairPrep, {
     needsDataOwner: true,
     priority: "高",
@@ -593,6 +609,22 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     "SCH-1001-2",
     "LOG-1001-1",
     "STA-1001-2",
+  ]);
+  assert.deepEqual(statusMismatch.dataQualityLinks, [
+    {
+      issueId: "DQ-202605-010",
+      title: "状态时间段重叠",
+      source: "status_log",
+      sourceLabel: "状态日志",
+      severity: "high",
+      status: "open",
+      owner: "运营负责人",
+      href: "/data-quality/DQ-202605-010",
+      matchedRecords: ["STA-1001-2"],
+      matchedFields: ["status_log.status_start_at/status_end_at", "培训安排说明"],
+      reason: "状态不一致需要核对状态日志切片是否会影响个人三轨解释。",
+      recommendation: "拆分或修正重叠状态，避免非有效产能重复计算。",
+    },
   ]);
   assert.deepEqual(statusMismatch.dataQualityRepairPrep, {
     needsDataOwner: false,

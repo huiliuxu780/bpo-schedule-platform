@@ -2309,6 +2309,27 @@
 - Browser smoke：通过，打开小组单日矩阵，页面显示“复核负载”“当前小组待复核 2 项，高优先 1 项”“最高负载”“下一优先查看”和处理分组负载，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Exception evidence data-quality links
+
+#### 结论
+
+- `F265-F267/US346-US348` 已在小组成员单日矩阵异常详情中增加关联数据质量查看链路。
+- 异常队列模型新增 `dataQualityLinks`，包含数据质量问题、匹配记录、核对字段、关联原因、建议和详情链接。
+- 页面在现有右侧异常详情展示“关联数据质量”，不新增入口或页面。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做异常到数据质量的查看关联，不代表真实数据修复、处理结论登记、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `lateLogin.dataQualityLinks` 为 `undefined`，证明测试覆盖新增模型能力。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“关联数据质量”“DQ-202605-009 / 登录员工不在主数据”“匹配记录：LOG-1002-1”“查看质量详情”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

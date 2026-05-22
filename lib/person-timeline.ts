@@ -266,6 +266,20 @@ export type FulfillmentMatrixExceptionQueueItem = {
     checkFields: string[]
     riskNote: string
   }
+  dataQualityLinks: Array<{
+    issueId: string
+    title: string
+    source: "login_log" | "status_log"
+    sourceLabel: string
+    severity: "high" | "medium" | "low"
+    status: "open" | "acknowledged" | "resolved" | "ignored"
+    owner: string
+    href: string
+    matchedRecords: string[]
+    matchedFields: string[]
+    reason: string
+    recommendation: string
+  }>
   dataQualityRepairPrep: {
     needsDataOwner: boolean
     priority: "高" | "中" | "低"
@@ -1022,6 +1036,7 @@ function buildFulfillmentMatrixExceptionQueue(
           closureChecklist: buildExceptionClosureChecklist(explanation),
           handoffSummary: buildExceptionHandoffSummary(member, explanation),
           dataCheckReadiness: buildExceptionDataCheckReadiness(explanation, evidenceCards),
+          dataQualityLinks: buildExceptionDataQualityLinks(explanation, evidenceCards),
           dataQualityRepairPrep: buildDataQualityRepairPrep(explanation),
           repairMaterials: buildRepairMaterials(explanation, evidenceCards),
           dataQualityImpactScope: buildDataQualityImpactScope(member, explanation),
@@ -1373,6 +1388,70 @@ function buildExceptionDataCheckReadiness(
     checkFields: ["排班覆盖时段", "登录覆盖时段", "状态类型", "培训安排说明"],
     riskNote: "若状态记录来自人工标记，需核对状态来源和登记说明。",
   }
+}
+
+function buildExceptionDataQualityLinks(
+  explanation: TimelineExceptionExplanation,
+  evidenceCards: FulfillmentMatrixExceptionQueueItem["evidenceCards"]
+): FulfillmentMatrixExceptionQueueItem["dataQualityLinks"] {
+  const issue =
+    explanation.type === "状态不一致"
+      ? dataQualityLinkIssues.statusOverlap
+      : dataQualityLinkIssues.loginMasterData
+
+  const sourceRecords =
+    explanation.type === "状态不一致"
+      ? evidenceCards.filter((card) => card.track === "status").map((card) => card.eventId)
+      : evidenceCards.filter((card) => card.track === "login").map((card) => card.eventId)
+  const matchedFields =
+    explanation.type === "状态不一致"
+      ? [issue.sourceField, "培训安排说明"]
+      : [issue.sourceField, "员工到岗说明"]
+
+  return [
+    {
+      issueId: issue.id,
+      title: issue.title,
+      source: issue.source,
+      sourceLabel: issue.sourceLabel,
+      severity: issue.severity,
+      status: issue.status,
+      owner: issue.owner,
+      href: `/data-quality/${issue.id}`,
+      matchedRecords: sourceRecords,
+      matchedFields,
+      reason:
+        explanation.type === "状态不一致"
+          ? "状态不一致需要核对状态日志切片是否会影响个人三轨解释。"
+          : "登录缺口需要核对登录日志和人员主数据是否能支撑当日履约判断。",
+      recommendation: issue.recommendation,
+    },
+  ]
+}
+
+const dataQualityLinkIssues = {
+  loginMasterData: {
+    id: "DQ-202605-009",
+    title: "登录员工不在主数据",
+    source: "login_log" as const,
+    sourceLabel: "登录日志",
+    sourceField: "login_log.employee_id",
+    severity: "low" as const,
+    status: "ignored" as const,
+    owner: "现场主管",
+    recommendation: "确认是否为临时账号；若需要计入履约，先补主数据。",
+  },
+  statusOverlap: {
+    id: "DQ-202605-010",
+    title: "状态时间段重叠",
+    source: "status_log" as const,
+    sourceLabel: "状态日志",
+    sourceField: "status_log.status_start_at/status_end_at",
+    severity: "high" as const,
+    status: "open" as const,
+    owner: "运营负责人",
+    recommendation: "拆分或修正重叠状态，避免非有效产能重复计算。",
+  },
 }
 
 function buildDataQualityRepairPrep(explanation: TimelineExceptionExplanation) {

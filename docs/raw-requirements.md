@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R334-R337 - 异常证据关联数据质量
+
+```yaml
+requirements:
+  - id: R334
+    module: "履约日历"
+    description: "小组成员单日矩阵中的异常证据需要关联已有数据质量问题，帮助现场主管判断是否需要先核对数据。"
+  - id: R335
+    module: "履约日历"
+    description: "异常队列模型需要返回关联数据质量问题、匹配记录、核对字段、关联原因和详情链接。"
+  - id: R336
+    module: "履约日历"
+    description: "异常到数据质量的关联仅作为查看链路，不提供数据修复、提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R337
+    module: "质量与交付"
+    description: "异常证据关联数据质量完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM approved next supervisor-oriented slice on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；复用现有数据质量问题，不新增页面、导航、数据库、真实接口、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R330-R333 - 小组复核负载汇总
 
 ```yaml

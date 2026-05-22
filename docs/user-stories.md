@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US346-US349 - 异常证据关联数据质量
+
+```yaml
+stories:
+  - id: US346
+    requirement_ids: [R334]
+    task_ids: [F265]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常证据能关联到已有数据质量问题，以便判断异常是否需要先做数据核对。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US347
+    requirement_ids: [R335]
+    task_ids: [F266]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列模型返回数据质量问题、匹配记录、核对字段和关联原因，以便在同一口径下解释数据风险。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US348
+    requirement_ids: [R336]
+    task_ids: [F267]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望异常到数据质量的关联只作为查看链路，以便不误导为已经具备数据修复或处理动作。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US349
+    requirement_ids: [R337]
+    task_ids: [Q048]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望异常证据关联数据质量批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常队列当前项展示关联数据质量问题。"
+  - "异常队列模型返回关联问题、匹配记录、核对字段、关联原因和详情链接。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US342-US345 - 小组复核负载汇总
 
 ```yaml
