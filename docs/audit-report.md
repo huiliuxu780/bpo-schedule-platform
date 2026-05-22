@@ -2478,6 +2478,28 @@
 - Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“异常来源”“来源 2 类，主要看 登录轨道”“主要来源”“登录轨道有 1 项异常，其中 1 项高优先，建议先核对原始登录记录。”“下一优先来源”“状态轨道”和“排班轨道”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Team day risk trend
+
+#### 结论
+
+- `F289-F291/US378-US381` 已在小组成员单日矩阵异常面板中增加团队日风险趋势。
+- 小组矩阵模型新增 `teamDayRiskTrend`，包含趋势方向、最高风险日、当前日对比、趋势点和下一关注点。
+- 页面在现有右侧异常面板展示“风险趋势”，位于当日风险摘要之前，不新增入口或页面。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、通知、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和排序口径，不代表真实趋势预警、通知、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `teamDayRiskTrend` 为 `undefined` 且页面缺少趋势卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“风险趋势”“本周风险从周一高位回落，当前日仍是最高风险日。”“较下一有排班日”“比周二高 80 分，缺口多 1 人，异常多 2 人。”，且风险趋势位于当日风险摘要之前。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-22 - Follow-up timeline visibility correction
 
 #### 结论

@@ -542,6 +542,7 @@ function MatrixExceptionPanel({
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
       {selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}
+      <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
@@ -999,6 +1000,69 @@ function ReviewLoadSummaryPanel({
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+function TeamDayRiskTrendPanel({
+  trend,
+}: {
+  trend: FulfillmentGroupMatrix["teamDayRiskTrend"]
+}) {
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">风险趋势</div>
+          <div className="text-xs text-muted-foreground">{trend.headline}</div>
+        </div>
+        <Badge
+          variant={
+            trend.currentDay.riskLevel === "高"
+              ? "destructive"
+              : trend.currentDay.riskLevel === "中"
+                ? "secondary"
+                : "outline"
+          }
+        >
+          {trend.direction}
+        </Badge>
+      </div>
+      <div className="grid gap-2 text-xs">
+        <div className="grid grid-cols-2 gap-2">
+          <SummaryMetric label="当前日" value={`${trend.currentDay.label} ${trend.currentDay.score}`} />
+          <SummaryMetric label="最高风险日" value={`${trend.highestRiskDay.label} ${trend.highestRiskDay.score}`} />
+        </div>
+        <div className="rounded-md border bg-muted/30 p-2 text-muted-foreground">
+          <div className="font-medium text-foreground">{trend.comparison.label}</div>
+          <div className="mt-1">{trend.comparison.summary}</div>
+        </div>
+        <div className="grid gap-1">
+          {trend.points.map((point) => (
+            <div key={point.date} className="grid grid-cols-[72px_minmax(0,1fr)_36px] items-center gap-2">
+              <span className="text-muted-foreground">{point.label}</span>
+              <div className="h-2 overflow-hidden rounded-full bg-muted">
+                <div
+                  className={cn(
+                    "h-full rounded-full",
+                    point.riskLevel === "高"
+                      ? "bg-destructive"
+                      : point.riskLevel === "中"
+                        ? "bg-primary"
+                        : "bg-muted-foreground"
+                  )}
+                  style={{ width: `${point.score}%` }}
+                />
+              </div>
+              <span className="text-right font-medium">{point.score}</span>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-md border p-2 text-muted-foreground">
+          <span className="font-medium text-foreground">下一关注：</span>
+          {trend.nextFocus.reason}
+        </div>
       </div>
     </div>
   )

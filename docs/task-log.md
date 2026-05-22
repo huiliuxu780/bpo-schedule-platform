@@ -1424,6 +1424,17 @@
 
 ### 2026-05-22
 
+- task_id: `F289-F291/Q056`
+- source_ids:
+  - `R366-R369`
+- story_ids:
+  - `US378-US381`
+- action: 在小组成员单日矩阵异常侧栏增加团队日风险趋势。
+- status: `done`
+- notes: 小组矩阵现在包含 `teamDayRiskTrend`，页面展示趋势方向、最高风险日、当前日对比、趋势点和下一关注点。本次不新增页面路由、不新增左侧入口、不新增依赖，不改后端、数据库、真实接口、权限、通知、提交、保存、审批、导出、批量、自动排班或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-22
+
 - task_id: `F286-F288/Q055-visible-follow-up`
 - source_ids:
   - `R362-R365`

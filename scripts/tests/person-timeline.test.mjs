@@ -36,12 +36,15 @@ test("person timeline summary counts local coverage", () => {
 test("matrix view surfaces selected exception follow-up before summary panels", () => {
   const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
+  const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
 
   assert.ok(followUpPosition >= 0);
+  assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(followUpPosition < riskDigestPosition);
+  assert.ok(trendPosition < riskDigestPosition);
   assert.equal(titleCount, 1);
 });
 
@@ -546,6 +549,52 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         value: "4问",
         tone: "medium",
         reason: "现场主管有 2 项需要交接。",
+      },
+    ],
+  });
+  assert.deepEqual(matrix.teamDayRiskTrend, {
+    direction: "下降",
+    headline: "本周风险从周一高位回落，当前日仍是最高风险日。",
+    currentDay: {
+      date: "2026-05-11",
+      label: "周一 05/11",
+      score: 100,
+      riskLevel: "高",
+      gapPeople: 2,
+      anomalyPeople: 2,
+    },
+    comparison: {
+      label: "较下一有排班日",
+      scoreDelta: 80,
+      summary: "比周二高 80 分，缺口多 1 人，异常多 2 人。",
+    },
+    highestRiskDay: {
+      date: "2026-05-11",
+      label: "周一 05/11",
+      score: 100,
+      reason: "缺口 2 人 / 异常 2 人",
+    },
+    nextFocus: {
+      date: "2026-05-11",
+      label: "周一 05/11",
+      reason: "先处理周一 2 项异常，避免高风险日悬空。",
+    },
+    points: [
+      {
+        date: "2026-05-11",
+        label: "周一 05/11",
+        score: 100,
+        riskLevel: "高",
+        gapPeople: 2,
+        anomalyPeople: 2,
+      },
+      {
+        date: "2026-05-12",
+        label: "周二 05/12",
+        score: 20,
+        riskLevel: "低",
+        gapPeople: 1,
+        anomalyPeople: 0,
       },
     ],
   });

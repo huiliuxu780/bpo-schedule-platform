@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R366-R369 - 团队日风险趋势
+
+```yaml
+requirements:
+  - id: R366
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示团队日风险趋势，帮助现场主管判断当前小组近几天风险是在上升、下降还是持平。"
+  - id: R367
+    module: "履约日历"
+    description: "小组矩阵模型需要返回趋势方向、最高风险日、当前日对比、趋势点和下一关注点。"
+  - id: R368
+    module: "履约日历"
+    description: "团队日风险趋势仅作为查看和排序口径，不提供通知、提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R369
+    module: "质量与交付"
+    description: "团队日风险趋势完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor-oriented business completion on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、权限、通知、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R362-R365 - 主管跟进时间线
 
 ```yaml

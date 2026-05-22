@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US378-US381 - 团队日风险趋势
+
+```yaml
+stories:
+  - id: US378
+    requirement_ids: [R366]
+    task_ids: [F289]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组成员单日矩阵中看到团队日风险趋势，以便判断当前小组近几天风险是否正在变糟。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US379
+    requirement_ids: [R367]
+    task_ids: [F290]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望模型返回趋势方向、最高风险日、当前日对比和趋势点，以便定位哪天风险最高、今天相比前一日变化多少。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US380
+    requirement_ids: [R368]
+    task_ids: [F291]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望风险趋势只表达查看和排序口径，以便不误导为已经具备线上流转或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US381
+    requirement_ids: [R369]
+    task_ids: [Q056]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望团队日风险趋势批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵展示团队日风险趋势。"
+  - "模型返回趋势方向、最高风险日、当前日对比、趋势点和下一关注点。"
+  - "页面不出现通知、提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US374-US377 - 主管跟进时间线
 
 ```yaml

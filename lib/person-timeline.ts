@@ -499,6 +499,38 @@ export type FulfillmentTeamDayRiskDigest = {
   signals: FulfillmentTeamDayRiskSignal[]
 }
 
+export type FulfillmentTeamDayRiskTrendPoint = {
+  date: string
+  label: string
+  score: number
+  riskLevel: FulfillmentTeamDayRiskDigest["riskLevel"]
+  gapPeople: number
+  anomalyPeople: number
+}
+
+export type FulfillmentTeamDayRiskTrend = {
+  direction: "上升" | "下降" | "持平"
+  headline: string
+  currentDay: FulfillmentTeamDayRiskTrendPoint
+  comparison: {
+    label: string
+    scoreDelta: number
+    summary: string
+  }
+  highestRiskDay: {
+    date: string
+    label: string
+    score: number
+    reason: string
+  }
+  nextFocus: {
+    date: string
+    label: string
+    reason: string
+  }
+  points: FulfillmentTeamDayRiskTrendPoint[]
+}
+
 export type FulfillmentMatrixExceptionQueueCursor = {
   selected?: FulfillmentMatrixExceptionQueueItem
   selectedIndex: number
@@ -520,6 +552,7 @@ export type FulfillmentGroupMatrix = {
   exceptionSourceSummary: FulfillmentExceptionSourceSummary
   supervisorHandoffOverview: FulfillmentSupervisorHandoffOverview
   teamDayRiskDigest: FulfillmentTeamDayRiskDigest
+  teamDayRiskTrend: FulfillmentTeamDayRiskTrend
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -949,6 +982,7 @@ export function getFulfillmentMatrix(
       exceptionSourceSummary,
       supervisorHandoffOverview
     ),
+    teamDayRiskTrend: summarizeTeamDayRiskTrend(group.days, selectedDate),
   }
 }
 
@@ -2454,6 +2488,125 @@ function getTeamDayRiskLevel(score: number): FulfillmentTeamDayRiskDigest["riskL
   }
 
   return "低"
+}
+
+function summarizeTeamDayRiskTrend(
+  days: FulfillmentDayMetrics[],
+  selectedDate: string
+): FulfillmentTeamDayRiskTrend {
+  const points = days
+    .filter((day) => day.plannedPeople > 0 || day.loginPeople > 0 || day.gapPeople > 0 || day.anomalyPeople > 0)
+    .map(buildTeamDayRiskTrendPoint)
+  const fallbackPoint = buildTeamDayRiskTrendPoint(
+    days.find((day) => day.date === selectedDate) ?? days[0]
+  )
+  const currentDay = points.find((point) => point.date === selectedDate) ?? points[0] ?? fallbackPoint
+  const currentIndex = points.findIndex((point) => point.date === currentDay.date)
+  const comparisonDay =
+    currentIndex > 0 ? points[currentIndex - 1] : points[currentIndex + 1] ?? currentDay
+  const comparesNext = currentIndex === 0 && Boolean(points[currentIndex + 1])
+  const scoreDelta = currentDay.score - comparisonDay.score
+  const highestRiskDay = [...points, currentDay].sort(
+    (a, b) =>
+      b.score - a.score ||
+      b.anomalyPeople - a.anomalyPeople ||
+      b.gapPeople - a.gapPeople ||
+      a.date.localeCompare(b.date)
+  )[0]
+  const direction = getTeamDayRiskTrendDirection(scoreDelta, comparesNext)
+
+  return {
+    direction,
+    headline: buildTeamDayRiskTrendHeadline(direction, currentDay, highestRiskDay),
+    currentDay,
+    comparison: {
+      label: comparesNext ? "较下一有排班日" : "较上一有排班日",
+      scoreDelta: Math.abs(scoreDelta),
+      summary: buildTeamDayRiskTrendComparisonSummary(currentDay, comparisonDay, scoreDelta),
+    },
+    highestRiskDay: {
+      date: highestRiskDay.date,
+      label: highestRiskDay.label,
+      score: highestRiskDay.score,
+      reason: `缺口 ${highestRiskDay.gapPeople} 人 / 异常 ${highestRiskDay.anomalyPeople} 人`,
+    },
+    nextFocus: {
+      date: currentDay.date,
+      label: currentDay.label,
+      reason:
+        currentDay.anomalyPeople > 0
+          ? `先处理${currentDay.label.slice(0, 2)} ${currentDay.anomalyPeople} 项异常，避免高风险日悬空。`
+          : `先核对${currentDay.label.slice(0, 2)}缺口，确认是否需要继续下钻。`,
+    },
+    points,
+  }
+}
+
+function buildTeamDayRiskTrendPoint(day: FulfillmentDayMetrics): FulfillmentTeamDayRiskTrendPoint {
+  const score = Math.min(100, day.gapPeople * 20 + day.anomalyPeople * 30)
+
+  return {
+    date: day.date,
+    label: `${day.weekday} ${day.label}`,
+    score,
+    riskLevel: getTeamDayRiskLevel(score),
+    gapPeople: day.gapPeople,
+    anomalyPeople: day.anomalyPeople,
+  }
+}
+
+function getTeamDayRiskTrendDirection(scoreDelta: number, comparesNext: boolean): FulfillmentTeamDayRiskTrend["direction"] {
+  if (scoreDelta === 0) {
+    return "持平"
+  }
+
+  if (comparesNext) {
+    return scoreDelta > 0 ? "下降" : "上升"
+  }
+
+  return scoreDelta > 0 ? "上升" : "下降"
+}
+
+function buildTeamDayRiskTrendHeadline(
+  direction: FulfillmentTeamDayRiskTrend["direction"],
+  currentDay: FulfillmentTeamDayRiskTrendPoint,
+  highestRiskDay: FulfillmentTeamDayRiskTrendPoint
+) {
+  if (currentDay.date === highestRiskDay.date && direction === "下降") {
+    return `本周风险从${currentDay.label.slice(0, 2)}高位回落，当前日仍是最高风险日。`
+  }
+
+  if (currentDay.date === highestRiskDay.date) {
+    return `当前日是本周最高风险日，风险趋势${direction}。`
+  }
+
+  return `本周最高风险日在${highestRiskDay.label.slice(0, 2)}，当前日风险趋势${direction}。`
+}
+
+function buildTeamDayRiskTrendComparisonSummary(
+  currentDay: FulfillmentTeamDayRiskTrendPoint,
+  comparisonDay: FulfillmentTeamDayRiskTrendPoint,
+  scoreDelta: number
+) {
+  if (scoreDelta === 0) {
+    return `与${comparisonDay.label.slice(0, 2)}持平，缺口和异常需要继续观察。`
+  }
+
+  const scoreText = scoreDelta > 0 ? "高" : "低"
+  const gapDelta = currentDay.gapPeople - comparisonDay.gapPeople
+  const anomalyDelta = currentDay.anomalyPeople - comparisonDay.anomalyPeople
+
+  return `比${comparisonDay.label.slice(0, 2)}${scoreText} ${Math.abs(scoreDelta)} 分，缺口${formatPeopleDelta(
+    gapDelta
+  )}，异常${formatPeopleDelta(anomalyDelta)}。`
+}
+
+function formatPeopleDelta(delta: number) {
+  if (delta === 0) {
+    return "持平"
+  }
+
+  return `${delta > 0 ? "多" : "少"} ${Math.abs(delta)} 人`
 }
 
 function buildTeamDayRiskHeadline(
