@@ -99,4 +99,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US346/F265 -> US349/Q048` completed the exception evidence to data-quality link slice: the fulfillment calendar group-day exception panel now shows related data quality issues, matched records, check fields, link reasons, recommendations, and quality detail links for the selected exception. Current queue is empty again.
 
-Recommended next production MVP slice: continue with exception aging/priority escalation or supervisor daily workload summary, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US350/F268 -> US353/Q049` completed the exception aging and priority escalation slice: the fulfillment calendar group-day exception panel now shows waiting duration, aging level, escalation reason, escalation target, next review window, and group-level aging/escalation counts. Current queue is empty again.
+
+Recommended next production MVP slice: continue with supervisor daily workload summary or exception source consolidation, keeping it local/frontend-only unless PM confirms a separate production action Gate.

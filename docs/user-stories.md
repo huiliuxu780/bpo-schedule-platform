@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US350-US353 - 异常超时与优先级升级
+
+```yaml
+stories:
+  - id: US350
+    requirement_ids: [R338]
+    task_ids: [F268]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列展示等待时长和超时等级，以便优先处理已经拖久的履约问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US351
+    requirement_ids: [R339]
+    task_ids: [F269]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列模型返回升级提示和下一复核窗口，以便判断是否需要拉高关注角色。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US352
+    requirement_ids: [R340]
+    task_ids: [F270]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望异常超时与升级只表达查看和排序口径，以便不误导为已经具备处理提交或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US353
+    requirement_ids: [R341]
+    task_ids: [Q049]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望异常超时与优先级升级批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常队列当前项展示识别时间、等待时长、超时等级、升级原因和下一复核窗口。"
+  - "异常队列摘要展示超时关注项和建议升级项数量。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US346-US349 - 异常证据关联数据质量
 
 ```yaml

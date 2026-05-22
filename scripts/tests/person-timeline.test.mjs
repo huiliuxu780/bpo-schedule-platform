@@ -326,6 +326,8 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     missingMaterialCount: 1,
     supervisorJudgmentCount: 1,
     dataCheckCount: 0,
+    agingWatchCount: 2,
+    escalationCount: 1,
     totalImpactHours: 5.35,
   });
   assert.deepEqual(matrix.reviewLoadSummary, {
@@ -522,6 +524,16 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     highPriorityOpenCount: 1,
     groupRiskNote: "供应商 A 当日仍有 2 项待跟进，其中 1 项为高优先。",
   });
+  assert.deepEqual(lateLogin.agingEscalation, {
+    detectedAt: "2026-05-11 09:22",
+    waitingMinutes: 308,
+    waitingLabel: "5小时08分钟",
+    level: "需要升级",
+    reason: "登录缺口已等待 5小时08分钟，仍缺员工到岗说明。",
+    escalationTarget: "现场主管",
+    nextReviewWindow: "2026-05-11 15:00 前",
+    queueHint: "先处理该项，避免当日登录缺口判断悬空。",
+  });
   const statusMismatch = matrix.exceptionQueue.find((item) => item.key === "A-1001::no_login");
   assert.ok(statusMismatch);
   assert.deepEqual(statusMismatch.reviewGroup, {
@@ -631,6 +643,16 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     priority: "中",
     reason: "状态轨道为培训，优先由现场主管确认培训安排是否登记。",
     ownerTeam: "现场主管",
+  });
+  assert.deepEqual(statusMismatch.agingEscalation, {
+    detectedAt: "2026-05-11 13:10",
+    waitingMinutes: 80,
+    waitingLabel: "1小时20分钟",
+    level: "接近超时",
+    reason: "状态判断已等待 1小时20分钟，需在班中复核培训安排说明。",
+    escalationTarget: "现场主管",
+    nextReviewWindow: "2026-05-11 15:30 前",
+    queueHint: "关注培训说明是否补齐，避免午后状态判断延后。",
   });
   assert.deepEqual(statusMismatch.supervisorFollowUp.status, "待主管复核");
   assert.deepEqual(statusMismatch.followUpGaps.missingNotes, ["培训安排说明", "在线要求确认"]);

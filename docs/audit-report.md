@@ -2330,6 +2330,28 @@
 - Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“关联数据质量”“DQ-202605-009 / 登录员工不在主数据”“匹配记录：LOG-1002-1”“查看质量详情”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Exception aging and escalation hints
+
+#### 结论
+
+- `F268-F270/US350-US352` 已在小组成员单日矩阵异常详情中增加超时与升级查看口径。
+- 异常队列模型新增 `agingEscalation`，包含识别时间、等待时长、超时等级、升级原因、关注角色、下一复核窗口和队列提示。
+- 队列摘要新增超时关注项和建议升级项数量。
+- 页面在现有右侧异常详情展示“超时与升级”，不新增入口或页面。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和排序口径，不代表真实处理、升级通知、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `exceptionQueueSummary` 缺少 `agingWatchCount` 和 `escalationCount`，证明测试覆盖新增模型能力。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“超时关注”“建议升级”“超时与升级”“识别时间：2026-05-11 09:22”“等待时长：5小时08分钟”“下一复核：2026-05-11 15:00 前”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

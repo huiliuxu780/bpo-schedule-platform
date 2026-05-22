@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R338-R341 - 异常超时与优先级升级
+
+```yaml
+requirements:
+  - id: R338
+    module: "履约日历"
+    description: "小组成员单日矩阵中的异常队列需要展示等待时长和超时等级，帮助现场主管识别已拖久的异常。"
+  - id: R339
+    module: "履约日历"
+    description: "异常队列模型需要返回升级提示，包括识别时间、等待时长、超时等级、升级原因、关注角色和下一复核窗口。"
+  - id: R340
+    module: "履约日历"
+    description: "异常超时与升级仅作为查看和排序口径，不提供提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R341
+    module: "质量与交付"
+    description: "异常超时与优先级升级完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM confirmed continued supervisor-oriented development on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路、排序口径和模型测试；不新增页面、导航、数据库、真实接口、权限、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R334-R337 - 异常证据关联数据质量
 
 ```yaml

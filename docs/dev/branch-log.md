@@ -1679,3 +1679,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F268-F270 Exception Aging Escalation
+
+- branch_name: `codex/f265-exception-data-quality-links`
+- base_main_commit: `01b12b3`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose exception aging and escalation hints on fulfillment exception queue items and show waiting duration, aging level, escalation reason, escalation target, next review window, and group-level aging/escalation counts in the existing group-day exception panel.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-day route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `agingWatchCount` and `escalationCount`; target model tests, product UI copy audit, navigation regression, typecheck, strict state check, diff whitespace check, browser smoke, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

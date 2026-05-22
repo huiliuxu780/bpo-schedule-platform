@@ -556,6 +556,8 @@ function MatrixExceptionPanel({
           value={`${matrix.exceptionQueueSummary.supervisorJudgmentCount}`}
         />
         <SummaryMetric label="需数据核对" value={`${matrix.exceptionQueueSummary.dataCheckCount}`} />
+        <SummaryMetric label="超时关注" value={`${matrix.exceptionQueueSummary.agingWatchCount}`} />
+        <SummaryMetric label="建议升级" value={`${matrix.exceptionQueueSummary.escalationCount}`} />
         <SummaryMetric
           label="总影响"
           value={`${matrix.exceptionQueueSummary.totalImpactHours.toFixed(1)}h`}
@@ -638,6 +640,9 @@ function MatrixExceptionPanel({
               <div className="text-muted-foreground">
                 处理分组：{item.reviewGroup.label}，{item.reviewGroup.reason}
               </div>
+              <div className="text-muted-foreground">
+                超时等级：{item.agingEscalation.level}，等待 {item.agingEscalation.waitingLabel}
+              </div>
               <div className="text-muted-foreground">排序依据：{item.sortReason}</div>
               <div className="text-muted-foreground">影响 {item.impactHours.toFixed(1)}h</div>
             </Link>
@@ -670,6 +675,30 @@ function MatrixExceptionPanel({
             <div>排序依据：{selected.sortReason}</div>
             <div>证据：{selected.evidence}</div>
             <div>主管判断：{selected.supervisorAction}</div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-sm font-medium">超时与升级</div>
+              <Badge
+                variant={
+                  selected.agingEscalation.level === "需要升级"
+                    ? "destructive"
+                    : selected.agingEscalation.level === "接近超时"
+                      ? "secondary"
+                      : "outline"
+                }
+              >
+                {selected.agingEscalation.level}
+              </Badge>
+            </div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>识别时间：{selected.agingEscalation.detectedAt}</div>
+              <div>等待时长：{selected.agingEscalation.waitingLabel}</div>
+              <div>升级原因：{selected.agingEscalation.reason}</div>
+              <div>关注角色：{selected.agingEscalation.escalationTarget}</div>
+              <div>下一复核：{selected.agingEscalation.nextReviewWindow}</div>
+              <div>{selected.agingEscalation.queueHint}</div>
+            </div>
           </div>
           <div className="grid gap-2 rounded-md border bg-muted/30 p-2">
             <div className="text-sm font-medium">处理建议</div>

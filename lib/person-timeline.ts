@@ -280,6 +280,16 @@ export type FulfillmentMatrixExceptionQueueItem = {
     reason: string
     recommendation: string
   }>
+  agingEscalation: {
+    detectedAt: string
+    waitingMinutes: number
+    waitingLabel: string
+    level: "正常跟进" | "接近超时" | "需要升级"
+    reason: string
+    escalationTarget: string
+    nextReviewWindow: string
+    queueHint: string
+  }
   dataQualityRepairPrep: {
     needsDataOwner: boolean
     priority: "高" | "中" | "低"
@@ -323,6 +333,8 @@ export type FulfillmentMatrixExceptionQueueSummary = {
   missingMaterialCount: number
   supervisorJudgmentCount: number
   dataCheckCount: number
+  agingWatchCount: number
+  escalationCount: number
   totalImpactHours: number
 }
 
@@ -1037,6 +1049,7 @@ function buildFulfillmentMatrixExceptionQueue(
           handoffSummary: buildExceptionHandoffSummary(member, explanation),
           dataCheckReadiness: buildExceptionDataCheckReadiness(explanation, evidenceCards),
           dataQualityLinks: buildExceptionDataQualityLinks(explanation, evidenceCards),
+          agingEscalation: buildExceptionAgingEscalation(explanation, date),
           dataQualityRepairPrep: buildDataQualityRepairPrep(explanation),
           repairMaterials: buildRepairMaterials(explanation, evidenceCards),
           dataQualityImpactScope: buildDataQualityImpactScope(member, explanation),
@@ -1053,6 +1066,7 @@ function buildFulfillmentMatrixExceptionQueue(
     )
     .sort(
       (a, b) =>
+        escalationLevelRank[b.agingEscalation.level] - escalationLevelRank[a.agingEscalation.level] ||
         priorityRank[b.priority] - priorityRank[a.priority] ||
         b.impactHours - a.impactHours ||
         a.employeeId.localeCompare(b.employeeId)
@@ -1429,6 +1443,64 @@ function buildExceptionDataQualityLinks(
   ]
 }
 
+function buildExceptionAgingEscalation(
+  explanation: TimelineExceptionExplanation,
+  date: string
+): FulfillmentMatrixExceptionQueueItem["agingEscalation"] {
+  const detectedTime =
+    explanation.type === "状态不一致"
+      ? addMinutesToClock(explanation.start, 10)
+      : addMinutesToClock(explanation.end, 1)
+  const waitingMinutes = Math.max(
+    0,
+    timeToMinutes(fulfillmentMatrixReviewCheckpoint) - timeToMinutes(detectedTime)
+  )
+  const waitingLabel = formatWaitingMinutes(waitingMinutes)
+
+  if (explanation.type === "状态不一致") {
+    const level = waitingMinutes >= 120 ? "需要升级" : waitingMinutes >= 60 ? "接近超时" : "正常跟进"
+
+    return {
+      detectedAt: `${date} ${detectedTime}`,
+      waitingMinutes,
+      waitingLabel,
+      level,
+      reason: `状态判断已等待 ${waitingLabel}，需在班中复核培训安排说明。`,
+      escalationTarget: "现场主管",
+      nextReviewWindow: `${date} 15:30 前`,
+      queueHint: "关注培训说明是否补齐，避免午后状态判断延后。",
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    const level = waitingMinutes >= 180 ? "需要升级" : waitingMinutes >= 60 ? "接近超时" : "正常跟进"
+
+    return {
+      detectedAt: `${date} ${detectedTime}`,
+      waitingMinutes,
+      waitingLabel,
+      level,
+      reason: `登录不足已等待 ${waitingLabel}，仍需确认离岗或断连原因。`,
+      escalationTarget: "现场主管",
+      nextReviewWindow: `${date} 15:00 前`,
+      queueHint: "先核对离岗说明和登出记录，避免履约时长判断悬空。",
+    }
+  }
+
+  const level = waitingMinutes >= 180 ? "需要升级" : waitingMinutes >= 60 ? "接近超时" : "正常跟进"
+
+  return {
+    detectedAt: `${date} ${detectedTime}`,
+    waitingMinutes,
+    waitingLabel,
+    level,
+    reason: `登录缺口已等待 ${waitingLabel}，仍缺员工到岗说明。`,
+    escalationTarget: "现场主管",
+    nextReviewWindow: `${date} 15:00 前`,
+    queueHint: "先处理该项，避免当日登录缺口判断悬空。",
+  }
+}
+
 const dataQualityLinkIssues = {
   loginMasterData: {
     id: "DQ-202605-009",
@@ -1712,6 +1784,8 @@ function summarizeFulfillmentMatrixExceptionQueue(
       (item) => item.reviewGroup.code === "supervisor_judgment"
     ).length,
     dataCheckCount: queue.filter((item) => item.reviewGroup.code === "data_check").length,
+    agingWatchCount: queue.filter((item) => item.agingEscalation.level !== "正常跟进").length,
+    escalationCount: queue.filter((item) => item.agingEscalation.level === "需要升级").length,
     totalImpactHours: roundHours(queue.reduce((total, item) => total + item.impactHours, 0)),
   }
 }
@@ -1930,11 +2004,19 @@ const priorityRank = {
   low: 1,
 }
 
+const escalationLevelRank = {
+  "需要升级": 3,
+  "接近超时": 2,
+  "正常跟进": 1,
+}
+
 const priorityText = {
   high: "高优先级",
   medium: "中优先级",
   low: "低优先级",
 }
+
+const fulfillmentMatrixReviewCheckpoint = "14:30"
 
 function earliestTime(values: string[]) {
   return values.filter(Boolean).sort((a, b) => timeToMinutes(a) - timeToMinutes(b))[0] ?? ""
@@ -1942,6 +2024,25 @@ function earliestTime(values: string[]) {
 
 function latestTime(values: string[]) {
   return values.filter(Boolean).sort((a, b) => timeToMinutes(b) - timeToMinutes(a))[0] ?? ""
+}
+
+function addMinutesToClock(value: string, minutes: number) {
+  const totalMinutes = timeToMinutes(value) + minutes
+  const hours = Math.floor(totalMinutes / 60)
+  const remainder = totalMinutes % 60
+
+  return `${String(hours).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`
+}
+
+function formatWaitingMinutes(value: number) {
+  const hours = Math.floor(value / 60)
+  const minutes = value % 60
+
+  if (hours === 0) {
+    return `${minutes}分钟`
+  }
+
+  return `${hours}小时${String(minutes).padStart(2, "0")}分钟`
 }
 
 function roundHours(value: number) {
