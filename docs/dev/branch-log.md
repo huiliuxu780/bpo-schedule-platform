@@ -1731,6 +1731,23 @@
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
 
+### F286-F288 Follow-up Timeline Visibility Fix
+
+- branch_name: `codex/f265-exception-data-quality-links`
+- base_main_commit: `16712aa`
+- remote_status: `not_pushed`
+- scope: frontend local business correction: move the selected exception follow-up timeline to the top of the existing group-day exception panel so supervisors can see detection, completed follow-up, current blocker, and next review immediately after selecting an exception.
+- allowed_files_check: `app/person-timeline/page.tsx`, `scripts/tests/person-timeline.test.mjs`, and traceability docs; no backend, package, lockfile, database, real integration, auth, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-day route only; no new route, sidebar entry, page, backend, package, lockfile, database, real integration, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target model/UI source-order regression tests, product UI copy audit, navigation regression, typecheck, browser smoke, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F265-F267 Exception Data Quality Links
 
 - branch_name: `codex/f265-exception-data-quality-links`

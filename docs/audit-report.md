@@ -2478,6 +2478,25 @@
 - Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“异常来源”“来源 2 类，主要看 登录轨道”“主要来源”“登录轨道有 1 项异常，其中 1 项高优先，建议先核对原始登录记录。”“下一优先来源”“状态轨道”和“排班轨道”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Follow-up timeline visibility correction
+
+#### 结论
+
+- 已修正 `F286-F288/US374-US377` 的可见性问题：选中异常后，“跟进时间线”现在位于小组成员单日矩阵右侧异常面板顶部。
+- 页面首屏可直接看到识别、已跟进、当前卡点和下一复核，不需要先翻过当日风险、复核负载、工作量、来源、交接等汇总模块。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只调整查看优先级，不改变异常计算、处理记录口径、升级口径或任何真实动作能力。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，包含“跟进时间线必须位于汇总面板前”的回归测试。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，首屏文本包含“跟进时间线”“A-1002 王敏 / 迟到 21 分钟”“当前卡点”“下一复核”。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

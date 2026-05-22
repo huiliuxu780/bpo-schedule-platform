@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -30,6 +31,18 @@ test("person timeline summary counts local coverage", () => {
   assert.equal(summary.loginHours, 58.45);
   assert.equal(summary.statusHours, 58.92);
   assert.equal("deferredActions" in summary, false);
+});
+
+test("matrix view surfaces selected exception follow-up before summary panels", () => {
+  const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
+  const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
+  const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
+  const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
+
+  assert.ok(followUpPosition >= 0);
+  assert.ok(riskDigestPosition >= 0);
+  assert.ok(followUpPosition < riskDigestPosition);
+  assert.equal(titleCount, 1);
 });
 
 test("person timeline filters by owner, anomaly, and query", () => {

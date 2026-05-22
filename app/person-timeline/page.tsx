@@ -541,6 +541,7 @@ function MatrixExceptionPanel({
 
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
+      {selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
@@ -794,25 +795,6 @@ function MatrixExceptionPanel({
             </div>
           </div>
           <div className="grid gap-2 rounded-md border p-2">
-            <div className="text-sm font-medium">跟进时间线</div>
-            <div className="grid gap-2">
-              {selected.followUpTimeline.map((item) => (
-                <div key={`${item.stage}-${item.time}`} className="rounded-md border p-2 text-xs">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-medium">{item.stage}</span>
-                    <Badge variant="secondary" className="text-[10px]">
-                      {item.status}
-                    </Badge>
-                  </div>
-                  <div className="mt-1 text-muted-foreground">
-                    {item.time} / {item.owner}
-                  </div>
-                  <div className="text-muted-foreground">{item.summary}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="grid gap-2 rounded-md border p-2">
             <div className="text-sm font-medium">数据核对提示</div>
             <div className="grid gap-1 text-xs text-muted-foreground">
               <div>相关记录：{selected.dataCheckReadiness.sourceRecords.join(" / ")}</div>
@@ -1015,6 +997,44 @@ function ReviewLoadSummaryPanel({
             <div className="text-muted-foreground">
               已齐 {group.readyItemCount} / 待补 {group.missingItemCount}
             </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SelectedExceptionFollowUpCard({
+  selected,
+}: {
+  selected: FulfillmentMatrixExceptionQueueItem
+}) {
+  return (
+    <div className="grid gap-2 rounded-md border bg-primary/10 p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">跟进时间线</div>
+          <div className="text-xs text-muted-foreground">
+            {selected.employeeId} {selected.employeeName} / {selected.title}
+          </div>
+        </div>
+        <Badge variant={selected.priority === "high" ? "destructive" : "outline"}>
+          {priorityLabel[selected.priority]}
+        </Badge>
+      </div>
+      <div className="grid gap-2">
+        {selected.followUpTimeline.map((item) => (
+          <div key={`${item.stage}-${item.time}`} className="rounded-md border bg-background/80 p-2 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{item.stage}</span>
+              <Badge variant="secondary" className="text-[10px]">
+                {item.status}
+              </Badge>
+            </div>
+            <div className="mt-1 text-muted-foreground">
+              {item.time} / {item.owner}
+            </div>
+            <div className="text-muted-foreground">{item.summary}</div>
           </div>
         ))}
       </div>
