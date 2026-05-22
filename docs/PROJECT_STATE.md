@@ -105,6 +105,7 @@ Current invariants:
 - `F268-F270/Q049` completed an exception aging and priority escalation slice: the fulfillment calendar group-day exception panel shows waiting duration, aging level, escalation reason, escalation target, next review window, and group-level aging/escalation counts. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F271-F273/Q050` completed a supervisor daily workload summary slice: the fulfillment calendar group-day exception panel shows daily focus item count, high-priority count, aging/escalation pressure, busiest owner role, owner workloads, and next focus item. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F274-F276/Q051` completed an exception source consolidation slice: the fulfillment calendar group-day exception panel shows primary exception source, next priority source, source distribution, source impact hours, and source-level high-priority/aging/escalation counts. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F277-F279/Q052` completed a supervisor handoff overview slice: the fulfillment calendar group-day exception panel shows handoff item count, open question count, escalation count, top recipient, next handoff item, and recipient-level handoff distribution. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -19,6 +19,17 @@
 
 ### 2026-05-22
 
+- task_id: `F277-F279/Q052`
+- source_ids:
+  - `R350-R353`
+- story_ids:
+  - `US362-US365`
+- action: 在小组成员单日矩阵异常侧栏增加主管交接概览。
+- status: `done`
+- notes: 小组矩阵模型现在包含 `supervisorHandoffOverview`；右侧异常面板展示待交接项、待核对问题、建议升级、主要接收人、下一优先交接和接收人分布。本次不新增页面路由、不新增左侧入口、不新增依赖，不改后端、数据库、真实接口、权限、提交、保存、审批、导出、批量、自动排班或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-22
+
 - task_id: `F238-F240-Q039`
 - source_ids: [`R298`, `R299`, `R300`, `R301`]
 - story_ids: [`US310`, `US311`, `US312`, `US313`]

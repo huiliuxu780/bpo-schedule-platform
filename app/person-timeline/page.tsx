@@ -544,6 +544,7 @@ function MatrixExceptionPanel({
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
       <ExceptionSourceSummaryPanel summary={matrix.exceptionSourceSummary} />
+      <SupervisorHandoffOverviewPanel summary={matrix.supervisorHandoffOverview} />
       <div className="grid grid-cols-2 gap-2 text-xs">
         <SummaryMetric label="异常" value={`${matrix.exceptionQueueSummary.totalCount}`} />
         <SummaryMetric label="高优" value={`${matrix.exceptionQueueSummary.highPriorityCount}`} />
@@ -1336,6 +1337,63 @@ function ExceptionSourceSummaryPanel({
             </div>
             <div className="text-muted-foreground">影响 {formatOneDecimal(source.impactHours)}h</div>
             <div className="text-muted-foreground">{source.focus}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SupervisorHandoffOverviewPanel({
+  summary,
+}: {
+  summary: FulfillmentGroupMatrix["supervisorHandoffOverview"]
+}) {
+  return (
+    <div className="grid gap-3 rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">交接概览</div>
+          <div className="text-xs text-muted-foreground">
+            待交接 {summary.totalHandoffItems} 项，待核对问题 {summary.openQuestionCount} 个
+          </div>
+        </div>
+        <Badge variant={summary.escalationItems > 0 ? "destructive" : "outline"}>
+          建议升级 {summary.escalationItems}
+        </Badge>
+      </div>
+      <div className="rounded-md border bg-background p-2 text-xs">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-medium">主要接收人</span>
+          <Badge variant="secondary">{summary.topRecipient.recipient}</Badge>
+        </div>
+        <div className="mt-1 text-muted-foreground">{summary.topRecipient.reason}</div>
+      </div>
+      {summary.nextHandoff ? (
+        <div className="rounded-md border bg-background p-2 text-xs">
+          <div className="font-medium">下一优先交接</div>
+          <div className="mt-1 text-muted-foreground">
+            {summary.nextHandoff.employeeName} / {summary.nextHandoff.title}
+          </div>
+          <div className="mt-1 text-muted-foreground">
+            {summary.nextHandoff.recipient}：{summary.nextHandoff.reason}
+          </div>
+        </div>
+      ) : null}
+      <div className="grid gap-2">
+        {summary.recipients.map((recipient) => (
+          <div key={recipient.recipient} className="rounded-md border bg-background p-2 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium">{recipient.recipient}</span>
+              <span className="text-muted-foreground">{recipient.itemCount} 项</span>
+            </div>
+            <div className="mt-1 text-muted-foreground">
+              高优先 {recipient.highPriorityCount} / 超时 {recipient.agingWatchCount} / 建议升级{" "}
+              {recipient.escalationCount}
+            </div>
+            <div className="text-muted-foreground">待核对问题 {recipient.openQuestionCount} 个</div>
+            <div className="text-muted-foreground">下一触点：{recipient.nextTouchpoint}</div>
+            <div className="text-muted-foreground">{recipient.focus}</div>
           </div>
         ))}
       </div>

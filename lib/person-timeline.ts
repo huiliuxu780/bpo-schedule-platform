@@ -428,6 +428,37 @@ export type FulfillmentExceptionSourceSummary = {
   sources: FulfillmentExceptionSourceSummarySource[]
 }
 
+export type FulfillmentSupervisorHandoffRecipient = {
+  recipient: string
+  itemCount: number
+  highPriorityCount: number
+  agingWatchCount: number
+  escalationCount: number
+  openQuestionCount: number
+  nextTouchpoint: string
+  focus: string
+}
+
+export type FulfillmentSupervisorHandoffOverview = {
+  totalHandoffItems: number
+  openQuestionCount: number
+  escalationItems: number
+  topRecipient: {
+    recipient: string
+    itemCount: number
+    reason: string
+  }
+  nextHandoff?: {
+    key: string
+    employeeId: string
+    employeeName: string
+    title: string
+    recipient: string
+    reason: string
+  }
+  recipients: FulfillmentSupervisorHandoffRecipient[]
+}
+
 export type FulfillmentMatrixExceptionQueueCursor = {
   selected?: FulfillmentMatrixExceptionQueueItem
   selectedIndex: number
@@ -447,6 +478,7 @@ export type FulfillmentGroupMatrix = {
   reviewLoadSummary: FulfillmentMatrixReviewLoadSummary
   supervisorDailyWorkload: FulfillmentSupervisorDailyWorkload
   exceptionSourceSummary: FulfillmentExceptionSourceSummary
+  supervisorHandoffOverview: FulfillmentSupervisorHandoffOverview
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -864,6 +896,7 @@ export function getFulfillmentMatrix(
     reviewLoadSummary: summarizeFulfillmentMatrixReviewLoad(exceptionQueue),
     supervisorDailyWorkload: summarizeSupervisorDailyWorkload(exceptionQueue),
     exceptionSourceSummary: summarizeExceptionSources(exceptionQueue),
+    supervisorHandoffOverview: summarizeSupervisorHandoffOverview(exceptionQueue),
   }
 }
 
@@ -2060,6 +2093,82 @@ function buildExceptionSourceReason(source: FulfillmentExceptionSourceSummarySou
   }
 
   return `${source.label}有 ${source.itemCount} 项异常，建议先核对排班覆盖和人员安排。`
+}
+
+function summarizeSupervisorHandoffOverview(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentSupervisorHandoffOverview {
+  const recipients = buildSupervisorHandoffRecipients(queue)
+  const topRecipient = recipients[0] ?? emptySupervisorHandoffRecipient("现场主管")
+  const nextHandoff = queue[0]
+
+  return {
+    totalHandoffItems: queue.length,
+    openQuestionCount: queue.reduce(
+      (total, item) => total + item.handoffSummary.openQuestions.length,
+      0
+    ),
+    escalationItems: queue.filter((item) => item.agingEscalation.level === "需要升级").length,
+    topRecipient: {
+      recipient: topRecipient.recipient,
+      itemCount: topRecipient.itemCount,
+      reason: `${topRecipient.recipient}有 ${topRecipient.itemCount} 项需要交接，仍有 ${topRecipient.openQuestionCount} 个待核对问题。`,
+    },
+    nextHandoff: nextHandoff
+      ? {
+          key: nextHandoff.key,
+          employeeId: nextHandoff.employeeId,
+          employeeName: nextHandoff.employeeName,
+          title: nextHandoff.title,
+          recipient: nextHandoff.handoffSummary.recipient,
+          reason: `${nextHandoff.agingEscalation.level} / ${nextHandoff.handoffSummary.openQuestions.length} 个待核对问题 / ${nextHandoff.handoffSummary.nextTouchpoint}`,
+        }
+      : undefined,
+    recipients,
+  }
+}
+
+function buildSupervisorHandoffRecipients(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentSupervisorHandoffRecipient[] {
+  const recipients = new Map<string, FulfillmentSupervisorHandoffRecipient>()
+
+  for (const item of queue) {
+    const current =
+      recipients.get(item.handoffSummary.recipient) ??
+      emptySupervisorHandoffRecipient(item.handoffSummary.recipient)
+
+    current.itemCount += 1
+    current.highPriorityCount += item.priority === "high" ? 1 : 0
+    current.agingWatchCount += item.agingEscalation.level !== "正常跟进" ? 1 : 0
+    current.escalationCount += item.agingEscalation.level === "需要升级" ? 1 : 0
+    current.openQuestionCount += item.handoffSummary.openQuestions.length
+    if (!current.nextTouchpoint) {
+      current.nextTouchpoint = item.handoffSummary.nextTouchpoint
+    }
+    recipients.set(item.handoffSummary.recipient, current)
+  }
+
+  return [...recipients.values()].sort(
+    (a, b) =>
+      b.itemCount - a.itemCount ||
+      b.escalationCount - a.escalationCount ||
+      b.openQuestionCount - a.openQuestionCount ||
+      a.recipient.localeCompare(b.recipient)
+  )
+}
+
+function emptySupervisorHandoffRecipient(recipient: string): FulfillmentSupervisorHandoffRecipient {
+  return {
+    recipient,
+    itemCount: 0,
+    highPriorityCount: 0,
+    agingWatchCount: 0,
+    escalationCount: 0,
+    openQuestionCount: 0,
+    nextTouchpoint: "",
+    focus: "集中说明待核对问题和下一触点，避免交接后重复追问。",
+  }
 }
 
 const exceptionSourceOrder: TimelineEventType[] = ["login", "status", "schedule"]

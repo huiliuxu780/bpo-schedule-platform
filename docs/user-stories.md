@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US362-US365 - 主管交接概览
+
+```yaml
+stories:
+  - id: US362
+    requirement_ids: [R350]
+    task_ids: [F277]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组成员单日矩阵看到交接概览，以便快速判断当天哪些异常需要交给谁继续跟进。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US363
+    requirement_ids: [R351]
+    task_ids: [F278]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组矩阵模型按交接对象聚合异常、待核对问题和下一触点，以便安排交接重点。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US364
+    requirement_ids: [R352]
+    task_ids: [F279]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望交接概览只表达查看和提醒口径，以便不误导为已经具备线上处理或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US365
+    requirement_ids: [R353]
+    task_ids: [Q052]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管交接概览批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵展示主管交接概览。"
+  - "模型返回待交接项、待核对问题、建议升级、主要接收人、下一优先交接和接收人分布。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US358-US361 - 异常来源聚合
 
 ```yaml

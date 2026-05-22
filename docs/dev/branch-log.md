@@ -2,6 +2,23 @@
 
 ## 2026-05-22
 
+### F277-F279 Supervisor Handoff Overview
+
+- branch_name: `codex/f265-exception-data-quality-links`
+- base_main_commit: `8ad2e28`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose supervisor handoff overview from the fulfillment exception queue and show handoff item count, open question count, escalation count, top recipient, next handoff item, and recipient-level distribution in the existing group-day exception panel.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-day route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `supervisorHandoffOverview`; target model tests, product UI copy audit, navigation regression, typecheck, strict state check, browser smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: reported in Done Report after final amend
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F238-F240-Q039 Product Semantics Cleanup
 
 - branch_name: `codex/f238-product-semantics-cleanup`

@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R350-R353 - 主管交接概览
+
+```yaml
+requirements:
+  - id: R350
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示主管交接概览，帮助现场主管判断当天哪些异常需要交给谁继续跟进。"
+  - id: R351
+    module: "履约日历"
+    description: "小组矩阵模型需要按交接对象聚合待交接项、待核对问题、建议升级和下一触点。"
+  - id: R352
+    module: "履约日历"
+    description: "主管交接概览仅作为查看和提醒口径，不提供提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R353
+    module: "质量与交付"
+    description: "主管交接概览完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor-oriented business completion on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、权限、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R346-R349 - 异常来源聚合
 
 ```yaml

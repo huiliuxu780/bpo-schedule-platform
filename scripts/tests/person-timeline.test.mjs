@@ -464,6 +464,36 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       },
     ],
   });
+  assert.deepEqual(matrix.supervisorHandoffOverview, {
+    totalHandoffItems: 2,
+    openQuestionCount: 4,
+    escalationItems: 1,
+    topRecipient: {
+      recipient: "现场主管",
+      itemCount: 2,
+      reason: "现场主管有 2 项需要交接，仍有 4 个待核对问题。",
+    },
+    nextHandoff: {
+      key: "A-1002::late_login",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      recipient: "现场主管",
+      reason: "需要升级 / 2 个待核对问题 / 班前到岗核对记录",
+    },
+    recipients: [
+      {
+        recipient: "现场主管",
+        itemCount: 2,
+        highPriorityCount: 1,
+        agingWatchCount: 2,
+        escalationCount: 1,
+        openQuestionCount: 4,
+        nextTouchpoint: "班前到岗核对记录",
+        focus: "集中说明待核对问题和下一触点，避免交接后重复追问。",
+      },
+    ],
+  });
   const lateLogin = matrix.exceptionQueue.find((item) => item.key === "A-1002::late_login");
   assert.ok(lateLogin);
   assert.deepEqual(lateLogin.reviewGroup, {
