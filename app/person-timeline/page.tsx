@@ -783,6 +783,17 @@ function MatrixExceptionPanel({
             </div>
           </div>
           <div className="grid gap-2 rounded-md border p-2">
+            <div className="text-sm font-medium">沟通上下文</div>
+            <div className="grid gap-1 text-xs text-muted-foreground">
+              <div>沟通对象：{selected.communicationContext.audience}</div>
+              <div>{selected.communicationContext.purpose}</div>
+              <div>关键说明：{selected.communicationContext.keyMessages.join(" / ")}</div>
+              <div>引用证据：{selected.communicationContext.evidenceToReference.join(" / ")}</div>
+              <div>待确认：{selected.communicationContext.openQuestions.join(" / ")}</div>
+              <div>下一沟通点：{selected.communicationContext.nextConversation}</div>
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
             <div className="text-sm font-medium">数据核对提示</div>
             <div className="grid gap-1 text-xs text-muted-foreground">
               <div>相关记录：{selected.dataCheckReadiness.sourceRecords.join(" / ")}</div>

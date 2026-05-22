@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US370-US373 - 主管异常沟通上下文
+
+```yaml
+stories:
+  - id: US370
+    requirement_ids: [R358]
+    task_ids: [F283]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在异常详情中看到沟通上下文，以便知道该和谁确认、先说什么、引用哪些证据。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US371
+    requirement_ids: [R359]
+    task_ids: [F284]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列模型返回沟通对象、沟通目的、关键说明、证据和待确认问题，以便减少重复追问。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US372
+    requirement_ids: [R360]
+    task_ids: [F285]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望沟通上下文只表达查看口径，以便不误导为已经具备线上通知、处理或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US373
+    requirement_ids: [R361]
+    task_ids: [Q054]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管异常沟通上下文批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常详情展示沟通上下文。"
+  - "模型返回沟通对象、沟通目的、关键说明、引用证据、待确认问题和下一沟通点。"
+  - "页面不出现通知、提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US366-US369 - 团队日风险摘要
 
 ```yaml

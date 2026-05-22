@@ -563,6 +563,21 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     communicationTarget: "王敏 / 现场主管",
     boundary: "当前仅记录跟进过程，处理动作由线下流程完成。",
   });
+  assert.deepEqual(lateLogin.communicationContext, {
+    audience: "王敏 / 现场主管",
+    purpose: "确认王敏 09:00-09:21 登录缺口的到岗事实和迟到原因。",
+    keyMessages: [
+      "排班 09:00 开始，登录 09:21 开始，存在 21 分钟缺口。",
+      "当前影响 0.35h，已达到需要升级关注。",
+      "需补到岗说明、迟到或漏登原因和现场主管确认口径。",
+    ],
+    evidenceToReference: [
+      "排班 SCH-1002-1：早班 09:00-17:00",
+      "登录 LOG-1002-1：CORN 登录 09:21-17:00",
+    ],
+    openQuestions: ["是否实际到岗但漏登", "迟到原因是否已说明"],
+    nextConversation: "2026-05-11 10:00 前和现场主管确认到岗说明。",
+  });
   assert.deepEqual(lateLogin.evidenceSummary, {
     schedule: "排班 SCH-1002-1：早班 09:00-17:00",
     login: "登录 LOG-1002-1：CORN 登录 09:21-17:00",

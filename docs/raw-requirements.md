@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R358-R361 - 主管异常沟通上下文
+
+```yaml
+requirements:
+  - id: R358
+    module: "履约日历"
+    description: "异常详情需要展示主管沟通上下文，帮助现场主管知道该和谁确认、先说什么、引用哪些证据。"
+  - id: R359
+    module: "履约日历"
+    description: "异常队列模型需要返回沟通对象、沟通目的、关键说明、引用证据、待确认问题和下一沟通点。"
+  - id: R360
+    module: "履约日历"
+    description: "主管异常沟通上下文仅作为查看口径，不提供通知、提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R361
+    module: "质量与交付"
+    description: "主管异常沟通上下文完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor-oriented business completion on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、权限、通知、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R354-R357 - 团队日风险摘要
 
 ```yaml

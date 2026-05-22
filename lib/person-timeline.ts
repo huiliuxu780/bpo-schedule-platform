@@ -261,6 +261,14 @@ export type FulfillmentMatrixExceptionQueueItem = {
     openQuestions: string[]
     nextTouchpoint: string
   }
+  communicationContext: {
+    audience: string
+    purpose: string
+    keyMessages: string[]
+    evidenceToReference: string[]
+    openQuestions: string[]
+    nextConversation: string
+  }
   dataCheckReadiness: {
     sourceRecords: string[]
     checkFields: string[]
@@ -1180,6 +1188,7 @@ function buildFulfillmentMatrixExceptionQueue(
           resolutionDraft: buildExceptionResolutionDraft(member, explanation),
           closureChecklist: buildExceptionClosureChecklist(explanation),
           handoffSummary: buildExceptionHandoffSummary(member, explanation),
+          communicationContext: buildExceptionCommunicationContext(member, explanation, evidenceCards),
           dataCheckReadiness: buildExceptionDataCheckReadiness(explanation, evidenceCards),
           dataQualityLinks: buildExceptionDataQualityLinks(explanation, evidenceCards),
           agingEscalation: buildExceptionAgingEscalation(explanation, date),
@@ -1361,6 +1370,87 @@ function buildExceptionHandoffSummary(
     )}h。`,
     openQuestions: ["培训安排是否已登记", "当班在线要求是否允许该状态"],
     nextTouchpoint: "状态轨道复核记录",
+  }
+}
+
+function buildExceptionCommunicationContext(
+  member: FulfillmentMatrixMember,
+  explanation: TimelineExceptionExplanation,
+  evidenceCards: FulfillmentMatrixExceptionQueueItem["evidenceCards"]
+) {
+  const scheduleCard = evidenceCards.find((card) => card.track === "schedule")
+  const loginCard = evidenceCards.find((card) => card.track === "login")
+  const statusCard = evidenceCards.find((card) => card.track === "status")
+  const audience = `${member.employeeName} / 现场主管`
+  const escalationText =
+    explanation.priority === "high" ? "已达到需要升级关注" : "需要保持跟进关注"
+
+  if (explanation.type === "登录缺口") {
+    return {
+      audience,
+      purpose: `确认${member.employeeName} ${explanation.start}-${explanation.end} 登录缺口的到岗事实和迟到原因。`,
+      keyMessages: [
+        `排班 ${scheduleCard?.start ?? explanation.start} 开始，登录 ${
+          loginCard?.start ?? explanation.end
+        } 开始，存在 ${formatGapMinutes(explanation.start, explanation.end)} 分钟缺口。`,
+        `当前影响 ${formatImpactHours(explanation.impactHours)}h，${escalationText}。`,
+        "需补到岗说明、迟到或漏登原因和现场主管确认口径。",
+      ],
+      evidenceToReference: [
+        `排班 ${scheduleCard?.eventId ?? "记录"}：${scheduleCard?.label ?? "排班"} ${
+          scheduleCard?.start ?? explanation.start
+        }-${scheduleCard?.end ?? explanation.end}`,
+        `登录 ${loginCard?.eventId ?? "记录"}：${loginCard?.label ?? "登录"} ${
+          loginCard?.start ?? explanation.end
+        }-${loginCard?.end ?? explanation.end}`,
+      ],
+      openQuestions: ["是否实际到岗但漏登", "迟到原因是否已说明"],
+      nextConversation: "2026-05-11 10:00 前和现场主管确认到岗说明。",
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      audience,
+      purpose: `确认${member.employeeName} ${explanation.start}-${explanation.end} 登录不足的离岗事实和记录原因。`,
+      keyMessages: [
+        `登录 ${loginCard?.end ?? explanation.start} 结束，排班 ${
+          scheduleCard?.end ?? explanation.end
+        } 结束，需要说明离岗差异。`,
+        `当前影响 ${formatImpactHours(explanation.impactHours)}h，${escalationText}。`,
+        "需补离岗说明、早退或漏登原因和现场主管确认口径。",
+      ],
+      evidenceToReference: [
+        `排班 ${scheduleCard?.eventId ?? "记录"}：${scheduleCard?.label ?? "排班"} ${
+          scheduleCard?.start ?? explanation.start
+        }-${scheduleCard?.end ?? explanation.end}`,
+        `登录 ${loginCard?.eventId ?? "记录"}：${loginCard?.label ?? "登录"} ${
+          loginCard?.start ?? explanation.start
+        }-${loginCard?.end ?? explanation.start}`,
+      ],
+      openQuestions: ["是否提前离岗", "系统登出时间是否准确"],
+      nextConversation: "2026-05-11 18:30 前和现场主管确认离岗说明。",
+    }
+  }
+
+  return {
+    audience,
+    purpose: `确认${member.employeeName} ${explanation.start}-${explanation.end} 状态不一致是否符合当班安排。`,
+    keyMessages: [
+      `状态轨道显示${statusCard?.label ?? "状态异常"}，覆盖 ${explanation.start}-${explanation.end}。`,
+      `当前影响 ${formatImpactHours(explanation.impactHours)}h，${escalationText}。`,
+      "需补培训安排说明和当班在线要求确认。",
+    ],
+    evidenceToReference: [
+      `排班 ${scheduleCard?.eventId ?? "记录"}：${scheduleCard?.label ?? "排班"} ${
+        scheduleCard?.start ?? explanation.start
+      }-${scheduleCard?.end ?? explanation.end}`,
+      `状态 ${statusCard?.eventId ?? "记录"}：${statusCard?.label ?? "状态"} ${
+        statusCard?.start ?? explanation.start
+      }-${statusCard?.end ?? explanation.end}`,
+    ],
+    openQuestions: ["培训安排是否已登记", "当班在线要求是否允许该状态"],
+    nextConversation: "2026-05-11 15:00 前和现场主管确认培训安排。",
   }
 }
 
@@ -2551,6 +2641,10 @@ function formatWaitingMinutes(value: number) {
   }
 
   return `${hours}小时${String(minutes).padStart(2, "0")}分钟`
+}
+
+function formatGapMinutes(start: string, end: string) {
+  return Math.max(timeToMinutes(end) - timeToMinutes(start), 0)
 }
 
 function roundHours(value: number) {
