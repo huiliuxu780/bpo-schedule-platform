@@ -378,6 +378,46 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       },
     ],
   });
+  assert.deepEqual(matrix.supervisorDailyWorkload, {
+    totalFocusItems: 2,
+    highPriorityItems: 1,
+    agingWatchItems: 2,
+    escalationItems: 1,
+    totalImpactHours: 5.35,
+    busiestOwner: {
+      ownerRole: "现场主管",
+      itemCount: 2,
+      reason: "现场主管今日有 2 项待关注，其中 1 项建议升级。",
+    },
+    nextFocus: {
+      key: "A-1002::late_login",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      ownerRole: "现场主管",
+      reason: "需要升级 / 需补材料 / 等待 5小时08分钟",
+    },
+    ownerLoads: [
+      {
+        ownerRole: "现场主管",
+        itemCount: 2,
+        highPriorityCount: 1,
+        agingWatchCount: 2,
+        escalationCount: 1,
+        impactHours: 5.35,
+        focus: "补充到岗、培训安排和主管判断材料。",
+      },
+      {
+        ownerRole: "数据管理员",
+        itemCount: 1,
+        highPriorityCount: 1,
+        agingWatchCount: 1,
+        escalationCount: 1,
+        impactHours: 0.35,
+        focus: "核对原始登录或状态日志。",
+      },
+    ],
+  });
   const lateLogin = matrix.exceptionQueue.find((item) => item.key === "A-1002::late_login");
   assert.ok(lateLogin);
   assert.deepEqual(lateLogin.reviewGroup, {

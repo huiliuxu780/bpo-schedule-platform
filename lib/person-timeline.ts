@@ -369,6 +369,38 @@ export type FulfillmentMatrixReviewLoadSummary = {
   groups: FulfillmentMatrixReviewLoadGroup[]
 }
 
+export type FulfillmentSupervisorDailyWorkloadOwner = {
+  ownerRole: string
+  itemCount: number
+  highPriorityCount: number
+  agingWatchCount: number
+  escalationCount: number
+  impactHours: number
+  focus: string
+}
+
+export type FulfillmentSupervisorDailyWorkload = {
+  totalFocusItems: number
+  highPriorityItems: number
+  agingWatchItems: number
+  escalationItems: number
+  totalImpactHours: number
+  busiestOwner: {
+    ownerRole: string
+    itemCount: number
+    reason: string
+  }
+  nextFocus?: {
+    key: string
+    employeeId: string
+    employeeName: string
+    title: string
+    ownerRole: string
+    reason: string
+  }
+  ownerLoads: FulfillmentSupervisorDailyWorkloadOwner[]
+}
+
 export type FulfillmentMatrixExceptionQueueCursor = {
   selected?: FulfillmentMatrixExceptionQueueItem
   selectedIndex: number
@@ -386,6 +418,7 @@ export type FulfillmentGroupMatrix = {
   exceptionQueue: FulfillmentMatrixExceptionQueueItem[]
   exceptionQueueSummary: FulfillmentMatrixExceptionQueueSummary
   reviewLoadSummary: FulfillmentMatrixReviewLoadSummary
+  supervisorDailyWorkload: FulfillmentSupervisorDailyWorkload
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -801,6 +834,7 @@ export function getFulfillmentMatrix(
     exceptionQueue,
     exceptionQueueSummary: summarizeFulfillmentMatrixExceptionQueue(exceptionQueue),
     reviewLoadSummary: summarizeFulfillmentMatrixReviewLoad(exceptionQueue),
+    supervisorDailyWorkload: summarizeSupervisorDailyWorkload(exceptionQueue),
   }
 }
 
@@ -1845,6 +1879,87 @@ function summarizeFulfillmentMatrixReviewLoad(
         }
       : undefined,
     groups,
+  }
+}
+
+function summarizeSupervisorDailyWorkload(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentSupervisorDailyWorkload {
+  const ownerLoads = buildSupervisorDailyWorkloadOwnerLoads(queue)
+  const busiestOwner = ownerLoads[0] ?? emptySupervisorWorkloadOwner("现场主管")
+  const nextFocus = queue[0]
+
+  return {
+    totalFocusItems: queue.length,
+    highPriorityItems: queue.filter((item) => item.priority === "high").length,
+    agingWatchItems: queue.filter((item) => item.agingEscalation.level !== "正常跟进").length,
+    escalationItems: queue.filter((item) => item.agingEscalation.level === "需要升级").length,
+    totalImpactHours: roundHours(queue.reduce((total, item) => total + item.impactHours, 0)),
+    busiestOwner: {
+      ownerRole: busiestOwner.ownerRole,
+      itemCount: busiestOwner.itemCount,
+      reason: `${busiestOwner.ownerRole}今日有 ${busiestOwner.itemCount} 项待关注，其中 ${busiestOwner.escalationCount} 项建议升级。`,
+    },
+    nextFocus: nextFocus
+      ? {
+          key: nextFocus.key,
+          employeeId: nextFocus.employeeId,
+          employeeName: nextFocus.employeeName,
+          title: nextFocus.title,
+          ownerRole: nextFocus.supervisorFollowUp.owner,
+          reason: `${nextFocus.agingEscalation.level} / ${nextFocus.reviewGroup.label} / 等待 ${nextFocus.agingEscalation.waitingLabel}`,
+        }
+      : undefined,
+    ownerLoads,
+  }
+}
+
+function buildSupervisorDailyWorkloadOwnerLoads(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentSupervisorDailyWorkloadOwner[] {
+  const loads = new Map<string, FulfillmentSupervisorDailyWorkloadOwner>()
+
+  for (const item of queue) {
+    addSupervisorWorkloadOwner(loads, item.supervisorFollowUp.owner, item)
+
+    if (item.dataQualityRepairPrep.needsDataOwner) {
+      addSupervisorWorkloadOwner(loads, item.dataQualityRepairPrep.ownerTeam, item)
+    }
+  }
+
+  return [...loads.values()].sort(
+    (a, b) =>
+      b.itemCount - a.itemCount ||
+      b.escalationCount - a.escalationCount ||
+      b.impactHours - a.impactHours ||
+      a.ownerRole.localeCompare(b.ownerRole)
+  )
+}
+
+function addSupervisorWorkloadOwner(
+  loads: Map<string, FulfillmentSupervisorDailyWorkloadOwner>,
+  ownerRole: string,
+  item: FulfillmentMatrixExceptionQueueItem
+) {
+  const current = loads.get(ownerRole) ?? emptySupervisorWorkloadOwner(ownerRole)
+
+  current.itemCount += 1
+  current.highPriorityCount += item.priority === "high" ? 1 : 0
+  current.agingWatchCount += item.agingEscalation.level !== "正常跟进" ? 1 : 0
+  current.escalationCount += item.agingEscalation.level === "需要升级" ? 1 : 0
+  current.impactHours = roundHours(current.impactHours + item.impactHours)
+  loads.set(ownerRole, current)
+}
+
+function emptySupervisorWorkloadOwner(ownerRole: string): FulfillmentSupervisorDailyWorkloadOwner {
+  return {
+    ownerRole,
+    itemCount: 0,
+    highPriorityCount: 0,
+    agingWatchCount: 0,
+    escalationCount: 0,
+    impactHours: 0,
+    focus: ownerRole === "数据管理员" ? "核对原始登录或状态日志。" : "补充到岗、培训安排和主管判断材料。",
   }
 }
 

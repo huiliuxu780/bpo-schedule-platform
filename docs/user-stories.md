@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US354-US357 - 主管日工作量汇总
+
+```yaml
+stories:
+  - id: US354
+    requirement_ids: [R342]
+    task_ids: [F271]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组成员单日矩阵看到当天工作量汇总，以便先判断待关注异常和超时压力。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US355
+    requirement_ids: [R343]
+    task_ids: [F272]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组矩阵模型返回角色负载和下一优先查看项，以便安排先看哪类问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US356
+    requirement_ids: [R344]
+    task_ids: [F273]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望主管日工作量只表达查看和排序口径，以便不误导为已经具备处理提交或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US357
+    requirement_ids: [R345]
+    task_ids: [Q050]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管日工作量汇总批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵展示主管日工作量汇总。"
+  - "模型返回待关注项、建议升级项、超时关注项、最高负载角色、角色负载和下一优先查看项。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US350-US353 - 异常超时与优先级升级
 
 ```yaml

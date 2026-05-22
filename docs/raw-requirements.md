@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R342-R345 - 主管日工作量汇总
+
+```yaml
+requirements:
+  - id: R342
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示主管当天工作量汇总，帮助现场主管判断待关注异常、超时压力和优先处理顺序。"
+  - id: R343
+    module: "履约日历"
+    description: "小组矩阵模型需要返回主管日工作量，包括待关注项、建议升级项、超时关注项、最高负载角色、角色负载和下一优先查看项。"
+  - id: R344
+    module: "履约日历"
+    description: "主管日工作量汇总仅作为查看和排序口径，不提供提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R345
+    module: "质量与交付"
+    description: "主管日工作量汇总完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor-oriented business completion on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、权限、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R338-R341 - 异常超时与优先级升级
 
 ```yaml

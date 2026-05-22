@@ -542,6 +542,7 @@ function MatrixExceptionPanel({
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
+      <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
       <div className="grid grid-cols-2 gap-2 text-xs">
         <SummaryMetric label="异常" value={`${matrix.exceptionQueueSummary.totalCount}`} />
         <SummaryMetric label="高优" value={`${matrix.exceptionQueueSummary.highPriorityCount}`} />
@@ -1225,6 +1226,71 @@ function MatrixTrack({
       </div>
     </div>
   )
+}
+
+function SupervisorDailyWorkloadPanel({
+  summary,
+}: {
+  summary: FulfillmentGroupMatrix["supervisorDailyWorkload"]
+}) {
+  return (
+    <div className="grid gap-3 rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">今日工作量</div>
+          <div className="text-xs text-muted-foreground">
+            待关注 {summary.totalFocusItems} 项，影响 {formatOneDecimal(summary.totalImpactHours)}h
+          </div>
+        </div>
+        <Badge variant={summary.escalationItems > 0 ? "destructive" : "outline"}>
+          建议升级 {summary.escalationItems}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        <SummaryMetric label="高优先" value={`${summary.highPriorityItems}`} />
+        <SummaryMetric label="超时关注" value={`${summary.agingWatchItems}`} />
+        <SummaryMetric label="角色数" value={`${summary.ownerLoads.length}`} />
+      </div>
+      <div className="rounded-md border bg-background p-2 text-xs">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-medium">最高负载角色</span>
+          <Badge variant="secondary">{summary.busiestOwner.ownerRole}</Badge>
+        </div>
+        <div className="mt-1 text-muted-foreground">{summary.busiestOwner.reason}</div>
+      </div>
+      {summary.nextFocus ? (
+        <div className="rounded-md border bg-background p-2 text-xs">
+          <div className="font-medium">下一优先查看</div>
+          <div className="mt-1 text-muted-foreground">
+            {summary.nextFocus.employeeId} {summary.nextFocus.employeeName} / {summary.nextFocus.title}
+          </div>
+          <div className="mt-1 text-muted-foreground">
+            {summary.nextFocus.ownerRole}：{summary.nextFocus.reason}
+          </div>
+        </div>
+      ) : null}
+      <div className="grid gap-2">
+        {summary.ownerLoads.map((owner) => (
+          <div key={owner.ownerRole} className="rounded-md border bg-background p-2 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium">{owner.ownerRole}</span>
+              <span className="text-muted-foreground">{owner.itemCount} 项</span>
+            </div>
+            <div className="mt-1 text-muted-foreground">
+              高优先 {owner.highPriorityCount} / 超时 {owner.agingWatchCount} / 建议升级{" "}
+              {owner.escalationCount}
+            </div>
+            <div className="text-muted-foreground">影响 {formatOneDecimal(owner.impactHours)}h</div>
+            <div className="text-muted-foreground">{owner.focus}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function formatOneDecimal(value: number) {
+  return (Math.round(value * 10) / 10).toFixed(1)
 }
 
 function SummaryMetric({ label, value }: { label: string; value: string }) {
