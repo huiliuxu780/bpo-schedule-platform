@@ -21,6 +21,7 @@ import {
   getPersonTimelineWeekView,
   getTimelineEventPosition,
   type PersonTimeline,
+  type PersonTimelineDailyReviewContext,
   type PersonTimelineWeekView,
   type TimelineExceptionExplanation,
   type TimelineEvent,
@@ -81,6 +82,9 @@ export default async function PersonTimelineDetailPage({
 
   const days = getPersonTimelineAvailableDates(row)
   const dailyView = getPersonTimelineDailyView(row, date)
+  const selectedReviewContext = exception
+    ? dailyView.reviewContexts.find((item) => item.key === exception)
+    : undefined
   const scheduleDetail = getPersonnelScheduleDetailForEmployeeDate(
     row.employeeId,
     dailyView.date
@@ -131,6 +135,10 @@ export default async function PersonTimelineDetailPage({
               <span>返回日期 {matrixDate}</span>
             </CardContent>
           </Card>
+        ) : null}
+
+        {selectedReviewContext ? (
+          <PersonReviewContextCard reviewContext={selectedReviewContext} />
         ) : null}
 
         <section className="grid gap-4 md:grid-cols-4">
@@ -308,6 +316,56 @@ function ExceptionExplanationCard({
         <div>建议动作：{explanation.supervisorAction}</div>
       </div>
     </div>
+  )
+}
+
+function PersonReviewContextCard({
+  reviewContext,
+}: {
+  reviewContext: PersonTimelineDailyReviewContext
+}) {
+  return (
+    <Card>
+      <CardHeader className="gap-3">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <CardTitle>异常复核口径</CardTitle>
+            <CardDescription>
+              与小组异常队列保持一致，用于解释当前个人三轨详情的处理语境。
+            </CardDescription>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="secondary">{reviewContext.reviewGroup.label}</Badge>
+            <Badge variant="outline">
+              已齐 {reviewContext.readyCount} 项 / 待补 {reviewContext.missingCount} 项
+            </Badge>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-3">
+        <div className="rounded-md border p-3 text-sm">
+          <div className="font-medium">{reviewContext.title}</div>
+          <div className="mt-2 grid gap-1 text-muted-foreground">
+            <div>处理分组：{reviewContext.reviewGroup.reason}</div>
+            <div>当前判断：{reviewContext.currentJudgment}</div>
+          </div>
+        </div>
+        <div className="grid gap-2 md:grid-cols-2">
+          {reviewContext.closureChecklist.items.map((item) => (
+            <div key={item.label} className="rounded-md border p-3 text-sm">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium">{item.label}</span>
+                <Badge variant="outline">{item.status}</Badge>
+              </div>
+              <div className="mt-2 grid gap-1 text-muted-foreground">
+                <div>负责角色：{item.ownerRole}</div>
+                <div>{item.judgmentImpact}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 

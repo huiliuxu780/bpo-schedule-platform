@@ -66,6 +66,58 @@ test("person timeline exposes calendar days and a daily three-track view", () =>
   assert.equal(dailyView.tracks.login.length, 1);
   assert.equal(dailyView.tracks.status.length, 2);
   assert.equal(dailyView.anomalies.length, 1);
+  assert.deepEqual(dailyView.reviewContexts, [
+    {
+      key: "A-1001::no_login",
+      anomalyCode: "no_login",
+      title: "午后状态缺登录切片",
+      reviewGroup: {
+        code: "supervisor_judgment",
+        label: "待主管判断",
+        reason: "需由现场主管确认培训安排是否符合当班在线要求。",
+      },
+      currentJudgment: "需补培训安排说明后再判断状态是否计入履约。",
+      readyCount: 3,
+      missingCount: 2,
+      closureChecklist: {
+        currentJudgment: "需补培训安排说明后再判断状态是否计入履约。",
+        readyCount: 3,
+        missingCount: 2,
+        items: [
+          {
+            label: "排班记录",
+            status: "已关联",
+            ownerRole: "排班运营",
+            judgmentImpact: "确认 13:00-18:00 排班覆盖。",
+          },
+          {
+            label: "登录记录",
+            status: "已关联",
+            ownerRole: "数据管理员",
+            judgmentImpact: "确认登录覆盖当日工作时段。",
+          },
+          {
+            label: "状态记录",
+            status: "已关联",
+            ownerRole: "现场主管",
+            judgmentImpact: "确认 13:00-18:00 状态为培训。",
+          },
+          {
+            label: "培训安排说明",
+            status: "需补充",
+            ownerRole: "现场主管",
+            judgmentImpact: "确认培训是否符合当班在线要求。",
+          },
+          {
+            label: "主管判断",
+            status: "待确认",
+            ownerRole: "现场主管",
+            judgmentImpact: "形成状态是否计入履约的判断。",
+          },
+        ],
+      },
+    },
+  ]);
   assert.deepEqual(dailyView.exceptionExplanations, [
     {
       id: "EXP-A-1001-2026-05-11-no_login",

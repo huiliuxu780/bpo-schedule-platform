@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R326-R329 - 个人详情复核口径同步
+
+```yaml
+requirements:
+  - id: R326
+    module: "履约日历"
+    description: "个人单日三轨详情需要在从异常队列下钻时展示同一异常的处理分组、复核清单和当前判断。"
+  - id: R327
+    module: "履约日历"
+    description: "个人日视图模型需要提供与异常队列一致的复核上下文，包含异常键、处理分组、复核清单和当前判断。"
+  - id: R328
+    module: "履约日历"
+    description: "个人详情复核口径仅作为查看信息，不提供提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R329
+    module: "质量与交付"
+    description: "个人详情复核口径同步完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued business function development on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R322-R325 - 主管异常队列分组
 
 ```yaml

@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US338-US341 - 个人详情复核口径同步
+
+```yaml
+stories:
+  - id: US338
+    requirement_ids: [R326]
+    task_ids: [F259]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望从异常队列进入个人单日三轨详情时仍能看到处理分组、复核清单和当前判断，以便下钻后不丢失处理语境。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US339
+    requirement_ids: [R327]
+    task_ids: [F260]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望个人日视图模型提供与异常队列一致的复核上下文，以便列表和个人详情使用同一口径。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US340
+    requirement_ids: [R328]
+    task_ids: [F261]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望个人详情复核口径只作为查看信息，以便不误导为已经具备处理提交或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US341
+    requirement_ids: [R329]
+    task_ids: [Q046]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望个人详情复核口径同步批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "个人单日三轨详情在带异常上下文时展示处理分组、复核清单和当前判断。"
+  - "个人日视图模型返回与异常队列一致的复核上下文。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US334-US337 - 主管异常队列分组
 
 ```yaml

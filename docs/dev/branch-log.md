@@ -1628,3 +1628,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
+
+### F259-F261 Personal Detail Review Context
+
+- branch_name: `codex/f259-person-detail-review-context`
+- base_main_commit: `c475e91`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose daily review contexts on personal timeline views and show the selected exception review group, current judgment, and closure checklist on the existing personal daily three-track detail page.
+- allowed_files_check: `app/person-timeline/[employeeId]/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing personal timeline detail route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: target model tests, product UI copy audit, navigation regression, strict state check, diff whitespace check, typecheck, browser smoke, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`

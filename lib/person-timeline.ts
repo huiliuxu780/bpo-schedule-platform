@@ -101,9 +101,21 @@ export type PersonTimelineDailyView = {
   tracks: PersonTimeline["tracks"]
   anomalies: TimelineAnomaly[]
   exceptionExplanations: TimelineExceptionExplanation[]
+  reviewContexts: PersonTimelineDailyReviewContext[]
   scheduledHours: number
   loginHours: number
   statusHours: number
+}
+
+export type PersonTimelineDailyReviewContext = {
+  key: string
+  anomalyCode: string
+  title: string
+  reviewGroup: FulfillmentMatrixExceptionQueueItem["reviewGroup"]
+  currentJudgment: string
+  readyCount: number
+  missingCount: number
+  closureChecklist: FulfillmentMatrixExceptionQueueItem["closureChecklist"]
 }
 
 export type FulfillmentDayMetrics = {
@@ -512,17 +524,39 @@ export function getPersonTimelineDailyView(
     requestedDate ??
     ""
   const tracks = filterTracksByDate(row, date)
+  const exceptionExplanations = buildExceptionExplanations(row, date, tracks)
 
   return {
     date,
     employee: row,
     tracks,
     anomalies: row.anomalies.filter((anomaly) => anomaly.date === date),
-    exceptionExplanations: buildExceptionExplanations(row, date, tracks),
+    exceptionExplanations,
+    reviewContexts: buildPersonTimelineDailyReviewContexts(row, exceptionExplanations),
     scheduledHours: sumEvents(tracks.schedule),
     loginHours: sumEvents(tracks.login),
     statusHours: sumEvents(tracks.status),
   }
+}
+
+function buildPersonTimelineDailyReviewContexts(
+  row: PersonTimeline,
+  explanations: TimelineExceptionExplanation[]
+): PersonTimelineDailyReviewContext[] {
+  return explanations.map((explanation) => {
+    const closureChecklist = buildExceptionClosureChecklist(explanation)
+
+    return {
+      key: fulfillmentMatrixExceptionKey(row.employeeId, explanation.anomalyCode),
+      anomalyCode: explanation.anomalyCode,
+      title: explanation.title,
+      reviewGroup: buildExceptionReviewGroup(explanation),
+      currentJudgment: closureChecklist.currentJudgment,
+      readyCount: closureChecklist.readyCount,
+      missingCount: closureChecklist.missingCount,
+      closureChecklist,
+    }
+  })
 }
 
 export function getPersonTimelineWeekView(

@@ -93,4 +93,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US334/F256 -> US337/Q045` completed the supervisor exception-queue grouping slice: the fulfillment calendar group-day exception panel now groups and filters queue items by missing material, supervisor judgment, and data check, with group counts in the queue summary. Current queue is empty again.
 
-Recommended next production MVP slice: continue with personal-detail checklist consistency or group-level review load summary, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US338/F259 -> US341/Q046` completed the personal-detail review-context slice: the fulfillment calendar personal daily three-track detail now shows the selected exception review group, current judgment, and closure checklist when opened from the group-day exception queue. Current queue is empty again.
+
+Recommended next production MVP slice: continue with group-level review load summary or exception evidence-to-data-quality cross-link, keeping it local/frontend-only unless PM confirms a separate production action Gate.

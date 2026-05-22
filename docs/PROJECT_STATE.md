@@ -99,6 +99,7 @@ Current invariants:
 - `F250-F252/Q043` completed a supervisor resolution-draft slice: the fulfillment calendar group-day exception panel shows suggested conclusion, required evidence, communication target, owner role, next review point, and open-risk text for the selected exception. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F253-F255/Q044` completed a supervisor closure-checklist slice: the fulfillment calendar group-day exception panel shows a closure checklist with ready and missing material counts, item status, owner role, judgment impact, and current judgment for the selected exception. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F256-F258/Q045` completed a supervisor exception-queue grouping slice: the fulfillment calendar group-day exception panel groups and filters queue items by missing material, supervisor judgment, and data check, with group counts in the queue summary. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F259-F261/Q046` completed a personal-detail review-context slice: the fulfillment calendar personal daily three-track detail shows the selected exception review group, current judgment, and closure checklist when opened from the group-day exception queue. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

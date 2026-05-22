@@ -2268,6 +2268,26 @@
 - Browser smoke：打开 `/person-timeline?...&queue=missing_material` 和 `/person-timeline?...&queue=supervisor_judgment`，侧栏显示“需补材料”“待主管判断”“需数据核对”和对应“处理分组”原因，且未出现提交、保存、审批、导出或批量入口。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Personal detail review context
+
+#### 结论
+
+- `F259-F261/US338-US340` 已在个人单日三轨详情中同步异常复核口径。
+- 个人日视图新增 `reviewContexts`，包含异常键、处理分组、当前判断和复核清单。
+- 从小组异常队列下钻到个人详情时，页面展示“异常复核口径”、处理分组、当前判断和复核项。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做个人详情查看语境同步，不代表正式处理结论登记、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：通过，打开带 `queue=supervisor_judgment` 和 `exception=A-1001::no_login` 的个人详情页，页面显示“异常复核口径”“待主管判断”“已齐 3 项 / 待补 2 项”、处理分组、当前判断和三轨内容，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
