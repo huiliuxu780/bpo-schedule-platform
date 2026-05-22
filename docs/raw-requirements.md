@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R354-R357 - 团队日风险摘要
+
+```yaml
+requirements:
+  - id: R354
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示当日风险摘要，帮助现场主管快速判断今天是否需要优先查看异常。"
+  - id: R355
+    module: "履约日历"
+    description: "小组矩阵模型需要汇总风险等级、主要风险、下一优先查看和风险信号。"
+  - id: R356
+    module: "履约日历"
+    description: "团队日风险摘要仅作为查看和排序口径，不提供提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R357
+    module: "质量与交付"
+    description: "团队日风险摘要完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor-oriented business completion on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、权限、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R350-R353 - 主管交接概览
 
 ```yaml

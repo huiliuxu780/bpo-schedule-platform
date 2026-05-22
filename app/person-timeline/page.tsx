@@ -541,6 +541,7 @@ function MatrixExceptionPanel({
 
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
+      <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
       <ExceptionSourceSummaryPanel summary={matrix.exceptionSourceSummary} />
@@ -1401,6 +1402,59 @@ function SupervisorHandoffOverviewPanel({
   )
 }
 
+function TeamDayRiskDigestPanel({
+  summary,
+}: {
+  summary: FulfillmentGroupMatrix["teamDayRiskDigest"]
+}) {
+  return (
+    <div className="grid gap-3 rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">当日风险</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.riskLevel === "高" ? "destructive" : "secondary"}>
+          {summary.riskLevel}风险 {summary.riskScore}
+        </Badge>
+      </div>
+      <div className="rounded-md border bg-background p-2 text-xs">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-medium">主要风险</span>
+          <Badge variant="secondary">{summary.primaryRisk.label}</Badge>
+        </div>
+        <div className="mt-1 text-muted-foreground">{summary.primaryRisk.reason}</div>
+      </div>
+      {summary.nextFocus ? (
+        <div className="rounded-md border bg-background p-2 text-xs">
+          <div className="font-medium">下一优先查看</div>
+          <div className="mt-1 text-muted-foreground">
+            {summary.nextFocus.employeeName} / {summary.nextFocus.title}
+          </div>
+          <div className="mt-1 text-muted-foreground">{summary.nextFocus.reason}</div>
+        </div>
+      ) : null}
+      <div className="grid gap-2">
+        {summary.signals.map((signal) => (
+          <div
+            key={signal.label}
+            className={cn(
+              "rounded-md border bg-background p-2 text-xs",
+              teamDayRiskSignalClass[signal.tone]
+            )}
+          >
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium">{signal.label}</span>
+              <span className="text-muted-foreground">{signal.value}</span>
+            </div>
+            <div className="mt-1 text-muted-foreground">{signal.reason}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function formatOneDecimal(value: number) {
   return (Math.round(value * 10) / 10).toFixed(1)
 }
@@ -1444,6 +1498,12 @@ const priorityLabel = {
   high: "高优先级",
   medium: "中优先级",
   low: "低优先级",
+}
+
+const teamDayRiskSignalClass = {
+  high: "border-red-200 dark:border-red-900",
+  medium: "border-amber-200 dark:border-amber-900",
+  low: "border-emerald-200 dark:border-emerald-900",
 }
 
 const trackLabel = {

@@ -494,6 +494,48 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       },
     ],
   });
+  assert.deepEqual(matrix.teamDayRiskDigest, {
+    riskLevel: "高",
+    riskScore: 86,
+    headline: "当日高风险：登录轨道与状态轨道同时存在异常，先看王敏。",
+    primaryRisk: {
+      label: "建议升级",
+      reason: "1 项异常已达到升级关注，2 项仍在超时关注。",
+    },
+    nextFocus: {
+      key: "A-1002::late_login",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      reason: "需要升级 / 登录轨道 / 2 个待核对问题",
+    },
+    signals: [
+      {
+        label: "待关注异常",
+        value: "2项",
+        tone: "high",
+        reason: "其中 1 项高优先，影响 5.35h。",
+      },
+      {
+        label: "超时关注",
+        value: "2项",
+        tone: "high",
+        reason: "1 项建议升级。",
+      },
+      {
+        label: "主要来源",
+        value: "登录轨道",
+        tone: "high",
+        reason: "登录轨道有 1 项异常。",
+      },
+      {
+        label: "交接压力",
+        value: "4问",
+        tone: "medium",
+        reason: "现场主管有 2 项需要交接。",
+      },
+    ],
+  });
   const lateLogin = matrix.exceptionQueue.find((item) => item.key === "A-1002::late_login");
   assert.ok(lateLogin);
   assert.deepEqual(lateLogin.reviewGroup, {

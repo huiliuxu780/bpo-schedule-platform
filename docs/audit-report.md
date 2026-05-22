@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-22 - Team day risk digest
+
+#### 结论
+
+- `F280-F282/Q053/US366-US369` 已完成团队日风险摘要和 QA 收口。
+- 小组矩阵模型新增 `teamDayRiskDigest`，包含风险等级、风险分、当日风险标题、主要风险、下一优先查看和风险信号。
+- 页面在现有右侧异常面板展示“当日风险”，不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和排序口径，不代表真实派单、处理记录写入、通知、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `teamDayRiskDigest` 为 `undefined`，证明测试覆盖新增模型能力。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“当日风险”“当日高风险：登录轨道与状态轨道同时存在异常，先看王敏。”“高风险 86”“主要风险”“下一优先查看”“需要升级 / 登录轨道 / 2 个待核对问题”和“交接压力”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-22 - Supervisor handoff overview
 
 #### 结论

@@ -106,6 +106,7 @@ Current invariants:
 - `F271-F273/Q050` completed a supervisor daily workload summary slice: the fulfillment calendar group-day exception panel shows daily focus item count, high-priority count, aging/escalation pressure, busiest owner role, owner workloads, and next focus item. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F274-F276/Q051` completed an exception source consolidation slice: the fulfillment calendar group-day exception panel shows primary exception source, next priority source, source distribution, source impact hours, and source-level high-priority/aging/escalation counts. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F277-F279/Q052` completed a supervisor handoff overview slice: the fulfillment calendar group-day exception panel shows handoff item count, open question count, escalation count, top recipient, next handoff item, and recipient-level handoff distribution. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F280-F282/Q053` completed a team-day risk digest slice: the fulfillment calendar group-day exception panel shows day risk level, risk score, headline, primary risk, next focus item, and risk signals. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

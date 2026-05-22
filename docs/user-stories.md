@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US366-US369 - 团队日风险摘要
+
+```yaml
+stories:
+  - id: US366
+    requirement_ids: [R354]
+    task_ids: [F280]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组成员单日矩阵看到当日风险摘要，以便快速判断今天是否需要优先查看异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US367
+    requirement_ids: [R355]
+    task_ids: [F281]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组矩阵模型汇总风险等级、主要风险、下一优先查看和风险信号，以便先看最影响履约的问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US368
+    requirement_ids: [R356]
+    task_ids: [F282]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望当日风险摘要只表达查看和排序口径，以便不误导为已经具备线上处理或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US369
+    requirement_ids: [R357]
+    task_ids: [Q053]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望团队日风险摘要批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵展示当日风险摘要。"
+  - "模型返回风险等级、主要风险、下一优先查看和风险信号。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US362-US365 - 主管交接概览
 
 ```yaml

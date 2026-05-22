@@ -459,6 +459,31 @@ export type FulfillmentSupervisorHandoffOverview = {
   recipients: FulfillmentSupervisorHandoffRecipient[]
 }
 
+export type FulfillmentTeamDayRiskSignal = {
+  label: string
+  value: string
+  tone: "high" | "medium" | "low"
+  reason: string
+}
+
+export type FulfillmentTeamDayRiskDigest = {
+  riskLevel: "高" | "中" | "低"
+  riskScore: number
+  headline: string
+  primaryRisk: {
+    label: string
+    reason: string
+  }
+  nextFocus?: {
+    key: string
+    employeeId: string
+    employeeName: string
+    title: string
+    reason: string
+  }
+  signals: FulfillmentTeamDayRiskSignal[]
+}
+
 export type FulfillmentMatrixExceptionQueueCursor = {
   selected?: FulfillmentMatrixExceptionQueueItem
   selectedIndex: number
@@ -479,6 +504,7 @@ export type FulfillmentGroupMatrix = {
   supervisorDailyWorkload: FulfillmentSupervisorDailyWorkload
   exceptionSourceSummary: FulfillmentExceptionSourceSummary
   supervisorHandoffOverview: FulfillmentSupervisorHandoffOverview
+  teamDayRiskDigest: FulfillmentTeamDayRiskDigest
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -882,8 +908,13 @@ export function getFulfillmentMatrix(
       const riskA = Number(a.scheduledHours > a.loginHours) + a.anomalies.length
       const riskB = Number(b.scheduledHours > b.loginHours) + b.anomalies.length
       return riskB - riskA || a.employeeId.localeCompare(b.employeeId)
-    })
+  })
   const exceptionQueue = buildFulfillmentMatrixExceptionQueue(members, selectedDate)
+  const exceptionQueueSummary = summarizeFulfillmentMatrixExceptionQueue(exceptionQueue)
+  const reviewLoadSummary = summarizeFulfillmentMatrixReviewLoad(exceptionQueue)
+  const supervisorDailyWorkload = summarizeSupervisorDailyWorkload(exceptionQueue)
+  const exceptionSourceSummary = summarizeExceptionSources(exceptionQueue)
+  const supervisorHandoffOverview = summarizeSupervisorHandoffOverview(exceptionQueue)
 
   return {
     date: selectedDate,
@@ -892,11 +923,17 @@ export function getFulfillmentMatrix(
     summary: buildDayMetrics(selectedDate, group.members),
     members,
     exceptionQueue,
-    exceptionQueueSummary: summarizeFulfillmentMatrixExceptionQueue(exceptionQueue),
-    reviewLoadSummary: summarizeFulfillmentMatrixReviewLoad(exceptionQueue),
-    supervisorDailyWorkload: summarizeSupervisorDailyWorkload(exceptionQueue),
-    exceptionSourceSummary: summarizeExceptionSources(exceptionQueue),
-    supervisorHandoffOverview: summarizeSupervisorHandoffOverview(exceptionQueue),
+    exceptionQueueSummary,
+    reviewLoadSummary,
+    supervisorDailyWorkload,
+    exceptionSourceSummary,
+    supervisorHandoffOverview,
+    teamDayRiskDigest: summarizeTeamDayRiskDigest(
+      exceptionQueue,
+      exceptionQueueSummary,
+      exceptionSourceSummary,
+      supervisorHandoffOverview
+    ),
   }
 }
 
@@ -2168,6 +2205,134 @@ function emptySupervisorHandoffRecipient(recipient: string): FulfillmentSupervis
     openQuestionCount: 0,
     nextTouchpoint: "",
     focus: "集中说明待核对问题和下一触点，避免交接后重复追问。",
+  }
+}
+
+function summarizeTeamDayRiskDigest(
+  queue: FulfillmentMatrixExceptionQueueItem[],
+  queueSummary: FulfillmentMatrixExceptionQueueSummary,
+  sourceSummary: FulfillmentExceptionSourceSummary,
+  handoffOverview: FulfillmentSupervisorHandoffOverview
+): FulfillmentTeamDayRiskDigest {
+  const riskScore = calculateTeamDayRiskScore(queueSummary)
+  const riskLevel = getTeamDayRiskLevel(riskScore)
+  const nextFocus = queue[0]
+  const activeSources = sourceSummary.sources.filter((source) => source.itemCount > 0)
+  const secondarySource = activeSources.find(
+    (source) => source.track !== sourceSummary.primarySource.track
+  )
+
+  return {
+    riskLevel,
+    riskScore,
+    headline: buildTeamDayRiskHeadline(riskLevel, sourceSummary, secondarySource, nextFocus),
+    primaryRisk: buildTeamDayPrimaryRisk(queueSummary),
+    nextFocus: nextFocus
+      ? {
+          key: nextFocus.key,
+          employeeId: nextFocus.employeeId,
+          employeeName: nextFocus.employeeName,
+          title: nextFocus.title,
+          reason: `${nextFocus.agingEscalation.level} / ${
+            exceptionSourceLabel[getExceptionPrimarySource(nextFocus)]
+          } / ${nextFocus.handoffSummary.openQuestions.length} 个待核对问题`,
+        }
+      : undefined,
+    signals: [
+      {
+        label: "待关注异常",
+        value: `${queueSummary.totalCount}项`,
+        tone: queueSummary.highPriorityCount > 0 ? "high" : queueSummary.totalCount > 0 ? "medium" : "low",
+        reason: `其中 ${queueSummary.highPriorityCount} 项高优先，影响 ${formatImpactHours(
+          roundHours(queue.reduce((total, item) => total + item.impactHours, 0))
+        )}h。`,
+      },
+      {
+        label: "超时关注",
+        value: `${queueSummary.agingWatchCount}项`,
+        tone: queueSummary.escalationCount > 0 ? "high" : queueSummary.agingWatchCount > 0 ? "medium" : "low",
+        reason: `${queueSummary.escalationCount} 项建议升级。`,
+      },
+      {
+        label: "主要来源",
+        value: sourceSummary.primarySource.label,
+        tone: sourceSummary.primarySource.itemCount > 0 ? "high" : "low",
+        reason: `${sourceSummary.primarySource.label}有 ${sourceSummary.primarySource.itemCount} 项异常。`,
+      },
+      {
+        label: "交接压力",
+        value: `${handoffOverview.openQuestionCount}问`,
+        tone: handoffOverview.openQuestionCount >= 4 ? "medium" : "low",
+        reason: `${handoffOverview.topRecipient.recipient}有 ${handoffOverview.topRecipient.itemCount} 项需要交接。`,
+      },
+    ],
+  }
+}
+
+function calculateTeamDayRiskScore(summary: FulfillmentMatrixExceptionQueueSummary) {
+  if (summary.totalCount === 0) {
+    return 0
+  }
+
+  return Math.min(
+    100,
+    50 +
+      summary.highPriorityCount * 10 +
+      summary.escalationCount * 16 +
+      summary.agingWatchCount * 5
+  )
+}
+
+function getTeamDayRiskLevel(score: number): FulfillmentTeamDayRiskDigest["riskLevel"] {
+  if (score >= 80) {
+    return "高"
+  }
+
+  if (score >= 50) {
+    return "中"
+  }
+
+  return "低"
+}
+
+function buildTeamDayRiskHeadline(
+  riskLevel: FulfillmentTeamDayRiskDigest["riskLevel"],
+  sourceSummary: FulfillmentExceptionSourceSummary,
+  secondarySource: FulfillmentExceptionSourceSummarySource | undefined,
+  nextFocus: FulfillmentMatrixExceptionQueueItem | undefined
+) {
+  if (!nextFocus || sourceSummary.primarySource.itemCount === 0) {
+    return "当日风险平稳：暂无需要优先查看的异常。"
+  }
+
+  const sourceText = secondarySource
+    ? `${sourceSummary.primarySource.label}与${secondarySource.label}同时存在异常`
+    : `${sourceSummary.primarySource.label}存在异常`
+
+  return `当日${riskLevel}风险：${sourceText}，先看${nextFocus.employeeName}。`
+}
+
+function buildTeamDayPrimaryRisk(summary: FulfillmentMatrixExceptionQueueSummary) {
+  if (summary.escalationCount > 0) {
+    return {
+      label: "建议升级",
+      reason: `${summary.escalationCount} 项异常已达到升级关注，${summary.agingWatchCount} 项仍在超时关注。`,
+    }
+  }
+
+  if (summary.highPriorityCount > 0) {
+    return {
+      label: "高优先",
+      reason: `${summary.highPriorityCount} 项异常为高优先，建议先看影响最大的人员。`,
+    }
+  }
+
+  return {
+    label: summary.totalCount > 0 ? "异常关注" : "风险平稳",
+    reason:
+      summary.totalCount > 0
+        ? `${summary.totalCount} 项异常需要继续查看。`
+        : "暂无需要优先查看的异常。",
   }
 }
 
