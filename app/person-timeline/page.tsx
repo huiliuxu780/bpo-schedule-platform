@@ -542,6 +542,7 @@ function MatrixExceptionPanel({
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
       {selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}
+      {selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
@@ -1001,6 +1002,47 @@ function ReviewLoadSummaryPanel({
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+function SelectedExceptionComparisonCard({
+  selected,
+}: {
+  selected: FulfillmentMatrixExceptionQueueItem
+}) {
+  const comparison = selected.exceptionComparison
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">异常对比</div>
+          <div className="text-xs text-muted-foreground">{comparison.priorityReason}</div>
+        </div>
+        <Badge variant="outline">{comparison.rankLabel}</Badge>
+      </div>
+      {comparison.comparedWith ? (
+        <div className="grid gap-2 text-xs">
+          <div className="rounded-md border bg-muted/30 p-2">
+            <div className="font-medium text-foreground">
+              对比：{comparison.comparedWith.employeeName} / {comparison.comparedWith.title}
+            </div>
+            <div className="mt-1 text-muted-foreground">
+              {priorityLabel[comparison.comparedWith.priority]} / {comparison.comparedWith.reviewGroup} /{" "}
+              {comparison.comparedWith.agingLevel} / 影响{" "}
+              {comparison.comparedWith.impactHours.toFixed(2).replace(/\\.00$/, "")}h
+            </div>
+          </div>
+          <div className="text-muted-foreground">{comparison.mainDifference}</div>
+          <div className="rounded-md border p-2 text-muted-foreground">
+            <span className="font-medium text-foreground">关注顺序：</span>
+            {comparison.focusHint}
+          </div>
+        </div>
+      ) : (
+        <div className="text-xs text-muted-foreground">{comparison.mainDifference}</div>
+      )}
     </div>
   )
 }

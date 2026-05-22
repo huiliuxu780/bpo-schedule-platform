@@ -276,6 +276,22 @@ export type FulfillmentMatrixExceptionQueueItem = {
     summary: string
     status: "已完成" | "进行中" | "待查看"
   }>
+  exceptionComparison: {
+    rankLabel: string
+    priorityReason: string
+    comparedWith?: {
+      key: string
+      employeeId: string
+      employeeName: string
+      title: string
+      priority: TimelineExceptionExplanation["priority"]
+      reviewGroup: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["label"]
+      agingLevel: FulfillmentMatrixExceptionQueueItem["agingEscalation"]["level"]
+      impactHours: number
+    }
+    mainDifference: string
+    focusHint: string
+  }
   dataCheckReadiness: {
     sourceRecords: string[]
     checkFields: string[]
@@ -1239,6 +1255,12 @@ function buildFulfillmentMatrixExceptionQueue(
           dataQualityImpactScope: buildDataQualityImpactScope(member, explanation),
           supervisorFollowUp: buildSupervisorFollowUp(member, explanation),
           followUpGaps: buildFollowUpGaps(explanation),
+          exceptionComparison: {
+            rankLabel: "",
+            priorityReason: "",
+            mainDifference: "",
+            focusHint: "",
+          },
           groupFollowUpRollup: {
             queuePosition: "",
             sameGroupOpenCount: 0,
@@ -1258,6 +1280,7 @@ function buildFulfillmentMatrixExceptionQueue(
 
   return queue.map((item, index) => ({
     ...item,
+    exceptionComparison: buildExceptionComparison(queue, index),
     groupFollowUpRollup: buildGroupFollowUpRollup(queue, index),
   }))
 }
@@ -1538,6 +1561,88 @@ function buildExceptionFollowUpTimeline(
       status: "待查看",
     },
   ]
+}
+
+function buildExceptionComparison(
+  queue: FulfillmentMatrixExceptionQueueItem[],
+  index: number
+): FulfillmentMatrixExceptionQueueItem["exceptionComparison"] {
+  const current = queue[index]
+  const compared = queue[index + 1] ?? queue[index - 1]
+
+  return {
+    rankLabel: `第 ${index + 1} / ${queue.length} 项`,
+    priorityReason: buildExceptionComparisonPriorityReason(current),
+    comparedWith: compared
+      ? {
+          key: compared.key,
+          employeeId: compared.employeeId,
+          employeeName: compared.employeeName,
+          title: compared.title,
+          priority: compared.priority,
+          reviewGroup: compared.reviewGroup.label,
+          agingLevel: compared.agingEscalation.level,
+          impactHours: compared.impactHours,
+        }
+      : undefined,
+    mainDifference: buildExceptionComparisonDifference(current, compared),
+    focusHint: buildExceptionComparisonFocusHint(current, compared),
+  }
+}
+
+function buildExceptionComparisonPriorityReason(item: FulfillmentMatrixExceptionQueueItem) {
+  const priorityPart = `${item.employeeName}为${priorityText[item.priority]}`
+  const agingPart =
+    item.agingEscalation.level === "需要升级"
+      ? "且已达到需要升级"
+      : item.agingEscalation.level === "接近超时"
+        ? "且接近超时"
+        : "且仍在正常跟进"
+
+  return `${priorityPart}，${agingPart}。`
+}
+
+function buildExceptionComparisonDifference(
+  current: FulfillmentMatrixExceptionQueueItem,
+  compared: FulfillmentMatrixExceptionQueueItem | undefined
+) {
+  if (!compared) {
+    return "当前队列只有这一项异常，先完成该项复核即可。"
+  }
+
+  const priorityDelta = priorityRank[current.priority] - priorityRank[compared.priority]
+  const impactDelta = roundHours(Math.abs(current.impactHours - compared.impactHours))
+  const priorityTextPart =
+    priorityDelta > 0
+      ? "当前异常优先级更高"
+      : priorityDelta < 0
+        ? "对比异常优先级更高"
+        : "两项异常优先级相同"
+  const impactText =
+    current.impactHours >= compared.impactHours
+      ? `当前异常影响时长多 ${formatImpactHours(impactDelta)}h`
+      : `对比异常影响时长多 ${formatImpactHours(impactDelta)}h`
+  const agingText =
+    compared.agingEscalation.level === "需要升级"
+      ? "且对比异常也已达到升级关注。"
+      : "但尚未达到升级关注。"
+
+  return `${priorityTextPart}；${impactText}，${agingText}`
+}
+
+function buildExceptionComparisonFocusHint(
+  current: FulfillmentMatrixExceptionQueueItem,
+  compared: FulfillmentMatrixExceptionQueueItem | undefined
+) {
+  if (!compared) {
+    return `先完成${current.employeeName}当前异常的复核说明。`
+  }
+
+  if (current.type === "登录缺口" && compared.type === "状态不一致") {
+    return `先补${current.employeeName}到岗说明，再回看${compared.employeeName}培训状态是否符合在线要求。`
+  }
+
+  return `先看${current.employeeName}，再对比${compared.employeeName}的${compared.title}。`
 }
 
 function buildFollowUpCurrentGapSummary(

@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US382-US385 - 主管异常对比
+
+```yaml
+stories:
+  - id: US382
+    requirement_ids: [R370]
+    task_ids: [F292]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在异常详情中看到当前异常和队列中相邻异常的对比，以便判断为什么先处理当前异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US383
+    requirement_ids: [R371]
+    task_ids: [F293]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望模型返回异常排名、优先原因、对比异常、主要差异和下一关注说明，以便复核队列排序是否合理。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US384
+    requirement_ids: [R372]
+    task_ids: [F294]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望异常对比只表达查看和排序口径，以便不误导为已经具备线上流转或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US385
+    requirement_ids: [R373]
+    task_ids: [Q057]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管异常对比批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "异常详情展示主管异常对比。"
+  - "模型返回当前异常排名、优先原因、对比异常、主要差异和下一关注说明。"
+  - "页面不出现通知、提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US378-US381 - 团队日风险趋势
 
 ```yaml

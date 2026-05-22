@@ -110,6 +110,7 @@ Current invariants:
 - `F283-F285/Q054` completed a supervisor exception communication context slice: the fulfillment calendar group-day exception panel shows communication audience, purpose, key messages, referenced evidence, open questions, and next conversation point for the selected exception. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F286-F288/Q055` completed a supervisor follow-up timeline slice: the fulfillment calendar group-day exception panel shows detection, completed follow-up, current blocker, and next review nodes for the selected exception. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F289-F291/Q056` completed a team-day risk trend slice: the fulfillment calendar group-day exception panel shows risk direction, highest-risk day, current-day comparison, trend points, and next focus. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F292-F294/Q057` completed a supervisor exception comparison slice: the fulfillment calendar group-day exception panel shows selected exception rank, priority reason, compared exception, main difference, and focus order. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

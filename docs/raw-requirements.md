@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R370-R373 - 主管异常对比
+
+```yaml
+requirements:
+  - id: R370
+    module: "履约日历"
+    description: "异常详情需要展示主管异常对比，帮助现场主管判断当前异常为什么排在前面、和下一条异常差在哪里。"
+  - id: R371
+    module: "履约日历"
+    description: "小组矩阵模型需要返回当前异常排名、优先原因、对比异常、主要差异和下一关注说明。"
+  - id: R372
+    module: "履约日历"
+    description: "主管异常对比仅作为查看和排序口径，不提供通知、提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R373
+    module: "质量与交付"
+    description: "主管异常对比完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested faster continued supervisor-oriented business completion on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、权限、通知、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R366-R369 - 团队日风险趋势
 
 ```yaml

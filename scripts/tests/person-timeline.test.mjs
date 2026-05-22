@@ -36,14 +36,17 @@ test("person timeline summary counts local coverage", () => {
 test("matrix view surfaces selected exception follow-up before summary panels", () => {
   const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
+  const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
 
   assert.ok(followUpPosition >= 0);
+  assert.ok(comparisonPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(followUpPosition < riskDigestPosition);
+  assert.ok(comparisonPosition < riskDigestPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.equal(titleCount, 1);
 });
@@ -670,6 +673,22 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       status: "待查看",
     },
   ]);
+  assert.deepEqual(lateLogin.exceptionComparison, {
+    rankLabel: "第 1 / 2 项",
+    priorityReason: "王敏为高优先级，且已达到需要升级。",
+    comparedWith: {
+      key: "A-1001::no_login",
+      employeeId: "A-1001",
+      employeeName: "刘晨",
+      title: "午后状态缺登录切片",
+      priority: "medium",
+      reviewGroup: "待主管判断",
+      agingLevel: "接近超时",
+      impactHours: 5,
+    },
+    mainDifference: "当前异常优先级更高；对比异常影响时长多 4.65h，但尚未达到升级关注。",
+    focusHint: "先补王敏到岗说明，再回看刘晨培训状态是否符合在线要求。",
+  });
   assert.deepEqual(lateLogin.evidenceSummary, {
     schedule: "排班 SCH-1002-1：早班 09:00-17:00",
     login: "登录 LOG-1002-1：CORN 登录 09:21-17:00",

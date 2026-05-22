@@ -2478,6 +2478,28 @@
 - Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“异常来源”“来源 2 类，主要看 登录轨道”“主要来源”“登录轨道有 1 项异常，其中 1 项高优先，建议先核对原始登录记录。”“下一优先来源”“状态轨道”和“排班轨道”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Supervisor exception comparison
+
+#### 结论
+
+- `F292-F294/US382-US385` 已在小组成员单日矩阵异常面板中增加主管异常对比。
+- 异常队列项新增 `exceptionComparison`，包含当前排名、优先原因、对比异常、主要差异和关注顺序。
+- 页面在现有右侧异常面板展示“异常对比”，位于当日风险摘要之前，不新增入口或页面。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、通知、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和排序解释，不代表真实处理、通知、写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `exceptionComparison` 为 `undefined` 且页面缺少对比卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“异常对比”“王敏为高优先级，且已达到需要升级。”“第 1 / 2 项”“对比：刘晨 / 午后状态缺登录切片”，且异常对比位于当日风险摘要之前。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-22 - Team day risk trend
 
 #### 结论

@@ -1731,6 +1731,23 @@
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
 
+### F292-F294 Supervisor Exception Comparison
+
+- branch_name: `codex/f265-exception-data-quality-links`
+- base_main_commit: `b6ee27f`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose supervisor exception comparison for the selected fulfillment exception and show rank, priority reason, compared exception, main difference, and focus order in the existing group-day exception panel.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, notification, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-day route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, notification, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `exceptionComparison` and missing comparison card; target model tests, product UI copy audit, navigation regression, typecheck, browser smoke, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F289-F291 Team Day Risk Trend
 
 - branch_name: `codex/f265-exception-data-quality-links`
