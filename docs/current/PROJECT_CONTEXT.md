@@ -103,4 +103,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US354/F271 -> US357/Q050` completed the supervisor daily workload summary slice: the fulfillment calendar group-day exception panel now shows daily focus item count, high-priority count, aging/escalation pressure, busiest owner role, owner workloads, and next focus item. Current queue is empty again.
 
-Recommended next production MVP slice: continue with exception source consolidation or supervisor handoff overview, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US358/F274 -> US361/Q051` completed the exception source consolidation slice: the fulfillment calendar group-day exception panel now shows primary exception source, next priority source, source distribution, source impact hours, and source-level high-priority/aging/escalation counts. Current queue is empty again.
+
+Recommended next production MVP slice: continue with supervisor handoff overview or team-day risk digest, keeping it local/frontend-only unless PM confirms a separate production action Gate.

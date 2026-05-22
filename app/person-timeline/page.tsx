@@ -543,6 +543,7 @@ function MatrixExceptionPanel({
     <aside className="grid gap-3 rounded-lg border p-3">
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
+      <ExceptionSourceSummaryPanel summary={matrix.exceptionSourceSummary} />
       <div className="grid grid-cols-2 gap-2 text-xs">
         <SummaryMetric label="异常" value={`${matrix.exceptionQueueSummary.totalCount}`} />
         <SummaryMetric label="高优" value={`${matrix.exceptionQueueSummary.highPriorityCount}`} />
@@ -1282,6 +1283,59 @@ function SupervisorDailyWorkloadPanel({
             </div>
             <div className="text-muted-foreground">影响 {formatOneDecimal(owner.impactHours)}h</div>
             <div className="text-muted-foreground">{owner.focus}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ExceptionSourceSummaryPanel({
+  summary,
+}: {
+  summary: FulfillmentGroupMatrix["exceptionSourceSummary"]
+}) {
+  return (
+    <div className="grid gap-3 rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">异常来源</div>
+          <div className="text-xs text-muted-foreground">
+            来源 {summary.totalSources} 类，主要看 {summary.primarySource.label}
+          </div>
+        </div>
+        <Badge variant={summary.primarySource.itemCount > 0 ? "secondary" : "outline"}>
+          {summary.primarySource.itemCount} 项
+        </Badge>
+      </div>
+      <div className="rounded-md border bg-background p-2 text-xs">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-medium">主要来源</span>
+          <Badge variant="secondary">{summary.primarySource.label}</Badge>
+        </div>
+        <div className="mt-1 text-muted-foreground">{summary.primarySource.reason}</div>
+      </div>
+      {summary.nextSource ? (
+        <div className="rounded-md border bg-background p-2 text-xs">
+          <div className="font-medium">下一优先来源</div>
+          <div className="mt-1 text-muted-foreground">
+            {summary.nextSource.label}：{summary.nextSource.reason}
+          </div>
+        </div>
+      ) : null}
+      <div className="grid gap-2">
+        {summary.sources.map((source) => (
+          <div key={source.track} className="rounded-md border bg-background p-2 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium">{source.label}</span>
+              <span className="text-muted-foreground">{source.itemCount} 项</span>
+            </div>
+            <div className="mt-1 text-muted-foreground">
+              高优先 {source.highPriorityCount} / 超时 {source.agingWatchCount} / 建议升级{" "}
+              {source.escalationCount}
+            </div>
+            <div className="text-muted-foreground">影响 {formatOneDecimal(source.impactHours)}h</div>
+            <div className="text-muted-foreground">{source.focus}</div>
           </div>
         ))}
       </div>

@@ -104,6 +104,7 @@ Current invariants:
 - `F265-F267/Q048` completed an exception evidence to data-quality link slice: the fulfillment calendar group-day exception panel shows related data quality issues, matched records, check fields, link reasons, recommendations, and quality detail links for the selected exception. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F268-F270/Q049` completed an exception aging and priority escalation slice: the fulfillment calendar group-day exception panel shows waiting duration, aging level, escalation reason, escalation target, next review window, and group-level aging/escalation counts. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F271-F273/Q050` completed a supervisor daily workload summary slice: the fulfillment calendar group-day exception panel shows daily focus item count, high-priority count, aging/escalation pressure, busiest owner role, owner workloads, and next focus item. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F274-F276/Q051` completed an exception source consolidation slice: the fulfillment calendar group-day exception panel shows primary exception source, next priority source, source distribution, source impact hours, and source-level high-priority/aging/escalation counts. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -418,6 +418,52 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
       },
     ],
   });
+  assert.deepEqual(matrix.exceptionSourceSummary, {
+    totalSources: 2,
+    primarySource: {
+      track: "login",
+      label: "登录轨道",
+      itemCount: 1,
+      reason: "登录轨道有 1 项异常，其中 1 项高优先，建议先核对原始登录记录。",
+    },
+    nextSource: {
+      track: "login",
+      label: "登录轨道",
+      reason: "需要升级 / 需补材料 / 影响 0.35h",
+    },
+    sources: [
+      {
+        track: "login",
+        label: "登录轨道",
+        itemCount: 1,
+        highPriorityCount: 1,
+        agingWatchCount: 1,
+        escalationCount: 1,
+        impactHours: 0.35,
+        focus: "核对登录开始/结束和原始登录记录。",
+      },
+      {
+        track: "status",
+        label: "状态轨道",
+        itemCount: 1,
+        highPriorityCount: 0,
+        agingWatchCount: 1,
+        escalationCount: 0,
+        impactHours: 5,
+        focus: "核对状态类型、覆盖时段和现场安排说明。",
+      },
+      {
+        track: "schedule",
+        label: "排班轨道",
+        itemCount: 0,
+        highPriorityCount: 0,
+        agingWatchCount: 0,
+        escalationCount: 0,
+        impactHours: 0,
+        focus: "核对排班覆盖、班次窗口和人员安排。",
+      },
+    ],
+  });
   const lateLogin = matrix.exceptionQueue.find((item) => item.key === "A-1002::late_login");
   assert.ok(lateLogin);
   assert.deepEqual(lateLogin.reviewGroup, {

@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US358-US361 - 异常来源聚合
+
+```yaml
+stories:
+  - id: US358
+    requirement_ids: [R346]
+    task_ids: [F274]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组成员单日矩阵看到异常来源聚合，以便判断当天主要问题来自排班、登录还是状态。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US359
+    requirement_ids: [R347]
+    task_ids: [F275]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组矩阵模型返回主要来源、来源分布和来源风险，以便先核对最关键的数据或业务源。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US360
+    requirement_ids: [R348]
+    task_ids: [F276]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望异常来源聚合只表达查看和排序口径，以便不误导为已经具备处理提交或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US361
+    requirement_ids: [R349]
+    task_ids: [Q051]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望异常来源聚合批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵展示异常来源聚合。"
+  - "模型返回主要来源、来源分布、影响时长、高优先、超时关注和建议升级数量。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US354-US357 - 主管日工作量汇总
 
 ```yaml

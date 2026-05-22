@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R346-R349 - 异常来源聚合
+
+```yaml
+requirements:
+  - id: R346
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示异常来源聚合，帮助现场主管判断当天异常主要来自排班、登录还是状态。"
+  - id: R347
+    module: "履约日历"
+    description: "小组矩阵模型需要返回异常来源摘要，包括主要来源、来源分布、影响时长、高优先、超时关注和建议升级数量。"
+  - id: R348
+    module: "履约日历"
+    description: "异常来源聚合仅作为查看和排序口径，不提供提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R349
+    module: "质量与交付"
+    description: "异常来源聚合完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor-oriented business completion on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、权限、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R342-R345 - 主管日工作量汇总
 
 ```yaml

@@ -401,6 +401,33 @@ export type FulfillmentSupervisorDailyWorkload = {
   ownerLoads: FulfillmentSupervisorDailyWorkloadOwner[]
 }
 
+export type FulfillmentExceptionSourceSummarySource = {
+  track: TimelineEventType
+  label: string
+  itemCount: number
+  highPriorityCount: number
+  agingWatchCount: number
+  escalationCount: number
+  impactHours: number
+  focus: string
+}
+
+export type FulfillmentExceptionSourceSummary = {
+  totalSources: number
+  primarySource: {
+    track: TimelineEventType
+    label: string
+    itemCount: number
+    reason: string
+  }
+  nextSource?: {
+    track: TimelineEventType
+    label: string
+    reason: string
+  }
+  sources: FulfillmentExceptionSourceSummarySource[]
+}
+
 export type FulfillmentMatrixExceptionQueueCursor = {
   selected?: FulfillmentMatrixExceptionQueueItem
   selectedIndex: number
@@ -419,6 +446,7 @@ export type FulfillmentGroupMatrix = {
   exceptionQueueSummary: FulfillmentMatrixExceptionQueueSummary
   reviewLoadSummary: FulfillmentMatrixReviewLoadSummary
   supervisorDailyWorkload: FulfillmentSupervisorDailyWorkload
+  exceptionSourceSummary: FulfillmentExceptionSourceSummary
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -835,6 +863,7 @@ export function getFulfillmentMatrix(
     exceptionQueueSummary: summarizeFulfillmentMatrixExceptionQueue(exceptionQueue),
     reviewLoadSummary: summarizeFulfillmentMatrixReviewLoad(exceptionQueue),
     supervisorDailyWorkload: summarizeSupervisorDailyWorkload(exceptionQueue),
+    exceptionSourceSummary: summarizeExceptionSources(exceptionQueue),
   }
 }
 
@@ -1961,6 +1990,96 @@ function emptySupervisorWorkloadOwner(ownerRole: string): FulfillmentSupervisorD
     impactHours: 0,
     focus: ownerRole === "数据管理员" ? "核对原始登录或状态日志。" : "补充到岗、培训安排和主管判断材料。",
   }
+}
+
+function summarizeExceptionSources(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentExceptionSourceSummary {
+  const sources = exceptionSourceOrder.map((track) => {
+    const items = queue.filter((item) => getExceptionPrimarySource(item) === track)
+    return {
+      track,
+      label: exceptionSourceLabel[track],
+      itemCount: items.length,
+      highPriorityCount: items.filter((item) => item.priority === "high").length,
+      agingWatchCount: items.filter((item) => item.agingEscalation.level !== "正常跟进").length,
+      escalationCount: items.filter((item) => item.agingEscalation.level === "需要升级").length,
+      impactHours: roundHours(items.reduce((total, item) => total + item.impactHours, 0)),
+      focus: exceptionSourceFocus[track],
+    }
+  })
+  const primarySource = [...sources].sort(
+    (a, b) =>
+      b.escalationCount - a.escalationCount ||
+      b.highPriorityCount - a.highPriorityCount ||
+      b.itemCount - a.itemCount ||
+      b.impactHours - a.impactHours ||
+      exceptionSourceRank[a.track] - exceptionSourceRank[b.track]
+  )[0]
+  const nextSource = queue[0] ? getExceptionPrimarySource(queue[0]) : undefined
+  const nextSourceSummary = nextSource ? sources.find((source) => source.track === nextSource) : undefined
+
+  return {
+    totalSources: sources.filter((source) => source.itemCount > 0).length,
+    primarySource: {
+      track: primarySource.track,
+      label: primarySource.label,
+      itemCount: primarySource.itemCount,
+      reason: buildExceptionSourceReason(primarySource),
+    },
+    nextSource: nextSourceSummary
+      ? {
+          track: nextSourceSummary.track,
+          label: nextSourceSummary.label,
+          reason: `${queue[0].agingEscalation.level} / ${queue[0].reviewGroup.label} / 影响 ${formatImpactHours(queue[0].impactHours)}h`,
+        }
+      : undefined,
+    sources,
+  }
+}
+
+function getExceptionPrimarySource(item: FulfillmentMatrixExceptionQueueItem): TimelineEventType {
+  if (item.type === "状态不一致") {
+    return "status"
+  }
+
+  if (item.type === "登录缺口" || item.type === "登录不足") {
+    return "login"
+  }
+
+  return "schedule"
+}
+
+function buildExceptionSourceReason(source: FulfillmentExceptionSourceSummarySource) {
+  if (source.track === "login") {
+    return `${source.label}有 ${source.itemCount} 项异常，其中 ${source.highPriorityCount} 项高优先，建议先核对原始登录记录。`
+  }
+
+  if (source.track === "status") {
+    return `${source.label}有 ${source.itemCount} 项异常，影响 ${formatImpactHours(source.impactHours)}h，建议先核对状态说明。`
+  }
+
+  return `${source.label}有 ${source.itemCount} 项异常，建议先核对排班覆盖和人员安排。`
+}
+
+const exceptionSourceOrder: TimelineEventType[] = ["login", "status", "schedule"]
+
+const exceptionSourceRank = {
+  login: 0,
+  status: 1,
+  schedule: 2,
+}
+
+const exceptionSourceLabel = {
+  schedule: "排班轨道",
+  login: "登录轨道",
+  status: "状态轨道",
+}
+
+const exceptionSourceFocus = {
+  schedule: "核对排班覆盖、班次窗口和人员安排。",
+  login: "核对登录开始/结束和原始登录记录。",
+  status: "核对状态类型、覆盖时段和现场安排说明。",
 }
 
 const reviewLoadGroupOrder: Array<{
