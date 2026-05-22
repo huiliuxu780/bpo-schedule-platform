@@ -683,6 +683,32 @@ function MatrixExceptionPanel({
             </div>
           </div>
           <div className="grid gap-2 rounded-md border p-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="text-sm font-medium">复核清单</div>
+              <div className="text-xs text-muted-foreground">
+                已齐 {selected.closureChecklist.readyCount} 项 / 待补{" "}
+                {selected.closureChecklist.missingCount} 项
+              </div>
+            </div>
+            <div className="text-xs font-medium text-foreground">
+              {selected.closureChecklist.currentJudgment}
+            </div>
+            <div className="grid gap-2">
+              {selected.closureChecklist.items.map((item) => (
+                <div key={item.label} className="rounded-md border p-2 text-xs">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-medium">{item.label}</span>
+                    <Badge variant="secondary" className="text-[10px]">
+                      {item.status}
+                    </Badge>
+                  </div>
+                  <div className="mt-1 text-muted-foreground">负责角色：{item.ownerRole}</div>
+                  <div className="text-muted-foreground">{item.judgmentImpact}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="grid gap-2 rounded-md border p-2">
             <div className="text-sm font-medium">交接摘要</div>
             <div className="grid gap-1 text-xs text-muted-foreground">
               <div>交接对象：{selected.handoffSummary.recipient}</div>

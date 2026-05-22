@@ -97,6 +97,7 @@ Current invariants:
 - `F244-F246/Q041` completed a schedule draft fulfillment-calendar drilldown slice: linked people in the schedule draft edit page route to the matching fulfillment calendar personal daily three-track detail with date, team, and group context preserved. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F247-F249/Q042` completed a personal schedule-source drillback slice: the fulfillment calendar personal daily three-track detail shows schedule draft source, plan/draft links, shift window, schedule detail ID, and related 0.5h interval count differences. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F250-F252/Q043` completed a supervisor resolution-draft slice: the fulfillment calendar group-day exception panel shows suggested conclusion, required evidence, communication target, owner role, next review point, and open-risk text for the selected exception. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F253-F255/Q044` completed a supervisor closure-checklist slice: the fulfillment calendar group-day exception panel shows a closure checklist with ready and missing material counts, item status, owner role, judgment impact, and current judgment for the selected exception. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US330-US333 - 主管异常复核清单
+
+```yaml
+stories:
+  - id: US330
+    requirement_ids: [R318]
+    task_ids: [F253]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组成员单日矩阵异常侧栏展示复核清单，以便知道当前还差哪些材料。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US331
+    requirement_ids: [R319]
+    task_ids: [F254]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常队列模型返回每个复核项的状态、责任角色和判断影响，以便统一异常复核口径。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US332
+    requirement_ids: [R320]
+    task_ids: [F255]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望复核清单只作为业务查看信息，以便不误导为已经具备提交、审批或持久化能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US333
+    requirement_ids: [R321]
+    task_ids: [Q044]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管异常复核清单批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵异常侧栏展示复核清单。"
+  - "异常队列模型返回清单项、状态、责任角色、判断影响和当前判断。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US326-US329 - 主管异常处理结论建议
 
 ```yaml

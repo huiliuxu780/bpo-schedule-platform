@@ -2228,6 +2228,26 @@
 - Browser smoke：打开 `/person-timeline?...&queue=high`，侧栏显示“处理结论建议”“待确认到岗：王敏 09:00-09:21 登录缺口，需补到岗说明。”“需核材料：员工到岗说明 / 迟到或漏登原因 / CORN 原始登录日志截图”“沟通对象：王敏 / 现场主管”“下一复核：2026-05-11 10:00”，且未出现提交、保存、审批、导出或批量入口。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Supervisor closure checklist
+
+#### 结论
+
+- `F253-F255/US330-US332` 已在小组成员单日矩阵异常侧栏增加主管复核清单。
+- 异常队列项新增 `closureChecklist`，包含复核项、状态、负责角色、判断影响、已齐/待补数量和当前判断。
+- 侧栏只展示业务复核信息，不提供提交、保存、审批、导出、批量或状态写入入口。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管复核清单查看，不代表正式处理结论登记、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：打开 `/person-timeline?...&queue=high`，侧栏显示“复核清单”“已齐 2 项 / 待补 2 项”“需补到岗说明后再判断当日登录缺口。”“排班记录”“登录记录”“到岗说明”“主管判断”，且未出现提交、保存、审批、导出或批量入口。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

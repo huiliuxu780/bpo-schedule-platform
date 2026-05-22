@@ -2,6 +2,70 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F253
+    title: "主管异常复核清单侧栏"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "小组成员单日矩阵异常侧栏展示复核清单。"
+      - "侧栏展示复核项状态、责任角色、判断影响和当前判断。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要提交、保存、审批、导出、批量或状态写入", "需要后端、数据库、真实接口、权限、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F254
+    title: "异常复核清单模型"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "异常队列项返回 `closureChecklist`。"
+      - "`closureChecklist` 包含清单项、状态、责任角色、判断影响和当前判断。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要提交、保存、审批、导出、批量或状态写入", "需要后端、数据库、真实接口、权限、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F255
+    title: "复核清单文案边界"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "scripts/tests/product-ui-copy-audit.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "页面使用业务查看语言。"
+      - "页面不出现内部执行口径、提交、保存、审批、导出、批量或状态写入入口。"
+      - "`node --test scripts/tests/product-ui-copy-audit.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要提交、保存、审批、导出、批量或状态写入", "需要后端、数据库、真实接口、权限、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q044
+    title: "主管异常复核清单 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型测试、文案审计、浏览器 smoke 和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+      - "确认未新增页面、导航、数据库、真实接口、提交、保存、审批、导出、批量或状态写入。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要提交、保存、审批、导出、批量或状态写入", "需要后端、数据库、真实接口、权限、自动排班或生产公式"]
+    commit_after_done: true
   - id: F250
     title: "主管异常处理结论建议侧栏"
     priority: P0

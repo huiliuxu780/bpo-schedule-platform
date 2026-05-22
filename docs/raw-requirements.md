@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R318-R321 - 主管异常复核清单
+
+```yaml
+requirements:
+  - id: R318
+    module: "履约日历"
+    description: "小组成员单日矩阵异常侧栏需要展示主管复核清单，让主管看到哪些材料已齐、哪些材料仍需补充。"
+  - id: R319
+    module: "履约日历"
+    description: "异常队列模型需要为每个异常生成复核清单字段，包含清单项、状态、责任角色和判断影响。"
+  - id: R320
+    module: "履约日历"
+    description: "复核清单需要给出当前业务判断，不提供提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R321
+    module: "质量与交付"
+    description: "主管异常复核清单完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued business function development on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R314-R317 - 主管异常处理结论建议
 
 ```yaml

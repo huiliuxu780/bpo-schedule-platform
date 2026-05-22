@@ -227,6 +227,17 @@ export type FulfillmentMatrixExceptionQueueItem = {
     nextReviewPoint: string
     riskIfOpen: string
   }
+  closureChecklist: {
+    currentJudgment: string
+    readyCount: number
+    missingCount: number
+    items: Array<{
+      label: string
+      status: "已关联" | "需补充" | "待确认"
+      ownerRole: string
+      judgmentImpact: string
+    }>
+  }
   handoffSummary: {
     recipient: string
     summary: string
@@ -932,6 +943,7 @@ function buildFulfillmentMatrixExceptionQueue(
           handlingRecords: getExceptionHandlingRecords(explanation),
           handlingOutcome: buildExceptionHandlingOutcome(member, explanation, evidenceCards),
           resolutionDraft: buildExceptionResolutionDraft(member, explanation),
+          closureChecklist: buildExceptionClosureChecklist(explanation),
           handoffSummary: buildExceptionHandoffSummary(member, explanation),
           dataCheckReadiness: buildExceptionDataCheckReadiness(explanation, evidenceCards),
           dataQualityRepairPrep: buildDataQualityRepairPrep(explanation),
@@ -1147,6 +1159,114 @@ function buildExceptionResolutionDraft(
     ownerRole: "现场主管",
     nextReviewPoint: "2026-05-11 15:00",
     riskIfOpen: "缺少培训安排说明会影响状态是否计入当班履约。",
+  }
+}
+
+function buildExceptionClosureChecklist(explanation: TimelineExceptionExplanation) {
+  if (explanation.type === "登录缺口") {
+    return {
+      currentJudgment: "需补到岗说明后再判断当日登录缺口。",
+      readyCount: 2,
+      missingCount: 2,
+      items: [
+        {
+          label: "排班记录",
+          status: "已关联" as const,
+          ownerRole: "排班运营",
+          judgmentImpact: `确认 ${explanation.start} 开始排班。`,
+        },
+        {
+          label: "登录记录",
+          status: "已关联" as const,
+          ownerRole: "数据管理员",
+          judgmentImpact: `确认 ${explanation.end} 登录开始。`,
+        },
+        {
+          label: "到岗说明",
+          status: "需补充" as const,
+          ownerRole: "现场主管",
+          judgmentImpact: "确认是否迟到或漏登。",
+        },
+        {
+          label: "主管判断",
+          status: "待确认" as const,
+          ownerRole: "现场主管",
+          judgmentImpact: "形成当日履约缺口判断。",
+        },
+      ],
+    }
+  }
+
+  if (explanation.type === "登录不足") {
+    return {
+      currentJudgment: "需补离岗说明后再判断当日登录不足。",
+      readyCount: 2,
+      missingCount: 2,
+      items: [
+        {
+          label: "排班记录",
+          status: "已关联" as const,
+          ownerRole: "排班运营",
+          judgmentImpact: `确认排班覆盖到 ${explanation.end}。`,
+        },
+        {
+          label: "登录记录",
+          status: "已关联" as const,
+          ownerRole: "数据管理员",
+          judgmentImpact: `确认登录结束时间为 ${explanation.start}。`,
+        },
+        {
+          label: "离岗说明",
+          status: "需补充" as const,
+          ownerRole: "现场主管",
+          judgmentImpact: "确认是否提前离岗或漏登。",
+        },
+        {
+          label: "主管判断",
+          status: "待确认" as const,
+          ownerRole: "现场主管",
+          judgmentImpact: "形成当日履约时长判断。",
+        },
+      ],
+    }
+  }
+
+  return {
+    currentJudgment: "需补培训安排说明后再判断状态是否计入履约。",
+    readyCount: 3,
+    missingCount: 2,
+    items: [
+      {
+        label: "排班记录",
+        status: "已关联" as const,
+        ownerRole: "排班运营",
+        judgmentImpact: `确认 ${explanation.start}-${explanation.end} 排班覆盖。`,
+      },
+      {
+        label: "登录记录",
+        status: "已关联" as const,
+        ownerRole: "数据管理员",
+        judgmentImpact: "确认登录覆盖当日工作时段。",
+      },
+      {
+        label: "状态记录",
+        status: "已关联" as const,
+        ownerRole: "现场主管",
+        judgmentImpact: `确认 ${explanation.start}-${explanation.end} 状态为培训。`,
+      },
+      {
+        label: "培训安排说明",
+        status: "需补充" as const,
+        ownerRole: "现场主管",
+        judgmentImpact: "确认培训是否符合当班在线要求。",
+      },
+      {
+        label: "主管判断",
+        status: "待确认" as const,
+        ownerRole: "现场主管",
+        judgmentImpact: "形成状态是否计入履约的判断。",
+      },
+    ],
   }
 }
 
