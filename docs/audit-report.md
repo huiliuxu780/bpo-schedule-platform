@@ -2288,6 +2288,27 @@
 - Browser smoke：通过，打开带 `queue=supervisor_judgment` 和 `exception=A-1001::no_login` 的个人详情页，页面显示“异常复核口径”“待主管判断”“已齐 3 项 / 待补 2 项”、处理分组、当前判断和三轨内容，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-22 - Group review-load summary
+
+#### 结论
+
+- `F262-F264/US342-US344` 已在小组成员单日矩阵中增加复核负载汇总。
+- 小组矩阵模型新增 `reviewLoadSummary`，包含总待复核、高优数量、已齐/待补材料数量、最高负载分组、下一优先查看和各分组负载。
+- 页面在现有右侧异常队列面板展示“复核负载”“最高负载”“下一优先查看”和分组负载，不新增入口或页面。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看视角的负载摘要，不代表正式处理结论登记、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `matrix.reviewLoadSummary` 为 `undefined`，证明测试覆盖新增模型能力。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，12 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- Browser smoke：通过，打开小组单日矩阵，页面显示“复核负载”“当前小组待复核 2 项，高优先 1 项”“最高负载”“下一优先查看”和处理分组负载，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ## Historical Audit Snapshots
 
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）

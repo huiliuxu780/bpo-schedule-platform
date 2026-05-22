@@ -312,6 +312,37 @@ export type FulfillmentMatrixExceptionQueueSummary = {
   totalImpactHours: number
 }
 
+export type FulfillmentMatrixReviewLoadGroup = {
+  code: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["code"]
+  label: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["label"]
+  count: number
+  highPriorityCount: number
+  readyItemCount: number
+  missingItemCount: number
+  reason: string
+}
+
+export type FulfillmentMatrixReviewLoadSummary = {
+  totalOpenCount: number
+  highPriorityOpenCount: number
+  readyItemCount: number
+  missingItemCount: number
+  topReviewGroup: {
+    code: FulfillmentMatrixReviewLoadGroup["code"]
+    label: FulfillmentMatrixReviewLoadGroup["label"]
+    count: number
+    reason: string
+  }
+  nextPriority?: {
+    key: string
+    employeeId: string
+    employeeName: string
+    title: string
+    reason: string
+  }
+  groups: FulfillmentMatrixReviewLoadGroup[]
+}
+
 export type FulfillmentMatrixExceptionQueueCursor = {
   selected?: FulfillmentMatrixExceptionQueueItem
   selectedIndex: number
@@ -328,6 +359,7 @@ export type FulfillmentGroupMatrix = {
   members: FulfillmentMatrixMember[]
   exceptionQueue: FulfillmentMatrixExceptionQueueItem[]
   exceptionQueueSummary: FulfillmentMatrixExceptionQueueSummary
+  reviewLoadSummary: FulfillmentMatrixReviewLoadSummary
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -742,6 +774,7 @@ export function getFulfillmentMatrix(
     members,
     exceptionQueue,
     exceptionQueueSummary: summarizeFulfillmentMatrixExceptionQueue(exceptionQueue),
+    reviewLoadSummary: summarizeFulfillmentMatrixReviewLoad(exceptionQueue),
   }
 }
 
@@ -1602,6 +1635,104 @@ function summarizeFulfillmentMatrixExceptionQueue(
     dataCheckCount: queue.filter((item) => item.reviewGroup.code === "data_check").length,
     totalImpactHours: roundHours(queue.reduce((total, item) => total + item.impactHours, 0)),
   }
+}
+
+function summarizeFulfillmentMatrixReviewLoad(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentMatrixReviewLoadSummary {
+  const groups = reviewLoadGroupOrder.map((group) => {
+    const items = queue.filter((item) => item.reviewGroup.code === group.code)
+    return {
+      code: group.code,
+      label: group.label,
+      count: items.length,
+      highPriorityCount: items.filter((item) => item.priority === "high").length,
+      readyItemCount: items.reduce(
+        (total, item) => total + item.closureChecklist.readyCount,
+        0
+      ),
+      missingItemCount: items.reduce(
+        (total, item) => total + item.closureChecklist.missingCount,
+        0
+      ),
+      reason: items[0]?.reviewGroup.reason ?? group.emptyReason,
+    }
+  })
+
+  const topGroup = [...groups].sort(
+    (a, b) =>
+      b.count - a.count ||
+      b.highPriorityCount - a.highPriorityCount ||
+      b.missingItemCount - a.missingItemCount ||
+      reviewLoadGroupRank[a.code] - reviewLoadGroupRank[b.code]
+  )[0]
+  const nextPriority = queue[0]
+
+  return {
+    totalOpenCount: queue.length,
+    highPriorityOpenCount: queue.filter((item) => item.priority === "high").length,
+    readyItemCount: queue.reduce((total, item) => total + item.closureChecklist.readyCount, 0),
+    missingItemCount: queue.reduce(
+      (total, item) => total + item.closureChecklist.missingCount,
+      0
+    ),
+    topReviewGroup: {
+      code: topGroup.code,
+      label: topGroup.label,
+      count: topGroup.count,
+      reason: topGroup.reason,
+    },
+    nextPriority: nextPriority
+      ? {
+          key: nextPriority.key,
+          employeeId: nextPriority.employeeId,
+          employeeName: nextPriority.employeeName,
+          title: nextPriority.title,
+          reason: buildReviewLoadNextPriorityReason(nextPriority),
+        }
+      : undefined,
+    groups,
+  }
+}
+
+const reviewLoadGroupOrder: Array<{
+  code: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["code"]
+  label: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["label"]
+  emptyReason: string
+}> = [
+  {
+    code: "missing_material",
+    label: "需补材料",
+    emptyReason: "暂无需补材料事项。",
+  },
+  {
+    code: "supervisor_judgment",
+    label: "待主管判断",
+    emptyReason: "暂无待主管判断事项。",
+  },
+  {
+    code: "data_check",
+    label: "需数据核对",
+    emptyReason: "暂无需数据核对事项。",
+  },
+]
+
+const reviewLoadGroupRank = {
+  missing_material: 0,
+  supervisor_judgment: 1,
+  data_check: 2,
+} satisfies Record<FulfillmentMatrixExceptionQueueItem["reviewGroup"]["code"], number>
+
+function buildReviewLoadNextPriorityReason(item: FulfillmentMatrixExceptionQueueItem) {
+  if (item.reviewGroup.code === "missing_material") {
+    return "先补到岗说明与原始登录记录，避免登录缺口判断悬空。"
+  }
+
+  if (item.reviewGroup.code === "data_check") {
+    return "先核对原始排班与登录记录，避免数据差异影响履约判断。"
+  }
+
+  return "先确认现场安排是否符合当班在线要求，避免状态口径悬空。"
 }
 
 function buildExceptionReviewGroup(explanation: TimelineExceptionExplanation) {

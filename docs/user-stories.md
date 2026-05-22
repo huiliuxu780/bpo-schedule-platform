@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US342-US345 - 小组复核负载汇总
+
+```yaml
+stories:
+  - id: US342
+    requirement_ids: [R330]
+    task_ids: [F262]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组成员单日矩阵看到复核负载汇总，以便先判断当天问题主要压在哪类处理口径上。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US343
+    requirement_ids: [R331]
+    task_ids: [F263]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望小组矩阵模型返回最高负载分组、待主管判断数量和下一优先处理建议，以便不只看单个异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US344
+    requirement_ids: [R332]
+    task_ids: [F264]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望复核负载汇总只表达查看和排序口径，以便不误导为已经具备处理提交或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US345
+    requirement_ids: [R333]
+    task_ids: [Q047]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望小组复核负载汇总批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵展示复核负载汇总。"
+  - "小组矩阵模型返回总待复核、处理分组负载、最高负载分组和下一优先处理建议。"
+  - "页面不出现提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US338-US341 - 个人详情复核口径同步
 
 ```yaml

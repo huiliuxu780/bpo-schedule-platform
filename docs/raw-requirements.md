@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R330-R333 - 小组复核负载汇总
+
+```yaml
+requirements:
+  - id: R330
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示复核负载汇总，帮助现场主管判断当天异常主要集中在哪类处理口径。"
+  - id: R331
+    module: "履约日历"
+    description: "小组矩阵模型需要返回复核负载摘要，包括总待复核、待主管判断、需补材料、需数据核对、最高负载分组和下一优先处理建议。"
+  - id: R332
+    module: "履约日历"
+    description: "复核负载汇总仅作为查看和排序口径，不提供提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R333
+    module: "质量与交付"
+    description: "小组复核负载汇总完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor-oriented business development on 2026-05-22"
+submitted_at: "2026-05-22"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R326-R329 - 个人详情复核口径同步
 
 ```yaml

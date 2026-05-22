@@ -541,6 +541,7 @@ function MatrixExceptionPanel({
 
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
+      <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <div className="grid grid-cols-2 gap-2 text-xs">
         <SummaryMetric label="异常" value={`${matrix.exceptionQueueSummary.totalCount}`} />
         <SummaryMetric label="高优" value={`${matrix.exceptionQueueSummary.highPriorityCount}`} />
@@ -849,6 +850,70 @@ function MatrixExceptionPanel({
         </>
       ) : null}
     </aside>
+  )
+}
+
+function ReviewLoadSummaryPanel({
+  summary,
+}: {
+  summary: FulfillmentGroupMatrix["reviewLoadSummary"]
+}) {
+  return (
+    <div className="grid gap-3 rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">复核负载</div>
+          <div className="text-xs text-muted-foreground">
+            当前小组待复核 {summary.totalOpenCount} 项，高优先 {summary.highPriorityOpenCount} 项
+          </div>
+        </div>
+        <Badge variant={summary.highPriorityOpenCount > 0 ? "destructive" : "outline"}>
+          待补 {summary.missingItemCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="已齐材料" value={`${summary.readyItemCount}`} />
+        <SummaryMetric label="待补材料" value={`${summary.missingItemCount}`} />
+      </div>
+      <div className="rounded-md border bg-background p-2 text-xs">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-medium">最高负载</span>
+          <Badge variant="secondary">{summary.topReviewGroup.label}</Badge>
+        </div>
+        <div className="mt-1 text-muted-foreground">
+          {summary.topReviewGroup.count} 项，{summary.topReviewGroup.reason}
+        </div>
+      </div>
+      {summary.nextPriority ? (
+        <div className="rounded-md border bg-background p-2 text-xs">
+          <div className="font-medium">下一优先查看</div>
+          <div className="mt-1 text-muted-foreground">
+            {summary.nextPriority.employeeId} {summary.nextPriority.employeeName} /{" "}
+            {summary.nextPriority.title}
+          </div>
+          <div className="mt-1 text-muted-foreground">{summary.nextPriority.reason}</div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-background p-2 text-xs text-muted-foreground">
+          当前没有待复核异常。
+        </div>
+      )}
+      <div className="grid gap-2">
+        {summary.groups.map((group) => (
+          <div key={group.code} className="grid gap-1 rounded-md border bg-background p-2 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium">{group.label}</span>
+              <span className="text-muted-foreground">
+                {group.count} 项 / 高优 {group.highPriorityCount}
+              </span>
+            </div>
+            <div className="text-muted-foreground">
+              已齐 {group.readyItemCount} / 待补 {group.missingItemCount}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 

@@ -328,6 +328,54 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     dataCheckCount: 0,
     totalImpactHours: 5.35,
   });
+  assert.deepEqual(matrix.reviewLoadSummary, {
+    totalOpenCount: 2,
+    highPriorityOpenCount: 1,
+    readyItemCount: 5,
+    missingItemCount: 4,
+    topReviewGroup: {
+      code: "missing_material",
+      label: "需补材料",
+      count: 1,
+      reason: "仍缺员工到岗说明、迟到或漏登原因和原始登录记录。",
+    },
+    nextPriority: {
+      key: "A-1002::late_login",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      reason: "先补到岗说明与原始登录记录，避免登录缺口判断悬空。",
+    },
+    groups: [
+      {
+        code: "missing_material",
+        label: "需补材料",
+        count: 1,
+        highPriorityCount: 1,
+        readyItemCount: 2,
+        missingItemCount: 2,
+        reason: "仍缺员工到岗说明、迟到或漏登原因和原始登录记录。",
+      },
+      {
+        code: "supervisor_judgment",
+        label: "待主管判断",
+        count: 1,
+        highPriorityCount: 0,
+        readyItemCount: 3,
+        missingItemCount: 2,
+        reason: "需由现场主管确认培训安排是否符合当班在线要求。",
+      },
+      {
+        code: "data_check",
+        label: "需数据核对",
+        count: 0,
+        highPriorityCount: 0,
+        readyItemCount: 0,
+        missingItemCount: 0,
+        reason: "暂无需数据核对事项。",
+      },
+    ],
+  });
   const lateLogin = matrix.exceptionQueue.find((item) => item.key === "A-1002::late_login");
   assert.ok(lateLogin);
   assert.deepEqual(lateLogin.reviewGroup, {
