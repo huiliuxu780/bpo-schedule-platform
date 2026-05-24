@@ -37,6 +37,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
   const teamRiskDistributionPosition = pageSource.indexOf("<TeamWeekRiskDistributionPanel team={teams[0]} />");
   const teamWeekCardPosition = pageSource.indexOf("{teams.map((team) => (");
+  const supervisorWeeklyReviewQueuePosition = pageSource.indexOf("<SupervisorWeeklyReviewQueuePanel team={team} />");
+  const groupRiskSummaryPosition = pageSource.indexOf("<GroupRiskSummaryPanel team={team} />");
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
   const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
   const ownerLoadPosition = pageSource.indexOf("{selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}");
@@ -51,7 +53,10 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
 
   assert.ok(teamRiskDistributionPosition >= 0);
   assert.ok(teamWeekCardPosition >= 0);
+  assert.ok(supervisorWeeklyReviewQueuePosition >= 0);
+  assert.ok(groupRiskSummaryPosition >= 0);
   assert.ok(teamRiskDistributionPosition < teamWeekCardPosition);
+  assert.ok(supervisorWeeklyReviewQueuePosition < groupRiskSummaryPosition);
   assert.ok(followUpPosition >= 0);
   assert.ok(comparisonPosition >= 0);
   assert.ok(ownerLoadPosition >= 0);
@@ -354,6 +359,67 @@ test("fulfillment calendar aggregates team week metrics", () => {
         loginPeople: 0,
         gapPeople: 0,
         anomalyPeople: 0,
+      },
+    ],
+  });
+  assert.deepEqual(shanghaiTeam.supervisorWeeklyReviewQueue, {
+    headline: "本周优先复核供应商 A 的周一 05/11，缺口 2 人 / 异常 2 人。",
+    totalItems: 3,
+    highPriorityCount: 1,
+    totalGapPeople: 4,
+    totalAnomalyPeople: 2,
+    topItem: {
+      key: "上海职场||博西客服||供应商 A::2026-05-11",
+      groupId: "上海职场||博西客服||供应商 A",
+      groupName: "供应商 A",
+      date: "2026-05-11",
+      label: "周一 05/11",
+      priority: "高",
+      score: 100,
+      gapPeople: 2,
+      anomalyPeople: 2,
+      reviewTarget: "A-1002 王敏",
+      reason: "缺口 2 人 / 异常 2 人，建议先看 A-1002 王敏。",
+    },
+    items: [
+      {
+        key: "上海职场||博西客服||供应商 A::2026-05-11",
+        groupId: "上海职场||博西客服||供应商 A",
+        groupName: "供应商 A",
+        date: "2026-05-11",
+        label: "周一 05/11",
+        priority: "高",
+        score: 100,
+        gapPeople: 2,
+        anomalyPeople: 2,
+        reviewTarget: "A-1002 王敏",
+        reason: "缺口 2 人 / 异常 2 人，建议先看 A-1002 王敏。",
+      },
+      {
+        key: "上海职场||博西客服||供应商 A::2026-05-12",
+        groupId: "上海职场||博西客服||供应商 A",
+        groupName: "供应商 A",
+        date: "2026-05-12",
+        label: "周二 05/12",
+        priority: "低",
+        score: 30,
+        gapPeople: 1,
+        anomalyPeople: 0,
+        reviewTarget: "A-1002 王敏",
+        reason: "缺口 1 人 / 异常 0 人，建议先看 A-1002 王敏。",
+      },
+      {
+        key: "上海职场||博西客服||供应商 B::2026-05-12",
+        groupId: "上海职场||博西客服||供应商 B",
+        groupName: "供应商 B",
+        date: "2026-05-12",
+        label: "周二 05/12",
+        priority: "低",
+        score: 30,
+        gapPeople: 1,
+        anomalyPeople: 0,
+        reviewTarget: "A-1005 赵岩",
+        reason: "缺口 1 人 / 异常 0 人，建议先看 A-1005 赵岩。",
       },
     ],
   });

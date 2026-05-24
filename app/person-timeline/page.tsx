@@ -268,9 +268,62 @@ function GroupWeekSection({
             />
           ))}
         </div>
-        <GroupRiskSummaryPanel team={team} />
+        <aside className="grid content-start gap-3">
+          <SupervisorWeeklyReviewQueuePanel team={team} />
+          <GroupRiskSummaryPanel team={team} />
+        </aside>
       </CardContent>
     </Card>
+  )
+}
+
+function SupervisorWeeklyReviewQueuePanel({ team }: { team: FulfillmentTeamWeek }) {
+  const queue = team.supervisorWeeklyReviewQueue
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">本周复核队列</div>
+          <div className="text-xs text-muted-foreground">{queue.headline}</div>
+        </div>
+        <Badge variant={queue.highPriorityCount > 0 ? "destructive" : "outline"}>
+          高优 {queue.highPriorityCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="待看组合" value={`${queue.totalItems}`} />
+        <SummaryMetric label="高优组合" value={`${queue.highPriorityCount}`} />
+        <SummaryMetric label="缺口人数" value={`${queue.totalGapPeople}`} />
+        <SummaryMetric label="异常人数" value={`${queue.totalAnomalyPeople}`} />
+      </div>
+      <div className="grid gap-2">
+        {queue.items.map((item) => (
+          <Link
+            key={item.key}
+            href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+              item.groupId
+            )}&date=${item.date}&queue=all`}
+            className="grid gap-2 rounded-md border bg-background p-2 text-xs transition-colors hover:bg-muted"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">
+                {item.groupName} / {item.label}
+              </span>
+              <Badge variant={item.priority === "高" ? "destructive" : "outline"}>
+                {item.priority}
+              </Badge>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <SummaryMetric label="缺口人数" value={`${item.gapPeople}`} />
+              <SummaryMetric label="异常人数" value={`${item.anomalyPeople}`} />
+            </div>
+            <div className="text-muted-foreground">建议先看：{item.reviewTarget}</div>
+            <div className="text-muted-foreground">{item.reason}</div>
+          </Link>
+        ))}
+      </div>
+    </div>
   )
 }
 

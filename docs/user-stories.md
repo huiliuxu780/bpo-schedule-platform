@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US410-US413 - 主管本周复核队列
+
+```yaml
+stories:
+  - id: US410
+    requirement_ids: [R398, R399]
+    task_ids: [F313]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到本周复核队列，以便先处理风险最高的小组日期组合。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US411
+    requirement_ids: [R399]
+    task_ids: [F314]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望本周复核队列展示最高优先级项、建议先看对象和复核原因，以便从团队视角快速下钻。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US412
+    requirement_ids: [R400]
+    task_ids: [F315]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望本周复核队列只表达查看顺序和下钻线索，以便不误导为线上派单、通知或审批能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US413
+    requirement_ids: [R401]
+    task_ids: [Q064]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管本周复核队列批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "团队下钻后的小组周视图展示本周复核队列。"
+  - "队列展示摘要、最高优先级项、小组、日期、优先级、缺口人数、异常人数、建议先看对象和复核原因。"
+  - "队列项可下钻到对应小组日期矩阵，但不出现通知、派单、提交、保存、审批、导出、批量、自动排班或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US402-US405 - 本周延续关注
 
 ```yaml

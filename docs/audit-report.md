@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Weekly supervisor review queue
+
+#### 结论
+
+- `F313-F315/Q064/US410-US413` 已完成主管本周复核队列和 QA 收口。
+- 团队周模型新增 `supervisorWeeklyReviewQueue`，包含队列摘要、最高优先级项、小组、日期、优先级、缺口人数、异常人数、建议先看对象和复核原因。
+- 页面在现有小组周视图右侧展示“本周复核队列”，不新增入口或页面；队列项只下钻到现有小组日期矩阵。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看顺序和下钻线索，不代表真实通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `supervisorWeeklyReviewQueue` 为 `undefined` 且页面缺少本周复核队列卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开团队下钻页，新增卡片区域显示“本周复核队列”“本周优先复核供应商 A 的周一 05/11，缺口 2 人 / 异常 2 人。”“待看组合”“高优组合”“供应商 A / 周一 05/11”“建议先看：A-1002 王敏”“供应商 B / 周二 05/12”，且卡片区域未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、通知、派单、提交、保存、审批、导出、批量或自动排班。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Exception closure readiness summary
 
 #### 结论

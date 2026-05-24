@@ -174,6 +174,30 @@ export type FulfillmentTeamWeekRiskDistribution = {
   points: FulfillmentTeamWeekRiskPoint[]
 }
 
+export type FulfillmentSupervisorWeeklyReviewQueueItem = {
+  key: string
+  groupId: string
+  groupName: string
+  date: string
+  label: string
+  priority: FulfillmentTeamDayRiskDigest["riskLevel"]
+  score: number
+  gapPeople: number
+  anomalyPeople: number
+  reviewTarget: string
+  reason: string
+}
+
+export type FulfillmentSupervisorWeeklyReviewQueue = {
+  headline: string
+  totalItems: number
+  highPriorityCount: number
+  totalGapPeople: number
+  totalAnomalyPeople: number
+  topItem?: FulfillmentSupervisorWeeklyReviewQueueItem
+  items: FulfillmentSupervisorWeeklyReviewQueueItem[]
+}
+
 export type FulfillmentTeamWeek = {
   id: string
   workplace: string
@@ -188,6 +212,7 @@ export type FulfillmentTeamWeek = {
     anomalyPeople: number
   }
   weekRiskDistribution: FulfillmentTeamWeekRiskDistribution
+  supervisorWeeklyReviewQueue: FulfillmentSupervisorWeeklyReviewQueue
   groups: FulfillmentGroupWeek[]
 }
 
@@ -1029,6 +1054,7 @@ export function getFulfillmentCalendar(
   const teams = teamsWithoutDistribution.map((team, index) => ({
     ...team,
     weekRiskDistribution: buildTeamWeekRiskDistribution(team, index + 1, teamsWithoutDistribution.length),
+    supervisorWeeklyReviewQueue: buildSupervisorWeeklyReviewQueue(team),
   }))
 
   const summary = summarizeDayMetrics(teams.flatMap((team) => team.days))
@@ -3695,7 +3721,7 @@ function buildTeamWeekRiskSummary(groups: FulfillmentGroupWeek[]) {
 }
 
 function buildTeamWeekRiskDistribution(
-  team: Omit<FulfillmentTeamWeek, "weekRiskDistribution">,
+  team: Omit<FulfillmentTeamWeek, "weekRiskDistribution" | "supervisorWeeklyReviewQueue">,
   rankIndex: number,
   teamCount: number
 ): FulfillmentTeamWeekRiskDistribution {
@@ -3754,6 +3780,83 @@ function buildTeamWeekRiskDistribution(
     },
     points,
   }
+}
+
+function buildSupervisorWeeklyReviewQueue(
+  team: Omit<FulfillmentTeamWeek, "weekRiskDistribution" | "supervisorWeeklyReviewQueue">
+): FulfillmentSupervisorWeeklyReviewQueue {
+  const items = team.groups
+    .flatMap((group) =>
+      group.days
+        .filter((day) => day.gapPeople > 0 || day.anomalyPeople > 0)
+        .map((day) => {
+          const score = Math.min(100, day.gapPeople * 30 + day.anomalyPeople * 40)
+          const reviewTarget = getSupervisorWeeklyReviewTarget(group.members, day.date)
+
+          return {
+            key: `${group.id}::${day.date}`,
+            groupId: group.id,
+            groupName: group.supplier,
+            date: day.date,
+            label: `${day.weekday} ${day.label}`,
+            priority: getTeamDayRiskLevel(score),
+            score,
+            gapPeople: day.gapPeople,
+            anomalyPeople: day.anomalyPeople,
+            reviewTarget,
+            reason: `缺口 ${day.gapPeople} 人 / 异常 ${day.anomalyPeople} 人，建议先看 ${reviewTarget}。`,
+          }
+        })
+    )
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        b.anomalyPeople - a.anomalyPeople ||
+        b.gapPeople - a.gapPeople ||
+        a.date.localeCompare(b.date) ||
+        a.groupName.localeCompare(b.groupName)
+    )
+  const topItem = items[0]
+
+  return {
+    headline: topItem
+      ? `本周优先复核${topItem.groupName} 的${topItem.label}，缺口 ${topItem.gapPeople} 人 / 异常 ${topItem.anomalyPeople} 人。`
+      : "本周暂无需要优先复核的小组日期。",
+    totalItems: items.length,
+    highPriorityCount: items.filter((item) => item.priority === "高").length,
+    totalGapPeople: items.reduce((total, item) => total + item.gapPeople, 0),
+    totalAnomalyPeople: items.reduce((total, item) => total + item.anomalyPeople, 0),
+    topItem,
+    items,
+  }
+}
+
+function getSupervisorWeeklyReviewTarget(members: PersonTimeline[], date: string) {
+  const candidates = members
+    .map((member) => {
+      const dailyView = getPersonTimelineDailyView(member, date)
+      return {
+        employeeId: member.employeeId,
+        employeeName: member.employeeName,
+        gapHours: dailyView.scheduledHours - dailyView.loginHours,
+        highestPriority: Math.max(
+          0,
+          ...dailyView.anomalies.map((anomaly) => priorityRank[anomaly.severity])
+        ),
+        anomalyCount: dailyView.anomalies.length,
+      }
+    })
+    .filter((member) => member.gapHours > 0 || member.anomalyCount > 0)
+    .sort(
+      (a, b) =>
+        b.highestPriority - a.highestPriority ||
+        b.anomalyCount - a.anomalyCount ||
+        b.gapHours - a.gapHours ||
+        a.employeeId.localeCompare(b.employeeId)
+    )
+  const target = candidates[0]
+
+  return target ? `${target.employeeId} ${target.employeeName}` : "当前小组"
 }
 
 function buildTeamWeekRiskPoint(day: FulfillmentDayMetrics): FulfillmentTeamWeekRiskPoint {

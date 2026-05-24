@@ -129,4 +129,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US406/F310 -> US409/Q063` completed the exception closure readiness summary slice: the fulfillment calendar group-day exception panel now shows ready/blocked counts, missing material, missing decision, data-check counts, next candidate, and blocker reasons before the review-load summary. Current queue is empty again.
 
-Recommended next production MVP slice: continue with weekly supervisor review queue or closure evidence drill-in, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US410/F313 -> US413/Q064` completed the weekly supervisor review queue slice: the fulfillment calendar group-week view now shows team-level weekly review queue items by group/date, risk priority, gap/anomaly counts, suggested review target, and drilldown link. Current queue is empty again.
+
+Recommended next production MVP slice: continue with closure evidence drill-in or weekly supervisor handoff summary, keeping it local/frontend-only unless PM confirms a separate production action Gate.

@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R398-R401 - 主管本周复核队列
+
+```yaml
+requirements:
+  - id: R398
+    module: "履约日历"
+    description: "团队下钻后的小组周视图需要展示主管本周复核队列，帮助现场主管按小组和日期判断本周先看哪些履约问题。"
+  - id: R399
+    module: "履约日历"
+    description: "主管本周复核队列需要包含队列摘要、最高优先级项、小组、日期、优先级、缺口人数、异常人数、建议先看对象和复核原因。"
+  - id: R400
+    module: "履约日历"
+    description: "主管本周复核队列只能表达查看顺序和下钻线索，不提供通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入能力。"
+  - id: R401
+    module: "质量与交付"
+    description: "主管本周复核队列完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历团队下钻后的小组周视图补充本地前端只读队列；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R390-R393 - 本周延续关注
 
 ```yaml
