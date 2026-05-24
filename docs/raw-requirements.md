@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R410-R413 - 团队级证据缺口分布
+
+```yaml
+requirements:
+  - id: R410
+    module: "履约日历"
+    description: "团队下钻后的小组周视图需要展示团队级证据缺口分布，帮助现场主管从周视角判断本周闭环证据主要缺在哪些类型。"
+  - id: R411
+    module: "履约日历"
+    description: "团队级证据缺口分布需要包含证据缺口项数、涉及人员数、主要缺口类型、负责角色、代表人员和建议下钻的小组日期异常。"
+  - id: R412
+    module: "履约日历"
+    description: "团队级证据缺口分布只能表达查看和定位口径，不提供通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入能力。"
+  - id: R413
+    module: "质量与交付"
+    description: "团队级证据缺口分布完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组周视图补充本地前端只读证据缺口分布；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R406-R409 - 周度主管交接摘要
 
 ```yaml

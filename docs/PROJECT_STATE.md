@@ -120,6 +120,7 @@ Current invariants:
 - `F313-F315/Q064` completed a weekly supervisor review queue slice: the fulfillment calendar group-week view shows team-level weekly review queue items by group/date, risk priority, gap/anomaly counts, suggested review target, and drilldown link. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F316-F318/Q065` completed a closure evidence drill-in slice: the fulfillment calendar group-day exception panel expands closure blockers into evidence items with person, owner role, current status, linked source records, next-view hint, and existing personal three-track drilldown. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F319-F321/Q066` completed a weekly supervisor handoff summary slice: the fulfillment calendar group-week view shows weekly handoff item count, open questions, escalation items, top recipient, next touchpoint, and drilldown links. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F322-F324/Q067` completed a team-level evidence gap distribution slice: the fulfillment calendar group-week view shows weekly evidence gap type distribution, affected people, owner roles, representative people, and drilldown links. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -236,6 +236,37 @@ export type FulfillmentSupervisorWeeklyHandoffSummary = {
   items: FulfillmentSupervisorWeeklyHandoffSummaryItem[]
 }
 
+export type FulfillmentTeamEvidenceGapDistributionGap = {
+  key: string
+  label: string
+  count: number
+  affectedPeopleCount: number
+  ownerRole: string
+  representativePeople: string[]
+  nextDrilldown: {
+    groupId: string
+    groupName: string
+    date: string
+    label: string
+    exceptionKey: string
+    reason: string
+  }
+}
+
+export type FulfillmentTeamEvidenceGapDistribution = {
+  headline: string
+  totalGapItems: number
+  affectedPeopleCount: number
+  topGap?: {
+    label: string
+    count: number
+    affectedPeopleCount: number
+    ownerRole: string
+    reason: string
+  }
+  gaps: FulfillmentTeamEvidenceGapDistributionGap[]
+}
+
 export type FulfillmentTeamWeek = {
   id: string
   workplace: string
@@ -252,6 +283,7 @@ export type FulfillmentTeamWeek = {
   weekRiskDistribution: FulfillmentTeamWeekRiskDistribution
   supervisorWeeklyReviewQueue: FulfillmentSupervisorWeeklyReviewQueue
   supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
+  teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
   groups: FulfillmentGroupWeek[]
 }
 
@@ -1106,6 +1138,7 @@ export function getFulfillmentCalendar(
     weekRiskDistribution: buildTeamWeekRiskDistribution(team, index + 1, teamsWithoutDistribution.length),
     supervisorWeeklyReviewQueue: buildSupervisorWeeklyReviewQueue(team),
     supervisorWeeklyHandoffSummary: buildSupervisorWeeklyHandoffSummary(team),
+    teamEvidenceGapDistribution: buildTeamEvidenceGapDistribution(team),
   }))
 
   const summary = summarizeDayMetrics(teams.flatMap((team) => team.days))
@@ -3806,7 +3839,10 @@ function buildTeamWeekRiskSummary(groups: FulfillmentGroupWeek[]) {
 function buildTeamWeekRiskDistribution(
   team: Omit<
     FulfillmentTeamWeek,
-    "weekRiskDistribution" | "supervisorWeeklyReviewQueue" | "supervisorWeeklyHandoffSummary"
+    | "weekRiskDistribution"
+    | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyHandoffSummary"
+    | "teamEvidenceGapDistribution"
   >,
   rankIndex: number,
   teamCount: number
@@ -3871,7 +3907,10 @@ function buildTeamWeekRiskDistribution(
 function buildSupervisorWeeklyReviewQueue(
   team: Omit<
     FulfillmentTeamWeek,
-    "weekRiskDistribution" | "supervisorWeeklyReviewQueue" | "supervisorWeeklyHandoffSummary"
+    | "weekRiskDistribution"
+    | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyHandoffSummary"
+    | "teamEvidenceGapDistribution"
   >
 ): FulfillmentSupervisorWeeklyReviewQueue {
   const items = team.groups
@@ -3923,7 +3962,10 @@ function buildSupervisorWeeklyReviewQueue(
 function buildSupervisorWeeklyHandoffSummary(
   team: Omit<
     FulfillmentTeamWeek,
-    "weekRiskDistribution" | "supervisorWeeklyReviewQueue" | "supervisorWeeklyHandoffSummary"
+    | "weekRiskDistribution"
+    | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyHandoffSummary"
+    | "teamEvidenceGapDistribution"
   >
 ): FulfillmentSupervisorWeeklyHandoffSummary {
   const items = team.groups
@@ -3980,6 +4022,93 @@ function buildSupervisorWeeklyHandoffSummary(
     nextItem: items[0] ? stripWeeklyHandoffItemInternalFields(items[0]) : undefined,
     recipients,
     items: items.map(stripWeeklyHandoffItemInternalFields),
+  }
+}
+
+function buildTeamEvidenceGapDistribution(
+  team: Omit<
+    FulfillmentTeamWeek,
+    | "weekRiskDistribution"
+    | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyHandoffSummary"
+    | "teamEvidenceGapDistribution"
+  >
+): FulfillmentTeamEvidenceGapDistribution {
+  const gapItems = team.groups.flatMap((group) =>
+    group.days.flatMap((day) => {
+      const members = buildFulfillmentMatrixMembersForDate(group.members, day.date)
+      const queue = buildFulfillmentMatrixExceptionQueue(members, day.date, group.members)
+
+      return queue.flatMap((item) =>
+        item.closureChecklist.items
+          .filter((checkItem) => checkItem.status !== "已关联")
+          .map((checkItem) => ({
+            key: checkItem.label,
+            label: checkItem.label,
+            ownerRole: checkItem.ownerRole,
+            employeeId: item.employeeId,
+            employeeName: item.employeeName,
+            title: item.title,
+            exceptionKey: item.key,
+            groupId: group.id,
+            groupName: group.supplier,
+            date: day.date,
+            dayLabel: `${day.weekday} ${day.label}`,
+          }))
+      )
+    })
+  )
+  const gaps = [...groupBy(gapItems, (item) => item.key).entries()]
+    .map(([key, items]) => {
+      const first = items[0]
+      const people = [
+        ...new Map(items.map((item) => [item.employeeId, `${item.employeeId} ${item.employeeName}`])).values(),
+      ]
+
+      return {
+        key,
+        label: first?.label ?? key,
+        count: items.length,
+        affectedPeopleCount: people.length,
+        ownerRole: first?.ownerRole ?? "现场主管",
+        representativePeople: people,
+        nextDrilldown: {
+          groupId: first?.groupId ?? "",
+          groupName: first?.groupName ?? "",
+          date: first?.date ?? "",
+          label: first?.dayLabel ?? "",
+          exceptionKey: first?.exceptionKey ?? "",
+          reason: first
+            ? `先看${first.employeeName}的${first.title}，补齐${first.label}。`
+            : "当前暂无需要下钻的证据缺口。",
+        },
+      }
+    })
+    .sort(
+      (a, b) =>
+        b.count - a.count ||
+        b.affectedPeopleCount - a.affectedPeopleCount ||
+        a.label.localeCompare(b.label)
+    )
+  const topGap = gaps[0]
+  const affectedPeopleCount = new Set(gapItems.map((item) => item.employeeId)).size
+
+  return {
+    headline: topGap
+      ? `本周证据缺口集中在${topGap.label}，共 ${topGap.count} 项，涉及 ${topGap.affectedPeopleCount} 人。`
+      : "本周暂无证据缺口。",
+    totalGapItems: gapItems.length,
+    affectedPeopleCount,
+    topGap: topGap
+      ? {
+          label: topGap.label,
+          count: topGap.count,
+          affectedPeopleCount: topGap.affectedPeopleCount,
+          ownerRole: topGap.ownerRole,
+          reason: `${topGap.label}缺 ${topGap.count} 项，先看${topGap.nextDrilldown.groupName} / ${topGap.nextDrilldown.label}。`,
+        }
+      : undefined,
+    gaps,
   }
 }
 

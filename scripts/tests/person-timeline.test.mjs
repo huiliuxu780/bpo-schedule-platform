@@ -39,6 +39,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const teamWeekCardPosition = pageSource.indexOf("{teams.map((team) => (");
   const supervisorWeeklyReviewQueuePosition = pageSource.indexOf("<SupervisorWeeklyReviewQueuePanel team={team} />");
   const supervisorWeeklyHandoffPosition = pageSource.indexOf("<SupervisorWeeklyHandoffSummaryPanel team={team} />");
+  const teamEvidenceGapDistributionPosition = pageSource.indexOf("<TeamEvidenceGapDistributionPanel team={team} />");
   const groupRiskSummaryPosition = pageSource.indexOf("<GroupRiskSummaryPanel team={team} />");
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
   const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
@@ -56,11 +57,14 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(teamWeekCardPosition >= 0);
   assert.ok(supervisorWeeklyReviewQueuePosition >= 0);
   assert.ok(supervisorWeeklyHandoffPosition >= 0);
+  assert.ok(teamEvidenceGapDistributionPosition >= 0);
   assert.ok(groupRiskSummaryPosition >= 0);
   assert.ok(teamRiskDistributionPosition < teamWeekCardPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < groupRiskSummaryPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < supervisorWeeklyHandoffPosition);
   assert.ok(supervisorWeeklyHandoffPosition < groupRiskSummaryPosition);
+  assert.ok(supervisorWeeklyHandoffPosition < teamEvidenceGapDistributionPosition);
+  assert.ok(teamEvidenceGapDistributionPosition < groupRiskSummaryPosition);
   assert.ok(followUpPosition >= 0);
   assert.ok(comparisonPosition >= 0);
   assert.ok(ownerLoadPosition >= 0);
@@ -486,6 +490,68 @@ test("fulfillment calendar aggregates team week metrics", () => {
         recipient: "现场主管",
         nextTouchpoint: "状态轨道复核记录",
         reason: "接近超时 / 2 个待核对问题 / 状态轨道复核记录",
+      },
+    ],
+  });
+  assert.deepEqual(shanghaiTeam.teamEvidenceGapDistribution, {
+    headline: "本周证据缺口集中在主管判断，共 2 项，涉及 2 人。",
+    totalGapItems: 4,
+    affectedPeopleCount: 2,
+    topGap: {
+      label: "主管判断",
+      count: 2,
+      affectedPeopleCount: 2,
+      ownerRole: "现场主管",
+      reason: "主管判断缺 2 项，先看供应商 A / 周一 05/11。",
+    },
+    gaps: [
+      {
+        key: "主管判断",
+        label: "主管判断",
+        count: 2,
+        affectedPeopleCount: 2,
+        ownerRole: "现场主管",
+        representativePeople: ["A-1002 王敏", "A-1001 刘晨"],
+        nextDrilldown: {
+          groupId: "上海职场||博西客服||供应商 A",
+          groupName: "供应商 A",
+          date: "2026-05-11",
+          label: "周一 05/11",
+          exceptionKey: "A-1002::late_login",
+          reason: "先看王敏的迟到 21 分钟，补齐主管判断。",
+        },
+      },
+      {
+        key: "到岗说明",
+        label: "到岗说明",
+        count: 1,
+        affectedPeopleCount: 1,
+        ownerRole: "现场主管",
+        representativePeople: ["A-1002 王敏"],
+        nextDrilldown: {
+          groupId: "上海职场||博西客服||供应商 A",
+          groupName: "供应商 A",
+          date: "2026-05-11",
+          label: "周一 05/11",
+          exceptionKey: "A-1002::late_login",
+          reason: "先看王敏的迟到 21 分钟，补齐到岗说明。",
+        },
+      },
+      {
+        key: "培训安排说明",
+        label: "培训安排说明",
+        count: 1,
+        affectedPeopleCount: 1,
+        ownerRole: "现场主管",
+        representativePeople: ["A-1001 刘晨"],
+        nextDrilldown: {
+          groupId: "上海职场||博西客服||供应商 A",
+          groupName: "供应商 A",
+          date: "2026-05-11",
+          label: "周一 05/11",
+          exceptionKey: "A-1001::no_login",
+          reason: "先看刘晨的午后状态缺登录切片，补齐培训安排说明。",
+        },
       },
     ],
   });

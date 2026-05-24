@@ -271,6 +271,7 @@ function GroupWeekSection({
         <aside className="grid content-start gap-3">
           <SupervisorWeeklyReviewQueuePanel team={team} />
           <SupervisorWeeklyHandoffSummaryPanel team={team} />
+          <TeamEvidenceGapDistributionPanel team={team} />
           <GroupRiskSummaryPanel team={team} />
         </aside>
       </CardContent>
@@ -321,6 +322,56 @@ function SupervisorWeeklyReviewQueuePanel({ team }: { team: FulfillmentTeamWeek 
             </div>
             <div className="text-muted-foreground">建议先看：{item.reviewTarget}</div>
             <div className="text-muted-foreground">{item.reason}</div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function TeamEvidenceGapDistributionPanel({ team }: { team: FulfillmentTeamWeek }) {
+  const distribution = team.teamEvidenceGapDistribution
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">证据缺口分布</div>
+          <div className="text-xs text-muted-foreground">{distribution.headline}</div>
+        </div>
+        <Badge variant={distribution.totalGapItems > 0 ? "secondary" : "outline"}>
+          缺口 {distribution.totalGapItems}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="证据缺口" value={`${distribution.totalGapItems}`} />
+        <SummaryMetric label="涉及人员" value={`${distribution.affectedPeopleCount}`} />
+        <SummaryMetric label="主要缺口" value={distribution.topGap?.label ?? "无"} />
+        <SummaryMetric label="负责角色" value={distribution.topGap?.ownerRole ?? "无"} />
+      </div>
+      <div className="grid gap-2">
+        {distribution.gaps.map((gap) => (
+          <Link
+            key={gap.key}
+            href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+              gap.nextDrilldown.groupId
+            )}&date=${gap.nextDrilldown.date}&queue=all&exception=${encodeScopeId(gap.nextDrilldown.exceptionKey)}`}
+            className="grid gap-2 rounded-md border bg-background p-2 text-xs transition-colors hover:bg-muted"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{gap.label}</span>
+              <Badge variant="outline">{gap.count} 项</Badge>
+            </div>
+            <div className="text-muted-foreground">
+              涉及 {gap.affectedPeopleCount} 人 / {gap.ownerRole}
+            </div>
+            <div className="text-muted-foreground">
+              代表人员：{gap.representativePeople.join(" / ")}
+            </div>
+            <div className="text-muted-foreground">
+              下钻：{gap.nextDrilldown.groupName} / {gap.nextDrilldown.label}
+            </div>
+            <div className="text-muted-foreground">{gap.nextDrilldown.reason}</div>
           </Link>
         ))}
       </div>

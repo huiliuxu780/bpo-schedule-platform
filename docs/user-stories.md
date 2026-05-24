@@ -29,6 +29,54 @@
 
 ## Stories
 
+### US422-US425 - 团队级证据缺口分布
+
+```yaml
+stories:
+  - id: US422
+    requirement_ids: [R410, R411]
+    task_ids: [F322]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到团队级证据缺口分布，以便判断本周闭环证据主要缺在哪类材料或判断。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US423
+    requirement_ids: [R411]
+    task_ids: [F323]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望证据缺口分布展示代表人员和建议下钻项，以便快速回到小组日期矩阵补看证据来源。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US424
+    requirement_ids: [R412]
+    task_ids: [F324]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望团队级证据缺口分布只表达查看和定位，以便不误导为线上通知、派单、审批或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US425
+    requirement_ids: [R413]
+    task_ids: [Q067]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望团队级证据缺口分布批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "团队下钻后的小组周视图展示证据缺口分布。"
+  - "分布展示证据缺口项数、涉及人员数、主要缺口类型、负责角色、代表人员和建议下钻项。"
+  - "下钻进入对应小组日期矩阵并保留异常上下文。"
+  - "页面不出现通知、派单、提交、保存、审批、导出、批量、自动排班或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US418-US421 - 周度主管交接摘要
 
 ```yaml

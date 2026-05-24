@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Team-level evidence gap distribution
+
+#### 结论
+
+- `F322-F324/Q067/US422-US425` 已完成团队级证据缺口分布和 QA 收口。
+- 团队周模型新增 `teamEvidenceGapDistribution`，包含证据缺口项数、涉及人员数、主要缺口类型、负责角色、代表人员和建议下钻项。
+- 页面在现有小组周视图右侧展示“证据缺口分布”，不新增入口或页面；缺口项只下钻到现有小组日期矩阵。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和证据定位，不代表真实通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `teamEvidenceGapDistribution` 为 `undefined` 且页面缺少证据缺口分布卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开团队下钻页，新增卡片区域显示“证据缺口分布”“本周证据缺口集中在主管判断，共 2 项，涉及 2 人。”“主管判断”“到岗说明”“培训安排说明”“A-1002 王敏”“A-1001 刘晨”“供应商 A”“周一 05/11”，且卡片区域未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、通知、派单、提交、保存、审批、导出、批量或自动排班。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Weekly supervisor handoff summary
 
 #### 结论
