@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Closure evidence drill-in
+
+#### 结论
+
+- `F316-F318/Q065/US414-US417` 已完成闭环证据下钻解释和 QA 收口。
+- 闭环准备度的阻塞项新增证据项，包含人员、负责角色、当前状态、已有证据来源和下一查看位置。
+- 页面在现有小组当日异常面板中展示“闭环证据”，证据项链接到已有个人单日三轨详情，不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和证据定位，不代表真实通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于闭环准备度缺少 `evidenceItems` 且页面闭环准备度卡未接收 `matrix` 生成下钻链接，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组当日矩阵，闭环准备度卡片区域显示“闭环证据”“A-1002 王敏 / 到岗说明”“已有关联证据：SCH-1002-1 / LOG-1002-1”“下一查看：查看王敏的个人单日三轨详情。”“A-1001 刘晨 / 培训安排说明”，并包含 `/person-timeline/A-1002` 与异常上下文链接；卡片区域未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、通知、派单、提交、保存、审批、导出、批量或自动排班。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Weekly supervisor review queue
 
 #### 结论

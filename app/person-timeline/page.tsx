@@ -672,7 +672,7 @@ function MatrixExceptionPanel({
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
       <TeamWeekCarryoverOverviewPanel overview={matrix.teamWeekCarryoverOverview} />
-      <ExceptionClosureReadinessSummaryPanel summary={matrix.exceptionClosureReadinessSummary} />
+      <ExceptionClosureReadinessSummaryPanel matrix={matrix} summary={matrix.exceptionClosureReadinessSummary} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
       <ExceptionSourceSummaryPanel summary={matrix.exceptionSourceSummary} />
@@ -1669,8 +1669,10 @@ function TeamWeekCarryoverOverviewPanel({
 }
 
 function ExceptionClosureReadinessSummaryPanel({
+  matrix,
   summary,
 }: {
+  matrix: FulfillmentGroupMatrix
   summary: FulfillmentGroupMatrix["exceptionClosureReadinessSummary"]
 }) {
   return (
@@ -1713,6 +1715,36 @@ function ExceptionClosureReadinessSummaryPanel({
                 <Badge variant="outline">{item.count} 项</Badge>
               </div>
               <div className="mt-1 text-muted-foreground">{item.reason}</div>
+              {item.evidenceItems.length > 0 ? (
+                <div className="mt-2 grid gap-2">
+                  <div className="font-medium text-foreground">闭环证据</div>
+                  {item.evidenceItems.map((evidence) => (
+                    <Link
+                      key={evidence.key}
+                      href={buildPersonFulfillmentDetailHref({
+                        employeeId: evidence.employeeId,
+                        date: matrix.date,
+                        teamId: matrix.team.id,
+                        groupId: matrix.group.id,
+                        returnDate: matrix.date,
+                        queueFilter: item.key,
+                        exceptionKey: evidence.key.split("::").slice(0, 2).join("::"),
+                      })}
+                      className="grid gap-1 rounded-md border bg-muted/30 p-2 transition-colors hover:bg-muted"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-medium">
+                          {evidence.employeeId} {evidence.employeeName} / {evidence.title}
+                        </span>
+                        <Badge variant="outline">{evidence.status}</Badge>
+                      </div>
+                      <div className="text-muted-foreground">负责角色：{evidence.ownerRole}</div>
+                      <div className="text-muted-foreground">{evidence.currentEvidence}</div>
+                      <div className="text-muted-foreground">下一查看：{evidence.nextView}</div>
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
             </div>
           ))}
         </div>

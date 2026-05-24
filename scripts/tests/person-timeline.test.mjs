@@ -47,7 +47,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
   const carryoverPosition = pageSource.indexOf("<TeamWeekCarryoverOverviewPanel overview={matrix.teamWeekCarryoverOverview} />");
-  const closureReadinessPosition = pageSource.indexOf("<ExceptionClosureReadinessSummaryPanel summary={matrix.exceptionClosureReadinessSummary} />");
+  const closureReadinessPosition = pageSource.indexOf("<ExceptionClosureReadinessSummaryPanel matrix={matrix} summary={matrix.exceptionClosureReadinessSummary} />");
   const reviewLoadPosition = pageSource.indexOf("<ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />");
   const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
 
@@ -993,12 +993,60 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         label: "待补材料",
         count: 1,
         reason: "王敏仍需补到岗说明、迟到或漏登原因、现场主管确认口径。",
+        evidenceItems: [
+          {
+            key: "A-1002::late_login::到岗说明",
+            employeeId: "A-1002",
+            employeeName: "王敏",
+            title: "到岗说明",
+            ownerRole: "现场主管",
+            status: "需补充",
+            sourceRecords: ["SCH-1002-1", "LOG-1002-1"],
+            currentEvidence: "已有关联证据：SCH-1002-1 / LOG-1002-1",
+            nextView: "查看王敏的个人单日三轨详情。",
+          },
+          {
+            key: "A-1002::late_login::主管判断",
+            employeeId: "A-1002",
+            employeeName: "王敏",
+            title: "主管判断",
+            ownerRole: "现场主管",
+            status: "待确认",
+            sourceRecords: ["SCH-1002-1", "LOG-1002-1"],
+            currentEvidence: "已有关联证据：SCH-1002-1 / LOG-1002-1",
+            nextView: "查看王敏的个人单日三轨详情。",
+          },
+        ],
       },
       {
         key: "supervisor_judgment",
         label: "待主管判断",
         count: 1,
         reason: "刘晨仍需确认培训安排是否符合在线要求。",
+        evidenceItems: [
+          {
+            key: "A-1001::no_login::培训安排说明",
+            employeeId: "A-1001",
+            employeeName: "刘晨",
+            title: "培训安排说明",
+            ownerRole: "现场主管",
+            status: "需补充",
+            sourceRecords: ["SCH-1001-2", "LOG-1001-1", "STA-1001-2"],
+            currentEvidence: "已有关联证据：SCH-1001-2 / LOG-1001-1 / STA-1001-2",
+            nextView: "查看刘晨的个人单日三轨详情。",
+          },
+          {
+            key: "A-1001::no_login::主管判断",
+            employeeId: "A-1001",
+            employeeName: "刘晨",
+            title: "主管判断",
+            ownerRole: "现场主管",
+            status: "待确认",
+            sourceRecords: ["SCH-1001-2", "LOG-1001-1", "STA-1001-2"],
+            currentEvidence: "已有关联证据：SCH-1001-2 / LOG-1001-1 / STA-1001-2",
+            nextView: "查看刘晨的个人单日三轨详情。",
+          },
+        ],
       },
     ],
   });

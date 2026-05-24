@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R402-R405 - 闭环证据下钻解释
+
+```yaml
+requirements:
+  - id: R402
+    module: "履约日历"
+    description: "闭环准备度需要展示阻塞项对应的证据下钻解释，让现场主管知道每个未闭环原因缺哪类证据、当前已有哪类证据以及应回看哪个人员。"
+  - id: R403
+    module: "履约日历"
+    description: "证据下钻解释需要包含证据项、人员、负责角色、当前状态、已有证据来源和下一查看位置，并能进入现有个人单日三轨详情。"
+  - id: R404
+    module: "履约日历"
+    description: "证据下钻解释只能用于查看和定位，不提供通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入能力。"
+  - id: R405
+    module: "质量与交付"
+    description: "闭环证据下钻解释完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读证据解释；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R398-R401 - 主管本周复核队列
 
 ```yaml

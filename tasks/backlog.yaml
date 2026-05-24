@@ -2,6 +2,71 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F316
+    title: "闭环阻塞证据解释"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "闭环准备度展示阻塞项下的证据项。"
+      - "证据项包含人员、负责角色、当前状态、已有证据来源和下一查看位置。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入", "需要后端、数据库、真实接口、权限或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F317
+    title: "闭环证据个人三轨下钻"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "证据项可进入现有个人单日三轨详情。"
+      - "下钻保留团队、小组、日期和异常上下文，不新增页面。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入", "需要后端、数据库、真实接口、权限或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F318
+    title: "闭环证据下钻文案边界"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "scripts/tests/product-ui-copy-audit.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "页面使用业务查看语言。"
+      - "页面不出现内部执行口径、通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入入口。"
+      - "文案审计测试和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入", "需要后端、数据库、真实接口、权限或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q065
+    title: "闭环证据下钻解释 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型测试、文案审计、浏览器 smoke 和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+      - "确认未新增页面、导航、数据库、真实接口、通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入", "需要后端、数据库、真实接口、权限或生产公式"]
+    commit_after_done: true
+
   - id: F313
     title: "主管本周复核队列卡片"
     priority: P0

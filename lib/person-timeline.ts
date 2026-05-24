@@ -690,6 +690,17 @@ export type FulfillmentExceptionClosureReadinessSummary = {
     label: "待补材料" | "待主管判断" | "待数据核对"
     count: number
     reason: string
+    evidenceItems: Array<{
+      key: string
+      employeeId: string
+      employeeName: string
+      title: string
+      ownerRole: string
+      status: string
+      sourceRecords: string[]
+      currentEvidence: string
+      nextView: string
+    }>
   }>
 }
 
@@ -2925,6 +2936,7 @@ function summarizeExceptionClosureReadiness(
         label: closureReadinessLabel[group.code],
         count: items.length,
         reason: buildClosureReadinessBlockerReason(group.code, items),
+        evidenceItems: buildClosureReadinessEvidenceItems(items),
       }
     })
     .filter((item) => item.count > 0)
@@ -3007,6 +3019,29 @@ function buildClosureReadinessBlockerReason(
   }
 
   return `${first.employeeName}仍需数据管理员核对原始记录。`
+}
+
+function buildClosureReadinessEvidenceItems(items: FulfillmentMatrixExceptionQueueItem[]) {
+  return items.flatMap((item) => {
+    const sourceRecords = item.evidenceCards.map((card) => card.eventId)
+    const currentEvidence = sourceRecords.length
+      ? `已有关联证据：${sourceRecords.join(" / ")}`
+      : "暂无已关联证据"
+
+    return item.closureChecklist.items
+      .filter((checklistItem) => checklistItem.status !== "已关联")
+      .map((checklistItem) => ({
+        key: `${item.key}::${checklistItem.label}`,
+        employeeId: item.employeeId,
+        employeeName: item.employeeName,
+        title: checklistItem.label,
+        ownerRole: checklistItem.ownerRole,
+        status: checklistItem.status,
+        sourceRecords,
+        currentEvidence,
+        nextView: `查看${item.employeeName}的个人单日三轨详情。`,
+      }))
+  })
 }
 
 function formatRequiredInfo(items: string[]) {

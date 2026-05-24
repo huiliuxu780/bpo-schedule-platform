@@ -29,6 +29,54 @@
 
 ## Stories
 
+### US414-US417 - 闭环证据下钻解释
+
+```yaml
+stories:
+  - id: US414
+    requirement_ids: [R402, R403]
+    task_ids: [F316]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在闭环准备度里看到阻塞项对应的证据解释，以便知道每个未闭环原因具体缺什么。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US415
+    requirement_ids: [R403]
+    task_ids: [F317]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望证据项能进入已有个人单日三轨详情，以便回看排班、登录和状态证据。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US416
+    requirement_ids: [R404]
+    task_ids: [F318]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望证据下钻解释只用于查看和定位，以便不误导为线上处理、审批或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US417
+    requirement_ids: [R405]
+    task_ids: [Q065]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望闭环证据下钻解释批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板的闭环准备度展示阻塞项下的证据项。"
+  - "证据项展示人员、负责角色、当前状态、已有证据来源和下一查看位置。"
+  - "证据项可进入现有个人单日三轨详情，并保留团队、小组、日期和异常上下文。"
+  - "页面不出现通知、派单、提交、保存、审批、导出、批量、自动排班或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US410-US413 - 主管本周复核队列
 
 ```yaml

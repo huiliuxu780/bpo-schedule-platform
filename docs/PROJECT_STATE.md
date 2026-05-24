@@ -118,6 +118,7 @@ Current invariants:
 - `F307-F309/Q062` completed a team-week carryover overview slice: the fulfillment calendar group-day exception panel shows carryover days, later-week gap/anomaly people, review targets, carryover reasons, and view order. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F310-F312/Q063` completed an exception closure readiness summary slice: the fulfillment calendar group-day exception panel shows ready/blocked counts, missing material, missing decision, data-check counts, next candidate, and blocker reasons. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F313-F315/Q064` completed a weekly supervisor review queue slice: the fulfillment calendar group-week view shows team-level weekly review queue items by group/date, risk priority, gap/anomaly counts, suggested review target, and drilldown link. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F316-F318/Q065` completed a closure evidence drill-in slice: the fulfillment calendar group-day exception panel expands closure blockers into evidence items with person, owner role, current status, linked source records, next-view hint, and existing personal three-track drilldown. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 
