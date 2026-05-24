@@ -123,4 +123,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US394/F301 -> US397/Q060` completed the next-day watchlist slice: the fulfillment calendar group-day exception panel now shows next-day date, headline, ordered watch items, source exceptions, owner roles, and watch reasons. Current queue is empty again.
 
-Recommended next production MVP slice: continue with group-risk cause split or team-week carryover overview, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US398/F304 -> US401/Q061` completed the group-risk cause split slice: the fulfillment calendar group-day exception panel now shows group risk cause headline, total impact hours, cause shares, impacted people, representative exceptions, and supervisor focus points. Current queue is empty again.
+
+Recommended next production MVP slice: continue with team-week carryover overview or exception closure readiness summary, keeping it local/frontend-only unless PM confirms a separate production action Gate.

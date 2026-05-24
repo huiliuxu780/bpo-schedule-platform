@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R386-R389 - 小组风险原因拆分
+
+```yaml
+requirements:
+  - id: R386
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示小组当天风险原因拆分，帮助现场主管判断风险主要来自登录到岗、状态安排还是数据核对。"
+  - id: R387
+    module: "履约日历"
+    description: "小组风险原因拆分需要包含原因名称、异常项数、涉及人数、影响时长、占比、代表异常和主管关注点。"
+  - id: R388
+    module: "履约日历"
+    description: "小组风险原因拆分仅表达查看和判断口径，不提供通知、提交、保存、审批、导出、批量、自动排班或状态写入能力。"
+  - id: R389
+    module: "质量与交付"
+    description: "小组风险原因拆分完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM agreed to continue the recommended group-risk cause split slice on 2026-05-24"
+submitted_at: "2026-05-24"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组单日矩阵右侧异常面板补充本地前端只读信息；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R382-R385 - 次日关注清单
 
 ```yaml

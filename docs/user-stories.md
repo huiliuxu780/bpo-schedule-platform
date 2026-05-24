@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US398-US401 - 小组风险原因拆分
+
+```yaml
+stories:
+  - id: US398
+    requirement_ids: [R386]
+    task_ids: [F304]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组成员单日矩阵看到当天风险原因拆分，以便判断风险主要来自登录到岗、状态安排还是数据核对。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US399
+    requirement_ids: [R387]
+    task_ids: [F305]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望风险原因拆分包含原因名称、异常项数、涉及人数、影响时长、占比、代表异常和主管关注点，以便快速判断优先复核方向。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US400
+    requirement_ids: [R388]
+    task_ids: [F306]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望小组风险原因拆分只表达查看和判断口径，以便不误导为已经具备线上流转或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US401
+    requirement_ids: [R389]
+    task_ids: [Q061]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望小组风险原因拆分批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵右侧展示风险原因拆分。"
+  - "原因拆分展示原因名称、异常项数、涉及人数、影响时长、占比、代表异常和主管关注点。"
+  - "页面不出现通知、提交、保存、审批、导出、批量、自动排班或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US394-US397 - 次日关注清单
 
 ```yaml

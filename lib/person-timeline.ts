@@ -616,6 +616,21 @@ export type FulfillmentTeamDayRiskTrend = {
   points: FulfillmentTeamDayRiskTrendPoint[]
 }
 
+export type FulfillmentGroupRiskCauseSplit = {
+  headline: string
+  totalImpactHours: number
+  causes: Array<{
+    key: "login_attendance" | "status_alignment" | "data_check"
+    label: string
+    itemCount: number
+    peopleCount: number
+    impactHours: number
+    share: number
+    representative: string
+    focus: string
+  }>
+}
+
 export type FulfillmentMatrixExceptionQueueCursor = {
   selected?: FulfillmentMatrixExceptionQueueItem
   selectedIndex: number
@@ -638,6 +653,7 @@ export type FulfillmentGroupMatrix = {
   supervisorHandoffOverview: FulfillmentSupervisorHandoffOverview
   teamDayRiskDigest: FulfillmentTeamDayRiskDigest
   teamDayRiskTrend: FulfillmentTeamDayRiskTrend
+  groupRiskCauseSplit: FulfillmentGroupRiskCauseSplit
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1072,6 +1088,7 @@ export function getFulfillmentMatrix(
       supervisorHandoffOverview
     ),
     teamDayRiskTrend: summarizeTeamDayRiskTrend(group.days, selectedDate),
+    groupRiskCauseSplit: summarizeGroupRiskCauseSplit(exceptionQueue),
   }
 }
 
@@ -2719,6 +2736,77 @@ function summarizeSupervisorHandoffOverview(
   }
 }
 
+function summarizeGroupRiskCauseSplit(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentGroupRiskCauseSplit {
+  const totalImpactHours = roundHours(queue.reduce((total, item) => total + item.impactHours, 0))
+  const grouped = new Map<FulfillmentGroupRiskCauseSplit["causes"][number]["key"], FulfillmentMatrixExceptionQueueItem[]>()
+
+  for (const item of queue) {
+    const key = getGroupRiskCauseKey(item)
+    grouped.set(key, [...(grouped.get(key) ?? []), item])
+  }
+
+  const causes = Array.from(grouped.entries())
+    .map(([key, items]) => {
+      const sortedItems = [...items].sort(
+        (a, b) =>
+          priorityRank[b.priority] - priorityRank[a.priority] ||
+          b.impactHours - a.impactHours ||
+          a.employeeId.localeCompare(b.employeeId)
+      )
+      const representative = sortedItems[0]
+      const impactHours = roundHours(items.reduce((total, item) => total + item.impactHours, 0))
+
+      return {
+        key,
+        label: groupRiskCauseLabel[key],
+        itemCount: items.length,
+        peopleCount: new Set(items.map((item) => item.employeeId)).size,
+        impactHours,
+        share: totalImpactHours > 0 ? Math.round((impactHours / totalImpactHours) * 100) : 0,
+        representative: representative
+          ? `${representative.employeeId} ${representative.employeeName} / ${representative.title}`
+          : "",
+        focus: groupRiskCauseFocus[key],
+      }
+    })
+    .sort(
+      (a, b) =>
+        b.impactHours - a.impactHours ||
+        b.itemCount - a.itemCount ||
+        groupRiskCauseRank[a.key] - groupRiskCauseRank[b.key]
+    )
+
+  const primary = causes[0]
+  const secondary = causes[1]
+
+  return {
+    headline:
+      primary && secondary
+        ? `当前小组风险主要来自${primary.label}，其次是${secondary.label}。`
+        : primary
+          ? `当前小组风险主要来自${primary.label}。`
+          : "当前小组暂无风险原因。",
+    totalImpactHours,
+    causes,
+  }
+}
+
+function getGroupRiskCauseKey(
+  item: FulfillmentMatrixExceptionQueueItem
+): FulfillmentGroupRiskCauseSplit["causes"][number]["key"] {
+  if (item.type === "状态不一致") {
+    return "status_alignment"
+  }
+
+  if (item.reviewGroup.code === "data_check") {
+    return "data_check"
+  }
+
+  return "login_attendance"
+}
+
 function buildSupervisorHandoffRecipients(
   queue: FulfillmentMatrixExceptionQueueItem[]
 ): FulfillmentSupervisorHandoffRecipient[] {
@@ -3184,6 +3272,24 @@ const priorityRank = {
   medium: 2,
   low: 1,
 }
+
+const groupRiskCauseLabel = {
+  login_attendance: "登录到岗偏差",
+  status_alignment: "状态安排不一致",
+  data_check: "数据核对问题",
+} satisfies Record<FulfillmentGroupRiskCauseSplit["causes"][number]["key"], string>
+
+const groupRiskCauseFocus = {
+  login_attendance: "先核对到岗说明和原始登录开始时间。",
+  status_alignment: "先确认培训安排是否应计入在线要求。",
+  data_check: "先核对原始记录字段和导入质量问题。",
+} satisfies Record<FulfillmentGroupRiskCauseSplit["causes"][number]["key"], string>
+
+const groupRiskCauseRank = {
+  status_alignment: 1,
+  login_attendance: 2,
+  data_check: 3,
+} satisfies Record<FulfillmentGroupRiskCauseSplit["causes"][number]["key"], number>
 
 const escalationLevelRank = {
   "需要升级": 3,

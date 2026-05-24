@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-24 - Group-risk cause split
+
+#### 结论
+
+- `F304-F306/Q061/US398-US401` 已完成小组风险原因拆分和 QA 收口。
+- 小组矩阵新增 `groupRiskCauseSplit`，包含风险原因标题、总影响时长、原因占比、异常项数、涉及人数、代表异常和主管关注点。
+- 页面在现有右侧异常详情展示“风险原因拆分”，不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和判断口径，不代表真实通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `groupRiskCauseSplit` 为 `undefined` 且页面缺少风险原因拆分卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，新增卡片区域显示“风险原因拆分”“当前小组风险主要来自状态安排不一致，其次是登录到岗偏差。”“影响 5.35h”“状态安排不一致”“93%”“代表异常：A-1001 刘晨 / 午后状态缺登录切片”“主管关注：先确认培训安排是否应计入在线要求。”“登录到岗偏差”“7%”“代表异常：A-1002 王敏 / 迟到 21 分钟”“主管关注：先核对到岗说明和原始登录开始时间。”，且卡片区域未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、通知、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-24 - Next-day watchlist
 
 #### 结论

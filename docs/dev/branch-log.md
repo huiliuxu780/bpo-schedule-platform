@@ -2,6 +2,23 @@
 
 ## 2026-05-22
 
+### F304-F306 Group-Risk Cause Split
+
+- branch_name: `codex/f265-exception-data-quality-links`
+- base_main_commit: `dc0d69d`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose group-risk cause split in the existing fulfillment calendar group-day exception panel, including group risk cause headline, total impact hours, cause shares, impacted people, representative exceptions, and supervisor focus points.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, notification action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-day route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, notification action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `groupRiskCauseSplit` and missing group-risk cause split card; target model tests, product UI copy audit, navigation regression, typecheck, browser smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F301-F303 Next-Day Watchlist
 
 - branch_name: `codex/f265-exception-data-quality-links`

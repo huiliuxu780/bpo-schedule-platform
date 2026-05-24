@@ -43,6 +43,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const nextDayPosition = pageSource.indexOf("{selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
+  const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
+  const reviewLoadPosition = pageSource.indexOf("<ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />");
   const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
 
   assert.ok(teamRiskDistributionPosition >= 0);
@@ -54,11 +56,15 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(nextDayPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
+  assert.ok(causeSplitPosition >= 0);
+  assert.ok(reviewLoadPosition >= 0);
   assert.ok(followUpPosition < riskDigestPosition);
   assert.ok(comparisonPosition < riskDigestPosition);
   assert.ok(ownerLoadPosition < riskDigestPosition);
   assert.ok(nextDayPosition < riskDigestPosition);
   assert.ok(trendPosition < riskDigestPosition);
+  assert.ok(riskDigestPosition < causeSplitPosition);
+  assert.ok(causeSplitPosition < reviewLoadPosition);
   assert.equal(titleCount, 1);
 });
 
@@ -848,6 +854,32 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         source: "今日异常：午后状态缺登录切片",
         reason: "今日状态判断未闭环，明天复核培训安排是否仍影响在线要求。",
         orderLabel: "第 2 项",
+      },
+    ],
+  });
+  assert.deepEqual(matrix.groupRiskCauseSplit, {
+    headline: "当前小组风险主要来自状态安排不一致，其次是登录到岗偏差。",
+    totalImpactHours: 5.35,
+    causes: [
+      {
+        key: "status_alignment",
+        label: "状态安排不一致",
+        itemCount: 1,
+        peopleCount: 1,
+        impactHours: 5,
+        share: 93,
+        representative: "A-1001 刘晨 / 午后状态缺登录切片",
+        focus: "先确认培训安排是否应计入在线要求。",
+      },
+      {
+        key: "login_attendance",
+        label: "登录到岗偏差",
+        itemCount: 1,
+        peopleCount: 1,
+        impactHours: 0.35,
+        share: 7,
+        representative: "A-1002 王敏 / 迟到 21 分钟",
+        focus: "先核对到岗说明和原始登录开始时间。",
       },
     ],
   });

@@ -617,6 +617,7 @@ function MatrixExceptionPanel({
       {selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
+      <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
       <ExceptionSourceSummaryPanel summary={matrix.exceptionSourceSummary} />
@@ -1534,6 +1535,43 @@ function MatrixTrack({
             )
           })
         )}
+      </div>
+    </div>
+  )
+}
+
+function GroupRiskCauseSplitPanel({
+  split,
+}: {
+  split: FulfillmentGroupMatrix["groupRiskCauseSplit"]
+}) {
+  return (
+    <div className="grid gap-3 rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">风险原因拆分</div>
+          <div className="text-xs text-muted-foreground">{split.headline}</div>
+        </div>
+        <Badge variant="outline">影响 {split.totalImpactHours.toFixed(2)}h</Badge>
+      </div>
+      <div className="grid gap-2">
+        {split.causes.map((cause) => (
+          <div key={cause.key} className="rounded-md border bg-background p-2 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{cause.label}</span>
+              <Badge variant={cause.share >= 50 ? "destructive" : "secondary"}>
+                {cause.share}%
+              </Badge>
+            </div>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              <SummaryMetric label="异常项" value={`${cause.itemCount}`} />
+              <SummaryMetric label="涉及人数" value={`${cause.peopleCount}`} />
+              <SummaryMetric label="影响" value={`${cause.impactHours.toFixed(2)}h`} />
+            </div>
+            <div className="mt-2 text-muted-foreground">代表异常：{cause.representative}</div>
+            <div className="text-muted-foreground">主管关注：{cause.focus}</div>
+          </div>
+        ))}
       </div>
     </div>
   )
