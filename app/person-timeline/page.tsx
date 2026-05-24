@@ -619,6 +619,7 @@ function MatrixExceptionPanel({
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
       <TeamWeekCarryoverOverviewPanel overview={matrix.teamWeekCarryoverOverview} />
+      <ExceptionClosureReadinessSummaryPanel summary={matrix.exceptionClosureReadinessSummary} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
       <ExceptionSourceSummaryPanel summary={matrix.exceptionSourceSummary} />
@@ -1610,6 +1611,59 @@ function TeamWeekCarryoverOverviewPanel({
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+function ExceptionClosureReadinessSummaryPanel({
+  summary,
+}: {
+  summary: FulfillmentGroupMatrix["exceptionClosureReadinessSummary"]
+}) {
+  return (
+    <div className="grid gap-3 rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">闭环准备度</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.blockedCount > 0 ? "secondary" : "outline"}>
+          未就绪 {summary.blockedCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="可闭环" value={`${summary.readyCount}`} />
+        <SummaryMetric label="未就绪" value={`${summary.blockedCount}`} />
+        <SummaryMetric label="待补材料" value={`${summary.missingMaterialCount}`} />
+        <SummaryMetric label="待主管判断" value={`${summary.missingDecisionCount}`} />
+        <SummaryMetric label="待数据核对" value={`${summary.dataCheckCount}`} />
+      </div>
+      {summary.nextCandidate ? (
+        <div className="rounded-md border bg-background p-2 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">下一候选</span>
+            <Badge variant="outline">{summary.nextCandidate.readiness}</Badge>
+          </div>
+          <div className="mt-1 text-foreground">
+            {summary.nextCandidate.employeeId} {summary.nextCandidate.employeeName} /{" "}
+            {summary.nextCandidate.title}
+          </div>
+          <div className="mt-1 text-muted-foreground">{summary.nextCandidate.reason}</div>
+        </div>
+      ) : null}
+      {summary.blockers.length > 0 ? (
+        <div className="grid gap-2">
+          {summary.blockers.map((item) => (
+            <div key={item.key} className="rounded-md border bg-background p-2 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium">{item.label}</span>
+                <Badge variant="outline">{item.count} 项</Badge>
+              </div>
+              <div className="mt-1 text-muted-foreground">{item.reason}</div>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }

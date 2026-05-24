@@ -4478,6 +4478,53 @@ acceptance:
   - "`node --experimental-strip-types --test scripts/tests/production-mvp-anomaly-triage-readiness.test.mjs` 和 `bash scripts/check.sh` 通过。"
 ```
 
+### US406-US409 - 异常闭环准备度摘要
+
+```yaml
+stories:
+  - id: US406
+    requirement_ids: [R394, R395]
+    task_ids: [F310]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组成员单日矩阵看到异常闭环准备度摘要，以便先判断哪些异常还缺材料、主管判断或数据核对。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US407
+    requirement_ids: [R395]
+    task_ids: [F311]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望闭环准备度摘要能指出下一候选异常和阻塞原因，以便按业务优先级补齐闭环前置条件。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US408
+    requirement_ids: [R396]
+    task_ids: [F312]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望闭环准备度保持只读查看口径，以便不误导为真实提交、审批、导出、批量或自动处理能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US409
+    requirement_ids: [R397]
+    task_ids: [Q063]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望异常闭环准备度摘要批次完成收口，确认模型、页面和 no-action 边界均通过验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵侧栏展示闭环准备度摘要。"
+  - "摘要包含可闭环、未就绪、待补材料、待主管判断、待数据核对、下一候选异常和阻塞原因。"
+  - "页面不出现提交、保存、审批、导出、批量、自动处理或内部项目管理口径。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US230 - 履约日历团队小组个人下钻
 
 ```yaml

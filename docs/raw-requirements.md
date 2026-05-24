@@ -2193,6 +2193,29 @@ status: "split"
 notes: "本组只做本地前端只读展示层和模型测试；不实现真实上传/导入、字段映射保存、主数据 CRUD、冻结解冻、数据库、审批、权限、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
 ```
 
+### R394-R397 - 异常闭环准备度摘要
+
+```yaml
+requirements:
+  - id: R394
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示异常闭环准备度摘要，让现场主管知道当前异常距离可闭环还缺哪些材料、判断或数据核对。"
+  - id: R395
+    module: "履约日历"
+    description: "闭环准备度摘要需要包含可闭环数量、未就绪数量、待补材料数量、待主管判断数量、待数据核对数量、下一候选异常和阻塞原因。"
+  - id: R396
+    module: "履约日历"
+    description: "闭环准备度摘要只能用于查看和判断，不提供提交、保存、审批、导出、批量或自动处理动作。"
+  - id: R397
+    module: "质量与交付"
+    description: "异常闭环准备度摘要完成后需要 QA 收口，确认页面文案、模型测试、产品 UI 禁词和 no-action 边界均可验证。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只做本地前端只读摘要和模型测试；不实现真实闭环提交、自动审批、权限、导出、批量、数据库、真实外部接口、生产公式、结算规则或 charge factor。"
+```
+
 ### R218 - 履约日历团队小组个人下钻
 
 ```yaml

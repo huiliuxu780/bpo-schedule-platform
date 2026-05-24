@@ -645,6 +645,29 @@ export type FulfillmentTeamWeekCarryoverOverview = {
   }>
 }
 
+export type FulfillmentExceptionClosureReadinessSummary = {
+  headline: string
+  readyCount: number
+  blockedCount: number
+  missingMaterialCount: number
+  missingDecisionCount: number
+  dataCheckCount: number
+  nextCandidate?: {
+    key: string
+    employeeId: string
+    employeeName: string
+    title: string
+    readiness: string
+    reason: string
+  }
+  blockers: Array<{
+    key: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["code"]
+    label: "待补材料" | "待主管判断" | "待数据核对"
+    count: number
+    reason: string
+  }>
+}
+
 export type FulfillmentMatrixExceptionQueueCursor = {
   selected?: FulfillmentMatrixExceptionQueueItem
   selectedIndex: number
@@ -669,6 +692,7 @@ export type FulfillmentGroupMatrix = {
   teamDayRiskTrend: FulfillmentTeamDayRiskTrend
   groupRiskCauseSplit: FulfillmentGroupRiskCauseSplit
   teamWeekCarryoverOverview: FulfillmentTeamWeekCarryoverOverview
+  exceptionClosureReadinessSummary: FulfillmentExceptionClosureReadinessSummary
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1110,6 +1134,7 @@ export function getFulfillmentMatrix(
       group.members,
       exceptionQueue
     ),
+    exceptionClosureReadinessSummary: summarizeExceptionClosureReadiness(exceptionQueue),
   }
 }
 
@@ -2858,6 +2883,108 @@ function summarizeTeamWeekCarryoverOverview(
     carryoverDays: carryoverItems.length,
     items: carryoverItems,
   }
+}
+
+function summarizeExceptionClosureReadiness(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentExceptionClosureReadinessSummary {
+  const readyItems = queue.filter((item) => item.closureChecklist.missingCount === 0)
+  const blockedItems = queue.filter((item) => item.closureChecklist.missingCount > 0)
+  const blockers = reviewLoadGroupOrder
+    .map((group) => {
+      const items = blockedItems.filter((item) => item.reviewGroup.code === group.code)
+
+      return {
+        key: group.code,
+        label: closureReadinessLabel[group.code],
+        count: items.length,
+        reason: buildClosureReadinessBlockerReason(group.code, items),
+      }
+    })
+    .filter((item) => item.count > 0)
+  const nextCandidate = queue[0]
+
+  return {
+    headline: buildClosureReadinessHeadline(queue.length, readyItems.length),
+    readyCount: readyItems.length,
+    blockedCount: blockedItems.length,
+    missingMaterialCount: queue.filter((item) => item.reviewGroup.code === "missing_material").length,
+    missingDecisionCount: queue.filter((item) => item.reviewGroup.code === "supervisor_judgment").length,
+    dataCheckCount: queue.filter((item) => item.reviewGroup.code === "data_check").length,
+    nextCandidate: nextCandidate
+      ? {
+          key: nextCandidate.key,
+          employeeId: nextCandidate.employeeId,
+          employeeName: nextCandidate.employeeName,
+          title: nextCandidate.title,
+          readiness: closureReadinessLabel[nextCandidate.reviewGroup.code],
+          reason: buildClosureReadinessCandidateReason(nextCandidate),
+        }
+      : undefined,
+    blockers,
+  }
+}
+
+const closureReadinessLabel: Record<
+  FulfillmentMatrixExceptionQueueItem["reviewGroup"]["code"],
+  FulfillmentExceptionClosureReadinessSummary["blockers"][number]["label"]
+> = {
+  missing_material: "待补材料",
+  supervisor_judgment: "待主管判断",
+  data_check: "待数据核对",
+}
+
+function buildClosureReadinessHeadline(totalCount: number, readyCount: number) {
+  if (totalCount === 0) {
+    return "当前小组暂无待闭环异常。"
+  }
+
+  if (readyCount === totalCount) {
+    return `当前 ${totalCount} 项异常均已具备闭环前置条件。`
+  }
+
+  if (readyCount > 0) {
+    return `当前 ${readyCount} / ${totalCount} 项异常具备闭环前置条件，其余仍需补齐材料或判断。`
+  }
+
+  return `当前 ${totalCount} 项异常均未达到闭环条件，优先补齐主管判断和到岗说明。`
+}
+
+function buildClosureReadinessCandidateReason(item: FulfillmentMatrixExceptionQueueItem) {
+  if (item.reviewGroup.code === "missing_material") {
+    return `缺少${formatRequiredInfo(item.handlingGuide.requiredInfo)}。`
+  }
+
+  if (item.reviewGroup.code === "supervisor_judgment") {
+    return `${item.employeeName}仍需确认培训安排是否符合在线要求。`
+  }
+
+  return `${item.employeeName}仍需数据管理员核对原始记录。`
+}
+
+function buildClosureReadinessBlockerReason(
+  code: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["code"],
+  items: FulfillmentMatrixExceptionQueueItem[]
+) {
+  const first = items[0]
+
+  if (!first) {
+    return "暂无阻塞项。"
+  }
+
+  if (code === "missing_material") {
+    return `${first.employeeName}仍需补${formatRequiredInfo(first.handlingGuide.requiredInfo)}。`
+  }
+
+  if (code === "supervisor_judgment") {
+    return `${first.employeeName}仍需确认培训安排是否符合在线要求。`
+  }
+
+  return `${first.employeeName}仍需数据管理员核对原始记录。`
+}
+
+function formatRequiredInfo(items: string[]) {
+  return items.join("、")
 }
 
 function getCarryoverReviewTarget(

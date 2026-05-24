@@ -8076,6 +8076,70 @@ tasks:
     stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量、自动排班或生产公式", "验证失败"]
     commit_after_done: true
 
+  - id: F310
+    title: "异常闭环准备度摘要卡片"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "小组成员单日矩阵侧栏展示闭环准备度摘要。"
+      - "摘要展示可闭环、未就绪、待补材料、待主管判断和待数据核对数量。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量、自动处理或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F311
+    title: "异常闭环下一候选与阻塞原因"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "闭环准备度模型给出下一候选异常、准备状态和阻塞原因。"
+      - "阻塞原因按待补材料、待主管判断和待数据核对聚合。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量、自动处理或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F312
+    title: "异常闭环准备度只读边界"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "闭环准备度 UI 只使用业务查看语言，不提供提交、保存、审批、导出、批量或自动处理动作。"
+      - "产品 UI 文案回归测试通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量、自动处理或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q063
+    title: "异常闭环准备度摘要 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型测试、产品 UI 文案测试、导航测试和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+      - "no-database/no-action/no-approval/no-export/no-batch 边界未越界。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端契约变更、数据库或真实外部集成", "需要权限、审批、导出、批量、自动处理或生产公式"]
+    commit_after_done: true
+
   - id: F094
     title: "导入批次历史本地模型与测试"
     priority: P0

@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Exception closure readiness summary
+
+#### 结论
+
+- `F310-F312/Q063/US406-US409` 已完成异常闭环准备度摘要和 QA 收口。
+- 小组矩阵新增 `exceptionClosureReadinessSummary`，包含可闭环、未就绪、待补材料、待主管判断、待数据核对、下一候选异常和阻塞原因。
+- 页面在现有右侧异常详情展示“闭环准备度”，位于“本周延续关注”和“复核工作量”之间，不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和闭环前置判断，不代表真实通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `exceptionClosureReadinessSummary` 为 `undefined` 且页面缺少闭环准备度卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，新增卡片区域显示“闭环准备度”“当前 2 项异常均未达到闭环条件，优先补齐主管判断和到岗说明。”“可闭环”“未就绪”“待补材料”“待主管判断”“下一候选”“A-1002 王敏 / 迟到 21 分钟”，且卡片区域未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、通知、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-24 - Team-week carryover overview
 
 #### 结论

@@ -45,6 +45,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
   const carryoverPosition = pageSource.indexOf("<TeamWeekCarryoverOverviewPanel overview={matrix.teamWeekCarryoverOverview} />");
+  const closureReadinessPosition = pageSource.indexOf("<ExceptionClosureReadinessSummaryPanel summary={matrix.exceptionClosureReadinessSummary} />");
   const reviewLoadPosition = pageSource.indexOf("<ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />");
   const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
 
@@ -59,6 +60,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(riskDigestPosition >= 0);
   assert.ok(causeSplitPosition >= 0);
   assert.ok(carryoverPosition >= 0);
+  assert.ok(closureReadinessPosition >= 0);
   assert.ok(reviewLoadPosition >= 0);
   assert.ok(followUpPosition < riskDigestPosition);
   assert.ok(comparisonPosition < riskDigestPosition);
@@ -69,6 +71,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(causeSplitPosition < reviewLoadPosition);
   assert.ok(causeSplitPosition < carryoverPosition);
   assert.ok(carryoverPosition < reviewLoadPosition);
+  assert.ok(carryoverPosition < closureReadinessPosition);
+  assert.ok(closureReadinessPosition < reviewLoadPosition);
   assert.equal(titleCount, 1);
 });
 
@@ -899,6 +903,36 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         reviewTarget: "A-1002 王敏",
         reason: "周二仍有 1 人登录缺口，需回看今日到岗问题是否连续。",
         orderLabel: "第 1 天",
+      },
+    ],
+  });
+  assert.deepEqual(matrix.exceptionClosureReadinessSummary, {
+    headline: "当前 2 项异常均未达到闭环条件，优先补齐主管判断和到岗说明。",
+    readyCount: 0,
+    blockedCount: 2,
+    missingMaterialCount: 1,
+    missingDecisionCount: 1,
+    dataCheckCount: 0,
+    nextCandidate: {
+      key: "A-1002::late_login",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      readiness: "待补材料",
+      reason: "缺少到岗说明、迟到或漏登原因、现场主管确认口径。",
+    },
+    blockers: [
+      {
+        key: "missing_material",
+        label: "待补材料",
+        count: 1,
+        reason: "王敏仍需补到岗说明、迟到或漏登原因、现场主管确认口径。",
+      },
+      {
+        key: "supervisor_judgment",
+        label: "待主管判断",
+        count: 1,
+        reason: "刘晨仍需确认培训安排是否符合在线要求。",
       },
     ],
   });
