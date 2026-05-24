@@ -121,4 +121,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US390/F298 -> US393/Q059` completed the exception owner load comparison slice: the fulfillment calendar group-day exception panel now shows selected exception owner load, busiest owner, compared owner, load difference, and focus order. Current queue is empty again.
 
-Recommended next production MVP slice: continue with next-day watchlist or group-risk cause split, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US394/F301 -> US397/Q060` completed the next-day watchlist slice: the fulfillment calendar group-day exception panel now shows next-day date, headline, ordered watch items, source exceptions, owner roles, and watch reasons. Current queue is empty again.
+
+Recommended next production MVP slice: continue with group-risk cause split or team-week carryover overview, keeping it local/frontend-only unless PM confirms a separate production action Gate.

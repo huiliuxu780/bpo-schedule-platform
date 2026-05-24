@@ -40,6 +40,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
   const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
   const ownerLoadPosition = pageSource.indexOf("{selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}");
+  const nextDayPosition = pageSource.indexOf("{selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
@@ -50,11 +51,13 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(followUpPosition >= 0);
   assert.ok(comparisonPosition >= 0);
   assert.ok(ownerLoadPosition >= 0);
+  assert.ok(nextDayPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(followUpPosition < riskDigestPosition);
   assert.ok(comparisonPosition < riskDigestPosition);
   assert.ok(ownerLoadPosition < riskDigestPosition);
+  assert.ok(nextDayPosition < riskDigestPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.equal(titleCount, 1);
 });
@@ -820,6 +823,33 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     },
     loadDifference: "现场主管是当前最高负载角色，比数据管理员多 1 项，影响多 5.00h。",
     focusOrder: "先由现场主管补王敏到岗说明，再让数据管理员核对原始登录记录。",
+  });
+  assert.deepEqual(lateLogin.nextDayWatchlist, {
+    date: "2026-05-12",
+    label: "周二 05/12",
+    headline: "明天先看周二 05/12 的登录缺口和今日未闭环异常。",
+    items: [
+      {
+        key: "A-1002::2026-05-12::late_login",
+        employeeId: "A-1002",
+        employeeName: "王敏",
+        priority: "high",
+        ownerRole: "现场主管",
+        source: "今日异常：迟到 21 分钟",
+        reason: "今日需要升级且明天仍有 0.1h 登录缺口，先确认到岗说明是否补齐。",
+        orderLabel: "第 1 项",
+      },
+      {
+        key: "A-1001::2026-05-12::no_login",
+        employeeId: "A-1001",
+        employeeName: "刘晨",
+        priority: "medium",
+        ownerRole: "现场主管",
+        source: "今日异常：午后状态缺登录切片",
+        reason: "今日状态判断未闭环，明天复核培训安排是否仍影响在线要求。",
+        orderLabel: "第 2 项",
+      },
+    ],
   });
   assert.deepEqual(lateLogin.evidenceSummary, {
     schedule: "排班 SCH-1002-1：早班 09:00-17:00",

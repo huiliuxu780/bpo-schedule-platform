@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-24 - Next-day watchlist
+
+#### 结论
+
+- `F301-F303/Q060/US394-US397` 已完成次日关注清单和 QA 收口。
+- 异常队列项新增 `nextDayWatchlist`，包含次日日期、关注说明、员工、优先级、责任角色、来源异常、关注原因和查看顺序。
+- 页面在现有右侧异常详情展示“次日关注清单”，不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看顺序，不代表真实通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `nextDayWatchlist` 为 `undefined` 且页面缺少次日关注清单卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，新增卡片区域显示“次日关注清单”“明天先看周二 05/12 的登录缺口和今日未闭环异常。”“A-1002”“王敏”“第 1 项”“高优先级”“责任角色”“现场主管”“来源”“今日异常：迟到 21 分钟”“今日需要升级且明天仍有 0.1h 登录缺口，先确认到岗说明是否补齐。”以及“A-1001”“刘晨”，且卡片区域未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、通知、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-22 - Supervisor follow-up timeline
 
 #### 结论

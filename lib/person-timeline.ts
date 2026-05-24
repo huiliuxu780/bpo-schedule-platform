@@ -346,6 +346,21 @@ export type FulfillmentMatrixExceptionQueueItem = {
     loadDifference: string
     focusOrder: string
   }
+  nextDayWatchlist: {
+    date: string
+    label: string
+    headline: string
+    items: Array<{
+      key: string
+      employeeId: string
+      employeeName: string
+      priority: TimelineAnomaly["severity"]
+      ownerRole: string
+      source: string
+      reason: string
+      orderLabel: string
+    }>
+  }
   dataCheckReadiness: {
     sourceRecords: string[]
     checkFields: string[]
@@ -1031,7 +1046,7 @@ export function getFulfillmentMatrix(
       const riskB = Number(b.scheduledHours > b.loginHours) + b.anomalies.length
       return riskB - riskA || a.employeeId.localeCompare(b.employeeId)
   })
-  const exceptionQueue = buildFulfillmentMatrixExceptionQueue(members, selectedDate)
+  const exceptionQueue = buildFulfillmentMatrixExceptionQueue(members, selectedDate, group.members)
   const exceptionQueueSummary = summarizeFulfillmentMatrixExceptionQueue(exceptionQueue)
   const reviewLoadSummary = summarizeFulfillmentMatrixReviewLoad(exceptionQueue)
   const supervisorDailyWorkload = summarizeSupervisorDailyWorkload(exceptionQueue)
@@ -1265,7 +1280,8 @@ function buildExceptionExplanations(
 
 function buildFulfillmentMatrixExceptionQueue(
   members: FulfillmentMatrixMember[],
-  date: string
+  date: string,
+  sourceMembers: PersonTimeline[] = []
 ): FulfillmentMatrixExceptionQueueItem[] {
   const queue = members
     .flatMap((member) =>
@@ -1329,6 +1345,12 @@ function buildFulfillmentMatrixExceptionQueue(
             loadDifference: "",
             focusOrder: "",
           },
+          nextDayWatchlist: {
+            date: addDays(date, 1),
+            label: "",
+            headline: "",
+            items: [],
+          },
           groupFollowUpRollup: {
             queuePosition: "",
             sameGroupOpenCount: 0,
@@ -1350,6 +1372,7 @@ function buildFulfillmentMatrixExceptionQueue(
     ...item,
     exceptionComparison: buildExceptionComparison(queue, index),
     ownerLoadComparison: buildOwnerLoadComparison(queue, item),
+    nextDayWatchlist: buildNextDayWatchlist(queue, item, sourceMembers, date),
     groupFollowUpRollup: buildGroupFollowUpRollup(queue, index),
   }))
 }
@@ -1816,6 +1839,64 @@ function buildOwnerLoadFocusOrder(
 
 function formatLoadImpactDifference(a: number, b: number) {
   return `${Math.abs(roundHours(a - b)).toFixed(2)}h`
+}
+
+function buildNextDayWatchlist(
+  queue: FulfillmentMatrixExceptionQueueItem[],
+  item: FulfillmentMatrixExceptionQueueItem,
+  members: PersonTimeline[],
+  date: string
+): FulfillmentMatrixExceptionQueueItem["nextDayWatchlist"] {
+  const nextDate = addDays(date, 1)
+  const label = `${formatWeekday(nextDate)} ${formatDateLabel(nextDate)}`
+  const prioritizedItems = [
+    item,
+    ...queue.filter((candidate) => candidate.key !== item.key),
+  ].slice(0, 2)
+
+  return {
+    date: nextDate,
+    label,
+    headline: `明天先看${label} 的登录缺口和今日未闭环异常。`,
+    items: prioritizedItems.map((candidate, index) => {
+      const member = members.find((candidateMember) => candidateMember.employeeId === candidate.employeeId)
+      const nextGapHours = member ? getMemberDayLoginGapHours(member, nextDate) : 0
+
+      return {
+        key: `${candidate.employeeId}::${nextDate}::${candidate.anomalyCode}`,
+        employeeId: candidate.employeeId,
+        employeeName: candidate.employeeName,
+        priority: candidate.priority,
+        ownerRole: candidate.supervisorFollowUp.owner,
+        source: `今日异常：${candidate.title}`,
+        reason: buildNextDayWatchReason(candidate, nextGapHours),
+        orderLabel: `第 ${index + 1} 项`,
+      }
+    }),
+  }
+}
+
+function getMemberDayLoginGapHours(member: PersonTimeline, date: string) {
+  const scheduledHours = sumEvents(member.tracks.schedule.filter((eventItem) => eventItem.date === date))
+  const loginHours = sumEvents(member.tracks.login.filter((eventItem) => eventItem.date === date))
+
+  return roundHours(Math.max(scheduledHours - loginHours, 0))
+}
+
+function buildNextDayWatchReason(item: FulfillmentMatrixExceptionQueueItem, nextGapHours: number) {
+  if ((item.agingEscalation.level === "需要升级" || item.priority === "high") && nextGapHours > 0) {
+    return `今日需要升级且明天仍有 ${nextGapHours.toFixed(1)}h 登录缺口，先确认到岗说明是否补齐。`
+  }
+
+  if (item.type === "状态不一致") {
+    return "今日状态判断未闭环，明天复核培训安排是否仍影响在线要求。"
+  }
+
+  if (nextGapHours > 0) {
+    return `明天仍有 ${nextGapHours.toFixed(1)}h 登录缺口，先确认是否连续影响到岗。`
+  }
+
+  return `今日${item.title}未闭环，明天先复核${item.supervisorFollowUp.owner}关注项。`
 }
 
 function buildFollowUpCurrentGapSummary(

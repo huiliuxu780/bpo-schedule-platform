@@ -614,6 +614,7 @@ function MatrixExceptionPanel({
       {selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}
       {selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}
       {selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}
+      {selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
@@ -1156,6 +1157,43 @@ function SelectedExceptionOwnerLoadComparisonCard({
       <div className="rounded-md border p-2 text-xs text-muted-foreground">
         <span className="font-medium text-foreground">处理顺序：</span>
         {comparison.focusOrder}
+      </div>
+    </div>
+  )
+}
+
+function SelectedExceptionNextDayWatchlistCard({
+  selected,
+}: {
+  selected: FulfillmentMatrixExceptionQueueItem
+}) {
+  const watchlist = selected.nextDayWatchlist
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">次日关注清单</div>
+          <div className="text-xs text-muted-foreground">{watchlist.headline}</div>
+        </div>
+        <Badge variant="outline">{watchlist.label}</Badge>
+      </div>
+      <div className="grid gap-2">
+        {watchlist.items.map((item) => (
+          <div key={item.key} className="rounded-md border bg-muted/30 p-2 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="font-medium text-foreground">
+                {item.employeeId} {item.employeeName}
+              </div>
+              <Badge variant={item.priority === "high" ? "destructive" : "outline"}>
+                {item.orderLabel} / {priorityLabel[item.priority]}
+              </Badge>
+            </div>
+            <div className="mt-1 text-muted-foreground">责任角色：{item.ownerRole}</div>
+            <div className="text-muted-foreground">来源：{item.source}</div>
+            <div className="mt-1 text-muted-foreground">{item.reason}</div>
+          </div>
+        ))}
       </div>
     </div>
   )

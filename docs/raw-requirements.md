@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R382-R385 - 次日关注清单
+
+```yaml
+requirements:
+  - id: R382
+    module: "履约日历"
+    description: "小组成员单日矩阵需要在选中异常后展示次日关注清单，帮助现场主管把今日未闭环异常转成明天优先查看对象。"
+  - id: R383
+    module: "履约日历"
+    description: "次日关注清单需要包含次日日期、关注说明、员工、优先级、责任角色、来源异常、关注原因和查看顺序。"
+  - id: R384
+    module: "履约日历"
+    description: "次日关注清单仅表达主管次日查看顺序，不提供通知、提交、保存、审批、导出、批量、自动排班或状态写入能力。"
+  - id: R385
+    module: "质量与交付"
+    description: "次日关注清单完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling development on 2026-05-24"
+submitted_at: "2026-05-24"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组单日矩阵右侧异常面板补充本地前端只读信息；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R378-R381 - 异常责任人负载对比
 
 ```yaml

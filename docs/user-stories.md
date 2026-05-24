@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US394-US397 - 次日关注清单
+
+```yaml
+stories:
+  - id: US394
+    requirement_ids: [R382]
+    task_ids: [F301]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在选中异常后看到次日关注清单，以便把今日未闭环异常转成明天优先查看对象。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US395
+    requirement_ids: [R383]
+    task_ids: [F302]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望次日关注清单包含日期、员工、优先级、责任角色、来源异常、关注原因和查看顺序，以便快速安排次日复核。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US396
+    requirement_ids: [R384]
+    task_ids: [F303]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望次日关注清单只表达查看顺序，以便不误导为已经具备线上流转或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US397
+    requirement_ids: [R385]
+    task_ids: [Q060]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望次日关注清单批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "选中异常后展示次日关注清单。"
+  - "清单展示次日日期、关注说明、员工、优先级、责任角色、来源异常、关注原因和查看顺序。"
+  - "清单不出现通知、提交、保存、审批、导出、批量、自动排班或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US390-US393 - 异常责任人负载对比
 
 ```yaml
