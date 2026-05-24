@@ -144,6 +144,36 @@ export type FulfillmentGroupWeek = {
   members: PersonTimeline[]
 }
 
+export type FulfillmentTeamWeekRiskPoint = FulfillmentDayMetrics & {
+  label: string
+  score: number
+  riskLevel: FulfillmentTeamDayRiskDigest["riskLevel"]
+}
+
+export type FulfillmentTeamWeekRiskDistribution = {
+  riskLevel: FulfillmentTeamDayRiskDigest["riskLevel"]
+  riskScore: number
+  headline: string
+  highestRiskDay: {
+    date: string
+    label: string
+    score: number
+    reason: string
+  }
+  primaryReason: string
+  nextDrilldown: {
+    date: string
+    label: string
+    groupName: string
+    reason: string
+  }
+  rank: {
+    label: string
+    reason: string
+  }
+  points: FulfillmentTeamWeekRiskPoint[]
+}
+
 export type FulfillmentTeamWeek = {
   id: string
   workplace: string
@@ -157,6 +187,7 @@ export type FulfillmentTeamWeek = {
     gapPeople: number
     anomalyPeople: number
   }
+  weekRiskDistribution: FulfillmentTeamWeekRiskDistribution
   groups: FulfillmentGroupWeek[]
 }
 
@@ -873,7 +904,7 @@ export function getFulfillmentCalendar(
   weekStart = fulfillmentDefaultWeekStart
 ): FulfillmentCalendar {
   const weekDays = buildWeekDays(weekStart)
-  const teams = Array.from(groupBy(rows, teamKey).entries())
+  const teamsWithoutDistribution = Array.from(groupBy(rows, teamKey).entries())
     .map(([id, members]) => {
       const [workplace = "", project = ""] = id.split("||")
       const groups = Array.from(groupBy(members, groupKey).entries())
@@ -902,6 +933,10 @@ export function getFulfillmentCalendar(
       }
     })
     .sort(compareFulfillmentRisk)
+  const teams = teamsWithoutDistribution.map((team, index) => ({
+    ...team,
+    weekRiskDistribution: buildTeamWeekRiskDistribution(team, index + 1, teamsWithoutDistribution.length),
+  }))
 
   const summary = summarizeDayMetrics(teams.flatMap((team) => team.days))
 
@@ -3122,6 +3157,79 @@ function buildTeamWeekRiskSummary(groups: FulfillmentGroupWeek[]) {
       : "",
     gapPeople: highestRiskGroup?.summary.gapPeople ?? 0,
     anomalyPeople: highestRiskGroup?.summary.anomalyPeople ?? 0,
+  }
+}
+
+function buildTeamWeekRiskDistribution(
+  team: Omit<FulfillmentTeamWeek, "weekRiskDistribution">,
+  rankIndex: number,
+  teamCount: number
+): FulfillmentTeamWeekRiskDistribution {
+  const points = team.days.map(buildTeamWeekRiskPoint)
+  const highestRiskPoint = [...points].sort(
+    (a, b) =>
+      b.score - a.score ||
+      b.anomalyPeople - a.anomalyPeople ||
+      b.gapPeople - a.gapPeople ||
+      a.date.localeCompare(b.date)
+  )[0]
+  const highestGroupForDay = [...team.groups].sort((a, b) => {
+    const dayA = a.days.find((day) => day.date === highestRiskPoint.date)
+    const dayB = b.days.find((day) => day.date === highestRiskPoint.date)
+    return (
+      (dayB?.gapPeople ?? 0) - (dayA?.gapPeople ?? 0) ||
+      (dayB?.anomalyPeople ?? 0) - (dayA?.anomalyPeople ?? 0) ||
+      a.supplier.localeCompare(b.supplier)
+    )
+  })[0]
+  const drilldownDay =
+    highestGroupForDay?.days.find((day) => day.date === highestRiskPoint.date) ?? highestRiskPoint
+  const riskScore = highestRiskPoint.score
+
+  return {
+    riskLevel: getTeamDayRiskLevel(riskScore),
+    riskScore,
+    headline:
+      riskScore > 0
+        ? `本周风险集中在${highestRiskPoint.label}，建议先下钻${highestGroupForDay?.supplier ?? "当前小组"}。`
+        : "本周暂无明显履约风险，可保持常规查看。",
+    highestRiskDay: {
+      date: highestRiskPoint.date,
+      label: highestRiskPoint.label,
+      score: highestRiskPoint.score,
+      reason: `缺口 ${highestRiskPoint.gapPeople} 人 / 异常 ${highestRiskPoint.anomalyPeople} 人`,
+    },
+    primaryReason:
+      riskScore > 0
+        ? `本周累计缺口 ${team.summary.gapPeople} 人，异常 ${team.summary.anomalyPeople} 人，最高风险来自${highestRiskPoint.label}。`
+        : "本周缺口和异常均为低位。",
+    nextDrilldown: {
+      date: highestRiskPoint.date,
+      label: highestRiskPoint.label,
+      groupName: highestGroupForDay?.supplier ?? "",
+      reason:
+        highestGroupForDay && riskScore > 0
+          ? `先看${highestGroupForDay.supplier}，缺口 ${drilldownDay.gapPeople} 人 / 异常 ${drilldownDay.anomalyPeople} 人。`
+          : "可从团队周卡继续查看。",
+    },
+    rank: {
+      label: `第 ${rankIndex} / ${teamCount} 个团队`,
+      reason: `按本周缺口和异常排序，${team.workplace} / ${team.project} 当前${
+        rankIndex === 1 ? "最高" : `第 ${rankIndex}`
+      }。`,
+    },
+    points,
+  }
+}
+
+function buildTeamWeekRiskPoint(day: FulfillmentDayMetrics): FulfillmentTeamWeekRiskPoint {
+  const score = Math.min(100, day.gapPeople * 30 + day.anomalyPeople * 40)
+
+  return {
+    ...day,
+    label: `${day.weekday} ${day.label}`,
+    score,
+    riskLevel: getTeamDayRiskLevel(score),
   }
 }
 

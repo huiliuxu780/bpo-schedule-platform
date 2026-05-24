@@ -2,6 +2,70 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F295
+    title: "团队周风险分布卡"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "团队周视图展示团队周风险分布。"
+      - "风险分布展示最高风险日、主要原因、建议下钻日期和团队排名。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要通知、提交、保存、审批、导出、批量或状态写入", "需要后端、数据库、真实接口、权限、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F296
+    title: "团队周风险分布模型"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "团队周模型返回 `weekRiskDistribution`。"
+      - "`weekRiskDistribution` 包含最高风险日、风险分布点、主要风险原因、建议下钻日期和团队周排名。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要通知、提交、保存、审批、导出、批量或状态写入", "需要后端、数据库、真实接口、权限、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F297
+    title: "团队周风险分布文案边界"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "scripts/tests/product-ui-copy-audit.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "页面使用业务查看语言。"
+      - "页面不出现内部执行口径、通知、提交、保存、审批、导出、批量或状态写入入口。"
+      - "`node --test scripts/tests/product-ui-copy-audit.test.mjs` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要通知、提交、保存、审批、导出、批量或状态写入", "需要后端、数据库、真实接口、权限、自动排班或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q058
+    title: "团队周风险分布 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型测试、文案审计、浏览器 smoke 和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+      - "确认未新增页面、导航、数据库、真实接口、通知、提交、保存、审批、导出、批量或状态写入。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要通知、提交、保存、审批、导出、批量或状态写入", "需要后端、数据库、真实接口、权限、自动排班或生产公式"]
+    commit_after_done: true
   - id: F292
     title: "主管异常对比卡"
     priority: P0

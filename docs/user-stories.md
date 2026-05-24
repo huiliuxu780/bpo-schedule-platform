@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US386-US389 - 团队周风险分布
+
+```yaml
+stories:
+  - id: US386
+    requirement_ids: [R374]
+    task_ids: [F295]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在团队周视图看到本周风险分布，以便先判断哪一天和哪个团队最需要下钻。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US387
+    requirement_ids: [R375]
+    task_ids: [F296]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望模型返回风险最高日、风险分布、主要风险原因、建议下钻日期和团队周排名，以便快速决定处理顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US388
+    requirement_ids: [R376]
+    task_ids: [F297]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望团队周风险分布只表达查看和排序口径，以便不误导为已经具备线上流转或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US389
+    requirement_ids: [R377]
+    task_ids: [Q058]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望团队周风险分布批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "团队周视图展示团队周风险分布。"
+  - "模型返回风险最高日、风险分布点、主要风险原因、建议下钻日期和团队周排名。"
+  - "页面不出现通知、提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US382-US385 - 主管异常对比
 
 ```yaml

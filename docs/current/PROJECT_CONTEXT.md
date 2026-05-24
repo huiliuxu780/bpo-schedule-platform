@@ -117,4 +117,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US382/F292 -> US385/Q057` completed the supervisor exception comparison slice: the fulfillment calendar group-day exception panel now shows selected exception rank, priority reason, compared exception, main difference, and focus order. Current queue is empty again.
 
-Recommended next production MVP slice: continue with team-week risk distribution or exception owner load comparison, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US386/F295 -> US389/Q058` completed the team-week risk distribution slice: the fulfillment calendar team-week view now shows highest-risk day, weekly risk points, primary reason, recommended drilldown group/date, and team rank. Current queue is empty again.
+
+Recommended next production MVP slice: continue with exception owner load comparison or next-day watchlist, keeping it local/frontend-only unless PM confirms a separate production action Gate.

@@ -35,12 +35,17 @@ test("person timeline summary counts local coverage", () => {
 
 test("matrix view surfaces selected exception follow-up before summary panels", () => {
   const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
+  const teamRiskDistributionPosition = pageSource.indexOf("<TeamWeekRiskDistributionPanel team={teams[0]} />");
+  const teamWeekCardPosition = pageSource.indexOf("{teams.map((team) => (");
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
   const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
 
+  assert.ok(teamRiskDistributionPosition >= 0);
+  assert.ok(teamWeekCardPosition >= 0);
+  assert.ok(teamRiskDistributionPosition < teamWeekCardPosition);
   assert.ok(followUpPosition >= 0);
   assert.ok(comparisonPosition >= 0);
   assert.ok(trendPosition >= 0);
@@ -231,6 +236,107 @@ test("fulfillment calendar aggregates team week metrics", () => {
       anomalyPeople: 2,
     }
   );
+  assert.deepEqual(shanghaiTeam.weekRiskDistribution, {
+    riskLevel: "高",
+    riskScore: 100,
+    headline: "本周风险集中在周一 05/11，建议先下钻供应商 A。",
+    highestRiskDay: {
+      date: "2026-05-11",
+      label: "周一 05/11",
+      score: 100,
+      reason: "缺口 2 人 / 异常 2 人",
+    },
+    primaryReason: "本周累计缺口 4 人，异常 2 人，最高风险来自周一 05/11。",
+    nextDrilldown: {
+      date: "2026-05-11",
+      label: "周一 05/11",
+      groupName: "供应商 A",
+      reason: "先看供应商 A，缺口 2 人 / 异常 2 人。",
+    },
+    rank: {
+      label: "第 1 / 3 个团队",
+      reason: "按本周缺口和异常排序，上海职场 / 博西客服 当前最高。",
+    },
+    points: [
+      {
+        date: "2026-05-11",
+        label: "周一 05/11",
+        score: 100,
+        riskLevel: "高",
+        weekday: "周一",
+        plannedPeople: 3,
+        loginPeople: 3,
+        gapPeople: 2,
+        anomalyPeople: 2,
+      },
+      {
+        date: "2026-05-12",
+        label: "周二 05/12",
+        score: 60,
+        riskLevel: "中",
+        weekday: "周二",
+        plannedPeople: 3,
+        loginPeople: 3,
+        gapPeople: 2,
+        anomalyPeople: 0,
+      },
+      {
+        date: "2026-05-13",
+        label: "周三 05/13",
+        score: 0,
+        riskLevel: "低",
+        weekday: "周三",
+        plannedPeople: 0,
+        loginPeople: 0,
+        gapPeople: 0,
+        anomalyPeople: 0,
+      },
+      {
+        date: "2026-05-14",
+        label: "周四 05/14",
+        score: 0,
+        riskLevel: "低",
+        weekday: "周四",
+        plannedPeople: 0,
+        loginPeople: 0,
+        gapPeople: 0,
+        anomalyPeople: 0,
+      },
+      {
+        date: "2026-05-15",
+        label: "周五 05/15",
+        score: 0,
+        riskLevel: "低",
+        weekday: "周五",
+        plannedPeople: 0,
+        loginPeople: 0,
+        gapPeople: 0,
+        anomalyPeople: 0,
+      },
+      {
+        date: "2026-05-16",
+        label: "周六 05/16",
+        score: 0,
+        riskLevel: "低",
+        weekday: "周六",
+        plannedPeople: 0,
+        loginPeople: 0,
+        gapPeople: 0,
+        anomalyPeople: 0,
+      },
+      {
+        date: "2026-05-17",
+        label: "周日 05/17",
+        score: 0,
+        riskLevel: "低",
+        weekday: "周日",
+        plannedPeople: 0,
+        loginPeople: 0,
+        gapPeople: 0,
+        anomalyPeople: 0,
+      },
+    ],
+  });
 });
 
 test("fulfillment group view sorts groups by business risk", () => {

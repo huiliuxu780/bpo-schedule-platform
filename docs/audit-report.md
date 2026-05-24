@@ -2478,6 +2478,28 @@
 - Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，页面显示“异常来源”“来源 2 类，主要看 登录轨道”“主要来源”“登录轨道有 1 项异常，其中 1 项高优先，建议先核对原始登录记录。”“下一优先来源”“状态轨道”和“排班轨道”，且未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、本地、后端、提交、保存、审批、导出或批量。
 - `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
 
+### 2026-05-24 - Team week risk distribution
+
+#### 结论
+
+- `F295-F297/US386-US389` 已在履约日历团队周视图增加团队周风险分布。
+- 团队周模型新增 `weekRiskDistribution`，包含最高风险日、风险分布点、主要风险原因、建议下钻日期、小组和团队排名。
+- 页面在现有团队周视图展示“团队周风险分布”，不新增入口或页面。
+- 本次没有新增页面路由、左侧入口、依赖、后端、数据库、真实接口、权限、通知、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和排序口径，不代表真实预警、通知、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `weekRiskDistribution` 为 `undefined` 且页面缺少团队周风险分布面板，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开 `/person-timeline`，页面显示“团队周风险分布”“本周风险集中在周一 05/11，建议先下钻供应商 A。”“第 1 / 3 个团队”“建议下钻”，且未出现内部执行词或通知、提交、保存、审批、导出、批量入口。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-22 - Supervisor exception comparison
 
 #### 结论

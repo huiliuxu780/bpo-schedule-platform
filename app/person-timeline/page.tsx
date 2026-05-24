@@ -150,6 +150,7 @@ function TeamWeekSection({
         </div>
       </CardHeader>
       <CardContent className="grid gap-4">
+        {teams[0] ? <TeamWeekRiskDistributionPanel team={teams[0]} /> : null}
         {teams.map((team) => (
           <WeekCard
             key={team.id}
@@ -161,6 +162,75 @@ function TeamWeekSection({
         ))}
       </CardContent>
     </Card>
+  )
+}
+
+function TeamWeekRiskDistributionPanel({ team }: { team: FulfillmentTeamWeek }) {
+  const distribution = team.weekRiskDistribution
+  const drilldownHref = `/person-timeline?team=${encodeScopeId(team.id)}&date=${distribution.nextDrilldown.date}`
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3 xl:grid-cols-[280px_minmax(0,1fr)_220px]">
+      <div className="grid content-start gap-2">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <div className="text-sm font-medium">团队周风险分布</div>
+            <div className="text-xs text-muted-foreground">
+              {team.workplace} / {team.project}
+            </div>
+          </div>
+          <Badge variant={distribution.riskLevel === "高" ? "destructive" : distribution.riskLevel === "中" ? "secondary" : "outline"}>
+            {distribution.riskLevel}
+          </Badge>
+        </div>
+        <div className="text-xs text-muted-foreground">{distribution.headline}</div>
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <SummaryMetric label="最高风险日" value={distribution.highestRiskDay.label} />
+          <SummaryMetric label="风险分" value={`${distribution.riskScore}`} />
+        </div>
+      </div>
+      <div className="grid content-start gap-2">
+        <div className="text-xs text-muted-foreground">{distribution.primaryReason}</div>
+        <div className="grid gap-2 md:grid-cols-7">
+          {distribution.points.map((point) => (
+            <Link
+              key={point.date}
+              href={`/person-timeline?team=${encodeScopeId(team.id)}&date=${point.date}`}
+              className={cn(
+                "grid gap-1 rounded-md border p-2 text-xs transition-colors hover:bg-muted",
+                point.date === distribution.highestRiskDay.date ? "border-primary bg-primary/10" : "border-border"
+              )}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium">{point.weekday}</span>
+                <Badge variant={point.riskLevel === "高" ? "destructive" : "outline"} className="text-[10px]">
+                  {point.score}
+                </Badge>
+              </div>
+              <span className="text-muted-foreground">{point.label.replace(`${point.weekday} `, "")}</span>
+              <span className="text-muted-foreground">缺 {point.gapPeople}</span>
+              <span className="text-muted-foreground">异 {point.anomalyPeople}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+      <div className="grid content-start gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+        <div>
+          <div className="font-medium text-foreground">{distribution.rank.label}</div>
+          <div className="mt-1 text-muted-foreground">{distribution.rank.reason}</div>
+        </div>
+        <div>
+          <div className="font-medium text-foreground">建议下钻</div>
+          <div className="mt-1 text-muted-foreground">
+            {distribution.nextDrilldown.label} / {distribution.nextDrilldown.groupName}
+          </div>
+          <div className="mt-1 text-muted-foreground">{distribution.nextDrilldown.reason}</div>
+        </div>
+        <Button asChild variant="outline" size="sm" className="justify-start">
+          <Link href={drilldownHref}>查看小组</Link>
+        </Button>
+      </div>
+    </div>
   )
 }
 

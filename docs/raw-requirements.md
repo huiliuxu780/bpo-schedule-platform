@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R374-R377 - 团队周风险分布
+
+```yaml
+requirements:
+  - id: R374
+    module: "履约日历"
+    description: "团队周视图需要展示团队本周风险分布，帮助现场主管先判断风险集中在哪一天、哪个团队需要优先下钻。"
+  - id: R375
+    module: "履约日历"
+    description: "团队周模型需要返回风险最高日、风险分布点、主要风险原因、建议下钻日期和团队周排名。"
+  - id: R376
+    module: "履约日历"
+    description: "团队周风险分布仅作为查看和排序口径，不提供通知、提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R377
+    module: "质量与交付"
+    description: "团队周风险分布完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM approved the long-running supervisor fulfillment closure goal and requested start on 2026-05-24"
+submitted_at: "2026-05-24"
+version: "1.0"
+status: "split"
+notes: "本组只做现有履约日历团队周层的本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、权限、通知、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R370-R373 - 主管异常对比
 
 ```yaml
