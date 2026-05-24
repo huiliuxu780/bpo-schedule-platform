@@ -618,6 +618,7 @@ function MatrixExceptionPanel({
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
+      <TeamWeekCarryoverOverviewPanel overview={matrix.teamWeekCarryoverOverview} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
       <SupervisorDailyWorkloadPanel summary={matrix.supervisorDailyWorkload} />
       <ExceptionSourceSummaryPanel summary={matrix.exceptionSourceSummary} />
@@ -1570,6 +1571,42 @@ function GroupRiskCauseSplitPanel({
             </div>
             <div className="mt-2 text-muted-foreground">代表异常：{cause.representative}</div>
             <div className="text-muted-foreground">主管关注：{cause.focus}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function TeamWeekCarryoverOverviewPanel({
+  overview,
+}: {
+  overview: FulfillmentGroupMatrix["teamWeekCarryoverOverview"]
+}) {
+  return (
+    <div className="grid gap-3 rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">本周延续关注</div>
+          <div className="text-xs text-muted-foreground">{overview.headline}</div>
+        </div>
+        <Badge variant={overview.carryoverDays > 0 ? "secondary" : "outline"}>
+          {overview.carryoverDays} 天
+        </Badge>
+      </div>
+      <div className="grid gap-2">
+        {overview.items.map((item) => (
+          <div key={item.date} className="rounded-md border bg-background p-2 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{item.label}</span>
+              <Badge variant="outline">{item.orderLabel}</Badge>
+            </div>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <SummaryMetric label="缺口人数" value={`${item.gapPeople}`} />
+              <SummaryMetric label="异常人数" value={`${item.anomalyPeople}`} />
+            </div>
+            <div className="mt-2 text-muted-foreground">建议回看：{item.reviewTarget}</div>
+            <div className="text-muted-foreground">延续原因：{item.reason}</div>
           </div>
         ))}
       </div>

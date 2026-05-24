@@ -44,6 +44,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
+  const carryoverPosition = pageSource.indexOf("<TeamWeekCarryoverOverviewPanel overview={matrix.teamWeekCarryoverOverview} />");
   const reviewLoadPosition = pageSource.indexOf("<ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />");
   const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
 
@@ -57,6 +58,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(causeSplitPosition >= 0);
+  assert.ok(carryoverPosition >= 0);
   assert.ok(reviewLoadPosition >= 0);
   assert.ok(followUpPosition < riskDigestPosition);
   assert.ok(comparisonPosition < riskDigestPosition);
@@ -65,6 +67,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(trendPosition < riskDigestPosition);
   assert.ok(riskDigestPosition < causeSplitPosition);
   assert.ok(causeSplitPosition < reviewLoadPosition);
+  assert.ok(causeSplitPosition < carryoverPosition);
+  assert.ok(carryoverPosition < reviewLoadPosition);
   assert.equal(titleCount, 1);
 });
 
@@ -880,6 +884,21 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         share: 7,
         representative: "A-1002 王敏 / 迟到 21 分钟",
         focus: "先核对到岗说明和原始登录开始时间。",
+      },
+    ],
+  });
+  assert.deepEqual(matrix.teamWeekCarryoverOverview, {
+    headline: "周一未闭环后，周二仍有 1 人登录缺口需要延续查看。",
+    carryoverDays: 1,
+    items: [
+      {
+        date: "2026-05-12",
+        label: "周二 05/12",
+        gapPeople: 1,
+        anomalyPeople: 0,
+        reviewTarget: "A-1002 王敏",
+        reason: "周二仍有 1 人登录缺口，需回看今日到岗问题是否连续。",
+        orderLabel: "第 1 天",
       },
     ],
   });

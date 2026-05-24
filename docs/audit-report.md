@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-24 - Team-week carryover overview
+
+#### 结论
+
+- `F307-F309/Q062/US402-US405` 已完成本周延续关注和 QA 收口。
+- 小组矩阵新增 `teamWeekCarryoverOverview`，包含后续关注日期、缺口人数、异常人数、建议回看对象、延续原因和查看顺序。
+- 页面在现有右侧异常详情展示“本周延续关注”，不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和排序口径，不代表真实通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `teamWeekCarryoverOverview` 为 `undefined` 且页面缺少本周延续关注卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组单日矩阵并选中 `A-1002::late_login`，新增卡片区域显示“本周延续关注”“周一未闭环后，周二仍有 1 人登录缺口需要延续查看。”“周二 05/12”“第 1 天”“缺口人数”“异常人数”“建议回看：A-1002 王敏”“延续原因：周二仍有 1 人登录缺口，需回看今日到岗问题是否连续。”，且卡片区域未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、通知、提交、保存、审批、导出或批量。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-24 - Group-risk cause split
 
 #### 结论

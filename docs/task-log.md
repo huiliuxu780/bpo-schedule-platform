@@ -19,6 +19,17 @@
 
 ### 2026-05-24
 
+- task_id: `F307-F309/Q062`
+- source_ids:
+  - `R390-R393`
+- story_ids:
+  - `US402-US405`
+- action: 在小组成员单日矩阵异常侧栏增加本周延续关注。
+- status: `done`
+- notes: 小组矩阵现在包含 `teamWeekCarryoverOverview`；右侧异常详情展示后续关注日期、缺口人数、异常人数、建议回看对象、延续原因和查看顺序。本次不新增页面路由、不新增左侧入口、不新增依赖，不改后端、数据库、真实接口、权限、通知、提交、保存、审批、导出、批量、自动排班或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-24
+
 - task_id: `F304-F306/Q061`
 - source_ids:
   - `R386-R389`

@@ -115,6 +115,7 @@ Current invariants:
 - `F298-F300/Q059` completed an exception owner load comparison slice: the fulfillment calendar group-day exception panel shows selected exception owner load, busiest owner, compared owner, load difference, and focus order. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F301-F303/Q060` completed a next-day watchlist slice: the fulfillment calendar group-day exception panel shows next-day date, headline, ordered watch items, source exceptions, owner roles, and watch reasons. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F304-F306/Q061` completed a group-risk cause split slice: the fulfillment calendar group-day exception panel shows group risk cause headline, total impact hours, cause shares, impacted people, representative exceptions, and supervisor focus points. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F307-F309/Q062` completed a team-week carryover overview slice: the fulfillment calendar group-day exception panel shows carryover days, later-week gap/anomaly people, review targets, carryover reasons, and view order. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US402-US405 - 本周延续关注
+
+```yaml
+stories:
+  - id: US402
+    requirement_ids: [R390]
+    task_ids: [F307]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组成员单日矩阵看到本周延续关注，以便判断当天未闭环风险在本周后续日期是否还会延续。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US403
+    requirement_ids: [R391]
+    task_ids: [F308]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望本周延续关注包含后续日期、缺口人数、异常人数、延续原因、建议回看对象和查看顺序，以便安排本周后续查看优先级。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US404
+    requirement_ids: [R392]
+    task_ids: [F309]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望本周延续关注只表达查看和排序口径，以便不误导为已经具备线上流转或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US405
+    requirement_ids: [R393]
+    task_ids: [Q062]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望本周延续关注批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组成员单日矩阵右侧展示本周延续关注。"
+  - "延续关注展示后续日期、缺口人数、异常人数、延续原因、建议回看对象和查看顺序。"
+  - "页面不出现通知、提交、保存、审批、导出、批量、自动排班或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US398-US401 - 小组风险原因拆分
 
 ```yaml

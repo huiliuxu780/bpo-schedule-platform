@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R390-R393 - 本周延续关注
+
+```yaml
+requirements:
+  - id: R390
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示本周延续关注，帮助现场主管判断当天未闭环风险在本周后续日期是否还会延续。"
+  - id: R391
+    module: "履约日历"
+    description: "本周延续关注需要包含后续关注日期、缺口人数、异常人数、延续原因、建议回看对象和查看顺序。"
+  - id: R392
+    module: "履约日历"
+    description: "本周延续关注仅表达查看和排序口径，不提供通知、提交、保存、审批、导出、批量、自动排班或状态写入能力。"
+  - id: R393
+    module: "质量与交付"
+    description: "本周延续关注完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling development on 2026-05-24"
+submitted_at: "2026-05-24"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组单日矩阵右侧异常面板补充本地前端只读信息；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R386-R389 - 小组风险原因拆分
 
 ```yaml

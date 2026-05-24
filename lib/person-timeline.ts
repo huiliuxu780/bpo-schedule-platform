@@ -631,6 +631,20 @@ export type FulfillmentGroupRiskCauseSplit = {
   }>
 }
 
+export type FulfillmentTeamWeekCarryoverOverview = {
+  headline: string
+  carryoverDays: number
+  items: Array<{
+    date: string
+    label: string
+    gapPeople: number
+    anomalyPeople: number
+    reviewTarget: string
+    reason: string
+    orderLabel: string
+  }>
+}
+
 export type FulfillmentMatrixExceptionQueueCursor = {
   selected?: FulfillmentMatrixExceptionQueueItem
   selectedIndex: number
@@ -654,6 +668,7 @@ export type FulfillmentGroupMatrix = {
   teamDayRiskDigest: FulfillmentTeamDayRiskDigest
   teamDayRiskTrend: FulfillmentTeamDayRiskTrend
   groupRiskCauseSplit: FulfillmentGroupRiskCauseSplit
+  teamWeekCarryoverOverview: FulfillmentTeamWeekCarryoverOverview
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1089,6 +1104,12 @@ export function getFulfillmentMatrix(
     ),
     teamDayRiskTrend: summarizeTeamDayRiskTrend(group.days, selectedDate),
     groupRiskCauseSplit: summarizeGroupRiskCauseSplit(exceptionQueue),
+    teamWeekCarryoverOverview: summarizeTeamWeekCarryoverOverview(
+      group.days,
+      selectedDate,
+      group.members,
+      exceptionQueue
+    ),
   }
 }
 
@@ -2805,6 +2826,67 @@ function getGroupRiskCauseKey(
   }
 
   return "login_attendance"
+}
+
+function summarizeTeamWeekCarryoverOverview(
+  days: FulfillmentDayMetrics[],
+  selectedDate: string,
+  members: PersonTimeline[],
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentTeamWeekCarryoverOverview {
+  const currentDay = days.find((day) => day.date === selectedDate)
+  const carryoverItems = days
+    .filter(
+      (day) => day.date > selectedDate && (day.gapPeople > 0 || day.anomalyPeople > 0)
+    )
+    .map((day, index) => ({
+      date: day.date,
+      label: `${day.weekday} ${day.label}`,
+      gapPeople: day.gapPeople,
+      anomalyPeople: day.anomalyPeople,
+      reviewTarget: getCarryoverReviewTarget(members, day.date, queue),
+      reason: buildCarryoverReason(day),
+      orderLabel: `第 ${index + 1} 天`,
+    }))
+
+  const first = carryoverItems[0]
+
+  return {
+    headline: first
+      ? `${currentDay?.weekday ?? "当日"}未闭环后，${first.label.slice(0, 2)}仍有 ${first.gapPeople} 人登录缺口需要延续查看。`
+      : `${currentDay?.weekday ?? "当日"}之后暂无延续关注日。`,
+    carryoverDays: carryoverItems.length,
+    items: carryoverItems,
+  }
+}
+
+function getCarryoverReviewTarget(
+  members: PersonTimeline[],
+  date: string,
+  queue: FulfillmentMatrixExceptionQueueItem[]
+) {
+  const gapMembers = members.filter((member) => {
+    const dailyTracks = filterTracksByDate(member, date)
+    return sumEvents(dailyTracks.schedule) > sumEvents(dailyTracks.login)
+  })
+  const queuedGapMember = queue
+    .map((item) => gapMembers.find((member) => member.employeeId === item.employeeId))
+    .find(Boolean)
+  const target = queuedGapMember ?? gapMembers[0] ?? queue[0]
+
+  return target ? `${target.employeeId} ${target.employeeName}` : "当前小组"
+}
+
+function buildCarryoverReason(day: FulfillmentDayMetrics) {
+  if (day.gapPeople > 0 && day.anomalyPeople > 0) {
+    return `${day.weekday}仍有 ${day.gapPeople} 人登录缺口和 ${day.anomalyPeople} 人异常，需连续回看今日未闭环对象。`
+  }
+
+  if (day.gapPeople > 0) {
+    return `${day.weekday}仍有 ${day.gapPeople} 人登录缺口，需回看今日到岗问题是否连续。`
+  }
+
+  return `${day.weekday}仍有 ${day.anomalyPeople} 人异常，需回看今日状态或数据问题是否延续。`
 }
 
 function buildSupervisorHandoffRecipients(
