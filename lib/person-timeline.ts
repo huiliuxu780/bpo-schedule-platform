@@ -323,6 +323,29 @@ export type FulfillmentMatrixExceptionQueueItem = {
     mainDifference: string
     focusHint: string
   }
+  ownerLoadComparison: {
+    currentOwner: {
+      ownerRole: string
+      itemCount: number
+      highPriorityCount: number
+      escalationCount: number
+      impactHours: number
+      focus: string
+    }
+    busiestOwner: {
+      ownerRole: string
+      itemCount: number
+      reason: string
+    }
+    comparedOwner?: {
+      ownerRole: string
+      itemCount: number
+      impactHours: number
+      reason: string
+    }
+    loadDifference: string
+    focusOrder: string
+  }
   dataCheckReadiness: {
     sourceRecords: string[]
     checkFields: string[]
@@ -1296,6 +1319,16 @@ function buildFulfillmentMatrixExceptionQueue(
             mainDifference: "",
             focusHint: "",
           },
+          ownerLoadComparison: {
+            currentOwner: emptyOwnerLoadComparisonOwner("现场主管"),
+            busiestOwner: {
+              ownerRole: "现场主管",
+              itemCount: 0,
+              reason: "",
+            },
+            loadDifference: "",
+            focusOrder: "",
+          },
           groupFollowUpRollup: {
             queuePosition: "",
             sameGroupOpenCount: 0,
@@ -1316,6 +1349,7 @@ function buildFulfillmentMatrixExceptionQueue(
   return queue.map((item, index) => ({
     ...item,
     exceptionComparison: buildExceptionComparison(queue, index),
+    ownerLoadComparison: buildOwnerLoadComparison(queue, item),
     groupFollowUpRollup: buildGroupFollowUpRollup(queue, index),
   }))
 }
@@ -1678,6 +1712,110 @@ function buildExceptionComparisonFocusHint(
   }
 
   return `先看${current.employeeName}，再对比${compared.employeeName}的${compared.title}。`
+}
+
+function buildOwnerLoadComparison(
+  queue: FulfillmentMatrixExceptionQueueItem[],
+  item: FulfillmentMatrixExceptionQueueItem
+): FulfillmentMatrixExceptionQueueItem["ownerLoadComparison"] {
+  const ownerLoads = buildSupervisorDailyWorkloadOwnerLoads(queue)
+  const currentOwner =
+    ownerLoads.find((owner) => owner.ownerRole === item.supervisorFollowUp.owner) ??
+    emptySupervisorWorkloadOwner(item.supervisorFollowUp.owner)
+  const busiestOwner = ownerLoads[0] ?? currentOwner
+  const comparedOwner = ownerLoads.find((owner) => owner.ownerRole !== currentOwner.ownerRole)
+
+  return {
+    currentOwner: {
+      ownerRole: currentOwner.ownerRole,
+      itemCount: currentOwner.itemCount,
+      highPriorityCount: currentOwner.highPriorityCount,
+      escalationCount: currentOwner.escalationCount,
+      impactHours: currentOwner.impactHours,
+      focus: currentOwner.focus,
+    },
+    busiestOwner: {
+      ownerRole: busiestOwner.ownerRole,
+      itemCount: busiestOwner.itemCount,
+      reason: `${busiestOwner.ownerRole}今日有 ${busiestOwner.itemCount} 项待关注，其中 ${busiestOwner.escalationCount} 项建议升级。`,
+    },
+    comparedOwner: comparedOwner
+      ? {
+          ownerRole: comparedOwner.ownerRole,
+          itemCount: comparedOwner.itemCount,
+          impactHours: comparedOwner.impactHours,
+          reason: buildOwnerLoadComparedReason(currentOwner, comparedOwner),
+        }
+      : undefined,
+    loadDifference: buildOwnerLoadDifference(currentOwner, busiestOwner, comparedOwner),
+    focusOrder: buildOwnerLoadFocusOrder(item, currentOwner, comparedOwner),
+  }
+}
+
+function emptyOwnerLoadComparisonOwner(
+  ownerRole: string
+): FulfillmentMatrixExceptionQueueItem["ownerLoadComparison"]["currentOwner"] {
+  const owner = emptySupervisorWorkloadOwner(ownerRole)
+
+  return {
+    ownerRole: owner.ownerRole,
+    itemCount: owner.itemCount,
+    highPriorityCount: owner.highPriorityCount,
+    escalationCount: owner.escalationCount,
+    impactHours: owner.impactHours,
+    focus: owner.focus,
+  }
+}
+
+function buildOwnerLoadComparedReason(
+  currentOwner: FulfillmentSupervisorDailyWorkloadOwner,
+  comparedOwner: FulfillmentSupervisorDailyWorkloadOwner
+) {
+  const itemDiff = Math.abs(currentOwner.itemCount - comparedOwner.itemCount)
+  const impactDiff = formatLoadImpactDifference(currentOwner.impactHours, comparedOwner.impactHours)
+  const itemDirection = currentOwner.itemCount >= comparedOwner.itemCount ? "少" : "多"
+  const impactDirection = currentOwner.impactHours >= comparedOwner.impactHours ? "少" : "多"
+
+  return `比${currentOwner.ownerRole}${itemDirection} ${itemDiff} 项，影响${impactDirection} ${impactDiff}。`
+}
+
+function buildOwnerLoadDifference(
+  currentOwner: FulfillmentSupervisorDailyWorkloadOwner,
+  busiestOwner: FulfillmentSupervisorDailyWorkloadOwner,
+  comparedOwner?: FulfillmentSupervisorDailyWorkloadOwner
+) {
+  if (!comparedOwner) {
+    return `${currentOwner.ownerRole}是当前唯一待关注角色。`
+  }
+
+  const itemDiff = Math.abs(currentOwner.itemCount - comparedOwner.itemCount)
+  const impactDiff = formatLoadImpactDifference(currentOwner.impactHours, comparedOwner.impactHours)
+
+  if (currentOwner.ownerRole === busiestOwner.ownerRole) {
+    return `${currentOwner.ownerRole}是当前最高负载角色，比${comparedOwner.ownerRole}多 ${itemDiff} 项，影响多 ${impactDiff}。`
+  }
+
+  return `${busiestOwner.ownerRole}是当前最高负载角色，${currentOwner.ownerRole}比${busiestOwner.ownerRole}少 ${itemDiff} 项。`
+}
+
+function buildOwnerLoadFocusOrder(
+  item: FulfillmentMatrixExceptionQueueItem,
+  currentOwner: FulfillmentSupervisorDailyWorkloadOwner,
+  comparedOwner?: FulfillmentSupervisorDailyWorkloadOwner
+) {
+  if (item.type === "登录缺口" && comparedOwner?.ownerRole === "数据管理员") {
+    return `先由${currentOwner.ownerRole}补${item.employeeName}到岗说明，再让${comparedOwner.ownerRole}核对原始登录记录。`
+  }
+
+  if (item.type === "状态不一致") {
+    return `先由${currentOwner.ownerRole}确认${item.employeeName}状态安排，再回看相关轨道证据。`
+  }
+
+  return `先由${currentOwner.ownerRole}处理${item.employeeName}当前异常，再按队列顺序查看下一项。`
+}
+
+function formatLoadImpactDifference(a: number, b: number) {
+  return `${Math.abs(roundHours(a - b)).toFixed(2)}h`
 }
 
 function buildFollowUpCurrentGapSummary(

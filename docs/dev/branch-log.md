@@ -1782,6 +1782,23 @@
 - push_decision: `ask PM after verified local commit`
 - blocked_reason: `N/A`
 
+### F298-F300 Exception Owner Load Comparison
+
+- branch_name: `codex/f265-exception-data-quality-links`
+- base_main_commit: `acb2fd3`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose selected exception owner load comparison in the existing fulfillment calendar group-day exception panel, including current owner load, busiest owner, compared owner, load difference, and focus order.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-day route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `ownerLoadComparison` and missing owner load comparison card; target model tests, product UI copy audit, navigation regression, typecheck, browser smoke, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F295-F297 Team Week Risk Distribution
 
 - branch_name: `codex/f265-exception-data-quality-links`

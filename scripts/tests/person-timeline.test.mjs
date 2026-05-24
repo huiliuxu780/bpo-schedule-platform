@@ -39,6 +39,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const teamWeekCardPosition = pageSource.indexOf("{teams.map((team) => (");
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
   const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
+  const ownerLoadPosition = pageSource.indexOf("{selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const titleCount = pageSource.match(/跟进时间线/g)?.length ?? 0;
@@ -48,10 +49,12 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(teamRiskDistributionPosition < teamWeekCardPosition);
   assert.ok(followUpPosition >= 0);
   assert.ok(comparisonPosition >= 0);
+  assert.ok(ownerLoadPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(followUpPosition < riskDigestPosition);
   assert.ok(comparisonPosition < riskDigestPosition);
+  assert.ok(ownerLoadPosition < riskDigestPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.equal(titleCount, 1);
 });
@@ -794,6 +797,29 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     },
     mainDifference: "当前异常优先级更高；对比异常影响时长多 4.65h，但尚未达到升级关注。",
     focusHint: "先补王敏到岗说明，再回看刘晨培训状态是否符合在线要求。",
+  });
+  assert.deepEqual(lateLogin.ownerLoadComparison, {
+    currentOwner: {
+      ownerRole: "现场主管",
+      itemCount: 2,
+      highPriorityCount: 1,
+      escalationCount: 1,
+      impactHours: 5.35,
+      focus: "补充到岗、培训安排和主管判断材料。",
+    },
+    busiestOwner: {
+      ownerRole: "现场主管",
+      itemCount: 2,
+      reason: "现场主管今日有 2 项待关注，其中 1 项建议升级。",
+    },
+    comparedOwner: {
+      ownerRole: "数据管理员",
+      itemCount: 1,
+      impactHours: 0.35,
+      reason: "比现场主管少 1 项，影响少 5.00h。",
+    },
+    loadDifference: "现场主管是当前最高负载角色，比数据管理员多 1 项，影响多 5.00h。",
+    focusOrder: "先由现场主管补王敏到岗说明，再让数据管理员核对原始登录记录。",
   });
   assert.deepEqual(lateLogin.evidenceSummary, {
     schedule: "排班 SCH-1002-1：早班 09:00-17:00",

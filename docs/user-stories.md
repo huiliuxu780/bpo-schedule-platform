@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US390-US393 - 异常责任人负载对比
+
+```yaml
+stories:
+  - id: US390
+    requirement_ids: [R378]
+    task_ids: [F298]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在选中异常后看到责任人负载对比，以便判断当前异常是否应由当前角色优先处理。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US391
+    requirement_ids: [R379]
+    task_ids: [F299]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望模型返回选中异常责任人、该责任人负载、最高负载责任人、负载差异和建议处理顺序，以便安排当天查看顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US392
+    requirement_ids: [R380]
+    task_ids: [F300]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望责任人负载对比只表达查看和排序口径，以便不误导为已经具备线上流转或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US393
+    requirement_ids: [R381]
+    task_ids: [Q059]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望异常责任人负载对比批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "选中异常后展示责任人负载对比。"
+  - "模型返回选中责任人、最高负载责任人、负载差异和建议处理顺序。"
+  - "页面不出现通知、提交、保存、审批、导出、批量或状态写入入口。"
+  - "`node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US386-US389 - 团队周风险分布
 
 ```yaml

@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R378-R381 - 异常责任人负载对比
+
+```yaml
+requirements:
+  - id: R378
+    module: "履约日历"
+    description: "小组成员单日矩阵需要展示选中异常的责任人负载对比，帮助现场主管判断当前异常由哪个角色承接、该角色当天是否已超负荷。"
+  - id: R379
+    module: "履约日历"
+    description: "小组矩阵模型需要返回选中异常责任人、该责任人负载、最高负载责任人、负载差异和建议处理顺序。"
+  - id: R380
+    module: "履约日历"
+    description: "异常责任人负载对比仅作为查看和排序口径，不提供通知、提交、保存、审批、导出、批量或状态写入能力。"
+  - id: R381
+    module: "质量与交付"
+    description: "异常责任人负载对比完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continuing the supervisor fulfillment closure chain on 2026-05-24"
+submitted_at: "2026-05-24"
+version: "1.0"
+status: "split"
+notes: "本组只做现有履约日历小组成员单日矩阵的本地前端查看链路和模型测试；不新增页面、导航、数据库、真实接口、权限、通知、提交、保存、审批、导出、批量、自动排班、生产公式、结算规则或 charge factor。"
+```
+
 ### R374-R377 - 团队周风险分布
 
 ```yaml

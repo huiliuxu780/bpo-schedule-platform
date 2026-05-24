@@ -613,6 +613,7 @@ function MatrixExceptionPanel({
     <aside className="grid gap-3 rounded-lg border p-3">
       {selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}
       {selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}
+      {selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <ReviewLoadSummaryPanel summary={matrix.reviewLoadSummary} />
@@ -1113,6 +1114,49 @@ function SelectedExceptionComparisonCard({
       ) : (
         <div className="text-xs text-muted-foreground">{comparison.mainDifference}</div>
       )}
+    </div>
+  )
+}
+
+function SelectedExceptionOwnerLoadComparisonCard({
+  selected,
+}: {
+  selected: FulfillmentMatrixExceptionQueueItem
+}) {
+  const comparison = selected.ownerLoadComparison
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">责任人负载对比</div>
+          <div className="text-xs text-muted-foreground">{comparison.loadDifference}</div>
+        </div>
+        <Badge variant={comparison.currentOwner.escalationCount > 0 ? "destructive" : "outline"}>
+          {comparison.currentOwner.ownerRole}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="当前责任人" value={`${comparison.currentOwner.itemCount} 项`} />
+        <SummaryMetric label="建议升级" value={`${comparison.currentOwner.escalationCount} 项`} />
+      </div>
+      <div className="rounded-md border bg-muted/30 p-2 text-xs">
+        <div className="font-medium text-foreground">{comparison.busiestOwner.ownerRole}</div>
+        <div className="mt-1 text-muted-foreground">{comparison.busiestOwner.reason}</div>
+      </div>
+      {comparison.comparedOwner ? (
+        <div className="rounded-md border p-2 text-xs">
+          <div className="font-medium text-foreground">对比角色：{comparison.comparedOwner.ownerRole}</div>
+          <div className="mt-1 text-muted-foreground">
+            {comparison.comparedOwner.itemCount} 项 / 影响 {comparison.comparedOwner.impactHours.toFixed(2)}h
+          </div>
+          <div className="mt-1 text-muted-foreground">{comparison.comparedOwner.reason}</div>
+        </div>
+      ) : null}
+      <div className="rounded-md border p-2 text-xs text-muted-foreground">
+        <span className="font-medium text-foreground">处理顺序：</span>
+        {comparison.focusOrder}
+      </div>
     </div>
   )
 }
