@@ -38,6 +38,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const teamRiskDistributionPosition = pageSource.indexOf("<TeamWeekRiskDistributionPanel team={teams[0]} />");
   const teamWeekCardPosition = pageSource.indexOf("{teams.map((team) => (");
   const supervisorWeeklyReviewQueuePosition = pageSource.indexOf("<SupervisorWeeklyReviewQueuePanel team={team} />");
+  const supervisorWeeklyHandoffPosition = pageSource.indexOf("<SupervisorWeeklyHandoffSummaryPanel team={team} />");
   const groupRiskSummaryPosition = pageSource.indexOf("<GroupRiskSummaryPanel team={team} />");
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
   const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
@@ -54,9 +55,12 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(teamRiskDistributionPosition >= 0);
   assert.ok(teamWeekCardPosition >= 0);
   assert.ok(supervisorWeeklyReviewQueuePosition >= 0);
+  assert.ok(supervisorWeeklyHandoffPosition >= 0);
   assert.ok(groupRiskSummaryPosition >= 0);
   assert.ok(teamRiskDistributionPosition < teamWeekCardPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < groupRiskSummaryPosition);
+  assert.ok(supervisorWeeklyReviewQueuePosition < supervisorWeeklyHandoffPosition);
+  assert.ok(supervisorWeeklyHandoffPosition < groupRiskSummaryPosition);
   assert.ok(followUpPosition >= 0);
   assert.ok(comparisonPosition >= 0);
   assert.ok(ownerLoadPosition >= 0);
@@ -420,6 +424,68 @@ test("fulfillment calendar aggregates team week metrics", () => {
         anomalyPeople: 0,
         reviewTarget: "A-1005 赵岩",
         reason: "缺口 1 人 / 异常 0 人，建议先看 A-1005 赵岩。",
+      },
+    ],
+  });
+  assert.deepEqual(shanghaiTeam.supervisorWeeklyHandoffSummary, {
+    headline: "本周需要向现场主管交接 2 项异常，开放问题 4 个。",
+    totalItems: 2,
+    openQuestionCount: 4,
+    escalationItems: 1,
+    topRecipient: {
+      recipient: "现场主管",
+      itemCount: 2,
+      reason: "现场主管承接 2 项异常，开放问题 4 个。",
+    },
+    nextItem: {
+      key: "上海职场||博西客服||供应商 A::2026-05-11::A-1002::late_login",
+      groupId: "上海职场||博西客服||供应商 A",
+      groupName: "供应商 A",
+      date: "2026-05-11",
+      label: "周一 05/11",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      recipient: "现场主管",
+      nextTouchpoint: "班前到岗核对记录",
+      reason: "需要升级 / 2 个待核对问题 / 班前到岗核对记录",
+    },
+    recipients: [
+      {
+        recipient: "现场主管",
+        itemCount: 2,
+        openQuestionCount: 4,
+        escalationCount: 1,
+        nextTouchpoint: "班前到岗核对记录",
+        focus: "本周集中说明班前到岗核对记录，避免跨天重复追问。",
+      },
+    ],
+    items: [
+      {
+        key: "上海职场||博西客服||供应商 A::2026-05-11::A-1002::late_login",
+        groupId: "上海职场||博西客服||供应商 A",
+        groupName: "供应商 A",
+        date: "2026-05-11",
+        label: "周一 05/11",
+        employeeId: "A-1002",
+        employeeName: "王敏",
+        title: "迟到 21 分钟",
+        recipient: "现场主管",
+        nextTouchpoint: "班前到岗核对记录",
+        reason: "需要升级 / 2 个待核对问题 / 班前到岗核对记录",
+      },
+      {
+        key: "上海职场||博西客服||供应商 A::2026-05-11::A-1001::no_login",
+        groupId: "上海职场||博西客服||供应商 A",
+        groupName: "供应商 A",
+        date: "2026-05-11",
+        label: "周一 05/11",
+        employeeId: "A-1001",
+        employeeName: "刘晨",
+        title: "午后状态缺登录切片",
+        recipient: "现场主管",
+        nextTouchpoint: "状态轨道复核记录",
+        reason: "接近超时 / 2 个待核对问题 / 状态轨道复核记录",
       },
     ],
   });

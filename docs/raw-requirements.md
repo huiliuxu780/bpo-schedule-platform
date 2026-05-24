@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R406-R409 - 周度主管交接摘要
+
+```yaml
+requirements:
+  - id: R406
+    module: "履约日历"
+    description: "团队下钻后的小组周视图需要展示周度主管交接摘要，帮助现场主管在本周复核队列之外看到需要向谁交接、仍有多少开放问题和升级关注。"
+  - id: R407
+    module: "履约日历"
+    description: "周度主管交接摘要需要包含交接项数、开放问题数、升级项数、主要交接对象、下一查看项、交接触点和对应小组日期下钻入口。"
+  - id: R408
+    module: "履约日历"
+    description: "周度主管交接摘要只能表达查看和交接准备口径，不提供通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入能力。"
+  - id: R409
+    module: "质量与交付"
+    description: "周度主管交接摘要完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组周视图补充本地前端只读交接摘要；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R402-R405 - 闭环证据下钻解释
 
 ```yaml

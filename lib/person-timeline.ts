@@ -198,6 +198,44 @@ export type FulfillmentSupervisorWeeklyReviewQueue = {
   items: FulfillmentSupervisorWeeklyReviewQueueItem[]
 }
 
+export type FulfillmentSupervisorWeeklyHandoffSummaryItem = {
+  key: string
+  groupId: string
+  groupName: string
+  date: string
+  label: string
+  employeeId: string
+  employeeName: string
+  title: string
+  recipient: string
+  nextTouchpoint: string
+  reason: string
+}
+
+export type FulfillmentSupervisorWeeklyHandoffRecipient = {
+  recipient: string
+  itemCount: number
+  openQuestionCount: number
+  escalationCount: number
+  nextTouchpoint: string
+  focus: string
+}
+
+export type FulfillmentSupervisorWeeklyHandoffSummary = {
+  headline: string
+  totalItems: number
+  openQuestionCount: number
+  escalationItems: number
+  topRecipient: {
+    recipient: string
+    itemCount: number
+    reason: string
+  }
+  nextItem?: FulfillmentSupervisorWeeklyHandoffSummaryItem
+  recipients: FulfillmentSupervisorWeeklyHandoffRecipient[]
+  items: FulfillmentSupervisorWeeklyHandoffSummaryItem[]
+}
+
 export type FulfillmentTeamWeek = {
   id: string
   workplace: string
@@ -213,6 +251,7 @@ export type FulfillmentTeamWeek = {
   }
   weekRiskDistribution: FulfillmentTeamWeekRiskDistribution
   supervisorWeeklyReviewQueue: FulfillmentSupervisorWeeklyReviewQueue
+  supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
   groups: FulfillmentGroupWeek[]
 }
 
@@ -1066,6 +1105,7 @@ export function getFulfillmentCalendar(
     ...team,
     weekRiskDistribution: buildTeamWeekRiskDistribution(team, index + 1, teamsWithoutDistribution.length),
     supervisorWeeklyReviewQueue: buildSupervisorWeeklyReviewQueue(team),
+    supervisorWeeklyHandoffSummary: buildSupervisorWeeklyHandoffSummary(team),
   }))
 
   const summary = summarizeDayMetrics(teams.flatMap((team) => team.days))
@@ -1098,6 +1138,30 @@ export function getFulfillmentGroup(
   return team?.groups.find((group) => group.id === decodeScopeId(groupId))
 }
 
+function buildFulfillmentMatrixMembersForDate(
+  members: PersonTimeline[],
+  date: string
+): FulfillmentMatrixMember[] {
+  return members.map((member) => {
+    const tracks = filterTracksByDate(member, date)
+    const exceptionExplanations = buildExceptionExplanations(member, date, tracks)
+
+    return {
+      employeeId: member.employeeId,
+      employeeName: member.employeeName,
+      workplace: member.workplace,
+      supplier: member.supplier,
+      project: member.project,
+      tracks,
+      anomalies: member.anomalies.filter((anomaly) => anomaly.date === date),
+      exceptionExplanations,
+      scheduledHours: sumEvents(tracks.schedule),
+      loginHours: sumEvents(tracks.login),
+      statusHours: sumEvents(tracks.status),
+    }
+  })
+}
+
 export function getFulfillmentMatrix(
   teamId: string | undefined,
   groupId: string | undefined,
@@ -1116,23 +1180,7 @@ export function getFulfillmentMatrix(
   }
 
   const selectedDate = date && group.days.some((day) => day.date === date) ? date : weekStart
-  const members = group.members
-    .map((member) => {
-      const dailyView = getPersonTimelineDailyView(member, selectedDate)
-      return {
-        employeeId: member.employeeId,
-        employeeName: member.employeeName,
-        workplace: member.workplace,
-        supplier: member.supplier,
-        project: member.project,
-        tracks: dailyView.tracks,
-        anomalies: dailyView.anomalies,
-        exceptionExplanations: dailyView.exceptionExplanations,
-        scheduledHours: dailyView.scheduledHours,
-        loginHours: dailyView.loginHours,
-        statusHours: dailyView.statusHours,
-      }
-    })
+  const members = buildFulfillmentMatrixMembersForDate(group.members, selectedDate)
     .sort((a, b) => {
       const riskA = Number(a.scheduledHours > a.loginHours) + a.anomalies.length
       const riskB = Number(b.scheduledHours > b.loginHours) + b.anomalies.length
@@ -3756,7 +3804,10 @@ function buildTeamWeekRiskSummary(groups: FulfillmentGroupWeek[]) {
 }
 
 function buildTeamWeekRiskDistribution(
-  team: Omit<FulfillmentTeamWeek, "weekRiskDistribution" | "supervisorWeeklyReviewQueue">,
+  team: Omit<
+    FulfillmentTeamWeek,
+    "weekRiskDistribution" | "supervisorWeeklyReviewQueue" | "supervisorWeeklyHandoffSummary"
+  >,
   rankIndex: number,
   teamCount: number
 ): FulfillmentTeamWeekRiskDistribution {
@@ -3818,7 +3869,10 @@ function buildTeamWeekRiskDistribution(
 }
 
 function buildSupervisorWeeklyReviewQueue(
-  team: Omit<FulfillmentTeamWeek, "weekRiskDistribution" | "supervisorWeeklyReviewQueue">
+  team: Omit<
+    FulfillmentTeamWeek,
+    "weekRiskDistribution" | "supervisorWeeklyReviewQueue" | "supervisorWeeklyHandoffSummary"
+  >
 ): FulfillmentSupervisorWeeklyReviewQueue {
   const items = team.groups
     .flatMap((group) =>
@@ -3863,6 +3917,131 @@ function buildSupervisorWeeklyReviewQueue(
     totalAnomalyPeople: items.reduce((total, item) => total + item.anomalyPeople, 0),
     topItem,
     items,
+  }
+}
+
+function buildSupervisorWeeklyHandoffSummary(
+  team: Omit<
+    FulfillmentTeamWeek,
+    "weekRiskDistribution" | "supervisorWeeklyReviewQueue" | "supervisorWeeklyHandoffSummary"
+  >
+): FulfillmentSupervisorWeeklyHandoffSummary {
+  const items = team.groups
+    .flatMap((group) =>
+      group.days.flatMap((day) => {
+        const members = buildFulfillmentMatrixMembersForDate(group.members, day.date)
+        const queue = buildFulfillmentMatrixExceptionQueue(members, day.date, group.members)
+
+        return queue.map((item) => ({
+          key: `${group.id}::${day.date}::${item.key}`,
+          groupId: group.id,
+          groupName: group.supplier,
+          date: day.date,
+          label: `${day.weekday} ${day.label}`,
+          employeeId: item.employeeId,
+          employeeName: item.employeeName,
+          title: item.title,
+          recipient: item.handoffSummary.recipient,
+          nextTouchpoint: item.handoffSummary.nextTouchpoint,
+          reason: `${item.agingEscalation.level} / ${item.handoffSummary.openQuestions.length} 个待核对问题 / ${item.handoffSummary.nextTouchpoint}`,
+          openQuestionCount: item.handoffSummary.openQuestions.length,
+          escalationCount: item.agingEscalation.level === "需要升级" ? 1 : 0,
+        }))
+      })
+    )
+    .sort(
+      (a, b) =>
+        b.escalationCount - a.escalationCount ||
+        b.openQuestionCount - a.openQuestionCount ||
+        a.date.localeCompare(b.date) ||
+        a.employeeId.localeCompare(b.employeeId)
+    )
+  const recipients = buildSupervisorWeeklyHandoffRecipients(items)
+  const topRecipient = recipients[0]
+  const totalItems = items.length
+  const openQuestionCount = items.reduce((total, item) => total + item.openQuestionCount, 0)
+  const escalationItems = items.reduce((total, item) => total + item.escalationCount, 0)
+
+  return {
+    headline:
+      totalItems > 0
+        ? `本周需要向${topRecipient?.recipient ?? "现场主管"}交接 ${totalItems} 项异常，开放问题 ${openQuestionCount} 个。`
+        : "本周暂无需要交接的异常。",
+    totalItems,
+    openQuestionCount,
+    escalationItems,
+    topRecipient: {
+      recipient: topRecipient?.recipient ?? "现场主管",
+      itemCount: topRecipient?.itemCount ?? 0,
+      reason: `${topRecipient?.recipient ?? "现场主管"}承接 ${topRecipient?.itemCount ?? 0} 项异常，开放问题 ${
+        topRecipient?.openQuestionCount ?? 0
+      } 个。`,
+    },
+    nextItem: items[0] ? stripWeeklyHandoffItemInternalFields(items[0]) : undefined,
+    recipients,
+    items: items.map(stripWeeklyHandoffItemInternalFields),
+  }
+}
+
+function buildSupervisorWeeklyHandoffRecipients(
+  items: Array<
+    FulfillmentSupervisorWeeklyHandoffSummaryItem & {
+      openQuestionCount: number
+      escalationCount: number
+    }
+  >
+): FulfillmentSupervisorWeeklyHandoffRecipient[] {
+  const recipients = new Map<string, FulfillmentSupervisorWeeklyHandoffRecipient>()
+
+  for (const item of items) {
+    const current =
+      recipients.get(item.recipient) ??
+      {
+        recipient: item.recipient,
+        itemCount: 0,
+        openQuestionCount: 0,
+        escalationCount: 0,
+        nextTouchpoint: item.nextTouchpoint,
+        focus: `本周集中说明${item.nextTouchpoint}，避免跨天重复追问。`,
+      }
+
+    current.itemCount += 1
+    current.openQuestionCount += item.openQuestionCount
+    current.escalationCount += item.escalationCount
+    if (!current.nextTouchpoint) {
+      current.nextTouchpoint = item.nextTouchpoint
+      current.focus = `本周集中说明${item.nextTouchpoint}，避免跨天重复追问。`
+    }
+    recipients.set(item.recipient, current)
+  }
+
+  return [...recipients.values()].sort(
+    (a, b) =>
+      b.itemCount - a.itemCount ||
+      b.escalationCount - a.escalationCount ||
+      b.openQuestionCount - a.openQuestionCount ||
+      a.recipient.localeCompare(b.recipient)
+  )
+}
+
+function stripWeeklyHandoffItemInternalFields(
+  item: FulfillmentSupervisorWeeklyHandoffSummaryItem & {
+    openQuestionCount: number
+    escalationCount: number
+  }
+): FulfillmentSupervisorWeeklyHandoffSummaryItem {
+  return {
+    key: item.key,
+    groupId: item.groupId,
+    groupName: item.groupName,
+    date: item.date,
+    label: item.label,
+    employeeId: item.employeeId,
+    employeeName: item.employeeName,
+    title: item.title,
+    recipient: item.recipient,
+    nextTouchpoint: item.nextTouchpoint,
+    reason: item.reason,
   }
 }
 

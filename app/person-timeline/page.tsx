@@ -270,6 +270,7 @@ function GroupWeekSection({
         </div>
         <aside className="grid content-start gap-3">
           <SupervisorWeeklyReviewQueuePanel team={team} />
+          <SupervisorWeeklyHandoffSummaryPanel team={team} />
           <GroupRiskSummaryPanel team={team} />
         </aside>
       </CardContent>
@@ -319,6 +320,65 @@ function SupervisorWeeklyReviewQueuePanel({ team }: { team: FulfillmentTeamWeek 
               <SummaryMetric label="异常人数" value={`${item.anomalyPeople}`} />
             </div>
             <div className="text-muted-foreground">建议先看：{item.reviewTarget}</div>
+            <div className="text-muted-foreground">{item.reason}</div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SupervisorWeeklyHandoffSummaryPanel({ team }: { team: FulfillmentTeamWeek }) {
+  const summary = team.supervisorWeeklyHandoffSummary
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">本周交接摘要</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.escalationItems > 0 ? "destructive" : "outline"}>
+          升级 {summary.escalationItems}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="交接项" value={`${summary.totalItems}`} />
+        <SummaryMetric label="开放问题" value={`${summary.openQuestionCount}`} />
+        <SummaryMetric label="交接对象" value={summary.topRecipient.recipient} />
+        <SummaryMetric label="对象事项" value={`${summary.topRecipient.itemCount}`} />
+      </div>
+      <div className="grid gap-2">
+        {summary.recipients.map((recipient) => (
+          <div key={recipient.recipient} className="grid gap-1 rounded-md border bg-muted/30 p-2 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{recipient.recipient}</span>
+              <span className="text-muted-foreground">{recipient.itemCount} 项</span>
+            </div>
+            <div className="text-muted-foreground">开放问题 {recipient.openQuestionCount} 个</div>
+            <div className="text-muted-foreground">下一触点：{recipient.nextTouchpoint}</div>
+            <div className="text-muted-foreground">{recipient.focus}</div>
+          </div>
+        ))}
+      </div>
+      <div className="grid gap-2">
+        {summary.items.slice(0, 3).map((item) => (
+          <Link
+            key={item.key}
+            href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+              item.groupId
+            )}&date=${item.date}&queue=all&exception=${encodeScopeId(`${item.employeeId}::${item.key.split("::").at(-1) ?? ""}`)}`}
+            className="grid gap-1 rounded-md border bg-background p-2 text-xs transition-colors hover:bg-muted"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">
+                {item.groupName} / {item.label}
+              </span>
+              <span className="text-muted-foreground">{item.recipient}</span>
+            </div>
+            <div className="text-muted-foreground">
+              {item.employeeId} {item.employeeName} / {item.title}
+            </div>
             <div className="text-muted-foreground">{item.reason}</div>
           </Link>
         ))}

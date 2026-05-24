@@ -19,6 +19,17 @@
 
 ### 2026-05-25
 
+- task_id: `F319-F321/Q066`
+- source_ids:
+  - `R406-R409`
+- story_ids:
+  - `US418-US421`
+- action: 在团队下钻后的小组周视图增加周度主管交接摘要。
+- status: `done`
+- notes: 团队周模型现在包含 `supervisorWeeklyHandoffSummary`；小组周视图右侧展示交接项、开放问题、升级项、主要交接对象、下一触点和小组日期下钻入口。本次不新增页面路由、不新增左侧入口、不新增依赖，不改后端、数据库、真实接口、权限、通知、派单、提交、保存、审批、导出、批量、自动排班或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-25
+
 - task_id: `F316-F318/Q065`
 - source_ids:
   - `R402-R405`

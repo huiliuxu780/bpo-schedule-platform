@@ -29,6 +29,54 @@
 
 ## Stories
 
+### US418-US421 - 周度主管交接摘要
+
+```yaml
+stories:
+  - id: US418
+    requirement_ids: [R406, R407]
+    task_ids: [F319]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到本周交接摘要，以便知道本周哪些异常需要交接给哪个角色。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US419
+    requirement_ids: [R407]
+    task_ids: [F320]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望交接摘要展示开放问题、升级项、下一触点和下钻入口，以便快速回到小组日期矩阵查看证据。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US420
+    requirement_ids: [R408]
+    task_ids: [F321]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望周度交接摘要只表达查看和交接准备，以便不误导为线上通知、派单、审批或写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US421
+    requirement_ids: [R409]
+    task_ids: [Q066]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度主管交接摘要批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "团队下钻后的小组周视图展示本周交接摘要。"
+  - "摘要展示交接项、开放问题、升级项、主要交接对象、下一触点和异常下钻入口。"
+  - "下钻进入对应小组日期矩阵并保留选中异常上下文。"
+  - "页面不出现通知、派单、提交、保存、审批、导出、批量、自动排班或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US414-US417 - 闭环证据下钻解释
 
 ```yaml

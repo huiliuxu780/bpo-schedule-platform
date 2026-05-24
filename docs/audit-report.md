@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-25 - Weekly supervisor handoff summary
+
+#### 结论
+
+- `F319-F321/Q066/US418-US421` 已完成周度主管交接摘要和 QA 收口。
+- 团队周模型新增 `supervisorWeeklyHandoffSummary`，包含交接项数、开放问题数、升级项数、主要交接对象、下一查看项、交接触点和下钻线索。
+- 页面在现有小组周视图右侧展示“本周交接摘要”，不新增入口或页面；交接项只下钻到现有小组日期矩阵。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和交接准备，不代表真实通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `supervisorWeeklyHandoffSummary` 为 `undefined` 且页面缺少本周交接摘要卡，证明测试覆盖新增模型和 UI 位置。
+- TDD 过程中发现并修正周度聚合漏洞：周度交接聚合必须严格按日期过滤，不能使用个人日视图的可用日期回退，否则会把单日异常复制到无轨道日期。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开团队下钻页，新增卡片区域显示“本周交接摘要”“本周需要向现场主管交接 2 项异常，开放问题 4 个。”“交接项”“开放问题”“升级 1”“现场主管”“班前到岗核对记录”“供应商 A”“周一 05/11”“A-1002”“王敏”“迟到 21 分钟”，且卡片区域未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、通知、派单、提交、保存、审批、导出、批量或自动排班。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Closure evidence drill-in
 
 #### 结论
