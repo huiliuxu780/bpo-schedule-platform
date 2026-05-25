@@ -915,6 +915,28 @@ export type FulfillmentSupervisorPrioritySummaryItem = {
   nextView: string
 }
 
+export type FulfillmentHandlingReadinessNarrative = {
+  headline: string
+  readyCount: number
+  blockedCount: number
+  evidenceLineCount: number
+  preparationSteps: string[]
+  leadItem?: FulfillmentHandlingReadinessNarrativeItem
+  items: FulfillmentHandlingReadinessNarrativeItem[]
+}
+
+export type FulfillmentHandlingReadinessNarrativeItem = {
+  key: string
+  employeeId: string
+  employeeName: string
+  title: string
+  readiness: string
+  blockerReason: string
+  evidenceStatus: string
+  impactScope: string
+  nextView: string
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
@@ -935,6 +957,7 @@ export type FulfillmentGroupMatrix = {
   dataQualityExceptionImpact: FulfillmentDataQualityExceptionImpact
   exceptionImpactPriority: FulfillmentExceptionImpactPriority
   supervisorPrioritySummary: FulfillmentSupervisorPrioritySummary
+  handlingReadinessNarrative: FulfillmentHandlingReadinessNarrative
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1392,6 +1415,7 @@ export function getFulfillmentMatrix(
     exceptionClosureReadinessSummary: summarizeExceptionClosureReadiness(exceptionQueue),
     exceptionImpactPriority: summarizeExceptionImpactPriority(exceptionQueue),
     supervisorPrioritySummary: summarizeSupervisorPrioritySummary(exceptionQueue),
+    handlingReadinessNarrative: summarizeHandlingReadinessNarrative(exceptionQueue),
   }
 }
 
@@ -3425,6 +3449,81 @@ function buildSupervisorPriorityHeadline(topFocus?: FulfillmentSupervisorPriorit
   }
 
   return `优先查看${topFocus.employeeName} / ${topFocus.title}：${topFocus.focusReason}。`
+}
+
+function summarizeHandlingReadinessNarrative(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentHandlingReadinessNarrative {
+  const sortedItems = queue
+    .map((item) => buildHandlingReadinessNarrativeItem(item))
+    .sort(
+      (a, b) =>
+        b.blockerCount - a.blockerCount ||
+        escalationLevelRank[b.agingLevel] - escalationLevelRank[a.agingLevel] ||
+        priorityRank[b.priority] - priorityRank[a.priority] ||
+        b.impactHours - a.impactHours ||
+        a.employeeId.localeCompare(b.employeeId)
+    )
+  const items = sortedItems.map((item) => ({
+    key: item.key,
+    employeeId: item.employeeId,
+    employeeName: item.employeeName,
+    title: item.title,
+    readiness: item.readiness,
+    blockerReason: item.blockerReason,
+    evidenceStatus: item.evidenceStatus,
+    impactScope: item.impactScope,
+    nextView: item.nextView,
+  }))
+  const leadItem = items[0]
+
+  return {
+    headline: buildHandlingReadinessHeadline(leadItem),
+    readyCount: queue.reduce((total, item) => total + item.closureChecklist.readyCount, 0),
+    blockedCount: queue.reduce((total, item) => total + item.closureChecklist.missingCount, 0),
+    evidenceLineCount: queue.length * 3,
+    preparationSteps: leadItem
+      ? [
+          `${leadItem.blockerReason.replace("缺少", "先补")}`,
+          `再${queue[0]?.handlingGuide.priorityChecks.join(" / ") ?? "核对现有证据"}。`,
+          `最后回看影响范围：${leadItem.impactScope}。`,
+        ]
+      : [],
+    leadItem,
+    items,
+  }
+}
+
+function buildHandlingReadinessNarrativeItem(item: FulfillmentMatrixExceptionQueueItem) {
+  return {
+    key: item.key,
+    employeeId: item.employeeId,
+    employeeName: item.employeeName,
+    title: item.title,
+    readiness: `已齐 ${item.closureChecklist.readyCount} 项 / 待补 ${item.closureChecklist.missingCount} 项`,
+    blockerReason: `缺少${item.handlingGuide.requiredInfo.join("、")}。`,
+    evidenceStatus: [
+      item.evidenceSummary.schedule,
+      item.evidenceSummary.login,
+      item.evidenceSummary.status,
+    ].join(" / "),
+    impactScope: item.dataQualityImpactScope.impactedObjects.join(" / "),
+    nextView: `先查看${item.employeeName}的${item.handlingGuide.requiredInfo[0]}和 ${item.detailDate} 个人三轨详情。`,
+    blockerCount: item.closureChecklist.missingCount,
+    agingLevel: item.agingEscalation.level,
+    priority: item.priority,
+    impactHours: item.impactHours,
+  }
+}
+
+function buildHandlingReadinessHeadline(leadItem?: FulfillmentHandlingReadinessNarrativeItem) {
+  if (!leadItem) {
+    return "当前小组暂无需要整理的处理准备叙事。"
+  }
+
+  const missingText = leadItem.blockerReason.replace("缺少", "缺").replace("。", "")
+
+  return `${leadItem.employeeName} / ${leadItem.title}还${missingText}，先补材料再判断。`
 }
 
 const closureReadinessLabel: Record<

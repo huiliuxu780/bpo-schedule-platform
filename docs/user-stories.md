@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US446-US449 - 处理准备叙事
+
+```yaml
+stories:
+  - id: US446
+    requirement_ids: [R434, R435]
+    task_ids: [F340]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组当日异常面板看到处理准备叙事，以便快速读懂当前异常闭环前还缺什么。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US447
+    requirement_ids: [R435]
+    task_ids: [F341]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望处理准备叙事展示主线说明、前置条件、阻塞原因、证据状态和下一查看点，以便稳定组织线下复核。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US448
+    requirement_ids: [R436]
+    task_ids: [F342]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望处理准备叙事只表达查看和准备口径，以便不误导为真实提交、保存、派单、审批或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US449
+    requirement_ids: [R437]
+    task_ids: [Q073]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望处理准备叙事批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板展示处理准备叙事。"
+  - "叙事展示主线说明、前置条件、阻塞原因、证据状态、影响范围和下一查看点。"
+  - "叙事不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US442-US445 - 主管优先级总览
 
 ```yaml

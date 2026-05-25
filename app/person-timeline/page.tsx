@@ -845,6 +845,7 @@ function MatrixExceptionPanel({
       <DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />
       <ExceptionImpactPriorityPanel priority={matrix.exceptionImpactPriority} />
       <SupervisorPrioritySummaryPanel summary={matrix.supervisorPrioritySummary} />
+      <HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
@@ -1661,6 +1662,69 @@ function SupervisorPrioritySummaryPanel({
       ) : (
         <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
           当前小组暂无主管优先级排序项。
+        </div>
+      )}
+    </div>
+  )
+}
+
+function HandlingReadinessNarrativePanel({
+  narrative,
+}: {
+  narrative: FulfillmentGroupMatrix["handlingReadinessNarrative"]
+}) {
+  const leadItem = narrative.leadItem
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">处理准备叙事</div>
+          <div className="text-xs text-muted-foreground">{narrative.headline}</div>
+        </div>
+        <Badge variant={narrative.blockedCount > 0 ? "destructive" : "outline"}>
+          待补 {narrative.blockedCount} 项
+        </Badge>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        <SummaryMetric label="已齐" value={`${narrative.readyCount} 项`} />
+        <SummaryMetric label="证据线" value={`${narrative.evidenceLineCount} 条`} />
+        <SummaryMetric label="叙事项" value={`${narrative.items.length} 项`} />
+      </div>
+      {leadItem ? (
+        <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <div>
+            <div className="font-medium text-foreground">
+              {leadItem.employeeId} {leadItem.employeeName} / {leadItem.title}
+            </div>
+            <div className="mt-1 text-muted-foreground">{leadItem.readiness}</div>
+          </div>
+          <div className="text-muted-foreground">{leadItem.blockerReason}</div>
+          <div className="text-muted-foreground">证据状态：{leadItem.evidenceStatus}</div>
+          <div className="text-muted-foreground">影响范围：{leadItem.impactScope}</div>
+          <div className="text-muted-foreground">{leadItem.nextView}</div>
+          <div className="grid gap-1">
+            {narrative.preparationSteps.map((step, index) => (
+              <div key={step} className="rounded-md border bg-background p-2">
+                <span className="font-medium text-foreground">准备 {index + 1}：</span>
+                <span className="text-muted-foreground">{step}</span>
+              </div>
+            ))}
+          </div>
+          <div className="grid gap-1">
+            {narrative.items.slice(0, 2).map((item, index) => (
+              <div key={item.key} className="rounded-md border bg-background p-2">
+                <div className="font-medium text-foreground">
+                  第 {index + 1} 条：{item.employeeName} / {item.title}
+                </div>
+                <div className="mt-1 text-muted-foreground">{item.blockerReason}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          当前小组暂无需要整理的处理准备叙事。
         </div>
       )}
     </div>

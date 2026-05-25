@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R434-R437 - 处理准备叙事
+
+```yaml
+requirements:
+  - id: R434
+    module: "履约日历"
+    description: "小组当日异常面板需要展示处理准备叙事，帮助现场主管快速读懂当前异常闭环前还缺什么。"
+  - id: R435
+    module: "履约日历"
+    description: "处理准备叙事需要包含主线说明、前置条件、阻塞原因、证据状态、影响范围和下一查看点。"
+  - id: R436
+    module: "履约日历"
+    description: "处理准备叙事只能表达查看和准备口径，不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或状态写入能力。"
+  - id: R437
+    module: "质量与交付"
+    description: "处理准备叙事完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested fast continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读处理准备叙事；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R430-R433 - 主管优先级总览
 
 ```yaml

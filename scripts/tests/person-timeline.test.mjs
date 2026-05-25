@@ -50,6 +50,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const dataQualityImpactPosition = pageSource.indexOf("<DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />");
   const impactPriorityPosition = pageSource.indexOf("<ExceptionImpactPriorityPanel priority={matrix.exceptionImpactPriority} />");
   const supervisorPriorityPosition = pageSource.indexOf("<SupervisorPrioritySummaryPanel summary={matrix.supervisorPrioritySummary} />");
+  const handlingReadinessPosition = pageSource.indexOf("<HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
@@ -81,6 +82,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(dataQualityImpactPosition >= 0);
   assert.ok(impactPriorityPosition >= 0);
   assert.ok(supervisorPriorityPosition >= 0);
+  assert.ok(handlingReadinessPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(causeSplitPosition >= 0);
@@ -95,7 +97,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(reviewOutcomePreviewPosition < dataQualityImpactPosition);
   assert.ok(dataQualityImpactPosition < impactPriorityPosition);
   assert.ok(impactPriorityPosition < supervisorPriorityPosition);
-  assert.ok(supervisorPriorityPosition < trendPosition);
+  assert.ok(supervisorPriorityPosition < handlingReadinessPosition);
+  assert.ok(handlingReadinessPosition < trendPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.ok(riskDigestPosition < causeSplitPosition);
   assert.ok(causeSplitPosition < reviewLoadPosition);
@@ -983,6 +986,55 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         focusReason: "中优 / 接近超时 / 待补 2 项 / 影响 5.00h",
         impactScope: "刘晨 / 状态轨道 / 2026-05-11 小组矩阵",
         nextView: "先核对培训安排说明、在线要求确认、主管复核结论。",
+      },
+    ],
+  });
+  assert.deepEqual(matrix.handlingReadinessNarrative, {
+    headline: "王敏 / 迟到 21 分钟还缺到岗说明、迟到或漏登原因、现场主管确认口径，先补材料再判断。",
+    readyCount: 5,
+    blockedCount: 4,
+    evidenceLineCount: 6,
+    preparationSteps: [
+      "先补到岗说明、迟到或漏登原因、现场主管确认口径。",
+      "再核对排班开始时间 09:00 / 核对登录开始时间 09:21 / 确认员工实际到岗时间。",
+      "最后回看影响范围：王敏 / 早班 / 2026-05-11 小组矩阵。",
+    ],
+    leadItem: {
+      key: "A-1002::late_login",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      readiness: "已齐 2 项 / 待补 2 项",
+      blockerReason: "缺少到岗说明、迟到或漏登原因、现场主管确认口径。",
+      evidenceStatus:
+        "排班 SCH-1002-1：早班 09:00-17:00 / 登录 LOG-1002-1：CORN 登录 09:21-17:00 / 状态轨道：无命中记录",
+      impactScope: "王敏 / 早班 / 2026-05-11 小组矩阵",
+      nextView: "先查看王敏的到岗说明和 2026-05-11 个人三轨详情。",
+    },
+    items: [
+      {
+        key: "A-1002::late_login",
+        employeeId: "A-1002",
+        employeeName: "王敏",
+        title: "迟到 21 分钟",
+        readiness: "已齐 2 项 / 待补 2 项",
+        blockerReason: "缺少到岗说明、迟到或漏登原因、现场主管确认口径。",
+        evidenceStatus:
+          "排班 SCH-1002-1：早班 09:00-17:00 / 登录 LOG-1002-1：CORN 登录 09:21-17:00 / 状态轨道：无命中记录",
+        impactScope: "王敏 / 早班 / 2026-05-11 小组矩阵",
+        nextView: "先查看王敏的到岗说明和 2026-05-11 个人三轨详情。",
+      },
+      {
+        key: "A-1001::no_login",
+        employeeId: "A-1001",
+        employeeName: "刘晨",
+        title: "午后状态缺登录切片",
+        readiness: "已齐 3 项 / 待补 2 项",
+        blockerReason: "缺少培训安排说明、在线要求确认、主管复核结论。",
+        evidenceStatus:
+          "排班 SCH-1001-2：午后班 13:00-18:00 / 登录 LOG-1001-1：CORN 登录 09:02-18:00 / 状态 STA-1001-2：培训 13:00-18:00",
+        impactScope: "刘晨 / 状态轨道 / 2026-05-11 小组矩阵",
+        nextView: "先查看刘晨的培训安排说明和 2026-05-11 个人三轨详情。",
       },
     ],
   });

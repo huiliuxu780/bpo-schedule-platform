@@ -126,6 +126,7 @@ Current invariants:
 - `F331-F333/Q070` completed a data quality exception impact slice: the fulfillment calendar group-day exception panel shows which data quality issues affect current exceptions, impacted exception count, people, hours, representative exceptions, and quality detail links. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F334-F336/Q071` completed an exception impact priority slice: the fulfillment calendar group-day exception panel shows top exception, impacted objects, impacted comparisons, impact hours, blocker count, priority reason, and ranked items. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F337-F339/Q072` completed a supervisor priority summary slice: the fulfillment calendar group-day exception panel shows top supervisor focus, priority reasons, high-priority count, blocked count, escalation count, impact hours, impact scope, and ordered review items. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F340-F342/Q073` completed a handling readiness narrative slice: the fulfillment calendar group-day exception panel shows a handling-prep narrative, readiness counts, missing blockers, evidence status, preparation steps, impact scope, and narrative items. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

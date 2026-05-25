@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Handling readiness narrative
+
+#### 结论
+
+- `F340-F342/Q073/US446-US449` 已完成处理准备叙事和 QA 收口。
+- 小组矩阵新增 `handlingReadinessNarrative`，基于当前异常队列已有处理指引、闭环清单、证据摘要和影响范围派生处理前置说明。
+- 页面在现有小组当日异常侧栏展示“处理准备叙事”，位于主管优先级总览之后、风险趋势之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和处理准备说明，不代表真实复核结论写入、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `handlingReadinessNarrative` 为 `undefined`；页面源序测试随后失败于缺少“处理准备叙事”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组当日矩阵并选中 `A-1002::late_login`，页面显示“处理准备叙事”“王敏 / 迟到 21 分钟还缺到岗说明、迟到或漏登原因、现场主管确认口径，先补材料再判断。”“待补 4 项”“证据状态”“准备 1”，且处理准备叙事位于风险趋势之前。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Supervisor priority summary
 
 #### 结论
