@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US454-US457 - 闭环风险解释
+
+```yaml
+stories:
+  - id: US454
+    requirement_ids: [R442, R443]
+    task_ids: [F346]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组当日异常面板看到闭环风险解释，以便快速理解当前异常为什么还不能闭环。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US455
+    requirement_ids: [R443]
+    task_ids: [F347]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望闭环风险解释展示不能闭环原因、业务影响、待补证据、负责角色和下一查看步骤，以便判断先补哪类材料。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US456
+    requirement_ids: [R444]
+    task_ids: [F348]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望闭环风险解释只表达查看和解释口径，以便不误导为真实提交、保存、审批或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US457
+    requirement_ids: [R445]
+    task_ids: [Q075]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望闭环风险解释批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板展示闭环风险解释。"
+  - "解释展示不能闭环原因、业务影响、待补证据、负责角色、下一查看步骤和风险项。"
+  - "解释不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US450-US453 - 主管决策摘要
 
 ```yaml

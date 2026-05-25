@@ -961,6 +961,32 @@ export type FulfillmentSupervisorDecisionDigestItem = {
   decisionReason: string
 }
 
+export type FulfillmentClosureRiskExplanation = {
+  headline: string
+  totalRiskCount: number
+  highImpactRiskCount: number
+  nextRiskOwner: string
+  leadRisk?: FulfillmentClosureRiskExplanationItem
+  risks: FulfillmentClosureRiskExplanationItem[]
+}
+
+export type FulfillmentClosureRiskExplanationItem = {
+  key: string
+  employeeId: string
+  employeeName: string
+  title: string
+  cannotCloseReason: string
+  businessImpact: string
+  missingEvidence: string[]
+  ownerRole: string
+  nextStep: string
+  riskLevel: "高" | "中" | "低"
+  readiness: string
+  impactHours: number
+  sourceReferences: string[]
+  riskReason: string
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
@@ -983,6 +1009,7 @@ export type FulfillmentGroupMatrix = {
   supervisorPrioritySummary: FulfillmentSupervisorPrioritySummary
   handlingReadinessNarrative: FulfillmentHandlingReadinessNarrative
   supervisorDecisionDigest: FulfillmentSupervisorDecisionDigest
+  closureRiskExplanation: FulfillmentClosureRiskExplanation
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1442,6 +1469,7 @@ export function getFulfillmentMatrix(
     supervisorPrioritySummary: summarizeSupervisorPrioritySummary(exceptionQueue),
     handlingReadinessNarrative: summarizeHandlingReadinessNarrative(exceptionQueue),
     supervisorDecisionDigest: summarizeSupervisorDecisionDigest(exceptionQueue),
+    closureRiskExplanation: summarizeClosureRiskExplanation(exceptionQueue),
   }
 }
 
@@ -3608,6 +3636,70 @@ function buildSupervisorDecisionDigestItem(
     sourceReferences: preview.sourceReferences,
     decisionReason: `${preview.confidence}可信 / 待补 ${missingCount} 项 / 风险：${preview.openRisk}`,
   }
+}
+
+function summarizeClosureRiskExplanation(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentClosureRiskExplanation {
+  const risks = queue
+    .map(buildClosureRiskExplanationItem)
+    .sort(
+      (a, b) =>
+        b.missingEvidence.length - a.missingEvidence.length ||
+        Number(Boolean(b.businessImpact)) - Number(Boolean(a.businessImpact)) ||
+        closureRiskLevelRank[b.riskLevel] - closureRiskLevelRank[a.riskLevel] ||
+        b.impactHours - a.impactHours ||
+        a.employeeId.localeCompare(b.employeeId)
+    )
+  const leadRisk = risks[0]
+
+  return {
+    headline: leadRisk
+      ? `当前 ${risks.length} 项异常存在闭环风险，先解释${leadRisk.employeeName} / ${leadRisk.title}的 ${leadRisk.missingEvidence.length - 1} 项阻塞。`
+      : "当前小组暂无需要解释的闭环风险。",
+    totalRiskCount: risks.length,
+    highImpactRiskCount: risks.filter((item) => item.impactHours >= 1).length,
+    nextRiskOwner: leadRisk?.ownerRole ?? "暂无负责角色",
+    leadRisk,
+    risks,
+  }
+}
+
+function buildClosureRiskExplanationItem(
+  item: FulfillmentMatrixExceptionQueueItem
+): FulfillmentClosureRiskExplanationItem {
+  const missingEvidence = item.handlingGuide.requiredInfo
+  const riskLevel = closureRiskLevelLabel[item.priority]
+  const closureType = item.title.includes("状态") ? "状态异常" : "履约缺口"
+
+  return {
+    key: item.key,
+    employeeId: item.employeeId,
+    employeeName: item.employeeName,
+    title: item.title,
+    cannotCloseReason: `仍缺${missingEvidence.join("、")}，不能形成当日${closureType}闭环。`,
+    businessImpact: item.reviewOutcomePreview.openRisk,
+    missingEvidence,
+    ownerRole: item.resolutionDraft.ownerRole,
+    nextStep: `先查看${item.employeeName}的${missingEvidence[0]}和 ${item.detailDate} 个人三轨详情。`,
+    riskLevel,
+    readiness: item.reviewOutcomePreview.readiness,
+    impactHours: item.impactHours,
+    sourceReferences: item.reviewOutcomePreview.sourceReferences,
+    riskReason: `${riskLevel}优先 / 待补 ${item.closureChecklist.missingCount} 项 / 影响 ${item.impactHours.toFixed(2)}h / 风险：${item.reviewOutcomePreview.openRisk}`,
+  }
+}
+
+const closureRiskLevelLabel: Record<TimelineAnomaly["severity"], FulfillmentClosureRiskExplanationItem["riskLevel"]> = {
+  high: "高",
+  medium: "中",
+  low: "低",
+}
+
+const closureRiskLevelRank: Record<FulfillmentClosureRiskExplanationItem["riskLevel"], number> = {
+  高: 3,
+  中: 2,
+  低: 1,
 }
 
 const confidenceRank: Record<FulfillmentMatrixExceptionQueueItem["reviewOutcomePreview"]["confidence"], number> = {

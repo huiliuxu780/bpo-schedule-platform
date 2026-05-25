@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-25 - Closure risk explanation
+
+#### 结论
+
+- `F346-F348/Q075/US454-US457` 已完成闭环风险解释和 QA 收口。
+- 小组矩阵新增 `closureRiskExplanation`，基于当前异常队列已有闭环清单、复核结论预览、质量影响范围、处理指引和证据引用派生闭环风险解释。
+- 页面在现有小组当日异常侧栏展示“闭环风险解释”，位于主管决策摘要之后、风险趋势之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和闭环风险解释，不代表真实复核结论写入、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `closureRiskExplanation` 为 `undefined`；页面源序测试同时失败于缺少“闭环风险解释”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run lint` 和 `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组当日矩阵并选中 `A-1002::late_login`，页面显示“闭环风险解释”“当前 2 项异常存在闭环风险，先解释王敏 / 迟到 21 分钟的 2 项阻塞。”“业务影响”“待补证据”“下一查看”，且闭环风险解释位于主管决策摘要之后、风险趋势之前。
+
 ### 2026-05-25 - Supervisor decision digest
 
 #### 结论

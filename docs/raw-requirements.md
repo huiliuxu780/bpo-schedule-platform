@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R442-R445 - 闭环风险解释
+
+```yaml
+requirements:
+  - id: R442
+    module: "履约日历"
+    description: "小组当日异常面板需要展示闭环风险解释，帮助现场主管快速理解当前异常为什么还不能闭环。"
+  - id: R443
+    module: "履约日历"
+    description: "闭环风险解释需要包含不能闭环原因、业务影响、待补证据、负责角色、下一查看步骤和风险项。"
+  - id: R444
+    module: "履约日历"
+    description: "闭环风险解释只能表达查看和解释口径，不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或状态写入能力。"
+  - id: R445
+    module: "质量与交付"
+    description: "闭环风险解释完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读闭环风险解释；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R438-R441 - 主管决策摘要
 
 ```yaml

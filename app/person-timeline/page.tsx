@@ -847,6 +847,7 @@ function MatrixExceptionPanel({
       <SupervisorPrioritySummaryPanel summary={matrix.supervisorPrioritySummary} />
       <HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />
       <SupervisorDecisionDigestPanel digest={matrix.supervisorDecisionDigest} />
+      <ClosureRiskExplanationPanel explanation={matrix.closureRiskExplanation} />
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
@@ -1784,6 +1785,67 @@ function SupervisorDecisionDigestPanel({
       ) : (
         <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
           当前小组暂无可摘要的主管决策项。
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ClosureRiskExplanationPanel({
+  explanation,
+}: {
+  explanation: FulfillmentGroupMatrix["closureRiskExplanation"]
+}) {
+  const leadRisk = explanation.leadRisk
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">闭环风险解释</div>
+          <div className="text-xs text-muted-foreground">{explanation.headline}</div>
+        </div>
+        <Badge variant={explanation.totalRiskCount > 0 ? "destructive" : "outline"}>
+          风险 {explanation.totalRiskCount} 项
+        </Badge>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        <SummaryMetric label="高影响" value={`${explanation.highImpactRiskCount} 项`} />
+        <SummaryMetric label="负责角色" value={explanation.nextRiskOwner} />
+        <SummaryMetric label="解释项" value={`${explanation.risks.length} 项`} />
+      </div>
+      {leadRisk ? (
+        <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <div className="font-medium text-foreground">
+                {leadRisk.employeeId} {leadRisk.employeeName} / {leadRisk.title}
+              </div>
+              <div className="mt-1 text-muted-foreground">{leadRisk.cannotCloseReason}</div>
+            </div>
+            <Badge variant={leadRisk.riskLevel === "高" ? "destructive" : "secondary"}>
+              {leadRisk.riskLevel}风险
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">业务影响：{leadRisk.businessImpact}</div>
+          <div className="text-muted-foreground">待补证据：{leadRisk.missingEvidence.join(" / ")}</div>
+          <div className="text-muted-foreground">负责角色：{leadRisk.ownerRole}</div>
+          <div className="text-muted-foreground">下一查看：{leadRisk.nextStep}</div>
+          <div className="text-muted-foreground">证据引用：{leadRisk.sourceReferences.join(" / ")}</div>
+          <div className="grid gap-1">
+            {explanation.risks.slice(0, 2).map((item, index) => (
+              <div key={item.key} className="rounded-md border bg-background p-2">
+                <div className="font-medium text-foreground">
+                  第 {index + 1} 项：{item.employeeName} / {item.title}
+                </div>
+                <div className="mt-1 text-muted-foreground">{item.riskReason}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          当前小组暂无需要解释的闭环风险。
         </div>
       )}
     </div>

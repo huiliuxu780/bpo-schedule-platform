@@ -128,6 +128,7 @@ Current invariants:
 - `F337-F339/Q072` completed a supervisor priority summary slice: the fulfillment calendar group-day exception panel shows top supervisor focus, priority reasons, high-priority count, blocked count, escalation count, impact hours, impact scope, and ordered review items. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F340-F342/Q073` completed a handling readiness narrative slice: the fulfillment calendar group-day exception panel shows a handling-prep narrative, readiness counts, missing blockers, evidence status, preparation steps, impact scope, and narrative items. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F343-F345/Q074` completed a supervisor decision digest slice: the fulfillment calendar group-day exception panel shows suggested decisions, confidence, source references, open risks, next review point, and digest items. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F346-F348/Q075` completed a closure risk explanation slice: the fulfillment calendar group-day exception panel shows why selected exceptions cannot close yet, business impact, missing evidence, owner role, next viewing step, and risk items. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

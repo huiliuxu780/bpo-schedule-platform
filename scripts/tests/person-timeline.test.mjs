@@ -52,6 +52,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const supervisorPriorityPosition = pageSource.indexOf("<SupervisorPrioritySummaryPanel summary={matrix.supervisorPrioritySummary} />");
   const handlingReadinessPosition = pageSource.indexOf("<HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />");
   const decisionDigestPosition = pageSource.indexOf("<SupervisorDecisionDigestPanel digest={matrix.supervisorDecisionDigest} />");
+  const closureRiskPosition = pageSource.indexOf("<ClosureRiskExplanationPanel explanation={matrix.closureRiskExplanation} />");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
@@ -85,6 +86,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(supervisorPriorityPosition >= 0);
   assert.ok(handlingReadinessPosition >= 0);
   assert.ok(decisionDigestPosition >= 0);
+  assert.ok(closureRiskPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(causeSplitPosition >= 0);
@@ -101,7 +103,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(impactPriorityPosition < supervisorPriorityPosition);
   assert.ok(supervisorPriorityPosition < handlingReadinessPosition);
   assert.ok(handlingReadinessPosition < decisionDigestPosition);
-  assert.ok(decisionDigestPosition < trendPosition);
+  assert.ok(decisionDigestPosition < closureRiskPosition);
+  assert.ok(closureRiskPosition < trendPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.ok(riskDigestPosition < causeSplitPosition);
   assert.ok(causeSplitPosition < reviewLoadPosition);
@@ -1086,6 +1089,62 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         nextReviewPoint: "2026-05-11 15:00",
         sourceReferences: ["SCH-1001-2", "LOG-1001-1", "STA-1001-2", "DQ-202605-010"],
         decisionReason: "中可信 / 待补 2 项 / 风险：缺少培训安排说明会影响状态是否计入当班履约。",
+      },
+    ],
+  });
+  assert.deepEqual(matrix.closureRiskExplanation, {
+    headline: "当前 2 项异常存在闭环风险，先解释王敏 / 迟到 21 分钟的 2 项阻塞。",
+    totalRiskCount: 2,
+    highImpactRiskCount: 1,
+    nextRiskOwner: "现场主管",
+    leadRisk: {
+      key: "A-1002::late_login",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      cannotCloseReason: "仍缺到岗说明、迟到或漏登原因、现场主管确认口径，不能形成当日履约缺口闭环。",
+      businessImpact: "缺少到岗说明会影响当日履约缺口判断。",
+      missingEvidence: ["到岗说明", "迟到或漏登原因", "现场主管确认口径"],
+      ownerRole: "现场主管",
+      nextStep: "先查看王敏的到岗说明和 2026-05-11 个人三轨详情。",
+      riskLevel: "高",
+      readiness: "已齐 2 项 / 待补 2 项",
+      impactHours: 0.35,
+      sourceReferences: ["SCH-1002-1", "LOG-1002-1", "DQ-202605-009"],
+      riskReason: "高优先 / 待补 2 项 / 影响 0.35h / 风险：缺少到岗说明会影响当日履约缺口判断。",
+    },
+    risks: [
+      {
+        key: "A-1002::late_login",
+        employeeId: "A-1002",
+        employeeName: "王敏",
+        title: "迟到 21 分钟",
+        cannotCloseReason: "仍缺到岗说明、迟到或漏登原因、现场主管确认口径，不能形成当日履约缺口闭环。",
+        businessImpact: "缺少到岗说明会影响当日履约缺口判断。",
+        missingEvidence: ["到岗说明", "迟到或漏登原因", "现场主管确认口径"],
+        ownerRole: "现场主管",
+        nextStep: "先查看王敏的到岗说明和 2026-05-11 个人三轨详情。",
+        riskLevel: "高",
+        readiness: "已齐 2 项 / 待补 2 项",
+        impactHours: 0.35,
+        sourceReferences: ["SCH-1002-1", "LOG-1002-1", "DQ-202605-009"],
+        riskReason: "高优先 / 待补 2 项 / 影响 0.35h / 风险：缺少到岗说明会影响当日履约缺口判断。",
+      },
+      {
+        key: "A-1001::no_login",
+        employeeId: "A-1001",
+        employeeName: "刘晨",
+        title: "午后状态缺登录切片",
+        cannotCloseReason: "仍缺培训安排说明、在线要求确认、主管复核结论，不能形成当日状态异常闭环。",
+        businessImpact: "缺少培训安排说明会影响状态是否计入当班履约。",
+        missingEvidence: ["培训安排说明", "在线要求确认", "主管复核结论"],
+        ownerRole: "现场主管",
+        nextStep: "先查看刘晨的培训安排说明和 2026-05-11 个人三轨详情。",
+        riskLevel: "中",
+        readiness: "已齐 3 项 / 待补 2 项",
+        impactHours: 5,
+        sourceReferences: ["SCH-1001-2", "LOG-1001-1", "STA-1001-2", "DQ-202605-010"],
+        riskReason: "中优先 / 待补 2 项 / 影响 5.00h / 风险：缺少培训安排说明会影响状态是否计入当班履约。",
       },
     ],
   });
