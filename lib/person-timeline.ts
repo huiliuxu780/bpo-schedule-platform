@@ -259,6 +259,38 @@ export type FulfillmentWeeklyDataQualitySummaryIssue = {
   href: string
 }
 
+export type FulfillmentWeeklyOwnerPressureSummary = {
+  headline: string
+  totalOwnerCount: number
+  totalExceptionCount: number
+  highPriorityCount: number
+  escalationCount: number
+  totalImpactHours: number
+  topOwner?: FulfillmentWeeklyOwnerPressureSummaryOwner
+  owners: FulfillmentWeeklyOwnerPressureSummaryOwner[]
+}
+
+export type FulfillmentWeeklyOwnerPressureSummaryOwner = {
+  ownerRole: string
+  exceptionCount: number
+  highPriorityCount: number
+  escalationCount: number
+  blockedEvidenceCount: number
+  impactHours: number
+  affectedPeople: string[]
+  affectedDays: string[]
+  affectedGroups: string[]
+  nextDrilldown: {
+    groupId: string
+    groupName: string
+    date: string
+    label: string
+    exceptionKey: string
+    reason: string
+  }
+  reason: string
+}
+
 export type FulfillmentSupervisorWeeklyHandoffSummaryItem = {
   key: string
   groupId: string
@@ -382,6 +414,7 @@ export type FulfillmentTeamWeek = {
   supervisorWeeklyReviewQueue: FulfillmentSupervisorWeeklyReviewQueue
   supervisorWeeklyDecisionDigest: FulfillmentSupervisorWeeklyDecisionDigest
   weeklyDataQualitySummary: FulfillmentWeeklyDataQualitySummary
+  weeklyOwnerPressureSummary: FulfillmentWeeklyOwnerPressureSummary
   supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
   teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
   closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
@@ -1466,6 +1499,7 @@ export function getFulfillmentCalendar(
     const teamEvidenceGapDistribution = buildTeamEvidenceGapDistribution(team)
     const closureReadinessTrend = buildTeamClosureReadinessTrend(team)
     const weeklyDataQualitySummary = buildWeeklyDataQualitySummary(team)
+    const weeklyOwnerPressureSummary = buildWeeklyOwnerPressureSummary(team)
 
     return {
       ...team,
@@ -1478,6 +1512,7 @@ export function getFulfillmentCalendar(
         closureReadinessTrend
       ),
       weeklyDataQualitySummary,
+      weeklyOwnerPressureSummary,
       supervisorWeeklyHandoffSummary,
       teamEvidenceGapDistribution,
       closureReadinessTrend,
@@ -4801,6 +4836,7 @@ function buildTeamWeekRiskDistribution(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
+    | "weeklyOwnerPressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4872,6 +4908,7 @@ function buildSupervisorWeeklyReviewQueue(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
+    | "weeklyOwnerPressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4930,6 +4967,7 @@ function buildSupervisorWeeklyHandoffSummary(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
+    | "weeklyOwnerPressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5083,6 +5121,7 @@ function buildTeamEvidenceGapDistribution(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
+    | "weeklyOwnerPressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5173,6 +5212,7 @@ function buildWeeklyDataQualitySummary(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
+    | "weeklyOwnerPressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5278,6 +5318,127 @@ function buildWeeklyDataQualitySummary(
   }
 }
 
+function buildWeeklyOwnerPressureSummary(
+  team: Omit<
+    FulfillmentTeamWeek,
+    | "weekRiskDistribution"
+    | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyDecisionDigest"
+    | "weeklyDataQualitySummary"
+    | "weeklyOwnerPressureSummary"
+    | "supervisorWeeklyHandoffSummary"
+    | "teamEvidenceGapDistribution"
+    | "closureReadinessTrend"
+  >
+): FulfillmentWeeklyOwnerPressureSummary {
+  const ownerEntries = team.groups.flatMap((group) =>
+    group.days.flatMap((day) => {
+      const members = buildFulfillmentMatrixMembersForDate(group.members, day.date)
+      const queue = buildFulfillmentMatrixExceptionQueue(members, day.date, group.members)
+
+      return queue.flatMap((item) => {
+        const ownerRoles = [item.supervisorFollowUp.owner]
+
+        if (item.dataQualityRepairPrep.needsDataOwner) {
+          ownerRoles.push(item.dataQualityRepairPrep.ownerTeam)
+        }
+
+        return ownerRoles.map((ownerRole) => ({
+          ownerRole,
+          item,
+          groupId: group.id,
+          groupName: group.supplier,
+          date: day.date,
+          dayLabel: `${day.weekday} ${day.label}`,
+        }))
+      })
+    })
+  )
+  const uniqueExceptions = new Map(ownerEntries.map((entry) => [entry.item.key, entry.item]))
+  const owners = [...groupBy(ownerEntries, (entry) => entry.ownerRole).entries()]
+    .map(([ownerRole, entries]) => {
+      const uniqueItems = [...new Map(entries.map((entry) => [entry.item.key, entry.item])).values()]
+      const topEntry = [...entries].sort(
+        (a, b) =>
+          priorityRank[b.item.priority] - priorityRank[a.item.priority] ||
+          b.item.impactHours - a.item.impactHours ||
+          a.item.employeeId.localeCompare(b.item.employeeId)
+      )[0]
+      const affectedPeople = Array.from(
+        new Map(entries.map((entry) => [entry.item.employeeId, entry.item.employeeName])).values()
+      ).sort()
+      const affectedDays = Array.from(
+        new Map(entries.map((entry) => [entry.date, entry.dayLabel])).values()
+      )
+      const affectedGroups = Array.from(new Set(entries.map((entry) => entry.groupName))).sort()
+      const blockedEvidenceCount = entries.reduce(
+        (total, entry) => total + entry.item.handlingGuide.requiredInfo.length,
+        0
+      )
+      const impactHours = roundHours(
+        uniqueItems.reduce((total, item) => total + item.impactHours, 0)
+      )
+      const highPriorityCount = uniqueItems.filter((item) => item.priority === "high").length
+      const escalationCount = uniqueItems.filter(
+        (item) => item.agingEscalation.level === "需要升级"
+      ).length
+
+      return {
+        ownerRole,
+        exceptionCount: uniqueItems.length,
+        highPriorityCount,
+        escalationCount,
+        blockedEvidenceCount,
+        impactHours,
+        affectedPeople,
+        affectedDays,
+        affectedGroups,
+        nextDrilldown: {
+          groupId: topEntry?.groupId ?? "",
+          groupName: topEntry?.groupName ?? "",
+          date: topEntry?.date ?? "",
+          label: topEntry?.dayLabel ?? "",
+          exceptionKey: topEntry?.item.key ?? "",
+          reason: topEntry
+            ? `先看${topEntry.item.employeeName}的${topEntry.item.title}，${ownerRole}需补 ${topEntry.item.handlingGuide.requiredInfo.length} 项证据。`
+            : `先看${ownerRole}的待处理异常。`,
+        },
+        reason: `${uniqueItems.length} 项异常 / ${highPriorityCount} 项高优 / ${escalationCount} 项升级 / 阻塞证据 ${blockedEvidenceCount} 项 / 影响 ${impactHours.toFixed(2)}h`,
+      }
+    })
+    .sort(
+      (a, b) =>
+        b.exceptionCount - a.exceptionCount ||
+        b.escalationCount - a.escalationCount ||
+        b.impactHours - a.impactHours ||
+        a.ownerRole.localeCompare(b.ownerRole)
+    )
+  const topOwner = owners[0]
+  const uniqueExceptionItems = [...uniqueExceptions.values()]
+
+  return {
+    headline: topOwner
+      ? `本周${topOwner.ownerRole}承接 ${topOwner.exceptionCount} 项异常、${
+          topOwner.escalationCount
+        } 项升级，先看${topOwner.nextDrilldown.reason
+          .replace(/^先看/, "")
+          .replace("的", " / ")
+          .split("，")[0]}。`
+      : "本周暂无需要汇总的责任压力。",
+    totalOwnerCount: owners.length,
+    totalExceptionCount: uniqueExceptionItems.length,
+    highPriorityCount: uniqueExceptionItems.filter((item) => item.priority === "high").length,
+    escalationCount: uniqueExceptionItems.filter(
+      (item) => item.agingEscalation.level === "需要升级"
+    ).length,
+    totalImpactHours: roundHours(
+      uniqueExceptionItems.reduce((total, item) => total + item.impactHours, 0)
+    ),
+    topOwner,
+    owners,
+  }
+}
+
 function buildTeamClosureReadinessTrend(
   team: Omit<
     FulfillmentTeamWeek,
@@ -5285,6 +5446,7 @@ function buildTeamClosureReadinessTrend(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
+    | "weeklyOwnerPressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"

@@ -29,6 +29,44 @@
 
 ## Stories
 
+### US470-US472 - 周度责任压力汇总
+
+```yaml
+stories:
+  - id: US470
+    requirement_ids: [R462, R463]
+    task_ids: [F357]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到周度责任压力，以便识别本周哪些负责角色承接最多异常和升级压力。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US471
+    requirement_ids: [R464]
+    task_ids: [F358]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望周度责任压力只表达查看和解释口径，以便不误导为真实派单、提交、保存、审批、导出或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US472
+    requirement_ids: [R465]
+    task_ids: [Q080]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度责任压力批次做收口，确认模型、页面顺序、浏览器 smoke、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组周视图展示周度责任压力。"
+  - "汇总展示负责角色、异常数、高优数、升级数、阻塞证据数、影响人员、影响日期、影响时长和下钻建议。"
+  - "页面只提供查看和解释入口，不出现真实派单、提交、保存、审批、导出、批量或状态写入能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US467-US469 - 周度质量影响汇总
 
 ```yaml

@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R462-R465 - 周度责任压力汇总
+
+```yaml
+requirements:
+  - id: R462
+    module: "履约日历"
+    description: "小组周视图需要展示周度责任压力，帮助现场主管识别本周哪些负责角色承接最多异常和升级压力。"
+  - id: R463
+    module: "履约日历"
+    description: "周度责任压力需要包含负责角色、异常数、高优数、升级数、阻塞证据数、影响人员、影响日期、影响时长和下钻建议。"
+  - id: R464
+    module: "履约日历"
+    description: "周度责任压力只能表达查看和解释口径，不提供真实派单、提交、保存、审批、导出、批量、真实处理或状态写入能力。"
+  - id: R465
+    module: "质量与交付"
+    description: "周度责任压力完成后需要 QA 收口，确认模型测试、页面顺序、浏览器 smoke、文案边界和 no-action 边界。"
+source: "PM requested continued supervisor-side production MVP development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组周视图补充本地前端只读周度责任压力；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R458-R461 - 周度质量影响汇总
 
 ```yaml

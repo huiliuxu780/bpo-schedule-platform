@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Weekly owner pressure
+
+#### 结论
+
+- `F357-F358/Q080/US470-US472` 已完成周度责任压力和 QA 收口。
+- 团队周视图新增 `weeklyOwnerPressureSummary`，基于本周各小组日期的本地异常队列派生负责角色、异常数、高优数、升级数、阻塞证据数、影响人员、影响日期、影响时长和下钻建议。
+- 页面在现有小组周视图侧栏展示“周度责任压力”，位于周度质量影响汇总之后、本周复核队列之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、真实修复、提交、保存、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和责任压力解释，不代表真实派单、通知、复核结论写入、异常关闭、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `weeklyOwnerPressureSummary` 为 `undefined`；页面源序测试同时失败于缺少“周度责任压力”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run lint` 和 `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组周视图，页面显示“周度责任压力”“本周现场主管承接 2 项异常、1 项升级，先看王敏 / 迟到 21 分钟。”“升级 1”“现场主管”“数据管理员”“阻塞证据 6 项”，且周度责任压力位于周度质量影响汇总之后、本周复核队列之前；截图保存至 `/private/tmp/bpo-weekly-owner-pressure-smoke.png`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-25 - Weekly data-quality summary
 
 #### 结论

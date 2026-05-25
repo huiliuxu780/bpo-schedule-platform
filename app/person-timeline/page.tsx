@@ -271,6 +271,7 @@ function GroupWeekSection({
         <aside className="grid content-start gap-3">
           <SupervisorWeeklyDecisionDigestPanel team={team} />
           <WeeklyDataQualitySummaryPanel team={team} />
+          <WeeklyOwnerPressurePanel team={team} />
           <SupervisorWeeklyReviewQueuePanel team={team} />
           <SupervisorWeeklyHandoffSummaryPanel team={team} />
           <TeamEvidenceGapDistributionPanel team={team} />
@@ -423,6 +424,79 @@ function WeeklyDataQualitySummaryPanel({ team }: { team: FulfillmentTeamWeek }) 
                 <span className="text-muted-foreground">{issue.impactHours.toFixed(2)}h</span>
               </div>
               <div className="text-muted-foreground">{issue.reason}</div>
+            </Link>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function WeeklyOwnerPressurePanel({ team }: { team: FulfillmentTeamWeek }) {
+  const summary = team.weeklyOwnerPressureSummary
+  const topOwner = summary.topOwner
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">周度责任压力</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.escalationCount > 0 ? "destructive" : "outline"}>
+          升级 {summary.escalationCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="负责角色" value={`${summary.totalOwnerCount} 个`} />
+        <SummaryMetric label="影响异常" value={`${summary.totalExceptionCount} 项`} />
+        <SummaryMetric label="高优异常" value={`${summary.highPriorityCount} 项`} />
+        <SummaryMetric label="影响时长" value={`${summary.totalImpactHours.toFixed(2)}h`} />
+      </div>
+      {topOwner ? (
+        <Link
+          href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+            topOwner.nextDrilldown.groupId
+          )}&date=${topOwner.nextDrilldown.date}&queue=all&exception=${encodeURIComponent(
+            topOwner.nextDrilldown.exceptionKey
+          )}`}
+          className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs transition-colors hover:bg-muted"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">{topOwner.ownerRole}</span>
+            <Badge variant={topOwner.escalationCount > 0 ? "destructive" : "secondary"}>
+              {topOwner.exceptionCount} 项
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">{topOwner.reason}</div>
+          <div className="text-muted-foreground">
+            影响人员：{topOwner.affectedPeople.join(" / ")}；影响日期：
+            {topOwner.affectedDays.join(" / ")}
+          </div>
+          <div className="text-muted-foreground">{topOwner.nextDrilldown.reason}</div>
+        </Link>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          本周暂无需要汇总的责任压力。
+        </div>
+      )}
+      {summary.owners.length > 1 ? (
+        <div className="grid gap-2">
+          {summary.owners.slice(1, 3).map((owner) => (
+            <Link
+              key={owner.ownerRole}
+              href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+                owner.nextDrilldown.groupId
+              )}&date=${owner.nextDrilldown.date}&queue=all&exception=${encodeURIComponent(
+                owner.nextDrilldown.exceptionKey
+              )}`}
+              className="grid gap-1 rounded-md border bg-background p-2 text-xs transition-colors hover:bg-muted"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium">{owner.ownerRole}</span>
+                <span className="text-muted-foreground">{owner.impactHours.toFixed(2)}h</span>
+              </div>
+              <div className="text-muted-foreground">{owner.reason}</div>
             </Link>
           ))}
         </div>
