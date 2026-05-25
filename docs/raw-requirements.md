@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R450-R453 - 主管闭环复核摘要
+
+```yaml
+requirements:
+  - id: R450
+    module: "履约日历"
+    description: "小组当日异常面板需要展示主管闭环复核摘要，帮助现场主管快速判断当前异常是否可闭环或还需复核。"
+  - id: R451
+    module: "履约日历"
+    description: "闭环复核摘要需要包含可闭环数量、待复核数量、阻塞数量、首个复核对象、建议结论、证据摘要、风险摘要和下一步。"
+  - id: R452
+    module: "履约日历"
+    description: "闭环复核摘要只能表达查看和解释口径，不提供提交、保存、关闭异常、审批、导出、批量、真实处理或状态写入能力。"
+  - id: R453
+    module: "质量与交付"
+    description: "闭环复核摘要完成后需要 QA 收口，确认模型测试、页面顺序、浏览器 smoke、文案边界和 no-action 边界。"
+source: "PM requested continued supervisor-side production MVP development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读闭环复核摘要；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R446-R449 - 周度决策摘要
 
 ```yaml

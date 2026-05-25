@@ -914,6 +914,7 @@ function MatrixExceptionPanel({
       <HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />
       <SupervisorDecisionDigestPanel digest={matrix.supervisorDecisionDigest} />
       <ClosureRiskExplanationPanel explanation={matrix.closureRiskExplanation} />
+      <ClosureReviewSummaryPanel summary={matrix.closureReviewSummary} />
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
@@ -1912,6 +1913,70 @@ function ClosureRiskExplanationPanel({
       ) : (
         <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
           当前小组暂无需要解释的闭环风险。
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ClosureReviewSummaryPanel({
+  summary,
+}: {
+  summary: FulfillmentGroupMatrix["closureReviewSummary"]
+}) {
+  const leadReview = summary.leadReview
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">闭环复核摘要</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.blockedCount > 0 ? "secondary" : "outline"}>
+          待复核 {summary.pendingReviewCount} 项
+        </Badge>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        <SummaryMetric label="可闭环" value={`${summary.readyToCloseCount} 项`} />
+        <SummaryMetric label="阻塞项" value={`${summary.blockedCount} 项`} />
+        <SummaryMetric label="复核角色" value={summary.nextReviewer} />
+      </div>
+      {leadReview ? (
+        <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <div className="font-medium text-foreground">
+                {leadReview.employeeId} {leadReview.employeeName} / {leadReview.title}
+              </div>
+              <div className="mt-1 text-muted-foreground">{leadReview.suggestedConclusion}</div>
+            </div>
+            <Badge variant={leadReview.reviewStatus === "需补材料" ? "destructive" : "secondary"}>
+              {leadReview.reviewStatus}
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">{leadReview.readiness}</div>
+          <div className="text-muted-foreground">阻塞摘要：{leadReview.blockerSummary}</div>
+          <div className="text-muted-foreground">证据摘要：{leadReview.evidenceSummary}</div>
+          <div className="text-muted-foreground">风险摘要：{leadReview.riskSummary}</div>
+          <div className="text-muted-foreground">下一步：{leadReview.nextAction}</div>
+          <div className="text-muted-foreground">依据：{leadReview.sourceReferences.join(" / ")}</div>
+          <div className="grid gap-1">
+            {summary.reviews.slice(0, 2).map((item, index) => (
+              <div key={item.key} className="rounded-md border bg-background p-2">
+                <div className="font-medium text-foreground">
+                  第 {index + 1} 项：{item.employeeName} / {item.title}
+                </div>
+                <div className="mt-1 text-muted-foreground">
+                  {item.reviewStatus} / {item.readiness} / {item.riskSummary}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          当前小组暂无需要汇总的闭环复核项。
         </div>
       )}
     </div>

@@ -29,6 +29,44 @@
 
 ## Stories
 
+### US461-US463 - 主管闭环复核摘要
+
+```yaml
+stories:
+  - id: US461
+    requirement_ids: [R450, R451]
+    task_ids: [F351]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组当日异常面板看到闭环复核摘要，以便快速判断当前异常是否可闭环或还需复核。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US462
+    requirement_ids: [R452]
+    task_ids: [F352]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望闭环复核摘要只表达查看和解释口径，以便不误导为真实提交、保存、关闭异常、审批或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US463
+    requirement_ids: [R453]
+    task_ids: [Q077]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望闭环复核摘要批次做收口，确认模型、页面顺序、浏览器 smoke、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板展示闭环复核摘要。"
+  - "摘要展示可闭环、待复核、阻塞数量、首个复核对象、建议结论、证据摘要、风险摘要和下一步。"
+  - "页面只提供查看和解释入口，不出现真实提交、保存、关闭异常、审批、导出、批量、派单或状态写入能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US458-US460 - 周度决策摘要
 
 ```yaml

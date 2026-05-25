@@ -130,6 +130,7 @@ Current invariants:
 - `F343-F345/Q074` completed a supervisor decision digest slice: the fulfillment calendar group-day exception panel shows suggested decisions, confidence, source references, open risks, next review point, and digest items. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F346-F348/Q075` completed a closure risk explanation slice: the fulfillment calendar group-day exception panel shows why selected exceptions cannot close yet, business impact, missing evidence, owner role, next viewing step, and risk items. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F349-F350/Q076` completed a weekly decision digest slice: the fulfillment calendar group-week view shows suggested weekly decisions, confidence, evidence summary, open risks, next review point, and source references before the weekly review queue. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F351-F352/Q077` completed a supervisor closure review summary slice: the fulfillment calendar group-day exception panel shows ready-to-close count, pending review count, blockers, lead review item, suggested conclusion, evidence summary, risk summary, next action, and source references. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

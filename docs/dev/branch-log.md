@@ -2,6 +2,24 @@
 
 ## 2026-05-25
 
+### F351-F352 Supervisor Closure Review Summary
+
+- branch_name: `codex/f343-supervisor-decision-digest`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `fe021c3`
+- remote_status: `pushed`
+- scope: frontend local business function: expose supervisor closure review summary in the existing fulfillment calendar group-day exception panel, including ready-to-close count, pending review count, blockers, lead review item, suggested conclusion, evidence summary, risk summary, next action, and source references.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `scripts/tests/product-ui-copy-audit.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, notification action, dispatch action, submit/save/close action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-day route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, notification action, dispatch action, submit/save/close action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `closureReviewSummary` and missing closure review summary card; target model tests, product UI copy audit, navigation regression, lint, typecheck, strict state check, browser smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F349-F350 Weekly Decision Digest
 
 - branch_name: `codex/f343-supervisor-decision-digest`

@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Supervisor closure review summary
+
+#### 结论
+
+- `F351-F352/Q077/US461-US463` 已完成主管闭环复核摘要和 QA 收口。
+- 小组矩阵新增 `closureReviewSummary`，基于当前异常队列已有复核分组、复核结论预览、闭环清单、证据摘要和开放风险派生闭环复核摘要。
+- 页面在现有小组当日异常侧栏展示“闭环复核摘要”，位于闭环风险解释之后、风险趋势之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、提交、保存、关闭异常、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和复核摘要，不代表真实复核结论写入、异常关闭、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `closureReviewSummary` 为 `undefined`；页面源序测试同时失败于缺少“闭环复核摘要”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run lint` 和 `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组当日矩阵并选中 `A-1002::late_login`，页面显示“闭环复核摘要”“当前 0 项可闭环、2 项待复核，先复核王敏 / 迟到 21 分钟。”“阻塞摘要”“风险摘要”“下一步”，且闭环复核摘要位于闭环风险解释之后、风险趋势之前。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-25 - Weekly decision digest
 
 #### 结论

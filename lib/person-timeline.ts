@@ -1013,6 +1013,33 @@ export type FulfillmentClosureRiskExplanationItem = {
   riskReason: string
 }
 
+export type FulfillmentClosureReviewSummary = {
+  headline: string
+  readyToCloseCount: number
+  pendingReviewCount: number
+  blockedCount: number
+  nextReviewer: string
+  leadReview?: FulfillmentClosureReviewSummaryItem
+  reviews: FulfillmentClosureReviewSummaryItem[]
+}
+
+export type FulfillmentClosureReviewStatus = FulfillmentMatrixExceptionQueueItem["reviewGroup"]["label"] | "已就绪"
+
+export type FulfillmentClosureReviewSummaryItem = {
+  key: string
+  employeeId: string
+  employeeName: string
+  title: string
+  reviewStatus: FulfillmentClosureReviewStatus
+  suggestedConclusion: string
+  readiness: string
+  blockerSummary: string
+  evidenceSummary: string
+  riskSummary: string
+  nextAction: string
+  sourceReferences: string[]
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
@@ -1036,6 +1063,7 @@ export type FulfillmentGroupMatrix = {
   handlingReadinessNarrative: FulfillmentHandlingReadinessNarrative
   supervisorDecisionDigest: FulfillmentSupervisorDecisionDigest
   closureRiskExplanation: FulfillmentClosureRiskExplanation
+  closureReviewSummary: FulfillmentClosureReviewSummary
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1509,6 +1537,7 @@ export function getFulfillmentMatrix(
     handlingReadinessNarrative: summarizeHandlingReadinessNarrative(exceptionQueue),
     supervisorDecisionDigest: summarizeSupervisorDecisionDigest(exceptionQueue),
     closureRiskExplanation: summarizeClosureRiskExplanation(exceptionQueue),
+    closureReviewSummary: summarizeClosureReviewSummary(exceptionQueue),
   }
 }
 
@@ -3727,6 +3756,82 @@ function buildClosureRiskExplanationItem(
     sourceReferences: item.reviewOutcomePreview.sourceReferences,
     riskReason: `${riskLevel}优先 / 待补 ${item.closureChecklist.missingCount} 项 / 影响 ${item.impactHours.toFixed(2)}h / 风险：${item.reviewOutcomePreview.openRisk}`,
   }
+}
+
+function summarizeClosureReviewSummary(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentClosureReviewSummary {
+  const reviewItems = queue
+    .map(buildClosureReviewSummaryItem)
+    .sort(
+      (a, b) =>
+        closureReviewStatusRank[b.reviewStatus] - closureReviewStatusRank[a.reviewStatus] ||
+        priorityRank[b.priority] - priorityRank[a.priority] ||
+        b.impactHours - a.impactHours ||
+        a.employeeId.localeCompare(b.employeeId)
+    )
+  const reviews = reviewItems.map((item) => ({
+    key: item.key,
+    employeeId: item.employeeId,
+    employeeName: item.employeeName,
+    title: item.title,
+    reviewStatus: item.reviewStatus,
+    suggestedConclusion: item.suggestedConclusion,
+    readiness: item.readiness,
+    blockerSummary: item.blockerSummary,
+    evidenceSummary: item.evidenceSummary,
+    riskSummary: item.riskSummary,
+    nextAction: item.nextAction,
+    sourceReferences: item.sourceReferences,
+  }))
+  const leadReview = reviews[0]
+  const readyToCloseCount = reviews.filter((item) => item.reviewStatus === "已就绪").length
+
+  return {
+    headline: leadReview
+      ? `当前 ${readyToCloseCount} 项可闭环、${reviews.length} 项待复核，先复核${leadReview.employeeName} / ${leadReview.title}。`
+      : "当前小组暂无需要汇总的闭环复核项。",
+    readyToCloseCount,
+    pendingReviewCount: reviews.length,
+    blockedCount: reviews.length - readyToCloseCount,
+    nextReviewer: leadReview ? "现场主管" : "暂无复核角色",
+    leadReview,
+    reviews,
+  }
+}
+
+function buildClosureReviewSummaryItem(item: FulfillmentMatrixExceptionQueueItem) {
+  const missingInfo = item.handlingGuide.requiredInfo
+  const reviewStatus: FulfillmentClosureReviewStatus =
+    item.closureChecklist.missingCount > 0 ? item.reviewGroup.label : "已就绪"
+
+  return {
+    key: item.key,
+    employeeId: item.employeeId,
+    employeeName: item.employeeName,
+    title: item.title,
+    reviewStatus,
+    suggestedConclusion: item.reviewOutcomePreview.suggestedOutcome,
+    readiness: `已齐 ${item.closureChecklist.readyCount} 项 / 待补 ${item.closureChecklist.missingCount} 项`,
+    blockerSummary: `缺少${missingInfo.join("、")}。`,
+    evidenceSummary: [
+      item.evidenceSummary.schedule,
+      item.evidenceSummary.login,
+      item.evidenceSummary.status,
+    ].join(" / "),
+    riskSummary: item.reviewOutcomePreview.openRisk,
+    nextAction: `先补${missingInfo[0] ?? "复核材料"}，再回看${item.employeeName} ${item.detailDate} 个人三轨详情。`,
+    sourceReferences: item.reviewOutcomePreview.sourceReferences,
+    priority: item.priority,
+    impactHours: item.impactHours,
+  }
+}
+
+const closureReviewStatusRank: Record<FulfillmentClosureReviewSummaryItem["reviewStatus"], number> = {
+  已就绪: 0,
+  需数据核对: 1,
+  待主管判断: 2,
+  需补材料: 3,
 }
 
 const closureRiskLevelLabel: Record<TimelineAnomaly["severity"], FulfillmentClosureRiskExplanationItem["riskLevel"]> = {

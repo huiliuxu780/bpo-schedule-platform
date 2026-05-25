@@ -155,4 +155,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US458/F349 -> US460/Q076` completed the weekly decision digest slice: the fulfillment calendar group-week view now shows suggested weekly decisions, confidence, evidence summary, open risks, next review point, and source references before the weekly review queue while preserving no-action boundaries. Current queue is empty again.
 
-Recommended next production MVP slice: continue with supervisor closure review summary or data-quality impact ranking refinement, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US461/F351 -> US463/Q077` completed the supervisor closure review summary slice: the fulfillment calendar group-day exception panel now shows ready-to-close count, pending review count, blockers, lead review item, suggested conclusion, evidence summary, risk summary, next action, and source references while preserving no-action boundaries. Current queue is empty again.
+
+Recommended next production MVP slice: continue with data-quality impact ranking refinement or supervisor closure review comparison, keeping it local/frontend-only unless PM confirms a separate production action Gate.

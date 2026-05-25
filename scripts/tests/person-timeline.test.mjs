@@ -54,6 +54,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const handlingReadinessPosition = pageSource.indexOf("<HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />");
   const decisionDigestPosition = pageSource.indexOf("<SupervisorDecisionDigestPanel digest={matrix.supervisorDecisionDigest} />");
   const closureRiskPosition = pageSource.indexOf("<ClosureRiskExplanationPanel explanation={matrix.closureRiskExplanation} />");
+  const closureReviewPosition = pageSource.indexOf("<ClosureReviewSummaryPanel summary={matrix.closureReviewSummary} />");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
@@ -91,6 +92,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(handlingReadinessPosition >= 0);
   assert.ok(decisionDigestPosition >= 0);
   assert.ok(closureRiskPosition >= 0);
+  assert.ok(closureReviewPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(causeSplitPosition >= 0);
@@ -108,7 +110,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(supervisorPriorityPosition < handlingReadinessPosition);
   assert.ok(handlingReadinessPosition < decisionDigestPosition);
   assert.ok(decisionDigestPosition < closureRiskPosition);
-  assert.ok(closureRiskPosition < trendPosition);
+  assert.ok(closureRiskPosition < closureReviewPosition);
+  assert.ok(closureReviewPosition < trendPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.ok(riskDigestPosition < causeSplitPosition);
   assert.ok(causeSplitPosition < reviewLoadPosition);
@@ -1214,6 +1217,60 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
         impactHours: 5,
         sourceReferences: ["SCH-1001-2", "LOG-1001-1", "STA-1001-2", "DQ-202605-010"],
         riskReason: "中优先 / 待补 2 项 / 影响 5.00h / 风险：缺少培训安排说明会影响状态是否计入当班履约。",
+      },
+    ],
+  });
+  assert.deepEqual(matrix.closureReviewSummary, {
+    headline: "当前 0 项可闭环、2 项待复核，先复核王敏 / 迟到 21 分钟。",
+    readyToCloseCount: 0,
+    pendingReviewCount: 2,
+    blockedCount: 2,
+    nextReviewer: "现场主管",
+    leadReview: {
+      key: "A-1002::late_login",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      reviewStatus: "需补材料",
+      suggestedConclusion: "待确认到岗：王敏 09:00-09:21 登录缺口，需补到岗说明。",
+      readiness: "已齐 2 项 / 待补 2 项",
+      blockerSummary: "缺少到岗说明、迟到或漏登原因、现场主管确认口径。",
+      evidenceSummary:
+        "排班 SCH-1002-1：早班 09:00-17:00 / 登录 LOG-1002-1：CORN 登录 09:21-17:00 / 状态轨道：无命中记录",
+      riskSummary: "缺少到岗说明会影响当日履约缺口判断。",
+      nextAction: "先补到岗说明，再回看王敏 2026-05-11 个人三轨详情。",
+      sourceReferences: ["SCH-1002-1", "LOG-1002-1", "DQ-202605-009"],
+    },
+    reviews: [
+      {
+        key: "A-1002::late_login",
+        employeeId: "A-1002",
+        employeeName: "王敏",
+        title: "迟到 21 分钟",
+        reviewStatus: "需补材料",
+        suggestedConclusion: "待确认到岗：王敏 09:00-09:21 登录缺口，需补到岗说明。",
+        readiness: "已齐 2 项 / 待补 2 项",
+        blockerSummary: "缺少到岗说明、迟到或漏登原因、现场主管确认口径。",
+        evidenceSummary:
+          "排班 SCH-1002-1：早班 09:00-17:00 / 登录 LOG-1002-1：CORN 登录 09:21-17:00 / 状态轨道：无命中记录",
+        riskSummary: "缺少到岗说明会影响当日履约缺口判断。",
+        nextAction: "先补到岗说明，再回看王敏 2026-05-11 个人三轨详情。",
+        sourceReferences: ["SCH-1002-1", "LOG-1002-1", "DQ-202605-009"],
+      },
+      {
+        key: "A-1001::no_login",
+        employeeId: "A-1001",
+        employeeName: "刘晨",
+        title: "午后状态缺登录切片",
+        reviewStatus: "待主管判断",
+        suggestedConclusion: "待确认状态：刘晨 13:00-18:00 状态为培训，需补培训安排说明。",
+        readiness: "已齐 3 项 / 待补 2 项",
+        blockerSummary: "缺少培训安排说明、在线要求确认、主管复核结论。",
+        evidenceSummary:
+          "排班 SCH-1001-2：午后班 13:00-18:00 / 登录 LOG-1001-1：CORN 登录 09:02-18:00 / 状态 STA-1001-2：培训 13:00-18:00",
+        riskSummary: "缺少培训安排说明会影响状态是否计入当班履约。",
+        nextAction: "先补培训安排说明，再回看刘晨 2026-05-11 个人三轨详情。",
+        sourceReferences: ["SCH-1001-2", "LOG-1001-1", "STA-1001-2", "DQ-202605-010"],
       },
     ],
   });
