@@ -29,6 +29,44 @@
 
 ## Stories
 
+### US482-US484 - 周度查看边界核查
+
+```yaml
+stories:
+  - id: US482
+    requirement_ids: [R478, R479]
+    task_ids: [F365]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到周度查看边界核查，以便区分当前看板依据和仍需另行确认的生产能力。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US483
+    requirement_ids: [R480]
+    task_ids: [F366]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望周度查看边界核查只表达查看和解释口径，以便不误导为复核写入、补充证据、审批发布、报表权限、外部接入或生产数据留存能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US484
+    requirement_ids: [R481]
+    task_ids: [Q084]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度查看边界核查批次做收口，确认模型、页面顺序、浏览器 smoke、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组周视图展示周度查看边界核查。"
+  - "汇总展示覆盖看板数、边界事项数、开放风险、升级压力、首要边界、关联看板和边界原因。"
+  - "页面只提供查看和解释入口，不出现复核写入、补充证据、审批发布、报表权限、外部接入或生产数据留存能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US479-US481 - 周度闭环收口摘要
 
 ```yaml

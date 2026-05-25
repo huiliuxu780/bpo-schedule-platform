@@ -24,7 +24,7 @@ The project contains:
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
-- Fulfillment calendar supervisor-side local read-only panels for exception review, closure readiness, closure risk, closure review summary, weekly decision digest, data-quality impact ranking, weekly data-quality summary, weekly owner pressure, weekly source pressure, weekly review comparison, and weekly closure closeout.
+- Fulfillment calendar supervisor-side local read-only panels for exception review, closure readiness, closure risk, closure review summary, weekly decision digest, data-quality impact ranking, weekly data-quality summary, weekly owner pressure, weekly source pressure, weekly review comparison, weekly closure closeout, and weekly view boundary check.
 - A documentation-first Lightweight Harness with current/registry state governance.
 
 The project does not contain:

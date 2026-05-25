@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R478-R481 - 周度查看边界核查
+
+```yaml
+requirements:
+  - id: R478
+    module: "履约日历"
+    description: "小组周视图需要展示周度查看边界核查，帮助现场主管区分当前看板依据和仍需另行确认的生产能力。"
+  - id: R479
+    module: "履约日历"
+    description: "周度查看边界核查需要包含覆盖看板数、边界事项数、开放风险、升级压力、首要边界、关联看板和边界原因。"
+  - id: R480
+    module: "履约日历"
+    description: "周度查看边界核查只能表达查看和解释口径，不提供复核写入、补充证据、审批发布、报表权限、外部接入或生产数据留存能力。"
+  - id: R481
+    module: "质量与交付"
+    description: "周度查看边界核查完成后需要 QA 收口，确认模型测试、页面顺序、浏览器 smoke、文案边界和 no-action 边界。"
+source: "PM requested continued supervisor-side production MVP development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组周视图补充本地前端只读周度查看边界核查；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R474-R477 - 周度闭环收口摘要
 
 ```yaml

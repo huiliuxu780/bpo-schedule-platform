@@ -44,6 +44,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const weeklySourcePressurePosition = pageSource.indexOf("<WeeklySourcePressurePanel team={team} />");
   const weeklyReviewComparisonPosition = pageSource.indexOf("<WeeklyReviewComparisonPanel team={team} />");
   const weeklyClosureCloseoutPosition = pageSource.indexOf("<WeeklyClosureCloseoutPanel team={team} />");
+  const weeklyQaBoundaryPosition = pageSource.indexOf("<WeeklyQaBoundaryPanel team={team} />");
   const supervisorWeeklyHandoffPosition = pageSource.indexOf("<SupervisorWeeklyHandoffSummaryPanel team={team} />");
   const teamEvidenceGapDistributionPosition = pageSource.indexOf("<TeamEvidenceGapDistributionPanel team={team} />");
   const closureReadinessTrendPosition = pageSource.indexOf("<ClosureReadinessTrendPanel team={team} />");
@@ -78,6 +79,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(weeklySourcePressurePosition >= 0);
   assert.ok(weeklyReviewComparisonPosition >= 0);
   assert.ok(weeklyClosureCloseoutPosition >= 0);
+  assert.ok(weeklyQaBoundaryPosition >= 0);
   assert.ok(supervisorWeeklyHandoffPosition >= 0);
   assert.ok(teamEvidenceGapDistributionPosition >= 0);
   assert.ok(closureReadinessTrendPosition >= 0);
@@ -89,7 +91,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(weeklyOwnerPressurePosition < weeklySourcePressurePosition);
   assert.ok(weeklySourcePressurePosition < weeklyReviewComparisonPosition);
   assert.ok(weeklyReviewComparisonPosition < weeklyClosureCloseoutPosition);
-  assert.ok(weeklyClosureCloseoutPosition < supervisorWeeklyReviewQueuePosition);
+  assert.ok(weeklyClosureCloseoutPosition < weeklyQaBoundaryPosition);
+  assert.ok(weeklyQaBoundaryPosition < supervisorWeeklyReviewQueuePosition);
   assert.ok(supervisorWeeklyDecisionDigestPosition < supervisorWeeklyHandoffPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < groupRiskSummaryPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < supervisorWeeklyHandoffPosition);
@@ -913,6 +916,64 @@ test("fulfillment calendar aggregates team week metrics", () => {
           exceptionKey: "",
           reason: "进入供应商 A 的周一 05/11，先看 A-1002 王敏。",
         },
+      },
+    ],
+  });
+  assert.deepEqual(shanghaiTeam.weeklyQaBoundarySummary, {
+    headline: "本周 7 个主管看板均为查看依据，6 类生产能力仍需单独确认。",
+    coveredPanelCount: 7,
+    boundaryCount: 6,
+    openRiskCount: 2,
+    escalationCount: 1,
+    topBoundary: {
+      key: "review_write",
+      label: "复核写入",
+      status: "需单独确认",
+      relatedPanel: "周度闭环收口摘要",
+      reason: "当前展示建议结论、证据和风险，不形成处理记录。",
+    },
+    boundaries: [
+      {
+        key: "review_write",
+        label: "复核写入",
+        status: "需单独确认",
+        relatedPanel: "周度闭环收口摘要",
+        reason: "当前展示建议结论、证据和风险，不形成处理记录。",
+      },
+      {
+        key: "evidence_upload",
+        label: "补充证据",
+        status: "需单独确认",
+        relatedPanel: "周度闭环收口摘要",
+        reason: "当前展示缺口和下钻建议，不接收文件或材料。",
+      },
+      {
+        key: "approval_release",
+        label: "审批发布",
+        status: "需单独确认",
+        relatedPanel: "周度复核对比摘要",
+        reason: "当前展示复核对比和风险，不改变发布状态。",
+      },
+      {
+        key: "permission_export",
+        label: "权限与报表",
+        status: "需单独确认",
+        relatedPanel: "周度质量影响汇总",
+        reason: "当前展示影响范围和质量线索，不生成报表文件或权限隔离。",
+      },
+      {
+        key: "source_integration",
+        label: "外部数据接入",
+        status: "需单独确认",
+        relatedPanel: "周度来源压力",
+        reason: "当前展示来源轨道归因，不连接外部系统。",
+      },
+      {
+        key: "production_records",
+        label: "生产数据留存",
+        status: "需单独确认",
+        relatedPanel: "本周复核队列",
+        reason: "当前展示队列和查看路径，不写入生产记录。",
       },
     ],
   });

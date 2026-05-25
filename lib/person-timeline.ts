@@ -379,6 +379,30 @@ export type FulfillmentWeeklyClosureCloseoutSummaryItem = {
   }
 }
 
+export type FulfillmentWeeklyQaBoundarySummary = {
+  headline: string
+  coveredPanelCount: number
+  boundaryCount: number
+  openRiskCount: number
+  escalationCount: number
+  topBoundary?: FulfillmentWeeklyQaBoundarySummaryBoundary
+  boundaries: FulfillmentWeeklyQaBoundarySummaryBoundary[]
+}
+
+export type FulfillmentWeeklyQaBoundarySummaryBoundary = {
+  key:
+    | "review_write"
+    | "evidence_upload"
+    | "approval_release"
+    | "permission_export"
+    | "source_integration"
+    | "production_records"
+  label: string
+  status: "需单独确认"
+  relatedPanel: string
+  reason: string
+}
+
 export type FulfillmentSupervisorWeeklyHandoffSummaryItem = {
   key: string
   groupId: string
@@ -506,6 +530,7 @@ export type FulfillmentTeamWeek = {
   weeklySourcePressureSummary: FulfillmentWeeklySourcePressureSummary
   weeklyReviewComparisonSummary: FulfillmentWeeklyReviewComparisonSummary
   weeklyClosureCloseoutSummary: FulfillmentWeeklyClosureCloseoutSummary
+  weeklyQaBoundarySummary: FulfillmentWeeklyQaBoundarySummary
   supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
   teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
   closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
@@ -1611,6 +1636,10 @@ export function getFulfillmentCalendar(
       teamEvidenceGapDistribution,
       closureReadinessTrend,
     })
+    const weeklyQaBoundarySummary = buildWeeklyQaBoundarySummary({
+      supervisorWeeklyDecisionDigest,
+      weeklySourcePressureSummary,
+    })
 
     return {
       ...team,
@@ -1622,6 +1651,7 @@ export function getFulfillmentCalendar(
       weeklySourcePressureSummary,
       weeklyReviewComparisonSummary,
       weeklyClosureCloseoutSummary,
+      weeklyQaBoundarySummary,
       supervisorWeeklyHandoffSummary,
       teamEvidenceGapDistribution,
       closureReadinessTrend,
@@ -4949,6 +4979,7 @@ function buildTeamWeekRiskDistribution(
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
     | "weeklyClosureCloseoutSummary"
+    | "weeklyQaBoundarySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5024,6 +5055,7 @@ function buildSupervisorWeeklyReviewQueue(
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
     | "weeklyClosureCloseoutSummary"
+    | "weeklyQaBoundarySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5086,6 +5118,7 @@ function buildSupervisorWeeklyHandoffSummary(
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
     | "weeklyClosureCloseoutSummary"
+    | "weeklyQaBoundarySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5243,6 +5276,7 @@ function buildTeamEvidenceGapDistribution(
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
     | "weeklyClosureCloseoutSummary"
+    | "weeklyQaBoundarySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5337,6 +5371,7 @@ function buildWeeklyDataQualitySummary(
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
     | "weeklyClosureCloseoutSummary"
+    | "weeklyQaBoundarySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5453,6 +5488,7 @@ function buildWeeklyOwnerPressureSummary(
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
     | "weeklyClosureCloseoutSummary"
+    | "weeklyQaBoundarySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5577,6 +5613,7 @@ function buildWeeklySourcePressureSummary(
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
     | "weeklyClosureCloseoutSummary"
+    | "weeklyQaBoundarySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5864,6 +5901,69 @@ function buildWeeklyClosureCloseoutSummary({
   }
 }
 
+function buildWeeklyQaBoundarySummary({
+  supervisorWeeklyDecisionDigest,
+  weeklySourcePressureSummary,
+}: {
+  supervisorWeeklyDecisionDigest: FulfillmentSupervisorWeeklyDecisionDigest
+  weeklySourcePressureSummary: FulfillmentWeeklySourcePressureSummary
+}): FulfillmentWeeklyQaBoundarySummary {
+  const boundaries: FulfillmentWeeklyQaBoundarySummaryBoundary[] = [
+    {
+      key: "review_write",
+      label: "复核写入",
+      status: "需单独确认",
+      relatedPanel: "周度闭环收口摘要",
+      reason: "当前展示建议结论、证据和风险，不形成处理记录。",
+    },
+    {
+      key: "evidence_upload",
+      label: "补充证据",
+      status: "需单独确认",
+      relatedPanel: "周度闭环收口摘要",
+      reason: "当前展示缺口和下钻建议，不接收文件或材料。",
+    },
+    {
+      key: "approval_release",
+      label: "审批发布",
+      status: "需单独确认",
+      relatedPanel: "周度复核对比摘要",
+      reason: "当前展示复核对比和风险，不改变发布状态。",
+    },
+    {
+      key: "permission_export",
+      label: "权限与报表",
+      status: "需单独确认",
+      relatedPanel: "周度质量影响汇总",
+      reason: "当前展示影响范围和质量线索，不生成报表文件或权限隔离。",
+    },
+    {
+      key: "source_integration",
+      label: "外部数据接入",
+      status: "需单独确认",
+      relatedPanel: "周度来源压力",
+      reason: "当前展示来源轨道归因，不连接外部系统。",
+    },
+    {
+      key: "production_records",
+      label: "生产数据留存",
+      status: "需单独确认",
+      relatedPanel: "本周复核队列",
+      reason: "当前展示队列和查看路径，不写入生产记录。",
+    },
+  ]
+
+  return {
+    headline: `本周 7 个主管看板均为查看依据，${boundaries.length} 类生产能力仍需单独确认。`,
+    coveredPanelCount: 7,
+    boundaryCount: boundaries.length,
+    openRiskCount: supervisorWeeklyDecisionDigest.openRiskCount,
+    escalationCount: weeklySourcePressureSummary.escalationCount,
+    topBoundary: boundaries[0],
+    boundaries,
+  }
+}
+
 function buildTeamClosureReadinessTrend(
   team: Omit<
     FulfillmentTeamWeek,
@@ -5875,6 +5975,7 @@ function buildTeamClosureReadinessTrend(
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
     | "weeklyClosureCloseoutSummary"
+    | "weeklyQaBoundarySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"

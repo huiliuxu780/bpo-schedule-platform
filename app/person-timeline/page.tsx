@@ -275,6 +275,7 @@ function GroupWeekSection({
           <WeeklySourcePressurePanel team={team} />
           <WeeklyReviewComparisonPanel team={team} />
           <WeeklyClosureCloseoutPanel team={team} />
+          <WeeklyQaBoundaryPanel team={team} />
           <SupervisorWeeklyReviewQueuePanel team={team} />
           <SupervisorWeeklyHandoffSummaryPanel team={team} />
           <TeamEvidenceGapDistributionPanel team={team} />
@@ -726,6 +727,59 @@ function WeeklyClosureCloseoutPanel({ team }: { team: FulfillmentTeamWeek }) {
               <div className="text-muted-foreground">{item.impact}</div>
               <div className="text-muted-foreground">{item.reason}</div>
             </Link>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function WeeklyQaBoundaryPanel({ team }: { team: FulfillmentTeamWeek }) {
+  const summary = team.weeklyQaBoundarySummary
+  const topBoundary = summary.topBoundary
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">周度查看边界核查</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.openRiskCount > 0 ? "destructive" : "outline"}>
+          边界 {summary.boundaryCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="查看依据" value={`${summary.coveredPanelCount} 个`} />
+        <SummaryMetric label="确认事项" value={`${summary.boundaryCount} 类`} />
+        <SummaryMetric label="开放风险" value={`${summary.openRiskCount} 项`} />
+        <SummaryMetric label="升级压力" value={`${summary.escalationCount} 项`} />
+      </div>
+      {topBoundary ? (
+        <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">{topBoundary.label}</span>
+            <Badge variant="secondary">{topBoundary.status}</Badge>
+          </div>
+          <div className="text-muted-foreground">{topBoundary.relatedPanel}</div>
+          <div className="text-muted-foreground">{topBoundary.reason}</div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          本周暂无需要补充核查的边界。
+        </div>
+      )}
+      {summary.boundaries.length > 1 ? (
+        <div className="grid gap-2">
+          {summary.boundaries.slice(1, 3).map((boundary) => (
+            <div key={boundary.key} className="grid gap-1 rounded-md border bg-background p-2 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium">{boundary.label}</span>
+                <span className="text-muted-foreground">{boundary.status}</span>
+              </div>
+              <div className="text-muted-foreground">{boundary.relatedPanel}</div>
+              <div className="text-muted-foreground">{boundary.reason}</div>
+            </div>
           ))}
         </div>
       ) : null}

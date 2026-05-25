@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Weekly view boundary check
+
+#### 结论
+
+- `F365-F366/Q084/US482-US484` 已完成周度查看边界核查和 QA 收口。
+- 团队周视图新增 `weeklyQaBoundarySummary`，基于周度决策摘要和周度来源压力派生覆盖看板数、边界事项数、开放风险、升级压力、首要边界、关联看板和边界原因。
+- 页面在现有小组周视图侧栏展示“周度查看边界核查”，位于周度闭环收口摘要之后、本周复核队列之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、真实修复、提交、保存、关闭异常、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看边界解释，不代表复核结论写入、证据上传、审批发布、报表权限、外部数据接入、处理记录写入或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `weeklyQaBoundarySummary` 为 `undefined`；页面源序测试同时失败于缺少“周度查看边界核查”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run lint` 和 `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组周视图，页面显示“周度查看边界核查”“本周 7 个主管看板均为查看依据，6 类生产能力仍需单独确认。”“边界 6”“复核写入”“补充证据”“审批发布”，且周度查看边界核查位于周度闭环收口摘要之后、本周复核队列之前；截图保存至 `/private/tmp/bpo-weekly-view-boundary-smoke.png`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-25 - Weekly closure closeout
 
 #### 结论
