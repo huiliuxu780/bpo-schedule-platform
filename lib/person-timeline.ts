@@ -937,6 +937,30 @@ export type FulfillmentHandlingReadinessNarrativeItem = {
   nextView: string
 }
 
+export type FulfillmentSupervisorDecisionDigest = {
+  headline: string
+  totalDecisionCount: number
+  mediumConfidenceCount: number
+  openRiskCount: number
+  nextReviewPoint: string
+  leadDecision?: FulfillmentSupervisorDecisionDigestItem
+  decisions: FulfillmentSupervisorDecisionDigestItem[]
+}
+
+export type FulfillmentSupervisorDecisionDigestItem = {
+  key: string
+  employeeId: string
+  employeeName: string
+  title: string
+  suggestedOutcome: string
+  confidence: FulfillmentMatrixExceptionQueueItem["reviewOutcomePreview"]["confidence"]
+  readiness: string
+  openRisk: string
+  nextReviewPoint: string
+  sourceReferences: string[]
+  decisionReason: string
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
@@ -958,6 +982,7 @@ export type FulfillmentGroupMatrix = {
   exceptionImpactPriority: FulfillmentExceptionImpactPriority
   supervisorPrioritySummary: FulfillmentSupervisorPrioritySummary
   handlingReadinessNarrative: FulfillmentHandlingReadinessNarrative
+  supervisorDecisionDigest: FulfillmentSupervisorDecisionDigest
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1416,6 +1441,7 @@ export function getFulfillmentMatrix(
     exceptionImpactPriority: summarizeExceptionImpactPriority(exceptionQueue),
     supervisorPrioritySummary: summarizeSupervisorPrioritySummary(exceptionQueue),
     handlingReadinessNarrative: summarizeHandlingReadinessNarrative(exceptionQueue),
+    supervisorDecisionDigest: summarizeSupervisorDecisionDigest(exceptionQueue),
   }
 }
 
@@ -3524,6 +3550,70 @@ function buildHandlingReadinessHeadline(leadItem?: FulfillmentHandlingReadinessN
   const missingText = leadItem.blockerReason.replace("缺少", "缺").replace("。", "")
 
   return `${leadItem.employeeName} / ${leadItem.title}还${missingText}，先补材料再判断。`
+}
+
+function summarizeSupervisorDecisionDigest(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentSupervisorDecisionDigest {
+  const decisionSources = queue
+    .map((item) => ({
+      item,
+      missingCount: item.closureChecklist.missingCount,
+    }))
+    .sort(
+      (a, b) =>
+        Number(Boolean(b.item.reviewOutcomePreview.openRisk)) -
+          Number(Boolean(a.item.reviewOutcomePreview.openRisk)) ||
+        confidenceRank[b.item.reviewOutcomePreview.confidence] -
+          confidenceRank[a.item.reviewOutcomePreview.confidence] ||
+        b.missingCount - a.missingCount ||
+        priorityRank[b.item.priority] - priorityRank[a.item.priority] ||
+        b.item.impactHours - a.item.impactHours ||
+        a.item.employeeId.localeCompare(b.item.employeeId)
+    )
+  const decisions = decisionSources.map(({ item, missingCount }) =>
+    buildSupervisorDecisionDigestItem(item, missingCount)
+  )
+  const leadDecision = decisions[0]
+
+  return {
+    headline: leadDecision
+      ? `当前 ${decisions.length} 项异常均有待确认判断，先看${leadDecision.employeeName} / ${leadDecision.title}。`
+      : "当前小组暂无可摘要的主管决策项。",
+    totalDecisionCount: decisions.length,
+    mediumConfidenceCount: decisions.filter((item) => item.confidence === "中").length,
+    openRiskCount: decisions.filter((item) => item.openRisk.length > 0).length,
+    nextReviewPoint: leadDecision?.nextReviewPoint ?? "暂无下一复核点",
+    leadDecision,
+    decisions,
+  }
+}
+
+function buildSupervisorDecisionDigestItem(
+  item: FulfillmentMatrixExceptionQueueItem,
+  missingCount: number
+): FulfillmentSupervisorDecisionDigestItem {
+  const preview = item.reviewOutcomePreview
+
+  return {
+    key: item.key,
+    employeeId: item.employeeId,
+    employeeName: item.employeeName,
+    title: item.title,
+    suggestedOutcome: preview.suggestedOutcome,
+    confidence: preview.confidence,
+    readiness: preview.readiness,
+    openRisk: preview.openRisk,
+    nextReviewPoint: preview.nextReviewPoint,
+    sourceReferences: preview.sourceReferences,
+    decisionReason: `${preview.confidence}可信 / 待补 ${missingCount} 项 / 风险：${preview.openRisk}`,
+  }
+}
+
+const confidenceRank: Record<FulfillmentMatrixExceptionQueueItem["reviewOutcomePreview"]["confidence"], number> = {
+  高: 3,
+  中: 2,
+  低: 1,
 }
 
 const closureReadinessLabel: Record<

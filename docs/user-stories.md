@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US450-US453 - 主管决策摘要
+
+```yaml
+stories:
+  - id: US450
+    requirement_ids: [R438, R439]
+    task_ids: [F343]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组当日异常面板看到主管决策摘要，以便快速读懂当前异常可形成哪些判断口径。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US451
+    requirement_ids: [R439]
+    task_ids: [F344]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望决策摘要展示建议判断、可信度、证据引用、开放风险和下一复核点，以便稳定组织复核讨论。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US452
+    requirement_ids: [R440]
+    task_ids: [F345]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望主管决策摘要只表达查看和建议口径，以便不误导为真实提交、保存、审批或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US453
+    requirement_ids: [R441]
+    task_ids: [Q074]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管决策摘要批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板展示主管决策摘要。"
+  - "摘要展示建议判断、可信度、证据引用、开放风险、下一复核点和摘要项。"
+  - "摘要不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US446-US449 - 处理准备叙事
 
 ```yaml

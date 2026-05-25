@@ -846,6 +846,7 @@ function MatrixExceptionPanel({
       <ExceptionImpactPriorityPanel priority={matrix.exceptionImpactPriority} />
       <SupervisorPrioritySummaryPanel summary={matrix.supervisorPrioritySummary} />
       <HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />
+      <SupervisorDecisionDigestPanel digest={matrix.supervisorDecisionDigest} />
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
@@ -1725,6 +1726,64 @@ function HandlingReadinessNarrativePanel({
       ) : (
         <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
           当前小组暂无需要整理的处理准备叙事。
+        </div>
+      )}
+    </div>
+  )
+}
+
+function SupervisorDecisionDigestPanel({
+  digest,
+}: {
+  digest: FulfillmentGroupMatrix["supervisorDecisionDigest"]
+}) {
+  const leadDecision = digest.leadDecision
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">主管决策摘要</div>
+          <div className="text-xs text-muted-foreground">{digest.headline}</div>
+        </div>
+        <Badge variant={digest.openRiskCount > 0 ? "destructive" : "outline"}>
+          风险 {digest.openRiskCount} 项
+        </Badge>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        <SummaryMetric label="判断项" value={`${digest.totalDecisionCount} 项`} />
+        <SummaryMetric label="中可信" value={`${digest.mediumConfidenceCount} 项`} />
+        <SummaryMetric label="下一复核" value={digest.nextReviewPoint} />
+      </div>
+      {leadDecision ? (
+        <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <div className="font-medium text-foreground">
+                {leadDecision.employeeId} {leadDecision.employeeName} / {leadDecision.title}
+              </div>
+              <div className="mt-1 text-muted-foreground">{leadDecision.suggestedOutcome}</div>
+            </div>
+            <Badge variant="secondary">可信度 {leadDecision.confidence}</Badge>
+          </div>
+          <div className="text-muted-foreground">{leadDecision.readiness}</div>
+          <div className="text-muted-foreground">开放风险：{leadDecision.openRisk}</div>
+          <div className="text-muted-foreground">证据引用：{leadDecision.sourceReferences.join(" / ")}</div>
+          <div className="text-muted-foreground">下一复核点：{leadDecision.nextReviewPoint}</div>
+          <div className="grid gap-1">
+            {digest.decisions.slice(0, 2).map((item, index) => (
+              <div key={item.key} className="rounded-md border bg-background p-2">
+                <div className="font-medium text-foreground">
+                  第 {index + 1} 项：{item.employeeName} / {item.title}
+                </div>
+                <div className="mt-1 text-muted-foreground">{item.decisionReason}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          当前小组暂无可摘要的主管决策项。
         </div>
       )}
     </div>

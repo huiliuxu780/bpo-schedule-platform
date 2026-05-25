@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R438-R441 - 主管决策摘要
+
+```yaml
+requirements:
+  - id: R438
+    module: "履约日历"
+    description: "小组当日异常面板需要展示主管决策摘要，帮助现场主管快速读懂当前异常可形成哪些判断口径。"
+  - id: R439
+    module: "履约日历"
+    description: "主管决策摘要需要包含建议判断、可信度、证据引用、开放风险、下一复核点和摘要项。"
+  - id: R440
+    module: "履约日历"
+    description: "主管决策摘要只能表达查看和建议口径，不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或状态写入能力。"
+  - id: R441
+    module: "质量与交付"
+    description: "主管决策摘要完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读主管决策摘要；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R434-R437 - 处理准备叙事
 
 ```yaml

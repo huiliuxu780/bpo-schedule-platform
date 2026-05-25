@@ -51,6 +51,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const impactPriorityPosition = pageSource.indexOf("<ExceptionImpactPriorityPanel priority={matrix.exceptionImpactPriority} />");
   const supervisorPriorityPosition = pageSource.indexOf("<SupervisorPrioritySummaryPanel summary={matrix.supervisorPrioritySummary} />");
   const handlingReadinessPosition = pageSource.indexOf("<HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />");
+  const decisionDigestPosition = pageSource.indexOf("<SupervisorDecisionDigestPanel digest={matrix.supervisorDecisionDigest} />");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
@@ -83,6 +84,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(impactPriorityPosition >= 0);
   assert.ok(supervisorPriorityPosition >= 0);
   assert.ok(handlingReadinessPosition >= 0);
+  assert.ok(decisionDigestPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(causeSplitPosition >= 0);
@@ -98,7 +100,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(dataQualityImpactPosition < impactPriorityPosition);
   assert.ok(impactPriorityPosition < supervisorPriorityPosition);
   assert.ok(supervisorPriorityPosition < handlingReadinessPosition);
-  assert.ok(handlingReadinessPosition < trendPosition);
+  assert.ok(handlingReadinessPosition < decisionDigestPosition);
+  assert.ok(decisionDigestPosition < trendPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.ok(riskDigestPosition < causeSplitPosition);
   assert.ok(causeSplitPosition < reviewLoadPosition);
@@ -1035,6 +1038,54 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
           "排班 SCH-1001-2：午后班 13:00-18:00 / 登录 LOG-1001-1：CORN 登录 09:02-18:00 / 状态 STA-1001-2：培训 13:00-18:00",
         impactScope: "刘晨 / 状态轨道 / 2026-05-11 小组矩阵",
         nextView: "先查看刘晨的培训安排说明和 2026-05-11 个人三轨详情。",
+      },
+    ],
+  });
+  assert.deepEqual(matrix.supervisorDecisionDigest, {
+    headline: "当前 2 项异常均有待确认判断，先看王敏 / 迟到 21 分钟。",
+    totalDecisionCount: 2,
+    mediumConfidenceCount: 2,
+    openRiskCount: 2,
+    nextReviewPoint: "2026-05-11 10:00",
+    leadDecision: {
+      key: "A-1002::late_login",
+      employeeId: "A-1002",
+      employeeName: "王敏",
+      title: "迟到 21 分钟",
+      suggestedOutcome: "待确认到岗：王敏 09:00-09:21 登录缺口，需补到岗说明。",
+      confidence: "中",
+      readiness: "已齐 2 项 / 待补 2 项",
+      openRisk: "缺少到岗说明会影响当日履约缺口判断。",
+      nextReviewPoint: "2026-05-11 10:00",
+      sourceReferences: ["SCH-1002-1", "LOG-1002-1", "DQ-202605-009"],
+      decisionReason: "中可信 / 待补 2 项 / 风险：缺少到岗说明会影响当日履约缺口判断。",
+    },
+    decisions: [
+      {
+        key: "A-1002::late_login",
+        employeeId: "A-1002",
+        employeeName: "王敏",
+        title: "迟到 21 分钟",
+        suggestedOutcome: "待确认到岗：王敏 09:00-09:21 登录缺口，需补到岗说明。",
+        confidence: "中",
+        readiness: "已齐 2 项 / 待补 2 项",
+        openRisk: "缺少到岗说明会影响当日履约缺口判断。",
+        nextReviewPoint: "2026-05-11 10:00",
+        sourceReferences: ["SCH-1002-1", "LOG-1002-1", "DQ-202605-009"],
+        decisionReason: "中可信 / 待补 2 项 / 风险：缺少到岗说明会影响当日履约缺口判断。",
+      },
+      {
+        key: "A-1001::no_login",
+        employeeId: "A-1001",
+        employeeName: "刘晨",
+        title: "午后状态缺登录切片",
+        suggestedOutcome: "待确认状态：刘晨 13:00-18:00 状态为培训，需补培训安排说明。",
+        confidence: "中",
+        readiness: "已齐 3 项 / 待补 2 项",
+        openRisk: "缺少培训安排说明会影响状态是否计入当班履约。",
+        nextReviewPoint: "2026-05-11 15:00",
+        sourceReferences: ["SCH-1001-2", "LOG-1001-1", "STA-1001-2", "DQ-202605-010"],
+        decisionReason: "中可信 / 待补 2 项 / 风险：缺少培训安排说明会影响状态是否计入当班履约。",
       },
     ],
   });
