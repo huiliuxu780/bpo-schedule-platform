@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R430-R433 - 主管优先级总览
+
+```yaml
+requirements:
+  - id: R430
+    module: "履约日历"
+    description: "小组当日异常面板需要展示主管优先级总览，帮助现场主管快速判断当前先看哪类异常和哪位员工。"
+  - id: R431
+    module: "履约日历"
+    description: "主管优先级总览需要包含首要查看对象、优先原因、影响时长、闭环阻塞、升级压力、影响范围和查看顺序。"
+  - id: R432
+    module: "履约日历"
+    description: "主管优先级总览只能表达查看和排序建议，不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或状态写入能力。"
+  - id: R433
+    module: "质量与交付"
+    description: "主管优先级总览完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读主管优先级总览；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R426-R429 - 异常影响范围优先级汇总
 
 ```yaml

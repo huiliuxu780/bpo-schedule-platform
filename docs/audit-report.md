@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Supervisor priority summary
+
+#### 结论
+
+- `F337-F339/Q072/US442-US445` 已完成主管优先级总览和 QA 收口。
+- 小组矩阵新增 `supervisorPrioritySummary`，基于当前异常队列已有优先级、升级状态、闭环阻塞、影响时长和影响范围派生主管查看顺序。
+- 页面在现有小组当日异常侧栏展示“主管优先级总览”，位于影响范围优先级之后、风险趋势之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和排序建议，不代表真实复核结论写入、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `supervisorPrioritySummary` 为 `undefined`；页面源序测试随后失败于缺少“主管优先级总览”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组当日矩阵并选中 `A-1002::late_login`，页面显示“主管优先级总览”“优先查看王敏 / 迟到 21 分钟：高优异常且需要升级，先补 2 项材料。”“高优 1 项”“阻塞 2 项”“升级 1 项”“A-1002 王敏 / 迟到 21 分钟”，且主管优先级总览位于风险趋势之前。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Exception impact priority
 
 #### 结论

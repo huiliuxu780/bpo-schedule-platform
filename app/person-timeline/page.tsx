@@ -844,6 +844,7 @@ function MatrixExceptionPanel({
       {selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}
       <DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />
       <ExceptionImpactPriorityPanel priority={matrix.exceptionImpactPriority} />
+      <SupervisorPrioritySummaryPanel summary={matrix.supervisorPrioritySummary} />
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
@@ -1594,6 +1595,72 @@ function ExceptionImpactPriorityPanel({
       ) : (
         <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
           当前异常队列没有可排序的影响范围。
+        </div>
+      )}
+    </div>
+  )
+}
+
+function SupervisorPrioritySummaryPanel({
+  summary,
+}: {
+  summary: FulfillmentGroupMatrix["supervisorPrioritySummary"]
+}) {
+  const topFocus = summary.topFocus
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">主管优先级总览</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.escalationCount > 0 ? "destructive" : "outline"}>
+          升级 {summary.escalationCount} 项
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="高优" value={`${summary.highPriorityCount} 项`} />
+        <SummaryMetric label="阻塞" value={`${summary.blockedCount} 项`} />
+        <SummaryMetric label="总影响" value={`${summary.totalImpactHours.toFixed(2)}h`} />
+        <SummaryMetric label="查看项" value={`${summary.orderedItems.length} 项`} />
+      </div>
+      {topFocus ? (
+        <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <div className="font-medium text-foreground">
+                {topFocus.employeeId} {topFocus.employeeName} / {topFocus.title}
+              </div>
+              <div className="mt-1 text-muted-foreground">{topFocus.focusReason}</div>
+            </div>
+            <Badge variant={topFocus.priority === "high" ? "destructive" : "secondary"}>
+              {topFocus.reviewGroup}
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">影响范围：{topFocus.impactScope}</div>
+          <div className="text-muted-foreground">{topFocus.nextView}</div>
+          <div className="flex flex-wrap gap-1">
+            {summary.focusReasons.map((reason) => (
+              <Badge key={reason} variant="outline" className="text-[11px]">
+                {reason}
+              </Badge>
+            ))}
+          </div>
+          <div className="grid gap-1">
+            {summary.orderedItems.slice(0, 2).map((item, index) => (
+              <div key={item.key} className="rounded-md border bg-background p-2">
+                <div className="font-medium text-foreground">
+                  第 {index + 1} 位：{item.employeeName} / {item.title}
+                </div>
+                <div className="mt-1 text-muted-foreground">{item.focusReason}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          当前小组暂无主管优先级排序项。
         </div>
       )}
     </div>

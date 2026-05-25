@@ -2,12 +2,30 @@
 
 ## 2026-05-25
 
+### F337-F339 Supervisor Priority Summary
+
+- branch_name: `codex/f337-supervisor-priority-summary`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `eaa9033`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose supervisor priority summary in the existing fulfillment calendar group-day exception panel, including top focus, priority reasons, high-priority count, blocked count, escalation count, impact hours, impact scope, and ordered review items.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `scripts/tests/product-ui-copy-audit.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, notification action, dispatch action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-day route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, notification action, dispatch action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `supervisorPrioritySummary` and missing supervisor priority summary card; target model tests, product UI copy audit, navigation regression, typecheck, strict state check, browser smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F334-F336 Exception Impact Priority
 
 - branch_name: `codex/f334-exception-impact-priority`
 - base_main_commit: `a3a134c`
 - base_chain_commit: `1b6cb47`
-- remote_status: `not_pushed`
+- remote_status: `pushed`
 - scope: frontend local business function: expose exception impact scope prioritization in the existing fulfillment calendar group-day exception panel, including top exception, impacted objects, impacted comparisons, impact hours, blocker count, priority reason, and ranked items.
 - allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `scripts/tests/product-ui-copy-audit.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, notification action, dispatch action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates existing fulfillment calendar group-day route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, notification action, dispatch action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
@@ -17,7 +35,7 @@
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `ask PM after verified local commit`
+- push_decision: `PM confirmed by 允许 on 2026-05-25; branch pushed`
 - blocked_reason: `N/A`
 
 ### F331-F333 Data Quality Exception Impact

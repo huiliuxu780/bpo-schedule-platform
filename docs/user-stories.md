@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US442-US445 - 主管优先级总览
+
+```yaml
+stories:
+  - id: US442
+    requirement_ids: [R430, R431]
+    task_ids: [F337]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组当日异常面板看到主管优先级总览，以便快速判断当前先看哪类异常和哪位员工。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US443
+    requirement_ids: [R431]
+    task_ids: [F338]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望优先级总览展示首要查看对象、优先原因、影响时长、阻塞压力、升级压力和查看顺序，以便稳定安排当天复核节奏。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US444
+    requirement_ids: [R432]
+    task_ids: [F339]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望主管优先级总览只表达查看和排序建议，以便不误导为真实派单、处理、审批或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US445
+    requirement_ids: [R433]
+    task_ids: [Q072]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望主管优先级总览批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板展示主管优先级总览。"
+  - "总览展示首要查看对象、优先原因、影响时长、闭环阻塞、升级压力、影响范围和查看顺序。"
+  - "总览不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US438-US441 - 异常影响范围优先级汇总
 
 ```yaml

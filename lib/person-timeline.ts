@@ -889,6 +889,32 @@ export type FulfillmentExceptionImpactPriorityItem = {
   excludedScope: string
 }
 
+export type FulfillmentSupervisorPrioritySummary = {
+  headline: string
+  totalImpactHours: number
+  highPriorityCount: number
+  blockedCount: number
+  escalationCount: number
+  focusReasons: string[]
+  topFocus?: FulfillmentSupervisorPrioritySummaryItem
+  orderedItems: FulfillmentSupervisorPrioritySummaryItem[]
+}
+
+export type FulfillmentSupervisorPrioritySummaryItem = {
+  key: string
+  employeeId: string
+  employeeName: string
+  title: string
+  priority: TimelineAnomaly["severity"]
+  reviewGroup: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["label"]
+  agingLevel: FulfillmentMatrixExceptionQueueItem["agingEscalation"]["level"]
+  impactHours: number
+  blockerCount: number
+  focusReason: string
+  impactScope: string
+  nextView: string
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
@@ -908,6 +934,7 @@ export type FulfillmentGroupMatrix = {
   exceptionClosureReadinessSummary: FulfillmentExceptionClosureReadinessSummary
   dataQualityExceptionImpact: FulfillmentDataQualityExceptionImpact
   exceptionImpactPriority: FulfillmentExceptionImpactPriority
+  supervisorPrioritySummary: FulfillmentSupervisorPrioritySummary
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1364,6 +1391,7 @@ export function getFulfillmentMatrix(
     ),
     exceptionClosureReadinessSummary: summarizeExceptionClosureReadiness(exceptionQueue),
     exceptionImpactPriority: summarizeExceptionImpactPriority(exceptionQueue),
+    supervisorPrioritySummary: summarizeSupervisorPrioritySummary(exceptionQueue),
   }
 }
 
@@ -3329,6 +3357,76 @@ function summarizeExceptionImpactPriority(
   }
 }
 
+function summarizeSupervisorPrioritySummary(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentSupervisorPrioritySummary {
+  const highPriorityCount = queue.filter((item) => item.priority === "high").length
+  const blockedCount = queue.filter((item) => item.closureChecklist.missingCount > 0).length
+  const escalationCount = queue.filter((item) => item.agingEscalation.level === "需要升级").length
+  const totalImpactHours = roundHours(queue.reduce((total, item) => total + item.impactHours, 0))
+  const orderedItems = queue
+    .map((item) => buildSupervisorPrioritySummaryItem(item))
+    .sort(
+      (a, b) =>
+        Number(b.priority === "high") - Number(a.priority === "high") ||
+        escalationLevelRank[b.agingLevel] - escalationLevelRank[a.agingLevel] ||
+        b.blockerCount - a.blockerCount ||
+        b.impactHours - a.impactHours ||
+        b.impactScope.split(" / ").length - a.impactScope.split(" / ").length ||
+        a.employeeId.localeCompare(b.employeeId)
+    )
+  const topFocus = orderedItems[0]
+
+  return {
+    headline: buildSupervisorPriorityHeadline(topFocus),
+    totalImpactHours,
+    highPriorityCount,
+    blockedCount,
+    escalationCount,
+    focusReasons: [
+      `高优异常 ${highPriorityCount} 项`,
+      `升级关注 ${escalationCount} 项`,
+      `闭环阻塞 ${blockedCount} 项`,
+      `总影响 ${totalImpactHours.toFixed(2)}h`,
+    ],
+    topFocus,
+    orderedItems,
+  }
+}
+
+function buildSupervisorPrioritySummaryItem(
+  item: FulfillmentMatrixExceptionQueueItem
+): FulfillmentSupervisorPrioritySummaryItem {
+  const blockerCount = item.closureChecklist.missingCount
+
+  return {
+    key: item.key,
+    employeeId: item.employeeId,
+    employeeName: item.employeeName,
+    title: item.title,
+    priority: item.priority,
+    reviewGroup: item.reviewGroup.label,
+    agingLevel: item.agingEscalation.level,
+    impactHours: item.impactHours,
+    blockerCount,
+    focusReason: `${supervisorPriorityShortLabel[item.priority]} / ${item.agingEscalation.level} / 待补 ${blockerCount} 项 / 影响 ${item.impactHours.toFixed(2)}h`,
+    impactScope: item.dataQualityImpactScope.impactedObjects.join(" / "),
+    nextView: `先核对${item.handlingGuide.requiredInfo.join("、")}。`,
+  }
+}
+
+function buildSupervisorPriorityHeadline(topFocus?: FulfillmentSupervisorPrioritySummaryItem) {
+  if (!topFocus) {
+    return "当前小组暂无需要排序的主管关注项。"
+  }
+
+  if (topFocus.priority === "high" && topFocus.agingLevel === "需要升级") {
+    return `优先查看${topFocus.employeeName} / ${topFocus.title}：高优异常且需要升级，先补 ${topFocus.blockerCount} 项材料。`
+  }
+
+  return `优先查看${topFocus.employeeName} / ${topFocus.title}：${topFocus.focusReason}。`
+}
+
 const closureReadinessLabel: Record<
   FulfillmentMatrixExceptionQueueItem["reviewGroup"]["code"],
   FulfillmentExceptionClosureReadinessSummary["blockers"][number]["label"]
@@ -3336,6 +3434,12 @@ const closureReadinessLabel: Record<
   missing_material: "待补材料",
   supervisor_judgment: "待主管判断",
   data_check: "待数据核对",
+}
+
+const supervisorPriorityShortLabel: Record<TimelineAnomaly["severity"], string> = {
+  high: "高优",
+  medium: "中优",
+  low: "低优",
 }
 
 function buildClosureReadinessHeadline(totalCount: number, readyCount: number) {
