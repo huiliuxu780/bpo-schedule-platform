@@ -29,6 +29,44 @@
 
 ## Stories
 
+### US467-US469 - 周度质量影响汇总
+
+```yaml
+stories:
+  - id: US467
+    requirement_ids: [R458, R459]
+    task_ids: [F355]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到周度质量影响汇总，以便先识别本周哪些数据质量问题正在影响异常复核。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US468
+    requirement_ids: [R460]
+    task_ids: [F356]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望周度质量影响汇总只表达查看和解释口径，以便不误导为真实修复、提交、保存、审批、导出或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US469
+    requirement_ids: [R461]
+    task_ids: [Q079]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度质量影响汇总批次做收口，确认模型、页面顺序、浏览器 smoke、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组周视图展示周度质量影响汇总。"
+  - "汇总展示影响异常数、影响人员、影响日期、影响时长、严重度、阻塞证据、下钻路径和业务原因。"
+  - "页面只提供查看和解释入口，不出现真实修复、提交、保存、审批、导出、批量、派单或状态写入能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US464-US466 - 数据质量影响排序细化
 
 ```yaml

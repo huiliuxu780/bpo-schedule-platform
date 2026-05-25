@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R458-R461 - 周度质量影响汇总
+
+```yaml
+requirements:
+  - id: R458
+    module: "履约日历"
+    description: "小组周视图需要展示周度质量影响汇总，帮助现场主管识别本周哪些数据质量问题正在影响异常复核。"
+  - id: R459
+    module: "履约日历"
+    description: "周度质量影响汇总需要包含影响异常数、影响人员、影响日期、影响时长、严重度、阻塞证据、下钻路径和业务原因。"
+  - id: R460
+    module: "履约日历"
+    description: "周度质量影响汇总只能表达查看和解释口径，不提供真实修复、提交、保存、审批、导出、批量、真实处理或状态写入能力。"
+  - id: R461
+    module: "质量与交付"
+    description: "周度质量影响汇总完成后需要 QA 收口，确认模型测试、页面顺序、浏览器 smoke、文案边界和 no-action 边界。"
+source: "PM requested continued supervisor-side production MVP development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组周视图补充本地前端只读周度质量影响汇总；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R454-R457 - 数据质量影响排序细化
 
 ```yaml

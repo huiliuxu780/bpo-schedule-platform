@@ -270,6 +270,7 @@ function GroupWeekSection({
         </div>
         <aside className="grid content-start gap-3">
           <SupervisorWeeklyDecisionDigestPanel team={team} />
+          <WeeklyDataQualitySummaryPanel team={team} />
           <SupervisorWeeklyReviewQueuePanel team={team} />
           <SupervisorWeeklyHandoffSummaryPanel team={team} />
           <TeamEvidenceGapDistributionPanel team={team} />
@@ -342,6 +343,90 @@ function SupervisorWeeklyDecisionDigestPanel({ team }: { team: FulfillmentTeamWe
           </Link>
         ))}
       </div>
+    </div>
+  )
+}
+
+function WeeklyDataQualitySummaryPanel({ team }: { team: FulfillmentTeamWeek }) {
+  const summary = team.weeklyDataQualitySummary
+  const topIssue = summary.topIssue
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">周度质量影响汇总</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.highSeverityCount > 0 ? "destructive" : "outline"}>
+          高严重 {summary.highSeverityCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="质量问题" value={`${summary.totalIssueCount} 个`} />
+        <SummaryMetric label="影响异常" value={`${summary.impactedExceptionCount} 项`} />
+        <SummaryMetric label="影响人员" value={`${summary.impactedPeopleCount} 人`} />
+        <SummaryMetric label="阻塞证据" value={`${summary.totalBlockedEvidenceCount} 项`} />
+      </div>
+      {topIssue ? (
+        <Link
+          href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+            topIssue.nextDrilldown.groupId
+          )}&date=${topIssue.nextDrilldown.date}&queue=all&exception=${encodeURIComponent(
+            topIssue.nextDrilldown.exceptionKey
+          )}`}
+          className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs transition-colors hover:bg-muted"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">
+              {topIssue.issueId} / {topIssue.title}
+            </span>
+            <Badge variant={topIssue.severity === "high" ? "destructive" : "secondary"}>
+              {topIssue.impactHours.toFixed(2)}h
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">{topIssue.reason}</div>
+          <div className="text-muted-foreground">
+            影响人员：{topIssue.impactedPeople.join(" / ")}；影响日期：
+            {topIssue.impactedDays.join(" / ")}
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {topIssue.blockedEvidence.map((evidence) => (
+              <Badge key={evidence} variant="outline" className="text-[11px]">
+                {evidence}
+              </Badge>
+            ))}
+          </div>
+          <div className="text-muted-foreground">{topIssue.nextDrilldown.reason}</div>
+        </Link>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          本周暂无数据质量问题影响异常。
+        </div>
+      )}
+      {summary.issues.length > 1 ? (
+        <div className="grid gap-2">
+          {summary.issues.slice(1, 3).map((issue) => (
+            <Link
+              key={issue.issueId}
+              href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+                issue.nextDrilldown.groupId
+              )}&date=${issue.nextDrilldown.date}&queue=all&exception=${encodeURIComponent(
+                issue.nextDrilldown.exceptionKey
+              )}`}
+              className="grid gap-1 rounded-md border bg-background p-2 text-xs transition-colors hover:bg-muted"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium">
+                  {issue.issueId} / {issue.title}
+                </span>
+                <span className="text-muted-foreground">{issue.impactHours.toFixed(2)}h</span>
+              </div>
+              <div className="text-muted-foreground">{issue.reason}</div>
+            </Link>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }

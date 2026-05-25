@@ -223,6 +223,42 @@ export type FulfillmentSupervisorWeeklyDecisionDigest = {
   decisions: FulfillmentSupervisorWeeklyDecisionDigestItem[]
 }
 
+export type FulfillmentWeeklyDataQualitySummary = {
+  headline: string
+  totalIssueCount: number
+  impactedExceptionCount: number
+  impactedPeopleCount: number
+  impactedDayCount: number
+  totalImpactHours: number
+  highSeverityCount: number
+  totalBlockedEvidenceCount: number
+  topIssue?: FulfillmentWeeklyDataQualitySummaryIssue
+  issues: FulfillmentWeeklyDataQualitySummaryIssue[]
+}
+
+export type FulfillmentWeeklyDataQualitySummaryIssue = {
+  issueId: string
+  title: string
+  severity: FulfillmentMatrixExceptionQueueItem["dataQualityLinks"][number]["severity"]
+  owner: string
+  impactHours: number
+  impactedExceptionCount: number
+  impactedPeople: string[]
+  impactedDays: string[]
+  affectedGroups: string[]
+  blockedEvidence: string[]
+  nextDrilldown: {
+    groupId: string
+    groupName: string
+    date: string
+    label: string
+    exceptionKey: string
+    reason: string
+  }
+  reason: string
+  href: string
+}
+
 export type FulfillmentSupervisorWeeklyHandoffSummaryItem = {
   key: string
   groupId: string
@@ -345,6 +381,7 @@ export type FulfillmentTeamWeek = {
   weekRiskDistribution: FulfillmentTeamWeekRiskDistribution
   supervisorWeeklyReviewQueue: FulfillmentSupervisorWeeklyReviewQueue
   supervisorWeeklyDecisionDigest: FulfillmentSupervisorWeeklyDecisionDigest
+  weeklyDataQualitySummary: FulfillmentWeeklyDataQualitySummary
   supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
   teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
   closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
@@ -1428,6 +1465,7 @@ export function getFulfillmentCalendar(
     const supervisorWeeklyHandoffSummary = buildSupervisorWeeklyHandoffSummary(team)
     const teamEvidenceGapDistribution = buildTeamEvidenceGapDistribution(team)
     const closureReadinessTrend = buildTeamClosureReadinessTrend(team)
+    const weeklyDataQualitySummary = buildWeeklyDataQualitySummary(team)
 
     return {
       ...team,
@@ -1439,6 +1477,7 @@ export function getFulfillmentCalendar(
         teamEvidenceGapDistribution,
         closureReadinessTrend
       ),
+      weeklyDataQualitySummary,
       supervisorWeeklyHandoffSummary,
       teamEvidenceGapDistribution,
       closureReadinessTrend,
@@ -4761,6 +4800,7 @@ function buildTeamWeekRiskDistribution(
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
+    | "weeklyDataQualitySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4831,6 +4871,7 @@ function buildSupervisorWeeklyReviewQueue(
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
+    | "weeklyDataQualitySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4888,6 +4929,7 @@ function buildSupervisorWeeklyHandoffSummary(
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
+    | "weeklyDataQualitySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5040,6 +5082,7 @@ function buildTeamEvidenceGapDistribution(
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
+    | "weeklyDataQualitySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5123,12 +5166,125 @@ function buildTeamEvidenceGapDistribution(
   }
 }
 
+function buildWeeklyDataQualitySummary(
+  team: Omit<
+    FulfillmentTeamWeek,
+    | "weekRiskDistribution"
+    | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyDecisionDigest"
+    | "weeklyDataQualitySummary"
+    | "supervisorWeeklyHandoffSummary"
+    | "teamEvidenceGapDistribution"
+    | "closureReadinessTrend"
+  >
+): FulfillmentWeeklyDataQualitySummary {
+  const linkedItems = team.groups.flatMap((group) =>
+    group.days.flatMap((day) => {
+      const members = buildFulfillmentMatrixMembersForDate(group.members, day.date)
+      const queue = buildFulfillmentMatrixExceptionQueue(members, day.date, group.members)
+
+      return queue.flatMap((item) =>
+        item.dataQualityLinks.map((issue) => ({
+          issue,
+          item,
+          groupId: group.id,
+          groupName: group.supplier,
+          date: day.date,
+          dayLabel: `${day.weekday} ${day.label}`,
+        }))
+      )
+    })
+  )
+  const issues = [...groupBy(linkedItems, (entry) => entry.issue.issueId).entries()]
+    .map(([issueId, entries]) => {
+      const first = entries[0]
+      const issue = first?.issue
+      const topEntry = [...entries].sort(
+        (a, b) =>
+          b.item.impactHours - a.item.impactHours ||
+          priorityRank[b.item.priority] - priorityRank[a.item.priority] ||
+          a.item.employeeId.localeCompare(b.item.employeeId)
+      )[0]
+      const blockedEvidence = Array.from(
+        new Set(entries.flatMap((entry) => entry.item.handlingGuide.requiredInfo))
+      )
+      const impactedDays = Array.from(
+        new Map(entries.map((entry) => [entry.date, entry.dayLabel])).values()
+      )
+      const affectedGroups = Array.from(new Set(entries.map((entry) => entry.groupName))).sort()
+      const impactedPeople = Array.from(
+        new Map(entries.map((entry) => [entry.item.employeeId, entry.item.employeeName])).values()
+      ).sort()
+      const impactHours = roundHours(
+        entries.reduce((total, entry) => total + entry.item.impactHours, 0)
+      )
+
+      return {
+        issueId,
+        title: issue?.title ?? issueId,
+        severity: issue?.severity ?? "low",
+        owner: issue?.owner ?? "现场主管",
+        impactHours,
+        impactedExceptionCount: entries.length,
+        impactedPeople,
+        impactedDays,
+        affectedGroups,
+        blockedEvidence,
+        nextDrilldown: {
+          groupId: topEntry?.groupId ?? "",
+          groupName: topEntry?.groupName ?? "",
+          date: topEntry?.date ?? "",
+          label: topEntry?.dayLabel ?? "",
+          exceptionKey: topEntry?.item.key ?? "",
+          reason: topEntry
+            ? `先看${topEntry.item.employeeName}的${topEntry.item.title}，再进入 ${
+                issue?.href ?? `/data-quality/${issueId}`
+              }。`
+            : `先进入 /data-quality/${issueId} 查看质量详情。`,
+        },
+        reason: `影响 ${impactHours.toFixed(2)}h / ${entries.length} 项异常 / ${
+          impactedDays.length
+        } 天 / ${blockedEvidence.length} 项证据阻塞 / ${issue?.severity ?? "low"}`,
+        href: issue?.href ?? `/data-quality/${issueId}`,
+      }
+    })
+    .sort(
+      (a, b) =>
+        dataQualitySeverityRank[b.severity] - dataQualitySeverityRank[a.severity] ||
+        b.impactHours - a.impactHours ||
+        b.impactedExceptionCount - a.impactedExceptionCount ||
+        a.issueId.localeCompare(b.issueId)
+    )
+  const topIssue = issues[0]
+
+  return {
+    headline: topIssue
+      ? `本周 ${issues.length} 个数据质量问题影响 ${linkedItems.length} 项异常，先处理${topIssue.title}。`
+      : "本周暂无数据质量问题影响异常。",
+    totalIssueCount: issues.length,
+    impactedExceptionCount: linkedItems.length,
+    impactedPeopleCount: new Set(linkedItems.map((entry) => entry.item.employeeId)).size,
+    impactedDayCount: new Set(linkedItems.map((entry) => entry.date)).size,
+    totalImpactHours: roundHours(
+      linkedItems.reduce((total, entry) => total + entry.item.impactHours, 0)
+    ),
+    highSeverityCount: issues.filter((issue) => issue.severity === "high").length,
+    totalBlockedEvidenceCount: issues.reduce(
+      (total, issue) => total + issue.blockedEvidence.length,
+      0
+    ),
+    topIssue,
+    issues,
+  }
+}
+
 function buildTeamClosureReadinessTrend(
   team: Omit<
     FulfillmentTeamWeek,
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyDecisionDigest"
+    | "weeklyDataQualitySummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
