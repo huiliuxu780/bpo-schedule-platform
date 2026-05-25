@@ -49,6 +49,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const nextDayPosition = pageSource.indexOf("{selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}");
   const reviewOutcomePreviewPosition = pageSource.indexOf("{selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}");
   const dataQualityImpactPosition = pageSource.indexOf("<DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />");
+  const dataQualityRankingPosition = pageSource.indexOf("<DataQualityImpactRankingPanel ranking={matrix.dataQualityImpactRanking} />");
   const impactPriorityPosition = pageSource.indexOf("<ExceptionImpactPriorityPanel priority={matrix.exceptionImpactPriority} />");
   const supervisorPriorityPosition = pageSource.indexOf("<SupervisorPrioritySummaryPanel summary={matrix.supervisorPrioritySummary} />");
   const handlingReadinessPosition = pageSource.indexOf("<HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />");
@@ -87,6 +88,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(nextDayPosition >= 0);
   assert.ok(reviewOutcomePreviewPosition >= 0);
   assert.ok(dataQualityImpactPosition >= 0);
+  assert.ok(dataQualityRankingPosition >= 0);
   assert.ok(impactPriorityPosition >= 0);
   assert.ok(supervisorPriorityPosition >= 0);
   assert.ok(handlingReadinessPosition >= 0);
@@ -105,7 +107,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(nextDayPosition < riskDigestPosition);
   assert.ok(nextDayPosition < reviewOutcomePreviewPosition);
   assert.ok(reviewOutcomePreviewPosition < dataQualityImpactPosition);
-  assert.ok(dataQualityImpactPosition < impactPriorityPosition);
+  assert.ok(dataQualityImpactPosition < dataQualityRankingPosition);
+  assert.ok(dataQualityRankingPosition < impactPriorityPosition);
   assert.ok(impactPriorityPosition < supervisorPriorityPosition);
   assert.ok(supervisorPriorityPosition < handlingReadinessPosition);
   assert.ok(handlingReadinessPosition < decisionDigestPosition);
@@ -960,6 +963,59 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
             impactHours: 0.35,
           },
         ],
+      },
+    ],
+  });
+  assert.deepEqual(matrix.dataQualityImpactRanking, {
+    headline: "优先处理 DQ-202605-010 状态时间段重叠，影响 5.00h 和 1 项异常。",
+    totalRankedIssueCount: 2,
+    highSeverityCount: 1,
+    totalBlockedEvidenceCount: 6,
+    leadIssue: {
+      issueId: "DQ-202605-010",
+      title: "状态时间段重叠",
+      rank: 1,
+      severity: "high",
+      owner: "运营负责人",
+      impactScore: 561,
+      impactHours: 5,
+      impactedExceptionCount: 1,
+      impactedPeople: ["刘晨"],
+      blockedEvidence: ["培训安排说明", "在线要求确认", "主管复核结论"],
+      recommendedView: "先看刘晨的午后状态缺登录切片，再进入 /data-quality/DQ-202605-010。",
+      businessReason: "影响 5.00h / 1 项异常 / 3 项证据阻塞 / high",
+      href: "/data-quality/DQ-202605-010",
+    },
+    items: [
+      {
+        issueId: "DQ-202605-010",
+        title: "状态时间段重叠",
+        rank: 1,
+        severity: "high",
+        owner: "运营负责人",
+        impactScore: 561,
+        impactHours: 5,
+        impactedExceptionCount: 1,
+        impactedPeople: ["刘晨"],
+        blockedEvidence: ["培训安排说明", "在线要求确认", "主管复核结论"],
+        recommendedView: "先看刘晨的午后状态缺登录切片，再进入 /data-quality/DQ-202605-010。",
+        businessReason: "影响 5.00h / 1 项异常 / 3 项证据阻塞 / high",
+        href: "/data-quality/DQ-202605-010",
+      },
+      {
+        issueId: "DQ-202605-009",
+        title: "登录员工不在主数据",
+        rank: 2,
+        severity: "low",
+        owner: "现场主管",
+        impactScore: 92,
+        impactHours: 0.35,
+        impactedExceptionCount: 1,
+        impactedPeople: ["王敏"],
+        blockedEvidence: ["到岗说明", "迟到或漏登原因", "现场主管确认口径"],
+        recommendedView: "先看王敏的迟到 21 分钟，再进入 /data-quality/DQ-202605-009。",
+        businessReason: "影响 0.35h / 1 项异常 / 3 项证据阻塞 / low",
+        href: "/data-quality/DQ-202605-009",
       },
     ],
   });

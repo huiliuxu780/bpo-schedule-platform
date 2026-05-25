@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R454-R457 - 数据质量影响排序细化
+
+```yaml
+requirements:
+  - id: R454
+    module: "履约日历"
+    description: "小组当日异常面板需要展示数据质量影响排序，帮助现场主管先处理对当前异常闭环影响最大的数据质量问题。"
+  - id: R455
+    module: "履约日历"
+    description: "数据质量影响排序需要包含影响分、严重度、阻塞证据、影响人员、影响异常数、业务原因和建议查看路径。"
+  - id: R456
+    module: "履约日历"
+    description: "数据质量影响排序只能表达查看和解释口径，不提供真实修复、提交、保存、审批、导出、批量、真实处理或状态写入能力。"
+  - id: R457
+    module: "质量与交付"
+    description: "数据质量影响排序完成后需要 QA 收口，确认模型测试、页面顺序、浏览器 smoke、文案边界和 no-action 边界。"
+source: "PM requested continued supervisor-side production MVP development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读数据质量影响排序；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R450-R453 - 主管闭环复核摘要
 
 ```yaml

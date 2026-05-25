@@ -891,6 +891,31 @@ export type FulfillmentDataQualityExceptionImpactIssue = {
   }>
 }
 
+export type FulfillmentDataQualityImpactRanking = {
+  headline: string
+  totalRankedIssueCount: number
+  highSeverityCount: number
+  totalBlockedEvidenceCount: number
+  leadIssue?: FulfillmentDataQualityImpactRankingItem
+  items: FulfillmentDataQualityImpactRankingItem[]
+}
+
+export type FulfillmentDataQualityImpactRankingItem = {
+  issueId: string
+  title: string
+  rank: number
+  severity: FulfillmentDataQualityExceptionImpactIssue["severity"]
+  owner: string
+  impactScore: number
+  impactHours: number
+  impactedExceptionCount: number
+  impactedPeople: string[]
+  blockedEvidence: string[]
+  recommendedView: string
+  businessReason: string
+  href: string
+}
+
 export type FulfillmentExceptionImpactPriority = {
   headline: string
   totalImpactHours: number
@@ -1058,6 +1083,7 @@ export type FulfillmentGroupMatrix = {
   teamWeekCarryoverOverview: FulfillmentTeamWeekCarryoverOverview
   exceptionClosureReadinessSummary: FulfillmentExceptionClosureReadinessSummary
   dataQualityExceptionImpact: FulfillmentDataQualityExceptionImpact
+  dataQualityImpactRanking: FulfillmentDataQualityImpactRanking
   exceptionImpactPriority: FulfillmentExceptionImpactPriority
   supervisorPrioritySummary: FulfillmentSupervisorPrioritySummary
   handlingReadinessNarrative: FulfillmentHandlingReadinessNarrative
@@ -1525,6 +1551,7 @@ export function getFulfillmentMatrix(
     teamDayRiskTrend: summarizeTeamDayRiskTrend(group.days, selectedDate),
     groupRiskCauseSplit: summarizeGroupRiskCauseSplit(exceptionQueue),
     dataQualityExceptionImpact: summarizeDataQualityExceptionImpact(exceptionQueue),
+    dataQualityImpactRanking: summarizeDataQualityImpactRanking(exceptionQueue),
     teamWeekCarryoverOverview: summarizeTeamWeekCarryoverOverview(
       group.days,
       selectedDate,
@@ -3364,6 +3391,78 @@ function summarizeDataQualityExceptionImpact(
     ),
     primaryIssue,
     issues,
+  }
+}
+
+function summarizeDataQualityImpactRanking(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentDataQualityImpactRanking {
+  const impact = summarizeDataQualityExceptionImpact(queue)
+  const rankedItems = impact.issues
+    .map((issue) => {
+      const matchingItems = queue.filter((item) =>
+        item.dataQualityLinks.some((link) => link.issueId === issue.issueId)
+      )
+      const blockedEvidence = Array.from(
+        new Set(matchingItems.flatMap((item) => item.handlingGuide.requiredInfo))
+      )
+      const topException = [...matchingItems].sort(
+        (a, b) =>
+          b.impactHours - a.impactHours ||
+          priorityRank[b.priority] - priorityRank[a.priority] ||
+          a.employeeId.localeCompare(b.employeeId)
+      )[0]
+      const impactScore = Math.round(
+        issue.impactHours * 100 +
+          issue.impactedExceptionCount * 25 +
+          blockedEvidence.length * 10 +
+          dataQualitySeverityRank[issue.severity] * 2
+      )
+
+      return {
+        issueId: issue.issueId,
+        title: issue.title,
+        rank: 0,
+        severity: issue.severity,
+        owner: issue.owner,
+        impactScore,
+        impactHours: issue.impactHours,
+        impactedExceptionCount: issue.impactedExceptionCount,
+        impactedPeople: issue.impactedPeople,
+        blockedEvidence,
+        recommendedView: topException
+          ? `先看${topException.employeeName}的${topException.title}，再进入 ${issue.href}。`
+          : `先进入 ${issue.href} 查看质量详情。`,
+        businessReason: `影响 ${issue.impactHours.toFixed(2)}h / ${
+          issue.impactedExceptionCount
+        } 项异常 / ${blockedEvidence.length} 项证据阻塞 / ${issue.severity}`,
+        href: issue.href,
+      }
+    })
+    .sort(
+      (a, b) =>
+        b.impactScore - a.impactScore ||
+        b.impactHours - a.impactHours ||
+        dataQualitySeverityRank[b.severity] - dataQualitySeverityRank[a.severity] ||
+        a.issueId.localeCompare(b.issueId)
+    )
+    .map((item, index) => ({ ...item, rank: index + 1 }))
+  const leadIssue = rankedItems[0]
+
+  return {
+    headline: leadIssue
+      ? `优先处理 ${leadIssue.issueId} ${leadIssue.title}，影响 ${leadIssue.impactHours.toFixed(
+          2
+        )}h 和 ${leadIssue.impactedExceptionCount} 项异常。`
+      : "当前暂无需要排序的数据质量影响。",
+    totalRankedIssueCount: rankedItems.length,
+    highSeverityCount: rankedItems.filter((item) => item.severity === "high").length,
+    totalBlockedEvidenceCount: rankedItems.reduce(
+      (total, item) => total + item.blockedEvidence.length,
+      0
+    ),
+    leadIssue,
+    items: rankedItems,
   }
 }
 

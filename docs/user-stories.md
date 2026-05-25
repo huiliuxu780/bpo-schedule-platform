@@ -29,6 +29,44 @@
 
 ## Stories
 
+### US464-US466 - 数据质量影响排序细化
+
+```yaml
+stories:
+  - id: US464
+    requirement_ids: [R454, R455]
+    task_ids: [F353]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组当日异常面板看到数据质量影响排序，以便先处理对异常闭环影响最大的质量问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US465
+    requirement_ids: [R456]
+    task_ids: [F354]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望数据质量影响排序只表达查看和解释口径，以便不误导为真实修复、提交、保存、审批、导出或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US466
+    requirement_ids: [R457]
+    task_ids: [Q078]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望数据质量影响排序批次做收口，确认模型、页面顺序、浏览器 smoke、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板展示数据质量影响排序。"
+  - "排序展示影响分、严重度、阻塞证据、影响人员、影响异常数、业务原因和建议查看路径。"
+  - "页面只提供查看和解释入口，不出现真实修复、提交、保存、审批、导出、批量、派单或状态写入能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US461-US463 - 主管闭环复核摘要
 
 ```yaml

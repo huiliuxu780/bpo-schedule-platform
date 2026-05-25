@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Data-quality impact ranking
+
+#### 结论
+
+- `F353-F354/Q078/US464-US466` 已完成数据质量影响排序和 QA 收口。
+- 小组矩阵新增 `dataQualityImpactRanking`，基于当前异常队列的数据质量链接、影响时长、严重度和处理指引派生影响分、阻塞证据和建议查看路径。
+- 页面在现有小组当日异常侧栏展示“数据质量影响排序”，位于质量影响异常之后、影响范围优先级之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、真实修复、提交、保存、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和影响排序，不代表真实数据质量修复、复核结论写入、异常关闭、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `dataQualityImpactRanking` 为 `undefined`；页面源序测试同时失败于缺少“数据质量影响排序”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run lint` 和 `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组当日矩阵并选中 `A-1002::late_login`，页面显示“数据质量影响排序”“优先处理 DQ-202605-010 状态时间段重叠，影响 5.00h 和 1 项异常。”“高严重 1”“阻塞证据 6 项”“影响分 561”“培训安排说明”“在线要求确认”“主管复核结论”，且数据质量影响排序位于质量影响异常之后、影响范围优先级之前；截图保存至 `/private/tmp/bpo-data-quality-impact-ranking-smoke.png`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-25 - Supervisor closure review summary
 
 #### 结论

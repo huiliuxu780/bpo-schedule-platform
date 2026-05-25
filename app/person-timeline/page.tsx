@@ -909,6 +909,7 @@ function MatrixExceptionPanel({
       {selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}
       {selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}
       <DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />
+      <DataQualityImpactRankingPanel ranking={matrix.dataQualityImpactRanking} />
       <ExceptionImpactPriorityPanel priority={matrix.exceptionImpactPriority} />
       <SupervisorPrioritySummaryPanel summary={matrix.supervisorPrioritySummary} />
       <HandlingReadinessNarrativePanel narrative={matrix.handlingReadinessNarrative} />
@@ -1605,6 +1606,87 @@ function DataQualityExceptionImpactPanel({
           当前异常队列没有关联的数据质量问题。
         </div>
       )}
+    </div>
+  )
+}
+
+function DataQualityImpactRankingPanel({
+  ranking,
+}: {
+  ranking: FulfillmentGroupMatrix["dataQualityImpactRanking"]
+}) {
+  const leadIssue = ranking.leadIssue
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">数据质量影响排序</div>
+          <div className="text-xs text-muted-foreground">{ranking.headline}</div>
+        </div>
+        <Badge variant={ranking.highSeverityCount > 0 ? "destructive" : "outline"}>
+          高严重 {ranking.highSeverityCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        <SummaryMetric label="排序问题" value={`${ranking.totalRankedIssueCount} 个`} />
+        <SummaryMetric label="阻塞证据" value={`${ranking.totalBlockedEvidenceCount} 项`} />
+        <SummaryMetric label="最高分" value={leadIssue ? `${leadIssue.impactScore}` : "-"} />
+      </div>
+      {leadIssue ? (
+        <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <div className="font-medium text-foreground">
+                #{leadIssue.rank} {leadIssue.issueId} / {leadIssue.title}
+              </div>
+              <div className="mt-1 text-muted-foreground">
+                负责人：{leadIssue.owner}；影响分 {leadIssue.impactScore}
+              </div>
+            </div>
+            <Badge variant={leadIssue.severity === "high" ? "destructive" : "secondary"}>
+              {leadIssue.impactedExceptionCount} 项异常
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">
+            影响人员：{leadIssue.impactedPeople.join(" / ")}；影响{" "}
+            {leadIssue.impactHours.toFixed(2)}h
+          </div>
+          <div className="text-muted-foreground">{leadIssue.businessReason}</div>
+          <div className="flex flex-wrap gap-1">
+            {leadIssue.blockedEvidence.map((evidence) => (
+              <Badge key={evidence} variant="outline" className="text-[11px]">
+                {evidence}
+              </Badge>
+            ))}
+          </div>
+          <div className="text-muted-foreground">{leadIssue.recommendedView}</div>
+          <div>
+            <Button asChild size="sm" variant="outline" className="h-7 px-2 text-xs">
+              <Link href={leadIssue.href}>查看质量详情</Link>
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          当前异常队列没有需要排序的数据质量影响。
+        </div>
+      )}
+      {ranking.items.length > 1 ? (
+        <div className="grid gap-1 text-xs">
+          {ranking.items.slice(1, 3).map((item) => (
+            <div key={item.issueId} className="flex items-center justify-between gap-2 rounded-md border p-2">
+              <div>
+                <div className="font-medium text-foreground">
+                  #{item.rank} {item.issueId} / {item.title}
+                </div>
+                <div className="mt-1 text-muted-foreground">{item.businessReason}</div>
+              </div>
+              <Badge variant="secondary">{item.impactScore}</Badge>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }
