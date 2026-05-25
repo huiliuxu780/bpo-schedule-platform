@@ -2,6 +2,7 @@ import Link from "next/link"
 
 import {
   createDemandForecastImportAction,
+  createLoginLogImportAction,
   createPersonnelScheduleImportAction,
 } from "@/app/import-batches/new/actions"
 import { AppShell } from "@/components/app-shell"
@@ -21,9 +22,28 @@ type PageProps = {
 
 export default async function NewImportBatchPage({ searchParams }: PageProps) {
   const { result, type } = await searchParams
-  const importType = type === "personnel-schedule" ? "personnel-schedule" : "demand-forecast"
+  const importType =
+    type === "personnel-schedule" || type === "login-log" ? type : "demand-forecast"
   const config =
-    importType === "personnel-schedule"
+    importType === "login-log"
+      ? {
+          title: "登录日志 CSV 导入",
+          description: "选择登录日志 CSV 文件，系统将解析字段、记录批次结果和失败行。",
+          cardDescription: "CSV 需要包含员工、业务日期、登录登出时间、职场、项目和来源系统。",
+          uploadedBy: "现场主管",
+          action: createLoginLogImportAction,
+          fields: [
+            "login_log_id",
+            "employee_id",
+            "business_date",
+            "login_at",
+            "logout_at",
+            "workplace_id",
+            "project_id",
+            "source_system",
+          ],
+        }
+      : importType === "personnel-schedule"
       ? {
           title: "人员级排班 CSV 导入",
           description: "选择人员级排班 CSV 文件，系统将解析字段、记录批次结果和失败行。",
@@ -90,6 +110,9 @@ export default async function NewImportBatchPage({ searchParams }: PageProps) {
           </Button>
           <Button asChild variant={importType === "personnel-schedule" ? "default" : "outline"} size="sm">
             <Link href="/import-batches/new?type=personnel-schedule">人员级排班</Link>
+          </Button>
+          <Button asChild variant={importType === "login-log" ? "default" : "outline"} size="sm">
+            <Link href="/import-batches/new?type=login-log">登录日志</Link>
           </Button>
         </div>
 

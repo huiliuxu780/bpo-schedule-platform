@@ -10,6 +10,7 @@ from backend.app.models import (
     FulfillmentComparisonContractResponse,
     ImportBatchFailureRow,
     ImportBatchResult,
+    LoginLogCsvImportRequest,
     MasterDataEntityContract,
     MasterDataImportContractResponse,
     IntervalExpansionContract,
@@ -49,6 +50,17 @@ PERSONNEL_SCHEDULE_IMPORT_REQUIRED_FIELDS = [
     "start_at",
     "end_at",
     "status",
+]
+
+LOGIN_LOG_IMPORT_REQUIRED_FIELDS = [
+    "login_log_id",
+    "employee_id",
+    "business_date",
+    "login_at",
+    "logout_at",
+    "workplace_id",
+    "project_id",
+    "source_system",
 ]
 
 IMPORT_BATCH_RESULTS: dict[str, ImportBatchResult] = {}
@@ -739,6 +751,119 @@ def validate_personnel_schedule_row(
                         error_code="invalid_time_range",
                         error_message="排班结束时间必须晚于开始时间",
                         raw_value=end_value,
+                    )
+                )
+
+    return failures
+
+
+def import_login_log_csv(request: LoginLogCsvImportRequest) -> ImportBatchResult:
+    uploaded_at = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds")
+    batch_id = f"BATCH-LL-{uploaded_at[:10].replace('-', '')}-{len(IMPORT_BATCH_RESULTS) + 1:03d}"
+    failure_rows: list[ImportBatchFailureRow] = []
+    success_rows = 0
+
+    reader = csv.DictReader(StringIO(request.csv_content.strip()))
+    rows = list(reader) if reader.fieldnames else []
+    missing_headers = [
+        field
+        for field in LOGIN_LOG_IMPORT_REQUIRED_FIELDS
+        if field not in (reader.fieldnames or [])
+    ]
+
+    if missing_headers:
+        failure_rows.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="login_log",
+                failed_row_number=1,
+                field_name=",".join(missing_headers),
+                error_code="missing_required_header",
+                error_message="缺少登录日志导入必填表头",
+                raw_value="",
+            )
+        )
+    else:
+        for row_index, row in enumerate(rows, start=2):
+            row_failures = validate_login_log_row(batch_id, row_index, row)
+
+            if row_failures:
+                failure_rows.extend(row_failures)
+            else:
+                success_rows += 1
+
+    error_codes = sorted({failure.error_code for failure in failure_rows})
+    failed_rows = len({failure.failed_row_number for failure in failure_rows})
+    result = ImportBatchResult(
+        batch_id=batch_id,
+        entity="login_log",
+        file_name=request.file_name,
+        uploaded_by=request.uploaded_by,
+        uploaded_at=uploaded_at,
+        status="completed" if failed_rows == 0 else "completed_with_errors",
+        total_rows=len(rows),
+        success_rows=success_rows,
+        failed_rows=failed_rows,
+        warning_rows=0,
+        error_codes=error_codes,
+        failure_rows=failure_rows,
+    )
+    IMPORT_BATCH_RESULTS[batch_id] = result
+
+    return result
+
+
+def validate_login_log_row(
+    batch_id: str,
+    row_index: int,
+    row: dict[str, str],
+) -> list[ImportBatchFailureRow]:
+    failures: list[ImportBatchFailureRow] = []
+
+    for field in LOGIN_LOG_IMPORT_REQUIRED_FIELDS:
+        raw_value = (row.get(field) or "").strip()
+        if not raw_value:
+            failures.append(
+                ImportBatchFailureRow(
+                    batch_id=batch_id,
+                    entity="login_log",
+                    failed_row_number=row_index,
+                    field_name=field,
+                    error_code="missing_required_field",
+                    error_message="登录日志导入必填字段为空",
+                    raw_value=raw_value,
+                )
+            )
+
+    login_value = (row.get("login_at") or "").strip()
+    logout_value = (row.get("logout_at") or "").strip()
+    if login_value and logout_value:
+        try:
+            login_at = datetime.fromisoformat(login_value)
+            logout_at = datetime.fromisoformat(logout_value)
+        except ValueError:
+            failures.append(
+                ImportBatchFailureRow(
+                    batch_id=batch_id,
+                    entity="login_log",
+                    failed_row_number=row_index,
+                    field_name="logout_at",
+                    error_code="invalid_time_range",
+                    error_message="登录和登出时间必须使用 ISO 时间格式",
+                    raw_value=logout_value,
+                )
+            )
+        else:
+            if login_at >= logout_at:
+                failures.append(
+                    ImportBatchFailureRow(
+                        batch_id=batch_id,
+                        entity="login_log",
+                        failed_row_number=row_index,
+                        field_name="logout_at",
+                        error_code="invalid_time_range",
+                        error_message="登出时间必须晚于登录时间",
+                        raw_value=logout_value,
                     )
                 )
 

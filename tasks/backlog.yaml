@@ -2,6 +2,53 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: B011
+    title: "登录日志 CSV 本地导入 API"
+    priority: P0
+    status: done
+    required_workflow: backend-mvp
+    allowed_files: ["backend/app/main.py", "backend/app/models.py", "backend/app/repository.py", "backend/tests/test_schedule_plans.py", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**", "backend/**/database*", "backend/**/orm*"]
+    acceptance:
+      - "POST /api/v1/import-batches/login-log 接收 file_name、uploaded_by、csv_content 并返回批次结果。"
+      - "后端使用标准库解析 CSV，记录成功行、失败行、错误码和行号。"
+      - "批次结果保存在本地进程内存中，不新增数据库、ORM、migration、依赖或外部集成。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F369
+    title: "登录日志 CSV 上传入口与批次结果"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/import-batches/**", "lib/import-batch-history.ts", "scripts/tests/import-batch-history.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**", "backend/**/database*", "backend/**/orm*"]
+    acceptance:
+      - "导入批次页提供进入登录日志 CSV 上传的入口。"
+      - "上传页通过文件输入读取 CSV，并通过 server action 调用本地导入 API。"
+      - "提交后跳转到批次详情，展示成功行、失败行、错误码和失败行明细。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q087
+    title: "登录日志 CSV 本地导入 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**", "backend/**/database*", "backend/**/orm*"]
+    acceptance:
+      - "后端 unittest、前端模型测试、状态检查、浏览器 smoke 和总检查通过。"
+      - "current queue 和 active tasks 在完成后清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
   - id: B010
     title: "人员级排班 CSV 本地导入 API"
     priority: P0

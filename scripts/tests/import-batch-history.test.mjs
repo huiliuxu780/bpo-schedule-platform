@@ -3,6 +3,7 @@ import test from "node:test"
 
 import { fallbackDataQualityIssues } from "../../lib/data-quality.ts"
 import {
+  createLoginLogImportBatch,
   createPersonnelScheduleImportBatch,
   fallbackImportBatches,
   getImportBatchQualityIssues,
@@ -119,6 +120,40 @@ test("personnel schedule import result maps template and failure impact", () => 
   assert.equal(batch.failureRows[0].fieldName, "end_at")
   assert.ok(batch.failureImpacts[0].businessImpact.includes("人员级排班"))
   assert.equal(typeof createPersonnelScheduleImportBatch, "function")
+})
+
+test("login log import result maps template and failure impact", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-LL-20260525-001",
+    entity: "login_log",
+    file_name: "login_log_test.csv",
+    uploaded_by: "现场主管",
+    uploaded_at: "2026-05-25T17:40:00+08:00",
+    status: "completed_with_errors",
+    total_rows: 2,
+    success_rows: 1,
+    failed_rows: 1,
+    warning_rows: 0,
+    error_codes: ["invalid_time_range"],
+    failure_rows: [
+      {
+        batch_id: "BATCH-LL-20260525-001",
+        entity: "login_log",
+        failed_row_number: 3,
+        field_name: "logout_at",
+        error_code: "invalid_time_range",
+        error_message: "登出时间必须晚于登录时间",
+        raw_value: "2026-05-26T09:00:00",
+      },
+    ],
+  })
+
+  assert.equal(batch.templateId, "TPL-LOGIN-LOG")
+  assert.equal(batch.templateName, "登录日志模板")
+  assert.deepEqual(batch.affectedObjects, ["登录日志", "人员时间轴", "履约对比"])
+  assert.equal(batch.failureRows[0].fieldName, "logout_at")
+  assert.ok(batch.failureImpacts[0].businessImpact.includes("登录日志"))
+  assert.equal(typeof createLoginLogImportBatch, "function")
 })
 
 test("import batch summary includes process-memory csv results", () => {

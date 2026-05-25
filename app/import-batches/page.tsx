@@ -41,7 +41,7 @@ export default async function ImportBatchesPage() {
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline">批次追踪</Badge>
             <Button asChild size="sm">
-              <Link href="/import-batches/new?type=personnel-schedule">上传 CSV</Link>
+              <Link href="/import-batches/new?type=login-log">上传 CSV</Link>
             </Button>
           </div>
         </div>

@@ -81,6 +81,12 @@ class PersonnelScheduleCsvImportRequest(BaseModel):
     csv_content: str
 
 
+class LoginLogCsvImportRequest(BaseModel):
+    file_name: str
+    uploaded_by: str
+    csv_content: str
+
+
 class ImportBatchFailureRow(BaseModel):
     batch_id: str
     entity: str

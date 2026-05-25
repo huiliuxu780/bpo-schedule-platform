@@ -5,6 +5,7 @@ from backend.app.models import (
     DemandForecastCsvImportRequest,
     FulfillmentComparisonContractResponse,
     ImportBatchResult,
+    LoginLogCsvImportRequest,
     MasterDataImportContractResponse,
     PersonnelScheduleCsvImportRequest,
     PersonnelScheduleImportContractResponse,
@@ -25,6 +26,7 @@ from backend.app.repository import (
     get_personnel_schedule_import_contract,
     find_plan_detail,
     import_demand_forecast_csv as create_demand_forecast_import_batch,
+    import_login_log_csv as create_login_log_import_batch,
     import_personnel_schedule_csv as create_personnel_schedule_import_batch,
     list_demand_plan_rows,
     list_schedule_risk_rows,
@@ -68,6 +70,11 @@ def import_personnel_schedule_csv(
     request: PersonnelScheduleCsvImportRequest,
 ) -> ImportBatchResult:
     return create_personnel_schedule_import_batch(request)
+
+
+@app.post("/api/v1/import-batches/login-log", response_model=ImportBatchResult)
+def import_login_log_csv(request: LoginLogCsvImportRequest) -> ImportBatchResult:
+    return create_login_log_import_batch(request)
 
 
 @app.get("/api/v1/import-batches/{batch_id}", response_model=ImportBatchResult)

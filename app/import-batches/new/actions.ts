@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 
 import {
   createDemandForecastImportBatch,
+  createLoginLogImportBatch,
   createPersonnelScheduleImportBatch,
 } from "@/lib/import-batch-history"
 
@@ -19,9 +20,13 @@ export async function createPersonnelScheduleImportAction(formData: FormData) {
   await createCsvImportAction(formData, "personnel-schedule")
 }
 
+export async function createLoginLogImportAction(formData: FormData) {
+  await createCsvImportAction(formData, "login-log")
+}
+
 async function createCsvImportAction(
   formData: FormData,
-  importType: "demand-forecast" | "personnel-schedule"
+  importType: "demand-forecast" | "personnel-schedule" | "login-log"
 ) {
   const file = formData.get("csv_file")
 
@@ -37,7 +42,9 @@ async function createCsvImportAction(
   const created =
     importType === "demand-forecast"
       ? await createDemandForecastImportBatch(payload)
-      : await createPersonnelScheduleImportBatch(payload)
+      : importType === "personnel-schedule"
+        ? await createPersonnelScheduleImportBatch(payload)
+        : await createLoginLogImportBatch(payload)
 
   if (!created) {
     redirect(`/import-batches/new?type=${importType}&result=failed`)
