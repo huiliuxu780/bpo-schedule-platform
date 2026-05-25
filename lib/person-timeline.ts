@@ -865,6 +865,30 @@ export type FulfillmentDataQualityExceptionImpactIssue = {
   }>
 }
 
+export type FulfillmentExceptionImpactPriority = {
+  headline: string
+  totalImpactHours: number
+  blockedItemCount: number
+  topItem?: FulfillmentExceptionImpactPriorityItem
+  items: FulfillmentExceptionImpactPriorityItem[]
+}
+
+export type FulfillmentExceptionImpactPriorityItem = {
+  key: string
+  employeeId: string
+  employeeName: string
+  title: string
+  priority: TimelineAnomaly["severity"]
+  reviewGroup: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["label"]
+  agingLevel: FulfillmentMatrixExceptionQueueItem["agingEscalation"]["level"]
+  impactHours: number
+  impactedObjects: string[]
+  impactedComparisons: string[]
+  blockerCount: number
+  priorityReason: string
+  excludedScope: string
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
@@ -883,6 +907,7 @@ export type FulfillmentGroupMatrix = {
   teamWeekCarryoverOverview: FulfillmentTeamWeekCarryoverOverview
   exceptionClosureReadinessSummary: FulfillmentExceptionClosureReadinessSummary
   dataQualityExceptionImpact: FulfillmentDataQualityExceptionImpact
+  exceptionImpactPriority: FulfillmentExceptionImpactPriority
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1338,6 +1363,7 @@ export function getFulfillmentMatrix(
       exceptionQueue
     ),
     exceptionClosureReadinessSummary: summarizeExceptionClosureReadiness(exceptionQueue),
+    exceptionImpactPriority: summarizeExceptionImpactPriority(exceptionQueue),
   }
 }
 
@@ -3251,6 +3277,55 @@ function summarizeExceptionClosureReadiness(
         }
       : undefined,
     blockers,
+  }
+}
+
+function summarizeExceptionImpactPriority(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentExceptionImpactPriority {
+  const items = queue
+    .map((item) => {
+      const blockerCount = item.closureChecklist.missingCount
+
+      return {
+        key: item.key,
+        employeeId: item.employeeId,
+        employeeName: item.employeeName,
+        title: item.title,
+        priority: item.priority,
+        reviewGroup: item.reviewGroup.label,
+        agingLevel: item.agingEscalation.level,
+        impactHours: item.impactHours,
+        impactedObjects: item.dataQualityImpactScope.impactedObjects,
+        impactedComparisons: item.dataQualityImpactScope.impactedComparisons,
+        blockerCount,
+        priorityReason: `影响 ${item.impactHours.toFixed(2)}h / ${
+          item.dataQualityImpactScope.impactedComparisons.length
+        } 个影响对比 / 待补 ${blockerCount} 项 / ${item.agingEscalation.level}`,
+        excludedScope: item.dataQualityImpactScope.excludedScope,
+      }
+    })
+    .sort(
+      (a, b) =>
+        b.impactHours - a.impactHours ||
+        b.impactedComparisons.length - a.impactedComparisons.length ||
+        b.blockerCount - a.blockerCount ||
+        priorityRank[b.priority] - priorityRank[a.priority] ||
+        escalationLevelRank[b.agingLevel] - escalationLevelRank[a.agingLevel] ||
+        a.employeeId.localeCompare(b.employeeId)
+    )
+  const topItem = items[0]
+
+  return {
+    headline: topItem
+      ? `优先查看${topItem.employeeName} / ${topItem.title}，影响 ${topItem.impactHours.toFixed(
+          2
+        )}h，涉及 ${topItem.impactedObjects.length} 个对象。`
+      : "当前小组暂无可排序的异常影响范围。",
+    totalImpactHours: roundHours(queue.reduce((total, item) => total + item.impactHours, 0)),
+    blockedItemCount: queue.filter((item) => item.closureChecklist.missingCount > 0).length,
+    topItem,
+    items,
   }
 }
 

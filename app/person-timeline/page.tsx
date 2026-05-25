@@ -843,6 +843,7 @@ function MatrixExceptionPanel({
       {selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}
       {selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}
       <DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />
+      <ExceptionImpactPriorityPanel priority={matrix.exceptionImpactPriority} />
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
@@ -1531,6 +1532,68 @@ function DataQualityExceptionImpactPanel({
       ) : (
         <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
           当前异常队列没有关联的数据质量问题。
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ExceptionImpactPriorityPanel({
+  priority,
+}: {
+  priority: FulfillmentGroupMatrix["exceptionImpactPriority"]
+}) {
+  const topItem = priority.topItem
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">影响范围优先级</div>
+          <div className="text-xs text-muted-foreground">{priority.headline}</div>
+        </div>
+        <Badge variant={topItem?.agingLevel === "需要升级" ? "destructive" : "outline"}>
+          {priority.blockedItemCount} 项阻塞
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="总影响" value={`${priority.totalImpactHours.toFixed(2)}h`} />
+        <SummaryMetric label="排序项" value={`${priority.items.length} 项`} />
+      </div>
+      {topItem ? (
+        <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <div className="font-medium text-foreground">
+                {topItem.employeeId} {topItem.employeeName} / {topItem.title}
+              </div>
+              <div className="mt-1 text-muted-foreground">{topItem.priorityReason}</div>
+            </div>
+            <Badge variant={topItem.priority === "high" ? "destructive" : "secondary"}>
+              {topItem.reviewGroup}
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">
+            影响对象：{topItem.impactedObjects.join(" / ")}
+          </div>
+          <div className="text-muted-foreground">
+            影响对比：{topItem.impactedComparisons.join(" / ")}
+          </div>
+          <div className="text-muted-foreground">{topItem.excludedScope}</div>
+          <div className="grid gap-1">
+            {priority.items.slice(0, 2).map((item, index) => (
+              <div key={item.key} className="rounded-md border bg-background p-2">
+                <div className="font-medium text-foreground">
+                  第 {index + 1} 位：{item.employeeName} / {item.title}
+                </div>
+                <div className="mt-1 text-muted-foreground">{item.priorityReason}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          当前异常队列没有可排序的影响范围。
         </div>
       )}
     </div>

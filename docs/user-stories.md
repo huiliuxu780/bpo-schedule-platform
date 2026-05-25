@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US438-US441 - 异常影响范围优先级汇总
+
+```yaml
+stories:
+  - id: US438
+    requirement_ids: [R426, R427]
+    task_ids: [F334]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组当日异常面板看到异常影响范围优先级，以便先查看影响对象和对比口径更大的异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US439
+    requirement_ids: [R427]
+    task_ids: [F335]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望影响范围优先级展示影响对象、影响对比、影响时长、闭环阻塞和代表异常，以便判断优先核对顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US440
+    requirement_ids: [R428]
+    task_ids: [F336]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望影响范围优先级只表达查看和排序口径，以便不误导为真实派单、处理、审批或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US441
+    requirement_ids: [R429]
+    task_ids: [Q071]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望影响范围优先级批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板展示异常影响范围优先级。"
+  - "优先级展示优先异常、影响对象、影响对比、影响时长、闭环阻塞、排序说明和代表异常。"
+  - "优先级不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US434-US437 - 数据质量到履约异常反向聚合
 
 ```yaml

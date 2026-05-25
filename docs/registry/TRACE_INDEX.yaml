@@ -312,7 +312,27 @@ stories:
   US435: {file: "docs/user-stories.md", requirement_ids: ["R423"], task_ids: ["F332"], archive_refs: []}
   US436: {file: "docs/user-stories.md", requirement_ids: ["R424"], task_ids: ["F333"], archive_refs: []}
   US437: {file: "docs/user-stories.md", requirement_ids: ["R425"], task_ids: ["Q070"], archive_refs: []}
+  US438: {file: "docs/user-stories.md", requirement_ids: ["R426", "R427"], task_ids: ["F334"], archive_refs: []}
+  US439: {file: "docs/user-stories.md", requirement_ids: ["R427"], task_ids: ["F335"], archive_refs: []}
+  US440: {file: "docs/user-stories.md", requirement_ids: ["R428"], task_ids: ["F336"], archive_refs: []}
+  US441: {file: "docs/user-stories.md", requirement_ids: ["R429"], task_ids: ["Q071"], archive_refs: []}
 tasks:
+  F334:
+    file: "tasks/backlog.yaml"
+    story_ids: ["US438"]
+    gate: "frontend-scaffold"
+  F335:
+    file: "tasks/backlog.yaml"
+    story_ids: ["US439"]
+    gate: "frontend-scaffold"
+  F336:
+    file: "tasks/backlog.yaml"
+    story_ids: ["US440"]
+    gate: "frontend-scaffold"
+  Q071:
+    file: "tasks/backlog.yaml"
+    story_ids: ["US441"]
+    gate: "qa"
   F331:
     file: "tasks/backlog.yaml"
     story_ids: ["US434"]

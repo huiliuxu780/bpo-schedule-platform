@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Exception impact priority
+
+#### 结论
+
+- `F334-F336/Q071/US438-US441` 已完成异常影响范围优先级汇总和 QA 收口。
+- 小组矩阵新增 `exceptionImpactPriority`，基于当前异常队列已有影响范围、影响对比、影响时长、优先级、闭环阻塞和升级状态派生排序。
+- 页面在现有小组当日异常侧栏展示“影响范围优先级”，位于质量影响异常之后、风险趋势之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和异常影响排序，不代表真实复核结论写入、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `exceptionImpactPriority` 为 `undefined`；页面源序测试随后失败于缺少“影响范围优先级”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组当日矩阵并选中 `A-1002::late_login`，页面显示“影响范围优先级”“优先查看刘晨 / 午后状态缺登录切片，影响 5.00h，涉及 3 个对象。”“2 项阻塞”“总影响”“5.35h”“A-1001 刘晨 / 午后状态缺登录切片”，且影响范围优先级位于风险趋势之前。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Data quality exception impact
 
 #### 结论

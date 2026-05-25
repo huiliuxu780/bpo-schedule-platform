@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R426-R429 - 异常影响范围优先级汇总
+
+```yaml
+requirements:
+  - id: R426
+    module: "履约日历"
+    description: "小组当日异常面板需要展示异常影响范围优先级，帮助现场主管判断哪些异常影响对象和对比口径更大。"
+  - id: R427
+    module: "履约日历"
+    description: "影响范围优先级需要包含优先异常、影响对象、影响对比、影响时长、闭环阻塞、排序说明和代表异常。"
+  - id: R428
+    module: "履约日历"
+    description: "影响范围优先级只能表达查看和排序口径，不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或状态写入能力。"
+  - id: R429
+    module: "质量与交付"
+    description: "影响范围优先级完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读影响范围优先级；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R422-R425 - 数据质量到履约异常反向聚合
 
 ```yaml

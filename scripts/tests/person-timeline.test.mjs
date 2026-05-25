@@ -48,6 +48,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const nextDayPosition = pageSource.indexOf("{selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}");
   const reviewOutcomePreviewPosition = pageSource.indexOf("{selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}");
   const dataQualityImpactPosition = pageSource.indexOf("<DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />");
+  const impactPriorityPosition = pageSource.indexOf("<ExceptionImpactPriorityPanel priority={matrix.exceptionImpactPriority} />");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
@@ -77,6 +78,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(nextDayPosition >= 0);
   assert.ok(reviewOutcomePreviewPosition >= 0);
   assert.ok(dataQualityImpactPosition >= 0);
+  assert.ok(impactPriorityPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(causeSplitPosition >= 0);
@@ -89,7 +91,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(nextDayPosition < riskDigestPosition);
   assert.ok(nextDayPosition < reviewOutcomePreviewPosition);
   assert.ok(reviewOutcomePreviewPosition < dataQualityImpactPosition);
-  assert.ok(dataQualityImpactPosition < trendPosition);
+  assert.ok(dataQualityImpactPosition < impactPriorityPosition);
+  assert.ok(impactPriorityPosition < trendPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.ok(riskDigestPosition < causeSplitPosition);
   assert.ok(causeSplitPosition < reviewLoadPosition);
@@ -873,6 +876,58 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
             impactHours: 0.35,
           },
         ],
+      },
+    ],
+  });
+  assert.deepEqual(matrix.exceptionImpactPriority, {
+    headline: "优先查看刘晨 / 午后状态缺登录切片，影响 5.00h，涉及 3 个对象。",
+    totalImpactHours: 5.35,
+    blockedItemCount: 2,
+    topItem: {
+      key: "A-1001::no_login",
+      employeeId: "A-1001",
+      employeeName: "刘晨",
+      title: "午后状态缺登录切片",
+      priority: "medium",
+      reviewGroup: "待主管判断",
+      agingLevel: "接近超时",
+      impactHours: 5,
+      impactedObjects: ["刘晨", "状态轨道", "2026-05-11 小组矩阵"],
+      impactedComparisons: ["排班 vs 状态", "当日异常人数"],
+      blockerCount: 2,
+      priorityReason: "影响 5.00h / 2 个影响对比 / 待补 2 项 / 接近超时",
+      excludedScope: "不影响登录原始时长、班次类型和需求预测版本。",
+    },
+    items: [
+      {
+        key: "A-1001::no_login",
+        employeeId: "A-1001",
+        employeeName: "刘晨",
+        title: "午后状态缺登录切片",
+        priority: "medium",
+        reviewGroup: "待主管判断",
+        agingLevel: "接近超时",
+        impactHours: 5,
+        impactedObjects: ["刘晨", "状态轨道", "2026-05-11 小组矩阵"],
+        impactedComparisons: ["排班 vs 状态", "当日异常人数"],
+        blockerCount: 2,
+        priorityReason: "影响 5.00h / 2 个影响对比 / 待补 2 项 / 接近超时",
+        excludedScope: "不影响登录原始时长、班次类型和需求预测版本。",
+      },
+      {
+        key: "A-1002::late_login",
+        employeeId: "A-1002",
+        employeeName: "王敏",
+        title: "迟到 21 分钟",
+        priority: "high",
+        reviewGroup: "需补材料",
+        agingLevel: "需要升级",
+        impactHours: 0.35,
+        impactedObjects: ["王敏", "早班", "2026-05-11 小组矩阵"],
+        impactedComparisons: ["排班 vs 登录", "当日履约缺口"],
+        blockerCount: 2,
+        priorityReason: "影响 0.35h / 2 个影响对比 / 待补 2 项 / 需要升级",
+        excludedScope: "不影响班次类型、供应商绑定和需求预测版本。",
       },
     ],
   });
