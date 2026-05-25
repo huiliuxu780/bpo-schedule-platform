@@ -47,6 +47,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const ownerLoadPosition = pageSource.indexOf("{selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}");
   const nextDayPosition = pageSource.indexOf("{selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}");
   const reviewOutcomePreviewPosition = pageSource.indexOf("{selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}");
+  const dataQualityImpactPosition = pageSource.indexOf("<DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
@@ -75,6 +76,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(ownerLoadPosition >= 0);
   assert.ok(nextDayPosition >= 0);
   assert.ok(reviewOutcomePreviewPosition >= 0);
+  assert.ok(dataQualityImpactPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(causeSplitPosition >= 0);
@@ -86,7 +88,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(ownerLoadPosition < riskDigestPosition);
   assert.ok(nextDayPosition < riskDigestPosition);
   assert.ok(nextDayPosition < reviewOutcomePreviewPosition);
-  assert.ok(reviewOutcomePreviewPosition < trendPosition);
+  assert.ok(reviewOutcomePreviewPosition < dataQualityImpactPosition);
+  assert.ok(dataQualityImpactPosition < trendPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.ok(riskDigestPosition < causeSplitPosition);
   assert.ok(causeSplitPosition < reviewLoadPosition);
@@ -788,6 +791,90 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     agingWatchCount: 2,
     escalationCount: 1,
     totalImpactHours: 5.35,
+  });
+  assert.deepEqual(matrix.dataQualityExceptionImpact, {
+    headline: "当前 2 个数据质量问题关联 2 项异常，先看状态时间段重叠。",
+    totalIssueCount: 2,
+    impactedExceptionCount: 2,
+    impactedPeopleCount: 2,
+    totalImpactHours: 5.35,
+    primaryIssue: {
+      issueId: "DQ-202605-010",
+      title: "状态时间段重叠",
+      sourceLabel: "状态日志",
+      severity: "high",
+      status: "open",
+      owner: "运营负责人",
+      href: "/data-quality/DQ-202605-010",
+      impactedExceptionCount: 1,
+      impactedPeople: ["刘晨"],
+      impactHours: 5,
+      reason: "状态不一致需要核对状态日志切片是否会影响个人三轨解释。",
+      recommendation: "拆分或修正重叠状态，避免非有效产能重复计算。",
+      representativeExceptions: [
+        {
+          key: "A-1001::no_login",
+          employeeId: "A-1001",
+          employeeName: "刘晨",
+          title: "午后状态缺登录切片",
+          priority: "medium",
+          reviewGroup: "待主管判断",
+          impactHours: 5,
+        },
+      ],
+    },
+    issues: [
+      {
+        issueId: "DQ-202605-010",
+        title: "状态时间段重叠",
+        sourceLabel: "状态日志",
+        severity: "high",
+        status: "open",
+        owner: "运营负责人",
+        href: "/data-quality/DQ-202605-010",
+        impactedExceptionCount: 1,
+        impactedPeople: ["刘晨"],
+        impactHours: 5,
+        reason: "状态不一致需要核对状态日志切片是否会影响个人三轨解释。",
+        recommendation: "拆分或修正重叠状态，避免非有效产能重复计算。",
+        representativeExceptions: [
+          {
+            key: "A-1001::no_login",
+            employeeId: "A-1001",
+            employeeName: "刘晨",
+            title: "午后状态缺登录切片",
+            priority: "medium",
+            reviewGroup: "待主管判断",
+            impactHours: 5,
+          },
+        ],
+      },
+      {
+        issueId: "DQ-202605-009",
+        title: "登录员工不在主数据",
+        sourceLabel: "登录日志",
+        severity: "low",
+        status: "ignored",
+        owner: "现场主管",
+        href: "/data-quality/DQ-202605-009",
+        impactedExceptionCount: 1,
+        impactedPeople: ["王敏"],
+        impactHours: 0.35,
+        reason: "登录缺口需要核对登录日志和人员主数据是否能支撑当日履约判断。",
+        recommendation: "确认是否为临时账号；若需要计入履约，先补主数据。",
+        representativeExceptions: [
+          {
+            key: "A-1002::late_login",
+            employeeId: "A-1002",
+            employeeName: "王敏",
+            title: "迟到 21 分钟",
+            priority: "high",
+            reviewGroup: "需补材料",
+            impactHours: 0.35,
+          },
+        ],
+      },
+    ],
   });
   assert.deepEqual(matrix.reviewLoadSummary, {
     totalOpenCount: 2,

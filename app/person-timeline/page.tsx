@@ -842,6 +842,7 @@ function MatrixExceptionPanel({
       {selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}
       {selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}
       {selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}
+      <DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
@@ -1461,6 +1462,77 @@ function SelectedExceptionReviewOutcomePreviewCard({
         <div>来源引用：{preview.sourceReferences.join(" / ")}</div>
         <div>{preview.boundary}</div>
       </div>
+    </div>
+  )
+}
+
+function DataQualityExceptionImpactPanel({
+  impact,
+}: {
+  impact: FulfillmentGroupMatrix["dataQualityExceptionImpact"]
+}) {
+  const primaryIssue = impact.primaryIssue
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">质量影响异常</div>
+          <div className="text-xs text-muted-foreground">{impact.headline}</div>
+        </div>
+        <Badge variant={primaryIssue?.severity === "high" ? "destructive" : "outline"}>
+          {impact.totalIssueCount} 个质量问题
+        </Badge>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        <SummaryMetric label="关联异常" value={`${impact.impactedExceptionCount} 项`} />
+        <SummaryMetric label="影响人员" value={`${impact.impactedPeopleCount} 人`} />
+        <SummaryMetric label="影响时长" value={`${impact.totalImpactHours.toFixed(2)}h`} />
+      </div>
+      {primaryIssue ? (
+        <div className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <div className="font-medium text-foreground">
+                {primaryIssue.issueId} / {primaryIssue.title}
+              </div>
+              <div className="mt-1 text-muted-foreground">
+                {primaryIssue.sourceLabel} / 负责人：{primaryIssue.owner}
+              </div>
+            </div>
+            <Badge variant={primaryIssue.severity === "high" ? "destructive" : "secondary"}>
+              {primaryIssue.impactedExceptionCount} 项异常
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">
+            影响人员：{primaryIssue.impactedPeople.join(" / ")}；影响{" "}
+            {primaryIssue.impactHours.toFixed(2)}h
+          </div>
+          <div className="text-muted-foreground">{primaryIssue.reason}</div>
+          <div className="text-muted-foreground">{primaryIssue.recommendation}</div>
+          <div className="grid gap-1">
+            {primaryIssue.representativeExceptions.map((item) => (
+              <div key={item.key} className="rounded-md border bg-background p-2">
+                <div className="font-medium text-foreground">
+                  {item.employeeId} {item.employeeName} / {item.title}
+                </div>
+                <div className="mt-1 text-muted-foreground">
+                  {item.reviewGroup} / {item.impactHours.toFixed(2)}h
+                </div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <Button asChild size="sm" variant="outline" className="h-7 px-2 text-xs">
+              <Link href={primaryIssue.href}>查看质量详情</Link>
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          当前异常队列没有关联的数据质量问题。
+        </div>
+      )}
     </div>
   )
 }

@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R422-R425 - 数据质量到履约异常反向聚合
+
+```yaml
+requirements:
+  - id: R422
+    module: "履约日历"
+    description: "小组当日异常面板需要从数据质量问题反向聚合受影响异常，帮助现场主管判断哪些质量问题正在影响最多异常。"
+  - id: R423
+    module: "履约日历"
+    description: "质量影响聚合需要包含异常数、影响人员、影响时长、代表异常、主要原因和质量详情入口。"
+  - id: R424
+    module: "履约日历"
+    description: "质量影响聚合只能表达查看和定位口径，不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实修复或状态写入能力。"
+  - id: R425
+    module: "质量与交付"
+    description: "质量影响聚合完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读质量影响聚合；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R418-R421 - 复核结论预览
 
 ```yaml

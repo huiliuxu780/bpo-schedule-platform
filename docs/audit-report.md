@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Data quality exception impact
+
+#### 结论
+
+- `F331-F333/Q070/US434-US437` 已完成数据质量到履约异常反向聚合和 QA 收口。
+- 小组矩阵新增 `dataQualityExceptionImpact`，基于当前异常队列已有 `dataQualityLinks` 聚合质量问题、关联异常、影响人员、影响时长、代表异常和质量详情入口。
+- 页面在现有小组当日异常侧栏展示“质量影响异常”，位于复核结论预览之后、风险趋势之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和质量影响定位，不代表真实质量修复、复核结论写入、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `dataQualityExceptionImpact` 为 `undefined`；页面源序测试随后失败于缺少“质量影响异常”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组当日矩阵并选中 `A-1002::late_login`，页面显示“质量影响异常”“当前 2 个数据质量问题关联 2 项异常，先看状态时间段重叠。”“关联异常 2 项”“影响人员 2 人”“影响时长 5.35h”“DQ-202605-010 / 状态时间段重叠”“A-1001 刘晨 / 午后状态缺登录切片”，且质量影响异常位于风险趋势之前。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Review outcome preview
 
 #### 结论

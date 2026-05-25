@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US434-US437 - 数据质量到履约异常反向聚合
+
+```yaml
+stories:
+  - id: US434
+    requirement_ids: [R422, R423]
+    task_ids: [F331]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组当日异常面板看到数据质量问题影响了哪些异常，以便先处理影响面最大的质量问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US435
+    requirement_ids: [R423]
+    task_ids: [F332]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望质量影响聚合展示异常数、影响人员、影响时长、代表异常和质量详情入口，以便快速判断核对顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US436
+    requirement_ids: [R424]
+    task_ids: [F333]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望质量影响聚合只表达查看和定位口径，以便不误导为真实修复、写入、派单或批量处理能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US437
+    requirement_ids: [R425]
+    task_ids: [Q070]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望质量影响聚合批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板展示质量影响异常聚合。"
+  - "聚合展示主要质量问题、异常数、影响人员、影响时长、代表异常、原因和质量详情入口。"
+  - "聚合不提供通知、派单、提交、保存、审批、导出、批量、自动排班、真实修复或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US430-US433 - 复核结论预览
 
 ```yaml

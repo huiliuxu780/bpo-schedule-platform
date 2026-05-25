@@ -831,6 +831,40 @@ export type FulfillmentMatrixExceptionQueueCursor = {
   next?: FulfillmentMatrixExceptionQueueItem
 }
 
+export type FulfillmentDataQualityExceptionImpact = {
+  headline: string
+  totalIssueCount: number
+  impactedExceptionCount: number
+  impactedPeopleCount: number
+  totalImpactHours: number
+  primaryIssue?: FulfillmentDataQualityExceptionImpactIssue
+  issues: FulfillmentDataQualityExceptionImpactIssue[]
+}
+
+export type FulfillmentDataQualityExceptionImpactIssue = {
+  issueId: string
+  title: string
+  sourceLabel: string
+  severity: FulfillmentMatrixExceptionQueueItem["dataQualityLinks"][number]["severity"]
+  status: FulfillmentMatrixExceptionQueueItem["dataQualityLinks"][number]["status"]
+  owner: string
+  href: string
+  impactedExceptionCount: number
+  impactedPeople: string[]
+  impactHours: number
+  reason: string
+  recommendation: string
+  representativeExceptions: Array<{
+    key: string
+    employeeId: string
+    employeeName: string
+    title: string
+    priority: TimelineAnomaly["severity"]
+    reviewGroup: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["label"]
+    impactHours: number
+  }>
+}
+
 export type FulfillmentGroupMatrix = {
   date: string
   team: FulfillmentTeamWeek
@@ -848,6 +882,7 @@ export type FulfillmentGroupMatrix = {
   groupRiskCauseSplit: FulfillmentGroupRiskCauseSplit
   teamWeekCarryoverOverview: FulfillmentTeamWeekCarryoverOverview
   exceptionClosureReadinessSummary: FulfillmentExceptionClosureReadinessSummary
+  dataQualityExceptionImpact: FulfillmentDataQualityExceptionImpact
 }
 
 export type FulfillmentGroupMemberWeekMatrixMember = {
@@ -1295,6 +1330,7 @@ export function getFulfillmentMatrix(
     ),
     teamDayRiskTrend: summarizeTeamDayRiskTrend(group.days, selectedDate),
     groupRiskCauseSplit: summarizeGroupRiskCauseSplit(exceptionQueue),
+    dataQualityExceptionImpact: summarizeDataQualityExceptionImpact(exceptionQueue),
     teamWeekCarryoverOverview: summarizeTeamWeekCarryoverOverview(
       group.days,
       selectedDate,
@@ -3052,6 +3088,85 @@ function summarizeGroupRiskCauseSplit(
   }
 }
 
+function summarizeDataQualityExceptionImpact(
+  queue: FulfillmentMatrixExceptionQueueItem[]
+): FulfillmentDataQualityExceptionImpact {
+  const grouped = new Map<
+    string,
+    {
+      issue: FulfillmentMatrixExceptionQueueItem["dataQualityLinks"][number]
+      items: FulfillmentMatrixExceptionQueueItem[]
+    }
+  >()
+
+  for (const item of queue) {
+    for (const issue of item.dataQualityLinks) {
+      const current = grouped.get(issue.issueId)
+      grouped.set(issue.issueId, {
+        issue,
+        items: current ? [...current.items, item] : [item],
+      })
+    }
+  }
+
+  const issues = Array.from(grouped.values())
+    .map(({ issue, items }) => {
+      const sortedItems = [...items].sort(
+        (a, b) =>
+          priorityRank[b.priority] - priorityRank[a.priority] ||
+          b.impactHours - a.impactHours ||
+          a.employeeId.localeCompare(b.employeeId)
+      )
+
+      return {
+        issueId: issue.issueId,
+        title: issue.title,
+        sourceLabel: issue.sourceLabel,
+        severity: issue.severity,
+        status: issue.status,
+        owner: issue.owner,
+        href: issue.href,
+        impactedExceptionCount: items.length,
+        impactedPeople: Array.from(new Set(items.map((item) => item.employeeName))).sort(),
+        impactHours: roundHours(items.reduce((total, item) => total + item.impactHours, 0)),
+        reason: issue.reason,
+        recommendation: issue.recommendation,
+        representativeExceptions: sortedItems.slice(0, 2).map((item) => ({
+          key: item.key,
+          employeeId: item.employeeId,
+          employeeName: item.employeeName,
+          title: item.title,
+          priority: item.priority,
+          reviewGroup: item.reviewGroup.label,
+          impactHours: item.impactHours,
+        })),
+      }
+    })
+    .sort(
+      (a, b) =>
+        dataQualitySeverityRank[b.severity] - dataQualitySeverityRank[a.severity] ||
+        b.impactHours - a.impactHours ||
+        b.impactedExceptionCount - a.impactedExceptionCount ||
+        a.issueId.localeCompare(b.issueId)
+    )
+  const impactedItems = queue.filter((item) => item.dataQualityLinks.length > 0)
+  const primaryIssue = issues[0]
+
+  return {
+    headline: primaryIssue
+      ? `当前 ${issues.length} 个数据质量问题关联 ${impactedItems.length} 项异常，先看${primaryIssue.title}。`
+      : "当前暂无数据质量问题影响异常。",
+    totalIssueCount: issues.length,
+    impactedExceptionCount: impactedItems.length,
+    impactedPeopleCount: new Set(impactedItems.map((item) => item.employeeId)).size,
+    totalImpactHours: roundHours(
+      impactedItems.reduce((total, item) => total + item.impactHours, 0)
+    ),
+    primaryIssue,
+    issues,
+  }
+}
+
 function getGroupRiskCauseKey(
   item: FulfillmentMatrixExceptionQueueItem
 ): FulfillmentGroupRiskCauseSplit["causes"][number]["key"] {
@@ -3714,6 +3829,12 @@ function exceptionExplanationId(row: PersonTimeline, anomaly: TimelineAnomaly) {
 }
 
 const priorityRank = {
+  high: 3,
+  medium: 2,
+  low: 1,
+}
+
+const dataQualitySeverityRank = {
   high: 3,
   medium: 2,
   low: 1,

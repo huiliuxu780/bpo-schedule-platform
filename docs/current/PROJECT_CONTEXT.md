@@ -141,4 +141,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US430/F328 -> US433/Q069` completed the supervisor review outcome preview slice: the fulfillment calendar group-day exception panel now shows suggested outcome, confidence, evidence summary, source references, readiness, open risk, and next review point while preserving no-action boundaries. Current queue is empty again.
 
-Recommended next production MVP slice: continue with data-quality-to-exception reverse aggregation, keeping it local/frontend-only unless PM confirms a separate production action Gate.
+`US434/F331 -> US437/Q070` completed the data-quality-to-exception reverse aggregation slice: the fulfillment calendar group-day exception panel now shows which data quality issues affect current exceptions, impacted exception count, people, hours, representative exceptions, and quality detail links while preserving no-action boundaries. Current queue is empty again.
+
+Recommended next production MVP slice: continue with exception impact scope prioritization or supervisor priority summary, keeping it local/frontend-only unless PM confirms a separate production action Gate.

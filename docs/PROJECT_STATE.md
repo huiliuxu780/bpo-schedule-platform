@@ -123,6 +123,7 @@ Current invariants:
 - `F322-F324/Q067` completed a team-level evidence gap distribution slice: the fulfillment calendar group-week view shows weekly evidence gap type distribution, affected people, owner roles, representative people, and drilldown links. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F325-F327/Q068` completed a weekly closure readiness trend slice: the fulfillment calendar group-week view shows daily closure readiness direction, ready/blocked day counts, top blocker, next review day, and drilldown links. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F328-F330/Q069` completed a review outcome preview slice: the fulfillment calendar group-day exception panel shows suggested outcome, confidence, evidence summary, source references, readiness, open risk, and next review point. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F331-F333/Q070` completed a data quality exception impact slice: the fulfillment calendar group-day exception panel shows which data quality issues affect current exceptions, impacted exception count, people, hours, representative exceptions, and quality detail links. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 
