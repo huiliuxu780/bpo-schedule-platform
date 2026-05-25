@@ -29,6 +29,54 @@
 
 ## Stories
 
+### US426-US429 - 周度闭环准备趋势
+
+```yaml
+stories:
+  - id: US426
+    requirement_ids: [R414, R415]
+    task_ids: [F325]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到周度闭环准备趋势，以便判断本周哪些天的闭环准备度正在变好或变差。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US427
+    requirement_ids: [R415]
+    task_ids: [F326]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望趋势说明包含主要阻塞原因和下一优先回看日期，以便从周视角进入对应小组日期继续查看。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US428
+    requirement_ids: [R416]
+    task_ids: [F327]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望周度闭环准备趋势只表达查看和判断口径，以便不误导为提交、保存、审批、派单或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US429
+    requirement_ids: [R417]
+    task_ids: [Q068]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度闭环准备趋势批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "团队下钻后的小组周视图展示周度闭环准备趋势。"
+  - "趋势展示每日可闭环项、阻塞项、趋势方向、主要阻塞原因和下一优先回看日期。"
+  - "下钻进入对应小组日期矩阵并保留日期上下文。"
+  - "页面不出现通知、派单、提交、保存、审批、导出、批量、自动排班或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US422-US425 - 团队级证据缺口分布
 
 ```yaml

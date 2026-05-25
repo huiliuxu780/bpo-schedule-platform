@@ -2,6 +2,71 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F325
+    title: "周度闭环准备趋势卡片"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "团队下钻后的小组周视图展示周度闭环准备趋势。"
+      - "趋势卡片位于团队级证据缺口分布之后、小组风险摘要之前。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入", "需要后端、数据库、真实接口、权限或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F326
+    title: "周度闭环准备趋势模型"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["lib/person-timeline.ts", "scripts/tests/person-timeline.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "`closureReadinessTrend` 聚合本周每日闭环准备度、趋势方向、主要阻塞原因和下一优先回看日期。"
+      - "周度聚合严格按日期过滤，不把单日异常复制到无轨道日期。"
+      - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入", "需要后端、数据库、真实接口、权限或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: F327
+    title: "周度闭环准备趋势文案边界"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/person-timeline/page.tsx", "scripts/tests/product-ui-copy-audit.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "页面使用业务查看语言。"
+      - "页面不出现内部执行口径、通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入入口。"
+      - "文案审计测试和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入", "需要后端、数据库、真实接口、权限或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q068
+    title: "周度闭环准备趋势 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    acceptance:
+      - "模型测试、文案审计、浏览器 smoke 和标准检查通过。"
+      - "current queue 和 active tasks 清空。"
+      - "确认未新增页面、导航、数据库、真实接口、通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要新增页面或导航", "需要通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入", "需要后端、数据库、真实接口、权限或生产公式"]
+    commit_after_done: true
+
   - id: F322
     title: "团队级证据缺口分布卡片"
     priority: P0

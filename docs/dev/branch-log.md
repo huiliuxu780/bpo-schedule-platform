@@ -2,6 +2,24 @@
 
 ## 2026-05-25
 
+### F325-F327 Weekly Closure Readiness Trend
+
+- branch_name: `codex/f325-weekly-closure-readiness-trend`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `091a331`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose weekly closure readiness trend in the existing fulfillment calendar group-week view, including daily readiness direction, ready/blocked day counts, top blocker, next review day, and drilldown links.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, notification action, dispatch action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-week route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, notification action, dispatch action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `closureReadinessTrend` and missing weekly closure readiness trend card; target model tests, product UI copy audit, navigation regression, typecheck, browser smoke, diff whitespace check, strict state check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F322-F324 Team-Level Evidence Gap Distribution
 
 - branch_name: `codex/f265-exception-data-quality-links`

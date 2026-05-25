@@ -267,6 +267,43 @@ export type FulfillmentTeamEvidenceGapDistribution = {
   gaps: FulfillmentTeamEvidenceGapDistributionGap[]
 }
 
+export type FulfillmentTeamClosureReadinessTrendPoint = {
+  date: string
+  label: string
+  readyCount: number
+  blockedCount: number
+  missingMaterialCount: number
+  missingDecisionCount: number
+  dataCheckCount: number
+  readinessScore: number
+  direction: "转好" | "转差" | "持平"
+  reason: string
+}
+
+export type FulfillmentTeamClosureReadinessTrend = {
+  headline: string
+  readyDayCount: number
+  blockedDayCount: number
+  improvingDayCount: number
+  decliningDayCount: number
+  stableDayCount: number
+  topBlocker?: {
+    key: FulfillmentMatrixExceptionQueueItem["reviewGroup"]["code"]
+    label: FulfillmentExceptionClosureReadinessSummary["blockers"][number]["label"]
+    count: number
+    reason: string
+  }
+  nextReviewDay?: {
+    date: string
+    label: string
+    groupId: string
+    groupName: string
+    blockedCount: number
+    reason: string
+  }
+  points: FulfillmentTeamClosureReadinessTrendPoint[]
+}
+
 export type FulfillmentTeamWeek = {
   id: string
   workplace: string
@@ -284,6 +321,7 @@ export type FulfillmentTeamWeek = {
   supervisorWeeklyReviewQueue: FulfillmentSupervisorWeeklyReviewQueue
   supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
   teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
+  closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
   groups: FulfillmentGroupWeek[]
 }
 
@@ -1139,6 +1177,7 @@ export function getFulfillmentCalendar(
     supervisorWeeklyReviewQueue: buildSupervisorWeeklyReviewQueue(team),
     supervisorWeeklyHandoffSummary: buildSupervisorWeeklyHandoffSummary(team),
     teamEvidenceGapDistribution: buildTeamEvidenceGapDistribution(team),
+    closureReadinessTrend: buildTeamClosureReadinessTrend(team),
   }))
 
   const summary = summarizeDayMetrics(teams.flatMap((team) => team.days))
@@ -3843,6 +3882,7 @@ function buildTeamWeekRiskDistribution(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
+    | "closureReadinessTrend"
   >,
   rankIndex: number,
   teamCount: number
@@ -3911,6 +3951,7 @@ function buildSupervisorWeeklyReviewQueue(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
+    | "closureReadinessTrend"
   >
 ): FulfillmentSupervisorWeeklyReviewQueue {
   const items = team.groups
@@ -3966,6 +4007,7 @@ function buildSupervisorWeeklyHandoffSummary(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
+    | "closureReadinessTrend"
   >
 ): FulfillmentSupervisorWeeklyHandoffSummary {
   const items = team.groups
@@ -4032,6 +4074,7 @@ function buildTeamEvidenceGapDistribution(
     | "supervisorWeeklyReviewQueue"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
+    | "closureReadinessTrend"
   >
 ): FulfillmentTeamEvidenceGapDistribution {
   const gapItems = team.groups.flatMap((group) =>
@@ -4110,6 +4153,165 @@ function buildTeamEvidenceGapDistribution(
       : undefined,
     gaps,
   }
+}
+
+function buildTeamClosureReadinessTrend(
+  team: Omit<
+    FulfillmentTeamWeek,
+    | "weekRiskDistribution"
+    | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyHandoffSummary"
+    | "teamEvidenceGapDistribution"
+    | "closureReadinessTrend"
+  >
+): FulfillmentTeamClosureReadinessTrend {
+  const daySnapshots = team.days.map((day) => {
+    const groupSnapshots = team.groups.map((group) => {
+      const members = buildFulfillmentMatrixMembersForDate(group.members, day.date)
+      const queue = buildFulfillmentMatrixExceptionQueue(members, day.date, group.members)
+      const summary = summarizeExceptionClosureReadiness(queue)
+
+      return {
+        group,
+        day,
+        queue,
+        summary,
+      }
+    })
+    const readyCount = groupSnapshots.reduce((total, item) => total + item.summary.readyCount, 0)
+    const blockedCount = groupSnapshots.reduce((total, item) => total + item.summary.blockedCount, 0)
+    const missingMaterialCount = groupSnapshots.reduce(
+      (total, item) => total + item.summary.missingMaterialCount,
+      0
+    )
+    const missingDecisionCount = groupSnapshots.reduce(
+      (total, item) => total + item.summary.missingDecisionCount,
+      0
+    )
+    const dataCheckCount = groupSnapshots.reduce((total, item) => total + item.summary.dataCheckCount, 0)
+    const readinessScore =
+      readyCount + blockedCount === 0 ? 100 : Math.round((readyCount / (readyCount + blockedCount)) * 100)
+
+    return {
+      day,
+      groupSnapshots,
+      readyCount,
+      blockedCount,
+      missingMaterialCount,
+      missingDecisionCount,
+      dataCheckCount,
+      readinessScore,
+    }
+  })
+  const points: FulfillmentTeamClosureReadinessTrendPoint[] = daySnapshots.map((snapshot, index) => {
+    const previous = daySnapshots[index - 1]
+    const direction: FulfillmentTeamClosureReadinessTrendPoint["direction"] =
+      previous && snapshot.readinessScore > previous.readinessScore
+        ? "转好"
+        : previous && snapshot.readinessScore < previous.readinessScore
+          ? "转差"
+          : "持平"
+
+    return {
+      date: snapshot.day.date,
+      label: `${snapshot.day.weekday} ${snapshot.day.label}`,
+      readyCount: snapshot.readyCount,
+      blockedCount: snapshot.blockedCount,
+      missingMaterialCount: snapshot.missingMaterialCount,
+      missingDecisionCount: snapshot.missingDecisionCount,
+      dataCheckCount: snapshot.dataCheckCount,
+      readinessScore: snapshot.readinessScore,
+      direction,
+      reason:
+        snapshot.blockedCount === 0
+          ? "当日暂无待闭环异常。"
+          : `待补材料 ${snapshot.missingMaterialCount} 项 / 待主管判断 ${snapshot.missingDecisionCount} 项 / 需数据核对 ${snapshot.dataCheckCount} 项`,
+    }
+  })
+  const blockerItems = daySnapshots.flatMap((snapshot) =>
+    snapshot.groupSnapshots.flatMap((groupSnapshot) =>
+      groupSnapshot.queue
+        .filter((item) => item.closureChecklist.missingCount > 0)
+        .map((item) => ({
+          key: item.reviewGroup.code,
+          label: closureReadinessLabel[item.reviewGroup.code],
+          groupId: groupSnapshot.group.id,
+          groupName: groupSnapshot.group.supplier,
+          dayLabel: `${snapshot.day.weekday} ${snapshot.day.label}`,
+        }))
+    )
+  )
+  const blockers: NonNullable<FulfillmentTeamClosureReadinessTrend["topBlocker"]>[] = reviewLoadGroupOrder
+    .map((group) => {
+      const items = blockerItems.filter((item) => item.key === group.code)
+      const first = items[0]
+      return {
+        key: group.code,
+        label: first?.label ?? closureReadinessLabel[group.code],
+        count: items.length,
+        reason: first
+          ? `${first.label}阻塞 ${items.length} 项，先看${first.groupName} / ${first.dayLabel}。`
+          : `${closureReadinessLabel[group.code]}阻塞 ${items.length} 项。`,
+      }
+    })
+    .filter((item) => item.count > 0)
+    .sort(
+      (a, b) =>
+        b.count - a.count ||
+        reviewLoadGroupRank[a.key] - reviewLoadGroupRank[b.key]
+    )
+  const nextSnapshot = [...daySnapshots]
+    .filter((snapshot) => snapshot.blockedCount > 0)
+    .sort((a, b) => b.blockedCount - a.blockedCount || a.day.date.localeCompare(b.day.date))[0]
+  const nextGroupSnapshot = nextSnapshot
+    ? [...nextSnapshot.groupSnapshots]
+        .filter((snapshot) => snapshot.summary.blockedCount > 0)
+        .sort(
+          (a, b) =>
+            b.summary.blockedCount - a.summary.blockedCount ||
+            a.group.supplier.localeCompare(b.group.supplier)
+        )[0]
+    : undefined
+  const topBlocker = blockers[0]
+
+  return {
+    headline: buildTeamClosureReadinessTrendHeadline(points, topBlocker),
+    readyDayCount: points.filter((point) => point.blockedCount === 0).length,
+    blockedDayCount: points.filter((point) => point.blockedCount > 0).length,
+    improvingDayCount: points.filter((point) => point.direction === "转好").length,
+    decliningDayCount: points.filter((point) => point.direction === "转差").length,
+    stableDayCount: points.filter((point) => point.direction === "持平").length,
+    topBlocker,
+    nextReviewDay:
+      nextSnapshot && nextGroupSnapshot
+        ? {
+            date: nextSnapshot.day.date,
+            label: `${nextSnapshot.day.weekday} ${nextSnapshot.day.label}`,
+            groupId: nextGroupSnapshot.group.id,
+            groupName: nextGroupSnapshot.group.supplier,
+            blockedCount: nextSnapshot.blockedCount,
+            reason: `${nextSnapshot.day.weekday} ${nextSnapshot.day.label} 仍有 ${nextSnapshot.blockedCount} 项未就绪，优先回看${nextGroupSnapshot.group.supplier}。`,
+          }
+        : undefined,
+    points,
+  }
+}
+
+function buildTeamClosureReadinessTrendHeadline(
+  points: FulfillmentTeamClosureReadinessTrendPoint[],
+  topBlocker?: FulfillmentTeamClosureReadinessTrend["topBlocker"]
+) {
+  const firstImprovingDay = points.find((point) => point.direction === "转好")
+
+  if (firstImprovingDay && topBlocker) {
+    return `本周闭环准备度${firstImprovingDay.label} 起转好，主要阻塞为${topBlocker.label}。`
+  }
+
+  if (topBlocker) {
+    return `本周闭环准备度主要阻塞为${topBlocker.label}，需要继续回看证据。`
+  }
+
+  return "本周闭环准备度保持稳定，暂无待闭环异常。"
 }
 
 function buildSupervisorWeeklyHandoffRecipients(

@@ -272,6 +272,7 @@ function GroupWeekSection({
           <SupervisorWeeklyReviewQueuePanel team={team} />
           <SupervisorWeeklyHandoffSummaryPanel team={team} />
           <TeamEvidenceGapDistributionPanel team={team} />
+          <ClosureReadinessTrendPanel team={team} />
           <GroupRiskSummaryPanel team={team} />
         </aside>
       </CardContent>
@@ -375,6 +376,67 @@ function TeamEvidenceGapDistributionPanel({ team }: { team: FulfillmentTeamWeek 
           </Link>
         ))}
       </div>
+    </div>
+  )
+}
+
+function ClosureReadinessTrendPanel({ team }: { team: FulfillmentTeamWeek }) {
+  const trend = team.closureReadinessTrend
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">闭环准备趋势</div>
+          <div className="text-xs text-muted-foreground">{trend.headline}</div>
+        </div>
+        <Badge variant={trend.blockedDayCount > 0 ? "secondary" : "outline"}>
+          阻塞 {trend.blockedDayCount} 天
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="准备天数" value={`${trend.readyDayCount}`} />
+        <SummaryMetric label="阻塞天数" value={`${trend.blockedDayCount}`} />
+        <SummaryMetric label="转好天数" value={`${trend.improvingDayCount}`} />
+        <SummaryMetric label="主要阻塞" value={trend.topBlocker?.label ?? "无"} />
+      </div>
+      {trend.nextReviewDay ? (
+        <Link
+          href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+            trend.nextReviewDay.groupId
+          )}&date=${trend.nextReviewDay.date}&queue=all`}
+          className="grid gap-1 rounded-md border bg-muted/30 p-2 text-xs transition-colors hover:bg-muted"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">
+              {trend.nextReviewDay.groupName} / {trend.nextReviewDay.label}
+            </span>
+            <Badge variant="outline">{trend.nextReviewDay.blockedCount} 项</Badge>
+          </div>
+          <div className="text-muted-foreground">{trend.nextReviewDay.reason}</div>
+        </Link>
+      ) : null}
+      <div className="grid grid-cols-7 gap-1 text-xs">
+        {trend.points.map((point) => (
+          <div
+            key={point.date}
+            className={cn(
+              "grid min-w-0 gap-1 rounded-md border p-2",
+              point.blockedCount > 0 ? "border-primary bg-primary/10" : "bg-background"
+            )}
+          >
+            <div className="truncate font-medium">{point.label.replace(`${point.label.split(" ")[0]} `, "")}</div>
+            <Badge variant={point.direction === "转差" ? "destructive" : point.direction === "转好" ? "secondary" : "outline"} className="justify-center text-[10px]">
+              {point.direction}
+            </Badge>
+            <div className="text-muted-foreground">阻 {point.blockedCount}</div>
+            <div className="text-muted-foreground">{point.readinessScore}</div>
+          </div>
+        ))}
+      </div>
+      {trend.topBlocker ? (
+        <div className="text-xs text-muted-foreground">{trend.topBlocker.reason}</div>
+      ) : null}
     </div>
   )
 }

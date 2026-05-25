@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Weekly closure readiness trend
+
+#### 结论
+
+- `F325-F327/Q068/US426-US429` 已完成周度闭环准备趋势和 QA 收口。
+- 团队周模型新增 `closureReadinessTrend`，包含每日闭环准备方向、准备/阻塞天数、主要阻塞、下一优先回看日期和下钻入口。
+- 页面在现有小组周视图右侧展示“闭环准备趋势”，不新增入口或页面；趋势项只下钻到现有小组日期矩阵。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和闭环判断准备，不代表真实复核结论写入、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `closureReadinessTrend` 为 `undefined` 且页面缺少闭环准备趋势卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开团队下钻页，新增卡片区域显示“闭环准备趋势”“本周闭环准备度周二 05/12 起转好，主要阻塞为待补材料。”“阻塞 1 天”“供应商 A / 周一 05/11”“待补材料阻塞 1 项，先看供应商 A / 周一 05/11。”，且页面未出现 PRD、Gate、验收清单、暂不实现、数据接入状态、人员时间轴、坐席状态轨迹、通知、派单、提交、保存、审批、导出、批量或自动排班。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Team-level evidence gap distribution
 
 #### 结论

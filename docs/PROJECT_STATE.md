@@ -121,6 +121,7 @@ Current invariants:
 - `F316-F318/Q065` completed a closure evidence drill-in slice: the fulfillment calendar group-day exception panel expands closure blockers into evidence items with person, owner role, current status, linked source records, next-view hint, and existing personal three-track drilldown. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F319-F321/Q066` completed a weekly supervisor handoff summary slice: the fulfillment calendar group-week view shows weekly handoff item count, open questions, escalation items, top recipient, next touchpoint, and drilldown links. It remained local/frontend only and returned current queue and active tasks to empty.
 - `F322-F324/Q067` completed a team-level evidence gap distribution slice: the fulfillment calendar group-week view shows weekly evidence gap type distribution, affected people, owner roles, representative people, and drilldown links. It remained local/frontend only and returned current queue and active tasks to empty.
+- `F325-F327/Q068` completed a weekly closure readiness trend slice: the fulfillment calendar group-week view shows daily closure readiness direction, ready/blocked day counts, top blocker, next review day, and drilldown links. It remained local/frontend only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

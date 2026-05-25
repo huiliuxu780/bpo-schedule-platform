@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R414-R417 - 周度闭环准备趋势
+
+```yaml
+requirements:
+  - id: R414
+    module: "履约日历"
+    description: "团队下钻后的小组周视图需要展示周度闭环准备趋势，帮助现场主管判断本周哪些天的闭环准备度正在变好、变差或保持稳定。"
+  - id: R415
+    module: "履约日历"
+    description: "周度闭环准备趋势需要包含每日可闭环项、阻塞项、趋势方向、主要阻塞原因、下一优先回看日期和对应小组日期下钻入口。"
+  - id: R416
+    module: "履约日历"
+    description: "周度闭环准备趋势只能表达查看、定位和判断口径，不提供通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入能力。"
+  - id: R417
+    module: "质量与交付"
+    description: "周度闭环准备趋势完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM approved recommended next slice on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组周视图补充本地前端只读闭环准备趋势；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R410-R413 - 团队级证据缺口分布
 
 ```yaml

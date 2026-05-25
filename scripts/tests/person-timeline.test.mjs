@@ -40,6 +40,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const supervisorWeeklyReviewQueuePosition = pageSource.indexOf("<SupervisorWeeklyReviewQueuePanel team={team} />");
   const supervisorWeeklyHandoffPosition = pageSource.indexOf("<SupervisorWeeklyHandoffSummaryPanel team={team} />");
   const teamEvidenceGapDistributionPosition = pageSource.indexOf("<TeamEvidenceGapDistributionPanel team={team} />");
+  const closureReadinessTrendPosition = pageSource.indexOf("<ClosureReadinessTrendPanel team={team} />");
   const groupRiskSummaryPosition = pageSource.indexOf("<GroupRiskSummaryPanel team={team} />");
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
   const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
@@ -58,6 +59,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(supervisorWeeklyReviewQueuePosition >= 0);
   assert.ok(supervisorWeeklyHandoffPosition >= 0);
   assert.ok(teamEvidenceGapDistributionPosition >= 0);
+  assert.ok(closureReadinessTrendPosition >= 0);
   assert.ok(groupRiskSummaryPosition >= 0);
   assert.ok(teamRiskDistributionPosition < teamWeekCardPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < groupRiskSummaryPosition);
@@ -65,6 +67,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(supervisorWeeklyHandoffPosition < groupRiskSummaryPosition);
   assert.ok(supervisorWeeklyHandoffPosition < teamEvidenceGapDistributionPosition);
   assert.ok(teamEvidenceGapDistributionPosition < groupRiskSummaryPosition);
+  assert.ok(teamEvidenceGapDistributionPosition < closureReadinessTrendPosition);
+  assert.ok(closureReadinessTrendPosition < groupRiskSummaryPosition);
   assert.ok(followUpPosition >= 0);
   assert.ok(comparisonPosition >= 0);
   assert.ok(ownerLoadPosition >= 0);
@@ -552,6 +556,114 @@ test("fulfillment calendar aggregates team week metrics", () => {
           exceptionKey: "A-1001::no_login",
           reason: "先看刘晨的午后状态缺登录切片，补齐培训安排说明。",
         },
+      },
+    ],
+  });
+  assert.deepEqual(shanghaiTeam.closureReadinessTrend, {
+    headline: "本周闭环准备度周二 05/12 起转好，主要阻塞为待补材料。",
+    readyDayCount: 6,
+    blockedDayCount: 1,
+    improvingDayCount: 1,
+    decliningDayCount: 0,
+    stableDayCount: 6,
+    topBlocker: {
+      key: "missing_material",
+      label: "待补材料",
+      count: 1,
+      reason: "待补材料阻塞 1 项，先看供应商 A / 周一 05/11。",
+    },
+    nextReviewDay: {
+      date: "2026-05-11",
+      label: "周一 05/11",
+      groupId: "上海职场||博西客服||供应商 A",
+      groupName: "供应商 A",
+      blockedCount: 2,
+      reason: "周一 05/11 仍有 2 项未就绪，优先回看供应商 A。",
+    },
+    points: [
+      {
+        date: "2026-05-11",
+        label: "周一 05/11",
+        readyCount: 0,
+        blockedCount: 2,
+        missingMaterialCount: 1,
+        missingDecisionCount: 1,
+        dataCheckCount: 0,
+        readinessScore: 0,
+        direction: "持平",
+        reason: "待补材料 1 项 / 待主管判断 1 项 / 需数据核对 0 项",
+      },
+      {
+        date: "2026-05-12",
+        label: "周二 05/12",
+        readyCount: 0,
+        blockedCount: 0,
+        missingMaterialCount: 0,
+        missingDecisionCount: 0,
+        dataCheckCount: 0,
+        readinessScore: 100,
+        direction: "转好",
+        reason: "当日暂无待闭环异常。",
+      },
+      {
+        date: "2026-05-13",
+        label: "周三 05/13",
+        readyCount: 0,
+        blockedCount: 0,
+        missingMaterialCount: 0,
+        missingDecisionCount: 0,
+        dataCheckCount: 0,
+        readinessScore: 100,
+        direction: "持平",
+        reason: "当日暂无待闭环异常。",
+      },
+      {
+        date: "2026-05-14",
+        label: "周四 05/14",
+        readyCount: 0,
+        blockedCount: 0,
+        missingMaterialCount: 0,
+        missingDecisionCount: 0,
+        dataCheckCount: 0,
+        readinessScore: 100,
+        direction: "持平",
+        reason: "当日暂无待闭环异常。",
+      },
+      {
+        date: "2026-05-15",
+        label: "周五 05/15",
+        readyCount: 0,
+        blockedCount: 0,
+        missingMaterialCount: 0,
+        missingDecisionCount: 0,
+        dataCheckCount: 0,
+        readinessScore: 100,
+        direction: "持平",
+        reason: "当日暂无待闭环异常。",
+      },
+      {
+        date: "2026-05-16",
+        label: "周六 05/16",
+        readyCount: 0,
+        blockedCount: 0,
+        missingMaterialCount: 0,
+        missingDecisionCount: 0,
+        dataCheckCount: 0,
+        readinessScore: 100,
+        direction: "持平",
+        reason: "当日暂无待闭环异常。",
+      },
+      {
+        date: "2026-05-17",
+        label: "周日 05/17",
+        readyCount: 0,
+        blockedCount: 0,
+        missingMaterialCount: 0,
+        missingDecisionCount: 0,
+        dataCheckCount: 0,
+        readinessScore: 100,
+        direction: "持平",
+        reason: "当日暂无待闭环异常。",
       },
     ],
   });
