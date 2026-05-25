@@ -29,6 +29,44 @@
 
 ## Stories
 
+### US479-US481 - 周度闭环收口摘要
+
+```yaml
+stories:
+  - id: US479
+    requirement_ids: [R474, R475]
+    task_ids: [F363]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到周度闭环收口摘要，以便识别哪些天、证据缺口和判断风险仍阻塞异常闭环。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US480
+    requirement_ids: [R476]
+    task_ids: [F364]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望周度闭环收口摘要只表达查看和解释口径，以便不误导为真实关闭异常、提交、保存、审批、导出或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US481
+    requirement_ids: [R477]
+    task_ids: [Q083]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度闭环收口摘要批次做收口，确认模型、页面顺序、浏览器 smoke、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组周视图展示周度闭环收口摘要。"
+  - "汇总展示可推进日、未就绪日、待补材料、待主管判断、开放风险、关键收口项和下钻建议。"
+  - "页面只提供查看和解释入口，不出现真实关闭异常、提交、保存、审批、导出、批量或状态写入能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US476-US478 - 周度复核对比摘要
 
 ```yaml

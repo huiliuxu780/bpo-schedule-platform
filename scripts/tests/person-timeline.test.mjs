@@ -43,6 +43,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const weeklyOwnerPressurePosition = pageSource.indexOf("<WeeklyOwnerPressurePanel team={team} />");
   const weeklySourcePressurePosition = pageSource.indexOf("<WeeklySourcePressurePanel team={team} />");
   const weeklyReviewComparisonPosition = pageSource.indexOf("<WeeklyReviewComparisonPanel team={team} />");
+  const weeklyClosureCloseoutPosition = pageSource.indexOf("<WeeklyClosureCloseoutPanel team={team} />");
   const supervisorWeeklyHandoffPosition = pageSource.indexOf("<SupervisorWeeklyHandoffSummaryPanel team={team} />");
   const teamEvidenceGapDistributionPosition = pageSource.indexOf("<TeamEvidenceGapDistributionPanel team={team} />");
   const closureReadinessTrendPosition = pageSource.indexOf("<ClosureReadinessTrendPanel team={team} />");
@@ -76,6 +77,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(weeklyOwnerPressurePosition >= 0);
   assert.ok(weeklySourcePressurePosition >= 0);
   assert.ok(weeklyReviewComparisonPosition >= 0);
+  assert.ok(weeklyClosureCloseoutPosition >= 0);
   assert.ok(supervisorWeeklyHandoffPosition >= 0);
   assert.ok(teamEvidenceGapDistributionPosition >= 0);
   assert.ok(closureReadinessTrendPosition >= 0);
@@ -86,7 +88,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(weeklyDataQualitySummaryPosition < weeklyOwnerPressurePosition);
   assert.ok(weeklyOwnerPressurePosition < weeklySourcePressurePosition);
   assert.ok(weeklySourcePressurePosition < weeklyReviewComparisonPosition);
-  assert.ok(weeklyReviewComparisonPosition < supervisorWeeklyReviewQueuePosition);
+  assert.ok(weeklyReviewComparisonPosition < weeklyClosureCloseoutPosition);
+  assert.ok(weeklyClosureCloseoutPosition < supervisorWeeklyReviewQueuePosition);
   assert.ok(supervisorWeeklyDecisionDigestPosition < supervisorWeeklyHandoffPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < groupRiskSummaryPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < supervisorWeeklyHandoffPosition);
@@ -835,6 +838,80 @@ test("fulfillment calendar aggregates team week metrics", () => {
           label: "周一 05/11",
           exceptionKey: "",
           reason: "先进入供应商 A / 周一 05/11，核对 A-1002 王敏。",
+        },
+      },
+    ],
+  });
+  assert.deepEqual(shanghaiTeam.weeklyClosureCloseoutSummary, {
+    headline: "本周 6 天可推进闭环，周一 05/11 仍有 2 项未就绪，先补待补材料。",
+    readyDayCount: 6,
+    blockedDayCount: 1,
+    missingMaterialCount: 1,
+    missingDecisionCount: 1,
+    openRiskCount: 2,
+    topCloseout: {
+      key: "blocked_day",
+      label: "优先收口日",
+      primary: "周一 05/11",
+      secondary: "供应商 A",
+      impact: "未就绪 2 项 / 待补材料 1 项 / 待主管判断 1 项",
+      reason: "周一 05/11 仍有 2 项未就绪，优先回看供应商 A。",
+      nextDrilldown: {
+        groupId: "上海职场||博西客服||供应商 A",
+        groupName: "供应商 A",
+        date: "2026-05-11",
+        label: "周一 05/11",
+        exceptionKey: "",
+        reason: "先进入供应商 A / 周一 05/11，补齐待补材料。",
+      },
+    },
+    items: [
+      {
+        key: "blocked_day",
+        label: "优先收口日",
+        primary: "周一 05/11",
+        secondary: "供应商 A",
+        impact: "未就绪 2 项 / 待补材料 1 项 / 待主管判断 1 项",
+        reason: "周一 05/11 仍有 2 项未就绪，优先回看供应商 A。",
+        nextDrilldown: {
+          groupId: "上海职场||博西客服||供应商 A",
+          groupName: "供应商 A",
+          date: "2026-05-11",
+          label: "周一 05/11",
+          exceptionKey: "",
+          reason: "先进入供应商 A / 周一 05/11，补齐待补材料。",
+        },
+      },
+      {
+        key: "evidence_gap",
+        label: "证据缺口收口",
+        primary: "主管判断",
+        secondary: "现场主管",
+        impact: "证据缺口 4 项 / 主管判断 2 项 / 涉及 2 人",
+        reason: "主管判断缺 2 项，先看供应商 A / 周一 05/11。",
+        nextDrilldown: {
+          groupId: "上海职场||博西客服||供应商 A",
+          groupName: "供应商 A",
+          date: "2026-05-11",
+          label: "周一 05/11",
+          exceptionKey: "A-1002::late_login",
+          reason: "先看王敏的迟到 21 分钟，补齐主管判断。",
+        },
+      },
+      {
+        key: "decision_risk",
+        label: "判断风险收口",
+        primary: "先复核供应商 A / 周一 05/11",
+        secondary: "开放风险 2 项",
+        impact: "建议判断 3 个 / 高把握 1 个 / 开放风险 2 项",
+        reason: "优先判断 A-1002 王敏 是否影响当日履约。",
+        nextDrilldown: {
+          groupId: "上海职场||博西客服||供应商 A",
+          groupName: "供应商 A",
+          date: "2026-05-11",
+          label: "周一 05/11",
+          exceptionKey: "",
+          reason: "进入供应商 A 的周一 05/11，先看 A-1002 王敏。",
         },
       },
     ],

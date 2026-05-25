@@ -274,6 +274,7 @@ function GroupWeekSection({
           <WeeklyOwnerPressurePanel team={team} />
           <WeeklySourcePressurePanel team={team} />
           <WeeklyReviewComparisonPanel team={team} />
+          <WeeklyClosureCloseoutPanel team={team} />
           <SupervisorWeeklyReviewQueuePanel team={team} />
           <SupervisorWeeklyHandoffSummaryPanel team={team} />
           <TeamEvidenceGapDistributionPanel team={team} />
@@ -626,6 +627,82 @@ function WeeklyReviewComparisonPanel({ team }: { team: FulfillmentTeamWeek }) {
       ) : (
         <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
           本周暂无需要汇总的复核对比。
+        </div>
+      )}
+      {summary.items.length > 1 ? (
+        <div className="grid gap-2">
+          {summary.items.slice(1, 3).map((item) => (
+            <Link
+              key={item.key}
+              href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+                item.nextDrilldown.groupId
+              )}&date=${item.nextDrilldown.date}&queue=all${
+                item.nextDrilldown.exceptionKey
+                  ? `&exception=${encodeURIComponent(item.nextDrilldown.exceptionKey)}`
+                  : ""
+              }`}
+              className="grid gap-1 rounded-md border bg-background p-2 text-xs transition-colors hover:bg-muted"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium">{item.label}</span>
+                <span className="text-muted-foreground">{item.primary}</span>
+              </div>
+              <div className="text-muted-foreground">{item.impact}</div>
+              <div className="text-muted-foreground">{item.reason}</div>
+            </Link>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function WeeklyClosureCloseoutPanel({ team }: { team: FulfillmentTeamWeek }) {
+  const summary = team.weeklyClosureCloseoutSummary
+  const topCloseout = summary.topCloseout
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">周度闭环收口摘要</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.blockedDayCount > 0 ? "destructive" : "outline"}>
+          未就绪 {summary.blockedDayCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="可推进日" value={`${summary.readyDayCount} 天`} />
+        <SummaryMetric label="未就绪日" value={`${summary.blockedDayCount} 天`} />
+        <SummaryMetric label="待补材料" value={`${summary.missingMaterialCount} 项`} />
+        <SummaryMetric label="开放风险" value={`${summary.openRiskCount} 项`} />
+      </div>
+      {topCloseout ? (
+        <Link
+          href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+            topCloseout.nextDrilldown.groupId
+          )}&date=${topCloseout.nextDrilldown.date}&queue=all${
+            topCloseout.nextDrilldown.exceptionKey
+              ? `&exception=${encodeURIComponent(topCloseout.nextDrilldown.exceptionKey)}`
+              : ""
+          }`}
+          className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs transition-colors hover:bg-muted"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">{topCloseout.label}</span>
+            <Badge variant="secondary">{topCloseout.primary}</Badge>
+          </div>
+          <div className="text-muted-foreground">
+            {topCloseout.primary} / {topCloseout.secondary}
+          </div>
+          <div className="text-muted-foreground">{topCloseout.impact}</div>
+          <div className="text-muted-foreground">{topCloseout.reason}</div>
+          <div className="text-muted-foreground">{topCloseout.nextDrilldown.reason}</div>
+        </Link>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          本周暂无需要集中收口的闭环阻塞。
         </div>
       )}
       {summary.items.length > 1 ? (

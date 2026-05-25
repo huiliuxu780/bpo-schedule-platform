@@ -351,6 +351,34 @@ export type FulfillmentWeeklyReviewComparisonSummaryItem = {
   }
 }
 
+export type FulfillmentWeeklyClosureCloseoutSummary = {
+  headline: string
+  readyDayCount: number
+  blockedDayCount: number
+  missingMaterialCount: number
+  missingDecisionCount: number
+  openRiskCount: number
+  topCloseout?: FulfillmentWeeklyClosureCloseoutSummaryItem
+  items: FulfillmentWeeklyClosureCloseoutSummaryItem[]
+}
+
+export type FulfillmentWeeklyClosureCloseoutSummaryItem = {
+  key: "blocked_day" | "evidence_gap" | "decision_risk"
+  label: string
+  primary: string
+  secondary: string
+  impact: string
+  reason: string
+  nextDrilldown: {
+    groupId: string
+    groupName: string
+    date: string
+    label: string
+    exceptionKey: string
+    reason: string
+  }
+}
+
 export type FulfillmentSupervisorWeeklyHandoffSummaryItem = {
   key: string
   groupId: string
@@ -477,6 +505,7 @@ export type FulfillmentTeamWeek = {
   weeklyOwnerPressureSummary: FulfillmentWeeklyOwnerPressureSummary
   weeklySourcePressureSummary: FulfillmentWeeklySourcePressureSummary
   weeklyReviewComparisonSummary: FulfillmentWeeklyReviewComparisonSummary
+  weeklyClosureCloseoutSummary: FulfillmentWeeklyClosureCloseoutSummary
   supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
   teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
   closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
@@ -1577,6 +1606,11 @@ export function getFulfillmentCalendar(
       weeklySourcePressureSummary,
       closureReadinessTrend,
     })
+    const weeklyClosureCloseoutSummary = buildWeeklyClosureCloseoutSummary({
+      supervisorWeeklyDecisionDigest,
+      teamEvidenceGapDistribution,
+      closureReadinessTrend,
+    })
 
     return {
       ...team,
@@ -1587,6 +1621,7 @@ export function getFulfillmentCalendar(
       weeklyOwnerPressureSummary,
       weeklySourcePressureSummary,
       weeklyReviewComparisonSummary,
+      weeklyClosureCloseoutSummary,
       supervisorWeeklyHandoffSummary,
       teamEvidenceGapDistribution,
       closureReadinessTrend,
@@ -4913,6 +4948,7 @@ function buildTeamWeekRiskDistribution(
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
+    | "weeklyClosureCloseoutSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4987,6 +5023,7 @@ function buildSupervisorWeeklyReviewQueue(
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
+    | "weeklyClosureCloseoutSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5048,6 +5085,7 @@ function buildSupervisorWeeklyHandoffSummary(
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
+    | "weeklyClosureCloseoutSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5204,6 +5242,7 @@ function buildTeamEvidenceGapDistribution(
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
+    | "weeklyClosureCloseoutSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5297,6 +5336,7 @@ function buildWeeklyDataQualitySummary(
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
+    | "weeklyClosureCloseoutSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5412,6 +5452,7 @@ function buildWeeklyOwnerPressureSummary(
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
+    | "weeklyClosureCloseoutSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5535,6 +5576,7 @@ function buildWeeklySourcePressureSummary(
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
+    | "weeklyClosureCloseoutSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5738,6 +5780,90 @@ function formatReviewComparisonTitle(reason: string) {
   return reason.replace(/^先看/, "").split("，")[0]
 }
 
+function buildWeeklyClosureCloseoutSummary({
+  supervisorWeeklyDecisionDigest,
+  teamEvidenceGapDistribution,
+  closureReadinessTrend,
+}: {
+  supervisorWeeklyDecisionDigest: FulfillmentSupervisorWeeklyDecisionDigest
+  teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
+  closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
+}): FulfillmentWeeklyClosureCloseoutSummary {
+  const nextReviewDay = closureReadinessTrend.nextReviewDay
+  const blockedPoint = nextReviewDay
+    ? closureReadinessTrend.points.find((point) => point.date === nextReviewDay.date)
+    : undefined
+  const topGap = teamEvidenceGapDistribution.gaps[0]
+  const topDecision = supervisorWeeklyDecisionDigest.topDecision
+  const items: FulfillmentWeeklyClosureCloseoutSummaryItem[] = []
+
+  if (nextReviewDay && blockedPoint) {
+    items.push({
+      key: "blocked_day",
+      label: "优先收口日",
+      primary: nextReviewDay.label,
+      secondary: nextReviewDay.groupName,
+      impact: `未就绪 ${nextReviewDay.blockedCount} 项 / 待补材料 ${blockedPoint.missingMaterialCount} 项 / 待主管判断 ${blockedPoint.missingDecisionCount} 项`,
+      reason: nextReviewDay.reason,
+      nextDrilldown: {
+        groupId: nextReviewDay.groupId,
+        groupName: nextReviewDay.groupName,
+        date: nextReviewDay.date,
+        label: nextReviewDay.label,
+        exceptionKey: "",
+        reason: `先进入${nextReviewDay.groupName} / ${nextReviewDay.label}，补齐${
+          closureReadinessTrend.topBlocker?.label ?? "闭环材料"
+        }。`,
+      },
+    })
+  }
+
+  if (topGap) {
+    items.push({
+      key: "evidence_gap",
+      label: "证据缺口收口",
+      primary: topGap.label,
+      secondary: topGap.ownerRole,
+      impact: `证据缺口 ${teamEvidenceGapDistribution.totalGapItems} 项 / ${topGap.label} ${topGap.count} 项 / 涉及 ${topGap.affectedPeopleCount} 人`,
+      reason: `${topGap.label}缺 ${topGap.count} 项，先看${topGap.nextDrilldown.groupName} / ${topGap.nextDrilldown.label}。`,
+      nextDrilldown: topGap.nextDrilldown,
+    })
+  }
+
+  if (topDecision) {
+    items.push({
+      key: "decision_risk",
+      label: "判断风险收口",
+      primary: topDecision.title,
+      secondary: `开放风险 ${supervisorWeeklyDecisionDigest.openRiskCount} 项`,
+      impact: `建议判断 ${supervisorWeeklyDecisionDigest.totalDecisions} 个 / 高把握 ${supervisorWeeklyDecisionDigest.highConfidenceCount} 个 / 开放风险 ${supervisorWeeklyDecisionDigest.openRiskCount} 项`,
+      reason: topDecision.suggestedDecision,
+      nextDrilldown: {
+        groupId: topDecision.groupId ?? "",
+        groupName: topDecision.groupName ?? "",
+        date: topDecision.date ?? "",
+        label: topDecision.label ?? "",
+        exceptionKey: "",
+        reason: topDecision.nextReviewPoint,
+      },
+    })
+  }
+
+  return {
+    headline:
+      nextReviewDay && closureReadinessTrend.topBlocker
+        ? `本周 ${closureReadinessTrend.readyDayCount} 天可推进闭环，${nextReviewDay.label} 仍有 ${nextReviewDay.blockedCount} 项未就绪，先补${closureReadinessTrend.topBlocker.label}。`
+        : "本周暂无需要集中收口的闭环阻塞。",
+    readyDayCount: closureReadinessTrend.readyDayCount,
+    blockedDayCount: closureReadinessTrend.blockedDayCount,
+    missingMaterialCount: blockedPoint?.missingMaterialCount ?? 0,
+    missingDecisionCount: blockedPoint?.missingDecisionCount ?? 0,
+    openRiskCount: supervisorWeeklyDecisionDigest.openRiskCount,
+    topCloseout: items[0],
+    items,
+  }
+}
+
 function buildTeamClosureReadinessTrend(
   team: Omit<
     FulfillmentTeamWeek,
@@ -5748,6 +5874,7 @@ function buildTeamClosureReadinessTrend(
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
     | "weeklyReviewComparisonSummary"
+    | "weeklyClosureCloseoutSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
