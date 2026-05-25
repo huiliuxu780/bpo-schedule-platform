@@ -29,6 +29,44 @@
 
 ## Stories
 
+### US473-US475 - 周度来源压力汇总
+
+```yaml
+stories:
+  - id: US473
+    requirement_ids: [R466, R467]
+    task_ids: [F359]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到周度来源压力，以便识别本周哪些异常轨道来源正在形成最多升级和闭环阻塞。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US474
+    requirement_ids: [R468]
+    task_ids: [F360]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望周度来源压力只表达查看和解释口径，以便不误导为真实修复、提交、保存、审批、导出或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US475
+    requirement_ids: [R469]
+    task_ids: [Q081]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度来源压力批次做收口，确认模型、页面顺序、浏览器 smoke、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组周视图展示周度来源压力。"
+  - "汇总展示来源轨道、异常数、高优数、升级数、阻塞证据数、影响人员、影响日期、影响时长和下钻建议。"
+  - "页面只提供查看和解释入口，不出现真实修复、提交、保存、审批、导出、批量或状态写入能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US470-US472 - 周度责任压力汇总
 
 ```yaml

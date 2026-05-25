@@ -291,6 +291,39 @@ export type FulfillmentWeeklyOwnerPressureSummaryOwner = {
   reason: string
 }
 
+export type FulfillmentWeeklySourcePressureSummary = {
+  headline: string
+  totalSourceCount: number
+  totalExceptionCount: number
+  highPriorityCount: number
+  escalationCount: number
+  totalImpactHours: number
+  topSource?: FulfillmentWeeklySourcePressureSummarySource
+  sources: FulfillmentWeeklySourcePressureSummarySource[]
+}
+
+export type FulfillmentWeeklySourcePressureSummarySource = {
+  track: TimelineEventType
+  label: string
+  exceptionCount: number
+  highPriorityCount: number
+  escalationCount: number
+  impactHours: number
+  affectedPeople: string[]
+  affectedDays: string[]
+  affectedGroups: string[]
+  blockedEvidenceCount: number
+  nextDrilldown: {
+    groupId: string
+    groupName: string
+    date: string
+    label: string
+    exceptionKey: string
+    reason: string
+  }
+  reason: string
+}
+
 export type FulfillmentSupervisorWeeklyHandoffSummaryItem = {
   key: string
   groupId: string
@@ -415,6 +448,7 @@ export type FulfillmentTeamWeek = {
   supervisorWeeklyDecisionDigest: FulfillmentSupervisorWeeklyDecisionDigest
   weeklyDataQualitySummary: FulfillmentWeeklyDataQualitySummary
   weeklyOwnerPressureSummary: FulfillmentWeeklyOwnerPressureSummary
+  weeklySourcePressureSummary: FulfillmentWeeklySourcePressureSummary
   supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
   teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
   closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
@@ -1500,6 +1534,7 @@ export function getFulfillmentCalendar(
     const closureReadinessTrend = buildTeamClosureReadinessTrend(team)
     const weeklyDataQualitySummary = buildWeeklyDataQualitySummary(team)
     const weeklyOwnerPressureSummary = buildWeeklyOwnerPressureSummary(team)
+    const weeklySourcePressureSummary = buildWeeklySourcePressureSummary(team)
 
     return {
       ...team,
@@ -1513,6 +1548,7 @@ export function getFulfillmentCalendar(
       ),
       weeklyDataQualitySummary,
       weeklyOwnerPressureSummary,
+      weeklySourcePressureSummary,
       supervisorWeeklyHandoffSummary,
       teamEvidenceGapDistribution,
       closureReadinessTrend,
@@ -4837,6 +4873,7 @@ function buildTeamWeekRiskDistribution(
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
+    | "weeklySourcePressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4909,6 +4946,7 @@ function buildSupervisorWeeklyReviewQueue(
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
+    | "weeklySourcePressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4968,6 +5006,7 @@ function buildSupervisorWeeklyHandoffSummary(
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
+    | "weeklySourcePressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5122,6 +5161,7 @@ function buildTeamEvidenceGapDistribution(
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
+    | "weeklySourcePressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5213,6 +5253,7 @@ function buildWeeklyDataQualitySummary(
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
+    | "weeklySourcePressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5326,6 +5367,7 @@ function buildWeeklyOwnerPressureSummary(
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
+    | "weeklySourcePressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5439,6 +5481,123 @@ function buildWeeklyOwnerPressureSummary(
   }
 }
 
+function buildWeeklySourcePressureSummary(
+  team: Omit<
+    FulfillmentTeamWeek,
+    | "weekRiskDistribution"
+    | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyDecisionDigest"
+    | "weeklyDataQualitySummary"
+    | "weeklyOwnerPressureSummary"
+    | "weeklySourcePressureSummary"
+    | "supervisorWeeklyHandoffSummary"
+    | "teamEvidenceGapDistribution"
+    | "closureReadinessTrend"
+  >
+): FulfillmentWeeklySourcePressureSummary {
+  const sourceEntries = team.groups.flatMap((group) =>
+    group.days.flatMap((day) => {
+      const members = buildFulfillmentMatrixMembersForDate(group.members, day.date)
+      const queue = buildFulfillmentMatrixExceptionQueue(members, day.date, group.members)
+
+      return queue.map((item) => ({
+        track: getExceptionPrimarySource(item),
+        item,
+        groupId: group.id,
+        groupName: group.supplier,
+        date: day.date,
+        dayLabel: `${day.weekday} ${day.label}`,
+      }))
+    })
+  )
+  const uniqueExceptions = new Map(sourceEntries.map((entry) => [entry.item.key, entry.item]))
+  const sources = [...groupBy(sourceEntries, (entry) => entry.track).entries()]
+    .map(([track, entries]) => {
+      const uniqueItems = [...new Map(entries.map((entry) => [entry.item.key, entry.item])).values()]
+      const topEntry = [...entries].sort(
+        (a, b) =>
+          priorityRank[b.item.priority] - priorityRank[a.item.priority] ||
+          b.item.impactHours - a.item.impactHours ||
+          a.item.employeeId.localeCompare(b.item.employeeId)
+      )[0]
+      const affectedPeople = Array.from(
+        new Map(entries.map((entry) => [entry.item.employeeId, entry.item.employeeName])).values()
+      ).sort()
+      const affectedDays = Array.from(
+        new Map(entries.map((entry) => [entry.date, entry.dayLabel])).values()
+      )
+      const affectedGroups = Array.from(new Set(entries.map((entry) => entry.groupName))).sort()
+      const blockedEvidenceCount = entries.reduce(
+        (total, entry) => total + entry.item.handlingGuide.requiredInfo.length,
+        0
+      )
+      const impactHours = roundHours(
+        uniqueItems.reduce((total, item) => total + item.impactHours, 0)
+      )
+      const highPriorityCount = uniqueItems.filter((item) => item.priority === "high").length
+      const escalationCount = uniqueItems.filter(
+        (item) => item.agingEscalation.level === "需要升级"
+      ).length
+      const label = exceptionSourceLabel[track]
+
+      return {
+        track,
+        label,
+        exceptionCount: uniqueItems.length,
+        highPriorityCount,
+        escalationCount,
+        blockedEvidenceCount,
+        impactHours,
+        affectedPeople,
+        affectedDays,
+        affectedGroups,
+        nextDrilldown: {
+          groupId: topEntry?.groupId ?? "",
+          groupName: topEntry?.groupName ?? "",
+          date: topEntry?.date ?? "",
+          label: topEntry?.dayLabel ?? "",
+          exceptionKey: topEntry?.item.key ?? "",
+          reason: topEntry
+            ? `先看${topEntry.item.employeeName}的${topEntry.item.title}，核对${label}。`
+            : `先核对${label}。`,
+        },
+        reason: `${uniqueItems.length} 项异常 / ${highPriorityCount} 项高优 / ${escalationCount} 项升级 / 阻塞证据 ${blockedEvidenceCount} 项 / 影响 ${impactHours.toFixed(2)}h`,
+      }
+    })
+    .sort(
+      (a, b) =>
+        b.escalationCount - a.escalationCount ||
+        b.highPriorityCount - a.highPriorityCount ||
+        b.exceptionCount - a.exceptionCount ||
+        b.impactHours - a.impactHours ||
+        exceptionSourceRank[a.track] - exceptionSourceRank[b.track]
+    )
+  const topSource = sources[0]
+  const uniqueExceptionItems = [...uniqueExceptions.values()]
+
+  return {
+    headline: topSource
+      ? `本周${topSource.label}有 ${topSource.exceptionCount} 项异常、${
+          topSource.escalationCount
+        } 项升级，先看${topSource.nextDrilldown.reason
+          .replace(/^先看/, "")
+          .replace("的", " / ")
+          .split("，")[0]}。`
+      : "本周暂无需要汇总的异常来源压力。",
+    totalSourceCount: sources.length,
+    totalExceptionCount: uniqueExceptionItems.length,
+    highPriorityCount: uniqueExceptionItems.filter((item) => item.priority === "high").length,
+    escalationCount: uniqueExceptionItems.filter(
+      (item) => item.agingEscalation.level === "需要升级"
+    ).length,
+    totalImpactHours: roundHours(
+      uniqueExceptionItems.reduce((total, item) => total + item.impactHours, 0)
+    ),
+    topSource,
+    sources,
+  }
+}
+
 function buildTeamClosureReadinessTrend(
   team: Omit<
     FulfillmentTeamWeek,
@@ -5447,6 +5606,7 @@ function buildTeamClosureReadinessTrend(
     | "supervisorWeeklyDecisionDigest"
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
+    | "weeklySourcePressureSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5721,14 +5881,14 @@ function groupKey(row: PersonTimeline) {
   return row.supplier
 }
 
-function groupBy<T>(rows: T[], getKey: (row: T) => string) {
+function groupBy<T, K extends string>(rows: T[], getKey: (row: T) => K) {
   return rows.reduce((groups, row) => {
     const key = getKey(row)
     const group = groups.get(key) ?? []
     group.push(row)
     groups.set(key, group)
     return groups
-  }, new Map<string, T[]>())
+  }, new Map<K, T[]>())
 }
 
 function decodeScopeId(value: string | undefined) {

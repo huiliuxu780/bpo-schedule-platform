@@ -272,6 +272,7 @@ function GroupWeekSection({
           <SupervisorWeeklyDecisionDigestPanel team={team} />
           <WeeklyDataQualitySummaryPanel team={team} />
           <WeeklyOwnerPressurePanel team={team} />
+          <WeeklySourcePressurePanel team={team} />
           <SupervisorWeeklyReviewQueuePanel team={team} />
           <SupervisorWeeklyHandoffSummaryPanel team={team} />
           <TeamEvidenceGapDistributionPanel team={team} />
@@ -497,6 +498,79 @@ function WeeklyOwnerPressurePanel({ team }: { team: FulfillmentTeamWeek }) {
                 <span className="text-muted-foreground">{owner.impactHours.toFixed(2)}h</span>
               </div>
               <div className="text-muted-foreground">{owner.reason}</div>
+            </Link>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function WeeklySourcePressurePanel({ team }: { team: FulfillmentTeamWeek }) {
+  const summary = team.weeklySourcePressureSummary
+  const topSource = summary.topSource
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">周度来源压力</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.escalationCount > 0 ? "destructive" : "outline"}>
+          升级 {summary.escalationCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="来源轨道" value={`${summary.totalSourceCount} 个`} />
+        <SummaryMetric label="影响异常" value={`${summary.totalExceptionCount} 项`} />
+        <SummaryMetric label="高优异常" value={`${summary.highPriorityCount} 项`} />
+        <SummaryMetric label="影响时长" value={`${summary.totalImpactHours.toFixed(2)}h`} />
+      </div>
+      {topSource ? (
+        <Link
+          href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+            topSource.nextDrilldown.groupId
+          )}&date=${topSource.nextDrilldown.date}&queue=all&exception=${encodeURIComponent(
+            topSource.nextDrilldown.exceptionKey
+          )}`}
+          className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs transition-colors hover:bg-muted"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">{topSource.label}</span>
+            <Badge variant={topSource.escalationCount > 0 ? "destructive" : "secondary"}>
+              {topSource.exceptionCount} 项
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">{topSource.reason}</div>
+          <div className="text-muted-foreground">
+            影响人员：{topSource.affectedPeople.join(" / ")}；影响日期：
+            {topSource.affectedDays.join(" / ")}
+          </div>
+          <div className="text-muted-foreground">{topSource.nextDrilldown.reason}</div>
+        </Link>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          本周暂无需要汇总的异常来源压力。
+        </div>
+      )}
+      {summary.sources.length > 1 ? (
+        <div className="grid gap-2">
+          {summary.sources.slice(1, 3).map((source) => (
+            <Link
+              key={source.track}
+              href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+                source.nextDrilldown.groupId
+              )}&date=${source.nextDrilldown.date}&queue=all&exception=${encodeURIComponent(
+                source.nextDrilldown.exceptionKey
+              )}`}
+              className="grid gap-1 rounded-md border bg-background p-2 text-xs transition-colors hover:bg-muted"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium">{source.label}</span>
+                <span className="text-muted-foreground">{source.impactHours.toFixed(2)}h</span>
+              </div>
+              <div className="text-muted-foreground">{source.reason}</div>
             </Link>
           ))}
         </div>

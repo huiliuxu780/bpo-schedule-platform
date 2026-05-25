@@ -41,6 +41,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const supervisorWeeklyDecisionDigestPosition = pageSource.indexOf("<SupervisorWeeklyDecisionDigestPanel team={team} />");
   const weeklyDataQualitySummaryPosition = pageSource.indexOf("<WeeklyDataQualitySummaryPanel team={team} />");
   const weeklyOwnerPressurePosition = pageSource.indexOf("<WeeklyOwnerPressurePanel team={team} />");
+  const weeklySourcePressurePosition = pageSource.indexOf("<WeeklySourcePressurePanel team={team} />");
   const supervisorWeeklyHandoffPosition = pageSource.indexOf("<SupervisorWeeklyHandoffSummaryPanel team={team} />");
   const teamEvidenceGapDistributionPosition = pageSource.indexOf("<TeamEvidenceGapDistributionPanel team={team} />");
   const closureReadinessTrendPosition = pageSource.indexOf("<ClosureReadinessTrendPanel team={team} />");
@@ -72,6 +73,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(supervisorWeeklyDecisionDigestPosition >= 0);
   assert.ok(weeklyDataQualitySummaryPosition >= 0);
   assert.ok(weeklyOwnerPressurePosition >= 0);
+  assert.ok(weeklySourcePressurePosition >= 0);
   assert.ok(supervisorWeeklyHandoffPosition >= 0);
   assert.ok(teamEvidenceGapDistributionPosition >= 0);
   assert.ok(closureReadinessTrendPosition >= 0);
@@ -80,7 +82,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(supervisorWeeklyDecisionDigestPosition < supervisorWeeklyReviewQueuePosition);
   assert.ok(supervisorWeeklyDecisionDigestPosition < weeklyDataQualitySummaryPosition);
   assert.ok(weeklyDataQualitySummaryPosition < weeklyOwnerPressurePosition);
-  assert.ok(weeklyOwnerPressurePosition < supervisorWeeklyReviewQueuePosition);
+  assert.ok(weeklyOwnerPressurePosition < weeklySourcePressurePosition);
+  assert.ok(weeklySourcePressurePosition < supervisorWeeklyReviewQueuePosition);
   assert.ok(supervisorWeeklyDecisionDigestPosition < supervisorWeeklyHandoffPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < groupRiskSummaryPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < supervisorWeeklyHandoffPosition);
@@ -684,6 +687,79 @@ test("fulfillment calendar aggregates team week metrics", () => {
           reason: "先看王敏的迟到 21 分钟，数据管理员需补 3 项证据。",
         },
         reason: "1 项异常 / 1 项高优 / 1 项升级 / 阻塞证据 3 项 / 影响 0.35h",
+      },
+    ],
+  });
+  assert.deepEqual(shanghaiTeam.weeklySourcePressureSummary, {
+    headline: "本周登录轨道有 1 项异常、1 项升级，先看王敏 / 迟到 21 分钟。",
+    totalSourceCount: 2,
+    totalExceptionCount: 2,
+    highPriorityCount: 1,
+    escalationCount: 1,
+    totalImpactHours: 5.35,
+    topSource: {
+      track: "login",
+      label: "登录轨道",
+      exceptionCount: 1,
+      highPriorityCount: 1,
+      escalationCount: 1,
+      impactHours: 0.35,
+      affectedPeople: ["王敏"],
+      affectedDays: ["周一 05/11"],
+      affectedGroups: ["供应商 A"],
+      blockedEvidenceCount: 3,
+      nextDrilldown: {
+        groupId: "上海职场||博西客服||供应商 A",
+        groupName: "供应商 A",
+        date: "2026-05-11",
+        label: "周一 05/11",
+        exceptionKey: "A-1002::late_login",
+        reason: "先看王敏的迟到 21 分钟，核对登录轨道。",
+      },
+      reason: "1 项异常 / 1 项高优 / 1 项升级 / 阻塞证据 3 项 / 影响 0.35h",
+    },
+    sources: [
+      {
+        track: "login",
+        label: "登录轨道",
+        exceptionCount: 1,
+        highPriorityCount: 1,
+        escalationCount: 1,
+        impactHours: 0.35,
+        affectedPeople: ["王敏"],
+        affectedDays: ["周一 05/11"],
+        affectedGroups: ["供应商 A"],
+        blockedEvidenceCount: 3,
+        nextDrilldown: {
+          groupId: "上海职场||博西客服||供应商 A",
+          groupName: "供应商 A",
+          date: "2026-05-11",
+          label: "周一 05/11",
+          exceptionKey: "A-1002::late_login",
+          reason: "先看王敏的迟到 21 分钟，核对登录轨道。",
+        },
+        reason: "1 项异常 / 1 项高优 / 1 项升级 / 阻塞证据 3 项 / 影响 0.35h",
+      },
+      {
+        track: "status",
+        label: "状态轨道",
+        exceptionCount: 1,
+        highPriorityCount: 0,
+        escalationCount: 0,
+        impactHours: 5,
+        affectedPeople: ["刘晨"],
+        affectedDays: ["周一 05/11"],
+        affectedGroups: ["供应商 A"],
+        blockedEvidenceCount: 3,
+        nextDrilldown: {
+          groupId: "上海职场||博西客服||供应商 A",
+          groupName: "供应商 A",
+          date: "2026-05-11",
+          label: "周一 05/11",
+          exceptionKey: "A-1001::no_login",
+          reason: "先看刘晨的午后状态缺登录切片，核对状态轨道。",
+        },
+        reason: "1 项异常 / 0 项高优 / 0 项升级 / 阻塞证据 3 项 / 影响 5.00h",
       },
     ],
   });
