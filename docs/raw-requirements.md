@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R418-R421 - 复核结论预览
+
+```yaml
+requirements:
+  - id: R418
+    module: "履约日历"
+    description: "小组当日异常面板需要展示复核结论预览，帮助现场主管在不提交、不保存的前提下读懂建议结论。"
+  - id: R419
+    module: "履约日历"
+    description: "复核结论预览需要包含建议结论、证据摘要、开放风险、可信度、来源引用和下一回看点。"
+  - id: R420
+    module: "履约日历"
+    description: "复核结论预览只能表达查看和建议口径，不提供通知、派单、提交、保存、审批、导出、批量、自动排班或状态写入能力。"
+  - id: R421
+    module: "质量与交付"
+    description: "复核结论预览完成后需要 QA 收口，确认模型测试、页面 smoke、文案审计和 no-action 边界。"
+source: "PM requested continued supervisor handling workflow development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组当日异常面板补充本地前端只读复核结论预览；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R414-R417 - 周度闭环准备趋势
 
 ```yaml

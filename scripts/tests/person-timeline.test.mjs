@@ -46,6 +46,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
   const ownerLoadPosition = pageSource.indexOf("{selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}");
   const nextDayPosition = pageSource.indexOf("{selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}");
+  const reviewOutcomePreviewPosition = pageSource.indexOf("{selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}");
   const trendPosition = pageSource.indexOf("<TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />");
   const riskDigestPosition = pageSource.indexOf("<TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />");
   const causeSplitPosition = pageSource.indexOf("<GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />");
@@ -73,6 +74,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(comparisonPosition >= 0);
   assert.ok(ownerLoadPosition >= 0);
   assert.ok(nextDayPosition >= 0);
+  assert.ok(reviewOutcomePreviewPosition >= 0);
   assert.ok(trendPosition >= 0);
   assert.ok(riskDigestPosition >= 0);
   assert.ok(causeSplitPosition >= 0);
@@ -83,6 +85,8 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(comparisonPosition < riskDigestPosition);
   assert.ok(ownerLoadPosition < riskDigestPosition);
   assert.ok(nextDayPosition < riskDigestPosition);
+  assert.ok(nextDayPosition < reviewOutcomePreviewPosition);
+  assert.ok(reviewOutcomePreviewPosition < trendPosition);
   assert.ok(trendPosition < riskDigestPosition);
   assert.ok(riskDigestPosition < causeSplitPosition);
   assert.ok(causeSplitPosition < reviewLoadPosition);
@@ -1321,6 +1325,20 @@ test("fulfillment matrix exposes member daily three-track rows", () => {
     ownerRole: "现场主管",
     nextReviewPoint: "2026-05-11 10:00",
     riskIfOpen: "缺少到岗说明会影响当日履约缺口判断。",
+  });
+  assert.deepEqual(lateLogin.reviewOutcomePreview, {
+    suggestedOutcome: "待确认到岗：王敏 09:00-09:21 登录缺口，需补到岗说明。",
+    confidence: "中",
+    evidenceSummary: [
+      "排班 SCH-1002-1：早班 09:00-17:00",
+      "登录 LOG-1002-1：CORN 登录 09:21-17:00",
+      "状态轨道：无命中记录",
+    ],
+    openRisk: "缺少到岗说明会影响当日履约缺口判断。",
+    nextReviewPoint: "2026-05-11 10:00",
+    sourceReferences: ["SCH-1002-1", "LOG-1002-1", "DQ-202605-009"],
+    readiness: "已齐 2 项 / 待补 2 项",
+    boundary: "仅作为主管复核前的结论预览，不形成处理记录。",
   });
   assert.deepEqual(lateLogin.closureChecklist, {
     currentJudgment: "需补到岗说明后再判断当日登录缺口。",

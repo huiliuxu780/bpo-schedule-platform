@@ -420,6 +420,16 @@ export type FulfillmentMatrixExceptionQueueItem = {
       judgmentImpact: string
     }>
   }
+  reviewOutcomePreview: {
+    suggestedOutcome: string
+    confidence: "高" | "中" | "低"
+    evidenceSummary: string[]
+    openRisk: string
+    nextReviewPoint: string
+    sourceReferences: string[]
+    readiness: string
+    boundary: string
+  }
   handoffSummary: {
     recipient: string
     summary: string
@@ -1507,6 +1517,11 @@ function buildFulfillmentMatrixExceptionQueue(
     .flatMap((member) =>
       member.exceptionExplanations.map((explanation) => {
         const evidenceCards = getEvidenceCards(member, explanation)
+        const evidenceSummary = summarizeExceptionEvidence(explanation, evidenceCards)
+        const resolutionDraft = buildExceptionResolutionDraft(member, explanation)
+        const closureChecklist = buildExceptionClosureChecklist(explanation)
+        const dataQualityLinks = buildExceptionDataQualityLinks(explanation, evidenceCards)
+        const agingEscalation = buildExceptionAgingEscalation(explanation, date)
 
         return {
           key: fulfillmentMatrixExceptionKey(member.employeeId, explanation.anomalyCode),
@@ -1533,17 +1548,25 @@ function buildFulfillmentMatrixExceptionQueue(
           evidence: explanation.evidence,
           supervisorAction: explanation.supervisorAction,
           handlingGuide: buildExceptionHandlingGuide(member, explanation, evidenceCards),
-          evidenceSummary: summarizeExceptionEvidence(explanation, evidenceCards),
+          evidenceSummary,
           handlingRecords: getExceptionHandlingRecords(explanation),
           handlingOutcome: buildExceptionHandlingOutcome(member, explanation, evidenceCards),
-          resolutionDraft: buildExceptionResolutionDraft(member, explanation),
-          closureChecklist: buildExceptionClosureChecklist(explanation),
+          resolutionDraft,
+          closureChecklist,
+          reviewOutcomePreview: buildExceptionReviewOutcomePreview(
+            resolutionDraft,
+            closureChecklist,
+            evidenceSummary,
+            evidenceCards,
+            dataQualityLinks,
+            agingEscalation
+          ),
           handoffSummary: buildExceptionHandoffSummary(member, explanation),
           communicationContext: buildExceptionCommunicationContext(member, explanation, evidenceCards),
           followUpTimeline: buildExceptionFollowUpTimeline(member, explanation, date),
           dataCheckReadiness: buildExceptionDataCheckReadiness(explanation, evidenceCards),
-          dataQualityLinks: buildExceptionDataQualityLinks(explanation, evidenceCards),
-          agingEscalation: buildExceptionAgingEscalation(explanation, date),
+          dataQualityLinks,
+          agingEscalation,
           dataQualityRepairPrep: buildDataQualityRepairPrep(explanation),
           repairMaterials: buildRepairMaterials(explanation, evidenceCards),
           dataQualityImpactScope: buildDataQualityImpactScope(member, explanation),
@@ -2279,6 +2302,39 @@ function buildExceptionClosureChecklist(explanation: TimelineExceptionExplanatio
         judgmentImpact: "形成状态是否计入履约的判断。",
       },
     ],
+  }
+}
+
+function buildExceptionReviewOutcomePreview(
+  resolutionDraft: FulfillmentMatrixExceptionQueueItem["resolutionDraft"],
+  closureChecklist: FulfillmentMatrixExceptionQueueItem["closureChecklist"],
+  evidenceSummary: FulfillmentMatrixExceptionQueueItem["evidenceSummary"],
+  evidenceCards: FulfillmentMatrixExceptionQueueItem["evidenceCards"],
+  dataQualityLinks: FulfillmentMatrixExceptionQueueItem["dataQualityLinks"],
+  agingEscalation: FulfillmentMatrixExceptionQueueItem["agingEscalation"]
+): FulfillmentMatrixExceptionQueueItem["reviewOutcomePreview"] {
+  const confidence =
+    closureChecklist.missingCount === 0
+      ? "高"
+      : agingEscalation.level === "需要升级" || dataQualityLinks.length > 0
+        ? "中"
+        : "低"
+  const sourceReferences = Array.from(
+    new Set([
+      ...evidenceCards.map((card) => card.eventId),
+      ...dataQualityLinks.map((link) => link.issueId),
+    ])
+  )
+
+  return {
+    suggestedOutcome: resolutionDraft.suggestedConclusion,
+    confidence,
+    evidenceSummary: [evidenceSummary.schedule, evidenceSummary.login, evidenceSummary.status],
+    openRisk: resolutionDraft.riskIfOpen,
+    nextReviewPoint: resolutionDraft.nextReviewPoint,
+    sourceReferences,
+    readiness: `已齐 ${closureChecklist.readyCount} 项 / 待补 ${closureChecklist.missingCount} 项`,
+    boundary: "仅作为主管复核前的结论预览，不形成处理记录。",
   }
 }
 

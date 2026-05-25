@@ -2,6 +2,24 @@
 
 ## 2026-05-25
 
+### F328-F330 Review Outcome Preview
+
+- branch_name: `codex/f328-review-outcome-preview`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `cb317ac`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose review outcome preview in the existing fulfillment calendar group-day exception panel, including suggested outcome, confidence, evidence summary, source references, readiness, open risk, and next review point.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `scripts/tests/product-ui-copy-audit.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, notification action, dispatch action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-day route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, notification action, dispatch action, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `reviewOutcomePreview` and missing review outcome preview card; target model tests, product UI copy audit, typecheck, strict state check, browser smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F325-F327 Weekly Closure Readiness Trend
 
 - branch_name: `codex/f325-weekly-closure-readiness-trend`

@@ -841,6 +841,7 @@ function MatrixExceptionPanel({
       {selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}
       {selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}
       {selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}
+      {selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}
       <TeamDayRiskTrendPanel trend={matrix.teamDayRiskTrend} />
       <TeamDayRiskDigestPanel summary={matrix.teamDayRiskDigest} />
       <GroupRiskCauseSplitPanel split={matrix.groupRiskCauseSplit} />
@@ -1423,6 +1424,42 @@ function SelectedExceptionNextDayWatchlistCard({
             <div className="mt-1 text-muted-foreground">{item.reason}</div>
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+function SelectedExceptionReviewOutcomePreviewCard({
+  selected,
+}: {
+  selected: FulfillmentMatrixExceptionQueueItem
+}) {
+  const preview = selected.reviewOutcomePreview
+
+  return (
+    <div className="grid gap-2 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">复核结论预览</div>
+          <div className="text-xs text-muted-foreground">基于当前证据、清单与开放风险生成。</div>
+        </div>
+        <Badge variant={preview.confidence === "高" ? "secondary" : "outline"}>
+          可信度 {preview.confidence}
+        </Badge>
+      </div>
+      <div className="rounded-md border bg-muted/30 p-2 text-xs">
+        <div className="font-medium text-foreground">{preview.suggestedOutcome}</div>
+        <div className="mt-1 text-muted-foreground">{preview.openRisk}</div>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="准备度" value={preview.readiness} />
+        <SummaryMetric label="来源数" value={`${preview.sourceReferences.length} 项`} />
+      </div>
+      <div className="grid gap-1 text-xs text-muted-foreground">
+        <div>下一复核：{preview.nextReviewPoint}</div>
+        <div>证据摘要：{preview.evidenceSummary.join(" / ")}</div>
+        <div>来源引用：{preview.sourceReferences.join(" / ")}</div>
+        <div>{preview.boundary}</div>
       </div>
     </div>
   )

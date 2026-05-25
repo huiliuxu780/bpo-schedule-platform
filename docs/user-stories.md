@@ -29,6 +29,53 @@
 
 ## Stories
 
+### US430-US433 - 复核结论预览
+
+```yaml
+stories:
+  - id: US430
+    requirement_ids: [R418, R419]
+    task_ids: [F328]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在选中异常后看到复核结论预览，以便在提交任何处理前先读懂建议结论、证据和风险。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US431
+    requirement_ids: [R419]
+    task_ids: [F329]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望结论预览包含证据摘要、开放风险、可信度和下一回看点，以便判断是否具备闭环条件。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US432
+    requirement_ids: [R420]
+    task_ids: [F330]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望复核结论预览只表达查看和建议口径，以便不误导为真实结论提交、保存、审批或状态写入。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US433
+    requirement_ids: [R421]
+    task_ids: [Q069]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望复核结论预览批次做收口，确认模型、页面、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组当日异常面板在选中异常后展示复核结论预览。"
+  - "预览展示建议结论、证据摘要、开放风险、可信度、来源引用和下一回看点。"
+  - "预览不提供通知、派单、提交、保存、审批、导出、批量、自动排班或写入动作。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、文案审计、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US426-US429 - 周度闭环准备趋势
 
 ```yaml

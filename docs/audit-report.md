@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Review outcome preview
+
+#### 结论
+
+- `F328-F330/Q069/US430-US433` 已完成复核结论预览和 QA 收口。
+- 异常队列项新增 `reviewOutcomePreview`，包含建议结论、可信度、证据摘要、来源引用、准备度、开放风险和下一复核点。
+- 页面在现有小组当日异常侧栏展示“复核结论预览”，位于次日关注清单之后、风险趋势之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和复核前口径整理，不代表真实复核结论写入、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `reviewOutcomePreview` 为 `undefined` 且页面缺少复核结论预览卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs`：通过，产品 UI 未暴露内部执行词。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组当日矩阵并选中 `A-1002::late_login`，页面显示“复核结论预览”“待确认到岗：王敏 09:00-09:21 登录缺口，需补到岗说明。”“可信度 中”“已齐 2 项 / 待补 2 项”“DQ-202605-009”，且复核结论预览位于风险趋势之前。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归测试、frontend lint、typecheck、Next build 和后端 unittest。
+
 ### 2026-05-25 - Weekly closure readiness trend
 
 #### 结论
