@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Weekly decision digest
+
+#### 结论
+
+- `F349-F350/Q076/US458-US460` 已完成周度决策摘要和 QA 收口。
+- 团队周视图新增 `supervisorWeeklyDecisionDigest`，基于本周复核队列、交接摘要、证据缺口分布和闭环准备趋势派生周度建议判断。
+- 页面在现有小组周视图侧栏展示“周度决策摘要”，位于本周复核队列之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和周度判断摘要，不代表真实复核结论写入、通知、派单、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `supervisorWeeklyDecisionDigest` 为 `undefined`；页面源序测试同时失败于缺少“周度决策摘要”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run lint` 和 `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组周视图，页面显示“周度决策摘要”“本周先判断供应商 A / 周一 05/11，当前 3 个复核组合、2 项异常交接需要主管确认。”“建议判断”“开放风险”“先复核供应商 A / 周一 05/11”“先补主管判断”“周一闭环暂缓”，且周度决策摘要位于本周复核队列之前。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-25 - Closure risk explanation
 
 #### 结论

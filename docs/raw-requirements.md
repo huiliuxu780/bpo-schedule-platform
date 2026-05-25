@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R446-R449 - 周度决策摘要
+
+```yaml
+requirements:
+  - id: R446
+    module: "履约日历"
+    description: "小组周视图需要展示周度决策摘要，帮助现场主管在进入复核队列前先理解本周建议优先判断什么。"
+  - id: R447
+    module: "履约日历"
+    description: "周度决策摘要需要包含建议判断、信心、证据摘要、开放风险、下一查看点和来源依据。"
+  - id: R448
+    module: "履约日历"
+    description: "周度决策摘要只能表达查看和解释口径，不提供提交、保存、审批、导出、批量、派单、真实处理或状态写入能力。"
+  - id: R449
+    module: "质量与交付"
+    description: "周度决策摘要完成后需要 QA 收口，确认模型测试、页面顺序、浏览器 smoke、文案边界和 no-action 边界。"
+source: "PM requested continued supervisor-side production MVP development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组周视图补充本地前端只读周度决策摘要；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R442-R445 - 闭环风险解释
 
 ```yaml

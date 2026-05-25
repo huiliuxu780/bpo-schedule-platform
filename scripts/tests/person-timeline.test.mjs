@@ -38,6 +38,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const teamRiskDistributionPosition = pageSource.indexOf("<TeamWeekRiskDistributionPanel team={teams[0]} />");
   const teamWeekCardPosition = pageSource.indexOf("{teams.map((team) => (");
   const supervisorWeeklyReviewQueuePosition = pageSource.indexOf("<SupervisorWeeklyReviewQueuePanel team={team} />");
+  const supervisorWeeklyDecisionDigestPosition = pageSource.indexOf("<SupervisorWeeklyDecisionDigestPanel team={team} />");
   const supervisorWeeklyHandoffPosition = pageSource.indexOf("<SupervisorWeeklyHandoffSummaryPanel team={team} />");
   const teamEvidenceGapDistributionPosition = pageSource.indexOf("<TeamEvidenceGapDistributionPanel team={team} />");
   const closureReadinessTrendPosition = pageSource.indexOf("<ClosureReadinessTrendPanel team={team} />");
@@ -64,11 +65,14 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(teamRiskDistributionPosition >= 0);
   assert.ok(teamWeekCardPosition >= 0);
   assert.ok(supervisorWeeklyReviewQueuePosition >= 0);
+  assert.ok(supervisorWeeklyDecisionDigestPosition >= 0);
   assert.ok(supervisorWeeklyHandoffPosition >= 0);
   assert.ok(teamEvidenceGapDistributionPosition >= 0);
   assert.ok(closureReadinessTrendPosition >= 0);
   assert.ok(groupRiskSummaryPosition >= 0);
   assert.ok(teamRiskDistributionPosition < teamWeekCardPosition);
+  assert.ok(supervisorWeeklyDecisionDigestPosition < supervisorWeeklyReviewQueuePosition);
+  assert.ok(supervisorWeeklyDecisionDigestPosition < supervisorWeeklyHandoffPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < groupRiskSummaryPosition);
   assert.ok(supervisorWeeklyReviewQueuePosition < supervisorWeeklyHandoffPosition);
   assert.ok(supervisorWeeklyHandoffPosition < groupRiskSummaryPosition);
@@ -454,6 +458,71 @@ test("fulfillment calendar aggregates team week metrics", () => {
         anomalyPeople: 0,
         reviewTarget: "A-1005 赵岩",
         reason: "缺口 1 人 / 异常 0 人，建议先看 A-1005 赵岩。",
+      },
+    ],
+  });
+  assert.deepEqual(shanghaiTeam.supervisorWeeklyDecisionDigest, {
+    headline: "本周先判断供应商 A / 周一 05/11，当前 3 个复核组合、2 项异常交接需要主管确认。",
+    totalDecisions: 3,
+    highConfidenceCount: 1,
+    openRiskCount: 2,
+    nextReviewTarget: "A-1002 王敏",
+    topDecision: {
+      key: "weekly_review_priority",
+      title: "先复核供应商 A / 周一 05/11",
+      suggestedDecision: "优先判断 A-1002 王敏 是否影响当日履约。",
+      confidence: "高",
+      evidenceSummary: "缺口 2 人 / 异常 2 人 / 高优组合 1 个。",
+      openRisk: "仍有 2 项异常交接，开放问题 4 个。",
+      nextReviewPoint: "进入供应商 A 的周一 05/11，先看 A-1002 王敏。",
+      sourceReferences: ["本周复核队列", "本周交接摘要"],
+      groupId: "上海职场||博西客服||供应商 A",
+      groupName: "供应商 A",
+      date: "2026-05-11",
+      label: "周一 05/11",
+    },
+    decisions: [
+      {
+        key: "weekly_review_priority",
+        title: "先复核供应商 A / 周一 05/11",
+        suggestedDecision: "优先判断 A-1002 王敏 是否影响当日履约。",
+        confidence: "高",
+        evidenceSummary: "缺口 2 人 / 异常 2 人 / 高优组合 1 个。",
+        openRisk: "仍有 2 项异常交接，开放问题 4 个。",
+        nextReviewPoint: "进入供应商 A 的周一 05/11，先看 A-1002 王敏。",
+        sourceReferences: ["本周复核队列", "本周交接摘要"],
+        groupId: "上海职场||博西客服||供应商 A",
+        groupName: "供应商 A",
+        date: "2026-05-11",
+        label: "周一 05/11",
+      },
+      {
+        key: "weekly_evidence_gap",
+        title: "先补主管判断",
+        suggestedDecision: "本周判断前先补齐主管判断，涉及 2 人。",
+        confidence: "中",
+        evidenceSummary: "证据缺口 4 项，主要缺口为主管判断。",
+        openRisk: "缺口未补齐时，周度结论只能作为复核准备口径。",
+        nextReviewPoint: "下钻供应商 A / 周一 05/11，核对主管判断。",
+        sourceReferences: ["证据缺口分布", "闭环准备趋势"],
+        groupId: "上海职场||博西客服||供应商 A",
+        groupName: "供应商 A",
+        date: "2026-05-11",
+        label: "周一 05/11",
+      },
+      {
+        key: "weekly_closure_readiness",
+        title: "周一闭环暂缓",
+        suggestedDecision: "周一 05/11 仍有 2 项未就绪，先解释待补材料。",
+        confidence: "中",
+        evidenceSummary: "准备 6 天 / 阻塞 1 天 / 转好 1 天。",
+        openRisk: "待补材料阻塞 1 项，闭环前需补齐说明。",
+        nextReviewPoint: "优先回看供应商 A 的周一 05/11。",
+        sourceReferences: ["闭环准备趋势"],
+        groupId: "上海职场||博西客服||供应商 A",
+        groupName: "供应商 A",
+        date: "2026-05-11",
+        label: "周一 05/11",
       },
     ],
   });

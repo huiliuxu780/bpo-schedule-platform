@@ -19,6 +19,17 @@
 
 ### 2026-05-25
 
+- task_id: `F349-F350/Q076`
+- source_ids:
+  - `R446-R449`
+- story_ids:
+  - `US458-US460`
+- action: 在小组周视图侧栏增加周度决策摘要。
+- status: `done`
+- notes: 小组周视图现在包含 `supervisorWeeklyDecisionDigest`；页面展示建议判断、信心、证据摘要、开放风险、下一查看点和来源依据。本次不新增页面路由、不新增左侧入口、不新增依赖，不改后端、数据库、真实接口、权限、通知、派单、提交、保存、审批、导出、批量、自动排班、真实处理或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-25
+
 - task_id: `F346-F348/Q075`
 - source_ids:
   - `R442-R445`

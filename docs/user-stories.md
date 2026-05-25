@@ -29,6 +29,44 @@
 
 ## Stories
 
+### US458-US460 - 周度决策摘要
+
+```yaml
+stories:
+  - id: US458
+    requirement_ids: [R446, R447]
+    task_ids: [F349]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到周度决策摘要，以便在进入复核队列前先理解本周建议优先判断什么。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US459
+    requirement_ids: [R448]
+    task_ids: [F350]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望周度决策摘要只表达查看和解释口径，以便不误导为真实提交、保存、审批或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US460
+    requirement_ids: [R449]
+    task_ids: [Q076]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度决策摘要批次做收口，确认模型、页面顺序、浏览器 smoke、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组周视图展示周度决策摘要。"
+  - "摘要展示建议判断、信心、证据摘要、开放风险、下一查看点和来源依据。"
+  - "页面只提供查看和解释入口，不出现真实提交、保存、审批、导出、批量、派单或状态写入能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US454-US457 - 闭环风险解释
 
 ```yaml

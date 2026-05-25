@@ -198,6 +198,31 @@ export type FulfillmentSupervisorWeeklyReviewQueue = {
   items: FulfillmentSupervisorWeeklyReviewQueueItem[]
 }
 
+export type FulfillmentSupervisorWeeklyDecisionDigestItem = {
+  key: string
+  title: string
+  suggestedDecision: string
+  confidence: "高" | "中" | "低"
+  evidenceSummary: string
+  openRisk: string
+  nextReviewPoint: string
+  sourceReferences: string[]
+  groupId?: string
+  groupName?: string
+  date?: string
+  label?: string
+}
+
+export type FulfillmentSupervisorWeeklyDecisionDigest = {
+  headline: string
+  totalDecisions: number
+  highConfidenceCount: number
+  openRiskCount: number
+  nextReviewTarget: string
+  topDecision?: FulfillmentSupervisorWeeklyDecisionDigestItem
+  decisions: FulfillmentSupervisorWeeklyDecisionDigestItem[]
+}
+
 export type FulfillmentSupervisorWeeklyHandoffSummaryItem = {
   key: string
   groupId: string
@@ -319,6 +344,7 @@ export type FulfillmentTeamWeek = {
   }
   weekRiskDistribution: FulfillmentTeamWeekRiskDistribution
   supervisorWeeklyReviewQueue: FulfillmentSupervisorWeeklyReviewQueue
+  supervisorWeeklyDecisionDigest: FulfillmentSupervisorWeeklyDecisionDigest
   supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
   teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
   closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
@@ -1343,14 +1369,27 @@ export function getFulfillmentCalendar(
       }
     })
     .sort(compareFulfillmentRisk)
-  const teams = teamsWithoutDistribution.map((team, index) => ({
-    ...team,
-    weekRiskDistribution: buildTeamWeekRiskDistribution(team, index + 1, teamsWithoutDistribution.length),
-    supervisorWeeklyReviewQueue: buildSupervisorWeeklyReviewQueue(team),
-    supervisorWeeklyHandoffSummary: buildSupervisorWeeklyHandoffSummary(team),
-    teamEvidenceGapDistribution: buildTeamEvidenceGapDistribution(team),
-    closureReadinessTrend: buildTeamClosureReadinessTrend(team),
-  }))
+  const teams = teamsWithoutDistribution.map((team, index) => {
+    const supervisorWeeklyReviewQueue = buildSupervisorWeeklyReviewQueue(team)
+    const supervisorWeeklyHandoffSummary = buildSupervisorWeeklyHandoffSummary(team)
+    const teamEvidenceGapDistribution = buildTeamEvidenceGapDistribution(team)
+    const closureReadinessTrend = buildTeamClosureReadinessTrend(team)
+
+    return {
+      ...team,
+      weekRiskDistribution: buildTeamWeekRiskDistribution(team, index + 1, teamsWithoutDistribution.length),
+      supervisorWeeklyReviewQueue,
+      supervisorWeeklyDecisionDigest: buildSupervisorWeeklyDecisionDigest(
+        supervisorWeeklyReviewQueue,
+        supervisorWeeklyHandoffSummary,
+        teamEvidenceGapDistribution,
+        closureReadinessTrend
+      ),
+      supervisorWeeklyHandoffSummary,
+      teamEvidenceGapDistribution,
+      closureReadinessTrend,
+    }
+  })
 
   const summary = summarizeDayMetrics(teams.flatMap((team) => team.days))
 
@@ -4517,6 +4556,7 @@ function buildTeamWeekRiskDistribution(
     FulfillmentTeamWeek,
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyDecisionDigest"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4586,6 +4626,7 @@ function buildSupervisorWeeklyReviewQueue(
     FulfillmentTeamWeek,
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyDecisionDigest"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4642,6 +4683,7 @@ function buildSupervisorWeeklyHandoffSummary(
     FulfillmentTeamWeek,
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyDecisionDigest"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4704,11 +4746,96 @@ function buildSupervisorWeeklyHandoffSummary(
   }
 }
 
+function buildSupervisorWeeklyDecisionDigest(
+  reviewQueue: FulfillmentSupervisorWeeklyReviewQueue,
+  handoffSummary: FulfillmentSupervisorWeeklyHandoffSummary,
+  evidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution,
+  closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
+): FulfillmentSupervisorWeeklyDecisionDigest {
+  const topReview = reviewQueue.topItem
+  const topGap = evidenceGapDistribution.topGap
+  const nextReviewDay = closureReadinessTrend.nextReviewDay
+  const decisions: FulfillmentSupervisorWeeklyDecisionDigestItem[] = []
+
+  if (topReview) {
+    decisions.push({
+      key: "weekly_review_priority",
+      title: `先复核${topReview.groupName} / ${topReview.label}`,
+      suggestedDecision: `优先判断 ${topReview.reviewTarget} 是否影响当日履约。`,
+      confidence: topReview.priority === "高" ? "高" : "中",
+      evidenceSummary: `缺口 ${topReview.gapPeople} 人 / 异常 ${topReview.anomalyPeople} 人 / 高优组合 ${reviewQueue.highPriorityCount} 个。`,
+      openRisk: `仍有 ${handoffSummary.totalItems} 项异常交接，开放问题 ${handoffSummary.openQuestionCount} 个。`,
+      nextReviewPoint: `进入${topReview.groupName} 的${topReview.label}，先看 ${topReview.reviewTarget}。`,
+      sourceReferences: ["本周复核队列", "本周交接摘要"],
+      groupId: topReview.groupId,
+      groupName: topReview.groupName,
+      date: topReview.date,
+      label: topReview.label,
+    })
+  }
+
+  if (topGap) {
+    const drilldown = evidenceGapDistribution.gaps[0]?.nextDrilldown
+    decisions.push({
+      key: "weekly_evidence_gap",
+      title: `先补${topGap.label}`,
+      suggestedDecision: `本周判断前先补齐${topGap.label}，涉及 ${topGap.affectedPeopleCount} 人。`,
+      confidence: "中",
+      evidenceSummary: `证据缺口 ${evidenceGapDistribution.totalGapItems} 项，主要缺口为${topGap.label}。`,
+      openRisk: "缺口未补齐时，周度结论只能作为复核准备口径。",
+      nextReviewPoint: drilldown
+        ? `下钻${drilldown.groupName} / ${drilldown.label}，核对${topGap.label}。`
+        : `先核对${topGap.label}。`,
+      sourceReferences: ["证据缺口分布", "闭环准备趋势"],
+      groupId: drilldown?.groupId,
+      groupName: drilldown?.groupName,
+      date: drilldown?.date,
+      label: drilldown?.label,
+    })
+  }
+
+  if (nextReviewDay) {
+    decisions.push({
+      key: "weekly_closure_readiness",
+      title: `${nextReviewDay.label.split(" ")[0]}闭环暂缓`,
+      suggestedDecision: `${nextReviewDay.label} 仍有 ${nextReviewDay.blockedCount} 项未就绪，先解释${
+        closureReadinessTrend.topBlocker?.label ?? "闭环阻塞"
+      }。`,
+      confidence: closureReadinessTrend.blockedDayCount > 0 ? "中" : "高",
+      evidenceSummary: `准备 ${closureReadinessTrend.readyDayCount} 天 / 阻塞 ${closureReadinessTrend.blockedDayCount} 天 / 转好 ${closureReadinessTrend.improvingDayCount} 天。`,
+      openRisk: closureReadinessTrend.topBlocker
+        ? `${closureReadinessTrend.topBlocker.label}阻塞 ${closureReadinessTrend.topBlocker.count} 项，闭环前需补齐说明。`
+        : "本周闭环准备未发现主要阻塞。",
+      nextReviewPoint: `优先回看${nextReviewDay.groupName} 的${nextReviewDay.label}。`,
+      sourceReferences: ["闭环准备趋势"],
+      groupId: nextReviewDay.groupId,
+      groupName: nextReviewDay.groupName,
+      date: nextReviewDay.date,
+      label: nextReviewDay.label,
+    })
+  }
+
+  const topDecision = decisions[0]
+
+  return {
+    headline: topReview
+      ? `本周先判断${topReview.groupName} / ${topReview.label}，当前 ${reviewQueue.totalItems} 个复核组合、${handoffSummary.totalItems} 项异常交接需要主管确认。`
+      : "本周暂无需要形成主管判断的复核组合。",
+    totalDecisions: decisions.length,
+    highConfidenceCount: decisions.filter((decision) => decision.confidence === "高").length,
+    openRiskCount: handoffSummary.totalItems,
+    nextReviewTarget: topReview?.reviewTarget ?? "暂无",
+    topDecision,
+    decisions,
+  }
+}
+
 function buildTeamEvidenceGapDistribution(
   team: Omit<
     FulfillmentTeamWeek,
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyDecisionDigest"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4797,6 +4924,7 @@ function buildTeamClosureReadinessTrend(
     FulfillmentTeamWeek,
     | "weekRiskDistribution"
     | "supervisorWeeklyReviewQueue"
+    | "supervisorWeeklyDecisionDigest"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"

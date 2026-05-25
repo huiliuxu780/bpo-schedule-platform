@@ -269,6 +269,7 @@ function GroupWeekSection({
           ))}
         </div>
         <aside className="grid content-start gap-3">
+          <SupervisorWeeklyDecisionDigestPanel team={team} />
           <SupervisorWeeklyReviewQueuePanel team={team} />
           <SupervisorWeeklyHandoffSummaryPanel team={team} />
           <TeamEvidenceGapDistributionPanel team={team} />
@@ -277,6 +278,71 @@ function GroupWeekSection({
         </aside>
       </CardContent>
     </Card>
+  )
+}
+
+function SupervisorWeeklyDecisionDigestPanel({ team }: { team: FulfillmentTeamWeek }) {
+  const digest = team.supervisorWeeklyDecisionDigest
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">周度决策摘要</div>
+          <div className="text-xs text-muted-foreground">{digest.headline}</div>
+        </div>
+        <Badge variant={digest.highConfidenceCount > 0 ? "secondary" : "outline"}>
+          高把握 {digest.highConfidenceCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="建议判断" value={`${digest.totalDecisions}`} />
+        <SummaryMetric label="开放风险" value={`${digest.openRiskCount}`} />
+        <SummaryMetric label="优先对象" value={digest.nextReviewTarget} />
+        <SummaryMetric label="依据数" value={`${digest.topDecision?.sourceReferences.length ?? 0}`} />
+      </div>
+      {digest.topDecision ? (
+        <Link
+          href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+            digest.topDecision.groupId ?? team.groups[0]?.id ?? ""
+          )}&date=${digest.topDecision.date ?? team.days[0]?.date ?? ""}&queue=all`}
+          className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs transition-colors hover:bg-muted"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">{digest.topDecision.title}</span>
+            <Badge variant={digest.topDecision.confidence === "高" ? "default" : "outline"}>
+              {digest.topDecision.confidence}把握
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">{digest.topDecision.suggestedDecision}</div>
+          <div className="text-muted-foreground">{digest.topDecision.evidenceSummary}</div>
+          <div className="text-muted-foreground">{digest.topDecision.openRisk}</div>
+          <div className="text-muted-foreground">{digest.topDecision.nextReviewPoint}</div>
+          <div className="text-muted-foreground">
+            依据：{digest.topDecision.sourceReferences.join(" / ")}
+          </div>
+        </Link>
+      ) : null}
+      <div className="grid gap-2">
+        {digest.decisions.slice(1).map((decision) => (
+          <Link
+            key={decision.key}
+            href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+              decision.groupId ?? team.groups[0]?.id ?? ""
+            )}&date=${decision.date ?? team.days[0]?.date ?? ""}&queue=all`}
+            className="grid gap-1 rounded-md border bg-background p-2 text-xs transition-colors hover:bg-muted"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{decision.title}</span>
+              <span className="text-muted-foreground">{decision.confidence}把握</span>
+            </div>
+            <div className="text-muted-foreground">{decision.suggestedDecision}</div>
+            <div className="text-muted-foreground">{decision.openRisk}</div>
+            <div className="text-muted-foreground">依据：{decision.sourceReferences.join(" / ")}</div>
+          </Link>
+        ))}
+      </div>
+    </div>
   )
 }
 
