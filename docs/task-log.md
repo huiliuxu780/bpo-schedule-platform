@@ -19,6 +19,17 @@
 
 ### 2026-05-25
 
+- task_id: `F361-F362/Q082`
+- source_ids:
+  - `R470-R473`
+- story_ids:
+  - `US476-US478`
+- action: 在小组周视图侧栏增加周度复核对比摘要。
+- status: `done`
+- notes: 团队周视图现在包含 `weeklyReviewComparisonSummary`；页面展示对比维度、升级压力、未就绪日、开放风险、关键对比项、影响说明和下钻建议。本次不新增页面路由、不新增左侧入口、不新增依赖，不改后端、数据库、真实接口、权限、通知、派单、真实修复、提交、保存、审批、导出、批量、自动排班、真实处理或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-25
+
 - task_id: `F359-F360/Q081`
 - source_ids:
   - `R466-R469`

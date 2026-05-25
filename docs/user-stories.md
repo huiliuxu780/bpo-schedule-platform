@@ -29,6 +29,44 @@
 
 ## Stories
 
+### US476-US478 - 周度复核对比摘要
+
+```yaml
+stories:
+  - id: US476
+    requirement_ids: [R470, R471]
+    task_ids: [F361]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在小组周视图看到周度复核对比摘要，以便把来源、责任、质量和闭环准备放在同一视角判断。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US477
+    requirement_ids: [R472]
+    task_ids: [F362]
+    module: "履约日历"
+    role: "PM"
+    story: "作为 PM，我希望周度复核对比摘要只表达查看和解释口径，以便不误导为真实修复、提交、保存、审批、导出或状态写入能力。"
+    task_type: "frontend"
+    priority: "P1"
+    status: "done"
+  - id: US478
+    requirement_ids: [R473]
+    task_ids: [Q082]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度复核对比摘要批次做收口，确认模型、页面顺序、浏览器 smoke、文案和边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "小组周视图展示周度复核对比摘要。"
+  - "汇总展示对比维度、升级压力、未就绪日、开放风险、关键对比项、影响说明和下钻建议。"
+  - "页面只提供查看和解释入口，不出现真实修复、提交、保存、审批、导出、批量或状态写入能力。"
+  - "`node --test scripts/tests/person-timeline.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US473-US475 - 周度来源压力汇总
 
 ```yaml

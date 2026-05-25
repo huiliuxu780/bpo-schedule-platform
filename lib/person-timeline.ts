@@ -324,6 +324,33 @@ export type FulfillmentWeeklySourcePressureSummarySource = {
   reason: string
 }
 
+export type FulfillmentWeeklyReviewComparisonSummary = {
+  headline: string
+  comparisonCount: number
+  escalationCount: number
+  blockedDayCount: number
+  openRiskCount: number
+  topComparison?: FulfillmentWeeklyReviewComparisonSummaryItem
+  items: FulfillmentWeeklyReviewComparisonSummaryItem[]
+}
+
+export type FulfillmentWeeklyReviewComparisonSummaryItem = {
+  key: "source_owner" | "quality_readiness" | "queue_decision"
+  label: string
+  primary: string
+  secondary: string
+  impact: string
+  reason: string
+  nextDrilldown: {
+    groupId: string
+    groupName: string
+    date: string
+    label: string
+    exceptionKey: string
+    reason: string
+  }
+}
+
 export type FulfillmentSupervisorWeeklyHandoffSummaryItem = {
   key: string
   groupId: string
@@ -449,6 +476,7 @@ export type FulfillmentTeamWeek = {
   weeklyDataQualitySummary: FulfillmentWeeklyDataQualitySummary
   weeklyOwnerPressureSummary: FulfillmentWeeklyOwnerPressureSummary
   weeklySourcePressureSummary: FulfillmentWeeklySourcePressureSummary
+  weeklyReviewComparisonSummary: FulfillmentWeeklyReviewComparisonSummary
   supervisorWeeklyHandoffSummary: FulfillmentSupervisorWeeklyHandoffSummary
   teamEvidenceGapDistribution: FulfillmentTeamEvidenceGapDistribution
   closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
@@ -1535,20 +1563,30 @@ export function getFulfillmentCalendar(
     const weeklyDataQualitySummary = buildWeeklyDataQualitySummary(team)
     const weeklyOwnerPressureSummary = buildWeeklyOwnerPressureSummary(team)
     const weeklySourcePressureSummary = buildWeeklySourcePressureSummary(team)
+    const supervisorWeeklyDecisionDigest = buildSupervisorWeeklyDecisionDigest(
+      supervisorWeeklyReviewQueue,
+      supervisorWeeklyHandoffSummary,
+      teamEvidenceGapDistribution,
+      closureReadinessTrend
+    )
+    const weeklyReviewComparisonSummary = buildWeeklyReviewComparisonSummary({
+      supervisorWeeklyReviewQueue,
+      supervisorWeeklyDecisionDigest,
+      weeklyDataQualitySummary,
+      weeklyOwnerPressureSummary,
+      weeklySourcePressureSummary,
+      closureReadinessTrend,
+    })
 
     return {
       ...team,
       weekRiskDistribution: buildTeamWeekRiskDistribution(team, index + 1, teamsWithoutDistribution.length),
       supervisorWeeklyReviewQueue,
-      supervisorWeeklyDecisionDigest: buildSupervisorWeeklyDecisionDigest(
-        supervisorWeeklyReviewQueue,
-        supervisorWeeklyHandoffSummary,
-        teamEvidenceGapDistribution,
-        closureReadinessTrend
-      ),
+      supervisorWeeklyDecisionDigest,
       weeklyDataQualitySummary,
       weeklyOwnerPressureSummary,
       weeklySourcePressureSummary,
+      weeklyReviewComparisonSummary,
       supervisorWeeklyHandoffSummary,
       teamEvidenceGapDistribution,
       closureReadinessTrend,
@@ -4874,6 +4912,7 @@ function buildTeamWeekRiskDistribution(
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
+    | "weeklyReviewComparisonSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -4947,6 +4986,7 @@ function buildSupervisorWeeklyReviewQueue(
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
+    | "weeklyReviewComparisonSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5007,6 +5047,7 @@ function buildSupervisorWeeklyHandoffSummary(
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
+    | "weeklyReviewComparisonSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5162,6 +5203,7 @@ function buildTeamEvidenceGapDistribution(
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
+    | "weeklyReviewComparisonSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5254,6 +5296,7 @@ function buildWeeklyDataQualitySummary(
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
+    | "weeklyReviewComparisonSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5368,6 +5411,7 @@ function buildWeeklyOwnerPressureSummary(
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
+    | "weeklyReviewComparisonSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5490,6 +5534,7 @@ function buildWeeklySourcePressureSummary(
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
+    | "weeklyReviewComparisonSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"
@@ -5598,6 +5643,101 @@ function buildWeeklySourcePressureSummary(
   }
 }
 
+function buildWeeklyReviewComparisonSummary({
+  supervisorWeeklyReviewQueue,
+  supervisorWeeklyDecisionDigest,
+  weeklyDataQualitySummary,
+  weeklyOwnerPressureSummary,
+  weeklySourcePressureSummary,
+  closureReadinessTrend,
+}: {
+  supervisorWeeklyReviewQueue: FulfillmentSupervisorWeeklyReviewQueue
+  supervisorWeeklyDecisionDigest: FulfillmentSupervisorWeeklyDecisionDigest
+  weeklyDataQualitySummary: FulfillmentWeeklyDataQualitySummary
+  weeklyOwnerPressureSummary: FulfillmentWeeklyOwnerPressureSummary
+  weeklySourcePressureSummary: FulfillmentWeeklySourcePressureSummary
+  closureReadinessTrend: FulfillmentTeamClosureReadinessTrend
+}): FulfillmentWeeklyReviewComparisonSummary {
+  const topSource = weeklySourcePressureSummary.topSource
+  const topOwner = weeklyOwnerPressureSummary.topOwner
+  const topIssue = weeklyDataQualitySummary.topIssue
+  const topBlocker = closureReadinessTrend.topBlocker
+  const topQueueItem = supervisorWeeklyReviewQueue.topItem
+  const topDecision = supervisorWeeklyDecisionDigest.topDecision
+  const items: FulfillmentWeeklyReviewComparisonSummaryItem[] = []
+
+  if (topSource && topOwner) {
+    const sourceFocus = formatReviewComparisonFocus(topSource.nextDrilldown.reason)
+    const sourceTitle = formatReviewComparisonTitle(topSource.nextDrilldown.reason)
+    items.push({
+      key: "source_owner",
+      label: "来源与责任对比",
+      primary: topSource.label,
+      secondary: topOwner.ownerRole,
+      impact: `来源 ${topSource.exceptionCount} 项异常 / 责任 ${topOwner.exceptionCount} 项异常 / 升级 ${weeklySourcePressureSummary.escalationCount} 项`,
+      reason: `${topSource.label}与${topOwner.ownerRole}都指向${sourceFocus}。`,
+      nextDrilldown: {
+        ...topSource.nextDrilldown,
+        reason: `先按${topSource.label}核对${sourceTitle}。`,
+      },
+    })
+  }
+
+  if (topIssue && topBlocker) {
+    items.push({
+      key: "quality_readiness",
+      label: "质量与闭环对比",
+      primary: topIssue.title,
+      secondary: topBlocker.label,
+      impact: `质量影响 ${topIssue.impactHours.toFixed(2)}h / 阻塞 ${
+        topBlocker.count
+      } 项 / 未就绪日 ${closureReadinessTrend.blockedDayCount} 天`,
+      reason: `${topIssue.title}影响 ${topIssue.impactedExceptionCount} 项异常，闭环主要阻塞为${topBlocker.label}。`,
+      nextDrilldown: topIssue.nextDrilldown,
+    })
+  }
+
+  if (topQueueItem && topDecision) {
+    items.push({
+      key: "queue_decision",
+      label: "队列与判断对比",
+      primary: `${topQueueItem.groupName} / ${topQueueItem.label}`,
+      secondary: topDecision.title,
+      impact: `待看 ${supervisorWeeklyReviewQueue.totalItems} 组 / 高优 ${supervisorWeeklyReviewQueue.highPriorityCount} 组 / 开放风险 ${supervisorWeeklyDecisionDigest.openRiskCount} 项`,
+      reason: `本周复核队列和决策摘要都先指向 ${topQueueItem.reviewTarget}。`,
+      nextDrilldown: {
+        groupId: topQueueItem.groupId,
+        groupName: topQueueItem.groupName,
+        date: topQueueItem.date,
+        label: topQueueItem.label,
+        exceptionKey: "",
+        reason: `先进入${topQueueItem.groupName} / ${topQueueItem.label}，核对 ${topQueueItem.reviewTarget}。`,
+      },
+    })
+  }
+
+  return {
+    headline:
+      topSource && topOwner && topIssue && topBlocker
+        ? `本周先对齐${topSource.label} / ${topOwner.ownerRole} / ${topIssue.title}，闭环阻塞集中在${topBlocker.label}。`
+        : "本周暂无需要汇总的复核对比。",
+    comparisonCount: items.length,
+    escalationCount: weeklySourcePressureSummary.escalationCount,
+    blockedDayCount: closureReadinessTrend.blockedDayCount,
+    openRiskCount: supervisorWeeklyDecisionDigest.openRiskCount,
+    topComparison: items[0],
+    items,
+  }
+}
+
+function formatReviewComparisonFocus(reason: string) {
+  return reason.replace(/^先看/, "").replace("的", " / ").split("，")[0]
+}
+
+function formatReviewComparisonTitle(reason: string) {
+  return reason.replace(/^先看/, "").split("，")[0]
+}
+
 function buildTeamClosureReadinessTrend(
   team: Omit<
     FulfillmentTeamWeek,
@@ -5607,6 +5747,7 @@ function buildTeamClosureReadinessTrend(
     | "weeklyDataQualitySummary"
     | "weeklyOwnerPressureSummary"
     | "weeklySourcePressureSummary"
+    | "weeklyReviewComparisonSummary"
     | "supervisorWeeklyHandoffSummary"
     | "teamEvidenceGapDistribution"
     | "closureReadinessTrend"

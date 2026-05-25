@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-25 - Weekly review comparison
+
+#### 结论
+
+- `F361-F362/Q082/US476-US478` 已完成周度复核对比摘要和 QA 收口。
+- 团队周视图新增 `weeklyReviewComparisonSummary`，基于本周来源压力、责任压力、质量影响、闭环准备趋势、复核队列和决策摘要派生对比维度、升级压力、未就绪日、开放风险、关键对比项、影响说明和下钻建议。
+- 页面在现有小组周视图侧栏展示“周度复核对比摘要”，位于周度来源压力之后、本周复核队列之前；不新增入口或页面。
+- 本批没有新增页面、没有新增依赖，没有改后端、数据库、真实接口、权限、通知、派单、真实修复、提交、保存、审批、导出、批量、自动排班、真实处理或生产公式。
+
+#### 风险
+
+- 本轮只做主管查看和复核对比解释，不代表真实数据修复、复核结论写入、异常关闭、处理记录写入、审批流、发布流或生产持久化已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `weeklyReviewComparisonSummary` 为 `undefined`；页面源序测试同时失败于缺少“周度复核对比摘要”卡，证明测试覆盖新增模型和 UI 位置。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型和源序测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run lint` 和 `npm run typecheck`：通过。
+- Browser smoke：通过，打开小组周视图，页面显示“周度复核对比摘要”“本周先对齐登录轨道 / 现场主管 / 状态时间段重叠，闭环阻塞集中在待补材料。”“对比 3”“来源与责任对比”“质量与闭环对比”“队列与判断对比”，且周度复核对比摘要位于周度来源压力之后、本周复核队列之前；截图保存至 `/private/tmp/bpo-weekly-review-comparison-smoke.png`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-25 - Weekly source pressure
 
 #### 结论

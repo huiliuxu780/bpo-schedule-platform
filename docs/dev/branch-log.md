@@ -2,6 +2,24 @@
 
 ## 2026-05-25
 
+### F361-F362 Weekly Review Comparison
+
+- branch_name: `codex/f343-supervisor-decision-digest`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `26d784a`
+- remote_status: `not_pushed`
+- scope: frontend local business function: expose weekly review comparison summary in the existing fulfillment calendar group-week sidebar, including comparison dimensions, escalation pressure, blocked days, open risks, key comparison items, impact explanations, and drilldown suggestion.
+- allowed_files_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, `scripts/tests/product-ui-copy-audit.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend, package, lockfile, database, real integration, auth, permission, notification action, dispatch action, real repair, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing fulfillment calendar group-week route and person timeline model/test plus current and legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, notification action, dispatch action, real repair, submit/save action, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `weeklyReviewComparisonSummary` and missing weekly review comparison card; target model tests, product UI copy audit, navigation regression, lint, typecheck, strict state check, browser smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F359-F360 Weekly Source Pressure
 
 - branch_name: `codex/f343-supervisor-decision-digest`

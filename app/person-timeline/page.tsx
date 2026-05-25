@@ -273,6 +273,7 @@ function GroupWeekSection({
           <WeeklyDataQualitySummaryPanel team={team} />
           <WeeklyOwnerPressurePanel team={team} />
           <WeeklySourcePressurePanel team={team} />
+          <WeeklyReviewComparisonPanel team={team} />
           <SupervisorWeeklyReviewQueuePanel team={team} />
           <SupervisorWeeklyHandoffSummaryPanel team={team} />
           <TeamEvidenceGapDistributionPanel team={team} />
@@ -571,6 +572,82 @@ function WeeklySourcePressurePanel({ team }: { team: FulfillmentTeamWeek }) {
                 <span className="text-muted-foreground">{source.impactHours.toFixed(2)}h</span>
               </div>
               <div className="text-muted-foreground">{source.reason}</div>
+            </Link>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+function WeeklyReviewComparisonPanel({ team }: { team: FulfillmentTeamWeek }) {
+  const summary = team.weeklyReviewComparisonSummary
+  const topComparison = summary.topComparison
+
+  return (
+    <div className="grid gap-3 rounded-lg border p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">周度复核对比摘要</div>
+          <div className="text-xs text-muted-foreground">{summary.headline}</div>
+        </div>
+        <Badge variant={summary.escalationCount > 0 ? "destructive" : "outline"}>
+          对比 {summary.comparisonCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="升级压力" value={`${summary.escalationCount} 项`} />
+        <SummaryMetric label="未就绪日" value={`${summary.blockedDayCount} 天`} />
+        <SummaryMetric label="开放风险" value={`${summary.openRiskCount} 项`} />
+        <SummaryMetric label="对比维度" value={`${summary.comparisonCount} 个`} />
+      </div>
+      {topComparison ? (
+        <Link
+          href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+            topComparison.nextDrilldown.groupId
+          )}&date=${topComparison.nextDrilldown.date}&queue=all${
+            topComparison.nextDrilldown.exceptionKey
+              ? `&exception=${encodeURIComponent(topComparison.nextDrilldown.exceptionKey)}`
+              : ""
+          }`}
+          className="grid gap-2 rounded-md border bg-muted/30 p-2 text-xs transition-colors hover:bg-muted"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">{topComparison.label}</span>
+            <Badge variant="secondary">{topComparison.primary}</Badge>
+          </div>
+          <div className="text-muted-foreground">
+            {topComparison.primary} / {topComparison.secondary}
+          </div>
+          <div className="text-muted-foreground">{topComparison.impact}</div>
+          <div className="text-muted-foreground">{topComparison.reason}</div>
+          <div className="text-muted-foreground">{topComparison.nextDrilldown.reason}</div>
+        </Link>
+      ) : (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+          本周暂无需要汇总的复核对比。
+        </div>
+      )}
+      {summary.items.length > 1 ? (
+        <div className="grid gap-2">
+          {summary.items.slice(1, 3).map((item) => (
+            <Link
+              key={item.key}
+              href={`/person-timeline?team=${encodeScopeId(team.id)}&group=${encodeScopeId(
+                item.nextDrilldown.groupId
+              )}&date=${item.nextDrilldown.date}&queue=all${
+                item.nextDrilldown.exceptionKey
+                  ? `&exception=${encodeURIComponent(item.nextDrilldown.exceptionKey)}`
+                  : ""
+              }`}
+              className="grid gap-1 rounded-md border bg-background p-2 text-xs transition-colors hover:bg-muted"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium">{item.label}</span>
+                <span className="text-muted-foreground">{item.primary}</span>
+              </div>
+              <div className="text-muted-foreground">{item.impact}</div>
+              <div className="text-muted-foreground">{item.reason}</div>
             </Link>
           ))}
         </div>

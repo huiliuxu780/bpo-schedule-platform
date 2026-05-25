@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R470-R473 - 周度复核对比摘要
+
+```yaml
+requirements:
+  - id: R470
+    module: "履约日历"
+    description: "小组周视图需要展示周度复核对比摘要，帮助现场主管把来源压力、责任压力、质量影响和闭环准备放在同一视角判断。"
+  - id: R471
+    module: "履约日历"
+    description: "周度复核对比摘要需要包含对比维度、升级压力、未就绪日、开放风险、关键对比项、影响说明和下钻建议。"
+  - id: R472
+    module: "履约日历"
+    description: "周度复核对比摘要只能表达查看和解释口径，不提供真实修复、提交、保存、审批、导出、批量、真实处理或状态写入能力。"
+  - id: R473
+    module: "质量与交付"
+    description: "周度复核对比摘要完成后需要 QA 收口，确认模型测试、页面顺序、浏览器 smoke、文案边界和 no-action 边界。"
+source: "PM requested continued supervisor-side production MVP development on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历小组周视图补充本地前端只读周度复核对比摘要；不新增页面、导航、依赖、后端、数据库、真实接口、权限、审批、导出、批量、自动排班或生产公式。"
+```
+
 ### R466-R469 - 周度来源压力汇总
 
 ```yaml
