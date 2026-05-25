@@ -4,6 +4,7 @@ import {
   createDemandForecastImportAction,
   createLoginLogImportAction,
   createPersonnelScheduleImportAction,
+  createStatusLogImportAction,
 } from "@/app/import-batches/new/actions"
 import { AppShell } from "@/components/app-shell"
 import { Button } from "@/components/ui/button"
@@ -23,9 +24,33 @@ type PageProps = {
 export default async function NewImportBatchPage({ searchParams }: PageProps) {
   const { result, type } = await searchParams
   const importType =
-    type === "personnel-schedule" || type === "login-log" ? type : "demand-forecast"
+    type === "demand-forecast" ||
+    type === "personnel-schedule" ||
+    type === "login-log" ||
+    type === "status-log"
+      ? type
+      : "status-log"
   const config =
-    importType === "login-log"
+    importType === "status-log"
+      ? {
+          title: "状态日志 CSV 导入",
+          description: "选择状态日志 CSV 文件，系统将解析字段、记录批次结果和失败行。",
+          cardDescription: "CSV 需要包含员工、业务日期、状态类型、开始结束时间、职场、项目和来源系统。",
+          uploadedBy: "现场主管",
+          action: createStatusLogImportAction,
+          fields: [
+            "status_log_id",
+            "employee_id",
+            "business_date",
+            "status_type",
+            "start_at",
+            "end_at",
+            "workplace_id",
+            "project_id",
+            "source_system",
+          ],
+        }
+      : importType === "login-log"
       ? {
           title: "登录日志 CSV 导入",
           description: "选择登录日志 CSV 文件，系统将解析字段、记录批次结果和失败行。",
@@ -113,6 +138,9 @@ export default async function NewImportBatchPage({ searchParams }: PageProps) {
           </Button>
           <Button asChild variant={importType === "login-log" ? "default" : "outline"} size="sm">
             <Link href="/import-batches/new?type=login-log">登录日志</Link>
+          </Button>
+          <Button asChild variant={importType === "status-log" ? "default" : "outline"} size="sm">
+            <Link href="/import-batches/new?type=status-log">状态日志</Link>
           </Button>
         </div>
 

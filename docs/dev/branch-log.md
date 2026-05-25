@@ -1,5 +1,25 @@
 # Branch Log
 
+## 2026-05-26
+
+### B012-F370 Status Log CSV Import
+
+- branch_name: `codex/f370-status-log-csv-import`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `854a423`
+- remote_status: `not_pushed`
+- scope: backend/frontend local business function: status log CSV upload/import vertical using FastAPI process-memory batch results, standard-library CSV parsing, frontend upload mode, batch detail, and failure-row review.
+- allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/repository.py`, `backend/tests/test_schedule_plans.py`, `app/import-batches/**`, `lib/import-batch-history.ts`, `scripts/tests/import-batch-history.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: adds one local upload/import API and one frontend CSV upload mode under existing import batch surfaces; updates current and legacy traceability docs; does not add database persistence, production file storage, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing backend status log import route/model and missing frontend status log import mapper/helper; backend unittest, import-batch model tests, product UI copy audit, navigation regression, typecheck, strict state check, API/browser smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ## 2026-05-25
 
 ### B011-F369 Login Log CSV Import

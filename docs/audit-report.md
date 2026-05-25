@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-26 - Status log CSV local import
+
+#### 结论
+
+- `B012/F370/Q088/US494-US496` 已完成状态日志 CSV 本地上传导入纵切。
+- 后端新增 `POST /api/v1/import-batches/status-log`，接收 `file_name`、`uploaded_by`、`csv_content`，用 Python 标准库 `csv.DictReader` 解析状态日志 CSV，并返回批次编号、成功行、失败行、错误码和失败行明细。
+- 后端复用 `GET /api/v1/import-batches/{batch_id}`，从 FastAPI 进程内存读取刚生成的批次结果；不写入数据库。
+- 前端 `/import-batches/new` 新增状态日志模式，导入批次页“上传 CSV”默认进入状态日志上传，批次详情页展示失败行号、字段、错误码、说明和原值。
+- 本批没有新增依赖、没有修改 package/lockfile，没有新增数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 批次结果保存在进程内存，服务重启后不会保留；这符合本 Gate 的 no-database 边界，不代表生产持久化、生产文件存储或审计留痕已完成。
+- 本轮只校验必填字段和状态开始/结束时间顺序；跨天、时区、业务日切分、真实 CORN/HR/WFM 接入和生产状态字典仍需后续独立 Gate。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于 `import_status_log_csv` 不存在；前端模型测试首次失败于 `createStatusLogImportBatch` 不存在。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans.SchedulePlansApiTest -v`：通过，37 个后端测试通过。
+- `node --test scripts/tests/import-batch-history.test.mjs`：通过，8 个导入批次模型测试通过。
+- Browser/API smoke：通过，CSV 生成 `BATCH-SL-20260526-001`，浏览器详情页显示“状态日志模板”“完成有错误”“失败行明细”“end_at”“invalid_time_range”“状态结束时间必须晚于开始时间”；上传页显示状态日志文件输入和必填字段。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-25 - Login log CSV local import
 
 #### 结论

@@ -10,6 +10,7 @@ from backend.app.main import (
     import_demand_forecast_csv,
     import_login_log_csv,
     import_personnel_schedule_csv,
+    import_status_log_csv,
     list_demand_plans,
     list_fulfillment_comparison_contract,
     list_master_data_import_contract,
@@ -26,6 +27,7 @@ from backend.app.models import (
     PersonnelScheduleCsvImportRequest,
     SchedulePlanDraftRequest,
     SchedulePlanIntervalInput,
+    StatusLogCsvImportRequest,
 )
 
 
@@ -46,6 +48,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/import-batches/demand-forecast", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/personnel-schedule", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/login-log", "POST"), routes)
+        self.assertIn(("/api/v1/import-batches/status-log", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
 
     def test_demand_forecast_csv_import_accepts_valid_rows(self) -> None:
@@ -241,6 +244,69 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(response.failed_rows, 1)
         self.assertEqual(response.error_codes, ["invalid_time_range"])
         self.assertEqual(response.failure_rows[0].field_name, "logout_at")
+        self.assertEqual(response.failure_rows[0].raw_value, "2026-05-26T09:00:00")
+
+    def test_status_log_csv_import_accepts_valid_rows(self) -> None:
+        response = import_status_log_csv(
+            StatusLogCsvImportRequest(
+                file_name="status_log_test.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "status_log_id,employee_id,business_date,status_type,start_at,end_at,workplace_id,project_id,source_system\n"
+                    "STATUS-001,E-001,2026-05-26,productive,2026-05-26T09:00:00,2026-05-26T09:30:00,WP-SH,P-BOSCH,CORN\n"
+                    "STATUS-002,E-002,2026-05-26,break,2026-05-26T10:00:00,2026-05-26T10:30:00,WP-SH,P-BOSCH,CORN\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.entity, "status_log")
+        self.assertEqual(response.status, "completed")
+        self.assertEqual(response.total_rows, 2)
+        self.assertEqual(response.success_rows, 2)
+        self.assertEqual(response.failed_rows, 0)
+        self.assertEqual(response.error_codes, [])
+        self.assertEqual(response.failure_rows, [])
+
+        stored = get_import_batch_result(response.batch_id)
+        self.assertEqual(stored, response)
+
+    def test_status_log_csv_import_records_missing_required_field(self) -> None:
+        response = import_status_log_csv(
+            StatusLogCsvImportRequest(
+                file_name="status_log_missing.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "status_log_id,employee_id,business_date,status_type,start_at,end_at,workplace_id,project_id,source_system\n"
+                    "STATUS-003,E-003,2026-05-26,,2026-05-26T09:00:00,2026-05-26T09:30:00,WP-SH,P-BOSCH,CORN\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.total_rows, 1)
+        self.assertEqual(response.success_rows, 0)
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["missing_required_field"])
+        self.assertEqual(response.failure_rows[0].failed_row_number, 2)
+        self.assertEqual(response.failure_rows[0].field_name, "status_type")
+        self.assertEqual(response.failure_rows[0].raw_value, "")
+
+    def test_status_log_csv_import_rejects_invalid_time_range(self) -> None:
+        response = import_status_log_csv(
+            StatusLogCsvImportRequest(
+                file_name="status_log_invalid_time.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "status_log_id,employee_id,business_date,status_type,start_at,end_at,workplace_id,project_id,source_system\n"
+                    "STATUS-004,E-004,2026-05-26,productive,2026-05-26T09:30:00,2026-05-26T09:00:00,WP-SH,P-BOSCH,CORN\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["invalid_time_range"])
+        self.assertEqual(response.failure_rows[0].field_name, "end_at")
         self.assertEqual(response.failure_rows[0].raw_value, "2026-05-26T09:00:00")
 
     def test_master_data_import_contract_defines_required_entities(self) -> None:

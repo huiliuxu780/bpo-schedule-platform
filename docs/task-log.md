@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-05-26
+
+- task_id: `B012/F370/Q088`
+- source_ids:
+  - `R494-R497`
+- story_ids:
+  - `US494-US496`
+- action: 完成状态日志 CSV 本地上传导入纵切。
+- status: `done`
+- notes: 新增 `POST /api/v1/import-batches/status-log`，复用 `GET /api/v1/import-batches/{batch_id}`，使用 Python 标准库解析 CSV 并将批次结果保存在 FastAPI 进程内存；上传页支持状态日志模式，批次详情展示成功行、失败行、错误码和失败行明细。本次不新增依赖，不改 package/lockfile，不新增数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
 ### 2026-05-25
 
 - task_id: `B011/F369/Q087`

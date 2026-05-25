@@ -72,6 +72,7 @@ export type DemandForecastCsvImportPayload = {
 
 export type PersonnelScheduleCsvImportPayload = DemandForecastCsvImportPayload
 export type LoginLogCsvImportPayload = DemandForecastCsvImportPayload
+export type StatusLogCsvImportPayload = DemandForecastCsvImportPayload
 
 export type ImportBatchFailureImpactSummary = {
   totalAffectedRows: number
@@ -290,6 +291,16 @@ function importEntityView(entity: string) {
     }
   }
 
+  if (entity === "status_log") {
+    return {
+      templateId: "TPL-STATUS-LOG",
+      templateName: "状态日志模板",
+      affectedObjects: ["状态日志", "人员时间轴", "履约对比"],
+      businessImpactTarget: "状态日志、人员时间轴和履约对比",
+      successTarget: "状态日志行",
+    }
+  }
+
   return {
     templateId: entity,
     templateName: entity,
@@ -371,6 +382,17 @@ export async function createLoginLogImportBatch(
 ): Promise<ImportBatch | null> {
   const result = await writeJson<ImportBatchResult>(
     "/api/v1/import-batches/login-log",
+    payload
+  )
+
+  return result ? mapImportBatchResult(result) : null
+}
+
+export async function createStatusLogImportBatch(
+  payload: StatusLogCsvImportPayload
+): Promise<ImportBatch | null> {
+  const result = await writeJson<ImportBatchResult>(
+    "/api/v1/import-batches/status-log",
     payload
   )
 
