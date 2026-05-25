@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 SchedulePlanStatus = Literal["draft", "review_ready", "published"]
 DemandPlanStatus = Literal["imported", "mapped"]
+ImportBatchStatus = Literal["completed", "completed_with_errors", "failed", "pending_review"]
 UnavailabilityStatus = Literal["active", "resolved"]
 ScheduleRiskLevel = Literal["high", "medium", "low"]
 MasterDataEntity = Literal[
@@ -66,6 +67,37 @@ class DemandPlanRow(BaseModel):
 
 class DemandPlanListResponse(BaseModel):
     items: list[DemandPlanRow]
+
+
+class DemandForecastCsvImportRequest(BaseModel):
+    file_name: str
+    uploaded_by: str
+    csv_content: str
+
+
+class ImportBatchFailureRow(BaseModel):
+    batch_id: str
+    entity: str
+    failed_row_number: int = Field(ge=1)
+    field_name: str
+    error_code: str
+    error_message: str
+    raw_value: str
+
+
+class ImportBatchResult(BaseModel):
+    batch_id: str
+    entity: str
+    file_name: str
+    uploaded_by: str
+    uploaded_at: str
+    status: ImportBatchStatus
+    total_rows: int = Field(ge=0)
+    success_rows: int = Field(ge=0)
+    failed_rows: int = Field(ge=0)
+    warning_rows: int = Field(ge=0)
+    error_codes: list[str]
+    failure_rows: list[ImportBatchFailureRow]
 
 
 class MasterDataEntityContract(BaseModel):

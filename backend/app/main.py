@@ -2,7 +2,9 @@ from fastapi import FastAPI, HTTPException
 
 from backend.app.models import (
     DemandPlanListResponse,
+    DemandForecastCsvImportRequest,
     FulfillmentComparisonContractResponse,
+    ImportBatchResult,
     MasterDataImportContractResponse,
     PersonnelScheduleImportContractResponse,
     ScheduleRiskListResponse,
@@ -17,9 +19,11 @@ from backend.app.models import (
 from backend.app.repository import (
     create_plan_draft,
     get_fulfillment_comparison_contract,
+    get_import_batch_result as find_import_batch_result,
     get_master_data_import_contract,
     get_personnel_schedule_import_contract,
     find_plan_detail,
+    import_demand_forecast_csv as create_demand_forecast_import_batch,
     list_demand_plan_rows,
     list_schedule_risk_rows,
     list_shift_detail_rows,
@@ -48,6 +52,29 @@ def list_schedule_plans(
 @app.get("/api/v1/demand-plans", response_model=DemandPlanListResponse)
 def list_demand_plans(query: str | None = None) -> DemandPlanListResponse:
     return DemandPlanListResponse(items=list_demand_plan_rows(query=query))
+
+
+@app.post("/api/v1/import-batches/demand-forecast", response_model=ImportBatchResult)
+def import_demand_forecast_csv(
+    request: DemandForecastCsvImportRequest,
+) -> ImportBatchResult:
+    return create_demand_forecast_import_batch(request)
+
+
+@app.get("/api/v1/import-batches/{batch_id}", response_model=ImportBatchResult)
+def get_import_batch_result(batch_id: str) -> ImportBatchResult:
+    result = find_import_batch_result(batch_id)
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "IMPORT_BATCH_NOT_FOUND",
+                    "message": "导入批次不存在",
+                }
+            },
+        )
+    return result
 
 
 @app.get(

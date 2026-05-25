@@ -2,6 +2,24 @@
 
 ## 2026-05-25
 
+### B009-F367 Demand Forecast CSV Import
+
+- branch_name: `codex/f367-demand-forecast-csv-import-v2`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `9026aec`
+- remote_status: `not_pushed`
+- scope: backend/frontend local business function: demand forecast CSV upload/import vertical using FastAPI process-memory batch results, standard-library CSV parsing, frontend upload entry, batch detail, and failure-row review.
+- allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/repository.py`, `backend/tests/test_schedule_plans.py`, `app/import-batches/**`, `lib/import-batch-history.ts`, `scripts/tests/import-batch-history.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: adds one local upload/import API and one frontend CSV upload entry under existing import batch surfaces; updates current and legacy traceability docs; does not add database persistence, production file storage, new dependencies, external connectors, permission boundaries, approval, export, batch operation, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing backend import models/routes and missing frontend batch result mapper; backend unittest, import-batch model tests, product UI copy audit, navigation regression, lint, typecheck, strict state check, API/browser smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F365-F366 Weekly View Boundary
 
 - branch_name: `codex/f343-supervisor-decision-digest`

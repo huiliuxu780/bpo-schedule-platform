@@ -18,8 +18,8 @@ import {
 } from "@/lib/data-quality"
 import {
   fallbackImportBatches,
+  getImportedBatchById,
   getImportBatchQualityIssues,
-  getImportBatchById,
   importBatchStatusLabel,
   summarizeImportBatchFailureImpacts,
 } from "@/lib/import-batch-history"
@@ -36,14 +36,20 @@ export function generateStaticParams() {
 
 export default async function ImportBatchDetailPage({ params }: PageProps) {
   const { batchId } = await params
-  const batch = getImportBatchById(batchId)
+  const batch = await getImportedBatchById(batchId)
 
   if (!batch) {
     notFound()
   }
 
   const qualityIssues = getImportBatchQualityIssues(batch.id, fallbackDataQualityIssues)
-  const failureImpactSummary = summarizeImportBatchFailureImpacts(batch.id)
+  const fallbackFailureImpactSummary = summarizeImportBatchFailureImpacts(batch.id)
+  const failureImpactItems =
+    batch.failureImpacts.length > 0 ? batch.failureImpacts : fallbackFailureImpactSummary.items
+  const totalAffectedRows =
+    failureImpactItems.length > 0
+      ? failureImpactItems.reduce((total, item) => total + item.affectedRows, 0)
+      : fallbackFailureImpactSummary.totalAffectedRows
 
   return (
     <AppShell title={batch.id} searchPlaceholder="搜索批次字段">
@@ -69,6 +75,45 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
           <Metric title="失败行" value={`${batch.failedRows}`} description="仅追溯展示" />
           <Metric title="警告行" value={`${batch.warningRows}`} description="需要人工查看" />
         </section>
+
+        {batch.failureRows.length > 0 ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>失败行明细</CardTitle>
+              <CardDescription>
+                按行号、字段、错误码和原值定位需要修正的数据。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-2">
+              {batch.failureRows.map((row) => (
+                <div
+                  key={`${row.failedRowNumber}-${row.fieldName}-${row.errorCode}`}
+                  className="grid gap-2 rounded-lg border p-3 text-sm md:grid-cols-[6rem_1fr_1fr_2fr]"
+                >
+                  <div>
+                    <div className="text-xs text-muted-foreground">行号</div>
+                    <div className="font-medium">{row.failedRowNumber}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">字段</div>
+                    <div className="font-mono text-xs">{row.fieldName}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">错误码</div>
+                    <div className="font-mono text-xs">{row.errorCode}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">说明</div>
+                    <div className="text-muted-foreground">
+                      {row.errorMessage}
+                      {row.rawValue ? ` / 原值：${row.rawValue}` : ""}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        ) : null}
 
         <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
           <Card>
@@ -167,12 +212,15 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
             </CardHeader>
             <CardContent className="grid gap-3">
               <div className="grid grid-cols-2 gap-3">
-                <Detail label="影响行数" value={`${failureImpactSummary.totalAffectedRows}`} />
-                <Detail label="影响项" value={`${failureImpactSummary.items.length}`} />
+                <Detail label="影响行数" value={`${totalAffectedRows}`} />
+                <Detail label="影响项" value={`${failureImpactItems.length}`} />
               </div>
-              {failureImpactSummary.items.length > 0 ? (
-                failureImpactSummary.items.map((item) => (
-                  <div key={item.relatedIssueIds.join("-")} className="rounded-lg border p-3">
+              {failureImpactItems.length > 0 ? (
+                failureImpactItems.map((item, index) => (
+                  <div
+                    key={`${item.relatedIssueIds.join("-")}-${index}`}
+                    className="rounded-lg border p-3"
+                  >
                     <div className="flex flex-wrap gap-2">
                       {item.affectedObjects.map((object) => (
                         <Badge key={object} variant="secondary">

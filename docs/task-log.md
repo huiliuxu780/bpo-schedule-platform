@@ -19,6 +19,17 @@
 
 ### 2026-05-25
 
+- task_id: `B009/F367/Q085`
+- source_ids:
+  - `R482-R485`
+- story_ids:
+  - `US485-US487`
+- action: 完成需求预测 CSV 本地上传导入纵切。
+- status: `done`
+- notes: 新增 `POST /api/v1/import-batches/demand-forecast` 和 `GET /api/v1/import-batches/{batch_id}`，使用 Python 标准库解析 CSV 并将批次结果保存在 FastAPI 进程内存；新增 `/import-batches/new` 上传入口，批次详情展示成功行、失败行、错误码和失败行明细。本次不新增依赖，不改 package/lockfile，不新增数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-25
+
 - task_id: `F365-F366/Q084`
 - source_ids:
   - `R478-R481`

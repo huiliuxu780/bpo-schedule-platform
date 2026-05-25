@@ -6,6 +6,8 @@ from backend.app.main import (
     app,
     create_schedule_plan_draft,
     get_schedule_plan,
+    get_import_batch_result,
+    import_demand_forecast_csv,
     list_demand_plans,
     list_fulfillment_comparison_contract,
     list_master_data_import_contract,
@@ -16,7 +18,11 @@ from backend.app.main import (
     list_unavailability,
     update_schedule_plan_draft,
 )
-from backend.app.models import SchedulePlanDraftRequest, SchedulePlanIntervalInput
+from backend.app.models import (
+    DemandForecastCsvImportRequest,
+    SchedulePlanDraftRequest,
+    SchedulePlanIntervalInput,
+)
 
 
 class SchedulePlansApiTest(unittest.TestCase):
@@ -33,6 +39,77 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/fulfillment-comparison/contract", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
+        self.assertIn(("/api/v1/import-batches/demand-forecast", "POST"), routes)
+        self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
+
+    def test_demand_forecast_csv_import_accepts_valid_rows(self) -> None:
+        response = import_demand_forecast_csv(
+            DemandForecastCsvImportRequest(
+                file_name="demand_forecast_test.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,18\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:30,10:00,20\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.entity, "demand_forecast")
+        self.assertEqual(response.status, "completed")
+        self.assertEqual(response.total_rows, 2)
+        self.assertEqual(response.success_rows, 2)
+        self.assertEqual(response.failed_rows, 0)
+        self.assertEqual(response.warning_rows, 0)
+        self.assertEqual(response.error_codes, [])
+        self.assertEqual(response.failure_rows, [])
+        self.assertEqual(response.file_name, "demand_forecast_test.csv")
+
+        stored = get_import_batch_result(response.batch_id)
+        self.assertIsNotNone(stored)
+        self.assertEqual(stored, response)
+
+    def test_demand_forecast_csv_import_records_failed_rows(self) -> None:
+        response = import_demand_forecast_csv(
+            DemandForecastCsvImportRequest(
+                file_name="demand_forecast_missing.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.total_rows, 1)
+        self.assertEqual(response.success_rows, 0)
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["missing_required_field"])
+        self.assertEqual(len(response.failure_rows), 1)
+        failure = response.failure_rows[0]
+        self.assertEqual(failure.failed_row_number, 2)
+        self.assertEqual(failure.field_name, "forecast_agents")
+        self.assertEqual(failure.error_code, "missing_required_field")
+        self.assertEqual(failure.raw_value, "")
+
+    def test_demand_forecast_csv_import_rejects_invalid_forecast_agents(self) -> None:
+        response = import_demand_forecast_csv(
+            DemandForecastCsvImportRequest(
+                file_name="demand_forecast_invalid.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,abc\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["invalid_number"])
+        self.assertEqual(response.failure_rows[0].field_name, "forecast_agents")
+        self.assertEqual(response.failure_rows[0].raw_value, "abc")
 
     def test_master_data_import_contract_defines_required_entities(self) -> None:
         response = list_master_data_import_contract()

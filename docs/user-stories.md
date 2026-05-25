@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US485-US487 - 需求预测 CSV 本地导入纵切
+
+```yaml
+stories:
+  - id: US485
+    requirement_ids: [R482, R483]
+    task_ids: [B009]
+    module: "导入批次"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望上传需求预测 CSV 并看到解析批次、成功行和失败行，以便开始真实导入闭环的第一步。"
+    task_type: "backend-mvp"
+    priority: "P0"
+    status: "done"
+  - id: US486
+    requirement_ids: [R484]
+    task_ids: [F367]
+    module: "导入批次"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望在导入批次页面选择 CSV 文件并进入批次结果，以便完成前端到本地后端的导入操作。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US487
+    requirement_ids: [R485]
+    task_ids: [Q085]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望需求预测 CSV 导入纵切完成后做收口验证，确认本地上传、解析、失败行和 no-database 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "POST /api/v1/import-batches/demand-forecast 接收需求预测 CSV 文本并返回批次结果。"
+  - "后端记录成功行、失败行、错误码、失败行号、字段名、原值和错误信息。"
+  - "导入批次页面提供需求预测 CSV 上传入口，提交后进入批次详情。"
+  - "本组不新增依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析或生产公式。"
+  - "`python -m unittest discover -s backend/tests -v`、`node --test scripts/tests/import-batch-history.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US482-US484 - 周度查看边界核查
 
 ```yaml

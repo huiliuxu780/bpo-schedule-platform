@@ -11,6 +11,16 @@ export type ImportBatchFailureImpact = {
   businessImpact: string
 }
 
+export type ImportBatchFailureRow = {
+  batchId: string
+  entity: string
+  failedRowNumber: number
+  fieldName: string
+  errorCode: string
+  errorMessage: string
+  rawValue: string
+}
+
 export type ImportBatch = {
   id: string
   templateId: string
@@ -26,8 +36,38 @@ export type ImportBatch = {
   affectedObjects: string[]
   errorCodes: string[]
   qualityIssueIds: string[]
+  failureRows: ImportBatchFailureRow[]
   failureImpacts: ImportBatchFailureImpact[]
   note: string
+}
+
+export type ImportBatchResult = {
+  batch_id: string
+  entity: string
+  file_name: string
+  uploaded_by: string
+  uploaded_at: string
+  status: ImportBatchStatus
+  total_rows: number
+  success_rows: number
+  failed_rows: number
+  warning_rows: number
+  error_codes: string[]
+  failure_rows: {
+    batch_id: string
+    entity: string
+    failed_row_number: number
+    field_name: string
+    error_code: string
+    error_message: string
+    raw_value: string
+  }[]
+}
+
+export type DemandForecastCsvImportPayload = {
+  file_name: string
+  uploaded_by: string
+  csv_content: string
 }
 
 export type ImportBatchFailureImpactSummary = {
@@ -48,12 +88,15 @@ export type ImportBatchSummary = {
 }
 
 export const deferredImportBatchActions = [
-  "无真实上传",
+  "无生产数据库留存",
   "无批量导入",
-  "无失败行写库",
+  "无外部系统接入",
   "无自动修复",
   "无审批或权限",
 ]
+
+const API_BASE_URL =
+  process.env.BPO_API_BASE_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8000"
 
 export const fallbackImportBatches: ImportBatch[] = [
   {
@@ -71,6 +114,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     affectedObjects: ["坐席", "职场", "供应商", "绑定关系"],
     errorCodes: ["missing_required_field", "foreign_key_missing"],
     qualityIssueIds: ["DQ-202605-001", "DQ-202605-004"],
+    failureRows: [],
     failureImpacts: [
       {
         relatedIssueIds: ["DQ-202605-001"],
@@ -102,6 +146,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     affectedObjects: ["人员级排班", "0.5h 时段汇总"],
     errorCodes: ["invalid_time_range", "shift_type_missing"],
     qualityIssueIds: ["DQ-202605-002", "DQ-202605-006"],
+    failureRows: [],
     failureImpacts: [
       {
         relatedIssueIds: ["DQ-202605-002"],
@@ -133,6 +178,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     affectedObjects: ["需求预测", "履约对比"],
     errorCodes: [],
     qualityIssueIds: [],
+    failureRows: [],
     failureImpacts: [],
     note: "0.5h 预测时段已完整覆盖。",
   },
@@ -151,6 +197,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     affectedObjects: ["状态日志", "人员时间轴"],
     errorCodes: ["duplicate_primary_key", "status_overlap"],
     qualityIssueIds: ["DQ-202605-003", "DQ-202605-008"],
+    failureRows: [],
     failureImpacts: [
       {
         relatedIssueIds: ["DQ-202605-003"],
@@ -168,6 +215,110 @@ export const fallbackImportBatches: ImportBatch[] = [
     note: "状态时间段重叠，当前只展示失败结果，不做修复提交。",
   },
 ]
+
+export function mapImportBatchResult(result: ImportBatchResult): ImportBatch {
+  return {
+    id: result.batch_id,
+    templateId: result.entity === "demand_forecast" ? "TPL-DEMAND-FORECAST" : result.entity,
+    templateName: result.entity === "demand_forecast" ? "需求预测模板" : result.entity,
+    sourceFile: result.file_name,
+    owner: result.uploaded_by,
+    uploadedAt: formatImportBatchTimestamp(result.uploaded_at),
+    status: result.status,
+    totalRows: result.total_rows,
+    successRows: result.success_rows,
+    failedRows: result.failed_rows,
+    warningRows: result.warning_rows,
+    affectedObjects: result.entity === "demand_forecast" ? ["需求预测", "履约对比"] : [],
+    errorCodes: result.error_codes,
+    qualityIssueIds: [],
+    failureRows: result.failure_rows.map((row) => ({
+      batchId: row.batch_id,
+      entity: row.entity,
+      failedRowNumber: row.failed_row_number,
+      fieldName: row.field_name,
+      errorCode: row.error_code,
+      errorMessage: row.error_message,
+      rawValue: row.raw_value,
+    })),
+    failureImpacts: result.failure_rows.map((row) => ({
+      relatedIssueIds: [],
+      affectedRows: 1,
+      affectedObjects: ["需求预测"],
+      businessImpact: `${row.field_name} 字段问题会影响需求预测导入和履约对比。`,
+    })),
+    note:
+      result.failed_rows > 0
+        ? "CSV 已解析，失败行需修正后重新导入。"
+        : "CSV 已解析，需求预测行可进入后续对齐。",
+  }
+}
+
+function formatImportBatchTimestamp(value: string) {
+  return value.replace("T", " ").slice(0, 16)
+}
+
+async function fetchJson<T>(path: string): Promise<T | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    return (await response.json()) as T
+  } catch {
+    return null
+  }
+}
+
+async function writeJson<T>(path: string, payload: unknown): Promise<T | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    return (await response.json()) as T
+  } catch {
+    return null
+  }
+}
+
+export async function createDemandForecastImportBatch(
+  payload: DemandForecastCsvImportPayload
+): Promise<ImportBatch | null> {
+  const result = await writeJson<ImportBatchResult>(
+    "/api/v1/import-batches/demand-forecast",
+    payload
+  )
+
+  return result ? mapImportBatchResult(result) : null
+}
+
+export async function getImportedBatchById(id: string): Promise<ImportBatch | null> {
+  const result = await fetchJson<ImportBatchResult>(`/api/v1/import-batches/${id}`)
+
+  return result ? mapImportBatchResult(result) : getImportBatchById(id) ?? null
+}
+
+export async function getImportBatches(): Promise<ImportBatch[]> {
+  return fallbackImportBatches
+}
 
 export function summarizeImportBatches(
   rows: ImportBatch[]

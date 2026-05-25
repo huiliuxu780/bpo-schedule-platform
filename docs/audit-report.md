@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-25 - Demand forecast CSV local import
+
+#### 结论
+
+- `B009/F367/Q085/US485-US487` 已完成需求预测 CSV 本地上传导入纵切。
+- 后端新增 `POST /api/v1/import-batches/demand-forecast`，接收 `file_name`、`uploaded_by`、`csv_content`，用 Python 标准库 `csv.DictReader` 解析需求预测 CSV，并返回批次编号、成功行、失败行、错误码和失败行明细。
+- 后端新增 `GET /api/v1/import-batches/{batch_id}`，从 FastAPI 进程内存读取刚生成的批次结果；不写入数据库。
+- 前端新增 `/import-batches/new`，导入批次页提供“上传 CSV”入口，批次详情页展示失败行号、字段、错误码、说明和原值。
+- 本批没有新增依赖、没有修改 package/lockfile，没有新增数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 批次结果保存在进程内存，服务重启后不会保留；这符合本 Gate 的 no-database 边界，不代表生产持久化、生产文件存储或审计留痕已完成。
+- 前端文件选择到 API 的真实表单提交已实现；受当前浏览器自动化能力限制，smoke 使用同一 CSV 文件直接调用本地 API 生成批次，再用浏览器验证上传页和批次详情渲染。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于 `get_import_batch_result` / `DemandForecastCsvImportRequest` 不存在；前端模型测试首次失败于 `mapImportBatchResult` 不存在。
+- `/Users/mac/.local/bin/python3 -m unittest discover -s backend/tests -v`：通过，28 个后端测试通过。
+- `node --test scripts/tests/import-batch-history.test.mjs`：通过，5 个导入批次模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs` 和 `node --test scripts/tests/product-navigation-business-only.test.mjs`：通过，产品 UI 未暴露内部执行词，导航未新增伪入口。
+- `npm run lint` 和 `npm run typecheck`：通过。
+- Browser/API smoke：通过，CSV 生成 `BATCH-DF-20260525-001`，浏览器详情页显示“需求预测模板”“完成有错误”“失败行明细”“forecast_agents”“missing_required_field”“需求预测导入必填字段为空”；上传页显示文件输入和必填字段。截图保存至 `/private/tmp/bpo-demand-forecast-import-smoke.png`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-25 - Weekly view boundary check
 
 #### 结论

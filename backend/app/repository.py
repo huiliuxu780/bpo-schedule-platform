@@ -1,10 +1,15 @@
+import csv
 from datetime import datetime, timedelta, timezone
+from io import StringIO
 
 from backend.app.models import (
     DemandPlanRow,
+    DemandForecastCsvImportRequest,
     AnomalyRuleContract,
     ComparisonSourceContract,
     FulfillmentComparisonContractResponse,
+    ImportBatchFailureRow,
+    ImportBatchResult,
     MasterDataEntityContract,
     MasterDataImportContractResponse,
     IntervalExpansionContract,
@@ -21,6 +26,17 @@ from backend.app.models import (
     UnavailabilityStatus,
 )
 from backend.app.seed_data import SCHEDULE_PLANS
+
+DEMAND_FORECAST_IMPORT_REQUIRED_FIELDS = [
+    "business_date",
+    "workplace_id",
+    "project_id",
+    "interval_start",
+    "interval_end",
+    "forecast_agents",
+]
+
+IMPORT_BATCH_RESULTS: dict[str, ImportBatchResult] = {}
 
 UNAVAILABILITY_ROWS = [
     UnavailabilityRow(
@@ -482,6 +498,133 @@ FULFILLMENT_COMPARISON_CONTRACT = FulfillmentComparisonContractResponse(
         "review_note",
     ],
 )
+
+
+def import_demand_forecast_csv(
+    request: DemandForecastCsvImportRequest,
+) -> ImportBatchResult:
+    uploaded_at = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds")
+    batch_id = f"BATCH-DF-{uploaded_at[:10].replace('-', '')}-{len(IMPORT_BATCH_RESULTS) + 1:03d}"
+    failure_rows: list[ImportBatchFailureRow] = []
+    success_rows = 0
+
+    reader = csv.DictReader(StringIO(request.csv_content.strip()))
+    rows = list(reader) if reader.fieldnames else []
+    missing_headers = [
+        field
+        for field in DEMAND_FORECAST_IMPORT_REQUIRED_FIELDS
+        if field not in (reader.fieldnames or [])
+    ]
+
+    if missing_headers:
+        failure_rows.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="demand_forecast",
+                failed_row_number=1,
+                field_name=",".join(missing_headers),
+                error_code="missing_required_header",
+                error_message="缺少需求预测导入必填表头",
+                raw_value="",
+            )
+        )
+    else:
+        for row_index, row in enumerate(rows, start=2):
+            row_failures = validate_demand_forecast_row(batch_id, row_index, row)
+
+            if row_failures:
+                failure_rows.extend(row_failures)
+            else:
+                success_rows += 1
+
+    error_codes = sorted({failure.error_code for failure in failure_rows})
+    failed_rows = len({failure.failed_row_number for failure in failure_rows})
+    total_rows = len(rows)
+    status = "completed" if failed_rows == 0 else "completed_with_errors"
+    result = ImportBatchResult(
+        batch_id=batch_id,
+        entity="demand_forecast",
+        file_name=request.file_name,
+        uploaded_by=request.uploaded_by,
+        uploaded_at=uploaded_at,
+        status=status,
+        total_rows=total_rows,
+        success_rows=success_rows,
+        failed_rows=failed_rows,
+        warning_rows=0,
+        error_codes=error_codes,
+        failure_rows=failure_rows,
+    )
+    IMPORT_BATCH_RESULTS[batch_id] = result
+
+    return result
+
+
+def validate_demand_forecast_row(
+    batch_id: str,
+    row_index: int,
+    row: dict[str, str],
+) -> list[ImportBatchFailureRow]:
+    failures: list[ImportBatchFailureRow] = []
+
+    for field in DEMAND_FORECAST_IMPORT_REQUIRED_FIELDS:
+        raw_value = (row.get(field) or "").strip()
+        if not raw_value:
+            failures.append(
+                ImportBatchFailureRow(
+                    batch_id=batch_id,
+                    entity="demand_forecast",
+                    failed_row_number=row_index,
+                    field_name=field,
+                    error_code="missing_required_field",
+                    error_message="需求预测导入必填字段为空",
+                    raw_value=raw_value,
+                )
+            )
+
+    forecast_value = (row.get("forecast_agents") or "").strip()
+    if forecast_value:
+        try:
+            forecast_agents = int(forecast_value)
+        except ValueError:
+            failures.append(
+                ImportBatchFailureRow(
+                    batch_id=batch_id,
+                    entity="demand_forecast",
+                    failed_row_number=row_index,
+                    field_name="forecast_agents",
+                    error_code="invalid_number",
+                    error_message="预测人数必须是非负整数",
+                    raw_value=forecast_value,
+                )
+            )
+        else:
+            if forecast_agents < 0:
+                failures.append(
+                    ImportBatchFailureRow(
+                        batch_id=batch_id,
+                        entity="demand_forecast",
+                        failed_row_number=row_index,
+                        field_name="forecast_agents",
+                        error_code="invalid_number",
+                        error_message="预测人数必须是非负整数",
+                        raw_value=forecast_value,
+                    )
+                )
+
+    return failures
+
+
+def get_import_batch_result(batch_id: str) -> ImportBatchResult | None:
+    return IMPORT_BATCH_RESULTS.get(batch_id)
+
+
+def list_process_import_batches() -> list[ImportBatchResult]:
+    return sorted(
+        IMPORT_BATCH_RESULTS.values(),
+        key=lambda batch: batch.uploaded_at,
+        reverse=True,
+    )
 
 
 def _coverage_rate(scheduled_agents: int, forecast_agents: int) -> float:

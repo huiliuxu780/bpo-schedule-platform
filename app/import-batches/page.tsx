@@ -2,6 +2,7 @@ import Link from "next/link"
 
 import { AppShell } from "@/components/app-shell"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -18,13 +19,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  fallbackImportBatches,
+  getImportBatches,
   importBatchStatusLabel,
   summarizeImportBatches,
 } from "@/lib/import-batch-history"
 
-export default function ImportBatchesPage() {
-  const rows = fallbackImportBatches
+export default async function ImportBatchesPage() {
+  const rows = await getImportBatches()
   const summary = summarizeImportBatches(rows)
 
   return (
@@ -37,7 +38,12 @@ export default function ImportBatchesPage() {
               查看上传批次状态、成功/失败行、错误码和数据质量问题追溯。
             </p>
           </div>
-          <Badge variant="outline">批次追踪</Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline">批次追踪</Badge>
+            <Button asChild size="sm">
+              <Link href="/import-batches/new">上传 CSV</Link>
+            </Button>
+          </div>
         </div>
 
         <section className="grid gap-4 md:grid-cols-4">
