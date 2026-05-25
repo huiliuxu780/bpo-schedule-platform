@@ -3,6 +3,7 @@ import test from "node:test"
 
 import { fallbackDataQualityIssues } from "../../lib/data-quality.ts"
 import {
+  createPersonnelScheduleImportBatch,
   fallbackImportBatches,
   getImportBatchQualityIssues,
   getImportBatchById,
@@ -84,6 +85,40 @@ test("import batch result maps local csv import failure rows", () => {
   assert.equal(batch.failureRows[0].failedRowNumber, 3)
   assert.equal(batch.failureRows[0].fieldName, "forecast_agents")
   assert.equal(batch.failureRows[0].errorMessage, "需求预测导入必填字段为空")
+})
+
+test("personnel schedule import result maps template and failure impact", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-PS-20260525-001",
+    entity: "personnel_schedule",
+    file_name: "personnel_schedule_test.csv",
+    uploaded_by: "排班运营",
+    uploaded_at: "2026-05-25T17:10:00+08:00",
+    status: "completed_with_errors",
+    total_rows: 2,
+    success_rows: 1,
+    failed_rows: 1,
+    warning_rows: 0,
+    error_codes: ["invalid_time_range"],
+    failure_rows: [
+      {
+        batch_id: "BATCH-PS-20260525-001",
+        entity: "personnel_schedule",
+        failed_row_number: 3,
+        field_name: "end_at",
+        error_code: "invalid_time_range",
+        error_message: "排班结束时间必须晚于开始时间",
+        raw_value: "09:00",
+      },
+    ],
+  })
+
+  assert.equal(batch.templateId, "TPL-PERSONNEL-SCHEDULE")
+  assert.equal(batch.templateName, "人员级排班模板")
+  assert.deepEqual(batch.affectedObjects, ["人员级排班", "0.5h 时段汇总"])
+  assert.equal(batch.failureRows[0].fieldName, "end_at")
+  assert.ok(batch.failureImpacts[0].businessImpact.includes("人员级排班"))
+  assert.equal(typeof createPersonnelScheduleImportBatch, "function")
 })
 
 test("import batch summary includes process-memory csv results", () => {

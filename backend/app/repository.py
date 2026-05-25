@@ -13,6 +13,7 @@ from backend.app.models import (
     MasterDataEntityContract,
     MasterDataImportContractResponse,
     IntervalExpansionContract,
+    PersonnelScheduleCsvImportRequest,
     PersonnelScheduleImportContractResponse,
     ScheduleRiskLevel,
     ScheduleRiskRow,
@@ -34,6 +35,20 @@ DEMAND_FORECAST_IMPORT_REQUIRED_FIELDS = [
     "interval_start",
     "interval_end",
     "forecast_agents",
+]
+
+PERSONNEL_SCHEDULE_IMPORT_REQUIRED_FIELDS = [
+    "schedule_detail_id",
+    "schedule_version_id",
+    "employee_id",
+    "business_date",
+    "workplace_id",
+    "supplier_id",
+    "project_id",
+    "shift_type_id",
+    "start_at",
+    "end_at",
+    "status",
 ]
 
 IMPORT_BATCH_RESULTS: dict[str, ImportBatchResult] = {}
@@ -609,6 +624,121 @@ def validate_demand_forecast_row(
                         error_code="invalid_number",
                         error_message="预测人数必须是非负整数",
                         raw_value=forecast_value,
+                    )
+                )
+
+    return failures
+
+
+def import_personnel_schedule_csv(
+    request: PersonnelScheduleCsvImportRequest,
+) -> ImportBatchResult:
+    uploaded_at = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds")
+    batch_id = f"BATCH-PS-{uploaded_at[:10].replace('-', '')}-{len(IMPORT_BATCH_RESULTS) + 1:03d}"
+    failure_rows: list[ImportBatchFailureRow] = []
+    success_rows = 0
+
+    reader = csv.DictReader(StringIO(request.csv_content.strip()))
+    rows = list(reader) if reader.fieldnames else []
+    missing_headers = [
+        field
+        for field in PERSONNEL_SCHEDULE_IMPORT_REQUIRED_FIELDS
+        if field not in (reader.fieldnames or [])
+    ]
+
+    if missing_headers:
+        failure_rows.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="personnel_schedule",
+                failed_row_number=1,
+                field_name=",".join(missing_headers),
+                error_code="missing_required_header",
+                error_message="缺少人员级排班导入必填表头",
+                raw_value="",
+            )
+        )
+    else:
+        for row_index, row in enumerate(rows, start=2):
+            row_failures = validate_personnel_schedule_row(batch_id, row_index, row)
+
+            if row_failures:
+                failure_rows.extend(row_failures)
+            else:
+                success_rows += 1
+
+    error_codes = sorted({failure.error_code for failure in failure_rows})
+    failed_rows = len({failure.failed_row_number for failure in failure_rows})
+    result = ImportBatchResult(
+        batch_id=batch_id,
+        entity="personnel_schedule",
+        file_name=request.file_name,
+        uploaded_by=request.uploaded_by,
+        uploaded_at=uploaded_at,
+        status="completed" if failed_rows == 0 else "completed_with_errors",
+        total_rows=len(rows),
+        success_rows=success_rows,
+        failed_rows=failed_rows,
+        warning_rows=0,
+        error_codes=error_codes,
+        failure_rows=failure_rows,
+    )
+    IMPORT_BATCH_RESULTS[batch_id] = result
+
+    return result
+
+
+def validate_personnel_schedule_row(
+    batch_id: str,
+    row_index: int,
+    row: dict[str, str],
+) -> list[ImportBatchFailureRow]:
+    failures: list[ImportBatchFailureRow] = []
+
+    for field in PERSONNEL_SCHEDULE_IMPORT_REQUIRED_FIELDS:
+        raw_value = (row.get(field) or "").strip()
+        if not raw_value:
+            failures.append(
+                ImportBatchFailureRow(
+                    batch_id=batch_id,
+                    entity="personnel_schedule",
+                    failed_row_number=row_index,
+                    field_name=field,
+                    error_code="missing_required_field",
+                    error_message="人员级排班导入必填字段为空",
+                    raw_value=raw_value,
+                )
+            )
+
+    start_value = (row.get("start_at") or "").strip()
+    end_value = (row.get("end_at") or "").strip()
+    if start_value and end_value:
+        try:
+            start_time = datetime.strptime(start_value, "%H:%M").time()
+            end_time = datetime.strptime(end_value, "%H:%M").time()
+        except ValueError:
+            failures.append(
+                ImportBatchFailureRow(
+                    batch_id=batch_id,
+                    entity="personnel_schedule",
+                    failed_row_number=row_index,
+                    field_name="end_at",
+                    error_code="invalid_time_range",
+                    error_message="排班开始和结束时间必须使用 HH:MM 格式",
+                    raw_value=end_value,
+                )
+            )
+        else:
+            if start_time >= end_time:
+                failures.append(
+                    ImportBatchFailureRow(
+                        batch_id=batch_id,
+                        entity="personnel_schedule",
+                        failed_row_number=row_index,
+                        field_name="end_at",
+                        error_code="invalid_time_range",
+                        error_message="排班结束时间必须晚于开始时间",
+                        raw_value=end_value,
                     )
                 )
 

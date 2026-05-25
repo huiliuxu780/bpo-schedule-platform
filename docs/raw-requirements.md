@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R486-R489 - 人员级排班 CSV 本地导入纵切
+
+```yaml
+requirements:
+  - id: R486
+    module: "导入批次"
+    description: "排班运营需要上传人员级排班 CSV 文件，并获得批次编号、解析结果、成功行、失败行和错误码。"
+  - id: R487
+    module: "导入批次"
+    description: "人员级排班 CSV 导入需要校验排班明细 ID、版本、员工、业务日期、职场、供应商、项目、班次、开始、结束和状态等必填字段，并保留失败行号、字段名、原值和错误信息。"
+  - id: R488
+    module: "导入批次"
+    description: "导入批次页面需要提供人员级排班 CSV 上传入口，提交后进入批次详情查看解析汇总和失败行明细。"
+  - id: R489
+    module: "质量与交付"
+    description: "人员级排班 CSV 导入纵切完成后需要 QA 收口，确认本地上传、标准库解析、失败行记录、浏览器 smoke 和 no-database 边界。"
+source: "PM requested continuing the real upload/import Gate on 2026-05-25"
+submitted_at: "2026-05-25"
+version: "1.0"
+status: "split"
+notes: "本组只做人员级排班 CSV 的本地 FastAPI process-memory 纵切：前端文件选择、server action 读取文本、后端标准库 CSV 解析、批次结果和失败行明细。不新增依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、自动排班或生产公式。"
+```
+
 ### R482-R485 - 需求预测 CSV 本地导入纵切
 
 ```yaml

@@ -70,6 +70,8 @@ export type DemandForecastCsvImportPayload = {
   csv_content: string
 }
 
+export type PersonnelScheduleCsvImportPayload = DemandForecastCsvImportPayload
+
 export type ImportBatchFailureImpactSummary = {
   totalAffectedRows: number
   items: ImportBatchFailureImpact[]
@@ -217,10 +219,12 @@ export const fallbackImportBatches: ImportBatch[] = [
 ]
 
 export function mapImportBatchResult(result: ImportBatchResult): ImportBatch {
+  const entityView = importEntityView(result.entity)
+
   return {
     id: result.batch_id,
-    templateId: result.entity === "demand_forecast" ? "TPL-DEMAND-FORECAST" : result.entity,
-    templateName: result.entity === "demand_forecast" ? "需求预测模板" : result.entity,
+    templateId: entityView.templateId,
+    templateName: entityView.templateName,
     sourceFile: result.file_name,
     owner: result.uploaded_by,
     uploadedAt: formatImportBatchTimestamp(result.uploaded_at),
@@ -229,7 +233,7 @@ export function mapImportBatchResult(result: ImportBatchResult): ImportBatch {
     successRows: result.success_rows,
     failedRows: result.failed_rows,
     warningRows: result.warning_rows,
-    affectedObjects: result.entity === "demand_forecast" ? ["需求预测", "履约对比"] : [],
+    affectedObjects: entityView.affectedObjects,
     errorCodes: result.error_codes,
     qualityIssueIds: [],
     failureRows: result.failure_rows.map((row) => ({
@@ -244,13 +248,43 @@ export function mapImportBatchResult(result: ImportBatchResult): ImportBatch {
     failureImpacts: result.failure_rows.map((row) => ({
       relatedIssueIds: [],
       affectedRows: 1,
-      affectedObjects: ["需求预测"],
-      businessImpact: `${row.field_name} 字段问题会影响需求预测导入和履约对比。`,
+      affectedObjects: entityView.affectedObjects,
+      businessImpact: `${row.field_name} 字段问题会影响${entityView.businessImpactTarget}。`,
     })),
     note:
       result.failed_rows > 0
         ? "CSV 已解析，失败行需修正后重新导入。"
-        : "CSV 已解析，需求预测行可进入后续对齐。",
+        : `CSV 已解析，${entityView.successTarget}可进入后续对齐。`,
+  }
+}
+
+function importEntityView(entity: string) {
+  if (entity === "demand_forecast") {
+    return {
+      templateId: "TPL-DEMAND-FORECAST",
+      templateName: "需求预测模板",
+      affectedObjects: ["需求预测", "履约对比"],
+      businessImpactTarget: "需求预测导入和履约对比",
+      successTarget: "需求预测行",
+    }
+  }
+
+  if (entity === "personnel_schedule") {
+    return {
+      templateId: "TPL-PERSONNEL-SCHEDULE",
+      templateName: "人员级排班模板",
+      affectedObjects: ["人员级排班", "0.5h 时段汇总"],
+      businessImpactTarget: "人员级排班和 0.5h 时段汇总",
+      successTarget: "人员级排班行",
+    }
+  }
+
+  return {
+    templateId: entity,
+    templateName: entity,
+    affectedObjects: [],
+    businessImpactTarget: "导入结果",
+    successTarget: "导入行",
   }
 }
 
@@ -304,6 +338,17 @@ export async function createDemandForecastImportBatch(
 ): Promise<ImportBatch | null> {
   const result = await writeJson<ImportBatchResult>(
     "/api/v1/import-batches/demand-forecast",
+    payload
+  )
+
+  return result ? mapImportBatchResult(result) : null
+}
+
+export async function createPersonnelScheduleImportBatch(
+  payload: PersonnelScheduleCsvImportPayload
+): Promise<ImportBatch | null> {
+  const result = await writeJson<ImportBatchResult>(
+    "/api/v1/import-batches/personnel-schedule",
     payload
   )
 

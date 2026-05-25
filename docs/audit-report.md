@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-25 - Personnel schedule CSV local import
+
+#### 结论
+
+- `B010/F368/Q086/US488-US490` 已完成人员级排班 CSV 本地上传导入纵切。
+- 后端新增 `POST /api/v1/import-batches/personnel-schedule`，接收 `file_name`、`uploaded_by`、`csv_content`，用 Python 标准库 `csv.DictReader` 解析人员级排班 CSV，并返回批次编号、成功行、失败行、错误码和失败行明细。
+- 后端复用 `GET /api/v1/import-batches/{batch_id}`，从 FastAPI 进程内存读取刚生成的批次结果；不写入数据库。
+- 前端 `/import-batches/new` 新增人员级排班模式，导入批次页“上传 CSV”默认进入人员级排班上传，批次详情页展示失败行号、字段、错误码、说明和原值。
+- 本批没有新增依赖、没有修改 package/lockfile，没有新增数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 批次结果保存在进程内存，服务重启后不会保留；这符合本 Gate 的 no-database 边界，不代表生产持久化、生产文件存储或审计留痕已完成。
+- 本轮只校验必填字段和起止时间顺序；员工、班次类型、供应商、职场和项目的真实主数据外键校验仍需后续主数据生产 Gate。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于 `import_personnel_schedule_csv` 不存在；前端模型测试首次失败于 `createPersonnelScheduleImportBatch` 不存在。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans.SchedulePlansApiTest -v`：通过，31 个后端测试通过。
+- `node --test scripts/tests/import-batch-history.test.mjs`：通过，6 个导入批次模型测试通过。
+- Browser/API smoke：通过，CSV 生成 `BATCH-PS-20260525-001`，浏览器详情页显示“人员级排班模板”“完成有错误”“失败行明细”“end_at”“invalid_time_range”“排班结束时间必须晚于开始时间”；上传页显示人员级排班文件输入和必填字段。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-25 - Demand forecast CSV local import
 
 #### 结论

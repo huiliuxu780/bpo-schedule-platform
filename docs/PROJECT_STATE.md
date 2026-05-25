@@ -26,6 +26,7 @@ The project contains:
 - Dashboard local operational polish for anomaly filters, data sync status table parity, and heatmap deficit summaries.
 - Fulfillment calendar supervisor-side local read-only panels for exception review, closure readiness, closure risk, closure review summary, weekly decision digest, data-quality impact ranking, weekly data-quality summary, weekly owner pressure, weekly source pressure, weekly review comparison, weekly closure closeout, and weekly view boundary check.
 - A demand forecast CSV upload/import local vertical backed by FastAPI process-memory batch results and failure-row records.
+- A personnel schedule CSV upload/import local vertical backed by FastAPI process-memory batch results and failure-row records.
 - A documentation-first Lightweight Harness with current/registry state governance.
 
 The project does not contain:

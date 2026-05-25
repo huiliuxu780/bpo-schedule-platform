@@ -75,6 +75,12 @@ class DemandForecastCsvImportRequest(BaseModel):
     csv_content: str
 
 
+class PersonnelScheduleCsvImportRequest(BaseModel):
+    file_name: str
+    uploaded_by: str
+    csv_content: str
+
+
 class ImportBatchFailureRow(BaseModel):
     batch_id: str
     entity: str

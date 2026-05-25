@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US488-US490 - 人员级排班 CSV 本地导入纵切
+
+```yaml
+stories:
+  - id: US488
+    requirement_ids: [R486, R487]
+    task_ids: [B010]
+    module: "导入批次"
+    role: "排班运营"
+    story: "作为排班运营，我希望上传人员级排班 CSV 并看到解析批次、成功行和失败行，以便把人员排班导入纳入真实闭环。"
+    task_type: "backend-mvp"
+    priority: "P0"
+    status: "done"
+  - id: US489
+    requirement_ids: [R488]
+    task_ids: [F368]
+    module: "导入批次"
+    role: "排班运营"
+    story: "作为排班运营，我希望在导入批次页面选择人员级排班 CSV 并进入批次结果，以便完成前端到本地后端的导入操作。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US490
+    requirement_ids: [R489]
+    task_ids: [Q086]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望人员级排班 CSV 导入纵切完成后做收口验证，确认本地上传、解析、失败行和 no-database 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "POST /api/v1/import-batches/personnel-schedule 接收人员级排班 CSV 文本并返回批次结果。"
+  - "后端记录成功行、失败行、错误码、失败行号、字段名、原值和错误信息。"
+  - "导入批次页面提供人员级排班 CSV 上传入口，提交后进入批次详情。"
+  - "本组不新增依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析或生产公式。"
+  - "`python -m unittest discover -s backend/tests -v`、`node --test scripts/tests/import-batch-history.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US485-US487 - 需求预测 CSV 本地导入纵切
 
 ```yaml

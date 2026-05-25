@@ -8,6 +8,7 @@ from backend.app.main import (
     get_schedule_plan,
     get_import_batch_result,
     import_demand_forecast_csv,
+    import_personnel_schedule_csv,
     list_demand_plans,
     list_fulfillment_comparison_contract,
     list_master_data_import_contract,
@@ -20,6 +21,7 @@ from backend.app.main import (
 )
 from backend.app.models import (
     DemandForecastCsvImportRequest,
+    PersonnelScheduleCsvImportRequest,
     SchedulePlanDraftRequest,
     SchedulePlanIntervalInput,
 )
@@ -40,6 +42,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
         self.assertIn(("/api/v1/import-batches/demand-forecast", "POST"), routes)
+        self.assertIn(("/api/v1/import-batches/personnel-schedule", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
 
     def test_demand_forecast_csv_import_accepts_valid_rows(self) -> None:
@@ -110,6 +113,69 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(response.error_codes, ["invalid_number"])
         self.assertEqual(response.failure_rows[0].field_name, "forecast_agents")
         self.assertEqual(response.failure_rows[0].raw_value, "abc")
+
+    def test_personnel_schedule_csv_import_accepts_valid_rows(self) -> None:
+        response = import_personnel_schedule_csv(
+            PersonnelScheduleCsvImportRequest(
+                file_name="personnel_schedule_test.csv",
+                uploaded_by="排班运营",
+                csv_content=(
+                    "schedule_detail_id,schedule_version_id,employee_id,business_date,workplace_id,supplier_id,project_id,shift_type_id,start_at,end_at,status\n"
+                    "SCH-001,SV-20260526,E-001,2026-05-26,WP-SH,SUP-01,P-BOSCH,SHIFT-DAY,09:00,18:00,published\n"
+                    "SCH-002,SV-20260526,E-002,2026-05-26,WP-SH,SUP-01,P-BOSCH,SHIFT-DAY,10:00,19:00,published\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.entity, "personnel_schedule")
+        self.assertEqual(response.status, "completed")
+        self.assertEqual(response.total_rows, 2)
+        self.assertEqual(response.success_rows, 2)
+        self.assertEqual(response.failed_rows, 0)
+        self.assertEqual(response.error_codes, [])
+        self.assertEqual(response.failure_rows, [])
+
+        stored = get_import_batch_result(response.batch_id)
+        self.assertEqual(stored, response)
+
+    def test_personnel_schedule_csv_import_records_missing_required_field(self) -> None:
+        response = import_personnel_schedule_csv(
+            PersonnelScheduleCsvImportRequest(
+                file_name="personnel_schedule_missing.csv",
+                uploaded_by="排班运营",
+                csv_content=(
+                    "schedule_detail_id,schedule_version_id,employee_id,business_date,workplace_id,supplier_id,project_id,shift_type_id,start_at,end_at,status\n"
+                    "SCH-003,SV-20260526,,2026-05-26,WP-SH,SUP-01,P-BOSCH,SHIFT-DAY,09:00,18:00,published\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.total_rows, 1)
+        self.assertEqual(response.success_rows, 0)
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["missing_required_field"])
+        self.assertEqual(response.failure_rows[0].failed_row_number, 2)
+        self.assertEqual(response.failure_rows[0].field_name, "employee_id")
+        self.assertEqual(response.failure_rows[0].raw_value, "")
+
+    def test_personnel_schedule_csv_import_rejects_invalid_time_range(self) -> None:
+        response = import_personnel_schedule_csv(
+            PersonnelScheduleCsvImportRequest(
+                file_name="personnel_schedule_invalid_time.csv",
+                uploaded_by="排班运营",
+                csv_content=(
+                    "schedule_detail_id,schedule_version_id,employee_id,business_date,workplace_id,supplier_id,project_id,shift_type_id,start_at,end_at,status\n"
+                    "SCH-004,SV-20260526,E-004,2026-05-26,WP-SH,SUP-01,P-BOSCH,SHIFT-DAY,18:00,09:00,published\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["invalid_time_range"])
+        self.assertEqual(response.failure_rows[0].field_name, "end_at")
+        self.assertEqual(response.failure_rows[0].raw_value, "09:00")
 
     def test_master_data_import_contract_defines_required_entities(self) -> None:
         response = list_master_data_import_contract()
