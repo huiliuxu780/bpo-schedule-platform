@@ -2,6 +2,24 @@
 
 ## 2026-05-26
 
+### B013-F371 Import Batch Process List
+
+- branch_name: `codex/f371-import-batches-process-list`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `9caf8ea`
+- remote_status: `not_pushed`
+- scope: backend/frontend local business function: expose process-memory import batch list through FastAPI and show those rows before frontend fallback rows on the import batch list.
+- allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/repository.py`, `backend/tests/test_schedule_plans.py`, `app/import-batches/**`, `lib/import-batch-history.ts`, `scripts/tests/import-batch-history.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: adds one read-only local list API and updates one frontend data client to prefer process-memory results with fallback; updates current and legacy traceability docs; does not add database persistence, production file storage, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing backend import batch list route/model, same-second ordering, and frontend fallback-only list behavior; backend unittest, import-batch model tests, product UI copy audit, navigation regression, typecheck, strict state check, API/browser smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### B012-F370 Status Log CSV Import
 
 - branch_name: `codex/f370-status-log-csv-import`

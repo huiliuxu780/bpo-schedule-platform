@@ -118,6 +118,10 @@ class ImportBatchResult(BaseModel):
     failure_rows: list[ImportBatchFailureRow]
 
 
+class ImportBatchListResponse(BaseModel):
+    items: list[ImportBatchResult]
+
+
 class MasterDataEntityContract(BaseModel):
     entity: MasterDataEntity
     primary_key: list[str]

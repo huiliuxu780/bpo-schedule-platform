@@ -11,6 +11,7 @@ from backend.app.main import (
     import_login_log_csv,
     import_personnel_schedule_csv,
     import_status_log_csv,
+    list_import_batches,
     list_demand_plans,
     list_fulfillment_comparison_contract,
     list_master_data_import_contract,
@@ -23,6 +24,7 @@ from backend.app.main import (
 )
 from backend.app.models import (
     DemandForecastCsvImportRequest,
+    ImportBatchListResponse,
     LoginLogCsvImportRequest,
     PersonnelScheduleCsvImportRequest,
     SchedulePlanDraftRequest,
@@ -49,6 +51,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/import-batches/personnel-schedule", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/login-log", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/status-log", "POST"), routes)
+        self.assertIn(("/api/v1/import-batches", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
 
     def test_demand_forecast_csv_import_accepts_valid_rows(self) -> None:
@@ -308,6 +311,36 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(response.error_codes, ["invalid_time_range"])
         self.assertEqual(response.failure_rows[0].field_name, "end_at")
         self.assertEqual(response.failure_rows[0].raw_value, "2026-05-26T09:00:00")
+
+    def test_import_batch_list_returns_process_memory_results_newest_first(self) -> None:
+        older = import_demand_forecast_csv(
+            DemandForecastCsvImportRequest(
+                file_name="demand_forecast_list.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,18\n"
+                ),
+            )
+        )
+        newer = import_status_log_csv(
+            StatusLogCsvImportRequest(
+                file_name="status_log_list.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "status_log_id,employee_id,business_date,status_type,start_at,end_at,workplace_id,project_id,source_system\n"
+                    "STATUS-501,E-501,2026-05-26,productive,2026-05-26T09:00:00,2026-05-26T09:30:00,WP-SH,P-BOSCH,CORN\n"
+                ),
+            )
+        )
+
+        response = list_import_batches()
+
+        self.assertIsInstance(response, ImportBatchListResponse)
+        batch_ids = [item.batch_id for item in response.items]
+        self.assertLess(batch_ids.index(newer.batch_id), batch_ids.index(older.batch_id))
+        self.assertIn(newer.batch_id, batch_ids)
+        self.assertIn(older.batch_id, batch_ids)
 
     def test_master_data_import_contract_defines_required_entities(self) -> None:
         response = list_master_data_import_contract()

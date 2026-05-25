@@ -29,6 +29,7 @@ The project contains:
 - A personnel schedule CSV upload/import local vertical backed by FastAPI process-memory batch results and failure-row records.
 - A login log CSV upload/import local vertical backed by FastAPI process-memory batch results and failure-row records.
 - A status log CSV upload/import local vertical backed by FastAPI process-memory batch results and failure-row records.
+- An import batch list that reads FastAPI process-memory CSV import results before falling back to local sample rows.
 - A documentation-first Lightweight Harness with current/registry state governance.
 
 The project does not contain:

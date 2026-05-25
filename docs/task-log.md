@@ -19,6 +19,17 @@
 
 ### 2026-05-26
 
+- task_id: `B013/F371/Q089`
+- source_ids:
+  - `R498-R501`
+- story_ids:
+  - `US497-US499`
+- action: 完成导入批次列表接入本地进程内结果。
+- status: `done`
+- notes: 新增 `GET /api/v1/import-batches` 读取 FastAPI 进程内 CSV 导入批次并按上传时间与批次号倒序返回；前端导入批次列表优先展示接口结果并保留现有 fallback 样例。本次不新增依赖，不改 package/lockfile，不新增数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-26
+
 - task_id: `B012/F370/Q088`
 - source_ids:
   - `R494-R497`

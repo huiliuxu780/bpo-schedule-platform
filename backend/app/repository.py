@@ -1003,7 +1003,7 @@ def get_import_batch_result(batch_id: str) -> ImportBatchResult | None:
 def list_process_import_batches() -> list[ImportBatchResult]:
     return sorted(
         IMPORT_BATCH_RESULTS.values(),
-        key=lambda batch: batch.uploaded_at,
+        key=lambda batch: (batch.uploaded_at, batch.batch_id),
         reverse=True,
     )
 

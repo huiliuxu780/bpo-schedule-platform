@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R498-R501 - 导入批次列表接入本地结果
+
+```yaml
+requirements:
+  - id: R498
+    module: "导入批次"
+    description: "现场主管需要在导入批次列表看到当前 FastAPI 进程内刚上传生成的 CSV 导入批次。"
+  - id: R499
+    module: "导入批次"
+    description: "导入批次列表接口只读取进程内存结果，按上传时间倒序返回，不新增数据库、文件存储或生产持久化。"
+  - id: R500
+    module: "导入批次"
+    description: "前端导入批次列表需要优先读取本地接口结果，并在接口不可用时保留现有 fallback 样例列表。"
+  - id: R501
+    module: "质量与交付"
+    description: "导入批次列表接入本地结果后需要 QA 收口，确认 API、前端列表、fallback、浏览器 smoke 和 no-database 边界。"
+source: "PM agreed to continue development after status log CSV import on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做导入批次列表读取 FastAPI process-memory 结果的本地只读能力，并保留现有前端 fallback。不新增依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R494-R497 - 状态日志 CSV 本地导入纵切
 
 ```yaml

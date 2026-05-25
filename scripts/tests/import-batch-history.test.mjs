@@ -7,6 +7,7 @@ import {
   createPersonnelScheduleImportBatch,
   createStatusLogImportBatch,
   fallbackImportBatches,
+  getImportBatches,
   getImportBatchQualityIssues,
   getImportBatchById,
   mapImportBatchResult,
@@ -212,4 +213,62 @@ test("import batch summary includes process-memory csv results", () => {
   assert.equal(summary.completed, 3)
   assert.equal(summary.totalRows, 1518)
   assert.equal(summary.failedRows, 439)
+})
+
+test("getImportBatches merges process-memory api rows before fallback rows", async () => {
+  const originalFetch = globalThis.fetch
+  globalThis.fetch = async () => ({
+    ok: true,
+    async json() {
+      return {
+        items: [
+          {
+            batch_id: "BATCH-SL-20260526-901",
+            entity: "status_log",
+            file_name: "status_log_live.csv",
+            uploaded_by: "现场主管",
+            uploaded_at: "2026-05-26T21:10:00+08:00",
+            status: "completed",
+            total_rows: 1,
+            success_rows: 1,
+            failed_rows: 0,
+            warning_rows: 0,
+            error_codes: [],
+            failure_rows: [],
+          },
+        ],
+      }
+    },
+  })
+
+  try {
+    const rows = await getImportBatches()
+
+    assert.equal(rows[0].id, "BATCH-SL-20260526-901")
+    assert.equal(rows[0].templateName, "状态日志模板")
+    assert.equal(rows.length, fallbackImportBatches.length + 1)
+  } finally {
+    globalThis.fetch = originalFetch
+  }
+})
+
+test("getImportBatches falls back to local rows when api is unavailable", async () => {
+  const originalFetch = globalThis.fetch
+  globalThis.fetch = async () => ({
+    ok: false,
+    async json() {
+      return {}
+    },
+  })
+
+  try {
+    const rows = await getImportBatches()
+
+    assert.deepEqual(
+      rows.map((row) => row.id),
+      fallbackImportBatches.map((row) => row.id)
+    )
+  } finally {
+    globalThis.fetch = originalFetch
+  }
 })

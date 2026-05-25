@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US497-US499 - 导入批次列表接入本地结果
+
+```yaml
+stories:
+  - id: US497
+    requirement_ids: [R498, R499]
+    task_ids: [B013]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望导入批次列表能看到当前服务进程内刚上传的 CSV 批次，以便不用只靠详情链接追踪导入结果。"
+    task_type: "backend-mvp"
+    priority: "P0"
+    status: "done"
+  - id: US498
+    requirement_ids: [R500]
+    task_ids: [F371]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望导入批次列表优先展示本地接口返回的导入批次，并在接口不可用时保留现有样例列表，以便本地演示链路稳定。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US499
+    requirement_ids: [R501]
+    task_ids: [Q089]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望导入批次列表接入本地结果后做收口验证，确认只读列表、fallback 和 no-database 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "GET /api/v1/import-batches 返回当前进程内 CSV 导入批次列表，按 uploaded_at 倒序。"
+  - "导入批次页优先展示接口返回的批次，并保留现有 fallback 样例列表。"
+  - "接口不可用时导入批次页仍能展示 fallback 样例列表。"
+  - "本组不新增依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`python -m unittest discover -s backend/tests -v`、`node --test scripts/tests/import-batch-history.test.mjs` 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US494-US496 - 状态日志 CSV 本地导入纵切
 
 ```yaml

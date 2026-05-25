@@ -406,7 +406,17 @@ export async function getImportedBatchById(id: string): Promise<ImportBatch | nu
 }
 
 export async function getImportBatches(): Promise<ImportBatch[]> {
-  return fallbackImportBatches
+  const result = await fetchJson<{ items: ImportBatchResult[] }>("/api/v1/import-batches")
+  const processRows = result?.items.map(mapImportBatchResult) ?? []
+
+  if (processRows.length === 0) {
+    return fallbackImportBatches
+  }
+
+  const processIds = new Set(processRows.map((row) => row.id))
+  const fallbackRows = fallbackImportBatches.filter((row) => !processIds.has(row.id))
+
+  return [...processRows, ...fallbackRows]
 }
 
 export function summarizeImportBatches(

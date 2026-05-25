@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-26 - Import batch list process-memory results
+
+#### 结论
+
+- `B013/F371/Q089/US497-US499` 已完成导入批次列表接入本地进程内结果。
+- 后端新增 `GET /api/v1/import-batches`，从 FastAPI 进程内存读取 CSV 导入批次结果，并按 `uploaded_at` 与 `batch_id` 倒序返回。
+- 前端 `getImportBatches()` 优先读取本地 API 结果，使用现有 `mapImportBatchResult()` 映射后放在 fallback 样例前；接口不可用或没有进程内结果时继续展示现有本地样例。
+- 本批没有新增依赖、没有修改 package/lockfile，没有新增数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 列表读取的是 FastAPI 进程内存，服务重启后不会保留；这符合本 Gate 的 no-database 边界，不代表生产持久化、生产文件存储或审计留痕已完成。
+- 当前只提供只读列表聚合，不提供批量处理、重新导入、导出、审批、权限或生产处理状态。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于 `list_import_batches` 不存在；同秒导入排序测试先失败并推动排序改为 `uploaded_at + batch_id` 倒序；前端模型测试首次失败于 `getImportBatches()` 仍只返回 fallback。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans.SchedulePlansApiTest -v`：通过，38 个后端测试通过。
+- `node --test scripts/tests/import-batch-history.test.mjs`：通过，10 个导入批次模型测试通过。
+- Browser/API smoke：通过，API 生成 `BATCH-SL-20260526-001`，`GET /api/v1/import-batches` 返回该批次，浏览器 `/import-batches` 显示“BATCH-SL-20260526-001”“状态日志模板”“status_log_list_smoke.csv”“现场主管”“已完成”，并保留 fallback “主数据模板”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Status log CSV local import
 
 #### 结论
