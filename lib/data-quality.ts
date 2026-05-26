@@ -242,6 +242,22 @@ export type DataQualityFieldImpactSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityReviewPriorityRationale = {
+  headline: string
+  priorityIssueId?: string
+  priorityIssueTitle?: string
+  priorityCause?: string
+  priorityField?: string
+  priorityDate?: string
+  priorityPerson?: string
+  impactedExceptionCount: number
+  impactedPeopleCount: number
+  href?: string
+  nextViewHint: string
+  reasons: string[]
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -736,6 +752,51 @@ export function summarizeDataQualityFieldImpactSummary(
     ).length,
     topField: items[0],
     items,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
+export function summarizeDataQualityReviewPriorityRationale(
+  rows: DataQualityIssue[]
+): DataQualityReviewPriorityRationale {
+  const exceptionTop = summarizeDataQualityExceptionTop(rows)
+  const causeSummary = summarizeDataQualityExceptionCauses(rows)
+  const personSummary = summarizeDataQualityPersonViewOrder(rows)
+  const daySummary = summarizeDataQualityDayViewOrder(rows)
+  const fieldSummary = summarizeDataQualityFieldImpactSummary(rows)
+  const topIssue = exceptionTop.topIssue
+
+  if (!topIssue) {
+    return {
+      headline: "暂无需要优先复核的数据质量问题",
+      impactedExceptionCount: 0,
+      impactedPeopleCount: 0,
+      nextViewHint: "当前没有匹配到履约异常影响，先继续查看数据质量清单。",
+      reasons: [],
+      deferredActions: deferredDataQualityActions,
+    }
+  }
+
+  const reasons = [
+    `字段 ${fieldSummary.topField?.sourceField ?? "未识别字段"} 影响 ${fieldSummary.topField?.affectedDateCount ?? 0} 个日期、${fieldSummary.topField?.affectedPeopleCount ?? 0} 名人员和 ${fieldSummary.topField?.impactedExceptionCount ?? 0} 项异常。`,
+    `日期 ${daySummary.topDate?.businessDate ?? "未识别日期"} 汇总 ${daySummary.topDate?.impactedExceptionCount ?? 0} 项异常和 ${daySummary.topDate?.impactedPeopleCount ?? 0} 名人员。`,
+    `人员 ${personSummary.topPerson?.employeeId ?? "未识别人员"} 关联 ${personSummary.topPerson?.causeCount ?? 0} 类原因和 ${personSummary.topPerson?.impactedExceptionCount ?? 0} 项异常。`,
+    `原因 ${causeSummary.topCause?.errorCode ?? topIssue.title} 是当前代表原因，先查看代表问题再回到质量详情核对原值。`,
+  ]
+
+  return {
+    headline: `先复核 ${topIssue.issueId} / ${topIssue.title}`,
+    priorityIssueId: topIssue.issueId,
+    priorityIssueTitle: topIssue.title,
+    priorityCause: causeSummary.topCause?.errorCode ?? topIssue.title,
+    priorityField: fieldSummary.topField?.sourceField,
+    priorityDate: daySummary.topDate?.businessDate,
+    priorityPerson: personSummary.topPerson?.employeeId,
+    impactedExceptionCount: topIssue.impactedExceptionCount,
+    impactedPeopleCount: topIssue.impactedPeople.length,
+    href: topIssue.href,
+    nextViewHint: `先查看问题 ${topIssue.issueId}，再按字段、日期和人员顺序复核影响范围。`,
+    reasons,
     deferredActions: deferredDataQualityActions,
   }
 }

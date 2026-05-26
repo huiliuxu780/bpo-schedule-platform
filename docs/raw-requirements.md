@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R554-R557 - 数据质量复核优先级说明
+
+```yaml
+requirements:
+  - id: R554
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到复核优先级说明，以便理解为什么某个问题、字段、日期或人员需要先看。"
+  - id: R555
+    module: "数据质量"
+    description: "复核优先级说明需要基于现有本地异常 Top、原因、人员、日期和字段摘要聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R556
+    module: "数据质量"
+    description: "复核优先级说明需要展示优先级标题、排序理由、首要字段、首要日期、首要人员、代表问题、下一查看入口和暂缓能力。"
+  - id: R557
+    module: "质量与交付"
+    description: "数据质量复核优先级说明完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F384 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读复核优先级说明，基于已有异常 Top、原因、人员、日期和字段摘要聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R550-R553 - 数据质量字段影响交叉摘要
 
 ```yaml

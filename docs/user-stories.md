@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US539-US541 - 数据质量复核优先级说明
+
+```yaml
+stories:
+  - id: US539
+    requirement_ids: [R554, R555]
+    task_ids: [F385]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到复核优先级说明，以便理解为什么某个问题、字段、日期或人员需要先看。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US540
+    requirement_ids: [R556]
+    task_ids: [F385]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望优先级说明串联字段、日期、人员和原因摘要，以便形成可读的复核顺序理由。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US541
+    requirement_ids: [R557]
+    task_ids: [Q103]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望复核优先级说明完成后做收口验证，确认只读说明、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供复核优先级说明，包含优先级标题、排序理由、首要字段、首要日期、首要人员、代表问题、下一查看入口和暂缓能力。"
+  - "数据质量总览页展示复核优先级说明卡片。"
+  - "没有复核影响时展示无优先级说明，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US536-US538 - 数据质量字段影响交叉摘要
 
 ```yaml

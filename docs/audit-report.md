@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality review priority rationale
+
+#### 结论
+
+- `F385/Q103/US539-US541` 已完成数据质量复核优先级说明。
+- 前端模型新增 `summarizeDataQualityReviewPriorityRationale()`，把影响异常 Top、字段、日期、人员和原因摘要汇成主管可读的首要复核理由。
+- 数据质量总览页新增“复核优先级说明”卡片，展示优先问题、首要字段、首要日期、首要人员、首要原因、理由列表、下一查看和“查看优先问题”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 复核优先级说明只基于本地现有聚合结果，不代表真实复核结论写入、数据修复、证据补录、审批、权限、导出、批量或生产持久化已经实现。
+- 优先级说明用于主管查看顺序，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityReviewPriorityRationale` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，23 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“复核优先级说明”“先复核 DQ-202605-010”“status_log.status_start_at/status_end_at”“2026-05-11”“A-1002”“查看优先问题”“无真实数据修复”“无导出或批量处理”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality field impact cross-summary
 
 #### 结论

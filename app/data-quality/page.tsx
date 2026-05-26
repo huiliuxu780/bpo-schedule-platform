@@ -27,6 +27,7 @@ import {
   summarizeDataQualityFieldImpactSummary,
   summarizeDataQualityExceptionCauses,
   summarizeDataQualityPersonViewOrder,
+  summarizeDataQualityReviewPriorityRationale,
   summarizeDataQualityExceptionTop,
   summarizeDataQualityIssues,
 } from "@/lib/data-quality"
@@ -44,6 +45,7 @@ export default function DataQualityPage() {
   const personViewOrderSummary = summarizeDataQualityPersonViewOrder(rows)
   const dayViewOrderSummary = summarizeDataQualityDayViewOrder(rows)
   const fieldImpactSummary = summarizeDataQualityFieldImpactSummary(rows)
+  const reviewPriorityRationale = summarizeDataQualityReviewPriorityRationale(rows)
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -116,6 +118,84 @@ export default function DataQualityPage() {
             </CardContent>
           </Card>
         </section>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>复核优先级说明</CardTitle>
+                <CardDescription>
+                  把问题、字段、日期、人员和原因聚成主管可读的首要复核理由。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {reviewPriorityRationale.priorityIssueId ?? "无优先项"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="影响异常"
+                value={`${reviewPriorityRationale.impactedExceptionCount}`}
+              />
+              <Detail
+                label="影响人员"
+                value={`${reviewPriorityRationale.impactedPeopleCount}`}
+              />
+              <Detail
+                label="首要日期"
+                value={reviewPriorityRationale.priorityDate ?? "无"}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    {reviewPriorityRationale.headline}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    字段：{reviewPriorityRationale.priorityField ?? "无"} / 人员：
+                    {reviewPriorityRationale.priorityPerson ?? "无"} / 原因：
+                    {reviewPriorityRationale.priorityCause ?? "无"}
+                  </div>
+                </div>
+                {reviewPriorityRationale.href ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={reviewPriorityRationale.href}>查看优先问题</Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {reviewPriorityRationale.reasons.length > 0 ? (
+                <div className="mt-3 grid gap-2">
+                  {reviewPriorityRationale.reasons.map((reason) => (
+                    <div key={reason} className="text-xs text-muted-foreground">
+                      {reason}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前没有匹配到需要优先复核的履约异常影响。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{reviewPriorityRationale.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

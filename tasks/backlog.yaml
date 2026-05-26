@@ -2,6 +2,37 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F385
+    title: "数据质量复核优先级说明"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/data-quality/page.tsx", "lib/data-quality.ts", "scripts/tests/data-quality.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "数据质量模型提供复核优先级说明，包含优先级标题、排序理由、首要字段、首要日期、首要人员、代表问题、下一查看入口和暂缓能力。"
+      - "数据质量总览页展示复核优先级说明卡片。"
+      - "没有复核影响时展示无优先级说明，不提供修复、提交、审批、导出或批量能力。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量、生产状态字典或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q103
+    title: "数据质量复核优先级说明 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "前端模型测试、页面 smoke、状态检查和总检查通过。"
+      - "current queue 和 active tasks 在完成后清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量、生产状态字典或生产公式"]
+    commit_after_done: true
   - id: F384
     title: "数据质量字段影响交叉摘要"
     priority: P0
