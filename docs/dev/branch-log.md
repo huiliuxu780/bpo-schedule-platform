@@ -2,6 +2,24 @@
 
 ## 2026-05-26
 
+### F388-Q106 Data Quality Owner Source Pressure
+
+- branch_name: `codex/f388-data-quality-owner-source-pressure`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `243ae4c`
+- remote_status: `not_pushed`
+- scope: frontend local read-only function: add gap owner/source pressure summary to the data quality overview, grouping uncovered review gaps by owner and data source.
+- allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality.ts`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing data quality overview route, data quality frontend model/test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing owner/source pressure export; data-quality tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F387-Q105 Data Quality Review Coverage Gap
 
 - branch_name: `codex/f387-data-quality-review-coverage-gap`

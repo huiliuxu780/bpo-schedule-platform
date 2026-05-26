@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality gap owner source pressure
+
+#### 结论
+
+- `F388/Q106/US548-US550` 已完成数据质量缺口 owner/来源压力摘要。
+- 前端模型新增 `summarizeDataQualityGapOwnerSourcePressure()`，基于复核覆盖缺口按 owner 和 source 聚合未覆盖问题压力。
+- 数据质量总览页新增“缺口 owner/来源压力”卡片，展示缺口问题、影响异常、影响人员、首要 owner、首要来源、代表问题和“查看压力问题”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- owner/来源压力摘要只基于本地现有聚合结果，不代表真实复核结论写入、数据修复、证据补录、审批、权限、导出、批量或生产持久化已经实现。
+- 压力摘要用于主管查看顺序，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityGapOwnerSourcePressure` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，29 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“缺口 owner/来源压力”“数据管理员”“主数据”“DQ-202605-004”“查看压力问题”“无真实数据修复”“无导出或批量处理”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality review coverage gap
 
 #### 结论

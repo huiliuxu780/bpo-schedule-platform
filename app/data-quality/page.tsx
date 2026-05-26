@@ -25,6 +25,7 @@ import {
   fallbackDataQualityIssues,
   summarizeDataQualityDayViewOrder,
   summarizeDataQualityFieldImpactSummary,
+  summarizeDataQualityGapOwnerSourcePressure,
   summarizeDataQualityExceptionCauses,
   summarizeDataQualityPersonViewOrder,
   summarizeDataQualityReviewCoverageGap,
@@ -50,6 +51,7 @@ export default function DataQualityPage() {
   const reviewPriorityRationale = summarizeDataQualityReviewPriorityRationale(rows)
   const reviewPathSequence = summarizeDataQualityReviewPathSequence(rows)
   const reviewCoverageGap = summarizeDataQualityReviewCoverageGap(rows)
+  const gapOwnerSourcePressure = summarizeDataQualityGapOwnerSourcePressure(rows)
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -193,6 +195,98 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>缺口 owner/来源压力</CardTitle>
+                <CardDescription>
+                  按责任人与数据来源汇总未覆盖缺口，便于安排下一轮复核查看。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {gapOwnerSourcePressure.topOwner ?? "无压力项"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="缺口问题"
+                value={`${gapOwnerSourcePressure.gapIssueCount}`}
+              />
+              <Detail
+                label="影响异常"
+                value={`${gapOwnerSourcePressure.impactedExceptionCount}`}
+              />
+              <Detail
+                label="影响人员"
+                value={`${gapOwnerSourcePressure.impactedPeopleCount}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    {gapOwnerSourcePressure.headline}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    首要 owner：{gapOwnerSourcePressure.topOwner ?? "无"} / 首要来源：
+                    {gapOwnerSourcePressure.topSource
+                      ? dataQualitySourceLabels[gapOwnerSourcePressure.topSource]
+                      : "无"}
+                  </div>
+                </div>
+                {gapOwnerSourcePressure.topItem ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={gapOwnerSourcePressure.topItem.href}>查看压力问题</Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {gapOwnerSourcePressure.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {gapOwnerSourcePressure.items.map((item) => (
+                    <div key={item.key} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">
+                        {item.owner} / {dataQualitySourceLabels[item.source]}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        代表问题：{item.representativeIssueId} / {item.representativeIssueTitle}
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                        <Detail label="缺口" value={`${item.gapIssueCount}`} />
+                        <Detail label="异常" value={`${item.impactedExceptionCount}`} />
+                        <Detail label="人员" value={`${item.impactedPeople.length}`} />
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        字段：{item.sourceFields.join(" / ") || "无"} / 人员：
+                        {item.impactedPeople.join(" / ") || "无"}
+                      </div>
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        下一查看：{item.nextViewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前没有未覆盖缺口的 owner 或来源压力。
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {gapOwnerSourcePressure.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

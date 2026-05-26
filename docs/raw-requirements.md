@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R566-R569 - 数据质量缺口 owner/来源压力摘要
+
+```yaml
+requirements:
+  - id: R566
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到未覆盖缺口的责任人与来源压力，以便先判断由谁复核、先看哪个数据源。"
+  - id: R567
+    module: "数据质量"
+    description: "owner/来源压力摘要需要基于现有本地复核覆盖缺口、影响异常 Top、问题 owner、source、字段和人员聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R568
+    module: "数据质量"
+    description: "owner/来源压力摘要需要展示缺口问题数、影响异常数、影响人员数、首要 owner、首要来源、压力项、首要缺口入口和暂缓能力。"
+  - id: R569
+    module: "质量与交付"
+    description: "数据质量缺口 owner/来源压力摘要完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM approved continuing after F387 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读缺口 owner/来源压力摘要，基于已有复核覆盖缺口、异常 Top、owner、source、字段和人员聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R562-R565 - 数据质量复核覆盖缺口摘要
 
 ```yaml

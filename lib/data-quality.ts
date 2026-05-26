@@ -307,6 +307,32 @@ export type DataQualityReviewCoverageGapSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityGapOwnerSourcePressureItem = {
+  key: string
+  owner: string
+  source: DataQualitySource
+  gapIssueCount: number
+  impactedExceptionCount: number
+  impactedPeople: string[]
+  sourceFields: string[]
+  representativeIssueId: string
+  representativeIssueTitle: string
+  href: string
+  nextViewHint: string
+}
+
+export type DataQualityGapOwnerSourcePressureSummary = {
+  headline: string
+  gapIssueCount: number
+  impactedExceptionCount: number
+  impactedPeopleCount: number
+  topOwner?: string
+  topSource?: DataQualitySource
+  topItem?: DataQualityGapOwnerSourcePressureItem
+  items: DataQualityGapOwnerSourcePressureItem[]
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -983,6 +1009,85 @@ export function summarizeDataQualityReviewCoverageGap(
   }
 }
 
+export function summarizeDataQualityGapOwnerSourcePressure(
+  rows: DataQualityIssue[]
+): DataQualityGapOwnerSourcePressureSummary {
+  const coverageGap = summarizeDataQualityReviewCoverageGap(rows)
+
+  if (coverageGap.items.length === 0) {
+    return {
+      headline: "当前复核路径已覆盖影响异常的数据质量问题",
+      gapIssueCount: 0,
+      impactedExceptionCount: 0,
+      impactedPeopleCount: 0,
+      items: [],
+      deferredActions: deferredDataQualityActions,
+    }
+  }
+
+  const groups = new Map<
+    string,
+    {
+      owner: string
+      source: DataQualitySource
+      items: DataQualityReviewCoverageGapItem[]
+      issues: DataQualityIssue[]
+    }
+  >()
+
+  for (const item of coverageGap.items) {
+    const issue = rows.find((row) => row.id === item.issueId)
+    const owner = issue?.owner ?? "未识别责任人"
+    const source = issue?.source ?? "master_data"
+    const key = `${owner}|${source}`
+    const existing = groups.get(key)
+
+    if (existing) {
+      existing.items.push(item)
+      if (issue) {
+        existing.issues.push(issue)
+      }
+      continue
+    }
+
+    groups.set(key, {
+      owner,
+      source,
+      items: [item],
+      issues: issue ? [issue] : [],
+    })
+  }
+
+  const items = Array.from(groups.entries())
+    .map(([key, group]) =>
+      buildDataQualityGapOwnerSourcePressureItem(key, group)
+    )
+    .sort(
+      (a, b) =>
+        b.impactedExceptionCount - a.impactedExceptionCount ||
+        b.impactedPeople.length - a.impactedPeople.length ||
+        b.gapIssueCount - a.gapIssueCount ||
+        a.owner.localeCompare(b.owner)
+    )
+
+  return {
+    headline: `${items[0].owner} / ${dataQualitySourceLabels[items[0].source]} 承接当前首要缺口压力`,
+    gapIssueCount: coverageGap.gapIssueCount,
+    impactedExceptionCount: items.reduce(
+      (total, item) => total + item.impactedExceptionCount,
+      0
+    ),
+    impactedPeopleCount: uniqueValues(
+      items.flatMap((item) => item.impactedPeople)
+    ).length,
+    topOwner: items[0].owner,
+    topSource: items[0].source,
+    topItem: items[0],
+    items,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
 export function dataQualitySeverityLabel(severity: DataQualitySeverity) {
   return {
     high: "高",
@@ -1262,6 +1367,37 @@ function buildDataQualityReviewCoverageGapItem(
     impactedPeople: item.impactedPeople,
     href: item.href,
     reason: `当前复核路径未覆盖 ${item.title}，该问题仍影响 ${item.impactedExceptionCount} 项异常和 ${item.impactedPeople.length} 名人员。`,
+  }
+}
+
+function buildDataQualityGapOwnerSourcePressureItem(
+  key: string,
+  group: {
+    owner: string
+    source: DataQualitySource
+    items: DataQualityReviewCoverageGapItem[]
+    issues: DataQualityIssue[]
+  }
+): DataQualityGapOwnerSourcePressureItem {
+  const representative = group.items[0]
+
+  return {
+    key,
+    owner: group.owner,
+    source: group.source,
+    gapIssueCount: group.items.length,
+    impactedExceptionCount: group.items.reduce(
+      (total, item) => total + item.impactedExceptionCount,
+      0
+    ),
+    impactedPeople: uniqueValues(
+      group.items.flatMap((item) => item.impactedPeople)
+    ),
+    sourceFields: uniqueValues(group.items.map((item) => item.sourceField)),
+    representativeIssueId: representative.issueId,
+    representativeIssueTitle: representative.title,
+    href: representative.href,
+    nextViewHint: `先由 ${group.owner} 查看 ${dataQualitySourceLabels[group.source]} 缺口，再回到复核路径确认覆盖范围。`,
   }
 }
 

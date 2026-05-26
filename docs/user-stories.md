@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US548-US550 - 数据质量缺口 owner/来源压力摘要
+
+```yaml
+stories:
+  - id: US548
+    requirement_ids: [R566, R567]
+    task_ids: [F388]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到未覆盖缺口的责任人与来源压力，以便先判断由谁复核、先看哪个数据源。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US549
+    requirement_ids: [R568]
+    task_ids: [F388]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望压力摘要展示 owner、来源、影响异常、影响人员和首要缺口入口，以便安排下一步只读复核。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US550
+    requirement_ids: [R569]
+    task_ids: [Q106]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望 owner/来源压力摘要完成后做收口验证，确认页面展示、模型测试和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供缺口 owner/来源压力摘要，包含缺口问题数、影响异常数、影响人员数、首要 owner、首要来源、压力项和暂缓能力。"
+  - "数据质量总览页展示缺口 owner/来源压力摘要卡片。"
+  - "没有缺口时展示无压力项，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US545-US547 - 数据质量复核覆盖缺口摘要
 
 ```yaml
