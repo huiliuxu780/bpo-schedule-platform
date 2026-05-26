@@ -12,7 +12,7 @@
 - allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates existing person timeline route, local model/test, server actions, and current and legacy traceability docs; does not add production persistence, backend external connectors, permission boundaries, approval, export, batch operation, file storage, production formulas, settlement rules, or charge-factor behavior.
 - check_result: TDD red observed for missing supervisor exception review state export; person-timeline tests, product copy/navigation tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
-- local_commit_sha: `b1c79b1`
+- local_commit_sha: `bc05dd2`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
