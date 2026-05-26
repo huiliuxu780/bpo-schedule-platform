@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality handoff risk import-batch impact
+
+#### 结论
+
+- `F399/Q117/US581-US583` 已完成数据质量交接风险关联导入批次影响。
+- 前端分组模型新增 `summarizeDataQualityGroupStepOwnerHandoffImportImpact()`，基于本地 owner 交接风险和 fallback 导入批次生成批次/失败行影响摘要。
+- 数据质量总览页新增“交接风险关联导入批次影响”卡片，展示 owner、代表问题、关联批次、失败行、字段、影响对象、质量问题入口、批次入口、人员履约入口和“查看风险批次”入口。
+- 本批没有新增真实上传、后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 交接风险关联导入批次影响只基于本地 fallback 数据质量问题、owner 交接风险和 fallback 导入批次，不代表真实上传、解析、失败行落库、审批、权限、导出、批量或生产持久化已经实现。
+- 批次影响用于主管只读追溯风险来源，不是生产级数据修复、SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality-groups.test.mjs` 首次失败于 `summarizeDataQualityGroupStepOwnerHandoffImportImpact` 未导出；`node --test scripts/tests/data-quality.test.mjs` 首次失败于页面未引用 `summarizeDataQualityGroupStepOwnerHandoffImportImpact`，证明测试覆盖新增模型和页面契约。
+- `node --test scripts/tests/data-quality-groups.test.mjs`：通过，13 个数据质量分组模型测试通过。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，33 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“交接风险关联导入批次影响”“数据管理员”“DQ-202605-004”“A-9931”“BATCH-20260519-001”“employee_id”“人员排班”“查看风险批次”“查看风险问题”“查看风险人员”“无真实数据修复”“无批量重导”。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，6 个产品文案/导航边界测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality group step owner handoff risk summary
 
 #### 结论

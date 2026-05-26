@@ -5,6 +5,7 @@ import {
   fallbackDataQualityGroups,
   getDataQualityGroup,
   summarizeDataQualityGroupExceptionCoverage,
+  summarizeDataQualityGroupStepOwnerHandoffImportImpact,
   summarizeDataQualityGroupStepOwnerHandoffRiskSummary,
   summarizeDataQualityGroupStepOwnerHandoffBrief,
   summarizeDataQualityGroupStepImpactDrilldown,
@@ -15,6 +16,7 @@ import {
   summarizeDataQualityGroups,
 } from "../../lib/data-quality-groups.ts"
 import { fallbackDataQualityIssues } from "../../lib/data-quality.ts"
+import { fallbackImportBatches } from "../../lib/import-batch-history.ts"
 
 test("data quality groups summarize business causes and risk", () => {
   const summary = summarizeDataQualityGroups(fallbackDataQualityGroups)
@@ -222,4 +224,25 @@ test("data quality group step owner handoff risk summary explains blockers", () 
   assert.ok(summary.items.some((item) => item.owner === "数据管理员"))
   assert.ok(summary.nextViewHint.includes("交接风险"))
   assert.ok(summary.deferredActions.includes("无批量重导"))
+})
+
+test("data quality group step owner handoff import impact links risk to batches", () => {
+  const summary = summarizeDataQualityGroupStepOwnerHandoffImportImpact(
+    fallbackDataQualityIssues,
+    fallbackImportBatches
+  )
+
+  assert.equal(summary.importImpactCount, 1)
+  assert.equal(summary.totalFailedRows, 19)
+  assert.equal(summary.topItem?.owner, "数据管理员")
+  assert.equal(summary.topItem?.representativeIssueId, "DQ-202605-004")
+  assert.equal(summary.topItem?.primaryPerson, "A-9931")
+  assert.equal(summary.topItem?.issueHref, "/data-quality/DQ-202605-004")
+  assert.equal(summary.topItem?.firstBatch?.batchId, "BATCH-20260519-001")
+  assert.equal(summary.topItem?.firstBatch?.href, "/import-batches/BATCH-20260519-001")
+  assert.ok(summary.topItem?.matchedFields.includes("employee_id"))
+  assert.ok(summary.topItem?.affectedObjects.includes("人员排班"))
+  assert.ok(summary.topItem?.nextViewHint.includes("风险批次"))
+  assert.ok(summary.nextViewHint.includes("导入批次"))
+  assert.ok(summary.deferredActions.includes("无真实数据修复"))
 })

@@ -45,6 +45,7 @@ import {
   summarizeDataQualityGroupReviewSequence,
   summarizeDataQualityGroupStepImpactDrilldown,
   summarizeDataQualityGroupStepOwnerHandoffBrief,
+  summarizeDataQualityGroupStepOwnerHandoffImportImpact,
   summarizeDataQualityGroupStepOwnerHandoffRiskSummary,
   summarizeDataQualityGroupStepOwnerLoad,
   summarizeDataQualityGroupStepOwnerReviewQueue,
@@ -100,6 +101,12 @@ export default function DataQualityPage() {
   const groupStepOwnerHandoffRiskSummary =
     summarizeDataQualityGroupStepOwnerHandoffRiskSummary(
       rows,
+      fallbackDataQualityGroups
+    )
+  const groupStepOwnerHandoffImportImpact =
+    summarizeDataQualityGroupStepOwnerHandoffImportImpact(
+      rows,
+      fallbackImportBatches,
       fallbackDataQualityGroups
     )
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
@@ -245,6 +252,138 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>交接风险关联导入批次影响</CardTitle>
+                <CardDescription>
+                  把 owner 交接风险继续关联到导入批次和失败行。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {groupStepOwnerHandoffImportImpact.topItem?.owner ?? "无批次影响"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="影响项"
+                value={`${groupStepOwnerHandoffImportImpact.importImpactCount}`}
+              />
+              <Detail
+                label="失败行"
+                value={`${groupStepOwnerHandoffImportImpact.totalFailedRows}`}
+              />
+              <Detail
+                label="批次"
+                value={
+                  groupStepOwnerHandoffImportImpact.topItem?.firstBatch?.batchId ??
+                  "无"
+                }
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    首项：{groupStepOwnerHandoffImportImpact.topItem?.owner ?? "无"}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    代表问题：
+                    {groupStepOwnerHandoffImportImpact.topItem
+                      ?.representativeIssueId ?? "无"}{" "}
+                    / 关联批次：
+                    {groupStepOwnerHandoffImportImpact.topItem?.firstBatch
+                      ?.batchId ?? "无"}
+                  </div>
+                </div>
+                {groupStepOwnerHandoffImportImpact.topItem?.firstBatch ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link
+                      href={groupStepOwnerHandoffImportImpact.topItem.firstBatch.href}
+                    >
+                      查看风险批次
+                    </Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {groupStepOwnerHandoffImportImpact.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {groupStepOwnerHandoffImportImpact.items.map((item) => (
+                    <div
+                      key={`${item.owner}-${item.representativeIssueId}`}
+                      className="rounded-lg border p-3"
+                    >
+                      <div className="text-sm font-medium">{item.owner}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        代表问题：{item.representativeIssueId} /{" "}
+                        {item.representativeIssueTitle}
+                      </div>
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <Detail label="批次" value={`${item.batchCount}`} />
+                        <Detail label="失败行" value={`${item.failedRows}`} />
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        字段：{item.matchedFields.join(" / ") || "无"} / 影响对象：
+                        {item.affectedObjects.join(" / ") || "无"}
+                      </div>
+                      <div className="mt-3 grid gap-2">
+                        {item.batches.map((batch) => (
+                          <div
+                            key={batch.batchId}
+                            className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground"
+                          >
+                            {batch.batchId} / {batch.templateName} / 失败行：
+                            {batch.failedRows} / {batch.reviewHint}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button asChild size="sm" variant="outline">
+                          <Link href={item.issueHref}>查看风险问题</Link>
+                        </Button>
+                        {item.firstBatch ? (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={item.firstBatch.href}>查看风险批次</Link>
+                          </Button>
+                        ) : null}
+                        {item.personHref ? (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={item.personHref}>查看风险人员</Link>
+                          </Button>
+                        ) : null}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        下一查看：{item.nextViewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前交接风险没有匹配到导入批次影响。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{groupStepOwnerHandoffImportImpact.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {groupStepOwnerHandoffImportImpact.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

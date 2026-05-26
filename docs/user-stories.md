@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US581-US583 - 数据质量交接风险关联导入批次影响
+
+```yaml
+stories:
+  - id: US581
+    requirement_ids: [R610, R611]
+    task_ids: [F399]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到交接风险关联导入批次影响，以便把风险问题继续追到本地批次和失败行。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US582
+    requirement_ids: [R612]
+    task_ids: [F399]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望批次影响摘要展示 owner、代表问题、关联批次、失败行、字段、影响对象和查看入口，以便继续只读追溯。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US583
+    requirement_ids: [R613]
+    task_ids: [Q117]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望交接风险关联导入批次影响完成后做收口验证，确认页面展示、模型测试和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量分组模型提供交接风险关联导入批次影响，基于 owner 交接风险和本地导入批次聚合。"
+  - "数据质量总览页展示交接风险关联导入批次影响卡片，包含 owner、代表问题、关联批次、失败行、字段、影响对象、入口和暂缓能力。"
+  - "没有关联批次时展示空状态，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增真实上传、后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality-groups.test.mjs`、`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US578-US580 - 数据质量分组步骤 owner 交接风险摘要
 
 ```yaml

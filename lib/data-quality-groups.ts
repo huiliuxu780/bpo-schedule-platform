@@ -1,4 +1,8 @@
-import type { DataQualityIssue } from "./data-quality"
+import type {
+  DataQualityImportBatchImpactItem,
+  DataQualityImportBatchLike,
+  DataQualityIssue,
+} from "./data-quality"
 
 export type DataQualityGroupRisk = "high" | "medium" | "low"
 
@@ -219,6 +223,32 @@ export type DataQualityGroupStepOwnerHandoffRiskSummary = {
   totalImpactedPeopleCount: number
   topRisk?: DataQualityGroupStepOwnerHandoffRiskItem
   items: DataQualityGroupStepOwnerHandoffRiskItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
+export type DataQualityGroupStepOwnerHandoffImportImpactItem = {
+  owner: string
+  representativeIssueId: string
+  representativeIssueTitle: string
+  primaryPerson?: string
+  groupTitles: string[]
+  issueHref: string
+  personHref?: string
+  batchCount: number
+  failedRows: number
+  matchedFields: string[]
+  affectedObjects: string[]
+  firstBatch?: DataQualityImportBatchImpactItem
+  batches: DataQualityImportBatchImpactItem[]
+  nextViewHint: string
+}
+
+export type DataQualityGroupStepOwnerHandoffImportImpactSummary = {
+  importImpactCount: number
+  totalFailedRows: number
+  topItem?: DataQualityGroupStepOwnerHandoffImportImpactItem
+  items: DataQualityGroupStepOwnerHandoffImportImpactItem[]
   nextViewHint: string
   deferredActions: string[]
 }
@@ -679,6 +709,140 @@ export function summarizeDataQualityGroupStepOwnerHandoffRiskSummary(
         ? "按 owner 交接风险逐项确认阻塞原因、代表问题和人员入口。"
         : "当前没有 owner 交接摘要可生成交接风险。",
     deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
+export function summarizeDataQualityGroupStepOwnerHandoffImportImpact(
+  issues: DataQualityIssue[],
+  batches: DataQualityImportBatchLike[],
+  groups = fallbackDataQualityGroups
+): DataQualityGroupStepOwnerHandoffImportImpactSummary {
+  const issueById = new Map(issues.map((issue) => [issue.id, issue]))
+  const riskSummary = summarizeDataQualityGroupStepOwnerHandoffRiskSummary(
+    issues,
+    groups
+  )
+
+  const items = riskSummary.items
+    .map((item): DataQualityGroupStepOwnerHandoffImportImpactItem | null => {
+      const issue = issueById.get(item.representativeIssueId)
+
+      if (!issue) {
+        return null
+      }
+
+      const impact = summarizeHandoffImportImpact(issue, batches)
+
+      if (impact.items.length === 0) {
+        return null
+      }
+
+      const firstBatch = impact.items[0]
+
+      if (!firstBatch) {
+        return null
+      }
+
+      return {
+        owner: item.owner,
+        representativeIssueId: item.representativeIssueId,
+        representativeIssueTitle: item.representativeIssueTitle,
+        ...(item.primaryPerson ? { primaryPerson: item.primaryPerson } : {}),
+        groupTitles: item.groupTitles,
+        issueHref: item.issueHref,
+        ...(item.personHref ? { personHref: item.personHref } : {}),
+        batchCount: impact.totalBatchCount,
+        failedRows: impact.totalFailedRows,
+        matchedFields: impact.matchedFields,
+        affectedObjects: impact.affectedObjects,
+        firstBatch,
+        batches: impact.items,
+        nextViewHint: firstBatch
+          ? `先查看风险批次 ${firstBatch.batchId}，再回到 ${item.representativeIssueId} 确认交接风险。`
+          : `先回到 ${item.representativeIssueId} 确认是否存在批次影响。`,
+      }
+    })
+    .filter(
+      (item): item is DataQualityGroupStepOwnerHandoffImportImpactItem =>
+        item !== null
+    )
+
+  return {
+    importImpactCount: items.length,
+    totalFailedRows: items.reduce((total, item) => total + item.failedRows, 0),
+    topItem: items[0],
+    items,
+    nextViewHint:
+      items.length > 0
+        ? "按交接风险查看关联导入批次和失败行，再回到代表问题确认影响对象。"
+        : "当前交接风险没有匹配到导入批次影响。",
+    deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
+function summarizeHandoffImportImpact(
+  issue: DataQualityIssue,
+  batches: DataQualityImportBatchLike[]
+) {
+  const items = batches
+    .map((batch) => buildHandoffImportImpactItem(issue, batch))
+    .filter((item): item is DataQualityImportBatchImpactItem => item !== null)
+
+  return {
+    totalBatchCount: items.length,
+    totalFailedRows: items.reduce((total, item) => total + item.failedRows, 0),
+    matchedFields: uniqueValues(items.flatMap((item) => item.matchedFields)),
+    affectedObjects: uniqueValues(items.flatMap((item) => item.affectedObjects)),
+    items,
+  }
+}
+
+function buildHandoffImportImpactItem(
+  issue: DataQualityIssue,
+  batch: DataQualityImportBatchLike
+): DataQualityImportBatchImpactItem | null {
+  const relatedImpacts = batch.failureImpacts.filter((impact) =>
+    impact.relatedIssueIds.includes(issue.id)
+  )
+  const matchedRows = batch.failureRows.filter((row) => {
+    return (
+      row.fieldName === issue.fieldName ||
+      issue.sourceField.split(/[./]/).includes(row.fieldName) ||
+      row.errorCode === issue.errorCode
+    )
+  })
+  const isLinkedIssue = batch.qualityIssueIds.includes(issue.id)
+
+  if (!isLinkedIssue && relatedImpacts.length === 0 && matchedRows.length === 0) {
+    return null
+  }
+
+  const matchedFields = uniqueValues([
+    ...matchedRows.map((row) => row.fieldName),
+    ...(isLinkedIssue || relatedImpacts.length > 0 ? [issue.fieldName] : []),
+  ])
+  const affectedObjects = uniqueValues([
+    ...batch.affectedObjects,
+    ...relatedImpacts.flatMap((impact) => impact.affectedObjects),
+  ])
+  const failedRows =
+    matchedRows.length > 0
+      ? matchedRows.length
+      : relatedImpacts.reduce((total, impact) => total + impact.affectedRows, 0)
+
+  return {
+    batchId: batch.id,
+    templateName: batch.templateName,
+    sourceFile: batch.sourceFile,
+    status: batch.status,
+    failedRows,
+    matchedFields,
+    affectedObjects,
+    href: `/import-batches/${batch.id}`,
+    reviewHint:
+      matchedRows.length > 0
+        ? `先查看 ${matchedFields.join("、")} 字段失败行，再回到质量问题确认影响对象。`
+        : `先查看 ${issue.fieldName} 字段关联批次，${issue.recommendation}`,
   }
 }
 

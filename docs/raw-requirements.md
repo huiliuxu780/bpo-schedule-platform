@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R610-R613 - 数据质量交接风险关联导入批次影响
+
+```yaml
+requirements:
+  - id: R610
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到交接风险关联导入批次影响，以便把风险问题继续追到本地批次和失败行。"
+  - id: R611
+    module: "数据质量"
+    description: "交接风险关联导入批次影响需要基于现有本地 owner 交接风险摘要和导入批次样例聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R612
+    module: "数据质量"
+    description: "交接风险关联导入批次影响需要展示 owner、代表问题、关联批次、失败行、字段、影响对象、质量问题入口、批次入口、查看提示和暂缓能力。"
+  - id: R613
+    module: "质量与交付"
+    description: "交接风险关联导入批次影响完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM requested continuing after F398 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读交接风险关联导入批次影响，基于已有 owner 交接风险摘要和 fallback 导入批次聚合。不新增真实上传、后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R606-R609 - 数据质量分组步骤 owner 交接风险摘要
 
 ```yaml
