@@ -17,6 +17,7 @@ import {
   dataQualityStatusLabel,
   fallbackDataQualityIssues,
   getDataQualityIssue,
+  summarizeDataQualityExceptionImpact,
   summarizeDataQualityImportBatchImpact,
 } from "@/lib/data-quality"
 import {
@@ -50,6 +51,7 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
     issue,
     fallbackImportBatches
   )
+  const exceptionImpactSummary = summarizeDataQualityExceptionImpact(issue)
 
   return (
     <AppShell title="数据质量详情" searchPlaceholder="搜索错误码、字段或来源">
@@ -147,6 +149,105 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
             </CardContent>
           </Card>
         </section>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>影响异常拆解</CardTitle>
+                <CardDescription>
+                  从当前质量问题反查受影响的履约异常、人员和下一查看入口。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {exceptionImpactSummary.impactedExceptionCount} 项异常
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-4">
+              <Detail
+                label="影响异常"
+                value={`${exceptionImpactSummary.impactedExceptionCount}`}
+              />
+              <Detail
+                label="影响人员"
+                value={`${exceptionImpactSummary.impactedPeopleCount}`}
+              />
+              <Detail
+                label="影响对象"
+                value={`${exceptionImpactSummary.affectedObjects.length}`}
+              />
+              <Detail
+                label="首要异常"
+                value={exceptionImpactSummary.primaryException?.label ?? "无"}
+              />
+            </div>
+
+            {exceptionImpactSummary.items.length > 0 ? (
+              <div className="grid gap-3">
+                {exceptionImpactSummary.items.map((item) => (
+                  <div key={`${item.type}-${item.objectId}`} className="rounded-lg border p-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">{item.label}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {item.type} / {item.objectId}
+                        </div>
+                      </div>
+                      <Badge variant="outline">{item.type}</Badge>
+                    </div>
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      {item.businessImpact}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                当前质量问题没有匹配到履约异常影响。
+              </p>
+            )}
+
+            {exceptionImpactSummary.impactedPeople.length > 0 ? (
+              <div>
+                <div className="text-xs text-muted-foreground">影响人员</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {exceptionImpactSummary.impactedPeople.map((employeeId) => (
+                    <Badge key={employeeId} variant="secondary">
+                      {employeeId}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
+              <div>
+                <div className="text-xs text-muted-foreground">下一查看</div>
+                <div className="mt-1 text-sm font-medium">
+                  {exceptionImpactSummary.nextViewHint}
+                </div>
+              </div>
+              {exceptionImpactSummary.nextViewHref ? (
+                <Button asChild size="sm" variant="outline">
+                  <Link href={exceptionImpactSummary.nextViewHref}>打开入口</Link>
+                </Button>
+              ) : null}
+            </div>
+
+            <div>
+              <div className="text-xs text-muted-foreground">暂缓能力</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {exceptionImpactSummary.deferredActions.map((action) => (
+                  <Badge key={action} variant="outline">
+                    {action}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

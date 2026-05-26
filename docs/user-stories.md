@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US524-US526 - 数据质量详情异常影响拆解
+
+```yaml
+stories:
+  - id: US524
+    requirement_ids: [R534, R535]
+    task_ids: [F380]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量详情看到单个质量问题影响了哪些履约异常和人员，以便从问题详情直接判断下一步查看顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US525
+    requirement_ids: [R536]
+    task_ids: [F380]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望异常影响拆解展示首要异常、影响对象、人员入口和暂缓能力，以便避免误以为可以直接修复或关闭异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US526
+    requirement_ids: [R537]
+    task_ids: [Q098]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望数据质量详情异常影响拆解完成后做收口验证，确认只读聚合、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供单问题异常影响拆解，包含影响异常数、影响人员、首要异常、影响对象、首要查看入口和暂缓能力。"
+  - "数据质量详情页展示影响异常拆解卡片。"
+  - "没有异常影响时展示无异常影响，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US521-US523 - 数据质量影响异常 Top 聚合
 
 ```yaml

@@ -6,6 +6,7 @@ import {
   fallbackDataQualityIssues,
   filterDataQualityIssues,
   getDataQualityIssue,
+  summarizeDataQualityExceptionImpact,
   summarizeDataQualityExceptionTop,
   summarizeDataQualityImportBatchImpact,
   summarizeDataQualityIssues,
@@ -162,12 +163,51 @@ test("data quality exception top exposes empty state", () => {
   assert.deepEqual(summary.items, []);
 });
 
+test("data quality issue exception impact summarizes one issue", () => {
+  const issue = getDataQualityIssue("DQ-202605-010");
+  assert.ok(issue);
+
+  const summary = summarizeDataQualityExceptionImpact(issue);
+
+  assert.equal(summary.impactedExceptionCount, 1);
+  assert.equal(summary.impactedPeopleCount, 1);
+  assert.ok(summary.impactedPeople.includes("A-1002"));
+  assert.equal(summary.primaryException?.label, "小组成员矩阵异常");
+  assert.equal(summary.primaryException?.objectId, "late_login");
+  assert.ok(summary.affectedObjects.includes("A-1002 2026-05-11 状态轨道"));
+  assert.ok(summary.nextViewHint.includes("个人履约"));
+  assert.ok(summary.deferredActions.includes("无真实数据修复"));
+  assert.ok(summary.deferredActions.includes("无导出或批量处理"));
+});
+
+test("data quality issue exception impact exposes no-impact state", () => {
+  const issue = getDataQualityIssue("DQ-202605-009");
+  assert.ok(issue);
+
+  const summary = summarizeDataQualityExceptionImpact(issue);
+
+  assert.equal(summary.impactedExceptionCount, 0);
+  assert.equal(summary.impactedPeopleCount, 0);
+  assert.equal(summary.primaryException, undefined);
+  assert.deepEqual(summary.items, []);
+});
+
 test("data quality page renders exception top summary", () => {
   const pageSource = readFileSync(new URL("../../app/data-quality/page.tsx", import.meta.url), "utf8");
 
   assert.ok(pageSource.includes("summarizeDataQualityExceptionTop"));
   assert.ok(pageSource.includes("影响异常 Top"));
   assert.ok(pageSource.includes("影响异常"));
+  assert.ok(pageSource.includes("影响人员"));
+  assert.ok(pageSource.includes("下一查看"));
+});
+
+test("data quality issue page renders exception impact drilldown", () => {
+  const pageSource = readFileSync(new URL("../../app/data-quality/[issueId]/page.tsx", import.meta.url), "utf8");
+
+  assert.ok(pageSource.includes("summarizeDataQualityExceptionImpact"));
+  assert.ok(pageSource.includes("影响异常拆解"));
+  assert.ok(pageSource.includes("首要异常"));
   assert.ok(pageSource.includes("影响人员"));
   assert.ok(pageSource.includes("下一查看"));
 });

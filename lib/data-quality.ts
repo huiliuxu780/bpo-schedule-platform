@@ -129,6 +129,25 @@ export type DataQualityExceptionTopSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityExceptionImpactItem = {
+  type: string
+  objectId: string
+  label: string
+  businessImpact: string
+}
+
+export type DataQualityExceptionImpactSummary = {
+  impactedExceptionCount: number
+  impactedPeopleCount: number
+  impactedPeople: string[]
+  affectedObjects: string[]
+  primaryException?: DataQualityExceptionImpactItem
+  items: DataQualityExceptionImpactItem[]
+  nextViewHint: string
+  nextViewHref?: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -343,6 +362,39 @@ export function summarizeDataQualityExceptionTop(
   }
 }
 
+export function summarizeDataQualityExceptionImpact(
+  issue: DataQualityIssue
+): DataQualityExceptionImpactSummary {
+  const exceptionItems = buildDataQualityExceptionImpactItems(issue)
+  const personTimelineLinks = issue.impactLinks.filter(
+    (link) => link.type === "person_timeline"
+  )
+  const impactedExceptionCount =
+    exceptionItems.length > 0 || personTimelineLinks.length > 0
+      ? Math.max(1, exceptionItems.length)
+      : 0
+  const impactedPeople =
+    impactedExceptionCount > 0 ? getImpactedPeople(issue) : []
+  const affectedObjects = uniqueValues(
+    issue.affectedObjects.map((object) => object.label)
+  )
+  const nextLink = personTimelineLinks[0] ?? issue.impactLinks[0]
+
+  return {
+    impactedExceptionCount,
+    impactedPeopleCount: impactedPeople.length,
+    impactedPeople,
+    affectedObjects,
+    primaryException: exceptionItems[0],
+    items: exceptionItems,
+    nextViewHint: nextLink
+      ? `先${nextLink.label}，再回到数据质量详情确认字段、原值和影响对象。`
+      : "先查看数据质量详情，确认字段、原值和影响对象。",
+    nextViewHref: nextLink?.target,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
 export function dataQualitySeverityLabel(severity: DataQualitySeverity) {
   return {
     high: "高",
@@ -384,14 +436,7 @@ function buildDataQualityExceptionTopItem(
     return null
   }
 
-  const impactedPeople = uniqueValues([
-    ...issue.affectedObjects
-      .map((object) => object.objectId)
-      .filter((objectId) => /^A-\d+/.test(objectId)),
-    ...issue.impactLinks
-      .map((link) => link.target.match(/A-\d+/)?.[0] ?? "")
-      .filter((employeeId) => employeeId.length > 0),
-  ])
+  const impactedPeople = getImpactedPeople(issue)
   const affectedObjects = uniqueValues(
     issue.affectedObjects.map((object) => object.label)
   )
@@ -412,6 +457,35 @@ function buildDataQualityExceptionTopItem(
       ? `先${nextLink.label}，再回到数据质量详情确认字段和原值。`
       : "先查看数据质量详情，确认字段、原值和影响对象。",
   }
+}
+
+function buildDataQualityExceptionImpactItems(
+  issue: DataQualityIssue
+): DataQualityExceptionImpactItem[] {
+  return issue.affectedObjects
+    .filter(
+      (object) =>
+        object.type.includes("履约") ||
+        object.label.includes("异常") ||
+        object.label.includes("履约")
+    )
+    .map((object) => ({
+      type: object.type,
+      objectId: object.objectId,
+      label: object.label,
+      businessImpact: object.businessImpact,
+    }))
+}
+
+function getImpactedPeople(issue: DataQualityIssue) {
+  return uniqueValues([
+    ...issue.affectedObjects
+      .map((object) => object.objectId)
+      .filter((objectId) => /^A-\d+/.test(objectId)),
+    ...issue.impactLinks
+      .map((link) => link.target.match(/A-\d+/)?.[0] ?? "")
+      .filter((employeeId) => employeeId.length > 0),
+  ])
 }
 
 function buildDataQualityImportBatchImpactItem(

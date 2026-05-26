@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality detail impacted-exception drilldown
+
+#### 结论
+
+- `F380/Q098/US524-US526` 已完成数据质量详情异常影响拆解。
+- 前端模型新增 `summarizeDataQualityExceptionImpact()`，基于单个数据质量问题的影响对象和履约入口聚合影响异常数、影响人员、首要异常、影响对象、下一查看入口和暂缓能力。
+- 数据质量详情页新增“影响异常拆解”卡片，展示影响异常、影响人员、影响对象、首要异常、异常条目、下一查看和暂缓能力。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 异常影响拆解只基于本地现有 quality issue affectedObjects/impactLinks，不代表真实异常闭环写入、数据修复、证据补录、审批、权限、导出、批量或生产持久化已经实现。
+- 影响拆解用于主管查看顺序，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityExceptionImpact` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，13 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality/DQ-202605-010` HTML 包含“影响异常拆解”“小组成员矩阵异常”“A-1002”“下一查看”“无真实数据修复”“无导出或批量处理”“首要异常”“打开入口”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality impacted-exception top aggregation
 
 #### 结论

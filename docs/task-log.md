@@ -19,6 +19,17 @@
 
 ### 2026-05-26
 
+- task_id: `F380/Q098`
+- source_ids:
+  - `R534-R537`
+- story_ids:
+  - `US524-US526`
+- action: 完成数据质量详情异常影响拆解。
+- status: `done`
+- notes: 数据质量详情页现在展示“影响异常拆解”，从单个质量问题反查影响异常、影响人员、首要异常、影响对象、下一查看入口和暂缓能力；模型基于现有本地 affectedObjects 与 impactLinks 只读聚合。本次不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-26
+
 - task_id: `F379/Q097`
 - source_ids:
   - `R530-R533`

@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R534-R537 - 数据质量详情异常影响拆解
+
+```yaml
+requirements:
+  - id: R534
+    module: "数据质量"
+    description: "现场主管需要在数据质量详情页看到单个质量问题影响的履约异常、人员和业务对象，以便从问题详情判断下一步查看顺序。"
+  - id: R535
+    module: "数据质量"
+    description: "异常影响拆解需要基于现有本地 affectedObjects 与 impactLinks 聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R536
+    module: "数据质量"
+    description: "异常影响拆解需要展示影响异常数、影响人员、首要异常、影响对象、首要查看入口和暂缓能力。"
+  - id: R537
+    module: "质量与交付"
+    description: "数据质量详情异常影响拆解完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F379 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量详情页的本地只读异常影响拆解，基于已有 fallbackDataQualityIssues 的 affectedObjects 与 impactLinks 聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R530-R533 - 数据质量影响异常 Top 聚合
 
 ```yaml
