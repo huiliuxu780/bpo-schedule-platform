@@ -148,6 +148,31 @@ export type DataQualityExceptionImpactSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityExceptionCauseItem = {
+  key: string
+  errorCode: string
+  source: DataQualitySource
+  sourceField: string
+  issueCount: number
+  impactedExceptionCount: number
+  impactedPeople: string[]
+  blockedRows: number
+  representativeIssueId: string
+  representativeIssueTitle: string
+  href: string
+  nextViewHint: string
+  severity: DataQualitySeverity
+}
+
+export type DataQualityExceptionCauseSummary = {
+  totalCauseCount: number
+  totalImpactedExceptionCount: number
+  totalImpactedPeopleCount: number
+  topCause?: DataQualityExceptionCauseItem
+  items: DataQualityExceptionCauseItem[]
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -395,6 +420,72 @@ export function summarizeDataQualityExceptionImpact(
   }
 }
 
+export function summarizeDataQualityExceptionCauses(
+  rows: DataQualityIssue[]
+): DataQualityExceptionCauseSummary {
+  const groups = new Map<
+    string,
+    {
+      errorCode: string
+      source: DataQualitySource
+      sourceField: string
+      issues: DataQualityIssue[]
+      impactSummaries: DataQualityExceptionImpactSummary[]
+    }
+  >()
+
+  for (const issue of rows) {
+    const impactSummary = summarizeDataQualityExceptionImpact(issue)
+
+    if (impactSummary.impactedExceptionCount === 0) {
+      continue
+    }
+
+    const key = `${issue.errorCode}|${issue.sourceField}|${issue.source}`
+    const existing = groups.get(key)
+
+    if (existing) {
+      existing.issues.push(issue)
+      existing.impactSummaries.push(impactSummary)
+      continue
+    }
+
+    groups.set(key, {
+      errorCode: issue.errorCode,
+      source: issue.source,
+      sourceField: issue.sourceField,
+      issues: [issue],
+      impactSummaries: [impactSummary],
+    })
+  }
+
+  const items = Array.from(groups.entries())
+    .map(([key, group]) => buildDataQualityExceptionCauseItem(key, group))
+    .sort(
+      (a, b) =>
+        b.impactedExceptionCount - a.impactedExceptionCount ||
+        b.impactedPeople.length - a.impactedPeople.length ||
+        b.blockedRows - a.blockedRows ||
+        b.issueCount - a.issueCount ||
+        dataQualitySeverityRank[b.severity] - dataQualitySeverityRank[a.severity] ||
+        a.errorCode.localeCompare(b.errorCode)
+    )
+
+  return {
+    totalCauseCount: items.length,
+    totalImpactedExceptionCount: items.reduce(
+      (total, item) => total + item.impactedExceptionCount,
+      0
+    ),
+    totalImpactedPeopleCount: uniqueValues(
+      items.flatMap((item) => item.impactedPeople)
+    ).length,
+    topCause: items[0],
+    items,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
 export function dataQualitySeverityLabel(severity: DataQualitySeverity) {
   return {
     high: "高",
@@ -475,6 +566,51 @@ function buildDataQualityExceptionImpactItems(
       label: object.label,
       businessImpact: object.businessImpact,
     }))
+}
+
+function buildDataQualityExceptionCauseItem(
+  key: string,
+  group: {
+    errorCode: string
+    source: DataQualitySource
+    sourceField: string
+    issues: DataQualityIssue[]
+    impactSummaries: DataQualityExceptionImpactSummary[]
+  }
+): DataQualityExceptionCauseItem {
+  const representativeIssue = group.issues
+    .slice()
+    .sort(
+      (a, b) =>
+        dataQualitySeverityRank[b.severity] - dataQualitySeverityRank[a.severity] ||
+        b.blockedRows - a.blockedRows ||
+        a.id.localeCompare(b.id)
+    )[0]
+  const firstNextViewHint =
+    group.impactSummaries.find((summary) => summary.nextViewHref)?.nextViewHint ??
+    group.impactSummaries[0]?.nextViewHint ??
+    "先查看代表问题详情，确认字段、原值和影响对象。"
+
+  return {
+    key,
+    errorCode: group.errorCode,
+    source: group.source,
+    sourceField: group.sourceField,
+    issueCount: group.issues.length,
+    impactedExceptionCount: group.impactSummaries.reduce(
+      (total, summary) => total + summary.impactedExceptionCount,
+      0
+    ),
+    impactedPeople: uniqueValues(
+      group.impactSummaries.flatMap((summary) => summary.impactedPeople)
+    ),
+    blockedRows: group.issues.reduce((total, issue) => total + issue.blockedRows, 0),
+    representativeIssueId: representativeIssue.id,
+    representativeIssueTitle: representativeIssue.title,
+    href: `/data-quality/${representativeIssue.id}`,
+    nextViewHint: firstNextViewHint,
+    severity: representativeIssue.severity,
+  }
 }
 
 function getImpactedPeople(issue: DataQualityIssue) {

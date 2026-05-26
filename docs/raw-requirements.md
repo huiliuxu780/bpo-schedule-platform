@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R538-R541 - 数据质量异常影响原因汇总
+
+```yaml
+requirements:
+  - id: R538
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到影响履约异常的数据质量原因汇总，以便优先识别最大问题类型。"
+  - id: R539
+    module: "数据质量"
+    description: "原因汇总需要基于现有本地 affectedObjects、impactLinks、错误码、字段和来源聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R540
+    module: "数据质量"
+    description: "原因汇总需要展示错误码、字段、来源、影响异常、影响人员、阻断行、代表问题、首要查看入口和暂缓能力。"
+  - id: R541
+    module: "质量与交付"
+    description: "数据质量异常影响原因汇总完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F380 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读原因汇总，基于已有 fallbackDataQualityIssues 的 affectedObjects、impactLinks、errorCode、sourceField 与 source 聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R534-R537 - 数据质量详情异常影响拆解
 
 ```yaml

@@ -19,6 +19,17 @@
 
 ### 2026-05-26
 
+- task_id: `F381/Q099`
+- source_ids:
+  - `R538-R541`
+- story_ids:
+  - `US527-US529`
+- action: 完成数据质量异常影响原因汇总。
+- status: `done`
+- notes: 数据质量总览页现在展示“异常影响原因汇总”，按错误码、字段和来源聚合影响履约异常的数据质量原因，并展示影响异常、影响人员、阻断行、代表问题、下一查看入口和暂缓能力；模型基于现有本地 affectedObjects、impactLinks、errorCode、sourceField 与 source 只读聚合。本次不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-26
+
 - task_id: `F380/Q098`
 - source_ids:
   - `R534-R537`

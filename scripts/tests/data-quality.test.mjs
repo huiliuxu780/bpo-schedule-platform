@@ -6,6 +6,7 @@ import {
   fallbackDataQualityIssues,
   filterDataQualityIssues,
   getDataQualityIssue,
+  summarizeDataQualityExceptionCauses,
   summarizeDataQualityExceptionImpact,
   summarizeDataQualityExceptionTop,
   summarizeDataQualityImportBatchImpact,
@@ -192,11 +193,42 @@ test("data quality issue exception impact exposes no-impact state", () => {
   assert.deepEqual(summary.items, []);
 });
 
+test("data quality exception causes summarize impacted reasons", () => {
+  const summary = summarizeDataQualityExceptionCauses(fallbackDataQualityIssues);
+
+  assert.equal(summary.totalCauseCount, 2);
+  assert.equal(summary.totalImpactedExceptionCount, 2);
+  assert.equal(summary.totalImpactedPeopleCount, 2);
+  assert.equal(summary.topCause?.errorCode, "status_overlap");
+  assert.equal(summary.topCause?.source, "status_log");
+  assert.equal(summary.topCause?.sourceField, "status_log.status_start_at/status_end_at");
+  assert.equal(summary.topCause?.impactedExceptionCount, 1);
+  assert.ok(summary.topCause?.impactedPeople.includes("A-1002"));
+  assert.equal(summary.topCause?.representativeIssueId, "DQ-202605-010");
+  assert.equal(summary.topCause?.href, "/data-quality/DQ-202605-010");
+  assert.ok(summary.topCause?.nextViewHint.includes("个人履约"));
+  assert.ok(summary.items.some((item) => item.errorCode === "unknown_foreign_key"));
+  assert.ok(summary.deferredActions.includes("无真实数据修复"));
+  assert.ok(summary.deferredActions.includes("无导出或批量处理"));
+});
+
+test("data quality exception causes expose empty state", () => {
+  const summary = summarizeDataQualityExceptionCauses([]);
+
+  assert.equal(summary.totalCauseCount, 0);
+  assert.equal(summary.totalImpactedExceptionCount, 0);
+  assert.equal(summary.totalImpactedPeopleCount, 0);
+  assert.equal(summary.topCause, undefined);
+  assert.deepEqual(summary.items, []);
+});
+
 test("data quality page renders exception top summary", () => {
   const pageSource = readFileSync(new URL("../../app/data-quality/page.tsx", import.meta.url), "utf8");
 
   assert.ok(pageSource.includes("summarizeDataQualityExceptionTop"));
+  assert.ok(pageSource.includes("summarizeDataQualityExceptionCauses"));
   assert.ok(pageSource.includes("影响异常 Top"));
+  assert.ok(pageSource.includes("异常影响原因汇总"));
   assert.ok(pageSource.includes("影响异常"));
   assert.ok(pageSource.includes("影响人员"));
   assert.ok(pageSource.includes("下一查看"));

@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US527-US529 - 数据质量异常影响原因汇总
+
+```yaml
+stories:
+  - id: US527
+    requirement_ids: [R538, R539]
+    task_ids: [F381]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到影响履约异常的数据质量原因汇总，以便优先识别最大问题类型。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US528
+    requirement_ids: [R540]
+    task_ids: [F381]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望原因汇总展示错误码、字段、来源、影响异常、影响人员、阻断行和代表问题，以便快速进入详情查看。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US529
+    requirement_ids: [R541]
+    task_ids: [Q099]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望数据质量异常影响原因汇总完成后做收口验证，确认只读聚合、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供异常影响原因汇总，包含错误码、字段、来源、影响异常、影响人员、阻断行、代表问题、首要查看入口和暂缓能力。"
+  - "数据质量总览页展示异常影响原因汇总卡片。"
+  - "没有异常影响原因时展示无异常影响，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US524-US526 - 数据质量详情异常影响拆解
 
 ```yaml

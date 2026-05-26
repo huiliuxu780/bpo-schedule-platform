@@ -23,6 +23,7 @@ import {
   dataQualitySourceLabels,
   dataQualityStatusLabel,
   fallbackDataQualityIssues,
+  summarizeDataQualityExceptionCauses,
   summarizeDataQualityExceptionTop,
   summarizeDataQualityIssues,
 } from "@/lib/data-quality"
@@ -36,6 +37,7 @@ export default function DataQualityPage() {
   const rows = fallbackDataQualityIssues
   const summary = summarizeDataQualityIssues(rows)
   const exceptionTopSummary = summarizeDataQualityExceptionTop(rows)
+  const exceptionCauseSummary = summarizeDataQualityExceptionCauses(rows)
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -169,6 +171,74 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {exceptionTopSummary.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>异常影响原因汇总</CardTitle>
+                <CardDescription>
+                  按错误码、字段和来源聚合，先看影响异常最多的数据质量原因。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {exceptionCauseSummary.totalCauseCount} 类原因
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid grid-cols-3 gap-3">
+              <Detail label="原因类型" value={`${exceptionCauseSummary.totalCauseCount}`} />
+              <Detail label="影响异常" value={`${exceptionCauseSummary.totalImpactedExceptionCount}`} />
+              <Detail label="影响人员" value={`${exceptionCauseSummary.totalImpactedPeopleCount}`} />
+            </div>
+
+            {exceptionCauseSummary.items.length > 0 ? (
+              <div className="grid gap-3 lg:grid-cols-2">
+                {exceptionCauseSummary.items.slice(0, 4).map((item) => (
+                  <div key={item.key} className="rounded-lg border p-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">
+                          {item.errorCode}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {dataQualitySourceLabels[item.source]} / {item.sourceField}
+                        </div>
+                      </div>
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={item.href}>查看代表问题</Link>
+                      </Button>
+                    </div>
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                      <Detail label="异常" value={`${item.impactedExceptionCount}`} />
+                      <Detail label="人员" value={`${item.impactedPeople.length}`} />
+                      <Detail label="阻断行" value={`${item.blockedRows}`} />
+                    </div>
+                    <div className="mt-3 text-xs text-muted-foreground">
+                      代表问题：{item.representativeIssueId} / {item.representativeIssueTitle}
+                    </div>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      下一查看：{item.nextViewHint}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                当前数据质量问题没有匹配到履约异常影响原因。
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              {exceptionCauseSummary.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

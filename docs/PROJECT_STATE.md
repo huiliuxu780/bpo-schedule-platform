@@ -147,6 +147,7 @@ Current invariants:
 - `US518/F378 -> US520/Q096` completed a weekly closure readiness trend reason breakdown slice: the fulfillment calendar group-week trend now shows daily change reasons, primary blockers, blocker breakdowns, and next viewing hints. It remained local/read-only and returned current queue and active tasks to empty.
 - `US521/F379 -> US523/Q097` completed a data-quality impacted-exception top aggregation slice: the data quality overview now ranks quality issues by impacted exceptions, impacted people, blocked rows, severity, and next viewing hints. It remained local/read-only and returned current queue and active tasks to empty.
 - `US524/F380 -> US526/Q098` completed a data-quality detail impacted-exception drilldown slice: data quality detail pages now show impacted exceptions, impacted people, primary exception, affected objects, next viewing hints, and deferred actions for a single quality issue. It remained local/read-only and returned current queue and active tasks to empty.
+- `US527/F381 -> US529/Q099` completed a data-quality impacted-exception cause summary slice: the data quality overview now groups impacted quality issues by error code, source field, and source, showing impacted exceptions, impacted people, blocked rows, representative issues, next viewing hints, and deferred actions. It remained local/read-only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

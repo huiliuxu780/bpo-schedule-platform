@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality impacted-exception cause summary
+
+#### 结论
+
+- `F381/Q099/US527-US529` 已完成数据质量异常影响原因汇总。
+- 前端模型新增 `summarizeDataQualityExceptionCauses()`，基于影响履约异常的数据质量问题，按错误码、字段和来源聚合原因组。
+- 数据质量总览页新增“异常影响原因汇总”卡片，展示原因类型、影响异常、影响人员、阻断行、代表问题、下一查看和暂缓能力。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 原因汇总只基于本地现有 quality issue affectedObjects/impactLinks/errorCode/sourceField/source，不代表真实异常闭环写入、数据修复、证据补录、审批、权限、导出、批量或生产持久化已经实现。
+- 原因排序用于主管查看优先级，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityExceptionCauses` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，15 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“异常影响原因汇总”“status_overlap”“status_log.status_start_at/status_end_at”“DQ-202605-010”“A-1002”“无真实数据修复”“无导出或批量处理”“查看代表问题”“原因类型”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality detail impacted-exception drilldown
 
 #### 结论
