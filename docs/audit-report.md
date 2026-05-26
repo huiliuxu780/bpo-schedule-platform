@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality review group link
+
+#### 结论
+
+- `F391/Q109/US557-US559` 已完成数据质量复核建议质量分组摘要。
+- 前端分组模型新增 `summarizeDataQualityReviewGroupLink()`，基于下一轮复核建议代表问题关联本地质量分组。
+- 数据质量总览页新增“复核建议质量分组”卡片，展示建议问题、匹配分组、未分组、分组问题、风险、owner、模板、字段和“查看质量分组”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 质量分组摘要只基于本地 fallback 分组和下一轮复核建议，不代表真实质量分组落库、数据修复、审批、权限、导出、批量或生产持久化已经实现。
+- 摘要用于主管只读追溯，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality-groups.test.mjs` 首次失败于 `summarizeDataQualityReviewGroupLink` 未导出；`node --test scripts/tests/data-quality.test.mjs` 首次失败于页面未引用 `summarizeDataQualityReviewGroupLink`，证明测试覆盖新增模型和页面契约。
+- `node --test scripts/tests/data-quality-groups.test.mjs`：通过，4 个数据质量分组模型测试通过。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，33 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“复核建议质量分组”“身份与主键完整性”“DQ-202605-004”“数据管理员”“高风险”“TPL-MASTER-DATA”“agent_binding.employee_id”“查看质量分组”“无真实数据修复”“无批量重导”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality review import batch impact
 
 #### 结论

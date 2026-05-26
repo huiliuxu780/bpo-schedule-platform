@@ -496,6 +496,7 @@ test("data quality page renders exception top summary", () => {
   assert.ok(pageSource.includes("summarizeDataQualityFieldImpactSummary"));
   assert.ok(pageSource.includes("summarizeDataQualityGapOwnerSourcePressure"));
   assert.ok(pageSource.includes("summarizeDataQualityNextReviewRecommendation"));
+  assert.ok(pageSource.includes("summarizeDataQualityReviewGroupLink"));
   assert.ok(pageSource.includes("summarizeDataQualityReviewImportBatchImpact"));
   assert.ok(pageSource.includes("summarizeDataQualityReviewCoverageGap"));
   assert.ok(pageSource.includes("summarizeDataQualityReviewPathSequence"));
@@ -514,6 +515,7 @@ test("data quality page renders exception top summary", () => {
   assert.ok(pageSource.includes("缺口 owner/来源压力"));
   assert.ok(pageSource.includes("缺口下一轮复核建议"));
   assert.ok(pageSource.includes("复核建议导入批次影响"));
+  assert.ok(pageSource.includes("复核建议质量分组"));
   assert.ok(pageSource.includes("查看个人履约"));
   assert.ok(pageSource.includes("查看履约日期"));
   assert.ok(pageSource.includes("查看字段问题"));
@@ -523,6 +525,7 @@ test("data quality page renders exception top summary", () => {
   assert.ok(pageSource.includes("查看压力问题"));
   assert.ok(pageSource.includes("查看建议问题"));
   assert.ok(pageSource.includes("查看关联批次"));
+  assert.ok(pageSource.includes("查看质量分组"));
   assert.ok(pageSource.includes("影响异常"));
   assert.ok(pageSource.includes("影响人员"));
   assert.ok(pageSource.includes("下一查看"));

@@ -38,8 +38,10 @@ import {
 } from "@/lib/data-quality"
 import { fallbackImportBatches } from "@/lib/import-batch-history"
 import {
+  dataQualityGroupRiskLabel,
   fallbackDataQualityGroups,
   getUngroupedDataQualityIssueIds,
+  summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
 } from "@/lib/data-quality-groups"
 
@@ -59,6 +61,10 @@ export default function DataQualityPage() {
   const reviewImportBatchImpact = summarizeDataQualityReviewImportBatchImpact(
     rows,
     fallbackImportBatches
+  )
+  const reviewGroupLink = summarizeDataQualityReviewGroupLink(
+    nextReviewRecommendation.representativeIssueId,
+    fallbackDataQualityGroups
   )
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
@@ -203,6 +209,98 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>复核建议质量分组</CardTitle>
+                <CardDescription>
+                  把建议问题回到质量分组，确认是否已进入原因分组和分组复核建议。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {reviewGroupLink.topGroup?.title ?? "未分组"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="匹配分组"
+                value={`${reviewGroupLink.totalMatchedGroupCount}`}
+              />
+              <Detail
+                label="未分组"
+                value={`${reviewGroupLink.ungroupedIssueCount}`}
+              />
+              <Detail
+                label="分组问题"
+                value={`${reviewGroupLink.groupedIssueCount}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    建议问题：{reviewGroupLink.representativeIssueId ?? "无"}
+                    {reviewGroupLink.topGroup ? ` / ${reviewGroupLink.topGroup.title}` : ""}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    owner：{reviewGroupLink.topGroup?.owner ?? "无"} / 风险：
+                    {reviewGroupLink.topGroup
+                      ? dataQualityGroupRiskLabel(reviewGroupLink.topGroup.risk)
+                      : "无"}
+                  </div>
+                </div>
+                {reviewGroupLink.topGroup ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={reviewGroupLink.topGroup.href}>查看质量分组</Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {reviewGroupLink.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {reviewGroupLink.items.map((item) => (
+                    <div key={item.groupId} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">
+                        {item.title} / {dataQualityGroupRiskLabel(item.risk)}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        owner：{item.owner} / 分组问题：{item.issueCount}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        模板：{item.sourceTemplates.join(" / ") || "无"} / 字段：
+                        {item.traceKeys.join(" / ") || "无"}
+                      </div>
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        分组建议：{item.recommendedReview}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前建议问题尚未匹配到质量分组。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{reviewGroupLink.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {reviewGroupLink.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

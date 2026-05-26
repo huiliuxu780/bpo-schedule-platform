@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R578-R581 - 数据质量复核建议质量分组摘要
+
+```yaml
+requirements:
+  - id: R578
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到复核建议关联的质量分组，以便判断建议问题是否已经进入原因分组。"
+  - id: R579
+    module: "数据质量"
+    description: "质量分组摘要需要基于现有本地下一轮复核建议和 fallback 质量分组聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R580
+    module: "数据质量"
+    description: "质量分组摘要需要展示建议问题、匹配分组、未分组、分组问题、风险、owner、字段、模板、分组入口、查看提示和暂缓能力。"
+  - id: R581
+    module: "质量与交付"
+    description: "数据质量复核建议质量分组摘要完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM requested continuing after F390 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读复核建议质量分组摘要，基于已有下一轮复核建议和 fallback 质量分组聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R574-R577 - 数据质量复核建议导入批次影响摘要
 
 ```yaml

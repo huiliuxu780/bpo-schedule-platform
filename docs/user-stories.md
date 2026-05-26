@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US557-US559 - 数据质量复核建议质量分组摘要
+
+```yaml
+stories:
+  - id: US557
+    requirement_ids: [R578, R579]
+    task_ids: [F391]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到复核建议关联的质量分组，以便判断建议问题是否已经进入原因分组。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US558
+    requirement_ids: [R580]
+    task_ids: [F391]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望质量分组摘要展示分组、风险、owner、字段、模板和分组入口，以便继续只读复核。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US559
+    requirement_ids: [R581]
+    task_ids: [Q109]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望复核建议质量分组摘要完成后做收口验证，确认页面展示、模型测试和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量分组模型提供复核建议质量分组摘要，包含建议问题、匹配分组、未分组、分组问题、风险、owner、字段、模板、分组入口和暂缓能力。"
+  - "数据质量总览页展示复核建议质量分组卡片。"
+  - "没有建议问题或分组匹配时展示空状态，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality-groups.test.mjs`、`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US554-US556 - 数据质量复核建议导入批次影响摘要
 
 ```yaml

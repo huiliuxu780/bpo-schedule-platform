@@ -27,6 +27,29 @@ export type DataQualityIssueGroupCoverage = {
   groups: DataQualityGroup[]
 }
 
+export type DataQualityReviewGroupLinkItem = {
+  groupId: string
+  title: string
+  risk: DataQualityGroupRisk
+  owner: string
+  issueCount: number
+  sourceTemplates: string[]
+  traceKeys: string[]
+  href: string
+  recommendedReview: string
+}
+
+export type DataQualityReviewGroupLinkSummary = {
+  representativeIssueId?: string
+  totalMatchedGroupCount: number
+  ungroupedIssueCount: number
+  groupedIssueCount: number
+  topGroup?: DataQualityReviewGroupLinkItem
+  items: DataQualityReviewGroupLinkItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityGroupActions = [
   "无真实数据修复",
   "无自动合并",
@@ -134,6 +157,52 @@ export function getUngroupedDataQualityIssueIds(
   return issueIds.filter((issueId) => !groupedIssueIds.has(issueId))
 }
 
+export function summarizeDataQualityReviewGroupLink(
+  representativeIssueId?: string,
+  groups = fallbackDataQualityGroups
+): DataQualityReviewGroupLinkSummary {
+  if (!representativeIssueId) {
+    return {
+      representativeIssueId,
+      totalMatchedGroupCount: 0,
+      ungroupedIssueCount: 0,
+      groupedIssueCount: 0,
+      items: [],
+      nextViewHint: "当前没有复核建议问题可关联质量分组。",
+      deferredActions: deferredDataQualityGroupActions,
+    }
+  }
+
+  const items = groups
+    .filter((group) => group.issueIds.includes(representativeIssueId))
+    .map((group) => ({
+      groupId: group.id,
+      title: group.title,
+      risk: group.risk,
+      owner: group.owner,
+      issueCount: group.issueIds.length,
+      sourceTemplates: group.sourceTemplates,
+      traceKeys: group.traceKeys,
+      href: `/data-quality/groups/${group.id}`,
+      recommendedReview: group.recommendedReview,
+    }))
+    .sort(compareReviewGroupLinkItems)
+
+  return {
+    representativeIssueId,
+    totalMatchedGroupCount: items.length,
+    ungroupedIssueCount: items.length > 0 ? 0 : 1,
+    groupedIssueCount: items.reduce((total, item) => total + item.issueCount, 0),
+    topGroup: items[0],
+    items,
+    nextViewHint:
+      items.length > 0
+        ? "进入质量分组查看同组问题、字段和分组复核建议。"
+        : "当前建议问题尚未进入质量分组，先查看数据质量详情。",
+    deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
 export function dataQualityGroupRiskLabel(risk: DataQualityGroupRisk) {
   return {
     high: "高风险",
@@ -144,4 +213,21 @@ export function dataQualityGroupRiskLabel(risk: DataQualityGroupRisk) {
 
 function getGroupedIssueIds(groups: DataQualityGroup[]) {
   return Array.from(new Set(groups.flatMap((group) => group.issueIds)))
+}
+
+function compareReviewGroupLinkItems(
+  left: DataQualityReviewGroupLinkItem,
+  right: DataQualityReviewGroupLinkItem
+) {
+  const riskRank: Record<DataQualityGroupRisk, number> = {
+    high: 3,
+    medium: 2,
+    low: 1,
+  }
+
+  return (
+    riskRank[right.risk] - riskRank[left.risk] ||
+    right.issueCount - left.issueCount ||
+    left.title.localeCompare(right.title, "zh-Hans-CN")
+  )
 }
