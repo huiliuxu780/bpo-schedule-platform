@@ -29,6 +29,47 @@
 
 ## Stories
 
+### US584-US586 - 主管异常处理本地写入闭环
+
+```yaml
+stories:
+  - id: US584
+    requirement_ids: [R614, R615]
+    task_ids: [F400]
+    module: "履约监控"
+    role: "现场主管"
+    story: "作为现场主管，我希望能在异常复核场景提交本地复核结论，以便从只读建议进入可验证的处理流转。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "ready"
+  - id: US585
+    requirement_ids: [R616]
+    task_ids: [F401]
+    module: "履约监控"
+    role: "现场主管"
+    story: "作为现场主管，我希望能给异常补充证据说明并关联已有记录，以便复核结论具备可追溯依据。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "ready"
+    dependencies: [US584]
+  - id: US586
+    requirement_ids: [R617]
+    task_ids: [F402]
+    module: "履约监控"
+    role: "现场主管"
+    story: "作为现场主管，我希望在复核结论和证据满足条件后本地关闭异常，以便形成从异常到处理记录的最小闭环。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "ready"
+    dependencies: [US584, US585]
+acceptance:
+  - "复核结论可以本地提交，并在异常队列和详情中可见。"
+  - "证据说明可以本地提交，并能关联已有批次、质量问题或人员履约记录。"
+  - "异常可以在本地推进到已形成处理结论，并展示处理记录。"
+  - "本组只使用本地 process-memory；不新增数据库、ORM、migration、真实外部系统、权限、审批、导出、批量、文件存储、生产公式、结算或 charge factor。"
+  - "每个任务完成后必须有模型/API测试、页面 smoke、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 证据。"
+```
+
 ### US581-US583 - 数据质量交接风险关联导入批次影响
 
 ```yaml

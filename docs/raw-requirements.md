@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R614-R617 - 主管异常处理本地写入闭环
+
+```yaml
+requirements:
+  - id: R614
+    module: "履约监控"
+    description: "现场主管需要能在异常复核场景提交本地复核结论，使当前只读建议进入可验证的处理流转。"
+  - id: R615
+    module: "履约监控"
+    description: "复核结论提交后需要在队列和详情中展示结论、提交人、提交时间和来源异常，并保持本地 process-memory 边界。"
+  - id: R616
+    module: "履约监控"
+    description: "现场主管需要能补充一条证据说明，并关联已有批次、质量问题或人员履约记录，形成本地处理记录。"
+  - id: R617
+    module: "履约监控"
+    description: "在复核结论和证据满足条件后，异常需要能本地关闭并展示处理人、时间、结论、证据和来源异常。"
+source: "PM corrected direction to complete review conclusion, evidence supplement, and local closure loop on 2026-05-27"
+submitted_at: "2026-05-27"
+version: "1.0"
+status: "split"
+notes: "本组目标是尽快贴近真实可用业务闭环，先用本地 process-memory 跑通写入、记录和状态变化；不接数据库、不做 ORM/migration、不接外部系统、不做权限、审批、导出、批量、文件存储、生产公式、结算或 charge factor。"
+```
+
 ### R610-R613 - 数据质量交接风险关联导入批次影响
 
 ```yaml
