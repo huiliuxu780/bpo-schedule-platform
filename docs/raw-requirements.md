@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R570-R573 - 数据质量缺口下一轮复核建议摘要
+
+```yaml
+requirements:
+  - id: R570
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到缺口下一轮复核建议，以便把 owner/来源压力转成可读的查看顺序。"
+  - id: R571
+    module: "数据质量"
+    description: "下一轮复核建议需要基于现有本地 owner/来源压力、复核覆盖缺口、代表问题、字段和人员聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R572
+    module: "数据质量"
+    description: "下一轮复核建议需要展示建议标题、建议步骤、首要 owner、首要来源、代表问题、查看入口、影响异常、影响人员和暂缓能力。"
+  - id: R573
+    module: "质量与交付"
+    description: "数据质量缺口下一轮复核建议完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM approved starting after F388 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读缺口下一轮复核建议摘要，基于已有 owner/来源压力、复核覆盖缺口、代表问题、字段和人员聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R566-R569 - 数据质量缺口 owner/来源压力摘要
 
 ```yaml

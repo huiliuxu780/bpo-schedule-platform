@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US551-US553 - 数据质量缺口下一轮复核建议摘要
+
+```yaml
+stories:
+  - id: US551
+    requirement_ids: [R570, R571]
+    task_ids: [F389]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到缺口下一轮复核建议，以便把 owner/来源压力转成可读的查看顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US552
+    requirement_ids: [R572]
+    task_ids: [F389]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望建议摘要展示建议标题、建议步骤、首要 owner、首要来源和代表问题入口，以便继续只读复核。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US553
+    requirement_ids: [R573]
+    task_ids: [Q107]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望缺口下一轮复核建议完成后做收口验证，确认页面展示、模型测试和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供缺口下一轮复核建议摘要，包含建议标题、建议步骤、首要 owner、首要来源、代表问题、查看入口和暂缓能力。"
+  - "数据质量总览页展示缺口下一轮复核建议卡片。"
+  - "没有缺口压力时展示无建议项，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US548-US550 - 数据质量缺口 owner/来源压力摘要
 
 ```yaml

@@ -333,6 +333,25 @@ export type DataQualityGapOwnerSourcePressureSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityNextReviewRecommendationStep = {
+  label: string
+  description: string
+  href?: string
+}
+
+export type DataQualityNextReviewRecommendationSummary = {
+  headline: string
+  topOwner?: string
+  topSource?: DataQualitySource
+  representativeIssueId?: string
+  representativeIssueTitle?: string
+  href?: string
+  impactedExceptionCount: number
+  impactedPeopleCount: number
+  steps: DataQualityNextReviewRecommendationStep[]
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -1084,6 +1103,54 @@ export function summarizeDataQualityGapOwnerSourcePressure(
     topSource: items[0].source,
     topItem: items[0],
     items,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
+export function summarizeDataQualityNextReviewRecommendation(
+  rows: DataQualityIssue[]
+): DataQualityNextReviewRecommendationSummary {
+  const pressure = summarizeDataQualityGapOwnerSourcePressure(rows)
+  const topItem = pressure.topItem
+
+  if (!topItem) {
+    return {
+      headline: "当前没有需要追加的缺口复核建议",
+      impactedExceptionCount: 0,
+      impactedPeopleCount: 0,
+      steps: [],
+      deferredActions: deferredDataQualityActions,
+    }
+  }
+
+  const sourceLabel = dataQualitySourceLabels[topItem.source]
+  const fieldText = topItem.sourceFields.join("、") || "未识别字段"
+  const peopleText = topItem.impactedPeople.join("、") || "未识别人员"
+
+  return {
+    headline: `建议下一轮先复核 ${topItem.representativeIssueId}`,
+    topOwner: topItem.owner,
+    topSource: topItem.source,
+    representativeIssueId: topItem.representativeIssueId,
+    representativeIssueTitle: topItem.representativeIssueTitle,
+    href: topItem.href,
+    impactedExceptionCount: topItem.impactedExceptionCount,
+    impactedPeopleCount: topItem.impactedPeople.length,
+    steps: [
+      {
+        label: "查看代表问题",
+        description: `先打开 ${topItem.representativeIssueId} / ${topItem.representativeIssueTitle}，确认缺口原因和影响对象。`,
+        href: topItem.href,
+      },
+      {
+        label: "核对 owner/来源",
+        description: `由 ${topItem.owner} 先核对 ${sourceLabel} 中的 ${fieldText}，重点看 ${peopleText}。`,
+      },
+      {
+        label: "回到复核路径",
+        description: "完成只读查看后回到复核路径，确认是否仍有未覆盖缺口。",
+      },
+    ],
     deferredActions: deferredDataQualityActions,
   }
 }

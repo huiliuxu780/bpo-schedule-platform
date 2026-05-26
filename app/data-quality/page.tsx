@@ -26,6 +26,7 @@ import {
   summarizeDataQualityDayViewOrder,
   summarizeDataQualityFieldImpactSummary,
   summarizeDataQualityGapOwnerSourcePressure,
+  summarizeDataQualityNextReviewRecommendation,
   summarizeDataQualityExceptionCauses,
   summarizeDataQualityPersonViewOrder,
   summarizeDataQualityReviewCoverageGap,
@@ -52,6 +53,7 @@ export default function DataQualityPage() {
   const reviewPathSequence = summarizeDataQualityReviewPathSequence(rows)
   const reviewCoverageGap = summarizeDataQualityReviewCoverageGap(rows)
   const gapOwnerSourcePressure = summarizeDataQualityGapOwnerSourcePressure(rows)
+  const nextReviewRecommendation = summarizeDataQualityNextReviewRecommendation(rows)
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -195,6 +197,86 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>缺口下一轮复核建议</CardTitle>
+                <CardDescription>
+                  把缺口压力转成下一轮只读查看顺序，便于主管安排复核重点。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {nextReviewRecommendation.representativeIssueId ?? "无建议项"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="影响异常"
+                value={`${nextReviewRecommendation.impactedExceptionCount}`}
+              />
+              <Detail
+                label="影响人员"
+                value={`${nextReviewRecommendation.impactedPeopleCount}`}
+              />
+              <Detail
+                label="建议步骤"
+                value={`${nextReviewRecommendation.steps.length}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    {nextReviewRecommendation.headline}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    首要 owner：{nextReviewRecommendation.topOwner ?? "无"} / 首要来源：
+                    {nextReviewRecommendation.topSource
+                      ? dataQualitySourceLabels[nextReviewRecommendation.topSource]
+                      : "无"}
+                  </div>
+                </div>
+                {nextReviewRecommendation.href ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={nextReviewRecommendation.href}>查看建议问题</Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {nextReviewRecommendation.steps.length > 0 ? (
+                <div className="mt-3 grid gap-3">
+                  {nextReviewRecommendation.steps.map((step, index) => (
+                    <div key={step.label} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">
+                        {index + 1}. {step.label}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {step.description}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前没有需要追加的缺口复核建议。
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {nextReviewRecommendation.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

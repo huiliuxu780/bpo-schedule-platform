@@ -7,6 +7,7 @@ import {
   summarizeDataQualityDayViewOrder,
   summarizeDataQualityFieldImpactSummary,
   summarizeDataQualityGapOwnerSourcePressure,
+  summarizeDataQualityNextReviewRecommendation,
   filterDataQualityIssues,
   getDataQualityIssue,
   summarizeDataQualityExceptionCauses,
@@ -429,12 +430,44 @@ test("data quality gap owner source pressure exposes empty state", () => {
   assert.deepEqual(summary.items, []);
 });
 
+test("data quality next review recommendation summarizes the next read-only steps", () => {
+  const summary = summarizeDataQualityNextReviewRecommendation(fallbackDataQualityIssues);
+
+  assert.equal(summary.headline, "建议下一轮先复核 DQ-202605-004");
+  assert.equal(summary.topOwner, "数据管理员");
+  assert.equal(summary.topSource, "master_data");
+  assert.equal(summary.representativeIssueId, "DQ-202605-004");
+  assert.equal(summary.href, "/data-quality/DQ-202605-004");
+  assert.equal(summary.impactedExceptionCount, 1);
+  assert.equal(summary.impactedPeopleCount, 1);
+  assert.equal(summary.steps.length, 3);
+  assert.equal(summary.steps[0].label, "查看代表问题");
+  assert.ok(summary.steps[1].description.includes("数据管理员"));
+  assert.ok(summary.steps[1].description.includes("主数据"));
+  assert.ok(summary.steps[2].description.includes("复核路径"));
+  assert.ok(summary.deferredActions.includes("无真实数据修复"));
+  assert.ok(summary.deferredActions.includes("无导出或批量处理"));
+});
+
+test("data quality next review recommendation exposes empty state", () => {
+  const summary = summarizeDataQualityNextReviewRecommendation([]);
+
+  assert.equal(summary.headline, "当前没有需要追加的缺口复核建议");
+  assert.equal(summary.topOwner, undefined);
+  assert.equal(summary.topSource, undefined);
+  assert.equal(summary.representativeIssueId, undefined);
+  assert.equal(summary.impactedExceptionCount, 0);
+  assert.equal(summary.impactedPeopleCount, 0);
+  assert.deepEqual(summary.steps, []);
+});
+
 test("data quality page renders exception top summary", () => {
   const pageSource = readFileSync(new URL("../../app/data-quality/page.tsx", import.meta.url), "utf8");
 
   assert.ok(pageSource.includes("summarizeDataQualityDayViewOrder"));
   assert.ok(pageSource.includes("summarizeDataQualityFieldImpactSummary"));
   assert.ok(pageSource.includes("summarizeDataQualityGapOwnerSourcePressure"));
+  assert.ok(pageSource.includes("summarizeDataQualityNextReviewRecommendation"));
   assert.ok(pageSource.includes("summarizeDataQualityReviewCoverageGap"));
   assert.ok(pageSource.includes("summarizeDataQualityReviewPathSequence"));
   assert.ok(pageSource.includes("summarizeDataQualityReviewPriorityRationale"));
@@ -450,6 +483,7 @@ test("data quality page renders exception top summary", () => {
   assert.ok(pageSource.includes("复核路径顺序"));
   assert.ok(pageSource.includes("复核覆盖缺口摘要"));
   assert.ok(pageSource.includes("缺口 owner/来源压力"));
+  assert.ok(pageSource.includes("缺口下一轮复核建议"));
   assert.ok(pageSource.includes("查看个人履约"));
   assert.ok(pageSource.includes("查看履约日期"));
   assert.ok(pageSource.includes("查看字段问题"));
@@ -457,6 +491,7 @@ test("data quality page renders exception top summary", () => {
   assert.ok(pageSource.includes("查看路径步骤"));
   assert.ok(pageSource.includes("查看缺口问题"));
   assert.ok(pageSource.includes("查看压力问题"));
+  assert.ok(pageSource.includes("查看建议问题"));
   assert.ok(pageSource.includes("影响异常"));
   assert.ok(pageSource.includes("影响人员"));
   assert.ok(pageSource.includes("下一查看"));
