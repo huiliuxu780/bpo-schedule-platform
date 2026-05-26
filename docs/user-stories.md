@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US500-US502 - 导入失败原因汇总
+
+```yaml
+stories:
+  - id: US500
+    requirement_ids: [R502, R503]
+    task_ids: [F372]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望在导入批次详情顶部看到失败原因汇总，以便先判断主要失败字段和错误码。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US501
+    requirement_ids: [R504]
+    task_ids: [F372]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望失败原因汇总能给出影响对象和修正提示，以便知道先修哪些字段。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US502
+    requirement_ids: [R505]
+    task_ids: [Q090]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望失败原因汇总完成后做收口验证，确认只读聚合、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "导入批次模型提供失败原因汇总，包含失败原因数、失败行数、首要原因、字段、错误码、代表行、影响对象和修正提示。"
+  - "导入批次详情页在失败行明细前展示失败原因汇总。"
+  - "没有失败行时展示无失败原因，不误导为处理、修复、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/import-batch-history.test.mjs`、浏览器 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US497-US499 - 导入批次列表接入本地结果
 
 ```yaml

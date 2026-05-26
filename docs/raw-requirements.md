@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R502-R505 - 导入失败原因汇总
+
+```yaml
+requirements:
+  - id: R502
+    module: "导入批次"
+    description: "现场主管需要在导入批次详情顶部看到失败原因汇总，快速判断主要失败字段、错误码和失败行数。"
+  - id: R503
+    module: "导入批次"
+    description: "失败原因汇总需要基于现有失败行明细本地聚合，不新增数据库、后端持久化或生产处理状态。"
+  - id: R504
+    module: "导入批次"
+    description: "失败原因汇总需要展示影响对象、首要修正提示和代表行，帮助现场主管先定位修正顺序。"
+  - id: R505
+    module: "质量与交付"
+    description: "导入失败原因汇总完成后需要 QA 收口，确认模型测试、页面展示、浏览器 smoke 和 no-action 边界。"
+source: "PM agreed to continue with import failure reason summary on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做导入批次详情页的本地只读失败原因汇总，基于已有 failureRows 和 affectedObjects 聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R498-R501 - 导入批次列表接入本地结果
 
 ```yaml

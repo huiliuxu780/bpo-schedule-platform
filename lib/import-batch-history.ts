@@ -79,6 +79,25 @@ export type ImportBatchFailureImpactSummary = {
   items: ImportBatchFailureImpact[]
 }
 
+export type ImportBatchFailureReason = {
+  id: string
+  errorCode: string
+  fieldName: string
+  failedRows: number
+  representativeRowNumber: number
+  representativeRawValue: string
+  errorMessage: string
+  affectedObjects: string[]
+  correctionHint: string
+}
+
+export type ImportBatchFailureReasonSummary = {
+  totalReasonCount: number
+  totalFailedRows: number
+  topReason: ImportBatchFailureReason | null
+  items: ImportBatchFailureReason[]
+}
+
 export type ImportBatchSummary = {
   total: number
   completed: number
@@ -489,6 +508,73 @@ export function summarizeImportBatchFailureImpacts(
     totalAffectedRows: items.reduce((total, item) => total + item.affectedRows, 0),
     items,
   }
+}
+
+export function summarizeImportBatchFailureReasons(
+  batch: ImportBatch
+): ImportBatchFailureReasonSummary {
+  const groupedRows = new Map<
+    string,
+    {
+      errorCode: string
+      fieldName: string
+      rows: ImportBatchFailureRow[]
+    }
+  >()
+
+  for (const row of batch.failureRows) {
+    const id = `${row.fieldName}:${row.errorCode}`
+    const group = groupedRows.get(id)
+
+    if (group) {
+      group.rows.push(row)
+    } else {
+      groupedRows.set(id, {
+        errorCode: row.errorCode,
+        fieldName: row.fieldName,
+        rows: [row],
+      })
+    }
+  }
+
+  const items = Array.from(groupedRows.values())
+    .map<ImportBatchFailureReason>((group) => {
+      const representativeRow = group.rows[0]
+
+      return {
+        id: `${group.fieldName}:${group.errorCode}`,
+        errorCode: group.errorCode,
+        fieldName: group.fieldName,
+        failedRows: group.rows.length,
+        representativeRowNumber: representativeRow.failedRowNumber,
+        representativeRawValue: representativeRow.rawValue,
+        errorMessage: representativeRow.errorMessage,
+        affectedObjects: batch.affectedObjects,
+        correctionHint: buildFailureReasonCorrectionHint(representativeRow),
+      }
+    })
+    .sort((first, second) => {
+      if (second.failedRows !== first.failedRows) {
+        return second.failedRows - first.failedRows
+      }
+
+      return first.fieldName.localeCompare(second.fieldName)
+    })
+
+  return {
+    totalReasonCount: items.length,
+    totalFailedRows: batch.failureRows.length,
+    topReason: items[0] ?? null,
+    items,
+  }
+}
+
+function buildFailureReasonCorrectionHint(row: ImportBatchFailureRow) {
+  if (!row.rawValue) {
+    return `补充 ${row.fieldName} 字段后重新导入 CSV。`
+  }
+
+  return `修正 ${row.fieldName} 字段的 ${row.errorCode} 问题后重新导入 CSV。`
 }
 
 export function importBatchStatusLabel(status: ImportBatchStatus) {

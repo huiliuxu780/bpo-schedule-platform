@@ -19,6 +19,17 @@
 
 ### 2026-05-26
 
+- task_id: `F372/Q090`
+- source_ids:
+  - `R502-R505`
+- story_ids:
+  - `US500-US502`
+- action: 完成导入批次详情失败原因汇总。
+- status: `done`
+- notes: 导入批次详情页现在在失败行明细前展示按字段和错误码聚合的失败原因汇总，包含原因数、失败行、首要字段、首要错误码、代表行、代表原值、影响对象和修正提示；模型基于现有 `failureRows` 与 `affectedObjects` 本地只读聚合。本次不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-26
+
 - task_id: `B013/F371/Q089`
 - source_ids:
   - `R498-R501`

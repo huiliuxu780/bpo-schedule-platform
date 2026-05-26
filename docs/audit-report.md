@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-26 - Import failure reason summary
+
+#### 结论
+
+- `F372/Q090/US500-US502` 已完成导入批次详情失败原因汇总。
+- 前端模型新增 `summarizeImportBatchFailureReasons()`，按字段和错误码聚合现有失败行，返回失败原因数、失败行数、首要原因、代表行、代表原值、影响对象和修正提示。
+- 导入批次详情页在失败行明细前展示“失败原因汇总”，帮助现场主管先看主要失败字段、错误码、影响对象和修正顺序。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 失败原因汇总只读取当前批次失败行并在前端本地聚合，不代表生产数据持久化、质量闭环写入、真实修复提交、审批或导出能力已经实现。
+- 浏览器自动化访问本机前端端口被运行环境拦截；已用同一开发服务的本机 HTML 响应核对页面关键文本。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/import-batch-history.test.mjs` 首次失败于 `summarizeImportBatchFailureReasons` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/import-batch-history.test.mjs`：通过，12 个导入批次模型测试通过。
+- `npm run typecheck`：通过。
+- 页面 smoke：通过，使用本地 API 创建 `BATCH-SL-20260526-001`，详情 HTML 包含“失败原因汇总”“原因数”“失败行”“end_at”“invalid_time_range”“status_type”“missing_required_field”“修正提示”“失败行明细”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Import batch list process-memory results
 
 #### 结论

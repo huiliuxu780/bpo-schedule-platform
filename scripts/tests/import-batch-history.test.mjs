@@ -12,6 +12,7 @@ import {
   getImportBatchById,
   mapImportBatchResult,
   summarizeImportBatchFailureImpacts,
+  summarizeImportBatchFailureReasons,
   summarizeImportBatches,
 } from "../../lib/import-batch-history.ts"
 
@@ -190,6 +191,95 @@ test("status log import result maps template and failure impact", () => {
   assert.equal(batch.failureRows[0].fieldName, "end_at")
   assert.ok(batch.failureImpacts[0].businessImpact.includes("状态日志"))
   assert.equal(typeof createStatusLogImportBatch, "function")
+})
+
+test("import batch failure reasons group failed rows by field and error code", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-SL-20260526-002",
+    entity: "status_log",
+    file_name: "status_log_reason_test.csv",
+    uploaded_by: "现场主管",
+    uploaded_at: "2026-05-26T21:00:00+08:00",
+    status: "completed_with_errors",
+    total_rows: 4,
+    success_rows: 1,
+    failed_rows: 3,
+    warning_rows: 0,
+    error_codes: ["invalid_time_range", "missing_required_field"],
+    failure_rows: [
+      {
+        batch_id: "BATCH-SL-20260526-002",
+        entity: "status_log",
+        failed_row_number: 3,
+        field_name: "end_at",
+        error_code: "invalid_time_range",
+        error_message: "状态结束时间必须晚于开始时间",
+        raw_value: "2026-05-26T09:00:00",
+      },
+      {
+        batch_id: "BATCH-SL-20260526-002",
+        entity: "status_log",
+        failed_row_number: 4,
+        field_name: "status_type",
+        error_code: "missing_required_field",
+        error_message: "状态类型不能为空",
+        raw_value: "",
+      },
+      {
+        batch_id: "BATCH-SL-20260526-002",
+        entity: "status_log",
+        failed_row_number: 5,
+        field_name: "end_at",
+        error_code: "invalid_time_range",
+        error_message: "状态结束时间必须晚于开始时间",
+        raw_value: "2026-05-26T10:00:00",
+      },
+    ],
+  })
+
+  const summary = summarizeImportBatchFailureReasons(batch)
+
+  assert.equal(summary.totalReasonCount, 2)
+  assert.equal(summary.totalFailedRows, 3)
+  assert.equal(summary.items.length, 2)
+  assert.equal(summary.topReason?.fieldName, "end_at")
+  assert.equal(summary.topReason?.errorCode, "invalid_time_range")
+  assert.equal(summary.topReason?.failedRows, 2)
+  assert.equal(summary.topReason?.representativeRowNumber, 3)
+  assert.equal(summary.topReason?.representativeRawValue, "2026-05-26T09:00:00")
+  assert.equal(summary.topReason?.errorMessage, "状态结束时间必须晚于开始时间")
+  assert.deepEqual(summary.topReason?.affectedObjects, [
+    "状态日志",
+    "人员时间轴",
+    "履约对比",
+  ])
+  assert.ok(summary.topReason?.correctionHint.includes("修正 end_at 字段"))
+  assert.equal(summary.items[1].fieldName, "status_type")
+  assert.ok(summary.items[1].correctionHint.includes("补充 status_type 字段"))
+})
+
+test("import batch failure reasons expose empty state when no failed rows exist", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-DF-20260526-001",
+    entity: "demand_forecast",
+    file_name: "demand_forecast_clean.csv",
+    uploaded_by: "预测运营",
+    uploaded_at: "2026-05-26T21:20:00+08:00",
+    status: "completed",
+    total_rows: 2,
+    success_rows: 2,
+    failed_rows: 0,
+    warning_rows: 0,
+    error_codes: [],
+    failure_rows: [],
+  })
+
+  const summary = summarizeImportBatchFailureReasons(batch)
+
+  assert.equal(summary.totalReasonCount, 0)
+  assert.equal(summary.totalFailedRows, 0)
+  assert.equal(summary.topReason, null)
+  assert.deepEqual(summary.items, [])
 })
 
 test("import batch summary includes process-memory csv results", () => {

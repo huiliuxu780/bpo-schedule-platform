@@ -22,6 +22,7 @@ import {
   getImportBatchQualityIssues,
   importBatchStatusLabel,
   summarizeImportBatchFailureImpacts,
+  summarizeImportBatchFailureReasons,
 } from "@/lib/import-batch-history"
 
 type PageProps = {
@@ -44,6 +45,7 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
 
   const qualityIssues = getImportBatchQualityIssues(batch.id, fallbackDataQualityIssues)
   const fallbackFailureImpactSummary = summarizeImportBatchFailureImpacts(batch.id)
+  const failureReasonSummary = summarizeImportBatchFailureReasons(batch)
   const failureImpactItems =
     batch.failureImpacts.length > 0 ? batch.failureImpacts : fallbackFailureImpactSummary.items
   const totalAffectedRows =
@@ -77,42 +79,107 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
         </section>
 
         {batch.failureRows.length > 0 ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>失败行明细</CardTitle>
-              <CardDescription>
-                按行号、字段、错误码和原值定位需要修正的数据。
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-2">
-              {batch.failureRows.map((row) => (
-                <div
-                  key={`${row.failedRowNumber}-${row.fieldName}-${row.errorCode}`}
-                  className="grid gap-2 rounded-lg border p-3 text-sm md:grid-cols-[6rem_1fr_1fr_2fr]"
-                >
-                  <div>
-                    <div className="text-xs text-muted-foreground">行号</div>
-                    <div className="font-medium">{row.failedRowNumber}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">字段</div>
-                    <div className="font-mono text-xs">{row.fieldName}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">错误码</div>
-                    <div className="font-mono text-xs">{row.errorCode}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">说明</div>
-                    <div className="text-muted-foreground">
-                      {row.errorMessage}
-                      {row.rawValue ? ` / 原值：${row.rawValue}` : ""}
+          <section className="grid gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>失败原因汇总</CardTitle>
+                <CardDescription>
+                  按字段和错误码聚合失败行，辅助判断修正顺序。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-3 md:grid-cols-4">
+                  <Detail
+                    label="原因数"
+                    value={`${failureReasonSummary.totalReasonCount}`}
+                  />
+                  <Detail
+                    label="失败行"
+                    value={`${failureReasonSummary.totalFailedRows}`}
+                  />
+                  <Detail
+                    label="首要字段"
+                    value={failureReasonSummary.topReason?.fieldName ?? "无"}
+                  />
+                  <Detail
+                    label="首要错误码"
+                    value={failureReasonSummary.topReason?.errorCode ?? "无"}
+                  />
+                </div>
+
+                <div className="grid gap-3">
+                  {failureReasonSummary.items.map((reason) => (
+                    <div key={reason.id} className="rounded-lg border p-3">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="font-mono text-xs text-muted-foreground">
+                            {reason.fieldName} / {reason.errorCode}
+                          </div>
+                          <div className="mt-1 text-sm font-medium">
+                            {reason.errorMessage}
+                          </div>
+                        </div>
+                        <Badge variant="secondary">失败 {reason.failedRows} 行</Badge>
+                      </div>
+                      <div className="mt-3 grid gap-2 text-xs text-muted-foreground md:grid-cols-[8rem_1fr]">
+                        <span>代表行：{reason.representativeRowNumber}</span>
+                        <span>
+                          代表原值：{reason.representativeRawValue || "空值"}
+                        </span>
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {reason.affectedObjects.map((object) => (
+                          <Badge key={object} variant="outline">
+                            {object}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="mt-3 text-sm text-muted-foreground">
+                        修正提示：{reason.correctionHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>失败行明细</CardTitle>
+                <CardDescription>
+                  按行号、字段、错误码和原值定位需要修正的数据。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-2">
+                {batch.failureRows.map((row) => (
+                  <div
+                    key={`${row.failedRowNumber}-${row.fieldName}-${row.errorCode}`}
+                    className="grid gap-2 rounded-lg border p-3 text-sm md:grid-cols-[6rem_1fr_1fr_2fr]"
+                  >
+                    <div>
+                      <div className="text-xs text-muted-foreground">行号</div>
+                      <div className="font-medium">{row.failedRowNumber}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">字段</div>
+                      <div className="font-mono text-xs">{row.fieldName}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">错误码</div>
+                      <div className="font-mono text-xs">{row.errorCode}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground">说明</div>
+                      <div className="text-muted-foreground">
+                        {row.errorMessage}
+                        {row.rawValue ? ` / 原值：${row.rawValue}` : ""}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+                ))}
+              </CardContent>
+            </Card>
+          </section>
         ) : null}
 
         <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
