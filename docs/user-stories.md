@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US554-US556 - 数据质量复核建议导入批次影响摘要
+
+```yaml
+stories:
+  - id: US554
+    requirement_ids: [R574, R575]
+    task_ids: [F390]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到复核建议关联的导入批次影响，以便知道建议问题来自哪个批次和失败行。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US555
+    requirement_ids: [R576]
+    task_ids: [F390]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望导入批次影响摘要展示批次数、失败行、影响对象、匹配字段和批次入口，以便继续只读追溯。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US556
+    requirement_ids: [R577]
+    task_ids: [Q108]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望复核建议导入批次影响摘要完成后做收口验证，确认页面展示、模型测试和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供复核建议导入批次影响摘要，包含建议问题、批次数、失败行、影响对象、匹配字段、批次入口和暂缓能力。"
+  - "数据质量总览页展示复核建议导入批次影响卡片。"
+  - "没有建议问题或批次影响时展示空状态，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US551-US553 - 数据质量缺口下一轮复核建议摘要
 
 ```yaml

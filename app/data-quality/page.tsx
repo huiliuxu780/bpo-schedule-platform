@@ -27,6 +27,7 @@ import {
   summarizeDataQualityFieldImpactSummary,
   summarizeDataQualityGapOwnerSourcePressure,
   summarizeDataQualityNextReviewRecommendation,
+  summarizeDataQualityReviewImportBatchImpact,
   summarizeDataQualityExceptionCauses,
   summarizeDataQualityPersonViewOrder,
   summarizeDataQualityReviewCoverageGap,
@@ -35,6 +36,7 @@ import {
   summarizeDataQualityExceptionTop,
   summarizeDataQualityIssues,
 } from "@/lib/data-quality"
+import { fallbackImportBatches } from "@/lib/import-batch-history"
 import {
   fallbackDataQualityGroups,
   getUngroupedDataQualityIssueIds,
@@ -54,6 +56,10 @@ export default function DataQualityPage() {
   const reviewCoverageGap = summarizeDataQualityReviewCoverageGap(rows)
   const gapOwnerSourcePressure = summarizeDataQualityGapOwnerSourcePressure(rows)
   const nextReviewRecommendation = summarizeDataQualityNextReviewRecommendation(rows)
+  const reviewImportBatchImpact = summarizeDataQualityReviewImportBatchImpact(
+    rows,
+    fallbackImportBatches
+  )
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -197,6 +203,98 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>复核建议导入批次影响</CardTitle>
+                <CardDescription>
+                  串联建议问题与导入批次、失败行和影响对象，便于继续追溯来源。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {reviewImportBatchImpact.representativeIssueId ?? "无关联批次"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="关联批次"
+                value={`${reviewImportBatchImpact.totalBatchCount}`}
+              />
+              <Detail
+                label="失败行"
+                value={`${reviewImportBatchImpact.totalFailedRows}`}
+              />
+              <Detail
+                label="影响对象"
+                value={`${reviewImportBatchImpact.affectedObjects.length}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    建议问题：{reviewImportBatchImpact.representativeIssueId ?? "无"}
+                    {reviewImportBatchImpact.representativeIssueTitle
+                      ? ` / ${reviewImportBatchImpact.representativeIssueTitle}`
+                      : ""}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    匹配字段：{reviewImportBatchImpact.matchedFields.join(" / ") || "无"} / 影响对象：
+                    {reviewImportBatchImpact.affectedObjects.join(" / ") || "无"}
+                  </div>
+                </div>
+                {reviewImportBatchImpact.firstBatch ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={reviewImportBatchImpact.firstBatch.href}>查看关联批次</Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {reviewImportBatchImpact.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {reviewImportBatchImpact.items.map((item) => (
+                    <div key={item.batchId} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">
+                        {item.batchId} / {item.templateName}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {item.sourceFile}
+                      </div>
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <Detail label="失败行" value={`${item.failedRows}`} />
+                        <Detail label="字段" value={`${item.matchedFields.length}`} />
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        查看提示：{item.reviewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前建议问题没有匹配到导入批次影响。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{reviewImportBatchImpact.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {reviewImportBatchImpact.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

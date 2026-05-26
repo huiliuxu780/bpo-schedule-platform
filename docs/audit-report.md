@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality review import batch impact
+
+#### 结论
+
+- `F390/Q108/US554-US556` 已完成数据质量复核建议导入批次影响摘要。
+- 前端模型新增 `summarizeDataQualityReviewImportBatchImpact()`，基于下一轮复核建议代表问题关联本地导入批次影响。
+- 数据质量总览页新增“复核建议导入批次影响”卡片，展示建议问题、关联批次、失败行、匹配字段、影响对象和“查看关联批次”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 导入批次影响摘要只基于本地 fallback 批次和质量问题，不代表真实批次落库、修复写入、审批、权限、导出、批量或生产持久化已经实现。
+- 摘要用于主管只读追溯，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityReviewImportBatchImpact` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，33 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“复核建议导入批次影响”“DQ-202605-004”“BATCH-20260519-001”“employee_id”“人员排班”“查看关联批次”“无真实数据修复”“无导出或批量处理”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality next review recommendation
 
 #### 结论

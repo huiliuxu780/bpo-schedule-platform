@@ -106,6 +106,19 @@ export type DataQualityImportBatchImpactSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityReviewImportBatchImpactSummary = {
+  representativeIssueId?: string
+  representativeIssueTitle?: string
+  totalBatchCount: number
+  totalFailedRows: number
+  matchedFields: string[]
+  affectedObjects: string[]
+  firstBatch?: DataQualityImportBatchImpactItem
+  items: DataQualityImportBatchImpactItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export type DataQualityExceptionTopItem = {
   issueId: string
   title: string
@@ -1151,6 +1164,60 @@ export function summarizeDataQualityNextReviewRecommendation(
         description: "完成只读查看后回到复核路径，确认是否仍有未覆盖缺口。",
       },
     ],
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
+export function summarizeDataQualityReviewImportBatchImpact(
+  rows: DataQualityIssue[],
+  batches: DataQualityImportBatchLike[]
+): DataQualityReviewImportBatchImpactSummary {
+  const recommendation = summarizeDataQualityNextReviewRecommendation(rows)
+
+  if (!recommendation.representativeIssueId) {
+    return {
+      totalBatchCount: 0,
+      totalFailedRows: 0,
+      matchedFields: [],
+      affectedObjects: [],
+      items: [],
+      nextViewHint: "当前没有建议问题可关联导入批次。",
+      deferredActions: deferredDataQualityActions,
+    }
+  }
+
+  const issue = rows.find(
+    (row) => row.id === recommendation.representativeIssueId
+  )
+
+  if (!issue) {
+    return {
+      representativeIssueId: recommendation.representativeIssueId,
+      representativeIssueTitle: recommendation.representativeIssueTitle,
+      totalBatchCount: 0,
+      totalFailedRows: 0,
+      matchedFields: [],
+      affectedObjects: [],
+      items: [],
+      nextViewHint: "当前建议问题没有匹配到本地数据质量记录。",
+      deferredActions: deferredDataQualityActions,
+    }
+  }
+
+  const impact = summarizeDataQualityImportBatchImpact(issue, batches)
+
+  return {
+    representativeIssueId: issue.id,
+    representativeIssueTitle: issue.title,
+    totalBatchCount: impact.totalBatchCount,
+    totalFailedRows: impact.totalFailedRows,
+    matchedFields: impact.matchedFields,
+    affectedObjects: impact.affectedObjects,
+    firstBatch: impact.items[0],
+    items: impact.items,
+    nextViewHint: impact.items[0]
+      ? `先查看关联批次 ${impact.items[0].batchId}，再回到建议问题确认字段和影响对象。`
+      : "当前建议问题没有匹配到导入批次影响，先查看数据质量详情。",
     deferredActions: deferredDataQualityActions,
   }
 }

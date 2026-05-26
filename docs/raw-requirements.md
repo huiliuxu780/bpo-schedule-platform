@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R574-R577 - 数据质量复核建议导入批次影响摘要
+
+```yaml
+requirements:
+  - id: R574
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到复核建议关联的导入批次影响，以便知道建议问题来自哪个批次和失败行。"
+  - id: R575
+    module: "数据质量"
+    description: "导入批次影响摘要需要基于现有本地下一轮复核建议、数据质量问题和 fallback 导入批次影响聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R576
+    module: "数据质量"
+    description: "导入批次影响摘要需要展示建议问题、批次数、失败行、影响对象、匹配字段、批次入口、查看提示和暂缓能力。"
+  - id: R577
+    module: "质量与交付"
+    description: "数据质量复核建议导入批次影响摘要完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM requested continuing after F389 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读复核建议导入批次影响摘要，基于已有下一轮复核建议、数据质量问题和 fallback 导入批次影响聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R570-R573 - 数据质量缺口下一轮复核建议摘要
 
 ```yaml
