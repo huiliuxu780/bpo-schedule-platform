@@ -2,6 +2,24 @@
 
 ## 2026-05-26
 
+### F379-Q097 Data Quality Exception Top
+
+- branch_name: `codex/f379-data-quality-exception-top`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `41a7ba1`
+- remote_status: `not_pushed`
+- scope: frontend local read-only function: add impacted-exception Top aggregation to the data quality overview, ranking issues by impacted exceptions, impacted people, blocked rows, severity, and next viewing hints.
+- allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality.ts`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing data quality overview route, data quality frontend model/test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing impacted-exception top export; data-quality tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F378-Q096 Weekly Closure Trend Reasons
 
 - branch_name: `codex/f378-weekly-closure-trend-reasons`

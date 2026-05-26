@@ -19,6 +19,17 @@
 
 ### 2026-05-26
 
+- task_id: `F379/Q097`
+- source_ids:
+  - `R530-R533`
+- story_ids:
+  - `US521-US523`
+- action: 完成数据质量影响异常 Top 聚合。
+- status: `done`
+- notes: 数据质量总览页现在展示“影响异常 Top”，按影响异常数、影响人员、阻断行和严重度对质量问题排序，并提供下一查看提示和问题详情入口；模型基于现有本地 affectedObjects 与 impactLinks 只读聚合。本次不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-26
+
 - task_id: `F378/Q096`
 - source_ids:
   - `R526-R529`

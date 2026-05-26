@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality impacted-exception top aggregation
+
+#### 结论
+
+- `F379/Q097/US521-US523` 已完成数据质量影响异常 Top 聚合。
+- 前端模型新增 `summarizeDataQualityExceptionTop()`，基于数据质量问题的影响对象和履约入口聚合影响异常数、影响人员、阻断行、首要查看入口和暂缓能力。
+- 数据质量总览页新增“影响异常 Top”卡片，展示影响问题、影响异常、影响人员、排名问题、影响对象、下一查看和“查看问题”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- Top 聚合只基于本地现有 quality issue affectedObjects/impactLinks，不代表真实异常闭环写入、数据修复、证据补录、审批、权限、导出、批量或生产持久化已经实现。
+- 影响排序用于主管查看优先级，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityExceptionTop` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，10 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“影响异常 Top”“影响问题”“影响异常”“影响人员”“DQ-202605-010”“状态时间段重叠”“下一查看”“无真实数据修复”“无导出或批量处理”“查看问题”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Weekly closure readiness trend reason breakdown
 
 #### 结论

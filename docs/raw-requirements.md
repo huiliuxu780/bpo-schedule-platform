@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R530-R533 - 数据质量影响异常 Top 聚合
+
+```yaml
+requirements:
+  - id: R530
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到影响履约异常最多的数据质量问题，以便优先查看高影响问题。"
+  - id: R531
+    module: "数据质量"
+    description: "影响异常 Top 聚合需要基于现有本地数据质量问题、影响对象和履约入口聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R532
+    module: "数据质量"
+    description: "影响异常 Top 聚合需要展示影响异常数、影响人员、阻断行、首要查看入口和暂缓能力。"
+  - id: R533
+    module: "质量与交付"
+    description: "数据质量影响异常 Top 聚合完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F378 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读 Top 聚合，基于已有 fallbackDataQualityIssues 的 affectedObjects 与 impactLinks 聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R526-R529 - 周度闭环准备趋势原因拆解
 
 ```yaml

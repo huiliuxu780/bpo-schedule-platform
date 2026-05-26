@@ -23,6 +23,7 @@ import {
   dataQualitySourceLabels,
   dataQualityStatusLabel,
   fallbackDataQualityIssues,
+  summarizeDataQualityExceptionTop,
   summarizeDataQualityIssues,
 } from "@/lib/data-quality"
 import {
@@ -34,6 +35,7 @@ import {
 export default function DataQualityPage() {
   const rows = fallbackDataQualityIssues
   const summary = summarizeDataQualityIssues(rows)
+  const exceptionTopSummary = summarizeDataQualityExceptionTop(rows)
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -106,6 +108,74 @@ export default function DataQualityPage() {
             </CardContent>
           </Card>
         </section>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>影响异常 Top</CardTitle>
+                <CardDescription>
+                  按影响异常、人员和阻断行聚合，帮助主管优先查看高影响数据问题。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {exceptionTopSummary.totalImpactedExceptionCount} 项异常
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid grid-cols-3 gap-3">
+              <Detail label="影响问题" value={`${exceptionTopSummary.totalIssueCount}`} />
+              <Detail label="影响异常" value={`${exceptionTopSummary.totalImpactedExceptionCount}`} />
+              <Detail label="影响人员" value={`${exceptionTopSummary.totalImpactedPeopleCount}`} />
+            </div>
+
+            {exceptionTopSummary.items.length > 0 ? (
+              <div className="grid gap-3 lg:grid-cols-2">
+                {exceptionTopSummary.items.slice(0, 4).map((item) => (
+                  <div key={item.issueId} className="rounded-lg border p-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">
+                          {item.issueId} / {item.title}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {dataQualitySeverityLabel(item.severity)} / {dataQualityStatusLabel(item.status)} / {item.owner}
+                        </div>
+                      </div>
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={item.href}>查看问题</Link>
+                      </Button>
+                    </div>
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                      <Detail label="异常" value={`${item.impactedExceptionCount}`} />
+                      <Detail label="人员" value={`${item.impactedPeople.length}`} />
+                      <Detail label="阻断行" value={`${item.blockedRows}`} />
+                    </div>
+                    <div className="mt-3 text-xs text-muted-foreground">
+                      影响对象：{item.affectedObjects.join(" / ")}
+                    </div>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      下一查看：{item.nextViewHint}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                当前数据质量问题没有匹配到履约异常影响。
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              {exceptionTopSummary.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

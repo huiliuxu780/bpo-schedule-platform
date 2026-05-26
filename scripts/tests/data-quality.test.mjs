@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
   fallbackDataQualityIssues,
   filterDataQualityIssues,
   getDataQualityIssue,
+  summarizeDataQualityExceptionTop,
   summarizeDataQualityImportBatchImpact,
   summarizeDataQualityIssues,
 } from "../../lib/data-quality.ts";
@@ -131,4 +133,41 @@ test("data quality import batch impact exposes empty state", () => {
   assert.deepEqual(summary.matchedFields, []);
   assert.deepEqual(summary.affectedObjects, []);
   assert.deepEqual(summary.items, []);
+});
+
+test("data quality exception top summarizes impacted anomalies", () => {
+  const summary = summarizeDataQualityExceptionTop(fallbackDataQualityIssues);
+
+  assert.equal(summary.totalIssueCount, 2);
+  assert.equal(summary.totalImpactedExceptionCount, 2);
+  assert.equal(summary.totalImpactedPeopleCount, 2);
+  assert.equal(summary.topIssue?.issueId, "DQ-202605-010");
+  assert.equal(summary.topIssue?.href, "/data-quality/DQ-202605-010");
+  assert.equal(summary.topIssue?.impactedExceptionCount, 1);
+  assert.ok(summary.topIssue?.impactedPeople.includes("A-1002"));
+  assert.ok(summary.topIssue?.affectedObjects.includes("小组成员矩阵异常"));
+  assert.ok(summary.topIssue?.nextViewHint.includes("个人履约"));
+  assert.ok(summary.items.some((item) => item.issueId === "DQ-202605-004"));
+  assert.ok(summary.deferredActions.includes("无真实数据修复"));
+  assert.ok(summary.deferredActions.includes("无导出或批量处理"));
+});
+
+test("data quality exception top exposes empty state", () => {
+  const summary = summarizeDataQualityExceptionTop([]);
+
+  assert.equal(summary.totalIssueCount, 0);
+  assert.equal(summary.totalImpactedExceptionCount, 0);
+  assert.equal(summary.totalImpactedPeopleCount, 0);
+  assert.equal(summary.topIssue, undefined);
+  assert.deepEqual(summary.items, []);
+});
+
+test("data quality page renders exception top summary", () => {
+  const pageSource = readFileSync(new URL("../../app/data-quality/page.tsx", import.meta.url), "utf8");
+
+  assert.ok(pageSource.includes("summarizeDataQualityExceptionTop"));
+  assert.ok(pageSource.includes("影响异常 Top"));
+  assert.ok(pageSource.includes("影响异常"));
+  assert.ok(pageSource.includes("影响人员"));
+  assert.ok(pageSource.includes("下一查看"));
 });

@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US521-US523 - 数据质量影响异常 Top 聚合
+
+```yaml
+stories:
+  - id: US521
+    requirement_ids: [R530, R531]
+    task_ids: [F379]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到影响异常 Top 问题，以便优先查看影响最多履约异常的数据问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US522
+    requirement_ids: [R532]
+    task_ids: [F379]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望 Top 聚合展示影响异常数、影响人员、阻断行和查看入口，以便快速定位应先看的质量问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US523
+    requirement_ids: [R533]
+    task_ids: [Q097]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望数据质量影响异常 Top 聚合完成后做收口验证，确认只读聚合、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供影响异常 Top 聚合，包含影响异常数、影响人员、阻断行、首要查看入口和暂缓能力。"
+  - "数据质量总览页展示影响异常 Top 卡片。"
+  - "没有影响异常时展示无影响异常，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US518-US520 - 周度闭环准备趋势原因拆解
 
 ```yaml

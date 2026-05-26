@@ -106,6 +106,29 @@ export type DataQualityImportBatchImpactSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityExceptionTopItem = {
+  issueId: string
+  title: string
+  severity: DataQualitySeverity
+  status: DataQualityStatus
+  owner: string
+  impactedExceptionCount: number
+  impactedPeople: string[]
+  blockedRows: number
+  affectedObjects: string[]
+  href: string
+  nextViewHint: string
+}
+
+export type DataQualityExceptionTopSummary = {
+  totalIssueCount: number
+  totalImpactedExceptionCount: number
+  totalImpactedPeopleCount: number
+  topIssue?: DataQualityExceptionTopItem
+  items: DataQualityExceptionTopItem[]
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -290,6 +313,36 @@ export function summarizeDataQualityImportBatchImpact(
   }
 }
 
+export function summarizeDataQualityExceptionTop(
+  rows: DataQualityIssue[]
+): DataQualityExceptionTopSummary {
+  const items = rows
+    .map(buildDataQualityExceptionTopItem)
+    .filter((item) => item !== null)
+    .sort(
+      (a, b) =>
+        b.impactedExceptionCount - a.impactedExceptionCount ||
+        b.impactedPeople.length - a.impactedPeople.length ||
+        b.blockedRows - a.blockedRows ||
+        dataQualitySeverityRank[b.severity] - dataQualitySeverityRank[a.severity] ||
+        a.issueId.localeCompare(b.issueId)
+    )
+
+  return {
+    totalIssueCount: items.length,
+    totalImpactedExceptionCount: items.reduce(
+      (total, item) => total + item.impactedExceptionCount,
+      0
+    ),
+    totalImpactedPeopleCount: uniqueValues(
+      items.flatMap((item) => item.impactedPeople)
+    ).length,
+    topIssue: items[0],
+    items,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
 export function dataQualitySeverityLabel(severity: DataQualitySeverity) {
   return {
     high: "高",
@@ -305,6 +358,60 @@ export function dataQualityStatusLabel(status: DataQualityStatus) {
     resolved: "已解决",
     ignored: "已忽略",
   }[status]
+}
+
+const dataQualitySeverityRank: Record<DataQualitySeverity, number> = {
+  high: 3,
+  medium: 2,
+  low: 1,
+}
+
+function buildDataQualityExceptionTopItem(
+  issue: DataQualityIssue
+): DataQualityExceptionTopItem | null {
+  const exceptionObjects = issue.affectedObjects.filter((object) =>
+    object.type.includes("履约") || object.label.includes("异常")
+  )
+  const personTimelineLinks = issue.impactLinks.filter(
+    (link) => link.type === "person_timeline"
+  )
+  const impactedExceptionCount =
+    exceptionObjects.length > 0 || personTimelineLinks.length > 0
+      ? Math.max(1, exceptionObjects.filter((object) => object.label.includes("异常")).length)
+      : 0
+
+  if (impactedExceptionCount === 0) {
+    return null
+  }
+
+  const impactedPeople = uniqueValues([
+    ...issue.affectedObjects
+      .map((object) => object.objectId)
+      .filter((objectId) => /^A-\d+/.test(objectId)),
+    ...issue.impactLinks
+      .map((link) => link.target.match(/A-\d+/)?.[0] ?? "")
+      .filter((employeeId) => employeeId.length > 0),
+  ])
+  const affectedObjects = uniqueValues(
+    issue.affectedObjects.map((object) => object.label)
+  )
+  const nextLink = personTimelineLinks[0] ?? issue.impactLinks[0]
+
+  return {
+    issueId: issue.id,
+    title: issue.title,
+    severity: issue.severity,
+    status: issue.status,
+    owner: issue.owner,
+    impactedExceptionCount,
+    impactedPeople,
+    blockedRows: issue.blockedRows,
+    affectedObjects,
+    href: `/data-quality/${issue.id}`,
+    nextViewHint: nextLink
+      ? `先${nextLink.label}，再回到数据质量详情确认字段和原值。`
+      : "先查看数据质量详情，确认字段、原值和影响对象。",
+  }
 }
 
 function buildDataQualityImportBatchImpactItem(
