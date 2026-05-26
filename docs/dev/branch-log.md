@@ -12,7 +12,7 @@
 - allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality-groups.ts`, `scripts/tests/data-quality-groups.test.mjs`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates existing data quality overview route, data quality group frontend model/test, data quality page source test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
 - check_result: TDD red observed for missing group step owner handoff import impact export and missing page source reference; data-quality group tests, data-quality tests, product copy/navigation tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
-- local_commit_sha: `1a87db2`
+- local_commit_sha: `b661c04`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
