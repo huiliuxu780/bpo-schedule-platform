@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US512-US514 - 导入批次复核结论预览
+
+```yaml
+stories:
+  - id: US512
+    requirement_ids: [R518, R519]
+    task_ids: [F376]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望在导入批次详情看到复核结论预览，以便把修正材料转成可阅读的建议结论。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US513
+    requirement_ids: [R520]
+    task_ids: [F376]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望复核结论预览展示建议结论、证据摘要、风险提示和下一查看点，以便复核前快速对齐口径。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US514
+    requirement_ids: [R521]
+    task_ids: [Q094]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望复核结论预览完成后做收口验证，确认只读结论、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "导入批次模型提供复核结论预览，包含建议结论、结论置信度、证据摘要、风险提示、下一查看点和暂缓能力。"
+  - "导入批次详情页在修正材料预览后展示复核结论预览。"
+  - "没有失败行时展示无复核结论准备，不误导为提交、补证据、关闭异常、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/import-batch-history.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US509-US511 - 导入批次修正材料预览
 
 ```yaml

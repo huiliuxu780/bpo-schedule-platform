@@ -27,6 +27,7 @@ import {
   summarizeImportBatchCorrectionMaterials,
   summarizeImportBatchCorrectionReadiness,
   summarizeImportBatchQualityImpact,
+  summarizeImportBatchReviewConclusion,
 } from "@/lib/import-batch-history"
 
 type PageProps = {
@@ -59,6 +60,10 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
     fallbackDataQualityIssues
   )
   const correctionMaterialSummary = summarizeImportBatchCorrectionMaterials(
+    batch,
+    fallbackDataQualityIssues
+  )
+  const reviewConclusionSummary = summarizeImportBatchReviewConclusion(
     batch,
     fallbackDataQualityIssues
   )
@@ -500,6 +505,94 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
 
             <Card>
               <CardHeader>
+                <CardTitle>复核结论预览</CardTitle>
+                <CardDescription>
+                  将修正材料整理为复核前的建议结论和风险口径。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-3 md:grid-cols-4">
+                  <Detail
+                    label="结论状态"
+                    value={reviewConclusionStatusLabel(
+                      reviewConclusionSummary.conclusionStatus
+                    )}
+                  />
+                  <Detail
+                    label="置信度"
+                    value={reviewConclusionConfidenceLabel(
+                      reviewConclusionSummary.confidence
+                    )}
+                  />
+                  <Detail
+                    label="证据摘要"
+                    value={`${reviewConclusionSummary.evidenceSummary.length}`}
+                  />
+                  <Detail
+                    label="风险提示"
+                    value={`${reviewConclusionSummary.riskSummary.length}`}
+                  />
+                </div>
+
+                <div className="rounded-lg border p-3">
+                  <div className="text-xs text-muted-foreground">建议结论</div>
+                  <p className="mt-1 text-sm font-medium">
+                    {reviewConclusionSummary.suggestedConclusion}
+                  </p>
+                </div>
+
+                {reviewConclusionSummary.evidenceSummary.length > 0 ? (
+                  <div className="grid gap-2">
+                    <div className="text-xs text-muted-foreground">证据摘要</div>
+                    {reviewConclusionSummary.evidenceSummary.map((item, index) => (
+                      <div
+                        key={item}
+                        className="grid gap-2 rounded-lg border p-3 text-sm sm:grid-cols-[3rem_1fr]"
+                      >
+                        <span className="font-medium tabular-nums">{index + 1}</span>
+                        <span className="text-muted-foreground">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {reviewConclusionSummary.riskSummary.length > 0 ? (
+                  <div className="grid gap-2">
+                    <div className="text-xs text-muted-foreground">风险提示</div>
+                    {reviewConclusionSummary.riskSummary.map((item, index) => (
+                      <div
+                        key={item}
+                        className="grid gap-2 rounded-lg border p-3 text-sm sm:grid-cols-[3rem_1fr]"
+                      >
+                        <span className="font-medium tabular-nums">{index + 1}</span>
+                        <span className="text-muted-foreground">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                <div className="rounded-lg border p-3">
+                  <div className="text-xs text-muted-foreground">下一查看点</div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {reviewConclusionSummary.nextReviewPoint}
+                  </p>
+                </div>
+
+                <div>
+                  <div className="text-xs text-muted-foreground">暂缓能力</div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {reviewConclusionSummary.deferredActions.map((action) => (
+                      <Badge key={action} variant="outline">
+                        {action}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>失败行明细</CardTitle>
                 <CardDescription>
                   按行号、字段、错误码和原值定位需要修正的数据。
@@ -706,6 +799,24 @@ function correctionMaterialStatusLabel(
     field_material_ready: "字段材料",
     quality_material_ready: "质量材料",
   }[status]
+}
+
+function reviewConclusionStatusLabel(
+  status: "not_required" | "field_review" | "quality_review"
+) {
+  return {
+    not_required: "无需结论",
+    field_review: "字段复核",
+    quality_review: "质量复核",
+  }[status]
+}
+
+function reviewConclusionConfidenceLabel(confidence: "none" | "medium" | "high") {
+  return {
+    none: "无",
+    medium: "中",
+    high: "高",
+  }[confidence]
 }
 
 function Metric({

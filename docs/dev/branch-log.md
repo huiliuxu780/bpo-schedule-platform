@@ -2,6 +2,24 @@
 
 ## 2026-05-26
 
+### F376-Q094 Import Review Conclusion Preview
+
+- branch_name: `codex/f376-import-review-conclusion-preview`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `8348649`
+- remote_status: `not_pushed`
+- scope: frontend local read-only function: prepare import review conclusion previews on the batch detail page by turning correction materials into conclusion status, suggested conclusion, confidence, evidence summary, risk summary, next review point, and deferred-action boundary.
+- allowed_files_check: `app/import-batches/**`, `lib/import-batch-history.ts`, `scripts/tests/import-batch-history.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates the existing import batch detail route, import batch frontend model/test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing review conclusion preview export; import-batch model tests, product UI copy audit, navigation regression, typecheck, strict state check, local API and HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F375-Q093 Import Correction Material Preview
 
 - branch_name: `codex/f375-import-correction-material-preview`

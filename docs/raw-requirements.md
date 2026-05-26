@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R518-R521 - 导入批次复核结论预览
+
+```yaml
+requirements:
+  - id: R518
+    module: "导入批次"
+    description: "现场主管需要在导入批次详情看到复核结论预览，把修正材料转成建议结论、证据摘要、风险提示和下一查看点。"
+  - id: R519
+    module: "导入批次"
+    description: "复核结论预览需要基于现有本地模型聚合，不新增复核结论写入、证据补录、异常关闭、审批、导出或批量能力。"
+  - id: R520
+    module: "导入批次"
+    description: "复核结论预览需要展示建议结论、结论置信度、证据摘要、风险提示、下一查看点和暂缓能力。"
+  - id: R521
+    module: "质量与交付"
+    description: "导入批次复核结论预览完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F375 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做导入批次详情页的本地只读复核结论预览，基于已有 failureRows、failure reason summary、quality impact rollup、correction readiness summary 和 correction materials 聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R514-R517 - 导入批次修正材料预览
 
 ```yaml

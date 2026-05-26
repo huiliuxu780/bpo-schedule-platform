@@ -2,6 +2,37 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F376
+    title: "导入批次复核结论预览"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/import-batches/**", "lib/import-batch-history.ts", "scripts/tests/import-batch-history.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "导入批次模型提供复核结论预览，包含建议结论、结论置信度、证据摘要、风险提示、下一查看点和暂缓能力。"
+      - "导入批次详情页在修正材料预览后展示复核结论预览。"
+      - "没有失败行时展示无复核结论准备，不提供提交、补证据、关闭异常、审批、导出或批量能力。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量、生产状态字典或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q094
+    title: "导入批次复核结论预览 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "前端模型测试、页面 smoke、状态检查和总检查通过。"
+      - "current queue 和 active tasks 在完成后清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量、生产状态字典或生产公式"]
+    commit_after_done: true
   - id: F375
     title: "导入批次修正材料预览"
     priority: P0

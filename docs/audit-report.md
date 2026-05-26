@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-26 - Import review conclusion preview
+
+#### 结论
+
+- `F376/Q094/US512-US514` 已完成导入批次复核结论预览。
+- 前端模型新增 `summarizeImportBatchReviewConclusion()`，基于失败原因汇总、质量影响聚合、修正准备摘要和修正材料预览生成结论状态、建议结论、置信度、证据摘要、风险提示、下一查看点和暂缓能力。
+- 导入批次详情页在“修正材料预览”后展示“复核结论预览”，并保留“失败行明细”作为下一层定位信息。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 复核结论预览只做复核前口径整理，不代表真实复核结论写入、证据补录、异常关闭、审批、权限、导出、批量或生产持久化已经实现。
+- in-app Browser 未能暴露可直接导航本地页面的控制接口；已用同一开发服务的本机 API 和 HTML 响应核对页面关键文本。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/import-batch-history.test.mjs` 首次失败于 `summarizeImportBatchReviewConclusion` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/import-batch-history.test.mjs`：通过，23 个导入批次模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过。
+- `npm run typecheck`：通过。
+- 页面 smoke：通过，使用本地 API 创建 `BATCH-SL-20260526-001`，详情 HTML 包含“复核结论预览”“建议结论”“结论状态”“置信度”“证据摘要”“风险提示”“下一查看点”“暂缓能力”“无复核结论写入”“无补证据写入”“无关闭异常”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Import correction material preview
 
 #### 结论

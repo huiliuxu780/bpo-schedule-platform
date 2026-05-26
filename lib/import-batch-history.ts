@@ -181,6 +181,23 @@ export type ImportBatchCorrectionMaterialSummary = {
   deferredActions: string[]
 }
 
+export type ImportBatchReviewConclusionStatus =
+  | "not_required"
+  | "field_review"
+  | "quality_review"
+
+export type ImportBatchReviewConclusionConfidence = "none" | "medium" | "high"
+
+export type ImportBatchReviewConclusionSummary = {
+  conclusionStatus: ImportBatchReviewConclusionStatus
+  suggestedConclusion: string
+  confidence: ImportBatchReviewConclusionConfidence
+  evidenceSummary: string[]
+  riskSummary: string[]
+  nextReviewPoint: string
+  deferredActions: string[]
+}
+
 export type ImportBatchSummary = {
   total: number
   completed: number
@@ -210,6 +227,14 @@ export const deferredImportBatchCorrectionActions = [
 export const deferredImportBatchCorrectionMaterialActions = [
   "无修正提交",
   "无补证据写入",
+  "无审批或批量",
+  "无导出",
+]
+
+export const deferredImportBatchReviewConclusionActions = [
+  "无复核结论写入",
+  "无补证据写入",
+  "无关闭异常",
   "无审批或批量",
   "无导出",
 ]
@@ -885,6 +910,72 @@ export function summarizeImportBatchCorrectionMaterials(
       confirmationPoint,
     ],
     deferredActions: deferredImportBatchCorrectionMaterialActions,
+  }
+}
+
+export function summarizeImportBatchReviewConclusion(
+  batch: ImportBatch,
+  issueRows: DataQualityIssue[]
+): ImportBatchReviewConclusionSummary {
+  const materialSummary = summarizeImportBatchCorrectionMaterials(batch, issueRows)
+
+  if (materialSummary.materialStatus === "not_required") {
+    return {
+      conclusionStatus: "not_required",
+      suggestedConclusion: "当前批次没有失败行，无需准备复核结论。",
+      confidence: "none",
+      evidenceSummary: [],
+      riskSummary: [],
+      nextReviewPoint: "无需进入失败行或质量问题复核。",
+      deferredActions: deferredImportBatchReviewConclusionActions,
+    }
+  }
+
+  const readinessSummary = summarizeImportBatchCorrectionReadiness(batch, issueRows)
+  const qualityImpactSummary = summarizeImportBatchQualityImpact(batch, issueRows)
+  const topIssue = qualityImpactSummary.topIssue
+  const primaryField = readinessSummary.primaryField
+  const evidenceSummary = [
+    ...materialSummary.fieldMaterials.slice(0, 2).map((item) => {
+      return `${item.fieldName} 字段 ${item.errorCode} 失败 ${item.failedRows} 行，代表行 ${item.representativeRowNumber}。`
+    }),
+    materialSummary.failureRowSamples.length > 0
+      ? `已准备 ${materialSummary.failureRowSamples.length} 条失败行样本用于核对原值。`
+      : "",
+    ...materialSummary.qualityReferences.slice(0, 2).map((reference) => {
+      return `${reference.issueId} ${reference.title} 阻塞 ${reference.blockedRows} 行。`
+    }),
+  ].filter((item) => item.length > 0)
+
+  if (!topIssue) {
+    return {
+      conclusionStatus: "field_review",
+      suggestedConclusion: `建议先按 ${primaryField} 字段做复核，本批暂不形成关闭结论。`,
+      confidence: "medium",
+      evidenceSummary,
+      riskSummary: [
+        "当前失败原因尚未关联数据质量问题，需要先核对字段原值、错误码和影响对象。",
+      ],
+      nextReviewPoint: `先看 ${primaryField} 字段材料，再看失败行样本。`,
+      deferredActions: deferredImportBatchReviewConclusionActions,
+    }
+  }
+
+  return {
+    conclusionStatus: "quality_review",
+    suggestedConclusion: `建议先按 ${primaryField} 字段和 ${topIssue.id} 质量问题复核，本批暂不形成关闭结论。`,
+    confidence: "high",
+    evidenceSummary,
+    riskSummary: [
+      `${topIssue.id} ${topIssue.title} 为${dataQualitySeverityText(
+        topIssue.severity
+      )}风险，仍影响 ${topIssue.blockedRows} 行。`,
+      qualityImpactSummary.unmatchedReasonCount > 0
+        ? `仍有 ${qualityImpactSummary.unmatchedReasonCount} 类失败原因未关联质量问题。`
+        : "失败原因已覆盖到相关质量问题。",
+    ],
+    nextReviewPoint: `查看 ${topIssue.id} 质量问题，再回到失败行样本确认原值。`,
+    deferredActions: deferredImportBatchReviewConclusionActions,
   }
 }
 

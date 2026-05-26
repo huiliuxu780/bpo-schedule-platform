@@ -16,6 +16,7 @@ import {
   summarizeImportBatchCorrectionMaterials,
   summarizeImportBatchCorrectionReadiness,
   summarizeImportBatchQualityImpact,
+  summarizeImportBatchReviewConclusion,
   summarizeImportBatches,
 } from "../../lib/import-batch-history.ts"
 
@@ -603,6 +604,112 @@ test("import batch correction materials expose empty state without failures", ()
   assert.deepEqual(summary.fieldMaterials, [])
   assert.deepEqual(summary.failureRowSamples, [])
   assert.deepEqual(summary.qualityReferences, [])
+})
+
+test("import batch review conclusion previews linked quality conclusion", () => {
+  const batch = {
+    ...getImportBatchById("BATCH-20260519-001"),
+    failureRows: [
+      {
+        batchId: "BATCH-20260519-001",
+        entity: "master_data",
+        failedRowNumber: 3,
+        fieldName: "employee_name",
+        errorCode: "missing_required_field",
+        errorMessage: "坐席姓名不能为空",
+        rawValue: "",
+      },
+      {
+        batchId: "BATCH-20260519-001",
+        entity: "master_data",
+        failedRowNumber: 4,
+        fieldName: "employee_id",
+        errorCode: "unknown_foreign_key",
+        errorMessage: "员工绑定缺失",
+        rawValue: "A-9931",
+      },
+    ],
+  }
+
+  const summary = summarizeImportBatchReviewConclusion(
+    batch,
+    fallbackDataQualityIssues
+  )
+
+  assert.equal(summary.conclusionStatus, "quality_review")
+  assert.equal(summary.confidence, "high")
+  assert.ok(summary.suggestedConclusion.includes("DQ-202605-001"))
+  assert.ok(summary.evidenceSummary.some((item) => item.includes("employee_id")))
+  assert.ok(summary.riskSummary.some((item) => item.includes("高风险")))
+  assert.ok(summary.nextReviewPoint.includes("DQ-202605-001"))
+  assert.ok(summary.deferredActions.includes("无复核结论写入"))
+  assert.ok(summary.deferredActions.includes("无补证据写入"))
+})
+
+test("import batch review conclusion previews field-only conclusion", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-SL-20260526-006",
+    entity: "status_log",
+    file_name: "status_log_review_test.csv",
+    uploaded_by: "现场主管",
+    uploaded_at: "2026-05-26T22:40:00+08:00",
+    status: "completed_with_errors",
+    total_rows: 1,
+    success_rows: 0,
+    failed_rows: 1,
+    warning_rows: 0,
+    error_codes: ["invalid_time_range"],
+    failure_rows: [
+      {
+        batch_id: "BATCH-SL-20260526-006",
+        entity: "status_log",
+        failed_row_number: 2,
+        field_name: "end_at",
+        error_code: "invalid_time_range",
+        error_message: "状态结束时间必须晚于开始时间",
+        raw_value: "2026-05-26T09:00:00",
+      },
+    ],
+  })
+
+  const summary = summarizeImportBatchReviewConclusion(
+    batch,
+    fallbackDataQualityIssues
+  )
+
+  assert.equal(summary.conclusionStatus, "field_review")
+  assert.equal(summary.confidence, "medium")
+  assert.ok(summary.suggestedConclusion.includes("end_at"))
+  assert.ok(summary.riskSummary.some((item) => item.includes("尚未关联数据质量问题")))
+  assert.ok(summary.nextReviewPoint.includes("失败行样本"))
+})
+
+test("import batch review conclusion exposes empty state without failures", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-DF-20260526-004",
+    entity: "demand_forecast",
+    file_name: "demand_forecast_review_clean.csv",
+    uploaded_by: "预测运营",
+    uploaded_at: "2026-05-26T22:50:00+08:00",
+    status: "completed",
+    total_rows: 2,
+    success_rows: 2,
+    failed_rows: 0,
+    warning_rows: 0,
+    error_codes: [],
+    failure_rows: [],
+  })
+
+  const summary = summarizeImportBatchReviewConclusion(
+    batch,
+    fallbackDataQualityIssues
+  )
+
+  assert.equal(summary.conclusionStatus, "not_required")
+  assert.equal(summary.confidence, "none")
+  assert.equal(summary.suggestedConclusion, "当前批次没有失败行，无需准备复核结论。")
+  assert.deepEqual(summary.evidenceSummary, [])
+  assert.deepEqual(summary.riskSummary, [])
 })
 
 test("import batch summary includes process-memory csv results", () => {

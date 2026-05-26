@@ -142,6 +142,7 @@ Current invariants:
 - `US503/F373 -> US505/Q091` completed an import failure quality impact rollup slice: import batch detail pages now connect failure reasons to linked data quality issues, show related issue count, covered fields, unmatched reasons, affected objects, top issue, and issue viewing order. It remained local/read-only and returned current queue and active tasks to empty.
 - `US506/F374 -> US508/Q092` completed an import correction readiness summary slice: import batch detail pages now combine failure reasons and quality impact into readiness level, primary field, confirmation objects, risk prompt, review order, and deferred-action boundary. It remained local/read-only and returned current queue and active tasks to empty.
 - `US509/F375 -> US511/Q093` completed an import correction material preview slice: import batch detail pages now organize correction materials into material status, material summary, field materials, failure-row samples, quality references, conversation points, and deferred-action boundary. It remained local/read-only and returned current queue and active tasks to empty.
+- `US512/F376 -> US514/Q094` completed an import review conclusion preview slice: import batch detail pages now turn correction materials into conclusion status, suggested conclusion, confidence, evidence summary, risk summary, next review point, and deferred-action boundary. It remained local/read-only and returned current queue and active tasks to empty.
 
 ## Product Direction
 
