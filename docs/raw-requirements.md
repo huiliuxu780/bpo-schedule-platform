@@ -17,6 +17,122 @@
 
 ## Requirements
 
+### R618-R652 - G001 生产雏形真实导入与履约对比闭环
+
+```yaml
+requirements:
+  - id: R618
+    module: "数据导入"
+    description: "数据管理员需要上传真实 CSV 文件，并选择文件类型：主数据、人员级排班、需求预测、登录日志或状态日志。"
+  - id: R619
+    module: "数据导入"
+    description: "上传后需要预览字段映射、行数统计和待校验字段，避免直接把原始文件静默写入业务数据。"
+  - id: R620
+    module: "数据导入"
+    description: "每次导入需要形成批次记录，包含批次号、文件名、文件类型、上传人、上传时间、业务日期范围、处理状态和行数统计。"
+  - id: R621
+    module: "数据导入"
+    description: "导入处理需要保留成功行、失败行、错误字段、原始值、错误原因和建议修正，失败行不能被只读页面替代。"
+  - id: R622
+    module: "数据导入"
+    description: "成功导入需要生成本地版本记录，用于后续排班、预测、登录、状态和异常对比追溯。"
+  - id: R623
+    module: "数据质量"
+    description: "导入基础能力完成后需要 QA 验证上传、映射、批次、失败行、版本和无数据库边界。"
+  - id: R624
+    module: "主数据"
+    description: "系统需要支持坐席、职场、供应商、项目、技能和绑定关系的本地导入。"
+  - id: R625
+    module: "主数据"
+    description: "主数据需要支持有效期、状态、冻结、解冻和待确认口径，用于后续引用判断。"
+  - id: R626
+    module: "主数据"
+    description: "主数据需要提供本地维护能力，允许在 process-memory 中新增、修改、冻结和解冻记录。"
+  - id: R627
+    module: "主数据"
+    description: "排班、预测、登录和状态导入必须引用主数据，缺失或失效绑定进入数据质量问题。"
+  - id: R628
+    module: "主数据"
+    description: "主数据页面需要能查看人员、职场、供应商、项目、技能、绑定关系和引用校验结果。"
+  - id: R629
+    module: "质量与交付"
+    description: "主数据基础能力完成后需要 QA 验证导入、维护、有效期、冻结和引用校验。"
+  - id: R630
+    module: "排班计划"
+    description: "系统需要支持人员级排班导入，字段包括员工、日期、业务日、职场、供应商、项目、技能、班次和开始结束时间。"
+  - id: R631
+    module: "排班计划"
+    description: "人员级排班需要引用班次类型，并校验休息、饭点和是否计入已排人数口径。"
+  - id: R632
+    module: "排班计划"
+    description: "每次人员级排班导入需要生成排班版本，并保留来源批次和版本追溯。"
+  - id: R633
+    module: "排班计划"
+    description: "人员级排班需要展开为 0.5h 时段排班汇总，并能从汇总追溯到具体人员。"
+  - id: R634
+    module: "排班计划"
+    description: "非法时间、跨天未配置、员工不存在、绑定失效等排班问题需要进入失败行或数据质量问题。"
+  - id: R635
+    module: "质量与交付"
+    description: "人员排班基础能力完成后需要 QA 验证导入、班次引用、版本、0.5h 展开和履约日历链接。"
+  - id: R636
+    module: "需求预测"
+    description: "系统需要支持需求预测导入，按业务日期、职场、项目、0.5h 时段、技能组、等级和预测人数记录。"
+  - id: R637
+    module: "需求预测"
+    description: "每次需求预测导入需要生成预测版本，并支持版本变更追踪。"
+  - id: R638
+    module: "需求预测"
+    description: "需求预测需要按日期、职场、项目、时段、技能组和等级与排班时段对齐。"
+  - id: R639
+    module: "需求预测"
+    description: "预测导入中的无效职场、项目、技能组或等级需要进入失败行或数据质量问题。"
+  - id: R640
+    module: "质量与交付"
+    description: "需求预测基础能力完成后需要 QA 验证导入、版本、变更追踪和排班对齐。"
+  - id: R641
+    module: "实际履约"
+    description: "系统需要支持登录日志导入，包含员工、登录时间、登出时间、职场、项目和来源批次。"
+  - id: R642
+    module: "实际履约"
+    description: "系统需要支持状态日志导入，包含员工、状态类型、开始结束时间、职场、项目和来源批次。"
+  - id: R643
+    module: "实际履约"
+    description: "登录和状态处理需要支持业务日、跨天、时区和固定状态字典口径。"
+  - id: R644
+    module: "实际履约"
+    description: "状态区间需要切分到 0.5h 时段，并识别状态断档、重叠和未知状态。"
+  - id: R645
+    module: "实际履约"
+    description: "登录日志需要与人员级排班对比，识别未登录、迟到、早退和未排班登录。"
+  - id: R646
+    module: "实际履约"
+    description: "状态日志需要与人员级排班对比，识别非有效产能、状态断档、状态重叠和未知状态。"
+  - id: R647
+    module: "履约监控"
+    description: "对比结果需要进入履约日历和个人三轨详情，供主管继续复核处理。"
+  - id: R648
+    module: "质量与交付"
+    description: "登录和状态基础能力完成后需要 QA 验证导入、切分、对比、异常识别和页面联动。"
+  - id: R649
+    module: "项目边界"
+    description: "G001 全链保持本地 process-memory 和本地合同，不接数据库、ORM、migration 或生产持久化配置。"
+  - id: R650
+    module: "项目边界"
+    description: "G001 不接真实 CORN、HR、WFM、Excel 或第三方系统，不做真实外部集成。"
+  - id: R651
+    module: "项目边界"
+    description: "G001 不做权限、供应商隔离、审批、导出、批量操作、自动排班、结算、收费因子或生产公式。"
+  - id: R652
+    module: "项目治理"
+    description: "G001 需要按阶段拆分、验证、提交和推进，第一批先执行导入中心、主数据和人员级排班基础。"
+source: "PM requested complete long-running split for true upload/import, master data, personnel schedule, demand forecast, login/status processing on 2026-05-27"
+submitted_at: "2026-05-27"
+version: "1.0"
+status: "split"
+notes: "本组是长期执行目标 G001。先在 No Database MVP Mode 下完成真实 CSV 上传、字段映射、批次、失败行、本地版本、主数据引用、人员级排班、需求预测、登录/状态切分和履约对比闭环；数据库、ORM、migration、权限、审批、导出、批量、真实外部集成、生产公式、结算和收费因子全部延后到独立 Gate。"
+```
+
 ### R614-R617 - 主管异常处理本地写入闭环
 
 ```yaml

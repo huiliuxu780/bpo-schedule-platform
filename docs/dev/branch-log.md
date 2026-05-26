@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### G001 Production Import Closure Planning Split
+
+- branch_name: `codex/g001-production-import-planning`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `7e8364d`
+- remote_status: `not_pushed`
+- scope: Harness planning split for the production-prototype import and fulfillment comparison chain, including raw requirements, user stories, backlog tasks, first ready current queue, and a long-running execution plan.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no product code, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates planning, traceability, current queue, active tasks, audit, task log, project state, and plan artifact only.
+- check_result: strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F400-F402 Supervisor Local Handling Write Loop
 
 - branch_name: `codex/f400-supervisor-review-submit`

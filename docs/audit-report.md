@@ -4,6 +4,26 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 production import closure planning split
+
+#### 结论
+
+- `G001/R618-R652/US587-US604/F403-Q123` 已完成长期执行拆分。
+- 第一批 ready current queue 为 `US587/F403 -> US595/Q120`，覆盖 CSV 上传/字段映射预览、导入批次/失败行/本地版本、主数据导入与维护、人员级排班导入与 0.5h 展开。
+- 需求预测波次 `US596-US598/F409-F411/Q121`、登录/状态波次 `US599-US603/F412-F415/Q122` 和全链边界 QA `US604/Q123` 已进入 backlog blocked，等待前置 ready 波次完成后释放。
+- 本批只拆需求、用户故事、任务队列、current queue 与计划文档，不新增产品代码、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- G001 是生产雏形拆分，不代表真实持久化、外部系统对接、权限隔离、审批发布、导出报表或生产级批量处理已经实现。
+- 后续若要进入数据库、文件存储、Excel xlsx、权限、审批、导出或真实集成，需要单独 Gate Plan 和 PM 确认。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过，ready stories 与 active tasks 一一对应，current 文档行数预算通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过。
+
 ### 2026-05-27 - Supervisor exception local handling write loop
 
 #### 结论

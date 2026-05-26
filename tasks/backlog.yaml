@@ -2,6 +2,316 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F403
+    title: "G001 导入中心 CSV 上传与字段映射"
+    priority: P0
+    status: ready
+    required_workflow: backend-vertical
+    allowed_files: ["app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "支持上传真实 CSV 并选择主数据、人员排班、需求预测、登录日志或状态日志类型。"
+      - "上传后展示字段映射预览、行数统计和待校验字段。"
+      - "不写数据库、不接外部系统、不做 Excel xlsx 解析或文件存储服务。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: F404
+    title: "G001 导入批次失败行与本地版本"
+    priority: P0
+    status: ready
+    required_workflow: backend-vertical
+    dependencies: ["F403"]
+    allowed_files: ["app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "每次导入形成批次记录，包含文件名、类型、上传人、时间、业务日期范围、处理状态和行数统计。"
+      - "成功行、失败行、错误字段、原始值、错误原因和建议修正可追溯。"
+      - "成功行生成本地版本记录，供后续业务数据引用。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: Q118
+    title: "G001 导入中心基础 QA"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    dependencies: ["F403", "F404"]
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "验证 CSV 上传、字段映射、批次、失败行、本地版本和页面 smoke。"
+      - "确认无数据库、无真实外部系统、无权限审批、无导出批量、无生产公式。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
+  - id: F405
+    title: "G001 主数据导入与查看"
+    priority: P0
+    status: ready
+    required_workflow: backend-vertical
+    dependencies: ["F404"]
+    allowed_files: ["app/master-data-relations/**", "app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "支持坐席、职场、供应商、项目、技能和绑定关系导入到本地 process-memory。"
+      - "主数据列表和详情可查看导入结果、来源批次和引用状态。"
+      - "导入失败行进入数据质量记录，不静默进入业务数据。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: F406
+    title: "G001 主数据维护状态有效期与引用校验"
+    priority: P0
+    status: ready
+    required_workflow: backend-vertical
+    dependencies: ["F405"]
+    allowed_files: ["app/master-data-relations/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "支持主数据本地新增、修改、冻结、解冻、有效期和状态口径。"
+      - "排班、预测、登录和状态引用无效主数据时进入数据质量问题。"
+      - "冻结不等同正式审批发布流，不做权限或供应商隔离。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: Q119
+    title: "G001 主数据基础 QA"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    dependencies: ["F405", "F406"]
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "验证主数据导入、查看、有效期、冻结、解冻和引用校验。"
+      - "确认缺失或失效绑定进入数据质量问题，不进入正常履约结果。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
+  - id: F407
+    title: "G001 人员级排班导入班次引用与版本"
+    priority: P0
+    status: ready
+    required_workflow: backend-vertical
+    dependencies: ["F406"]
+    allowed_files: ["app/import-batches/**", "app/schedule-plans/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "支持人员级排班导入，字段包含员工、日期、业务日、职场、供应商、项目、技能、班次和开始结束时间。"
+      - "排班引用班次类型并生成 schedule_version_id 和来源批次。"
+      - "非法时间、跨天未配置、员工不存在、绑定失效进入失败行或数据质量问题。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: F408
+    title: "G001 人员级排班 0.5h 展开与履约链接"
+    priority: P0
+    status: ready
+    required_workflow: backend-vertical
+    dependencies: ["F407"]
+    allowed_files: ["app/person-timeline/**", "app/schedule-plans/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "人员级排班展开为 0.5h 时段汇总。"
+      - "0.5h 汇总可追溯到具体人员排班和来源版本。"
+      - "履约日历和个人三轨详情能引用真实导入后的本地排班结果。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: Q120
+    title: "G001 人员级排班基础 QA"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    dependencies: ["F407", "F408"]
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "验证人员级排班导入、班次引用、版本、0.5h 展开、追溯和页面 smoke。"
+      - "确认排班基础流不做数据库、审批、导出、批量、自动排班或生产公式。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
+  - id: F409
+    title: "G001 需求预测导入"
+    priority: P0
+    status: blocked
+    required_workflow: backend-vertical
+    dependencies: ["F408"]
+    allowed_files: ["app/production-mvp/demand-forecast/**", "app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "支持需求预测按业务日期、职场、项目、0.5h 时段、技能组、等级和预测人数导入。"
+      - "无效职场、项目、技能组或等级进入失败行或数据质量问题。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["依赖 F408 未完成", "需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: F410
+    title: "G001 需求预测版本与变更追踪"
+    priority: P0
+    status: blocked
+    required_workflow: backend-vertical
+    dependencies: ["F409"]
+    allowed_files: ["app/production-mvp/demand-forecast/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "每次需求预测导入生成 forecast_version_id。"
+      - "新版本覆盖旧版本时保留本地变更追踪，不静默丢失来源批次。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["依赖 F409 未完成", "需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: F411
+    title: "G001 需求预测与排班对齐"
+    priority: P0
+    status: blocked
+    required_workflow: backend-vertical
+    dependencies: ["F410"]
+    allowed_files: ["app/person-timeline/**", "app/production-mvp/demand-forecast/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "预测按日期、职场、项目、时段、技能组和等级与 0.5h 排班对齐。"
+      - "能识别预测缺口、超排和无匹配排班候选异常。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["依赖 F410 未完成", "需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: Q121
+    title: "G001 需求预测基础 QA"
+    priority: P1
+    status: blocked
+    required_workflow: qa
+    dependencies: ["F409", "F410", "F411"]
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "验证预测导入、版本、变更追踪、排班对齐和页面 smoke。"
+      - "确认预测流不做数据库、真实外部接口、审批、导出、批量或生产公式。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["依赖 F411 未完成", "验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
+  - id: F412
+    title: "G001 登录日志导入与业务日归一"
+    priority: P0
+    status: blocked
+    required_workflow: backend-vertical
+    dependencies: ["F408"]
+    allowed_files: ["app/import-batches/**", "app/person-timeline/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "支持登录日志导入，包含员工、登录时间、登出时间、职场、项目和来源批次。"
+      - "登录日志按业务日、跨天和时区口径本地归一。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["依赖 F408 未完成", "需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: F413
+    title: "G001 状态日志导入与状态字典校验"
+    priority: P0
+    status: blocked
+    required_workflow: backend-vertical
+    dependencies: ["F408"]
+    allowed_files: ["app/import-batches/**", "app/person-timeline/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "支持状态日志导入，包含员工、状态类型、开始结束时间、职场、项目和来源批次。"
+      - "固定状态字典校验未知状态，未知状态进入失败行或数据质量问题。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["依赖 F408 未完成", "需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: F414
+    title: "G001 登录状态 0.5h 切分与质量问题"
+    priority: P0
+    status: blocked
+    required_workflow: backend-vertical
+    dependencies: ["F412", "F413"]
+    allowed_files: ["app/person-timeline/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "登录和状态区间切分到 0.5h 时段。"
+      - "状态断档、重叠和未知状态生成本地数据质量问题。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["依赖 F412/F413 未完成", "需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: F415
+    title: "G001 排班与登录状态对比异常"
+    priority: P0
+    status: blocked
+    required_workflow: backend-vertical
+    dependencies: ["F414"]
+    allowed_files: ["app/person-timeline/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "排班 vs 登录识别未登录、迟到、早退和未排班登录。"
+      - "排班 vs 状态识别非有效产能、状态断档、状态重叠和未知状态。"
+      - "异常进入履约日历和个人三轨详情供主管复核。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions: ["依赖 F414 未完成", "需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: Q122
+    title: "G001 登录状态处理 QA"
+    priority: P1
+    status: blocked
+    required_workflow: qa
+    dependencies: ["F412", "F413", "F414", "F415"]
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "验证登录/状态导入、业务日归一、状态字典、0.5h 切分、异常识别和页面 smoke。"
+      - "确认实际履约处理不做数据库、真实外部接口、权限审批、导出批量或生产公式。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["依赖 F415 未完成", "验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
+  - id: Q123
+    title: "G001 全链边界与收口 QA"
+    priority: P1
+    status: blocked
+    required_workflow: qa
+    dependencies: ["Q118", "Q119", "Q120", "Q121", "Q122"]
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "验证 G001 全链从上传、主数据、排班、预测、登录/状态到履约异常的本地闭环。"
+      - "确认全链仍未引入数据库、真实外部系统、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["依赖 Q118-Q122 未完成", "验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
   - id: F400
     title: "主管异常复核结论本地提交闭环"
     priority: P0

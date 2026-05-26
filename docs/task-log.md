@@ -19,6 +19,15 @@
 
 ### 2026-05-27
 
+- task_id: `G001-SPLIT`
+- source_ids:
+  - `R618-R652`
+- story_ids:
+  - `US587-US604`
+- action: 拆分生产雏形真实导入与履约对比闭环的长期执行链。
+- status: `done`
+- notes: 已把真实上传/导入中心、主数据可维护、人员级排班生产流、需求预测生产流、登录/状态日志生产处理拆成 R618-R652、US587-US604 与 F403-Q123；current queue 仅放入第一批 ready 的 US587-US595/F403-Q120，预测与登录/状态后续波次保持 blocked。本次只做 Harness/计划拆分，不新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
 - task_id: `F400-F402`
 - source_ids:
   - `R614-R617`

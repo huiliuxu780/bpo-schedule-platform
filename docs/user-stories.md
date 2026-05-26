@@ -29,6 +29,196 @@
 
 ## Stories
 
+### US587-US604 - G001 生产雏形真实导入与履约对比闭环
+
+```yaml
+stories:
+  - id: US587
+    requirement_ids: [R618, R619]
+    task_ids: [F403]
+    module: "数据导入"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望上传真实 CSV 并预览字段映射和行数统计，以便导入前确认文件能被系统识别。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "ready"
+  - id: US588
+    requirement_ids: [R620, R621, R622]
+    task_ids: [F404]
+    module: "数据导入"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望导入后形成批次、成功行、失败行和本地版本，以便追溯每次文件处理结果。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "ready"
+    dependencies: [US587]
+  - id: US589
+    requirement_ids: [R623]
+    task_ids: [Q118]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望验证导入中心基础闭环，以便确认上传、映射、批次、失败行、版本和边界可验收。"
+    task_type: "qa"
+    priority: "P1"
+    status: "ready"
+    dependencies: [US587, US588]
+  - id: US590
+    requirement_ids: [R624, R628]
+    task_ids: [F405]
+    module: "主数据"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望导入和查看坐席、职场、供应商、项目、技能和绑定关系，以便后续业务数据能引用主数据。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "ready"
+    dependencies: [US588]
+  - id: US591
+    requirement_ids: [R625, R626, R627]
+    task_ids: [F406]
+    module: "主数据"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望维护主数据状态、有效期、冻结和引用校验，以便无效绑定进入数据质量而不是正常履约。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "ready"
+    dependencies: [US590]
+  - id: US592
+    requirement_ids: [R629]
+    task_ids: [Q119]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望验证主数据导入和维护闭环，以便确认引用校验、有效期和冻结口径可验收。"
+    task_type: "qa"
+    priority: "P1"
+    status: "ready"
+    dependencies: [US590, US591]
+  - id: US593
+    requirement_ids: [R630, R631, R632]
+    task_ids: [F407]
+    module: "排班计划"
+    role: "排班运营"
+    story: "作为排班运营，我希望导入人员级排班并引用班次类型和排班版本，以便每条排班能追溯到员工和来源批次。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "ready"
+    dependencies: [US591]
+  - id: US594
+    requirement_ids: [R633, R634]
+    task_ids: [F408]
+    module: "排班计划"
+    role: "排班运营"
+    story: "作为排班运营，我希望人员级排班能展开为 0.5h 汇总并处理排班质量问题，以便履约日历从真实排班生成。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "ready"
+    dependencies: [US593]
+  - id: US595
+    requirement_ids: [R635]
+    task_ids: [Q120]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望验证人员级排班导入、版本、班次引用和 0.5h 展开，以便确认排班基础闭环可验收。"
+    task_type: "qa"
+    priority: "P1"
+    status: "ready"
+    dependencies: [US593, US594]
+  - id: US596
+    requirement_ids: [R636, R637]
+    task_ids: [F409, F410]
+    module: "需求预测"
+    role: "排班运营"
+    story: "作为排班运营，我希望导入需求预测并生成预测版本和变更记录，以便后续供需对比可追溯。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "blocked"
+    dependencies: [US594]
+  - id: US597
+    requirement_ids: [R638, R639]
+    task_ids: [F411]
+    module: "需求预测"
+    role: "排班运营"
+    story: "作为排班运营，我希望预测按职场、项目、时段、技能组和等级与排班对齐，以便识别缺口和超排。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "blocked"
+    dependencies: [US596]
+  - id: US598
+    requirement_ids: [R640]
+    task_ids: [Q121]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望验证需求预测导入、版本、变更追踪和排班对齐，以便确认预测生产流可验收。"
+    task_type: "qa"
+    priority: "P1"
+    status: "blocked"
+    dependencies: [US596, US597]
+  - id: US599
+    requirement_ids: [R641, R643]
+    task_ids: [F412]
+    module: "实际履约"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望导入登录日志并按业务日、跨天和时区口径归一，以便判断人员是否到岗。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "blocked"
+    dependencies: [US594]
+  - id: US600
+    requirement_ids: [R642, R643]
+    task_ids: [F413]
+    module: "实际履约"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望导入状态日志并校验固定状态字典，以便判断人员是否处于有效产能状态。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "blocked"
+    dependencies: [US594]
+  - id: US601
+    requirement_ids: [R644]
+    task_ids: [F414]
+    module: "实际履约"
+    role: "数据管理员"
+    story: "作为数据管理员，我希望状态区间切分到 0.5h 并识别断档、重叠和未知状态，以便质量问题先被暴露。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "blocked"
+    dependencies: [US599, US600]
+  - id: US602
+    requirement_ids: [R645, R646, R647]
+    task_ids: [F415]
+    module: "履约监控"
+    role: "现场主管"
+    story: "作为现场主管，我希望排班能与登录和状态事实对比并生成异常，以便在履约日历和个人三轨详情复核。"
+    task_type: "backend-vertical"
+    priority: "P0"
+    status: "blocked"
+    dependencies: [US599, US600, US601]
+  - id: US603
+    requirement_ids: [R648]
+    task_ids: [Q122]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望验证登录/状态导入、切分、对比、异常识别和页面联动，以便确认实际履约处理流可验收。"
+    task_type: "qa"
+    priority: "P1"
+    status: "blocked"
+    dependencies: [US599, US600, US601, US602]
+  - id: US604
+    requirement_ids: [R649, R650, R651, R652]
+    task_ids: [Q123]
+    module: "项目治理"
+    role: "PM"
+    story: "作为 PM，我希望 G001 每阶段都保持 no-database 和 no-production-workflow 边界，以便长链执行不偏离生产雏形目标。"
+    task_type: "qa"
+    priority: "P1"
+    status: "blocked"
+    dependencies: [US589, US592, US595, US598, US603]
+acceptance:
+  - "G001 全链拆成导入中心、主数据、人员级排班、需求预测、登录/状态处理五个阶段。"
+  - "第一批 current queue 只放导入中心、主数据、人员级排班的 ready stories，后续预测和登录/状态 stories 在 backlog 中 blocked 等依赖。"
+  - "所有阶段均保持本地 process-memory 和本地合同，不新增数据库、ORM、migration、真实外部系统、权限、审批、导出、批量、自动排班、生产公式、结算或 charge factor。"
+  - "每个执行阶段必须有模型/API测试、页面 smoke、`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 证据。"
+```
+
 ### US584-US586 - 主管异常处理本地写入闭环
 
 ```yaml

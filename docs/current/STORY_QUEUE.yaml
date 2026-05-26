@@ -5,4 +5,84 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US587
+    status: ready
+    priority: P0
+    module: "数据导入"
+    role: "数据管理员"
+    task_ids: ["F403"]
+    requirement_ids: ["R618", "R619"]
+    story: "上传真实 CSV 并预览字段映射和行数统计。"
+  - id: US588
+    status: ready
+    priority: P0
+    module: "数据导入"
+    role: "数据管理员"
+    task_ids: ["F404"]
+    requirement_ids: ["R620", "R621", "R622"]
+    dependencies: ["US587"]
+    story: "导入后形成批次、成功行、失败行和本地版本。"
+  - id: US589
+    status: ready
+    priority: P1
+    module: "质量与交付"
+    role: "QA"
+    task_ids: ["Q118"]
+    requirement_ids: ["R623"]
+    dependencies: ["US587", "US588"]
+    story: "验证导入中心基础闭环。"
+  - id: US590
+    status: ready
+    priority: P0
+    module: "主数据"
+    role: "数据管理员"
+    task_ids: ["F405"]
+    requirement_ids: ["R624", "R628"]
+    dependencies: ["US588"]
+    story: "导入和查看坐席、职场、供应商、项目、技能和绑定关系。"
+  - id: US591
+    status: ready
+    priority: P0
+    module: "主数据"
+    role: "数据管理员"
+    task_ids: ["F406"]
+    requirement_ids: ["R625", "R626", "R627"]
+    dependencies: ["US590"]
+    story: "维护主数据状态、有效期、冻结和引用校验。"
+  - id: US592
+    status: ready
+    priority: P1
+    module: "质量与交付"
+    role: "QA"
+    task_ids: ["Q119"]
+    requirement_ids: ["R629"]
+    dependencies: ["US590", "US591"]
+    story: "验证主数据导入和维护闭环。"
+  - id: US593
+    status: ready
+    priority: P0
+    module: "排班计划"
+    role: "排班运营"
+    task_ids: ["F407"]
+    requirement_ids: ["R630", "R631", "R632"]
+    dependencies: ["US591"]
+    story: "导入人员级排班并引用班次类型和排班版本。"
+  - id: US594
+    status: ready
+    priority: P0
+    module: "排班计划"
+    role: "排班运营"
+    task_ids: ["F408"]
+    requirement_ids: ["R633", "R634"]
+    dependencies: ["US593"]
+    story: "人员级排班展开为 0.5h 汇总并处理排班质量问题。"
+  - id: US595
+    status: ready
+    priority: P1
+    module: "质量与交付"
+    role: "QA"
+    task_ids: ["Q120"]
+    requirement_ids: ["R635"]
+    dependencies: ["US593", "US594"]
+    story: "验证人员级排班导入、版本、班次引用和 0.5h 展开。"
