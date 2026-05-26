@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R506-R509 - 导入失败原因质量影响聚合
+
+```yaml
+requirements:
+  - id: R506
+    module: "导入批次"
+    description: "现场主管需要在导入批次详情看到失败原因关联的数据质量影响，快速判断哪些质量问题受当前批次失败影响。"
+  - id: R507
+    module: "导入批次"
+    description: "质量影响聚合需要基于现有关联质量问题和失败行本地聚合，不新增数据库、后端持久化、修复提交或生产处理状态。"
+  - id: R508
+    module: "导入批次"
+    description: "质量影响聚合需要展示字段覆盖、影响对象、首要质量问题和查看顺序，帮助主管从失败原因反向定位质量问题。"
+  - id: R509
+    module: "质量与交付"
+    description: "导入失败原因质量影响聚合完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F372 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做导入批次详情页的本地只读质量影响聚合，基于已有 failureRows、qualityIssueIds 和本地 data-quality rows 聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R502-R505 - 导入失败原因汇总
 
 ```yaml

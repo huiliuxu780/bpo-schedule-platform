@@ -14,6 +14,7 @@ import {
 import {
   dataQualitySeverityLabel,
   dataQualitySourceLabels,
+  dataQualityStatusLabel,
   fallbackDataQualityIssues,
 } from "@/lib/data-quality"
 import {
@@ -23,6 +24,7 @@ import {
   importBatchStatusLabel,
   summarizeImportBatchFailureImpacts,
   summarizeImportBatchFailureReasons,
+  summarizeImportBatchQualityImpact,
 } from "@/lib/import-batch-history"
 
 type PageProps = {
@@ -46,6 +48,10 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
   const qualityIssues = getImportBatchQualityIssues(batch.id, fallbackDataQualityIssues)
   const fallbackFailureImpactSummary = summarizeImportBatchFailureImpacts(batch.id)
   const failureReasonSummary = summarizeImportBatchFailureReasons(batch)
+  const qualityImpactSummary = summarizeImportBatchQualityImpact(
+    batch,
+    fallbackDataQualityIssues
+  )
   const failureImpactItems =
     batch.failureImpacts.length > 0 ? batch.failureImpacts : fallbackFailureImpactSummary.items
   const totalAffectedRows =
@@ -140,6 +146,99 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
                     </div>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>质量影响聚合</CardTitle>
+                <CardDescription>
+                  将失败原因关联到数据质量问题，辅助判断查看顺序。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-3 md:grid-cols-4">
+                  <Detail
+                    label="关联问题"
+                    value={`${qualityImpactSummary.relatedIssueCount}`}
+                  />
+                  <Detail
+                    label="覆盖字段"
+                    value={`${qualityImpactSummary.coveredFieldCount}`}
+                  />
+                  <Detail
+                    label="未关联原因"
+                    value={`${qualityImpactSummary.unmatchedReasonCount}`}
+                  />
+                  <Detail
+                    label="首要问题"
+                    value={qualityImpactSummary.topIssue?.id ?? "无"}
+                  />
+                </div>
+
+                {qualityImpactSummary.affectedObjects.length > 0 ? (
+                  <div>
+                    <div className="text-xs text-muted-foreground">影响对象</div>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {qualityImpactSummary.affectedObjects.map((object) => (
+                        <Badge key={object} variant="secondary">
+                          {object}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {qualityImpactSummary.items.length > 0 ? (
+                  <div className="grid gap-3">
+                    {qualityImpactSummary.items.map((item, index) => (
+                      <div key={item.issueId} className="rounded-lg border p-3">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="text-xs text-muted-foreground">
+                              建议查看 {index + 1} / {qualityImpactSummary.items.length}
+                            </div>
+                            <div className="mt-1 text-sm font-medium">
+                              {item.issueId} {item.title}
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <Badge variant={item.severity === "high" ? "destructive" : "secondary"}>
+                              {dataQualitySeverityLabel(item.severity)}
+                            </Badge>
+                            <Badge variant="outline">
+                              {dataQualityStatusLabel(item.status)}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-3">
+                          <span>负责人：{item.owner}</span>
+                          <span>阻塞行：{item.blockedRows}</span>
+                          <span>匹配字段：{item.matchedFields.join(", ") || "未直接匹配"}</span>
+                        </div>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {item.affectedObjects.map((object) => (
+                            <Badge key={object} variant="outline">
+                              {object}
+                            </Badge>
+                          ))}
+                        </div>
+                        <p className="mt-3 text-sm text-muted-foreground">
+                          {item.recommendation}
+                        </p>
+                        <div className="mt-3 flex justify-end">
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={item.href}>查看问题</Link>
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    当前批次没有关联数据质量影响，仅展示失败原因和失败行明细。
+                  </p>
+                )}
               </CardContent>
             </Card>
 

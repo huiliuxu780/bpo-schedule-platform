@@ -2,6 +2,37 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F373
+    title: "导入失败原因质量影响聚合"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    allowed_files: ["app/import-batches/**", "lib/import-batch-history.ts", "scripts/tests/import-batch-history.test.mjs", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "导入批次模型提供质量影响聚合，包含关联质量问题数、未关联失败原因数、字段覆盖、影响对象、首要质量问题和查看顺序。"
+      - "导入批次详情页在失败原因汇总后展示质量影响聚合。"
+      - "没有关联质量问题时展示无关联质量影响，不提供处理、修复、审批、导出或批量能力。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量、生产状态字典或生产公式", "验证失败"]
+    commit_after_done: true
+  - id: Q091
+    title: "导入失败原因质量影响聚合 QA"
+    priority: P1
+    status: done
+    required_workflow: qa
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "前端模型测试、页面 smoke、状态检查和总检查通过。"
+      - "current queue 和 active tasks 在完成后清空。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量、生产状态字典或生产公式"]
+    commit_after_done: true
   - id: F372
     title: "导入失败原因汇总"
     priority: P0

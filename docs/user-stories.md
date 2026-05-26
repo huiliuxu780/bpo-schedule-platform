@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US503-US505 - 导入失败原因质量影响聚合
+
+```yaml
+stories:
+  - id: US503
+    requirement_ids: [R506, R507]
+    task_ids: [F373]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望在导入批次详情看到失败原因关联的数据质量影响，以便知道哪些质量问题需要优先查看。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US504
+    requirement_ids: [R508]
+    task_ids: [F373]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望质量影响聚合能展示字段覆盖、影响对象和查看顺序，以便把失败原因转成质量问题定位路径。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US505
+    requirement_ids: [R509]
+    task_ids: [Q091]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望质量影响聚合完成后做收口验证，确认只读聚合、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "导入批次模型提供质量影响聚合，包含关联质量问题数、未关联失败原因数、字段覆盖、影响对象、首要质量问题和查看顺序。"
+  - "导入批次详情页在失败原因汇总后展示质量影响聚合，并保留相关质量问题详情入口。"
+  - "没有关联质量问题时展示无关联质量影响，不误导为处理、修复、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/import-batch-history.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US500-US502 - 导入失败原因汇总
 
 ```yaml

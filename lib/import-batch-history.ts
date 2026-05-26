@@ -1,3 +1,5 @@
+import type { DataQualityIssue } from "./data-quality"
+
 export type ImportBatchStatus = "completed" | "completed_with_errors" | "failed" | "pending_review"
 
 export type ImportBatchQualityIssue = {
@@ -96,6 +98,28 @@ export type ImportBatchFailureReasonSummary = {
   totalFailedRows: number
   topReason: ImportBatchFailureReason | null
   items: ImportBatchFailureReason[]
+}
+
+export type ImportBatchQualityImpactItem = {
+  issueId: string
+  title: string
+  severity: DataQualityIssue["severity"]
+  status: DataQualityIssue["status"]
+  owner: string
+  blockedRows: number
+  matchedFields: string[]
+  affectedObjects: string[]
+  recommendation: string
+  href: string
+}
+
+export type ImportBatchQualityImpactSummary = {
+  relatedIssueCount: number
+  coveredFieldCount: number
+  unmatchedReasonCount: number
+  affectedObjects: string[]
+  topIssue: DataQualityIssue | null
+  items: ImportBatchQualityImpactItem[]
 }
 
 export type ImportBatchSummary = {
@@ -575,6 +599,116 @@ function buildFailureReasonCorrectionHint(row: ImportBatchFailureRow) {
   }
 
   return `修正 ${row.fieldName} 字段的 ${row.errorCode} 问题后重新导入 CSV。`
+}
+
+export function summarizeImportBatchQualityImpact(
+  batch: ImportBatch,
+  issueRows: DataQualityIssue[]
+): ImportBatchQualityImpactSummary {
+  const issuesById = new Map(issueRows.map((issue) => [issue.id, issue]))
+  const relatedIssues = batch.qualityIssueIds
+    .map((issueId) => issuesById.get(issueId))
+    .filter((issue) => issue !== undefined)
+  const failureReasonSummary = summarizeImportBatchFailureReasons(batch)
+  const failureFields = new Set(
+    failureReasonSummary.items.map((reason) => reason.fieldName)
+  )
+  const coveredFields = new Set<string>()
+
+  const items = relatedIssues
+    .map<ImportBatchQualityImpactItem>((issue) => {
+      const matchedFields = matchIssueFields(issue, failureFields)
+
+      for (const field of matchedFields) {
+        coveredFields.add(field)
+      }
+
+      return {
+        issueId: issue.id,
+        title: issue.title,
+        severity: issue.severity,
+        status: issue.status,
+        owner: issue.owner,
+        blockedRows: issue.blockedRows,
+        matchedFields,
+        affectedObjects: affectedObjectsForIssue(issue),
+        recommendation: issue.recommendation,
+        href: `/data-quality/${issue.id}`,
+      }
+    })
+    .sort((first, second) => {
+      const statusDelta = qualityImpactStatusRank(first.status) - qualityImpactStatusRank(second.status)
+
+      if (statusDelta !== 0) {
+        return statusDelta
+      }
+
+      const severityDelta =
+        qualityImpactSeverityRank(first.severity) - qualityImpactSeverityRank(second.severity)
+
+      if (severityDelta !== 0) {
+        return severityDelta
+      }
+
+      return second.blockedRows - first.blockedRows
+    })
+
+  const affectedObjects = Array.from(
+    new Set(items.flatMap((item) => item.affectedObjects))
+  )
+
+  return {
+    relatedIssueCount: items.length,
+    coveredFieldCount: coveredFields.size,
+    unmatchedReasonCount: Math.max(
+      failureReasonSummary.totalReasonCount - coveredFields.size,
+      0
+    ),
+    affectedObjects,
+    topIssue: relatedIssues.find((issue) => issue.id === items[0]?.issueId) ?? null,
+    items,
+  }
+}
+
+function matchIssueFields(issue: DataQualityIssue, failureFields: Set<string>) {
+  return Array.from(failureFields).filter((field) => {
+    return issue.fieldName === field || issue.sourceField.split(/[./]/).includes(field)
+  })
+}
+
+function affectedObjectsForIssue(issue: DataQualityIssue) {
+  const objects = issue.affectedObjects.map((object) => object.type)
+  const entityLabel = dataQualityEntityLabels[issue.entity]
+
+  return entityLabel
+    ? [entityLabel, ...objects.filter((object) => object !== entityLabel && object !== "主数据")]
+    : objects
+}
+
+const dataQualityEntityLabels: Record<string, string> = {
+  agent: "坐席",
+  agent_binding: "人员排班",
+  personnel_schedule: "人员级排班",
+  demand_forecast: "需求预测",
+  login_log: "登录日志",
+  status_log: "状态日志",
+}
+
+function qualityImpactStatusRank(status: DataQualityIssue["status"]) {
+  return {
+    open: 0,
+    acknowledged: 1,
+    resolved: 2,
+    ignored: 3,
+  }[status]
+}
+
+function qualityImpactSeverityRank(severity: DataQualityIssue["severity"]) {
+  return {
+    high: 0,
+    medium: 1,
+    low: 2,
+  }[severity]
 }
 
 export function importBatchStatusLabel(status: ImportBatchStatus) {

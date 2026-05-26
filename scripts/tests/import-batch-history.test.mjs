@@ -13,6 +13,7 @@ import {
   mapImportBatchResult,
   summarizeImportBatchFailureImpacts,
   summarizeImportBatchFailureReasons,
+  summarizeImportBatchQualityImpact,
   summarizeImportBatches,
 } from "../../lib/import-batch-history.ts"
 
@@ -279,6 +280,93 @@ test("import batch failure reasons expose empty state when no failed rows exist"
   assert.equal(summary.totalReasonCount, 0)
   assert.equal(summary.totalFailedRows, 0)
   assert.equal(summary.topReason, null)
+  assert.deepEqual(summary.items, [])
+})
+
+test("import batch quality impact summarizes linked issues and matched fields", () => {
+  const batch = {
+    ...getImportBatchById("BATCH-20260519-001"),
+    failureRows: [
+      {
+        batchId: "BATCH-20260519-001",
+        entity: "master_data",
+        failedRowNumber: 3,
+        fieldName: "employee_name",
+        errorCode: "missing_required_field",
+        errorMessage: "坐席姓名不能为空",
+        rawValue: "",
+      },
+      {
+        batchId: "BATCH-20260519-001",
+        entity: "master_data",
+        failedRowNumber: 4,
+        fieldName: "employee_id",
+        errorCode: "unknown_foreign_key",
+        errorMessage: "员工绑定缺失",
+        rawValue: "A-9931",
+      },
+      {
+        batchId: "BATCH-20260519-001",
+        entity: "master_data",
+        failedRowNumber: 5,
+        fieldName: "supplier_id",
+        errorCode: "duplicate_primary_key",
+        errorMessage: "供应商重复",
+        rawValue: "SUP-08",
+      },
+    ],
+  }
+
+  const summary = summarizeImportBatchQualityImpact(batch, fallbackDataQualityIssues)
+
+  assert.equal(summary.relatedIssueCount, 2)
+  assert.equal(summary.coveredFieldCount, 2)
+  assert.equal(summary.unmatchedReasonCount, 1)
+  assert.equal(summary.topIssue?.id, "DQ-202605-001")
+  assert.equal(summary.items.length, 2)
+  assert.equal(summary.items[0].issueId, "DQ-202605-001")
+  assert.equal(summary.items[0].matchedFields.includes("employee_name"), true)
+  assert.equal(summary.items[0].blockedRows, 48)
+  assert.equal(summary.items[0].href, "/data-quality/DQ-202605-001")
+  assert.deepEqual(summary.affectedObjects.slice(0, 2), ["坐席", "人员排班"])
+  assert.equal(summary.items[1].issueId, "DQ-202605-004")
+  assert.equal(summary.items[1].matchedFields.includes("employee_id"), true)
+  assert.ok(summary.items[1].recommendation.includes("员工主数据"))
+})
+
+test("import batch quality impact exposes empty state without linked issues", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-SL-20260526-003",
+    entity: "status_log",
+    file_name: "status_log_unlinked_test.csv",
+    uploaded_by: "现场主管",
+    uploaded_at: "2026-05-26T21:40:00+08:00",
+    status: "completed_with_errors",
+    total_rows: 1,
+    success_rows: 0,
+    failed_rows: 1,
+    warning_rows: 0,
+    error_codes: ["invalid_time_range"],
+    failure_rows: [
+      {
+        batch_id: "BATCH-SL-20260526-003",
+        entity: "status_log",
+        failed_row_number: 2,
+        field_name: "end_at",
+        error_code: "invalid_time_range",
+        error_message: "状态结束时间必须晚于开始时间",
+        raw_value: "2026-05-26T09:00:00",
+      },
+    ],
+  })
+
+  const summary = summarizeImportBatchQualityImpact(batch, fallbackDataQualityIssues)
+
+  assert.equal(summary.relatedIssueCount, 0)
+  assert.equal(summary.coveredFieldCount, 0)
+  assert.equal(summary.unmatchedReasonCount, 1)
+  assert.equal(summary.topIssue, null)
+  assert.deepEqual(summary.affectedObjects, [])
   assert.deepEqual(summary.items, [])
 })
 

@@ -19,6 +19,17 @@
 
 ### 2026-05-26
 
+- task_id: `F373/Q091`
+- source_ids:
+  - `R506-R509`
+- story_ids:
+  - `US503-US505`
+- action: 完成导入失败原因质量影响聚合。
+- status: `done`
+- notes: 导入批次详情页现在在失败原因汇总后展示质量影响聚合，包含关联问题数、覆盖字段、未关联原因、首要问题、影响对象和建议查看顺序；模型基于现有 `failureRows`、`qualityIssueIds` 和本地 data-quality rows 只读聚合。本次不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-26
+
 - task_id: `F372/Q090`
 - source_ids:
   - `R502-R505`

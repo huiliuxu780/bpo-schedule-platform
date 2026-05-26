@@ -2,6 +2,24 @@
 
 ## 2026-05-26
 
+### F373-Q091 Import Quality Impact Rollup
+
+- branch_name: `codex/f373-import-quality-impact-rollup`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `d88cfcb`
+- remote_status: `not_pushed`
+- scope: frontend local read-only function: connect import failure reasons to linked data-quality issues on the batch detail page, exposing related issue count, field coverage, unmatched reasons, affected objects, top issue, and issue viewing order.
+- allowed_files_check: `app/import-batches/**`, `lib/import-batch-history.ts`, `scripts/tests/import-batch-history.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates the existing import batch detail route, import batch frontend model/test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing quality impact rollup export; import-batch model tests, product UI copy audit, navigation regression, typecheck, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F372-Q090 Import Failure Reason Summary
 
 - branch_name: `codex/f372-import-failure-summary`

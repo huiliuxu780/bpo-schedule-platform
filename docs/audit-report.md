@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-26 - Import failure quality impact rollup
+
+#### 结论
+
+- `F373/Q091/US503-US505` 已完成导入失败原因质量影响聚合。
+- 前端模型新增 `summarizeImportBatchQualityImpact()`，基于批次失败原因、`qualityIssueIds` 和本地数据质量问题聚合关联问题数、覆盖字段、未关联原因、影响对象、首要问题和查看顺序。
+- 导入批次详情页在“失败原因汇总”后展示“质量影响聚合”，并保留已有数据质量问题详情入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 质量影响聚合只读取现有本地质量问题和当前批次失败行，不代表生产修复、真实质量闭环写入、审批、权限、导出或批量能力已经实现。
+- 本地 process-memory CSV 批次没有 `qualityIssueIds` 时，页面会显示“无关联质量影响”的只读空状态。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/import-batch-history.test.mjs` 首次失败于 `summarizeImportBatchQualityImpact` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/import-batch-history.test.mjs`：通过，14 个导入批次模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过。
+- `npm run typecheck`：通过。
+- 页面 smoke：通过，使用本地 API 创建 `BATCH-SL-20260526-001`，详情 HTML 包含“质量影响聚合”“关联问题”“覆盖字段”“未关联原因”“首要问题”“当前批次没有关联数据质量影响”“失败原因汇总”“失败行明细”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Import failure reason summary
 
 #### 结论
