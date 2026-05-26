@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R594-R597 - 数据质量分组步骤 owner/人员负载摘要
+
+```yaml
+requirements:
+  - id: R594
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到分组步骤按 owner 和人员汇总的负载摘要，以便判断先协调哪个责任人。"
+  - id: R595
+    module: "数据质量"
+    description: "owner/人员负载摘要需要基于现有本地分组步骤影响对象聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R596
+    module: "数据质量"
+    description: "owner/人员负载摘要需要展示 owner、步骤数、影响人员、代表问题、质量问题入口、人员履约入口、查看提示和暂缓能力。"
+  - id: R597
+    module: "质量与交付"
+    description: "数据质量分组步骤 owner/人员负载摘要完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM requested continuing after F394 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读分组步骤 owner/人员负载摘要，基于已有分组步骤影响对象聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R590-R593 - 数据质量分组步骤影响对象摘要
 
 ```yaml

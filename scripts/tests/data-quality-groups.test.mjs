@@ -6,6 +6,7 @@ import {
   getDataQualityGroup,
   summarizeDataQualityGroupExceptionCoverage,
   summarizeDataQualityGroupStepImpactDrilldown,
+  summarizeDataQualityGroupStepOwnerLoad,
   summarizeDataQualityGroupReviewSequence,
   summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
@@ -133,4 +134,25 @@ test("data quality group step impact drilldown links steps to issues and people"
   assert.ok(summary.items.some((item) => item.groupId === "identity-integrity"))
   assert.ok(summary.nextViewHint.includes("影响对象"))
   assert.ok(summary.deferredActions.includes("无批量重导"))
+})
+
+test("data quality group step owner load groups review pressure by owner", () => {
+  const summary = summarizeDataQualityGroupStepOwnerLoad(fallbackDataQualityIssues)
+
+  assert.equal(summary.ownerCount, 2)
+  assert.equal(summary.totalStepCount, 2)
+  assert.equal(summary.totalImpactedPeopleCount, 2)
+  assert.equal(summary.topOwner?.owner, "运营负责人")
+  assert.equal(summary.topOwner?.stepCount, 1)
+  assert.equal(summary.topOwner?.representativeIssueId, "DQ-202605-010")
+  assert.equal(summary.topOwner?.issueHref, "/data-quality/DQ-202605-010")
+  assert.equal(
+    summary.topOwner?.personHref,
+    "/person-timeline/A-1002?date=2026-05-11"
+  )
+  assert.ok(summary.topOwner?.impactedPeople.includes("A-1002"))
+  assert.ok(summary.topOwner?.groupTitles.includes("时间有效性"))
+  assert.ok(summary.items.some((item) => item.owner === "数据管理员"))
+  assert.ok(summary.nextViewHint.includes("owner"))
+  assert.ok(summary.deferredActions.includes("无真实数据修复"))
 })

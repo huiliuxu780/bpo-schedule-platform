@@ -2,22 +2,40 @@
 
 ## 2026-05-26
 
-### F394-Q112 Data Quality Group Step Impact Drilldown
+### F395-Q113 Data Quality Step Owner Load
 
-- branch_name: `codex/f394-data-quality-group-step-impact-drilldown`
+- branch_name: `codex/f395-data-quality-step-owner-load`
 - base_main_commit: `a3a134c`
-- base_chain_commit: `bb77735`
+- base_chain_commit: `aa15a1d`
 - remote_status: `not_pushed`
-- scope: frontend local read-only function: add group step impact drilldown summary to the data quality overview, connecting ordered group review steps to representative issues, people, affected objects, and drilldown links.
+- scope: frontend local read-only function: add group step owner/person load summary to the data quality overview, rolling ordered group review steps up by responsible owner and impacted people.
 - allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality-groups.ts`, `scripts/tests/data-quality-groups.test.mjs`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates existing data quality overview route, data quality group frontend model/test, data quality page source test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
-- check_result: TDD red observed for missing group step impact drilldown export and missing page source reference; data-quality group tests, data-quality tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- check_result: TDD red observed for missing group step owner/person load export and missing page source reference; data-quality group tests, data-quality tests, product copy/navigation tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
 - local_commit_sha: to be reported in Done Report after local commit creation.
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
+### F394-Q112 Data Quality Group Step Impact Drilldown
+
+- branch_name: `codex/f394-data-quality-group-step-impact-drilldown`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `bb77735`
+- remote_status: `pushed`
+- scope: frontend local read-only function: add group step impact drilldown summary to the data quality overview, connecting ordered group review steps to representative issues, people, affected objects, and drilldown links.
+- allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality-groups.ts`, `scripts/tests/data-quality-groups.test.mjs`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing data quality overview route, data quality group frontend model/test, data quality page source test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing group step impact drilldown export and missing page source reference; data-quality group tests, data-quality tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `aa15a1d`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM confirmed push; pushed to origin/codex/f394-data-quality-group-step-impact-drilldown`
 - blocked_reason: `N/A`
 
 ### F393-Q111 Data Quality Group Review Sequence

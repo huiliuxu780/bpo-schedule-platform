@@ -131,6 +131,29 @@ export type DataQualityGroupStepImpactDrilldownSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityGroupStepOwnerLoadItem = {
+  owner: string
+  firstSequence: number
+  stepCount: number
+  impactedPeople: string[]
+  groupTitles: string[]
+  representativeIssueId: string
+  representativeIssueTitle: string
+  issueHref: string
+  personHref?: string
+  nextViewHint: string
+}
+
+export type DataQualityGroupStepOwnerLoadSummary = {
+  ownerCount: number
+  totalStepCount: number
+  totalImpactedPeopleCount: number
+  topOwner?: DataQualityGroupStepOwnerLoadItem
+  items: DataQualityGroupStepOwnerLoadItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityGroupActions = [
   "无真实数据修复",
   "无自动合并",
@@ -399,6 +422,72 @@ export function summarizeDataQualityGroupStepImpactDrilldown(
   }
 }
 
+export function summarizeDataQualityGroupStepOwnerLoad(
+  issues: DataQualityIssue[],
+  groups = fallbackDataQualityGroups
+): DataQualityGroupStepOwnerLoadSummary {
+  const drilldown = summarizeDataQualityGroupStepImpactDrilldown(issues, groups)
+  const itemsByOwner = new Map<
+    string,
+    {
+      sourceItems: DataQualityGroupStepImpactDrilldownItem[]
+      impactedPeople: string[]
+      groupTitles: string[]
+    }
+  >()
+
+  for (const item of drilldown.items) {
+    const current = itemsByOwner.get(item.owner) ?? {
+      sourceItems: [],
+      impactedPeople: [],
+      groupTitles: [],
+    }
+    current.sourceItems.push(item)
+    current.impactedPeople = uniqueValues([
+      ...current.impactedPeople,
+      ...item.impactedPeople,
+    ])
+    current.groupTitles = uniqueValues([...current.groupTitles, item.title])
+    itemsByOwner.set(item.owner, current)
+  }
+
+  const items = Array.from(itemsByOwner.entries())
+    .map(([owner, value]) => {
+      const representative = [...value.sourceItems].sort(
+        (left, right) => left.sequence - right.sequence
+      )[0]
+
+      return {
+        owner,
+        firstSequence: representative.sequence,
+        stepCount: value.sourceItems.length,
+        impactedPeople: value.impactedPeople,
+        groupTitles: value.groupTitles,
+        representativeIssueId: representative.representativeIssueId,
+        representativeIssueTitle: representative.representativeIssueTitle,
+        issueHref: representative.issueHref,
+        personHref: representative.personHref,
+        nextViewHint: `先协调${owner}查看 ${representative.representativeIssueId}，再核对关联人员。`,
+      }
+    })
+    .sort(compareOwnerLoadItems)
+
+  return {
+    ownerCount: items.length,
+    totalStepCount: drilldown.stepCount,
+    totalImpactedPeopleCount: uniqueValues(
+      items.flatMap((item) => item.impactedPeople)
+    ).length,
+    topOwner: items[0],
+    items,
+    nextViewHint:
+      items.length > 0
+        ? "按 owner 查看分组步骤负载，再进入代表问题和人员履约核对。"
+        : "当前没有分组步骤可生成 owner 负载摘要。",
+    deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
 export function dataQualityGroupRiskLabel(risk: DataQualityGroupRisk) {
   return {
     high: "高风险",
@@ -482,6 +571,18 @@ function compareGroupExceptionCoverageItems(
     right.blockedRows - left.blockedRows ||
     compareRisk(right.risk, left.risk) ||
     left.title.localeCompare(right.title, "zh-Hans-CN")
+  )
+}
+
+function compareOwnerLoadItems(
+  left: DataQualityGroupStepOwnerLoadItem,
+  right: DataQualityGroupStepOwnerLoadItem
+) {
+  return (
+    right.stepCount - left.stepCount ||
+    right.impactedPeople.length - left.impactedPeople.length ||
+    left.firstSequence - right.firstSequence ||
+    left.owner.localeCompare(right.owner, "zh-Hans-CN")
   )
 }
 

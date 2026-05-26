@@ -44,6 +44,7 @@ import {
   summarizeDataQualityGroupExceptionCoverage,
   summarizeDataQualityGroupReviewSequence,
   summarizeDataQualityGroupStepImpactDrilldown,
+  summarizeDataQualityGroupStepOwnerLoad,
   summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
 } from "@/lib/data-quality-groups"
@@ -78,6 +79,10 @@ export default function DataQualityPage() {
     fallbackDataQualityGroups
   )
   const groupStepImpactDrilldown = summarizeDataQualityGroupStepImpactDrilldown(
+    rows,
+    fallbackDataQualityGroups
+  )
+  const groupStepOwnerLoad = summarizeDataQualityGroupStepOwnerLoad(
     rows,
     fallbackDataQualityGroups
   )
@@ -224,6 +229,101 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>分组步骤 owner/人员负载</CardTitle>
+                <CardDescription>
+                  按 owner 汇总分组步骤和影响人员，便于判断先协调谁。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {groupStepOwnerLoad.topOwner?.owner ?? "无 owner 负载"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail label="owner" value={`${groupStepOwnerLoad.ownerCount}`} />
+              <Detail label="步骤" value={`${groupStepOwnerLoad.totalStepCount}`} />
+              <Detail
+                label="影响人员"
+                value={`${groupStepOwnerLoad.totalImpactedPeopleCount}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    首要 owner：{groupStepOwnerLoad.topOwner?.owner ?? "无"}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    代表问题：{groupStepOwnerLoad.topOwner?.representativeIssueId ?? "无"} / 人员：
+                    {groupStepOwnerLoad.topOwner?.impactedPeople.join(" / ") || "无"}
+                  </div>
+                </div>
+                {groupStepOwnerLoad.topOwner ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={groupStepOwnerLoad.topOwner.issueHref}>查看 owner 负载</Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {groupStepOwnerLoad.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {groupStepOwnerLoad.items.map((item) => (
+                    <div key={item.owner} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">{item.owner}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        分组：{item.groupTitles.join(" / ") || "无"} / 代表问题：
+                        {item.representativeIssueId}
+                      </div>
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <Detail label="步骤" value={`${item.stepCount}`} />
+                        <Detail label="人员" value={`${item.impactedPeople.length}`} />
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        影响人员：{item.impactedPeople.join(" / ") || "无"}
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button asChild size="sm" variant="outline">
+                          <Link href={item.issueHref}>查看质量问题</Link>
+                        </Button>
+                        {item.personHref ? (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={item.personHref}>查看人员履约</Link>
+                          </Button>
+                        ) : null}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        下一查看：{item.nextViewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前没有分组步骤可生成 owner 负载摘要。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{groupStepOwnerLoad.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {groupStepOwnerLoad.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

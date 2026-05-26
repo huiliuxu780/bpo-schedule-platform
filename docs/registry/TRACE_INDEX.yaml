@@ -443,7 +443,18 @@ stories:
   US566: {file: "docs/user-stories.md", requirement_ids: ["R590", "R591"], task_ids: ["F394"], archive_refs: []}
   US567: {file: "docs/user-stories.md", requirement_ids: ["R592"], task_ids: ["F394"], archive_refs: []}
   US568: {file: "docs/user-stories.md", requirement_ids: ["R593"], task_ids: ["Q112"], archive_refs: []}
+  US569: {file: "docs/user-stories.md", requirement_ids: ["R594", "R595"], task_ids: ["F395"], archive_refs: []}
+  US570: {file: "docs/user-stories.md", requirement_ids: ["R596"], task_ids: ["F395"], archive_refs: []}
+  US571: {file: "docs/user-stories.md", requirement_ids: ["R597"], task_ids: ["Q113"], archive_refs: []}
 tasks:
+  F395:
+    file: "tasks/backlog.yaml"
+    story_ids: ["US569", "US570"]
+    gate: "frontend-scaffold"
+  Q113:
+    file: "tasks/backlog.yaml"
+    story_ids: ["US571"]
+    gate: "qa"
   F394:
     file: "tasks/backlog.yaml"
     story_ids: ["US566", "US567"]
@@ -1646,6 +1657,10 @@ requirements:
   R591: {file: "docs/raw-requirements.md", story_ids: ["US566"], task_ids: ["F394"]}
   R592: {file: "docs/raw-requirements.md", story_ids: ["US567"], task_ids: ["F394"]}
   R593: {file: "docs/raw-requirements.md", story_ids: ["US568"], task_ids: ["Q112"]}
+  R594: {file: "docs/raw-requirements.md", story_ids: ["US569"], task_ids: ["F395"]}
+  R595: {file: "docs/raw-requirements.md", story_ids: ["US569"], task_ids: ["F395"]}
+  R596: {file: "docs/raw-requirements.md", story_ids: ["US570"], task_ids: ["F395"]}
+  R597: {file: "docs/raw-requirements.md", story_ids: ["US571"], task_ids: ["Q113"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
