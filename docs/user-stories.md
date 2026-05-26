@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US509-US511 - 导入批次修正材料预览
+
+```yaml
+stories:
+  - id: US509
+    requirement_ids: [R514, R515]
+    task_ids: [F375]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望在导入批次详情看到修正材料预览，以便把字段、失败行和质量问题整理成复核前材料包。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US510
+    requirement_ids: [R516]
+    task_ids: [F375]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望修正材料预览展示材料摘要、字段材料、失败行样本、相关质量问题和暂缓能力，以便快速准备沟通材料。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US511
+    requirement_ids: [R517]
+    task_ids: [Q093]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望修正材料预览完成后做收口验证，确认只读材料、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "导入批次模型提供修正材料预览，包含材料摘要、字段材料、失败行样本、相关质量问题、建议沟通口径和暂缓能力。"
+  - "导入批次详情页在修正准备摘要后展示修正材料预览。"
+  - "没有失败行时展示无材料准备，不误导为处理、修复、提交、补证据、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/import-batch-history.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US506-US508 - 导入批次修正准备摘要
 
 ```yaml

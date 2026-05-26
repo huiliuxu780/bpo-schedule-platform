@@ -24,6 +24,7 @@ import {
   importBatchStatusLabel,
   summarizeImportBatchFailureImpacts,
   summarizeImportBatchFailureReasons,
+  summarizeImportBatchCorrectionMaterials,
   summarizeImportBatchCorrectionReadiness,
   summarizeImportBatchQualityImpact,
 } from "@/lib/import-batch-history"
@@ -54,6 +55,10 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
     fallbackDataQualityIssues
   )
   const correctionReadinessSummary = summarizeImportBatchCorrectionReadiness(
+    batch,
+    fallbackDataQualityIssues
+  )
+  const correctionMaterialSummary = summarizeImportBatchCorrectionMaterials(
     batch,
     fallbackDataQualityIssues
   )
@@ -335,6 +340,166 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
 
             <Card>
               <CardHeader>
+                <CardTitle>修正材料预览</CardTitle>
+                <CardDescription>
+                  把字段、失败行和质量问题整理成复核前材料。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-3 md:grid-cols-4">
+                  <Detail
+                    label="材料状态"
+                    value={correctionMaterialStatusLabel(
+                      correctionMaterialSummary.materialStatus
+                    )}
+                  />
+                  <Detail
+                    label="字段材料"
+                    value={`${correctionMaterialSummary.fieldMaterials.length}`}
+                  />
+                  <Detail
+                    label="失败行样本"
+                    value={`${correctionMaterialSummary.failureRowSamples.length}`}
+                  />
+                  <Detail
+                    label="相关质量"
+                    value={`${correctionMaterialSummary.qualityReferences.length}`}
+                  />
+                </div>
+
+                <div className="rounded-lg border p-3">
+                  <div className="text-xs text-muted-foreground">材料摘要</div>
+                  <p className="mt-1 text-sm font-medium">
+                    {correctionMaterialSummary.summary}
+                  </p>
+                </div>
+
+                {correctionMaterialSummary.fieldMaterials.length > 0 ? (
+                  <div className="grid gap-2">
+                    <div className="text-xs text-muted-foreground">字段材料</div>
+                    {correctionMaterialSummary.fieldMaterials.map((item) => (
+                      <div key={item.id} className="rounded-lg border p-3">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="font-mono text-xs text-muted-foreground">
+                              {item.fieldName} / {item.errorCode}
+                            </div>
+                            <div className="mt-1 text-sm font-medium">
+                              {item.correctionHint}
+                            </div>
+                          </div>
+                          <Badge variant="secondary">失败 {item.failedRows} 行</Badge>
+                        </div>
+                        <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+                          <span>代表行：{item.representativeRowNumber}</span>
+                          <span>
+                            代表原值：{item.representativeRawValue || "空值"}
+                          </span>
+                        </div>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {item.affectedObjects.map((object) => (
+                            <Badge key={object} variant="outline">
+                              {object}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {correctionMaterialSummary.failureRowSamples.length > 0 ? (
+                  <div className="grid gap-2">
+                    <div className="text-xs text-muted-foreground">失败行样本</div>
+                    {correctionMaterialSummary.failureRowSamples.map((row) => (
+                      <div
+                        key={`${row.failedRowNumber}-${row.fieldName}-${row.errorCode}`}
+                        className="grid gap-2 rounded-lg border p-3 text-sm md:grid-cols-[5rem_1fr_1fr_2fr]"
+                      >
+                        <span>行 {row.failedRowNumber}</span>
+                        <span className="font-mono text-xs">{row.fieldName}</span>
+                        <span className="font-mono text-xs">{row.errorCode}</span>
+                        <span className="text-muted-foreground">
+                          {row.errorMessage}
+                          {row.rawValue ? ` / 原值：${row.rawValue}` : ""}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {correctionMaterialSummary.qualityReferences.length > 0 ? (
+                  <div className="grid gap-2">
+                    <div className="text-xs text-muted-foreground">相关质量问题</div>
+                    {correctionMaterialSummary.qualityReferences.map((reference) => (
+                      <div
+                        key={reference.issueId}
+                        className="rounded-lg border p-3 text-sm"
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="font-medium">
+                              {reference.issueId} {reference.title}
+                            </div>
+                            <div className="mt-1 text-xs text-muted-foreground">
+                              负责人：{reference.owner} / 阻塞 {reference.blockedRows} 行
+                            </div>
+                          </div>
+                          <Badge
+                            variant={
+                              reference.severity === "high" ? "destructive" : "secondary"
+                            }
+                          >
+                            {dataQualitySeverityLabel(reference.severity)}
+                          </Badge>
+                        </div>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {reference.matchedFields.map((field) => (
+                            <Badge key={field} variant="outline">
+                              {field}
+                            </Badge>
+                          ))}
+                        </div>
+                        <div className="mt-3 flex justify-end">
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={reference.href}>查看问题</Link>
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {correctionMaterialSummary.conversationPoints.length > 0 ? (
+                  <div className="grid gap-2">
+                    <div className="text-xs text-muted-foreground">沟通要点</div>
+                    {correctionMaterialSummary.conversationPoints.map((point, index) => (
+                      <div
+                        key={point}
+                        className="grid gap-2 rounded-lg border p-3 text-sm sm:grid-cols-[3rem_1fr]"
+                      >
+                        <span className="font-medium tabular-nums">{index + 1}</span>
+                        <span className="text-muted-foreground">{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                <div>
+                  <div className="text-xs text-muted-foreground">暂缓能力</div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {correctionMaterialSummary.deferredActions.map((action) => (
+                      <Badge key={action} variant="outline">
+                        {action}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>失败行明细</CardTitle>
                 <CardDescription>
                   按行号、字段、错误码和原值定位需要修正的数据。
@@ -531,6 +696,16 @@ function correctionReadinessLevelLabel(
     needs_field_review: "字段核对",
     needs_quality_review: "质量核对",
   }[level]
+}
+
+function correctionMaterialStatusLabel(
+  status: "not_required" | "field_material_ready" | "quality_material_ready"
+) {
+  return {
+    not_required: "无需材料",
+    field_material_ready: "字段材料",
+    quality_material_ready: "质量材料",
+  }[status]
 }
 
 function Metric({

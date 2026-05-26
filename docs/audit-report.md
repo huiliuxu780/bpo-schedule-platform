@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-26 - Import correction material preview
+
+#### 结论
+
+- `F375/Q093/US509-US511` 已完成导入批次修正材料预览。
+- 前端模型新增 `summarizeImportBatchCorrectionMaterials()`，基于失败原因汇总、质量影响聚合和修正准备摘要整理材料状态、材料摘要、字段材料、失败行样本、相关质量问题、沟通要点和暂缓能力。
+- 导入批次详情页在“修正准备摘要”后展示“修正材料预览”，并保留“失败行明细”作为下一层定位信息。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 修正材料预览只做复核前材料整理，不代表真实修正提交、证据补录、复核结论写入、审批、权限、导出、批量或生产持久化已经实现。
+- in-app Browser 未能暴露可直接导航本地页面的控制接口；已用同一开发服务的本机 API 和 HTML 响应核对页面关键文本。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/import-batch-history.test.mjs` 首次失败于 `summarizeImportBatchCorrectionMaterials` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/import-batch-history.test.mjs`：通过，20 个导入批次模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过。
+- `npm run typecheck`：通过。
+- 页面 smoke：通过，使用本地 API 创建 `BATCH-SL-20260526-001`，详情 HTML 包含“修正材料预览”“材料摘要”“字段材料”“失败行样本”“沟通要点”“暂缓能力”“无修正提交”“无补证据写入”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Import correction readiness summary
 
 #### 结论

@@ -137,6 +137,50 @@ export type ImportBatchCorrectionReadinessSummary = {
   deferredActions: string[]
 }
 
+export type ImportBatchCorrectionMaterialStatus =
+  | "not_required"
+  | "field_material_ready"
+  | "quality_material_ready"
+
+export type ImportBatchCorrectionMaterialField = {
+  id: string
+  fieldName: string
+  errorCode: string
+  failedRows: number
+  representativeRowNumber: number
+  representativeRawValue: string
+  correctionHint: string
+  affectedObjects: string[]
+}
+
+export type ImportBatchCorrectionMaterialRowSample = {
+  failedRowNumber: number
+  fieldName: string
+  errorCode: string
+  rawValue: string
+  errorMessage: string
+}
+
+export type ImportBatchCorrectionMaterialQualityReference = {
+  issueId: string
+  title: string
+  severity: DataQualityIssue["severity"]
+  owner: string
+  blockedRows: number
+  matchedFields: string[]
+  href: string
+}
+
+export type ImportBatchCorrectionMaterialSummary = {
+  materialStatus: ImportBatchCorrectionMaterialStatus
+  summary: string
+  fieldMaterials: ImportBatchCorrectionMaterialField[]
+  failureRowSamples: ImportBatchCorrectionMaterialRowSample[]
+  qualityReferences: ImportBatchCorrectionMaterialQualityReference[]
+  conversationPoints: string[]
+  deferredActions: string[]
+}
+
 export type ImportBatchSummary = {
   total: number
   completed: number
@@ -161,6 +205,13 @@ export const deferredImportBatchCorrectionActions = [
   "无修正提交",
   "无审批或批量",
   "无生产数据写入",
+]
+
+export const deferredImportBatchCorrectionMaterialActions = [
+  "无修正提交",
+  "无补证据写入",
+  "无审批或批量",
+  "无导出",
 ]
 
 const API_BASE_URL =
@@ -755,6 +806,85 @@ export function summarizeImportBatchCorrectionReadiness(
         : "最后确认当前批次影响对象。",
     ],
     deferredActions: deferredImportBatchCorrectionActions,
+  }
+}
+
+export function summarizeImportBatchCorrectionMaterials(
+  batch: ImportBatch,
+  issueRows: DataQualityIssue[]
+): ImportBatchCorrectionMaterialSummary {
+  const failureReasonSummary = summarizeImportBatchFailureReasons(batch)
+
+  if (failureReasonSummary.totalFailedRows === 0) {
+    return {
+      materialStatus: "not_required",
+      summary: "当前批次没有失败行，无需准备修正材料。",
+      fieldMaterials: [],
+      failureRowSamples: [],
+      qualityReferences: [],
+      conversationPoints: [],
+      deferredActions: deferredImportBatchCorrectionMaterialActions,
+    }
+  }
+
+  const qualityImpactSummary = summarizeImportBatchQualityImpact(batch, issueRows)
+  const correctionReadinessSummary = summarizeImportBatchCorrectionReadiness(
+    batch,
+    issueRows
+  )
+  const topField = correctionReadinessSummary.primaryField
+  const topIssue = qualityImpactSummary.topIssue
+  const materialStatus =
+    qualityImpactSummary.relatedIssueCount > 0
+      ? "quality_material_ready"
+      : "field_material_ready"
+  const fieldMaterials = failureReasonSummary.items.map((reason) => ({
+    id: reason.id,
+    fieldName: reason.fieldName,
+    errorCode: reason.errorCode,
+    failedRows: reason.failedRows,
+    representativeRowNumber: reason.representativeRowNumber,
+    representativeRawValue: reason.representativeRawValue,
+    correctionHint: reason.correctionHint,
+    affectedObjects: reason.affectedObjects,
+  }))
+  const failureRowSamples = batch.failureRows.slice(0, 5).map((row) => ({
+    failedRowNumber: row.failedRowNumber,
+    fieldName: row.fieldName,
+    errorCode: row.errorCode,
+    rawValue: row.rawValue,
+    errorMessage: row.errorMessage,
+  }))
+  const qualityReferences = qualityImpactSummary.items.map((item) => ({
+    issueId: item.issueId,
+    title: item.title,
+    severity: item.severity,
+    owner: item.owner,
+    blockedRows: item.blockedRows,
+    matchedFields: item.matchedFields,
+    href: item.href,
+  }))
+  const confirmationPoint =
+    correctionReadinessSummary.confirmationObjects.length > 0
+      ? `需确认对象：${correctionReadinessSummary.confirmationObjects.join("、")}。`
+      : "需确认当前批次影响对象。"
+
+  return {
+    materialStatus,
+    summary: topIssue
+      ? `材料已按 ${topField} 字段和 ${topIssue.id} 质量问题整理。`
+      : `材料已按 ${topField} 字段失败原因整理。`,
+    fieldMaterials,
+    failureRowSamples,
+    qualityReferences,
+    conversationPoints: [
+      topIssue
+        ? `先说明 ${topIssue.id} ${topIssue.title} 的影响。`
+        : `先说明 ${topField} 字段失败原因。`,
+      `带上 ${failureRowSamples.length} 条失败行样本核对原值和错误码。`,
+      confirmationPoint,
+    ],
+    deferredActions: deferredImportBatchCorrectionMaterialActions,
   }
 }
 

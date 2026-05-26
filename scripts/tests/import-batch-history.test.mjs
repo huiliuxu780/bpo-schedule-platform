@@ -13,6 +13,7 @@ import {
   mapImportBatchResult,
   summarizeImportBatchFailureImpacts,
   summarizeImportBatchFailureReasons,
+  summarizeImportBatchCorrectionMaterials,
   summarizeImportBatchCorrectionReadiness,
   summarizeImportBatchQualityImpact,
   summarizeImportBatches,
@@ -486,6 +487,122 @@ test("import batch correction readiness exposes no-op state without failures", (
   assert.equal(summary.primaryRisk, "无")
   assert.deepEqual(summary.confirmationObjects, [])
   assert.deepEqual(summary.reviewSteps, [])
+})
+
+test("import batch correction materials prepare linked quality packet", () => {
+  const batch = {
+    ...getImportBatchById("BATCH-20260519-001"),
+    failureRows: [
+      {
+        batchId: "BATCH-20260519-001",
+        entity: "master_data",
+        failedRowNumber: 3,
+        fieldName: "employee_name",
+        errorCode: "missing_required_field",
+        errorMessage: "坐席姓名不能为空",
+        rawValue: "",
+      },
+      {
+        batchId: "BATCH-20260519-001",
+        entity: "master_data",
+        failedRowNumber: 4,
+        fieldName: "employee_id",
+        errorCode: "unknown_foreign_key",
+        errorMessage: "员工绑定缺失",
+        rawValue: "A-9931",
+      },
+      {
+        batchId: "BATCH-20260519-001",
+        entity: "master_data",
+        failedRowNumber: 5,
+        fieldName: "supplier_id",
+        errorCode: "duplicate_primary_key",
+        errorMessage: "供应商重复",
+        rawValue: "SUP-08",
+      },
+    ],
+  }
+
+  const summary = summarizeImportBatchCorrectionMaterials(
+    batch,
+    fallbackDataQualityIssues
+  )
+
+  assert.equal(summary.materialStatus, "quality_material_ready")
+  assert.ok(summary.summary.includes("employee_id"))
+  assert.ok(summary.fieldMaterials.some((item) => item.fieldName === "employee_id"))
+  assert.equal(summary.failureRowSamples.some((row) => row.failedRowNumber === 4), true)
+  assert.ok(
+    summary.qualityReferences.some((reference) => reference.issueId === "DQ-202605-001")
+  )
+  assert.ok(summary.conversationPoints.some((point) => point.includes("DQ-202605-001")))
+  assert.ok(summary.deferredActions.includes("无修正提交"))
+  assert.ok(summary.deferredActions.includes("无补证据写入"))
+})
+
+test("import batch correction materials prepare unlinked field packet", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-SL-20260526-005",
+    entity: "status_log",
+    file_name: "status_log_material_test.csv",
+    uploaded_by: "现场主管",
+    uploaded_at: "2026-05-26T22:20:00+08:00",
+    status: "completed_with_errors",
+    total_rows: 1,
+    success_rows: 0,
+    failed_rows: 1,
+    warning_rows: 0,
+    error_codes: ["invalid_time_range"],
+    failure_rows: [
+      {
+        batch_id: "BATCH-SL-20260526-005",
+        entity: "status_log",
+        failed_row_number: 2,
+        field_name: "end_at",
+        error_code: "invalid_time_range",
+        error_message: "状态结束时间必须晚于开始时间",
+        raw_value: "2026-05-26T09:00:00",
+      },
+    ],
+  })
+
+  const summary = summarizeImportBatchCorrectionMaterials(
+    batch,
+    fallbackDataQualityIssues
+  )
+
+  assert.equal(summary.materialStatus, "field_material_ready")
+  assert.equal(summary.fieldMaterials[0].fieldName, "end_at")
+  assert.equal(summary.qualityReferences.length, 0)
+  assert.ok(summary.conversationPoints.some((point) => point.includes("失败行样本")))
+})
+
+test("import batch correction materials expose empty state without failures", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-DF-20260526-003",
+    entity: "demand_forecast",
+    file_name: "demand_forecast_material_clean.csv",
+    uploaded_by: "预测运营",
+    uploaded_at: "2026-05-26T22:30:00+08:00",
+    status: "completed",
+    total_rows: 2,
+    success_rows: 2,
+    failed_rows: 0,
+    warning_rows: 0,
+    error_codes: [],
+    failure_rows: [],
+  })
+
+  const summary = summarizeImportBatchCorrectionMaterials(
+    batch,
+    fallbackDataQualityIssues
+  )
+
+  assert.equal(summary.materialStatus, "not_required")
+  assert.equal(summary.summary, "当前批次没有失败行，无需准备修正材料。")
+  assert.deepEqual(summary.fieldMaterials, [])
+  assert.deepEqual(summary.failureRowSamples, [])
+  assert.deepEqual(summary.qualityReferences, [])
 })
 
 test("import batch summary includes process-memory csv results", () => {

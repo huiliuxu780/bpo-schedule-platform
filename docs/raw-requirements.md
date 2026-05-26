@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R514-R517 - 导入批次修正材料预览
+
+```yaml
+requirements:
+  - id: R514
+    module: "导入批次"
+    description: "现场主管需要在导入批次详情看到修正材料预览，把失败字段、失败行样本、质量问题和确认对象整理成复核前材料包。"
+  - id: R515
+    module: "导入批次"
+    description: "修正材料预览需要基于现有本地模型聚合，不新增数据库、后端持久化、修正提交、证据补录或生产处理状态。"
+  - id: R516
+    module: "导入批次"
+    description: "修正材料预览需要展示材料摘要、字段材料、失败行样本、相关质量问题、建议沟通口径和暂缓能力。"
+  - id: R517
+    module: "质量与交付"
+    description: "导入批次修正材料预览完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F374 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做导入批次详情页的本地只读修正材料预览，基于已有 failureRows、failure reason summary、quality impact rollup 和 correction readiness summary 聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R510-R513 - 导入批次修正准备摘要
 
 ```yaml
