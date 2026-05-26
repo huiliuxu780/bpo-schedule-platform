@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US563-US565 - 数据质量分组复核顺序摘要
+
+```yaml
+stories:
+  - id: US563
+    requirement_ids: [R586, R587]
+    task_ids: [F393]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到质量分组复核顺序，以便先处理影响履约异常最多的分组。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US564
+    requirement_ids: [R588]
+    task_ids: [F393]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望复核顺序展示步骤、owner、代表问题、影响异常、影响人员、阻断行和查看入口，以便按顺序只读追溯。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US565
+    requirement_ids: [R589]
+    task_ids: [Q111]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望质量分组复核顺序完成后做收口验证，确认页面展示、模型测试和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量分组模型提供分组复核顺序摘要，基于分组异常影响覆盖排序。"
+  - "数据质量总览页展示质量分组复核顺序卡片，包含步骤、owner、代表问题、影响异常、影响人员、阻断行、入口和暂缓能力。"
+  - "没有分组异常影响时展示空状态，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality-groups.test.mjs`、`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US560-US562 - 数据质量分组异常影响覆盖摘要
 
 ```yaml

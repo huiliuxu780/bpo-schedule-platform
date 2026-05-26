@@ -42,6 +42,7 @@ import {
   fallbackDataQualityGroups,
   getUngroupedDataQualityIssueIds,
   summarizeDataQualityGroupExceptionCoverage,
+  summarizeDataQualityGroupReviewSequence,
   summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
 } from "@/lib/data-quality-groups"
@@ -68,6 +69,10 @@ export default function DataQualityPage() {
     fallbackDataQualityGroups
   )
   const groupExceptionCoverage = summarizeDataQualityGroupExceptionCoverage(
+    rows,
+    fallbackDataQualityGroups
+  )
+  const groupReviewSequence = summarizeDataQualityGroupReviewSequence(
     rows,
     fallbackDataQualityGroups
   )
@@ -214,6 +219,101 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>质量分组复核顺序</CardTitle>
+                <CardDescription>
+                  把影响履约异常的质量分组排成主管可读的查看步骤。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {groupReviewSequence.firstStep?.title ?? "无分组步骤"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail label="分组步骤" value={`${groupReviewSequence.stepCount}`} />
+              <Detail
+                label="首要异常"
+                value={`${groupReviewSequence.firstStep?.impactedExceptionCount ?? 0}`}
+              />
+              <Detail
+                label="首要人员"
+                value={`${groupReviewSequence.firstStep?.impactedPeople.length ?? 0}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    {groupReviewSequence.headline}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    首要 owner：{groupReviewSequence.firstStep?.owner ?? "无"} / 风险：
+                    {groupReviewSequence.firstStep
+                      ? dataQualityGroupRiskLabel(groupReviewSequence.firstStep.risk)
+                      : "无"}{" "}
+                    / 代表问题：
+                    {groupReviewSequence.firstStep?.representativeIssueId ?? "无"}
+                  </div>
+                </div>
+                {groupReviewSequence.firstStep ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={groupReviewSequence.firstStep.href}>查看分组步骤</Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {groupReviewSequence.steps.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {groupReviewSequence.steps.map((step) => (
+                    <div key={step.groupId} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">
+                        第 {step.sequence} 步：{step.title}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        owner：{step.owner} / {dataQualityGroupRiskLabel(step.risk)} / 代表问题：
+                        {step.representativeIssueId}
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                        <Detail label="异常" value={`${step.impactedExceptionCount}`} />
+                        <Detail label="人员" value={`${step.impactedPeople.length}`} />
+                        <Detail label="阻断行" value={`${step.blockedRows}`} />
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        {step.representativeIssueTitle}
+                      </div>
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        下一查看：{step.nextViewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前质量分组没有匹配到履约异常影响。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{groupReviewSequence.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {groupReviewSequence.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

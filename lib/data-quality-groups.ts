@@ -83,6 +83,30 @@ export type DataQualityGroupExceptionCoverageSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityGroupReviewSequenceStep = {
+  sequence: number
+  groupId: string
+  title: string
+  risk: DataQualityGroupRisk
+  owner: string
+  representativeIssueId: string
+  representativeIssueTitle: string
+  impactedExceptionCount: number
+  impactedPeople: string[]
+  blockedRows: number
+  href: string
+  nextViewHint: string
+}
+
+export type DataQualityGroupReviewSequenceSummary = {
+  stepCount: number
+  headline: string
+  firstStep?: DataQualityGroupReviewSequenceStep
+  steps: DataQualityGroupReviewSequenceStep[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityGroupActions = [
   "无真实数据修复",
   "无自动合并",
@@ -263,6 +287,42 @@ export function summarizeDataQualityGroupExceptionCoverage(
       items.length > 0
         ? "先查看影响最多履约异常的质量分组，再回到代表问题确认字段和影响对象。"
         : "当前质量分组没有匹配到履约异常影响。",
+    deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
+export function summarizeDataQualityGroupReviewSequence(
+  issues: DataQualityIssue[],
+  groups = fallbackDataQualityGroups
+): DataQualityGroupReviewSequenceSummary {
+  const coverage = summarizeDataQualityGroupExceptionCoverage(issues, groups)
+  const steps = coverage.items.map((item, index) => ({
+    sequence: index + 1,
+    groupId: item.groupId,
+    title: item.title,
+    risk: item.risk,
+    owner: item.owner,
+    representativeIssueId: item.representativeIssueId,
+    representativeIssueTitle: item.representativeIssueTitle,
+    impactedExceptionCount: item.impactedExceptionCount,
+    impactedPeople: item.impactedPeople,
+    blockedRows: item.blockedRows,
+    href: item.href,
+    nextViewHint: `第 ${index + 1} 步查看${item.title}，再打开 ${item.representativeIssueId} 复核影响对象。`,
+  }))
+  const [firstStep, secondStep] = steps
+
+  return {
+    stepCount: steps.length,
+    headline: firstStep
+      ? `先看 ${firstStep.title}${secondStep ? `，再看 ${secondStep.title}` : ""}`
+      : "当前没有需要排序的质量分组。",
+    firstStep,
+    steps,
+    nextViewHint:
+      steps.length > 0
+        ? "按分组步骤查看原因分组，再回到代表问题确认履约异常影响。"
+        : "当前质量分组没有匹配到履约异常影响，暂不生成复核顺序。",
     deferredActions: deferredDataQualityGroupActions,
   }
 }

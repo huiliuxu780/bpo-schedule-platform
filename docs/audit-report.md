@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality group review sequence
+
+#### 结论
+
+- `F393/Q111/US563-US565` 已完成数据质量分组复核顺序摘要。
+- 前端分组模型新增 `summarizeDataQualityGroupReviewSequence()`，基于本地质量分组异常影响覆盖生成主管复核步骤。
+- 数据质量总览页新增“质量分组复核顺序”卡片，展示首要步骤、owner、风险、代表问题、影响异常、影响人员、阻断行、下一查看提示和“查看分组步骤”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 分组复核顺序只基于本地 fallback 分组和异常影响覆盖，不代表真实复核任务、异常闭环写入、审批、权限、导出、批量或生产持久化已经实现。
+- 摘要用于主管只读查看顺序，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality-groups.test.mjs` 首次失败于 `summarizeDataQualityGroupReviewSequence` 未导出；`node --test scripts/tests/data-quality.test.mjs` 首次失败于页面未引用 `summarizeDataQualityGroupReviewSequence`，证明测试覆盖新增模型和页面契约。
+- `node --test scripts/tests/data-quality-groups.test.mjs`：通过，7 个数据质量分组模型测试通过。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，33 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“质量分组复核顺序”“先看 时间有效性”“运营负责人”“DQ-202605-010”“查看分组步骤”“第 1 步：时间有效性”“无真实数据修复”“无批量重导”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality group exception coverage
 
 #### 结论

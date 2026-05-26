@@ -5,6 +5,7 @@ import {
   fallbackDataQualityGroups,
   getDataQualityGroup,
   summarizeDataQualityGroupExceptionCoverage,
+  summarizeDataQualityGroupReviewSequence,
   summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
 } from "../../lib/data-quality-groups.ts"
@@ -93,4 +94,20 @@ test("data quality group exception coverage exposes empty state", () => {
   assert.equal(summary.totalBlockedRows, 0)
   assert.equal(summary.topGroup, undefined)
   assert.deepEqual(summary.items, [])
+})
+
+test("data quality group review sequence orders impacted groups", () => {
+  const summary = summarizeDataQualityGroupReviewSequence(fallbackDataQualityIssues)
+
+  assert.equal(summary.stepCount, 2)
+  assert.ok(summary.headline.includes("时间有效性"))
+  assert.equal(summary.firstStep?.groupId, "time-validity")
+  assert.equal(summary.firstStep?.sequence, 1)
+  assert.equal(summary.firstStep?.owner, "运营负责人")
+  assert.equal(summary.firstStep?.representativeIssueId, "DQ-202605-010")
+  assert.equal(summary.firstStep?.href, "/data-quality/groups/time-validity")
+  assert.ok(summary.firstStep?.impactedPeople.includes("A-1002"))
+  assert.ok(summary.steps.some((step) => step.groupId === "identity-integrity"))
+  assert.ok(summary.nextViewHint.includes("分组步骤"))
+  assert.ok(summary.deferredActions.includes("无真实数据修复"))
 })

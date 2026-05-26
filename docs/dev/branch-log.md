@@ -2,12 +2,30 @@
 
 ## 2026-05-26
 
+### F393-Q111 Data Quality Group Review Sequence
+
+- branch_name: `codex/f393-data-quality-group-review-sequence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `cd1383f`
+- remote_status: `not_pushed`
+- scope: frontend local read-only function: add quality-group review sequence summary to the data quality overview, turning impacted quality groups into ordered supervisor review steps.
+- allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality-groups.ts`, `scripts/tests/data-quality-groups.test.mjs`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing data quality overview route, data quality group frontend model/test, data quality page source test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing group review sequence export and missing page source reference; data-quality group tests, data-quality tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F392-Q110 Data Quality Group Exception Coverage
 
 - branch_name: `codex/f392-data-quality-group-exception-coverage`
 - base_main_commit: `a3a134c`
 - base_chain_commit: `c1159cb`
-- remote_status: `not_pushed`
+- remote_status: `pushed`
 - scope: frontend local read-only function: add quality-group exception coverage summary to the data quality overview, ranking groups by impacted fulfillment exceptions, people, and blocked rows.
 - allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality-groups.ts`, `scripts/tests/data-quality-groups.test.mjs`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates existing data quality overview route, data quality group frontend model/test, data quality page source test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
@@ -17,7 +35,7 @@
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `ask PM after verified local commit`
+- push_decision: `PM confirmed push; pushed to origin/codex/f392-data-quality-group-exception-coverage`
 - blocked_reason: `N/A`
 
 ### F391-Q109 Data Quality Review Group Link
