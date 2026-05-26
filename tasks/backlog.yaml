@@ -5,7 +5,7 @@ tasks:
   - id: F400
     title: "主管异常复核结论本地提交闭环"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     allowed_files: ["app/person-timeline/**", "backend/**", "lib/person-timeline.ts", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
@@ -21,7 +21,7 @@ tasks:
   - id: F401
     title: "主管异常证据补充本地提交闭环"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     dependencies: ["F400"]
     allowed_files: ["app/person-timeline/**", "backend/**", "lib/person-timeline.ts", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
@@ -38,7 +38,7 @@ tasks:
   - id: F402
     title: "主管异常本地关闭处理记录闭环"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     dependencies: ["F400", "F401"]
     allowed_files: ["app/person-timeline/**", "backend/**", "lib/person-timeline.ts", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]

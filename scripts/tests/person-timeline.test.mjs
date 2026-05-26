@@ -12,12 +12,17 @@ import {
   getFulfillmentGroupMemberWeekMatrix,
   getFulfillmentMatrix,
   getFulfillmentMatrixExceptionQueueCursor,
+  getSupervisorExceptionReviewState,
   getFulfillmentTeam,
   getPersonTimeline,
   getPersonTimelineAvailableDates,
   getPersonTimelineDailyView,
   getPersonTimelineWeekView,
   getTimelineEventPosition,
+  resetSupervisorExceptionReviewProcessMemory,
+  submitSupervisorExceptionEvidence,
+  submitSupervisorExceptionReviewConclusion,
+  submitSupervisorExceptionClosure,
   summarizePersonTimelines,
 } from "../../lib/person-timeline.ts";
 
@@ -149,6 +154,52 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(carryoverPosition < closureReadinessPosition);
   assert.ok(closureReadinessPosition < reviewLoadPosition);
   assert.equal(titleCount, 1);
+});
+
+test("supervisor exception review process memory stores conclusion evidence and closure", () => {
+  resetSupervisorExceptionReviewProcessMemory();
+
+  const conclusion = submitSupervisorExceptionReviewConclusion({
+    exceptionKey: "A-1001::no_login",
+    employeeId: "A-1001",
+    anomalyCode: "no_login",
+    submittedBy: "现场主管",
+    conclusion: "确认培训安排符合当班要求，登录缺口不计入人员缺勤。",
+    sourceReferences: ["schedule-A-1001-20260511-1300", "status-A-1001-20260511-training"],
+  });
+  const evidence = submitSupervisorExceptionEvidence({
+    exceptionKey: "A-1001::no_login",
+    submittedBy: "现场主管",
+    note: "已核对培训登记和状态轨道，员工当天参加项目培训。",
+    linkedRecordType: "person_timeline",
+    linkedRecordId: "A-1001",
+  });
+  const closure = submitSupervisorExceptionClosure({
+    exceptionKey: "A-1001::no_login",
+    closedBy: "现场主管",
+    conclusion: "已形成本地处理结论，后续等待数据库持久化 Gate。",
+  });
+  const state = getSupervisorExceptionReviewState("A-1001::no_login");
+
+  assert.equal(conclusion.id, "REV-0001");
+  assert.equal(evidence.id, "EVD-0001");
+  assert.equal(closure.id, "CLS-0001");
+  assert.equal(state.status, "closed_locally");
+  assert.equal(state.latestConclusion?.conclusion, conclusion.conclusion);
+  assert.equal(state.evidenceRecords.length, 1);
+  assert.equal(state.closureRecord?.evidenceRecordIds[0], "EVD-0001");
+});
+
+test("person timeline page exposes local review submit evidence and closure actions", () => {
+  const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
+
+  assert.ok(pageSource.includes("SelectedExceptionLocalClosureCard"));
+  assert.ok(pageSource.includes("提交复核结论"));
+  assert.ok(pageSource.includes("补充证据"));
+  assert.ok(pageSource.includes("关闭异常"));
+  assert.ok(pageSource.includes("submitSupervisorReviewConclusionAction"));
+  assert.ok(pageSource.includes("submitSupervisorEvidenceAction"));
+  assert.ok(pageSource.includes("submitSupervisorClosureAction"));
 });
 
 test("person timeline filters by owner, anomaly, and query", () => {

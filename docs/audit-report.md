@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-27 - Supervisor exception local handling write loop
+
+#### 结论
+
+- `F400-F402/US584-US586` 已完成主管异常处理本地写入闭环。
+- `lib/person-timeline.ts` 新增主管异常处理 process-memory：复核结论、证据补充、关闭记录和状态查询。
+- 人员履约时间线异常面板新增“处理闭环”，支持提交复核结论、补充证据、在结论和证据满足后关闭异常，并展示最新处理状态。
+- 本批没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 处理记录只存在于当前 Next.js 进程内存，刷新服务或多进程部署不会保留；这不是生产持久化、权限控制、审批流或批量处理。
+- 关闭条件只校验本地结论和证据是否已提交，不代表生产级证据验真、状态字典、结算、考核或 SLA 规则已经实现。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于 `getSupervisorExceptionReviewState` 未导出，证明测试先覆盖新增处理状态契约。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，15 个模型/页面源码测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，6 个产品文案/导航边界测试通过。
+- 页面 smoke：通过，人员履约时间线页面包含“处理闭环”“提交复核结论”“补充证据”“关闭异常”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality handoff risk import-batch impact
 
 #### 结论

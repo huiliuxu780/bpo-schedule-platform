@@ -41,7 +41,7 @@ stories:
     story: "作为现场主管，我希望能在异常复核场景提交本地复核结论，以便从只读建议进入可验证的处理流转。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
   - id: US585
     requirement_ids: [R616]
     task_ids: [F401]
@@ -50,7 +50,7 @@ stories:
     story: "作为现场主管，我希望能给异常补充证据说明并关联已有记录，以便复核结论具备可追溯依据。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US584]
   - id: US586
     requirement_ids: [R617]
@@ -60,7 +60,7 @@ stories:
     story: "作为现场主管，我希望在复核结论和证据满足条件后本地关闭异常，以便形成从异常到处理记录的最小闭环。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US584, US585]
 acceptance:
   - "复核结论可以本地提交，并在异常队列和详情中可见。"

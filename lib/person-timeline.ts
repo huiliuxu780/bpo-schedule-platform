@@ -33,6 +33,183 @@ export type TimelineExceptionExplanation = {
   priority: TimelineAnomaly["severity"]
 }
 
+export type SupervisorExceptionReviewConclusionRecord = {
+  id: string
+  exceptionKey: string
+  employeeId: string
+  anomalyCode: string
+  submittedBy: string
+  submittedAt: string
+  conclusion: string
+  sourceReferences: string[]
+}
+
+export type SupervisorExceptionEvidenceRecord = {
+  id: string
+  exceptionKey: string
+  submittedBy: string
+  submittedAt: string
+  note: string
+  linkedRecordType: "import_batch" | "data_quality_issue" | "person_timeline"
+  linkedRecordId: string
+}
+
+export type SupervisorExceptionClosureRecord = {
+  id: string
+  exceptionKey: string
+  closedBy: string
+  closedAt: string
+  conclusion: string
+  evidenceRecordIds: string[]
+}
+
+export type SupervisorExceptionReviewState = {
+  exceptionKey: string
+  status: "not_started" | "review_submitted" | "evidence_added" | "closed_locally"
+  latestConclusion?: SupervisorExceptionReviewConclusionRecord
+  evidenceRecords: SupervisorExceptionEvidenceRecord[]
+  closureRecord?: SupervisorExceptionClosureRecord
+}
+
+export type SupervisorExceptionReviewConclusionInput = {
+  exceptionKey: string
+  employeeId: string
+  anomalyCode: string
+  submittedBy: string
+  conclusion: string
+  sourceReferences?: string[]
+}
+
+export type SupervisorExceptionEvidenceInput = {
+  exceptionKey: string
+  submittedBy: string
+  note: string
+  linkedRecordType: SupervisorExceptionEvidenceRecord["linkedRecordType"]
+  linkedRecordId: string
+}
+
+export type SupervisorExceptionClosureInput = {
+  exceptionKey: string
+  closedBy: string
+  conclusion: string
+}
+
+const supervisorReviewConclusionRecords: SupervisorExceptionReviewConclusionRecord[] = []
+const supervisorReviewEvidenceRecords: SupervisorExceptionEvidenceRecord[] = []
+const supervisorReviewClosureRecords: SupervisorExceptionClosureRecord[] = []
+
+export function resetSupervisorExceptionReviewProcessMemory() {
+  supervisorReviewConclusionRecords.length = 0
+  supervisorReviewEvidenceRecords.length = 0
+  supervisorReviewClosureRecords.length = 0
+}
+
+export function submitSupervisorExceptionReviewConclusion(
+  input: SupervisorExceptionReviewConclusionInput
+): SupervisorExceptionReviewConclusionRecord {
+  const record: SupervisorExceptionReviewConclusionRecord = {
+    id: nextProcessMemoryId("REV", supervisorReviewConclusionRecords.length),
+    exceptionKey: input.exceptionKey,
+    employeeId: input.employeeId,
+    anomalyCode: input.anomalyCode,
+    submittedBy: input.submittedBy.trim() || "现场主管",
+    submittedAt: currentProcessMemoryTimestamp(),
+    conclusion: input.conclusion.trim(),
+    sourceReferences: input.sourceReferences ?? [],
+  }
+
+  if (!record.exceptionKey || !record.conclusion) {
+    throw new Error("exceptionKey and conclusion are required")
+  }
+
+  supervisorReviewConclusionRecords.push(record)
+  return record
+}
+
+export function submitSupervisorExceptionEvidence(
+  input: SupervisorExceptionEvidenceInput
+): SupervisorExceptionEvidenceRecord {
+  const record: SupervisorExceptionEvidenceRecord = {
+    id: nextProcessMemoryId("EVD", supervisorReviewEvidenceRecords.length),
+    exceptionKey: input.exceptionKey,
+    submittedBy: input.submittedBy.trim() || "现场主管",
+    submittedAt: currentProcessMemoryTimestamp(),
+    note: input.note.trim(),
+    linkedRecordType: input.linkedRecordType,
+    linkedRecordId: input.linkedRecordId.trim(),
+  }
+
+  if (!record.exceptionKey || !record.note || !record.linkedRecordId) {
+    throw new Error("exceptionKey, note, and linkedRecordId are required")
+  }
+
+  supervisorReviewEvidenceRecords.push(record)
+  return record
+}
+
+export function submitSupervisorExceptionClosure(
+  input: SupervisorExceptionClosureInput
+): SupervisorExceptionClosureRecord {
+  const state = getSupervisorExceptionReviewState(input.exceptionKey)
+
+  if (!state.latestConclusion || state.evidenceRecords.length === 0) {
+    throw new Error("review conclusion and evidence are required before closure")
+  }
+
+  const record: SupervisorExceptionClosureRecord = {
+    id: nextProcessMemoryId("CLS", supervisorReviewClosureRecords.length),
+    exceptionKey: input.exceptionKey,
+    closedBy: input.closedBy.trim() || "现场主管",
+    closedAt: currentProcessMemoryTimestamp(),
+    conclusion: input.conclusion.trim(),
+    evidenceRecordIds: state.evidenceRecords.map((item) => item.id),
+  }
+
+  if (!record.conclusion) {
+    throw new Error("closure conclusion is required")
+  }
+
+  supervisorReviewClosureRecords.push(record)
+  return record
+}
+
+export function getSupervisorExceptionReviewState(
+  exceptionKey: string
+): SupervisorExceptionReviewState {
+  const latestConclusion = supervisorReviewConclusionRecords
+    .filter((record) => record.exceptionKey === exceptionKey)
+    .at(-1)
+  const evidenceRecords = supervisorReviewEvidenceRecords.filter(
+    (record) => record.exceptionKey === exceptionKey
+  )
+  const closureRecord = supervisorReviewClosureRecords
+    .filter((record) => record.exceptionKey === exceptionKey)
+    .at(-1)
+  const status = closureRecord
+    ? "closed_locally"
+    : evidenceRecords.length > 0
+      ? "evidence_added"
+      : latestConclusion
+        ? "review_submitted"
+        : "not_started"
+
+  return {
+    exceptionKey,
+    status,
+    ...(latestConclusion ? { latestConclusion } : {}),
+    evidenceRecords,
+    ...(closureRecord ? { closureRecord } : {}),
+  }
+}
+
+function nextProcessMemoryId(prefix: string, currentLength: number) {
+  return `${prefix}-${String(currentLength + 1).padStart(4, "0")}`
+}
+
+function currentProcessMemoryTimestamp() {
+  return new Date().toISOString().replace("T", " ").slice(0, 16)
+}
+
 export type PersonTimeline = {
   employeeId: string
   employeeName: string

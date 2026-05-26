@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-05-27
+
+- task_id: `F400-F402`
+- source_ids:
+  - `R614-R617`
+- story_ids:
+  - `US584-US586`
+- action: 完成主管异常处理本地写入闭环。
+- status: `done`
+- notes: 人员履约时间线的异常处理面板现在支持对选中异常提交复核结论、补充证据并在满足结论和证据条件后关闭异常，处理状态、结论、证据和关闭记录均进入本地 process-memory 并在面板内展示。本次不新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
 ### 2026-05-26
 
 - task_id: `F399/Q117`

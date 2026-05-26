@@ -1,5 +1,25 @@
 # Branch Log
 
+## 2026-05-27
+
+### F400-F402 Supervisor Local Handling Write Loop
+
+- branch_name: `codex/f400-supervisor-review-submit`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `dac42a6`
+- remote_status: `not_pushed`
+- scope: local process-memory write loop: add supervisor review conclusion submission, evidence supplement, and exception closure records to the person timeline exception panel.
+- allowed_files_check: `app/person-timeline/**`, `lib/person-timeline.ts`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing person timeline route, local model/test, server actions, and current and legacy traceability docs; does not add production persistence, backend external connectors, permission boundaries, approval, export, batch operation, file storage, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing supervisor exception review state export; person-timeline tests, product copy/navigation tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `b1c79b1`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ## 2026-05-26
 
 ### F399-Q117 Data Quality Handoff Risk Import Impact

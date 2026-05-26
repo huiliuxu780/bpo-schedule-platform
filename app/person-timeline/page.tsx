@@ -12,6 +12,11 @@ import {
 } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import {
+  submitSupervisorClosureAction,
+  submitSupervisorEvidenceAction,
+  submitSupervisorReviewConclusionAction,
+} from "./actions"
+import {
   buildFulfillmentMatrixReturnHref,
   buildPersonFulfillmentDetailHref,
   encodeScopeId,
@@ -20,6 +25,7 @@ import {
   getFulfillmentGroupMemberWeekMatrix,
   getFulfillmentMatrix,
   getFulfillmentMatrixExceptionQueueCursor,
+  getSupervisorExceptionReviewState,
   getFulfillmentTeam,
   getTimelineEventPosition,
   type FulfillmentCalendarSummary,
@@ -30,6 +36,7 @@ import {
   type FulfillmentMatrixExceptionQueueCursor,
   type FulfillmentMatrixExceptionQueueItem,
   type FulfillmentMatrixMember,
+  type SupervisorExceptionReviewState,
   type FulfillmentTeamWeek,
   type PersonTimelineWeekDay,
   type TimelineEvent,
@@ -1365,6 +1372,8 @@ function MatrixExceptionPanel({
         exceptionKey: selected.key,
       })
     : ""
+  const returnPath = selected ? matrixQueueItemHref(matrix, queueFilter, selected.key) : "/person-timeline"
+  const reviewState = selected ? getSupervisorExceptionReviewState(selected.key) : undefined
 
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
@@ -1372,6 +1381,13 @@ function MatrixExceptionPanel({
       {selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}
       {selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}
       {selected ? <SelectedExceptionNextDayWatchlistCard selected={selected} /> : null}
+      {selected && reviewState ? (
+        <SelectedExceptionLocalClosureCard
+          selected={selected}
+          reviewState={reviewState}
+          returnPath={returnPath}
+        />
+      ) : null}
       {selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}
       <DataQualityExceptionImpactPanel impact={matrix.dataQualityExceptionImpact} />
       <DataQualityImpactRankingPanel ranking={matrix.dataQualityImpactRanking} />
@@ -2000,6 +2016,178 @@ function SelectedExceptionReviewOutcomePreviewCard({
         <div>来源引用：{preview.sourceReferences.join(" / ")}</div>
         <div>{preview.boundary}</div>
       </div>
+    </div>
+  )
+}
+
+function SelectedExceptionLocalClosureCard({
+  selected,
+  reviewState,
+  returnPath,
+}: {
+  selected: FulfillmentMatrixExceptionQueueItem
+  reviewState: SupervisorExceptionReviewState
+  returnPath: string
+}) {
+  const preview = selected.reviewOutcomePreview
+  const canClose =
+    reviewState.latestConclusion &&
+    reviewState.evidenceRecords.length > 0 &&
+    !reviewState.closureRecord
+  const statusLabel: Record<SupervisorExceptionReviewState["status"], string> = {
+    not_started: "待提交",
+    review_submitted: "已提交结论",
+    evidence_added: "已补证据",
+    closed_locally: "已形成处理结论",
+  }
+  const linkedRecordTypeLabel: Record<
+    SupervisorExceptionReviewState["evidenceRecords"][number]["linkedRecordType"],
+    string
+  > = {
+    import_batch: "导入批次",
+    data_quality_issue: "数据质量问题",
+    person_timeline: "人员履约记录",
+  }
+
+  return (
+    <div className="grid gap-3 rounded-md border p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">处理闭环</div>
+          <div className="text-xs text-muted-foreground">
+            提交复核结论、补充证据并推进处理状态。
+          </div>
+        </div>
+        <Badge variant={reviewState.status === "closed_locally" ? "secondary" : "outline"}>
+          {statusLabel[reviewState.status]}
+        </Badge>
+      </div>
+
+      {reviewState.latestConclusion ? (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">{reviewState.latestConclusion.submittedBy}</span>
+            <span className="text-muted-foreground">
+              {reviewState.latestConclusion.submittedAt}
+            </span>
+          </div>
+          <div className="mt-1 text-muted-foreground">
+            {reviewState.latestConclusion.conclusion}
+          </div>
+          <div className="mt-1 text-muted-foreground">
+            来源：{reviewState.latestConclusion.sourceReferences.join(" / ") || selected.key}
+          </div>
+        </div>
+      ) : null}
+
+      <form action={submitSupervisorReviewConclusionAction} className="grid gap-2">
+        <input type="hidden" name="exception_key" value={selected.key} />
+        <input type="hidden" name="employee_id" value={selected.employeeId} />
+        <input type="hidden" name="anomaly_code" value={selected.anomalyCode} />
+        <input type="hidden" name="return_path" value={returnPath} />
+        <input
+          type="hidden"
+          name="source_references"
+          value={preview.sourceReferences.join(",")}
+        />
+        <input type="hidden" name="submitted_by" value="现场主管" />
+        <textarea
+          name="conclusion"
+          required
+          rows={3}
+          className="min-h-20 rounded-md border bg-background px-3 py-2 text-xs"
+          defaultValue={preview.suggestedOutcome}
+        />
+        <Button size="sm" type="submit" className="h-8 justify-self-start text-xs">
+          提交复核结论
+        </Button>
+      </form>
+
+      <div className="grid gap-2">
+        <div className="text-xs font-medium">补充证据</div>
+        {reviewState.evidenceRecords.map((record) => (
+          <div key={record.id} className="rounded-md border bg-muted/30 p-2 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{record.submittedBy}</span>
+              <span className="text-muted-foreground">{record.submittedAt}</span>
+            </div>
+            <div className="mt-1 text-muted-foreground">{record.note}</div>
+            <div className="mt-1 text-muted-foreground">
+              关联：{linkedRecordTypeLabel[record.linkedRecordType]} / {record.linkedRecordId}
+            </div>
+          </div>
+        ))}
+        <form action={submitSupervisorEvidenceAction} className="grid gap-2">
+          <input type="hidden" name="exception_key" value={selected.key} />
+          <input type="hidden" name="return_path" value={returnPath} />
+          <input type="hidden" name="submitted_by" value="现场主管" />
+          <select
+            name="linked_record_type"
+            defaultValue="person_timeline"
+            className="h-8 rounded-md border bg-background px-2 text-xs"
+          >
+            <option value="person_timeline">人员履约记录</option>
+            <option value="data_quality_issue">数据质量问题</option>
+            <option value="import_batch">导入批次</option>
+          </select>
+          <input
+            name="linked_record_id"
+            required
+            className="h-8 rounded-md border bg-background px-3 text-xs"
+            defaultValue={selected.employeeId}
+          />
+          <textarea
+            name="note"
+            required
+            rows={2}
+            className="min-h-16 rounded-md border bg-background px-3 py-2 text-xs"
+            placeholder="补充主管核对说明"
+          />
+          <Button size="sm" type="submit" variant="outline" className="h-8 justify-self-start text-xs">
+            补充证据
+          </Button>
+        </form>
+      </div>
+
+      {reviewState.closureRecord ? (
+        <div className="rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">{reviewState.closureRecord.closedBy}</span>
+            <span className="text-muted-foreground">{reviewState.closureRecord.closedAt}</span>
+          </div>
+          <div className="mt-1 text-muted-foreground">{reviewState.closureRecord.conclusion}</div>
+          <div className="mt-1 text-muted-foreground">
+            证据：{reviewState.closureRecord.evidenceRecordIds.join(" / ")}
+          </div>
+        </div>
+      ) : (
+        <form action={submitSupervisorClosureAction} className="grid gap-2">
+          <input type="hidden" name="exception_key" value={selected.key} />
+          <input type="hidden" name="return_path" value={returnPath} />
+          <input type="hidden" name="closed_by" value="现场主管" />
+          <textarea
+            name="closure_conclusion"
+            required
+            rows={2}
+            className="min-h-16 rounded-md border bg-background px-3 py-2 text-xs"
+            defaultValue={
+              reviewState.latestConclusion
+                ? `基于 ${selected.key} 的复核结论和补充证据，形成处理记录。`
+                : ""
+            }
+            placeholder="先提交复核结论并补证据后关闭"
+          />
+          <Button
+            size="sm"
+            type="submit"
+            variant="outline"
+            className="h-8 justify-self-start text-xs"
+            disabled={!canClose}
+          >
+            关闭异常
+          </Button>
+        </form>
+      )}
     </div>
   )
 }
