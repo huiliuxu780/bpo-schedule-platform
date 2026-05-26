@@ -43,6 +43,7 @@ import {
   getUngroupedDataQualityIssueIds,
   summarizeDataQualityGroupExceptionCoverage,
   summarizeDataQualityGroupReviewSequence,
+  summarizeDataQualityGroupStepImpactDrilldown,
   summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
 } from "@/lib/data-quality-groups"
@@ -73,6 +74,10 @@ export default function DataQualityPage() {
     fallbackDataQualityGroups
   )
   const groupReviewSequence = summarizeDataQualityGroupReviewSequence(
+    rows,
+    fallbackDataQualityGroups
+  )
+  const groupStepImpactDrilldown = summarizeDataQualityGroupStepImpactDrilldown(
     rows,
     fallbackDataQualityGroups
   )
@@ -219,6 +224,108 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>分组步骤影响对象</CardTitle>
+                <CardDescription>
+                  把分组步骤落到代表问题、影响人员和影响对象，便于继续追溯。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {groupStepImpactDrilldown.firstItem?.representativeIssueId ?? "无影响对象"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail label="分组步骤" value={`${groupStepImpactDrilldown.stepCount}`} />
+              <Detail
+                label="影响人员"
+                value={`${groupStepImpactDrilldown.totalImpactedPeopleCount}`}
+              />
+              <Detail
+                label="首要对象"
+                value={`${groupStepImpactDrilldown.firstItem?.affectedObjects.length ?? 0}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    首要影响：{groupStepImpactDrilldown.firstItem?.title ?? "无"}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    owner：{groupStepImpactDrilldown.firstItem?.owner ?? "无"} / 代表问题：
+                    {groupStepImpactDrilldown.firstItem?.representativeIssueId ?? "无"} / 人员：
+                    {groupStepImpactDrilldown.firstItem?.impactedPeople.join(" / ") || "无"}
+                  </div>
+                </div>
+                {groupStepImpactDrilldown.firstItem ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={groupStepImpactDrilldown.firstItem.issueHref}>
+                      查看影响对象
+                    </Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {groupStepImpactDrilldown.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {groupStepImpactDrilldown.items.map((item) => (
+                    <div key={item.groupId} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">
+                        第 {item.sequence} 步：{item.title}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {dataQualityGroupRiskLabel(item.risk)} / 代表问题：
+                        {item.representativeIssueId} / {item.representativeIssueTitle}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        人员：{item.impactedPeople.join(" / ") || "无"}
+                      </div>
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        影响对象：{item.affectedObjects.join(" / ") || "无"}
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button asChild size="sm" variant="outline">
+                          <Link href={item.issueHref}>查看质量问题</Link>
+                        </Button>
+                        {item.personHref ? (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={item.personHref}>查看人员履约</Link>
+                          </Button>
+                        ) : null}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        下一查看：{item.nextViewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前没有分组步骤可生成影响对象摘要。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{groupStepImpactDrilldown.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {groupStepImpactDrilldown.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

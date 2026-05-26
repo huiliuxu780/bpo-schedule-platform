@@ -5,6 +5,7 @@ import {
   fallbackDataQualityGroups,
   getDataQualityGroup,
   summarizeDataQualityGroupExceptionCoverage,
+  summarizeDataQualityGroupStepImpactDrilldown,
   summarizeDataQualityGroupReviewSequence,
   summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
@@ -110,4 +111,26 @@ test("data quality group review sequence orders impacted groups", () => {
   assert.ok(summary.steps.some((step) => step.groupId === "identity-integrity"))
   assert.ok(summary.nextViewHint.includes("分组步骤"))
   assert.ok(summary.deferredActions.includes("无真实数据修复"))
+})
+
+test("data quality group step impact drilldown links steps to issues and people", () => {
+  const summary = summarizeDataQualityGroupStepImpactDrilldown(
+    fallbackDataQualityIssues
+  )
+
+  assert.equal(summary.stepCount, 2)
+  assert.equal(summary.totalImpactedPeopleCount, 2)
+  assert.equal(summary.firstItem?.sequence, 1)
+  assert.equal(summary.firstItem?.groupId, "time-validity")
+  assert.equal(summary.firstItem?.representativeIssueId, "DQ-202605-010")
+  assert.equal(summary.firstItem?.issueHref, "/data-quality/DQ-202605-010")
+  assert.equal(
+    summary.firstItem?.personHref,
+    "/person-timeline/A-1002?date=2026-05-11"
+  )
+  assert.ok(summary.firstItem?.impactedPeople.includes("A-1002"))
+  assert.ok(summary.firstItem?.affectedObjects.includes("小组成员矩阵异常"))
+  assert.ok(summary.items.some((item) => item.groupId === "identity-integrity"))
+  assert.ok(summary.nextViewHint.includes("影响对象"))
+  assert.ok(summary.deferredActions.includes("无批量重导"))
 })

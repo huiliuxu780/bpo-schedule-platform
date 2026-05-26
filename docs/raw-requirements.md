@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R590-R593 - 数据质量分组步骤影响对象摘要
+
+```yaml
+requirements:
+  - id: R590
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到分组复核步骤的影响对象摘要，以便知道每个分组步骤要先看哪个问题、人员和对象。"
+  - id: R591
+    module: "数据质量"
+    description: "分组步骤影响对象摘要需要基于现有本地分组复核顺序和数据质量问题聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R592
+    module: "数据质量"
+    description: "分组步骤影响对象摘要需要展示步骤、代表问题、影响人员、影响对象、质量详情入口、人员履约入口、查看提示和暂缓能力。"
+  - id: R593
+    module: "质量与交付"
+    description: "数据质量分组步骤影响对象摘要完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM requested continuing after F393 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读分组步骤影响对象摘要，基于已有 fallback 质量分组、数据质量问题和分组复核顺序聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R586-R589 - 数据质量分组复核顺序摘要
 
 ```yaml

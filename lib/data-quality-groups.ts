@@ -107,6 +107,30 @@ export type DataQualityGroupReviewSequenceSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityGroupStepImpactDrilldownItem = {
+  sequence: number
+  groupId: string
+  title: string
+  risk: DataQualityGroupRisk
+  owner: string
+  representativeIssueId: string
+  representativeIssueTitle: string
+  issueHref: string
+  personHref?: string
+  impactedPeople: string[]
+  affectedObjects: string[]
+  nextViewHint: string
+}
+
+export type DataQualityGroupStepImpactDrilldownSummary = {
+  stepCount: number
+  totalImpactedPeopleCount: number
+  firstItem?: DataQualityGroupStepImpactDrilldownItem
+  items: DataQualityGroupStepImpactDrilldownItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityGroupActions = [
   "无真实数据修复",
   "无自动合并",
@@ -323,6 +347,54 @@ export function summarizeDataQualityGroupReviewSequence(
       steps.length > 0
         ? "按分组步骤查看原因分组，再回到代表问题确认履约异常影响。"
         : "当前质量分组没有匹配到履约异常影响，暂不生成复核顺序。",
+    deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
+export function summarizeDataQualityGroupStepImpactDrilldown(
+  issues: DataQualityIssue[],
+  groups = fallbackDataQualityGroups
+): DataQualityGroupStepImpactDrilldownSummary {
+  const issueById = new Map(issues.map((issue) => [issue.id, issue]))
+  const sequence = summarizeDataQualityGroupReviewSequence(issues, groups)
+  const items = sequence.steps.map((step) => {
+    const issue = issueById.get(step.representativeIssueId)
+    const affectedObjects = issue
+      ? uniqueValues(issue.affectedObjects.map((object) => object.label))
+      : []
+    const personHref = issue?.impactLinks.find((link) =>
+      link.target.includes("/person-timeline")
+    )?.target
+
+    return {
+      sequence: step.sequence,
+      groupId: step.groupId,
+      title: step.title,
+      risk: step.risk,
+      owner: step.owner,
+      representativeIssueId: step.representativeIssueId,
+      representativeIssueTitle: step.representativeIssueTitle,
+      issueHref: `/data-quality/${step.representativeIssueId}`,
+      personHref,
+      impactedPeople: step.impactedPeople,
+      affectedObjects,
+      nextViewHint: personHref
+        ? `先打开 ${step.representativeIssueId}，再进入人员履约核对影响对象。`
+        : `先打开 ${step.representativeIssueId}，再查看该问题的影响对象。`,
+    }
+  })
+
+  return {
+    stepCount: items.length,
+    totalImpactedPeopleCount: uniqueValues(
+      items.flatMap((item) => item.impactedPeople)
+    ).length,
+    firstItem: items[0],
+    items,
+    nextViewHint:
+      items.length > 0
+        ? "按分组步骤查看代表问题、人员和影响对象，确认异常追溯入口。"
+        : "当前没有分组步骤可生成影响对象摘要。",
     deferredActions: deferredDataQualityGroupActions,
   }
 }

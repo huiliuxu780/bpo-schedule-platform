@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality group step impact drilldown
+
+#### 结论
+
+- `F394/Q112/US566-US568` 已完成数据质量分组步骤影响对象摘要。
+- 前端分组模型新增 `summarizeDataQualityGroupStepImpactDrilldown()`，基于本地分组复核顺序和代表问题生成影响对象摘要。
+- 数据质量总览页新增“分组步骤影响对象”卡片，展示分组步骤、代表问题、影响人员、影响对象、质量问题入口、人员履约入口和“查看影响对象”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 分组步骤影响对象摘要只基于本地 fallback 分组、数据质量问题和复核顺序，不代表真实复核任务、异常闭环写入、审批、权限、导出、批量或生产持久化已经实现。
+- 摘要用于主管只读追溯，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality-groups.test.mjs` 首次失败于 `summarizeDataQualityGroupStepImpactDrilldown` 未导出；`node --test scripts/tests/data-quality.test.mjs` 首次失败于页面未引用 `summarizeDataQualityGroupStepImpactDrilldown`，证明测试覆盖新增模型和页面契约。
+- `node --test scripts/tests/data-quality-groups.test.mjs`：通过，8 个数据质量分组模型测试通过。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，33 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“分组步骤影响对象”“DQ-202605-010”“A-1002”“小组成员矩阵异常”“查看影响对象”“查看人员履约”“无真实数据修复”“无批量重导”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality group review sequence
 
 #### 结论
