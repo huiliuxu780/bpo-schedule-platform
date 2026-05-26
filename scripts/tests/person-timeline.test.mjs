@@ -48,6 +48,9 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   const supervisorWeeklyHandoffPosition = pageSource.indexOf("<SupervisorWeeklyHandoffSummaryPanel team={team} />");
   const teamEvidenceGapDistributionPosition = pageSource.indexOf("<TeamEvidenceGapDistributionPanel team={team} />");
   const closureReadinessTrendPosition = pageSource.indexOf("<ClosureReadinessTrendPanel team={team} />");
+  const closureTrendReasonLabelPosition = pageSource.indexOf("变化原因");
+  const closureTrendPrimaryBlockerLabelPosition = pageSource.indexOf("主阻塞");
+  const closureTrendNextViewLabelPosition = pageSource.indexOf("下一查看");
   const groupRiskSummaryPosition = pageSource.indexOf("<GroupRiskSummaryPanel team={team} />");
   const followUpPosition = pageSource.indexOf("{selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}");
   const comparisonPosition = pageSource.indexOf("{selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}");
@@ -83,6 +86,9 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(supervisorWeeklyHandoffPosition >= 0);
   assert.ok(teamEvidenceGapDistributionPosition >= 0);
   assert.ok(closureReadinessTrendPosition >= 0);
+  assert.ok(closureTrendReasonLabelPosition >= 0);
+  assert.ok(closureTrendPrimaryBlockerLabelPosition >= 0);
+  assert.ok(closureTrendNextViewLabelPosition >= 0);
   assert.ok(groupRiskSummaryPosition >= 0);
   assert.ok(teamRiskDistributionPosition < teamWeekCardPosition);
   assert.ok(supervisorWeeklyDecisionDigestPosition < supervisorWeeklyReviewQueuePosition);
@@ -101,6 +107,7 @@ test("matrix view surfaces selected exception follow-up before summary panels", 
   assert.ok(teamEvidenceGapDistributionPosition < groupRiskSummaryPosition);
   assert.ok(teamEvidenceGapDistributionPosition < closureReadinessTrendPosition);
   assert.ok(closureReadinessTrendPosition < groupRiskSummaryPosition);
+  assert.ok(closureReadinessTrendPosition < closureTrendReasonLabelPosition);
   assert.ok(followUpPosition >= 0);
   assert.ok(comparisonPosition >= 0);
   assert.ok(ownerLoadPosition >= 0);
@@ -1101,7 +1108,19 @@ test("fulfillment calendar aggregates team week metrics", () => {
       },
     ],
   });
-  assert.deepEqual(shanghaiTeam.closureReadinessTrend, {
+  const closureTrendForExistingAssertions = {
+    ...shanghaiTeam.closureReadinessTrend,
+    points: shanghaiTeam.closureReadinessTrend.points.map((point) => {
+      const pointForExistingAssertions = { ...point };
+      delete pointForExistingAssertions.changeReason;
+      delete pointForExistingAssertions.primaryBlocker;
+      delete pointForExistingAssertions.breakdown;
+      delete pointForExistingAssertions.nextViewHint;
+      return pointForExistingAssertions;
+    }),
+  };
+
+  assert.deepEqual(closureTrendForExistingAssertions, {
     headline: "本周闭环准备度周二 05/12 起转好，主要阻塞为待补材料。",
     readyDayCount: 6,
     blockedDayCount: 1,
@@ -1209,6 +1228,30 @@ test("fulfillment calendar aggregates team week metrics", () => {
       },
     ],
   });
+
+  assert.deepEqual(shanghaiTeam.closureReadinessTrend.points[0].primaryBlocker, {
+    key: "missing_material",
+    label: "待补材料",
+    count: 1,
+  });
+  assert.equal(
+    shanghaiTeam.closureReadinessTrend.points[0].changeReason,
+    "首日基线：准备度 0，阻塞 2 项。"
+  );
+  assert.deepEqual(shanghaiTeam.closureReadinessTrend.points[0].breakdown, [
+    { key: "missing_material", label: "待补材料", count: 1 },
+    { key: "supervisor_decision", label: "待主管判断", count: 1 },
+    { key: "data_check", label: "需数据核对", count: 0 },
+  ]);
+  assert.equal(
+    shanghaiTeam.closureReadinessTrend.points[0].nextViewHint,
+    "先回看周一 05/11 的待补材料，再确认主管判断和数据核对。"
+  );
+  assert.equal(
+    shanghaiTeam.closureReadinessTrend.points[1].changeReason,
+    "较前一日转好：准备度从 0 提升到 100，阻塞减少 2 项。"
+  );
+  assert.equal(shanghaiTeam.closureReadinessTrend.points[1].primaryBlocker, null);
 });
 
 test("fulfillment group view sorts groups by business risk", () => {

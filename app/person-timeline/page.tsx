@@ -941,6 +941,30 @@ function ClosureReadinessTrendPanel({ team }: { team: FulfillmentTeamWeek }) {
           </div>
         ))}
       </div>
+      <div className="grid gap-2 text-xs">
+        <div className="font-medium">变化原因</div>
+        {trend.points
+          .filter((point) => point.blockedCount > 0 || point.direction !== "持平")
+          .map((point) => (
+            <div key={`${point.date}-reason`} className="grid gap-2 rounded-md border bg-background p-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-medium">{point.label}</span>
+                <Badge variant={point.primaryBlocker ? "secondary" : "outline"}>
+                  主阻塞：{point.primaryBlocker?.label ?? "无"}
+                </Badge>
+              </div>
+              <div className="text-muted-foreground">{point.changeReason}</div>
+              <div className="flex flex-wrap gap-2">
+                {point.breakdown.map((item) => (
+                  <Badge key={item.key} variant="outline">
+                    {item.label} {item.count}
+                  </Badge>
+                ))}
+              </div>
+              <div className="text-muted-foreground">下一查看：{point.nextViewHint}</div>
+            </div>
+          ))}
+      </div>
       {trend.topBlocker ? (
         <div className="text-xs text-muted-foreground">{trend.topBlocker.reason}</div>
       ) : null}

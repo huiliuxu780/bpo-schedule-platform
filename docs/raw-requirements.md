@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R526-R529 - 周度闭环准备趋势原因拆解
+
+```yaml
+requirements:
+  - id: R526
+    module: "履约日历"
+    description: "现场主管需要在小组周视图的闭环准备趋势里看到每天变好、变差或持平的原因，判断本周闭环准备变化。"
+  - id: R527
+    module: "履约日历"
+    description: "趋势原因需要基于现有本地闭环准备、异常队列和证据缺口模型聚合，不新增提交、关闭异常、审批或生产写入。"
+  - id: R528
+    module: "履约日历"
+    description: "趋势原因需要拆分待补材料、待主管判断、数据核对阻塞、主阻塞来源和下一查看提示。"
+  - id: R529
+    module: "质量与交付"
+    description: "周度闭环准备趋势原因拆解完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F377 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做履约日历小组周视图的本地只读趋势原因拆解，基于现有 team.closureReadinessTrend 与异常队列聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R522-R525 - 数据质量影响导入批次反向聚合
 
 ```yaml

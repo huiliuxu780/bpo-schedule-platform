@@ -144,6 +144,7 @@ Current invariants:
 - `US509/F375 -> US511/Q093` completed an import correction material preview slice: import batch detail pages now organize correction materials into material status, material summary, field materials, failure-row samples, quality references, conversation points, and deferred-action boundary. It remained local/read-only and returned current queue and active tasks to empty.
 - `US512/F376 -> US514/Q094` completed an import review conclusion preview slice: import batch detail pages now turn correction materials into conclusion status, suggested conclusion, confidence, evidence summary, risk summary, next review point, and deferred-action boundary. It remained local/read-only and returned current queue and active tasks to empty.
 - `US515/F377 -> US517/Q095` completed a data-quality import-batch impact aggregation slice: data quality detail pages now reverse-link quality issues to related import batches, failed rows, matched fields, affected objects, review hints, and batch detail links. It remained local/read-only and returned current queue and active tasks to empty.
+- `US518/F378 -> US520/Q096` completed a weekly closure readiness trend reason breakdown slice: the fulfillment calendar group-week trend now shows daily change reasons, primary blockers, blocker breakdowns, and next viewing hints. It remained local/read-only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

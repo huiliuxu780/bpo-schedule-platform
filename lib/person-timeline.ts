@@ -483,6 +483,18 @@ export type FulfillmentTeamClosureReadinessTrendPoint = {
   readinessScore: number
   direction: "转好" | "转差" | "持平"
   reason: string
+  changeReason: string
+  primaryBlocker: {
+    key: "missing_material" | "supervisor_decision" | "data_check"
+    label: string
+    count: number
+  } | null
+  breakdown: {
+    key: "missing_material" | "supervisor_decision" | "data_check"
+    label: string
+    count: number
+  }[]
+  nextViewHint: string
 }
 
 export type FulfillmentTeamClosureReadinessTrend = {
@@ -6027,6 +6039,8 @@ function buildTeamClosureReadinessTrend(
         : previous && snapshot.readinessScore < previous.readinessScore
           ? "转差"
           : "持平"
+    const breakdown = buildClosureReadinessPointBreakdown(snapshot)
+    const primaryBlocker = breakdown.filter((item) => item.count > 0)[0] ?? null
 
     return {
       date: snapshot.day.date,
@@ -6042,6 +6056,12 @@ function buildTeamClosureReadinessTrend(
         snapshot.blockedCount === 0
           ? "当日暂无待闭环异常。"
           : `待补材料 ${snapshot.missingMaterialCount} 项 / 待主管判断 ${snapshot.missingDecisionCount} 项 / 需数据核对 ${snapshot.dataCheckCount} 项`,
+      changeReason: buildClosureReadinessChangeReason(snapshot, previous),
+      primaryBlocker,
+      breakdown,
+      nextViewHint: primaryBlocker
+        ? `先回看${snapshot.day.weekday} ${snapshot.day.label} 的${primaryBlocker.label}，再确认主管判断和数据核对。`
+        : "当日暂无待闭环异常，继续查看后续高风险日。",
     }
   })
   const blockerItems = daySnapshots.flatMap((snapshot) =>
@@ -6111,6 +6131,61 @@ function buildTeamClosureReadinessTrend(
         : undefined,
     points,
   }
+}
+
+function buildClosureReadinessPointBreakdown(snapshot: {
+  missingMaterialCount: number
+  missingDecisionCount: number
+  dataCheckCount: number
+}) {
+  return [
+    {
+      key: "missing_material" as const,
+      label: "待补材料",
+      count: snapshot.missingMaterialCount,
+    },
+    {
+      key: "supervisor_decision" as const,
+      label: "待主管判断",
+      count: snapshot.missingDecisionCount,
+    },
+    {
+      key: "data_check" as const,
+      label: "需数据核对",
+      count: snapshot.dataCheckCount,
+    },
+  ]
+}
+
+function buildClosureReadinessChangeReason(
+  snapshot: { readinessScore: number; blockedCount: number },
+  previous?: { readinessScore: number; blockedCount: number }
+) {
+  if (!previous) {
+    return `首日基线：准备度 ${snapshot.readinessScore}，阻塞 ${snapshot.blockedCount} 项。`
+  }
+
+  const scoreVerb =
+    snapshot.readinessScore > previous.readinessScore
+      ? "提升"
+      : snapshot.readinessScore < previous.readinessScore
+        ? "下降"
+        : "保持"
+  const blockDelta = previous.blockedCount - snapshot.blockedCount
+  const blockText =
+    blockDelta > 0
+      ? `阻塞减少 ${blockDelta} 项`
+      : blockDelta < 0
+        ? `阻塞增加 ${Math.abs(blockDelta)} 项`
+        : `阻塞保持 ${snapshot.blockedCount} 项`
+  const direction =
+    snapshot.readinessScore > previous.readinessScore
+      ? "转好"
+      : snapshot.readinessScore < previous.readinessScore
+        ? "转差"
+        : "持平"
+
+  return `较前一日${direction}：准备度从 ${previous.readinessScore} ${scoreVerb}到 ${snapshot.readinessScore}，${blockText}。`
 }
 
 function buildTeamClosureReadinessTrendHeadline(

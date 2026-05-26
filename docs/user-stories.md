@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US518-US520 - 周度闭环准备趋势原因拆解
+
+```yaml
+stories:
+  - id: US518
+    requirement_ids: [R526, R527]
+    task_ids: [F378]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望在闭环准备趋势里看到每天变好或变差的原因，以便判断本周哪些天的闭环准备正在改善或恶化。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US519
+    requirement_ids: [R528]
+    task_ids: [F378]
+    module: "履约日历"
+    role: "现场主管"
+    story: "作为现场主管，我希望趋势原因能拆分材料、主管判断和数据核对阻塞，以便知道下一步该看哪类证据。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US520
+    requirement_ids: [R529]
+    task_ids: [Q096]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望周度闭环趋势原因拆解完成后做收口验证，确认只读展示、页面 smoke 和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "闭环准备趋势模型提供每日原因拆解，包含方向原因、主阻塞、阻塞拆分和下一查看提示。"
+  - "小组周视图闭环准备趋势卡片展示原因拆解，不新增路由。"
+  - "没有阻塞时展示稳定或暂无待闭环异常，不误导为提交、关闭异常、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/person-timeline.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US515-US517 - 数据质量影响导入批次反向聚合
 
 ```yaml

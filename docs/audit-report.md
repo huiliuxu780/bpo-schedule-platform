@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Weekly closure readiness trend reason breakdown
+
+#### 结论
+
+- `F378/Q096/US518-US520` 已完成周度闭环准备趋势原因拆解。
+- 前端模型扩展 `closureReadinessTrend.points`，为每日趋势增加变化原因、主阻塞、材料/主管判断/数据核对拆分和下一查看提示。
+- 履约日历小组周视图的“闭环准备趋势”卡片新增“变化原因”区域，展示阻塞日和转好日的原因说明。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 原因拆解只基于本地现有异常队列和闭环材料状态，不代表真实证据补录、异常关闭、复核结论写入、审批、权限、导出、批量或生产持久化已经实现。
+- 趋势点的变化原因是主管查看提示，不是生产级 SLA、结算或考核公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/person-timeline.test.mjs` 首次失败于页面缺少“变化原因”文案且趋势点缺少 `primaryBlocker` 等字段，证明测试覆盖新增模型和页面契约。
+- `node --test scripts/tests/person-timeline.test.mjs`：通过，13 个履约日历模型/页面源码测试通过。
+- 页面 smoke：通过，`/person-timeline?team=%E4%B8%8A%E6%B5%B7%E8%81%8C%E5%9C%BA%7C%7C%E5%8D%9A%E8%A5%BF%E5%AE%A2%E6%9C%8D` HTML 包含“闭环准备趋势”“变化原因”“主阻塞”“下一查看”“首日基线”“较前一日转好”“待补材料”“待主管判断”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality import batch impact aggregation
 
 #### 结论
