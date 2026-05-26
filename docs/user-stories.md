@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US560-US562 - 数据质量分组异常影响覆盖摘要
+
+```yaml
+stories:
+  - id: US560
+    requirement_ids: [R582, R583]
+    task_ids: [F392]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到质量分组对履约异常的影响覆盖，以便知道哪些分组正在影响最多异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US561
+    requirement_ids: [R584]
+    task_ids: [F392]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望分组影响覆盖展示分组、风险、owner、影响异常、影响人员、阻断行、代表问题和入口，以便继续只读追溯。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US562
+    requirement_ids: [R585]
+    task_ids: [Q110]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望质量分组异常影响覆盖完成后做收口验证，确认页面展示、模型测试和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量分组模型提供分组异常影响覆盖摘要，包含影响分组、影响异常、影响人员、阻断行、代表问题、字段、模板、分组入口和暂缓能力。"
+  - "数据质量总览页展示质量分组异常影响覆盖卡片。"
+  - "没有分组异常影响时展示空状态，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality-groups.test.mjs`、`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US557-US559 - 数据质量复核建议质量分组摘要
 
 ```yaml

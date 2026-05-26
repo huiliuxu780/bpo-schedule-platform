@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality group exception coverage
+
+#### 结论
+
+- `F392/Q110/US560-US562` 已完成数据质量分组异常影响覆盖摘要。
+- 前端分组模型新增 `summarizeDataQualityGroupExceptionCoverage()`，基于本地质量分组和数据质量问题反查影响履约异常的分组。
+- 数据质量总览页新增“质量分组异常影响覆盖”卡片，展示影响分组、影响异常、影响人员、阻断行、首要分组、代表问题、模板、字段、影响对象和“查看影响分组”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 分组异常影响覆盖只基于本地 fallback 分组和数据质量问题，不代表真实质量分组落库、异常闭环写入、审批、权限、导出、批量或生产持久化已经实现。
+- 摘要用于主管只读追溯，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality-groups.test.mjs` 首次失败于 `summarizeDataQualityGroupExceptionCoverage` 未导出；`node --test scripts/tests/data-quality.test.mjs` 首次失败于页面未引用 `summarizeDataQualityGroupExceptionCoverage`，证明测试覆盖新增模型和页面契约。
+- `node --test scripts/tests/data-quality-groups.test.mjs`：通过，6 个数据质量分组模型测试通过。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，33 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“质量分组异常影响覆盖”“时间有效性”“运营负责人”“DQ-202605-010”“小组成员矩阵异常”“A-1002”“查看影响分组”“无真实数据修复”“无批量重导”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality review group link
 
 #### 结论

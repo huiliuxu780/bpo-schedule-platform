@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R582-R585 - 数据质量分组异常影响覆盖摘要
+
+```yaml
+requirements:
+  - id: R582
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到质量分组对履约异常的影响覆盖，以便知道哪些分组正在影响最多异常。"
+  - id: R583
+    module: "数据质量"
+    description: "分组异常影响覆盖需要基于现有本地质量分组和数据质量问题聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R584
+    module: "数据质量"
+    description: "分组异常影响覆盖需要展示影响分组、影响异常、影响人员、阻断行、风险、owner、代表问题、字段、模板、分组入口、查看提示和暂缓能力。"
+  - id: R585
+    module: "质量与交付"
+    description: "数据质量分组异常影响覆盖完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM requested continuing after F391 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读分组异常影响覆盖摘要，基于已有 fallback 质量分组和数据质量问题聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R578-R581 - 数据质量复核建议质量分组摘要
 
 ```yaml

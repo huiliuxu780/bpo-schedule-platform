@@ -1,3 +1,5 @@
+import type { DataQualityIssue } from "./data-quality"
+
 export type DataQualityGroupRisk = "high" | "medium" | "low"
 
 export type DataQualityGroup = {
@@ -46,6 +48,37 @@ export type DataQualityReviewGroupLinkSummary = {
   groupedIssueCount: number
   topGroup?: DataQualityReviewGroupLinkItem
   items: DataQualityReviewGroupLinkItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
+export type DataQualityGroupExceptionCoverageItem = {
+  groupId: string
+  title: string
+  risk: DataQualityGroupRisk
+  owner: string
+  issueCount: number
+  impactedIssueCount: number
+  impactedExceptionCount: number
+  impactedPeople: string[]
+  blockedRows: number
+  affectedObjects: string[]
+  sourceTemplates: string[]
+  traceKeys: string[]
+  representativeIssueId: string
+  representativeIssueTitle: string
+  href: string
+  nextViewHint: string
+}
+
+export type DataQualityGroupExceptionCoverageSummary = {
+  totalGroupCount: number
+  totalImpactedGroupCount: number
+  totalImpactedExceptionCount: number
+  totalImpactedPeopleCount: number
+  totalBlockedRows: number
+  topGroup?: DataQualityGroupExceptionCoverageItem
+  items: DataQualityGroupExceptionCoverageItem[]
   nextViewHint: string
   deferredActions: string[]
 }
@@ -203,6 +236,37 @@ export function summarizeDataQualityReviewGroupLink(
   }
 }
 
+export function summarizeDataQualityGroupExceptionCoverage(
+  issues: DataQualityIssue[],
+  groups = fallbackDataQualityGroups
+): DataQualityGroupExceptionCoverageSummary {
+  const issueById = new Map(issues.map((issue) => [issue.id, issue]))
+  const items = groups
+    .map((group) => buildGroupExceptionCoverageItem(group, issueById))
+    .filter((item): item is DataQualityGroupExceptionCoverageItem => item !== null)
+    .sort(compareGroupExceptionCoverageItems)
+
+  return {
+    totalGroupCount: groups.length,
+    totalImpactedGroupCount: items.length,
+    totalImpactedExceptionCount: items.reduce(
+      (total, item) => total + item.impactedExceptionCount,
+      0
+    ),
+    totalImpactedPeopleCount: uniqueValues(
+      items.flatMap((item) => item.impactedPeople)
+    ).length,
+    totalBlockedRows: items.reduce((total, item) => total + item.blockedRows, 0),
+    topGroup: items[0],
+    items,
+    nextViewHint:
+      items.length > 0
+        ? "先查看影响最多履约异常的质量分组，再回到代表问题确认字段和影响对象。"
+        : "当前质量分组没有匹配到履约异常影响。",
+    deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
 export function dataQualityGroupRiskLabel(risk: DataQualityGroupRisk) {
   return {
     high: "高风险",
@@ -230,4 +294,111 @@ function compareReviewGroupLinkItems(
     right.issueCount - left.issueCount ||
     left.title.localeCompare(right.title, "zh-Hans-CN")
   )
+}
+
+function buildGroupExceptionCoverageItem(
+  group: DataQualityGroup,
+  issueById: Map<string, DataQualityIssue>
+): DataQualityGroupExceptionCoverageItem | null {
+  const groupIssues = group.issueIds
+    .map((issueId) => issueById.get(issueId))
+    .filter((issue): issue is DataQualityIssue => Boolean(issue))
+  const impactedIssues = groupIssues.filter(
+    (issue) => getImpactedExceptionCount(issue) > 0
+  )
+
+  if (impactedIssues.length === 0) {
+    return null
+  }
+
+  const representativeIssue = [...impactedIssues].sort(compareIssuesByImpact)[0]
+
+  return {
+    groupId: group.id,
+    title: group.title,
+    risk: group.risk,
+    owner: group.owner,
+    issueCount: group.issueIds.length,
+    impactedIssueCount: impactedIssues.length,
+    impactedExceptionCount: impactedIssues.reduce(
+      (total, issue) => total + getImpactedExceptionCount(issue),
+      0
+    ),
+    impactedPeople: uniqueValues(impactedIssues.flatMap(getImpactedPeople)),
+    blockedRows: impactedIssues.reduce((total, issue) => total + issue.blockedRows, 0),
+    affectedObjects: uniqueValues(
+      impactedIssues.flatMap((issue) =>
+        issue.affectedObjects.map((object) => object.label)
+      )
+    ),
+    sourceTemplates: group.sourceTemplates,
+    traceKeys: group.traceKeys,
+    representativeIssueId: representativeIssue.id,
+    representativeIssueTitle: representativeIssue.title,
+    href: `/data-quality/groups/${group.id}`,
+    nextViewHint: `先查看${group.title}分组，再打开 ${representativeIssue.id} 确认异常影响对象。`,
+  }
+}
+
+function compareGroupExceptionCoverageItems(
+  left: DataQualityGroupExceptionCoverageItem,
+  right: DataQualityGroupExceptionCoverageItem
+) {
+  return (
+    right.impactedExceptionCount - left.impactedExceptionCount ||
+    right.impactedPeople.length - left.impactedPeople.length ||
+    right.blockedRows - left.blockedRows ||
+    compareRisk(right.risk, left.risk) ||
+    left.title.localeCompare(right.title, "zh-Hans-CN")
+  )
+}
+
+function compareIssuesByImpact(left: DataQualityIssue, right: DataQualityIssue) {
+  return (
+    getImpactedExceptionCount(right) - getImpactedExceptionCount(left) ||
+    getImpactedPeople(right).length - getImpactedPeople(left).length ||
+    right.blockedRows - left.blockedRows ||
+    left.id.localeCompare(right.id)
+  )
+}
+
+function getImpactedExceptionCount(issue: DataQualityIssue) {
+  const exceptionObjects = issue.affectedObjects.filter(
+    (object) =>
+      object.type.includes("履约") ||
+      object.label.includes("异常") ||
+      object.label.includes("履约")
+  )
+  const personTimelineLinks = issue.impactLinks.filter(
+    (link) => link.type === "person_timeline"
+  )
+
+  return exceptionObjects.length > 0 || personTimelineLinks.length > 0
+    ? Math.max(1, exceptionObjects.filter((object) => object.label.includes("异常")).length)
+    : 0
+}
+
+function getImpactedPeople(issue: DataQualityIssue) {
+  return uniqueValues([
+    ...issue.affectedObjects
+      .map((object) => object.objectId)
+      .filter((objectId) => /^A-\d+/.test(objectId)),
+    ...issue.impactLinks
+      .map((link) => link.target.match(/A-\d+/)?.[0] ?? "")
+      .filter((employeeId) => employeeId.length > 0),
+  ])
+}
+
+function compareRisk(left: DataQualityGroupRisk, right: DataQualityGroupRisk) {
+  const riskRank: Record<DataQualityGroupRisk, number> = {
+    high: 3,
+    medium: 2,
+    low: 1,
+  }
+
+  return riskRank[left] - riskRank[right]
+}
+
+function uniqueValues(values: string[]) {
+  return Array.from(new Set(values.filter((value) => value.length > 0)))
 }

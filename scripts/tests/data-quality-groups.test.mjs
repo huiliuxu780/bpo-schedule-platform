@@ -4,9 +4,11 @@ import test from "node:test"
 import {
   fallbackDataQualityGroups,
   getDataQualityGroup,
+  summarizeDataQualityGroupExceptionCoverage,
   summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
 } from "../../lib/data-quality-groups.ts"
+import { fallbackDataQualityIssues } from "../../lib/data-quality.ts"
 
 test("data quality groups summarize business causes and risk", () => {
   const summary = summarizeDataQualityGroups(fallbackDataQualityGroups)
@@ -58,4 +60,37 @@ test("data quality review group link exposes empty and ungrouped states", () => 
   assert.equal(ungrouped.totalMatchedGroupCount, 0)
   assert.equal(ungrouped.ungroupedIssueCount, 1)
   assert.deepEqual(ungrouped.items, [])
+})
+
+test("data quality group exception coverage summarizes impacted groups", () => {
+  const summary = summarizeDataQualityGroupExceptionCoverage(fallbackDataQualityIssues)
+
+  assert.equal(summary.totalGroupCount, 4)
+  assert.equal(summary.totalImpactedGroupCount, 2)
+  assert.equal(summary.totalImpactedExceptionCount, 2)
+  assert.equal(summary.totalImpactedPeopleCount, 2)
+  assert.equal(summary.totalBlockedRows, 39)
+  assert.equal(summary.topGroup?.groupId, "time-validity")
+  assert.equal(summary.topGroup?.title, "时间有效性")
+  assert.equal(summary.topGroup?.risk, "high")
+  assert.equal(summary.topGroup?.owner, "运营负责人")
+  assert.equal(summary.topGroup?.representativeIssueId, "DQ-202605-010")
+  assert.equal(summary.topGroup?.href, "/data-quality/groups/time-validity")
+  assert.ok(summary.topGroup?.impactedPeople.includes("A-1002"))
+  assert.ok(summary.topGroup?.affectedObjects.includes("小组成员矩阵异常"))
+  assert.ok(summary.items.some((item) => item.groupId === "identity-integrity"))
+  assert.ok(summary.nextViewHint.includes("履约异常"))
+  assert.ok(summary.deferredActions.includes("无真实数据修复"))
+})
+
+test("data quality group exception coverage exposes empty state", () => {
+  const summary = summarizeDataQualityGroupExceptionCoverage([])
+
+  assert.equal(summary.totalGroupCount, 4)
+  assert.equal(summary.totalImpactedGroupCount, 0)
+  assert.equal(summary.totalImpactedExceptionCount, 0)
+  assert.equal(summary.totalImpactedPeopleCount, 0)
+  assert.equal(summary.totalBlockedRows, 0)
+  assert.equal(summary.topGroup, undefined)
+  assert.deepEqual(summary.items, [])
 })

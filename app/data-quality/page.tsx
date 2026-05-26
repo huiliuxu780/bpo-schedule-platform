@@ -41,6 +41,7 @@ import {
   dataQualityGroupRiskLabel,
   fallbackDataQualityGroups,
   getUngroupedDataQualityIssueIds,
+  summarizeDataQualityGroupExceptionCoverage,
   summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
 } from "@/lib/data-quality-groups"
@@ -64,6 +65,10 @@ export default function DataQualityPage() {
   )
   const reviewGroupLink = summarizeDataQualityReviewGroupLink(
     nextReviewRecommendation.representativeIssueId,
+    fallbackDataQualityGroups
+  )
+  const groupExceptionCoverage = summarizeDataQualityGroupExceptionCoverage(
+    rows,
     fallbackDataQualityGroups
   )
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
@@ -209,6 +214,112 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>质量分组异常影响覆盖</CardTitle>
+                <CardDescription>
+                  从质量分组反向查看哪些原因分组正在影响履约异常和人员。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {groupExceptionCoverage.topGroup?.title ?? "无影响分组"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-4">
+              <Detail
+                label="影响分组"
+                value={`${groupExceptionCoverage.totalImpactedGroupCount}`}
+              />
+              <Detail
+                label="影响异常"
+                value={`${groupExceptionCoverage.totalImpactedExceptionCount}`}
+              />
+              <Detail
+                label="影响人员"
+                value={`${groupExceptionCoverage.totalImpactedPeopleCount}`}
+              />
+              <Detail
+                label="阻断行"
+                value={`${groupExceptionCoverage.totalBlockedRows}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    首要分组：{groupExceptionCoverage.topGroup?.title ?? "无"}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    owner：{groupExceptionCoverage.topGroup?.owner ?? "无"} / 风险：
+                    {groupExceptionCoverage.topGroup
+                      ? dataQualityGroupRiskLabel(groupExceptionCoverage.topGroup.risk)
+                      : "无"}{" "}
+                    / 代表问题：
+                    {groupExceptionCoverage.topGroup?.representativeIssueId ?? "无"}
+                  </div>
+                </div>
+                {groupExceptionCoverage.topGroup ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={groupExceptionCoverage.topGroup.href}>查看影响分组</Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {groupExceptionCoverage.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {groupExceptionCoverage.items.map((item) => (
+                    <div key={item.groupId} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">
+                        {item.title} / {dataQualityGroupRiskLabel(item.risk)}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        owner：{item.owner} / 代表问题：{item.representativeIssueId} /{" "}
+                        {item.representativeIssueTitle}
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                        <Detail label="异常" value={`${item.impactedExceptionCount}`} />
+                        <Detail label="人员" value={`${item.impactedPeople.length}`} />
+                        <Detail label="阻断行" value={`${item.blockedRows}`} />
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        模板：{item.sourceTemplates.join(" / ") || "无"} / 字段：
+                        {item.traceKeys.join(" / ") || "无"}
+                      </div>
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        影响对象：{item.affectedObjects.join(" / ") || "无"}
+                      </div>
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        下一查看：{item.nextViewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前质量分组没有匹配到履约异常影响。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{groupExceptionCoverage.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {groupExceptionCoverage.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>
