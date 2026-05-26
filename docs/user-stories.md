@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US515-US517 - 数据质量影响导入批次反向聚合
+
+```yaml
+stories:
+  - id: US515
+    requirement_ids: [R522, R523]
+    task_ids: [F377]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量详情看到影响导入批次，以便从质量问题反查相关批次和失败字段。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US516
+    requirement_ids: [R524]
+    task_ids: [F377]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望影响导入批次展示批次数、失败行、匹配字段、影响对象和批次入口，以便快速定位需要查看的导入批次。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US517
+    requirement_ids: [R525]
+    task_ids: [Q095]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望质量问题到导入批次反向聚合完成后做收口验证，确认只读聚合、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供影响导入批次聚合，包含批次数、失败行、匹配字段、影响对象、批次入口和查看建议。"
+  - "数据质量详情页展示影响导入批次卡片。"
+  - "没有匹配批次时展示无影响批次，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US512-US514 - 导入批次复核结论预览
 
 ```yaml

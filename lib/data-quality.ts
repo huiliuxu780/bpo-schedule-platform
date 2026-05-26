@@ -65,6 +65,47 @@ export type DataQualitySummary = {
   deferredActions: string[]
 }
 
+export type DataQualityImportBatchLike = {
+  id: string
+  templateName: string
+  sourceFile: string
+  status: "completed" | "completed_with_errors" | "failed" | "pending_review"
+  failedRows: number
+  qualityIssueIds: string[]
+  affectedObjects: string[]
+  failureRows: {
+    failedRowNumber: number
+    fieldName: string
+    errorCode: string
+  }[]
+  failureImpacts: {
+    relatedIssueIds: string[]
+    affectedRows: number
+    affectedObjects: string[]
+  }[]
+}
+
+export type DataQualityImportBatchImpactItem = {
+  batchId: string
+  templateName: string
+  sourceFile: string
+  status: "completed" | "completed_with_errors" | "failed" | "pending_review"
+  failedRows: number
+  matchedFields: string[]
+  affectedObjects: string[]
+  href: string
+  reviewHint: string
+}
+
+export type DataQualityImportBatchImpactSummary = {
+  totalBatchCount: number
+  totalFailedRows: number
+  matchedFields: string[]
+  affectedObjects: string[]
+  items: DataQualityImportBatchImpactItem[]
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -231,6 +272,24 @@ export function getDataQualityIssue(id: string) {
   return fallbackDataQualityIssues.find((row) => row.id === id)
 }
 
+export function summarizeDataQualityImportBatchImpact(
+  issue: DataQualityIssue,
+  batches: DataQualityImportBatchLike[]
+): DataQualityImportBatchImpactSummary {
+  const items = batches
+    .map((batch) => buildDataQualityImportBatchImpactItem(issue, batch))
+    .filter((item) => item !== null)
+
+  return {
+    totalBatchCount: items.length,
+    totalFailedRows: items.reduce((total, item) => total + item.failedRows, 0),
+    matchedFields: uniqueValues(items.flatMap((item) => item.matchedFields)),
+    affectedObjects: uniqueValues(items.flatMap((item) => item.affectedObjects)),
+    items,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
 export function dataQualitySeverityLabel(severity: DataQualitySeverity) {
   return {
     high: "高",
@@ -246,6 +305,59 @@ export function dataQualityStatusLabel(status: DataQualityStatus) {
     resolved: "已解决",
     ignored: "已忽略",
   }[status]
+}
+
+function buildDataQualityImportBatchImpactItem(
+  issue: DataQualityIssue,
+  batch: DataQualityImportBatchLike
+): DataQualityImportBatchImpactItem | null {
+  const relatedImpacts = batch.failureImpacts.filter((impact) =>
+    impact.relatedIssueIds.includes(issue.id)
+  )
+  const matchedRows = batch.failureRows.filter((row) => {
+    return (
+      row.fieldName === issue.fieldName ||
+      issue.sourceField.split(/[./]/).includes(row.fieldName) ||
+      row.errorCode === issue.errorCode
+    )
+  })
+  const isLinkedIssue = batch.qualityIssueIds.includes(issue.id)
+
+  if (!isLinkedIssue && relatedImpacts.length === 0 && matchedRows.length === 0) {
+    return null
+  }
+
+  const matchedFields = uniqueValues([
+    ...matchedRows.map((row) => row.fieldName),
+    ...(isLinkedIssue || relatedImpacts.length > 0 ? [issue.fieldName] : []),
+  ])
+  const affectedObjects = uniqueValues([
+    ...batch.affectedObjects,
+    ...relatedImpacts.flatMap((impact) => impact.affectedObjects),
+  ])
+  const failedRows =
+    matchedRows.length > 0
+      ? matchedRows.length
+      : relatedImpacts.reduce((total, impact) => total + impact.affectedRows, 0)
+
+  return {
+    batchId: batch.id,
+    templateName: batch.templateName,
+    sourceFile: batch.sourceFile,
+    status: batch.status,
+    failedRows,
+    matchedFields,
+    affectedObjects,
+    href: `/import-batches/${batch.id}`,
+    reviewHint:
+      matchedRows.length > 0
+        ? `先查看 ${matchedFields.join("、")} 字段失败行，再回到质量问题确认影响对象。`
+        : `先查看 ${issue.fieldName} 字段关联批次，${issue.recommendation}`,
+  }
+}
+
+function uniqueValues(values: string[]) {
+  return Array.from(new Set(values.filter((value) => value.length > 0)))
 }
 
 function countBySource(rows: DataQualityIssue[]) {

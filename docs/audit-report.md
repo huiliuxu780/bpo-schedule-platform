@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality import batch impact aggregation
+
+#### 结论
+
+- `F377/Q095/US515-US517` 已完成数据质量影响导入批次反向聚合。
+- 前端模型新增 `summarizeDataQualityImportBatchImpact()`，基于数据质量问题、导入批次关联 ID、失败行字段和错误码聚合相关批次、失败行、匹配字段、影响对象、查看建议和暂缓能力。
+- 数据质量详情页新增“影响导入批次”卡片，展示相关批次、失败行、匹配字段、影响对象、批次状态、查看建议和“查看批次”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 影响导入批次只做本地只读反向聚合，不代表真实失败行落库、真实数据修复、复核结论写入、证据补录、异常关闭、审批、权限、导出、批量或生产持久化已经实现。
+- 页面聚合基于现有本地 fallback 数据；未匹配到导入批次时会展示只读空状态。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityImportBatchImpact` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，7 个数据质量模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过。
+- `npm run typecheck`：通过。
+- 页面 smoke：通过，`/data-quality/DQ-202605-004` HTML 包含“影响导入批次”“相关批次”“匹配字段”“BATCH-20260519-001”“查看批次”“无真实数据修复”“无导出或批量处理”“employee_id”“人员排班”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Import review conclusion preview
 
 #### 结论

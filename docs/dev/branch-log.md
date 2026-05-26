@@ -2,6 +2,24 @@
 
 ## 2026-05-26
 
+### F377-Q095 Data Quality Import Batch Impact
+
+- branch_name: `codex/f377-data-quality-import-batch-impact`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `bf25193`
+- remote_status: `not_pushed`
+- scope: frontend local read-only function: expose import-batch impact aggregation on the data quality detail page by reverse-linking a quality issue to related import batches, failed rows, matched fields, affected objects, review hints, and batch detail links.
+- allowed_files_check: `app/data-quality/**`, `lib/data-quality.ts`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates the existing data quality detail route, data quality frontend model/test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing import-batch impact summary export; data-quality model tests, product UI copy audit, navigation regression, typecheck, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F376-Q094 Import Review Conclusion Preview
 
 - branch_name: `codex/f376-import-review-conclusion-preview`

@@ -17,11 +17,13 @@ import {
   dataQualityStatusLabel,
   fallbackDataQualityIssues,
   getDataQualityIssue,
+  summarizeDataQualityImportBatchImpact,
 } from "@/lib/data-quality"
 import {
   dataQualityGroupRiskLabel,
   getDataQualityGroupsForIssue,
 } from "@/lib/data-quality-groups"
+import { fallbackImportBatches, importBatchStatusLabel } from "@/lib/import-batch-history"
 
 type PageProps = {
   params: Promise<{
@@ -44,6 +46,10 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
   }
 
   const groups = getDataQualityGroupsForIssue(issue.id)
+  const importBatchImpactSummary = summarizeDataQualityImportBatchImpact(
+    issue,
+    fallbackImportBatches
+  )
 
   return (
     <AppShell title="数据质量详情" searchPlaceholder="搜索错误码、字段或来源">
@@ -141,6 +147,96 @@ export default async function DataQualityIssuePage({ params }: PageProps) {
             </CardContent>
           </Card>
         </section>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>影响导入批次</CardTitle>
+            <CardDescription>
+              从当前质量问题反查相关导入批次、失败字段和影响对象。
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-4">
+              <Detail
+                label="相关批次"
+                value={`${importBatchImpactSummary.totalBatchCount}`}
+              />
+              <Detail
+                label="失败行"
+                value={`${importBatchImpactSummary.totalFailedRows}`}
+              />
+              <Detail
+                label="匹配字段"
+                value={`${importBatchImpactSummary.matchedFields.length}`}
+              />
+              <Detail
+                label="影响对象"
+                value={`${importBatchImpactSummary.affectedObjects.length}`}
+              />
+            </div>
+
+            {importBatchImpactSummary.matchedFields.length > 0 ? (
+              <div>
+                <div className="text-xs text-muted-foreground">匹配字段</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {importBatchImpactSummary.matchedFields.map((field) => (
+                    <Badge key={field} variant="secondary">
+                      {field}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {importBatchImpactSummary.items.length > 0 ? (
+              <div className="grid gap-3">
+                {importBatchImpactSummary.items.map((item) => (
+                  <div key={item.batchId} className="rounded-lg border p-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium">{item.batchId}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {item.templateName} / {item.sourceFile}
+                        </div>
+                      </div>
+                      <Badge variant="secondary">
+                        {importBatchStatusLabel(item.status)}
+                      </Badge>
+                    </div>
+                    <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-3">
+                      <span>失败行：{item.failedRows}</span>
+                      <span>字段：{item.matchedFields.join(", ") || "无"}</span>
+                      <span>影响对象：{item.affectedObjects.join("、") || "无"}</span>
+                    </div>
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      {item.reviewHint}
+                    </p>
+                    <div className="mt-3 flex justify-end">
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={item.href}>查看批次</Link>
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                当前质量问题没有匹配到导入批次。
+              </p>
+            )}
+
+            <div>
+              <div className="text-xs text-muted-foreground">暂缓能力</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {importBatchImpactSummary.deferredActions.map((action) => (
+                  <Badge key={action} variant="outline">
+                    {action}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

@@ -5,8 +5,13 @@ import {
   fallbackDataQualityIssues,
   filterDataQualityIssues,
   getDataQualityIssue,
+  summarizeDataQualityImportBatchImpact,
   summarizeDataQualityIssues,
 } from "../../lib/data-quality.ts";
+import {
+  fallbackImportBatches,
+  mapImportBatchResult,
+} from "../../lib/import-batch-history.ts";
 
 test("data quality summary counts local issue coverage", () => {
   const summary = summarizeDataQualityIssues(fallbackDataQualityIssues);
@@ -59,4 +64,71 @@ test("data quality issue detail exposes business impact chain", () => {
   assert.equal(row.affectedObjects[0].objectId, "A-1002");
   assert.ok(row.impactLinks.some((link) => link.type === "status_log"));
   assert.ok(row.impactLinks.some((link) => link.label.includes("个人履约")));
+});
+
+test("data quality import batch impact summarizes linked fallback batches", () => {
+  const issue = getDataQualityIssue("DQ-202605-004");
+  assert.ok(issue);
+
+  const summary = summarizeDataQualityImportBatchImpact(issue, fallbackImportBatches);
+
+  assert.equal(summary.totalBatchCount, 1);
+  assert.equal(summary.totalFailedRows, 19);
+  assert.ok(summary.matchedFields.includes("employee_id"));
+  assert.ok(summary.affectedObjects.includes("人员排班"));
+  assert.equal(summary.items[0].batchId, "BATCH-20260519-001");
+  assert.equal(summary.items[0].href, "/import-batches/BATCH-20260519-001");
+  assert.ok(summary.items[0].reviewHint.includes("员工"));
+  assert.ok(summary.deferredActions.includes("无真实数据修复"));
+  assert.ok(summary.deferredActions.includes("无导出或批量处理"));
+});
+
+test("data quality import batch impact matches direct failure rows", () => {
+  const issue = getDataQualityIssue("DQ-202605-010");
+  assert.ok(issue);
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-SL-20260526-101",
+    entity: "status_log",
+    file_name: "status_log_overlap.csv",
+    uploaded_by: "现场主管",
+    uploaded_at: "2026-05-26T23:00:00+08:00",
+    status: "completed_with_errors",
+    total_rows: 2,
+    success_rows: 1,
+    failed_rows: 1,
+    warning_rows: 0,
+    error_codes: ["status_overlap"],
+    failure_rows: [
+      {
+        batch_id: "BATCH-SL-20260526-101",
+        entity: "status_log",
+        failed_row_number: 2,
+        field_name: "status_start_at",
+        error_code: "status_overlap",
+        error_message: "状态时间段重叠",
+        raw_value: "11:00-11:30",
+      },
+    ],
+  });
+
+  const summary = summarizeDataQualityImportBatchImpact(issue, [batch]);
+
+  assert.equal(summary.totalBatchCount, 1);
+  assert.equal(summary.totalFailedRows, 1);
+  assert.ok(summary.matchedFields.includes("status_start_at"));
+  assert.ok(summary.affectedObjects.includes("状态日志"));
+  assert.ok(summary.items[0].reviewHint.includes("失败行"));
+});
+
+test("data quality import batch impact exposes empty state", () => {
+  const issue = getDataQualityIssue("DQ-202605-009");
+  assert.ok(issue);
+
+  const summary = summarizeDataQualityImportBatchImpact(issue, []);
+
+  assert.equal(summary.totalBatchCount, 0);
+  assert.equal(summary.totalFailedRows, 0);
+  assert.deepEqual(summary.matchedFields, []);
+  assert.deepEqual(summary.affectedObjects, []);
+  assert.deepEqual(summary.items, []);
 });

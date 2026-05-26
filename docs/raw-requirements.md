@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R522-R525 - 数据质量影响导入批次反向聚合
+
+```yaml
+requirements:
+  - id: R522
+    module: "数据质量"
+    description: "现场主管需要在数据质量详情看到影响导入批次，从单个质量问题反查相关导入批次、失败字段和失败行。"
+  - id: R523
+    module: "数据质量"
+    description: "影响导入批次需要基于现有本地批次和质量问题模型聚合，不新增后端接口、数据库持久化、修复提交或生产处理状态。"
+  - id: R524
+    module: "数据质量"
+    description: "影响导入批次需要展示批次数、失败行、匹配字段、影响对象、批次入口和查看建议。"
+  - id: R525
+    module: "质量与交付"
+    description: "数据质量影响导入批次反向聚合完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM approved push and asked to continue development on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量详情页的本地只读反向聚合，基于已有 fallbackDataQualityIssues 与 fallbackImportBatches 聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R518-R521 - 导入批次复核结论预览
 
 ```yaml
