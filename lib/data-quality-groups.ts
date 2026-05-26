@@ -154,6 +154,31 @@ export type DataQualityGroupStepOwnerLoadSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityGroupStepOwnerReviewQueueItem = {
+  rank: number
+  owner: string
+  stepCount: number
+  impactedPeople: string[]
+  primaryPerson?: string
+  groupTitles: string[]
+  representativeIssueId: string
+  representativeIssueTitle: string
+  issueHref: string
+  personHref?: string
+  queueReason: string
+  nextViewHint: string
+}
+
+export type DataQualityGroupStepOwnerReviewQueueSummary = {
+  queueCount: number
+  totalStepCount: number
+  totalImpactedPeopleCount: number
+  firstItem?: DataQualityGroupStepOwnerReviewQueueItem
+  items: DataQualityGroupStepOwnerReviewQueueItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityGroupActions = [
   "无真实数据修复",
   "无自动合并",
@@ -484,6 +509,47 @@ export function summarizeDataQualityGroupStepOwnerLoad(
       items.length > 0
         ? "按 owner 查看分组步骤负载，再进入代表问题和人员履约核对。"
         : "当前没有分组步骤可生成 owner 负载摘要。",
+    deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
+export function summarizeDataQualityGroupStepOwnerReviewQueue(
+  issues: DataQualityIssue[],
+  groups = fallbackDataQualityGroups
+): DataQualityGroupStepOwnerReviewQueueSummary {
+  const ownerLoad = summarizeDataQualityGroupStepOwnerLoad(issues, groups)
+  const items = ownerLoad.items.map((item, index) => {
+    const rank = index + 1
+    const primaryPerson = item.impactedPeople[0]
+
+    return {
+      rank,
+      owner: item.owner,
+      stepCount: item.stepCount,
+      impactedPeople: item.impactedPeople,
+      primaryPerson,
+      groupTitles: item.groupTitles,
+      representativeIssueId: item.representativeIssueId,
+      representativeIssueTitle: item.representativeIssueTitle,
+      issueHref: item.issueHref,
+      personHref: item.personHref,
+      queueReason: `第 ${rank} 位：${item.owner} 负责 ${item.stepCount} 个分组步骤，影响 ${item.impactedPeople.length} 名人员。`,
+      nextViewHint: primaryPerson
+        ? `先查看 ${item.representativeIssueId}，再核对 ${primaryPerson} 的人员履约。`
+        : `先查看 ${item.representativeIssueId}，再回到 owner 负载确认影响人员。`,
+    }
+  })
+
+  return {
+    queueCount: items.length,
+    totalStepCount: ownerLoad.totalStepCount,
+    totalImpactedPeopleCount: ownerLoad.totalImpactedPeopleCount,
+    firstItem: items[0],
+    items,
+    nextViewHint:
+      items.length > 0
+        ? "按 owner 复核队列逐项查看代表问题和人员履约，再回到分组步骤确认遗漏。"
+        : "当前没有 owner 负载可生成复核队列。",
     deferredActions: deferredDataQualityGroupActions,
   }
 }

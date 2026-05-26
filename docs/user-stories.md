@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US572-US574 - 数据质量分组步骤 owner 复核队列
+
+```yaml
+stories:
+  - id: US572
+    requirement_ids: [R598, R599]
+    task_ids: [F396]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到分组步骤 owner 复核队列，以便知道每个责任人下一步先看哪个问题和人员。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US573
+    requirement_ids: [R600]
+    task_ids: [F396]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望 owner 复核队列展示 rank、owner、代表问题、代表人员、关联分组、队列理由和查看入口，以便继续只读追溯。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US574
+    requirement_ids: [R601]
+    task_ids: [Q114]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望分组步骤 owner 复核队列完成后做收口验证，确认页面展示、模型测试和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量分组模型提供分组步骤 owner 复核队列，基于 owner/人员负载聚合。"
+  - "数据质量总览页展示分组步骤 owner 复核队列卡片，包含 rank、owner、代表问题、代表人员、关联分组、队列理由、入口和暂缓能力。"
+  - "没有 owner 负载时展示空状态，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality-groups.test.mjs`、`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US569-US571 - 数据质量分组步骤 owner/人员负载摘要
 
 ```yaml

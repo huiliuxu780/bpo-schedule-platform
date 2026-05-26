@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality group step owner review queue
+
+#### 结论
+
+- `F396/Q114/US572-US574` 已完成数据质量分组步骤 owner 复核队列。
+- 前端分组模型新增 `summarizeDataQualityGroupStepOwnerReviewQueue()`，基于本地分组步骤 owner/人员负载生成 owner 复核队列。
+- 数据质量总览页新增“分组步骤 owner 复核队列”卡片，展示 rank、owner、代表问题、代表人员、关联分组、队列理由、质量问题入口、人员履约入口和“查看队列问题”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 分组步骤 owner 复核队列只基于本地 fallback 分组、数据质量问题和 owner/人员负载，不代表真实复核任务、异常闭环写入、审批、权限、导出、批量或生产持久化已经实现。
+- 队列用于主管只读查看顺序，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality-groups.test.mjs` 首次失败于 `summarizeDataQualityGroupStepOwnerReviewQueue` 未导出；`node --test scripts/tests/data-quality.test.mjs` 首次失败于页面未引用 `summarizeDataQualityGroupStepOwnerReviewQueue`，证明测试覆盖新增模型和页面契约。
+- `node --test scripts/tests/data-quality-groups.test.mjs`：通过，10 个数据质量分组模型测试通过。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，33 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“分组步骤 owner 复核队列”“运营负责人”“DQ-202605-010”“A-1002”“时间有效性”“查看队列问题”“查看队列人员”“第 1 位”“无真实数据修复”“无批量重导”。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，6 个产品文案/导航边界测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality group step owner/person load
 
 #### 结论

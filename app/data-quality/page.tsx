@@ -45,6 +45,7 @@ import {
   summarizeDataQualityGroupReviewSequence,
   summarizeDataQualityGroupStepImpactDrilldown,
   summarizeDataQualityGroupStepOwnerLoad,
+  summarizeDataQualityGroupStepOwnerReviewQueue,
   summarizeDataQualityReviewGroupLink,
   summarizeDataQualityGroups,
 } from "@/lib/data-quality-groups"
@@ -83,6 +84,10 @@ export default function DataQualityPage() {
     fallbackDataQualityGroups
   )
   const groupStepOwnerLoad = summarizeDataQualityGroupStepOwnerLoad(
+    rows,
+    fallbackDataQualityGroups
+  )
+  const groupStepOwnerReviewQueue = summarizeDataQualityGroupStepOwnerReviewQueue(
     rows,
     fallbackDataQualityGroups
   )
@@ -229,6 +234,112 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>分组步骤 owner 复核队列</CardTitle>
+                <CardDescription>
+                  把 owner/人员负载转成下一步只读查看队列，明确先看哪个问题和人员。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {groupStepOwnerReviewQueue.firstItem?.owner ?? "无复核队列"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail label="队列项" value={`${groupStepOwnerReviewQueue.queueCount}`} />
+              <Detail
+                label="步骤"
+                value={`${groupStepOwnerReviewQueue.totalStepCount}`}
+              />
+              <Detail
+                label="影响人员"
+                value={`${groupStepOwnerReviewQueue.totalImpactedPeopleCount}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    首项：{groupStepOwnerReviewQueue.firstItem?.owner ?? "无"}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    代表问题：
+                    {groupStepOwnerReviewQueue.firstItem?.representativeIssueId ?? "无"} / 代表人员：
+                    {groupStepOwnerReviewQueue.firstItem?.primaryPerson ?? "无"}
+                  </div>
+                </div>
+                {groupStepOwnerReviewQueue.firstItem ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={groupStepOwnerReviewQueue.firstItem.issueHref}>
+                      查看队列问题
+                    </Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {groupStepOwnerReviewQueue.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {groupStepOwnerReviewQueue.items.map((item) => (
+                    <div key={`${item.rank}-${item.owner}`} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">
+                        {item.rank}. {item.owner}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        代表问题：{item.representativeIssueId} / {item.representativeIssueTitle}
+                      </div>
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <Detail label="步骤" value={`${item.stepCount}`} />
+                        <Detail label="人员" value={`${item.impactedPeople.length}`} />
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        分组：{item.groupTitles.join(" / ") || "无"} / 代表人员：
+                        {item.primaryPerson ?? "无"}
+                      </div>
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        队列理由：{item.queueReason}
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button asChild size="sm" variant="outline">
+                          <Link href={item.issueHref}>查看队列问题</Link>
+                        </Button>
+                        {item.personHref ? (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={item.personHref}>查看队列人员</Link>
+                          </Button>
+                        ) : null}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        下一查看：{item.nextViewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前没有 owner 负载可生成复核队列。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{groupStepOwnerReviewQueue.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {groupStepOwnerReviewQueue.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>
