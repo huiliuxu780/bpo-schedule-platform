@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-26 - Import correction readiness summary
+
+#### 结论
+
+- `F374/Q092/US506-US508` 已完成导入批次修正准备摘要。
+- 前端模型新增 `summarizeImportBatchCorrectionReadiness()`，基于失败原因汇总、质量影响聚合和本地数据质量问题生成准备等级、首要字段、需确认对象、风险提示、建议查看顺序和暂缓能力。
+- 导入批次详情页在“质量影响聚合”后展示“修正准备摘要”，并保留“失败行明细”作为下一层定位信息。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 修正准备摘要只做查看顺序和复核材料准备口径，不代表真实修正提交、证据补录、复核结论写入、审批、权限、导出、批量或生产持久化已经实现。
+- in-app Browser 未能直接访问本地端口；已用同一开发服务的本机 HTML 响应核对页面关键文本。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/import-batch-history.test.mjs` 首次失败于 `summarizeImportBatchCorrectionReadiness` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/import-batch-history.test.mjs`：通过，17 个导入批次模型测试通过。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过。
+- `npm run typecheck`：通过。
+- 页面 smoke：通过，使用本地 API 创建 `BATCH-SL-20260526-001`，详情 HTML 包含“修正准备摘要”“准备等级”“首要字段”“确认对象”“风险提示”“建议查看顺序”“暂缓能力”“无修正提交”“无审批或批量”“失败行明细”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Import failure quality impact rollup
 
 #### 结论

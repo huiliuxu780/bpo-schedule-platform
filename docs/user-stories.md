@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US506-US508 - 导入批次修正准备摘要
+
+```yaml
+stories:
+  - id: US506
+    requirement_ids: [R510, R511]
+    task_ids: [F374]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望在导入批次详情看到修正准备摘要，以便把失败原因和质量影响转成查看优先级。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US507
+    requirement_ids: [R512]
+    task_ids: [F374]
+    module: "导入批次"
+    role: "现场主管"
+    story: "作为现场主管，我希望修正准备摘要展示首要字段、需确认对象、风险提示和建议查看顺序，以便准备复核材料。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US508
+    requirement_ids: [R513]
+    task_ids: [Q092]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望修正准备摘要完成后做收口验证，确认只读摘要、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "导入批次模型提供修正准备摘要，包含准备等级、首要字段、需确认对象、风险提示、建议查看顺序和只读边界提示。"
+  - "导入批次详情页在质量影响聚合后展示修正准备摘要。"
+  - "没有失败行时展示无修正准备，不误导为处理、修复、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/import-batch-history.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US503-US505 - 导入失败原因质量影响聚合
 
 ```yaml

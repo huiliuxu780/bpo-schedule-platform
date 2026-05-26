@@ -140,6 +140,7 @@ Current invariants:
 - `F351-F352/Q077` completed a supervisor closure review summary slice: the fulfillment calendar group-day exception panel shows ready-to-close count, pending review count, blockers, lead review item, suggested conclusion, evidence summary, risk summary, next action, and source references. It remained local/frontend only and returned current queue and active tasks to empty.
 - `US500/F372 -> US502/Q090` completed an import failure reason summary slice: import batch detail pages now group failure rows by field and error code, show top reason, representative row, affected objects, and correction hint before row-level details. It remained local/read-only and returned current queue and active tasks to empty.
 - `US503/F373 -> US505/Q091` completed an import failure quality impact rollup slice: import batch detail pages now connect failure reasons to linked data quality issues, show related issue count, covered fields, unmatched reasons, affected objects, top issue, and issue viewing order. It remained local/read-only and returned current queue and active tasks to empty.
+- `US506/F374 -> US508/Q092` completed an import correction readiness summary slice: import batch detail pages now combine failure reasons and quality impact into readiness level, primary field, confirmation objects, risk prompt, review order, and deferred-action boundary. It remained local/read-only and returned current queue and active tasks to empty.
 
 ## Product Direction
 

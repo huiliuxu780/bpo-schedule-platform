@@ -380,7 +380,18 @@ stories:
   US503: {file: "docs/user-stories.md", requirement_ids: ["R506", "R507"], task_ids: ["F373"], archive_refs: []}
   US504: {file: "docs/user-stories.md", requirement_ids: ["R508"], task_ids: ["F373"], archive_refs: []}
   US505: {file: "docs/user-stories.md", requirement_ids: ["R509"], task_ids: ["Q091"], archive_refs: []}
+  US506: {file: "docs/user-stories.md", requirement_ids: ["R510", "R511"], task_ids: ["F374"], archive_refs: []}
+  US507: {file: "docs/user-stories.md", requirement_ids: ["R512"], task_ids: ["F374"], archive_refs: []}
+  US508: {file: "docs/user-stories.md", requirement_ids: ["R513"], task_ids: ["Q092"], archive_refs: []}
 tasks:
+  F374:
+    file: "tasks/backlog.yaml"
+    story_ids: ["US506", "US507"]
+    gate: "frontend-scaffold"
+  Q092:
+    file: "tasks/backlog.yaml"
+    story_ids: ["US508"]
+    gate: "qa"
   F373:
     file: "tasks/backlog.yaml"
     story_ids: ["US503", "US504"]
@@ -1331,6 +1342,10 @@ requirements:
   R507: {file: "docs/raw-requirements.md", story_ids: ["US503"], task_ids: ["F373"]}
   R508: {file: "docs/raw-requirements.md", story_ids: ["US504"], task_ids: ["F373"]}
   R509: {file: "docs/raw-requirements.md", story_ids: ["US505"], task_ids: ["Q091"]}
+  R510: {file: "docs/raw-requirements.md", story_ids: ["US506"], task_ids: ["F374"]}
+  R511: {file: "docs/raw-requirements.md", story_ids: ["US506"], task_ids: ["F374"]}
+  R512: {file: "docs/raw-requirements.md", story_ids: ["US507"], task_ids: ["F374"]}
+  R513: {file: "docs/raw-requirements.md", story_ids: ["US508"], task_ids: ["Q092"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

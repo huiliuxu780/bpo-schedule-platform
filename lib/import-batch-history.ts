@@ -122,6 +122,21 @@ export type ImportBatchQualityImpactSummary = {
   items: ImportBatchQualityImpactItem[]
 }
 
+export type ImportBatchCorrectionReadinessLevel =
+  | "not_required"
+  | "needs_field_review"
+  | "needs_quality_review"
+
+export type ImportBatchCorrectionReadinessSummary = {
+  readinessLevel: ImportBatchCorrectionReadinessLevel
+  headline: string
+  primaryField: string
+  primaryRisk: string
+  confirmationObjects: string[]
+  reviewSteps: string[]
+  deferredActions: string[]
+}
+
 export type ImportBatchSummary = {
   total: number
   completed: number
@@ -140,6 +155,12 @@ export const deferredImportBatchActions = [
   "无外部系统接入",
   "无自动修复",
   "无审批或权限",
+]
+
+export const deferredImportBatchCorrectionActions = [
+  "无修正提交",
+  "无审批或批量",
+  "无生产数据写入",
 ]
 
 const API_BASE_URL =
@@ -670,6 +691,73 @@ export function summarizeImportBatchQualityImpact(
   }
 }
 
+export function summarizeImportBatchCorrectionReadiness(
+  batch: ImportBatch,
+  issueRows: DataQualityIssue[]
+): ImportBatchCorrectionReadinessSummary {
+  const failureReasonSummary = summarizeImportBatchFailureReasons(batch)
+
+  if (failureReasonSummary.totalFailedRows === 0) {
+    return {
+      readinessLevel: "not_required",
+      headline: "当前批次没有失败行，无需准备修正材料。",
+      primaryField: "无",
+      primaryRisk: "无",
+      confirmationObjects: [],
+      reviewSteps: [],
+      deferredActions: deferredImportBatchCorrectionActions,
+    }
+  }
+
+  const qualityImpactSummary = summarizeImportBatchQualityImpact(batch, issueRows)
+  const topReason = failureReasonSummary.topReason
+  const topIssue = qualityImpactSummary.topIssue
+  const primaryField = topReason?.fieldName ?? "无"
+  const confirmationObjects = Array.from(
+    new Set([
+      ...qualityImpactSummary.affectedObjects,
+      ...(topReason?.affectedObjects ?? []),
+      ...batch.affectedObjects,
+    ])
+  )
+
+  if (!topIssue) {
+    return {
+      readinessLevel: "needs_field_review",
+      headline: `先核对 ${primaryField} 字段失败原因，再查看失败行明细。`,
+      primaryField,
+      primaryRisk: "当前失败原因尚未关联数据质量问题，需要先按字段核对原值和错误码。",
+      confirmationObjects,
+      reviewSteps: [
+        `先看 ${primaryField} 字段失败原因。`,
+        "再看失败行明细中的代表原值、行号和错误码。",
+        confirmationObjects.length > 0
+          ? `最后确认对象：${confirmationObjects.join("、")}。`
+          : "最后确认当前批次影响对象。",
+      ],
+      deferredActions: deferredImportBatchCorrectionActions,
+    }
+  }
+
+  return {
+    readinessLevel: "needs_quality_review",
+    headline: `先看 ${primaryField} 字段，再查看 ${topIssue.id} 质量问题。`,
+    primaryField,
+    primaryRisk: `${topIssue.id} ${topIssue.title} 为${dataQualitySeverityText(
+      topIssue.severity
+    )}风险，仍影响 ${topIssue.blockedRows} 行。`,
+    confirmationObjects,
+    reviewSteps: [
+      `先看 ${primaryField} 字段失败原因。`,
+      `再看 ${topIssue.id} ${topIssue.title} 的质量影响。`,
+      confirmationObjects.length > 0
+        ? `最后确认对象：${confirmationObjects.join("、")}。`
+        : "最后确认当前批次影响对象。",
+    ],
+    deferredActions: deferredImportBatchCorrectionActions,
+  }
+}
+
 function matchIssueFields(issue: DataQualityIssue, failureFields: Set<string>) {
   return Array.from(failureFields).filter((field) => {
     return issue.fieldName === field || issue.sourceField.split(/[./]/).includes(field)
@@ -708,6 +796,14 @@ function qualityImpactSeverityRank(severity: DataQualityIssue["severity"]) {
     high: 0,
     medium: 1,
     low: 2,
+  }[severity]
+}
+
+function dataQualitySeverityText(severity: DataQualityIssue["severity"]) {
+  return {
+    high: "高",
+    medium: "中",
+    low: "低",
   }[severity]
 }
 

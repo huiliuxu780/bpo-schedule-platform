@@ -24,6 +24,7 @@ import {
   importBatchStatusLabel,
   summarizeImportBatchFailureImpacts,
   summarizeImportBatchFailureReasons,
+  summarizeImportBatchCorrectionReadiness,
   summarizeImportBatchQualityImpact,
 } from "@/lib/import-batch-history"
 
@@ -49,6 +50,10 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
   const fallbackFailureImpactSummary = summarizeImportBatchFailureImpacts(batch.id)
   const failureReasonSummary = summarizeImportBatchFailureReasons(batch)
   const qualityImpactSummary = summarizeImportBatchQualityImpact(
+    batch,
+    fallbackDataQualityIssues
+  )
+  const correctionReadinessSummary = summarizeImportBatchCorrectionReadiness(
     batch,
     fallbackDataQualityIssues
   )
@@ -244,6 +249,92 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
 
             <Card>
               <CardHeader>
+                <CardTitle>修正准备摘要</CardTitle>
+                <CardDescription>
+                  汇总失败原因和质量影响，形成复核前的查看顺序。
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-3 md:grid-cols-4">
+                  <Detail
+                    label="准备等级"
+                    value={correctionReadinessLevelLabel(
+                      correctionReadinessSummary.readinessLevel
+                    )}
+                  />
+                  <Detail
+                    label="首要字段"
+                    value={correctionReadinessSummary.primaryField}
+                  />
+                  <Detail
+                    label="确认对象"
+                    value={`${correctionReadinessSummary.confirmationObjects.length}`}
+                  />
+                  <Detail
+                    label="暂缓能力"
+                    value={`${correctionReadinessSummary.deferredActions.length}`}
+                  />
+                </div>
+
+                <div className="rounded-lg border p-3">
+                  <div className="text-xs text-muted-foreground">风险提示</div>
+                  <div className="mt-1 text-sm font-medium">
+                    {correctionReadinessSummary.primaryRisk}
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {correctionReadinessSummary.headline}
+                  </p>
+                </div>
+
+                {correctionReadinessSummary.confirmationObjects.length > 0 ? (
+                  <div>
+                    <div className="text-xs text-muted-foreground">需确认对象</div>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {correctionReadinessSummary.confirmationObjects.map((object) => (
+                        <Badge key={object} variant="secondary">
+                          {object}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {correctionReadinessSummary.reviewSteps.length > 0 ? (
+                  <div className="grid gap-2">
+                    <div className="text-xs text-muted-foreground">建议查看顺序</div>
+                    {correctionReadinessSummary.reviewSteps.map((step, index) => (
+                      <div
+                        key={step}
+                        className="grid gap-2 rounded-lg border p-3 text-sm sm:grid-cols-[3rem_1fr]"
+                      >
+                        <span className="font-medium tabular-nums">
+                          {index + 1}
+                        </span>
+                        <span className="text-muted-foreground">{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    当前批次没有失败行，无需准备修正材料。
+                  </p>
+                )}
+
+                <div>
+                  <div className="text-xs text-muted-foreground">暂缓能力</div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {correctionReadinessSummary.deferredActions.map((action) => (
+                      <Badge key={action} variant="outline">
+                        {action}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>失败行明细</CardTitle>
                 <CardDescription>
                   按行号、字段、错误码和原值定位需要修正的数据。
@@ -430,6 +521,16 @@ function Detail({ label, value }: { label: string; value: string }) {
       <div className="mt-1 text-sm font-medium tabular-nums">{value}</div>
     </div>
   )
+}
+
+function correctionReadinessLevelLabel(
+  level: "not_required" | "needs_field_review" | "needs_quality_review"
+) {
+  return {
+    not_required: "无需准备",
+    needs_field_review: "字段核对",
+    needs_quality_review: "质量核对",
+  }[level]
 }
 
 function Metric({

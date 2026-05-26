@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R510-R513 - 导入批次修正准备摘要
+
+```yaml
+requirements:
+  - id: R510
+    module: "导入批次"
+    description: "现场主管需要在导入批次详情看到修正准备摘要，把失败原因、质量影响和失败行明细汇总成查看优先级。"
+  - id: R511
+    module: "导入批次"
+    description: "修正准备摘要需要基于现有本地模型聚合，不新增数据库、后端持久化、修复提交或生产处理状态。"
+  - id: R512
+    module: "导入批次"
+    description: "修正准备摘要需要展示首要字段、需确认对象、风险提示和建议查看顺序，帮助主管准备复核材料。"
+  - id: R513
+    module: "质量与交付"
+    description: "导入批次修正准备摘要完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F373 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做导入批次详情页的本地只读修正准备摘要，基于已有 failureRows、failure reason summary 和 quality impact rollup 聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R506-R509 - 导入失败原因质量影响聚合
 
 ```yaml

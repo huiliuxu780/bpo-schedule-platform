@@ -19,6 +19,17 @@
 
 ### 2026-05-26
 
+- task_id: `F374/Q092`
+- source_ids:
+  - `R510-R513`
+- story_ids:
+  - `US506-US508`
+- action: 完成导入批次修正准备摘要。
+- status: `done`
+- notes: 导入批次详情页现在在质量影响聚合后展示修正准备摘要，包含准备等级、首要字段、需确认对象、风险提示、建议查看顺序和暂缓能力；模型基于现有失败原因、质量影响和本地 data-quality rows 只读聚合。本次不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-26
+
 - task_id: `F373/Q091`
 - source_ids:
   - `R506-R509`
