@@ -201,6 +201,28 @@ export type DataQualityGroupStepOwnerHandoffBriefSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityGroupStepOwnerHandoffRiskItem = {
+  owner: string
+  representativeIssueId: string
+  representativeIssueTitle: string
+  primaryPerson?: string
+  groupTitles: string[]
+  issueHref: string
+  personHref?: string
+  impactedPeople: string[]
+  riskReasons: string[]
+  nextViewHint: string
+}
+
+export type DataQualityGroupStepOwnerHandoffRiskSummary = {
+  riskCount: number
+  totalImpactedPeopleCount: number
+  topRisk?: DataQualityGroupStepOwnerHandoffRiskItem
+  items: DataQualityGroupStepOwnerHandoffRiskItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityGroupActions = [
   "无真实数据修复",
   "无自动合并",
@@ -612,6 +634,50 @@ export function summarizeDataQualityGroupStepOwnerHandoffBrief(
       items.length > 0
         ? "按 owner 交接摘要逐项确认代表问题、代表人员和关联分组。"
         : "当前没有 owner 队列可生成交接摘要。",
+    deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
+export function summarizeDataQualityGroupStepOwnerHandoffRiskSummary(
+  issues: DataQualityIssue[],
+  groups = fallbackDataQualityGroups
+): DataQualityGroupStepOwnerHandoffRiskSummary {
+  const handoffBrief = summarizeDataQualityGroupStepOwnerHandoffBrief(issues, groups)
+  const items = handoffBrief.items.map((item) => ({
+    owner: item.owner,
+    representativeIssueId: item.representativeIssueId,
+    representativeIssueTitle: item.representativeIssueTitle,
+    primaryPerson: item.primaryPerson,
+    groupTitles: item.groupTitles,
+    issueHref: item.issueHref,
+    personHref: item.personHref,
+    impactedPeople: item.impactedPeople,
+    riskReasons: [
+      `阻塞原因：${item.owner} 需要先确认 ${item.representativeIssueId} / ${item.representativeIssueTitle} 的交接范围。`,
+      item.primaryPerson
+        ? `代表人员：${item.primaryPerson}，若人员履约未核对，交接结论可能停留在口径说明。`
+        : "代表人员缺失，交接前需要先回到质量问题确认影响对象。",
+      item.groupTitles.length > 1
+        ? `关联分组：${item.groupTitles.join(" / ")}，同一 owner 需要先拆清分组责任。`
+        : `关联分组：${item.groupTitles.join(" / ") || "无"}，需确认是否足够支撑责任人复核。`,
+      item.impactedPeople.length > 1
+        ? `影响人员：${item.impactedPeople.join(" / ")}，多人影响会放大交接阻塞。`
+        : `影响人员：${item.impactedPeople[0] ?? "无"}，先保证人员入口可追溯。`,
+    ],
+    nextViewHint: item.primaryPerson
+      ? `先查看风险问题 ${item.representativeIssueId}，再核对 ${item.primaryPerson} 的人员履约。`
+      : `先查看风险问题 ${item.representativeIssueId}，再回到交接摘要补齐影响对象。`,
+  }))
+
+  return {
+    riskCount: items.length,
+    totalImpactedPeopleCount: handoffBrief.totalImpactedPeopleCount,
+    topRisk: items[0],
+    items,
+    nextViewHint:
+      items.length > 0
+        ? "按 owner 交接风险逐项确认阻塞原因、代表问题和人员入口。"
+        : "当前没有 owner 交接摘要可生成交接风险。",
     deferredActions: deferredDataQualityGroupActions,
   }
 }

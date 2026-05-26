@@ -2,22 +2,40 @@
 
 ## 2026-05-26
 
-### F397-Q115 Data Quality Owner Handoff Brief
+### F398-Q116 Data Quality Owner Handoff Risk Summary
 
-- branch_name: `codex/f397-data-quality-owner-handoff-brief`
+- branch_name: `codex/f398-data-quality-owner-handoff-risk-summary`
 - base_main_commit: `a3a134c`
-- base_chain_commit: `db05864`
+- base_chain_commit: `69c462e`
 - remote_status: `not_pushed`
-- scope: frontend local read-only function: add group step owner handoff brief summary to the data quality overview, turning owner review queue items into supervisor handoff wording for each responsible owner.
+- scope: frontend local read-only function: add group step owner handoff risk summary to the data quality overview, turning owner handoff brief items into supervisor-facing blocker reasons.
 - allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality-groups.ts`, `scripts/tests/data-quality-groups.test.mjs`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates existing data quality overview route, data quality group frontend model/test, data quality page source test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
-- check_result: TDD red observed for missing group step owner handoff brief export and missing page source reference; data-quality group tests, data-quality tests, product copy/navigation tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- check_result: TDD red observed for missing group step owner handoff risk summary export and missing page source reference; data-quality group tests, data-quality tests, product copy/navigation tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
 - local_commit_sha: to be reported in Done Report after local commit creation.
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
 - push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
+### F397-Q115 Data Quality Owner Handoff Brief
+
+- branch_name: `codex/f397-data-quality-owner-handoff-brief`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `db05864`
+- remote_status: `pushed`
+- scope: frontend local read-only function: add group step owner handoff brief summary to the data quality overview, turning owner review queue items into supervisor handoff wording for each responsible owner.
+- allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality-groups.ts`, `scripts/tests/data-quality-groups.test.mjs`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing data quality overview route, data quality group frontend model/test, data quality page source test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing group step owner handoff brief export and missing page source reference; data-quality group tests, data-quality tests, product copy/navigation tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `69c462e`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `PM confirmed push; pushed to origin/codex/f397-data-quality-owner-handoff-brief`
 - blocked_reason: `N/A`
 
 ### F396-Q114 Data Quality Owner Review Queue

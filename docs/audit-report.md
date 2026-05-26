@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality group step owner handoff risk summary
+
+#### 结论
+
+- `F398/Q116/US578-US580` 已完成数据质量分组步骤 owner 交接风险摘要。
+- 前端分组模型新增 `summarizeDataQualityGroupStepOwnerHandoffRiskSummary()`，基于本地 owner 交接摘要生成主管可读阻塞原因。
+- 数据质量总览页新增“分组步骤 owner 交接风险摘要”卡片，展示 owner、代表问题、代表人员、关联分组、阻塞原因、质量问题入口、人员履约入口和“查看风险问题”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 分组步骤 owner 交接风险摘要只基于本地 fallback 分组、数据质量问题和 owner 交接摘要，不代表真实复核任务、异常闭环写入、审批、权限、导出、批量或生产持久化已经实现。
+- 阻塞原因用于主管只读提前说明风险，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality-groups.test.mjs` 首次失败于 `summarizeDataQualityGroupStepOwnerHandoffRiskSummary` 未导出；`node --test scripts/tests/data-quality.test.mjs` 首次失败于页面未引用 `summarizeDataQualityGroupStepOwnerHandoffRiskSummary`，证明测试覆盖新增模型和页面契约。
+- `node --test scripts/tests/data-quality-groups.test.mjs`：通过，12 个数据质量分组模型测试通过。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，33 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“分组步骤 owner 交接风险摘要”“运营负责人”“DQ-202605-010”“A-1002”“时间有效性”“查看风险问题”“查看风险人员”“阻塞原因”“交接风险”“无真实数据修复”“无批量重导”。
+- `node --test scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，6 个产品文案/导航边界测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality group step owner handoff brief
 
 #### 结论

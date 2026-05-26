@@ -45,6 +45,7 @@ import {
   summarizeDataQualityGroupReviewSequence,
   summarizeDataQualityGroupStepImpactDrilldown,
   summarizeDataQualityGroupStepOwnerHandoffBrief,
+  summarizeDataQualityGroupStepOwnerHandoffRiskSummary,
   summarizeDataQualityGroupStepOwnerLoad,
   summarizeDataQualityGroupStepOwnerReviewQueue,
   summarizeDataQualityReviewGroupLink,
@@ -96,6 +97,11 @@ export default function DataQualityPage() {
     rows,
     fallbackDataQualityGroups
   )
+  const groupStepOwnerHandoffRiskSummary =
+    summarizeDataQualityGroupStepOwnerHandoffRiskSummary(
+      rows,
+      fallbackDataQualityGroups
+    )
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -239,6 +245,125 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>分组步骤 owner 交接风险摘要</CardTitle>
+                <CardDescription>
+                  把 owner 交接摘要转成阻塞原因，便于主管提前说明风险点。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {groupStepOwnerHandoffRiskSummary.topRisk?.owner ?? "无交接风险"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="风险项"
+                value={`${groupStepOwnerHandoffRiskSummary.riskCount}`}
+              />
+              <Detail
+                label="影响人员"
+                value={`${groupStepOwnerHandoffRiskSummary.totalImpactedPeopleCount}`}
+              />
+              <Detail
+                label="问题"
+                value={
+                  groupStepOwnerHandoffRiskSummary.topRisk?.representativeIssueId ??
+                  "无"
+                }
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    首要风险：{groupStepOwnerHandoffRiskSummary.topRisk?.owner ?? "无"}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    代表问题：
+                    {groupStepOwnerHandoffRiskSummary.topRisk
+                      ?.representativeIssueId ?? "无"}{" "}
+                    / 代表人员：
+                    {groupStepOwnerHandoffRiskSummary.topRisk?.primaryPerson ?? "无"}
+                  </div>
+                </div>
+                {groupStepOwnerHandoffRiskSummary.topRisk ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={groupStepOwnerHandoffRiskSummary.topRisk.issueHref}>
+                      查看风险问题
+                    </Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {groupStepOwnerHandoffRiskSummary.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {groupStepOwnerHandoffRiskSummary.items.map((item) => (
+                    <div
+                      key={`${item.owner}-${item.representativeIssueId}`}
+                      className="rounded-lg border p-3"
+                    >
+                      <div className="text-sm font-medium">{item.owner}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        代表问题：{item.representativeIssueId} /{" "}
+                        {item.representativeIssueTitle}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        分组：{item.groupTitles.join(" / ") || "无"} / 代表人员：
+                        {item.primaryPerson ?? "无"}
+                      </div>
+                      <div className="mt-3 grid gap-2">
+                        {item.riskReasons.map((reason) => (
+                          <div
+                            key={reason}
+                            className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground"
+                          >
+                            {reason}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button asChild size="sm" variant="outline">
+                          <Link href={item.issueHref}>查看风险问题</Link>
+                        </Button>
+                        {item.personHref ? (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={item.personHref}>查看风险人员</Link>
+                          </Button>
+                        ) : null}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        下一查看：{item.nextViewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前没有 owner 交接摘要可生成交接风险。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{groupStepOwnerHandoffRiskSummary.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {groupStepOwnerHandoffRiskSummary.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

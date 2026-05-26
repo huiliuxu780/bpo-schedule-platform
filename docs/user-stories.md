@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US578-US580 - 数据质量分组步骤 owner 交接风险摘要
+
+```yaml
+stories:
+  - id: US578
+    requirement_ids: [R606, R607]
+    task_ids: [F398]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到分组步骤 owner 交接风险摘要，以便知道交接给责任人时最可能卡在哪里。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US579
+    requirement_ids: [R608]
+    task_ids: [F398]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望风险摘要展示 owner、代表问题、代表人员、关联分组、阻塞原因、查看入口和风险提示，以便继续只读追溯。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US580
+    requirement_ids: [R609]
+    task_ids: [Q116]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望分组步骤 owner 交接风险摘要完成后做收口验证，确认页面展示、模型测试和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量分组模型提供分组步骤 owner 交接风险摘要，基于 owner 交接摘要聚合。"
+  - "数据质量总览页展示分组步骤 owner 交接风险摘要卡片，包含 owner、代表问题、代表人员、关联分组、阻塞原因、入口和暂缓能力。"
+  - "没有 owner 交接摘要时展示空状态，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality-groups.test.mjs`、`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US575-US577 - 数据质量分组步骤 owner 交接摘要
 
 ```yaml
