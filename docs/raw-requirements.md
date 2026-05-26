@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R542-R545 - 数据质量人员履约查看顺序
+
+```yaml
+requirements:
+  - id: R542
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到受影响人员的查看顺序，以便从数据质量原因快速进入个人履约核对。"
+  - id: R543
+    module: "数据质量"
+    description: "人员查看顺序需要基于现有本地 affectedObjects、impactLinks 和异常原因汇总聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R544
+    module: "数据质量"
+    description: "人员查看顺序需要展示员工、影响原因数、影响异常数、代表原因、代表问题、个人履约入口和暂缓能力。"
+  - id: R545
+    module: "质量与交付"
+    description: "数据质量人员履约查看顺序完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F381 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读人员查看顺序，基于已有 fallbackDataQualityIssues 的 affectedObjects、impactLinks 和异常影响原因汇总聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R538-R541 - 数据质量异常影响原因汇总
 
 ```yaml

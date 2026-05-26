@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality impacted-person view order
+
+#### 结论
+
+- `F382/Q100/US530-US532` 已完成数据质量人员履约查看顺序。
+- 前端模型新增 `summarizeDataQualityPersonViewOrder()`，基于影响履约异常的数据质量问题，按受影响人员聚合原因、异常和代表问题。
+- 数据质量总览页新增“人员履约查看顺序”卡片，展示影响人员、影响异常、首要人员、代表原因、代表问题、下一查看和“查看个人履约”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 人员查看顺序只基于本地现有 quality issue affectedObjects/impactLinks，不代表真实异常闭环写入、数据修复、证据补录、审批、权限、导出、批量或生产持久化已经实现。
+- 人员排序用于主管查看优先级，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityPersonViewOrder` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，17 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“人员履约查看顺序”“A-1002”“status_overlap”“DQ-202605-010”“查看个人履约”“无真实数据修复”“无导出或批量处理”“首要人员”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality impacted-exception cause summary
 
 #### 结论

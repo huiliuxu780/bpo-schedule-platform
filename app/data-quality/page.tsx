@@ -24,6 +24,7 @@ import {
   dataQualityStatusLabel,
   fallbackDataQualityIssues,
   summarizeDataQualityExceptionCauses,
+  summarizeDataQualityPersonViewOrder,
   summarizeDataQualityExceptionTop,
   summarizeDataQualityIssues,
 } from "@/lib/data-quality"
@@ -38,6 +39,7 @@ export default function DataQualityPage() {
   const summary = summarizeDataQualityIssues(rows)
   const exceptionTopSummary = summarizeDataQualityExceptionTop(rows)
   const exceptionCauseSummary = summarizeDataQualityExceptionCauses(rows)
+  const personViewOrderSummary = summarizeDataQualityPersonViewOrder(rows)
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -171,6 +173,71 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {exceptionTopSummary.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>人员履约查看顺序</CardTitle>
+                <CardDescription>
+                  按受影响人员聚合原因和异常，帮助主管先进入个人履约核对。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {personViewOrderSummary.totalPersonCount} 人
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid grid-cols-3 gap-3">
+              <Detail label="影响人员" value={`${personViewOrderSummary.totalPersonCount}`} />
+              <Detail label="影响异常" value={`${personViewOrderSummary.totalImpactedExceptionCount}`} />
+              <Detail label="首要人员" value={personViewOrderSummary.topPerson?.employeeId ?? "无"} />
+            </div>
+
+            {personViewOrderSummary.items.length > 0 ? (
+              <div className="grid gap-3 lg:grid-cols-2">
+                {personViewOrderSummary.items.slice(0, 4).map((item) => (
+                  <div key={item.employeeId} className="rounded-lg border p-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">
+                          {item.employeeId} / {item.representativeCause}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {item.representativeIssueId} / {item.representativeIssueTitle}
+                        </div>
+                      </div>
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={item.href}>查看个人履约</Link>
+                      </Button>
+                    </div>
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                      <Detail label="原因" value={`${item.causeCount}`} />
+                      <Detail label="异常" value={`${item.impactedExceptionCount}`} />
+                      <Detail label="阻断行" value={`${item.blockedRows}`} />
+                    </div>
+                    <div className="mt-3 text-xs text-muted-foreground">
+                      下一查看：{item.nextViewHint}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                当前数据质量问题没有匹配到需要进入个人履约的人员。
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              {personViewOrderSummary.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

@@ -2,6 +2,24 @@
 
 ## 2026-05-26
 
+### F382-Q100 Data Quality Person View Order
+
+- branch_name: `codex/f382-data-quality-person-view-order`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `2a4f0fb`
+- remote_status: `not_pushed`
+- scope: frontend local read-only function: add impacted-person view order to the data quality overview, grouping impacted people by quality causes and exceptions with personal fulfillment links.
+- allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality.ts`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing data quality overview route, data quality frontend model/test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing impacted-person view-order export; data-quality tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F381-Q099 Data Quality Exception Cause Summary
 
 - branch_name: `codex/f381-data-quality-exception-cause-summary`

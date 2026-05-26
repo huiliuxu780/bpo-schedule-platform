@@ -173,6 +173,26 @@ export type DataQualityExceptionCauseSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityPersonViewOrderItem = {
+  employeeId: string
+  causeCount: number
+  impactedExceptionCount: number
+  blockedRows: number
+  representativeCause: string
+  representativeIssueId: string
+  representativeIssueTitle: string
+  href: string
+  nextViewHint: string
+}
+
+export type DataQualityPersonViewOrderSummary = {
+  totalPersonCount: number
+  totalImpactedExceptionCount: number
+  topPerson?: DataQualityPersonViewOrderItem
+  items: DataQualityPersonViewOrderItem[]
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -486,6 +506,64 @@ export function summarizeDataQualityExceptionCauses(
   }
 }
 
+export function summarizeDataQualityPersonViewOrder(
+  rows: DataQualityIssue[]
+): DataQualityPersonViewOrderSummary {
+  const groups = new Map<
+    string,
+    {
+      employeeId: string
+      issues: DataQualityIssue[]
+      impactSummaries: DataQualityExceptionImpactSummary[]
+    }
+  >()
+
+  for (const issue of rows) {
+    const impactSummary = summarizeDataQualityExceptionImpact(issue)
+
+    if (impactSummary.impactedExceptionCount === 0) {
+      continue
+    }
+
+    for (const employeeId of impactSummary.impactedPeople) {
+      const existing = groups.get(employeeId)
+
+      if (existing) {
+        existing.issues.push(issue)
+        existing.impactSummaries.push(impactSummary)
+        continue
+      }
+
+      groups.set(employeeId, {
+        employeeId,
+        issues: [issue],
+        impactSummaries: [impactSummary],
+      })
+    }
+  }
+
+  const items = Array.from(groups.values())
+    .map(buildDataQualityPersonViewOrderItem)
+    .sort(
+      (a, b) =>
+        b.impactedExceptionCount - a.impactedExceptionCount ||
+        b.causeCount - a.causeCount ||
+        b.blockedRows - a.blockedRows ||
+        a.employeeId.localeCompare(b.employeeId)
+    )
+
+  return {
+    totalPersonCount: items.length,
+    totalImpactedExceptionCount: items.reduce(
+      (total, item) => total + item.impactedExceptionCount,
+      0
+    ),
+    topPerson: items[0],
+    items,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
 export function dataQualitySeverityLabel(severity: DataQualitySeverity) {
   return {
     high: "高",
@@ -610,6 +688,50 @@ function buildDataQualityExceptionCauseItem(
     href: `/data-quality/${representativeIssue.id}`,
     nextViewHint: firstNextViewHint,
     severity: representativeIssue.severity,
+  }
+}
+
+function buildDataQualityPersonViewOrderItem(group: {
+  employeeId: string
+  issues: DataQualityIssue[]
+  impactSummaries: DataQualityExceptionImpactSummary[]
+}): DataQualityPersonViewOrderItem {
+  const representativeIssue = group.issues
+    .slice()
+    .sort(
+      (a, b) =>
+        dataQualitySeverityRank[b.severity] - dataQualitySeverityRank[a.severity] ||
+        b.blockedRows - a.blockedRows ||
+        a.id.localeCompare(b.id)
+    )[0]
+  const causeKeys = uniqueValues(
+    group.issues.map(
+      (issue) => `${issue.errorCode}|${issue.sourceField}|${issue.source}`
+    )
+  )
+  const personImpact =
+    group.impactSummaries.find((summary) =>
+      summary.nextViewHref?.includes(group.employeeId)
+    ) ?? group.impactSummaries[0]
+  const href = personImpact?.nextViewHref?.includes(group.employeeId)
+    ? personImpact.nextViewHref
+    : `/person-timeline/${group.employeeId}`
+
+  return {
+    employeeId: group.employeeId,
+    causeCount: causeKeys.length,
+    impactedExceptionCount: group.impactSummaries.reduce(
+      (total, summary) => total + summary.impactedExceptionCount,
+      0
+    ),
+    blockedRows: group.issues.reduce((total, issue) => total + issue.blockedRows, 0),
+    representativeCause: representativeIssue.errorCode,
+    representativeIssueId: representativeIssue.id,
+    representativeIssueTitle: representativeIssue.title,
+    href,
+    nextViewHint:
+      personImpact?.nextViewHint ??
+      "先查看个人履约详情，再回到数据质量详情确认字段、原值和影响对象。",
   }
 }
 
