@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R562-R565 - 数据质量复核覆盖缺口摘要
+
+```yaml
+requirements:
+  - id: R562
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到复核覆盖缺口摘要，以便知道当前路径还没有覆盖哪些影响异常的数据质量问题。"
+  - id: R563
+    module: "数据质量"
+    description: "覆盖缺口摘要需要基于现有本地复核路径、影响异常 Top、字段、人员和原因摘要聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R564
+    module: "数据质量"
+    description: "覆盖缺口摘要需要展示总影响问题数、已覆盖问题数、未覆盖问题数、首要缺口、缺口字段、缺口人员、查看入口和暂缓能力。"
+  - id: R565
+    module: "质量与交付"
+    description: "数据质量复核覆盖缺口摘要完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F386 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读复核覆盖缺口摘要，基于已有复核路径、异常 Top、字段、人员和原因摘要聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R558-R561 - 数据质量复核路径顺序
 
 ```yaml

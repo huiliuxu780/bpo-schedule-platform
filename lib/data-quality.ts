@@ -284,6 +284,29 @@ export type DataQualityReviewPathSequence = {
   deferredActions: string[]
 }
 
+export type DataQualityReviewCoverageGapItem = {
+  issueId: string
+  title: string
+  sourceField: string
+  impactedExceptionCount: number
+  impactedPeople: string[]
+  href: string
+  reason: string
+}
+
+export type DataQualityReviewCoverageGapSummary = {
+  headline: string
+  totalImpactedIssueCount: number
+  coveredIssueCount: number
+  gapIssueCount: number
+  firstGap?: DataQualityReviewCoverageGapItem
+  gapFields: string[]
+  gapPeople: string[]
+  items: DataQualityReviewCoverageGapItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -918,6 +941,48 @@ export function summarizeDataQualityReviewPathSequence(
   }
 }
 
+export function summarizeDataQualityReviewCoverageGap(
+  rows: DataQualityIssue[]
+): DataQualityReviewCoverageGapSummary {
+  const reviewPath = summarizeDataQualityReviewPathSequence(rows)
+  const exceptionTop = summarizeDataQualityExceptionTop(rows)
+  const coveredIssueIds = uniqueValues(
+    reviewPath.steps
+      .map((step) => step.href?.match(/\/data-quality\/([^/?#]+)/)?.[1] ?? "")
+      .filter((issueId) => issueId.length > 0)
+  )
+  const items = exceptionTop.items
+    .filter((item) => !coveredIssueIds.includes(item.issueId))
+    .map((item) => buildDataQualityReviewCoverageGapItem(item, rows))
+
+  if (items.length === 0) {
+    return {
+      headline: "当前复核路径已覆盖全部影响异常的数据质量问题",
+      totalImpactedIssueCount: exceptionTop.totalIssueCount,
+      coveredIssueCount: coveredIssueIds.length,
+      gapIssueCount: 0,
+      gapFields: [],
+      gapPeople: [],
+      items: [],
+      nextViewHint: "当前没有复核覆盖缺口，继续按复核路径顺序查看即可。",
+      deferredActions: deferredDataQualityActions,
+    }
+  }
+
+  return {
+    headline: `还有 ${items.length} 个影响异常的数据质量问题未进入当前复核路径`,
+    totalImpactedIssueCount: exceptionTop.totalIssueCount,
+    coveredIssueCount: coveredIssueIds.length,
+    gapIssueCount: items.length,
+    firstGap: items[0],
+    gapFields: uniqueValues(items.map((item) => item.sourceField)),
+    gapPeople: uniqueValues(items.flatMap((item) => item.impactedPeople)),
+    items,
+    nextViewHint: `先查看缺口问题 ${items[0].issueId}，再回到复核路径确认是否需要补看字段、人员或原因。`,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
 export function dataQualitySeverityLabel(severity: DataQualitySeverity) {
   return {
     high: "高",
@@ -1180,6 +1245,23 @@ function buildDataQualityFieldImpactSummaryItem(
     representativeIssueTitle: representativeIssue.title,
     href: `/data-quality/${representativeIssue.id}`,
     nextViewHint: firstNextViewHint,
+  }
+}
+
+function buildDataQualityReviewCoverageGapItem(
+  item: DataQualityExceptionTopItem,
+  rows: DataQualityIssue[]
+): DataQualityReviewCoverageGapItem {
+  const issue = rows.find((row) => row.id === item.issueId)
+
+  return {
+    issueId: item.issueId,
+    title: item.title,
+    sourceField: issue?.sourceField ?? "未识别字段",
+    impactedExceptionCount: item.impactedExceptionCount,
+    impactedPeople: item.impactedPeople,
+    href: item.href,
+    reason: `当前复核路径未覆盖 ${item.title}，该问题仍影响 ${item.impactedExceptionCount} 项异常和 ${item.impactedPeople.length} 名人员。`,
   }
 }
 

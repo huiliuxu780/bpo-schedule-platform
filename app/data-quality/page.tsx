@@ -27,6 +27,7 @@ import {
   summarizeDataQualityFieldImpactSummary,
   summarizeDataQualityExceptionCauses,
   summarizeDataQualityPersonViewOrder,
+  summarizeDataQualityReviewCoverageGap,
   summarizeDataQualityReviewPathSequence,
   summarizeDataQualityReviewPriorityRationale,
   summarizeDataQualityExceptionTop,
@@ -48,6 +49,7 @@ export default function DataQualityPage() {
   const fieldImpactSummary = summarizeDataQualityFieldImpactSummary(rows)
   const reviewPriorityRationale = summarizeDataQualityReviewPriorityRationale(rows)
   const reviewPathSequence = summarizeDataQualityReviewPathSequence(rows)
+  const reviewCoverageGap = summarizeDataQualityReviewCoverageGap(rows)
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -191,6 +193,93 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>复核覆盖缺口摘要</CardTitle>
+                <CardDescription>
+                  对比当前复核路径和影响异常问题，识别还没进入路径的缺口。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">{reviewCoverageGap.gapIssueCount} 个缺口</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="影响问题"
+                value={`${reviewCoverageGap.totalImpactedIssueCount}`}
+              />
+              <Detail
+                label="已覆盖"
+                value={`${reviewCoverageGap.coveredIssueCount}`}
+              />
+              <Detail
+                label="未覆盖"
+                value={`${reviewCoverageGap.gapIssueCount}`}
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    {reviewCoverageGap.headline}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    缺口字段：{reviewCoverageGap.gapFields.join(" / ") || "无"} / 缺口人员：
+                    {reviewCoverageGap.gapPeople.join(" / ") || "无"}
+                  </div>
+                </div>
+                {reviewCoverageGap.firstGap ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={reviewCoverageGap.firstGap.href}>查看缺口问题</Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {reviewCoverageGap.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {reviewCoverageGap.items.map((item) => (
+                    <div key={item.issueId} className="rounded-lg border p-3">
+                      <div className="text-sm font-medium">
+                        {item.issueId} / {item.title}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {item.sourceField}
+                      </div>
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <Detail label="异常" value={`${item.impactedExceptionCount}`} />
+                        <Detail label="人员" value={`${item.impactedPeople.length}`} />
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        缺口原因：{item.reason}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前复核路径已覆盖全部影响异常的数据质量问题。
+                </p>
+              )}
+            </div>
+
+            <div className="text-xs text-muted-foreground">
+              下一查看：{reviewCoverageGap.nextViewHint}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {reviewCoverageGap.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

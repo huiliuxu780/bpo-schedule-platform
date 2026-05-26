@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US545-US547 - 数据质量复核覆盖缺口摘要
+
+```yaml
+stories:
+  - id: US545
+    requirement_ids: [R562, R563]
+    task_ids: [F387]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到复核覆盖缺口摘要，以便知道当前路径还没有覆盖哪些影响异常的问题。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US546
+    requirement_ids: [R564]
+    task_ids: [F387]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望缺口摘要展示未覆盖问题、字段、人员和查看入口，以便继续安排复核。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US547
+    requirement_ids: [R565]
+    task_ids: [Q105]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望复核覆盖缺口摘要完成后做收口验证，确认只读缺口、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供复核覆盖缺口摘要，包含总影响问题、已覆盖问题、未覆盖问题、首要缺口、缺口字段、缺口人员、查看入口和暂缓能力。"
+  - "数据质量总览页展示复核覆盖缺口摘要卡片。"
+  - "没有缺口时展示全部覆盖，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US542-US544 - 数据质量复核路径顺序
 
 ```yaml
