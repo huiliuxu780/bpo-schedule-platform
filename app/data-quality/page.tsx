@@ -44,6 +44,7 @@ import {
   summarizeDataQualityGroupExceptionCoverage,
   summarizeDataQualityGroupReviewSequence,
   summarizeDataQualityGroupStepImpactDrilldown,
+  summarizeDataQualityGroupStepOwnerHandoffBrief,
   summarizeDataQualityGroupStepOwnerLoad,
   summarizeDataQualityGroupStepOwnerReviewQueue,
   summarizeDataQualityReviewGroupLink,
@@ -88,6 +89,10 @@ export default function DataQualityPage() {
     fallbackDataQualityGroups
   )
   const groupStepOwnerReviewQueue = summarizeDataQualityGroupStepOwnerReviewQueue(
+    rows,
+    fallbackDataQualityGroups
+  )
+  const groupStepOwnerHandoffBrief = summarizeDataQualityGroupStepOwnerHandoffBrief(
     rows,
     fallbackDataQualityGroups
   )
@@ -234,6 +239,124 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>分组步骤 owner 交接摘要</CardTitle>
+                <CardDescription>
+                  把 owner 复核队列转成交接口径，便于主管向责任人说明先看什么。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {groupStepOwnerHandoffBrief.firstItem?.owner ?? "无交接摘要"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="交接项"
+                value={`${groupStepOwnerHandoffBrief.handoffCount}`}
+              />
+              <Detail
+                label="影响人员"
+                value={`${groupStepOwnerHandoffBrief.totalImpactedPeopleCount}`}
+              />
+              <Detail
+                label="问题"
+                value={
+                  groupStepOwnerHandoffBrief.firstItem?.representativeIssueId ?? "无"
+                }
+              />
+            </div>
+
+            <div className="rounded-lg border p-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    首项：{groupStepOwnerHandoffBrief.firstItem?.owner ?? "无"}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    代表问题：
+                    {groupStepOwnerHandoffBrief.firstItem?.representativeIssueId ??
+                      "无"}{" "}
+                    / 代表人员：
+                    {groupStepOwnerHandoffBrief.firstItem?.primaryPerson ?? "无"}
+                  </div>
+                </div>
+                {groupStepOwnerHandoffBrief.firstItem ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={groupStepOwnerHandoffBrief.firstItem.issueHref}>
+                      查看交接问题
+                    </Link>
+                  </Button>
+                ) : null}
+              </div>
+
+              {groupStepOwnerHandoffBrief.items.length > 0 ? (
+                <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                  {groupStepOwnerHandoffBrief.items.map((item) => (
+                    <div
+                      key={`${item.owner}-${item.representativeIssueId}`}
+                      className="rounded-lg border p-3"
+                    >
+                      <div className="text-sm font-medium">{item.owner}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        代表问题：{item.representativeIssueId} /{" "}
+                        {item.representativeIssueTitle}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        分组：{item.groupTitles.join(" / ") || "无"} / 代表人员：
+                        {item.primaryPerson ?? "无"}
+                      </div>
+                      <div className="mt-3 grid gap-2">
+                        {item.handoffPoints.map((point) => (
+                          <div
+                            key={point}
+                            className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground"
+                          >
+                            {point}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button asChild size="sm" variant="outline">
+                          <Link href={item.issueHref}>查看交接问题</Link>
+                        </Button>
+                        {item.personHref ? (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={item.personHref}>查看交接人员</Link>
+                          </Button>
+                        ) : null}
+                      </div>
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        下一查看：{item.nextViewHint}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  当前没有 owner 队列可生成交接摘要。
+                </p>
+              )}
+
+              <div className="mt-3 text-xs text-muted-foreground">
+                下一查看：{groupStepOwnerHandoffBrief.nextViewHint}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {groupStepOwnerHandoffBrief.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

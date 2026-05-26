@@ -19,6 +19,17 @@
 
 ### 2026-05-26
 
+- task_id: `F397/Q115`
+- source_ids:
+  - `R602-R605`
+- story_ids:
+  - `US575-US577`
+- action: 完成数据质量分组步骤 owner 交接摘要。
+- status: `done`
+- notes: 数据质量总览页现在展示“分组步骤 owner 交接摘要”，把 owner 复核队列转成主管给责任人的交接口径，包含 owner、代表问题、代表人员、关联分组、交接要点、质量详情入口和人员履约入口，并提供下一查看提示和暂缓能力；模型基于现有本地分组步骤 owner 复核队列只读聚合。本次不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-26
+
 - task_id: `F396/Q114`
 - source_ids:
   - `R598-R601`

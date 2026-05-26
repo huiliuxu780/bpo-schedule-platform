@@ -179,6 +179,28 @@ export type DataQualityGroupStepOwnerReviewQueueSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityGroupStepOwnerHandoffBriefItem = {
+  owner: string
+  representativeIssueId: string
+  representativeIssueTitle: string
+  primaryPerson?: string
+  groupTitles: string[]
+  issueHref: string
+  personHref?: string
+  impactedPeople: string[]
+  handoffPoints: string[]
+  nextViewHint: string
+}
+
+export type DataQualityGroupStepOwnerHandoffBriefSummary = {
+  handoffCount: number
+  totalImpactedPeopleCount: number
+  firstItem?: DataQualityGroupStepOwnerHandoffBriefItem
+  items: DataQualityGroupStepOwnerHandoffBriefItem[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityGroupActions = [
   "无真实数据修复",
   "无自动合并",
@@ -550,6 +572,46 @@ export function summarizeDataQualityGroupStepOwnerReviewQueue(
       items.length > 0
         ? "按 owner 复核队列逐项查看代表问题和人员履约，再回到分组步骤确认遗漏。"
         : "当前没有 owner 负载可生成复核队列。",
+    deferredActions: deferredDataQualityGroupActions,
+  }
+}
+
+export function summarizeDataQualityGroupStepOwnerHandoffBrief(
+  issues: DataQualityIssue[],
+  groups = fallbackDataQualityGroups
+): DataQualityGroupStepOwnerHandoffBriefSummary {
+  const queue = summarizeDataQualityGroupStepOwnerReviewQueue(issues, groups)
+  const items = queue.items.map((item) => ({
+    owner: item.owner,
+    representativeIssueId: item.representativeIssueId,
+    representativeIssueTitle: item.representativeIssueTitle,
+    primaryPerson: item.primaryPerson,
+    groupTitles: item.groupTitles,
+    issueHref: item.issueHref,
+    personHref: item.personHref,
+    impactedPeople: item.impactedPeople,
+    handoffPoints: [
+      `交接 ${item.owner} 先看 ${item.representativeIssueId} / ${item.representativeIssueTitle}。`,
+      `关联分组：${item.groupTitles.join(" / ") || "无"}。`,
+      item.primaryPerson
+        ? `代表人员：${item.primaryPerson}，先核对人员履约链路。`
+        : "暂无代表人员，先回到质量问题确认影响对象。",
+      `队列理由：${item.queueReason}`,
+    ],
+    nextViewHint: item.primaryPerson
+      ? `先打开 ${item.representativeIssueId}，再进入 ${item.primaryPerson} 的人员履约。`
+      : `先打开 ${item.representativeIssueId}，再回到 owner 队列确认影响人员。`,
+  }))
+
+  return {
+    handoffCount: items.length,
+    totalImpactedPeopleCount: queue.totalImpactedPeopleCount,
+    firstItem: items[0],
+    items,
+    nextViewHint:
+      items.length > 0
+        ? "按 owner 交接摘要逐项确认代表问题、代表人员和关联分组。"
+        : "当前没有 owner 队列可生成交接摘要。",
     deferredActions: deferredDataQualityGroupActions,
   }
 }

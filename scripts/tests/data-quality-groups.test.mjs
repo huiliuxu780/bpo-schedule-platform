@@ -5,6 +5,7 @@ import {
   fallbackDataQualityGroups,
   getDataQualityGroup,
   summarizeDataQualityGroupExceptionCoverage,
+  summarizeDataQualityGroupStepOwnerHandoffBrief,
   summarizeDataQualityGroupStepImpactDrilldown,
   summarizeDataQualityGroupStepOwnerLoad,
   summarizeDataQualityGroupStepOwnerReviewQueue,
@@ -177,5 +178,25 @@ test("data quality group step owner review queue orders owner follow-up", () => 
   assert.ok(summary.firstItem?.queueReason.includes("第 1 位"))
   assert.ok(summary.items.some((item) => item.owner === "数据管理员"))
   assert.ok(summary.nextViewHint.includes("owner 复核队列"))
+  assert.ok(summary.deferredActions.includes("无真实数据修复"))
+})
+
+test("data quality group step owner handoff brief summarizes owner wording", () => {
+  const summary = summarizeDataQualityGroupStepOwnerHandoffBrief(fallbackDataQualityIssues)
+
+  assert.equal(summary.handoffCount, 2)
+  assert.equal(summary.totalImpactedPeopleCount, 2)
+  assert.equal(summary.firstItem?.owner, "运营负责人")
+  assert.equal(summary.firstItem?.representativeIssueId, "DQ-202605-010")
+  assert.equal(summary.firstItem?.primaryPerson, "A-1002")
+  assert.equal(summary.firstItem?.issueHref, "/data-quality/DQ-202605-010")
+  assert.equal(
+    summary.firstItem?.personHref,
+    "/person-timeline/A-1002?date=2026-05-11"
+  )
+  assert.ok(summary.firstItem?.groupTitles.includes("时间有效性"))
+  assert.ok(summary.firstItem?.handoffPoints.some((point) => point.includes("交接")))
+  assert.ok(summary.items.some((item) => item.owner === "数据管理员"))
+  assert.ok(summary.nextViewHint.includes("owner 交接"))
   assert.ok(summary.deferredActions.includes("无真实数据修复"))
 })
