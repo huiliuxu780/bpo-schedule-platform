@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US536-US538 - 数据质量字段影响交叉摘要
+
+```yaml
+stories:
+  - id: US536
+    requirement_ids: [R550, R551]
+    task_ids: [F384]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到来源字段的交叉影响摘要，以便识别哪些字段同时影响日期、人员和履约异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US537
+    requirement_ids: [R552]
+    task_ids: [F384]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望字段摘要展示代表问题、影响日期、影响人员、影响异常和查看入口，以便按字段安排复核顺序。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US538
+    requirement_ids: [R553]
+    task_ids: [Q102]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望字段交叉影响摘要完成后做收口验证，确认只读聚合、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供字段交叉影响摘要，包含来源字段、来源、代表原因、代表问题、影响日期数、影响人员数、影响异常数、首要查看入口和暂缓能力。"
+  - "数据质量总览页展示字段影响交叉摘要卡片。"
+  - "没有字段影响时展示无字段影响，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US533-US535 - 数据质量履约日期查看顺序
 
 ```yaml

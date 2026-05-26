@@ -2,6 +2,24 @@
 
 ## 2026-05-26
 
+### F384-Q102 Data Quality Field Impact Summary
+
+- branch_name: `codex/f384-data-quality-field-impact-summary`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `2a3e60c`
+- remote_status: `not_pushed`
+- scope: frontend local read-only function: add field impact cross-summary to the data quality overview, grouping impacted source fields by fulfillment dates, people, and exceptions with representative quality issue links.
+- allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality.ts`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing data quality overview route, data quality frontend model/test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing field impact summary export; data-quality tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F383-Q101 Data Quality Day View Order
 
 - branch_name: `codex/f383-data-quality-day-view-order`

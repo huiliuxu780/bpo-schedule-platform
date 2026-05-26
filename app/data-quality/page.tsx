@@ -24,6 +24,7 @@ import {
   dataQualityStatusLabel,
   fallbackDataQualityIssues,
   summarizeDataQualityDayViewOrder,
+  summarizeDataQualityFieldImpactSummary,
   summarizeDataQualityExceptionCauses,
   summarizeDataQualityPersonViewOrder,
   summarizeDataQualityExceptionTop,
@@ -42,6 +43,7 @@ export default function DataQualityPage() {
   const exceptionCauseSummary = summarizeDataQualityExceptionCauses(rows)
   const personViewOrderSummary = summarizeDataQualityPersonViewOrder(rows)
   const dayViewOrderSummary = summarizeDataQualityDayViewOrder(rows)
+  const fieldImpactSummary = summarizeDataQualityFieldImpactSummary(rows)
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -175,6 +177,77 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {exceptionTopSummary.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>字段影响交叉摘要</CardTitle>
+                <CardDescription>
+                  按来源字段聚合影响日期、人员和异常，帮助主管识别扩散最广的字段。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">
+                {fieldImpactSummary.totalFieldCount} 个字段
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid grid-cols-3 gap-3">
+              <Detail label="字段" value={`${fieldImpactSummary.totalFieldCount}`} />
+              <Detail label="影响日期" value={`${fieldImpactSummary.totalAffectedDateCount}`} />
+              <Detail label="影响人员" value={`${fieldImpactSummary.totalAffectedPeopleCount}`} />
+            </div>
+
+            {fieldImpactSummary.items.length > 0 ? (
+              <div className="grid gap-3 lg:grid-cols-2">
+                {fieldImpactSummary.items.slice(0, 4).map((item) => (
+                  <div key={item.key} className="rounded-lg border p-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">
+                          {item.sourceField}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {dataQualitySourceLabels[item.source]} / {item.representativeCause}
+                        </div>
+                      </div>
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={item.href}>查看字段问题</Link>
+                      </Button>
+                    </div>
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                      <Detail label="日期" value={`${item.affectedDateCount}`} />
+                      <Detail label="人员" value={`${item.affectedPeopleCount}`} />
+                      <Detail label="异常" value={`${item.impactedExceptionCount}`} />
+                    </div>
+                    <div className="mt-3 text-xs text-muted-foreground">
+                      代表问题：{item.representativeIssueId} / {item.representativeIssueTitle}
+                    </div>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      影响日期：{item.affectedDates.join(" / ") || "无"}
+                    </div>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      下一查看：{item.nextViewHint}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                当前数据质量问题没有匹配到字段级履约影响。
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              {fieldImpactSummary.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

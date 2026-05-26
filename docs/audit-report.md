@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality field impact cross-summary
+
+#### 结论
+
+- `F384/Q102/US536-US538` 已完成数据质量字段影响交叉摘要。
+- 前端模型新增 `summarizeDataQualityFieldImpactSummary()`，基于影响履约异常的数据质量问题，按来源字段和来源聚合影响日期、人员、异常和代表问题。
+- 数据质量总览页新增“字段影响交叉摘要”卡片，展示字段、影响日期、影响人员、影响异常、代表原因、代表问题、下一查看和“查看字段问题”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 字段交叉摘要只基于本地现有 quality issue affectedObjects/impactLinks/sourceField/source，不代表真实异常闭环写入、数据修复、证据补录、审批、权限、导出、批量或生产持久化已经实现。
+- 字段排序用于主管查看优先级，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityFieldImpactSummary` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，21 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“字段影响交叉摘要”“status_log.status_start_at/status_end_at”“DQ-202605-010”“status_overlap”“查看字段问题”“无真实数据修复”“无导出或批量处理”“影响日期”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality impacted-day view order
 
 #### 结论

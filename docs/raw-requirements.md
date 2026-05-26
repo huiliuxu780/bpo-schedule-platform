@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R550-R553 - 数据质量字段影响交叉摘要
+
+```yaml
+requirements:
+  - id: R550
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到来源字段的交叉影响摘要，以便识别哪些字段同时影响履约日期、人员和异常。"
+  - id: R551
+    module: "数据质量"
+    description: "字段交叉摘要需要基于现有本地 affectedObjects、impactLinks、sourceField、source 和异常影响聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R552
+    module: "数据质量"
+    description: "字段交叉摘要需要展示来源字段、来源、代表原因、代表问题、影响日期数、影响人员数、影响异常数、首要查看入口和暂缓能力。"
+  - id: R553
+    module: "质量与交付"
+    description: "数据质量字段影响交叉摘要完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F383 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读字段交叉影响摘要，基于已有 fallbackDataQualityIssues 的 affectedObjects、impactLinks、sourceField、source 和异常影响聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R546-R549 - 数据质量履约日期查看顺序
 
 ```yaml

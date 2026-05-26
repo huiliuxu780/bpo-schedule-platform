@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   fallbackDataQualityIssues,
   summarizeDataQualityDayViewOrder,
+  summarizeDataQualityFieldImpactSummary,
   filterDataQualityIssues,
   getDataQualityIssue,
   summarizeDataQualityExceptionCauses,
@@ -277,10 +278,41 @@ test("data quality day view order exposes empty state", () => {
   assert.deepEqual(summary.items, []);
 });
 
+test("data quality field impact summary cross-summarizes impacted fields", () => {
+  const summary = summarizeDataQualityFieldImpactSummary(fallbackDataQualityIssues);
+
+  assert.equal(summary.totalFieldCount, 2);
+  assert.equal(summary.totalImpactedExceptionCount, 2);
+  assert.equal(summary.totalAffectedDateCount, 1);
+  assert.equal(summary.totalAffectedPeopleCount, 2);
+  assert.equal(summary.topField?.sourceField, "status_log.status_start_at/status_end_at");
+  assert.equal(summary.topField?.source, "status_log");
+  assert.equal(summary.topField?.representativeCause, "status_overlap");
+  assert.equal(summary.topField?.representativeIssueId, "DQ-202605-010");
+  assert.equal(summary.topField?.href, "/data-quality/DQ-202605-010");
+  assert.equal(summary.topField?.affectedDateCount, 1);
+  assert.equal(summary.topField?.affectedPeopleCount, 1);
+  assert.ok(summary.items.some((item) => item.sourceField === "agent_binding.employee_id"));
+  assert.ok(summary.deferredActions.includes("无真实数据修复"));
+  assert.ok(summary.deferredActions.includes("无导出或批量处理"));
+});
+
+test("data quality field impact summary exposes empty state", () => {
+  const summary = summarizeDataQualityFieldImpactSummary([]);
+
+  assert.equal(summary.totalFieldCount, 0);
+  assert.equal(summary.totalImpactedExceptionCount, 0);
+  assert.equal(summary.totalAffectedDateCount, 0);
+  assert.equal(summary.totalAffectedPeopleCount, 0);
+  assert.equal(summary.topField, undefined);
+  assert.deepEqual(summary.items, []);
+});
+
 test("data quality page renders exception top summary", () => {
   const pageSource = readFileSync(new URL("../../app/data-quality/page.tsx", import.meta.url), "utf8");
 
   assert.ok(pageSource.includes("summarizeDataQualityDayViewOrder"));
+  assert.ok(pageSource.includes("summarizeDataQualityFieldImpactSummary"));
   assert.ok(pageSource.includes("summarizeDataQualityExceptionTop"));
   assert.ok(pageSource.includes("summarizeDataQualityExceptionCauses"));
   assert.ok(pageSource.includes("summarizeDataQualityPersonViewOrder"));
@@ -288,8 +320,10 @@ test("data quality page renders exception top summary", () => {
   assert.ok(pageSource.includes("异常影响原因汇总"));
   assert.ok(pageSource.includes("人员履约查看顺序"));
   assert.ok(pageSource.includes("履约日期查看顺序"));
+  assert.ok(pageSource.includes("字段影响交叉摘要"));
   assert.ok(pageSource.includes("查看个人履约"));
   assert.ok(pageSource.includes("查看履约日期"));
+  assert.ok(pageSource.includes("查看字段问题"));
   assert.ok(pageSource.includes("影响异常"));
   assert.ok(pageSource.includes("影响人员"));
   assert.ok(pageSource.includes("下一查看"));

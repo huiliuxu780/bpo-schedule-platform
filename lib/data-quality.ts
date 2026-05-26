@@ -215,6 +215,33 @@ export type DataQualityDayViewOrderSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityFieldImpactSummaryItem = {
+  key: string
+  source: DataQualitySource
+  sourceField: string
+  affectedDateCount: number
+  affectedDates: string[]
+  affectedPeopleCount: number
+  affectedPeople: string[]
+  impactedExceptionCount: number
+  blockedRows: number
+  representativeCause: string
+  representativeIssueId: string
+  representativeIssueTitle: string
+  href: string
+  nextViewHint: string
+}
+
+export type DataQualityFieldImpactSummary = {
+  totalFieldCount: number
+  totalImpactedExceptionCount: number
+  totalAffectedDateCount: number
+  totalAffectedPeopleCount: number
+  topField?: DataQualityFieldImpactSummaryItem
+  items: DataQualityFieldImpactSummaryItem[]
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -647,6 +674,72 @@ export function summarizeDataQualityDayViewOrder(
   }
 }
 
+export function summarizeDataQualityFieldImpactSummary(
+  rows: DataQualityIssue[]
+): DataQualityFieldImpactSummary {
+  const groups = new Map<
+    string,
+    {
+      source: DataQualitySource
+      sourceField: string
+      issues: DataQualityIssue[]
+      impactSummaries: DataQualityExceptionImpactSummary[]
+    }
+  >()
+
+  for (const issue of rows) {
+    const impactSummary = summarizeDataQualityExceptionImpact(issue)
+
+    if (impactSummary.impactedExceptionCount === 0) {
+      continue
+    }
+
+    const key = `${issue.sourceField}|${issue.source}`
+    const existing = groups.get(key)
+
+    if (existing) {
+      existing.issues.push(issue)
+      existing.impactSummaries.push(impactSummary)
+      continue
+    }
+
+    groups.set(key, {
+      source: issue.source,
+      sourceField: issue.sourceField,
+      issues: [issue],
+      impactSummaries: [impactSummary],
+    })
+  }
+
+  const items = Array.from(groups.entries())
+    .map(([key, group]) => buildDataQualityFieldImpactSummaryItem(key, group))
+    .sort(
+      (a, b) =>
+        b.impactedExceptionCount - a.impactedExceptionCount ||
+        b.affectedDateCount - a.affectedDateCount ||
+        b.affectedPeopleCount - a.affectedPeopleCount ||
+        b.blockedRows - a.blockedRows ||
+        a.key.localeCompare(b.key)
+    )
+
+  return {
+    totalFieldCount: items.length,
+    totalImpactedExceptionCount: items.reduce(
+      (total, item) => total + item.impactedExceptionCount,
+      0
+    ),
+    totalAffectedDateCount: uniqueValues(
+      items.flatMap((item) => item.affectedDates)
+    ).length,
+    totalAffectedPeopleCount: uniqueValues(
+      items.flatMap((item) => item.affectedPeople)
+    ).length,
+    topField: items[0],
+    items,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
 export function dataQualitySeverityLabel(severity: DataQualitySeverity) {
   return {
     high: "高",
@@ -858,6 +951,57 @@ function buildDataQualityDayViewOrderItem(group: {
     nextViewHint:
       dateImpact?.nextViewHint ??
       "先查看履约日期对应的个人履约详情，再回到数据质量详情确认字段、原值和影响对象。",
+  }
+}
+
+function buildDataQualityFieldImpactSummaryItem(
+  key: string,
+  group: {
+    source: DataQualitySource
+    sourceField: string
+    issues: DataQualityIssue[]
+    impactSummaries: DataQualityExceptionImpactSummary[]
+  }
+): DataQualityFieldImpactSummaryItem {
+  const representativeIssue = group.issues
+    .slice()
+    .sort(
+      (a, b) =>
+        dataQualitySeverityRank[b.severity] - dataQualitySeverityRank[a.severity] ||
+        b.blockedRows - a.blockedRows ||
+        a.id.localeCompare(b.id)
+    )[0]
+  const affectedDates = uniqueValues(
+    group.issues.flatMap((issue, index) =>
+      getImpactedBusinessDates(issue, group.impactSummaries[index])
+    )
+  )
+  const affectedPeople = uniqueValues(
+    group.impactSummaries.flatMap((summary) => summary.impactedPeople)
+  )
+  const firstNextViewHint =
+    group.impactSummaries.find((summary) => summary.nextViewHref)?.nextViewHint ??
+    group.impactSummaries[0]?.nextViewHint ??
+    "先查看字段代表问题，再回到数据质量详情确认字段、原值和影响对象。"
+
+  return {
+    key,
+    source: group.source,
+    sourceField: group.sourceField,
+    affectedDateCount: affectedDates.length,
+    affectedDates,
+    affectedPeopleCount: affectedPeople.length,
+    affectedPeople,
+    impactedExceptionCount: group.impactSummaries.reduce(
+      (total, summary) => total + summary.impactedExceptionCount,
+      0
+    ),
+    blockedRows: group.issues.reduce((total, issue) => total + issue.blockedRows, 0),
+    representativeCause: representativeIssue.errorCode,
+    representativeIssueId: representativeIssue.id,
+    representativeIssueTitle: representativeIssue.title,
+    href: `/data-quality/${representativeIssue.id}`,
+    nextViewHint: firstNextViewHint,
   }
 }
 
