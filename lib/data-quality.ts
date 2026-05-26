@@ -258,6 +258,32 @@ export type DataQualityReviewPriorityRationale = {
   deferredActions: string[]
 }
 
+export type DataQualityReviewPathStepType =
+  | "issue"
+  | "field"
+  | "date"
+  | "person"
+  | "cause"
+
+export type DataQualityReviewPathStep = {
+  type: DataQualityReviewPathStepType
+  label: string
+  title: string
+  href?: string
+  reason: string
+  impactedExceptionCount: number
+  impactedPeopleCount: number
+}
+
+export type DataQualityReviewPathSequence = {
+  headline: string
+  stepCount: number
+  firstStep?: DataQualityReviewPathStep
+  steps: DataQualityReviewPathStep[]
+  nextViewHint: string
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -797,6 +823,97 @@ export function summarizeDataQualityReviewPriorityRationale(
     href: topIssue.href,
     nextViewHint: `先查看问题 ${topIssue.issueId}，再按字段、日期和人员顺序复核影响范围。`,
     reasons,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
+export function summarizeDataQualityReviewPathSequence(
+  rows: DataQualityIssue[]
+): DataQualityReviewPathSequence {
+  const priorityRationale = summarizeDataQualityReviewPriorityRationale(rows)
+  const exceptionTop = summarizeDataQualityExceptionTop(rows)
+  const fieldSummary = summarizeDataQualityFieldImpactSummary(rows)
+  const daySummary = summarizeDataQualityDayViewOrder(rows)
+  const personSummary = summarizeDataQualityPersonViewOrder(rows)
+  const causeSummary = summarizeDataQualityExceptionCauses(rows)
+  const topIssue = exceptionTop.topIssue
+
+  if (!topIssue) {
+    return {
+      headline: "暂无可排序的数据质量复核路径",
+      stepCount: 0,
+      steps: [],
+      nextViewHint: "当前没有匹配到履约异常影响，先继续查看数据质量清单。",
+      deferredActions: deferredDataQualityActions,
+    }
+  }
+
+  const steps: DataQualityReviewPathStep[] = [
+    {
+      type: "issue",
+      label: "优先问题",
+      title: `${topIssue.issueId} / ${topIssue.title}`,
+      href: topIssue.href,
+      reason: priorityRationale.headline,
+      impactedExceptionCount: topIssue.impactedExceptionCount,
+      impactedPeopleCount: topIssue.impactedPeople.length,
+    },
+  ]
+
+  if (fieldSummary.topField) {
+    steps.push({
+      type: "field",
+      label: "字段影响",
+      title: fieldSummary.topField.sourceField,
+      href: fieldSummary.topField.href,
+      reason: `字段影响 ${fieldSummary.topField.affectedDateCount} 个日期和 ${fieldSummary.topField.affectedPeopleCount} 名人员。`,
+      impactedExceptionCount: fieldSummary.topField.impactedExceptionCount,
+      impactedPeopleCount: fieldSummary.topField.affectedPeopleCount,
+    })
+  }
+
+  if (daySummary.topDate) {
+    steps.push({
+      type: "date",
+      label: "履约日期",
+      title: `${daySummary.topDate.businessDate} / ${daySummary.topDate.representativeCause}`,
+      href: daySummary.topDate.href,
+      reason: `该日期汇总 ${daySummary.topDate.impactedExceptionCount} 项异常和 ${daySummary.topDate.impactedPeopleCount} 名人员。`,
+      impactedExceptionCount: daySummary.topDate.impactedExceptionCount,
+      impactedPeopleCount: daySummary.topDate.impactedPeopleCount,
+    })
+  }
+
+  if (personSummary.topPerson) {
+    steps.push({
+      type: "person",
+      label: "受影响人员",
+      title: `${personSummary.topPerson.employeeId} / ${personSummary.topPerson.representativeCause}`,
+      href: personSummary.topPerson.href,
+      reason: `该人员关联 ${personSummary.topPerson.causeCount} 类原因和 ${personSummary.topPerson.impactedExceptionCount} 项异常。`,
+      impactedExceptionCount: personSummary.topPerson.impactedExceptionCount,
+      impactedPeopleCount: 1,
+    })
+  }
+
+  if (causeSummary.topCause) {
+    steps.push({
+      type: "cause",
+      label: "代表原因",
+      title: `${causeSummary.topCause.errorCode} / ${causeSummary.topCause.sourceField}`,
+      href: causeSummary.topCause.href,
+      reason: `该原因影响 ${causeSummary.topCause.impactedExceptionCount} 项异常和 ${causeSummary.topCause.impactedPeople.length} 名人员。`,
+      impactedExceptionCount: causeSummary.topCause.impactedExceptionCount,
+      impactedPeopleCount: causeSummary.topCause.impactedPeople.length,
+    })
+  }
+
+  return {
+    headline: `先看 ${topIssue.issueId}，再按字段、日期、人员和原因展开`,
+    stepCount: steps.length,
+    firstStep: steps[0],
+    steps,
+    nextViewHint: "按路径步骤逐项查看，最后回到数据质量清单确认是否还有未覆盖问题。",
     deferredActions: deferredDataQualityActions,
   }
 }

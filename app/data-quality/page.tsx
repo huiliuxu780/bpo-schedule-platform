@@ -27,6 +27,7 @@ import {
   summarizeDataQualityFieldImpactSummary,
   summarizeDataQualityExceptionCauses,
   summarizeDataQualityPersonViewOrder,
+  summarizeDataQualityReviewPathSequence,
   summarizeDataQualityReviewPriorityRationale,
   summarizeDataQualityExceptionTop,
   summarizeDataQualityIssues,
@@ -46,6 +47,7 @@ export default function DataQualityPage() {
   const dayViewOrderSummary = summarizeDataQualityDayViewOrder(rows)
   const fieldImpactSummary = summarizeDataQualityFieldImpactSummary(rows)
   const reviewPriorityRationale = summarizeDataQualityReviewPriorityRationale(rows)
+  const reviewPathSequence = summarizeDataQualityReviewPathSequence(rows)
   const groupSummary = summarizeDataQualityGroups(fallbackDataQualityGroups)
   const ungroupedIssueIds = getUngroupedDataQualityIssueIds(rows.map((row) => row.id))
   const openRows = rows.filter((row) => row.status === "open")
@@ -189,6 +191,83 @@ export default function DataQualityPage() {
 
             <div className="flex flex-wrap gap-2">
               {reviewPriorityRationale.deferredActions.map((action) => (
+                <Badge key={action} variant="outline">
+                  {action}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>复核路径顺序</CardTitle>
+                <CardDescription>
+                  把优先问题、字段、日期、人员和原因排成连续查看路径。
+                </CardDescription>
+              </div>
+              <Badge variant="secondary">{reviewPathSequence.stepCount} 步</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-3 md:grid-cols-3">
+              <Detail
+                label="路径步骤"
+                value={`${reviewPathSequence.stepCount}`}
+              />
+              <Detail
+                label="首要步骤"
+                value={reviewPathSequence.firstStep?.label ?? "无"}
+              />
+              <Detail
+                label="首要入口"
+                value={reviewPathSequence.firstStep?.title ?? "无"}
+              />
+            </div>
+
+            {reviewPathSequence.steps.length > 0 ? (
+              <div className="grid gap-3 lg:grid-cols-2">
+                {reviewPathSequence.steps.map((step, index) => (
+                  <div key={`${step.type}-${step.title}`} className="rounded-lg border p-3">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-xs text-muted-foreground">
+                          {index + 1}. {step.label}
+                        </div>
+                        <div className="truncate text-sm font-medium">
+                          {step.title}
+                        </div>
+                      </div>
+                      {step.href ? (
+                        <Button asChild size="sm" variant="outline">
+                          <Link href={step.href}>查看路径步骤</Link>
+                        </Button>
+                      ) : null}
+                    </div>
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                      <Detail label="异常" value={`${step.impactedExceptionCount}`} />
+                      <Detail label="人员" value={`${step.impactedPeopleCount}`} />
+                    </div>
+                    <div className="mt-3 text-xs text-muted-foreground">
+                      路径理由：{step.reason}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                当前没有匹配到可排序的数据质量复核路径。
+              </p>
+            )}
+
+            <div className="text-xs text-muted-foreground">
+              下一查看：{reviewPathSequence.nextViewHint}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {reviewPathSequence.deferredActions.map((action) => (
                 <Badge key={action} variant="outline">
                   {action}
                 </Badge>

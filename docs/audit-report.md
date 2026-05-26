@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-26 - Data quality review path sequence
+
+#### 结论
+
+- `F386/Q104/US542-US544` 已完成数据质量复核路径顺序。
+- 前端模型新增 `summarizeDataQualityReviewPathSequence()`，把优先问题、字段、日期、人员和原因摘要汇成连续查看步骤。
+- 数据质量总览页新增“复核路径顺序”卡片，展示路径步骤、首要步骤、首要入口、每步理由、影响异常、影响人员和“查看路径步骤”入口。
+- 本批没有新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 复核路径顺序只基于本地现有聚合结果，不代表真实复核结论写入、数据修复、证据补录、审批、权限、导出、批量或生产持久化已经实现。
+- 路径顺序用于主管查看导航，不是生产级 SLA、结算、考核或收费公式。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/data-quality.test.mjs` 首次失败于 `summarizeDataQualityReviewPathSequence` 未导出，证明测试覆盖新增模型契约。
+- `node --test scripts/tests/data-quality.test.mjs`：通过，25 个数据质量模型/页面源码测试通过。
+- 页面 smoke：通过，`/data-quality` HTML 包含“复核路径顺序”“先看 DQ-202605-010”“status_log.status_start_at/status_end_at”“2026-05-11”“A-1002”“status_overlap”“查看路径步骤”“无真实数据修复”“无导出或批量处理”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-26 - Data quality review priority rationale
 
 #### 结论

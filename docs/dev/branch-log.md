@@ -2,6 +2,24 @@
 
 ## 2026-05-26
 
+### F386-Q104 Data Quality Review Path Sequence
+
+- branch_name: `codex/f386-data-quality-review-path-sequence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `47fed29`
+- remote_status: `not_pushed`
+- scope: frontend local read-only function: add review path sequence to the data quality overview, combining priority issue, field, date, person, and cause summaries into ordered view steps.
+- allowed_files_check: `app/data-quality/page.tsx`, `lib/data-quality.ts`, `scripts/tests/data-quality.test.mjs`, `docs/**`, and `tasks/backlog.yaml`; no backend interface, package, lockfile, dependency, database, ORM, migration, real external integration, auth, permission, approval, export, batch operation, Excel xlsx parsing, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing data quality overview route, data quality frontend model/test, and current and legacy traceability docs; does not add backend endpoints, production persistence, new dependencies, external connectors, permission boundaries, approval, export, batch operation, production status dictionary, automatic scheduling, production formula, settlement rule, or charge-factor behavior.
+- check_result: TDD red observed for missing review path sequence export; data-quality tests, strict state check, local HTML smoke, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F385-Q103 Data Quality Review Priority Rationale
 
 - branch_name: `codex/f385-data-quality-review-priority-rationale`

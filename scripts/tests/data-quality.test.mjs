@@ -11,6 +11,7 @@ import {
   summarizeDataQualityExceptionCauses,
   summarizeDataQualityExceptionImpact,
   summarizeDataQualityPersonViewOrder,
+  summarizeDataQualityReviewPathSequence,
   summarizeDataQualityReviewPriorityRationale,
   summarizeDataQualityExceptionTop,
   summarizeDataQualityImportBatchImpact,
@@ -337,11 +338,45 @@ test("data quality review priority rationale exposes empty state", () => {
   assert.deepEqual(summary.reasons, []);
 });
 
+test("data quality review path sequence orders first review steps", () => {
+  const summary = summarizeDataQualityReviewPathSequence(fallbackDataQualityIssues);
+
+  assert.equal(summary.headline, "先看 DQ-202605-010，再按字段、日期、人员和原因展开");
+  assert.equal(summary.stepCount, 5);
+  assert.equal(summary.firstStep?.type, "issue");
+  assert.equal(summary.firstStep?.title, "DQ-202605-010 / 状态时间段重叠");
+  assert.equal(summary.firstStep?.href, "/data-quality/DQ-202605-010");
+  assert.deepEqual(summary.steps.map((step) => step.type), [
+    "issue",
+    "field",
+    "date",
+    "person",
+    "cause",
+  ]);
+  assert.ok(summary.steps.some((step) => step.title.includes("status_log.status_start_at/status_end_at")));
+  assert.ok(summary.steps.some((step) => step.title.includes("2026-05-11")));
+  assert.ok(summary.steps.some((step) => step.title.includes("A-1002")));
+  assert.ok(summary.steps.some((step) => step.title.includes("status_overlap")));
+  assert.ok(summary.nextViewHint.includes("路径步骤"));
+  assert.ok(summary.deferredActions.includes("无真实数据修复"));
+  assert.ok(summary.deferredActions.includes("无导出或批量处理"));
+});
+
+test("data quality review path sequence exposes empty state", () => {
+  const summary = summarizeDataQualityReviewPathSequence([]);
+
+  assert.equal(summary.headline, "暂无可排序的数据质量复核路径");
+  assert.equal(summary.stepCount, 0);
+  assert.equal(summary.firstStep, undefined);
+  assert.deepEqual(summary.steps, []);
+});
+
 test("data quality page renders exception top summary", () => {
   const pageSource = readFileSync(new URL("../../app/data-quality/page.tsx", import.meta.url), "utf8");
 
   assert.ok(pageSource.includes("summarizeDataQualityDayViewOrder"));
   assert.ok(pageSource.includes("summarizeDataQualityFieldImpactSummary"));
+  assert.ok(pageSource.includes("summarizeDataQualityReviewPathSequence"));
   assert.ok(pageSource.includes("summarizeDataQualityReviewPriorityRationale"));
   assert.ok(pageSource.includes("summarizeDataQualityExceptionTop"));
   assert.ok(pageSource.includes("summarizeDataQualityExceptionCauses"));
@@ -352,10 +387,12 @@ test("data quality page renders exception top summary", () => {
   assert.ok(pageSource.includes("履约日期查看顺序"));
   assert.ok(pageSource.includes("字段影响交叉摘要"));
   assert.ok(pageSource.includes("复核优先级说明"));
+  assert.ok(pageSource.includes("复核路径顺序"));
   assert.ok(pageSource.includes("查看个人履约"));
   assert.ok(pageSource.includes("查看履约日期"));
   assert.ok(pageSource.includes("查看字段问题"));
   assert.ok(pageSource.includes("查看优先问题"));
+  assert.ok(pageSource.includes("查看路径步骤"));
   assert.ok(pageSource.includes("影响异常"));
   assert.ok(pageSource.includes("影响人员"));
   assert.ok(pageSource.includes("下一查看"));

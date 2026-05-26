@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R558-R561 - 数据质量复核路径顺序
+
+```yaml
+requirements:
+  - id: R558
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到复核路径顺序，以便按优先问题、字段、日期、人员和原因依次查看。"
+  - id: R559
+    module: "数据质量"
+    description: "复核路径顺序需要基于现有本地异常 Top、复核优先级、字段、日期、人员和原因摘要聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R560
+    module: "数据质量"
+    description: "复核路径顺序需要展示每个步骤的类型、标题、查看入口、理由、影响异常数、影响人员数和暂缓能力。"
+  - id: R561
+    module: "质量与交付"
+    description: "数据质量复核路径顺序完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F385 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读复核路径顺序，基于已有异常 Top、复核优先级、原因、人员、日期和字段摘要聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R554-R557 - 数据质量复核优先级说明
 
 ```yaml

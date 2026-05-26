@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US542-US544 - 数据质量复核路径顺序
+
+```yaml
+stories:
+  - id: US542
+    requirement_ids: [R558, R559]
+    task_ids: [F386]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到复核路径顺序，以便按问题、字段、日期、人员和原因依次查看。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US543
+    requirement_ids: [R560]
+    task_ids: [F386]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望每个路径步骤都有查看入口、理由和影响范围，以便快速判断先看哪里。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US544
+    requirement_ids: [R561]
+    task_ids: [Q104]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望复核路径顺序完成后做收口验证，确认只读路径、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供复核路径顺序，包含步骤类型、标题、查看入口、理由、影响异常数、影响人员数、路径总览和暂缓能力。"
+  - "数据质量总览页展示复核路径顺序卡片。"
+  - "没有路径影响时展示无复核路径，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US539-US541 - 数据质量复核优先级说明
 
 ```yaml
