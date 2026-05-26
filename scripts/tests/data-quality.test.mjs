@@ -4,6 +4,7 @@ import test from "node:test";
 
 import {
   fallbackDataQualityIssues,
+  summarizeDataQualityDayViewOrder,
   filterDataQualityIssues,
   getDataQualityIssue,
   summarizeDataQualityExceptionCauses,
@@ -249,16 +250,46 @@ test("data quality person view order exposes empty state", () => {
   assert.deepEqual(summary.items, []);
 });
 
+test("data quality day view order summarizes impacted fulfillment dates", () => {
+  const summary = summarizeDataQualityDayViewOrder(fallbackDataQualityIssues);
+
+  assert.equal(summary.totalDateCount, 1);
+  assert.equal(summary.totalImpactedExceptionCount, 2);
+  assert.equal(summary.totalImpactedPeopleCount, 2);
+  assert.equal(summary.topDate?.businessDate, "2026-05-11");
+  assert.equal(summary.topDate?.representativeCause, "status_overlap");
+  assert.equal(summary.topDate?.representativeIssueId, "DQ-202605-010");
+  assert.equal(summary.topDate?.href, "/person-timeline/A-1002?date=2026-05-11");
+  assert.equal(summary.topDate?.impactedExceptionCount, 2);
+  assert.equal(summary.topDate?.impactedPeopleCount, 2);
+  assert.ok(summary.topDate?.nextViewHint.includes("个人履约"));
+  assert.ok(summary.deferredActions.includes("无真实数据修复"));
+  assert.ok(summary.deferredActions.includes("无导出或批量处理"));
+});
+
+test("data quality day view order exposes empty state", () => {
+  const summary = summarizeDataQualityDayViewOrder([]);
+
+  assert.equal(summary.totalDateCount, 0);
+  assert.equal(summary.totalImpactedExceptionCount, 0);
+  assert.equal(summary.totalImpactedPeopleCount, 0);
+  assert.equal(summary.topDate, undefined);
+  assert.deepEqual(summary.items, []);
+});
+
 test("data quality page renders exception top summary", () => {
   const pageSource = readFileSync(new URL("../../app/data-quality/page.tsx", import.meta.url), "utf8");
 
+  assert.ok(pageSource.includes("summarizeDataQualityDayViewOrder"));
   assert.ok(pageSource.includes("summarizeDataQualityExceptionTop"));
   assert.ok(pageSource.includes("summarizeDataQualityExceptionCauses"));
   assert.ok(pageSource.includes("summarizeDataQualityPersonViewOrder"));
   assert.ok(pageSource.includes("影响异常 Top"));
   assert.ok(pageSource.includes("异常影响原因汇总"));
   assert.ok(pageSource.includes("人员履约查看顺序"));
+  assert.ok(pageSource.includes("履约日期查看顺序"));
   assert.ok(pageSource.includes("查看个人履约"));
+  assert.ok(pageSource.includes("查看履约日期"));
   assert.ok(pageSource.includes("影响异常"));
   assert.ok(pageSource.includes("影响人员"));
   assert.ok(pageSource.includes("下一查看"));

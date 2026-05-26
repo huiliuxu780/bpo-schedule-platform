@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R546-R549 - 数据质量履约日期查看顺序
+
+```yaml
+requirements:
+  - id: R546
+    module: "数据质量"
+    description: "现场主管需要在数据质量总览看到受影响履约日期的查看顺序，以便先进入影响最大的日期核对异常。"
+  - id: R547
+    module: "数据质量"
+    description: "日期查看顺序需要基于现有本地 affectedObjects、impactLinks、日期文本和个人履约入口聚合，不新增后端接口、数据库持久化或生产处理状态。"
+  - id: R548
+    module: "数据质量"
+    description: "日期查看顺序需要展示业务日期、影响人员数、影响异常数、代表问题、代表原因、履约入口和暂缓能力。"
+  - id: R549
+    module: "质量与交付"
+    description: "数据质量履约日期查看顺序完成后需要 QA 收口，确认模型测试、页面展示、页面 smoke 和 no-action 边界。"
+source: "PM asked to continue after F382 on 2026-05-26"
+submitted_at: "2026-05-26"
+version: "1.0"
+status: "split"
+notes: "本组只做数据质量总览页的本地只读履约日期查看顺序，基于已有 fallbackDataQualityIssues 的 affectedObjects、impactLinks、日期文本和个人履约入口聚合。不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式。"
+```
+
 ### R542-R545 - 数据质量人员履约查看顺序
 
 ```yaml

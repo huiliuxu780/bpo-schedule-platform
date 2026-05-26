@@ -193,6 +193,28 @@ export type DataQualityPersonViewOrderSummary = {
   deferredActions: string[]
 }
 
+export type DataQualityDayViewOrderItem = {
+  businessDate: string
+  impactedPeopleCount: number
+  impactedPeople: string[]
+  impactedExceptionCount: number
+  blockedRows: number
+  representativeCause: string
+  representativeIssueId: string
+  representativeIssueTitle: string
+  href: string
+  nextViewHint: string
+}
+
+export type DataQualityDayViewOrderSummary = {
+  totalDateCount: number
+  totalImpactedExceptionCount: number
+  totalImpactedPeopleCount: number
+  topDate?: DataQualityDayViewOrderItem
+  items: DataQualityDayViewOrderItem[]
+  deferredActions: string[]
+}
+
 export const deferredDataQualityActions = [
   "无真实数据修复",
   "无审批流",
@@ -564,6 +586,67 @@ export function summarizeDataQualityPersonViewOrder(
   }
 }
 
+export function summarizeDataQualityDayViewOrder(
+  rows: DataQualityIssue[]
+): DataQualityDayViewOrderSummary {
+  const groups = new Map<
+    string,
+    {
+      businessDate: string
+      issues: DataQualityIssue[]
+      impactSummaries: DataQualityExceptionImpactSummary[]
+    }
+  >()
+
+  for (const issue of rows) {
+    const impactSummary = summarizeDataQualityExceptionImpact(issue)
+
+    if (impactSummary.impactedExceptionCount === 0) {
+      continue
+    }
+
+    for (const businessDate of getImpactedBusinessDates(issue, impactSummary)) {
+      const existing = groups.get(businessDate)
+
+      if (existing) {
+        existing.issues.push(issue)
+        existing.impactSummaries.push(impactSummary)
+        continue
+      }
+
+      groups.set(businessDate, {
+        businessDate,
+        issues: [issue],
+        impactSummaries: [impactSummary],
+      })
+    }
+  }
+
+  const items = Array.from(groups.values())
+    .map(buildDataQualityDayViewOrderItem)
+    .sort(
+      (a, b) =>
+        b.impactedExceptionCount - a.impactedExceptionCount ||
+        b.impactedPeopleCount - a.impactedPeopleCount ||
+        b.blockedRows - a.blockedRows ||
+        a.businessDate.localeCompare(b.businessDate)
+    )
+
+  return {
+    totalDateCount: items.length,
+    totalImpactedExceptionCount: items.reduce(
+      (total, item) => total + item.impactedExceptionCount,
+      0
+    ),
+    totalImpactedPeopleCount: uniqueValues(
+      items.flatMap((item) => item.impactedPeople)
+    ).length,
+    topDate: items[0],
+    items,
+    deferredActions: deferredDataQualityActions,
+  }
+}
+
 export function dataQualitySeverityLabel(severity: DataQualitySeverity) {
   return {
     high: "高",
@@ -735,6 +818,49 @@ function buildDataQualityPersonViewOrderItem(group: {
   }
 }
 
+function buildDataQualityDayViewOrderItem(group: {
+  businessDate: string
+  issues: DataQualityIssue[]
+  impactSummaries: DataQualityExceptionImpactSummary[]
+}): DataQualityDayViewOrderItem {
+  const representativeIssue = group.issues
+    .slice()
+    .sort(
+      (a, b) =>
+        dataQualitySeverityRank[b.severity] - dataQualitySeverityRank[a.severity] ||
+        b.blockedRows - a.blockedRows ||
+        a.id.localeCompare(b.id)
+    )[0]
+  const dateImpact =
+    group.impactSummaries.find((summary) =>
+      summary.nextViewHref?.includes(`date=${group.businessDate}`)
+    ) ?? group.impactSummaries[0]
+  const href = dateImpact?.nextViewHref?.includes(`date=${group.businessDate}`)
+    ? dateImpact.nextViewHref
+    : `/person-timeline?date=${group.businessDate}`
+  const impactedPeople = uniqueValues(
+    group.impactSummaries.flatMap((summary) => summary.impactedPeople)
+  )
+
+  return {
+    businessDate: group.businessDate,
+    impactedPeopleCount: impactedPeople.length,
+    impactedPeople,
+    impactedExceptionCount: group.impactSummaries.reduce(
+      (total, summary) => total + summary.impactedExceptionCount,
+      0
+    ),
+    blockedRows: group.issues.reduce((total, issue) => total + issue.blockedRows, 0),
+    representativeCause: representativeIssue.errorCode,
+    representativeIssueId: representativeIssue.id,
+    representativeIssueTitle: representativeIssue.title,
+    href,
+    nextViewHint:
+      dateImpact?.nextViewHint ??
+      "先查看履约日期对应的个人履约详情，再回到数据质量详情确认字段、原值和影响对象。",
+  }
+}
+
 function getImpactedPeople(issue: DataQualityIssue) {
   return uniqueValues([
     ...issue.affectedObjects
@@ -744,6 +870,29 @@ function getImpactedPeople(issue: DataQualityIssue) {
       .map((link) => link.target.match(/A-\d+/)?.[0] ?? "")
       .filter((employeeId) => employeeId.length > 0),
   ])
+}
+
+function getImpactedBusinessDates(
+  issue: DataQualityIssue,
+  impactSummary: DataQualityExceptionImpactSummary
+) {
+  return uniqueValues([
+    ...issue.impactLinks.flatMap((link) => extractBusinessDates(link.target)),
+    ...(impactSummary.nextViewHref
+      ? extractBusinessDates(impactSummary.nextViewHref)
+      : []),
+    ...issue.affectedObjects.flatMap((object) =>
+      extractBusinessDates(
+        `${object.objectId} ${object.label} ${object.businessImpact}`
+      )
+    ),
+  ])
+}
+
+function extractBusinessDates(value: string) {
+  return Array.from(value.matchAll(/\d{4}-\d{2}-\d{2}/g)).map(
+    (match) => match[0]
+  )
 }
 
 function buildDataQualityImportBatchImpactItem(

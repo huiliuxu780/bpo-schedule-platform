@@ -19,6 +19,17 @@
 
 ### 2026-05-26
 
+- task_id: `F383/Q101`
+- source_ids:
+  - `R546-R549`
+- story_ids:
+  - `US533-US535`
+- action: 完成数据质量履约日期查看顺序。
+- status: `done`
+- notes: 数据质量总览页现在展示“履约日期查看顺序”，按受影响业务日期聚合质量原因、履约异常和人员，并展示代表原因、代表问题、履约日期入口、下一查看提示和暂缓能力；模型基于现有本地 affectedObjects、impactLinks、日期文本和异常影响聚合只读推导。本次不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-26
+
 - task_id: `F382/Q100`
 - source_ids:
   - `R542-R545`

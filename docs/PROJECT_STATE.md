@@ -31,6 +31,7 @@ The project contains:
 - A status log CSV upload/import local vertical backed by FastAPI process-memory batch results and failure-row records.
 - An import batch list that reads FastAPI process-memory CSV import results before falling back to local sample rows.
 - `US530/F382 -> US532/Q100` completed a data-quality impacted-person view-order slice: the data quality overview now groups impacted people by quality causes and exceptions, showing representative causes, representative issues, personal fulfillment links, next viewing hints, and deferred actions. It remained local/read-only and returned current queue and active tasks to empty.
+- `US533/F383 -> US535/Q101` completed a data-quality impacted-day view-order slice: the data quality overview now groups impacted fulfillment dates by quality causes, exceptions, and people, showing representative causes, representative issues, fulfillment date links, next viewing hints, and deferred actions. It remained local/read-only and returned current queue and active tasks to empty.
 - A documentation-first Lightweight Harness with current/registry state governance.
 
 The project does not contain:

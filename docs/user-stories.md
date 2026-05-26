@@ -29,6 +29,45 @@
 
 ## Stories
 
+### US533-US535 - 数据质量履约日期查看顺序
+
+```yaml
+stories:
+  - id: US533
+    requirement_ids: [R546, R547]
+    task_ids: [F383]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望在数据质量总览看到受影响履约日期的查看顺序，以便先进入影响最大的日期核对异常。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US534
+    requirement_ids: [R548]
+    task_ids: [F383]
+    module: "数据质量"
+    role: "现场主管"
+    story: "作为现场主管，我希望日期查看顺序展示代表问题、影响人员、影响异常和履约入口，以便按日期安排复核。"
+    task_type: "frontend"
+    priority: "P0"
+    status: "done"
+  - id: US535
+    requirement_ids: [R549]
+    task_ids: [Q101]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望数据质量履约日期查看顺序完成后做收口验证，确认只读聚合、页面展示和 no-action 边界均可验证。"
+    task_type: "qa"
+    priority: "P1"
+    status: "done"
+acceptance:
+  - "数据质量模型提供履约日期查看顺序，包含业务日期、影响人员数、影响异常数、代表原因、代表问题、履约入口和暂缓能力。"
+  - "数据质量总览页展示履约日期查看顺序卡片。"
+  - "没有受影响日期时展示无日期影响，不误导为修复、提交、审批、导出或批量能力。"
+  - "本组不新增后端接口、依赖、数据库、ORM、migration、真实外部接口、权限、审批、导出、批量、Excel xlsx 解析、生产状态字典、自动排班或生产公式。"
+  - "`node --test scripts/tests/data-quality.test.mjs`、页面 smoke 和 `bash scripts/check.sh` 通过。"
+```
+
 ### US530-US532 - 数据质量人员履约查看顺序
 
 ```yaml
