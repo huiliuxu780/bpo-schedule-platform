@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### Q123 G001 Full-Chain Boundary QA
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `94e8889`
+- remote_status: `not_pushed`
+- scope: QA closeout for the G001 local production-prototype chain, covering import center, master data, personnel schedule, demand forecast, login/status processing, actual-log slicing, schedule-vs-actual anomalies, and no-database/no-production-workflow boundary.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates current queue, active tasks, backlog/story status, audit, task log, project state/context, and branch log only.
+- check_result: target backend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q122 G001 Login Status Processing QA
 
 - branch_name: `codex/f412-login-status-logs`
@@ -12,7 +30,7 @@
 - allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates current queue, active tasks, backlog/story status, audit, task log, project state/context, and branch log only.
 - check_result: target backend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
-- local_commit_sha: `pending`
+- local_commit_sha: `94e8889`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

@@ -4,6 +4,24 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 full-chain boundary QA
+
+#### 结论
+
+- `Q123/US604/R649-R652` 已完成 G001 全链边界与收口 QA。
+- 已验收上传/字段映射预览、导入批次、失败行、主数据导入与维护、人员排班导入与 0.5h 展开、需求预测导入与排班对齐、登录/状态导入、实际日志切分、状态质量问题和排班 vs 实际异常。
+- current queue 与 active tasks 已清空。
+
+#### 风险
+
+- G001 仍是本地生产雏形，不是生产系统：没有数据库、ORM、migration、真实外部接口、生产文件存储、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+- 新增 actual-log 和 schedule-vs-actual 合同目前以后端/API 为主，后续如需主管页完整显示，需要单独开 frontend/API surfacing Gate。
+
+#### 验证
+
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，57 个后端测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-27 - G001 login status processing QA
 
 #### 结论

@@ -19,6 +19,18 @@
 
 ### 2026-05-27
 
+- task_id: `Q123`
+- source_ids:
+  - `R649`
+  - `R650`
+  - `R651`
+  - `R652`
+- story_ids:
+  - `US604`
+- action: 完成 G001 全链边界与收口 QA。
+- status: `done`
+- notes: 已验证上传/字段映射预览、导入批次、失败行、主数据导入与维护、人员排班导入与 0.5h 展开、需求预测导入与排班对齐、登录/状态导入、实际日志切分、状态质量问题和排班 vs 实际异常均保持本地 CSV/process-memory 合同。没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
 - task_id: `Q122`
 - source_ids:
   - `R648`
