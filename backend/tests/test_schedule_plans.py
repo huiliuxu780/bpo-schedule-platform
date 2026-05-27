@@ -16,6 +16,7 @@ from backend.app.main import (
     list_imported_master_data_records,
     list_imported_personnel_schedule_records,
     list_imported_login_log_records,
+    list_imported_status_log_records,
     list_personnel_schedule_interval_records,
     upsert_master_data_record,
     freeze_master_data_record,
@@ -79,6 +80,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/master-data/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/personnel-schedules/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/login-logs/imported-records", "GET"), routes)
+        self.assertIn(("/api/v1/status-logs/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/personnel-schedules/interval-schedules", "GET"), routes)
         self.assertIn(("/api/v1/import-batches", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
@@ -775,6 +777,57 @@ class SchedulePlansApiTest(unittest.TestCase):
 
         stored = get_import_batch_result(response.batch_id)
         self.assertEqual(stored, response)
+
+    def test_status_log_csv_import_exposes_dictionary_mapped_records(self) -> None:
+        response = import_status_log_csv(
+            StatusLogCsvImportRequest(
+                file_name="status_log_dictionary.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "status_log_id,employee_id,business_date,status_type,start_at,end_at,workplace_id,project_id,source_system,timezone,source_status_code\n"
+                    "STATUS-DICT-001,E-300,2026-05-26,training,2026-05-26T13:00:00,2026-05-26T14:30:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai,TRN\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed")
+        self.assertEqual(response.success_rows, 1)
+        self.assertEqual(len(response.version_records), 1)
+
+        records = list_imported_status_log_records()
+        imported = next(item for item in records.items if item.status_log_id == "STATUS-DICT-001")
+        self.assertEqual(imported.employee_id, "E-300")
+        self.assertEqual(imported.business_date, "2026-05-26")
+        self.assertEqual(imported.normalized_business_date, "2026-05-26")
+        self.assertEqual(imported.status_type, "training")
+        self.assertEqual(imported.status_label, "培训")
+        self.assertFalse(imported.counts_as_productive)
+        self.assertEqual(imported.normalized_start_at, "2026-05-26T13:00:00+08:00")
+        self.assertEqual(imported.normalized_end_at, "2026-05-26T14:30:00+08:00")
+        self.assertFalse(imported.cross_day)
+        self.assertEqual(imported.duration_minutes, 90)
+        self.assertEqual(imported.source_status_code, "TRN")
+        self.assertEqual(imported.source_batch_id, response.batch_id)
+        self.assertEqual(imported.source_version_id, response.version_records[0].version_id)
+
+    def test_status_log_csv_import_rejects_unknown_status_type(self) -> None:
+        response = import_status_log_csv(
+            StatusLogCsvImportRequest(
+                file_name="status_log_unknown.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "status_log_id,employee_id,business_date,status_type,start_at,end_at,workplace_id,project_id,source_system\n"
+                    "STATUS-UNKNOWN-001,E-301,2026-05-26,coaching_unknown,2026-05-26T13:00:00,2026-05-26T14:00:00,WP-SH,P-BOSCH,CORN\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.success_rows, 0)
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["unknown_status_type"])
+        self.assertEqual(response.failure_rows[0].field_name, "status_type")
+        self.assertEqual(response.failure_rows[0].raw_value, "coaching_unknown")
 
     def test_status_log_csv_import_records_missing_required_field(self) -> None:
         response = import_status_log_csv(

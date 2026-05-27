@@ -19,6 +19,16 @@
 
 ### 2026-05-27
 
+- task_id: `F413`
+- source_ids:
+  - `R642`
+  - `R643`
+- story_ids:
+  - `US600`
+- action: 完成 G001 状态日志导入与状态字典校验。
+- status: `done`
+- notes: 状态日志 CSV 成功行现在会生成 process-memory 状态业务记录，保留来源批次/版本、业务日、归一业务日、IANA 时区、归一开始/结束时间、跨天标记、持续分钟数、固定状态中文标签、是否计入有效产能和来源状态码；未知状态类型、非法时区、非法时间范围或缺失必填字段进入失败行。没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已从 US600/F413 切到 US601/F414。
+
 - task_id: `F412`
 - source_ids:
   - `R641`

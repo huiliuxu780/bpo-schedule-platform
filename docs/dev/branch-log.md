@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F413 G001 Status Log Dictionary Validation
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `8c5935e`
+- remote_status: `not_pushed`
+- scope: backend-vertical local status-log slice: persist successful status CSV rows as process-memory status records, validate a fixed status dictionary, normalize business day and IANA timezone timestamps, mark cross-day intervals, compute duration minutes, and retain source batch/version traceability.
+- allowed_files_check: `app/import-batches/**`, `app/person-timeline/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates status-log import schema/repository/route, backend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing imported status-log records route; target backend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F412 G001 Login Log Business-Day Normalization
 
 - branch_name: `codex/f412-login-status-logs`
@@ -12,7 +30,7 @@
 - allowed_files_check: `app/import-batches/**`, `app/person-timeline/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates login-log import schema/repository/route, backend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
 - check_result: TDD red observed for missing imported login-log records route; target backend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
-- local_commit_sha: `pending`
+- local_commit_sha: `8c5935e`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

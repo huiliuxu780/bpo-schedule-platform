@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 status log dictionary validation
+
+#### 结论
+
+- `F413/US600/R642/R643` 已完成 G001 状态日志导入与状态字典校验。
+- 后端新增 `/api/v1/status-logs/imported-records`，状态 CSV 成功行会写入 process-memory 状态业务记录。
+- 状态记录保留来源批次、来源版本、业务日、归一业务日、IANA 时区、归一开始/结束时间、跨天标记、持续分钟数、固定状态中文标签、是否计入有效产能和来源状态码。
+- 未知状态类型会以 `unknown_status_type` 进入失败行，不进入状态业务记录。
+- current queue 与 active tasks 已切到 `US601/F414`。
+
+#### 风险
+
+- 当前状态日志仍是 no-database process-memory，不是生产状态日志库、真实 CORN 接入、文件存储或可复跑切分任务。
+- 登录/状态区间切分、断档/重叠质量问题仍归后续 `F414`；排班 vs 登录/状态异常仍归 `F415`。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `list_imported_status_log_records` 接口。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，53 个后端测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已切到 `US601/F414`。
+
 ### 2026-05-27 - G001 login log business-day normalization
 
 #### 结论

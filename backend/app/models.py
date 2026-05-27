@@ -351,6 +351,33 @@ class LoginLogImportedRecordListResponse(BaseModel):
     items: list[LoginLogImportedRecord]
 
 
+class StatusLogImportedRecord(BaseModel):
+    status_log_id: str
+    employee_id: str
+    business_date: str
+    normalized_business_date: str
+    status_type: str
+    status_label: str
+    counts_as_productive: bool
+    start_at: str
+    end_at: str
+    normalized_start_at: str
+    normalized_end_at: str
+    cross_day: bool
+    duration_minutes: int = Field(ge=0)
+    workplace_id: str
+    project_id: str
+    source_system: str
+    timezone: str
+    source_status_code: str | None = None
+    source_batch_id: str
+    source_version_id: str
+
+
+class StatusLogImportedRecordListResponse(BaseModel):
+    items: list[StatusLogImportedRecord]
+
+
 class MasterDataEntityContract(BaseModel):
     entity: MasterDataEntity
     primary_key: list[str]

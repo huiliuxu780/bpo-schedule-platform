@@ -29,6 +29,7 @@ from backend.app.models import (
     SchedulePlanListResponse,
     SchedulePlanStatus,
     ShiftDetailListResponse,
+    StatusLogImportedRecordListResponse,
     StatusLogCsvImportRequest,
     UnavailabilityListResponse,
     UnavailabilityStatus,
@@ -56,6 +57,7 @@ from backend.app.repository import (
     list_process_import_batches,
     list_schedule_risk_rows,
     list_shift_detail_rows,
+    list_status_log_imported_records as find_status_log_imported_records,
     list_plan_summaries,
     list_unavailability_rows,
     upsert_master_data_record as save_master_data_record,
@@ -173,6 +175,16 @@ def list_imported_personnel_schedule_records() -> PersonnelScheduleImportedRecor
 def list_imported_login_log_records() -> LoginLogImportedRecordListResponse:
     return LoginLogImportedRecordListResponse(
         items=find_login_log_imported_records()
+    )
+
+
+@app.get(
+    "/api/v1/status-logs/imported-records",
+    response_model=StatusLogImportedRecordListResponse,
+)
+def list_imported_status_log_records() -> StatusLogImportedRecordListResponse:
+    return StatusLogImportedRecordListResponse(
+        items=find_status_log_imported_records()
     )
 
 

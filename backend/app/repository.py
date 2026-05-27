@@ -38,6 +38,7 @@ from backend.app.models import (
     SchedulePlanSummary,
     SchedulePlanStatus,
     ShiftDetailRow,
+    StatusLogImportedRecord,
     StatusLogCsvImportRequest,
     UnavailabilityRow,
     UnavailabilityStatus,
@@ -132,6 +133,7 @@ MASTER_DATA_IMPORTED_RECORDS: list[MasterDataImportedRecord] = []
 PERSONNEL_SCHEDULE_IMPORTED_RECORDS: list[PersonnelScheduleImportedRecord] = []
 PERSONNEL_SCHEDULE_INTERVAL_RECORDS: list[PersonnelScheduleIntervalRecord] = []
 LOGIN_LOG_IMPORTED_RECORDS: list[LoginLogImportedRecord] = []
+STATUS_LOG_IMPORTED_RECORDS: list[StatusLogImportedRecord] = []
 
 SHIFT_TYPE_REFERENCES = {
     "SHIFT-DAY": "标准早班",
@@ -154,6 +156,15 @@ DEMAND_PROJECT_REFERENCES = {
 
 DEMAND_SKILL_GROUP_REFERENCES = {"热线", "工单"}
 DEMAND_GRADE_REFERENCES = {"L1", "L2"}
+
+STATUS_TYPE_DICTIONARY = {
+    "productive": {"label": "在线", "counts_as_productive": True},
+    "break": {"label": "休息", "counts_as_productive": False},
+    "meal": {"label": "用餐", "counts_as_productive": False},
+    "training": {"label": "培训", "counts_as_productive": False},
+    "meeting": {"label": "会议", "counts_as_productive": False},
+    "offline": {"label": "离线", "counts_as_productive": False},
+}
 
 
 def preview_csv_import(request: CsvImportPreviewRequest) -> CsvImportPreviewResponse:
@@ -1946,6 +1957,16 @@ def import_status_log_csv(request: StatusLogCsvImportRequest) -> ImportBatchResu
     )
     IMPORT_BATCH_RESULTS[batch_id] = result
 
+    if version_records:
+        STATUS_LOG_IMPORTED_RECORDS[:0] = [
+            build_status_log_imported_record(
+                row,
+                batch_id,
+                version_records[0].version_id,
+            )
+            for row in successful_rows
+        ]
+
     return result
 
 
@@ -1975,8 +1996,21 @@ def validate_status_log_row(
     end_value = (row.get("end_at") or "").strip()
     if start_value and end_value:
         try:
-            start_at = datetime.fromisoformat(start_value)
-            end_at = datetime.fromisoformat(end_value)
+            source_timezone = ZoneInfo((row.get("timezone") or "").strip() or "Asia/Shanghai")
+            start_at = parse_login_log_datetime(start_value, source_timezone)
+            end_at = parse_login_log_datetime(end_value, source_timezone)
+        except ZoneInfoNotFoundError:
+            failures.append(
+                ImportBatchFailureRow(
+                    batch_id=batch_id,
+                    entity="status_log",
+                    failed_row_number=row_index,
+                    field_name="timezone",
+                    error_code="invalid_timezone",
+                    error_message="状态日志时区必须使用 IANA 时区编码",
+                    raw_value=(row.get("timezone") or "").strip(),
+                )
+            )
         except ValueError:
             failures.append(
                 ImportBatchFailureRow(
@@ -2003,7 +2037,65 @@ def validate_status_log_row(
                     )
                 )
 
+    status_type = (row.get("status_type") or "").strip()
+    if status_type and status_type not in STATUS_TYPE_DICTIONARY:
+        failures.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="status_log",
+                failed_row_number=row_index,
+                field_name="status_type",
+                error_code="unknown_status_type",
+                error_message="状态类型不在固定状态字典中",
+                raw_value=status_type,
+            )
+        )
+
     return failures
+
+
+def build_status_log_imported_record(
+    row: dict[str, str],
+    batch_id: str,
+    version_id: str,
+) -> StatusLogImportedRecord:
+    source_timezone_name = (row.get("timezone") or "").strip() or "Asia/Shanghai"
+    source_timezone = ZoneInfo(source_timezone_name)
+    start_at = parse_login_log_datetime((row.get("start_at") or "").strip(), source_timezone)
+    end_at = parse_login_log_datetime((row.get("end_at") or "").strip(), source_timezone)
+    normalized_business_date = normalize_login_business_date(
+        (row.get("business_date") or "").strip(),
+        start_at,
+    )
+    status_type = (row.get("status_type") or "").strip()
+    status_definition = STATUS_TYPE_DICTIONARY[status_type]
+
+    return StatusLogImportedRecord(
+        status_log_id=(row.get("status_log_id") or "").strip(),
+        employee_id=(row.get("employee_id") or "").strip(),
+        business_date=(row.get("business_date") or "").strip(),
+        normalized_business_date=normalized_business_date,
+        status_type=status_type,
+        status_label=status_definition["label"],
+        counts_as_productive=bool(status_definition["counts_as_productive"]),
+        start_at=(row.get("start_at") or "").strip(),
+        end_at=(row.get("end_at") or "").strip(),
+        normalized_start_at=start_at.isoformat(timespec="seconds"),
+        normalized_end_at=end_at.isoformat(timespec="seconds"),
+        cross_day=start_at.date() != end_at.date(),
+        duration_minutes=int((end_at - start_at).total_seconds() // 60),
+        workplace_id=(row.get("workplace_id") or "").strip(),
+        project_id=(row.get("project_id") or "").strip(),
+        source_system=(row.get("source_system") or "").strip(),
+        timezone=source_timezone_name,
+        source_status_code=(row.get("source_status_code") or "").strip() or None,
+        source_batch_id=batch_id,
+        source_version_id=version_id,
+    )
+
+
+def list_status_log_imported_records() -> list[StatusLogImportedRecord]:
+    return STATUS_LOG_IMPORTED_RECORDS
 
 
 def get_import_batch_result(batch_id: str) -> ImportBatchResult | None:

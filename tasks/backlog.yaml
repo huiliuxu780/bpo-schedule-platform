@@ -234,7 +234,7 @@ tasks:
   - id: F413
     title: "G001 状态日志导入与状态字典校验"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     dependencies: ["F408"]
     allowed_files: ["app/import-batches/**", "app/person-timeline/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
@@ -250,7 +250,7 @@ tasks:
   - id: F414
     title: "G001 登录状态 0.5h 切分与质量问题"
     priority: P0
-    status: blocked
+    status: ready
     required_workflow: backend-vertical
     dependencies: ["F412", "F413"]
     allowed_files: ["app/person-timeline/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]

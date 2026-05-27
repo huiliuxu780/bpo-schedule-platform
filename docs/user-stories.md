@@ -170,7 +170,7 @@ stories:
     story: "作为数据管理员，我希望导入状态日志并校验固定状态字典，以便判断人员是否处于有效产能状态。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US594]
   - id: US601
     requirement_ids: [R644]
@@ -180,7 +180,7 @@ stories:
     story: "作为数据管理员，我希望状态区间切分到 0.5h 并识别断档、重叠和未知状态，以便质量问题先被暴露。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "blocked"
+    status: "ready"
     dependencies: [US599, US600]
   - id: US602
     requirement_ids: [R645, R646, R647]
