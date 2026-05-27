@@ -4,6 +4,8 @@ from io import StringIO
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from backend.app.models import (
+    ActualLogIntervalRecord,
+    ActualLogQualityIssueRecord,
     CsvImportPreviewRequest,
     CsvImportPreviewResponse,
     DemandPlanRow,
@@ -2096,6 +2098,178 @@ def build_status_log_imported_record(
 
 def list_status_log_imported_records() -> list[StatusLogImportedRecord]:
     return STATUS_LOG_IMPORTED_RECORDS
+
+
+def list_actual_log_interval_records() -> list[ActualLogIntervalRecord]:
+    intervals: list[ActualLogIntervalRecord] = []
+
+    for login_record in LOGIN_LOG_IMPORTED_RECORDS:
+        login_start = datetime.fromisoformat(login_record.normalized_login_at)
+        login_end = datetime.fromisoformat(login_record.normalized_logout_at)
+        for interval_start_dt, interval_end_dt in split_datetime_half_hour_intervals(
+            login_start,
+            login_end,
+        ):
+            status_records = [
+                status_record
+                for status_record in STATUS_LOG_IMPORTED_RECORDS
+                if status_record.employee_id == login_record.employee_id
+                and status_record.normalized_business_date == login_record.normalized_business_date
+                and status_record.workplace_id == login_record.workplace_id
+                and status_record.project_id == login_record.project_id
+                and overlap_minutes(
+                    datetime.fromisoformat(status_record.normalized_start_at),
+                    datetime.fromisoformat(status_record.normalized_end_at),
+                    interval_start_dt,
+                    interval_end_dt,
+                )
+                > 0
+            ]
+            login_minutes = overlap_minutes(
+                login_start,
+                login_end,
+                interval_start_dt,
+                interval_end_dt,
+            )
+            status_minutes = sum(
+                overlap_minutes(
+                    datetime.fromisoformat(status_record.normalized_start_at),
+                    datetime.fromisoformat(status_record.normalized_end_at),
+                    interval_start_dt,
+                    interval_end_dt,
+                )
+                for status_record in status_records
+            )
+            productive_minutes = sum(
+                overlap_minutes(
+                    datetime.fromisoformat(status_record.normalized_start_at),
+                    datetime.fromisoformat(status_record.normalized_end_at),
+                    interval_start_dt,
+                    interval_end_dt,
+                )
+                for status_record in status_records
+                if status_record.counts_as_productive
+            )
+            trace_status = "ready"
+            if status_minutes < login_minutes:
+                trace_status = "status_gap"
+            elif status_minutes > login_minutes:
+                trace_status = "status_overlap"
+
+            intervals.append(
+                ActualLogIntervalRecord(
+                    interval_id="-".join(
+                        [
+                            "AL",
+                            login_record.employee_id,
+                            login_record.normalized_business_date,
+                            interval_start_dt.strftime("%H%M"),
+                            interval_end_dt.strftime("%H%M"),
+                        ]
+                    ),
+                    employee_id=login_record.employee_id,
+                    business_date=login_record.normalized_business_date,
+                    workplace_id=login_record.workplace_id,
+                    project_id=login_record.project_id,
+                    interval_start=interval_start_dt.strftime("%H:%M"),
+                    interval_end=interval_end_dt.strftime("%H:%M"),
+                    login_minutes=login_minutes,
+                    status_minutes=status_minutes,
+                    productive_minutes=productive_minutes,
+                    status_types=unique_values(
+                        status_record.status_type for status_record in status_records
+                    ),
+                    login_log_ids=[login_record.login_log_id],
+                    status_log_ids=unique_values(
+                        status_record.status_log_id for status_record in status_records
+                    ),
+                    trace_status=trace_status,
+                )
+            )
+
+    return sorted(
+        intervals,
+        key=lambda item: (
+            item.business_date,
+            item.employee_id,
+            item.interval_start,
+            item.interval_end,
+        ),
+    )
+
+
+def list_actual_log_quality_issue_records() -> list[ActualLogQualityIssueRecord]:
+    issues: list[ActualLogQualityIssueRecord] = []
+
+    for interval in list_actual_log_interval_records():
+        if interval.trace_status == "ready":
+            continue
+
+        gap_minutes = max(interval.login_minutes - interval.status_minutes, 0)
+        overlap_value = max(interval.status_minutes - interval.login_minutes, 0)
+        issues.append(
+            ActualLogQualityIssueRecord(
+                issue_id="-".join(
+                    [
+                        "AQ",
+                        interval.trace_status,
+                        interval.employee_id,
+                        interval.business_date,
+                        interval.interval_start.replace(":", ""),
+                    ]
+                ),
+                issue_type=interval.trace_status,
+                employee_id=interval.employee_id,
+                business_date=interval.business_date,
+                workplace_id=interval.workplace_id,
+                project_id=interval.project_id,
+                interval_start=interval.interval_start,
+                interval_end=interval.interval_end,
+                gap_minutes=gap_minutes,
+                overlap_minutes=overlap_value,
+                source_record_ids=interval.status_log_ids,
+                message=(
+                    "状态区间少于登录区间"
+                    if interval.trace_status == "status_gap"
+                    else "状态区间存在重叠"
+                ),
+            )
+        )
+
+    return issues
+
+
+def split_datetime_half_hour_intervals(
+    start_at: datetime,
+    end_at: datetime,
+) -> list[tuple[datetime, datetime]]:
+    cursor = start_at.replace(
+        minute=0 if start_at.minute < 30 else 30,
+        second=0,
+        microsecond=0,
+    )
+    intervals: list[tuple[datetime, datetime]] = []
+
+    while cursor < end_at:
+        next_time = cursor + timedelta(minutes=30)
+        intervals.append((cursor, next_time))
+        cursor = next_time
+
+    return intervals
+
+
+def overlap_minutes(
+    source_start: datetime,
+    source_end: datetime,
+    interval_start: datetime,
+    interval_end: datetime,
+) -> int:
+    overlap_start = max(source_start, interval_start)
+    overlap_end = min(source_end, interval_end)
+    if overlap_start >= overlap_end:
+        return 0
+
+    return int((overlap_end - overlap_start).total_seconds() // 60)
 
 
 def get_import_batch_result(batch_id: str) -> ImportBatchResult | None:

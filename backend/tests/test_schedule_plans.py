@@ -17,6 +17,8 @@ from backend.app.main import (
     list_imported_personnel_schedule_records,
     list_imported_login_log_records,
     list_imported_status_log_records,
+    list_actual_log_interval_records,
+    list_actual_log_quality_issues,
     list_personnel_schedule_interval_records,
     upsert_master_data_record,
     freeze_master_data_record,
@@ -81,6 +83,8 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/personnel-schedules/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/login-logs/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/status-logs/imported-records", "GET"), routes)
+        self.assertIn(("/api/v1/actual-logs/intervals", "GET"), routes)
+        self.assertIn(("/api/v1/actual-logs/quality-issues", "GET"), routes)
         self.assertIn(("/api/v1/personnel-schedules/interval-schedules", "GET"), routes)
         self.assertIn(("/api/v1/import-batches", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
@@ -867,6 +871,91 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(response.error_codes, ["invalid_time_range"])
         self.assertEqual(response.failure_rows[0].field_name, "end_at")
         self.assertEqual(response.failure_rows[0].raw_value, "2026-05-26T09:00:00")
+
+    def test_actual_logs_split_login_and_status_into_half_hour_intervals(self) -> None:
+        login_response = import_login_log_csv(
+            LoginLogCsvImportRequest(
+                file_name="actual_login_interval.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "login_log_id,employee_id,business_date,login_at,logout_at,workplace_id,project_id,source_system,timezone\n"
+                    "LOG-F414-001,E-F414-1,2026-05-26,2026-05-26T09:00:00,2026-05-26T10:00:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                ),
+            )
+        )
+        status_response = import_status_log_csv(
+            StatusLogCsvImportRequest(
+                file_name="actual_status_interval.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "status_log_id,employee_id,business_date,status_type,start_at,end_at,workplace_id,project_id,source_system,timezone\n"
+                    "STA-F414-001,E-F414-1,2026-05-26,productive,2026-05-26T09:00:00,2026-05-26T09:30:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                    "STA-F414-002,E-F414-1,2026-05-26,break,2026-05-26T09:30:00,2026-05-26T10:00:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                ),
+            )
+        )
+
+        self.assertEqual(login_response.status, "completed")
+        self.assertEqual(status_response.status, "completed")
+        intervals = [
+            item
+            for item in list_actual_log_interval_records().items
+            if item.employee_id == "E-F414-1"
+        ]
+
+        self.assertEqual(len(intervals), 2)
+        self.assertEqual(intervals[0].interval_start, "09:00")
+        self.assertEqual(intervals[0].interval_end, "09:30")
+        self.assertEqual(intervals[0].login_minutes, 30)
+        self.assertEqual(intervals[0].status_minutes, 30)
+        self.assertEqual(intervals[0].productive_minutes, 30)
+        self.assertEqual(intervals[0].status_types, ["productive"])
+        self.assertEqual(intervals[0].trace_status, "ready")
+        self.assertEqual(intervals[1].interval_start, "09:30")
+        self.assertEqual(intervals[1].interval_end, "10:00")
+        self.assertEqual(intervals[1].productive_minutes, 0)
+        self.assertEqual(intervals[1].status_types, ["break"])
+
+    def test_actual_logs_create_quality_issues_for_status_gaps_and_overlaps(self) -> None:
+        import_login_log_csv(
+            LoginLogCsvImportRequest(
+                file_name="actual_login_quality.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "login_log_id,employee_id,business_date,login_at,logout_at,workplace_id,project_id,source_system,timezone\n"
+                    "LOG-F414-002,E-F414-2,2026-05-26,2026-05-26T13:00:00,2026-05-26T14:00:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                ),
+            )
+        )
+        import_status_log_csv(
+            StatusLogCsvImportRequest(
+                file_name="actual_status_quality.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "status_log_id,employee_id,business_date,status_type,start_at,end_at,workplace_id,project_id,source_system,timezone\n"
+                    "STA-F414-003,E-F414-2,2026-05-26,productive,2026-05-26T13:00:00,2026-05-26T13:30:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                    "STA-F414-004,E-F414-2,2026-05-26,training,2026-05-26T13:15:00,2026-05-26T13:45:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                ),
+            )
+        )
+
+        issues = [
+            item
+            for item in list_actual_log_quality_issues().items
+            if item.employee_id == "E-F414-2"
+        ]
+        issue_types = {item.issue_type for item in issues}
+
+        self.assertIn("status_overlap", issue_types)
+        self.assertIn("status_gap", issue_types)
+        overlap = next(item for item in issues if item.issue_type == "status_overlap")
+        gap = next(item for item in issues if item.issue_type == "status_gap")
+        self.assertEqual(overlap.interval_start, "13:00")
+        self.assertEqual(overlap.interval_end, "13:30")
+        self.assertEqual(overlap.source_record_ids, ["STA-F414-003", "STA-F414-004"])
+        self.assertEqual(gap.interval_start, "13:30")
+        self.assertEqual(gap.interval_end, "14:00")
+        self.assertEqual(gap.gap_minutes, 15)
 
     def test_import_batch_list_returns_process_memory_results_newest_first(self) -> None:
         older = import_demand_forecast_csv(

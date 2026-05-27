@@ -378,6 +378,46 @@ class StatusLogImportedRecordListResponse(BaseModel):
     items: list[StatusLogImportedRecord]
 
 
+class ActualLogIntervalRecord(BaseModel):
+    interval_id: str
+    employee_id: str
+    business_date: str
+    workplace_id: str
+    project_id: str
+    interval_start: str
+    interval_end: str
+    login_minutes: int = Field(ge=0)
+    status_minutes: int = Field(ge=0)
+    productive_minutes: int = Field(ge=0)
+    status_types: list[str]
+    login_log_ids: list[str]
+    status_log_ids: list[str]
+    trace_status: str
+
+
+class ActualLogIntervalListResponse(BaseModel):
+    items: list[ActualLogIntervalRecord]
+
+
+class ActualLogQualityIssueRecord(BaseModel):
+    issue_id: str
+    issue_type: str
+    employee_id: str
+    business_date: str
+    workplace_id: str
+    project_id: str
+    interval_start: str
+    interval_end: str
+    gap_minutes: int = Field(ge=0)
+    overlap_minutes: int = Field(ge=0)
+    source_record_ids: list[str]
+    message: str
+
+
+class ActualLogQualityIssueListResponse(BaseModel):
+    items: list[ActualLogQualityIssueRecord]
+
+
 class MasterDataEntityContract(BaseModel):
     entity: MasterDataEntity
     primary_key: list[str]

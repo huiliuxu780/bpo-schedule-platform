@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 actual log interval slicing
+
+#### 结论
+
+- `F414/US601/R644` 已完成 G001 登录状态 0.5h 切分与质量问题。
+- 后端新增 `/api/v1/actual-logs/intervals`，基于已导入登录和状态 process-memory 记录生成 0.5h 区间记录。
+- 后端新增 `/api/v1/actual-logs/quality-issues`，状态断档生成 `status_gap`，状态重叠生成 `status_overlap`。
+- 区间记录保留员工、业务日、职场、项目、0.5h 时段、登录分钟、状态分钟、有效产能分钟、登录记录、状态记录、状态类型和追溯状态。
+- current queue 与 active tasks 已切到 `US602/F415`。
+
+#### 风险
+
+- 当前实际日志区间仍是 no-database process-memory 动态计算，不是生产可复跑任务、结果表或履约异常写入闭环。
+- 排班 vs 登录/状态异常识别仍归后续 `F415`。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `list_actual_log_interval_records` 接口。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，55 个后端测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已切到 `US602/F415`。
+
 ### 2026-05-27 - G001 status log dictionary validation
 
 #### 结论

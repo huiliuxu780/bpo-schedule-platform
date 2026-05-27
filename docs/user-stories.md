@@ -180,7 +180,7 @@ stories:
     story: "作为数据管理员，我希望状态区间切分到 0.5h 并识别断档、重叠和未知状态，以便质量问题先被暴露。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US599, US600]
   - id: US602
     requirement_ids: [R645, R646, R647]
@@ -190,7 +190,7 @@ stories:
     story: "作为现场主管，我希望排班能与登录和状态事实对比并生成异常，以便在履约日历和个人三轨详情复核。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "blocked"
+    status: "ready"
     dependencies: [US599, US600, US601]
   - id: US603
     requirement_ids: [R648]

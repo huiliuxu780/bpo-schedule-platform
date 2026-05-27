@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 
 from backend.app.models import (
+    ActualLogIntervalListResponse,
+    ActualLogQualityIssueListResponse,
     CsvImportPreviewRequest,
     CsvImportPreviewResponse,
     DemandForecastVersionChangeListResponse,
@@ -64,6 +66,8 @@ from backend.app.repository import (
     freeze_master_data_record as set_master_data_record_frozen,
     unfreeze_master_data_record as set_master_data_record_unfrozen,
     check_master_data_reference as validate_master_data_reference,
+    list_actual_log_interval_records as find_actual_log_interval_records,
+    list_actual_log_quality_issue_records as find_actual_log_quality_issue_records,
     update_plan_draft,
 )
 
@@ -185,6 +189,26 @@ def list_imported_login_log_records() -> LoginLogImportedRecordListResponse:
 def list_imported_status_log_records() -> StatusLogImportedRecordListResponse:
     return StatusLogImportedRecordListResponse(
         items=find_status_log_imported_records()
+    )
+
+
+@app.get(
+    "/api/v1/actual-logs/intervals",
+    response_model=ActualLogIntervalListResponse,
+)
+def list_actual_log_interval_records() -> ActualLogIntervalListResponse:
+    return ActualLogIntervalListResponse(
+        items=find_actual_log_interval_records()
+    )
+
+
+@app.get(
+    "/api/v1/actual-logs/quality-issues",
+    response_model=ActualLogQualityIssueListResponse,
+)
+def list_actual_log_quality_issues() -> ActualLogQualityIssueListResponse:
+    return ActualLogQualityIssueListResponse(
+        items=find_actual_log_quality_issue_records()
     )
 
 

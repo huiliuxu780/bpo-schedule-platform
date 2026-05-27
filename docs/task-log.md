@@ -19,6 +19,15 @@
 
 ### 2026-05-27
 
+- task_id: `F414`
+- source_ids:
+  - `R644`
+- story_ids:
+  - `US601`
+- action: 完成 G001 登录状态 0.5h 切分与质量问题。
+- status: `done`
+- notes: 已导入的登录和状态 process-memory 记录现在可生成实际履约 0.5h 区间，包含登录分钟、状态分钟、有效产能分钟、来源登录/状态记录、状态类型和追溯状态；状态断档生成 status_gap，状态重叠生成 status_overlap。没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已从 US601/F414 切到 US602/F415。
+
 - task_id: `F413`
 - source_ids:
   - `R642`

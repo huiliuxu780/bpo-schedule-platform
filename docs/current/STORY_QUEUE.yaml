@@ -6,12 +6,12 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US601
+  - id: US602
     status: ready
     priority: P0
-    module: "实际履约"
-    role: "数据管理员"
-    task_ids: ["F414"]
-    requirement_ids: ["R644"]
-    dependencies: ["US599", "US600"]
-    story: "将登录和状态区间切分到 0.5h 并暴露数据质量问题。"
+    module: "履约监控"
+    role: "现场主管"
+    task_ids: ["F415"]
+    requirement_ids: ["R645", "R646", "R647"]
+    dependencies: ["US601"]
+    story: "将排班与登录、状态事实对比并生成履约异常。"
