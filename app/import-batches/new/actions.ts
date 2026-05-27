@@ -11,6 +11,7 @@ import {
 import {
   createDemandForecastImportBatch,
   createLoginLogImportBatch,
+  createMasterDataImportBatch,
   createPersonnelScheduleImportBatch,
   createStatusLogImportBatch,
 } from "@/lib/import-batch-history"
@@ -21,6 +22,10 @@ function formText(formData: FormData, key: string) {
 
 export async function createDemandForecastImportAction(formData: FormData) {
   await createCsvImportAction(formData, "demand-forecast")
+}
+
+export async function createMasterDataImportAction(formData: FormData) {
+  await createCsvImportAction(formData, "master-data")
 }
 
 export async function createPersonnelScheduleImportAction(formData: FormData) {
@@ -74,7 +79,7 @@ export async function previewCsvImportAction(
 
 async function createCsvImportAction(
   formData: FormData,
-  importType: Exclude<CsvImportType, "master-data">
+  importType: CsvImportType
 ) {
   const file = formData.get("csv_file")
 
@@ -88,7 +93,9 @@ async function createCsvImportAction(
     csv_content: await file.text(),
   }
   const created =
-    importType === "demand-forecast"
+    importType === "master-data"
+      ? await createMasterDataImportBatch(payload)
+      : importType === "demand-forecast"
       ? await createDemandForecastImportBatch(payload)
       : importType === "personnel-schedule"
         ? await createPersonnelScheduleImportBatch(payload)

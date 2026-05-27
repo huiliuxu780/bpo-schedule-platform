@@ -5,6 +5,7 @@ import { useActionState } from "react"
 import {
   createDemandForecastImportAction,
   createLoginLogImportAction,
+  createMasterDataImportAction,
   createPersonnelScheduleImportAction,
   createStatusLogImportAction,
   previewCsvImportAction,
@@ -25,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input"
 
 const importActions = {
+  "master-data": createMasterDataImportAction,
   "demand-forecast": createDemandForecastImportAction,
   "personnel-schedule": createPersonnelScheduleImportAction,
   "login-log": createLoginLogImportAction,
@@ -38,10 +40,9 @@ export function ImportCsvPreviewForm({ importType }: { importType: CsvImportType
     initialCsvImportPreviewState
   )
   const canSubmit =
-    importType !== "master-data" &&
     state.status === "ready" &&
     state.preview?.missingRequiredFields.length === 0
-  const submitAction = importType === "master-data" ? undefined : importActions[importType]
+  const submitAction = importActions[importType]
 
   return (
     <form action={previewAction} className="grid gap-4">
@@ -118,7 +119,6 @@ export function ImportCsvPreviewForm({ importType }: { importType: CsvImportType
           type="submit"
           formAction={submitAction}
           disabled={!canSubmit}
-          title={importType === "master-data" ? "主数据导入处理将在后续任务开放" : undefined}
         >
           提交导入
         </Button>

@@ -54,7 +54,7 @@ tasks:
   - id: F405
     title: "G001 主数据导入与查看"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     dependencies: ["F404"]
     allowed_files: ["app/master-data-relations/**", "app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]

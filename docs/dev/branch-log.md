@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F405 G001 Master Data Import View
+
+- branch_name: `codex/f405-master-data-import-view`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `f81404d`
+- remote_status: `not_pushed`
+- scope: backend-vertical local master-data import/view slice: submit master-data CSV to process-memory import batches, store successful binding rows with source batch and import version, preserve failed rows, and display source batch/import version/reference status on the master-data page.
+- allowed_files_check: `app/master-data-relations/**`, `app/import-batches/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates master-data import endpoint/schema/repository, import-batch frontend action mapping, master-data relation model/page, tests, and current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing `import_master_data_csv`, imported master-data record listing, frontend master-data import mapping, and page traceability fields; target backend/frontend tests, product copy/navigation tests, API/page smoke, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q118 G001 Import Center Foundation QA
 
 - branch_name: `codex/f403-import-csv-mapping`

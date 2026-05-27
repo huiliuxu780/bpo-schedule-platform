@@ -96,6 +96,7 @@ export type DemandForecastCsvImportPayload = {
   csv_content: string
 }
 
+export type MasterDataCsvImportPayload = DemandForecastCsvImportPayload
 export type PersonnelScheduleCsvImportPayload = DemandForecastCsvImportPayload
 export type LoginLogCsvImportPayload = DemandForecastCsvImportPayload
 export type StatusLogCsvImportPayload = DemandForecastCsvImportPayload
@@ -449,6 +450,16 @@ export function mapImportBatchResult(result: ImportBatchResult): ImportBatch {
 }
 
 function importEntityView(entity: string) {
+  if (entity === "master_data") {
+    return {
+      templateId: "TPL-MASTER-DATA",
+      templateName: "主数据模板",
+      affectedObjects: ["坐席", "职场", "供应商", "项目", "技能", "绑定关系"],
+      businessImpactTarget: "主数据引用、人员排班和履约对比",
+      successTarget: "主数据行",
+    }
+  }
+
   if (entity === "demand_forecast") {
     return {
       templateId: "TPL-DEMAND-FORECAST",
@@ -560,6 +571,17 @@ export async function createDemandForecastImportBatch(
 ): Promise<ImportBatch | null> {
   const result = await writeJson<ImportBatchResult>(
     "/api/v1/import-batches/demand-forecast",
+    payload
+  )
+
+  return result ? mapImportBatchResult(result) : null
+}
+
+export async function createMasterDataImportBatch(
+  payload: MasterDataCsvImportPayload
+): Promise<ImportBatch | null> {
+  const result = await writeJson<ImportBatchResult>(
+    "/api/v1/import-batches/master-data",
     payload
   )
 

@@ -82,6 +82,12 @@ class DemandForecastCsvImportRequest(BaseModel):
     csv_content: str
 
 
+class MasterDataCsvImportRequest(BaseModel):
+    file_name: str
+    uploaded_by: str
+    csv_content: str
+
+
 class PersonnelScheduleCsvImportRequest(BaseModel):
     file_name: str
     uploaded_by: str
@@ -159,6 +165,29 @@ class ImportBatchResult(BaseModel):
 
 class ImportBatchListResponse(BaseModel):
     items: list[ImportBatchResult]
+
+
+class MasterDataImportedRecord(BaseModel):
+    employee_id: str
+    employee_name: str
+    supplier_id: str
+    supplier_name: str
+    workplace_id: str
+    workplace_name: str
+    project_id: str
+    project_name: str
+    skill_group: str
+    skill_level: str
+    effective_from: str
+    effective_to: str
+    status: str
+    source_batch_id: str
+    source_version_id: str
+    reference_status: str
+
+
+class MasterDataImportedRecordListResponse(BaseModel):
+    items: list[MasterDataImportedRecord]
 
 
 class MasterDataEntityContract(BaseModel):

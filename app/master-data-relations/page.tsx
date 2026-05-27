@@ -12,17 +12,19 @@ import {
 } from "@/components/ui/card"
 import {
   employeeMasterDataBindingStatusLabel,
-  fallbackEmployeeMasterDataBindings,
   fallbackMasterDataRelations,
+  getEmployeeMasterDataBindings,
   getMasterDataBindingTarget,
+  masterDataReferenceStatusLabel,
   summarizeEmployeeMasterDataBindings,
   summarizeMasterDataRelations,
 } from "@/lib/master-data-relations"
 
-export default function MasterDataRelationsPage() {
+export default async function MasterDataRelationsPage() {
   const relations = fallbackMasterDataRelations
+  const employeeBindings = await getEmployeeMasterDataBindings()
   const summary = summarizeMasterDataRelations(relations)
-  const bindingSummary = summarizeEmployeeMasterDataBindings()
+  const bindingSummary = summarizeEmployeeMasterDataBindings(employeeBindings)
 
   return (
     <AppShell title="主数据关系" searchPlaceholder="搜索主数据对象或关系">
@@ -89,7 +91,7 @@ export default function MasterDataRelationsPage() {
             </div>
           </CardHeader>
           <CardContent className="grid gap-3 lg:grid-cols-2">
-            {fallbackEmployeeMasterDataBindings.map((binding) => (
+            {employeeBindings.map((binding) => (
               <div
                 key={binding.employeeId}
                 id={`employee-${binding.employeeId}`}
@@ -115,6 +117,9 @@ export default function MasterDataRelationsPage() {
                     label="关联异常"
                     value={[...binding.anomalyIds, ...binding.qualityIssueIds].join("、") || "无"}
                   />
+                  <MiniDetail label="来源批次" value={binding.sourceBatchId ?? "样例关系"} />
+                  <MiniDetail label="导入版本" value={binding.sourceVersionId ?? "未生成"} />
+                  <MiniDetail label="引用状态" value={masterDataReferenceStatusLabel(binding.referenceStatus)} />
                 </div>
                 <p className="mt-3 text-sm text-muted-foreground">
                   {binding.businessImpact}

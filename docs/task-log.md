@@ -19,6 +19,16 @@
 
 ### 2026-05-27
 
+- task_id: `F405`
+- source_ids:
+  - `R624`
+  - `R628`
+- story_ids:
+  - `US590`
+- action: 完成 G001 主数据导入与查看。
+- status: `done`
+- notes: 主数据 CSV 现在可提交到 FastAPI process-memory 批次，成功行生成导入版本和员工绑定记录，失败行进入批次失败行并不进入业务记录；主数据关系页展示导入记录的来源批次、导入版本和引用状态。没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已移除 US590/F405，下一项为 US591/F406。
+
 - task_id: `Q118`
 - source_ids:
   - `R623`

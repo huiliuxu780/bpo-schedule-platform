@@ -14,6 +14,8 @@ from backend.app.models import (
     ImportBatchResult,
     ImportBatchVersionRecord,
     LoginLogCsvImportRequest,
+    MasterDataCsvImportRequest,
+    MasterDataImportedRecord,
     MasterDataEntityContract,
     MasterDataImportContractResponse,
     IntervalExpansionContract,
@@ -113,6 +115,7 @@ CSV_IMPORT_PENDING_VALIDATION_FIELDS = {
 }
 
 IMPORT_BATCH_RESULTS: dict[str, ImportBatchResult] = {}
+MASTER_DATA_IMPORTED_RECORDS: list[MasterDataImportedRecord] = []
 
 
 def preview_csv_import(request: CsvImportPreviewRequest) -> CsvImportPreviewResponse:
@@ -646,6 +649,136 @@ FULFILLMENT_COMPARISON_CONTRACT = FulfillmentComparisonContractResponse(
         "review_note",
     ],
 )
+
+
+def import_master_data_csv(
+    request: MasterDataCsvImportRequest,
+) -> ImportBatchResult:
+    uploaded_at = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds")
+    batch_id = f"BATCH-MD-{uploaded_at[:10].replace('-', '')}-{len(IMPORT_BATCH_RESULTS) + 1:03d}"
+    failure_rows: list[ImportBatchFailureRow] = []
+    successful_rows: list[dict[str, str]] = []
+    success_rows = 0
+
+    reader = csv.DictReader(StringIO(request.csv_content.strip()))
+    rows = list(reader) if reader.fieldnames else []
+    missing_headers = [
+        field
+        for field in MASTER_DATA_IMPORT_REQUIRED_FIELDS
+        if field not in (reader.fieldnames or [])
+    ]
+
+    if missing_headers:
+        failure_rows.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="master_data",
+                failed_row_number=1,
+                field_name=",".join(missing_headers),
+                error_code="missing_required_header",
+                error_message="缺少主数据导入必填表头",
+                raw_value="",
+            )
+        )
+    else:
+        for row_index, row in enumerate(rows, start=2):
+            row_failures = validate_master_data_row(batch_id, row_index, row)
+
+            if row_failures:
+                failure_rows.extend(row_failures)
+            else:
+                success_rows += 1
+                successful_rows.append(row)
+
+    error_codes = sorted({failure.error_code for failure in failure_rows})
+    failed_rows = len({failure.failed_row_number for failure in failure_rows})
+    business_date_start, business_date_end, version_records = build_import_version_records(
+        batch_id=batch_id,
+        entity="master_data",
+        file_name=request.file_name,
+        uploaded_at=uploaded_at,
+        successful_rows=successful_rows,
+    )
+    result = ImportBatchResult(
+        batch_id=batch_id,
+        entity="master_data",
+        file_name=request.file_name,
+        uploaded_by=request.uploaded_by,
+        uploaded_at=uploaded_at,
+        status="completed" if failed_rows == 0 else "completed_with_errors",
+        total_rows=len(rows),
+        success_rows=success_rows,
+        failed_rows=failed_rows,
+        warning_rows=0,
+        business_date_start=business_date_start,
+        business_date_end=business_date_end,
+        error_codes=error_codes,
+        failure_rows=failure_rows,
+        version_records=version_records,
+    )
+    IMPORT_BATCH_RESULTS[batch_id] = result
+
+    if version_records:
+        MASTER_DATA_IMPORTED_RECORDS[:0] = [
+            build_master_data_imported_record(row, batch_id, version_records[0].version_id)
+            for row in successful_rows
+        ]
+
+    return result
+
+
+def validate_master_data_row(
+    batch_id: str,
+    row_index: int,
+    row: dict[str, str],
+) -> list[ImportBatchFailureRow]:
+    failures: list[ImportBatchFailureRow] = []
+
+    for field in MASTER_DATA_IMPORT_REQUIRED_FIELDS:
+        raw_value = (row.get(field) or "").strip()
+        if not raw_value:
+            failures.append(
+                ImportBatchFailureRow(
+                    batch_id=batch_id,
+                    entity="master_data",
+                    failed_row_number=row_index,
+                    field_name=field,
+                    error_code="missing_required_field",
+                    error_message="主数据导入必填字段为空",
+                    raw_value=raw_value,
+                )
+            )
+
+    return failures
+
+
+def build_master_data_imported_record(
+    row: dict[str, str],
+    batch_id: str,
+    version_id: str,
+) -> MasterDataImportedRecord:
+    return MasterDataImportedRecord(
+        employee_id=(row.get("employee_id") or "").strip(),
+        employee_name=(row.get("employee_name") or "").strip() or "未命名坐席",
+        supplier_id=(row.get("supplier_id") or "").strip(),
+        supplier_name=(row.get("supplier_name") or "").strip() or (row.get("supplier_id") or "").strip(),
+        workplace_id=(row.get("workplace_id") or "").strip(),
+        workplace_name=(row.get("workplace_name") or "").strip() or (row.get("workplace_id") or "").strip(),
+        project_id=(row.get("project_id") or "").strip(),
+        project_name=(row.get("project_name") or "").strip() or (row.get("project_id") or "").strip(),
+        skill_group=(row.get("skill_group") or "").strip(),
+        skill_level=(row.get("skill_level") or "").strip() or "待确认",
+        effective_from=(row.get("effective_from") or "").strip(),
+        effective_to=(row.get("effective_to") or "").strip() or "未设置",
+        status=(row.get("status") or "").strip() or "active",
+        source_batch_id=batch_id,
+        source_version_id=version_id,
+        reference_status="ready",
+    )
+
+
+def list_master_data_imported_records() -> list[MasterDataImportedRecord]:
+    return MASTER_DATA_IMPORTED_RECORDS
 
 
 def import_demand_forecast_csv(

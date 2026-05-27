@@ -9,6 +9,8 @@ from backend.app.models import (
     ImportBatchListResponse,
     ImportBatchResult,
     LoginLogCsvImportRequest,
+    MasterDataCsvImportRequest,
+    MasterDataImportedRecordListResponse,
     MasterDataImportContractResponse,
     PersonnelScheduleCsvImportRequest,
     PersonnelScheduleImportContractResponse,
@@ -31,10 +33,12 @@ from backend.app.repository import (
     find_plan_detail,
     import_demand_forecast_csv as create_demand_forecast_import_batch,
     import_login_log_csv as create_login_log_import_batch,
+    import_master_data_csv as create_master_data_import_batch,
     import_personnel_schedule_csv as create_personnel_schedule_import_batch,
     preview_csv_import as create_csv_import_preview,
     import_status_log_csv as create_status_log_import_batch,
     list_demand_plan_rows,
+    list_master_data_imported_records as find_master_data_imported_records,
     list_process_import_batches,
     list_schedule_risk_rows,
     list_shift_detail_rows,
@@ -63,6 +67,11 @@ def list_schedule_plans(
 @app.get("/api/v1/demand-plans", response_model=DemandPlanListResponse)
 def list_demand_plans(query: str | None = None) -> DemandPlanListResponse:
     return DemandPlanListResponse(items=list_demand_plan_rows(query=query))
+
+
+@app.post("/api/v1/import-batches/master-data", response_model=ImportBatchResult)
+def import_master_data_csv(request: MasterDataCsvImportRequest) -> ImportBatchResult:
+    return create_master_data_import_batch(request)
 
 
 @app.post("/api/v1/import-batches/demand-forecast", response_model=ImportBatchResult)
@@ -97,6 +106,16 @@ def preview_csv_import(request: CsvImportPreviewRequest) -> CsvImportPreviewResp
 @app.get("/api/v1/import-batches", response_model=ImportBatchListResponse)
 def list_import_batches() -> ImportBatchListResponse:
     return ImportBatchListResponse(items=list_process_import_batches())
+
+
+@app.get(
+    "/api/v1/master-data/imported-records",
+    response_model=MasterDataImportedRecordListResponse,
+)
+def list_imported_master_data_records() -> MasterDataImportedRecordListResponse:
+    return MasterDataImportedRecordListResponse(
+        items=find_master_data_imported_records()
+    )
 
 
 @app.get("/api/v1/import-batches/{batch_id}", response_model=ImportBatchResult)

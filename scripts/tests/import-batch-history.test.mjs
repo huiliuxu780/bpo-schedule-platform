@@ -4,6 +4,7 @@ import test from "node:test"
 
 import { fallbackDataQualityIssues } from "../../lib/data-quality.ts"
 import {
+  createMasterDataImportBatch,
   createLoginLogImportBatch,
   createPersonnelScheduleImportBatch,
   createStatusLogImportBatch,
@@ -112,6 +113,43 @@ test("import batch result maps local csv import failure rows", () => {
   assert.equal(batch.failureRows[0].failedRowNumber, 3)
   assert.equal(batch.failureRows[0].fieldName, "forecast_agents")
   assert.equal(batch.failureRows[0].errorMessage, "需求预测导入必填字段为空")
+})
+
+test("master data import result maps template source and version", () => {
+  const batch = mapImportBatchResult({
+    batch_id: "BATCH-MD-20260527-001",
+    entity: "master_data",
+    file_name: "master_data_test.csv",
+    uploaded_by: "数据管理员",
+    uploaded_at: "2026-05-27T10:20:00+08:00",
+    status: "completed",
+    total_rows: 2,
+    success_rows: 2,
+    failed_rows: 0,
+    warning_rows: 0,
+    business_date_start: null,
+    business_date_end: null,
+    error_codes: [],
+    version_records: [
+      {
+        version_id: "VER-MD-20260527-001",
+        entity: "master_data",
+        batch_id: "BATCH-MD-20260527-001",
+        source_file: "master_data_test.csv",
+        row_count: 2,
+        business_date_start: null,
+        business_date_end: null,
+        created_at: "2026-05-27T10:20:00+08:00",
+      },
+    ],
+    failure_rows: [],
+  })
+
+  assert.equal(batch.templateId, "TPL-MASTER-DATA")
+  assert.equal(batch.templateName, "主数据模板")
+  assert.deepEqual(batch.affectedObjects, ["坐席", "职场", "供应商", "项目", "技能", "绑定关系"])
+  assert.equal(batch.localVersions[0].versionId, "VER-MD-20260527-001")
+  assert.equal(typeof createMasterDataImportBatch, "function")
 })
 
 test("import batch detail page displays import versions", () => {

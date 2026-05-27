@@ -7,11 +7,13 @@ from backend.app.main import (
     create_schedule_plan_draft,
     get_schedule_plan,
     get_import_batch_result,
+    import_master_data_csv,
     import_demand_forecast_csv,
     import_login_log_csv,
     import_personnel_schedule_csv,
     preview_csv_import,
     import_status_log_csv,
+    list_imported_master_data_records,
     list_import_batches,
     list_demand_plans,
     list_fulfillment_comparison_contract,
@@ -28,6 +30,7 @@ from backend.app.models import (
     ImportBatchListResponse,
     LoginLogCsvImportRequest,
     CsvImportPreviewRequest,
+    MasterDataCsvImportRequest,
     PersonnelScheduleCsvImportRequest,
     SchedulePlanDraftRequest,
     SchedulePlanIntervalInput,
@@ -50,10 +53,12 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
         self.assertIn(("/api/v1/import-batches/preview", "POST"), routes)
+        self.assertIn(("/api/v1/import-batches/master-data", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/demand-forecast", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/personnel-schedule", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/login-log", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/status-log", "POST"), routes)
+        self.assertIn(("/api/v1/master-data/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/import-batches", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
 
@@ -92,6 +97,71 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn("supplier_id", response.missing_required_fields)
         self.assertIn("skill_group", response.missing_required_fields)
         self.assertEqual(response.warning_fields, [])
+
+    def test_master_data_csv_import_accepts_valid_rows_and_exposes_records(self) -> None:
+        response = import_master_data_csv(
+            MasterDataCsvImportRequest(
+                file_name="master_data_test.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "employee_id,employee_name,workplace_id,workplace_name,supplier_id,supplier_name,project_id,project_name,skill_group,skill_level,effective_from,effective_to,status\n"
+                    "E-901,赵一,WP-SH,上海职场,SUP-01,供应商 A,P-BOSCH,博西客服,热线,L2,2026-05-01,2026-12-31,active\n"
+                    "E-902,钱二,WP-SZ,苏州职场,SUP-02,供应商 B,P-BOSCH,博西客服,工单,L1,2026-05-01,2026-12-31,active\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.entity, "master_data")
+        self.assertEqual(response.status, "completed")
+        self.assertEqual(response.total_rows, 2)
+        self.assertEqual(response.success_rows, 2)
+        self.assertEqual(response.failed_rows, 0)
+        self.assertEqual(response.error_codes, [])
+        self.assertEqual(response.failure_rows, [])
+        self.assertEqual(len(response.version_records), 1)
+        self.assertEqual(response.version_records[0].entity, "master_data")
+        self.assertEqual(response.version_records[0].row_count, 2)
+
+        records = list_imported_master_data_records()
+        employee_ids = {item.employee_id for item in records.items}
+        self.assertIn("E-901", employee_ids)
+        imported = next(item for item in records.items if item.employee_id == "E-901")
+        self.assertEqual(imported.source_batch_id, response.batch_id)
+        self.assertEqual(imported.source_version_id, response.version_records[0].version_id)
+        self.assertEqual(imported.reference_status, "ready")
+        self.assertEqual(imported.supplier_name, "供应商 A")
+        self.assertEqual(imported.workplace_name, "上海职场")
+
+    def test_master_data_csv_import_records_failed_rows_without_business_record(self) -> None:
+        before_ids = {
+            item.employee_id for item in list_imported_master_data_records().items
+        }
+        response = import_master_data_csv(
+            MasterDataCsvImportRequest(
+                file_name="master_data_missing.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "employee_id,employee_name,workplace_id,supplier_id,project_id,skill_group,effective_from\n"
+                    "E-903,孙三,WP-SH,SUP-01,P-BOSCH,,2026-05-01\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.total_rows, 1)
+        self.assertEqual(response.success_rows, 0)
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["missing_required_field"])
+        self.assertEqual(response.version_records, [])
+        self.assertEqual(len(response.failure_rows), 1)
+        self.assertEqual(response.failure_rows[0].entity, "master_data")
+        self.assertEqual(response.failure_rows[0].failed_row_number, 2)
+        self.assertEqual(response.failure_rows[0].field_name, "skill_group")
+
+        after_ids = {
+            item.employee_id for item in list_imported_master_data_records().items
+        }
+        self.assertEqual(after_ids - before_ids, set())
 
     def test_demand_forecast_csv_import_accepts_valid_rows(self) -> None:
         response = import_demand_forecast_csv(

@@ -70,7 +70,7 @@ stories:
     story: "作为数据管理员，我希望导入和查看坐席、职场、供应商、项目、技能和绑定关系，以便后续业务数据能引用主数据。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US588]
   - id: US591
     requirement_ids: [R625, R626, R627]

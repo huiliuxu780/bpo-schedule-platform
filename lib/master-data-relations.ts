@@ -27,6 +27,8 @@ export type EmployeeMasterDataBindingStatus =
   | "expiring_soon"
   | "inactive"
 
+export type MasterDataReferenceStatus = "ready" | "needs_review" | "blocked"
+
 export type EmployeeMasterDataBinding = {
   employeeId: string
   employeeName: string
@@ -40,6 +42,28 @@ export type EmployeeMasterDataBinding = {
   anomalyIds: string[]
   qualityIssueIds: string[]
   businessImpact: string
+  sourceBatchId?: string
+  sourceVersionId?: string
+  referenceStatus?: MasterDataReferenceStatus
+}
+
+export type ImportedMasterDataRecord = {
+  employee_id: string
+  employee_name: string
+  supplier_id: string
+  supplier_name: string
+  workplace_id: string
+  workplace_name: string
+  project_id: string
+  project_name: string
+  skill_group: string
+  skill_level: string
+  effective_from: string
+  effective_to: string
+  status: string
+  source_batch_id: string
+  source_version_id: string
+  reference_status: MasterDataReferenceStatus
 }
 
 export type MasterDataRelations = {
@@ -63,6 +87,9 @@ export type EmployeeMasterDataBindingSummary = {
   expiringSoon: number
   inactive: number
 }
+
+const API_BASE_URL =
+  process.env.BPO_API_BASE_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8000"
 
 export const fallbackMasterDataRelations: MasterDataRelations = {
   nodes: [
@@ -200,6 +227,54 @@ export function summarizeEmployeeMasterDataBindings(
   }
 }
 
+export function mapImportedMasterDataRecord(
+  record: ImportedMasterDataRecord
+): EmployeeMasterDataBinding {
+  return employeeBinding({
+    employeeId: record.employee_id,
+    employeeName: record.employee_name,
+    supplier: record.supplier_name || record.supplier_id,
+    workplace: record.workplace_name || record.workplace_id,
+    project: record.project_name || record.project_id,
+    skills: [record.skill_group, record.skill_level].filter(Boolean),
+    effectiveFrom: record.effective_from,
+    effectiveTo: record.effective_to || "未设置",
+    status: employeeBindingStatusFromImported(record.status),
+    anomalyIds: [],
+    qualityIssueIds: [],
+    businessImpact: "主数据已导入，可用于后续业务引用。",
+    sourceBatchId: record.source_batch_id,
+    sourceVersionId: record.source_version_id,
+    referenceStatus: record.reference_status,
+  })
+}
+
+export function mergeImportedMasterDataBindings(
+  importedRows: EmployeeMasterDataBinding[],
+  fallbackRows = fallbackEmployeeMasterDataBindings
+) {
+  const importedIds = new Set(importedRows.map((row) => row.employeeId))
+  const remainingFallbackRows = fallbackRows.filter(
+    (row) => !importedIds.has(row.employeeId)
+  )
+
+  return [...importedRows, ...remainingFallbackRows]
+}
+
+export async function getEmployeeMasterDataBindings() {
+  const response = await fetchJson<{ items: ImportedMasterDataRecord[] }>(
+    "/api/v1/master-data/imported-records"
+  )
+  const importedRows =
+    response?.items.map((record) => mapImportedMasterDataRecord(record)) ?? []
+
+  if (importedRows.length === 0) {
+    return fallbackEmployeeMasterDataBindings
+  }
+
+  return mergeImportedMasterDataBindings(importedRows)
+}
+
 export function getEmployeeMasterDataBinding(employeeId: string) {
   return fallbackEmployeeMasterDataBindings.find(
     (row) => row.employeeId === employeeId
@@ -219,6 +294,49 @@ export function employeeMasterDataBindingStatusLabel(
     expiring_soon: "即将到期",
     inactive: "已停用",
   }[status]
+}
+
+export function masterDataReferenceStatusLabel(status?: MasterDataReferenceStatus) {
+  if (!status) {
+    return "样例关系"
+  }
+
+  return {
+    ready: "可引用",
+    needs_review: "待复核",
+    blocked: "阻断",
+  }[status]
+}
+
+function employeeBindingStatusFromImported(status: string): EmployeeMasterDataBindingStatus {
+  if (status === "inactive") {
+    return "inactive"
+  }
+
+  if (status === "needs_review") {
+    return "needs_review"
+  }
+
+  return "active"
+}
+
+async function fetchJson<T>(path: string): Promise<T | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    return (await response.json()) as T
+  } catch {
+    return null
+  }
 }
 
 function node(

@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 master data import and view
+
+#### 结论
+
+- `F405/US590/R624/R628` 已完成 G001 主数据导入与查看。
+- 后端新增主数据 CSV 提交接口、process-memory 批次记录、失败行记录、导入版本和导入后员工绑定记录查询。
+- 前端主数据导入页现在可提交主数据 CSV；主数据关系页读取导入记录并展示来源批次、导入版本和引用状态。
+- current queue 与 active tasks 已移除 `US590/F405`，下一项为 `US591/F406`。
+
+#### 风险
+
+- 当前仍是 no-database process-memory，服务重启后不会保留生产主数据。
+- 有效期、冻结/解冻、引用校验和维护动作仍归后续 `F406`，本批不做权限、审批、导出、批量或生产持久化。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `import_master_data_csv`；前端 node test 首次失败于缺少主数据导入映射和导入记录映射函数。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，42 个后端测试通过。
+- `node --test scripts/tests/csv-import-preview.test.mjs scripts/tests/master-data-relations.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，42 个前端/契约测试通过。
+- 页面 smoke：`/master-data-relations` 和 `/import-batches/new?type=master-data` 返回 200；Playwright 快照显示主数据页包含“来源批次”“导入版本”“引用状态”，导入页包含主数据 CSV 预览和提交按钮。
+- API smoke：`POST /api/v1/import-batches/master-data` 返回 `master_data completed 1 1`，`GET /api/v1/master-data/imported-records` 可查到导入员工 `E-990`，前端主数据页可渲染该员工。
+
 ### 2026-05-27 - G001 import center foundation QA
 
 #### 结论
