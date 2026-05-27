@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F403 G001 CSV Upload Mapping Preview
+
+- branch_name: `codex/f403-import-csv-mapping`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `d069aa7`
+- remote_status: `not_pushed`
+- scope: backend-vertical local preview slice: add CSV upload field-mapping preview for master data, personnel schedule, demand forecast, login log, and status log import types before import submission.
+- allowed_files_check: `app/import-batches/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates the import-batch new page, local CSV preview model, preview server action, local FastAPI preview contract, backend/frontend tests, and current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing CSV preview model and missing backend preview route; csv-import-preview tests, import-batch-history tests, product copy/navigation tests, backend unittest, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### G001 Production Import Closure Planning Split
 
 - branch_name: `codex/g001-production-import-planning`

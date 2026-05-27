@@ -6,14 +6,6 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US587
-    status: ready
-    priority: P0
-    module: "数据导入"
-    role: "数据管理员"
-    task_ids: ["F403"]
-    requirement_ids: ["R618", "R619"]
-    story: "上传真实 CSV 并预览字段映射和行数统计。"
   - id: US588
     status: ready
     priority: P0

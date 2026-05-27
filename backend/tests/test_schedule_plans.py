@@ -10,6 +10,7 @@ from backend.app.main import (
     import_demand_forecast_csv,
     import_login_log_csv,
     import_personnel_schedule_csv,
+    preview_csv_import,
     import_status_log_csv,
     list_import_batches,
     list_demand_plans,
@@ -26,6 +27,7 @@ from backend.app.models import (
     DemandForecastCsvImportRequest,
     ImportBatchListResponse,
     LoginLogCsvImportRequest,
+    CsvImportPreviewRequest,
     PersonnelScheduleCsvImportRequest,
     SchedulePlanDraftRequest,
     SchedulePlanIntervalInput,
@@ -47,12 +49,49 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/fulfillment-comparison/contract", "GET"), routes)
         self.assertIn(("/api/v1/schedule-plans/drafts", "POST"), routes)
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
+        self.assertIn(("/api/v1/import-batches/preview", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/demand-forecast", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/personnel-schedule", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/login-log", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/status-log", "POST"), routes)
         self.assertIn(("/api/v1/import-batches", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
+
+    def test_csv_import_preview_maps_uploaded_headers_before_import(self) -> None:
+        response = preview_csv_import(
+            CsvImportPreviewRequest(
+                file_name="demand_forecast_preview.csv",
+                import_type="demand_forecast",
+                csv_content=(
+                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
+                    "2026-05-11,SH,P1,09:00,09:30,12\n"
+                    "2026-05-11,SH,P1,09:30,10:00,14"
+                ),
+            )
+        )
+
+        self.assertEqual(response.file_name, "demand_forecast_preview.csv")
+        self.assertEqual(response.import_type, "demand_forecast")
+        self.assertEqual(response.total_rows, 2)
+        self.assertEqual(response.missing_required_fields, [])
+        self.assertIn("forecast_agents", response.pending_validation_fields)
+
+    def test_csv_import_preview_identifies_missing_master_data_headers(self) -> None:
+        response = preview_csv_import(
+            CsvImportPreviewRequest(
+                file_name="master_data_preview.csv",
+                import_type="master_data",
+                csv_content=(
+                    "employee_id,workplace_id,project_id,effective_from\n"
+                    "A-1001,SH,P1,2026-05-01"
+                ),
+            )
+        )
+
+        self.assertEqual(response.total_rows, 1)
+        self.assertIn("supplier_id", response.missing_required_fields)
+        self.assertIn("skill_group", response.missing_required_fields)
+        self.assertEqual(response.warning_fields, [])
 
     def test_demand_forecast_csv_import_accepts_valid_rows(self) -> None:
         response = import_demand_forecast_csv(

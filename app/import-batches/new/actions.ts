@@ -3,6 +3,12 @@
 import { redirect } from "next/navigation"
 
 import {
+  buildCsvImportPreview,
+  normalizeCsvImportType,
+  type CsvImportPreviewFormState,
+  type CsvImportType,
+} from "@/lib/csv-import-preview"
+import {
   createDemandForecastImportBatch,
   createLoginLogImportBatch,
   createPersonnelScheduleImportBatch,
@@ -29,9 +35,46 @@ export async function createStatusLogImportAction(formData: FormData) {
   await createCsvImportAction(formData, "status-log")
 }
 
+export async function previewCsvImportAction(
+  _state: CsvImportPreviewFormState,
+  formData: FormData
+): Promise<CsvImportPreviewFormState> {
+  const importType = normalizeCsvImportType(formText(formData, "import_type"))
+  const file = formData.get("csv_file")
+
+  if (!file || typeof file === "string" || file.size === 0) {
+    return {
+      status: "error",
+      message: "请选择 CSV 文件后再预览。",
+    }
+  }
+
+  if (!file.name.toLowerCase().endsWith(".csv")) {
+    return {
+      status: "error",
+      message: "当前只支持 CSV 文件预览。",
+    }
+  }
+
+  const preview = buildCsvImportPreview({
+    importType,
+    fileName: file.name,
+    csvContent: await file.text(),
+  })
+
+  return {
+    status: "ready",
+    message:
+      preview.missingRequiredFields.length > 0
+        ? "字段映射预览已生成，仍有必填字段缺失。"
+        : "字段映射预览已生成，可以继续校验后提交。",
+    preview,
+  }
+}
+
 async function createCsvImportAction(
   formData: FormData,
-  importType: "demand-forecast" | "personnel-schedule" | "login-log" | "status-log"
+  importType: Exclude<CsvImportType, "master-data">
 ) {
   const file = formData.get("csv_file")
 

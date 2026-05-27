@@ -3,6 +3,8 @@ from datetime import datetime, timedelta, timezone
 from io import StringIO
 
 from backend.app.models import (
+    CsvImportPreviewRequest,
+    CsvImportPreviewResponse,
     DemandPlanRow,
     DemandForecastCsvImportRequest,
     AnomalyRuleContract,
@@ -76,7 +78,73 @@ STATUS_LOG_IMPORT_REQUIRED_FIELDS = [
     "source_system",
 ]
 
+MASTER_DATA_IMPORT_REQUIRED_FIELDS = [
+    "employee_id",
+    "workplace_id",
+    "supplier_id",
+    "project_id",
+    "skill_group",
+    "effective_from",
+]
+
+CSV_IMPORT_OPTIONAL_FIELDS = {
+    "master_data": ["employee_name", "supplier_name", "effective_to", "status"],
+    "personnel_schedule": ["source_system", "note"],
+    "demand_forecast": ["skill_group", "grade", "source_system"],
+    "login_log": ["device_id", "timezone"],
+    "status_log": ["timezone", "source_status_code"],
+}
+
+CSV_IMPORT_REQUIRED_FIELDS = {
+    "master_data": MASTER_DATA_IMPORT_REQUIRED_FIELDS,
+    "personnel_schedule": PERSONNEL_SCHEDULE_IMPORT_REQUIRED_FIELDS,
+    "demand_forecast": DEMAND_FORECAST_IMPORT_REQUIRED_FIELDS,
+    "login_log": LOGIN_LOG_IMPORT_REQUIRED_FIELDS,
+    "status_log": STATUS_LOG_IMPORT_REQUIRED_FIELDS,
+}
+
+CSV_IMPORT_PENDING_VALIDATION_FIELDS = {
+    "master_data": MASTER_DATA_IMPORT_REQUIRED_FIELDS,
+    "personnel_schedule": ["employee_id", "shift_type_id", "start_at", "end_at", "status"],
+    "demand_forecast": ["interval_start", "interval_end", "forecast_agents"],
+    "login_log": ["employee_id", "login_at", "logout_at", "source_system"],
+    "status_log": ["employee_id", "status_type", "start_at", "end_at", "source_system"],
+}
+
 IMPORT_BATCH_RESULTS: dict[str, ImportBatchResult] = {}
+
+
+def preview_csv_import(request: CsvImportPreviewRequest) -> CsvImportPreviewResponse:
+    reader = csv.reader(StringIO(request.csv_content.strip()))
+    records = [row for row in reader if any(cell.strip() for cell in row)]
+    detected_fields = [field.strip() for field in records[0]] if records else []
+    data_rows = records[1:] if records else []
+    required_fields = CSV_IMPORT_REQUIRED_FIELDS[request.import_type]
+    optional_fields = CSV_IMPORT_OPTIONAL_FIELDS[request.import_type]
+    known_fields = set(required_fields + optional_fields)
+    detected_field_set = set(detected_fields)
+    mapped_fields = [field for field in detected_fields if field in known_fields]
+    missing_required_fields = [
+        field for field in required_fields if field not in detected_field_set
+    ]
+    warning_fields = [field for field in detected_fields if field not in known_fields]
+    pending_validation_fields = [
+        field
+        for field in CSV_IMPORT_PENDING_VALIDATION_FIELDS[request.import_type]
+        if field in detected_field_set
+    ]
+
+    return CsvImportPreviewResponse(
+        file_name=request.file_name,
+        import_type=request.import_type,
+        total_rows=len(data_rows),
+        detected_fields=detected_fields,
+        required_fields=required_fields,
+        mapped_fields=mapped_fields,
+        missing_required_fields=missing_required_fields,
+        warning_fields=warning_fields,
+        pending_validation_fields=pending_validation_fields,
+    )
 
 UNAVAILABILITY_ROWS = [
     UnavailabilityRow(

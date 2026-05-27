@@ -41,7 +41,7 @@ stories:
     story: "作为数据管理员，我希望上传真实 CSV 并预览字段映射和行数统计，以便导入前确认文件能被系统识别。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
   - id: US588
     requirement_ids: [R620, R621, R622]
     task_ids: [F404]

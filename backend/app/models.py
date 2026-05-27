@@ -22,6 +22,13 @@ ComparisonSource = Literal[
     "login_log",
     "status_log",
 ]
+CsvImportType = Literal[
+    "master_data",
+    "personnel_schedule",
+    "demand_forecast",
+    "login_log",
+    "status_log",
+]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -91,6 +98,24 @@ class StatusLogCsvImportRequest(BaseModel):
     file_name: str
     uploaded_by: str
     csv_content: str
+
+
+class CsvImportPreviewRequest(BaseModel):
+    file_name: str
+    import_type: CsvImportType
+    csv_content: str
+
+
+class CsvImportPreviewResponse(BaseModel):
+    file_name: str
+    import_type: CsvImportType
+    total_rows: int = Field(ge=0)
+    detected_fields: list[str]
+    required_fields: list[str]
+    mapped_fields: list[str]
+    missing_required_fields: list[str]
+    warning_fields: list[str]
+    pending_validation_fields: list[str]
 
 
 class ImportBatchFailureRow(BaseModel):

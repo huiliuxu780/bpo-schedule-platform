@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 
 from backend.app.models import (
+    CsvImportPreviewRequest,
+    CsvImportPreviewResponse,
     DemandPlanListResponse,
     DemandForecastCsvImportRequest,
     FulfillmentComparisonContractResponse,
@@ -30,6 +32,7 @@ from backend.app.repository import (
     import_demand_forecast_csv as create_demand_forecast_import_batch,
     import_login_log_csv as create_login_log_import_batch,
     import_personnel_schedule_csv as create_personnel_schedule_import_batch,
+    preview_csv_import as create_csv_import_preview,
     import_status_log_csv as create_status_log_import_batch,
     list_demand_plan_rows,
     list_process_import_batches,
@@ -84,6 +87,11 @@ def import_login_log_csv(request: LoginLogCsvImportRequest) -> ImportBatchResult
 @app.post("/api/v1/import-batches/status-log", response_model=ImportBatchResult)
 def import_status_log_csv(request: StatusLogCsvImportRequest) -> ImportBatchResult:
     return create_status_log_import_batch(request)
+
+
+@app.post("/api/v1/import-batches/preview", response_model=CsvImportPreviewResponse)
+def preview_csv_import(request: CsvImportPreviewRequest) -> CsvImportPreviewResponse:
+    return create_csv_import_preview(request)
 
 
 @app.get("/api/v1/import-batches", response_model=ImportBatchListResponse)

@@ -19,6 +19,15 @@
 
 ### 2026-05-27
 
+- task_id: `F403`
+- source_ids:
+  - `R618-R619`
+- story_ids:
+  - `US587`
+- action: 完成 G001 导入中心 CSV 上传与字段映射预览。
+- status: `done`
+- notes: 导入批次新增页现在支持主数据、人员级排班、需求预测、登录日志和状态日志 CSV 类型选择，上传真实 CSV 后先生成字段映射预览、数据行数、缺失必填字段、未识别字段和待校验字段；后端同步提供本地 `/api/v1/import-batches/preview` 预览契约。主数据本次只开放预览，真实导入处理留给后续 F405；本次不新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已移除 US587/F403，下一项为 US588/F404。
+
 - task_id: `G001-SPLIT`
 - source_ids:
   - `R618-R652`

@@ -5,7 +5,7 @@ tasks:
   - id: F403
     title: "G001 导入中心 CSV 上传与字段映射"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     allowed_files: ["app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]

@@ -4,12 +4,34 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 CSV upload and field-mapping preview
+
+#### 结论
+
+- `F403/US587/R618-R619` 已完成 G001 导入中心 CSV 上传与字段映射预览。
+- `/import-batches/new` 支持选择主数据、人员级排班、需求预测、登录日志和状态日志 CSV 类型，并在提交导入前预览字段映射、行数、缺失必填字段、未识别字段和待校验字段。
+- 后端新增本地预览契约 `/api/v1/import-batches/preview`，使用 Python `csv` 解析上传内容并返回同类字段映射摘要。
+- 主数据本次只开放上传预览，不执行真实业务导入；主数据导入处理仍归后续 `F405`。
+- 本批没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 预览结果只基于 CSV 表头和行数，不代表字段值、主数据引用、业务日期、跨天状态或排班规则已经完成生产级校验。
+- 已有需求预测、人员排班、登录日志和状态日志提交仍走本地 process-memory 导入；主数据提交将在后续任务开放。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/csv-import-preview.test.mjs` 首次失败于缺少 `lib/csv-import-preview.ts`；后端 unittest 首次失败于缺少 `preview_csv_import`。
+- `node --test scripts/tests/csv-import-preview.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，33 个测试通过。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，40 个后端测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已移除 `US587/F403`，下一项为 `US588/F404`。
+
 ### 2026-05-27 - G001 production import closure planning split
 
 #### 结论
 
 - `G001/R618-R652/US587-US604/F403-Q123` 已完成长期执行拆分。
-- 第一批 ready current queue 为 `US587/F403 -> US595/Q120`，覆盖 CSV 上传/字段映射预览、导入批次/失败行/本地版本、主数据导入与维护、人员级排班导入与 0.5h 展开。
+- 第一批 ready current queue 原为 `US587/F403 -> US595/Q120`；`US587/F403` 已完成后，当前队列从 `US588/F404` 继续，覆盖导入批次/失败行/本地版本、主数据导入与维护、人员级排班导入与 0.5h 展开。
 - 需求预测波次 `US596-US598/F409-F411/Q121`、登录/状态波次 `US599-US603/F412-F415/Q122` 和全链边界 QA `US604/Q123` 已进入 backlog blocked，等待前置 ready 波次完成后释放。
 - 本批只拆需求、用户故事、任务队列、current queue 与计划文档，不新增产品代码、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
 
