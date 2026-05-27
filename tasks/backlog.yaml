@@ -154,7 +154,7 @@ tasks:
   - id: F409
     title: "G001 需求预测导入"
     priority: P0
-    status: blocked
+    status: done
     required_workflow: backend-vertical
     dependencies: ["F408"]
     allowed_files: ["app/production-mvp/demand-forecast/**", "app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
@@ -170,7 +170,7 @@ tasks:
   - id: F410
     title: "G001 需求预测版本与变更追踪"
     priority: P0
-    status: blocked
+    status: ready
     required_workflow: backend-vertical
     dependencies: ["F409"]
     allowed_files: ["app/production-mvp/demand-forecast/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]

@@ -79,6 +79,46 @@ test("demand supply alignment exposes shortage overstaff and versions", () => {
   );
 });
 
+test("demand supply alignment preserves imported demand source traceability", () => {
+  const rows = buildDemandSupplyAlignment([
+    {
+      demand_id: "DF-BATCH-001-002",
+      plan_date: "2026-05-11",
+      project_name: "博西客服",
+      site_name: "上海职场",
+      interval_start: "09:30",
+      interval_end: "10:00",
+      skill_group: "热线",
+      skill_level: "L2",
+      forecast_agents: 20,
+      forecast_version: "VER-DF-20260527-001",
+      source: "导入需求预测 / BATCH-DF-20260527-001",
+      source_batch_id: "BATCH-DF-20260527-001",
+      source_version_id: "VER-DF-20260527-001",
+      status: "imported",
+    },
+  ]);
+
+  assert.deepEqual(
+    {
+      demandId: rows[0]?.demandId,
+      forecastVersion: rows[0]?.forecastVersion,
+      sourceBatchId: rows[0]?.sourceBatchId,
+      sourceVersionId: rows[0]?.sourceVersionId,
+      forecastAgents: rows[0]?.forecastAgents,
+      status: rows[0]?.alignmentStatus,
+    },
+    {
+      demandId: "DF-BATCH-001-002",
+      forecastVersion: "VER-DF-20260527-001",
+      sourceBatchId: "BATCH-DF-20260527-001",
+      sourceVersionId: "VER-DF-20260527-001",
+      forecastAgents: 20,
+      status: "缺口",
+    }
+  );
+});
+
 test("demand supply alignment exposes unmatched skill group anomalies", () => {
   const rows = buildDemandSupplyAlignment();
   const mismatch = rows.find(

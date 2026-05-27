@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 demand forecast import
+
+#### 结论
+
+- `F409/US596/R636-R637` 已完成 G001 需求预测导入。
+- 后端需求预测 CSV 导入现在会把成功行写入 process-memory 需求预测业务记录，字段包含业务日、职场、项目、0.5h 时段、技能组、等级、预测人数、来源批次和预测版本。
+- 无效职场、项目、技能组、等级或预测人数会进入失败行，不进入需求预测业务记录。
+- 需求计划读取会优先返回导入预测行，并保留来源批次和版本追溯；前端预测排班对齐模型也保留导入来源批次和版本。
+- current queue 与 active tasks 已切到 `US596/F410`。
+
+#### 风险
+
+- 当前需求预测仍是 no-database process-memory，不是生产预测版本库或可审计持久化。
+- 新版本覆盖旧版本的变更追踪仍归 `F410`；预测 vs 排班对齐和异常生成仍归 `F411`。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于成功行未进入需求预测业务记录、未知技能组未阻断；前端 node test 首次失败于对齐模型未保留来源批次/版本。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，47 个后端测试通过。
+- `node --test scripts/tests/demand-supply-alignment.test.mjs scripts/tests/demand-forecast-contract.test.mjs scripts/tests/import-batch-history.test.mjs`：通过，31 个前端/契约测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已切到 `US596/F410`。
+
 ### 2026-05-27 - G001 personnel schedule foundation QA
 
 #### 结论

@@ -67,8 +67,13 @@ class DemandPlanRow(BaseModel):
     site_name: str
     interval_start: str
     interval_end: str
+    skill_group: str
+    skill_level: str
     forecast_agents: int = Field(ge=0)
+    forecast_version: str
     source: str
+    source_batch_id: str | None = None
+    source_version_id: str | None = None
     status: DemandPlanStatus
 
 

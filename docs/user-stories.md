@@ -130,7 +130,7 @@ stories:
     story: "作为排班运营，我希望导入需求预测并生成预测版本和变更记录，以便后续供需对比可追溯。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "blocked"
+    status: "ready"
     dependencies: [US594]
   - id: US597
     requirement_ids: [R638, R639]

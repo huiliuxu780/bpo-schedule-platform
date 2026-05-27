@@ -46,6 +46,8 @@ DEMAND_FORECAST_IMPORT_REQUIRED_FIELDS = [
     "project_id",
     "interval_start",
     "interval_end",
+    "skill_group",
+    "grade",
     "forecast_agents",
 ]
 
@@ -98,7 +100,7 @@ MASTER_DATA_IMPORT_REQUIRED_FIELDS = [
 CSV_IMPORT_OPTIONAL_FIELDS = {
     "master_data": ["employee_name", "supplier_name", "effective_to", "status"],
     "personnel_schedule": ["source_system", "note"],
-    "demand_forecast": ["skill_group", "grade", "source_system"],
+    "demand_forecast": ["source_system"],
     "login_log": ["device_id", "timezone"],
     "status_log": ["timezone", "source_status_code"],
 }
@@ -114,12 +116,13 @@ CSV_IMPORT_REQUIRED_FIELDS = {
 CSV_IMPORT_PENDING_VALIDATION_FIELDS = {
     "master_data": MASTER_DATA_IMPORT_REQUIRED_FIELDS,
     "personnel_schedule": ["employee_id", "shift_type_id", "start_at", "end_at", "status"],
-    "demand_forecast": ["interval_start", "interval_end", "forecast_agents"],
+    "demand_forecast": ["interval_start", "interval_end", "skill_group", "grade", "forecast_agents"],
     "login_log": ["employee_id", "login_at", "logout_at", "source_system"],
     "status_log": ["employee_id", "status_type", "start_at", "end_at", "source_system"],
 }
 
 IMPORT_BATCH_RESULTS: dict[str, ImportBatchResult] = {}
+DEMAND_FORECAST_IMPORTED_RECORDS: list[DemandPlanRow] = []
 MASTER_DATA_IMPORTED_RECORDS: list[MasterDataImportedRecord] = []
 PERSONNEL_SCHEDULE_IMPORTED_RECORDS: list[PersonnelScheduleImportedRecord] = []
 PERSONNEL_SCHEDULE_INTERVAL_RECORDS: list[PersonnelScheduleIntervalRecord] = []
@@ -133,6 +136,18 @@ SHIFT_TYPE_REFERENCES = {
     "SHIFT-MID-01": "中班 B",
     "SHIFT-LATE-01": "晚班 C",
 }
+
+DEMAND_WORKPLACE_REFERENCES = {
+    "WP-SH": "上海职场",
+    "WP-SZ": "苏州职场",
+}
+
+DEMAND_PROJECT_REFERENCES = {
+    "P-BOSCH": "博西客服",
+}
+
+DEMAND_SKILL_GROUP_REFERENCES = {"热线", "工单"}
+DEMAND_GRADE_REFERENCES = {"L1", "L2"}
 
 
 def preview_csv_import(request: CsvImportPreviewRequest) -> CsvImportPreviewResponse:
@@ -1009,6 +1024,7 @@ def import_demand_forecast_csv(
                 failure_rows.extend(row_failures)
             else:
                 success_rows += 1
+                row["__row_number"] = str(row_index)
                 successful_rows.append(row)
 
     error_codes = sorted({failure.error_code for failure in failure_rows})
@@ -1040,6 +1056,16 @@ def import_demand_forecast_csv(
         version_records=version_records,
     )
     IMPORT_BATCH_RESULTS[batch_id] = result
+
+    if version_records:
+        DEMAND_FORECAST_IMPORTED_RECORDS[:0] = [
+            build_demand_forecast_imported_record(
+                row,
+                batch_id,
+                version_records[0].version_id,
+            )
+            for row in successful_rows
+        ]
 
     return result
 
@@ -1096,7 +1122,90 @@ def validate_demand_forecast_row(
                     )
                 )
 
+    workplace_id = (row.get("workplace_id") or "").strip()
+    if workplace_id and workplace_id not in DEMAND_WORKPLACE_REFERENCES:
+        failures.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="demand_forecast",
+                failed_row_number=row_index,
+                field_name="workplace_id",
+                error_code="workplace_invalid",
+                error_message="需求预测职场不存在或未启用",
+                raw_value=workplace_id,
+            )
+        )
+
+    project_id = (row.get("project_id") or "").strip()
+    if project_id and project_id not in DEMAND_PROJECT_REFERENCES:
+        failures.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="demand_forecast",
+                failed_row_number=row_index,
+                field_name="project_id",
+                error_code="project_invalid",
+                error_message="需求预测项目不存在或未启用",
+                raw_value=project_id,
+            )
+        )
+
+    skill_group = (row.get("skill_group") or "").strip()
+    if skill_group and skill_group not in DEMAND_SKILL_GROUP_REFERENCES:
+        failures.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="demand_forecast",
+                failed_row_number=row_index,
+                field_name="skill_group",
+                error_code="skill_group_invalid",
+                error_message="需求预测技能组不存在或未启用",
+                raw_value=skill_group,
+            )
+        )
+
+    grade = (row.get("grade") or "").strip()
+    if grade and grade not in DEMAND_GRADE_REFERENCES:
+        failures.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="demand_forecast",
+                failed_row_number=row_index,
+                field_name="grade",
+                error_code="grade_invalid",
+                error_message="需求预测等级不存在或未启用",
+                raw_value=grade,
+            )
+        )
+
     return failures
+
+
+def build_demand_forecast_imported_record(
+    row: dict[str, str],
+    batch_id: str,
+    version_id: str,
+) -> DemandPlanRow:
+    workplace_id = (row.get("workplace_id") or "").strip()
+    project_id = (row.get("project_id") or "").strip()
+    row_number = (row.get("__row_number") or "0").strip()
+
+    return DemandPlanRow(
+        demand_id=f"DF-{batch_id}-{row_number}",
+        plan_date=(row.get("business_date") or "").strip(),
+        project_name=DEMAND_PROJECT_REFERENCES.get(project_id, project_id),
+        site_name=DEMAND_WORKPLACE_REFERENCES.get(workplace_id, workplace_id),
+        interval_start=(row.get("interval_start") or "").strip(),
+        interval_end=(row.get("interval_end") or "").strip(),
+        skill_group=(row.get("skill_group") or "").strip(),
+        skill_level=(row.get("grade") or "").strip(),
+        forecast_agents=int((row.get("forecast_agents") or "0").strip()),
+        forecast_version=version_id,
+        source=f"导入需求预测 / {batch_id}",
+        source_batch_id=batch_id,
+        source_version_id=version_id,
+        status="imported",
+    )
 
 
 def import_personnel_schedule_csv(
@@ -1784,7 +1893,12 @@ def _matches_demand_query(row: DemandPlanRow, query: str) -> bool:
             row.site_name,
             row.interval_start,
             row.interval_end,
+            row.skill_group,
+            row.skill_level,
+            row.forecast_version,
             row.source,
+            row.source_batch_id or "",
+            row.source_version_id or "",
             row.status,
         ]
     ).lower()
@@ -1947,7 +2061,8 @@ def list_shift_detail_rows(
 
 
 def list_demand_plan_rows(query: str | None = None) -> list[DemandPlanRow]:
-    rows = [
+    rows = [*DEMAND_FORECAST_IMPORTED_RECORDS]
+    rows.extend(
         DemandPlanRow(
             demand_id=f"demand-{plan.summary.plan_date}-{plan.summary.site_name}-{interval.interval_start}".replace(
                 " ", "-"
@@ -1957,18 +2072,31 @@ def list_demand_plan_rows(query: str | None = None) -> list[DemandPlanRow]:
             site_name=plan.summary.site_name,
             interval_start=interval.interval_start,
             interval_end=interval.interval_end,
+            skill_group=demand_skill_for_backend(interval.interval_start)[0],
+            skill_level=demand_skill_for_backend(interval.interval_start)[1],
             forecast_agents=interval.forecast_agents,
+            forecast_version=f"预测 {plan.summary.version}",
             source="本地预测需求",
             status="mapped",
         )
         for plan in SCHEDULE_PLANS
         for interval in plan.intervals
-    ]
+    )
 
     if query is not None:
         rows = [row for row in rows if _matches_demand_query(row, query)]
 
     return rows
+
+
+def demand_skill_for_backend(start: str) -> tuple[str, str]:
+    if start == "11:30":
+        return "工单", "L2"
+
+    if start == "12:30":
+        return "热线", "L1"
+
+    return "热线", "L2"
 
 
 def list_unavailability_rows(

@@ -83,9 +83,9 @@ class SchedulePlansApiTest(unittest.TestCase):
                 file_name="demand_forecast_preview.csv",
                 import_type="demand_forecast",
                 csv_content=(
-                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
-                    "2026-05-11,SH,P1,09:00,09:30,12\n"
-                    "2026-05-11,SH,P1,09:30,10:00,14"
+                    "business_date,workplace_id,project_id,interval_start,interval_end,skill_group,grade,forecast_agents\n"
+                    "2026-05-11,SH,P1,09:00,09:30,热线,L2,12\n"
+                    "2026-05-11,SH,P1,09:30,10:00,热线,L2,14"
                 ),
             )
         )
@@ -317,9 +317,9 @@ class SchedulePlansApiTest(unittest.TestCase):
                 file_name="demand_forecast_test.csv",
                 uploaded_by="数据管理员",
                 csv_content=(
-                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
-                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,18\n"
-                    "2026-05-26,WP-SH,P-BOSCH,09:30,10:00,20\n"
+                    "business_date,workplace_id,project_id,interval_start,interval_end,skill_group,grade,forecast_agents\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,热线,L2,18\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:30,10:00,热线,L2,20\n"
                 ),
             )
         )
@@ -343,14 +343,50 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIsNotNone(stored)
         self.assertEqual(stored, response)
 
+        demand_rows = list_demand_plans(query=response.batch_id).items
+        imported = next(
+            item
+            for item in demand_rows
+            if item.interval_start == "09:30" and item.interval_end == "10:00"
+        )
+        self.assertEqual(imported.site_name, "上海职场")
+        self.assertEqual(imported.project_name, "博西客服")
+        self.assertEqual(imported.skill_group, "热线")
+        self.assertEqual(imported.skill_level, "L2")
+        self.assertEqual(imported.forecast_agents, 20)
+        self.assertEqual(imported.forecast_version, response.version_records[0].version_id)
+        self.assertEqual(imported.source_batch_id, response.batch_id)
+        self.assertEqual(imported.source_version_id, response.version_records[0].version_id)
+        self.assertEqual(imported.status, "imported")
+
+    def test_demand_forecast_csv_import_rejects_unknown_skill_group(self) -> None:
+        response = import_demand_forecast_csv(
+            DemandForecastCsvImportRequest(
+                file_name="demand_forecast_unknown_skill.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "business_date,workplace_id,project_id,interval_start,interval_end,skill_group,grade,forecast_agents\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,未知技能,L2,18\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.success_rows, 0)
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["skill_group_invalid"])
+        self.assertEqual(response.failure_rows[0].field_name, "skill_group")
+        self.assertEqual(response.failure_rows[0].raw_value, "未知技能")
+        self.assertEqual(list_demand_plans(query=response.batch_id).items, [])
+
     def test_demand_forecast_csv_import_records_failed_rows(self) -> None:
         response = import_demand_forecast_csv(
             DemandForecastCsvImportRequest(
                 file_name="demand_forecast_missing.csv",
                 uploaded_by="数据管理员",
                 csv_content=(
-                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
-                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,\n"
+                    "business_date,workplace_id,project_id,interval_start,interval_end,skill_group,grade,forecast_agents\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,热线,L2,\n"
                 ),
             )
         )
@@ -373,8 +409,8 @@ class SchedulePlansApiTest(unittest.TestCase):
                 file_name="demand_forecast_invalid.csv",
                 uploaded_by="数据管理员",
                 csv_content=(
-                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
-                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,abc\n"
+                    "business_date,workplace_id,project_id,interval_start,interval_end,skill_group,grade,forecast_agents\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,热线,L2,abc\n"
                 ),
             )
         )
@@ -631,8 +667,8 @@ class SchedulePlansApiTest(unittest.TestCase):
                 file_name="demand_forecast_list.csv",
                 uploaded_by="数据管理员",
                 csv_content=(
-                    "business_date,workplace_id,project_id,interval_start,interval_end,forecast_agents\n"
-                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,18\n"
+                    "business_date,workplace_id,project_id,interval_start,interval_end,skill_group,grade,forecast_agents\n"
+                    "2026-05-26,WP-SH,P-BOSCH,09:00,09:30,热线,L2,18\n"
                 ),
             )
         )

@@ -19,6 +19,16 @@
 
 ### 2026-05-27
 
+- task_id: `F409`
+- source_ids:
+  - `R636`
+  - `R637`
+- story_ids:
+  - `US596`
+- action: 完成 G001 需求预测导入。
+- status: `done`
+- notes: 需求预测 CSV 导入现在要求业务日、职场、项目、0.5h 时段、技能组、等级和预测人数；成功行生成 process-memory 需求预测业务记录，带来源批次、预测版本、技能组和等级，可通过需求计划列表读取；无效职场、项目、技能组、等级或预测人数进入失败行，不进入需求预测业务记录。没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已从 F409 切到 US596/F410。
+
 - task_id: `Q120`
 - source_ids:
   - `R635`

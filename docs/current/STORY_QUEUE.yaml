@@ -5,4 +5,13 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US596
+    status: ready
+    priority: P0
+    module: "需求预测"
+    role: "排班运营"
+    task_ids: ["F410"]
+    requirement_ids: ["R636", "R637"]
+    dependencies: ["US594"]
+    story: "生成需求预测版本并记录变更追踪，延续需求预测导入闭环。"

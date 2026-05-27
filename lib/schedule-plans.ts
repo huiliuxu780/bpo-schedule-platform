@@ -57,6 +57,8 @@ export type DemandPlanRow = {
   forecast_agents: number
   forecast_version: string
   source: string
+  source_batch_id?: string | null
+  source_version_id?: string | null
   status: "imported" | "mapped"
 }
 
@@ -83,6 +85,8 @@ export type DemandSupplyAlignmentRow = {
   alignmentStatus: DemandSupplyAlignmentStatus
   mismatchReason: string
   forecastVersion: string
+  sourceBatchId?: string | null
+  sourceVersionId?: string | null
   scheduleVersion: string
   personnelDetailHref: string
 }
@@ -504,6 +508,8 @@ export function buildDemandSupplyAlignment(
           ? `当前时段没有匹配 ${row.skill_group} / ${row.skill_level} 的已排人员`
           : "",
         forecastVersion: row.forecast_version,
+        sourceBatchId: row.source_batch_id,
+        sourceVersionId: row.source_version_id,
         scheduleVersion: `排班 ${plan.summary.version}`,
         personnelDetailHref: `/schedule-plans/${plan.summary.id}#personnel-schedule-details`,
       },
