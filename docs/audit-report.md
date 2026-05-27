@@ -4,6 +4,24 @@
 
 ## Current Audit
 
+### 2026-05-27 - actual-log frontend visibility QA
+
+#### 结论
+
+- `Q124/US607/R656` 已完成 actual-log 前端可见链路 QA。
+- 已验收前端合同模型、履约日历可见面板、目标页面 smoke 和 no-database/no-production-action 边界。
+- current queue 与 active tasks 已清空。
+
+#### 风险
+
+- 本轮仍是本地合同和本地页面闭环，不是数据库持久化、真实外部接口、生产文件存储、权限、审批、导出、批量、可复跑任务、生产异常表、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs scripts/tests/actual-fulfillment-contracts.test.mjs`：通过，25 个前端模型/页面/文案/导航测试通过。
+- Browser smoke：通过，打开 `/person-timeline?...exception=A-1002::late_login`，页面可见“实际履约切片”“切片”“质量问题”“排班对比异常”“影响分钟”“来源记录”“登录时间晚于排班开始”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-27 - actual-log fulfillment calendar visibility
 
 #### 结论

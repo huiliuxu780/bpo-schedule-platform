@@ -19,6 +19,17 @@
 
 ### 2026-05-27
 
+- task_id: `Q124`
+- source_ids:
+  - `R656`
+- story_ids:
+  - `US607`
+- action: 完成 actual-log 前端可见链路 QA。
+- status: `done`
+- notes: 已验证 actual-log intervals、quality issues、schedule-vs-actual anomalies 前端模型、履约日历页面展示、浏览器 smoke 和 no-database/no-production-action 边界。没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-27
+
 - task_id: `F417`
 - source_ids:
   - `R655`

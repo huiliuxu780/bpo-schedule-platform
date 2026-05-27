@@ -61,7 +61,7 @@ stories:
     story: "作为 QA，我希望验证 actual-log 前端可见链路，以便确认模型、页面和边界都可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "ready"
+    status: "done"
     dependencies: [US605, US606]
 acceptance:
   - "前端模型能读取 actual-log intervals、actual-log quality issues 和 schedule-vs-actual anomalies。"
