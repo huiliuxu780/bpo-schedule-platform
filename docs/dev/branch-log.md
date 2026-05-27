@@ -1,5 +1,24 @@
 # Branch Log
 
+## 2026-05-28
+
+### DB001 Database Gate Plan
+
+- branch_name: `codex/db001-database-gate-plan`
+- base_main_commit: `a3a134c`
+- remote_status: `not_pushed`
+- scope: Define database Gate planning and future persistence workflow boundaries without implementing database code.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, migration, ORM, repository, schema, database connection, production persistence config, external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: current queue, active tasks, raw requirements, user stories, backlog, Gate Registry, database Gate plan, implementation plan, audit, task log, project context, and branch log.
+- check_result: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed after clearing stale cross-branch `.next` generated types.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ## 2026-05-10
 
 ### Clean Harness Initialization

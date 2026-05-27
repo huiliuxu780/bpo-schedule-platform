@@ -44,6 +44,8 @@ Backlog `required_workflow` values must map to one of the gates below. If a task
 | `harness` | Harness Documentation Gate | Harness rules, backlog planning, project state, audit, branch log, check scripts | Business implementation, new dependencies, package/lockfile changes, real integrations, database, auth, permissions, approval, export, batch operations |
 | `frontend-scaffold` | Frontend Scaffold Gate | Confirmed static/dashboard UI, local prototype pages, shadcn components, frontend-only local mock or API-client presentation work | New dependencies or package/lockfile changes without PM confirmation, real external data, auth, permissions, approval, export, batch operations, production formulas/status codes/settlement/charge factors |
 | `frontend-audit` | Frontend Audit Gate | Read-only UI/design/code audit and gap reports | Direct UI edits, dependency/package changes, business implementation, copied external code |
+| `database-planning` | Database Planning Gate | Database Gate docs, persistence sequencing, implementation plans, risk boundaries | Creating DB connections, ORM/repository code, migration/schema files, package/lockfile changes, production persistence config |
+| `database-persistence` | Database Persistence Gate | PM-confirmed database implementation tasks after DB001 | Any unconfirmed dependency/package change, real external integration, auth/permissions, approval/export/batch, production formulas/settlement/charge factors |
 | `backend` | Backend Local MVP Gate | Local FastAPI endpoints, local seed/in-memory data, backend tests, route contracts | Database persistence, real external integrations, auth, permissions, approval/export/batch workflows, production status codes/formulas/settlement/charge factors |
 | `backend-mvp` | Backend Local MVP Gate | Same as `backend`, used for MVP-local backend tasks that explicitly avoid production workflow capability | Same as `backend` |
 | `backend-vertical` | Backend Local MVP Gate | Backend portion of a confirmed vertical slice using local data and tests | Same as `backend` |
@@ -105,6 +107,57 @@ Required Git evidence:
 - `check_result`
 - `local_commit_sha` when final check passes and local commit succeeds
 - `push_decision` for stage/module/coherent feature-set completion
+
+## Database Planning Gate
+
+Use this gate for `required_workflow: database-planning` tasks.
+
+Allowed:
+
+- Update database Gate planning documents.
+- Update persistence sequencing, entity ownership, migration strategy notes, and implementation plans.
+- Update backlog, raw requirements, user stories, current queue, audit records, task logs, branch logs, and project context.
+- Define future database tasks and required confirmations.
+
+Forbidden:
+
+- Creating or modifying database connection code.
+- Creating ORM models, repositories, adapters, migration files, schema files, or production persistence configuration.
+- Adding dependencies or modifying package/lockfiles.
+- Connecting real external systems.
+- Implementing auth, permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors.
+
+Required verification:
+
+- `bash scripts/check-state.sh --strict`
+- `git diff --check`
+- `bash scripts/check.sh`
+
+## Database Persistence Gate
+
+Use this gate for future `required_workflow: database-persistence` tasks only after PM separately confirms the concrete database environment, dependency strategy, and migration strategy.
+
+Allowed when a specific task is confirmed:
+
+- Implement the exact database connection, ORM/repository, migration, schema, and persistence slice listed in that task.
+- Add or modify backend tests and database test fixtures listed in that task.
+- Update frontend clients only when the task explicitly requires a vertical slice.
+- Update Harness traceability documents.
+
+Forbidden unless separately confirmed by PM:
+
+- Real external CORN, HR, WFM, Excel, or third-party integrations.
+- Auth, permissions, supplier isolation, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors.
+- Any package/lockfile change outside the approved database dependency set.
+- Broad schema implementation beyond the task's accepted entity slice.
+
+Required verification:
+
+- Database migration/check command defined by the active task.
+- Backend tests for the persistence slice.
+- `bash scripts/check-state.sh --strict`
+- `git diff --check`
+- `bash scripts/check.sh`
 
 ## Frontend Scaffold Gate
 

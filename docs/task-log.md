@@ -17,6 +17,20 @@
 
 ## Log
 
+### 2026-05-28
+
+- task_id: `DB001`
+- source_ids:
+  - `R665`
+  - `R666`
+  - `R667`
+  - `R668`
+- story_ids:
+  - `US612`
+- action: 启动数据库 Gate 规划与首批落库拆解。
+- status: `done`
+- notes: PM 已确认进入数据库 Gate；DB001 已交付数据库 Gate 规划、database-planning/database-persistence workflow、首批导入持久化顺序、DB002 前置确认项和实施计划。本轮未创建数据库连接、ORM、repository、migration、schema、生产持久化配置、新依赖、真实外部集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
 ### 2026-05-12
 
 - task_id: `F018`

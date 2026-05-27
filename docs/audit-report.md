@@ -4,6 +4,24 @@
 
 ## Current Audit
 
+### 2026-05-28 - DB001 数据库 Gate 规划
+
+#### 审计结论
+
+- `US612/DB001/R665-R668` 已完成数据库 Gate 规划。
+- 本轮新增 `database-planning` 与 `database-persistence` workflow 规则，明确 DB001 只做规划，DB002 之后才可能进入实现。
+- 数据库 Gate 规划明确首批落库应先做导入批次、成功/失败行和版本记录，再推进主数据、人员排班、预测、登录状态、对比结果和复核记录。
+
+#### 风险
+
+- DB001 不包含数据库实现，不能被解读为已具备生产持久化。
+- DB002 开始前仍需 PM 明确数据库引擎、依赖/package 修改授权、migration 工具和测试数据库方案。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check` 和最终 `bash scripts/check.sh`：通过。首次 full check 因 `.next` 跨分支生成缓存引用旧页面失败；清理 `.next` 后复跑通过。
+
 ### 2026-05-12 - F018 风险提示表局部 table parity 迁移审计
 
 #### 审计结论

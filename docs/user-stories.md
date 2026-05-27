@@ -29,6 +29,31 @@
 
 ## Stories
 
+### US612 - 数据库 Gate 规划
+
+```yaml
+id: US612
+requirement_ids:
+  - R665
+  - R666
+  - R667
+  - R668
+task_ids:
+  - DB001
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望先确认数据库 Gate 的边界、首批落库顺序和实施计划，以便后续数据库开发不混入权限、审批、导出、批量和结算等生产能力。"
+task_type: "database-planning"
+priority: "P0"
+acceptance:
+  - "数据库 Gate 文档明确允许、禁止和硬停项。"
+  - "首批落库顺序从导入批次、失败行和版本记录开始。"
+  - "后续数据库实现拆成可逐步执行的 DB002+ 任务。"
+  - "本轮不创建数据库连接、ORM、migration、schema、生产持久化配置或新依赖。"
+dependencies: []
+status: "done"
+```
+
 ### US001 - 运营负责人查看 Dashboard 总览
 
 ```yaml

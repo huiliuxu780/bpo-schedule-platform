@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R665-R668 - 数据库 Gate 规划与首批落库拆解
+
+```yaml
+requirements:
+  - id: R665
+    module: "生产持久化"
+    description: "PM 已确认进入数据库 Gate，需要先明确数据库落库边界、禁止混入的生产能力和首批可执行范围。"
+  - id: R666
+    module: "生产持久化"
+    description: "数据库 Gate 需要先按业务依赖顺序拆分：导入批次、失败行、版本记录、主数据、人员排班、预测、登录状态、异常、复核记录。"
+  - id: R667
+    module: "生产持久化"
+    description: "首批落库建议从导入批次、成功/失败行和版本记录开始，因为后续主数据、排班、预测、登录状态和异常都依赖导入来源。"
+  - id: R668
+    module: "质量与交付"
+    description: "数据库 Gate 规划需要有明确验收方式：本轮只交付文档、Harness 任务和实施计划，不创建数据库连接、ORM、migration、schema 或生产配置。"
+source: "PM confirmed database Gate after local supervisor handling-record chain on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只做数据库 Gate 规划和执行拆解，不实施数据库持久化；下一步 DB002 开始前必须再次确认具体数据库环境、依赖和 migration 策略。"
+```
+
 ### R001 - BPO WFM Dashboard 静态首页
 
 ```yaml
