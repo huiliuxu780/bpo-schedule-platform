@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F417 Actual Fulfillment Calendar Visibility
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `ce14376`
+- remote_status: `not_pushed`
+- scope: frontend local business visibility: show actual-log intervals, actual-log quality issues, and schedule-vs-actual anomalies in the existing fulfillment calendar group-day exception panel.
+- allowed_files_check: `app/person-timeline/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, component, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing `/person-timeline` route and frontend tests plus current and legacy traceability docs; no new standalone status page, sidebar entry, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `getActualFulfillmentRecords` and `ActualFulfillmentPanel`; target model/page tests, product UI copy audit, navigation regression, typecheck, browser smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F416 Actual Fulfillment Contract Model
 
 - branch_name: `codex/f412-login-status-logs`

@@ -12,6 +12,12 @@ import {
 } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import {
+  filterScheduleActualAnomalies,
+  getActualFulfillmentRecords,
+  summarizeActualFulfillmentRecords,
+  type ActualFulfillmentRecords,
+} from "@/lib/actual-fulfillment-contracts"
+import {
   submitSupervisorClosureAction,
   submitSupervisorEvidenceAction,
   submitSupervisorReviewConclusionAction,
@@ -70,6 +76,7 @@ export default async function PersonTimelinePage({ searchParams }: PageProps) {
     focus === "gap" || focus === "anomaly" ? focus : "all"
   const queueFilter = getMatrixQueueFilter(queue)
   const calendar = getFulfillmentCalendar(fallbackPersonTimelines)
+  const actualFulfillmentRecords = await getActualFulfillmentRecords()
   const selectedTeam = getFulfillmentTeam(teamId, fallbackPersonTimelines)
   const selectedMatrix =
     selectedTeam && groupId && date
@@ -106,6 +113,7 @@ export default async function PersonTimelinePage({ searchParams }: PageProps) {
             matrix={selectedMatrix}
             selectedExceptionKey={exception}
             queueFilter={queueFilter}
+            actualFulfillmentRecords={actualFulfillmentRecords}
           />
         ) : selectedGroupWeekMatrix ? (
           <GroupMemberWeekMatrixSection matrix={selectedGroupWeekMatrix} focus={groupWeekFocus} />
@@ -1251,10 +1259,12 @@ function MemberMatrixSection({
   matrix,
   selectedExceptionKey,
   queueFilter,
+  actualFulfillmentRecords,
 }: {
   matrix: FulfillmentGroupMatrix
   selectedExceptionKey?: string
   queueFilter: MatrixQueueFilter
+  actualFulfillmentRecords: ActualFulfillmentRecords
 }) {
   const visibleQueue = getVisibleMatrixExceptionQueue(matrix, queueFilter)
   const queueCursor = getFulfillmentMatrixExceptionQueueCursor(visibleQueue, selectedExceptionKey)
@@ -1299,6 +1309,7 @@ function MemberMatrixSection({
             matrix={matrix}
             visibleQueue={visibleQueue}
             queueFilter={queueFilter}
+            actualFulfillmentRecords={actualFulfillmentRecords}
           />
         </div>
       </CardContent>
@@ -1353,11 +1364,13 @@ function MatrixExceptionPanel({
   matrix,
   visibleQueue,
   queueFilter,
+  actualFulfillmentRecords,
 }: {
   cursor: FulfillmentMatrixExceptionQueueCursor
   matrix: FulfillmentGroupMatrix
   visibleQueue: FulfillmentMatrixExceptionQueueItem[]
   queueFilter: MatrixQueueFilter
+  actualFulfillmentRecords: ActualFulfillmentRecords
 }) {
   const selected = cursor.selected
 
@@ -1377,6 +1390,11 @@ function MatrixExceptionPanel({
 
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
+      <ActualFulfillmentPanel
+        matrix={matrix}
+        selected={selected}
+        records={actualFulfillmentRecords}
+      />
       {selected ? <SelectedExceptionFollowUpCard selected={selected} /> : null}
       {selected ? <SelectedExceptionComparisonCard selected={selected} /> : null}
       {selected ? <SelectedExceptionOwnerLoadComparisonCard selected={selected} /> : null}
@@ -1796,6 +1814,124 @@ function MatrixExceptionPanel({
         </>
       ) : null}
     </aside>
+  )
+}
+
+function ActualFulfillmentPanel({
+  matrix,
+  selected,
+  records,
+}: {
+  matrix: FulfillmentGroupMatrix
+  selected?: FulfillmentMatrixExceptionQueueItem
+  records: ActualFulfillmentRecords
+}) {
+  const scope = {
+    employeeId: selected?.employeeId,
+    businessDate: selected?.detailDate ?? matrix.date,
+    workplaceId: matrix.team.workplace,
+    projectId: matrix.team.project,
+  }
+  const intervals = records.intervals.filter(
+    (item) =>
+      item.businessDate === scope.businessDate &&
+      item.workplaceId === scope.workplaceId &&
+      item.projectId === scope.projectId &&
+      (!scope.employeeId || item.employeeId === scope.employeeId)
+  )
+  const qualityIssues = records.qualityIssues.filter(
+    (item) =>
+      item.businessDate === scope.businessDate &&
+      item.workplaceId === scope.workplaceId &&
+      item.projectId === scope.projectId &&
+      (!scope.employeeId || item.employeeId === scope.employeeId)
+  )
+  const anomalies = filterScheduleActualAnomalies(records.anomalies, {
+    employeeId: scope.employeeId,
+    businessDate: scope.businessDate,
+  }).filter(
+    (item) => item.workplaceId === scope.workplaceId && item.projectId === scope.projectId
+  )
+  const summary = summarizeActualFulfillmentRecords({
+    intervals,
+    qualityIssues,
+    anomalies,
+  })
+  const primaryAnomaly = anomalies[0]
+
+  return (
+    <div className="grid gap-3 rounded-md border bg-muted/30 p-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">实际履约切片</div>
+          <div className="text-xs text-muted-foreground">
+            {selected ? `${selected.employeeId} ${selected.employeeName}` : matrix.group.supplier} / {scope.businessDate}
+          </div>
+        </div>
+        <Badge variant={summary.highSeverityCount > 0 ? "destructive" : "outline"}>
+          高严重 {summary.highSeverityCount}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <SummaryMetric label="切片" value={`${summary.intervalCount}`} />
+        <SummaryMetric label="质量问题" value={`${summary.qualityIssueCount}`} />
+        <SummaryMetric label="排班对比异常" value={`${summary.anomalyCount}`} />
+        <SummaryMetric label="影响分钟" value={`${summary.totalImpactMinutes}`} />
+      </div>
+      {primaryAnomaly ? (
+        <div className="grid gap-2 rounded-md border bg-background p-2 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-medium">{primaryAnomaly.message}</span>
+            <Badge variant={primaryAnomaly.severity === "high" ? "destructive" : "secondary"}>
+              {primaryAnomaly.impactMinutes} 分钟
+            </Badge>
+          </div>
+          <div className="text-muted-foreground">
+            {primaryAnomaly.intervalStart}-{primaryAnomaly.intervalEnd} / {primaryAnomaly.anomalyType}
+          </div>
+          <div className="text-muted-foreground">
+            来源记录：{primaryAnomaly.sourceRecordIds.join(" / ")}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-md border bg-background p-2 text-xs text-muted-foreground">
+          当前范围暂无排班对比异常。
+        </div>
+      )}
+      <div className="grid gap-2">
+        {intervals.slice(0, 2).map((item) => (
+          <div key={item.intervalId} className="grid gap-1 rounded-md border bg-background p-2 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">
+                {item.intervalStart}-{item.intervalEnd}
+              </span>
+              <span className="text-muted-foreground">
+                登录 {item.loginMinutes} / 状态 {item.statusMinutes} / 有效 {item.productiveMinutes}
+              </span>
+            </div>
+            <div className="text-muted-foreground">
+              状态：{item.statusTypes.join(" / ") || "未记录"}；来源记录：
+              {[...item.loginLogIds, ...item.statusLogIds].join(" / ")}
+            </div>
+          </div>
+        ))}
+      </div>
+      {qualityIssues.length > 0 ? (
+        <div className="grid gap-2">
+          {qualityIssues.slice(0, 2).map((issue) => (
+            <div key={issue.issueId} className="grid gap-1 rounded-md border bg-background p-2 text-xs">
+              <div className="font-medium">{issue.message}</div>
+              <div className="text-muted-foreground">
+                {issue.intervalStart}-{issue.intervalEnd} / 断档 {issue.gapMinutes} / 重叠 {issue.overlapMinutes}
+              </div>
+              <div className="text-muted-foreground">
+                来源记录：{issue.sourceRecordIds.join(" / ")}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
   )
 }
 

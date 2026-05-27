@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -108,4 +109,14 @@ test("actual fulfillment anomalies can be filtered by employee date and severity
     rows.map((row) => row.anomalyType),
     ["late_login", "non_productive_status"]
   );
+});
+
+test("person timeline page surfaces actual fulfillment records in the exception panel", () => {
+  const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
+
+  assert.ok(pageSource.includes("getActualFulfillmentRecords"));
+  assert.ok(pageSource.includes("ActualFulfillmentPanel"));
+  assert.ok(pageSource.includes("实际履约切片"));
+  assert.ok(pageSource.includes("排班对比异常"));
+  assert.ok(pageSource.includes("来源记录"));
 });

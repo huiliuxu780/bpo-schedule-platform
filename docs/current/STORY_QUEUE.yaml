@@ -6,17 +6,8 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US606
-    status: ready
-    priority: P0
-    module: "履约监控"
-    role: "现场主管"
-    task_ids: ["F417"]
-    requirement_ids: ["R655"]
-    dependencies: ["US605"]
-    story: "在现有履约日历链路展示实际履约切片、质量问题和排班对比异常。"
   - id: US607
-    status: blocked
+    status: ready
     priority: P1
     module: "质量与交付"
     role: "QA"

@@ -22,7 +22,7 @@ tasks:
   - id: F417
     title: "履约日历实际履约切片与异常可见面板"
     priority: P0
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["F416"]
     allowed_files: ["app/person-timeline/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
@@ -39,7 +39,7 @@ tasks:
   - id: Q124
     title: "actual-log 前端可见链路 QA"
     priority: P1
-    status: blocked
+    status: ready
     required_workflow: qa
     dependencies: ["F416", "F417"]
     allowed_files: ["docs/**", "tasks/backlog.yaml"]

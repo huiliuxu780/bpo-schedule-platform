@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-27 - actual-log fulfillment calendar visibility
+
+#### 结论
+
+- `F417/US606/R655` 已在现有履约日历链路展示 actual-log 和 schedule-vs-actual 前端合同结果。
+- 小组成员单日矩阵右侧异常面板现在展示“实际履约切片”，包含切片、质量问题、排班对比异常、影响分钟和来源记录。
+- 选中异常时按员工和业务日聚焦；未选中时按小组日期范围展示。
+- 本次没有新增独立状态页、后端、依赖、数据库、真实接口、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 页面仍读取本地合同和 fallback；不是数据库持久化、真实外部接口、可复跑任务或生产异常表。
+- 本轮只做查看，不新增处理动作、审批、导出或批量。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/actual-fulfillment-contracts.test.mjs` 首次失败于页面缺少 `getActualFulfillmentRecords` 和 `ActualFulfillmentPanel`。
+- `node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs scripts/tests/actual-fulfillment-contracts.test.mjs`：通过，25 个前端模型/页面/文案/导航测试通过。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，打开 `/person-timeline?...exception=A-1002::late_login`，页面可见“实际履约切片”“排班对比异常”“来源记录”“登录时间晚于排班开始”。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 已推进到 `US607/Q124`。
+
 ### 2026-05-27 - actual-log frontend contract model
 
 #### 结论

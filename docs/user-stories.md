@@ -51,7 +51,7 @@ stories:
     story: "作为现场主管，我希望在现有履约日历看到排班与登录/状态对比异常，以便复核时能追到来源记录。"
     task_type: "frontend-scaffold"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US605]
   - id: US607
     requirement_ids: [R656]
@@ -61,7 +61,7 @@ stories:
     story: "作为 QA，我希望验证 actual-log 前端可见链路，以便确认模型、页面和边界都可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "blocked"
+    status: "ready"
     dependencies: [US605, US606]
 acceptance:
   - "前端模型能读取 actual-log intervals、actual-log quality issues 和 schedule-vs-actual anomalies。"
