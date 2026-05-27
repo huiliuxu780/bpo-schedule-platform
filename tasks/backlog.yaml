@@ -23,7 +23,7 @@ tasks:
   - id: Q126
     title: "本地复核处理记录链 QA"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     dependencies: ["F419"]
     allowed_files: ["docs/**", "tasks/backlog.yaml"]

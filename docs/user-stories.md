@@ -51,7 +51,7 @@ stories:
     story: "作为 QA，我希望验证本地处理记录链回显，以便确认记录顺序、来源证据和边界可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "ready"
+    status: "done"
     dependencies: [US610]
 acceptance:
   - "页面在处理闭环区域展示本地处理记录链。"

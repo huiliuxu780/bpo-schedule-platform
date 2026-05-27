@@ -19,6 +19,17 @@
 
 ### 2026-05-27
 
+- task_id: `Q126`
+- source_ids:
+  - `R664`
+- story_ids:
+  - `US611`
+- action: 完成本地复核处理记录链 QA。
+- status: `done`
+- notes: 已验证处理记录链模型、页面回显、待提交复核预览、actual-log 默认证据、来源记录引用、页面 smoke 和 no-database/no-production-action 边界。没有新增后端、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-27
+
 - task_id: `F419`
 - source_ids:
   - `R661`

@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### Q126 Local Handling Record Chain QA
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `f49b432`
+- remote_status: `not_pushed`
+- scope: QA closeout for local handling-record chain, covering record order, pending preview, actual-log evidence defaults, source references, browser smoke, and no-database/no-production-action boundary.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates current queue, active tasks, backlog/story status, audit, task log, project context, and branch log only.
+- check_result: target frontend tests, browser smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F419 Local Handling Record Chain
 
 - branch_name: `codex/f412-login-status-logs`

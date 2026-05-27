@@ -4,6 +4,24 @@
 
 ## Current Audit
 
+### 2026-05-27 - local handling-record chain QA
+
+#### 结论
+
+- `Q126/US611/R664` 已完成本地复核处理记录链 QA。
+- 已验收模型记录顺序、页面“处理记录链”回显、待提交复核预览、actual-log 默认证据和 no-database/no-production-action 边界。
+- current queue 与 active tasks 已清空。
+
+#### 风险
+
+- 本轮仍是本地 process-memory 记录链，不是数据库持久化、真实外部接口、权限、审批、导出、批量、文件存储或生产异常处理表。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs scripts/tests/actual-fulfillment-contracts.test.mjs`：通过，28 个前端模型/页面/文案/导航测试通过。
+- Browser smoke：通过，目标页面可见“处理记录链”“待提交复核”“实际来源证据”“提交复核结论”“补充证据”，补充证据默认 `actual_log` 和 `SCH-A-1002-20260511`，复核来源包含 `SCH-A-1002-20260511` 与 `LOG-A-1002-20260511`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-27 - local handling-record chain
 
 #### 结论

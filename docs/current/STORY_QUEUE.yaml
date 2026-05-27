@@ -5,13 +5,4 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories:
-  - id: US611
-    status: ready
-    priority: P1
-    module: "质量与交付"
-    role: "QA"
-    task_ids: ["Q126"]
-    requirement_ids: ["R664"]
-    dependencies: ["US610"]
-    story: "验证本地处理记录链回显、来源引用和 no-database/no-production-action 边界。"
+stories: []

@@ -5,13 +5,4 @@ notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
-tasks:
-  - id: Q126
-    status: ready
-    title: "本地复核处理记录链 QA"
-    priority: P1
-    story_ids: ["US611"]
-    required_workflow: qa
-    dependencies: ["F419"]
-    allowed_files: ["docs/**", "tasks/backlog.yaml"]
-    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+tasks: []
