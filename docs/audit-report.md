@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - actual-log source evidence write-through
+
+#### 结论
+
+- `F418/US608/R657-R659` 已将 actual-log 来源记录接入主管本地复核证据。
+- 模型新增 actual-log 证据来源抽取，优先使用排班对比异常 source records，再补充质量问题和切片来源记录。
+- 处理闭环卡现在展示“实际来源证据”；复核结论表单的 `source_references` 包含 actual-log 来源；补充证据默认关联 `actual_log` 和首条实际来源记录。
+- 本次没有新增后端、依赖、数据库、真实接口、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮仍是本地表单默认值和 process-memory 提交，不是生产持久化、权限审批、真实证据文件存储或批量处理。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/actual-fulfillment-contracts.test.mjs` 首次失败于缺少 `getActualFulfillmentEvidenceReferences`。
+- `node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs scripts/tests/actual-fulfillment-contracts.test.mjs`：通过，27 个前端模型/页面/文案/导航测试通过。
+- `npm run typecheck`：通过。
+- Browser smoke：通过，目标页面可见“实际来源证据”，补充证据默认 `actual_log`，默认记录 `SCH-A-1002-20260511`，复核来源包含 `SCH-A-1002-20260511` 和 `LOG-A-1002-20260511`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 已推进到 `US609/Q125`。
+
 ### 2026-05-27 - actual-log frontend visibility QA
 
 #### 结论

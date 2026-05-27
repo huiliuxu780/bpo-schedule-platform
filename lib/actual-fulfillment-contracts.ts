@@ -67,6 +67,8 @@ export type ActualFulfillmentSummary = {
 export type ScheduleActualAnomalyFilter = {
   employeeId?: string
   businessDate?: string
+  workplaceId?: string
+  projectId?: string
   severity?: ScheduleActualAnomalyRecord["severity"]
 }
 
@@ -317,11 +319,53 @@ export function filterScheduleActualAnomalies(
     if (filters.businessDate && row.businessDate !== filters.businessDate) {
       return false
     }
+    if (filters.workplaceId && row.workplaceId !== filters.workplaceId) {
+      return false
+    }
+    if (filters.projectId && row.projectId !== filters.projectId) {
+      return false
+    }
     if (filters.severity && row.severity !== filters.severity) {
       return false
     }
     return true
   })
+}
+
+export function getActualFulfillmentEvidenceReferences(
+  records: ActualFulfillmentRecords,
+  filters: ScheduleActualAnomalyFilter
+): string[] {
+  const references: string[] = []
+  const pushAll = (items: string[]) => {
+    for (const item of items) {
+      if (item && !references.includes(item)) {
+        references.push(item)
+      }
+    }
+  }
+  const matchesScope = (
+    row: Pick<
+      ActualLogIntervalRecord,
+      "employeeId" | "businessDate" | "workplaceId" | "projectId"
+    >
+  ) =>
+    (!filters.employeeId || row.employeeId === filters.employeeId) &&
+    (!filters.businessDate || row.businessDate === filters.businessDate) &&
+    (!filters.workplaceId || row.workplaceId === filters.workplaceId) &&
+    (!filters.projectId || row.projectId === filters.projectId)
+
+  for (const anomaly of filterScheduleActualAnomalies(records.anomalies, filters)) {
+    pushAll(anomaly.sourceRecordIds)
+  }
+  for (const issue of records.qualityIssues.filter(matchesScope)) {
+    pushAll([issue.issueId, ...issue.sourceRecordIds])
+  }
+  for (const interval of records.intervals.filter(matchesScope)) {
+    pushAll([...interval.loginLogIds, ...interval.statusLogIds, interval.intervalId])
+  }
+
+  return references
 }
 
 export async function getActualFulfillmentRecords(): Promise<ActualFulfillmentRecords> {

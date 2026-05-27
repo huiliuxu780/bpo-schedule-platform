@@ -2,6 +2,39 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F418
+    title: "actual-log 来源记录接入本地复核证据"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["F416", "F417", "Q124"]
+    allowed_files: ["app/person-timeline/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "components/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "复核结论表单的 `source_references` 优先包含 actual-log 来源记录。"
+      - "补充证据表单默认关联实际履约记录来源。"
+      - "页面展示实际来源证据列表，供主管提交前核对。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["依赖 F416/F417/Q124 未完成", "需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: Q125
+    title: "actual-log 来源证据接入 QA"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    dependencies: ["F418"]
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "验证 actual-log 来源记录接入复核结论和补充证据表单。"
+      - "确认本轮只做本地复核证据预填，不新增数据库、真实外部系统、权限审批、导出批量或生产公式。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["依赖 F418 未完成", "验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
   - id: F416
     title: "actual-log 与排班对比异常前端合同模型"
     priority: P0

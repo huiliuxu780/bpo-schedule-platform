@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F418 Actual Log Source Evidence
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `bffda3c`
+- remote_status: `not_pushed`
+- scope: frontend local evidence write-through: derive actual-log source references from schedule-vs-actual anomalies, quality issues, and actual intervals, show them in the local closure card, and default review/evidence forms to those records.
+- allowed_files_check: `app/person-timeline/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, component, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates existing `/person-timeline` local closure form, actual fulfillment model/test, and current/legacy traceability docs; no new route, sidebar entry, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `getActualFulfillmentEvidenceReferences`; target model/page tests, product UI copy audit, navigation regression, typecheck, browser smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q124 Actual Fulfillment Visibility QA
 
 - branch_name: `codex/f412-login-status-logs`

@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   fallbackActualFulfillmentRecords,
   filterScheduleActualAnomalies,
+  getActualFulfillmentEvidenceReferences,
   getActualFulfillmentRecords,
   summarizeActualFulfillmentRecords,
 } from "../../lib/actual-fulfillment-contracts.ts";
@@ -111,6 +112,22 @@ test("actual fulfillment anomalies can be filtered by employee date and severity
   );
 });
 
+test("actual fulfillment evidence references prefer anomaly source records", () => {
+  const references = getActualFulfillmentEvidenceReferences(fallbackActualFulfillmentRecords, {
+    employeeId: "A-1002",
+    businessDate: "2026-05-11",
+    workplaceId: "上海职场",
+    projectId: "博西客服",
+  });
+
+  assert.deepEqual(references.slice(0, 4), [
+    "SCH-A-1002-20260511",
+    "LOG-A-1002-20260511",
+    "STA-A-1002-20260511-0946",
+    "STA-A-1002-20260511-0921",
+  ]);
+});
+
 test("person timeline page surfaces actual fulfillment records in the exception panel", () => {
   const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
 
@@ -119,4 +136,14 @@ test("person timeline page surfaces actual fulfillment records in the exception 
   assert.ok(pageSource.includes("实际履约切片"));
   assert.ok(pageSource.includes("排班对比异常"));
   assert.ok(pageSource.includes("来源记录"));
+});
+
+test("person timeline local review form defaults to actual fulfillment evidence", () => {
+  const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
+
+  assert.ok(pageSource.includes("getActualFulfillmentEvidenceReferences"));
+  assert.ok(pageSource.includes("actualEvidenceReferences"));
+  assert.ok(pageSource.includes("实际来源证据"));
+  assert.ok(pageSource.includes('value="actual_log"'));
+  assert.ok(pageSource.includes('defaultValue={actualEvidenceReferences[0] ?? selected.employeeId}'));
 });

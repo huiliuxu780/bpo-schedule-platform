@@ -50,7 +50,7 @@ export type SupervisorExceptionEvidenceRecord = {
   submittedBy: string
   submittedAt: string
   note: string
-  linkedRecordType: "import_batch" | "data_quality_issue" | "person_timeline"
+  linkedRecordType: "import_batch" | "data_quality_issue" | "person_timeline" | "actual_log"
   linkedRecordId: string
 }
 

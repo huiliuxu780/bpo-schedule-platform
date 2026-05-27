@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R657-R660 - actual-log 来源记录接入本地复核证据
+
+```yaml
+requirements:
+  - id: R657
+    module: "履约监控"
+    description: "现场主管在提交本地复核结论时，需要自动带上当前 actual-log 排班对比异常的来源记录，避免只提交泛化判断。"
+  - id: R658
+    module: "履约监控"
+    description: "现场主管补充证据时，需要默认关联 actual-log 来源记录，包括排班明细、登录记录、状态记录或质量问题记录。"
+  - id: R659
+    module: "履约监控"
+    description: "页面需要明确展示本次复核将引用哪些实际来源证据，便于主管提交前核对。"
+  - id: R660
+    module: "质量与交付"
+    description: "actual-log 来源证据接入后需要 QA 验证模型、页面 smoke、表单默认值和无数据库/无生产动作边界。"
+source: "PM requested continuing local production-prototype development after actual-log visibility on 2026-05-27"
+submitted_at: "2026-05-27"
+version: "1.0"
+status: "split"
+notes: "本组只把已有 actual-log 本地合同的来源记录接入主管本地复核和证据表单，不新增数据库、ORM、migration、真实外部系统、权限、审批、导出、批量、文件存储、生产公式、结算、收费因子或新依赖。"
+```
+
 ### R653-R656 - 实际履约合同前端可见链路
 
 ```yaml

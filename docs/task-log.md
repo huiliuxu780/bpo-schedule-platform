@@ -19,6 +19,19 @@
 
 ### 2026-05-27
 
+- task_id: `F418`
+- source_ids:
+  - `R657`
+  - `R658`
+  - `R659`
+- story_ids:
+  - `US608`
+- action: 将 actual-log 来源记录接入主管本地复核证据。
+- status: `done`
+- notes: actual fulfillment 模型新增来源证据抽取，优先使用排班对比异常的 source records；`/person-timeline` 处理闭环卡展示“实际来源证据”，复核结论隐藏来源包含 actual-log 来源记录，补充证据默认关联 `actual_log` 和首条实际来源记录。没有新增后端、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 已推进到 Q125。
+
+### 2026-05-27
+
 - task_id: `Q124`
 - source_ids:
   - `R656`

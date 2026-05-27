@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils"
 import {
   filterScheduleActualAnomalies,
+  getActualFulfillmentEvidenceReferences,
   getActualFulfillmentRecords,
   summarizeActualFulfillmentRecords,
   type ActualFulfillmentRecords,
@@ -1387,6 +1388,14 @@ function MatrixExceptionPanel({
     : ""
   const returnPath = selected ? matrixQueueItemHref(matrix, queueFilter, selected.key) : "/person-timeline"
   const reviewState = selected ? getSupervisorExceptionReviewState(selected.key) : undefined
+  const actualEvidenceReferences = selected
+    ? getActualFulfillmentEvidenceReferences(actualFulfillmentRecords, {
+        employeeId: selected.employeeId,
+        businessDate: selected.detailDate,
+        workplaceId: matrix.team.workplace,
+        projectId: matrix.team.project,
+      })
+    : []
 
   return (
     <aside className="grid gap-3 rounded-lg border p-3">
@@ -1404,6 +1413,7 @@ function MatrixExceptionPanel({
           selected={selected}
           reviewState={reviewState}
           returnPath={returnPath}
+          actualEvidenceReferences={actualEvidenceReferences}
         />
       ) : null}
       {selected ? <SelectedExceptionReviewOutcomePreviewCard selected={selected} /> : null}
@@ -2160,12 +2170,17 @@ function SelectedExceptionLocalClosureCard({
   selected,
   reviewState,
   returnPath,
+  actualEvidenceReferences,
 }: {
   selected: FulfillmentMatrixExceptionQueueItem
   reviewState: SupervisorExceptionReviewState
   returnPath: string
+  actualEvidenceReferences: string[]
 }) {
   const preview = selected.reviewOutcomePreview
+  const sourceReferences = Array.from(
+    new Set([...actualEvidenceReferences, ...preview.sourceReferences])
+  )
   const canClose =
     reviewState.latestConclusion &&
     reviewState.evidenceRecords.length > 0 &&
@@ -2180,6 +2195,7 @@ function SelectedExceptionLocalClosureCard({
     SupervisorExceptionReviewState["evidenceRecords"][number]["linkedRecordType"],
     string
   > = {
+    actual_log: "实际履约记录",
     import_batch: "导入批次",
     data_quality_issue: "数据质量问题",
     person_timeline: "人员履约记录",
@@ -2198,6 +2214,13 @@ function SelectedExceptionLocalClosureCard({
           {statusLabel[reviewState.status]}
         </Badge>
       </div>
+
+      {actualEvidenceReferences.length > 0 ? (
+        <div className="grid gap-1 rounded-md border bg-muted/30 p-2 text-xs">
+          <div className="font-medium text-foreground">实际来源证据</div>
+          <div className="text-muted-foreground">{actualEvidenceReferences.join(" / ")}</div>
+        </div>
+      ) : null}
 
       {reviewState.latestConclusion ? (
         <div className="rounded-md border bg-muted/30 p-2 text-xs">
@@ -2224,7 +2247,7 @@ function SelectedExceptionLocalClosureCard({
         <input
           type="hidden"
           name="source_references"
-          value={preview.sourceReferences.join(",")}
+          value={sourceReferences.join(",")}
         />
         <input type="hidden" name="submitted_by" value="现场主管" />
         <textarea
@@ -2259,9 +2282,10 @@ function SelectedExceptionLocalClosureCard({
           <input type="hidden" name="submitted_by" value="现场主管" />
           <select
             name="linked_record_type"
-            defaultValue="person_timeline"
+            defaultValue={actualEvidenceReferences.length > 0 ? "actual_log" : "person_timeline"}
             className="h-8 rounded-md border bg-background px-2 text-xs"
           >
+            <option value="actual_log">实际履约记录</option>
             <option value="person_timeline">人员履约记录</option>
             <option value="data_quality_issue">数据质量问题</option>
             <option value="import_batch">导入批次</option>
@@ -2270,7 +2294,7 @@ function SelectedExceptionLocalClosureCard({
             name="linked_record_id"
             required
             className="h-8 rounded-md border bg-background px-3 text-xs"
-            defaultValue={selected.employeeId}
+            defaultValue={actualEvidenceReferences[0] ?? selected.employeeId}
           />
           <textarea
             name="note"

@@ -29,6 +29,37 @@
 
 ## Stories
 
+### US608-US609 - actual-log 来源记录接入本地复核证据
+
+```yaml
+stories:
+  - id: US608
+    requirement_ids: [R657, R658, R659]
+    task_ids: [F418]
+    module: "履约监控"
+    role: "现场主管"
+    story: "作为现场主管，我希望提交本地复核结论和补充证据时能默认引用 actual-log 来源记录，以便处理记录有真实依据。"
+    task_type: "frontend-scaffold"
+    priority: "P0"
+    status: "done"
+    dependencies: [US606, US607]
+  - id: US609
+    requirement_ids: [R660]
+    task_ids: [Q125]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望验证 actual-log 来源证据接入，以便确认复核表单默认值、页面展示和边界可验收。"
+    task_type: "qa"
+    priority: "P1"
+    status: "ready"
+    dependencies: [US608]
+acceptance:
+  - "复核结论表单的来源引用优先包含 actual-log 来源记录。"
+  - "补充证据表单默认关联 actual-log 来源记录。"
+  - "页面显示本次可引用的实际来源证据。"
+  - "本组不新增数据库、ORM、migration、真实外部系统、权限、审批、导出、批量、文件存储、生产公式、结算、收费因子或新依赖。"
+```
+
 ### US605-US607 - 实际履约合同前端可见链路
 
 ```yaml
