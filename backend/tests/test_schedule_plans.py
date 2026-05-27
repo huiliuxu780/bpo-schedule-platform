@@ -22,6 +22,7 @@ from backend.app.main import (
     check_master_data_reference,
     list_import_batches,
     list_demand_plans,
+    list_demand_forecast_version_changes,
     list_fulfillment_comparison_contract,
     list_master_data_import_contract,
     list_personnel_schedule_import_contract,
@@ -68,6 +69,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/master-data/records/{employee_id}/unfreeze", "POST"), routes)
         self.assertIn(("/api/v1/master-data/reference-check", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/demand-forecast", "POST"), routes)
+        self.assertIn(("/api/v1/demand-forecasts/version-changes", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/personnel-schedule", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/login-log", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/status-log", "POST"), routes)
@@ -378,6 +380,49 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(response.failure_rows[0].field_name, "skill_group")
         self.assertEqual(response.failure_rows[0].raw_value, "未知技能")
         self.assertEqual(list_demand_plans(query=response.batch_id).items, [])
+
+    def test_demand_forecast_csv_import_tracks_version_changes(self) -> None:
+        first = import_demand_forecast_csv(
+            DemandForecastCsvImportRequest(
+                file_name="demand_forecast_first_version.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "business_date,workplace_id,project_id,interval_start,interval_end,skill_group,grade,forecast_agents\n"
+                    "2026-05-27,WP-SH,P-BOSCH,09:00,09:30,热线,L2,18\n"
+                ),
+            )
+        )
+        second = import_demand_forecast_csv(
+            DemandForecastCsvImportRequest(
+                file_name="demand_forecast_second_version.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "business_date,workplace_id,project_id,interval_start,interval_end,skill_group,grade,forecast_agents\n"
+                    "2026-05-27,WP-SH,P-BOSCH,09:00,09:30,热线,L2,22\n"
+                ),
+            )
+        )
+
+        changes = list_demand_forecast_version_changes().items
+        change = next(
+            item
+            for item in changes
+            if item.new_source_batch_id == second.batch_id
+            and item.interval_start == "09:00"
+            and item.interval_end == "09:30"
+        )
+        self.assertEqual(change.change_type, "updated")
+        self.assertEqual(change.business_date, "2026-05-27")
+        self.assertEqual(change.workplace_id, "WP-SH")
+        self.assertEqual(change.project_id, "P-BOSCH")
+        self.assertEqual(change.skill_group, "热线")
+        self.assertEqual(change.skill_level, "L2")
+        self.assertEqual(change.previous_forecast_agents, 18)
+        self.assertEqual(change.new_forecast_agents, 22)
+        self.assertEqual(change.previous_source_batch_id, first.batch_id)
+        self.assertEqual(change.new_source_batch_id, second.batch_id)
+        self.assertEqual(change.previous_version_id, first.version_records[0].version_id)
+        self.assertEqual(change.new_version_id, second.version_records[0].version_id)
 
     def test_demand_forecast_csv_import_records_failed_rows(self) -> None:
         response = import_demand_forecast_csv(

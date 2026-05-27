@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 demand forecast version changes
+
+#### 结论
+
+- `F410/US596/R636-R637` 已完成 G001 需求预测版本与变更追踪。
+- 同一业务日、职场、项目、0.5h 时段、技能组和等级再次导入预测时，系统会生成本地变更记录，保留上一来源批次、上一版本、新来源批次、新版本、前后预测人数和变更类型。
+- 新版本不会静默覆盖旧版本来源，变更记录可通过 `/api/v1/demand-forecasts/version-changes` 读取。
+- current queue 与 active tasks 已切到 `US597/F411`。
+
+#### 风险
+
+- 当前变更追踪仍是 no-database process-memory，不是生产持久化版本库。
+- 预测 vs 排班对齐、缺口/超排/无匹配候选识别仍归 `F411`。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `list_demand_forecast_version_changes` 接口。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，48 个后端测试通过。
+- `node --test scripts/tests/demand-supply-alignment.test.mjs scripts/tests/demand-forecast-contract.test.mjs scripts/tests/import-batch-history.test.mjs`：通过，31 个前端/契约测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已切到 `US597/F411`。
+
 ### 2026-05-27 - G001 demand forecast import
 
 #### 结论

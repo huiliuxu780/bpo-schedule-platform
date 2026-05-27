@@ -81,6 +81,29 @@ class DemandPlanListResponse(BaseModel):
     items: list[DemandPlanRow]
 
 
+class DemandForecastVersionChangeRecord(BaseModel):
+    change_id: str
+    change_type: str
+    business_date: str
+    workplace_id: str
+    project_id: str
+    skill_group: str
+    skill_level: str
+    interval_start: str
+    interval_end: str
+    previous_forecast_agents: int | None = Field(default=None, ge=0)
+    new_forecast_agents: int = Field(ge=0)
+    previous_source_batch_id: str | None = None
+    new_source_batch_id: str
+    previous_version_id: str | None = None
+    new_version_id: str
+    changed_at: str
+
+
+class DemandForecastVersionChangeListResponse(BaseModel):
+    items: list[DemandForecastVersionChangeRecord]
+
+
 class DemandForecastCsvImportRequest(BaseModel):
     file_name: str
     uploaded_by: str

@@ -6,12 +6,12 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
 tasks:
-  - id: F410
+  - id: F411
     status: ready
-    title: "G001 需求预测版本与变更追踪"
+    title: "G001 需求预测与排班对齐"
     priority: P0
-    story_ids: ["US596"]
+    story_ids: ["US597"]
     required_workflow: backend-vertical
-    dependencies: ["F409"]
-    allowed_files: ["app/production-mvp/demand-forecast/**", "app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    dependencies: ["F410"]
+    allowed_files: ["app/person-timeline/**", "app/production-mvp/demand-forecast/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
     forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]

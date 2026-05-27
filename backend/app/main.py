@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from backend.app.models import (
     CsvImportPreviewRequest,
     CsvImportPreviewResponse,
+    DemandForecastVersionChangeListResponse,
     DemandPlanListResponse,
     DemandForecastCsvImportRequest,
     FulfillmentComparisonContractResponse,
@@ -43,6 +44,7 @@ from backend.app.repository import (
     import_personnel_schedule_csv as create_personnel_schedule_import_batch,
     preview_csv_import as create_csv_import_preview,
     import_status_log_csv as create_status_log_import_batch,
+    list_demand_forecast_version_change_records as find_demand_forecast_version_changes,
     list_demand_plan_rows,
     list_master_data_imported_records as find_master_data_imported_records,
     list_personnel_schedule_imported_records as find_personnel_schedule_imported_records,
@@ -79,6 +81,16 @@ def list_schedule_plans(
 @app.get("/api/v1/demand-plans", response_model=DemandPlanListResponse)
 def list_demand_plans(query: str | None = None) -> DemandPlanListResponse:
     return DemandPlanListResponse(items=list_demand_plan_rows(query=query))
+
+
+@app.get(
+    "/api/v1/demand-forecasts/version-changes",
+    response_model=DemandForecastVersionChangeListResponse,
+)
+def list_demand_forecast_version_changes() -> DemandForecastVersionChangeListResponse:
+    return DemandForecastVersionChangeListResponse(
+        items=find_demand_forecast_version_changes()
+    )
 
 
 @app.post("/api/v1/import-batches/master-data", response_model=ImportBatchResult)

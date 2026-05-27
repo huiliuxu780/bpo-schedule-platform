@@ -6,6 +6,7 @@ from backend.app.models import (
     CsvImportPreviewRequest,
     CsvImportPreviewResponse,
     DemandPlanRow,
+    DemandForecastVersionChangeRecord,
     DemandForecastCsvImportRequest,
     AnomalyRuleContract,
     ComparisonSourceContract,
@@ -123,6 +124,7 @@ CSV_IMPORT_PENDING_VALIDATION_FIELDS = {
 
 IMPORT_BATCH_RESULTS: dict[str, ImportBatchResult] = {}
 DEMAND_FORECAST_IMPORTED_RECORDS: list[DemandPlanRow] = []
+DEMAND_FORECAST_VERSION_CHANGES: list[DemandForecastVersionChangeRecord] = []
 MASTER_DATA_IMPORTED_RECORDS: list[MasterDataImportedRecord] = []
 PERSONNEL_SCHEDULE_IMPORTED_RECORDS: list[PersonnelScheduleImportedRecord] = []
 PERSONNEL_SCHEDULE_INTERVAL_RECORDS: list[PersonnelScheduleIntervalRecord] = []
@@ -1058,7 +1060,7 @@ def import_demand_forecast_csv(
     IMPORT_BATCH_RESULTS[batch_id] = result
 
     if version_records:
-        DEMAND_FORECAST_IMPORTED_RECORDS[:0] = [
+        imported_records = [
             build_demand_forecast_imported_record(
                 row,
                 batch_id,
@@ -1066,6 +1068,12 @@ def import_demand_forecast_csv(
             )
             for row in successful_rows
         ]
+        DEMAND_FORECAST_VERSION_CHANGES[:0] = build_demand_forecast_version_changes(
+            imported_records,
+            DEMAND_FORECAST_IMPORTED_RECORDS,
+            uploaded_at,
+        )
+        DEMAND_FORECAST_IMPORTED_RECORDS[:0] = imported_records
 
     return result
 
@@ -1206,6 +1214,83 @@ def build_demand_forecast_imported_record(
         source_version_id=version_id,
         status="imported",
     )
+
+
+def build_demand_forecast_version_changes(
+    new_records: list[DemandPlanRow],
+    existing_records: list[DemandPlanRow],
+    changed_at: str,
+) -> list[DemandForecastVersionChangeRecord]:
+    previous_by_key = {
+        demand_forecast_version_key(record): record
+        for record in existing_records
+        if record.source_batch_id and record.source_version_id
+    }
+    changes: list[DemandForecastVersionChangeRecord] = []
+
+    for record in new_records:
+        previous = previous_by_key.get(demand_forecast_version_key(record))
+        change_type = (
+            "created"
+            if previous is None
+            else "unchanged"
+            if previous.forecast_agents == record.forecast_agents
+            else "updated"
+        )
+        changes.append(
+            DemandForecastVersionChangeRecord(
+                change_id=f"DFC-{record.source_batch_id}-{record.demand_id}",
+                change_type=change_type,
+                business_date=record.plan_date,
+                workplace_id=demand_workplace_id_for_name(record.site_name),
+                project_id=demand_project_id_for_name(record.project_name),
+                skill_group=record.skill_group,
+                skill_level=record.skill_level,
+                interval_start=record.interval_start,
+                interval_end=record.interval_end,
+                previous_forecast_agents=previous.forecast_agents if previous else None,
+                new_forecast_agents=record.forecast_agents,
+                previous_source_batch_id=previous.source_batch_id if previous else None,
+                new_source_batch_id=record.source_batch_id or "",
+                previous_version_id=previous.source_version_id if previous else None,
+                new_version_id=record.source_version_id or record.forecast_version,
+                changed_at=changed_at,
+            )
+        )
+
+    return changes
+
+
+def demand_forecast_version_key(record: DemandPlanRow) -> tuple[str, str, str, str, str, str, str]:
+    return (
+        record.plan_date,
+        record.site_name,
+        record.project_name,
+        record.interval_start,
+        record.interval_end,
+        record.skill_group,
+        record.skill_level,
+    )
+
+
+def demand_workplace_id_for_name(workplace_name: str) -> str:
+    for workplace_id, known_name in DEMAND_WORKPLACE_REFERENCES.items():
+        if known_name == workplace_name:
+            return workplace_id
+
+    return workplace_name
+
+
+def demand_project_id_for_name(project_name: str) -> str:
+    for project_id, known_name in DEMAND_PROJECT_REFERENCES.items():
+        if known_name == project_name:
+            return project_id
+
+    return project_name
+
+
+def list_demand_forecast_version_change_records() -> list[DemandForecastVersionChangeRecord]:
+    return DEMAND_FORECAST_VERSION_CHANGES
 
 
 def import_personnel_schedule_csv(
