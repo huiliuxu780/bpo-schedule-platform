@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 schedule actual anomalies
+
+#### 结论
+
+- `F415/US602/R645-R647` 已完成 G001 排班与登录状态对比异常。
+- 后端新增 `/api/v1/schedule-actual/anomalies`，基于人员级排班、登录记录、状态记录、实际日志区间和质量问题生成本地履约异常。
+- 当前异常覆盖 `no_login`、`late_login`、`early_logout`、`unscheduled_login`、`non_productive_status`、`status_gap` 和 `status_overlap`。
+- 异常记录保留员工、业务日、职场、项目、排班明细、登录记录、状态记录、影响分钟、严重度和来源记录。
+- current queue 与 active tasks 已切到 `US603/Q122`。
+
+#### 风险
+
+- 当前异常仍是 no-database process-memory 动态结果，不是生产异常表、复跑任务或审批闭环。
+- QA 收口仍归 `Q122`；全链边界 QA 仍归 `Q123`。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `list_schedule_actual_anomaly_records` 接口。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，57 个后端测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已切到 `US603/Q122`。
+
 ### 2026-05-27 - G001 actual log interval slicing
 
 #### 结论

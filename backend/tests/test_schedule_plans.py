@@ -19,6 +19,7 @@ from backend.app.main import (
     list_imported_status_log_records,
     list_actual_log_interval_records,
     list_actual_log_quality_issues,
+    list_schedule_actual_anomaly_records,
     list_personnel_schedule_interval_records,
     upsert_master_data_record,
     freeze_master_data_record,
@@ -85,6 +86,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/status-logs/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/actual-logs/intervals", "GET"), routes)
         self.assertIn(("/api/v1/actual-logs/quality-issues", "GET"), routes)
+        self.assertIn(("/api/v1/schedule-actual/anomalies", "GET"), routes)
         self.assertIn(("/api/v1/personnel-schedules/interval-schedules", "GET"), routes)
         self.assertIn(("/api/v1/import-batches", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
@@ -956,6 +958,82 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(gap.interval_start, "13:30")
         self.assertEqual(gap.interval_end, "14:00")
         self.assertEqual(gap.gap_minutes, 15)
+
+    def test_schedule_actual_anomalies_detect_login_and_status_exceptions(self) -> None:
+        import_personnel_schedule_csv(
+            PersonnelScheduleCsvImportRequest(
+                file_name="schedule_actual_schedule.csv",
+                uploaded_by="排班运营",
+                csv_content=(
+                    "schedule_detail_id,schedule_version_id,employee_id,business_date,workplace_id,supplier_id,project_id,shift_type_id,start_at,end_at,status,skill_group,skill_level\n"
+                    "SCH-F415-001,SV-F415,E-F415-3,2026-05-26,WP-SH,SUP-01,P-BOSCH,SHIFT-DAY,09:00,10:00,published,热线,L2\n"
+                    "SCH-F415-002,SV-F415,E-F415-5,2026-05-26,WP-SH,SUP-01,P-BOSCH,SHIFT-DAY,09:00,10:00,published,热线,L2\n"
+                ),
+            )
+        )
+        import_login_log_csv(
+            LoginLogCsvImportRequest(
+                file_name="schedule_actual_login.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "login_log_id,employee_id,business_date,login_at,logout_at,workplace_id,project_id,source_system,timezone\n"
+                    "LOG-F415-001,E-F415-3,2026-05-26,2026-05-26T09:15:00,2026-05-26T09:45:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                ),
+            )
+        )
+        import_status_log_csv(
+            StatusLogCsvImportRequest(
+                file_name="schedule_actual_status.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "status_log_id,employee_id,business_date,status_type,start_at,end_at,workplace_id,project_id,source_system,timezone\n"
+                    "STA-F415-001,E-F415-3,2026-05-26,productive,2026-05-26T09:15:00,2026-05-26T09:30:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                    "STA-F415-002,E-F415-3,2026-05-26,break,2026-05-26T09:30:00,2026-05-26T09:45:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                ),
+            )
+        )
+
+        anomalies = [
+            item
+            for item in list_schedule_actual_anomaly_records().items
+            if item.employee_id in {"E-F415-3", "E-F415-5"}
+        ]
+        anomaly_types = {item.anomaly_type for item in anomalies}
+
+        self.assertIn("late_login", anomaly_types)
+        self.assertIn("early_logout", anomaly_types)
+        self.assertIn("non_productive_status", anomaly_types)
+        self.assertIn("no_login", anomaly_types)
+        late_login = next(item for item in anomalies if item.anomaly_type == "late_login")
+        no_login = next(item for item in anomalies if item.anomaly_type == "no_login")
+        self.assertEqual(late_login.schedule_detail_id, "SCH-F415-001")
+        self.assertEqual(late_login.login_log_id, "LOG-F415-001")
+        self.assertEqual(late_login.impact_minutes, 15)
+        self.assertEqual(no_login.schedule_detail_id, "SCH-F415-002")
+        self.assertIsNone(no_login.login_log_id)
+
+    def test_schedule_actual_anomalies_detect_unscheduled_login(self) -> None:
+        import_login_log_csv(
+            LoginLogCsvImportRequest(
+                file_name="schedule_actual_unscheduled_login.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "login_log_id,employee_id,business_date,login_at,logout_at,workplace_id,project_id,source_system,timezone\n"
+                    "LOG-F415-UNSCHEDULED,E-F415-4,2026-05-26,2026-05-26T11:00:00,2026-05-26T11:30:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai\n"
+                ),
+            )
+        )
+
+        anomalies = [
+            item
+            for item in list_schedule_actual_anomaly_records().items
+            if item.employee_id == "E-F415-4"
+        ]
+
+        self.assertEqual(len(anomalies), 1)
+        self.assertEqual(anomalies[0].anomaly_type, "unscheduled_login")
+        self.assertIsNone(anomalies[0].schedule_detail_id)
+        self.assertEqual(anomalies[0].login_log_id, "LOG-F415-UNSCHEDULED")
 
     def test_import_batch_list_returns_process_memory_results_newest_first(self) -> None:
         older = import_demand_forecast_csv(

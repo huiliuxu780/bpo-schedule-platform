@@ -190,7 +190,7 @@ stories:
     story: "作为现场主管，我希望排班能与登录和状态事实对比并生成异常，以便在履约日历和个人三轨详情复核。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US599, US600, US601]
   - id: US603
     requirement_ids: [R648]
@@ -200,7 +200,7 @@ stories:
     story: "作为 QA，我希望验证登录/状态导入、切分、对比、异常识别和页面联动，以便确认实际履约处理流可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "blocked"
+    status: "ready"
     dependencies: [US599, US600, US601, US602]
   - id: US604
     requirement_ids: [R649, R650, R651, R652]

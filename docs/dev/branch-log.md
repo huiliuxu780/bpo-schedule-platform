@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F415 G001 Schedule Actual Anomalies
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `8dc28fb`
+- remote_status: `not_pushed`
+- scope: backend-vertical local schedule-vs-actual anomaly slice: compare personnel schedule records with login records, status records, actual-log intervals, and quality issues, returning no-login, late-login, early-logout, unscheduled-login, non-productive-status, status-gap, and status-overlap anomalies.
+- allowed_files_check: `app/person-timeline/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates schedule-vs-actual anomaly schemas/repository/routes, backend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing schedule-vs-actual anomaly route; target backend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F414 G001 Actual Log Interval Slicing
 
 - branch_name: `codex/f412-login-status-logs`
@@ -12,7 +30,7 @@
 - allowed_files_check: `app/person-timeline/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates actual-log interval and quality issue schemas/repository/routes, backend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
 - check_result: TDD red observed for missing actual-log interval records route; target backend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
-- local_commit_sha: `pending`
+- local_commit_sha: `8dc28fb`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

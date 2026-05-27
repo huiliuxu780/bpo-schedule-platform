@@ -418,6 +418,28 @@ class ActualLogQualityIssueListResponse(BaseModel):
     items: list[ActualLogQualityIssueRecord]
 
 
+class ScheduleActualAnomalyRecord(BaseModel):
+    anomaly_id: str
+    anomaly_type: str
+    employee_id: str
+    business_date: str
+    workplace_id: str
+    project_id: str
+    schedule_detail_id: str | None = None
+    login_log_id: str | None = None
+    status_log_ids: list[str] = []
+    interval_start: str
+    interval_end: str
+    impact_minutes: int = Field(ge=0)
+    severity: str
+    source_record_ids: list[str]
+    message: str
+
+
+class ScheduleActualAnomalyListResponse(BaseModel):
+    items: list[ScheduleActualAnomalyRecord]
+
+
 class MasterDataEntityContract(BaseModel):
     entity: MasterDataEntity
     primary_key: list[str]

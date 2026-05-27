@@ -39,6 +39,7 @@ from backend.app.models import (
     SchedulePlanInterval,
     SchedulePlanSummary,
     SchedulePlanStatus,
+    ScheduleActualAnomalyRecord,
     ShiftDetailRow,
     StatusLogImportedRecord,
     StatusLogCsvImportRequest,
@@ -2237,6 +2238,276 @@ def list_actual_log_quality_issue_records() -> list[ActualLogQualityIssueRecord]
         )
 
     return issues
+
+
+def list_schedule_actual_anomaly_records() -> list[ScheduleActualAnomalyRecord]:
+    anomalies: list[ScheduleActualAnomalyRecord] = []
+
+    for schedule_record in PERSONNEL_SCHEDULE_IMPORTED_RECORDS:
+        schedule_start = parse_schedule_record_datetime(
+            schedule_record.business_date,
+            schedule_record.start_at,
+        )
+        schedule_end = parse_schedule_record_datetime(
+            schedule_record.business_date,
+            schedule_record.end_at,
+        )
+        matching_logins = find_matching_login_records(schedule_record, schedule_start, schedule_end)
+
+        if not matching_logins:
+            anomalies.append(
+                build_schedule_actual_anomaly(
+                    anomaly_type="no_login",
+                    employee_id=schedule_record.employee_id,
+                    business_date=schedule_record.business_date,
+                    workplace_id=schedule_record.workplace_id,
+                    project_id=schedule_record.project_id,
+                    schedule_detail_id=schedule_record.schedule_detail_id,
+                    login_log_id=None,
+                    status_log_ids=[],
+                    interval_start=schedule_record.start_at,
+                    interval_end=schedule_record.end_at,
+                    impact_minutes=int((schedule_end - schedule_start).total_seconds() // 60),
+                    source_record_ids=[schedule_record.schedule_detail_id],
+                    message="有排班但没有匹配登录记录",
+                )
+            )
+            continue
+
+        primary_login = matching_logins[0]
+        login_start = datetime.fromisoformat(primary_login.normalized_login_at)
+        login_end = datetime.fromisoformat(primary_login.normalized_logout_at)
+        if login_start > schedule_start:
+            anomalies.append(
+                build_schedule_actual_anomaly(
+                    anomaly_type="late_login",
+                    employee_id=schedule_record.employee_id,
+                    business_date=schedule_record.business_date,
+                    workplace_id=schedule_record.workplace_id,
+                    project_id=schedule_record.project_id,
+                    schedule_detail_id=schedule_record.schedule_detail_id,
+                    login_log_id=primary_login.login_log_id,
+                    status_log_ids=[],
+                    interval_start=schedule_record.start_at,
+                    interval_end=login_start.strftime("%H:%M"),
+                    impact_minutes=int((login_start - schedule_start).total_seconds() // 60),
+                    source_record_ids=[schedule_record.schedule_detail_id, primary_login.login_log_id],
+                    message="登录时间晚于排班开始",
+                )
+            )
+        if login_end < schedule_end:
+            anomalies.append(
+                build_schedule_actual_anomaly(
+                    anomaly_type="early_logout",
+                    employee_id=schedule_record.employee_id,
+                    business_date=schedule_record.business_date,
+                    workplace_id=schedule_record.workplace_id,
+                    project_id=schedule_record.project_id,
+                    schedule_detail_id=schedule_record.schedule_detail_id,
+                    login_log_id=primary_login.login_log_id,
+                    status_log_ids=[],
+                    interval_start=login_end.strftime("%H:%M"),
+                    interval_end=schedule_record.end_at,
+                    impact_minutes=int((schedule_end - login_end).total_seconds() // 60),
+                    source_record_ids=[schedule_record.schedule_detail_id, primary_login.login_log_id],
+                    message="登出时间早于排班结束",
+                )
+            )
+
+        for interval in list_actual_log_interval_records():
+            if not interval_matches_schedule(interval, schedule_record):
+                continue
+
+            if interval.status_minutes > 0 and interval.productive_minutes < interval.status_minutes:
+                anomalies.append(
+                    build_schedule_actual_anomaly(
+                        anomaly_type="non_productive_status",
+                        employee_id=schedule_record.employee_id,
+                        business_date=schedule_record.business_date,
+                        workplace_id=schedule_record.workplace_id,
+                        project_id=schedule_record.project_id,
+                        schedule_detail_id=schedule_record.schedule_detail_id,
+                        login_log_id=primary_login.login_log_id,
+                        status_log_ids=interval.status_log_ids,
+                        interval_start=interval.interval_start,
+                        interval_end=interval.interval_end,
+                        impact_minutes=interval.status_minutes - interval.productive_minutes,
+                        source_record_ids=[
+                            schedule_record.schedule_detail_id,
+                            primary_login.login_log_id,
+                            *interval.status_log_ids,
+                        ],
+                        message="排班区间存在非有效产能状态",
+                    )
+                )
+
+        for issue in list_actual_log_quality_issue_records():
+            if not issue_matches_schedule(issue, schedule_record):
+                continue
+
+            anomalies.append(
+                build_schedule_actual_anomaly(
+                    anomaly_type=issue.issue_type,
+                    employee_id=schedule_record.employee_id,
+                    business_date=schedule_record.business_date,
+                    workplace_id=schedule_record.workplace_id,
+                    project_id=schedule_record.project_id,
+                    schedule_detail_id=schedule_record.schedule_detail_id,
+                    login_log_id=primary_login.login_log_id,
+                    status_log_ids=issue.source_record_ids,
+                    interval_start=issue.interval_start,
+                    interval_end=issue.interval_end,
+                    impact_minutes=issue.gap_minutes or issue.overlap_minutes,
+                    source_record_ids=[
+                        schedule_record.schedule_detail_id,
+                        primary_login.login_log_id,
+                        *issue.source_record_ids,
+                    ],
+                    message=issue.message,
+                )
+            )
+
+    scheduled_keys = {
+        (
+            schedule_record.employee_id,
+            schedule_record.business_date,
+            schedule_record.workplace_id,
+            schedule_record.project_id,
+        )
+        for schedule_record in PERSONNEL_SCHEDULE_IMPORTED_RECORDS
+    }
+    for login_record in LOGIN_LOG_IMPORTED_RECORDS:
+        login_key = (
+            login_record.employee_id,
+            login_record.normalized_business_date,
+            login_record.workplace_id,
+            login_record.project_id,
+        )
+        if login_key in scheduled_keys:
+            continue
+
+        anomalies.append(
+            build_schedule_actual_anomaly(
+                anomaly_type="unscheduled_login",
+                employee_id=login_record.employee_id,
+                business_date=login_record.normalized_business_date,
+                workplace_id=login_record.workplace_id,
+                project_id=login_record.project_id,
+                schedule_detail_id=None,
+                login_log_id=login_record.login_log_id,
+                status_log_ids=[],
+                interval_start=datetime.fromisoformat(login_record.normalized_login_at).strftime("%H:%M"),
+                interval_end=datetime.fromisoformat(login_record.normalized_logout_at).strftime("%H:%M"),
+                impact_minutes=login_record.duration_minutes,
+                source_record_ids=[login_record.login_log_id],
+                message="有登录记录但没有匹配排班",
+            )
+        )
+
+    return sorted(
+        anomalies,
+        key=lambda item: (
+            item.business_date,
+            item.employee_id,
+            item.interval_start,
+            item.anomaly_type,
+        ),
+    )
+
+
+def build_schedule_actual_anomaly(
+    *,
+    anomaly_type: str,
+    employee_id: str,
+    business_date: str,
+    workplace_id: str,
+    project_id: str,
+    schedule_detail_id: str | None,
+    login_log_id: str | None,
+    status_log_ids: list[str],
+    interval_start: str,
+    interval_end: str,
+    impact_minutes: int,
+    source_record_ids: list[str],
+    message: str,
+) -> ScheduleActualAnomalyRecord:
+    return ScheduleActualAnomalyRecord(
+        anomaly_id="-".join(
+            [
+                "SA",
+                anomaly_type,
+                employee_id,
+                business_date,
+                interval_start.replace(":", ""),
+            ]
+        ),
+        anomaly_type=anomaly_type,
+        employee_id=employee_id,
+        business_date=business_date,
+        workplace_id=workplace_id,
+        project_id=project_id,
+        schedule_detail_id=schedule_detail_id,
+        login_log_id=login_log_id,
+        status_log_ids=status_log_ids,
+        interval_start=interval_start,
+        interval_end=interval_end,
+        impact_minutes=impact_minutes,
+        severity="high" if impact_minutes >= 30 else "medium",
+        source_record_ids=unique_values(source_record_ids),
+        message=message,
+    )
+
+
+def find_matching_login_records(
+    schedule_record: PersonnelScheduleImportedRecord,
+    schedule_start: datetime,
+    schedule_end: datetime,
+) -> list[LoginLogImportedRecord]:
+    return [
+        login_record
+        for login_record in LOGIN_LOG_IMPORTED_RECORDS
+        if login_record.employee_id == schedule_record.employee_id
+        and login_record.normalized_business_date == schedule_record.business_date
+        and login_record.workplace_id == schedule_record.workplace_id
+        and login_record.project_id == schedule_record.project_id
+        and overlap_minutes(
+            datetime.fromisoformat(login_record.normalized_login_at),
+            datetime.fromisoformat(login_record.normalized_logout_at),
+            schedule_start,
+            schedule_end,
+        )
+        > 0
+    ]
+
+
+def interval_matches_schedule(
+    interval: ActualLogIntervalRecord,
+    schedule_record: PersonnelScheduleImportedRecord,
+) -> bool:
+    return (
+        interval.employee_id == schedule_record.employee_id
+        and interval.business_date == schedule_record.business_date
+        and interval.workplace_id == schedule_record.workplace_id
+        and interval.project_id == schedule_record.project_id
+    )
+
+
+def issue_matches_schedule(
+    issue: ActualLogQualityIssueRecord,
+    schedule_record: PersonnelScheduleImportedRecord,
+) -> bool:
+    return (
+        issue.employee_id == schedule_record.employee_id
+        and issue.business_date == schedule_record.business_date
+        and issue.workplace_id == schedule_record.workplace_id
+        and issue.project_id == schedule_record.project_id
+    )
+
+
+def parse_schedule_record_datetime(business_date: str, time_value: str) -> datetime:
+    return datetime.fromisoformat(f"{business_date}T{time_value}:00").replace(
+        tzinfo=ZoneInfo("Asia/Shanghai")
+    )
 
 
 def split_datetime_half_hour_intervals(

@@ -19,6 +19,17 @@
 
 ### 2026-05-27
 
+- task_id: `F415`
+- source_ids:
+  - `R645`
+  - `R646`
+  - `R647`
+- story_ids:
+  - `US602`
+- action: 完成 G001 排班与登录状态对比异常。
+- status: `done`
+- notes: 已基于人员级排班、登录记录、状态记录、实际日志 0.5h 区间和质量问题生成本地履约异常，覆盖 no_login、late_login、early_logout、unscheduled_login、non_productive_status、status_gap 和 status_overlap，并保留排班明细、登录记录、状态记录、影响分钟、严重度和来源记录。没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已从 US602/F415 切到 US603/Q122。
+
 - task_id: `F414`
 - source_ids:
   - `R644`

@@ -30,6 +30,7 @@ from backend.app.models import (
     SchedulePlanDraftRequest,
     SchedulePlanListResponse,
     SchedulePlanStatus,
+    ScheduleActualAnomalyListResponse,
     ShiftDetailListResponse,
     StatusLogImportedRecordListResponse,
     StatusLogCsvImportRequest,
@@ -58,6 +59,7 @@ from backend.app.repository import (
     list_personnel_schedule_interval_records as find_personnel_schedule_interval_records,
     list_process_import_batches,
     list_schedule_risk_rows,
+    list_schedule_actual_anomaly_records as find_schedule_actual_anomaly_records,
     list_shift_detail_rows,
     list_status_log_imported_records as find_status_log_imported_records,
     list_plan_summaries,
@@ -209,6 +211,16 @@ def list_actual_log_interval_records() -> ActualLogIntervalListResponse:
 def list_actual_log_quality_issues() -> ActualLogQualityIssueListResponse:
     return ActualLogQualityIssueListResponse(
         items=find_actual_log_quality_issue_records()
+    )
+
+
+@app.get(
+    "/api/v1/schedule-actual/anomalies",
+    response_model=ScheduleActualAnomalyListResponse,
+)
+def list_schedule_actual_anomaly_records() -> ScheduleActualAnomalyListResponse:
+    return ScheduleActualAnomalyListResponse(
+        items=find_schedule_actual_anomaly_records()
     )
 
 
