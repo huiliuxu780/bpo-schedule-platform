@@ -80,7 +80,7 @@ stories:
     story: "作为数据管理员，我希望维护主数据状态、有效期、冻结和引用校验，以便无效绑定进入数据质量而不是正常履约。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US590]
   - id: US592
     requirement_ids: [R629]

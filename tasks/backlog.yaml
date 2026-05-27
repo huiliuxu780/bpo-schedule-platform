@@ -71,7 +71,7 @@ tasks:
   - id: F406
     title: "G001 主数据维护状态有效期与引用校验"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     dependencies: ["F405"]
     allowed_files: ["app/master-data-relations/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]

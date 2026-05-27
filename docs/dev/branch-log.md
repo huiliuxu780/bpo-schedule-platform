@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F406 G001 Master Data Maintenance Reference Check
+
+- branch_name: `codex/f405-master-data-import-view`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `6e3cff0`
+- remote_status: `not_pushed`
+- scope: backend-vertical local master-data maintenance slice: add/update process-memory master-data records, freeze/unfreeze records, validate employee references by business date and binding keys, and expose maintenance/reference status on the master-data page.
+- allowed_files_check: `app/master-data-relations/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates master-data maintenance actions, API schemas/routes/repository functions, master-data relation model/page, tests, and current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing `upsert_master_data_record`, freeze/unfreeze/reference-check functions, and master-data maintenance summary; target backend/frontend tests, product copy/navigation tests, API/page smoke, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F405 G001 Master Data Import View
 
 - branch_name: `codex/f405-master-data-import-view`

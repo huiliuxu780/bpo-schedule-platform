@@ -12,6 +12,10 @@ from backend.app.models import (
     MasterDataCsvImportRequest,
     MasterDataImportedRecordListResponse,
     MasterDataImportContractResponse,
+    MasterDataImportedRecord,
+    MasterDataRecordUpsertRequest,
+    MasterDataReferenceCheckRequest,
+    MasterDataReferenceCheckResult,
     PersonnelScheduleCsvImportRequest,
     PersonnelScheduleImportContractResponse,
     ScheduleRiskListResponse,
@@ -44,6 +48,10 @@ from backend.app.repository import (
     list_shift_detail_rows,
     list_plan_summaries,
     list_unavailability_rows,
+    upsert_master_data_record as save_master_data_record,
+    freeze_master_data_record as set_master_data_record_frozen,
+    unfreeze_master_data_record as set_master_data_record_unfrozen,
+    check_master_data_reference as validate_master_data_reference,
     update_plan_draft,
 )
 
@@ -116,6 +124,71 @@ def list_imported_master_data_records() -> MasterDataImportedRecordListResponse:
     return MasterDataImportedRecordListResponse(
         items=find_master_data_imported_records()
     )
+
+
+@app.post("/api/v1/master-data/records", response_model=MasterDataImportedRecord)
+def upsert_master_data_record(
+    request: MasterDataRecordUpsertRequest,
+) -> MasterDataImportedRecord:
+    return save_master_data_record(request)
+
+
+@app.put("/api/v1/master-data/records/{employee_id}", response_model=MasterDataImportedRecord)
+def update_master_data_record(
+    employee_id: str,
+    request: MasterDataRecordUpsertRequest,
+) -> MasterDataImportedRecord:
+    return save_master_data_record(request.model_copy(update={"employee_id": employee_id}))
+
+
+@app.post(
+    "/api/v1/master-data/records/{employee_id}/freeze",
+    response_model=MasterDataImportedRecord,
+)
+def freeze_master_data_record(employee_id: str) -> MasterDataImportedRecord:
+    updated = set_master_data_record_frozen(employee_id)
+    if updated is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "MASTER_DATA_RECORD_NOT_FOUND",
+                    "message": "主数据记录不存在",
+                }
+            },
+        )
+
+    return updated
+
+
+@app.post(
+    "/api/v1/master-data/records/{employee_id}/unfreeze",
+    response_model=MasterDataImportedRecord,
+)
+def unfreeze_master_data_record(employee_id: str) -> MasterDataImportedRecord:
+    updated = set_master_data_record_unfrozen(employee_id)
+    if updated is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "MASTER_DATA_RECORD_NOT_FOUND",
+                    "message": "主数据记录不存在",
+                }
+            },
+        )
+
+    return updated
+
+
+@app.post(
+    "/api/v1/master-data/reference-check",
+    response_model=MasterDataReferenceCheckResult,
+)
+def check_master_data_reference(
+    request: MasterDataReferenceCheckRequest,
+) -> MasterDataReferenceCheckResult:
+    return validate_master_data_reference(request)
 
 
 @app.get("/api/v1/import-batches/{batch_id}", response_model=ImportBatchResult)

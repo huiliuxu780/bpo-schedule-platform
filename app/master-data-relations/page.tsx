@@ -1,8 +1,14 @@
 import Link from "next/link"
 
+import {
+  freezeMasterDataRecordAction,
+  unfreezeMasterDataRecordAction,
+  upsertMasterDataRecordAction,
+} from "@/app/master-data-relations/actions"
 import { AppShell } from "@/components/app-shell"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   Card,
   CardContent,
@@ -17,14 +23,21 @@ import {
   getMasterDataBindingTarget,
   masterDataReferenceStatusLabel,
   summarizeEmployeeMasterDataBindings,
+  summarizeMasterDataMaintenance,
   summarizeMasterDataRelations,
 } from "@/lib/master-data-relations"
 
-export default async function MasterDataRelationsPage() {
+type PageProps = {
+  searchParams: Promise<{ result?: string }>
+}
+
+export default async function MasterDataRelationsPage({ searchParams }: PageProps) {
+  const { result } = await searchParams
   const relations = fallbackMasterDataRelations
   const employeeBindings = await getEmployeeMasterDataBindings()
   const summary = summarizeMasterDataRelations(relations)
   const bindingSummary = summarizeEmployeeMasterDataBindings(employeeBindings)
+  const maintenanceSummary = summarizeMasterDataMaintenance(employeeBindings)
 
   return (
     <AppShell title="主数据关系" searchPlaceholder="搜索主数据对象或关系">
@@ -43,8 +56,14 @@ export default async function MasterDataRelationsPage() {
           <Metric title="对象" value={`${summary.nodeCount}`} />
           <Metric title="关系" value={`${summary.edgeCount}`} />
           <Metric title="员工绑定" value={`${bindingSummary.total}`} />
-          <Metric title="待复核" value={`${bindingSummary.needsReview}`} />
+          <Metric title="冻结" value={`${bindingSummary.frozen}`} />
         </section>
+
+        {result ? (
+          <div className="rounded-lg border p-3 text-sm">
+            {result === "maintained" ? "主数据维护已提交。" : "主数据维护失败，请检查数据服务或字段。"}
+          </div>
+        ) : null}
 
         <section className="grid gap-4 lg:grid-cols-[1fr_0.8fr]">
           <Card>
@@ -75,6 +94,67 @@ export default async function MasterDataRelationsPage() {
           </Card>
 
         </section>
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex flex-col gap-1">
+                <CardTitle>维护状态</CardTitle>
+                <CardDescription>
+                  新增或修改主数据后，冻结、解冻和引用校验会影响后续业务引用。
+                </CardDescription>
+              </div>
+              <Badge variant="outline">
+                {maintenanceSummary.imported} 条导入 / {maintenanceSummary.blockedReferences} 条阻断
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-4 xl:grid-cols-[1fr_0.8fr]">
+            <form
+              action={upsertMasterDataRecordAction}
+              className="grid gap-3 rounded-lg border p-3 md:grid-cols-3"
+            >
+              <MiniInput label="员工编号" name="employee_id" required />
+              <MiniInput label="员工姓名" name="employee_name" />
+              <MiniInput label="职场编号" name="workplace_id" required />
+              <MiniInput label="职场名称" name="workplace_name" />
+              <MiniInput label="供应商编号" name="supplier_id" required />
+              <MiniInput label="供应商名称" name="supplier_name" />
+              <MiniInput label="项目编号" name="project_id" required />
+              <MiniInput label="项目名称" name="project_name" />
+              <MiniInput label="技能组" name="skill_group" required />
+              <MiniInput label="等级" name="skill_level" />
+              <MiniInput label="生效日期" name="effective_from" required />
+              <MiniInput label="失效日期" name="effective_to" />
+              <div className="flex items-end md:col-span-3">
+                <Button type="submit" size="sm">
+                  新增或修改
+                </Button>
+              </div>
+            </form>
+
+            <div className="grid gap-3 rounded-lg border p-3">
+              <div>
+                <div className="text-sm font-medium">引用校验</div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  冻结、停用、有效期失效或绑定不一致的记录会进入数据质量核对。
+                </p>
+              </div>
+              <div className="grid gap-2 text-sm">
+                <MiniDetail label="已冻结" value={`${maintenanceSummary.frozen}`} />
+                <MiniDetail label="引用阻断" value={`${maintenanceSummary.blockedReferences}`} />
+                <MiniDetail label="即将到期" value={`${maintenanceSummary.expiringSoon}`} />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {maintenanceSummary.deferredActions.map((action) => (
+                  <Badge key={action} variant="outline">
+                    {action}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
@@ -125,6 +205,22 @@ export default async function MasterDataRelationsPage() {
                   {binding.businessImpact}
                 </p>
                 <div className="mt-3 flex justify-end">
+                  {binding.sourceBatchId ? (
+                    <div className="mr-auto flex gap-2">
+                      <form action={freezeMasterDataRecordAction}>
+                        <input name="employee_id" type="hidden" value={binding.employeeId} />
+                        <Button size="sm" variant="outline" type="submit">
+                          冻结
+                        </Button>
+                      </form>
+                      <form action={unfreezeMasterDataRecordAction}>
+                        <input name="employee_id" type="hidden" value={binding.employeeId} />
+                        <Button size="sm" variant="outline" type="submit">
+                          解冻
+                        </Button>
+                      </form>
+                    </div>
+                  ) : null}
                   <Button asChild size="sm" variant="outline">
                     <Link href={getMasterDataBindingTarget(binding.employeeId)}>定位此员工</Link>
                   </Button>
@@ -166,6 +262,23 @@ function MiniDetail({ label, value }: { label: string; value: string }) {
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="mt-1 break-words text-sm font-medium">{value}</div>
     </div>
+  )
+}
+
+function MiniInput({
+  label,
+  name,
+  required,
+}: {
+  label: string
+  name: string
+  required?: boolean
+}) {
+  return (
+    <label className="flex flex-col gap-2 text-sm">
+      <span className="font-medium">{label}</span>
+      <Input name={name} required={required} />
+    </label>
   )
 }
 

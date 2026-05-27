@@ -14,6 +14,10 @@ from backend.app.main import (
     preview_csv_import,
     import_status_log_csv,
     list_imported_master_data_records,
+    upsert_master_data_record,
+    freeze_master_data_record,
+    unfreeze_master_data_record,
+    check_master_data_reference,
     list_import_batches,
     list_demand_plans,
     list_fulfillment_comparison_contract,
@@ -31,6 +35,8 @@ from backend.app.models import (
     LoginLogCsvImportRequest,
     CsvImportPreviewRequest,
     MasterDataCsvImportRequest,
+    MasterDataRecordUpsertRequest,
+    MasterDataReferenceCheckRequest,
     PersonnelScheduleCsvImportRequest,
     SchedulePlanDraftRequest,
     SchedulePlanIntervalInput,
@@ -54,6 +60,11 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/schedule-plans/{plan_id}/draft", "PUT"), routes)
         self.assertIn(("/api/v1/import-batches/preview", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/master-data", "POST"), routes)
+        self.assertIn(("/api/v1/master-data/records", "POST"), routes)
+        self.assertIn(("/api/v1/master-data/records/{employee_id}", "PUT"), routes)
+        self.assertIn(("/api/v1/master-data/records/{employee_id}/freeze", "POST"), routes)
+        self.assertIn(("/api/v1/master-data/records/{employee_id}/unfreeze", "POST"), routes)
+        self.assertIn(("/api/v1/master-data/reference-check", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/demand-forecast", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/personnel-schedule", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/login-log", "POST"), routes)
@@ -162,6 +173,139 @@ class SchedulePlansApiTest(unittest.TestCase):
             item.employee_id for item in list_imported_master_data_records().items
         }
         self.assertEqual(after_ids - before_ids, set())
+
+    def test_master_data_record_upsert_updates_process_memory_record(self) -> None:
+        created = upsert_master_data_record(
+            MasterDataRecordUpsertRequest(
+                employee_id="E-910",
+                employee_name="维护员工",
+                workplace_id="WP-SH",
+                workplace_name="上海职场",
+                supplier_id="SUP-01",
+                supplier_name="供应商 A",
+                project_id="P-BOSCH",
+                project_name="博西客服",
+                skill_group="热线",
+                skill_level="L2",
+                effective_from="2026-05-01",
+                effective_to="2026-12-31",
+                status="active",
+            )
+        )
+        updated = upsert_master_data_record(
+            MasterDataRecordUpsertRequest(
+                employee_id="E-910",
+                employee_name="维护员工",
+                workplace_id="WP-SH",
+                workplace_name="上海职场",
+                supplier_id="SUP-01",
+                supplier_name="供应商 A",
+                project_id="P-BOSCH",
+                project_name="博西客服",
+                skill_group="工单",
+                skill_level="L1",
+                effective_from="2026-05-01",
+                effective_to="2026-12-31",
+                status="active",
+            )
+        )
+
+        self.assertEqual(created.employee_id, "E-910")
+        self.assertEqual(updated.skill_group, "工单")
+        self.assertEqual(updated.skill_level, "L1")
+        self.assertEqual(updated.reference_status, "ready")
+
+    def test_master_data_freeze_and_unfreeze_drive_reference_check(self) -> None:
+        upsert_master_data_record(
+            MasterDataRecordUpsertRequest(
+                employee_id="E-911",
+                employee_name="冻结员工",
+                workplace_id="WP-SH",
+                workplace_name="上海职场",
+                supplier_id="SUP-01",
+                supplier_name="供应商 A",
+                project_id="P-BOSCH",
+                project_name="博西客服",
+                skill_group="热线",
+                skill_level="L2",
+                effective_from="2026-05-01",
+                effective_to="2026-12-31",
+                status="active",
+            )
+        )
+
+        frozen = freeze_master_data_record("E-911")
+        blocked = check_master_data_reference(
+            MasterDataReferenceCheckRequest(
+                employee_id="E-911",
+                business_date="2026-05-27",
+                workplace_id="WP-SH",
+                supplier_id="SUP-01",
+                project_id="P-BOSCH",
+            )
+        )
+        unfrozen = unfreeze_master_data_record("E-911")
+        ready = check_master_data_reference(
+            MasterDataReferenceCheckRequest(
+                employee_id="E-911",
+                business_date="2026-05-27",
+                workplace_id="WP-SH",
+                supplier_id="SUP-01",
+                project_id="P-BOSCH",
+            )
+        )
+
+        self.assertEqual(frozen.status, "frozen")
+        self.assertEqual(frozen.reference_status, "blocked")
+        self.assertEqual(blocked.reference_status, "blocked")
+        self.assertEqual(blocked.error_code, "master_data_frozen")
+        self.assertEqual(unfrozen.status, "active")
+        self.assertEqual(unfrozen.reference_status, "ready")
+        self.assertEqual(ready.reference_status, "ready")
+        self.assertIsNone(ready.error_code)
+
+    def test_master_data_reference_check_blocks_expired_or_missing_bindings(self) -> None:
+        upsert_master_data_record(
+            MasterDataRecordUpsertRequest(
+                employee_id="E-912",
+                employee_name="过期员工",
+                workplace_id="WP-SH",
+                workplace_name="上海职场",
+                supplier_id="SUP-01",
+                supplier_name="供应商 A",
+                project_id="P-BOSCH",
+                project_name="博西客服",
+                skill_group="热线",
+                skill_level="L2",
+                effective_from="2026-05-01",
+                effective_to="2026-05-20",
+                status="active",
+            )
+        )
+
+        expired = check_master_data_reference(
+            MasterDataReferenceCheckRequest(
+                employee_id="E-912",
+                business_date="2026-05-27",
+                workplace_id="WP-SH",
+                supplier_id="SUP-01",
+                project_id="P-BOSCH",
+            )
+        )
+        missing = check_master_data_reference(
+            MasterDataReferenceCheckRequest(
+                employee_id="E-999",
+                business_date="2026-05-27",
+                workplace_id="WP-SH",
+                supplier_id="SUP-01",
+                project_id="P-BOSCH",
+            )
+        )
+
+        self.assertEqual(expired.reference_status, "blocked")
+        self.assertEqual(expired.error_code, "master_data_effective_range_invalid")
+        self.assertEqual(missing.reference_status, "blocked")
+        self.assertEqual(missing.error_code, "master_data_missing")
 
     def test_demand_forecast_csv_import_accepts_valid_rows(self) -> None:
         response = import_demand_forecast_csv(

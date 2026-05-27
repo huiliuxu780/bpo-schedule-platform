@@ -16,6 +16,9 @@ from backend.app.models import (
     LoginLogCsvImportRequest,
     MasterDataCsvImportRequest,
     MasterDataImportedRecord,
+    MasterDataRecordUpsertRequest,
+    MasterDataReferenceCheckRequest,
+    MasterDataReferenceCheckResult,
     MasterDataEntityContract,
     MasterDataImportContractResponse,
     IntervalExpansionContract,
@@ -779,6 +782,180 @@ def build_master_data_imported_record(
 
 def list_master_data_imported_records() -> list[MasterDataImportedRecord]:
     return MASTER_DATA_IMPORTED_RECORDS
+
+
+def upsert_master_data_record(
+    request: MasterDataRecordUpsertRequest,
+) -> MasterDataImportedRecord:
+    existing_index = next(
+        (
+            index
+            for index, record in enumerate(MASTER_DATA_IMPORTED_RECORDS)
+            if record.employee_id == request.employee_id
+        ),
+        None,
+    )
+    now_label = datetime.now(timezone(timedelta(hours=8))).strftime("%Y%m%d%H%M%S")
+    existing = (
+        MASTER_DATA_IMPORTED_RECORDS[existing_index]
+        if existing_index is not None
+        else None
+    )
+    record = MasterDataImportedRecord(
+        employee_id=request.employee_id.strip(),
+        employee_name=request.employee_name.strip(),
+        supplier_id=request.supplier_id.strip(),
+        supplier_name=request.supplier_name.strip(),
+        workplace_id=request.workplace_id.strip(),
+        workplace_name=request.workplace_name.strip(),
+        project_id=request.project_id.strip(),
+        project_name=request.project_name.strip(),
+        skill_group=request.skill_group.strip(),
+        skill_level=request.skill_level.strip() or "待确认",
+        effective_from=request.effective_from.strip(),
+        effective_to=request.effective_to.strip() or "未设置",
+        status=request.status.strip() or "active",
+        source_batch_id=existing.source_batch_id if existing else f"MAINT-MD-{now_label}",
+        source_version_id=f"VER-MD-MAINT-{now_label}",
+        reference_status=reference_status_for_master_data_status(request.status),
+    )
+
+    if existing_index is None:
+        MASTER_DATA_IMPORTED_RECORDS.insert(0, record)
+    else:
+        MASTER_DATA_IMPORTED_RECORDS[existing_index] = record
+
+    return record
+
+
+def freeze_master_data_record(employee_id: str) -> MasterDataImportedRecord | None:
+    return set_master_data_record_status(employee_id, "frozen")
+
+
+def unfreeze_master_data_record(employee_id: str) -> MasterDataImportedRecord | None:
+    return set_master_data_record_status(employee_id, "active")
+
+
+def set_master_data_record_status(
+    employee_id: str,
+    status: str,
+) -> MasterDataImportedRecord | None:
+    existing = next(
+        (
+            record
+            for record in MASTER_DATA_IMPORTED_RECORDS
+            if record.employee_id == employee_id
+        ),
+        None,
+    )
+
+    if existing is None:
+        return None
+
+    updated = existing.model_copy(
+        update={
+            "status": status,
+            "reference_status": reference_status_for_master_data_status(status),
+            "source_version_id": f"VER-MD-MAINT-{datetime.now(timezone(timedelta(hours=8))).strftime('%Y%m%d%H%M%S')}",
+        }
+    )
+    index = MASTER_DATA_IMPORTED_RECORDS.index(existing)
+    MASTER_DATA_IMPORTED_RECORDS[index] = updated
+
+    return updated
+
+
+def check_master_data_reference(
+    request: MasterDataReferenceCheckRequest,
+) -> MasterDataReferenceCheckResult:
+    record = next(
+        (
+            item
+            for item in MASTER_DATA_IMPORTED_RECORDS
+            if item.employee_id == request.employee_id
+        ),
+        None,
+    )
+
+    if record is None:
+        return master_data_reference_block(
+            request.employee_id,
+            "master_data_missing",
+            "员工主数据不存在，需先补齐主数据记录。",
+        )
+
+    if record.status == "frozen":
+        return master_data_reference_block(
+            request.employee_id,
+            "master_data_frozen",
+            "员工主数据已冻结，不能进入正常履约引用。",
+        )
+
+    if record.status == "inactive":
+        return master_data_reference_block(
+            request.employee_id,
+            "master_data_inactive",
+            "员工主数据已停用，不能进入正常履约引用。",
+        )
+
+    if not is_business_date_within_effective_range(
+        request.business_date,
+        record.effective_from,
+        record.effective_to,
+    ):
+        return master_data_reference_block(
+            request.employee_id,
+            "master_data_effective_range_invalid",
+            "业务日期不在主数据有效期内。",
+        )
+
+    if (
+        record.workplace_id != request.workplace_id
+        or record.supplier_id != request.supplier_id
+        or record.project_id != request.project_id
+    ):
+        return master_data_reference_block(
+            request.employee_id,
+            "master_data_binding_mismatch",
+            "员工主数据绑定关系与引用数据不一致。",
+        )
+
+    return MasterDataReferenceCheckResult(
+        employee_id=request.employee_id,
+        reference_status="ready",
+    )
+
+
+def reference_status_for_master_data_status(status: str) -> str:
+    return "blocked" if status in {"frozen", "inactive"} else "ready"
+
+
+def is_business_date_within_effective_range(
+    business_date: str,
+    effective_from: str,
+    effective_to: str,
+) -> bool:
+    if effective_from and business_date < effective_from:
+        return False
+
+    if effective_to and effective_to != "未设置" and business_date > effective_to:
+        return False
+
+    return True
+
+
+def master_data_reference_block(
+    employee_id: str,
+    error_code: str,
+    error_message: str,
+) -> MasterDataReferenceCheckResult:
+    return MasterDataReferenceCheckResult(
+        employee_id=employee_id,
+        reference_status="blocked",
+        error_code=error_code,
+        error_message=error_message,
+        quality_issue_id=f"DQ-MD-{employee_id}",
+    )
 
 
 def import_demand_forecast_csv(

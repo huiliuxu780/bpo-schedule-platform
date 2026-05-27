@@ -6,15 +6,6 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US591
-    status: ready
-    priority: P0
-    module: "主数据"
-    role: "数据管理员"
-    task_ids: ["F406"]
-    requirement_ids: ["R625", "R626", "R627"]
-    dependencies: ["US590"]
-    story: "维护主数据状态、有效期、冻结和引用校验。"
   - id: US592
     status: ready
     priority: P1

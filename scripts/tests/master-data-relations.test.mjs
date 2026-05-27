@@ -9,6 +9,7 @@ import {
   getMasterDataRelationNode,
   mergeImportedMasterDataBindings,
   mapImportedMasterDataRecord,
+  summarizeMasterDataMaintenance,
   summarizeEmployeeMasterDataBindings,
   summarizeMasterDataRelations,
 } from "../../lib/master-data-relations.ts";
@@ -114,4 +115,58 @@ test("master data page displays import traceability fields", () => {
   assert.ok(source.includes("来源批次"));
   assert.ok(source.includes("导入版本"));
   assert.ok(source.includes("引用状态"));
+});
+
+test("master data maintenance summary counts frozen and blocked references", () => {
+  const summary = summarizeMasterDataMaintenance([
+    {
+      employeeId: "E-901",
+      employeeName: "赵一",
+      supplier: "供应商 A",
+      workplace: "上海职场",
+      project: "博西客服",
+      skills: ["热线", "L2"],
+      effectiveFrom: "2026-05-01",
+      effectiveTo: "2026-12-31",
+      status: "active",
+      anomalyIds: [],
+      qualityIssueIds: [],
+      businessImpact: "主数据已导入，可用于后续业务引用。",
+      sourceBatchId: "BATCH-MD-20260527-001",
+      sourceVersionId: "VER-MD-20260527-001",
+      referenceStatus: "ready",
+    },
+    {
+      employeeId: "E-902",
+      employeeName: "钱二",
+      supplier: "供应商 B",
+      workplace: "苏州职场",
+      project: "博西客服",
+      skills: ["工单", "L1"],
+      effectiveFrom: "2026-05-01",
+      effectiveTo: "2026-05-20",
+      status: "frozen",
+      anomalyIds: [],
+      qualityIssueIds: ["DQ-MD-E-902"],
+      businessImpact: "主数据已冻结，引用会进入数据质量核对。",
+      sourceBatchId: "BATCH-MD-20260527-001",
+      sourceVersionId: "VER-MD-20260527-001",
+      referenceStatus: "blocked",
+    },
+  ]);
+
+  assert.equal(summary.imported, 2);
+  assert.equal(summary.frozen, 1);
+  assert.equal(summary.blockedReferences, 1);
+  assert.deepEqual(summary.deferredActions, ["无审批发布", "无权限隔离", "无导出或批量"]);
+});
+
+test("master data page exposes maintenance and reference check controls", () => {
+  const source = readFileSync("app/master-data-relations/page.tsx", "utf8");
+
+  assert.ok(source.includes("维护状态"));
+  assert.ok(source.includes("新增或修改"));
+  assert.ok(source.includes("冻结"));
+  assert.ok(source.includes("解冻"));
+  assert.ok(source.includes("引用校验"));
 });

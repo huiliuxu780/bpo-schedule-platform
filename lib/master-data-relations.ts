@@ -25,6 +25,7 @@ export type EmployeeMasterDataBindingStatus =
   | "active"
   | "needs_review"
   | "expiring_soon"
+  | "frozen"
   | "inactive"
 
 export type MasterDataReferenceStatus = "ready" | "needs_review" | "blocked"
@@ -85,8 +86,23 @@ export type EmployeeMasterDataBindingSummary = {
   active: number
   needsReview: number
   expiringSoon: number
+  frozen: number
   inactive: number
 }
+
+export type MasterDataMaintenanceSummary = {
+  imported: number
+  frozen: number
+  blockedReferences: number
+  expiringSoon: number
+  deferredActions: string[]
+}
+
+export const deferredMasterDataMaintenanceActions = [
+  "无审批发布",
+  "无权限隔离",
+  "无导出或批量",
+]
 
 const API_BASE_URL =
   process.env.BPO_API_BASE_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8000"
@@ -223,6 +239,7 @@ export function summarizeEmployeeMasterDataBindings(
     active: rows.filter((row) => row.status === "active").length,
     needsReview: rows.filter((row) => row.status === "needs_review").length,
     expiringSoon: rows.filter((row) => row.status === "expiring_soon").length,
+    frozen: rows.filter((row) => row.status === "frozen").length,
     inactive: rows.filter((row) => row.status === "inactive").length,
   }
 }
@@ -275,6 +292,18 @@ export async function getEmployeeMasterDataBindings() {
   return mergeImportedMasterDataBindings(importedRows)
 }
 
+export function summarizeMasterDataMaintenance(
+  rows: EmployeeMasterDataBinding[]
+): MasterDataMaintenanceSummary {
+  return {
+    imported: rows.filter((row) => row.sourceBatchId).length,
+    frozen: rows.filter((row) => row.status === "frozen").length,
+    blockedReferences: rows.filter((row) => row.referenceStatus === "blocked").length,
+    expiringSoon: rows.filter((row) => row.status === "expiring_soon").length,
+    deferredActions: deferredMasterDataMaintenanceActions,
+  }
+}
+
 export function getEmployeeMasterDataBinding(employeeId: string) {
   return fallbackEmployeeMasterDataBindings.find(
     (row) => row.employeeId === employeeId
@@ -292,6 +321,7 @@ export function employeeMasterDataBindingStatusLabel(
     active: "有效",
     needs_review: "待复核",
     expiring_soon: "即将到期",
+    frozen: "已冻结",
     inactive: "已停用",
   }[status]
 }
@@ -311,6 +341,10 @@ export function masterDataReferenceStatusLabel(status?: MasterDataReferenceStatu
 function employeeBindingStatusFromImported(status: string): EmployeeMasterDataBindingStatus {
   if (status === "inactive") {
     return "inactive"
+  }
+
+  if (status === "frozen") {
+    return "frozen"
   }
 
   if (status === "needs_review") {

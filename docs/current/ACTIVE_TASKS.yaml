@@ -6,15 +6,6 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
 tasks:
-  - id: F406
-    status: ready
-    title: "G001 主数据维护状态有效期与引用校验"
-    priority: P0
-    story_ids: ["US591"]
-    required_workflow: backend-vertical
-    dependencies: ["F405"]
-    allowed_files: ["app/master-data-relations/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
-    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
   - id: Q119
     status: ready
     title: "G001 主数据基础 QA"

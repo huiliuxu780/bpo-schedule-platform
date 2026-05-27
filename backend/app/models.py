@@ -190,6 +190,38 @@ class MasterDataImportedRecordListResponse(BaseModel):
     items: list[MasterDataImportedRecord]
 
 
+class MasterDataRecordUpsertRequest(BaseModel):
+    employee_id: str
+    employee_name: str
+    supplier_id: str
+    supplier_name: str
+    workplace_id: str
+    workplace_name: str
+    project_id: str
+    project_name: str
+    skill_group: str
+    skill_level: str = "待确认"
+    effective_from: str
+    effective_to: str = "未设置"
+    status: str = "active"
+
+
+class MasterDataReferenceCheckRequest(BaseModel):
+    employee_id: str
+    business_date: str
+    workplace_id: str
+    supplier_id: str
+    project_id: str
+
+
+class MasterDataReferenceCheckResult(BaseModel):
+    employee_id: str
+    reference_status: str
+    error_code: str | None = None
+    error_message: str | None = None
+    quality_issue_id: str | None = None
+
+
 class MasterDataEntityContract(BaseModel):
     entity: MasterDataEntity
     primary_key: list[str]

@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 master data maintenance and reference check
+
+#### 结论
+
+- `F406/US591/R625-R627` 已完成 G001 主数据维护状态、有效期与引用校验。
+- 后端新增主数据 process-memory 新增/修改、冻结、解冻和引用校验接口；冻结、停用、过期、缺失或绑定不一致会返回阻断状态和数据质量式错误码。
+- 前端主数据关系页新增维护状态区，展示新增或修改、冻结、解冻、引用校验、阻断引用和暂不做审批/权限/导出的边界。
+- current queue 与 active tasks 已移除 `US591/F406`，下一项为 `US592/Q119`。
+
+#### 风险
+
+- 当前维护能力仍是 process-memory，不是生产数据库 CRUD，服务重启后不会保留维护结果。
+- 引用校验只覆盖主数据有效期、冻结/停用、缺失和绑定不一致；排班、预测、登录和状态导入的真实引用落地仍归后续任务。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `upsert_master_data_record`，前端 node test 首次失败于缺少 `summarizeMasterDataMaintenance`。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，45 个后端测试通过。
+- `node --test scripts/tests/master-data-relations.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，40 个前端/契约测试通过。
+- API smoke：新增 `E-991` 返回 `ready`；冻结后引用校验返回 `blocked master_data_frozen`；解冻后恢复 `active ready`。
+- 页面 smoke：`/master-data-relations` 可渲染 `E-991`，并包含“维护状态”“新增或修改”“冻结”“解冻”“引用校验”。
+
 ### 2026-05-27 - G001 master data import and view
 
 #### 结论
