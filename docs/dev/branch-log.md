@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### Q121 G001 Demand Forecast Foundation QA
+
+- branch_name: `codex/f409-demand-forecast-import`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `ef2f20e`
+- remote_status: `not_pushed`
+- scope: QA closeout for the G001 demand-forecast foundation, covering demand forecast import, forecast versions, version-change records, forecast-vs-schedule alignment, product copy/navigation boundaries, strict state checks, and no-database boundary.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates current queue, active tasks, backlog/story status, audit, task log, project state/context, and branch log only.
+- check_result: target backend/frontend contract tests, product copy/navigation tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F411 G001 Demand Forecast Schedule Alignment
 
 - branch_name: `codex/f409-demand-forecast-import`
@@ -12,7 +30,7 @@
 - allowed_files_check: `app/person-timeline/**`, `app/production-mvp/demand-forecast/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates demand schedule alignment schema/repository/route, backend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
 - check_result: TDD red observed for missing demand schedule alignment route; target backend/frontend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
-- local_commit_sha: `pending`
+- local_commit_sha: `ef2f20e`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
@@ -30,7 +48,7 @@
 - allowed_files_check: `app/production-mvp/demand-forecast/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates demand forecast version-change schema/repository/route, backend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
 - check_result: TDD red observed for missing demand forecast version-change route; target backend/frontend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
-- local_commit_sha: `pending`
+- local_commit_sha: `bb8f797`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
@@ -48,7 +66,7 @@
 - allowed_files_check: `app/production-mvp/demand-forecast/**`, `app/import-batches/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates demand forecast import schema/repository, demand plan row model, backend/frontend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
 - check_result: TDD red observed for missing imported demand forecast records, missing skill-group validation, and missing source batch/version in alignment rows; target backend/frontend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
-- local_commit_sha: `pending`
+- local_commit_sha: `8513189`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 demand forecast foundation QA
+
+#### 结论
+
+- `Q121/US598/R640` 已完成 G001 需求预测基础 QA。
+- 已验收 `F409` 需求预测 CSV 导入、`F410` 预测版本与变更追踪、`F411` 预测 vs 人员排班 0.5h 对齐。
+- 目标测试覆盖预测导入成功/失败行、来源批次、预测版本、版本变更记录、缺口/超排/平衡/无匹配排班结果、产品文案和业务导航边界。
+- current queue 与 active tasks 已清空。
+
+#### 风险
+
+- 需求预测基础仍是 no-database process-memory，不是生产预测版本库、持久化计算任务或异常写入闭环。
+- 登录日志、状态日志、登录/状态 0.5h 切分、排班 vs 登录/状态异常仍归后续 `US599-US603/F412-F415/Q122`。
+
+#### 验证
+
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，49 个后端测试通过。
+- `node --test scripts/tests/demand-supply-alignment.test.mjs scripts/tests/demand-forecast-contract.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，37 个前端/契约测试通过。
+- `bash scripts/check-state.sh --strict`：通过，当前队列和 active tasks 可清空。
+- `git diff --check` 和最终 `bash scripts/check.sh`：通过。
+
 ### 2026-05-27 - G001 demand forecast schedule alignment
 
 #### 结论

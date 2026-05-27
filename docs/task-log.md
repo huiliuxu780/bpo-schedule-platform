@@ -19,6 +19,15 @@
 
 ### 2026-05-27
 
+- task_id: `Q121`
+- source_ids:
+  - `R640`
+- story_ids:
+  - `US598`
+- action: 完成 G001 需求预测基础 QA。
+- status: `done`
+- notes: 已验证需求预测导入、预测版本、版本变更追踪、预测 vs 人员排班 0.5h 对齐、产品文案和导航边界；目标测试、严格状态检查、空白检查和最终项目检查均通过。没有新增产品代码、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空，下一步建议解锁登录/状态处理波次。
+
 - task_id: `F411`
 - source_ids:
   - `R638`

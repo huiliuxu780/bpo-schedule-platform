@@ -202,7 +202,7 @@ tasks:
   - id: Q121
     title: "G001 需求预测基础 QA"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     dependencies: ["F409", "F410", "F411"]
     allowed_files: ["docs/**", "tasks/backlog.yaml"]

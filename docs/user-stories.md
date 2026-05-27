@@ -150,7 +150,7 @@ stories:
     story: "作为 QA，我希望验证需求预测导入、版本、变更追踪和排班对齐，以便确认预测生产流可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "ready"
+    status: "done"
     dependencies: [US596, US597]
   - id: US599
     requirement_ids: [R641, R643]
