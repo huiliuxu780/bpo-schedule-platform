@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 demand forecast schedule alignment
+
+#### 结论
+
+- `F411/US597/R638-R639` 已完成 G001 需求预测与排班对齐。
+- 后端新增 `/api/v1/demand-forecasts/schedule-alignments`，按业务日、职场、项目、0.5h 时段、技能组和等级对齐导入预测与人员排班 0.5h 汇总。
+- 对齐结果输出 `forecast_shortage`、`forecast_overstaffed`、`balanced` 和 `no_matching_schedule`，并保留预测来源批次/版本、排班版本、排班来源批次、排班明细和员工追溯。
+- current queue 与 active tasks 已切到 `US598/Q121`。
+
+#### 风险
+
+- 当前对齐结果仍是 no-database process-memory 现场计算，不是生产计算任务、结果表或异常写入闭环。
+- QA 收口仍归 `Q121`；登录/状态日志处理仍归后续任务。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `list_demand_schedule_alignments` 接口。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，49 个后端测试通过。
+- `node --test scripts/tests/demand-supply-alignment.test.mjs scripts/tests/demand-forecast-contract.test.mjs scripts/tests/import-batch-history.test.mjs`：通过，31 个前端/契约测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已切到 `US598/Q121`。
+
 ### 2026-05-27 - G001 demand forecast version changes
 
 #### 结论

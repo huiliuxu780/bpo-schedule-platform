@@ -104,6 +104,33 @@ class DemandForecastVersionChangeListResponse(BaseModel):
     items: list[DemandForecastVersionChangeRecord]
 
 
+class DemandScheduleAlignmentRecord(BaseModel):
+    alignment_id: str
+    demand_id: str
+    business_date: str
+    workplace_id: str
+    project_id: str
+    skill_group: str
+    skill_level: str
+    interval_start: str
+    interval_end: str
+    forecast_agents: int = Field(ge=0)
+    scheduled_agents: int = Field(ge=0)
+    shortage_agents: int = Field(ge=0)
+    overstaffed_agents: int = Field(ge=0)
+    alignment_status: str
+    demand_source_batch_id: str
+    demand_version_id: str
+    schedule_version_ids: list[str]
+    schedule_source_batch_ids: list[str]
+    schedule_detail_ids: list[str]
+    employee_ids: list[str]
+
+
+class DemandScheduleAlignmentListResponse(BaseModel):
+    items: list[DemandScheduleAlignmentRecord]
+
+
 class DemandForecastCsvImportRequest(BaseModel):
     file_name: str
     uploaded_by: str

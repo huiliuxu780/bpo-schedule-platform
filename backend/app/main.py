@@ -4,6 +4,7 @@ from backend.app.models import (
     CsvImportPreviewRequest,
     CsvImportPreviewResponse,
     DemandForecastVersionChangeListResponse,
+    DemandScheduleAlignmentListResponse,
     DemandPlanListResponse,
     DemandForecastCsvImportRequest,
     FulfillmentComparisonContractResponse,
@@ -45,6 +46,7 @@ from backend.app.repository import (
     preview_csv_import as create_csv_import_preview,
     import_status_log_csv as create_status_log_import_batch,
     list_demand_forecast_version_change_records as find_demand_forecast_version_changes,
+    list_demand_schedule_alignment_records as find_demand_schedule_alignments,
     list_demand_plan_rows,
     list_master_data_imported_records as find_master_data_imported_records,
     list_personnel_schedule_imported_records as find_personnel_schedule_imported_records,
@@ -90,6 +92,16 @@ def list_demand_plans(query: str | None = None) -> DemandPlanListResponse:
 def list_demand_forecast_version_changes() -> DemandForecastVersionChangeListResponse:
     return DemandForecastVersionChangeListResponse(
         items=find_demand_forecast_version_changes()
+    )
+
+
+@app.get(
+    "/api/v1/demand-forecasts/schedule-alignments",
+    response_model=DemandScheduleAlignmentListResponse,
+)
+def list_demand_schedule_alignments() -> DemandScheduleAlignmentListResponse:
+    return DemandScheduleAlignmentListResponse(
+        items=find_demand_schedule_alignments()
     )
 
 

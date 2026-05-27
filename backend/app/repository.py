@@ -7,6 +7,7 @@ from backend.app.models import (
     CsvImportPreviewResponse,
     DemandPlanRow,
     DemandForecastVersionChangeRecord,
+    DemandScheduleAlignmentRecord,
     DemandForecastCsvImportRequest,
     AnomalyRuleContract,
     ComparisonSourceContract,
@@ -1291,6 +1292,81 @@ def demand_project_id_for_name(project_name: str) -> str:
 
 def list_demand_forecast_version_change_records() -> list[DemandForecastVersionChangeRecord]:
     return DEMAND_FORECAST_VERSION_CHANGES
+
+
+def list_demand_schedule_alignment_records() -> list[DemandScheduleAlignmentRecord]:
+    alignments: list[DemandScheduleAlignmentRecord] = []
+    imported_demand_rows = [
+        row for row in DEMAND_FORECAST_IMPORTED_RECORDS if row.source_batch_id and row.source_version_id
+    ]
+
+    for demand in imported_demand_rows:
+        schedule_matches = [
+            item
+            for item in PERSONNEL_SCHEDULE_INTERVAL_RECORDS
+            if item.business_date == demand.plan_date
+            and item.workplace_id == demand_workplace_id_for_name(demand.site_name)
+            and item.project_id == demand_project_id_for_name(demand.project_name)
+            and item.skill_group == demand.skill_group
+            and item.skill_level == demand.skill_level
+            and item.interval_start == demand.interval_start
+            and item.interval_end == demand.interval_end
+        ]
+        scheduled_agents = sum(item.scheduled_agents for item in schedule_matches)
+        shortage_agents = max(demand.forecast_agents - scheduled_agents, 0)
+        overstaffed_agents = max(scheduled_agents - demand.forecast_agents, 0)
+
+        if not schedule_matches:
+            alignment_status = "no_matching_schedule"
+        elif shortage_agents > 0:
+            alignment_status = "forecast_shortage"
+        elif overstaffed_agents > 0:
+            alignment_status = "forecast_overstaffed"
+        else:
+            alignment_status = "balanced"
+
+        alignments.append(
+            DemandScheduleAlignmentRecord(
+                alignment_id=f"DSA-{demand.source_batch_id}-{demand.demand_id}",
+                demand_id=demand.demand_id,
+                business_date=demand.plan_date,
+                workplace_id=demand_workplace_id_for_name(demand.site_name),
+                project_id=demand_project_id_for_name(demand.project_name),
+                skill_group=demand.skill_group,
+                skill_level=demand.skill_level,
+                interval_start=demand.interval_start,
+                interval_end=demand.interval_end,
+                forecast_agents=demand.forecast_agents,
+                scheduled_agents=scheduled_agents,
+                shortage_agents=shortage_agents,
+                overstaffed_agents=overstaffed_agents,
+                alignment_status=alignment_status,
+                demand_source_batch_id=demand.source_batch_id or "",
+                demand_version_id=demand.source_version_id or demand.forecast_version,
+                schedule_version_ids=unique_values(
+                    item.schedule_version_id for item in schedule_matches
+                ),
+                schedule_source_batch_ids=unique_values(
+                    item.source_batch_id for item in schedule_matches
+                ),
+                schedule_detail_ids=unique_values(
+                    detail_id
+                    for item in schedule_matches
+                    for detail_id in item.schedule_detail_ids
+                ),
+                employee_ids=unique_values(
+                    employee_id
+                    for item in schedule_matches
+                    for employee_id in item.employee_ids
+                ),
+            )
+        )
+
+    return alignments
+
+
+def unique_values(values) -> list[str]:
+    return list(dict.fromkeys(value for value in values if value))
 
 
 def import_personnel_schedule_csv(

@@ -6,12 +6,12 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US597
+  - id: US598
     status: ready
-    priority: P0
-    module: "需求预测"
-    role: "排班运营"
-    task_ids: ["F411"]
-    requirement_ids: ["R638", "R639"]
-    dependencies: ["US596"]
-    story: "预测按职场、项目、时段、技能组和等级与排班对齐，识别缺口、超排和无匹配排班候选。"
+    priority: P1
+    module: "质量与交付"
+    role: "QA"
+    task_ids: ["Q121"]
+    requirement_ids: ["R640"]
+    dependencies: ["US596", "US597"]
+    story: "验证需求预测导入、版本、变更追踪和排班对齐。"

@@ -23,6 +23,7 @@ from backend.app.main import (
     list_import_batches,
     list_demand_plans,
     list_demand_forecast_version_changes,
+    list_demand_schedule_alignments,
     list_fulfillment_comparison_contract,
     list_master_data_import_contract,
     list_personnel_schedule_import_contract,
@@ -70,6 +71,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/master-data/reference-check", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/demand-forecast", "POST"), routes)
         self.assertIn(("/api/v1/demand-forecasts/version-changes", "GET"), routes)
+        self.assertIn(("/api/v1/demand-forecasts/schedule-alignments", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/personnel-schedule", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/login-log", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/status-log", "POST"), routes)
@@ -423,6 +425,62 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(change.new_source_batch_id, second.batch_id)
         self.assertEqual(change.previous_version_id, first.version_records[0].version_id)
         self.assertEqual(change.new_version_id, second.version_records[0].version_id)
+
+    def test_demand_forecast_aligns_with_personnel_schedule_intervals(self) -> None:
+        schedule = import_personnel_schedule_csv(
+            PersonnelScheduleCsvImportRequest(
+                file_name="personnel_schedule_for_alignment.csv",
+                uploaded_by="排班运营",
+                csv_content=(
+                    "schedule_detail_id,schedule_version_id,employee_id,business_date,workplace_id,supplier_id,project_id,shift_type_id,start_at,end_at,skill_group,skill_level,status\n"
+                    "SCH-A-001,SV-ALIGN-001,E-101,2026-05-28,WP-SH,SUP-01,P-BOSCH,SHIFT-DAY,09:00,10:00,热线,L2,published\n"
+                    "SCH-A-002,SV-ALIGN-001,E-102,2026-05-28,WP-SH,SUP-01,P-BOSCH,SHIFT-DAY,09:00,10:00,热线,L2,published\n"
+                ),
+            )
+        )
+        demand = import_demand_forecast_csv(
+            DemandForecastCsvImportRequest(
+                file_name="demand_forecast_alignment.csv",
+                uploaded_by="数据管理员",
+                csv_content=(
+                    "business_date,workplace_id,project_id,interval_start,interval_end,skill_group,grade,forecast_agents\n"
+                    "2026-05-28,WP-SH,P-BOSCH,09:00,09:30,热线,L2,3\n"
+                    "2026-05-28,WP-SH,P-BOSCH,09:30,10:00,热线,L2,1\n"
+                    "2026-05-28,WP-SH,P-BOSCH,10:00,10:30,工单,L2,1\n"
+                ),
+            )
+        )
+
+        alignments = [
+            item
+            for item in list_demand_schedule_alignments().items
+            if item.demand_source_batch_id == demand.batch_id
+        ]
+        shortage = next(item for item in alignments if item.interval_start == "09:00")
+        overstaffed = next(item for item in alignments if item.interval_start == "09:30")
+        unmatched = next(item for item in alignments if item.interval_start == "10:00")
+
+        self.assertEqual(shortage.alignment_status, "forecast_shortage")
+        self.assertEqual(shortage.forecast_agents, 3)
+        self.assertEqual(shortage.scheduled_agents, 2)
+        self.assertEqual(shortage.shortage_agents, 1)
+        self.assertEqual(shortage.overstaffed_agents, 0)
+        self.assertEqual(shortage.demand_version_id, demand.version_records[0].version_id)
+        self.assertEqual(shortage.schedule_version_ids, ["SV-ALIGN-001"])
+        self.assertEqual(shortage.schedule_source_batch_ids, [schedule.batch_id])
+        self.assertEqual(shortage.schedule_detail_ids, ["SCH-A-001", "SCH-A-002"])
+        self.assertEqual(shortage.employee_ids, ["E-101", "E-102"])
+
+        self.assertEqual(overstaffed.alignment_status, "forecast_overstaffed")
+        self.assertEqual(overstaffed.forecast_agents, 1)
+        self.assertEqual(overstaffed.scheduled_agents, 2)
+        self.assertEqual(overstaffed.shortage_agents, 0)
+        self.assertEqual(overstaffed.overstaffed_agents, 1)
+
+        self.assertEqual(unmatched.alignment_status, "no_matching_schedule")
+        self.assertEqual(unmatched.forecast_agents, 1)
+        self.assertEqual(unmatched.scheduled_agents, 0)
+        self.assertEqual(unmatched.schedule_detail_ids, [])
 
     def test_demand_forecast_csv_import_records_failed_rows(self) -> None:
         response = import_demand_forecast_csv(

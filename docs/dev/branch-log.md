@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F411 G001 Demand Forecast Schedule Alignment
+
+- branch_name: `codex/f409-demand-forecast-import`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `bb8f797`
+- remote_status: `not_pushed`
+- scope: backend-vertical local demand-forecast schedule alignment slice: compare imported demand forecast rows with personnel schedule 0.5h interval records by business date, workplace, project, interval, skill group, and grade, returning shortage, overstaffed, balanced, or no-matching-schedule results with demand and schedule traceability.
+- allowed_files_check: `app/person-timeline/**`, `app/production-mvp/demand-forecast/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates demand schedule alignment schema/repository/route, backend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing demand schedule alignment route; target backend/frontend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F410 G001 Demand Forecast Version Changes
 
 - branch_name: `codex/f409-demand-forecast-import`
