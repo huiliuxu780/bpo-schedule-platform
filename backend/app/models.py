@@ -128,6 +128,17 @@ class ImportBatchFailureRow(BaseModel):
     raw_value: str
 
 
+class ImportBatchVersionRecord(BaseModel):
+    version_id: str
+    entity: str
+    batch_id: str
+    source_file: str
+    row_count: int = Field(ge=0)
+    business_date_start: str | None = None
+    business_date_end: str | None = None
+    created_at: str
+
+
 class ImportBatchResult(BaseModel):
     batch_id: str
     entity: str
@@ -139,8 +150,11 @@ class ImportBatchResult(BaseModel):
     success_rows: int = Field(ge=0)
     failed_rows: int = Field(ge=0)
     warning_rows: int = Field(ge=0)
+    business_date_start: str | None = None
+    business_date_end: str | None = None
     error_codes: list[str]
     failure_rows: list[ImportBatchFailureRow]
+    version_records: list[ImportBatchVersionRecord] = []
 
 
 class ImportBatchListResponse(BaseModel):

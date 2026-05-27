@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F404 G001 Import Batch Version Records
+
+- branch_name: `codex/f403-import-csv-mapping`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `3121541`
+- remote_status: `not_pushed`
+- scope: backend-vertical local import-result slice: add business date ranges and generated import version records to process-memory import batches, while preserving failed row traceability.
+- allowed_files_check: `app/import-batches/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates import batch result schema, repository import functions, frontend batch model/detail page, tests, and current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing business date range, localVersions, detail-page version block, and backend business_date_start; import-batch tests, product copy/navigation tests, backend unittest, detail-page smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F403 G001 CSV Upload Mapping Preview
 
 - branch_name: `codex/f403-import-csv-mapping`

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict"
+import { readFileSync } from "node:fs"
 import test from "node:test"
 
 import { fallbackDataQualityIssues } from "../../lib/data-quality.ts"
@@ -67,7 +68,21 @@ test("import batch result maps local csv import failure rows", () => {
     success_rows: 1,
     failed_rows: 1,
     warning_rows: 0,
+    business_date_start: "2026-05-25",
+    business_date_end: "2026-05-25",
     error_codes: ["missing_required_field"],
+    version_records: [
+      {
+        version_id: "VER-DF-20260525-001",
+        entity: "demand_forecast",
+        batch_id: "BATCH-DF-20260525-001",
+        source_file: "demand_forecast_test.csv",
+        row_count: 1,
+        business_date_start: "2026-05-25",
+        business_date_end: "2026-05-25",
+        created_at: "2026-05-25T16:40:00+08:00",
+      },
+    ],
     failure_rows: [
       {
         batch_id: "BATCH-DF-20260525-001",
@@ -87,12 +102,24 @@ test("import batch result maps local csv import failure rows", () => {
   assert.equal(batch.sourceFile, "demand_forecast_test.csv")
   assert.equal(batch.owner, "数据管理员")
   assert.equal(batch.uploadedAt, "2026-05-25 16:40")
+  assert.equal(batch.businessDateRange, "2026-05-25")
   assert.equal(batch.status, "completed_with_errors")
   assert.deepEqual(batch.errorCodes, ["missing_required_field"])
+  assert.equal(batch.localVersions.length, 1)
+  assert.equal(batch.localVersions[0].versionId, "VER-DF-20260525-001")
+  assert.equal(batch.localVersions[0].rowCount, 1)
   assert.equal(batch.failureRows.length, 1)
   assert.equal(batch.failureRows[0].failedRowNumber, 3)
   assert.equal(batch.failureRows[0].fieldName, "forecast_agents")
   assert.equal(batch.failureRows[0].errorMessage, "需求预测导入必填字段为空")
+})
+
+test("import batch detail page displays import versions", () => {
+  const source = readFileSync("app/import-batches/[batchId]/page.tsx", "utf8")
+
+  assert.ok(source.includes("导入版本"))
+  assert.ok(source.includes("businessDateRange"))
+  assert.ok(source.includes("localVersions"))
 })
 
 test("personnel schedule import result maps template and failure impact", () => {

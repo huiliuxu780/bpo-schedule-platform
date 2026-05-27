@@ -21,7 +21,7 @@ tasks:
   - id: F404
     title: "G001 导入批次失败行与本地版本"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     dependencies: ["F403"]
     allowed_files: ["app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]

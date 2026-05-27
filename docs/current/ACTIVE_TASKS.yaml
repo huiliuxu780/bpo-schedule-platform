@@ -6,15 +6,6 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
 tasks:
-  - id: F404
-    status: ready
-    title: "G001 导入批次失败行与本地版本"
-    priority: P0
-    story_ids: ["US588"]
-    required_workflow: backend-vertical
-    dependencies: ["F403"]
-    allowed_files: ["app/import-batches/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
-    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
   - id: Q118
     status: ready
     title: "G001 导入中心基础 QA"

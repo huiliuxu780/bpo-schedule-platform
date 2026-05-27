@@ -23,6 +23,16 @@ export type ImportBatchFailureRow = {
   rawValue: string
 }
 
+export type ImportBatchVersionRecord = {
+  versionId: string
+  entity: string
+  batchId: string
+  sourceFile: string
+  rowCount: number
+  businessDateRange: string
+  createdAt: string
+}
+
 export type ImportBatch = {
   id: string
   templateId: string
@@ -30,6 +40,7 @@ export type ImportBatch = {
   sourceFile: string
   owner: string
   uploadedAt: string
+  businessDateRange: string
   status: ImportBatchStatus
   totalRows: number
   successRows: number
@@ -40,6 +51,7 @@ export type ImportBatch = {
   qualityIssueIds: string[]
   failureRows: ImportBatchFailureRow[]
   failureImpacts: ImportBatchFailureImpact[]
+  localVersions: ImportBatchVersionRecord[]
   note: string
 }
 
@@ -54,7 +66,19 @@ export type ImportBatchResult = {
   success_rows: number
   failed_rows: number
   warning_rows: number
+  business_date_start?: string | null
+  business_date_end?: string | null
   error_codes: string[]
+  version_records?: {
+    version_id: string
+    entity: string
+    batch_id: string
+    source_file: string
+    row_count: number
+    business_date_start?: string | null
+    business_date_end?: string | null
+    created_at: string
+  }[]
   failure_rows: {
     batch_id: string
     entity: string
@@ -250,6 +274,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     sourceFile: "master_data_20260519.xlsx",
     owner: "数据管理员",
     uploadedAt: "2026-05-19 09:12",
+    businessDateRange: "2026-05-19",
     status: "completed_with_errors",
     totalRows: 320,
     successRows: 308,
@@ -273,6 +298,7 @@ export const fallbackImportBatches: ImportBatch[] = [
         businessImpact: "绑定关系缺失会导致排班人员无法进入职场、项目、供应商维度的履约对比。",
       },
     ],
+    localVersions: [],
     note: "供应商绑定缺失导致部分人员不可用于排班。",
   },
   {
@@ -282,6 +308,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     sourceFile: "personnel_schedule_20260519.xlsx",
     owner: "排班运营",
     uploadedAt: "2026-05-19 10:05",
+    businessDateRange: "2026-05-19",
     status: "pending_review",
     totalRows: 680,
     successRows: 646,
@@ -305,6 +332,7 @@ export const fallbackImportBatches: ImportBatch[] = [
         businessImpact: "班次类型不存在会导致人员排班无法解释休息、饭点和计入口径。",
       },
     ],
+    localVersions: [],
     note: "部分班次类型未启用，等待排班运营复核。",
   },
   {
@@ -314,6 +342,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     sourceFile: "demand_forecast_20260519.xlsx",
     owner: "预测运营",
     uploadedAt: "2026-05-19 10:40",
+    businessDateRange: "2026-05-19",
     status: "completed",
     totalRows: 96,
     successRows: 96,
@@ -324,6 +353,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     qualityIssueIds: [],
     failureRows: [],
     failureImpacts: [],
+    localVersions: [],
     note: "0.5h 预测时段已完整覆盖。",
   },
   {
@@ -333,6 +363,7 @@ export const fallbackImportBatches: ImportBatch[] = [
     sourceFile: "status_log_20260519.xlsx",
     owner: "现场主管",
     uploadedAt: "2026-05-19 11:20",
+    businessDateRange: "2026-05-19",
     status: "failed",
     totalRows: 420,
     successRows: 0,
@@ -356,6 +387,7 @@ export const fallbackImportBatches: ImportBatch[] = [
         businessImpact: "预测时段断档会让排班和预测对比缺少同一 0.5h 基准。",
       },
     ],
+    localVersions: [],
     note: "状态时间段重叠，当前只展示失败结果，不做修复提交。",
   },
 ]
@@ -370,6 +402,10 @@ export function mapImportBatchResult(result: ImportBatchResult): ImportBatch {
     sourceFile: result.file_name,
     owner: result.uploaded_by,
     uploadedAt: formatImportBatchTimestamp(result.uploaded_at),
+    businessDateRange: formatBusinessDateRange(
+      result.business_date_start,
+      result.business_date_end
+    ),
     status: result.status,
     totalRows: result.total_rows,
     successRows: result.success_rows,
@@ -392,6 +428,18 @@ export function mapImportBatchResult(result: ImportBatchResult): ImportBatch {
       affectedRows: 1,
       affectedObjects: entityView.affectedObjects,
       businessImpact: `${row.field_name} 字段问题会影响${entityView.businessImpactTarget}。`,
+    })),
+    localVersions: (result.version_records ?? []).map((version) => ({
+      versionId: version.version_id,
+      entity: version.entity,
+      batchId: version.batch_id,
+      sourceFile: version.source_file,
+      rowCount: version.row_count,
+      businessDateRange: formatBusinessDateRange(
+        version.business_date_start,
+        version.business_date_end
+      ),
+      createdAt: formatImportBatchTimestamp(version.created_at),
     })),
     note:
       result.failed_rows > 0
@@ -452,6 +500,18 @@ function importEntityView(entity: string) {
 
 function formatImportBatchTimestamp(value: string) {
   return value.replace("T", " ").slice(0, 16)
+}
+
+function formatBusinessDateRange(start?: string | null, end?: string | null) {
+  if (!start && !end) {
+    return "未标注"
+  }
+
+  if (!end || start === end) {
+    return start ?? end ?? "未标注"
+  }
+
+  return `${start} 至 ${end}`
 }
 
 async function fetchJson<T>(path: string): Promise<T | null> {

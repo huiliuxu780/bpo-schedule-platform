@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 import batch version records
+
+#### 结论
+
+- `F404/US588/R620-R622` 已完成 G001 导入批次失败行与版本记录。
+- 后端 `ImportBatchResult` 新增业务日期范围和 `version_records`，成功行生成导入版本记录，失败行继续保留行号、字段、错误码、错误原因和原始值。
+- 前端批次模型映射业务日期范围和导入版本，批次详情页新增“业务日期”和“导入版本”展示。
+- 本批没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 版本记录仍随当前进程内存存在，不是生产数据库版本、文件存储版本或审批发布版本。
+- 主数据真实导入处理仍归后续 `F405`，本批只增强已有 CSV 导入结果的可追溯结构。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/import-batch-history.test.mjs` 首次失败于缺少 `businessDateRange`、`localVersions` 和详情页版本区块；后端 unittest 首次失败于缺少 `business_date_start`。
+- `node --test scripts/tests/csv-import-preview.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，34 个测试通过。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，40 个后端测试通过。
+- 页面 smoke：通过，`/import-batches/BATCH-20260519-003` 展示“业务日期”和成功行范围。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已移除 `US588/F404`，下一项为 `US589/Q118`。
+
 ### 2026-05-27 - G001 CSV upload and field-mapping preview
 
 #### 结论

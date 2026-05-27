@@ -115,6 +115,11 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(response.error_codes, [])
         self.assertEqual(response.failure_rows, [])
         self.assertEqual(response.file_name, "demand_forecast_test.csv")
+        self.assertEqual(response.business_date_start, "2026-05-26")
+        self.assertEqual(response.business_date_end, "2026-05-26")
+        self.assertEqual(len(response.version_records), 1)
+        self.assertEqual(response.version_records[0].batch_id, response.batch_id)
+        self.assertEqual(response.version_records[0].row_count, 2)
 
         stored = get_import_batch_result(response.batch_id)
         self.assertIsNotNone(stored)

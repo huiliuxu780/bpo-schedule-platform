@@ -12,6 +12,7 @@ from backend.app.models import (
     FulfillmentComparisonContractResponse,
     ImportBatchFailureRow,
     ImportBatchResult,
+    ImportBatchVersionRecord,
     LoginLogCsvImportRequest,
     MasterDataEntityContract,
     MasterDataImportContractResponse,
@@ -144,6 +145,45 @@ def preview_csv_import(request: CsvImportPreviewRequest) -> CsvImportPreviewResp
         missing_required_fields=missing_required_fields,
         warning_fields=warning_fields,
         pending_validation_fields=pending_validation_fields,
+    )
+
+
+def build_import_version_records(
+    *,
+    batch_id: str,
+    entity: str,
+    file_name: str,
+    uploaded_at: str,
+    successful_rows: list[dict[str, str]],
+) -> tuple[str | None, str | None, list[ImportBatchVersionRecord]]:
+    business_dates = sorted(
+        {
+            (row.get("business_date") or "").strip()
+            for row in successful_rows
+            if (row.get("business_date") or "").strip()
+        }
+    )
+    business_date_start = business_dates[0] if business_dates else None
+    business_date_end = business_dates[-1] if business_dates else None
+
+    if not successful_rows:
+        return business_date_start, business_date_end, []
+
+    return (
+        business_date_start,
+        business_date_end,
+        [
+            ImportBatchVersionRecord(
+                version_id=batch_id.replace("BATCH-", "VER-", 1),
+                entity=entity,
+                batch_id=batch_id,
+                source_file=file_name,
+                row_count=len(successful_rows),
+                business_date_start=business_date_start,
+                business_date_end=business_date_end,
+                created_at=uploaded_at,
+            )
+        ],
     )
 
 UNAVAILABILITY_ROWS = [
@@ -614,6 +654,7 @@ def import_demand_forecast_csv(
     uploaded_at = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds")
     batch_id = f"BATCH-DF-{uploaded_at[:10].replace('-', '')}-{len(IMPORT_BATCH_RESULTS) + 1:03d}"
     failure_rows: list[ImportBatchFailureRow] = []
+    successful_rows: list[dict[str, str]] = []
     success_rows = 0
 
     reader = csv.DictReader(StringIO(request.csv_content.strip()))
@@ -644,11 +685,19 @@ def import_demand_forecast_csv(
                 failure_rows.extend(row_failures)
             else:
                 success_rows += 1
+                successful_rows.append(row)
 
     error_codes = sorted({failure.error_code for failure in failure_rows})
     failed_rows = len({failure.failed_row_number for failure in failure_rows})
     total_rows = len(rows)
     status = "completed" if failed_rows == 0 else "completed_with_errors"
+    business_date_start, business_date_end, version_records = build_import_version_records(
+        batch_id=batch_id,
+        entity="demand_forecast",
+        file_name=request.file_name,
+        uploaded_at=uploaded_at,
+        successful_rows=successful_rows,
+    )
     result = ImportBatchResult(
         batch_id=batch_id,
         entity="demand_forecast",
@@ -660,8 +709,11 @@ def import_demand_forecast_csv(
         success_rows=success_rows,
         failed_rows=failed_rows,
         warning_rows=0,
+        business_date_start=business_date_start,
+        business_date_end=business_date_end,
         error_codes=error_codes,
         failure_rows=failure_rows,
+        version_records=version_records,
     )
     IMPORT_BATCH_RESULTS[batch_id] = result
 
@@ -729,6 +781,7 @@ def import_personnel_schedule_csv(
     uploaded_at = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds")
     batch_id = f"BATCH-PS-{uploaded_at[:10].replace('-', '')}-{len(IMPORT_BATCH_RESULTS) + 1:03d}"
     failure_rows: list[ImportBatchFailureRow] = []
+    successful_rows: list[dict[str, str]] = []
     success_rows = 0
 
     reader = csv.DictReader(StringIO(request.csv_content.strip()))
@@ -759,9 +812,17 @@ def import_personnel_schedule_csv(
                 failure_rows.extend(row_failures)
             else:
                 success_rows += 1
+                successful_rows.append(row)
 
     error_codes = sorted({failure.error_code for failure in failure_rows})
     failed_rows = len({failure.failed_row_number for failure in failure_rows})
+    business_date_start, business_date_end, version_records = build_import_version_records(
+        batch_id=batch_id,
+        entity="personnel_schedule",
+        file_name=request.file_name,
+        uploaded_at=uploaded_at,
+        successful_rows=successful_rows,
+    )
     result = ImportBatchResult(
         batch_id=batch_id,
         entity="personnel_schedule",
@@ -773,8 +834,11 @@ def import_personnel_schedule_csv(
         success_rows=success_rows,
         failed_rows=failed_rows,
         warning_rows=0,
+        business_date_start=business_date_start,
+        business_date_end=business_date_end,
         error_codes=error_codes,
         failure_rows=failure_rows,
+        version_records=version_records,
     )
     IMPORT_BATCH_RESULTS[batch_id] = result
 
@@ -842,6 +906,7 @@ def import_login_log_csv(request: LoginLogCsvImportRequest) -> ImportBatchResult
     uploaded_at = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds")
     batch_id = f"BATCH-LL-{uploaded_at[:10].replace('-', '')}-{len(IMPORT_BATCH_RESULTS) + 1:03d}"
     failure_rows: list[ImportBatchFailureRow] = []
+    successful_rows: list[dict[str, str]] = []
     success_rows = 0
 
     reader = csv.DictReader(StringIO(request.csv_content.strip()))
@@ -872,9 +937,17 @@ def import_login_log_csv(request: LoginLogCsvImportRequest) -> ImportBatchResult
                 failure_rows.extend(row_failures)
             else:
                 success_rows += 1
+                successful_rows.append(row)
 
     error_codes = sorted({failure.error_code for failure in failure_rows})
     failed_rows = len({failure.failed_row_number for failure in failure_rows})
+    business_date_start, business_date_end, version_records = build_import_version_records(
+        batch_id=batch_id,
+        entity="login_log",
+        file_name=request.file_name,
+        uploaded_at=uploaded_at,
+        successful_rows=successful_rows,
+    )
     result = ImportBatchResult(
         batch_id=batch_id,
         entity="login_log",
@@ -886,8 +959,11 @@ def import_login_log_csv(request: LoginLogCsvImportRequest) -> ImportBatchResult
         success_rows=success_rows,
         failed_rows=failed_rows,
         warning_rows=0,
+        business_date_start=business_date_start,
+        business_date_end=business_date_end,
         error_codes=error_codes,
         failure_rows=failure_rows,
+        version_records=version_records,
     )
     IMPORT_BATCH_RESULTS[batch_id] = result
 
@@ -955,6 +1031,7 @@ def import_status_log_csv(request: StatusLogCsvImportRequest) -> ImportBatchResu
     uploaded_at = datetime.now(timezone(timedelta(hours=8))).isoformat(timespec="seconds")
     batch_id = f"BATCH-SL-{uploaded_at[:10].replace('-', '')}-{len(IMPORT_BATCH_RESULTS) + 1:03d}"
     failure_rows: list[ImportBatchFailureRow] = []
+    successful_rows: list[dict[str, str]] = []
     success_rows = 0
 
     reader = csv.DictReader(StringIO(request.csv_content.strip()))
@@ -985,9 +1062,17 @@ def import_status_log_csv(request: StatusLogCsvImportRequest) -> ImportBatchResu
                 failure_rows.extend(row_failures)
             else:
                 success_rows += 1
+                successful_rows.append(row)
 
     error_codes = sorted({failure.error_code for failure in failure_rows})
     failed_rows = len({failure.failed_row_number for failure in failure_rows})
+    business_date_start, business_date_end, version_records = build_import_version_records(
+        batch_id=batch_id,
+        entity="status_log",
+        file_name=request.file_name,
+        uploaded_at=uploaded_at,
+        successful_rows=successful_rows,
+    )
     result = ImportBatchResult(
         batch_id=batch_id,
         entity="status_log",
@@ -999,8 +1084,11 @@ def import_status_log_csv(request: StatusLogCsvImportRequest) -> ImportBatchResu
         success_rows=success_rows,
         failed_rows=failed_rows,
         warning_rows=0,
+        business_date_start=business_date_start,
+        business_date_end=business_date_end,
         error_codes=error_codes,
         failure_rows=failure_rows,
+        version_records=version_records,
     )
     IMPORT_BATCH_RESULTS[batch_id] = result
 

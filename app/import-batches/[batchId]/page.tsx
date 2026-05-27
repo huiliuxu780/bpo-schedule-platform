@@ -92,12 +92,49 @@ export default async function ImportBatchDetailPage({ params }: PageProps) {
           </Badge>
         </div>
 
-        <section className="grid gap-4 md:grid-cols-4">
+        <section className="grid gap-4 md:grid-cols-5">
           <Metric title="总行数" value={`${batch.totalRows}`} description={batch.sourceFile} />
           <Metric title="成功行" value={`${batch.successRows}`} description="处理结果" />
           <Metric title="失败行" value={`${batch.failedRows}`} description="仅追溯展示" />
           <Metric title="警告行" value={`${batch.warningRows}`} description="需要人工查看" />
+          <Metric title="业务日期" value={batch.businessDateRange} description="成功行范围" />
         </section>
+
+        {batch.localVersions.length > 0 ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>导入版本</CardTitle>
+              <CardDescription>
+                成功行生成的版本记录，用于后续导入结果追溯。
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              {batch.localVersions.map((version) => (
+                <div
+                  key={version.versionId}
+                  className="grid gap-3 rounded-lg border p-3 text-sm md:grid-cols-[1fr_9rem_10rem_10rem]"
+                >
+                  <div>
+                    <div className="text-xs text-muted-foreground">版本号</div>
+                    <div className="font-mono text-xs">{version.versionId}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">成功行</div>
+                    <div className="font-medium tabular-nums">{version.rowCount}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">业务日期</div>
+                    <div className="text-muted-foreground">{version.businessDateRange}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">生成时间</div>
+                    <div className="text-muted-foreground">{version.createdAt}</div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        ) : null}
 
         {batch.failureRows.length > 0 ? (
           <section className="grid gap-4">

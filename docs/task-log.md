@@ -19,6 +19,15 @@
 
 ### 2026-05-27
 
+- task_id: `F404`
+- source_ids:
+  - `R620-R622`
+- story_ids:
+  - `US588`
+- action: 完成 G001 导入批次失败行与版本记录。
+- status: `done`
+- notes: 导入结果现在包含文件名、类型、提交人、提交时间、处理状态、行数统计、业务日期范围、失败行明细和成功行生成的导入版本记录；批次详情页新增业务日期和导入版本展示。数据仍为本地 process-memory，不新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已移除 US588/F404，下一项为 US589/Q118。
+
 - task_id: `F403`
 - source_ids:
   - `R618-R619`

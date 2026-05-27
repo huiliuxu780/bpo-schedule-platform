@@ -50,7 +50,7 @@ stories:
     story: "作为数据管理员，我希望导入后形成批次、成功行、失败行和本地版本，以便追溯每次文件处理结果。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US587]
   - id: US589
     requirement_ids: [R623]
