@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 import center foundation QA
+
+#### 结论
+
+- `Q118/US589/R623` 已完成 G001 导入中心基础 QA。
+- 已验收 `F403` 的 CSV 上传/字段映射预览和 `F404` 的导入批次、失败行、业务日期、导入版本记录。
+- current queue 与 active tasks 已移除 `US589/Q118`，下一项为 `US590/F405`。
+- 本 QA 没有新增或修改产品代码、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 导入中心仍是 no-database process-memory 能力，服务重启后不会保留生产数据。
+- 主数据真实导入与维护、人员级排班版本流、预测和登录/状态生产处理仍在后续任务中。
+
+#### 验证
+
+- `node --test scripts/tests/csv-import-preview.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，34 个测试通过。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，40 个后端测试通过。
+- 页面 smoke：通过，`/import-batches/new?type=master-data` 展示主数据 CSV 预览、五类导入类型、字段映射预览和禁用的主数据提交；`/import-batches/BATCH-20260519-003` 展示业务日期。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已移除 `US589/Q118`，下一项为 `US590/F405`。
+
 ### 2026-05-27 - G001 import batch version records
 
 #### 结论

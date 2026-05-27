@@ -19,6 +19,15 @@
 
 ### 2026-05-27
 
+- task_id: `Q118`
+- source_ids:
+  - `R623`
+- story_ids:
+  - `US589`
+- action: 完成 G001 导入中心基础 QA。
+- status: `done`
+- notes: 已验证 CSV 上传/字段映射预览、导入批次、失败行、本地版本、产品文案边界、后端导入契约、页面 smoke 和最终项目检查；确认没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。current queue 与 active tasks 已移除 US589/Q118，下一项为 US590/F405。
+
 - task_id: `F404`
 - source_ids:
   - `R620-R622`

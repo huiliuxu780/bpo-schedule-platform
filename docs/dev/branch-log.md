@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### Q118 G001 Import Center Foundation QA
+
+- branch_name: `codex/f403-import-csv-mapping`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `dc390c9`
+- remote_status: `not_pushed`
+- scope: QA closeout for the G001 import center foundation, covering CSV upload preview, import batch result traceability, failed rows, import versions, page smoke, and no-database boundary.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates current queue, active tasks, backlog/story status, audit, task log, project state, and branch log only.
+- check_result: csv preview/import-batch tests, product copy/navigation tests, backend unittest, page smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F404 G001 Import Batch Version Records
 
 - branch_name: `codex/f403-import-csv-mapping`

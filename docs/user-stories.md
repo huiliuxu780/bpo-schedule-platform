@@ -60,7 +60,7 @@ stories:
     story: "作为 QA，我希望验证导入中心基础闭环，以便确认上传、映射、批次、失败行、版本和边界可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "ready"
+    status: "done"
     dependencies: [US587, US588]
   - id: US590
     requirement_ids: [R624, R628]
