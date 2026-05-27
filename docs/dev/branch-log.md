@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F416 Actual Fulfillment Contract Model
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `0df5f25`
+- remote_status: `not_pushed`
+- scope: frontend local contract model: expose actual-log intervals, actual-log quality issues, and schedule-vs-actual anomalies through a frontend model, fallback records, summary, and anomaly filters.
+- allowed_files_check: `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, app page, component, package, lockfile, database, real integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: adds frontend contract model and model tests plus current and legacy traceability docs; no route, sidebar entry, backend, package, lockfile, database, real integration, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- check_result: TDD red observed for missing `actual-fulfillment-contracts` model; target model tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q123 G001 Full-Chain Boundary QA
 
 - branch_name: `codex/f412-login-status-logs`

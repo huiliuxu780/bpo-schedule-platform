@@ -5,4 +5,22 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US606
+    status: ready
+    priority: P0
+    module: "履约监控"
+    role: "现场主管"
+    task_ids: ["F417"]
+    requirement_ids: ["R655"]
+    dependencies: ["US605"]
+    story: "在现有履约日历链路展示实际履约切片、质量问题和排班对比异常。"
+  - id: US607
+    status: blocked
+    priority: P1
+    module: "质量与交付"
+    role: "QA"
+    task_ids: ["Q124"]
+    requirement_ids: ["R656"]
+    dependencies: ["US605", "US606"]
+    story: "验证 actual-log 和 schedule-vs-actual 前端可见链路及 no-database 边界。"

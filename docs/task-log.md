@@ -19,6 +19,18 @@
 
 ### 2026-05-27
 
+- task_id: `F416`
+- source_ids:
+  - `R653`
+  - `R654`
+- story_ids:
+  - `US605`
+- action: 增加 actual-log 与排班对比异常前端合同模型。
+- status: `done`
+- notes: 新增 `lib/actual-fulfillment-contracts.ts`，读取 `/api/v1/actual-logs/intervals`、`/api/v1/actual-logs/quality-issues` 和 `/api/v1/schedule-actual/anomalies`，并提供合同一致 fallback、摘要统计和异常筛选。本次不新增页面、不改后端、不新增依赖，不做数据库、真实外部系统、权限、审批、导出、批量或生产公式；current queue 已推进到 F417。
+
+### 2026-05-27
+
 - task_id: `Q123`
 - source_ids:
   - `R649`

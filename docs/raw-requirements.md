@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R653-R656 - 实际履约合同前端可见链路
+
+```yaml
+requirements:
+  - id: R653
+    module: "实际履约"
+    description: "现场主管需要在前端读取登录状态 0.5h 切片合同，看到员工、日期、职场、项目、时段、登录分钟、状态分钟、有效产能分钟和来源记录。"
+  - id: R654
+    module: "实际履约"
+    description: "现场主管需要在前端读取状态断档、重叠等质量问题合同，确认哪些源记录正在影响履约判断。"
+  - id: R655
+    module: "履约监控"
+    description: "现场主管需要在现有履约日历链路看到排班 vs 登录/状态对比异常，包含异常类型、影响分钟、严重度、来源记录和业务说明。"
+  - id: R656
+    module: "质量与交付"
+    description: "actual-log 和 schedule-vs-actual 前端可见链路完成后需要 QA 验证模型、页面 smoke 和无数据库/无生产动作边界。"
+source: "PM agreed to continue frontend/API surfacing for actual-log and schedule-vs-actual contracts on 2026-05-27"
+submitted_at: "2026-05-27"
+version: "1.0"
+status: "split"
+notes: "本组只把已完成的本地 FastAPI 合同接入前端模型并在履约日历可见，不新增数据库、ORM、migration、真实外部系统、文件存储、权限、审批、导出、批量、生产公式、结算、收费因子或新依赖。"
+```
+
 ### R618-R652 - G001 生产雏形真实导入与履约对比闭环
 
 ```yaml

@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-05-27 - actual-log frontend contract model
+
+#### 结论
+
+- `F416/US605/R653-R654` 已增加 actual-log 前端合同模型。
+- 前端模型会读取 actual-log intervals、actual-log quality issues 和 schedule-vs-actual anomalies 三个本地 FastAPI 合同。
+- fallback 数据保留员工、日期、职场、项目、时段、影响分钟、严重度、来源记录和业务说明。
+- 本次没有新增页面、后端、依赖、数据库、真实接口、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮只完成前端模型层，不代表主管页面已经可见；页面展示由 `F417` 执行。
+
+#### 验证
+
+- TDD red：`node --test scripts/tests/actual-fulfillment-contracts.test.mjs` 首次失败于缺少 `lib/actual-fulfillment-contracts.ts`，证明测试覆盖新增模型。
+- `node --test scripts/tests/actual-fulfillment-contracts.test.mjs`：通过，3 个 actual-log 合同模型测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 已推进到 `US606/F417`。
+
 ### 2026-05-27 - G001 full-chain boundary QA
 
 #### 结论

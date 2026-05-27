@@ -29,6 +29,47 @@
 
 ## Stories
 
+### US605-US607 - 实际履约合同前端可见链路
+
+```yaml
+stories:
+  - id: US605
+    requirement_ids: [R653, R654]
+    task_ids: [F416]
+    module: "实际履约"
+    role: "现场主管"
+    story: "作为现场主管，我希望前端能读取登录状态切片和质量问题合同，以便履约日历后续展示真实来源。"
+    task_type: "frontend-scaffold"
+    priority: "P0"
+    status: "done"
+    dependencies: [US602, US603]
+  - id: US606
+    requirement_ids: [R655]
+    task_ids: [F417]
+    module: "履约监控"
+    role: "现场主管"
+    story: "作为现场主管，我希望在现有履约日历看到排班与登录/状态对比异常，以便复核时能追到来源记录。"
+    task_type: "frontend-scaffold"
+    priority: "P0"
+    status: "ready"
+    dependencies: [US605]
+  - id: US607
+    requirement_ids: [R656]
+    task_ids: [Q124]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望验证 actual-log 前端可见链路，以便确认模型、页面和边界都可验收。"
+    task_type: "qa"
+    priority: "P1"
+    status: "blocked"
+    dependencies: [US605, US606]
+acceptance:
+  - "前端模型能读取 actual-log intervals、actual-log quality issues 和 schedule-vs-actual anomalies。"
+  - "履约日历页面能展示实际履约切片、质量问题和排班对比异常。"
+  - "本组不新增数据库、ORM、migration、真实外部系统、文件存储、权限、审批、导出、批量、生产公式、结算、收费因子或新依赖。"
+  - "每个任务完成后必须有模型测试、页面 smoke、`bash scripts/check-state.sh --strict` 和 `bash scripts/check.sh` 证据。"
+```
+
 ### US587-US604 - G001 生产雏形真实导入与履约对比闭环
 
 ```yaml
