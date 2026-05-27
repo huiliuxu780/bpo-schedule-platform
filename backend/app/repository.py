@@ -1,6 +1,7 @@
 import csv
 from datetime import datetime, timedelta, timezone
 from io import StringIO
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from backend.app.models import (
     CsvImportPreviewRequest,
@@ -15,6 +16,7 @@ from backend.app.models import (
     ImportBatchFailureRow,
     ImportBatchResult,
     ImportBatchVersionRecord,
+    LoginLogImportedRecord,
     LoginLogCsvImportRequest,
     MasterDataCsvImportRequest,
     MasterDataImportedRecord,
@@ -129,6 +131,7 @@ DEMAND_FORECAST_VERSION_CHANGES: list[DemandForecastVersionChangeRecord] = []
 MASTER_DATA_IMPORTED_RECORDS: list[MasterDataImportedRecord] = []
 PERSONNEL_SCHEDULE_IMPORTED_RECORDS: list[PersonnelScheduleImportedRecord] = []
 PERSONNEL_SCHEDULE_INTERVAL_RECORDS: list[PersonnelScheduleIntervalRecord] = []
+LOGIN_LOG_IMPORTED_RECORDS: list[LoginLogImportedRecord] = []
 
 SHIFT_TYPE_REFERENCES = {
     "SHIFT-DAY": "标准早班",
@@ -1744,6 +1747,16 @@ def import_login_log_csv(request: LoginLogCsvImportRequest) -> ImportBatchResult
     )
     IMPORT_BATCH_RESULTS[batch_id] = result
 
+    if version_records:
+        LOGIN_LOG_IMPORTED_RECORDS[:0] = [
+            build_login_log_imported_record(
+                row,
+                batch_id,
+                version_records[0].version_id,
+            )
+            for row in successful_rows
+        ]
+
     return result
 
 
@@ -1773,8 +1786,21 @@ def validate_login_log_row(
     logout_value = (row.get("logout_at") or "").strip()
     if login_value and logout_value:
         try:
-            login_at = datetime.fromisoformat(login_value)
-            logout_at = datetime.fromisoformat(logout_value)
+            source_timezone = ZoneInfo((row.get("timezone") or "").strip() or "Asia/Shanghai")
+            login_at = parse_login_log_datetime(login_value, source_timezone)
+            logout_at = parse_login_log_datetime(logout_value, source_timezone)
+        except ZoneInfoNotFoundError:
+            failures.append(
+                ImportBatchFailureRow(
+                    batch_id=batch_id,
+                    entity="login_log",
+                    failed_row_number=row_index,
+                    field_name="timezone",
+                    error_code="invalid_timezone",
+                    error_message="登录日志时区必须使用 IANA 时区编码",
+                    raw_value=(row.get("timezone") or "").strip(),
+                )
+            )
         except ValueError:
             failures.append(
                 ImportBatchFailureRow(
@@ -1802,6 +1828,57 @@ def validate_login_log_row(
                 )
 
     return failures
+
+
+def build_login_log_imported_record(
+    row: dict[str, str],
+    batch_id: str,
+    version_id: str,
+) -> LoginLogImportedRecord:
+    source_timezone_name = (row.get("timezone") or "").strip() or "Asia/Shanghai"
+    source_timezone = ZoneInfo(source_timezone_name)
+    login_at = parse_login_log_datetime((row.get("login_at") or "").strip(), source_timezone)
+    logout_at = parse_login_log_datetime((row.get("logout_at") or "").strip(), source_timezone)
+    normalized_business_date = normalize_login_business_date(
+        (row.get("business_date") or "").strip(),
+        login_at,
+    )
+
+    return LoginLogImportedRecord(
+        login_log_id=(row.get("login_log_id") or "").strip(),
+        employee_id=(row.get("employee_id") or "").strip(),
+        business_date=(row.get("business_date") or "").strip(),
+        normalized_business_date=normalized_business_date,
+        login_at=(row.get("login_at") or "").strip(),
+        logout_at=(row.get("logout_at") or "").strip(),
+        normalized_login_at=login_at.isoformat(timespec="seconds"),
+        normalized_logout_at=logout_at.isoformat(timespec="seconds"),
+        cross_day=login_at.date() != logout_at.date(),
+        duration_minutes=int((logout_at - login_at).total_seconds() // 60),
+        workplace_id=(row.get("workplace_id") or "").strip(),
+        project_id=(row.get("project_id") or "").strip(),
+        source_system=(row.get("source_system") or "").strip(),
+        timezone=source_timezone_name,
+        device_id=(row.get("device_id") or "").strip() or None,
+        source_batch_id=batch_id,
+        source_version_id=version_id,
+    )
+
+
+def parse_login_log_datetime(value: str, source_timezone: ZoneInfo) -> datetime:
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=source_timezone)
+
+    return parsed.astimezone(source_timezone)
+
+
+def normalize_login_business_date(business_date: str, login_at: datetime) -> str:
+    return business_date or login_at.date().isoformat()
+
+
+def list_login_log_imported_records() -> list[LoginLogImportedRecord]:
+    return LOGIN_LOG_IMPORTED_RECORDS
 
 
 def import_status_log_csv(request: StatusLogCsvImportRequest) -> ImportBatchResult:

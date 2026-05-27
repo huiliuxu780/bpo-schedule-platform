@@ -10,6 +10,7 @@ from backend.app.models import (
     FulfillmentComparisonContractResponse,
     ImportBatchListResponse,
     ImportBatchResult,
+    LoginLogImportedRecordListResponse,
     LoginLogCsvImportRequest,
     MasterDataCsvImportRequest,
     MasterDataImportedRecordListResponse,
@@ -48,6 +49,7 @@ from backend.app.repository import (
     list_demand_forecast_version_change_records as find_demand_forecast_version_changes,
     list_demand_schedule_alignment_records as find_demand_schedule_alignments,
     list_demand_plan_rows,
+    list_login_log_imported_records as find_login_log_imported_records,
     list_master_data_imported_records as find_master_data_imported_records,
     list_personnel_schedule_imported_records as find_personnel_schedule_imported_records,
     list_personnel_schedule_interval_records as find_personnel_schedule_interval_records,
@@ -161,6 +163,16 @@ def list_imported_master_data_records() -> MasterDataImportedRecordListResponse:
 def list_imported_personnel_schedule_records() -> PersonnelScheduleImportedRecordListResponse:
     return PersonnelScheduleImportedRecordListResponse(
         items=find_personnel_schedule_imported_records()
+    )
+
+
+@app.get(
+    "/api/v1/login-logs/imported-records",
+    response_model=LoginLogImportedRecordListResponse,
+)
+def list_imported_login_log_records() -> LoginLogImportedRecordListResponse:
+    return LoginLogImportedRecordListResponse(
+        items=find_login_log_imported_records()
     )
 
 

@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F412 G001 Login Log Business-Day Normalization
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `2ec8925`
+- remote_status: `not_pushed`
+- scope: backend-vertical local login-log slice: persist successful login CSV rows as process-memory login records, normalize business day and IANA timezone timestamps, mark cross-day sessions, compute duration minutes, and retain source batch/version traceability.
+- allowed_files_check: `app/import-batches/**`, `app/person-timeline/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates login-log import schema/repository/route, backend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing imported login-log records route; target backend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q121 G001 Demand Forecast Foundation QA
 
 - branch_name: `codex/f409-demand-forecast-import`

@@ -4,6 +4,26 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 login log business-day normalization
+
+#### 结论
+
+- `F412/US599/R641/R643` 已完成 G001 登录日志导入与业务日归一。
+- 后端新增 `/api/v1/login-logs/imported-records`，登录 CSV 成功行会写入 process-memory 登录业务记录。
+- 登录记录保留来源批次、来源版本、业务日、归一业务日、IANA 时区、归一登录/登出时间、跨天标记、持续分钟数、职场、项目、来源系统和设备编号。
+- current queue 与 active tasks 已切到 `US600/F413`。
+
+#### 风险
+
+- 当前登录日志仍是 no-database process-memory，不是生产登录日志库、真实 CORN 接入、文件存储或可复跑计算任务。
+- 登录 vs 排班异常识别仍归后续 `F415`；状态日志字典校验仍归 `F413`。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `list_imported_login_log_records` 接口。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，51 个后端测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已切到 `US600/F413`。
+
 ### 2026-05-27 - G001 demand forecast foundation QA
 
 #### 结论

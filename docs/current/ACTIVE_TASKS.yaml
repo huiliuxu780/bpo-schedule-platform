@@ -5,4 +5,13 @@ notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
-tasks: []
+tasks:
+  - id: F413
+    status: ready
+    title: "G001 状态日志导入与状态字典校验"
+    priority: P0
+    story_ids: ["US600"]
+    required_workflow: backend-vertical
+    dependencies: ["F408"]
+    allowed_files: ["app/import-batches/**", "app/person-timeline/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]

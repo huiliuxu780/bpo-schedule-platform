@@ -327,6 +327,30 @@ class PersonnelScheduleIntervalRecordListResponse(BaseModel):
     items: list[PersonnelScheduleIntervalRecord]
 
 
+class LoginLogImportedRecord(BaseModel):
+    login_log_id: str
+    employee_id: str
+    business_date: str
+    normalized_business_date: str
+    login_at: str
+    logout_at: str
+    normalized_login_at: str
+    normalized_logout_at: str
+    cross_day: bool
+    duration_minutes: int = Field(ge=0)
+    workplace_id: str
+    project_id: str
+    source_system: str
+    timezone: str
+    device_id: str | None = None
+    source_batch_id: str
+    source_version_id: str
+
+
+class LoginLogImportedRecordListResponse(BaseModel):
+    items: list[LoginLogImportedRecord]
+
+
 class MasterDataEntityContract(BaseModel):
     entity: MasterDataEntity
     primary_key: list[str]

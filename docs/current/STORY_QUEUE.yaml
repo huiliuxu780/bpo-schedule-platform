@@ -5,4 +5,13 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US600
+    status: ready
+    priority: P0
+    module: "实际履约"
+    role: "数据管理员"
+    task_ids: ["F413"]
+    requirement_ids: ["R642", "R643"]
+    dependencies: ["US594"]
+    story: "导入状态日志并校验固定状态字典。"

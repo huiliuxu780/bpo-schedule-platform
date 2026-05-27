@@ -160,7 +160,7 @@ stories:
     story: "作为数据管理员，我希望导入登录日志并按业务日、跨天和时区口径归一，以便判断人员是否到岗。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "blocked"
+    status: "done"
     dependencies: [US594]
   - id: US600
     requirement_ids: [R642, R643]
@@ -170,7 +170,7 @@ stories:
     story: "作为数据管理员，我希望导入状态日志并校验固定状态字典，以便判断人员是否处于有效产能状态。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "blocked"
+    status: "ready"
     dependencies: [US594]
   - id: US601
     requirement_ids: [R644]

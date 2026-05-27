@@ -19,6 +19,16 @@
 
 ### 2026-05-27
 
+- task_id: `F412`
+- source_ids:
+  - `R641`
+  - `R643`
+- story_ids:
+  - `US599`
+- action: 完成 G001 登录日志导入与业务日归一。
+- status: `done`
+- notes: 登录日志 CSV 成功行现在会生成 process-memory 登录业务记录，保留来源批次/版本、业务日、归一业务日、IANA 时区、归一登录/登出时间、跨天标记、持续分钟数、职场、项目、来源系统和设备编号；非法时区、非法时间范围或缺失必填字段进入失败行。没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已从 US599/F412 切到 US600/F413。
+
 - task_id: `Q121`
 - source_ids:
   - `R640`

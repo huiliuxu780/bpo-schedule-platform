@@ -15,6 +15,7 @@ from backend.app.main import (
     import_status_log_csv,
     list_imported_master_data_records,
     list_imported_personnel_schedule_records,
+    list_imported_login_log_records,
     list_personnel_schedule_interval_records,
     upsert_master_data_record,
     freeze_master_data_record,
@@ -77,6 +78,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/import-batches/status-log", "POST"), routes)
         self.assertIn(("/api/v1/master-data/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/personnel-schedules/imported-records", "GET"), routes)
+        self.assertIn(("/api/v1/login-logs/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/personnel-schedules/interval-schedules", "GET"), routes)
         self.assertIn(("/api/v1/import-batches", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
@@ -662,6 +664,36 @@ class SchedulePlansApiTest(unittest.TestCase):
         stored = get_import_batch_result(response.batch_id)
         self.assertEqual(stored, response)
 
+    def test_login_log_csv_import_normalizes_business_day_and_timezone(self) -> None:
+        response = import_login_log_csv(
+            LoginLogCsvImportRequest(
+                file_name="login_log_cross_day.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "login_log_id,employee_id,business_date,login_at,logout_at,workplace_id,project_id,source_system,timezone,device_id\n"
+                    "LOG-TZ-001,E-200,2026-05-26,2026-05-26T23:30:00,2026-05-27T01:15:00,WP-SH,P-BOSCH,CORN,Asia/Shanghai,TERM-01\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed")
+        self.assertEqual(response.success_rows, 1)
+        self.assertEqual(len(response.version_records), 1)
+
+        records = list_imported_login_log_records()
+        imported = next(item for item in records.items if item.login_log_id == "LOG-TZ-001")
+        self.assertEqual(imported.employee_id, "E-200")
+        self.assertEqual(imported.business_date, "2026-05-26")
+        self.assertEqual(imported.normalized_business_date, "2026-05-26")
+        self.assertEqual(imported.timezone, "Asia/Shanghai")
+        self.assertTrue(imported.cross_day)
+        self.assertEqual(imported.duration_minutes, 105)
+        self.assertEqual(imported.normalized_login_at, "2026-05-26T23:30:00+08:00")
+        self.assertEqual(imported.normalized_logout_at, "2026-05-27T01:15:00+08:00")
+        self.assertEqual(imported.source_batch_id, response.batch_id)
+        self.assertEqual(imported.source_version_id, response.version_records[0].version_id)
+        self.assertEqual(imported.device_id, "TERM-01")
+
     def test_login_log_csv_import_records_missing_required_field(self) -> None:
         response = import_login_log_csv(
             LoginLogCsvImportRequest(
@@ -700,6 +732,25 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(response.error_codes, ["invalid_time_range"])
         self.assertEqual(response.failure_rows[0].field_name, "logout_at")
         self.assertEqual(response.failure_rows[0].raw_value, "2026-05-26T09:00:00")
+
+    def test_login_log_csv_import_rejects_invalid_timezone(self) -> None:
+        response = import_login_log_csv(
+            LoginLogCsvImportRequest(
+                file_name="login_log_invalid_timezone.csv",
+                uploaded_by="现场主管",
+                csv_content=(
+                    "login_log_id,employee_id,business_date,login_at,logout_at,workplace_id,project_id,source_system,timezone\n"
+                    "LOG-TZ-002,E-201,2026-05-26,2026-05-26T09:00:00,2026-05-26T18:00:00,WP-SH,P-BOSCH,CORN,GMT+25\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.success_rows, 0)
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["invalid_timezone"])
+        self.assertEqual(response.failure_rows[0].field_name, "timezone")
+        self.assertEqual(response.failure_rows[0].raw_value, "GMT+25")
 
     def test_status_log_csv_import_accepts_valid_rows(self) -> None:
         response = import_status_log_csv(
