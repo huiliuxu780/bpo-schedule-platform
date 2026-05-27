@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### Q122 G001 Login Status Processing QA
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `707ba0c`
+- remote_status: `not_pushed`
+- scope: QA closeout for the G001 login/status processing wave, covering login import, status import, business-day normalization, status dictionary validation, actual-log 0.5h slicing, gap/overlap quality issues, schedule-vs-actual anomalies, and no-database boundary.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates current queue, active tasks, backlog/story status, audit, task log, project state/context, and branch log only.
+- check_result: target backend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F415 G001 Schedule Actual Anomalies
 
 - branch_name: `codex/f412-login-status-logs`
@@ -12,7 +30,7 @@
 - allowed_files_check: `app/person-timeline/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: updates schedule-vs-actual anomaly schemas/repository/routes, backend tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
 - check_result: TDD red observed for missing schedule-vs-actual anomaly route; target backend tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
-- local_commit_sha: `pending`
+- local_commit_sha: `707ba0c`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

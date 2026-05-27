@@ -19,6 +19,15 @@
 
 ### 2026-05-27
 
+- task_id: `Q122`
+- source_ids:
+  - `R648`
+- story_ids:
+  - `US603`
+- action: 完成 G001 登录状态处理 QA。
+- status: `done`
+- notes: 已验证登录日志导入、状态日志导入、业务日归一、IANA 时区、固定状态字典、0.5h 实际日志切分、状态断档/重叠质量问题、排班 vs 登录/状态异常和 no-database 边界；目标后端测试、严格状态检查、空白检查和最终项目检查均通过。没有新增产品代码、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已从 US603/Q122 切到 US604/Q123。
+
 - task_id: `F415`
 - source_ids:
   - `R645`

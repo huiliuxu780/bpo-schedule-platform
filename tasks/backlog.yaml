@@ -283,7 +283,7 @@ tasks:
   - id: Q122
     title: "G001 登录状态处理 QA"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     dependencies: ["F412", "F413", "F414", "F415"]
     allowed_files: ["docs/**", "tasks/backlog.yaml"]
@@ -299,7 +299,7 @@ tasks:
   - id: Q123
     title: "G001 全链边界与收口 QA"
     priority: P1
-    status: blocked
+    status: ready
     required_workflow: qa
     dependencies: ["Q118", "Q119", "Q120", "Q121", "Q122"]
     allowed_files: ["docs/**", "tasks/backlog.yaml"]

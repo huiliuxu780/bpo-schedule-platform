@@ -6,12 +6,12 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US603
+  - id: US604
     status: ready
     priority: P1
-    module: "质量与交付"
-    role: "QA"
-    task_ids: ["Q122"]
-    requirement_ids: ["R648"]
-    dependencies: ["US599", "US600", "US601", "US602"]
-    story: "验证登录/状态导入、切分、质量问题和排班对比异常。"
+    module: "项目治理"
+    role: "PM"
+    task_ids: ["Q123"]
+    requirement_ids: ["R649", "R650", "R651", "R652"]
+    dependencies: ["US589", "US592", "US595", "US598", "US603"]
+    story: "验证 G001 全链 no-database 和 no-production-workflow 边界。"

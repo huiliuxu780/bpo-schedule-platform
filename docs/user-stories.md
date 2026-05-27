@@ -200,7 +200,7 @@ stories:
     story: "作为 QA，我希望验证登录/状态导入、切分、对比、异常识别和页面联动，以便确认实际履约处理流可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "ready"
+    status: "done"
     dependencies: [US599, US600, US601, US602]
   - id: US604
     requirement_ids: [R649, R650, R651, R652]
@@ -210,7 +210,7 @@ stories:
     story: "作为 PM，我希望 G001 每阶段都保持 no-database 和 no-production-workflow 边界，以便长链执行不偏离生产雏形目标。"
     task_type: "qa"
     priority: "P1"
-    status: "blocked"
+    status: "ready"
     dependencies: [US589, US592, US595, US598, US603]
 acceptance:
   - "G001 全链拆成导入中心、主数据、人员级排班、需求预测、登录/状态处理五个阶段。"

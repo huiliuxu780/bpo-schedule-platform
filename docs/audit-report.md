@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 login status processing QA
+
+#### 结论
+
+- `Q122/US603/R648` 已完成 G001 登录状态处理 QA。
+- 已验收 `F412` 登录日志导入与业务日归一、`F413` 状态日志导入与状态字典、`F414` 登录/状态 0.5h 切分和质量问题、`F415` 排班 vs 登录/状态异常。
+- 验证覆盖登录/状态来源批次、版本、IANA 时区、跨天归一、固定状态字典、状态断档/重叠、未登录、迟到、早退、未排班登录和非有效产能异常。
+- current queue 与 active tasks 已切到 `US604/Q123`。
+
+#### 风险
+
+- 登录/状态处理仍是 no-database process-memory，不是生产登录/状态日志库、真实 CORN 接入、可复跑任务、异常表或审批闭环。
+- G001 全链 no-database/no-production-workflow 边界仍归 `Q123` 做最终收口。
+
+#### 验证
+
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，57 个后端测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已切到 `US604/Q123`。
+
 ### 2026-05-27 - G001 schedule actual anomalies
 
 #### 结论
