@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 personnel schedule 0.5h expansion
+
+#### 结论
+
+- `F408/US594/R633-R634` 已完成 G001 人员级排班 0.5h 展开与履约链接。
+- 后端人员级排班 CSV 成功行现在会生成 process-memory `interval_schedule` 汇总，按排班版本、业务日、职场、项目、技能组、等级和 0.5h 时段聚合。
+- 每个 0.5h 汇总保留员工、排班明细、来源批次、来源版本和 trace 状态；非法时间和未知班次仍进入失败行，不生成正常展开结果。
+- 前端排班计划页展示 `0.5h 展开`、来源批次、排班版本、明细追溯和个人履约链接。
+- current queue 与 active tasks 已移除 `US594/F408`，下一项为 `US595/Q120`。
+
+#### 风险
+
+- 当前 0.5h 展开仍是 no-database process-memory 和前端本地聚合，不是生产排班版本库、发布冻结口径或数据库持久化结果。
+- 跨天排班、真实人员主数据强校验、预测对比、登录/状态对比和异常写入闭环仍归后续任务；本批不做自动排班、审批发布、导出、批量或生产公式。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `list_personnel_schedule_interval_records`；前端 node test 首次失败于缺少 `buildPersonnelScheduleIntervalExpansion`。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，46 个后端测试通过。
+- `node --test scripts/tests/personnel-schedule-details.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，45 个前端/契约测试通过。
+- 页面 smoke：`http://localhost:3021/schedule-plans` 可渲染 `0.5h 展开`、`来源批次`、`排班版本` 和 `履约链接`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已移除 `US594/F408`，下一项为 `US595/Q120`。
+
 ### 2026-05-27 - G001 personnel schedule import references and version
 
 #### 结论

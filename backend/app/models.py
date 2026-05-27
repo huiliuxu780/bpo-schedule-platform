@@ -250,6 +250,28 @@ class PersonnelScheduleImportedRecordListResponse(BaseModel):
     items: list[PersonnelScheduleImportedRecord]
 
 
+class PersonnelScheduleIntervalRecord(BaseModel):
+    interval_schedule_id: str
+    schedule_version_id: str
+    business_date: str
+    workplace_id: str
+    project_id: str
+    skill_group: str
+    skill_level: str
+    interval_start: str
+    interval_end: str
+    scheduled_agents: int = Field(ge=0)
+    employee_ids: list[str]
+    schedule_detail_ids: list[str]
+    source_batch_id: str
+    source_version_id: str
+    trace_status: str
+
+
+class PersonnelScheduleIntervalRecordListResponse(BaseModel):
+    items: list[PersonnelScheduleIntervalRecord]
+
+
 class MasterDataEntityContract(BaseModel):
     entity: MasterDataEntity
     primary_key: list[str]

@@ -104,6 +104,33 @@ export type PersonnelScheduleIntervalLinkageSummary = {
   intervalsNeedingReview: number
 }
 
+export type PersonnelScheduleIntervalExpansionPerson = {
+  employeeId: string
+  employeeName: string
+  scheduleDetailId: string
+  supplier: string
+  shiftType: string
+  timelineHref: string
+}
+
+export type PersonnelScheduleIntervalExpansion = {
+  intervalScheduleId: string
+  scheduleVersionId: string
+  businessDate: string
+  workplace: string
+  project: string
+  skill: string
+  intervalStart: string
+  intervalEnd: string
+  scheduledAgents: number
+  employeeIds: string[]
+  scheduleDetailIds: string[]
+  sourceBatchId: string
+  sourceVersionId: string
+  traceStatus: "ready" | "review"
+  people: PersonnelScheduleIntervalExpansionPerson[]
+}
+
 export type PersonScheduleSource = {
   planId: string
   planHref: string
@@ -305,6 +332,73 @@ export function mergeImportedPersonnelScheduleDetails(
   )
 
   return [...importedRows, ...remainingFallbackRows]
+}
+
+export function buildPersonnelScheduleIntervalExpansion(
+  rows: PersonnelScheduleDetailRow[]
+): PersonnelScheduleIntervalExpansion[] {
+  const grouped = new Map<string, PersonnelScheduleIntervalExpansion>()
+
+  rows.forEach((row) => {
+    row.expandedIntervals.forEach((interval) => {
+      const scheduleVersionId = row.scheduleVersionId ?? row.planId
+      const sourceBatchId = row.sourceBatchId ?? "样例记录"
+      const sourceVersionId = row.sourceVersionId ?? scheduleVersionId
+      const skill = `${row.skillGroup} / ${row.skillLevel}`
+      const key = [
+        scheduleVersionId,
+        row.businessDate,
+        row.workplace,
+        row.project,
+        skill,
+        interval.start,
+        interval.end,
+      ].join("||")
+      const existing =
+        grouped.get(key) ??
+        {
+          intervalScheduleId: `IS-${scheduleVersionId}-${row.businessDate}-${interval.start.replace(":", "")}-${interval.end.replace(":", "")}`,
+          scheduleVersionId,
+          businessDate: row.businessDate,
+          workplace: row.workplace,
+          project: row.project,
+          skill,
+          intervalStart: interval.start,
+          intervalEnd: interval.end,
+          scheduledAgents: 0,
+          employeeIds: [],
+          scheduleDetailIds: [],
+          sourceBatchId,
+          sourceVersionId,
+          traceStatus: "ready" as const,
+          people: [],
+        }
+
+      existing.employeeIds.push(row.employeeId)
+      existing.scheduleDetailIds.push(row.scheduleDetailId)
+      existing.people.push({
+        employeeId: row.employeeId,
+        employeeName: row.employeeName,
+        scheduleDetailId: row.scheduleDetailId,
+        supplier: row.supplier,
+        shiftType: row.shiftType,
+        timelineHref: buildPersonTimelineHref(row),
+      })
+      existing.scheduledAgents = existing.employeeIds.length
+      grouped.set(key, existing)
+    })
+  })
+
+  return [...grouped.values()].sort((left, right) =>
+    [
+      left.businessDate.localeCompare(right.businessDate),
+      left.intervalStart.localeCompare(right.intervalStart),
+      left.intervalEnd.localeCompare(right.intervalEnd),
+      left.workplace.localeCompare(right.workplace),
+      left.project.localeCompare(right.project),
+      left.skill.localeCompare(right.skill),
+    ].find((value) => value !== 0) ?? 0
+  )
 }
 
 export function getPersonnelScheduleDetailForEmployeeDate(

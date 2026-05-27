@@ -6,15 +6,6 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
 tasks:
-  - id: F408
-    status: ready
-    title: "G001 人员级排班 0.5h 展开与履约链接"
-    priority: P0
-    story_ids: ["US594"]
-    required_workflow: backend-vertical
-    dependencies: ["F407"]
-    allowed_files: ["app/person-timeline/**", "app/schedule-plans/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
-    forbidden_files: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
   - id: Q120
     status: ready
     title: "G001 人员级排班基础 QA"

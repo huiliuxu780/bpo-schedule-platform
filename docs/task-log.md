@@ -19,6 +19,16 @@
 
 ### 2026-05-27
 
+- task_id: `F408`
+- source_ids:
+  - `R633`
+  - `R634`
+- story_ids:
+  - `US594`
+- action: 完成 G001 人员级排班 0.5h 展开与履约链接。
+- status: `done`
+- notes: 人员级排班 CSV 成功导入后会在 process-memory 生成 0.5h interval-schedule 汇总，按排班版本、业务日、职场、项目、技能组、等级和时段聚合，并保留员工、排班明细、来源批次和来源版本追溯；非法时间和未知班次仍进入失败行，不生成正常展开结果。排班计划页展示 0.5h 展开、来源批次、排班版本、明细追溯和个人履约链接。没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已移除 US594/F408，下一项为 US595/Q120。
+
 - task_id: `F407`
 - source_ids:
   - `R630`

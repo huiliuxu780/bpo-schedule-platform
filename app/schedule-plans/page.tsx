@@ -6,6 +6,7 @@ import { MvpFlowSummary } from "@/components/mvp-flow-summary"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
 import {
+  buildPersonnelScheduleIntervalExpansion,
   getImportedPersonnelScheduleDetails,
   summarizePersonnelScheduleDetails,
 } from "@/lib/personnel-schedule-details"
@@ -75,6 +76,8 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const plans = await getSchedulePlansWithFilters({ query, status })
   const personnelScheduleRows = await getImportedPersonnelScheduleDetails()
   const personnelScheduleSummary = summarizePersonnelScheduleDetails(personnelScheduleRows)
+  const personnelScheduleIntervalExpansions =
+    buildPersonnelScheduleIntervalExpansion(personnelScheduleRows)
   const importedPersonnelScheduleRows = personnelScheduleRows.filter(
     (row) => row.sourceBatchId
   )
@@ -190,6 +193,57 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
                   <MiniDetail label="来源批次" value={row.sourceBatchId ?? "样例记录"} />
                   <MiniDetail label="排班版本" value={row.scheduleVersionId ?? row.planId} />
                   <MiniDetail label="班次引用" value={row.shiftType} />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-start justify-between gap-4">
+            <div>
+              <CardTitle>0.5h 展开</CardTitle>
+              <CardDescription>
+                按排班版本、日期、技能和 0.5h 时段汇总，并保留履约链接。
+              </CardDescription>
+            </div>
+            <Badge variant="outline">
+              {personnelScheduleIntervalExpansions.length} 个时段
+            </Badge>
+          </CardHeader>
+          <CardContent className="grid gap-3 lg:grid-cols-2">
+            {personnelScheduleIntervalExpansions.slice(0, 6).map((interval) => (
+              <div key={interval.intervalScheduleId} className="rounded-lg border p-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-medium">
+                      {interval.businessDate} {interval.intervalStart}-{interval.intervalEnd}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {interval.workplace} / {interval.project} / {interval.skill}
+                    </div>
+                  </div>
+                  <Badge variant={interval.traceStatus === "ready" ? "secondary" : "default"}>
+                    {interval.scheduledAgents} 人
+                  </Badge>
+                </div>
+                <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                  <MiniDetail label="来源批次" value={interval.sourceBatchId} />
+                  <MiniDetail label="排班版本" value={interval.scheduleVersionId} />
+                  <MiniDetail label="明细追溯" value={interval.scheduleDetailIds.join("、")} />
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {interval.people.slice(0, 3).map((person) => (
+                    <Button
+                      key={`${interval.intervalScheduleId}-${person.employeeId}`}
+                      asChild
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Link href={person.timelineHref}>
+                        履约链接 {person.employeeId}
+                      </Link>
+                    </Button>
+                  ))}
                 </div>
               </div>
             ))}

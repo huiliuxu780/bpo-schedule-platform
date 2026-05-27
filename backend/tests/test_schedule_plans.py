@@ -15,6 +15,7 @@ from backend.app.main import (
     import_status_log_csv,
     list_imported_master_data_records,
     list_imported_personnel_schedule_records,
+    list_personnel_schedule_interval_records,
     upsert_master_data_record,
     freeze_master_data_record,
     unfreeze_master_data_record,
@@ -72,6 +73,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/import-batches/status-log", "POST"), routes)
         self.assertIn(("/api/v1/master-data/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/personnel-schedules/imported-records", "GET"), routes)
+        self.assertIn(("/api/v1/personnel-schedules/interval-schedules", "GET"), routes)
         self.assertIn(("/api/v1/import-batches", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
 
@@ -417,6 +419,24 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(imported.shift_type_reference_status, "ready")
         self.assertEqual(imported.shift_type_id, "SHIFT-DAY")
 
+        interval_records = list_personnel_schedule_interval_records().items
+        interval = next(
+            item
+            for item in interval_records
+            if item.source_batch_id == response.batch_id
+            and item.interval_start == "10:00"
+            and item.interval_end == "10:30"
+        )
+        self.assertEqual(interval.schedule_version_id, "SV-20260526")
+        self.assertEqual(interval.business_date, "2026-05-26")
+        self.assertEqual(interval.workplace_id, "WP-SH")
+        self.assertEqual(interval.project_id, "P-BOSCH")
+        self.assertEqual(interval.scheduled_agents, 2)
+        self.assertEqual(interval.employee_ids, ["E-001", "E-002"])
+        self.assertEqual(interval.schedule_detail_ids, ["SCH-001", "SCH-002"])
+        self.assertEqual(interval.source_version_id, response.version_records[0].version_id)
+        self.assertEqual(interval.trace_status, "ready")
+
     def test_personnel_schedule_csv_import_rejects_unknown_shift_type(self) -> None:
         response = import_personnel_schedule_csv(
             PersonnelScheduleCsvImportRequest(
@@ -474,6 +494,10 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertEqual(response.error_codes, ["invalid_time_range"])
         self.assertEqual(response.failure_rows[0].field_name, "end_at")
         self.assertEqual(response.failure_rows[0].raw_value, "09:00")
+        interval_records = list_personnel_schedule_interval_records().items
+        self.assertFalse(
+            any("SCH-004" in item.schedule_detail_ids for item in interval_records)
+        )
 
     def test_login_log_csv_import_accepts_valid_rows(self) -> None:
         response = import_login_log_csv(

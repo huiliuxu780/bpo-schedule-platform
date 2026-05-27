@@ -24,6 +24,7 @@ from backend.app.models import (
     IntervalExpansionContract,
     PersonnelScheduleCsvImportRequest,
     PersonnelScheduleImportedRecord,
+    PersonnelScheduleIntervalRecord,
     PersonnelScheduleImportContractResponse,
     ScheduleRiskLevel,
     ScheduleRiskRow,
@@ -121,6 +122,7 @@ CSV_IMPORT_PENDING_VALIDATION_FIELDS = {
 IMPORT_BATCH_RESULTS: dict[str, ImportBatchResult] = {}
 MASTER_DATA_IMPORTED_RECORDS: list[MasterDataImportedRecord] = []
 PERSONNEL_SCHEDULE_IMPORTED_RECORDS: list[PersonnelScheduleImportedRecord] = []
+PERSONNEL_SCHEDULE_INTERVAL_RECORDS: list[PersonnelScheduleIntervalRecord] = []
 
 SHIFT_TYPE_REFERENCES = {
     "SHIFT-DAY": "标准早班",
@@ -1173,6 +1175,11 @@ def import_personnel_schedule_csv(
             )
             for row in successful_rows
         ]
+        PERSONNEL_SCHEDULE_INTERVAL_RECORDS[:0] = build_personnel_schedule_interval_records(
+            successful_rows,
+            batch_id,
+            version_records[0].version_id,
+        )
 
     return result
 
@@ -1282,6 +1289,124 @@ def build_personnel_schedule_imported_record(
 
 def list_personnel_schedule_imported_records() -> list[PersonnelScheduleImportedRecord]:
     return PERSONNEL_SCHEDULE_IMPORTED_RECORDS
+
+
+def build_personnel_schedule_interval_records(
+    successful_rows: list[dict[str, str]],
+    batch_id: str,
+    version_id: str,
+) -> list[PersonnelScheduleIntervalRecord]:
+    grouped: dict[tuple[str, str, str, str, str, str, str, str], dict[str, list[str]]] = {}
+
+    for row in successful_rows:
+        intervals = expand_personnel_schedule_intervals(
+            (row.get("start_at") or "").strip(),
+            (row.get("end_at") or "").strip(),
+        )
+        for interval_start, interval_end in intervals:
+            key = (
+                (row.get("schedule_version_id") or "").strip(),
+                (row.get("business_date") or "").strip(),
+                (row.get("workplace_id") or "").strip(),
+                (row.get("project_id") or "").strip(),
+                (row.get("skill_group") or "").strip() or "待确认",
+                (row.get("skill_level") or "").strip() or "待确认",
+                interval_start,
+                interval_end,
+            )
+            item = grouped.setdefault(
+                key,
+                {
+                    "employee_ids": [],
+                    "schedule_detail_ids": [],
+                },
+            )
+            item["employee_ids"].append((row.get("employee_id") or "").strip())
+            item["schedule_detail_ids"].append((row.get("schedule_detail_id") or "").strip())
+
+    records: list[PersonnelScheduleIntervalRecord] = []
+    for (
+        schedule_version_id,
+        business_date,
+        workplace_id,
+        project_id,
+        skill_group,
+        skill_level,
+        interval_start,
+        interval_end,
+    ), item in grouped.items():
+        employee_ids = [value for value in item["employee_ids"] if value]
+        schedule_detail_ids = [value for value in item["schedule_detail_ids"] if value]
+        records.append(
+            PersonnelScheduleIntervalRecord(
+                interval_schedule_id="-".join(
+                    [
+                        "IS",
+                        schedule_version_id,
+                        business_date,
+                        workplace_id,
+                        project_id,
+                        skill_group,
+                        skill_level,
+                        interval_start.replace(":", ""),
+                        interval_end.replace(":", ""),
+                    ]
+                ),
+                schedule_version_id=schedule_version_id,
+                business_date=business_date,
+                workplace_id=workplace_id,
+                project_id=project_id,
+                skill_group=skill_group,
+                skill_level=skill_level,
+                interval_start=interval_start,
+                interval_end=interval_end,
+                scheduled_agents=len(employee_ids),
+                employee_ids=employee_ids,
+                schedule_detail_ids=schedule_detail_ids,
+                source_batch_id=batch_id,
+                source_version_id=version_id,
+                trace_status="ready",
+            )
+        )
+
+    return sorted(
+        records,
+        key=lambda item: (
+            item.business_date,
+            item.interval_start,
+            item.interval_end,
+            item.workplace_id,
+            item.project_id,
+            item.skill_group,
+            item.skill_level,
+        ),
+    )
+
+
+def expand_personnel_schedule_intervals(
+    start_value: str,
+    end_value: str,
+) -> list[tuple[str, str]]:
+    start = datetime.strptime(start_value, "%H:%M")
+    end = datetime.strptime(end_value, "%H:%M")
+    intervals: list[tuple[str, str]] = []
+    cursor = start
+
+    while cursor < end:
+        next_time = min(cursor + timedelta(minutes=30), end)
+        intervals.append(
+            (
+                cursor.strftime("%H:%M"),
+                next_time.strftime("%H:%M"),
+            )
+        )
+        cursor = next_time
+
+    return intervals
+
+
+def list_personnel_schedule_interval_records() -> list[PersonnelScheduleIntervalRecord]:
+    return PERSONNEL_SCHEDULE_INTERVAL_RECORDS
 
 
 def import_login_log_csv(request: LoginLogCsvImportRequest) -> ImportBatchResult:

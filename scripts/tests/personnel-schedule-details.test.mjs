@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   buildPersonTimelineHref,
   buildPersonScheduleSource,
+  buildPersonnelScheduleIntervalExpansion,
   mapImportedPersonnelScheduleRecord,
   mergeImportedPersonnelScheduleDetails,
   buildPersonnelIntervalTrace,
@@ -72,6 +73,69 @@ test("imported personnel schedule records map source batch version and shift ref
   assert.equal(row.shiftType, "标准早班");
 });
 
+test("personnel schedule interval expansion groups half-hour source rows with trace links", () => {
+  const rows = [
+    mapImportedPersonnelScheduleRecord({
+      schedule_detail_id: "SCH-001",
+      schedule_version_id: "SV-20260526",
+      employee_id: "E-001",
+      employee_name: "导入员工 1",
+      business_date: "2026-05-26",
+      workplace_id: "WP-SH",
+      workplace_name: "上海职场",
+      supplier_id: "SUP-01",
+      supplier_name: "供应商 A",
+      project_id: "P-BOSCH",
+      project_name: "博西客服",
+      shift_type_id: "SHIFT-DAY",
+      shift_type_name: "标准早班",
+      shift_type_reference_status: "ready",
+      start_at: "09:00",
+      end_at: "10:00",
+      skill_group: "热线",
+      skill_level: "L2",
+      status: "published",
+      source_batch_id: "BATCH-PS-20260527-001",
+      source_version_id: "VER-PS-20260527-001",
+    }),
+    mapImportedPersonnelScheduleRecord({
+      schedule_detail_id: "SCH-002",
+      schedule_version_id: "SV-20260526",
+      employee_id: "E-002",
+      employee_name: "导入员工 2",
+      business_date: "2026-05-26",
+      workplace_id: "WP-SH",
+      workplace_name: "上海职场",
+      supplier_id: "SUP-01",
+      supplier_name: "供应商 A",
+      project_id: "P-BOSCH",
+      project_name: "博西客服",
+      shift_type_id: "SHIFT-DAY",
+      shift_type_name: "标准早班",
+      shift_type_reference_status: "ready",
+      start_at: "09:30",
+      end_at: "10:30",
+      skill_group: "热线",
+      skill_level: "L2",
+      status: "published",
+      source_batch_id: "BATCH-PS-20260527-001",
+      source_version_id: "VER-PS-20260527-001",
+    }),
+  ];
+
+  const expansions = buildPersonnelScheduleIntervalExpansion(rows);
+  const interval = expansions.find(
+    (item) => item.intervalStart === "09:30" && item.intervalEnd === "10:00"
+  );
+
+  assert.equal(interval.scheduledAgents, 2);
+  assert.equal(interval.scheduleVersionId, "SV-20260526");
+  assert.equal(interval.sourceBatchId, "BATCH-PS-20260527-001");
+  assert.deepEqual(interval.employeeIds, ["E-001", "E-002"]);
+  assert.deepEqual(interval.scheduleDetailIds, ["SCH-001", "SCH-002"]);
+  assert.equal(interval.people[0].timelineHref.includes("/person-timeline/E-001"), true);
+});
+
 test("imported personnel schedule rows are shown before fallback rows", () => {
   const rows = mergeImportedPersonnelScheduleDetails([
     mapImportedPersonnelScheduleRecord({
@@ -111,6 +175,8 @@ test("schedule plans page exposes imported personnel schedule traceability", () 
   assert.ok(source.includes("来源批次"));
   assert.ok(source.includes("排班版本"));
   assert.ok(source.includes("班次引用"));
+  assert.ok(source.includes("0.5h 展开"));
+  assert.ok(source.includes("履约链接"));
 });
 
 test("personnel schedule field coverage confirms business columns", () => {

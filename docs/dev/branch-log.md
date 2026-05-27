@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F408 G001 Personnel Schedule Interval Expansion
+
+- branch_name: `codex/f408-personnel-schedule-expansion`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `3ccd04c`
+- remote_status: `not_pushed`
+- scope: backend-vertical local personnel-schedule interval expansion slice: generate 0.5h interval schedule records from successful personnel schedule imports, retain source batch/version, employee and schedule-detail traceability, and display interval expansion with personal fulfillment links on the schedule plans page.
+- allowed_files_check: `app/person-timeline/**`, `app/schedule-plans/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates personnel-schedule interval schema/repository/route, schedule-plan page interval expansion, personnel-schedule model/tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing personnel schedule interval records and interval expansion UI model; target backend/frontend tests, product copy/navigation tests, page smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F407 G001 Personnel Schedule Import References
 
 - branch_name: `codex/f407-personnel-schedule-import`

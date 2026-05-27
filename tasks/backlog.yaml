@@ -121,7 +121,7 @@ tasks:
   - id: F408
     title: "G001 人员级排班 0.5h 展开与履约链接"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     dependencies: ["F407"]
     allowed_files: ["app/person-timeline/**", "app/schedule-plans/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]

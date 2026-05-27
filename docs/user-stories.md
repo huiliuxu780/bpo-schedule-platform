@@ -110,7 +110,7 @@ stories:
     story: "作为排班运营，我希望人员级排班能展开为 0.5h 汇总并处理排班质量问题，以便履约日历从真实排班生成。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US593]
   - id: US595
     requirement_ids: [R635]
