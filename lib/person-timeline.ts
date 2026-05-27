@@ -71,6 +71,23 @@ export type SupervisorExceptionReviewState = {
   closureRecord?: SupervisorExceptionClosureRecord
 }
 
+export type SupervisorExceptionHandlingRecord = {
+  id: string
+  kind: "pending_review" | "review_conclusion" | "evidence" | "closure"
+  title: string
+  actor: string
+  occurredAt: string
+  summary: string
+  references: string[]
+}
+
+export type SupervisorExceptionHandlingRecordsInput = {
+  exceptionKey: string
+  state: SupervisorExceptionReviewState
+  suggestedConclusion: string
+  sourceReferences: string[]
+}
+
 export type SupervisorExceptionReviewConclusionInput = {
   exceptionKey: string
   employeeId: string
@@ -200,6 +217,67 @@ export function getSupervisorExceptionReviewState(
     evidenceRecords,
     ...(closureRecord ? { closureRecord } : {}),
   }
+}
+
+export function buildSupervisorExceptionHandlingRecords(
+  input: SupervisorExceptionHandlingRecordsInput
+): SupervisorExceptionHandlingRecord[] {
+  const records: SupervisorExceptionHandlingRecord[] = []
+
+  if (input.state.latestConclusion) {
+    records.push({
+      id: input.state.latestConclusion.id,
+      kind: "review_conclusion",
+      title: "复核结论",
+      actor: input.state.latestConclusion.submittedBy,
+      occurredAt: input.state.latestConclusion.submittedAt,
+      summary: input.state.latestConclusion.conclusion,
+      references: input.state.latestConclusion.sourceReferences,
+    })
+  }
+
+  for (const evidence of input.state.evidenceRecords) {
+    records.push({
+      id: evidence.id,
+      kind: "evidence",
+      title: "补充证据",
+      actor: evidence.submittedBy,
+      occurredAt: evidence.submittedAt,
+      summary: evidence.note,
+      references: [evidence.id, evidence.linkedRecordId],
+    })
+  }
+
+  if (input.state.closureRecord) {
+    records.push({
+      id: input.state.closureRecord.id,
+      kind: "closure",
+      title: "处理结论",
+      actor: input.state.closureRecord.closedBy,
+      occurredAt: input.state.closureRecord.closedAt,
+      summary: input.state.closureRecord.conclusion,
+      references: [
+        input.state.closureRecord.id,
+        ...input.state.closureRecord.evidenceRecordIds,
+      ],
+    })
+  }
+
+  if (records.length > 0) {
+    return records
+  }
+
+  return [
+    {
+      id: `PENDING-${input.exceptionKey}`,
+      kind: "pending_review",
+      title: "待提交复核",
+      actor: "现场主管",
+      occurredAt: "待提交",
+      summary: input.suggestedConclusion,
+      references: input.sourceReferences,
+    },
+  ]
 }
 
 function nextProcessMemoryId(prefix: string, currentLength: number) {

@@ -26,6 +26,7 @@ import {
 import {
   buildFulfillmentMatrixReturnHref,
   buildPersonFulfillmentDetailHref,
+  buildSupervisorExceptionHandlingRecords,
   encodeScopeId,
   fallbackPersonTimelines,
   getFulfillmentCalendar,
@@ -2181,6 +2182,12 @@ function SelectedExceptionLocalClosureCard({
   const sourceReferences = Array.from(
     new Set([...actualEvidenceReferences, ...preview.sourceReferences])
   )
+  const handlingRecords = buildSupervisorExceptionHandlingRecords({
+    exceptionKey: selected.key,
+    state: reviewState,
+    suggestedConclusion: preview.suggestedOutcome,
+    sourceReferences,
+  })
   const canClose =
     reviewState.latestConclusion &&
     reviewState.evidenceRecords.length > 0 &&
@@ -2221,6 +2228,29 @@ function SelectedExceptionLocalClosureCard({
           <div className="text-muted-foreground">{actualEvidenceReferences.join(" / ")}</div>
         </div>
       ) : null}
+
+      <div className="grid gap-2">
+        <div>
+          <div className="text-xs font-medium">处理记录链</div>
+          <div className="text-xs text-muted-foreground">
+            还未提交时显示待提交复核预览，提交后按结论、证据、处理结论顺序回显。
+          </div>
+        </div>
+        {handlingRecords.map((record) => (
+          <div key={record.id} className="rounded-md border bg-muted/30 p-2 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-medium">{record.title}</span>
+              <span className="text-muted-foreground">
+                {record.actor} / {record.occurredAt}
+              </span>
+            </div>
+            <div className="mt-1 text-muted-foreground">{record.summary}</div>
+            <div className="mt-1 text-muted-foreground">
+              来源：{record.references.join(" / ") || selected.key}
+            </div>
+          </div>
+        ))}
+      </div>
 
       {reviewState.latestConclusion ? (
         <div className="rounded-md border bg-muted/30 p-2 text-xs">

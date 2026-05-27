@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F419 Local Handling Record Chain
+
+- branch_name: `codex/f412-login-status-logs`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `98ba7ff`
+- remote_status: `not_pushed`
+- scope: Add local handling-record chain to the selected exception closure card, covering pending review preview, submitted conclusion, evidence, closure result, actual-log source references, and no-database/no-production-action boundary.
+- allowed_files_check: `app/person-timeline/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no backend, components, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `app/person-timeline/page.tsx`, `lib/person-timeline.ts`, `scripts/tests/person-timeline.test.mjs`, current queue, active tasks, backlog/story status, audit, task log, project context, raw requirements, and branch log.
+- check_result: TDD red observed for missing `buildSupervisorExceptionHandlingRecords`; target frontend tests, browser smoke, typecheck, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q125 Actual Log Source Evidence QA
 
 - branch_name: `codex/f412-login-status-logs`

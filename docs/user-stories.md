@@ -29,6 +29,37 @@
 
 ## Stories
 
+### US610-US611 - 本地复核处理记录链回显
+
+```yaml
+stories:
+  - id: US610
+    requirement_ids: [R661, R662, R663]
+    task_ids: [F419]
+    module: "履约监控"
+    role: "现场主管"
+    story: "作为现场主管，我希望选中异常后看到本地处理记录链和待提交预览，以便知道这条异常是否已经形成可追溯处理记录。"
+    task_type: "frontend-scaffold"
+    priority: "P0"
+    status: "done"
+    dependencies: [US608, US609]
+  - id: US611
+    requirement_ids: [R664]
+    task_ids: [Q126]
+    module: "质量与交付"
+    role: "QA"
+    story: "作为 QA，我希望验证本地处理记录链回显，以便确认记录顺序、来源证据和边界可验收。"
+    task_type: "qa"
+    priority: "P1"
+    status: "ready"
+    dependencies: [US610]
+acceptance:
+  - "页面在处理闭环区域展示本地处理记录链。"
+  - "记录链包含复核结论、补充证据、关闭结果或待提交预览。"
+  - "记录链保留 actual-log 来源引用和证据记录 ID。"
+  - "本组不新增数据库、ORM、migration、真实外部系统、权限、审批、导出、批量、文件存储、生产公式、结算、收费因子或新依赖。"
+```
+
 ### US608-US609 - actual-log 来源记录接入本地复核证据
 
 ```yaml

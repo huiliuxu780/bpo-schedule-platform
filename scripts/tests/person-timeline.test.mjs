@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   buildFulfillmentMatrixReturnHref,
   buildPersonFulfillmentDetailHref,
+  buildSupervisorExceptionHandlingRecords,
   fallbackPersonTimelines,
   filterPersonTimelines,
   getFulfillmentCalendar,
@@ -190,10 +191,79 @@ test("supervisor exception review process memory stores conclusion evidence and 
   assert.equal(state.closureRecord?.evidenceRecordIds[0], "EVD-0001");
 });
 
+test("supervisor exception handling records expose pending submitted evidence and closure chain", () => {
+  resetSupervisorExceptionReviewProcessMemory();
+
+  const pendingState = getSupervisorExceptionReviewState("A-1002::late_login");
+  const pendingRecords = buildSupervisorExceptionHandlingRecords({
+    exceptionKey: "A-1002::late_login",
+    state: pendingState,
+    suggestedConclusion: "建议按实际登录晚到记录进入主管复核。",
+    sourceReferences: ["SCH-A-1002-20260511", "LOG-A-1002-20260511"],
+  });
+
+  assert.deepEqual(pendingRecords, [
+    {
+      id: "PENDING-A-1002::late_login",
+      kind: "pending_review",
+      title: "待提交复核",
+      actor: "现场主管",
+      occurredAt: "待提交",
+      summary: "建议按实际登录晚到记录进入主管复核。",
+      references: ["SCH-A-1002-20260511", "LOG-A-1002-20260511"],
+    },
+  ]);
+
+  submitSupervisorExceptionReviewConclusion({
+    exceptionKey: "A-1002::late_login",
+    employeeId: "A-1002",
+    anomalyCode: "late_login",
+    submittedBy: "现场主管",
+    conclusion: "确认登录晚到 21 分钟，需要按实际来源记录复核。",
+    sourceReferences: ["SCH-A-1002-20260511", "LOG-A-1002-20260511"],
+  });
+  submitSupervisorExceptionEvidence({
+    exceptionKey: "A-1002::late_login",
+    submittedBy: "现场主管",
+    note: "已核对排班明细和登录日志。",
+    linkedRecordType: "actual_log",
+    linkedRecordId: "SCH-A-1002-20260511",
+  });
+  submitSupervisorExceptionClosure({
+    exceptionKey: "A-1002::late_login",
+    closedBy: "现场主管",
+    conclusion: "已形成本地处理记录，等待后续数据库 Gate 持久化。",
+  });
+
+  const closedRecords = buildSupervisorExceptionHandlingRecords({
+    exceptionKey: "A-1002::late_login",
+    state: getSupervisorExceptionReviewState("A-1002::late_login"),
+    suggestedConclusion: "建议按实际登录晚到记录进入主管复核。",
+    sourceReferences: ["SCH-A-1002-20260511", "LOG-A-1002-20260511"],
+  });
+
+  assert.deepEqual(
+    closedRecords.map((record) => record.kind),
+    ["review_conclusion", "evidence", "closure"]
+  );
+  assert.equal(closedRecords[0].title, "复核结论");
+  assert.deepEqual(closedRecords[0].references, [
+    "SCH-A-1002-20260511",
+    "LOG-A-1002-20260511",
+  ]);
+  assert.equal(closedRecords[1].title, "补充证据");
+  assert.deepEqual(closedRecords[1].references, ["EVD-0001", "SCH-A-1002-20260511"]);
+  assert.equal(closedRecords[2].title, "处理结论");
+  assert.deepEqual(closedRecords[2].references, ["CLS-0001", "EVD-0001"]);
+});
+
 test("person timeline page exposes local review submit evidence and closure actions", () => {
   const pageSource = readFileSync(new URL("../../app/person-timeline/page.tsx", import.meta.url), "utf8");
 
   assert.ok(pageSource.includes("SelectedExceptionLocalClosureCard"));
+  assert.ok(pageSource.includes("buildSupervisorExceptionHandlingRecords"));
+  assert.ok(pageSource.includes("处理记录链"));
+  assert.ok(pageSource.includes("待提交复核"));
   assert.ok(pageSource.includes("提交复核结论"));
   assert.ok(pageSource.includes("补充证据"));
   assert.ok(pageSource.includes("关闭异常"));

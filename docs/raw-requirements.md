@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R661-R664 - 本地复核处理记录链回显
+
+```yaml
+requirements:
+  - id: R661
+    module: "履约监控"
+    description: "现场主管需要在选中异常后看到本地复核处理记录链，包含结论、补充证据、关闭结果和当前状态。"
+  - id: R662
+    module: "履约监控"
+    description: "处理记录链需要保留来源记录、证据记录和处理人时间，便于后续数据库持久化时映射成处理记录表。"
+  - id: R663
+    module: "履约监控"
+    description: "当还没有真实提交记录时，页面需要给出基于当前建议结论和 actual-log 来源的待提交记录预览，而不是展示空白状态。"
+  - id: R664
+    module: "质量与交付"
+    description: "本地复核处理记录链完成后需要 QA 验证模型、页面 smoke、状态顺序和无数据库/无生产动作边界。"
+source: "PM asked to continue local production-prototype development after actual-log evidence write-through on 2026-05-27"
+submitted_at: "2026-05-27"
+version: "1.0"
+status: "split"
+notes: "本组只在现有履约日历中回显本地 process-memory 处理记录链和待提交预览，不新增数据库、ORM、migration、真实外部系统、权限、审批、导出、批量、文件存储、生产公式、结算、收费因子或新依赖。"
+```
+
 ### R657-R660 - actual-log 来源记录接入本地复核证据
 
 ```yaml

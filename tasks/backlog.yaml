@@ -2,6 +2,40 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: F419
+    title: "本地复核处理记录链回显"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["F418", "Q125"]
+    allowed_files: ["app/person-timeline/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "components/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "处理闭环区域展示本地处理记录链。"
+      - "记录链包含复核结论、补充证据、关闭结果或待提交预览。"
+      - "记录链保留 actual-log 来源引用和证据记录 ID。"
+      - "不新增数据库、ORM、migration、真实外部系统、权限、审批、导出、批量、文件存储、生产公式、结算、收费因子或新依赖。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions: ["依赖 F418/Q125 未完成", "需要数据库、ORM、migration 或生产持久化", "需要真实外部系统接入", "需要权限、审批、导出、批量或生产公式", "需要新增依赖或修改 package/lockfile", "验证失败"]
+    commit_after_done: true
+  - id: Q126
+    title: "本地复核处理记录链 QA"
+    priority: P1
+    status: ready
+    required_workflow: qa
+    dependencies: ["F419"]
+    allowed_files: ["docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
+    acceptance:
+      - "验证处理记录链的记录类型、顺序、来源引用和页面 smoke。"
+      - "确认本轮只做本地处理记录回显，不新增数据库、真实外部系统、权限审批、导出批量或生产公式。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions: ["依赖 F419 未完成", "验证失败", "需要新增依赖或修改 package/lockfile", "需要后端接口、数据库、ORM、migration 或生产持久化", "需要真实外部集成", "需要权限、审批、导出、批量或生产公式"]
+    commit_after_done: true
   - id: F418
     title: "actual-log 来源记录接入本地复核证据"
     priority: P0
