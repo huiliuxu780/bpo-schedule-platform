@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### Q119 G001 Master Data Foundation QA
+
+- branch_name: `codex/f405-master-data-import-view`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `2a1ddbf`
+- remote_status: `not_pushed`
+- scope: QA closeout for the G001 master-data foundation, covering CSV import, failed rows, import versions, source batch traceability, local maintenance, freeze/unfreeze, effective-date and binding reference checks, page smoke, and no-database boundary.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates current queue, active tasks, backlog/story status, audit, task log, project context, and branch log only.
+- check_result: master-data backend/frontend tests, import-batch regression, product copy/navigation tests, API/page smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F406 G001 Master Data Maintenance Reference Check
 
 - branch_name: `codex/f405-master-data-import-view`

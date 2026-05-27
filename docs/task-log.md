@@ -19,6 +19,15 @@
 
 ### 2026-05-27
 
+- task_id: `Q119`
+- source_ids:
+  - `R629`
+- story_ids:
+  - `US592`
+- action: 完成 G001 主数据基础 QA。
+- status: `done`
+- notes: 已验证主数据 CSV 导入、来源批次、导入版本、失败行不进入业务记录、process-memory 新增/修改、冻结、解冻、有效期校验、绑定引用校验、产品文案边界、API smoke、页面 smoke 和最终项目检查；确认没有新增数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。current queue 与 active tasks 已移除 US592/Q119，下一项为 US593/F407。
+
 - task_id: `F406`
 - source_ids:
   - `R625`

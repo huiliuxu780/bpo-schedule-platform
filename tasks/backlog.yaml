@@ -88,7 +88,7 @@ tasks:
   - id: Q119
     title: "G001 主数据基础 QA"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     dependencies: ["F405", "F406"]
     allowed_files: ["docs/**", "tasks/backlog.yaml"]

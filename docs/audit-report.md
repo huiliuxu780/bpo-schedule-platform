@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 master data foundation QA
+
+#### 结论
+
+- `Q119/US592/R629` 已完成 G001 主数据基础 QA。
+- 已验收 `F405` 的主数据 CSV 导入、失败行、来源批次、导入版本和主数据页展示，以及 `F406` 的新增/修改、冻结、解冻、有效期和引用校验。
+- current queue 与 active tasks 已移除 `US592/Q119`，下一项为 `US593/F407`。
+- 本 QA 没有新增或修改产品代码、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 主数据能力仍是 no-database process-memory，不是生产持久化、供应商隔离、权限控制或审批发布。
+- 人员级排班导入、班次引用、排班版本和 0.5h 展开仍归 `F407/F408/Q120`。
+
+#### 验证
+
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，45 个后端测试通过。
+- `node --test scripts/tests/master-data-relations.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，40 个前端/契约测试通过。
+- API smoke：主数据新增、冻结、引用校验阻断和解冻恢复均通过。
+- 页面 smoke：`/master-data-relations` 可渲染维护状态、新增或修改、冻结、解冻、引用校验和导入员工记录。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已移除 `US592/Q119`，下一项为 `US593/F407`。
+
 ### 2026-05-27 - G001 master data maintenance and reference check
 
 #### 结论

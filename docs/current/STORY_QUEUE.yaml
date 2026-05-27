@@ -6,15 +6,6 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US592
-    status: ready
-    priority: P1
-    module: "质量与交付"
-    role: "QA"
-    task_ids: ["Q119"]
-    requirement_ids: ["R629"]
-    dependencies: ["US590", "US591"]
-    story: "验证主数据导入和维护闭环。"
   - id: US593
     status: ready
     priority: P0

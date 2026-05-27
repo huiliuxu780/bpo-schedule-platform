@@ -90,7 +90,7 @@ stories:
     story: "作为 QA，我希望验证主数据导入和维护闭环，以便确认引用校验、有效期和冻结口径可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "ready"
+    status: "done"
     dependencies: [US590, US591]
   - id: US593
     requirement_ids: [R630, R631, R632]

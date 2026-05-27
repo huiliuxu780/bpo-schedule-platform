@@ -6,15 +6,6 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
 tasks:
-  - id: Q119
-    status: ready
-    title: "G001 主数据基础 QA"
-    priority: P1
-    story_ids: ["US592"]
-    required_workflow: qa
-    dependencies: ["F405", "F406"]
-    allowed_files: ["docs/**", "tasks/backlog.yaml"]
-    forbidden_files: ["backend/**", "app/**", "components/**", "lib/**", "package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "migrations/**"]
   - id: F407
     status: ready
     title: "G001 人员级排班导入班次引用与版本"
