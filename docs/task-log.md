@@ -19,6 +19,17 @@
 
 ### 2026-05-27
 
+- task_id: `Q125`
+- source_ids:
+  - `R660`
+- story_ids:
+  - `US609`
+- action: 完成 actual-log 来源证据接入 QA。
+- status: `done`
+- notes: 已验证 actual-log 来源记录抽取、复核结论来源引用、补充证据默认关联、页面 smoke 和 no-database/no-production-action 边界。没有新增后端、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-05-27
+
 - task_id: `F418`
 - source_ids:
   - `R657`

@@ -4,6 +4,24 @@
 
 ## Current Audit
 
+### 2026-05-27 - actual-log source evidence QA
+
+#### 结论
+
+- `Q125/US609/R660` 已完成 actual-log 来源证据接入 QA。
+- 已验收模型证据抽取、页面实际来源证据展示、复核结论隐藏来源、补充证据默认关联和 no-database/no-production-action 边界。
+- current queue 与 active tasks 已清空。
+
+#### 风险
+
+- 本轮仍是本地 process-memory 复核和表单默认值，不是生产持久化、真实外部接口、真实文件证据、权限、审批、导出、批量或异常表。
+
+#### 验证
+
+- `node --test scripts/tests/person-timeline.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs scripts/tests/actual-fulfillment-contracts.test.mjs`：通过，27 个前端模型/页面/文案/导航测试通过。
+- Browser smoke：通过，目标页面可见“实际来源证据”“SCH-A-1002-20260511”“LOG-A-1002-20260511”“提交复核结论”“补充证据”，补充证据默认 `actual_log` 和 `SCH-A-1002-20260511`，复核来源包含 actual-log 记录。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-27 - actual-log source evidence write-through
 
 #### 结论

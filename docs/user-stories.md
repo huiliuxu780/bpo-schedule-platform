@@ -51,7 +51,7 @@ stories:
     story: "作为 QA，我希望验证 actual-log 来源证据接入，以便确认复核表单默认值、页面展示和边界可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "ready"
+    status: "done"
     dependencies: [US608]
 acceptance:
   - "复核结论表单的来源引用优先包含 actual-log 来源记录。"

@@ -22,7 +22,7 @@ tasks:
   - id: Q125
     title: "actual-log 来源证据接入 QA"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     dependencies: ["F418"]
     allowed_files: ["docs/**", "tasks/backlog.yaml"]
