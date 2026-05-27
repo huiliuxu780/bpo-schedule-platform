@@ -6,6 +6,10 @@ import { MvpFlowSummary } from "@/components/mvp-flow-summary"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import { ScheduleRiskTable } from "@/components/schedule-risk-table"
 import {
+  getImportedPersonnelScheduleDetails,
+  summarizePersonnelScheduleDetails,
+} from "@/lib/personnel-schedule-details"
+import {
   formatCoverageRate,
   getSchedulePlansWithFilters,
   getScheduleRisks,
@@ -69,6 +73,11 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
   const plans = await getSchedulePlansWithFilters({ query, status })
+  const personnelScheduleRows = await getImportedPersonnelScheduleDetails()
+  const personnelScheduleSummary = summarizePersonnelScheduleDetails(personnelScheduleRows)
+  const importedPersonnelScheduleRows = personnelScheduleRows.filter(
+    (row) => row.sourceBatchId
+  )
   const risks = await getScheduleRisks(query)
   const totalForecast = plans.reduce((sum, plan) => sum + plan.forecast_agents, 0)
   const totalScheduled = plans.reduce(
@@ -152,6 +161,43 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">
             <div>
+              <CardTitle>人员排班导入</CardTitle>
+              <CardDescription>
+                查看人员级排班来源批次、排班版本和班次引用状态。
+              </CardDescription>
+            </div>
+            <Badge variant="outline">
+              {importedPersonnelScheduleRows.length} 条导入 / {personnelScheduleSummary.peopleCount} 条记录
+            </Badge>
+          </CardHeader>
+          <CardContent className="grid gap-3 lg:grid-cols-2">
+            {personnelScheduleRows.slice(0, 4).map((row) => (
+              <div key={row.scheduleDetailId} className="rounded-lg border p-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-medium">
+                      {row.employeeId} {row.employeeName}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {row.workplace} / {row.project} / {row.supplier}
+                    </div>
+                  </div>
+                  <Badge variant={row.shiftTypeReferenceStatus === "blocked" ? "destructive" : "secondary"}>
+                    班次引用 {row.shiftTypeReferenceStatus === "blocked" ? "阻断" : "可用"}
+                  </Badge>
+                </div>
+                <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                  <MiniDetail label="来源批次" value={row.sourceBatchId ?? "样例记录"} />
+                  <MiniDetail label="排班版本" value={row.scheduleVersionId ?? row.planId} />
+                  <MiniDetail label="班次引用" value={row.shiftType} />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-start justify-between gap-4">
+            <div>
               <CardTitle>排班风险提示</CardTitle>
               <CardDescription>
                 缺口与不可用记录联动提示
@@ -173,6 +219,15 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
         />
       </main>
     </AppShell>
+  )
+}
+
+function MiniDetail({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 break-words text-sm font-medium">{value}</div>
+    </div>
   )
 }
 

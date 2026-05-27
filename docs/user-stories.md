@@ -100,7 +100,7 @@ stories:
     story: "作为排班运营，我希望导入人员级排班并引用班次类型和排班版本，以便每条排班能追溯到员工和来源批次。"
     task_type: "backend-vertical"
     priority: "P0"
-    status: "ready"
+    status: "done"
     dependencies: [US591]
   - id: US594
     requirement_ids: [R633, R634]

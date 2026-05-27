@@ -7,6 +7,7 @@ export type PersonnelScheduleInterval = {
 
 export type PersonnelScheduleDetailRow = {
   scheduleDetailId: string
+  scheduleVersionId?: string
   planId: string
   employeeId: string
   employeeName: string
@@ -25,6 +26,33 @@ export type PersonnelScheduleDetailRow = {
   expandedIntervals: PersonnelScheduleInterval[]
   anomalyCodes: string[]
   anomalyLabels: string[]
+  sourceBatchId?: string
+  sourceVersionId?: string
+  shiftTypeReferenceStatus?: "ready" | "blocked"
+}
+
+export type ImportedPersonnelScheduleRecord = {
+  schedule_detail_id: string
+  schedule_version_id: string
+  employee_id: string
+  employee_name: string
+  business_date: string
+  workplace_id: string
+  workplace_name: string
+  supplier_id: string
+  supplier_name: string
+  project_id: string
+  project_name: string
+  shift_type_id: string
+  shift_type_name: string
+  shift_type_reference_status: "ready" | "blocked"
+  start_at: string
+  end_at: string
+  skill_group: string
+  skill_level: string
+  status: string
+  source_batch_id: string
+  source_version_id: string
 }
 
 export type PersonnelScheduleSummary = {
@@ -119,6 +147,9 @@ const anomalyLabel: Record<string, string> = {
   late_login: "登录迟到",
   early_logout: "提前离线",
 }
+
+const API_BASE_URL =
+  process.env.BPO_API_BASE_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8000"
 
 export const fallbackPersonnelScheduleDetails: PersonnelScheduleDetailRow[] = [
   row({
@@ -220,6 +251,60 @@ export const fallbackPersonnelScheduleDetails: PersonnelScheduleDetailRow[] = [
 
 export function getPersonnelScheduleDetails(planId: string) {
   return fallbackPersonnelScheduleDetails.filter((item) => item.planId === planId)
+}
+
+export async function getImportedPersonnelScheduleDetails() {
+  const response = await fetchJson<{ items: ImportedPersonnelScheduleRecord[] }>(
+    "/api/v1/personnel-schedules/imported-records"
+  )
+  const importedRows =
+    response?.items.map((item) => mapImportedPersonnelScheduleRecord(item)) ?? []
+
+  if (importedRows.length === 0) {
+    return fallbackPersonnelScheduleDetails
+  }
+
+  return mergeImportedPersonnelScheduleDetails(importedRows)
+}
+
+export function mapImportedPersonnelScheduleRecord(
+  record: ImportedPersonnelScheduleRecord
+): PersonnelScheduleDetailRow {
+  return row({
+    scheduleDetailId: record.schedule_detail_id,
+    scheduleVersionId: record.schedule_version_id,
+    planId: `imported-${record.schedule_version_id}`,
+    employeeId: record.employee_id,
+    employeeName: record.employee_name,
+    businessDate: record.business_date,
+    workplace: record.workplace_name || record.workplace_id,
+    supplier: record.supplier_name || record.supplier_id,
+    project: record.project_name || record.project_id,
+    shiftType: record.shift_type_name || record.shift_type_id,
+    startTime: record.start_at,
+    endTime: record.end_at,
+    breakWindow: "待引用班次",
+    mealWindow: "待引用班次",
+    skillGroup: record.skill_group,
+    skillLevel: record.skill_level,
+    scheduledHours: (toMinutes(record.end_at) - toMinutes(record.start_at)) / 60,
+    anomalyCodes: [],
+    sourceBatchId: record.source_batch_id,
+    sourceVersionId: record.source_version_id,
+    shiftTypeReferenceStatus: record.shift_type_reference_status,
+  })
+}
+
+export function mergeImportedPersonnelScheduleDetails(
+  importedRows: PersonnelScheduleDetailRow[],
+  fallbackRows = fallbackPersonnelScheduleDetails
+) {
+  const importedIds = new Set(importedRows.map((row) => row.scheduleDetailId))
+  const remainingFallbackRows = fallbackRows.filter(
+    (row) => !importedIds.has(row.scheduleDetailId)
+  )
+
+  return [...importedRows, ...remainingFallbackRows]
 }
 
 export function getPersonnelScheduleDetailForEmployeeDate(
@@ -426,6 +511,25 @@ function row(
     ...item,
     expandedIntervals: expandHalfHourIntervals(item.startTime, item.endTime),
     anomalyLabels: item.anomalyCodes.map((code) => anomalyLabel[code] ?? code),
+  }
+}
+
+async function fetchJson<T>(path: string): Promise<T | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    return (await response.json()) as T
+  } catch {
+    return null
   }
 }
 

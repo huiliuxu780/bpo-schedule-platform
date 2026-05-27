@@ -23,6 +23,7 @@ from backend.app.models import (
     MasterDataImportContractResponse,
     IntervalExpansionContract,
     PersonnelScheduleCsvImportRequest,
+    PersonnelScheduleImportedRecord,
     PersonnelScheduleImportContractResponse,
     ScheduleRiskLevel,
     ScheduleRiskRow,
@@ -119,6 +120,17 @@ CSV_IMPORT_PENDING_VALIDATION_FIELDS = {
 
 IMPORT_BATCH_RESULTS: dict[str, ImportBatchResult] = {}
 MASTER_DATA_IMPORTED_RECORDS: list[MasterDataImportedRecord] = []
+PERSONNEL_SCHEDULE_IMPORTED_RECORDS: list[PersonnelScheduleImportedRecord] = []
+
+SHIFT_TYPE_REFERENCES = {
+    "SHIFT-DAY": "标准早班",
+    "SHIFT-MID": "标准中班",
+    "SHIFT-EVENING": "标准晚班",
+    "SHIFT-SUPPORT": "支援班",
+    "SHIFT-MORNING-01": "早班 A",
+    "SHIFT-MID-01": "中班 B",
+    "SHIFT-LATE-01": "晚班 C",
+}
 
 
 def preview_csv_import(request: CsvImportPreviewRequest) -> CsvImportPreviewResponse:
@@ -1152,6 +1164,16 @@ def import_personnel_schedule_csv(
     )
     IMPORT_BATCH_RESULTS[batch_id] = result
 
+    if version_records:
+        PERSONNEL_SCHEDULE_IMPORTED_RECORDS[:0] = [
+            build_personnel_schedule_imported_record(
+                row,
+                batch_id,
+                version_records[0].version_id,
+            )
+            for row in successful_rows
+        ]
+
     return result
 
 
@@ -1209,7 +1231,57 @@ def validate_personnel_schedule_row(
                     )
                 )
 
+    shift_type_id = (row.get("shift_type_id") or "").strip()
+    if shift_type_id and shift_type_id not in SHIFT_TYPE_REFERENCES:
+        failures.append(
+            ImportBatchFailureRow(
+                batch_id=batch_id,
+                entity="personnel_schedule",
+                failed_row_number=row_index,
+                field_name="shift_type_id",
+                error_code="shift_type_missing",
+                error_message="班次类型不存在或未启用",
+                raw_value=shift_type_id,
+            )
+        )
+
     return failures
+
+
+def build_personnel_schedule_imported_record(
+    row: dict[str, str],
+    batch_id: str,
+    version_id: str,
+) -> PersonnelScheduleImportedRecord:
+    shift_type_id = (row.get("shift_type_id") or "").strip()
+
+    return PersonnelScheduleImportedRecord(
+        schedule_detail_id=(row.get("schedule_detail_id") or "").strip(),
+        schedule_version_id=(row.get("schedule_version_id") or "").strip(),
+        employee_id=(row.get("employee_id") or "").strip(),
+        employee_name=(row.get("employee_name") or "").strip() or (row.get("employee_id") or "").strip(),
+        business_date=(row.get("business_date") or "").strip(),
+        workplace_id=(row.get("workplace_id") or "").strip(),
+        workplace_name=(row.get("workplace_name") or "").strip() or (row.get("workplace_id") or "").strip(),
+        supplier_id=(row.get("supplier_id") or "").strip(),
+        supplier_name=(row.get("supplier_name") or "").strip() or (row.get("supplier_id") or "").strip(),
+        project_id=(row.get("project_id") or "").strip(),
+        project_name=(row.get("project_name") or "").strip() or (row.get("project_id") or "").strip(),
+        shift_type_id=shift_type_id,
+        shift_type_name=SHIFT_TYPE_REFERENCES.get(shift_type_id, shift_type_id),
+        shift_type_reference_status="ready",
+        start_at=(row.get("start_at") or "").strip(),
+        end_at=(row.get("end_at") or "").strip(),
+        skill_group=(row.get("skill_group") or "").strip() or "待确认",
+        skill_level=(row.get("skill_level") or "").strip() or "待确认",
+        status=(row.get("status") or "").strip(),
+        source_batch_id=batch_id,
+        source_version_id=version_id,
+    )
+
+
+def list_personnel_schedule_imported_records() -> list[PersonnelScheduleImportedRecord]:
+    return PERSONNEL_SCHEDULE_IMPORTED_RECORDS
 
 
 def import_login_log_csv(request: LoginLogCsvImportRequest) -> ImportBatchResult:

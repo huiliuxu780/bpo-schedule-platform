@@ -14,6 +14,7 @@ from backend.app.main import (
     preview_csv_import,
     import_status_log_csv,
     list_imported_master_data_records,
+    list_imported_personnel_schedule_records,
     upsert_master_data_record,
     freeze_master_data_record,
     unfreeze_master_data_record,
@@ -70,6 +71,7 @@ class SchedulePlansApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/import-batches/login-log", "POST"), routes)
         self.assertIn(("/api/v1/import-batches/status-log", "POST"), routes)
         self.assertIn(("/api/v1/master-data/imported-records", "GET"), routes)
+        self.assertIn(("/api/v1/personnel-schedules/imported-records", "GET"), routes)
         self.assertIn(("/api/v1/import-batches", "GET"), routes)
         self.assertIn(("/api/v1/import-batches/{batch_id}", "GET"), routes)
 
@@ -404,6 +406,35 @@ class SchedulePlansApiTest(unittest.TestCase):
 
         stored = get_import_batch_result(response.batch_id)
         self.assertEqual(stored, response)
+
+        records = list_imported_personnel_schedule_records()
+        imported = next(
+            item for item in records.items if item.schedule_detail_id == "SCH-001"
+        )
+        self.assertEqual(imported.source_batch_id, response.batch_id)
+        self.assertEqual(imported.source_version_id, response.version_records[0].version_id)
+        self.assertEqual(imported.schedule_version_id, "SV-20260526")
+        self.assertEqual(imported.shift_type_reference_status, "ready")
+        self.assertEqual(imported.shift_type_id, "SHIFT-DAY")
+
+    def test_personnel_schedule_csv_import_rejects_unknown_shift_type(self) -> None:
+        response = import_personnel_schedule_csv(
+            PersonnelScheduleCsvImportRequest(
+                file_name="personnel_schedule_unknown_shift.csv",
+                uploaded_by="排班运营",
+                csv_content=(
+                    "schedule_detail_id,schedule_version_id,employee_id,business_date,workplace_id,supplier_id,project_id,shift_type_id,start_at,end_at,status\n"
+                    "SCH-009,SV-20260526,E-009,2026-05-26,WP-SH,SUP-01,P-BOSCH,SHIFT-UNKNOWN,09:00,18:00,published\n"
+                ),
+            )
+        )
+
+        self.assertEqual(response.status, "completed_with_errors")
+        self.assertEqual(response.success_rows, 0)
+        self.assertEqual(response.failed_rows, 1)
+        self.assertEqual(response.error_codes, ["shift_type_missing"])
+        self.assertEqual(response.failure_rows[0].field_name, "shift_type_id")
+        self.assertEqual(response.failure_rows[0].raw_value, "SHIFT-UNKNOWN")
 
     def test_personnel_schedule_csv_import_records_missing_required_field(self) -> None:
         response = import_personnel_schedule_csv(

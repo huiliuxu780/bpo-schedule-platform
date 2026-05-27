@@ -222,6 +222,34 @@ class MasterDataReferenceCheckResult(BaseModel):
     quality_issue_id: str | None = None
 
 
+class PersonnelScheduleImportedRecord(BaseModel):
+    schedule_detail_id: str
+    schedule_version_id: str
+    employee_id: str
+    employee_name: str
+    business_date: str
+    workplace_id: str
+    workplace_name: str
+    supplier_id: str
+    supplier_name: str
+    project_id: str
+    project_name: str
+    shift_type_id: str
+    shift_type_name: str
+    shift_type_reference_status: str
+    start_at: str
+    end_at: str
+    skill_group: str
+    skill_level: str
+    status: str
+    source_batch_id: str
+    source_version_id: str
+
+
+class PersonnelScheduleImportedRecordListResponse(BaseModel):
+    items: list[PersonnelScheduleImportedRecord]
+
+
 class MasterDataEntityContract(BaseModel):
     entity: MasterDataEntity
     primary_key: list[str]

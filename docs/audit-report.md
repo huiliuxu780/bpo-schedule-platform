@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 personnel schedule import references and version
+
+#### 结论
+
+- `F407/US593/R630-R632` 已完成 G001 人员级排班导入班次引用与版本。
+- 后端人员级排班 CSV 导入现在会保留 process-memory 人员排班业务记录，包含来源批次、排班版本、班次引用状态和人员排班业务字段。
+- 未知班次类型会进入失败行并返回 `shift_type_missing`，不会进入人员排班业务记录。
+- 前端排班计划页展示人员排班导入、来源批次、排班版本和班次引用。
+- current queue 与 active tasks 已移除 `US593/F407`，下一项为 `US594/F408`。
+
+#### 风险
+
+- 当前人员排班记录仍是 no-database process-memory，不是生产排班版本库或发布冻结口径。
+- 0.5h 展开、跨天质量问题和履约链接仍归 `F408`，本批不做自动排班、审批发布、导出、批量或生产公式。
+
+#### 验证
+
+- TDD red：后端 unittest 首次失败于缺少 `list_imported_personnel_schedule_records`；前端 node test 首次失败于缺少 `mapImportedPersonnelScheduleRecord`。
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，46 个后端测试通过。
+- `node --test scripts/tests/personnel-schedule-details.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，44 个前端/契约测试通过。
+
 ### 2026-05-27 - G001 master data foundation QA
 
 #### 结论

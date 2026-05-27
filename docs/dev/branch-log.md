@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### F407 G001 Personnel Schedule Import References
+
+- branch_name: `codex/f407-personnel-schedule-import`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `1c818a5`
+- remote_status: `not_pushed`
+- scope: backend-vertical local personnel-schedule import slice: persist imported personnel schedule rows in process memory, expose schedule version/source batch traceability, validate shift-type references, and display imported personnel schedule traceability on the schedule plans page.
+- allowed_files_check: `app/import-batches/**`, `app/schedule-plans/**`, `backend/**`, `lib/**`, `scripts/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates personnel-schedule import schema/repository/route, schedule-plan page traceability, personnel-schedule model/tests, current and legacy traceability docs; does not add production persistence, file storage, external connectors, permission boundaries, approval, export, batch operation, production formulas, settlement rules, or charge-factor behavior.
+- check_result: TDD red observed for missing imported personnel schedule records, schedule version/source batch mapping, and shift-type reference status; target backend/frontend tests, product copy/navigation tests, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q119 G001 Master Data Foundation QA
 
 - branch_name: `codex/f405-master-data-import-view`

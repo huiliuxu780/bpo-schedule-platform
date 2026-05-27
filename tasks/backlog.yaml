@@ -104,7 +104,7 @@ tasks:
   - id: F407
     title: "G001 人员级排班导入班次引用与版本"
     priority: P0
-    status: ready
+    status: done
     required_workflow: backend-vertical
     dependencies: ["F406"]
     allowed_files: ["app/import-batches/**", "app/schedule-plans/**", "backend/**", "lib/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]

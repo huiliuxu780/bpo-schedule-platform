@@ -6,15 +6,6 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US593
-    status: ready
-    priority: P0
-    module: "排班计划"
-    role: "排班运营"
-    task_ids: ["F407"]
-    requirement_ids: ["R630", "R631", "R632"]
-    dependencies: ["US591"]
-    story: "导入人员级排班并引用班次类型和排班版本。"
   - id: US594
     status: ready
     priority: P0

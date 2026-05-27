@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
   buildPersonTimelineHref,
   buildPersonScheduleSource,
+  mapImportedPersonnelScheduleRecord,
+  mergeImportedPersonnelScheduleDetails,
   buildPersonnelIntervalTrace,
   buildPersonnelScheduleIntervalLinkage,
   summarizePersonnelScheduleIntervalLinkage,
@@ -34,6 +37,80 @@ test("personnel schedule details expose employee-level rows for a plan", () => {
     { start: "09:00", end: "09:30" },
     { start: "09:30", end: "10:00" },
   ]);
+});
+
+test("imported personnel schedule records map source batch version and shift reference", () => {
+  const row = mapImportedPersonnelScheduleRecord({
+    schedule_detail_id: "SCH-001",
+    schedule_version_id: "SV-20260526",
+    employee_id: "E-001",
+    employee_name: "导入员工",
+    business_date: "2026-05-26",
+    workplace_id: "WP-SH",
+    workplace_name: "上海职场",
+    supplier_id: "SUP-01",
+    supplier_name: "供应商 A",
+    project_id: "P-BOSCH",
+    project_name: "博西客服",
+    shift_type_id: "SHIFT-DAY",
+    shift_type_name: "标准早班",
+    shift_type_reference_status: "ready",
+    start_at: "09:00",
+    end_at: "18:00",
+    skill_group: "热线",
+    skill_level: "L2",
+    status: "published",
+    source_batch_id: "BATCH-PS-20260527-001",
+    source_version_id: "VER-PS-20260527-001",
+  });
+
+  assert.equal(row.scheduleDetailId, "SCH-001");
+  assert.equal(row.scheduleVersionId, "SV-20260526");
+  assert.equal(row.sourceBatchId, "BATCH-PS-20260527-001");
+  assert.equal(row.sourceVersionId, "VER-PS-20260527-001");
+  assert.equal(row.shiftTypeReferenceStatus, "ready");
+  assert.equal(row.shiftType, "标准早班");
+});
+
+test("imported personnel schedule rows are shown before fallback rows", () => {
+  const rows = mergeImportedPersonnelScheduleDetails([
+    mapImportedPersonnelScheduleRecord({
+      schedule_detail_id: "SCH-001",
+      schedule_version_id: "SV-20260526",
+      employee_id: "E-001",
+      employee_name: "导入员工",
+      business_date: "2026-05-26",
+      workplace_id: "WP-SH",
+      workplace_name: "上海职场",
+      supplier_id: "SUP-01",
+      supplier_name: "供应商 A",
+      project_id: "P-BOSCH",
+      project_name: "博西客服",
+      shift_type_id: "SHIFT-DAY",
+      shift_type_name: "标准早班",
+      shift_type_reference_status: "ready",
+      start_at: "09:00",
+      end_at: "18:00",
+      skill_group: "热线",
+      skill_level: "L2",
+      status: "published",
+      source_batch_id: "BATCH-PS-20260527-001",
+      source_version_id: "VER-PS-20260527-001",
+    }),
+  ]);
+
+  assert.equal(rows[0].scheduleDetailId, "SCH-001");
+  assert.equal(rows[0].sourceVersionId, "VER-PS-20260527-001");
+  assert.ok(rows.some((row) => row.scheduleDetailId === "PSD-1001-20260511"));
+});
+
+test("schedule plans page exposes imported personnel schedule traceability", () => {
+  const source = readFileSync("app/schedule-plans/page.tsx", "utf8");
+
+  assert.ok(source.includes("人员排班导入"));
+  assert.ok(source.includes("来源批次"));
+  assert.ok(source.includes("排班版本"));
+  assert.ok(source.includes("班次引用"));
 });
 
 test("personnel schedule field coverage confirms business columns", () => {

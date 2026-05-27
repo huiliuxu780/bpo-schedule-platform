@@ -17,6 +17,7 @@ from backend.app.models import (
     MasterDataReferenceCheckRequest,
     MasterDataReferenceCheckResult,
     PersonnelScheduleCsvImportRequest,
+    PersonnelScheduleImportedRecordListResponse,
     PersonnelScheduleImportContractResponse,
     ScheduleRiskListResponse,
     SchedulePlanDetail,
@@ -43,6 +44,7 @@ from backend.app.repository import (
     import_status_log_csv as create_status_log_import_batch,
     list_demand_plan_rows,
     list_master_data_imported_records as find_master_data_imported_records,
+    list_personnel_schedule_imported_records as find_personnel_schedule_imported_records,
     list_process_import_batches,
     list_schedule_risk_rows,
     list_shift_detail_rows,
@@ -123,6 +125,16 @@ def list_import_batches() -> ImportBatchListResponse:
 def list_imported_master_data_records() -> MasterDataImportedRecordListResponse:
     return MasterDataImportedRecordListResponse(
         items=find_master_data_imported_records()
+    )
+
+
+@app.get(
+    "/api/v1/personnel-schedules/imported-records",
+    response_model=PersonnelScheduleImportedRecordListResponse,
+)
+def list_imported_personnel_schedule_records() -> PersonnelScheduleImportedRecordListResponse:
+    return PersonnelScheduleImportedRecordListResponse(
+        items=find_personnel_schedule_imported_records()
     )
 
 
