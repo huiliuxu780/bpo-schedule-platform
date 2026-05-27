@@ -138,7 +138,7 @@ tasks:
   - id: Q120
     title: "G001 人员级排班基础 QA"
     priority: P1
-    status: ready
+    status: done
     required_workflow: qa
     dependencies: ["F407", "F408"]
     allowed_files: ["docs/**", "tasks/backlog.yaml"]

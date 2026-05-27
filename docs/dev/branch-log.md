@@ -2,6 +2,24 @@
 
 ## 2026-05-27
 
+### Q120 G001 Personnel Schedule Foundation QA
+
+- branch_name: `codex/f408-personnel-schedule-expansion`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `1eed7dd`
+- remote_status: `not_pushed`
+- scope: QA closeout for the G001 personnel-schedule foundation, covering personnel schedule import, shift-type references, source batch/version traceability, 0.5h expansion, employee/schedule-detail traceability, page smoke, and no-database boundary.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, dependency, database, ORM, migration, external integration, auth, permission, approval, export, batch operation, file storage, Excel xlsx parsing, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: updates current queue, active tasks, backlog/story status, audit, task log, project state/context, and branch log only.
+- check_result: personnel-schedule backend/frontend tests, import-batch regression, product copy/navigation tests, page smoke, strict state check, diff whitespace check, and final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ### F408 G001 Personnel Schedule Interval Expansion
 
 - branch_name: `codex/f408-personnel-schedule-expansion`

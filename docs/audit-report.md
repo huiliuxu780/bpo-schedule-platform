@@ -4,6 +4,27 @@
 
 ## Current Audit
 
+### 2026-05-27 - G001 personnel schedule foundation QA
+
+#### 结论
+
+- `Q120/US595/R635` 已完成 G001 人员级排班基础 QA。
+- 已验收 `F407` 的人员级排班导入、来源批次、排班版本、班次引用和失败行阻断，以及 `F408` 的 0.5h 展开、员工/排班明细追溯和个人履约链接。
+- current queue 与 active tasks 已移除 `US595/Q120`，当前队列为空；下一步建议解除 `US596/F409` 阻塞并进入需求预测导入。
+- 本 QA 没有新增或修改产品代码、数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。
+
+#### 风险
+
+- 人员级排班基础仍是 no-database process-memory，不是生产排班版本库、审批发布、冻结或供应商隔离口径。
+- 需求预测导入、预测版本、预测 vs 排班对齐、登录/状态日志处理和真实异常写入闭环仍未完成。
+
+#### 验证
+
+- `/Users/mac/.local/bin/python3 -m unittest backend.tests.test_schedule_plans`：通过，46 个后端测试通过。
+- `node --test scripts/tests/personnel-schedule-details.test.mjs scripts/tests/import-batch-history.test.mjs scripts/tests/product-ui-copy-audit.test.mjs scripts/tests/product-navigation-business-only.test.mjs`：通过，45 个前端/契约测试通过。
+- 页面 smoke：`http://localhost:3021/schedule-plans` 可渲染 `0.5h 展开`、`来源批次`、`排班版本` 和 `履约链接`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，current queue 与 active tasks 已清空。
+
 ### 2026-05-27 - G001 personnel schedule 0.5h expansion
 
 #### 结论

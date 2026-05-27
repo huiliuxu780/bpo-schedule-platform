@@ -120,7 +120,7 @@ stories:
     story: "作为 QA，我希望验证人员级排班导入、版本、班次引用和 0.5h 展开，以便确认排班基础闭环可验收。"
     task_type: "qa"
     priority: "P1"
-    status: "ready"
+    status: "done"
     dependencies: [US593, US594]
   - id: US596
     requirement_ids: [R636, R637]

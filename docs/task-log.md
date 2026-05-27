@@ -19,6 +19,15 @@
 
 ### 2026-05-27
 
+- task_id: `Q120`
+- source_ids:
+  - `R635`
+- story_ids:
+  - `US595`
+- action: 完成 G001 人员级排班基础 QA。
+- status: `done`
+- notes: 已验证人员级排班导入、班次引用、来源批次、排班版本、0.5h 展开、员工/排班明细追溯、页面 smoke、产品文案边界和最终项目检查；确认排班基础流仍是 no-database process-memory，不包含数据库、ORM、migration、真实外部接口、依赖、权限、审批、导出、批量、文件存储、Excel xlsx 解析、自动排班、结算、收费因子或生产公式。current queue 与 active tasks 已移除 US595/Q120；下一步建议解除 US596/F409 的阻塞并进入需求预测导入。
+
 - task_id: `F408`
 - source_ids:
   - `R633`
