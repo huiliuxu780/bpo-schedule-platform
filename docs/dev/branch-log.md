@@ -14,10 +14,10 @@
 - check_result: target Q127 unittest passed; backend unittest discovery passed with 49 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
 - local_commit_sha: `a86dc3d`
 - integration_status: `not_started`
-- integration_method: `N/A`
+- integration_method: `draft PR`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pushed after PM confirmation`
+- push_decision: `pushed after PM confirmation; draft PR opened at https://github.com/huiliuxu780/bpo-schedule-platform/pull/1`
 - blocked_reason: `N/A`
 
 ### DB008 Review Closure Persistence
