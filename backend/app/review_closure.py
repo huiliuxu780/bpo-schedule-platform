@@ -6,6 +6,10 @@ def write_review_closure(
     request: ReviewClosureWriteRequest,
     repository: ReviewPersistenceRepository,
 ) -> ReviewCaseDetail:
+    existing = repository.get_review_case(request.case.case_id)
+    if existing is not None:
+        return existing
+
     repository.create_review_case(request.case)
     for evidence in request.evidence:
         repository.add_evidence(evidence)

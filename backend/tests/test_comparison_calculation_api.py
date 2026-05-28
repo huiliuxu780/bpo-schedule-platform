@@ -58,6 +58,44 @@ class ComparisonCalculationApiTest(unittest.TestCase):
         self.assertEqual(response.run.total_gap_agents, 2)
         self.assertEqual(len(response.forecast_schedule_results), 1)
 
+    def test_calculate_comparison_run_api_returns_existing_run_on_duplicate_request(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'comparison-calc.db'}"
+            _seed_comparison_sources(database_url)
+
+            with (
+                patch(
+                    "backend.app.main.ComparisonPersistenceRepository",
+                    return_value=ComparisonPersistenceRepository(database_url),
+                ),
+                patch(
+                    "backend.app.main.ForecastPersistenceRepository",
+                    return_value=ForecastPersistenceRepository(database_url),
+                ),
+                patch(
+                    "backend.app.main.PersonnelSchedulePersistenceRepository",
+                    return_value=PersonnelSchedulePersistenceRepository(database_url),
+                ),
+                patch(
+                    "backend.app.main.ActualLogPersistenceRepository",
+                    return_value=ActualLogPersistenceRepository(database_url),
+                ),
+            ):
+                request = ComparisonCalculationRequest(
+                    run_id="CALC-FS-API-IDEMPOTENT",
+                    comparison_type="forecast_vs_schedule",
+                    forecast_version_id="FC-20260511-V1",
+                    schedule_version_id="SCH-20260511-V1",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                )
+                first = calculate_comparison_run_api(request)
+                second = calculate_comparison_run_api(request)
+
+        self.assertEqual(second.run.run_id, first.run.run_id)
+        self.assertEqual(second.run.created_at, first.run.created_at)
+        self.assertEqual(len(second.forecast_schedule_results), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

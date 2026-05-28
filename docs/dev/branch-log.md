@@ -2,6 +2,23 @@
 
 ## 2026-05-28
 
+### IM010 Idempotent Rerun Guards
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `a2bf76c`
+- remote_status: `continuing from origin/codex/import-center-api-vertical`
+- scope: Add first idempotent rerun guards for duplicate comparison calculate and review closure write requests: API/service behavior, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/app/main.py`, `backend/app/review_closure.py`, `backend/tests/test_comparison_calculation_api.py`, `backend/tests/test_review_closure_api.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no dependency files, migration files, frontend files, idempotency table, task queue, real external integration, auth, permission, approval, export, batch, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: comparison calculate existing-run return guard, review closure existing-case return guard, idempotency API tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target idempotent rerun API tests passed with 6 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed with 111 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM009 Persisted Result List Query APIs
 
 - branch_name: `codex/import-center-api-vertical`

@@ -1170,3 +1170,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做本地只读列表筛选 API；不新增 schema/migration，不做分页、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R710 - 计算与复核写入幂等重跑保护第一刀
+
+```yaml
+id: R710
+module: "结果写入"
+description: "对比计算和复核闭环已经具备写入、单查和列表后，需要先保护重复请求：相同 run_id 的计算、相同 case_id 的复核写入应直接返回已有结果，避免重复点击造成重复写入或错误噪音。"
+source: "PM approved starting IM010 on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做 comparison calculate 与 review closure write 的天然业务键幂等；不新增 schema/migration，不做导入 apply 重跑、幂等表、任务队列、前端、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

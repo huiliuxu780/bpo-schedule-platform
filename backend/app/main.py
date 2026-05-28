@@ -365,10 +365,15 @@ def apply_actual_log_import(batch_id: str) -> ActualLogImportApplyResponse:
 def calculate_comparison_run_api(
     request: ComparisonCalculationRequest,
 ) -> ComparisonRunDetail:
+    comparison_repository = ComparisonPersistenceRepository()
+    existing = comparison_repository.get_comparison_run(request.run_id)
+    if existing is not None:
+        return existing
+
     try:
         return calculate_comparison_run(
             request,
-            comparison_repository=ComparisonPersistenceRepository(),
+            comparison_repository=comparison_repository,
             forecast_repository=ForecastPersistenceRepository(),
             schedule_repository=PersonnelSchedulePersistenceRepository(),
             actual_repository=ActualLogPersistenceRepository(),

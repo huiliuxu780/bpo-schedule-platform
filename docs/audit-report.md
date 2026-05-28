@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM010 计算与复核写入幂等重跑保护第一刀
+
+#### 审计结论
+
+- `US630/IM010/R710` 已完成计算与复核写入幂等重跑保护第一刀。
+- `POST /api/v1/comparison-runs/calculate` 在 `run_id` 已存在时返回已有 `ComparisonRunDetail`，不重复计算写入。
+- `POST /api/v1/review-cases/write-closure` 在 `case_id` 已存在时返回已有 `ReviewCaseDetail`，不重复写入证据、结论或关闭记录。
+- 原有缺失引用和非法请求校验保留。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只保护天然业务键明确的 calculate 和 write-closure，不等于导入 apply、模板保存、异步任务、任务队列或批量操作已具备幂等。
+- 本轮不新增 schema/migration；后续导入 apply 重跑需要按 master data、personnel schedule、forecast、actual logs 的版本/业务键逐类处理。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_comparison_calculation_api backend.tests.test_review_closure_api -v`：通过，6 个 API 测试通过，其中 2 个覆盖重复请求幂等返回。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 111 个 backend unittest。
+
 ### 2026-05-28 - IM009 持久化结果列表筛选 API 第一刀
 
 #### 审计结论

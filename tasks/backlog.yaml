@@ -3894,3 +3894,52 @@ tasks:
       - "需要自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM010
+    title: "计算与复核写入幂等重跑保护第一刀"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM009"]
+    allowed_files:
+      - "backend/app/main.py"
+      - "backend/app/review_closure.py"
+      - "backend/tests/test_comparison_calculation_api.py"
+      - "backend/tests/test_review_closure_api.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/migrations/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "重复调用 POST /api/v1/comparison-runs/calculate 且 run_id 已存在时，返回已有 ComparisonRunDetail，不重复计算写入。"
+      - "重复调用 POST /api/v1/review-cases/write-closure 且 case_id 已存在时，返回已有 ReviewCaseDetail，不重复写入证据、结论或关闭记录。"
+      - "保留原有缺失引用和非法请求校验。"
+      - "不新增 schema/migration，不做导入 apply 重跑、幂等表、任务队列、前端、权限、审批、导出、批量或生产公式。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration 变更"
+      - "需要幂等表、任务队列、审批、导出或批量能力"
+      - "需要真实外部 CORN、HR、WFM 或第三方集成"
+      - "需要认证、权限、供应商隔离"
+      - "需要自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

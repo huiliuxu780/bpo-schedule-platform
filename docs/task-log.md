@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM010`
+- source_ids:
+  - `R710`
+- story_ids:
+  - `US630`
+- action: 实现计算与复核写入幂等重跑保护第一刀。
+- status: `done`
+- notes: IM010 新增相同 run_id 的 comparison calculate 重复请求返回已有 ComparisonRunDetail，相同 case_id 的 review closure write 重复请求返回已有 ReviewCaseDetail。重复请求不新增 comparison results、review evidence、review conclusions 或 review closures。不新增依赖，不改 schema/migration，不做导入 apply 重跑、幂等表、任务队列、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM009`
 - source_ids:
   - `R709`

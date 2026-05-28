@@ -2201,3 +2201,26 @@ dependencies:
   - "US628"
 status: "done"
 ```
+
+### US630 - 计算与复核写入幂等重跑保护第一刀
+
+```yaml
+id: US630
+requirement_ids:
+  - R710
+module: "结果写入"
+role: "主管"
+story: "作为主管，我希望重复触发相同对比计算或复核关闭写入时系统直接返回已有结果，以免重复点击造成重复写入或错误噪音。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "重复调用 POST /api/v1/comparison-runs/calculate 且 run_id 已存在时，返回已有 ComparisonRunDetail。"
+  - "重复调用 POST /api/v1/review-cases/write-closure 且 case_id 已存在时，返回已有 ReviewCaseDetail。"
+  - "重复请求不新增 comparison results、review evidence、review conclusions 或 review closures。"
+  - "保留原有缺失引用和非法请求校验。"
+  - "不新增 schema/migration，不做导入 apply 重跑、幂等表、任务队列、权限、审批、导出或批量操作。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US629"
+status: "done"
+```
