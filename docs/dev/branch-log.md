@@ -2,6 +2,23 @@
 
 ## 2026-05-28
 
+### IM003 Personnel Schedule Import Application
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `f3d9895`
+- remote_status: `continuing pushed origin/codex/import-center-api-vertical`
+- scope: Apply persisted `personnel_schedule` CSV success rows into DB004 personnel schedule repositories: service conversion, FastAPI apply route, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/app/personnel_schedule_import.py`, `backend/app/main.py`, `backend/app/models.py`, `backend/tests/test_personnel_schedule_import*.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no dependency files, migration files, frontend files, real external integration, auth, permission, approval, export, batch rescheduling, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: personnel-schedule import application service, FastAPI apply route, API and service tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target personnel-schedule import application tests passed with 7 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed with 69 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM002 Master Data Import Application
 
 - branch_name: `codex/import-center-api-vertical`

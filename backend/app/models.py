@@ -353,6 +353,14 @@ class PersonnelScheduleVersionDetail(BaseModel):
     intervals: list[PersonnelScheduleIntervalRecord]
 
 
+class PersonnelScheduleImportApplyResponse(BaseModel):
+    batch_id: str
+    schedule_version_id: str
+    shift_types: int = Field(ge=0)
+    details: int = Field(ge=0)
+    skipped_rows: int = Field(ge=0)
+
+
 class ForecastIntervalInput(BaseModel):
     forecast_interval_id: str
     forecast_date: str

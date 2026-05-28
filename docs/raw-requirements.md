@@ -1079,3 +1079,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只应用已持久化的 master_data CSV 成功行；不新增 schema/migration，不做 CRUD UI，不做权限、审批、导出、批量、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R703 - 人员排班导入应用到 DB004 repository
+
+```yaml
+id: R703
+module: "导入中心"
+description: "主数据导入应用完成后，系统需要把 personnel_schedule 批次中的成功行应用到 DB004 人员排班 repository，生成排班版本、班次类型、人员排班明细和 0.5h 展开区间。"
+source: "PM continued import-center production flow on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只应用已持久化的 personnel_schedule CSV 成功行；不新增 schema/migration，不做排班维护 UI、发布/冻结、权限、审批、导出、批量调班、外部集成、自动排班、生产公式、结算或收费因子。"
+```

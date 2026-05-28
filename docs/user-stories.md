@@ -2040,3 +2040,26 @@ dependencies:
   - "US621"
 status: "done"
 ```
+
+### US623 - 人员排班导入应用到 DB004 repository
+
+```yaml
+id: US623
+requirement_ids:
+  - R703
+module: "导入中心"
+role: "排班管理员"
+story: "作为排班管理员，我希望把已上传的 personnel_schedule CSV 成功行应用到人员排班 repository，以便生成可追溯的人员排班版本、班次类型、排班明细和 0.5h 区间。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增本地 FastAPI 人员排班导入应用入口，按 batch_id 读取已持久化导入批次。"
+  - "仅允许 file_type 为 personnel_schedule 的批次应用到人员排班。"
+  - "成功行根据 record_type 写入 shift types 和 personnel schedule details。"
+  - "应用后生成 schedule version，并复用 DB004 0.5h 展开、主数据引用、绑定和冻结校验。"
+  - "不新增 schema/migration，不做排班维护 UI、发布/冻结、权限、审批、导出、批量调班或外部集成。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US622"
+status: "done"
+```

@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM003`
+- source_ids:
+  - `R703`
+- story_ids:
+  - `US623`
+- action: 实现人员排班导入应用到 DB004 repository。
+- status: `done`
+- notes: IM003 新增人员排班导入应用服务和 API，按 batch_id 读取已持久化 personnel_schedule 导入批次，只处理成功行，并按 record_type 写入 shift types 和 personnel schedule details。应用后复用 DB004 的 import version 校验、主数据引用校验、人员绑定校验和 0.5h 展开。未新增依赖，未改 schema/migration，未做排班维护 UI、发布/冻结、外部集成、权限、审批、导出、批量调班、自动排班、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM002`
 - source_ids:
   - `R702`

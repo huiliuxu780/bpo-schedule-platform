@@ -3554,3 +3554,52 @@ tasks:
       - "需要自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM003
+    title: "人员排班导入应用到 DB004 repository"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    allowed_files:
+      - "backend/app/personnel_schedule_import.py"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/tests/test_personnel_schedule_import.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/migrations/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "新增本地 FastAPI 人员排班导入应用入口，按 batch_id 读取已持久化导入批次。"
+      - "仅允许 file_type 为 personnel_schedule 的批次应用到人员排班。"
+      - "成功行根据 record_type 写入 shift types 和 personnel schedule details。"
+      - "应用后生成 schedule version，并复用 DB004 0.5h 展开、主数据引用、绑定和冻结校验。"
+      - "不新增 schema/migration，不做排班维护 UI、发布/冻结、权限、审批、导出、批量调班或外部集成。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration 变更"
+      - "需要排班维护 UI、发布/冻结或批量调班"
+      - "需要真实外部 CORN、HR、WFM 或第三方集成"
+      - "需要认证、权限、供应商隔离、审批或导出"
+      - "需要自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true
