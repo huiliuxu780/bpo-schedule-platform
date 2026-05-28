@@ -423,6 +423,7 @@ class ForecastVersionDetail(BaseModel):
 class ForecastImportApplyResponse(BaseModel):
     batch_id: str
     forecast_version_id: str
+    applied_status: Literal["applied", "already_applied"]
     intervals: int = Field(ge=0)
     total_required_agents: int = Field(ge=0)
     skipped_rows: int = Field(ge=0)

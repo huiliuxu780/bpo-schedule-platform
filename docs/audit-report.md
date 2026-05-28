@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM013 需求预测导入应用幂等重跑保护第一刀
+
+#### 审计结论
+
+- `US633/IM013/R713` 已完成需求预测导入应用幂等重跑保护第一刀。
+- `POST /api/v1/import-batches/{batch_id}/apply-forecast` 首次应用返回 `applied_status=applied`。
+- 同一 `demand_forecast` batch 已应用后再次调用返回 `applied_status=already_applied`。
+- 重复调用不再执行 forecast version、forecast interval 或 forecast change 写入。
+- 非 `demand_forecast` 批次、缺失字段、导入版本和主数据引用校验保留。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只保护 `demand_forecast` apply，不等于 `login_log` 或 `status_log` apply 已具备幂等。
+- 本轮不新增 schema/migration；后续实际日志导入类型需要按导入版本和业务键单独处理。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_forecast_import_api backend.tests.test_forecast_import_service -v`：通过，11 个需求预测 import apply 测试通过，其中 2 个覆盖重复请求幂等返回和 no-write guard。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 117 个 backend unittest。
+
 ### 2026-05-28 - IM012 人员排班导入应用幂等重跑保护第一刀
 
 #### 审计结论

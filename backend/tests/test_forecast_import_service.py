@@ -17,6 +17,16 @@ from backend.app.models import (
 )
 
 
+class CountingForecastPersistenceRepository(ForecastPersistenceRepository):
+    def __init__(self, database_url: str | None = None):
+        super().__init__(database_url)
+        self.create_forecast_version_call_count = 0
+
+    def create_forecast_version(self, request):
+        self.create_forecast_version_call_count += 1
+        return super().create_forecast_version(request)
+
+
 class ForecastImportServiceTest(unittest.TestCase):
     def test_success_rows_are_applied_to_forecast_repository(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -97,6 +107,7 @@ class ForecastImportServiceTest(unittest.TestCase):
                 {
                     "batch_id": "BATCH-FC-APPLY-001",
                     "forecast_version_id": "BATCH-FC-APPLY-001::forecast",
+                    "applied_status": "applied",
                     "intervals": 2,
                     "total_required_agents": 26,
                     "skipped_rows": 1,
@@ -123,6 +134,84 @@ class ForecastImportServiceTest(unittest.TestCase):
             )
             self.assertEqual(loaded.changes[0].compared_from_version_id, "FC-OLD")
             self.assertEqual(loaded.changes[0].change_reason, "客户更新峰值需求")
+
+    def test_duplicate_batch_returns_already_applied_without_second_write(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'forecast-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            _seed_master_data(database_url, "BATCH-FC-APPLY-002")
+            detail = import_repository.create_import_batch(
+                ImportBatchCreateRequest(
+                    batch_id="BATCH-FC-APPLY-002",
+                    file_name="demand_forecast.csv",
+                    file_type="demand_forecast",
+                    uploaded_by="计划管理员",
+                    business_date_from="2026-05-10",
+                    business_date_to="2026-05-12",
+                    rows=[
+                        _success_row(
+                            1,
+                            {
+                                "forecast_date": "2026-05-11",
+                                "interval_start": "09:00",
+                                "interval_end": "09:30",
+                                "workplace_id": "SH-01",
+                                "project_id": "BOSCH-CS",
+                                "skill_id": "L1-CN",
+                                "demand_level": "L1",
+                                "required_agents": "12",
+                            },
+                        ),
+                        _success_row(
+                            2,
+                            {
+                                "forecast_date": "2026-05-11",
+                                "interval_start": "09:30",
+                                "interval_end": "10:00",
+                                "workplace_id": "SH-01",
+                                "project_id": "BOSCH-CS",
+                                "skill_id": "L1-CN",
+                                "demand_level": "L1",
+                                "required_agents": "14",
+                            },
+                        ),
+                    ],
+                    versions=[
+                        ImportBatchVersionInput(
+                            version_id="IMPORT-FC-APPLY-002",
+                            version_type="demand_forecast",
+                            business_date_from="2026-05-11",
+                            business_date_to="2026-05-11",
+                        )
+                    ],
+                )
+            )
+            forecast_repository = CountingForecastPersistenceRepository(database_url)
+            forecast_repository.init_schema()
+
+            first_summary = apply_forecast_import_batch(
+                detail,
+                forecast_repository,
+                compared_from_version_id="FC-OLD",
+                change_reason="客户更新峰值需求",
+            )
+            second_summary = apply_forecast_import_batch(
+                detail,
+                forecast_repository,
+                compared_from_version_id="FC-OLD",
+                change_reason="客户更新峰值需求",
+            )
+
+            self.assertEqual(first_summary["applied_status"], "applied")
+            self.assertEqual(second_summary["applied_status"], "already_applied")
+            self.assertEqual(forecast_repository.create_forecast_version_call_count, 1)
+            loaded = forecast_repository.get_forecast_version(
+                "BATCH-FC-APPLY-002::forecast"
+            )
+            self.assertIsNotNone(loaded)
+            self.assertEqual(len(loaded.intervals), 2)
+            self.assertEqual(len(loaded.changes), 1)
 
     def test_non_demand_forecast_batch_is_rejected(self) -> None:
         detail = _detail_with_standard_fields(

@@ -2270,3 +2270,26 @@ dependencies:
   - "US631"
 status: "done"
 ```
+
+### US633 - 需求预测导入应用幂等重跑保护第一刀
+
+```yaml
+id: US633
+requirement_ids:
+  - R713
+module: "导入中心"
+role: "计划管理员"
+story: "作为计划管理员，我希望同一个 demand_forecast 导入批次重复应用时系统直接返回已应用摘要，以免重复点击造成重复预测版本、预测明细和变更记录写入。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "首次调用 apply-forecast 返回 applied_status=applied。"
+  - "同一 demand_forecast batch 已应用后再次调用返回 applied_status=already_applied。"
+  - "重复调用不再执行 forecast version、forecast interval 或 forecast change 写入。"
+  - "保留非 demand_forecast 批次、缺失字段、导入版本和主数据引用校验。"
+  - "不新增 schema/migration，不做其他导入类型幂等、幂等表、任务队列、权限、审批、导出或批量操作。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US632"
+status: "done"
+```

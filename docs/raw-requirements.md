@@ -1209,3 +1209,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做 personnel_schedule apply 幂等；不新增 schema/migration，不做其他导入类型幂等、幂等表、任务队列、前端、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R713 - 需求预测导入应用幂等重跑保护第一刀
+
+```yaml
+id: R713
+module: "导入中心"
+description: "需求预测导入应用已经能把 demand_forecast 成功行写入 DB005 后，需要保护同一批次重复应用：已应用批次应直接返回已有应用摘要，避免重复写 forecast version、forecast interval 和 forecast change。"
+source: "PM approved continuing with IM013 on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做 demand_forecast apply 幂等；不新增 schema/migration，不做其他导入类型幂等、幂等表、任务队列、前端、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

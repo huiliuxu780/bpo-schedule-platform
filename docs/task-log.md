@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM013`
+- source_ids:
+  - `R713`
+- story_ids:
+  - `US633`
+- action: 实现需求预测导入应用幂等重跑保护第一刀。
+- status: `done`
+- notes: IM013 新增同一 demand_forecast batch 重复调用 apply-forecast 时返回 already_applied 摘要，不再执行 forecast version、forecast interval 或 forecast change 写入；首次应用返回 applied。不新增依赖，不改 schema/migration，不做 master_data、personnel_schedule、actual_logs 幂等，不做幂等表、任务队列、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM012`
 - source_ids:
   - `R712`

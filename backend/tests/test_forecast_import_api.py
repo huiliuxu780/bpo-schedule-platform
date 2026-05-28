@@ -53,8 +53,48 @@ class ForecastImportApiTest(unittest.TestCase):
 
             self.assertEqual(response.batch_id, "BATCH-FC-APPLY-001")
             self.assertEqual(response.forecast_version_id, "BATCH-FC-APPLY-001::forecast")
+            self.assertEqual(response.applied_status, "applied")
             self.assertEqual(response.intervals, 2)
             self.assertEqual(response.total_required_agents, 26)
+
+    def test_apply_forecast_import_returns_already_applied_on_duplicate(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'forecast-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            _seed_master_data(database_url, "BATCH-FC-APPLY-002")
+            _create_forecast_batch(import_repository, "BATCH-FC-APPLY-002")
+            forecast_repository = ForecastPersistenceRepository(database_url)
+            forecast_repository.init_schema()
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.ForecastPersistenceRepository",
+                    return_value=forecast_repository,
+                ),
+            ):
+                first_response = apply_forecast_import(
+                    "BATCH-FC-APPLY-002",
+                    compared_from_version_id="FC-OLD",
+                    change_reason="客户更新峰值需求",
+                )
+                second_response = apply_forecast_import(
+                    "BATCH-FC-APPLY-002",
+                    compared_from_version_id="FC-OLD",
+                    change_reason="客户更新峰值需求",
+                )
+
+        self.assertEqual(first_response.applied_status, "applied")
+        self.assertEqual(second_response.applied_status, "already_applied")
+        self.assertEqual(second_response.forecast_version_id, "BATCH-FC-APPLY-002::forecast")
+        self.assertEqual(second_response.intervals, 2)
+        self.assertEqual(second_response.total_required_agents, 26)
 
     def test_apply_forecast_import_returns_404_for_missing_batch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

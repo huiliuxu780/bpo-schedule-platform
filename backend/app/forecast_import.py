@@ -52,11 +52,18 @@ def apply_forecast_import_batch(
             continue
         request.intervals.append(_forecast_interval_from_row(row))
 
-    repository.create_forecast_version(request)
+    applied_status = (
+        "already_applied"
+        if repository.has_forecast_import_version(request.import_version_id)
+        else "applied"
+    )
+    if applied_status == "applied":
+        repository.create_forecast_version(request)
 
     return {
         "batch_id": detail.batch.batch_id,
         "forecast_version_id": request.forecast_version_id,
+        "applied_status": applied_status,
         "intervals": len(request.intervals),
         "total_required_agents": sum(
             interval.required_agents for interval in request.intervals
