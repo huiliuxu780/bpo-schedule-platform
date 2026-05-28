@@ -19,6 +19,20 @@
 
 ### 2026-05-28
 
+- task_id: `DB007`
+- source_ids:
+  - `R689`
+  - `R690`
+  - `R691`
+  - `R692`
+- story_ids:
+  - `US618`
+- action: 实现对比结果持久化基础。
+- status: `done`
+- notes: DB007 新增 comparison runs、forecast-vs-schedule results 和 schedule-vs-actual results 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖结果读取、缺失源版本拒绝、非 status_log 拒绝、跨版本来源拒绝和来源维度不一致拒绝。未扩展到真实计算调度、异常复核、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `DB006`
 - source_ids:
   - `R685`

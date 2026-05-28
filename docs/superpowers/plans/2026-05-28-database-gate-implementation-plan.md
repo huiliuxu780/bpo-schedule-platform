@@ -157,7 +157,7 @@ Keep this slice focused on forecast versions, forecast interval rows, and import
 
 Keep this slice focused on login events, status intervals, business-day normalization, timezone checks, and status dictionary mapping.
 
-- [ ] **Step 3: DB007 persist comparison results**
+- [x] **Step 3: DB007 persist comparison results**
 
 Keep this slice focused on forecast-vs-schedule and schedule-vs-actual result storage and source record references.
 

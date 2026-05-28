@@ -29,6 +29,36 @@
 
 ## Stories
 
+### US618 - DB007 对比结果持久化基础
+
+```yaml
+id: US618
+requirement_ids:
+  - R689
+  - R690
+  - R691
+  - R692
+task_ids:
+  - DB007
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望预测 vs 排班、排班 vs 实际的结果可以持久化并保留来源引用，以便后续异常生成和复核闭环有可复跑基线。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 comparison runs、forecast-vs-schedule results 和 schedule-vs-actual results。"
+  - "校验 forecast version、schedule version、actual import version 和来源记录引用。"
+  - "测试覆盖结果状态、差异数值、来源引用、缺失引用拒绝和重复 run 读取。"
+  - "不实现真实计算调度、异常复核写入、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB006
+status: "done"
+completed_scope:
+  - "持久化 comparison runs、forecast-vs-schedule results 和 schedule-vs-actual results。"
+  - "校验 forecast version、schedule version、actual status import version 和来源记录版本归属。"
+  - "测试覆盖结果读取、缺失源版本拒绝、非 status_log 拒绝、跨版本来源拒绝和来源维度不一致拒绝。"
+```
+
 ### US617 - DB006 登录/状态日志持久化基础
 
 ```yaml

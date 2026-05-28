@@ -17,6 +17,25 @@
 
 ## Requirements
 
+### R689-R692 - DB007 对比结果持久化基础
+
+```yaml
+requirements:
+  - id: R689
+    description: "系统需要持久化 forecast-vs-schedule 对比结果，保留 forecast version、schedule version 和来源 interval/detail 引用。"
+  - id: R690
+    description: "系统需要持久化 schedule-vs-actual 对比结果，保留 schedule version、actual import version 和来源 schedule/status 引用。"
+  - id: R691
+    description: "对比结果持久化需要支持结果状态、差异数值和可复跑 run 标识，方便后续异常引擎读取。"
+  - id: R692
+    description: "DB007 不应扩展到真实计算调度、异常复核写入、审批、权限、导出、批量、生产公式、结算或收费因子。"
+source: "DB006 actual log foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "只做对比结果持久化基础；不接真实外部接口、不新增依赖、不改前端、不做异常闭环动作。"
+```
+
 ### R685-R688 - DB006 登录/状态日志持久化基础
 
 ```yaml

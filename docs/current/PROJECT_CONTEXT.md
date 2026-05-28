@@ -6,11 +6,11 @@ Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governe
 
 ## Active Boundary
 
-The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed `database-persistence` tasks with named entity slices. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, and login/status logs.
+The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed `database-persistence` tasks with named entity slices. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, and comparison results.
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed database slice was `US617/DB006`, which added login/status log persistence for login events, logout events, status dictionary, status intervals, business-day splitting, timezone checks, and import/master-data reference checks.
+No ready product story is currently queued. The last completed database slice was `US618/DB007`, which added comparison run persistence, forecast-vs-schedule result storage, schedule-vs-actual result storage, source version/record reference checks, and result dimension checks.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next database slice is `DB007` comparison result persistence: forecast-vs-schedule and schedule-vs-actual result storage with source record references. Keep review closure persistence, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next database slice is `DB008` review closure record persistence. Keep external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

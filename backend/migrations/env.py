@@ -6,6 +6,7 @@ from sqlalchemy import engine_from_config, pool
 
 from backend.app.import_persistence import Base
 from backend.app import actual_log_persistence  # noqa: F401
+from backend.app import comparison_persistence  # noqa: F401
 from backend.app import forecast_persistence  # noqa: F401
 from backend.app import master_data_persistence  # noqa: F401
 from backend.app import personnel_schedule_persistence  # noqa: F401

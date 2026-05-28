@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - DB007 对比结果持久化基础
+
+#### 审计结论
+
+- `US618/DB007/R689-R692` 已完成对比结果持久化基础。
+- 新增 comparison SQLAlchemy repository 和 Alembic migration，覆盖 comparison runs、forecast-vs-schedule results 和 schedule-vs-actual results。
+- 对比结果会校验 forecast version、schedule version、actual status import version、来源记录版本归属和结果维度一致性。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB007 只提供对比结果落库，不等于真实对比计算任务、异常生成、复核闭环或真实 CORN/HR/WFM 接入已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_comparison_persistence -v`：通过，7 个 DB007 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db007.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import、master data、personnel schedule、forecast、actual log 和 comparison result 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，41 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 41 个 backend unittest。
+
 ### 2026-05-28 - DB006 登录/状态日志持久化基础
 
 #### 审计结论

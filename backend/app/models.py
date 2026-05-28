@@ -17,6 +17,8 @@ ImportFileType = Literal[
 ImportRowStatus = Literal["success", "failed", "warning"]
 ImportProcessingStatus = Literal["completed", "completed_with_errors"]
 MasterDataStatus = Literal["active", "frozen", "inactive"]
+ComparisonType = Literal["forecast_vs_schedule", "schedule_vs_actual"]
+ComparisonRunStatus = Literal["completed", "failed"]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -458,3 +460,108 @@ class ActualStatusIntervalRecord(BaseModel):
     normalized_status: str
     category: str
     is_productive: bool
+
+
+class ForecastScheduleComparisonResultInput(BaseModel):
+    forecast_interval_id: str | None = None
+    schedule_detail_id: str | None = None
+    business_date: str
+    workplace_id: str
+    project_id: str
+    skill_id: str
+    interval_start: str
+    interval_end: str
+    forecast_agents: int = Field(ge=0)
+    scheduled_agents: int = Field(ge=0)
+    gap_agents: int
+    result_status: str
+
+
+class ScheduleActualComparisonResultInput(BaseModel):
+    schedule_detail_id: str | None = None
+    actual_status_interval_row_id: int | None = None
+    business_date: str
+    employee_id: str
+    interval_start: str
+    interval_end: str
+    scheduled_minutes: int = Field(ge=0)
+    actual_productive_minutes: int = Field(ge=0)
+    late_minutes: int = Field(ge=0)
+    result_status: str
+
+
+class ComparisonRunRequest(BaseModel):
+    run_id: str
+    comparison_type: ComparisonType
+    forecast_version_id: str | None = None
+    schedule_version_id: str | None = None
+    actual_import_version_id: str | None = None
+    business_date_from: str
+    business_date_to: str
+    status: ComparisonRunStatus
+    total_results: int | None = Field(default=None, ge=0)
+    total_gap_agents: int | None = None
+    total_late_minutes: int | None = Field(default=None, ge=0)
+    forecast_schedule_results: list[ForecastScheduleComparisonResultInput] = Field(
+        default_factory=list
+    )
+    schedule_actual_results: list[ScheduleActualComparisonResultInput] = Field(
+        default_factory=list
+    )
+
+
+class ComparisonRunRecord(BaseModel):
+    run_id: str
+    comparison_type: ComparisonType
+    forecast_version_id: str | None = None
+    schedule_version_id: str | None = None
+    actual_import_version_id: str | None = None
+    business_date_from: str
+    business_date_to: str
+    status: ComparisonRunStatus
+    total_results: int
+    total_gap_agents: int | None = None
+    total_late_minutes: int | None = None
+    created_at: str
+
+
+class ForecastScheduleComparisonResultRecord(BaseModel):
+    result_id: int
+    run_id: str
+    forecast_version_id: str
+    schedule_version_id: str
+    forecast_interval_id: str | None = None
+    schedule_detail_id: str | None = None
+    business_date: str
+    workplace_id: str
+    project_id: str
+    skill_id: str
+    interval_start: str
+    interval_end: str
+    forecast_agents: int
+    scheduled_agents: int
+    gap_agents: int
+    result_status: str
+
+
+class ScheduleActualComparisonResultRecord(BaseModel):
+    result_id: int
+    run_id: str
+    schedule_version_id: str
+    actual_import_version_id: str
+    schedule_detail_id: str | None = None
+    actual_status_interval_row_id: int | None = None
+    business_date: str
+    employee_id: str
+    interval_start: str
+    interval_end: str
+    scheduled_minutes: int
+    actual_productive_minutes: int
+    late_minutes: int
+    result_status: str
+
+
+class ComparisonRunDetail(BaseModel):
+    run: ComparisonRunRecord
+    forecast_schedule_results: list[ForecastScheduleComparisonResultRecord]
+    schedule_actual_results: list[ScheduleActualComparisonResultRecord]
