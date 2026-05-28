@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM018 导入批次列表与应用状态查询第一刀
+
+#### 审计结论
+
+- `US638/IM018/R718` 已完成导入批次列表与应用状态查询第一刀。
+- 新增只读 `GET /api/v1/import-batches`。
+- 列表行返回批次基础信息、成功/失败/警告计数、版本数、应用状态、应用目标、导入版本和已应用记录数。
+- 支持按 `file_type`、`processing_status`、`uploaded_by` 和 `application_status` 过滤。
+- 复用现有 import batch、version 和 application-summary 能力，不新增 schema/migration。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮不做分页；批次数量增长后需要单独分页/排序任务。
+- 本轮应用状态是即时派生，不新增 application task 表或异步处理记录。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_import_batch_list_api -v`：通过，3 个导入批次列表 API 测试通过。
+- `.venv/bin/python -m unittest backend.tests.test_import_application_summary_api backend.tests.test_import_row_correction_api backend.tests.test_import_upload_api backend.tests.test_import_mapping_api -v`：通过，18 个相邻导入 API 回归测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 143 个 backend unittest。
+
 ### 2026-05-29 - IM017 导入失败行修正第一刀
 
 #### 审计结论

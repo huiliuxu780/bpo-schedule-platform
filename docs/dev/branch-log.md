@@ -2,6 +2,23 @@
 
 ## 2026-05-29
 
+### IM018 Import Batch Status List
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `f73be51`
+- remote_status: `continuing from origin/codex/import-center-api-vertical`
+- scope: Add read-only import batch list/status query over existing import batch, version, and application-summary data: repository list method, API route, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/app/import_persistence.py`, `backend/app/main.py`, `backend/app/models.py`, `backend/tests/test_import_batch_list_api.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no dependency files, migration files, frontend files, pagination, export, batch operation, external integration, auth, permission, approval, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: import batch list response model, import repository list method, read-only API route, API tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target import batch list tests passed with 3 tests; adjacent import API regression passed with 18 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed with 143 backend unittest.
+- local_commit_sha: pending.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM017 Import Failed Row Correction
 
 - branch_name: `codex/import-center-api-vertical`

@@ -2386,3 +2386,26 @@ dependencies:
   - "US636"
 status: "done"
 ```
+
+### US638 - 导入批次列表与应用状态查询第一刀
+
+```yaml
+id: US638
+requirement_ids:
+  - R718
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望看到导入批次列表中的上传结果、版本数量和应用状态，以便判断哪些批次还需要修正、应用或复核。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增导入批次列表查询 API。"
+  - "列表行返回批次基础信息、成功/失败/警告计数、版本数和应用状态摘要。"
+  - "支持按 file_type、processing_status、uploaded_by 和 application_status 进行只读过滤。"
+  - "复用现有 import batch、version 和 application-summary 判断，不新增 schema/migration。"
+  - "不做前端、分页、导出、批量、权限、审批、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US637"
+status: "done"
+```

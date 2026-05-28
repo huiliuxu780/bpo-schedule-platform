@@ -37,6 +37,7 @@ The project contains:
 - A read-only import batch application summary API slice that derives batch application state from existing import and domain repositories without schema or migration changes.
 - A persisted import field-mapping template slice that allows reusable upload mappings by `template_id`.
 - A failed import row correction slice that updates failed rows in place and recalculates import batch row counts without schema or migration changes.
+- A read-only import batch list/status query slice that lists upload result counts, version counts, and derived application state without schema or migration changes.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -46,7 +47,7 @@ The project contains:
 The project does not contain:
 
 - Real external API integration.
-- Broad production persistence beyond the DB002 import foundation, DB003 master data, DB004 personnel schedule, DB005 demand forecast, DB006 login/status log, DB007 comparison result, DB008 review closure record, IM001 import-center CSV upload slice, IM002-IM005 import application slices, IM006 comparison calculation trigger, IM007 review closure write API, IM008 persisted result query API, IM009 persisted result list query API, IM010 idempotent rerun protection slice, IM011 master-data apply idempotency slice, IM012 personnel-schedule apply idempotency slice, IM013 demand-forecast apply idempotency slice, IM014 actual-log apply idempotency slice, IM015 read-only import application summary slice, IM016 field-mapping template slice, and IM017 failed-row correction slice.
+- Broad production persistence beyond the DB002 import foundation, DB003 master data, DB004 personnel schedule, DB005 demand forecast, DB006 login/status log, DB007 comparison result, DB008 review closure record, IM001 import-center CSV upload slice, IM002-IM005 import application slices, IM006 comparison calculation trigger, IM007 review closure write API, IM008 persisted result query API, IM009 persisted result list query API, IM010 idempotent rerun protection slice, IM011 master-data apply idempotency slice, IM012 personnel-schedule apply idempotency slice, IM013 demand-forecast apply idempotency slice, IM014 actual-log apply idempotency slice, IM015 read-only import application summary slice, IM016 field-mapping template slice, IM017 failed-row correction slice, and IM018 read-only import batch list/status query slice.
 - Authentication or production permission boundaries.
 - Multipart upload, real Excel import, or real CORN integration.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
@@ -84,6 +85,7 @@ Current allowed database scope:
 - IM015 import application summary: read-only batch application state is derived from existing import and domain repositories.
 - IM016 import field-mapping templates: reusable upload field mappings may be persisted and reused by `upload-csv`.
 - IM017 import failed-row correction: failed rows may be corrected in place and import batch row counts recalculated without adding schema or migration changes.
+- IM018 import batch list/status query: import batches may be listed with upload result counts, version counts, and derived application state without adding schema or migration changes.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:

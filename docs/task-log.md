@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM018`
+- source_ids:
+  - `R718`
+- story_ids:
+  - `US638`
+- action: 实现导入批次列表与应用状态查询第一刀。
+- status: `done`
+- notes: IM018 新增只读 `GET /api/v1/import-batches`，返回批次基础信息、成功/失败/警告计数、版本数和应用状态摘要，并支持 file_type、processing_status、uploaded_by 与 application_status 过滤。未新增 schema/migration，不做前端、分页、导出、批量、外部集成、权限、审批、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM017`
 - source_ids:
   - `R717`

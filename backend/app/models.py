@@ -231,6 +231,30 @@ class ImportBatchPersistenceDetail(BaseModel):
     versions: list[ImportBatchVersionRecord]
 
 
+class ImportBatchListRow(BaseModel):
+    batch_id: str
+    file_name: str
+    file_type: ImportFileType
+    uploaded_by: str
+    uploaded_at: str
+    business_date_from: str
+    business_date_to: str
+    processing_status: ImportProcessingStatus
+    total_rows: int = Field(ge=0)
+    success_rows: int = Field(ge=0)
+    failed_rows: int = Field(ge=0)
+    warning_rows: int = Field(ge=0)
+    version_count: int = Field(ge=0)
+    application_status: ImportApplicationStatus
+    application_target: str
+    import_version_id: str | None = None
+    applied_record_count: int = Field(ge=0)
+
+
+class ImportBatchListResponse(BaseModel):
+    items: list[ImportBatchListRow]
+
+
 class ImportFieldMappingTemplateCreateRequest(BaseModel):
     template_id: str
     template_name: str

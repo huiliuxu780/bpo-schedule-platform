@@ -4311,3 +4311,53 @@ tasks:
       - "需要审批、导出、自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM018
+    title: "导入批次列表与应用状态查询第一刀"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM017"]
+    allowed_files:
+      - "backend/app/import_persistence.py"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/tests/test_import_batch_list_api.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "新增导入批次列表查询 API。"
+      - "列表行返回批次基础信息、成功/失败/警告计数、版本数和应用状态摘要。"
+      - "支持按 file_type、processing_status、uploaded_by 和 application_status 进行只读过滤。"
+      - "复用现有 import batch、version 和 application-summary 判断，不新增 schema/migration。"
+      - "不做前端、分页、导出、批量、权限、审批、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration 变更"
+      - "范围扩展到前端、分页、导出或批量能力"
+      - "需要真实外部 CORN、HR、WFM 或第三方集成"
+      - "需要认证、权限、供应商隔离"
+      - "需要审批、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

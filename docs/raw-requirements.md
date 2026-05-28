@@ -1274,3 +1274,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做 failed row 单行原地修正和批次计数重算；不新增 schema/migration，不做修正历史表、前端、批量修正、自动 apply、Excel/multipart、权限、审批、导出、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R718 - 导入批次列表与应用状态查询第一刀
+
+```yaml
+id: R718
+module: "导入中心"
+description: "导入中心已经具备上传、模板复用、失败行修正和单批次应用摘要后，需要一个批次列表查询入口，让数据管理员按批次查看上传结果、版本数量和是否已应用，支撑导入中心进入真实可用的日常查看闭环。"
+source: "PM approved continuing import-center production usability on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做只读批次列表和状态聚合；不新增 schema/migration，不做前端、分页、导出、批量、权限、审批、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+```

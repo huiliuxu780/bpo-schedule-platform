@@ -32,11 +32,15 @@ from backend.app.models import (
     ImportBatchApplicationSummary,
     ImportBatchCreateRequest,
     ImportFileType,
+    ImportApplicationStatus,
+    ImportBatchListResponse,
+    ImportBatchListRow,
     ImportBatchPersistenceDetail,
     ImportBatchRowCorrectionRequest,
     ImportFieldMappingTemplateCreateRequest,
     ImportFieldMappingTemplateListResponse,
     ImportFieldMappingTemplateRecord,
+    ImportProcessingStatus,
     MasterDataImportApplyResponse,
     PersonnelScheduleImportApplyResponse,
     ReviewCaseDetail,
@@ -126,6 +130,63 @@ def create_persisted_import_batch(
                 }
             },
         ) from exc
+
+
+@app.get("/api/v1/import-batches", response_model=ImportBatchListResponse)
+def list_import_batches(
+    file_type: ImportFileType | None = None,
+    processing_status: ImportProcessingStatus | None = None,
+    uploaded_by: str | None = None,
+    application_status: ImportApplicationStatus | None = None,
+) -> ImportBatchListResponse:
+    import_repository = get_import_persistence_repository()
+    details = import_repository.list_import_batches(
+        file_type=file_type,
+        processing_status=processing_status,
+        uploaded_by=uploaded_by,
+    )
+    master_data_repository = MasterDataPersistenceRepository()
+    schedule_repository = PersonnelSchedulePersistenceRepository()
+    forecast_repository = ForecastPersistenceRepository()
+    actual_repository = ActualLogPersistenceRepository()
+
+    rows: list[ImportBatchListRow] = []
+    for detail in details:
+        summary = build_import_application_summary(
+            detail,
+            master_data_repository=master_data_repository,
+            schedule_repository=schedule_repository,
+            forecast_repository=forecast_repository,
+            actual_repository=actual_repository,
+        )
+        if (
+            application_status is not None
+            and summary.application_status != application_status
+        ):
+            continue
+        batch = detail.batch
+        rows.append(
+            ImportBatchListRow(
+                batch_id=batch.batch_id,
+                file_name=batch.file_name,
+                file_type=batch.file_type,
+                uploaded_by=batch.uploaded_by,
+                uploaded_at=batch.uploaded_at,
+                business_date_from=batch.business_date_from,
+                business_date_to=batch.business_date_to,
+                processing_status=batch.processing_status,
+                total_rows=batch.total_rows,
+                success_rows=batch.success_rows,
+                failed_rows=batch.failed_rows,
+                warning_rows=batch.warning_rows,
+                version_count=len(detail.versions),
+                application_status=summary.application_status,
+                application_target=summary.application_target,
+                import_version_id=summary.import_version_id,
+                applied_record_count=summary.applied_record_count,
+            )
+        )
+    return ImportBatchListResponse(items=rows)
 
 
 @app.get(

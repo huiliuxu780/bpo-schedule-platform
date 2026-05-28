@@ -9,11 +9,13 @@ from sqlalchemy.types import JSON
 
 from backend.app.models import (
     ImportBatchCreateRequest,
+    ImportFileType,
     ImportBatchPersistenceDetail,
     ImportBatchRecord,
     ImportBatchRowCorrectionRequest,
     ImportBatchRowResultRecord,
     ImportBatchVersionRecord,
+    ImportProcessingStatus,
 )
 
 
@@ -205,6 +207,37 @@ class ImportPersistenceRepository:
             failed_rows=[row for row in row_records if row.row_status == "failed"],
             versions=[_version_record(version) for version in versions],
         )
+
+    def list_import_batches(
+        self,
+        *,
+        file_type: ImportFileType | None = None,
+        processing_status: ImportProcessingStatus | None = None,
+        uploaded_by: str | None = None,
+    ) -> list[ImportBatchPersistenceDetail]:
+        statement = select(ImportBatchEntity)
+        if file_type is not None:
+            statement = statement.where(ImportBatchEntity.file_type == file_type)
+        if processing_status is not None:
+            statement = statement.where(
+                ImportBatchEntity.processing_status == processing_status
+            )
+        if uploaded_by is not None:
+            statement = statement.where(ImportBatchEntity.uploaded_by == uploaded_by)
+        statement = statement.order_by(
+            ImportBatchEntity.uploaded_at.desc(),
+            ImportBatchEntity.batch_id,
+        )
+
+        with self.session_factory() as session:
+            batch_ids = [batch.batch_id for batch in session.scalars(statement)]
+
+        details: list[ImportBatchPersistenceDetail] = []
+        for batch_id in batch_ids:
+            detail = self.get_import_batch(batch_id)
+            if detail is not None:
+                details.append(detail)
+        return details
 
     def correct_failed_row(
         self,
