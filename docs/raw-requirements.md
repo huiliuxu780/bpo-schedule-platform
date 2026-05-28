@@ -17,6 +17,25 @@
 
 ## Requirements
 
+### R693-R696 - DB008 复核闭环记录持久化基础
+
+```yaml
+requirements:
+  - id: R693
+    description: "系统需要持久化主管复核 case，并引用 DB007 的 forecast-vs-schedule 或 schedule-vs-actual 对比结果。"
+  - id: R694
+    description: "系统需要持久化复核证据记录，包括证据类型、证据位置、提交人、提交时间和备注。"
+  - id: R695
+    description: "系统需要持久化复核结论和关闭记录，保留结论类型、风险等级、处理人、关闭状态和关闭备注。"
+  - id: R696
+    description: "DB008 不应扩展到审批流、权限、批量关闭、导出、真实外部证据服务、生产状态码、结算或收费因子。"
+source: "DB007 comparison result foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "只做复核闭环记录持久化基础；不接真实外部接口、不新增依赖、不改前端、不做审批权限。"
+```
+
 ### R689-R692 - DB007 对比结果持久化基础
 
 ```yaml

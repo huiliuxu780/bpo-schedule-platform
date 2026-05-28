@@ -6,11 +6,11 @@ Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governe
 
 ## Active Boundary
 
-The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed `database-persistence` tasks with named entity slices. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, and comparison results.
+The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed `database-persistence` tasks with named entity slices. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, and review closure records.
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed database slice was `US618/DB007`, which added comparison run persistence, forecast-vs-schedule result storage, schedule-vs-actual result storage, source version/record reference checks, and result dimension checks.
+No ready product story is currently queued. The last completed database slice was `US619/DB008`, which added supervisor review case, evidence, conclusion, and closure record persistence with source comparison result references and business-date checks.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next database slice is `DB008` review closure record persistence. Keep external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next step is `Q127` database foundation QA closeout. Keep external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

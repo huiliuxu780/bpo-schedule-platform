@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-28 - DB008 复核闭环记录持久化基础
+
+#### 审计结论
+
+- `US619/DB008/R693-R696` 已完成复核闭环记录持久化基础。
+- 新增 review SQLAlchemy repository 和 Alembic migration，覆盖 review cases、review evidence、review conclusions 和 review closures。
+- 复核 case 会校验来源 comparison result 类型、来源 result id 存在性和业务日一致性。
+- closure 对同一 case 只允许关闭一次。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB008 只提供复核记录落库，不等于审批流、权限、批量关闭、导出、真实外部证据服务或真实外部接口已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_review_persistence -v`：通过，6 个 DB008 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db008.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import、master data、personnel schedule、forecast、actual log、comparison result 和 review closure 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，47 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 47 个 backend unittest。
+
 ### 2026-05-28 - DB007 对比结果持久化基础
 
 #### 审计结论

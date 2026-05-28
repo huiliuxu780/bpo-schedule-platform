@@ -10,6 +10,7 @@ from backend.app import comparison_persistence  # noqa: F401
 from backend.app import forecast_persistence  # noqa: F401
 from backend.app import master_data_persistence  # noqa: F401
 from backend.app import personnel_schedule_persistence  # noqa: F401
+from backend.app import review_persistence  # noqa: F401
 
 config = context.config
 

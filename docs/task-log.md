@@ -19,6 +19,20 @@
 
 ### 2026-05-28
 
+- task_id: `DB008`
+- source_ids:
+  - `R693`
+  - `R694`
+  - `R695`
+  - `R696`
+- story_ids:
+  - `US619`
+- action: 实现复核闭环记录持久化基础。
+- status: `done`
+- notes: DB008 新增 review cases、review evidence、review conclusions 和 review closures 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖证据、结论、关闭记录读取、缺失来源拒绝、来源类型不匹配拒绝、业务日不一致拒绝和重复关闭拒绝。未扩展到审批流、权限、导出、批量、真实外部证据服务、外部接口、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `DB007`
 - source_ids:
   - `R689`

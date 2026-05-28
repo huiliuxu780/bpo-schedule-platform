@@ -29,6 +29,36 @@
 
 ## Stories
 
+### US619 - DB008 复核闭环记录持久化基础
+
+```yaml
+id: US619
+requirement_ids:
+  - R693
+  - R694
+  - R695
+  - R696
+task_ids:
+  - DB008
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望主管复核 case、证据、结论和关闭记录可以持久化并引用对比结果，以便后续异常闭环从只读判断进入可追溯处理记录。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 review cases、review evidence、review conclusions 和 review closures。"
+  - "校验来源 comparison result 类型和 result id 引用。"
+  - "测试覆盖证据、结论、关闭记录读取、缺失来源拒绝、来源类型不匹配拒绝和重复关闭拒绝。"
+  - "不实现审批流、权限、批量关闭、导出、真实外部证据服务、生产状态码、结算或收费因子。"
+dependencies:
+  - DB007
+status: "done"
+completed_scope:
+  - "持久化 review cases、review evidence、review conclusions 和 review closures。"
+  - "校验 forecast_schedule/schedule_actual 来源 result id、来源类型和业务日一致性。"
+  - "测试覆盖证据、结论、关闭记录读取、缺失来源拒绝、来源类型不匹配拒绝、业务日不一致拒绝和重复关闭拒绝。"
+```
+
 ### US618 - DB007 对比结果持久化基础
 
 ```yaml

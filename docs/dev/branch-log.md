@@ -2,6 +2,24 @@
 
 ## 2026-05-28
 
+### DB008 Review Closure Persistence
+
+- branch_name: `codex/db008-review-closure-persistence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `20b3fa2`
+- remote_status: `not_pushed`
+- scope: Implement the confirmed review closure persistence foundation only: review cases, evidence records, conclusions, closure records, comparison-result source references, Alembic migration, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend review models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: worker subagent target DB008 unittest passed after RED failure; main worker added missing source business-date check; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 47 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM confirmation after verified local commit`
+- blocked_reason: `N/A`
+
 ### DB007 Comparison Result Persistence
 
 - branch_name: `codex/db007-comparison-result-persistence`
@@ -12,7 +30,7 @@
 - allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: backend comparison models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
 - check_result: worker subagent target DB007 unittest passed after RED failure; main worker added missing source-dimension checks; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 41 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `20b3fa2`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

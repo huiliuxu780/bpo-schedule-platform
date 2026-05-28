@@ -161,7 +161,7 @@ Keep this slice focused on login events, status intervals, business-day normaliz
 
 Keep this slice focused on forecast-vs-schedule and schedule-vs-actual result storage and source record references.
 
-- [ ] **Step 4: DB008 persist review closure records**
+- [x] **Step 4: DB008 persist review closure records**
 
 Keep this slice focused on supervisor review conclusions, evidence records, closure records, and source references.
 

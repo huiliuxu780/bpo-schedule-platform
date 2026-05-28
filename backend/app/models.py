@@ -19,6 +19,7 @@ ImportProcessingStatus = Literal["completed", "completed_with_errors"]
 MasterDataStatus = Literal["active", "frozen", "inactive"]
 ComparisonType = Literal["forecast_vs_schedule", "schedule_vs_actual"]
 ComparisonRunStatus = Literal["completed", "failed"]
+ReviewSourceResultType = Literal["forecast_schedule", "schedule_actual"]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -565,3 +566,86 @@ class ComparisonRunDetail(BaseModel):
     run: ComparisonRunRecord
     forecast_schedule_results: list[ForecastScheduleComparisonResultRecord]
     schedule_actual_results: list[ScheduleActualComparisonResultRecord]
+
+
+class ReviewCaseCreateRequest(BaseModel):
+    case_id: str
+    source_result_type: ReviewSourceResultType
+    source_result_id: int = Field(ge=1)
+    business_date: str
+    owner_id: str
+    severity: str
+    status: str
+
+
+class ReviewCaseRecord(BaseModel):
+    case_id: str
+    source_result_type: ReviewSourceResultType
+    source_result_id: int
+    business_date: str
+    owner_id: str
+    severity: str
+    status: str
+    created_at: str
+
+
+class ReviewEvidenceInput(BaseModel):
+    evidence_id: str
+    case_id: str
+    evidence_type: str
+    evidence_uri: str
+    submitted_by: str
+    note: str | None = None
+
+
+class ReviewEvidenceRecord(BaseModel):
+    evidence_id: str
+    case_id: str
+    evidence_type: str
+    evidence_uri: str
+    submitted_by: str
+    submitted_at: str
+    note: str | None = None
+
+
+class ReviewConclusionInput(BaseModel):
+    conclusion_id: str
+    case_id: str
+    conclusion_type: str
+    risk_level: str
+    conclusion_text: str
+    decided_by: str
+
+
+class ReviewConclusionRecord(BaseModel):
+    conclusion_id: str
+    case_id: str
+    conclusion_type: str
+    risk_level: str
+    conclusion_text: str
+    decided_by: str
+    decided_at: str
+
+
+class ReviewClosureInput(BaseModel):
+    closure_id: str
+    case_id: str
+    closure_status: str
+    closed_by: str
+    closure_note: str | None = None
+
+
+class ReviewClosureRecord(BaseModel):
+    closure_id: str
+    case_id: str
+    closure_status: str
+    closed_by: str
+    closed_at: str
+    closure_note: str | None = None
+
+
+class ReviewCaseDetail(BaseModel):
+    case: ReviewCaseRecord
+    evidence: list[ReviewEvidenceRecord]
+    conclusions: list[ReviewConclusionRecord]
+    closure: ReviewClosureRecord | None = None
