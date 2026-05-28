@@ -1,9 +1,13 @@
-from fastapi import FastAPI, HTTPException
+import json
 
+from fastapi import Body, FastAPI, HTTPException, Query
+
+from backend.app.import_upload import build_import_batch_from_csv
 from backend.app.import_persistence import get_import_persistence_repository
 from backend.app.models import (
     DemandPlanListResponse,
     ImportBatchCreateRequest,
+    ImportFileType,
     ImportBatchPersistenceDetail,
     ScheduleRiskListResponse,
     SchedulePlanDetail,
@@ -107,6 +111,76 @@ def get_persisted_import_batch(batch_id: str) -> ImportBatchPersistenceDetail:
             },
         )
     return batch
+
+
+@app.post("/api/v1/import-batches/upload-csv", response_model=ImportBatchPersistenceDetail)
+def upload_import_batch_csv(
+    batch_id: str,
+    file_name: str,
+    file_type: ImportFileType,
+    uploaded_by: str,
+    business_date_from: str,
+    business_date_to: str,
+    field_mapping: str = Query(
+        default='{"source_key":"source_key"}',
+        description="JSON object mapping CSV source columns to standard fields.",
+    ),
+    version_id: str | None = None,
+    csv_body: str = Body(media_type="text/csv"),
+) -> ImportBatchPersistenceDetail:
+    try:
+        parsed_mapping = json.loads(field_mapping)
+    except json.JSONDecodeError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "IMPORT_FIELD_MAPPING_INVALID",
+                    "message": "字段映射必须是 JSON object",
+                }
+            },
+        ) from exc
+
+    if not isinstance(parsed_mapping, dict):
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "IMPORT_FIELD_MAPPING_INVALID",
+                    "message": "字段映射必须是 JSON object",
+                }
+            },
+        )
+
+    try:
+        request = build_import_batch_from_csv(
+            batch_id=batch_id,
+            file_name=file_name,
+            file_type=file_type,
+            uploaded_by=uploaded_by,
+            business_date_from=business_date_from,
+            business_date_to=business_date_to,
+            csv_text=csv_body,
+            field_mapping={str(key): str(value) for key, value in parsed_mapping.items()},
+            version_id=version_id,
+        )
+        return get_import_persistence_repository().create_import_batch(request)
+    except ValueError as exc:
+        message = str(exc)
+        code = (
+            "IMPORT_BATCH_ALREADY_EXISTS"
+            if "already exists" in message
+            else "IMPORT_CSV_UPLOAD_INVALID"
+        )
+        raise HTTPException(
+            status_code=409 if code == "IMPORT_BATCH_ALREADY_EXISTS" else 400,
+            detail={
+                "error": {
+                    "code": code,
+                    "message": message,
+                }
+            },
+        ) from exc
 
 
 @app.get("/api/v1/schedule-plans/{plan_id}", response_model=SchedulePlanDetail)

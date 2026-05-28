@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM001 真实导入中心 CSV 上传 API 第一刀
+
+#### 审计结论
+
+- `US621/IM001/R701` 已完成第一条真实导入中心 CSV 上传 API 纵切。
+- 新增 `/api/v1/import-batches/upload-csv`，通过 `text/csv` 原始请求体接收 CSV 内容和导入元数据。
+- 新增 CSV 解析服务，支持字段映射、标准字段与原始列保留、缺少 `source_key` 的行级失败记录。
+- 上传完成后通过现有 import persistence foundation 生成 import batch、row results、failed rows 和默认 import version。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮刻意不做 multipart 和 Excel，因为当前项目没有 `python-multipart`，新增依赖需要单独确认。
+- 本轮只把 CSV 内容进入导入批次和版本，不等于主数据、排班、预测、登录日志或状态日志已经被应用到各自业务 repository。
+- 外部 CORN/HR/WFM 接入、auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_import_upload_service backend.tests.test_import_upload_api -v`：通过，6 个导入上传测试通过。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，55 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 55 个 backend unittest。
+
 ### 2026-05-28 - Q127 数据库基础 QA 收口
 
 #### 审计结论

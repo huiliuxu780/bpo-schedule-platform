@@ -1053,3 +1053,16 @@ version: "1.0"
 status: "split"
 notes: "本组只做本地前端表格展示层 parity；不新增依赖、不改后端契约、不接数据库、不做审批、导出、批量、权限或生产公式。"
 ```
+
+### R701 - 真实导入中心 CSV 上传 API 第一刀
+
+```yaml
+id: R701
+module: "导入中心"
+description: "数据库底座合入 main 后，系统需要第一条真实 CSV 上传解析纵切：API 接收 CSV 内容、应用字段映射、生成导入批次、行级成功/失败结果和 import version，以便后续主数据、排班、预测、登录日志和状态日志可以从真实文件内容进入持久化链路。"
+source: "PM requested merge main then continue with subagent development on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做无新增依赖的 text/csv 原始请求体上传和本地持久化 API；不做 multipart/Excel、外部 CORN/HR/WFM 接入、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

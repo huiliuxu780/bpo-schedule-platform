@@ -1994,3 +1994,26 @@ acceptance:
   - "本地筛选和统计模型有回归测试覆盖。"
   - "不新增依赖、不改后端契约、不接数据库、不启用审批、导出、批量、权限或生产公式。"
 ```
+
+### US621 - 真实导入中心 CSV 上传 API 第一刀
+
+```yaml
+id: US621
+requirement_ids:
+  - R701
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望通过 API 上传 CSV 内容并配置字段映射，以便系统生成可追溯的导入批次、行级错误和 import version。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增本地 FastAPI CSV 上传入口，接收 text/csv 请求体和导入元数据。"
+  - "字段映射能把源列映射为标准字段，并把每行原始数据写入导入行结果。"
+  - "缺少必填字段的行会被标为 failed，并记录 error_field、error_code 和 error_message。"
+  - "导入完成后生成 import batch、row results、failed rows 和 import version。"
+  - "不新增依赖，不实现 multipart/Excel，不接外部系统，不做权限、审批、导出或批量操作。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US620"
+status: "done"
+```

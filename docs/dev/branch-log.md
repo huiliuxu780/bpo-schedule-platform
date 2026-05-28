@@ -2,6 +2,23 @@
 
 ## 2026-05-28
 
+### IM001 Import Center CSV Upload API Vertical
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `not_pushed`
+- scope: Implement the first import-center CSV upload API vertical only: `text/csv` raw body parsing, field mapping, row-level success/failure results, default import version generation, persistence through the existing import repository, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/app/import_upload.py`, `backend/app/main.py`, `backend/app/models.py`, `backend/tests/test_import_upload*.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no dependency files, migration files, frontend files, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: import upload service, FastAPI upload route, import upload backend tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target import upload tests passed with 6 tests; backend unittest discovery passed with 55 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### Q127 Database Foundation QA
 
 - branch_name: `codex/q127-database-foundation-qa`

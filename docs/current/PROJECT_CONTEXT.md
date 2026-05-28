@@ -2,15 +2,15 @@
 
 ## Current Stage
 
-Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness + controlled database Gate.
+Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness + controlled database Gate + import center API vertical.
 
 ## Active Boundary
 
-The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed tasks. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, and review closure records. Q127 database foundation QA closeout has verified the local migration-backed foundation.
+The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed tasks. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, review closure records, and the first import-center CSV upload API vertical. Q127 database foundation QA closeout has verified the local migration-backed foundation.
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed QA slice was `US620/Q127`, which verified DB002-DB008 Alembic head table coverage and a minimum end-to-end persistence chain from import/version records to review closure records.
+No ready product story is currently queued. The last completed slice was `US621/IM001`, which added a no-new-dependency CSV upload API vertical using the existing import persistence foundation.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next step is PM integration decision for the pushed DB006-DB008 and Q127 branches. Keep external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next step is to plan the next import-center slice explicitly: likely import template/mapping management or master-data import application into the DB003 repositories. Keep multipart/Excel, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

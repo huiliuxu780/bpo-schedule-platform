@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM001`
+- source_ids:
+  - `R701`
+- story_ids:
+  - `US621`
+- action: 实现真实导入中心 CSV 上传 API 第一刀。
+- status: `done`
+- notes: IM001 新增 `text/csv` 原始请求体上传入口、CSV 字段映射解析服务、行级成功/失败结果、失败字段与错误码、默认 import version 生成，并通过既有 import persistence repository 落库。未新增依赖，未实现 multipart/Excel，未接外部系统，未引入权限、审批、导出、批量、schema/migration 变更、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `Q127`
 - source_ids:
   - `R697`
