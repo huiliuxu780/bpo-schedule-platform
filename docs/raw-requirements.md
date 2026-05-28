@@ -1222,3 +1222,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做 demand_forecast apply 幂等；不新增 schema/migration，不做其他导入类型幂等、幂等表、任务队列、前端、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R714 - 实际日志导入应用幂等重跑保护第一刀
+
+```yaml
+id: R714
+module: "导入中心"
+description: "实际日志导入应用已经能把 login_log 和 status_log 成功行写入 DB006 后，需要保护同一批次重复应用：已应用批次应直接返回已有应用摘要，避免重复写 login event、status dictionary 和 status interval。"
+source: "PM approved continuing with IM014 on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做 login_log/status_log apply 幂等；不新增 schema/migration，不做其他导入类型幂等、幂等表、任务队列、前端、权限、审批、导出、批量、生产状态码规则、结算或收费因子。"
+```

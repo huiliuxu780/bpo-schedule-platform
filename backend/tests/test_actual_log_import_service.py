@@ -16,6 +16,26 @@ from backend.app.models import (
 )
 
 
+class CountingActualLogPersistenceRepository(ActualLogPersistenceRepository):
+    def __init__(self, database_url: str | None = None):
+        super().__init__(database_url)
+        self.create_login_events_call_count = 0
+        self.upsert_status_dictionary_call_count = 0
+        self.create_status_intervals_call_count = 0
+
+    def create_login_events(self, events):
+        self.create_login_events_call_count += 1
+        return super().create_login_events(events)
+
+    def upsert_status_dictionary(self, entries):
+        self.upsert_status_dictionary_call_count += 1
+        return super().upsert_status_dictionary(entries)
+
+    def create_status_intervals(self, request):
+        self.create_status_intervals_call_count += 1
+        return super().create_status_intervals(request)
+
+
 class ActualLogImportServiceTest(unittest.TestCase):
     def test_login_success_rows_are_applied_to_actual_log_repository(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -79,6 +99,7 @@ class ActualLogImportServiceTest(unittest.TestCase):
                 {
                     "batch_id": "BATCH-LOGIN-APPLY-001",
                     "file_type": "login_log",
+                    "applied_status": "applied",
                     "login_events": 2,
                     "status_dictionary_entries": 0,
                     "status_intervals": 0,
@@ -149,6 +170,7 @@ class ActualLogImportServiceTest(unittest.TestCase):
             summary = apply_actual_log_import_batch(detail, actual_repository)
 
             self.assertEqual(summary["status_dictionary_entries"], 1)
+            self.assertEqual(summary["applied_status"], "applied")
             self.assertEqual(summary["status_intervals"], 1)
             self.assertEqual(summary["skipped_rows"], 1)
             self.assertEqual(
@@ -162,6 +184,123 @@ class ActualLogImportServiceTest(unittest.TestCase):
                     ("2026-05-11", "23:30", "24:00"),
                     ("2026-05-12", "00:00", "00:30"),
                 ],
+            )
+
+    def test_duplicate_login_batch_returns_already_applied_without_second_write(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'actual-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            _seed_employee(database_url, "BATCH-LOGIN-APPLY-002")
+            detail = import_repository.create_import_batch(
+                ImportBatchCreateRequest(
+                    batch_id="BATCH-LOGIN-APPLY-002",
+                    file_name="login_log.csv",
+                    file_type="login_log",
+                    uploaded_by="数据管理员",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                    rows=[
+                        _success_row(
+                            1,
+                            {
+                                "event_id": "LOGIN-002",
+                                "employee_id": "A-1001",
+                                "event_type": "login",
+                                "event_at": "2026-05-11T08:59:30",
+                                "timezone": "Asia/Shanghai",
+                            },
+                        )
+                    ],
+                    versions=[
+                        ImportBatchVersionInput(
+                            version_id="IMPORT-LOGIN-APPLY-002",
+                            version_type="login_log",
+                            business_date_from="2026-05-11",
+                            business_date_to="2026-05-11",
+                        )
+                    ],
+                )
+            )
+            actual_repository = CountingActualLogPersistenceRepository(database_url)
+            actual_repository.init_schema()
+
+            first_summary = apply_actual_log_import_batch(detail, actual_repository)
+            second_summary = apply_actual_log_import_batch(detail, actual_repository)
+
+            self.assertEqual(first_summary["applied_status"], "applied")
+            self.assertEqual(second_summary["applied_status"], "already_applied")
+            self.assertEqual(actual_repository.create_login_events_call_count, 1)
+            self.assertEqual(
+                len(actual_repository.get_login_events("IMPORT-LOGIN-APPLY-002")),
+                1,
+            )
+
+    def test_duplicate_status_batch_returns_already_applied_without_second_write(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'actual-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            _seed_employee(database_url, "BATCH-STATUS-APPLY-002")
+            detail = import_repository.create_import_batch(
+                ImportBatchCreateRequest(
+                    batch_id="BATCH-STATUS-APPLY-002",
+                    file_name="status_log.csv",
+                    file_type="status_log",
+                    uploaded_by="数据管理员",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-12",
+                    rows=[
+                        _success_row(
+                            1,
+                            {
+                                "record_type": "status_dictionary",
+                                "external_status_code": "READY",
+                                "normalized_status": "ready",
+                                "category": "available",
+                                "is_productive": "true",
+                            },
+                        ),
+                        _success_row(
+                            2,
+                            {
+                                "record_type": "status_interval",
+                                "interval_id": "STATUS-002",
+                                "employee_id": "A-1001",
+                                "external_status_code": "READY",
+                                "start_at": "2026-05-11T23:30:00",
+                                "end_at": "2026-05-12T00:30:00",
+                                "timezone": "Asia/Shanghai",
+                            },
+                        ),
+                    ],
+                    versions=[
+                        ImportBatchVersionInput(
+                            version_id="IMPORT-STATUS-APPLY-002",
+                            version_type="status_log",
+                            business_date_from="2026-05-11",
+                            business_date_to="2026-05-12",
+                        )
+                    ],
+                )
+            )
+            actual_repository = CountingActualLogPersistenceRepository(database_url)
+            actual_repository.init_schema()
+
+            first_summary = apply_actual_log_import_batch(detail, actual_repository)
+            second_summary = apply_actual_log_import_batch(detail, actual_repository)
+
+            self.assertEqual(first_summary["applied_status"], "applied")
+            self.assertEqual(second_summary["applied_status"], "already_applied")
+            self.assertEqual(actual_repository.upsert_status_dictionary_call_count, 1)
+            self.assertEqual(actual_repository.create_status_intervals_call_count, 1)
+            self.assertEqual(
+                len(actual_repository.get_status_intervals("IMPORT-STATUS-APPLY-002")),
+                2,
             )
 
     def test_non_actual_log_batch_is_rejected(self) -> None:

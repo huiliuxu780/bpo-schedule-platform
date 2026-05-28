@@ -218,6 +218,34 @@ class ActualLogPersistenceRepository:
             )
         return [_status_interval_record(interval) for interval in intervals]
 
+    def has_actual_import_version(
+        self,
+        import_version_id: str,
+        *,
+        file_type: str,
+    ) -> bool:
+        with self.session_factory() as session:
+            if file_type == "login_log":
+                return (
+                    session.scalar(
+                        select(ActualLoginEventEntity.event_id).where(
+                            ActualLoginEventEntity.import_version_id == import_version_id
+                        )
+                    )
+                    is not None
+                )
+            if file_type == "status_log":
+                return (
+                    session.scalar(
+                        select(ActualStatusIntervalEntity.interval_row_id).where(
+                            ActualStatusIntervalEntity.import_version_id
+                            == import_version_id
+                        )
+                    )
+                    is not None
+                )
+        raise ValueError(f"file_type {file_type} is not an actual log type")
+
     def _validate_import_version(
         self,
         session: Session,

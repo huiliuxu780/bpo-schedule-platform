@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM014`
+- source_ids:
+  - `R714`
+- story_ids:
+  - `US634`
+- action: 实现实际日志导入应用幂等重跑保护第一刀。
+- status: `done`
+- notes: IM014 新增同一 login_log 或 status_log batch 重复调用 apply-actual-logs 时返回 already_applied 摘要，不再执行 login event、status dictionary 或 status interval 写入；首次应用返回 applied。不新增依赖，不改 schema/migration，不做 master_data、personnel_schedule、forecast 幂等，不做幂等表、任务队列、前端、外部集成、权限、审批、导出、批量、生产状态码规则、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM013`
 - source_ids:
   - `R713`

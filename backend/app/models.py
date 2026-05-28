@@ -432,6 +432,7 @@ class ForecastImportApplyResponse(BaseModel):
 class ActualLogImportApplyResponse(BaseModel):
     batch_id: str
     file_type: str
+    applied_status: Literal["applied", "already_applied"]
     login_events: int = Field(ge=0)
     status_dictionary_entries: int = Field(ge=0)
     status_intervals: int = Field(ge=0)

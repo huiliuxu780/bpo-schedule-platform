@@ -2,6 +2,23 @@
 
 ## 2026-05-28
 
+### IM014 Actual Log Apply Idempotency
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `d1e7f0d`
+- remote_status: `continuing from origin/codex/import-center-api-vertical`
+- scope: Add first import-apply idempotency guard for login_log and status_log batches: existing actual-log import-version detection, response status, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/app/actual_log_import.py`, `backend/app/actual_log_persistence.py`, `backend/app/models.py`, `backend/app/main.py`, `backend/tests/test_actual_log_import*.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no dependency files, migration files, frontend files, idempotency table, task queue, other import apply type, real external integration, auth, permission, approval, export, batch, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: actual_logs apply response status, DB006 login/status import-version applied detection, duplicate apply no-write guard, API/service tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target actual log import apply tests passed with 13 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed with 120 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM013 Demand Forecast Apply Idempotency
 
 - branch_name: `codex/import-center-api-vertical`

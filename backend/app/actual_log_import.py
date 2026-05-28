@@ -46,21 +46,31 @@ def apply_actual_log_import_batch(
                 status_intervals=status_intervals,
             )
 
-    if login_events:
-        repository.create_login_events(login_events)
-    if dictionary_entries:
-        repository.upsert_status_dictionary(dictionary_entries)
-    if status_intervals:
-        repository.create_status_intervals(
-            ActualStatusIntervalImportRequest(
-                import_version_id=selected_version.version_id,
-                intervals=status_intervals,
-            )
+    applied_status = (
+        "already_applied"
+        if repository.has_actual_import_version(
+            selected_version.version_id,
+            file_type=detail.batch.file_type,
         )
+        else "applied"
+    )
+    if applied_status == "applied":
+        if login_events:
+            repository.create_login_events(login_events)
+        if dictionary_entries:
+            repository.upsert_status_dictionary(dictionary_entries)
+        if status_intervals:
+            repository.create_status_intervals(
+                ActualStatusIntervalImportRequest(
+                    import_version_id=selected_version.version_id,
+                    intervals=status_intervals,
+                )
+            )
 
     return {
         "batch_id": detail.batch.batch_id,
         "file_type": detail.batch.file_type,
+        "applied_status": applied_status,
         "login_events": len(login_events),
         "status_dictionary_entries": len(dictionary_entries),
         "status_intervals": len(status_intervals),

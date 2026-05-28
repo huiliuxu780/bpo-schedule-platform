@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM014 实际日志导入应用幂等重跑保护第一刀
+
+#### 审计结论
+
+- `US634/IM014/R714` 已完成实际日志导入应用幂等重跑保护第一刀。
+- `POST /api/v1/import-batches/{batch_id}/apply-actual-logs` 首次应用返回 `applied_status=applied`。
+- 同一 `login_log` 或 `status_log` batch 已应用后再次调用返回 `applied_status=already_applied`。
+- 重复调用不再执行 login event、status dictionary 或 status interval 写入。
+- 非 actual log 批次、缺失字段、导入版本、时区和主数据引用校验保留。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只保护已有 DB006 落库痕迹可判断的 login/status apply；未新增幂等表或批处理任务状态。
+- 本轮不新增 schema/migration；纯 status dictionary-only 批次没有 import_version 落库痕迹，后续如要精确追踪需单独 schema 任务。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产状态码规则、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_actual_log_import_api backend.tests.test_actual_log_import_service -v`：通过，13 个 actual log import apply 测试通过，其中 3 个覆盖重复请求幂等返回和 no-write guard。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 120 个 backend unittest。
+
 ### 2026-05-28 - IM013 需求预测导入应用幂等重跑保护第一刀
 
 #### 审计结论

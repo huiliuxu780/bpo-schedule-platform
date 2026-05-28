@@ -51,8 +51,39 @@ class ActualLogImportApiTest(unittest.TestCase):
 
             self.assertEqual(response.batch_id, "BATCH-LOGIN-API-001")
             self.assertEqual(response.file_type, "login_log")
+            self.assertEqual(response.applied_status, "applied")
             self.assertEqual(response.login_events, 1)
             self.assertEqual(response.skipped_rows, 0)
+
+    def test_apply_actual_log_import_returns_already_applied_on_duplicate(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'actual-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            _seed_employee(database_url, "BATCH-LOGIN-API-002")
+            _create_login_batch(import_repository, "BATCH-LOGIN-API-002")
+            actual_repository = ActualLogPersistenceRepository(database_url)
+            actual_repository.init_schema()
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.ActualLogPersistenceRepository",
+                    return_value=actual_repository,
+                ),
+            ):
+                first_response = apply_actual_log_import("BATCH-LOGIN-API-002")
+                second_response = apply_actual_log_import("BATCH-LOGIN-API-002")
+
+        self.assertEqual(first_response.applied_status, "applied")
+        self.assertEqual(second_response.applied_status, "already_applied")
+        self.assertEqual(second_response.file_type, "login_log")
+        self.assertEqual(second_response.login_events, 1)
 
     def test_apply_actual_log_import_returns_404_for_missing_batch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
