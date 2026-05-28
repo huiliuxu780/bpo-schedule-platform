@@ -4155,3 +4155,53 @@ tasks:
       - "需要自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM015
+    title: "导入批次应用结果查询摘要第一刀"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM014"]
+    allowed_files:
+      - "backend/app/import_application_summary.py"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/tests/test_import_application_summary_api.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/migrations/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "新增 GET /api/v1/import-batches/{batch_id}/application-summary。"
+      - "返回 batch_id、file_type、application_status、application_target、import_version_id 和 applied_record_count。"
+      - "对 master_data、personnel_schedule、demand_forecast、login_log、status_log 复用现有 repository 判断是否已应用。"
+      - "查询不存在的 batch 返回 404 和稳定错误码。"
+      - "不新增 schema/migration，不做模板持久化、字段映射 CRUD、前端、权限、审批、导出、批量或生产公式。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration 变更"
+      - "需要模板持久化、字段映射 CRUD、审批、导出或批量能力"
+      - "需要真实外部 CORN、HR、WFM 或第三方集成"
+      - "需要认证、权限、供应商隔离"
+      - "需要自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

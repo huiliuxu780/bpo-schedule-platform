@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM015 导入批次应用结果查询摘要第一刀
+
+#### 审计结论
+
+- `US635/IM015/R715` 已完成导入批次应用结果查询摘要第一刀。
+- 新增只读 `GET /api/v1/import-batches/{batch_id}/application-summary`。
+- 返回 `batch_id`、`file_type`、`application_status`、`application_target`、`import_version_id` 和 `applied_record_count`。
+- 对 `master_data`、`personnel_schedule`、`demand_forecast`、`login_log`、`status_log` 复用现有 repository 判断已应用状态。
+- 查询不存在的 batch 返回 `IMPORT_BATCH_NOT_FOUND`。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做只读摘要，不新增应用状态表或幂等任务表。
+- `applied_record_count` 基于现有落库结果可判断的记录计数；如果后续引入自定义 application target 或异步任务，需要单独 schema 任务补充更精确的运行记录。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_import_application_summary_api -v`：通过，4 个 application-summary API 测试通过。
+- `.venv/bin/python -m unittest backend.tests.test_master_data_import_api backend.tests.test_personnel_schedule_import_api backend.tests.test_forecast_import_api backend.tests.test_actual_log_import_api backend.tests.test_import_upload_api -v`：通过，19 个相邻导入 API 回归测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 124 个 backend unittest。
+
 ### 2026-05-28 - IM014 实际日志导入应用幂等重跑保护第一刀
 
 #### 审计结论

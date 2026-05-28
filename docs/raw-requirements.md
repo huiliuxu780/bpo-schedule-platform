@@ -1235,3 +1235,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做 login_log/status_log apply 幂等；不新增 schema/migration，不做其他导入类型幂等、幂等表、任务队列、前端、权限、审批、导出、批量、生产状态码规则、结算或收费因子。"
 ```
+
+### R715 - 导入批次应用结果查询摘要第一刀
+
+```yaml
+id: R715
+module: "导入中心"
+description: "导入应用链路已经能写入并具备幂等后，系统需要一个只读查询入口，按 batch_id 返回当前批次是否已应用、对应应用目标、导入版本和可判断的落库记录数，支撑后续页面展示真实应用状态。"
+source: "PM approved continuing after IM014 on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做只读应用摘要 API；不新增 schema/migration，不做模板持久化、字段映射 CRUD、前端、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

@@ -16,6 +16,7 @@ ImportFileType = Literal[
 ]
 ImportRowStatus = Literal["success", "failed", "warning"]
 ImportProcessingStatus = Literal["completed", "completed_with_errors"]
+ImportApplicationStatus = Literal["not_applied", "applied"]
 MasterDataStatus = Literal["active", "frozen", "inactive"]
 ComparisonType = Literal["forecast_vs_schedule", "schedule_vs_actual"]
 ComparisonRunStatus = Literal["completed", "failed"]
@@ -223,6 +224,15 @@ class ImportBatchPersistenceDetail(BaseModel):
     rows: list[ImportBatchRowResultRecord]
     failed_rows: list[ImportBatchRowResultRecord]
     versions: list[ImportBatchVersionRecord]
+
+
+class ImportBatchApplicationSummary(BaseModel):
+    batch_id: str
+    file_type: ImportFileType
+    application_status: ImportApplicationStatus
+    application_target: str
+    import_version_id: str | None = None
+    applied_record_count: int = Field(ge=0)
 
 
 class MasterDataReferenceInput(BaseModel):

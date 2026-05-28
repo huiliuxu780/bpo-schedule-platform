@@ -8,6 +8,7 @@ from backend.app.comparison_calculation import calculate_comparison_run
 from backend.app.comparison_persistence import ComparisonPersistenceRepository
 from backend.app.forecast_import import apply_forecast_import_batch
 from backend.app.forecast_persistence import ForecastPersistenceRepository
+from backend.app.import_application_summary import build_import_application_summary
 from backend.app.import_upload import build_import_batch_from_csv
 from backend.app.import_persistence import get_import_persistence_repository
 from backend.app.master_data_import import apply_master_data_import_batch
@@ -25,6 +26,7 @@ from backend.app.models import (
     ComparisonType,
     DemandPlanListResponse,
     ForecastImportApplyResponse,
+    ImportBatchApplicationSummary,
     ImportBatchCreateRequest,
     ImportFileType,
     ImportBatchPersistenceDetail,
@@ -136,6 +138,32 @@ def get_persisted_import_batch(batch_id: str) -> ImportBatchPersistenceDetail:
             },
         )
     return batch
+
+
+@app.get(
+    "/api/v1/import-batches/{batch_id}/application-summary",
+    response_model=ImportBatchApplicationSummary,
+)
+def get_import_application_summary(batch_id: str) -> ImportBatchApplicationSummary:
+    batch = get_import_persistence_repository().get_import_batch(batch_id)
+    if batch is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "IMPORT_BATCH_NOT_FOUND",
+                    "message": "导入批次不存在",
+                }
+            },
+        )
+
+    return build_import_application_summary(
+        batch,
+        master_data_repository=MasterDataPersistenceRepository(),
+        schedule_repository=PersonnelSchedulePersistenceRepository(),
+        forecast_repository=ForecastPersistenceRepository(),
+        actual_repository=ActualLogPersistenceRepository(),
+    )
 
 
 @app.post("/api/v1/import-batches/upload-csv", response_model=ImportBatchPersistenceDetail)

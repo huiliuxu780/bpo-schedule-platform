@@ -2316,3 +2316,26 @@ dependencies:
   - "US633"
 status: "done"
 ```
+
+### US635 - 导入批次应用结果查询摘要第一刀
+
+```yaml
+id: US635
+requirement_ids:
+  - R715
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望按导入批次查询当前是否已经应用以及应用到了哪个目标，以便在真实上传/导入闭环中判断下一步动作，而不是只看上传批次本身。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增 GET /api/v1/import-batches/{batch_id}/application-summary。"
+  - "返回 batch_id、file_type、application_status、application_target、import_version_id 和 applied_record_count。"
+  - "对 master_data、personnel_schedule、demand_forecast、login_log、status_log 复用现有 repository 判断是否已应用。"
+  - "查询不存在的 batch 返回 404 和稳定错误码。"
+  - "不新增 schema/migration，不做模板持久化、字段映射 CRUD、前端、权限、审批、导出或批量操作。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US634"
+status: "done"
+```

@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM015`
+- source_ids:
+  - `R715`
+- story_ids:
+  - `US635`
+- action: 实现导入批次应用结果查询摘要第一刀。
+- status: `done`
+- notes: IM015 新增只读 `GET /api/v1/import-batches/{batch_id}/application-summary`，按 batch 返回 file_type、application_status、application_target、import_version_id 和 applied_record_count；复用现有 repository 判断 master_data、personnel_schedule、demand_forecast、login_log、status_log 是否已应用。未新增依赖，未改 schema/migration，未做模板持久化、字段映射 CRUD、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM014`
 - source_ids:
   - `R714`
