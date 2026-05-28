@@ -2178,3 +2178,26 @@ dependencies:
   - "US627"
 status: "done"
 ```
+
+### US629 - 持久化结果列表筛选 API 第一刀
+
+```yaml
+id: US629
+requirement_ids:
+  - R709
+module: "结果查询"
+role: "主管"
+story: "作为主管，我希望按业务日、类型、状态和 owner 等条件列出已持久化的对比 run 与复核 case，以便从真实闭环记录中定位需要查看的对象。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增 GET /api/v1/comparison-runs，返回 DB007 ComparisonRunRecord 列表。"
+  - "comparison runs 支持 comparison_type、status、business_date 筛选。"
+  - "新增 GET /api/v1/review-cases，返回 DB008 ReviewCaseRecord 列表。"
+  - "review cases 支持 business_date、owner_id、status、severity、source_result_type 筛选。"
+  - "不新增 schema/migration，不做分页、前端、权限、审批、导出或批量操作。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US628"
+status: "done"
+```

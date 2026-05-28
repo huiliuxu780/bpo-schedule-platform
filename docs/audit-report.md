@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM009 持久化结果列表筛选 API 第一刀
+
+#### 审计结论
+
+- `US629/IM009/R709` 已完成持久化结果列表筛选 API 第一刀。
+- 新增 `/api/v1/comparison-runs`，返回 DB007 `ComparisonRunRecord` 轻量列表。
+- comparison runs 支持 `comparison_type`、`status`、`business_date` 筛选。
+- 新增 `/api/v1/review-cases`，返回 DB008 `ReviewCaseRecord` 轻量列表。
+- review cases 支持 `business_date`、`owner_id`、`status`、`severity`、`source_result_type` 筛选。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做只读 summary 列表，不等于分页、排序参数、全文搜索、模板持久化、前端接入、权限、审批、导出或批量处理已完成。
+- 本轮不新增 schema/migration；后续如需大列表分页、索引优化、查询审计或跨对象聚合，需要单独任务。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_result_list_query_api -v`：通过，6 个持久化结果列表筛选测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 109 个 backend unittest。
+
 ### 2026-05-28 - IM008 持久化结果查询 API 收口
 
 #### 审计结论

@@ -1157,3 +1157,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做本地只读查询 API；不新增 schema/migration，不做模板持久化、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R709 - 持久化结果列表筛选 API 第一刀
+
+```yaml
+id: R709
+module: "结果查询"
+description: "单条持久化结果已经能按 id 读回后，系统需要列表和基础筛选能力，让主管可以按业务日、类型、状态、owner 等维度找到 DB007 对比 run 和 DB008 复核 case。"
+source: "PM approved continuing with IM009 on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做本地只读列表筛选 API；不新增 schema/migration，不做分页、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

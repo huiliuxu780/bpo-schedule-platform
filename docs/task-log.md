@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM009`
+- source_ids:
+  - `R709`
+- story_ids:
+  - `US629`
+- action: 实现持久化结果列表筛选 API 第一刀。
+- status: `done`
+- notes: IM009 新增 DB007 comparison run 与 DB008 review case 的只读列表筛选 API，返回轻量 summary 列表。comparison runs 支持 comparison_type、status、business_date 筛选；review cases 支持 business_date、owner_id、status、severity、source_result_type 筛选。不新增依赖，不改 schema/migration，不做分页、模板持久化、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM008`
 - source_ids:
   - `R708`

@@ -18,6 +18,7 @@ from backend.app.models import (
     ReviewConclusionRecord,
     ReviewEvidenceInput,
     ReviewEvidenceRecord,
+    ReviewSourceResultType,
 )
 
 
@@ -224,6 +225,34 @@ class ReviewPersistenceRepository:
             conclusions=[_conclusion_record(row) for row in conclusions],
             closure=_closure_record(closure) if closure is not None else None,
         )
+
+    def list_review_cases(
+        self,
+        business_date: str | None = None,
+        owner_id: str | None = None,
+        status: str | None = None,
+        severity: str | None = None,
+        source_result_type: ReviewSourceResultType | None = None,
+    ) -> list[ReviewCaseRecord]:
+        statement = select(ReviewCaseEntity)
+        if business_date is not None:
+            statement = statement.where(ReviewCaseEntity.business_date == business_date)
+        if owner_id is not None:
+            statement = statement.where(ReviewCaseEntity.owner_id == owner_id)
+        if status is not None:
+            statement = statement.where(ReviewCaseEntity.status == status)
+        if severity is not None:
+            statement = statement.where(ReviewCaseEntity.severity == severity)
+        if source_result_type is not None:
+            statement = statement.where(
+                ReviewCaseEntity.source_result_type == source_result_type
+            )
+        statement = statement.order_by(
+            ReviewCaseEntity.business_date,
+            ReviewCaseEntity.case_id,
+        )
+        with self.session_factory() as session:
+            return [_case_record(row) for row in session.scalars(statement)]
 
     def _validate_source_result(
         self,

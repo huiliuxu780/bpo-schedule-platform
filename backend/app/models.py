@@ -614,6 +614,10 @@ class ComparisonRunDetail(BaseModel):
     schedule_actual_results: list[ScheduleActualComparisonResultRecord]
 
 
+class ComparisonRunListResponse(BaseModel):
+    items: list[ComparisonRunRecord]
+
+
 class ReviewCaseCreateRequest(BaseModel):
     case_id: str
     source_result_type: ReviewSourceResultType
@@ -702,3 +706,7 @@ class ReviewCaseDetail(BaseModel):
     evidence: list[ReviewEvidenceRecord]
     conclusions: list[ReviewConclusionRecord]
     closure: ReviewClosureRecord | None = None
+
+
+class ReviewCaseListResponse(BaseModel):
+    items: list[ReviewCaseRecord]

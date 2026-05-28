@@ -3844,3 +3844,53 @@ tasks:
       - "需要自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM009
+    title: "持久化结果列表筛选 API 第一刀"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM008"]
+    allowed_files:
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/comparison_persistence.py"
+      - "backend/app/review_persistence.py"
+      - "backend/tests/test_result_list_query_api.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/migrations/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "新增 GET /api/v1/comparison-runs，返回 DB007 ComparisonRunRecord 列表。"
+      - "comparison runs 支持 comparison_type、status、business_date 筛选。"
+      - "新增 GET /api/v1/review-cases，返回 DB008 ReviewCaseRecord 列表。"
+      - "review cases 支持 business_date、owner_id、status、severity、source_result_type 筛选。"
+      - "不新增 schema/migration，不做分页、前端、权限、审批、导出、批量或生产公式。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration 变更"
+      - "需要真实外部 CORN、HR、WFM 或第三方集成"
+      - "需要认证、权限、供应商隔离、审批、导出或批量操作"
+      - "需要自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

@@ -20,6 +20,9 @@ from backend.app.models import (
     ActualLogImportApplyResponse,
     ComparisonCalculationRequest,
     ComparisonRunDetail,
+    ComparisonRunListResponse,
+    ComparisonRunStatus,
+    ComparisonType,
     DemandPlanListResponse,
     ForecastImportApplyResponse,
     ImportBatchCreateRequest,
@@ -28,7 +31,9 @@ from backend.app.models import (
     MasterDataImportApplyResponse,
     PersonnelScheduleImportApplyResponse,
     ReviewCaseDetail,
+    ReviewCaseListResponse,
     ReviewClosureWriteRequest,
+    ReviewSourceResultType,
     ScheduleRiskListResponse,
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
@@ -381,6 +386,24 @@ def calculate_comparison_run_api(
 
 
 @app.get(
+    "/api/v1/comparison-runs",
+    response_model=ComparisonRunListResponse,
+)
+def list_comparison_runs_api(
+    comparison_type: ComparisonType | None = None,
+    status: ComparisonRunStatus | None = None,
+    business_date: str | None = None,
+) -> ComparisonRunListResponse:
+    return ComparisonRunListResponse(
+        items=ComparisonPersistenceRepository().list_comparison_runs(
+            comparison_type=comparison_type,
+            status=status,
+            business_date=business_date,
+        )
+    )
+
+
+@app.get(
     "/api/v1/comparison-runs/{run_id}",
     response_model=ComparisonRunDetail,
 )
@@ -418,6 +441,28 @@ def write_review_closure_api(
                 }
             },
         ) from exc
+
+
+@app.get(
+    "/api/v1/review-cases",
+    response_model=ReviewCaseListResponse,
+)
+def list_review_cases_api(
+    business_date: str | None = None,
+    owner_id: str | None = None,
+    status: str | None = None,
+    severity: str | None = None,
+    source_result_type: ReviewSourceResultType | None = None,
+) -> ReviewCaseListResponse:
+    return ReviewCaseListResponse(
+        items=ReviewPersistenceRepository().list_review_cases(
+            business_date=business_date,
+            owner_id=owner_id,
+            status=status,
+            severity=severity,
+            source_result_type=source_result_type,
+        )
+    )
 
 
 @app.get(

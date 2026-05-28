@@ -10,6 +10,8 @@ from backend.app.models import (
     ComparisonRunDetail,
     ComparisonRunRecord,
     ComparisonRunRequest,
+    ComparisonRunStatus,
+    ComparisonType,
     ForecastScheduleComparisonResultInput,
     ForecastScheduleComparisonResultRecord,
     ScheduleActualComparisonResultInput,
@@ -199,6 +201,31 @@ class ComparisonPersistenceRepository:
                 for result in schedule_actual_results
             ],
         )
+
+    def list_comparison_runs(
+        self,
+        comparison_type: ComparisonType | None = None,
+        status: ComparisonRunStatus | None = None,
+        business_date: str | None = None,
+    ) -> list[ComparisonRunRecord]:
+        statement = select(ComparisonRunEntity)
+        if comparison_type is not None:
+            statement = statement.where(
+                ComparisonRunEntity.comparison_type == comparison_type
+            )
+        if status is not None:
+            statement = statement.where(ComparisonRunEntity.status == status)
+        if business_date is not None:
+            statement = statement.where(
+                ComparisonRunEntity.business_date_from <= business_date,
+                ComparisonRunEntity.business_date_to >= business_date,
+            )
+        statement = statement.order_by(
+            ComparisonRunEntity.business_date_from,
+            ComparisonRunEntity.run_id,
+        )
+        with self.session_factory() as session:
+            return [_run_record(row) for row in session.scalars(statement)]
 
     def _run_entity(self, request: ComparisonRunRequest) -> ComparisonRunEntity:
         return ComparisonRunEntity(
