@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R673-R676 - DB003 主数据持久化基础
+
+```yaml
+requirements:
+  - id: R673
+    module: "生产持久化"
+    description: "主数据需要先落库坐席、职场、供应商、项目和技能，作为后续人员排班、预测对齐和日志对比的引用基础。"
+  - id: R674
+    module: "生产持久化"
+    description: "主数据绑定关系需要记录坐席与供应商、职场、项目、技能之间的有效关系，并支持有效期校验。"
+  - id: R675
+    module: "生产持久化"
+    description: "主数据需要支持冻结状态，冻结或不存在的引用不能被绑定关系误用。"
+  - id: R676
+    module: "生产持久化"
+    description: "DB003 不应扩展到人员排班、预测、登录状态、异常复核、权限、审批、导出、批量或生产公式。"
+source: "DB002 database foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只授权主数据持久化基础：employees, suppliers, workplaces, projects, skills, bindings, effective dates, freeze status, and reference checks."
+```
+
 ### R669-R672 - DB002 导入持久化基础前置确认
 
 ```yaml

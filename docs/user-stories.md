@@ -29,6 +29,36 @@
 
 ## Stories
 
+### US614 - DB003 主数据持久化基础
+
+```yaml
+id: US614
+requirement_ids:
+  - R673
+  - R674
+  - R675
+  - R676
+task_ids:
+  - DB003
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望主数据先完成坐席、职场、供应商、项目、技能和绑定关系的持久化，以便后续人员排班、预测和日志对比都能引用稳定主数据。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 employees, suppliers, workplaces, projects, skills。"
+  - "持久化 employee bindings，覆盖 employee/supplier/workplace/project/skill 引用。"
+  - "支持有效期、冻结状态和引用校验。"
+  - "不实现人员排班、预测、登录/状态日志、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB002
+status: "done"
+completed_scope:
+  - "持久化 employees, suppliers, workplaces, projects, skills。"
+  - "持久化 employee bindings。"
+  - "测试覆盖新 repository 读取、冻结状态拒绝和 import batch 来源引用。"
+```
+
 ### US613 - DB002 导入持久化基础
 
 ```yaml

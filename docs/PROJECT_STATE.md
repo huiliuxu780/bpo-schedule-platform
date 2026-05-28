@@ -19,7 +19,7 @@ The project contains:
 
 - A PM-confirmed shadcn/ui-style BPO WFM dashboard scaffold.
 - Local scheduling-plan MVP verticals backed by local FastAPI seed/process-memory contracts and frontend fallback contracts.
-- A PM-confirmed database Gate with the first import persistence foundation slice.
+- A PM-confirmed database Gate with import persistence and master data persistence foundation slices.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -29,7 +29,7 @@ The project contains:
 The project does not contain:
 
 - Real external API integration.
-- Broad production persistence beyond the DB002 import foundation slice.
+- Broad production persistence beyond the DB002 import foundation and DB003 master data slices.
 - Authentication or production permission boundaries.
 - Real Excel import or real CORN integration.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
@@ -44,6 +44,7 @@ Current allowed database scope:
 - Confirmed `database-persistence` tasks only.
 - Named entity slices only.
 - DB002 import persistence foundation: import batches, row results, failed row details, and import-generated version records.
+- DB003 master data persistence foundation: employees, suppliers, workplaces, projects, skills, bindings, effective dates, freeze status, and reference checks.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:
@@ -80,6 +81,7 @@ Current invariants:
 - `F041-F059/Q014` completed a 20-task local frontend parity block across schedule plans, schedule risks, and unavailability tables, then returned current queue and active tasks to empty.
 - `DB001/US612` defined the database Gate and persistence order.
 - `DB002/US613` added the first database slice for import batches, row results, failed rows, and import-generated version records, then returned current queue and active tasks to empty.
+- `DB003/US614` added the master data slice for employees, suppliers, workplaces, projects, skills, bindings, effective dates, freeze status, and reference checks, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
@@ -87,7 +89,7 @@ Near-term product work should stay inside either confirmed local MVP frontend/ba
 
 Recommended order after state governance:
 
-1. If continuing database work, seed DB003 master data persistence before implementation.
+1. If continuing database work, seed DB004 personnel schedule persistence before implementation.
 2. Keep each database task limited to one entity group and its reference checks.
 3. Do not mix auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors into the database foundation.
 

@@ -105,15 +105,15 @@ git commit -m "DB002 add import persistence foundation"
 - Implementation files: to be confirmed after DB002 lands.
 - Tests: backend persistence tests for employees, suppliers, workplaces, projects, skills, and bindings.
 
-- [ ] **Step 1: Write failing tests for master data upsert and reference checks**
+- [x] **Step 1: Write failing tests for master data upsert and reference checks**
 
 Tests must cover effective dates, freeze status, missing references, and binding validity.
 
-- [ ] **Step 2: Implement master data persistence**
+- [x] **Step 2: Implement master data persistence**
 
 Persist employees, suppliers, workplaces, projects, skills, and employee-project-workplace bindings.
 
-- [ ] **Step 3: Verify and commit**
+- [x] **Step 3: Verify and commit**
 
 Run the DB task verification commands and commit with:
 

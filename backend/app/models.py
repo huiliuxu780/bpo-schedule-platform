@@ -16,6 +16,7 @@ ImportFileType = Literal[
 ]
 ImportRowStatus = Literal["success", "failed", "warning"]
 ImportProcessingStatus = Literal["completed", "completed_with_errors"]
+MasterDataStatus = Literal["active", "frozen", "inactive"]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -219,3 +220,52 @@ class ImportBatchPersistenceDetail(BaseModel):
     rows: list[ImportBatchRowResultRecord]
     failed_rows: list[ImportBatchRowResultRecord]
     versions: list[ImportBatchVersionRecord]
+
+
+class MasterDataReferenceInput(BaseModel):
+    reference_id: str
+    reference_name: str
+    status: MasterDataStatus
+    effective_from: str
+    effective_to: str
+
+
+class EmployeeMasterDataInput(BaseModel):
+    employee_id: str
+    employee_name: str
+    status: MasterDataStatus
+    effective_from: str
+    effective_to: str
+
+
+class EmployeeBindingInput(BaseModel):
+    binding_id: str
+    employee_id: str
+    supplier_id: str
+    workplace_id: str
+    project_id: str
+    skill_id: str
+    effective_from: str
+    effective_to: str
+
+
+class MasterDataSnapshotRequest(BaseModel):
+    batch_id: str
+    suppliers: list[MasterDataReferenceInput] = Field(default_factory=list)
+    workplaces: list[MasterDataReferenceInput] = Field(default_factory=list)
+    projects: list[MasterDataReferenceInput] = Field(default_factory=list)
+    skills: list[MasterDataReferenceInput] = Field(default_factory=list)
+    employees: list[EmployeeMasterDataInput] = Field(default_factory=list)
+    bindings: list[EmployeeBindingInput] = Field(default_factory=list)
+
+
+class EmployeeBindingRecord(BaseModel):
+    binding_id: str
+    employee_id: str
+    supplier_id: str
+    workplace_id: str
+    project_id: str
+    skill_id: str
+    effective_from: str
+    effective_to: str
+    batch_id: str

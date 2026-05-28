@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - DB003 主数据持久化基础
+
+#### 审计结论
+
+- `US614/DB003/R673-R676` 已完成主数据持久化基础。
+- 新增 master data SQLAlchemy repository 和 Alembic migration，覆盖 employees、suppliers、workplaces、projects、skills 和 employee bindings。
+- 绑定关系会校验 employee/supplier/workplace/project/skill 引用存在、状态为 active、未 frozen，并处于有效期范围内。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB003 只提供主数据落库和引用校验，不等于主数据 CRUD 管理界面、真实上传导入、排班生产流或预测/日志处理已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_master_data_persistence -v`：通过，2 个 DB003 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db003.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import persistence 和 master data 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，22 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 22 个 backend unittest。
+
 ### 2026-05-28 - DB002 导入持久化基础
 
 #### 审计结论

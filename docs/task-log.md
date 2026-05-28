@@ -19,6 +19,20 @@
 
 ### 2026-05-28
 
+- task_id: `DB003`
+- source_ids:
+  - `R673`
+  - `R674`
+  - `R675`
+  - `R676`
+- story_ids:
+  - `US614`
+- action: 实现主数据持久化基础。
+- status: `done`
+- notes: DB003 新增 employees、suppliers、workplaces、projects、skills 和 employee bindings 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖新 repository 读取、冻结引用拒绝和 DB002 import batch 来源引用。未扩展到人员排班、需求预测、登录/状态日志、对比结果、复核闭环、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `DB002`
 - source_ids:
   - `R669`
