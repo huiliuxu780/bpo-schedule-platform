@@ -1066,3 +1066,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做无新增依赖的 text/csv 原始请求体上传和本地持久化 API；不做 multipart/Excel、外部 CORN/HR/WFM 接入、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R702 - 主数据导入应用到 DB003 repository
+
+```yaml
+id: R702
+module: "导入中心"
+description: "CSV 上传批次已经能生成行级结果和 import version 后，系统需要把 master_data 批次中的成功行应用到 DB003 主数据 repository，生成员工、职场、供应商、项目、技能和绑定关系的可维护基础数据。"
+source: "PM confirmed continuing import-center production flow on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只应用已持久化的 master_data CSV 成功行；不新增 schema/migration，不做 CRUD UI，不做权限、审批、导出、批量、外部集成、生产公式、结算或收费因子。"
+```

@@ -2017,3 +2017,26 @@ dependencies:
   - "US620"
 status: "done"
 ```
+
+### US622 - 主数据导入应用到 DB003 repository
+
+```yaml
+id: US622
+requirement_ids:
+  - R702
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望把已上传的 master_data CSV 成功行应用到主数据 repository，以便员工、供应商、职场、项目、技能和绑定关系进入生产雏形数据链路。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增本地 FastAPI 主数据导入应用入口，按 batch_id 读取已持久化导入批次。"
+  - "仅允许 file_type 为 master_data 的批次应用到主数据。"
+  - "成功行根据 record_type 写入 suppliers、workplaces、projects、skills、employees 和 bindings。"
+  - "绑定关系继续复用 DB003 引用校验和冻结校验。"
+  - "不新增 schema/migration，不做 CRUD UI、权限、审批、导出、批量或外部集成。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US621"
+status: "done"
+```

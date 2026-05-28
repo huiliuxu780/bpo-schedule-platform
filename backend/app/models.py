@@ -274,6 +274,17 @@ class EmployeeBindingRecord(BaseModel):
     batch_id: str
 
 
+class MasterDataImportApplyResponse(BaseModel):
+    batch_id: str
+    suppliers: int = Field(ge=0)
+    workplaces: int = Field(ge=0)
+    projects: int = Field(ge=0)
+    skills: int = Field(ge=0)
+    employees: int = Field(ge=0)
+    bindings: int = Field(ge=0)
+    skipped_rows: int = Field(ge=0)
+
+
 class ShiftTypeInput(BaseModel):
     shift_type_id: str
     shift_type_name: str

@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM002`
+- source_ids:
+  - `R702`
+- story_ids:
+  - `US622`
+- action: 实现主数据导入应用到 DB003 repository。
+- status: `done`
+- notes: IM002 新增主数据导入应用服务和 API，按 batch_id 读取已持久化 master_data 导入批次，只处理成功行，并按 record_type 写入 suppliers、workplaces、projects、skills、employees 和 bindings。绑定关系继续复用 DB003 引用校验和冻结校验。未新增依赖，未改 schema/migration，未做 CRUD UI、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM001`
 - source_ids:
   - `R701`
