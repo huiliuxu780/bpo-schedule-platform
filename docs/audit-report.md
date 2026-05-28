@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM016 字段映射模板持久化第一刀
+
+#### 审计结论
+
+- `US636/IM016/R716` 已完成字段映射模板持久化第一刀。
+- 新增 `import_field_mapping_templates` 表和 `20260529_0008` Alembic migration。
+- 新增字段映射模板 repository，支持创建、按 id 单查、按 file_type 列表过滤。
+- 新增 `POST /api/v1/import-field-mapping-templates`、`GET /api/v1/import-field-mapping-templates`、`GET /api/v1/import-field-mapping-templates/{template_id}`。
+- `POST /api/v1/import-batches/upload-csv` 支持 `template_id` 复用已保存字段映射，并保留直接 `field_mapping` JSON 上传。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做模板创建、列表、单查和上传复用；未做模板更新、停用、删除、前端管理页面或批量能力。
+- 本轮仍是 `text/csv` 请求体；未做 Excel/multipart、大文件、异步处理或文件存储。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_database_foundation_closeout backend.tests.test_import_mapping_persistence backend.tests.test_import_mapping_api backend.tests.test_import_upload_api -v`：通过，15 个目标和相邻导入测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 134 个 backend unittest。
+
 ### 2026-05-28 - IM015 导入批次应用结果查询摘要第一刀
 
 #### 审计结论

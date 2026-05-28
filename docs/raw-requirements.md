@@ -1248,3 +1248,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做只读应用摘要 API；不新增 schema/migration，不做模板持久化、字段映射 CRUD、前端、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R716 - 字段映射模板持久化第一刀
+
+```yaml
+id: R716
+module: "导入中心"
+description: "导入中心已经支持一次性 field_mapping JSON 上传，但真实导入流程需要保存并复用字段映射模板，避免每次上传都手工传完整映射。"
+source: "PM approved IM016 field-mapping template persistence on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做字段映射模板持久化、只读列表/单查和 upload-csv 按 template_id 复用；不做前端、Excel/multipart、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

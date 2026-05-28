@@ -1,5 +1,24 @@
 # Branch Log
 
+## 2026-05-29
+
+### IM016 Import Field Mapping Templates
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `3ad0cde`
+- remote_status: `continuing from origin/codex/import-center-api-vertical`
+- scope: Add first persisted import field-mapping template slice: mapping template table/migration, repository, create/list/get APIs, upload-csv template reuse, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/app/import_mapping_persistence.py`, `backend/app/import_upload.py`, `backend/app/main.py`, `backend/app/models.py`, `backend/migrations/versions/20260529_0008_import_mapping_templates.py`, mapping/upload/database tests, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no dependency files, frontend files, Excel/multipart, external integration, auth, permission, approval, export, batch, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: import mapping template repository/model/API/migration, upload-csv template reuse, mapping/upload/database tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target mapping/upload/database tests passed with 15 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed with 134 backend unittest.
+- local_commit_sha: pending.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ## 2026-05-28
 
 ### IM015 Import Application Summary

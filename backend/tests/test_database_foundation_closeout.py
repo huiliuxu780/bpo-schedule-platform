@@ -21,6 +21,7 @@ class DatabaseFoundationCloseoutTest(unittest.TestCase):
     def test_migration_head_creates_database_foundation_tables(self) -> None:
         expected_tables = {
             "import_batches",
+            "import_field_mapping_templates",
             "import_row_results",
             "import_versions",
             "master_data_employees",

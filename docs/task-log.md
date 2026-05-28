@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-05-29
+
+- task_id: `IM016`
+- source_ids:
+  - `R716`
+- story_ids:
+  - `US636`
+- action: 实现字段映射模板持久化第一刀。
+- status: `done`
+- notes: IM016 新增字段映射模板表、migration、repository、创建/列表/单查 API，并支持 upload-csv 按 template_id 复用已保存映射。未新增依赖，不做前端、Excel/multipart、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
 ### 2026-05-28
 
 - task_id: `IM015`

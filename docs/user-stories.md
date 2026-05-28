@@ -2339,3 +2339,27 @@ dependencies:
   - "US634"
 status: "done"
 ```
+
+### US636 - 字段映射模板持久化第一刀
+
+```yaml
+id: US636
+requirement_ids:
+  - R716
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望保存并复用导入字段映射模板，以便同类文件后续上传时不必重复手工传完整字段映射。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增字段映射模板持久化表和 Alembic migration。"
+  - "新增创建、列表、单查字段映射模板 API。"
+  - "模板包含 template_id、template_name、file_type、field_mapping、created_by、created_at 和 is_active。"
+  - "upload-csv 支持 template_id 复用模板，同时保留直接 field_mapping JSON 上传。"
+  - "缺失模板返回稳定错误码；重复模板 ID 返回稳定冲突错误码。"
+  - "不做前端、Excel/multipart、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US635"
+status: "done"
+```

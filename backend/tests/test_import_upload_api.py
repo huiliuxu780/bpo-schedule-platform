@@ -6,8 +6,10 @@ from unittest.mock import patch
 
 from fastapi import HTTPException
 
+from backend.app.import_mapping_persistence import ImportMappingPersistenceRepository
 from backend.app.import_persistence import ImportPersistenceRepository
 from backend.app.main import app, upload_import_batch_csv
+from backend.app.models import ImportFieldMappingTemplateCreateRequest
 
 
 class ImportUploadApiTest(unittest.TestCase):
@@ -70,6 +72,78 @@ class ImportUploadApiTest(unittest.TestCase):
         self.assertEqual(
             raised.exception.detail["error"]["code"],
             "IMPORT_FIELD_MAPPING_INVALID",
+        )
+
+    def test_upload_csv_uses_saved_field_mapping_template(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'import-upload.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            mapping_repository = ImportMappingPersistenceRepository(database_url)
+            mapping_repository.init_schema()
+            mapping_repository.create_field_mapping_template(
+                ImportFieldMappingTemplateCreateRequest(
+                    template_id="TPL-UPLOAD-001",
+                    template_name="员工主数据模板",
+                    file_type="master_data",
+                    field_mapping={"员工编号": "source_key", "姓名": "employee_name"},
+                    created_by="数据管理员",
+                )
+            )
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.get_import_mapping_persistence_repository",
+                    return_value=mapping_repository,
+                ),
+            ):
+                detail = upload_import_batch_csv(
+                    batch_id="BATCH-UPLOAD-TPL-001",
+                    file_name="employees.csv",
+                    file_type="master_data",
+                    uploaded_by="数据管理员",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                    field_mapping=None,
+                    template_id="TPL-UPLOAD-001",
+                    csv_body="员工编号,姓名\nA-1001,张三\n",
+                )
+
+        self.assertEqual(detail.batch.success_rows, 1)
+        self.assertEqual(detail.rows[0].source_key, "A-1001")
+        self.assertEqual(detail.rows[0].raw_data["standard_fields"]["employee_name"], "张三")
+
+    def test_upload_csv_returns_404_for_missing_field_mapping_template(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'import-upload.db'}"
+            mapping_repository = ImportMappingPersistenceRepository(database_url)
+            mapping_repository.init_schema()
+
+            with patch(
+                "backend.app.main.get_import_mapping_persistence_repository",
+                return_value=mapping_repository,
+            ):
+                with self.assertRaises(HTTPException) as raised:
+                    upload_import_batch_csv(
+                        batch_id="BATCH-UPLOAD-TPL-404",
+                        file_name="employees.csv",
+                        file_type="master_data",
+                        uploaded_by="数据管理员",
+                        business_date_from="2026-05-11",
+                        business_date_to="2026-05-11",
+                        field_mapping=None,
+                        template_id="missing",
+                        csv_body="员工编号,姓名\nA-1001,张三\n",
+                    )
+
+        self.assertEqual(raised.exception.status_code, 404)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "IMPORT_FIELD_MAPPING_TEMPLATE_NOT_FOUND",
         )
 
 

@@ -4205,3 +4205,58 @@ tasks:
       - "需要自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM016
+    title: "字段映射模板持久化第一刀"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM015"]
+    allowed_files:
+      - "backend/app/import_mapping_persistence.py"
+      - "backend/app/import_upload.py"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/migrations/versions/20260529_0008_import_mapping_templates.py"
+      - "backend/tests/test_import_mapping_persistence.py"
+      - "backend/tests/test_import_mapping_api.py"
+      - "backend/tests/test_import_upload_api.py"
+      - "backend/tests/test_database_foundation_closeout.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "新增字段映射模板持久化表和 Alembic migration。"
+      - "新增创建、列表、单查字段映射模板 API。"
+      - "模板包含 template_id、template_name、file_type、field_mapping、created_by、created_at 和 is_active。"
+      - "upload-csv 支持 template_id 复用模板，同时保留直接 field_mapping JSON 上传。"
+      - "缺失模板返回稳定错误码；重复模板 ID 返回稳定冲突错误码。"
+      - "不做前端、Excel/multipart、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到 Excel/multipart 上传"
+      - "范围扩展到字段映射 CRUD 前端或批量操作"
+      - "需要真实外部 CORN、HR、WFM 或第三方集成"
+      - "需要认证、权限、供应商隔离"
+      - "需要审批、导出、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

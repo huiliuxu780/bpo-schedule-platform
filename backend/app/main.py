@@ -9,6 +9,9 @@ from backend.app.comparison_persistence import ComparisonPersistenceRepository
 from backend.app.forecast_import import apply_forecast_import_batch
 from backend.app.forecast_persistence import ForecastPersistenceRepository
 from backend.app.import_application_summary import build_import_application_summary
+from backend.app.import_mapping_persistence import (
+    get_import_mapping_persistence_repository,
+)
 from backend.app.import_upload import build_import_batch_from_csv
 from backend.app.import_persistence import get_import_persistence_repository
 from backend.app.master_data_import import apply_master_data_import_batch
@@ -30,6 +33,9 @@ from backend.app.models import (
     ImportBatchCreateRequest,
     ImportFileType,
     ImportBatchPersistenceDetail,
+    ImportFieldMappingTemplateCreateRequest,
+    ImportFieldMappingTemplateListResponse,
+    ImportFieldMappingTemplateRecord,
     MasterDataImportApplyResponse,
     PersonnelScheduleImportApplyResponse,
     ReviewCaseDetail,
@@ -166,6 +172,66 @@ def get_import_application_summary(batch_id: str) -> ImportBatchApplicationSumma
     )
 
 
+@app.post(
+    "/api/v1/import-field-mapping-templates",
+    response_model=ImportFieldMappingTemplateRecord,
+)
+def create_import_field_mapping_template(
+    request: ImportFieldMappingTemplateCreateRequest,
+) -> ImportFieldMappingTemplateRecord:
+    try:
+        return get_import_mapping_persistence_repository().create_field_mapping_template(
+            request
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "IMPORT_FIELD_MAPPING_TEMPLATE_ALREADY_EXISTS",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+
+@app.get(
+    "/api/v1/import-field-mapping-templates",
+    response_model=ImportFieldMappingTemplateListResponse,
+)
+def list_import_field_mapping_templates(
+    file_type: ImportFileType | None = None,
+) -> ImportFieldMappingTemplateListResponse:
+    return ImportFieldMappingTemplateListResponse(
+        items=get_import_mapping_persistence_repository().list_field_mapping_templates(
+            file_type=file_type
+        )
+    )
+
+
+@app.get(
+    "/api/v1/import-field-mapping-templates/{template_id}",
+    response_model=ImportFieldMappingTemplateRecord,
+)
+def get_import_field_mapping_template(
+    template_id: str,
+) -> ImportFieldMappingTemplateRecord:
+    template = get_import_mapping_persistence_repository().get_field_mapping_template(
+        template_id
+    )
+    if template is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "IMPORT_FIELD_MAPPING_TEMPLATE_NOT_FOUND",
+                    "message": "字段映射模板不存在",
+                }
+            },
+        )
+    return template
+
+
 @app.post("/api/v1/import-batches/upload-csv", response_model=ImportBatchPersistenceDetail)
 def upload_import_batch_csv(
     batch_id: str,
@@ -174,15 +240,87 @@ def upload_import_batch_csv(
     uploaded_by: str,
     business_date_from: str,
     business_date_to: str,
-    field_mapping: str = Query(
+    field_mapping: str | None = Query(
         default='{"source_key":"source_key"}',
         description="JSON object mapping CSV source columns to standard fields.",
     ),
     version_id: str | None = None,
+    template_id: str | None = None,
     csv_body: str = Body(media_type="text/csv"),
 ) -> ImportBatchPersistenceDetail:
+    parsed_mapping = _resolve_upload_field_mapping(
+        field_mapping=field_mapping,
+        template_id=template_id,
+        file_type=file_type,
+    )
+
     try:
-        parsed_mapping = json.loads(field_mapping)
+        request = build_import_batch_from_csv(
+            batch_id=batch_id,
+            file_name=file_name,
+            file_type=file_type,
+            uploaded_by=uploaded_by,
+            business_date_from=business_date_from,
+            business_date_to=business_date_to,
+            csv_text=csv_body,
+            field_mapping=parsed_mapping,
+            version_id=version_id,
+        )
+        return get_import_persistence_repository().create_import_batch(request)
+    except ValueError as exc:
+        message = str(exc)
+        code = (
+            "IMPORT_BATCH_ALREADY_EXISTS"
+            if "already exists" in message
+            else "IMPORT_CSV_UPLOAD_INVALID"
+        )
+        raise HTTPException(
+            status_code=409 if code == "IMPORT_BATCH_ALREADY_EXISTS" else 400,
+            detail={
+                "error": {
+                    "code": code,
+                    "message": message,
+                }
+            },
+        ) from exc
+
+
+def _resolve_upload_field_mapping(
+    *,
+    field_mapping: str | None,
+    template_id: str | None,
+    file_type: ImportFileType,
+) -> dict[str, str]:
+    if template_id is not None:
+        template = (
+            get_import_mapping_persistence_repository().get_field_mapping_template(
+                template_id
+            )
+        )
+        if template is None:
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "error": {
+                        "code": "IMPORT_FIELD_MAPPING_TEMPLATE_NOT_FOUND",
+                        "message": "字段映射模板不存在",
+                    }
+                },
+            )
+        if template.file_type != file_type:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": {
+                        "code": "IMPORT_FIELD_MAPPING_TEMPLATE_FILE_TYPE_MISMATCH",
+                        "message": "字段映射模板类型与导入文件类型不一致",
+                    }
+                },
+            )
+        return dict(template.field_mapping)
+
+    try:
+        parsed_mapping = json.loads(field_mapping or "{}")
     except json.JSONDecodeError as exc:
         raise HTTPException(
             status_code=400,
@@ -204,36 +342,7 @@ def upload_import_batch_csv(
                 }
             },
         )
-
-    try:
-        request = build_import_batch_from_csv(
-            batch_id=batch_id,
-            file_name=file_name,
-            file_type=file_type,
-            uploaded_by=uploaded_by,
-            business_date_from=business_date_from,
-            business_date_to=business_date_to,
-            csv_text=csv_body,
-            field_mapping={str(key): str(value) for key, value in parsed_mapping.items()},
-            version_id=version_id,
-        )
-        return get_import_persistence_repository().create_import_batch(request)
-    except ValueError as exc:
-        message = str(exc)
-        code = (
-            "IMPORT_BATCH_ALREADY_EXISTS"
-            if "already exists" in message
-            else "IMPORT_CSV_UPLOAD_INVALID"
-        )
-        raise HTTPException(
-            status_code=409 if code == "IMPORT_BATCH_ALREADY_EXISTS" else 400,
-            detail={
-                "error": {
-                    "code": code,
-                    "message": message,
-                }
-            },
-        ) from exc
+    return {str(key): str(value) for key, value in parsed_mapping.items()}
 
 
 @app.post(

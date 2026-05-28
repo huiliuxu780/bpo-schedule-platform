@@ -226,6 +226,28 @@ class ImportBatchPersistenceDetail(BaseModel):
     versions: list[ImportBatchVersionRecord]
 
 
+class ImportFieldMappingTemplateCreateRequest(BaseModel):
+    template_id: str
+    template_name: str
+    file_type: ImportFileType
+    field_mapping: dict[str, str] = Field(min_length=1)
+    created_by: str
+
+
+class ImportFieldMappingTemplateRecord(BaseModel):
+    template_id: str
+    template_name: str
+    file_type: ImportFileType
+    field_mapping: dict[str, str]
+    created_by: str
+    created_at: str
+    is_active: bool
+
+
+class ImportFieldMappingTemplateListResponse(BaseModel):
+    items: list[ImportFieldMappingTemplateRecord]
+
+
 class ImportBatchApplicationSummary(BaseModel):
     batch_id: str
     file_type: ImportFileType
