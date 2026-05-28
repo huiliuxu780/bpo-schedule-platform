@@ -5,4 +5,14 @@ notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
-tasks: []
+tasks:
+  - id: DB002
+    status: blocked
+    title: "导入批次持久化基础"
+    priority: P0
+    story_ids: ["US613"]
+    required_workflow: database-persistence
+    dependencies: ["DB001"]
+    allowed_files: ["backend/**", "scripts/tests/**", "docs/**", "tasks/backlog.yaml"]
+    forbidden_files: ["app/**", "components/**", "lib/**"]
+    blocked_reason: "等待 PM 确认数据库引擎、依赖/package 变更授权、migration 工具和测试数据库方案。"

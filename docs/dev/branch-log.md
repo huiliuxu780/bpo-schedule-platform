@@ -2,6 +2,24 @@
 
 ## 2026-05-28
 
+### DB002 Import Persistence Preflight
+
+- branch_name: `codex/db001-database-gate-plan`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `2b71bfe`
+- remote_status: `db001_pushed`
+- scope: Seed DB002 as a blocked current task with explicit PM confirmations required before database implementation starts.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, migration, ORM, repository, schema, database connection, production persistence config, external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: current queue, active tasks, blockers, raw requirements, user stories, backlog, audit, task log, project context, and branch log.
+- check_result: `bash scripts/check-state.sh --strict` passed with blocked DB002; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `database engine, dependency/package-change allowance, ORM/migration tool, and test database setup are not confirmed`
+
 ### DB001 Database Gate Plan
 
 - branch_name: `codex/db001-database-gate-plan`

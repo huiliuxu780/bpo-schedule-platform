@@ -5,4 +5,13 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US613
+    status: blocked
+    priority: P0
+    module: "生产持久化"
+    role: "PM"
+    task_ids: ["DB002"]
+    requirement_ids: ["R669", "R670", "R671", "R672"]
+    dependencies: ["DB001"]
+    story: "DB002 导入持久化基础等待数据库引擎、依赖授权、migration 工具和测试数据库方案确认。"

@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R669-R672 - DB002 导入持久化基础前置确认
+
+```yaml
+requirements:
+  - id: R669
+    module: "生产持久化"
+    description: "DB002 开始前必须确认数据库引擎和本地运行方式，避免在未知环境下创建连接和 migration。"
+  - id: R670
+    module: "生产持久化"
+    description: "DB002 开始前必须确认是否允许修改 package/lockfile 以引入数据库、ORM 或 migration 依赖。"
+  - id: R671
+    module: "生产持久化"
+    description: "DB002 开始前必须确认 migration 工具和测试数据库方案，确保导入批次持久化可验证。"
+  - id: R672
+    module: "生产持久化"
+    description: "DB002 的首批实现范围限定为导入批次、导入行结果、失败行明细和导入生成版本记录。"
+source: "DB001 database Gate follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "blocked"
+notes: "本组是 DB002 真实实现前置确认卡口。确认前只允许维护文档和 blocked Harness 状态，不允许创建数据库连接、ORM、migration、schema、生产配置或新依赖。"
+```
+
 ### R665-R668 - 数据库 Gate 规划与首批落库拆解
 
 ```yaml

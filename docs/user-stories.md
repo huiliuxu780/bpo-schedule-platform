@@ -29,6 +29,33 @@
 
 ## Stories
 
+### US613 - DB002 导入持久化基础前置确认
+
+```yaml
+id: US613
+requirement_ids:
+  - R669
+  - R670
+  - R671
+  - R672
+task_ids:
+  - DB002
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望在 DB002 开始前确认数据库引擎、依赖授权、migration 工具和测试库方案，以便导入批次持久化实现可控。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "明确数据库引擎。"
+  - "明确是否允许 package/lockfile 变更。"
+  - "明确 ORM、migration 工具和测试数据库方案。"
+  - "实现范围只包含导入批次、导入行结果、失败行明细和导入生成版本记录。"
+dependencies:
+  - DB001
+status: "blocked"
+blocked_reason: "等待 PM 确认数据库引擎、依赖授权、migration 工具和测试数据库方案。"
+```
+
 ### US612 - 数据库 Gate 规划
 
 ```yaml

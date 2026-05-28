@@ -19,6 +19,20 @@
 
 ### 2026-05-28
 
+- task_id: `DB002`
+- source_ids:
+  - `R669`
+  - `R670`
+  - `R671`
+  - `R672`
+- story_ids:
+  - `US613`
+- action: 写入 DB002 导入批次持久化基础的前置确认卡口。
+- status: `blocked`
+- notes: DB002 已加入 current queue 和 active tasks，但状态为 blocked；阻塞项为数据库引擎、依赖/package 变更授权、ORM/migration 工具和测试数据库方案未确认。本次只维护文档状态，不创建数据库连接、ORM、repository、migration、schema、生产持久化配置、新依赖、真实外部集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+### 2026-05-28
+
 - task_id: `DB001`
 - source_ids:
   - `R665`

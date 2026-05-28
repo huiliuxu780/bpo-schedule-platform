@@ -4,6 +4,23 @@
 
 ## Current Audit
 
+### 2026-05-28 - DB002 前置确认卡口
+
+#### 审计结论
+
+- `US613/DB002/R669-R672` 已写入 current queue 和 active tasks，但状态为 `blocked`。
+- 阻塞项是数据库引擎、依赖/package 变更授权、ORM/migration 工具和测试数据库方案未确认。
+- DB002 的实现范围已限定为导入批次、导入行结果、失败行明细和导入生成版本记录。
+
+#### 风险
+
+- 在未解除阻塞前启动实现会违反数据库 Gate 和 package/lockfile stop condition。
+- 本轮不创建数据库连接、ORM、repository、migration、schema、生产持久化配置或新依赖。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，DB002 保持 blocked。
+
 ### 2026-05-28 - DB001 数据库 Gate 规划
 
 #### 审计结论
