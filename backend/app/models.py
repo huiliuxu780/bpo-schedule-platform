@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -7,6 +7,15 @@ SchedulePlanStatus = Literal["draft", "review_ready", "published"]
 DemandPlanStatus = Literal["imported", "mapped"]
 UnavailabilityStatus = Literal["active", "resolved"]
 ScheduleRiskLevel = Literal["high", "medium", "low"]
+ImportFileType = Literal[
+    "master_data",
+    "personnel_schedule",
+    "demand_forecast",
+    "login_log",
+    "status_log",
+]
+ImportRowStatus = Literal["success", "failed", "warning"]
+ImportProcessingStatus = Literal["completed", "completed_with_errors"]
 
 
 class SchedulePlanSummary(BaseModel):
@@ -139,3 +148,74 @@ class ApiError(BaseModel):
 
 class ApiErrorResponse(BaseModel):
     error: ApiError
+
+
+class ImportBatchRowResultInput(BaseModel):
+    row_number: int = Field(ge=1)
+    row_status: ImportRowStatus
+    source_key: str | None = None
+    error_field: str | None = None
+    error_code: str | None = None
+    error_message: str | None = None
+    raw_data: dict[str, Any] = Field(default_factory=dict)
+
+
+class ImportBatchVersionInput(BaseModel):
+    version_id: str
+    version_type: ImportFileType
+    business_date_from: str
+    business_date_to: str
+
+
+class ImportBatchCreateRequest(BaseModel):
+    batch_id: str
+    file_name: str
+    file_type: ImportFileType
+    uploaded_by: str
+    business_date_from: str
+    business_date_to: str
+    rows: list[ImportBatchRowResultInput] = Field(min_length=1)
+    versions: list[ImportBatchVersionInput] = Field(default_factory=list)
+
+
+class ImportBatchRecord(BaseModel):
+    batch_id: str
+    file_name: str
+    file_type: ImportFileType
+    uploaded_by: str
+    uploaded_at: str
+    business_date_from: str
+    business_date_to: str
+    processing_status: ImportProcessingStatus
+    total_rows: int = Field(ge=0)
+    success_rows: int = Field(ge=0)
+    failed_rows: int = Field(ge=0)
+    warning_rows: int = Field(ge=0)
+
+
+class ImportBatchRowResultRecord(BaseModel):
+    row_id: int
+    batch_id: str
+    row_number: int = Field(ge=1)
+    row_status: ImportRowStatus
+    source_key: str | None = None
+    error_field: str | None = None
+    error_code: str | None = None
+    error_message: str | None = None
+    raw_data: dict[str, Any] = Field(default_factory=dict)
+
+
+class ImportBatchVersionRecord(BaseModel):
+    version_id: str
+    batch_id: str
+    version_type: ImportFileType
+    business_date_from: str
+    business_date_to: str
+    created_at: str
+
+
+class ImportBatchPersistenceDetail(BaseModel):
+    batch: ImportBatchRecord
+    rows: list[ImportBatchRowResultRecord]
+    failed_rows: list[ImportBatchRowResultRecord]
+    versions: list[ImportBatchVersionRecord]

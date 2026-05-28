@@ -29,7 +29,7 @@
 
 ## Stories
 
-### US613 - DB002 导入持久化基础前置确认
+### US613 - DB002 导入持久化基础
 
 ```yaml
 id: US613
@@ -42,7 +42,7 @@ task_ids:
   - DB002
 module: "生产持久化"
 role: "PM"
-story: "作为 PM，我希望在 DB002 开始前确认数据库引擎、依赖授权、migration 工具和测试库方案，以便导入批次持久化实现可控。"
+story: "作为 PM，我希望使用已确认的 PostgreSQL/SQLAlchemy/Alembic 口径实现导入批次持久化基础，以便后续主数据、排班、预测和状态日志都有可追溯的导入来源。"
 task_type: "database-persistence"
 priority: "P0"
 acceptance:
@@ -52,8 +52,17 @@ acceptance:
   - "实现范围只包含导入批次、导入行结果、失败行明细和导入生成版本记录。"
 dependencies:
   - DB001
-status: "blocked"
-blocked_reason: "等待 PM 确认数据库引擎、依赖授权、migration 工具和测试数据库方案。"
+status: "done"
+confirmed_database_engine: "PostgreSQL"
+confirmed_orm: "SQLAlchemy"
+confirmed_migration_tool: "Alembic"
+confirmed_test_database: "isolated local test database"
+package_change_allowed: true
+completed_scope:
+  - "导入批次记录。"
+  - "导入行结果、失败行明细和错误原因。"
+  - "导入生成版本记录。"
+  - "Alembic migration 和 backend persistence tests。"
 ```
 
 ### US612 - 数据库 Gate 规划

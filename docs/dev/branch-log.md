@@ -2,6 +2,24 @@
 
 ## 2026-05-28
 
+### DB002 Import Persistence Foundation
+
+- branch_name: `codex/db001-database-gate-plan`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `bc07c05`
+- remote_status: `origin/codex/db001-database-gate-plan` currently contains DB001 and DB002 preflight; DB002 implementation is local until PM confirms push.
+- scope: Implement the confirmed import persistence foundation only: import batches, row results, failed row details, generated version records, SQLAlchemy repository, Alembic migration, FastAPI endpoints, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend import persistence models/repository/routes/tests, Alembic migration files, backend requirements, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target DB002 unittest passed; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM confirmation after verified local commit`
+- blocked_reason: `N/A`
+
 ### DB002 Import Persistence Preflight
 
 - branch_name: `codex/db001-database-gate-plan`
@@ -12,12 +30,12 @@
 - allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, migration, ORM, repository, schema, database connection, production persistence config, external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: current queue, active tasks, blockers, raw requirements, user stories, backlog, audit, task log, project context, and branch log.
 - check_result: `bash scripts/check-state.sh --strict` passed with blocked DB002; `git diff --check` passed; final `bash scripts/check.sh` passed.
-- local_commit_sha: `pending`
+- local_commit_sha: `bc07c05`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `ask PM after verified local commit`
+- push_decision: `pushed after PM confirmation`
 - blocked_reason: `database engine, dependency/package-change allowance, ORM/migration tool, and test database setup are not confirmed`
 
 ### DB001 Database Gate Plan
@@ -29,7 +47,7 @@
 - allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, migration, ORM, repository, schema, database connection, production persistence config, external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: current queue, active tasks, raw requirements, user stories, backlog, Gate Registry, database Gate plan, implementation plan, audit, task log, project context, and branch log.
 - check_result: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed after clearing stale cross-branch `.next` generated types.
-- local_commit_sha: `pending`
+- local_commit_sha: `2b71bfe`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

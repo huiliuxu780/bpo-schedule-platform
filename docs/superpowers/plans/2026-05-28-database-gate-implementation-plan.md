@@ -75,23 +75,23 @@ git commit -m "DB001 define database gate plan"
 - Modify: `tasks/backlog.yaml`
 - Implementation files: to be confirmed after PM selects database engine, dependency strategy, migration tool, and test database setup.
 
-- [ ] **Step 1: Confirm implementation prerequisites**
+- [x] **Step 1: Confirm implementation prerequisites**
 
 Ask PM to confirm database engine, migration tool, package-change allowance, local database runtime, and test database setup.
 
-- [ ] **Step 2: Write failing tests**
+- [x] **Step 2: Write failing tests**
 
 Write backend tests that require durable import batches, row results, failed rows, and generated version records to survive across request/service calls.
 
-- [ ] **Step 3: Implement only the import foundation slice**
+- [x] **Step 3: Implement only the import foundation slice**
 
 Implement database connection, migration entry, schema, and repository methods only for import batches, row results, failed rows, and version records.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 Run the DB migration/check command defined by DB002, backend tests for import persistence, `bash scripts/check-state.sh --strict`, `git diff --check`, and `bash scripts/check.sh`.
 
-- [ ] **Step 5: Commit DB002**
+- [x] **Step 5: Commit DB002**
 
 Commit only DB002 files with message:
 

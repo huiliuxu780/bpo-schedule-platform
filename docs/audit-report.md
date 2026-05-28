@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - DB002 导入持久化基础
+
+#### 审计结论
+
+- `US613/DB002/R669-R672` 已完成第一段数据库实现：导入批次、导入行结果、失败行明细和导入生成版本记录。
+- 新增 SQLAlchemy repository、Alembic migration、FastAPI persistence endpoints 和 backend 持久化测试。
+- 测试覆盖同一 SQLite 测试库在新 repository 实例中仍能读取已写入的批次、失败行错误原因和版本记录。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB002 只提供导入来源和版本基础，不等于真实文件上传、字段映射、主数据、排班、预测、登录状态、对比计算或复核闭环已生产化。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 连接、部署环境、凭据管理和真实外部数据接入仍需后续任务和环境确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_import_persistence -v`：通过，1 个 DB002 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/imports.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 `import_batches`、`import_row_results`、`import_versions`。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，20 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 20 个 backend unittest。
+
 ### 2026-05-28 - DB002 前置确认卡口
 
 #### 审计结论

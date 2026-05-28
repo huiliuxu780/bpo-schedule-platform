@@ -2,15 +2,15 @@
 
 ## Current Stage
 
-Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness.
+Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness + controlled database Gate.
 
 ## Active Boundary
 
-The project is in No Database MVP Mode. Product work may continue only through confirmed local frontend stories, local FastAPI seed/process-memory contracts, and verification tasks. The project must not connect or prepare a production database before PM confirms a later database Gate and provides an environment.
+The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed `database-persistence` tasks with named entity slices. The current implemented database slice is limited to import batches, import row results, failed row details, and import-generated version records.
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed product chain was `US083/F041 -> ... -> US102/Q014`, which extended local table parity across schedule plans, schedule risks, and unavailability tables without database, package, backend contract, approval, export, batch, permission, or production formula work.
+No ready product story is currently queued. The last completed database slice was `US613/DB002`, which added the import persistence foundation after PM confirmed PostgreSQL production target, SQLAlchemy, Alembic, dependency changes, and an isolated local test database.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -42,9 +42,9 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Stop Conditions
 
-- New dependencies or package/lockfile changes.
 - Real external data sources or integrations.
-- Database connection setup, ORM, migrations, schema implementation, or production persistence config.
+- Database work outside the named entity slice of a confirmed `database-persistence` task.
+- Unconfirmed new dependencies or package/lockfile changes.
 - Authentication or permission boundaries.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
 - Production status-code, formula, settlement-rule, or charge-factor changes.
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US613/DB002` is blocked before implementation. DB001 completed database Gate planning and was pushed to `origin/codex/db001-database-gate-plan`; DB002 must not start until PM confirms database engine, dependency/package-change allowance, ORM/migration tool, and test database setup. Recommended defaults are PostgreSQL, SQLAlchemy, Alembic, and an isolated local test database. Do not create database connections, ORM models, repositories, migrations, schema files, production persistence config, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, charge factors, or new dependencies until DB002 is explicitly unblocked.
+Recommended next database slice is `DB003` master data persistence: employees, suppliers, workplaces, projects, skills, bindings, effective dates, freeze status, and reference checks. Keep personnel schedule, demand forecast, login/status logs, comparison results, review closure persistence, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

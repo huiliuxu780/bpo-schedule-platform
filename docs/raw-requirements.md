@@ -36,8 +36,8 @@ requirements:
 source: "DB001 database Gate follow-up on 2026-05-28"
 submitted_at: "2026-05-28"
 version: "1.0"
-status: "blocked"
-notes: "本组是 DB002 真实实现前置确认卡口。确认前只允许维护文档和 blocked Harness 状态，不允许创建数据库连接、ORM、migration、schema、生产配置或新依赖。"
+status: "split"
+notes: "PM 已确认 PostgreSQL、SQLAlchemy、Alembic、依赖变更和本地隔离测试库口径；DB002 已按该范围实现导入批次、行结果、失败行明细和导入生成版本记录持久化。"
 ```
 
 ### R665-R668 - 数据库 Gate 规划与首批落库拆解

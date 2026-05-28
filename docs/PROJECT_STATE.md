@@ -2,7 +2,7 @@
 
 ## Current Stage
 
-Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness.
+Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness + controlled database Gate.
 
 For current execution context, default next step, active queue, active tasks, and blockers, read:
 
@@ -19,7 +19,7 @@ The project contains:
 
 - A PM-confirmed shadcn/ui-style BPO WFM dashboard scaffold.
 - Local scheduling-plan MVP verticals backed by local FastAPI seed/process-memory contracts and frontend fallback contracts.
-- No Database MVP Mode.
+- A PM-confirmed database Gate with the first import persistence foundation slice.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -29,31 +29,29 @@ The project contains:
 The project does not contain:
 
 - Real external API integration.
-- Database persistence or production persistence setup.
+- Broad production persistence beyond the DB002 import foundation slice.
 - Authentication or production permission boundaries.
 - Real Excel import or real CORN integration.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
 - Production status-code finalization, formulas, settlement rules, or charge factors.
 
-## No Database MVP Mode
+## Database Gate Mode
 
-PM confirmed on 2026-05-12 that the project should not connect a database before the local MVP feature chain is developed and verified, because there is currently no database environment.
+PM originally confirmed on 2026-05-12 that the local MVP should not connect a database before the local feature chain was developed and verified. PM later confirmed on 2026-05-28 that the project may enter a controlled database Gate.
 
-Allowed local MVP data modes:
+Current allowed database scope:
 
-- Local FastAPI endpoints backed by seed data or process memory.
-- Frontend API-client fallback data that matches the same contract.
-- Read-only or draft-only local verification flows.
-- Documentation and audit records that keep database work out of scope.
+- Confirmed `database-persistence` tasks only.
+- Named entity slices only.
+- DB002 import persistence foundation: import batches, row results, failed row details, and import-generated version records.
+- SQLAlchemy, Alembic, and an isolated local test database for verification.
 
-Hard stop until a later PM-confirmed Gate:
+Hard stop until separate PM confirmation:
 
-- Database connection setup.
-- ORM models, repositories, or adapters.
-- Migration files.
-- Schema implementation as engineering work.
-- Production persistence configuration.
+- Broad schema implementation outside the active entity slice.
 - Real external data-source integration.
+- Authentication, permission boundaries, supplier isolation, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors.
+- Personnel schedule, demand forecast, login/status log, comparison result, and review closure persistence unless a matching database task is active.
 
 ## State Governance Direction
 
@@ -80,16 +78,18 @@ Current invariants:
 - `H027/US068` extended state checks to validate `TRACE_INDEX.yaml` current file paths and reduce duplicate registry path output.
 - `H028/US069` fixed the Codex Plan boundary: the Plan panel is only a session projection and must never override Harness current/registry state.
 - `F041-F059/Q014` completed a 20-task local frontend parity block across schedule plans, schedule risks, and unavailability tables, then returned current queue and active tasks to empty.
+- `DB001/US612` defined the database Gate and persistence order.
+- `DB002/US613` added the first database slice for import batches, row results, failed rows, and import-generated version records, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
-Near-term product work should remain inside the no-database local MVP boundary.
+Near-term product work should stay inside either confirmed local MVP frontend/backend slices or confirmed database-persistence slices.
 
 Recommended order after state governance:
 
-1. Seed the next ready story in current state before execution.
-2. Continue frontend/local-contract work only when it avoids database, real integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, and charge factors.
-3. Continue table parity only in small display-only slices unless PM confirms a broader component-interaction Gate.
+1. If continuing database work, seed DB003 master data persistence before implementation.
+2. Keep each database task limited to one entity group and its reference checks.
+3. Do not mix auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors into the database foundation.
 
 ## Frontend Direction
 

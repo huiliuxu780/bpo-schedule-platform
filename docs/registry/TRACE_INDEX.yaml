@@ -1,5 +1,5 @@
 version: 1
-updated_at: "2026-05-12"
+updated_at: "2026-05-28"
 rules:
   - "This registry stores IDs, paths, and relationships only."
   - "Do not store lifecycle state in this file."
@@ -136,6 +136,8 @@ stories:
   US100: {file: "docs/user-stories.md", requirement_ids: ["R088"], task_ids: ["F058"], archive_refs: []}
   US101: {file: "docs/user-stories.md", requirement_ids: ["R089"], task_ids: ["F059"], archive_refs: []}
   US102: {file: "docs/user-stories.md", requirement_ids: ["R090"], task_ids: ["Q014"], archive_refs: []}
+  US612: {file: "docs/user-stories.md", requirement_ids: ["R665", "R666", "R667", "R668"], task_ids: ["DB001"], archive_refs: []}
+  US613: {file: "docs/user-stories.md", requirement_ids: ["R669", "R670", "R671", "R672"], task_ids: ["DB002"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -237,6 +239,8 @@ tasks:
   F058: {file: "tasks/backlog.yaml", story_ids: ["US100"], gate: "frontend-scaffold"}
   F059: {file: "tasks/backlog.yaml", story_ids: ["US101"], gate: "frontend-scaffold"}
   Q014: {file: "tasks/backlog.yaml", story_ids: ["US102"], gate: "qa"}
+  DB001: {file: "tasks/backlog.yaml", story_ids: ["US612"], gate: "database-planning"}
+  DB002: {file: "tasks/backlog.yaml", story_ids: ["US613"], gate: "database-persistence"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -358,6 +362,14 @@ requirements:
   R088: {file: "docs/raw-requirements.md", story_ids: ["US100"], task_ids: ["F058"]}
   R089: {file: "docs/raw-requirements.md", story_ids: ["US101"], task_ids: ["F059"]}
   R090: {file: "docs/raw-requirements.md", story_ids: ["US102"], task_ids: ["Q014"]}
+  R665: {file: "docs/raw-requirements.md", story_ids: ["US612"], task_ids: ["DB001"]}
+  R666: {file: "docs/raw-requirements.md", story_ids: ["US612"], task_ids: ["DB001"]}
+  R667: {file: "docs/raw-requirements.md", story_ids: ["US612"], task_ids: ["DB001"]}
+  R668: {file: "docs/raw-requirements.md", story_ids: ["US612"], task_ids: ["DB001"]}
+  R669: {file: "docs/raw-requirements.md", story_ids: ["US613"], task_ids: ["DB002"]}
+  R670: {file: "docs/raw-requirements.md", story_ids: ["US613"], task_ids: ["DB002"]}
+  R671: {file: "docs/raw-requirements.md", story_ids: ["US613"], task_ids: ["DB002"]}
+  R672: {file: "docs/raw-requirements.md", story_ids: ["US613"], task_ids: ["DB002"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

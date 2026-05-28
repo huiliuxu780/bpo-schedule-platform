@@ -27,9 +27,23 @@
   - `R672`
 - story_ids:
   - `US613`
+- action: 实现导入批次持久化基础。
+- status: `done`
+- notes: DB002 使用 PM 确认的 PostgreSQL 生产口径、SQLAlchemy、Alembic、依赖变更授权和本地隔离测试库方案，新增导入批次、行结果、失败行明细和导入生成版本记录的 repository、migration、API 入口和 backend 测试；未扩展到主数据、人员排班、预测、登录状态、异常复核、真实外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
+- task_id: `DB002`
+- source_ids:
+  - `R669`
+  - `R670`
+  - `R671`
+  - `R672`
+- story_ids:
+  - `US613`
 - action: 写入 DB002 导入批次持久化基础的前置确认卡口。
 - status: `blocked`
-- notes: DB002 已加入 current queue 和 active tasks，但状态为 blocked；阻塞项为数据库引擎、依赖/package 变更授权、ORM/migration 工具和测试数据库方案未确认。本次只维护文档状态，不创建数据库连接、ORM、repository、migration、schema、生产持久化配置、新依赖、真实外部集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+- notes: DB002 已加入 current queue 和 active tasks，但状态为 blocked；阻塞项为数据库引擎、依赖/package 变更授权、ORM/migration 工具和测试数据库方案未确认。本次只维护文档状态，不创建数据库连接、ORM、repository、migration、schema、生产持久化配置、新依赖、真实外部集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。该前置卡口已通过后续 PM 确认解除，并进入 DB002 实现。
 
 ### 2026-05-28
 

@@ -1,0 +1,70 @@
+import tempfile
+import unittest
+from pathlib import Path
+
+from backend.app.import_persistence import ImportPersistenceRepository
+from backend.app.models import (
+    ImportBatchCreateRequest,
+    ImportBatchRowResultInput,
+    ImportBatchVersionInput,
+)
+
+
+class ImportPersistenceTest(unittest.TestCase):
+    def test_import_batch_rows_failures_and_versions_survive_new_repository_instance(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'imports.db'}"
+            writer = ImportPersistenceRepository(database_url)
+            writer.init_schema()
+
+            created = writer.create_import_batch(
+                ImportBatchCreateRequest(
+                    batch_id="BATCH-DB002-001",
+                    file_name="personnel_schedule_20260511.csv",
+                    file_type="personnel_schedule",
+                    uploaded_by="数据管理员",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                    rows=[
+                        ImportBatchRowResultInput(
+                            row_number=1,
+                            row_status="success",
+                            source_key="A-1001|2026-05-11",
+                            raw_data={"employee_id": "A-1001", "shift_type_id": "MORNING"},
+                        ),
+                        ImportBatchRowResultInput(
+                            row_number=2,
+                            row_status="failed",
+                            source_key="A-404|2026-05-11",
+                            error_field="employee_id",
+                            error_code="UNKNOWN_EMPLOYEE",
+                            error_message="员工不存在",
+                            raw_data={"employee_id": "A-404", "shift_type_id": "MORNING"},
+                        ),
+                    ],
+                    versions=[
+                        ImportBatchVersionInput(
+                            version_id="SCH-V-20260511-001",
+                            version_type="personnel_schedule",
+                            business_date_from="2026-05-11",
+                            business_date_to="2026-05-11",
+                        )
+                    ],
+                )
+            )
+
+            reader = ImportPersistenceRepository(database_url)
+            loaded = reader.get_import_batch("BATCH-DB002-001")
+
+            self.assertIsNotNone(loaded)
+            self.assertEqual(created.batch.success_rows, 1)
+            self.assertEqual(created.batch.failed_rows, 1)
+            self.assertEqual(loaded.batch.batch_id, "BATCH-DB002-001")
+            self.assertEqual(loaded.batch.total_rows, 2)
+            self.assertEqual(loaded.rows[1].row_status, "failed")
+            self.assertEqual(loaded.failed_rows[0].error_code, "UNKNOWN_EMPLOYEE")
+            self.assertEqual(loaded.versions[0].version_id, "SCH-V-20260511-001")
+
+
+if __name__ == "__main__":
+    unittest.main()
