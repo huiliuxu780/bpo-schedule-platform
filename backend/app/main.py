@@ -2,6 +2,8 @@ import json
 
 from fastapi import Body, FastAPI, HTTPException, Query
 
+from backend.app.forecast_import import apply_forecast_import_batch
+from backend.app.forecast_persistence import ForecastPersistenceRepository
 from backend.app.import_upload import build_import_batch_from_csv
 from backend.app.import_persistence import get_import_persistence_repository
 from backend.app.master_data_import import apply_master_data_import_batch
@@ -10,6 +12,7 @@ from backend.app.personnel_schedule_import import apply_personnel_schedule_impor
 from backend.app.personnel_schedule_persistence import PersonnelSchedulePersistenceRepository
 from backend.app.models import (
     DemandPlanListResponse,
+    ForecastImportApplyResponse,
     ImportBatchCreateRequest,
     ImportFileType,
     ImportBatchPersistenceDetail,
@@ -259,6 +262,48 @@ def apply_personnel_schedule_import(batch_id: str) -> PersonnelScheduleImportApp
         ) from exc
 
     return PersonnelScheduleImportApplyResponse(**summary)
+
+
+@app.post(
+    "/api/v1/import-batches/{batch_id}/apply-forecast",
+    response_model=ForecastImportApplyResponse,
+)
+def apply_forecast_import(
+    batch_id: str,
+    compared_from_version_id: str | None = None,
+    change_reason: str | None = None,
+) -> ForecastImportApplyResponse:
+    batch = get_import_persistence_repository().get_import_batch(batch_id)
+    if batch is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "IMPORT_BATCH_NOT_FOUND",
+                    "message": "导入批次不存在",
+                }
+            },
+        )
+
+    try:
+        summary = apply_forecast_import_batch(
+            batch,
+            ForecastPersistenceRepository(),
+            compared_from_version_id=compared_from_version_id,
+            change_reason=change_reason,
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "FORECAST_IMPORT_INVALID",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+    return ForecastImportApplyResponse(**summary)
 
 
 @app.get("/api/v1/schedule-plans/{plan_id}", response_model=SchedulePlanDetail)

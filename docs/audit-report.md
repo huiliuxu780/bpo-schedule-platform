@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM004 需求预测导入应用到 DB005 repository
+
+#### 审计结论
+
+- `US624/IM004/R704` 已完成需求预测导入应用第一刀。
+- 新增 `/api/v1/import-batches/{batch_id}/apply-forecast`，按 batch_id 读取已持久化导入批次。
+- 仅允许 `file_type=demand_forecast` 的批次应用到需求预测。
+- 成功行写入 forecast intervals，并生成 forecast version。
+- 支持 `compared_from_version_id` 和 `change_reason` 形成版本变更记录。
+- 应用后复用 DB005 的 import version 校验、30 分钟区间校验、主数据引用校验、冻结和业务日期校验。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只应用已上传的 demand_forecast 成功行，不等于预测算法、预测 UI、版本审批或预测发布流程已完成。
+- 本轮不新增 schema/migration；后续如需导入应用审计表、重跑策略或幂等策略，需要单独任务。
+- 外部 CORN/HR/WFM 接入、auth、权限、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_forecast_import_service backend.tests.test_forecast_import_api -v`：通过，9 个需求预测导入应用测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 78 个 backend unittest。
+
 ### 2026-05-28 - IM003 人员排班导入应用到 DB004 repository
 
 #### 审计结论

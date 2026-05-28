@@ -1092,3 +1092,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只应用已持久化的 personnel_schedule CSV 成功行；不新增 schema/migration，不做排班维护 UI、发布/冻结、权限、审批、导出、批量调班、外部集成、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R704 - 需求预测导入应用到 DB005 repository
+
+```yaml
+id: R704
+module: "导入中心"
+description: "人员排班导入应用完成后，系统需要把 demand_forecast 批次中的成功行应用到 DB005 需求预测 repository，生成 forecast version、0.5h forecast intervals 和版本变更记录。"
+source: "PM continued import-center production flow on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只应用已持久化的 demand_forecast CSV 成功行；不新增 schema/migration，不做预测算法、预测 UI、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算或收费因子。"
+```

@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM004`
+- source_ids:
+  - `R704`
+- story_ids:
+  - `US624`
+- action: 实现需求预测导入应用到 DB005 repository。
+- status: `done`
+- notes: IM004 新增需求预测导入应用服务和 API，按 batch_id 读取已持久化 demand_forecast 导入批次，只处理成功行，并写入 forecast version、forecast intervals 和可选版本变更记录。应用后复用 DB005 的 import version 校验、30 分钟区间校验、主数据引用校验、冻结和业务日期校验。未新增依赖，未改 schema/migration，未做预测算法、预测 UI、外部集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM003`
 - source_ids:
   - `R703`

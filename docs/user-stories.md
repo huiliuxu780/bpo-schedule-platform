@@ -2063,3 +2063,27 @@ dependencies:
   - "US622"
 status: "done"
 ```
+
+### US624 - 需求预测导入应用到 DB005 repository
+
+```yaml
+id: US624
+requirement_ids:
+  - R704
+module: "导入中心"
+role: "计划管理员"
+story: "作为计划管理员，我希望把已上传的 demand_forecast CSV 成功行应用到需求预测 repository，以便生成可追溯的预测版本、技能/等级需求和 0.5h 预测区间。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增本地 FastAPI 需求预测导入应用入口，按 batch_id 读取已持久化导入批次。"
+  - "仅允许 file_type 为 demand_forecast 的批次应用到需求预测。"
+  - "成功行写入 forecast intervals，并生成 forecast version。"
+  - "应用后复用 DB005 30 分钟区间、主数据引用、冻结和业务日期校验。"
+  - "支持 compared_from_version_id 和 change_reason 形成版本变更记录。"
+  - "不新增 schema/migration，不做预测算法、预测 UI、权限、审批、导出、批量或外部集成。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US623"
+status: "done"
+```

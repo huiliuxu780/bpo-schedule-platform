@@ -418,6 +418,14 @@ class ForecastVersionDetail(BaseModel):
     changes: list[ForecastVersionChangeRecord]
 
 
+class ForecastImportApplyResponse(BaseModel):
+    batch_id: str
+    forecast_version_id: str
+    intervals: int = Field(ge=0)
+    total_required_agents: int = Field(ge=0)
+    skipped_rows: int = Field(ge=0)
+
+
 ActualLoginEventType = Literal["login", "logout"]
 
 
