@@ -149,7 +149,7 @@ git commit -m "DB004 add personnel schedule persistence"
 - Implementation files: to be confirmed per task.
 - Tests: backend persistence tests per entity group.
 
-- [ ] **Step 1: DB005 persist forecast versions and interval rows**
+- [x] **Step 1: DB005 persist forecast versions and interval rows**
 
 Keep this slice focused on forecast versions, forecast interval rows, and import source references.
 

@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - DB005 需求预测持久化基础
+
+#### 审计结论
+
+- `US616/DB005/R681-R684` 已完成需求预测持久化基础。
+- 新增 forecast SQLAlchemy repository 和 Alembic migration，覆盖 forecast versions、forecast interval rows 和 forecast version changes。
+- 预测行会校验 import version、workplace、project 和 skill 引用，并限定预测时段为 0.5h。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB005 只提供需求预测落库和版本变更记录，不等于预测上传解析、预测算法、排班对比、登录状态对比或复核闭环已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_forecast_persistence -v`：通过，3 个 DB005 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db005.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import、master data、personnel schedule 和 forecast 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，28 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 28 个 backend unittest。
+
 ### 2026-05-28 - DB004 人员级排班持久化基础
 
 #### 审计结论

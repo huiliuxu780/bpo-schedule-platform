@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R681-R684 - DB005 需求预测持久化基础
+
+```yaml
+requirements:
+  - id: R681
+    module: "生产持久化"
+    description: "需求预测需要落库预测版本，并关联 DB002 导入版本。"
+  - id: R682
+    module: "生产持久化"
+    description: "需求预测需要按日期、0.5h 时段、职场、项目、技能和等级保存预测人数。"
+  - id: R683
+    module: "生产持久化"
+    description: "需求预测需要校验主数据职场、项目和技能引用，并记录版本变更来源。"
+  - id: R684
+    module: "生产持久化"
+    description: "DB005 不应扩展到登录状态、对比计算、异常复核、权限、审批、导出、批量或生产公式。"
+source: "DB004 personnel schedule foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只授权需求预测持久化基础：forecast versions, forecast interval rows, workplace/project/skill/level demand alignment, import source references, and version change tracking."
+```
+
 ### R677-R680 - DB004 人员级排班持久化基础
 
 ```yaml

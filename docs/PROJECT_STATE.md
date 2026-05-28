@@ -19,7 +19,7 @@ The project contains:
 
 - A PM-confirmed shadcn/ui-style BPO WFM dashboard scaffold.
 - Local scheduling-plan MVP verticals backed by local FastAPI seed/process-memory contracts and frontend fallback contracts.
-- A PM-confirmed database Gate with import persistence, master data persistence, and personnel schedule persistence foundation slices.
+- A PM-confirmed database Gate with import persistence, master data persistence, personnel schedule persistence, and demand forecast persistence foundation slices.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -29,7 +29,7 @@ The project contains:
 The project does not contain:
 
 - Real external API integration.
-- Broad production persistence beyond the DB002 import foundation, DB003 master data, and DB004 personnel schedule slices.
+- Broad production persistence beyond the DB002 import foundation, DB003 master data, DB004 personnel schedule, and DB005 demand forecast slices.
 - Authentication or production permission boundaries.
 - Real Excel import or real CORN integration.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
@@ -46,6 +46,7 @@ Current allowed database scope:
 - DB002 import persistence foundation: import batches, row results, failed row details, and import-generated version records.
 - DB003 master data persistence foundation: employees, suppliers, workplaces, projects, skills, bindings, effective dates, freeze status, and reference checks.
 - DB004 personnel schedule persistence foundation: schedule versions, shift types, personnel schedule details, half-hour intervals, and import/master-data reference checks.
+- DB005 demand forecast persistence foundation: forecast versions, forecast interval rows, skill/level demand alignment, import source references, and version change tracking.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:
@@ -53,7 +54,7 @@ Hard stop until separate PM confirmation:
 - Broad schema implementation outside the active entity slice.
 - Real external data-source integration.
 - Authentication, permission boundaries, supplier isolation, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors.
-- Demand forecast, login/status log, comparison result, and review closure persistence unless a matching database task is active.
+- Login/status log, comparison result, and review closure persistence unless a matching database task is active.
 
 ## State Governance Direction
 
@@ -84,6 +85,7 @@ Current invariants:
 - `DB002/US613` added the first database slice for import batches, row results, failed rows, and import-generated version records, then returned current queue and active tasks to empty.
 - `DB003/US614` added the master data slice for employees, suppliers, workplaces, projects, skills, bindings, effective dates, freeze status, and reference checks, then returned current queue and active tasks to empty.
 - `DB004/US615` added the personnel schedule slice for schedule versions, shift types, personnel schedule details, half-hour intervals, and import/master-data reference checks, then returned current queue and active tasks to empty.
+- `DB005/US616` added the demand forecast slice for forecast versions, interval rows, skill/level demand alignment, import source references, and version change tracking, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
@@ -91,7 +93,7 @@ Near-term product work should stay inside either confirmed local MVP frontend/ba
 
 Recommended order after state governance:
 
-1. If continuing database work, seed DB005 demand forecast persistence before implementation.
+1. If continuing database work, seed DB006 login/status log persistence before implementation.
 2. Keep each database task limited to one entity group and its reference checks.
 3. Do not mix auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors into the database foundation.
 

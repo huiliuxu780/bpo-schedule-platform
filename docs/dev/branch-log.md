@@ -2,22 +2,40 @@
 
 ## 2026-05-28
 
-### DB004 Personnel Schedule Persistence
+### DB005 Demand Forecast Persistence
 
-- branch_name: `codex/db004-personnel-schedule-persistence`
+- branch_name: `codex/db005-demand-forecast-persistence`
 - base_main_commit: `a3a134c`
-- base_chain_commit: `1686b19`
+- base_chain_commit: `bc971ea`
 - remote_status: `not_pushed`
-- scope: Implement the confirmed personnel schedule persistence foundation only: schedule versions, shift types, personnel schedule details, half-hour intervals, import/master-data reference checks, Alembic migration, backend tests, and traceability cleanup.
+- scope: Implement the confirmed demand forecast persistence foundation only: forecast versions, forecast interval rows, skill/level demand alignment, import source references, version change records, Alembic migration, backend tests, and traceability cleanup.
 - allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
-- scope_diff_check: backend personnel schedule models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
-- check_result: target DB004 unittest passed after RED failure; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 25 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- scope_diff_check: backend forecast models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target DB005 unittest passed after RED failure; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 28 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
 - local_commit_sha: to be reported in Done Report after local commit creation.
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM confirmation after verified local commit`
+- blocked_reason: `N/A`
+
+### DB004 Personnel Schedule Persistence
+
+- branch_name: `codex/db004-personnel-schedule-persistence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `1686b19`
+- remote_status: `pushed to origin/codex/db004-personnel-schedule-persistence after PM confirmation`
+- scope: Implement the confirmed personnel schedule persistence foundation only: schedule versions, shift types, personnel schedule details, half-hour intervals, import/master-data reference checks, Alembic migration, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend personnel schedule models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target DB004 unittest passed after RED failure; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 25 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `bc971ea`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
 - blocked_reason: `N/A`
 
 ### DB003 Master Data Persistence

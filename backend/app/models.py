@@ -337,3 +337,60 @@ class PersonnelScheduleVersionDetail(BaseModel):
     version: PersonnelScheduleVersionRecord
     details: list[PersonnelScheduleDetailRecord]
     intervals: list[PersonnelScheduleIntervalRecord]
+
+
+class ForecastIntervalInput(BaseModel):
+    forecast_interval_id: str
+    forecast_date: str
+    interval_start: str
+    interval_end: str
+    workplace_id: str
+    project_id: str
+    skill_id: str
+    demand_level: str
+    required_agents: int = Field(ge=0)
+
+
+class ForecastVersionRequest(BaseModel):
+    forecast_version_id: str
+    import_version_id: str
+    business_date_from: str
+    business_date_to: str
+    compared_from_version_id: str | None = None
+    change_reason: str | None = None
+    intervals: list[ForecastIntervalInput] = Field(default_factory=list)
+
+
+class ForecastVersionRecord(BaseModel):
+    forecast_version_id: str
+    import_version_id: str
+    business_date_from: str
+    business_date_to: str
+    total_intervals: int
+    total_required_agents: int
+
+
+class ForecastIntervalRecord(BaseModel):
+    forecast_interval_id: str
+    forecast_version_id: str
+    forecast_date: str
+    interval_start: str
+    interval_end: str
+    workplace_id: str
+    project_id: str
+    skill_id: str
+    demand_level: str
+    required_agents: int
+
+
+class ForecastVersionChangeRecord(BaseModel):
+    change_id: int
+    forecast_version_id: str
+    compared_from_version_id: str | None = None
+    change_reason: str | None = None
+
+
+class ForecastVersionDetail(BaseModel):
+    version: ForecastVersionRecord
+    intervals: list[ForecastIntervalRecord]
+    changes: list[ForecastVersionChangeRecord]

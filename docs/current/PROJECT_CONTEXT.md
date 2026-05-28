@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed database slice was `US615/DB004`, which added personnel schedule persistence for schedule versions, personnel schedule details, shift type references, half-hour expansion, and import/master-data reference checks.
+No ready product story is currently queued. The last completed database slice was `US616/DB005`, which added demand forecast persistence for forecast versions, forecast interval rows, workplace/project/skill/level demand alignment, import source references, and version change tracking.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next database slice is `DB005` demand forecast persistence: forecast versions, forecast interval rows, skill/level demand alignment, import source references, and version change tracking. Keep login/status logs, comparison results, review closure persistence, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next database slice is `DB006` login/status log persistence: login events, logout events, status intervals, business-day normalization, timezone checks, and status dictionary mapping. Keep comparison results, review closure persistence, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

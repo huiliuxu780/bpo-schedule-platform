@@ -2,6 +2,41 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: DB005
+    title: "需求预测持久化基础"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["DB004"]
+    allowed_files:
+      - "backend/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "alembic.ini"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "持久化预测版本、0.5h 预测行和版本变更记录。"
+      - "测试覆盖 import version、职场、项目和技能引用校验。"
+      - "测试覆盖技能等级需求、冻结/缺失引用拒绝和无效时间范围拒绝。"
+      - "不包含登录状态、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions:
+      - "范围扩展到登录状态、异常或复核记录"
+      - "需要真实外部系统接入"
+      - "需要权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "需要新增未确认依赖或修改 JS package/lockfile"
+      - "验证失败"
+    commit_after_done: true
   - id: DB004
     title: "人员级排班持久化基础"
     priority: P0

@@ -29,6 +29,36 @@
 
 ## Stories
 
+### US616 - DB005 需求预测持久化基础
+
+```yaml
+id: US616
+requirement_ids:
+  - R681
+  - R682
+  - R683
+  - R684
+task_ids:
+  - DB005
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望需求预测完成版本、0.5h 预测行和技能等级需求持久化，以便后续预测 vs 排班对比有稳定需求基线。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 forecast versions、forecast interval rows 和 version change records。"
+  - "校验 import version、workplace、project 和 skill 引用。"
+  - "测试覆盖 0.5h 时段、技能等级需求、版本变更追踪、冻结/缺失引用拒绝和无效时间范围拒绝。"
+  - "不实现登录/状态日志、对比结果、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB004
+status: "done"
+completed_scope:
+  - "持久化 forecast versions、forecast interval rows 和 version change records。"
+  - "校验 import version、workplace、project 和 skill 引用。"
+  - "测试覆盖 0.5h 时段、技能等级需求、版本变更追踪、冻结技能拒绝和非 0.5h 时段拒绝。"
+```
+
 ### US615 - DB004 人员级排班持久化基础
 
 ```yaml

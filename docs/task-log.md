@@ -19,6 +19,20 @@
 
 ### 2026-05-28
 
+- task_id: `DB005`
+- source_ids:
+  - `R681`
+  - `R682`
+  - `R683`
+  - `R684`
+- story_ids:
+  - `US616`
+- action: 实现需求预测持久化基础。
+- status: `done`
+- notes: DB005 新增 forecast versions、forecast interval rows 和 forecast version changes 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖 0.5h 时段、技能等级需求、版本变更追踪、冻结技能拒绝和非 0.5h 时段拒绝。未扩展到登录/状态日志、对比结果、复核闭环、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `DB004`
 - source_ids:
   - `R677`
