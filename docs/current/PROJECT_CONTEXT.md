@@ -6,11 +6,11 @@ Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governe
 
 ## Active Boundary
 
-The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed tasks. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, review closure records, the first import-center CSV upload API vertical, master-data import application into DB003 repositories, personnel-schedule import application into DB004 repositories, demand-forecast import application into DB005 repositories, actual-log import application into DB006 repositories, local comparison calculation into DB007 repositories, and review closure write API into DB008 repositories. Q127 database foundation QA closeout has verified the local migration-backed foundation.
+The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed tasks. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, review closure records, the first import-center CSV upload API vertical, master-data import application into DB003 repositories, personnel-schedule import application into DB004 repositories, demand-forecast import application into DB005 repositories, actual-log import application into DB006 repositories, local comparison calculation into DB007 repositories, review closure write API into DB008 repositories, and persisted result query APIs over DB007/DB008 repositories. Q127 database foundation QA closeout has verified the local migration-backed foundation.
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed slice was `US627/IM007`, which adds a local review closure write API into DB008 without adding schema or migration changes.
+No ready product story is currently queued. The last completed slice was `US628/IM008`, which adds read APIs for persisted DB007 comparison runs and DB008 review cases without adding schema or migration changes.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 

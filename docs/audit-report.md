@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM008 持久化结果查询 API 收口
+
+#### 审计结论
+
+- `US628/IM008/R708` 已完成持久化结果查询 API 收口。
+- 新增 `/api/v1/comparison-runs/{run_id}`，按 run_id 返回 DB007 `ComparisonRunDetail`。
+- 新增 `/api/v1/review-cases/{case_id}`，按 case_id 返回 DB008 `ReviewCaseDetail`。
+- 查询不存在时返回 404，并使用稳定错误码 `COMPARISON_RUN_NOT_FOUND` 或 `REVIEW_CASE_NOT_FOUND`。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做现有 DB007/DB008 repository 的只读 API，不等于模板持久化、列表筛选、前端接入、权限、审批、导出或批量处理已完成。
+- 本轮不新增 schema/migration；后续如需查询分页、列表汇总、幂等重跑查询、模板保存或审计搜索，需要单独任务。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_result_query_api -v`：通过，6 个持久化结果查询 API 测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 103 个 backend unittest。
+
 ### 2026-05-28 - IM007 复核闭环写入到 DB008 repository
 
 #### 审计结论

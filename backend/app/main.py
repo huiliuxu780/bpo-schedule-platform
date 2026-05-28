@@ -380,6 +380,25 @@ def calculate_comparison_run_api(
         ) from exc
 
 
+@app.get(
+    "/api/v1/comparison-runs/{run_id}",
+    response_model=ComparisonRunDetail,
+)
+def get_comparison_run_api(run_id: str) -> ComparisonRunDetail:
+    detail = ComparisonPersistenceRepository().get_comparison_run(run_id)
+    if detail is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "COMPARISON_RUN_NOT_FOUND",
+                    "message": "对比计算结果不存在",
+                }
+            },
+        )
+    return detail
+
+
 @app.post(
     "/api/v1/review-cases/write-closure",
     response_model=ReviewCaseDetail,
@@ -399,6 +418,25 @@ def write_review_closure_api(
                 }
             },
         ) from exc
+
+
+@app.get(
+    "/api/v1/review-cases/{case_id}",
+    response_model=ReviewCaseDetail,
+)
+def get_review_case_api(case_id: str) -> ReviewCaseDetail:
+    detail = ReviewPersistenceRepository().get_review_case(case_id)
+    if detail is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "REVIEW_CASE_NOT_FOUND",
+                    "message": "复核记录不存在",
+                }
+            },
+        )
+    return detail
 
 
 @app.get("/api/v1/schedule-plans/{plan_id}", response_model=SchedulePlanDetail)

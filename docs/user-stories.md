@@ -2156,3 +2156,25 @@ dependencies:
   - "US626"
 status: "done"
 ```
+
+### US628 - 持久化结果查询 API 收口
+
+```yaml
+id: US628
+requirement_ids:
+  - R708
+module: "结果查询"
+role: "主管"
+story: "作为主管，我希望按对比 run_id 或复核 case_id 读回已持久化的详情，以便后续页面和接口可以消费真实闭环结果，而不是只依赖写入响应。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增 GET /api/v1/comparison-runs/{run_id}，返回 DB007 ComparisonRunDetail。"
+  - "新增 GET /api/v1/review-cases/{case_id}，返回 DB008 ReviewCaseDetail。"
+  - "查询不存在时返回 404 和稳定错误码。"
+  - "不新增 schema/migration，不做模板持久化、前端、外部集成、权限、审批、导出或批量操作。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US627"
+status: "done"
+```

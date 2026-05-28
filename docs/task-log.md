@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM008`
+- source_ids:
+  - `R708`
+- story_ids:
+  - `US628`
+- action: 实现持久化结果查询 API 收口。
+- status: `done`
+- notes: IM008 新增 DB007 comparison run 与 DB008 review case 的只读查询 API，按 id 返回已持久化详情或稳定 404 错误码。不新增依赖，不改 schema/migration，不做模板持久化、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM007`
 - source_ids:
   - `R707`

@@ -149,6 +149,10 @@ stories:
   US622: {file: "docs/user-stories.md", requirement_ids: ["R702"], task_ids: ["IM002"], archive_refs: []}
   US623: {file: "docs/user-stories.md", requirement_ids: ["R703"], task_ids: ["IM003"], archive_refs: []}
   US624: {file: "docs/user-stories.md", requirement_ids: ["R704"], task_ids: ["IM004"], archive_refs: []}
+  US625: {file: "docs/user-stories.md", requirement_ids: ["R705"], task_ids: ["IM005"], archive_refs: []}
+  US626: {file: "docs/user-stories.md", requirement_ids: ["R706"], task_ids: ["IM006"], archive_refs: []}
+  US627: {file: "docs/user-stories.md", requirement_ids: ["R707"], task_ids: ["IM007"], archive_refs: []}
+  US628: {file: "docs/user-stories.md", requirement_ids: ["R708"], task_ids: ["IM008"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -263,6 +267,10 @@ tasks:
   IM002: {file: "tasks/backlog.yaml", story_ids: ["US622"], gate: "database-persistence"}
   IM003: {file: "tasks/backlog.yaml", story_ids: ["US623"], gate: "database-persistence"}
   IM004: {file: "tasks/backlog.yaml", story_ids: ["US624"], gate: "database-persistence"}
+  IM005: {file: "tasks/backlog.yaml", story_ids: ["US625"], gate: "database-persistence"}
+  IM006: {file: "tasks/backlog.yaml", story_ids: ["US626"], gate: "database-persistence"}
+  IM007: {file: "tasks/backlog.yaml", story_ids: ["US627"], gate: "database-persistence"}
+  IM008: {file: "tasks/backlog.yaml", story_ids: ["US628"], gate: "database-persistence"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -427,6 +435,7 @@ requirements:
   R705: {file: "docs/raw-requirements.md", story_ids: ["US625"], task_ids: ["IM005"]}
   R706: {file: "docs/raw-requirements.md", story_ids: ["US626"], task_ids: ["IM006"]}
   R707: {file: "docs/raw-requirements.md", story_ids: ["US627"], task_ids: ["IM007"]}
+  R708: {file: "docs/raw-requirements.md", story_ids: ["US628"], task_ids: ["IM008"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

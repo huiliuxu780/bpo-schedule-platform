@@ -1144,3 +1144,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做本地 DB008 写入纵切；不新增 schema/migration，不做审批流、权限、批量关闭、导出、外部证据服务、生产公式、结算或收费因子。"
 ```
+
+### R708 - 持久化结果查询 API 收口
+
+```yaml
+id: R708
+module: "结果查询"
+description: "对比计算和复核闭环已经能写入 DB007/DB008 后，系统需要只读 API 按 run_id/case_id 读回已持久化详情，支撑后续页面或接口消费真实闭环结果。"
+source: "PM approved continuing with IM008 on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做本地只读查询 API；不新增 schema/migration，不做模板持久化、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```
