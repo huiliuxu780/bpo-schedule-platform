@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM007`
+- source_ids:
+  - `R707`
+- story_ids:
+  - `US627`
+- action: 实现复核闭环写入到 DB008 repository。
+- status: `done`
+- notes: IM007 新增本地 review closure 写入服务和 API，把 case、evidence、conclusion 和 closure 依次写入 DB008，并返回完整 ReviewCaseDetail。复用 DB008 来源结果、业务日、case 存在性和重复关闭校验。未新增依赖，未改 schema/migration，未做前端、真实外部证据服务、审批流、权限、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM006`
 - source_ids:
   - `R706`

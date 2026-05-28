@@ -690,6 +690,13 @@ class ReviewClosureRecord(BaseModel):
     closure_note: str | None = None
 
 
+class ReviewClosureWriteRequest(BaseModel):
+    case: ReviewCaseCreateRequest
+    evidence: list[ReviewEvidenceInput] = Field(default_factory=list)
+    conclusions: list[ReviewConclusionInput] = Field(default_factory=list)
+    closure: ReviewClosureInput | None = None
+
+
 class ReviewCaseDetail(BaseModel):
     case: ReviewCaseRecord
     evidence: list[ReviewEvidenceRecord]

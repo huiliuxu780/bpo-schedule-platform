@@ -2,6 +2,23 @@
 
 ## 2026-05-28
 
+### IM007 Review Closure Write API
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `f4dc45c`
+- remote_status: `continuing pushed origin/codex/import-center-api-vertical`
+- scope: Add local DB008 review closure write vertical: service orchestration, FastAPI route, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/app/review_closure.py`, `backend/app/main.py`, `backend/app/models.py`, `backend/tests/test_review_closure*.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no dependency files, migration files, frontend files, real external evidence service, auth, permission, approval workflow, export, batch, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: review closure write service, FastAPI write route, API and service tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target review closure write tests passed with 4 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed with 97 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM006 Comparison Calculation Trigger
 
 - branch_name: `codex/import-center-api-vertical`

@@ -14,6 +14,8 @@ from backend.app.master_data_import import apply_master_data_import_batch
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.personnel_schedule_import import apply_personnel_schedule_import_batch
 from backend.app.personnel_schedule_persistence import PersonnelSchedulePersistenceRepository
+from backend.app.review_closure import write_review_closure
+from backend.app.review_persistence import ReviewPersistenceRepository
 from backend.app.models import (
     ActualLogImportApplyResponse,
     ComparisonCalculationRequest,
@@ -25,6 +27,8 @@ from backend.app.models import (
     ImportBatchPersistenceDetail,
     MasterDataImportApplyResponse,
     PersonnelScheduleImportApplyResponse,
+    ReviewCaseDetail,
+    ReviewClosureWriteRequest,
     ScheduleRiskListResponse,
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
@@ -370,6 +374,27 @@ def calculate_comparison_run_api(
             detail={
                 "error": {
                     "code": "COMPARISON_CALCULATION_INVALID",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+
+@app.post(
+    "/api/v1/review-cases/write-closure",
+    response_model=ReviewCaseDetail,
+)
+def write_review_closure_api(
+    request: ReviewClosureWriteRequest,
+) -> ReviewCaseDetail:
+    try:
+        return write_review_closure(request, ReviewPersistenceRepository())
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "REVIEW_CLOSURE_INVALID",
                     "message": str(exc),
                 }
             },

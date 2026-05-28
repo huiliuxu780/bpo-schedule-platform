@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM007 复核闭环写入到 DB008 repository
+
+#### 审计结论
+
+- `US627/IM007/R707` 已完成本地复核闭环写入第一刀。
+- 新增 `/api/v1/review-cases/write-closure`，接收 case、可选 evidence、可选 conclusion、可选 closure。
+- 写入顺序为 case -> evidence -> conclusion -> closure，并返回完整 `ReviewCaseDetail`。
+- case 来源必须引用 DB007 `forecast_schedule` 或 `schedule_actual` result。
+- 应用后复用 DB008 来源结果、业务日、case 存在性和重复关闭校验。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做本地写入闭环，不等于审批流、权限、批量关闭、导出报表、外部证据服务或供应商隔离已完成。
+- 本轮不新增 schema/migration；后续如需幂等策略、状态流转约束、修改/撤销结论或复核任务分派，需要单独任务。
+- Auth、权限、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_review_closure_service backend.tests.test_review_closure_api -v`：通过，4 个复核闭环写入测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 97 个 backend unittest。
+
 ### 2026-05-28 - IM006 对比计算触发到 DB007 repository
 
 #### 审计结论

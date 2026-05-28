@@ -2133,3 +2133,26 @@ dependencies:
   - "US625"
 status: "done"
 ```
+
+### US627 - 复核闭环写入到 DB008 repository
+
+```yaml
+id: US627
+requirement_ids:
+  - R707
+module: "复核闭环"
+role: "主管"
+story: "作为主管，我希望把对比结果的复核 case、证据、结论和关闭记录写入系统，以便异常处理形成可追溯闭环。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增本地 FastAPI 复核闭环写入入口，接收 case、可选 evidence、可选 conclusion、可选 closure。"
+  - "case 来源必须引用 DB007 forecast_schedule 或 schedule_actual result。"
+  - "写入顺序为 case -> evidence -> conclusion -> closure，并返回完整 ReviewCaseDetail。"
+  - "复用 DB008 来源结果、业务日、case 存在性和重复关闭校验。"
+  - "不新增 schema/migration，不做审批流、权限、批量关闭、导出或外部证据服务。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US626"
+status: "done"
+```

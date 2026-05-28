@@ -3750,3 +3750,51 @@ tasks:
       - "需要自动排班、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM007
+    title: "复核闭环写入到 DB008 repository"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    allowed_files:
+      - "backend/app/review_closure.py"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/tests/test_review_closure.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/migrations/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "新增本地 FastAPI 复核闭环写入入口，接收 case、可选 evidence、可选 conclusion、可选 closure。"
+      - "case 来源必须引用 DB007 forecast_schedule 或 schedule_actual result。"
+      - "写入顺序为 case -> evidence -> conclusion -> closure，并返回完整 ReviewCaseDetail。"
+      - "复用 DB008 来源结果、业务日、case 存在性和重复关闭校验。"
+      - "不新增 schema/migration，不做审批流、权限、批量关闭、导出或外部证据服务。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration 变更"
+      - "需要真实外部证据服务或 CORN、HR、WFM 集成"
+      - "需要认证、权限、供应商隔离、审批、导出或批量操作"
+      - "需要自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

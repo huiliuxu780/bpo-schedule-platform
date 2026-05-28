@@ -1131,3 +1131,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做本地计算触发和 DB007 结果写入；不新增 schema/migration，不做外部 CORN/HR/WFM 接入，不做生产状态码/公式定版、权限、审批、导出、批量、自动排班、结算或收费因子。"
 ```
+
+### R707 - 复核闭环写入到 DB008 repository
+
+```yaml
+id: R707
+module: "复核闭环"
+description: "对比计算已经能生成 DB007 异常结果后，系统需要一个本地复核闭环写入 API，把主管复核 case、证据、结论和关闭记录写入 DB008 repository，形成可追溯处理记录。"
+source: "PM approved continuing with IM007 on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做本地 DB008 写入纵切；不新增 schema/migration，不做审批流、权限、批量关闭、导出、外部证据服务、生产公式、结算或收费因子。"
+```
