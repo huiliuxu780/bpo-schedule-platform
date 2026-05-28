@@ -29,6 +29,36 @@
 
 ## Stories
 
+### US615 - DB004 人员级排班持久化基础
+
+```yaml
+id: US615
+requirement_ids:
+  - R677
+  - R678
+  - R679
+  - R680
+task_ids:
+  - DB004
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望人员级排班完成版本、明细、班次引用和 0.5h 展开持久化，以便后续预测对比和登录状态对比有稳定排班基线。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 schedule versions、shift types、personnel schedule details 和 half-hour intervals。"
+  - "校验 import version、employee、workplace、project、skill 和 shift type 引用。"
+  - "测试覆盖 0.5h 展开、冻结/缺失引用拒绝和无效时间范围拒绝。"
+  - "不实现需求预测、登录/状态日志、对比结果、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB003
+status: "done"
+completed_scope:
+  - "持久化 schedule versions、shift types、personnel schedule details 和 half-hour intervals。"
+  - "校验 import version、employee、workplace、project、skill、employee binding 和 shift type 引用。"
+  - "测试覆盖 0.5h 展开、冻结班次类型拒绝和无效时间范围拒绝。"
+```
+
 ### US614 - DB003 主数据持久化基础
 
 ```yaml

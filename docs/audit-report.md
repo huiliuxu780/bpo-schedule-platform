@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - DB004 人员级排班持久化基础
+
+#### 审计结论
+
+- `US615/DB004/R677-R680` 已完成人员级排班持久化基础。
+- 新增 personnel schedule SQLAlchemy repository 和 Alembic migration，覆盖 schedule versions、shift types、personnel schedule details 和 half-hour intervals。
+- 排班明细会校验 import version、employee、workplace、project、skill、employee binding 和 shift type 引用，并将排班时段展开为 0.5h 区间。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB004 只提供人员级排班落库和 0.5h 展开，不等于排班维护 UI、发布/冻结流程、预测对比、登录状态对比或真实导入流程已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_personnel_schedule_persistence -v`：通过，3 个 DB004 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db004.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import persistence、master data 和 personnel schedule 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，25 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 25 个 backend unittest。
+
 ### 2026-05-28 - DB003 主数据持久化基础
 
 #### 审计结论

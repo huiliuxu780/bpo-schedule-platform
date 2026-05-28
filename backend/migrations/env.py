@@ -6,6 +6,7 @@ from sqlalchemy import engine_from_config, pool
 
 from backend.app.import_persistence import Base
 from backend.app import master_data_persistence  # noqa: F401
+from backend.app import personnel_schedule_persistence  # noqa: F401
 
 config = context.config
 

@@ -139,6 +139,7 @@ stories:
   US612: {file: "docs/user-stories.md", requirement_ids: ["R665", "R666", "R667", "R668"], task_ids: ["DB001"], archive_refs: []}
   US613: {file: "docs/user-stories.md", requirement_ids: ["R669", "R670", "R671", "R672"], task_ids: ["DB002"], archive_refs: []}
   US614: {file: "docs/user-stories.md", requirement_ids: ["R673", "R674", "R675", "R676"], task_ids: ["DB003"], archive_refs: []}
+  US615: {file: "docs/user-stories.md", requirement_ids: ["R677", "R678", "R679", "R680"], task_ids: ["DB004"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -243,6 +244,7 @@ tasks:
   DB001: {file: "tasks/backlog.yaml", story_ids: ["US612"], gate: "database-planning"}
   DB002: {file: "tasks/backlog.yaml", story_ids: ["US613"], gate: "database-persistence"}
   DB003: {file: "tasks/backlog.yaml", story_ids: ["US614"], gate: "database-persistence"}
+  DB004: {file: "tasks/backlog.yaml", story_ids: ["US615"], gate: "database-persistence"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -376,6 +378,10 @@ requirements:
   R674: {file: "docs/raw-requirements.md", story_ids: ["US614"], task_ids: ["DB003"]}
   R675: {file: "docs/raw-requirements.md", story_ids: ["US614"], task_ids: ["DB003"]}
   R676: {file: "docs/raw-requirements.md", story_ids: ["US614"], task_ids: ["DB003"]}
+  R677: {file: "docs/raw-requirements.md", story_ids: ["US615"], task_ids: ["DB004"]}
+  R678: {file: "docs/raw-requirements.md", story_ids: ["US615"], task_ids: ["DB004"]}
+  R679: {file: "docs/raw-requirements.md", story_ids: ["US615"], task_ids: ["DB004"]}
+  R680: {file: "docs/raw-requirements.md", story_ids: ["US615"], task_ids: ["DB004"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

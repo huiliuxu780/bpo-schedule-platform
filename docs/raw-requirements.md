@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R677-R680 - DB004 人员级排班持久化基础
+
+```yaml
+requirements:
+  - id: R677
+    module: "生产持久化"
+    description: "人员级排班需要先落库排班版本和人员排班明细，并关联 DB002 导入版本。"
+  - id: R678
+    module: "生产持久化"
+    description: "人员排班明细需要引用主数据员工、项目、职场和技能，并校验引用存在、未冻结且有效。"
+  - id: R679
+    module: "生产持久化"
+    description: "人员排班需要引用班次类型，并把排班明细展开为 0.5h 区间记录。"
+  - id: R680
+    module: "生产持久化"
+    description: "DB004 不应扩展到需求预测、登录状态、对比计算、异常复核、权限、审批、导出、批量或生产公式。"
+source: "DB003 master data foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只授权人员级排班持久化基础：schedule versions, personnel schedule details, shift types, half-hour expansion, and import/master-data reference checks."
+```
+
 ### R673-R676 - DB003 主数据持久化基础
 
 ```yaml

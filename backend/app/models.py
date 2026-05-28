@@ -269,3 +269,71 @@ class EmployeeBindingRecord(BaseModel):
     effective_from: str
     effective_to: str
     batch_id: str
+
+
+class ShiftTypeInput(BaseModel):
+    shift_type_id: str
+    shift_type_name: str
+    status: MasterDataStatus
+    start_time: str
+    end_time: str
+    effective_from: str
+    effective_to: str
+
+
+class PersonnelScheduleDetailInput(BaseModel):
+    schedule_detail_id: str
+    employee_id: str
+    workplace_id: str
+    project_id: str
+    skill_id: str
+    shift_type_id: str
+    schedule_date: str
+    start_time: str
+    end_time: str
+
+
+class PersonnelScheduleVersionRequest(BaseModel):
+    schedule_version_id: str
+    import_version_id: str
+    business_date_from: str
+    business_date_to: str
+    shift_types: list[ShiftTypeInput] = Field(default_factory=list)
+    details: list[PersonnelScheduleDetailInput] = Field(default_factory=list)
+
+
+class PersonnelScheduleVersionRecord(BaseModel):
+    schedule_version_id: str
+    import_version_id: str
+    business_date_from: str
+    business_date_to: str
+    total_details: int
+
+
+class PersonnelScheduleDetailRecord(BaseModel):
+    schedule_detail_id: str
+    schedule_version_id: str
+    employee_id: str
+    workplace_id: str
+    project_id: str
+    skill_id: str
+    shift_type_id: str
+    schedule_date: str
+    start_time: str
+    end_time: str
+
+
+class PersonnelScheduleIntervalRecord(BaseModel):
+    interval_id: int
+    schedule_detail_id: str
+    schedule_version_id: str
+    employee_id: str
+    interval_date: str
+    interval_start: str
+    interval_end: str
+
+
+class PersonnelScheduleVersionDetail(BaseModel):
+    version: PersonnelScheduleVersionRecord
+    details: list[PersonnelScheduleDetailRecord]
+    intervals: list[PersonnelScheduleIntervalRecord]

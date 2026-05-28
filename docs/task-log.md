@@ -19,6 +19,20 @@
 
 ### 2026-05-28
 
+- task_id: `DB004`
+- source_ids:
+  - `R677`
+  - `R678`
+  - `R679`
+  - `R680`
+- story_ids:
+  - `US615`
+- action: 实现人员级排班持久化基础。
+- status: `done`
+- notes: DB004 新增 schedule versions、shift types、personnel schedule details 和 half-hour intervals 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖 0.5h 展开、跨 repository 读取、冻结班次类型拒绝和无效时间范围拒绝。未扩展到需求预测、登录/状态日志、对比结果、复核闭环、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `DB003`
 - source_ids:
   - `R673`

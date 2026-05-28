@@ -127,15 +127,15 @@ git commit -m "DB003 add master data persistence"
 - Implementation files: to be confirmed after DB003 lands.
 - Tests: backend persistence tests for schedule versions, details, shift references, and half-hour expansion records.
 
-- [ ] **Step 1: Write failing tests for personnel schedule versions**
+- [x] **Step 1: Write failing tests for personnel schedule versions**
 
 Tests must cover shift-type reference checks, invalid time ranges, generated half-hour intervals, and version references.
 
-- [ ] **Step 2: Implement personnel schedule persistence**
+- [x] **Step 2: Implement personnel schedule persistence**
 
 Persist schedule versions, schedule details, and half-hour expansion output.
 
-- [ ] **Step 3: Verify and commit**
+- [x] **Step 3: Verify and commit**
 
 Run the DB task verification commands and commit with:
 
