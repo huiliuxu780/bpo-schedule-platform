@@ -153,7 +153,7 @@ git commit -m "DB004 add personnel schedule persistence"
 
 Keep this slice focused on forecast versions, forecast interval rows, and import source references.
 
-- [ ] **Step 2: DB006 persist login and status logs**
+- [x] **Step 2: DB006 persist login and status logs**
 
 Keep this slice focused on login events, status intervals, business-day normalization, timezone checks, and status dictionary mapping.
 

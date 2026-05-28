@@ -2,22 +2,40 @@
 
 ## 2026-05-28
 
-### DB005 Demand Forecast Persistence
+### DB006 Actual Log Persistence
 
-- branch_name: `codex/db005-demand-forecast-persistence`
+- branch_name: `codex/db006-actual-log-persistence`
 - base_main_commit: `a3a134c`
-- base_chain_commit: `bc971ea`
+- base_chain_commit: `e40d548`
 - remote_status: `not_pushed`
-- scope: Implement the confirmed demand forecast persistence foundation only: forecast versions, forecast interval rows, skill/level demand alignment, import source references, version change records, Alembic migration, backend tests, and traceability cleanup.
+- scope: Implement the confirmed login/status log persistence foundation only: login/logout events, status dictionary, status intervals, business-day splitting, timezone checks, import/master-data reference checks, Alembic migration, backend tests, and traceability cleanup.
 - allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
-- scope_diff_check: backend forecast models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
-- check_result: target DB005 unittest passed after RED failure; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 28 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- scope_diff_check: backend actual log models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: worker subagent target DB006 unittest passed after RED failure; main worker added missing login employee and unknown status checks; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 34 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
 - local_commit_sha: to be reported in Done Report after local commit creation.
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM confirmation after verified local commit`
+- blocked_reason: `N/A`
+
+### DB005 Demand Forecast Persistence
+
+- branch_name: `codex/db005-demand-forecast-persistence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `bc971ea`
+- remote_status: `pushed to origin/codex/db005-demand-forecast-persistence after PM confirmation`
+- scope: Implement the confirmed demand forecast persistence foundation only: forecast versions, forecast interval rows, skill/level demand alignment, import source references, version change records, Alembic migration, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend forecast models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target DB005 unittest passed after RED failure; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 28 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `e40d548`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
 - blocked_reason: `N/A`
 
 ### DB004 Personnel Schedule Persistence

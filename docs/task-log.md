@@ -19,6 +19,20 @@
 
 ### 2026-05-28
 
+- task_id: `DB006`
+- source_ids:
+  - `R685`
+  - `R686`
+  - `R687`
+  - `R688`
+- story_ids:
+  - `US617`
+- action: 实现登录/状态日志持久化基础。
+- status: `done`
+- notes: DB006 新增 actual login events、actual status dictionary 和 actual status intervals 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖登录/登出事件读取、跨天业务日切分、Asia/Shanghai 时区校验、冻结员工拒绝和未知状态拒绝。未扩展到排班/预测对比、复核闭环、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `DB005`
 - source_ids:
   - `R681`

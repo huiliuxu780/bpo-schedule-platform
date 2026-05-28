@@ -17,6 +17,29 @@
 
 ## Requirements
 
+### R685-R688 - DB006 登录/状态日志持久化基础
+
+```yaml
+requirements:
+  - id: R685
+    module: "生产持久化"
+    description: "登录日志需要落库登录、登出事件，并关联 DB002 导入版本和 DB003 主数据员工。"
+  - id: R686
+    module: "生产持久化"
+    description: "状态日志需要落库状态区间，支持跨天切分、业务日和时区校验。"
+  - id: R687
+    module: "生产持久化"
+    description: "状态日志需要状态字典映射，将外部状态码映射为内部状态分类。"
+  - id: R688
+    module: "生产持久化"
+    description: "DB006 不应扩展到排班对比、预测对比、异常复核、权限、审批、导出、批量或生产公式。"
+source: "DB005 demand forecast foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只授权登录/状态日志持久化基础：login events, logout events, status intervals, business-day normalization, timezone checks, and status dictionary mapping."
+```
+
 ### R681-R684 - DB005 需求预测持久化基础
 
 ```yaml

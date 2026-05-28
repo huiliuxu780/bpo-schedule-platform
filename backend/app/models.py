@@ -394,3 +394,67 @@ class ForecastVersionDetail(BaseModel):
     version: ForecastVersionRecord
     intervals: list[ForecastIntervalRecord]
     changes: list[ForecastVersionChangeRecord]
+
+
+ActualLoginEventType = Literal["login", "logout"]
+
+
+class ActualLoginEventInput(BaseModel):
+    event_id: str
+    import_version_id: str
+    employee_id: str
+    event_type: ActualLoginEventType
+    event_at: str
+    timezone: str
+
+
+class ActualLoginEventRecord(BaseModel):
+    event_id: str
+    import_version_id: str
+    employee_id: str
+    event_type: ActualLoginEventType
+    event_at: str
+    timezone: str
+
+
+class ActualStatusDictionaryInput(BaseModel):
+    external_status_code: str
+    normalized_status: str
+    category: str
+    is_productive: bool
+
+
+class ActualStatusDictionaryRecord(BaseModel):
+    external_status_code: str
+    normalized_status: str
+    category: str
+    is_productive: bool
+
+
+class ActualStatusIntervalInput(BaseModel):
+    interval_id: str
+    employee_id: str
+    external_status_code: str
+    start_at: str
+    end_at: str
+    timezone: str
+
+
+class ActualStatusIntervalImportRequest(BaseModel):
+    import_version_id: str
+    intervals: list[ActualStatusIntervalInput] = Field(default_factory=list)
+
+
+class ActualStatusIntervalRecord(BaseModel):
+    interval_row_id: int
+    source_interval_id: str
+    import_version_id: str
+    employee_id: str
+    business_date: str
+    interval_start: str
+    interval_end: str
+    timezone: str
+    external_status_code: str
+    normalized_status: str
+    category: str
+    is_productive: bool

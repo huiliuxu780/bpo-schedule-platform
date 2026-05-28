@@ -29,6 +29,36 @@
 
 ## Stories
 
+### US617 - DB006 登录/状态日志持久化基础
+
+```yaml
+id: US617
+requirement_ids:
+  - R685
+  - R686
+  - R687
+  - R688
+task_ids:
+  - DB006
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望登录和状态日志完成事件、区间、业务日和状态字典持久化，以便后续排班 vs 实际状态对比有稳定实际基线。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 login events、status dictionary 和 status intervals。"
+  - "校验 import version、employee 和状态字典引用。"
+  - "测试覆盖跨天区间切分、业务日、时区校验和未知状态拒绝。"
+  - "不实现预测/排班对比、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB005
+status: "done"
+completed_scope:
+  - "持久化 login events、status dictionary 和 status intervals。"
+  - "校验 login_log/status_log import version、employee 和状态字典引用。"
+  - "测试覆盖跨天业务日切分、Asia/Shanghai 时区校验、冻结员工拒绝和未知状态拒绝。"
+```
+
 ### US616 - DB005 需求预测持久化基础
 
 ```yaml

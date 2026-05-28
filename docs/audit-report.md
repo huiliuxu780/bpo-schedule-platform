@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-28 - DB006 登录/状态日志持久化基础
+
+#### 审计结论
+
+- `US617/DB006/R685-R688` 已完成登录/状态日志持久化基础。
+- 新增 actual log SQLAlchemy repository 和 Alembic migration，覆盖 actual login events、actual status dictionary 和 actual status intervals。
+- 状态区间会校验 `status_log` import version、employee、状态字典和 Asia/Shanghai 时区，并按业务日切分跨天区间。
+- login event 会校验 `login_log` import version、employee 和 Asia/Shanghai 时区。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB006 只提供实际登录/状态日志落库，不等于排班 vs 实际对比、异常生成、复核闭环或真实 CORN 接入已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_actual_log_persistence -v`：通过，6 个 DB006 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db006.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import、master data、personnel schedule、forecast 和 actual log 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，34 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 34 个 backend unittest。
+
 ### 2026-05-28 - DB005 需求预测持久化基础
 
 #### 审计结论
