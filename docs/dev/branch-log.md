@@ -13,11 +13,11 @@
 - scope_diff_check: backend database foundation QA test, QA closeout report, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
 - check_result: target Q127 unittest passed; backend unittest discovery passed with 49 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
 - local_commit_sha: `a86dc3d`
-- integration_status: `not_started`
+- integration_status: `ready_for_review`
 - integration_method: `draft PR`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pushed after PM confirmation; draft PR opened at https://github.com/huiliuxu780/bpo-schedule-platform/pull/1`
+- push_decision: `pushed after PM confirmation; PR opened and marked ready for review at https://github.com/huiliuxu780/bpo-schedule-platform/pull/1`
 - blocked_reason: `N/A`
 
 ### DB008 Review Closure Persistence
