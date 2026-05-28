@@ -45,6 +45,33 @@ class MasterDataImportApiTest(unittest.TestCase):
             self.assertEqual(response.skills, 1)
             self.assertEqual(response.employees, 1)
             self.assertEqual(response.bindings, 1)
+            self.assertEqual(response.applied_status, "applied")
+
+    def test_apply_master_data_import_returns_already_applied_on_duplicate_batch(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'master-data-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            master_data_repository = MasterDataPersistenceRepository(database_url)
+            master_data_repository.init_schema()
+            _create_master_data_batch(import_repository, "BATCH-MD-APPLY-IDEMPOTENT")
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.MasterDataPersistenceRepository",
+                    return_value=master_data_repository,
+                ),
+            ):
+                first = apply_master_data_import("BATCH-MD-APPLY-IDEMPOTENT")
+                second = apply_master_data_import("BATCH-MD-APPLY-IDEMPOTENT")
+
+        self.assertEqual(first.applied_status, "applied")
+        self.assertEqual(second.applied_status, "already_applied")
+        self.assertEqual(second.bindings, 1)
 
     def test_apply_master_data_import_returns_404_for_missing_batch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

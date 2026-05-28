@@ -1,6 +1,6 @@
 from typing import TypeVar
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
 
 from backend.app.import_persistence import Base, build_engine
@@ -184,6 +184,20 @@ class MasterDataPersistenceRepository:
             for binding in request.bindings:
                 self._validate_binding(session, binding)
                 session.merge(_binding_entity(binding, request.batch_id))
+
+    def has_snapshot_batch(self, batch_id: str) -> bool:
+        with self.session_factory() as session:
+            checks = [
+                select(SupplierEntity.supplier_id).where(SupplierEntity.batch_id == batch_id),
+                select(WorkplaceEntity.workplace_id).where(WorkplaceEntity.batch_id == batch_id),
+                select(ProjectEntity.project_id).where(ProjectEntity.batch_id == batch_id),
+                select(SkillEntity.skill_id).where(SkillEntity.batch_id == batch_id),
+                select(EmployeeEntity.employee_id).where(EmployeeEntity.batch_id == batch_id),
+                select(EmployeeBindingEntity.binding_id).where(
+                    EmployeeBindingEntity.batch_id == batch_id
+                ),
+            ]
+            return any(session.scalar(statement) is not None for statement in checks)
 
     def get_employee_binding(self, binding_id: str) -> EmployeeBindingRecord | None:
         with self.session_factory() as session:

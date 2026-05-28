@@ -118,6 +118,7 @@ class MasterDataImportServiceTest(unittest.TestCase):
                 summary,
                 {
                     "batch_id": "BATCH-MD-IMPORT-001",
+                    "applied_status": "applied",
                     "suppliers": 1,
                     "workplaces": 1,
                     "projects": 1,
@@ -132,6 +133,44 @@ class MasterDataImportServiceTest(unittest.TestCase):
             self.assertEqual(binding.employee_id, "A-1001")
             self.assertEqual(binding.supplier_id, "SUP-A")
             self.assertEqual(binding.batch_id, "BATCH-MD-IMPORT-001")
+
+    def test_duplicate_batch_returns_already_applied_without_snapshot_write(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'master_data.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            detail = import_repository.create_import_batch(
+                ImportBatchCreateRequest(
+                    batch_id="BATCH-MD-IMPORT-IDEMPOTENT",
+                    file_name="master_data.csv",
+                    file_type="master_data",
+                    uploaded_by="数据管理员",
+                    business_date_from="2026-05-01",
+                    business_date_to="2026-12-31",
+                    rows=[
+                        _success_row(
+                            1,
+                            {
+                                "record_type": "supplier",
+                                "supplier_id": "SUP-A",
+                                "supplier_name": "供应商 A",
+                                "status": "active",
+                                "effective_from": "2026-05-01",
+                                "effective_to": "2026-12-31",
+                            },
+                        )
+                    ],
+                )
+            )
+            master_repository = CountingMasterDataRepository(database_url)
+            master_repository.init_schema()
+
+            first = apply_master_data_import_batch(detail, master_repository)
+            second = apply_master_data_import_batch(detail, master_repository)
+
+        self.assertEqual(first["applied_status"], "applied")
+        self.assertEqual(second["applied_status"], "already_applied")
+        self.assertEqual(master_repository.create_snapshot_calls, 1)
 
     def test_non_master_data_batch_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -233,6 +272,16 @@ def _detail_with_standard_fields(
 
 def _empty_master_repository() -> MasterDataPersistenceRepository:
     return MasterDataPersistenceRepository("sqlite+pysqlite:///:memory:")
+
+
+class CountingMasterDataRepository(MasterDataPersistenceRepository):
+    def __init__(self, database_url: str):
+        super().__init__(database_url)
+        self.create_snapshot_calls = 0
+
+    def create_snapshot(self, request):
+        self.create_snapshot_calls += 1
+        return super().create_snapshot(request)
 
 
 if __name__ == "__main__":

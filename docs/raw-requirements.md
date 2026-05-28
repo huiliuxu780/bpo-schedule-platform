@@ -1183,3 +1183,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做 comparison calculate 与 review closure write 的天然业务键幂等；不新增 schema/migration，不做导入 apply 重跑、幂等表、任务队列、前端、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R711 - 主数据导入应用幂等重跑保护第一刀
+
+```yaml
+id: R711
+module: "导入中心"
+description: "主数据导入应用已经能把 master_data 成功行写入 DB003 后，需要先保护同一批次重复应用：已应用批次应直接返回已有应用摘要，避免重复写入逻辑和操作噪音。"
+source: "PM approved continuing with IM011 on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做 master_data apply 幂等；不新增 schema/migration，不做其他导入类型幂等、幂等表、任务队列、前端、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

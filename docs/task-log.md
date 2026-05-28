@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM011`
+- source_ids:
+  - `R711`
+- story_ids:
+  - `US631`
+- action: 实现主数据导入应用幂等重跑保护第一刀。
+- status: `done`
+- notes: IM011 新增同一 master_data batch 重复调用 apply-master-data 时返回 already_applied 摘要，不再执行 master data snapshot 写入；首次应用返回 applied。不新增依赖，不改 schema/migration，不做 personnel_schedule、forecast、actual_logs 幂等，不做幂等表、任务队列、前端、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM010`
 - source_ids:
   - `R710`

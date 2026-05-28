@@ -276,6 +276,7 @@ class EmployeeBindingRecord(BaseModel):
 
 class MasterDataImportApplyResponse(BaseModel):
     batch_id: str
+    applied_status: Literal["applied", "already_applied"]
     suppliers: int = Field(ge=0)
     workplaces: int = Field(ge=0)
     projects: int = Field(ge=0)

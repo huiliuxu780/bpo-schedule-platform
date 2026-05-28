@@ -2224,3 +2224,26 @@ dependencies:
   - "US629"
 status: "done"
 ```
+
+### US631 - 主数据导入应用幂等重跑保护第一刀
+
+```yaml
+id: US631
+requirement_ids:
+  - R711
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望同一个 master_data 导入批次重复应用时系统直接返回已应用摘要，以免重复点击造成重复写入逻辑和操作噪音。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "首次调用 apply-master-data 返回 applied_status=applied。"
+  - "同一 master_data batch 已应用后再次调用返回 applied_status=already_applied。"
+  - "重复调用不再执行 master data snapshot 写入。"
+  - "保留非 master_data 批次、缺失字段和引用校验。"
+  - "不新增 schema/migration，不做其他导入类型幂等、幂等表、任务队列、权限、审批、导出或批量操作。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US630"
+status: "done"
+```

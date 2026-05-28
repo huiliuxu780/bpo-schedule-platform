@@ -38,10 +38,17 @@ def apply_master_data_import_batch(
             continue
         _append_success_row(snapshot, row)
 
-    repository.create_snapshot(snapshot)
+    applied_status = (
+        "already_applied"
+        if repository.has_snapshot_batch(detail.batch.batch_id)
+        else "applied"
+    )
+    if applied_status == "applied":
+        repository.create_snapshot(snapshot)
 
     return {
         "batch_id": detail.batch.batch_id,
+        "applied_status": applied_status,
         "suppliers": len(snapshot.suppliers),
         "workplaces": len(snapshot.workplaces),
         "projects": len(snapshot.projects),

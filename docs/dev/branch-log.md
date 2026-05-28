@@ -2,6 +2,23 @@
 
 ## 2026-05-28
 
+### IM011 Master Data Apply Idempotency
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `360a4f9`
+- remote_status: `continuing from origin/codex/import-center-api-vertical`
+- scope: Add first import-apply idempotency guard for master_data batches: existing-batch application detection, response status, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/app/master_data_import.py`, `backend/app/master_data_persistence.py`, `backend/app/models.py`, `backend/app/main.py`, `backend/tests/test_master_data_import*.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no dependency files, migration files, frontend files, idempotency table, task queue, other import apply type, real external integration, auth, permission, approval, export, batch, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: master_data apply response status, DB003 batch-applied detection, duplicate apply no-write guard, API/service tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target master_data import apply tests passed with 9 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed with 113 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM010 Idempotent Rerun Guards
 
 - branch_name: `codex/import-center-api-vertical`
