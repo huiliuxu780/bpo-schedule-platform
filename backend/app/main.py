@@ -12,6 +12,7 @@ from backend.app.import_application_summary import build_import_application_summ
 from backend.app.import_mapping_persistence import (
     get_import_mapping_persistence_repository,
 )
+from backend.app.import_readiness import build_import_apply_readiness
 from backend.app.import_upload import build_import_batch_from_csv
 from backend.app.import_persistence import get_import_persistence_repository
 from backend.app.master_data_import import apply_master_data_import_batch
@@ -33,6 +34,7 @@ from backend.app.models import (
     ImportBatchCreateRequest,
     ImportFileType,
     ImportApplicationStatus,
+    ImportApplyReadinessResponse,
     ImportBatchListResponse,
     ImportBatchListRow,
     ImportBatchPersistenceDetail,
@@ -283,6 +285,33 @@ def get_import_application_summary(batch_id: str) -> ImportBatchApplicationSumma
         forecast_repository=ForecastPersistenceRepository(),
         actual_repository=ActualLogPersistenceRepository(),
     )
+
+
+@app.get(
+    "/api/v1/import-batches/{batch_id}/apply-readiness",
+    response_model=ImportApplyReadinessResponse,
+)
+def get_import_apply_readiness(batch_id: str) -> ImportApplyReadinessResponse:
+    batch = get_import_persistence_repository().get_import_batch(batch_id)
+    if batch is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "IMPORT_BATCH_NOT_FOUND",
+                    "message": "导入批次不存在",
+                }
+            },
+        )
+
+    application_summary = build_import_application_summary(
+        batch,
+        master_data_repository=MasterDataPersistenceRepository(),
+        schedule_repository=PersonnelSchedulePersistenceRepository(),
+        forecast_repository=ForecastPersistenceRepository(),
+        actual_repository=ActualLogPersistenceRepository(),
+    )
+    return build_import_apply_readiness(batch, application_summary)
 
 
 @app.post(

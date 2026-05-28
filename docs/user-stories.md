@@ -2432,3 +2432,26 @@ dependencies:
   - "US638"
 status: "done"
 ```
+
+### US640 - 导入批次应用前就绪校验第一刀
+
+```yaml
+id: US640
+requirement_ids:
+  - R720
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在应用导入批次前看到明确的就绪状态和阻塞原因，以便先处理失败行、缺失版本或已应用批次，而不是盲目点击应用。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增导入批次应用前只读就绪校验 API。"
+  - "返回 batch_id、file_type、readiness_status、阻塞原因、失败行数、成功行数、版本数和应用状态摘要。"
+  - "存在 failed rows、无成功行、无导入版本、已应用批次时返回 blocked。"
+  - "不存在批次时返回稳定错误码。"
+  - "不新增 schema/migration，不做自动 apply、前端、深度主数据校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US639"
+status: "done"
+```

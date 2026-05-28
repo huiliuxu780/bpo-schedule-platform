@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM020`
+- source_ids:
+  - `R720`
+- story_ids:
+  - `US640`
+- action: 实现导入批次应用前就绪校验第一刀。
+- status: `done`
+- notes: IM020 新增只读 `GET /api/v1/import-batches/{batch_id}/apply-readiness`，返回 ready/blocked、阻塞原因、失败/成功/警告行数、版本数和应用状态摘要。未新增 schema/migration，不做自动 apply、前端、深度主数据校验、批量、外部集成、权限、审批、导出、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM019`
 - source_ids:
   - `R719`

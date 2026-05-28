@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM020 导入批次应用前就绪校验第一刀
+
+#### 审计结论
+
+- `US640/IM020/R720` 已完成导入批次应用前就绪校验第一刀。
+- 新增只读 `GET /api/v1/import-batches/{batch_id}/apply-readiness`。
+- 返回 `batch_id`、`file_type`、`readiness_status`、阻塞原因、行数、版本数和应用状态摘要。
+- 批次存在失败行、无成功行、无导入版本或已应用时返回 `blocked`。
+- 查询不存在 batch 返回稳定 `IMPORT_BATCH_NOT_FOUND`。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做浅层应用前判断，不做主数据引用、班次规则、时区、跨天等深度业务校验。
+- 本轮不自动触发 apply，也不产生 apply 任务表或审批流。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_import_readiness_api -v`：通过，5 个 apply-readiness API 测试通过。
+- `.venv/bin/python -m unittest backend.tests.test_import_batch_list_api backend.tests.test_import_application_summary_api backend.tests.test_import_row_correction_api backend.tests.test_import_mapping_api backend.tests.test_import_upload_api -v`：通过，25 个相邻导入 API 回归测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 154 个 backend unittest。
+
 ### 2026-05-29 - IM019 字段映射模板更新与停用第一刀
 
 #### 审计结论

@@ -1300,3 +1300,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做字段映射模板更新和软停用；不新增 schema/migration，不做前端、物理删除、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
 ```
+
+### R720 - 导入批次应用前就绪校验第一刀
+
+```yaml
+id: R720
+module: "导入中心"
+description: "导入中心已经具备上传、失败行修正、批次状态列表、模板维护和应用摘要后，需要一个应用前只读就绪校验，明确哪些批次可以应用，哪些批次因为失败行、无成功行、缺导入版本或已应用而不应继续执行。"
+source: "PM requested push then continue import-center production usability on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做应用前只读就绪判断；不新增 schema/migration，不做自动 apply、前端、深度主数据校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+```

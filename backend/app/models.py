@@ -17,6 +17,7 @@ ImportFileType = Literal[
 ImportRowStatus = Literal["success", "failed", "warning"]
 ImportProcessingStatus = Literal["completed", "completed_with_errors"]
 ImportApplicationStatus = Literal["not_applied", "applied"]
+ImportReadinessStatus = Literal["ready", "blocked"]
 MasterDataStatus = Literal["active", "frozen", "inactive"]
 ComparisonType = Literal["forecast_vs_schedule", "schedule_vs_actual"]
 ComparisonRunStatus = Literal["completed", "failed"]
@@ -285,6 +286,27 @@ class ImportFieldMappingTemplateListResponse(BaseModel):
 class ImportBatchApplicationSummary(BaseModel):
     batch_id: str
     file_type: ImportFileType
+    application_status: ImportApplicationStatus
+    application_target: str
+    import_version_id: str | None = None
+    applied_record_count: int = Field(ge=0)
+
+
+class ImportApplyReadinessBlocker(BaseModel):
+    code: str
+    message: str
+
+
+class ImportApplyReadinessResponse(BaseModel):
+    batch_id: str
+    file_type: ImportFileType
+    readiness_status: ImportReadinessStatus
+    blockers: list[ImportApplyReadinessBlocker]
+    total_rows: int = Field(ge=0)
+    success_rows: int = Field(ge=0)
+    failed_rows: int = Field(ge=0)
+    warning_rows: int = Field(ge=0)
+    version_count: int = Field(ge=0)
     application_status: ImportApplicationStatus
     application_target: str
     import_version_id: str | None = None
