@@ -11,6 +11,7 @@ from backend.app.models import (
     ImportBatchCreateRequest,
     ImportBatchPersistenceDetail,
     ImportBatchRecord,
+    ImportBatchRowCorrectionRequest,
     ImportBatchRowResultRecord,
     ImportBatchVersionRecord,
 )
@@ -205,6 +206,68 @@ class ImportPersistenceRepository:
             versions=[_version_record(version) for version in versions],
         )
 
+    def correct_failed_row(
+        self,
+        batch_id: str,
+        request: ImportBatchRowCorrectionRequest,
+    ) -> ImportBatchPersistenceDetail:
+        source_key = _required_source_key(request.standard_fields)
+        with self.session_factory.begin() as session:
+            batch = session.get(ImportBatchEntity, batch_id)
+            if batch is None:
+                raise ValueError(f"import batch does not exist: {batch_id}")
+
+            row = session.scalars(
+                select(ImportRowResultEntity).where(
+                    ImportRowResultEntity.batch_id == batch_id,
+                    ImportRowResultEntity.row_number == request.row_number,
+                )
+            ).first()
+            if row is None:
+                raise ValueError(
+                    f"import row does not exist: batch_id={batch_id}, "
+                    f"row_number={request.row_number}"
+                )
+            if row.row_status != "failed":
+                raise ValueError(
+                    f"import row is not failed: batch_id={batch_id}, "
+                    f"row_number={request.row_number}"
+                )
+
+            raw_data = dict(row.raw_data)
+            raw_data["standard_fields"] = dict(request.standard_fields)
+            raw_data["correction"] = {
+                "previous_error_field": row.error_field,
+                "previous_error_code": row.error_code,
+                "previous_error_message": row.error_message,
+            }
+            row.row_status = "success"
+            row.source_key = source_key
+            row.error_field = None
+            row.error_code = None
+            row.error_message = None
+            row.raw_data = raw_data
+            session.flush()
+
+            rows = list(
+                session.scalars(
+                    select(ImportRowResultEntity).where(
+                        ImportRowResultEntity.batch_id == batch_id
+                    )
+                )
+            )
+            batch.success_rows = sum(1 for item in rows if item.row_status == "success")
+            batch.failed_rows = sum(1 for item in rows if item.row_status == "failed")
+            batch.warning_rows = sum(1 for item in rows if item.row_status == "warning")
+            batch.processing_status = (
+                "completed_with_errors" if batch.failed_rows else "completed"
+            )
+
+        corrected = self.get_import_batch(batch_id)
+        if corrected is None:
+            raise RuntimeError("corrected import batch could not be read back")
+        return corrected
+
 
 def _batch_record(entity: ImportBatchEntity) -> ImportBatchRecord:
     return ImportBatchRecord(
@@ -246,6 +309,13 @@ def _version_record(entity: ImportVersionEntity) -> ImportBatchVersionRecord:
         business_date_to=entity.business_date_to,
         created_at=entity.created_at,
     )
+
+
+def _required_source_key(standard_fields: dict) -> str:
+    source_key = standard_fields.get("source_key")
+    if source_key is not None and str(source_key).strip():
+        return str(source_key).strip()
+    raise ValueError("corrected row missing required field: source_key")
 
 
 _default_repository: ImportPersistenceRepository | None = None

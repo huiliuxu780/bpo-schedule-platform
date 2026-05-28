@@ -165,6 +165,11 @@ class ImportBatchRowResultInput(BaseModel):
     raw_data: dict[str, Any] = Field(default_factory=dict)
 
 
+class ImportBatchRowCorrectionRequest(BaseModel):
+    row_number: int = Field(ge=1)
+    standard_fields: dict[str, Any] = Field(min_length=1)
+
+
 class ImportBatchVersionInput(BaseModel):
     version_id: str
     version_type: ImportFileType

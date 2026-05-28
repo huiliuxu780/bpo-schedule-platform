@@ -1261,3 +1261,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做字段映射模板持久化、只读列表/单查和 upload-csv 按 template_id 复用；不做前端、Excel/multipart、外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R717 - 导入失败行修正第一刀
+
+```yaml
+id: R717
+module: "导入中心"
+description: "导入中心已经能记录失败行和复用字段映射模板后，需要先支持单行失败数据修正，让数据管理员把错误行修正为可应用的成功行，而不是只能重新上传整批文件。"
+source: "PM requested continuing import-center production usability on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做 failed row 单行原地修正和批次计数重算；不新增 schema/migration，不做修正历史表、前端、批量修正、自动 apply、Excel/multipart、权限、审批、导出、外部集成、生产公式、结算或收费因子。"
+```

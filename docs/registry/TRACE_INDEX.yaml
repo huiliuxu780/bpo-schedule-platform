@@ -161,6 +161,7 @@ stories:
   US634: {file: "docs/user-stories.md", requirement_ids: ["R714"], task_ids: ["IM014"], archive_refs: []}
   US635: {file: "docs/user-stories.md", requirement_ids: ["R715"], task_ids: ["IM015"], archive_refs: []}
   US636: {file: "docs/user-stories.md", requirement_ids: ["R716"], task_ids: ["IM016"], archive_refs: []}
+  US637: {file: "docs/user-stories.md", requirement_ids: ["R717"], task_ids: ["IM017"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -287,6 +288,7 @@ tasks:
   IM014: {file: "tasks/backlog.yaml", story_ids: ["US634"], gate: "database-persistence"}
   IM015: {file: "tasks/backlog.yaml", story_ids: ["US635"], gate: "database-persistence"}
   IM016: {file: "tasks/backlog.yaml", story_ids: ["US636"], gate: "database-persistence"}
+  IM017: {file: "tasks/backlog.yaml", story_ids: ["US637"], gate: "database-persistence"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -460,6 +462,7 @@ requirements:
   R714: {file: "docs/raw-requirements.md", story_ids: ["US634"], task_ids: ["IM014"]}
   R715: {file: "docs/raw-requirements.md", story_ids: ["US635"], task_ids: ["IM015"]}
   R716: {file: "docs/raw-requirements.md", story_ids: ["US636"], task_ids: ["IM016"]}
+  R717: {file: "docs/raw-requirements.md", story_ids: ["US637"], task_ids: ["IM017"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

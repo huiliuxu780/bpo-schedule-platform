@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM017`
+- source_ids:
+  - `R717`
+- story_ids:
+  - `US637`
+- action: 实现导入失败行修正第一刀。
+- status: `done`
+- notes: IM017 新增 failed row 单行修正 API 和 repository 方法，修正后将行状态改为 success、清空错误字段、写入 corrected standard_fields，并重算批次成功/失败/警告计数和 processing_status。未新增 schema/migration，不做修正历史表、前端、批量修正、自动 apply、Excel/multipart、外部集成、权限、审批、导出、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM016`
 - source_ids:
   - `R716`

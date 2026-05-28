@@ -4260,3 +4260,54 @@ tasks:
       - "需要审批、导出、自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM017
+    title: "导入失败行修正第一刀"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM016"]
+    allowed_files:
+      - "backend/app/import_persistence.py"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/tests/test_import_persistence.py"
+      - "backend/tests/test_import_row_correction_api.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "新增失败行修正 API，可按 batch_id 和 row_number 修正 failed row。"
+      - "修正请求写入 corrected standard_fields，将 row_status 改为 success，清空 error_field/error_code/error_message，并设置 source_key。"
+      - "修正后重算 import batch success_rows、failed_rows、warning_rows 和 processing_status。"
+      - "只允许修正 failed row；不存在 batch、row 或非 failed row 返回稳定错误码。"
+      - "不新增 schema/migration，不做修正历史表、前端、批量修正、自动 apply、Excel/multipart、权限、审批、导出、外部集成、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration 变更或修正历史表"
+      - "范围扩展到前端、批量修正或自动 apply"
+      - "需要真实外部 CORN、HR、WFM 或第三方集成"
+      - "需要认证、权限、供应商隔离"
+      - "需要审批、导出、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

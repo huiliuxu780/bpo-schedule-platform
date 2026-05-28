@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM017 导入失败行修正第一刀
+
+#### 审计结论
+
+- `US637/IM017/R717` 已完成导入失败行修正第一刀。
+- 新增 `POST /api/v1/import-batches/{batch_id}/rows/{row_number}/correct`。
+- 修正 failed row 时写入 corrected `standard_fields`，将 `row_status` 改为 `success`，清空错误字段，并设置 `source_key`。
+- 修正后重算 import batch 的 `success_rows`、`failed_rows`、`warning_rows` 和 `processing_status`。
+- 不存在 batch、row 或修正非 failed row 时返回稳定错误码。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮为单行原地修正；未新增修正历史表或审计轨迹表。
+- 本轮不自动触发 apply；修正后仍需要后续 apply API 显式应用批次。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_import_persistence backend.tests.test_import_row_correction_api -v`：通过，7 个失败行修正测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 140 个 backend unittest。
+
 ### 2026-05-29 - IM016 字段映射模板持久化第一刀
 
 #### 审计结论

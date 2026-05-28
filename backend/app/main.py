@@ -33,6 +33,7 @@ from backend.app.models import (
     ImportBatchCreateRequest,
     ImportFileType,
     ImportBatchPersistenceDetail,
+    ImportBatchRowCorrectionRequest,
     ImportFieldMappingTemplateCreateRequest,
     ImportFieldMappingTemplateListResponse,
     ImportFieldMappingTemplateRecord,
@@ -144,6 +145,56 @@ def get_persisted_import_batch(batch_id: str) -> ImportBatchPersistenceDetail:
             },
         )
     return batch
+
+
+@app.post(
+    "/api/v1/import-batches/{batch_id}/rows/{row_number}/correct",
+    response_model=ImportBatchPersistenceDetail,
+)
+def correct_import_batch_failed_row(
+    batch_id: str,
+    row_number: int,
+    request: ImportBatchRowCorrectionRequest,
+) -> ImportBatchPersistenceDetail:
+    try:
+        return get_import_persistence_repository().correct_failed_row(
+            batch_id,
+            ImportBatchRowCorrectionRequest(
+                row_number=row_number,
+                standard_fields=request.standard_fields,
+            ),
+        )
+    except ValueError as exc:
+        message = str(exc)
+        if "batch does not exist" in message:
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "error": {
+                        "code": "IMPORT_BATCH_NOT_FOUND",
+                        "message": "导入批次不存在",
+                    }
+                },
+            ) from exc
+        if "row does not exist" in message:
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "error": {
+                        "code": "IMPORT_ROW_NOT_FOUND",
+                        "message": "导入行不存在",
+                    }
+                },
+            ) from exc
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "IMPORT_ROW_CORRECTION_INVALID",
+                    "message": message,
+                }
+            },
+        ) from exc
 
 
 @app.get(

@@ -2363,3 +2363,26 @@ dependencies:
   - "US635"
 status: "done"
 ```
+
+### US637 - 导入失败行修正第一刀
+
+```yaml
+id: US637
+requirement_ids:
+  - R717
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望修正导入批次中的单条失败行，以便不用重新上传整批文件也能把可修复数据推进到后续应用流程。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增失败行修正 API，可按 batch_id 和 row_number 修正 failed row。"
+  - "修正请求写入 corrected standard_fields，将 row_status 改为 success，清空 error_field/error_code/error_message，并设置 source_key。"
+  - "修正后重算 import batch success_rows、failed_rows、warning_rows 和 processing_status。"
+  - "只允许修正 failed row；不存在 batch、row 或非 failed row 返回稳定错误码。"
+  - "不新增 schema/migration，不做修正历史表、前端、批量修正、自动 apply、Excel/multipart、权限、审批、导出、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US636"
+status: "done"
+```
