@@ -425,6 +425,7 @@ requirements:
   R703: {file: "docs/raw-requirements.md", story_ids: ["US623"], task_ids: ["IM003"]}
   R704: {file: "docs/raw-requirements.md", story_ids: ["US624"], task_ids: ["IM004"]}
   R705: {file: "docs/raw-requirements.md", story_ids: ["US625"], task_ids: ["IM005"]}
+  R706: {file: "docs/raw-requirements.md", story_ids: ["US626"], task_ids: ["IM006"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM006 对比计算触发到 DB007 repository
+
+#### 审计结论
+
+- `US626/IM006/R706` 已完成本地对比计算触发第一刀。
+- 新增 `/api/v1/comparison-runs/calculate`，接收 comparison_type 和来源版本。
+- `forecast_vs_schedule` 基于 DB005 forecast intervals 与 DB004 schedule intervals 聚合生成 gap 结果。
+- `schedule_vs_actual` 基于 DB004 schedule intervals 与 DB006 productive status intervals 生成 matched/late 结果。
+- 计算结果写入 DB007 comparison run/results，并复用 DB007 来源版本和结果维度校验。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做本地可复跑计算触发，不等于生产状态码、最终业务公式、调度任务、外部 CORN/HR/WFM 接入或异常复核闭环已完成。
+- 本轮不新增 schema/migration；后续如需幂等重跑、任务队列、计算审计表或异步调度，需要单独任务。
+- Auth、权限、审批、导出、批量、自动排班、生产公式定版、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_comparison_calculation_service backend.tests.test_comparison_calculation_api -v`：通过，5 个对比计算触发测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 93 个 backend unittest。
+
 ### 2026-05-28 - IM005 登录/状态日志导入应用到 DB006 repository
 
 #### 审计结论

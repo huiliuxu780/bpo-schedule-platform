@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM006`
+- source_ids:
+  - `R706`
+- story_ids:
+  - `US626`
+- action: 实现对比计算触发到 DB007 repository。
+- status: `done`
+- notes: IM006 新增本地 comparison calculation 服务和 API，基于已有预测、排班和实际状态数据生成 forecast_vs_schedule 与 schedule_vs_actual comparison run/results，并复用 DB007 来源版本和结果维度校验。未新增依赖，未改 schema/migration，未做前端、真实外部集成、生产状态码/公式定版、权限、审批、导出、批量、自动排班、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM005`
 - source_ids:
   - `R705`

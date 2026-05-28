@@ -2110,3 +2110,26 @@ dependencies:
   - "US624"
 status: "done"
 ```
+
+### US626 - 对比计算触发到 DB007 repository
+
+```yaml
+id: US626
+requirement_ids:
+  - R706
+module: "对比计算"
+role: "运营负责人"
+story: "作为运营负责人，我希望触发 forecast vs schedule 和 schedule vs actual 的本地对比计算，以便系统从已导入的预测、排班、实际状态生成可复核的异常结果。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增本地 FastAPI 对比计算入口，接收 comparison_type 和来源版本。"
+  - "forecast_vs_schedule 基于 DB005 forecast intervals 与 DB004 schedule intervals 聚合生成 gap 结果。"
+  - "schedule_vs_actual 基于 DB004 schedule intervals 与 DB006 productive status intervals 生成 late/matched 结果。"
+  - "计算结果写入 DB007 comparison run/results，并复用 DB007 来源版本和结果维度校验。"
+  - "不新增 schema/migration，不接外部系统，不做生产状态码/公式定版、权限、审批、导出或批量操作。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US625"
+status: "done"
+```

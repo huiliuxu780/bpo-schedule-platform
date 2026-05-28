@@ -6,11 +6,11 @@ Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governe
 
 ## Active Boundary
 
-The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed tasks. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, review closure records, the first import-center CSV upload API vertical, master-data import application into DB003 repositories, personnel-schedule import application into DB004 repositories, demand-forecast import application into DB005 repositories, and actual-log import application into DB006 repositories. Q127 database foundation QA closeout has verified the local migration-backed foundation.
+The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed tasks. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, review closure records, the first import-center CSV upload API vertical, master-data import application into DB003 repositories, personnel-schedule import application into DB004 repositories, demand-forecast import application into DB005 repositories, actual-log import application into DB006 repositories, and local comparison calculation into DB007 repositories. Q127 database foundation QA closeout has verified the local migration-backed foundation.
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed slice was `US625/IM005`, which applies persisted `login_log` and `status_log` CSV success rows into the DB006 actual log repository without adding schema or migration changes.
+No ready product story is currently queued. The last completed slice was `US626/IM006`, which adds a local comparison calculation trigger that writes forecast-vs-schedule and schedule-vs-actual results into DB007 without adding schema or migration changes.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next step is to plan the next import-center slice explicitly: comparison calculation trigger into DB007 or import template/mapping management. Keep multipart/Excel, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next step is to plan the next slice explicitly: review closure write API into DB008 or import template/mapping management. Keep multipart/Excel, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

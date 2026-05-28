@@ -4,6 +4,8 @@ from fastapi import Body, FastAPI, HTTPException, Query
 
 from backend.app.actual_log_import import apply_actual_log_import_batch
 from backend.app.actual_log_persistence import ActualLogPersistenceRepository
+from backend.app.comparison_calculation import calculate_comparison_run
+from backend.app.comparison_persistence import ComparisonPersistenceRepository
 from backend.app.forecast_import import apply_forecast_import_batch
 from backend.app.forecast_persistence import ForecastPersistenceRepository
 from backend.app.import_upload import build_import_batch_from_csv
@@ -14,6 +16,8 @@ from backend.app.personnel_schedule_import import apply_personnel_schedule_impor
 from backend.app.personnel_schedule_persistence import PersonnelSchedulePersistenceRepository
 from backend.app.models import (
     ActualLogImportApplyResponse,
+    ComparisonCalculationRequest,
+    ComparisonRunDetail,
     DemandPlanListResponse,
     ForecastImportApplyResponse,
     ImportBatchCreateRequest,
@@ -343,6 +347,33 @@ def apply_actual_log_import(batch_id: str) -> ActualLogImportApplyResponse:
         ) from exc
 
     return ActualLogImportApplyResponse(**summary)
+
+
+@app.post(
+    "/api/v1/comparison-runs/calculate",
+    response_model=ComparisonRunDetail,
+)
+def calculate_comparison_run_api(
+    request: ComparisonCalculationRequest,
+) -> ComparisonRunDetail:
+    try:
+        return calculate_comparison_run(
+            request,
+            comparison_repository=ComparisonPersistenceRepository(),
+            forecast_repository=ForecastPersistenceRepository(),
+            schedule_repository=PersonnelSchedulePersistenceRepository(),
+            actual_repository=ActualLogPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "COMPARISON_CALCULATION_INVALID",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
 
 
 @app.get("/api/v1/schedule-plans/{plan_id}", response_model=SchedulePlanDetail)

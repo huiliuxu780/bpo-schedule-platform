@@ -3701,3 +3701,52 @@ tasks:
       - "需要自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM006
+    title: "对比计算触发到 DB007 repository"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    allowed_files:
+      - "backend/app/comparison_calculation.py"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/tests/test_comparison_calculation.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/migrations/**"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "新增本地 FastAPI 对比计算入口，接收 comparison_type 和来源版本。"
+      - "forecast_vs_schedule 基于 DB005 forecast intervals 与 DB004 schedule intervals 聚合生成 gap 结果。"
+      - "schedule_vs_actual 基于 DB004 schedule intervals 与 DB006 productive status intervals 生成 late/matched 结果。"
+      - "计算结果写入 DB007 comparison run/results，并复用 DB007 来源版本和结果维度校验。"
+      - "不新增 schema/migration，不接外部系统，不做生产状态码/公式定版、权限、审批、导出或批量操作。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration 变更"
+      - "需要真实外部 CORN、HR、WFM 或第三方集成"
+      - "需要生产状态码或生产公式定版"
+      - "需要认证、权限、供应商隔离、审批、导出或批量操作"
+      - "需要自动排班、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

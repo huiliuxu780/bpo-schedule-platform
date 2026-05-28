@@ -1118,3 +1118,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只应用已持久化的 login_log/status_log CSV 成功行；不新增 schema/migration，不做 CORN/HR/WFM 外部接入、状态码生产规则、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R706 - 对比计算触发到 DB007 repository
+
+```yaml
+id: R706
+module: "对比计算"
+description: "导入中心已经能把预测、排班和实际日志应用到各自 repository 后，系统需要一个本地可复跑的对比计算入口，把 forecast vs schedule 和 schedule vs actual 计算结果写入 DB007 comparison repository。"
+source: "PM continued production-usefulness flow on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只做本地计算触发和 DB007 结果写入；不新增 schema/migration，不做外部 CORN/HR/WFM 接入，不做生产状态码/公式定版、权限、审批、导出、批量、自动排班、结算或收费因子。"
+```

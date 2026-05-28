@@ -547,6 +547,16 @@ class ComparisonRunRequest(BaseModel):
     )
 
 
+class ComparisonCalculationRequest(BaseModel):
+    run_id: str
+    comparison_type: ComparisonType
+    forecast_version_id: str | None = None
+    schedule_version_id: str | None = None
+    actual_import_version_id: str | None = None
+    business_date_from: str
+    business_date_to: str
+
+
 class ComparisonRunRecord(BaseModel):
     run_id: str
     comparison_type: ComparisonType
