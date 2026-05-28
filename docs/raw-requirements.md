@@ -17,6 +17,25 @@
 
 ## Requirements
 
+### R697-R700 - Q127 数据库基础 QA 收口
+
+```yaml
+requirements:
+  - id: R697
+    description: "数据库基础需要一次 QA 收口，确认 DB002-DB008 的 Alembic head 能创建所有基础表。"
+  - id: R698
+    description: "数据库基础需要一次最小端到端持久化验证，覆盖 import、master data、schedule、forecast、actual、comparison 和 review closure 链路。"
+  - id: R699
+    description: "QA 收口需要生成可追溯结论，明确已完成、未完成和仍禁止混入的范围。"
+  - id: R700
+    description: "Q127 不应修改产品行为、数据库 schema、repository 实现、权限、审批、导出、批量、生产公式、结算或收费因子。"
+source: "DB008 review closure foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "只做 QA 验证、测试和追溯；不改生产实现、不接真实外部接口、不新增依赖。"
+```
+
 ### R693-R696 - DB008 复核闭环记录持久化基础
 
 ```yaml

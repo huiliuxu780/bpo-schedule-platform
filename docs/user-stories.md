@@ -29,6 +29,37 @@
 
 ## Stories
 
+### US620 - Q127 数据库基础 QA 收口
+
+```yaml
+id: US620
+requirement_ids:
+  - R697
+  - R698
+  - R699
+  - R700
+task_ids:
+  - Q127
+module: "质量与交付"
+role: "PM"
+story: "作为 PM，我希望 DB002-DB008 的数据库基础经过一次 QA 收口，以便确认生产持久化雏形已形成可迁移、可读回、可追溯的闭环。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "验证 Alembic head 能创建 DB002-DB008 全部基础表。"
+  - "验证最小端到端链路可从导入批次走到复核关闭记录。"
+  - "输出 QA 结论，明确已完成、未完成和仍禁止混入范围。"
+  - "不修改产品行为、数据库 schema、repository 实现、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB008
+status: "done"
+completed_scope:
+  - "新增 database foundation QA closeout 测试。"
+  - "验证 Alembic head 能创建 DB002-DB008 全部基础表。"
+  - "验证最小端到端链路可从导入/版本记录走到复核关闭记录。"
+  - "输出数据库基础 QA 收口结论文档。"
+```
+
 ### US619 - DB008 复核闭环记录持久化基础
 
 ```yaml

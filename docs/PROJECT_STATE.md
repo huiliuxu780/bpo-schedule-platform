@@ -57,7 +57,7 @@ Hard stop until separate PM confirmation:
 - Broad schema implementation outside the active entity slice.
 - Real external data-source integration.
 - Authentication, permission boundaries, supplier isolation, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors.
-- Database QA closeout or additional persistence unless a matching task is active.
+- Additional persistence, production deployment, or integration unless a matching task is active.
 
 ## State Governance Direction
 
@@ -92,6 +92,7 @@ Current invariants:
 - `DB006/US617` added the login/status log slice for login/logout events, status dictionary, status intervals, business-day splitting, timezone checks, and import/master-data reference checks, then returned current queue and active tasks to empty.
 - `DB007/US618` added the comparison result slice for comparison runs, forecast-vs-schedule results, schedule-vs-actual results, source version/record reference checks, and result dimension checks, then returned current queue and active tasks to empty.
 - `DB008/US619` added the review closure record slice for review cases, evidence records, conclusions, closure records, source comparison result references, and business-date checks, then returned current queue and active tasks to empty.
+- `Q127/US620` verified the DB002-DB008 foundation with Alembic head table coverage and a minimum end-to-end persistence chain from import/version records to review closure records, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
@@ -99,9 +100,9 @@ Near-term product work should stay inside either confirmed local MVP frontend/ba
 
 Recommended order after state governance:
 
-1. If continuing database work, seed Q127 database foundation QA closeout before implementation.
-2. Keep each database task limited to one entity group and its reference checks.
-3. Do not mix auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors into the database foundation.
+1. Ask PM whether to push or integrate the verified DB006-DB008 and Q127 branches.
+2. If continuing product work, plan the next stage explicitly before adding external integrations or production workflow capabilities.
+3. Do not mix auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors into the foundation without a separate task.
 
 ## Frontend Direction
 

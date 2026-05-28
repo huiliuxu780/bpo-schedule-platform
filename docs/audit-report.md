@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-05-28 - Q127 数据库基础 QA 收口
+
+#### 审计结论
+
+- `US620/Q127/R697-R700` 已完成数据库基础 QA 收口。
+- Alembic head 已验证能创建 DB002-DB008 全部基础表。
+- 最小端到端持久化链路已验证可从导入/版本记录走到复核关闭记录。
+- QA 结论已记录在 `docs/quality/DATABASE_FOUNDATION_QA_2026-05-28.md`。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- Q127 只验证本地 SQLite 上的迁移和 repository 闭环，不等于生产 PostgreSQL 部署、外部系统接入或权限审批能力已完成。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_database_foundation_closeout -v`：通过，2 个 QA closeout 测试通过。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，49 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 49 个 backend unittest。
+
 ### 2026-05-28 - DB008 复核闭环记录持久化基础
 
 #### 审计结论

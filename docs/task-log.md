@@ -19,6 +19,20 @@
 
 ### 2026-05-28
 
+- task_id: `Q127`
+- source_ids:
+  - `R697`
+  - `R698`
+  - `R699`
+  - `R700`
+- story_ids:
+  - `US620`
+- action: 执行数据库基础 QA 收口。
+- status: `done`
+- notes: Q127 新增 database foundation QA closeout 测试，覆盖 Alembic head 建表和从导入/版本记录到复核关闭记录的最小端到端持久化链路；输出 `docs/quality/DATABASE_FOUNDATION_QA_2026-05-28.md`。未修改产品行为、数据库 schema、repository 实现、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `DB008`
 - source_ids:
   - `R693`

@@ -6,11 +6,11 @@ Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governe
 
 ## Active Boundary
 
-The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed `database-persistence` tasks with named entity slices. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, and review closure records.
+The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed tasks. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, and review closure records. Q127 database foundation QA closeout has verified the local migration-backed foundation.
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed database slice was `US619/DB008`, which added supervisor review case, evidence, conclusion, and closure record persistence with source comparison result references and business-date checks.
+No ready product story is currently queued. The last completed QA slice was `US620/Q127`, which verified DB002-DB008 Alembic head table coverage and a minimum end-to-end persistence chain from import/version records to review closure records.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -43,7 +43,7 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 ## Current Stop Conditions
 
 - Real external data sources or integrations.
-- Database work outside the named entity slice of a confirmed `database-persistence` task.
+- Database QA closeout or additional persistence unless a matching task is active.
 - Unconfirmed new dependencies or package/lockfile changes.
 - Authentication or permission boundaries.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next step is `Q127` database foundation QA closeout. Keep external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next step is PM push/integration decision for the verified DB006-DB008 and Q127 branches. Keep external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

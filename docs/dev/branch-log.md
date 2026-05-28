@@ -2,6 +2,24 @@
 
 ## 2026-05-28
 
+### Q127 Database Foundation QA
+
+- branch_name: `codex/q127-database-foundation-qa`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `138292d`
+- remote_status: `not_pushed`
+- scope: Verify the DB002-DB008 database foundation only: Alembic head table coverage, minimum end-to-end persistence chain, QA report, and traceability cleanup.
+- allowed_files_check: `backend/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no `backend/app/**`, `backend/migrations/**`, `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend database foundation QA test, QA closeout report, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target Q127 unittest passed; backend unittest discovery passed with 49 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM confirmation after verified local commit`
+- blocked_reason: `N/A`
+
 ### DB008 Review Closure Persistence
 
 - branch_name: `codex/db008-review-closure-persistence`
@@ -12,7 +30,7 @@
 - allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: backend review models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
 - check_result: worker subagent target DB008 unittest passed after RED failure; main worker added missing source business-date check; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 47 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `138292d`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

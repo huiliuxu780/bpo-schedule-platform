@@ -165,7 +165,7 @@ Keep this slice focused on forecast-vs-schedule and schedule-vs-actual result st
 
 Keep this slice focused on supervisor review conclusions, evidence records, closure records, and source references.
 
-- [ ] **Step 5: Run QA closeout**
+- [x] **Step 5: Run QA closeout**
 
 Create `Q127` to verify the database foundation without adding permissions, approval, export, batch operations, settlement, charge factors, production formulas, or real external integrations.
 
