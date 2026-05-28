@@ -2087,3 +2087,26 @@ dependencies:
   - "US623"
 status: "done"
 ```
+
+### US625 - 登录/状态日志导入应用到 DB006 repository
+
+```yaml
+id: US625
+requirement_ids:
+  - R705
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望把已上传的 login_log/status_log CSV 成功行应用到实际日志 repository，以便登录/登出事件、状态字典和状态区间进入可追溯数据链路。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增本地 FastAPI 实际日志导入应用入口，按 batch_id 读取已持久化导入批次。"
+  - "仅允许 file_type 为 login_log 或 status_log 的批次应用到实际日志。"
+  - "login_log 成功行写入 login/logout events，并复用 DB006 import version、employee 和时区校验。"
+  - "status_log 成功行可根据 record_type 写入 status dictionary 或 status intervals，并复用 DB006 字典、跨天切分、业务日、employee 和时区校验。"
+  - "不新增 schema/migration，不接 CORN/HR/WFM，不做状态码生产规则、权限、审批、导出、批量或外部集成。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US624"
+status: "done"
+```

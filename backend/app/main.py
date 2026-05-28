@@ -2,6 +2,8 @@ import json
 
 from fastapi import Body, FastAPI, HTTPException, Query
 
+from backend.app.actual_log_import import apply_actual_log_import_batch
+from backend.app.actual_log_persistence import ActualLogPersistenceRepository
 from backend.app.forecast_import import apply_forecast_import_batch
 from backend.app.forecast_persistence import ForecastPersistenceRepository
 from backend.app.import_upload import build_import_batch_from_csv
@@ -11,6 +13,7 @@ from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.personnel_schedule_import import apply_personnel_schedule_import_batch
 from backend.app.personnel_schedule_persistence import PersonnelSchedulePersistenceRepository
 from backend.app.models import (
+    ActualLogImportApplyResponse,
     DemandPlanListResponse,
     ForecastImportApplyResponse,
     ImportBatchCreateRequest,
@@ -304,6 +307,42 @@ def apply_forecast_import(
         ) from exc
 
     return ForecastImportApplyResponse(**summary)
+
+
+@app.post(
+    "/api/v1/import-batches/{batch_id}/apply-actual-logs",
+    response_model=ActualLogImportApplyResponse,
+)
+def apply_actual_log_import(batch_id: str) -> ActualLogImportApplyResponse:
+    batch = get_import_persistence_repository().get_import_batch(batch_id)
+    if batch is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "IMPORT_BATCH_NOT_FOUND",
+                    "message": "导入批次不存在",
+                }
+            },
+        )
+
+    try:
+        summary = apply_actual_log_import_batch(
+            batch,
+            ActualLogPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "ACTUAL_LOG_IMPORT_INVALID",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+    return ActualLogImportApplyResponse(**summary)
 
 
 @app.get("/api/v1/schedule-plans/{plan_id}", response_model=SchedulePlanDetail)

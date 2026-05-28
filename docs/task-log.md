@@ -19,6 +19,17 @@
 
 ### 2026-05-28
 
+- task_id: `IM005`
+- source_ids:
+  - `R705`
+- story_ids:
+  - `US625`
+- action: 实现登录/状态日志导入应用到 DB006 repository。
+- status: `done`
+- notes: IM005 新增 actual log 导入应用服务和 API，按 batch_id 读取已持久化 login_log/status_log 导入批次，只处理成功行，并写入 login/logout events、status dictionary 或 status intervals。应用后复用 DB006 的 import version、employee、状态字典、跨天切分、业务日和时区校验。未新增依赖，未改 schema/migration，未做真实外部集成、状态码生产规则、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
 - task_id: `IM004`
 - source_ids:
   - `R704`

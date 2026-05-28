@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-28 - IM005 登录/状态日志导入应用到 DB006 repository
+
+#### 审计结论
+
+- `US625/IM005/R705` 已完成登录/状态日志导入应用第一刀。
+- 新增 `/api/v1/import-batches/{batch_id}/apply-actual-logs`，按 batch_id 读取已持久化导入批次。
+- 仅允许 `file_type=login_log` 或 `file_type=status_log` 的批次应用到实际日志。
+- `login_log` 成功行写入 login/logout events。
+- `status_log` 成功行可按 `record_type` 写入 status dictionary 或 status intervals。
+- 应用后复用 DB006 的 import version、employee、状态字典、跨天切分、业务日和时区校验。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只应用已上传的 login_log/status_log 成功行，不等于真实 CORN/HR/WFM 接入、状态码生产规则、排班 vs 实际对比任务或异常闭环已完成。
+- 本轮不新增 schema/migration；后续如需导入应用审计表、重跑策略或幂等策略，需要单独任务。
+- Auth、权限、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_actual_log_import_service backend.tests.test_actual_log_import_api -v`：通过，10 个登录/状态日志导入应用测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 88 个 backend unittest。
+
 ### 2026-05-28 - IM004 需求预测导入应用到 DB005 repository
 
 #### 审计结论

@@ -1105,3 +1105,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只应用已持久化的 demand_forecast CSV 成功行；不新增 schema/migration，不做预测算法、预测 UI、权限、审批、导出、批量、外部集成、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R705 - 登录/状态日志导入应用到 DB006 repository
+
+```yaml
+id: R705
+module: "导入中心"
+description: "需求预测导入应用完成后，系统需要把 login_log 与 status_log 批次中的成功行应用到 DB006 实际日志 repository，生成登录/登出事件、状态字典和状态区间，为后续排班 vs 实际对比提供生产雏形输入。"
+source: "PM continued import-center production flow on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本轮只应用已持久化的 login_log/status_log CSV 成功行；不新增 schema/migration，不做 CORN/HR/WFM 外部接入、状态码生产规则、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

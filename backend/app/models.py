@@ -426,6 +426,15 @@ class ForecastImportApplyResponse(BaseModel):
     skipped_rows: int = Field(ge=0)
 
 
+class ActualLogImportApplyResponse(BaseModel):
+    batch_id: str
+    file_type: str
+    login_events: int = Field(ge=0)
+    status_dictionary_entries: int = Field(ge=0)
+    status_intervals: int = Field(ge=0)
+    skipped_rows: int = Field(ge=0)
+
+
 ActualLoginEventType = Literal["login", "logout"]
 
 
