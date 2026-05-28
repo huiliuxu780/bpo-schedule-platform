@@ -100,7 +100,7 @@ Near-term product work should stay inside either confirmed local MVP frontend/ba
 
 Recommended order after state governance:
 
-1. Ask PM whether to push or integrate the verified DB006-DB008 and Q127 branches.
+1. Ask PM whether to integrate the pushed DB006-DB008 and Q127 branches.
 2. If continuing product work, plan the next stage explicitly before adding external integrations or production workflow capabilities.
 3. Do not mix auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors into the foundation without a separate task.
 

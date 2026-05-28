@@ -7,17 +7,17 @@
 - branch_name: `codex/q127-database-foundation-qa`
 - base_main_commit: `a3a134c`
 - base_chain_commit: `138292d`
-- remote_status: `not_pushed`
+- remote_status: `pushed to origin/codex/q127-database-foundation-qa after PM confirmation`
 - scope: Verify the DB002-DB008 database foundation only: Alembic head table coverage, minimum end-to-end persistence chain, QA report, and traceability cleanup.
 - allowed_files_check: `backend/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no `backend/app/**`, `backend/migrations/**`, `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: backend database foundation QA test, QA closeout report, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
 - check_result: target Q127 unittest passed; backend unittest discovery passed with 49 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `a86dc3d`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM confirmation after verified local commit`
+- push_decision: `pushed after PM confirmation`
 - blocked_reason: `N/A`
 
 ### DB008 Review Closure Persistence
@@ -25,7 +25,7 @@
 - branch_name: `codex/db008-review-closure-persistence`
 - base_main_commit: `a3a134c`
 - base_chain_commit: `20b3fa2`
-- remote_status: `not_pushed`
+- remote_status: `pushed to origin/codex/db008-review-closure-persistence after PM confirmation`
 - scope: Implement the confirmed review closure persistence foundation only: review cases, evidence records, conclusions, closure records, comparison-result source references, Alembic migration, backend tests, and traceability cleanup.
 - allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: backend review models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
@@ -35,7 +35,7 @@
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM confirmation after verified local commit`
+- push_decision: `pushed after PM confirmation`
 - blocked_reason: `N/A`
 
 ### DB007 Comparison Result Persistence
@@ -43,7 +43,7 @@
 - branch_name: `codex/db007-comparison-result-persistence`
 - base_main_commit: `a3a134c`
 - base_chain_commit: `ec3a1f4`
-- remote_status: `not_pushed`
+- remote_status: `pushed to origin/codex/db007-comparison-result-persistence after PM confirmation`
 - scope: Implement the confirmed comparison result persistence foundation only: comparison runs, forecast-vs-schedule result rows, schedule-vs-actual result rows, source version/record reference checks, Alembic migration, backend tests, and traceability cleanup.
 - allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: backend comparison models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
@@ -53,7 +53,7 @@
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM confirmation after verified local commit`
+- push_decision: `pushed after PM confirmation`
 - blocked_reason: `N/A`
 
 ### DB006 Actual Log Persistence
@@ -61,7 +61,7 @@
 - branch_name: `codex/db006-actual-log-persistence`
 - base_main_commit: `a3a134c`
 - base_chain_commit: `e40d548`
-- remote_status: `not_pushed`
+- remote_status: `pushed to origin/codex/db006-actual-log-persistence after PM confirmation`
 - scope: Implement the confirmed login/status log persistence foundation only: login/logout events, status dictionary, status intervals, business-day splitting, timezone checks, import/master-data reference checks, Alembic migration, backend tests, and traceability cleanup.
 - allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
 - scope_diff_check: backend actual log models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
@@ -71,7 +71,7 @@
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM confirmation after verified local commit`
+- push_decision: `pushed after PM confirmation`
 - blocked_reason: `N/A`
 
 ### DB005 Demand Forecast Persistence

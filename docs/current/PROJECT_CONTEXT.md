@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next step is PM push/integration decision for the verified DB006-DB008 and Q127 branches. Keep external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next step is PM integration decision for the pushed DB006-DB008 and Q127 branches. Keep external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
