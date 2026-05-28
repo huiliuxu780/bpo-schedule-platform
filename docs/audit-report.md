@@ -4,6 +4,234 @@
 
 ## Current Audit
 
+### 2026-05-28 - Q127 数据库基础 QA 收口
+
+#### 审计结论
+
+- `US620/Q127/R697-R700` 已完成数据库基础 QA 收口。
+- Alembic head 已验证能创建 DB002-DB008 全部基础表。
+- 最小端到端持久化链路已验证可从导入/版本记录走到复核关闭记录。
+- QA 结论已记录在 `docs/quality/DATABASE_FOUNDATION_QA_2026-05-28.md`。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- Q127 只验证本地 SQLite 上的迁移和 repository 闭环，不等于生产 PostgreSQL 部署、外部系统接入或权限审批能力已完成。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_database_foundation_closeout -v`：通过，2 个 QA closeout 测试通过。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，49 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 49 个 backend unittest。
+
+### 2026-05-28 - DB008 复核闭环记录持久化基础
+
+#### 审计结论
+
+- `US619/DB008/R693-R696` 已完成复核闭环记录持久化基础。
+- 新增 review SQLAlchemy repository 和 Alembic migration，覆盖 review cases、review evidence、review conclusions 和 review closures。
+- 复核 case 会校验来源 comparison result 类型、来源 result id 存在性和业务日一致性。
+- closure 对同一 case 只允许关闭一次。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB008 只提供复核记录落库，不等于审批流、权限、批量关闭、导出、真实外部证据服务或真实外部接口已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_review_persistence -v`：通过，6 个 DB008 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db008.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import、master data、personnel schedule、forecast、actual log、comparison result 和 review closure 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，47 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 47 个 backend unittest。
+
+### 2026-05-28 - DB007 对比结果持久化基础
+
+#### 审计结论
+
+- `US618/DB007/R689-R692` 已完成对比结果持久化基础。
+- 新增 comparison SQLAlchemy repository 和 Alembic migration，覆盖 comparison runs、forecast-vs-schedule results 和 schedule-vs-actual results。
+- 对比结果会校验 forecast version、schedule version、actual status import version、来源记录版本归属和结果维度一致性。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB007 只提供对比结果落库，不等于真实对比计算任务、异常生成、复核闭环或真实 CORN/HR/WFM 接入已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_comparison_persistence -v`：通过，7 个 DB007 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db007.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import、master data、personnel schedule、forecast、actual log 和 comparison result 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，41 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 41 个 backend unittest。
+
+### 2026-05-28 - DB006 登录/状态日志持久化基础
+
+#### 审计结论
+
+- `US617/DB006/R685-R688` 已完成登录/状态日志持久化基础。
+- 新增 actual log SQLAlchemy repository 和 Alembic migration，覆盖 actual login events、actual status dictionary 和 actual status intervals。
+- 状态区间会校验 `status_log` import version、employee、状态字典和 Asia/Shanghai 时区，并按业务日切分跨天区间。
+- login event 会校验 `login_log` import version、employee 和 Asia/Shanghai 时区。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB006 只提供实际登录/状态日志落库，不等于排班 vs 实际对比、异常生成、复核闭环或真实 CORN 接入已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_actual_log_persistence -v`：通过，6 个 DB006 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db006.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import、master data、personnel schedule、forecast 和 actual log 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，34 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 34 个 backend unittest。
+
+### 2026-05-28 - DB005 需求预测持久化基础
+
+#### 审计结论
+
+- `US616/DB005/R681-R684` 已完成需求预测持久化基础。
+- 新增 forecast SQLAlchemy repository 和 Alembic migration，覆盖 forecast versions、forecast interval rows 和 forecast version changes。
+- 预测行会校验 import version、workplace、project 和 skill 引用，并限定预测时段为 0.5h。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB005 只提供需求预测落库和版本变更记录，不等于预测上传解析、预测算法、排班对比、登录状态对比或复核闭环已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_forecast_persistence -v`：通过，3 个 DB005 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db005.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import、master data、personnel schedule 和 forecast 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，28 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 28 个 backend unittest。
+
+### 2026-05-28 - DB004 人员级排班持久化基础
+
+#### 审计结论
+
+- `US615/DB004/R677-R680` 已完成人员级排班持久化基础。
+- 新增 personnel schedule SQLAlchemy repository 和 Alembic migration，覆盖 schedule versions、shift types、personnel schedule details 和 half-hour intervals。
+- 排班明细会校验 import version、employee、workplace、project、skill、employee binding 和 shift type 引用，并将排班时段展开为 0.5h 区间。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB004 只提供人员级排班落库和 0.5h 展开，不等于排班维护 UI、发布/冻结流程、预测对比、登录状态对比或真实导入流程已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_personnel_schedule_persistence -v`：通过，3 个 DB004 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db004.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import persistence、master data 和 personnel schedule 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，25 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 25 个 backend unittest。
+
+### 2026-05-28 - DB003 主数据持久化基础
+
+#### 审计结论
+
+- `US614/DB003/R673-R676` 已完成主数据持久化基础。
+- 新增 master data SQLAlchemy repository 和 Alembic migration，覆盖 employees、suppliers、workplaces、projects、skills 和 employee bindings。
+- 绑定关系会校验 employee/supplier/workplace/project/skill 引用存在、状态为 active、未 frozen，并处于有效期范围内。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB003 只提供主数据落库和引用校验，不等于主数据 CRUD 管理界面、真实上传导入、排班生产流或预测/日志处理已完成。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 部署、凭据和真实外部系统接入仍需后续任务确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_master_data_persistence -v`：通过，2 个 DB003 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/db003.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 import persistence 和 master data 表。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，22 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 22 个 backend unittest。
+
+### 2026-05-28 - DB002 导入持久化基础
+
+#### 审计结论
+
+- `US613/DB002/R669-R672` 已完成第一段数据库实现：导入批次、导入行结果、失败行明细和导入生成版本记录。
+- 新增 SQLAlchemy repository、Alembic migration、FastAPI persistence endpoints 和 backend 持久化测试。
+- 测试覆盖同一 SQLite 测试库在新 repository 实例中仍能读取已写入的批次、失败行错误原因和版本记录。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- DB002 只提供导入来源和版本基础，不等于真实文件上传、字段映射、主数据、排班、预测、登录状态、对比计算或复核闭环已生产化。
+- 默认运行仍使用本地 SQLite fallback；生产 PostgreSQL 连接、部署环境、凭据管理和真实外部数据接入仍需后续任务和环境确认。
+- Auth、权限、审批、导出、批量、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_import_persistence -v`：通过，1 个 DB002 持久化测试通过。
+- `BPO_DATABASE_URL=sqlite+pysqlite:///<tmp>/imports.db .venv/bin/alembic -c alembic.ini upgrade head`：通过，生成 `import_batches`、`import_row_results`、`import_versions`。
+- `.venv/bin/python -m unittest discover -s backend/tests -v`：通过，20 个 backend unittest 通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 20 个 backend unittest。
+
+### 2026-05-28 - DB002 前置确认卡口
+
+#### 审计结论
+
+- `US613/DB002/R669-R672` 已写入 current queue 和 active tasks，但状态为 `blocked`。
+- 阻塞项是数据库引擎、依赖/package 变更授权、ORM/migration 工具和测试数据库方案未确认。
+- DB002 的实现范围已限定为导入批次、导入行结果、失败行明细和导入生成版本记录。
+
+#### 风险
+
+- 在未解除阻塞前启动实现会违反数据库 Gate 和 package/lockfile stop condition。
+- 本轮不创建数据库连接、ORM、repository、migration、schema、生产持久化配置或新依赖。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh`：通过，DB002 保持 blocked。
+
+### 2026-05-28 - DB001 数据库 Gate 规划
+
+#### 审计结论
+
+- `US612/DB001/R665-R668` 已完成数据库 Gate 规划。
+- 本轮新增 `database-planning` 与 `database-persistence` workflow 规则，明确 DB001 只做规划，DB002 之后才可能进入实现。
+- 数据库 Gate 规划明确首批落库应先做导入批次、成功/失败行和版本记录，再推进主数据、人员排班、预测、登录状态、对比结果和复核记录。
+
+#### 风险
+
+- DB001 不包含数据库实现，不能被解读为已具备生产持久化。
+- DB002 开始前仍需 PM 明确数据库引擎、依赖/package 修改授权、migration 工具和测试数据库方案。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check` 和最终 `bash scripts/check.sh`：通过。首次 full check 因 `.next` 跨分支生成缓存引用旧页面失败；清理 `.next` 后复跑通过。
+
 ### 2026-05-12 - F018 风险提示表局部 table parity 迁移审计
 
 #### 审计结论

@@ -1,7 +1,10 @@
 from fastapi import FastAPI, HTTPException
 
+from backend.app.import_persistence import get_import_persistence_repository
 from backend.app.models import (
     DemandPlanListResponse,
+    ImportBatchCreateRequest,
+    ImportBatchPersistenceDetail,
     ScheduleRiskListResponse,
     SchedulePlanDetail,
     SchedulePlanDraftRequest,
@@ -67,6 +70,43 @@ def list_unavailability(
     return UnavailabilityListResponse(
         items=list_unavailability_rows(status=status, query=query)
     )
+
+
+@app.post("/api/v1/import-batches/persisted", response_model=ImportBatchPersistenceDetail)
+def create_persisted_import_batch(
+    request: ImportBatchCreateRequest,
+) -> ImportBatchPersistenceDetail:
+    try:
+        return get_import_persistence_repository().create_import_batch(request)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": {
+                    "code": "IMPORT_BATCH_ALREADY_EXISTS",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+
+@app.get(
+    "/api/v1/import-batches/persisted/{batch_id}",
+    response_model=ImportBatchPersistenceDetail,
+)
+def get_persisted_import_batch(batch_id: str) -> ImportBatchPersistenceDetail:
+    batch = get_import_persistence_repository().get_import_batch(batch_id)
+    if batch is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "IMPORT_BATCH_NOT_FOUND",
+                    "message": "导入批次不存在",
+                }
+            },
+        )
+    return batch
 
 
 @app.get("/api/v1/schedule-plans/{plan_id}", response_model=SchedulePlanDetail)

@@ -17,6 +17,146 @@
 
 ## Log
 
+### 2026-05-28
+
+- task_id: `Q127`
+- source_ids:
+  - `R697`
+  - `R698`
+  - `R699`
+  - `R700`
+- story_ids:
+  - `US620`
+- action: 执行数据库基础 QA 收口。
+- status: `done`
+- notes: Q127 新增 database foundation QA closeout 测试，覆盖 Alembic head 建表和从导入/版本记录到复核关闭记录的最小端到端持久化链路；输出 `docs/quality/DATABASE_FOUNDATION_QA_2026-05-28.md`。未修改产品行为、数据库 schema、repository 实现、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
+- task_id: `DB008`
+- source_ids:
+  - `R693`
+  - `R694`
+  - `R695`
+  - `R696`
+- story_ids:
+  - `US619`
+- action: 实现复核闭环记录持久化基础。
+- status: `done`
+- notes: DB008 新增 review cases、review evidence、review conclusions 和 review closures 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖证据、结论、关闭记录读取、缺失来源拒绝、来源类型不匹配拒绝、业务日不一致拒绝和重复关闭拒绝。未扩展到审批流、权限、导出、批量、真实外部证据服务、外部接口、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
+- task_id: `DB007`
+- source_ids:
+  - `R689`
+  - `R690`
+  - `R691`
+  - `R692`
+- story_ids:
+  - `US618`
+- action: 实现对比结果持久化基础。
+- status: `done`
+- notes: DB007 新增 comparison runs、forecast-vs-schedule results 和 schedule-vs-actual results 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖结果读取、缺失源版本拒绝、非 status_log 拒绝、跨版本来源拒绝和来源维度不一致拒绝。未扩展到真实计算调度、异常复核、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
+- task_id: `DB006`
+- source_ids:
+  - `R685`
+  - `R686`
+  - `R687`
+  - `R688`
+- story_ids:
+  - `US617`
+- action: 实现登录/状态日志持久化基础。
+- status: `done`
+- notes: DB006 新增 actual login events、actual status dictionary 和 actual status intervals 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖登录/登出事件读取、跨天业务日切分、Asia/Shanghai 时区校验、冻结员工拒绝和未知状态拒绝。未扩展到排班/预测对比、复核闭环、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
+- task_id: `DB005`
+- source_ids:
+  - `R681`
+  - `R682`
+  - `R683`
+  - `R684`
+- story_ids:
+  - `US616`
+- action: 实现需求预测持久化基础。
+- status: `done`
+- notes: DB005 新增 forecast versions、forecast interval rows 和 forecast version changes 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖 0.5h 时段、技能等级需求、版本变更追踪、冻结技能拒绝和非 0.5h 时段拒绝。未扩展到登录/状态日志、对比结果、复核闭环、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
+- task_id: `DB004`
+- source_ids:
+  - `R677`
+  - `R678`
+  - `R679`
+  - `R680`
+- story_ids:
+  - `US615`
+- action: 实现人员级排班持久化基础。
+- status: `done`
+- notes: DB004 新增 schedule versions、shift types、personnel schedule details 和 half-hour intervals 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖 0.5h 展开、跨 repository 读取、冻结班次类型拒绝和无效时间范围拒绝。未扩展到需求预测、登录/状态日志、对比结果、复核闭环、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
+- task_id: `DB003`
+- source_ids:
+  - `R673`
+  - `R674`
+  - `R675`
+  - `R676`
+- story_ids:
+  - `US614`
+- action: 实现主数据持久化基础。
+- status: `done`
+- notes: DB003 新增 employees、suppliers、workplaces、projects、skills 和 employee bindings 的持久化表、repository、Alembic migration 和 backend 测试；测试覆盖新 repository 读取、冻结引用拒绝和 DB002 import batch 来源引用。未扩展到人员排班、需求预测、登录/状态日志、对比结果、复核闭环、外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
+- task_id: `DB002`
+- source_ids:
+  - `R669`
+  - `R670`
+  - `R671`
+  - `R672`
+- story_ids:
+  - `US613`
+- action: 实现导入批次持久化基础。
+- status: `done`
+- notes: DB002 使用 PM 确认的 PostgreSQL 生产口径、SQLAlchemy、Alembic、依赖变更授权和本地隔离测试库方案，新增导入批次、行结果、失败行明细和导入生成版本记录的 repository、migration、API 入口和 backend 测试；未扩展到主数据、人员排班、预测、登录状态、异常复核、真实外部集成、权限、审批、导出、批量、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-28
+
+- task_id: `DB002`
+- source_ids:
+  - `R669`
+  - `R670`
+  - `R671`
+  - `R672`
+- story_ids:
+  - `US613`
+- action: 写入 DB002 导入批次持久化基础的前置确认卡口。
+- status: `blocked`
+- notes: DB002 已加入 current queue 和 active tasks，但状态为 blocked；阻塞项为数据库引擎、依赖/package 变更授权、ORM/migration 工具和测试数据库方案未确认。本次只维护文档状态，不创建数据库连接、ORM、repository、migration、schema、生产持久化配置、新依赖、真实外部集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。该前置卡口已通过后续 PM 确认解除，并进入 DB002 实现。
+
+### 2026-05-28
+
+- task_id: `DB001`
+- source_ids:
+  - `R665`
+  - `R666`
+  - `R667`
+  - `R668`
+- story_ids:
+  - `US612`
+- action: 启动数据库 Gate 规划与首批落库拆解。
+- status: `done`
+- notes: PM 已确认进入数据库 Gate；DB001 已交付数据库 Gate 规划、database-planning/database-persistence workflow、首批导入持久化顺序、DB002 前置确认项和实施计划。本轮未创建数据库连接、ORM、repository、migration、schema、生产持久化配置、新依赖、真实外部集成、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
 ### 2026-05-12
 
 - task_id: `F018`

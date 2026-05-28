@@ -1,5 +1,5 @@
 version: 1
-updated_at: "2026-05-12"
+updated_at: "2026-05-28"
 rules:
   - "This registry stores IDs, paths, and relationships only."
   - "Do not store lifecycle state in this file."
@@ -136,6 +136,15 @@ stories:
   US100: {file: "docs/user-stories.md", requirement_ids: ["R088"], task_ids: ["F058"], archive_refs: []}
   US101: {file: "docs/user-stories.md", requirement_ids: ["R089"], task_ids: ["F059"], archive_refs: []}
   US102: {file: "docs/user-stories.md", requirement_ids: ["R090"], task_ids: ["Q014"], archive_refs: []}
+  US612: {file: "docs/user-stories.md", requirement_ids: ["R665", "R666", "R667", "R668"], task_ids: ["DB001"], archive_refs: []}
+  US613: {file: "docs/user-stories.md", requirement_ids: ["R669", "R670", "R671", "R672"], task_ids: ["DB002"], archive_refs: []}
+  US614: {file: "docs/user-stories.md", requirement_ids: ["R673", "R674", "R675", "R676"], task_ids: ["DB003"], archive_refs: []}
+  US615: {file: "docs/user-stories.md", requirement_ids: ["R677", "R678", "R679", "R680"], task_ids: ["DB004"], archive_refs: []}
+  US616: {file: "docs/user-stories.md", requirement_ids: ["R681", "R682", "R683", "R684"], task_ids: ["DB005"], archive_refs: []}
+  US617: {file: "docs/user-stories.md", requirement_ids: ["R685", "R686", "R687", "R688"], task_ids: ["DB006"], archive_refs: []}
+  US618: {file: "docs/user-stories.md", requirement_ids: ["R689", "R690", "R691", "R692"], task_ids: ["DB007"], archive_refs: []}
+  US619: {file: "docs/user-stories.md", requirement_ids: ["R693", "R694", "R695", "R696"], task_ids: ["DB008"], archive_refs: []}
+  US620: {file: "docs/user-stories.md", requirement_ids: ["R697", "R698", "R699", "R700"], task_ids: ["Q127"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -237,6 +246,15 @@ tasks:
   F058: {file: "tasks/backlog.yaml", story_ids: ["US100"], gate: "frontend-scaffold"}
   F059: {file: "tasks/backlog.yaml", story_ids: ["US101"], gate: "frontend-scaffold"}
   Q014: {file: "tasks/backlog.yaml", story_ids: ["US102"], gate: "qa"}
+  DB001: {file: "tasks/backlog.yaml", story_ids: ["US612"], gate: "database-planning"}
+  DB002: {file: "tasks/backlog.yaml", story_ids: ["US613"], gate: "database-persistence"}
+  DB003: {file: "tasks/backlog.yaml", story_ids: ["US614"], gate: "database-persistence"}
+  DB004: {file: "tasks/backlog.yaml", story_ids: ["US615"], gate: "database-persistence"}
+  DB005: {file: "tasks/backlog.yaml", story_ids: ["US616"], gate: "database-persistence"}
+  DB006: {file: "tasks/backlog.yaml", story_ids: ["US617"], gate: "database-persistence"}
+  DB007: {file: "tasks/backlog.yaml", story_ids: ["US618"], gate: "database-persistence"}
+  DB008: {file: "tasks/backlog.yaml", story_ids: ["US619"], gate: "database-persistence"}
+  Q127: {file: "tasks/backlog.yaml", story_ids: ["US620"], gate: "qa"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -358,6 +376,42 @@ requirements:
   R088: {file: "docs/raw-requirements.md", story_ids: ["US100"], task_ids: ["F058"]}
   R089: {file: "docs/raw-requirements.md", story_ids: ["US101"], task_ids: ["F059"]}
   R090: {file: "docs/raw-requirements.md", story_ids: ["US102"], task_ids: ["Q014"]}
+  R665: {file: "docs/raw-requirements.md", story_ids: ["US612"], task_ids: ["DB001"]}
+  R666: {file: "docs/raw-requirements.md", story_ids: ["US612"], task_ids: ["DB001"]}
+  R667: {file: "docs/raw-requirements.md", story_ids: ["US612"], task_ids: ["DB001"]}
+  R668: {file: "docs/raw-requirements.md", story_ids: ["US612"], task_ids: ["DB001"]}
+  R669: {file: "docs/raw-requirements.md", story_ids: ["US613"], task_ids: ["DB002"]}
+  R670: {file: "docs/raw-requirements.md", story_ids: ["US613"], task_ids: ["DB002"]}
+  R671: {file: "docs/raw-requirements.md", story_ids: ["US613"], task_ids: ["DB002"]}
+  R672: {file: "docs/raw-requirements.md", story_ids: ["US613"], task_ids: ["DB002"]}
+  R673: {file: "docs/raw-requirements.md", story_ids: ["US614"], task_ids: ["DB003"]}
+  R674: {file: "docs/raw-requirements.md", story_ids: ["US614"], task_ids: ["DB003"]}
+  R675: {file: "docs/raw-requirements.md", story_ids: ["US614"], task_ids: ["DB003"]}
+  R676: {file: "docs/raw-requirements.md", story_ids: ["US614"], task_ids: ["DB003"]}
+  R677: {file: "docs/raw-requirements.md", story_ids: ["US615"], task_ids: ["DB004"]}
+  R678: {file: "docs/raw-requirements.md", story_ids: ["US615"], task_ids: ["DB004"]}
+  R679: {file: "docs/raw-requirements.md", story_ids: ["US615"], task_ids: ["DB004"]}
+  R680: {file: "docs/raw-requirements.md", story_ids: ["US615"], task_ids: ["DB004"]}
+  R681: {file: "docs/raw-requirements.md", story_ids: ["US616"], task_ids: ["DB005"]}
+  R682: {file: "docs/raw-requirements.md", story_ids: ["US616"], task_ids: ["DB005"]}
+  R683: {file: "docs/raw-requirements.md", story_ids: ["US616"], task_ids: ["DB005"]}
+  R684: {file: "docs/raw-requirements.md", story_ids: ["US616"], task_ids: ["DB005"]}
+  R685: {file: "docs/raw-requirements.md", story_ids: ["US617"], task_ids: ["DB006"]}
+  R686: {file: "docs/raw-requirements.md", story_ids: ["US617"], task_ids: ["DB006"]}
+  R687: {file: "docs/raw-requirements.md", story_ids: ["US617"], task_ids: ["DB006"]}
+  R688: {file: "docs/raw-requirements.md", story_ids: ["US617"], task_ids: ["DB006"]}
+  R689: {file: "docs/raw-requirements.md", story_ids: ["US618"], task_ids: ["DB007"]}
+  R690: {file: "docs/raw-requirements.md", story_ids: ["US618"], task_ids: ["DB007"]}
+  R691: {file: "docs/raw-requirements.md", story_ids: ["US618"], task_ids: ["DB007"]}
+  R692: {file: "docs/raw-requirements.md", story_ids: ["US618"], task_ids: ["DB007"]}
+  R693: {file: "docs/raw-requirements.md", story_ids: ["US619"], task_ids: ["DB008"]}
+  R694: {file: "docs/raw-requirements.md", story_ids: ["US619"], task_ids: ["DB008"]}
+  R695: {file: "docs/raw-requirements.md", story_ids: ["US619"], task_ids: ["DB008"]}
+  R696: {file: "docs/raw-requirements.md", story_ids: ["US619"], task_ids: ["DB008"]}
+  R697: {file: "docs/raw-requirements.md", story_ids: ["US620"], task_ids: ["Q127"]}
+  R698: {file: "docs/raw-requirements.md", story_ids: ["US620"], task_ids: ["Q127"]}
+  R699: {file: "docs/raw-requirements.md", story_ids: ["US620"], task_ids: ["Q127"]}
+  R700: {file: "docs/raw-requirements.md", story_ids: ["US620"], task_ids: ["Q127"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

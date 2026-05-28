@@ -1,5 +1,186 @@
 # Branch Log
 
+## 2026-05-28
+
+### Q127 Database Foundation QA
+
+- branch_name: `codex/q127-database-foundation-qa`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `138292d`
+- remote_status: `pushed to origin/codex/q127-database-foundation-qa after PM confirmation`
+- scope: Verify the DB002-DB008 database foundation only: Alembic head table coverage, minimum end-to-end persistence chain, QA report, and traceability cleanup.
+- allowed_files_check: `backend/tests/**`, `docs/**`, and `tasks/backlog.yaml`; no `backend/app/**`, `backend/migrations/**`, `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend database foundation QA test, QA closeout report, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target Q127 unittest passed; backend unittest discovery passed with 49 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `a86dc3d`
+- integration_status: `ready_for_review`
+- integration_method: `draft PR`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation; PR opened and marked ready for review at https://github.com/huiliuxu780/bpo-schedule-platform/pull/1`
+- blocked_reason: `N/A`
+
+### DB008 Review Closure Persistence
+
+- branch_name: `codex/db008-review-closure-persistence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `20b3fa2`
+- remote_status: `pushed to origin/codex/db008-review-closure-persistence after PM confirmation`
+- scope: Implement the confirmed review closure persistence foundation only: review cases, evidence records, conclusions, closure records, comparison-result source references, Alembic migration, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend review models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: worker subagent target DB008 unittest passed after RED failure; main worker added missing source business-date check; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 47 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `138292d`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
+- blocked_reason: `N/A`
+
+### DB007 Comparison Result Persistence
+
+- branch_name: `codex/db007-comparison-result-persistence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `ec3a1f4`
+- remote_status: `pushed to origin/codex/db007-comparison-result-persistence after PM confirmation`
+- scope: Implement the confirmed comparison result persistence foundation only: comparison runs, forecast-vs-schedule result rows, schedule-vs-actual result rows, source version/record reference checks, Alembic migration, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend comparison models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: worker subagent target DB007 unittest passed after RED failure; main worker added missing source-dimension checks; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 41 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `20b3fa2`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
+- blocked_reason: `N/A`
+
+### DB006 Actual Log Persistence
+
+- branch_name: `codex/db006-actual-log-persistence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `e40d548`
+- remote_status: `pushed to origin/codex/db006-actual-log-persistence after PM confirmation`
+- scope: Implement the confirmed login/status log persistence foundation only: login/logout events, status dictionary, status intervals, business-day splitting, timezone checks, import/master-data reference checks, Alembic migration, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend actual log models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: worker subagent target DB006 unittest passed after RED failure; main worker added missing login employee and unknown status checks; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 34 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `ec3a1f4`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
+- blocked_reason: `N/A`
+
+### DB005 Demand Forecast Persistence
+
+- branch_name: `codex/db005-demand-forecast-persistence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `bc971ea`
+- remote_status: `pushed to origin/codex/db005-demand-forecast-persistence after PM confirmation`
+- scope: Implement the confirmed demand forecast persistence foundation only: forecast versions, forecast interval rows, skill/level demand alignment, import source references, version change records, Alembic migration, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend forecast models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target DB005 unittest passed after RED failure; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 28 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `e40d548`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
+- blocked_reason: `N/A`
+
+### DB004 Personnel Schedule Persistence
+
+- branch_name: `codex/db004-personnel-schedule-persistence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `1686b19`
+- remote_status: `pushed to origin/codex/db004-personnel-schedule-persistence after PM confirmation`
+- scope: Implement the confirmed personnel schedule persistence foundation only: schedule versions, shift types, personnel schedule details, half-hour intervals, import/master-data reference checks, Alembic migration, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend personnel schedule models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target DB004 unittest passed after RED failure; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed with 25 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `bc971ea`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
+- blocked_reason: `N/A`
+
+### DB003 Master Data Persistence
+
+- branch_name: `codex/db003-master-data-persistence`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `d7fabc8`
+- remote_status: `pushed to origin/codex/db003-master-data-persistence after PM confirmation`
+- scope: Implement the confirmed master data persistence foundation only: employees, suppliers, workplaces, projects, skills, employee bindings, effective dates, freeze status, reference checks, Alembic migration, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend master data models/repository/tests, Alembic migration files, current queue cleanup, registry trace index, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target DB003 unittest passed after RED failure; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `1686b19`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
+- blocked_reason: `N/A`
+
+### DB002 Import Persistence Foundation
+
+- branch_name: `codex/db001-database-gate-plan`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `bc07c05`
+- remote_status: `pushed to origin/codex/db001-database-gate-plan after PM confirmation`
+- scope: Implement the confirmed import persistence foundation only: import batches, row results, failed row details, generated version records, SQLAlchemy repository, Alembic migration, FastAPI endpoints, backend tests, and traceability cleanup.
+- allowed_files_check: `backend/**`, `docs/**`, `tasks/backlog.yaml`, and `alembic.ini`; no `app/**`, `components/**`, `lib/**`, JS package/lockfiles, real external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: backend import persistence models/repository/routes/tests, Alembic migration files, backend requirements, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, implementation plan, and branch log.
+- check_result: target DB002 unittest passed; Alembic upgrade against isolated SQLite passed; backend unittest discovery passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `d7fabc8`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
+- blocked_reason: `N/A`
+
+### DB002 Import Persistence Preflight
+
+- branch_name: `codex/db001-database-gate-plan`
+- base_main_commit: `a3a134c`
+- base_chain_commit: `2b71bfe`
+- remote_status: `db001_pushed`
+- scope: Seed DB002 as a blocked current task with explicit PM confirmations required before database implementation starts.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, migration, ORM, repository, schema, database connection, production persistence config, external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: current queue, active tasks, blockers, raw requirements, user stories, backlog, audit, task log, project context, and branch log.
+- check_result: `bash scripts/check-state.sh --strict` passed with blocked DB002; `git diff --check` passed; final `bash scripts/check.sh` passed.
+- local_commit_sha: `bc07c05`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pushed after PM confirmation`
+- blocked_reason: `database engine, dependency/package-change allowance, ORM/migration tool, and test database setup are not confirmed`
+
+### DB001 Database Gate Plan
+
+- branch_name: `codex/db001-database-gate-plan`
+- base_main_commit: `a3a134c`
+- remote_status: `not_pushed`
+- scope: Define database Gate planning and future persistence workflow boundaries without implementing database code.
+- allowed_files_check: `docs/**` and `tasks/backlog.yaml`; no backend, app, components, lib, package, lockfile, migration, ORM, repository, schema, database connection, production persistence config, external integration, auth, permission, approval, export, batch, automatic scheduling, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: current queue, active tasks, raw requirements, user stories, backlog, Gate Registry, database Gate plan, implementation plan, audit, task log, project context, and branch log.
+- check_result: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed after clearing stale cross-branch `.next` generated types.
+- local_commit_sha: `2b71bfe`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `ask PM after verified local commit`
+- blocked_reason: `N/A`
+
 ## 2026-05-10
 
 ### Clean Harness Initialization

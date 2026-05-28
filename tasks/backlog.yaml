@@ -2,6 +2,322 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: Q127
+    title: "数据库基础 QA 收口"
+    priority: P0
+    status: done
+    required_workflow: qa
+    dependencies: ["DB008"]
+    allowed_files:
+      - "backend/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "backend/app/**"
+      - "backend/migrations/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "验证 Alembic head 能创建 DB002-DB008 全部基础表。"
+      - "验证最小端到端链路可从导入批次走到复核关闭记录。"
+      - "输出 QA 结论，明确已完成、未完成和仍禁止混入范围。"
+      - "不修改产品行为、数据库 schema、repository 实现、权限、审批、导出、批量、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "范围扩展到产品行为变更、数据库 schema 变更或 repository 实现变更"
+      - "需要真实外部系统接入"
+      - "需要权限、审批、导出、批量、生产公式、结算或收费因子"
+      - "需要新增未确认依赖或修改 JS package/lockfile"
+      - "验证失败"
+    commit_after_done: true
+  - id: DB008
+    title: "复核闭环记录持久化基础"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["DB007"]
+    allowed_files:
+      - "backend/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "alembic.ini"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "持久化 review cases、review evidence、review conclusions 和 review closures。"
+      - "测试覆盖来源 comparison result 类型和 result id 引用校验。"
+      - "测试覆盖证据、结论、关闭记录读取、缺失来源拒绝、来源类型不匹配拒绝和重复关闭拒绝。"
+      - "不包含审批流、权限、批量关闭、导出、真实外部证据服务、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions:
+      - "范围扩展到审批流、权限、导出、批量或真实外部证据服务"
+      - "需要真实外部系统接入"
+      - "需要生产公式、结算或收费因子"
+      - "需要新增未确认依赖或修改 JS package/lockfile"
+      - "验证失败"
+    commit_after_done: true
+  - id: DB007
+    title: "对比结果持久化基础"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["DB006"]
+    allowed_files:
+      - "backend/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "alembic.ini"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "持久化 comparison runs、forecast-vs-schedule results 和 schedule-vs-actual results。"
+      - "测试覆盖 forecast version、schedule version、actual import version 和来源记录引用校验。"
+      - "测试覆盖结果状态、差异数值、缺失引用拒绝和重复 run 读取。"
+      - "不包含真实计算调度、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions:
+      - "范围扩展到真实计算调度、异常或复核记录"
+      - "需要真实外部系统接入"
+      - "需要权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "需要新增未确认依赖或修改 JS package/lockfile"
+      - "验证失败"
+    commit_after_done: true
+  - id: DB006
+    title: "登录/状态日志持久化基础"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["DB005"]
+    allowed_files:
+      - "backend/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "alembic.ini"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "持久化登录/登出事件、状态字典和状态区间。"
+      - "测试覆盖 import version、员工和状态字典引用校验。"
+      - "测试覆盖跨天切分、业务日、时区校验和未知状态拒绝。"
+      - "不包含对比结果、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions:
+      - "范围扩展到对比结果、异常或复核记录"
+      - "需要真实外部系统接入"
+      - "需要权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "需要新增未确认依赖或修改 JS package/lockfile"
+      - "验证失败"
+    commit_after_done: true
+  - id: DB005
+    title: "需求预测持久化基础"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["DB004"]
+    allowed_files:
+      - "backend/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "alembic.ini"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "持久化预测版本、0.5h 预测行和版本变更记录。"
+      - "测试覆盖 import version、职场、项目和技能引用校验。"
+      - "测试覆盖技能等级需求、冻结/缺失引用拒绝和无效时间范围拒绝。"
+      - "不包含登录状态、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions:
+      - "范围扩展到登录状态、异常或复核记录"
+      - "需要真实外部系统接入"
+      - "需要权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "需要新增未确认依赖或修改 JS package/lockfile"
+      - "验证失败"
+    commit_after_done: true
+  - id: DB004
+    title: "人员级排班持久化基础"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["DB003"]
+    allowed_files:
+      - "backend/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "alembic.ini"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "持久化排班版本、班次类型、人员排班明细和 0.5h 展开记录。"
+      - "测试覆盖 import version、员工、职场、项目、技能、班次类型引用校验。"
+      - "测试覆盖冻结/缺失引用拒绝和无效时间范围拒绝。"
+      - "不包含需求预测、登录状态、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions:
+      - "范围扩展到需求预测、登录状态、异常或复核记录"
+      - "需要真实外部系统接入"
+      - "需要权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "需要新增未确认依赖或修改 JS package/lockfile"
+      - "验证失败"
+    commit_after_done: true
+  - id: DB003
+    title: "主数据持久化基础"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["DB002"]
+    allowed_files:
+      - "backend/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "alembic.ini"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "持久化坐席、职场、供应商、项目、技能和绑定关系。"
+      - "测试覆盖有效期、冻结状态和引用校验。"
+      - "不包含人员排班、预测、登录状态、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions:
+      - "范围扩展到人员排班、预测、登录状态、异常或复核记录"
+      - "需要真实外部系统接入"
+      - "需要权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "需要新增未确认依赖或修改 JS package/lockfile"
+      - "验证失败"
+    commit_after_done: true
+  - id: DB002
+    title: "导入批次持久化基础"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["DB001"]
+    allowed_files:
+      - "backend/**"
+      - "scripts/tests/**"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+      - "alembic.ini"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+    acceptance:
+      - "持久化导入批次、导入行结果、失败行明细和导入生成版本记录。"
+      - "测试覆盖跨请求/服务调用后数据仍可读取。"
+      - "不包含主数据、人员排班、预测、登录状态、异常、复核记录、权限、审批、导出、批量、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: high
+    confirmed_database_engine: "PostgreSQL"
+    confirmed_orm: "SQLAlchemy"
+    confirmed_migration_tool: "Alembic"
+    confirmed_test_database: "isolated local test database"
+    package_change_allowed: true
+    stop_conditions:
+      - "数据库引擎未确认"
+      - "依赖或 package/lockfile 变更未确认"
+      - "migration 工具未确认"
+      - "测试数据库方案未确认"
+      - "范围扩展到主数据、排班、预测、登录状态、异常或复核记录"
+      - "需要真实外部系统接入"
+      - "需要权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: DB001
+    title: "数据库 Gate 规划与首批落库拆解"
+    priority: P0
+    status: done
+    required_workflow: database-planning
+    dependencies: []
+    allowed_files:
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "migrations/**"
+    acceptance:
+      - "新增数据库 Gate 规划文档，明确允许、禁止、硬停项和首批落库顺序。"
+      - "新增后续数据库实施计划，拆出 DB002+ 可执行任务。"
+      - "更新 Gate Registry，使 database-planning 和后续 database-persistence workflow 有明确规则。"
+      - "本轮不创建数据库连接、ORM、migration、schema、生产持久化配置或新依赖。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: high
+    stop_conditions:
+      - "需要修改 package 或 lockfile"
+      - "需要创建数据库连接、ORM、migration、schema 或生产持久化配置"
+      - "需要真实外部系统接入"
+      - "需要权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: H001
     title: "最小 Harness 初始化"
     priority: P0

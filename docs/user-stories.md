@@ -29,6 +29,278 @@
 
 ## Stories
 
+### US620 - Q127 数据库基础 QA 收口
+
+```yaml
+id: US620
+requirement_ids:
+  - R697
+  - R698
+  - R699
+  - R700
+task_ids:
+  - Q127
+module: "质量与交付"
+role: "PM"
+story: "作为 PM，我希望 DB002-DB008 的数据库基础经过一次 QA 收口，以便确认生产持久化雏形已形成可迁移、可读回、可追溯的闭环。"
+task_type: "qa"
+priority: "P0"
+acceptance:
+  - "验证 Alembic head 能创建 DB002-DB008 全部基础表。"
+  - "验证最小端到端链路可从导入批次走到复核关闭记录。"
+  - "输出 QA 结论，明确已完成、未完成和仍禁止混入范围。"
+  - "不修改产品行为、数据库 schema、repository 实现、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB008
+status: "done"
+completed_scope:
+  - "新增 database foundation QA closeout 测试。"
+  - "验证 Alembic head 能创建 DB002-DB008 全部基础表。"
+  - "验证最小端到端链路可从导入/版本记录走到复核关闭记录。"
+  - "输出数据库基础 QA 收口结论文档。"
+```
+
+### US619 - DB008 复核闭环记录持久化基础
+
+```yaml
+id: US619
+requirement_ids:
+  - R693
+  - R694
+  - R695
+  - R696
+task_ids:
+  - DB008
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望主管复核 case、证据、结论和关闭记录可以持久化并引用对比结果，以便后续异常闭环从只读判断进入可追溯处理记录。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 review cases、review evidence、review conclusions 和 review closures。"
+  - "校验来源 comparison result 类型和 result id 引用。"
+  - "测试覆盖证据、结论、关闭记录读取、缺失来源拒绝、来源类型不匹配拒绝和重复关闭拒绝。"
+  - "不实现审批流、权限、批量关闭、导出、真实外部证据服务、生产状态码、结算或收费因子。"
+dependencies:
+  - DB007
+status: "done"
+completed_scope:
+  - "持久化 review cases、review evidence、review conclusions 和 review closures。"
+  - "校验 forecast_schedule/schedule_actual 来源 result id、来源类型和业务日一致性。"
+  - "测试覆盖证据、结论、关闭记录读取、缺失来源拒绝、来源类型不匹配拒绝、业务日不一致拒绝和重复关闭拒绝。"
+```
+
+### US618 - DB007 对比结果持久化基础
+
+```yaml
+id: US618
+requirement_ids:
+  - R689
+  - R690
+  - R691
+  - R692
+task_ids:
+  - DB007
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望预测 vs 排班、排班 vs 实际的结果可以持久化并保留来源引用，以便后续异常生成和复核闭环有可复跑基线。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 comparison runs、forecast-vs-schedule results 和 schedule-vs-actual results。"
+  - "校验 forecast version、schedule version、actual import version 和来源记录引用。"
+  - "测试覆盖结果状态、差异数值、来源引用、缺失引用拒绝和重复 run 读取。"
+  - "不实现真实计算调度、异常复核写入、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB006
+status: "done"
+completed_scope:
+  - "持久化 comparison runs、forecast-vs-schedule results 和 schedule-vs-actual results。"
+  - "校验 forecast version、schedule version、actual status import version 和来源记录版本归属。"
+  - "测试覆盖结果读取、缺失源版本拒绝、非 status_log 拒绝、跨版本来源拒绝和来源维度不一致拒绝。"
+```
+
+### US617 - DB006 登录/状态日志持久化基础
+
+```yaml
+id: US617
+requirement_ids:
+  - R685
+  - R686
+  - R687
+  - R688
+task_ids:
+  - DB006
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望登录和状态日志完成事件、区间、业务日和状态字典持久化，以便后续排班 vs 实际状态对比有稳定实际基线。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 login events、status dictionary 和 status intervals。"
+  - "校验 import version、employee 和状态字典引用。"
+  - "测试覆盖跨天区间切分、业务日、时区校验和未知状态拒绝。"
+  - "不实现预测/排班对比、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB005
+status: "done"
+completed_scope:
+  - "持久化 login events、status dictionary 和 status intervals。"
+  - "校验 login_log/status_log import version、employee 和状态字典引用。"
+  - "测试覆盖跨天业务日切分、Asia/Shanghai 时区校验、冻结员工拒绝和未知状态拒绝。"
+```
+
+### US616 - DB005 需求预测持久化基础
+
+```yaml
+id: US616
+requirement_ids:
+  - R681
+  - R682
+  - R683
+  - R684
+task_ids:
+  - DB005
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望需求预测完成版本、0.5h 预测行和技能等级需求持久化，以便后续预测 vs 排班对比有稳定需求基线。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 forecast versions、forecast interval rows 和 version change records。"
+  - "校验 import version、workplace、project 和 skill 引用。"
+  - "测试覆盖 0.5h 时段、技能等级需求、版本变更追踪、冻结/缺失引用拒绝和无效时间范围拒绝。"
+  - "不实现登录/状态日志、对比结果、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB004
+status: "done"
+completed_scope:
+  - "持久化 forecast versions、forecast interval rows 和 version change records。"
+  - "校验 import version、workplace、project 和 skill 引用。"
+  - "测试覆盖 0.5h 时段、技能等级需求、版本变更追踪、冻结技能拒绝和非 0.5h 时段拒绝。"
+```
+
+### US615 - DB004 人员级排班持久化基础
+
+```yaml
+id: US615
+requirement_ids:
+  - R677
+  - R678
+  - R679
+  - R680
+task_ids:
+  - DB004
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望人员级排班完成版本、明细、班次引用和 0.5h 展开持久化，以便后续预测对比和登录状态对比有稳定排班基线。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 schedule versions、shift types、personnel schedule details 和 half-hour intervals。"
+  - "校验 import version、employee、workplace、project、skill 和 shift type 引用。"
+  - "测试覆盖 0.5h 展开、冻结/缺失引用拒绝和无效时间范围拒绝。"
+  - "不实现需求预测、登录/状态日志、对比结果、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB003
+status: "done"
+completed_scope:
+  - "持久化 schedule versions、shift types、personnel schedule details 和 half-hour intervals。"
+  - "校验 import version、employee、workplace、project、skill、employee binding 和 shift type 引用。"
+  - "测试覆盖 0.5h 展开、冻结班次类型拒绝和无效时间范围拒绝。"
+```
+
+### US614 - DB003 主数据持久化基础
+
+```yaml
+id: US614
+requirement_ids:
+  - R673
+  - R674
+  - R675
+  - R676
+task_ids:
+  - DB003
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望主数据先完成坐席、职场、供应商、项目、技能和绑定关系的持久化，以便后续人员排班、预测和日志对比都能引用稳定主数据。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "持久化 employees, suppliers, workplaces, projects, skills。"
+  - "持久化 employee bindings，覆盖 employee/supplier/workplace/project/skill 引用。"
+  - "支持有效期、冻结状态和引用校验。"
+  - "不实现人员排班、预测、登录/状态日志、异常复核、权限、审批、导出、批量、生产公式、结算或收费因子。"
+dependencies:
+  - DB002
+status: "done"
+completed_scope:
+  - "持久化 employees, suppliers, workplaces, projects, skills。"
+  - "持久化 employee bindings。"
+  - "测试覆盖新 repository 读取、冻结状态拒绝和 import batch 来源引用。"
+```
+
+### US613 - DB002 导入持久化基础
+
+```yaml
+id: US613
+requirement_ids:
+  - R669
+  - R670
+  - R671
+  - R672
+task_ids:
+  - DB002
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望使用已确认的 PostgreSQL/SQLAlchemy/Alembic 口径实现导入批次持久化基础，以便后续主数据、排班、预测和状态日志都有可追溯的导入来源。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "明确数据库引擎。"
+  - "明确是否允许 package/lockfile 变更。"
+  - "明确 ORM、migration 工具和测试数据库方案。"
+  - "实现范围只包含导入批次、导入行结果、失败行明细和导入生成版本记录。"
+dependencies:
+  - DB001
+status: "done"
+confirmed_database_engine: "PostgreSQL"
+confirmed_orm: "SQLAlchemy"
+confirmed_migration_tool: "Alembic"
+confirmed_test_database: "isolated local test database"
+package_change_allowed: true
+completed_scope:
+  - "导入批次记录。"
+  - "导入行结果、失败行明细和错误原因。"
+  - "导入生成版本记录。"
+  - "Alembic migration 和 backend persistence tests。"
+```
+
+### US612 - 数据库 Gate 规划
+
+```yaml
+id: US612
+requirement_ids:
+  - R665
+  - R666
+  - R667
+  - R668
+task_ids:
+  - DB001
+module: "生产持久化"
+role: "PM"
+story: "作为 PM，我希望先确认数据库 Gate 的边界、首批落库顺序和实施计划，以便后续数据库开发不混入权限、审批、导出、批量和结算等生产能力。"
+task_type: "database-planning"
+priority: "P0"
+acceptance:
+  - "数据库 Gate 文档明确允许、禁止和硬停项。"
+  - "首批落库顺序从导入批次、失败行和版本记录开始。"
+  - "后续数据库实现拆成可逐步执行的 DB002+ 任务。"
+  - "本轮不创建数据库连接、ORM、migration、schema、生产持久化配置或新依赖。"
+dependencies: []
+status: "done"
+```
+
 ### US001 - 运营负责人查看 Dashboard 总览
 
 ```yaml

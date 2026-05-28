@@ -2,7 +2,7 @@
 
 ## Current Stage
 
-Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness.
+Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness + controlled database Gate.
 
 For current execution context, default next step, active queue, active tasks, and blockers, read:
 
@@ -19,7 +19,7 @@ The project contains:
 
 - A PM-confirmed shadcn/ui-style BPO WFM dashboard scaffold.
 - Local scheduling-plan MVP verticals backed by local FastAPI seed/process-memory contracts and frontend fallback contracts.
-- No Database MVP Mode.
+- A PM-confirmed database Gate with import persistence, master data persistence, personnel schedule persistence, demand forecast persistence, login/status log persistence, comparison result persistence, and review closure record persistence foundation slices.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -29,31 +29,35 @@ The project contains:
 The project does not contain:
 
 - Real external API integration.
-- Database persistence or production persistence setup.
+- Broad production persistence beyond the DB002 import foundation, DB003 master data, DB004 personnel schedule, DB005 demand forecast, DB006 login/status log, DB007 comparison result, and DB008 review closure record slices.
 - Authentication or production permission boundaries.
 - Real Excel import or real CORN integration.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
 - Production status-code finalization, formulas, settlement rules, or charge factors.
 
-## No Database MVP Mode
+## Database Gate Mode
 
-PM confirmed on 2026-05-12 that the project should not connect a database before the local MVP feature chain is developed and verified, because there is currently no database environment.
+PM originally confirmed on 2026-05-12 that the local MVP should not connect a database before the local feature chain was developed and verified. PM later confirmed on 2026-05-28 that the project may enter a controlled database Gate.
 
-Allowed local MVP data modes:
+Current allowed database scope:
 
-- Local FastAPI endpoints backed by seed data or process memory.
-- Frontend API-client fallback data that matches the same contract.
-- Read-only or draft-only local verification flows.
-- Documentation and audit records that keep database work out of scope.
+- Confirmed `database-persistence` tasks only.
+- Named entity slices only.
+- DB002 import persistence foundation: import batches, row results, failed row details, and import-generated version records.
+- DB003 master data persistence foundation: employees, suppliers, workplaces, projects, skills, bindings, effective dates, freeze status, and reference checks.
+- DB004 personnel schedule persistence foundation: schedule versions, shift types, personnel schedule details, half-hour intervals, and import/master-data reference checks.
+- DB005 demand forecast persistence foundation: forecast versions, forecast interval rows, skill/level demand alignment, import source references, and version change tracking.
+- DB006 login/status log persistence foundation: login/logout events, status dictionary, status intervals, business-day splitting, timezone checks, and import/master-data reference checks.
+- DB007 comparison result persistence foundation: comparison runs, forecast-vs-schedule results, schedule-vs-actual results, source version/record reference checks, and result dimension checks.
+- DB008 review closure record persistence foundation: review cases, evidence records, conclusions, closure records, source comparison result references, and business-date checks.
+- SQLAlchemy, Alembic, and an isolated local test database for verification.
 
-Hard stop until a later PM-confirmed Gate:
+Hard stop until separate PM confirmation:
 
-- Database connection setup.
-- ORM models, repositories, or adapters.
-- Migration files.
-- Schema implementation as engineering work.
-- Production persistence configuration.
+- Broad schema implementation outside the active entity slice.
 - Real external data-source integration.
+- Authentication, permission boundaries, supplier isolation, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors.
+- Additional persistence, production deployment, or integration unless a matching task is active.
 
 ## State Governance Direction
 
@@ -80,16 +84,25 @@ Current invariants:
 - `H027/US068` extended state checks to validate `TRACE_INDEX.yaml` current file paths and reduce duplicate registry path output.
 - `H028/US069` fixed the Codex Plan boundary: the Plan panel is only a session projection and must never override Harness current/registry state.
 - `F041-F059/Q014` completed a 20-task local frontend parity block across schedule plans, schedule risks, and unavailability tables, then returned current queue and active tasks to empty.
+- `DB001/US612` defined the database Gate and persistence order.
+- `DB002/US613` added the first database slice for import batches, row results, failed rows, and import-generated version records, then returned current queue and active tasks to empty.
+- `DB003/US614` added the master data slice for employees, suppliers, workplaces, projects, skills, bindings, effective dates, freeze status, and reference checks, then returned current queue and active tasks to empty.
+- `DB004/US615` added the personnel schedule slice for schedule versions, shift types, personnel schedule details, half-hour intervals, and import/master-data reference checks, then returned current queue and active tasks to empty.
+- `DB005/US616` added the demand forecast slice for forecast versions, interval rows, skill/level demand alignment, import source references, and version change tracking, then returned current queue and active tasks to empty.
+- `DB006/US617` added the login/status log slice for login/logout events, status dictionary, status intervals, business-day splitting, timezone checks, and import/master-data reference checks, then returned current queue and active tasks to empty.
+- `DB007/US618` added the comparison result slice for comparison runs, forecast-vs-schedule results, schedule-vs-actual results, source version/record reference checks, and result dimension checks, then returned current queue and active tasks to empty.
+- `DB008/US619` added the review closure record slice for review cases, evidence records, conclusions, closure records, source comparison result references, and business-date checks, then returned current queue and active tasks to empty.
+- `Q127/US620` verified the DB002-DB008 foundation with Alembic head table coverage and a minimum end-to-end persistence chain from import/version records to review closure records, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
-Near-term product work should remain inside the no-database local MVP boundary.
+Near-term product work should stay inside either confirmed local MVP frontend/backend slices or confirmed database-persistence slices.
 
 Recommended order after state governance:
 
-1. Seed the next ready story in current state before execution.
-2. Continue frontend/local-contract work only when it avoids database, real integrations, auth, permissions, approval, export, batch, production formulas, settlement rules, and charge factors.
-3. Continue table parity only in small display-only slices unless PM confirms a broader component-interaction Gate.
+1. Ask PM whether to integrate the pushed DB006-DB008 and Q127 branches.
+2. If continuing product work, plan the next stage explicitly before adding external integrations or production workflow capabilities.
+3. Do not mix auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors into the foundation without a separate task.
 
 ## Frontend Direction
 

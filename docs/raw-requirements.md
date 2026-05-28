@@ -17,6 +17,201 @@
 
 ## Requirements
 
+### R697-R700 - Q127 数据库基础 QA 收口
+
+```yaml
+requirements:
+  - id: R697
+    description: "数据库基础需要一次 QA 收口，确认 DB002-DB008 的 Alembic head 能创建所有基础表。"
+  - id: R698
+    description: "数据库基础需要一次最小端到端持久化验证，覆盖 import、master data、schedule、forecast、actual、comparison 和 review closure 链路。"
+  - id: R699
+    description: "QA 收口需要生成可追溯结论，明确已完成、未完成和仍禁止混入的范围。"
+  - id: R700
+    description: "Q127 不应修改产品行为、数据库 schema、repository 实现、权限、审批、导出、批量、生产公式、结算或收费因子。"
+source: "DB008 review closure foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "只做 QA 验证、测试和追溯；不改生产实现、不接真实外部接口、不新增依赖。"
+```
+
+### R693-R696 - DB008 复核闭环记录持久化基础
+
+```yaml
+requirements:
+  - id: R693
+    description: "系统需要持久化主管复核 case，并引用 DB007 的 forecast-vs-schedule 或 schedule-vs-actual 对比结果。"
+  - id: R694
+    description: "系统需要持久化复核证据记录，包括证据类型、证据位置、提交人、提交时间和备注。"
+  - id: R695
+    description: "系统需要持久化复核结论和关闭记录，保留结论类型、风险等级、处理人、关闭状态和关闭备注。"
+  - id: R696
+    description: "DB008 不应扩展到审批流、权限、批量关闭、导出、真实外部证据服务、生产状态码、结算或收费因子。"
+source: "DB007 comparison result foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "只做复核闭环记录持久化基础；不接真实外部接口、不新增依赖、不改前端、不做审批权限。"
+```
+
+### R689-R692 - DB007 对比结果持久化基础
+
+```yaml
+requirements:
+  - id: R689
+    description: "系统需要持久化 forecast-vs-schedule 对比结果，保留 forecast version、schedule version 和来源 interval/detail 引用。"
+  - id: R690
+    description: "系统需要持久化 schedule-vs-actual 对比结果，保留 schedule version、actual import version 和来源 schedule/status 引用。"
+  - id: R691
+    description: "对比结果持久化需要支持结果状态、差异数值和可复跑 run 标识，方便后续异常引擎读取。"
+  - id: R692
+    description: "DB007 不应扩展到真实计算调度、异常复核写入、审批、权限、导出、批量、生产公式、结算或收费因子。"
+source: "DB006 actual log foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "只做对比结果持久化基础；不接真实外部接口、不新增依赖、不改前端、不做异常闭环动作。"
+```
+
+### R685-R688 - DB006 登录/状态日志持久化基础
+
+```yaml
+requirements:
+  - id: R685
+    module: "生产持久化"
+    description: "登录日志需要落库登录、登出事件，并关联 DB002 导入版本和 DB003 主数据员工。"
+  - id: R686
+    module: "生产持久化"
+    description: "状态日志需要落库状态区间，支持跨天切分、业务日和时区校验。"
+  - id: R687
+    module: "生产持久化"
+    description: "状态日志需要状态字典映射，将外部状态码映射为内部状态分类。"
+  - id: R688
+    module: "生产持久化"
+    description: "DB006 不应扩展到排班对比、预测对比、异常复核、权限、审批、导出、批量或生产公式。"
+source: "DB005 demand forecast foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只授权登录/状态日志持久化基础：login events, logout events, status intervals, business-day normalization, timezone checks, and status dictionary mapping."
+```
+
+### R681-R684 - DB005 需求预测持久化基础
+
+```yaml
+requirements:
+  - id: R681
+    module: "生产持久化"
+    description: "需求预测需要落库预测版本，并关联 DB002 导入版本。"
+  - id: R682
+    module: "生产持久化"
+    description: "需求预测需要按日期、0.5h 时段、职场、项目、技能和等级保存预测人数。"
+  - id: R683
+    module: "生产持久化"
+    description: "需求预测需要校验主数据职场、项目和技能引用，并记录版本变更来源。"
+  - id: R684
+    module: "生产持久化"
+    description: "DB005 不应扩展到登录状态、对比计算、异常复核、权限、审批、导出、批量或生产公式。"
+source: "DB004 personnel schedule foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只授权需求预测持久化基础：forecast versions, forecast interval rows, workplace/project/skill/level demand alignment, import source references, and version change tracking."
+```
+
+### R677-R680 - DB004 人员级排班持久化基础
+
+```yaml
+requirements:
+  - id: R677
+    module: "生产持久化"
+    description: "人员级排班需要先落库排班版本和人员排班明细，并关联 DB002 导入版本。"
+  - id: R678
+    module: "生产持久化"
+    description: "人员排班明细需要引用主数据员工、项目、职场和技能，并校验引用存在、未冻结且有效。"
+  - id: R679
+    module: "生产持久化"
+    description: "人员排班需要引用班次类型，并把排班明细展开为 0.5h 区间记录。"
+  - id: R680
+    module: "生产持久化"
+    description: "DB004 不应扩展到需求预测、登录状态、对比计算、异常复核、权限、审批、导出、批量或生产公式。"
+source: "DB003 master data foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只授权人员级排班持久化基础：schedule versions, personnel schedule details, shift types, half-hour expansion, and import/master-data reference checks."
+```
+
+### R673-R676 - DB003 主数据持久化基础
+
+```yaml
+requirements:
+  - id: R673
+    module: "生产持久化"
+    description: "主数据需要先落库坐席、职场、供应商、项目和技能，作为后续人员排班、预测对齐和日志对比的引用基础。"
+  - id: R674
+    module: "生产持久化"
+    description: "主数据绑定关系需要记录坐席与供应商、职场、项目、技能之间的有效关系，并支持有效期校验。"
+  - id: R675
+    module: "生产持久化"
+    description: "主数据需要支持冻结状态，冻结或不存在的引用不能被绑定关系误用。"
+  - id: R676
+    module: "生产持久化"
+    description: "DB003 不应扩展到人员排班、预测、登录状态、异常复核、权限、审批、导出、批量或生产公式。"
+source: "DB002 database foundation follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只授权主数据持久化基础：employees, suppliers, workplaces, projects, skills, bindings, effective dates, freeze status, and reference checks."
+```
+
+### R669-R672 - DB002 导入持久化基础前置确认
+
+```yaml
+requirements:
+  - id: R669
+    module: "生产持久化"
+    description: "DB002 开始前必须确认数据库引擎和本地运行方式，避免在未知环境下创建连接和 migration。"
+  - id: R670
+    module: "生产持久化"
+    description: "DB002 开始前必须确认是否允许修改 package/lockfile 以引入数据库、ORM 或 migration 依赖。"
+  - id: R671
+    module: "生产持久化"
+    description: "DB002 开始前必须确认 migration 工具和测试数据库方案，确保导入批次持久化可验证。"
+  - id: R672
+    module: "生产持久化"
+    description: "DB002 的首批实现范围限定为导入批次、导入行结果、失败行明细和导入生成版本记录。"
+source: "DB001 database Gate follow-up on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "PM 已确认 PostgreSQL、SQLAlchemy、Alembic、依赖变更和本地隔离测试库口径；DB002 已按该范围实现导入批次、行结果、失败行明细和导入生成版本记录持久化。"
+```
+
+### R665-R668 - 数据库 Gate 规划与首批落库拆解
+
+```yaml
+requirements:
+  - id: R665
+    module: "生产持久化"
+    description: "PM 已确认进入数据库 Gate，需要先明确数据库落库边界、禁止混入的生产能力和首批可执行范围。"
+  - id: R666
+    module: "生产持久化"
+    description: "数据库 Gate 需要先按业务依赖顺序拆分：导入批次、失败行、版本记录、主数据、人员排班、预测、登录状态、异常、复核记录。"
+  - id: R667
+    module: "生产持久化"
+    description: "首批落库建议从导入批次、成功/失败行和版本记录开始，因为后续主数据、排班、预测、登录状态和异常都依赖导入来源。"
+  - id: R668
+    module: "质量与交付"
+    description: "数据库 Gate 规划需要有明确验收方式：本轮只交付文档、Harness 任务和实施计划，不创建数据库连接、ORM、migration、schema 或生产配置。"
+source: "PM confirmed database Gate after local supervisor handling-record chain on 2026-05-28"
+submitted_at: "2026-05-28"
+version: "1.0"
+status: "split"
+notes: "本组只做数据库 Gate 规划和执行拆解，不实施数据库持久化；下一步 DB002 开始前必须再次确认具体数据库环境、依赖和 migration 策略。"
+```
+
 ### R001 - BPO WFM Dashboard 静态首页
 
 ```yaml

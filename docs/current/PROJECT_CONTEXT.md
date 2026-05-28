@@ -2,15 +2,15 @@
 
 ## Current Stage
 
-Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness.
+Frontend dashboard scaffold + local scheduling-plan MVP vertical + state-governed Lightweight Harness + controlled database Gate.
 
 ## Active Boundary
 
-The project is in No Database MVP Mode. Product work may continue only through confirmed local frontend stories, local FastAPI seed/process-memory contracts, and verification tasks. The project must not connect or prepare a production database before PM confirms a later database Gate and provides an environment.
+The project has entered a PM-confirmed database Gate. Database work may continue only through small, confirmed tasks. Implemented database slices now cover import batches, master data, personnel schedules, demand forecasts, login/status logs, comparison results, and review closure records. Q127 database foundation QA closeout has verified the local migration-backed foundation.
 
 ## Default Next Step
 
-No ready product story is currently queued. The last completed product chain was `US083/F041 -> ... -> US102/Q014`, which extended local table parity across schedule plans, schedule risks, and unavailability tables without database, package, backend contract, approval, export, batch, permission, or production formula work.
+No ready product story is currently queued. The last completed QA slice was `US620/Q127`, which verified DB002-DB008 Alembic head table coverage and a minimum end-to-end persistence chain from import/version records to review closure records.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -42,9 +42,9 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Stop Conditions
 
-- New dependencies or package/lockfile changes.
 - Real external data sources or integrations.
-- Database connection setup, ORM, migrations, schema implementation, or production persistence config.
+- Database QA closeout or additional persistence unless a matching task is active.
+- Unconfirmed new dependencies or package/lockfile changes.
 - Authentication or permission boundaries.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
 - Production status-code, formula, settlement-rule, or charge-factor changes.
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-After this state-governance layer is verified, seed the next ready story explicitly before returning to product development. The recommended product order remains: risk detail drilldown follow-ups only if needed, unavailability impact locator follow-ups only if needed, then table parity slices. Database work stays deferred.
+Recommended next step is PM integration decision for the pushed DB006-DB008 and Q127 branches. Keep external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
