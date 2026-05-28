@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM019`
+- source_ids:
+  - `R719`
+- story_ids:
+  - `US639`
+- action: 实现字段映射模板更新与停用第一刀。
+- status: `done`
+- notes: IM019 新增字段映射模板更新和软停用 API，更新 template_name/field_mapping，停用后模板不再被列表、单查或 upload-csv 复用返回。未新增 schema/migration，不做前端、物理删除、批量、外部集成、权限、审批、导出、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM018`
 - source_ids:
   - `R718`

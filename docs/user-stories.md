@@ -2409,3 +2409,26 @@ dependencies:
   - "US637"
 status: "done"
 ```
+
+### US639 - 字段映射模板更新与停用第一刀
+
+```yaml
+id: US639
+requirement_ids:
+  - R719
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望修正或停用字段映射模板，以便错误模板不会继续被上传流程复用。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增字段映射模板更新 API，可更新 template_name 和 field_mapping。"
+  - "新增字段映射模板停用 API，将模板置为 inactive。"
+  - "停用模板不再出现在列表/单查中，upload-csv 按 template_id 复用时返回缺失模板错误。"
+  - "不存在模板时返回稳定错误码。"
+  - "不新增 schema/migration，不做前端、物理删除、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US638"
+status: "done"
+```

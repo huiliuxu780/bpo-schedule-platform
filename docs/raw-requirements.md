@@ -1287,3 +1287,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做只读批次列表和状态聚合；不新增 schema/migration，不做前端、分页、导出、批量、权限、审批、外部集成、Excel/multipart、生产公式、结算或收费因子。"
 ```
+
+### R719 - 字段映射模板更新与停用第一刀
+
+```yaml
+id: R719
+module: "导入中心"
+description: "字段映射模板已经可以创建、列表、单查并被 upload-csv 复用后，需要支持修正模板名称/字段映射以及停用错误模板，避免数据管理员只能新建模板或继续误用旧模板。"
+source: "PM approved continuing import-center production usability on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做字段映射模板更新和软停用；不新增 schema/migration，不做前端、物理删除、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+```

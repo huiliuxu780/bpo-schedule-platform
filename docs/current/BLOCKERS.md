@@ -7,7 +7,7 @@ None.
 ## Standing Constraints
 
 - Database work is allowed only inside a PM-confirmed database-persistence task and its named entity slice.
-- Current database-persistence queue is empty after `IM018`; add a new confirmed task before more database work.
+- Current database-persistence queue is empty after `IM019`; add a new confirmed task before more database work.
 - Do not expand completed Q127 QA closeout into product behavior changes, database schema changes, repository implementation changes, approval workflow, permissions, export, batch operations, external integrations, production formulas, settlement rules, or charge factors without a new task.
 - No real external data integration.
 - No multipart or Excel upload until a separate dependency/package decision is confirmed.

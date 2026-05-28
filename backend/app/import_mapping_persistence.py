@@ -8,6 +8,7 @@ from backend.app.import_persistence import Base, build_engine
 from backend.app.models import (
     ImportFieldMappingTemplateCreateRequest,
     ImportFieldMappingTemplateRecord,
+    ImportFieldMappingTemplateUpdateRequest,
     ImportFileType,
 )
 
@@ -72,6 +73,36 @@ class ImportMappingPersistenceRepository:
             entity = session.get(ImportFieldMappingTemplateEntity, template_id)
             if entity is None or not entity.is_active:
                 return None
+            return _template_record(entity)
+
+    def update_field_mapping_template(
+        self,
+        template_id: str,
+        request: ImportFieldMappingTemplateUpdateRequest,
+    ) -> ImportFieldMappingTemplateRecord:
+        with self.session_factory.begin() as session:
+            entity = session.get(ImportFieldMappingTemplateEntity, template_id)
+            if entity is None or not entity.is_active:
+                raise ValueError(
+                    f"import field mapping template does not exist: {template_id}"
+                )
+            entity.template_name = request.template_name
+            entity.field_mapping = dict(request.field_mapping)
+            session.flush()
+            return _template_record(entity)
+
+    def deactivate_field_mapping_template(
+        self,
+        template_id: str,
+    ) -> ImportFieldMappingTemplateRecord:
+        with self.session_factory.begin() as session:
+            entity = session.get(ImportFieldMappingTemplateEntity, template_id)
+            if entity is None or not entity.is_active:
+                raise ValueError(
+                    f"import field mapping template does not exist: {template_id}"
+                )
+            entity.is_active = False
+            session.flush()
             return _template_record(entity)
 
     def list_field_mapping_templates(

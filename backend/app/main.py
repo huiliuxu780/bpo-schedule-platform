@@ -40,6 +40,7 @@ from backend.app.models import (
     ImportFieldMappingTemplateCreateRequest,
     ImportFieldMappingTemplateListResponse,
     ImportFieldMappingTemplateRecord,
+    ImportFieldMappingTemplateUpdateRequest,
     ImportProcessingStatus,
     MasterDataImportApplyResponse,
     PersonnelScheduleImportApplyResponse,
@@ -342,6 +343,51 @@ def get_import_field_mapping_template(
             },
         )
     return template
+
+
+@app.patch(
+    "/api/v1/import-field-mapping-templates/{template_id}",
+    response_model=ImportFieldMappingTemplateRecord,
+)
+def update_import_field_mapping_template(
+    template_id: str,
+    request: ImportFieldMappingTemplateUpdateRequest,
+) -> ImportFieldMappingTemplateRecord:
+    try:
+        return get_import_mapping_persistence_repository().update_field_mapping_template(
+            template_id,
+            request,
+        )
+    except ValueError as exc:
+        raise _field_mapping_template_not_found(exc)
+
+
+@app.post(
+    "/api/v1/import-field-mapping-templates/{template_id}/deactivate",
+    response_model=ImportFieldMappingTemplateRecord,
+)
+def deactivate_import_field_mapping_template(
+    template_id: str,
+) -> ImportFieldMappingTemplateRecord:
+    try:
+        return (
+            get_import_mapping_persistence_repository()
+            .deactivate_field_mapping_template(template_id)
+        )
+    except ValueError as exc:
+        raise _field_mapping_template_not_found(exc)
+
+
+def _field_mapping_template_not_found(exc: ValueError) -> HTTPException:
+    return HTTPException(
+        status_code=404,
+        detail={
+            "error": {
+                "code": "IMPORT_FIELD_MAPPING_TEMPLATE_NOT_FOUND",
+                "message": "字段映射模板不存在",
+            }
+        },
+    )
 
 
 @app.post("/api/v1/import-batches/upload-csv", response_model=ImportBatchPersistenceDetail)

@@ -263,6 +263,11 @@ class ImportFieldMappingTemplateCreateRequest(BaseModel):
     created_by: str
 
 
+class ImportFieldMappingTemplateUpdateRequest(BaseModel):
+    template_name: str
+    field_mapping: dict[str, str] = Field(min_length=1)
+
+
 class ImportFieldMappingTemplateRecord(BaseModel):
     template_id: str
     template_name: str

@@ -4361,3 +4361,55 @@ tasks:
       - "需要审批、自动排班、生产公式、结算规则或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM019
+    title: "字段映射模板更新与停用第一刀"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM018"]
+    allowed_files:
+      - "backend/app/import_mapping_persistence.py"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/tests/test_import_mapping_persistence.py"
+      - "backend/tests/test_import_mapping_api.py"
+      - "backend/tests/test_import_upload_api.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+    acceptance:
+      - "新增字段映射模板更新 API，可更新 template_name 和 field_mapping。"
+      - "新增字段映射模板停用 API，将模板置为 inactive。"
+      - "停用模板不再出现在列表/单查中，upload-csv 按 template_id 复用时返回缺失模板错误。"
+      - "不存在模板时返回稳定错误码。"
+      - "不新增 schema/migration，不做前端、物理删除、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration 变更"
+      - "范围扩展到前端、物理删除、导出或批量能力"
+      - "需要真实外部 CORN、HR、WFM 或第三方集成"
+      - "需要认证、权限、供应商隔离"
+      - "需要审批、自动排班、生产公式、结算规则或收费因子"
+      - "验证失败"
+    commit_after_done: true

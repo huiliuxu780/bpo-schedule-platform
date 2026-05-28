@@ -9,10 +9,15 @@ from backend.app.import_mapping_persistence import ImportMappingPersistenceRepos
 from backend.app.main import (
     app,
     create_import_field_mapping_template,
+    deactivate_import_field_mapping_template,
     get_import_field_mapping_template,
     list_import_field_mapping_templates,
+    update_import_field_mapping_template,
 )
-from backend.app.models import ImportFieldMappingTemplateCreateRequest
+from backend.app.models import (
+    ImportFieldMappingTemplateCreateRequest,
+    ImportFieldMappingTemplateUpdateRequest,
+)
 
 
 class ImportMappingApiTest(unittest.TestCase):
@@ -23,6 +28,17 @@ class ImportMappingApiTest(unittest.TestCase):
         self.assertIn(("/api/v1/import-field-mapping-templates", "GET"), routes)
         self.assertIn(
             ("/api/v1/import-field-mapping-templates/{template_id}", "GET"),
+            routes,
+        )
+        self.assertIn(
+            ("/api/v1/import-field-mapping-templates/{template_id}", "PATCH"),
+            routes,
+        )
+        self.assertIn(
+            (
+                "/api/v1/import-field-mapping-templates/{template_id}/deactivate",
+                "POST",
+            ),
             routes,
         )
 
@@ -123,6 +139,94 @@ class ImportMappingApiTest(unittest.TestCase):
             ):
                 with self.assertRaises(HTTPException) as raised:
                     get_import_field_mapping_template("missing")
+
+        self.assertEqual(raised.exception.status_code, 404)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "IMPORT_FIELD_MAPPING_TEMPLATE_NOT_FOUND",
+        )
+
+    def test_update_import_field_mapping_template_returns_updated_template(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'mapping-api.db'}"
+            repository = ImportMappingPersistenceRepository(database_url)
+            repository.init_schema()
+
+            with patch(
+                "backend.app.main.get_import_mapping_persistence_repository",
+                return_value=repository,
+            ):
+                create_import_field_mapping_template(
+                    ImportFieldMappingTemplateCreateRequest(
+                        template_id="TPL-API-UPDATE",
+                        template_name="旧模板",
+                        file_type="master_data",
+                        field_mapping={"员工编号": "source_key"},
+                        created_by="数据管理员",
+                    )
+                )
+                updated = update_import_field_mapping_template(
+                    "TPL-API-UPDATE",
+                    ImportFieldMappingTemplateUpdateRequest(
+                        template_name="新模板",
+                        field_mapping={
+                            "员工编号": "source_key",
+                            "姓名": "employee_name",
+                        },
+                    ),
+                )
+
+        self.assertEqual(updated.template_name, "新模板")
+        self.assertEqual(updated.field_mapping["姓名"], "employee_name")
+
+    def test_deactivate_import_field_mapping_template_hides_template(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'mapping-api.db'}"
+            repository = ImportMappingPersistenceRepository(database_url)
+            repository.init_schema()
+
+            with patch(
+                "backend.app.main.get_import_mapping_persistence_repository",
+                return_value=repository,
+            ):
+                create_import_field_mapping_template(
+                    ImportFieldMappingTemplateCreateRequest(
+                        template_id="TPL-API-INACTIVE",
+                        template_name="停用模板",
+                        file_type="master_data",
+                        field_mapping={"员工编号": "source_key"},
+                        created_by="数据管理员",
+                    )
+                )
+                deactivated = deactivate_import_field_mapping_template(
+                    "TPL-API-INACTIVE"
+                )
+                with self.assertRaises(HTTPException) as raised:
+                    get_import_field_mapping_template("TPL-API-INACTIVE")
+                response = list_import_field_mapping_templates(file_type="master_data")
+
+        self.assertFalse(deactivated.is_active)
+        self.assertEqual(raised.exception.status_code, 404)
+        self.assertEqual(response.items, [])
+
+    def test_update_import_field_mapping_template_returns_404_for_missing(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'mapping-api.db'}"
+            repository = ImportMappingPersistenceRepository(database_url)
+            repository.init_schema()
+
+            with patch(
+                "backend.app.main.get_import_mapping_persistence_repository",
+                return_value=repository,
+            ):
+                with self.assertRaises(HTTPException) as raised:
+                    update_import_field_mapping_template(
+                        "missing",
+                        ImportFieldMappingTemplateUpdateRequest(
+                            template_name="新模板",
+                            field_mapping={"员工编号": "source_key"},
+                        ),
+                    )
 
         self.assertEqual(raised.exception.status_code, 404)
         self.assertEqual(

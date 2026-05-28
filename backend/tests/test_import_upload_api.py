@@ -146,6 +146,45 @@ class ImportUploadApiTest(unittest.TestCase):
             "IMPORT_FIELD_MAPPING_TEMPLATE_NOT_FOUND",
         )
 
+    def test_upload_csv_returns_404_for_deactivated_field_mapping_template(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'import-upload.db'}"
+            mapping_repository = ImportMappingPersistenceRepository(database_url)
+            mapping_repository.init_schema()
+            mapping_repository.create_field_mapping_template(
+                ImportFieldMappingTemplateCreateRequest(
+                    template_id="TPL-UPLOAD-INACTIVE",
+                    template_name="停用模板",
+                    file_type="master_data",
+                    field_mapping={"员工编号": "source_key"},
+                    created_by="数据管理员",
+                )
+            )
+            mapping_repository.deactivate_field_mapping_template("TPL-UPLOAD-INACTIVE")
+
+            with patch(
+                "backend.app.main.get_import_mapping_persistence_repository",
+                return_value=mapping_repository,
+            ):
+                with self.assertRaises(HTTPException) as raised:
+                    upload_import_batch_csv(
+                        batch_id="BATCH-UPLOAD-TPL-INACTIVE",
+                        file_name="employees.csv",
+                        file_type="master_data",
+                        uploaded_by="数据管理员",
+                        business_date_from="2026-05-11",
+                        business_date_to="2026-05-11",
+                        field_mapping=None,
+                        template_id="TPL-UPLOAD-INACTIVE",
+                        csv_body="员工编号,姓名\nA-1001,张三\n",
+                    )
+
+        self.assertEqual(raised.exception.status_code, 404)
+        self.assertEqual(
+            raised.exception.detail["error"]["code"],
+            "IMPORT_FIELD_MAPPING_TEMPLATE_NOT_FOUND",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

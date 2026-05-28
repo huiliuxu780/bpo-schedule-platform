@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM019 字段映射模板更新与停用第一刀
+
+#### 审计结论
+
+- `US639/IM019/R719` 已完成字段映射模板更新与停用第一刀。
+- 新增 `PATCH /api/v1/import-field-mapping-templates/{template_id}`，可更新 `template_name` 和 `field_mapping`。
+- 新增 `POST /api/v1/import-field-mapping-templates/{template_id}/deactivate`，将模板软停用。
+- 停用模板不再被列表、单查或 `upload-csv` 按 `template_id` 复用返回。
+- 不存在或已停用模板返回稳定 `IMPORT_FIELD_MAPPING_TEMPLATE_NOT_FOUND`。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮是软停用，不做物理删除或模板版本历史。
+- 本轮不做前端模板管理页；页面接入需单独 frontend Gate。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_import_mapping_persistence backend.tests.test_import_mapping_api backend.tests.test_import_upload_api -v`：通过，19 个模板维护和上传复用测试通过。
+- `.venv/bin/python -m unittest backend.tests.test_import_batch_list_api backend.tests.test_import_application_summary_api backend.tests.test_import_row_correction_api -v`：通过，11 个相邻导入 API 回归测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 149 个 backend unittest。
+
 ### 2026-05-29 - IM018 导入批次列表与应用状态查询第一刀
 
 #### 审计结论
