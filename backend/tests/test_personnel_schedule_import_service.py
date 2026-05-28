@@ -17,6 +17,18 @@ from backend.app.personnel_schedule_import import apply_personnel_schedule_impor
 from backend.app.personnel_schedule_persistence import PersonnelSchedulePersistenceRepository
 
 
+class CountingPersonnelSchedulePersistenceRepository(
+    PersonnelSchedulePersistenceRepository
+):
+    def __init__(self, database_url: str | None = None):
+        super().__init__(database_url)
+        self.create_schedule_version_call_count = 0
+
+    def create_schedule_version(self, request):
+        self.create_schedule_version_call_count += 1
+        return super().create_schedule_version(request)
+
+
 class PersonnelScheduleImportServiceTest(unittest.TestCase):
     def test_success_rows_are_applied_to_schedule_repository(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -92,6 +104,7 @@ class PersonnelScheduleImportServiceTest(unittest.TestCase):
                 {
                     "batch_id": "BATCH-SCH-APPLY-001",
                     "schedule_version_id": "BATCH-SCH-APPLY-001::schedule",
+                    "applied_status": "applied",
                     "shift_types": 1,
                     "details": 1,
                     "skipped_rows": 1,
@@ -110,6 +123,82 @@ class PersonnelScheduleImportServiceTest(unittest.TestCase):
                 [interval.interval_start for interval in loaded.intervals],
                 ["09:00", "09:30", "10:00", "10:30"],
             )
+
+    def test_duplicate_batch_returns_already_applied_without_second_write(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'schedule-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            _seed_master_data(database_url, "BATCH-SCH-APPLY-002")
+            detail = import_repository.create_import_batch(
+                ImportBatchCreateRequest(
+                    batch_id="BATCH-SCH-APPLY-002",
+                    file_name="personnel_schedule.csv",
+                    file_type="personnel_schedule",
+                    uploaded_by="排班管理员",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                    rows=[
+                        _success_row(
+                            1,
+                            {
+                                "record_type": "shift_type",
+                                "shift_type_id": "MORNING-2H",
+                                "shift_type_name": "早班",
+                                "status": "active",
+                                "start_time": "09:00",
+                                "end_time": "11:00",
+                                "effective_from": "2026-05-01",
+                                "effective_to": "2026-12-31",
+                            },
+                        ),
+                        _success_row(
+                            2,
+                            {
+                                "record_type": "schedule_detail",
+                                "employee_id": "A-1001",
+                                "workplace_id": "SH-01",
+                                "project_id": "BOSCH-CS",
+                                "skill_id": "L1-CN",
+                                "shift_type_id": "MORNING-2H",
+                                "schedule_date": "2026-05-11",
+                                "start_time": "09:00",
+                                "end_time": "11:00",
+                            },
+                        ),
+                    ],
+                    versions=[
+                        ImportBatchVersionInput(
+                            version_id="IMPORT-SCH-APPLY-002",
+                            version_type="personnel_schedule",
+                            business_date_from="2026-05-11",
+                            business_date_to="2026-05-11",
+                        )
+                    ],
+                )
+            )
+            schedule_repository = CountingPersonnelSchedulePersistenceRepository(
+                database_url
+            )
+            schedule_repository.init_schema()
+
+            first_summary = apply_personnel_schedule_import_batch(
+                detail,
+                schedule_repository,
+            )
+            second_summary = apply_personnel_schedule_import_batch(
+                detail,
+                schedule_repository,
+            )
+
+            self.assertEqual(first_summary["applied_status"], "applied")
+            self.assertEqual(second_summary["applied_status"], "already_applied")
+            self.assertEqual(schedule_repository.create_schedule_version_call_count, 1)
+            loaded = schedule_repository.get_schedule_version(
+                "BATCH-SCH-APPLY-002::schedule"
+            )
+            self.assertIsNotNone(loaded)
+            self.assertEqual(len(loaded.intervals), 4)
 
     def test_non_personnel_schedule_batch_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -53,8 +53,40 @@ class PersonnelScheduleImportApiTest(unittest.TestCase):
 
             self.assertEqual(response.batch_id, "BATCH-SCH-APPLY-001")
             self.assertEqual(response.schedule_version_id, "BATCH-SCH-APPLY-001::schedule")
+            self.assertEqual(response.applied_status, "applied")
             self.assertEqual(response.shift_types, 1)
             self.assertEqual(response.details, 1)
+
+    def test_apply_personnel_schedule_import_returns_already_applied_on_duplicate(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'schedule-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            _seed_master_data(database_url, "BATCH-SCH-APPLY-002")
+            _create_schedule_batch(import_repository, "BATCH-SCH-APPLY-002")
+            schedule_repository = PersonnelSchedulePersistenceRepository(database_url)
+            schedule_repository.init_schema()
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.PersonnelSchedulePersistenceRepository",
+                    return_value=schedule_repository,
+                ),
+            ):
+                first_response = apply_personnel_schedule_import("BATCH-SCH-APPLY-002")
+                second_response = apply_personnel_schedule_import("BATCH-SCH-APPLY-002")
+
+        self.assertEqual(first_response.applied_status, "applied")
+        self.assertEqual(second_response.applied_status, "already_applied")
+        self.assertEqual(second_response.schedule_version_id, "BATCH-SCH-APPLY-002::schedule")
+        self.assertEqual(second_response.shift_types, 1)
+        self.assertEqual(second_response.details, 1)
 
     def test_apply_personnel_schedule_import_returns_404_for_missing_batch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

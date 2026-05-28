@@ -357,6 +357,7 @@ class PersonnelScheduleVersionDetail(BaseModel):
 class PersonnelScheduleImportApplyResponse(BaseModel):
     batch_id: str
     schedule_version_id: str
+    applied_status: Literal["applied", "already_applied"]
     shift_types: int = Field(ge=0)
     details: int = Field(ge=0)
     skipped_rows: int = Field(ge=0)

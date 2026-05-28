@@ -213,6 +213,17 @@ class PersonnelSchedulePersistenceRepository:
             intervals=[_interval_record(interval) for interval in intervals],
         )
 
+    def has_schedule_import_version(self, import_version_id: str) -> bool:
+        with self.session_factory() as session:
+            return (
+                session.scalar(
+                    select(PersonnelScheduleVersionEntity.schedule_version_id).where(
+                        PersonnelScheduleVersionEntity.import_version_id == import_version_id
+                    )
+                )
+                is not None
+            )
+
     def _validate_import_version(self, session: Session, import_version_id: str) -> None:
         version = session.get(ImportVersionEntity, import_version_id)
         if version is None:

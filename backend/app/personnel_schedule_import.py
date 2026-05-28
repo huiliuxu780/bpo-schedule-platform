@@ -49,11 +49,18 @@ def apply_personnel_schedule_import_batch(
             continue
         _append_success_row(request, row)
 
-    repository.create_schedule_version(request)
+    applied_status = (
+        "already_applied"
+        if repository.has_schedule_import_version(request.import_version_id)
+        else "applied"
+    )
+    if applied_status == "applied":
+        repository.create_schedule_version(request)
 
     return {
         "batch_id": detail.batch.batch_id,
         "schedule_version_id": request.schedule_version_id,
+        "applied_status": applied_status,
         "shift_types": len(request.shift_types),
         "details": len(request.details),
         "skipped_rows": skipped_rows,

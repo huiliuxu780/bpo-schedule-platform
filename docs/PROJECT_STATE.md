@@ -31,6 +31,7 @@ The project contains:
 - A persisted result list query API slice that adds read-only filters over DB007 comparison runs and DB008 review cases without adding schema or migration changes.
 - An idempotent rerun protection slice for duplicate comparison calculate and review closure write requests without adding schema or migration changes.
 - A master-data import apply idempotency slice for duplicate master_data batch applications without adding schema or migration changes.
+- A personnel-schedule import apply idempotency slice for duplicate personnel_schedule batch applications without adding schema or migration changes.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -40,7 +41,7 @@ The project contains:
 The project does not contain:
 
 - Real external API integration.
-- Broad production persistence beyond the DB002 import foundation, DB003 master data, DB004 personnel schedule, DB005 demand forecast, DB006 login/status log, DB007 comparison result, DB008 review closure record, IM001 import-center CSV upload slice, IM002-IM005 import application slices, IM006 comparison calculation trigger, IM007 review closure write API, IM008 persisted result query API, IM009 persisted result list query API, IM010 idempotent rerun protection slice, and IM011 master-data apply idempotency slice.
+- Broad production persistence beyond the DB002 import foundation, DB003 master data, DB004 personnel schedule, DB005 demand forecast, DB006 login/status log, DB007 comparison result, DB008 review closure record, IM001 import-center CSV upload slice, IM002-IM005 import application slices, IM006 comparison calculation trigger, IM007 review closure write API, IM008 persisted result query API, IM009 persisted result list query API, IM010 idempotent rerun protection slice, IM011 master-data apply idempotency slice, and IM012 personnel-schedule apply idempotency slice.
 - Authentication or production permission boundaries.
 - Multipart upload, real Excel import, or real CORN integration.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
@@ -72,6 +73,7 @@ Current allowed database scope:
 - IM009 persisted result list query API: DB007 comparison runs and DB008 review cases may be listed with basic read-only filters.
 - IM010 idempotent rerun protection: duplicate comparison calculate and review closure write requests return existing persisted results by natural business key.
 - IM011 master-data apply idempotency: duplicate master_data batch applications return an already-applied summary instead of running snapshot writes again.
+- IM012 personnel-schedule apply idempotency: duplicate personnel_schedule batch applications return an already-applied summary without repeating schedule repository writes.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:
@@ -126,6 +128,7 @@ Current invariants:
 - `IM009/US629` added persisted result list query APIs over existing DB007/DB008 repositories without new dependencies, schema/migration changes, pagination, frontend, external integrations, auth/permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 - `IM010/US630` added existing-result return behavior for duplicate comparison calculate and review closure write requests without new dependencies, schema/migration changes, idempotency tables, task queues, frontend, external integrations, auth/permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 - `IM011/US631` added already-applied return behavior for duplicate master_data batch applications without new dependencies, schema/migration changes, idempotency tables, task queues, other import apply types, frontend, external integrations, auth/permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
+- `IM012/US632` added already-applied return behavior for duplicate personnel_schedule batch applications without new dependencies, schema/migration changes, idempotency tables, task queues, other import apply types, frontend, external integrations, auth/permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 
 ## Product Direction
 
