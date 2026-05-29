@@ -2545,3 +2545,26 @@ dependencies:
   - "US643"
 status: "done"
 ```
+
+### US645 - 导入中心 CSV 上传表单第一刀
+
+```yaml
+id: US645
+requirement_ids:
+  - R725
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在导入中心页面选择本地 CSV 文件并提交到现有上传 API，以便真实生成导入批次而不是只看空列表。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 页面新增 CSV 上传表单，可提交 batch_id、file_name、file_type、uploaded_by、业务日期和 field_mapping JSON。"
+  - "上传表单读取本地 CSV 文件内容，通过 Next server action 调用现有 `POST /api/v1/import-batches/upload-csv`，成功后跳转到新 batch。"
+  - "上传失败返回 `/data-quality?upload=failed` 并展示错误状态，不吞掉 API 错误。"
+  - "上传成功后仍复用现有批次列表和 apply-readiness 读取，不新增静态业务样例。"
+  - "不新增依赖，不修改 package/lockfile，不做 Excel/multipart、apply 写操作、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和本地上传 smoke 通过。"
+dependencies:
+  - "US644"
+status: "done"
+```

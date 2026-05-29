@@ -4,6 +4,32 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM025 导入中心 CSV 上传表单第一刀
+
+#### 审计结论
+
+- `US645/IM025/R725` 已完成导入中心 CSV 上传表单第一刀。
+- `/data-quality` 页面新增 CSV 上传表单，可提交 batch_id、file_name、file_type、uploaded_by、业务日期和 field_mapping JSON。
+- 新增 Next server action 读取本地 CSV 文件内容，并调用现有 `POST /api/v1/import-batches/upload-csv`。
+- 上传成功后跳转到新 batch，页面继续复用现有批次列表和 apply-readiness 读取。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做 CSV 文本上传到现有本地 API；不做 Excel/multipart、不新增依赖、不新增后端 API。
+- 本轮不做 apply 写按钮、批量导入、审批、导出或权限边界。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs`：通过，5 个模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `curl -fsS -X POST ... /api/v1/import-batches/upload-csv ...`：通过，生成本地批次 `BATCH-IM025-SMOKE-001`。
+- `curl -fsS 'http://127.0.0.1:8000/api/v1/import-batches?uploaded_by=local-operator'`：通过，能读回 `BATCH-IM025-SMOKE-001`。
+- `curl -fsS -o /tmp/data-quality-im025.html -w "%{http_code}" 'http://127.0.0.1:3021/data-quality?batch=BATCH-IM025-SMOKE-001'`：返回 `200`。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 160 个 backend unittest。
+
 ### 2026-05-29 - IM024 导入中心前端 API 接入第一刀
 
 #### 审计结论

@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/app-shell"
 import { ImportCenterApiPanel } from "@/components/import-center-api-panel"
+import { ImportCenterUploadForm } from "@/components/import-center-upload-form"
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchListRow,
@@ -11,6 +12,8 @@ export const dynamic = "force-dynamic"
 type DataQualityPageProps = {
   searchParams?: Promise<{
     batch?: string
+    upload?: string
+    reason?: string
   }>
 }
 
@@ -41,6 +44,12 @@ export default async function DataQualityPage({
         readiness={readinessResult.data}
         batchError={batchResult.error}
         readinessError={readinessResult.error}
+        uploadForm={
+          <ImportCenterUploadForm
+            uploadStatus={params?.upload}
+            uploadReason={params?.reason}
+          />
+        }
       />
     </AppShell>
   )

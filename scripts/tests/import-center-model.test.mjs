@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   buildImportApiUrl,
+  buildImportUploadUrl,
   formatImportFileType,
   getImportBatchHealth,
   summarizeImportBatches,
@@ -92,5 +93,35 @@ test("import center API URL builder keeps local API configurable", () => {
   assert.equal(
     buildImportApiUrl("api/v1/import-batches/B1/apply-readiness", "http://127.0.0.1:8000/"),
     "http://127.0.0.1:8000/api/v1/import-batches/B1/apply-readiness",
+  );
+});
+
+test("import center upload URL builder encodes CSV upload query", () => {
+  const url = new URL(
+    buildImportUploadUrl(
+      {
+        batchId: "BATCH-CSV-001",
+        fileName: "主数据.csv",
+        fileType: "master_data",
+        uploadedBy: "ops",
+        businessDateFrom: "2026-05-01",
+        businessDateTo: "2026-05-31",
+        fieldMapping: '{"source_key":"source_key","姓名":"employee_name"}',
+      },
+      "http://127.0.0.1:8000",
+    ),
+  );
+
+  assert.equal(url.origin, "http://127.0.0.1:8000");
+  assert.equal(url.pathname, "/api/v1/import-batches/upload-csv");
+  assert.equal(url.searchParams.get("batch_id"), "BATCH-CSV-001");
+  assert.equal(url.searchParams.get("file_name"), "主数据.csv");
+  assert.equal(url.searchParams.get("file_type"), "master_data");
+  assert.equal(url.searchParams.get("uploaded_by"), "ops");
+  assert.equal(url.searchParams.get("business_date_from"), "2026-05-01");
+  assert.equal(url.searchParams.get("business_date_to"), "2026-05-31");
+  assert.equal(
+    url.searchParams.get("field_mapping"),
+    '{"source_key":"source_key","姓名":"employee_name"}',
   );
 });

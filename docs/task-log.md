@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM025`
+- source_ids:
+  - `R725`
+- story_ids:
+  - `US645`
+- action: 实现导入中心 CSV 上传表单第一刀。
+- status: `done`
+- notes: IM025 在 `/data-quality` 新增 CSV 上传表单，通过 Next server action 读取本地 CSV 文件文本并调用现有 `POST /api/v1/import-batches/upload-csv`，成功后跳转到新 batch，失败时返回上传失败状态。未新增依赖，不做 Excel/multipart、apply 写操作、后端、schema/migration、权限、审批、导出、批量、外部集成、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM024`
 - source_ids:
   - `R724`

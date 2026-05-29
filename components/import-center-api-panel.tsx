@@ -35,6 +35,7 @@ type ImportCenterApiPanelProps = {
   readiness: ImportApplyReadinessResponse | null
   batchError: string | null
   readinessError: string | null
+  uploadForm?: React.ReactNode
 }
 
 export function ImportCenterApiPanel({
@@ -43,6 +44,7 @@ export function ImportCenterApiPanel({
   readiness,
   batchError,
   readinessError,
+  uploadForm,
 }: ImportCenterApiPanelProps) {
   const summary = summarizeImportBatches(batches)
   const selectedBatch =
@@ -50,6 +52,7 @@ export function ImportCenterApiPanel({
 
   return (
     <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
+      {uploadForm}
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <SummaryCard
           title="导入批次"

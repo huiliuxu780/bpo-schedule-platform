@@ -2,6 +2,23 @@
 
 ## 2026-05-29
 
+### IM025 Import Center CSV Upload Form
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `260a97a`
+- remote_status: `continuing from pushed origin/codex/import-center-api-vertical`
+- scope: Add first CSV upload form slice on `/data-quality`: Next server action, upload form UI, import upload URL model helper, model tests, local upload smoke, current queue cleanup, and traceability records.
+- allowed_files_check: `app/data-quality/**`, `components/import-center-api-panel.tsx`, `components/import-center-model.ts`, `components/import-center-upload-form.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no backend files, dependency files, lockfiles, schema/migration files, Excel/multipart, apply write actions, external integration, auth, permission, approval, export, batch operation, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `/data-quality` upload action/form, import-center upload URL model, model tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target import-center model tests passed with 5 tests; `npm run lint` passed; `npm run typecheck` passed; local upload API smoke created `BATCH-IM025-SMOKE-001`; `/data-quality?batch=BATCH-IM025-SMOKE-001` HTTP smoke returned `200`; final `bash scripts/check.sh` passed with strict state check, frontend build, and 160 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM024 Import Center Frontend API Wiring
 
 - branch_name: `codex/import-center-api-vertical`

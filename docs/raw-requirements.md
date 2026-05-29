@@ -1365,3 +1365,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端只读 API 接入、导航入口和加载/空/错误状态；不新增依赖，不做上传写入、apply 写操作、后端、schema/migration、权限、审批、导出、批量、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R725 - 导入中心 CSV 上传表单第一刀
+
+```yaml
+id: R725
+module: "导入中心"
+description: "导入中心前端已经能读取真实批次和 readiness 后，需要先接入现有 CSV 上传 API，让数据管理员可以从页面选择本地 CSV 文件并生成导入批次。"
+source: "PM requested continuing production usability after IM024 on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端 CSV 文件读取、Next server action 请求组合和现有 upload-csv API 调用；不新增依赖，不做 Excel/multipart、apply 写操作、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

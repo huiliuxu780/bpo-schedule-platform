@@ -71,6 +71,16 @@ export type ImportBatchSummary = {
 
 export type ImportBatchHealth = "blocked" | "warning" | "ready_candidate" | "applied"
 
+export type ImportUploadRequest = {
+  batchId: string
+  fileName: string
+  fileType: ImportFileType
+  uploadedBy: string
+  businessDateFrom: string
+  businessDateTo: string
+  fieldMapping: string
+}
+
 const fileTypeLabels: Record<ImportFileType, string> = {
   master_data: "主数据",
   personnel_schedule: "人员排班",
@@ -100,6 +110,26 @@ export function buildImportApiUrl(path: string, apiBase = getDefaultApiBase()): 
   const normalizedPath = path.startsWith("/") ? path : `/${path}`
 
   return `${normalizedBase}${normalizedPath}`
+}
+
+export function buildImportUploadUrl(
+  request: ImportUploadRequest,
+  apiBase = getDefaultApiBase()
+): string {
+  const searchParams = new URLSearchParams({
+    batch_id: request.batchId,
+    file_name: request.fileName,
+    file_type: request.fileType,
+    uploaded_by: request.uploadedBy,
+    business_date_from: request.businessDateFrom,
+    business_date_to: request.businessDateTo,
+    field_mapping: request.fieldMapping,
+  })
+
+  return buildImportApiUrl(
+    `/api/v1/import-batches/upload-csv?${searchParams.toString()}`,
+    apiBase
+  )
 }
 
 export function formatImportFileType(fileType: ImportFileType): string {
