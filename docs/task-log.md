@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM024`
+- source_ids:
+  - `R724`
+- story_ids:
+  - `US644`
+- action: 实现导入中心前端 API 接入第一刀。
+- status: `done`
+- notes: IM024 新增 `/data-quality` 页面，从本地 FastAPI `GET /api/v1/import-batches` 读取批次列表，并按选中 batch 只读读取 `GET /api/v1/import-batches/{batch_id}/apply-readiness`，展示 readiness、批次阻塞和行级阻塞。侧边栏文件导入、接入批次、数据质量入口已指向 `/data-quality`。未新增依赖，不做上传写入、apply 写操作、后端、schema/migration、权限、审批、导出、批量、外部集成、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM023`
 - source_ids:
   - `R723`

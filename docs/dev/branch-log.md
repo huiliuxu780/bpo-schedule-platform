@@ -2,6 +2,23 @@
 
 ## 2026-05-29
 
+### IM024 Import Center Frontend API Wiring
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `7cbbad6`
+- remote_status: `continuing from pushed origin/codex/import-center-api-vertical`
+- scope: Add first read-only import-center frontend API wiring slice: `/data-quality` page, import batch/readiness API rendering, sidebar links, model tests, current queue cleanup, and traceability records.
+- allowed_files_check: `app/data-quality/**`, `components/app-sidebar.tsx`, `components/import-center-api-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no backend files, dependency files, lockfiles, schema/migration files, upload write actions, apply write actions, external integration, auth, permission, approval, export, batch operation, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `/data-quality` page, import-center API panel/model, sidebar data/import links, model tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target import-center model tests passed with 4 tests; `npm run lint` passed; `npm run typecheck` passed; Node 22 `npm run build` passed; local API smoke returned `{"items":[]}`; `/data-quality` HTTP smoke returned `200`; final `bash scripts/check.sh` passed with strict state check, frontend build, and 160 backend unittest after rerun with network permission for `next/font`.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM023 Personnel Actual Apply Readiness Guard
 
 - branch_name: `codex/import-center-api-vertical`

@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM024 导入中心前端 API 接入第一刀
+
+#### 审计结论
+
+- `US644/IM024/R724` 已完成导入中心前端 API 接入第一刀。
+- 新增 `/data-quality` 页面，通过服务端读取本地 `GET /api/v1/import-batches`，避免浏览器跨端口 CORS 阻断。
+- 页面按选中批次读取 `GET /api/v1/import-batches/{batch_id}/apply-readiness`，展示 readiness、批次阻塞和行级阻塞。
+- 侧边栏数据与集成下的文件导入、接入批次、数据质量入口已指向 `/data-quality`。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做只读前端 API 接入；不做上传表单、apply 写按钮、失败行修正写入、审批、导出或批量能力。
+- 本轮页面读取本地 API；若 FastAPI 未启动，页面展示 API 错误状态，不回退为静态业务样例。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs`：通过，4 个模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `NODE_ENV=development npm run dev` + `curl -fsS -o /tmp/data-quality.html -w "%{http_code}" http://127.0.0.1:3000/data-quality`：返回 `200`。
+- `curl -fsS http://127.0.0.1:8000/api/v1/import-batches`：返回 `{"items":[]}`，页面验证基于真实空 API 状态。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 160 个 backend unittest；首次沙箱运行因 `next/font` DNS 被拦截失败，授权网络重跑后通过。
+
 ### 2026-05-29 - IM023 人员排班与实际日志应用前 readiness 安全闸第一刀
 
 #### 审计结论

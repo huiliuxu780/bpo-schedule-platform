@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current queue is empty after `US643/IM023` completed. No ready task should be executed until the next story is explicitly added.
+Current queue is empty after `US644/IM024` completed. No ready task should be executed until the next story is explicitly added.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next step after `IM023` is verified is to continue with one small production-usable import-center slice: import-center frontend API wiring, or a narrow operator-facing readiness/apply response aggregation. Keep multipart/Excel, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next step after `IM024` is verified is to continue with the next production-usable import-center slice: operator-facing single-row correction from the UI, or upload request composition through the existing CSV API. Keep apply write buttons, multipart/Excel, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

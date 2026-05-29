@@ -2522,3 +2522,26 @@ dependencies:
   - "US642"
 status: "done"
 ```
+
+### US644 - 导入中心前端 API 接入第一刀
+
+```yaml
+id: US644
+requirement_ids:
+  - R724
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在前端导入中心看到真实 API 返回的导入批次和应用准备度，以便不用只看本地静态展示就能判断批次是否需要修正或应用。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增或接通 `/data-quality` 前端页面，页面从本地 FastAPI `GET /api/v1/import-batches` 读取导入批次列表。"
+  - "选中批次后只读调用 `GET /api/v1/import-batches/{batch_id}/apply-readiness`，展示 readiness、阻塞项和行级阻塞。"
+  - "侧边栏数据与集成下的文件导入、接入批次、数据质量入口指向 `/data-quality` 并具备当前选中态。"
+  - "页面具备加载、空数据和 API 错误状态，不使用新增静态业务样例代替 API 结果。"
+  - "不新增依赖，不修改 package/lockfile，不做上传写入、apply 写操作、审批、导出、批量、权限、外部集成、schema/migration、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和浏览器 smoke 通过。"
+dependencies:
+  - "US643"
+status: "done"
+```

@@ -41,6 +41,7 @@ The project contains:
 - A read-only import batch list/status query slice that lists upload result counts, version counts, and derived application state without schema or migration changes.
 - A read-only import apply-readiness validation slice that blocks apply when failed rows, no success rows, missing versions, already-applied state, or row-level required-field gaps are detected.
 - Apply-before-write readiness safety gates for all four import apply routes that return stable not-ready errors while preserving duplicate already-applied idempotency.
+- A read-only import-center frontend API wiring slice that adds `/data-quality`, reads local import batch and apply-readiness APIs, and links data/import sidebar entries to the real page.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -94,6 +95,7 @@ Current allowed database scope:
 - IM021 import row-level readiness precheck: apply-readiness may return row-level required-field blockers for success rows before apply without adding schema or migration changes.
 - IM022 import apply safety gate: master_data and demand_forecast apply routes reject not-ready batches before writing while preserving already_applied idempotency without adding schema or migration changes.
 - IM023 import apply safety gate completion: personnel_schedule and login/status-log apply routes now reject not-ready batches before writing while preserving already_applied idempotency without adding schema or migration changes.
+- IM024 import-center frontend API wiring: `/data-quality` reads local import batch and apply-readiness APIs without adding write actions, dependencies, backend changes, or schema/migration changes.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:
