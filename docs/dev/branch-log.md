@@ -2,6 +2,23 @@
 
 ## 2026-05-29
 
+### IM027 Import Center Field Mapping Template Selection
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `8aac380`
+- remote_status: `continuing from pushed origin/codex/import-center-api-vertical`
+- scope: Add first field-mapping template selection slice on `/data-quality`: fetch existing templates, show template selector and summaries in the CSV upload form, submit `template_id` through the existing upload server action, keep manual JSON fallback, add import-center model helpers/tests, local template upload smoke, current queue cleanup, and traceability records.
+- allowed_files_check: `app/data-quality/**`, `components/import-center-model.ts`, `components/import-center-upload-form.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no backend files, dependency files, lockfiles, schema/migration files, template CRUD UI, external integration, auth, permission, approval, export, batch operation, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `/data-quality` template fetch and upload action parameter, import-center upload form template selector and template summaries, import-center template URL/summary helpers, model tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target import-center model tests passed with 10 tests; `npm run lint` passed; `npm run typecheck` passed; local template API smoke created `TPL-IM027-SMOKE-001`; local upload API smoke created `BATCH-IM027-SMOKE-001` using `template_id`; production `/data-quality?batch=BATCH-IM027-SMOKE-001` smoke on temporary port 3022 returned `200`; final `bash scripts/check.sh` passed with strict state check, frontend build, and 160 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM026 Import Center Failed Row Correction UI
 
 - branch_name: `codex/import-center-api-vertical`

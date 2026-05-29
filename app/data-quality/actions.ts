@@ -19,6 +19,7 @@ export async function uploadImportCsvAction(formData: FormData) {
   const businessDateFrom = formText(formData, "business_date_from")
   const businessDateTo = formText(formData, "business_date_to")
   const fieldMapping = formText(formData, "field_mapping") || '{"source_key":"source_key"}'
+  const templateId = formText(formData, "template_id")
   const file = formData.get("csv_file")
 
   if (!batchId || !businessDateFrom || !businessDateTo || !(file instanceof File)) {
@@ -27,6 +28,8 @@ export async function uploadImportCsvAction(formData: FormData) {
 
   const csvText = await file.text()
   const fileName = formText(formData, "file_name") || file.name
+  let apiStatus: number | null = null
+  let networkError: string | null = null
 
   try {
     const response = await fetch(
@@ -38,6 +41,7 @@ export async function uploadImportCsvAction(formData: FormData) {
         businessDateFrom,
         businessDateTo,
         fieldMapping,
+        templateId: templateId || undefined,
       }),
       {
         method: "POST",
@@ -49,16 +53,22 @@ export async function uploadImportCsvAction(formData: FormData) {
       }
     )
 
-    if (!response.ok) {
-      redirect(
-        `/data-quality?upload=failed&reason=api_${response.status}&batch=${encodeURIComponent(
-          batchId
-        )}`
-      )
-    }
+    apiStatus = response.status
   } catch (error) {
+    networkError = formatActionError(error)
+  }
+
+  if (networkError) {
     redirect(
-      `/data-quality?upload=failed&reason=${encodeURIComponent(formatActionError(error))}`
+      `/data-quality?upload=failed&reason=${encodeURIComponent(networkError)}`
+    )
+  }
+
+  if (apiStatus !== null && (apiStatus < 200 || apiStatus >= 300)) {
+    redirect(
+      `/data-quality?upload=failed&reason=api_${apiStatus}&batch=${encodeURIComponent(
+        batchId
+      )}`
     )
   }
 

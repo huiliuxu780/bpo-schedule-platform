@@ -4747,3 +4747,48 @@ tasks:
       - "范围扩展到批量修正、apply 写按钮、审批、导出、权限、外部集成、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM027
+    title: "导入中心字段映射模板选择第一刀"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM026"]
+    allowed_files:
+      - "app/data-quality/**"
+      - "components/import-center-model.ts"
+      - "components/import-center-upload-form.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality` 读取现有 field mapping templates 列表，并在 CSV 上传表单展示模板选择。"
+      - "上传表单选择模板后提交 template_id 到现有 upload-csv API。"
+      - "无模板或模板 API 异常时仍保留手填 field_mapping JSON 上传路径。"
+      - "模板列表展示模板名称、类型和映射摘要，不新增静态业务样例。"
+      - "不新增依赖，不修改 package/lockfile，不做模板 CRUD UI、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和本地模板上传 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到模板 CRUD UI、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

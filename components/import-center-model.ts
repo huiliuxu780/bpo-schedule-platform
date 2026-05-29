@@ -109,6 +109,17 @@ export type ImportUploadRequest = {
   businessDateFrom: string
   businessDateTo: string
   fieldMapping: string
+  templateId?: string
+}
+
+export type ImportFieldMappingTemplate = {
+  template_id: string
+  template_name: string
+  file_type: ImportFileType
+  field_mapping: Record<string, string>
+  created_by: string
+  created_at: string
+  is_active: boolean
 }
 
 const fileTypeLabels: Record<ImportFileType, string> = {
@@ -156,8 +167,28 @@ export function buildImportUploadUrl(
     field_mapping: request.fieldMapping,
   })
 
+  if (request.templateId) {
+    searchParams.set("template_id", request.templateId)
+  }
+
   return buildImportApiUrl(
     `/api/v1/import-batches/upload-csv?${searchParams.toString()}`,
+    apiBase
+  )
+}
+
+export function buildImportFieldMappingTemplatesUrl(
+  fileType?: ImportFileType,
+  apiBase = getDefaultApiBase()
+): string {
+  if (!fileType) {
+    return buildImportApiUrl("/api/v1/import-field-mapping-templates", apiBase)
+  }
+
+  const searchParams = new URLSearchParams({ file_type: fileType })
+
+  return buildImportApiUrl(
+    `/api/v1/import-field-mapping-templates?${searchParams.toString()}`,
     apiBase
   )
 }
@@ -249,6 +280,22 @@ export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): st
   }
 
   return JSON.stringify(row.raw_data)
+}
+
+export function formatFieldMappingTemplateSummary(
+  template: ImportFieldMappingTemplate
+): string {
+  const entries = Object.entries(template.field_mapping)
+  const preview = entries.slice(0, 3).map(([sourceField, standardField]) => {
+    return `${sourceField} -> ${standardField}`
+  })
+  const remainingCount = entries.length - preview.length
+
+  if (remainingCount > 0) {
+    preview[preview.length - 1] = `${preview[preview.length - 1]} +${remainingCount}`
+  }
+
+  return preview.join(", ")
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

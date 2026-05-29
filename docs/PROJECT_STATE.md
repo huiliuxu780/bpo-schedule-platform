@@ -44,6 +44,7 @@ The project contains:
 - A read-only import-center frontend API wiring slice that adds `/data-quality`, reads local import batch and apply-readiness APIs, and links data/import sidebar entries to the real page.
 - A CSV upload form slice on `/data-quality` that reads a local CSV file in a Next server action and calls the existing local `upload-csv` API without adding backend changes or new dependencies.
 - A failed-row correction UI slice on `/data-quality` that reads persisted batch detail, shows failed rows, and submits single-row corrections through the existing local row correction API without adding backend changes or new dependencies.
+- A field-mapping template selection slice on `/data-quality` that reads existing mapping templates, shows template summaries, and submits `template_id` to the existing `upload-csv` API while keeping manual JSON mapping as fallback.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -99,6 +100,8 @@ Current allowed database scope:
 - IM023 import apply safety gate completion: personnel_schedule and login/status-log apply routes now reject not-ready batches before writing while preserving already_applied idempotency without adding schema or migration changes.
 - IM024 import-center frontend API wiring: `/data-quality` reads local import batch and apply-readiness APIs without adding write actions, dependencies, backend changes, or schema/migration changes.
 - IM025 import-center CSV upload form: `/data-quality` can submit local CSV files through a Next server action to the existing `upload-csv` API without adding Excel/multipart, apply write actions, backend changes, dependencies, or schema/migration changes.
+- IM026 import-center failed-row correction UI: `/data-quality` can read persisted batch detail, show failed rows, and submit single-row corrections through the existing row correction API without adding backend changes, dependencies, or schema/migration changes.
+- IM027 import-center field-mapping template selection: `/data-quality` can read existing field-mapping templates and submit selected `template_id` to the existing `upload-csv` API while preserving manual JSON mapping fallback.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:

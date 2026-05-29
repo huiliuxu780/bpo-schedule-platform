@@ -5,5 +5,4 @@ notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
-tasks:
-  []
+tasks: []

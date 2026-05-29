@@ -1,7 +1,12 @@
 import { Upload } from "lucide-react"
 
 import { uploadImportCsvAction } from "@/app/data-quality/actions"
-import { formatImportFileType, type ImportFileType } from "@/components/import-center-model"
+import {
+  formatFieldMappingTemplateSummary,
+  formatImportFileType,
+  type ImportFieldMappingTemplate,
+  type ImportFileType,
+} from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,6 +15,8 @@ import { Input } from "@/components/ui/input"
 type ImportCenterUploadFormProps = {
   uploadStatus?: string
   uploadReason?: string
+  templates?: ImportFieldMappingTemplate[]
+  templateError?: string | null
 }
 
 const fileTypes: ImportFileType[] = [
@@ -23,6 +30,8 @@ const fileTypes: ImportFileType[] = [
 export function ImportCenterUploadForm({
   uploadStatus,
   uploadReason,
+  templates = [],
+  templateError,
 }: ImportCenterUploadFormProps) {
   return (
     <Card>
@@ -71,14 +80,31 @@ export function ImportCenterUploadForm({
             <Field label="CSV 文件">
               <Input name="csv_file" type="file" accept=".csv,text/csv" required />
             </Field>
-            <Field label="字段映射 JSON">
-              <textarea
-                name="field_mapping"
-                defaultValue={'{"source_key":"source_key"}'}
-                className="min-h-20 w-full rounded-lg border border-input bg-background px-2.5 py-2 font-mono text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-              />
-            </Field>
+            <div className="grid gap-3">
+              <Field label="字段映射模板">
+                <select
+                  name="template_id"
+                  defaultValue=""
+                  className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <option value="">手填字段映射 JSON</option>
+                  {templates.map((template) => (
+                    <option key={template.template_id} value={template.template_id}>
+                      {formatImportFileType(template.file_type)} · {template.template_name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="字段映射 JSON">
+                <textarea
+                  name="field_mapping"
+                  defaultValue={'{"source_key":"source_key"}'}
+                  className="min-h-20 w-full rounded-lg border border-input bg-background px-2.5 py-2 font-mono text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                />
+              </Field>
+            </div>
           </div>
+          <TemplateSummary templates={templates} templateError={templateError} />
           {uploadStatus === "failed" ? (
             <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
               上传失败：{uploadReason || "请检查 API 状态、批次号或字段映射。"}
@@ -93,6 +119,52 @@ export function ImportCenterUploadForm({
         </form>
       </CardContent>
     </Card>
+  )
+}
+
+function TemplateSummary({
+  templates,
+  templateError,
+}: {
+  templates: ImportFieldMappingTemplate[]
+  templateError?: string | null
+}) {
+  if (templateError) {
+    return (
+      <div className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-300">
+        字段映射模板读取失败，仍可手填 JSON 上传：{templateError}
+      </div>
+    )
+  }
+
+  if (templates.length === 0) {
+    return (
+      <div className="rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground">
+        暂无可用模板，当前使用手填字段映射 JSON。
+      </div>
+    )
+  }
+
+  return (
+    <div className="grid gap-2 rounded-md border px-3 py-2">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm font-medium">可选字段映射模板</span>
+        <Badge variant="outline">{templates.length} 个</Badge>
+      </div>
+      <div className="grid gap-2 md:grid-cols-2">
+        {templates.map((template) => (
+          <div key={template.template_id} className="grid gap-1 rounded-md bg-muted/40 p-2">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary">{formatImportFileType(template.file_type)}</Badge>
+              <span className="truncate text-sm font-medium">{template.template_name}</span>
+            </div>
+            <p className="truncate text-xs text-muted-foreground">
+              {formatFieldMappingTemplateSummary(template)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 

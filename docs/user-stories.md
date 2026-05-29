@@ -2591,3 +2591,26 @@ dependencies:
   - "US645"
 status: "done"
 ```
+
+### US647 - 导入中心字段映射模板选择第一刀
+
+```yaml
+id: US647
+requirement_ids:
+  - R727
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望上传 CSV 时可以选择已有字段映射模板，以便复用稳定映射并减少每次手填 JSON 的错误。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 读取现有 field mapping templates 列表，并在 CSV 上传表单展示模板选择。"
+  - "上传表单选择模板后提交 template_id 到现有 upload-csv API。"
+  - "无模板或模板 API 异常时仍保留手填 field_mapping JSON 上传路径。"
+  - "模板列表展示模板名称、类型和映射摘要，不新增静态业务样例。"
+  - "不新增依赖，不修改 package/lockfile，不做模板 CRUD UI、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和本地模板上传 smoke 通过。"
+dependencies:
+  - "US646"
+status: "done"
+```

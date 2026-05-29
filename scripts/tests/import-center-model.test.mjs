@@ -4,8 +4,10 @@ import test from "node:test";
 import {
   buildImportApiUrl,
   buildImportBatchDetailUrl,
+  buildImportFieldMappingTemplatesUrl,
   buildImportRowCorrectionUrl,
   buildImportUploadUrl,
+  formatFieldMappingTemplateSummary,
   getImportRowStandardFieldsPreview,
   formatImportFileType,
   getImportBatchHealth,
@@ -126,6 +128,59 @@ test("import center upload URL builder encodes CSV upload query", () => {
   assert.equal(
     url.searchParams.get("field_mapping"),
     '{"source_key":"source_key","姓名":"employee_name"}',
+  );
+});
+
+test("import center upload URL builder can submit a field mapping template id", () => {
+  const url = new URL(
+    buildImportUploadUrl(
+      {
+        batchId: "BATCH-TPL-001",
+        fileName: "schedule.csv",
+        fileType: "personnel_schedule",
+        uploadedBy: "ops",
+        businessDateFrom: "2026-05-01",
+        businessDateTo: "2026-05-31",
+        fieldMapping: '{"source_key":"source_key"}',
+        templateId: "TPL-SCHEDULE-001",
+      },
+      "http://127.0.0.1:8000",
+    ),
+  );
+
+  assert.equal(url.pathname, "/api/v1/import-batches/upload-csv");
+  assert.equal(url.searchParams.get("template_id"), "TPL-SCHEDULE-001");
+  assert.equal(url.searchParams.get("field_mapping"), '{"source_key":"source_key"}');
+});
+
+test("import center mapping template URL builder supports all templates and file type filtering", () => {
+  assert.equal(
+    buildImportFieldMappingTemplatesUrl(undefined, "http://127.0.0.1:8000"),
+    "http://127.0.0.1:8000/api/v1/import-field-mapping-templates",
+  );
+  assert.equal(
+    buildImportFieldMappingTemplatesUrl("master_data", "http://127.0.0.1:8000"),
+    "http://127.0.0.1:8000/api/v1/import-field-mapping-templates?file_type=master_data",
+  );
+});
+
+test("import center mapping template summary previews stable field pairs", () => {
+  assert.equal(
+    formatFieldMappingTemplateSummary({
+      template_id: "TPL-MD-001",
+      template_name: "主数据 source_key",
+      file_type: "master_data",
+      field_mapping: {
+        source_key: "source_key",
+        "姓名": "employee_name",
+        "工号": "employee_id",
+        "城市": "worksite",
+      },
+      created_by: "ops",
+      created_at: "2026-05-29T10:00:00+08:00",
+      is_active: true,
+    }),
+    "source_key -> source_key, 姓名 -> employee_name, 工号 -> employee_id +1",
   );
 });
 

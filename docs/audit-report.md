@@ -4,6 +4,33 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM027 导入中心字段映射模板选择第一刀
+
+#### 审计结论
+
+- `US647/IM027/R727` 已完成导入中心字段映射模板选择第一刀。
+- `/data-quality` 读取现有 field mapping templates，并在 CSV 上传表单展示模板选择。
+- 上传表单选择模板后提交 `template_id` 到现有 `upload-csv` API。
+- 无模板或模板 API 异常时仍保留手填 `field_mapping` JSON 上传路径。
+- 模板列表展示模板名称、类型和映射摘要，未新增静态业务样例。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做上传表单模板选择和模板摘要展示；不做模板 CRUD UI、不新增后端 API、不新增 schema/migration。
+- 本轮依赖现有 field-mapping template API；若本地 FastAPI 未启动，页面展示模板读取失败并保留手填 JSON。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs`：通过，10 个模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `curl -fsS -X POST ... /api/v1/import-field-mapping-templates ...`：通过，创建本地模板 `TPL-IM027-SMOKE-001`。
+- `curl -fsS -X POST ... /api/v1/import-batches/upload-csv ... template_id=TPL-IM027-SMOKE-001`：通过，生成本地批次 `BATCH-IM027-SMOKE-001`。
+- `curl -fsS 'http://localhost:3022/data-quality?batch=BATCH-IM027-SMOKE-001'`：返回 `200`，页面 HTML 包含字段映射模板下拉、模板摘要和 smoke 批次。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend build 和 160 个 backend unittest。
+
 ### 2026-05-29 - IM026 导入中心失败行列表与单行修正 UI 第一刀
 
 #### 审计结论

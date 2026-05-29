@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM027`
+- source_ids:
+  - `R727`
+- story_ids:
+  - `US647`
+- action: 实现导入中心字段映射模板选择第一刀。
+- status: `done`
+- notes: IM027 在 `/data-quality` 读取现有 field mapping templates，上传表单新增模板选择并把 `template_id` 传给现有 `upload-csv` API；页面展示模板名称、类型和映射摘要，同时保留手填 field_mapping JSON 兜底路径。未新增依赖，不做模板 CRUD UI、后端、schema/migration、权限、审批、导出、批量、外部集成、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM026`
 - source_ids:
   - `R726`

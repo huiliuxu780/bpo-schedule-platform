@@ -5,9 +5,11 @@ import { ImportCenterUploadForm } from "@/components/import-center-upload-form"
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchPersistenceDetail,
+  type ImportFieldMappingTemplate,
   type ImportBatchListRow,
   buildImportApiUrl,
   buildImportBatchDetailUrl,
+  buildImportFieldMappingTemplatesUrl,
 } from "@/components/import-center-model"
 
 export const dynamic = "force-dynamic"
@@ -32,6 +34,7 @@ export default async function DataQualityPage({
 }: DataQualityPageProps) {
   const params = await searchParams
   const batchResult = await fetchImportBatches()
+  const templateResult = await fetchImportFieldMappingTemplates()
   const batches = batchResult.data ?? []
   const selectedBatchId =
     params?.batch && batches.some((batch) => batch.batch_id === params.batch)
@@ -56,6 +59,8 @@ export default async function DataQualityPage({
           <ImportCenterUploadForm
             uploadStatus={params?.upload}
             uploadReason={params?.reason}
+            templates={templateResult.data ?? []}
+            templateError={templateResult.error}
           />
         }
         rowCorrectionPanel={
@@ -70,6 +75,37 @@ export default async function DataQualityPage({
       />
     </AppShell>
   )
+}
+
+async function fetchImportFieldMappingTemplates(): Promise<
+  ApiResult<ImportFieldMappingTemplate[]>
+> {
+  try {
+    const response = await fetch(buildImportFieldMappingTemplatesUrl(), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `字段映射模板 API 返回 ${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as {
+      items?: ImportFieldMappingTemplate[]
+    }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
 }
 
 async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {

@@ -1391,3 +1391,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端失败行列表、修正请求组合和现有 row correction API 调用；不新增依赖，不做批量修正、apply 写按钮、后端、schema/migration、审批、导出、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R727 - 导入中心字段映射模板选择第一刀
+
+```yaml
+id: R727
+module: "导入中心"
+description: "导入中心前端已经能上传 CSV 和修正失败行后，需要在上传时复用现有字段映射模板，让数据管理员不用每次手填 field_mapping JSON，也能继续保留手填路径作为模板缺失或 API 异常时的兜底。"
+source: "PM requested continuing import-center production usability after IM026 on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端读取字段映射模板、上传表单选择 template_id 和手填 JSON 兜底；不新增依赖，不做模板 CRUD UI、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```
