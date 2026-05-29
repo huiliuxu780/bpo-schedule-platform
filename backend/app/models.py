@@ -297,11 +297,19 @@ class ImportApplyReadinessBlocker(BaseModel):
     message: str
 
 
+class ImportApplyReadinessRowBlocker(BaseModel):
+    row_number: int = Field(ge=1)
+    code: str
+    field_name: str | None = None
+    message: str
+
+
 class ImportApplyReadinessResponse(BaseModel):
     batch_id: str
     file_type: ImportFileType
     readiness_status: ImportReadinessStatus
     blockers: list[ImportApplyReadinessBlocker]
+    row_blockers: list[ImportApplyReadinessRowBlocker] = Field(default_factory=list)
     total_rows: int = Field(ge=0)
     success_rows: int = Field(ge=0)
     failed_rows: int = Field(ge=0)

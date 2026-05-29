@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM021 导入批次应用前行级字段预检第一刀
+
+#### 审计结论
+
+- `US641/IM021/R721` 已完成导入批次应用前行级字段预检第一刀。
+- `GET /api/v1/import-batches/{batch_id}/apply-readiness` 响应新增 `row_blockers`。
+- 成功行缺少当前 `file_type` 或 `record_type` 应用所需标准字段时返回 `blocked`。
+- 行级阻塞包含 `row_number`、`code`、`field_name` 和 `message`。
+- 干净批次继续返回 `ready` 且 `row_blockers` 为空。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做字段级只读预检，不做主数据引用存在性、班次规则、时区、跨天等深度业务校验。
+- 本轮不自动触发 apply，也不新增 apply 任务表、审批流、导出或批量能力。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_import_readiness_api -v`：通过，7 个 apply-readiness API 测试通过。
+- `.venv/bin/python -m unittest backend.tests.test_import_readiness_api backend.tests.test_import_batch_list_api backend.tests.test_import_application_summary_api backend.tests.test_import_row_correction_api backend.tests.test_import_mapping_api backend.tests.test_import_upload_api -v`：通过，32 个相邻导入 API 回归测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 156 个 backend unittest。
+
 ### 2026-05-29 - IM020 导入批次应用前就绪校验第一刀
 
 #### 审计结论

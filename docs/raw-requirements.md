@@ -1313,3 +1313,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做应用前只读就绪判断；不新增 schema/migration，不做自动 apply、前端、深度主数据校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
 ```
+
+### R721 - 导入批次应用前行级字段预检第一刀
+
+```yaml
+id: R721
+module: "导入中心"
+description: "导入中心已经具备批次级 apply-readiness 判断后，需要在应用前进一步暴露成功行的字段级阻塞原因，避免缺少标准字段的成功行进入 apply 时才失败。"
+source: "PM requested continuing import-center production usability on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做应用前只读行级字段预检；不新增 schema/migration，不做自动 apply、前端、深度主数据引用校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+```

@@ -2455,3 +2455,26 @@ dependencies:
   - "US639"
 status: "done"
 ```
+
+### US641 - 导入批次应用前行级字段预检第一刀
+
+```yaml
+id: US641
+requirement_ids:
+  - R721
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在导入批次应用前看到成功行的字段级阻塞原因，以便先修正缺字段数据再执行应用。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "apply-readiness 返回 row_blockers 行级阻塞列表。"
+  - "成功行缺少当前 file_type/record_type 所需标准字段时返回 blocked。"
+  - "行级阻塞包含 row_number、code、field_name 和 message。"
+  - "干净批次仍返回 ready 且 row_blockers 为空。"
+  - "不新增 schema/migration，不做自动 apply、前端、深度主数据引用校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US640"
+status: "done"
+```

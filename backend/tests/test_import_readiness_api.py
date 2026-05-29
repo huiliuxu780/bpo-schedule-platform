@@ -6,6 +6,7 @@ from unittest.mock import patch
 from fastapi import HTTPException
 
 from backend.app import main
+from backend.app.forecast_persistence import ForecastPersistenceRepository
 from backend.app.import_persistence import ImportPersistenceRepository
 from backend.app.main import app, apply_master_data_import
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
@@ -50,10 +51,77 @@ class ImportReadinessApiTest(unittest.TestCase):
         self.assertEqual(response.file_type, "master_data")
         self.assertEqual(response.readiness_status, "ready")
         self.assertEqual(response.blockers, [])
+        self.assertEqual(response.row_blockers, [])
         self.assertEqual(response.success_rows, 6)
         self.assertEqual(response.failed_rows, 0)
         self.assertEqual(response.version_count, 1)
         self.assertEqual(response.application_status, "not_applied")
+
+    def test_import_apply_readiness_blocks_success_row_missing_required_field(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'readiness.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            master_data_repository = MasterDataPersistenceRepository(database_url)
+            master_data_repository.init_schema()
+            _create_master_data_batch_missing_employee_name(
+                import_repository,
+                "BATCH-READY-004",
+            )
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.MasterDataPersistenceRepository",
+                    return_value=master_data_repository,
+                ),
+            ):
+                response = main.get_import_apply_readiness("BATCH-READY-004")
+
+        self.assertEqual(response.readiness_status, "blocked")
+        self.assertEqual(
+            [blocker.code for blocker in response.blockers],
+            ["IMPORT_ROW_PRECHECK_FAILED"],
+        )
+        self.assertEqual(len(response.row_blockers), 1)
+        self.assertEqual(response.row_blockers[0].row_number, 1)
+        self.assertEqual(response.row_blockers[0].code, "IMPORT_ROW_FIELD_MISSING")
+        self.assertEqual(response.row_blockers[0].field_name, "employee_name")
+
+    def test_import_apply_readiness_blocks_demand_forecast_missing_required_field(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'readiness.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            forecast_repository = ForecastPersistenceRepository(database_url)
+            forecast_repository.init_schema()
+            _create_demand_forecast_batch_missing_required_agents(
+                import_repository,
+                "BATCH-READY-005",
+            )
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.ForecastPersistenceRepository",
+                    return_value=forecast_repository,
+                ),
+            ):
+                response = main.get_import_apply_readiness("BATCH-READY-005")
+
+        self.assertEqual(response.readiness_status, "blocked")
+        self.assertEqual(len(response.row_blockers), 1)
+        self.assertEqual(response.row_blockers[0].row_number, 1)
+        self.assertEqual(response.row_blockers[0].code, "IMPORT_ROW_FIELD_MISSING")
+        self.assertEqual(response.row_blockers[0].field_name, "required_agents")
 
     def test_import_apply_readiness_blocks_failed_rows_and_missing_version(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -223,6 +291,88 @@ def _create_failed_batch_without_version(
                     error_message="缺少必填字段 source_key",
                     raw_data={"standard_fields": {"source_key": ""}},
                 ),
+            ],
+        )
+    )
+
+
+def _create_master_data_batch_missing_employee_name(
+    repository: ImportPersistenceRepository,
+    batch_id: str,
+) -> None:
+    repository.create_import_batch(
+        ImportBatchCreateRequest(
+            batch_id=batch_id,
+            file_name="master_data.csv",
+            file_type="master_data",
+            uploaded_by="数据管理员",
+            business_date_from="2026-05-01",
+            business_date_to="2026-12-31",
+            rows=[
+                ImportBatchRowResultInput(
+                    row_number=1,
+                    row_status="success",
+                    source_key="A-1001",
+                    raw_data={
+                        "standard_fields": {
+                            "record_type": "employee",
+                            "employee_id": "A-1001",
+                            "status": "active",
+                            "effective_from": "2026-05-01",
+                            "effective_to": "2026-12-31",
+                        }
+                    },
+                )
+            ],
+            versions=[
+                ImportBatchVersionInput(
+                    version_id=f"{batch_id}::master_data",
+                    version_type="master_data",
+                    business_date_from="2026-05-01",
+                    business_date_to="2026-12-31",
+                )
+            ],
+        )
+    )
+
+
+def _create_demand_forecast_batch_missing_required_agents(
+    repository: ImportPersistenceRepository,
+    batch_id: str,
+) -> None:
+    repository.create_import_batch(
+        ImportBatchCreateRequest(
+            batch_id=batch_id,
+            file_name="demand_forecast.csv",
+            file_type="demand_forecast",
+            uploaded_by="数据管理员",
+            business_date_from="2026-05-11",
+            business_date_to="2026-05-11",
+            rows=[
+                ImportBatchRowResultInput(
+                    row_number=1,
+                    row_status="success",
+                    source_key="SH-01||BOSCH-CS||L1-CN||2026-05-11T09:00",
+                    raw_data={
+                        "standard_fields": {
+                            "forecast_date": "2026-05-11",
+                            "interval_start": "09:00",
+                            "interval_end": "09:30",
+                            "workplace_id": "SH-01",
+                            "project_id": "BOSCH-CS",
+                            "skill_id": "L1-CN",
+                            "demand_level": "normal",
+                        }
+                    },
+                )
+            ],
+            versions=[
+                ImportBatchVersionInput(
+                    version_id=f"{batch_id}::demand_forecast",
+                    version_type="demand_forecast",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                )
             ],
         )
     )

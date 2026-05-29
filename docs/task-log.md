@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM021`
+- source_ids:
+  - `R721`
+- story_ids:
+  - `US641`
+- action: 实现导入批次应用前行级字段预检第一刀。
+- status: `done`
+- notes: IM021 在只读 `GET /api/v1/import-batches/{batch_id}/apply-readiness` 响应中新增 `row_blockers`，对成功行按 file_type/record_type 检查应用所需标准字段，缺字段或未知 record_type 时返回 blocked。未新增 schema/migration，不做自动 apply、前端、深度主数据引用校验、批量、外部集成、权限、审批、导出、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM020`
 - source_ids:
   - `R720`
