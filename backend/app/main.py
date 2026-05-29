@@ -620,10 +620,20 @@ def apply_personnel_schedule_import(batch_id: str) -> PersonnelScheduleImportApp
             },
         )
 
+    schedule_repository = PersonnelSchedulePersistenceRepository()
+    application_summary = build_import_application_summary(
+        batch,
+        master_data_repository=MasterDataPersistenceRepository(),
+        schedule_repository=schedule_repository,
+        forecast_repository=ForecastPersistenceRepository(),
+        actual_repository=ActualLogPersistenceRepository(),
+    )
+    _raise_if_import_apply_not_ready(batch, application_summary)
+
     try:
         summary = apply_personnel_schedule_import_batch(
             batch,
-            PersonnelSchedulePersistenceRepository(),
+            schedule_repository,
         )
     except ValueError as exc:
         raise HTTPException(
@@ -708,10 +718,20 @@ def apply_actual_log_import(batch_id: str) -> ActualLogImportApplyResponse:
             },
         )
 
+    actual_repository = ActualLogPersistenceRepository()
+    application_summary = build_import_application_summary(
+        batch,
+        master_data_repository=MasterDataPersistenceRepository(),
+        schedule_repository=PersonnelSchedulePersistenceRepository(),
+        forecast_repository=ForecastPersistenceRepository(),
+        actual_repository=actual_repository,
+    )
+    _raise_if_import_apply_not_ready(batch, application_summary)
+
     try:
         summary = apply_actual_log_import_batch(
             batch,
-            ActualLogPersistenceRepository(),
+            actual_repository,
         )
     except ValueError as exc:
         raise HTTPException(

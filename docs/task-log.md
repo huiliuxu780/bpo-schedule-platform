@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM023`
+- source_ids:
+  - `R723`
+- story_ids:
+  - `US643`
+- action: 实现人员排班与实际日志应用前 readiness 安全闸第一刀。
+- status: `done`
+- notes: IM023 在 personnel_schedule 和 login/status-log apply 路由写入前复用 apply-readiness 判断，未就绪批次返回稳定 `IMPORT_APPLY_NOT_READY` 并携带 readiness 详情；已应用批次继续返回 existing already_applied 幂等响应。未新增 schema/migration，不做前端、深度主数据引用校验、批量、外部集成、权限、审批、导出、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM022`
 - source_ids:
   - `R722`

@@ -85,6 +85,40 @@ class ActualLogImportApiTest(unittest.TestCase):
         self.assertEqual(second_response.file_type, "login_log")
         self.assertEqual(second_response.login_events, 1)
 
+    def test_apply_actual_log_import_returns_not_ready_for_row_field_gap(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'actual-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            actual_repository = ActualLogPersistenceRepository(database_url)
+            actual_repository.init_schema()
+            _create_login_batch_missing_event_at(
+                import_repository,
+                "BATCH-LOGIN-API-NOT-READY",
+            )
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.ActualLogPersistenceRepository",
+                    return_value=actual_repository,
+                ),
+            ):
+                with self.assertRaises(HTTPException) as raised:
+                    apply_actual_log_import("BATCH-LOGIN-API-NOT-READY")
+
+        self.assertEqual(raised.exception.status_code, 400)
+        error = raised.exception.detail["error"]
+        self.assertEqual(error["code"], "IMPORT_APPLY_NOT_READY")
+        self.assertEqual(error["readiness"]["readiness_status"], "blocked")
+        self.assertEqual(
+            error["readiness"]["row_blockers"][0]["field_name"],
+            "event_at",
+        )
+
     def test_apply_actual_log_import_returns_404_for_missing_batch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'actual-import.db'}"
@@ -133,6 +167,45 @@ def _create_login_batch(
             versions=[
                 ImportBatchVersionInput(
                     version_id="IMPORT-LOGIN-API-001",
+                    version_type="login_log",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                )
+            ],
+        )
+    )
+
+
+def _create_login_batch_missing_event_at(
+    repository: ImportPersistenceRepository,
+    batch_id: str,
+) -> None:
+    repository.create_import_batch(
+        ImportBatchCreateRequest(
+            batch_id=batch_id,
+            file_name="login_log.csv",
+            file_type="login_log",
+            uploaded_by="数据管理员",
+            business_date_from="2026-05-11",
+            business_date_to="2026-05-11",
+            rows=[
+                ImportBatchRowResultInput(
+                    row_number=1,
+                    row_status="success",
+                    source_key="LOGIN-API-MISSING-EVENT-AT",
+                    raw_data={
+                        "standard_fields": {
+                            "event_id": "LOGIN-API-MISSING-EVENT-AT",
+                            "employee_id": "A-1001",
+                            "event_type": "login",
+                            "timezone": "Asia/Shanghai",
+                        }
+                    },
+                )
+            ],
+            versions=[
+                ImportBatchVersionInput(
+                    version_id=f"{batch_id}::login_log",
                     version_type="login_log",
                     business_date_from="2026-05-11",
                     business_date_to="2026-05-11",

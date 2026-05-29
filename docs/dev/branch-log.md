@@ -2,6 +2,23 @@
 
 ## 2026-05-29
 
+### IM023 Personnel Actual Apply Readiness Guard
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `f5bfacd`
+- remote_status: `continuing from pushed origin/codex/import-center-api-vertical`
+- scope: Extend apply-before-write readiness guard to personnel_schedule and actual-log import apply routes: route guard, API tests, current queue cleanup, and traceability records.
+- allowed_files_check: `backend/app/main.py`, `backend/tests/test_personnel_schedule_import_api.py`, `backend/tests/test_actual_log_import_api.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no dependency files, migration files, frontend files, deep master-data reference validation, batch operation, external integration, auth, permission, approval, export, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: personnel_schedule/actual apply readiness guard, API tests for `IMPORT_APPLY_NOT_READY`, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target personnel/actual apply API tests passed with 10 tests; adjacent four-type apply/readiness regression passed with 27 tests; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `bash scripts/check.sh` passed with 160 backend unittest.
+- local_commit_sha: pending.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM022 Import Apply Readiness Guard
 
 - branch_name: `codex/import-center-api-vertical`

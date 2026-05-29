@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM023 人员排班与实际日志应用前 readiness 安全闸第一刀
+
+#### 审计结论
+
+- `US643/IM023/R723` 已完成人员排班与实际日志应用前 readiness 安全闸第一刀。
+- `apply-personnel-schedule` 和 `apply-actual-logs` 在写入前复用 apply-readiness 判断。
+- 未就绪批次返回稳定 `IMPORT_APPLY_NOT_READY`，错误体包含 readiness 详情。
+- 已应用批次继续返回既有 `already_applied` 幂等响应，不被 readiness 安全闸改成错误。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做应用前字段/版本/批次状态类安全闸，不做深度主数据引用存在性之外的新业务规则。
+- 本轮不新增 schema/migration，不自动触发 apply，也不新增审批流、导出或批量能力。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `.venv/bin/python -m unittest backend.tests.test_personnel_schedule_import_api backend.tests.test_actual_log_import_api -v`：通过，10 个 personnel/actual apply API 测试通过。
+- `.venv/bin/python -m unittest backend.tests.test_master_data_import_api backend.tests.test_forecast_import_api backend.tests.test_personnel_schedule_import_api backend.tests.test_actual_log_import_api backend.tests.test_import_readiness_api -v`：通过，27 个四类 apply/readiness 回归测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 160 个 backend unittest。
+
 ### 2026-05-29 - IM022 导入应用前 readiness 安全闸第一刀
 
 #### 审计结论

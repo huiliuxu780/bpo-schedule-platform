@@ -1339,3 +1339,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做 apply 前 readiness 安全闸；保留已应用批次的 already_applied 幂等返回；不新增 schema/migration，不做前端、深度主数据引用校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
 ```
+
+### R723 - 人员排班与实际日志应用前 readiness 安全闸第一刀
+
+```yaml
+id: R723
+module: "导入中心"
+description: "master_data 和 demand_forecast apply 已经具备写入前 readiness 安全闸后，需要把同样口径补到 personnel_schedule 和 login/status-log apply，形成四类导入应用的一致安全拦截。"
+source: "PM requested continuing import-center production usability on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做 personnel_schedule 与 login/status-log apply 前 readiness 安全闸；保留已应用批次的 already_applied 幂等返回；不新增 schema/migration，不做前端、深度主数据引用校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+```

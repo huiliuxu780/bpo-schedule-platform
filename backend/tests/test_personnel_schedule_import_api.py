@@ -88,6 +88,42 @@ class PersonnelScheduleImportApiTest(unittest.TestCase):
         self.assertEqual(second_response.shift_types, 1)
         self.assertEqual(second_response.details, 1)
 
+    def test_apply_personnel_schedule_import_returns_not_ready_for_row_field_gap(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'schedule-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            schedule_repository = PersonnelSchedulePersistenceRepository(database_url)
+            schedule_repository.init_schema()
+            _create_schedule_batch_missing_shift_type_id(
+                import_repository,
+                "BATCH-SCH-APPLY-NOT-READY",
+            )
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.PersonnelSchedulePersistenceRepository",
+                    return_value=schedule_repository,
+                ),
+            ):
+                with self.assertRaises(HTTPException) as raised:
+                    apply_personnel_schedule_import("BATCH-SCH-APPLY-NOT-READY")
+
+        self.assertEqual(raised.exception.status_code, 400)
+        error = raised.exception.detail["error"]
+        self.assertEqual(error["code"], "IMPORT_APPLY_NOT_READY")
+        self.assertEqual(error["readiness"]["readiness_status"], "blocked")
+        self.assertEqual(
+            error["readiness"]["row_blockers"][0]["field_name"],
+            "shift_type_id",
+        )
+
     def test_apply_personnel_schedule_import_returns_404_for_missing_batch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'schedule-import.db'}"
@@ -149,6 +185,44 @@ def _create_schedule_batch(
             versions=[
                 ImportBatchVersionInput(
                     version_id="IMPORT-SCH-APPLY-001",
+                    version_type="personnel_schedule",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                )
+            ],
+        )
+    )
+
+
+def _create_schedule_batch_missing_shift_type_id(
+    repository: ImportPersistenceRepository,
+    batch_id: str,
+) -> None:
+    repository.create_import_batch(
+        ImportBatchCreateRequest(
+            batch_id=batch_id,
+            file_name="personnel_schedule.csv",
+            file_type="personnel_schedule",
+            uploaded_by="排班管理员",
+            business_date_from="2026-05-11",
+            business_date_to="2026-05-11",
+            rows=[
+                _row(
+                    1,
+                    {
+                        "record_type": "shift_type",
+                        "shift_type_name": "早班",
+                        "status": "active",
+                        "start_time": "09:00",
+                        "end_time": "11:00",
+                        "effective_from": "2026-05-01",
+                        "effective_to": "2026-12-31",
+                    },
+                ),
+            ],
+            versions=[
+                ImportBatchVersionInput(
+                    version_id=f"{batch_id}::personnel_schedule",
                     version_type="personnel_schedule",
                     business_date_from="2026-05-11",
                     business_date_to="2026-05-11",

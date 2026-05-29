@@ -40,7 +40,7 @@ The project contains:
 - A failed import row correction slice that updates failed rows in place and recalculates import batch row counts without schema or migration changes.
 - A read-only import batch list/status query slice that lists upload result counts, version counts, and derived application state without schema or migration changes.
 - A read-only import apply-readiness validation slice that blocks apply when failed rows, no success rows, missing versions, already-applied state, or row-level required-field gaps are detected.
-- An apply-before-write readiness safety gate for `master_data` and `demand_forecast` imports that returns stable not-ready errors while preserving duplicate already-applied idempotency.
+- Apply-before-write readiness safety gates for all four import apply routes that return stable not-ready errors while preserving duplicate already-applied idempotency.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -50,7 +50,7 @@ The project contains:
 The project does not contain:
 
 - Real external API integration.
-- Broad production persistence beyond the DB002 import foundation, DB003 master data, DB004 personnel schedule, DB005 demand forecast, DB006 login/status log, DB007 comparison result, DB008 review closure record, IM001 import-center CSV upload slice, IM002-IM005 import application slices, IM006 comparison calculation trigger, IM007 review closure write API, IM008 persisted result query API, IM009 persisted result list query API, IM010 idempotent rerun protection slice, IM011 master-data apply idempotency slice, IM012 personnel-schedule apply idempotency slice, IM013 demand-forecast apply idempotency slice, IM014 actual-log apply idempotency slice, IM015 read-only import application summary slice, IM016 field-mapping template slice, IM017 failed-row correction slice, IM018 read-only import batch list/status query slice, IM019 field-mapping template update/deactivate slice, IM020 read-only import apply-readiness validation slice, IM021 row-level required-field readiness precheck slice, and IM022 apply-before-write readiness safety gate slice.
+- Broad production persistence beyond the DB002 import foundation, DB003 master data, DB004 personnel schedule, DB005 demand forecast, DB006 login/status log, DB007 comparison result, DB008 review closure record, IM001 import-center CSV upload slice, IM002-IM005 import application slices, IM006 comparison calculation trigger, IM007 review closure write API, IM008 persisted result query API, IM009 persisted result list query API, IM010 idempotent rerun protection slice, IM011 master-data apply idempotency slice, IM012 personnel-schedule apply idempotency slice, IM013 demand-forecast apply idempotency slice, IM014 actual-log apply idempotency slice, IM015 read-only import application summary slice, IM016 field-mapping template slice, IM017 failed-row correction slice, IM018 read-only import batch list/status query slice, IM019 field-mapping template update/deactivate slice, IM020 read-only import apply-readiness validation slice, IM021 row-level required-field readiness precheck slice, IM022 master_data/demand_forecast apply safety gate slice, and IM023 personnel_schedule/actual-log apply safety gate slice.
 - Authentication or production permission boundaries.
 - Multipart upload, real Excel import, or real CORN integration.
 - Approval, export, batch-operation, automatic scheduling, or production workflow capabilities.
@@ -93,6 +93,7 @@ Current allowed database scope:
 - IM020 import apply-readiness validation: batches may be checked before apply for failed rows, missing success rows, missing versions, and already-applied state without adding schema or migration changes.
 - IM021 import row-level readiness precheck: apply-readiness may return row-level required-field blockers for success rows before apply without adding schema or migration changes.
 - IM022 import apply safety gate: master_data and demand_forecast apply routes reject not-ready batches before writing while preserving already_applied idempotency without adding schema or migration changes.
+- IM023 import apply safety gate completion: personnel_schedule and login/status-log apply routes now reject not-ready batches before writing while preserving already_applied idempotency without adding schema or migration changes.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:

@@ -2500,3 +2500,25 @@ dependencies:
   - "US641"
 status: "done"
 ```
+
+### US643 - 人员排班与实际日志应用前 readiness 安全闸第一刀
+
+```yaml
+id: US643
+requirement_ids:
+  - R723
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望人员排班和实际日志导入应用也在写入前自动拦截未就绪批次，以便四类导入应用口径一致。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "apply-personnel-schedule 与 apply-actual-logs 在写入前复用 apply-readiness 结果。"
+  - "未就绪批次返回稳定 `IMPORT_APPLY_NOT_READY` 错误，并包含 readiness 详情。"
+  - "已应用批次继续返回现有 already_applied 幂等响应，不被 readiness 安全闸改成错误。"
+  - "不新增 schema/migration，不做前端、深度主数据引用校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、后端测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US642"
+status: "done"
+```
