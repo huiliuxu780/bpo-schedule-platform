@@ -1378,3 +1378,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端 CSV 文件读取、Next server action 请求组合和现有 upload-csv API 调用；不新增依赖，不做 Excel/multipart、apply 写操作、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R726 - 导入中心失败行列表与单行修正 UI 第一刀
+
+```yaml
+id: R726
+module: "导入中心"
+description: "导入中心前端已经能上传 CSV 并读取批次/readiness 后，需要把失败行明细和现有单行修正 API 接到页面上，让数据管理员可以直接看到失败原因并提交一行修正。"
+source: "PM requested continuing production usability after IM025 on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端失败行列表、修正请求组合和现有 row correction API 调用；不新增依赖，不做批量修正、apply 写按钮、后端、schema/migration、审批、导出、权限、外部集成、生产公式、结算或收费因子。"
+```

@@ -36,6 +36,7 @@ type ImportCenterApiPanelProps = {
   batchError: string | null
   readinessError: string | null
   uploadForm?: React.ReactNode
+  rowCorrectionPanel?: React.ReactNode
 }
 
 export function ImportCenterApiPanel({
@@ -45,6 +46,7 @@ export function ImportCenterApiPanel({
   batchError,
   readinessError,
   uploadForm,
+  rowCorrectionPanel,
 }: ImportCenterApiPanelProps) {
   const summary = summarizeImportBatches(batches)
   const selectedBatch =
@@ -191,6 +193,7 @@ export function ImportCenterApiPanel({
           </CardContent>
         </Card>
       </section>
+      {rowCorrectionPanel}
     </main>
   )
 }

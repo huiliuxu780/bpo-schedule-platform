@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM026`
+- source_ids:
+  - `R726`
+- story_ids:
+  - `US646`
+- action: 实现导入中心失败行列表与单行修正 UI 第一刀。
+- status: `done`
+- notes: IM026 在 `/data-quality` 读取选中批次 persisted detail，展示 failed_rows 明细和单行修正表单；表单通过 Next server action 调用现有 `POST /api/v1/import-batches/{batch_id}/rows/{row_number}/correct`。未新增依赖，不做批量修正、apply 写按钮、后端、schema/migration、权限、审批、导出、外部集成、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM025`
 - source_ids:
   - `R725`

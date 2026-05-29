@@ -11,6 +11,8 @@ export type ImportApplicationStatus = "not_applied" | "applied"
 
 export type ImportReadinessStatus = "ready" | "blocked"
 
+export type ImportRowStatus = "success" | "failed" | "warning"
+
 export type ImportBatchListRow = {
   batch_id: string
   file_name: string
@@ -29,6 +31,34 @@ export type ImportBatchListRow = {
   application_target: string
   import_version_id: string | null
   applied_record_count: number
+}
+
+export type ImportBatchRowResult = {
+  row_id: number
+  batch_id: string
+  row_number: number
+  row_status: ImportRowStatus
+  source_key: string | null
+  error_field: string | null
+  error_code: string | null
+  error_message: string | null
+  raw_data: Record<string, unknown>
+}
+
+export type ImportBatchVersion = {
+  version_id: string
+  batch_id: string
+  version_type: ImportFileType
+  business_date_from: string
+  business_date_to: string
+  created_at: string
+}
+
+export type ImportBatchPersistenceDetail = {
+  batch: Omit<ImportBatchListRow, "version_count" | "application_status" | "application_target" | "import_version_id" | "applied_record_count">
+  rows: ImportBatchRowResult[]
+  failed_rows: ImportBatchRowResult[]
+  versions: ImportBatchVersion[]
 }
 
 export type ImportReadinessBlocker = {
@@ -132,6 +162,27 @@ export function buildImportUploadUrl(
   )
 }
 
+export function buildImportBatchDetailUrl(
+  batchId: string,
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl(
+    `/api/v1/import-batches/persisted/${encodeURIComponent(batchId)}`,
+    apiBase
+  )
+}
+
+export function buildImportRowCorrectionUrl(
+  batchId: string,
+  rowNumber: number,
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl(
+    `/api/v1/import-batches/${encodeURIComponent(batchId)}/rows/${rowNumber}/correct`,
+    apiBase
+  )
+}
+
 export function formatImportFileType(fileType: ImportFileType): string {
   return fileTypeLabels[fileType] ?? fileType
 }
@@ -189,6 +240,19 @@ export function getImportBatchHealth(
   }
 
   return "ready_candidate"
+}
+
+export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): string {
+  const standardFields = row.raw_data.standard_fields
+  if (isRecord(standardFields)) {
+    return JSON.stringify(standardFields)
+  }
+
+  return JSON.stringify(row.raw_data)
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
 }
 
 function getDefaultApiBase(): string {

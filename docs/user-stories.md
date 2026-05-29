@@ -2568,3 +2568,26 @@ dependencies:
   - "US644"
 status: "done"
 ```
+
+### US646 - 导入中心失败行列表与单行修正 UI 第一刀
+
+```yaml
+id: US646
+requirement_ids:
+  - R726
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在导入中心页面看到失败行明细并提交单行修正，以便上传后可以直接完成错误行闭环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 读取选中批次 detail，并展示 failed_rows 列表。"
+  - "每条失败行展示 row_number、error_field、error_code、error_message 和 raw_data/standard_fields 摘要。"
+  - "每条失败行提供单行修正表单，通过 Next server action 调用现有 `POST /api/v1/import-batches/{batch_id}/rows/{row_number}/correct`。"
+  - "修正成功后回到当前 batch 并展示成功状态，继续复用批次列表和 apply-readiness。"
+  - "不新增依赖，不修改 package/lockfile，不做批量修正、apply 写按钮、后端、schema/migration、审批、导出、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和本地修正 smoke 通过。"
+dependencies:
+  - "US645"
+status: "done"
+```

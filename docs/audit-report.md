@@ -4,6 +4,33 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM026 导入中心失败行列表与单行修正 UI 第一刀
+
+#### 审计结论
+
+- `US646/IM026/R726` 已完成导入中心失败行列表与单行修正 UI 第一刀。
+- `/data-quality` 会读取选中批次的 persisted detail，并展示 `failed_rows`。
+- 每条失败行展示行号、错误字段、错误码、错误说明和标准字段摘要。
+- 每条失败行提供单行修正表单，通过 Next server action 调用现有 row correction API。
+- 修正后回到当前 batch，并继续复用批次列表和 apply-readiness 读取。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做单行修正 UI；不做批量修正、不做 apply 写按钮、不新增后端 API、不新增 schema/migration。
+- 本轮依赖现有 row correction API；若本地 FastAPI 未启动，页面展示 API 错误或修正失败状态。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs`：通过，7 个模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `curl -fsS -X POST ... /api/v1/import-batches/upload-csv ...`：通过，生成含失败行的本地批次 `BATCH-IM026-SMOKE-003` 和 `BATCH-IM026-SMOKE-004`。
+- `curl -fsS -X POST ... /api/v1/import-batches/BATCH-IM026-SMOKE-003/rows/1/correct ...`：通过，失败行被修正为 success，批次计数变为 `success_rows=1`、`failed_rows=0`。
+- `curl -fsS -o /tmp/data-quality-im026.html -w "%{http_code}" 'http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004'`：返回 `200`，页面 HTML 包含失败行修正面板、错误码和提交修正按钮。
+- `bash scripts/check.sh`：通过，包含 strict state check、state-check 回归、frontend lint/typecheck/build 和 160 个 backend unittest。
+
 ### 2026-05-29 - IM025 导入中心 CSV 上传表单第一刀
 
 #### 审计结论

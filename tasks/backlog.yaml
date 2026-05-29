@@ -4701,3 +4701,49 @@ tasks:
       - "范围扩展到 Excel/multipart、apply 写操作、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM026
+    title: "导入中心失败行列表与单行修正 UI 第一刀"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM025"]
+    allowed_files:
+      - "app/data-quality/**"
+      - "components/import-center-api-panel.tsx"
+      - "components/import-center-model.ts"
+      - "components/import-center-row-correction-panel.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality` 读取选中批次 detail，并展示 failed_rows 列表。"
+      - "每条失败行展示 row_number、error_field、error_code、error_message 和 raw_data/standard_fields 摘要。"
+      - "每条失败行提供单行修正表单，通过 Next server action 调用现有 row correction API。"
+      - "修正成功后回到当前 batch 并展示成功状态，继续复用批次列表和 readiness。"
+      - "不新增依赖，不修改 package/lockfile，不做批量修正、apply 写按钮、后端、schema/migration、审批、导出、权限、外部集成、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和本地修正 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到批量修正、apply 写按钮、审批、导出、权限、外部集成、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
