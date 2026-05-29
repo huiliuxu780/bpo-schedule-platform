@@ -4792,3 +4792,47 @@ tasks:
       - "范围扩展到模板 CRUD UI、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM028
+    title: "导入中心批次明细 drilldown 第一刀"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM027"]
+    allowed_files:
+      - "app/data-quality/**"
+      - "components/import-center-batch-detail-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality` 对选中批次展示 persisted detail drilldown。"
+      - "明细展示批次行状态分布、版本列表、全部行结果和 standard_fields/raw_data 预览。"
+      - "明细 API 异常或无批次时展示空/错误状态，不新增静态业务样例。"
+      - "只读展示，不新增 apply 写按钮、批量修正、模板 CRUD、后端、schema/migration、导出、权限、审批、外部集成、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到 apply 写按钮、批量修正、模板 CRUD、审批、导出、权限、外部集成、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

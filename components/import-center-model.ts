@@ -99,6 +99,14 @@ export type ImportBatchSummary = {
   notAppliedBatches: number
 }
 
+export type ImportBatchDetailSummary = {
+  totalRows: number
+  successRows: number
+  failedRows: number
+  warningRows: number
+  versionCount: number
+}
+
 export type ImportBatchHealth = "blocked" | "warning" | "ready_candidate" | "applied"
 
 export type ImportUploadRequest = {
@@ -144,6 +152,12 @@ const applicationStatusLabels: Record<ImportApplicationStatus, string> = {
 const readinessStatusLabels: Record<ImportReadinessStatus, string> = {
   ready: "可应用",
   blocked: "未就绪",
+}
+
+const rowStatusLabels: Record<ImportRowStatus, string> = {
+  success: "成功",
+  failed: "失败",
+  warning: "警告",
 }
 
 export function buildImportApiUrl(path: string, apiBase = getDefaultApiBase()): string {
@@ -230,6 +244,10 @@ export function formatImportReadinessStatus(status: ImportReadinessStatus): stri
   return readinessStatusLabels[status] ?? status
 }
 
+export function formatImportRowStatus(status: ImportRowStatus): string {
+  return rowStatusLabels[status] ?? status
+}
+
 export function summarizeImportBatches(rows: ImportBatchListRow[]): ImportBatchSummary {
   return rows.reduce<ImportBatchSummary>(
     (summary, row) => ({
@@ -271,6 +289,30 @@ export function getImportBatchHealth(
   }
 
   return "ready_candidate"
+}
+
+export function summarizeImportBatchDetail(
+  detail: ImportBatchPersistenceDetail
+): ImportBatchDetailSummary {
+  const rowSummary = detail.rows.reduce(
+    (summary, row) => ({
+      totalRows: summary.totalRows + 1,
+      successRows: summary.successRows + (row.row_status === "success" ? 1 : 0),
+      failedRows: summary.failedRows + (row.row_status === "failed" ? 1 : 0),
+      warningRows: summary.warningRows + (row.row_status === "warning" ? 1 : 0),
+    }),
+    {
+      totalRows: 0,
+      successRows: 0,
+      failedRows: 0,
+      warningRows: 0,
+    }
+  )
+
+  return {
+    ...rowSummary,
+    versionCount: detail.versions.length,
+  }
 }
 
 export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): string {

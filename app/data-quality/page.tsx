@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/app-shell"
 import { ImportCenterApiPanel } from "@/components/import-center-api-panel"
+import { ImportCenterBatchDetailPanel } from "@/components/import-center-batch-detail-panel"
 import { ImportCenterRowCorrectionPanel } from "@/components/import-center-row-correction-panel"
 import { ImportCenterUploadForm } from "@/components/import-center-upload-form"
 import {
@@ -64,13 +65,19 @@ export default async function DataQualityPage({
           />
         }
         rowCorrectionPanel={
-          <ImportCenterRowCorrectionPanel
-            detail={detailResult.data}
-            detailError={detailResult.error}
-            correctionStatus={params?.correction}
-            correctionReason={params?.reason}
-            correctionRow={params?.row}
-          />
+          <>
+            <ImportCenterBatchDetailPanel
+              detail={detailResult.data}
+              detailError={detailResult.error}
+            />
+            <ImportCenterRowCorrectionPanel
+              detail={detailResult.data}
+              detailError={detailResult.error}
+              correctionStatus={params?.correction}
+              correctionReason={params?.reason}
+              correctionRow={params?.row}
+            />
+          </>
         }
       />
     </AppShell>

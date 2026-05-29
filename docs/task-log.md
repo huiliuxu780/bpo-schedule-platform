@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM028`
+- source_ids:
+  - `R728`
+- story_ids:
+  - `US648`
+- action: 实现导入中心批次明细 drilldown 第一刀。
+- status: `done`
+- notes: IM028 在 `/data-quality` 对选中批次展示 persisted detail drilldown，包含行状态分布、版本列表、全部行结果和 standard_fields/raw_data 预览。未新增依赖，不做 apply 写按钮、批量修正、模板 CRUD、后端、schema/migration、权限、审批、导出、外部集成、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM027`
 - source_ids:
   - `R727`

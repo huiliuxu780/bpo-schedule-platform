@@ -1404,3 +1404,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端读取字段映射模板、上传表单选择 template_id 和手填 JSON 兜底；不新增依赖，不做模板 CRUD UI、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R728 - 导入中心批次明细 drilldown 第一刀
+
+```yaml
+id: R728
+module: "导入中心"
+description: "导入中心前端已经能读取批次、上传 CSV、修正失败行并选择字段映射模板后，需要对选中批次展示更完整的只读明细，让数据管理员能直接查看版本、全部行结果和标准字段预览，减少只看汇总和失败行时的排查断点。"
+source: "PM requested continuing import-center production usability after IM027 on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端 persisted detail 只读 drilldown；不新增依赖，不做后端、schema/migration、apply 写按钮、批量修正、模板 CRUD、审批、导出、权限、外部集成、生产公式、结算或收费因子。"
+```

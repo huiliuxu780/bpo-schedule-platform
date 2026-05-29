@@ -2614,3 +2614,25 @@ dependencies:
   - "US646"
 status: "done"
 ```
+
+### US648 - 导入中心批次明细 drilldown 第一刀
+
+```yaml
+id: US648
+requirement_ids:
+  - R728
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在选中导入批次后看到版本、全部行结果和字段预览，以便不用离开页面就能判断批次内容和下一步处理。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 对选中批次展示 persisted detail drilldown。"
+  - "明细展示批次行状态分布、版本列表、全部行结果和 standard_fields/raw_data 预览。"
+  - "明细 API 异常或无批次时展示空/错误状态，不新增静态业务样例。"
+  - "只读展示，不新增 apply 写按钮、批量修正、模板 CRUD、后端、schema/migration、导出、权限、审批、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US647"
+status: "done"
+```

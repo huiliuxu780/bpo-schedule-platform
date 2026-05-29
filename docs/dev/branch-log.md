@@ -2,6 +2,23 @@
 
 ## 2026-05-29
 
+### IM028 Import Center Batch Detail Drilldown
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `0fbf690`
+- remote_status: `continuing from pushed origin/codex/import-center-api-vertical`
+- scope: Add first selected-batch detail drilldown slice on `/data-quality`: persisted detail summary, version list, all row results, standard field previews, import-center model summary helpers/tests, page smoke, current queue cleanup, and traceability records.
+- allowed_files_check: `app/data-quality/**`, `components/import-center-batch-detail-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no backend files, dependency files, lockfiles, schema/migration files, apply write buttons, batch correction, template CRUD, external integration, auth, permission, approval, export, batch operation, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `/data-quality` detail panel wiring, new import-center batch detail panel, import-center detail summary/row status helpers, model tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target import-center model tests passed with 12 tests; `npm run lint` passed; `npm run typecheck` passed; local API smoke returned persisted import batches; `/data-quality?batch=BATCH-IM026-SMOKE-004` smoke returned `200` and contained batch detail, version record, all row results, selected batch id, and `REQUIRED_FIELD_MISSING`; final `bash scripts/check.sh` passed with strict state check, frontend build, and 160 backend unittest.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending after verified local commit`
+- blocked_reason: `N/A`
+
 ### IM027 Import Center Field Mapping Template Selection
 
 - branch_name: `codex/import-center-api-vertical`

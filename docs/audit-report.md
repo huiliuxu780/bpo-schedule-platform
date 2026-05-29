@@ -4,6 +4,32 @@
 
 ## Current Audit
 
+### 2026-05-29 - IM028 导入中心批次明细 drilldown 第一刀
+
+#### 审计结论
+
+- `US648/IM028/R728` 已完成导入中心批次明细 drilldown 第一刀。
+- `/data-quality` 对选中批次展示 persisted detail drilldown。
+- 明细展示批次行状态分布、版本列表、全部行结果和 `standard_fields`/`raw_data` 预览。
+- 明细 API 异常或无批次时展示空/错误状态，不新增静态业务样例。
+- 本轮只读展示，不新增 apply 写按钮、批量修正、模板 CRUD、后端、schema/migration、导出、权限、审批、外部集成、生产公式、结算或收费因子。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮依赖现有 persisted detail API；若本地 FastAPI 未启动，页面展示批次明细读取失败或空状态。
+- 本轮只显示当前 API 返回的行结果和版本，不做分页、导出或批量操作。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs`：通过，12 个模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `curl -fsS 'http://127.0.0.1:8000/api/v1/import-batches'`：通过，本地 API 返回 smoke 批次。
+- `curl -fsS 'http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004'`：返回 `200`，页面 HTML 包含批次明细、版本记录、全部行结果、`BATCH-IM026-SMOKE-004` 和 `REQUIRED_FIELD_MISSING`。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend build 和 160 个 backend unittest。
+
 ### 2026-05-29 - IM027 导入中心字段映射模板选择第一刀
 
 #### 审计结论
