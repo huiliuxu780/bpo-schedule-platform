@@ -19,6 +19,17 @@
 
 ### 2026-05-29
 
+- task_id: `IM022`
+- source_ids:
+  - `R722`
+- story_ids:
+  - `US642`
+- action: 实现导入应用前 readiness 安全闸第一刀。
+- status: `done`
+- notes: IM022 在 master_data 和 demand_forecast apply 路由写入前复用 apply-readiness 判断，未就绪批次返回稳定 `IMPORT_APPLY_NOT_READY` 并携带 readiness 详情；已应用批次继续返回 existing already_applied 幂等响应。未新增 schema/migration，不做前端、深度主数据引用校验、批量、外部集成、权限、审批、导出、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-29
+
 - task_id: `IM021`
 - source_ids:
   - `R721`

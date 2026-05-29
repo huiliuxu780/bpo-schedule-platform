@@ -8,7 +8,11 @@ from fastapi import HTTPException
 from backend.app.import_persistence import ImportPersistenceRepository
 from backend.app.main import app, apply_master_data_import
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
-from backend.app.models import ImportBatchCreateRequest, ImportBatchRowResultInput
+from backend.app.models import (
+    ImportBatchCreateRequest,
+    ImportBatchRowResultInput,
+    ImportBatchVersionInput,
+)
 
 
 class MasterDataImportApiTest(unittest.TestCase):
@@ -72,6 +76,40 @@ class MasterDataImportApiTest(unittest.TestCase):
         self.assertEqual(first.applied_status, "applied")
         self.assertEqual(second.applied_status, "already_applied")
         self.assertEqual(second.bindings, 1)
+
+    def test_apply_master_data_import_returns_not_ready_for_row_field_gap(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'master-data-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            master_data_repository = MasterDataPersistenceRepository(database_url)
+            master_data_repository.init_schema()
+            _create_master_data_batch_missing_employee_name(
+                import_repository,
+                "BATCH-MD-APPLY-NOT-READY",
+            )
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.MasterDataPersistenceRepository",
+                    return_value=master_data_repository,
+                ),
+            ):
+                with self.assertRaises(HTTPException) as raised:
+                    apply_master_data_import("BATCH-MD-APPLY-NOT-READY")
+
+        self.assertEqual(raised.exception.status_code, 400)
+        error = raised.exception.detail["error"]
+        self.assertEqual(error["code"], "IMPORT_APPLY_NOT_READY")
+        self.assertEqual(error["readiness"]["readiness_status"], "blocked")
+        self.assertEqual(
+            error["readiness"]["row_blockers"][0]["field_name"],
+            "employee_name",
+        )
 
     def test_apply_master_data_import_returns_404_for_missing_batch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -140,6 +178,54 @@ def _create_master_data_batch(
                         "effective_to": "2026-06-30",
                     },
                 ),
+            ],
+            versions=[
+                ImportBatchVersionInput(
+                    version_id=f"{batch_id}::master_data",
+                    version_type="master_data",
+                    business_date_from="2026-05-01",
+                    business_date_to="2026-12-31",
+                )
+            ],
+        )
+    )
+
+
+def _create_master_data_batch_missing_employee_name(
+    repository: ImportPersistenceRepository,
+    batch_id: str,
+) -> None:
+    repository.create_import_batch(
+        ImportBatchCreateRequest(
+            batch_id=batch_id,
+            file_name="master_data.csv",
+            file_type="master_data",
+            uploaded_by="数据管理员",
+            business_date_from="2026-05-01",
+            business_date_to="2026-12-31",
+            rows=[
+                ImportBatchRowResultInput(
+                    row_number=1,
+                    row_status="success",
+                    source_key="A-1001",
+                    raw_data={
+                        "standard_fields": {
+                            "record_type": "employee",
+                            "employee_id": "A-1001",
+                            "status": "active",
+                            "effective_from": "2026-05-01",
+                            "effective_to": "2026-12-31",
+                        }
+                    },
+                )
+            ],
+            versions=[
+                ImportBatchVersionInput(
+                    version_id=f"{batch_id}::master_data",
+                    version_type="master_data",
+                    business_date_from="2026-05-01",
+                    business_date_to="2026-12-31",
+                )
             ],
         )
     )

@@ -96,6 +96,40 @@ class ForecastImportApiTest(unittest.TestCase):
         self.assertEqual(second_response.intervals, 2)
         self.assertEqual(second_response.total_required_agents, 26)
 
+    def test_apply_forecast_import_returns_not_ready_for_row_field_gap(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'forecast-import.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            forecast_repository = ForecastPersistenceRepository(database_url)
+            forecast_repository.init_schema()
+            _create_forecast_batch_missing_required_agents(
+                import_repository,
+                "BATCH-FC-APPLY-NOT-READY",
+            )
+
+            with (
+                patch(
+                    "backend.app.main.get_import_persistence_repository",
+                    return_value=import_repository,
+                ),
+                patch(
+                    "backend.app.main.ForecastPersistenceRepository",
+                    return_value=forecast_repository,
+                ),
+            ):
+                with self.assertRaises(HTTPException) as raised:
+                    apply_forecast_import("BATCH-FC-APPLY-NOT-READY")
+
+        self.assertEqual(raised.exception.status_code, 400)
+        error = raised.exception.detail["error"]
+        self.assertEqual(error["code"], "IMPORT_APPLY_NOT_READY")
+        self.assertEqual(error["readiness"]["readiness_status"], "blocked")
+        self.assertEqual(
+            error["readiness"]["row_blockers"][0]["field_name"],
+            "required_agents",
+        )
+
     def test_apply_forecast_import_returns_404_for_missing_batch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             database_url = f"sqlite+pysqlite:///{Path(tmp_dir) / 'forecast-import.db'}"
@@ -132,6 +166,48 @@ def _create_forecast_batch(
             versions=[
                 ImportBatchVersionInput(
                     version_id="IMPORT-FC-APPLY-001",
+                    version_type="demand_forecast",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                )
+            ],
+        )
+    )
+
+
+def _create_forecast_batch_missing_required_agents(
+    repository: ImportPersistenceRepository,
+    batch_id: str,
+) -> None:
+    repository.create_import_batch(
+        ImportBatchCreateRequest(
+            batch_id=batch_id,
+            file_name="demand_forecast.csv",
+            file_type="demand_forecast",
+            uploaded_by="计划管理员",
+            business_date_from="2026-05-11",
+            business_date_to="2026-05-11",
+            rows=[
+                ImportBatchRowResultInput(
+                    row_number=1,
+                    row_status="success",
+                    source_key="SH-01|BOSCH-CS|L1-CN|2026-05-11|09:00",
+                    raw_data={
+                        "standard_fields": {
+                            "forecast_date": "2026-05-11",
+                            "interval_start": "09:00",
+                            "interval_end": "09:30",
+                            "workplace_id": "SH-01",
+                            "project_id": "BOSCH-CS",
+                            "skill_id": "L1-CN",
+                            "demand_level": "L1",
+                        }
+                    },
+                )
+            ],
+            versions=[
+                ImportBatchVersionInput(
+                    version_id=f"{batch_id}::demand_forecast",
                     version_type="demand_forecast",
                     business_date_from="2026-05-11",
                     business_date_to="2026-05-11",

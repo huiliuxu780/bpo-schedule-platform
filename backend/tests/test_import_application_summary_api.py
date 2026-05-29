@@ -12,7 +12,11 @@ from backend.app.main import (
     get_import_application_summary,
 )
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
-from backend.app.models import ImportBatchCreateRequest, ImportBatchRowResultInput
+from backend.app.models import (
+    ImportBatchCreateRequest,
+    ImportBatchRowResultInput,
+    ImportBatchVersionInput,
+)
 
 
 class ImportApplicationSummaryApiTest(unittest.TestCase):
@@ -59,7 +63,11 @@ class ImportApplicationSummaryApiTest(unittest.TestCase):
             import_repository.init_schema()
             master_data_repository = MasterDataPersistenceRepository(database_url)
             master_data_repository.init_schema()
-            _create_master_data_batch(import_repository, "BATCH-SUMMARY-002")
+            _create_master_data_batch(
+                import_repository,
+                "BATCH-SUMMARY-002",
+                with_version=True,
+            )
 
             with (
                 patch(
@@ -98,6 +106,8 @@ class ImportApplicationSummaryApiTest(unittest.TestCase):
 def _create_master_data_batch(
     repository: ImportPersistenceRepository,
     batch_id: str,
+    *,
+    with_version: bool = False,
 ) -> None:
     def row(row_number: int, standard_fields: dict[str, str]) -> ImportBatchRowResultInput:
         return ImportBatchRowResultInput(
@@ -150,6 +160,18 @@ def _create_master_data_batch(
                     },
                 ),
             ],
+            versions=(
+                [
+                    ImportBatchVersionInput(
+                        version_id=f"{batch_id}::master_data",
+                        version_type="master_data",
+                        business_date_from="2026-05-01",
+                        business_date_to="2026-12-31",
+                    )
+                ]
+                if with_version
+                else []
+            ),
         )
     )
 

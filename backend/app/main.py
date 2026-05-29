@@ -314,6 +314,31 @@ def get_import_apply_readiness(batch_id: str) -> ImportApplyReadinessResponse:
     return build_import_apply_readiness(batch, application_summary)
 
 
+def _raise_if_import_apply_not_ready(
+    batch: ImportBatchPersistenceDetail,
+    application_summary: ImportBatchApplicationSummary,
+) -> None:
+    readiness = build_import_apply_readiness(batch, application_summary)
+    blocking_codes = [
+        blocker.code
+        for blocker in readiness.blockers
+        if blocker.code != "IMPORT_BATCH_ALREADY_APPLIED"
+    ]
+    if not blocking_codes:
+        return
+
+    raise HTTPException(
+        status_code=400,
+        detail={
+            "error": {
+                "code": "IMPORT_APPLY_NOT_READY",
+                "message": "导入批次未满足应用条件，需先处理就绪校验阻塞项。",
+                "readiness": readiness.model_dump(),
+            }
+        },
+    )
+
+
 @app.post(
     "/api/v1/import-field-mapping-templates",
     response_model=ImportFieldMappingTemplateRecord,
@@ -549,10 +574,20 @@ def apply_master_data_import(batch_id: str) -> MasterDataImportApplyResponse:
             },
         )
 
+    master_data_repository = MasterDataPersistenceRepository()
+    application_summary = build_import_application_summary(
+        batch,
+        master_data_repository=master_data_repository,
+        schedule_repository=PersonnelSchedulePersistenceRepository(),
+        forecast_repository=ForecastPersistenceRepository(),
+        actual_repository=ActualLogPersistenceRepository(),
+    )
+    _raise_if_import_apply_not_ready(batch, application_summary)
+
     try:
         summary = apply_master_data_import_batch(
             batch,
-            MasterDataPersistenceRepository(),
+            master_data_repository,
         )
     except ValueError as exc:
         raise HTTPException(
@@ -625,10 +660,20 @@ def apply_forecast_import(
             },
         )
 
+    forecast_repository = ForecastPersistenceRepository()
+    application_summary = build_import_application_summary(
+        batch,
+        master_data_repository=MasterDataPersistenceRepository(),
+        schedule_repository=PersonnelSchedulePersistenceRepository(),
+        forecast_repository=forecast_repository,
+        actual_repository=ActualLogPersistenceRepository(),
+    )
+    _raise_if_import_apply_not_ready(batch, application_summary)
+
     try:
         summary = apply_forecast_import_batch(
             batch,
-            ForecastPersistenceRepository(),
+            forecast_repository,
             compared_from_version_id=compared_from_version_id,
             change_reason=change_reason,
         )

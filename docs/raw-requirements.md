@@ -1326,3 +1326,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做应用前只读行级字段预检；不新增 schema/migration，不做自动 apply、前端、深度主数据引用校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
 ```
+
+### R722 - 导入应用前 readiness 安全闸第一刀
+
+```yaml
+id: R722
+module: "导入中心"
+description: "导入中心已经能只读判断批次 apply-readiness 后，需要让导入应用接口在写入业务仓储前复用该判断，阻止失败行、缺版本或字段缺口数据进入业务表。"
+source: "PM requested continuing import-center production usability on 2026-05-29"
+submitted_at: "2026-05-29"
+version: "1.0"
+status: "split"
+notes: "本轮只做 apply 前 readiness 安全闸；保留已应用批次的 already_applied 幂等返回；不新增 schema/migration，不做前端、深度主数据引用校验、批量、权限、审批、导出、外部集成、Excel/multipart、生产公式、结算或收费因子。"
+```
