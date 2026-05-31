@@ -1469,3 +1469,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端只读行动建议和模型 helper；不新增依赖，不做 apply 写按钮、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R733 - 导入中心异常态处理建议
+
+```yaml
+id: R733
+module: "导入中心"
+description: "导入中心前端已经能上传、读取批次、读取模板、查看准备度和应用前建议后，需要把批次 API、准备度 API、模板 API、暂无批次、暂无模板这些前置异常收敛成同一组处理建议，减少数据管理员在多个区域之间排查的断点。"
+source: "PM requested continuing import-center production usability after IM032 on 2026-05-31"
+submitted_at: "2026-05-31"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端只读异常态处理建议和模型 helper；不新增依赖，不做 apply 写按钮、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

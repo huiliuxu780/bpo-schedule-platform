@@ -10,6 +10,7 @@ import {
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchListRow,
+  type ImportExceptionGuidance,
   formatImportApplicationStatus,
   formatImportFileType,
   formatImportProcessingStatus,
@@ -17,6 +18,7 @@ import {
   getImportBatchHealth,
   summarizeImportApplyActionGuidance,
   summarizeImportBatches,
+  summarizeImportExceptionGuidance,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -36,6 +38,8 @@ type ImportCenterApiPanelProps = {
   readiness: ImportApplyReadinessResponse | null
   batchError: string | null
   readinessError: string | null
+  templateError?: string | null
+  templateCount?: number
   uploadForm?: React.ReactNode
   rowCorrectionPanel?: React.ReactNode
 }
@@ -46,16 +50,27 @@ export function ImportCenterApiPanel({
   readiness,
   batchError,
   readinessError,
+  templateError = null,
+  templateCount = 0,
   uploadForm,
   rowCorrectionPanel,
 }: ImportCenterApiPanelProps) {
   const summary = summarizeImportBatches(batches)
   const selectedBatch =
     batches.find((batch) => batch.batch_id === selectedBatchId) ?? batches[0] ?? null
+  const exceptionGuidance = summarizeImportExceptionGuidance({
+    batchError,
+    readinessError,
+    templateError,
+    selectedBatchId: selectedBatch?.batch_id ?? selectedBatchId,
+    batchCount: batches.length,
+    templateCount,
+  })
 
   return (
     <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       {uploadForm}
+      <ExceptionGuidancePanel items={exceptionGuidance} />
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <SummaryCard
           title="导入批次"
@@ -205,6 +220,63 @@ export function ImportCenterApiPanel({
       {rowCorrectionPanel}
     </main>
   )
+}
+
+function ExceptionGuidancePanel({ items }: { items: ImportExceptionGuidance[] }) {
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">异常态处理建议</CardTitle>
+        <p className="mt-1 text-sm text-muted-foreground">
+          汇总批次、准备度和字段映射模板的前置异常，先处理阻塞项再继续操作。
+        </p>
+      </CardHeader>
+      <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        {items.map((item) => (
+          <div
+            key={item.scope}
+            className={cn(
+              "grid gap-2 rounded-md border p-3 text-sm",
+              item.tone === "blocked"
+                ? "border-destructive/40 bg-destructive/10"
+                : item.tone === "ready"
+                  ? "border-emerald-500/30 bg-emerald-500/10"
+                  : "bg-muted/30"
+            )}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <span className="font-medium">{item.title}</span>
+              <Badge
+                variant={
+                  item.tone === "blocked"
+                    ? "destructive"
+                    : item.tone === "ready"
+                      ? "secondary"
+                      : "outline"
+                }
+              >
+                {formatExceptionTone(item.tone)}
+              </Badge>
+            </div>
+            <p className="text-muted-foreground">{item.detail}</p>
+            <p className="text-xs text-muted-foreground">{item.nextAction}</p>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  )
+}
+
+function formatExceptionTone(tone: ImportExceptionGuidance["tone"]): string {
+  if (tone === "blocked") {
+    return "阻塞"
+  }
+
+  if (tone === "ready") {
+    return "正常"
+  }
+
+  return "提醒"
 }
 
 function ApplyActionGuidance({

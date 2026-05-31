@@ -2726,3 +2726,25 @@ dependencies:
   - "US651"
 status: "done"
 ```
+
+### US653 - 导入中心异常态处理建议
+
+```yaml
+id: US653
+requirement_ids:
+  - R733
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在导入中心看到批次、准备度和模板读取异常的统一处理建议，以便先处理前置问题再继续上传、修正或应用前复核。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 展示导入中心异常态处理建议。"
+  - "建议区覆盖批次 API 异常、准备度 API 异常、模板 API 异常、暂无批次和暂无模板。"
+  - "无异常时展示可继续处理的只读提示。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US652"
+status: "done"
+```

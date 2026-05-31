@@ -127,6 +127,24 @@ export type ImportApplyActionGuidance = {
   nextAction: string
 }
 
+export type ImportExceptionGuidanceTone = "blocked" | "warning" | "ready"
+
+export type ImportExceptionGuidanceScope =
+  | "batch_api"
+  | "readiness_api"
+  | "template_api"
+  | "empty_batches"
+  | "empty_templates"
+  | "ready"
+
+export type ImportExceptionGuidance = {
+  scope: ImportExceptionGuidanceScope
+  tone: ImportExceptionGuidanceTone
+  title: string
+  detail: string
+  nextAction: string
+}
+
 export type ImportFieldMappingTemplateSummary = {
   totalTemplates: number
   activeTemplates: number
@@ -475,6 +493,82 @@ export function summarizeImportApplyActionGuidance(
     detail: `${readiness.success_rows} 行成功、${readiness.failed_rows} 行失败，已生成 ${readiness.version_count} 个版本。`,
     nextAction: "复核版本和目标对象后，再由后续受控任务提供应用写入入口。",
   }
+}
+
+export function summarizeImportExceptionGuidance({
+  batchError,
+  readinessError,
+  templateError,
+  selectedBatchId,
+  batchCount,
+  templateCount,
+}: {
+  batchError?: string | null
+  readinessError?: string | null
+  templateError?: string | null
+  selectedBatchId: string | null
+  batchCount: number
+  templateCount: number
+}): ImportExceptionGuidance[] {
+  const guidance: ImportExceptionGuidance[] = []
+
+  if (batchError) {
+    guidance.push({
+      scope: "batch_api",
+      tone: "blocked",
+      title: "批次读取失败",
+      detail: batchError,
+      nextAction: "先确认本地 API 和 /api/v1/import-batches；批次不可读时不要继续判断准备度。",
+    })
+  } else if (batchCount === 0) {
+    guidance.push({
+      scope: "empty_batches",
+      tone: "warning",
+      title: "暂无导入批次",
+      detail: "当前没有可查看或复核的导入批次。",
+      nextAction: "先上传 CSV，生成批次、行结果和导入版本后再继续检查准备度。",
+    })
+  }
+
+  if (readinessError && selectedBatchId) {
+    guidance.push({
+      scope: "readiness_api",
+      tone: "blocked",
+      title: "准备度读取失败",
+      detail: `${selectedBatchId}：${readinessError}`,
+      nextAction: "先恢复准备度接口；准备度未知时不要执行应用写入或下游复核。",
+    })
+  }
+
+  if (templateError) {
+    guidance.push({
+      scope: "template_api",
+      tone: "warning",
+      title: "模板读取失败",
+      detail: templateError,
+      nextAction: "上传仍可使用手填字段映射 JSON；稍后再重试模板读取。",
+    })
+  } else if (templateCount === 0) {
+    guidance.push({
+      scope: "empty_templates",
+      tone: "warning",
+      title: "暂无字段映射模板",
+      detail: "当前没有启用或停用模板可供选择。",
+      nextAction: "本轮先使用手填字段映射 JSON；模板维护留到后续受控任务。",
+    })
+  }
+
+  if (guidance.length === 0) {
+    guidance.push({
+      scope: "ready",
+      tone: "ready",
+      title: "关键异常态已收敛",
+      detail: "批次、准备度和字段映射模板均可读取。",
+      nextAction: "继续处理失败行、检查应用前行动建议，或上传下一份文件。",
+    })
+  }
+
+  return guidance
 }
 
 export function summarizeImportFieldMappingTemplates(

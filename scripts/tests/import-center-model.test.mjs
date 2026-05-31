@@ -10,6 +10,7 @@ import {
   formatFieldMappingTemplateSummary,
   formatImportRowStatus,
   summarizeImportApplyActionGuidance,
+  summarizeImportExceptionGuidance,
   summarizeImportRowCorrectionNotice,
   summarizeImportTemplateFitHint,
   summarizeImportFieldMappingTemplates,
@@ -560,5 +561,101 @@ test("import center apply action guidance explains next step before write action
       detail: "准备度 API 返回 500",
       nextAction: "先确认本地 API 状态；不要在准备度未知时执行应用写入。",
     },
+  );
+});
+
+test("import center exception guidance consolidates API and empty-state blockers", () => {
+  assert.deepEqual(
+    summarizeImportExceptionGuidance({
+      batchError: "导入批次 API 返回 500",
+      readinessError: null,
+      templateError: null,
+      selectedBatchId: null,
+      batchCount: 0,
+      templateCount: 2,
+    }),
+    [
+      {
+        scope: "batch_api",
+        tone: "blocked",
+        title: "批次读取失败",
+        detail: "导入批次 API 返回 500",
+        nextAction: "先确认本地 API 和 /api/v1/import-batches；批次不可读时不要继续判断准备度。",
+      },
+    ],
+  );
+
+  assert.deepEqual(
+    summarizeImportExceptionGuidance({
+      batchError: null,
+      readinessError: "准备度 API 返回 404",
+      templateError: "字段映射模板 API 返回 500",
+      selectedBatchId: "BATCH-MD-001",
+      batchCount: 1,
+      templateCount: 0,
+    }),
+    [
+      {
+        scope: "readiness_api",
+        tone: "blocked",
+        title: "准备度读取失败",
+        detail: "BATCH-MD-001：准备度 API 返回 404",
+        nextAction: "先恢复准备度接口；准备度未知时不要执行应用写入或下游复核。",
+      },
+      {
+        scope: "template_api",
+        tone: "warning",
+        title: "模板读取失败",
+        detail: "字段映射模板 API 返回 500",
+        nextAction: "上传仍可使用手填字段映射 JSON；稍后再重试模板读取。",
+      },
+    ],
+  );
+
+  assert.deepEqual(
+    summarizeImportExceptionGuidance({
+      batchError: null,
+      readinessError: null,
+      templateError: null,
+      selectedBatchId: null,
+      batchCount: 0,
+      templateCount: 0,
+    }),
+    [
+      {
+        scope: "empty_batches",
+        tone: "warning",
+        title: "暂无导入批次",
+        detail: "当前没有可查看或复核的导入批次。",
+        nextAction: "先上传 CSV，生成批次、行结果和导入版本后再继续检查准备度。",
+      },
+      {
+        scope: "empty_templates",
+        tone: "warning",
+        title: "暂无字段映射模板",
+        detail: "当前没有启用或停用模板可供选择。",
+        nextAction: "本轮先使用手填字段映射 JSON；模板维护留到后续受控任务。",
+      },
+    ],
+  );
+
+  assert.deepEqual(
+    summarizeImportExceptionGuidance({
+      batchError: null,
+      readinessError: null,
+      templateError: null,
+      selectedBatchId: "BATCH-MD-001",
+      batchCount: 1,
+      templateCount: 2,
+    }),
+    [
+      {
+        scope: "ready",
+        tone: "ready",
+        title: "关键异常态已收敛",
+        detail: "批次、准备度和字段映射模板均可读取。",
+        nextAction: "继续处理失败行、检查应用前行动建议，或上传下一份文件。",
+      },
+    ],
   );
 });

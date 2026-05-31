@@ -57,6 +57,8 @@ export default async function DataQualityPage({
         readiness={readinessResult.data}
         batchError={batchResult.error}
         readinessError={readinessResult.error}
+        templateError={templateResult.error}
+        templateCount={(templateResult.data ?? []).length}
         uploadForm={
           <div className="grid gap-4">
             <ImportCenterUploadForm

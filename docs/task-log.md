@@ -1214,6 +1214,17 @@
 - status: `done`
 - notes: `/data-quality` 应用准备度侧栏现在把 readiness、失败行、行级阻塞、版本和已应用状态转成下一步建议；保持只读，不新增 apply 写按钮。
 
+### 2026-05-31
+
+- task_id: `IM033`
+- source_ids:
+  - `R733`
+- story_ids:
+  - `US653`
+- action: 增加导入中心异常态处理建议。
+- status: `done`
+- notes: `/data-quality` 现在把批次 API、准备度 API、模板 API、暂无批次和暂无模板收敛到同一只读建议区；保持只读，不新增 apply 写按钮、后端、数据库或生产流程能力。
+
 ### 2026-05-13
 
 - task_id: `F031`

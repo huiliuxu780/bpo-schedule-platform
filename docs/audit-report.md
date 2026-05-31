@@ -1962,6 +1962,30 @@
 
 ## Historical Audit Snapshots
 
+### 2026-05-31 - IM033 导入中心异常态处理建议
+
+#### 审计结论
+
+- `IM033/US653` 已在 `/data-quality` 增加“异常态处理建议”。
+- 模型层新增 `summarizeImportExceptionGuidance`，覆盖批次 API 异常、准备度 API 异常、模板 API 异常、暂无批次、暂无模板和关键异常态已收敛。
+- 页面只读展示前置异常处理建议，不新增 apply 写按钮，不触发后端写入、审批、导出、批量、权限或生产动作。
+
+#### 风险
+
+- 当前仍是前端提示和本地 API 状态汇总，不是生产级导入调度、重试队列或自动修复流程。
+- 后续若要做真实上传重试、批量处理、权限隔离或数据库级审计，需要另开受控任务。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportExceptionGuidance` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，18 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 可见 `异常态处理建议` 和 `关键异常态已收敛`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-05-31 - IM032 导入中心应用前行动建议
 
 #### 审计结论
