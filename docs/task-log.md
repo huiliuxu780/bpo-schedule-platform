@@ -1203,6 +1203,17 @@
 - status: `done`
 - notes: `/data-quality` 上传区现在按文件类型展示启用模板数、推荐说明、映射字段数和手填 JSON 兜底；移除路由级 loading fallback，确保主内容可见。
 
+### 2026-05-31
+
+- task_id: `IM032`
+- source_ids:
+  - `R732`
+- story_ids:
+  - `US652`
+- action: 增加导入中心应用前行动建议。
+- status: `done`
+- notes: `/data-quality` 应用准备度侧栏现在把 readiness、失败行、行级阻塞、版本和已应用状态转成下一步建议；保持只读，不新增 apply 写按钮。
+
 ### 2026-05-13
 
 - task_id: `F031`

@@ -2704,3 +2704,25 @@ dependencies:
   - "US650"
 status: "done"
 ```
+
+### US652 - 导入中心应用前行动建议
+
+```yaml
+id: US652
+requirement_ids:
+  - R732
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在应用写入前看到明确行动建议，以便根据失败行、行级缺字段、版本和已应用状态决定下一步。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 对选中批次展示应用前行动建议。"
+  - "建议区根据 readiness、失败行、行级缺字段、版本和已应用状态输出下一步。"
+  - "准备度 API 异常或无批次时展示可读兜底提示。"
+  - "只读展示，不新增 apply 写按钮、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US651"
+status: "done"
+```

@@ -15,6 +15,7 @@ import {
   formatImportProcessingStatus,
   formatImportReadinessStatus,
   getImportBatchHealth,
+  summarizeImportApplyActionGuidance,
   summarizeImportBatches,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -180,15 +181,23 @@ export function ImportCenterApiPanel({
                 : "暂无批次"}
             </p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="grid gap-4">
             {!selectedBatch ? (
               <EmptyState title="暂无选中批次" detail="导入批次列表为空。" compact />
-            ) : readinessError ? (
-              <EmptyState title="准备度读取失败" detail={readinessError} compact />
-            ) : readiness ? (
-              <ReadinessDetail readiness={readiness} />
             ) : (
-              <EmptyState title="暂无准备度" detail="未返回 readiness 结果。" compact />
+              <>
+                <ApplyActionGuidance
+                  readiness={readiness}
+                  readinessError={readinessError}
+                />
+                {readinessError ? (
+                  <EmptyState title="准备度读取失败" detail={readinessError} compact />
+                ) : readiness ? (
+                  <ReadinessDetail readiness={readiness} />
+                ) : (
+                  <EmptyState title="暂无准备度" detail="未返回 readiness 结果。" compact />
+                )}
+              </>
             )}
           </CardContent>
         </Card>
@@ -196,6 +205,65 @@ export function ImportCenterApiPanel({
       {rowCorrectionPanel}
     </main>
   )
+}
+
+function ApplyActionGuidance({
+  readiness,
+  readinessError,
+}: {
+  readiness: ImportApplyReadinessResponse | null
+  readinessError: string | null
+}) {
+  const guidance = summarizeImportApplyActionGuidance(readiness, readinessError)
+
+  return (
+    <div
+      className={cn(
+        "grid gap-2 rounded-md border p-3 text-sm",
+        guidance.tone === "blocked"
+          ? "border-destructive/40 bg-destructive/10"
+          : guidance.tone === "ready"
+            ? "border-emerald-500/30 bg-emerald-500/10"
+            : "bg-muted/30"
+      )}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-medium">应用前行动建议</span>
+        <Badge
+          variant={
+            guidance.tone === "blocked"
+              ? "destructive"
+              : guidance.tone === "ready"
+                ? "secondary"
+                : "outline"
+          }
+        >
+          {formatGuidanceTone(guidance.tone)}
+        </Badge>
+      </div>
+      <div className="font-medium">{guidance.title}</div>
+      <p className="text-muted-foreground">{guidance.detail}</p>
+      <p className="text-xs text-muted-foreground">{guidance.nextAction}</p>
+    </div>
+  )
+}
+
+function formatGuidanceTone(
+  tone: ReturnType<typeof summarizeImportApplyActionGuidance>["tone"]
+): string {
+  if (tone === "ready") {
+    return "可复核"
+  }
+
+  if (tone === "blocked") {
+    return "需处理"
+  }
+
+  if (tone === "done") {
+    return "已完成"
+  }
+
+  return "未知"
 }
 
 type SummaryCardProps = {

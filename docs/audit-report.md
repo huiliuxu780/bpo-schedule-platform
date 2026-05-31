@@ -1962,6 +1962,30 @@
 
 ## Historical Audit Snapshots
 
+### 2026-05-31 - IM032 导入中心应用前行动建议
+
+#### 审计结论
+
+- `IM032/US652` 已在 `/data-quality` 应用准备度侧栏增加“应用前行动建议”。
+- 模型层新增 `summarizeImportApplyActionGuidance`，覆盖可复核、失败行阻塞、行级必填字段阻塞、已应用和准备度 API 异常路径。
+- 页面仅展示下一步建议，不新增 apply 写按钮，不触发后端写入、审批、导出、批量、权限或生产动作。
+
+#### 风险
+
+- 当前仍是应用前判断和提示，不是应用写入入口。
+- 后续若要真正应用导入批次，需要另开受控任务，明确权限、幂等、审计和回滚边界。
+
+#### 验证
+
+- TDD 红灯：`node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportApplyActionGuidance` export 失败。
+- `node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs`：通过，17 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 可见 `应用前行动建议`、当前批次号和应用前下一步口径。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-05-31 - IM031 导入中心上传前模板适配提示
 
 #### 审计结论

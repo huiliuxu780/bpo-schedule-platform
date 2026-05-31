@@ -118,6 +118,15 @@ export type ImportRowCorrectionNotice = {
   nextAction: string
 }
 
+export type ImportApplyActionGuidanceTone = "ready" | "blocked" | "done" | "unknown"
+
+export type ImportApplyActionGuidance = {
+  tone: ImportApplyActionGuidanceTone
+  title: string
+  detail: string
+  nextAction: string
+}
+
 export type ImportFieldMappingTemplateSummary = {
   totalTemplates: number
   activeTemplates: number
@@ -391,6 +400,81 @@ export function summarizeImportRowCorrectionNotice({
   }
 
   return null
+}
+
+export function summarizeImportApplyActionGuidance(
+  readiness: ImportApplyReadinessResponse | null,
+  readinessError?: string | null
+): ImportApplyActionGuidance {
+  if (readinessError || !readiness) {
+    return {
+      tone: "unknown",
+      title: "准备度暂不可判断",
+      detail: readinessError ?? "未返回准备度结果。",
+      nextAction: "先确认本地 API 状态；不要在准备度未知时执行应用写入。",
+    }
+  }
+
+  if (readiness.application_status === "applied") {
+    return {
+      tone: "done",
+      title: "批次已应用",
+      detail: `已写入 ${readiness.applied_record_count} 条记录，不需要重复应用。`,
+      nextAction: "查看下游版本或结果列表，确认是否还需要复核异常。",
+    }
+  }
+
+  if (readiness.failed_rows > 0) {
+    return {
+      tone: "blocked",
+      title: "先修正失败行",
+      detail: `当前批次还有 ${readiness.failed_rows} 行失败，不能进入应用写入。`,
+      nextAction: "在失败行修正区逐行补齐标准字段，完成后重新查看准备度。",
+    }
+  }
+
+  if (readiness.row_blockers.length > 0) {
+    const firstBlocker = readiness.row_blockers[0]
+    const fieldLabel = firstBlocker.field_name
+      ? ` ${firstBlocker.field_name}`
+      : ""
+
+    return {
+      tone: "blocked",
+      title: "先补齐行级必填字段",
+      detail: `${readiness.row_blockers.length} 个行级阻塞正在影响应用准备度。`,
+      nextAction: `优先处理第 ${firstBlocker.row_number} 行${fieldLabel}；补齐后重新查看准备度。`,
+    }
+  }
+
+  if (readiness.version_count === 0 || !readiness.import_version_id) {
+    return {
+      tone: "blocked",
+      title: "先生成导入版本",
+      detail: "当前批次还没有可追溯导入版本。",
+      nextAction: "检查上传解析结果和版本生成记录，确认版本存在后再进入应用前复核。",
+    }
+  }
+
+  if (readiness.readiness_status === "blocked") {
+    const blocker = readiness.blockers.find(
+      (item) => item.code !== "IMPORT_BATCH_ALREADY_APPLIED"
+    )
+
+    return {
+      tone: "blocked",
+      title: "先处理批次阻塞",
+      detail: blocker?.message ?? "当前批次仍存在阻塞原因。",
+      nextAction: "处理阻塞项后重新查看准备度。",
+    }
+  }
+
+  return {
+    tone: "ready",
+    title: "可进入应用前复核",
+    detail: `${readiness.success_rows} 行成功、${readiness.failed_rows} 行失败，已生成 ${readiness.version_count} 个版本。`,
+    nextAction: "复核版本和目标对象后，再由后续受控任务提供应用写入入口。",
+  }
 }
 
 export function summarizeImportFieldMappingTemplates(

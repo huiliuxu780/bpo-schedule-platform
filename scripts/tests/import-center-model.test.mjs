@@ -9,6 +9,7 @@ import {
   buildImportUploadUrl,
   formatFieldMappingTemplateSummary,
   formatImportRowStatus,
+  summarizeImportApplyActionGuidance,
   summarizeImportRowCorrectionNotice,
   summarizeImportTemplateFitHint,
   summarizeImportFieldMappingTemplates,
@@ -459,6 +460,105 @@ test("import center template fit hint recommends active template by selected fil
       mappedFieldCount: 0,
       detail: "字段映射模板读取失败：字段映射模板 API 返回 500",
       nextAction: "保留手填字段映射 JSON 上传，或稍后重试模板读取。",
+    },
+  );
+});
+
+test("import center apply action guidance explains next step before write actions", () => {
+  const readyReadiness = {
+    batch_id: "BATCH-MD-001",
+    file_type: "master_data",
+    readiness_status: "ready",
+    blockers: [],
+    row_blockers: [],
+    total_rows: 10,
+    success_rows: 10,
+    failed_rows: 0,
+    warning_rows: 0,
+    version_count: 1,
+    application_status: "not_applied",
+    application_target: "master_data",
+    import_version_id: "BATCH-MD-001::v1",
+    applied_record_count: 0,
+  };
+
+  assert.deepEqual(summarizeImportApplyActionGuidance(readyReadiness), {
+    tone: "ready",
+    title: "可进入应用前复核",
+    detail: "10 行成功、0 行失败，已生成 1 个版本。",
+    nextAction: "复核版本和目标对象后，再由后续受控任务提供应用写入入口。",
+  });
+
+  assert.deepEqual(
+    summarizeImportApplyActionGuidance({
+      ...readyReadiness,
+      readiness_status: "blocked",
+      failed_rows: 2,
+      blockers: [{ code: "IMPORT_BATCH_HAS_FAILED_ROWS", message: "批次仍有失败行" }],
+    }),
+    {
+      tone: "blocked",
+      title: "先修正失败行",
+      detail: "当前批次还有 2 行失败，不能进入应用写入。",
+      nextAction: "在失败行修正区逐行补齐标准字段，完成后重新查看准备度。",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportApplyActionGuidance({
+      ...readyReadiness,
+      readiness_status: "blocked",
+      row_blockers: [
+        {
+          row_number: 3,
+          code: "MISSING_REQUIRED_FIELD",
+          field_name: "employee_id",
+          message: "employee_id is required",
+        },
+        {
+          row_number: 4,
+          code: "MISSING_REQUIRED_FIELD",
+          field_name: "shift_type",
+          message: "shift_type is required",
+        },
+      ],
+    }),
+    {
+      tone: "blocked",
+      title: "先补齐行级必填字段",
+      detail: "2 个行级阻塞正在影响应用准备度。",
+      nextAction: "优先处理第 3 行 employee_id；补齐后重新查看准备度。",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportApplyActionGuidance({
+      ...readyReadiness,
+      readiness_status: "blocked",
+      application_status: "applied",
+      applied_record_count: 10,
+      blockers: [
+        {
+          code: "IMPORT_BATCH_ALREADY_APPLIED",
+          message: "already applied",
+        },
+      ],
+    }),
+    {
+      tone: "done",
+      title: "批次已应用",
+      detail: "已写入 10 条记录，不需要重复应用。",
+      nextAction: "查看下游版本或结果列表，确认是否还需要复核异常。",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportApplyActionGuidance(null, "准备度 API 返回 500"),
+    {
+      tone: "unknown",
+      title: "准备度暂不可判断",
+      detail: "准备度 API 返回 500",
+      nextAction: "先确认本地 API 状态；不要在准备度未知时执行应用写入。",
     },
   );
 });

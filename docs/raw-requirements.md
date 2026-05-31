@@ -1456,3 +1456,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端上传前模板适配提示和 data-quality 可见性修复；不新增依赖，不做后端、schema/migration、模板 CRUD、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R732 - 导入中心应用前行动建议
+
+```yaml
+id: R732
+module: "导入中心"
+description: "导入中心前端已经能读取准备度、失败行、行级阻塞和版本状态后，需要把这些状态转成应用前行动建议，让数据管理员知道下一步应先修正、补字段、复核版本还是查看已应用结果。"
+source: "PM requested continuing import-center production usability after IM031 on 2026-05-31"
+submitted_at: "2026-05-31"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端只读行动建议和模型 helper；不新增依赖，不做 apply 写按钮、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

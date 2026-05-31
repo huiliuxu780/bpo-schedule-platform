@@ -4970,3 +4970,47 @@ tasks:
       - "范围扩展到模板 CRUD、apply 写按钮、审批、导出、权限、批量、外部集成、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM032
+    title: "导入中心应用前行动建议"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM031"]
+    allowed_files:
+      - "app/data-quality/**"
+      - "components/import-center-api-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality` 对选中批次展示应用前行动建议。"
+      - "建议区根据 readiness、失败行、行级缺字段、版本和已应用状态输出下一步。"
+      - "准备度 API 异常或无批次时展示可读兜底提示。"
+      - "只读展示，不新增 apply 写按钮、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到 apply 写按钮、审批、导出、权限、批量、外部集成、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
