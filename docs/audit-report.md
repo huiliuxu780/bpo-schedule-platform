@@ -4,6 +4,33 @@
 
 ## Current Audit
 
+### 2026-05-31 - IM029 导入中心失败行修正结果反馈打磨
+
+#### 审计结论
+
+- `US649/IM029/R729` 已完成导入中心失败行修正结果反馈打磨。
+- `/data-quality` 在单行修正成功后展示可读结果摘要。
+- 结果摘要展示修正行号、剩余失败行数量和下一步处理提示。
+- 修正失败时把 `invalid_json`、`missing_required_fields` 和 `api_*` 等常见原因翻译成业务可读说明。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、批量修正、apply 写按钮、模板 CRUD、审批、导出、权限、外部集成、生产公式、结算或收费因子。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只改善已有单行修正后的反馈展示；不新增批量修正、自动应用或关闭异常能力。
+- 本轮依赖现有 persisted detail API 和 row correction API；若本地 FastAPI 未启动，页面仍会展示读取失败或修正失败状态。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- `node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs`：通过，14 个模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `curl -fsS 'http://127.0.0.1:8000/api/v1/import-batches'`：通过，本地 API 返回 smoke 批次。
+- `curl -fsS 'http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1'`：返回 `200`，页面 HTML 包含第 1 行已修正和剩余失败行提示。
+- `curl -fsS 'http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=failed&reason=invalid_json&row=1'`：返回 `200`，页面 HTML 包含修正失败和标准字段不是合法 JSON 对象。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend build 和 backend unittest。
+
 ### 2026-05-29 - IM028 导入中心批次明细 drilldown 第一刀
 
 #### 审计结论

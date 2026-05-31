@@ -3,8 +3,10 @@ import { AlertTriangle, CheckCircle2, RotateCcw } from "lucide-react"
 import { correctImportFailedRowAction } from "@/app/data-quality/actions"
 import {
   type ImportBatchPersistenceDetail,
+  type ImportRowCorrectionNotice,
   type ImportBatchRowResult,
   getImportRowStandardFieldsPreview,
+  summarizeImportRowCorrectionNotice,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -34,6 +36,12 @@ export function ImportCenterRowCorrectionPanel({
   correctionRow,
 }: ImportCenterRowCorrectionPanelProps) {
   const failedRows = detail?.failed_rows ?? []
+  const correctionNotice = summarizeImportRowCorrectionNotice({
+    status: correctionStatus,
+    reason: correctionReason,
+    row: correctionRow,
+    remainingFailedRows: failedRows.length,
+  })
 
   return (
     <Card className="overflow-hidden">
@@ -80,11 +88,7 @@ export function ImportCenterRowCorrectionPanel({
             </Table>
           </div>
         )}
-        {correctionStatus === "failed" ? (
-          <div className="border-t bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            修正失败：{correctionReason || "请检查 JSON、行号或本地 API 状态。"}
-          </div>
-        ) : null}
+        {correctionNotice ? <CorrectionNotice notice={correctionNotice} /> : null}
       </CardContent>
     </Card>
   )
@@ -151,6 +155,27 @@ function StatusBadge({
   }
 
   return <Badge variant="outline">无失败行</Badge>
+}
+
+function CorrectionNotice({ notice }: { notice: ImportRowCorrectionNotice }) {
+  const isSuccess = notice.tone === "success"
+  const Icon = isSuccess ? CheckCircle2 : AlertTriangle
+  const panelClass = isSuccess
+    ? "border-t bg-emerald-50 px-4 py-3 text-sm text-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-200"
+    : "border-t bg-destructive/10 px-4 py-3 text-sm text-destructive"
+
+  return (
+    <div className={panelClass}>
+      <div className="flex items-start gap-2">
+        <Icon className="mt-0.5 size-4 shrink-0" />
+        <div className="grid gap-1">
+          <div className="font-medium">{notice.title}</div>
+          <div>{notice.detail}</div>
+          <div className="text-xs opacity-80">{notice.nextAction}</div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function PanelState({

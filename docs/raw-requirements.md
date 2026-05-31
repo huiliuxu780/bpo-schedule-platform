@@ -1417,3 +1417,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端 persisted detail 只读 drilldown；不新增依赖，不做后端、schema/migration、apply 写按钮、批量修正、模板 CRUD、审批、导出、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R729 - 导入中心失败行修正结果反馈打磨
+
+```yaml
+id: R729
+module: "导入中心"
+description: "导入中心前端已经能展示失败行并提交单行修正后，需要把修正成功、修正失败、剩余失败行和下一步处理提示做成主管/数据管理员可读的结果摘要，减少修正后不知道是否还要继续处理的断点。"
+source: "PM requested continuing import-center production usability after IM028 on 2026-05-31"
+submitted_at: "2026-05-31"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端修正结果摘要和模型 helper；不新增依赖，不做后端、schema/migration、批量修正、apply 写按钮、模板 CRUD、审批、导出、权限、外部集成、生产公式、结算或收费因子。"
+```

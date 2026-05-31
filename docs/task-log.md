@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-05-31
+
+- task_id: `IM029`
+- source_ids:
+  - `R729`
+- story_ids:
+  - `US649`
+- action: 实现导入中心失败行修正结果反馈打磨。
+- status: `done`
+- notes: IM029 在 `/data-quality` 的失败行修正面板中新增修正结果摘要，成功时展示修正行号、剩余失败行数量和下一步提示，失败时把常见原因转成业务可读说明。未新增依赖，不做后端、schema/migration、批量修正、apply 写按钮、模板 CRUD、权限、审批、导出、外部集成、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
 ### 2026-05-29
 
 - task_id: `IM028`

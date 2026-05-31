@@ -2636,3 +2636,25 @@ dependencies:
   - "US647"
 status: "done"
 ```
+
+### US649 - 导入中心失败行修正结果反馈打磨
+
+```yaml
+id: US649
+requirement_ids:
+  - R729
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望失败行修正后看到明确的成功/失败结果、剩余失败行数量和下一步提示，以便判断还要继续修正还是回到批次准备度检查。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 在单行修正成功后展示可读结果摘要。"
+  - "结果摘要展示修正行号、剩余失败行数量和下一步处理提示。"
+  - "修正失败时把常见失败原因翻译成业务可读说明。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、批量修正、apply 写按钮、模板 CRUD、审批、导出、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US648"
+status: "done"
+```

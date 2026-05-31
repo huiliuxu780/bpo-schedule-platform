@@ -109,6 +109,15 @@ export type ImportBatchDetailSummary = {
 
 export type ImportBatchHealth = "blocked" | "warning" | "ready_candidate" | "applied"
 
+export type ImportRowCorrectionNoticeTone = "success" | "failed"
+
+export type ImportRowCorrectionNotice = {
+  tone: ImportRowCorrectionNoticeTone
+  title: string
+  detail: string
+  nextAction: string
+}
+
 export type ImportUploadRequest = {
   batchId: string
   fileName: string
@@ -324,6 +333,44 @@ export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): st
   return JSON.stringify(row.raw_data)
 }
 
+export function summarizeImportRowCorrectionNotice({
+  status,
+  reason,
+  row,
+  remainingFailedRows,
+}: {
+  status?: string
+  reason?: string
+  row?: string
+  remainingFailedRows: number
+}): ImportRowCorrectionNotice | null {
+  if (status === "success") {
+    return {
+      tone: "success",
+      title: `第 ${row ?? "-"} 行已修正`,
+      detail:
+        remainingFailedRows > 0
+          ? `当前批次仍有 ${remainingFailedRows} 行待修正。`
+          : "当前批次已没有失败行。",
+      nextAction:
+        remainingFailedRows > 0
+          ? "继续处理剩余失败行，完成后再查看批次准备度。"
+          : "查看上方批次准备度和批次明细，确认是否仍有阻塞原因。",
+    }
+  }
+
+  if (status === "failed") {
+    return {
+      tone: "failed",
+      title: "修正失败",
+      detail: formatImportRowCorrectionFailureReason(reason),
+      nextAction: "检查字段 JSON、行号和本地 API 状态后重新提交。",
+    }
+  }
+
+  return null
+}
+
 export function formatFieldMappingTemplateSummary(
   template: ImportFieldMappingTemplate
 ): string {
@@ -338,6 +385,26 @@ export function formatFieldMappingTemplateSummary(
   }
 
   return preview.join(", ")
+}
+
+function formatImportRowCorrectionFailureReason(reason?: string): string {
+  if (!reason) {
+    return "未返回具体失败原因。"
+  }
+
+  if (reason === "missing_required_fields") {
+    return "缺少批次、行号或标准字段内容。"
+  }
+
+  if (reason === "invalid_json") {
+    return "标准字段不是合法 JSON 对象。"
+  }
+
+  if (reason.startsWith("api_")) {
+    return `本地 API 返回 ${reason.replace("api_", "")}。`
+  }
+
+  return reason
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

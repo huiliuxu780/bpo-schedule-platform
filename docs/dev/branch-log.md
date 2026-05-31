@@ -1,5 +1,24 @@
 # Branch Log
 
+## 2026-05-31
+
+### IM029 Import Center Row Correction Feedback
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `9e15bc9`
+- remote_status: `continuing from pushed origin/codex/import-center-api-vertical`
+- scope: Add failed-row correction result feedback on `/data-quality`: correction notice model helper, success/failure result panel, remaining failed-row guidance, business-readable failure reasons, model tests, page smoke, current queue cleanup, and traceability records.
+- allowed_files_check: `app/data-quality/**`, `components/import-center-model.ts`, `components/import-center-row-correction-panel.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no backend files, dependency files, lockfiles, schema/migration files, apply write buttons, batch correction, template CRUD, external integration, auth, permission, approval, export, batch operation, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: import-center correction notice helper, row correction panel result block, model tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target import-center model tests passed with 14 tests; `npm run lint` passed; `npm run typecheck` passed; local API smoke returned persisted import batches; `/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` smoke returned `200` and contained correction success and remaining failed-row text; `/data-quality?batch=BATCH-IM026-SMOKE-004&correction=failed&reason=invalid_json&row=1` smoke returned `200` and contained business-readable invalid JSON failure text; final `bash scripts/check.sh` passed with strict state check, frontend build, and backend unittest.
+- local_commit_sha: reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM confirmation`
+- blocked_reason: `N/A`
+
 ## 2026-05-29
 
 ### IM028 Import Center Batch Detail Drilldown
