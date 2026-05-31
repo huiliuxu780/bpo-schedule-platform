@@ -118,6 +118,14 @@ export type ImportRowCorrectionNotice = {
   nextAction: string
 }
 
+export type ImportFieldMappingTemplateSummary = {
+  totalTemplates: number
+  activeTemplates: number
+  inactiveTemplates: number
+  coveredFileTypes: number
+  totalMappedFields: number
+}
+
 export type ImportUploadRequest = {
   batchId: string
   fileName: string
@@ -369,6 +377,34 @@ export function summarizeImportRowCorrectionNotice({
   }
 
   return null
+}
+
+export function summarizeImportFieldMappingTemplates(
+  templates: ImportFieldMappingTemplate[]
+): ImportFieldMappingTemplateSummary {
+  const coveredFileTypes = new Set<ImportFileType>()
+
+  return templates.reduce<ImportFieldMappingTemplateSummary>(
+    (summary, template) => {
+      coveredFileTypes.add(template.file_type)
+
+      return {
+        totalTemplates: summary.totalTemplates + 1,
+        activeTemplates: summary.activeTemplates + (template.is_active ? 1 : 0),
+        inactiveTemplates: summary.inactiveTemplates + (template.is_active ? 0 : 1),
+        coveredFileTypes: coveredFileTypes.size,
+        totalMappedFields:
+          summary.totalMappedFields + Object.keys(template.field_mapping).length,
+      }
+    },
+    {
+      totalTemplates: 0,
+      activeTemplates: 0,
+      inactiveTemplates: 0,
+      coveredFileTypes: 0,
+      totalMappedFields: 0,
+    }
+  )
 }
 
 export function formatFieldMappingTemplateSummary(

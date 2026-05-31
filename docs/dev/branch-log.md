@@ -2,6 +2,23 @@
 
 ## 2026-05-31
 
+### IM030 Import Center Template Visibility
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `d3ce9a7`
+- remote_status: `continuing from local ahead commit on codex/import-center-api-vertical`
+- scope: Add read-only field-mapping template management visibility on `/data-quality`: template inventory summary, active/inactive counts, covered file type count, mapped-field count, template cards, model summary helper/tests, page smoke, current queue cleanup, and traceability records.
+- allowed_files_check: `app/data-quality/**`, `components/import-center-model.ts`, `components/import-center-template-management-panel.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, legacy traceability docs, and `tasks/backlog.yaml`; no backend files, dependency files, lockfiles, schema/migration files, template create/update/deactivate buttons, external integration, auth, permission, approval, export, batch operation, production formula, settlement rule, or charge-factor files.
+- scope_diff_check: `/data-quality` template panel wiring, new read-only import-center template management panel, import-center template inventory summary helper, model tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log.
+- check_result: target import-center model test first failed because `summarizeImportFieldMappingTemplates` did not exist; after implementation target model tests passed with 15 tests; `npm run lint` passed; `npm run typecheck` passed; local template API smoke returned `TPL-IM027-SMOKE-001`; `/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` smoke returned `200` and contained template inventory text and template id; final `bash scripts/check.sh` passed with strict state check, frontend build, and backend unittest.
+- local_commit_sha: reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM confirmation`
+- blocked_reason: `N/A`
+
 ### IM029 Import Center Row Correction Feedback
 
 - branch_name: `codex/import-center-api-vertical`

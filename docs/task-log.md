@@ -19,6 +19,17 @@
 
 ### 2026-05-31
 
+- task_id: `IM030`
+- source_ids:
+  - `R730`
+- story_ids:
+  - `US650`
+- action: 实现导入中心字段映射模板只读管理可见性。
+- status: `done`
+- notes: IM030 在 `/data-quality` 新增字段映射模板只读管理面板，展示模板总数、启用/停用数量、覆盖文件类型、映射字段数，以及每个模板的状态、创建人、创建时间和映射摘要。未新增依赖，不做模板新增/编辑/停用按钮、后端、schema/migration、权限、审批、导出、批量、外部集成、生产公式、结算或收费因子。任务完成后 current queue 和 active tasks 已清空。
+
+### 2026-05-31
+
 - task_id: `IM029`
 - source_ids:
   - `R729`

@@ -10,6 +10,7 @@ import {
   formatFieldMappingTemplateSummary,
   formatImportRowStatus,
   summarizeImportRowCorrectionNotice,
+  summarizeImportFieldMappingTemplates,
   summarizeImportBatchDetail,
   getImportRowStandardFieldsPreview,
   formatImportFileType,
@@ -340,5 +341,44 @@ test("import center row correction notice explains failed correction reasons", (
       remainingFailedRows: 1,
     }),
     null,
+  );
+});
+
+test("import center field mapping template summary tracks inventory and coverage", () => {
+  assert.deepEqual(
+    summarizeImportFieldMappingTemplates([
+      {
+        template_id: "TPL-MD-001",
+        template_name: "主数据 source_key",
+        file_type: "master_data",
+        field_mapping: {
+          source_key: "source_key",
+          "姓名": "employee_name",
+        },
+        created_by: "ops",
+        created_at: "2026-05-29T10:00:00+08:00",
+        is_active: true,
+      },
+      {
+        template_id: "TPL-SCH-001",
+        template_name: "排班基础模板",
+        file_type: "personnel_schedule",
+        field_mapping: {
+          source_key: "source_key",
+          "日期": "business_date",
+          "开始": "start_time",
+        },
+        created_by: "planner",
+        created_at: "2026-05-29T11:00:00+08:00",
+        is_active: false,
+      },
+    ]),
+    {
+      totalTemplates: 2,
+      activeTemplates: 1,
+      inactiveTemplates: 1,
+      coveredFileTypes: 2,
+      totalMappedFields: 5,
+    },
   );
 });

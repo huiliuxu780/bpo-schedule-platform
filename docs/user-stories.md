@@ -2658,3 +2658,26 @@ dependencies:
   - "US648"
 status: "done"
 ```
+
+### US650 - 导入中心字段映射模板只读管理可见性
+
+```yaml
+id: US650
+requirement_ids:
+  - R730
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在导入中心看到字段映射模板库存、状态和覆盖范围，以便判断当前模板是否足够支撑不同文件类型的后续上传。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 展示字段映射模板只读管理面板。"
+  - "面板展示模板总数、启用/停用数量、覆盖文件类型数量和映射字段数量。"
+  - "每个模板展示文件类型、状态、创建人、创建时间和字段映射摘要。"
+  - "模板 API 异常或无模板时展示空/错误状态，不新增静态业务样例。"
+  - "不新增依赖，不修改 package/lockfile，不做模板新增/编辑/停用按钮、后端、schema/migration、审批、导出、权限、批量、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US649"
+status: "done"
+```

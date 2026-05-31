@@ -4,6 +4,34 @@
 
 ## Current Audit
 
+### 2026-05-31 - IM030 导入中心字段映射模板只读管理可见性
+
+#### 审计结论
+
+- `US650/IM030/R730` 已完成导入中心字段映射模板只读管理可见性。
+- `/data-quality` 展示字段映射模板只读管理面板。
+- 面板展示模板总数、启用/停用数量、覆盖文件类型数量和映射字段数量。
+- 每个模板展示文件类型、状态、创建人、创建时间和字段映射摘要。
+- 模板 API 异常或无模板时展示空/错误状态，不新增静态业务样例。
+- 本轮不新增依赖，不修改 package/lockfile，不做模板新增/编辑/停用按钮、后端、schema/migration、审批、导出、权限、批量、外部集成、生产公式、结算或收费因子。
+- current queue 和 active tasks 已清空，done history 不写入 current 文件。
+
+#### 风险
+
+- 本轮只做只读可见性；不提供模板创建、更新、停用或批量维护操作。
+- 本轮依赖现有 field-mapping template API；若本地 FastAPI 未启动，页面展示模板读取失败并保留上传表单手填 JSON 路径。
+- Auth、权限、供应商隔离、审批、导出、批量、自动排班、生产公式、结算和收费因子仍明确禁止混入。
+
+#### 验证
+
+- TDD 红灯：`node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs` 先因缺少 `summarizeImportFieldMappingTemplates` export 失败。
+- `node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs`：通过，15 个模型测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `curl -fsS 'http://127.0.0.1:8000/api/v1/import-field-mapping-templates'`：通过，本地 API 返回 `TPL-IM027-SMOKE-001`。
+- `curl -fsS 'http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1'`：返回 `200`，页面 HTML 包含字段映射模板、只读查看模板库存、启用模板、停用模板、覆盖类型、映射字段和 `TPL-IM027-SMOKE-001`。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend build 和 backend unittest。
+
 ### 2026-05-31 - IM029 导入中心失败行修正结果反馈打磨
 
 #### 审计结论

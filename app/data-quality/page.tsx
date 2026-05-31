@@ -2,6 +2,7 @@ import { AppShell } from "@/components/app-shell"
 import { ImportCenterApiPanel } from "@/components/import-center-api-panel"
 import { ImportCenterBatchDetailPanel } from "@/components/import-center-batch-detail-panel"
 import { ImportCenterRowCorrectionPanel } from "@/components/import-center-row-correction-panel"
+import { ImportCenterTemplateManagementPanel } from "@/components/import-center-template-management-panel"
 import { ImportCenterUploadForm } from "@/components/import-center-upload-form"
 import {
   type ImportApplyReadinessResponse,
@@ -57,12 +58,18 @@ export default async function DataQualityPage({
         batchError={batchResult.error}
         readinessError={readinessResult.error}
         uploadForm={
-          <ImportCenterUploadForm
-            uploadStatus={params?.upload}
-            uploadReason={params?.reason}
-            templates={templateResult.data ?? []}
-            templateError={templateResult.error}
-          />
+          <div className="grid gap-4">
+            <ImportCenterUploadForm
+              uploadStatus={params?.upload}
+              uploadReason={params?.reason}
+              templates={templateResult.data ?? []}
+              templateError={templateResult.error}
+            />
+            <ImportCenterTemplateManagementPanel
+              templates={templateResult.data ?? []}
+              templateError={templateResult.error}
+            />
+          </div>
         }
         rowCorrectionPanel={
           <>

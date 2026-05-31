@@ -4880,3 +4880,48 @@ tasks:
       - "范围扩展到批量修正、apply 写按钮、模板 CRUD、审批、导出、权限、外部集成、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM030
+    title: "导入中心字段映射模板只读管理可见性"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM029"]
+    allowed_files:
+      - "app/data-quality/**"
+      - "components/import-center-model.ts"
+      - "components/import-center-template-management-panel.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality` 展示字段映射模板只读管理面板。"
+      - "面板展示模板总数、启用/停用数量、覆盖文件类型数量和映射字段数量。"
+      - "每个模板展示文件类型、状态、创建人、创建时间和字段映射摘要。"
+      - "模板 API 异常或无模板时展示空/错误状态，不新增静态业务样例。"
+      - "不新增依赖，不修改 package/lockfile，不做模板新增/编辑/停用按钮、后端、schema/migration、审批、导出、权限、批量、外部集成、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到模板新增/编辑/停用按钮、审批、导出、权限、批量、外部集成、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
