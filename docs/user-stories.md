@@ -2681,3 +2681,26 @@ dependencies:
   - "US649"
 status: "done"
 ```
+
+### US651 - 导入中心上传前模板适配提示
+
+```yaml
+id: US651
+requirement_ids:
+  - R731
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望上传 CSV 前看到各文件类型的模板适配情况和兜底路径，以便选择正确模板或改用手填字段映射 JSON。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 上传区展示模板适配提示。"
+  - "提示展示各文件类型的启用模板数、推荐模板说明、映射字段数量和手填 JSON 兜底。"
+  - "无匹配模板或模板 API 异常时展示可读提示，不新增静态业务样例。"
+  - "移除 `/data-quality` 路由级 loading fallback，避免 in-app browser 停在骨架屏看不到主内容。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、模板 CRUD、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US650"
+status: "done"
+```

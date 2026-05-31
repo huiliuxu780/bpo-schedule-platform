@@ -126,6 +126,20 @@ export type ImportFieldMappingTemplateSummary = {
   totalMappedFields: number
 }
 
+export type ImportTemplateFitStatus = "matched" | "missing" | "error"
+
+export type ImportTemplateFitHint = {
+  fileType: ImportFileType
+  status: ImportTemplateFitStatus
+  matchingTemplates: number
+  activeMatchingTemplates: number
+  recommendedTemplateId: string | null
+  recommendedTemplateName: string | null
+  mappedFieldCount: number
+  detail: string
+  nextAction: string
+}
+
 export type ImportUploadRequest = {
   batchId: string
   fileName: string
@@ -405,6 +419,59 @@ export function summarizeImportFieldMappingTemplates(
       totalMappedFields: 0,
     }
   )
+}
+
+export function summarizeImportTemplateFitHint(
+  fileType: ImportFileType,
+  templates: ImportFieldMappingTemplate[],
+  templateError?: string | null
+): ImportTemplateFitHint {
+  if (templateError) {
+    return {
+      fileType,
+      status: "error",
+      matchingTemplates: 0,
+      activeMatchingTemplates: 0,
+      recommendedTemplateId: null,
+      recommendedTemplateName: null,
+      mappedFieldCount: 0,
+      detail: `字段映射模板读取失败：${templateError}`,
+      nextAction: "保留手填字段映射 JSON 上传，或稍后重试模板读取。",
+    }
+  }
+
+  const matchingTemplates = templates.filter((template) => template.file_type === fileType)
+  const activeTemplates = matchingTemplates.filter((template) => template.is_active)
+  const recommendedTemplate = [...activeTemplates].sort(
+    (left, right) =>
+      Object.keys(right.field_mapping).length - Object.keys(left.field_mapping).length
+  )[0]
+
+  if (!recommendedTemplate) {
+    return {
+      fileType,
+      status: "missing",
+      matchingTemplates: matchingTemplates.length,
+      activeMatchingTemplates: activeTemplates.length,
+      recommendedTemplateId: null,
+      recommendedTemplateName: null,
+      mappedFieldCount: 0,
+      detail: `${formatImportFileType(fileType)}没有启用模板。`,
+      nextAction: "先使用手填字段映射 JSON 上传；模板维护在单独任务中处理。",
+    }
+  }
+
+  return {
+    fileType,
+    status: "matched",
+    matchingTemplates: matchingTemplates.length,
+    activeMatchingTemplates: activeTemplates.length,
+    recommendedTemplateId: recommendedTemplate.template_id,
+    recommendedTemplateName: recommendedTemplate.template_name,
+    mappedFieldCount: Object.keys(recommendedTemplate.field_mapping).length,
+    detail: `已找到 ${activeTemplates.length} 个启用模板，推荐使用“${recommendedTemplate.template_name}”。`,
+    nextAction: "选择同类型模板后上传；如 CSV 表头不一致，再改用手填字段映射 JSON。",
+  }
 }
 
 export function formatFieldMappingTemplateSummary(

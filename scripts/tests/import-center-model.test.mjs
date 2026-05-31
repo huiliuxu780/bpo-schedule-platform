@@ -10,6 +10,7 @@ import {
   formatFieldMappingTemplateSummary,
   formatImportRowStatus,
   summarizeImportRowCorrectionNotice,
+  summarizeImportTemplateFitHint,
   summarizeImportFieldMappingTemplates,
   summarizeImportBatchDetail,
   getImportRowStandardFieldsPreview,
@@ -379,6 +380,85 @@ test("import center field mapping template summary tracks inventory and coverage
       inactiveTemplates: 1,
       coveredFileTypes: 2,
       totalMappedFields: 5,
+    },
+  );
+});
+
+test("import center template fit hint recommends active template by selected file type", () => {
+  const templates = [
+    {
+      template_id: "TPL-MD-LOW",
+      template_name: "主数据基础模板",
+      file_type: "master_data",
+      field_mapping: {
+        source_key: "source_key",
+      },
+      created_by: "ops",
+      created_at: "2026-05-29T10:00:00+08:00",
+      is_active: true,
+    },
+    {
+      template_id: "TPL-MD-FULL",
+      template_name: "主数据完整模板",
+      file_type: "master_data",
+      field_mapping: {
+        source_key: "source_key",
+        "姓名": "employee_name",
+        "工号": "employee_id",
+      },
+      created_by: "ops",
+      created_at: "2026-05-29T11:00:00+08:00",
+      is_active: true,
+    },
+    {
+      template_id: "TPL-SCHEDULE-OFF",
+      template_name: "停用排班模板",
+      file_type: "personnel_schedule",
+      field_mapping: {
+        source_key: "source_key",
+      },
+      created_by: "ops",
+      created_at: "2026-05-29T12:00:00+08:00",
+      is_active: false,
+    },
+  ];
+
+  assert.deepEqual(summarizeImportTemplateFitHint("master_data", templates), {
+    fileType: "master_data",
+    status: "matched",
+    matchingTemplates: 2,
+    activeMatchingTemplates: 2,
+    recommendedTemplateId: "TPL-MD-FULL",
+    recommendedTemplateName: "主数据完整模板",
+    mappedFieldCount: 3,
+    detail: "已找到 2 个启用模板，推荐使用“主数据完整模板”。",
+    nextAction: "选择同类型模板后上传；如 CSV 表头不一致，再改用手填字段映射 JSON。",
+  });
+
+  assert.deepEqual(summarizeImportTemplateFitHint("personnel_schedule", templates), {
+    fileType: "personnel_schedule",
+    status: "missing",
+    matchingTemplates: 1,
+    activeMatchingTemplates: 0,
+    recommendedTemplateId: null,
+    recommendedTemplateName: null,
+    mappedFieldCount: 0,
+    detail: "人员排班没有启用模板。",
+    nextAction: "先使用手填字段映射 JSON 上传；模板维护在单独任务中处理。",
+  });
+
+  assert.deepEqual(
+    summarizeImportTemplateFitHint("login_log", templates, "字段映射模板 API 返回 500"),
+    {
+      fileType: "login_log",
+      status: "error",
+      matchingTemplates: 0,
+      activeMatchingTemplates: 0,
+      recommendedTemplateId: null,
+      recommendedTemplateName: null,
+      mappedFieldCount: 0,
+      detail: "字段映射模板读取失败：字段映射模板 API 返回 500",
+      nextAction: "保留手填字段映射 JSON 上传，或稍后重试模板读取。",
     },
   );
 });

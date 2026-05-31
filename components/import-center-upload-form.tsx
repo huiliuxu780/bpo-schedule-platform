@@ -6,6 +6,7 @@ import {
   formatImportFileType,
   type ImportFieldMappingTemplate,
   type ImportFileType,
+  summarizeImportTemplateFitHint,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -46,7 +47,7 @@ export function ImportCenterUploadForm({
       </CardHeader>
       <CardContent>
         <form action={uploadImportCsvAction} className="grid gap-4">
-          <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
             <Field label="批次号">
               <Input name="batch_id" placeholder="BATCH-CSV-20260529" required />
             </Field>
@@ -89,8 +90,13 @@ export function ImportCenterUploadForm({
                 >
                   <option value="">手填字段映射 JSON</option>
                   {templates.map((template) => (
-                    <option key={template.template_id} value={template.template_id}>
+                    <option
+                      key={template.template_id}
+                      value={template.template_id}
+                      disabled={!template.is_active}
+                    >
                       {formatImportFileType(template.file_type)} · {template.template_name}
+                      {template.is_active ? "" : "（停用）"}
                     </option>
                   ))}
                 </select>
@@ -104,6 +110,7 @@ export function ImportCenterUploadForm({
               </Field>
             </div>
           </div>
+          <TemplateFitSummary templates={templates} templateError={templateError} />
           <TemplateSummary templates={templates} templateError={templateError} />
           {uploadStatus === "failed" ? (
             <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -119,6 +126,54 @@ export function ImportCenterUploadForm({
         </form>
       </CardContent>
     </Card>
+  )
+}
+
+function TemplateFitSummary({
+  templates,
+  templateError,
+}: {
+  templates: ImportFieldMappingTemplate[]
+  templateError?: string | null
+}) {
+  return (
+    <div className="grid gap-2 rounded-md border bg-muted/20 px-3 py-2">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm font-medium">模板适配提示</span>
+        <Badge variant={templateError ? "destructive" : "outline"}>
+          {templateError ? "读取失败" : "上传前检查"}
+        </Badge>
+      </div>
+      <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-5">
+        {fileTypes.map((fileType) => {
+          const fitHint = summarizeImportTemplateFitHint(
+            fileType,
+            templates,
+            templateError
+          )
+
+          return (
+            <div key={fileType} className="grid gap-1 rounded-md bg-background p-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-medium">{formatImportFileType(fileType)}</span>
+                <Badge
+                  variant={fitHint.status === "matched" ? "secondary" : "outline"}
+                >
+                  {fitHint.activeMatchingTemplates} 个启用
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground">{fitHint.detail}</p>
+              <div className="font-mono text-xs text-muted-foreground">
+                映射字段 {fitHint.mappedFieldCount}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      <p className="text-xs text-muted-foreground">
+        选择同类型模板后上传；如果 CSV 表头不一致，保留手填字段映射 JSON 作为兜底。
+      </p>
+    </div>
   )
 }
 

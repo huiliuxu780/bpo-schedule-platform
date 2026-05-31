@@ -1348,3 +1348,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending after verified local commit`
 - blocked_reason: `N/A`
+
+### IM031 Import Center Template Fit Hints
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical exists; local branch was ahead 2 before IM031`
+- scope: upload-before template fit hints, `/data-quality` route loading fallback removal, model test coverage, and traceability records.
+- allowed_files_check: `app/data-quality/**`, `components/import-center-model.ts`, `components/import-center-upload-form.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, external integration, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/loading.tsx`, `components/import-center-model.ts`, `components/import-center-upload-form.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, external integration, production formula, settlement, or charge-factor files.
+- check_result: target model test passed with 16 tests; `npm run lint` passed; `npm run typecheck` passed; in-app browser smoke passed after removing `/data-quality/loading.tsx`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed with strict state check, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

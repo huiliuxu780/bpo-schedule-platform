@@ -1962,6 +1962,31 @@
 
 ## Historical Audit Snapshots
 
+### 2026-05-31 - IM031 导入中心上传前模板适配提示
+
+#### 审计结论
+
+- `IM031/US651` 已在 `/data-quality` 上传区增加模板适配提示，按文件类型展示启用模板数、推荐说明、映射字段数量和手填 JSON 兜底。
+- 模型层新增 `summarizeImportTemplateFitHint`，覆盖推荐启用模板、无启用模板和模板 API 异常三种路径。
+- 页面 smoke 发现 `/data-quality/loading.tsx` 会让 in-app browser 停在骨架屏，已移除该 route-level loading fallback，让主内容直接可见。
+- 本轮未新增依赖、未修改 package/lockfile，未触碰后端、schema/migration、模板 CRUD、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前仍是上传前提示和可见性增强，不是模板维护流程，也不是上传后的真实 apply 写操作。
+- 文件类型和模板选择仍由用户确认，后续若要做强校验或自动应用，需要单独任务定义。
+
+#### 验证
+
+- TDD 红灯：`node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportTemplateFitHint` export 失败。
+- `node --experimental-strip-types --test scripts/tests/import-center-model.test.mjs`：通过，16 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 可见 `CSV 导入`、`模板适配提示`、`手填字段映射 JSON` 和当前批次号。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-05-11 - Lightweight Harness 文档型升级（历史快照）
 
 #### 审计结论

@@ -1192,6 +1192,17 @@
 - status: `done`
 - notes: `components/data-table.tsx` 现在由 TanStack Table 管理本地排序、搜索过滤和分页；新增 `components/data-table-model.ts` 与无依赖模型测试覆盖搜索和页码夹紧。
 
+### 2026-05-31
+
+- task_id: `IM031`
+- source_ids:
+  - `R731`
+- story_ids:
+  - `US651`
+- action: 增加导入中心上传前模板适配提示，并修复 data-quality 页面在 in-app browser 停留骨架屏的问题。
+- status: `done`
+- notes: `/data-quality` 上传区现在按文件类型展示启用模板数、推荐说明、映射字段数和手填 JSON 兜底；移除路由级 loading fallback，确保主内容可见。
+
 ### 2026-05-13
 
 - task_id: `F031`

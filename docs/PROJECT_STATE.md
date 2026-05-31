@@ -48,6 +48,7 @@ The project contains:
 - A selected-batch detail drilldown slice on `/data-quality` that shows persisted versions, all row results, row status distribution, and standard field previews without adding backend changes or new dependencies.
 - A failed-row correction result feedback slice on `/data-quality` that summarizes correction success/failure, remaining failed rows, and next action guidance without adding backend changes or new dependencies.
 - A field-mapping template read-only management visibility slice on `/data-quality` that shows template inventory, status, covered file types, and mapping summaries without adding backend changes or new dependencies.
+- An upload-before-template fit hint slice on `/data-quality` that shows per-file-type template coverage, recommended-template guidance, and JSON fallback while removing the route loading fallback that hid main content in the in-app browser.
 - Local detail drilldowns for scheduling risks and unavailability impact.
 - Display-only TanStack Table parity slices across the current schedule-plan, demand-plan, shift-detail, risk, and unavailability views.
 - Dashboard anomaly detail table parity, including local TanStack Table sorting, filtering, pagination, column visibility, and page-size controls.
@@ -108,6 +109,7 @@ Current allowed database scope:
 - IM028 import-center selected-batch detail drilldown: `/data-quality` can display persisted versions, all row results, row status distribution, and field previews for the selected import batch without adding backend changes, dependencies, or schema/migration changes.
 - IM029 import-center failed-row correction result feedback: `/data-quality` can display correction success/failure summaries, remaining failed-row counts, and next-action guidance without adding backend changes, dependencies, or schema/migration changes.
 - IM030 import-center field-mapping template read-only visibility: `/data-quality` can display template inventory, active/inactive counts, covered file types, mapped-field counts, and template summaries without adding backend changes, dependencies, or schema/migration changes.
+- IM031 import-center upload template fit hints: `/data-quality` can display upload-before template fit guidance and avoid the route-level loading fallback that kept the page on skeleton content in the in-app browser, without adding backend changes, dependencies, or schema/migration changes.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:

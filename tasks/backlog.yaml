@@ -4925,3 +4925,48 @@ tasks:
       - "范围扩展到模板新增/编辑/停用按钮、审批、导出、权限、批量、外部集成、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM031
+    title: "导入中心上传前模板适配提示"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM030"]
+    allowed_files:
+      - "app/data-quality/**"
+      - "components/import-center-model.ts"
+      - "components/import-center-upload-form.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality` 上传区展示模板适配提示。"
+      - "提示展示各文件类型的启用模板数、推荐模板说明、映射字段数量和手填 JSON 兜底。"
+      - "无匹配模板或模板 API 异常时展示可读提示，不新增静态业务样例。"
+      - "移除 `/data-quality` 路由级 loading fallback，避免 in-app browser 停在骨架屏看不到主内容。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、模板 CRUD、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到模板 CRUD、apply 写按钮、审批、导出、权限、批量、外部集成、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

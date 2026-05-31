@@ -1443,3 +1443,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端只读模板管理可见性；不新增依赖，不做模板新增/编辑/停用按钮、后端、schema/migration、审批、导出、权限、批量、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R731 - 导入中心上传前模板适配提示
+
+```yaml
+id: R731
+module: "导入中心"
+description: "导入中心前端已经能选择模板并查看模板库存后，需要在上传前提示不同文件类型的模板匹配情况、推荐模板和无模板兜底路径，避免数据管理员上传前不知道该选哪个模板。"
+source: "PM requested continuing import-center production usability after IM030 on 2026-05-31"
+submitted_at: "2026-05-31"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端上传前模板适配提示和 data-quality 可见性修复；不新增依赖，不做后端、schema/migration、模板 CRUD、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```
