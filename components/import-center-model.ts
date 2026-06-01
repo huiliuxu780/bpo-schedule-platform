@@ -182,6 +182,25 @@ export type ImportApplicationVisibility = {
   nextAction: string
 }
 
+export type ImportDownstreamResultNavigationTone =
+  | "blocked"
+  | "ready"
+  | "done"
+  | "unknown"
+
+export type ImportDownstreamResultNavigation = {
+  tone: ImportDownstreamResultNavigationTone
+  title: string
+  detail: string
+  comparisonLabel: string
+  reviewLabel: string
+  primaryActionLabel: string
+  primaryHref: string
+  secondaryActionLabel: string
+  secondaryHref: string
+  evidenceLabel: string
+}
+
 export type ImportBatchReviewGuideTone = "blocked" | "warning" | "ready" | "done" | "unknown"
 
 export type ImportBatchReviewGuide = {
@@ -582,6 +601,66 @@ export function summarizeImportApplicationVisibility({
     title: "等待准备度确认",
     detail: "当前批次尚未应用，准备度暂不可判断；先确认本地 API 状态和批次明细。",
     nextAction: "准备度未知时只做查看和修正，不进入应用写入。",
+  }
+}
+
+export function summarizeImportDownstreamResultNavigation({
+  batch,
+  readiness,
+}: {
+  batch: ImportBatchListRow
+  readiness: ImportApplyReadinessResponse | null
+}): ImportDownstreamResultNavigation {
+  const versionLabel = batch.import_version_id ?? "未生成"
+  const businessDate = batch.business_date_from
+
+  if (readiness?.readiness_status === "blocked" || batch.failed_rows > 0) {
+    return {
+      tone: "blocked",
+      title: "先修正导入阻塞",
+      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响后续对比与复核判断。",
+      comparisonLabel: "对比结果：等待应用版本",
+      reviewLabel: "复核案例：等待质量问题清理",
+      primaryActionLabel: "查看失败行",
+      primaryHref: "#import-row-correction",
+      secondaryActionLabel: "查看应用准备度",
+      secondaryHref: "#import-apply-readiness",
+      evidenceLabel: `失败 ${batch.failed_rows.toLocaleString("zh-CN")} 行 · 警告 ${batch.warning_rows.toLocaleString("zh-CN")} 行`,
+    }
+  }
+
+  if (batch.application_status !== "applied") {
+    return {
+      tone: readiness?.readiness_status === "ready" ? "ready" : "unknown",
+      title:
+        readiness?.readiness_status === "ready"
+          ? "等待受控应用"
+          : "等待应用状态确认",
+      detail:
+        readiness?.readiness_status === "ready"
+          ? "当前批次已通过应用前检查，但还没有形成已应用版本；下游结果需要等待受控应用完成。"
+          : "当前批次尚未应用且准备度未知；先确认准备度、版本和批次明细，再判断是否能进入下游结果。",
+      comparisonLabel: "对比结果：等待应用版本",
+      reviewLabel: "复核案例：等待对比结果",
+      primaryActionLabel: "查看应用准备度",
+      primaryHref: "#import-apply-readiness",
+      secondaryActionLabel: "查看批次明细",
+      secondaryHref: "#import-batch-detail",
+      evidenceLabel: `已应用 0 条 · 版本 ${versionLabel}`,
+    }
+  }
+
+  return {
+    tone: "done",
+    title: formatDownstreamNavigationTitle(batch.file_type),
+    detail: formatDownstreamNavigationDetail(batch),
+    comparisonLabel: formatDownstreamComparisonLabel(batch.file_type, versionLabel),
+    reviewLabel: "复核案例：按履约异常结果继续追踪",
+    primaryActionLabel: "查看对比结果 API",
+    primaryHref: `/api/v1/comparison-runs?business_date=${encodeURIComponent(businessDate)}`,
+    secondaryActionLabel: "查看复核案例 API",
+    secondaryHref: `/api/v1/review-cases?business_date=${encodeURIComponent(businessDate)}`,
+    evidenceLabel: `已应用 ${batch.applied_record_count.toLocaleString("zh-CN")} 条 · 版本 ${versionLabel}`,
   }
 }
 
@@ -1127,6 +1206,59 @@ function formatImportApplicationTarget(target: string): string {
   }
 
   return target
+}
+
+function formatDownstreamNavigationTitle(fileType: ImportFileType): string {
+  if (fileType === "personnel_schedule") {
+    return "可进入排班履约对比"
+  }
+
+  if (fileType === "demand_forecast") {
+    return "可进入预测排班对比"
+  }
+
+  if (fileType === "login_log" || fileType === "status_log") {
+    return "可进入实际履约对比"
+  }
+
+  return "可进入下游结果复核"
+}
+
+function formatDownstreamNavigationDetail(batch: ImportBatchListRow): string {
+  const recordCount = batch.applied_record_count.toLocaleString("zh-CN")
+
+  if (batch.file_type === "personnel_schedule") {
+    return `人员排班已应用 ${recordCount} 条记录，可继续查看预测 vs 排班或排班 vs 实际登录/状态的本地结果列表。`
+  }
+
+  if (batch.file_type === "demand_forecast") {
+    return `需求预测已应用 ${recordCount} 条记录，可继续查看预测 vs 排班的本地结果列表。`
+  }
+
+  if (batch.file_type === "login_log" || batch.file_type === "status_log") {
+    return `实际日志已应用 ${recordCount} 条记录，可继续查看排班 vs 实际登录/状态的本地结果列表。`
+  }
+
+  return `主数据已应用 ${recordCount} 条记录，可继续确认版本引用，并在对比结果和复核案例中追踪归因口径。`
+}
+
+function formatDownstreamComparisonLabel(
+  fileType: ImportFileType,
+  versionLabel: string
+): string {
+  if (fileType === "personnel_schedule") {
+    return `对比结果：排班版本 ${versionLabel}`
+  }
+
+  if (fileType === "demand_forecast") {
+    return `对比结果：预测版本 ${versionLabel}`
+  }
+
+  if (fileType === "login_log" || fileType === "status_log") {
+    return `对比结果：实际日志版本 ${versionLabel}`
+  }
+
+  return `对比结果：主数据版本 ${versionLabel}`
 }
 
 function summarizeImportDetailErrorFields(rows: ImportBatchRowResult[]): string {

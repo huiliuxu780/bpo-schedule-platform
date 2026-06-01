@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current queue is empty after `US659/IM039`: 导入中心数据质量到履约异常追踪可见性.
+Current queue is empty after `US660/IM040`: 导入中心应用结果到下游结果导航.
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next step is import-center application-to-result navigation or import-center result-readiness summary. Keep apply write buttons, multipart/Excel, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next step is persisted comparison-result list visibility on `/data-quality` or persisted review-case list visibility. Keep apply write buttons, multipart/Excel, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

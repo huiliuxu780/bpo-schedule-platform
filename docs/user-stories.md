@@ -2880,3 +2880,25 @@ dependencies:
   - "US658"
 status: "done"
 ```
+
+### US660 - 导入中心应用结果到下游结果导航
+
+```yaml
+id: US660
+requirement_ids:
+  - R740
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望批次应用结果能提示下游可查看的对比结果和复核案例入口，以便从导入中心继续追踪真实业务闭环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 对选中批次展示只读下游结果导航。"
+  - "导航根据批次应用状态、文件类型、版本和记录数提示对比结果、复核案例或前置修正路径。"
+  - "导航使用现有页面锚点或本地 API 结果路径口径，不新增写入按钮或后端能力。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US659"
+status: "done"
+```

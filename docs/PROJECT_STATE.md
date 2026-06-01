@@ -119,6 +119,7 @@ Current allowed database scope:
 - IM037 import-center application status visibility: `/data-quality` can show a read-only selected-batch application status overview with target, version, applied count, and next-step wording without backend changes, dependencies, write buttons, or schema/migration changes.
 - IM038 import-center batch-detail readability: `/data-quality` can show a read-only batch detail processing summary, next-step guidance, and row-level error-field visibility without backend changes, dependencies, write buttons, or schema/migration changes.
 - IM039 import-center data-quality-to-exception trace visibility: `/data-quality` can show read-only downstream exception impact scope, quality evidence, and next-step guidance from selected batch detail without backend changes, dependencies, write buttons, or schema/migration changes.
+- IM040 import-center downstream result navigation: `/data-quality` can show read-only downstream comparison/review navigation from selected batch application status without backend changes, dependencies, write buttons, or schema/migration changes.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:
@@ -183,6 +184,7 @@ Current invariants:
 - `IM037/US657` added selected-batch read-only application status visibility for target, import version, applied record count, and next-step status wording, then returned current queue and active tasks to empty.
 - `IM038/US658` added batch detail readability with processing summary, next-step guidance, error-field summary, and row-level error-field visibility, then returned current queue and active tasks to empty.
 - `IM039/US659` added read-only data-quality-to-exception trace visibility for downstream exception impact scope, quality evidence, and next-step guidance, then returned current queue and active tasks to empty.
+- `IM040/US660` added read-only downstream result navigation from selected-batch application status to comparison and review result paths, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

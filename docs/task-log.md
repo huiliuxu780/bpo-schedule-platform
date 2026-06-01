@@ -1282,6 +1282,17 @@
 
 ### 2026-06-01
 
+- task_id: `IM040`
+- source_ids:
+  - `R740`
+- story_ids:
+  - `US660`
+- action: 增加导入中心应用结果到下游结果导航。
+- status: `done`
+- notes: `/data-quality` 的应用准备度区域现在展示只读下游结果导航，按批次应用状态、文件类型、版本和质量状态提示对比结果 API、复核案例 API 或前置修正路径；不新增后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限或生产流程能力。
+
+### 2026-06-01
+
 - task_id: `IM039`
 - source_ids:
   - `R739`

@@ -4,6 +4,33 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM040 导入中心应用结果到下游结果导航
+
+#### 审计结论
+
+- `IM040/US660` 已在 `/data-quality` 的应用准备度区域增加“下游结果导航”。
+- 模型层新增 `summarizeImportDownstreamResultNavigation`，根据应用状态、文件类型、版本、失败行和记录数输出对比结果、复核案例或前置修正路径。
+- 页面使用现有 shadcn `Card`、`Badge`、`Button` 组合展示只读导航，并把对比结果和复核案例链接指向现有本地 API 结果列表路径。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是前端只读导航，不是对比结果列表 UI、复核案例列表 UI、复核结论写入、审批、导出或批量处理。
+- 后续若要把 `/api/v1/comparison-runs` 和 `/api/v1/review-cases` 做成业务列表页，需要另开受控任务。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportDownstreamResultNavigation` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，25 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- shadcn 快查：新增文件范围未发现 `space-x/space-y` 或硬编码灰阶色。
+- 页面 smoke：`http://127.0.0.1:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 返回 200，包含 `下游结果导航` 和行动入口。
+- In-app browser：`http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1#import-apply-readiness` 可见 `下游结果导航`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM039 导入中心数据质量到履约异常追踪可见性
 
 #### 审计结论

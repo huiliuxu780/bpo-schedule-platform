@@ -11,7 +11,9 @@ import {
   type ImportApplyReadinessResponse,
   type ImportBatchFilters,
   type ImportBatchListRow,
+  type ImportDownstreamResultNavigation,
   type ImportExceptionGuidance,
+  buildImportApiUrl,
   filterImportBatches,
   formatImportApplicationStatus,
   formatImportFileType,
@@ -22,9 +24,11 @@ import {
   summarizeImportApplicationVisibility,
   summarizeImportBatchReviewGuide,
   summarizeImportBatches,
+  summarizeImportDownstreamResultNavigation,
   summarizeImportExceptionGuidance,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
@@ -234,6 +238,7 @@ export function ImportCenterApiPanel({
                   readinessError={readinessError}
                 />
                 <ApplicationVisibilityPanel batch={selectedBatch} readiness={readiness} />
+                <DownstreamNavigationPanel batch={selectedBatch} readiness={readiness} />
                 {readinessError ? (
                   <EmptyState title="准备度读取失败" detail={readinessError} compact />
                 ) : readiness ? (
@@ -618,6 +623,97 @@ function ApplicationVisibilityPanel({
       </div>
     </div>
   )
+}
+
+function DownstreamNavigationPanel({
+  batch,
+  readiness,
+}: {
+  batch: ImportBatchListRow
+  readiness: ImportApplyReadinessResponse | null
+}) {
+  const navigation = summarizeImportDownstreamResultNavigation({ batch, readiness })
+
+  return (
+    <div
+      className={cn(
+        "grid gap-3 rounded-md border p-3 text-sm",
+        navigation.tone === "blocked"
+          ? "border-destructive/40 bg-destructive/10"
+          : navigation.tone === "ready"
+            ? "border-emerald-500/30 bg-emerald-500/10"
+            : navigation.tone === "done"
+              ? "bg-muted/40"
+              : "bg-muted/30"
+      )}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-medium">下游结果导航</span>
+        <Badge
+          variant={
+            navigation.tone === "blocked"
+              ? "destructive"
+              : navigation.tone === "done"
+                ? "secondary"
+                : "outline"
+          }
+        >
+          {formatDownstreamNavigationTone(navigation.tone)}
+        </Badge>
+      </div>
+      <div>
+        <div className="font-medium">{navigation.title}</div>
+        <p className="mt-1 text-muted-foreground">{navigation.detail}</p>
+      </div>
+      <div className="grid gap-2 md:grid-cols-2">
+        <ApplicationMetric label="结果线索" value={navigation.comparisonLabel} />
+        <ApplicationMetric label="复核线索" value={navigation.reviewLabel} />
+        <ApplicationMetric
+          label="证据"
+          value={navigation.evidenceLabel}
+          className="md:col-span-2"
+        />
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button asChild size="sm" variant={navigation.tone === "blocked" ? "outline" : "default"}>
+          <Link href={formatDownstreamHref(navigation.primaryHref)}>
+            {navigation.primaryActionLabel}
+          </Link>
+        </Button>
+        <Button asChild size="sm" variant="outline">
+          <Link href={formatDownstreamHref(navigation.secondaryHref)}>
+            {navigation.secondaryActionLabel}
+          </Link>
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function formatDownstreamHref(href: string): string {
+  if (href.startsWith("/api/")) {
+    return buildImportApiUrl(href)
+  }
+
+  return href
+}
+
+function formatDownstreamNavigationTone(
+  tone: ImportDownstreamResultNavigation["tone"]
+): string {
+  if (tone === "blocked") {
+    return "先处理"
+  }
+
+  if (tone === "ready") {
+    return "待应用"
+  }
+
+  if (tone === "done") {
+    return "可追踪"
+  }
+
+  return "待判断"
 }
 
 function ApplicationMetric({

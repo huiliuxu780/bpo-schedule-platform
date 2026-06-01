@@ -1560,3 +1560,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端只读质量到异常影响追踪和模型 helper；不新增依赖，不做后端、schema/migration、真实异常查询、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R740 - 导入中心应用结果到下游结果导航
+
+```yaml
+id: R740
+module: "导入中心"
+description: "导入中心已经能展示应用状态、批次明细和数据质量到履约异常的影响追踪后，需要把已应用或未应用批次转成下游对比结果、复核案例和前置修正的只读导航，让数据管理员知道导入完成后该继续追踪哪里。"
+source: "PM requested continuing import-center production usability after IM039 and requested installing shadcn skills before continued frontend development on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端只读下游结果导航和模型 helper；不新增依赖，不做后端、schema/migration、真实异常查询、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```
