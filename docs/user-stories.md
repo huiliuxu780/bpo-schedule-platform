@@ -3131,3 +3131,26 @@ dependencies:
   - "US669"
 status: "done"
 ```
+
+### US671 - 复核结论预览只读 drilldown
+
+```yaml
+id: US671
+requirement_ids:
+  - R751
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望批次详情页能把当前下游复核案例汇总成只读结论预览，以便先判断建议结论、证据和残余风险，再决定是否进入后续受控处理。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 的结果追踪页签展示复核结论预览。"
+  - "预览根据未关闭复核案例、对比结果、质量问题和读取错误生成建议结论。"
+  - "预览展示关键证据、残余风险和下一步，不提供提交、关闭、审批、导出或批量操作。"
+  - "无复核案例、结果读取失败或批次未进入下游闭环时展示清晰只读空态。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US670"
+status: "done"
+```

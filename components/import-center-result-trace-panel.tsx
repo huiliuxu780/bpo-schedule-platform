@@ -6,6 +6,7 @@ import {
   ArrowRight,
   CheckCircle2,
   CircleSlash,
+  ClipboardCheck,
   ClipboardList,
   ExternalLink,
 } from "lucide-react"
@@ -17,11 +18,14 @@ import {
   type ImportComparisonRunRecord,
   type ImportDownstreamResultDrilldown,
   type ImportQualityImpactAggregation,
+  type ImportReviewConclusionPreview,
   type ImportResultTrace,
   type ImportReviewCaseRecord,
   buildImportApiUrl,
+  buildImportReviewCasesUrl,
   summarizeImportDownstreamResultDrilldown,
   summarizeImportQualityImpactAggregation,
+  summarizeImportReviewConclusionPreview,
   summarizeImportResultTrace,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -80,6 +84,14 @@ export function ImportCenterResultTracePanel({
     comparisonError,
     reviewError,
   })
+  const conclusionPreview = summarizeImportReviewConclusionPreview({
+    businessDate,
+    comparisonRuns,
+    reviewCases,
+    qualityImpact,
+    comparisonError,
+    reviewError,
+  })
 
   return (
     <Card id="import-result-trace" className="scroll-mt-16 overflow-hidden">
@@ -99,6 +111,10 @@ export function ImportCenterResultTracePanel({
       <CardContent className="grid gap-4">
         <ResultDrilldownSummary drilldown={drilldown} />
         <QualityImpactAggregationPanel aggregation={qualityImpact} />
+        <ReviewConclusionPreviewPanel
+          businessDate={businessDate}
+          preview={conclusionPreview}
+        />
         <ResultTraceSummary trace={trace} />
 
         <section className="grid gap-4 xl:grid-cols-2">
@@ -107,6 +123,76 @@ export function ImportCenterResultTracePanel({
         </section>
       </CardContent>
     </Card>
+  )
+}
+
+function ReviewConclusionPreviewPanel({
+  businessDate,
+  preview,
+}: {
+  businessDate: string | null
+  preview: ImportReviewConclusionPreview
+}) {
+  return (
+    <section className="grid gap-4 rounded-md border bg-muted/30 p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid min-w-0 gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <ClipboardCheck className="size-4 text-muted-foreground" />
+            <h3 className="text-sm font-medium">复核结论预览</h3>
+            <Badge
+              variant={preview.tone === "blocked" ? "destructive" : "outline"}
+            >
+              {formatReviewConclusionTone(preview.tone)}
+            </Badge>
+          </div>
+          <div>
+            <div className="font-medium">{preview.title}</div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {preview.suggestedConclusion}
+            </p>
+          </div>
+        </div>
+        <Button asChild size="sm" variant="outline">
+          <Link
+            href={
+              businessDate
+                ? buildImportReviewCasesUrl(businessDate)
+                : "#import-result-trace"
+            }
+          >
+            查看复核案例
+            <ExternalLink data-icon="inline-end" />
+          </Link>
+        </Button>
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-2">
+        <TraceFocus
+          icon={<ClipboardList className="size-4" />}
+          label="建议证据"
+          value={preview.evidenceSummary}
+        />
+        <TraceFocus
+          icon={<AlertTriangle className="size-4" />}
+          label="残余风险"
+          value={preview.residualRisk}
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-xs font-medium text-muted-foreground">结论依据</div>
+        <div className="flex flex-wrap gap-2">
+          {preview.evidence.map((item) => (
+            <Badge key={item} variant="outline">
+              {item}
+            </Badge>
+          ))}
+        </div>
+      </div>
+
+      <p className="text-sm text-muted-foreground">{preview.nextAction}</p>
+    </section>
   )
 }
 
@@ -515,6 +601,24 @@ function formatQualityImpactTone(
   }
 
   return "等待明细"
+}
+
+function formatReviewConclusionTone(
+  tone: ImportReviewConclusionPreview["tone"]
+): string {
+  if (tone === "blocked") {
+    return "暂缓关闭"
+  }
+
+  if (tone === "warning") {
+    return "需复核"
+  }
+
+  if (tone === "ready") {
+    return "可摘要"
+  }
+
+  return "等待结果"
 }
 
 function formatComparisonType(

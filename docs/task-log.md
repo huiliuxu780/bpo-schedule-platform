@@ -1477,3 +1477,14 @@
 - action: 执行 F041-F059 20-task table parity QA 收口。
 - status: `done`
 - notes: 模型测试覆盖三张表的本地筛选与统计；未新增依赖、未改后端契约、未接数据库、未引入审批、导出、批量、权限或生产公式；current queue 与 active tasks 已清空。
+
+### 2026-06-01
+
+- task_id: `IM051`
+- source_ids:
+  - `R751`
+- story_ids:
+  - `US671`
+- action: 增加批次详情结果追踪的只读复核结论预览。
+- status: `done`
+- notes: `/data-quality/[batchId]` 结果追踪现在汇总建议结论、关键证据、残余风险和下一步；本轮不新增复核关闭写入、后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

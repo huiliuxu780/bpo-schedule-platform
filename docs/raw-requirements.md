@@ -1703,3 +1703,16 @@ version: "1.0"
 status: "done"
 notes: "本轮只做本地验证脚本和 check.sh 集成；不新增依赖，不调用远程 shadcn CLI 作为硬依赖，不修改产品 UI、后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
 ```
+
+### R751 - 复核结论预览只读 drilldown
+
+```yaml
+id: R751
+module: "导入中心"
+description: "批次详情页已有下游结果、质量影响和复核案例列表，但主管仍缺少可直接阅读的复核结论草案。需要在结果追踪页签补充只读结论预览，汇总建议结论、关键证据和残余风险。"
+source: "PM agreed to continue with read-only review conclusion preview after IM050 on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读复核结论预览；不新增复核关闭写入，不做后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
+```

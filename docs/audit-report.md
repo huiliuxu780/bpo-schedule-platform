@@ -2490,3 +2490,30 @@
 - 下一次新增业务模块需求时，先登记到 `docs/raw-requirements.md`。
 - 再拆分到 `docs/user-stories.md`，并检查依赖、优先级和阻塞项。
 - 涉及结算、权限、导出、批量操作、真实数据来源时，必须先 PM 确认。
+
+### 2026-06-01 - IM051 复核结论预览只读 drilldown
+
+#### 审计结论
+
+- `IM051/US671` 已在 `/data-quality/[batchId]` 结果追踪页签增加“复核结论预览”。
+- 模型层新增只读结论摘要，按读取错误、复核案例、对比结果和质量影响生成建议结论、关键证据、残余风险和下一步。
+- 页面保留现有结果追踪层级，并在质量影响聚合之后展示结论预览；“查看复核案例”仅作为只读下游入口，不提交、不关闭、不审批、不导出、不批量处理。
+- 本轮未新增依赖，未修改 package/lockfile，未触碰后端、schema/migration、真实外部接口、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是主管阅读用的结论预览，不是复核关闭写入、证据补录或审批流。
+- 如果后续要真正提交复核结论或关闭异常，必须另开受控任务并明确权限、审计、幂等和回滚边界。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportReviewConclusionPreview` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，36 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过；直接用全局 Node 24 构建会触发已知 native addon 问题，项目校验以 Node 22 为准。
+- page smoke：内置浏览器本地 URL 被 client 拦截；临时生产服务 `http://127.0.0.1:3023/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` 的 HTTP smoke 命中 `复核结论预览`、`结论依据`、`残余风险`、`查看复核案例`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。

@@ -195,6 +195,7 @@ Current invariants:
 - `IM048/US668` added read-only downstream result drilldown in `/data-quality/[batchId]`, showing whether the selected batch is blocked, waiting for downstream results, or already has actionable comparison/review records, then returned current queue and active tasks to empty.
 - `IM049/US669` added read-only quality-to-exception reverse aggregation in `/data-quality/[batchId]`, grouping failed/warning import rows by error field and reason and relating them to same-business-date comparison/review candidates, then returned current queue and active tasks to empty.
 - `IM050/US670` added a local shadcn/ui convention gate into `bash scripts/check.sh`, covering project shadcn config, `space-x/space-y`, hardcoded Tailwind color scales, arbitrary radius utilities, and documented baseline debt without adding dependencies or changing product UI.
+- `IM051/US671` added read-only review conclusion preview in `/data-quality/[batchId]`, summarizing suggested conclusion, evidence, residual risk, and next action from existing comparison/review/quality context, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -168,6 +168,22 @@ export type ImportQualityImpactAggregation = {
   groups: ImportQualityImpactIssueGroup[]
 }
 
+export type ImportReviewConclusionPreviewTone =
+  | "blocked"
+  | "warning"
+  | "ready"
+  | "empty"
+
+export type ImportReviewConclusionPreview = {
+  tone: ImportReviewConclusionPreviewTone
+  title: string
+  suggestedConclusion: string
+  evidenceSummary: string
+  residualRisk: string
+  nextAction: string
+  evidence: string[]
+}
+
 export type ImportBatchHealth = "blocked" | "warning" | "ready_candidate" | "applied"
 
 export type ImportRowCorrectionNoticeTone = "success" | "failed"
@@ -1426,6 +1442,133 @@ export function summarizeImportQualityImpactAggregation({
   }
 }
 
+export function summarizeImportReviewConclusionPreview({
+  businessDate,
+  comparisonRuns,
+  reviewCases,
+  qualityImpact,
+  comparisonError,
+  reviewError,
+}: {
+  businessDate: string | null
+  comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
+  qualityImpact: ImportQualityImpactAggregation
+  comparisonError: string | null
+  reviewError: string | null
+}): ImportReviewConclusionPreview {
+  const openReviewCases = reviewCases.filter((reviewCase) => reviewCase.status !== "closed")
+  const comparisonResults = comparisonRuns.reduce(
+    (total, run) => total + run.total_results,
+    0
+  )
+  const primaryReviewCase = openReviewCases[0] ?? reviewCases[0] ?? null
+  const primaryComparisonRun =
+    comparisonRuns.find((run) => run.status === "completed") ?? comparisonRuns[0] ?? null
+  const evidence = [
+    `业务日 ${businessDate ?? "未选择"}`,
+    reviewError ? "复核读取失败" : `复核案例 ${reviewCases.length.toLocaleString("zh-CN")} 个`,
+    reviewError ? `复核案例 ${reviewCases.length.toLocaleString("zh-CN")} 个` : `未关闭 ${openReviewCases.length.toLocaleString("zh-CN")} 个`,
+    comparisonError ? "对比读取失败" : `对比结果 ${comparisonResults.toLocaleString("zh-CN")} 条`,
+  ]
+
+  if (comparisonError || reviewError) {
+    return {
+      tone: "blocked",
+      title: "暂不能生成结论预览",
+      suggestedConclusion: `${reviewError ? "复核案例读取失败" : "对比结果读取失败"}，当前结论预览只能作为占位，不能用于关闭判断。`,
+      evidenceSummary: formatReviewConclusionEvidenceSummary({
+        primaryComparisonRun,
+        primaryReviewCase,
+        qualityImpact,
+        comparisonError,
+        reviewError,
+      }),
+      residualRisk: "下游结果读取不完整，可能漏掉未关闭异常或证据缺口。",
+      nextAction: "先恢复下游结果读取，再生成复核结论预览。",
+      evidence,
+    }
+  }
+
+  if (reviewCases.length === 0 && comparisonRuns.length === 0) {
+    return {
+      tone: "empty",
+      title: "等待复核结果",
+      suggestedConclusion: "当前业务日还没有复核案例或对比结果，暂不形成结论预览。",
+      evidenceSummary: formatReviewConclusionEvidenceSummary({
+        primaryComparisonRun,
+        primaryReviewCase,
+        qualityImpact,
+        comparisonError,
+        reviewError,
+      }),
+      residualRisk: "下游结果尚未生成，无法判断是否存在需要主管处理的异常。",
+      nextAction: "先确认对比计算和复核案例是否已生成，再查看结论预览。",
+      evidence,
+    }
+  }
+
+  const qualityIssueRows = qualityImpact.groups.reduce(
+    (total, group) => total + group.rowCount,
+    0
+  )
+
+  if (openReviewCases.length > 0) {
+    return {
+      tone: "blocked",
+      title: "建议暂缓关闭复核",
+      suggestedConclusion: `当前有 ${openReviewCases.length.toLocaleString("zh-CN")} 个未关闭复核案例，且首要质量问题为 ${qualityImpact.topIssueLabel}；建议先补齐证据后再关闭。`,
+      evidenceSummary: formatReviewConclusionEvidenceSummary({
+        primaryComparisonRun,
+        primaryReviewCase,
+        qualityImpact,
+        comparisonError,
+        reviewError,
+      }),
+      residualRisk:
+        qualityIssueRows > 0
+          ? `仍有 ${openReviewCases.length.toLocaleString("zh-CN")} 个未关闭复核案例和 ${qualityIssueRows.toLocaleString("zh-CN")} 行质量问题；直接关闭会留下证据缺口。`
+          : `仍有 ${openReviewCases.length.toLocaleString("zh-CN")} 个未关闭复核案例；直接关闭会留下处理缺口。`,
+      nextAction: "先处理首要质量问题和未关闭复核案例，确认补证后再进入受控关闭流程。",
+      evidence,
+    }
+  }
+
+  if (qualityIssueRows > 0) {
+    return {
+      tone: "warning",
+      title: "建议复核后再关闭",
+      suggestedConclusion: `复核案例均已关闭，但仍有 ${qualityIssueRows.toLocaleString("zh-CN")} 行质量问题；建议先确认质量问题不影响结论。`,
+      evidenceSummary: formatReviewConclusionEvidenceSummary({
+        primaryComparisonRun,
+        primaryReviewCase,
+        qualityImpact,
+        comparisonError,
+        reviewError,
+      }),
+      residualRisk: "质量问题仍可能影响异常归因或证据完整性。",
+      nextAction: "复核质量问题证据后，再进入受控关闭流程。",
+      evidence,
+    }
+  }
+
+  return {
+    tone: "ready",
+    title: "可作为关闭前摘要",
+    suggestedConclusion: "当前未发现未关闭复核案例或行级质量问题，可作为后续受控关闭前的只读摘要。",
+    evidenceSummary: formatReviewConclusionEvidenceSummary({
+      primaryComparisonRun,
+      primaryReviewCase,
+      qualityImpact,
+      comparisonError,
+      reviewError,
+    }),
+    residualRisk: "仍需在正式关闭写入前确认业务证据和责任人意见。",
+    nextAction: "后续关闭写入、审批或批量处理必须进入单独受控任务。",
+    evidence,
+  }
+}
+
 export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): string {
   const standardFields = row.raw_data.standard_fields
   if (isRecord(standardFields)) {
@@ -2156,6 +2299,34 @@ function formatQualityImpactDownstreamLabel({
     : `对比结果 ${comparisonResults.toLocaleString("zh-CN")} 条`
 
   return `${reviewLabel} · ${openLabel} · ${comparisonLabel}`
+}
+
+function formatReviewConclusionEvidenceSummary({
+  primaryComparisonRun,
+  primaryReviewCase,
+  qualityImpact,
+  comparisonError,
+  reviewError,
+}: {
+  primaryComparisonRun: ImportComparisonRunRecord | null
+  primaryReviewCase: ImportReviewCaseRecord | null
+  qualityImpact: ImportQualityImpactAggregation
+  comparisonError: string | null
+  reviewError: string | null
+}): string {
+  const reviewLabel = reviewError
+    ? "复核案例读取失败"
+    : primaryReviewCase
+      ? `复核 ${primaryReviewCase.case_id} · ${primaryReviewCase.severity} · ${primaryReviewCase.owner_id}`
+      : "复核 暂无案例"
+  const comparisonLabel = comparisonError
+    ? "对比结果读取失败"
+    : primaryComparisonRun
+      ? `对比 ${primaryComparisonRun.run_id} · ${formatComparisonRunType(primaryComparisonRun.comparison_type)} · ${primaryComparisonRun.total_results.toLocaleString("zh-CN")} 条结果`
+      : "对比结果 0 条"
+  const qualityLabel = `质量 ${qualityImpact.topIssueLabel}`
+
+  return `${reviewLabel}；${comparisonLabel}；${qualityLabel}`
 }
 
 function appendQualityImpactEvidence(
