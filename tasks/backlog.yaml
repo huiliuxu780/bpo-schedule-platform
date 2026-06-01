@@ -5693,3 +5693,48 @@ tasks:
       - "范围扩展到新增业务能力、真实外部接口、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM048
+    title: "批次详情下游结果追踪 drilldown"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM047"]
+    allowed_files:
+      - "app/data-quality/[batchId]/page.tsx"
+      - "components/import-center-result-trace-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality/[batchId]` 的结果追踪页签展示下游结果判断。"
+      - "未应用、准备度阻塞、无业务日或结果查询失败时，页面展示清晰阻塞原因和下一步入口。"
+      - "已有 comparison-runs 或 review-cases 时，页面给出优先查看的对比运行或复核案例、证据和只读 API 入口。"
+      - "对比结果和复核案例表保留在详情页结果追踪工作区下方，不回流到列表页。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

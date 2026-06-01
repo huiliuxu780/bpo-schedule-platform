@@ -1664,3 +1664,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读问题分组；不新增应用写入按钮、不做批量处理、审批、导出、权限、后端、schema/migration、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R748 - 批次详情下游结果追踪 drilldown
+
+```yaml
+id: R748
+module: "导入中心"
+description: "批次详情页已经能展示对比结果和复核案例列表，但还缺少对当前批次是否已经进入下游闭环、应该先看哪个结果、阻塞在哪里的判断。需要在结果追踪页签补充只读 drilldown 判断。"
+source: "Current recommendation after IM047 and PM requested continuing development on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读下游结果 drilldown；不新增依赖，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+```

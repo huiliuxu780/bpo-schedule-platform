@@ -1326,6 +1326,17 @@
 
 ### 2026-06-01
 
+- task_id: `IM048`
+- source_ids:
+  - `R748`
+- story_ids:
+  - `US668`
+- action: 增加批次详情下游结果追踪 drilldown。
+- status: `done`
+- notes: `/data-quality/[batchId]` 的结果追踪页签现在展示下游结果判断、优先对比线索、优先复核线索、判断证据和只读入口；未应用或准备度阻塞时引导先处理导入阻塞。保持前端只读，不新增后端、schema/migration、复核写入、审批、导出、批量、权限或生产流程能力。
+
+### 2026-06-01
+
 - task_id: `IM037`
 - source_ids:
   - `R737`

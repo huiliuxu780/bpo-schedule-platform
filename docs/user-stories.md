@@ -3062,3 +3062,26 @@ dependencies:
   - "US666"
 status: "done"
 ```
+
+### US668 - 批次详情下游结果追踪 drilldown
+
+```yaml
+id: US668
+requirement_ids:
+  - R748
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望批次详情页的结果追踪能判断当前批次是否已经进入对比和复核闭环，并给出优先查看的下游结果入口。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 的结果追踪页签展示下游结果判断。"
+  - "未应用、准备度阻塞、无业务日或结果查询失败时，页面展示清晰阻塞原因和下一步入口。"
+  - "已有 comparison-runs 或 review-cases 时，页面给出优先查看的对比运行或复核案例、证据和只读 API 入口。"
+  - "对比结果和复核案例表保留在详情页结果追踪工作区下方，不回流到列表页。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US667"
+status: "done"
+```

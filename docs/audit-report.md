@@ -4,6 +4,33 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM048 批次详情下游结果追踪 drilldown
+
+#### 审计结论
+
+- `IM048/US668` 已在 `/data-quality/[batchId]` 的“结果追踪”页签增加下游结果判断区。
+- 页面现在按当前批次应用状态、准备度、业务日、对比结果和复核案例判断：需处理、等待结果或可追踪。
+- 未应用或准备度阻塞时，优先引导处理失败行和应用准备度；已有结果时，优先展示未关闭复核案例或关联对比运行。
+- 对比结果表和复核案例表仍保留在详情页结果追踪工作区下方，没有回流到列表页。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只做只读 drilldown 和已有 API 入口，不创建复核结论，也不触发对比计算或批次应用写入。
+- 后续如继续深化，应优先做数据质量问题到下游异常影响的反向聚合，不要混入审批、导出、批量、权限或生产规则。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportDownstreamResultDrilldown` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，32 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- shadcn 快查：触达前端文件范围未发现 `space-x/space-y`、硬编码灰阶色阶或新的非语义色彩类。
+- in-app browser smoke：`/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` 的“结果追踪”Tab 包含“下游结果判断”“先处理导入阻塞”“优先对比线索”“优先复核线索”“判断证据”；console error 为空。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM047 应用准备度问题分组
 
 #### 审计结论

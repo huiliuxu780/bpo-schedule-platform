@@ -130,6 +130,8 @@ export default async function ImportBatchDetailPage({
             }
             resultTracePanel={
               <ImportCenterResultTracePanel
+                batch={selectedBatch}
+                readiness={readinessResult.data}
                 businessDate={businessDate}
                 comparisonRuns={comparisonResult.data ?? []}
                 comparisonError={comparisonResult.error}

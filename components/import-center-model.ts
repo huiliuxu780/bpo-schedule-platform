@@ -260,6 +260,22 @@ export type ImportResultTrace = {
   nextAction: string
 }
 
+export type ImportDownstreamResultDrilldownTone = "ready" | "empty" | "blocked"
+
+export type ImportDownstreamResultDrilldown = {
+  tone: ImportDownstreamResultDrilldownTone
+  title: string
+  detail: string
+  nextAction: string
+  comparisonFocus: string
+  reviewFocus: string
+  primaryActionLabel: string
+  primaryHref: string
+  secondaryActionLabel: string
+  secondaryHref: string
+  evidence: string[]
+}
+
 export type ImportPageHierarchyDetailTab =
   | "status-check"
   | "batch-detail"
@@ -905,6 +921,209 @@ export function summarizeImportResultTrace({
     reviewSummary,
     nextAction: "继续查看对比结果和复核案例明细，确认导入数据是否已进入业务闭环。",
   }
+}
+
+export function summarizeImportDownstreamResultDrilldown({
+  batch,
+  readiness,
+  businessDate,
+  comparisonRuns,
+  reviewCases,
+  comparisonError,
+  reviewError,
+}: {
+  batch: ImportBatchListRow | null
+  readiness: ImportApplyReadinessResponse | null
+  businessDate: string | null
+  comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
+  comparisonError: string | null
+  reviewError: string | null
+}): ImportDownstreamResultDrilldown {
+  const versionLabel = batch?.import_version_id ?? readiness?.import_version_id ?? "未生成"
+  const completedComparisonRuns = comparisonRuns.filter(
+    (run) => run.status === "completed"
+  )
+  const openReviewCases = reviewCases.filter((reviewCase) => reviewCase.status !== "closed")
+  const primaryComparisonRun =
+    completedComparisonRuns[0] ?? comparisonRuns[0] ?? null
+  const primaryReviewCase = openReviewCases[0] ?? reviewCases[0] ?? null
+
+  if (comparisonError || reviewError) {
+    return {
+      tone: "blocked",
+      title: "下游结果读取受阻",
+      detail: "当前业务日的对比结果或复核案例读取失败，不能把它判断为无下游结果。",
+      nextAction: "先确认结果查询 API，再回到批次应用状态和业务日范围判断。",
+      comparisonFocus: comparisonError ? "对比结果读取失败" : formatDrilldownComparisonFocus(primaryComparisonRun),
+      reviewFocus: reviewError ? "复核案例读取失败" : formatDrilldownReviewFocus(primaryReviewCase),
+      primaryActionLabel: "查看对比结果 API",
+      primaryHref: businessDate
+        ? buildImportComparisonRunsUrl(businessDate)
+        : buildImportApiUrl("/api/v1/comparison-runs"),
+      secondaryActionLabel: "查看复核案例 API",
+      secondaryHref: businessDate
+        ? buildImportReviewCasesUrl(businessDate)
+        : buildImportApiUrl("/api/v1/review-cases"),
+      evidence: [
+        `业务日 ${businessDate ?? "未确认"}`,
+        comparisonError ? "对比结果读取失败" : `对比结果 ${comparisonRuns.length.toLocaleString("zh-CN")} 个`,
+        reviewError ? "复核案例读取失败" : `复核案例 ${reviewCases.length.toLocaleString("zh-CN")} 个`,
+        `版本 ${versionLabel}`,
+      ],
+    }
+  }
+
+  if (!batch || !businessDate) {
+    return {
+      tone: "empty",
+      title: "等待批次业务日",
+      detail: "还没有可用于追踪下游结果的批次业务日，无法定位对比结果和复核案例。",
+      nextAction: "先返回批次列表选择有效批次，再进入结果追踪。",
+      comparisonFocus: "等待批次业务日",
+      reviewFocus: "等待批次业务日",
+      primaryActionLabel: "返回批次列表",
+      primaryHref: "/data-quality",
+      secondaryActionLabel: "查看批次明细",
+      secondaryHref: "#import-batch-detail",
+      evidence: ["业务日 未确认", `版本 ${versionLabel}`],
+    }
+  }
+
+  if (
+    batch.application_status !== "applied" ||
+    readiness?.readiness_status === "blocked"
+  ) {
+    const failedRows = readiness?.failed_rows ?? batch.failed_rows
+    return {
+      tone: "blocked",
+      title: "先处理导入阻塞",
+      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响后续对比与复核判断。",
+      nextAction: "先完成失败行修正和应用准备度检查，再判断下游结果。",
+      comparisonFocus: "等待应用版本",
+      reviewFocus: failedRows > 0 ? "等待质量问题清理" : "等待对比结果",
+      primaryActionLabel: failedRows > 0 ? "处理失败行" : "查看应用准备度",
+      primaryHref: failedRows > 0 ? "#import-row-correction" : "#import-apply-readiness",
+      secondaryActionLabel: "查看应用准备度",
+      secondaryHref: "#import-apply-readiness",
+      evidence: [
+        `应用状态 ${formatImportApplicationStatus(batch.application_status)}`,
+        `失败 ${failedRows.toLocaleString("zh-CN")} 行`,
+        `准备度 ${readiness ? formatDrilldownReadinessStatus(readiness.readiness_status) : "未返回"}`,
+        `业务日 ${businessDate}`,
+      ],
+    }
+  }
+
+  if (comparisonRuns.length === 0 && reviewCases.length === 0) {
+    return {
+      tone: "empty",
+      title: "等待下游结果生成",
+      detail: `当前批次已应用，但业务日 ${businessDate} 还没有查询到对比结果或复核案例。`,
+      nextAction: "确认对比计算是否已触发；若尚未触发，不要把当前批次判断为已形成闭环。",
+      comparisonFocus: "暂无对比运行",
+      reviewFocus: "暂无复核案例",
+      primaryActionLabel: "查看对比结果 API",
+      primaryHref: buildImportComparisonRunsUrl(businessDate),
+      secondaryActionLabel: "查看复核案例 API",
+      secondaryHref: buildImportReviewCasesUrl(businessDate),
+      evidence: [
+        `应用状态 ${formatImportApplicationStatus(batch.application_status)}`,
+        `已应用 ${batch.applied_record_count.toLocaleString("zh-CN")} 条`,
+        `版本 ${versionLabel}`,
+        `业务日 ${businessDate}`,
+      ],
+    }
+  }
+
+  const hasOpenReviewCases = openReviewCases.length > 0
+  return {
+    tone: "ready",
+    title: "下游闭环已有结果",
+    detail: `当前批次已应用，并且业务日 ${businessDate} 已有对比结果或复核案例；${hasOpenReviewCases ? "优先处理未关闭复核案例。" : "先确认对比结果是否需要生成复核案例。"}`,
+    nextAction: hasOpenReviewCases
+      ? "先查看未关闭复核案例，再回看关联对比运行和来源版本。"
+      : "先查看已完成对比运行，再判断是否需要进入复核。",
+    comparisonFocus: formatDrilldownComparisonFocus(primaryComparisonRun),
+    reviewFocus: formatDrilldownReviewFocus(primaryReviewCase),
+    primaryActionLabel: hasOpenReviewCases ? "查看未关闭复核案例" : "查看对比运行",
+    primaryHref:
+      hasOpenReviewCases && primaryReviewCase
+        ? buildImportApiUrl(
+            `/api/v1/review-cases/${encodeURIComponent(primaryReviewCase.case_id)}`
+          )
+        : primaryComparisonRun
+          ? buildImportApiUrl(
+              `/api/v1/comparison-runs/${encodeURIComponent(primaryComparisonRun.run_id)}`
+            )
+          : buildImportComparisonRunsUrl(businessDate),
+    secondaryActionLabel: hasOpenReviewCases ? "查看关联对比运行" : "查看复核案例",
+    secondaryHref: primaryComparisonRun
+      ? buildImportApiUrl(
+          `/api/v1/comparison-runs/${encodeURIComponent(primaryComparisonRun.run_id)}`
+        )
+      : buildImportReviewCasesUrl(businessDate),
+    evidence: [
+      `应用状态 ${formatImportApplicationStatus(batch.application_status)}`,
+      `对比结果 ${comparisonRuns.length.toLocaleString("zh-CN")} 个`,
+      `复核未关闭 ${openReviewCases.length.toLocaleString("zh-CN")} 个`,
+      `业务日 ${businessDate}`,
+    ],
+  }
+}
+
+function formatDrilldownComparisonFocus(run: ImportComparisonRunRecord | null): string {
+  if (!run) {
+    return "暂无对比运行"
+  }
+
+  return `${run.run_id} · ${formatComparisonRunType(run.comparison_type)} · ${formatComparisonRunStatus(run.status)} · ${run.total_results.toLocaleString("zh-CN")} 条结果`
+}
+
+function formatDrilldownReviewFocus(reviewCase: ImportReviewCaseRecord | null): string {
+  if (!reviewCase) {
+    return "暂无复核案例"
+  }
+
+  return `${reviewCase.case_id} · ${reviewCase.severity} · ${formatReviewCaseStatus(reviewCase.status)} · ${reviewCase.owner_id}`
+}
+
+function formatComparisonRunType(
+  type: ImportComparisonRunRecord["comparison_type"]
+): string {
+  if (type === "forecast_vs_schedule") {
+    return "预测 vs 排班"
+  }
+
+  return "排班 vs 实际"
+}
+
+function formatComparisonRunStatus(status: ImportComparisonRunRecord["status"]): string {
+  if (status === "completed") {
+    return "完成"
+  }
+
+  return "失败"
+}
+
+function formatReviewCaseStatus(status: string): string {
+  if (status === "closed") {
+    return "已关闭"
+  }
+
+  if (status === "open") {
+    return "未关闭"
+  }
+
+  return status
+}
+
+function formatDrilldownReadinessStatus(status: ImportReadinessStatus): string {
+  if (status === "blocked") {
+    return "阻塞"
+  }
+
+  return "可应用"
 }
 
 export function summarizeImportPageHierarchy(params: {

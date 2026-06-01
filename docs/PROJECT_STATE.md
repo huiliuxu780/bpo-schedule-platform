@@ -192,6 +192,7 @@ Current invariants:
 - `IM045/US665` redesigned `/data-quality/[batchId]` into a single-column processing flow with overview cards, full-width processing tabs, and status check as the default tab, then returned current queue and active tasks to empty.
 - `IM046/US666` added read-only field-mapping template fit detail in `/data-quality/[batchId]`, including recommended template, field coverage, suggested field gaps, and source-to-standard mapping rows, then returned current queue and active tasks to empty.
 - `IM047/US667` added read-only apply-readiness issue grouping in `/data-quality/[batchId]`, covering failed rows, row-level required fields, version gaps, application state, and batch-level blockers, then returned current queue and active tasks to empty.
+- `IM048/US668` added read-only downstream result drilldown in `/data-quality/[batchId]`, showing whether the selected batch is blocked, waiting for downstream results, or already has actionable comparison/review records, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

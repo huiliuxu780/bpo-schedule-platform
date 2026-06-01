@@ -1,12 +1,23 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
-import { Activity, CircleSlash, ClipboardList, ExternalLink } from "lucide-react"
+import {
+  Activity,
+  ArrowRight,
+  CheckCircle2,
+  CircleSlash,
+  ClipboardList,
+  ExternalLink,
+} from "lucide-react"
 
 import {
+  type ImportApplyReadinessResponse,
+  type ImportBatchListRow,
   type ImportComparisonRunRecord,
+  type ImportDownstreamResultDrilldown,
   type ImportResultTrace,
   type ImportReviewCaseRecord,
   buildImportApiUrl,
+  summarizeImportDownstreamResultDrilldown,
   summarizeImportResultTrace,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +33,8 @@ import {
 } from "@/components/ui/table"
 
 type ImportCenterResultTracePanelProps = {
+  batch: ImportBatchListRow | null
+  readiness: ImportApplyReadinessResponse | null
   businessDate: string | null
   comparisonRuns: ImportComparisonRunRecord[]
   comparisonError: string | null
@@ -30,6 +43,8 @@ type ImportCenterResultTracePanelProps = {
 }
 
 export function ImportCenterResultTracePanel({
+  batch,
+  readiness,
   businessDate,
   comparisonRuns,
   comparisonError,
@@ -37,6 +52,15 @@ export function ImportCenterResultTracePanel({
   reviewError,
 }: ImportCenterResultTracePanelProps) {
   const trace = summarizeImportResultTrace({
+    businessDate,
+    comparisonRuns,
+    reviewCases,
+    comparisonError,
+    reviewError,
+  })
+  const drilldown = summarizeImportDownstreamResultDrilldown({
+    batch,
+    readiness,
     businessDate,
     comparisonRuns,
     reviewCases,
@@ -55,11 +79,12 @@ export function ImportCenterResultTracePanel({
               : "等待选中批次业务日"}
           </p>
         </div>
-        <Badge variant={trace.tone === "blocked" ? "destructive" : "outline"}>
-          {formatTraceTone(trace.tone)}
+        <Badge variant={drilldown.tone === "blocked" ? "destructive" : "outline"}>
+          {formatDrilldownTone(drilldown.tone)}
         </Badge>
       </CardHeader>
       <CardContent className="grid gap-4">
+        <ResultDrilldownSummary drilldown={drilldown} />
         <ResultTraceSummary trace={trace} />
 
         <section className="grid gap-4 xl:grid-cols-2">
@@ -68,6 +93,74 @@ export function ImportCenterResultTracePanel({
         </section>
       </CardContent>
     </Card>
+  )
+}
+
+function ResultDrilldownSummary({
+  drilldown,
+}: {
+  drilldown: ImportDownstreamResultDrilldown
+}) {
+  return (
+    <section className="grid gap-4 rounded-md border bg-muted/30 p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid min-w-0 gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <CheckCircle2 className="size-4 text-muted-foreground" />
+            <h3 className="text-sm font-medium">下游结果判断</h3>
+            <Badge
+              variant={drilldown.tone === "blocked" ? "destructive" : "secondary"}
+            >
+              {formatDrilldownTone(drilldown.tone)}
+            </Badge>
+          </div>
+          <div>
+            <div className="font-medium">{drilldown.title}</div>
+            <p className="mt-1 text-sm text-muted-foreground">{drilldown.detail}</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm">
+            <Link href={drilldown.primaryHref}>
+              {drilldown.primaryActionLabel}
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href={drilldown.secondaryHref}>
+              {drilldown.secondaryActionLabel}
+              <ExternalLink data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-2">
+        <TraceFocus
+          icon={<Activity className="size-4" />}
+          label="优先对比线索"
+          value={drilldown.comparisonFocus}
+        />
+        <TraceFocus
+          icon={<ClipboardList className="size-4" />}
+          label="优先复核线索"
+          value={drilldown.reviewFocus}
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-xs font-medium text-muted-foreground">判断证据</div>
+        <div className="flex flex-wrap gap-2">
+          {drilldown.evidence.map((item) => (
+            <Badge key={item} variant="outline">
+              {item}
+            </Badge>
+          ))}
+        </div>
+      </div>
+
+      <p className="text-sm text-muted-foreground">{drilldown.nextAction}</p>
+    </section>
   )
 }
 
@@ -241,6 +334,26 @@ function ReviewCasesTable({
   )
 }
 
+function TraceFocus({
+  icon,
+  label,
+  value,
+}: {
+  icon: ReactNode
+  label: string
+  value: string
+}) {
+  return (
+    <div className="flex min-w-0 items-start gap-3 rounded-md border bg-background/70 p-3">
+      <span className="mt-0.5 text-muted-foreground">{icon}</span>
+      <div className="min-w-0">
+        <div className="text-xs text-muted-foreground">{label}</div>
+        <div className="mt-1 truncate text-sm font-medium">{value}</div>
+      </div>
+    </div>
+  )
+}
+
 function TraceMetric({ icon, value }: { icon: ReactNode; value: string }) {
   return (
     <div className="flex min-w-0 items-center gap-2 rounded-md border bg-background/70 p-2">
@@ -262,16 +375,18 @@ function PanelState({ title, detail }: { title: string; detail: string }) {
   )
 }
 
-function formatTraceTone(tone: ImportResultTrace["tone"]): string {
+function formatDrilldownTone(
+  tone: ImportDownstreamResultDrilldown["tone"]
+): string {
   if (tone === "ready") {
     return "可追踪"
   }
 
   if (tone === "blocked") {
-    return "读取受阻"
+    return "需处理"
   }
 
-  return "暂无结果"
+  return "等待结果"
 }
 
 function formatComparisonType(
