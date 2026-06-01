@@ -6,6 +6,7 @@ import {
   buildImportBatchDetailUrl,
   buildImportBatchProcessingHref,
   buildImportComparisonRunsUrl,
+  buildImportQualityIssueReviewCasesHref,
   buildImportReviewCasesWorkspaceHref,
   buildImportFieldMappingTemplatesUrl,
   buildImportReviewCasesUrl,
@@ -590,6 +591,7 @@ test("import center result drilldown selects the most actionable downstream reco
       ],
       comparisonError: null,
       reviewError: null,
+      businessDate: "2026-05-11",
     }),
     {
       tone: "ready",
@@ -676,6 +678,7 @@ test("import center quality impact aggregation ranks issue groups by downstream 
       ],
       comparisonError: null,
       reviewError: null,
+      businessDate: "2026-05-11",
     }),
     {
       tone: "blocked",
@@ -695,6 +698,9 @@ test("import center quality impact aggregation ranks issue groups by downstream 
           openReviewCases: 1,
           comparisonResults: 15,
           impactLabel: "2 行问题 · 2 个复核案例 · 15 条对比结果",
+          reviewCasesHref: "/data-quality/review-cases?businessDate=2026-05-11&status=open&sourceResultType=schedule_actual&query=employee_id+%C2%B7+REQUIRED_FIELD_MISSING",
+          reviewCasesActionLabel: "查看相关复核案例",
+          reviewCasesFocus: "employee_id · REQUIRED_FIELD_MISSING",
           evidence: ["行 2 失败", "行 3 警告", "source_key A3"],
           nextAction: "先修正 employee_id 的 REQUIRED_FIELD_MISSING，再回看未关闭复核案例。",
         },
@@ -708,6 +714,9 @@ test("import center quality impact aggregation ranks issue groups by downstream 
           openReviewCases: 1,
           comparisonResults: 15,
           impactLabel: "1 行问题 · 2 个复核案例 · 15 条对比结果",
+          reviewCasesHref: "/data-quality/review-cases?businessDate=2026-05-11&status=open&sourceResultType=schedule_actual&query=shift_type+%C2%B7+UNKNOWN_SHIFT",
+          reviewCasesActionLabel: "查看相关复核案例",
+          reviewCasesFocus: "shift_type · UNKNOWN_SHIFT",
           evidence: ["行 4 失败", "source_key A4"],
           nextAction: "先修正 shift_type 的 UNKNOWN_SHIFT，再回看未关闭复核案例。",
         },
@@ -1029,6 +1038,15 @@ test("import center review evidence gap drilldown handles empty and read-error s
 
 test("import center review cases workspace builds page href and filters cases", () => {
   assert.equal(
+    buildImportQualityIssueReviewCasesHref({
+      businessDate: "2026-05-11",
+      sourceResultType: "schedule_actual",
+      issueTitle: "employee_id · REQUIRED_FIELD_MISSING",
+    }),
+    "/data-quality/review-cases?businessDate=2026-05-11&status=open&sourceResultType=schedule_actual&query=employee_id+%C2%B7+REQUIRED_FIELD_MISSING"
+  );
+
+  assert.equal(
     buildImportReviewCasesWorkspaceHref({
       businessDate: "2026-05-11",
       ownerId: "OWNER-A",
@@ -1071,6 +1089,16 @@ test("import center review cases workspace builds page href and filters cases", 
       severity: "high",
       sourceResultType: "schedule_actual",
       query: "late",
+    }),
+    [cases[0]]
+  );
+
+  assert.deepEqual(
+    filterImportReviewCases(cases, {
+      businessDate: "2026-05-11",
+      status: "open",
+      sourceResultType: "schedule_actual",
+      query: "employee_id · REQUIRED_FIELD_MISSING",
     }),
     [cases[0]]
   );

@@ -85,6 +85,7 @@ export function ImportCenterResultTracePanel({
     reviewCases,
     comparisonError,
     reviewError,
+    businessDate,
   })
   const conclusionPreview = summarizeImportReviewConclusionPreview({
     businessDate,
@@ -394,7 +395,15 @@ function QualityImpactAggregationPanel({
                     </div>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {group.nextAction}
+                    <div className="grid gap-2">
+                      <span>{group.nextAction}</span>
+                      <Button asChild size="sm" variant="outline" className="w-fit">
+                        <Link href={group.reviewCasesHref}>
+                          {group.reviewCasesActionLabel}
+                          <ExternalLink data-icon="inline-end" />
+                        </Link>
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

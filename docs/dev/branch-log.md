@@ -1739,3 +1739,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM054 Import Center Quality Issue Review Focus
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical exists; local branch was ahead 1 before IM054 because IM053 is locally committed and not pushed.`
+- scope: read-only quality-impact issue group links into `/data-quality/review-cases`, review-case workspace focus visibility, model helper/test coverage, and traceability records.
+- allowed_files_check: `components/import-center-model.ts`, `components/import-center-result-trace-panel.tsx`, `components/import-center-review-cases-workspace.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files.
+- scope_diff_check: `components/import-center-model.ts`, `components/import-center-result-trace-panel.tsx`, `components/import-center-review-cases-workspace.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files. `.local/` remains untracked and untouched.
+- check_result: TDD red test failed first because `buildImportQualityIssueReviewCasesHref` was not exported; target model test passed with 40 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with documented baseline only; production smoke passed on the batch detail page for `质量影响聚合`, `查看相关复核案例`, and review-case href, and on `/data-quality/review-cases?businessDate=2026-05-01&status=open&sourceResultType=schedule_actual&query=source_key+%C2%B7+REQUIRED_FIELD_MISSING` for `复核案例工作台`, `焦点 source_key · REQUIRED_FIELD_MISSING`, and focus explanation; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

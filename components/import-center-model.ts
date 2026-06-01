@@ -154,6 +154,9 @@ export type ImportQualityImpactIssueGroup = {
   openReviewCases: number
   comparisonResults: number
   impactLabel: string
+  reviewCasesHref: string
+  reviewCasesActionLabel: string
+  reviewCasesFocus: string
   evidence: string[]
   nextAction: string
 }
@@ -709,6 +712,23 @@ export function buildImportReviewCasesWorkspaceHref(
   return `/data-quality/review-cases${serialized ? `?${serialized}` : ""}`
 }
 
+export function buildImportQualityIssueReviewCasesHref({
+  businessDate,
+  sourceResultType,
+  issueTitle,
+}: {
+  businessDate: string | null
+  sourceResultType?: ImportReviewCaseRecord["source_result_type"] | "all" | null
+  issueTitle: string
+}): string {
+  return buildImportReviewCasesWorkspaceHref({
+    businessDate,
+    status: "open",
+    sourceResultType: sourceResultType ?? "all",
+    query: issueTitle,
+  })
+}
+
 export function buildImportRowCorrectionUrl(
   batchId: string,
   rowNumber: number,
@@ -819,7 +839,9 @@ export function filterImportReviewCases(
   const status = normalizeAllFilterValue(filters.status)
   const severity = normalizeAllFilterValue(filters.severity)
   const sourceResultType = normalizeAllFilterValue(filters.sourceResultType)
-  const query = filters.query?.trim().toLowerCase() ?? ""
+  const rawQuery = filters.query?.trim() ?? ""
+  const query = rawQuery.toLowerCase()
+  const shouldFilterByQuery = query && !isQualityIssueFocusQuery(rawQuery)
 
   return cases.filter((reviewCase) => {
     if (businessDate && reviewCase.business_date !== businessDate) {
@@ -842,7 +864,7 @@ export function filterImportReviewCases(
       return false
     }
 
-    if (!query) {
+    if (!shouldFilterByQuery) {
       return true
     }
 
@@ -1571,12 +1593,14 @@ export function summarizeImportQualityImpactAggregation({
   reviewCases,
   comparisonError,
   reviewError,
+  businessDate,
 }: {
   detail: ImportBatchPersistenceDetail | null
   comparisonRuns: ImportComparisonRunRecord[]
   reviewCases: ImportReviewCaseRecord[]
   comparisonError: string | null
   reviewError: string | null
+  businessDate?: string | null
 }): ImportQualityImpactAggregation {
   const openReviewCases = reviewCases.filter((reviewCase) => reviewCase.status !== "closed")
     .length
@@ -1626,11 +1650,16 @@ export function summarizeImportQualityImpactAggregation({
         const field = row.error_field?.trim() || "未返回字段"
         const code = row.error_code?.trim() || "未返回原因"
         const key = `${field}::${code}`
+        const title = `${field} · ${code}`
+        const reviewCasesSourceType = inferQualityIssueReviewCaseSourceType({
+          reviewCases,
+          comparisonRuns,
+        })
         const existing =
           map.get(key) ??
           ({
             key,
-            title: `${field} · ${code}`,
+            title,
             rowCount: 0,
             failedRows: 0,
             warningRows: 0,
@@ -1638,6 +1667,16 @@ export function summarizeImportQualityImpactAggregation({
             openReviewCases,
             comparisonResults,
             impactLabel: "",
+            reviewCasesHref: buildImportQualityIssueReviewCasesHref({
+              businessDate:
+                businessDate ??
+                reviewCases[0]?.business_date ??
+                detail.batch.business_date_from,
+              sourceResultType: reviewCasesSourceType,
+              issueTitle: title,
+            }),
+            reviewCasesActionLabel: "查看相关复核案例",
+            reviewCasesFocus: title,
             evidence: [],
             nextAction: `先修正 ${field} 的 ${code}，再回看未关闭复核案例。`,
           } satisfies ImportQualityImpactIssueGroup)
@@ -2769,6 +2808,7 @@ function buildReviewCasesWorkspaceDetail(
   filters: ImportReviewCasesWorkspaceFilters
 ): string {
   const businessDate = normalizeFilterValue(filters.businessDate)
+  const query = normalizeFilterValue(filters.query)
   const openCount = cases.filter((reviewCase) => reviewCase.status !== "closed").length
   const highRiskOpenCount = cases.filter(
     (reviewCase) =>
@@ -2777,9 +2817,46 @@ function buildReviewCasesWorkspaceDetail(
 
   return [
     businessDate ? `业务日 ${businessDate}` : "全部业务日",
+    query && isQualityIssueFocusQuery(query) ? `质量焦点 ${query}` : null,
     `未关闭 ${openCount.toLocaleString("zh-CN")} 个`,
     `高风险未关闭 ${highRiskOpenCount.toLocaleString("zh-CN")} 个`,
-  ].join(" · ")
+  ]
+    .filter(Boolean)
+    .join(" · ")
+}
+
+function isQualityIssueFocusQuery(query: string): boolean {
+  return query.includes(" · ") || query.includes("::")
+}
+
+function inferQualityIssueReviewCaseSourceType({
+  reviewCases,
+  comparisonRuns,
+}: {
+  reviewCases: ImportReviewCaseRecord[]
+  comparisonRuns: ImportComparisonRunRecord[]
+}): ImportReviewCaseRecord["source_result_type"] | "all" {
+  const primaryReviewCase =
+    reviewCases.find((reviewCase) => reviewCase.status !== "closed") ??
+    reviewCases[0] ??
+    null
+
+  if (primaryReviewCase) {
+    return primaryReviewCase.source_result_type
+  }
+
+  const primaryRun =
+    comparisonRuns.find((run) => run.status === "completed") ?? comparisonRuns[0] ?? null
+
+  if (primaryRun?.comparison_type === "schedule_vs_actual") {
+    return "schedule_actual"
+  }
+
+  if (primaryRun?.comparison_type === "forecast_vs_schedule") {
+    return "forecast_schedule"
+  }
+
+  return "all"
 }
 
 function buildReviewCaseOwnerGroups(

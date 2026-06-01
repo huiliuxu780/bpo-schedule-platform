@@ -2572,3 +2572,29 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
+### 2026-06-01 - IM054 质量问题到复核案例聚焦
+
+#### 审计结论
+
+- `IM054/US674` 已在 `/data-quality/[batchId]` 的“质量影响聚合”问题组中增加“查看相关复核案例”入口。
+- 入口跳转到 `/data-quality/review-cases`，并带入业务日、未关闭状态、来源类型和质量关键词焦点。
+- `/data-quality/review-cases` 在页头展示当前焦点，筛选区说明从质量问题进入时关键词作为只读焦点保留。
+- 本轮未新增依赖，未修改 package/lockfile，未触碰 app 路由、后端、schema/migration、真实外部接口、证据补录、复核关闭写入、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前质量关键词是只读焦点上下文，不是复核案例与质量行的生产级关联写入。
+- 如果后续要做真实证据补录、复核关闭、质量问题归因落库或批量处理，必须另开受控任务并明确权限、审计、幂等和回滚边界。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 因缺少 `buildImportQualityIssueReviewCasesHref` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，40 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- page smoke：重启后的 production 服务 `http://127.0.0.1:3021/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` 命中 `质量影响聚合`、`查看相关复核案例` 和 `/data-quality/review-cases?...query=source_key+%C2%B7+REQUIRED_FIELD_MISSING`；`http://127.0.0.1:3021/data-quality/review-cases?businessDate=2026-05-01&status=open&sourceResultType=schedule_actual&query=source_key+%C2%B7+REQUIRED_FIELD_MISSING` 命中 `复核案例工作台`、`焦点 source_key · REQUIRED_FIELD_MISSING` 和筛选说明。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。

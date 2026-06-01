@@ -1510,3 +1510,14 @@
 - action: 拆出复核案例工作台二级页。
 - status: `done`
 - notes: 新增 `/data-quality/review-cases` 只读工作台，支持业务日、owner、状态、严重度、来源和关键词筛选，展示摘要、分组和案例表；批次详情的复核入口跳转到二级页；本轮不新增证据补录、复核关闭写入、后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-01
+
+- task_id: `IM054`
+- source_ids:
+  - `R754`
+- story_ids:
+  - `US674`
+- action: 增加质量问题到复核案例工作台的只读聚焦跳转。
+- status: `done`
+- notes: `/data-quality/[batchId]` 质量影响聚合每个问题组现在提供“查看相关复核案例”，跳转到 `/data-quality/review-cases` 并带入业务日、未关闭状态、来源类型和质量关键词焦点；复核案例工作台展示焦点条件但不提供证据补录、复核关闭、审批、导出、批量、权限、后端、schema/migration、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

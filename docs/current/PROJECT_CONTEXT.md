@@ -12,6 +12,8 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 No ready or in-progress story is currently queued in `docs/current/STORY_QUEUE.yaml`.
 
+`US674/IM054` completed the quality-issue to review-case focus links and current queue returned to empty.
+
 `US673/IM053` completed the read-only second-level review-case workspace and current queue returned to empty.
 
 `US672/IM052` completed the read-only review evidence gap drilldown and current queue returned to empty.

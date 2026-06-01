@@ -3200,3 +3200,26 @@ dependencies:
   - "US672"
 status: "done"
 ```
+
+### US674 - 质量问题到复核案例聚焦
+
+```yaml
+id: US674
+requirement_ids:
+  - R754
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望从批次详情里的质量问题直接跳转并聚焦到复核案例工作台，以便快速查看哪些未关闭复核案例可能受该质量问题影响。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 的质量影响聚合每个问题组提供查看相关复核案例入口。"
+  - "入口跳转到 `/data-quality/review-cases`，并带入业务日、未关闭状态、来源类型和关键词焦点。"
+  - "`/data-quality/review-cases` 展示当前焦点条件，让主管知道是从哪个质量问题进入。"
+  - "页面只读展示，不提供提交、补证据、关闭、审批、导出或批量操作。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US673"
+status: "done"
+```

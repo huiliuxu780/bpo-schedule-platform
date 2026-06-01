@@ -4,6 +4,10 @@
 
 None.
 
+## Active Scope Constraints
+
+None.
+
 ## Standing Constraints
 
 - Database work is allowed only inside a PM-confirmed database-persistence task and its named entity slice.

@@ -5954,3 +5954,46 @@ tasks:
       - "范围扩展到证据补录、复核写入、关闭、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM054
+    title: "质量问题到复核案例聚焦"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM053"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "components/import-center-result-trace-panel.tsx"
+      - "components/import-center-review-cases-workspace.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "app/**"
+    acceptance:
+      - "`/data-quality/[batchId]` 的质量影响聚合每个问题组提供查看相关复核案例入口。"
+      - "入口跳转到 `/data-quality/review-cases`，并带入业务日、未关闭状态、来源类型和关键词焦点。"
+      - "`/data-quality/review-cases` 展示当前焦点条件，让主管知道是从哪个质量问题进入。"
+      - "页面只读展示，不提供提交、补证据、关闭、审批、导出或批量操作。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到证据补录、复核写入、关闭、审批、导出、权限、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

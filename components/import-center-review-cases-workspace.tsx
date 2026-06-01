@@ -93,6 +93,9 @@ function ReviewCasesHeader({
         ) : (
           <Badge variant="outline">全部业务日</Badge>
         )}
+        {filters.query ? (
+          <Badge variant="secondary">焦点 {filters.query}</Badge>
+        ) : null}
       </div>
     </section>
   )
@@ -181,7 +184,7 @@ function ReviewCaseFilterCard({
               筛选复核案例
             </CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">
-              按业务日、owner、状态、严重度和来源定位案例，保持只读查看。
+              按业务日、owner、状态、严重度和来源定位案例；从质量问题进入时，关键词作为只读焦点保留。
             </p>
           </div>
           <Button asChild size="sm" variant="ghost">
