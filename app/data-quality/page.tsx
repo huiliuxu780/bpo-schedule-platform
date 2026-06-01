@@ -73,7 +73,22 @@ export default async function DataQualityPage({
         batchFilters={batchFilters}
         templateError={templateResult.error}
         templateCount={(templateResult.data ?? []).length}
-        uploadForm={
+        batchDetailPanel={
+          <ImportCenterBatchDetailPanel
+            detail={detailResult.data}
+            detailError={detailResult.error}
+          />
+        }
+        rowCorrectionPanel={
+          <ImportCenterRowCorrectionPanel
+            detail={detailResult.data}
+            detailError={detailResult.error}
+            correctionStatus={params?.correction}
+            correctionReason={params?.reason}
+            correctionRow={params?.row}
+          />
+        }
+        dataToolsPanel={
           <div className="grid gap-4">
             <ImportCenterUploadForm
               uploadStatus={params?.upload}
@@ -87,21 +102,6 @@ export default async function DataQualityPage({
               templateError={templateResult.error}
             />
           </div>
-        }
-        rowCorrectionPanel={
-          <>
-            <ImportCenterBatchDetailPanel
-              detail={detailResult.data}
-              detailError={detailResult.error}
-            />
-            <ImportCenterRowCorrectionPanel
-              detail={detailResult.data}
-              detailError={detailResult.error}
-              correctionStatus={params?.correction}
-              correctionReason={params?.reason}
-              correctionRow={params?.row}
-            />
-          </>
         }
       />
     </AppShell>

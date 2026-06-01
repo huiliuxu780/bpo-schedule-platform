@@ -1282,6 +1282,17 @@
 
 ### 2026-06-01
 
+- task_id: `IM041A`
+- source_ids:
+  - `R741`
+- story_ids:
+  - `US661`
+- action: 重构数据质量页信息架构。
+- status: `done`
+- notes: `/data-quality` 现在按顶部概览、接入批次工作台、选中批次状态检查器和分层详情 Tabs 组织；批次明细、失败行修正、导入与模板被收纳到分层详情，`ImportCenterApiPanel` 改为薄组合层；不新增依赖、业务能力、后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限或生产流程能力。
+
+### 2026-06-01
+
 - task_id: `IM040`
 - source_ids:
   - `R740`

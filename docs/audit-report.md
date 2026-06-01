@@ -2138,6 +2138,33 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
 
+### 2026-06-01 - IM041A 数据质量页信息架构重构
+
+#### 审计结论
+
+- `IM041A/US661` 已把 `/data-quality` 从单页纵向堆叠重构为顶部概览、接入批次工作台、选中批次状态检查器和分层详情 Tabs。
+- `ImportCenterApiPanel` 不再承载全部业务 UI，概览、批次列表、状态检查器和详情 Tabs 已拆成独立业务组件。
+- 批次明细、失败行修正、导入与模板被收纳进分层详情；本轮只调整展示层级和组件边界，不新增写入能力。
+- 浏览器检查发现 flex column 下工作台区域曾被压缩到 0 高度，已改为 grid auto rows 并复验通过；PM 截图继续暴露 Tabs 默认横向 flex 导致详情内容挤到批次表右侧，已在详情 Tabs 显式改为 `flex-col` 并加分区边界。
+
+#### 风险
+
+- 当前仍是导入中心前端信息架构整理，不是新的导入处理能力。
+- 后续若要新增 apply 写入、审批、导出、批量、权限、外部集成或生产规则，仍需单独 Gate。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportPageHierarchy` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，26 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- shadcn 快速检查：触达的 import-center 前端文件未发现 `space-x/space-y` 或硬编码灰阶色类。
+- page smoke：`http://127.0.0.1:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 返回 200，并包含 `接入批次工作台`、`选中批次状态检查器`、`分层详情`、`导入与模板`。
+- in-app browser smoke：同一页面可见新结构；布局矩形显示 `import-batch-workspace` 高度正常，`import-detail-workspace` 位于工作台之后；详情 Tabs computed `flex-direction` 为 `column`，活动内容与 TabsList 左侧对齐，不再挤到右侧覆盖批次表。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-05-31 - IM033 导入中心异常态处理建议
 
 #### 审计结论

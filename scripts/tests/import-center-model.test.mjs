@@ -14,6 +14,7 @@ import {
   summarizeImportApplyActionGuidance,
   summarizeImportApplicationVisibility,
   summarizeImportDownstreamResultNavigation,
+  summarizeImportPageHierarchy,
   summarizeImportBatchDetailReadability,
   summarizeImportExceptionGuidance,
   summarizeImportBatchReviewGuide,
@@ -373,6 +374,56 @@ test("import center downstream navigation explains next result path", () => {
       secondaryHref: "#import-apply-readiness",
       evidenceLabel: "失败 2 行 · 警告 1 行",
     },
+  );
+});
+
+test("import center page hierarchy keeps utilities out of the primary workflow", () => {
+  assert.deepEqual(
+    summarizeImportPageHierarchy({
+      selectedBatch: {
+        ...baseBatch,
+        batch_id: "BATCH-SCH-001",
+        file_type: "personnel_schedule",
+        failed_rows: 2,
+        warning_rows: 1,
+      },
+      readiness: {
+        batch_id: "BATCH-SCH-001",
+        file_type: "personnel_schedule",
+        readiness_status: "blocked",
+        blockers: [{ code: "IMPORT_BATCH_HAS_FAILED_ROWS", message: "有失败行" }],
+        row_blockers: [],
+        total_rows: 10,
+        success_rows: 8,
+        failed_rows: 2,
+        warning_rows: 1,
+        version_count: 1,
+        application_status: "not_applied",
+        application_target: "personnel_schedule",
+        import_version_id: "BATCH-SCH-001::v1",
+        applied_record_count: 0,
+      },
+      hasBatchDetail: true,
+      hasUploadTools: true,
+    }),
+    {
+      primaryRegion: "接入批次工作台",
+      inspectorRegion: "选中批次状态检查器",
+      detailTabs: ["批次明细", "失败行修正", "导入与模板"],
+      defaultDetailTab: "row-correction",
+      utilityPlacement: "导入与模板收纳到分层详情",
+      layoutIntent: "先定位批次，再处理状态，最后进入详情。",
+    },
+  );
+
+  assert.equal(
+    summarizeImportPageHierarchy({
+      selectedBatch: baseBatch,
+      readiness: null,
+      hasBatchDetail: true,
+      hasUploadTools: true,
+    }).defaultDetailTab,
+    "batch-detail",
   );
 });
 

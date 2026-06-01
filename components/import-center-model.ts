@@ -201,6 +201,20 @@ export type ImportDownstreamResultNavigation = {
   evidenceLabel: string
 }
 
+export type ImportPageHierarchyDetailTab =
+  | "batch-detail"
+  | "row-correction"
+  | "data-tools"
+
+export type ImportPageHierarchy = {
+  primaryRegion: string
+  inspectorRegion: string
+  detailTabs: string[]
+  defaultDetailTab: ImportPageHierarchyDetailTab
+  utilityPlacement: string
+  layoutIntent: string
+}
+
 export type ImportBatchReviewGuideTone = "blocked" | "warning" | "ready" | "done" | "unknown"
 
 export type ImportBatchReviewGuide = {
@@ -661,6 +675,38 @@ export function summarizeImportDownstreamResultNavigation({
     secondaryActionLabel: "查看复核案例 API",
     secondaryHref: `/api/v1/review-cases?business_date=${encodeURIComponent(businessDate)}`,
     evidenceLabel: `已应用 ${batch.applied_record_count.toLocaleString("zh-CN")} 条 · 版本 ${versionLabel}`,
+  }
+}
+
+export function summarizeImportPageHierarchy({
+  selectedBatch,
+  readiness,
+  hasBatchDetail,
+  hasUploadTools,
+}: {
+  selectedBatch: ImportBatchListRow | null
+  readiness: ImportApplyReadinessResponse | null
+  hasBatchDetail: boolean
+  hasUploadTools: boolean
+}): ImportPageHierarchy {
+  const hasBlockingRows =
+    Boolean(selectedBatch && selectedBatch.failed_rows > 0) ||
+    readiness?.readiness_status === "blocked"
+  const defaultDetailTab: ImportPageHierarchyDetailTab = hasBlockingRows
+    ? "row-correction"
+    : hasBatchDetail
+      ? "batch-detail"
+      : hasUploadTools
+        ? "data-tools"
+        : "batch-detail"
+
+  return {
+    primaryRegion: "接入批次工作台",
+    inspectorRegion: selectedBatch ? "选中批次状态检查器" : "等待选择批次",
+    detailTabs: ["批次明细", "失败行修正", "导入与模板"],
+    defaultDetailTab,
+    utilityPlacement: "导入与模板收纳到分层详情",
+    layoutIntent: "先定位批次，再处理状态，最后进入详情。",
   }
 }
 

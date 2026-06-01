@@ -1400,6 +1400,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM041A Import Center Data Quality Page IA Refactor
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical exists; local branch was ahead 12 before IM041A`
+- scope: `/data-quality` information architecture, overview/workbench/inspector/detail-tabs component split, hierarchy model test coverage, page smoke, and traceability records.
+- allowed_files_check: `app/data-quality/page.tsx`, `components/import-center-api-panel.tsx`, new import-center frontend component files, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, external integration, production formula, settlement, or charge-factor files.
+- scope_diff_check: same as allowed scope; `.local/` remains untracked and untouched.
+- check_result: TDD red test failed first because `summarizeImportPageHierarchy` was not exported; target model test passed with 26 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn quick check found no `space-x/space-y` or hardcoded grayscale classes in the touched frontend files; page smoke passed on `http://127.0.0.1:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` for `接入批次工作台`, `选中批次状态检查器`, `分层详情`, and `导入与模板`; in-app browser verified the workbench no longer collapses before detail tabs and verified detail Tabs use column layout after PM screenshot exposed the row-layout overlap; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed with strict state check, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM034 Import Center Upload Result Batch Entry
 
 - branch_name: `codex/import-center-api-vertical`

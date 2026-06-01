@@ -1573,3 +1573,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端只读下游结果导航和模型 helper；不新增依赖，不做后端、schema/migration、真实异常查询、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R741 - 数据质量页信息架构重构
+
+```yaml
+id: R741
+module: "导入中心"
+description: "数据质量页已经承载导入、模板、批次、准备度、应用状态、下游导航、批次明细和失败行修正后，页面变成纵向堆叠的长页面。需要把展示层级重构为批次工作台、状态检查器和分层详情，提升生产工具可读性。"
+source: "PM criticized the long single-page layout and requested starting a UI/product structure correction on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮只做前端信息架构和组件边界重构；不新增依赖，不新增业务能力，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

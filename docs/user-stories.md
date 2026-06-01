@@ -2902,3 +2902,25 @@ dependencies:
   - "US659"
 status: "done"
 ```
+
+### US661 - 数据质量页信息架构重构
+
+```yaml
+id: US661
+requirement_ids:
+  - R741
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望数据质量页按工作台、状态检查和分层详情组织，而不是把所有功能纵向堆叠，以便更快完成批次定位、阻塞处理和结果追踪。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 首屏按顶部概览、批次工作台、状态检查器组织，不再把上传、明细、修正全部平铺在主路径。"
+  - "批次明细、失败行修正、导入与模板被收纳到分层详情 Tabs。"
+  - "`ImportCenterApiPanel` 不再承载全部业务 UI，工作台、状态检查器、概览和详情 Tabs 拆成独立业务组件。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US660"
+status: "done"
+```
