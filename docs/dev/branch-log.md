@@ -1655,3 +1655,19 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+### IM049 Import Center Quality Impact Aggregation
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical exists; local branch was ahead 20 before IM049`
+- scope: read-only quality-to-exception reverse aggregation in `/data-quality/[batchId]`, model helper/test coverage, result trace panel UI, and traceability records.
+- allowed_files_check: `app/data-quality/[batchId]/page.tsx`, `components/import-center-result-trace-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/[batchId]/page.tsx`, `components/import-center-result-trace-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files. `.local/` remains untracked and untouched.
+- check_result: TDD red test failed first because `summarizeImportQualityImpactAggregation` was not exported; target model test passed with 34 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn quick check found no `space-x/space-y` or hardcoded grayscale classes in touched frontend files; in-app browser channel was unavailable, so production HTTP smoke passed on `http://127.0.0.1:3022/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` for `质量影响聚合`, `首要问题`, `source_key · REQUIRED_FIELD_MISSING`, and `查看失败行修正`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed with strict state check, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

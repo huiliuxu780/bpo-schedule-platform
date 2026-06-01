@@ -1677,3 +1677,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读下游结果 drilldown；不新增依赖，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
 ```
+
+### R749 - 数据质量到异常反向聚合 drilldown
+
+```yaml
+id: R749
+module: "导入中心"
+description: "批次详情页已经能看到下游结果判断，但还缺少从异常影响反推导入质量问题的聚合视角。需要把失败/警告行按错误字段和错误原因分组，并关联当前业务日已有对比结果与复核案例，提示先处理影响候选最大的质量问题。"
+source: "Current recommendation after IM048 and PM requested continuing development on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读质量影响聚合；不新增依赖，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+```

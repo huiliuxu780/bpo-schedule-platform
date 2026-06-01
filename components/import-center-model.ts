@@ -138,6 +138,36 @@ export type ImportQualityExceptionTrace = {
   evidenceLabel: string
 }
 
+export type ImportQualityImpactAggregationTone =
+  | "blocked"
+  | "warning"
+  | "ready"
+  | "empty"
+
+export type ImportQualityImpactIssueGroup = {
+  key: string
+  title: string
+  rowCount: number
+  failedRows: number
+  warningRows: number
+  affectedReviewCases: number
+  openReviewCases: number
+  comparisonResults: number
+  impactLabel: string
+  evidence: string[]
+  nextAction: string
+}
+
+export type ImportQualityImpactAggregation = {
+  tone: ImportQualityImpactAggregationTone
+  title: string
+  detail: string
+  downstreamLabel: string
+  topIssueLabel: string
+  nextAction: string
+  groups: ImportQualityImpactIssueGroup[]
+}
+
 export type ImportBatchHealth = "blocked" | "warning" | "ready_candidate" | "applied"
 
 export type ImportRowCorrectionNoticeTone = "success" | "failed"
@@ -1291,6 +1321,111 @@ export function summarizeImportQualityExceptionTrace(
   }
 }
 
+export function summarizeImportQualityImpactAggregation({
+  detail,
+  comparisonRuns,
+  reviewCases,
+  comparisonError,
+  reviewError,
+}: {
+  detail: ImportBatchPersistenceDetail | null
+  comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
+  comparisonError: string | null
+  reviewError: string | null
+}): ImportQualityImpactAggregation {
+  const openReviewCases = reviewCases.filter((reviewCase) => reviewCase.status !== "closed")
+    .length
+  const comparisonResults = comparisonRuns.reduce(
+    (total, run) => total + run.total_results,
+    0
+  )
+  const downstreamLabel = formatQualityImpactDownstreamLabel({
+    reviewCaseCount: reviewCases.length,
+    openReviewCases,
+    comparisonResults,
+    comparisonError,
+    reviewError,
+  })
+
+  if (!detail) {
+    return {
+      tone: "empty",
+      title: "等待批次明细",
+      detail: "还没有可聚合的行级质量结果。",
+      downstreamLabel,
+      topIssueLabel: "暂无质量问题",
+      nextAction: "先确认批次明细是否读取成功，再查看质量影响聚合。",
+      groups: [],
+    }
+  }
+
+  const issueRows = detail.rows.filter(
+    (row) => row.row_status === "failed" || row.row_status === "warning"
+  )
+
+  if (issueRows.length === 0) {
+    return {
+      tone: "ready",
+      title: "暂无行级质量问题",
+      detail: "当前批次没有失败行或警告行，可直接回看下游对比结果和复核案例。",
+      downstreamLabel,
+      topIssueLabel: "暂无质量问题",
+      nextAction: "继续查看下游结果判断，不需要从质量问题反向处理。",
+      groups: [],
+    }
+  }
+
+  const groups = Array.from(
+    issueRows
+      .reduce((map, row) => {
+        const field = row.error_field?.trim() || "未返回字段"
+        const code = row.error_code?.trim() || "未返回原因"
+        const key = `${field}::${code}`
+        const existing =
+          map.get(key) ??
+          ({
+            key,
+            title: `${field} · ${code}`,
+            rowCount: 0,
+            failedRows: 0,
+            warningRows: 0,
+            affectedReviewCases: reviewCases.length,
+            openReviewCases,
+            comparisonResults,
+            impactLabel: "",
+            evidence: [],
+            nextAction: `先修正 ${field} 的 ${code}，再回看未关闭复核案例。`,
+          } satisfies ImportQualityImpactIssueGroup)
+
+        existing.rowCount += 1
+        existing.failedRows += row.row_status === "failed" ? 1 : 0
+        existing.warningRows += row.row_status === "warning" ? 1 : 0
+        existing.evidence = appendQualityImpactEvidence(existing.evidence, row)
+        existing.impactLabel = `${existing.rowCount.toLocaleString("zh-CN")} 行问题 · ${reviewCases.length.toLocaleString("zh-CN")} 个复核案例 · ${comparisonResults.toLocaleString("zh-CN")} 条对比结果`
+        map.set(key, existing)
+        return map
+      }, new Map<string, ImportQualityImpactIssueGroup>())
+      .values()
+  ).sort(
+    (current, next) =>
+      next.rowCount - current.rowCount ||
+      next.failedRows - current.failedRows ||
+      current.title.localeCompare(next.title)
+  )
+  const hasFailedRows = issueRows.some((row) => row.row_status === "failed")
+
+  return {
+    tone: comparisonError || reviewError ? "warning" : hasFailedRows ? "blocked" : "warning",
+    title: "质量问题正在影响下游判断",
+    detail: `当前批次有 ${issueRows.length.toLocaleString("zh-CN")} 行质量问题，当前业务日已有 ${reviewCases.length.toLocaleString("zh-CN")} 个复核案例、${comparisonResults.toLocaleString("zh-CN")} 条对比结果；先处理影响候选最高的问题组。`,
+    downstreamLabel,
+    topIssueLabel: groups[0]?.title ?? "暂无质量问题",
+    nextAction: "先处理质量问题行数最多的问题组，再回看未关闭复核案例和对比结果。",
+    groups,
+  }
+}
+
 export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): string {
   const standardFields = row.raw_data.standard_fields
   if (isRecord(standardFields)) {
@@ -1995,6 +2130,53 @@ function summarizeImportDetailErrorFields(rows: ImportBatchRowResult[]): string 
   }
 
   return fields.slice(0, 3).join("、")
+}
+
+function formatQualityImpactDownstreamLabel({
+  reviewCaseCount,
+  openReviewCases,
+  comparisonResults,
+  comparisonError,
+  reviewError,
+}: {
+  reviewCaseCount: number
+  openReviewCases: number
+  comparisonResults: number
+  comparisonError: string | null
+  reviewError: string | null
+}): string {
+  const reviewLabel = reviewError
+    ? "复核案例读取失败"
+    : `复核案例 ${reviewCaseCount.toLocaleString("zh-CN")} 个`
+  const openLabel = reviewError
+    ? "未关闭未知"
+    : `未关闭 ${openReviewCases.toLocaleString("zh-CN")} 个`
+  const comparisonLabel = comparisonError
+    ? "对比结果读取失败"
+    : `对比结果 ${comparisonResults.toLocaleString("zh-CN")} 条`
+
+  return `${reviewLabel} · ${openLabel} · ${comparisonLabel}`
+}
+
+function appendQualityImpactEvidence(
+  evidence: string[],
+  row: ImportBatchRowResult
+): string[] {
+  const nextEvidence = [...evidence]
+  const rowLabel = `行 ${row.row_number.toLocaleString("zh-CN")} ${formatImportRowStatus(row.row_status)}`
+
+  if (!nextEvidence.includes(rowLabel)) {
+    nextEvidence.push(rowLabel)
+  }
+
+  if (row.source_key) {
+    const sourceLabel = `source_key ${row.source_key}`
+    if (!nextEvidence.includes(sourceLabel)) {
+      nextEvidence.push(sourceLabel)
+    }
+  }
+
+  return nextEvidence.slice(0, 4)
 }
 
 function formatQualityExceptionImpactScope(fileType: ImportFileType): string {

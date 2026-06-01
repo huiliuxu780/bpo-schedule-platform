@@ -2,6 +2,7 @@ import Link from "next/link"
 import type { ReactNode } from "react"
 import {
   Activity,
+  AlertTriangle,
   ArrowRight,
   CheckCircle2,
   CircleSlash,
@@ -12,12 +13,15 @@ import {
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchListRow,
+  type ImportBatchPersistenceDetail,
   type ImportComparisonRunRecord,
   type ImportDownstreamResultDrilldown,
+  type ImportQualityImpactAggregation,
   type ImportResultTrace,
   type ImportReviewCaseRecord,
   buildImportApiUrl,
   summarizeImportDownstreamResultDrilldown,
+  summarizeImportQualityImpactAggregation,
   summarizeImportResultTrace,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -35,6 +39,7 @@ import {
 type ImportCenterResultTracePanelProps = {
   batch: ImportBatchListRow | null
   readiness: ImportApplyReadinessResponse | null
+  detail: ImportBatchPersistenceDetail | null
   businessDate: string | null
   comparisonRuns: ImportComparisonRunRecord[]
   comparisonError: string | null
@@ -45,6 +50,7 @@ type ImportCenterResultTracePanelProps = {
 export function ImportCenterResultTracePanel({
   batch,
   readiness,
+  detail,
   businessDate,
   comparisonRuns,
   comparisonError,
@@ -62,6 +68,13 @@ export function ImportCenterResultTracePanel({
     batch,
     readiness,
     businessDate,
+    comparisonRuns,
+    reviewCases,
+    comparisonError,
+    reviewError,
+  })
+  const qualityImpact = summarizeImportQualityImpactAggregation({
+    detail,
     comparisonRuns,
     reviewCases,
     comparisonError,
@@ -85,6 +98,7 @@ export function ImportCenterResultTracePanel({
       </CardHeader>
       <CardContent className="grid gap-4">
         <ResultDrilldownSummary drilldown={drilldown} />
+        <QualityImpactAggregationPanel aggregation={qualityImpact} />
         <ResultTraceSummary trace={trace} />
 
         <section className="grid gap-4 xl:grid-cols-2">
@@ -93,6 +107,102 @@ export function ImportCenterResultTracePanel({
         </section>
       </CardContent>
     </Card>
+  )
+}
+
+function QualityImpactAggregationPanel({
+  aggregation,
+}: {
+  aggregation: ImportQualityImpactAggregation
+}) {
+  return (
+    <section className="grid gap-4 rounded-md border bg-muted/30 p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid min-w-0 gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <AlertTriangle className="size-4 text-muted-foreground" />
+            <h3 className="text-sm font-medium">质量影响聚合</h3>
+            <Badge
+              variant={aggregation.tone === "blocked" ? "destructive" : "outline"}
+            >
+              {formatQualityImpactTone(aggregation.tone)}
+            </Badge>
+          </div>
+          <div>
+            <div className="font-medium">{aggregation.title}</div>
+            <p className="mt-1 text-sm text-muted-foreground">{aggregation.detail}</p>
+          </div>
+        </div>
+        <div className="grid gap-2 text-sm">
+          <TraceMetric
+            icon={<ClipboardList className="size-4" />}
+            value={aggregation.downstreamLabel}
+          />
+          <TraceMetric
+            icon={<AlertTriangle className="size-4" />}
+            value={`首要问题：${aggregation.topIssueLabel}`}
+          />
+        </div>
+      </div>
+
+      {aggregation.groups.length === 0 ? (
+        <PanelState title={aggregation.title} detail={aggregation.nextAction} />
+      ) : (
+        <div className="overflow-x-auto rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="min-w-[220px]">质量问题</TableHead>
+                <TableHead>行数</TableHead>
+                <TableHead className="min-w-[180px]">下游影响候选</TableHead>
+                <TableHead className="min-w-[220px]">证据</TableHead>
+                <TableHead className="min-w-[240px]">下一步</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {aggregation.groups.map((group) => (
+                <TableRow key={group.key}>
+                  <TableCell>
+                    <div className="grid gap-1">
+                      <span className="font-mono text-xs">{group.title}</span>
+                      <span className="text-xs text-muted-foreground">
+                        失败 {group.failedRows} 行 · 警告 {group.warningRows} 行
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">{group.rowCount}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    {group.impactLabel}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {group.evidence.map((item) => (
+                        <Badge key={item} variant="outline">
+                          {item}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {group.nextAction}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground">{aggregation.nextAction}</p>
+        <Button asChild size="sm" variant="outline">
+          <Link href="#import-row-correction">
+            查看失败行修正
+            <ArrowRight data-icon="inline-end" />
+          </Link>
+        </Button>
+      </div>
+    </section>
   )
 }
 
@@ -387,6 +497,24 @@ function formatDrilldownTone(
   }
 
   return "等待结果"
+}
+
+function formatQualityImpactTone(
+  tone: ImportQualityImpactAggregation["tone"]
+): string {
+  if (tone === "blocked") {
+    return "影响候选"
+  }
+
+  if (tone === "warning") {
+    return "需复核"
+  }
+
+  if (tone === "ready") {
+    return "无质量问题"
+  }
+
+  return "等待明细"
 }
 
 function formatComparisonType(

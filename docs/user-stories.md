@@ -3085,3 +3085,26 @@ dependencies:
   - "US667"
 status: "done"
 ```
+
+### US669 - 数据质量到异常反向聚合 drilldown
+
+```yaml
+id: US669
+requirement_ids:
+  - R749
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望批次详情页能把导入质量问题按字段和错误原因聚合，并关联当前业务日下游异常影响候选，以便先处理影响最大的质量问题。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 的结果追踪页签展示质量影响聚合。"
+  - "聚合按导入失败/警告行的错误字段和错误原因分组，展示行数、失败/警告构成和主要证据。"
+  - "聚合关联当前业务日的 comparison-runs 与 review-cases，说明影响候选、未关闭复核数量和下一步处理建议。"
+  - "无质量问题、无批次明细或下游结果为空时展示清晰只读空态，不新增写入按钮。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US668"
+status: "done"
+```

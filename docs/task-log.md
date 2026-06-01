@@ -1326,6 +1326,17 @@
 
 ### 2026-06-01
 
+- task_id: `IM049`
+- source_ids:
+  - `R749`
+- story_ids:
+  - `US669`
+- action: 增加数据质量到异常反向聚合。
+- status: `done`
+- notes: `/data-quality/[batchId]` 的结果追踪页签现在展示质量影响聚合，按错误字段和错误原因分组失败/警告行，并关联当前业务日复核案例、未关闭数量和对比结果候选。保持前端只读，不新增后端、schema/migration、复核写入、审批、导出、批量、权限或生产流程能力。
+
+### 2026-06-01
+
 - task_id: `IM048`
 - source_ids:
   - `R748`

@@ -4,6 +4,33 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM049 数据质量到异常反向聚合 drilldown
+
+#### 审计结论
+
+- `IM049/US669` 已在 `/data-quality/[batchId]` 的“结果追踪”页签增加质量影响聚合区。
+- 聚合按导入失败/警告行的错误字段和错误原因分组，展示问题行数、失败/警告构成、下游影响候选、证据和下一步。
+- 聚合关联当前业务日已有 comparison-runs 与 review-cases，说明复核案例、未关闭复核和对比结果候选。
+- 无批次明细或无行级质量问题时展示只读空态，不新增写入按钮。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是只读“影响候选”聚合，尚未建立行级质量问题到具体复核案例的数据库级真实映射。
+- 后续如继续深化，应优先做复核结论预览，不要混入真实关闭写入、审批、导出、批量或权限。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportQualityImpactAggregation` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，34 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- shadcn 快查：触达前端文件范围未发现 `space-x/space-y`、硬编码灰阶色阶或新的非语义色彩类。
+- in-app browser smoke：浏览器通道返回 route unavailable；本轮改用生产构建 HTTP smoke 补证。临时启动 `npm run start -- -p 3022` 后，`curl http://127.0.0.1:3022/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` 返回页面 HTML，包含 `质量影响聚合`、`首要问题`、`source_key · REQUIRED_FIELD_MISSING`、`1 行问题 · 0 个复核案例 · 0 条对比结果` 和 `查看失败行修正`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM048 批次详情下游结果追踪 drilldown
 
 #### 审计结论
