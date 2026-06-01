@@ -116,6 +116,17 @@ export type ImportBatchDetailSummary = {
   versionCount: number
 }
 
+export type ImportBatchDetailReadabilityTone = "blocked" | "warning" | "ready" | "empty"
+
+export type ImportBatchDetailReadability = {
+  tone: ImportBatchDetailReadabilityTone
+  title: string
+  detail: string
+  nextAction: string
+  focusLabel: string
+  errorFieldSummary: string
+}
+
 export type ImportBatchHealth = "blocked" | "warning" | "ready_candidate" | "applied"
 
 export type ImportRowCorrectionNoticeTone = "success" | "failed"
@@ -587,6 +598,66 @@ export function summarizeImportBatchDetail(
   }
 }
 
+export function summarizeImportBatchDetailReadability(
+  detail: ImportBatchPersistenceDetail
+): ImportBatchDetailReadability {
+  const summary = summarizeImportBatchDetail(detail)
+  const errorFieldSummary = summarizeImportDetailErrorFields(detail.rows)
+
+  if (summary.totalRows === 0) {
+    return {
+      tone: "empty",
+      title: "等待行结果",
+      detail: "当前批次还没有可展示的行结果。",
+      nextAction: "先确认批次是否完成解析，再查看上传结果或重试导入。",
+      focusLabel: "行结果",
+      errorFieldSummary,
+    }
+  }
+
+  if (summary.failedRows > 0) {
+    return {
+      tone: "blocked",
+      title: "先处理失败行",
+      detail: `当前批次共 ${summary.totalRows.toLocaleString("zh-CN")} 行，${summary.failedRows.toLocaleString("zh-CN")} 行失败、${summary.warningRows.toLocaleString("zh-CN")} 行警告；失败行会阻塞后续应用。`,
+      nextAction: "先查看全部行结果中的错误字段和失败原因，再进入失败行修正。",
+      focusLabel: "失败行",
+      errorFieldSummary,
+    }
+  }
+
+  if (summary.versionCount === 0) {
+    return {
+      tone: "warning",
+      title: "缺少版本记录",
+      detail: `当前批次有 ${summary.totalRows.toLocaleString("zh-CN")} 行结果但还没有版本记录；需要先确认导入版本是否生成。`,
+      nextAction: "优先查看版本记录区域和应用准备度，确认是否存在版本缺口。",
+      focusLabel: "版本记录",
+      errorFieldSummary,
+    }
+  }
+
+  if (summary.warningRows > 0) {
+    return {
+      tone: "warning",
+      title: "复核警告行",
+      detail: `当前批次没有失败行，但仍有 ${summary.warningRows.toLocaleString("zh-CN")} 行警告；应用前建议复核字段预览和错误说明。`,
+      nextAction: "先复核警告行，再查看应用准备度是否仍有阻塞。",
+      focusLabel: "警告行",
+      errorFieldSummary,
+    }
+  }
+
+  return {
+    tone: "ready",
+    title: "批次明细可复核",
+    detail: `当前批次 ${summary.totalRows.toLocaleString("zh-CN")} 行均未发现失败或警告，并已生成 ${summary.versionCount.toLocaleString("zh-CN")} 条版本记录。`,
+    nextAction: "继续查看版本记录和应用状态概览，确认是否进入应用前复核。",
+    focusLabel: "版本记录",
+    errorFieldSummary,
+  }
+}
+
 export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): string {
   const standardFields = row.raw_data.standard_fields
   if (isRecord(standardFields)) {
@@ -594,6 +665,10 @@ export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): st
   }
 
   return JSON.stringify(row.raw_data)
+}
+
+export function formatImportRowErrorField(row: ImportBatchRowResult): string {
+  return row.error_field?.trim() || "无"
 }
 
 export function summarizeImportRowCorrectionNotice({
@@ -980,6 +1055,22 @@ function formatImportApplicationTarget(target: string): string {
   }
 
   return target
+}
+
+function summarizeImportDetailErrorFields(rows: ImportBatchRowResult[]): string {
+  const fields = Array.from(
+    new Set(
+      rows
+        .map((row) => row.error_field?.trim())
+        .filter((field): field is string => Boolean(field))
+    )
+  )
+
+  if (fields.length === 0) {
+    return "无"
+  }
+
+  return fields.slice(0, 3).join("、")
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

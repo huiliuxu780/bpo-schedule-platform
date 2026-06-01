@@ -1269,6 +1269,17 @@
 - status: `done`
 - notes: `/data-quality` 现在对选中批次展示只读应用状态概览，汇总应用状态、应用目标、导入版本、已应用记录数和下一步判断；保持前端只读展示，不新增后端、schema/migration、apply 写按钮、审批、导出、批量、权限或生产流程能力。
 
+### 2026-06-01
+
+- task_id: `IM038`
+- source_ids:
+  - `R738`
+- story_ids:
+  - `US658`
+- action: 增强导入中心批次明细可读性。
+- status: `done`
+- notes: `/data-quality` 的批次明细现在展示处理摘要、下一步只读建议和错误字段摘要，全部行结果表也直接展示错误字段；保持前端只读展示，不新增后端、schema/migration、apply 写按钮、审批、导出、批量、权限或生产流程能力。
+
 ### 2026-05-13
 
 - task_id: `F031`

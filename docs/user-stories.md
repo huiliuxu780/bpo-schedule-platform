@@ -2836,3 +2836,25 @@ dependencies:
   - "US656"
 status: "done"
 ```
+
+### US658 - 导入中心批次明细可读性增强
+
+```yaml
+id: US658
+requirement_ids:
+  - R738
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望批次明细页能更清楚地解释当前批次处理结果和错误字段，以便不只看到行表，还能快速判断先看版本、失败行还是应用准备度。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 选中批次后，批次明细展示处理摘要和下一步只读建议。"
+  - "摘要根据失败行、警告行、版本记录和总行数解释当前批次该先看哪里。"
+  - "全部行结果表能直接看到错误字段，降低只看错误码和 JSON 预览的理解成本。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US657"
+status: "done"
+```

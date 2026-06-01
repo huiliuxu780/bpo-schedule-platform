@@ -1534,3 +1534,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端只读应用状态概览和模型 helper；不新增依赖，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R738 - 导入中心批次明细可读性增强
+
+```yaml
+id: R738
+module: "导入中心"
+description: "导入中心已经能展示批次明细、全部行结果和应用状态后，需要让批次明细先给出处理摘要、下一步建议，并在行表中直接暴露错误字段，减少数据管理员从 JSON 预览和错误码中反推问题的成本。"
+source: "PM requested continuing import-center production usability after IM037 on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端只读批次明细可读性增强和模型 helper；不新增依赖，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

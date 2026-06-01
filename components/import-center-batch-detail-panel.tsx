@@ -5,9 +5,11 @@ import {
   type ImportBatchRowResult,
   formatImportFileType,
   formatImportProcessingStatus,
+  formatImportRowErrorField,
   formatImportRowStatus,
   getImportRowStandardFieldsPreview,
   summarizeImportBatchDetail,
+  summarizeImportBatchDetailReadability,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -56,6 +58,7 @@ export function ImportCenterBatchDetailPanel({
   }
 
   const summary = summarizeImportBatchDetail(detail)
+  const readability = summarizeImportBatchDetailReadability(detail)
 
   return (
     <Card id="import-batch-detail" className="scroll-mt-16 overflow-hidden">
@@ -77,6 +80,39 @@ export function ImportCenterBatchDetailPanel({
           <Metric label="失败" value={summary.failedRows} />
           <Metric label="警告" value={summary.warningRows} />
           <Metric label="版本" value={summary.versionCount} />
+        </section>
+
+        <section
+          className={
+            readability.tone === "blocked"
+              ? "grid gap-3 rounded-md border border-destructive/40 bg-destructive/10 p-3"
+              : readability.tone === "warning"
+                ? "grid gap-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-3"
+                : "grid gap-3 rounded-md border bg-muted/30 p-3"
+          }
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div className="text-sm font-medium">处理摘要</div>
+              <div className="mt-1 text-sm text-muted-foreground">{readability.title}</div>
+            </div>
+            <Badge variant={readability.tone === "blocked" ? "destructive" : "outline"}>
+              {readability.focusLabel}
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground">{readability.detail}</p>
+          <div className="grid gap-2 md:grid-cols-2">
+            <div className="rounded-md border bg-background/70 p-2">
+              <div className="text-xs text-muted-foreground">错误字段</div>
+              <div className="mt-1 font-mono text-xs font-medium">
+                {readability.errorFieldSummary}
+              </div>
+            </div>
+            <div className="rounded-md border bg-background/70 p-2">
+              <div className="text-xs text-muted-foreground">下一步</div>
+              <div className="mt-1 text-xs font-medium">{readability.nextAction}</div>
+            </div>
+          </div>
         </section>
 
         <section className="grid gap-2">
@@ -123,6 +159,7 @@ export function ImportCenterBatchDetailPanel({
                     <TableHead className="w-20">行号</TableHead>
                     <TableHead>状态</TableHead>
                     <TableHead className="min-w-[160px]">source_key</TableHead>
+                    <TableHead className="min-w-[140px]">错误字段</TableHead>
                     <TableHead className="min-w-[220px]">错误</TableHead>
                     <TableHead className="min-w-[320px]">字段预览</TableHead>
                   </TableRow>
@@ -151,6 +188,7 @@ function DetailRow({ row }: { row: ImportBatchRowResult }) {
         </Badge>
       </TableCell>
       <TableCell className="font-mono text-xs">{row.source_key ?? "-"}</TableCell>
+      <TableCell className="font-mono text-xs">{formatImportRowErrorField(row)}</TableCell>
       <TableCell>
         {row.error_code ? (
           <div className="grid gap-1 text-sm">

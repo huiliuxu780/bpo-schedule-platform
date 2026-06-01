@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM038 导入中心批次明细可读性增强
+
+#### 审计结论
+
+- `IM038/US658` 已在 `/data-quality` 的批次明细增加“处理摘要”。
+- 模型层新增 `summarizeImportBatchDetailReadability` 和 `formatImportRowErrorField`，根据失败行、警告行、版本记录和总行数输出只读复核焦点。
+- 页面在批次明细中展示下一步建议、错误字段摘要，并在全部行结果表中直接展示错误字段。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是前端只读可读性增强，不是批量修正、导出、审批或应用写入。
+- 后续若要做行结果筛选、分页、导出、批量修正或服务端审计，需要另开受控任务。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `formatImportRowErrorField` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，23 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- 页面 smoke：`http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 返回页面，包含 `处理摘要`、`错误字段` 和 `下一步`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM037 导入中心应用状态概览
 
 #### 审计结论
