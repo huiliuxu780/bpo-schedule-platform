@@ -4,6 +4,32 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM046 字段映射模板适配详情
+
+#### 审计结论
+
+- `IM046/US666` 已在 `/data-quality/[batchId]` 的“导入与模板”页签增加当前批次文件类型的模板适配详情。
+- 页面现在展示推荐模板、同类型启用/停用数量、推荐映射字段数、建议字段缺口、已覆盖标准字段和缺口字段。
+- 模板卡片展示 source -> standard 映射表格，不再只依赖一行映射摘要。
+- 无启用模板或模板读取失败时保留只读兜底提示，说明可继续手填字段映射 JSON。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、模板 CRUD 写入、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只做模板适配可见性，不创建、不更新、不停用模板，也不把模板选择结果写回批次处理状态。
+- 后续如继续深化，应优先做应用准备度问题分组或结果追踪 drilldown，仍不要混入审批、导出、批量和生产规则。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportTemplateFitDetail` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，29 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- shadcn 快查：触达前端文件范围未发现 `space-x/space-y`、硬编码灰阶/琥珀/绿色色阶、旧左右分栏文案、`分层详情` 或 `选中批次状态检查器`。
+- in-app browser smoke：`/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` 的“导入与模板”Tab 唯一可点；页面包含“模板适配”“推荐”“已覆盖标准字段”“建议补齐字段”“来源字段”“标准字段”；console error 为空。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM045 数据质量批次详情单列处理流重设计
 
 #### 审计结论

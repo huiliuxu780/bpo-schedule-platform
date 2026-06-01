@@ -3016,3 +3016,26 @@ dependencies:
   - "US664"
 status: "done"
 ```
+
+### US666 - 字段映射模板适配详情
+
+```yaml
+id: US666
+requirement_ids:
+  - R746
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望批次详情页能按当前文件类型说明字段映射模板的适配情况、推荐模板和字段缺口，以便上传和复核前能判断模板是否可用。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 的导入与模板页签展示当前批次文件类型的模板适配摘要。"
+  - "页面展示推荐启用模板、同类型启用/停用数量、映射字段数、已覆盖标准字段和缺口字段。"
+  - "模板卡片展示 source -> standard 字段映射明细，而不是只展示一行摘要。"
+  - "无同类型启用模板或模板读取失败时，页面提供只读提示并保留手填字段映射 JSON 作为兜底说明。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、模板 CRUD 写入、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US665"
+status: "done"
+```

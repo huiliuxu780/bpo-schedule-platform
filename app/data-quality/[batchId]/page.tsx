@@ -149,6 +149,7 @@ export default async function ImportBatchDetailPage({
                 <ImportCenterTemplateManagementPanel
                   templates={templateResult.data ?? []}
                   templateError={templateResult.error}
+                  selectedFileType={selectedBatch?.file_type ?? null}
                 />
               </div>
             }

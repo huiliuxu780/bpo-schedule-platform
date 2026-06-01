@@ -1260,6 +1260,17 @@
 
 ### 2026-06-01
 
+- task_id: `IM046`
+- source_ids:
+  - `R746`
+- story_ids:
+  - `US666`
+- action: 增加字段映射模板适配详情。
+- status: `done`
+- notes: `/data-quality/[batchId]` 的导入与模板页签现在按当前批次文件类型展示模板适配、推荐模板、字段覆盖、建议缺口和 source -> standard 映射明细；保持只读展示，不新增模板 CRUD、依赖、后端、schema/migration、真实外部接口、审批、导出、批量、权限或生产流程能力。
+
+### 2026-06-01
+
 - task_id: `IM045`
 - source_ids:
   - `R745`

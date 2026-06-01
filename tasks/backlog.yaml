@@ -5413,6 +5413,51 @@ tasks:
       - "范围扩展到新增业务能力、真实外部接口、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM046
+    title: "字段映射模板适配详情"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM045"]
+    allowed_files:
+      - "app/data-quality/[batchId]/page.tsx"
+      - "components/import-center-template-management-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality/[batchId]` 的导入与模板页签展示当前批次文件类型的模板适配摘要。"
+      - "页面展示推荐启用模板、同类型启用/停用数量、映射字段数、已覆盖标准字段和缺口字段。"
+      - "模板卡片展示 source -> standard 字段映射明细，而不是只展示一行摘要。"
+      - "无同类型启用模板或模板读取失败时，页面提供只读提示并保留手填字段映射 JSON 作为兜底说明。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、模板 CRUD 写入、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到模板 CRUD 写入、真实外部接口、审批、导出、权限、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: IM042
     title: "数据质量页下游结果列表可见性"
     priority: P1

@@ -1,5 +1,24 @@
 # Branch Log
 
+## 2026-06-01
+
+### IM046 Field Mapping Template Fit Detail
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical exists; local branch was ahead 17 before IM046`
+- scope: add read-only field-mapping template fit detail on `/data-quality/[batchId]`, including recommended template, current file-type coverage, suggested standard-field gaps, source-to-standard mapping rows, model test coverage, and traceability records.
+- allowed_files_check: `app/data-quality/[batchId]/page.tsx`, `components/import-center-template-management-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, external integration, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/[batchId]/page.tsx`, `components/import-center-template-management-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, external integration, production formula, settlement, or charge-factor files.
+- check_result: TDD red test failed first because `summarizeImportTemplateFitDetail` was missing; target model test passed with 29 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn quick check found no `space-x/space-y`, hardcoded grayscale/amber/emerald classes, old split-layout copy, `分层详情`, or `选中批次状态检查器` in touched frontend files; in-app browser smoke passed for the template fit tab, coverage/gap labels, mapping table labels, and empty console errors; `git diff --check` passed; `bash scripts/check.sh` passed with strict state check, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ## 2026-05-31
 
 ### IM030 Import Center Template Visibility

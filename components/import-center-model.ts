@@ -306,6 +306,38 @@ export type ImportTemplateFitHint = {
   nextAction: string
 }
 
+export type ImportTemplateMappingPair = {
+  sourceField: string
+  standardField: string
+}
+
+export type ImportTemplateFitOption = {
+  templateId: string
+  templateName: string
+  isActive: boolean
+  mappedFieldCount: number
+  mappedStandardFields: string[]
+  missingStandardFields: string[]
+  mappingPairs: ImportTemplateMappingPair[]
+}
+
+export type ImportTemplateFitDetail = {
+  fileType: ImportFileType
+  status: ImportTemplateFitStatus
+  matchingTemplates: number
+  activeMatchingTemplates: number
+  inactiveMatchingTemplates: number
+  recommendedTemplateId: string | null
+  recommendedTemplateName: string | null
+  recommendedMappedFieldCount: number
+  mappedStandardFields: string[]
+  missingStandardFields: string[]
+  templateOptions: ImportTemplateFitOption[]
+  title: string
+  detail: string
+  nextAction: string
+}
+
 export type ImportUploadRequest = {
   batchId: string
   fileName: string
@@ -355,6 +387,36 @@ const rowStatusLabels: Record<ImportRowStatus, string> = {
   success: "成功",
   failed: "失败",
   warning: "警告",
+}
+
+const recommendedImportStandardFields: Record<ImportFileType, string[]> = {
+  master_data: [
+    "source_key",
+    "employee_id",
+    "employee_name",
+    "worksite_id",
+    "supplier_id",
+    "project_id",
+  ],
+  personnel_schedule: [
+    "source_key",
+    "employee_id",
+    "business_date",
+    "shift_type_id",
+    "start_time",
+    "end_time",
+  ],
+  demand_forecast: [
+    "source_key",
+    "business_date",
+    "interval_start",
+    "worksite_id",
+    "project_id",
+    "skill_group",
+    "demand_agents",
+  ],
+  login_log: ["source_key", "employee_id", "login_time", "logout_time"],
+  status_log: ["source_key", "employee_id", "status_code", "start_time", "end_time"],
 }
 
 export function buildImportApiUrl(path: string, apiBase = getDefaultApiBase()): string {
@@ -1315,6 +1377,76 @@ export function summarizeImportTemplateFitHint(
   }
 }
 
+export function summarizeImportTemplateFitDetail(
+  fileType: ImportFileType,
+  templates: ImportFieldMappingTemplate[],
+  templateError?: string | null
+): ImportTemplateFitDetail {
+  const recommendedFields = recommendedImportStandardFields[fileType]
+
+  if (templateError) {
+    return {
+      fileType,
+      status: "error",
+      matchingTemplates: 0,
+      activeMatchingTemplates: 0,
+      inactiveMatchingTemplates: 0,
+      recommendedTemplateId: null,
+      recommendedTemplateName: null,
+      recommendedMappedFieldCount: 0,
+      mappedStandardFields: [],
+      missingStandardFields: recommendedFields,
+      templateOptions: [],
+      title: "字段映射模板读取失败",
+      detail: `字段映射模板读取失败：${templateError}`,
+      nextAction: "保留手填字段映射 JSON 上传，或稍后重试模板读取。",
+    }
+  }
+
+  const matchingTemplates = templates.filter((template) => template.file_type === fileType)
+  const templateOptions = matchingTemplates
+    .map((template) => buildImportTemplateFitOption(template, recommendedFields))
+    .sort(compareImportTemplateFitOptions)
+  const activeOptions = templateOptions.filter((template) => template.isActive)
+  const recommendedTemplate = activeOptions[0] ?? null
+
+  if (!recommendedTemplate) {
+    return {
+      fileType,
+      status: "missing",
+      matchingTemplates: matchingTemplates.length,
+      activeMatchingTemplates: 0,
+      inactiveMatchingTemplates: templateOptions.length,
+      recommendedTemplateId: null,
+      recommendedTemplateName: null,
+      recommendedMappedFieldCount: 0,
+      mappedStandardFields: [],
+      missingStandardFields: recommendedFields,
+      templateOptions,
+      title: `暂无启用${formatImportFileType(fileType)}模板`,
+      detail: `当前${formatImportFileType(fileType)}没有启用模板；上传前需要手填字段映射 JSON。`,
+      nextAction: "先使用手填字段映射 JSON；模板新增或维护留到单独受控任务。",
+    }
+  }
+
+  return {
+    fileType,
+    status: "matched",
+    matchingTemplates: matchingTemplates.length,
+    activeMatchingTemplates: activeOptions.length,
+    inactiveMatchingTemplates: templateOptions.length - activeOptions.length,
+    recommendedTemplateId: recommendedTemplate.templateId,
+    recommendedTemplateName: recommendedTemplate.templateName,
+    recommendedMappedFieldCount: recommendedTemplate.mappedFieldCount,
+    mappedStandardFields: recommendedTemplate.mappedStandardFields,
+    missingStandardFields: recommendedTemplate.missingStandardFields,
+    templateOptions,
+    title: `推荐使用${recommendedTemplate.templateName}`,
+    detail: `当前${formatImportFileType(fileType)}有 ${activeOptions.length} 个启用模板；推荐模板覆盖 ${recommendedTemplate.mappedFieldCount} 个字段，仍缺 ${recommendedTemplate.missingStandardFields.length} 个建议字段。`,
+    nextAction: "优先使用推荐模板；如果 CSV 表头不一致，继续用手填字段映射 JSON 兜底。",
+  }
+}
+
 export function formatFieldMappingTemplateSummary(
   template: ImportFieldMappingTemplate
 ): string {
@@ -1329,6 +1461,50 @@ export function formatFieldMappingTemplateSummary(
   }
 
   return preview.join(", ")
+}
+
+function buildImportTemplateFitOption(
+  template: ImportFieldMappingTemplate,
+  recommendedFields: string[]
+): ImportTemplateFitOption {
+  const mappingPairs = Object.entries(template.field_mapping).map(
+    ([sourceField, standardField]) => ({
+      sourceField,
+      standardField,
+    })
+  )
+  const mappedStandardFields = Array.from(
+    new Set(mappingPairs.map((pair) => pair.standardField))
+  ).sort()
+  const mappedFieldSet = new Set(mappedStandardFields)
+  const missingStandardFields = recommendedFields.filter(
+    (field) => !mappedFieldSet.has(field)
+  )
+
+  return {
+    templateId: template.template_id,
+    templateName: template.template_name,
+    isActive: template.is_active,
+    mappedFieldCount: mappingPairs.length,
+    mappedStandardFields,
+    missingStandardFields,
+    mappingPairs,
+  }
+}
+
+function compareImportTemplateFitOptions(
+  left: ImportTemplateFitOption,
+  right: ImportTemplateFitOption
+): number {
+  if (left.isActive !== right.isActive) {
+    return left.isActive ? -1 : 1
+  }
+
+  if (left.mappedFieldCount !== right.mappedFieldCount) {
+    return right.mappedFieldCount - left.mappedFieldCount
+  }
+
+  return left.templateId.localeCompare(right.templateId)
 }
 
 function formatImportRowCorrectionFailureReason(reason?: string): string {

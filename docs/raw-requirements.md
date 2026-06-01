@@ -1638,3 +1638,16 @@ version: "1.0"
 status: "done"
 notes: "本轮只做前端页面布局和业务文案重构；使用现有 shadcn Card/Tabs/Badge/Button，不新增依赖，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R746 - 字段映射模板适配详情
+
+```yaml
+id: R746
+module: "导入中心"
+description: "批次详情页的导入与模板区域仍主要展示模板库存，缺少按当前批次文件类型判断模板是否匹配、推荐哪个模板、覆盖哪些标准字段、缺哪些关键字段的业务化说明。需要在详情页内补充只读模板适配详情。"
+source: "PM asked to continue production-usability work after batch detail page redesign on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读模板适配和字段映射详情展示；不新增模板 CRUD 写入，不新增依赖，不做后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
+```
