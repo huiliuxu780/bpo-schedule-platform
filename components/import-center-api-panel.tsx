@@ -1,6 +1,3 @@
-import type { ReactNode } from "react"
-
-import { ImportCenterBatchInspectorPanel } from "@/components/import-center-batch-inspector-panel"
 import { ImportCenterBatchListPanel } from "@/components/import-center-batch-list-panel"
 import { ImportCenterOverviewPanel } from "@/components/import-center-overview-panel"
 import {
@@ -21,7 +18,6 @@ type ImportCenterApiPanelProps = {
   batchFilters?: ImportBatchFilters
   templateError?: string | null
   templateCount?: number
-  children?: ReactNode
 }
 
 export function ImportCenterApiPanel({
@@ -33,7 +29,6 @@ export function ImportCenterApiPanel({
   batchFilters = {},
   templateError = null,
   templateCount = 1,
-  children,
 }: ImportCenterApiPanelProps) {
   const filteredBatches = filterImportBatches(batches, batchFilters)
   const selectedBatch =
@@ -64,7 +59,7 @@ export function ImportCenterApiPanel({
 
       <section
         id="import-batch-workspace"
-        className="grid min-h-0 scroll-mt-16 gap-4 xl:grid-cols-[minmax(0,1fr)_420px]"
+        className="grid min-h-0 scroll-mt-16 gap-4"
       >
         <ImportCenterBatchListPanel
           batches={batches}
@@ -75,16 +70,7 @@ export function ImportCenterApiPanel({
           batchFilters={batchFilters}
           selectedBatchDetailHref={selectedBatchDetailHref}
         />
-        <ImportCenterBatchInspectorPanel
-          selectedBatch={selectedBatch}
-          readiness={readiness}
-          readinessError={readinessError}
-          mode="summary"
-          detailHref={selectedBatchDetailHref}
-        />
       </section>
-
-      {children}
     </main>
   )
 }

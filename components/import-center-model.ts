@@ -442,9 +442,7 @@ export function buildImportBatchProcessingHref(
 
   const query = searchParams.toString()
 
-  return `/data-quality/import-batches/${encodeURIComponent(batchId)}${
-    query ? `?${query}` : ""
-  }`
+  return `/data-quality/${encodeURIComponent(batchId)}${query ? `?${query}` : ""}`
 }
 
 export function buildImportComparisonRunsUrl(

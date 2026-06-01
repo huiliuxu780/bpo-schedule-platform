@@ -523,6 +523,9 @@ requirements:
   US663: {file: "docs/user-stories.md", requirement_ids: ["R743"], task_ids: ["IM043"], archive_refs: []}
   IM043: {file: "tasks/backlog.yaml", story_ids: ["US663"], gate: "frontend-scaffold"}
   R743: {file: "docs/raw-requirements.md", story_ids: ["US663"], task_ids: ["IM043"]}
+  US664: {file: "docs/user-stories.md", requirement_ids: ["R744"], task_ids: ["IM044"], archive_refs: []}
+  IM044: {file: "tasks/backlog.yaml", story_ids: ["US664"], gate: "frontend-scaffold"}
+  R744: {file: "docs/raw-requirements.md", story_ids: ["US664"], task_ids: ["IM044"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

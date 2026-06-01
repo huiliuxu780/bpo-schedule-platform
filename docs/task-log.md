@@ -1260,6 +1260,17 @@
 
 ### 2026-06-01
 
+- task_id: `IM044`
+- source_ids:
+  - `R744`
+- story_ids:
+  - `US664`
+- action: 修正数据质量批次二级详情导航。
+- status: `done`
+- notes: `/data-quality` 现在只保留概览、筛选和批次列表；状态检查器、分层详情、失败行修正、结果追踪和导入模板集中在 `/data-quality/[batchId]`；旧 `/data-quality/import-batches/[batchId]` 保留兼容跳转；不新增依赖、后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限或生产流程能力。
+
+### 2026-06-01
+
 - task_id: `IM043`
 - source_ids:
   - `R743`

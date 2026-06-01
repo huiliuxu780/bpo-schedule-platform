@@ -479,7 +479,7 @@ test("import center result trace summarizes persisted downstream lists", () => {
 test("import center batch processing href routes concrete work to detail page", () => {
   assert.equal(
     buildImportBatchProcessingHref("BATCH-IM026-SMOKE-004"),
-    "/data-quality/import-batches/BATCH-IM026-SMOKE-004",
+    "/data-quality/BATCH-IM026-SMOKE-004",
   );
 
   assert.equal(
@@ -487,7 +487,7 @@ test("import center batch processing href routes concrete work to detail page", 
       correction: "success",
       row: "1",
     }),
-    "/data-quality/import-batches/BATCH%2FCSV%20001?correction=success&row=1",
+    "/data-quality/BATCH%2FCSV%20001?correction=success&row=1",
   );
 });
 

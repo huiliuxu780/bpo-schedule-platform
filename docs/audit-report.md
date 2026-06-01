@@ -4,6 +4,33 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM044 数据质量批次二级详情导航修正
+
+#### 审计结论
+
+- `IM044/US664` 已把具体批次处理入口调整为 `/data-quality/[batchId]`，让详情页成为数据质量下的二级页面。
+- `/data-quality` 只保留批次概览、筛选和列表，不再放置“选中批次状态检查器”。
+- 详情页保留状态检查器、分层详情、失败行修正、结果追踪和导入模板；旧 `/data-quality/import-batches/[batchId]` 保留为兼容跳转，避免旧链接断开。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是前端页面层级与导航修正，不是批次应用写入、批量处理、权限隔离或审批流。
+- 后续若继续深化生产可用性，建议拆成模板/字段映射管理深度、准备度问题分组或结果详情钻取，不要混入外部集成和生产规则。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因 `buildImportBatchProcessingHref` 仍返回旧 `/data-quality/import-batches/[batchId]` 路径失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，28 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- shadcn 快查：触达前端文件范围未发现 `space-x/space-y` 或硬编码灰阶色。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- in-app browser smoke：`/data-quality?batch=BATCH-IM026-SMOKE-004` 不包含 `选中批次状态检查器` 和 `分层详情`，处理链接指向 `/data-quality/[batchId]`；`/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` 包含 `批次处理详情`、`返回批次列表`、`选中批次状态检查器`、`分层详情` 和 `第 1 行已修正`；旧 `/data-quality/import-batches/BATCH-IM026-SMOKE-004?correction=success&row=1` 跳转到新二级路径；console error 为空。
+- 截图证据：`/private/tmp/im044-data-quality-second-level-detail.png`。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM040 导入中心应用结果到下游结果导航
 
 #### 审计结论

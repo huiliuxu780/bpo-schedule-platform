@@ -1612,3 +1612,16 @@ version: "1.0"
 status: "done"
 notes: "本轮只做前端路由和信息架构拆分；复用已有组件和本地 API 客户端口径，不新增依赖，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R744 - 数据质量批次二级详情导航修正
+
+```yaml
+id: R744
+module: "导入中心"
+description: "数据质量批次处理页拆分后，列表页仍保留状态检查器，且详情路径像三级页面，返回列表不够顺滑。需要把状态检查器完全移入批次详情页，并把具体处理页调整为 `/data-quality/[batchId]` 二级页面。"
+source: "PM feedback that detail page is not a second-level page, returning to the list is not smooth, and status checker should not live on the list page on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮只做前端路由、页面层级和导航修正；保留旧详情路径兼容跳转，不新增依赖，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

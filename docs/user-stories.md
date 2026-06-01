@@ -2970,3 +2970,26 @@ dependencies:
   - "US662"
 status: "done"
 ```
+
+### US664 - 数据质量批次二级详情导航修正
+
+```yaml
+id: US664
+requirement_ids:
+  - R744
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望数据质量列表页只用于定位批次，并通过真正的二级批次详情页处理状态检查、失败行和结果追踪，以便返回列表和继续处理都更顺滑。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 只展示概览、筛选和批次列表，不再渲染选中批次状态检查器。"
+  - "批次处理入口进入 `/data-quality/[batchId]`，旧 `/data-quality/import-batches/[batchId]` 可兼容跳转到新二级详情页。"
+  - "详情页保留选中批次状态检查器、分层详情、失败行修正、结果追踪和导入模板，并提供返回 `/data-quality?batch=<batchId>` 的列表入口。"
+  - "修正成功/失败 query 仍能在二级详情页展示，不丢失当前处理反馈。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US663"
+status: "done"
+```

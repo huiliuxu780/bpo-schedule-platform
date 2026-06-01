@@ -1077,6 +1077,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM044 Data Quality Second-Level Detail Navigation
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical exists; local branch was ahead 15 before IM044`
+- scope: move batch processing entry to `/data-quality/[batchId]`, remove the status checker from `/data-quality`, keep old `/data-quality/import-batches/[batchId]` as a redirect, preserve correction query feedback, model test coverage, and traceability records.
+- allowed_files_check: `app/data-quality/page.tsx`, `app/data-quality/[batchId]/page.tsx`, `app/data-quality/import-batches/[batchId]/page.tsx`, `components/import-center-api-panel.tsx`, `components/import-center-batch-list-panel.tsx`, `components/import-center-batch-inspector-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, external integration, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/[batchId]/page.tsx`, `app/data-quality/import-batches/[batchId]/page.tsx`, `components/import-center-api-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, external integration, production formula, settlement, or charge-factor files.
+- check_result: TDD red test failed first because `buildImportBatchProcessingHref` still returned `/data-quality/import-batches/[batchId]`; target model test passed with 28 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn quick check found no `space-x/space-y` or hardcoded grayscale classes in touched frontend files; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; in-app browser smoke passed for list-only workbench, second-level detail page, legacy redirect, and empty console errors; `bash scripts/check.sh` passed with strict state check, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### F023 Unavailability Table Parity
 
 - branch_name: `codex/f021-detail-chain`
