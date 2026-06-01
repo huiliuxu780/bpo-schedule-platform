@@ -6,6 +6,7 @@ import {
   buildImportBatchDetailUrl,
   buildImportBatchProcessingHref,
   buildImportComparisonRunsUrl,
+  buildImportReviewCasesWorkspaceHref,
   buildImportFieldMappingTemplatesUrl,
   buildImportReviewCasesUrl,
   buildImportRowCorrectionUrl,
@@ -21,6 +22,8 @@ import {
   summarizeImportQualityImpactAggregation,
   summarizeImportReviewConclusionPreview,
   summarizeImportReviewEvidenceGapDrilldown,
+  summarizeImportReviewCasesWorkspace,
+  filterImportReviewCases,
   summarizeImportResultTrace,
   summarizeImportPageHierarchy,
   summarizeImportReadinessIssueGroups,
@@ -1021,6 +1024,114 @@ test("import center review evidence gap drilldown handles empty and read-error s
       nextAction: "继续查看对比结果和复核结论预览。",
       gaps: [],
     },
+  );
+});
+
+test("import center review cases workspace builds page href and filters cases", () => {
+  assert.equal(
+    buildImportReviewCasesWorkspaceHref({
+      businessDate: "2026-05-11",
+      ownerId: "OWNER-A",
+      status: "open",
+      severity: "high",
+      sourceResultType: "schedule_actual",
+      query: "late",
+    }),
+    "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A&status=open&severity=high&sourceResultType=schedule_actual&query=late"
+  );
+
+  const cases = [
+    {
+      case_id: "CASE-LATE-001",
+      source_result_type: "schedule_actual",
+      source_result_id: 18,
+      business_date: "2026-05-11",
+      owner_id: "OWNER-A",
+      severity: "high",
+      status: "open",
+      created_at: "2026-05-11T10:00:00+08:00",
+    },
+    {
+      case_id: "CASE-CLOSED-001",
+      source_result_type: "forecast_schedule",
+      source_result_id: 8,
+      business_date: "2026-05-11",
+      owner_id: "OWNER-B",
+      severity: "low",
+      status: "closed",
+      created_at: "2026-05-11T11:00:00+08:00",
+    },
+  ];
+
+  assert.deepEqual(
+    filterImportReviewCases(cases, {
+      businessDate: "2026-05-11",
+      ownerId: "OWNER-A",
+      status: "open",
+      severity: "high",
+      sourceResultType: "schedule_actual",
+      query: "late",
+    }),
+    [cases[0]]
+  );
+});
+
+test("import center review cases workspace summarizes groups and next action", () => {
+  const summary = summarizeImportReviewCasesWorkspace({
+    cases: [
+      {
+        case_id: "CASE-HIGH-001",
+        source_result_type: "schedule_actual",
+        source_result_id: 18,
+        business_date: "2026-05-11",
+        owner_id: "OWNER-A",
+        severity: "high",
+        status: "open",
+        created_at: "2026-05-11T10:00:00+08:00",
+      },
+      {
+        case_id: "CASE-MEDIUM-001",
+        source_result_type: "forecast_schedule",
+        source_result_id: 12,
+        business_date: "2026-05-11",
+        owner_id: "OWNER-A",
+        severity: "medium",
+        status: "open",
+        created_at: "2026-05-11T10:20:00+08:00",
+      },
+      {
+        case_id: "CASE-CLOSED-001",
+        source_result_type: "schedule_actual",
+        source_result_id: 20,
+        business_date: "2026-05-11",
+        owner_id: "OWNER-B",
+        severity: "low",
+        status: "closed",
+        created_at: "2026-05-11T11:00:00+08:00",
+      },
+    ],
+    filters: {
+      businessDate: "2026-05-11",
+      status: "all",
+      severity: "all",
+      sourceResultType: "all",
+    },
+    error: null,
+  });
+
+  assert.equal(summary.tone, "blocked");
+  assert.equal(summary.title, "复核案例 3 个");
+  assert.equal(summary.openCount, 2);
+  assert.equal(summary.closedCount, 1);
+  assert.equal(summary.ownerGroups[0].ownerId, "OWNER-A");
+  assert.equal(summary.ownerGroups[0].openCount, 2);
+  assert.equal(summary.statusGroups[0].label, "未关闭");
+  assert.equal(summary.statusGroups[0].count, 2);
+  assert.equal(summary.sourceGroups[0].label, "排班实际");
+  assert.equal(summary.sourceGroups[0].count, 2);
+  assert.equal(
+    summary.nextAction,
+    "先处理 OWNER-A 名下 2 个未关闭复核案例，再回看高风险来源和证据缺口。"
   );
 });
 

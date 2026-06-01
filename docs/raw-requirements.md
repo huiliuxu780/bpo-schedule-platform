@@ -1729,3 +1729,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读证据缺口展示；不新增证据补录、复核关闭写入，不做后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
 ```
+
+### R753 - 复核案例工作台二级页
+
+```yaml
+id: R753
+module: "导入中心"
+description: "批次详情页已经加入复核结论和证据缺口，但复核案例仍夹在详情页结果追踪中，容易继续形成超长单页。需要把复核案例查看和处理定位拆成独立二级工作台，支持筛选、分组和从批次详情页跳转。"
+source: "PM agreed to split review-case detail and handling into a separate second-level page on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读复核案例工作台；不新增证据补录、复核关闭写入，不做后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
+```

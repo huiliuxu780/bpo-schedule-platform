@@ -5911,3 +5911,46 @@ tasks:
       - "范围扩展到证据补录、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM053
+    title: "复核案例工作台二级页"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM052"]
+    allowed_files:
+      - "app/data-quality/review-cases/page.tsx"
+      - "components/import-center-review-cases-workspace.tsx"
+      - "components/import-center-result-trace-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `/data-quality/review-cases` 二级页面，展示复核案例工作台。"
+      - "工作台支持业务日、owner、状态、严重度和来源筛选，并展示分组摘要。"
+      - "批次详情页的复核证据缺口和结论预览入口跳转到复核案例工作台，而不是继续留在详情页内展开所有处理视图。"
+      - "页面只读展示案例、证据缺口、质量线索和下一步，不提供提交、补证据、关闭、审批、导出或批量操作。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到证据补录、复核写入、关闭、审批、导出、权限、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

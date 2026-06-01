@@ -1722,3 +1722,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM053 Import Center Review Cases Workspace
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical existed; local branch was aligned before IM053`
+- scope: read-only `/data-quality/review-cases` second-level workspace, review-case workspace model helpers/tests, detail-page review-case links, and traceability records.
+- allowed_files_check: `app/data-quality/review-cases/page.tsx`, `components/import-center-review-cases-workspace.tsx`, `components/import-center-result-trace-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/review-cases/page.tsx`, `components/import-center-review-cases-workspace.tsx`, `components/import-center-result-trace-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files. `.local/` remains untracked and untouched.
+- check_result: TDD red test failed first because `buildImportReviewCasesWorkspaceHref` was not exported; target model test passed with 40 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with documented baseline only; Node 22 production build passed and included `/data-quality/review-cases`; temporary production smoke passed on `/data-quality/review-cases?businessDate=2026-05-11&status=open` for `复核案例工作台`, `筛选复核案例`, `分组情况`, `复核案例列表`, and `返回数据质量`; batch detail smoke confirmed `/data-quality/review-cases` links; temporary 8000/3023 services were stopped; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

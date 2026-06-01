@@ -2544,3 +2544,31 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
+### 2026-06-01 - IM053 复核案例工作台二级页
+
+#### 审计结论
+
+- `IM053/US673` 已新增 `/data-quality/review-cases` 只读复核案例工作台。
+- 工作台展示摘要卡、筛选区、owner/状态/严重度/来源分组和案例列表，避免继续把复核查看堆在批次详情页内。
+- 批次详情页中的“查看复核案例”入口改为跳转到二级工作台，并带入业务日或未关闭状态筛选。
+- 本轮未新增依赖，未修改 package/lockfile，未触碰后端、schema/migration、真实外部接口、证据补录、复核关闭写入、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是主管查看和定位工作台，不是复核案例写入、证据上传、关闭异常或审批流。
+- 如果后续要做真实处理动作，必须另开受控任务并明确权限、审计、幂等、回滚和批量边界。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 因缺少 `buildImportReviewCasesWorkspaceHref` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，40 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过，产物包含 `/data-quality/review-cases` 动态路由。
+- page smoke：临时 FastAPI + Next production 服务下，`http://127.0.0.1:3023/data-quality/review-cases?businessDate=2026-05-11&status=open` 命中 `复核案例工作台`、`筛选复核案例`、`分组情况`、`复核案例列表`、`返回数据质量`；批次详情页 smoke 命中 `/data-quality/review-cases`、`复核证据缺口`、`复核结论预览`。
+- 临时 8000/3023 服务已停止。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。

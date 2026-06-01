@@ -3177,3 +3177,26 @@ dependencies:
   - "US671"
 status: "done"
 ```
+
+### US673 - 复核案例工作台二级页
+
+```yaml
+id: US673
+requirement_ids:
+  - R753
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望复核案例从批次详情页拆成独立二级工作台，以便按 owner、状态、严重度和来源筛选处理，而不是在一个超长详情页里查找。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增 `/data-quality/review-cases` 二级页面，展示复核案例工作台。"
+  - "工作台支持业务日、owner、状态、严重度和来源筛选，并展示分组摘要。"
+  - "批次详情页的复核证据缺口和结论预览入口跳转到复核案例工作台，而不是继续留在详情页内展开所有处理视图。"
+  - "页面只读展示案例、证据缺口、质量线索和下一步，不提供提交、补证据、关闭、审批、导出或批量操作。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US672"
+status: "done"
+```

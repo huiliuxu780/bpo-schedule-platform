@@ -1499,3 +1499,14 @@
 - action: 增加批次详情结果追踪的只读复核证据缺口 drilldown。
 - status: `done`
 - notes: `/data-quality/[batchId]` 结果追踪现在按未关闭复核案例展示缺口风险、owner、需补证据、质量问题线索、对比结果线索和下一步；本轮不新增证据补录、复核关闭写入、后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-01
+
+- task_id: `IM053`
+- source_ids:
+  - `R753`
+- story_ids:
+  - `US673`
+- action: 拆出复核案例工作台二级页。
+- status: `done`
+- notes: 新增 `/data-quality/review-cases` 只读工作台，支持业务日、owner、状态、严重度、来源和关键词筛选，展示摘要、分组和案例表；批次详情的复核入口跳转到二级页；本轮不新增证据补录、复核关闭写入、后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

@@ -23,7 +23,7 @@ import {
   type ImportResultTrace,
   type ImportReviewCaseRecord,
   buildImportApiUrl,
-  buildImportReviewCasesUrl,
+  buildImportReviewCasesWorkspaceHref,
   summarizeImportDownstreamResultDrilldown,
   summarizeImportQualityImpactAggregation,
   summarizeImportReviewConclusionPreview,
@@ -166,7 +166,7 @@ function ReviewEvidenceGapPanel({
           <Link
             href={
               businessDate
-                ? buildImportReviewCasesUrl(businessDate)
+                ? buildImportReviewCasesWorkspaceHref({ businessDate, status: "open" })
                 : "#import-result-trace"
             }
           >
@@ -281,7 +281,7 @@ function ReviewConclusionPreviewPanel({
           <Link
             href={
               businessDate
-                ? buildImportReviewCasesUrl(businessDate)
+                ? buildImportReviewCasesWorkspaceHref({ businessDate })
                 : "#import-result-trace"
             }
           >

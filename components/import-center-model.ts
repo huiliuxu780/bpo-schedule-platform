@@ -320,6 +320,43 @@ export type ImportReviewCaseRecord = {
   created_at: string
 }
 
+export type ImportReviewCasesWorkspaceFilters = {
+  businessDate?: string | null
+  ownerId?: string | null
+  status?: string | null
+  severity?: string | null
+  sourceResultType?: ImportReviewCaseRecord["source_result_type"] | "all" | null
+  query?: string | null
+}
+
+export type ImportReviewCasesWorkspaceTone = "blocked" | "warning" | "ready" | "empty"
+
+export type ImportReviewCasesWorkspaceGroup = {
+  key: string
+  label: string
+  count: number
+  openCount: number
+}
+
+export type ImportReviewCasesOwnerGroup = ImportReviewCasesWorkspaceGroup & {
+  ownerId: string
+}
+
+export type ImportReviewCasesWorkspaceSummary = {
+  tone: ImportReviewCasesWorkspaceTone
+  title: string
+  detail: string
+  totalCount: number
+  openCount: number
+  closedCount: number
+  highRiskOpenCount: number
+  ownerGroups: ImportReviewCasesOwnerGroup[]
+  statusGroups: ImportReviewCasesWorkspaceGroup[]
+  severityGroups: ImportReviewCasesWorkspaceGroup[]
+  sourceGroups: ImportReviewCasesWorkspaceGroup[]
+  nextAction: string
+}
+
 export type ImportResultTraceTone = "ready" | "empty" | "blocked"
 
 export type ImportResultTrace = {
@@ -633,6 +670,45 @@ export function buildImportReviewCasesUrl(
   return buildImportApiUrl(`/api/v1/review-cases?${searchParams.toString()}`, apiBase)
 }
 
+export function buildImportReviewCasesApiUrl(
+  filters: ImportReviewCasesWorkspaceFilters,
+  apiBase = getDefaultApiBase()
+): string {
+  const searchParams = new URLSearchParams()
+
+  appendReviewCasesFilterParams(searchParams, filters, {
+    businessDateKey: "business_date",
+    ownerIdKey: "owner_id",
+    sourceResultTypeKey: "source_result_type",
+  })
+
+  const query = searchParams.toString()
+
+  return buildImportApiUrl(`/api/v1/review-cases${query ? `?${query}` : ""}`, apiBase)
+}
+
+export function buildImportReviewCasesWorkspaceHref(
+  filters: ImportReviewCasesWorkspaceFilters
+): string {
+  const searchParams = new URLSearchParams()
+
+  appendReviewCasesFilterParams(searchParams, filters, {
+    businessDateKey: "businessDate",
+    ownerIdKey: "ownerId",
+    sourceResultTypeKey: "sourceResultType",
+  })
+
+  const query = filters.query?.trim()
+
+  if (query) {
+    searchParams.set("query", query)
+  }
+
+  const serialized = searchParams.toString()
+
+  return `/data-quality/review-cases${serialized ? `?${serialized}` : ""}`
+}
+
 export function buildImportRowCorrectionUrl(
   batchId: string,
   rowNumber: number,
@@ -732,6 +808,134 @@ export function filterImportBatches(
 
     return searchableText.includes(query)
   })
+}
+
+export function filterImportReviewCases(
+  cases: ImportReviewCaseRecord[],
+  filters: ImportReviewCasesWorkspaceFilters
+): ImportReviewCaseRecord[] {
+  const businessDate = normalizeFilterValue(filters.businessDate)
+  const ownerId = normalizeFilterValue(filters.ownerId)
+  const status = normalizeAllFilterValue(filters.status)
+  const severity = normalizeAllFilterValue(filters.severity)
+  const sourceResultType = normalizeAllFilterValue(filters.sourceResultType)
+  const query = filters.query?.trim().toLowerCase() ?? ""
+
+  return cases.filter((reviewCase) => {
+    if (businessDate && reviewCase.business_date !== businessDate) {
+      return false
+    }
+
+    if (ownerId && reviewCase.owner_id !== ownerId) {
+      return false
+    }
+
+    if (status && reviewCase.status !== status) {
+      return false
+    }
+
+    if (severity && reviewCase.severity !== severity) {
+      return false
+    }
+
+    if (sourceResultType && reviewCase.source_result_type !== sourceResultType) {
+      return false
+    }
+
+    if (!query) {
+      return true
+    }
+
+    const searchableText = [
+      reviewCase.case_id,
+      reviewCase.owner_id,
+      reviewCase.severity,
+      reviewCase.status,
+      reviewCase.source_result_type,
+      String(reviewCase.source_result_id),
+      reviewCase.business_date,
+    ]
+      .join(" ")
+      .toLowerCase()
+
+    return searchableText.includes(query)
+  })
+}
+
+export function summarizeImportReviewCasesWorkspace({
+  cases,
+  filters,
+  error,
+}: {
+  cases: ImportReviewCaseRecord[]
+  filters: ImportReviewCasesWorkspaceFilters
+  error: string | null
+}): ImportReviewCasesWorkspaceSummary {
+  if (error) {
+    return {
+      tone: "blocked",
+      title: "复核案例读取失败",
+      detail: error,
+      totalCount: 0,
+      openCount: 0,
+      closedCount: 0,
+      highRiskOpenCount: 0,
+      ownerGroups: [],
+      statusGroups: [],
+      severityGroups: [],
+      sourceGroups: [],
+      nextAction: "先恢复复核案例读取，再判断 owner、证据缺口和处理优先级。",
+    }
+  }
+
+  const filteredCases = filterImportReviewCases(cases, filters)
+  const openCases = filteredCases.filter((reviewCase) => reviewCase.status !== "closed")
+  const highRiskOpenCases = openCases.filter((reviewCase) =>
+    isHighRiskReviewSeverity(reviewCase.severity)
+  )
+  const topOwner = buildReviewCaseOwnerGroups(filteredCases)[0] ?? null
+
+  if (filteredCases.length === 0) {
+    return {
+      tone: "empty",
+      title: "暂无匹配复核案例",
+      detail: "当前筛选条件下没有可展示的复核案例。",
+      totalCount: 0,
+      openCount: 0,
+      closedCount: 0,
+      highRiskOpenCount: 0,
+      ownerGroups: [],
+      statusGroups: [],
+      severityGroups: [],
+      sourceGroups: [],
+      nextAction: "放宽业务日、owner、状态、严重度或来源筛选后再查看。",
+    }
+  }
+
+  const openCount = openCases.length
+  const closedCount = filteredCases.length - openCount
+
+  return {
+    tone: highRiskOpenCases.length > 0 ? "blocked" : openCount > 0 ? "warning" : "ready",
+    title: `复核案例 ${filteredCases.length.toLocaleString("zh-CN")} 个`,
+    detail: buildReviewCasesWorkspaceDetail(filteredCases, filters),
+    totalCount: filteredCases.length,
+    openCount,
+    closedCount,
+    highRiskOpenCount: highRiskOpenCases.length,
+    ownerGroups: buildReviewCaseOwnerGroups(filteredCases),
+    statusGroups: buildReviewCaseGroups(filteredCases, "status", formatReviewCaseStatus),
+    severityGroups: buildReviewCaseGroups(filteredCases, "severity", formatReviewCaseSeverity),
+    sourceGroups: buildReviewCaseGroups(
+      filteredCases,
+      "source_result_type",
+      formatReviewCaseSourceType
+    ),
+    nextAction:
+      topOwner && topOwner.openCount > 0
+        ? `先处理 ${topOwner.ownerId} 名下 ${topOwner.openCount.toLocaleString("zh-CN")} 个未关闭复核案例，再回看高风险来源和证据缺口。`
+        : "当前筛选结果没有未关闭复核案例，可继续回看已关闭案例的来源和证据完整性。",
+  }
 }
 
 export function getImportBatchHealth(
@@ -2506,6 +2710,152 @@ function formatReviewEvidenceNeed(sourceResultType: string): string {
   }
 
   return "补充来源结果、责任人说明和质量修正记录。"
+}
+
+function appendReviewCasesFilterParams(
+  searchParams: URLSearchParams,
+  filters: ImportReviewCasesWorkspaceFilters,
+  keys: {
+    businessDateKey: string
+    ownerIdKey: string
+    sourceResultTypeKey: string
+  }
+): void {
+  const businessDate = normalizeFilterValue(filters.businessDate)
+  const ownerId = normalizeFilterValue(filters.ownerId)
+  const status = normalizeAllFilterValue(filters.status)
+  const severity = normalizeAllFilterValue(filters.severity)
+  const sourceResultType = normalizeAllFilterValue(filters.sourceResultType)
+
+  if (businessDate) {
+    searchParams.set(keys.businessDateKey, businessDate)
+  }
+
+  if (ownerId) {
+    searchParams.set(keys.ownerIdKey, ownerId)
+  }
+
+  if (status) {
+    searchParams.set("status", status)
+  }
+
+  if (severity) {
+    searchParams.set("severity", severity)
+  }
+
+  if (sourceResultType) {
+    searchParams.set(keys.sourceResultTypeKey, sourceResultType)
+  }
+}
+
+function normalizeFilterValue(value?: string | null): string | null {
+  const normalized = value?.trim()
+
+  return normalized ? normalized : null
+}
+
+function normalizeAllFilterValue(value?: string | null): string | null {
+  const normalized = normalizeFilterValue(value)
+
+  if (!normalized || normalized === "all") {
+    return null
+  }
+
+  return normalized
+}
+
+function buildReviewCasesWorkspaceDetail(
+  cases: ImportReviewCaseRecord[],
+  filters: ImportReviewCasesWorkspaceFilters
+): string {
+  const businessDate = normalizeFilterValue(filters.businessDate)
+  const openCount = cases.filter((reviewCase) => reviewCase.status !== "closed").length
+  const highRiskOpenCount = cases.filter(
+    (reviewCase) =>
+      reviewCase.status !== "closed" && isHighRiskReviewSeverity(reviewCase.severity)
+  ).length
+
+  return [
+    businessDate ? `业务日 ${businessDate}` : "全部业务日",
+    `未关闭 ${openCount.toLocaleString("zh-CN")} 个`,
+    `高风险未关闭 ${highRiskOpenCount.toLocaleString("zh-CN")} 个`,
+  ].join(" · ")
+}
+
+function buildReviewCaseOwnerGroups(
+  cases: ImportReviewCaseRecord[]
+): ImportReviewCasesOwnerGroup[] {
+  return buildReviewCaseGroups(cases, "owner_id", (ownerId) => ownerId)
+    .map((group) => ({
+      ...group,
+      ownerId: group.key,
+    }))
+    .sort((a, b) => b.openCount - a.openCount || b.count - a.count || a.ownerId.localeCompare(b.ownerId))
+}
+
+function buildReviewCaseGroups<K extends keyof ImportReviewCaseRecord>(
+  cases: ImportReviewCaseRecord[],
+  key: K,
+  formatLabel: (value: ImportReviewCaseRecord[K]) => string
+): ImportReviewCasesWorkspaceGroup[] {
+  const groups = new Map<string, ImportReviewCasesWorkspaceGroup>()
+
+  for (const reviewCase of cases) {
+    const rawValue = reviewCase[key]
+    const groupKey = String(rawValue)
+    const existing = groups.get(groupKey) ?? {
+      key: groupKey,
+      label: formatLabel(rawValue),
+      count: 0,
+      openCount: 0,
+    }
+
+    existing.count += 1
+
+    if (reviewCase.status !== "closed") {
+      existing.openCount += 1
+    }
+
+    groups.set(groupKey, existing)
+  }
+
+  return [...groups.values()].sort(
+    (a, b) => b.openCount - a.openCount || b.count - a.count || a.label.localeCompare(b.label)
+  )
+}
+
+function formatReviewCaseSeverity(severity: string): string {
+  if (severity === "critical") {
+    return "严重"
+  }
+
+  if (severity === "high") {
+    return "高"
+  }
+
+  if (severity === "medium") {
+    return "中"
+  }
+
+  if (severity === "low") {
+    return "低"
+  }
+
+  return severity
+}
+
+function formatReviewCaseSourceType(
+  sourceResultType: ImportReviewCaseRecord["source_result_type"]
+): string {
+  if (sourceResultType === "forecast_schedule") {
+    return "预测排班"
+  }
+
+  return "排班实际"
+}
+
+function isHighRiskReviewSeverity(severity: string): boolean {
+  return severity === "high" || severity === "critical"
 }
 
 function appendQualityImpactEvidence(
