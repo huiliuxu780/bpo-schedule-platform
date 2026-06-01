@@ -1521,3 +1521,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端只读批次处理导览、锚点定位和模型 helper；不新增依赖，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R737 - 导入中心应用状态概览
+
+```yaml
+id: R737
+module: "导入中心"
+description: "导入中心前端已经能查看选中批次、应用准备度和批次处理导览后，需要把应用状态、应用目标、导入版本和已应用记录数汇总成只读概览，让数据管理员不用在批次列表和准备度详情之间来回拼状态。"
+source: "PM requested continuing import-center production usability after IM036 on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端只读应用状态概览和模型 helper；不新增依赖，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

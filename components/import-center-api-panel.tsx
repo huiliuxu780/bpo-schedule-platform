@@ -19,6 +19,7 @@ import {
   formatImportReadinessStatus,
   getImportBatchHealth,
   summarizeImportApplyActionGuidance,
+  summarizeImportApplicationVisibility,
   summarizeImportBatchReviewGuide,
   summarizeImportBatches,
   summarizeImportExceptionGuidance,
@@ -232,6 +233,7 @@ export function ImportCenterApiPanel({
                   readiness={readiness}
                   readinessError={readinessError}
                 />
+                <ApplicationVisibilityPanel batch={selectedBatch} readiness={readiness} />
                 {readinessError ? (
                   <EmptyState title="准备度读取失败" detail={readinessError} compact />
                 ) : readiness ? (
@@ -560,6 +562,77 @@ function ApplyActionGuidance({
       <div className="font-medium">{guidance.title}</div>
       <p className="text-muted-foreground">{guidance.detail}</p>
       <p className="text-xs text-muted-foreground">{guidance.nextAction}</p>
+    </div>
+  )
+}
+
+function ApplicationVisibilityPanel({
+  batch,
+  readiness,
+}: {
+  batch: ImportBatchListRow
+  readiness: ImportApplyReadinessResponse | null
+}) {
+  const visibility = summarizeImportApplicationVisibility({ batch, readiness })
+
+  return (
+    <div
+      className={cn(
+        "grid gap-3 rounded-md border p-3 text-sm",
+        visibility.tone === "blocked"
+          ? "border-destructive/40 bg-destructive/10"
+          : visibility.tone === "ready"
+            ? "border-emerald-500/30 bg-emerald-500/10"
+            : visibility.tone === "done"
+              ? "bg-muted/40"
+              : "bg-muted/30"
+      )}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-medium">应用状态概览</span>
+        <Badge
+          variant={
+            visibility.tone === "blocked"
+              ? "destructive"
+              : visibility.tone === "done"
+                ? "secondary"
+                : "outline"
+          }
+        >
+          {visibility.statusLabel}
+        </Badge>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <ApplicationMetric label="应用目标" value={visibility.targetLabel} />
+        <ApplicationMetric label="已应用记录" value={visibility.appliedRecordLabel} />
+        <ApplicationMetric
+          label="导入版本"
+          value={visibility.versionLabel}
+          className="col-span-2"
+        />
+      </div>
+      <div>
+        <div className="font-medium">{visibility.title}</div>
+        <p className="mt-1 text-muted-foreground">{visibility.detail}</p>
+        <p className="mt-1 text-xs text-muted-foreground">{visibility.nextAction}</p>
+      </div>
+    </div>
+  )
+}
+
+function ApplicationMetric({
+  label,
+  value,
+  className,
+}: {
+  label: string
+  value: string
+  className?: string
+}) {
+  return (
+    <div className={cn("rounded-md border bg-background/60 p-2", className)}>
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 truncate font-mono text-xs font-medium">{value}</div>
     </div>
   )
 }

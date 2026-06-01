@@ -147,6 +147,19 @@ export type ImportApplyActionGuidance = {
   nextAction: string
 }
 
+export type ImportApplicationVisibilityTone = "blocked" | "ready" | "done" | "unknown"
+
+export type ImportApplicationVisibility = {
+  tone: ImportApplicationVisibilityTone
+  statusLabel: string
+  targetLabel: string
+  versionLabel: string
+  appliedRecordLabel: string
+  title: string
+  detail: string
+  nextAction: string
+}
+
 export type ImportBatchReviewGuideTone = "blocked" | "warning" | "ready" | "done" | "unknown"
 
 export type ImportBatchReviewGuide = {
@@ -484,6 +497,69 @@ export function summarizeImportBatchReviewGuide({
     primaryActionLabel: "查看批次明细",
     primaryAnchor: "#import-batch-detail",
     secondaryAnchor: "#import-apply-readiness",
+  }
+}
+
+export function summarizeImportApplicationVisibility({
+  batch,
+  readiness,
+}: {
+  batch: ImportBatchListRow
+  readiness: ImportApplyReadinessResponse | null
+}): ImportApplicationVisibility {
+  const statusLabel = formatImportApplicationStatus(batch.application_status)
+  const targetLabel = formatImportApplicationTarget(batch.application_target)
+  const versionLabel = batch.import_version_id ?? "未生成"
+  const appliedRecordLabel = `${batch.applied_record_count.toLocaleString("zh-CN")} 条`
+
+  if (batch.application_status === "applied") {
+    return {
+      tone: "done",
+      statusLabel,
+      targetLabel,
+      versionLabel,
+      appliedRecordLabel,
+      title: "应用结果已生成",
+      detail: `当前批次已应用到${targetLabel}，共 ${batch.applied_record_count.toLocaleString("zh-CN")} 条记录；继续查看版本记录或下游对比结果。`,
+      nextAction: "查看批次明细中的版本记录，确认业务日期范围和记录数。",
+    }
+  }
+
+  if (readiness?.readiness_status === "blocked" || batch.failed_rows > 0) {
+    return {
+      tone: "blocked",
+      statusLabel,
+      targetLabel,
+      versionLabel,
+      appliedRecordLabel,
+      title: "应用前仍有阻塞",
+      detail: "当前批次尚未应用，且准备度存在阻塞；先处理失败行、行级缺字段或版本缺口。",
+      nextAction: "先查看失败行修正和应用准备度，不要在阻塞未清前进入写入流程。",
+    }
+  }
+
+  if (readiness?.readiness_status === "ready") {
+    return {
+      tone: "ready",
+      statusLabel,
+      targetLabel,
+      versionLabel,
+      appliedRecordLabel,
+      title: "可进入应用前复核",
+      detail: "当前批次准备度为可应用，但本页仍只展示状态，不提供应用写入按钮。",
+      nextAction: "复核应用目标、版本和批次明细；真正应用写入需要单独受控任务。",
+    }
+  }
+
+  return {
+    tone: "unknown",
+    statusLabel,
+    targetLabel,
+    versionLabel,
+    appliedRecordLabel,
+    title: "等待准备度确认",
+    detail: "当前批次尚未应用，准备度暂不可判断；先确认本地 API 状态和批次明细。",
+    nextAction: "准备度未知时只做查看和修正，不进入应用写入。",
   }
 }
 
@@ -884,6 +960,26 @@ function formatImportUploadFailureReason(reason?: string | null): string {
   }
 
   return decodeURIComponent(reason)
+}
+
+function formatImportApplicationTarget(target: string): string {
+  if (target === "master_data") {
+    return "主数据"
+  }
+
+  if (target === "personnel_schedule") {
+    return "人员排班"
+  }
+
+  if (target === "demand_forecast") {
+    return "需求预测"
+  }
+
+  if (target === "actual_logs") {
+    return "实际日志"
+  }
+
+  return target
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -11,6 +11,7 @@ import {
   formatFieldMappingTemplateSummary,
   formatImportRowStatus,
   summarizeImportApplyActionGuidance,
+  summarizeImportApplicationVisibility,
   summarizeImportExceptionGuidance,
   summarizeImportBatchReviewGuide,
   summarizeImportRowCorrectionNotice,
@@ -215,6 +216,91 @@ test("import center batch review guide directs selected batch follow-up", () => 
       primaryAnchor: "#import-apply-readiness",
       secondaryAnchor: "#import-batch-detail",
     },
+  );
+});
+
+test("import center application visibility summarizes selected batch status", () => {
+  assert.deepEqual(
+    summarizeImportApplicationVisibility({
+      batch: {
+        ...baseBatch,
+        application_status: "applied",
+        application_target: "master_data",
+        import_version_id: "BATCH-MD-001::v1",
+        applied_record_count: 10,
+      },
+      readiness: null,
+    }),
+    {
+      tone: "done",
+      statusLabel: "已应用",
+      targetLabel: "主数据",
+      versionLabel: "BATCH-MD-001::v1",
+      appliedRecordLabel: "10 条",
+      title: "应用结果已生成",
+      detail: "当前批次已应用到主数据，共 10 条记录；继续查看版本记录或下游对比结果。",
+      nextAction: "查看批次明细中的版本记录，确认业务日期范围和记录数。",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportApplicationVisibility({
+      batch: baseBatch,
+      readiness: {
+        batch_id: "BATCH-MD-001",
+        file_type: "master_data",
+        readiness_status: "ready",
+        blockers: [],
+        row_blockers: [],
+        total_rows: 10,
+        success_rows: 10,
+        failed_rows: 0,
+        warning_rows: 0,
+        version_count: 1,
+        application_status: "not_applied",
+        application_target: "master_data",
+        import_version_id: "BATCH-MD-001::v1",
+        applied_record_count: 0,
+      },
+    }),
+    {
+      tone: "ready",
+      statusLabel: "未应用",
+      targetLabel: "主数据",
+      versionLabel: "BATCH-MD-001::v1",
+      appliedRecordLabel: "0 条",
+      title: "可进入应用前复核",
+      detail: "当前批次准备度为可应用，但本页仍只展示状态，不提供应用写入按钮。",
+      nextAction: "复核应用目标、版本和批次明细；真正应用写入需要单独受控任务。",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportApplicationVisibility({
+      batch: { ...baseBatch, failed_rows: 1 },
+      readiness: {
+        batch_id: "BATCH-MD-001",
+        file_type: "master_data",
+        readiness_status: "blocked",
+        blockers: [{ code: "IMPORT_BATCH_HAS_FAILED_ROWS", message: "有失败行" }],
+        row_blockers: [],
+        total_rows: 10,
+        success_rows: 9,
+        failed_rows: 1,
+        warning_rows: 0,
+        version_count: 1,
+        application_status: "not_applied",
+        application_target: "master_data",
+        import_version_id: "BATCH-MD-001::v1",
+        applied_record_count: 0,
+      },
+    }).tone,
+    "blocked",
+  );
+
+  assert.equal(
+    summarizeImportApplicationVisibility({ batch: baseBatch, readiness: null }).tone,
+    "unknown",
   );
 });
 

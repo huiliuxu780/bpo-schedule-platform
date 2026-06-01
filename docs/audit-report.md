@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM037 导入中心应用状态概览
+
+#### 审计结论
+
+- `IM037/US657` 已在 `/data-quality` 增加“应用状态概览”。
+- 模型层新增 `summarizeImportApplicationVisibility`，根据已应用、未应用且可复核、未应用且阻塞、准备度未知输出只读状态口径。
+- 页面在选中批次的应用准备度区域展示应用状态、应用目标、导入版本、已应用记录数和下一步建议。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是前端只读状态概览，不是应用写入、应用发布、批量处理或审批流程。
+- 后续若要做真实 apply 按钮、权限隔离、批量处理、导出或服务端审计，需要另开受控任务。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportApplicationVisibility` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，22 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+- 页面 smoke：`http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 返回页面，包含 `应用状态概览`、`应用目标`、`导入版本` 和 `已应用记录`。
+
 ### 2026-06-01 - IM036 导入中心选中批次处理导览
 
 #### 审计结论

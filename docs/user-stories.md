@@ -2814,3 +2814,25 @@ dependencies:
   - "US655"
 status: "done"
 ```
+
+### US657 - 导入中心应用状态概览
+
+```yaml
+id: US657
+requirement_ids:
+  - R737
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望选中批次后看到只读应用状态概览，以便确认应用目标、导入版本、已应用记录数和下一步状态判断。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 对选中批次展示只读应用状态概览。"
+  - "概览展示应用状态、应用目标、导入版本和已应用记录数。"
+  - "概览根据已应用、未应用且可复核、未应用且阻塞、准备度未知输出下一步口径。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US656"
+status: "done"
+```
