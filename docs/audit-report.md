@@ -2138,6 +2138,31 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
 
+### 2026-06-01 - IM043 数据质量批次详情页拆分
+
+#### 审计结论
+
+- `IM043/US663` 已把具体查看和处理从 `/data-quality` 拆到 `/data-quality/import-batches/[batchId]`。
+- `/data-quality` 现在只保留批次概览、筛选、批次列表和选中批次状态摘要，并提供“处理/进入批次处理页”入口。
+- 批次详情页集中承载批次明细、失败行修正、结果追踪、导入与模板，并保留修正成功/失败 query 反馈。
+
+#### 风险
+
+- 当前仍是前端信息架构拆分和已有 API 读取，不是新增业务写入、审批、导出、批量或权限能力。
+- 后续若要做真实 apply 按钮、批量处理、权限隔离或外部集成，仍需单独 Gate。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 曾因缺少 `buildImportBatchProcessingHref` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，28 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- shadcn 快速检查：触达的 data-quality/import-center 文件未发现 `space-x/space-y`、硬编码色阶或任意半径类。
+- in-app browser smoke：`/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 不再包含 `分层详情`；`/data-quality/import-batches/BATCH-IM026-SMOKE-004?correction=success&row=1` 包含 `批次处理详情`、`分层详情`、`批次明细`、`失败行修正`、`结果追踪`、`导入与模板` 和 `第 1 行已修正`；browser console error 为空。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM042 数据质量页下游结果列表可见性
 
 #### 审计结论

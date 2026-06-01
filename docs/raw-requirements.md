@@ -1599,3 +1599,16 @@ version: "1.0"
 status: "done"
 notes: "本轮只做前端只读结果列表可见性和模型 helper；复用已有 comparison-runs/review-cases 列表 API，不新增依赖，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R743 - 数据质量批次处理详情页拆分
+
+```yaml
+id: R743
+module: "导入中心"
+description: "数据质量页仍然把批次定位、状态摘要、批次明细、失败行修正、结果追踪和导入模板放在同一个长页面里。需要把具体查看和处理拆到单独批次处理详情页，让列表页只负责找批次和进入详情。"
+source: "PM challenged long single-page data-quality layout and requested separate detail page on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮只做前端路由和信息架构拆分；复用已有组件和本地 API 客户端口径，不新增依赖，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

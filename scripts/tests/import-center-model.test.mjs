@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   buildImportApiUrl,
   buildImportBatchDetailUrl,
+  buildImportBatchProcessingHref,
   buildImportComparisonRunsUrl,
   buildImportFieldMappingTemplatesUrl,
   buildImportReviewCasesUrl,
@@ -472,6 +473,21 @@ test("import center result trace summarizes persisted downstream lists", () => {
       reviewSummary: "复核案例 0 个 · 未关闭 0 个",
       nextAction: "先确认本地结果查询 API 状态；读取失败时不要把当前批次判断为无下游结果。",
     },
+  );
+});
+
+test("import center batch processing href routes concrete work to detail page", () => {
+  assert.equal(
+    buildImportBatchProcessingHref("BATCH-IM026-SMOKE-004"),
+    "/data-quality/import-batches/BATCH-IM026-SMOKE-004",
+  );
+
+  assert.equal(
+    buildImportBatchProcessingHref("BATCH/CSV 001", {
+      correction: "success",
+      row: "1",
+    }),
+    "/data-quality/import-batches/BATCH%2FCSV%20001?correction=success&row=1",
   );
 });
 

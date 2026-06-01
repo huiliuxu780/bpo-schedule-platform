@@ -187,6 +187,7 @@ Current invariants:
 - `IM040/US660` added read-only downstream result navigation from selected-batch application status to comparison and review result paths, then returned current queue and active tasks to empty.
 - `IM041A/US661` restructured `/data-quality` into overview, access-batch workbench, selected-batch status inspector, and layered detail tabs for batch detail, failed-row correction, and import/template tools, then returned current queue and active tasks to empty.
 - `IM042/US662` added a read-only result trace tab on `/data-quality` that lists selected-batch business-date comparison runs and review cases from existing APIs, then returned current queue and active tasks to empty.
+- `IM043/US663` split concrete batch viewing and handling into `/data-quality/import-batches/[batchId]`, leaving `/data-quality` as the batch workbench, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

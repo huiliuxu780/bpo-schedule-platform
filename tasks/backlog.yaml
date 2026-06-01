@@ -5460,3 +5460,52 @@ tasks:
       - "范围扩展到新增业务能力、真实外部接口、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM043
+    title: "数据质量批次详情页拆分"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM042"]
+    allowed_files:
+      - "app/data-quality/page.tsx"
+      - "app/data-quality/import-batches/[batchId]/page.tsx"
+      - "components/import-center-api-panel.tsx"
+      - "components/import-center-batch-list-panel.tsx"
+      - "components/import-center-batch-inspector-panel.tsx"
+      - "components/import-center-detail-tabs.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality` 只保留批次概览、筛选、批次列表和选中批次状态摘要，不再渲染批次明细、失败行修正、结果追踪和导入模板详情。"
+      - "批次列表或状态检查器提供进入 `/data-quality/import-batches/[batchId]` 的详情处理入口。"
+      - "新增批次详情页集中展示批次明细、失败行修正、结果追踪、导入与模板，并保留选中批次状态检查。"
+      - "修正成功/失败 query 仍能在批次详情页展示，不丢失当前处理反馈。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到新增业务能力、真实外部接口、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

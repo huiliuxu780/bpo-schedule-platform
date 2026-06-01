@@ -2947,3 +2947,26 @@ dependencies:
   - "US661"
 status: "done"
 ```
+
+### US663 - 数据质量批次处理详情页拆分
+
+```yaml
+id: US663
+requirement_ids:
+  - R743
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望数据质量页只负责定位批次，并把批次明细、失败行修正和结果追踪放到单独批次处理页，以便列表页不再变成长页面。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 只保留批次概览、筛选、批次列表和选中批次状态摘要，不再渲染批次明细、失败行修正、结果追踪和导入模板详情。"
+  - "批次列表或状态检查器提供进入 `/data-quality/import-batches/[batchId]` 的详情处理入口。"
+  - "新增批次详情页集中展示批次明细、失败行修正、结果追踪、导入与模板，并保留选中批次状态检查。"
+  - "修正成功/失败 query 仍能在批次详情页展示，不丢失当前处理反馈。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US662"
+status: "done"
+```

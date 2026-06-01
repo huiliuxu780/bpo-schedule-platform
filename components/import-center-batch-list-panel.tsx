@@ -5,6 +5,7 @@ import {
   type ImportApplyReadinessResponse,
   type ImportBatchFilters,
   type ImportBatchListRow,
+  buildImportBatchProcessingHref,
   filterImportBatches,
   formatImportApplicationStatus,
   formatImportFileType,
@@ -31,6 +32,7 @@ type ImportCenterBatchListPanelProps = {
   readiness: ImportApplyReadinessResponse | null
   batchError: string | null
   batchFilters: ImportBatchFilters
+  selectedBatchDetailHref?: string | null
 }
 
 export function ImportCenterBatchListPanel({
@@ -40,6 +42,7 @@ export function ImportCenterBatchListPanel({
   readiness,
   batchError,
   batchFilters,
+  selectedBatchDetailHref,
 }: ImportCenterBatchListPanelProps) {
   const filteredBatches = filterImportBatches(batches, batchFilters)
 
@@ -84,6 +87,7 @@ export function ImportCenterBatchListPanel({
                   <TableHead className="text-right">成功/失败</TableHead>
                   <TableHead>应用状态</TableHead>
                   <TableHead className="text-right">版本</TableHead>
+                  <TableHead className="text-right">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -137,6 +141,19 @@ export function ImportCenterBatchListPanel({
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">{batch.version_count}</TableCell>
+                      <TableCell className="text-right">
+                        <Button asChild size="sm" variant={isSelected ? "default" : "outline"}>
+                          <Link
+                            href={
+                              isSelected && selectedBatchDetailHref
+                                ? selectedBatchDetailHref
+                                : buildImportBatchProcessingHref(batch.batch_id)
+                            }
+                          >
+                            处理
+                          </Link>
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   )
                 })}

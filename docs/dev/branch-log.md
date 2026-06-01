@@ -1417,6 +1417,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM043 Data Quality Batch Detail Page Split
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical exists; local branch was ahead 14 before IM043`
+- scope: split `/data-quality` batch workbench from `/data-quality/import-batches/[batchId]` processing detail page, add detail entry links, keep correction query feedback, model test coverage, and traceability records.
+- allowed_files_check: `app/data-quality/page.tsx`, `app/data-quality/import-batches/[batchId]/page.tsx`, `components/import-center-api-panel.tsx`, `components/import-center-batch-list-panel.tsx`, `components/import-center-batch-inspector-panel.tsx`, `components/import-center-detail-tabs.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, external integration, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/page.tsx`, `app/data-quality/import-batches/[batchId]/page.tsx`, `components/import-center-api-panel.tsx`, `components/import-center-batch-list-panel.tsx`, `components/import-center-batch-inspector-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, external integration, production formula, settlement, or charge-factor files.
+- check_result: TDD red test failed first because `buildImportBatchProcessingHref` was not exported; target model test passed with 28 tests; `npm run lint` passed; `npm run typecheck` passed; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; in-app browser smoke passed for workbench/detail split and empty console errors; `bash scripts/check.sh` passed with strict state check, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM042 Import Center Result Trace Lists
 
 - branch_name: `codex/import-center-api-vertical`

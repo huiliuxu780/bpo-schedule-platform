@@ -413,6 +413,40 @@ export function buildImportBatchDetailUrl(
   )
 }
 
+export function buildImportBatchProcessingHref(
+  batchId: string,
+  params: {
+    correction?: string | null
+    reason?: string | null
+    row?: string | null
+    upload?: string | null
+  } = {}
+): string {
+  const searchParams = new URLSearchParams()
+
+  if (params.correction) {
+    searchParams.set("correction", params.correction)
+  }
+
+  if (params.reason) {
+    searchParams.set("reason", params.reason)
+  }
+
+  if (params.row) {
+    searchParams.set("row", params.row)
+  }
+
+  if (params.upload) {
+    searchParams.set("upload", params.upload)
+  }
+
+  const query = searchParams.toString()
+
+  return `/data-quality/import-batches/${encodeURIComponent(batchId)}${
+    query ? `?${query}` : ""
+  }`
+}
+
 export function buildImportComparisonRunsUrl(
   businessDate: string,
   apiBase = getDefaultApiBase()

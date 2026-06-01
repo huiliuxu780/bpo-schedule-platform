@@ -23,12 +23,16 @@ type ImportCenterBatchInspectorPanelProps = {
   selectedBatch: ImportBatchListRow | null
   readiness: ImportApplyReadinessResponse | null
   readinessError: string | null
+  mode?: "summary" | "detail"
+  detailHref?: string | null
 }
 
 export function ImportCenterBatchInspectorPanel({
   selectedBatch,
   readiness,
   readinessError,
+  mode = "detail",
+  detailHref = null,
 }: ImportCenterBatchInspectorPanelProps) {
   return (
     <Card id="import-apply-readiness" className="scroll-mt-16">
@@ -43,6 +47,16 @@ export function ImportCenterBatchInspectorPanel({
       <CardContent className="grid gap-4">
         {!selectedBatch ? (
           <EmptyState title="暂无选中批次" detail="先在左侧工作台选择导入批次。" compact />
+        ) : mode === "summary" ? (
+          <>
+            <BatchReviewGuideCard
+              batch={selectedBatch}
+              readiness={readiness}
+              detailHref={detailHref}
+            />
+            <ApplicationVisibilityPanel batch={selectedBatch} readiness={readiness} />
+            <DetailEntryPanel detailHref={detailHref} readinessError={readinessError} />
+          </>
         ) : (
           <>
             <BatchReviewGuideCard batch={selectedBatch} readiness={readiness} />
@@ -66,9 +80,11 @@ export function ImportCenterBatchInspectorPanel({
 function BatchReviewGuideCard({
   batch,
   readiness,
+  detailHref = null,
 }: {
   batch: ImportBatchListRow
   readiness: ImportApplyReadinessResponse | null
+  detailHref?: string | null
 }) {
   const guide = summarizeImportBatchReviewGuide({ batch, readiness })
 
@@ -110,12 +126,51 @@ function BatchReviewGuideCard({
       </div>
       <div className="flex flex-wrap gap-2">
         <Button asChild size="sm" variant={guide.tone === "blocked" ? "outline" : "default"}>
-          <a href="#import-detail-workspace">{guide.primaryActionLabel}</a>
+          {detailHref ? (
+            <Link href={detailHref}>查看和处理</Link>
+          ) : (
+            <a href="#import-detail-workspace">{guide.primaryActionLabel}</a>
+          )}
         </Button>
-        <Button asChild size="sm" variant="outline">
-          <a href="#import-detail-workspace">查看分层详情</a>
-        </Button>
+        {detailHref ? null : (
+          <Button asChild size="sm" variant="outline">
+            <a href="#import-detail-workspace">查看分层详情</a>
+          </Button>
+        )}
       </div>
+    </section>
+  )
+}
+
+function DetailEntryPanel({
+  detailHref,
+  readinessError,
+}: {
+  detailHref: string | null
+  readinessError: string | null
+}) {
+  return (
+    <section className="grid gap-3 rounded-md border bg-muted/30 p-3 text-sm">
+      <div>
+        <div className="font-medium">具体情况查看和处理</div>
+        <p className="mt-1 text-muted-foreground">
+          批次明细、失败行修正、结果追踪和导入模板已放到单独批次处理页。
+        </p>
+      </div>
+      {readinessError ? (
+        <div className="rounded-md border border-destructive/40 bg-destructive/10 p-2 text-xs text-muted-foreground">
+          准备度读取失败：{readinessError}
+        </div>
+      ) : null}
+      {detailHref ? (
+        <Button asChild size="sm">
+          <Link href={detailHref}>进入批次处理页</Link>
+        </Button>
+      ) : (
+        <Button size="sm" disabled>
+          等待选择批次
+        </Button>
+      )}
     </section>
   )
 }

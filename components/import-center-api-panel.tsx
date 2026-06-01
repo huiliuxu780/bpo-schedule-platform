@@ -2,15 +2,14 @@ import type { ReactNode } from "react"
 
 import { ImportCenterBatchInspectorPanel } from "@/components/import-center-batch-inspector-panel"
 import { ImportCenterBatchListPanel } from "@/components/import-center-batch-list-panel"
-import { ImportCenterDetailTabs } from "@/components/import-center-detail-tabs"
 import { ImportCenterOverviewPanel } from "@/components/import-center-overview-panel"
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchFilters,
   type ImportBatchListRow,
+  buildImportBatchProcessingHref,
   filterImportBatches,
   summarizeImportExceptionGuidance,
-  summarizeImportPageHierarchy,
 } from "@/components/import-center-model"
 
 type ImportCenterApiPanelProps = {
@@ -22,10 +21,7 @@ type ImportCenterApiPanelProps = {
   batchFilters?: ImportBatchFilters
   templateError?: string | null
   templateCount?: number
-  batchDetailPanel: ReactNode
-  rowCorrectionPanel: ReactNode
-  resultTracePanel: ReactNode
-  dataToolsPanel: ReactNode
+  children?: ReactNode
 }
 
 export function ImportCenterApiPanel({
@@ -36,11 +32,8 @@ export function ImportCenterApiPanel({
   readinessError,
   batchFilters = {},
   templateError = null,
-  templateCount = 0,
-  batchDetailPanel,
-  rowCorrectionPanel,
-  resultTracePanel,
-  dataToolsPanel,
+  templateCount = 1,
+  children,
 }: ImportCenterApiPanelProps) {
   const filteredBatches = filterImportBatches(batches, batchFilters)
   const selectedBatch =
@@ -56,13 +49,9 @@ export function ImportCenterApiPanel({
     batchCount: batches.length,
     templateCount,
   })
-  const hierarchy = summarizeImportPageHierarchy({
-    selectedBatch,
-    readiness,
-    hasBatchDetail: Boolean(batchDetailPanel),
-    hasUploadTools: Boolean(dataToolsPanel),
-    hasResultTrace: Boolean(resultTracePanel),
-  })
+  const selectedBatchDetailHref = selectedBatch
+    ? buildImportBatchProcessingHref(selectedBatch.batch_id)
+    : null
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
@@ -84,21 +73,18 @@ export function ImportCenterApiPanel({
           readiness={readiness}
           batchError={batchError}
           batchFilters={batchFilters}
+          selectedBatchDetailHref={selectedBatchDetailHref}
         />
         <ImportCenterBatchInspectorPanel
           selectedBatch={selectedBatch}
           readiness={readiness}
           readinessError={readinessError}
+          mode="summary"
+          detailHref={selectedBatchDetailHref}
         />
       </section>
 
-      <ImportCenterDetailTabs
-        hierarchy={hierarchy}
-        batchDetailPanel={batchDetailPanel}
-        rowCorrectionPanel={rowCorrectionPanel}
-        resultTracePanel={resultTracePanel}
-        dataToolsPanel={dataToolsPanel}
-      />
+      {children}
     </main>
   )
 }

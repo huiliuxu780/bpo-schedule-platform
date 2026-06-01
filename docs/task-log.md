@@ -1260,6 +1260,17 @@
 
 ### 2026-06-01
 
+- task_id: `IM043`
+- source_ids:
+  - `R743`
+- story_ids:
+  - `US663`
+- action: 拆分数据质量批次处理详情页。
+- status: `done`
+- notes: `/data-quality` 现在只保留批次概览、筛选、列表和选中批次状态摘要；批次明细、失败行修正、结果追踪和导入模板迁移到 `/data-quality/import-batches/[batchId]`；不新增依赖、后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限或生产流程能力。
+
+### 2026-06-01
+
 - task_id: `IM042`
 - source_ids:
   - `R742`
