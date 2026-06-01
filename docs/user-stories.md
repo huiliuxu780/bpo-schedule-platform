@@ -3154,3 +3154,26 @@ dependencies:
   - "US670"
 status: "done"
 ```
+
+### US672 - 复核证据缺口只读 drilldown
+
+```yaml
+id: US672
+requirement_ids:
+  - R752
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望批次详情页能把复核案例的证据缺口按风险、owner 和质量问题展示出来，以便先补齐关键证据再进入后续受控处理。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 的结果追踪页签展示复核证据缺口 drilldown。"
+  - "缺口根据未关闭复核案例、质量问题、对比结果和读取错误生成风险等级、缺口项、owner 提示和下一步。"
+  - "页面展示缺口摘要、关键缺口列表和只读证据提示，不提供证据补录、提交、关闭、审批、导出或批量操作。"
+  - "无复核案例、无缺口或结果读取失败时展示清晰只读空态。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US671"
+status: "done"
+```

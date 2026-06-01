@@ -5869,3 +5869,45 @@ tasks:
       - "范围扩展到复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM052
+    title: "复核证据缺口只读 drilldown"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM051"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "components/import-center-result-trace-panel.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "app/**"
+    acceptance:
+      - "`/data-quality/[batchId]` 的结果追踪页签展示复核证据缺口 drilldown。"
+      - "缺口根据未关闭复核案例、质量问题、对比结果和读取错误生成风险等级、缺口项、owner 提示和下一步。"
+      - "页面展示缺口摘要、关键缺口列表和只读证据提示，不提供证据补录、提交、关闭、审批、导出或批量操作。"
+      - "无复核案例、无缺口或结果读取失败时展示清晰只读空态。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到证据补录、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

@@ -1488,3 +1488,14 @@
 - action: 增加批次详情结果追踪的只读复核结论预览。
 - status: `done`
 - notes: `/data-quality/[batchId]` 结果追踪现在汇总建议结论、关键证据、残余风险和下一步；本轮不新增复核关闭写入、后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-01
+
+- task_id: `IM052`
+- source_ids:
+  - `R752`
+- story_ids:
+  - `US672`
+- action: 增加批次详情结果追踪的只读复核证据缺口 drilldown。
+- status: `done`
+- notes: `/data-quality/[batchId]` 结果追踪现在按未关闭复核案例展示缺口风险、owner、需补证据、质量问题线索、对比结果线索和下一步；本轮不新增证据补录、复核关闭写入、后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

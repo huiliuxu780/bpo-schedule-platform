@@ -19,6 +19,7 @@ import {
   type ImportDownstreamResultDrilldown,
   type ImportQualityImpactAggregation,
   type ImportReviewConclusionPreview,
+  type ImportReviewEvidenceGapDrilldown,
   type ImportResultTrace,
   type ImportReviewCaseRecord,
   buildImportApiUrl,
@@ -26,6 +27,7 @@ import {
   summarizeImportDownstreamResultDrilldown,
   summarizeImportQualityImpactAggregation,
   summarizeImportReviewConclusionPreview,
+  summarizeImportReviewEvidenceGapDrilldown,
   summarizeImportResultTrace,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -92,6 +94,14 @@ export function ImportCenterResultTracePanel({
     comparisonError,
     reviewError,
   })
+  const evidenceGap = summarizeImportReviewEvidenceGapDrilldown({
+    businessDate,
+    comparisonRuns,
+    reviewCases,
+    qualityImpact,
+    comparisonError,
+    reviewError,
+  })
 
   return (
     <Card id="import-result-trace" className="scroll-mt-16 overflow-hidden">
@@ -111,6 +121,7 @@ export function ImportCenterResultTracePanel({
       <CardContent className="grid gap-4">
         <ResultDrilldownSummary drilldown={drilldown} />
         <QualityImpactAggregationPanel aggregation={qualityImpact} />
+        <ReviewEvidenceGapPanel businessDate={businessDate} drilldown={evidenceGap} />
         <ReviewConclusionPreviewPanel
           businessDate={businessDate}
           preview={conclusionPreview}
@@ -123,6 +134,119 @@ export function ImportCenterResultTracePanel({
         </section>
       </CardContent>
     </Card>
+  )
+}
+
+function ReviewEvidenceGapPanel({
+  businessDate,
+  drilldown,
+}: {
+  businessDate: string | null
+  drilldown: ImportReviewEvidenceGapDrilldown
+}) {
+  return (
+    <section className="grid gap-4 rounded-md border bg-muted/30 p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid min-w-0 gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <ClipboardList className="size-4 text-muted-foreground" />
+            <h3 className="text-sm font-medium">复核证据缺口</h3>
+            <Badge
+              variant={drilldown.tone === "blocked" ? "destructive" : "outline"}
+            >
+              {formatReviewEvidenceGapTone(drilldown.tone)}
+            </Badge>
+          </div>
+          <div>
+            <div className="font-medium">{drilldown.title}</div>
+            <p className="mt-1 text-sm text-muted-foreground">{drilldown.summary}</p>
+          </div>
+        </div>
+        <Button asChild size="sm" variant="outline">
+          <Link
+            href={
+              businessDate
+                ? buildImportReviewCasesUrl(businessDate)
+                : "#import-result-trace"
+            }
+          >
+            查看复核案例
+            <ExternalLink data-icon="inline-end" />
+          </Link>
+        </Button>
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-2">
+        <TraceFocus
+          icon={<ClipboardCheck className="size-4" />}
+          label="责任人"
+          value={drilldown.ownerSummary}
+        />
+        <TraceFocus
+          icon={<AlertTriangle className="size-4" />}
+          label="下一步"
+          value={drilldown.nextAction}
+        />
+      </div>
+
+      {drilldown.gaps.length === 0 ? (
+        <PanelState title={drilldown.title} detail={drilldown.nextAction} />
+      ) : (
+        <div className="overflow-x-auto rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="min-w-[180px]">缺口</TableHead>
+                <TableHead>Owner</TableHead>
+                <TableHead className="min-w-[240px]">需补证据</TableHead>
+                <TableHead className="min-w-[220px]">影响线索</TableHead>
+                <TableHead className="min-w-[220px]">依据</TableHead>
+                <TableHead className="min-w-[240px]">下一步</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {drilldown.gaps.map((gap) => (
+                <TableRow key={gap.key}>
+                  <TableCell>
+                    <div className="grid gap-1">
+                      <span className="font-mono text-xs">{gap.title}</span>
+                      <Badge
+                        variant={gap.riskTone === "blocked" ? "destructive" : "outline"}
+                      >
+                        {formatReviewEvidenceGapTone(gap.riskTone)}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">{gap.ownerId}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {gap.evidenceNeed}
+                  </TableCell>
+                  <TableCell>
+                    <div className="grid gap-1 text-xs text-muted-foreground">
+                      <span>{gap.relatedQualityIssue}</span>
+                      <span>{gap.relatedComparison}</span>
+                      <span>{gap.riskLabel}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {gap.evidence.map((item) => (
+                        <Badge key={item} variant="outline">
+                          {item}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {gap.nextAction}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -619,6 +743,24 @@ function formatReviewConclusionTone(
   }
 
   return "等待结果"
+}
+
+function formatReviewEvidenceGapTone(
+  tone: ImportReviewEvidenceGapDrilldown["tone"]
+): string {
+  if (tone === "blocked") {
+    return "需补证"
+  }
+
+  if (tone === "warning") {
+    return "需复核"
+  }
+
+  if (tone === "ready") {
+    return "低风险"
+  }
+
+  return "暂无缺口"
 }
 
 function formatComparisonType(

@@ -184,6 +184,30 @@ export type ImportReviewConclusionPreview = {
   evidence: string[]
 }
 
+export type ImportReviewEvidenceGapTone = "blocked" | "warning" | "ready" | "empty"
+
+export type ImportReviewEvidenceGapItem = {
+  key: string
+  title: string
+  ownerId: string
+  riskTone: ImportReviewEvidenceGapTone
+  evidenceNeed: string
+  relatedQualityIssue: string
+  relatedComparison: string
+  riskLabel: string
+  nextAction: string
+  evidence: string[]
+}
+
+export type ImportReviewEvidenceGapDrilldown = {
+  tone: ImportReviewEvidenceGapTone
+  title: string
+  summary: string
+  ownerSummary: string
+  nextAction: string
+  gaps: ImportReviewEvidenceGapItem[]
+}
+
 export type ImportBatchHealth = "blocked" | "warning" | "ready_candidate" | "applied"
 
 export type ImportRowCorrectionNoticeTone = "success" | "failed"
@@ -1569,6 +1593,88 @@ export function summarizeImportReviewConclusionPreview({
   }
 }
 
+export function summarizeImportReviewEvidenceGapDrilldown({
+  businessDate,
+  comparisonRuns,
+  reviewCases,
+  qualityImpact,
+  comparisonError,
+  reviewError,
+}: {
+  businessDate: string | null
+  comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
+  qualityImpact: ImportQualityImpactAggregation
+  comparisonError: string | null
+  reviewError: string | null
+}): ImportReviewEvidenceGapDrilldown {
+  if (reviewError || comparisonError) {
+    return {
+      tone: "blocked",
+      title: "暂不能判断证据缺口",
+      summary: `${reviewError ? "复核案例读取失败" : "对比结果读取失败"}，当前缺口列表只能作为占位。`,
+      ownerSummary: "owner 暂不可用",
+      nextAction: reviewError
+        ? "先恢复复核案例读取，再判断证据缺口。"
+        : "先恢复对比结果读取，再判断证据缺口。",
+      gaps: [],
+    }
+  }
+
+  const openReviewCases = reviewCases.filter((reviewCase) => reviewCase.status !== "closed")
+
+  if (openReviewCases.length === 0) {
+    return {
+      tone: "empty",
+      title: "暂无证据缺口",
+      summary: "当前业务日没有未关闭复核案例，暂不形成证据缺口列表。",
+      ownerSummary: "owner 无",
+      nextAction: "继续查看对比结果和复核结论预览。",
+      gaps: [],
+    }
+  }
+
+  const qualityIssueRows = qualityImpact.groups.reduce(
+    (total, group) => total + group.rowCount,
+    0
+  )
+  const primaryQualityIssue = qualityImpact.topIssueLabel || "暂无质量问题"
+  const primaryComparisonRun =
+    comparisonRuns.find((run) => run.status === "completed") ?? comparisonRuns[0] ?? null
+  const relatedComparison = primaryComparisonRun
+    ? `${primaryComparisonRun.run_id} · ${formatComparisonRunType(primaryComparisonRun.comparison_type)} · ${primaryComparisonRun.total_results.toLocaleString("zh-CN")} 条结果`
+    : "暂无对比结果"
+  const comparisonResults = primaryComparisonRun?.total_results ?? 0
+  const gaps = openReviewCases
+    .map((reviewCase) =>
+      buildReviewEvidenceGapItem({
+        reviewCase,
+        businessDate,
+        qualityIssueRows,
+        primaryQualityIssue,
+        relatedComparison,
+        comparisonResults,
+      })
+    )
+    .sort(
+      (current, next) =>
+        reviewEvidenceGapRank(next) - reviewEvidenceGapRank(current) ||
+        current.key.localeCompare(next.key)
+    )
+  const ownerSummary = `owner ${Array.from(
+    new Set(gaps.map((gap) => gap.ownerId))
+  ).join("、")}`
+
+  return {
+    tone: gaps.some((gap) => gap.riskTone === "blocked") ? "blocked" : "warning",
+    title: "证据缺口需要先处理",
+    summary: `当前 ${openReviewCases.length.toLocaleString("zh-CN")} 个未关闭复核案例需要补齐证据；首要缺口为 ${gaps[0]?.key ?? "暂无"}，关联 ${primaryQualityIssue}。`,
+    ownerSummary,
+    nextAction: "先按高风险缺口补齐证据，再回看复核结论预览。",
+    gaps,
+  }
+}
+
 export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): string {
   const standardFields = row.raw_data.standard_fields
   if (isRecord(standardFields)) {
@@ -2327,6 +2433,79 @@ function formatReviewConclusionEvidenceSummary({
   const qualityLabel = `质量 ${qualityImpact.topIssueLabel}`
 
   return `${reviewLabel}；${comparisonLabel}；${qualityLabel}`
+}
+
+function buildReviewEvidenceGapItem({
+  reviewCase,
+  businessDate,
+  qualityIssueRows,
+  primaryQualityIssue,
+  relatedComparison,
+  comparisonResults,
+}: {
+  reviewCase: ImportReviewCaseRecord
+  businessDate: string | null
+  qualityIssueRows: number
+  primaryQualityIssue: string
+  relatedComparison: string
+  comparisonResults: number
+}): ImportReviewEvidenceGapItem {
+  const riskTone = formatReviewEvidenceGapTone(reviewCase.severity)
+  const riskLabelPrefix =
+    riskTone === "blocked" ? "高风险" : riskTone === "warning" ? "中风险" : "低风险"
+
+  return {
+    key: reviewCase.case_id,
+    title: `${reviewCase.case_id} · ${reviewCase.severity}`,
+    ownerId: reviewCase.owner_id,
+    riskTone,
+    evidenceNeed: formatReviewEvidenceNeed(reviewCase.source_result_type),
+    relatedQualityIssue: primaryQualityIssue,
+    relatedComparison,
+    riskLabel: `${riskLabelPrefix} · 质量问题 ${qualityIssueRows.toLocaleString("zh-CN")} 行 · 对比结果 ${comparisonResults.toLocaleString("zh-CN")} 条`,
+    nextAction: `owner ${reviewCase.owner_id} 先补齐 ${reviewCase.case_id} 的关键证据，再进入关闭前复核。`,
+    evidence: [
+      `业务日 ${businessDate ?? reviewCase.business_date}`,
+      `来源 ${reviewCase.source_result_type}#${reviewCase.source_result_id}`,
+      `状态 ${reviewCase.status}`,
+    ],
+  }
+}
+
+function formatReviewEvidenceGapTone(severity: string): ImportReviewEvidenceGapTone {
+  if (severity === "high" || severity === "critical") {
+    return "blocked"
+  }
+
+  if (severity === "medium") {
+    return "warning"
+  }
+
+  return "ready"
+}
+
+function reviewEvidenceGapRank(gap: ImportReviewEvidenceGapItem): number {
+  if (gap.riskTone === "blocked") {
+    return 3
+  }
+
+  if (gap.riskTone === "warning") {
+    return 2
+  }
+
+  return 1
+}
+
+function formatReviewEvidenceNeed(sourceResultType: string): string {
+  if (sourceResultType === "schedule_actual") {
+    return "补充登录/状态明细、排班版本引用和质量修正记录。"
+  }
+
+  if (sourceResultType === "forecast_schedule") {
+    return "补充预测版本、排班版本引用和质量修正记录。"
+  }
+
+  return "补充来源结果、责任人说明和质量修正记录。"
 }
 
 function appendQualityImpactEvidence(

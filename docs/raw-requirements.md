@@ -1716,3 +1716,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读复核结论预览；不新增复核关闭写入，不做后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
 ```
+
+### R752 - 复核证据缺口只读 drilldown
+
+```yaml
+id: R752
+module: "导入中心"
+description: "批次详情页已经能生成复核结论预览，但主管仍缺少证据缺口视角，无法快速判断哪些未关闭复核案例缺少证据、缺口由谁处理、会影响哪些质量问题。需要在结果追踪页签补充只读证据缺口 drilldown。"
+source: "PM asked to continue after IM051 and prior Done Report recommended review evidence gap drilldown on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读证据缺口展示；不新增证据补录、复核关闭写入，不做后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
+```

@@ -2517,3 +2517,30 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
+### 2026-06-01 - IM052 复核证据缺口只读 drilldown
+
+#### 审计结论
+
+- `IM052/US672` 已在 `/data-quality/[batchId]` 结果追踪页签增加“复核证据缺口”。
+- 模型层新增只读缺口摘要，按读取错误、未关闭复核案例、质量问题和对比结果生成风险等级、owner、需补证据、质量问题线索、对比结果线索和下一步。
+- 页面把证据缺口作为独立区块放在质量影响聚合与复核结论预览之间，避免继续把所有判断堆进一个超长页面段落。
+- 本轮未新增依赖，未修改 package/lockfile，未触碰后端、schema/migration、真实外部接口、证据补录、复核关闭写入、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是主管阅读用的证据缺口提示，不是证据补录表单、附件上传、复核关闭或审批流。
+- 如果后续要做真实补证据或关闭异常，必须另开受控任务并明确权限、审计、幂等和回滚边界。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportReviewEvidenceGapDrilldown` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，38 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- page smoke：临时生产服务 `http://127.0.0.1:3023/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` 的 HTTP smoke 命中 `复核证据缺口`、`暂无证据缺口`、`责任人`、`查看复核案例`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。
