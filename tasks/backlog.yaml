@@ -5458,6 +5458,50 @@ tasks:
       - "范围扩展到模板 CRUD 写入、真实外部接口、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM047
+    title: "应用准备度问题分组"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM046"]
+    allowed_files:
+      - "components/import-center-batch-inspector-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality/[batchId]` 的状态检查展示应用准备度问题分组。"
+      - "问题组覆盖失败行、行级必填字段、版本/应用状态和其他批次阻塞。"
+      - "每个问题组展示数量、影响说明、下一步和关键证据。"
+      - "无阻塞或已应用状态下也能展示清晰的只读状态说明。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、应用写入、批量处理、审批、导出、权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到应用写入、批量处理、审批、导出、权限、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: IM042
     title: "数据质量页下游结果列表可见性"
     priority: P1

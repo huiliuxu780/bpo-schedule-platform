@@ -1651,3 +1651,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读模板适配和字段映射详情展示；不新增模板 CRUD 写入，不新增依赖，不做后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
 ```
+
+### R747 - 应用准备度问题分组
+
+```yaml
+id: R747
+module: "导入中心"
+description: "批次详情页的状态检查仍把 blockers、row_blockers、版本和应用状态分散展示，主管难以判断先处理哪类问题。需要把应用准备度阻塞按失败行、行级必填字段、版本/应用状态和其他批次阻塞分组，并给出下一步。"
+source: "Current recommendation after IM046 on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读问题分组；不新增应用写入按钮、不做批量处理、审批、导出、权限、后端、schema/migration、真实外部接口、生产公式、结算或收费因子。"
+```

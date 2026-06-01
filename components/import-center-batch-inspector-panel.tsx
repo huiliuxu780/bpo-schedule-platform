@@ -5,6 +5,7 @@ import {
   type ImportApplyReadinessResponse,
   type ImportBatchListRow,
   type ImportDownstreamResultNavigation,
+  type ImportReadinessIssueGroup,
   buildImportApiUrl,
   formatImportFileType,
   formatImportProcessingStatus,
@@ -13,6 +14,7 @@ import {
   summarizeImportApplicationVisibility,
   summarizeImportBatchReviewGuide,
   summarizeImportDownstreamResultNavigation,
+  summarizeImportReadinessIssueGroups,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -61,6 +63,10 @@ export function ImportCenterBatchInspectorPanel({
           <>
             <BatchReviewGuideCard batch={selectedBatch} readiness={readiness} />
             <ApplyActionGuidance readiness={readiness} readinessError={readinessError} />
+            <ReadinessIssueGroups
+              readiness={readiness}
+              readinessError={readinessError}
+            />
             <ApplicationVisibilityPanel batch={selectedBatch} readiness={readiness} />
             <DownstreamNavigationPanel batch={selectedBatch} readiness={readiness} />
             {readinessError ? (
@@ -335,6 +341,75 @@ function DownstreamNavigationPanel({
   )
 }
 
+function ReadinessIssueGroups({
+  readiness,
+  readinessError,
+}: {
+  readiness: ImportApplyReadinessResponse | null
+  readinessError: string | null
+}) {
+  const groups = summarizeImportReadinessIssueGroups(readiness, readinessError)
+
+  return (
+    <section className="grid gap-3 rounded-md border bg-muted/20 p-3 text-sm">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="font-medium">准备度问题分组</div>
+          <p className="mt-1 text-muted-foreground">
+            先按问题类型处理阻塞，再回到准备度检查确认是否可复核。
+          </p>
+        </div>
+        <Badge variant={groups.some((group) => group.tone === "blocked") ? "destructive" : "outline"}>
+          {groups.length} 组
+        </Badge>
+      </div>
+      <div className="grid gap-3 lg:grid-cols-2">
+        {groups.map((group) => (
+          <ReadinessIssueGroupCard key={group.key} group={group} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function ReadinessIssueGroupCard({ group }: { group: ImportReadinessIssueGroup }) {
+  return (
+    <div
+      className={cn(
+        "grid gap-3 rounded-md border bg-background p-3",
+        group.tone === "blocked" ? "border-destructive/40" : ""
+      )}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="font-medium">{group.title}</div>
+          <p className="mt-1 text-muted-foreground">{group.detail}</p>
+        </div>
+        <Badge
+          variant={
+            group.tone === "blocked"
+              ? "destructive"
+              : group.tone === "ready" || group.tone === "done"
+                ? "secondary"
+                : "outline"
+          }
+        >
+          {formatIssueGroupTone(group)}
+        </Badge>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Badge variant="outline">数量 {group.count.toLocaleString("zh-CN")}</Badge>
+        {group.evidence.map((item) => (
+          <Badge key={item} variant="outline" className="font-mono">
+            {item}
+          </Badge>
+        ))}
+      </div>
+      <p className="text-xs text-muted-foreground">{group.nextAction}</p>
+    </div>
+  )
+}
+
 function ReadinessDetail({ readiness }: { readiness: ImportApplyReadinessResponse }) {
   const blockers = readiness.blockers.filter(
     (blocker) => blocker.code !== "IMPORT_BATCH_ALREADY_APPLIED"
@@ -481,6 +556,22 @@ function formatGuidanceTone(
   }
 
   if (tone === "done") {
+    return "已完成"
+  }
+
+  return "未知"
+}
+
+function formatIssueGroupTone(group: ImportReadinessIssueGroup): string {
+  if (group.tone === "blocked") {
+    return "需处理"
+  }
+
+  if (group.tone === "ready") {
+    return "可复核"
+  }
+
+  if (group.tone === "done") {
     return "已完成"
   }
 

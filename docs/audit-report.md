@@ -4,6 +4,33 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM047 应用准备度问题分组
+
+#### 审计结论
+
+- `IM047/US667` 已在 `/data-quality/[batchId]` 的“状态检查”区域增加准备度问题分组。
+- 问题组覆盖失败行、行级必填字段、导入版本缺口、已应用状态、批次级阻塞和 ready/unknown 兜底状态。
+- 每组展示数量、影响说明、下一步和关键证据，帮助先处理主要阻塞。
+- 原始 blockers 和 row blockers 明细仍保留下方，方便追溯。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、应用写入、批量处理、审批、导出、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只做准备度问题可见性，不提供应用写入入口，也不改变后端 readiness 判定。
+- 后续如继续深化，应优先做下游对比/复核结果 drilldown，不要混入审批、导出、批量或生产规则。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportReadinessIssueGroups` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，30 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- shadcn 快查：触达前端文件范围未发现 `space-x/space-y`、硬编码灰阶/琥珀/绿色色阶、旧左右分栏文案、`分层详情` 或 `选中批次状态检查器`。
+- in-app browser smoke：`/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` 包含“准备度问题分组”“失败行阻塞”“批次级阻塞”和数量证据；console error 为空。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM046 字段映射模板适配详情
 
 #### 审计结论

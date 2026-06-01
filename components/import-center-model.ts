@@ -169,6 +169,27 @@ export type ImportApplyActionGuidance = {
   nextAction: string
 }
 
+export type ImportReadinessIssueGroupTone = "blocked" | "ready" | "done" | "unknown"
+
+export type ImportReadinessIssueGroupKey =
+  | "failed_rows"
+  | "row_required_fields"
+  | "version"
+  | "application"
+  | "batch_blockers"
+  | "ready"
+  | "unknown"
+
+export type ImportReadinessIssueGroup = {
+  key: ImportReadinessIssueGroupKey
+  tone: ImportReadinessIssueGroupTone
+  title: string
+  count: number
+  detail: string
+  nextAction: string
+  evidence: string[]
+}
+
 export type ImportApplicationVisibilityTone = "blocked" | "ready" | "done" | "unknown"
 
 export type ImportApplicationVisibility = {
@@ -1218,6 +1239,130 @@ export function summarizeImportApplyActionGuidance(
     detail: `${readiness.success_rows} 行成功、${readiness.failed_rows} 行失败，已生成 ${readiness.version_count} 个版本。`,
     nextAction: "复核版本和目标对象后，再由后续受控任务提供应用写入入口。",
   }
+}
+
+export function summarizeImportReadinessIssueGroups(
+  readiness: ImportApplyReadinessResponse | null,
+  readinessError?: string | null
+): ImportReadinessIssueGroup[] {
+  if (readinessError || !readiness) {
+    return [
+      {
+        key: "unknown",
+        tone: "unknown",
+        title: "准备度暂不可判断",
+        count: 1,
+        detail: readinessError ?? "未返回准备度结果。",
+        nextAction: "先确认本地 API 状态；准备度未知时不要执行应用写入。",
+        evidence: readinessError ? [readinessError] : ["无 readiness 结果"],
+      },
+    ]
+  }
+
+  if (readiness.application_status === "applied") {
+    return [
+      {
+        key: "application",
+        tone: "done",
+        title: "批次已应用",
+        count: readiness.applied_record_count,
+        detail: `当前批次已写入 ${readiness.applied_record_count.toLocaleString("zh-CN")} 条记录。`,
+        nextAction: "查看下游结果和复核线索，不需要重复应用。",
+        evidence: [
+          `目标 ${readiness.application_target}`,
+          `版本 ${readiness.import_version_id ?? "未生成"}`,
+        ],
+      },
+    ]
+  }
+
+  const groups: ImportReadinessIssueGroup[] = []
+
+  if (readiness.failed_rows > 0) {
+    groups.push({
+      key: "failed_rows",
+      tone: "blocked",
+      title: "失败行阻塞",
+      count: readiness.failed_rows,
+      detail: `当前批次还有 ${readiness.failed_rows.toLocaleString("zh-CN")} 行失败，应用写入前必须先修正。`,
+      nextAction: "先进入失败行修正，补齐标准字段并重新检查准备度。",
+      evidence: [
+        `失败 ${readiness.failed_rows.toLocaleString("zh-CN")} 行`,
+        `成功 ${readiness.success_rows.toLocaleString("zh-CN")} 行`,
+        `警告 ${readiness.warning_rows.toLocaleString("zh-CN")} 行`,
+      ],
+    })
+  }
+
+  if (readiness.row_blockers.length > 0) {
+    const firstBlocker = readiness.row_blockers[0]
+    const fieldLabel = firstBlocker.field_name ? ` ${firstBlocker.field_name}` : ""
+
+    groups.push({
+      key: "row_required_fields",
+      tone: "blocked",
+      title: "行级必填字段缺口",
+      count: readiness.row_blockers.length,
+      detail: `${readiness.row_blockers.length.toLocaleString("zh-CN")} 个行级阻塞正在影响应用准备度。`,
+      nextAction: `优先处理第 ${firstBlocker.row_number} 行${fieldLabel}；补齐后重新查看准备度。`,
+      evidence: readiness.row_blockers
+        .slice(0, 4)
+        .map((blocker) =>
+          blocker.field_name
+            ? `第 ${blocker.row_number} 行 ${blocker.field_name}`
+            : `第 ${blocker.row_number} 行`
+        ),
+    })
+  }
+
+  if (readiness.version_count === 0 || !readiness.import_version_id) {
+    groups.push({
+      key: "version",
+      tone: "blocked",
+      title: "导入版本缺口",
+      count: 1,
+      detail: "当前批次还没有可追溯导入版本。",
+      nextAction: "检查上传解析结果和版本生成记录，确认版本存在后再进入应用前复核。",
+      evidence: [
+        `版本 ${readiness.version_count.toLocaleString("zh-CN")}`,
+        `导入版本 ${readiness.import_version_id ?? "未生成"}`,
+      ],
+    })
+  }
+
+  const batchBlockers = readiness.blockers.filter(
+    (blocker) => blocker.code !== "IMPORT_BATCH_ALREADY_APPLIED"
+  )
+  if (batchBlockers.length > 0) {
+    groups.push({
+      key: "batch_blockers",
+      tone: "blocked",
+      title: "批次级阻塞",
+      count: batchBlockers.length,
+      detail: `${batchBlockers.length.toLocaleString("zh-CN")} 个批次级阻塞仍需处理。`,
+      nextAction: "按阻塞码处理批次问题后重新检查准备度。",
+      evidence: batchBlockers.map((blocker) => blocker.code),
+    })
+  }
+
+  if (groups.length === 0) {
+    return [
+      {
+        key: "ready",
+        tone: "ready",
+        title: "准备度已通过",
+        count: 0,
+        detail: "当前批次没有应用前阻塞，已生成可追溯导入版本。",
+        nextAction: "继续复核应用目标和下游结果；真正应用写入仍需单独受控入口。",
+        evidence: [
+          `成功 ${readiness.success_rows.toLocaleString("zh-CN")} 行`,
+          `版本 ${readiness.import_version_id ?? "未生成"}`,
+        ],
+      },
+    ]
+  }
+
+  return groups
 }
 
 export function summarizeImportExceptionGuidance({

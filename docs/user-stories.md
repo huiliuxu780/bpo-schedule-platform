@@ -3039,3 +3039,26 @@ dependencies:
   - "US665"
 status: "done"
 ```
+
+### US667 - 应用准备度问题分组
+
+```yaml
+id: US667
+requirement_ids:
+  - R747
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望批次状态检查能把应用准备度阻塞按问题类型分组，以便先处理影响应用写入的主要问题。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 的状态检查展示应用准备度问题分组。"
+  - "问题组覆盖失败行、行级必填字段、版本/应用状态和其他批次阻塞。"
+  - "每个问题组展示数量、影响说明、下一步和关键证据。"
+  - "无阻塞或已应用状态下也能展示清晰的只读状态说明。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、应用写入、批量处理、审批、导出、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US666"
+status: "done"
+```
