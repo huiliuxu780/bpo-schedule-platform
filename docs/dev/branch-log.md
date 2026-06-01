@@ -2,6 +2,23 @@
 
 ## 2026-06-01
 
+### IM050 shadcn/ui Automated Verification Gate
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical exists; local branch was ahead 21 before IM050`
+- scope: add local shadcn/ui convention checker, baseline file, Node tests, `bash scripts/check.sh` integration, and traceability records.
+- allowed_files_check: `scripts/check.sh`, `scripts/check-shadcn-ui.mjs`, `scripts/shadcn-ui-baseline.json`, `scripts/tests/check-shadcn-ui.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no product UI, backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files.
+- scope_diff_check: shadcn checker script, checker tests, baseline file, check.sh wiring, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log. `.local/` remains untracked and untouched.
+- check_result: TDD red test failed first because `scripts/check-shadcn-ui.mjs` was missing; target checker tests passed with 3 tests; real project checker passed with 5 documented baseline violations and no new violations; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed with strict state check, shadcn checker tests, real shadcn project scan, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM047 Apply Readiness Issue Grouping
 
 - branch_name: `codex/import-center-api-vertical`

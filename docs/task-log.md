@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-06-01
+
+- task_id: `IM050`
+- source_ids:
+  - `R750`
+- story_ids:
+  - `US670`
+- action: 将 shadcn/ui 约束并入自动化验证链路。
+- status: `done`
+- notes: IM050 新增 `scripts/check-shadcn-ui.mjs`、`scripts/tests/check-shadcn-ui.test.mjs` 和 `scripts/shadcn-ui-baseline.json`，并将脚本测试和真实项目扫描接入 `bash scripts/check.sh`。检查不依赖远程 shadcn CLI 或新增依赖；当前历史违例进入 baseline，后续新增 `space-x/space-y`、硬编码 Tailwind 色阶、任意半径或 shadcn config 漂移会失败。任务完成后 current queue 和 active tasks 已清空。
+
 ### 2026-05-31
 
 - task_id: `IM030`

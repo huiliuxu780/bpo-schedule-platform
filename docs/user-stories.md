@@ -3108,3 +3108,26 @@ dependencies:
   - "US668"
 status: "done"
 ```
+
+### US670 - shadcn/ui 自动化验证链路
+
+```yaml
+id: US670
+requirement_ids:
+  - R750
+module: "Harness"
+role: "前端开发者"
+story: "作为前端开发者，我希望 shadcn/ui 约束进入自动化验证链路，以便每次 check 都能阻止新增明显违背 shadcn 规则的 UI 写法。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 自动运行 shadcn/ui 本地约束检查。"
+  - "检查不依赖远程 shadcn CLI、网络或新增 npm 依赖。"
+  - "检查覆盖 `components.json` 基线、禁止 `space-x/space-y`、禁止项目代码硬编码 Tailwind 色阶、禁止项目代码任意半径。"
+  - "历史已存在违例进入 baseline，新增违例会失败。"
+  - "脚本自身有 Node test 覆盖通过、失败和 baseline 场景。"
+  - "不修改产品 UI，不修改 package/lockfile，不做后端、schema/migration、审批、导出、批量、权限、生产公式、结算或收费因子。"
+dependencies:
+  - "US669"
+status: "done"
+```

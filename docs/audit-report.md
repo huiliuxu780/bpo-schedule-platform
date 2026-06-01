@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM050 shadcn/ui 自动化验证链路
+
+#### 审计结论
+
+- `IM050/US670` 已将 shadcn/ui 本地约束检查接入 `bash scripts/check.sh`。
+- 新增 `scripts/check-shadcn-ui.mjs`，检查 `components.json` 项目基线、禁止项目代码新增 `space-x/space-y`、禁止硬编码 Tailwind 色阶、禁止任意半径。
+- 新增 `scripts/tests/check-shadcn-ui.test.mjs` 覆盖通过、失败和 baseline 场景。
+- 新增 `scripts/shadcn-ui-baseline.json` 记录当前 5 个历史色阶违例；本轮不改产品 UI，后续新增违例会被 check 阻断。
+- 本轮不新增依赖，不修改 package/lockfile，不调用远程 shadcn CLI 作为硬依赖，不做产品 UI、后端、schema/migration、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前自动化覆盖 shadcn 规则中稳定可静态化的部分；更复杂的组件组合语义和图标嵌套仍需要 code review 配合。
+- baseline 中的 5 个历史色阶违例应后续单独治理，不应在新功能任务里继续扩张。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/check-shadcn-ui.test.mjs` 因缺少 `scripts/check-shadcn-ui.mjs` 失败。
+- `node --test scripts/tests/check-shadcn-ui.test.mjs`：通过，3 个 shadcn checker 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，识别 5 个已记录 baseline 违例，无新增违例。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、shadcn checker 测试、真实 shadcn 项目扫描、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM049 数据质量到异常反向聚合 drilldown
 
 #### 审计结论

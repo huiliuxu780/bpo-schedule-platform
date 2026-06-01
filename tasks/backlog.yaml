@@ -5783,3 +5783,47 @@ tasks:
       - "范围扩展到复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM050
+    title: "shadcn/ui 自动化验证链路"
+    priority: P1
+    status: done
+    required_workflow: harness
+    dependencies: ["IM049"]
+    allowed_files:
+      - "scripts/check.sh"
+      - "scripts/check-shadcn-ui.mjs"
+      - "scripts/shadcn-ui-baseline.json"
+      - "scripts/tests/check-shadcn-ui.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+      - "app/**"
+      - "components/**"
+    acceptance:
+      - "`bash scripts/check.sh` 自动运行 shadcn/ui 本地约束检查。"
+      - "检查不依赖远程 shadcn CLI、网络或新增 npm 依赖。"
+      - "检查覆盖 `components.json` 基线、禁止 `space-x/space-y`、禁止项目代码硬编码 Tailwind 色阶、禁止项目代码任意半径。"
+      - "历史已存在违例进入 baseline，新增违例会失败。"
+      - "脚本自身有 Node test 覆盖通过、失败和 baseline 场景。"
+      - "不修改产品 UI，不修改 package/lockfile，不做后端、schema/migration、审批、导出、批量、权限、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改产品 UI、后端、schema、migration 或数据库结构"
+      - "范围扩展到审批、导出、权限、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

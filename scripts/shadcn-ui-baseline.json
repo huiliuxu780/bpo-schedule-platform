@@ -1,0 +1,13 @@
+{
+  "notes": [
+    "Known pre-existing shadcn/ui convention drift allowed only so the automated gate can be introduced without unrelated UI refactors.",
+    "Do not add new entries during feature work unless a task explicitly governs legacy UI debt."
+  ],
+  "allowedViolations": [
+    "components/import-center-batch-detail-panel.tsx:93|no-hardcoded-tailwind-colors|amber-500/30|e8b76287",
+    "components/import-center-batch-detail-panel.tsx:223|no-hardcoded-tailwind-colors|amber-500/30|e8b76287",
+    "components/import-center-row-correction-panel.tsx:164|no-hardcoded-tailwind-colors|emerald-50|85d439e6",
+    "components/import-center-upload-form.tsx:152|no-hardcoded-tailwind-colors|emerald-500/30|adfd6946",
+    "components/import-center-upload-form.tsx:233|no-hardcoded-tailwind-colors|amber-500/30|04af2ef7"
+  ]
+}

@@ -58,8 +58,11 @@ required_files=(
   "scripts/dev.sh"
   "scripts/run-next-dev.sh"
   "scripts/check-state.sh"
+  "scripts/check-shadcn-ui.mjs"
+  "scripts/shadcn-ui-baseline.json"
   "scripts/verify-backend-runtime.sh"
   "scripts/verify-frontend-native-runtime.mjs"
+  "scripts/tests/check-shadcn-ui.test.mjs"
   "scripts/tests/check-state.test.mjs"
   "scripts/tests/verify-backend-runtime.test.mjs"
   "scripts/tests/verify-frontend-native-runtime.test.mjs"
@@ -145,6 +148,8 @@ case "$state_check_mode" in
     ;;
 esac
 node --test scripts/tests/check-state.test.mjs
+node --test scripts/tests/check-shadcn-ui.test.mjs
+node scripts/check-shadcn-ui.mjs
 bash scripts/verify-backend-runtime.sh
 node --test scripts/tests/verify-backend-runtime.test.mjs
 npm run lint

@@ -194,6 +194,7 @@ Current invariants:
 - `IM047/US667` added read-only apply-readiness issue grouping in `/data-quality/[batchId]`, covering failed rows, row-level required fields, version gaps, application state, and batch-level blockers, then returned current queue and active tasks to empty.
 - `IM048/US668` added read-only downstream result drilldown in `/data-quality/[batchId]`, showing whether the selected batch is blocked, waiting for downstream results, or already has actionable comparison/review records, then returned current queue and active tasks to empty.
 - `IM049/US669` added read-only quality-to-exception reverse aggregation in `/data-quality/[batchId]`, grouping failed/warning import rows by error field and reason and relating them to same-business-date comparison/review candidates, then returned current queue and active tasks to empty.
+- `IM050/US670` added a local shadcn/ui convention gate into `bash scripts/check.sh`, covering project shadcn config, `space-x/space-y`, hardcoded Tailwind color scales, arbitrary radius utilities, and documented baseline debt without adding dependencies or changing product UI.
 
 ## Product Direction
 

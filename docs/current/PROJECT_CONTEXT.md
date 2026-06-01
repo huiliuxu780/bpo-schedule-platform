@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current queue is empty after `US669/IM049`: 数据质量到异常反向聚合 drilldown.
+Current queue is empty after `US670/IM050`: shadcn/ui 自动化验证链路。
 
 The H024 current-queue smoke task proved that a ready story plus matching active task can pass strict state checks before execution; after completion, current queue returned to empty so done history does not accumulate here.
 
@@ -53,4 +53,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next step after `US669/IM049` is read-only review conclusion preview: summarize suggested conclusion, evidence, and residual risk for selected downstream cases without writing closure records. Keep apply write buttons, multipart/Excel, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.
+Recommended next product step after `US670/IM050` is read-only review conclusion preview: summarize suggested conclusion, evidence, and residual risk for selected downstream cases without writing closure records. Keep apply write buttons, multipart/Excel, external integrations, auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope until separate tasks.

@@ -1690,3 +1690,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读质量影响聚合；不新增依赖，不做后端、schema/migration、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
 ```
+
+### R750 - shadcn/ui 自动化验证链路
+
+```yaml
+id: R750
+module: "Harness"
+description: "前端开发必须把 shadcn/ui 规则并入自动化验证链路，避免后续继续手写不符合 shadcn 约束的布局、颜色和半径样式。"
+source: "PM requested merging shadcn skill checks into automated verification on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮只做本地验证脚本和 check.sh 集成；不新增依赖，不调用远程 shadcn CLI 作为硬依赖，不修改产品 UI、后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
+```
