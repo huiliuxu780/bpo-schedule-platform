@@ -4,6 +4,34 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM045 数据质量批次详情单列处理流重设计
+
+#### 审计结论
+
+- `IM045/US665` 已把 `/data-quality/[batchId]` 从左右分栏改为单列处理流程。
+- 页面现在按批次头部、处理总览、全宽批次处理 Tabs 组织；状态检查作为默认 Tab，不再作为左侧栏。
+- 页面文案不再使用“分层详情”或“选中批次状态检查器”，改为业务化的“批次处理”和“状态检查”。
+- `correction=success&row=1` 的修正结果反馈提升到批次处理工作区上方，默认状态检查 Tab 下也不会丢失当前处理反馈。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是详情页信息架构和展示层级修正，不是应用写入、批量修正、权限隔离或审批流程。
+- 后续如继续深化，应优先做模板/字段映射管理深度或准备度问题分组，不要混入生产规则和外部集成。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因 `summarizeImportPageHierarchy` 仍返回旧分层详情和 `row-correction` 默认 Tab 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，28 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- shadcn 快查：触达前端文件范围未发现 `space-x/space-y`、硬编码灰阶色、旧左右分栏类名、`分层详情` 或 `选中批次状态检查器`。
+- in-app browser smoke：`/data-quality/BATCH-IM026-SMOKE-004?correction=success&row=1` 包含处理总览、`批次处理`、`状态检查`、`失败行修正`、`批次明细`、`结果追踪`、`导入与模板` 和 `第 1 行已修正`；不包含 `分层详情` 或 `选中批次状态检查器`；console error 为空。
+- 截图证据：`/private/tmp/im045-data-quality-single-column-detail.png`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM044 数据质量批次二级详情导航修正
 
 #### 审计结论

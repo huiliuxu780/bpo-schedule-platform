@@ -37,7 +37,7 @@ export function ImportCenterBatchInspectorPanel({
   return (
     <Card id="import-apply-readiness" className="scroll-mt-16">
       <CardHeader>
-        <CardTitle className="text-base">选中批次状态检查器</CardTitle>
+        <CardTitle className="text-base">状态检查</CardTitle>
         <p className="mt-1 text-sm text-muted-foreground">
           {selectedBatch
             ? `${formatImportFileType(selectedBatch.file_type)} · ${formatImportProcessingStatus(selectedBatch.processing_status)}`
@@ -134,7 +134,7 @@ function BatchReviewGuideCard({
         </Button>
         {detailHref ? null : (
           <Button asChild size="sm" variant="outline">
-            <a href="#import-detail-workspace">查看分层详情</a>
+            <a href="#import-detail-workspace">查看批次处理</a>
           </Button>
         )}
       </div>

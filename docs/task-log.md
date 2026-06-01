@@ -1260,6 +1260,17 @@
 
 ### 2026-06-01
 
+- task_id: `IM045`
+- source_ids:
+  - `R745`
+- story_ids:
+  - `US665`
+- action: 重设计数据质量批次详情页为单列处理流。
+- status: `done`
+- notes: `/data-quality/[batchId]` 现在按批次头部、处理总览和全宽批次处理 Tabs 组织；状态检查作为默认 Tab，不再使用左右分栏或“分层详情”文案；修正结果反馈在默认状态检查 Tab 下仍可见；不新增依赖、后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限或生产流程能力。
+
+### 2026-06-01
+
 - task_id: `IM044`
 - source_ids:
   - `R744`

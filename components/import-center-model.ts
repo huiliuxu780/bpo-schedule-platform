@@ -240,6 +240,7 @@ export type ImportResultTrace = {
 }
 
 export type ImportPageHierarchyDetailTab =
+  | "status-check"
   | "batch-detail"
   | "row-correction"
   | "result-trace"
@@ -823,39 +824,23 @@ export function summarizeImportResultTrace({
   }
 }
 
-export function summarizeImportPageHierarchy({
-  selectedBatch,
-  readiness,
-  hasBatchDetail,
-  hasUploadTools,
-  hasResultTrace = false,
-}: {
+export function summarizeImportPageHierarchy(params: {
   selectedBatch: ImportBatchListRow | null
   readiness: ImportApplyReadinessResponse | null
   hasBatchDetail: boolean
   hasUploadTools: boolean
   hasResultTrace?: boolean
 }): ImportPageHierarchy {
-  const hasBlockingRows =
-    Boolean(selectedBatch && selectedBatch.failed_rows > 0) ||
-    readiness?.readiness_status === "blocked"
-  const defaultDetailTab: ImportPageHierarchyDetailTab = hasBlockingRows
-    ? "row-correction"
-    : selectedBatch?.application_status === "applied" && hasResultTrace
-      ? "result-trace"
-    : hasBatchDetail
-      ? "batch-detail"
-      : hasUploadTools
-        ? "data-tools"
-        : "batch-detail"
+  const { selectedBatch } = params
+  const defaultDetailTab: ImportPageHierarchyDetailTab = "status-check"
 
   return {
     primaryRegion: "接入批次工作台",
-    inspectorRegion: selectedBatch ? "选中批次状态检查器" : "等待选择批次",
-    detailTabs: ["批次明细", "失败行修正", "结果追踪", "导入与模板"],
+    inspectorRegion: selectedBatch ? "状态检查" : "等待选择批次",
+    detailTabs: ["状态检查", "失败行修正", "批次明细", "结果追踪", "导入与模板"],
     defaultDetailTab,
-    utilityPlacement: "导入与模板收纳到分层详情",
-    layoutIntent: "先定位批次，再处理状态，最后进入详情。",
+    utilityPlacement: "导入与模板收纳到批次处理工作区",
+    layoutIntent: "先看处理总览，再进入全宽批次处理工作区。",
   }
 }
 

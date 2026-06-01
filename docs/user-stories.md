@@ -2993,3 +2993,26 @@ dependencies:
   - "US663"
 status: "done"
 ```
+
+### US665 - 数据质量批次详情单列处理流重设计
+
+```yaml
+id: US665
+requirement_ids:
+  - R745
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望批次详情页按单列处理流程组织，而不是左右分栏，以便状态检查、失败行修正和批次明细都能在全宽工作区内处理。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 不再使用状态检查器左栏和分层详情右栏的左右分栏。"
+  - "详情页在批次头部下方展示处理总览，随后用全宽 Tabs 展示状态检查、失败行修正、批次明细、结果追踪、导入与模板。"
+  - "状态检查作为默认工作区 Tab，不再以“选中批次状态检查器”侧栏出现，页面标题不再使用“分层详情”。"
+  - "修正成功/失败 query 仍能在详情页展示，不丢失当前处理反馈。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US664"
+status: "done"
+```

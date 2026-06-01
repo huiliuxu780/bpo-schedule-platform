@@ -1625,3 +1625,16 @@ version: "1.0"
 status: "done"
 notes: "本轮只做前端路由、页面层级和导航修正；保留旧详情路径兼容跳转，不新增依赖，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R745 - 数据质量批次详情单列处理流重设计
+
+```yaml
+id: R745
+module: "导入中心"
+description: "数据质量批次详情页改成二级页面后，状态检查器和分层详情仍以左右分栏呈现，导致核心处理区域被压窄、层级概念不业务化。需要重设计为单列处理流程：顶部批次信息、处理总览、全宽批次处理工作区。"
+source: "PM rejected the left-right split detail layout and requested redesign on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮只做前端页面布局和业务文案重构；使用现有 shadcn Card/Tabs/Badge/Button，不新增依赖，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type ImportCenterDetailTabsProps = {
   hierarchy: ImportPageHierarchy
+  statusCheckPanel: ReactNode
   batchDetailPanel: ReactNode
   rowCorrectionPanel: ReactNode
   resultTracePanel: ReactNode
@@ -13,6 +14,7 @@ type ImportCenterDetailTabsProps = {
 
 export function ImportCenterDetailTabs({
   hierarchy,
+  statusCheckPanel,
   batchDetailPanel,
   rowCorrectionPanel,
   resultTracePanel,
@@ -24,16 +26,20 @@ export function ImportCenterDetailTabs({
       className="scroll-mt-16 border-t bg-background pt-4"
     >
       <div className="mb-3 flex flex-col gap-1">
-        <h2 className="text-base font-medium">分层详情</h2>
+        <h2 className="text-base font-medium">批次处理</h2>
         <p className="text-sm text-muted-foreground">{hierarchy.layoutIntent}</p>
       </div>
       <Tabs defaultValue={hierarchy.defaultDetailTab} className="flex-col gap-4">
         <TabsList className="w-full justify-start overflow-x-auto md:w-fit">
-          <TabsTrigger value="batch-detail">{hierarchy.detailTabs[0]}</TabsTrigger>
+          <TabsTrigger value="status-check">{hierarchy.detailTabs[0]}</TabsTrigger>
           <TabsTrigger value="row-correction">{hierarchy.detailTabs[1]}</TabsTrigger>
-          <TabsTrigger value="result-trace">{hierarchy.detailTabs[2]}</TabsTrigger>
-          <TabsTrigger value="data-tools">{hierarchy.detailTabs[3]}</TabsTrigger>
+          <TabsTrigger value="batch-detail">{hierarchy.detailTabs[2]}</TabsTrigger>
+          <TabsTrigger value="result-trace">{hierarchy.detailTabs[3]}</TabsTrigger>
+          <TabsTrigger value="data-tools">{hierarchy.detailTabs[4]}</TabsTrigger>
         </TabsList>
+        <TabsContent value="status-check" className="m-0">
+          {statusCheckPanel}
+        </TabsContent>
         <TabsContent value="batch-detail" className="m-0">
           {batchDetailPanel}
         </TabsContent>

@@ -21,8 +21,11 @@ import {
   buildImportComparisonRunsUrl,
   buildImportFieldMappingTemplatesUrl,
   buildImportReviewCasesUrl,
+  formatImportApplicationStatus,
   formatImportFileType,
+  formatImportReadinessStatus,
   summarizeImportPageHierarchy,
+  summarizeImportRowCorrectionNotice,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -84,15 +87,32 @@ export default async function ImportBatchDetailPage({
           batchError={batchResult.error}
         />
 
-        <section className="grid gap-4 xl:grid-cols-[380px_minmax(0,1fr)]">
-          <ImportCenterBatchInspectorPanel
-            selectedBatch={selectedBatch}
-            readiness={readinessResult.data}
-            readinessError={readinessResult.error}
-            mode="detail"
-          />
+        <ProcessingOverview
+          batch={selectedBatch}
+          readiness={readinessResult.data}
+          readinessError={readinessResult.error}
+          comparisonCount={comparisonResult.data?.length ?? 0}
+          reviewCaseCount={reviewCaseResult.data?.length ?? 0}
+        />
+
+        <CorrectionFeedbackBanner
+          correctionStatus={query?.correction}
+          correctionReason={query?.reason}
+          correctionRow={query?.row}
+          remainingFailedRows={detailResult.data?.failed_rows.length ?? 0}
+        />
+
+        <section className="grid gap-4">
           <ImportCenterDetailTabs
             hierarchy={hierarchy}
+            statusCheckPanel={
+              <ImportCenterBatchInspectorPanel
+                selectedBatch={selectedBatch}
+                readiness={readinessResult.data}
+                readinessError={readinessResult.error}
+                mode="detail"
+              />
+            }
             batchDetailPanel={
               <ImportCenterBatchDetailPanel
                 detail={detailResult.data}
@@ -136,6 +156,131 @@ export default async function ImportBatchDetailPage({
         </section>
       </main>
     </AppShell>
+  )
+}
+
+function CorrectionFeedbackBanner({
+  correctionStatus,
+  correctionReason,
+  correctionRow,
+  remainingFailedRows,
+}: {
+  correctionStatus?: string
+  correctionReason?: string
+  correctionRow?: string
+  remainingFailedRows: number
+}) {
+  const notice = summarizeImportRowCorrectionNotice({
+    status: correctionStatus,
+    reason: correctionReason,
+    row: correctionRow,
+    remainingFailedRows,
+  })
+
+  if (!notice) {
+    return null
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
+        <div>
+          <CardTitle className="text-base">{notice.title}</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">{notice.detail}</p>
+        </div>
+        <Badge variant={notice.tone === "success" ? "secondary" : "destructive"}>
+          {notice.tone === "success" ? "已修正" : "修正失败"}
+        </Badge>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">{notice.nextAction}</p>
+      </CardContent>
+    </Card>
+  )
+}
+
+function ProcessingOverview({
+  batch,
+  readiness,
+  readinessError,
+  comparisonCount,
+  reviewCaseCount,
+}: {
+  batch: ImportBatchListRow | null
+  readiness: ImportApplyReadinessResponse | null
+  readinessError: string | null
+  comparisonCount: number
+  reviewCaseCount: number
+}) {
+  return (
+    <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <OverviewCard
+        label="准备度"
+        value={
+          readiness
+            ? formatImportReadinessStatus(readiness.readiness_status)
+            : readinessError
+              ? "读取失败"
+              : "未返回"
+        }
+        detail={
+          readiness
+            ? `阻塞 ${readiness.blockers.length + readiness.row_blockers.length} 项`
+            : readinessError ?? "等待准备度结果"
+        }
+        tone={readiness?.readiness_status === "blocked" || readinessError ? "blocked" : "default"}
+      />
+      <OverviewCard
+        label="失败行"
+        value={batch ? `${batch.failed_rows}` : "-"}
+        detail={batch ? `警告 ${batch.warning_rows} 行 · 成功 ${batch.success_rows} 行` : "暂无批次"}
+        tone={batch && batch.failed_rows > 0 ? "blocked" : "default"}
+      />
+      <OverviewCard
+        label="应用状态"
+        value={batch ? formatImportApplicationStatus(batch.application_status) : "-"}
+        detail={batch?.import_version_id ?? "未生成导入版本"}
+        tone={batch?.application_status === "applied" ? "done" : "default"}
+      />
+      <OverviewCard
+        label="下游结果"
+        value={`${comparisonCount}/${reviewCaseCount}`}
+        detail="对比结果 / 复核案例"
+        tone={comparisonCount > 0 || reviewCaseCount > 0 ? "done" : "default"}
+      />
+    </section>
+  )
+}
+
+function OverviewCard({
+  label,
+  value,
+  detail,
+  tone,
+}: {
+  label: string
+  value: string
+  detail: string
+  tone: "default" | "blocked" | "done"
+}) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {label}
+        </CardTitle>
+        <Badge
+          variant={
+            tone === "blocked" ? "destructive" : tone === "done" ? "secondary" : "outline"
+          }
+        >
+          {value}
+        </Badge>
+      </CardHeader>
+      <CardContent>
+        <div className="truncate text-sm text-muted-foreground">{detail}</div>
+      </CardContent>
+    </Card>
   )
 }
 

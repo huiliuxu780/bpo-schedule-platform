@@ -189,6 +189,7 @@ Current invariants:
 - `IM042/US662` added a read-only result trace tab on `/data-quality` that lists selected-batch business-date comparison runs and review cases from existing APIs, then returned current queue and active tasks to empty.
 - `IM043/US663` split concrete batch viewing and handling into `/data-quality/import-batches/[batchId]`, leaving `/data-quality` as the batch workbench, then returned current queue and active tasks to empty.
 - `IM044/US664` moved concrete batch processing to true second-level `/data-quality/[batchId]`, removed the status checker from the list page, kept old detail URLs as redirects, and returned current queue and active tasks to empty.
+- `IM045/US665` redesigned `/data-quality/[batchId]` into a single-column processing flow with overview cards, full-width processing tabs, and status check as the default tab, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

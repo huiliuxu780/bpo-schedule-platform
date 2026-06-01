@@ -522,11 +522,11 @@ test("import center page hierarchy keeps utilities out of the primary workflow",
     }),
     {
       primaryRegion: "接入批次工作台",
-      inspectorRegion: "选中批次状态检查器",
-      detailTabs: ["批次明细", "失败行修正", "结果追踪", "导入与模板"],
-      defaultDetailTab: "row-correction",
-      utilityPlacement: "导入与模板收纳到分层详情",
-      layoutIntent: "先定位批次，再处理状态，最后进入详情。",
+      inspectorRegion: "状态检查",
+      detailTabs: ["状态检查", "失败行修正", "批次明细", "结果追踪", "导入与模板"],
+      defaultDetailTab: "status-check",
+      utilityPlacement: "导入与模板收纳到批次处理工作区",
+      layoutIntent: "先看处理总览，再进入全宽批次处理工作区。",
     },
   );
 
@@ -537,7 +537,7 @@ test("import center page hierarchy keeps utilities out of the primary workflow",
       hasBatchDetail: true,
       hasUploadTools: true,
     }).defaultDetailTab,
-    "batch-detail",
+    "status-check",
   );
 });
 

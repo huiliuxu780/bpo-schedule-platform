@@ -5558,3 +5558,49 @@ tasks:
       - "范围扩展到新增业务能力、真实外部接口、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM045
+    title: "数据质量批次详情单列处理流重设计"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM044"]
+    allowed_files:
+      - "app/data-quality/[batchId]/page.tsx"
+      - "components/import-center-detail-tabs.tsx"
+      - "components/import-center-batch-inspector-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality/[batchId]` 不再使用状态检查器左栏和分层详情右栏的左右分栏。"
+      - "详情页在批次头部下方展示处理总览，随后用全宽 Tabs 展示状态检查、失败行修正、批次明细、结果追踪、导入与模板。"
+      - "状态检查作为默认工作区 Tab，不再以“选中批次状态检查器”侧栏出现，页面标题不再使用“分层详情”。"
+      - "修正成功/失败 query 仍能在详情页展示，不丢失当前处理反馈。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到新增业务能力、真实外部接口、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
