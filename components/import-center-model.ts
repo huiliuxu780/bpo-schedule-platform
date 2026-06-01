@@ -147,6 +147,17 @@ export type ImportApplyActionGuidance = {
   nextAction: string
 }
 
+export type ImportBatchReviewGuideTone = "blocked" | "warning" | "ready" | "done" | "unknown"
+
+export type ImportBatchReviewGuide = {
+  tone: ImportBatchReviewGuideTone
+  title: string
+  detail: string
+  primaryActionLabel: string
+  primaryAnchor: string
+  secondaryAnchor: string
+}
+
 export type ImportExceptionGuidanceTone = "blocked" | "warning" | "ready"
 
 export type ImportExceptionGuidanceScope =
@@ -413,6 +424,67 @@ export function getImportBatchHealth(
   }
 
   return "ready_candidate"
+}
+
+export function summarizeImportBatchReviewGuide({
+  batch,
+  readiness,
+}: {
+  batch: ImportBatchListRow
+  readiness: ImportApplyReadinessResponse | null
+}): ImportBatchReviewGuide {
+  if (batch.failed_rows > 0 || readiness?.readiness_status === "blocked") {
+    return {
+      tone: "blocked",
+      title: "先处理失败行",
+      detail: `当前批次有 ${batch.failed_rows} 行失败、${batch.warning_rows} 行警告，应用前需要先修正失败行并复核警告。`,
+      primaryActionLabel: "查看失败行",
+      primaryAnchor: "#import-row-correction",
+      secondaryAnchor: "#import-batch-detail",
+    }
+  }
+
+  if (batch.application_status === "applied") {
+    return {
+      tone: "done",
+      title: "批次已应用",
+      detail: `当前批次已应用 ${batch.applied_record_count} 条记录，可查看批次明细和版本记录确认结果。`,
+      primaryActionLabel: "查看批次明细",
+      primaryAnchor: "#import-batch-detail",
+      secondaryAnchor: "#import-apply-readiness",
+    }
+  }
+
+  if (readiness?.readiness_status === "ready") {
+    return {
+      tone: "ready",
+      title: "可进入应用前复核",
+      detail: "当前批次没有失败行，准备度为可应用；继续查看应用准备度和版本范围。",
+      primaryActionLabel: "查看应用准备度",
+      primaryAnchor: "#import-apply-readiness",
+      secondaryAnchor: "#import-batch-detail",
+    }
+  }
+
+  if (batch.warning_rows > 0) {
+    return {
+      tone: "warning",
+      title: "先复核警告行",
+      detail: `当前批次没有失败行，但有 ${batch.warning_rows} 行警告；应用前先查看批次明细确认字段口径。`,
+      primaryActionLabel: "查看批次明细",
+      primaryAnchor: "#import-batch-detail",
+      secondaryAnchor: "#import-apply-readiness",
+    }
+  }
+
+  return {
+    tone: "unknown",
+    title: "等待准备度结果",
+    detail: "当前批次没有失败行；准备度暂不可判断，先查看批次明细和应用准备度区域。",
+    primaryActionLabel: "查看批次明细",
+    primaryAnchor: "#import-batch-detail",
+    secondaryAnchor: "#import-apply-readiness",
+  }
 }
 
 export function summarizeImportBatchDetail(

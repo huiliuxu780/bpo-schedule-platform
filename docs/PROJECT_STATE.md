@@ -115,6 +115,7 @@ Current allowed database scope:
 - IM033 import-center exception-state guidance: `/data-quality` can consolidate batch API, readiness API, template API, empty-batch, and empty-template states into one read-only action panel without adding backend changes, dependencies, write buttons, or schema/migration changes.
 - IM034 import-center upload result batch entry: `/data-quality` can display upload success/failure guidance with a batch link and next-step review path without adding backend changes, dependencies, write buttons, or schema/migration changes.
 - IM035 import-center access-batch filtering: `/data-quality` can filter access batches by keyword, file type, processing status, and application status while keeping rows clickable and showing no-match empty state without backend changes, dependencies, write buttons, or schema/migration changes.
+- IM036 import-center selected-batch review navigation: `/data-quality` can show a read-only batch review guide and anchor links to batch detail, failed-row correction, and apply-readiness areas without backend changes, dependencies, write buttons, or schema/migration changes.
 - SQLAlchemy, Alembic, and an isolated local test database for verification.
 
 Hard stop until separate PM confirmation:
@@ -175,6 +176,7 @@ Current invariants:
 - `IM033/US653` added exception-state guidance across batch API, readiness API, template API, empty batch, and empty template states, then returned current queue and active tasks to empty.
 - `IM034/US654` added upload result guidance with success/failure summaries, batch links, and next-step review paths, then returned current queue and active tasks to empty.
 - `IM035/US655` added access-batch filtering by keyword, file type, processing status, and application status, then returned current queue and active tasks to empty.
+- `IM036/US656` added selected-batch review guidance and anchor navigation across batch detail, failed-row correction, and apply-readiness regions, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-06-01 - IM036 导入中心选中批次处理导览
+
+#### 审计结论
+
+- `IM036/US656` 已在 `/data-quality` 增加“批次处理导览”。
+- 模型层新增 `summarizeImportBatchReviewGuide`，根据失败行、警告、应用状态和 readiness 输出下一步定位建议。
+- 页面新增到批次明细、失败行修正和应用准备度的锚点定位；批次行点击默认定位到批次明细。
+- 本轮不新增依赖，不修改 package/lockfile，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是前端只读导览和页面内定位，不是应用写入、批量修正、导出或审批流程。
+- 后续若要做真实 apply 按钮、权限隔离、批量处理或服务端审计，需要另开受控任务。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportBatchReviewGuide` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，21 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+- 页面 smoke：`http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 返回页面，包含 `批次处理导览`、`查看失败行`、`import-row-correction`、`import-batch-detail` 和 `import-apply-readiness`；筛选后的批次链接包含 `#import-batch-detail`。
+
 ### 2026-05-31 - IM030 导入中心字段映射模板只读管理可见性
 
 #### 审计结论

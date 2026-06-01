@@ -1508,3 +1508,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端本地批次筛选和模型 helper；不新增依赖，不做后端查询参数、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R736 - 导入中心选中批次处理导览
+
+```yaml
+id: R736
+module: "导入中心"
+description: "导入中心前端已经能筛选接入批次、查看批次明细、失败行和应用准备度后，需要在选中批次后给出只读处理导览，并提供到批次明细、失败行修正和应用准备度的快速定位，减少数据管理员在同一页内寻找下一步的断点。"
+source: "PM requested continuing import-center production usability after IM035 on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端只读批次处理导览、锚点定位和模型 helper；不新增依赖，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

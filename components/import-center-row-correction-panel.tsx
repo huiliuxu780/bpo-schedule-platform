@@ -44,7 +44,7 @@ export function ImportCenterRowCorrectionPanel({
   })
 
   return (
-    <Card className="overflow-hidden">
+    <Card id="import-row-correction" className="scroll-mt-16 overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between gap-3">
         <div>
           <CardTitle className="text-base">失败行修正</CardTitle>

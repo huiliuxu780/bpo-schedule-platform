@@ -2792,3 +2792,25 @@ dependencies:
   - "US654"
 status: "done"
 ```
+
+### US656 - 导入中心选中批次处理导览
+
+```yaml
+id: US656
+requirement_ids:
+  - R736
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望选中接入批次后看到批次处理导览，并能快速跳到批次明细、失败行修正和应用准备度，以便减少筛选后继续复核的断点。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 对选中批次展示只读处理导览。"
+  - "导览根据失败行、警告、应用状态和 readiness 输出下一步定位建议。"
+  - "批次行点击和导览链接能定位到批次明细、失败行修正或应用准备度区域。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US655"
+status: "done"
+```

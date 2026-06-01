@@ -12,6 +12,7 @@ import {
   formatImportRowStatus,
   summarizeImportApplyActionGuidance,
   summarizeImportExceptionGuidance,
+  summarizeImportBatchReviewGuide,
   summarizeImportRowCorrectionNotice,
   summarizeImportTemplateFitHint,
   summarizeImportUploadResultGuidance,
@@ -128,6 +129,92 @@ test("import center batch filters narrow upload history locally", () => {
       applicationStatus: "all",
     }),
     [],
+  );
+});
+
+test("import center batch review guide directs selected batch follow-up", () => {
+  assert.deepEqual(
+    summarizeImportBatchReviewGuide({
+      batch: {
+        ...baseBatch,
+        failed_rows: 2,
+        warning_rows: 1,
+        application_status: "not_applied",
+      },
+      readiness: {
+        batch_id: "BATCH-MD-001",
+        file_type: "master_data",
+        readiness_status: "blocked",
+        blockers: [{ code: "IMPORT_BATCH_HAS_FAILED_ROWS", message: "有失败行" }],
+        row_blockers: [],
+        total_rows: 10,
+        success_rows: 8,
+        failed_rows: 2,
+        warning_rows: 1,
+        version_count: 1,
+        application_status: "not_applied",
+        application_target: "master_data",
+        import_version_id: "BATCH-MD-001::v1",
+        applied_record_count: 0,
+      },
+    }),
+    {
+      tone: "blocked",
+      title: "先处理失败行",
+      detail: "当前批次有 2 行失败、1 行警告，应用前需要先修正失败行并复核警告。",
+      primaryActionLabel: "查看失败行",
+      primaryAnchor: "#import-row-correction",
+      secondaryAnchor: "#import-batch-detail",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportBatchReviewGuide({
+      batch: {
+        ...baseBatch,
+        application_status: "applied",
+        applied_record_count: 10,
+      },
+      readiness: null,
+    }),
+    {
+      tone: "done",
+      title: "批次已应用",
+      detail: "当前批次已应用 10 条记录，可查看批次明细和版本记录确认结果。",
+      primaryActionLabel: "查看批次明细",
+      primaryAnchor: "#import-batch-detail",
+      secondaryAnchor: "#import-apply-readiness",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportBatchReviewGuide({
+      batch: baseBatch,
+      readiness: {
+        batch_id: "BATCH-MD-001",
+        file_type: "master_data",
+        readiness_status: "ready",
+        blockers: [],
+        row_blockers: [],
+        total_rows: 10,
+        success_rows: 10,
+        failed_rows: 0,
+        warning_rows: 0,
+        version_count: 1,
+        application_status: "not_applied",
+        application_target: "master_data",
+        import_version_id: "BATCH-MD-001::v1",
+        applied_record_count: 0,
+      },
+    }),
+    {
+      tone: "ready",
+      title: "可进入应用前复核",
+      detail: "当前批次没有失败行，准备度为可应用；继续查看应用准备度和版本范围。",
+      primaryActionLabel: "查看应用准备度",
+      primaryAnchor: "#import-apply-readiness",
+      secondaryAnchor: "#import-batch-detail",
+    },
   );
 });
 

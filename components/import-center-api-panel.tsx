@@ -19,6 +19,7 @@ import {
   formatImportReadinessStatus,
   getImportBatchHealth,
   summarizeImportApplyActionGuidance,
+  summarizeImportBatchReviewGuide,
   summarizeImportBatches,
   summarizeImportExceptionGuidance,
 } from "@/components/import-center-model"
@@ -108,6 +109,10 @@ export function ImportCenterApiPanel({
         />
       </section>
 
+      {selectedBatch ? (
+        <BatchReviewGuideCard batch={selectedBatch} readiness={readiness} />
+      ) : null}
+
       <section className="grid min-h-0 gap-4 xl:grid-cols-[1fr_380px]">
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between gap-3">
@@ -163,7 +168,11 @@ export function ImportCenterApiPanel({
                         <TableRow key={batch.batch_id} data-state={isSelected ? "selected" : undefined}>
                           <TableCell>
                             <Link
-                              href={buildBatchListHref(batch.batch_id, batchFilters)}
+                              href={buildBatchListHref(
+                                batch.batch_id,
+                                batchFilters,
+                                "#import-batch-detail"
+                              )}
                               className="grid gap-1"
                             >
                               <span className="font-mono text-xs font-medium">
@@ -205,7 +214,7 @@ export function ImportCenterApiPanel({
           </CardContent>
         </Card>
 
-        <Card>
+        <Card id="import-apply-readiness" className="scroll-mt-16">
           <CardHeader>
             <CardTitle className="text-base">应用准备度</CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -317,7 +326,8 @@ function BatchFilterForm({
 
 function buildBatchListHref(
   batchId: string,
-  filters: ImportBatchFilters
+  filters: ImportBatchFilters,
+  anchor = ""
 ): string {
   const searchParams = new URLSearchParams({ batch: batchId })
 
@@ -337,7 +347,94 @@ function buildBatchListHref(
     searchParams.set("batchApplicationStatus", filters.applicationStatus)
   }
 
-  return `/data-quality?${searchParams.toString()}`
+  return `/data-quality?${searchParams.toString()}${anchor}`
+}
+
+function BatchReviewGuideCard({
+  batch,
+  readiness,
+}: {
+  batch: ImportBatchListRow
+  readiness: ImportApplyReadinessResponse | null
+}) {
+  const guide = summarizeImportBatchReviewGuide({ batch, readiness })
+
+  return (
+    <Card
+      className={cn(
+        "border-l-4",
+        guide.tone === "blocked"
+          ? "border-l-destructive"
+          : guide.tone === "ready"
+            ? "border-l-emerald-500"
+            : guide.tone === "done"
+              ? "border-l-primary"
+              : "border-l-muted-foreground"
+      )}
+    >
+      <CardHeader className="flex flex-row items-start justify-between gap-3 pb-3">
+        <div>
+          <CardTitle className="text-base">批次处理导览</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {batch.batch_id} · {formatImportFileType(batch.file_type)}
+          </p>
+        </div>
+        <Badge
+          variant={
+            guide.tone === "blocked"
+              ? "destructive"
+              : guide.tone === "done"
+                ? "secondary"
+                : "outline"
+          }
+        >
+          {formatReviewGuideTone(guide.tone)}
+        </Badge>
+      </CardHeader>
+      <CardContent className="grid gap-3 pt-0">
+        <div>
+          <div className="text-sm font-medium">{guide.title}</div>
+          <p className="mt-1 text-sm text-muted-foreground">{guide.detail}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href={guide.primaryAnchor}
+            className="inline-flex h-8 items-center rounded-lg border border-input px-3 text-sm font-medium hover:bg-muted"
+          >
+            {guide.primaryActionLabel}
+          </a>
+          <a
+            href={guide.secondaryAnchor}
+            className="inline-flex h-8 items-center rounded-lg border border-input px-3 text-sm font-medium hover:bg-muted"
+          >
+            查看关联区域
+          </a>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function formatReviewGuideTone(
+  tone: ReturnType<typeof summarizeImportBatchReviewGuide>["tone"]
+): string {
+  if (tone === "blocked") {
+    return "需处理"
+  }
+
+  if (tone === "ready") {
+    return "可复核"
+  }
+
+  if (tone === "done") {
+    return "已完成"
+  }
+
+  if (tone === "warning") {
+    return "需关注"
+  }
+
+  return "待判断"
 }
 
 function FilterSelect({

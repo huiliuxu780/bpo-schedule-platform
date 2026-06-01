@@ -31,7 +31,7 @@ export function ImportCenterBatchDetailPanel({
 }: ImportCenterBatchDetailPanelProps) {
   if (detailError) {
     return (
-      <Card>
+      <Card id="import-batch-detail" className="scroll-mt-16">
         <CardHeader>
           <CardTitle className="text-base">批次明细</CardTitle>
         </CardHeader>
@@ -44,7 +44,7 @@ export function ImportCenterBatchDetailPanel({
 
   if (!detail) {
     return (
-      <Card>
+      <Card id="import-batch-detail" className="scroll-mt-16">
         <CardHeader>
           <CardTitle className="text-base">批次明细</CardTitle>
         </CardHeader>
@@ -58,7 +58,7 @@ export function ImportCenterBatchDetailPanel({
   const summary = summarizeImportBatchDetail(detail)
 
   return (
-    <Card className="overflow-hidden">
+    <Card id="import-batch-detail" className="scroll-mt-16 overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between gap-3">
         <div>
           <CardTitle className="text-base">批次明细</CardTitle>
