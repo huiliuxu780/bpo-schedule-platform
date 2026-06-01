@@ -64,6 +64,7 @@ export default async function DataQualityPage({
             <ImportCenterUploadForm
               uploadStatus={params?.upload}
               uploadReason={params?.reason}
+              uploadBatchId={params?.batch}
               templates={templateResult.data ?? []}
               templateError={templateResult.error}
             />

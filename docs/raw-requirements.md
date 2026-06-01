@@ -1482,3 +1482,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端只读异常态处理建议和模型 helper；不新增依赖，不做 apply 写按钮、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R734 - 导入中心上传结果批次入口
+
+```yaml
+id: R734
+module: "导入中心"
+description: "导入中心前端已经能上传 CSV 并回到数据质量页后，需要把上传成功或失败的结果转成明确批次入口和下一步提示，让数据管理员能直接跳到接入批次、失败行、批次明细和应用准备度，而不是只看到一个状态徽标。"
+source: "PM requested continuing import-center production usability after IM033 on 2026-05-31"
+submitted_at: "2026-05-31"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端上传结果导航提示和模型 helper；不新增依赖，不做 apply 写按钮、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

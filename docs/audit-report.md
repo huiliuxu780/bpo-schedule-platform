@@ -1962,6 +1962,30 @@
 
 ## Historical Audit Snapshots
 
+### 2026-05-31 - IM034 导入中心上传结果批次入口
+
+#### 审计结论
+
+- `IM034/US654` 已在 `/data-quality` 上传区增加上传结果导航提示。
+- 模型层新增 `summarizeImportUploadResultGuidance`，覆盖上传成功、API 失败、缺少必填字段和无上传状态路径。
+- 页面通过 query 参数展示成功/失败结果、批次入口和下一步复核路径，不新增 apply 写按钮，不触发后端写入、审批、导出、批量、权限或生产动作。
+
+#### 风险
+
+- 当前是上传结果后的前端导航提示，不是异步上传队列、文件存储、批量重试或生产审计流。
+- 后续若要做真实批量处理、上传队列、权限隔离或导出，需要另开受控任务。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `summarizeImportUploadResultGuidance` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，19 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`/data-quality?upload=success&batch=BATCH-IM026-SMOKE-004` 可见 `CSV 上传成功` 和 `查看批次`；`/data-quality?upload=failed&reason=api_409&batch=BATCH-IM026-SMOKE-004` 可见 `CSV 上传失败`、`接口返回 409` 和 `回看批次`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-05-31 - IM033 导入中心异常态处理建议
 
 #### 审计结论

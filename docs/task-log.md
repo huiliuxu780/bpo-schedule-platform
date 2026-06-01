@@ -1225,6 +1225,17 @@
 - status: `done`
 - notes: `/data-quality` 现在把批次 API、准备度 API、模板 API、暂无批次和暂无模板收敛到同一只读建议区；保持只读，不新增 apply 写按钮、后端、数据库或生产流程能力。
 
+### 2026-05-31
+
+- task_id: `IM034`
+- source_ids:
+  - `R734`
+- story_ids:
+  - `US654`
+- action: 增加导入中心上传结果批次入口。
+- status: `done`
+- notes: `/data-quality` 现在能根据 upload query 展示 CSV 上传成功/失败结果、批次入口和下一步复核路径；保持只读，不新增 apply 写按钮、后端、数据库或生产流程能力。
+
 ### 2026-05-13
 
 - task_id: `F031`

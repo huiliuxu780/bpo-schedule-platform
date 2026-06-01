@@ -2748,3 +2748,25 @@ dependencies:
   - "US652"
 status: "done"
 ```
+
+### US654 - 导入中心上传结果批次入口
+
+```yaml
+id: US654
+requirement_ids:
+  - R734
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望 CSV 上传成功或失败后看到明确的批次入口和下一步处理提示，以便上传后直接进入批次、失败行和准备度检查。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality?upload=success&batch=...` 展示上传成功后的批次入口和下一步。"
+  - "`/data-quality?upload=failed&reason=...&batch=...` 展示失败原因、批次回看入口和重试建议。"
+  - "结果提示能指向接入批次、失败行/批次明细和应用准备度，不新增真实 apply 写按钮。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US653"
+status: "done"
+```

@@ -13,6 +13,7 @@ import {
   summarizeImportExceptionGuidance,
   summarizeImportRowCorrectionNotice,
   summarizeImportTemplateFitHint,
+  summarizeImportUploadResultGuidance,
   summarizeImportFieldMappingTemplates,
   summarizeImportBatchDetail,
   getImportRowStandardFieldsPreview,
@@ -657,5 +658,64 @@ test("import center exception guidance consolidates API and empty-state blockers
         nextAction: "继续处理失败行、检查应用前行动建议，或上传下一份文件。",
       },
     ],
+  );
+});
+
+test("import center upload result guidance links uploads back to batch review", () => {
+  assert.deepEqual(
+    summarizeImportUploadResultGuidance({
+      status: "success",
+      batchId: "BATCH-CSV-001",
+      reason: null,
+    }),
+    {
+      tone: "success",
+      title: "CSV 上传成功",
+      detail: "批次 BATCH-CSV-001 已提交并可在接入批次中查看。",
+      batchHref: "/data-quality?batch=BATCH-CSV-001",
+      primaryActionLabel: "查看批次",
+      nextAction: "查看批次行结果、失败行和应用准备度；确认无阻塞后再进入后续受控应用流程。",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportUploadResultGuidance({
+      status: "failed",
+      batchId: "BATCH/CSV 001",
+      reason: "api_409",
+    }),
+    {
+      tone: "failed",
+      title: "CSV 上传失败",
+      detail: "接口返回 409，可能是批次号重复或请求不满足接口校验。",
+      batchHref: "/data-quality?batch=BATCH%2FCSV%20001",
+      primaryActionLabel: "回看批次",
+      nextAction: "检查批次号、字段映射 JSON、模板选择和 CSV 表头后重新上传；如果批次已存在，先查看原批次结果。",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportUploadResultGuidance({
+      status: "failed",
+      batchId: null,
+      reason: "missing_required_fields",
+    }),
+    {
+      tone: "failed",
+      title: "CSV 上传失败",
+      detail: "缺少批次号、业务日期或 CSV 文件。",
+      batchHref: null,
+      primaryActionLabel: "补齐后重试",
+      nextAction: "补齐必填字段、确认选择 CSV 文件后重新上传。",
+    },
+  );
+
+  assert.equal(
+    summarizeImportUploadResultGuidance({
+      status: undefined,
+      batchId: null,
+      reason: null,
+    }),
+    null,
   );
 });

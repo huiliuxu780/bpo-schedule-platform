@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Upload } from "lucide-react"
 
 import { uploadImportCsvAction } from "@/app/data-quality/actions"
@@ -6,7 +7,9 @@ import {
   formatImportFileType,
   type ImportFieldMappingTemplate,
   type ImportFileType,
+  type ImportUploadResultGuidance,
   summarizeImportTemplateFitHint,
+  summarizeImportUploadResultGuidance,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -16,6 +19,7 @@ import { Input } from "@/components/ui/input"
 type ImportCenterUploadFormProps = {
   uploadStatus?: string
   uploadReason?: string
+  uploadBatchId?: string
   templates?: ImportFieldMappingTemplate[]
   templateError?: string | null
 }
@@ -31,9 +35,16 @@ const fileTypes: ImportFileType[] = [
 export function ImportCenterUploadForm({
   uploadStatus,
   uploadReason,
+  uploadBatchId,
   templates = [],
   templateError,
 }: ImportCenterUploadFormProps) {
+  const uploadGuidance = summarizeImportUploadResultGuidance({
+    status: uploadStatus,
+    batchId: uploadBatchId,
+    reason: uploadReason,
+  })
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3">
@@ -112,11 +123,7 @@ export function ImportCenterUploadForm({
           </div>
           <TemplateFitSummary templates={templates} templateError={templateError} />
           <TemplateSummary templates={templates} templateError={templateError} />
-          {uploadStatus === "failed" ? (
-            <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              上传失败：{uploadReason || "请检查 API 状态、批次号或字段映射。"}
-            </div>
-          ) : null}
+          <UploadResultGuidance guidance={uploadGuidance} />
           <div className="flex justify-end">
             <Button type="submit">
               <Upload className="size-4" />
@@ -126,6 +133,43 @@ export function ImportCenterUploadForm({
         </form>
       </CardContent>
     </Card>
+  )
+}
+
+function UploadResultGuidance({
+  guidance,
+}: {
+  guidance: ImportUploadResultGuidance | null
+}) {
+  if (!guidance) {
+    return null
+  }
+
+  return (
+    <div
+      className={
+        guidance.tone === "success"
+          ? "grid gap-2 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm"
+          : "grid gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm"
+      }
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="font-medium">{guidance.title}</div>
+          <p className="mt-1 text-muted-foreground">{guidance.detail}</p>
+        </div>
+        {guidance.batchHref ? (
+          <Button asChild size="sm" variant="outline">
+            <Link href={guidance.batchHref}>{guidance.primaryActionLabel}</Link>
+          </Button>
+        ) : (
+          <Badge variant={guidance.tone === "failed" ? "destructive" : "secondary"}>
+            {guidance.primaryActionLabel}
+          </Badge>
+        )}
+      </div>
+      <p className="text-xs text-muted-foreground">{guidance.nextAction}</p>
+    </div>
   )
 }
 

@@ -118,6 +118,17 @@ export type ImportRowCorrectionNotice = {
   nextAction: string
 }
 
+export type ImportUploadResultGuidanceTone = "success" | "failed"
+
+export type ImportUploadResultGuidance = {
+  tone: ImportUploadResultGuidanceTone
+  title: string
+  detail: string
+  batchHref: string | null
+  primaryActionLabel: string
+  nextAction: string
+}
+
 export type ImportApplyActionGuidanceTone = "ready" | "blocked" | "done" | "unknown"
 
 export type ImportApplyActionGuidance = {
@@ -420,6 +431,49 @@ export function summarizeImportRowCorrectionNotice({
   return null
 }
 
+export function summarizeImportUploadResultGuidance({
+  status,
+  batchId,
+  reason,
+}: {
+  status?: string
+  batchId?: string | null
+  reason?: string | null
+}): ImportUploadResultGuidance | null {
+  if (status !== "success" && status !== "failed") {
+    return null
+  }
+
+  const batchHref = batchId
+    ? `/data-quality?batch=${encodeURIComponent(batchId)}`
+    : null
+
+  if (status === "success") {
+    return {
+      tone: "success",
+      title: "CSV 上传成功",
+      detail: batchId
+        ? `批次 ${batchId} 已提交并可在接入批次中查看。`
+        : "CSV 已提交并可在接入批次中查看。",
+      batchHref,
+      primaryActionLabel: batchHref ? "查看批次" : "查看接入批次",
+      nextAction:
+        "查看批次行结果、失败行和应用准备度；确认无阻塞后再进入后续受控应用流程。",
+    }
+  }
+
+  return {
+    tone: "failed",
+    title: "CSV 上传失败",
+    detail: formatImportUploadFailureReason(reason),
+    batchHref,
+    primaryActionLabel: batchHref ? "回看批次" : "补齐后重试",
+    nextAction: batchHref
+      ? "检查批次号、字段映射 JSON、模板选择和 CSV 表头后重新上传；如果批次已存在，先查看原批次结果。"
+      : "补齐必填字段、确认选择 CSV 文件后重新上传。",
+  }
+}
+
 export function summarizeImportApplyActionGuidance(
   readiness: ImportApplyReadinessResponse | null,
   readinessError?: string | null
@@ -686,6 +740,23 @@ function formatImportRowCorrectionFailureReason(reason?: string): string {
   }
 
   return reason
+}
+
+function formatImportUploadFailureReason(reason?: string | null): string {
+  if (!reason) {
+    return "请检查 API 状态、批次号、字段映射或 CSV 文件。"
+  }
+
+  if (reason === "missing_required_fields") {
+    return "缺少批次号、业务日期或 CSV 文件。"
+  }
+
+  const apiStatus = reason.match(/^api_(\d{3})$/)
+  if (apiStatus) {
+    return `接口返回 ${apiStatus[1]}，可能是批次号重复或请求不满足接口校验。`
+  }
+
+  return decodeURIComponent(reason)
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
