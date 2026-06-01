@@ -2,17 +2,22 @@ import { AppShell } from "@/components/app-shell"
 import { ImportCenterApiPanel } from "@/components/import-center-api-panel"
 import { ImportCenterBatchDetailPanel } from "@/components/import-center-batch-detail-panel"
 import { ImportCenterRowCorrectionPanel } from "@/components/import-center-row-correction-panel"
+import { ImportCenterResultTracePanel } from "@/components/import-center-result-trace-panel"
 import { ImportCenterTemplateManagementPanel } from "@/components/import-center-template-management-panel"
 import { ImportCenterUploadForm } from "@/components/import-center-upload-form"
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchPersistenceDetail,
+  type ImportComparisonRunRecord,
   type ImportFieldMappingTemplate,
   type ImportBatchListRow,
   type ImportBatchFilters,
+  type ImportReviewCaseRecord,
   buildImportApiUrl,
   buildImportBatchDetailUrl,
+  buildImportComparisonRunsUrl,
   buildImportFieldMappingTemplatesUrl,
+  buildImportReviewCasesUrl,
   filterImportBatches,
 } from "@/components/import-center-model"
 
@@ -55,12 +60,24 @@ export default async function DataQualityPage({
     params?.batch && batches.some((batch) => batch.batch_id === params.batch)
       ? params.batch
       : filteredBatches[0]?.batch_id ?? null
+  const selectedBatch =
+    batches.find((batch) => batch.batch_id === selectedBatchId) ??
+    filteredBatches[0] ??
+    batches[0] ??
+    null
+  const resultBusinessDate = selectedBatch?.business_date_from ?? null
   const readinessResult = selectedBatchId
     ? await fetchImportReadiness(selectedBatchId)
     : { data: null, error: null }
   const detailResult = selectedBatchId
     ? await fetchImportBatchDetail(selectedBatchId)
     : { data: null, error: null }
+  const comparisonResult = resultBusinessDate
+    ? await fetchImportComparisonRuns(resultBusinessDate)
+    : { data: [], error: null }
+  const reviewCaseResult = resultBusinessDate
+    ? await fetchImportReviewCases(resultBusinessDate)
+    : { data: [], error: null }
 
   return (
     <AppShell title="数据质量" searchPlaceholder="搜索导入批次、文件或上传人">
@@ -86,6 +103,15 @@ export default async function DataQualityPage({
             correctionStatus={params?.correction}
             correctionReason={params?.reason}
             correctionRow={params?.row}
+          />
+        }
+        resultTracePanel={
+          <ImportCenterResultTracePanel
+            businessDate={resultBusinessDate}
+            comparisonRuns={comparisonResult.data ?? []}
+            comparisonError={comparisonResult.error}
+            reviewCases={reviewCaseResult.data ?? []}
+            reviewError={reviewCaseResult.error}
           />
         }
         dataToolsPanel={
@@ -220,6 +246,64 @@ async function fetchImportBatchDetail(
   } catch (error) {
     return {
       data: null,
+      error: formatApiError(error),
+    }
+  }
+}
+
+async function fetchImportComparisonRuns(
+  businessDate: string
+): Promise<ApiResult<ImportComparisonRunRecord[]>> {
+  try {
+    const response = await fetch(buildImportComparisonRunsUrl(businessDate), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `对比结果 API 返回 ${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as { items?: ImportComparisonRunRecord[] }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
+async function fetchImportReviewCases(
+  businessDate: string
+): Promise<ApiResult<ImportReviewCaseRecord[]>> {
+  try {
+    const response = await fetch(buildImportReviewCasesUrl(businessDate), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `复核案例 API 返回 ${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as { items?: ImportReviewCaseRecord[] }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
       error: formatApiError(error),
     }
   }

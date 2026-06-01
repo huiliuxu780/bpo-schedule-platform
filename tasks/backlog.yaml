@@ -5413,3 +5413,50 @@ tasks:
       - "范围扩展到新增业务能力、真实外部接口、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM042
+    title: "数据质量页下游结果列表可见性"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM041A"]
+    allowed_files:
+      - "app/data-quality/page.tsx"
+      - "components/import-center-api-panel.tsx"
+      - "components/import-center-detail-tabs.tsx"
+      - "components/import-center-result-trace-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/requirements.txt"
+      - "backend/migrations/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality` 分层详情新增 `结果追踪` Tab。"
+      - "结果追踪按选中批次 `business_date_from` 读取并展示已有 comparison-runs 和 review-cases 列表摘要。"
+      - "列表展示只读状态、业务日、来源版本或 owner，并提供已有 API/detail 链接口径。"
+      - "无数据或 API 异常时展示清晰空态，不新增写入按钮或后端能力。"
+      - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 backend、schema、migration 或数据库结构变更"
+      - "范围扩展到新增业务能力、真实外部接口、复核写入、审批、导出、权限、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

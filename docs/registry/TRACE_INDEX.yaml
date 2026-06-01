@@ -177,6 +177,7 @@ stories:
   US650: {file: "docs/user-stories.md", requirement_ids: ["R730"], task_ids: ["IM030"], archive_refs: []}
   US660: {file: "docs/user-stories.md", requirement_ids: ["R740"], task_ids: ["IM040"], archive_refs: []}
   US661: {file: "docs/user-stories.md", requirement_ids: ["R741"], task_ids: ["IM041A"], archive_refs: []}
+  US662: {file: "docs/user-stories.md", requirement_ids: ["R742"], task_ids: ["IM042"], archive_refs: []}
 tasks:
   H024:
     file: "tasks/backlog.yaml"
@@ -319,6 +320,7 @@ tasks:
   IM030: {file: "tasks/backlog.yaml", story_ids: ["US650"], gate: "frontend-scaffold"}
   IM040: {file: "tasks/backlog.yaml", story_ids: ["US660"], gate: "frontend-scaffold"}
   IM041A: {file: "tasks/backlog.yaml", story_ids: ["US661"], gate: "frontend-scaffold"}
+  IM042: {file: "tasks/backlog.yaml", story_ids: ["US662"], gate: "frontend-scaffold"}
 requirements:
   R051:
     file: "docs/raw-requirements.md"
@@ -517,6 +519,7 @@ requirements:
   R739: {file: "docs/raw-requirements.md", story_ids: ["US659"], task_ids: ["IM039"]}
   R740: {file: "docs/raw-requirements.md", story_ids: ["US660"], task_ids: ["IM040"]}
   R741: {file: "docs/raw-requirements.md", story_ids: ["US661"], task_ids: ["IM041A"]}
+  R742: {file: "docs/raw-requirements.md", story_ids: ["US662"], task_ids: ["IM042"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

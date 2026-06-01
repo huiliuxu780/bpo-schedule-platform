@@ -1586,3 +1586,16 @@ version: "1.0"
 status: "done"
 notes: "本轮只做前端信息架构和组件边界重构；不新增依赖，不新增业务能力，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R742 - 数据质量页下游结果列表可见性
+
+```yaml
+id: R742
+module: "导入中心"
+description: "数据质量页已经有下游结果导航和分层详情后，需要把选中批次业务日关联的对比结果与复核案例列表直接展示出来，让数据管理员不用只点 API 链接，也能在页面内判断下游业务闭环是否已有结果。"
+source: "PM requested continuing import-center production usability after IM041A on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "done"
+notes: "本轮只做前端只读结果列表可见性和模型 helper；复用已有 comparison-runs/review-cases 列表 API，不新增依赖，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

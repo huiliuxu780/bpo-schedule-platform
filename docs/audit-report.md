@@ -2138,6 +2138,28 @@
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
 
+### 2026-06-01 - IM042 数据质量页下游结果列表可见性
+
+#### 审计结论
+
+- `IM042/US662` 已在 `/data-quality` 分层详情新增 `结果追踪` Tab。
+- 页面按选中批次 `business_date_from` 读取已有 `/api/v1/comparison-runs` 和 `/api/v1/review-cases` 列表，并展示只读摘要、状态、业务日、来源版本、owner 与 detail 链接口径。
+- 无下游结果或 API 异常时展示清晰空态/阻塞态；本轮不新增写入按钮、不新增后端能力。
+
+#### 风险
+
+- 当前仍是只读结果可见性，不是对比计算触发、复核写入或关闭异常。
+- 后续若要做 apply 写入、批量处理、审批、导出、权限、外部集成或生产规则，仍需单独 Gate。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 曾因缺少 `buildImportComparisonRunsUrl` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，27 个 import-center model 测试通过。
+- in-app browser smoke：`http://localhost:3021/data-quality?batch=BATCH-IM026-SMOKE-004&correction=success&row=1` 可见 `批次明细`、`失败行修正`、`结果追踪`、`导入与模板` 四个详情 Tab；点击 `结果追踪` 后可见业务日、对比结果区和复核案例区；浏览器 console error 为空。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
 ### 2026-06-01 - IM041A 数据质量页信息架构重构
 
 #### 审计结论

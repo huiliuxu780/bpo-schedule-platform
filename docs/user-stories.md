@@ -2924,3 +2924,26 @@ dependencies:
   - "US660"
 status: "done"
 ```
+
+### US662 - 数据质量页下游结果列表可见性
+
+```yaml
+id: US662
+requirement_ids:
+  - R742
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在数据质量页直接看到选中批次业务日关联的对比结果和复核案例列表，以便从导入批次继续追踪下游业务闭环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 分层详情新增 `结果追踪` Tab。"
+  - "结果追踪按选中批次 `business_date_from` 读取并展示已有 comparison-runs 和 review-cases 列表摘要。"
+  - "列表展示只读状态、业务日、来源版本或 owner，并提供已有 API/detail 链接口径。"
+  - "无数据或 API 异常时展示清晰空态，不新增写入按钮或后端能力。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US661"
+status: "done"
+```

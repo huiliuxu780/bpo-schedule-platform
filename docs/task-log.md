@@ -1260,6 +1260,17 @@
 
 ### 2026-06-01
 
+- task_id: `IM042`
+- source_ids:
+  - `R742`
+- story_ids:
+  - `US662`
+- action: 增加数据质量页下游结果列表可见性。
+- status: `done`
+- notes: `/data-quality` 分层详情新增 `结果追踪` Tab，按选中批次业务日读取已有 comparison-runs 和 review-cases，并以只读摘要、列表、空态和 detail 链接口径展示；不新增依赖、后端、schema/migration、真实外部接口、复核写入、审批、导出、批量、权限或生产流程能力。
+
+### 2026-06-01
+
 - task_id: `IM037`
 - source_ids:
   - `R737`

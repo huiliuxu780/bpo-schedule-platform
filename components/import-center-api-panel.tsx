@@ -24,6 +24,7 @@ type ImportCenterApiPanelProps = {
   templateCount?: number
   batchDetailPanel: ReactNode
   rowCorrectionPanel: ReactNode
+  resultTracePanel: ReactNode
   dataToolsPanel: ReactNode
 }
 
@@ -38,6 +39,7 @@ export function ImportCenterApiPanel({
   templateCount = 0,
   batchDetailPanel,
   rowCorrectionPanel,
+  resultTracePanel,
   dataToolsPanel,
 }: ImportCenterApiPanelProps) {
   const filteredBatches = filterImportBatches(batches, batchFilters)
@@ -59,6 +61,7 @@ export function ImportCenterApiPanel({
     readiness,
     hasBatchDetail: Boolean(batchDetailPanel),
     hasUploadTools: Boolean(dataToolsPanel),
+    hasResultTrace: Boolean(resultTracePanel),
   })
 
   return (
@@ -93,6 +96,7 @@ export function ImportCenterApiPanel({
         hierarchy={hierarchy}
         batchDetailPanel={batchDetailPanel}
         rowCorrectionPanel={rowCorrectionPanel}
+        resultTracePanel={resultTracePanel}
         dataToolsPanel={dataToolsPanel}
       />
     </main>

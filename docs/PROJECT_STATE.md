@@ -186,6 +186,7 @@ Current invariants:
 - `IM039/US659` added read-only data-quality-to-exception trace visibility for downstream exception impact scope, quality evidence, and next-step guidance, then returned current queue and active tasks to empty.
 - `IM040/US660` added read-only downstream result navigation from selected-batch application status to comparison and review result paths, then returned current queue and active tasks to empty.
 - `IM041A/US661` restructured `/data-quality` into overview, access-batch workbench, selected-batch status inspector, and layered detail tabs for batch detail, failed-row correction, and import/template tools, then returned current queue and active tasks to empty.
+- `IM042/US662` added a read-only result trace tab on `/data-quality` that lists selected-batch business-date comparison runs and review cases from existing APIs, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
@@ -193,7 +194,7 @@ Near-term product work should stay inside either confirmed local MVP frontend/ba
 
 Recommended order after state governance:
 
-1. Plan the next slice explicitly: import template/mapping management or idempotent rerun safeguards for import/application/calculation flows.
+1. Plan the next slice explicitly: import template/mapping management depth or clearer apply-readiness issue grouping.
 2. If continuing product work, keep each slice small and verified before adding external integrations or production workflow capabilities.
 3. Do not mix auth, permissions, approval, export, batch, production formulas, settlement rules, or charge factors into the foundation without a separate task.
 

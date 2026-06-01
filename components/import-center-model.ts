@@ -201,9 +201,48 @@ export type ImportDownstreamResultNavigation = {
   evidenceLabel: string
 }
 
+export type ImportComparisonRunStatus = "completed" | "failed"
+
+export type ImportComparisonRunRecord = {
+  run_id: string
+  comparison_type: "forecast_vs_schedule" | "schedule_vs_actual"
+  forecast_version_id: string | null
+  schedule_version_id: string | null
+  actual_import_version_id: string | null
+  business_date_from: string
+  business_date_to: string
+  status: ImportComparisonRunStatus
+  total_results: number
+  total_gap_agents: number | null
+  total_late_minutes: number | null
+  created_at: string
+}
+
+export type ImportReviewCaseRecord = {
+  case_id: string
+  source_result_type: "forecast_schedule" | "schedule_actual"
+  source_result_id: number
+  business_date: string
+  owner_id: string
+  severity: string
+  status: string
+  created_at: string
+}
+
+export type ImportResultTraceTone = "ready" | "empty" | "blocked"
+
+export type ImportResultTrace = {
+  tone: ImportResultTraceTone
+  title: string
+  comparisonSummary: string
+  reviewSummary: string
+  nextAction: string
+}
+
 export type ImportPageHierarchyDetailTab =
   | "batch-detail"
   | "row-correction"
+  | "result-trace"
   | "data-tools"
 
 export type ImportPageHierarchy = {
@@ -372,6 +411,24 @@ export function buildImportBatchDetailUrl(
     `/api/v1/import-batches/persisted/${encodeURIComponent(batchId)}`,
     apiBase
   )
+}
+
+export function buildImportComparisonRunsUrl(
+  businessDate: string,
+  apiBase = getDefaultApiBase()
+): string {
+  const searchParams = new URLSearchParams({ business_date: businessDate })
+
+  return buildImportApiUrl(`/api/v1/comparison-runs?${searchParams.toString()}`, apiBase)
+}
+
+export function buildImportReviewCasesUrl(
+  businessDate: string,
+  apiBase = getDefaultApiBase()
+): string {
+  const searchParams = new URLSearchParams({ business_date: businessDate })
+
+  return buildImportApiUrl(`/api/v1/review-cases?${searchParams.toString()}`, apiBase)
 }
 
 export function buildImportRowCorrectionUrl(
@@ -678,22 +735,82 @@ export function summarizeImportDownstreamResultNavigation({
   }
 }
 
+export function summarizeImportResultTrace({
+  businessDate,
+  comparisonRuns,
+  reviewCases,
+  comparisonError,
+  reviewError,
+}: {
+  businessDate: string | null
+  comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
+  comparisonError: string | null
+  reviewError: string | null
+}): ImportResultTrace {
+  const hasError = Boolean(comparisonError || reviewError)
+  const completedComparisonRuns = comparisonRuns.filter(
+    (run) => run.status === "completed"
+  ).length
+  const failedComparisonRuns = comparisonRuns.filter((run) => run.status === "failed").length
+  const openReviewCases = reviewCases.filter((reviewCase) => reviewCase.status !== "closed")
+    .length
+  const comparisonSummary = comparisonError
+    ? "对比结果读取失败"
+    : `对比结果 ${comparisonRuns.length.toLocaleString("zh-CN")} 个 · 完成 ${completedComparisonRuns.toLocaleString("zh-CN")} 个 · 失败 ${failedComparisonRuns.toLocaleString("zh-CN")} 个`
+  const reviewSummary = reviewError
+    ? "复核案例读取失败"
+    : `复核案例 ${reviewCases.length.toLocaleString("zh-CN")} 个 · 未关闭 ${openReviewCases.toLocaleString("zh-CN")} 个`
+
+  if (hasError) {
+    return {
+      tone: "blocked",
+      title: "结果追踪读取受阻",
+      comparisonSummary,
+      reviewSummary,
+      nextAction: "先确认本地结果查询 API 状态；读取失败时不要把当前批次判断为无下游结果。",
+    }
+  }
+
+  if (!businessDate || (comparisonRuns.length === 0 && reviewCases.length === 0)) {
+    return {
+      tone: "empty",
+      title: businessDate ? "暂未找到下游结果" : "等待批次业务日",
+      comparisonSummary,
+      reviewSummary,
+      nextAction: "没有结果时先确认批次是否已应用、对比计算是否已触发，以及复核案例是否已生成。",
+    }
+  }
+
+  return {
+    tone: "ready",
+    title: "已找到下游结果",
+    comparisonSummary,
+    reviewSummary,
+    nextAction: "继续查看对比结果和复核案例明细，确认导入数据是否已进入业务闭环。",
+  }
+}
+
 export function summarizeImportPageHierarchy({
   selectedBatch,
   readiness,
   hasBatchDetail,
   hasUploadTools,
+  hasResultTrace = false,
 }: {
   selectedBatch: ImportBatchListRow | null
   readiness: ImportApplyReadinessResponse | null
   hasBatchDetail: boolean
   hasUploadTools: boolean
+  hasResultTrace?: boolean
 }): ImportPageHierarchy {
   const hasBlockingRows =
     Boolean(selectedBatch && selectedBatch.failed_rows > 0) ||
     readiness?.readiness_status === "blocked"
   const defaultDetailTab: ImportPageHierarchyDetailTab = hasBlockingRows
     ? "row-correction"
+    : selectedBatch?.application_status === "applied" && hasResultTrace
+      ? "result-trace"
     : hasBatchDetail
       ? "batch-detail"
       : hasUploadTools
@@ -703,7 +820,7 @@ export function summarizeImportPageHierarchy({
   return {
     primaryRegion: "接入批次工作台",
     inspectorRegion: selectedBatch ? "选中批次状态检查器" : "等待选择批次",
-    detailTabs: ["批次明细", "失败行修正", "导入与模板"],
+    detailTabs: ["批次明细", "失败行修正", "结果追踪", "导入与模板"],
     defaultDetailTab,
     utilityPlacement: "导入与模板收纳到分层详情",
     layoutIntent: "先定位批次，再处理状态，最后进入详情。",
