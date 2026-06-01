@@ -127,6 +127,17 @@ export type ImportBatchDetailReadability = {
   errorFieldSummary: string
 }
 
+export type ImportQualityExceptionTraceTone = "blocked" | "warning" | "ready" | "empty"
+
+export type ImportQualityExceptionTrace = {
+  tone: ImportQualityExceptionTraceTone
+  title: string
+  impactScope: string
+  issueSummary: string
+  nextAction: string
+  evidenceLabel: string
+}
+
 export type ImportBatchHealth = "blocked" | "warning" | "ready_candidate" | "applied"
 
 export type ImportRowCorrectionNoticeTone = "success" | "failed"
@@ -658,6 +669,67 @@ export function summarizeImportBatchDetailReadability(
   }
 }
 
+export function summarizeImportQualityExceptionTrace(
+  detail: ImportBatchPersistenceDetail
+): ImportQualityExceptionTrace {
+  const summary = summarizeImportBatchDetail(detail)
+  const impactScope = formatQualityExceptionImpactScope(detail.batch.file_type)
+  const evidenceLabel = `错误字段：${summarizeImportDetailErrorFields(detail.rows)}`
+
+  if (summary.totalRows === 0) {
+    return {
+      tone: "empty",
+      title: "等待质量结果",
+      impactScope,
+      issueSummary: "当前批次还没有行结果，暂不能判断对履约异常的影响。",
+      nextAction: "先确认导入解析结果，再继续查看异常影响范围。",
+      evidenceLabel,
+    }
+  }
+
+  if (summary.failedRows > 0) {
+    return {
+      tone: "blocked",
+      title: "履约异常判断被数据质量阻塞",
+      impactScope,
+      issueSummary: formatQualityExceptionFailedIssue(detail.batch.file_type, summary),
+      nextAction: "先修正失败行并复核警告行，再查看应用准备度和下游对比结果。",
+      evidenceLabel,
+    }
+  }
+
+  if (summary.versionCount === 0) {
+    return {
+      tone: "warning",
+      title: "版本缺口影响异常引用",
+      impactScope,
+      issueSummary: `${summary.totalRows.toLocaleString("zh-CN")} 行已解析但还没有版本记录；${formatQualityExceptionVersionSubject(detail.batch.file_type)}无法稳定引用${formatQualityExceptionVersionLabel(detail.batch.file_type)}。`,
+      nextAction: formatQualityExceptionVersionAction(detail.batch.file_type),
+      evidenceLabel,
+    }
+  }
+
+  if (summary.warningRows > 0) {
+    return {
+      tone: "warning",
+      title: "警告行需要异常前复核",
+      impactScope,
+      issueSummary: `当前批次没有失败行，但仍有 ${summary.warningRows.toLocaleString("zh-CN")} 行警告；异常归因前需要确认字段是否可用。`,
+      nextAction: "先复核警告行字段，再查看应用准备度和下游对比结果。",
+      evidenceLabel,
+    }
+  }
+
+  return {
+    tone: "ready",
+    title: "可用于异常归因复核",
+    impactScope,
+    issueSummary: `${summary.totalRows.toLocaleString("zh-CN")} 行已解析并生成 ${summary.versionCount.toLocaleString("zh-CN")} 条版本记录；当前未发现失败或警告。`,
+    nextAction: "继续查看应用状态和下游异常归因结果。",
+    evidenceLabel,
+  }
+}
+
 export function getImportRowStandardFieldsPreview(row: ImportBatchRowResult): string {
   const standardFields = row.raw_data.standard_fields
   if (isRecord(standardFields)) {
@@ -1071,6 +1143,91 @@ function summarizeImportDetailErrorFields(rows: ImportBatchRowResult[]): string 
   }
 
   return fields.slice(0, 3).join("、")
+}
+
+function formatQualityExceptionImpactScope(fileType: ImportFileType): string {
+  if (fileType === "master_data") {
+    return "主数据 -> 团队/供应商/技能归因"
+  }
+
+  if (fileType === "personnel_schedule") {
+    return "人员排班 -> 排班 vs 登录/状态异常"
+  }
+
+  if (fileType === "demand_forecast") {
+    return "需求预测 -> 预测 vs 排班缺口异常"
+  }
+
+  return "实际日志 -> 排班 vs 登录/状态异常"
+}
+
+function formatQualityExceptionFailedIssue(
+  fileType: ImportFileType,
+  summary: ImportBatchDetailSummary
+): string {
+  const rowCounts = `${summary.failedRows.toLocaleString("zh-CN")} 行失败、${summary.warningRows.toLocaleString("zh-CN")} 行警告`
+
+  if (fileType === "personnel_schedule") {
+    return `${rowCounts}；失败行会影响迟到、缺勤、未按排班登录等异常判断。`
+  }
+
+  if (fileType === "demand_forecast") {
+    return `${rowCounts}；失败行会影响预测缺口、排班覆盖等异常判断。`
+  }
+
+  if (fileType === "master_data") {
+    return `${rowCounts}；失败行会影响职场、供应商、项目、技能和人员归因。`
+  }
+
+  return `${rowCounts}；失败行会影响迟到、早退、状态不符等异常判断。`
+}
+
+function formatQualityExceptionVersionSubject(fileType: ImportFileType): string {
+  if (fileType === "demand_forecast") {
+    return "缺口异常"
+  }
+
+  if (fileType === "personnel_schedule") {
+    return "排班异常"
+  }
+
+  if (fileType === "master_data") {
+    return "异常归因"
+  }
+
+  return "实际履约异常"
+}
+
+function formatQualityExceptionVersionLabel(fileType: ImportFileType): string {
+  if (fileType === "demand_forecast") {
+    return "预测版本"
+  }
+
+  if (fileType === "personnel_schedule") {
+    return "排班版本"
+  }
+
+  if (fileType === "master_data") {
+    return "主数据版本"
+  }
+
+  return "日志版本"
+}
+
+function formatQualityExceptionVersionAction(fileType: ImportFileType): string {
+  if (fileType === "demand_forecast") {
+    return "先确认导入版本生成，再进入预测 vs 排班对比复核。"
+  }
+
+  if (fileType === "personnel_schedule") {
+    return "先确认排班版本生成，再进入排班 vs 实际对比复核。"
+  }
+
+  if (fileType === "master_data") {
+    return "先确认主数据版本生成，再查看异常归因是否可复核。"
+  }
+
+  return "先确认日志版本生成，再进入排班 vs 实际对比复核。"
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

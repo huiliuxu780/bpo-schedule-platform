@@ -3,6 +3,7 @@ import { CircleSlash, Database, FileText } from "lucide-react"
 import {
   type ImportBatchPersistenceDetail,
   type ImportBatchRowResult,
+  type ImportQualityExceptionTrace,
   formatImportFileType,
   formatImportProcessingStatus,
   formatImportRowErrorField,
@@ -10,6 +11,7 @@ import {
   getImportRowStandardFieldsPreview,
   summarizeImportBatchDetail,
   summarizeImportBatchDetailReadability,
+  summarizeImportQualityExceptionTrace,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -59,6 +61,7 @@ export function ImportCenterBatchDetailPanel({
 
   const summary = summarizeImportBatchDetail(detail)
   const readability = summarizeImportBatchDetailReadability(detail)
+  const exceptionTrace = summarizeImportQualityExceptionTrace(detail)
 
   return (
     <Card id="import-batch-detail" className="scroll-mt-16 overflow-hidden">
@@ -114,6 +117,8 @@ export function ImportCenterBatchDetailPanel({
             </div>
           </div>
         </section>
+
+        <QualityExceptionTracePanel trace={exceptionTrace} />
 
         <section className="grid gap-2">
           <div className="flex items-center gap-2 text-sm font-medium">
@@ -205,6 +210,45 @@ function DetailRow({ row }: { row: ImportBatchRowResult }) {
         </pre>
       </TableCell>
     </TableRow>
+  )
+}
+
+function QualityExceptionTracePanel({ trace }: { trace: ImportQualityExceptionTrace }) {
+  return (
+    <section
+      className={
+        trace.tone === "blocked"
+          ? "grid gap-3 rounded-md border border-destructive/40 bg-destructive/10 p-3"
+          : trace.tone === "warning"
+            ? "grid gap-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-3"
+            : "grid gap-3 rounded-md border bg-muted/30 p-3"
+      }
+    >
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">履约异常影响追踪</div>
+          <div className="mt-1 text-sm text-muted-foreground">{trace.title}</div>
+        </div>
+        <Badge variant={trace.tone === "blocked" ? "destructive" : "outline"}>
+          只读追踪
+        </Badge>
+      </div>
+      <div className="grid gap-2 md:grid-cols-3">
+        <TraceMetric label="影响链路" value={trace.impactScope} />
+        <TraceMetric label="质量证据" value={trace.evidenceLabel} />
+        <TraceMetric label="下一步" value={trace.nextAction} />
+      </div>
+      <p className="text-sm text-muted-foreground">{trace.issueSummary}</p>
+    </section>
+  )
+}
+
+function TraceMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border bg-background/70 p-2">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 text-xs font-medium">{value}</div>
+    </div>
   )
 }
 

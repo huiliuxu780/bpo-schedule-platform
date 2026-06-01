@@ -2858,3 +2858,25 @@ dependencies:
   - "US657"
 status: "done"
 ```
+
+### US659 - 导入中心数据质量到履约异常追踪可见性
+
+```yaml
+id: US659
+requirement_ids:
+  - R739
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在批次明细中看到数据质量问题会影响哪些履约异常判断，以便先修正会阻塞异常闭环的数据问题。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 选中批次后，批次明细展示只读履约异常影响追踪。"
+  - "追踪说明按文件类型、失败行、警告行和版本记录解释可能影响的异常判断。"
+  - "追踪说明输出异常影响范围、数据问题摘要和下一步复核建议。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实异常查询、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US658"
+status: "done"
+```

@@ -1547,3 +1547,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端只读批次明细可读性增强和模型 helper；不新增依赖，不做后端、schema/migration、apply 写按钮、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R739 - 导入中心数据质量到履约异常追踪可见性
+
+```yaml
+id: R739
+module: "导入中心"
+description: "导入中心已经能展示批次明细、错误字段和应用状态后，需要把当前批次的数据质量问题映射成会影响的履约异常判断范围，让数据管理员知道失败行、警告行或版本缺口会阻塞哪些后续异常闭环。"
+source: "PM requested continuing import-center production usability after IM038 on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端只读质量到异常影响追踪和模型 helper；不新增依赖，不做后端、schema/migration、真实异常查询、复核写入、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```
