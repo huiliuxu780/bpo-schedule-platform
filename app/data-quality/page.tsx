@@ -9,9 +9,11 @@ import {
   type ImportBatchPersistenceDetail,
   type ImportFieldMappingTemplate,
   type ImportBatchListRow,
+  type ImportBatchFilters,
   buildImportApiUrl,
   buildImportBatchDetailUrl,
   buildImportFieldMappingTemplatesUrl,
+  filterImportBatches,
 } from "@/components/import-center-model"
 
 export const dynamic = "force-dynamic"
@@ -23,6 +25,10 @@ type DataQualityPageProps = {
     correction?: string
     reason?: string
     row?: string
+    batchQuery?: string
+    batchFileType?: string
+    batchProcessingStatus?: string
+    batchApplicationStatus?: string
   }>
 }
 
@@ -38,10 +44,17 @@ export default async function DataQualityPage({
   const batchResult = await fetchImportBatches()
   const templateResult = await fetchImportFieldMappingTemplates()
   const batches = batchResult.data ?? []
+  const batchFilters: ImportBatchFilters = {
+    query: params?.batchQuery,
+    fileType: params?.batchFileType,
+    processingStatus: params?.batchProcessingStatus,
+    applicationStatus: params?.batchApplicationStatus,
+  } as ImportBatchFilters
+  const filteredBatches = filterImportBatches(batches, batchFilters)
   const selectedBatchId =
     params?.batch && batches.some((batch) => batch.batch_id === params.batch)
       ? params.batch
-      : batches[0]?.batch_id ?? null
+      : filteredBatches[0]?.batch_id ?? null
   const readinessResult = selectedBatchId
     ? await fetchImportReadiness(selectedBatchId)
     : { data: null, error: null }
@@ -57,6 +70,7 @@ export default async function DataQualityPage({
         readiness={readinessResult.data}
         batchError={batchResult.error}
         readinessError={readinessResult.error}
+        batchFilters={batchFilters}
         templateError={templateResult.error}
         templateCount={(templateResult.data ?? []).length}
         uploadForm={

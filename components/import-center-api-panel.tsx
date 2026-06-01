@@ -9,8 +9,10 @@ import {
 
 import {
   type ImportApplyReadinessResponse,
+  type ImportBatchFilters,
   type ImportBatchListRow,
   type ImportExceptionGuidance,
+  filterImportBatches,
   formatImportApplicationStatus,
   formatImportFileType,
   formatImportProcessingStatus,
@@ -38,6 +40,7 @@ type ImportCenterApiPanelProps = {
   readiness: ImportApplyReadinessResponse | null
   batchError: string | null
   readinessError: string | null
+  batchFilters?: ImportBatchFilters
   templateError?: string | null
   templateCount?: number
   uploadForm?: React.ReactNode
@@ -50,14 +53,19 @@ export function ImportCenterApiPanel({
   readiness,
   batchError,
   readinessError,
+  batchFilters = {},
   templateError = null,
   templateCount = 0,
   uploadForm,
   rowCorrectionPanel,
 }: ImportCenterApiPanelProps) {
-  const summary = summarizeImportBatches(batches)
+  const filteredBatches = filterImportBatches(batches, batchFilters)
+  const summary = summarizeImportBatches(filteredBatches)
   const selectedBatch =
-    batches.find((batch) => batch.batch_id === selectedBatchId) ?? batches[0] ?? null
+    batches.find((batch) => batch.batch_id === selectedBatchId) ??
+    filteredBatches[0] ??
+    batches[0] ??
+    null
   const exceptionGuidance = summarizeImportExceptionGuidance({
     batchError,
     readinessError,
@@ -106,12 +114,17 @@ export function ImportCenterApiPanel({
             <div>
               <CardTitle className="text-base">接入批次</CardTitle>
               <p className="mt-1 text-sm text-muted-foreground">
-                {batchError ?? "来自 /api/v1/import-batches"}
+                {batchError ??
+                  `来自 /api/v1/import-batches · ${filteredBatches.length}/${batches.length} 批匹配`}
               </p>
             </div>
             {batchError ? <Badge variant="destructive">API 异常</Badge> : null}
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className="grid gap-0 p-0">
+            <BatchFilterForm
+              filters={batchFilters}
+              selectedBatchId={selectedBatch?.batch_id ?? selectedBatchId}
+            />
             {batches.length === 0 ? (
               <EmptyState
                 title={batchError ? "批次读取失败" : "暂无导入批次"}
@@ -119,6 +132,11 @@ export function ImportCenterApiPanel({
                   batchError ??
                   "本地 API 当前没有返回批次。上传 API 写入批次后，这里会直接显示。"
                 }
+              />
+            ) : filteredBatches.length === 0 ? (
+              <EmptyState
+                title="没有匹配批次"
+                detail="调整关键词、文件类型、处理状态或应用状态后重新筛选。"
               />
             ) : (
               <div className="overflow-x-auto">
@@ -134,7 +152,7 @@ export function ImportCenterApiPanel({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {batches.map((batch) => {
+                    {filteredBatches.map((batch) => {
                       const isSelected = batch.batch_id === selectedBatch?.batch_id
                       const health = getImportBatchHealth(
                         batch,
@@ -145,7 +163,7 @@ export function ImportCenterApiPanel({
                         <TableRow key={batch.batch_id} data-state={isSelected ? "selected" : undefined}>
                           <TableCell>
                             <Link
-                              href={`/data-quality?batch=${encodeURIComponent(batch.batch_id)}`}
+                              href={buildBatchListHref(batch.batch_id, batchFilters)}
                               className="grid gap-1"
                             >
                               <span className="font-mono text-xs font-medium">
@@ -219,6 +237,135 @@ export function ImportCenterApiPanel({
       </section>
       {rowCorrectionPanel}
     </main>
+  )
+}
+
+function BatchFilterForm({
+  filters,
+  selectedBatchId,
+}: {
+  filters: ImportBatchFilters
+  selectedBatchId: string | null
+}) {
+  return (
+    <form
+      action="/data-quality"
+      className="grid gap-3 border-t px-4 py-3 md:grid-cols-[minmax(180px,1fr)_repeat(3,minmax(120px,160px))_auto_auto]"
+    >
+      <label className="grid gap-1.5 text-sm">
+        <span className="font-medium">关键词</span>
+        <input
+          name="batchQuery"
+          defaultValue={filters.query ?? ""}
+          placeholder="批次、文件、上传人"
+          className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+        />
+      </label>
+      <FilterSelect
+        label="文件类型"
+        name="batchFileType"
+        value={filters.fileType ?? "all"}
+        options={[
+          ["all", "全部"],
+          ["master_data", "主数据"],
+          ["personnel_schedule", "人员排班"],
+          ["demand_forecast", "需求预测"],
+          ["login_log", "登录日志"],
+          ["status_log", "状态日志"],
+        ]}
+      />
+      <FilterSelect
+        label="处理状态"
+        name="batchProcessingStatus"
+        value={filters.processingStatus ?? "all"}
+        options={[
+          ["all", "全部"],
+          ["completed", "已完成"],
+          ["completed_with_errors", "有失败行"],
+          ["failed", "失败"],
+        ]}
+      />
+      <FilterSelect
+        label="应用状态"
+        name="batchApplicationStatus"
+        value={filters.applicationStatus ?? "all"}
+        options={[
+          ["all", "全部"],
+          ["not_applied", "未应用"],
+          ["applied", "已应用"],
+        ]}
+      />
+      <div className="flex items-end">
+        <button
+          type="submit"
+          className="h-8 rounded-lg border border-input px-3 text-sm font-medium hover:bg-muted"
+        >
+          筛选
+        </button>
+      </div>
+      <div className="flex items-end">
+        <Link
+          href={selectedBatchId ? `/data-quality?batch=${encodeURIComponent(selectedBatchId)}` : "/data-quality"}
+          className="flex h-8 items-center rounded-lg border border-input px-3 text-sm font-medium hover:bg-muted"
+        >
+          重置
+        </Link>
+      </div>
+    </form>
+  )
+}
+
+function buildBatchListHref(
+  batchId: string,
+  filters: ImportBatchFilters
+): string {
+  const searchParams = new URLSearchParams({ batch: batchId })
+
+  if (filters.query?.trim()) {
+    searchParams.set("batchQuery", filters.query.trim())
+  }
+
+  if (filters.fileType && filters.fileType !== "all") {
+    searchParams.set("batchFileType", filters.fileType)
+  }
+
+  if (filters.processingStatus && filters.processingStatus !== "all") {
+    searchParams.set("batchProcessingStatus", filters.processingStatus)
+  }
+
+  if (filters.applicationStatus && filters.applicationStatus !== "all") {
+    searchParams.set("batchApplicationStatus", filters.applicationStatus)
+  }
+
+  return `/data-quality?${searchParams.toString()}`
+}
+
+function FilterSelect({
+  label,
+  name,
+  value,
+  options,
+}: {
+  label: string
+  name: string
+  value: string
+  options: [string, string][]
+}) {
+  return (
+    <label className="grid gap-1.5 text-sm">
+      <span className="font-medium">{label}</span>
+      <select
+        name={name}
+        defaultValue={value}
+        className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        {options.map(([optionValue, labelText]) => (
+          <option key={optionValue} value={optionValue}>
+            {labelText}
+          </option>
+        ))}
+      </select>
+    </label>
   )
 }
 

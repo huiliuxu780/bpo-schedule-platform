@@ -1495,3 +1495,16 @@ version: "1.0"
 status: "split"
 notes: "本轮只做前端上传结果导航提示和模型 helper；不新增依赖，不做 apply 写按钮、后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
 ```
+
+### R735 - 导入中心接入批次筛选
+
+```yaml
+id: R735
+module: "导入中心"
+description: "导入中心前端已经能展示接入批次、上传结果、失败行和应用准备度后，需要在接入批次列表上提供文件类型、处理状态、应用状态和关键词筛选，让数据管理员能快速定位上传历史中的失败批次、未应用批次或特定上传人/文件。"
+source: "PM requested continuing import-center production usability after IM034 on 2026-06-01"
+submitted_at: "2026-06-01"
+version: "1.0"
+status: "split"
+notes: "本轮只做前端本地批次筛选和模型 helper；不新增依赖，不做后端查询参数、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+```

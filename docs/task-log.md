@@ -1236,6 +1236,17 @@
 - status: `done`
 - notes: `/data-quality` 现在能根据 upload query 展示 CSV 上传成功/失败结果、批次入口和下一步复核路径；保持只读，不新增 apply 写按钮、后端、数据库或生产流程能力。
 
+### 2026-06-01
+
+- task_id: `IM035`
+- source_ids:
+  - `R735`
+- story_ids:
+  - `US655`
+- action: 增加导入中心接入批次筛选。
+- status: `done`
+- notes: `/data-quality` 接入批次列表现在支持关键词、文件类型、处理状态和应用状态筛选，展示匹配数量、可点击批次行和无匹配空态；保持前端本地筛选，不新增后端查询、schema/migration、审批、导出、批量、权限或生产流程能力。
+
 ### 2026-05-13
 
 - task_id: `F031`

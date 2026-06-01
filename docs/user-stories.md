@@ -2770,3 +2770,25 @@ dependencies:
   - "US653"
 status: "done"
 ```
+
+### US655 - 导入中心接入批次筛选
+
+```yaml
+id: US655
+requirement_ids:
+  - R735
+module: "导入中心"
+role: "数据管理员"
+story: "作为数据管理员，我希望在接入批次列表按文件类型、处理状态、应用状态和关键词筛选上传历史，以便快速定位需要复核或修正的批次。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality` 接入批次列表提供关键词、文件类型、处理状态和应用状态筛选。"
+  - "筛选结果展示匹配数量，并保持批次行可点击进入详情。"
+  - "无匹配结果时展示可读空态，不新增静态业务样例。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、审批、导出、批量、权限、外部集成、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、`git diff --check`、`bash scripts/check.sh` 和页面 smoke 通过。"
+dependencies:
+  - "US654"
+status: "done"
+```

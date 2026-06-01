@@ -1962,6 +1962,31 @@
 
 ## Historical Audit Snapshots
 
+### 2026-06-01 - IM035 导入中心接入批次筛选
+
+#### 审计结论
+
+- `IM035/US655` 已在 `/data-quality` 接入批次列表增加关键词、文件类型、处理状态和应用状态筛选。
+- 模型层新增 `filterImportBatches`，覆盖上传历史的本地筛选和无匹配结果。
+- 页面展示匹配数量、可读空态，并在点击批次行时保留当前筛选条件；不新增后端查询参数、审批、导出、批量、权限或生产动作。
+
+#### 风险
+
+- 当前是前端本地筛选，不是服务端分页查询、权限隔离或生产审计筛选。
+- 后续若要做服务端查询、导出、批量处理或权限隔离，需要另开受控任务。
+
+#### 验证
+
+- TDD 红灯：`/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 因缺少 `filterImportBatches` export 失败。
+- `/opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，20 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：当前 Codex in-app browser 路由不可用，未能通过该通道执行；已用本地 HTTP smoke 补充验证。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+- 本地 HTTP smoke：`http://127.0.0.1:3023/data-quality?batchQuery=smoke&batchFileType=personnel_schedule&batchProcessingStatus=completed_with_errors&batchApplicationStatus=not_applied` 和 `http://127.0.0.1:3023/data-quality?batchQuery=__missing_im035__` 均返回页面，关键文本包含 `关键词`、`文件类型`、`处理状态`、`应用状态`、`0/4 批匹配`、`没有匹配批次` 和空态说明。
+
 ### 2026-05-31 - IM034 导入中心上传结果批次入口
 
 #### 审计结论

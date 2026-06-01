@@ -7,6 +7,7 @@ import {
   buildImportFieldMappingTemplatesUrl,
   buildImportRowCorrectionUrl,
   buildImportUploadUrl,
+  filterImportBatches,
   formatFieldMappingTemplateSummary,
   formatImportRowStatus,
   summarizeImportApplyActionGuidance,
@@ -72,6 +73,62 @@ test("import center summary uses live batch rows without sample data", () => {
     appliedBatches: 1,
     notAppliedBatches: 1,
   });
+});
+
+test("import center batch filters narrow upload history locally", () => {
+  const batches = [
+    baseBatch,
+    {
+      ...baseBatch,
+      batch_id: "BATCH-SCH-001",
+      file_name: "schedule-may.csv",
+      file_type: "personnel_schedule",
+      uploaded_by: "planner",
+      processing_status: "completed_with_errors",
+      failed_rows: 2,
+      application_status: "not_applied",
+    },
+    {
+      ...baseBatch,
+      batch_id: "BATCH-LOGIN-001",
+      file_name: "login-log.csv",
+      file_type: "login_log",
+      uploaded_by: "ops",
+      processing_status: "completed",
+      application_status: "applied",
+      applied_record_count: 10,
+    },
+  ];
+
+  assert.deepEqual(
+    filterImportBatches(batches, {
+      query: "planner",
+      fileType: "personnel_schedule",
+      processingStatus: "completed_with_errors",
+      applicationStatus: "not_applied",
+    }).map((batch) => batch.batch_id),
+    ["BATCH-SCH-001"],
+  );
+
+  assert.deepEqual(
+    filterImportBatches(batches, {
+      query: "login",
+      fileType: "all",
+      processingStatus: "all",
+      applicationStatus: "applied",
+    }).map((batch) => batch.batch_id),
+    ["BATCH-LOGIN-001"],
+  );
+
+  assert.deepEqual(
+    filterImportBatches(batches, {
+      query: "missing",
+      fileType: "all",
+      processingStatus: "all",
+      applicationStatus: "all",
+    }),
+    [],
+  );
 });
 
 test("import center health prefers readiness blockers over row counts", () => {
