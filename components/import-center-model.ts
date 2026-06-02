@@ -477,6 +477,27 @@ export type ImportReviewCaseDetailResponse = {
 
 export type ImportReviewCaseDetailTone = "blocked" | "warning" | "ready" | "empty"
 
+export type ImportReviewCaseProcessingStageKey =
+  | "all"
+  | "missing_evidence"
+  | "missing_conclusion"
+  | "ready_to_close"
+  | "closed"
+  | "unknown"
+
+export type ImportReviewCaseProcessingStageSnapshot = {
+  evidenceCount: number
+  conclusionCount: number
+  isClosed: boolean
+}
+
+export type ImportReviewCaseProcessingStageSummary = {
+  key: Exclude<ImportReviewCaseProcessingStageKey, "all">
+  label: string
+  nextAction: string
+  evidenceLabel: string
+}
+
 export type ImportReviewCaseDetailSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -620,6 +641,7 @@ export type ImportReviewCasesWorkspaceFilters = {
   status?: string | null
   severity?: string | null
   sourceResultType?: ImportReviewCaseRecord["source_result_type"] | "all" | null
+  processingStage?: ImportReviewCaseProcessingStageKey | null
   query?: string | null
 }
 
@@ -648,6 +670,7 @@ export type ImportReviewCasesWorkspaceSummary = {
   statusGroups: ImportReviewCasesWorkspaceGroup[]
   severityGroups: ImportReviewCasesWorkspaceGroup[]
   sourceGroups: ImportReviewCasesWorkspaceGroup[]
+  processingStageGroups: ImportReviewCasesWorkspaceGroup[]
   nextAction: string
 }
 
@@ -1042,6 +1065,12 @@ export function buildImportReviewCasesWorkspaceHref(
     sourceResultTypeKey: "sourceResultType",
   })
 
+  const processingStage = normalizeAllFilterValue(filters.processingStage)
+
+  if (processingStage) {
+    searchParams.set("processingStage", processingStage)
+  }
+
   const query = filters.query?.trim()
 
   if (query) {
@@ -1177,13 +1206,15 @@ export function filterImportBatches(
 
 export function filterImportReviewCases(
   cases: ImportReviewCaseRecord[],
-  filters: ImportReviewCasesWorkspaceFilters
+  filters: ImportReviewCasesWorkspaceFilters,
+  processingStages: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined> = {}
 ): ImportReviewCaseRecord[] {
   const businessDate = normalizeFilterValue(filters.businessDate)
   const ownerId = normalizeFilterValue(filters.ownerId)
   const status = normalizeAllFilterValue(filters.status)
   const severity = normalizeAllFilterValue(filters.severity)
   const sourceResultType = normalizeAllFilterValue(filters.sourceResultType)
+  const processingStage = normalizeAllFilterValue(filters.processingStage)
   const rawQuery = filters.query?.trim() ?? ""
   const query = rawQuery.toLowerCase()
   const shouldFilterByQuery = query && !isQualityIssueFocusQuery(rawQuery)
@@ -1206,6 +1237,16 @@ export function filterImportReviewCases(
     }
 
     if (sourceResultType && reviewCase.source_result_type !== sourceResultType) {
+      return false
+    }
+
+    if (
+      processingStage &&
+      summarizeImportReviewCaseProcessingStage(
+        reviewCase,
+        processingStages[reviewCase.case_id]
+      ).key !== processingStage
+    ) {
       return false
     }
 
@@ -1233,10 +1274,12 @@ export function summarizeImportReviewCasesWorkspace({
   cases,
   filters,
   error,
+  processingStages = {},
 }: {
   cases: ImportReviewCaseRecord[]
   filters: ImportReviewCasesWorkspaceFilters
   error: string | null
+  processingStages?: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
 }): ImportReviewCasesWorkspaceSummary {
   if (error) {
     return {
@@ -1251,11 +1294,12 @@ export function summarizeImportReviewCasesWorkspace({
       statusGroups: [],
       severityGroups: [],
       sourceGroups: [],
+      processingStageGroups: [],
       nextAction: "先恢复复核案例读取，再判断 owner、证据缺口和处理优先级。",
     }
   }
 
-  const filteredCases = filterImportReviewCases(cases, filters)
+  const filteredCases = filterImportReviewCases(cases, filters, processingStages)
   const openCases = filteredCases.filter((reviewCase) => reviewCase.status !== "closed")
   const highRiskOpenCases = openCases.filter((reviewCase) =>
     isHighRiskReviewSeverity(reviewCase.severity)
@@ -1275,6 +1319,7 @@ export function summarizeImportReviewCasesWorkspace({
       statusGroups: [],
       severityGroups: [],
       sourceGroups: [],
+      processingStageGroups: [],
       nextAction: "放宽业务日、owner、状态、严重度或来源筛选后再查看。",
     }
   }
@@ -1298,10 +1343,66 @@ export function summarizeImportReviewCasesWorkspace({
       "source_result_type",
       formatReviewCaseSourceType
     ),
+    processingStageGroups: buildReviewCaseProcessingStageGroups(
+      filteredCases,
+      processingStages
+    ),
     nextAction:
       topOwner && topOwner.openCount > 0
         ? `先处理 ${topOwner.ownerId} 名下 ${topOwner.openCount.toLocaleString("zh-CN")} 个未关闭复核案例，再回看高风险来源和证据缺口。`
         : "当前筛选结果没有未关闭复核案例，可继续回看已关闭案例的来源和证据完整性。",
+  }
+}
+
+export function summarizeImportReviewCaseProcessingStage(
+  reviewCase: ImportReviewCaseRecord,
+  stage?: ImportReviewCaseProcessingStageSnapshot
+): ImportReviewCaseProcessingStageSummary {
+  if (reviewCase.status === "closed" || stage?.isClosed) {
+    return {
+      key: "closed",
+      label: "已关闭",
+      nextAction: "回看关闭依据，不在列表页重新打开。",
+      evidenceLabel: stage
+        ? `证据 ${stage.evidenceCount.toLocaleString("zh-CN")} 条 · 结论 ${stage.conclusionCount.toLocaleString("zh-CN")} 条`
+        : "证据不可用 · 结论不可用",
+    }
+  }
+
+  if (!stage) {
+    return {
+      key: "unknown",
+      label: "阶段未知",
+      nextAction: "先打开详情页确认处理材料。",
+      evidenceLabel: "证据不可用 · 结论不可用",
+    }
+  }
+
+  const evidenceLabel = `证据 ${stage.evidenceCount.toLocaleString("zh-CN")} 条 · 结论 ${stage.conclusionCount.toLocaleString("zh-CN")} 条`
+
+  if (stage.evidenceCount === 0) {
+    return {
+      key: "missing_evidence",
+      label: "缺证据",
+      nextAction: "先补充证据，再补充复核结论。",
+      evidenceLabel,
+    }
+  }
+
+  if (stage.conclusionCount === 0) {
+    return {
+      key: "missing_conclusion",
+      label: "缺结论",
+      nextAction: "先补充复核结论，再判断能否关闭。",
+      evidenceLabel,
+    }
+  }
+
+  return {
+    key: "ready_to_close",
+    label: "可关闭",
+    nextAction: "证据和结论已齐，进入受控关闭入口。",
+    evidenceLabel,
   }
 }
 
@@ -4195,6 +4296,38 @@ function buildReviewCaseOwnerGroups(
       ownerId: group.key,
     }))
     .sort((a, b) => b.openCount - a.openCount || b.count - a.count || a.ownerId.localeCompare(b.ownerId))
+}
+
+function buildReviewCaseProcessingStageGroups(
+  cases: ImportReviewCaseRecord[],
+  processingStages: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
+): ImportReviewCasesWorkspaceGroup[] {
+  const groups = new Map<string, ImportReviewCasesWorkspaceGroup>()
+
+  for (const reviewCase of cases) {
+    const stage = summarizeImportReviewCaseProcessingStage(
+      reviewCase,
+      processingStages[reviewCase.case_id]
+    )
+    const existing = groups.get(stage.key) ?? {
+      key: stage.key,
+      label: stage.label,
+      count: 0,
+      openCount: 0,
+    }
+
+    existing.count += 1
+
+    if (reviewCase.status !== "closed") {
+      existing.openCount += 1
+    }
+
+    groups.set(stage.key, existing)
+  }
+
+  return [...groups.values()].sort(
+    (a, b) => b.openCount - a.openCount || b.count - a.count || a.label.localeCompare(b.label)
+  )
 }
 
 function buildReviewCaseGroups<K extends keyof ImportReviewCaseRecord>(

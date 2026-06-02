@@ -6497,3 +6497,47 @@ tasks:
       - "范围扩展到证据补录、结论补充、关闭、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM066
+    title: "复核案例处理阶段筛选"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM065"]
+    allowed_files:
+      - "app/data-quality/review-cases/page.tsx"
+      - "components/import-center-model.ts"
+      - "components/import-center-review-cases-workspace.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "`/data-quality/review-cases` 支持处理阶段筛选：缺证据、缺结论、可关闭、已关闭。"
+      - "处理阶段基于现有复核详情 API 的 evidence、conclusions 和 closure 计数派生，不新增后端 API 或 schema。"
+      - "列表页展示每个案例的处理阶段和阶段分组统计。"
+      - "读取详情失败时保留案例行，并展示阶段未知，不误判为可关闭。"
+      - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不做写入动作、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到写入动作、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

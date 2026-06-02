@@ -210,6 +210,7 @@ Current invariants:
 - `IM063/US683` added controlled review-case evidence supplement write for existing open cases and a detail-page evidence entry that is blocked after closure, then returned current queue and active tasks to empty.
 - `IM064/US684` added controlled review-case conclusion supplement write for existing open cases and a detail-page conclusion entry that is blocked after closure, then returned current queue and active tasks to empty.
 - `IM065/US685` added a read-only review-case processing timeline on the second-level detail page, aggregating evidence, conclusions, and closure records by processing order without adding backend routes, schema/migration changes, dependencies, write actions, approval, export, batch operations, permissions, external integrations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
+- `IM066/US686` added read-only processing-stage filters on the review-case workspace for missing evidence, missing conclusion, ready to close, closed, and unknown stages, deriving stage from existing detail API records without adding backend routes, schema/migration changes, dependencies, write actions, approval, export, batch operations, permissions, external integrations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 
 ## Product Direction
 

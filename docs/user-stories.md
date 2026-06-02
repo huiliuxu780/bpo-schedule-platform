@@ -3479,3 +3479,26 @@ dependencies:
   - "US684"
 status: "done"
 ```
+
+### US686 - 复核案例处理阶段筛选
+
+```yaml
+id: US686
+requirement_ids:
+  - R766
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望在复核案例列表按处理阶段筛选缺证据、缺结论、可关闭和已关闭案例，以便不用逐个打开详情页就能安排处理顺序。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases` 支持处理阶段筛选：缺证据、缺结论、可关闭、已关闭。"
+  - "处理阶段基于现有复核详情 API 的 evidence、conclusions 和 closure 计数派生，不新增后端 API 或 schema。"
+  - "列表页展示每个案例的处理阶段和阶段分组统计。"
+  - "读取详情失败时保留案例行，并展示阶段未知，不误判为可关闭。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不做写入动作、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US685"
+status: "done"
+```

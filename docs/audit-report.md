@@ -2901,3 +2901,27 @@
 - `npm run typecheck`：通过。
 - in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases/CASE-QUERY-001` 命中 `处理时间线`、`补充证据`、`补充结论`、`关闭案例` 和 `已关闭`。
 - `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 177 个 backend unittest。
+
+### 2026-06-02 - IM066 复核案例处理阶段筛选
+
+#### 审计结论
+
+- `IM066/US686` 已在 `/data-quality/review-cases` 增加只读处理阶段筛选。
+- 处理阶段支持缺证据、缺结论、可关闭、已关闭和阶段未知；阶段由现有 review-case detail API 的 evidence、conclusions 和 closure 记录派生。
+- 列表页展示处理阶段、材料计数和阶段下一步；分组面板新增处理阶段分组。
+- 本轮未新增后端 API，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、写入动作、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前阶段筛选通过列表页逐个读取现有详情 API 派生，适合当前本地 MVP；大规模生产分页和批量阶段统计仍需要后续后端查询优化任务。
+- 读取详情失败的案例保留在列表中并标记阶段未知，不会误判为可关闭。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先因缺少 `summarizeImportReviewCaseProcessingStage` export 失败。
+- `node scripts/tests/import-center-model.test.mjs`：通过，49 个 import-center model 测试通过。
+- `node --test scripts/tests/check-shadcn-ui.test.mjs` 和 `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases?processingStage=closed` 命中 `处理阶段`、`已关闭`、`复核案例列表`、`阶段` 和 `CASE-QUERY-001`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -11,9 +11,11 @@ import {
 
 import {
   type ImportReviewCaseRecord,
+  type ImportReviewCaseProcessingStageSnapshot,
   type ImportReviewCasesWorkspaceFilters,
   buildImportReviewCaseDetailWorkspaceHref,
   filterImportReviewCases,
+  summarizeImportReviewCaseProcessingStage,
   summarizeImportReviewCasesWorkspace,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -32,19 +34,22 @@ import {
 type ImportCenterReviewCasesWorkspaceProps = {
   cases: ImportReviewCaseRecord[]
   filters: ImportReviewCasesWorkspaceFilters
+  processingStages: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
   error: string | null
 }
 
 export function ImportCenterReviewCasesWorkspace({
   cases,
   filters,
+  processingStages,
   error,
 }: ImportCenterReviewCasesWorkspaceProps) {
-  const filteredCases = filterImportReviewCases(cases, filters)
+  const filteredCases = filterImportReviewCases(cases, filters, processingStages)
   const summary = summarizeImportReviewCasesWorkspace({
     cases,
     filters,
     error,
+    processingStages,
   })
 
   return (
@@ -55,7 +60,11 @@ export function ImportCenterReviewCasesWorkspace({
 
       <section className="grid gap-4 xl:grid-cols-[360px_minmax(0,1fr)]">
         <ReviewCaseGroupingPanel summary={summary} />
-        <ReviewCaseTable cases={filteredCases} error={error} />
+        <ReviewCaseTable
+          cases={filteredCases}
+          processingStages={processingStages}
+          error={error}
+        />
       </section>
     </main>
   )
@@ -95,6 +104,9 @@ function ReviewCasesHeader({
         )}
         {filters.query ? (
           <Badge variant="secondary">焦点 {filters.query}</Badge>
+        ) : null}
+        {filters.processingStage && filters.processingStage !== "all" ? (
+          <Badge variant="secondary">阶段 {filters.processingStage}</Badge>
         ) : null}
       </div>
     </section>
@@ -198,7 +210,7 @@ function ReviewCaseFilterCard({
       <CardContent>
         <form
           action="/data-quality/review-cases"
-          className="grid gap-3 md:grid-cols-[minmax(140px,1fr)_minmax(140px,1fr)_repeat(3,minmax(120px,160px))_auto]"
+          className="grid gap-3 md:grid-cols-[minmax(140px,1fr)_minmax(140px,1fr)_repeat(4,minmax(120px,160px))_auto]"
         >
           <label className="grid gap-1.5 text-sm">
             <span className="font-medium">业务日</span>
@@ -224,6 +236,19 @@ function ReviewCaseFilterCard({
               ["all", "全部"],
               ["open", "未关闭"],
               ["closed", "已关闭"],
+            ]}
+          />
+          <FilterSelect
+            label="处理阶段"
+            name="processingStage"
+            value={filters.processingStage ?? "all"}
+            options={[
+              ["all", "全部"],
+              ["missing_evidence", "缺证据"],
+              ["missing_conclusion", "缺结论"],
+              ["ready_to_close", "可关闭"],
+              ["closed", "已关闭"],
+              ["unknown", "阶段未知"],
             ]}
           />
           <FilterSelect
@@ -284,6 +309,7 @@ function ReviewCaseGroupingPanel({
       <CardContent className="grid gap-4">
         <GroupList title="Owner 负载" groups={summary.ownerGroups} />
         <GroupList title="状态拆分" groups={summary.statusGroups} />
+        <GroupList title="处理阶段" groups={summary.processingStageGroups} />
         <GroupList title="严重度拆分" groups={summary.severityGroups} />
         <GroupList title="来源拆分" groups={summary.sourceGroups} />
       </CardContent>
@@ -329,9 +355,11 @@ function GroupList({
 
 function ReviewCaseTable({
   cases,
+  processingStages,
   error,
 }: {
   cases: ImportReviewCaseRecord[]
+  processingStages: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
   error: string | null
 }) {
   return (
@@ -361,6 +389,7 @@ function ReviewCaseTable({
                   <TableHead className="min-w-[180px]">案例</TableHead>
                   <TableHead>级别</TableHead>
                   <TableHead>状态</TableHead>
+                  <TableHead className="min-w-[140px]">处理阶段</TableHead>
                   <TableHead>Owner</TableHead>
                   <TableHead className="min-w-[160px]">来源</TableHead>
                   <TableHead className="min-w-[220px]">证据缺口</TableHead>
@@ -369,57 +398,74 @@ function ReviewCaseTable({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {cases.map((reviewCase) => (
-                  <TableRow key={reviewCase.case_id}>
-                    <TableCell>
-                      <div className="grid gap-1">
-                        <span className="font-mono text-xs font-medium">
-                          {reviewCase.case_id}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {reviewCase.business_date}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          isHighRiskSeverity(reviewCase.severity)
-                            ? "destructive"
-                            : "outline"
-                        }
-                      >
-                        {formatSeverity(reviewCase.severity)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={reviewCase.status === "closed" ? "secondary" : "outline"}
-                      >
-                        {formatStatus(reviewCase.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {reviewCase.owner_id}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {formatSource(reviewCase)}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {formatEvidenceGap(reviewCase)}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {formatNextAction(reviewCase)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button asChild size="icon-sm" variant="ghost" aria-label="查看复核详情">
-                        <Link href={buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id)}>
-                          <ArrowRight />
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {cases.map((reviewCase) => {
+                  const stage = summarizeImportReviewCaseProcessingStage(
+                    reviewCase,
+                    processingStages[reviewCase.case_id]
+                  )
+
+                  return (
+                    <TableRow key={reviewCase.case_id}>
+                      <TableCell>
+                        <div className="grid gap-1">
+                          <span className="font-mono text-xs font-medium">
+                            {reviewCase.case_id}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {reviewCase.business_date}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            isHighRiskSeverity(reviewCase.severity)
+                              ? "destructive"
+                              : "outline"
+                          }
+                        >
+                          {formatSeverity(reviewCase.severity)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={reviewCase.status === "closed" ? "secondary" : "outline"}
+                        >
+                          {formatStatus(reviewCase.status)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="grid gap-1">
+                          <Badge variant={stage.key === "unknown" ? "secondary" : "outline"}>
+                            {stage.label}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {stage.evidenceLabel}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {reviewCase.owner_id}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {formatSource(reviewCase)}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {formatEvidenceGap(reviewCase)}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {stage.nextAction}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button asChild size="icon-sm" variant="ghost" aria-label="查看复核详情">
+                          <Link href={buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id)}>
+                            <ArrowRight />
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
               </TableBody>
             </Table>
           </div>
@@ -537,14 +583,6 @@ function formatEvidenceGap(reviewCase: ImportReviewCaseRecord): string {
   }
 
   return "预测版本、排班版本和质量修正记录。"
-}
-
-function formatNextAction(reviewCase: ImportReviewCaseRecord): string {
-  if (reviewCase.status === "closed") {
-    return "回看关闭依据，不在本页重新打开。"
-  }
-
-  return `owner ${reviewCase.owner_id} 先补齐证据，再进入受控关闭流程。`
 }
 
 function isHighRiskSeverity(severity: string): boolean {

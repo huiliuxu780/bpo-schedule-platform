@@ -1642,3 +1642,14 @@
 - action: 增加复核案例详情页只读处理时间线。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 新增“处理时间线”独立区块，按时间聚合 evidence、conclusions 和 closure，展示阶段、处理人、时间、处理说明、当前阶段和下一步建议；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM066`
+- source_ids:
+  - `R766`
+- story_ids:
+  - `US686`
+- action: 增加复核案例工作台只读处理阶段筛选。
+- status: `done`
+- notes: `/data-quality/review-cases` 新增处理阶段筛选和阶段列，支持缺证据、缺结论、可关闭、已关闭和阶段未知；阶段由现有详情 API 的 evidence、conclusions 和 closure 记录派生；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

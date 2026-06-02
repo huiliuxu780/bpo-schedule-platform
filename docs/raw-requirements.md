@@ -1899,3 +1899,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读处理时间线；复核案例详情页新增 `处理时间线`，按时间聚合 evidence、conclusions 和 closure，展示阶段、处理人、时间、说明、当前阶段和下一步建议；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R766 - 复核案例处理阶段筛选
+
+```yaml
+id: R766
+module: "导入中心"
+description: "复核详情页已经具备证据、结论、关闭和时间线，但主管回到复核列表时仍无法按处理阶段安排工作。需要在复核案例工作台按缺证据、缺结论、可关闭和已关闭筛选案例。"
+source: "After IM065 processing timeline and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读处理阶段筛选；复核案例工作台新增 processingStage 参数和处理阶段筛选，阶段由现有 review-case detail API 的 evidence、conclusions 和 closure 记录派生，列表展示阶段、材料计数和阶段分组；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```
