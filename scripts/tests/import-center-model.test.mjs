@@ -7,6 +7,8 @@ import {
   buildImportBatchProcessingHref,
   buildImportComparisonRunsUrl,
   buildImportQualityIssueReviewCasesHref,
+  buildImportReviewCaseDetailApiUrl,
+  buildImportReviewCaseDetailWorkspaceHref,
   buildImportReviewCasesWorkspaceHref,
   buildImportFieldMappingTemplatesUrl,
   buildImportReviewCasesUrl,
@@ -22,6 +24,7 @@ import {
   summarizeImportDownstreamResultDrilldown,
   summarizeImportQualityImpactAggregation,
   summarizeImportReviewConclusionPreview,
+  summarizeImportReviewCaseDetail,
   summarizeImportReviewEvidenceGapDrilldown,
   summarizeImportReviewCasesWorkspace,
   filterImportReviewCases,
@@ -1160,6 +1163,96 @@ test("import center review cases workspace summarizes groups and next action", (
   assert.equal(
     summary.nextAction,
     "先处理 OWNER-A 名下 2 个未关闭复核案例，再回看高风险来源和证据缺口。"
+  );
+});
+
+test("import center review case detail summarizes read-only case context", () => {
+  assert.equal(
+    buildImportReviewCaseDetailWorkspaceHref("CASE-QUERY-001"),
+    "/data-quality/review-cases/CASE-QUERY-001"
+  );
+  assert.equal(
+    buildImportReviewCaseDetailApiUrl("CASE-QUERY-001"),
+    "http://127.0.0.1:8000/api/v1/review-cases/CASE-QUERY-001"
+  );
+
+  assert.deepEqual(
+    summarizeImportReviewCaseDetail({
+      detail: {
+        case: {
+          case_id: "CASE-QUERY-001",
+          source_result_type: "forecast_schedule",
+          source_result_id: 12,
+          business_date: "2026-05-11",
+          owner_id: "supervisor-01",
+          severity: "high",
+          status: "open",
+          created_at: "2026-05-11T10:00:00+08:00",
+        },
+        evidence: [
+          {
+            evidence_id: "EVD-QUERY-001",
+            case_id: "CASE-QUERY-001",
+            evidence_type: "note",
+            evidence_uri: "local://review/CASE-QUERY-001/note",
+            submitted_by: "supervisor-01",
+            submitted_at: "2026-05-11T10:20:00+08:00",
+            note: "复核说明",
+          },
+        ],
+        conclusions: [
+          {
+            conclusion_id: "CON-QUERY-001",
+            case_id: "CASE-QUERY-001",
+            conclusion_type: "confirmed_gap",
+            risk_level: "high",
+            conclusion_text: "确认预测与排班缺口。",
+            decided_by: "ops-lead-01",
+            decided_at: "2026-05-11T10:30:00+08:00",
+          },
+        ],
+        closure: null,
+      },
+      error: null,
+    }),
+    {
+      tone: "blocked",
+      title: "CASE-QUERY-001 · 高 · 未关闭",
+      sourceLabel: "预测排班 #12",
+      ownerLabel: "supervisor-01",
+      evidenceLabel: "证据 1 条 · 结论 1 条 · 未关闭",
+      qualityFocus: "预测版本、排班版本和质量修正记录。",
+      evidenceGap: "仍需确认预测版本、排班版本引用和质量修正记录。",
+      nextAction: "owner supervisor-01 先复核 1 条证据和 1 条结论，再进入受控关闭流程。",
+      detailHref: "http://127.0.0.1:8000/api/v1/review-cases/CASE-QUERY-001",
+      listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=supervisor-01&status=open&severity=high&sourceResultType=forecast_schedule",
+      evidence: [
+        "业务日 2026-05-11",
+        "来源 预测排班 #12",
+        "证据 EVD-QUERY-001 · note · supervisor-01",
+        "结论 CON-QUERY-001 · high · ops-lead-01",
+      ],
+    }
+  );
+
+  assert.deepEqual(
+    summarizeImportReviewCaseDetail({
+      detail: null,
+      error: "复核案例 API 返回 404",
+    }),
+    {
+      tone: "blocked",
+      title: "复核案例读取失败",
+      sourceLabel: "来源不可用",
+      ownerLabel: "owner 不可用",
+      evidenceLabel: "证据不可用",
+      qualityFocus: "质量问题不可用",
+      evidenceGap: "复核案例 API 返回 404",
+      nextAction: "先恢复复核案例读取，再查看来源结果和证据缺口。",
+      detailHref: "/data-quality/review-cases",
+      listHref: "/data-quality/review-cases",
+      evidence: ["读取失败"],
+    }
   );
 });
 

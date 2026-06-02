@@ -3223,3 +3223,26 @@ dependencies:
   - "US673"
 status: "done"
 ```
+
+### US675 - 复核案例详情页
+
+```yaml
+id: US675
+requirement_ids:
+  - R755
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望从复核案例工作台进入单个复核案例详情页，以便只读查看来源结果、质量问题、证据缺口和下一步建议，而不是在列表页里塞满所有处理信息。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增 `/data-quality/review-cases/[caseId]` 二级详情页，展示单个复核案例详情。"
+  - "复核案例工作台列表提供进入详情页的只读入口。"
+  - "详情页展示案例摘要、来源结果线索、质量问题焦点、证据缺口和建议下一步。"
+  - "页面只读展示，不提供提交、补证据、关闭、审批、导出或批量操作。"
+  - "不新增依赖，不修改 package/lockfile，不做后端、schema/migration、真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US674"
+status: "done"
+```

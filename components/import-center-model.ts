@@ -323,6 +323,58 @@ export type ImportReviewCaseRecord = {
   created_at: string
 }
 
+export type ImportReviewEvidenceRecord = {
+  evidence_id: string
+  case_id: string
+  evidence_type: string
+  evidence_uri: string
+  submitted_by: string
+  submitted_at: string
+  note: string | null
+}
+
+export type ImportReviewConclusionRecord = {
+  conclusion_id: string
+  case_id: string
+  conclusion_type: string
+  risk_level: string
+  conclusion_text: string
+  decided_by: string
+  decided_at: string
+}
+
+export type ImportReviewClosureRecord = {
+  closure_id: string
+  case_id: string
+  closure_status: string
+  closed_by: string
+  closed_at: string
+  closure_note: string | null
+}
+
+export type ImportReviewCaseDetailResponse = {
+  case: ImportReviewCaseRecord
+  evidence: ImportReviewEvidenceRecord[]
+  conclusions: ImportReviewConclusionRecord[]
+  closure: ImportReviewClosureRecord | null
+}
+
+export type ImportReviewCaseDetailTone = "blocked" | "warning" | "ready" | "empty"
+
+export type ImportReviewCaseDetailSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  sourceLabel: string
+  ownerLabel: string
+  evidenceLabel: string
+  qualityFocus: string
+  evidenceGap: string
+  nextAction: string
+  detailHref: string
+  listHref: string
+  evidence: string[]
+}
+
 export type ImportReviewCasesWorkspaceFilters = {
   businessDate?: string | null
   ownerId?: string | null
@@ -690,6 +742,16 @@ export function buildImportReviewCasesApiUrl(
   return buildImportApiUrl(`/api/v1/review-cases${query ? `?${query}` : ""}`, apiBase)
 }
 
+export function buildImportReviewCaseDetailApiUrl(
+  caseId: string,
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl(
+    `/api/v1/review-cases/${encodeURIComponent(caseId)}`,
+    apiBase
+  )
+}
+
 export function buildImportReviewCasesWorkspaceHref(
   filters: ImportReviewCasesWorkspaceFilters
 ): string {
@@ -710,6 +772,10 @@ export function buildImportReviewCasesWorkspaceHref(
   const serialized = searchParams.toString()
 
   return `/data-quality/review-cases${serialized ? `?${serialized}` : ""}`
+}
+
+export function buildImportReviewCaseDetailWorkspaceHref(caseId: string): string {
+  return `/data-quality/review-cases/${encodeURIComponent(caseId)}`
 }
 
 export function buildImportQualityIssueReviewCasesHref({
@@ -957,6 +1023,91 @@ export function summarizeImportReviewCasesWorkspace({
       topOwner && topOwner.openCount > 0
         ? `先处理 ${topOwner.ownerId} 名下 ${topOwner.openCount.toLocaleString("zh-CN")} 个未关闭复核案例，再回看高风险来源和证据缺口。`
         : "当前筛选结果没有未关闭复核案例，可继续回看已关闭案例的来源和证据完整性。",
+  }
+}
+
+export function summarizeImportReviewCaseDetail({
+  detail,
+  error,
+}: {
+  detail: ImportReviewCaseDetailResponse | null
+  error: string | null
+}): ImportReviewCaseDetailSummary {
+  if (error) {
+    return {
+      tone: "blocked",
+      title: "复核案例读取失败",
+      sourceLabel: "来源不可用",
+      ownerLabel: "owner 不可用",
+      evidenceLabel: "证据不可用",
+      qualityFocus: "质量问题不可用",
+      evidenceGap: error,
+      nextAction: "先恢复复核案例读取，再查看来源结果和证据缺口。",
+      detailHref: "/data-quality/review-cases",
+      listHref: "/data-quality/review-cases",
+      evidence: ["读取失败"],
+    }
+  }
+
+  if (!detail) {
+    return {
+      tone: "empty",
+      title: "等待复核案例",
+      sourceLabel: "来源未选择",
+      ownerLabel: "owner 未选择",
+      evidenceLabel: "证据未选择",
+      qualityFocus: "等待案例详情",
+      evidenceGap: "还没有可展示的复核案例详情。",
+      nextAction: "先从复核案例工作台选择一个案例。",
+      detailHref: "/data-quality/review-cases",
+      listHref: "/data-quality/review-cases",
+      evidence: ["等待案例"],
+    }
+  }
+
+  const reviewCase = detail.case
+  const isClosed = reviewCase.status === "closed" || detail.closure !== null
+  const evidenceCount = detail.evidence.length
+  const conclusionCount = detail.conclusions.length
+  const sourceLabel = formatReviewCaseDetailSource(reviewCase)
+  const listHref = buildImportReviewCasesWorkspaceHref({
+    businessDate: reviewCase.business_date,
+    ownerId: reviewCase.owner_id,
+    status: reviewCase.status,
+    severity: reviewCase.severity,
+    sourceResultType: reviewCase.source_result_type,
+  })
+
+  return {
+    tone: isClosed
+      ? "ready"
+      : isHighRiskReviewSeverity(reviewCase.severity)
+        ? "blocked"
+        : "warning",
+    title: `${reviewCase.case_id} · ${formatReviewCaseSeverity(reviewCase.severity)} · ${formatReviewCaseStatus(reviewCase.status)}`,
+    sourceLabel,
+    ownerLabel: reviewCase.owner_id,
+    evidenceLabel: `证据 ${evidenceCount.toLocaleString("zh-CN")} 条 · 结论 ${conclusionCount.toLocaleString("zh-CN")} 条 · ${isClosed ? "已关闭" : "未关闭"}`,
+    qualityFocus: formatReviewCaseQualityFocus(reviewCase),
+    evidenceGap: formatReviewCaseDetailEvidenceGap(reviewCase, isClosed),
+    nextAction: formatReviewCaseDetailNextAction({
+      reviewCase,
+      evidenceCount,
+      conclusionCount,
+      isClosed,
+    }),
+    detailHref: buildImportReviewCaseDetailApiUrl(reviewCase.case_id),
+    listHref,
+    evidence: [
+      `业务日 ${reviewCase.business_date}`,
+      `来源 ${sourceLabel}`,
+      detail.evidence[0]
+        ? `证据 ${detail.evidence[0].evidence_id} · ${detail.evidence[0].evidence_type} · ${detail.evidence[0].submitted_by}`
+        : "证据 0 条",
+      detail.conclusions[0]
+        ? `结论 ${detail.conclusions[0].conclusion_id} · ${detail.conclusions[0].risk_level} · ${detail.conclusions[0].decided_by}`
+        : "结论 0 条",
+    ],
   }
 }
 
@@ -2823,6 +2974,51 @@ function buildReviewCasesWorkspaceDetail(
   ]
     .filter(Boolean)
     .join(" · ")
+}
+
+function formatReviewCaseDetailSource(reviewCase: ImportReviewCaseRecord): string {
+  return `${formatReviewCaseSourceType(reviewCase.source_result_type)} #${reviewCase.source_result_id}`
+}
+
+function formatReviewCaseQualityFocus(reviewCase: ImportReviewCaseRecord): string {
+  if (reviewCase.source_result_type === "schedule_actual") {
+    return "登录/状态明细、排班版本和质量修正记录。"
+  }
+
+  return "预测版本、排班版本和质量修正记录。"
+}
+
+function formatReviewCaseDetailEvidenceGap(
+  reviewCase: ImportReviewCaseRecord,
+  isClosed: boolean
+): string {
+  if (isClosed) {
+    return "案例已关闭，当前只回看关闭依据和证据完整性。"
+  }
+
+  if (reviewCase.source_result_type === "schedule_actual") {
+    return "仍需确认登录/状态明细、排班版本引用和质量修正记录。"
+  }
+
+  return "仍需确认预测版本、排班版本引用和质量修正记录。"
+}
+
+function formatReviewCaseDetailNextAction({
+  reviewCase,
+  evidenceCount,
+  conclusionCount,
+  isClosed,
+}: {
+  reviewCase: ImportReviewCaseRecord
+  evidenceCount: number
+  conclusionCount: number
+  isClosed: boolean
+}): string {
+  if (isClosed) {
+    return "回看关闭依据，不在本页重新打开或修改结论。"
+  }
+
+  return `owner ${reviewCase.owner_id} 先复核 ${evidenceCount.toLocaleString("zh-CN")} 条证据和 ${conclusionCount.toLocaleString("zh-CN")} 条结论，再进入受控关闭流程。`
 }
 
 function isQualityIssueFocusQuery(query: string): boolean {

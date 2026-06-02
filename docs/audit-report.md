@@ -2598,3 +2598,30 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
+### 2026-06-02 - IM055 复核案例二级详情页
+
+#### 审计结论
+
+- `IM055/US675` 已新增 `/data-quality/review-cases/[caseId]` 只读复核案例详情页。
+- 复核案例工作台列表中的详情入口从后端 API 链接改为前端二级详情页，避免把单个案例处理信息继续堆在列表页。
+- 详情页展示案例摘要、来源结果、owner、证据状态、质量焦点、证据缺口、下一步建议、证据记录、结论记录和只读处理边界。
+- 本轮未新增依赖，未修改 package/lockfile，未触碰后端、schema/migration、真实外部接口、证据补录、复核关闭写入、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是二级详情查看页，不是复核关闭、证据补录、异常处理写入或审批流。
+- 当前运行中的本地后端复核案例列表为空，因此浏览器 smoke 覆盖的是二级路由和只读 API 404 错误态；正常详情态由模型测试覆盖，后续若要演示正常态，需要先准备当前本地后端的复核案例数据。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 因缺少 `buildImportReviewCaseDetailApiUrl` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，41 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `/Users/mac/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node node_modules/next/dist/bin/next build --webpack`：通过，产物包含 `/data-quality/review-cases/[caseId]` 动态路由；默认 Codex App 签名 Node 会触发 macOS native addon Team ID 校验，验证使用工作区备用 Node 运行时。
+- page smoke：生产服务 `http://127.0.0.1:3021/data-quality/review-cases/CASE-QUERY-001` 命中 `复核案例详情`、`返回复核案例`、`证据缺口`、`处理边界` 和详情 API 地址；当前后端 `CASE-QUERY-001` 返回 404，所以页面展示只读错误态。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。

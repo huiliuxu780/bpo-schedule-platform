@@ -1756,3 +1756,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM055 Import Center Review Case Detail Page
+
+- branch_name: `codex/import-center-api-vertical`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/import-center-api-vertical exists; local branch was ahead 2 before IM055 because IM053 and IM054 are locally committed and not pushed.`
+- scope: read-only `/data-quality/review-cases/[caseId]` second-level detail page, review-case workspace list-to-detail link, model helper/test coverage, and traceability records.
+- allowed_files_check: `app/data-quality/review-cases/[caseId]/page.tsx`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-cases-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/review-cases/[caseId]/page.tsx`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-cases-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files. `.local/` remains untracked and untouched.
+- check_result: TDD red test failed first because `buildImportReviewCaseDetailApiUrl` was not exported; target model test passed with 41 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with documented baseline only; production build passed with the workspace bundled Node runtime and included `/data-quality/review-cases/[caseId]`; production smoke passed on `/data-quality/review-cases/CASE-QUERY-001` for `复核案例详情`, `返回复核案例`, `证据缺口`, and `处理边界`, with current backend data returning API 404 read-only error state; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 160 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -1,9 +1,9 @@
 import Link from "next/link"
 import {
   ArrowLeft,
+  ArrowRight,
   CircleSlash,
   ClipboardList,
-  ExternalLink,
   Filter,
   RotateCcw,
   UserRound,
@@ -12,7 +12,7 @@ import {
 import {
   type ImportReviewCaseRecord,
   type ImportReviewCasesWorkspaceFilters,
-  buildImportApiUrl,
+  buildImportReviewCaseDetailWorkspaceHref,
   filterImportReviewCases,
   summarizeImportReviewCasesWorkspace,
 } from "@/components/import-center-model"
@@ -412,13 +412,9 @@ function ReviewCaseTable({
                       {formatNextAction(reviewCase)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button asChild size="icon-sm" variant="ghost" aria-label="查看复核 API">
-                        <Link
-                          href={buildImportApiUrl(
-                            `/api/v1/review-cases/${encodeURIComponent(reviewCase.case_id)}`
-                          )}
-                        >
-                          <ExternalLink />
+                      <Button asChild size="icon-sm" variant="ghost" aria-label="查看复核详情">
+                        <Link href={buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id)}>
+                          <ArrowRight />
                         </Link>
                       </Button>
                     </TableCell>

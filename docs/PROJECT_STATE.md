@@ -199,6 +199,7 @@ Current invariants:
 - `IM052/US672` added read-only review evidence gap drilldown in `/data-quality/[batchId]`, ranking open review cases by risk and showing owner, evidence needs, quality issue context, comparison context, and next action, then returned current queue and active tasks to empty.
 - `IM053/US673` split review-case viewing into `/data-quality/review-cases`, with read-only filters, summary cards, grouping, case table, and detail-page links into the second-level workspace, then returned current queue and active tasks to empty.
 - `IM054/US674` linked quality-impact issue groups to `/data-quality/review-cases` with business date, open status, source type, and quality-focus keyword context, while keeping review handling read-only and returning current queue and active tasks to empty.
+- `IM055/US675` added `/data-quality/review-cases/[caseId]` as a read-only second-level review-case detail page, with list-to-detail navigation, case summary, source line, quality focus, evidence gap, evidence/conclusion records, and processing-boundary guidance, then returned current queue and active tasks to empty.
 
 ## Product Direction
 
