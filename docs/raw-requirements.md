@@ -1768,3 +1768,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读详情页和复核案例列表入口；详情页展示摘要、来源、质量焦点、证据缺口、证据/结论记录和只读处理边界；不新增证据补录、复核关闭写入，不做后端、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。"
 ```
+
+### R756 - 复核案例详情正常态数据准备
+
+```yaml
+id: R756
+module: "导入中心"
+description: "复核案例详情页已经拆成二级页，但当前本地数据库没有复核案例记录，页面只能展示 API 404 错误态。需要一个受控的本地 smoke 数据准备能力，复用现有 DB007/DB008 repository 和 schema 生成一条可查看的 CASE-QUERY-001，便于验收真实读取链路。"
+source: "After IM055 page smoke found current backend has no review case data and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成本地 smoke 数据准备 helper 和测试；`seed_review_case_demo()` 可生成 `CASE-QUERY-001`、来源对比结果、证据和结论，重复执行返回已存在案例；不新增 schema/migration，不新增依赖，不接真实外部接口，不做权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

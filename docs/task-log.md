@@ -1532,3 +1532,14 @@
 - action: 增加复核案例只读二级详情页。
 - status: `done`
 - notes: 新增 `/data-quality/review-cases/[caseId]`，复核案例工作台列表可进入单个案例详情；详情页展示案例摘要、来源结果、质量焦点、证据缺口、证据/结论记录和只读处理边界；本轮不新增证据补录、复核关闭写入、审批、导出、批量、权限、后端、schema/migration、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM056`
+- source_ids:
+  - `R756`
+- story_ids:
+  - `US676`
+- action: 增加复核案例详情正常态本地数据准备。
+- status: `done`
+- notes: 新增 `seed_review_case_demo()`，可在本地 sqlite 库中复用现有 DB007/DB008 repository 和 schema 生成 `CASE-QUERY-001`、来源对比结果、证据和结论，重复执行返回已存在案例；本轮不新增 schema/migration、依赖、真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

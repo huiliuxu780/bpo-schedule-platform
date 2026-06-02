@@ -1773,3 +1773,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM056 Import Center Review Demo Seed
+
+- branch_name: `codex/im056-review-demo-seed`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/main is ancestor of current branch; current branch is based on pushed import-center vertical HEAD.`
+- scope: local review-case smoke data preparation for `CASE-QUERY-001`, target backend test coverage, current/registry state updates, and traceability records.
+- allowed_files_check: `backend/app/review_demo_seed.py`, `backend/tests/test_review_demo_seed.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, app route, component, real integration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files.
+- scope_diff_check: `backend/app/review_demo_seed.py`, `backend/tests/test_review_demo_seed.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, app route, component, real integration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files. `.local/` remains untracked and untouched.
+- check_result: TDD red test failed first because `backend.app.review_demo_seed` did not exist; target backend unittest passed with 2 tests; local seed command generated `CASE-QUERY-001`; browser smoke passed on `/data-quality/review-cases/CASE-QUERY-001` for `CASE-QUERY-001 · 高 · 未关闭`, `证据 1 条 · 结论 1 条 · 未关闭`, `预测排班 #1`, and `证据 EVD-QUERY-001 · note · supervisor-01`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

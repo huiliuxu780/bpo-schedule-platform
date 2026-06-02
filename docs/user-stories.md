@@ -3246,3 +3246,26 @@ dependencies:
   - "US674"
 status: "done"
 ```
+
+### US676 - 复核案例详情正常态数据准备
+
+```yaml
+id: US676
+requirement_ids:
+  - R756
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望复核案例详情页能通过本地准备数据展示真实正常态，以便验收从复核列表到单案详情的 DB008 读取链路，而不是只能看到 404 错误态。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "新增本地复核案例 smoke 数据准备 helper，可在空本地 sqlite 库中生成 `CASE-QUERY-001`。"
+  - "生成的数据复用现有 DB007/DB008 repository、模型和 schema，不新增 migration/schema。"
+  - "重复执行数据准备时返回已存在案例，不重复写入证据、结论或关闭记录。"
+  - "准备后的 `/api/v1/review-cases/CASE-QUERY-001` 和 `/data-quality/review-cases/CASE-QUERY-001` 能展示正常详情态。"
+  - "不新增依赖，不修改 package/lockfile，不接真实外部接口，不做权限、审批、导出、批量、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、目标 backend unittest、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US675"
+status: "done"
+```

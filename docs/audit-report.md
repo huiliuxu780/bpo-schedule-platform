@@ -2625,3 +2625,27 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 160 个后端 unittest。
+
+### 2026-06-02 - IM056 复核案例详情正常态数据准备
+
+#### 审计结论
+
+- `IM056/US676` 已新增 `backend.app.review_demo_seed.seed_review_case_demo()`。
+- helper 复用现有 DB007/DB008 repository 和模型，在本地 sqlite 库中生成 `CASE-QUERY-001`、来源 forecast-vs-schedule 对比结果、证据和结论。
+- helper 幂等：如果 `CASE-QUERY-001` 已存在，直接返回已有 `ReviewCaseDetail`，不重复写入证据、结论或关闭记录。
+- 本轮未新增依赖，未修改 package/lockfile，未新增 schema/migration，未新增生产 API，未触碰真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是本地 smoke 数据准备能力，不是生产复核处理流程、证据上传入口、审批流或批量初始化功能。
+- helper 使用固定 demo ID，仅用于本地验收 `CASE-QUERY-001` 正常态；未来生产数据生成仍应通过受控导入、对比计算和复核写入链路。
+
+#### 验证
+
+- TDD 红灯：`.venv/bin/python -m unittest backend.tests.test_review_demo_seed -v` 因缺少 `backend.app.review_demo_seed` 失败。
+- `.venv/bin/python -m unittest backend.tests.test_review_demo_seed -v`：通过，2 个测试覆盖创建和幂等。
+- `.venv/bin/python -m backend.app.review_demo_seed`：通过，在当前本地 `.local` 数据库生成 `CASE-QUERY-001`。
+- page smoke：生产服务 `http://127.0.0.1:3021/data-quality/review-cases/CASE-QUERY-001` 命中 `CASE-QUERY-001 · 高 · 未关闭`、`证据 1 条 · 结论 1 条 · 未关闭`、`预测排班 #1` 和 `证据 EVD-QUERY-001 · note · supervisor-01`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 backend unittest。

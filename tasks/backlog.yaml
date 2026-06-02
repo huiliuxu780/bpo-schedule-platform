@@ -6040,3 +6040,45 @@ tasks:
       - "范围扩展到证据补录、复核写入、关闭、审批、导出、权限、批量、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM056
+    title: "复核案例详情正常态数据准备"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM055"]
+    allowed_files:
+      - "backend/app/review_demo_seed.py"
+      - "backend/tests/test_review_demo_seed.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "app/**"
+      - "components/**"
+    acceptance:
+      - "新增本地复核案例 smoke 数据准备 helper，可在空本地 sqlite 库中生成 `CASE-QUERY-001`。"
+      - "生成的数据复用现有 DB007/DB008 repository、模型和 schema，不新增 migration/schema。"
+      - "重复执行数据准备时返回已存在案例，不重复写入证据、结论或关闭记录。"
+      - "准备后的 `/api/v1/review-cases/CASE-QUERY-001` 和 `/data-quality/review-cases/CASE-QUERY-001` 能展示正常详情态。"
+      - "不新增依赖，不修改 package/lockfile，不接真实外部接口，不做权限、审批、导出、批量、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、目标 backend unittest、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema、migration 或数据库结构变更"
+      - "范围扩展到真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
