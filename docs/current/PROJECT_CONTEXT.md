@@ -12,6 +12,8 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 Current story queue is empty and active tasks are empty.
 
+`US687/IM067` completed the read-only review-case owner-stage workload matrix on the second-level review-case workspace, then current queue returned to empty.
+
 `US686/IM066` completed read-only review-case processing-stage filters on the second-level review-case workspace, then current queue returned to empty.
 
 `US685/IM065` completed the read-only review-case processing timeline on the second-level review-case detail page, then current queue returned to empty.

@@ -1912,3 +1912,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读处理阶段筛选；复核案例工作台新增 processingStage 参数和处理阶段筛选，阶段由现有 review-case detail API 的 evidence、conclusions 和 closure 记录派生，列表展示阶段、材料计数和阶段分组；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R767 - 复核 Owner 阶段负载矩阵
+
+```yaml
+id: R767
+module: "导入中心"
+description: "复核案例工作台已经能按处理阶段筛选案例，但主管仍无法快速判断不同 owner 手上分别有多少缺证据、缺结论、可关闭或已关闭案例。需要新增只读 owner × 处理阶段负载矩阵，并支持从矩阵进入对应过滤列表。"
+source: "After IM066 processing-stage filters and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读 owner 阶段负载矩阵；复核案例工作台按 owner 聚合缺证据、缺结论、可关闭、已关闭和阶段未知数量，并提供 ownerId + processingStage 过滤入口；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

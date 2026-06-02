@@ -498,6 +498,36 @@ export type ImportReviewCaseProcessingStageSummary = {
   evidenceLabel: string
 }
 
+export type ImportReviewOwnerStageMatrixStageKey = Exclude<
+  ImportReviewCaseProcessingStageKey,
+  "all"
+>
+
+export type ImportReviewOwnerStageMatrixColumn = {
+  key: ImportReviewOwnerStageMatrixStageKey
+  label: string
+}
+
+export type ImportReviewOwnerStageMatrixCell = ImportReviewOwnerStageMatrixColumn & {
+  count: number
+  href: string | null
+}
+
+export type ImportReviewOwnerStageMatrixRow = {
+  ownerId: string
+  totalCount: number
+  actionableCount: number
+  cells: ImportReviewOwnerStageMatrixCell[]
+}
+
+export type ImportReviewOwnerStageMatrixSummary = {
+  columns: ImportReviewOwnerStageMatrixColumn[]
+  rows: ImportReviewOwnerStageMatrixRow[]
+  totalOwners: number
+  totalCases: number
+  actionableCount: number
+}
+
 export type ImportReviewCaseDetailSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -1403,6 +1433,90 @@ export function summarizeImportReviewCaseProcessingStage(
     label: "可关闭",
     nextAction: "证据和结论已齐，进入受控关闭入口。",
     evidenceLabel,
+  }
+}
+
+export function summarizeImportReviewOwnerStageMatrix({
+  cases,
+  processingStages = {},
+  baseFilters = {},
+}: {
+  cases: ImportReviewCaseRecord[]
+  processingStages?: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
+  baseFilters?: ImportReviewCasesWorkspaceFilters
+}): ImportReviewOwnerStageMatrixSummary {
+  const scopedCases = filterImportReviewCases(
+    cases,
+    {
+      businessDate: baseFilters.businessDate,
+      severity: baseFilters.severity,
+      sourceResultType: baseFilters.sourceResultType,
+    },
+    processingStages
+  )
+  const rowsByOwner = new Map<string, ImportReviewOwnerStageMatrixRow>()
+
+  for (const reviewCase of scopedCases) {
+    const stage = summarizeImportReviewCaseProcessingStage(
+      reviewCase,
+      processingStages[reviewCase.case_id]
+    )
+    const row = rowsByOwner.get(reviewCase.owner_id) ?? {
+      ownerId: reviewCase.owner_id,
+      totalCount: 0,
+      actionableCount: 0,
+      cells: IMPORT_REVIEW_OWNER_STAGE_MATRIX_COLUMNS.map((column) => ({
+        ...column,
+        count: 0,
+        href: null,
+      })),
+    }
+    const cell = row.cells.find((candidate) => candidate.key === stage.key)
+
+    row.totalCount += 1
+
+    if (stage.key !== "closed") {
+      row.actionableCount += 1
+    }
+
+    if (cell) {
+      cell.count += 1
+    }
+
+    rowsByOwner.set(reviewCase.owner_id, row)
+  }
+
+  const rows = [...rowsByOwner.values()]
+    .map((row) => ({
+      ...row,
+      cells: row.cells.map((cell) => ({
+        ...cell,
+        href:
+          cell.count > 0
+            ? buildImportReviewCasesWorkspaceHref({
+                businessDate: baseFilters.businessDate,
+                ownerId: row.ownerId,
+                severity: baseFilters.severity,
+                sourceResultType: baseFilters.sourceResultType,
+                processingStage: cell.key,
+                query: baseFilters.query,
+              })
+            : null,
+      })),
+    }))
+    .sort(
+      (a, b) =>
+        b.actionableCount - a.actionableCount ||
+        b.totalCount - a.totalCount ||
+        a.ownerId.localeCompare(b.ownerId)
+    )
+
+  return {
+    columns: IMPORT_REVIEW_OWNER_STAGE_MATRIX_COLUMNS,
+    rows,
+    totalOwners: rows.length,
+    totalCases: rows.reduce((total, row) => total + row.totalCount, 0),
+    actionableCount: rows.reduce((total, row) => total + row.actionableCount, 0),
   }
 }
 
@@ -4329,6 +4443,14 @@ function buildReviewCaseProcessingStageGroups(
     (a, b) => b.openCount - a.openCount || b.count - a.count || a.label.localeCompare(b.label)
   )
 }
+
+const IMPORT_REVIEW_OWNER_STAGE_MATRIX_COLUMNS: ImportReviewOwnerStageMatrixColumn[] = [
+  { key: "missing_evidence", label: "缺证据" },
+  { key: "missing_conclusion", label: "缺结论" },
+  { key: "ready_to_close", label: "可关闭" },
+  { key: "closed", label: "已关闭" },
+  { key: "unknown", label: "阶段未知" },
+]
 
 function buildReviewCaseGroups<K extends keyof ImportReviewCaseRecord>(
   cases: ImportReviewCaseRecord[],

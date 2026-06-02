@@ -1653,3 +1653,14 @@
 - action: 增加复核案例工作台只读处理阶段筛选。
 - status: `done`
 - notes: `/data-quality/review-cases` 新增处理阶段筛选和阶段列，支持缺证据、缺结论、可关闭、已关闭和阶段未知；阶段由现有详情 API 的 evidence、conclusions 和 closure 记录派生；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM067`
+- source_ids:
+  - `R767`
+- story_ids:
+  - `US687`
+- action: 增加复核案例工作台只读 Owner 阶段负载矩阵。
+- status: `done`
+- notes: `/data-quality/review-cases` 新增 `Owner 阶段负载` 矩阵，按 owner 聚合缺证据、缺结论、可关闭、已关闭和阶段未知案例数；非零单元格进入对应 `ownerId + processingStage` 过滤列表；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

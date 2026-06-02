@@ -2925,3 +2925,28 @@
 - `npm run typecheck`：通过。
 - in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases?processingStage=closed` 命中 `处理阶段`、`已关闭`、`复核案例列表`、`阶段` 和 `CASE-QUERY-001`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-02 - IM067 复核 Owner 阶段负载矩阵
+
+#### 审计结论
+
+- `IM067/US687` 已在 `/data-quality/review-cases` 增加只读 `Owner 阶段负载` 矩阵。
+- 矩阵按 owner 聚合缺证据、缺结论、可关闭、已关闭和阶段未知案例数，并展示待处理数量。
+- 非零单元格使用现有列表路由进入对应 `ownerId + processingStage` 过滤结果，不新增后端 API。
+- 本轮未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、写入动作、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前矩阵仍基于列表数据和逐详情派生的阶段快照，适合本地 MVP；生产大规模 owner 阶段统计需要后续后端聚合查询任务。
+- 矩阵只用于定位工作量，不代表审批队列、批量分派或权限隔离。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先因缺少 `summarizeImportReviewOwnerStageMatrix` export 失败。
+- `node scripts/tests/import-center-model.test.mjs`：通过，50 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node --test scripts/tests/check-shadcn-ui.test.mjs` 和 `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases` 命中 `Owner 阶段负载`、`缺证据`、`缺结论`、`可关闭`、`已关闭`、`阶段未知` 和 `复核案例列表`。
+- in-app browser href smoke：页面存在 `/data-quality/review-cases?ownerId=supervisor-01&processingStage=missing_conclusion`、`ready_to_close` 和 `closed` 链接。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

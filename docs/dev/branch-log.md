@@ -1960,3 +1960,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM067 Import Center Review Owner Stage Matrix
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM060 after push; local branch has IM061 through IM067 changes not pushed yet.`
+- scope: read-only owner × processing-stage workload matrix on `/data-quality/review-cases`, model helper/test coverage, shadcn-composed matrix component, and traceability records.
+- allowed_files_check: `components/import-center-model.ts`, `components/import-center-review-cases-workspace.tsx`, `components/import-center-review-owner-stage-matrix.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, write action, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `components/import-center-model.ts`, `components/import-center-review-cases-workspace.tsx`, `components/import-center-review-owner-stage-matrix.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, write action, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` remains untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `summarizeImportReviewOwnerStageMatrix` was not exported; target model test passed with 50 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; in-app browser smoke on 3026 rendered `Owner 阶段负载`, `缺证据`, `缺结论`, `可关闭`, `已关闭`, `阶段未知`, and `复核案例列表`; href smoke found owner/stage links for `missing_conclusion`, `ready_to_close`, and `closed`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -3502,3 +3502,26 @@ dependencies:
   - "US685"
 status: "done"
 ```
+
+### US687 - 复核 Owner 阶段负载矩阵
+
+```yaml
+id: US687
+requirement_ids:
+  - R767
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望在复核案例工作台按 owner 和处理阶段看到负载矩阵，以便快速判断谁手上还有缺证据、缺结论、可关闭或已关闭案例。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases` 展示 owner × 处理阶段负载矩阵。"
+  - "矩阵列包含缺证据、缺结论、可关闭、已关闭和阶段未知。"
+  - "每个非零单元格跳转到对应 `ownerId + processingStage` 的列表过滤结果。"
+  - "矩阵基于现有复核案例列表和详情阶段快照派生，不新增后端 API 或 schema。"
+  - "页面保持只读，不新增写入、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US686"
+status: "done"
+```

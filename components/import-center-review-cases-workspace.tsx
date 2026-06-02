@@ -18,6 +18,7 @@ import {
   summarizeImportReviewCaseProcessingStage,
   summarizeImportReviewCasesWorkspace,
 } from "@/components/import-center-model"
+import { ImportCenterReviewOwnerStageMatrix } from "@/components/import-center-review-owner-stage-matrix"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -56,6 +57,11 @@ export function ImportCenterReviewCasesWorkspace({
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <ReviewCasesHeader filters={filters} summary={summary} />
       <ReviewCaseSummaryCards summary={summary} />
+      <ImportCenterReviewOwnerStageMatrix
+        cases={cases}
+        filters={filters}
+        processingStages={processingStages}
+      />
       <ReviewCaseFilterCard filters={filters} />
 
       <section className="grid gap-4 xl:grid-cols-[360px_minmax(0,1fr)]">

@@ -6541,3 +6541,48 @@ tasks:
       - "范围扩展到写入动作、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM067
+    title: "复核 Owner 阶段负载矩阵"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM066"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "components/import-center-review-cases-workspace.tsx"
+      - "components/import-center-review-owner-stage-matrix.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "app/**"
+    acceptance:
+      - "`/data-quality/review-cases` 展示 owner × 处理阶段负载矩阵。"
+      - "矩阵列包含缺证据、缺结论、可关闭、已关闭和阶段未知。"
+      - "每个非零单元格跳转到对应 `ownerId + processingStage` 的列表过滤结果。"
+      - "矩阵基于现有复核案例列表和详情阶段快照派生，不新增后端 API 或 schema。"
+      - "页面保持只读，不新增写入、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到写入动作、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
