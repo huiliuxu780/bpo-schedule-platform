@@ -1565,3 +1565,14 @@
 - action: 增加复核案例详情的只读来源链路反查。
 - status: `done`
 - notes: `/api/v1/review-cases/{case_id}` 现在返回 `source_trace`，详情页新增“来源链路”区块，展示计算运行、业务版本、导入版本和导入批次；本轮不新增 schema/migration、依赖、真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM059`
+- source_ids:
+  - `R759`
+- story_ids:
+  - `US679`
+- action: 增加复核案例来源运行的只读前端详情入口。
+- status: `done`
+- notes: 新增 `/data-quality/comparison-runs/[runId]` 二级页，展示对比运行摘要、来源版本、结果明细和处理边界；复核案例来源链路提供“查看运行详情”，批次详情中的对比运行 action 改为前端详情路由；本轮不新增 schema/migration、依赖、真实外部接口、计算触发、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

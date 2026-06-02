@@ -3313,3 +3313,26 @@ dependencies:
   - "US677"
 status: "done"
 ```
+
+### US679 - 复核案例来源运行详情入口
+
+```yaml
+id: US679
+requirement_ids:
+  - R759
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望从复核案例详情页跳转到来源对比运行详情页，以便继续查看该运行的结果列表，而不是打开 API JSON。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 的来源链路区块提供前端运行详情入口。"
+  - "新增 `/data-quality/comparison-runs/[runId]` 二级详情页，只读展示运行摘要和结果列表。"
+  - "批次详情里的对比运行详情入口优先跳前端详情页，而不是 API JSON。"
+  - "页面保持只读，不提供计算触发、提交、关闭、审批、导出或批量操作。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US678"
+status: "done"
+```

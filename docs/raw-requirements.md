@@ -1807,3 +1807,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成只读来源链路上下文；`ReviewCaseDetail` 返回 `source_trace`，详情页展示计算运行、版本和导入批次；不新增 schema/migration，不新增依赖，不接真实外部接口，不做证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R759 - 复核案例来源运行详情入口
+
+```yaml
+id: R759
+module: "导入中心"
+description: "复核案例详情页已经能展示来源运行、版本和导入批次，但运行 ID 仍不能进入可读的前端详情页，只能通过 API JSON 查看。需要从来源链路进入只读对比运行详情页，展示运行摘要和结果列表。"
+source: "After IM058 source trace context and PM agreed to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读运行详情入口；复核案例来源链路可进入 `/data-quality/comparison-runs/[runId]`，运行详情页展示摘要、来源版本、结果明细和处理边界；不新增 schema/migration，不新增依赖，不接真实外部接口，不做计算触发、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

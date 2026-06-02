@@ -80,6 +80,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
           />
           <SourceTraceCard
             run={summary.sourceTraceRun}
+            href={summary.sourceTraceHref}
             versions={summary.sourceTraceVersions}
           />
 
@@ -148,21 +149,33 @@ export function ImportCenterReviewCaseDetailWorkspace({
 
 function SourceTraceCard({
   run,
+  href,
   versions,
 }: {
   run: string
+  href: string
   versions: string[]
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <GitBranch className="size-4 text-muted-foreground" />
-          来源链路
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          只读反查计算运行、版本和导入批次。
-        </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <GitBranch className="size-4 text-muted-foreground" />
+              来源链路
+            </CardTitle>
+            <p className="mt-1 text-sm text-muted-foreground">
+              只读反查计算运行、版本和导入批次。
+            </p>
+          </div>
+          <Button asChild size="sm" variant="outline">
+            <Link href={href}>
+              查看运行详情
+              <ExternalLink data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="grid gap-3">
         <div className="rounded-md border bg-muted/30 p-3 text-sm">

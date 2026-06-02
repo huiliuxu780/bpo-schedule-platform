@@ -5,6 +5,8 @@ import {
   buildImportApiUrl,
   buildImportBatchDetailUrl,
   buildImportBatchProcessingHref,
+  buildImportComparisonRunDetailApiUrl,
+  buildImportComparisonRunDetailWorkspaceHref,
   buildImportComparisonRunsUrl,
   buildImportQualityIssueReviewCasesHref,
   buildImportReviewCaseDetailApiUrl,
@@ -25,6 +27,7 @@ import {
   summarizeImportQualityImpactAggregation,
   summarizeImportReviewConclusionPreview,
   summarizeImportReviewCaseDetail,
+  summarizeImportComparisonRunDetail,
   summarizeImportReviewEvidenceGapDrilldown,
   summarizeImportReviewCasesWorkspace,
   filterImportReviewCases,
@@ -1175,6 +1178,14 @@ test("import center review case detail summarizes read-only case context", () =>
     buildImportReviewCaseDetailApiUrl("CASE-QUERY-001"),
     "http://127.0.0.1:8000/api/v1/review-cases/CASE-QUERY-001"
   );
+  assert.equal(
+    buildImportComparisonRunDetailWorkspaceHref("RUN-DB008-FS"),
+    "/data-quality/comparison-runs/RUN-DB008-FS"
+  );
+  assert.equal(
+    buildImportComparisonRunDetailApiUrl("RUN-DB008-FS"),
+    "http://127.0.0.1:8000/api/v1/comparison-runs/RUN-DB008-FS"
+  );
 
   assert.deepEqual(
     summarizeImportReviewCaseDetail({
@@ -1298,6 +1309,7 @@ test("import center review case detail summarizes read-only case context", () =>
       ownerLabel: "supervisor-01",
       evidenceLabel: "证据 1 条 · 结论 1 条 · 未关闭",
       sourceTraceRun: "计算 RUN-DB008-FS · 预测排班 · completed · 2 条结果",
+      sourceTraceHref: "/data-quality/comparison-runs/RUN-DB008-FS",
       sourceTraceVersions: [
         "预测版本 FC-20260511-V1 · IMPORT-FC-20260511 · BATCH-DB007-20260511",
         "排班版本 SCH-20260511-V1 · IMPORT-SCH-20260511 · BATCH-DB007-20260511",
@@ -1330,6 +1342,7 @@ test("import center review case detail summarizes read-only case context", () =>
       ownerLabel: "owner 不可用",
       evidenceLabel: "证据不可用",
       sourceTraceRun: "来源链路不可用",
+      sourceTraceHref: "/data-quality/review-cases",
       sourceTraceVersions: ["等待 API 恢复"],
       qualityFocus: "质量问题不可用",
       evidenceGap: "复核案例 API 返回 404",
@@ -1337,6 +1350,72 @@ test("import center review case detail summarizes read-only case context", () =>
       detailHref: "/data-quality/review-cases",
       listHref: "/data-quality/review-cases",
       evidence: ["读取失败"],
+    }
+  );
+});
+
+test("import center comparison run detail summarizes result rows", () => {
+  assert.deepEqual(
+    summarizeImportComparisonRunDetail({
+      detail: {
+        run: {
+          run_id: "RUN-DB008-FS",
+          comparison_type: "forecast_vs_schedule",
+          forecast_version_id: "FC-20260511-V1",
+          schedule_version_id: "SCH-20260511-V1",
+          actual_import_version_id: null,
+          business_date_from: "2026-05-11",
+          business_date_to: "2026-05-11",
+          status: "completed",
+          total_results: 2,
+          total_gap_agents: 4,
+          total_late_minutes: null,
+          created_at: "2026-05-11T10:00:00+08:00",
+        },
+        forecast_schedule_results: [
+          {
+            result_id: 12,
+            run_id: "RUN-DB008-FS",
+            forecast_version_id: "FC-20260511-V1",
+            schedule_version_id: "SCH-20260511-V1",
+            forecast_interval_id: "FC-INT-001",
+            schedule_detail_id: "DETAIL-A-1001-20260511",
+            business_date: "2026-05-11",
+            workplace_id: "SH-01",
+            project_id: "BOSCH-CS",
+            skill_id: "L1-CN",
+            interval_start: "09:00",
+            interval_end: "09:30",
+            forecast_agents: 3,
+            scheduled_agents: 1,
+            gap_agents: 2,
+            result_status: "gap",
+          },
+        ],
+        schedule_actual_results: [],
+      },
+      error: null,
+    }),
+    {
+      tone: "ready",
+      title: "RUN-DB008-FS · 预测排班 · 完成",
+      metricCards: [
+        { label: "结果数", value: "2", detail: "计算结果" },
+        { label: "缺口", value: "4 人", detail: "预测排班差异" },
+        { label: "迟到", value: "0 分钟", detail: "排班实际差异" },
+        { label: "业务日", value: "2026-05-11", detail: "至 2026-05-11" },
+      ],
+      versionLabel: "预测 FC-20260511-V1 · 排班 SCH-20260511-V1",
+      apiHref: "http://127.0.0.1:8000/api/v1/comparison-runs/RUN-DB008-FS",
+      resultRows: [
+        {
+          id: "forecast-12",
+          source: "预测排班",
+          dimension: "2026-05-11 · 09:00-09:30 · SH-01 · BOSCH-CS · L1-CN",
+          metric: "预测 3 人 · 排班 1 人 · 缺口 2 人",
+          status: "gap",
+        },
+      ],
     }
   );
 });

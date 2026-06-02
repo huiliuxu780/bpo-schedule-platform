@@ -312,6 +312,63 @@ export type ImportComparisonRunRecord = {
   created_at: string
 }
 
+export type ImportForecastScheduleComparisonResultRecord = {
+  result_id: number
+  run_id: string
+  forecast_version_id: string
+  schedule_version_id: string
+  forecast_interval_id: string | null
+  schedule_detail_id: string | null
+  business_date: string
+  workplace_id: string
+  project_id: string
+  skill_id: string
+  interval_start: string
+  interval_end: string
+  forecast_agents: number
+  scheduled_agents: number
+  gap_agents: number
+  result_status: string
+}
+
+export type ImportScheduleActualComparisonResultRecord = {
+  result_id: number
+  run_id: string
+  schedule_version_id: string
+  actual_import_version_id: string
+  schedule_detail_id: string | null
+  actual_status_interval_row_id: number | null
+  business_date: string
+  employee_id: string
+  interval_start: string
+  interval_end: string
+  scheduled_minutes: number
+  actual_productive_minutes: number
+  late_minutes: number
+  result_status: string
+}
+
+export type ImportComparisonRunDetailResponse = {
+  run: ImportComparisonRunRecord
+  forecast_schedule_results: ImportForecastScheduleComparisonResultRecord[]
+  schedule_actual_results: ImportScheduleActualComparisonResultRecord[]
+}
+
+export type ImportComparisonRunDetailSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  metricCards: Array<{ label: string; value: string; detail: string }>
+  versionLabel: string
+  apiHref: string
+  resultRows: Array<{
+    id: string
+    source: string
+    dimension: string
+    metric: string
+    status: string
+  }>
+}
+
 export type ImportReviewCaseRecord = {
   case_id: string
   source_result_type: "forecast_schedule" | "schedule_actual"
@@ -412,6 +469,7 @@ export type ImportReviewCaseDetailSummary = {
   sourceResultDimensions: string[]
   sourceResultMetrics: string[]
   sourceTraceRun: string
+  sourceTraceHref: string
   sourceTraceVersions: string[]
   ownerLabel: string
   evidenceLabel: string
@@ -764,6 +822,20 @@ export function buildImportComparisonRunsUrl(
   return buildImportApiUrl(`/api/v1/comparison-runs?${searchParams.toString()}`, apiBase)
 }
 
+export function buildImportComparisonRunDetailApiUrl(
+  runId: string,
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl(
+    `/api/v1/comparison-runs/${encodeURIComponent(runId)}`,
+    apiBase
+  )
+}
+
+export function buildImportComparisonRunDetailWorkspaceHref(runId: string): string {
+  return `/data-quality/comparison-runs/${encodeURIComponent(runId)}`
+}
+
 export function buildImportReviewCasesUrl(
   businessDate: string,
   apiBase = getDefaultApiBase()
@@ -1089,6 +1161,7 @@ export function summarizeImportReviewCaseDetail({
       sourceResultDimensions: ["来源不可用"],
       sourceResultMetrics: ["等待 API 恢复"],
       sourceTraceRun: "来源链路不可用",
+      sourceTraceHref: "/data-quality/review-cases",
       sourceTraceVersions: ["等待 API 恢复"],
       ownerLabel: "owner 不可用",
       evidenceLabel: "证据不可用",
@@ -1109,6 +1182,7 @@ export function summarizeImportReviewCaseDetail({
       sourceResultDimensions: ["等待案例"],
       sourceResultMetrics: ["等待来源结果"],
       sourceTraceRun: "等待来源链路",
+      sourceTraceHref: "/data-quality/review-cases",
       sourceTraceVersions: ["等待案例"],
       ownerLabel: "owner 未选择",
       evidenceLabel: "证据未选择",
@@ -1150,6 +1224,7 @@ export function summarizeImportReviewCaseDetail({
     sourceResultDimensions: sourceResultSummary.dimensions,
     sourceResultMetrics: sourceResultSummary.metrics,
     sourceTraceRun: sourceTraceSummary.run,
+    sourceTraceHref: sourceTraceSummary.href,
     sourceTraceVersions: sourceTraceSummary.versions,
     ownerLabel: reviewCase.owner_id,
     evidenceLabel: `证据 ${evidenceCount.toLocaleString("zh-CN")} 条 · 结论 ${conclusionCount.toLocaleString("zh-CN")} 条 · ${isClosed ? "已关闭" : "未关闭"}`,
@@ -3047,10 +3122,11 @@ function formatReviewCaseDetailSource(reviewCase: ImportReviewCaseRecord): strin
 
 function summarizeReviewCaseSourceTrace(
   sourceTrace: ImportReviewCaseSourceTraceRecord | null
-): { run: string; versions: string[] } {
+): { run: string; href: string; versions: string[] } {
   if (!sourceTrace) {
     return {
       run: "等待来源链路",
+      href: "/data-quality/review-cases",
       versions: ["等待计算运行和版本批次"],
     }
   }
@@ -3062,6 +3138,7 @@ function summarizeReviewCaseSourceTrace(
       sourceTrace.run.status,
       `${sourceTrace.run.total_results.toLocaleString("zh-CN")} 条结果`,
     ].join(" · "),
+    href: buildImportComparisonRunDetailWorkspaceHref(sourceTrace.run.run_id),
     versions: sourceTrace.versions.length
       ? sourceTrace.versions.map(formatReviewCaseSourceTraceVersion)
       : ["未返回版本链路"],
@@ -3100,6 +3177,155 @@ function formatComparisonTypeLabel(
   }
 
   return "排班实际"
+}
+
+export function summarizeImportComparisonRunDetail({
+  detail,
+  error,
+}: {
+  detail: ImportComparisonRunDetailResponse | null
+  error: string | null
+}): ImportComparisonRunDetailSummary {
+  if (error) {
+    return emptyComparisonRunDetailSummary({
+      tone: "blocked",
+      title: "对比运行读取失败",
+      businessDate: "不可用",
+      businessDateDetail: error,
+      versionLabel: "版本不可用",
+    })
+  }
+
+  if (!detail) {
+    return emptyComparisonRunDetailSummary({
+      tone: "empty",
+      title: "等待对比运行",
+      businessDate: "未选择",
+      businessDateDetail: "等待运行",
+      versionLabel: "等待版本",
+    })
+  }
+
+  return {
+    tone: detail.run.status === "failed" ? "blocked" : "ready",
+    title: `${detail.run.run_id} · ${formatComparisonTypeLabel(detail.run.comparison_type)} · ${formatComparisonRunStatus(detail.run.status)}`,
+    metricCards: [
+      {
+        label: "结果数",
+        value: detail.run.total_results.toLocaleString("zh-CN"),
+        detail: "计算结果",
+      },
+      {
+        label: "缺口",
+        value: `${(detail.run.total_gap_agents ?? 0).toLocaleString("zh-CN")} 人`,
+        detail: "预测排班差异",
+      },
+      {
+        label: "迟到",
+        value: `${(detail.run.total_late_minutes ?? 0).toLocaleString("zh-CN")} 分钟`,
+        detail: "排班实际差异",
+      },
+      {
+        label: "业务日",
+        value: detail.run.business_date_from,
+        detail: `至 ${detail.run.business_date_to}`,
+      },
+    ],
+    versionLabel: formatComparisonRunVersionLabel(detail.run),
+    apiHref: buildImportComparisonRunDetailApiUrl(detail.run.run_id),
+    resultRows: [
+      ...detail.forecast_schedule_results.map(formatForecastScheduleResultRow),
+      ...detail.schedule_actual_results.map(formatScheduleActualResultRow),
+    ],
+  }
+}
+
+function emptyComparisonRunDetailSummary({
+  tone,
+  title,
+  businessDate,
+  businessDateDetail,
+  versionLabel,
+}: {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  businessDate: string
+  businessDateDetail: string
+  versionLabel: string
+}): ImportComparisonRunDetailSummary {
+  return {
+    tone,
+    title,
+    metricCards: [
+      { label: "结果数", value: "0", detail: "等待运行" },
+      { label: "缺口", value: "0 人", detail: "等待运行" },
+      { label: "迟到", value: "0 分钟", detail: "等待运行" },
+      { label: "业务日", value: businessDate, detail: businessDateDetail },
+    ],
+    versionLabel,
+    apiHref: buildImportApiUrl("/api/v1/comparison-runs"),
+    resultRows: [],
+  }
+}
+
+function formatComparisonRunVersionLabel(run: ImportComparisonRunRecord): string {
+  if (run.comparison_type === "forecast_vs_schedule") {
+    return [
+      run.forecast_version_id ? `预测 ${run.forecast_version_id}` : null,
+      run.schedule_version_id ? `排班 ${run.schedule_version_id}` : null,
+    ]
+      .filter((item): item is string => item !== null)
+      .join(" · ")
+  }
+
+  return [
+    run.schedule_version_id ? `排班 ${run.schedule_version_id}` : null,
+    run.actual_import_version_id ? `实际 ${run.actual_import_version_id}` : null,
+  ]
+    .filter((item): item is string => item !== null)
+    .join(" · ")
+}
+
+function formatForecastScheduleResultRow(
+  result: ImportForecastScheduleComparisonResultRecord
+): ImportComparisonRunDetailSummary["resultRows"][number] {
+  return {
+    id: `forecast-${result.result_id}`,
+    source: "预测排班",
+    dimension: [
+      result.business_date,
+      `${result.interval_start}-${result.interval_end}`,
+      result.workplace_id,
+      result.project_id,
+      result.skill_id,
+    ].join(" · "),
+    metric: [
+      `预测 ${result.forecast_agents.toLocaleString("zh-CN")} 人`,
+      `排班 ${result.scheduled_agents.toLocaleString("zh-CN")} 人`,
+      `缺口 ${result.gap_agents.toLocaleString("zh-CN")} 人`,
+    ].join(" · "),
+    status: result.result_status,
+  }
+}
+
+function formatScheduleActualResultRow(
+  result: ImportScheduleActualComparisonResultRecord
+): ImportComparisonRunDetailSummary["resultRows"][number] {
+  return {
+    id: `actual-${result.result_id}`,
+    source: "排班实际",
+    dimension: [
+      result.business_date,
+      `${result.interval_start}-${result.interval_end}`,
+      result.employee_id,
+    ].join(" · "),
+    metric: [
+      `排班 ${result.scheduled_minutes.toLocaleString("zh-CN")} 分钟`,
+      `有效 ${result.actual_productive_minutes.toLocaleString("zh-CN")} 分钟`,
+      `迟到 ${result.late_minutes.toLocaleString("zh-CN")} 分钟`,
+    ].join(" · "),
+    status: result.result_status,
+  }
 }
 
 function summarizeReviewCaseSourceResult(

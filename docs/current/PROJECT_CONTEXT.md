@@ -10,7 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current queue is empty. No ready or in-progress story is queued in `docs/current/STORY_QUEUE.yaml`.
+Current queue is empty. No ready story is available in `docs/current/STORY_QUEUE.yaml`.
+
+`US679/IM059` completed the read-only comparison-run detail page and frontend links from review-case source trace, then current queue returned to empty.
 
 `US678/IM058` completed read-only review-case source trace context for calculation runs, versions, and related import batches, then current queue returned to empty.
 

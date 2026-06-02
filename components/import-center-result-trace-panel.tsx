@@ -23,6 +23,7 @@ import {
   type ImportResultTrace,
   type ImportReviewCaseRecord,
   buildImportApiUrl,
+  buildImportComparisonRunDetailWorkspaceHref,
   buildImportReviewCasesWorkspaceHref,
   summarizeImportDownstreamResultDrilldown,
   summarizeImportQualityImpactAggregation,
@@ -568,11 +569,7 @@ function ComparisonRunsTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild size="icon-sm" variant="ghost" aria-label="查看对比详情">
-                      <Link
-                        href={buildImportApiUrl(
-                          `/api/v1/comparison-runs/${encodeURIComponent(run.run_id)}`
-                        )}
-                      >
+                      <Link href={buildImportComparisonRunDetailWorkspaceHref(run.run_id)}>
                         <ExternalLink className="size-4" />
                       </Link>
                     </Button>

@@ -2709,3 +2709,31 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 backend unittest。
+
+### 2026-06-02 - IM059 复核案例来源运行详情入口
+
+#### 审计结论
+
+- `IM059/US679` 已新增 `/data-quality/comparison-runs/[runId]` 只读二级详情页。
+- 详情页使用现有 shadcn/ui `Card`、`Table`、`Badge`、`Button` 组合，按单列层级展示运行摘要、来源版本、结果明细和处理边界，不再把来源运行处理继续塞回复核案例长页。
+- `/data-quality/review-cases/[caseId]` 的来源链路区块新增“查看运行详情”，跳转前端运行详情页。
+- 批次详情中的对比运行 action 已改为 `/data-quality/comparison-runs/[runId]` 前端路由，不再优先打开 API JSON。
+- 本轮未新增依赖，未修改 package/lockfile，未新增后端、schema/migration，未触碰真实外部接口、计算触发、证据补录、复核关闭写入、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是只读运行详情查看，不是重新计算、异常处理、证据补录、关闭异常、审批或批量处理。
+- 当前本地 smoke 数据可以验证复核案例到运行详情的前端链路；批次详情中的对比运行链接以代码路径和模型测试覆盖为主，当前 demo 批次未暴露可点击的下游对比运行记录。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 先因缺少 `buildImportComparisonRunDetailApiUrl` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，42 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run typecheck`：通过。
+- `npm run lint`：通过。
+- in-app browser smoke：`http://localhost:3026/data-quality/comparison-runs/RUN-DEMO-FS-20260511` 命中 `对比运行详情`、`运行来源`、`结果明细` 和 `处理边界`，且不是 API JSON；截图保存在 `/private/tmp/im059-comparison-run-detail-smoke.png`。
+- in-app browser smoke：`http://localhost:3026/data-quality/review-cases/CASE-QUERY-001` 的来源链路存在 1 个 `/data-quality/comparison-runs/RUN-DEMO-FS-20260511` 前端链接和 1 个 `查看运行详情` action。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 163 个后端 unittest。
