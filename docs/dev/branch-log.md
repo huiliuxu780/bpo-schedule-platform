@@ -53,6 +53,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM072 Import Center Review Action Submit Feedback
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM060 after push; local branch has IM061 through IM072 changes not pushed yet.`
+- scope: unify review-case detail action submit feedback inside the processing action deck, parse existing evidence/conclusion/closure URL result parameters, add model helper/test coverage, and update traceability records.
+- allowed_files_check: `app/data-quality/review-cases/[caseId]/page.tsx`, `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: detail page search params, review-case action feedback model helper, action deck feedback notice, model tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `summarizeImportReviewCaseActionFeedback` was not exported; target model test passed with 55 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; production build passed; production browser smoke on 3030 rendered feedback for `evidence=success`, `conclusion=failed`, and `closure=success`; final `bash scripts/check.sh` result to be reported after final verification.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM069 Import Center Review Owner Pending Navigation
 
 - branch_name: `codex/im057-review-source-context`

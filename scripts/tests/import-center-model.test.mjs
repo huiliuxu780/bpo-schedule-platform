@@ -32,6 +32,7 @@ import {
   summarizeImportReviewCaseDetail,
   summarizeImportReviewCaseEvidenceChain,
   summarizeImportReviewCaseActionDeck,
+  summarizeImportReviewCaseActionFeedback,
   summarizeImportReviewCaseProcessingTimeline,
   summarizeImportReviewCaseProcessingStage,
   summarizeImportReviewCaseClosureAction,
@@ -2262,6 +2263,62 @@ test("import center review case detail summarizes the processing action deck", (
       error: null,
     }).nextAction,
     "案例已关闭；后续只读追溯处理动作、证据和结论。"
+  );
+});
+
+test("import center review case detail summarizes action submit feedback", () => {
+  assert.deepEqual(
+    summarizeImportReviewCaseActionFeedback({
+      evidence: "success",
+      conclusion: null,
+      closure: null,
+    }),
+    {
+      tone: "ready",
+      title: "补证据提交成功",
+      statusLabel: "已写入",
+      detail: "证据已写入当前复核案例；继续补充结论或复核关闭条件。",
+      actionKey: "evidence",
+    }
+  );
+
+  assert.deepEqual(
+    summarizeImportReviewCaseActionFeedback({
+      evidence: null,
+      conclusion: "failed",
+      closure: null,
+    }),
+    {
+      tone: "blocked",
+      title: "补结论提交失败",
+      statusLabel: "写入失败",
+      detail: "结论未写入；检查本地 API、案例状态和必填字段后重试。",
+      actionKey: "conclusion",
+    }
+  );
+
+  assert.deepEqual(
+    summarizeImportReviewCaseActionFeedback({
+      evidence: null,
+      conclusion: null,
+      closure: "success",
+    }),
+    {
+      tone: "ready",
+      title: "关闭案例提交成功",
+      statusLabel: "已关闭",
+      detail: "关闭记录已写入；后续只读追溯处理动作、证据和结论。",
+      actionKey: "closure",
+    }
+  );
+
+  assert.equal(
+    summarizeImportReviewCaseActionFeedback({
+      evidence: null,
+      conclusion: null,
+      closure: null,
+    }),
+    null
   );
 });
 

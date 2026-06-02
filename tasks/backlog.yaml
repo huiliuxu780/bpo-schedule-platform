@@ -6762,3 +6762,47 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM072
+    title: "复核动作提交反馈统一化"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM071"]
+    allowed_files:
+      - "app/data-quality/review-cases/[caseId]/page.tsx"
+      - "components/import-center-model.ts"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "`/data-quality/review-cases/[caseId]` 读取 `evidence`、`conclusion`、`closure` 提交结果参数。"
+      - "处理动作区顶部展示成功或失败反馈，包含动作名称、结果状态和下一步建议。"
+      - "无提交结果参数时不展示反馈条，不影响原有动作区。"
+      - "反馈只解析现有页面参数和现有写入结果，不新增后端 route、schema 或持久化。"
+      - "不新增依赖，不修改 package/lockfile，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

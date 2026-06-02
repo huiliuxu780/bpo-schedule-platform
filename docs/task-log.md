@@ -1708,3 +1708,14 @@
 - action: 整合复核案例详情页处理动作区。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 新增统一 `处理动作区`，展示当前推荐动作、证据/结论/关闭材料状态，并用 tab 收纳补证据、补结论和关闭案例三个现有受控入口；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM072`
+- source_ids:
+  - `R772`
+- story_ids:
+  - `US692`
+- action: 统一复核动作提交反馈。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 读取现有 `evidence`、`conclusion`、`closure` 提交结果参数，并在 `处理动作区` 顶部展示动作名称、写入结果和下一步建议；无提交结果参数时不展示反馈条；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

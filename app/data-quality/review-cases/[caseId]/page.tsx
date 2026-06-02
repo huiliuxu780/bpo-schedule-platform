@@ -14,6 +14,11 @@ type ReviewCaseDetailPageProps = {
   params: Promise<{
     caseId: string
   }>
+  searchParams: Promise<{
+    evidence?: string | string[]
+    conclusion?: string | string[]
+    closure?: string | string[]
+  }>
 }
 
 type ApiResult<T> = {
@@ -23,8 +28,10 @@ type ApiResult<T> = {
 
 export default async function ReviewCaseDetailPage({
   params,
+  searchParams,
 }: ReviewCaseDetailPageProps) {
   const routeParams = await params
+  const routeSearchParams = await searchParams
   const caseId = routeParams.caseId
   const result = await fetchImportReviewCaseDetail(caseId)
   const ownerCasesResult = await fetchSameOwnerReviewCases(result.data?.case ?? null)
@@ -42,9 +49,22 @@ export default async function ReviewCaseDetailPage({
         ownerCases={ownerCasesResult.data ?? []}
         ownerProcessingStages={ownerProcessingStages}
         ownerContextError={ownerCasesResult.error}
+        actionFeedback={{
+          evidence: getFirstSearchParam(routeSearchParams.evidence),
+          conclusion: getFirstSearchParam(routeSearchParams.conclusion),
+          closure: getFirstSearchParam(routeSearchParams.closure),
+        }}
       />
     </AppShell>
   )
+}
+
+function getFirstSearchParam(value: string | string[] | undefined): string | null {
+  if (Array.isArray(value)) {
+    return value[0] ?? null
+  }
+
+  return value ?? null
 }
 
 async function fetchSameOwnerReviewCases(

@@ -655,6 +655,14 @@ export type ImportReviewCaseActionDeckSummary = {
   }>
 }
 
+export type ImportReviewCaseActionFeedbackSummary = {
+  tone: Exclude<ImportReviewCaseDetailTone, "empty" | "warning">
+  title: string
+  statusLabel: string
+  detail: string
+  actionKey: "evidence" | "conclusion" | "closure"
+}
+
 export type ImportReviewCaseClosureActionSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -2285,6 +2293,65 @@ export function summarizeImportReviewCaseActionDeck({
       closureAction,
       primaryKey,
     }),
+  }
+}
+
+export function summarizeImportReviewCaseActionFeedback({
+  evidence,
+  conclusion,
+  closure,
+}: {
+  evidence: string | null
+  conclusion: string | null
+  closure: string | null
+}): ImportReviewCaseActionFeedbackSummary | null {
+  const action = closure
+    ? { key: "closure" as const, value: closure }
+    : conclusion
+      ? { key: "conclusion" as const, value: conclusion }
+      : evidence
+        ? { key: "evidence" as const, value: evidence }
+        : null
+
+  if (!action) {
+    return null
+  }
+
+  const isSuccess = action.value === "success"
+  const tone = isSuccess ? "ready" : "blocked"
+
+  if (action.key === "evidence") {
+    return {
+      tone,
+      title: isSuccess ? "补证据提交成功" : "补证据提交失败",
+      statusLabel: isSuccess ? "已写入" : "写入失败",
+      detail: isSuccess
+        ? "证据已写入当前复核案例；继续补充结论或复核关闭条件。"
+        : "证据未写入；检查本地 API、案例状态和必填字段后重试。",
+      actionKey: "evidence",
+    }
+  }
+
+  if (action.key === "conclusion") {
+    return {
+      tone,
+      title: isSuccess ? "补结论提交成功" : "补结论提交失败",
+      statusLabel: isSuccess ? "已写入" : "写入失败",
+      detail: isSuccess
+        ? "结论已写入当前复核案例；继续复核证据和关闭条件。"
+        : "结论未写入；检查本地 API、案例状态和必填字段后重试。",
+      actionKey: "conclusion",
+    }
+  }
+
+  return {
+    tone,
+    title: isSuccess ? "关闭案例提交成功" : "关闭案例提交失败",
+    statusLabel: isSuccess ? "已关闭" : "写入失败",
+    detail: isSuccess
+      ? "关闭记录已写入；后续只读追溯处理动作、证据和结论。"
+      : "关闭记录未写入；确认已有证据和结论后重试。",
+    actionKey: "closure",
   }
 }
 

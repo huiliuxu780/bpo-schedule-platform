@@ -11,12 +11,14 @@ import {
 } from "lucide-react"
 
 import {
+  type ImportReviewCaseActionFeedbackSummary,
   type ImportReviewCaseDetailResponse,
   type ImportReviewCaseProcessingStageSnapshot,
   type ImportReviewCaseRecord,
   buildImportReviewCaseDetailApiUrl,
-  summarizeImportReviewCaseDetail,
   summarizeImportReviewCaseActionDeck,
+  summarizeImportReviewCaseActionFeedback,
+  summarizeImportReviewCaseDetail,
   summarizeImportReviewCaseEvidenceChain,
 } from "@/components/import-center-model"
 import { ImportCenterReviewCaseClosurePanel } from "@/components/import-center-review-case-closure-panel"
@@ -50,6 +52,13 @@ type ImportCenterReviewCaseDetailWorkspaceProps = {
   ownerCases: ImportReviewCaseRecord[]
   ownerProcessingStages: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
   ownerContextError: string | null
+  actionFeedback: ImportReviewCaseActionFeedbackParams
+}
+
+type ImportReviewCaseActionFeedbackParams = {
+  evidence: string | null
+  conclusion: string | null
+  closure: string | null
 }
 
 export function ImportCenterReviewCaseDetailWorkspace({
@@ -59,6 +68,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
   ownerCases,
   ownerProcessingStages,
   ownerContextError,
+  actionFeedback,
 }: ImportCenterReviewCaseDetailWorkspaceProps) {
   const summary = summarizeImportReviewCaseDetail({ detail, error })
   const evidenceChain = summarizeImportReviewCaseEvidenceChain({ detail, error })
@@ -148,6 +158,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
           caseId={caseId}
           detail={detail}
           error={error}
+          actionFeedback={actionFeedback}
         />
         <EvidenceTable detail={detail} />
         <ConclusionTable detail={detail} />
@@ -161,12 +172,15 @@ function ReviewCaseActionDeck({
   caseId,
   detail,
   error,
+  actionFeedback,
 }: {
   caseId: string
   detail: ImportReviewCaseDetailResponse | null
   error: string | null
+  actionFeedback: ImportReviewCaseActionFeedbackParams
 }) {
   const deck = summarizeImportReviewCaseActionDeck({ detail, error })
+  const feedback = summarizeImportReviewCaseActionFeedback(actionFeedback)
   const primaryStep = deck.steps.find((step) => step.isPrimary) ?? deck.steps[0]
 
   return (
@@ -186,6 +200,7 @@ function ReviewCaseActionDeck({
         </div>
       </CardHeader>
       <CardContent className="grid gap-4">
+        {feedback ? <ReviewCaseActionFeedbackNotice feedback={feedback} /> : null}
         <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(220px,280px)]">
           <div className="rounded-md border bg-muted/30 p-3">
             <div className="text-sm text-muted-foreground">当前推荐动作</div>
@@ -259,6 +274,29 @@ function ReviewCaseActionDeck({
         </Tabs>
       </CardContent>
     </Card>
+  )
+}
+
+function ReviewCaseActionFeedbackNotice({
+  feedback,
+}: {
+  feedback: ImportReviewCaseActionFeedbackSummary
+}) {
+  return (
+    <div className="rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="text-sm font-medium">{feedback.title}</div>
+          <div className="mt-1 text-sm text-muted-foreground">{feedback.detail}</div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="secondary">{formatActionFeedbackKey(feedback.actionKey)}</Badge>
+          <Badge variant={feedback.tone === "blocked" ? "destructive" : "outline"}>
+            {feedback.statusLabel}
+          </Badge>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -603,4 +641,18 @@ function formatDetailTone(
   }
 
   return "暂无详情"
+}
+
+function formatActionFeedbackKey(
+  actionKey: ImportReviewCaseActionFeedbackSummary["actionKey"]
+): string {
+  if (actionKey === "closure") {
+    return "关闭案例"
+  }
+
+  if (actionKey === "conclusion") {
+    return "补结论"
+  }
+
+  return "补证据"
 }

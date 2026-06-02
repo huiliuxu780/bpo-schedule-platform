@@ -1977,3 +1977,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成复核详情页处理动作区整合；页面用统一动作区展示当前推荐动作、材料状态和三个处理 tab，复用已有 evidence、conclusion、closure 本地 API；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R772 - 复核动作提交反馈统一化
+
+```yaml
+id: R772
+module: "导入中心"
+description: "复核详情页已经把补证据、补结论和关闭入口整合到处理动作区，但提交后仍只依赖 URL 参数表达 success/failed。需要在处理动作区顶部统一展示提交结果、影响动作和下一步建议。"
+source: "After IM071 action deck and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成复核动作提交反馈统一化；复核详情页解析现有 evidence、conclusion、closure searchParams，在处理动作区顶部展示动作名称、写入结果和下一步建议；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

@@ -3616,3 +3616,26 @@ dependencies:
   - "US690"
 status: "done"
 ```
+
+### US692 - 复核动作提交反馈统一化
+
+```yaml
+id: US692
+requirement_ids:
+  - R772
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望提交补证据、补结论或关闭案例后，在处理动作区直接看到提交结果和下一步建议，以便不用从 URL 参数或页面变化里猜测是否写入成功。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 读取 `evidence`、`conclusion`、`closure` 提交结果参数。"
+  - "处理动作区顶部展示成功或失败反馈，包含动作名称、结果状态和下一步建议。"
+  - "无提交结果参数时不展示反馈条，不影响原有动作区。"
+  - "反馈只解析现有页面参数和现有写入结果，不新增后端 route、schema 或持久化。"
+  - "不新增依赖，不修改 package/lockfile，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US691"
+status: "done"
+```
