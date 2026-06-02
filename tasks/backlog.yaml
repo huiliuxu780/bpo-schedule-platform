@@ -6126,3 +6126,47 @@ tasks:
       - "范围扩展到证据补录、复核写入、关闭、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM058
+    title: "复核案例来源链路反查"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM057"]
+    allowed_files:
+      - "backend/app/models.py"
+      - "backend/app/review_persistence.py"
+      - "backend/tests/test_result_query_api.py"
+      - "components/import-center-model.ts"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "app/**"
+    acceptance:
+      - "`/api/v1/review-cases/{case_id}` 返回只读来源链路上下文，包含计算运行、版本和可关联导入批次。"
+      - "`/data-quality/review-cases/[caseId]` 独立展示来源链路，不把内容塞回列表页或单页长卷。"
+      - "页面保持只读，不提供证据补录、提交、关闭、审批、导出或批量操作。"
+      - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、目标 backend unittest、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema、migration 或数据库结构变更"
+      - "范围扩展到证据补录、复核写入、关闭、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

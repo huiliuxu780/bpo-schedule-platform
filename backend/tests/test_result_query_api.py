@@ -134,6 +134,31 @@ class ResultQueryApiTest(unittest.TestCase):
         self.assertEqual(detail.source_result.scheduled_agents, 1)
         self.assertEqual(detail.source_result.gap_agents, 2)
         self.assertEqual(detail.source_result.result_status, "gap")
+        self.assertIsNotNone(detail.source_trace)
+        self.assertEqual(detail.source_trace.run.run_id, "RUN-DB008-FS")
+        self.assertEqual(detail.source_trace.run.comparison_type, "forecast_vs_schedule")
+        self.assertEqual(detail.source_trace.run.total_results, 2)
+        self.assertEqual(detail.source_trace.run.total_gap_agents, 4)
+        self.assertEqual(
+            [version.version_role for version in detail.source_trace.versions],
+            ["forecast", "schedule"],
+        )
+        self.assertEqual(
+            detail.source_trace.versions[0].business_version_id,
+            "FC-20260511-V1",
+        )
+        self.assertEqual(
+            detail.source_trace.versions[0].import_version_id,
+            "IMPORT-FC-20260511",
+        )
+        self.assertEqual(
+            detail.source_trace.versions[0].batch_id,
+            "BATCH-DB007-20260511",
+        )
+        self.assertEqual(
+            detail.source_trace.versions[0].file_name,
+            "db007_sources.csv",
+        )
 
     def test_get_review_case_api_returns_schedule_actual_source_context(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -171,6 +196,22 @@ class ResultQueryApiTest(unittest.TestCase):
         self.assertEqual(detail.source_result.actual_productive_minutes, 15)
         self.assertEqual(detail.source_result.late_minutes, 15)
         self.assertEqual(detail.source_result.result_status, "late")
+        self.assertIsNotNone(detail.source_trace)
+        self.assertEqual(detail.source_trace.run.run_id, "RUN-DB008-SA")
+        self.assertEqual(detail.source_trace.run.comparison_type, "schedule_vs_actual")
+        self.assertEqual(detail.source_trace.run.total_late_minutes, 15)
+        self.assertEqual(
+            [version.version_role for version in detail.source_trace.versions],
+            ["schedule", "actual"],
+        )
+        self.assertEqual(
+            detail.source_trace.versions[1].import_version_id,
+            "IMPORT-STATUS-20260511",
+        )
+        self.assertEqual(
+            detail.source_trace.versions[1].batch_id,
+            "BATCH-DB007-20260511",
+        )
 
     def test_get_review_case_api_returns_404_for_missing_case(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

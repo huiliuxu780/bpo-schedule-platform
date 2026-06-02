@@ -2680,3 +2680,32 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 163 个后端 unittest。
+
+### 2026-06-02 - IM058 复核案例来源链路反查
+
+#### 审计结论
+
+- `IM058/US678` 已在 `ReviewCaseDetail` 中增加只读 `source_trace` 上下文。
+- backend 复用现有 DB007/DB008 和导入版本表，按复核来源结果反查计算运行、业务版本、导入版本、导入批次和文件名。
+- `/data-quality/review-cases/[caseId]` 新增“来源链路”独立区块，展示计算运行和版本/批次链路，避免把来源追踪继续塞回列表页或批次长页。
+- 本轮未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、证据补录、复核关闭写入、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是只读来源链路查看，不是复核写入、证据补录、关闭异常、审批或批量处理。
+- 页面 smoke 使用临时本地服务 8002/3026；原有 3021/3025 服务未被替换。
+
+#### 验证
+
+- TDD 红灯：后端目标测试因 `ReviewCaseDetail` 缺少 `source_trace` 失败。
+- TDD 红灯：前端模型测试因 summary 缺少 `sourceTraceRun/sourceTraceVersions` 失败。
+- `.venv/bin/python -m unittest backend.tests.test_result_query_api -v`：通过，7 个 result query API 测试覆盖 forecast_schedule 和 schedule_actual 来源链路。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，41 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- API smoke：`http://127.0.0.1:8002/api/v1/review-cases/CASE-QUERY-001` 返回 `source_trace`，含 `RUN-DEMO-FS-20260511`、`FC-DEMO-20260511-V1`、`IMPORT-DEMO-FC-20260511` 和 `BATCH-DEMO-REVIEW-20260511`。
+- page smoke：`http://127.0.0.1:3026/data-quality/review-cases/CASE-QUERY-001` 命中 `来源链路`、`计算 RUN-DEMO-FS-20260511`、`预测版本 FC-DEMO-20260511-V1`、`IMPORT-DEMO-FC-20260511` 和 `BATCH-DEMO-REVIEW-20260511`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 backend unittest。

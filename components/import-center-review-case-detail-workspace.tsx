@@ -6,6 +6,7 @@ import {
   Database,
   ExternalLink,
   FileText,
+  GitBranch,
   ShieldAlert,
 } from "lucide-react"
 
@@ -77,6 +78,10 @@ export function ImportCenterReviewCaseDetailWorkspace({
             dimensions={summary.sourceResultDimensions}
             metrics={summary.sourceResultMetrics}
           />
+          <SourceTraceCard
+            run={summary.sourceTraceRun}
+            versions={summary.sourceTraceVersions}
+          />
 
           <Card>
             <CardHeader className="flex flex-row items-start justify-between gap-3">
@@ -138,6 +143,43 @@ export function ImportCenterReviewCaseDetailWorkspace({
         </Card>
       </section>
     </main>
+  )
+}
+
+function SourceTraceCard({
+  run,
+  versions,
+}: {
+  run: string
+  versions: string[]
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <GitBranch className="size-4 text-muted-foreground" />
+          来源链路
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          只读反查计算运行、版本和导入批次。
+        </p>
+      </CardHeader>
+      <CardContent className="grid gap-3">
+        <div className="rounded-md border bg-muted/30 p-3 text-sm">
+          {run}
+        </div>
+        <div className="grid gap-2">
+          {versions.map((version) => (
+            <div
+              key={version}
+              className="rounded-md border px-3 py-2 text-sm text-muted-foreground"
+            >
+              {version}
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 

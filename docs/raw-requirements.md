@@ -1794,3 +1794,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成现有 DB007/DB008 来源结果读取和前端只读展示；`ReviewCaseDetail` 返回 `source_result`，详情页展示来源结果明细；不新增 schema/migration，不新增依赖，不接真实外部接口，不做权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R758 - 复核案例来源链路反查
+
+```yaml
+id: R758
+module: "导入中心"
+description: "复核案例详情页已经能展示来源结果上下文，但主管仍无法继续判断该结果来自哪次对比计算、哪些版本以及关联哪个导入批次。需要在详情 API 和页面里补充只读来源链路反查。"
+source: "After IM057 source result context and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成只读来源链路上下文；`ReviewCaseDetail` 返回 `source_trace`，详情页展示计算运行、版本和导入批次；不新增 schema/migration，不新增依赖，不接真实外部接口，不做证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

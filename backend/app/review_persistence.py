@@ -4,15 +4,25 @@ from sqlalchemy import ForeignKey, String, UniqueConstraint, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
 
 from backend.app.comparison_persistence import (
+    ComparisonRunEntity,
     ForecastScheduleComparisonResultEntity,
     ScheduleActualComparisonResultEntity,
 )
-from backend.app.import_persistence import Base, build_engine
+from backend.app.forecast_persistence import ForecastVersionEntity
+from backend.app.import_persistence import (
+    Base,
+    ImportBatchEntity,
+    ImportVersionEntity,
+    build_engine,
+)
 from backend.app.models import (
+    ComparisonRunRecord,
     ReviewCaseCreateRequest,
     ReviewCaseDetail,
     ReviewCaseRecord,
     ReviewCaseSourceResultRecord,
+    ReviewCaseSourceTraceRecord,
+    ReviewCaseSourceTraceVersionRecord,
     ReviewClosureInput,
     ReviewClosureRecord,
     ReviewConclusionInput,
@@ -21,6 +31,7 @@ from backend.app.models import (
     ReviewEvidenceRecord,
     ReviewSourceResultType,
 )
+from backend.app.personnel_schedule_persistence import PersonnelScheduleVersionEntity
 
 
 class ReviewCaseEntity(Base):
@@ -220,10 +231,12 @@ class ReviewPersistenceRepository:
                 select(ReviewClosureEntity).where(ReviewClosureEntity.case_id == case_id)
             )
             source_result = _source_result_record(session, case)
+            source_trace = _source_trace_record(session, source_result)
 
         return ReviewCaseDetail(
             case=_case_record(case),
             source_result=source_result,
+            source_trace=source_trace,
             evidence=[_evidence_record(row) for row in evidence],
             conclusions=[_conclusion_record(row) for row in conclusions],
             closure=_closure_record(closure) if closure is not None else None,
@@ -404,6 +417,130 @@ def _closure_record(entity: ReviewClosureEntity) -> ReviewClosureRecord:
         closed_by=entity.closed_by,
         closed_at=entity.closed_at,
         closure_note=entity.closure_note,
+    )
+
+
+def _source_trace_record(
+    session: Session,
+    source_result: ReviewCaseSourceResultRecord | None,
+) -> ReviewCaseSourceTraceRecord | None:
+    if source_result is None:
+        return None
+
+    run = session.get(ComparisonRunEntity, source_result.run_id)
+    if run is None:
+        return None
+
+    versions: list[ReviewCaseSourceTraceVersionRecord] = []
+    if source_result.source_result_type == "forecast_schedule":
+        if source_result.forecast_version_id is not None:
+            forecast_version = session.get(
+                ForecastVersionEntity,
+                source_result.forecast_version_id,
+            )
+            versions.append(
+                _source_trace_version_record(
+                    session=session,
+                    version_role="forecast",
+                    business_version_id=source_result.forecast_version_id,
+                    import_version_id=forecast_version.import_version_id
+                    if forecast_version is not None
+                    else None,
+                )
+            )
+        if source_result.schedule_version_id is not None:
+            versions.append(
+                _schedule_trace_version_record(
+                    session,
+                    source_result.schedule_version_id,
+                )
+            )
+    else:
+        if source_result.schedule_version_id is not None:
+            versions.append(
+                _schedule_trace_version_record(
+                    session,
+                    source_result.schedule_version_id,
+                )
+            )
+        if source_result.actual_import_version_id is not None:
+            versions.append(
+                _source_trace_version_record(
+                    session=session,
+                    version_role="actual",
+                    business_version_id=source_result.actual_import_version_id,
+                    import_version_id=source_result.actual_import_version_id,
+                )
+            )
+
+    return ReviewCaseSourceTraceRecord(
+        run=ComparisonRunRecord(
+            run_id=run.run_id,
+            comparison_type=run.comparison_type,
+            forecast_version_id=run.forecast_version_id,
+            schedule_version_id=run.schedule_version_id,
+            actual_import_version_id=run.actual_import_version_id,
+            business_date_from=run.business_date_from,
+            business_date_to=run.business_date_to,
+            status=run.status,
+            total_results=run.total_results,
+            total_gap_agents=run.total_gap_agents,
+            total_late_minutes=run.total_late_minutes,
+            created_at=run.created_at,
+        ),
+        versions=versions,
+    )
+
+
+def _schedule_trace_version_record(
+    session: Session,
+    schedule_version_id: str,
+) -> ReviewCaseSourceTraceVersionRecord:
+    schedule_version = session.get(PersonnelScheduleVersionEntity, schedule_version_id)
+    return _source_trace_version_record(
+        session=session,
+        version_role="schedule",
+        business_version_id=schedule_version_id,
+        import_version_id=schedule_version.import_version_id
+        if schedule_version is not None
+        else None,
+    )
+
+
+def _source_trace_version_record(
+    *,
+    session: Session,
+    version_role: str,
+    business_version_id: str,
+    import_version_id: str | None,
+) -> ReviewCaseSourceTraceVersionRecord:
+    import_version = (
+        session.get(ImportVersionEntity, import_version_id)
+        if import_version_id is not None
+        else None
+    )
+    batch = (
+        session.get(ImportBatchEntity, import_version.batch_id)
+        if import_version is not None
+        else None
+    )
+    return ReviewCaseSourceTraceVersionRecord(
+        version_role=version_role,
+        business_version_id=business_version_id,
+        import_version_id=import_version.version_id
+        if import_version is not None
+        else import_version_id,
+        import_version_type=import_version.version_type
+        if import_version is not None
+        else None,
+        batch_id=import_version.batch_id if import_version is not None else None,
+        file_name=batch.file_name if batch is not None else None,
+        business_date_from=import_version.business_date_from
+        if import_version is not None
+        else None,
+        business_date_to=import_version.business_date_to
+        if import_version is not None
+        else None,
     )
 
 

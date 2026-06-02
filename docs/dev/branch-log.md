@@ -1807,3 +1807,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM058 Import Center Review Source Trace
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `not pushed`
+- scope: read-only source-trace context enrichment for `/api/v1/review-cases/{case_id}` and `/data-quality/review-cases/[caseId]`, model helper/test coverage, and traceability records.
+- allowed_files_check: `backend/app/models.py`, `backend/app/review_persistence.py`, `backend/tests/test_result_query_api.py`, `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, app route, real integration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files.
+- scope_diff_check: `backend/app/models.py`, `backend/app/review_persistence.py`, `backend/tests/test_result_query_api.py`, `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, app route, real integration, auth, permissions, approval, export, batch, production formula, settlement, or charge-factor files. `.local/` remains untracked and untouched.
+- check_result: TDD red backend test failed first because `ReviewCaseDetail` had no `source_trace`; TDD red frontend model test failed first because summary lacked `sourceTraceRun/sourceTraceVersions`; backend target test passed with 7 tests; import-center model test passed with 41 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; API smoke on 8002 returned `source_trace`; page smoke on 3026 rendered `来源链路`, `计算 RUN-DEMO-FS-20260511`, `预测版本 FC-DEMO-20260511-V1`, `IMPORT-DEMO-FC-20260511`, and `BATCH-DEMO-REVIEW-20260511`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -378,9 +378,26 @@ export type ImportReviewCaseSourceResultRecord = {
   late_minutes: number | null
 }
 
+export type ImportReviewCaseSourceTraceVersionRecord = {
+  version_role: "forecast" | "schedule" | "actual"
+  business_version_id: string
+  import_version_id: string | null
+  import_version_type: ImportFileType | null
+  batch_id: string | null
+  file_name: string | null
+  business_date_from: string | null
+  business_date_to: string | null
+}
+
+export type ImportReviewCaseSourceTraceRecord = {
+  run: ImportComparisonRunRecord
+  versions: ImportReviewCaseSourceTraceVersionRecord[]
+}
+
 export type ImportReviewCaseDetailResponse = {
   case: ImportReviewCaseRecord
   source_result?: ImportReviewCaseSourceResultRecord | null
+  source_trace?: ImportReviewCaseSourceTraceRecord | null
   evidence: ImportReviewEvidenceRecord[]
   conclusions: ImportReviewConclusionRecord[]
   closure: ImportReviewClosureRecord | null
@@ -394,6 +411,8 @@ export type ImportReviewCaseDetailSummary = {
   sourceLabel: string
   sourceResultDimensions: string[]
   sourceResultMetrics: string[]
+  sourceTraceRun: string
+  sourceTraceVersions: string[]
   ownerLabel: string
   evidenceLabel: string
   qualityFocus: string
@@ -1069,6 +1088,8 @@ export function summarizeImportReviewCaseDetail({
       sourceLabel: "来源不可用",
       sourceResultDimensions: ["来源不可用"],
       sourceResultMetrics: ["等待 API 恢复"],
+      sourceTraceRun: "来源链路不可用",
+      sourceTraceVersions: ["等待 API 恢复"],
       ownerLabel: "owner 不可用",
       evidenceLabel: "证据不可用",
       qualityFocus: "质量问题不可用",
@@ -1087,6 +1108,8 @@ export function summarizeImportReviewCaseDetail({
       sourceLabel: "来源未选择",
       sourceResultDimensions: ["等待案例"],
       sourceResultMetrics: ["等待来源结果"],
+      sourceTraceRun: "等待来源链路",
+      sourceTraceVersions: ["等待案例"],
       ownerLabel: "owner 未选择",
       evidenceLabel: "证据未选择",
       qualityFocus: "等待案例详情",
@@ -1107,6 +1130,7 @@ export function summarizeImportReviewCaseDetail({
     reviewCase,
     detail.source_result ?? null
   )
+  const sourceTraceSummary = summarizeReviewCaseSourceTrace(detail.source_trace ?? null)
   const listHref = buildImportReviewCasesWorkspaceHref({
     businessDate: reviewCase.business_date,
     ownerId: reviewCase.owner_id,
@@ -1125,6 +1149,8 @@ export function summarizeImportReviewCaseDetail({
     sourceLabel,
     sourceResultDimensions: sourceResultSummary.dimensions,
     sourceResultMetrics: sourceResultSummary.metrics,
+    sourceTraceRun: sourceTraceSummary.run,
+    sourceTraceVersions: sourceTraceSummary.versions,
     ownerLabel: reviewCase.owner_id,
     evidenceLabel: `证据 ${evidenceCount.toLocaleString("zh-CN")} 条 · 结论 ${conclusionCount.toLocaleString("zh-CN")} 条 · ${isClosed ? "已关闭" : "未关闭"}`,
     qualityFocus: formatReviewCaseQualityFocus(reviewCase),
@@ -3017,6 +3043,63 @@ function buildReviewCasesWorkspaceDetail(
 
 function formatReviewCaseDetailSource(reviewCase: ImportReviewCaseRecord): string {
   return `${formatReviewCaseSourceType(reviewCase.source_result_type)} #${reviewCase.source_result_id}`
+}
+
+function summarizeReviewCaseSourceTrace(
+  sourceTrace: ImportReviewCaseSourceTraceRecord | null
+): { run: string; versions: string[] } {
+  if (!sourceTrace) {
+    return {
+      run: "等待来源链路",
+      versions: ["等待计算运行和版本批次"],
+    }
+  }
+
+  return {
+    run: [
+      `计算 ${sourceTrace.run.run_id}`,
+      formatComparisonTypeLabel(sourceTrace.run.comparison_type),
+      sourceTrace.run.status,
+      `${sourceTrace.run.total_results.toLocaleString("zh-CN")} 条结果`,
+    ].join(" · "),
+    versions: sourceTrace.versions.length
+      ? sourceTrace.versions.map(formatReviewCaseSourceTraceVersion)
+      : ["未返回版本链路"],
+  }
+}
+
+function formatReviewCaseSourceTraceVersion(
+  version: ImportReviewCaseSourceTraceVersionRecord
+): string {
+  return [
+    `${formatReviewCaseSourceTraceRole(version.version_role)} ${version.business_version_id}`,
+    version.import_version_id,
+    version.batch_id,
+  ]
+    .filter((item): item is string => Boolean(item))
+    .join(" · ")
+}
+
+function formatReviewCaseSourceTraceRole(
+  versionRole: ImportReviewCaseSourceTraceVersionRecord["version_role"]
+): string {
+  if (versionRole === "forecast") {
+    return "预测版本"
+  }
+  if (versionRole === "schedule") {
+    return "排班版本"
+  }
+  return "实际版本"
+}
+
+function formatComparisonTypeLabel(
+  type: ImportComparisonRunRecord["comparison_type"]
+): string {
+  if (type === "forecast_vs_schedule") {
+    return "预测排班"
+  }
+
+  return "排班实际"
 }
 
 function summarizeReviewCaseSourceResult(

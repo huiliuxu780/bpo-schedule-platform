@@ -3291,3 +3291,25 @@ dependencies:
   - "US676"
 status: "done"
 ```
+
+### US678 - 复核案例来源链路反查
+
+```yaml
+id: US678
+requirement_ids:
+  - R758
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望在复核案例详情页继续反查来源计算运行、版本和导入批次，以便判断异常链路来自哪次计算、哪些版本和哪个导入来源。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "`/api/v1/review-cases/{case_id}` 返回只读来源链路上下文，包含计算运行、版本和可关联导入批次。"
+  - "`/data-quality/review-cases/[caseId]` 独立展示来源链路，不把内容塞回列表页或单页长卷。"
+  - "页面保持只读，不提供证据补录、提交、关闭、审批、导出或批量操作。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、目标 backend unittest、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US677"
+status: "done"
+```

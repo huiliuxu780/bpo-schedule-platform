@@ -765,6 +765,22 @@ class ReviewCaseSourceResultRecord(BaseModel):
     late_minutes: int | None = None
 
 
+class ReviewCaseSourceTraceVersionRecord(BaseModel):
+    version_role: Literal["forecast", "schedule", "actual"]
+    business_version_id: str
+    import_version_id: str | None = None
+    import_version_type: ImportFileType | None = None
+    batch_id: str | None = None
+    file_name: str | None = None
+    business_date_from: str | None = None
+    business_date_to: str | None = None
+
+
+class ReviewCaseSourceTraceRecord(BaseModel):
+    run: ComparisonRunRecord
+    versions: list[ReviewCaseSourceTraceVersionRecord]
+
+
 class ReviewEvidenceInput(BaseModel):
     evidence_id: str
     case_id: str
@@ -830,6 +846,7 @@ class ReviewClosureWriteRequest(BaseModel):
 class ReviewCaseDetail(BaseModel):
     case: ReviewCaseRecord
     source_result: ReviewCaseSourceResultRecord | None = None
+    source_trace: ReviewCaseSourceTraceRecord | None = None
     evidence: list[ReviewEvidenceRecord]
     conclusions: list[ReviewConclusionRecord]
     closure: ReviewClosureRecord | None = None
