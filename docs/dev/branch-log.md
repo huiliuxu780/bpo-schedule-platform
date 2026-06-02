@@ -1977,3 +1977,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM068 Import Center Review Owner Context
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM060 after push; local branch has IM061 through IM068 changes not pushed yet.`
+- scope: read-only same-owner processing context on `/data-quality/review-cases/[caseId]`, detail-page list/stage data loading, model helper/test coverage, shadcn-composed context component, and traceability records.
+- allowed_files_check: `app/data-quality/review-cases/[caseId]/page.tsx`, `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-owner-context.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, write action, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/review-cases/[caseId]/page.tsx`, `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-owner-context.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, write action, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` remains untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `summarizeImportReviewOwnerContext` was not exported; target model test passed with 51 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; in-app browser smoke on 3026 rendered `同 Owner 处理上下文`, `查看 Owner 列表`, `进入首要阶段`, `复核案例详情`, and `处理时间线`; href smoke found same-owner list and priority-stage links; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -2950,3 +2950,28 @@
 - in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases` 命中 `Owner 阶段负载`、`缺证据`、`缺结论`、`可关闭`、`已关闭`、`阶段未知` 和 `复核案例列表`。
 - in-app browser href smoke：页面存在 `/data-quality/review-cases?ownerId=supervisor-01&processingStage=missing_conclusion`、`ready_to_close` 和 `closed` 链接。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-02 - IM068 复核详情同 Owner 处理上下文
+
+#### 审计结论
+
+- `IM068/US688` 已在 `/data-quality/review-cases/[caseId]` 增加只读 `同 Owner 处理上下文` 区块。
+- 区块展示同 owner 同业务日的其他复核案例，包含处理阶段、证据/结论状态、风险、状态、创建时间和详情入口。
+- 区块提供 `查看 Owner 列表` 和 `进入首要阶段` 链接，复用现有列表过滤参数。
+- 本轮未新增后端 API，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、写入动作、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前上下文仍基于详情页读取现有 list API 和逐详情阶段快照，适合本地 MVP；生产大规模同 owner 上下文仍需要后续后端聚合查询任务。
+- 该区块只是处理上下文，不是批量分派、审批队列、权限隔离或 SLA 规则。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先因缺少 `summarizeImportReviewOwnerContext` export 失败。
+- `node scripts/tests/import-center-model.test.mjs`：通过，51 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases/CASE-QUERY-001` 命中 `同 Owner 处理上下文`、`查看 Owner 列表`、`进入首要阶段`、`复核案例详情` 和 `处理时间线`。
+- in-app browser href smoke：`查看 Owner 列表` 指向 `/data-quality/review-cases?businessDate=2026-05-11&ownerId=supervisor-01`；`进入首要阶段` 指向 `/data-quality/review-cases?businessDate=2026-05-11&ownerId=supervisor-01&processingStage=missing_conclusion`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

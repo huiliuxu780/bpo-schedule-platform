@@ -528,6 +528,31 @@ export type ImportReviewOwnerStageMatrixSummary = {
   actionableCount: number
 }
 
+export type ImportReviewOwnerContextItem = {
+  caseId: string
+  severityLabel: string
+  statusLabel: string
+  stageKey: ImportReviewOwnerStageMatrixStageKey
+  stageLabel: string
+  evidenceLabel: string
+  nextAction: string
+  createdAt: string
+  detailHref: string
+}
+
+export type ImportReviewOwnerContextSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  detail: string
+  ownerId: string | null
+  businessDate: string | null
+  totalCount: number
+  actionableCount: number
+  listHref: string
+  stageHref: string
+  items: ImportReviewOwnerContextItem[]
+}
+
 export type ImportReviewCaseDetailSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -1517,6 +1542,142 @@ export function summarizeImportReviewOwnerStageMatrix({
     totalOwners: rows.length,
     totalCases: rows.reduce((total, row) => total + row.totalCount, 0),
     actionableCount: rows.reduce((total, row) => total + row.actionableCount, 0),
+  }
+}
+
+export function summarizeImportReviewOwnerContext({
+  currentCase,
+  cases,
+  processingStages = {},
+  error = null,
+  limit = 6,
+}: {
+  currentCase: ImportReviewCaseRecord | null
+  cases: ImportReviewCaseRecord[]
+  processingStages?: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
+  error?: string | null
+  limit?: number
+}): ImportReviewOwnerContextSummary {
+  if (!currentCase) {
+    return {
+      tone: "blocked",
+      title: "Owner 上下文不可用",
+      detail: error ?? "当前案例读取失败，暂不能聚合同 owner 处理上下文。",
+      ownerId: null,
+      businessDate: null,
+      totalCount: 0,
+      actionableCount: 0,
+      listHref: "/data-quality/review-cases",
+      stageHref: "/data-quality/review-cases",
+      items: [],
+    }
+  }
+
+  const listHref = buildImportReviewCasesWorkspaceHref({
+    businessDate: currentCase.business_date,
+    ownerId: currentCase.owner_id,
+  })
+
+  if (error) {
+    return {
+      tone: "blocked",
+      title: "同 Owner 上下文读取失败",
+      detail: error,
+      ownerId: currentCase.owner_id,
+      businessDate: currentCase.business_date,
+      totalCount: 0,
+      actionableCount: 0,
+      listHref,
+      stageHref: listHref,
+      items: [],
+    }
+  }
+
+  const relatedItems = cases
+    .filter(
+      (reviewCase) =>
+        reviewCase.case_id !== currentCase.case_id &&
+        reviewCase.owner_id === currentCase.owner_id &&
+        reviewCase.business_date === currentCase.business_date
+    )
+    .map((reviewCase) => {
+      const stage = summarizeImportReviewCaseProcessingStage(
+        reviewCase,
+        processingStages[reviewCase.case_id]
+      )
+
+      return {
+        caseId: reviewCase.case_id,
+        severityLabel: formatReviewCaseSeverity(reviewCase.severity),
+        statusLabel: formatReviewCaseStatus(reviewCase.status),
+        stageKey: stage.key,
+        stageLabel: stage.label,
+        evidenceLabel: stage.evidenceLabel,
+        nextAction: stage.nextAction,
+        createdAt: reviewCase.created_at,
+        detailHref: buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id),
+        severityRank: getReviewCaseSeverityRank(reviewCase.severity),
+        stageRank: getReviewCaseProcessingStageRank(stage.key),
+      }
+    })
+    .sort(
+      (a, b) =>
+        a.stageRank - b.stageRank ||
+        a.severityRank - b.severityRank ||
+        a.createdAt.localeCompare(b.createdAt) ||
+        a.caseId.localeCompare(b.caseId)
+    )
+
+  const items = relatedItems.slice(0, limit).map((item) => ({
+    caseId: item.caseId,
+    severityLabel: item.severityLabel,
+    statusLabel: item.statusLabel,
+    stageKey: item.stageKey,
+    stageLabel: item.stageLabel,
+    evidenceLabel: item.evidenceLabel,
+    nextAction: item.nextAction,
+    createdAt: item.createdAt,
+    detailHref: item.detailHref,
+  }))
+  const actionableCount = relatedItems.filter((item) => item.stageKey !== "closed").length
+  const firstActionableStage =
+    relatedItems.find((item) => item.stageKey !== "closed")?.stageKey ??
+    relatedItems[0]?.stageKey ??
+    null
+  const stageHref = firstActionableStage
+    ? buildImportReviewCasesWorkspaceHref({
+        businessDate: currentCase.business_date,
+        ownerId: currentCase.owner_id,
+        processingStage: firstActionableStage,
+      })
+    : listHref
+
+  if (relatedItems.length === 0) {
+    return {
+      tone: "empty",
+      title: "同 Owner 暂无其他案例",
+      detail: `${currentCase.owner_id} 在 ${currentCase.business_date} 没有其他复核案例。`,
+      ownerId: currentCase.owner_id,
+      businessDate: currentCase.business_date,
+      totalCount: 0,
+      actionableCount: 0,
+      listHref,
+      stageHref,
+      items: [],
+    }
+  }
+
+  return {
+    tone: actionableCount > 0 ? "warning" : "ready",
+    title: `同 Owner 待处理 ${actionableCount.toLocaleString("zh-CN")} 个`,
+    detail: `${currentCase.owner_id} 在 ${currentCase.business_date} 还有 ${relatedItems.length.toLocaleString("zh-CN")} 个其他复核案例。`,
+    ownerId: currentCase.owner_id,
+    businessDate: currentCase.business_date,
+    totalCount: relatedItems.length,
+    actionableCount,
+    listHref,
+    stageHref,
+    items,
   }
 }
 
@@ -4442,6 +4603,29 @@ function buildReviewCaseProcessingStageGroups(
   return [...groups.values()].sort(
     (a, b) => b.openCount - a.openCount || b.count - a.count || a.label.localeCompare(b.label)
   )
+}
+
+function getReviewCaseProcessingStageRank(
+  stageKey: ImportReviewOwnerStageMatrixStageKey
+): number {
+  return IMPORT_REVIEW_OWNER_STAGE_MATRIX_COLUMNS.findIndex(
+    (column) => column.key === stageKey
+  )
+}
+
+function getReviewCaseSeverityRank(severity: string): number {
+  switch (severity) {
+    case "critical":
+      return 0
+    case "high":
+      return 1
+    case "medium":
+      return 2
+    case "low":
+      return 3
+    default:
+      return 4
+  }
 }
 
 const IMPORT_REVIEW_OWNER_STAGE_MATRIX_COLUMNS: ImportReviewOwnerStageMatrixColumn[] = [

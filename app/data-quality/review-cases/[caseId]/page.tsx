@@ -2,7 +2,10 @@ import { AppShell } from "@/components/app-shell"
 import { ImportCenterReviewCaseDetailWorkspace } from "@/components/import-center-review-case-detail-workspace"
 import {
   type ImportReviewCaseDetailResponse,
+  type ImportReviewCaseProcessingStageSnapshot,
+  type ImportReviewCaseRecord,
   buildImportReviewCaseDetailApiUrl,
+  buildImportReviewCasesApiUrl,
 } from "@/components/import-center-model"
 
 export const dynamic = "force-dynamic"
@@ -24,6 +27,11 @@ export default async function ReviewCaseDetailPage({
   const routeParams = await params
   const caseId = routeParams.caseId
   const result = await fetchImportReviewCaseDetail(caseId)
+  const ownerCasesResult = await fetchSameOwnerReviewCases(result.data?.case ?? null)
+  const ownerProcessingStages = await fetchReviewCaseProcessingStages(
+    ownerCasesResult.data ?? [],
+    result.data
+  )
 
   return (
     <AppShell title="复核案例详情" searchPlaceholder="搜索复核案例、owner 或来源">
@@ -31,9 +39,100 @@ export default async function ReviewCaseDetailPage({
         caseId={caseId}
         detail={result.data}
         error={result.error}
+        ownerCases={ownerCasesResult.data ?? []}
+        ownerProcessingStages={ownerProcessingStages}
+        ownerContextError={ownerCasesResult.error}
       />
     </AppShell>
   )
+}
+
+async function fetchSameOwnerReviewCases(
+  currentCase: ImportReviewCaseRecord | null
+): Promise<ApiResult<ImportReviewCaseRecord[]>> {
+  if (!currentCase) {
+    return {
+      data: [],
+      error: null,
+    }
+  }
+
+  try {
+    const response = await fetch(
+      buildImportReviewCasesApiUrl({
+        businessDate: currentCase.business_date,
+        ownerId: currentCase.owner_id,
+        status: "all",
+      }),
+      { cache: "no-store" }
+    )
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `同 Owner 复核案例 API 返回 ${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as { items?: ImportReviewCaseRecord[] }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
+async function fetchReviewCaseProcessingStages(
+  cases: ImportReviewCaseRecord[],
+  currentDetail: ImportReviewCaseDetailResponse | null
+): Promise<Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>> {
+  const entries = await Promise.all(
+    cases.map(async (reviewCase) => {
+      if (currentDetail && reviewCase.case_id === currentDetail.case.case_id) {
+        return [
+          reviewCase.case_id,
+          {
+            evidenceCount: currentDetail.evidence.length,
+            conclusionCount: currentDetail.conclusions.length,
+            isClosed:
+              currentDetail.case.status === "closed" || currentDetail.closure !== null,
+          },
+        ] as const
+      }
+
+      try {
+        const response = await fetch(
+          buildImportReviewCaseDetailApiUrl(reviewCase.case_id),
+          { cache: "no-store" }
+        )
+
+        if (!response.ok) {
+          return [reviewCase.case_id, undefined] as const
+        }
+
+        const detail = (await response.json()) as ImportReviewCaseDetailResponse
+
+        return [
+          reviewCase.case_id,
+          {
+            evidenceCount: detail.evidence.length,
+            conclusionCount: detail.conclusions.length,
+            isClosed: detail.case.status === "closed" || detail.closure !== null,
+          },
+        ] as const
+      } catch {
+        return [reviewCase.case_id, undefined] as const
+      }
+    })
+  )
+
+  return Object.fromEntries(entries)
 }
 
 async function fetchImportReviewCaseDetail(

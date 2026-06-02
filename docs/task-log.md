@@ -1664,3 +1664,14 @@
 - action: 增加复核案例工作台只读 Owner 阶段负载矩阵。
 - status: `done`
 - notes: `/data-quality/review-cases` 新增 `Owner 阶段负载` 矩阵，按 owner 聚合缺证据、缺结论、可关闭、已关闭和阶段未知案例数；非零单元格进入对应 `ownerId + processingStage` 过滤列表；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM068`
+- source_ids:
+  - `R768`
+- story_ids:
+  - `US688`
+- action: 增加复核案例详情页只读同 Owner 处理上下文。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 新增 `同 Owner 处理上下文` 区块，展示同 owner 同业务日的其他案例、处理阶段、证据/结论状态、严重度和详情入口；提供 `查看 Owner 列表` 和 `进入首要阶段` 链接；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

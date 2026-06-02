@@ -3525,3 +3525,26 @@ dependencies:
   - "US686"
 status: "done"
 ```
+
+### US688 - 复核详情同 Owner 处理上下文
+
+```yaml
+id: US688
+requirement_ids:
+  - R768
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望在复核案例详情页看到同 owner 的其他待处理案例，以便从当前案例继续安排同责任人的缺证据、缺结论和可关闭工作。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 展示同 owner 处理上下文区块。"
+  - "区块列出同 owner 的其他案例，展示处理阶段、证据/结论状态、严重度和详情入口。"
+  - "区块提供回到同 owner 列表过滤的入口。"
+  - "上下文基于现有 review-case list API 和 detail 阶段快照派生，不新增后端 API 或 schema。"
+  - "页面保持只读，不新增写入、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US687"
+status: "done"
+```

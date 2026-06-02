@@ -1925,3 +1925,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读 owner 阶段负载矩阵；复核案例工作台按 owner 聚合缺证据、缺结论、可关闭、已关闭和阶段未知数量，并提供 ownerId + processingStage 过滤入口；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R768 - 复核详情同 Owner 处理上下文
+
+```yaml
+id: R768
+module: "导入中心"
+description: "复核案例工作台已经能按 owner 和处理阶段看到负载矩阵，但主管进入单个案例详情后仍需要回到列表才能判断同一 owner 的其他待处理案例。需要在详情页增加只读同 owner 处理上下文，展示同 owner 的其他案例、处理阶段和详情入口。"
+source: "After IM067 owner-stage matrix and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读同 owner 处理上下文；复核案例详情页展示同 owner 同业务日的其他案例、阶段、证据/结论状态、风险和详情入口，并提供 owner 列表及首要阶段入口；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

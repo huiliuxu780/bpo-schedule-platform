@@ -12,6 +12,8 @@ import {
 
 import {
   type ImportReviewCaseDetailResponse,
+  type ImportReviewCaseProcessingStageSnapshot,
+  type ImportReviewCaseRecord,
   buildImportReviewCaseDetailApiUrl,
   summarizeImportReviewCaseDetail,
   summarizeImportReviewCaseEvidenceChain,
@@ -19,6 +21,7 @@ import {
 import { ImportCenterReviewCaseClosurePanel } from "@/components/import-center-review-case-closure-panel"
 import { ImportCenterReviewCaseConclusionPanel } from "@/components/import-center-review-case-conclusion-panel"
 import { ImportCenterReviewCaseEvidencePanel } from "@/components/import-center-review-case-evidence-panel"
+import { ImportCenterReviewOwnerContext } from "@/components/import-center-review-owner-context"
 import { ImportCenterReviewCaseProcessingTimeline } from "@/components/import-center-review-case-processing-timeline"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -42,12 +45,18 @@ type ImportCenterReviewCaseDetailWorkspaceProps = {
   caseId: string
   detail: ImportReviewCaseDetailResponse | null
   error: string | null
+  ownerCases: ImportReviewCaseRecord[]
+  ownerProcessingStages: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
+  ownerContextError: string | null
 }
 
 export function ImportCenterReviewCaseDetailWorkspace({
   caseId,
   detail,
   error,
+  ownerCases,
+  ownerProcessingStages,
+  ownerContextError,
 }: ImportCenterReviewCaseDetailWorkspaceProps) {
   const summary = summarizeImportReviewCaseDetail({ detail, error })
   const evidenceChain = summarizeImportReviewCaseEvidenceChain({ detail, error })
@@ -85,6 +94,12 @@ export function ImportCenterReviewCaseDetailWorkspace({
       </section>
 
       <section className="grid gap-4">
+        <ImportCenterReviewOwnerContext
+          currentCase={detail?.case ?? null}
+          cases={ownerCases}
+          processingStages={ownerProcessingStages}
+          error={ownerContextError}
+        />
         <SourceResultContextCard
           dimensions={summary.sourceResultDimensions}
           metrics={summary.sourceResultMetrics}
