@@ -44,6 +44,30 @@ dependencies:
 status: "done"
 ```
 
+### US684 - 复核案例结论补充写入入口
+
+```yaml
+id: US684
+requirement_ids:
+  - R764
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望在复核案例详情页对未关闭案例补充复核结论，以便证据补齐后能形成可关闭的处理链路。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "`POST /api/v1/review-cases/{case_id}/conclusion` 能对已存在且未关闭的复核案例新增一条 conclusion，并返回带最新 conclusion 列表的详情。"
+  - "已关闭案例、case_id 不匹配或重复 conclusion_id 时返回明确错误，不写入新结论。"
+  - "`/data-quality/review-cases/[caseId]` 对未关闭案例展示受控结论补充入口。"
+  - "结论补充入口提交 conclusion_type、risk_level、conclusion_text 和 decided_by 到本地 API，成功后回到当前详情页并显示最新结论。"
+  - "读取失败或已关闭时不展示可提交结论按钮，只展示阻塞原因。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、目标 backend unittest、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US683"
+status: "done"
+```
+
 ### US683 - 复核案例证据补录写入入口
 
 ```yaml

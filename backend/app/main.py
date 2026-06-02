@@ -20,6 +20,7 @@ from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.personnel_schedule_import import apply_personnel_schedule_import_batch
 from backend.app.personnel_schedule_persistence import PersonnelSchedulePersistenceRepository
 from backend.app.review_closure import write_review_closure
+from backend.app.review_conclusion import write_review_conclusion
 from backend.app.review_evidence import write_review_evidence
 from backend.app.review_persistence import ReviewPersistenceRepository
 from backend.app.models import (
@@ -50,6 +51,7 @@ from backend.app.models import (
     ReviewCaseDetail,
     ReviewCaseListResponse,
     ReviewClosureWriteRequest,
+    ReviewConclusionInput,
     ReviewEvidenceInput,
     ReviewSourceResultType,
     ScheduleRiskListResponse,
@@ -838,6 +840,32 @@ def write_review_evidence_api(
             detail={
                 "error": {
                     "code": "REVIEW_EVIDENCE_INVALID",
+                    "message": str(exc),
+                }
+            },
+        ) from exc
+
+
+@app.post(
+    "/api/v1/review-cases/{case_id}/conclusion",
+    response_model=ReviewCaseDetail,
+)
+def write_review_conclusion_api(
+    case_id: str,
+    request: ReviewConclusionInput,
+) -> ReviewCaseDetail:
+    try:
+        return write_review_conclusion(
+            case_id,
+            request,
+            ReviewPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "REVIEW_CONCLUSION_INVALID",
                     "message": str(exc),
                 }
             },

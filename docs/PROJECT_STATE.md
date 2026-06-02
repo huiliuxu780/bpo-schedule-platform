@@ -208,6 +208,7 @@ Current invariants:
 - `IM061/US681` added a read-only evidence/conclusion chain on `/data-quality/review-cases/[caseId]`, showing evidence, conclusions, optional closure, status, and next action in a single-column detail flow, then returned current queue and active tasks to empty.
 - `IM062/US682` added controlled review-case closure write for existing open cases and a detail-page close entry that disappears after closure, then returned current queue and active tasks to empty.
 - `IM063/US683` added controlled review-case evidence supplement write for existing open cases and a detail-page evidence entry that is blocked after closure, then returned current queue and active tasks to empty.
+- `IM064/US684` added controlled review-case conclusion supplement write for existing open cases and a detail-page conclusion entry that is blocked after closure, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -1620,3 +1620,14 @@
 - action: 增加复核案例详情页受控证据补录入口。
 - status: `done`
 - notes: 新增 `POST /api/v1/review-cases/{case_id}/evidence`，可对已存在且未关闭的复核案例新增一条 evidence 并返回最新详情；详情页新增“补充复核证据”独立 panel，open case 展示提交入口，closed case 展示阻塞原因；本轮不新增依赖、package/lockfile、schema/migration、真实外部接口、结论新增、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM064`
+- source_ids:
+  - `R764`
+- story_ids:
+  - `US684`
+- action: 增加复核案例详情页受控结论补充入口。
+- status: `done`
+- notes: 新增 `POST /api/v1/review-cases/{case_id}/conclusion`，可对已存在且未关闭的复核案例新增一条 conclusion 并返回最新详情；详情页新增“补充复核结论”独立 panel，位于证据补录之后、关闭入口之前；open case 展示提交入口，closed case 展示阻塞原因；本轮不新增依赖、package/lockfile、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

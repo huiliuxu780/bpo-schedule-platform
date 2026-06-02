@@ -41,6 +41,20 @@ status: "done"
 notes: "本轮已完成本地 evidence 写入 API 和详情页受控提交入口；open case 可补充一条证据，closed case 或 case_id 不匹配会阻塞；不新增 schema/migration，不新增依赖，不接真实外部接口，不做结论新增、审批、导出、批量、权限、生产公式、结算或收费因子。"
 ```
 
+### R764 - 复核案例结论补充写入入口
+
+```yaml
+id: R764
+module: "导入中心"
+description: "复核案例详情页已经能补充证据，但证据齐全后仍不能补充复核结论，导致关闭前处理链路不完整。需要提供受控结论补充写入入口，让主管能对未关闭案例新增 conclusion，再进入后续关闭。"
+source: "After IM063 controlled evidence entry and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "split"
+status: "done"
+notes: "本轮已完成本地 conclusion 写入 API 和详情页受控提交入口；open case 可补充一条结论，closed case、case_id 不匹配或重复 conclusion_id 会阻塞；不新增 schema/migration，不新增依赖，不接真实外部接口，不做审批、导出、批量、权限、生产公式、结算或收费因子。"
+```
+
 ## Requirements
 
 ### R697-R700 - Q127 数据库基础 QA 收口

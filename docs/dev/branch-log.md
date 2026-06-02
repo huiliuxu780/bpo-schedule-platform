@@ -1909,3 +1909,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM064 Import Center Review Conclusion Write Entry
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM060 after push; local branch has IM061, IM062, IM063, and IM064 changes not pushed yet.`
+- scope: controlled conclusion supplement write for existing open review cases, detail-page conclusion entry, model helper/test coverage, target backend test coverage, and traceability records.
+- allowed_files_check: `backend/app/main.py`, `backend/app/review_conclusion.py`, `backend/tests/test_review_conclusion_service.py`, `backend/tests/test_review_conclusion_api.py`, `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-case-conclusion-panel.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, app route, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `backend/app/main.py`, `backend/app/review_conclusion.py`, `backend/tests/test_review_conclusion_service.py`, `backend/tests/test_review_conclusion_api.py`, `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-case-conclusion-panel.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, app route, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` remains untracked and must not be staged.
+- check_result: TDD red backend tests failed first because conclusion write service/API did not exist; TDD red frontend model test failed first because conclusion write helpers were missing; target backend unittest passed with 6 tests; target model test passed with 47 tests; lint, typecheck, build with Node 22 PATH, and shadcn gate passed; API smoke on temporary latest backend 8003 wrote `CON-CASE-CONCLUSION-SMOKE-001-001`; SSR page smoke on 3026 rendered the open-case conclusion panel and conclusion record, and rendered the closed-case blocker with no `提交结论`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

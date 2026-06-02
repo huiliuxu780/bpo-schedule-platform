@@ -2847,3 +2847,33 @@
 - in-app browser smoke：`/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001` 命中 `补充复核证据`，`提交证据` 按钮数量为 1，并显示 `EVD-CASE-EVIDENCE-SMOKE-001-001`。
 - in-app browser smoke：`/data-quality/review-cases/CASE-QUERY-001` 命中 `案例已关闭`，`提交证据` 按钮数量为 0。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-02 - IM064 复核案例结论补充写入入口
+
+#### 审计结论
+
+- `IM064/US684` 已新增受控结论补充写入 API：`POST /api/v1/review-cases/{case_id}/conclusion`。
+- `write_review_conclusion()` 对已存在且未关闭的 review case 写入一条 conclusion，并返回带最新 conclusions 列表的 detail。
+- 服务层会阻止 path `case_id` 与 payload `case_id` 不一致、已关闭案例补结论、缺失 case 或重复 conclusion_id。
+- `/data-quality/review-cases/[caseId]` 新增“补充复核结论”独立 panel，位于证据补录之后、关闭入口之前。
+- 本轮未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只支持单条 conclusion 补充，不是审批流、批量处理、权限隔离、结论模板管理或生产状态码最终口径。
+- 页面 form 使用现有本地 API base；当前开发进程若未刷新后端代码，提交动作需要重启本地后端后才能直接点通。本轮用临时最新 8003 后端完成 API smoke。
+
+#### 验证
+
+- TDD 红灯：后端 service/api 目标测试先因缺少 `backend.app.review_conclusion` 和 `write_review_conclusion_api` 失败。
+- TDD 红灯：前端模型测试先因缺少 conclusion write helper export 失败。
+- `.venv/bin/python -m unittest backend.tests.test_review_conclusion_service backend.tests.test_review_conclusion_api`：通过，6 个 review conclusion 测试通过。
+- `node scripts/tests/import-center-model.test.mjs`：通过，47 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node --test scripts/tests/check-shadcn-ui.test.mjs` 和 `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- API smoke：临时最新后端 `http://127.0.0.1:8003/api/v1/review-cases/CASE-CONCLUSION-SMOKE-001/conclusion` 返回 `CON-CASE-CONCLUSION-SMOKE-001-001`。
+- SSR page smoke：`/data-quality/review-cases/CASE-CONCLUSION-SMOKE-001` 命中 `补充复核结论`、`CON-CASE-CONCLUSION-SMOKE-001-001` 和 `CASE-CONCLUSION-SMOKE-001`。
+- SSR page smoke：`/data-quality/review-cases/CASE-QUERY-001` 命中 `补充复核结论` 和 `案例已关闭`，未命中 `提交结论`。
+- `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`：通过。直接 `npm run build` 会因本机默认 Node 24 触发 Next/lightningcss native addon 签名加载问题；项目标准 check 使用 Node 22 PATH。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
