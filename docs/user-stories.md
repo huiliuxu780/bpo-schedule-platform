@@ -3571,3 +3571,25 @@ dependencies:
   - "US688"
 status: "done"
 ```
+
+### US690 - 复核工作台同 Owner 首条待处理入口
+
+```yaml
+id: US690
+requirement_ids:
+  - R770
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望在复核案例工作台按 owner 看到首条待处理入口，以便从列表页直接进入某个责任人的连续处理链路。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases` 展示同 owner 首条待处理入口。"
+  - "入口按 owner 聚合当前筛选结果，展示待处理数量、首条待处理阶段和详情链接。"
+  - "入口复用现有 review-case list 数据和 detail 阶段快照，不新增后端 API 或 schema。"
+  - "页面保持只读，不新增写入、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US689"
+status: "done"
+```

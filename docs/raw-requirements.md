@@ -1951,3 +1951,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读同 owner 待处理导航；复核案例详情页基于现有列表和阶段快照派生同 owner 同业务日待处理序列，展示当前位置、上一条/下一条入口，当前案例已关闭时引导进入首条待处理；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R770 - 复核工作台同 Owner 首条待处理入口
+
+```yaml
+id: R770
+module: "导入中心"
+description: "复核案例详情页已经支持同 owner 上下条待处理导航，但主管在复核工作台列表页仍需要先点某个具体案例才能进入连续处理链路。需要在列表页增加只读同 owner 首条待处理入口，按 owner 展示当前筛选结果中的待处理数量、首条阶段和详情入口。"
+source: "After IM069 owner pending navigation and PM asked to continue business features on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读入口；复核案例工作台基于当前筛选结果和阶段快照派生 owner 首条待处理，展示待处理数量、首条阶段、详情入口和 owner 列表入口；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

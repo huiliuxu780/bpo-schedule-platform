@@ -1686,3 +1686,14 @@
 - action: 增加复核案例详情页只读同 Owner 待处理导航。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 的 `同 Owner 处理上下文` 内新增 `同 Owner 待处理导航` 操作条，展示当前案例在同 owner 同业务日待处理序列中的位置，提供上一条/下一条入口；当前案例已关闭或不在待处理序列时提供进入首条待处理入口；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM070`
+- source_ids:
+  - `R770`
+- story_ids:
+  - `US690`
+- action: 增加复核案例工作台只读同 Owner 首条待处理入口。
+- status: `done`
+- notes: `/data-quality/review-cases` 的分组面板新增 `同 Owner 首条待处理` 区块，按 owner 展示当前筛选结果中的待处理数量、首条待处理阶段、详情入口和 owner 列表入口；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

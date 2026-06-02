@@ -3000,3 +3000,29 @@
 - in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases/CASE-QUERY-001` 命中 `同 Owner 待处理导航`、`当前案例不在待处理序列`、`进入首条待处理` 和 `同 Owner 处理上下文`。
 - in-app browser navigation smoke：点击 `进入首条待处理` 后进入 `CASE-EVIDENCE-SMOKE-001`，命中 `第 1 / 2 条` 和 `下一条待处理`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-02 - IM070 复核工作台同 Owner 首条待处理入口
+
+#### 审计结论
+
+- `IM070/US690` 已在 `/data-quality/review-cases` 的分组面板增加只读 `同 Owner 首条待处理` 区块。
+- 区块按 owner 聚合当前筛选结果，展示待处理数量、首条待处理阶段、进入首条待处理详情入口和 owner 列表入口。
+- 入口与 `IM069` 的详情页同 owner 待处理导航衔接，主管可从列表页直接进入连续处理链路。
+- 本轮未新增后端 API，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、写入动作、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前入口仍基于列表页已有数据和阶段快照，适合本地 MVP；生产大规模 owner 首条待处理仍需要后续后端聚合和分页优化。
+- 该入口只是只读导航，不是批量分派、审批队列、权限隔离或 SLA 规则。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先因缺少 `summarizeImportReviewOwnerFirstPendingEntries` export 失败。
+- `node scripts/tests/import-center-model.test.mjs`：通过，53 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- in-app browser production smoke：`http://127.0.0.1:3028/data-quality/review-cases?processingStage=missing_conclusion` 命中 `同 Owner 首条待处理`、`进入首条待处理`、`查看 Owner 列表` 和 `复核案例列表`。
+- in-app browser navigation smoke：点击 `进入首条待处理` 后进入 `CASE-EVIDENCE-SMOKE-001`，命中 `同 Owner 待处理导航`、`第 1 / 2 条` 和 `下一条待处理`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

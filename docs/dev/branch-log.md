@@ -19,6 +19,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM070 Import Center Review Owner First Pending Entry
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM060 after push; local branch has IM061 through IM070 changes not pushed yet.`
+- scope: read-only same-owner first pending entry on `/data-quality/review-cases`, model helper/test coverage, shadcn-composed owner entry block, and traceability records.
+- allowed_files_check: `components/import-center-model.ts`, `components/import-center-review-cases-workspace.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, write action, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `components/import-center-model.ts`, `components/import-center-review-cases-workspace.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, write action, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `summarizeImportReviewOwnerFirstPendingEntries` was not exported; target model test passed with 53 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; production build passed; production browser smoke on 3028 rendered `同 Owner 首条待处理`, `进入首条待处理`, and `查看 Owner 列表`, then detail navigation rendered `同 Owner 待处理导航`, `第 1 / 2 条`, and `下一条待处理`; final `bash scripts/check.sh` result to be reported after final verification.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM069 Import Center Review Owner Pending Navigation
 
 - branch_name: `codex/im057-review-source-context`

@@ -576,6 +576,15 @@ export type ImportReviewOwnerNavigationSummary = {
   sequence: ImportReviewOwnerNavigationItem[]
 }
 
+export type ImportReviewOwnerFirstPendingEntry = {
+  ownerId: string
+  businessDate: string
+  totalCount: number
+  actionableCount: number
+  listHref: string
+  firstPendingCase: ImportReviewOwnerNavigationItem
+}
+
 export type ImportReviewCaseDetailSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -1824,6 +1833,88 @@ export function summarizeImportReviewOwnerNavigation({
     next,
     sequence,
   }
+}
+
+export function summarizeImportReviewOwnerFirstPendingEntries({
+  cases,
+  processingStages = {},
+  limit = 5,
+}: {
+  cases: ImportReviewCaseRecord[]
+  processingStages?: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
+  limit?: number
+}): ImportReviewOwnerFirstPendingEntry[] {
+  const groups = new Map<string, ImportReviewCaseRecord[]>()
+
+  for (const reviewCase of cases) {
+    const groupKey = `${reviewCase.owner_id}::${reviewCase.business_date}`
+    const existing = groups.get(groupKey) ?? []
+    existing.push(reviewCase)
+    groups.set(groupKey, existing)
+  }
+
+  return [...groups.values()]
+    .map((groupCases) => {
+      const firstCase = groupCases[0]
+      const sequence = groupCases
+        .map((reviewCase) => {
+          const stage = summarizeImportReviewCaseProcessingStage(
+            reviewCase,
+            processingStages[reviewCase.case_id]
+          )
+
+          return {
+            caseId: reviewCase.case_id,
+            stageKey: stage.key,
+            stageLabel: stage.label,
+            severityLabel: formatReviewCaseSeverity(reviewCase.severity),
+            createdAt: reviewCase.created_at,
+            href: buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id),
+            severityRank: getReviewCaseSeverityRank(reviewCase.severity),
+            stageRank: getReviewCaseProcessingStageRank(stage.key),
+          }
+        })
+        .filter((item) => item.stageKey !== "closed")
+        .sort(
+          (a, b) =>
+            a.stageRank - b.stageRank ||
+            a.severityRank - b.severityRank ||
+            a.createdAt.localeCompare(b.createdAt) ||
+            a.caseId.localeCompare(b.caseId)
+        )
+
+      const firstPendingCase = sequence[0]
+      if (!firstPendingCase || !firstCase) {
+        return null
+      }
+
+      return {
+        ownerId: firstCase.owner_id,
+        businessDate: firstCase.business_date,
+        totalCount: groupCases.length,
+        actionableCount: sequence.length,
+        listHref: buildImportReviewCasesWorkspaceHref({
+          businessDate: firstCase.business_date,
+          ownerId: firstCase.owner_id,
+        }),
+        firstPendingCase: {
+          caseId: firstPendingCase.caseId,
+          stageKey: firstPendingCase.stageKey,
+          stageLabel: firstPendingCase.stageLabel,
+          severityLabel: firstPendingCase.severityLabel,
+          createdAt: firstPendingCase.createdAt,
+          href: firstPendingCase.href,
+        },
+      }
+    })
+    .filter((entry): entry is ImportReviewOwnerFirstPendingEntry => entry !== null)
+    .sort(
+      (a, b) =>
+        b.actionableCount - a.actionableCount ||
+        a.ownerId.localeCompare(b.ownerId) ||
+        a.businessDate.localeCompare(b.businessDate)
+    )
+    .slice(0, limit)
 }
 
 export function summarizeImportReviewCaseDetail({

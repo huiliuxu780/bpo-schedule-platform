@@ -17,6 +17,7 @@ import {
   filterImportReviewCases,
   summarizeImportReviewCaseProcessingStage,
   summarizeImportReviewCasesWorkspace,
+  summarizeImportReviewOwnerFirstPendingEntries,
 } from "@/components/import-center-model"
 import { ImportCenterReviewOwnerStageMatrix } from "@/components/import-center-review-owner-stage-matrix"
 import { Badge } from "@/components/ui/badge"
@@ -65,7 +66,11 @@ export function ImportCenterReviewCasesWorkspace({
       <ReviewCaseFilterCard filters={filters} />
 
       <section className="grid gap-4 xl:grid-cols-[360px_minmax(0,1fr)]">
-        <ReviewCaseGroupingPanel summary={summary} />
+        <ReviewCaseGroupingPanel
+          cases={filteredCases}
+          processingStages={processingStages}
+          summary={summary}
+        />
         <ReviewCaseTable
           cases={filteredCases}
           processingStages={processingStages}
@@ -299,10 +304,19 @@ function ReviewCaseFilterCard({
 }
 
 function ReviewCaseGroupingPanel({
+  cases,
+  processingStages,
   summary,
 }: {
+  cases: ImportReviewCaseRecord[]
+  processingStages: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
   summary: ReturnType<typeof summarizeImportReviewCasesWorkspace>
 }) {
+  const firstPendingEntries = summarizeImportReviewOwnerFirstPendingEntries({
+    cases,
+    processingStages,
+  })
+
   return (
     <Card className="overflow-hidden">
       <CardHeader>
@@ -313,6 +327,7 @@ function ReviewCaseGroupingPanel({
         <p className="text-sm text-muted-foreground">{summary.nextAction}</p>
       </CardHeader>
       <CardContent className="grid gap-4">
+        <OwnerFirstPendingList entries={firstPendingEntries} />
         <GroupList title="Owner 负载" groups={summary.ownerGroups} />
         <GroupList title="状态拆分" groups={summary.statusGroups} />
         <GroupList title="处理阶段" groups={summary.processingStageGroups} />
@@ -320,6 +335,54 @@ function ReviewCaseGroupingPanel({
         <GroupList title="来源拆分" groups={summary.sourceGroups} />
       </CardContent>
     </Card>
+  )
+}
+
+function OwnerFirstPendingList({
+  entries,
+}: {
+  entries: ReturnType<typeof summarizeImportReviewOwnerFirstPendingEntries>
+}) {
+  return (
+    <section className="grid gap-2">
+      <div className="text-xs font-medium text-muted-foreground">
+        同 Owner 首条待处理
+      </div>
+      {entries.length === 0 ? (
+        <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
+          当前筛选结果暂无 owner 待处理案例
+        </div>
+      ) : (
+        <div className="grid gap-2">
+          {entries.map((entry) => (
+            <div
+              key={`${entry.ownerId}-${entry.businessDate}`}
+              className="grid gap-2 rounded-md border bg-muted/30 p-2"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-medium">{entry.ownerId}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {entry.businessDate} · 待处理{" "}
+                    {entry.actionableCount.toLocaleString("zh-CN")} /{" "}
+                    {entry.totalCount.toLocaleString("zh-CN")}
+                  </div>
+                </div>
+                <Badge variant="outline">{entry.firstPendingCase.stageLabel}</Badge>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button asChild size="sm" variant="secondary">
+                  <Link href={entry.firstPendingCase.href}>进入首条待处理</Link>
+                </Button>
+                <Button asChild size="sm" variant="outline">
+                  <Link href={entry.listHref}>查看 Owner 列表</Link>
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   )
 }
 
