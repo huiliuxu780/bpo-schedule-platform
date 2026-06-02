@@ -663,6 +663,18 @@ export type ImportReviewCaseActionFeedbackSummary = {
   actionKey: "evidence" | "conclusion" | "closure"
 }
 
+export type ImportReviewCaseActionContinuationSummary = {
+  tone: Exclude<ImportReviewCaseDetailTone, "empty" | "warning">
+  title: string
+  statusLabel: string
+  detail: string
+  primaryLabel: string
+  primaryHref: string
+  primaryDetail: string
+  listLabel: string
+  listHref: string
+}
+
 export type ImportReviewCaseClosureActionSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -2350,8 +2362,56 @@ export function summarizeImportReviewCaseActionFeedback({
     statusLabel: isSuccess ? "已关闭" : "写入失败",
     detail: isSuccess
       ? "关闭记录已写入；后续只读追溯处理动作、证据和结论。"
-      : "关闭记录未写入；确认已有证据和结论后重试。",
+    : "关闭记录未写入；确认已有证据和结论后重试。",
     actionKey: "closure",
+  }
+}
+
+export function summarizeImportReviewCaseActionContinuation({
+  feedback,
+  navigation,
+}: {
+  feedback: ImportReviewCaseActionFeedbackSummary | null
+  navigation: ImportReviewOwnerNavigationSummary
+}): ImportReviewCaseActionContinuationSummary | null {
+  if (!feedback) {
+    return null
+  }
+
+  const pendingCount = navigation.totalActionableCount
+  const pendingLabel = pendingCount.toLocaleString("zh-CN")
+  const nextCase = navigation.next
+
+  if (!nextCase) {
+    return {
+      tone: feedback.tone,
+      title: "续办导航",
+      statusLabel: pendingCount > 0 ? `还有 ${pendingLabel} 条待处理` : "暂无待处理",
+      detail:
+        navigation.ownerId && navigation.businessDate
+          ? `${navigation.ownerId} 在 ${navigation.businessDate} 暂无下一条待处理案例；可回到列表复核筛选结果。`
+          : "当前案例上下文不可用；可回到复核列表重新定位。",
+      primaryLabel: "返回同 Owner 列表",
+      primaryHref: navigation.listHref,
+      primaryDetail: "回到当前 owner 的复核筛选列表。",
+      listLabel: "返回复核列表",
+      listHref: "/data-quality/review-cases",
+    }
+  }
+
+  return {
+    tone: feedback.tone,
+    title: "续办导航",
+    statusLabel: `还有 ${pendingLabel} 条待处理`,
+    detail:
+      navigation.ownerId && navigation.businessDate
+        ? `${navigation.ownerId} 在 ${navigation.businessDate} 还有 ${pendingLabel} 条待处理案例；建议继续处理 ${nextCase.caseId}。`
+        : `还有 ${pendingLabel} 条待处理案例；建议继续处理 ${nextCase.caseId}。`,
+    primaryLabel: feedback.tone === "ready" ? "继续处理下一条" : "查看下一条待处理",
+    primaryHref: nextCase.href,
+    primaryDetail: `${nextCase.caseId} · ${nextCase.stageLabel} · ${nextCase.severityLabel}`,
+    listLabel: "返回同 Owner 列表",
+    listHref: navigation.listHref,
   }
 }
 

@@ -3639,3 +3639,26 @@ dependencies:
   - "US691"
 status: "done"
 ```
+
+### US693 - 复核提交后的续办导航
+
+```yaml
+id: US693
+requirement_ids:
+  - R773
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望提交复核动作后直接看到下一条同 owner 待处理案例和返回列表入口，以便连续处理复核工作而不是重新查找。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 在提交反馈出现时展示续办导航。"
+  - "续办导航优先展示同 owner 下一条待处理案例；当前案例已关闭或不在序列中时展示首条待处理案例。"
+  - "续办导航始终提供返回同 owner 复核列表的入口。"
+  - "续办导航复用现有 review-case list 数据和 detail 阶段快照，不新增后端 API 或 schema。"
+  - "不新增依赖，不修改 package/lockfile，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US692"
+status: "done"
+```

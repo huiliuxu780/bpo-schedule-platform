@@ -1990,3 +1990,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成复核动作提交反馈统一化；复核详情页解析现有 evidence、conclusion、closure searchParams，在处理动作区顶部展示动作名称、写入结果和下一步建议；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R773 - 复核提交后的续办导航
+
+```yaml
+id: R773
+module: "导入中心"
+description: "复核动作区已经能展示提交成功或失败反馈，但主管提交后仍需要在页面下方或列表页重新寻找下一条待处理案例。需要在提交反馈旁边展示续办导航，优先进入同 owner 下一条待处理案例，并保留返回复核列表入口。"
+source: "After IM072 action feedback and PM asked to continue development on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成复核提交后的续办导航；复核详情页在提交反馈出现时复用现有同 owner 待处理序列，展示下一条待处理案例入口和同 owner 列表返回入口；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

@@ -33,6 +33,7 @@ import {
   summarizeImportReviewCaseEvidenceChain,
   summarizeImportReviewCaseActionDeck,
   summarizeImportReviewCaseActionFeedback,
+  summarizeImportReviewCaseActionContinuation,
   summarizeImportReviewCaseProcessingTimeline,
   summarizeImportReviewCaseProcessingStage,
   summarizeImportReviewCaseClosureAction,
@@ -2317,6 +2318,82 @@ test("import center review case detail summarizes action submit feedback", () =>
       evidence: null,
       conclusion: null,
       closure: null,
+    }),
+    null
+  );
+});
+
+test("import center review case detail summarizes action continuation links", () => {
+  const currentCase = {
+    case_id: "CASE-CURRENT",
+    source_result_type: "schedule_actual",
+    source_result_id: 18,
+    business_date: "2026-05-11",
+    owner_id: "OWNER-A",
+    severity: "medium",
+    status: "open",
+    created_at: "2026-05-11T10:10:00+08:00",
+  };
+  const cases = [
+    currentCase,
+    {
+      case_id: "CASE-MISSING-EVIDENCE",
+      source_result_type: "forecast_schedule",
+      source_result_id: 20,
+      business_date: "2026-05-11",
+      owner_id: "OWNER-A",
+      severity: "critical",
+      status: "open",
+      created_at: "2026-05-11T10:20:00+08:00",
+    },
+    {
+      case_id: "CASE-READY-CLOSE",
+      source_result_type: "forecast_schedule",
+      source_result_id: 21,
+      business_date: "2026-05-11",
+      owner_id: "OWNER-A",
+      severity: "low",
+      status: "open",
+      created_at: "2026-05-11T10:30:00+08:00",
+    },
+  ];
+  const processingStages = {
+    "CASE-CURRENT": { evidenceCount: 1, conclusionCount: 0, isClosed: false },
+    "CASE-MISSING-EVIDENCE": { evidenceCount: 0, conclusionCount: 0, isClosed: false },
+    "CASE-READY-CLOSE": { evidenceCount: 1, conclusionCount: 1, isClosed: false },
+  };
+  const feedback = summarizeImportReviewCaseActionFeedback({
+    evidence: "success",
+    conclusion: null,
+    closure: null,
+  });
+  const navigation = summarizeImportReviewOwnerNavigation({
+    currentCase,
+    cases,
+    processingStages,
+  });
+
+  const continuation = summarizeImportReviewCaseActionContinuation({
+    feedback,
+    navigation,
+  });
+
+  assert.deepEqual(continuation, {
+    tone: "ready",
+    title: "续办导航",
+    statusLabel: "还有 3 条待处理",
+    detail: "OWNER-A 在 2026-05-11 还有 3 条待处理案例；建议继续处理 CASE-READY-CLOSE。",
+    primaryLabel: "继续处理下一条",
+    primaryHref: "/data-quality/review-cases/CASE-READY-CLOSE",
+    primaryDetail: "CASE-READY-CLOSE · 可关闭 · 低",
+    listLabel: "返回同 Owner 列表",
+    listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A",
+  });
+
+  assert.equal(
+    summarizeImportReviewCaseActionContinuation({
+      feedback: null,
+      navigation,
     }),
     null
   );

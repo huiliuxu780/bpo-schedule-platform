@@ -1719,3 +1719,14 @@
 - action: 统一复核动作提交反馈。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 读取现有 `evidence`、`conclusion`、`closure` 提交结果参数，并在 `处理动作区` 顶部展示动作名称、写入结果和下一步建议；无提交结果参数时不展示反馈条；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM073`
+- source_ids:
+  - `R773`
+- story_ids:
+  - `US693`
+- action: 增加复核提交后的续办导航。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 在提交反馈出现时新增 `续办导航`，优先展示同 owner 下一条待处理案例入口，并提供返回同 owner 复核列表入口；复用现有 review-case list 数据和 detail 阶段快照；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

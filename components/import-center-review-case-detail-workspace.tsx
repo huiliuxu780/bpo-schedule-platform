@@ -11,15 +11,19 @@ import {
 } from "lucide-react"
 
 import {
+  type ImportReviewCaseActionContinuationSummary,
   type ImportReviewCaseActionFeedbackSummary,
   type ImportReviewCaseDetailResponse,
   type ImportReviewCaseProcessingStageSnapshot,
   type ImportReviewCaseRecord,
+  type ImportReviewOwnerNavigationSummary,
   buildImportReviewCaseDetailApiUrl,
   summarizeImportReviewCaseActionDeck,
+  summarizeImportReviewCaseActionContinuation,
   summarizeImportReviewCaseActionFeedback,
   summarizeImportReviewCaseDetail,
   summarizeImportReviewCaseEvidenceChain,
+  summarizeImportReviewOwnerNavigation,
 } from "@/components/import-center-model"
 import { ImportCenterReviewCaseClosurePanel } from "@/components/import-center-review-case-closure-panel"
 import { ImportCenterReviewCaseConclusionPanel } from "@/components/import-center-review-case-conclusion-panel"
@@ -72,6 +76,12 @@ export function ImportCenterReviewCaseDetailWorkspace({
 }: ImportCenterReviewCaseDetailWorkspaceProps) {
   const summary = summarizeImportReviewCaseDetail({ detail, error })
   const evidenceChain = summarizeImportReviewCaseEvidenceChain({ detail, error })
+  const ownerNavigation = summarizeImportReviewOwnerNavigation({
+    currentCase: detail?.case ?? null,
+    cases: ownerCases,
+    processingStages: ownerProcessingStages,
+    error: ownerContextError,
+  })
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
@@ -159,6 +169,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
           detail={detail}
           error={error}
           actionFeedback={actionFeedback}
+          ownerNavigation={ownerNavigation}
         />
         <EvidenceTable detail={detail} />
         <ConclusionTable detail={detail} />
@@ -173,14 +184,20 @@ function ReviewCaseActionDeck({
   detail,
   error,
   actionFeedback,
+  ownerNavigation,
 }: {
   caseId: string
   detail: ImportReviewCaseDetailResponse | null
   error: string | null
   actionFeedback: ImportReviewCaseActionFeedbackParams
+  ownerNavigation: ImportReviewOwnerNavigationSummary
 }) {
   const deck = summarizeImportReviewCaseActionDeck({ detail, error })
   const feedback = summarizeImportReviewCaseActionFeedback(actionFeedback)
+  const continuation = summarizeImportReviewCaseActionContinuation({
+    feedback,
+    navigation: ownerNavigation,
+  })
   const primaryStep = deck.steps.find((step) => step.isPrimary) ?? deck.steps[0]
 
   return (
@@ -201,6 +218,9 @@ function ReviewCaseActionDeck({
       </CardHeader>
       <CardContent className="grid gap-4">
         {feedback ? <ReviewCaseActionFeedbackNotice feedback={feedback} /> : null}
+        {continuation ? (
+          <ReviewCaseActionContinuationPanel continuation={continuation} />
+        ) : null}
         <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(220px,280px)]">
           <div className="rounded-md border bg-muted/30 p-3">
             <div className="text-sm text-muted-foreground">当前推荐动作</div>
@@ -274,6 +294,44 @@ function ReviewCaseActionDeck({
         </Tabs>
       </CardContent>
     </Card>
+  )
+}
+
+function ReviewCaseActionContinuationPanel({
+  continuation,
+}: {
+  continuation: ImportReviewCaseActionContinuationSummary
+}) {
+  return (
+    <div className="rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="text-sm font-medium">{continuation.title}</div>
+            <Badge variant={continuation.tone === "blocked" ? "destructive" : "outline"}>
+              {continuation.statusLabel}
+            </Badge>
+          </div>
+          <div className="mt-1 text-sm text-muted-foreground">
+            {continuation.detail}
+          </div>
+          <div className="mt-2 text-xs text-muted-foreground">
+            {continuation.primaryDetail}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button asChild size="sm" variant="default">
+            <Link href={continuation.primaryHref}>
+              {continuation.primaryLabel}
+              <ExternalLink data-icon="inline-end" />
+            </Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href={continuation.listHref}>{continuation.listLabel}</Link>
+          </Button>
+        </div>
+      </div>
+    </div>
   )
 }
 

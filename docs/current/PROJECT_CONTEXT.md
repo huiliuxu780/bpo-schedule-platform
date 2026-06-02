@@ -14,6 +14,8 @@ Current story queue is empty and active tasks are empty.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
+`US693/IM073` completed the review-case submit continuation navigation, then current queue returned to empty.
+
 `US692/IM072` completed the review-case action submit feedback, then current queue returned to empty.
 
 `US691/IM071` completed the review-case detail processing action deck, then current queue returned to empty.
