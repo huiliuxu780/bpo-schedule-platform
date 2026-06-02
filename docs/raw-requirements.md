@@ -28,6 +28,19 @@ status: "done"
 notes: "本轮已完成 existing open case 的受控 closure 写入和复核案例详情页关闭入口；页面只在证据和结论齐全且未关闭时展示提交按钮，已关闭、读取失败或材料缺失时只展示阻塞原因；不新增 schema/migration，不新增依赖，不接真实外部接口，不做证据补录、审批、导出、批量、权限、生产公式、结算或收费因子。"
 ```
 
+### R763 - 复核案例证据补录写入入口
+
+```yaml
+id: R763
+module: "导入中心"
+description: "复核案例详情页已经能关闭证据和结论齐全的 open 案例，但材料不足时仍不能补充证据。需要先提供受控证据补录写入入口，让主管能对未关闭案例新增 evidence，再进入后续关闭。"
+source: "After IM062 controlled closure entry and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成本地 evidence 写入 API 和详情页受控提交入口；open case 可补充一条证据，closed case 或 case_id 不匹配会阻塞；不新增 schema/migration，不新增依赖，不接真实外部接口，不做结论新增、审批、导出、批量、权限、生产公式、结算或收费因子。"
+```
+
 ## Requirements
 
 ### R697-R700 - Q127 数据库基础 QA 收口

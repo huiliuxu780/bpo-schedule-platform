@@ -2818,3 +2818,32 @@
 - API smoke：临时最新后端 `http://127.0.0.1:8003/api/v1/review-cases/write-closure` 返回 `closure_id=CLO-CASE-QUERY-001`、`closure_status=closed`、`closed_by=ops-lead-01`。
 - in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases/CASE-QUERY-001` 刷新后命中 `已关闭` 和 `案例已关闭`，`关闭案例` 按钮数量为 0。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-02 - IM063 复核案例证据补录写入入口
+
+#### 审计结论
+
+- `IM063/US683` 已新增受控证据补录写入 API：`POST /api/v1/review-cases/{case_id}/evidence`。
+- `write_review_evidence()` 对已存在且未关闭的 review case 写入一条 evidence，并返回带最新 evidence 列表的 detail。
+- 服务层会阻止 path `case_id` 与 payload `case_id` 不一致、已关闭案例补证据、缺失 case 或重复 evidence_id。
+- `/data-quality/review-cases/[caseId]` 新增“补充复核证据”独立 panel，位于证据链路之后、关闭入口之前。
+- 本轮未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、结论新增、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只支持单条 evidence 补录，不是结论新增、证据附件上传、审批流、批量处理或权限隔离。
+- 页面 form 使用现有本地 API base；当前 3026/8002 开发进程如果未刷新后端代码，提交动作需要重启本地后端后才能直接点通。本轮用临时最新 8003 后端完成 API smoke。
+
+#### 验证
+
+- TDD 红灯：后端 service/api 目标测试先因缺少 `backend.app.review_evidence` 和 `write_review_evidence_api` 失败。
+- TDD 红灯：前端模型测试先因缺少 evidence write helper export 失败。
+- `.venv/bin/python -m unittest backend.tests.test_review_evidence_service backend.tests.test_review_evidence_api -v`：通过，6 个 review evidence 测试通过。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，46 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- API smoke：临时最新后端 `http://127.0.0.1:8003/api/v1/review-cases/CASE-EVIDENCE-SMOKE-001/evidence` 返回 `evidence_count=1` 和 `last_evidence=EVD-CASE-EVIDENCE-SMOKE-001-001`。
+- in-app browser smoke：`/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001` 命中 `补充复核证据`，`提交证据` 按钮数量为 1，并显示 `EVD-CASE-EVIDENCE-SMOKE-001-001`。
+- in-app browser smoke：`/data-quality/review-cases/CASE-QUERY-001` 命中 `案例已关闭`，`提交证据` 按钮数量为 0。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

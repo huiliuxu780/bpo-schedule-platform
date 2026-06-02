@@ -44,6 +44,30 @@ dependencies:
 status: "done"
 ```
 
+### US683 - 复核案例证据补录写入入口
+
+```yaml
+id: US683
+requirement_ids:
+  - R763
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望能在复核案例详情页对未关闭案例补充一条证据，以便材料不足时先补齐处理依据，再进入关闭。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "`POST /api/v1/review-cases/{case_id}/evidence` 能对已存在且未关闭的复核案例新增一条 evidence，并返回带最新 evidence 列表的详情。"
+  - "已关闭案例、case_id 不匹配或重复 evidence_id 时返回明确错误，不写入新证据。"
+  - "`/data-quality/review-cases/[caseId]` 对未关闭案例展示受控证据补录入口。"
+  - "证据补录入口提交 evidence_type、evidence_uri、submitted_by 和 note 到现有本地 API，成功后回到当前详情页并显示最新证据。"
+  - "读取失败或已关闭时不展示可提交补录按钮，只展示阻塞原因。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做结论新增、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、目标 backend unittest、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US682"
+status: "done"
+```
+
 ## DAG Rules
 
 - 每条用户故事必须关联至少一条原始需求。

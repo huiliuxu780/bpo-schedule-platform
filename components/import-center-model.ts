@@ -522,6 +522,22 @@ export type ImportReviewCaseClosureActionSummary = {
   apiHref: string
 }
 
+export type ImportReviewCaseEvidenceActionSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  canSubmit: boolean
+  statusLabel: string
+  actionLabel: string
+  detail: string
+  blockers: string[]
+  apiHref: string
+}
+
+export type ImportReviewEvidenceWritePayload = Pick<
+  ImportReviewEvidenceRecord,
+  "evidence_id" | "case_id" | "evidence_type" | "evidence_uri" | "submitted_by" | "note"
+>
+
 export type ImportReviewCaseClosureWritePayload = {
   case: Pick<
     ImportReviewCaseRecord,
@@ -954,6 +970,16 @@ export function buildImportReviewCaseClosureWriteApiUrl(
   apiBase = getDefaultApiBase()
 ): string {
   return buildImportApiUrl("/api/v1/review-cases/write-closure", apiBase)
+}
+
+export function buildImportReviewEvidenceWriteApiUrl(
+  caseId: string,
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl(
+    `/api/v1/review-cases/${encodeURIComponent(caseId)}/evidence`,
+    apiBase
+  )
 }
 
 export function buildImportReviewCasesWorkspaceHref(
@@ -1460,6 +1486,83 @@ export function summarizeImportReviewCaseClosureAction({
       : blockers.join("；"),
     blockers,
     apiHref: buildImportReviewCaseClosureWriteApiUrl(),
+  }
+}
+
+export function summarizeImportReviewCaseEvidenceAction({
+  detail,
+  error,
+}: {
+  detail: ImportReviewCaseDetailResponse | null
+  error: string | null
+}): ImportReviewCaseEvidenceActionSummary {
+  if (error) {
+    return {
+      tone: "blocked",
+      title: "补充复核证据",
+      canSubmit: false,
+      statusLabel: "读取失败",
+      actionLabel: "不可补充",
+      detail: "复核案例读取失败，不能提交证据补录。",
+      blockers: [error],
+      apiHref: buildImportReviewEvidenceWriteApiUrl(""),
+    }
+  }
+
+  if (!detail) {
+    return {
+      tone: "empty",
+      title: "补充复核证据",
+      canSubmit: false,
+      statusLabel: "等待案例",
+      actionLabel: "不可补充",
+      detail: "先从复核案例工作台选择一个案例。",
+      blockers: ["等待复核案例"],
+      apiHref: buildImportReviewEvidenceWriteApiUrl(""),
+    }
+  }
+
+  const blockers = [
+    ...(detail.case.status === "closed" || detail.closure ? ["案例已关闭"] : []),
+  ]
+  const canSubmit = blockers.length === 0
+
+  return {
+    tone: canSubmit ? "warning" : "ready",
+    title: "补充复核证据",
+    canSubmit,
+    statusLabel: canSubmit ? "可补充" : "已关闭",
+    actionLabel: canSubmit ? "提交证据" : "不可补充",
+    detail: canSubmit
+      ? "当前案例未关闭，可补充一条证据记录。"
+      : blockers.join("；"),
+    blockers,
+    apiHref: buildImportReviewEvidenceWriteApiUrl(detail.case.case_id),
+  }
+}
+
+export function buildImportReviewEvidenceWritePayload({
+  detail,
+  evidenceType,
+  evidenceUri,
+  submittedBy,
+  note,
+}: {
+  detail: ImportReviewCaseDetailResponse
+  evidenceType: string
+  evidenceUri: string
+  submittedBy: string
+  note: string
+}): ImportReviewEvidenceWritePayload {
+  const nextNumber = String(detail.evidence.length + 1).padStart(3, "0")
+
+  return {
+    evidence_id: `EVD-${detail.case.case_id}-${nextNumber}`,
+    case_id: detail.case.case_id,
+    evidence_type: evidenceType,
+    evidence_uri: evidenceUri,
+    submitted_by: submittedBy,
+    note: note.trim() ? note.trim() : null,
   }
 }
 

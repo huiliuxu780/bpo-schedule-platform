@@ -17,6 +17,7 @@ import {
   summarizeImportReviewCaseEvidenceChain,
 } from "@/components/import-center-model"
 import { ImportCenterReviewCaseClosurePanel } from "@/components/import-center-review-case-closure-panel"
+import { ImportCenterReviewCaseEvidencePanel } from "@/components/import-center-review-case-evidence-panel"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -123,6 +124,11 @@ export function ImportCenterReviewCaseDetailWorkspace({
         </Card>
 
         <EvidenceChainCard chain={evidenceChain} />
+        <ImportCenterReviewCaseEvidencePanel
+          caseId={caseId}
+          detail={detail}
+          error={error}
+        />
         <ImportCenterReviewCaseClosurePanel
           caseId={caseId}
           detail={detail}

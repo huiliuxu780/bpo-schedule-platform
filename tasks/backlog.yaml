@@ -6354,3 +6354,52 @@ tasks:
       - "关闭写入 API 契约需要新增路由或改变生产状态码口径"
       - "验证失败"
     commit_after_done: true
+  - id: IM063
+    title: "复核案例证据补录写入入口"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM062"]
+    allowed_files:
+      - "backend/app/main.py"
+      - "backend/app/review_evidence.py"
+      - "backend/tests/test_review_evidence_api.py"
+      - "backend/tests/test_review_evidence_service.py"
+      - "components/import-center-model.ts"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "components/import-center-review-case-evidence-panel.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "app/**"
+    acceptance:
+      - "`POST /api/v1/review-cases/{case_id}/evidence` 能对已存在且未关闭的复核案例新增一条 evidence，并返回带最新 evidence 列表的详情。"
+      - "已关闭案例、case_id 不匹配或重复 evidence_id 时返回明确错误，不写入新证据。"
+      - "`/data-quality/review-cases/[caseId]` 对未关闭案例展示受控证据补录入口。"
+      - "证据补录入口提交 evidence_type、evidence_uri、submitted_by 和 note 到现有本地 API，成功后回到当前详情页并显示最新证据。"
+      - "读取失败或已关闭时不展示可提交补录按钮，只展示阻塞原因。"
+      - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做结论新增、审批、导出、批量、权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、目标 backend unittest、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: high
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema、migration 或数据库结构变更"
+      - "范围扩展到结论新增、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "证据写入 API 契约需要改变生产状态码口径"
+      - "验证失败"
+    commit_after_done: true
