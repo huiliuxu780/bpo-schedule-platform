@@ -1543,3 +1543,14 @@
 - action: 增加复核案例详情正常态本地数据准备。
 - status: `done`
 - notes: 新增 `seed_review_case_demo()`，可在本地 sqlite 库中复用现有 DB007/DB008 repository 和 schema 生成 `CASE-QUERY-001`、来源对比结果、证据和结论，重复执行返回已存在案例；本轮不新增 schema/migration、依赖、真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM057`
+- source_ids:
+  - `R757`
+- story_ids:
+  - `US677`
+- action: 增加复核案例详情的只读来源结果上下文。
+- status: `done`
+- notes: `/api/v1/review-cases/{case_id}` 现在返回 `source_result`，详情页新增“来源结果明细”区块，展示业务日、时段、职场、项目、技能和差异指标；本轮不新增 schema/migration、依赖、真实外部接口、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

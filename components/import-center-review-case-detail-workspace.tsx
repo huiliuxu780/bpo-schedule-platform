@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   ClipboardCheck,
   ClipboardList,
+  Database,
   ExternalLink,
   FileText,
   ShieldAlert,
@@ -72,6 +73,11 @@ export function ImportCenterReviewCaseDetailWorkspace({
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid gap-4">
+          <SourceResultContextCard
+            dimensions={summary.sourceResultDimensions}
+            metrics={summary.sourceResultMetrics}
+          />
+
           <Card>
             <CardHeader className="flex flex-row items-start justify-between gap-3">
               <div>
@@ -132,6 +138,49 @@ export function ImportCenterReviewCaseDetailWorkspace({
         </Card>
       </section>
     </main>
+  )
+}
+
+function SourceResultContextCard({
+  dimensions,
+  metrics,
+}: {
+  dimensions: string[]
+  metrics: string[]
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Database className="size-4 text-muted-foreground" />
+          来源结果明细
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          只读展示复核案例引用的对比结果上下文。
+        </p>
+      </CardHeader>
+      <CardContent className="grid gap-3">
+        <div className="grid gap-2 md:grid-cols-2">
+          <SourceResultGroup title="业务维度" items={dimensions} />
+          <SourceResultGroup title="差异指标" items={metrics} />
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function SourceResultGroup({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="grid gap-2 rounded-md border bg-muted/30 p-3">
+      <div className="text-sm font-medium">{title}</div>
+      <div className="flex flex-wrap gap-2">
+        {items.map((item) => (
+          <Badge key={item} variant="outline">
+            {item}
+          </Badge>
+        ))}
+      </div>
+    </div>
   )
 }
 

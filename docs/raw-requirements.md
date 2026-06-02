@@ -1781,3 +1781,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成本地 smoke 数据准备 helper 和测试；`seed_review_case_demo()` 可生成 `CASE-QUERY-001`、来源对比结果、证据和结论，重复执行返回已存在案例；不新增 schema/migration，不新增依赖，不接真实外部接口，不做权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R757 - 复核案例来源结果上下文
+
+```yaml
+id: R757
+module: "导入中心"
+description: "复核案例详情页已经能展示正常态数据，但来源结果仍只显示编号和类型，主管无法判断案例来自哪个业务日、时段、职场、项目、技能和差异指标。需要在详情 API 和页面中补齐只读来源结果上下文。"
+source: "After IM056 normal-state smoke and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成现有 DB007/DB008 来源结果读取和前端只读展示；`ReviewCaseDetail` 返回 `source_result`，详情页展示来源结果明细；不新增 schema/migration，不新增依赖，不接真实外部接口，不做权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

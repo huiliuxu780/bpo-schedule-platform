@@ -12,6 +12,7 @@ from backend.app.models import (
     ReviewCaseCreateRequest,
     ReviewCaseDetail,
     ReviewCaseRecord,
+    ReviewCaseSourceResultRecord,
     ReviewClosureInput,
     ReviewClosureRecord,
     ReviewConclusionInput,
@@ -218,9 +219,11 @@ class ReviewPersistenceRepository:
             closure = session.scalar(
                 select(ReviewClosureEntity).where(ReviewClosureEntity.case_id == case_id)
             )
+            source_result = _source_result_record(session, case)
 
         return ReviewCaseDetail(
             case=_case_record(case),
+            source_result=source_result,
             evidence=[_evidence_record(row) for row in evidence],
             conclusions=[_conclusion_record(row) for row in conclusions],
             closure=_closure_record(closure) if closure is not None else None,
@@ -310,6 +313,62 @@ def _case_record(entity: ReviewCaseEntity) -> ReviewCaseRecord:
         severity=entity.severity,
         status=entity.status,
         created_at=entity.created_at,
+    )
+
+
+def _source_result_record(
+    session: Session,
+    case: ReviewCaseEntity,
+) -> ReviewCaseSourceResultRecord | None:
+    if case.source_result_type == "forecast_schedule":
+        source = session.get(
+            ForecastScheduleComparisonResultEntity,
+            case.source_result_id,
+        )
+        if source is None:
+            return None
+        return ReviewCaseSourceResultRecord(
+            source_result_type="forecast_schedule",
+            result_id=source.result_id,
+            run_id=source.run_id,
+            forecast_version_id=source.forecast_version_id,
+            schedule_version_id=source.schedule_version_id,
+            forecast_interval_id=source.forecast_interval_id,
+            schedule_detail_id=source.schedule_detail_id,
+            business_date=source.business_date,
+            workplace_id=source.workplace_id,
+            project_id=source.project_id,
+            skill_id=source.skill_id,
+            interval_start=source.interval_start,
+            interval_end=source.interval_end,
+            forecast_agents=source.forecast_agents,
+            scheduled_agents=source.scheduled_agents,
+            gap_agents=source.gap_agents,
+            result_status=source.result_status,
+        )
+
+    source = session.get(
+        ScheduleActualComparisonResultEntity,
+        case.source_result_id,
+    )
+    if source is None:
+        return None
+    return ReviewCaseSourceResultRecord(
+        source_result_type="schedule_actual",
+        result_id=source.result_id,
+        run_id=source.run_id,
+        schedule_version_id=source.schedule_version_id,
+        actual_import_version_id=source.actual_import_version_id,
+        schedule_detail_id=source.schedule_detail_id,
+        actual_status_interval_row_id=source.actual_status_interval_row_id,
+        business_date=source.business_date,
+        employee_id=source.employee_id,
+        interval_start=source.interval_start,
+        interval_end=source.interval_end,
+        scheduled_minutes=source.scheduled_minutes,
+        actual_productive_minutes=source.actual_productive_minutes,
+        late_minutes=source.late_minutes,
+        result_status=source.result_status,
     )
 
 

@@ -3269,3 +3269,25 @@ dependencies:
   - "US675"
 status: "done"
 ```
+
+### US677 - 复核案例来源结果上下文
+
+```yaml
+id: US677
+requirement_ids:
+  - R757
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望复核案例详情页能展示来源对比结果的业务上下文，以便判断案例来自哪个业务日、时段、职场、项目、技能和差异，而不是只看到一个结果编号。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "`/api/v1/review-cases/{case_id}` 返回只读 `source_result` 上下文，覆盖 forecast_schedule 和 schedule_actual 来源类型。"
+  - "`/data-quality/review-cases/[caseId]` 在独立区块展示来源结果明细，包括业务日、时段、维度和关键差异指标。"
+  - "页面保持只读，不提供证据补录、提交、关闭、审批、导出或批量操作。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、目标 backend unittest、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US676"
+status: "done"
+```

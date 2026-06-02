@@ -201,6 +201,7 @@ Current invariants:
 - `IM054/US674` linked quality-impact issue groups to `/data-quality/review-cases` with business date, open status, source type, and quality-focus keyword context, while keeping review handling read-only and returning current queue and active tasks to empty.
 - `IM055/US675` added `/data-quality/review-cases/[caseId]` as a read-only second-level review-case detail page, with list-to-detail navigation, case summary, source line, quality focus, evidence gap, evidence/conclusion records, and processing-boundary guidance, then returned current queue and active tasks to empty.
 - `IM056/US676` added local review-case smoke data preparation for `CASE-QUERY-001`, reusing existing DB007/DB008 repositories and schema so the review-case detail page can show a persisted normal state, then returned current queue and active tasks to empty.
+- `IM057/US677` added read-only review-case source result context to `/api/v1/review-cases/{case_id}` and `/data-quality/review-cases/[caseId]`, showing business date, interval, dimensions, and key difference metrics from existing DB007/DB008 results, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

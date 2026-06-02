@@ -352,8 +352,35 @@ export type ImportReviewClosureRecord = {
   closure_note: string | null
 }
 
+export type ImportReviewCaseSourceResultRecord = {
+  source_result_type: ImportReviewCaseRecord["source_result_type"]
+  result_id: number
+  run_id: string
+  business_date: string
+  interval_start: string
+  interval_end: string
+  result_status: string
+  workplace_id: string | null
+  project_id: string | null
+  skill_id: string | null
+  employee_id: string | null
+  forecast_version_id: string | null
+  schedule_version_id: string | null
+  actual_import_version_id: string | null
+  forecast_interval_id: string | null
+  schedule_detail_id: string | null
+  actual_status_interval_row_id: number | null
+  forecast_agents: number | null
+  scheduled_agents: number | null
+  gap_agents: number | null
+  scheduled_minutes: number | null
+  actual_productive_minutes: number | null
+  late_minutes: number | null
+}
+
 export type ImportReviewCaseDetailResponse = {
   case: ImportReviewCaseRecord
+  source_result?: ImportReviewCaseSourceResultRecord | null
   evidence: ImportReviewEvidenceRecord[]
   conclusions: ImportReviewConclusionRecord[]
   closure: ImportReviewClosureRecord | null
@@ -365,6 +392,8 @@ export type ImportReviewCaseDetailSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
   sourceLabel: string
+  sourceResultDimensions: string[]
+  sourceResultMetrics: string[]
   ownerLabel: string
   evidenceLabel: string
   qualityFocus: string
@@ -1038,6 +1067,8 @@ export function summarizeImportReviewCaseDetail({
       tone: "blocked",
       title: "复核案例读取失败",
       sourceLabel: "来源不可用",
+      sourceResultDimensions: ["来源不可用"],
+      sourceResultMetrics: ["等待 API 恢复"],
       ownerLabel: "owner 不可用",
       evidenceLabel: "证据不可用",
       qualityFocus: "质量问题不可用",
@@ -1054,6 +1085,8 @@ export function summarizeImportReviewCaseDetail({
       tone: "empty",
       title: "等待复核案例",
       sourceLabel: "来源未选择",
+      sourceResultDimensions: ["等待案例"],
+      sourceResultMetrics: ["等待来源结果"],
       ownerLabel: "owner 未选择",
       evidenceLabel: "证据未选择",
       qualityFocus: "等待案例详情",
@@ -1070,6 +1103,10 @@ export function summarizeImportReviewCaseDetail({
   const evidenceCount = detail.evidence.length
   const conclusionCount = detail.conclusions.length
   const sourceLabel = formatReviewCaseDetailSource(reviewCase)
+  const sourceResultSummary = summarizeReviewCaseSourceResult(
+    reviewCase,
+    detail.source_result ?? null
+  )
   const listHref = buildImportReviewCasesWorkspaceHref({
     businessDate: reviewCase.business_date,
     ownerId: reviewCase.owner_id,
@@ -1086,6 +1123,8 @@ export function summarizeImportReviewCaseDetail({
         : "warning",
     title: `${reviewCase.case_id} · ${formatReviewCaseSeverity(reviewCase.severity)} · ${formatReviewCaseStatus(reviewCase.status)}`,
     sourceLabel,
+    sourceResultDimensions: sourceResultSummary.dimensions,
+    sourceResultMetrics: sourceResultSummary.metrics,
     ownerLabel: reviewCase.owner_id,
     evidenceLabel: `证据 ${evidenceCount.toLocaleString("zh-CN")} 条 · 结论 ${conclusionCount.toLocaleString("zh-CN")} 条 · ${isClosed ? "已关闭" : "未关闭"}`,
     qualityFocus: formatReviewCaseQualityFocus(reviewCase),
@@ -2978,6 +3017,75 @@ function buildReviewCasesWorkspaceDetail(
 
 function formatReviewCaseDetailSource(reviewCase: ImportReviewCaseRecord): string {
   return `${formatReviewCaseSourceType(reviewCase.source_result_type)} #${reviewCase.source_result_id}`
+}
+
+function summarizeReviewCaseSourceResult(
+  reviewCase: ImportReviewCaseRecord,
+  sourceResult: ImportReviewCaseSourceResultRecord | null
+): { dimensions: string[]; metrics: string[] } {
+  if (!sourceResult) {
+    return {
+      dimensions: [
+        `业务日 ${reviewCase.business_date}`,
+        `${formatReviewCaseSourceType(reviewCase.source_result_type)} #${reviewCase.source_result_id}`,
+      ],
+      metrics: ["等待来源结果明细"],
+    }
+  }
+
+  if (sourceResult.source_result_type === "schedule_actual") {
+    return {
+      dimensions: [
+        `业务日 ${sourceResult.business_date}`,
+        `时段 ${sourceResult.interval_start}-${sourceResult.interval_end}`,
+        sourceResult.employee_id ? `坐席 ${sourceResult.employee_id}` : null,
+        sourceResult.schedule_version_id
+          ? `排班版本 ${sourceResult.schedule_version_id}`
+          : null,
+        sourceResult.actual_import_version_id
+          ? `实际版本 ${sourceResult.actual_import_version_id}`
+          : null,
+      ].filter((item): item is string => item !== null),
+      metrics: [
+        formatNullableNumberMetric("排班", sourceResult.scheduled_minutes, "分钟"),
+        formatNullableNumberMetric(
+          "有效",
+          sourceResult.actual_productive_minutes,
+          "分钟"
+        ),
+        formatNullableNumberMetric("迟到", sourceResult.late_minutes, "分钟"),
+        `状态 ${sourceResult.result_status}`,
+      ].filter((item): item is string => item !== null),
+    }
+  }
+
+  return {
+    dimensions: [
+      `业务日 ${sourceResult.business_date}`,
+      `时段 ${sourceResult.interval_start}-${sourceResult.interval_end}`,
+      sourceResult.workplace_id ? `职场 ${sourceResult.workplace_id}` : null,
+      sourceResult.project_id ? `项目 ${sourceResult.project_id}` : null,
+      sourceResult.skill_id ? `技能 ${sourceResult.skill_id}` : null,
+    ].filter((item): item is string => item !== null),
+    metrics: [
+      formatNullableNumberMetric("预测", sourceResult.forecast_agents, "人"),
+      formatNullableNumberMetric("排班", sourceResult.scheduled_agents, "人"),
+      formatNullableNumberMetric("缺口", sourceResult.gap_agents, "人"),
+      `状态 ${sourceResult.result_status}`,
+    ].filter((item): item is string => item !== null),
+  }
+}
+
+function formatNullableNumberMetric(
+  label: string,
+  value: number | null,
+  unit: string
+): string | null {
+  if (value === null) {
+    return null
+  }
+
+  return `${label} ${value.toLocaleString("zh-CN")} ${unit}`
 }
 
 function formatReviewCaseQualityFocus(reviewCase: ImportReviewCaseRecord): string {

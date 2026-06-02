@@ -2649,3 +2649,34 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 backend unittest。
+
+### 2026-06-02 - IM057 复核案例来源结果上下文
+
+#### 审计结论
+
+- `IM057/US677` 已在 `ReviewCaseDetail` 中增加只读 `source_result` 上下文。
+- backend 复用现有 DB007 对比结果表：`forecast_schedule` 返回业务日、时段、职场、项目、技能、预测人数、排班人数、缺口和状态；`schedule_actual` 返回业务日、时段、坐席、排班分钟、有效分钟、迟到分钟和状态。
+- `/data-quality/review-cases/[caseId]` 新增“来源结果明细”独立区块，按业务维度和差异指标分组展示，不再只显示来源编号。
+- 本轮未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、证据补录、复核关闭写入、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前是来源结果只读上下文，不是复核写入、证据补录、关闭异常、审批或批量处理。
+- 页面 smoke 使用 8001 新后端和 3025 新前端临时服务；原 3021/8000 旧服务未被替换。
+
+#### 验证
+
+- TDD 红灯：后端目标测试因 `ReviewCaseDetail` 缺少 `source_result` 失败。
+- TDD 红灯：前端模型测试因 summary 缺少 `sourceResultDimensions/sourceResultMetrics` 失败。
+- `.venv/bin/python -m unittest backend.tests.test_result_query_api -v`：通过，7 个 result query API 测试覆盖两种来源。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，41 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `npm run build`：默认 Codex Node 命中已知 native addon 签名问题；使用工作区 Node 运行 `/Users/mac/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node node_modules/next/dist/bin/next build --webpack` 通过。
+- API smoke：`http://127.0.0.1:8001/api/v1/review-cases/CASE-QUERY-001` 返回 `source_result`，含 `SH-01`、`BOSCH-CS`、`L1-CN`、`forecast_agents=3`、`scheduled_agents=1`、`gap_agents=2`。
+- page smoke：`http://127.0.0.1:3025/data-quality/review-cases/CASE-QUERY-001` 的 production HTML 命中 `来源结果明细`、`职场 SH-01`、`项目 BOSCH-CS`、`技能 L1-CN`、`缺口 2 人`。
+- Playwright wrapper smoke 因 `npm exec playwright-cli` 卡住未完成，已终止该临时进程。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 163 个后端 unittest。

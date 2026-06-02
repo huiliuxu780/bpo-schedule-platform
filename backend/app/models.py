@@ -739,6 +739,32 @@ class ReviewCaseRecord(BaseModel):
     created_at: str
 
 
+class ReviewCaseSourceResultRecord(BaseModel):
+    source_result_type: ReviewSourceResultType
+    result_id: int
+    run_id: str
+    business_date: str
+    interval_start: str
+    interval_end: str
+    result_status: str
+    workplace_id: str | None = None
+    project_id: str | None = None
+    skill_id: str | None = None
+    employee_id: str | None = None
+    forecast_version_id: str | None = None
+    schedule_version_id: str | None = None
+    actual_import_version_id: str | None = None
+    forecast_interval_id: str | None = None
+    schedule_detail_id: str | None = None
+    actual_status_interval_row_id: int | None = None
+    forecast_agents: int | None = None
+    scheduled_agents: int | None = None
+    gap_agents: int | None = None
+    scheduled_minutes: int | None = None
+    actual_productive_minutes: int | None = None
+    late_minutes: int | None = None
+
+
 class ReviewEvidenceInput(BaseModel):
     evidence_id: str
     case_id: str
@@ -803,6 +829,7 @@ class ReviewClosureWriteRequest(BaseModel):
 
 class ReviewCaseDetail(BaseModel):
     case: ReviewCaseRecord
+    source_result: ReviewCaseSourceResultRecord | None = None
     evidence: list[ReviewEvidenceRecord]
     conclusions: list[ReviewConclusionRecord]
     closure: ReviewClosureRecord | None = None
