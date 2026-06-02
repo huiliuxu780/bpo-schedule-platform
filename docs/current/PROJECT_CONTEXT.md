@@ -10,7 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current queue is empty. No ready story is available in `docs/current/STORY_QUEUE.yaml`.
+Current story queue and active tasks are empty. Continue only after the next requirement is explicitly converted into a ready story and active task.
+
+`US681/IM061` completed the read-only evidence/conclusion chain on the review-case detail page, then current queue returned to empty.
 
 `US680/IM060` completed read-only linked review-case positioning on the comparison-run detail page, then current queue returned to empty.
 

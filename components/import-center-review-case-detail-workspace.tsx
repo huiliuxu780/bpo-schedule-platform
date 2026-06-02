@@ -14,10 +14,17 @@ import {
   type ImportReviewCaseDetailResponse,
   buildImportReviewCaseDetailApiUrl,
   summarizeImportReviewCaseDetail,
+  summarizeImportReviewCaseEvidenceChain,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -39,6 +46,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
   error,
 }: ImportCenterReviewCaseDetailWorkspaceProps) {
   const summary = summarizeImportReviewCaseDetail({ detail, error })
+  const evidenceChain = summarizeImportReviewCaseEvidenceChain({ detail, error })
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
@@ -72,78 +80,153 @@ export function ImportCenterReviewCaseDetailWorkspace({
         <MetricCard label="质量焦点" value={summary.qualityFocus} detail="关闭前核对项" />
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="grid gap-4">
-          <SourceResultContextCard
-            dimensions={summary.sourceResultDimensions}
-            metrics={summary.sourceResultMetrics}
-          />
-          <SourceTraceCard
-            run={summary.sourceTraceRun}
-            href={summary.sourceTraceHref}
-            versions={summary.sourceTraceVersions}
-          />
-
-          <Card>
-            <CardHeader className="flex flex-row items-start justify-between gap-3">
-              <div>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <ShieldAlert className="size-4 text-muted-foreground" />
-                  证据缺口
-                </CardTitle>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {summary.evidenceGap}
-                </p>
-              </div>
-              <Button asChild size="sm" variant="outline">
-                <Link href={summary.detailHref}>
-                  查看详情 API
-                  <ExternalLink data-icon="inline-end" />
-                </Link>
-              </Button>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
-                {summary.nextAction}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {summary.evidence.map((item) => (
-                  <Badge key={item} variant="outline">
-                    {item}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <EvidenceTable detail={detail} />
-          <ConclusionTable detail={detail} />
-        </div>
+      <section className="grid gap-4">
+        <SourceResultContextCard
+          dimensions={summary.sourceResultDimensions}
+          metrics={summary.sourceResultMetrics}
+        />
+        <SourceTraceCard
+          run={summary.sourceTraceRun}
+          href={summary.sourceTraceHref}
+          versions={summary.sourceTraceVersions}
+        />
 
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <ClipboardCheck className="size-4 text-muted-foreground" />
-              处理边界
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              本页只读展示，不提供补证据、关闭、审批、导出或批量处理。
-            </p>
-          </CardHeader>
-          <CardContent className="grid gap-3 text-sm text-muted-foreground">
-            <div className="rounded-md border bg-muted/30 p-3">
-              复核结论写入需要单独受控任务，必须明确权限、审计、幂等和回滚边界。
+          <CardHeader className="flex flex-row items-start justify-between gap-3">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <ShieldAlert className="size-4 text-muted-foreground" />
+                证据缺口
+              </CardTitle>
+              <CardDescription className="mt-1">{summary.evidenceGap}</CardDescription>
             </div>
-            <div className="rounded-md border bg-muted/30 p-3">
-              <div>当前详情来自</div>
-              <div className="mt-1 break-all font-mono text-xs">
-                {buildImportReviewCaseDetailApiUrl(caseId)}
-              </div>
+            <Button asChild size="sm" variant="outline">
+              <Link href={summary.detailHref}>
+                查看详情 API
+                <ExternalLink data-icon="inline-end" />
+              </Link>
+            </Button>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
+              {summary.nextAction}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {summary.evidence.map((item) => (
+                <Badge key={item} variant="outline">
+                  {item}
+                </Badge>
+              ))}
             </div>
           </CardContent>
         </Card>
+
+        <EvidenceChainCard chain={evidenceChain} />
+        <EvidenceTable detail={detail} />
+        <ConclusionTable detail={detail} />
+        <ProcessingBoundaryCard caseId={caseId} />
       </section>
     </main>
+  )
+}
+
+function EvidenceChainCard({
+  chain,
+}: {
+  chain: ReturnType<typeof summarizeImportReviewCaseEvidenceChain>
+}) {
+  return (
+    <Card className="overflow-hidden">
+      <CardHeader>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <ClipboardList className="size-4 text-muted-foreground" />
+              {chain.title}
+            </CardTitle>
+            <CardDescription className="mt-1">{chain.summary}</CardDescription>
+          </div>
+          <Badge variant={chain.tone === "blocked" ? "destructive" : "outline"}>
+            {chain.statusLabel}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-3 p-0">
+        {chain.items.length === 0 ? (
+          <EmptyPanel title="暂无链路记录" detail={chain.nextAction} />
+        ) : (
+          <>
+            <div className="px-4 lg:px-6">
+              <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
+                {chain.nextAction}
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[96px]">阶段</TableHead>
+                    <TableHead className="min-w-[220px]">记录</TableHead>
+                    <TableHead className="min-w-[210px]">时间</TableHead>
+                    <TableHead className="min-w-[280px]">说明</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {chain.items.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <Badge variant="secondary">{item.typeLabel}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="grid gap-1">
+                          <div className="font-mono text-xs">{item.id}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {item.title}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {item.timestamp}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {item.detail}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function ProcessingBoundaryCard({ caseId }: { caseId: string }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <ClipboardCheck className="size-4 text-muted-foreground" />
+          处理边界
+        </CardTitle>
+        <CardDescription>
+          本页只读展示，不提供补证据、关闭、审批、导出或批量处理。
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-3 text-sm text-muted-foreground">
+        <div className="rounded-md border bg-muted/30 p-3">
+          复核结论写入需要单独受控任务，必须明确权限、审计、幂等和回滚边界。
+        </div>
+        <div className="rounded-md border bg-muted/30 p-3">
+          <div>当前详情来自</div>
+          <div className="mt-1 break-all font-mono text-xs">
+            {buildImportReviewCaseDetailApiUrl(caseId)}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 

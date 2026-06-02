@@ -2764,3 +2764,29 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 163 个后端 unittest。
+
+### 2026-06-02 - IM061 复核案例证据结论链路
+
+#### 审计结论
+
+- `IM061/US681` 已在 `/data-quality/review-cases/[caseId]` 增加“证据与结论链路”只读区块。
+- 链路模型汇总证据数、结论数、关闭状态和下一步建议，并把 evidence、conclusions、closure 合并为按时间排序的链路条目。
+- 复核案例详情主体已调整为单列分层：来源结果、来源链路、证据缺口、证据与结论链路、证据表、结论表、处理边界。
+- 本轮未新增依赖，未修改 package/lockfile，未新增后端、schema/migration，未触碰真实外部接口、证据补录、复核关闭写入、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前仍是只读展示，不是证据补录、复核结论提交、关闭异常、审批或批量处理。
+- 浏览器截图通道两次超时；页面 smoke 已通过 DOM 文本和结构验证。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 先因缺少 `summarizeImportReviewCaseEvidenceChain` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，44 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases/CASE-QUERY-001` 命中 `证据与结论链路`、`EVD-QUERY-001`、`CON-QUERY-001`，主体 section class 为 `grid gap-4`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 163 个后端 unittest。

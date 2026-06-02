@@ -3360,3 +3360,27 @@ dependencies:
   - "US679"
 status: "done"
 ```
+
+### US681 - 复核案例证据结论链路
+
+```yaml
+id: US681
+requirement_ids:
+  - R761
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望复核案例详情页把证据、结论和关闭状态整理成只读链路，以便先判断处理材料是否齐全，而不是只看分散表格。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 展示 `证据与结论链路` 区块。"
+  - "链路区块汇总证据数、结论数、关闭状态和下一步只读建议。"
+  - "有证据、结论或关闭记录时展示按时间排序的链路条目。"
+  - "无记录或读取失败时展示只读空态/错误态，不触发写入。"
+  - "页面保持只读，不提供证据补录、提交、关闭、审批、导出或批量操作。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US680"
+status: "done"
+```

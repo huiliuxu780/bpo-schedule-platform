@@ -205,6 +205,7 @@ Current invariants:
 - `IM058/US678` added read-only review-case source trace context to `/api/v1/review-cases/{case_id}` and `/data-quality/review-cases/[caseId]`, showing the comparison run, business versions, import versions, and related import batch, then returned current queue and active tasks to empty.
 - `IM059/US679` added `/data-quality/comparison-runs/[runId]` as a read-only second-level comparison-run detail page, linked review-case source trace and batch result trace actions to the frontend route instead of raw API JSON, then returned current queue and active tasks to empty.
 - `IM060/US680` added read-only linked review-case positioning on `/data-quality/comparison-runs/[runId]`, matching current run results to review cases and linking to review-case detail pages, then returned current queue and active tasks to empty.
+- `IM061/US681` added a read-only evidence/conclusion chain on `/data-quality/review-cases/[caseId]`, showing evidence, conclusions, optional closure, status, and next action in a single-column detail flow, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

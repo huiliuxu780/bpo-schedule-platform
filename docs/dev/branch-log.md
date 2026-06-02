@@ -1858,3 +1858,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM061 Import Center Review Evidence Chain
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM060 after push; local branch has IM061 changes not pushed yet.`
+- scope: read-only evidence/conclusion/closure chain on `/data-quality/review-cases/[caseId]`, review-case detail page single-column hierarchy polish, model helper/test coverage, and traceability records.
+- allowed_files_check: `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, real integration, auth, permissions, approval, export, batch operation, production formula, settlement, or charge-factor files.
+- scope_diff_check: `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, real integration, auth, permissions, approval, export, batch operation, production formula, settlement, or charge-factor files. `.local/` remains untracked and untouched.
+- check_result: TDD red frontend model test failed first because `summarizeImportReviewCaseEvidenceChain` was not exported; target model test passed with 44 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; in-app browser smoke on 3026 rendered `证据与结论链路`, `EVD-QUERY-001`, and `CON-QUERY-001`, with the main detail section using single-column `grid gap-4`; screenshot capture through the browser backend timed out twice and was not used as acceptance evidence; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 163 backend unittests.
+- local_commit_sha: `current HEAD on codex/im057-review-source-context; exact SHA reported in Done Report`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

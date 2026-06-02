@@ -1587,3 +1587,14 @@
 - action: 增加对比运行详情页的关联复核案例定位。
 - status: `done`
 - notes: `/data-quality/comparison-runs/[runId]` 新增“关联复核案例”区块，按当前运行结果的 `source_result_type + source_result_id` 匹配同业务日复核案例，并提供 `/data-quality/review-cases/[caseId]` 前端详情入口；本轮不新增后端、schema/migration、依赖、真实外部接口、计算触发、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM061`
+- source_ids:
+  - `R761`
+- story_ids:
+  - `US681`
+- action: 增加复核案例详情页的只读证据与结论链路。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 新增“证据与结论链路”区块，汇总证据数、结论数、关闭状态和下一步建议，并按时间展示证据、结论和关闭记录；详情主体调整为单列分层，避免左右分栏和长页堆叠；本轮不新增后端、schema/migration、依赖、真实外部接口、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

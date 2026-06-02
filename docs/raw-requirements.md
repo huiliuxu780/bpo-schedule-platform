@@ -1833,3 +1833,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读关联定位；运行详情页按当前运行结果匹配复核案例，并提供复核详情前端入口；复用已有 comparison-run detail 和 review-cases list API，不新增 schema/migration，不新增依赖，不接真实外部接口，不做计算触发、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R761 - 复核案例证据结论链路
+
+```yaml
+id: R761
+module: "导入中心"
+description: "复核案例详情页已经能展示来源结果、来源链路、证据表和结论表，但主管仍需要先看到证据、结论、关闭状态的处理材料链路。需要新增只读证据与结论链路，避免只靠分散表格判断准备度。"
+source: "After IM060 linked review-case positioning and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读链路展示；复核案例详情页新增 `证据与结论链路`，按时间展示 evidence、conclusions 和 closure，并把页面主体调整为单列分层；不新增 schema/migration，不新增依赖，不接真实外部接口，不做证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

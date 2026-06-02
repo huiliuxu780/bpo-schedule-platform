@@ -496,6 +496,21 @@ export type ImportReviewCaseDetailSummary = {
   evidence: string[]
 }
 
+export type ImportReviewCaseEvidenceChainSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  statusLabel: string
+  summary: string
+  nextAction: string
+  items: Array<{
+    id: string
+    typeLabel: string
+    title: string
+    detail: string
+    timestamp: string
+  }>
+}
+
 export type ImportReviewCasesWorkspaceFilters = {
   businessDate?: string | null
   ownerId?: string | null
@@ -1263,6 +1278,80 @@ export function summarizeImportReviewCaseDetail({
         ? `结论 ${detail.conclusions[0].conclusion_id} · ${detail.conclusions[0].risk_level} · ${detail.conclusions[0].decided_by}`
         : "结论 0 条",
     ],
+  }
+}
+
+export function summarizeImportReviewCaseEvidenceChain({
+  detail,
+  error,
+}: {
+  detail: ImportReviewCaseDetailResponse | null
+  error: string | null
+}): ImportReviewCaseEvidenceChainSummary {
+  if (error) {
+    return {
+      tone: "blocked",
+      title: "证据链路读取失败",
+      statusLabel: "读取失败",
+      summary: error,
+      nextAction: "先恢复复核案例读取，再查看证据、结论和关闭记录。",
+      items: [],
+    }
+  }
+
+  if (!detail) {
+    return {
+      tone: "empty",
+      title: "证据与结论链路",
+      statusLabel: "等待案例",
+      summary: "证据 0 条 · 结论 0 条 · 未关闭",
+      nextAction: "先从复核案例工作台选择一个案例。",
+      items: [],
+    }
+  }
+
+  const isClosed = detail.case.status === "closed" || detail.closure !== null
+  const evidenceCount = detail.evidence.length
+  const conclusionCount = detail.conclusions.length
+  const items = [
+    ...detail.evidence.map((item) => ({
+      id: item.evidence_id,
+      typeLabel: "证据",
+      title: `${item.evidence_type} · ${item.submitted_by}`,
+      detail: item.note ?? item.evidence_uri,
+      timestamp: item.submitted_at,
+    })),
+    ...detail.conclusions.map((item) => ({
+      id: item.conclusion_id,
+      typeLabel: "结论",
+      title: `${item.conclusion_type} · ${item.risk_level} · ${item.decided_by}`,
+      detail: item.conclusion_text,
+      timestamp: item.decided_at,
+    })),
+    ...(detail.closure
+      ? [
+          {
+            id: detail.closure.closure_id,
+            typeLabel: "关闭",
+            title: `${detail.closure.closure_status} · ${detail.closure.closed_by}`,
+            detail: detail.closure.closure_note ?? "无关闭备注",
+            timestamp: detail.closure.closed_at,
+          },
+        ]
+      : []),
+  ].sort((a, b) => a.timestamp.localeCompare(b.timestamp))
+
+  return {
+    tone: isClosed ? "ready" : evidenceCount > 0 && conclusionCount > 0 ? "warning" : "blocked",
+    title: "证据与结论链路",
+    statusLabel: isClosed ? formatReviewCaseStatus("closed") : formatReviewCaseStatus(detail.case.status),
+    summary: `证据 ${evidenceCount.toLocaleString("zh-CN")} 条 · 结论 ${conclusionCount.toLocaleString("zh-CN")} 条 · ${isClosed ? "已关闭" : "未关闭"}`,
+    nextAction: isClosed
+      ? "已形成关闭记录，继续回看证据和结论是否完整。"
+      : evidenceCount > 0 && conclusionCount > 0
+        ? "先复核证据和结论内容，再进入受控关闭流程。"
+        : "当前链路材料不足，先补齐证据和结论后再判断能否关闭。",
+    items,
   }
 }
 

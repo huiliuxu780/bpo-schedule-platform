@@ -6261,3 +6261,48 @@ tasks:
       - "范围扩展到计算触发、证据补录、复核写入、关闭、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM061
+    title: "复核案例证据结论链路"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM060"]
+    allowed_files:
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "app/**"
+    acceptance:
+      - "`/data-quality/review-cases/[caseId]` 展示 `证据与结论链路` 区块。"
+      - "链路区块汇总证据数、结论数、关闭状态和下一步只读建议。"
+      - "有证据、结论或关闭记录时展示按时间排序的链路条目。"
+      - "无记录或读取失败时展示只读空态/错误态，不触发写入。"
+      - "页面保持只读，不提供证据补录、提交、关闭、审批、导出或批量操作。"
+      - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到证据补录、复核写入、关闭、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
