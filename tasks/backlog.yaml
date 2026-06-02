@@ -6306,3 +6306,51 @@ tasks:
       - "范围扩展到证据补录、复核写入、关闭、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM062
+    title: "复核案例关闭写入入口"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM061"]
+    allowed_files:
+      - "backend/app/review_closure.py"
+      - "backend/tests/test_review_closure_service.py"
+      - "backend/tests/test_review_closure_api.py"
+      - "components/import-center-model.ts"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "components/import-center-review-case-closure-panel.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "app/**"
+    acceptance:
+      - "`POST /api/v1/review-cases/write-closure` 能对已存在且未关闭的复核案例写入 closure，并返回带 closure 的详情。"
+      - "重复提交同一已关闭案例返回已有 closed detail，不重复写入 closure。"
+      - "`/data-quality/review-cases/[caseId]` 对有证据、有结论且未关闭的案例展示受控关闭入口。"
+      - "关闭入口提交当前案例、已有证据、已有结论和 closure payload 到现有本地 API，成功后在页面显示已关闭状态。"
+      - "读取失败、已关闭、缺少证据或缺少结论时不展示可提交关闭按钮，只展示阻塞原因。"
+      - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做证据补录、审批、导出、批量、权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、目标 backend unittest、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: high
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema、migration 或数据库结构变更"
+      - "范围扩展到证据补录、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "关闭写入 API 契约需要新增路由或改变生产状态码口径"
+      - "验证失败"
+    commit_after_done: true

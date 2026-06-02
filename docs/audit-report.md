@@ -2790,3 +2790,31 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 163 个后端 unittest。
+
+### 2026-06-02 - IM062 复核案例关闭写入入口
+
+#### 审计结论
+
+- `IM062/US682` 已补齐复核案例详情页的受控关闭写入入口。
+- `write_review_closure()` 对已存在且未关闭的 review case 会写入 request closure，并返回带 closure 的 detail；已关闭案例重复提交仍返回已有 detail，不重复写入。
+- `/data-quality/review-cases/[caseId]` 新增“关闭复核案例”区块；仅当证据和结论均存在且案例未关闭时展示提交按钮。
+- 关闭入口使用现有本地 `POST /api/v1/review-cases/write-closure`，提交当前案例、已有证据、已有结论和 closure payload；不提供证据补录、审批、导出、批量或权限能力。
+- 本轮未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只是受控关闭写入入口，不是证据补录、结论新增、审批流、批量处理或权限隔离。
+- 浏览器当前 3026 页面依赖的 8002 后端进程曾未加载最新服务逻辑；使用 8003 临时最新后端完成 API smoke 后，同一 `.local` 数据库可被 3026 页面读出已关闭状态。
+
+#### 验证
+
+- TDD 红灯：后端 service/api 目标测试先因 existing open case 直接返回旧 detail、未写入 closure 失败。
+- TDD 红灯：前端模型测试先因缺少 closure write helper export 失败。
+- `.venv/bin/python -m unittest backend.tests.test_review_closure_service backend.tests.test_review_closure_api -v`：通过，7 个 review closure 测试通过。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，45 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- API smoke：临时最新后端 `http://127.0.0.1:8003/api/v1/review-cases/write-closure` 返回 `closure_id=CLO-CASE-QUERY-001`、`closure_status=closed`、`closed_by=ops-lead-01`。
+- in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases/CASE-QUERY-001` 刷新后命中 `已关闭` 和 `案例已关闭`，`关闭案例` 按钮数量为 0。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

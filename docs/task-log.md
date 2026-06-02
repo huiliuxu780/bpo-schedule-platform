@@ -1598,3 +1598,14 @@
 - action: 增加复核案例详情页的只读证据与结论链路。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 新增“证据与结论链路”区块，汇总证据数、结论数、关闭状态和下一步建议，并按时间展示证据、结论和关闭记录；详情主体调整为单列分层，避免左右分栏和长页堆叠；本轮不新增后端、schema/migration、依赖、真实外部接口、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM062`
+- source_ids:
+  - `R762`
+- story_ids:
+  - `US682`
+- action: 增加复核案例详情页受控关闭写入入口。
+- status: `done`
+- notes: `POST /api/v1/review-cases/write-closure` 现在可对已存在且未关闭的复核案例写入 closure；`/data-quality/review-cases/[caseId]` 在证据和结论齐全时展示关闭入口，关闭后展示已关闭阻塞态且不再提供提交按钮；本轮不新增依赖、package/lockfile、schema/migration、真实外部接口、证据补录、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

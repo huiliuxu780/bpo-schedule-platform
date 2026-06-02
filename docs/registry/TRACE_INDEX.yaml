@@ -577,6 +577,9 @@ requirements:
   US681: {file: "docs/user-stories.md", requirement_ids: ["R761"], task_ids: ["IM061"], archive_refs: []}
   IM061: {file: "tasks/backlog.yaml", story_ids: ["US681"], gate: "frontend-scaffold"}
   R761: {file: "docs/raw-requirements.md", story_ids: ["US681"], task_ids: ["IM061"]}
+  US682: {file: "docs/user-stories.md", requirement_ids: ["R762"], task_ids: ["IM062"], archive_refs: []}
+  IM062: {file: "tasks/backlog.yaml", story_ids: ["US682"], gate: "database-persistence"}
+  R762: {file: "docs/raw-requirements.md", story_ids: ["US682"], task_ids: ["IM062"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

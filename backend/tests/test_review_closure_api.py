@@ -138,6 +138,75 @@ class ReviewClosureApiTest(unittest.TestCase):
         self.assertEqual(len(second.conclusions), 1)
         self.assertEqual(second.closure.closure_id, "CLO-WRITE-API-IDEMPOTENT")
 
+    def test_write_review_closure_api_closes_existing_open_case(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'review-close.db'}"
+            source_ids = _seed_review_sources(database_url)
+            repository = ReviewPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_review_case(
+                ReviewCaseCreateRequest(
+                    case_id="CASE-WRITE-API-EXISTING",
+                    source_result_type="schedule_actual",
+                    source_result_id=source_ids["schedule_actual"],
+                    business_date="2026-05-11",
+                    owner_id="supervisor-02",
+                    severity="medium",
+                    status="open",
+                )
+            )
+            repository.add_evidence(
+                ReviewEvidenceInput(
+                    evidence_id="EVD-WRITE-API-EXISTING",
+                    case_id="CASE-WRITE-API-EXISTING",
+                    evidence_type="note",
+                    evidence_uri="local://review/CASE-WRITE-API-EXISTING/note",
+                    submitted_by="supervisor-02",
+                    note="已有证据",
+                )
+            )
+            repository.add_conclusion(
+                ReviewConclusionInput(
+                    conclusion_id="CON-WRITE-API-EXISTING",
+                    case_id="CASE-WRITE-API-EXISTING",
+                    conclusion_type="confirmed_late",
+                    risk_level="medium",
+                    conclusion_text="确认存在迟到状态。",
+                    decided_by="ops-lead-02",
+                )
+            )
+
+            with patch(
+                "backend.app.main.ReviewPersistenceRepository",
+                return_value=repository,
+            ):
+                detail = write_review_closure_api(
+                    ReviewClosureWriteRequest(
+                        case=ReviewCaseCreateRequest(
+                            case_id="CASE-WRITE-API-EXISTING",
+                            source_result_type="schedule_actual",
+                            source_result_id=source_ids["schedule_actual"],
+                            business_date="2026-05-11",
+                            owner_id="supervisor-02",
+                            severity="medium",
+                            status="open",
+                        ),
+                        closure=ReviewClosureInput(
+                            closure_id="CLO-WRITE-API-EXISTING",
+                            case_id="CASE-WRITE-API-EXISTING",
+                            closure_status="closed",
+                            closed_by="ops-lead-02",
+                            closure_note="已有证据和结论，关闭案例。",
+                        ),
+                    )
+                )
+
+        self.assertEqual(detail.case.case_id, "CASE-WRITE-API-EXISTING")
+        self.assertEqual(len(detail.evidence), 1)
+        self.assertEqual(len(detail.conclusions), 1)
+        self.assertIsNotNone(detail.closure)
+        self.assertEqual(detail.closure.closure_id, "CLO-WRITE-API-EXISTING")
+
 
 if __name__ == "__main__":
     unittest.main()

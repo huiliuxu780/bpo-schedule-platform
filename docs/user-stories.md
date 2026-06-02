@@ -20,6 +20,30 @@
   status: "draft"
 ```
 
+### US682 - 复核案例关闭写入入口
+
+```yaml
+id: US682
+requirement_ids:
+  - R762
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望能在复核案例详情页对已具备证据和结论的 open 案例执行受控关闭写入，以便形成真实处理记录，而不是只停留在只读预览。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "`POST /api/v1/review-cases/write-closure` 能对已存在且未关闭的复核案例写入 closure，并返回带 closure 的详情。"
+  - "重复提交同一已关闭案例返回已有 closed detail，不重复写入 closure。"
+  - "`/data-quality/review-cases/[caseId]` 对有证据、有结论且未关闭的案例展示受控关闭入口。"
+  - "关闭入口提交当前案例、已有证据、已有结论和 closure payload 到现有本地 API，成功后在页面显示已关闭状态。"
+  - "读取失败、已关闭、缺少证据或缺少结论时不展示可提交关闭按钮，只展示阻塞原因。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做证据补录、审批、导出、批量、权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、目标 backend unittest、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US681"
+status: "done"
+```
+
 ## DAG Rules
 
 - 每条用户故事必须关联至少一条原始需求。

@@ -1875,3 +1875,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM062 Import Center Review Closure Write Entry
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM060 after push; local branch has IM061 and IM062 changes not pushed yet.`
+- scope: controlled closure write for existing open review cases, detail-page closure entry, model helper/test coverage, target backend test coverage, and traceability records.
+- allowed_files_check: `backend/app/review_closure.py`, `backend/tests/test_review_closure_service.py`, `backend/tests/test_review_closure_api.py`, `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-case-closure-panel.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, app route, real external integration, evidence supplement, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `backend/app/review_closure.py`, `backend/tests/test_review_closure_service.py`, `backend/tests/test_review_closure_api.py`, `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-case-closure-panel.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, app route, real external integration, evidence supplement, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` remains untracked and must not be staged.
+- check_result: TDD red backend tests failed first because existing open cases returned without closure; TDD red frontend model test failed first because closure write helpers were missing; target backend unittest passed with 7 tests; target model test passed with 45 tests; lint, typecheck, and shadcn gate passed; API smoke on temporary latest backend 8003 returned `CLO-CASE-QUERY-001`; in-app browser smoke on 3026 rendered closed state with no `关闭案例` button; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 165 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

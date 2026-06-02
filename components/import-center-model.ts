@@ -511,6 +511,54 @@ export type ImportReviewCaseEvidenceChainSummary = {
   }>
 }
 
+export type ImportReviewCaseClosureActionSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  canSubmit: boolean
+  statusLabel: string
+  actionLabel: string
+  detail: string
+  blockers: string[]
+  apiHref: string
+}
+
+export type ImportReviewCaseClosureWritePayload = {
+  case: Pick<
+    ImportReviewCaseRecord,
+    | "case_id"
+    | "source_result_type"
+    | "source_result_id"
+    | "business_date"
+    | "owner_id"
+    | "severity"
+    | "status"
+  >
+  evidence: Array<
+    Pick<
+      ImportReviewEvidenceRecord,
+      "evidence_id" | "case_id" | "evidence_type" | "evidence_uri" | "submitted_by" | "note"
+    >
+  >
+  conclusions: Array<
+    Pick<
+      ImportReviewConclusionRecord,
+      | "conclusion_id"
+      | "case_id"
+      | "conclusion_type"
+      | "risk_level"
+      | "conclusion_text"
+      | "decided_by"
+    >
+  >
+  closure: {
+    closure_id: string
+    case_id: string
+    closure_status: "closed"
+    closed_by: string
+    closure_note: string | null
+  }
+}
+
 export type ImportReviewCasesWorkspaceFilters = {
   businessDate?: string | null
   ownerId?: string | null
@@ -900,6 +948,12 @@ export function buildImportReviewCaseDetailApiUrl(
     `/api/v1/review-cases/${encodeURIComponent(caseId)}`,
     apiBase
   )
+}
+
+export function buildImportReviewCaseClosureWriteApiUrl(
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl("/api/v1/review-cases/write-closure", apiBase)
 }
 
 export function buildImportReviewCasesWorkspaceHref(
@@ -1352,6 +1406,105 @@ export function summarizeImportReviewCaseEvidenceChain({
         ? "先复核证据和结论内容，再进入受控关闭流程。"
         : "当前链路材料不足，先补齐证据和结论后再判断能否关闭。",
     items,
+  }
+}
+
+export function summarizeImportReviewCaseClosureAction({
+  detail,
+  error,
+}: {
+  detail: ImportReviewCaseDetailResponse | null
+  error: string | null
+}): ImportReviewCaseClosureActionSummary {
+  if (error) {
+    return {
+      tone: "blocked",
+      title: "关闭复核案例",
+      canSubmit: false,
+      statusLabel: "读取失败",
+      actionLabel: "不可关闭",
+      detail: "复核案例读取失败，不能提交关闭写入。",
+      blockers: [error],
+      apiHref: buildImportReviewCaseClosureWriteApiUrl(),
+    }
+  }
+
+  if (!detail) {
+    return {
+      tone: "empty",
+      title: "关闭复核案例",
+      canSubmit: false,
+      statusLabel: "等待案例",
+      actionLabel: "不可关闭",
+      detail: "先从复核案例工作台选择一个案例。",
+      blockers: ["等待复核案例"],
+      apiHref: buildImportReviewCaseClosureWriteApiUrl(),
+    }
+  }
+
+  const blockers = [
+    ...(detail.case.status === "closed" || detail.closure ? ["案例已关闭"] : []),
+    ...(detail.evidence.length === 0 ? ["缺少证据"] : []),
+    ...(detail.conclusions.length === 0 ? ["缺少复核结论"] : []),
+  ]
+  const canSubmit = blockers.length === 0
+
+  return {
+    tone: canSubmit ? "warning" : detail.closure ? "ready" : "blocked",
+    title: "关闭复核案例",
+    canSubmit,
+    statusLabel: canSubmit ? "可关闭" : detail.closure ? "已关闭" : "不可关闭",
+    actionLabel: canSubmit ? "关闭案例" : "不可关闭",
+    detail: canSubmit
+      ? `已有 ${detail.evidence.length.toLocaleString("zh-CN")} 条证据和 ${detail.conclusions.length.toLocaleString("zh-CN")} 条结论，可提交关闭写入。`
+      : blockers.join("；"),
+    blockers,
+    apiHref: buildImportReviewCaseClosureWriteApiUrl(),
+  }
+}
+
+export function buildImportReviewCaseClosureWritePayload({
+  detail,
+  closedBy,
+  closureNote,
+}: {
+  detail: ImportReviewCaseDetailResponse
+  closedBy: string
+  closureNote: string
+}): ImportReviewCaseClosureWritePayload {
+  return {
+    case: {
+      case_id: detail.case.case_id,
+      source_result_type: detail.case.source_result_type,
+      source_result_id: detail.case.source_result_id,
+      business_date: detail.case.business_date,
+      owner_id: detail.case.owner_id,
+      severity: detail.case.severity,
+      status: detail.case.status,
+    },
+    evidence: detail.evidence.map((item) => ({
+      evidence_id: item.evidence_id,
+      case_id: item.case_id,
+      evidence_type: item.evidence_type,
+      evidence_uri: item.evidence_uri,
+      submitted_by: item.submitted_by,
+      note: item.note,
+    })),
+    conclusions: detail.conclusions.map((item) => ({
+      conclusion_id: item.conclusion_id,
+      case_id: item.case_id,
+      conclusion_type: item.conclusion_type,
+      risk_level: item.risk_level,
+      conclusion_text: item.conclusion_text,
+      decided_by: item.decided_by,
+    })),
+    closure: {
+      closure_id: `CLO-${detail.case.case_id}`,
+      case_id: detail.case.case_id,
+      closure_status: "closed",
+      closed_by: closedBy,
+      closure_note: closureNote.trim() ? closureNote.trim() : null,
+    },
   }
 }
 

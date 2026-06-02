@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R762 - 复核案例关闭写入入口
+
+```yaml
+id: R762
+module: "导入中心"
+description: "复核案例详情页已经能展示证据、结论和关闭状态链路，但主管仍不能对证据和结论齐全的 open 案例形成真实关闭记录。现有 closure API 对已存在案例会直接返回 existing detail，无法关闭当前 open 案例。需要修正为可对现有 open 案例写入 closure，并在详情页提供受控关闭入口。"
+source: "After IM061 evidence/conclusion chain and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成 existing open case 的受控 closure 写入和复核案例详情页关闭入口；页面只在证据和结论齐全且未关闭时展示提交按钮，已关闭、读取失败或材料缺失时只展示阻塞原因；不新增 schema/migration，不新增依赖，不接真实外部接口，不做证据补录、审批、导出、批量、权限、生产公式、结算或收费因子。"
+```
+
 ## Requirements
 
 ### R697-R700 - Q127 数据库基础 QA 收口

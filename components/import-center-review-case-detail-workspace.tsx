@@ -16,6 +16,7 @@ import {
   summarizeImportReviewCaseDetail,
   summarizeImportReviewCaseEvidenceChain,
 } from "@/components/import-center-model"
+import { ImportCenterReviewCaseClosurePanel } from "@/components/import-center-review-case-closure-panel"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -122,6 +123,11 @@ export function ImportCenterReviewCaseDetailWorkspace({
         </Card>
 
         <EvidenceChainCard chain={evidenceChain} />
+        <ImportCenterReviewCaseClosurePanel
+          caseId={caseId}
+          detail={detail}
+          error={error}
+        />
         <EvidenceTable detail={detail} />
         <ConclusionTable detail={detail} />
         <ProcessingBoundaryCard caseId={caseId} />
@@ -212,12 +218,12 @@ function ProcessingBoundaryCard({ caseId }: { caseId: string }) {
           处理边界
         </CardTitle>
         <CardDescription>
-          本页只读展示，不提供补证据、关闭、审批、导出或批量处理。
+          本页只允许对当前案例执行受控关闭写入，不提供补证据、审批、导出或批量处理。
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3 text-sm text-muted-foreground">
         <div className="rounded-md border bg-muted/30 p-3">
-          复核结论写入需要单独受控任务，必须明确权限、审计、幂等和回滚边界。
+          关闭写入复用现有本地 API；证据补录、结论新增、审批和批量处理仍需要单独受控任务。
         </div>
         <div className="rounded-md border bg-muted/30 p-3">
           <div>当前详情来自</div>
