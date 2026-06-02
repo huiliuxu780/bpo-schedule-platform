@@ -4,6 +4,7 @@ import {
   type ImportReviewCaseProcessingStageSnapshot,
   type ImportReviewCaseRecord,
   summarizeImportReviewOwnerContext,
+  summarizeImportReviewOwnerNavigation,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -42,6 +43,12 @@ export function ImportCenterReviewOwnerContext({
     processingStages,
     error,
   })
+  const navigation = summarizeImportReviewOwnerNavigation({
+    currentCase,
+    cases,
+    processingStages,
+    error,
+  })
 
   return (
     <Card className="overflow-hidden">
@@ -62,18 +69,61 @@ export function ImportCenterReviewOwnerContext({
         </div>
       </CardHeader>
       <CardContent className="grid gap-3 p-0">
-        <div className="flex flex-wrap gap-2 px-4 lg:px-6">
-          <Button asChild size="sm" variant="outline">
-            <Link href={context.listHref}>查看 Owner 列表</Link>
-          </Button>
-          <Button
-            asChild
-            disabled={context.actionableCount === 0}
-            size="sm"
-            variant="secondary"
-          >
-            <Link href={context.stageHref}>进入首要阶段</Link>
-          </Button>
+        <div className="grid gap-3 px-4 lg:px-6">
+          <div className="rounded-md border bg-muted/30 p-3">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="text-sm font-medium">{navigation.title}</div>
+                  <Badge variant="outline">{navigation.positionLabel}</Badge>
+                  <Badge variant="secondary">
+                    待处理 {navigation.totalActionableCount.toLocaleString("zh-CN")}
+                  </Badge>
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {navigation.detail}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {navigation.previous ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={navigation.previous.href}>上一条待处理</Link>
+                  </Button>
+                ) : (
+                  <Button disabled size="sm" variant="outline">
+                    上一条待处理
+                  </Button>
+                )}
+                {navigation.next ? (
+                  <Button asChild size="sm" variant="secondary">
+                    <Link href={navigation.next.href}>
+                      {navigation.positionLabel === "当前案例不在待处理序列"
+                        ? "进入首条待处理"
+                        : "下一条待处理"}
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button disabled size="sm" variant="secondary">
+                    下一条待处理
+                  </Button>
+                )}
+                <Button asChild size="sm" variant="outline">
+                  <Link href={navigation.listHref}>查看 Owner 列表</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {context.actionableCount > 0 ? (
+              <Button asChild size="sm" variant="secondary">
+                <Link href={context.stageHref}>进入首要阶段</Link>
+              </Button>
+            ) : (
+              <Button disabled size="sm" variant="secondary">
+                进入首要阶段
+              </Button>
+            )}
+          </div>
         </div>
         {context.items.length === 0 ? (
           <div className="px-4 pb-4 lg:px-6">

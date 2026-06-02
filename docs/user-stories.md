@@ -3548,3 +3548,26 @@ dependencies:
   - "US687"
 status: "done"
 ```
+
+### US689 - 复核详情同 Owner 待处理导航
+
+```yaml
+id: US689
+requirement_ids:
+  - R769
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望在复核案例详情页直接跳转同 owner 的上一条或下一条待处理案例，以便不用回到列表也能连续处理同责任人的复核工作。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 的同 Owner 上下文内展示待处理导航。"
+  - "导航展示当前案例在同 owner 同业务日待处理序列中的位置，并提供上一条/下一条入口。"
+  - "当前案例已关闭或不在待处理序列时，引导进入首条同 owner 待处理案例。"
+  - "导航基于现有 review-case list API 和 detail 阶段快照派生，不新增后端 API 或 schema。"
+  - "页面保持只读，不新增写入、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US688"
+status: "done"
+```

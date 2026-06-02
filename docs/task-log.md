@@ -1675,3 +1675,14 @@
 - action: 增加复核案例详情页只读同 Owner 处理上下文。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 新增 `同 Owner 处理上下文` 区块，展示同 owner 同业务日的其他案例、处理阶段、证据/结论状态、严重度和详情入口；提供 `查看 Owner 列表` 和 `进入首要阶段` 链接；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM069`
+- source_ids:
+  - `R769`
+- story_ids:
+  - `US689`
+- action: 增加复核案例详情页只读同 Owner 待处理导航。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 的 `同 Owner 处理上下文` 内新增 `同 Owner 待处理导航` 操作条，展示当前案例在同 owner 同业务日待处理序列中的位置，提供上一条/下一条入口；当前案例已关闭或不在待处理序列时提供进入首条待处理入口；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

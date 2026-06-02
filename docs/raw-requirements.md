@@ -1938,3 +1938,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读同 owner 处理上下文；复核案例详情页展示同 owner 同业务日的其他案例、阶段、证据/结论状态、风险和详情入口，并提供 owner 列表及首要阶段入口；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R769 - 复核详情同 Owner 待处理导航
+
+```yaml
+id: R769
+module: "导入中心"
+description: "复核案例详情页已经能展示同 owner 的其他案例，但主管仍需要回到列表或表格逐条切换。需要在详情页增加只读同 owner 待处理导航，支持从当前案例进入上一条/下一条待处理案例，已关闭案例则引导进入首条待处理。"
+source: "After IM068 owner context and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读同 owner 待处理导航；复核案例详情页基于现有列表和阶段快照派生同 owner 同业务日待处理序列，展示当前位置、上一条/下一条入口，当前案例已关闭时引导进入首条待处理；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

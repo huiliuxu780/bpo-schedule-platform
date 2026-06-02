@@ -553,6 +553,29 @@ export type ImportReviewOwnerContextSummary = {
   items: ImportReviewOwnerContextItem[]
 }
 
+export type ImportReviewOwnerNavigationItem = {
+  caseId: string
+  stageKey: ImportReviewOwnerStageMatrixStageKey
+  stageLabel: string
+  severityLabel: string
+  createdAt: string
+  href: string
+}
+
+export type ImportReviewOwnerNavigationSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  detail: string
+  ownerId: string | null
+  businessDate: string | null
+  listHref: string
+  positionLabel: string
+  totalActionableCount: number
+  previous: ImportReviewOwnerNavigationItem | null
+  next: ImportReviewOwnerNavigationItem | null
+  sequence: ImportReviewOwnerNavigationItem[]
+}
+
 export type ImportReviewCaseDetailSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -1678,6 +1701,128 @@ export function summarizeImportReviewOwnerContext({
     listHref,
     stageHref,
     items,
+  }
+}
+
+export function summarizeImportReviewOwnerNavigation({
+  currentCase,
+  cases,
+  processingStages = {},
+  error = null,
+}: {
+  currentCase: ImportReviewCaseRecord | null
+  cases: ImportReviewCaseRecord[]
+  processingStages?: Record<string, ImportReviewCaseProcessingStageSnapshot | undefined>
+  error?: string | null
+}): ImportReviewOwnerNavigationSummary {
+  if (!currentCase) {
+    return {
+      tone: "blocked",
+      title: "同 Owner 待处理导航",
+      detail: error ?? "当前案例读取失败，暂不能计算同 owner 待处理导航。",
+      ownerId: null,
+      businessDate: null,
+      listHref: "/data-quality/review-cases",
+      positionLabel: "当前案例不可用",
+      totalActionableCount: 0,
+      previous: null,
+      next: null,
+      sequence: [],
+    }
+  }
+
+  const listHref = buildImportReviewCasesWorkspaceHref({
+    businessDate: currentCase.business_date,
+    ownerId: currentCase.owner_id,
+  })
+
+  if (error) {
+    return {
+      tone: "blocked",
+      title: "同 Owner 待处理导航",
+      detail: error,
+      ownerId: currentCase.owner_id,
+      businessDate: currentCase.business_date,
+      listHref,
+      positionLabel: "待处理序列不可用",
+      totalActionableCount: 0,
+      previous: null,
+      next: null,
+      sequence: [],
+    }
+  }
+
+  const sameOwnerCases = new Map<string, ImportReviewCaseRecord>()
+  for (const reviewCase of [currentCase, ...cases]) {
+    if (
+      reviewCase.owner_id === currentCase.owner_id &&
+      reviewCase.business_date === currentCase.business_date
+    ) {
+      sameOwnerCases.set(reviewCase.case_id, reviewCase)
+    }
+  }
+
+  const sequence = [...sameOwnerCases.values()]
+    .map((reviewCase) => {
+      const stage = summarizeImportReviewCaseProcessingStage(
+        reviewCase,
+        processingStages[reviewCase.case_id]
+      )
+
+      return {
+        caseId: reviewCase.case_id,
+        stageKey: stage.key,
+        stageLabel: stage.label,
+        severityLabel: formatReviewCaseSeverity(reviewCase.severity),
+        createdAt: reviewCase.created_at,
+        href: buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id),
+        severityRank: getReviewCaseSeverityRank(reviewCase.severity),
+        stageRank: getReviewCaseProcessingStageRank(stage.key),
+      }
+    })
+    .filter((item) => item.stageKey !== "closed")
+    .sort(
+      (a, b) =>
+        a.stageRank - b.stageRank ||
+        a.severityRank - b.severityRank ||
+        a.createdAt.localeCompare(b.createdAt) ||
+        a.caseId.localeCompare(b.caseId)
+    )
+    .map((item) => ({
+      caseId: item.caseId,
+      stageKey: item.stageKey,
+      stageLabel: item.stageLabel,
+      severityLabel: item.severityLabel,
+      createdAt: item.createdAt,
+      href: item.href,
+    }))
+
+  const currentIndex = sequence.findIndex((item) => item.caseId === currentCase.case_id)
+  const previous = currentIndex > 0 ? sequence[currentIndex - 1] : null
+  const next =
+    currentIndex >= 0
+      ? sequence[currentIndex + 1] ?? null
+      : sequence[0] ?? null
+  const positionLabel =
+    currentIndex >= 0
+      ? `第 ${(currentIndex + 1).toLocaleString("zh-CN")} / ${sequence.length.toLocaleString("zh-CN")} 条`
+      : "当前案例不在待处理序列"
+
+  return {
+    tone: sequence.length > 0 ? "warning" : "empty",
+    title: "同 Owner 待处理导航",
+    detail:
+      sequence.length > 0
+        ? `${currentCase.owner_id} 在 ${currentCase.business_date} 有 ${sequence.length.toLocaleString("zh-CN")} 条待处理案例。`
+        : `${currentCase.owner_id} 在 ${currentCase.business_date} 暂无待处理案例。`,
+    ownerId: currentCase.owner_id,
+    businessDate: currentCase.business_date,
+    listHref,
+    positionLabel,
+    totalActionableCount: sequence.length,
+    previous,
+    next,
+    sequence,
   }
 }
 

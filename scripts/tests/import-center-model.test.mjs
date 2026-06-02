@@ -45,6 +45,7 @@ import {
   summarizeImportReviewCasesWorkspace,
   summarizeImportReviewOwnerStageMatrix,
   summarizeImportReviewOwnerContext,
+  summarizeImportReviewOwnerNavigation,
   filterImportReviewCases,
   summarizeImportResultTrace,
   summarizeImportPageHierarchy,
@@ -1475,6 +1476,117 @@ test("import center review case detail summarizes same-owner processing context"
       listHref: "/data-quality/review-cases",
       stageHref: "/data-quality/review-cases",
       items: [],
+    }
+  );
+});
+
+test("import center review case detail summarizes same-owner pending navigation", () => {
+  const currentCase = {
+    case_id: "CASE-CURRENT",
+    source_result_type: "schedule_actual",
+    source_result_id: 18,
+    business_date: "2026-05-11",
+    owner_id: "OWNER-A",
+    severity: "medium",
+    status: "open",
+    created_at: "2026-05-11T10:10:00+08:00",
+  };
+  const closedCurrentCase = {
+    ...currentCase,
+    case_id: "CASE-CLOSED",
+    status: "closed",
+    created_at: "2026-05-11T10:40:00+08:00",
+  };
+  const cases = [
+    currentCase,
+    {
+      case_id: "CASE-MISSING-EVIDENCE",
+      source_result_type: "forecast_schedule",
+      source_result_id: 20,
+      business_date: "2026-05-11",
+      owner_id: "OWNER-A",
+      severity: "critical",
+      status: "open",
+      created_at: "2026-05-11T10:20:00+08:00",
+    },
+    {
+      case_id: "CASE-READY-CLOSE",
+      source_result_type: "forecast_schedule",
+      source_result_id: 21,
+      business_date: "2026-05-11",
+      owner_id: "OWNER-A",
+      severity: "low",
+      status: "open",
+      created_at: "2026-05-11T10:30:00+08:00",
+    },
+    closedCurrentCase,
+    {
+      case_id: "CASE-OTHER-OWNER",
+      source_result_type: "schedule_actual",
+      source_result_id: 23,
+      business_date: "2026-05-11",
+      owner_id: "OWNER-B",
+      severity: "critical",
+      status: "open",
+      created_at: "2026-05-11T10:00:00+08:00",
+    },
+  ];
+  const processingStages = {
+    "CASE-CURRENT": { evidenceCount: 1, conclusionCount: 0, isClosed: false },
+    "CASE-MISSING-EVIDENCE": { evidenceCount: 0, conclusionCount: 0, isClosed: false },
+    "CASE-READY-CLOSE": { evidenceCount: 1, conclusionCount: 1, isClosed: false },
+    "CASE-CLOSED": { evidenceCount: 1, conclusionCount: 1, isClosed: true },
+  };
+
+  const navigation = summarizeImportReviewOwnerNavigation({
+    currentCase,
+    cases,
+    processingStages,
+  });
+
+  assert.deepEqual(
+    {
+      title: navigation.title,
+      positionLabel: navigation.positionLabel,
+      totalActionableCount: navigation.totalActionableCount,
+      listHref: navigation.listHref,
+      previousCaseId: navigation.previous?.caseId ?? null,
+      nextCaseId: navigation.next?.caseId ?? null,
+      sequenceIds: navigation.sequence.map((item) => item.caseId),
+    },
+    {
+      title: "同 Owner 待处理导航",
+      positionLabel: "第 2 / 3 条",
+      totalActionableCount: 3,
+      listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A",
+      previousCaseId: "CASE-MISSING-EVIDENCE",
+      nextCaseId: "CASE-READY-CLOSE",
+      sequenceIds: [
+        "CASE-MISSING-EVIDENCE",
+        "CASE-CURRENT",
+        "CASE-READY-CLOSE",
+      ],
+    }
+  );
+  assert.equal(navigation.previous?.href, "/data-quality/review-cases/CASE-MISSING-EVIDENCE");
+  assert.equal(navigation.next?.href, "/data-quality/review-cases/CASE-READY-CLOSE");
+
+  const closedNavigation = summarizeImportReviewOwnerNavigation({
+    currentCase: closedCurrentCase,
+    cases,
+    processingStages,
+  });
+
+  assert.deepEqual(
+    {
+      positionLabel: closedNavigation.positionLabel,
+      previousCaseId: closedNavigation.previous?.caseId ?? null,
+      nextCaseId: closedNavigation.next?.caseId ?? null,
+    },
+    {
+      positionLabel: "当前案例不在待处理序列",
+      previousCaseId: null,
+      nextCaseId: "CASE-MISSING-EVIDENCE",
     }
   );
 });
