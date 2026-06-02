@@ -3593,3 +3593,26 @@ dependencies:
   - "US689"
 status: "done"
 ```
+
+### US691 - 复核详情处理动作区整合
+
+```yaml
+id: US691
+requirement_ids:
+  - R771
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望在复核案例详情页先看到统一的处理动作区，以便不用在长页面里寻找补证据、补结论和关闭入口，就能按当前阶段完成下一步。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 展示统一的处理动作区。"
+  - "动作区展示当前推荐动作、证据/结论/关闭材料状态和下一步说明。"
+  - "补证据、补结论和关闭入口复用现有本地 API，不新增后端 route 或 schema。"
+  - "关闭案例后动作区展示已关闭状态，不再显示可提交按钮。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US690"
+status: "done"
+```

@@ -637,6 +637,24 @@ export type ImportReviewCaseProcessingTimelineSummary = {
   }>
 }
 
+export type ImportReviewCaseActionDeckSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  statusLabel: string
+  primaryAction: string
+  summary: string
+  nextAction: string
+  steps: Array<{
+    key: "evidence" | "conclusion" | "closure"
+    title: string
+    statusLabel: string
+    actionLabel: string
+    canSubmit: boolean
+    isPrimary: boolean
+    detail: string
+  }>
+}
+
 export type ImportReviewCaseClosureActionSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -2193,6 +2211,83 @@ export function summarizeImportReviewCaseProcessingTimeline({
   }
 }
 
+export function summarizeImportReviewCaseActionDeck({
+  detail,
+  error,
+}: {
+  detail: ImportReviewCaseDetailResponse | null
+  error: string | null
+}): ImportReviewCaseActionDeckSummary {
+  const evidenceAction = summarizeImportReviewCaseEvidenceAction({ detail, error })
+  const conclusionAction = summarizeImportReviewCaseConclusionAction({ detail, error })
+  const closureAction = summarizeImportReviewCaseClosureAction({ detail, error })
+
+  if (error || !detail) {
+    const fallbackAction = error ? "等待恢复" : "等待案例"
+
+    return {
+      tone: error ? "blocked" : "empty",
+      title: "处理动作区",
+      statusLabel: fallbackAction,
+      primaryAction: fallbackAction,
+      summary: error ?? "暂无复核案例详情。",
+      nextAction: error
+        ? "先恢复复核案例读取，再执行补证据、补结论或关闭。"
+        : "先从复核案例工作台选择一个案例。",
+      steps: buildReviewCaseActionDeckSteps({
+        evidenceAction,
+        conclusionAction,
+        closureAction,
+        primaryKey: "evidence",
+      }),
+    }
+  }
+
+  const isClosed = detail.case.status === "closed" || detail.closure !== null
+  const evidenceCount = detail.evidence.length
+  const conclusionCount = detail.conclusions.length
+  const primaryKey = isClosed
+    ? "closure"
+    : evidenceCount === 0
+      ? "evidence"
+      : conclusionCount === 0
+        ? "conclusion"
+        : "closure"
+  const primaryAction =
+    primaryKey === "evidence"
+      ? evidenceAction.title
+      : primaryKey === "conclusion"
+        ? conclusionAction.title
+        : closureAction.title
+
+  return {
+    tone: isClosed ? "ready" : primaryKey === "closure" ? "warning" : "blocked",
+    title: "处理动作区",
+    statusLabel: isClosed
+      ? "已关闭"
+      : primaryKey === "evidence"
+        ? "等待证据"
+        : primaryKey === "conclusion"
+          ? "等待结论"
+          : "可关闭",
+    primaryAction,
+    summary: `证据 ${evidenceCount.toLocaleString("zh-CN")} 条 · 结论 ${conclusionCount.toLocaleString("zh-CN")} 条 · ${isClosed ? "已关闭" : "未关闭"}`,
+    nextAction: isClosed
+      ? "案例已关闭；后续只读追溯处理动作、证据和结论。"
+      : primaryKey === "evidence"
+        ? "先补充证据，再补充复核结论；关闭入口会在材料齐全后开放。"
+        : primaryKey === "conclusion"
+          ? "已有证据，继续补充复核结论；关闭入口会在材料齐全后开放。"
+          : "证据和结论已齐，复核无误后提交关闭案例。",
+    steps: buildReviewCaseActionDeckSteps({
+      evidenceAction,
+      conclusionAction,
+      closureAction,
+      primaryKey,
+    }),
+  }
+}
+
 export function summarizeImportReviewCaseClosureAction({
   detail,
   error,
@@ -2245,6 +2340,48 @@ export function summarizeImportReviewCaseClosureAction({
     blockers,
     apiHref: buildImportReviewCaseClosureWriteApiUrl(),
   }
+}
+
+function buildReviewCaseActionDeckSteps({
+  evidenceAction,
+  conclusionAction,
+  closureAction,
+  primaryKey,
+}: {
+  evidenceAction: ImportReviewCaseEvidenceActionSummary
+  conclusionAction: ImportReviewCaseConclusionActionSummary
+  closureAction: ImportReviewCaseClosureActionSummary
+  primaryKey: "evidence" | "conclusion" | "closure"
+}): ImportReviewCaseActionDeckSummary["steps"] {
+  return [
+    {
+      key: "evidence",
+      title: evidenceAction.title,
+      statusLabel: evidenceAction.statusLabel,
+      actionLabel: evidenceAction.actionLabel,
+      canSubmit: evidenceAction.canSubmit,
+      isPrimary: primaryKey === "evidence",
+      detail: evidenceAction.detail,
+    },
+    {
+      key: "conclusion",
+      title: conclusionAction.title,
+      statusLabel: conclusionAction.statusLabel,
+      actionLabel: conclusionAction.actionLabel,
+      canSubmit: conclusionAction.canSubmit,
+      isPrimary: primaryKey === "conclusion",
+      detail: conclusionAction.detail,
+    },
+    {
+      key: "closure",
+      title: closureAction.title,
+      statusLabel: closureAction.statusLabel,
+      actionLabel: closureAction.actionLabel,
+      canSubmit: closureAction.canSubmit,
+      isPrimary: primaryKey === "closure",
+      detail: closureAction.detail,
+    },
+  ]
 }
 
 export function summarizeImportReviewCaseEvidenceAction({

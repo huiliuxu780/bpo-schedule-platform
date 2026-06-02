@@ -31,6 +31,7 @@ import {
   summarizeImportReviewConclusionPreview,
   summarizeImportReviewCaseDetail,
   summarizeImportReviewCaseEvidenceChain,
+  summarizeImportReviewCaseActionDeck,
   summarizeImportReviewCaseProcessingTimeline,
   summarizeImportReviewCaseProcessingStage,
   summarizeImportReviewCaseClosureAction,
@@ -2143,6 +2144,124 @@ test("import center review case detail builds processing timeline", () => {
       nextAction: "先补充证据，再补充复核结论；关闭入口需要证据和结论齐全。",
       items: [],
     }
+  );
+});
+
+test("import center review case detail summarizes the processing action deck", () => {
+  const baseDetail = {
+    case: {
+      case_id: "CASE-ACTION-001",
+      source_result_type: "schedule_actual",
+      source_result_id: 42,
+      business_date: "2026-05-11",
+      owner_id: "supervisor-02",
+      severity: "medium",
+      status: "open",
+      created_at: "2026-05-11T09:40:00+08:00",
+    },
+    source_result: null,
+    source_trace: null,
+    evidence: [],
+    conclusions: [],
+    closure: null,
+  };
+
+  assert.deepEqual(
+    summarizeImportReviewCaseActionDeck({ detail: baseDetail, error: null }),
+    {
+      tone: "blocked",
+      title: "处理动作区",
+      statusLabel: "等待证据",
+      primaryAction: "补充复核证据",
+      summary: "证据 0 条 · 结论 0 条 · 未关闭",
+      nextAction: "先补充证据，再补充复核结论；关闭入口会在材料齐全后开放。",
+      steps: [
+        {
+          key: "evidence",
+          title: "补充复核证据",
+          statusLabel: "可补充",
+          actionLabel: "提交证据",
+          canSubmit: true,
+          isPrimary: true,
+          detail: "当前案例未关闭，可补充一条证据记录。",
+        },
+        {
+          key: "conclusion",
+          title: "补充复核结论",
+          statusLabel: "可补充",
+          actionLabel: "提交结论",
+          canSubmit: true,
+          isPrimary: false,
+          detail: "当前案例未关闭，可补充一条复核结论。",
+        },
+        {
+          key: "closure",
+          title: "关闭复核案例",
+          statusLabel: "不可关闭",
+          actionLabel: "不可关闭",
+          canSubmit: false,
+          isPrimary: false,
+          detail: "缺少证据；缺少复核结论",
+        },
+      ],
+    }
+  );
+
+  const readyToCloseDetail = {
+    ...baseDetail,
+    evidence: [
+      {
+        evidence_id: "EVD-ACTION-001",
+        case_id: "CASE-ACTION-001",
+        evidence_type: "status_log",
+        evidence_uri: "local://review/CASE-ACTION-001/status-log",
+        submitted_by: "supervisor-02",
+        submitted_at: "2026-05-11T10:10:00+08:00",
+        note: "补充状态日志。",
+      },
+    ],
+    conclusions: [
+      {
+        conclusion_id: "CON-ACTION-001",
+        case_id: "CASE-ACTION-001",
+        conclusion_type: "confirmed_late",
+        risk_level: "medium",
+        conclusion_text: "确认迟到异常成立。",
+        decided_by: "ops-lead-02",
+        decided_at: "2026-05-11T10:30:00+08:00",
+      },
+    ],
+  };
+
+  assert.deepEqual(
+    summarizeImportReviewCaseActionDeck({
+      detail: readyToCloseDetail,
+      error: null,
+    }).steps.map((step) => [step.key, step.isPrimary, step.canSubmit]),
+    [
+      ["evidence", false, true],
+      ["conclusion", false, true],
+      ["closure", true, true],
+    ]
+  );
+
+  assert.deepEqual(
+    summarizeImportReviewCaseActionDeck({
+      detail: {
+        ...readyToCloseDetail,
+        case: { ...readyToCloseDetail.case, status: "closed" },
+        closure: {
+          closure_id: "CLO-ACTION-001",
+          case_id: "CASE-ACTION-001",
+          closure_status: "closed",
+          closed_by: "ops-lead-02",
+          closed_at: "2026-05-11T10:45:00+08:00",
+          closure_note: "已完成闭环。",
+        },
+      },
+      error: null,
+    }).nextAction,
+    "案例已关闭；后续只读追溯处理动作、证据和结论。"
   );
 });
 

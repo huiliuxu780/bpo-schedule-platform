@@ -36,6 +36,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM071 Import Center Review Case Action Deck
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM060 after push; local branch has IM061 through IM071 changes not pushed yet.`
+- scope: consolidate review-case detail evidence, conclusion, and closure entries into one processing action deck, model helper/test coverage, shadcn Tabs composition, and traceability records.
+- allowed_files_check: `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, review-case action panel components, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-case-evidence-panel.tsx`, `components/import-center-review-case-conclusion-panel.tsx`, `components/import-center-review-case-closure-panel.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `summarizeImportReviewCaseActionDeck` was not exported; target model test passed with 54 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; production build passed; production browser smoke on 3029 rendered `处理动作区`, `当前推荐动作`, `补证据`, `补结论`, `关闭案例`, and `处理边界`; tab smoke rendered closure blockers; closed-case smoke rendered closed state and zero submit buttons; final `bash scripts/check.sh` result to be reported after final verification.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM069 Import Center Review Owner Pending Navigation
 
 - branch_name: `codex/im057-review-source-context`

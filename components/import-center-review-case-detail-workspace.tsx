@@ -16,6 +16,7 @@ import {
   type ImportReviewCaseRecord,
   buildImportReviewCaseDetailApiUrl,
   summarizeImportReviewCaseDetail,
+  summarizeImportReviewCaseActionDeck,
   summarizeImportReviewCaseEvidenceChain,
 } from "@/components/import-center-model"
 import { ImportCenterReviewCaseClosurePanel } from "@/components/import-center-review-case-closure-panel"
@@ -40,6 +41,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type ImportCenterReviewCaseDetailWorkspaceProps = {
   caseId: string
@@ -142,17 +144,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
 
         <EvidenceChainCard chain={evidenceChain} />
         <ImportCenterReviewCaseProcessingTimeline detail={detail} error={error} />
-        <ImportCenterReviewCaseEvidencePanel
-          caseId={caseId}
-          detail={detail}
-          error={error}
-        />
-        <ImportCenterReviewCaseConclusionPanel
-          caseId={caseId}
-          detail={detail}
-          error={error}
-        />
-        <ImportCenterReviewCaseClosurePanel
+        <ReviewCaseActionDeck
           caseId={caseId}
           detail={detail}
           error={error}
@@ -162,6 +154,111 @@ export function ImportCenterReviewCaseDetailWorkspace({
         <ProcessingBoundaryCard caseId={caseId} />
       </section>
     </main>
+  )
+}
+
+function ReviewCaseActionDeck({
+  caseId,
+  detail,
+  error,
+}: {
+  caseId: string
+  detail: ImportReviewCaseDetailResponse | null
+  error: string | null
+}) {
+  const deck = summarizeImportReviewCaseActionDeck({ detail, error })
+  const primaryStep = deck.steps.find((step) => step.isPrimary) ?? deck.steps[0]
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <ClipboardCheck className="size-4 text-muted-foreground" />
+              {deck.title}
+            </CardTitle>
+            <CardDescription className="mt-1">{deck.nextAction}</CardDescription>
+          </div>
+          <Badge variant={deck.tone === "blocked" ? "destructive" : "outline"}>
+            {deck.statusLabel}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(220px,280px)]">
+          <div className="rounded-md border bg-muted/30 p-3">
+            <div className="text-sm text-muted-foreground">当前推荐动作</div>
+            <div className="mt-1 text-base font-semibold tracking-normal">
+              {deck.primaryAction}
+            </div>
+            <div className="mt-2 text-sm text-muted-foreground">{deck.summary}</div>
+          </div>
+          <div className="rounded-md border bg-muted/30 p-3">
+            <div className="text-sm text-muted-foreground">主入口状态</div>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <Badge variant={primaryStep?.canSubmit ? "outline" : "secondary"}>
+                {primaryStep?.statusLabel ?? deck.statusLabel}
+              </Badge>
+              {primaryStep?.canSubmit ? (
+                <span className="text-sm text-muted-foreground">可提交</span>
+              ) : (
+                <span className="text-sm text-muted-foreground">需先满足阻塞条件</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-2 md:grid-cols-3">
+          {deck.steps.map((step) => (
+            <div
+              key={step.key}
+              className="grid gap-2 rounded-md border bg-background p-3"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="text-sm font-medium">{step.title}</div>
+                <Badge variant={step.isPrimary ? "outline" : "secondary"}>
+                  {step.isPrimary ? "当前" : step.statusLabel}
+                </Badge>
+              </div>
+              <div className="text-sm text-muted-foreground">{step.detail}</div>
+            </div>
+          ))}
+        </div>
+
+        <Tabs defaultValue={primaryStep?.key ?? "evidence"} className="gap-3">
+          <TabsList className="w-full justify-start overflow-x-auto">
+            <TabsTrigger value="evidence">补证据</TabsTrigger>
+            <TabsTrigger value="conclusion">补结论</TabsTrigger>
+            <TabsTrigger value="closure">关闭案例</TabsTrigger>
+          </TabsList>
+          <TabsContent value="evidence">
+            <ImportCenterReviewCaseEvidencePanel
+              caseId={caseId}
+              detail={detail}
+              error={error}
+              embedded
+            />
+          </TabsContent>
+          <TabsContent value="conclusion">
+            <ImportCenterReviewCaseConclusionPanel
+              caseId={caseId}
+              detail={detail}
+              error={error}
+              embedded
+            />
+          </TabsContent>
+          <TabsContent value="closure">
+            <ImportCenterReviewCaseClosurePanel
+              caseId={caseId}
+              detail={detail}
+              error={error}
+              embedded
+            />
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -247,12 +344,12 @@ function ProcessingBoundaryCard({ caseId }: { caseId: string }) {
           处理边界
         </CardTitle>
         <CardDescription>
-          本页只允许对当前案例执行受控关闭写入，不提供补证据、审批、导出或批量处理。
+          本页只允许对当前案例执行受控证据补充、结论补充和关闭写入。
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3 text-sm text-muted-foreground">
         <div className="rounded-md border bg-muted/30 p-3">
-          关闭写入复用现有本地 API；证据补录、结论新增、审批和批量处理仍需要单独受控任务。
+          三个动作复用现有本地 API；审批、导出、权限和批量处理仍需要单独受控任务。
         </div>
         <div className="rounded-md border bg-muted/30 p-3">
           <div>当前详情来自</div>

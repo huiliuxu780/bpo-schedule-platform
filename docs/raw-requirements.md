@@ -1964,3 +1964,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读入口；复核案例工作台基于当前筛选结果和阶段快照派生 owner 首条待处理，展示待处理数量、首条阶段、详情入口和 owner 列表入口；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R771 - 复核详情处理动作区整合
+
+```yaml
+id: R771
+module: "导入中心"
+description: "复核详情页已经具备补证据、补结论和关闭入口，但三个动作面板仍分散在长详情流中，主管需要滚动拼接当前该做什么。需要把现有三个受控动作入口整合成一个处理动作区，突出当前推荐动作、材料状态和可提交入口。"
+source: "PM agreed to continue business features after IM070 on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成复核详情页处理动作区整合；页面用统一动作区展示当前推荐动作、材料状态和三个处理 tab，复用已有 evidence、conclusion、closure 本地 API；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

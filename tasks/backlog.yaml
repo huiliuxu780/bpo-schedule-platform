@@ -6716,3 +6716,49 @@ tasks:
       - "范围扩展到写入动作、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM071
+    title: "复核详情处理动作区整合"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM070"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "components/import-center-review-case-evidence-panel.tsx"
+      - "components/import-center-review-case-conclusion-panel.tsx"
+      - "components/import-center-review-case-closure-panel.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "`/data-quality/review-cases/[caseId]` 展示统一的处理动作区。"
+      - "动作区展示当前推荐动作、证据/结论/关闭材料状态和下一步说明。"
+      - "补证据、补结论和关闭入口复用现有本地 API，不新增后端 route 或 schema。"
+      - "关闭案例后动作区展示已关闭状态，不再显示可提交按钮。"
+      - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

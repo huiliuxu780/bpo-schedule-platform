@@ -23,12 +23,14 @@ type ImportCenterReviewCaseEvidencePanelProps = {
   caseId: string
   detail: ImportReviewCaseDetailResponse | null
   error: string | null
+  embedded?: boolean
 }
 
 export function ImportCenterReviewCaseEvidencePanel({
   caseId,
   detail,
   error,
+  embedded = false,
 }: ImportCenterReviewCaseEvidencePanelProps) {
   const action = summarizeImportReviewCaseEvidenceAction({ detail, error })
 
@@ -65,74 +67,84 @@ export function ImportCenterReviewCaseEvidencePanel({
     redirect(`${buildImportReviewCaseDetailWorkspaceHref(caseId)}${suffix}`)
   }
 
+  const header = (
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <FileText className="size-4 text-muted-foreground" />
+          {action.title}
+        </CardTitle>
+        <CardDescription className="mt-1">{action.detail}</CardDescription>
+      </div>
+      <Badge variant={action.canSubmit ? "outline" : "secondary"}>
+        {action.statusLabel}
+      </Badge>
+    </div>
+  )
+  const body = action.canSubmit ? (
+    <form action={submitEvidence} className="grid gap-3">
+      <div className="grid gap-3 md:grid-cols-[minmax(0,180px)_minmax(0,1fr)]">
+        <Input
+          aria-label="证据类型"
+          name="evidence_type"
+          defaultValue="note"
+          required
+        />
+        <Input
+          aria-label="证据位置"
+          name="evidence_uri"
+          defaultValue={`local://review/${caseId}/note`}
+          required
+        />
+      </div>
+      <div className="grid gap-3 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
+        <Input
+          aria-label="提交人"
+          name="submitted_by"
+          defaultValue={detail?.case.owner_id ?? ""}
+          required
+        />
+        <Input
+          aria-label="证据备注"
+          name="note"
+          defaultValue="补充复核证据。"
+        />
+      </div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="break-all font-mono text-xs text-muted-foreground">
+          {action.apiHref}
+        </div>
+        <Button type="submit" size="sm">
+          {action.actionLabel}
+        </Button>
+      </div>
+    </form>
+  ) : (
+    <div className="grid gap-2">
+      {action.blockers.map((blocker) => (
+        <div
+          key={blocker}
+          className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground"
+        >
+          {blocker}
+        </div>
+      ))}
+    </div>
+  )
+
+  if (embedded) {
+    return (
+      <section className="grid gap-4 rounded-md border bg-background p-4">
+        {header}
+        {body}
+      </section>
+    )
+  }
+
   return (
     <Card>
-      <CardHeader>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FileText className="size-4 text-muted-foreground" />
-              {action.title}
-            </CardTitle>
-            <CardDescription className="mt-1">{action.detail}</CardDescription>
-          </div>
-          <Badge variant={action.canSubmit ? "outline" : "secondary"}>
-            {action.statusLabel}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {action.canSubmit ? (
-          <form action={submitEvidence} className="grid gap-3">
-            <div className="grid gap-3 md:grid-cols-[minmax(0,180px)_minmax(0,1fr)]">
-              <Input
-                aria-label="证据类型"
-                name="evidence_type"
-                defaultValue="note"
-                required
-              />
-              <Input
-                aria-label="证据位置"
-                name="evidence_uri"
-                defaultValue={`local://review/${caseId}/note`}
-                required
-              />
-            </div>
-            <div className="grid gap-3 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
-              <Input
-                aria-label="提交人"
-                name="submitted_by"
-                defaultValue={detail?.case.owner_id ?? ""}
-                required
-              />
-              <Input
-                aria-label="证据备注"
-                name="note"
-                defaultValue="补充复核证据。"
-              />
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="break-all font-mono text-xs text-muted-foreground">
-                {action.apiHref}
-              </div>
-              <Button type="submit" size="sm">
-                {action.actionLabel}
-              </Button>
-            </div>
-          </form>
-        ) : (
-          <div className="grid gap-2">
-            {action.blockers.map((blocker) => (
-              <div
-                key={blocker}
-                className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground"
-              >
-                {blocker}
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
+      <CardHeader>{header}</CardHeader>
+      <CardContent>{body}</CardContent>
     </Card>
   )
 }

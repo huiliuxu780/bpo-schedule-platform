@@ -1697,3 +1697,14 @@
 - action: 增加复核案例工作台只读同 Owner 首条待处理入口。
 - status: `done`
 - notes: `/data-quality/review-cases` 的分组面板新增 `同 Owner 首条待处理` 区块，按 owner 展示当前筛选结果中的待处理数量、首条待处理阶段、详情入口和 owner 列表入口；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM071`
+- source_ids:
+  - `R771`
+- story_ids:
+  - `US691`
+- action: 整合复核案例详情页处理动作区。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 新增统一 `处理动作区`，展示当前推荐动作、证据/结论/关闭材料状态，并用 tab 收纳补证据、补结论和关闭案例三个现有受控入口；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

@@ -3026,3 +3026,29 @@
 - in-app browser production smoke：`http://127.0.0.1:3028/data-quality/review-cases?processingStage=missing_conclusion` 命中 `同 Owner 首条待处理`、`进入首条待处理`、`查看 Owner 列表` 和 `复核案例列表`。
 - in-app browser navigation smoke：点击 `进入首条待处理` 后进入 `CASE-EVIDENCE-SMOKE-001`，命中 `同 Owner 待处理导航`、`第 1 / 2 条` 和 `下一条待处理`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-02 - IM071 复核详情处理动作区整合
+
+#### 审计结论
+
+- `IM071/US691` 已在 `/data-quality/review-cases/[caseId]` 增加统一 `处理动作区`。
+- 动作区展示当前推荐动作、材料摘要、主入口状态，并用 shadcn Tabs 收纳 `补证据`、`补结论` 和 `关闭案例` 三个现有处理入口。
+- 三个入口复用已有 evidence、conclusion 和 closure 本地 API；本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前处理动作区仍是本地 MVP 的单案例处理入口，不是审批流、权限隔离、批量处理或 SLA 队列。
+- 生产规模下的处理动作状态仍建议后续由后端聚合接口返回，避免详情页多处派生。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先因缺少 `summarizeImportReviewCaseActionDeck` export 失败。
+- `node scripts/tests/import-center-model.test.mjs`：通过，54 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- in-app browser production smoke：`http://127.0.0.1:3029/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001` 命中 `处理动作区`、`当前推荐动作`、`补证据`、`补结论`、`关闭案例` 和 `处理边界`。
+- in-app browser tab smoke：点击 `关闭案例` tab 后命中 `关闭复核案例`、`不可关闭` 和 `缺少复核结论`。
+- in-app browser closed-case smoke：`http://127.0.0.1:3029/data-quality/review-cases/CASE-QUERY-001` 命中 `处理动作区`、`已关闭` 和 `案例已关闭；后续只读追溯处理动作、证据和结论`，且 `提交证据`、`提交结论`、`关闭案例` 按钮数量均为 0。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
