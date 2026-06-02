@@ -1886,3 +1886,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读链路展示；复核案例详情页新增 `证据与结论链路`，按时间展示 evidence、conclusions 和 closure，并把页面主体调整为单列分层；不新增 schema/migration，不新增依赖，不接真实外部接口，不做证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R765 - 复核案例处理时间线
+
+```yaml
+id: R765
+module: "导入中心"
+description: "复核案例详情页已经具备证据补录、结论补充和关闭入口，但主管仍需要一个按处理顺序组织的时间线，快速判断当前案例经历了哪些动作、由谁处理、下一步是什么，而不是在多个区块之间来回拼接。"
+source: "After IM064 conclusion supplement entry and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读处理时间线；复核案例详情页新增 `处理时间线`，按时间聚合 evidence、conclusions 和 closure，展示阶段、处理人、时间、说明、当前阶段和下一步建议；不新增 API、schema/migration、依赖、写入动作、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

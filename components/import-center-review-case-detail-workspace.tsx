@@ -19,6 +19,7 @@ import {
 import { ImportCenterReviewCaseClosurePanel } from "@/components/import-center-review-case-closure-panel"
 import { ImportCenterReviewCaseConclusionPanel } from "@/components/import-center-review-case-conclusion-panel"
 import { ImportCenterReviewCaseEvidencePanel } from "@/components/import-center-review-case-evidence-panel"
+import { ImportCenterReviewCaseProcessingTimeline } from "@/components/import-center-review-case-processing-timeline"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -125,6 +126,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
         </Card>
 
         <EvidenceChainCard chain={evidenceChain} />
+        <ImportCenterReviewCaseProcessingTimeline detail={detail} error={error} />
         <ImportCenterReviewCaseEvidencePanel
           caseId={caseId}
           detail={detail}

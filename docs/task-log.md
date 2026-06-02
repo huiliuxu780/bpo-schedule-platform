@@ -1631,3 +1631,14 @@
 - action: 增加复核案例详情页受控结论补充入口。
 - status: `done`
 - notes: 新增 `POST /api/v1/review-cases/{case_id}/conclusion`，可对已存在且未关闭的复核案例新增一条 conclusion 并返回最新详情；详情页新增“补充复核结论”独立 panel，位于证据补录之后、关闭入口之前；open case 展示提交入口，closed case 展示阻塞原因；本轮不新增依赖、package/lockfile、schema/migration、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM065`
+- source_ids:
+  - `R765`
+- story_ids:
+  - `US685`
+- action: 增加复核案例详情页只读处理时间线。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 新增“处理时间线”独立区块，按时间聚合 evidence、conclusions 和 closure，展示阶段、处理人、时间、处理说明、当前阶段和下一步建议；本轮不新增后端、schema/migration、依赖、写入动作、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

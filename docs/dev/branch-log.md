@@ -1926,3 +1926,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM065 Import Center Review Processing Timeline
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM060 after push; local branch has IM061, IM062, IM063, IM064, and IM065 changes not pushed yet.`
+- scope: read-only processing timeline on `/data-quality/review-cases/[caseId]`, model helper/test coverage, shadcn-composed timeline component, and traceability records.
+- allowed_files_check: `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-case-processing-timeline.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, app route, package, lockfile, schema, migration, write action, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-review-case-processing-timeline.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, app route, package, lockfile, schema, migration, write action, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` remains untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `summarizeImportReviewCaseProcessingTimeline` was not exported; target model test passed with 48 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; direct `npm run build` on default Node 24 failed due existing Next/lightningcss native addon issue; in-app browser smoke on 3026 rendered `处理时间线`, `补充证据`, `补充结论`, `关闭案例`, and `已关闭`; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

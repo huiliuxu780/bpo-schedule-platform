@@ -511,6 +511,24 @@ export type ImportReviewCaseEvidenceChainSummary = {
   }>
 }
 
+export type ImportReviewCaseProcessingTimelineSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  statusLabel: string
+  currentStage: string
+  summary: string
+  nextAction: string
+  items: Array<{
+    id: string
+    stage: string
+    actor: string
+    timestamp: string
+    title: string
+    detail: string
+    sourceLabel: string
+  }>
+}
+
 export type ImportReviewCaseClosureActionSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -1462,6 +1480,103 @@ export function summarizeImportReviewCaseEvidenceChain({
       : evidenceCount > 0 && conclusionCount > 0
         ? "先复核证据和结论内容，再进入受控关闭流程。"
         : "当前链路材料不足，先补齐证据和结论后再判断能否关闭。",
+    items,
+  }
+}
+
+export function summarizeImportReviewCaseProcessingTimeline({
+  detail,
+  error,
+}: {
+  detail: ImportReviewCaseDetailResponse | null
+  error: string | null
+}): ImportReviewCaseProcessingTimelineSummary {
+  if (error) {
+    return {
+      tone: "blocked",
+      title: "处理时间线",
+      statusLabel: "读取失败",
+      currentStage: "等待读取",
+      summary: error,
+      nextAction: "先恢复复核案例读取，再查看处理动作、证据、结论和关闭记录。",
+      items: [],
+    }
+  }
+
+  if (!detail) {
+    return {
+      tone: "empty",
+      title: "处理时间线",
+      statusLabel: "等待案例",
+      currentStage: "等待选择",
+      summary: "暂无处理动作",
+      nextAction: "先从复核案例工作台选择一个案例。",
+      items: [],
+    }
+  }
+
+  const items = [
+    ...detail.evidence.map((item) => ({
+      id: item.evidence_id,
+      stage: "补充证据",
+      actor: item.submitted_by,
+      timestamp: item.submitted_at,
+      title: item.evidence_type,
+      detail: item.note ?? item.evidence_uri,
+      sourceLabel: "证据",
+    })),
+    ...detail.conclusions.map((item) => ({
+      id: item.conclusion_id,
+      stage: "补充结论",
+      actor: item.decided_by,
+      timestamp: item.decided_at,
+      title: `${item.conclusion_type} · ${item.risk_level}`,
+      detail: item.conclusion_text,
+      sourceLabel: "结论",
+    })),
+    ...(detail.closure
+      ? [
+          {
+            id: detail.closure.closure_id,
+            stage: "关闭案例",
+            actor: detail.closure.closed_by,
+            timestamp: detail.closure.closed_at,
+            title: detail.closure.closure_status,
+            detail: detail.closure.closure_note ?? "无关闭备注",
+            sourceLabel: "关闭",
+          },
+        ]
+      : []),
+  ].sort((a, b) => a.timestamp.localeCompare(b.timestamp))
+
+  const isClosed = detail.case.status === "closed" || detail.closure !== null
+  const hasEvidence = detail.evidence.length > 0
+  const hasConclusion = detail.conclusions.length > 0
+  const latestTimestamp = items.at(-1)?.timestamp
+
+  if (items.length === 0) {
+    return {
+      tone: "warning",
+      title: "处理时间线",
+      statusLabel: "未开始",
+      currentStage: "等待证据",
+      summary: "暂无处理动作",
+      nextAction: "先补充证据，再补充复核结论；关闭入口需要证据和结论齐全。",
+      items,
+    }
+  }
+
+  return {
+    tone: isClosed ? "ready" : hasEvidence && hasConclusion ? "warning" : "blocked",
+    title: "处理时间线",
+    statusLabel: isClosed ? "已关闭" : hasEvidence && hasConclusion ? "待关闭" : "处理中",
+    currentStage: isClosed ? "已关闭" : hasEvidence && hasConclusion ? "等待关闭" : "等待结论",
+    summary: `${items.length.toLocaleString("zh-CN")} 个处理动作 · 最新动作 ${latestTimestamp ?? "无"}`,
+    nextAction: isClosed
+      ? "案例已关闭；后续只读追溯处理动作、证据和结论，不再补充写入。"
+      : hasEvidence && hasConclusion
+        ? "证据和结论已齐，继续复核后进入受控关闭入口。"
+        : "已有证据但缺少结论；先补充复核结论，再判断是否关闭。",
     items,
   }
 }

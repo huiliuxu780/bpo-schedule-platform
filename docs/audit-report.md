@@ -2877,3 +2877,27 @@
 - SSR page smoke：`/data-quality/review-cases/CASE-QUERY-001` 命中 `补充复核结论` 和 `案例已关闭`，未命中 `提交结论`。
 - `PATH=/opt/homebrew/opt/node@22/bin:$PATH npm run build`：通过。直接 `npm run build` 会因本机默认 Node 24 触发 Next/lightningcss native addon 签名加载问题；项目标准 check 使用 Node 22 PATH。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-02 - IM065 复核案例处理时间线
+
+#### 审计结论
+
+- `IM065/US685` 已在 `/data-quality/review-cases/[caseId]` 增加独立“处理时间线”区块。
+- 时间线只读聚合现有 detail 中的 evidence、conclusions 和 closure，按时间排序展示处理阶段、处理人、时间、动作来源和说明。
+- 时间线输出当前阶段、状态标签和下一步建议，避免主管在证据、结论、关闭入口之间手工拼接处理顺序。
+- 本轮未新增后端 API，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、写入动作、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前时间线是只读聚合，不是审批流、处理 SLA、批量处理、权限隔离或操作日志持久化。
+- 直接 `npm run build` 在本机默认 Node 24 下仍会触发既有 Next/lightningcss native addon 问题；项目标准 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 已通过。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先因缺少 `summarizeImportReviewCaseProcessingTimeline` export 失败。
+- `node scripts/tests/import-center-model.test.mjs`：通过，48 个 import-center model 测试通过。
+- `node --test scripts/tests/check-shadcn-ui.test.mjs` 和 `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases/CASE-QUERY-001` 命中 `处理时间线`、`补充证据`、`补充结论`、`关闭案例` 和 `已关闭`。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 177 个 backend unittest。

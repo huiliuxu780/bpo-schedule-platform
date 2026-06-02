@@ -3456,3 +3456,26 @@ dependencies:
   - "US680"
 status: "done"
 ```
+
+### US685 - 复核案例处理时间线
+
+```yaml
+id: US685
+requirement_ids:
+  - R765
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望复核案例详情页把证据补录、结论补充和关闭记录整理成处理时间线，以便按处理顺序判断当前案例走到哪一步、下一步该做什么。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 展示独立的处理时间线区块。"
+  - "时间线按处理顺序聚合 evidence、conclusion 和 closure，并展示阶段、责任人、时间和处理说明。"
+  - "时间线给出当前阶段和下一步建议；读取失败或无记录时展示只读空态/错误态。"
+  - "页面保持只读，不新增证据补录、结论补充、关闭、审批、导出、权限、批量或外部接口能力。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不做生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US684"
+status: "done"
+```

@@ -12,6 +12,8 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 Current story queue is empty and active tasks are empty.
 
+`US685/IM065` completed the read-only review-case processing timeline on the second-level review-case detail page, then current queue returned to empty.
+
 `US684/IM064` completed the controlled review-case conclusion supplement write path for existing open cases and the detail-page conclusion entry, then current queue returned to empty.
 
 `US683/IM063` completed the controlled review-case evidence supplement write path for existing open cases and the detail-page evidence entry, then current queue returned to empty.

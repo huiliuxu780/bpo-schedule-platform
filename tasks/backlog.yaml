@@ -6452,3 +6452,48 @@ tasks:
       - "结论写入 API 契约需要改变生产状态码口径"
       - "验证失败"
     commit_after_done: true
+  - id: IM065
+    title: "复核案例处理时间线"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM064"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "components/import-center-review-case-processing-timeline.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "app/**"
+    acceptance:
+      - "`/data-quality/review-cases/[caseId]` 展示独立的处理时间线区块。"
+      - "时间线按处理顺序聚合 evidence、conclusion 和 closure，并展示阶段、责任人、时间和处理说明。"
+      - "时间线给出当前阶段和下一步建议；读取失败或无记录时展示只读空态/错误态。"
+      - "页面保持只读，不新增证据补录、结论补充、关闭、审批、导出、权限、批量或外部接口能力。"
+      - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不做生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到证据补录、结论补充、关闭、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
