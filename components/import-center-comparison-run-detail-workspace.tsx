@@ -1,9 +1,11 @@
 import Link from "next/link"
-import { Activity, ArrowLeft, ExternalLink, GitBranch, Table2 } from "lucide-react"
+import { Activity, ArrowLeft, ExternalLink, GitBranch, ShieldAlert, Table2 } from "lucide-react"
 
 import {
   type ImportComparisonRunDetailResponse,
+  type ImportReviewCaseRecord,
   summarizeImportComparisonRunDetail,
+  summarizeImportComparisonRunReviewCases,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -21,14 +23,23 @@ type ImportCenterComparisonRunDetailWorkspaceProps = {
   runId: string
   detail: ImportComparisonRunDetailResponse | null
   error: string | null
+  reviewCases: ImportReviewCaseRecord[]
+  reviewError: string | null
 }
 
 export function ImportCenterComparisonRunDetailWorkspace({
   runId,
   detail,
   error,
+  reviewCases,
+  reviewError,
 }: ImportCenterComparisonRunDetailWorkspaceProps) {
   const summary = summarizeImportComparisonRunDetail({ detail, error })
+  const relatedReviewCases = summarizeImportComparisonRunReviewCases({
+    detail,
+    reviewCases,
+    reviewError,
+  })
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
@@ -126,6 +137,78 @@ export function ImportCenterComparisonRunDetailWorkspace({
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline">{row.status}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="overflow-hidden">
+          <CardHeader>
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div className="grid gap-1">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <ShieldAlert className="size-4 text-muted-foreground" />
+                  关联复核案例
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  {relatedReviewCases.detail}
+                </p>
+              </div>
+              <Badge
+                variant={
+                  relatedReviewCases.tone === "blocked"
+                    ? "destructive"
+                    : "outline"
+                }
+              >
+                {relatedReviewCases.title}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {relatedReviewCases.cases.length === 0 ? (
+              <div className="grid gap-2 p-4 text-sm text-muted-foreground">
+                <p>{relatedReviewCases.nextAction}</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[160px]">复核案例</TableHead>
+                    <TableHead className="min-w-[140px]">来源结果</TableHead>
+                    <TableHead className="min-w-[140px]">责任人</TableHead>
+                    <TableHead className="min-w-[96px]">风险</TableHead>
+                    <TableHead className="min-w-[96px]">状态</TableHead>
+                    <TableHead className="min-w-[96px] text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {relatedReviewCases.cases.map((reviewCase) => (
+                    <TableRow key={reviewCase.caseId}>
+                      <TableCell className="font-medium">
+                        {reviewCase.caseId}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {reviewCase.resultLabel}
+                      </TableCell>
+                      <TableCell>{reviewCase.ownerLabel}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{reviewCase.severityLabel}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{reviewCase.statusLabel}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button asChild size="sm" variant="outline">
+                          <Link href={reviewCase.href}>
+                            查看详情
+                            <ExternalLink data-icon="inline-end" />
+                          </Link>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}

@@ -6216,3 +6216,48 @@ tasks:
       - "范围扩展到计算触发、证据补录、复核写入、关闭、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM060
+    title: "对比运行关联复核案例定位"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM059"]
+    allowed_files:
+      - "app/data-quality/comparison-runs/[runId]/page.tsx"
+      - "components/import-center-comparison-run-detail-workspace.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "`/data-quality/comparison-runs/[runId]` 展示关联复核案例区块。"
+      - "关联复核案例按当前运行结果的 `source_result_type + source_result_id` 匹配。"
+      - "有匹配案例时提供 `/data-quality/review-cases/[caseId]` 前端详情入口。"
+      - "无匹配案例或读取失败时展示只读空态/错误态，不触发写入。"
+      - "页面保持只读，不提供计算触发、证据补录、提交、关闭、审批、导出或批量操作。"
+      - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做权限、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到计算触发、证据补录、复核写入、关闭、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

@@ -1841,3 +1841,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM060 Import Center Comparison Run Review Links
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM059; local branch has IM060 changes not pushed yet.`
+- scope: read-only linked review-case positioning on `/data-quality/comparison-runs/[runId]`, existing review-cases list fetch, model helper/test coverage, and traceability records.
+- allowed_files_check: `app/data-quality/comparison-runs/[runId]/page.tsx`, `components/import-center-comparison-run-detail-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, real integration, auth, permissions, approval, export, batch operation, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/comparison-runs/[runId]/page.tsx`, `components/import-center-comparison-run-detail-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, real integration, auth, permissions, approval, export, batch operation, production formula, settlement, or charge-factor files. `.local/` remains untracked and untouched.
+- check_result: TDD red frontend model test failed first because `summarizeImportComparisonRunReviewCases` was not exported; target model test passed with 43 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; in-app browser smoke on 3026 rendered `关联复核案例`, `CASE-QUERY-001`, `查看详情`, and one `/data-quality/review-cases/CASE-QUERY-001` link; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 163 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

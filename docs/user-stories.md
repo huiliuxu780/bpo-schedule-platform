@@ -3336,3 +3336,27 @@ dependencies:
   - "US678"
 status: "done"
 ```
+
+### US680 - 对比运行关联复核案例定位
+
+```yaml
+id: US680
+requirement_ids:
+  - R760
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望在对比运行详情页看到该运行结果关联的复核案例，以便从计算结果继续定位到具体复核异常和证据页。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/comparison-runs/[runId]` 展示关联复核案例区块。"
+  - "关联复核案例按当前运行结果的 `source_result_type + source_result_id` 匹配。"
+  - "有匹配案例时提供 `/data-quality/review-cases/[caseId]` 前端详情入口。"
+  - "无匹配案例或读取失败时展示只读空态/错误态，不触发写入。"
+  - "页面保持只读，不提供计算触发、证据补录、提交、关闭、审批、导出或批量操作。"
+  - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不接真实外部接口，不做权限、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US679"
+status: "done"
+```

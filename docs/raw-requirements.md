@@ -1820,3 +1820,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成前端只读运行详情入口；复核案例来源链路可进入 `/data-quality/comparison-runs/[runId]`，运行详情页展示摘要、来源版本、结果明细和处理边界；不新增 schema/migration，不新增依赖，不接真实外部接口，不做计算触发、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子。"
 ```
+
+### R760 - 对比运行关联复核案例定位
+
+```yaml
+id: R760
+module: "导入中心"
+description: "对比运行详情页已经能展示运行摘要和结果列表，但主管仍需要继续判断哪些结果已经形成复核案例，并从结果进入具体复核详情和证据查看。需要在运行详情页增加只读关联复核案例定位。"
+source: "After IM059 comparison-run detail page and PM asked to continue on 2026-06-02"
+submitted_at: "2026-06-02"
+version: "1.0"
+status: "done"
+notes: "本轮已完成前端只读关联定位；运行详情页按当前运行结果匹配复核案例，并提供复核详情前端入口；复用已有 comparison-run detail 和 review-cases list API，不新增 schema/migration，不新增依赖，不接真实外部接口，不做计算触发、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子。"
+```

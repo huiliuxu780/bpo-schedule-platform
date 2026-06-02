@@ -369,6 +369,21 @@ export type ImportComparisonRunDetailSummary = {
   }>
 }
 
+export type ImportComparisonRunReviewCaseSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  detail: string
+  nextAction: string
+  cases: Array<{
+    caseId: string
+    resultLabel: string
+    ownerLabel: string
+    severityLabel: string
+    statusLabel: string
+    href: string
+  }>
+}
+
 export type ImportReviewCaseRecord = {
   case_id: string
   source_result_type: "forecast_schedule" | "schedule_actual"
@@ -3238,6 +3253,137 @@ export function summarizeImportComparisonRunDetail({
       ...detail.schedule_actual_results.map(formatScheduleActualResultRow),
     ],
   }
+}
+
+export function summarizeImportComparisonRunReviewCases({
+  detail,
+  reviewCases,
+  reviewError,
+}: {
+  detail: ImportComparisonRunDetailResponse | null
+  reviewCases: ImportReviewCaseRecord[]
+  reviewError: string | null
+}): ImportComparisonRunReviewCaseSummary {
+  if (reviewError) {
+    return {
+      tone: "blocked",
+      title: "复核案例读取失败",
+      detail: reviewError,
+      nextAction: "先恢复复核案例读取，再判断当前运行结果是否已进入复核。",
+      cases: [],
+    }
+  }
+
+  if (!detail) {
+    return {
+      tone: "empty",
+      title: "等待运行结果",
+      detail: "还没有可匹配复核案例的对比运行结果。",
+      nextAction: "先选择一个对比运行。",
+      cases: [],
+    }
+  }
+
+  const resultLabels = new Map<string, string>()
+  for (const result of detail.forecast_schedule_results) {
+    resultLabels.set(
+      buildReviewCaseSourceResultKey("forecast_schedule", result.result_id),
+      `预测排班 #${result.result_id}`
+    )
+  }
+  for (const result of detail.schedule_actual_results) {
+    resultLabels.set(
+      buildReviewCaseSourceResultKey("schedule_actual", result.result_id),
+      `排班实际 #${result.result_id}`
+    )
+  }
+
+  const matchedCases = reviewCases
+    .filter((reviewCase) =>
+      resultLabels.has(
+        buildReviewCaseSourceResultKey(
+          reviewCase.source_result_type,
+          reviewCase.source_result_id
+        )
+      )
+    )
+    .sort(
+      (current, next) =>
+        reviewCaseSeverityRank(next.severity) - reviewCaseSeverityRank(current.severity) ||
+        reviewCaseOpenRank(next.status) - reviewCaseOpenRank(current.status) ||
+        current.case_id.localeCompare(next.case_id)
+    )
+
+  if (matchedCases.length === 0) {
+    return {
+      tone: "empty",
+      title: "暂无关联复核案例",
+      detail: "当前运行结果尚未匹配到复核案例。",
+      nextAction: "继续查看结果明细；后续复核写入必须进入单独受控任务。",
+      cases: [],
+    }
+  }
+
+  const openCount = matchedCases.filter((reviewCase) => reviewCase.status !== "closed").length
+  const hasHighRiskOpenCase = matchedCases.some(
+    (reviewCase) =>
+      reviewCase.status !== "closed" && isHighRiskReviewSeverity(reviewCase.severity)
+  )
+
+  return {
+    tone: hasHighRiskOpenCase ? "blocked" : openCount > 0 ? "warning" : "ready",
+    title: `关联复核案例 ${matchedCases.length.toLocaleString("zh-CN")} 个`,
+    detail: `当前运行有 ${matchedCases.length.toLocaleString("zh-CN")} 个结果已形成复核案例，其中 ${openCount.toLocaleString("zh-CN")} 个仍未关闭。`,
+    nextAction:
+      openCount > 0
+        ? "先查看未关闭或高风险复核案例，再回看运行结果和证据。"
+        : "当前关联案例均已关闭，可继续回看结果明细和关闭证据。",
+    cases: matchedCases.map((reviewCase) => ({
+      caseId: reviewCase.case_id,
+      resultLabel:
+        resultLabels.get(
+          buildReviewCaseSourceResultKey(
+            reviewCase.source_result_type,
+            reviewCase.source_result_id
+          )
+        ) ?? formatReviewCaseDetailSource(reviewCase),
+      ownerLabel: reviewCase.owner_id,
+      severityLabel: formatReviewCaseSeverity(reviewCase.severity),
+      statusLabel: formatReviewCaseStatus(reviewCase.status),
+      href: buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id),
+    })),
+  }
+}
+
+function buildReviewCaseSourceResultKey(
+  sourceResultType: ImportReviewCaseRecord["source_result_type"],
+  sourceResultId: number
+): string {
+  return `${sourceResultType}:${sourceResultId}`
+}
+
+function reviewCaseOpenRank(status: string): number {
+  return status === "closed" ? 0 : 1
+}
+
+function reviewCaseSeverityRank(severity: string): number {
+  if (severity === "critical") {
+    return 4
+  }
+
+  if (severity === "high") {
+    return 3
+  }
+
+  if (severity === "medium") {
+    return 2
+  }
+
+  if (severity === "low") {
+    return 1
+  }
+
+  return 0
 }
 
 function emptyComparisonRunDetailSummary({

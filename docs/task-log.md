@@ -1576,3 +1576,14 @@
 - action: 增加复核案例来源运行的只读前端详情入口。
 - status: `done`
 - notes: 新增 `/data-quality/comparison-runs/[runId]` 二级页，展示对比运行摘要、来源版本、结果明细和处理边界；复核案例来源链路提供“查看运行详情”，批次详情中的对比运行 action 改为前端详情路由；本轮不新增 schema/migration、依赖、真实外部接口、计算触发、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-02
+
+- task_id: `IM060`
+- source_ids:
+  - `R760`
+- story_ids:
+  - `US680`
+- action: 增加对比运行详情页的关联复核案例定位。
+- status: `done`
+- notes: `/data-quality/comparison-runs/[runId]` 新增“关联复核案例”区块，按当前运行结果的 `source_result_type + source_result_id` 匹配同业务日复核案例，并提供 `/data-quality/review-cases/[caseId]` 前端详情入口；本轮不新增后端、schema/migration、依赖、真实外部接口、计算触发、证据补录、复核关闭、权限、审批、导出、批量、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

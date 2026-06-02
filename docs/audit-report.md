@@ -2737,3 +2737,30 @@
 - `bash scripts/check-state.sh --strict`：通过。
 - `git diff --check`：通过。
 - `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 163 个后端 unittest。
+
+### 2026-06-02 - IM060 对比运行关联复核案例定位
+
+#### 审计结论
+
+- `IM060/US680` 已在 `/data-quality/comparison-runs/[runId]` 增加“关联复核案例”只读区块。
+- 页面复用已有 comparison-run detail API 和 review-cases list API，按当前运行的 `forecast_schedule_results`、`schedule_actual_results` 与复核案例的 `source_result_type + source_result_id` 匹配。
+- 有关联案例时展示案例号、来源结果、owner、风险、状态，并提供 `/data-quality/review-cases/[caseId]` 前端详情入口。
+- 无匹配案例或读取失败时展示只读空态/错误态，不触发写入。
+- 本轮未新增依赖，未修改 package/lockfile，未新增后端、schema/migration，未触碰真实外部接口、计算触发、证据补录、复核关闭写入、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只定位到复核案例详情；证据补录、复核关闭、审批和批量处理仍未实现。
+- 关联匹配依赖 review-cases list API 返回 `source_result_type` 与 `source_result_id`，不新增后端联表查询。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-center-model.test.mjs` 先因缺少 `summarizeImportComparisonRunReviewCases` export 失败。
+- `node --test scripts/tests/import-center-model.test.mjs`：通过，43 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3026/data-quality/comparison-runs/RUN-DEMO-FS-20260511` 命中 `关联复核案例`、`CASE-QUERY-001`、`查看详情` 和 `/data-quality/review-cases/CASE-QUERY-001`，且没有 `Application error`。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state check、shadcn gate、frontend lint、typecheck、Next build 和 163 个后端 unittest。
