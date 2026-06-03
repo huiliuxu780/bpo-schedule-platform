@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue is empty after `US712/IM092` completed.
+Current story queue has been reseeded with `US713/IM093` after `US712/IM092` completed.
 
-The `US710-US712 / IM090-IM092` comparison-result callback chain is complete. New product development should not start until the next R/US/IM slice is explicitly seeded into `docs/current/**`.
+The next approved chain stays inside the existing `/data-quality/versions` and comparison-result routes: `US713/IM093` is now the only current ready story, while `US714/IM094` and `US715/IM095` remain outside `docs/current/**` until the previous slice is green.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -33,6 +33,8 @@ After that empty-state checkpoint, the next chain was reseeded for comparison-re
 `US711/IM091` completed the second slice on the existing `comparison run detail` page. The page now clearly identifies itself as the current version context's full result-review homepage, shows source versions, business date range, and read-only review guidance above the existing run source/result detail sections. Current state then advanced to `US712/IM092`.
 
 `US712/IM092` completed the third slice on the same `comparison run detail` page. The page now tries to resolve source import batches from existing applied import-version data, shows stable return entries back to source batch result trace and the version workbench when defensible, and shows an explicit blocked state when source batches cannot be matched. Current queue returned to empty.
+
+After that empty-state checkpoint, the next chain was reseeded for calculation-trigger entry and result review. `US713/IM093` is current for showing local-comparison candidate entries on the business version workbench; `US714/IM094` and `US715/IM095` remain in planning state until `IM093` completes.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -137,4 +139,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-No story is current. Recommended next step is to reseed a small R/US/IM chain before continuing product development.
+`US713/IM093` is now current for adding local-comparison candidate entries to the business version workbench.

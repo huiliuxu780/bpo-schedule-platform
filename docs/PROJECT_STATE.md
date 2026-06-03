@@ -396,3 +396,13 @@ After `IM091` went green, current state advanced to `US712/IM092` as the only re
 The implementation stayed frontend-only and reused existing import batch list, version workbench, and comparison-run detail contracts. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor was added.
 
 After `IM092` went green, the `US710-US712 / IM090-IM092` callback chain returned current queue to empty. Any next product-development slice must be reseeded before implementation.
+
+## 2026-06-03 IM093-IM095 Version Workbench Calculation Trigger Planning
+
+After the comparison-result callback chain completed, the next calculation-trigger chain was split to stay inside existing `/data-quality/versions`, batch result-trace, and comparison-run detail routes:
+
+1. `US713/IM093`: show local-comparison candidate entries on the business version workbench.
+2. `US714/IM094`: add a controlled single-version local comparison submit entry on the version workbench.
+3. `US715/IM095`: show result-review feedback after a version-workbench comparison submit.
+
+To keep Story Runner state narrow, only `US713/IM093` entered `docs/current/**` as ready. `US714/IM094` and `US715/IM095` stay outside current state until the prior slice is green. This chain stays frontend-only and must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors.

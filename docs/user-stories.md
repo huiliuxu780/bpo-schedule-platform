@@ -4084,3 +4084,72 @@ dependencies:
   - "US698"
 status: "done"
 ```
+
+### US713 - 版本工作台本地比对候选入口
+
+```yaml
+id: US713
+requirement_ids:
+  - R793
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在业务版本工作台看到当前版本能发起哪类本地比对，以便不用跳转多次也能判断下一步计算入口。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/versions` 在可定位来源版本的行展示本地比对候选入口。"
+  - "候选入口明确对比口径、来源版本组合、业务日和触发前下一步。"
+  - "来源版本不足、业务域不支持或未应用版本时展示清晰阻塞态，不渲染误导性提交按钮。"
+  - "候选入口复用已有批次结果追踪/版本语境，不新增后端 API、schema/migration 或依赖。"
+  - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US712"
+status: "draft"
+```
+
+### US714 - 版本工作台单次本地比对提交
+
+```yaml
+id: US714
+requirement_ids:
+  - R794
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在业务版本工作台对满足条件的单个版本发起一次本地比对，以便把版本检查和计算触发放在同一个工作流里。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/versions` 只在来源版本组合完整时提供单次本地比对提交入口。"
+  - "提交入口复用现有本地 comparison calculate 能力，不新增后端 route 或 schema。"
+  - "重复提交或后端返回 existing run 时保持幂等反馈，不暗示创建了多个运行。"
+  - "不支持的业务域、缺来源版本或未应用版本不展示提交按钮。"
+  - "不新增依赖，不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US713"
+status: "draft"
+```
+
+### US715 - 版本工作台计算后结果回看
+
+```yaml
+id: US715
+requirement_ids:
+  - R795
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在版本工作台发起本地比对后直接看到运行回看入口，以便确认结果并进入 comparison run detail 继续检查。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "版本工作台在本地比对提交成功或复用已有运行后展示结果回看卡片。"
+  - "回看卡片展示运行 ID、对比口径、结果规模、关键差异和进入 comparison run detail / 结果列表的入口。"
+  - "运行暂未回显时展示明确阻塞态，不伪造完整结果。"
+  - "复用现有 comparison run detail、结果列表和版本工作台，不新增后端 API、schema/migration 或依赖。"
+  - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US714"
+status: "draft"
+```

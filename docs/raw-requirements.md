@@ -2250,3 +2250,42 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成字段映射模板新增页；新增 /data-quality/field-mapping-templates/new，提交后调用现有 create template API 并跳转模板详情页，模板管理区新增进入新增页的入口；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R793 - 版本工作台本地比对候选入口
+
+```yaml
+id: R793
+module: "导入中心"
+description: "当前已经具备本地 comparison calculate 能力和结果查询页面，但业务版本工作台还没有清晰告诉用户某个版本能发起哪类单次比对。需要先在版本工作台按版本行展示本地比对候选入口，并把用户带回已有结果追踪/触发语境。"
+source: "After IM092 completion and PM asked to continue on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "draft"
+notes: "本条只补版本工作台的单次比对候选入口和触发前语境，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+```
+
+### R794 - 版本工作台单次本地比对提交
+
+```yaml
+id: R794
+module: "导入中心"
+description: "版本工作台展示本地比对候选后，用户仍需要进入其他页面才能提交计算。需要在版本工作台对已满足来源版本条件的单个版本提供受控单次提交入口，复用现有本地 calculate 能力。"
+source: "After R793 planning on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "draft"
+notes: "本条只做单版本、单次、本地计算提交；不做批量计算、自动排班、审批、权限、导出、真实外部接口、生产公式、结算或收费因子。"
+```
+
+### R795 - 版本工作台计算后结果回看
+
+```yaml
+id: R795
+module: "导入中心"
+description: "版本工作台提交单次本地比对后，用户需要在当前工作台看到这次提交产生或复用的运行，并能稳定进入 comparison run detail 或结果列表回看。需要补计算提交后的回看卡片和结果入口。"
+source: "After R794 planning on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "draft"
+notes: "本条只补本地计算提交后的结果回看链路，复用现有 comparison run detail、结果列表和版本工作台；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+```

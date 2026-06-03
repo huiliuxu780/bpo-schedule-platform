@@ -2454,3 +2454,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM093-IM095 Version Workbench Calculation Trigger Planning
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `892e868`
+- remote_status: `branch includes pushed IM092 return-loop baseline; IM093-IM095 planning/state changes are local only until PM asks to push.`
+- scope: define `R793-R795`, `US713-US715`, and `IM093-IM095`; seed only `US713/IM093` into current ready state; continue the local comparison-trigger flow inside the existing version workbench, batch result-trace, and comparison-run-detail routes.
+- allowed_files_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no package, lockfile, backend, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after the planning/state update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
