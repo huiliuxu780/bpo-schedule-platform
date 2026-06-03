@@ -430,3 +430,13 @@ After `IM094` completion, current state advanced to `US715/IM095` for richer res
 The implementation stayed frontend-only and reused existing comparison-run list data and comparison-run detail routes. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor was added.
 
 After `IM095` completion, the `US713-US715 / IM093-IM095` calculation-trigger chain returned current queue to empty. Any next product-development slice must be reseeded before implementation.
+
+## 2026-06-03 IM096-IM098 Master Data Maintenance Planning
+
+After the import-center apply, version-trace, and local-comparison trigger chains completed, the next product area was split into a master-data maintenance chain:
+
+1. `US716/IM096`: add a read-only master-data maintenance workbench entry.
+2. `US717/IM097`: add master-data entity detail and reference-impact visibility.
+3. `US718/IM098`: plan controlled maintenance actions only after the read-only surface and reference context are clear.
+
+To keep Story Runner state narrow, only `US716/IM096` entered `docs/current/**` as ready. `US717/IM097` and `US718/IM098` stay outside current state until the prior slice is green. This chain must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors without a separate confirmed task.

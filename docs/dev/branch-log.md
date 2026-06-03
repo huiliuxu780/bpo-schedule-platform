@@ -2522,3 +2522,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM096-IM098 Master Data Maintenance Planning
+
+- branch_name: `codex/im096-master-data-maintenance-planning`
+- base_main_commit: `0d64d02`
+- remote_status: `main includes merged IM095 baseline; IM096-IM098 planning/state changes are local only until final merge/push.`
+- scope: define `R796-R798`, `US716-US718`, and `IM096-IM098`; seed only `US716/IM096` into current ready state; start with a read-only master-data maintenance workbench before entity detail or controlled write actions.
+- allowed_files_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no business code, backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: planning and current-state files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; current file line budgets are within limits (`PROJECT_CONTEXT.md` 142/160, `STORY_QUEUE.yaml` 27/200, `ACTIVE_TASKS.yaml` 51/220, `BLOCKERS.md` 18/120). Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

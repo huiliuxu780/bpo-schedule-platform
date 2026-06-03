@@ -4156,3 +4156,69 @@ dependencies:
 status: "done"
 notes: "IM095 已完成：版本工作台在本地比对提交成功后展示结果回看卡片；运行已回显时展示对比口径、结果数、关键差异和业务日，运行暂未回显时展示阻塞态且不伪造结果。"
 ```
+
+### US716 - 主数据维护工作台只读入口
+
+```yaml
+id: US716
+requirement_ids:
+  - R796
+module: "主数据维护"
+role: "运营管理员"
+story: "作为运营管理员，我希望有一个主数据维护工作台入口，按坐席、职场、供应商、项目、技能和绑定关系查看当前维护范围，以便先确认主数据对象和维护边界。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "主数据维护入口在现有导航体系内可达，不创建新的首页或营销页。"
+  - "工作台按坐席、职场、供应商、项目、技能和绑定关系分组展示只读维护范围。"
+  - "页面明确当前只读边界、来源批次/版本口径和后续维护动作入口状态。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US715"
+status: "ready"
+```
+
+### US717 - 主数据实体详情与引用影响
+
+```yaml
+id: US717
+requirement_ids:
+  - R797
+module: "主数据维护"
+role: "运营管理员"
+story: "作为运营管理员，我希望查看单个主数据实体或绑定关系的详情、有效期、冻结状态、来源批次和引用影响，以便维护前知道可能影响哪些业务数据。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "从主数据维护工作台可进入实体或绑定关系详情。"
+  - "详情页展示有效期、冻结状态、来源批次/版本和引用影响摘要。"
+  - "缺少引用数据时展示明确空态或阻塞态，不伪造影响。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US716"
+status: "draft"
+```
+
+### US718 - 主数据受控维护动作
+
+```yaml
+id: US718
+requirement_ids:
+  - R798
+module: "主数据维护"
+role: "运营管理员"
+story: "作为运营管理员，我希望在引用校验清楚后执行受控的主数据新增、编辑、冻结或有效期调整，以便维护基础对象时不会破坏已引用业务数据。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "维护动作必须先展示引用校验结果和失败反馈边界。"
+  - "新增、编辑、冻结或有效期调整的范围需按实体类型拆分，不混成批量能力。"
+  - "写入动作进入前需要单独确认，不默认扩展到后端/schema/migration。"
+  - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US717"
+status: "draft"
+```

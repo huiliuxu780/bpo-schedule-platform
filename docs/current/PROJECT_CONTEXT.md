@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-`US715/IM095` completed the version-workbench result-review feedback slice. Current story queue is empty.
+`US715/IM095` completed the version-workbench result-review feedback slice. Current story queue has advanced to `US716/IM096`.
 
-The approved `US713-US715 / IM093-IM095` calculation-trigger chain is complete. Do not guess the next product task; reseed `docs/current/**` before more development.
+The next approved chain starts the master-data maintenance surface. `US716/IM096` is the only current ready story; `US717/IM097` and `US718/IM098` remain outside `docs/current/**` until the previous slice is green.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -139,4 +139,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Current queue is empty after `US715/IM095`. The next product-development slice must be reseeded into `docs/current/**` before implementation.
+`US716/IM096` is now current for adding a read-only master-data maintenance workbench entry.

@@ -3415,3 +3415,18 @@
 - HTTP smoke：`http://127.0.0.1:3000/data-quality/versions?businessDate=2026-05-11&compare=success&compareRun=RUN-DEMO-FS-20260511` 命中 `版本工作台本地比对结果`、`RUN-DEMO-FS-20260511`、`预测排班`、`结果数` 和 `缺口`。
 - HTTP smoke：`http://127.0.0.1:3000/data-quality/versions?businessDate=2026-05-11&compare=success&compareRun=RUN-NOT-YET-IM095` 命中 `运行结果暂未回显`、`RUN-NOT-YET-IM095`、`不伪造结果规模或关键差异` 和 `待回显`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM096-IM098 主数据维护链路规划
+
+#### 审计结论
+
+- 已从空 current 状态拆出 `R796-R798 / US716-US718 / IM096-IM098`。
+- 当前只将 `US716/IM096` 放入 `docs/current/**`，作为唯一 ready 任务。
+- 推荐顺序为：主数据维护只读工作台入口、实体详情与引用影响、受控维护动作。
+- 规划明确先不进入后端 API、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：通过，current 队列只包含 `US716/IM096`，registry 无 lifecycle state 字段，current 文件行数均在预算内。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 frontend build 和 backend 177 tests OK。
