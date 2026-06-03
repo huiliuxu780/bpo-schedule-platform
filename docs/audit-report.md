@@ -3535,3 +3535,30 @@
 - HTTP smoke：`http://127.0.0.1:3000/schedule-plans/production` 命中 `排班生产`、`只读工作台`、`人员排班生产台账`、`版本详情待 IM100` 和 `发布/冻结边界待 IM101`。
 - in-app browser smoke：当前 URL 为 `/schedule-plans/production`，页面命中只读工作台、台账和 IM100 后续提示，侧边栏只有 `排班生产` 处于 active 状态。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-04 - IM100 人员排班版本详情与 0.5h 展开结果
+
+#### 审计结论
+
+- `IM100/US720` 已新增 `/schedule-plans/production/[batchId]`，从排班生产工作台的版本行进入。
+- 详情页展示来源批次/版本、业务日范围、应用状态、成功导入行、班次引用口径、人员范围说明、0.5h 展开状态和阻塞原因。
+- 当前本地列表 API 没有人员清单、班次明细或逐 0.5h 明细，页面明确展示 `不伪造人员级明细`，不构造假数据。
+- 工作台原有 `版本详情待 IM100` 文案已更新为版本详情可查看，发布/冻结边界仍待 IM101。
+- 本轮未新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。
+- 当前状态已推进到 `US721/IM101`，该任务涉及发布/冻结边界安全壳，进入实现前需要 PM 确认。
+
+#### 风险
+
+- 当前详情页只基于 import-batch list 的应用摘要展示，不展示真实人员名单、班次引用明细或半小时行明细。
+- 本地 API 当前没有 personnel_schedule 批次，页面 smoke 覆盖未知批次/无展开记录阻塞态；已应用版本详情由模型测试覆盖。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `summarizePersonnelScheduleProductionDetail`。
+- `node scripts/tests/personnel-schedule-production-model.test.mjs`：通过，7 个 personnel-schedule production model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- HTTP smoke：`http://127.0.0.1:3000/schedule-plans/production/BATCH-MISSING-IM100` 命中 `排班版本详情`、`排班版本未定位`、`不伪造人员级明细`、`暂未发现 0.5h 展开记录` 和 `返回排班生产`。
+- in-app browser smoke：当前 URL 为 `/schedule-plans/production/BATCH-MISSING-IM100`，命中详情页、阻塞态、0.5h 阻塞、不伪造人员级明细和返回入口。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

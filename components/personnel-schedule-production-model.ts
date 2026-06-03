@@ -8,6 +8,7 @@ export type PersonnelScheduleProductionRow = {
   versionLabel: string
   sourceBatchLabel: string
   sourceBatchHref: string
+  detailHref: string
   businessDateLabel: string
   uploadedAtLabel: string
   applicationLabel: "已应用" | "待应用"
@@ -27,6 +28,27 @@ export type PersonnelScheduleProductionSummary = {
   expandedVersions: number
   blockedVersions: number
   rows: PersonnelScheduleProductionRow[]
+}
+
+export type PersonnelScheduleProductionDetailSummary = {
+  tone: Exclude<PersonnelScheduleProductionTone, "empty">
+  title: string
+  detail: string
+  batchId: string
+  fileName: string
+  versionLabel: string
+  sourceBatchHref: string
+  workbenchHref: string
+  businessDateLabel: string
+  uploadedAtLabel: string
+  applicationLabel: PersonnelScheduleProductionRow["applicationLabel"]
+  expansionLabel: PersonnelScheduleProductionRow["expansionLabel"]
+  appliedRecordCountLabel: string
+  sourceRowLabel: string
+  shiftReferenceLabel: string
+  personScopeLabel: string
+  halfHourResultLabel: string
+  blockerSummary: string
 }
 
 export function summarizePersonnelScheduleProductionWorkbench(
@@ -67,6 +89,7 @@ function toPersonnelScheduleProductionRow(
     versionLabel: batch.import_version_id ?? "暂无排班业务版本",
     sourceBatchLabel: batch.batch_id,
     sourceBatchHref: `/data-quality/import-batches/${batch.batch_id}`,
+    detailHref: `/schedule-plans/production/${batch.batch_id}`,
     businessDateLabel: formatBusinessDateRange(
       batch.business_date_from,
       batch.business_date_to
@@ -77,7 +100,69 @@ function toPersonnelScheduleProductionRow(
     tone,
     appliedRecordCountLabel: batch.applied_record_count.toLocaleString("zh-CN"),
     blockerSummary: resolvePersonnelScheduleBlocker(batch, hasVersion, isApplied),
-    nextActionLabel: "版本详情待 IM100",
+    nextActionLabel: "查看版本详情",
+  }
+}
+
+export function summarizePersonnelScheduleProductionDetail(
+  batches: ImportBatchListRow[],
+  batchId: string
+): PersonnelScheduleProductionDetailSummary {
+  const batch = batches.find(
+    (candidate) =>
+      candidate.batch_id === batchId && candidate.file_type === "personnel_schedule"
+  )
+
+  if (!batch) {
+    return {
+      tone: "blocked",
+      title: "排班版本未定位",
+      detail: "当前来源批次不在人员排班生产台账中，无法展示版本详情。",
+      batchId,
+      fileName: "未找到来源文件",
+      versionLabel: "未找到对应人员排班批次",
+      sourceBatchHref: "/schedule-plans/production",
+      workbenchHref: "/schedule-plans/production",
+      businessDateLabel: "未定位",
+      uploadedAtLabel: "未定位",
+      applicationLabel: "待应用",
+      expansionLabel: "缺少版本无法展开",
+      appliedRecordCountLabel: "0",
+      sourceRowLabel: "未定位来源行",
+      shiftReferenceLabel: "未定位来源批次，无法确认班次引用",
+      personScopeLabel: "未定位来源批次，不伪造人员级明细",
+      halfHourResultLabel: "暂未发现 0.5h 展开记录",
+      blockerSummary: "请返回排班生产工作台选择来源批次",
+    }
+  }
+
+  const row = toPersonnelScheduleProductionRow(batch)
+  const isReady = row.tone === "ready"
+
+  return {
+    tone: row.tone === "empty" ? "blocked" : row.tone,
+    title: isReady ? "排班版本详情已定位" : "排班版本详情仍有阻塞",
+    detail: isReady
+      ? "当前版本已应用并形成 0.5h 展开记录，可作为后续比对和复核的只读来源。"
+      : "当前版本缺少应用、业务版本或 0.5h 展开记录，详情页只展示可确认的来源口径。",
+    batchId: batch.batch_id,
+    fileName: batch.file_name,
+    versionLabel: row.versionLabel,
+    sourceBatchHref: row.sourceBatchHref,
+    workbenchHref: "/schedule-plans/production",
+    businessDateLabel: row.businessDateLabel,
+    uploadedAtLabel: row.uploadedAtLabel,
+    applicationLabel: row.applicationLabel,
+    expansionLabel: row.expansionLabel,
+    appliedRecordCountLabel: row.appliedRecordCountLabel,
+    sourceRowLabel: `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`,
+    shiftReferenceLabel: `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，班次引用明细待版本 API 暴露`,
+    personScopeLabel: "当前列表 API 未暴露人员清单，不伪造人员级明细",
+    halfHourResultLabel:
+      batch.applied_record_count > 0
+        ? `已形成 ${batch.applied_record_count.toLocaleString("zh-CN")} 条 0.5h 展开记录`
+        : "暂未发现 0.5h 展开记录",
+    blockerSummary: row.blockerSummary,
   }
 }
 

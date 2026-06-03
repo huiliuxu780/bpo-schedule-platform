@@ -1,18 +1,18 @@
 version: 1
-updated_at: "2026-06-03"
+updated_at: "2026-06-04"
 source_of_truth: "current_active_tasks"
 notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
 tasks:
-  - id: IM100
-    title: "人员排班版本详情与半小时展开结果"
-    story_ids: ["US720"]
+  - id: IM101
+    title: "人员排班发布冻结边界安全壳"
+    story_ids: ["US721"]
     status: ready
     required_workflow: frontend-scaffold
     dependencies:
-      - "IM099"
+      - "IM100"
     allowed_files:
       - "app/schedule-plans/production/**"
       - "components/personnel-schedule-production-workbench.tsx"
@@ -34,14 +34,14 @@ tasks:
       - "backend/app/**"
       - "backend/tests/**"
     acceptance:
-      - "从人员排班生产工作台可进入排班版本详情。"
-      - "详情页展示来源批次/版本、业务日范围、班次引用、人员范围和 0.5h 展开状态。"
-      - "缺少展开结果时展示明确空态或阻塞态，不伪造人员级明细。"
-      - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "发布、冻结或取消发布动作必须先展示来源版本、展开结果和引用校验边界。"
+      - "动作按钮保持安全壳状态，不提交真实生产状态变化。"
+      - "写入动作进入前需要单独确认，不默认扩展到后端/schema/migration。"
+      - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
       - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
-    auto_run: true
-    pm_confirmation_required: false
-    conflict_risk: medium
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: high
     stop_conditions:
       - "需要新增依赖或修改 package/lockfile"
       - "范围扩展到后端、schema、migration 或数据库结构变更"

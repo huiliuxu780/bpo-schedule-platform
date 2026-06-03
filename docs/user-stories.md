@@ -4265,7 +4265,8 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US719"
-status: "ready"
+status: "done"
+notes: "IM100 已完成：从 `/schedule-plans/production` 工作台进入 `/schedule-plans/production/[batchId]` 详情页，展示来源批次/版本、业务日、班次引用口径、人员范围不伪造说明和 0.5h 展开状态。"
 ```
 
 ### US721 - 人员排班发布冻结边界安全壳
@@ -4287,5 +4288,5 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US720"
-status: "draft"
+status: "ready"
 ```

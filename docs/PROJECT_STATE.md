@@ -470,3 +470,9 @@ Only `US719/IM099` entered current ready state. `US720/IM100` and `US721/IM101` 
 `IM099/US719` added `/schedule-plans/production` under the existing plan/schedule navigation as a read-only personnel-schedule production workbench. The page reuses the current import-batch list contract and filters personnel-schedule batches into production rows with source batch, business version, business date range, application state, 0.5h expansion state, blocker summary, and next-step labels.
 
 The slice intentionally does not publish, freeze, trigger automatic scheduling, or write production state. It adds no backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, real external integration, production formula, settlement rule, or charge-factor change. Current state advanced to `US720/IM100` for version detail and 0.5h expansion result visibility.
+
+## 2026-06-04 IM100 Personnel Schedule Version Detail
+
+`IM100/US720` added `/schedule-plans/production/[batchId]` as the read-only personnel-schedule version detail page reached from the production workbench. The detail page resolves the selected source batch from the existing import-batch list, then shows source batch/version, business date range, application state, successful source rows, shift-reference scope, personnel-scope no-fabrication notice, 0.5h expansion state, and blocker summary.
+
+The page does not fabricate personnel names, shift detail rows, or interval rows because the current list API only exposes batch, version, and applied-record counts. No backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work was added. Current state advanced to `US721/IM101`, which requires PM confirmation before any publish/freeze boundary shell implementation.

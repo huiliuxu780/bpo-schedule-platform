@@ -2624,3 +2624,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM100 Personnel Schedule Version Detail
+
+- branch_name: `codex/im100-personnel-schedule-version-detail`
+- base_main_commit: `4573173`
+- remote_status: `main includes merged IM099 personnel-schedule production workbench baseline; IM100 implementation is local only until final merge/push.`
+- scope: add `/schedule-plans/production/[batchId]` read-only version detail from the production workbench; show source batch/version, business date range, application state, successful source rows, shift-reference scope, personnel-scope no-fabrication notice, 0.5h expansion state, blocker summary, and return links.
+- allowed_files_check: `app/schedule-plans/production/**`, `components/personnel-schedule-production-workbench.tsx`, `components/personnel-schedule-production-model.ts`, `scripts/tests/personnel-schedule-production-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 7 tests after TDD red failed on missing `summarizePersonnelScheduleProductionDetail`; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; HTTP smoke on `http://127.0.0.1:3000/schedule-plans/production/BATCH-MISSING-IM100` matched `排班版本详情`, `排班版本未定位`, `不伪造人员级明细`, `暂未发现 0.5h 展开记录`, and `返回排班生产`; in-app browser smoke confirmed the same blocked no-fabrication state. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

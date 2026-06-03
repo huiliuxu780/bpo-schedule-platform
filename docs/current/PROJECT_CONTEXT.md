@@ -139,6 +139,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US719/IM099` completed the personnel-schedule production read-only workbench under existing plan/schedule navigation. The page shows source batch, schedule business version, application status, 0.5h expansion state, blockers, and explicit read-only boundaries.
+`US720/IM100` completed the personnel-schedule version detail slice. `/schedule-plans/production/[batchId]` now shows source batch/version, business date range, shift-reference scope, personnel-scope no-fabrication notice, and 0.5h expansion state from the existing import-batch application summary.
 
-Current story queue has advanced to `US720/IM100`, the second personnel-schedule production slice. Add version detail and 0.5h expansion result visibility from the existing workbench only; do not add backend/schema/migration, permissions, approval, export, batch operations, production formulas, settlement, or charge-factor work.
+Current story queue has advanced to `US721/IM101`, the publish/freeze boundary safety-shell slice. This task requires PM confirmation before implementation because it discusses production action boundaries; do not add real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, or charge-factor work.

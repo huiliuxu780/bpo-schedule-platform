@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  summarizePersonnelScheduleProductionDetail,
   summarizePersonnelScheduleProductionWorkbench,
 } from "../../components/personnel-schedule-production-model.ts";
 
@@ -54,10 +55,11 @@ test("personnel schedule production workbench summarizes applied schedule versio
   assert.equal(summary.blockedVersions, 0);
   assert.equal(summary.rows[0].versionLabel, "BATCH-SCH-001::v1");
   assert.equal(summary.rows[0].sourceBatchHref, "/data-quality/import-batches/BATCH-SCH-001");
+  assert.equal(summary.rows[0].detailHref, "/schedule-plans/production/BATCH-SCH-001");
   assert.equal(summary.rows[0].applicationLabel, "已应用");
   assert.equal(summary.rows[0].expansionLabel, "0.5h 已展开");
   assert.equal(summary.rows[0].blockerSummary, "无阻塞；当前只读展示排班生产口径");
-  assert.equal(summary.rows[0].nextActionLabel, "版本详情待 IM100");
+  assert.equal(summary.rows[0].nextActionLabel, "查看版本详情");
 });
 
 test("personnel schedule production workbench blocks unapplied schedule versions", () => {
@@ -94,4 +96,47 @@ test("personnel schedule production workbench blocks missing import version", ()
   assert.equal(summary.rows[0].versionLabel, "暂无排班业务版本");
   assert.equal(summary.rows[0].expansionLabel, "缺少版本无法展开");
   assert.equal(summary.rows[0].blockerSummary, "缺少人员排班业务版本");
+});
+
+test("personnel schedule production detail resolves a schedule version by source batch", () => {
+  const detail = summarizePersonnelScheduleProductionDetail([baseBatch], "BATCH-SCH-001");
+
+  assert.equal(detail.tone, "ready");
+  assert.equal(detail.title, "排班版本详情已定位");
+  assert.equal(detail.batchId, "BATCH-SCH-001");
+  assert.equal(detail.versionLabel, "BATCH-SCH-001::v1");
+  assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-SCH-001");
+  assert.equal(detail.workbenchHref, "/schedule-plans/production");
+  assert.equal(detail.businessDateLabel, "2026-06-01 至 2026-06-07");
+  assert.equal(detail.shiftReferenceLabel, "来自 12 条成功导入行，班次引用明细待版本 API 暴露");
+  assert.equal(detail.personScopeLabel, "当前列表 API 未暴露人员清单，不伪造人员级明细");
+  assert.equal(detail.halfHourResultLabel, "已形成 96 条 0.5h 展开记录");
+  assert.equal(detail.blockerSummary, "无阻塞；当前只读展示排班生产口径");
+});
+
+test("personnel schedule production detail blocks missing expansion records without fabricated details", () => {
+  const detail = summarizePersonnelScheduleProductionDetail(
+    [
+      {
+        ...baseBatch,
+        applied_record_count: 0,
+      },
+    ],
+    "BATCH-SCH-001"
+  );
+
+  assert.equal(detail.tone, "blocked");
+  assert.equal(detail.halfHourResultLabel, "暂未发现 0.5h 展开记录");
+  assert.equal(detail.personScopeLabel, "当前列表 API 未暴露人员清单，不伪造人员级明细");
+  assert.equal(detail.blockerSummary, "已应用但暂未发现展开记录");
+});
+
+test("personnel schedule production detail shows a blocked state for unknown batch", () => {
+  const detail = summarizePersonnelScheduleProductionDetail([baseBatch], "BATCH-MISSING");
+
+  assert.equal(detail.tone, "blocked");
+  assert.equal(detail.title, "排班版本未定位");
+  assert.equal(detail.batchId, "BATCH-MISSING");
+  assert.equal(detail.versionLabel, "未找到对应人员排班批次");
+  assert.equal(detail.blockerSummary, "请返回排班生产工作台选择来源批次");
 });

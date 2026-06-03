@@ -2351,8 +2351,8 @@ description: "人员排班生产工作台需要进入单个排班版本详情，
 source: "After R799 planning on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "ready"
-notes: "第二刀只做版本详情和展开结果可视化；不做发布、冻结、自动排班、真实写入、批量或审批。"
+status: "done"
+notes: "IM100 已完成：新增 `/schedule-plans/production/[batchId]` 排班版本详情页，从工作台进入后展示来源批次/版本、业务日、班次引用口径、人员范围不伪造说明和 0.5h 展开状态；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R801 - 人员排班发布冻结边界安全壳
@@ -2364,6 +2364,6 @@ description: "在人员排班版本和 0.5h 展开结果可见后，再展示发
 source: "After R800 planning on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
+status: "ready"
 notes: "第三刀只做生产动作边界安全壳；发布/冻结是真实生产状态能力，进入前需要单独确认，不混入审批、权限、导出、批量、结算或生产公式。"
 ```

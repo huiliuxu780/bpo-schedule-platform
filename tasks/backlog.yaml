@@ -7979,7 +7979,7 @@ tasks:
   - id: IM100
     title: "人员排班版本详情与半小时展开结果"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM099"]
     allowed_files:
@@ -8017,10 +8017,11 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已新增 `/schedule-plans/production/[batchId]` 排班版本详情页，并从工作台行进入详情；详情展示来源批次/版本、业务日范围、班次引用口径、人员范围不伪造说明、0.5h 展开状态和阻塞原因。"
   - id: IM101
     title: "人员排班发布冻结边界安全壳"
     priority: P1
-    status: draft
+    status: ready
     required_workflow: frontend-scaffold
     dependencies: ["IM100"]
     allowed_files:
