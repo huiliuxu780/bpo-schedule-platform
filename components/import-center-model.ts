@@ -534,6 +534,19 @@ export type ImportComparisonRunDetailSummary = {
   }>
 }
 
+export type ImportComparisonRunReturnLinks = {
+  tone: ImportVersionWorkbenchTone
+  title: string
+  detail: string
+  sourceBatchLabel: string
+  versionWorkbenchLabel: string
+  primaryActionLabel: string
+  primaryHref: string | null
+  secondaryActionLabel: string
+  secondaryHref: string | null
+  evidence: string[]
+}
+
 export type ImportComparisonRunReviewCaseSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -6425,6 +6438,245 @@ export function summarizeImportComparisonRunReviewCases({
       href: buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id),
     })),
   }
+}
+
+export function summarizeImportComparisonRunReturnLinks({
+  detail,
+  error,
+  batches,
+  batchError,
+}: {
+  detail: ImportComparisonRunDetailResponse | null
+  error: string | null
+  batches: ImportBatchListRow[]
+  batchError: string | null
+}): ImportComparisonRunReturnLinks {
+  if (error) {
+    return emptyComparisonRunReturnLinks({
+      tone: "blocked",
+      title: "回跳链路暂不可用",
+      detail: `当前运行读取失败：${error}。`,
+      versionWorkbenchLabel: "业务版本工作台",
+      secondaryHref: "/data-quality/versions",
+    })
+  }
+
+  if (!detail) {
+    return emptyComparisonRunReturnLinks({
+      tone: "empty",
+      title: "等待运行语境",
+      detail: "选择可读取的对比运行后，再判断来源批次和版本工作台回跳。",
+      versionWorkbenchLabel: "业务版本工作台",
+      secondaryHref: "/data-quality/versions",
+    })
+  }
+
+  const sourceVersions = collectComparisonRunSourceVersions(detail.run)
+  const evidence = sourceVersions.map(
+    (sourceVersion) => `来源版本 ${sourceVersion.label} ${sourceVersion.versionId}`
+  )
+  const versionWorkbenchLabel = `业务版本工作台 · ${detail.run.business_date_from}`
+
+  if (batchError) {
+    return {
+      tone: "blocked",
+      title: "来源批次读取失败",
+      detail: `当前运行能识别版本语境，但导入批次列表读取失败：${batchError}。`,
+      sourceBatchLabel: "暂未定位",
+      versionWorkbenchLabel,
+      primaryActionLabel: "来源批次暂不可回跳",
+      primaryHref: null,
+      secondaryActionLabel: "查看版本工作台",
+      secondaryHref: buildImportVersionWorkbenchHref({
+        businessDate: detail.run.business_date_from,
+      }),
+      evidence,
+    }
+  }
+
+  const matchedBatches = sortImportBatchesByUploadedAt(
+    batches.filter((batch) =>
+      sourceVersions.some((sourceVersion) =>
+        isComparisonRunSourceBatchMatch(detail.run, sourceVersion, batch)
+      )
+    )
+  )
+  const primaryBatch = matchedBatches[0] ?? null
+
+  if (!primaryBatch) {
+    return {
+      tone: "blocked",
+      title: "来源批次未定位",
+      detail:
+        "当前运行能识别版本语境，但暂未在导入批次列表中匹配到来源批次；不要伪造批次回跳。",
+      sourceBatchLabel: "暂未定位",
+      versionWorkbenchLabel,
+      primaryActionLabel: "来源批次暂不可回跳",
+      primaryHref: null,
+      secondaryActionLabel: "查看版本工作台",
+      secondaryHref: buildImportVersionWorkbenchHref({
+        businessDate: detail.run.business_date_from,
+      }),
+      evidence,
+    }
+  }
+
+  return {
+    tone: "ready",
+    title: "已形成回跳闭环",
+    detail: `当前运行已匹配 ${matchedBatches.length.toLocaleString("zh-CN")} 个来源批次；可回到 ${primaryBatch.batch_id} 的结果追踪，或按业务日进入版本工作台。`,
+    sourceBatchLabel: matchedBatches.map((batch) => batch.batch_id).join(" · "),
+    versionWorkbenchLabel,
+    primaryActionLabel: "回到来源批次结果追踪",
+    primaryHref: buildImportBatchProcessingHref(primaryBatch.batch_id, {
+      tab: "result-trace",
+    }),
+    secondaryActionLabel: "查看版本工作台",
+    secondaryHref: buildImportVersionWorkbenchHref({
+      businessDate: detail.run.business_date_from,
+      domain: mapImportFileTypeToVersionWorkbenchDomain(primaryBatch.file_type),
+    }),
+    evidence: [
+      ...evidence,
+      ...matchedBatches.map((batch) => `来源批次 ${batch.batch_id}`),
+    ],
+  }
+}
+
+function emptyComparisonRunReturnLinks({
+  tone,
+  title,
+  detail,
+  versionWorkbenchLabel,
+  secondaryHref,
+}: {
+  tone: ImportVersionWorkbenchTone
+  title: string
+  detail: string
+  versionWorkbenchLabel: string
+  secondaryHref: string
+}): ImportComparisonRunReturnLinks {
+  return {
+    tone,
+    title,
+    detail,
+    sourceBatchLabel: "暂未定位",
+    versionWorkbenchLabel,
+    primaryActionLabel: "来源批次暂不可回跳",
+    primaryHref: null,
+    secondaryActionLabel: "查看版本工作台",
+    secondaryHref,
+    evidence: [],
+  }
+}
+
+type ImportComparisonRunSourceVersion = {
+  label: string
+  versionId: string
+  fileTypes: ImportFileType[]
+}
+
+function collectComparisonRunSourceVersions(
+  run: ImportComparisonRunRecord
+): ImportComparisonRunSourceVersion[] {
+  if (run.comparison_type === "forecast_vs_schedule") {
+    const sourceVersions: Array<ImportComparisonRunSourceVersion | null> = [
+      run.forecast_version_id
+        ? {
+            label: "预测",
+            versionId: run.forecast_version_id,
+            fileTypes: ["demand_forecast" as const],
+          }
+        : null,
+      run.schedule_version_id
+        ? {
+            label: "排班",
+            versionId: run.schedule_version_id,
+            fileTypes: ["personnel_schedule" as const],
+          }
+        : null,
+    ]
+
+    return sourceVersions.filter(isImportComparisonRunSourceVersion)
+  }
+
+  const sourceVersions: Array<ImportComparisonRunSourceVersion | null> = [
+    run.schedule_version_id
+      ? {
+          label: "排班",
+          versionId: run.schedule_version_id,
+          fileTypes: ["personnel_schedule" as const],
+        }
+      : null,
+    run.actual_import_version_id
+      ? {
+          label: "实际",
+          versionId: run.actual_import_version_id,
+          fileTypes: ["login_log" as const, "status_log" as const],
+        }
+      : null,
+  ]
+
+  return sourceVersions.filter(isImportComparisonRunSourceVersion)
+}
+
+function isImportComparisonRunSourceVersion(
+  sourceVersion: ImportComparisonRunSourceVersion | null
+): sourceVersion is ImportComparisonRunSourceVersion {
+  return sourceVersion !== null
+}
+
+function isComparisonRunSourceBatchMatch(
+  run: ImportComparisonRunRecord,
+  sourceVersion: ImportComparisonRunSourceVersion,
+  batch: ImportBatchListRow
+): boolean {
+  return (
+    batch.application_status === "applied" &&
+    batch.import_version_id === sourceVersion.versionId &&
+    sourceVersion.fileTypes.includes(batch.file_type) &&
+    batch.business_date_from <= run.business_date_to &&
+    batch.business_date_to >= run.business_date_from
+  )
+}
+
+function buildImportVersionWorkbenchHref({
+  businessDate,
+  domain,
+}: {
+  businessDate?: string | null
+  domain?: ImportVersionWorkbenchDomainKey | null
+}): string {
+  const searchParams = new URLSearchParams()
+
+  if (businessDate) {
+    searchParams.set("businessDate", businessDate)
+  }
+
+  if (domain) {
+    searchParams.set("domain", domain)
+  }
+
+  const query = searchParams.toString()
+  return query ? `/data-quality/versions?${query}` : "/data-quality/versions"
+}
+
+function mapImportFileTypeToVersionWorkbenchDomain(
+  fileType: ImportFileType
+): ImportVersionWorkbenchDomainKey {
+  if (fileType === "master_data") {
+    return "master_data"
+  }
+
+  if (fileType === "personnel_schedule") {
+    return "personnel_schedule"
+  }
+
+  if (fileType === "demand_forecast") {
+    return "demand_forecast"
+  }
+
+  return "actual_logs"
 }
 
 function buildReviewCaseSourceResultKey(

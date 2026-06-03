@@ -7244,7 +7244,7 @@ tasks:
   - id: IM092
     title: "comparison run detail 回跳闭环"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM091"]
     allowed_files:
@@ -7281,6 +7281,7 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    notes: "已完成。comparison run detail 会基于现有 import batch list 与运行来源版本 ID 保守匹配来源批次；匹配成功时提供回到来源批次结果追踪与版本工作台入口，匹配失败时显示明确阻塞态，不伪造批次链接。"
   - id: IM080
     title: "字段映射模板上传预选链路"
     priority: P1

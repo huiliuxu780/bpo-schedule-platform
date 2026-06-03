@@ -167,8 +167,8 @@ description: "当用户进入 comparison run detail 看完整结果后，还需�
 source: "After R791 planning confirmation on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "ready"
-notes: "本条只补现有页面之间的导航闭环，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "本轮已完成 comparison run detail 到来源批次结果追踪和版本工作台的回跳闭环；页面会用现有 import batch list 按版本 ID 保守定位来源批次，能定位时提供真实回跳，不能定位时展示阻塞态并保留版本工作台入口；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R780 - 字段映射模板上传预选链路

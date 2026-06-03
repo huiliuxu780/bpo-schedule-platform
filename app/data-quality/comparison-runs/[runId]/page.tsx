@@ -1,8 +1,10 @@
 import { AppShell } from "@/components/app-shell"
 import { ImportCenterComparisonRunDetailWorkspace } from "@/components/import-center-comparison-run-detail-workspace"
 import {
+  type ImportBatchListRow,
   type ImportComparisonRunDetailResponse,
   type ImportReviewCaseRecord,
+  buildImportApiUrl,
   buildImportComparisonRunDetailApiUrl,
   buildImportReviewCasesUrl,
 } from "@/components/import-center-model"
@@ -29,6 +31,9 @@ export default async function ComparisonRunDetailPage({
   const reviewCasesResult = result.data
     ? await fetchImportReviewCases(result.data.run.business_date_from)
     : { data: [], error: result.error }
+  const batchResult = result.data
+    ? await fetchImportBatches()
+    : { data: [], error: result.error }
 
   return (
     <AppShell title="对比运行详情" searchPlaceholder="搜索运行、版本或结果">
@@ -38,6 +43,8 @@ export default async function ComparisonRunDetailPage({
         error={result.error}
         reviewCases={reviewCasesResult.data ?? []}
         reviewError={reviewCasesResult.error}
+        batches={batchResult.data ?? []}
+        batchError={batchResult.error}
       />
     </AppShell>
   )
@@ -65,6 +72,33 @@ async function fetchImportComparisonRunDetail(
   } catch (error) {
     return {
       data: null,
+      error: formatApiError(error),
+    }
+  }
+}
+
+async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
+  try {
+    const response = await fetch(buildImportApiUrl("/api/v1/import-batches"), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `导入批次 API 返回 ${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as { items?: ImportBatchListRow[] }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
       error: formatApiError(error),
     }
   }

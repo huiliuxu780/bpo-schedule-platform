@@ -388,3 +388,11 @@ After `IM090` went green, current state advanced to `US711/IM091` as the only re
 The implementation stayed frontend-only. It reused the existing comparison-run detail API contract, model summary, metric cards, run source section, result rows, and related review-case section. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor was added.
 
 After `IM091` went green, current state advanced to `US712/IM092` as the only ready slice for stable return links from `comparison run detail` back to source batch result trace and the version workbench.
+
+## 2026-06-03 IM092 Comparison Run Return Loop
+
+`US712/IM092` completed the third slice of the comparison-result callback chain on the existing `comparison run detail` route. The page now reads the existing import-batch list and conservatively matches source batches by applied `import_version_id`, file type, and business-date overlap. When a match is defensible, the page shows a stable return entry back to the source batch `结果追踪` plus a filtered version-workbench entry; when no source batch is matched, it shows `来源批次未定位` and does not fabricate a batch link.
+
+The implementation stayed frontend-only and reused existing import batch list, version workbench, and comparison-run detail contracts. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor was added.
+
+After `IM092` went green, the `US710-US712 / IM090-IM092` callback chain returned current queue to empty. Any next product-development slice must be reseeded before implementation.

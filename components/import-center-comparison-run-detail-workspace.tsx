@@ -2,9 +2,11 @@ import Link from "next/link"
 import { Activity, ArrowLeft, ExternalLink, GitBranch, ShieldAlert, Table2 } from "lucide-react"
 
 import {
+  type ImportBatchListRow,
   type ImportComparisonRunDetailResponse,
   type ImportReviewCaseRecord,
   summarizeImportComparisonRunDetail,
+  summarizeImportComparisonRunReturnLinks,
   summarizeImportComparisonRunReviewCases,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -25,6 +27,8 @@ type ImportCenterComparisonRunDetailWorkspaceProps = {
   error: string | null
   reviewCases: ImportReviewCaseRecord[]
   reviewError: string | null
+  batches: ImportBatchListRow[]
+  batchError: string | null
 }
 
 export function ImportCenterComparisonRunDetailWorkspace({
@@ -33,8 +37,16 @@ export function ImportCenterComparisonRunDetailWorkspace({
   error,
   reviewCases,
   reviewError,
+  batches,
+  batchError,
 }: ImportCenterComparisonRunDetailWorkspaceProps) {
   const summary = summarizeImportComparisonRunDetail({ detail, error })
+  const returnLinks = summarizeImportComparisonRunReturnLinks({
+    detail,
+    error,
+    batches,
+    batchError,
+  })
   const relatedReviewCases = summarizeImportComparisonRunReviewCases({
     detail,
     reviewCases,
@@ -113,6 +125,71 @@ export function ImportCenterComparisonRunDetailWorkspace({
               <span className="font-medium">
                 {summary.resultReviewContext.nextAction}
               </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="gap-3">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div className="grid gap-1">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <GitBranch className="size-4 text-muted-foreground" />
+                  {returnLinks.title}
+                </CardTitle>
+                <p className="max-w-3xl text-sm text-muted-foreground">
+                  {returnLinks.detail}
+                </p>
+              </div>
+              <Badge
+                variant={returnLinks.tone === "blocked" ? "destructive" : "outline"}
+                className="w-fit"
+              >
+                {returnLinks.sourceBatchLabel}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="grid gap-1 text-sm">
+                <span className="text-muted-foreground">来源批次</span>
+                <span className="font-medium">{returnLinks.sourceBatchLabel}</span>
+              </div>
+              <div className="grid gap-1 text-sm">
+                <span className="text-muted-foreground">版本台账</span>
+                <span className="font-medium">{returnLinks.versionWorkbenchLabel}</span>
+              </div>
+            </div>
+            {returnLinks.evidence.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {returnLinks.evidence.map((item) => (
+                  <Badge key={item} variant="secondary">
+                    {item}
+                  </Badge>
+                ))}
+              </div>
+            ) : null}
+            <div className="flex flex-wrap gap-2">
+              {returnLinks.primaryHref ? (
+                <Button asChild size="sm" variant="outline">
+                  <Link href={returnLinks.primaryHref}>
+                    {returnLinks.primaryActionLabel}
+                    <ExternalLink data-icon="inline-end" />
+                  </Link>
+                </Button>
+              ) : (
+                <Badge variant="destructive" className="h-9 px-3">
+                  {returnLinks.primaryActionLabel}
+                </Badge>
+              )}
+              {returnLinks.secondaryHref ? (
+                <Button asChild size="sm" variant="outline">
+                  <Link href={returnLinks.secondaryHref}>
+                    {returnLinks.secondaryActionLabel}
+                    <ExternalLink data-icon="inline-end" />
+                  </Link>
+                </Button>
+              ) : null}
             </div>
           </CardContent>
         </Card>

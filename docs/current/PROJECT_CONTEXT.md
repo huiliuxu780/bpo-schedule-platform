@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue has advanced to `US712/IM092` after `US711/IM091` completed.
+Current story queue is empty after `US712/IM092` completed.
 
-The next approved chain stays inside the existing batch `结果追踪` and `comparison run detail` routes: `US712/IM092` is now the only current ready story.
+The `US710-US712 / IM090-IM092` comparison-result callback chain is complete. New product development should not start until the next R/US/IM slice is explicitly seeded into `docs/current/**`.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -31,6 +31,8 @@ The next approved chain stays inside the existing batch `结果追踪` and `comp
 After that empty-state checkpoint, the next chain was reseeded for comparison-result callback closure. `US710/IM090` completed the first slice: keep the main entry inside the current batch `结果追踪` context, and add a latest-run callback card after local comparison success before the user moves into the full `comparison run detail` page. Current state then advanced to `US711/IM091`.
 
 `US711/IM091` completed the second slice on the existing `comparison run detail` page. The page now clearly identifies itself as the current version context's full result-review homepage, shows source versions, business date range, and read-only review guidance above the existing run source/result detail sections. Current state then advanced to `US712/IM092`.
+
+`US712/IM092` completed the third slice on the same `comparison run detail` page. The page now tries to resolve source import batches from existing applied import-version data, shows stable return entries back to source batch result trace and the version workbench when defensible, and shows an explicit blocked state when source batches cannot be matched. Current queue returned to empty.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -135,4 +137,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US712/IM092` is now current for adding stable return links from `comparison run detail` back to source batch result trace and the version workbench.
+No story is current. Recommended next step is to reseed a small R/US/IM chain before continuing product development.
