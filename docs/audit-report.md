@@ -3364,3 +3364,29 @@
 - `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
 - production DOM smoke：`BATCH-IM083-SMOKE-002` readiness 为 ready，`http://127.0.0.1:3043/data-quality/BATCH-IM083-SMOKE-002?apply=success` 命中 `批次应用成功`、`单批次应用已就绪`、`应用到业务数据` 和版本 `BATCH-IM083-SMOKE-002::v1`；blocked 批次 `BATCH-IM026-SMOKE-004` 命中 `应用前仍有阻塞`、`不可应用`、`暂不可应用`，且未命中 `应用到业务数据`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM094 版本工作台单次本地比对提交
+
+#### 审计结论
+
+- `IM094/US714` 已在 `/data-quality/versions` 将完整来源版本组合的 `本地比对` 候选升级为受控提交入口。
+- 提交入口通过 server action 复用现有 `comparison-runs/calculate` API，不新增后端 route、schema/migration 或依赖。
+- 成功或失败都回到版本工作台；成功文案明确为生成或复用一个本地对比运行，避免暗示重复提交会创建多条运行。
+- 不支持业务域、未应用批次、缺 import version 或来源版本组合不完整时仍不展示提交按钮。
+- 本轮未触碰审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只是单版本、单次、本地提交入口，不是批量计算、自动计算或生产调度编排。
+- 当前本地 smoke 数据没有完整配对版本，ready 提交按钮由模型测试覆盖；页面 smoke 覆盖成功/失败反馈和 blocked 状态。
+
+#### 验证
+
+- `node scripts/tests/import-center-model.test.mjs`：通过，77 个 import-center model 测试通过。
+- `bash scripts/check-state.sh --strict`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- HTTP smoke：`http://127.0.0.1:3000/data-quality/versions?compare=success&compareRun=RUN-IM094-SMOKE` 命中 `本地比对已提交`、`RUN-IM094-SMOKE` 和生成/复用说明。
+- HTTP smoke：`http://127.0.0.1:3000/data-quality/versions?compare=failed&compareReason=missing_required_fields` 命中 `本地比对未提交` 和 `提交参数不完整`。
+- `git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

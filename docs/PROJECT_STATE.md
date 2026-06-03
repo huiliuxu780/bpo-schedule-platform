@@ -414,3 +414,11 @@ To keep Story Runner state narrow, only `US713/IM093` entered `docs/current/**` 
 The model layer now summarizes comparison candidate tone, comparison type, source version pair, business date range, action label, and target href. The page renders that summary without introducing a new backend API, route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
 
 After `IM093` completion, current state advanced to `US714/IM094` for the controlled single-version local comparison submit entry. `US715/IM095` remains outside current state until `IM094` is green.
+
+## 2026-06-03 IM094 Version Workbench Single Comparison Submit
+
+`US714/IM094` completed the controlled single-version local comparison submit slice on `/data-quality/versions`. The workbench now upgrades complete local-comparison candidates from read-only entries into a server-action form that submits one local comparison run through the existing `comparison-runs/calculate` API. The candidate model carries the comparison type, source version pair, business date range, source batch, and request payload so unsupported domains, unapplied rows, missing import versions, or incomplete source-version combinations still show blocked state without a submit button.
+
+The submit action returns to the same version workbench with success or failure feedback, preserves active filters, and describes duplicate/existing-run behavior as `generated or reused` instead of implying multiple new runs. The implementation stayed frontend-only and introduced no backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
+
+After `IM094` completion, current state advanced to `US715/IM095` for richer result-review feedback after a version-workbench comparison submit.

@@ -472,6 +472,137 @@ export async function triggerLocalComparisonRunAction(formData: FormData) {
   )
 }
 
+export async function triggerVersionWorkbenchLocalComparisonRunAction(formData: FormData) {
+  const sourceBatchId = formText(formData, "source_batch_id")
+  const comparisonType = formText(
+    formData,
+    "comparison_type"
+  ) as ImportComparisonRunRecord["comparison_type"]
+  const forecastVersionId = formText(formData, "forecast_version_id") || null
+  const scheduleVersionId = formText(formData, "schedule_version_id") || null
+  const actualImportVersionId = formText(formData, "actual_import_version_id") || null
+  const businessDateFrom = formText(formData, "business_date_from")
+  const businessDateTo = formText(formData, "business_date_to")
+
+  if (
+    !sourceBatchId ||
+    !businessDateFrom ||
+    !businessDateTo ||
+    (comparisonType !== "forecast_vs_schedule" &&
+      comparisonType !== "schedule_vs_actual") ||
+    (comparisonType === "forecast_vs_schedule" &&
+      (!forecastVersionId || !scheduleVersionId)) ||
+    (comparisonType === "schedule_vs_actual" &&
+      (!scheduleVersionId || !actualImportVersionId))
+  ) {
+    redirect(
+      buildVersionWorkbenchComparisonReturnHref(formData, {
+        compare: "failed",
+        compareReason: "missing_required_fields",
+      })
+    )
+  }
+
+  let networkError: string | null = null
+  let apiReason: string | null = null
+  let runId = buildLocalComparisonRunId(comparisonType, businessDateFrom)
+
+  try {
+    const response = await fetch(buildImportComparisonRunCalculateUrl(), {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        run_id: runId,
+        comparison_type: comparisonType,
+        forecast_version_id: forecastVersionId,
+        schedule_version_id: scheduleVersionId,
+        actual_import_version_id: actualImportVersionId,
+        business_date_from: businessDateFrom,
+        business_date_to: businessDateTo,
+      }),
+      cache: "no-store",
+    })
+
+    const payload = await readActionJson(response)
+    const responseRunId = extractActionRunId(payload)
+    if (typeof responseRunId === "string" && responseRunId.trim().length > 0) {
+      runId = responseRunId
+    }
+
+    if (response.status < 200 || response.status >= 300) {
+      apiReason = extractActionApiReason(payload) ?? `api_${response.status}`
+    }
+  } catch (error) {
+    networkError = formatActionError(error)
+  }
+
+  if (networkError) {
+    redirect(
+      buildVersionWorkbenchComparisonReturnHref(formData, {
+        compare: "failed",
+        compareReason: networkError,
+      })
+    )
+  }
+
+  if (apiReason) {
+    redirect(
+      buildVersionWorkbenchComparisonReturnHref(formData, {
+        compare: "failed",
+        compareReason: apiReason,
+        compareRun: runId,
+      })
+    )
+  }
+
+  redirect(
+    buildVersionWorkbenchComparisonReturnHref(formData, {
+      compare: "success",
+      compareRun: runId,
+    })
+  )
+}
+
+function buildVersionWorkbenchComparisonReturnHref(
+  formData: FormData,
+  params: {
+    compare: "success" | "failed"
+    compareRun?: string | null
+    compareReason?: string | null
+  }
+): string {
+  const searchParams = new URLSearchParams()
+  const businessDate = formText(formData, "return_business_date")
+  const domain = formText(formData, "return_domain")
+  const status = formText(formData, "return_status")
+
+  if (businessDate) {
+    searchParams.set("businessDate", businessDate)
+  }
+
+  if (domain && domain !== "all") {
+    searchParams.set("domain", domain)
+  }
+
+  if (status && status !== "all") {
+    searchParams.set("status", status)
+  }
+
+  searchParams.set("compare", params.compare)
+
+  if (params.compareRun) {
+    searchParams.set("compareRun", params.compareRun)
+  }
+
+  if (params.compareReason) {
+    searchParams.set("compareReason", params.compareReason)
+  }
+
+  return `/data-quality/versions?${searchParams.toString()}`
+}
+
 function parseStandardFields(value: string): Record<string, unknown> | null {
   try {
     const parsed = JSON.parse(value) as unknown

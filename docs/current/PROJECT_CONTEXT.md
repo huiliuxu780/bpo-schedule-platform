@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-`US713/IM093` completed the local-comparison candidate entry slice on the business version workbench. Current story queue has advanced to `US714/IM094`.
+`US714/IM094` completed the controlled single-version local comparison submit entry on the business version workbench. Current story queue has advanced to `US715/IM095`.
 
-The next approved chain stays inside the existing `/data-quality/versions` and comparison-result routes: `US714/IM094` is now the only current ready story, while `US715/IM095` remains outside `docs/current/**` until the previous slice is green.
+The next approved chain stays inside the existing `/data-quality/versions` and comparison-result routes: `US715/IM095` is now the only current ready story.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -34,7 +34,7 @@ After that empty-state checkpoint, the next chain was reseeded for comparison-re
 
 `US712/IM092` completed the third slice on the same `comparison run detail` page. The page now tries to resolve source import batches from existing applied import-version data, shows stable return entries back to source batch result trace and the version workbench when defensible, and shows an explicit blocked state when source batches cannot be matched. Current queue returned to empty.
 
-After that empty-state checkpoint, the next chain was reseeded for calculation-trigger entry and result review. `US713/IM093` completed the first slice by adding local-comparison candidate entries on the business version workbench, including explicit blocked states for unsupported, unapplied, or incomplete source-version cases. Current state then advanced to `US714/IM094`, while `US715/IM095` remains in planning state until `IM094` completes.
+After that empty-state checkpoint, the next chain was reseeded for calculation-trigger entry and result review. `US713/IM093` completed the first slice by adding local-comparison candidate entries on the business version workbench, including explicit blocked states for unsupported, unapplied, or incomplete source-version cases. `US714/IM094` then added a controlled submit form for complete version pairs and returns success/failure feedback to the same workbench. Current state advanced to `US715/IM095`.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -139,4 +139,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US714/IM094` is now current for adding a controlled single-version local comparison submit entry on the business version workbench.
+`US715/IM095` is now current for adding version-workbench result-review feedback after a local comparison submit.

@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { AlertTriangle, ArrowLeft, ArrowRight, Filter, GitBranch, Layers3 } from "lucide-react"
 
+import { triggerVersionWorkbenchLocalComparisonRunAction } from "@/app/data-quality/actions"
 import {
   type ImportBatchListRow,
   type ImportComparisonRunRecord,
@@ -28,6 +29,9 @@ type ImportCenterVersionWorkbenchProps = {
   reviewCases: ImportReviewCaseRecord[]
   filters: ImportVersionWorkbenchFilters
   error: string | null
+  comparisonStatus?: string | null
+  comparisonRunId?: string | null
+  comparisonReason?: string | null
 }
 
 export function ImportCenterVersionWorkbench({
@@ -36,12 +40,20 @@ export function ImportCenterVersionWorkbench({
   reviewCases,
   filters,
   error,
+  comparisonStatus,
+  comparisonRunId,
+  comparisonReason,
 }: ImportCenterVersionWorkbenchProps) {
   const summary = summarizeImportVersionWorkbench({
     batches,
     comparisonRuns,
     reviewCases,
     filters,
+  })
+  const comparisonNotice = summarizeVersionWorkbenchSubmitNotice({
+    status: comparisonStatus,
+    runId: comparisonRunId,
+    reason: comparisonReason,
   })
 
   return (
@@ -82,6 +94,48 @@ export function ImportCenterVersionWorkbench({
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
+        </Card>
+      ) : null}
+
+      {comparisonNotice ? (
+        <Card
+          className={
+            comparisonNotice.tone === "success"
+              ? "border-primary/40"
+              : "border-destructive/50"
+          }
+        >
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <GitBranch
+                className={
+                  comparisonNotice.tone === "success"
+                    ? "size-4 text-primary"
+                    : "size-4 text-destructive"
+                }
+              />
+              {comparisonNotice.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground lg:flex-row lg:items-center lg:justify-between">
+            <div className="grid gap-1">
+              <p>{comparisonNotice.detail}</p>
+              <p className="font-mono text-xs">{comparisonNotice.runLabel}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {comparisonNotice.primaryHref ? (
+                <Button asChild size="sm">
+                  <Link href={comparisonNotice.primaryHref}>
+                    {comparisonNotice.primaryActionLabel}
+                    <ArrowRight data-icon="inline-end" />
+                  </Link>
+                </Button>
+              ) : null}
+              <Button asChild size="sm" variant="outline">
+                <Link href="#version-ledger">{comparisonNotice.secondaryActionLabel}</Link>
+              </Button>
+            </div>
+          </CardContent>
         </Card>
       ) : null}
 
@@ -172,7 +226,7 @@ export function ImportCenterVersionWorkbench({
         </CardContent>
       </Card>
 
-      <Card className="overflow-hidden">
+      <Card id="version-ledger" className="overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Layers3 className="size-4 text-muted-foreground" />
@@ -230,7 +284,10 @@ export function ImportCenterVersionWorkbench({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <ComparisonCandidateSummary candidate={row.comparisonCandidate} />
+                    <ComparisonCandidateSummary
+                      candidate={row.comparisonCandidate}
+                      filters={filters}
+                    />
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex flex-wrap justify-end gap-2">
@@ -265,7 +322,7 @@ export function ImportCenterVersionWorkbench({
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-2 text-sm text-muted-foreground">
-          <p>本页只读，不触发应用、计算、发布、冻结、审批、导出或批量处理。</p>
+          <p>本页仅提供受控单次本地比对提交，不触发应用、发布、冻结、审批、导出或批量处理。</p>
           <p>当前时间先使用批次上传时间作为可见口径；发布、冻结和审批语义仍留在后续版本切片处理。</p>
         </CardContent>
       </Card>
@@ -275,8 +332,10 @@ export function ImportCenterVersionWorkbench({
 
 function ComparisonCandidateSummary({
   candidate,
+  filters,
 }: {
   candidate: ImportVersionComparisonCandidate
+  filters: ImportVersionWorkbenchFilters
 }) {
   const badgeVariant = candidate.tone === "ready" ? "secondary" : "outline"
 
@@ -293,13 +352,51 @@ function ComparisonCandidateSummary({
         </div>
         <div className="text-xs text-muted-foreground">{candidate.detail}</div>
       </div>
-      {candidate.href ? (
-        <Button asChild size="sm" variant="outline" className="w-fit">
-          <Link href={candidate.href}>
+      {candidate.canSubmit && candidate.request && candidate.sourceBatchId ? (
+        <form action={triggerVersionWorkbenchLocalComparisonRunAction} className="w-fit">
+          <input type="hidden" name="source_batch_id" value={candidate.sourceBatchId} />
+          <input
+            type="hidden"
+            name="comparison_type"
+            value={candidate.request.comparisonType}
+          />
+          <input
+            type="hidden"
+            name="forecast_version_id"
+            value={candidate.request.forecastVersionId ?? ""}
+          />
+          <input
+            type="hidden"
+            name="schedule_version_id"
+            value={candidate.request.scheduleVersionId ?? ""}
+          />
+          <input
+            type="hidden"
+            name="actual_import_version_id"
+            value={candidate.request.actualImportVersionId ?? ""}
+          />
+          <input
+            type="hidden"
+            name="business_date_from"
+            value={candidate.request.businessDateFrom}
+          />
+          <input
+            type="hidden"
+            name="business_date_to"
+            value={candidate.request.businessDateTo}
+          />
+          <input
+            type="hidden"
+            name="return_business_date"
+            value={filters.businessDate ?? ""}
+          />
+          <input type="hidden" name="return_domain" value={filters.domain ?? "all"} />
+          <input type="hidden" name="return_status" value={filters.status ?? "all"} />
+          <Button type="submit" size="sm" variant="outline" className="w-fit">
             {candidate.actionLabel}
             <ArrowRight data-icon="inline-end" />
-          </Link>
-        </Button>
+          </Button>
+        </form>
       ) : (
         <Badge variant="outline" className="w-fit">
           {candidate.actionLabel}
@@ -307,6 +404,68 @@ function ComparisonCandidateSummary({
       )}
     </div>
   )
+}
+
+function summarizeVersionWorkbenchSubmitNotice({
+  status,
+  runId,
+  reason,
+}: {
+  status?: string | null
+  runId?: string | null
+  reason?: string | null
+}): {
+  tone: "success" | "failed"
+  title: string
+  detail: string
+  runLabel: string
+  primaryActionLabel: string
+  primaryHref: string | null
+  secondaryActionLabel: string
+} | null {
+  if (status === "success" && runId) {
+    return {
+      tone: "success",
+      title: "本地比对已提交",
+      detail: "当前版本组合已生成或复用一个本地对比运行；重复提交时后端会返回已有运行，不创建多条重复结果。",
+      runLabel: runId,
+      primaryActionLabel: "查看对比运行",
+      primaryHref: `/data-quality/comparison-runs/${encodeURIComponent(runId)}`,
+      secondaryActionLabel: "回到版本台账",
+    }
+  }
+
+  if (status === "failed") {
+    return {
+      tone: "failed",
+      title: "本地比对未提交",
+      detail: formatVersionWorkbenchSubmitFailure(reason),
+      runLabel: runId ?? "未生成运行",
+      primaryActionLabel: "查看对比运行",
+      primaryHref: runId
+        ? `/data-quality/comparison-runs/${encodeURIComponent(runId)}`
+        : null,
+      secondaryActionLabel: "回到版本台账",
+    }
+  }
+
+  return null
+}
+
+function formatVersionWorkbenchSubmitFailure(reason?: string | null): string {
+  if (!reason) {
+    return "提交未返回成功结果，请确认版本组合和本地 API 状态。"
+  }
+
+  if (reason === "missing_required_fields") {
+    return "提交参数不完整，当前版本组合还不能发起本地比对。"
+  }
+
+  if (reason.startsWith("api_")) {
+    return `本地 API 返回 ${reason.replace("api_", "")}，请先回看版本组合和服务状态。`
+  }
+
+  return reason
 }
 
 function MetricCard({

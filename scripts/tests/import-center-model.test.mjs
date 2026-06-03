@@ -420,7 +420,7 @@ test("version workbench routes matched applied versions to run detail and applie
   );
 });
 
-test("version workbench exposes local comparison candidates without submit actions", () => {
+test("version workbench exposes local comparison candidates with controlled submit requests", () => {
   const summary = summarizeImportVersionWorkbench({
     batches: [
       {
@@ -462,18 +462,29 @@ test("version workbench exposes local comparison candidates without submit actio
   const scheduleRow = summary.rows.find((row) => row.domainKey === "personnel_schedule");
   assert.deepEqual(scheduleRow?.comparisonCandidate, {
     tone: "ready",
-    title: "可进入本地比对语境",
-    detail: "当前版本可按 排班实际 和已定位来源版本组合进入单次本地比对触发前检查。",
+    canSubmit: true,
+    title: "可发起一次本地比对",
+    detail: "当前版本可按 排班实际 和已定位来源版本组合提交一次本地比对；重复提交由后端幂等返回已有运行。",
     comparisonTypeLabel: "排班实际",
     versionPairLabel: "SCH-VERSION-001 / STATUS-VERSION-001",
     businessDateLabel: "2026-05-12 ~ 2026-05-12",
-    actionLabel: "进入比对触发语境",
+    actionLabel: "发起一次本地比对",
     href: "/data-quality/BATCH-SCH-CANDIDATE?tab=result-trace",
+    sourceBatchId: "BATCH-SCH-CANDIDATE",
+    request: {
+      comparisonType: "schedule_vs_actual",
+      forecastVersionId: null,
+      scheduleVersionId: "SCH-VERSION-001",
+      actualImportVersionId: "STATUS-VERSION-001",
+      businessDateFrom: "2026-05-12",
+      businessDateTo: "2026-05-12",
+    },
   });
 
   const masterRow = summary.rows.find((row) => row.domainKey === "master_data");
   assert.deepEqual(masterRow?.comparisonCandidate, {
     tone: "blocked",
+    canSubmit: false,
     title: "暂无本地比对候选",
     detail: "主数据当前没有可直接发起的预测排班或排班实际比对口径。",
     comparisonTypeLabel: "不支持",
@@ -481,6 +492,8 @@ test("version workbench exposes local comparison candidates without submit actio
     businessDateLabel: "2026-05-12 ~ 2026-05-12",
     actionLabel: "不可触发",
     href: null,
+    sourceBatchId: "BATCH-MD-CANDIDATE",
+    request: null,
   });
 });
 

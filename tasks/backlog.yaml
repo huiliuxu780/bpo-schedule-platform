@@ -7722,7 +7722,7 @@ tasks:
   - id: IM094
     title: "版本工作台单次本地比对提交"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM093"]
     allowed_files:
@@ -7762,10 +7762,11 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已在业务版本工作台为完整来源版本组合提供受控单次本地比对提交表单；提交复用现有 comparison calculate 能力，成功或失败回到当前工作台展示反馈，重复提交按后端幂等返回说明为生成或复用运行。"
   - id: IM095
     title: "版本工作台计算后结果回看"
     priority: P1
-    status: draft
+    status: ready
     required_workflow: frontend-scaffold
     dependencies: ["IM094"]
     allowed_files:

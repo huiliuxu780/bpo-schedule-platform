@@ -2488,3 +2488,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM094 Version Workbench Single Comparison Submit
+
+- branch_name: `codex/im094-version-workbench-single-compare`
+- base_main_commit: `763ec00`
+- remote_status: `main includes merged IM083-IM093 baseline; IM094 implementation is local only until PM asks to push.`
+- scope: add a controlled single-version local comparison submit form on `/data-quality/versions`, reuse the existing comparison calculate API through a server action, preserve version-workbench filters on submit feedback, keep incomplete or unsupported candidates blocked without submit buttons, advance current state from `IM094` to `IM095`, and record local smoke evidence.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/data-quality/versions/**`, `components/import-center-version-workbench.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 77 tests; `bash scripts/check-state.sh --strict` passed; shadcn gate passed with 3 documented baseline findings; `npm run lint` passed; `npm run typecheck` passed; HTTP smoke on `http://127.0.0.1:3000/data-quality/versions?compare=success&compareRun=RUN-IM094-SMOKE` and failed-submit query confirmed success/failure feedback. Final `git diff --check` and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

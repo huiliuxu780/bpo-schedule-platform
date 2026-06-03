@@ -2273,8 +2273,8 @@ description: "版本工作台展示本地比对候选后，用户仍需要进入
 source: "After R793 planning on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "ready"
-notes: "本条只做单版本、单次、本地计算提交；不做批量计算、自动排班、审批、权限、导出、真实外部接口、生产公式、结算或收费因子。"
+status: "done"
+notes: "IM094 已完成：版本工作台可对完整来源版本组合提交一次本地 comparison calculate，并在当前页展示生成或复用运行的反馈；不做批量计算、自动排班、审批、权限、导出、真实外部接口、生产公式、结算或收费因子。"
 ```
 
 ### R795 - 版本工作台计算后结果回看
@@ -2286,6 +2286,6 @@ description: "版本工作台提交单次本地比对后，用户需要在当前
 source: "After R794 planning on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
+status: "ready"
 notes: "本条只补本地计算提交后的结果回看链路，复用现有 comparison run detail、结果列表和版本工作台；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```

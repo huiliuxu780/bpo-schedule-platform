@@ -17,6 +17,9 @@ type VersionWorkbenchPageProps = {
     businessDate?: string
     domain?: ImportVersionWorkbenchFilters["domain"]
     status?: ImportVersionWorkbenchFilters["status"]
+    compare?: string
+    compareRun?: string
+    compareReason?: string
   }>
 }
 
@@ -52,6 +55,9 @@ export default async function VersionWorkbenchPage({
         reviewCases={reviewCasesResult.data ?? []}
         filters={filters}
         error={batchResult.error ?? comparisonRunsResult.error ?? reviewCasesResult.error}
+        comparisonStatus={params?.compare}
+        comparisonRunId={params?.compareRun}
+        comparisonReason={params?.compareReason}
       />
     </AppShell>
   )
