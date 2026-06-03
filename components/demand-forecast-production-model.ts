@@ -8,6 +8,7 @@ export type DemandForecastProductionRow = {
   versionLabel: string
   sourceBatchLabel: string
   sourceBatchHref: string
+  detailHref: string
   businessDateLabel: string
   uploadedAtLabel: string
   applicationLabel: "已应用" | "待应用"
@@ -19,6 +20,29 @@ export type DemandForecastProductionRow = {
   appliedRecordCountLabel: string
   blockerSummary: string
   nextActionLabel: string
+}
+
+export type DemandForecastProductionDetailSummary = {
+  tone: Exclude<DemandForecastProductionTone, "empty">
+  title: string
+  detail: string
+  batchId: string
+  fileName: string
+  versionLabel: string
+  sourceBatchHref: string
+  workbenchHref: string
+  businessDateLabel: string
+  uploadedAtLabel: string
+  applicationLabel: DemandForecastProductionRow["applicationLabel"]
+  alignmentLabel: DemandForecastProductionRow["alignmentLabel"]
+  appliedRecordCountLabel: string
+  sourceRowLabel: string
+  skillAlignmentLabel: string
+  timeBucketLabel: string
+  forecastScopeLabel: string
+  alignmentResultLabel: string
+  blockerSummary: string
+  changeBoundaryLabel: string
 }
 
 export type DemandForecastProductionSummary = {
@@ -74,6 +98,7 @@ function toDemandForecastProductionRow(
     versionLabel: batch.import_version_id ?? "暂无预测业务版本",
     sourceBatchLabel: batch.batch_id,
     sourceBatchHref: `/data-quality/import-batches/${batch.batch_id}`,
+    detailHref: `/demand-plans/production/${batch.batch_id}`,
     businessDateLabel: formatBusinessDateRange(
       batch.business_date_from,
       batch.business_date_to
@@ -84,7 +109,77 @@ function toDemandForecastProductionRow(
     tone,
     appliedRecordCountLabel: batch.applied_record_count.toLocaleString("zh-CN"),
     blockerSummary: resolveDemandForecastBlocker(batch, hasVersion, isApplied),
-    nextActionLabel: "版本详情待 IM103",
+    nextActionLabel: "查看版本详情",
+  }
+}
+
+export function summarizeDemandForecastProductionDetail(
+  batches: ImportBatchListRow[],
+  batchId: string
+): DemandForecastProductionDetailSummary {
+  const batch = batches.find(
+    (candidate) =>
+      candidate.batch_id === batchId && candidate.file_type === "demand_forecast"
+  )
+
+  if (!batch) {
+    return {
+      tone: "blocked",
+      title: "预测版本未定位",
+      detail: "当前来源批次不在需求预测生产台账中，无法展示版本详情。",
+      batchId,
+      fileName: "未找到来源文件",
+      versionLabel: "未找到对应需求预测批次",
+      sourceBatchHref: "/demand-plans/production",
+      workbenchHref: "/demand-plans/production",
+      businessDateLabel: "未定位",
+      uploadedAtLabel: "未定位",
+      applicationLabel: "待应用",
+      alignmentLabel: "缺少版本无法对齐",
+      appliedRecordCountLabel: "0",
+      sourceRowLabel: "未定位来源行",
+      skillAlignmentLabel: "未定位来源批次，无法确认技能组和等级",
+      timeBucketLabel: "暂未发现 0.5h 预测明细",
+      forecastScopeLabel: "未定位来源批次，不伪造技能组/等级/时段行",
+      alignmentResultLabel: "暂未发现技能组/等级/时段对齐结果",
+      blockerSummary: "请返回预测生产工作台选择来源批次",
+      changeBoundaryLabel: "变更追踪边界待 IM104",
+    }
+  }
+
+  const row = toDemandForecastProductionRow(batch)
+  const isReady = row.tone === "ready"
+  const alignmentResultLabel =
+    batch.applied_record_count > 0
+      ? `已形成 ${batch.applied_record_count.toLocaleString("zh-CN")} 条技能组/等级/时段预测明细`
+      : "暂未发现技能组/等级/时段对齐结果"
+
+  return {
+    tone: row.tone,
+    title: isReady ? "预测版本详情已定位" : "预测版本详情仍有阻塞",
+    detail: isReady
+      ? "当前版本已应用并形成技能组、等级和 0.5h 时段对齐口径，可作为后续排班和比对的只读来源。"
+      : "当前版本缺少应用、业务版本或预测明细，详情页只展示可确认的来源口径。",
+    batchId: batch.batch_id,
+    fileName: batch.file_name,
+    versionLabel: row.versionLabel,
+    sourceBatchHref: row.sourceBatchHref,
+    workbenchHref: "/demand-plans/production",
+    businessDateLabel: row.businessDateLabel,
+    uploadedAtLabel: row.uploadedAtLabel,
+    applicationLabel: row.applicationLabel,
+    alignmentLabel: row.alignmentLabel,
+    appliedRecordCountLabel: row.appliedRecordCountLabel,
+    sourceRowLabel: `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`,
+    skillAlignmentLabel: `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，技能组和等级明细待版本 API 暴露`,
+    timeBucketLabel:
+      batch.applied_record_count > 0
+        ? "0.5h 时段口径已确认"
+        : "暂未发现 0.5h 预测明细",
+    forecastScopeLabel: "当前列表 API 未暴露预测明细，不伪造技能组/等级/时段行",
+    alignmentResultLabel,
+    blockerSummary: row.blockerSummary,
+    changeBoundaryLabel: "变更追踪边界待 IM104",
   }
 }
 

@@ -1,6 +1,8 @@
 import Link from "next/link"
+import type { ReactNode } from "react"
 import {
   AlertTriangle,
+  ArrowLeft,
   ArrowRight,
   CalendarClock,
   FileClock,
@@ -12,6 +14,7 @@ import {
 import type { ImportBatchListRow } from "@/components/import-center-model"
 import {
   type DemandForecastProductionTone,
+  summarizeDemandForecastProductionDetail,
   summarizeDemandForecastProductionWorkbench,
 } from "@/components/demand-forecast-production-model"
 import { Badge } from "@/components/ui/badge"
@@ -179,8 +182,11 @@ export function DemandForecastProductionWorkbench({
                       {row.blockerSummary}
                     </TableCell>
                     <TableCell className="align-top text-right">
-                      <Button size="sm" variant="outline" disabled>
-                        {row.nextActionLabel}
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={row.detailHref}>
+                          {row.nextActionLabel}
+                          <ArrowRight data-icon="inline-end" />
+                        </Link>
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -207,6 +213,114 @@ export function DemandForecastProductionWorkbench({
           icon={<FileClock className="size-4 text-muted-foreground" />}
           title="后续顺序"
           detail="IM103 再进入单版本详情和对齐结果；IM104 只展示变更追踪安全壳，不直接接真实写入。"
+        />
+      </section>
+    </main>
+  )
+}
+
+export function DemandForecastProductionDetail({
+  batches,
+  batchId,
+  error,
+}: {
+  batches: ImportBatchListRow[]
+  batchId: string
+  error: string | null
+}) {
+  const detail = summarizeDemandForecastProductionDetail(batches, batchId)
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
+      <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <div className="mb-2">
+            <Button asChild size="sm" variant="ghost">
+              <Link href={detail.workbenchHref}>
+                <ArrowLeft data-icon="inline-start" />
+                返回预测生产
+              </Link>
+            </Button>
+          </div>
+          <h1 className="text-xl font-semibold tracking-normal">预测版本详情</h1>
+          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+            查看单个需求预测来源批次对应的业务版本、技能组/等级/时段对齐口径和预测明细边界。本页只读，不调整预测、不写变更记录。
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant={detail.tone === "blocked" ? "destructive" : "outline"}>
+            {detail.tone === "ready" ? "对齐已形成" : "详情仍阻塞"}
+          </Badge>
+          <Badge variant="secondary">只读详情</Badge>
+        </div>
+      </section>
+
+      {error ? (
+        <Card className="border-destructive/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <AlertTriangle className="size-4 text-destructive" />
+              预测来源读取失败
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
+        </Card>
+      ) : null}
+
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard label="来源版本" value={detail.versionLabel} detail={detail.title} tone="default" />
+        <MetricCard label="应用状态" value={detail.applicationLabel} detail={detail.appliedRecordCountLabel} tone={detail.applicationLabel === "已应用" ? "ready" : "blocked"} />
+        <MetricCard label="对齐状态" value={detail.alignmentLabel} detail={detail.alignmentResultLabel} tone={detail.tone === "ready" ? "ready" : "blocked"} />
+        <MetricCard label="变更追踪" value="暂不写入" detail={detail.changeBoundaryLabel} tone="default" />
+      </section>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <CalendarClock className="size-4 text-muted-foreground" />
+            版本来源
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 text-sm text-muted-foreground md:grid-cols-2">
+          <DetailItem label="来源批次" value={detail.batchId} />
+          <DetailItem label="来源文件" value={detail.fileName} />
+          <DetailItem label="业务日范围" value={detail.businessDateLabel} />
+          <DetailItem label="上传时间" value={detail.uploadedAtLabel} />
+          <DetailItem label="成功导入" value={detail.sourceRowLabel} />
+          <DetailItem label="阻塞原因" value={detail.blockerSummary} />
+          <div className="md:col-span-2">
+            <Button asChild size="sm" variant="outline">
+              <Link href={detail.sourceBatchHref}>查看来源批次</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Table2 className="size-4 text-muted-foreground" />
+            技能组/等级/时段对齐结果
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 text-sm text-muted-foreground">
+          <DetailItem label="技能组与等级" value={detail.skillAlignmentLabel} />
+          <DetailItem label="时段粒度" value={detail.timeBucketLabel} />
+          <DetailItem label="预测明细边界" value={detail.forecastScopeLabel} />
+          <DetailItem label="对齐结果" value={detail.alignmentResultLabel} />
+        </CardContent>
+      </Card>
+
+      <section className="grid gap-3 md:grid-cols-2">
+        <BoundaryItem
+          icon={<Lock className="size-4 text-muted-foreground" />}
+          title="不伪造预测明细"
+          detail="当前列表 API 只提供批次级摘要，详情页不构造技能组、等级或 0.5h 明细行。"
+        />
+        <BoundaryItem
+          icon={<FileClock className="size-4 text-muted-foreground" />}
+          title={detail.changeBoundaryLabel}
+          detail="IM104 只展示变更追踪边界安全壳，不直接接真实预测变更写入。"
         />
       </section>
     </main>
@@ -245,7 +359,7 @@ function BoundaryItem({
   title,
   detail,
 }: {
-  icon: React.ReactNode
+  icon: ReactNode
   title: string
   detail: string
 }) {
@@ -259,6 +373,15 @@ function BoundaryItem({
       </CardHeader>
       <CardContent className="text-sm text-muted-foreground">{detail}</CardContent>
     </Card>
+  )
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="grid gap-1">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-sm font-medium text-foreground">{value}</div>
+    </div>
   )
 }
 

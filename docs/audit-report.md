@@ -3627,3 +3627,30 @@
 - HTTP smoke：`http://127.0.0.1:3000/demand-plans/production` 命中 `预测生产`、`只读工作台`、`需求预测生产台账`、`版本详情待 IM103` 和 `变更追踪边界待 IM104`。
 - in-app browser smoke：当前 URL 为 `/demand-plans/production`，页面命中只读工作台、台账和 IM103/IM104 后续提示，侧边栏只有 `预测生产` 处于 active 状态。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-04 - IM103 需求预测版本详情与对齐结果
+
+#### 审计结论
+
+- `IM103/US723` 已新增 `/demand-plans/production/[batchId]`，从预测生产工作台的版本行进入。
+- 详情页展示来源批次/版本、业务日范围、应用状态、成功导入行、技能组/等级对齐边界、0.5h 时段口径、对齐结果和阻塞原因。
+- 当前本地列表 API 没有技能组、等级或逐 0.5h 明细，页面明确展示 `不伪造技能组/等级/时段行`，不构造假数据。
+- 工作台原有 `版本详情待 IM103` 文案已更新为版本详情可查看，变更追踪边界仍待 IM104。
+- 本轮未新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。
+- 当前状态已推进到 `US724/IM104`，该任务涉及变更追踪边界安全壳，进入实现前需要 PM 确认。
+
+#### 风险
+
+- 当前详情页只基于 import-batch list 的应用摘要展示，不展示真实技能组、等级或半小时预测明细。
+- 本地 API 当前没有 demand_forecast 批次，页面 smoke 覆盖未知批次/无对齐记录阻塞态；已应用版本详情由模型测试覆盖。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `summarizeDemandForecastProductionDetail`。
+- `node scripts/tests/demand-forecast-production-model.test.mjs`：通过，7 个 demand-forecast production model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- HTTP smoke：`http://127.0.0.1:3000/demand-plans/production/BATCH-MISSING-IM103` 命中 `预测版本详情`、`预测版本未定位`、`不伪造技能组/等级/时段行`、`暂未发现 0.5h 预测明细`、`变更追踪边界待 IM104` 和 `返回预测生产`。
+- in-app browser smoke：当前 URL 为 `/demand-plans/production/BATCH-MISSING-IM103`，命中详情页、阻塞态、0.5h 阻塞、不伪造预测明细和返回入口，且侧边栏 `预测生产` 处于 active 状态。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -2692,3 +2692,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM103 Demand Forecast Version Detail
+
+- branch_name: `codex/im103-demand-forecast-version-detail`
+- base_main_commit: `075bded`
+- remote_status: `main includes merged IM102 demand-forecast production workbench baseline; IM103 implementation is local only until final merge/push.`
+- scope: add `/demand-plans/production/[batchId]` read-only version detail from the production workbench; show source batch/version, business date range, application state, successful source rows, skill-group/level alignment boundary, 0.5h time-bucket state, forecast-detail no-fabrication notice, alignment result, blocker summary, and return links.
+- allowed_files_check: `app/demand-plans/production/**`, `components/demand-forecast-production-workbench.tsx`, `components/demand-forecast-production-model.ts`, `components/app-sidebar.tsx`, `scripts/tests/demand-forecast-production-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 7 tests after TDD red failed on missing `summarizeDemandForecastProductionDetail`; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; HTTP smoke on `http://127.0.0.1:3000/demand-plans/production/BATCH-MISSING-IM103` matched `预测版本详情`, `预测版本未定位`, `不伪造技能组/等级/时段行`, `暂未发现 0.5h 预测明细`, `变更追踪边界待 IM104`, and `返回预测生产`; in-app browser smoke confirmed the same blocked no-fabrication state and active sidebar item `预测生产`. Final `bash scripts/check-state.sh --strict`, `git diff --check --cached`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

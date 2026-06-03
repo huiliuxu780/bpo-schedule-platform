@@ -8106,13 +8106,14 @@ tasks:
   - id: IM103
     title: "需求预测版本详情与对齐结果"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM102"]
     allowed_files:
       - "app/demand-plans/production/**"
       - "components/demand-forecast-production-workbench.tsx"
       - "components/demand-forecast-production-model.ts"
+      - "components/app-sidebar.tsx"
       - "scripts/tests/demand-forecast-production-model.test.mjs"
       - "docs/current/**"
       - "docs/registry/TRACE_INDEX.yaml"
@@ -8144,10 +8145,11 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已新增 `/demand-plans/production/[batchId]` 预测版本详情页，并从工作台行进入详情；详情展示来源批次/版本、业务日范围、技能组/等级/时段对齐边界、预测明细不伪造说明、对齐结果和阻塞原因。"
   - id: IM104
     title: "需求预测变更追踪边界安全壳"
     priority: P1
-    status: planned
+    status: ready
     required_workflow: frontend-scaffold
     dependencies: ["IM103"]
     allowed_files:

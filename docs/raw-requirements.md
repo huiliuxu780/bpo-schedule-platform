@@ -2390,8 +2390,8 @@ description: "需求预测生产工作台需要进入单个预测版本详情，
 source: "After R802 planning on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "ready"
-notes: "IM103 当前 ready：在 IM102 工作台后新增预测版本详情；缺少技能组/等级/时段明细时必须展示空态或阻塞态，不伪造预测行。"
+status: "done"
+notes: "IM103 已完成：从 `/demand-plans/production` 进入 `/demand-plans/production/[batchId]` 预测版本详情页，展示来源批次/版本、业务日、技能组/等级/时段对齐边界、预测明细不伪造说明和阻塞状态；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R804 - 需求预测变更追踪边界安全壳
@@ -2403,6 +2403,6 @@ description: "在预测版本详情和对齐结果可见后，再展示预测变
 source: "After R803 planning on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "planned"
-notes: "规划：IM104 只展示变更追踪边界安全壳；不接真实写入、公式、审批、导出、批量、权限或生产状态变化。"
+status: "ready"
+notes: "IM104 当前 ready 但需 PM 确认：只展示变更追踪边界安全壳；不接真实写入、公式、审批、导出、批量、权限或生产状态变化。"
 ```

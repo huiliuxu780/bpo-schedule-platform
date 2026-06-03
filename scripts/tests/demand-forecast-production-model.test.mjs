@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { summarizeDemandForecastProductionWorkbench } from "../../components/demand-forecast-production-model.ts";
+import {
+  summarizeDemandForecastProductionDetail,
+  summarizeDemandForecastProductionWorkbench,
+} from "../../components/demand-forecast-production-model.ts";
 
 const baseBatch = {
   batch_id: "BATCH-FC-001",
@@ -53,12 +56,13 @@ test("demand forecast production workbench summarizes applied forecast versions"
   assert.equal(summary.blockedVersions, 0);
   assert.equal(summary.rows[0].versionLabel, "BATCH-FC-001::v1");
   assert.equal(summary.rows[0].sourceBatchHref, "/data-quality/import-batches/BATCH-FC-001");
+  assert.equal(summary.rows[0].detailHref, "/demand-plans/production/BATCH-FC-001");
   assert.equal(summary.rows[0].businessDateLabel, "2026-06-08 至 2026-06-14");
   assert.equal(summary.rows[0].applicationLabel, "已应用");
   assert.equal(summary.rows[0].alignmentLabel, "技能组/等级/时段已对齐");
   assert.equal(summary.rows[0].appliedRecordCountLabel, "336");
   assert.equal(summary.rows[0].blockerSummary, "无阻塞；当前只读展示需求预测生产口径");
-  assert.equal(summary.rows[0].nextActionLabel, "版本详情待 IM103");
+  assert.equal(summary.rows[0].nextActionLabel, "查看版本详情");
 });
 
 test("demand forecast production workbench blocks unapplied forecast versions", () => {
@@ -95,4 +99,51 @@ test("demand forecast production workbench blocks missing import version", () =>
   assert.equal(summary.rows[0].versionLabel, "暂无预测业务版本");
   assert.equal(summary.rows[0].alignmentLabel, "缺少版本无法对齐");
   assert.equal(summary.rows[0].blockerSummary, "缺少需求预测业务版本");
+});
+
+test("demand forecast production detail resolves a forecast version by source batch", () => {
+  const detail = summarizeDemandForecastProductionDetail([baseBatch], "BATCH-FC-001");
+
+  assert.equal(detail.tone, "ready");
+  assert.equal(detail.title, "预测版本详情已定位");
+  assert.equal(detail.batchId, "BATCH-FC-001");
+  assert.equal(detail.versionLabel, "BATCH-FC-001::v1");
+  assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-FC-001");
+  assert.equal(detail.workbenchHref, "/demand-plans/production");
+  assert.equal(detail.businessDateLabel, "2026-06-08 至 2026-06-14");
+  assert.equal(detail.sourceRowLabel, "24 / 24 条成功导入");
+  assert.equal(detail.skillAlignmentLabel, "来自 24 条成功导入行，技能组和等级明细待版本 API 暴露");
+  assert.equal(detail.timeBucketLabel, "0.5h 时段口径已确认");
+  assert.equal(detail.forecastScopeLabel, "当前列表 API 未暴露预测明细，不伪造技能组/等级/时段行");
+  assert.equal(detail.alignmentResultLabel, "已形成 336 条技能组/等级/时段预测明细");
+  assert.equal(detail.blockerSummary, "无阻塞；当前只读展示需求预测生产口径");
+  assert.equal(detail.changeBoundaryLabel, "变更追踪边界待 IM104");
+});
+
+test("demand forecast production detail blocks missing forecast rows without fabricated details", () => {
+  const detail = summarizeDemandForecastProductionDetail(
+    [
+      {
+        ...baseBatch,
+        applied_record_count: 0,
+      },
+    ],
+    "BATCH-FC-001"
+  );
+
+  assert.equal(detail.tone, "blocked");
+  assert.equal(detail.timeBucketLabel, "暂未发现 0.5h 预测明细");
+  assert.equal(detail.forecastScopeLabel, "当前列表 API 未暴露预测明细，不伪造技能组/等级/时段行");
+  assert.equal(detail.alignmentResultLabel, "暂未发现技能组/等级/时段对齐结果");
+  assert.equal(detail.blockerSummary, "已应用但暂未发现预测明细");
+});
+
+test("demand forecast production detail shows a blocked state for unknown batch", () => {
+  const detail = summarizeDemandForecastProductionDetail([baseBatch], "BATCH-MISSING");
+
+  assert.equal(detail.tone, "blocked");
+  assert.equal(detail.title, "预测版本未定位");
+  assert.equal(detail.batchId, "BATCH-MISSING");
+  assert.equal(detail.versionLabel, "未找到对应需求预测批次");
+  assert.equal(detail.blockerSummary, "请返回预测生产工作台选择来源批次");
 });
