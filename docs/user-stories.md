@@ -4222,3 +4222,69 @@ dependencies:
   - "US717"
 status: "done"
 ```
+
+### US719 - 人员排班生产工作台只读入口
+
+```yaml
+id: US719
+requirement_ids:
+  - R799
+module: "人员排班生产"
+role: "排班主管"
+story: "作为排班主管，我希望在计划与排班下查看人员级排班生产工作台，按排班版本、来源批次、应用状态和 0.5h 展开状态确认当前排班数据是否可用于后续履约比对。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "入口在现有计划与排班功能下可达，不创建新的首页或营销页。"
+  - "工作台展示人员排班来源批次、业务版本、应用状态、0.5h 展开状态和阻塞原因。"
+  - "页面明确当前只读边界和后续版本详情、发布/冻结动作状态。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US718"
+status: "ready"
+```
+
+### US720 - 人员排班版本详情与 0.5h 展开结果
+
+```yaml
+id: US720
+requirement_ids:
+  - R800
+module: "人员排班生产"
+role: "排班主管"
+story: "作为排班主管，我希望进入单个人员排班版本详情，查看班次引用、人员维度和 0.5h 展开结果，以便确认这个版本是否能进入比对和复核链路。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "从人员排班生产工作台可进入排班版本详情。"
+  - "详情页展示来源批次/版本、业务日范围、班次引用、人员范围和 0.5h 展开状态。"
+  - "缺少展开结果时展示明确空态或阻塞态，不伪造人员级明细。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US719"
+status: "draft"
+```
+
+### US721 - 人员排班发布冻结边界安全壳
+
+```yaml
+id: US721
+requirement_ids:
+  - R801
+module: "人员排班生产"
+role: "排班主管"
+story: "作为排班主管，我希望在发布或冻结排班版本前先看到校验条件、失败原因和当前未接入真实写入的边界，以便不误操作生产排班口径。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "发布、冻结或取消发布动作必须先展示来源版本、展开结果和引用校验边界。"
+  - "动作按钮保持安全壳状态，不提交真实生产状态变化。"
+  - "写入动作进入前需要单独确认，不默认扩展到后端/schema/migration。"
+  - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US720"
+status: "draft"
+```

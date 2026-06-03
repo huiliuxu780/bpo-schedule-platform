@@ -2930,7 +2930,9 @@
 - `npm run lint`：通过。
 - `npm run typecheck`：通过。
 - in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases?processingStage=closed` 命中 `处理阶段`、`已关闭`、`复核案例列表`、`阶段` 和 `CASE-QUERY-001`。
-- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+- `bash scripts/check-state.sh --strict`：通过，current 队列只包含 `US719/IM099`，registry 无 lifecycle state 字段，current 文件行数均在预算内。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 frontend build 和 backend 177 tests OK。
 
 ### 2026-06-02 - IM067 复核 Owner 阶段负载矩阵
 
@@ -3494,4 +3496,17 @@
 - `npm run typecheck`：通过。
 - `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
 - HTTP smoke：`http://127.0.0.1:3000/master-data/bindings` 命中受控维护动作、新增/编辑/冻结/有效期调整、来源阻塞失败边界和 `暂不提交`；`/master-data/agents` 命中单坐席范围和非批量说明。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM099-IM101 人员排班生产链路规划
+
+#### 审计结论
+
+- 已从空 current 状态拆出 `R799-R801 / US719-US721 / IM099-IM101`。
+- 当前只将 `US719/IM099` 放入 `docs/current/**`，作为唯一 ready 任务。
+- 推荐顺序为：人员排班生产只读工作台、排班版本详情与 0.5h 展开结果、发布/冻结边界安全壳。
+- 规划明确先不进入后端 API、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -458,3 +458,9 @@ The detail view stays read-only: it shows source batch/version context, entity-l
 `IM098/US718` added a controlled maintenance-action shell to `/master-data/[entityKey]`. Each entity detail now shows four action categories: create, edit, freeze, and effective-period adjustment.
 
 The shell is intentionally non-writing. Each action shows single-entity scope, reference-check requirements, failure boundaries, and a disabled `暂不提交` button. No backend write API, schema/migration, dependency, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement rule, or charge-factor work was added. Current queue returned to empty after the master-data read-only/action-boundary chain.
+
+## 2026-06-03 IM099-IM101 Personnel Schedule Production Planning
+
+After the master-data maintenance chain, the next recommended block is personnel-level schedule production. It starts with a read-only production workbench under the existing plan/schedule area, then can add version detail with 0.5h expansion visibility, and only after that can discuss publish/freeze boundaries.
+
+Only `US719/IM099` entered current ready state. `US720/IM100` and `US721/IM101` stay outside current until the previous slice is green. The chain must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors without a separate confirmed task.

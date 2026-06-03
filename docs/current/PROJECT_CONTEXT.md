@@ -139,4 +139,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US718/IM098` completed the frontend safety shell for controlled master-data maintenance actions. Current story queue is empty. The master-data maintenance chain now has read-only workbench, entity detail/reference impact, and disabled action-boundary visibility, but still has no backend/schema/migration write capability, permissions, approval, export, batch operations, production formulas, settlement, or charge-factor work.
+`US718/IM098` completed the frontend safety shell for controlled master-data maintenance actions. The master-data maintenance chain now has read-only workbench, entity detail/reference impact, and disabled action-boundary visibility.
+
+Current story queue has advanced to `US719/IM099`, the first personnel-schedule production slice. The route must stay under existing plan/schedule navigation and remain read-only: source batch, schedule version, application status, 0.5h expansion state, and blocker visibility only. No backend/schema/migration, permissions, approval, export, batch operations, production formulas, settlement, or charge-factor work.
