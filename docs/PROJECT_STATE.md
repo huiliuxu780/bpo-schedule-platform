@@ -326,3 +326,23 @@ After `IM085` went green, current state advanced to `US706/IM086` as the only re
 The implementation stayed frontend-only. It reused the existing comparison calculate API, result-trace positioning helpers, and batch-detail query context without adding backend routes, schema/migration changes, dependencies, approval, export, batch operation, permission, real external integration, production formula, settlement rule, or charge factor changes.
 
 After `IM086` went green, current queue returned to empty. Any subsequent batch/version workspace slice must be reseeded explicitly before implementation.
+
+## 2026-06-03 IM087-IM089 Version Workbench Planning
+
+After `US706/IM086`, PM confirmed that the next slice should stay inside the existing `data-quality` product path and must not invent a new homepage. The approved route is `/data-quality/versions`, positioned as a read-only business-version ledger under the import-center chain.
+
+The approved sequence is:
+
+1. `US707/IM087`: add the read-only version ledger page and base navigation entry.
+2. `US708/IM088`: add stable jumps from version rows into batch detail, result trace, or matched comparison run.
+3. `US709/IM089`: add downstream impact summaries for comparison runs and review cases.
+
+To keep Story Runner state narrow, only `US707/IM087` entered `docs/current/**` first. `US708/IM088` and `US709/IM089` stayed outside current state until `IM087` was green.
+
+## 2026-06-03 IM087 Version Workbench Ledger
+
+`US707/IM087` completed the first version-workbench slice. `/data-quality/versions` now provides a read-only business-version ledger page that groups the current context into four business domains: master data, personnel schedule, demand forecast, and login/status logs. Each row shows the current version label, source batch, business date, current visible time, state, blocker summary, and a base next-step entry.
+
+The implementation remained frontend-only. It reused the existing import-batch list API, current import-center model helpers, and the data-quality navigation shell. The page explicitly keeps current visible time scoped to the uploaded batch record for now and does not claim publish/freeze/approval semantics. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor was added.
+
+After `IM087` went green, current state advanced to `US708/IM088` as the only ready slice. `US709/IM089` remains outside `docs/current/**` until `IM088` completes.

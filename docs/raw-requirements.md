@@ -93,6 +93,45 @@ status: "done"
 notes: "本轮已完成版本结果页本地比对计算受控入口；结果追踪的版本定位区会在 comparison_type 和来源版本明确时展示 `发起一次本地比对`，提交后将成功/失败反馈带回当前版本语境，并提供进入新 comparison run 详情或结果列表的入口；主数据、版本缺失或上下文不足场景保持阻塞态且不展示写入按钮；复用现有 comparison calculate API 和结果查询能力，不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算、自动排班或收费因子。"
 ```
 
+### R787 - 业务版本工作台只读台账页
+
+```yaml
+id: R787
+module: "导入中心"
+description: "导入批次应用、结果卡片、版本定位和本地比对入口都已经形成链路，但用户仍缺少一个跨批次、跨数据域的统一版本台账，难以快速确认主数据、排班、预测、登录/状态日志当前各自落在哪个版本、来自哪个批次、现在处于什么阻塞状态。需要在 data-quality 下新增只读业务版本工作台。"
+source: "After IM086 and PM confirmed /data-quality/versions direction on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已完成 /data-quality/versions 只读业务版本台账页和基础导航入口；页面按主数据、人员排班、需求预测、登录/状态日志四类业务域汇总当前版本、来源批次、当前可见时间、阻塞摘要和基础下一步入口，并在数据质量侧边导航新增入口；复用现有 import-batch list API 与前端模型聚合，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+```
+
+### R788 - 业务版本工作台稳定跳转链路
+
+```yaml
+id: R788
+module: "导入中心"
+description: "版本工作台第一页建立后，用户还需要从当前版本行稳定进入对应批次详情、结果追踪和已存在的 comparison run，避免再次回到列表手动检索。需要补齐版本工作台到真实页面的稳定跳转链路。"
+source: "After R787 planning confirmation on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "draft"
+notes: "本条只补导航链路，不新增写入动作、后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+```
+
+### R789 - 业务版本工作台下游影响摘要
+
+```yaml
+id: R789
+module: "导入中心"
+description: "版本工作台能看到当前版本和来源批次后，运营负责人还需要一眼知道这个版本已经影响了多少 comparison run、review case，以及当前为什么仍然阻塞。需要在版本工作台补齐下游影响摘要。"
+source: "After R788 planning confirmation on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "draft"
+notes: "本条只补只读摘要，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+```
+
 ### R780 - 字段映射模板上传预选链路
 
 ```yaml

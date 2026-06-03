@@ -155,6 +155,70 @@ dependencies:
 status: "done"
 ```
 
+### US707 - 业务版本工作台只读台账页
+
+```yaml
+id: US707
+requirement_ids:
+  - R787
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在数据质量下有一个只读业务版本台账页，以便不逐个打开批次也能扫描主数据、排班、预测和登录/状态日志当前各自的版本上下文。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/versions` 展示只读业务版本台账，至少覆盖主数据、人员排班、需求预测和登录/状态日志四类业务域。"
+  - "每行至少展示数据域、当前版本、来源批次、当前可见时间、状态和阻塞摘要，并给出基础下一步入口。"
+  - "无当前版本、未应用或信息不完整时展示明确 empty/blocked 状态，不假装已有版本。"
+  - "数据质量导航提供进入版本工作台的入口；本轮不新增稳定 comparison run / review case 深链，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US706"
+status: "done"
+```
+
+### US708 - 业务版本工作台稳定跳转链路
+
+```yaml
+id: US708
+requirement_ids:
+  - R788
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望从版本工作台的当前版本行直接进入批次详情、结果追踪或对应对比运行，以便继续处理而不是回列表重新检索。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "版本工作台对已定位上下文的行提供稳定的批次详情、结果追踪或 comparison run 跳转。"
+  - "上下文不足时只展示阻塞说明，不提供误导性深链。"
+  - "复用现有 data-quality 页面和本地查询能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US707"
+status: "draft"
+```
+
+### US709 - 业务版本工作台下游影响摘要
+
+```yaml
+id: US709
+requirement_ids:
+  - R789
+module: "导入中心"
+role: "运营复核负责人"
+story: "作为运营复核负责人，我希望在版本工作台一眼看到当前版本已经影响了多少对比运行和复核案例，以便判断下一步该去哪里继续追踪。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "版本工作台为当前版本行补 comparison run / review case 的只读影响摘要。"
+  - "没有下游结果或上下文不完整时展示明确空态或阻塞态。"
+  - "复用现有 comparison runs、review cases 和批次上下文能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US708"
+status: "draft"
+```
+
 ### US700 - 字段映射模板上传预选链路
 
 ```yaml

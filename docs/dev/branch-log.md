@@ -2318,3 +2318,37 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM087-IM089 Version Workbench Planning
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `948f9da`
+- remote_status: `branch includes pushed IM086 baseline; version-workbench planning/spec changes are local only.`
+- scope: define `R787-R789`, `US707-US709`, and `IM087-IM089`; seed only `US707/IM087` into current ready state; add the version-workbench implementation plan and update registry/project-state/branch trace for the approved next chain.
+- allowed_files_check: `docs/superpowers/plans/2026-06-03-version-workbench-implementation-plan.md`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no app, backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `docs/superpowers/plans/2026-06-03-version-workbench-implementation-plan.md`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after the planning/state update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM087 Version Workbench Ledger
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `dbe5ac1`
+- remote_status: `branch includes pushed IM086 baseline plus local version-workbench spec commit; IM087 implementation is local only until PM asks to push.`
+- scope: `/data-quality/versions` read-only version ledger page, data-quality sidebar entry, import-center model summary helpers/test coverage, current-state advancement from `IM087` to `IM088`, and local production-page smoke evidence.
+- allowed_files_check: `app/data-quality/versions/**`, `components/app-sidebar.tsx`, `components/import-center-version-workbench.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/superpowers/plans/2026-06-03-version-workbench-implementation-plan.md`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/versions/**`, `components/app-sidebar.tsx`, `components/import-center-version-workbench.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/superpowers/plans/2026-06-03-version-workbench-implementation-plan.md`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red model test failed first because `summarizeImportVersionWorkbench` was not exported; target model test then passed with 73 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests. In-app browser smoke on `http://localhost:3000/data-quality/versions` verified the page title, table, sidebar entry, and current ledger rows.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -5,4 +5,22 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US708
+    requirement_ids:
+      - "R788"
+    task_ids:
+      - "IM088"
+    module: "导入中心"
+    role: "导入管理员"
+    story: "作为导入管理员，我希望从版本工作台的当前版本行直接进入批次详情、结果追踪或对应对比运行，以便继续处理而不是回列表重新检索。"
+    task_type: "frontend-scaffold"
+    priority: "P1"
+    status: ready
+    dependencies:
+      - "US707"
+    acceptance:
+      - "版本工作台对已定位上下文的行提供稳定的批次详情、结果追踪或 comparison run 跳转。"
+      - "上下文不足时只展示阻塞说明，不提供误导性深链。"
+      - "复用现有 data-quality 页面和本地查询能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"

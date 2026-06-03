@@ -108,6 +108,49 @@ export type ImportBatchFilters = {
   applicationStatus?: ImportApplicationStatus | ImportBatchFilterValue | null
 }
 
+export type ImportVersionWorkbenchDomainKey =
+  | "master_data"
+  | "personnel_schedule"
+  | "demand_forecast"
+  | "actual_logs"
+
+export type ImportVersionWorkbenchTone = "ready" | "blocked" | "empty"
+
+export type ImportVersionWorkbenchFilterValue = "all"
+
+export type ImportVersionWorkbenchFilters = {
+  businessDate?: string | null
+  domain?: ImportVersionWorkbenchDomainKey | ImportVersionWorkbenchFilterValue | null
+  status?: ImportVersionWorkbenchTone | ImportVersionWorkbenchFilterValue | null
+}
+
+export type ImportVersionWorkbenchRow = {
+  domainKey: ImportVersionWorkbenchDomainKey
+  domainLabel: string
+  sourceFileLabel: string
+  tone: ImportVersionWorkbenchTone
+  statusLabel: string
+  versionLabel: string
+  sourceBatchLabel: string
+  businessDateLabel: string
+  visibleTimeLabel: string
+  blockerSummary: string
+  nextAction: string
+  primaryActionLabel: string
+  primaryActionHref: string | null
+}
+
+export type ImportVersionWorkbenchSummary = {
+  tone: ImportVersionWorkbenchTone
+  title: string
+  detail: string
+  totalDomains: number
+  readyCount: number
+  blockedCount: number
+  emptyCount: number
+  rows: ImportVersionWorkbenchRow[]
+}
+
 export type ImportBatchDetailSummary = {
   totalRows: number
   successRows: number
@@ -1598,6 +1641,188 @@ export function filterImportBatches(
       .toLowerCase()
 
     return searchableText.includes(query)
+  })
+}
+
+const versionWorkbenchDomains: Array<{
+  key: ImportVersionWorkbenchDomainKey
+  label: string
+  sourceFileLabel: string
+  fileTypes: ImportFileType[]
+}> = [
+  {
+    key: "master_data",
+    label: "主数据",
+    sourceFileLabel: "主数据",
+    fileTypes: ["master_data"],
+  },
+  {
+    key: "personnel_schedule",
+    label: "人员排班",
+    sourceFileLabel: "人员排班",
+    fileTypes: ["personnel_schedule"],
+  },
+  {
+    key: "demand_forecast",
+    label: "需求预测",
+    sourceFileLabel: "需求预测",
+    fileTypes: ["demand_forecast"],
+  },
+  {
+    key: "actual_logs",
+    label: "登录/状态日志",
+    sourceFileLabel: "登录日志 / 状态日志",
+    fileTypes: ["login_log", "status_log"],
+  },
+]
+
+export function summarizeImportVersionWorkbench({
+  batches,
+  filters,
+}: {
+  batches: ImportBatchListRow[]
+  filters: ImportVersionWorkbenchFilters
+}): ImportVersionWorkbenchSummary {
+  const businessDate = normalizeFilterValue(filters.businessDate)
+  const domainFilter =
+    filters.domain && filters.domain !== "all" ? filters.domain : null
+  const statusFilter =
+    filters.status && filters.status !== "all" ? filters.status : null
+  const scopedBatches = businessDate
+    ? batches.filter((batch) => batch.business_date_from === businessDate)
+    : batches
+  const rows = versionWorkbenchDomains
+    .map((domain) => summarizeImportVersionWorkbenchRow(domain, scopedBatches))
+    .filter((row) => (domainFilter ? row.domainKey === domainFilter : true))
+    .filter((row) => (statusFilter ? row.tone === statusFilter : true))
+
+  const readyCount = rows.filter((row) => row.tone === "ready").length
+  const blockedCount = rows.filter((row) => row.tone === "blocked").length
+  const emptyCount = rows.filter((row) => row.tone === "empty").length
+  const totalDomains = versionWorkbenchDomains.length
+  const tone: ImportVersionWorkbenchTone =
+    blockedCount > 0 ? "blocked" : readyCount > 0 ? "ready" : "empty"
+
+  return {
+    tone,
+    title:
+      readyCount > 0
+        ? `当前已形成 ${readyCount.toLocaleString("zh-CN")} 个业务域版本`
+        : "当前还没有可用业务版本",
+    detail: businessDate
+      ? `业务日 ${businessDate} · 当前筛出 ${rows.length.toLocaleString("zh-CN")} / ${totalDomains.toLocaleString("zh-CN")} 个业务域`
+      : `当前筛出 ${rows.length.toLocaleString("zh-CN")} / ${totalDomains.toLocaleString("zh-CN")} 个业务域`,
+    totalDomains,
+    readyCount,
+    blockedCount,
+    emptyCount,
+    rows,
+  }
+}
+
+function summarizeImportVersionWorkbenchRow(
+  domain: (typeof versionWorkbenchDomains)[number],
+  batches: ImportBatchListRow[]
+): ImportVersionWorkbenchRow {
+  const domainBatches = sortImportBatchesByUploadedAt(
+    batches.filter((batch) => domain.fileTypes.includes(batch.file_type))
+  )
+  const latestAppliedBatch =
+    domainBatches.find((batch) => batch.application_status === "applied") ?? null
+  const latestObservedBatch = domainBatches[0] ?? null
+  const currentBatch = latestAppliedBatch ?? latestObservedBatch
+
+  if (!currentBatch) {
+    return {
+      domainKey: domain.key,
+      domainLabel: domain.label,
+      sourceFileLabel: domain.sourceFileLabel,
+      tone: "empty",
+      statusLabel: "暂无版本",
+      versionLabel: "暂无",
+      sourceBatchLabel: "暂无批次",
+      businessDateLabel: "暂无业务日",
+      visibleTimeLabel: "暂无时间",
+      blockerSummary: `当前${domain.label}还没有导入批次。`,
+      nextAction: "先进入导入批次列表创建或定位可用批次。",
+      primaryActionLabel: "查看导入批次",
+      primaryActionHref: "/data-quality",
+    }
+  }
+
+  if (latestAppliedBatch && latestAppliedBatch.import_version_id) {
+    return {
+      domainKey: domain.key,
+      domainLabel: domain.label,
+      sourceFileLabel: formatImportFileType(currentBatch.file_type),
+      tone: "ready",
+      statusLabel: "已形成当前版本",
+      versionLabel: latestAppliedBatch.import_version_id,
+      sourceBatchLabel: latestAppliedBatch.batch_id,
+      businessDateLabel: latestAppliedBatch.business_date_from,
+      visibleTimeLabel: formatVersionWorkbenchVisibleTime(latestAppliedBatch.uploaded_at),
+      blockerSummary: `当前按最近已应用批次 ${latestAppliedBatch.batch_id} 作为版本口径。`,
+      nextAction: "从当前批次详情继续核对版本记录和结果追踪。",
+      primaryActionLabel: "查看批次详情",
+      primaryActionHref: buildImportBatchProcessingHref(latestAppliedBatch.batch_id, {
+        tab: "batch-detail",
+      }),
+    }
+  }
+
+  return {
+    domainKey: domain.key,
+    domainLabel: domain.label,
+    sourceFileLabel: formatImportFileType(currentBatch.file_type),
+    tone: "blocked",
+    statusLabel:
+      currentBatch.application_status === "applied" ? "版本信息缺失" : "待应用",
+    versionLabel: currentBatch.import_version_id ?? "未形成当前版本",
+    sourceBatchLabel: currentBatch.batch_id,
+    businessDateLabel: currentBatch.business_date_from,
+    visibleTimeLabel: formatVersionWorkbenchVisibleTime(currentBatch.uploaded_at),
+    blockerSummary:
+      currentBatch.application_status === "applied"
+        ? `批次 ${currentBatch.batch_id} 已应用，但当前导入版本仍未返回。`
+        : currentBatch.failed_rows > 0
+          ? `最新批次仍有 ${currentBatch.failed_rows.toLocaleString("zh-CN")} 行失败，当前不能视为稳定版本。`
+          : `最新批次 ${currentBatch.batch_id} 尚未应用，当前没有稳定版本口径。`,
+    nextAction:
+      currentBatch.application_status === "applied"
+        ? "先核对版本记录和应用摘要，再继续下游追踪。"
+        : "先进入当前批次处理详情，确认 readiness、失败行和应用状态。",
+    primaryActionLabel: "查看批次详情",
+    primaryActionHref: buildImportBatchProcessingHref(currentBatch.batch_id, {
+      tab: "batch-detail",
+    }),
+  }
+}
+
+function sortImportBatchesByUploadedAt(rows: ImportBatchListRow[]): ImportBatchListRow[] {
+  return [...rows].sort((current, next) => {
+    const uploadedRank = next.uploaded_at.localeCompare(current.uploaded_at)
+
+    if (uploadedRank !== 0) {
+      return uploadedRank
+    }
+
+    return next.batch_id.localeCompare(current.batch_id)
+  })
+}
+
+function formatVersionWorkbenchVisibleTime(timestamp: string): string {
+  const parsed = new Date(timestamp)
+
+  if (Number.isNaN(parsed.getTime())) {
+    return timestamp
+  }
+
+  return parsed.toLocaleString("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   })
 }
 

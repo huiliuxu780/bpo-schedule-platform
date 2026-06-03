@@ -7032,6 +7032,130 @@ tasks:
       - "验证失败"
     commit_after_done: true
     notes: "已完成。版本结果页会在 comparison_type 与来源版本明确时展示受控本地比对入口；提交后反馈回到当前版本语境，并提供新 comparison run 详情或结果列表入口；主数据、版本缺失或上下文不足场景保持阻塞态且不展示写入按钮。"
+  - id: IM087
+    title: "业务版本工作台只读台账页"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM086"]
+    allowed_files:
+      - "app/data-quality/versions/**"
+      - "components/app-sidebar.tsx"
+      - "components/import-center-version-workbench.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/superpowers/plans/2026-06-03-version-workbench-implementation-plan.md"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "`/data-quality/versions` 展示只读业务版本台账，至少覆盖主数据、人员排班、需求预测和登录/状态日志四类业务域。"
+      - "每行至少展示数据域、当前版本、来源批次、当前可见时间、状态和阻塞摘要，并给出基础下一步入口。"
+      - "无当前版本、未应用或信息不完整时展示明确 empty/blocked 状态，不假装已有版本。"
+      - "数据质量导航提供进入版本工作台的入口；本轮不新增稳定 comparison run / review case 深链，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    notes: "已完成。/data-quality/versions 现在提供只读业务版本台账页，汇总主数据、排班、预测和登录/状态日志四类业务域的当前版本、来源批次、当前可见时间、状态和阻塞摘要，并在数据质量导航新增入口；本轮只提供基础下一步入口，不引入稳定 comparison run / review case 深链。"
+  - id: IM088
+    title: "业务版本工作台稳定跳转链路"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    dependencies: ["IM087"]
+    allowed_files:
+      - "app/data-quality/versions/**"
+      - "components/import-center-version-workbench.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "版本工作台对已定位上下文的行提供稳定的批次详情、结果追踪或 comparison run 跳转。"
+      - "上下文不足时只展示阻塞说明，不提供误导性深链。"
+      - "复用现有 data-quality 页面和本地查询能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM089
+    title: "业务版本工作台下游影响摘要"
+    priority: P1
+    status: draft
+    required_workflow: frontend-scaffold
+    dependencies: ["IM088"]
+    allowed_files:
+      - "app/data-quality/versions/**"
+      - "components/import-center-version-workbench.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "版本工作台为当前版本行补 comparison run / review case 的只读影响摘要。"
+      - "没有下游结果或上下文不完整时展示明确空态或阻塞态。"
+      - "复用现有 comparison runs、review cases 和批次上下文能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: IM080
     title: "字段映射模板上传预选链路"
     priority: P1

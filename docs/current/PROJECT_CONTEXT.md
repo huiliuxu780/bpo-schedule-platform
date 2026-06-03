@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue is empty again after `US706/IM086` completed.
+Current story queue has advanced to `US708/IM088` after `US707/IM087` completed.
 
-No additional downstream-result slice is in `docs/current/**` after `US706/IM086`; any later batch/version workspace work must be reseeded explicitly before implementation.
+The approved next chain is the first `业务版本工作台` slice under `data-quality`: `US708/IM088` is now the only current ready story, while `US709/IM089` stays outside `docs/current/**` until `IM088` completes.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -21,6 +21,8 @@ No additional downstream-result slice is in `docs/current/**` after `US706/IM086
 `US705/IM085` completed the applied-version positioning slice on the second-level batch detail page. The page now resolves direct version-result context from an applied batch, upgrades supported result-card entries to corresponding comparison-run detail links, and adds a version-context section inside result trace; unsupported or incomplete version cases stay in explicit empty/blocked state. Current state then advanced to `US706/IM086` only.
 
 `US706/IM086` completed the controlled local comparison-trigger slice on the second-level batch detail page. The result-trace version-context section now shows a gated `发起一次本地比对` entry only when comparison type and source versions are clear from the positioned result context, keeps unsupported or incomplete cases blocked without a write button, and returns success/failure feedback plus new-run/result-list links back into the same version-result context. Current queue then returned to empty.
+
+`US707/IM087` started the next chain from that empty state and is now complete. The first slice adds `/data-quality/versions` as a read-only version ledger page under the existing import-center path. It stays frontend-only, reuses current import-batch list data, and does not add backend APIs, schema or migration changes, dependencies, approval, export, batch operations, permissions, automatic scheduling, production formulas, settlement, or charge factors.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -125,4 +127,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Before any new implementation, reseed the next batch/version workspace slice into `docs/current/**`. The most natural next chain is to define the first "业务版本工作台" slice on top of the now-complete apply-result, version-positioning, and local-comparison-trigger path.
+`US708/IM088` is now current for stable workbench jumps. `US709/IM089` remains planned next for downstream impact summaries and must stay outside current state until `IM088` is green.
