@@ -6,23 +6,23 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US713
+  - id: US714
     requirement_ids:
-      - "R793"
+      - "R794"
     task_ids:
-      - "IM093"
+      - "IM094"
     module: "导入中心"
     role: "导入管理员"
-    story: "作为导入管理员，我希望在业务版本工作台看到当前版本能发起哪类本地比对，以便不用跳转多次也能判断下一步计算入口。"
+    story: "作为导入管理员，我希望在业务版本工作台对满足条件的单个版本发起一次本地比对，以便把版本检查和计算触发放在同一个工作流里。"
     task_type: "frontend-scaffold"
     priority: "P1"
     status: ready
     dependencies:
-      - "US712"
+      - "US713"
     acceptance:
-      - "`/data-quality/versions` 在可定位来源版本的行展示本地比对候选入口。"
-      - "候选入口明确对比口径、来源版本组合、业务日和触发前下一步。"
-      - "来源版本不足、业务域不支持或未应用版本时展示清晰阻塞态，不渲染误导性提交按钮。"
-      - "候选入口复用已有批次结果追踪/版本语境，不新增后端 API、schema/migration 或依赖。"
-      - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "`/data-quality/versions` 只在来源版本组合完整时提供单次本地比对提交入口。"
+      - "提交入口复用现有本地 comparison calculate 能力，不新增后端 route 或 schema。"
+      - "重复提交或后端返回 existing run 时保持幂等反馈，不暗示创建了多个运行。"
+      - "不支持的业务域、缺来源版本或未应用版本不展示提交按钮。"
+      - "不新增依赖，不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
       - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"

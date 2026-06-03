@@ -420,6 +420,70 @@ test("version workbench routes matched applied versions to run detail and applie
   );
 });
 
+test("version workbench exposes local comparison candidates without submit actions", () => {
+  const summary = summarizeImportVersionWorkbench({
+    batches: [
+      {
+        ...baseBatch,
+        batch_id: "BATCH-SCH-CANDIDATE",
+        file_type: "personnel_schedule",
+        application_status: "applied",
+        import_version_id: "SCH-VERSION-001",
+        business_date_from: "2026-05-12",
+        business_date_to: "2026-05-12",
+        uploaded_at: "2026-06-03T10:00:00+08:00",
+      },
+      {
+        ...baseBatch,
+        batch_id: "BATCH-STATUS-CANDIDATE",
+        file_type: "status_log",
+        application_status: "applied",
+        application_target: "actual_logs",
+        import_version_id: "STATUS-VERSION-001",
+        business_date_from: "2026-05-12",
+        business_date_to: "2026-05-12",
+        uploaded_at: "2026-06-03T11:00:00+08:00",
+      },
+      {
+        ...baseBatch,
+        batch_id: "BATCH-MD-CANDIDATE",
+        file_type: "master_data",
+        application_status: "applied",
+        import_version_id: "MD-VERSION-001",
+        business_date_from: "2026-05-12",
+        business_date_to: "2026-05-12",
+        uploaded_at: "2026-06-03T12:00:00+08:00",
+      },
+    ],
+    comparisonRuns: [],
+    filters: {},
+  });
+
+  const scheduleRow = summary.rows.find((row) => row.domainKey === "personnel_schedule");
+  assert.deepEqual(scheduleRow?.comparisonCandidate, {
+    tone: "ready",
+    title: "可进入本地比对语境",
+    detail: "当前版本可按 排班实际 和已定位来源版本组合进入单次本地比对触发前检查。",
+    comparisonTypeLabel: "排班实际",
+    versionPairLabel: "SCH-VERSION-001 / STATUS-VERSION-001",
+    businessDateLabel: "2026-05-12 ~ 2026-05-12",
+    actionLabel: "进入比对触发语境",
+    href: "/data-quality/BATCH-SCH-CANDIDATE?tab=result-trace",
+  });
+
+  const masterRow = summary.rows.find((row) => row.domainKey === "master_data");
+  assert.deepEqual(masterRow?.comparisonCandidate, {
+    tone: "blocked",
+    title: "暂无本地比对候选",
+    detail: "主数据当前没有可直接发起的预测排班或排班实际比对口径。",
+    comparisonTypeLabel: "不支持",
+    versionPairLabel: "MD-VERSION-001",
+    businessDateLabel: "2026-05-12 ~ 2026-05-12",
+    actionLabel: "不可触发",
+    href: null,
+  });
+});
+
 test("import center batch review guide directs selected batch follow-up", () => {
   assert.deepEqual(
     summarizeImportBatchReviewGuide({

@@ -142,6 +142,18 @@ export type ImportVersionWorkbenchRow = {
   primaryActionHref: string | null
   secondaryActionLabel: string | null
   secondaryActionHref: string | null
+  comparisonCandidate: ImportVersionComparisonCandidate
+}
+
+export type ImportVersionComparisonCandidate = {
+  tone: ImportVersionWorkbenchTone
+  title: string
+  detail: string
+  comparisonTypeLabel: string
+  versionPairLabel: string
+  businessDateLabel: string
+  actionLabel: string
+  href: string | null
 }
 
 export type ImportVersionWorkbenchSummary = {
@@ -1803,6 +1815,16 @@ function summarizeImportVersionWorkbenchRow(
       primaryActionHref: "/data-quality",
       secondaryActionLabel: null,
       secondaryActionHref: null,
+      comparisonCandidate: {
+        tone: "empty",
+        title: "暂无本地比对候选",
+        detail: `当前${domain.label}还没有导入批次，无法判断本地比对候选。`,
+        comparisonTypeLabel: "未确认",
+        versionPairLabel: "暂无",
+        businessDateLabel: "暂无业务日",
+        actionLabel: "不可触发",
+        href: null,
+      },
     }
   }
 
@@ -1829,6 +1851,10 @@ function summarizeImportVersionWorkbenchRow(
       comparisonRuns,
       reviewCases,
     })
+    const comparisonCandidate = summarizeVersionWorkbenchComparisonCandidate({
+      batch: latestAppliedBatch,
+      allBatches: batches,
+    })
 
     return {
       domainKey: domain.key,
@@ -1848,6 +1874,7 @@ function summarizeImportVersionWorkbenchRow(
       primaryActionHref: batchDetailHref,
       secondaryActionLabel: secondaryAction.label,
       secondaryActionHref: secondaryAction.href,
+      comparisonCandidate,
     }
   }
 
@@ -1879,6 +1906,10 @@ function summarizeImportVersionWorkbenchRow(
     comparisonRuns,
     reviewCases,
   })
+  const blockedComparisonCandidate = summarizeVersionWorkbenchComparisonCandidate({
+    batch: currentBatch,
+    allBatches: batches,
+  })
 
   return {
     domainKey: domain.key,
@@ -1907,6 +1938,198 @@ function summarizeImportVersionWorkbenchRow(
     primaryActionHref: blockedBatchDetailHref,
     secondaryActionLabel: blockedSecondaryAction.label,
     secondaryActionHref: blockedSecondaryAction.href,
+    comparisonCandidate: blockedComparisonCandidate,
+  }
+}
+
+function summarizeVersionWorkbenchComparisonCandidate({
+  batch,
+  allBatches,
+}: {
+  batch: ImportBatchListRow
+  allBatches: ImportBatchListRow[]
+}): ImportVersionComparisonCandidate {
+  const businessDateLabel = `${batch.business_date_from} ~ ${batch.business_date_to}`
+  const currentVersion = batch.import_version_id ?? "版本未返回"
+
+  if (batch.application_status !== "applied") {
+    return {
+      tone: "blocked",
+      title: "暂无本地比对候选",
+      detail: "当前版本尚未应用，不能进入本地比对触发前检查。",
+      comparisonTypeLabel: "未确认",
+      versionPairLabel: currentVersion,
+      businessDateLabel,
+      actionLabel: "不可触发",
+      href: null,
+    }
+  }
+
+  if (!batch.import_version_id) {
+    return {
+      tone: "blocked",
+      title: "暂无本地比对候选",
+      detail: "当前批次已应用，但导入版本仍未返回，不能形成比对来源版本组合。",
+      comparisonTypeLabel: "未确认",
+      versionPairLabel: currentVersion,
+      businessDateLabel,
+      actionLabel: "不可触发",
+      href: null,
+    }
+  }
+
+  if (batch.file_type === "demand_forecast") {
+    const scheduleBatch = findAppliedBatchForComparisonCandidate({
+      allBatches,
+      fileTypes: ["personnel_schedule"],
+      batch,
+    })
+
+    if (scheduleBatch?.import_version_id) {
+      return buildReadyVersionWorkbenchComparisonCandidate({
+        batch,
+        comparisonTypeLabel: "预测排班",
+        versionPairLabel: `${batch.import_version_id} / ${scheduleBatch.import_version_id}`,
+      })
+    }
+
+    return buildBlockedVersionWorkbenchComparisonCandidate({
+      batch,
+      detail: "当前预测版本还缺同业务日已应用排班版本，暂不能形成预测排班比对候选。",
+    })
+  }
+
+  if (batch.file_type === "personnel_schedule") {
+    const actualBatch = findAppliedBatchForComparisonCandidate({
+      allBatches,
+      fileTypes: ["login_log", "status_log"],
+      batch,
+    })
+
+    if (actualBatch?.import_version_id) {
+      return buildReadyVersionWorkbenchComparisonCandidate({
+        batch,
+        comparisonTypeLabel: "排班实际",
+        versionPairLabel: `${batch.import_version_id} / ${actualBatch.import_version_id}`,
+      })
+    }
+
+    const forecastBatch = findAppliedBatchForComparisonCandidate({
+      allBatches,
+      fileTypes: ["demand_forecast"],
+      batch,
+    })
+
+    if (forecastBatch?.import_version_id) {
+      return buildReadyVersionWorkbenchComparisonCandidate({
+        batch,
+        comparisonTypeLabel: "预测排班",
+        versionPairLabel: `${forecastBatch.import_version_id} / ${batch.import_version_id}`,
+      })
+    }
+
+    return buildBlockedVersionWorkbenchComparisonCandidate({
+      batch,
+      detail:
+        "当前排班版本还缺同业务日已应用预测版本或登录/状态日志版本，暂不能形成本地比对候选。",
+    })
+  }
+
+  if (batch.file_type === "login_log" || batch.file_type === "status_log") {
+    const scheduleBatch = findAppliedBatchForComparisonCandidate({
+      allBatches,
+      fileTypes: ["personnel_schedule"],
+      batch,
+    })
+
+    if (scheduleBatch?.import_version_id) {
+      return buildReadyVersionWorkbenchComparisonCandidate({
+        batch,
+        comparisonTypeLabel: "排班实际",
+        versionPairLabel: `${scheduleBatch.import_version_id} / ${batch.import_version_id}`,
+      })
+    }
+
+    return buildBlockedVersionWorkbenchComparisonCandidate({
+      batch,
+      detail: "当前实际日志版本还缺同业务日已应用排班版本，暂不能形成排班实际比对候选。",
+    })
+  }
+
+  return {
+    tone: "blocked",
+    title: "暂无本地比对候选",
+    detail: "主数据当前没有可直接发起的预测排班或排班实际比对口径。",
+    comparisonTypeLabel: "不支持",
+    versionPairLabel: batch.import_version_id,
+    businessDateLabel: `${batch.business_date_from} ~ ${batch.business_date_to}`,
+    actionLabel: "不可触发",
+    href: null,
+  }
+}
+
+function findAppliedBatchForComparisonCandidate({
+  allBatches,
+  fileTypes,
+  batch,
+}: {
+  allBatches: ImportBatchListRow[]
+  fileTypes: ImportFileType[]
+  batch: ImportBatchListRow
+}): ImportBatchListRow | null {
+  return (
+    sortImportBatchesByUploadedAt(
+      allBatches.filter(
+        (candidate) =>
+          candidate.application_status === "applied" &&
+          candidate.import_version_id &&
+          fileTypes.includes(candidate.file_type) &&
+          candidate.business_date_from <= batch.business_date_to &&
+          candidate.business_date_to >= batch.business_date_from
+      )
+    )[0] ?? null
+  )
+}
+
+function buildReadyVersionWorkbenchComparisonCandidate({
+  batch,
+  comparisonTypeLabel,
+  versionPairLabel,
+}: {
+  batch: ImportBatchListRow
+  comparisonTypeLabel: string
+  versionPairLabel: string
+}): ImportVersionComparisonCandidate {
+  return {
+    tone: "ready",
+    title: "可进入本地比对语境",
+    detail: `当前版本可按 ${comparisonTypeLabel} 和已定位来源版本组合进入单次本地比对触发前检查。`,
+    comparisonTypeLabel,
+    versionPairLabel,
+    businessDateLabel: `${batch.business_date_from} ~ ${batch.business_date_to}`,
+    actionLabel: "进入比对触发语境",
+    href: buildImportBatchProcessingHref(batch.batch_id, {
+      tab: "result-trace",
+    }),
+  }
+}
+
+function buildBlockedVersionWorkbenchComparisonCandidate({
+  batch,
+  detail,
+}: {
+  batch: ImportBatchListRow
+  detail: string
+}): ImportVersionComparisonCandidate {
+  return {
+    tone: "blocked",
+    title: "暂无本地比对候选",
+    detail,
+    comparisonTypeLabel: "未确认",
+    versionPairLabel: batch.import_version_id ?? "版本未返回",
+    businessDateLabel: `${batch.business_date_from} ~ ${batch.business_date_to}`,
+    actionLabel: "不可触发",
+    href: null,
   }
 }
 

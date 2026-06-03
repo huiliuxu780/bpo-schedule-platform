@@ -5,6 +5,7 @@ import {
   type ImportBatchListRow,
   type ImportComparisonRunRecord,
   type ImportReviewCaseRecord,
+  type ImportVersionComparisonCandidate,
   type ImportVersionWorkbenchFilters,
   summarizeImportVersionWorkbench,
 } from "@/components/import-center-model"
@@ -179,7 +180,7 @@ export function ImportCenterVersionWorkbench({
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <Table>
+          <Table className="min-w-[1880px]">
             <TableHeader>
               <TableRow>
                 <TableHead className="min-w-[160px]">业务域</TableHead>
@@ -189,6 +190,7 @@ export function ImportCenterVersionWorkbench({
                 <TableHead className="min-w-[110px]">状态</TableHead>
                 <TableHead className="min-w-[320px]">阻塞摘要</TableHead>
                 <TableHead className="min-w-[280px]">下游影响</TableHead>
+                <TableHead className="min-w-[300px]">本地比对</TableHead>
                 <TableHead className="min-w-[220px] text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
@@ -226,6 +228,9 @@ export function ImportCenterVersionWorkbench({
                         {row.downstreamDetail}
                       </div>
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <ComparisonCandidateSummary candidate={row.comparisonCandidate} />
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex flex-wrap justify-end gap-2">
@@ -265,6 +270,42 @@ export function ImportCenterVersionWorkbench({
         </CardContent>
       </Card>
     </main>
+  )
+}
+
+function ComparisonCandidateSummary({
+  candidate,
+}: {
+  candidate: ImportVersionComparisonCandidate
+}) {
+  const badgeVariant = candidate.tone === "ready" ? "secondary" : "outline"
+
+  return (
+    <div className="grid gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge variant={badgeVariant}>{candidate.comparisonTypeLabel}</Badge>
+        <span className="text-xs text-muted-foreground">{candidate.businessDateLabel}</span>
+      </div>
+      <div className="grid gap-1">
+        <div className="text-sm font-medium">{candidate.title}</div>
+        <div className="font-mono text-xs text-muted-foreground">
+          {candidate.versionPairLabel}
+        </div>
+        <div className="text-xs text-muted-foreground">{candidate.detail}</div>
+      </div>
+      {candidate.href ? (
+        <Button asChild size="sm" variant="outline" className="w-fit">
+          <Link href={candidate.href}>
+            {candidate.actionLabel}
+            <ArrowRight data-icon="inline-end" />
+          </Link>
+        </Button>
+      ) : (
+        <Badge variant="outline" className="w-fit">
+          {candidate.actionLabel}
+        </Badge>
+      )}
+    </div>
   )
 }
 

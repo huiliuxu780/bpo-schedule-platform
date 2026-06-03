@@ -7679,7 +7679,7 @@ tasks:
   - id: IM093
     title: "版本工作台本地比对候选入口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM092"]
     allowed_files:
@@ -7718,10 +7718,11 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已在业务版本工作台新增本地比对候选列；可定位来源版本时提供进入现有结果追踪语境的入口，来源版本不足、未应用或不支持业务域时展示阻塞态且不渲染提交按钮。"
   - id: IM094
     title: "版本工作台单次本地比对提交"
     priority: P1
-    status: draft
+    status: ready
     required_workflow: frontend-scaffold
     dependencies: ["IM093"]
     allowed_files:

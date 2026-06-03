@@ -2260,8 +2260,8 @@ description: "当前已经具备本地 comparison calculate 能力和结果查�
 source: "After IM092 completion and PM asked to continue on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
-notes: "本条只补版本工作台的单次比对候选入口和触发前语境，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "IM093 已完成：业务版本工作台按版本行展示本地比对候选/阻塞态，明确对比口径、来源版本组合、业务日和触发前下一步；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R794 - 版本工作台单次本地比对提交
@@ -2273,7 +2273,7 @@ description: "版本工作台展示本地比对候选后，用户仍需要进入
 source: "After R793 planning on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
+status: "ready"
 notes: "本条只做单版本、单次、本地计算提交；不做批量计算、自动排班、审批、权限、导出、真实外部接口、生产公式、结算或收费因子。"
 ```
 

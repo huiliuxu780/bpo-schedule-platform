@@ -2471,3 +2471,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM093 Version Workbench Local Comparison Candidates
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `892e868`
+- remote_status: `branch includes pushed IM092 return-loop baseline; IM093 planning commit and implementation are local only until PM asks to push.`
+- scope: add a read-only `本地比对` candidate column to `/data-quality/versions`; summarize candidate comparison type, source version pair, business date range, and existing result-trace target; keep unsupported, unapplied, missing-version, and incomplete-source rows blocked without submit buttons.
+- allowed_files_check: `components/import-center-model.ts`, `components/import-center-version-workbench.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no package, lockfile, backend, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: `node scripts/tests/import-center-model.test.mjs`, `npm run typecheck`, browser smoke on `http://127.0.0.1:3000/data-quality/versions`, `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required before Done Report.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

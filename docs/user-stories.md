@@ -4105,7 +4105,8 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US712"
-status: "draft"
+status: "done"
+notes: "IM093 已完成：/data-quality/versions 新增本地比对候选列，ready 候选链接回现有结果追踪语境，缺来源版本、未应用或不支持业务域保持阻塞态且不渲染提交按钮。"
 ```
 
 ### US714 - 版本工作台单次本地比对提交
@@ -4128,7 +4129,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US713"
-status: "draft"
+status: "ready"
 ```
 
 ### US715 - 版本工作台计算后结果回看

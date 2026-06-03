@@ -406,3 +406,11 @@ After the comparison-result callback chain completed, the next calculation-trigg
 3. `US715/IM095`: show result-review feedback after a version-workbench comparison submit.
 
 To keep Story Runner state narrow, only `US713/IM093` entered `docs/current/**` as ready. `US714/IM094` and `US715/IM095` stay outside current state until the prior slice is green. This chain stays frontend-only and must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors.
+
+## 2026-06-03 IM093 Version Workbench Local Comparison Candidates
+
+`US713/IM093` completed the first slice of the version-workbench calculation-trigger chain. `/data-quality/versions` now exposes a read-only `本地比对` column for each business-domain row. Applied versions with a defensible same-business-date source pair can point back into the existing batch `结果追踪` trigger context, while unsupported domains, unapplied rows, missing import-version IDs, and incomplete source-version combinations show an explicit blocked state with no submit button.
+
+The model layer now summarizes comparison candidate tone, comparison type, source version pair, business date range, action label, and target href. The page renders that summary without introducing a new backend API, route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
+
+After `IM093` completion, current state advanced to `US714/IM094` for the controlled single-version local comparison submit entry. `US715/IM095` remains outside current state until `IM094` is green.
