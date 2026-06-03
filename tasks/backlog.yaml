@@ -7936,7 +7936,7 @@ tasks:
   - id: IM099
     title: "人员排班生产工作台只读入口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM098"]
     allowed_files:
@@ -7975,10 +7975,11 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已新增 `/schedule-plans/production` 只读排班生产工作台，挂在现有计划与排班导航下；页面展示人员排班来源批次、业务版本、应用状态、0.5h 展开状态、阻塞原因、只读边界和 IM100/IM101 后续入口状态。"
   - id: IM100
     title: "人员排班版本详情与半小时展开结果"
     priority: P1
-    status: draft
+    status: ready
     required_workflow: frontend-scaffold
     dependencies: ["IM099"]
     allowed_files:

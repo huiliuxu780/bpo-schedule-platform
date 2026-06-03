@@ -2607,3 +2607,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM099 Personnel Schedule Production Workbench
+
+- branch_name: `codex/im099-personnel-schedule-production-workbench`
+- base_main_commit: `923c315`
+- remote_status: `main includes merged IM099-IM101 planning baseline; IM099 implementation is local only until final merge/push.`
+- scope: add `/schedule-plans/production` as a read-only personnel-schedule production workbench under existing plan/schedule navigation; show source batch, schedule business version, application status, 0.5h expansion state, blocker summary, read-only boundary, and IM100/IM101 next-step labels.
+- allowed_files_check: `app/schedule-plans/production/**`, `components/personnel-schedule-production-workbench.tsx`, `components/personnel-schedule-production-model.ts`, `components/app-sidebar.tsx`, `scripts/tests/personnel-schedule-production-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 4 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; HTTP smoke on `http://127.0.0.1:3000/schedule-plans/production` matched `排班生产`, `只读工作台`, `人员排班生产台账`, `版本详情待 IM100`, and `发布/冻结边界待 IM101`; in-app browser smoke confirmed route, page signals, and only `排班生产` as the active sidebar item. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

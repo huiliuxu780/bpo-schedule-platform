@@ -21,6 +21,7 @@ type NavItem = {
   title: string
   href: string
   activeMatch?: "exact" | "prefix"
+  excludePrefixes?: string[]
   active?: boolean
   badge?: string
   tag?: string
@@ -53,7 +54,13 @@ const nav: NavGroup[] = [
     icon: CalendarDays,
     items: [
       { title: "需求计划", href: "/demand-plans", activeMatch: "exact" },
-      { title: "排班计划", href: "/schedule-plans", activeMatch: "prefix" },
+      { title: "排班生产", href: "/schedule-plans/production", activeMatch: "exact", tag: "P1" },
+      {
+        title: "排班计划",
+        href: "/schedule-plans",
+        activeMatch: "prefix",
+        excludePrefixes: ["/schedule-plans/production"],
+      },
       { title: "班次明细", href: "/shift-details", activeMatch: "exact" },
       { title: "不可用管理", href: "/unavailability", activeMatch: "exact", tag: "P1" },
       { title: "智能排班", href: "/schedule-plans", tag: "Beta" },
@@ -135,7 +142,10 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
       }
 
       if (item.activeMatch === "prefix") {
-        return pathname.startsWith(item.href)
+        return (
+          pathname.startsWith(item.href) &&
+          !item.excludePrefixes?.some((prefix) => pathname.startsWith(prefix))
+        )
       }
 
       return false

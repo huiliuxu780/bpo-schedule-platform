@@ -4242,7 +4242,8 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US718"
-status: "ready"
+status: "done"
+notes: "IM099 已完成：`/schedule-plans/production` 在现有计划与排班导航下展示人员排班生产只读工作台，包含来源批次、业务版本、应用状态、0.5h 展开状态、阻塞原因和后续版本详情/发布冻结边界。"
 ```
 
 ### US720 - 人员排班版本详情与 0.5h 展开结果
@@ -4264,7 +4265,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US719"
-status: "draft"
+status: "ready"
 ```
 
 ### US721 - 人员排班发布冻结边界安全壳

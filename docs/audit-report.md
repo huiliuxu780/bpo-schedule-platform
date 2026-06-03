@@ -3510,3 +3510,28 @@
 #### 验证
 
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM099 人员排班生产工作台只读入口
+
+#### 审计结论
+
+- `IM099/US719` 已新增 `/schedule-plans/production`，入口位于现有计划与排班导航下，不创建新的首页。
+- 工作台复用现有导入批次列表，按人员排班批次展示来源批次、业务版本、业务日范围、应用状态、0.5h 展开状态和阻塞原因。
+- 页面明确当前只读：版本详情待 IM100，发布/冻结边界待 IM101；本轮不发布、不冻结、不触发自动排班。
+- 本轮未新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。
+- 当前状态已推进到 `US720/IM100`，用于后续单版本详情和 0.5h 展开结果可视化。
+
+#### 风险
+
+- 当前 0.5h 展开只根据已应用版本和应用记录数判断可见状态，不展示人员级明细。
+- 这是只读生产台账，不是发布、冻结、自动排班或生产状态写入。
+
+#### 验证
+
+- `node scripts/tests/personnel-schedule-production-model.test.mjs`：通过，4 个 personnel-schedule production model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- HTTP smoke：`http://127.0.0.1:3000/schedule-plans/production` 命中 `排班生产`、`只读工作台`、`人员排班生产台账`、`版本详情待 IM100` 和 `发布/冻结边界待 IM101`。
+- in-app browser smoke：当前 URL 为 `/schedule-plans/production`，页面命中只读工作台、台账和 IM100 后续提示，侧边栏只有 `排班生产` 处于 active 状态。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

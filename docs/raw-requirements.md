@@ -2338,8 +2338,8 @@ description: "主数据维护链路已经形成只读工作台、详情和动作
 source: "After IM098 completion and PM asked to continue on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "ready"
-notes: "第一刀只做人员排班生产的入口、版本分组、来源批次和展开状态可见性；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "IM099 已完成：新增计划与排班下的 `/schedule-plans/production` 只读排班生产工作台，展示来源批次、业务版本、应用状态、0.5h 展开状态、阻塞原因和 IM100/IM101 后续边界；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R800 - 人员排班版本详情与 0.5h 展开结果
@@ -2351,7 +2351,7 @@ description: "人员排班生产工作台需要进入单个排班版本详情，
 source: "After R799 planning on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
+status: "ready"
 notes: "第二刀只做版本详情和展开结果可视化；不做发布、冻结、自动排班、真实写入、批量或审批。"
 ```
 

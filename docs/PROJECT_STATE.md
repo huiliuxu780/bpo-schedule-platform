@@ -464,3 +464,9 @@ The shell is intentionally non-writing. Each action shows single-entity scope, r
 After the master-data maintenance chain, the next recommended block is personnel-level schedule production. It starts with a read-only production workbench under the existing plan/schedule area, then can add version detail with 0.5h expansion visibility, and only after that can discuss publish/freeze boundaries.
 
 Only `US719/IM099` entered current ready state. `US720/IM100` and `US721/IM101` stay outside current until the previous slice is green. The chain must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors without a separate confirmed task.
+
+## 2026-06-03 IM099 Personnel Schedule Production Workbench
+
+`IM099/US719` added `/schedule-plans/production` under the existing plan/schedule navigation as a read-only personnel-schedule production workbench. The page reuses the current import-batch list contract and filters personnel-schedule batches into production rows with source batch, business version, business date range, application state, 0.5h expansion state, blocker summary, and next-step labels.
+
+The slice intentionally does not publish, freeze, trigger automatic scheduling, or write production state. It adds no backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, real external integration, production formula, settlement rule, or charge-factor change. Current state advanced to `US720/IM100` for version detail and 0.5h expansion result visibility.
