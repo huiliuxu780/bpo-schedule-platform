@@ -6811,6 +6811,51 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM082
+    title: "独立上传结果回流"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM081"]
+    allowed_files:
+      - "app/data-quality/actions.ts"
+      - "app/data-quality/uploads/new/page.tsx"
+      - "components/import-center-model.ts"
+      - "components/import-center-upload-form.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "独立上传页提交后成功或失败都回到 `/data-quality/uploads/new`，而不是默认回到数据质量列表页。"
+      - "成功反馈展示新批次号，并提供进入该批次处理详情的入口。"
+      - "失败反馈保留错误原因和可继续上传的表单。"
+      - "批次详情页内原有 CSV 上传表单继续回到数据质量列表页或批次语境，不被独立上传页回流逻辑破坏。"
+      - "复用现有 `uploadImportCsvAction`、上传表单和结果反馈模型，不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: IM080
     title: "字段映射模板上传预选链路"
     priority: P1

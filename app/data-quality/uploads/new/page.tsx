@@ -77,6 +77,7 @@ export default async function ImportUploadWorkspacePage({
           </TabsList>
           <TabsContent value="upload">
             <ImportCenterUploadForm
+              resultRedirectTo="/data-quality/uploads/new"
               selectedTemplateId={query?.templateId}
               templateError={templateResult.error}
               templates={templates}

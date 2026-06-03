@@ -3312,3 +3312,29 @@
 - `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过，新路由出现在 Next build route 表中。
 - production DOM smoke：`http://127.0.0.1:3040/data-quality/uploads/new?templateId=TPL-IM027-SMOKE-001` 命中 `CSV 上传工作区`、`已预选字段映射模板`，且 `template_id` defaultValue 为 `TPL-IM027-SMOKE-001`；模板详情页命中 `/data-quality/uploads/new?templateId=TPL-IM027-SMOKE-001` 与 `用此模板上传`；数据质量列表页命中 `/data-quality/uploads/new` 与 `上传 CSV`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM082 独立上传结果回流
+
+#### 审计结论
+
+- `IM082/US702` 已让独立上传页提交后回到 `/data-quality/uploads/new` 显示结果反馈，而不是统一回到数据质量列表页。
+- 独立上传表单通过隐藏字段设置固定返回目标；server action 只接受 `/data-quality/uploads/new` 这个受控目标，其他值走原有 `/data-quality` 行为。
+- 成功反馈和带批次的失败反馈都链接到 `/data-quality/{batchId}` 二级批次处理页，方便上传后立即检查行结果、失败行和应用准备度。
+- 批次详情页内的上传表单不设置独立页返回目标，原有批次语境不被破坏。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只是单次上传后的前端回流，不是上传队列、批量上传或审批发布流。
+- 上传结果仍依赖现有 API 响应和 URL 参数；生产级审计流水、权限隔离和批量重试仍需后续独立任务。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先失败，证明旧模型没有独立上传结果回流 href；随后结果反馈测试先失败，证明旧反馈入口仍指向列表页。
+- `node scripts/tests/import-center-model.test.mjs`：通过，64 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- production DOM smoke：`http://127.0.0.1:3042/data-quality/uploads/new?upload=success&batch=BATCH-IM082-SMOKE-001` 命中 `CSV 上传成功`、`进入批次处理`、`/data-quality/BATCH-IM082-SMOKE-001` 和 `result_redirect_to`；失败页命中 `CSV 上传失败`、`api_409`、二级批次链接和 `result_redirect_to`；批次详情页未出现 `result_redirect_to`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

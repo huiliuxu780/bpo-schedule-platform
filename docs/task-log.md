@@ -1818,3 +1818,14 @@
 - action: 新增独立 CSV 上传工作区。
 - status: `done`
 - notes: 新增 `/data-quality/uploads/new` 二级页，复用现有 CSV 上传表单、上传 action 和字段映射模板 API；数据质量列表页提供 `上传 CSV` 入口，模板详情页在无来源批次时也可携带 `templateId` 进入独立上传页；上传页用 `上传 CSV` / `字段映射模板` tab 分层，避免继续堆叠到批次详情长页；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM082`
+- source_ids:
+  - `R782`
+- story_ids:
+  - `US702`
+- action: 独立上传结果回流到上传工作区。
+- status: `done`
+- notes: 独立上传页的 CSV 表单现在携带受控 `result_redirect_to=/data-quality/uploads/new` 返回目标，上传成功或失败后回到独立上传页显示反馈；成功和带批次失败反馈入口直达 `/data-quality/{batchId}` 二级批次处理页；批次详情页上传表单不设置该返回目标，保持原有回流行为；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

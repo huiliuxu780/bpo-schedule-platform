@@ -24,6 +24,7 @@ type ImportCenterUploadFormProps = {
   templates?: ImportFieldMappingTemplate[]
   templateError?: string | null
   selectedTemplateId?: string
+  resultRedirectTo?: string
 }
 
 const fileTypes: ImportFileType[] = [
@@ -41,6 +42,7 @@ export function ImportCenterUploadForm({
   templates = [],
   templateError,
   selectedTemplateId,
+  resultRedirectTo,
 }: ImportCenterUploadFormProps) {
   const uploadGuidance = summarizeImportUploadResultGuidance({
     status: uploadStatus,
@@ -65,6 +67,9 @@ export function ImportCenterUploadForm({
       </CardHeader>
       <CardContent>
         <form action={uploadImportCsvAction} className="grid gap-4">
+          {resultRedirectTo ? (
+            <input name="result_redirect_to" type="hidden" value={resultRedirectTo} />
+          ) : null}
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
             <Field label="批次号">
               <Input name="batch_id" placeholder="BATCH-CSV-20260529" required />

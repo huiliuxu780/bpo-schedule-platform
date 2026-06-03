@@ -226,6 +226,7 @@ Current invariants:
 - `IM079/US699` added a second-level field-mapping template creation page over the existing create template API, then returned current queue and active tasks to empty.
 - `IM080/US700` added a field-mapping template upload prefill chain from batch template maintenance to template detail and back into the batch upload tools with the selected template prefilled; it then returned current queue and active tasks to empty.
 - `IM081/US701` added an independent `/data-quality/uploads/new` CSV upload workspace with list-page entry, template-detail prefill entry, and tabbed upload/template hierarchy over existing upload and template APIs; it then returned current queue and active tasks to empty.
+- `IM082/US702` added independent upload result return guidance so standalone uploads return to `/data-quality/uploads/new` with success/failure feedback and direct batch processing links while batch-detail uploads keep their original redirect behavior; it then returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -43,6 +43,29 @@ dependencies:
 status: "done"
 ```
 
+### US702 - 独立上传结果回流
+
+```yaml
+id: US702
+requirement_ids:
+  - R782
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望独立上传页在上传后保留结果反馈和新批次入口，以便上传完成后立即进入批次处理。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "独立上传页提交后成功或失败都回到 `/data-quality/uploads/new`，而不是默认回到数据质量列表页。"
+  - "成功反馈展示新批次号，并提供进入该批次处理详情的入口。"
+  - "失败反馈保留错误原因和可继续上传的表单。"
+  - "批次详情页内原有 CSV 上传表单继续回到数据质量列表页或批次语境，不被独立上传页回流逻辑破坏。"
+  - "复用现有 `uploadImportCsvAction`、上传表单和结果反馈模型，不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US701"
+status: "done"
+```
+
 ### US700 - 字段映射模板上传预选链路
 
 ```yaml

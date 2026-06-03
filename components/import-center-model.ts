@@ -1106,6 +1106,24 @@ export function buildImportUploadWorkspaceHref(
   return `/data-quality/uploads/new${query ? `?${query}` : ""}`
 }
 
+export function buildImportUploadWorkspaceResultHref(params: {
+  status: "success" | "failed"
+  batchId?: string | null
+  reason?: string | null
+}): string {
+  const searchParams = new URLSearchParams({ upload: params.status })
+
+  if (params.reason) {
+    searchParams.set("reason", params.reason)
+  }
+
+  if (params.batchId) {
+    searchParams.set("batch", params.batchId)
+  }
+
+  return `/data-quality/uploads/new?${searchParams.toString()}`
+}
+
 export function buildImportFieldMappingTemplateWorkspaceHref(
   templateId: string,
   params: {
@@ -3906,9 +3924,7 @@ export function summarizeImportUploadResultGuidance({
     return null
   }
 
-  const batchHref = batchId
-    ? `/data-quality?batch=${encodeURIComponent(batchId)}`
-    : null
+  const batchHref = batchId ? buildImportBatchProcessingHref(batchId) : null
 
   if (status === "success") {
     return {
@@ -3918,7 +3934,7 @@ export function summarizeImportUploadResultGuidance({
         ? `批次 ${batchId} 已提交并可在接入批次中查看。`
         : "CSV 已提交并可在接入批次中查看。",
       batchHref,
-      primaryActionLabel: batchHref ? "查看批次" : "查看接入批次",
+      primaryActionLabel: batchHref ? "进入批次处理" : "查看接入批次",
       nextAction:
         "查看批次行结果、失败行和应用准备度；确认无阻塞后再进入后续受控应用流程。",
     }

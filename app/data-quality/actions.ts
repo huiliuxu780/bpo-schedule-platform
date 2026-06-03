@@ -8,6 +8,7 @@ import {
   buildImportFieldMappingTemplateDetailUrl,
   buildImportFieldMappingTemplateWorkspaceHref,
   buildImportRowCorrectionUrl,
+  buildImportUploadWorkspaceResultHref,
   buildImportUploadUrl,
   type ImportFileType,
 } from "@/components/import-center-model"
@@ -24,10 +25,14 @@ export async function uploadImportCsvAction(formData: FormData) {
   const businessDateTo = formText(formData, "business_date_to")
   const fieldMapping = formText(formData, "field_mapping") || '{"source_key":"source_key"}'
   const templateId = formText(formData, "template_id")
+  const resultTarget = formText(formData, "result_redirect_to")
   const file = formData.get("csv_file")
 
   if (!batchId || !businessDateFrom || !businessDateTo || !(file instanceof File)) {
-    redirect("/data-quality?upload=failed&reason=missing_required_fields")
+    redirect(buildUploadResultRedirectHref(resultTarget, {
+      status: "failed",
+      reason: "missing_required_fields",
+    }))
   }
 
   const csvText = await file.text()
@@ -63,20 +68,49 @@ export async function uploadImportCsvAction(formData: FormData) {
   }
 
   if (networkError) {
-    redirect(
-      `/data-quality?upload=failed&reason=${encodeURIComponent(networkError)}`
-    )
+    redirect(buildUploadResultRedirectHref(resultTarget, {
+      status: "failed",
+      reason: networkError,
+    }))
   }
 
   if (apiStatus !== null && (apiStatus < 200 || apiStatus >= 300)) {
-    redirect(
-      `/data-quality?upload=failed&reason=api_${apiStatus}&batch=${encodeURIComponent(
-        batchId
-      )}`
-    )
+    redirect(buildUploadResultRedirectHref(resultTarget, {
+      status: "failed",
+      reason: `api_${apiStatus}`,
+      batchId,
+    }))
   }
 
-  redirect(`/data-quality?upload=success&batch=${encodeURIComponent(batchId)}`)
+  redirect(buildUploadResultRedirectHref(resultTarget, {
+    status: "success",
+    batchId,
+  }))
+}
+
+function buildUploadResultRedirectHref(
+  resultTarget: string,
+  params: {
+    status: "success" | "failed"
+    batchId?: string | null
+    reason?: string | null
+  }
+) {
+  if (resultTarget === "/data-quality/uploads/new") {
+    return buildImportUploadWorkspaceResultHref(params)
+  }
+
+  const searchParams = new URLSearchParams({ upload: params.status })
+
+  if (params.reason) {
+    searchParams.set("reason", params.reason)
+  }
+
+  if (params.batchId) {
+    searchParams.set("batch", params.batchId)
+  }
+
+  return `/data-quality?${searchParams.toString()}`
 }
 
 export async function correctImportFailedRowAction(formData: FormData) {

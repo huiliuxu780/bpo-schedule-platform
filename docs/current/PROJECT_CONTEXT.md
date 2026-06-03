@@ -32,6 +32,8 @@ Current story queue is empty and active tasks are empty.
 
 `US701/IM081` completed the independent CSV upload workspace, then current queue returned to empty.
 
+`US702/IM082` completed independent upload result return guidance, then current queue returned to empty.
+
 `US692/IM072` completed the review-case action submit feedback, then current queue returned to empty.
 
 `US691/IM071` completed the review-case detail processing action deck, then current queue returned to empty.

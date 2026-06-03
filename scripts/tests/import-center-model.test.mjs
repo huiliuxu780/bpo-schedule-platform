@@ -15,6 +15,7 @@ import {
   buildImportFieldMappingTemplateUploadHref,
   buildImportFieldMappingTemplateWorkspaceHref,
   buildImportUploadWorkspaceHref,
+  buildImportUploadWorkspaceResultHref,
   buildImportQualityIssueReviewCasesHref,
   buildImportReviewCaseDetailApiUrl,
   buildImportReviewCaseDetailWorkspaceHref,
@@ -3159,6 +3160,24 @@ test("import center upload workspace href supports direct template prefill", () 
   );
 });
 
+test("import center upload workspace result href preserves upload feedback", () => {
+  assert.equal(
+    buildImportUploadWorkspaceResultHref({
+      status: "success",
+      batchId: "BATCH/CSV 001",
+    }),
+    "/data-quality/uploads/new?upload=success&batch=BATCH%2FCSV+001",
+  );
+  assert.equal(
+    buildImportUploadWorkspaceResultHref({
+      status: "failed",
+      reason: "api_409",
+      batchId: "BATCH/CSV 001",
+    }),
+    "/data-quality/uploads/new?upload=failed&reason=api_409&batch=BATCH%2FCSV+001",
+  );
+});
+
 test("import center upload prefill summarizes selected active template", () => {
   const summary = summarizeImportTemplateUploadPrefill(
     [
@@ -4132,8 +4151,8 @@ test("import center upload result guidance links uploads back to batch review", 
       tone: "success",
       title: "CSV 上传成功",
       detail: "批次 BATCH-CSV-001 已提交并可在接入批次中查看。",
-      batchHref: "/data-quality?batch=BATCH-CSV-001",
-      primaryActionLabel: "查看批次",
+      batchHref: "/data-quality/BATCH-CSV-001",
+      primaryActionLabel: "进入批次处理",
       nextAction: "查看批次行结果、失败行和应用准备度；确认无阻塞后再进入后续受控应用流程。",
     },
   );
@@ -4148,7 +4167,7 @@ test("import center upload result guidance links uploads back to batch review", 
       tone: "failed",
       title: "CSV 上传失败",
       detail: "接口返回 409，可能是批次号重复或请求不满足接口校验。",
-      batchHref: "/data-quality?batch=BATCH%2FCSV%20001",
+      batchHref: "/data-quality/BATCH%2FCSV%20001",
       primaryActionLabel: "回看批次",
       nextAction: "检查批次号、字段映射 JSON、模板选择和 CSV 表头后重新上传；如果批次已存在，先查看原批次结果。",
     },

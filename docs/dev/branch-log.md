@@ -2215,3 +2215,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM082 Import Center Upload Result Return
+
+- branch_name: `codex/im082-upload-result-return`
+- base_main_commit: `58c8812`
+- remote_status: `branch created locally from pushed codex/im081-upload-workspace; not pushed yet.`
+- scope: independent upload result redirect target, upload result workspace href helper, direct batch processing links in upload result feedback, upload form hidden return target, production DOM smoke evidence, and traceability records.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/data-quality/uploads/new/page.tsx`, `components/import-center-model.ts`, `components/import-center-upload-form.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/actions.ts`, `app/data-quality/uploads/new/page.tsx`, `components/import-center-model.ts`, `components/import-center-upload-form.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `buildImportUploadWorkspaceResultHref` was not exported; a second red test proved upload result feedback still linked to list query instead of second-level batch processing; target model test passed with 64 tests; lint, typecheck, shadcn gate, and Node 22 build passed; production DOM smoke on 3042 verified success/failed upload result pages and confirmed batch detail upload did not include the independent return hidden input; `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

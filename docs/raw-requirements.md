@@ -28,6 +28,19 @@ status: "done"
 notes: "本轮已新增 /data-quality/uploads/new 独立上传工作区；数据质量列表页提供上传入口，模板详情页在无来源批次时可携带 templateId 进入独立上传页，上传页复用现有 CSV 上传 action、模板 API 和上传表单，并用 tab 区分上传与模板视图；未新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
 
+### R782 - 独立上传结果回流
+
+```yaml
+id: R782
+module: "导入中心"
+description: "独立 CSV 上传工作区已经建立，但现有 upload action 成功或失败后仍统一回到数据质量列表页。需要让独立上传页提交后回到上传工作区自身，展示成功/失败反馈和新批次处理入口，避免用户上传后还要回列表中查找批次。"
+source: "After IM081 and PM asked to continue on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已完成独立上传结果回流；独立上传页提交后通过受控返回目标回到 /data-quality/uploads/new，成功/失败反馈保留在上传工作区，成功和可回看失败批次入口直达二级批次处理页；批次详情页上传表单不设置该返回目标，保持原语境；未新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```
+
 ### R780 - 字段映射模板上传预选链路
 
 ```yaml
