@@ -286,3 +286,7 @@ The previous project workspace is archived outside this clean root:
 `/Users/mac/Documents/Codex/01_Projects/bpo-schedule-platform-lab/`
 
 That archive is reference material only. Do not import from it, wire it into build/lint/check flows, or copy large modules into active source without a confirmed migration task.
+
+## 2026-06-03 IM083 Single-Batch Apply Entry
+
+`US703/IM083` completed a controlled single-batch apply entry on the second-level import batch detail page. The page now shows an apply panel for readiness-ready, not-applied batches and routes the submit through existing apply APIs by file type. Blocked, already-applied, or readiness-unknown states remain read-only. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, production formula, settlement rule, or charge factor was added.

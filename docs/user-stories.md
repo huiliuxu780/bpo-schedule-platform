@@ -66,6 +66,29 @@ dependencies:
 status: "done"
 ```
 
+### US703 - 单批次导入应用写入入口
+
+```yaml
+id: US703
+requirement_ids:
+  - R783
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在批次处理详情页对准备度通过的单个批次执行应用写入，以便上传和修正完成后能进入真实业务数据闭环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 在准备度 ready 且未应用时展示单批次应用入口。"
+  - "应用入口按 file_type 调用现有 apply API：master_data、personnel_schedule、demand_forecast、login_log/status_log。"
+  - "应用成功后留在当前批次详情页并展示成功反馈和下一步下游结果提示。"
+  - "准备度阻塞、已应用、准备度读取失败或未知文件类型时只展示原因，不提供写入按钮。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US702"
+status: "done"
+```
+
 ### US700 - 字段映射模板上传预选链路
 
 ```yaml

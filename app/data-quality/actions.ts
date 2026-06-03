@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation"
 
 import {
+  buildImportBatchApplyUrl,
   buildImportFieldMappingTemplateCreateUrl,
   buildImportFieldMappingTemplateDeactivateUrl,
   buildImportFieldMappingTemplateDetailUrl,
@@ -12,6 +13,14 @@ import {
   buildImportUploadUrl,
   type ImportFileType,
 } from "@/components/import-center-model"
+
+const importFileTypes = new Set<ImportFileType>([
+  "master_data",
+  "personnel_schedule",
+  "demand_forecast",
+  "login_log",
+  "status_log",
+])
 
 function formText(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim()
@@ -323,6 +332,44 @@ export async function deactivateImportFieldMappingTemplateAction(formData: FormD
   }
 
   redirect(`${detailHref}?template=success&action=deactivate`)
+}
+
+export async function applyImportBatchAction(formData: FormData) {
+  const batchId = formText(formData, "batch_id")
+  const fileType = formText(formData, "file_type") as ImportFileType
+  const detailHref = batchId
+    ? `/data-quality/${encodeURIComponent(batchId)}`
+    : "/data-quality"
+
+  if (!batchId || !importFileTypes.has(fileType)) {
+    redirect(`${detailHref}?apply=failed&reason=missing_required_fields`)
+  }
+
+  let apiStatus: number | null = null
+  let networkError: string | null = null
+
+  try {
+    const response = await fetch(buildImportBatchApplyUrl(batchId, fileType), {
+      method: "POST",
+      cache: "no-store",
+    })
+
+    apiStatus = response.status
+  } catch (error) {
+    networkError = formatActionError(error)
+  }
+
+  if (networkError) {
+    redirect(
+      `${detailHref}?apply=failed&reason=${encodeURIComponent(networkError)}`
+    )
+  }
+
+  if (apiStatus !== null && (apiStatus < 200 || apiStatus >= 300)) {
+    redirect(`${detailHref}?apply=failed&reason=api_${apiStatus}`)
+  }
+
+  redirect(`${detailHref}?apply=success`)
 }
 
 function parseStandardFields(value: string): Record<string, unknown> | null {

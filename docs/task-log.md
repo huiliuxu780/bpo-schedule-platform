@@ -1829,3 +1829,14 @@
 - action: 独立上传结果回流到上传工作区。
 - status: `done`
 - notes: 独立上传页的 CSV 表单现在携带受控 `result_redirect_to=/data-quality/uploads/new` 返回目标，上传成功或失败后回到独立上传页显示反馈；成功和带批次失败反馈入口直达 `/data-quality/{batchId}` 二级批次处理页；批次详情页上传表单不设置该返回目标，保持原有回流行为；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM083`
+- source_ids:
+  - `R783`
+- story_ids:
+  - `US703`
+- action: 新增单批次导入应用写入入口。
+- status: `done`
+- notes: 批次处理详情页新增单批次应用区；readiness ready 且未应用时展示 `应用到业务数据` 提交入口，按 file_type 调用现有 apply API；应用成功或失败后回到当前批次详情页展示反馈；阻塞、已应用或准备度未知时只展示原因，不展示写入按钮；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

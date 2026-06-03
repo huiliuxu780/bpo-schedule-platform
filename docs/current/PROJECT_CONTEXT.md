@@ -12,6 +12,8 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 Current story queue is empty and active tasks are empty.
 
+`US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then current queue returned to empty.
+
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
 `US693/IM073` completed the review-case submit continuation navigation, then current queue returned to empty.

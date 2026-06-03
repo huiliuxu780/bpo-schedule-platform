@@ -2232,3 +2232,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM083 Import Center Single-Batch Apply Entry
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `235276f`
+- remote_status: `branch created locally from IM082; not pushed yet.`
+- scope: single-batch apply entry on `/data-quality/[batchId]`, apply server action over existing apply APIs, model helpers/test coverage, production DOM smoke evidence, and traceability records.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/data-quality/[batchId]/page.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/actions.ts`, `app/data-quality/[batchId]/page.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `buildImportBatchApplyUrl` was not exported; target model test passed with 67 tests; lint, typecheck, shadcn gate, and Node 22 build passed; production DOM smoke on 3043 verified ready apply entry, apply success feedback, and blocked-state no-submit behavior; `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

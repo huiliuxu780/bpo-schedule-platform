@@ -242,6 +242,31 @@ export type ImportApplyActionGuidance = {
   nextAction: string
 }
 
+export type ImportSingleBatchApplyActionTone =
+  | "ready"
+  | "blocked"
+  | "done"
+  | "unknown"
+
+export type ImportSingleBatchApplyAction = {
+  tone: ImportSingleBatchApplyActionTone
+  canSubmit: boolean
+  statusLabel: string
+  actionLabel: string
+  title: string
+  detail: string
+  nextAction: string
+}
+
+export type ImportBatchApplyResultNoticeTone = "success" | "failed"
+
+export type ImportBatchApplyResultNotice = {
+  tone: ImportBatchApplyResultNoticeTone
+  title: string
+  detail: string
+  nextAction: string
+}
+
 export type ImportReadinessIssueGroupTone = "blocked" | "ready" | "done" | "unknown"
 
 export type ImportReadinessIssueGroupKey =
@@ -1062,6 +1087,33 @@ export function buildImportUploadUrl(
     `/api/v1/import-batches/upload-csv?${searchParams.toString()}`,
     apiBase
   )
+}
+
+export function buildImportBatchApplyUrl(
+  batchId: string,
+  fileType: ImportFileType,
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl(
+    `/api/v1/import-batches/${encodeURIComponent(batchId)}/${getImportBatchApplyApiAction(fileType)}`,
+    apiBase
+  )
+}
+
+function getImportBatchApplyApiAction(fileType: ImportFileType): string {
+  if (fileType === "master_data") {
+    return "apply-master-data"
+  }
+
+  if (fileType === "personnel_schedule") {
+    return "apply-personnel-schedule"
+  }
+
+  if (fileType === "demand_forecast") {
+    return "apply-forecast"
+  }
+
+  return "apply-actual-logs"
 }
 
 export function buildImportFieldMappingTemplatesUrl(
@@ -4027,6 +4079,95 @@ export function summarizeImportApplyActionGuidance(
   }
 }
 
+export function summarizeImportSingleBatchApplyAction(
+  readiness: ImportApplyReadinessResponse | null,
+  readinessError?: string | null
+): ImportSingleBatchApplyAction {
+  if (readinessError || !readiness) {
+    return {
+      tone: "unknown",
+      canSubmit: false,
+      statusLabel: "准备度未知",
+      actionLabel: "暂不可应用",
+      title: "准备度暂不可判断",
+      detail: readinessError ?? "未返回准备度结果。",
+      nextAction: "先确认本地 API 状态；不要在准备度未知时执行应用写入。",
+    }
+  }
+
+  if (readiness.application_status === "applied") {
+    return {
+      tone: "done",
+      canSubmit: false,
+      statusLabel: "已应用",
+      actionLabel: "无需重复应用",
+      title: "批次已应用",
+      detail: `已写入 ${readiness.applied_record_count} 条记录，不需要重复应用。`,
+      nextAction: "继续查看下游版本、对比结果或复核案例。",
+    }
+  }
+
+  if (readiness.readiness_status !== "ready") {
+    const blocker =
+      readiness.blockers.find((item) => item.code !== "IMPORT_BATCH_ALREADY_APPLIED")
+        ?.message ??
+      readiness.row_blockers[0]?.message ??
+      "当前批次仍存在应用前阻塞。"
+
+    return {
+      tone: "blocked",
+      canSubmit: false,
+      statusLabel: "不可应用",
+      actionLabel: "暂不可应用",
+      title: "应用前仍有阻塞",
+      detail: blocker,
+      nextAction: "先处理失败行、行级缺字段或版本缺口，再重新查看准备度。",
+    }
+  }
+
+  return {
+    tone: "ready",
+    canSubmit: true,
+    statusLabel: "可应用",
+    actionLabel: "应用到业务数据",
+    title: "单批次应用已就绪",
+    detail: `${readiness.success_rows} 行成功记录将写入 ${readiness.application_target}。`,
+    nextAction: "确认版本和应用目标无误后，只对当前批次执行一次应用写入。",
+  }
+}
+
+export function summarizeImportBatchApplyResultNotice({
+  status,
+  batchId,
+  reason,
+}: {
+  status?: string
+  batchId?: string | null
+  reason?: string | null
+}): ImportBatchApplyResultNotice | null {
+  if (status !== "success" && status !== "failed") {
+    return null
+  }
+
+  if (status === "success") {
+    return {
+      tone: "success",
+      title: "批次应用成功",
+      detail: batchId
+        ? `批次 ${batchId} 已写入对应业务数据。`
+        : "当前批次已写入对应业务数据。",
+      nextAction: "刷新准备度和应用状态后，继续查看下游结果或复核案例。",
+    }
+  }
+
+  return {
+    tone: "failed",
+    title: "批次应用失败",
+    detail: formatImportApplyFailureReason(reason),
+    nextAction: "回到状态检查区查看阻塞项；修正后只对当前批次重试。",
+  }
+}
+
 export function summarizeImportReadinessIssueGroups(
   readiness: ImportApplyReadinessResponse | null,
   readinessError?: string | null
@@ -4562,6 +4703,23 @@ function formatImportUploadFailureReason(reason?: string | null): string {
   const apiStatus = reason.match(/^api_(\d{3})$/)
   if (apiStatus) {
     return `接口返回 ${apiStatus[1]}，可能是批次号重复或请求不满足接口校验。`
+  }
+
+  return decodeURIComponent(reason)
+}
+
+function formatImportApplyFailureReason(reason?: string | null): string {
+  if (!reason) {
+    return "请检查本地 API 状态、批次准备度或应用目标。"
+  }
+
+  if (reason === "missing_required_fields") {
+    return "缺少批次号或文件类型。"
+  }
+
+  const apiStatus = reason.match(/^api_(\d{3})$/)
+  if (apiStatus) {
+    return `本地应用 API 返回 ${apiStatus[1]}。`
   }
 
   return decodeURIComponent(reason)

@@ -3338,3 +3338,29 @@
 - `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
 - production DOM smoke：`http://127.0.0.1:3042/data-quality/uploads/new?upload=success&batch=BATCH-IM082-SMOKE-001` 命中 `CSV 上传成功`、`进入批次处理`、`/data-quality/BATCH-IM082-SMOKE-001` 和 `result_redirect_to`；失败页命中 `CSV 上传失败`、`api_409`、二级批次链接和 `result_redirect_to`；批次详情页未出现 `result_redirect_to`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM083 单批次导入应用写入入口
+
+#### 审计结论
+
+- `IM083/US703` 已在 `/data-quality/[batchId]` 二级批次处理详情页新增单批次应用区。
+- readiness ready 且未应用的批次展示 `应用到业务数据` 提交入口，并通过 server action 按 file_type 调用现有 apply API。
+- 应用结果通过 `apply=success|failed` 回到当前批次详情页展示反馈，不跳回列表，也不改变独立上传页回流逻辑。
+- readiness 阻塞、已应用或准备度未知时只展示原因和下一步，不展示写入按钮。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只支持单批次手动应用，不是批量应用、审批发布、权限隔离或任务队列。
+- apply API 的写入和幂等仍由现有后端控制；前端只负责 ready 状态下的受控入口和结果反馈。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先失败，证明旧模型没有 apply API URL builder、单批次应用摘要和应用结果反馈。
+- `node scripts/tests/import-center-model.test.mjs`：通过，67 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- production DOM smoke：`BATCH-IM083-SMOKE-002` readiness 为 ready，`http://127.0.0.1:3043/data-quality/BATCH-IM083-SMOKE-002?apply=success` 命中 `批次应用成功`、`单批次应用已就绪`、`应用到业务数据` 和版本 `BATCH-IM083-SMOKE-002::v1`；blocked 批次 `BATCH-IM026-SMOKE-004` 命中 `应用前仍有阻塞`、`不可应用`、`暂不可应用`，且未命中 `应用到业务数据`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

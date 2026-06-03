@@ -9,6 +9,7 @@ import { ImportCenterResultTracePanel } from "@/components/import-center-result-
 import { ImportCenterRowCorrectionPanel } from "@/components/import-center-row-correction-panel"
 import { ImportCenterTemplateManagementPanel } from "@/components/import-center-template-management-panel"
 import { ImportCenterUploadForm } from "@/components/import-center-upload-form"
+import { applyImportBatchAction } from "@/app/data-quality/actions"
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchListRow,
@@ -24,8 +25,10 @@ import {
   formatImportApplicationStatus,
   formatImportFileType,
   formatImportReadinessStatus,
+  summarizeImportBatchApplyResultNotice,
   summarizeImportPageHierarchy,
   summarizeImportRowCorrectionNotice,
+  summarizeImportSingleBatchApplyAction,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -43,6 +46,7 @@ type ImportBatchDetailPageProps = {
     reason?: string
     row?: string
     templateId?: string
+    apply?: string
   }>
 }
 
@@ -97,6 +101,17 @@ export default async function ImportBatchDetailPage({
           readinessError={readinessResult.error}
           comparisonCount={comparisonResult.data?.length ?? 0}
           reviewCaseCount={reviewCaseResult.data?.length ?? 0}
+        />
+
+        <ApplyFeedbackBanner
+          applyStatus={query?.apply}
+          applyReason={query?.reason}
+          batchId={batchId}
+        />
+
+        <SingleBatchApplyPanel
+          readiness={readinessResult.data}
+          readinessError={readinessResult.error}
         />
 
         <CorrectionFeedbackBanner
@@ -166,6 +181,90 @@ export default async function ImportBatchDetailPage({
         </section>
       </main>
     </AppShell>
+  )
+}
+
+function ApplyFeedbackBanner({
+  applyStatus,
+  applyReason,
+  batchId,
+}: {
+  applyStatus?: string
+  applyReason?: string
+  batchId: string
+}) {
+  const notice = summarizeImportBatchApplyResultNotice({
+    status: applyStatus,
+    reason: applyReason,
+    batchId,
+  })
+
+  if (!notice) {
+    return null
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
+        <div>
+          <CardTitle className="text-base">{notice.title}</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">{notice.detail}</p>
+        </div>
+        <Badge variant={notice.tone === "success" ? "secondary" : "destructive"}>
+          {notice.tone === "success" ? "已应用" : "应用失败"}
+        </Badge>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">{notice.nextAction}</p>
+      </CardContent>
+    </Card>
+  )
+}
+
+function SingleBatchApplyPanel({
+  readiness,
+  readinessError,
+}: {
+  readiness: ImportApplyReadinessResponse | null
+  readinessError: string | null
+}) {
+  const action = summarizeImportSingleBatchApplyAction(readiness, readinessError)
+
+  return (
+    <Card id="import-single-batch-apply">
+      <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
+        <div>
+          <CardTitle className="text-base">{action.title}</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">{action.detail}</p>
+        </div>
+        <Badge
+          variant={
+            action.tone === "blocked" || action.tone === "unknown"
+              ? "destructive"
+              : "secondary"
+          }
+        >
+          {action.statusLabel}
+        </Badge>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        <p className="text-sm text-muted-foreground">{action.nextAction}</p>
+        {action.canSubmit && readiness ? (
+          <form action={applyImportBatchAction} className="flex flex-wrap items-center gap-3">
+            <input name="batch_id" type="hidden" value={readiness.batch_id} />
+            <input name="file_type" type="hidden" value={readiness.file_type} />
+            <Button type="submit">{action.actionLabel}</Button>
+            <span className="text-xs text-muted-foreground">
+              目标 {readiness.application_target} · 版本 {readiness.import_version_id}
+            </span>
+          </form>
+        ) : (
+          <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
+            {action.actionLabel}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 
