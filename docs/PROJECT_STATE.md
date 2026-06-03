@@ -476,3 +476,9 @@ The slice intentionally does not publish, freeze, trigger automatic scheduling, 
 `IM100/US720` added `/schedule-plans/production/[batchId]` as the read-only personnel-schedule version detail page reached from the production workbench. The detail page resolves the selected source batch from the existing import-batch list, then shows source batch/version, business date range, application state, successful source rows, shift-reference scope, personnel-scope no-fabrication notice, 0.5h expansion state, and blocker summary.
 
 The page does not fabricate personnel names, shift detail rows, or interval rows because the current list API only exposes batch, version, and applied-record counts. No backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work was added. Current state advanced to `US721/IM101`, which requires PM confirmation before any publish/freeze boundary shell implementation.
+
+## 2026-06-04 IM101 Personnel Schedule Release Freeze Shell
+
+`IM101/US721` added the publish/freeze boundary safety shell to the personnel-schedule version detail page. The detail now shows three disabled production-action cards: publish version, freeze version, and unpublish. Each card surfaces the selected source version, 0.5h expansion gate, reference-check gate, and failure boundary so users can see why the current page cannot change production state.
+
+The implementation remains non-writing. It adds no form, server action, backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work. After the IM099-IM101 personnel-schedule production chain, current queue returned to empty.

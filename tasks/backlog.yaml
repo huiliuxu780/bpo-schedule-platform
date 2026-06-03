@@ -8021,7 +8021,7 @@ tasks:
   - id: IM101
     title: "人员排班发布冻结边界安全壳"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM100"]
     allowed_files:
@@ -8059,3 +8059,4 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已在 `/schedule-plans/production/[batchId]` 详情页增加发布、冻结、取消发布三类安全壳；每类展示来源版本、展开校验、引用校验和失败边界，按钮禁用且不提交真实生产状态变化。"

@@ -139,6 +139,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US720/IM100` completed the personnel-schedule version detail slice. `/schedule-plans/production/[batchId]` now shows source batch/version, business date range, shift-reference scope, personnel-scope no-fabrication notice, and 0.5h expansion state from the existing import-batch application summary.
+`US721/IM101` completed the personnel-schedule publish/freeze boundary safety shell. `/schedule-plans/production/[batchId]` now shows disabled publish, freeze, and unpublish action cards with source-version, 0.5h expansion, reference-check, and failure-boundary context.
 
-Current story queue has advanced to `US721/IM101`, the publish/freeze boundary safety-shell slice. This task requires PM confirmation before implementation because it discusses production action boundaries; do not add real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, or charge-factor work.
+Current story queue is empty again after the IM099-IM101 personnel-schedule production chain. Do not guess the next task; reseed the next feature set into `R/US/IM` before more development. Keep avoiding real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, and charge-factor work unless a new confirmed task allows it.

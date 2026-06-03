@@ -112,6 +112,22 @@ test("personnel schedule production detail resolves a schedule version by source
   assert.equal(detail.personScopeLabel, "当前列表 API 未暴露人员清单，不伪造人员级明细");
   assert.equal(detail.halfHourResultLabel, "已形成 96 条 0.5h 展开记录");
   assert.equal(detail.blockerSummary, "无阻塞；当前只读展示排班生产口径");
+  assert.equal(detail.actionShellTitle, "发布/冻结边界安全壳");
+  assert.equal(detail.actionShellDetail, "当前只展示生产动作前置校验，不提交真实发布或冻结状态。");
+  assert.equal(detail.actionShells.length, 3);
+  assert.deepEqual(
+    detail.actionShells.map((action) => action.actionLabel),
+    ["发布版本", "冻结版本", "取消发布"]
+  );
+  assert.deepEqual(
+    detail.actionShells.map((action) => action.disabledLabel),
+    ["暂不发布", "暂不冻结", "暂不取消发布"]
+  );
+  assert.equal(detail.actionShells[0].sourceVersionLabel, "BATCH-SCH-001::v1");
+  assert.equal(detail.actionShells[0].expansionGateLabel, "已形成 96 条 0.5h 展开记录");
+  assert.equal(detail.actionShells[0].referenceGateLabel, "引用校验待接入：需确认比对、复核和后续履约引用");
+  assert.equal(detail.actionShells[0].failureBoundaryLabel, "当前未接入真实写入，不能改变生产排班口径");
+  assert.equal(detail.actionShells[0].isEnabled, false);
 });
 
 test("personnel schedule production detail blocks missing expansion records without fabricated details", () => {
@@ -129,6 +145,8 @@ test("personnel schedule production detail blocks missing expansion records with
   assert.equal(detail.halfHourResultLabel, "暂未发现 0.5h 展开记录");
   assert.equal(detail.personScopeLabel, "当前列表 API 未暴露人员清单，不伪造人员级明细");
   assert.equal(detail.blockerSummary, "已应用但暂未发现展开记录");
+  assert.equal(detail.actionShells[0].expansionGateLabel, "阻塞：暂未发现 0.5h 展开记录");
+  assert.equal(detail.actionShells[0].failureBoundaryLabel, "阻塞：已应用但暂未发现展开记录");
 });
 
 test("personnel schedule production detail shows a blocked state for unknown batch", () => {

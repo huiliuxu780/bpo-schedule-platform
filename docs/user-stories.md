@@ -4288,5 +4288,6 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US720"
-status: "ready"
+status: "done"
+notes: "IM101 已完成：排班版本详情页新增发布、冻结、取消发布三类生产动作边界安全壳，展示来源版本、展开校验、引用校验和失败边界，动作按钮保持禁用。"
 ```

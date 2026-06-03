@@ -3562,3 +3562,29 @@
 - HTTP smoke：`http://127.0.0.1:3000/schedule-plans/production/BATCH-MISSING-IM100` 命中 `排班版本详情`、`排班版本未定位`、`不伪造人员级明细`、`暂未发现 0.5h 展开记录` 和 `返回排班生产`。
 - in-app browser smoke：当前 URL 为 `/schedule-plans/production/BATCH-MISSING-IM100`，命中详情页、阻塞态、0.5h 阻塞、不伪造人员级明细和返回入口。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-04 - IM101 人员排班发布冻结边界安全壳
+
+#### 审计结论
+
+- `IM101/US721` 已在 `/schedule-plans/production/[batchId]` 详情页新增发布、冻结、取消发布三类生产动作边界安全壳。
+- 每类动作展示来源版本、0.5h 展开校验、引用校验和失败边界。
+- 动作按钮分别显示 `暂不发布`、`暂不冻结`、`暂不取消发布`，均为禁用状态。
+- 本轮没有新增表单、server action、后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。
+- IM099-IM101 人员排班生产链路已闭合，当前队列回到空。
+
+#### 风险
+
+- 当前只是安全壳，不改变生产排班发布或冻结状态。
+- 引用校验为前端边界说明，真实校验和写入需要后续单独确认后再拆任务。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `actionShellTitle` 和 `actionShells`。
+- `node scripts/tests/personnel-schedule-production-model.test.mjs`：通过，7 个 personnel-schedule production model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- HTTP smoke：`http://127.0.0.1:3000/schedule-plans/production/BATCH-MISSING-IM101` 命中 `发布/冻结边界安全壳`、`发布版本`、`冻结版本`、`取消发布`、`暂不发布`、`暂不冻结`、`暂不取消发布` 和 `引用校验待接入`。
+- in-app browser smoke：当前 URL 为 `/schedule-plans/production/BATCH-MISSING-IM101`，命中安全壳和三类动作，且三个按钮均为 disabled。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

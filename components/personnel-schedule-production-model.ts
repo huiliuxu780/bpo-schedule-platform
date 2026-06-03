@@ -49,6 +49,20 @@ export type PersonnelScheduleProductionDetailSummary = {
   personScopeLabel: string
   halfHourResultLabel: string
   blockerSummary: string
+  actionShellTitle: string
+  actionShellDetail: string
+  actionShells: PersonnelScheduleProductionActionShell[]
+}
+
+export type PersonnelScheduleProductionActionShell = {
+  actionKey: "publish" | "freeze" | "unpublish"
+  actionLabel: string
+  disabledLabel: string
+  sourceVersionLabel: string
+  expansionGateLabel: string
+  referenceGateLabel: string
+  failureBoundaryLabel: string
+  isEnabled: false
 }
 
 export function summarizePersonnelScheduleProductionWorkbench(
@@ -133,11 +147,22 @@ export function summarizePersonnelScheduleProductionDetail(
       personScopeLabel: "未定位来源批次，不伪造人员级明细",
       halfHourResultLabel: "暂未发现 0.5h 展开记录",
       blockerSummary: "请返回排班生产工作台选择来源批次",
+      actionShellTitle: "发布/冻结边界安全壳",
+      actionShellDetail: "当前只展示生产动作前置校验，不提交真实发布或冻结状态。",
+      actionShells: buildPersonnelScheduleActionShells({
+        sourceVersionLabel: "未找到对应人员排班批次",
+        expansionGateLabel: "阻塞：暂未发现 0.5h 展开记录",
+        failureBoundaryLabel: "阻塞：请返回排班生产工作台选择来源批次",
+      }),
     }
   }
 
   const row = toPersonnelScheduleProductionRow(batch)
   const isReady = row.tone === "ready"
+  const halfHourResultLabel =
+    batch.applied_record_count > 0
+      ? `已形成 ${batch.applied_record_count.toLocaleString("zh-CN")} 条 0.5h 展开记录`
+      : "暂未发现 0.5h 展开记录"
 
   return {
     tone: row.tone === "empty" ? "blocked" : row.tone,
@@ -158,12 +183,65 @@ export function summarizePersonnelScheduleProductionDetail(
     sourceRowLabel: `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`,
     shiftReferenceLabel: `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，班次引用明细待版本 API 暴露`,
     personScopeLabel: "当前列表 API 未暴露人员清单，不伪造人员级明细",
-    halfHourResultLabel:
-      batch.applied_record_count > 0
-        ? `已形成 ${batch.applied_record_count.toLocaleString("zh-CN")} 条 0.5h 展开记录`
-        : "暂未发现 0.5h 展开记录",
+    halfHourResultLabel,
     blockerSummary: row.blockerSummary,
+    actionShellTitle: "发布/冻结边界安全壳",
+    actionShellDetail: "当前只展示生产动作前置校验，不提交真实发布或冻结状态。",
+    actionShells: buildPersonnelScheduleActionShells({
+      sourceVersionLabel: row.versionLabel,
+      expansionGateLabel:
+        batch.applied_record_count > 0
+          ? halfHourResultLabel
+          : `阻塞：${halfHourResultLabel}`,
+      failureBoundaryLabel:
+        row.tone === "ready"
+          ? "当前未接入真实写入，不能改变生产排班口径"
+          : `阻塞：${row.blockerSummary}`,
+    }),
   }
+}
+
+function buildPersonnelScheduleActionShells({
+  sourceVersionLabel,
+  expansionGateLabel,
+  failureBoundaryLabel,
+}: {
+  sourceVersionLabel: string
+  expansionGateLabel: string
+  failureBoundaryLabel: string
+}): PersonnelScheduleProductionActionShell[] {
+  return [
+    {
+      actionKey: "publish",
+      actionLabel: "发布版本",
+      disabledLabel: "暂不发布",
+      sourceVersionLabel,
+      expansionGateLabel,
+      referenceGateLabel: "引用校验待接入：需确认比对、复核和后续履约引用",
+      failureBoundaryLabel,
+      isEnabled: false,
+    },
+    {
+      actionKey: "freeze",
+      actionLabel: "冻结版本",
+      disabledLabel: "暂不冻结",
+      sourceVersionLabel,
+      expansionGateLabel,
+      referenceGateLabel: "引用校验待接入：需确认当前版本没有未关闭复核阻塞",
+      failureBoundaryLabel,
+      isEnabled: false,
+    },
+    {
+      actionKey: "unpublish",
+      actionLabel: "取消发布",
+      disabledLabel: "暂不取消发布",
+      sourceVersionLabel,
+      expansionGateLabel,
+      referenceGateLabel: "引用校验待接入：需确认下游履约、复核和版本回退边界",
+      failureBoundaryLabel,
+      isEnabled: false,
+    },
+  ]
 }
 
 function resolveExpansionLabel(

@@ -6,6 +6,7 @@ import {
   ArrowRight,
   CalendarClock,
   FileClock,
+  ListChecks,
   Lock,
   Table2,
   Users,
@@ -353,6 +354,52 @@ export function PersonnelScheduleProductionDetail({
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
           当前列表 API 只提供来源批次、版本和应用记录数。本页只展示这些已确认信息；人员名单、班次明细和逐 0.5h 明细待后续版本 API 暴露后再呈现。
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ListChecks className="size-4 text-muted-foreground" />
+            {detail.actionShellTitle}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <p className="text-sm text-muted-foreground">
+            {detail.actionShellDetail}
+          </p>
+          <div className="grid gap-3 lg:grid-cols-3">
+            {detail.actionShells.map((action) => (
+              <Card key={action.actionKey}>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">{action.actionLabel}</CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-3">
+                  <div className="grid gap-2 text-sm text-muted-foreground">
+                    <DetailItem
+                      label="来源版本"
+                      value={action.sourceVersionLabel}
+                    />
+                    <DetailItem
+                      label="展开校验"
+                      value={action.expansionGateLabel}
+                    />
+                    <DetailItem
+                      label="引用校验"
+                      value={action.referenceGateLabel}
+                    />
+                    <DetailItem
+                      label="失败边界"
+                      value={action.failureBoundaryLabel}
+                    />
+                  </div>
+                  <Button disabled size="sm" variant="outline">
+                    {action.disabledLabel}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </main>
