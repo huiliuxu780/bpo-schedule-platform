@@ -3,6 +3,9 @@
 import { redirect } from "next/navigation"
 
 import {
+  buildImportFieldMappingTemplateDeactivateUrl,
+  buildImportFieldMappingTemplateDetailUrl,
+  buildImportFieldMappingTemplateWorkspaceHref,
   buildImportRowCorrectionUrl,
   buildImportUploadUrl,
   type ImportFileType,
@@ -129,11 +132,142 @@ export async function correctImportFailedRowAction(formData: FormData) {
   )
 }
 
+export async function updateImportFieldMappingTemplateAction(formData: FormData) {
+  const templateId = formText(formData, "template_id")
+  const templateName = formText(formData, "template_name")
+  const fieldMappingText = formText(formData, "field_mapping")
+  const detailHref = templateId
+    ? buildImportFieldMappingTemplateWorkspaceHref(templateId)
+    : "/data-quality"
+
+  if (!templateId || !templateName || !fieldMappingText) {
+    redirect(
+      `${detailHref}?template=failed&action=update&reason=missing_required_fields`
+    )
+  }
+
+  const fieldMapping = parseStringFieldMapping(fieldMappingText)
+  if (!fieldMapping) {
+    redirect(`${detailHref}?template=failed&action=update&reason=invalid_json`)
+  }
+
+  let apiStatus: number | null = null
+  let networkError: string | null = null
+
+  try {
+    const response = await fetch(buildImportFieldMappingTemplateDetailUrl(templateId), {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        template_name: templateName,
+        field_mapping: fieldMapping,
+      }),
+      cache: "no-store",
+    })
+
+    apiStatus = response.status
+  } catch (error) {
+    networkError = formatActionError(error)
+  }
+
+  if (networkError) {
+    redirect(
+      `${detailHref}?template=failed&action=update&reason=${encodeURIComponent(networkError)}`
+    )
+  }
+
+  if (apiStatus !== null && (apiStatus < 200 || apiStatus >= 300)) {
+    redirect(`${detailHref}?template=failed&action=update&reason=api_${apiStatus}`)
+  }
+
+  redirect(`${detailHref}?template=success&action=update`)
+}
+
+export async function deactivateImportFieldMappingTemplateAction(formData: FormData) {
+  const templateId = formText(formData, "template_id")
+  const detailHref = templateId
+    ? buildImportFieldMappingTemplateWorkspaceHref(templateId)
+    : "/data-quality"
+
+  if (!templateId) {
+    redirect(
+      `${detailHref}?template=failed&action=deactivate&reason=missing_required_fields`
+    )
+  }
+
+  let apiStatus: number | null = null
+  let networkError: string | null = null
+
+  try {
+    const response = await fetch(
+      buildImportFieldMappingTemplateDeactivateUrl(templateId),
+      {
+        method: "POST",
+        cache: "no-store",
+      }
+    )
+
+    apiStatus = response.status
+  } catch (error) {
+    networkError = formatActionError(error)
+  }
+
+  if (networkError) {
+    redirect(
+      `${detailHref}?template=failed&action=deactivate&reason=${encodeURIComponent(networkError)}`
+    )
+  }
+
+  if (apiStatus !== null && (apiStatus < 200 || apiStatus >= 300)) {
+    redirect(
+      `${detailHref}?template=failed&action=deactivate&reason=api_${apiStatus}`
+    )
+  }
+
+  redirect(`${detailHref}?template=success&action=deactivate`)
+}
+
 function parseStandardFields(value: string): Record<string, unknown> | null {
   try {
     const parsed = JSON.parse(value) as unknown
     if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
       return parsed as Record<string, unknown>
+    }
+  } catch {
+    return null
+  }
+
+  return null
+}
+
+function parseStringFieldMapping(value: string): Record<string, string> | null {
+  try {
+    const parsed = JSON.parse(value) as unknown
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+      return null
+    }
+
+    const entries = Object.entries(parsed)
+    if (entries.length === 0) {
+      return null
+    }
+
+    if (
+      entries.every(
+        ([sourceField, standardField]) =>
+          sourceField.trim().length > 0 &&
+          typeof standardField === "string" &&
+          standardField.trim().length > 0
+      )
+    ) {
+      return Object.fromEntries(
+        entries.map(([sourceField, standardField]) => [
+          sourceField.trim(),
+          String(standardField).trim(),
+        ])
+      )
     }
   } catch {
     return null

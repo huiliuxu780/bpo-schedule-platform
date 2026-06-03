@@ -8,6 +8,9 @@ import {
   buildImportComparisonRunDetailApiUrl,
   buildImportComparisonRunDetailWorkspaceHref,
   buildImportComparisonRunsUrl,
+  buildImportFieldMappingTemplateDeactivateUrl,
+  buildImportFieldMappingTemplateDetailUrl,
+  buildImportFieldMappingTemplateWorkspaceHref,
   buildImportQualityIssueReviewCasesHref,
   buildImportReviewCaseDetailApiUrl,
   buildImportReviewCaseDetailWorkspaceHref,
@@ -63,6 +66,7 @@ import {
   summarizeImportTemplateFitHint,
   summarizeImportTemplateFitDetail,
   summarizeImportUploadResultGuidance,
+  summarizeImportFieldMappingTemplateActionNotice,
   summarizeImportFieldMappingTemplates,
   summarizeImportBatchDetail,
   getImportRowStandardFieldsPreview,
@@ -3100,6 +3104,64 @@ test("import center mapping template URL builder supports all templates and file
   assert.equal(
     buildImportFieldMappingTemplatesUrl("master_data", "http://127.0.0.1:8000"),
     "http://127.0.0.1:8000/api/v1/import-field-mapping-templates?file_type=master_data",
+  );
+});
+
+test("import center field mapping template detail URLs encode template path", () => {
+  assert.equal(
+    buildImportFieldMappingTemplateWorkspaceHref("TPL/MD 001"),
+    "/data-quality/field-mapping-templates/TPL%2FMD%20001",
+  );
+  assert.equal(
+    buildImportFieldMappingTemplateDetailUrl("TPL/MD 001", "http://127.0.0.1:8000"),
+    "http://127.0.0.1:8000/api/v1/import-field-mapping-templates/TPL%2FMD%20001",
+  );
+  assert.equal(
+    buildImportFieldMappingTemplateDeactivateUrl(
+      "TPL/MD 001",
+      "http://127.0.0.1:8000",
+    ),
+    "http://127.0.0.1:8000/api/v1/import-field-mapping-templates/TPL%2FMD%20001/deactivate",
+  );
+});
+
+test("import center field mapping template action notice summarizes update and deactivate results", () => {
+  assert.deepEqual(
+    summarizeImportFieldMappingTemplateActionNotice({
+      status: "success",
+      action: "update",
+      reason: undefined,
+      templateId: "TPL-MD-001",
+    }),
+    {
+      tone: "success",
+      title: "模板已更新",
+      detail: "字段映射模板 TPL-MD-001 已保存最新名称和字段映射。",
+      nextAction: "返回批次处理页重新选择模板，或继续检查当前模板字段覆盖。",
+    },
+  );
+  assert.deepEqual(
+    summarizeImportFieldMappingTemplateActionNotice({
+      status: "failed",
+      action: "deactivate",
+      reason: "api_404",
+      templateId: "TPL-MD-001",
+    }),
+    {
+      tone: "failed",
+      title: "模板停用失败",
+      detail: "字段映射模板 TPL-MD-001 未完成停用：api_404。",
+      nextAction: "检查模板是否仍存在，再重新提交停用。",
+    },
+  );
+  assert.equal(
+    summarizeImportFieldMappingTemplateActionNotice({
+      status: undefined,
+      action: undefined,
+      reason: undefined,
+      templateId: "TPL-MD-001",
+    }),
+    null,
   );
 });
 

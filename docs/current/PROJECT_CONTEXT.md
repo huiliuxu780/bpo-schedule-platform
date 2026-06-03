@@ -24,6 +24,8 @@ Current story queue is empty and active tasks are empty.
 
 `US697/IM077` completed the review-case continuation return-list open-status focus, then current queue returned to empty.
 
+`US698/IM078` completed the field-mapping template maintenance detail page, then current queue returned to empty.
+
 `US692/IM072` completed the review-case action submit feedback, then current queue returned to empty.
 
 `US691/IM071` completed the review-case detail processing action deck, then current queue returned to empty.

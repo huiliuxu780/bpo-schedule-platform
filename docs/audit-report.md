@@ -3205,3 +3205,29 @@
 - `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
 - in-app browser production smoke：`http://127.0.0.1:3035/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001?evidence=success` 命中 `续办导航`，且 `返回同 Owner 列表` 链接为 `/data-quality/review-cases?businessDate=2026-05-11&ownerId=supervisor-01&status=open`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM078 字段映射模板维护详情页
+
+#### 审计结论
+
+- `IM078/US698` 已新增独立二级页 `/data-quality/field-mapping-templates/[templateId]`，模板维护不再堆在批次详情长页中。
+- 页面展示模板名称、模板 ID、启用状态、文件类型、创建信息、字段映射明细、更新表单和维护边界。
+- 更新表单复用现有 `PATCH /api/v1/import-field-mapping-templates/{template_id}`；停用入口复用现有 deactivate API，停用模板不展示重复停用入口。
+- 批次详情页的字段映射模板卡片新增 `维护模板` 入口，链接到独立详情页。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只维护已有模板，不新增模板创建页；新增模板仍依赖已有后端 API 或后续独立任务。
+- 停用是现有 API 的单模板动作，不是批量模板治理、审批或权限隔离。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先失败，证明旧模型没有模板详情页 href、单模板 API URL、停用 API URL 和维护结果反馈摘要。
+- `node scripts/tests/import-center-model.test.mjs`：通过，59 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过，新路由出现在 Next build route 表中。
+- in-app browser production smoke：`http://127.0.0.1:3036/data-quality/field-mapping-templates/TPL-IM027-SMOKE-001` 命中 `模板维护`、`维护边界`、`保存模板` 和 `停用模板`；批次详情页 `导入与模板` tab 存在 `维护模板` 链接；无害更新提交后命中 `模板已更新` 成功反馈。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -2055,3 +2055,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成复核续办返回列表保留未关闭焦点；同 Owner 待处理导航和提交后续办导航的返回列表入口会带上 status=open，避免已关闭案例混入连续处理队列；复用现有 review-case list filters，不新增 API、schema/migration、依赖、页面路由、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R778 - 字段映射模板维护详情页
+
+```yaml
+id: R778
+module: "导入中心"
+description: "字段映射模板已经可以被上传流程读取和复用，但前端目前主要是只读展示，模板修正和停用需要依赖后端 API 或测试入口。需要把模板维护放到独立二级页面，支持查看、更新和停用，避免继续堆在批次详情长页里。"
+source: "After IM077 and PM asked to continue with real business functionality on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已完成字段映射模板维护详情页；新增 /data-quality/field-mapping-templates/[templateId] 二级页，展示模板详情、字段映射明细、模板更新表单和停用入口，并从模板卡片进入维护页；复用现有模板 PATCH 和 deactivate API，不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

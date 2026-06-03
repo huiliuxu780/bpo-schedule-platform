@@ -888,6 +888,15 @@ export type ImportFieldMappingTemplateSummary = {
   totalMappedFields: number
 }
 
+export type ImportFieldMappingTemplateActionNoticeTone = "success" | "failed"
+
+export type ImportFieldMappingTemplateActionNotice = {
+  tone: ImportFieldMappingTemplateActionNoticeTone
+  title: string
+  detail: string
+  nextAction: string
+}
+
 export type ImportTemplateFitStatus = "matched" | "missing" | "error"
 
 export type ImportTemplateFitHint = {
@@ -1058,6 +1067,32 @@ export function buildImportFieldMappingTemplatesUrl(
 
   return buildImportApiUrl(
     `/api/v1/import-field-mapping-templates?${searchParams.toString()}`,
+    apiBase
+  )
+}
+
+export function buildImportFieldMappingTemplateWorkspaceHref(
+  templateId: string
+): string {
+  return `/data-quality/field-mapping-templates/${encodeURIComponent(templateId)}`
+}
+
+export function buildImportFieldMappingTemplateDetailUrl(
+  templateId: string,
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl(
+    `/api/v1/import-field-mapping-templates/${encodeURIComponent(templateId)}`,
+    apiBase
+  )
+}
+
+export function buildImportFieldMappingTemplateDeactivateUrl(
+  templateId: string,
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl(
+    `/api/v1/import-field-mapping-templates/${encodeURIComponent(templateId)}/deactivate`,
     apiBase
   )
 }
@@ -4147,6 +4182,48 @@ export function summarizeImportFieldMappingTemplates(
       totalMappedFields: 0,
     }
   )
+}
+
+export function summarizeImportFieldMappingTemplateActionNotice({
+  status,
+  action,
+  reason,
+  templateId,
+}: {
+  status?: string
+  action?: string
+  reason?: string
+  templateId: string
+}): ImportFieldMappingTemplateActionNotice | null {
+  if (!status || !action) {
+    return null
+  }
+
+  const isSuccess = status === "success"
+  const isDeactivate = action === "deactivate"
+  const actionLabel = isDeactivate ? "停用" : "更新"
+
+  if (isSuccess) {
+    return {
+      tone: "success",
+      title: isDeactivate ? "模板已停用" : "模板已更新",
+      detail: isDeactivate
+        ? `字段映射模板 ${templateId} 已停用，上传时不会再作为启用模板推荐。`
+        : `字段映射模板 ${templateId} 已保存最新名称和字段映射。`,
+      nextAction: isDeactivate
+        ? "返回批次处理页检查同类型模板覆盖，必要时选择其他启用模板。"
+        : "返回批次处理页重新选择模板，或继续检查当前模板字段覆盖。",
+    }
+  }
+
+  return {
+    tone: "failed",
+    title: `模板${actionLabel}失败`,
+    detail: `字段映射模板 ${templateId} 未完成${actionLabel}：${reason || "未知错误"}。`,
+    nextAction: isDeactivate
+      ? "检查模板是否仍存在，再重新提交停用。"
+      : "检查模板名称和字段映射 JSON 后重新提交。",
+  }
 }
 
 export function summarizeImportTemplateFitHint(

@@ -7023,3 +7023,48 @@ tasks:
       - "范围扩展到页面路由、新 UI 组件、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM078
+    title: "字段映射模板维护详情页"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM077"]
+    allowed_files:
+      - "app/data-quality/actions.ts"
+      - "app/data-quality/field-mapping-templates/[templateId]/page.tsx"
+      - "components/import-center-model.ts"
+      - "components/import-center-template-management-panel.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "`/data-quality/field-mapping-templates/[templateId]` 展示模板详情、启用状态、文件类型、字段映射明细和返回入口。"
+      - "模板详情页提供更新模板名称和字段映射 JSON 的表单，提交后调用现有 PATCH 模板 API。"
+      - "启用模板可在详情页停用，提交后调用现有 deactivate API；停用模板不展示重复停用入口。"
+      - "模板卡片提供进入详情页的入口，不再把维护动作堆在批次详情页。"
+      - "不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

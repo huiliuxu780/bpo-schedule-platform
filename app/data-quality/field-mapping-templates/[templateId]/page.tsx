@@ -1,0 +1,369 @@
+import Link from "next/link"
+import type { ReactNode } from "react"
+import { ArrowLeft, Ban, Save } from "lucide-react"
+
+import {
+  deactivateImportFieldMappingTemplateAction,
+  updateImportFieldMappingTemplateAction,
+} from "@/app/data-quality/actions"
+import { AppShell } from "@/components/app-shell"
+import {
+  type ImportFieldMappingTemplate,
+  buildImportFieldMappingTemplateDetailUrl,
+  formatFieldMappingTemplateSummary,
+  formatImportFileType,
+  summarizeImportFieldMappingTemplateActionNotice,
+} from "@/components/import-center-model"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+export const dynamic = "force-dynamic"
+
+type FieldMappingTemplatePageProps = {
+  params: Promise<{
+    templateId: string
+  }>
+  searchParams?: Promise<{
+    template?: string
+    action?: string
+    reason?: string
+  }>
+}
+
+type ApiResult<T> = {
+  data: T | null
+  error: string | null
+}
+
+export default async function FieldMappingTemplatePage({
+  params,
+  searchParams,
+}: FieldMappingTemplatePageProps) {
+  const routeParams = await params
+  const query = await searchParams
+  const templateId = decodeURIComponent(routeParams.templateId)
+  const templateResult = await fetchImportFieldMappingTemplate(templateId)
+  const template = templateResult.data
+  const actionNotice = summarizeImportFieldMappingTemplateActionNotice({
+    status: query?.template,
+    action: query?.action,
+    reason: query?.reason,
+    templateId,
+  })
+
+  return (
+    <AppShell title="字段映射模板" searchPlaceholder="搜索模板、字段或文件类型">
+      <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
+        <TemplateHeader template={template} templateId={templateId} />
+
+        {actionNotice ? (
+          <Card>
+            <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
+              <div>
+                <CardTitle className="text-base">{actionNotice.title}</CardTitle>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {actionNotice.detail}
+                </p>
+              </div>
+              <Badge
+                variant={
+                  actionNotice.tone === "success" ? "secondary" : "destructive"
+                }
+              >
+                {actionNotice.tone === "success" ? "成功" : "失败"}
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                {actionNotice.nextAction}
+              </p>
+            </CardContent>
+          </Card>
+        ) : null}
+
+        {templateResult.error ? (
+          <TemplateReadError error={templateResult.error} templateId={templateId} />
+        ) : template ? (
+          <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="grid gap-4">
+              <TemplateUpdateCard template={template} />
+              <TemplateMappingTable template={template} />
+            </div>
+            <TemplateControlCard template={template} />
+          </section>
+        ) : (
+          <TemplateReadError error="字段映射模板不存在" templateId={templateId} />
+        )}
+      </main>
+    </AppShell>
+  )
+}
+
+function TemplateHeader({
+  template,
+  templateId,
+}: {
+  template: ImportFieldMappingTemplate | null
+  templateId: string
+}) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <div className="min-w-0">
+          <div className="mb-3">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/data-quality">
+                <ArrowLeft data-icon="inline-start" />
+                返回导入中心
+              </Link>
+            </Button>
+          </div>
+          <CardTitle className="text-lg">
+            {template?.template_name ?? "字段映射模板详情"}
+          </CardTitle>
+          <p className="mt-1 font-mono text-xs text-muted-foreground">{templateId}</p>
+        </div>
+        <div className="flex flex-wrap justify-end gap-2">
+          {template ? (
+            <Badge variant={template.is_active ? "secondary" : "outline"}>
+              {template.is_active ? "启用" : "停用"}
+            </Badge>
+          ) : null}
+          {template ? (
+            <Badge variant="outline">{formatImportFileType(template.file_type)}</Badge>
+          ) : null}
+        </div>
+      </CardHeader>
+      {template ? (
+        <CardContent className="grid gap-3 md:grid-cols-3">
+          <HeaderMetric
+            label="映射字段"
+            value={Object.keys(template.field_mapping).length.toLocaleString("zh-CN")}
+          />
+          <HeaderMetric label="创建人" value={template.created_by} />
+          <HeaderMetric label="创建时间" value={formatTemplateCreatedAt(template.created_at)} />
+        </CardContent>
+      ) : null}
+    </Card>
+  )
+}
+
+function TemplateUpdateCard({ template }: { template: ImportFieldMappingTemplate }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">模板维护</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          维护模板名称和来源字段到标准字段的映射关系
+        </p>
+      </CardHeader>
+      <CardContent>
+        <form action={updateImportFieldMappingTemplateAction} className="grid gap-4">
+          <input name="template_id" type="hidden" value={template.template_id} />
+          <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
+            <Field label="模板名称">
+              <Input
+                name="template_name"
+                defaultValue={template.template_name}
+                required
+              />
+            </Field>
+            <Field label="文件类型">
+              <Input defaultValue={formatImportFileType(template.file_type)} disabled />
+            </Field>
+          </div>
+          <Field label="字段映射 JSON">
+            <textarea
+              name="field_mapping"
+              defaultValue={JSON.stringify(template.field_mapping, null, 2)}
+              className="min-h-56 w-full rounded-lg border border-input bg-background px-2.5 py-2 font-mono text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              required
+            />
+          </Field>
+          <div className="flex justify-end">
+            <Button type="submit">
+              <Save data-icon="inline-start" />
+              保存模板
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+function TemplateMappingTable({ template }: { template: ImportFieldMappingTemplate }) {
+  const mappingPairs = Object.entries(template.field_mapping)
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">字段映射明细</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          {formatFieldMappingTemplateSummary(template)}
+        </p>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>来源字段</TableHead>
+              <TableHead>标准字段</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mappingPairs.map(([sourceField, standardField]) => (
+              <TableRow key={`${template.template_id}-${sourceField}`}>
+                <TableCell className="font-mono text-xs">{sourceField}</TableCell>
+                <TableCell className="font-mono text-xs">{standardField}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  )
+}
+
+function TemplateControlCard({ template }: { template: ImportFieldMappingTemplate }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">维护边界</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          本页只维护字段映射模板，不触发导入批次应用或下游计算
+        </p>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <div className="grid gap-3">
+          <BoundaryItem label="可维护" value="模板名称、字段映射 JSON、启用状态" />
+          <BoundaryItem label="不处理" value="新增模板、批量导入、审批、导出、权限" />
+          <BoundaryItem label="当前状态" value={template.is_active ? "启用" : "停用"} />
+        </div>
+        {template.is_active ? (
+          <form action={deactivateImportFieldMappingTemplateAction} className="grid gap-3">
+            <input name="template_id" type="hidden" value={template.template_id} />
+            <p className="text-sm text-muted-foreground">
+              停用后，该模板不会作为启用模板推荐；历史批次记录不受影响。
+            </p>
+            <Button type="submit" variant="destructive">
+              <Ban data-icon="inline-start" />
+              停用模板
+            </Button>
+          </form>
+        ) : (
+          <div className="rounded-md border border-dashed px-3 py-3 text-sm text-muted-foreground">
+            当前模板已停用，本页不提供重复停用入口。
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function TemplateReadError({
+  error,
+  templateId,
+}: {
+  error: string
+  templateId: string
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">模板读取失败</CardTitle>
+        <p className="mt-1 font-mono text-xs text-muted-foreground">{templateId}</p>
+      </CardHeader>
+      <CardContent className="grid gap-3">
+        <p className="text-sm text-muted-foreground">{error}</p>
+        <div>
+          <Button asChild size="sm" variant="outline">
+            <Link href="/data-quality">返回导入中心</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string
+  children: ReactNode
+}) {
+  return (
+    <label className="grid gap-1.5 text-sm">
+      <span className="font-medium text-muted-foreground">{label}</span>
+      {children}
+    </label>
+  )
+}
+
+function HeaderMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 rounded-md border bg-muted/30 p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 truncate font-mono text-xs font-medium">{value}</div>
+    </div>
+  )
+}
+
+function BoundaryItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 text-sm font-medium">{value}</div>
+    </div>
+  )
+}
+
+function formatTemplateCreatedAt(value: string): string {
+  return value.replace("T", " ").slice(0, 16)
+}
+
+async function fetchImportFieldMappingTemplate(
+  templateId: string
+): Promise<ApiResult<ImportFieldMappingTemplate>> {
+  try {
+    const response = await fetch(buildImportFieldMappingTemplateDetailUrl(templateId), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error: `字段映射模板 API 返回 ${response.status}`,
+      }
+    }
+
+    return {
+      data: (await response.json()) as ImportFieldMappingTemplate,
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: null,
+      error: formatApiError(error),
+    }
+  }
+}
+
+function formatApiError(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return "api_unavailable"
+}

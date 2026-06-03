@@ -1774,3 +1774,14 @@
 - action: 让复核续办返回列表保留未关闭焦点。
 - status: `done`
 - notes: 同 Owner 待处理导航和提交后续办导航的 `返回同 Owner 列表` 链接现在带 `status=open`，主管从详情返回列表时仍停留在未关闭处理队列；本轮不新增后端 route、schema/migration、依赖、页面路由、新 UI 组件、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM078`
+- source_ids:
+  - `R778`
+- story_ids:
+  - `US698`
+- action: 新增字段映射模板维护详情页。
+- status: `done`
+- notes: 新增 `/data-quality/field-mapping-templates/[templateId]` 二级页，展示字段映射模板详情、字段映射明细、更新表单和停用入口；批次详情页模板卡片新增 `维护模板` 入口；本轮复用现有模板 PATCH 和 deactivate API，不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

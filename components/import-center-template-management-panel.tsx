@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { FileText } from "lucide-react"
 
 import {
@@ -5,12 +6,14 @@ import {
   type ImportFileType,
   type ImportTemplateFitDetail,
   type ImportTemplateFitOption,
+  buildImportFieldMappingTemplateWorkspaceHref,
   formatFieldMappingTemplateSummary,
   formatImportFileType,
   summarizeImportFieldMappingTemplates,
   summarizeImportTemplateFitDetail,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
@@ -162,6 +165,13 @@ function TemplateCard({
         <Badge variant={template.is_active ? "secondary" : "outline"}>
           {template.is_active ? "启用" : "停用"}
         </Badge>
+      </div>
+      <div>
+        <Button asChild size="sm" variant="outline">
+          <Link href={buildImportFieldMappingTemplateWorkspaceHref(template.template_id)}>
+            维护模板
+          </Link>
+        </Button>
       </div>
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <Badge variant={template.file_type === selectedFileType ? "secondary" : "outline"}>

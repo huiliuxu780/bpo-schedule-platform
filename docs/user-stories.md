@@ -3754,3 +3754,26 @@ dependencies:
   - "US696"
 status: "done"
 ```
+
+### US698 - 字段映射模板维护详情页
+
+```yaml
+id: US698
+requirement_ids:
+  - R778
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在独立二级页面维护字段映射模板，以便修正模板名称或字段映射并停用不再使用的模板。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/field-mapping-templates/[templateId]` 展示模板详情、启用状态、文件类型、字段映射明细和返回入口。"
+  - "模板详情页提供更新模板名称和字段映射 JSON 的表单，提交后调用现有 PATCH 模板 API。"
+  - "启用模板可在详情页停用，提交后调用现有 deactivate API；停用模板不展示重复停用入口。"
+  - "模板卡片提供进入详情页的入口，不再把维护动作堆在批次详情页。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US697"
+status: "done"
+```
