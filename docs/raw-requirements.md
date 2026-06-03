@@ -63,8 +63,8 @@ description: "单批次应用入口已经可把 ready 批次写入业务数据�
 source: "After IM083 and PM confirmed downstream result chain planning on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "confirmed"
-notes: "本需求只规划前端结果呈现和导航入口，复用现有批次详情、应用摘要、readiness 和下游结果查询能力；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+status: "done"
+notes: "本轮已完成二级批次处理详情页的应用成功结果卡片和下一步入口；已应用批次会展示应用目标、生成版本状态和当前可见写入状态，并提供进入版本记录或下游结果追踪的链接；未应用、应用失败、readiness 阻塞或应用摘要缺失时不误报为已生成业务版本；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
 
 ### R785 - 已应用批次版本结果定位链路

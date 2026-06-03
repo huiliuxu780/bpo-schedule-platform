@@ -6903,7 +6903,7 @@ tasks:
   - id: IM084
     title: "批次应用成功结果卡片和下一步入口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM083"]
     allowed_files:
@@ -6945,7 +6945,7 @@ tasks:
   - id: IM085
     title: "已应用批次版本结果定位链路"
     priority: P1
-    status: draft
+    status: ready
     required_workflow: frontend-scaffold
     dependencies: ["IM084"]
     allowed_files:

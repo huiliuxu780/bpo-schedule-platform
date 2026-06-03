@@ -267,6 +267,22 @@ export type ImportBatchApplyResultNotice = {
   nextAction: string
 }
 
+export type ImportAppliedResultCardTone = "success" | "done"
+
+export type ImportAppliedResultCard = {
+  tone: ImportAppliedResultCardTone
+  statusLabel: string
+  title: string
+  detail: string
+  targetLabel: string
+  versionLabel: string
+  appliedRecordLabel: string
+  primaryActionLabel: string
+  primaryHref: string
+  secondaryActionLabel: string
+  secondaryHref: string
+}
+
 export type ImportReadinessIssueGroupTone = "blocked" | "ready" | "done" | "unknown"
 
 export type ImportReadinessIssueGroupKey =
@@ -1239,6 +1255,8 @@ export function buildImportBatchProcessingHref(
     reason?: string | null
     row?: string | null
     upload?: string | null
+    apply?: string | null
+    tab?: ImportPageHierarchyDetailTab | null
   } = {}
 ): string {
   const searchParams = new URLSearchParams()
@@ -1257,6 +1275,14 @@ export function buildImportBatchProcessingHref(
 
   if (params.upload) {
     searchParams.set("upload", params.upload)
+  }
+
+  if (params.apply) {
+    searchParams.set("apply", params.apply)
+  }
+
+  if (params.tab) {
+    searchParams.set("tab", params.tab)
   }
 
   const query = searchParams.toString()
@@ -4165,6 +4191,74 @@ export function summarizeImportBatchApplyResultNotice({
     title: "批次应用失败",
     detail: formatImportApplyFailureReason(reason),
     nextAction: "回到状态检查区查看阻塞项；修正后只对当前批次重试。",
+  }
+}
+
+export function summarizeImportAppliedResultCard({
+  batch,
+  readiness,
+  applyStatus,
+}: {
+  batch: ImportBatchListRow
+  readiness: ImportApplyReadinessResponse | null
+  applyStatus?: string
+}): ImportAppliedResultCard | null {
+  const isApplied =
+    batch.application_status === "applied" ||
+    readiness?.application_status === "applied"
+
+  if (!isApplied) {
+    return null
+  }
+
+  const targetLabel = formatImportApplicationTarget(
+    readiness?.application_target ?? batch.application_target
+  )
+  const versionLabel =
+    readiness?.import_version_id ?? batch.import_version_id ?? "未生成"
+  const appliedRecordCount = Math.max(
+    batch.applied_record_count,
+    readiness?.applied_record_count ?? 0
+  )
+  const appliedRecordLabel = `${appliedRecordCount.toLocaleString("zh-CN")} 条`
+
+  if (batch.file_type === "master_data") {
+    return {
+      tone: applyStatus === "success" ? "success" : "done",
+      statusLabel: applyStatus === "success" ? "刚完成应用" : "已应用",
+      title: "业务版本结果已生成",
+      detail: `当前批次已写入${targetLabel}，生成版本 ${versionLabel}；建议先核对版本记录，再进入下游结果追踪。`,
+      targetLabel,
+      versionLabel,
+      appliedRecordLabel,
+      primaryActionLabel: "查看版本记录",
+      primaryHref: buildImportBatchProcessingHref(batch.batch_id, {
+        tab: "batch-detail",
+      }),
+      secondaryActionLabel: "查看下游结果追踪",
+      secondaryHref: buildImportBatchProcessingHref(batch.batch_id, {
+        tab: "result-trace",
+      }),
+    }
+  }
+
+  return {
+    tone: applyStatus === "success" ? "success" : "done",
+    statusLabel: applyStatus === "success" ? "刚完成应用" : "已应用",
+    title: "业务版本结果已生成",
+    detail: `当前批次已写入${targetLabel}，生成版本 ${versionLabel}，可继续查看下游结果追踪或复核案例。`,
+    targetLabel,
+    versionLabel,
+    appliedRecordLabel,
+    primaryActionLabel: "查看下游结果追踪",
+    primaryHref: buildImportBatchProcessingHref(batch.batch_id, {
+      tab: "result-trace",
+    }),
+    secondaryActionLabel: "查看复核案例",
+    secondaryHref: buildImportReviewCasesWorkspaceHref({
+      businessDate: batch.business_date_from,
+      status: "open",
+    }),
   }
 }
 

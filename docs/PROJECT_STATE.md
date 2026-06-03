@@ -302,3 +302,11 @@ The approved sequence is:
 3. `US706/IM086`: add a controlled local comparison-calculate entry inside that version-result context.
 
 To keep Story Runner state narrow, only `US704/IM084` was moved into `docs/current/**` as `ready`. `US705/IM085` and `US706/IM086` were added to the legacy planning layer and registry only, and must not enter current state until the prior slice is green.
+
+## 2026-06-03 IM084 Applied Result Card And Next-Step Entry
+
+`US704/IM084` completed the application-success result visibility slice on the second-level import batch detail page. After a batch apply succeeds, `/data-quality/[batchId]` now shows a dedicated applied-result card instead of relying only on generic success feedback. The card summarizes the apply target, generated-version state, and current visible write state, then exposes the next-step links for version records and downstream result trace based on the current batch context.
+
+The implementation stayed inside the existing frontend/detail-page model layer. It reused current batch detail data, apply feedback, readiness state, and existing navigation helpers. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, production formula, settlement rule, or charge factor was added.
+
+After `IM084` went green, current state advanced to `US705/IM085` as the only ready slice. `US706/IM086` remains outside `docs/current/**` until `IM085` completes.

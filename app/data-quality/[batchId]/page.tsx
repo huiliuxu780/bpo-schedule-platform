@@ -15,6 +15,7 @@ import {
   type ImportBatchListRow,
   type ImportBatchPersistenceDetail,
   type ImportComparisonRunRecord,
+  type ImportPageHierarchyDetailTab,
   type ImportFieldMappingTemplate,
   type ImportReviewCaseRecord,
   buildImportApiUrl,
@@ -25,6 +26,7 @@ import {
   formatImportApplicationStatus,
   formatImportFileType,
   formatImportReadinessStatus,
+  summarizeImportAppliedResultCard,
   summarizeImportBatchApplyResultNotice,
   summarizeImportPageHierarchy,
   summarizeImportRowCorrectionNotice,
@@ -47,6 +49,7 @@ type ImportBatchDetailPageProps = {
     row?: string
     templateId?: string
     apply?: string
+    tab?: string
   }>
 }
 
@@ -82,9 +85,12 @@ export default async function ImportBatchDetailPage({
     hasUploadTools: true,
     hasResultTrace: true,
   })
-  const detailHierarchy = query?.templateId
-    ? { ...hierarchy, defaultDetailTab: "data-tools" as const }
-    : hierarchy
+  const requestedTab = normalizeDetailTab(query?.tab)
+  const detailHierarchy = requestedTab
+    ? { ...hierarchy, defaultDetailTab: requestedTab }
+    : query?.templateId
+      ? { ...hierarchy, defaultDetailTab: "data-tools" as const }
+      : hierarchy
 
   return (
     <AppShell title="批次处理" searchPlaceholder="搜索导入批次、文件或上传人">
@@ -107,6 +113,12 @@ export default async function ImportBatchDetailPage({
           applyStatus={query?.apply}
           applyReason={query?.reason}
           batchId={batchId}
+        />
+
+        <AppliedResultCard
+          batch={selectedBatch}
+          readiness={readinessResult.data}
+          applyStatus={query?.apply}
         />
 
         <SingleBatchApplyPanel
@@ -184,6 +196,20 @@ export default async function ImportBatchDetailPage({
   )
 }
 
+function normalizeDetailTab(value?: string): ImportPageHierarchyDetailTab | null {
+  if (
+    value === "status-check" ||
+    value === "batch-detail" ||
+    value === "row-correction" ||
+    value === "result-trace" ||
+    value === "data-tools"
+  ) {
+    return value
+  }
+
+  return null
+}
+
 function ApplyFeedbackBanner({
   applyStatus,
   applyReason,
@@ -216,6 +242,59 @@ function ApplyFeedbackBanner({
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground">{notice.nextAction}</p>
+      </CardContent>
+    </Card>
+  )
+}
+
+function AppliedResultCard({
+  batch,
+  readiness,
+  applyStatus,
+}: {
+  batch: ImportBatchListRow | null
+  readiness: ImportApplyReadinessResponse | null
+  applyStatus?: string
+}) {
+  if (!batch) {
+    return null
+  }
+
+  const result = summarizeImportAppliedResultCard({
+    batch,
+    readiness,
+    applyStatus,
+  })
+
+  if (!result) {
+    return null
+  }
+
+  return (
+    <Card id="import-applied-result-card">
+      <CardHeader className="flex flex-row items-start justify-between gap-3 pb-2">
+        <div>
+          <CardTitle className="text-base">{result.title}</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">{result.detail}</p>
+        </div>
+        <Badge variant={result.tone === "success" ? "secondary" : "outline"}>
+          {result.statusLabel}
+        </Badge>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <section className="grid gap-3 md:grid-cols-3">
+          <ResultMetric label="应用目标" value={result.targetLabel} />
+          <ResultMetric label="生成版本" value={result.versionLabel} />
+          <ResultMetric label="当前可见写入状态" value={result.appliedRecordLabel} />
+        </section>
+        <div className="flex flex-wrap gap-3">
+          <Button asChild>
+            <Link href={result.primaryHref}>{result.primaryActionLabel}</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href={result.secondaryHref}>{result.secondaryActionLabel}</Link>
+          </Button>
+        </div>
       </CardContent>
     </Card>
   )
@@ -265,6 +344,15 @@ function SingleBatchApplyPanel({
         )}
       </CardContent>
     </Card>
+  )
+}
+
+function ResultMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border bg-muted/30 p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 break-all font-mono text-xs font-medium">{value}</div>
+    </div>
   )
 }
 

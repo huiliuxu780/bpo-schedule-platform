@@ -10,11 +10,13 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue now contains `US704/IM084` as the only ready slice. It scopes the next step to application-success result visibility on the second-level batch detail page.
+Current story queue now contains `US705/IM085` as the only ready slice. It scopes the next step to direct version/result positioning from an already applied batch.
 
-`US705/IM085` and `US706/IM086` are now defined in legacy planning files for the same downstream-result chain, but they must stay out of `docs/current/**` until `US704/IM084` is green and current state is advanced.
+`US706/IM086` remains defined in legacy planning files for the same downstream-result chain, but it must stay out of `docs/current/**` until `US705/IM085` is green and current state is advanced.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
+
+`US704/IM084` completed the applied-result visibility slice on the second-level batch detail page. The page now shows an applied result card with target/version-state metrics and next-step links, then current state advanced to `US705/IM085` only.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -119,4 +121,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next product step is to execute only `US704/IM084`, confirm the generated-version result card and next-step entry behavior on `/data-quality/[batchId]`, and keep `IM085` plus `IM086` as sequential backlog slices until that result visibility is stable.
+Recommended next product step is to execute only `US705/IM085`, turn the applied result card into a stable entry toward version/result context, and keep `IM086` as the following controlled comparison-trigger slice until version positioning is stable.

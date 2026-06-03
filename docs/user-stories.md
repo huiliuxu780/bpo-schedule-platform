@@ -108,7 +108,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US703"
-status: "ready"
+status: "done"
 ```
 
 ### US705 - 已应用批次版本结果定位链路
@@ -130,7 +130,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US704"
-status: "draft"
+status: "ready"
 ```
 
 ### US706 - 版本结果页本地比对计算受控入口

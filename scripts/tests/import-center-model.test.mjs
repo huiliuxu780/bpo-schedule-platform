@@ -34,6 +34,7 @@ import {
   formatImportRowStatus,
   summarizeImportApplyActionGuidance,
   summarizeImportApplicationVisibility,
+  summarizeImportAppliedResultCard,
   summarizeImportDownstreamResultNavigation,
   summarizeImportDownstreamResultDrilldown,
   summarizeImportQualityImpactAggregation,
@@ -2966,6 +2967,14 @@ test("import center batch processing href routes concrete work to detail page", 
     }),
     "/data-quality/BATCH%2FCSV%20001?correction=success&row=1",
   );
+
+  assert.equal(
+    buildImportBatchProcessingHref("BATCH-IM084-001", {
+      apply: "success",
+      tab: "result-trace",
+    }),
+    "/data-quality/BATCH-IM084-001?apply=success&tab=result-trace",
+  );
 });
 
 test("import center page hierarchy keeps utilities out of the primary workflow", () => {
@@ -4071,6 +4080,89 @@ test("import center batch apply result notice summarizes action feedback", () =>
   );
 
   assert.equal(summarizeImportBatchApplyResultNotice({ status: undefined }), null);
+});
+
+test("import center applied result card shows version result and next-step entries", () => {
+  assert.deepEqual(
+    summarizeImportAppliedResultCard({
+      batch: {
+        ...baseBatch,
+        batch_id: "BATCH-IM084-SCH-001",
+        file_type: "personnel_schedule",
+        application_status: "applied",
+        application_target: "personnel_schedule",
+        import_version_id: "SCH-VERSION-001",
+        applied_record_count: 36,
+      },
+      readiness: {
+        batch_id: "BATCH-IM084-SCH-001",
+        file_type: "personnel_schedule",
+        readiness_status: "ready",
+        blockers: [],
+        row_blockers: [],
+        total_rows: 36,
+        success_rows: 36,
+        failed_rows: 0,
+        warning_rows: 0,
+        version_count: 1,
+        application_status: "applied",
+        application_target: "personnel_schedule",
+        import_version_id: "SCH-VERSION-001",
+        applied_record_count: 36,
+      },
+      applyStatus: "success",
+    }),
+    {
+      tone: "success",
+      statusLabel: "刚完成应用",
+      title: "业务版本结果已生成",
+      detail: "当前批次已写入人员排班，生成版本 SCH-VERSION-001，可继续查看下游结果追踪或复核案例。",
+      targetLabel: "人员排班",
+      versionLabel: "SCH-VERSION-001",
+      appliedRecordLabel: "36 条",
+      primaryActionLabel: "查看下游结果追踪",
+      primaryHref: "/data-quality/BATCH-IM084-SCH-001?tab=result-trace",
+      secondaryActionLabel: "查看复核案例",
+      secondaryHref: "/data-quality/review-cases?businessDate=2026-05-01&status=open",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportAppliedResultCard({
+      batch: {
+        ...baseBatch,
+        batch_id: "BATCH-IM084-MD-001",
+        application_status: "applied",
+        application_target: "master_data",
+        import_version_id: "MD-VERSION-001",
+        applied_record_count: 10,
+      },
+      readiness: null,
+      applyStatus: undefined,
+    }),
+    {
+      tone: "done",
+      statusLabel: "已应用",
+      title: "业务版本结果已生成",
+      detail: "当前批次已写入主数据，生成版本 MD-VERSION-001；建议先核对版本记录，再进入下游结果追踪。",
+      targetLabel: "主数据",
+      versionLabel: "MD-VERSION-001",
+      appliedRecordLabel: "10 条",
+      primaryActionLabel: "查看版本记录",
+      primaryHref: "/data-quality/BATCH-IM084-MD-001?tab=batch-detail",
+      secondaryActionLabel: "查看下游结果追踪",
+      secondaryHref: "/data-quality/BATCH-IM084-MD-001?tab=result-trace",
+    },
+  );
+
+  assert.equal(
+    summarizeImportAppliedResultCard({
+      batch: baseBatch,
+      readiness: null,
+      applyStatus: undefined,
+    }),
+    null,
+  );
 });
 
 test("import center readiness issue groups prioritize blockers by operational type", () => {

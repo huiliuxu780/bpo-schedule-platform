@@ -2266,3 +2266,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM084 Applied Result Card And Next-Step Entry
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `e1714cc`
+- remote_status: `branch includes pushed IM083 baseline; IM084 implementation is local only until PM asks to push.`
+- scope: applied-result card and next-step entry on `/data-quality/[batchId]`, model helper/test coverage, current-state advancement from `IM084` to `IM085`, and local production-page smoke evidence.
+- allowed_files_check: `app/data-quality/[batchId]/page.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/[batchId]/page.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target frontend model test failed first because `summarizeImportAppliedResultCard` was missing; model test then passed with 68 tests; lint, typecheck, Node 22 build, `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required for completion; production browser smoke on `http://127.0.0.1:3000/data-quality/BATCH-DEMO-REVIEW-20260511?apply=success` verified the result card plus `查看版本记录` and `查看下游结果追踪` links, and verified navigation to `?tab=result-trace`.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
