@@ -2377,8 +2377,8 @@ description: "人员排班生产链路已形成工作台、详情和发布/冻�
 source: "After IM101 completion and PM agreed to continue on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "ready"
-notes: "规划：IM102 先新增 `/demand-plans/production` 只读需求预测生产工作台；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "IM102 已完成：新增 `/demand-plans/production` 只读需求预测生产工作台，展示预测版本、来源批次、应用状态、技能组/等级/时段对齐状态、阻塞原因和 IM103/IM104 后续边界；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R803 - 需求预测版本详情与对齐结果
@@ -2390,8 +2390,8 @@ description: "需求预测生产工作台需要进入单个预测版本详情，
 source: "After R802 planning on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "planned"
-notes: "规划：IM103 在 IM102 后新增预测版本详情；缺少技能组/等级/时段明细时必须展示空态或阻塞态，不伪造预测行。"
+status: "ready"
+notes: "IM103 当前 ready：在 IM102 工作台后新增预测版本详情；缺少技能组/等级/时段明细时必须展示空态或阻塞态，不伪造预测行。"
 ```
 
 ### R804 - 需求预测变更追踪边界安全壳

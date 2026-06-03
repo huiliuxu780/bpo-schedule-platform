@@ -4311,7 +4311,8 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US721"
-status: "ready"
+status: "done"
+notes: "IM102 已完成：`/demand-plans/production` 在现有计划与排班导航下展示需求预测生产只读工作台，包含来源批次、预测版本、应用状态、技能组/等级/时段对齐状态、阻塞原因和后续 IM103/IM104 边界。"
 ```
 
 ### US723 - 需求预测版本详情与对齐结果
@@ -4333,7 +4334,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US722"
-status: "planned"
+status: "ready"
 ```
 
 ### US724 - 需求预测变更追踪边界安全壳

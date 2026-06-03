@@ -54,6 +54,7 @@ const nav: NavGroup[] = [
     icon: CalendarDays,
     items: [
       { title: "需求计划", href: "/demand-plans", activeMatch: "exact" },
+      { title: "预测生产", href: "/demand-plans/production", activeMatch: "exact", tag: "P1" },
       { title: "排班生产", href: "/schedule-plans/production", activeMatch: "exact", tag: "P1" },
       {
         title: "排班计划",

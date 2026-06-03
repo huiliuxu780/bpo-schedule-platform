@@ -488,3 +488,9 @@ The implementation remains non-writing. It adds no form, server action, backend 
 After the personnel-schedule production chain, the next recommended block is demand-forecast production. It starts with a read-only production workbench under the existing plan/schedule area, then can add forecast version detail with skill-group/level/time-bucket alignment visibility, and only after that can discuss change-tracking boundaries.
 
 Only `US722/IM102` entered current ready state. `US723/IM103` and `US724/IM104` stay outside current until the previous slice is green. The chain must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors without a separate confirmed task.
+
+## 2026-06-04 IM102 Demand Forecast Production Workbench
+
+`IM102/US722` added `/demand-plans/production` under the existing plan/schedule navigation as a read-only demand-forecast production workbench. The page reuses the current import-batch list contract and filters demand-forecast batches into production rows with source batch, forecast business version, business date range, application state, skill-group/level/time-bucket alignment state, blocker summary, and IM103/IM104 next-step labels.
+
+The slice intentionally does not adjust forecasts, write change records, trigger automatic scheduling, or write production state. It adds no backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, real external integration, production formula, settlement rule, or charge-factor change. Current state advanced to `US723/IM103` for forecast version detail and alignment-result visibility.
