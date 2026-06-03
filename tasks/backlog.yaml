@@ -7766,7 +7766,7 @@ tasks:
   - id: IM095
     title: "版本工作台计算后结果回看"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM094"]
     allowed_files:
@@ -7805,3 +7805,4 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已在版本工作台本地比对提交成功后展示结果回看卡片；运行已回显时显示对比口径、结果数、关键差异和业务日，运行暂未回显时保持阻塞态并保留运行详情入口。"

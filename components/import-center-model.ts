@@ -414,6 +414,20 @@ export type ImportLatestComparisonRunCallback = {
   secondaryHref: string
 }
 
+export type ImportVersionWorkbenchComparisonResultReviewTone = "success" | "blocked"
+
+export type ImportVersionWorkbenchComparisonResultReview = {
+  tone: ImportVersionWorkbenchComparisonResultReviewTone
+  title: string
+  detail: string
+  runLabel: string
+  metricCards: Array<{ label: string; value: string; detail: string }>
+  primaryActionLabel: string
+  primaryHref: string
+  secondaryActionLabel: string
+  secondaryHref: string
+}
+
 export type ImportReadinessIssueGroupTone = "blocked" | "ready" | "done" | "unknown"
 
 export type ImportReadinessIssueGroupKey =
@@ -5436,6 +5450,74 @@ export function summarizeImportLatestComparisonRunCallback({
     primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
     secondaryActionLabel: "查看结果列表",
     secondaryHref: "#comparison-runs-list",
+  }
+}
+
+export function summarizeImportVersionWorkbenchComparisonResultReview({
+  status,
+  runId,
+  comparisonRuns,
+}: {
+  status?: string | null
+  runId?: string | null
+  comparisonRuns: ImportComparisonRunRecord[]
+}): ImportVersionWorkbenchComparisonResultReview | null {
+  if (status !== "success" || !runId) {
+    return null
+  }
+
+  const matchedRun = comparisonRuns.find((run) => run.run_id === runId) ?? null
+
+  if (!matchedRun) {
+    return {
+      tone: "blocked",
+      title: "运行结果暂未回显",
+      detail: `版本工作台已收到运行 ${runId} 的成功反馈，但当前结果列表还没有回显这次运行；先保留运行入口，不伪造结果规模或关键差异。`,
+      runLabel: runId,
+      metricCards: [
+        { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },
+        { label: "结果数", value: "待回显", detail: "等待运行回显" },
+        { label: "关键差异", value: "待回显", detail: "等待运行回显" },
+        { label: "业务日", value: "待回显", detail: "等待运行回显" },
+      ],
+      primaryActionLabel: "查看对比运行",
+      primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
+      secondaryActionLabel: "回到版本台账",
+      secondaryHref: "#version-ledger",
+    }
+  }
+
+  return {
+    tone: "success",
+    title: "版本工作台本地比对结果",
+    detail: `运行 ${runId} 已在版本工作台回显；先确认结果规模和关键差异，再进入完整对比运行详情。`,
+    runLabel: runId,
+    metricCards: [
+      {
+        label: "对比口径",
+        value: formatComparisonTypeLabel(matchedRun.comparison_type),
+        detail: formatComparisonRunStatusLabel(matchedRun.status),
+      },
+      {
+        label: "结果数",
+        value: matchedRun.total_results.toLocaleString("zh-CN"),
+        detail: "当前运行结果",
+      },
+      {
+        label: formatComparisonRunKeyMetricLabel(matchedRun),
+        value: formatComparisonRunKeyMetric(matchedRun),
+        detail: formatComparisonRunKeyMetricDetail(matchedRun),
+      },
+      {
+        label: "业务日",
+        value: matchedRun.business_date_from,
+        detail: `至 ${matchedRun.business_date_to}`,
+      },
+    ],
+    primaryActionLabel: "查看对比运行",
+    primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
+    secondaryActionLabel: "回到版本台账",
+    secondaryHref: "#version-ledger",
   }
 }
 

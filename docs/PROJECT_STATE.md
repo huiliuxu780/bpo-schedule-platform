@@ -422,3 +422,11 @@ After `IM093` completion, current state advanced to `US714/IM094` for the contro
 The submit action returns to the same version workbench with success or failure feedback, preserves active filters, and describes duplicate/existing-run behavior as `generated or reused` instead of implying multiple new runs. The implementation stayed frontend-only and introduced no backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
 
 After `IM094` completion, current state advanced to `US715/IM095` for richer result-review feedback after a version-workbench comparison submit.
+
+## 2026-06-03 IM095 Version Workbench Result Review Feedback
+
+`US715/IM095` completed the result-review feedback slice on `/data-quality/versions`. After a version-workbench local comparison submit succeeds or reuses an existing run, the workbench now looks for the returned run in the current comparison-run list. When the run is visible, the feedback card shows the run ID, comparison type, status, result count, key metric, business date, and a direct entry to the comparison-run detail page. When the run is not yet visible, the card stays in an explicit blocked state with `待回显` metrics and keeps the detail entry without fabricating result size or key difference.
+
+The implementation stayed frontend-only and reused existing comparison-run list data and comparison-run detail routes. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor was added.
+
+After `IM095` completion, the `US713-US715 / IM093-IM095` calculation-trigger chain returned current queue to empty. Any next product-development slice must be reseeded before implementation.

@@ -2286,6 +2286,6 @@ description: "版本工作台提交单次本地比对后，用户需要在当前
 source: "After R794 planning on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "ready"
-notes: "本条只补本地计算提交后的结果回看链路，复用现有 comparison run detail、结果列表和版本工作台；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "IM095 已完成：版本工作台提交本地比对后可显示结果回看卡片，运行已回显时展示口径、结果规模和关键差异，未回显时保持阻塞态；复用现有 comparison run detail、结果列表和版本工作台，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```

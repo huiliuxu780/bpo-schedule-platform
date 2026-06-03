@@ -4153,5 +4153,6 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US714"
-status: "ready"
+status: "done"
+notes: "IM095 已完成：版本工作台在本地比对提交成功后展示结果回看卡片；运行已回显时展示对比口径、结果数、关键差异和业务日，运行暂未回显时展示阻塞态且不伪造结果。"
 ```

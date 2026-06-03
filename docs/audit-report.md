@@ -3390,3 +3390,28 @@
 - HTTP smoke：`http://127.0.0.1:3000/data-quality/versions?compare=success&compareRun=RUN-IM094-SMOKE` 命中 `本地比对已提交`、`RUN-IM094-SMOKE` 和生成/复用说明。
 - HTTP smoke：`http://127.0.0.1:3000/data-quality/versions?compare=failed&compareReason=missing_required_fields` 命中 `本地比对未提交` 和 `提交参数不完整`。
 - `git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM095 版本工作台计算后结果回看
+
+#### 审计结论
+
+- `IM095/US715` 已增强 `/data-quality/versions` 的本地比对提交后结果回看卡片。
+- 当提交返回的运行已在当前 comparison run 列表回显时，卡片展示运行 ID、对比口径、结果数、关键差异和业务日，并提供进入 comparison run detail 的入口。
+- 当运行暂未回显时，卡片展示 `待回显` 指标和明确阻塞说明，不伪造结果规模或关键差异。
+- 本轮复用现有 comparison run list 数据和 detail 路由，未新增后端 API、schema/migration 或依赖。
+- 本轮未触碰审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前回看卡片只依赖页面可见的 comparison run 列表；若提交后列表尚未同步，会显示阻塞态而不是完整结果。
+- 这是单次本地比对后的回看入口，不是批量计算、自动计算或生产调度编排。
+
+#### 验证
+
+- `node scripts/tests/import-center-model.test.mjs`：通过，78 个 import-center model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- HTTP smoke：`http://127.0.0.1:3000/data-quality/versions?businessDate=2026-05-11&compare=success&compareRun=RUN-DEMO-FS-20260511` 命中 `版本工作台本地比对结果`、`RUN-DEMO-FS-20260511`、`预测排班`、`结果数` 和 `缺口`。
+- HTTP smoke：`http://127.0.0.1:3000/data-quality/versions?businessDate=2026-05-11&compare=success&compareRun=RUN-NOT-YET-IM095` 命中 `运行结果暂未回显`、`RUN-NOT-YET-IM095`、`不伪造结果规模或关键差异` 和 `待回显`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

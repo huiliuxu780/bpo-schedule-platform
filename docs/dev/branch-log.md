@@ -2505,3 +2505,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM095 Version Workbench Result Review Feedback
+
+- branch_name: `codex/im095-version-workbench-result-review`
+- base_main_commit: `84799e2`
+- remote_status: `main includes merged IM094 baseline; IM095 implementation is local only until final merge/push.`
+- scope: enhance `/data-quality/versions` submit feedback with matched-run result-review metrics, preserve a no-fabrication blocked state when the submitted run is not yet visible, return current state to empty after the IM093-IM095 chain, and record local HTTP smoke evidence.
+- allowed_files_check: `app/data-quality/versions/**`, `components/import-center-version-workbench.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 78 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; HTTP smoke on `http://127.0.0.1:3000/data-quality/versions?businessDate=2026-05-11&compare=success&compareRun=RUN-DEMO-FS-20260511` confirmed matched-run metrics, and `RUN-NOT-YET-IM095` confirmed no-fabrication blocked state. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

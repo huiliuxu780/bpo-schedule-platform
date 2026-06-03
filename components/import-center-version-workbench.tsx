@@ -8,6 +8,7 @@ import {
   type ImportReviewCaseRecord,
   type ImportVersionComparisonCandidate,
   type ImportVersionWorkbenchFilters,
+  summarizeImportVersionWorkbenchComparisonResultReview,
   summarizeImportVersionWorkbench,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -50,7 +51,12 @@ export function ImportCenterVersionWorkbench({
     reviewCases,
     filters,
   })
-  const comparisonNotice = summarizeVersionWorkbenchSubmitNotice({
+  const comparisonResultReview = summarizeImportVersionWorkbenchComparisonResultReview({
+    status: comparisonStatus,
+    runId: comparisonRunId,
+    comparisonRuns,
+  })
+  const comparisonNotice = comparisonResultReview ?? summarizeVersionWorkbenchSubmitNotice({
     status: comparisonStatus,
     runId: comparisonRunId,
     reason: comparisonReason,
@@ -117,24 +123,43 @@ export function ImportCenterVersionWorkbench({
               {comparisonNotice.title}
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground lg:flex-row lg:items-center lg:justify-between">
-            <div className="grid gap-1">
-              <p>{comparisonNotice.detail}</p>
-              <p className="font-mono text-xs">{comparisonNotice.runLabel}</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {comparisonNotice.primaryHref ? (
-                <Button asChild size="sm">
-                  <Link href={comparisonNotice.primaryHref}>
-                    {comparisonNotice.primaryActionLabel}
-                    <ArrowRight data-icon="inline-end" />
+          <CardContent className="grid gap-4 text-sm text-muted-foreground">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div className="grid gap-1">
+                <p>{comparisonNotice.detail}</p>
+                <p className="font-mono text-xs">{comparisonNotice.runLabel}</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {comparisonNotice.primaryHref ? (
+                  <Button asChild size="sm">
+                    <Link href={comparisonNotice.primaryHref}>
+                      {comparisonNotice.primaryActionLabel}
+                      <ArrowRight data-icon="inline-end" />
+                    </Link>
+                  </Button>
+                ) : null}
+                <Button asChild size="sm" variant="outline">
+                  <Link href={comparisonNotice.secondaryHref}>
+                    {comparisonNotice.secondaryActionLabel}
                   </Link>
                 </Button>
-              ) : null}
-              <Button asChild size="sm" variant="outline">
-                <Link href="#version-ledger">{comparisonNotice.secondaryActionLabel}</Link>
-              </Button>
+              </div>
             </div>
+            {comparisonNotice.metricCards ? (
+              <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+                {comparisonNotice.metricCards.map((metric) => (
+                  <div key={metric.label} className="rounded-md border bg-muted/20 p-3">
+                    <div className="text-xs text-muted-foreground">{metric.label}</div>
+                    <div className="mt-1 text-lg font-semibold tracking-normal text-foreground">
+                      {metric.value}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {metric.detail}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       ) : null}
@@ -419,9 +444,11 @@ function summarizeVersionWorkbenchSubmitNotice({
   title: string
   detail: string
   runLabel: string
+  metricCards?: Array<{ label: string; value: string; detail: string }>
   primaryActionLabel: string
   primaryHref: string | null
   secondaryActionLabel: string
+  secondaryHref: string
 } | null {
   if (status === "success" && runId) {
     return {
@@ -432,6 +459,7 @@ function summarizeVersionWorkbenchSubmitNotice({
       primaryActionLabel: "查看对比运行",
       primaryHref: `/data-quality/comparison-runs/${encodeURIComponent(runId)}`,
       secondaryActionLabel: "回到版本台账",
+      secondaryHref: "#version-ledger",
     }
   }
 
@@ -446,6 +474,7 @@ function summarizeVersionWorkbenchSubmitNotice({
         ? `/data-quality/comparison-runs/${encodeURIComponent(runId)}`
         : null,
       secondaryActionLabel: "回到版本台账",
+      secondaryHref: "#version-ledger",
     }
   }
 
