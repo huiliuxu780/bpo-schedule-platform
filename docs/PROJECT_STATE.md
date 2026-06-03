@@ -221,6 +221,7 @@ Current invariants:
 - `IM074/US694` added failed-submit retry targeting inside the review-case processing action deck, automatically opening the failed action tab and showing retry guidance when evidence/conclusion/closure writes return failed URL parameters without adding backend routes, schema/migration changes, dependencies, approval, export, batch operations, permissions, external integrations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 - `IM075/US695` corrected successful-submit continuation priority inside the review-case processing action deck, keeping the primary continuation on the current case when it still needs the next processing action and falling back to same-owner next pending only after the current case leaves the actionable sequence; it then returned current queue and active tasks to empty.
 - `IM076/US696` added closure-success queue handoff wording inside the review-case processing action deck, making closed-case handoff explicit and labeling the primary continuation as closing-then-next when another same-owner pending case exists; it then returned current queue and active tasks to empty.
+- `IM077/US697` kept review continuation return-list links focused on open cases by adding `status=open` to same-owner list links in the detail and action continuation flows; it then returned current queue and active tasks to empty.
 
 ## Product Direction
 

@@ -22,6 +22,8 @@ Current story queue is empty and active tasks are empty.
 
 `US696/IM076` completed the review-case closure-success queue handoff guidance, then current queue returned to empty.
 
+`US697/IM077` completed the review-case continuation return-list open-status focus, then current queue returned to empty.
+
 `US692/IM072` completed the review-case action submit feedback, then current queue returned to empty.
 
 `US691/IM071` completed the review-case detail processing action deck, then current queue returned to empty.

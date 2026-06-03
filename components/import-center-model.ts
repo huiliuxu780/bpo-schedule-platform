@@ -1656,6 +1656,7 @@ export function summarizeImportReviewOwnerContext({
   const listHref = buildImportReviewCasesWorkspaceHref({
     businessDate: currentCase.business_date,
     ownerId: currentCase.owner_id,
+    status: "open",
   })
 
   if (error) {
@@ -1792,6 +1793,7 @@ export function summarizeImportReviewOwnerNavigation({
   const listHref = buildImportReviewCasesWorkspaceHref({
     businessDate: currentCase.business_date,
     ownerId: currentCase.owner_id,
+    status: "open",
   })
 
   if (error) {

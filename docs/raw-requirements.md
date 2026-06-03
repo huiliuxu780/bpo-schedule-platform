@@ -2042,3 +2042,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成复核关闭成功后的队列交接提示；关闭成功且存在同 owner 下一条待处理时，续办导航明确展示当前案例已关闭，并将主入口标为关闭后处理下一条；复用现有 review-case list 数据和阶段快照，不新增 API、schema/migration、依赖、页面路由、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R777 - 复核续办返回列表保留未关闭焦点
+
+```yaml
+id: R777
+module: "导入中心"
+description: "复核详情页的续办导航可以回到同 Owner 列表，但当前列表入口只带业务日和 owner，未明确限定未关闭案例。主管从关闭成功或处理成功回列表时，应继续停留在未关闭处理队列，避免已关闭案例混入连续处理视图。"
+source: "After IM076 closure handoff and PM asked to continue on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已完成复核续办返回列表保留未关闭焦点；同 Owner 待处理导航和提交后续办导航的返回列表入口会带上 status=open，避免已关闭案例混入连续处理队列；复用现有 review-case list filters，不新增 API、schema/migration、依赖、页面路由、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

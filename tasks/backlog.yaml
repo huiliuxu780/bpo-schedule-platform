@@ -6979,3 +6979,47 @@ tasks:
       - "范围扩展到页面路由、新 UI 组件、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM077
+    title: "复核续办返回列表保留未关闭焦点"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM076"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "app/**"
+      - "components/import-center-review-case-detail-workspace.tsx"
+    acceptance:
+      - "同 Owner 待处理导航的列表入口包含 `status=open`。"
+      - "提交成功、关闭成功和失败反馈下的续办导航返回同 Owner 列表入口均复用带 `status=open` 的列表链接。"
+      - "下一条详情入口不受影响，仍指向具体复核案例详情页。"
+      - "复用现有 review-case list filter，不新增后端 API、schema/migration 或页面路由。"
+      - "不新增依赖，不修改 package/lockfile，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到页面路由、新 UI 组件、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

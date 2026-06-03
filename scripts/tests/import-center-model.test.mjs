@@ -1452,7 +1452,7 @@ test("import center review case detail summarizes same-owner processing context"
       businessDate: "2026-05-11",
       totalCount: 3,
       actionableCount: 3,
-      listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A",
+      listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A&status=open",
       stageHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A&processingStage=missing_evidence",
       itemIds: [
         "CASE-MISSING-EVIDENCE",
@@ -1563,7 +1563,7 @@ test("import center review case detail summarizes same-owner pending navigation"
       title: "同 Owner 待处理导航",
       positionLabel: "第 2 / 3 条",
       totalActionableCount: 3,
-      listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A",
+      listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A&status=open",
       previousCaseId: "CASE-MISSING-EVIDENCE",
       nextCaseId: "CASE-READY-CLOSE",
       sequenceIds: [
@@ -2420,7 +2420,7 @@ test("import center review case detail summarizes action continuation links", ()
     primaryHref: "/data-quality/review-cases/CASE-CURRENT",
     primaryDetail: "CASE-CURRENT · 缺结论 · 中",
     listLabel: "返回同 Owner 列表",
-    listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A",
+    listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A&status=open",
   });
 
   const closureFeedback = summarizeImportReviewCaseActionFeedback({
@@ -2451,7 +2451,7 @@ test("import center review case detail summarizes action continuation links", ()
       primaryHref: "/data-quality/review-cases/CASE-MISSING-EVIDENCE",
       primaryDetail: "CASE-MISSING-EVIDENCE · 缺证据 · 严重",
       listLabel: "返回同 Owner 列表",
-      listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A",
+      listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A&status=open",
     }
   );
 

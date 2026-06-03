@@ -1763,3 +1763,14 @@
 - action: 增加复核关闭成功后的队列交接提示。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 在 `closure=success` 且当前案例已离开待处理序列时，续办导航明确展示 `当前案例已关闭`，并将主入口标为 `关闭后处理下一条`；本轮不新增后端 route、schema/migration、依赖、页面路由、新 UI 组件、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM077`
+- source_ids:
+  - `R777`
+- story_ids:
+  - `US697`
+- action: 让复核续办返回列表保留未关闭焦点。
+- status: `done`
+- notes: 同 Owner 待处理导航和提交后续办导航的 `返回同 Owner 列表` 链接现在带 `status=open`，主管从详情返回列表时仍停留在未关闭处理队列；本轮不新增后端 route、schema/migration、依赖、页面路由、新 UI 组件、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

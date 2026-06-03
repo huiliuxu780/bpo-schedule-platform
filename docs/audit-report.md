@@ -3180,3 +3180,28 @@
 - `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
 - in-app browser production smoke：`http://127.0.0.1:3034/data-quality/review-cases/CASE-QUERY-001?closure=success` 命中 `关闭案例提交成功`、`当前案例已关闭` 和 `关闭后处理下一条`，且主入口链接指向 `/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM077 复核续办返回列表保留未关闭焦点
+
+#### 审计结论
+
+- `IM077/US697` 已让复核详情同 Owner 列表入口保留未关闭焦点。
+- 同 Owner 待处理导航的 listHref 现在包含 `status=open`。
+- 提交成功、关闭成功和失败反馈下的续办导航返回同 Owner 列表入口复用该链接，避免回到列表后混入已关闭案例。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未新增页面路由或 UI 组件，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只是前端链接焦点，不是权限过滤或后端任务队列游标。
+- 如果后续要做生产队列，需要后端返回明确的 owner queue cursor 和权限范围。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先失败，证明旧链接没有 `status=open`。
+- `node scripts/tests/import-center-model.test.mjs`：通过，57 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- in-app browser production smoke：`http://127.0.0.1:3035/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001?evidence=success` 命中 `续办导航`，且 `返回同 Owner 列表` 链接为 `/data-quality/review-cases?businessDate=2026-05-11&ownerId=supervisor-01&status=open`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -3731,3 +3731,26 @@ dependencies:
   - "US695"
 status: "done"
 ```
+
+### US697 - 复核续办返回列表保留未关闭焦点
+
+```yaml
+id: US697
+requirement_ids:
+  - R777
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望从复核详情续办导航返回同 Owner 列表时仍停留在未关闭案例队列，以便连续处理时不被已关闭案例打断。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "同 Owner 待处理导航的列表入口包含 `status=open`。"
+  - "提交成功、关闭成功和失败反馈下的续办导航返回同 Owner 列表入口均复用带 `status=open` 的列表链接。"
+  - "下一条详情入口不受影响，仍指向具体复核案例详情页。"
+  - "复用现有 review-case list filter，不新增后端 API、schema/migration 或页面路由。"
+  - "不新增依赖，不修改 package/lockfile，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US696"
+status: "done"
+```
