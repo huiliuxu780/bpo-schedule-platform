@@ -2386,3 +2386,37 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM090-IM092 Comparison Result Callback Planning
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `3d427b3`
+- remote_status: `branch includes pushed IM086 baseline plus local version-workbench chain; callback-chain planning and implementation are local only until PM asks to push.`
+- scope: define `R790-R792`, `US710-US712`, and `IM090-IM092`; seed only `US710/IM090` into current ready state; continue the main callback chain inside existing result-trace and comparison-run-detail routes.
+- allowed_files_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no package, lockfile, backend, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after the planning/state update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM090 Latest Comparison Run Callback Card
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `3d427b3`
+- remote_status: `branch includes pushed IM086 baseline plus local version-workbench chain; IM090 implementation is local only until PM asks to push.`
+- scope: batch result-trace latest-run callback card, model summary coverage, current-state advancement from `IM090` to `IM091`, and local batch-page smoke evidence.
+- allowed_files_check: `app/data-quality/[batchId]/**`, `components/import-center-result-trace-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/[batchId]/**`, `components/import-center-result-trace-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: model TDD first failed because `summarizeImportLatestComparisonRunCallback` did not exist; after implementation `node scripts/tests/import-center-model.test.mjs` passed with 75 tests. Browser smoke on `http://localhost:3000/data-quality/BATCH-DEMO-REVIEW-20260511?tab=result-trace&compare=success&compareRun=RUN-LOCAL-SMOKE-001` confirmed the callback card path and the explicit blocked fallback state when the target run is not yet in the live list. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

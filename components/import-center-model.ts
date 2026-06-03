@@ -385,6 +385,20 @@ export type ImportVersionComparisonTriggerNotice = {
   secondaryHref: string
 }
 
+export type ImportLatestComparisonRunCallbackTone = "success" | "blocked"
+
+export type ImportLatestComparisonRunCallback = {
+  tone: ImportLatestComparisonRunCallbackTone
+  title: string
+  detail: string
+  runLabel: string
+  metricCards: Array<{ label: string; value: string; detail: string }>
+  primaryActionLabel: string
+  primaryHref: string
+  secondaryActionLabel: string
+  secondaryHref: string
+}
+
 export type ImportReadinessIssueGroupTone = "blocked" | "ready" | "done" | "unknown"
 
 export type ImportReadinessIssueGroupKey =
@@ -5060,6 +5074,76 @@ export function summarizeImportVersionComparisonTriggerNotice({
   return null
 }
 
+export function summarizeImportLatestComparisonRunCallback({
+  status,
+  runId,
+  reason: _reason,
+  comparisonRuns,
+}: {
+  status?: string | null
+  runId?: string | null
+  reason?: string | null
+  comparisonRuns: ImportComparisonRunRecord[]
+}): ImportLatestComparisonRunCallback | null {
+  if (status !== "success" || !runId) {
+    return null
+  }
+
+  const matchedRun = comparisonRuns.find((run) => run.run_id === runId) ?? null
+
+  if (!matchedRun) {
+    return {
+      tone: "blocked",
+      title: "最新运行结果暂未回显",
+      detail: `当前页已收到运行 ${runId} 的成功反馈，但结果列表还没有回显这次运行；先刷新当前结果追踪，再进入运行详情复核。`,
+      runLabel: runId,
+      metricCards: [
+        { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },
+        { label: "结果数", value: "待回显", detail: "当前运行结果" },
+        { label: "关键差异", value: "待回显", detail: "等待结果列表同步" },
+        { label: "业务日", value: "待回显", detail: "等待结果列表同步" },
+      ],
+      primaryActionLabel: "查看新对比运行",
+      primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
+      secondaryActionLabel: "查看结果列表",
+      secondaryHref: "#comparison-runs-list",
+    }
+  }
+
+  return {
+    tone: "success",
+    title: "最新一次本地比对结果",
+    detail: `当前版本语境刚生成运行 ${runId}，可在当前页先确认结果规模，再进入完整运行详情。`,
+    runLabel: runId,
+    metricCards: [
+      {
+        label: "对比口径",
+        value: formatComparisonTypeLabel(matchedRun.comparison_type),
+        detail: formatComparisonRunStatusLabel(matchedRun.status),
+      },
+      {
+        label: "结果数",
+        value: matchedRun.total_results.toLocaleString("zh-CN"),
+        detail: "当前运行结果",
+      },
+      {
+        label: formatComparisonRunKeyMetricLabel(matchedRun),
+        value: formatComparisonRunKeyMetric(matchedRun),
+        detail: formatComparisonRunKeyMetricDetail(matchedRun),
+      },
+      {
+        label: "业务日",
+        value: matchedRun.business_date_from,
+        detail: `至 ${matchedRun.business_date_to}`,
+      },
+    ],
+    primaryActionLabel: "查看新对比运行",
+    primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
+    secondaryActionLabel: "查看结果列表",
+    secondaryHref: "#comparison-runs-list",
+  }
+}
+
 function supportsDirectVersionResultContext(fileType: ImportFileType): boolean {
   return (
     fileType === "personnel_schedule" ||
@@ -5213,6 +5297,44 @@ function formatImportVersionComparisonTriggerFailureReason(
   }
 
   return `本地比对提交失败：${reason}`
+}
+
+function formatComparisonRunKeyMetric(run: ImportComparisonRunRecord): string {
+  if (run.comparison_type === "forecast_vs_schedule") {
+    return `${run.total_gap_agents?.toLocaleString("zh-CN") ?? 0} 人`
+  }
+
+  return `${run.total_late_minutes?.toLocaleString("zh-CN") ?? 0} 分钟`
+}
+
+function formatComparisonRunKeyMetricLabel(run: ImportComparisonRunRecord): string {
+  if (run.comparison_type === "forecast_vs_schedule") {
+    return "缺口"
+  }
+
+  return "迟到"
+}
+
+function formatComparisonRunKeyMetricDetail(run: ImportComparisonRunRecord): string {
+  if (run.comparison_type === "forecast_vs_schedule") {
+    return "预测排班差异"
+  }
+
+  return "排班实际差异"
+}
+
+function formatComparisonRunStatusLabel(
+  status: ImportComparisonRunRecord["status"]
+): string {
+  if (status === "completed") {
+    return "已完成"
+  }
+
+  if (status === "failed") {
+    return "失败"
+  }
+
+  return "进行中"
 }
 
 export function summarizeImportReadinessIssueGroups(

@@ -219,6 +219,70 @@ dependencies:
 status: "done"
 ```
 
+### US710 - 结果追踪中的最新运行回看卡片
+
+```yaml
+id: US710
+requirement_ids:
+  - R790
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在当前批次的结果追踪里直接看到刚刚生成的最新一次本地比对运行摘要，以便不用立刻跳页也能先判断这次运行是否值得继续看。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "本地比对成功回跳到结果追踪后，页面展示当前版本语境下的最新运行结果卡片。"
+  - "卡片至少展示运行 ID、对比口径、结果规模、关键差异和进入 comparison run detail / 结果列表的入口。"
+  - "运行暂未回显时展示明确阻塞态，不假装已经拿到完整结果。"
+  - "复用现有 comparison run 列表和成功回跳 query 参数，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US709"
+status: "done"
+```
+
+### US711 - comparison run detail 结果回看主页强化
+
+```yaml
+id: US711
+requirement_ids:
+  - R791
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望进入 comparison run detail 后能明确知道这就是当前版本语境下的完整结果回看页，以便放心在这里继续检查结果明细。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "从结果追踪进入 comparison run detail 时，页面明确这是当前版本语境下的完整结果回看主页。"
+  - "页面强化来源版本、业务日和回看语义，不要求新增写入动作。"
+  - "复用现有 comparison run detail 查询与页面结构，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US710"
+status: "draft"
+```
+
+### US712 - comparison run detail 回跳闭环
+
+```yaml
+id: US712
+requirement_ids:
+  - R792
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在 comparison run detail 看完完整结果后能稳定回到来源批次的结果追踪或版本工作台，以便这条链路形成真正闭环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "comparison run detail 提供回到来源批次结果追踪和版本工作台的稳定返回入口。"
+  - "来源批次或版本语境不足时展示清晰阻塞态，不伪造回跳。"
+  - "复用现有批次、版本工作台和 comparison run detail 页面，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US711"
+status: "draft"
+```
+
 ### US700 - 字段映射模板上传预选链路
 
 ```yaml

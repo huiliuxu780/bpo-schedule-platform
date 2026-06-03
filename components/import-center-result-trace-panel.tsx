@@ -32,6 +32,7 @@ import {
   buildImportComparisonRunDetailWorkspaceHref,
   buildImportReviewCasesWorkspaceHref,
   summarizeImportAppliedVersionResultContext,
+  summarizeImportLatestComparisonRunCallback,
   summarizeImportVersionComparisonTrigger,
   summarizeImportVersionComparisonTriggerNotice,
   summarizeImportDownstreamResultDrilldown,
@@ -191,6 +192,12 @@ function AppliedVersionResultContextSection({
     runId: searchParams.get("compareRun"),
     reason: searchParams.get("compareReason"),
   })
+  const latestComparisonRunCallback = summarizeImportLatestComparisonRunCallback({
+    status: searchParams.get("compare"),
+    runId: searchParams.get("compareRun"),
+    reason: searchParams.get("compareReason"),
+    comparisonRuns,
+  })
 
   return (
     <section className="grid gap-4 rounded-md border bg-muted/30 p-4">
@@ -248,12 +255,69 @@ function AppliedVersionResultContextSection({
         <ComparisonTriggerNoticeSection notice={comparisonNotice} />
       ) : null}
 
+      {latestComparisonRunCallback ? (
+        <LatestComparisonRunCallbackSection summary={latestComparisonRunCallback} />
+      ) : null}
+
       {comparisonAction ? (
         <ComparisonTriggerActionSection
           batchId={batch.batch_id}
           action={comparisonAction}
         />
       ) : null}
+    </section>
+  )
+}
+
+function LatestComparisonRunCallbackSection({
+  summary,
+}: {
+  summary: ReturnType<typeof summarizeImportLatestComparisonRunCallback>
+}) {
+  if (!summary) {
+    return null
+  }
+
+  return (
+    <section className="grid gap-3 rounded-md border bg-background/80 p-3">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid gap-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <Activity className="size-4 text-muted-foreground" />
+            <div className="text-sm font-medium">{summary.title}</div>
+            <Badge variant={summary.tone === "success" ? "secondary" : "destructive"}>
+              {summary.tone === "success" ? "最新结果" : "待刷新"}
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground">{summary.detail}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm">
+            <Link href={summary.primaryHref}>
+              {summary.primaryActionLabel}
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href={summary.secondaryHref}>
+              {summary.secondaryActionLabel}
+              <ExternalLink data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+      <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
+        {summary.metricCards.map((metric) => (
+          <div key={metric.label} className="rounded-md border bg-background/60 p-3">
+            <div className="text-xs text-muted-foreground">{metric.label}</div>
+            <div className="mt-1 break-all font-mono text-xs font-medium">
+              {metric.value}
+            </div>
+            <div className="mt-1 text-xs text-muted-foreground">{metric.detail}</div>
+          </div>
+        ))}
+      </div>
+      <div className="text-xs font-mono text-muted-foreground">{summary.runLabel}</div>
     </section>
   )
 }

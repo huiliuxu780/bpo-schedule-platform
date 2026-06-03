@@ -362,3 +362,21 @@ After `IM088` went green, current state advanced to `US709/IM089` as the only re
 The implementation stayed frontend-only. It reused the existing import-batch list, comparison-run list, and review-case list queries, then applied conservative frontend attribution rules: matched versions show comparison-run counts and same-business-date review-case counts only when the current version already maps to concrete comparison runs; missing versions, unapplied batches, unsupported direct chains, and blank domains stay in explicit blocked or empty state instead of showing misleading counts.
 
 After `IM089` went green, current queue returned to empty. The next phase must be reseeded into `docs/current/**` before more product development starts.
+
+## 2026-06-03 IM090-IM092 Comparison Result Callback Planning
+
+After the version-workbench chain completed, PM confirmed that the next slice should not invent a new page and should keep the main callback entry inside the existing batch `结果追踪` context. The approved structure is:
+
+1. `US710/IM090`: show a latest-run callback card inside batch result trace immediately after local comparison success.
+2. `US711/IM091`: reinforce `comparison run detail` as the full result-review page for the current version context.
+3. `US712/IM092`: add stable return links from `comparison run detail` back to source batch result trace and version workbench.
+
+To keep Story Runner state narrow, only `US710/IM090` entered `docs/current/**` first. `US711/IM091` and `US712/IM092` remain outside current state until `IM090` is green.
+
+## 2026-06-03 IM090 Latest Comparison Run Callback Card
+
+`US710/IM090` completed the first slice of the comparison-result callback chain inside the existing batch result-trace context. After local comparison success redirects back to `/data-quality/[batchId]?tab=result-trace`, the page now keeps the existing success notice and adds a dedicated latest-run callback card under the same version-result context.
+
+When the new run already appears in the current comparison-run list, the card surfaces the run ID, comparison type, result count, key metric, and direct entries to the new run detail or current result list. When the success redirect arrives before the current page can see that run in the list, the card stays explicit about that lag and exposes a blocked-but-actionable fallback instead of pretending the result is already present. The implementation stayed frontend-only, reused existing search params and comparison-run list data, and introduced no backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
+
+After `IM090` went green, current state advanced to `US711/IM091` as the only ready slice.

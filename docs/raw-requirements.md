@@ -132,6 +132,45 @@ status: "done"
 notes: "本轮已完成版本工作台下游影响摘要；/data-quality/versions 现为当前版本行补充 comparison run / review case 只读计数或阻塞解释，并对无版本、无批次、无直接结果链路场景给出明确空态；实现复用现有 comparison runs、review cases 和前端版本定位能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 
+### R790 - 本地比对触发后的最新运行回看卡片
+
+```yaml
+id: R790
+module: "导入中心"
+description: "在版本结果页发起一次本地比对后，用户虽然能收到成功提示，但还缺少一个稳定的当前页回看卡片，无法快速确认这次运行到底生成了什么规模的结果。需要在结果追踪语境里补一张最新运行结果卡片。"
+source: "After R789 completion and PM confirmed the next callback chain on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已完成结果追踪中的最新运行回看卡片；本地比对成功回跳后，结果追踪会在当前版本语境展示最新一次运行结果卡片，并在运行暂未回显时给出明确阻塞态；复用现有 comparison run 列表与成功回跳 query 参数，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+```
+
+### R791 - comparison run detail 作为完整结果回看主页
+
+```yaml
+id: R791
+module: "导入中心"
+description: "当前结果追踪页适合做触发反馈和最近一次运行定位，但完整结果阅读仍应落在 comparison run detail。需要把最新运行回看链路稳定导向 comparison run detail，并在该页强化它作为完整结果回看主页的语义。"
+source: "After R790 planning confirmation on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "draft"
+notes: "本条只补 comparison run detail 的当前版本语境强调和来源说明，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+```
+
+### R792 - comparison run detail 到来源批次与版本台账的回跳闭环
+
+```yaml
+id: R792
+module: "导入中心"
+description: "当用户进入 comparison run detail 看完整结果后，还需要能稳定回到来源批次的结果追踪或版本工作台，否则这条链仍然是单向的。需要补 comparison run detail 的回跳闭环。"
+source: "After R791 planning confirmation on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "draft"
+notes: "本条只补现有页面之间的导航闭环，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+```
+
 ### R780 - 字段映射模板上传预选链路
 
 ```yaml

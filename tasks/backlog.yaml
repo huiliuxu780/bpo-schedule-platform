@@ -7158,6 +7158,128 @@ tasks:
       - "验证失败"
     commit_after_done: true
     notes: "已完成。版本工作台当前版本行为 comparison run / review case 补齐只读下游影响摘要；已匹配版本显示运行数和复核案例数，未应用、版本缺失、无直接链路或无批次场景显示明确阻塞/空态说明。"
+  - id: IM090
+    title: "结果追踪中的最新运行回看卡片"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM089"]
+    allowed_files:
+      - "app/data-quality/[batchId]/**"
+      - "components/import-center-result-trace-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "本地比对成功回跳到结果追踪后，页面展示当前版本语境下的最新运行结果卡片。"
+      - "卡片至少展示运行 ID、对比口径、结果规模、关键差异和进入 comparison run detail / 结果列表的入口。"
+      - "运行暂未回显时展示明确阻塞态，不假装已经拿到完整结果。"
+      - "复用现有 comparison run 列表和成功回跳 query 参数，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    notes: "已完成。本地比对成功回跳后，结果追踪会显示当前版本语境下的最新运行回看卡片；当运行已回显时展示对比口径、结果规模、关键差异和入口，当运行尚未回显时展示明确阻塞态与回看入口。"
+  - id: IM091
+    title: "comparison run detail 结果回看主页强化"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    dependencies: ["IM090"]
+    allowed_files:
+      - "app/data-quality/comparison-runs/[runId]/**"
+      - "components/import-center-comparison-run-detail-workspace.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "从结果追踪进入 comparison run detail 时，页面明确这是当前版本语境下的完整结果回看主页。"
+      - "页面强化来源版本、业务日和回看语义，不要求新增写入动作。"
+      - "复用现有 comparison run detail 查询与页面结构，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM092
+    title: "comparison run detail 回跳闭环"
+    priority: P1
+    status: draft
+    required_workflow: frontend-scaffold
+    dependencies: ["IM091"]
+    allowed_files:
+      - "app/data-quality/comparison-runs/[runId]/**"
+      - "components/import-center-comparison-run-detail-workspace.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "comparison run detail 提供回到来源批次结果追踪和版本工作台的稳定返回入口。"
+      - "来源批次或版本语境不足时展示清晰阻塞态，不伪造回跳。"
+      - "复用现有批次、版本工作台和 comparison run detail 页面，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: IM080
     title: "字段映射模板上传预选链路"
     priority: P1
