@@ -4291,3 +4291,69 @@ dependencies:
 status: "done"
 notes: "IM101 已完成：排班版本详情页新增发布、冻结、取消发布三类生产动作边界安全壳，展示来源版本、展开校验、引用校验和失败边界，动作按钮保持禁用。"
 ```
+
+### US722 - 需求预测生产工作台只读入口
+
+```yaml
+id: US722
+requirement_ids:
+  - R802
+module: "需求预测生产"
+role: "计划主管"
+story: "作为计划主管，我希望在计划与排班下查看需求预测生产工作台，按预测版本、来源批次、应用状态和技能组/等级/时段对齐状态确认当前预测数据是否可用于后续排班和比对。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "入口在现有计划与排班功能下可达，不创建新的首页或营销页。"
+  - "工作台展示需求预测来源批次、预测业务版本、应用状态、技能组/等级/时段对齐状态和阻塞原因。"
+  - "页面明确当前只读边界和后续版本详情、变更追踪入口状态。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US721"
+status: "ready"
+```
+
+### US723 - 需求预测版本详情与对齐结果
+
+```yaml
+id: US723
+requirement_ids:
+  - R803
+module: "需求预测生产"
+role: "计划主管"
+story: "作为计划主管，我希望进入单个需求预测版本详情，查看业务日范围、技能组、等级、时段粒度和对齐结果，以便确认这个预测版本能否进入排班和履约比对链路。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "从需求预测生产工作台可进入预测版本详情。"
+  - "详情页展示来源批次/版本、业务日范围、技能组、等级、时段粒度和对齐状态。"
+  - "缺少预测明细或对齐结果时展示明确空态或阻塞态，不伪造技能组/等级/时段明细。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US722"
+status: "planned"
+```
+
+### US724 - 需求预测变更追踪边界安全壳
+
+```yaml
+id: US724
+requirement_ids:
+  - R804
+module: "需求预测生产"
+role: "计划主管"
+story: "作为计划主管，我希望在追踪或调整需求预测前先看到来源、对齐和下游影响校验边界，以便不误操作预测生产口径。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "变更追踪入口必须先展示来源版本、技能组/等级/时段对齐和下游影响校验边界。"
+  - "动作按钮保持安全壳状态，不提交真实预测变更或生产状态变化。"
+  - "写入动作进入前需要单独确认，不默认扩展到后端/schema/migration。"
+  - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US723"
+status: "planned"
+```

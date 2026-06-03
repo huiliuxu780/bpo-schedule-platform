@@ -3588,3 +3588,16 @@
 - HTTP smoke：`http://127.0.0.1:3000/schedule-plans/production/BATCH-MISSING-IM101` 命中 `发布/冻结边界安全壳`、`发布版本`、`冻结版本`、`取消发布`、`暂不发布`、`暂不冻结`、`暂不取消发布` 和 `引用校验待接入`。
 - in-app browser smoke：当前 URL 为 `/schedule-plans/production/BATCH-MISSING-IM101`，命中安全壳和三类动作，且三个按钮均为 disabled。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-04 - IM102-IM104 需求预测生产链路规划
+
+#### 审计结论
+
+- 已从空 current 状态拆出 `R802-R804 / US722-US724 / IM102-IM104`。
+- 当前只将 `US722/IM102` 放入 `docs/current/**`，作为唯一 ready 任务。
+- 推荐顺序为：需求预测生产只读工作台、预测版本详情与对齐结果、变更追踪边界安全壳。
+- 规划明确先不进入后端 API、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

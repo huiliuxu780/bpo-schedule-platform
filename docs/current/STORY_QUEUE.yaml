@@ -5,4 +5,19 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US722
+    status: ready
+    task_id: IM102
+    requirement_ids:
+      - R802
+    title: "需求预测生产工作台只读入口"
+    module: "需求预测生产"
+    priority: P1
+    gate: frontend-scaffold
+    summary: "在现有计划与排班下新增需求预测生产工作台，展示预测版本、来源批次、应用状态、技能组/等级/时段对齐状态和阻塞原因，不进入写入或公式。"
+    acceptance:
+      - "`/demand-plans/production` 在现有计划与排班功能下可达，不创建新的首页或营销页。"
+      - "工作台展示需求预测来源批次、预测业务版本、应用状态、技能组/等级/时段对齐状态和阻塞原因。"
+      - "页面明确当前只读边界和后续版本详情、变更追踪入口状态。"
+      - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"

@@ -2658,3 +2658,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM102-IM104 Demand Forecast Production Planning
+
+- branch_name: `codex/im102-demand-forecast-production-planning`
+- base_main_commit: `0f70f24`
+- remote_status: `main includes merged IM101 personnel-schedule release/freeze shell baseline; IM102-IM104 planning/state changes are local only until final merge/push.`
+- scope: define `R802-R804`, `US722-US724`, and `IM102-IM104`; seed only `US722/IM102` into current ready state; start demand-forecast production with a read-only workbench before version detail or change-tracking boundaries.
+- allowed_files_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no business code, backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: planning and current-state files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; current file line budgets are within limits (`PROJECT_CONTEXT.md` 144/160, `STORY_QUEUE.yaml` 23/200, `ACTIVE_TASKS.yaml` 53/220, `BLOCKERS.md` 18/120). Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

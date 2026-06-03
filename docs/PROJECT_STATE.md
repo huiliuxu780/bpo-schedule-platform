@@ -482,3 +482,9 @@ The page does not fabricate personnel names, shift detail rows, or interval rows
 `IM101/US721` added the publish/freeze boundary safety shell to the personnel-schedule version detail page. The detail now shows three disabled production-action cards: publish version, freeze version, and unpublish. Each card surfaces the selected source version, 0.5h expansion gate, reference-check gate, and failure boundary so users can see why the current page cannot change production state.
 
 The implementation remains non-writing. It adds no form, server action, backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work. After the IM099-IM101 personnel-schedule production chain, current queue returned to empty.
+
+## 2026-06-04 IM102-IM104 Demand Forecast Production Planning
+
+After the personnel-schedule production chain, the next recommended block is demand-forecast production. It starts with a read-only production workbench under the existing plan/schedule area, then can add forecast version detail with skill-group/level/time-bucket alignment visibility, and only after that can discuss change-tracking boundaries.
+
+Only `US722/IM102` entered current ready state. `US723/IM103` and `US724/IM104` stay outside current until the previous slice is green. The chain must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors without a separate confirmed task.
