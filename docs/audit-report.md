@@ -3286,3 +3286,29 @@
 - `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
 - in-app browser production smoke：`http://127.0.0.1:3038/data-quality/field-mapping-templates/TPL-IM027-SMOKE-001?batchId=BATCH-IM027-SMOKE-001` 命中 `用此模板上传`，href 为 `/data-quality/BATCH-IM027-SMOKE-001?templateId=TPL-IM027-SMOKE-001#import-detail-workspace`；继续打开该链接后，页面默认选中 `导入与模板` tab，CSV 上传表单存在，`template_id` 选中 `TPL-IM027-SMOKE-001`，并展示 `已预选字段映射模板`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM081 独立 CSV 上传工作区
+
+#### 审计结论
+
+- `IM081/US701` 已新增独立二级页 `/data-quality/uploads/new`，CSV 上传不再只能从已有批次详情页进入。
+- 数据质量列表页新增 `上传 CSV` 入口，指向独立上传工作区。
+- 字段映射模板详情页对启用模板仍保留 `用此模板上传`；有来源批次时回到批次处理页，无来源批次时进入独立上传页并携带 `templateId`。
+- 独立上传页复用现有 `ImportCenterUploadForm`、`uploadImportCsvAction` 和字段映射模板 API，并通过 `上传 CSV` / `字段映射模板` tab 分层展示。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前上传仍是 CSV 单批上传，不支持 Excel、multipart 扩展、批量上传或上传审批。
+- 上传成功后的写入和跳转继续沿用现有 action；生产级上传队列、权限隔离和审计流水仍需后续独立任务。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先失败，证明旧模型没有独立上传工作区 href。
+- `node scripts/tests/import-center-model.test.mjs`：通过，63 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过，新路由出现在 Next build route 表中。
+- production DOM smoke：`http://127.0.0.1:3040/data-quality/uploads/new?templateId=TPL-IM027-SMOKE-001` 命中 `CSV 上传工作区`、`已预选字段映射模板`，且 `template_id` defaultValue 为 `TPL-IM027-SMOKE-001`；模板详情页命中 `/data-quality/uploads/new?templateId=TPL-IM027-SMOKE-001` 与 `用此模板上传`；数据质量列表页命中 `/data-quality/uploads/new` 与 `上传 CSV`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

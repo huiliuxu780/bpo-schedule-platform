@@ -1090,6 +1090,22 @@ export function buildImportFieldMappingTemplateNewWorkspaceHref(): string {
   return "/data-quality/field-mapping-templates/new"
 }
 
+export function buildImportUploadWorkspaceHref(
+  params: {
+    templateId?: string | null
+  } = {}
+): string {
+  const searchParams = new URLSearchParams()
+
+  if (params.templateId) {
+    searchParams.set("templateId", params.templateId)
+  }
+
+  const query = searchParams.toString()
+
+  return `/data-quality/uploads/new${query ? `?${query}` : ""}`
+}
+
 export function buildImportFieldMappingTemplateWorkspaceHref(
   templateId: string,
   params: {

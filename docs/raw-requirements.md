@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R781 - 独立 CSV 上传工作区
+
+```yaml
+id: R781
+module: "导入中心"
+description: "CSV 上传表单现在主要挂在批次处理详情里的导入与模板 tab，用户需要先进入某个已有批次才能看到上传入口。需要新增独立上传工作区，让导入管理员可以从数据质量列表、模板详情或模板管理直接发起上传，并支持 templateId 预选。"
+source: "After IM080 and PM asked to continue on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已新增 /data-quality/uploads/new 独立上传工作区；数据质量列表页提供上传入口，模板详情页在无来源批次时可携带 templateId 进入独立上传页，上传页复用现有 CSV 上传 action、模板 API 和上传表单，并用 tab 区分上传与模板视图；未新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```
+
 ### R780 - 字段映射模板上传预选链路
 
 ```yaml

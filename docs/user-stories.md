@@ -20,6 +20,29 @@
   status: "draft"
 ```
 
+### US701 - 独立 CSV 上传工作区
+
+```yaml
+id: US701
+requirement_ids:
+  - R781
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望有独立的 CSV 上传工作区，以便不依赖某个已存在批次也能发起真实导入。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/uploads/new` 展示独立 CSV 上传工作区，复用现有上传表单、模板列表和模板适配提示。"
+  - "数据质量列表页提供进入上传工作区的入口，避免上传入口只藏在批次详情页。"
+  - "模板详情页在没有来源批次时也能进入上传工作区并携带 `templateId` 预选。"
+  - "上传工作区读取 `templateId` 查询参数，默认选中可用模板并提示不可用模板。"
+  - "复用现有 `uploadImportCsvAction` 和模板 API，不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US700"
+status: "done"
+```
+
 ### US700 - 字段映射模板上传预选链路
 
 ```yaml

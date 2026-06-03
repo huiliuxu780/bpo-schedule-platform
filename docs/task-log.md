@@ -1807,3 +1807,14 @@
 - action: 打通字段映射模板上传预选链路。
 - status: `done`
 - notes: 批次详情的模板维护入口会带来源 `batchId`，模板详情页对启用模板展示 `用此模板上传` 入口，返回批次处理页后默认打开 `导入与模板` tab，并在 CSV 上传表单中默认选中可用模板、提示停用或缺失模板不可用；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM081`
+- source_ids:
+  - `R781`
+- story_ids:
+  - `US701`
+- action: 新增独立 CSV 上传工作区。
+- status: `done`
+- notes: 新增 `/data-quality/uploads/new` 二级页，复用现有 CSV 上传表单、上传 action 和字段映射模板 API；数据质量列表页提供 `上传 CSV` 入口，模板详情页在无来源批次时也可携带 `templateId` 进入独立上传页；上传页用 `上传 CSV` / `字段映射模板` tab 分层，避免继续堆叠到批次详情长页；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

@@ -634,6 +634,9 @@ requirements:
   US700: {file: "docs/user-stories.md", requirement_ids: ["R780"], task_ids: ["IM080"], archive_refs: []}
   IM080: {file: "tasks/backlog.yaml", story_ids: ["US700"], gate: "frontend-scaffold"}
   R780: {file: "docs/raw-requirements.md", story_ids: ["US700"], task_ids: ["IM080"]}
+  US701: {file: "docs/user-stories.md", requirement_ids: ["R781"], task_ids: ["IM081"], archive_refs: []}
+  IM081: {file: "tasks/backlog.yaml", story_ids: ["US701"], gate: "frontend-scaffold"}
+  R781: {file: "docs/raw-requirements.md", story_ids: ["US701"], task_ids: ["IM081"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

@@ -11,6 +11,7 @@ import {
   type ImportFieldMappingTemplate,
   buildImportFieldMappingTemplateDetailUrl,
   buildImportFieldMappingTemplateUploadHref,
+  buildImportUploadWorkspaceHref,
   formatFieldMappingTemplateSummary,
   formatImportFileType,
   summarizeImportFieldMappingTemplateActionNotice,
@@ -125,6 +126,13 @@ function TemplateHeader({
   template: ImportFieldMappingTemplate | null
   templateId: string
 }) {
+  const uploadHref =
+    template && sourceBatchId
+      ? buildImportFieldMappingTemplateUploadHref(sourceBatchId, template.template_id)
+      : template
+        ? buildImportUploadWorkspaceHref({ templateId: template.template_id })
+        : null
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4">
@@ -151,14 +159,9 @@ function TemplateHeader({
           {template ? (
             <Badge variant="outline">{formatImportFileType(template.file_type)}</Badge>
           ) : null}
-          {template?.is_active && sourceBatchId ? (
+          {template?.is_active && uploadHref ? (
             <Button asChild size="sm">
-              <Link
-                href={buildImportFieldMappingTemplateUploadHref(
-                  sourceBatchId,
-                  template.template_id
-                )}
-              >
+              <Link href={uploadHref}>
                 <Upload data-icon="inline-start" />
                 用此模板上传
               </Link>

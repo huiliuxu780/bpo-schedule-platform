@@ -14,6 +14,7 @@ import {
   buildImportFieldMappingTemplateNewWorkspaceHref,
   buildImportFieldMappingTemplateUploadHref,
   buildImportFieldMappingTemplateWorkspaceHref,
+  buildImportUploadWorkspaceHref,
   buildImportQualityIssueReviewCasesHref,
   buildImportReviewCaseDetailApiUrl,
   buildImportReviewCaseDetailWorkspaceHref,
@@ -3147,6 +3148,14 @@ test("import center field mapping template upload href carries batch and templat
   assert.equal(
     buildImportFieldMappingTemplateUploadHref("BATCH/CSV 001", "TPL/MD 001"),
     "/data-quality/BATCH%2FCSV%20001?templateId=TPL%2FMD+001#import-detail-workspace",
+  );
+});
+
+test("import center upload workspace href supports direct template prefill", () => {
+  assert.equal(buildImportUploadWorkspaceHref(), "/data-quality/uploads/new");
+  assert.equal(
+    buildImportUploadWorkspaceHref({ templateId: "TPL/MD 001" }),
+    "/data-quality/uploads/new?templateId=TPL%2FMD+001",
   );
 });
 

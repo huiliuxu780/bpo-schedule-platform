@@ -2198,3 +2198,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM081 Import Center Independent Upload Workspace
+
+- branch_name: `codex/im081-upload-workspace`
+- base_main_commit: `9c389e5`
+- remote_status: `branch created locally from pushed codex/im080-template-upload-prefill; not pushed yet.`
+- scope: independent `/data-quality/uploads/new` CSV upload workspace, data-quality list entry, template-detail independent upload prefill link, model helper/test coverage, production DOM smoke evidence, and traceability records.
+- allowed_files_check: `app/data-quality/uploads/new/page.tsx`, `app/data-quality/field-mapping-templates/[templateId]/page.tsx`, `components/import-center-batch-list-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/uploads/new/page.tsx`, `app/data-quality/field-mapping-templates/[templateId]/page.tsx`, `components/import-center-batch-list-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `buildImportUploadWorkspaceHref` was not exported; target model test passed with 63 tests; shadcn gate passed with documented baseline only; lint, typecheck, and Node 22 build passed; production DOM smoke on 3040 rendered the independent upload page with template prefill, found template-detail independent upload href, and found the list-page upload entry; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; first full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests; final check rerun after branch-log evidence update before local commit.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
