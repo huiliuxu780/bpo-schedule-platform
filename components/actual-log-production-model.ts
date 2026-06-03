@@ -1,4 +1,8 @@
-import type { ImportBatchListRow } from "@/components/import-center-model"
+import type {
+  ImportBatchListRow,
+  ImportBatchPersistenceDetail,
+  ImportBatchRowResult,
+} from "@/components/import-center-model"
 
 export type ActualLogProductionTone = "ready" | "blocked" | "empty"
 
@@ -9,6 +13,7 @@ export type ActualLogProductionRow = {
   versionLabel: string
   sourceBatchLabel: string
   sourceBatchHref: string
+  detailHref: string
   businessDateLabel: string
   uploadedAtLabel: string
   applicationLabel: "已应用" | "待应用"
@@ -30,6 +35,48 @@ export type ActualLogProductionSummary = {
   appliedVersions: number
   blockedVersions: number
   rows: ActualLogProductionRow[]
+}
+
+export type ActualLogProcessingDetailRow = {
+  rowNumberLabel: string
+  recordLabel: string
+  employeeLabel: string
+  timeRangeLabel: string
+  timezoneLabel: string
+  businessDayLabel: string
+  crossDayLabel: string
+  boundaryLabel: string
+  tone: "ready" | "blocked"
+}
+
+export type ActualLogProcessingDetailSummary = {
+  tone: Exclude<ActualLogProductionTone, "empty">
+  title: string
+  detail: string
+  batchId: string
+  fileName: string
+  fileTypeLabel: "登录日志" | "状态日志" | "未定位"
+  versionLabel: string
+  sourceBatchHref: string
+  workbenchHref: string
+  businessDateLabel: string
+  uploadedAtLabel: string
+  applicationLabel: "已应用" | "待应用"
+  appliedRecordCountLabel: string
+  sourceRowLabel: string
+  timezoneCheckLabel: string
+  businessDayLabel: string
+  crossDaySplitLabel: string
+  statusIntervalBoundaryLabel: string
+  loginEventBoundaryLabel: string
+  detailEmptyLabel: string
+  blockerSummary: string
+  loginEventCount: number
+  statusDictionaryCount: number
+  statusIntervalCount: number
+  crossDayIntervalCount: number
+  nonShanghaiTimezoneCount: number
+  rows: ActualLogProcessingDetailRow[]
 }
 
 export function summarizeActualLogProductionWorkbench(
@@ -72,6 +119,7 @@ function toActualLogProductionRow(batch: ImportBatchListRow): ActualLogProductio
     versionLabel: batch.import_version_id ?? "暂无实际日志业务版本",
     sourceBatchLabel: batch.batch_id,
     sourceBatchHref: `/data-quality/import-batches/${batch.batch_id}`,
+    detailHref: `/actual-logs/production/${batch.batch_id}`,
     businessDateLabel: formatBusinessDateRange(
       batch.business_date_from,
       batch.business_date_to
@@ -85,6 +133,347 @@ function toActualLogProductionRow(batch: ImportBatchListRow): ActualLogProductio
     processingBoundaryLabel: resolveProcessingBoundaryLabel(batch, hasVersion, isApplied),
     blockerSummary: resolveActualLogBlocker(batch, hasVersion, isApplied),
   }
+}
+
+export function summarizeActualLogProcessingDetail(
+  batches: ImportBatchListRow[],
+  batchId: string,
+  detail: ImportBatchPersistenceDetail | null
+): ActualLogProcessingDetailSummary {
+  const batch = batches.find(
+    (candidate) =>
+      candidate.batch_id === batchId &&
+      (candidate.file_type === "login_log" || candidate.file_type === "status_log")
+  )
+
+  if (!batch) {
+    return buildMissingActualLogProcessingDetail(batchId)
+  }
+
+  const row = toActualLogProductionRow(batch)
+  const parsedRows = detail ? summarizeActualLogDetailRows(batch, detail.rows) : []
+  const loginEventCount = parsedRows.filter((item) =>
+    item.recordLabel.startsWith("登录事件")
+  ).length
+  const statusDictionaryCount = parsedRows.filter(
+    (item) => item.recordLabel === "状态字典"
+  ).length
+  const statusIntervalCount = parsedRows.filter((item) =>
+    item.recordLabel.startsWith("状态区间")
+  ).length
+  const crossDayIntervalCount = parsedRows.filter((item) =>
+    item.crossDayLabel.startsWith("跨天区间")
+  ).length
+  const nonShanghaiTimezoneCount = parsedRows.filter((item) =>
+    item.timezoneLabel.startsWith("非 Asia/Shanghai")
+  ).length
+  const hasDetailRows = parsedRows.length > 0
+  const isReady = row.tone === "ready" && hasDetailRows
+
+  return {
+    tone: isReady ? "ready" : "blocked",
+    title: resolveProcessingDetailTitle(batch.file_type, isReady, hasDetailRows),
+    detail: resolveProcessingDetailText(batch.file_type, isReady, hasDetailRows),
+    batchId: batch.batch_id,
+    fileName: batch.file_name,
+    fileTypeLabel: row.fileTypeLabel,
+    versionLabel: row.versionLabel,
+    sourceBatchHref: row.sourceBatchHref,
+    workbenchHref: "/actual-logs/production",
+    businessDateLabel: row.businessDateLabel,
+    uploadedAtLabel: row.uploadedAtLabel,
+    applicationLabel: row.applicationLabel,
+    appliedRecordCountLabel: row.appliedRecordCountLabel,
+    sourceRowLabel: `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`,
+    timezoneCheckLabel: resolveProcessingTimezoneLabel(
+      parsedRows,
+      nonShanghaiTimezoneCount
+    ),
+    businessDayLabel: `业务日覆盖 ${row.businessDateLabel}`,
+    crossDaySplitLabel: resolveProcessingCrossDayLabel(
+      batch.file_type,
+      hasDetailRows,
+      crossDayIntervalCount
+    ),
+    statusIntervalBoundaryLabel: resolveStatusIntervalBoundaryLabel(
+      statusIntervalCount,
+      statusDictionaryCount
+    ),
+    loginEventBoundaryLabel: resolveLoginEventBoundaryLabel(loginEventCount),
+    detailEmptyLabel: hasDetailRows
+      ? "已读取批次明细"
+      : "批次明细未读取，不能展示逐行登录事件或状态区间",
+    blockerSummary: hasDetailRows ? row.blockerSummary : "缺少逐行处理明细",
+    loginEventCount,
+    statusDictionaryCount,
+    statusIntervalCount,
+    crossDayIntervalCount,
+    nonShanghaiTimezoneCount,
+    rows: parsedRows,
+  }
+}
+
+function buildMissingActualLogProcessingDetail(
+  batchId: string
+): ActualLogProcessingDetailSummary {
+  return {
+    tone: "blocked",
+    title: "日志处理批次未定位",
+    detail: "当前来源批次不在登录/状态日志生产台账中，无法展示处理解释。",
+    batchId,
+    fileName: "未找到来源文件",
+    fileTypeLabel: "未定位",
+    versionLabel: "未找到实际日志业务版本",
+    sourceBatchHref: "/actual-logs/production",
+    workbenchHref: "/actual-logs/production",
+    businessDateLabel: "未定位",
+    uploadedAtLabel: "未定位",
+    applicationLabel: "待应用",
+    appliedRecordCountLabel: "0",
+    sourceRowLabel: "未定位来源行",
+    timezoneCheckLabel: "缺少逐行明细，不能伪造时区校验结果",
+    businessDayLabel: "未定位业务日",
+    crossDaySplitLabel: "缺少状态区间明细，不能伪造跨天切分",
+    statusIntervalBoundaryLabel: "未定位状态区间",
+    loginEventBoundaryLabel: "未定位登录事件",
+    detailEmptyLabel: "批次明细未读取，不能展示逐行登录事件或状态区间",
+    blockerSummary: "请返回日志生产工作台选择来源批次",
+    loginEventCount: 0,
+    statusDictionaryCount: 0,
+    statusIntervalCount: 0,
+    crossDayIntervalCount: 0,
+    nonShanghaiTimezoneCount: 0,
+    rows: [],
+  }
+}
+
+function summarizeActualLogDetailRows(
+  batch: ImportBatchListRow,
+  rows: ImportBatchRowResult[]
+): ActualLogProcessingDetailRow[] {
+  return rows
+    .filter((row) => row.row_status === "success")
+    .map((row) => {
+      const standardFields = readStandardFields(row)
+
+      if (!standardFields) {
+        return {
+          rowNumberLabel: `第 ${row.row_number} 行`,
+          recordLabel: "明细字段不足",
+          employeeLabel: "未读取",
+          timeRangeLabel: "未读取",
+          timezoneLabel: "缺少 standard_fields",
+          businessDayLabel: "未定位",
+          crossDayLabel: "缺少逐行起止时间，不能伪造跨天切分",
+          boundaryLabel: "当前明细缺少标准字段，只能展示空态解释",
+          tone: "blocked",
+        }
+      }
+
+      if (batch.file_type === "login_log") {
+        return summarizeLoginEventRow(row, standardFields)
+      }
+
+      return summarizeStatusLogRow(row, standardFields)
+    })
+}
+
+function summarizeLoginEventRow(
+  row: ImportBatchRowResult,
+  fields: Record<string, unknown>
+): ActualLogProcessingDetailRow {
+  const eventType = readText(fields, "event_type") ?? "unknown"
+  const eventAt = readText(fields, "event_at")
+  const businessDay = formatBusinessDayFromTimestamp(eventAt)
+  const timezone = readText(fields, "timezone")
+
+  return {
+    rowNumberLabel: `第 ${row.row_number} 行`,
+    recordLabel: `登录事件 ${eventType}`,
+    employeeLabel: readText(fields, "employee_id") ?? "未读取员工",
+    timeRangeLabel: eventAt ?? "未读取事件时间",
+    timezoneLabel: formatTimezoneLabel(timezone),
+    businessDayLabel: businessDay,
+    crossDayLabel: "登录事件不做跨天区间切分",
+    boundaryLabel: "仅解释登录/登出事件归属，不计算实际工时",
+    tone: timezone === "Asia/Shanghai" ? "ready" : "blocked",
+  }
+}
+
+function summarizeStatusLogRow(
+  row: ImportBatchRowResult,
+  fields: Record<string, unknown>
+): ActualLogProcessingDetailRow {
+  const recordType = readText(fields, "record_type")
+
+  if (recordType === "status_dictionary") {
+    return {
+      rowNumberLabel: `第 ${row.row_number} 行`,
+      recordLabel: "状态字典",
+      employeeLabel: "字典行",
+      timeRangeLabel: readText(fields, "external_status_code") ?? "未读取状态码",
+      timezoneLabel: "字典行不参与时区校验",
+      businessDayLabel: "字典行不归属具体业务日",
+      crossDayLabel: "字典行不做跨天切分",
+      boundaryLabel: `状态 ${readText(fields, "external_status_code") ?? "未读取"} 的生产性口径待 IM107 安全壳解释`,
+      tone: "ready",
+    }
+  }
+
+  const startAt = readText(fields, "start_at")
+  const endAt = readText(fields, "end_at")
+  const startDay = formatBusinessDayFromTimestamp(startAt)
+  const endDay = formatBusinessDayFromTimestamp(endAt)
+  const timezone = readText(fields, "timezone")
+
+  return {
+    rowNumberLabel: `第 ${row.row_number} 行`,
+    recordLabel: `状态区间 ${readText(fields, "external_status_code") ?? "unknown"}`,
+    employeeLabel: readText(fields, "employee_id") ?? "未读取员工",
+    timeRangeLabel: formatTimeRange(startAt, endAt),
+    timezoneLabel: formatTimezoneLabel(timezone),
+    businessDayLabel: startDay === endDay ? startDay : `${startDay} 至 ${endDay}`,
+    crossDayLabel:
+      startDay === endDay
+        ? "单业务日状态区间"
+        : `跨天区间：按业务日 ${startDay} / ${endDay} 切分解释`,
+    boundaryLabel: "状态区间只读展示；实际生产性分钟由后续排班 vs 实际比对解释",
+    tone: timezone === "Asia/Shanghai" ? "ready" : "blocked",
+  }
+}
+
+function readStandardFields(row: ImportBatchRowResult): Record<string, unknown> | null {
+  const standardFields = row.raw_data.standard_fields
+  return isRecord(standardFields) ? standardFields : null
+}
+
+function readText(fields: Record<string, unknown>, key: string): string | null {
+  const value = fields[key]
+
+  if (value === null || value === undefined) {
+    return null
+  }
+
+  const text = String(value).trim()
+  return text.length > 0 ? text : null
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+}
+
+function formatTimezoneLabel(timezone: string | null): string {
+  if (!timezone) {
+    return "缺少时区字段"
+  }
+
+  return timezone === "Asia/Shanghai"
+    ? "Asia/Shanghai 已确认"
+    : `非 Asia/Shanghai：${timezone}`
+}
+
+function formatBusinessDayFromTimestamp(value: string | null): string {
+  if (!value || value.length < 10) {
+    return "未定位业务日"
+  }
+
+  return value.slice(0, 10)
+}
+
+function formatTimeRange(startAt: string | null, endAt: string | null): string {
+  if (!startAt && !endAt) {
+    return "未读取起止时间"
+  }
+
+  return `${startAt ?? "未读取开始"} 至 ${endAt ?? "未读取结束"}`
+}
+
+function resolveProcessingDetailTitle(
+  fileType: ImportBatchListRow["file_type"],
+  isReady: boolean,
+  hasDetailRows: boolean
+): string {
+  if (!hasDetailRows) {
+    return "日志处理解释缺少明细"
+  }
+
+  if (fileType === "status_log") {
+    return isReady ? "状态日志处理解释已定位" : "状态日志处理解释仍有阻塞"
+  }
+
+  return isReady ? "登录日志处理解释已定位" : "登录日志处理解释仍有阻塞"
+}
+
+function resolveProcessingDetailText(
+  fileType: ImportBatchListRow["file_type"],
+  isReady: boolean,
+  hasDetailRows: boolean
+): string {
+  if (!hasDetailRows) {
+    return "当前只读页面没有可用逐行处理明细，不能展示登录事件或状态区间。"
+  }
+
+  if (isReady) {
+    return fileType === "status_log"
+      ? "当前状态日志明细可解释状态字典、状态区间、业务日归属、时区和跨天切分。"
+      : "当前登录日志明细可解释登录/登出事件、业务日归属和 Asia/Shanghai 时区校验。"
+  }
+
+  return "当前明细存在阻塞或时区异常，只展示可确认的处理口径。"
+}
+
+function resolveProcessingTimezoneLabel(
+  rows: ActualLogProcessingDetailRow[],
+  nonShanghaiTimezoneCount: number
+): string {
+  if (rows.length === 0) {
+    return "缺少逐行明细，不能伪造时区校验结果"
+  }
+
+  if (nonShanghaiTimezoneCount > 0) {
+    return `发现 ${nonShanghaiTimezoneCount.toLocaleString("zh-CN")} 行非 Asia/Shanghai 时区`
+  }
+
+  return `${rows.length.toLocaleString("zh-CN")} 行明细均为 Asia/Shanghai 或字典行`
+}
+
+function resolveProcessingCrossDayLabel(
+  fileType: ImportBatchListRow["file_type"],
+  hasDetailRows: boolean,
+  crossDayIntervalCount: number
+): string {
+  if (!hasDetailRows) {
+    return "缺少状态区间明细，不能伪造跨天切分"
+  }
+
+  if (fileType === "login_log") {
+    return "登录事件不产生跨天状态区间"
+  }
+
+  if (crossDayIntervalCount > 0) {
+    return `发现 ${crossDayIntervalCount.toLocaleString("zh-CN")} 条跨天状态区间；解释为按业务日边界切分`
+  }
+
+  return "未发现跨天状态区间"
+}
+
+function resolveStatusIntervalBoundaryLabel(
+  statusIntervalCount: number,
+  statusDictionaryCount: number
+): string {
+  if (statusIntervalCount === 0 && statusDictionaryCount === 0) {
+    return "暂未发现状态区间或状态字典明细"
+  }
+
+  return `状态字典 ${statusDictionaryCount.toLocaleString("zh-CN")} 行 · 状态区间 ${statusIntervalCount.toLocaleString("zh-CN")} 行`
+}
+
+function resolveLoginEventBoundaryLabel(loginEventCount: number): string {
+  if (loginEventCount === 0) {
+    return "暂未发现登录/登出事件明细"
+  }
+
+  return `登录/登出事件 ${loginEventCount.toLocaleString("zh-CN")} 行；不在本页计算实际工时`
 }
 
 function compareActualLogBatches(left: ImportBatchListRow, right: ImportBatchListRow) {

@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { summarizeActualLogProductionWorkbench } from "../../components/actual-log-production-model.ts";
+import {
+  summarizeActualLogProcessingDetail,
+  summarizeActualLogProductionWorkbench,
+} from "../../components/actual-log-production-model.ts";
 
 const baseLoginBatch = {
   batch_id: "BATCH-LOGIN-001",
@@ -72,6 +75,7 @@ test("actual log production workbench summarizes applied login and status batche
   assert.equal(summary.rows[0].fileTypeLabel, "状态日志");
   assert.equal(summary.rows[0].versionLabel, "BATCH-STATUS-001::v1");
   assert.equal(summary.rows[0].sourceBatchHref, "/data-quality/import-batches/BATCH-STATUS-001");
+  assert.equal(summary.rows[0].detailHref, "/actual-logs/production/BATCH-STATUS-001");
   assert.equal(summary.rows[0].businessDateLabel, "2026-06-04 至 2026-06-05");
   assert.equal(summary.rows[0].timezoneBoundaryLabel, "Asia/Shanghai 时区校验待处理详情页解释");
   assert.equal(summary.rows[0].crossDayBoundaryLabel, "跨天区间会按业务日切分，明细待 IM106");
@@ -111,4 +115,155 @@ test("actual log production workbench blocks missing actual log version without 
   assert.equal(summary.rows[0].timezoneBoundaryLabel, "当前列表 API 未暴露逐行时区，不伪造时区异常");
   assert.equal(summary.rows[0].crossDayBoundaryLabel, "当前列表 API 未暴露逐行起止时间，不伪造跨天区间");
   assert.equal(summary.rows[0].blockerSummary, "缺少实际日志业务版本");
+});
+
+test("actual log processing detail explains cross-day status interval rows", () => {
+  const detail = summarizeActualLogProcessingDetail(
+    [baseStatusBatch],
+    "BATCH-STATUS-001",
+    {
+      batch: {
+        batch_id: "BATCH-STATUS-001",
+        file_name: "status-log.csv",
+        file_type: "status_log",
+        uploaded_by: "operator",
+        uploaded_at: "2026-06-04T08:30:00+08:00",
+        business_date_from: "2026-06-04",
+        business_date_to: "2026-06-05",
+        processing_status: "completed",
+        total_rows: 2,
+        success_rows: 2,
+        failed_rows: 0,
+        warning_rows: 0,
+      },
+      versions: [
+        {
+          version_id: "BATCH-STATUS-001::v1",
+          batch_id: "BATCH-STATUS-001",
+          version_type: "status_log",
+          business_date_from: "2026-06-04",
+          business_date_to: "2026-06-05",
+          created_at: "2026-06-04T08:31:00+08:00",
+        },
+      ],
+      rows: [
+        {
+          row_id: 1,
+          batch_id: "BATCH-STATUS-001",
+          row_number: 1,
+          row_status: "success",
+          source_key: "READY",
+          error_field: null,
+          error_code: null,
+          error_message: null,
+          raw_data: {
+            standard_fields: {
+              record_type: "status_dictionary",
+              external_status_code: "READY",
+              normalized_status: "ready",
+              category: "available",
+              is_productive: "true",
+            },
+          },
+        },
+        {
+          row_id: 2,
+          batch_id: "BATCH-STATUS-001",
+          row_number: 2,
+          row_status: "success",
+          source_key: "STATUS-001",
+          error_field: null,
+          error_code: null,
+          error_message: null,
+          raw_data: {
+            standard_fields: {
+              record_type: "status_interval",
+              interval_id: "STATUS-001",
+              employee_id: "A-1001",
+              external_status_code: "READY",
+              start_at: "2026-06-04T23:30:00",
+              end_at: "2026-06-05T00:30:00",
+              timezone: "Asia/Shanghai",
+            },
+          },
+        },
+      ],
+      failed_rows: [],
+    }
+  );
+
+  assert.equal(detail.title, "状态日志处理解释已定位");
+  assert.equal(detail.statusDictionaryCount, 1);
+  assert.equal(detail.statusIntervalCount, 1);
+  assert.equal(detail.crossDayIntervalCount, 1);
+  assert.equal(detail.nonShanghaiTimezoneCount, 0);
+  assert.equal(detail.timezoneCheckLabel, "2 行明细均为 Asia/Shanghai 或字典行");
+  assert.equal(detail.businessDayLabel, "业务日覆盖 2026-06-04 至 2026-06-05");
+  assert.equal(detail.crossDaySplitLabel, "发现 1 条跨天状态区间；解释为按业务日边界切分");
+  assert.equal(detail.rows[1].businessDayLabel, "2026-06-04 至 2026-06-05");
+  assert.equal(detail.rows[1].crossDayLabel, "跨天区间：按业务日 2026-06-04 / 2026-06-05 切分解释");
+  assert.equal(detail.rows[1].timezoneLabel, "Asia/Shanghai 已确认");
+});
+
+test("actual log processing detail explains login event business day and timezone", () => {
+  const detail = summarizeActualLogProcessingDetail(
+    [baseLoginBatch],
+    "BATCH-LOGIN-001",
+    {
+      batch: {
+        batch_id: "BATCH-LOGIN-001",
+        file_name: "login-log.csv",
+        file_type: "login_log",
+        uploaded_by: "operator",
+        uploaded_at: "2026-06-04T08:30:00+08:00",
+        business_date_from: "2026-06-04",
+        business_date_to: "2026-06-04",
+        processing_status: "completed",
+        total_rows: 1,
+        success_rows: 1,
+        failed_rows: 0,
+        warning_rows: 0,
+      },
+      versions: [],
+      rows: [
+        {
+          row_id: 1,
+          batch_id: "BATCH-LOGIN-001",
+          row_number: 1,
+          row_status: "success",
+          source_key: "LOGIN-001",
+          error_field: null,
+          error_code: null,
+          error_message: null,
+          raw_data: {
+            standard_fields: {
+              event_id: "LOGIN-001",
+              employee_id: "A-1001",
+              event_type: "login",
+              event_at: "2026-06-04T08:59:30",
+              timezone: "Asia/Shanghai",
+            },
+          },
+        },
+      ],
+      failed_rows: [],
+    }
+  );
+
+  assert.equal(detail.loginEventCount, 1);
+  assert.equal(detail.statusIntervalCount, 0);
+  assert.equal(detail.businessDayLabel, "业务日覆盖 2026-06-04");
+  assert.equal(detail.crossDaySplitLabel, "登录事件不产生跨天状态区间");
+  assert.equal(detail.rows[0].recordLabel, "登录事件 login");
+  assert.equal(detail.rows[0].businessDayLabel, "2026-06-04");
+});
+
+test("actual log processing detail keeps an explicit empty state without row detail", () => {
+  const detail = summarizeActualLogProcessingDetail([baseStatusBatch], "BATCH-STATUS-001", null);
+
+  assert.equal(detail.tone, "blocked");
+  assert.equal(detail.rows.length, 0);
+  assert.equal(detail.detailEmptyLabel, "批次明细未读取，不能展示逐行登录事件或状态区间");
+  assert.equal(detail.timezoneCheckLabel, "缺少逐行明细，不能伪造时区校验结果");
+  assert.equal(detail.crossDaySplitLabel, "缺少状态区间明细，不能伪造跨天切分");
 });

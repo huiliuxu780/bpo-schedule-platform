@@ -2429,8 +2429,8 @@ description: "从日志生产工作台进入单批次处理解释页，展示跨
 source: "After R805 planning on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "ready"
-notes: "待 IM105 完成后进入 current；不新增后端 API、schema/migration 或真实外部接口。"
+status: "done"
+notes: "IM106 已完成：新增 `/actual-logs/production/[batchId]` 只读处理解释页，展示业务日归属、Asia/Shanghai 时区校验、跨天状态区间切分、状态字典/状态区间/登录事件明细，以及缺少逐行明细时的不造假空态。"
 ```
 
 ### R807 - 状态字典与异常解释安全壳

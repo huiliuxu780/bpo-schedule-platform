@@ -4402,7 +4402,8 @@ acceptance:
   - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 dependencies:
   - "US725"
-status: "ready"
+status: "done"
+notes: "IM106 已完成：从 `/actual-logs/production` 可进入 `/actual-logs/production/[batchId]`，详情页解释业务日、时区、跨天切分、状态字典、状态区间和登录事件；缺少明细时保持明确空态。"
 ```
 
 ### US727 - 状态字典与异常解释安全壳

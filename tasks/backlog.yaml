@@ -8234,7 +8234,7 @@ tasks:
   - id: IM106
     title: "登录/状态日志处理解释详情"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM105"]
     allowed_files:
@@ -8271,6 +8271,7 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已新增 `/actual-logs/production/[batchId]` 只读处理解释页，并从日志生产工作台每行提供处理解释入口；详情页展示来源版本、业务日归属、Asia/Shanghai 时区校验、跨天状态区间切分、状态字典/状态区间/登录事件明细和缺明细不造假的空态。"
   - id: IM107
     title: "状态字典与异常解释安全壳"
     priority: P1

@@ -5,17 +5,23 @@ import {
   ArrowRight,
   Clock3,
   DatabaseZap,
+  FileSearch,
   Globe2,
   Layers3,
   Lock,
+  Split,
   Table2,
 } from "lucide-react"
 
 import {
+  summarizeActualLogProcessingDetail,
   type ActualLogProductionTone,
   summarizeActualLogProductionWorkbench,
 } from "@/components/actual-log-production-model"
-import type { ImportBatchListRow } from "@/components/import-center-model"
+import type {
+  ImportBatchListRow,
+  ImportBatchPersistenceDetail,
+} from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,6 +36,13 @@ import {
 
 type ActualLogProductionWorkbenchProps = {
   batches: ImportBatchListRow[]
+  error: string | null
+}
+
+type ActualLogProcessingDetailProps = {
+  batches: ImportBatchListRow[]
+  batchId: string
+  detail: ImportBatchPersistenceDetail | null
   error: string | null
 }
 
@@ -149,6 +162,7 @@ export function ActualLogProductionWorkbench({
                 <TableHead>跨天边界</TableHead>
                 <TableHead>处理边界</TableHead>
                 <TableHead>阻塞原因</TableHead>
+                <TableHead>操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -187,11 +201,19 @@ export function ActualLogProductionWorkbench({
                     <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
                       {row.blockerSummary}
                     </TableCell>
+                    <TableCell className="align-top">
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={row.detailHref}>
+                          处理解释
+                          <ArrowRight data-icon="inline-end" />
+                        </Link>
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} className="h-24 text-center text-sm text-muted-foreground">
+                  <TableCell colSpan={9} className="h-24 text-center text-sm text-muted-foreground">
                     暂无登录日志或状态日志导入批次
                   </TableCell>
                 </TableRow>
@@ -218,6 +240,136 @@ export function ActualLogProductionWorkbench({
           detail="本轮不改状态字典、不重算实际工时、不触发排班 vs 实际比对，只建立生产台账入口。"
         />
       </section>
+    </main>
+  )
+}
+
+export function ActualLogProcessingDetail({
+  batches,
+  batchId,
+  detail,
+  error,
+}: ActualLogProcessingDetailProps) {
+  const summary = summarizeActualLogProcessingDetail(batches, batchId, detail)
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
+      <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Button asChild size="sm" variant="ghost">
+              <Link href={summary.workbenchHref}>返回日志生产工作台</Link>
+            </Button>
+            <Badge variant={summary.tone === "ready" ? "outline" : "destructive"}>
+              {summary.tone === "ready" ? "可解释" : "解释受限"}
+            </Badge>
+            <Badge variant="secondary">{summary.fileTypeLabel}</Badge>
+          </div>
+          <h1 className="text-xl font-semibold tracking-normal">登录/状态日志处理解释</h1>
+          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+            {summary.detail}
+          </p>
+        </div>
+        <Button asChild size="sm" variant="outline">
+          <Link href={summary.sourceBatchHref}>
+            查看来源批次
+            <ArrowRight data-icon="inline-end" />
+          </Link>
+        </Button>
+      </section>
+
+      {error ? (
+        <Card className="border-destructive/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <AlertTriangle className="size-4 text-destructive" />
+              明细读取失败
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
+        </Card>
+      ) : null}
+
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <MetricCard label="登录事件" value={summary.loginEventCount.toLocaleString("zh-CN")} detail={summary.loginEventBoundaryLabel} tone="default" />
+        <MetricCard label="状态字典" value={summary.statusDictionaryCount.toLocaleString("zh-CN")} detail="字典配置只读展示，变更待 IM107" tone="default" />
+        <MetricCard label="状态区间" value={summary.statusIntervalCount.toLocaleString("zh-CN")} detail={summary.statusIntervalBoundaryLabel} tone={summary.statusIntervalCount > 0 ? "ready" : "default"} />
+        <MetricCard label="跨天区间" value={summary.crossDayIntervalCount.toLocaleString("zh-CN")} detail={summary.crossDaySplitLabel} tone={summary.crossDayIntervalCount > 0 ? "ready" : "default"} />
+        <MetricCard label="时区异常" value={summary.nonShanghaiTimezoneCount.toLocaleString("zh-CN")} detail={summary.timezoneCheckLabel} tone={summary.nonShanghaiTimezoneCount > 0 ? "blocked" : "default"} />
+      </section>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <FileSearch className="size-4 text-muted-foreground" />
+            {summary.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 text-sm text-muted-foreground">
+          <div className="grid gap-1">
+            <p className="font-mono text-xs text-foreground">{summary.versionLabel}</p>
+            <p>{summary.fileName} · {summary.batchId}</p>
+            <p>{summary.sourceRowLabel} · 已应用记录 {summary.appliedRecordCountLabel}</p>
+            <p>{summary.businessDayLabel}</p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            <BoundaryPill title="时区校验" detail={summary.timezoneCheckLabel} />
+            <BoundaryPill title="业务日归属" detail={summary.businessDayLabel} />
+            <BoundaryPill title="跨天切分" detail={summary.crossDaySplitLabel} />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Split className="size-4 text-muted-foreground" />
+            逐行处理解释
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>行号</TableHead>
+                <TableHead>记录</TableHead>
+                <TableHead>员工</TableHead>
+                <TableHead>时间</TableHead>
+                <TableHead>时区</TableHead>
+                <TableHead>业务日</TableHead>
+                <TableHead>跨天解释</TableHead>
+                <TableHead>边界</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {summary.rows.length > 0 ? (
+                summary.rows.map((row) => (
+                  <TableRow key={`${row.rowNumberLabel}-${row.recordLabel}`}>
+                    <TableCell className="align-top font-mono text-xs">{row.rowNumberLabel}</TableCell>
+                    <TableCell className="align-top">{row.recordLabel}</TableCell>
+                    <TableCell className="align-top text-sm text-muted-foreground">{row.employeeLabel}</TableCell>
+                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">{row.timeRangeLabel}</TableCell>
+                    <TableCell className="max-w-xs align-top">
+                      <Badge variant={row.tone === "ready" ? "outline" : "destructive"}>
+                        {row.timezoneLabel}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="align-top text-sm text-muted-foreground">{row.businessDayLabel}</TableCell>
+                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">{row.crossDayLabel}</TableCell>
+                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">{row.boundaryLabel}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-24 text-center text-sm text-muted-foreground">
+                    {summary.detailEmptyLabel}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </main>
   )
 }
@@ -268,6 +420,15 @@ function BoundaryItem({
       </CardHeader>
       <CardContent className="text-sm text-muted-foreground">{detail}</CardContent>
     </Card>
+  )
+}
+
+function BoundaryPill({ title, detail }: { title: string; detail: string }) {
+  return (
+    <div className="rounded-md border px-3 py-2">
+      <div className="text-xs font-medium text-foreground">{title}</div>
+      <div className="mt-1 text-xs text-muted-foreground">{detail}</div>
+    </div>
   )
 }
 

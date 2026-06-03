@@ -2760,3 +2760,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM106 Actual Log Processing Detail
+
+- branch_name: `codex/im106-actual-log-processing-detail`
+- base_main_commit: `9d7e305`
+- remote_status: `main includes merged IM105 actual-log production workbench baseline; IM106 implementation is local only until final merge/push.`
+- scope: add `/actual-logs/production/[batchId]` read-only processing explanation detail from the login/status-log production workbench; show source batch/version context, business-day ownership, Asia/Shanghai timezone checks, cross-day status-interval split explanation, status dictionary rows, status interval rows, login-event rows, and no-detail empty states.
+- allowed_files_check: `app/actual-logs/production/**`, `components/actual-log-production-workbench.tsx`, `components/actual-log-production-model.ts`, `scripts/tests/actual-log-production-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test first failed because `summarizeActualLogProcessingDetail` was missing, then passed with 7 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; in-app browser smoke on `http://127.0.0.1:3000/actual-logs/production` matched title, ledger, empty state, and no-compare boundary; direct smoke on `http://127.0.0.1:3000/actual-logs/production/BATCH-NOT-FOUND` matched processing detail title, missing-batch state, no-fabrication empty state, timezone empty state, and cross-day empty state. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -143,4 +143,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US725/IM105` completed the login/status-log production workbench under Data & Integration. `/actual-logs/production` now shows login/status source batches, actual-log business versions, business dates, timezone and cross-day boundaries, and read-only production constraints.
 
-Current state advanced to `US726/IM106` for single-batch processing explanation. `US727/IM107` stays outside current until IM106 is green. Keep avoiding real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, and charge-factor work unless a new confirmed task allows it.
+`US726/IM106` completed the single-batch login/status-log processing explanation detail. `/actual-logs/production/[batchId]` now shows source batch/version context, business-day ownership, Asia/Shanghai timezone checks, cross-day split explanation, status dictionary rows, status interval rows, login-event rows, and explicit no-detail empty states without fabricating events or intervals.
+
+Current state advanced to `US727/IM107` for the status-dictionary and exception-explanation safety shell. Keep avoiding real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, and charge-factor work unless a new confirmed task allows it.
