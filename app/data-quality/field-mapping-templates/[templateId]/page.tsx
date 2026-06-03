@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
-import { ArrowLeft, Ban, Save } from "lucide-react"
+import { ArrowLeft, Ban, Save, Upload } from "lucide-react"
 
 import {
   deactivateImportFieldMappingTemplateAction,
@@ -10,6 +10,7 @@ import { AppShell } from "@/components/app-shell"
 import {
   type ImportFieldMappingTemplate,
   buildImportFieldMappingTemplateDetailUrl,
+  buildImportFieldMappingTemplateUploadHref,
   formatFieldMappingTemplateSummary,
   formatImportFileType,
   summarizeImportFieldMappingTemplateActionNotice,
@@ -36,6 +37,7 @@ type FieldMappingTemplatePageProps = {
   searchParams?: Promise<{
     template?: string
     action?: string
+    batchId?: string
     reason?: string
   }>
 }
@@ -52,6 +54,7 @@ export default async function FieldMappingTemplatePage({
   const routeParams = await params
   const query = await searchParams
   const templateId = decodeURIComponent(routeParams.templateId)
+  const sourceBatchId = query?.batchId
   const templateResult = await fetchImportFieldMappingTemplate(templateId)
   const template = templateResult.data
   const actionNotice = summarizeImportFieldMappingTemplateActionNotice({
@@ -64,7 +67,11 @@ export default async function FieldMappingTemplatePage({
   return (
     <AppShell title="字段映射模板" searchPlaceholder="搜索模板、字段或文件类型">
       <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
-        <TemplateHeader template={template} templateId={templateId} />
+        <TemplateHeader
+          sourceBatchId={sourceBatchId}
+          template={template}
+          templateId={templateId}
+        />
 
         {actionNotice ? (
           <Card>
@@ -110,9 +117,11 @@ export default async function FieldMappingTemplatePage({
 }
 
 function TemplateHeader({
+  sourceBatchId,
   template,
   templateId,
 }: {
+  sourceBatchId?: string
   template: ImportFieldMappingTemplate | null
   templateId: string
 }) {
@@ -141,6 +150,19 @@ function TemplateHeader({
           ) : null}
           {template ? (
             <Badge variant="outline">{formatImportFileType(template.file_type)}</Badge>
+          ) : null}
+          {template?.is_active && sourceBatchId ? (
+            <Button asChild size="sm">
+              <Link
+                href={buildImportFieldMappingTemplateUploadHref(
+                  sourceBatchId,
+                  template.template_id
+                )}
+              >
+                <Upload data-icon="inline-start" />
+                用此模板上传
+              </Link>
+            </Button>
           ) : null}
         </div>
       </CardHeader>

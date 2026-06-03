@@ -28,6 +28,8 @@ Current story queue is empty and active tasks are empty.
 
 `US699/IM079` completed the field-mapping template creation page, then current queue returned to empty.
 
+`US700/IM080` completed the field-mapping template upload prefill chain, then current queue returned to empty.
+
 `US692/IM072` completed the review-case action submit feedback, then current queue returned to empty.
 
 `US691/IM071` completed the review-case detail processing action deck, then current queue returned to empty.

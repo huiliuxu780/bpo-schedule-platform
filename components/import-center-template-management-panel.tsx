@@ -29,12 +29,14 @@ type ImportCenterTemplateManagementPanelProps = {
   templates: ImportFieldMappingTemplate[]
   templateError?: string | null
   selectedFileType?: ImportFileType | null
+  sourceBatchId?: string | null
 }
 
 export function ImportCenterTemplateManagementPanel({
   templates,
   templateError,
   selectedFileType,
+  sourceBatchId,
 }: ImportCenterTemplateManagementPanelProps) {
   const summary = summarizeImportFieldMappingTemplates(templates)
   const fitDetail = selectedFileType
@@ -99,6 +101,7 @@ export function ImportCenterTemplateManagementPanel({
                 fitOption={fitOptionsByTemplateId.get(template.template_id) ?? null}
                 isRecommended={fitDetail?.recommendedTemplateId === template.template_id}
                 selectedFileType={selectedFileType}
+                sourceBatchId={sourceBatchId}
                 template={template}
               />
             ))}
@@ -142,11 +145,13 @@ function TemplateCard({
   fitOption,
   isRecommended,
   selectedFileType,
+  sourceBatchId,
 }: {
   template: ImportFieldMappingTemplate
   fitOption: ImportTemplateFitOption | null
   isRecommended: boolean
   selectedFileType?: ImportFileType | null
+  sourceBatchId?: string | null
 }) {
   const mappedFieldCount = fitOption?.mappedFieldCount ?? Object.keys(template.field_mapping).length
   const mappingPairs =
@@ -174,7 +179,11 @@ function TemplateCard({
       </div>
       <div>
         <Button asChild size="sm" variant="outline">
-          <Link href={buildImportFieldMappingTemplateWorkspaceHref(template.template_id)}>
+          <Link
+            href={buildImportFieldMappingTemplateWorkspaceHref(template.template_id, {
+              batchId: sourceBatchId,
+            })}
+          >
             维护模板
           </Link>
         </Button>

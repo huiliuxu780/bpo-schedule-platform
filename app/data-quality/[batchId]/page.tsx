@@ -42,6 +42,7 @@ type ImportBatchDetailPageProps = {
     correction?: string
     reason?: string
     row?: string
+    templateId?: string
   }>
 }
 
@@ -77,6 +78,9 @@ export default async function ImportBatchDetailPage({
     hasUploadTools: true,
     hasResultTrace: true,
   })
+  const detailHierarchy = query?.templateId
+    ? { ...hierarchy, defaultDetailTab: "data-tools" as const }
+    : hierarchy
 
   return (
     <AppShell title="批次处理" searchPlaceholder="搜索导入批次、文件或上传人">
@@ -104,7 +108,7 @@ export default async function ImportBatchDetailPage({
 
         <section className="grid gap-4">
           <ImportCenterDetailTabs
-            hierarchy={hierarchy}
+            hierarchy={detailHierarchy}
             statusCheckPanel={
               <ImportCenterBatchInspectorPanel
                 selectedBatch={selectedBatch}
@@ -148,11 +152,13 @@ export default async function ImportBatchDetailPage({
                   uploadBatchId={batchId}
                   templates={templateResult.data ?? []}
                   templateError={templateResult.error}
+                  selectedTemplateId={query?.templateId}
                 />
                 <ImportCenterTemplateManagementPanel
                   templates={templateResult.data ?? []}
                   templateError={templateResult.error}
                   selectedFileType={selectedBatch?.file_type ?? null}
+                  sourceBatchId={batchId}
                 />
               </div>
             }

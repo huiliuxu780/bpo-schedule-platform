@@ -4665,6 +4665,7 @@ tasks:
       - "app/data-quality/**"
       - "components/import-center-api-panel.tsx"
       - "components/import-center-model.ts"
+      - "components/import-center-template-management-panel.tsx"
       - "components/import-center-upload-form.tsx"
       - "scripts/tests/import-center-model.test.mjs"
       - "docs/current/**"
@@ -6752,6 +6753,50 @@ tasks:
       - "补证据、补结论和关闭入口复用现有本地 API，不新增后端 route 或 schema。"
       - "关闭案例后动作区展示已关闭状态，不再显示可提交按钮。"
       - "不新增依赖，不修改 package/lockfile，不新增 schema/migration，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM080
+    title: "字段映射模板上传预选链路"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM079"]
+    allowed_files:
+      - "app/data-quality/[batchId]/page.tsx"
+      - "app/data-quality/field-mapping-templates/[templateId]/page.tsx"
+      - "components/import-center-model.ts"
+      - "components/import-center-upload-form.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "模板详情页对启用模板提供 `用此模板上传` 入口，跳转到批次处理页的导入与模板工具区。"
+      - "批次处理页读取 `templateId` 查询参数，并传入 CSV 上传表单。"
+      - "CSV 上传表单默认选中该模板，并展示预选模板提示；停用或不存在的模板不误报为可用。"
+      - "复用现有 `template_id` 上传能力，不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
       - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
     auto_run: true
     pm_confirmation_required: false

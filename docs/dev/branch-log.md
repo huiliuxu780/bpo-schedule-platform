@@ -19,6 +19,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM080 Import Center Field Mapping Template Upload Prefill
+
+- branch_name: `codex/im080-template-upload-prefill`
+- base_main_commit: `c4ae1b0`
+- remote_status: `branch created locally from pushed codex/im079-template-create; not pushed yet.`
+- scope: template detail to batch upload prefill chain, source batch context links from template cards, upload form prefill notice, model helper/test coverage, browser smoke evidence, and traceability records.
+- allowed_files_check: `app/data-quality/[batchId]/page.tsx`, `app/data-quality/field-mapping-templates/[templateId]/page.tsx`, `components/import-center-model.ts`, `components/import-center-template-management-panel.tsx`, `components/import-center-upload-form.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/[batchId]/page.tsx`, `app/data-quality/field-mapping-templates/[templateId]/page.tsx`, `components/import-center-model.ts`, `components/import-center-template-management-panel.tsx`, `components/import-center-upload-form.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model tests failed first because upload href/preselect helpers and batchId-preserving template detail href were missing; target model test passed with 62 tests; shadcn gate passed with 3 documented baseline findings; lint, typecheck, and Node 22 build passed; in-app browser smoke on 3038 verified the template detail `用此模板上传` link and batch upload form preselected `TPL-IM027-SMOKE-001`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; first full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests; final check rerun after branch-log evidence update before local commit.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM070 Import Center Review Owner First Pending Entry
 
 - branch_name: `codex/im057-review-source-context`

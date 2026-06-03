@@ -897,6 +897,15 @@ export type ImportFieldMappingTemplateActionNotice = {
   nextAction: string
 }
 
+export type ImportTemplateUploadPrefill = {
+  selectedTemplateId: string
+  defaultTemplateId: string
+  tone: ImportFieldMappingTemplateActionNoticeTone
+  title: string
+  detail: string
+  nextAction: string
+}
+
 export type ImportTemplateFitStatus = "matched" | "missing" | "error"
 
 export type ImportTemplateFitHint = {
@@ -1082,9 +1091,29 @@ export function buildImportFieldMappingTemplateNewWorkspaceHref(): string {
 }
 
 export function buildImportFieldMappingTemplateWorkspaceHref(
+  templateId: string,
+  params: {
+    batchId?: string | null
+  } = {}
+): string {
+  const searchParams = new URLSearchParams()
+
+  if (params.batchId) {
+    searchParams.set("batchId", params.batchId)
+  }
+
+  const query = searchParams.toString()
+
+  return `/data-quality/field-mapping-templates/${encodeURIComponent(templateId)}${query ? `?${query}` : ""}`
+}
+
+export function buildImportFieldMappingTemplateUploadHref(
+  batchId: string,
   templateId: string
 ): string {
-  return `/data-quality/field-mapping-templates/${encodeURIComponent(templateId)}`
+  const searchParams = new URLSearchParams({ templateId })
+
+  return `/data-quality/${encodeURIComponent(batchId)}?${searchParams.toString()}#import-detail-workspace`
 }
 
 export function buildImportFieldMappingTemplateDetailUrl(
@@ -4238,6 +4267,51 @@ export function summarizeImportFieldMappingTemplateActionNotice({
     nextAction: isDeactivate
       ? "检查模板是否仍存在，再重新提交停用。"
       : "检查模板名称和字段映射 JSON 后重新提交。",
+  }
+}
+
+export function summarizeImportTemplateUploadPrefill(
+  templates: ImportFieldMappingTemplate[],
+  selectedTemplateId?: string | null
+): ImportTemplateUploadPrefill | null {
+  if (!selectedTemplateId) {
+    return null
+  }
+
+  const template = templates.find(
+    (candidate) => candidate.template_id === selectedTemplateId
+  )
+
+  if (!template) {
+    return {
+      selectedTemplateId,
+      defaultTemplateId: "",
+      tone: "failed",
+      title: "模板不可用于上传",
+      detail: `字段映射模板 ${selectedTemplateId} 不在当前可选模板列表中。`,
+      nextAction: "请返回模板管理确认模板状态，或手填字段映射 JSON 后上传。",
+    }
+  }
+
+  if (!template.is_active) {
+    return {
+      selectedTemplateId,
+      defaultTemplateId: "",
+      tone: "failed",
+      title: "模板不可用于上传",
+      detail: `字段映射模板 ${selectedTemplateId} 已停用，上传表单不会默认使用它。`,
+      nextAction: "请选择其他启用模板，或手填字段映射 JSON 后上传。",
+    }
+  }
+
+  return {
+    selectedTemplateId,
+    defaultTemplateId: template.template_id,
+    tone: "success",
+    title: "已预选字段映射模板",
+    detail: `${template.template_name} · ${formatImportFileType(template.file_type)} · ${Object.keys(template.field_mapping).length} 个字段`,
+    nextAction:
+      "确认 CSV 文件表头匹配该模板后上传；如不匹配，可改选其他模板或手填字段映射 JSON。",
   }
 }
 

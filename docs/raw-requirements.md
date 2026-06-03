@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R780 - 字段映射模板上传预选链路
+
+```yaml
+id: R780
+module: "导入中心"
+description: "字段映射模板已经可以新增、维护和停用，但模板详情页与 CSV 上传工具之间仍是割裂的。需要让导入管理员从模板详情页直接带着该模板进入批次上传工具，并在上传表单中默认选中该模板。"
+source: "After IM079 and PM asked to continue on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已完成字段映射模板上传预选链路；批次详情的模板维护入口会携带来源 batchId，模板详情页对启用模板展示用此模板上传入口，批次上传工具读取 templateId 并默认选中可用模板；复用现有上传表单和 template_id 上传能力，不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```
+
 ### R762 - 复核案例关闭写入入口
 
 ```yaml

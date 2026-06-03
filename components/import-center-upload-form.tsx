@@ -9,6 +9,7 @@ import {
   type ImportFileType,
   type ImportUploadResultGuidance,
   summarizeImportTemplateFitHint,
+  summarizeImportTemplateUploadPrefill,
   summarizeImportUploadResultGuidance,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +23,7 @@ type ImportCenterUploadFormProps = {
   uploadBatchId?: string
   templates?: ImportFieldMappingTemplate[]
   templateError?: string | null
+  selectedTemplateId?: string
 }
 
 const fileTypes: ImportFileType[] = [
@@ -38,12 +40,17 @@ export function ImportCenterUploadForm({
   uploadBatchId,
   templates = [],
   templateError,
+  selectedTemplateId,
 }: ImportCenterUploadFormProps) {
   const uploadGuidance = summarizeImportUploadResultGuidance({
     status: uploadStatus,
     batchId: uploadBatchId,
     reason: uploadReason,
   })
+  const templatePrefill = summarizeImportTemplateUploadPrefill(
+    templates,
+    selectedTemplateId
+  )
 
   return (
     <Card>
@@ -96,7 +103,7 @@ export function ImportCenterUploadForm({
               <Field label="字段映射模板">
                 <select
                   name="template_id"
-                  defaultValue=""
+                  defaultValue={templatePrefill?.defaultTemplateId ?? ""}
                   className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
                   <option value="">手填字段映射 JSON</option>
@@ -112,6 +119,7 @@ export function ImportCenterUploadForm({
                   ))}
                 </select>
               </Field>
+              <TemplatePrefillNotice prefill={templatePrefill} />
               <Field label="字段映射 JSON">
                 <textarea
                   name="field_mapping"
@@ -126,13 +134,42 @@ export function ImportCenterUploadForm({
           <UploadResultGuidance guidance={uploadGuidance} />
           <div className="flex justify-end">
             <Button type="submit">
-              <Upload className="size-4" />
+              <Upload data-icon="inline-start" />
               上传 CSV
             </Button>
           </div>
         </form>
       </CardContent>
     </Card>
+  )
+}
+
+function TemplatePrefillNotice({
+  prefill,
+}: {
+  prefill: ReturnType<typeof summarizeImportTemplateUploadPrefill>
+}) {
+  if (!prefill) {
+    return null
+  }
+
+  return (
+    <div
+      className={
+        prefill.tone === "success"
+          ? "grid gap-1 rounded-md border bg-muted/20 px-3 py-2 text-sm"
+          : "grid gap-1 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm"
+      }
+    >
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="font-medium">{prefill.title}</span>
+        <Badge variant={prefill.tone === "success" ? "secondary" : "destructive"}>
+          {prefill.selectedTemplateId}
+        </Badge>
+      </div>
+      <p className="text-muted-foreground">{prefill.detail}</p>
+      <p className="text-xs text-muted-foreground">{prefill.nextAction}</p>
+    </div>
   )
 }
 
@@ -149,7 +186,7 @@ function UploadResultGuidance({
     <div
       className={
         guidance.tone === "success"
-          ? "grid gap-2 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm"
+          ? "grid gap-2 rounded-md border bg-muted/20 px-3 py-2 text-sm"
           : "grid gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm"
       }
     >
@@ -230,7 +267,7 @@ function TemplateSummary({
 }) {
   if (templateError) {
     return (
-      <div className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-700 dark:text-amber-300">
+      <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-muted-foreground">
         字段映射模板读取失败，仍可手填 JSON 上传：{templateError}
       </div>
     )

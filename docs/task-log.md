@@ -1796,3 +1796,14 @@
 - action: 新增字段映射模板新增页。
 - status: `done`
 - notes: 新增 `/data-quality/field-mapping-templates/new` 二级页，支持填写模板 ID、名称、文件类型、创建人和字段映射 JSON，提交后调用现有 create template API 并跳转对应模板详情页；字段映射模板管理区新增 `新增模板` 入口；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM080`
+- source_ids:
+  - `R780`
+- story_ids:
+  - `US700`
+- action: 打通字段映射模板上传预选链路。
+- status: `done`
+- notes: 批次详情的模板维护入口会带来源 `batchId`，模板详情页对启用模板展示 `用此模板上传` 入口，返回批次处理页后默认打开 `导入与模板` tab，并在 CSV 上传表单中默认选中可用模板、提示停用或缺失模板不可用；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

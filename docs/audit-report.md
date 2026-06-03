@@ -3258,3 +3258,31 @@
 - in-app browser production smoke：`http://127.0.0.1:3037/data-quality/field-mapping-templates/new` 命中 `新增字段映射模板`、`模板 ID`、`模板名称`、`字段映射 JSON`、`创建模板` 和 `创建边界`。
 - 静态入口检查：`components/import-center-template-management-panel.tsx` 存在 `新增模板` 链接，href 来源为 `buildImportFieldMappingTemplateNewWorkspaceHref()`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM080 字段映射模板上传预选链路
+
+#### 审计结论
+
+- `IM080/US700` 已把字段映射模板维护和 CSV 上传工具打通。
+- 批次详情页的模板维护入口会携带来源 `batchId`，避免模板详情页丢失返回上传工具的上下文。
+- 模板详情页对启用模板展示 `用此模板上传`，链接到 `/data-quality/{batchId}?templateId={templateId}#import-detail-workspace`。
+- 批次处理页读取 `templateId` 查询参数后默认打开 `导入与模板` tab，并传给 CSV 上传表单。
+- CSV 上传表单默认选中启用模板并展示预选提示；停用或缺失模板不会被默认使用，并展示不可用提示。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前链路仍依赖批次详情页作为上传工具承载页；后续若做独立上传中心，可以把预选逻辑迁移到专用上传页。
+- 该能力是单模板预选，不是批量模板治理、审批、权限隔离或真实外部接入。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先失败，证明旧模型没有模板上传 href、来源 batchId 透传和上传预选摘要。
+- `node scripts/tests/import-center-model.test.mjs`：通过，62 个 import-center model 测试通过。
+- shadcn 复核：本轮新增 UI 复用现有 Card/Button/Badge/Input，图标改用 `data-icon`，并把同文件旧硬编码提示色改为语义 token。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- in-app browser production smoke：`http://127.0.0.1:3038/data-quality/field-mapping-templates/TPL-IM027-SMOKE-001?batchId=BATCH-IM027-SMOKE-001` 命中 `用此模板上传`，href 为 `/data-quality/BATCH-IM027-SMOKE-001?templateId=TPL-IM027-SMOKE-001#import-detail-workspace`；继续打开该链接后，页面默认选中 `导入与模板` tab，CSV 上传表单存在，`template_id` 选中 `TPL-IM027-SMOKE-001`，并展示 `已预选字段映射模板`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

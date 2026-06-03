@@ -20,6 +20,28 @@
   status: "draft"
 ```
 
+### US700 - 字段映射模板上传预选链路
+
+```yaml
+id: US700
+requirement_ids:
+  - R780
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望从字段映射模板详情页直接带着该模板进入上传工具，以便创建或维护模板后能马上用于 CSV 上传。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "模板详情页对启用模板提供 `用此模板上传` 入口，跳转到批次处理页的导入与模板工具区。"
+  - "批次处理页读取 `templateId` 查询参数，并传入 CSV 上传表单。"
+  - "CSV 上传表单默认选中该模板，并展示预选模板提示；停用或不存在的模板不误报为可用。"
+  - "复用现有 `template_id` 上传能力，不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US699"
+status: "done"
+```
+
 ### US682 - 复核案例关闭写入入口
 
 ```yaml

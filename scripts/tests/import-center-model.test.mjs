@@ -12,6 +12,7 @@ import {
   buildImportFieldMappingTemplateDetailUrl,
   buildImportFieldMappingTemplateCreateUrl,
   buildImportFieldMappingTemplateNewWorkspaceHref,
+  buildImportFieldMappingTemplateUploadHref,
   buildImportFieldMappingTemplateWorkspaceHref,
   buildImportQualityIssueReviewCasesHref,
   buildImportReviewCaseDetailApiUrl,
@@ -67,6 +68,7 @@ import {
   summarizeImportRowCorrectionNotice,
   summarizeImportTemplateFitHint,
   summarizeImportTemplateFitDetail,
+  summarizeImportTemplateUploadPrefill,
   summarizeImportUploadResultGuidance,
   summarizeImportFieldMappingTemplateActionNotice,
   summarizeImportFieldMappingTemplates,
@@ -3123,6 +3125,12 @@ test("import center field mapping template detail URLs encode template path", ()
     "/data-quality/field-mapping-templates/TPL%2FMD%20001",
   );
   assert.equal(
+    buildImportFieldMappingTemplateWorkspaceHref("TPL/MD 001", {
+      batchId: "BATCH/CSV 001",
+    }),
+    "/data-quality/field-mapping-templates/TPL%2FMD%20001?batchId=BATCH%2FCSV+001",
+  );
+  assert.equal(
     buildImportFieldMappingTemplateDetailUrl("TPL/MD 001", "http://127.0.0.1:8000"),
     "http://127.0.0.1:8000/api/v1/import-field-mapping-templates/TPL%2FMD%20001",
   );
@@ -3133,6 +3141,83 @@ test("import center field mapping template detail URLs encode template path", ()
     ),
     "http://127.0.0.1:8000/api/v1/import-field-mapping-templates/TPL%2FMD%20001/deactivate",
   );
+});
+
+test("import center field mapping template upload href carries batch and template prefill", () => {
+  assert.equal(
+    buildImportFieldMappingTemplateUploadHref("BATCH/CSV 001", "TPL/MD 001"),
+    "/data-quality/BATCH%2FCSV%20001?templateId=TPL%2FMD+001#import-detail-workspace",
+  );
+});
+
+test("import center upload prefill summarizes selected active template", () => {
+  const summary = summarizeImportTemplateUploadPrefill(
+    [
+      {
+        template_id: "TPL-MD-001",
+        template_name: "主数据模板",
+        file_type: "master_data",
+        field_mapping: { source_key: "source_key", name: "employee_name" },
+        is_active: true,
+        created_by: "ops",
+        created_at: "2026-06-03T09:00:00+08:00",
+      },
+      {
+        template_id: "TPL-OFF",
+        template_name: "停用模板",
+        file_type: "master_data",
+        field_mapping: { source_key: "source_key" },
+        is_active: false,
+        created_by: "ops",
+        created_at: "2026-06-03T09:00:00+08:00",
+      },
+    ],
+    "TPL-MD-001",
+  );
+
+  assert.deepEqual(summary, {
+    selectedTemplateId: "TPL-MD-001",
+    defaultTemplateId: "TPL-MD-001",
+    tone: "success",
+    title: "已预选字段映射模板",
+    detail: "主数据模板 · 主数据 · 2 个字段",
+    nextAction: "确认 CSV 文件表头匹配该模板后上传；如不匹配，可改选其他模板或手填字段映射 JSON。",
+  });
+});
+
+test("import center upload prefill warns when template is inactive or missing", () => {
+  const inactive = summarizeImportTemplateUploadPrefill(
+    [
+      {
+        template_id: "TPL-OFF",
+        template_name: "停用模板",
+        file_type: "master_data",
+        field_mapping: { source_key: "source_key" },
+        is_active: false,
+        created_by: "ops",
+        created_at: "2026-06-03T09:00:00+08:00",
+      },
+    ],
+    "TPL-OFF",
+  );
+  const missing = summarizeImportTemplateUploadPrefill([], "TPL-MISSING");
+
+  assert.deepEqual(inactive, {
+    selectedTemplateId: "TPL-OFF",
+    defaultTemplateId: "",
+    tone: "failed",
+    title: "模板不可用于上传",
+    detail: "字段映射模板 TPL-OFF 已停用，上传表单不会默认使用它。",
+    nextAction: "请选择其他启用模板，或手填字段映射 JSON 后上传。",
+  });
+  assert.deepEqual(missing, {
+    selectedTemplateId: "TPL-MISSING",
+    defaultTemplateId: "",
+    tone: "failed",
+    title: "模板不可用于上传",
+    detail: "字段映射模板 TPL-MISSING 不在当前可选模板列表中。",
+    nextAction: "请返回模板管理确认模板状态，或手填字段映射 JSON 后上传。",
+  });
 });
 
 test("import center field mapping template action notice summarizes update and deactivate results", () => {
