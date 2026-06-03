@@ -3155,3 +3155,28 @@
 - `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
 - in-app browser production smoke：`http://127.0.0.1:3033/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001?evidence=success` 命中 `补证据提交成功`、`续办导航`、`当前案例仍待处理` 和 `继续处理当前案例`，且主入口链接指向 `/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM076 复核关闭成功后的队列交接提示
+
+#### 审计结论
+
+- `IM076/US696` 已修正 `/data-quality/review-cases/[caseId]` 关闭成功后的续办导航语义。
+- 当 URL 返回 `closure=success`，且当前案例已经不在同 owner 待处理序列中时，续办导航展示 `当前案例已关闭`。
+- 存在下一条待处理案例时，主入口展示 `关闭后处理下一条` 并指向下一条详情页。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未新增页面路由或 UI 组件，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前交接提示仍基于 URL action result、现有 list API 和阶段快照；生产队列游标、权限隔离和 SLA 归属仍需后续独立任务。
+- 该能力只是关闭成功后的前端交接说明，不是审批完成、任务分派或批量关闭。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先失败，证明旧行为只显示普通 `继续处理下一条`，没有关闭交接语义。
+- `node scripts/tests/import-center-model.test.mjs`：通过，57 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- in-app browser production smoke：`http://127.0.0.1:3034/data-quality/review-cases/CASE-QUERY-001?closure=success` 命中 `关闭案例提交成功`、`当前案例已关闭` 和 `关闭后处理下一条`，且主入口链接指向 `/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

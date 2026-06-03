@@ -2431,6 +2431,23 @@ export function summarizeImportReviewCaseActionContinuation({
     }
   }
 
+  if (feedback.tone === "ready" && feedback.actionKey === "closure") {
+    return {
+      tone: feedback.tone,
+      title: "续办导航",
+      statusLabel: "当前案例已关闭",
+      detail:
+        navigation.ownerId && navigation.businessDate
+          ? `${navigation.ownerId} 在 ${navigation.businessDate} 还有 ${pendingLabel} 条待处理案例；当前案例已关闭，建议继续处理 ${nextCase.caseId}。`
+          : `当前案例已关闭；建议继续处理 ${nextCase.caseId}。`,
+      primaryLabel: "关闭后处理下一条",
+      primaryHref: nextCase.href,
+      primaryDetail: `${nextCase.caseId} · ${nextCase.stageLabel} · ${nextCase.severityLabel}`,
+      listLabel: "返回同 Owner 列表",
+      listHref: navigation.listHref,
+    }
+  }
+
   return {
     tone: feedback.tone,
     title: "续办导航",

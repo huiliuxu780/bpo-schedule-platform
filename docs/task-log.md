@@ -1752,3 +1752,14 @@
 - action: 修正复核提交成功后的当前案例优先续办。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 在成功反馈出现时识别当前案例是否仍在同 owner 待处理序列中；当前案例仍缺下一步材料时，续办主入口优先展示 `继续处理当前案例` 并指向当前详情页，当前案例已关闭或不在待处理序列时再进入同 owner 下一条；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM076`
+- source_ids:
+  - `R776`
+- story_ids:
+  - `US696`
+- action: 增加复核关闭成功后的队列交接提示。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 在 `closure=success` 且当前案例已离开待处理序列时，续办导航明确展示 `当前案例已关闭`，并将主入口标为 `关闭后处理下一条`；本轮不新增后端 route、schema/migration、依赖、页面路由、新 UI 组件、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

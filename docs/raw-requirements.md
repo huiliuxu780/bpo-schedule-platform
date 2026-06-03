@@ -2029,3 +2029,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成复核提交成功后的当前案例优先续办；当前案例仍在待处理序列时，续办入口优先指向当前案例下一步，当前案例已关闭或不在待处理序列时再进入同 owner 下一条；复用现有 review-case list 数据和阶段快照，不新增 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R776 - 复核关闭成功后的队列交接提示
+
+```yaml
+id: R776
+module: "导入中心"
+description: "复核关闭提交成功后，续办导航虽然能进入同 owner 下一条待处理案例，但文案没有明确告诉主管当前案例已关闭、当前操作正在进入队列交接。需要在关闭成功且存在下一条待处理时，明确展示关闭后的交接状态和下一条处理入口。"
+source: "After IM075 current-case continuation priority and PM asked to continue on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已完成复核关闭成功后的队列交接提示；关闭成功且存在同 owner 下一条待处理时，续办导航明确展示当前案例已关闭，并将主入口标为关闭后处理下一条；复用现有 review-case list 数据和阶段快照，不新增 API、schema/migration、依赖、页面路由、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

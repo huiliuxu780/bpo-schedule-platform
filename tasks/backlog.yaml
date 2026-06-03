@@ -6935,3 +6935,47 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM076
+    title: "复核关闭成功后的队列交接提示"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM075"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+      - "app/**"
+      - "components/import-center-review-case-detail-workspace.tsx"
+    acceptance:
+      - "`/data-quality/review-cases/[caseId]` 在 `closure=success` 且当前案例不再待处理时展示关闭后的队列交接语义。"
+      - "存在同 owner 下一条待处理时，续办主入口展示关闭后处理下一条，并指向下一条详情页。"
+      - "非关闭成功反馈不受影响；失败反馈仍交给重试定位，当前案例仍待处理时仍优先当前案例。"
+      - "复用现有 review-case list 数据和阶段快照，不新增后端 API、schema/migration 或页面路由。"
+      - "不新增依赖，不修改 package/lockfile，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到页面路由、新 UI 组件、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

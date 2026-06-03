@@ -2423,6 +2423,38 @@ test("import center review case detail summarizes action continuation links", ()
     listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A",
   });
 
+  const closureFeedback = summarizeImportReviewCaseActionFeedback({
+    evidence: null,
+    conclusion: null,
+    closure: "success",
+  });
+  const closedNavigation = summarizeImportReviewOwnerNavigation({
+    currentCase: { ...currentCase, status: "closed" },
+    cases,
+    processingStages: {
+      ...processingStages,
+      "CASE-CURRENT": { evidenceCount: 1, conclusionCount: 1, isClosed: true },
+    },
+  });
+
+  assert.deepEqual(
+    summarizeImportReviewCaseActionContinuation({
+      feedback: closureFeedback,
+      navigation: closedNavigation,
+    }),
+    {
+      tone: "ready",
+      title: "续办导航",
+      statusLabel: "当前案例已关闭",
+      detail: "OWNER-A 在 2026-05-11 还有 2 条待处理案例；当前案例已关闭，建议继续处理 CASE-MISSING-EVIDENCE。",
+      primaryLabel: "关闭后处理下一条",
+      primaryHref: "/data-quality/review-cases/CASE-MISSING-EVIDENCE",
+      primaryDetail: "CASE-MISSING-EVIDENCE · 缺证据 · 严重",
+      listLabel: "返回同 Owner 列表",
+      listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A",
+    }
+  );
+
   assert.equal(
     summarizeImportReviewCaseActionContinuation({
       feedback: null,

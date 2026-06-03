@@ -3708,3 +3708,26 @@ dependencies:
   - "US694"
 status: "done"
 ```
+
+### US696 - 复核关闭成功后的队列交接提示
+
+```yaml
+id: US696
+requirement_ids:
+  - R776
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望关闭案例成功后，续办导航明确告诉我当前案例已关闭，并直接引导处理下一条待处理案例，以便连续复核时不会误以为当前案例还需要动作。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 在 `closure=success` 且当前案例不再待处理时展示关闭后的队列交接语义。"
+  - "存在同 owner 下一条待处理时，续办主入口展示关闭后处理下一条，并指向下一条详情页。"
+  - "非关闭成功反馈不受影响；失败反馈仍交给重试定位，当前案例仍待处理时仍优先当前案例。"
+  - "复用现有 review-case list 数据和阶段快照，不新增后端 API、schema/migration 或页面路由。"
+  - "不新增依赖，不修改 package/lockfile，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US695"
+status: "done"
+```
