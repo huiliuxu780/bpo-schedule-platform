@@ -34,6 +34,7 @@ import {
   summarizeImportReviewCaseActionDeck,
   summarizeImportReviewCaseActionFeedback,
   summarizeImportReviewCaseActionContinuation,
+  summarizeImportReviewCaseActionRetry,
   summarizeImportReviewCaseProcessingTimeline,
   summarizeImportReviewCaseProcessingStage,
   summarizeImportReviewCaseClosureAction,
@@ -2321,6 +2322,38 @@ test("import center review case detail summarizes action submit feedback", () =>
     }),
     null
   );
+});
+
+test("import center review case detail summarizes failed action retry target", () => {
+  const failedConclusionFeedback = summarizeImportReviewCaseActionFeedback({
+    evidence: null,
+    conclusion: "failed",
+    closure: null,
+  });
+
+  assert.deepEqual(
+    summarizeImportReviewCaseActionRetry(failedConclusionFeedback),
+    {
+      tone: "blocked",
+      title: "重试定位",
+      statusLabel: "已定位到补结论",
+      detail: "补结论写入失败，当前已打开补结论入口；检查必填字段、案例状态和本地 API 后重试。",
+      tabValue: "conclusion",
+      actionLabel: "补结论",
+    }
+  );
+
+  assert.equal(
+    summarizeImportReviewCaseActionRetry(
+      summarizeImportReviewCaseActionFeedback({
+        evidence: "success",
+        conclusion: null,
+        closure: null,
+      })
+    ),
+    null
+  );
+  assert.equal(summarizeImportReviewCaseActionRetry(null), null);
 });
 
 test("import center review case detail summarizes action continuation links", () => {

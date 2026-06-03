@@ -3105,3 +3105,28 @@
 - in-app browser production smoke：`http://127.0.0.1:3031/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001?evidence=success` 命中 `处理动作区`、`补证据提交成功`、`续办导航`、`继续处理下一条` 和 `返回同 Owner 列表`。
 - in-app browser link smoke：`继续处理下一条` 指向 `/data-quality/review-cases/CASE-CONCLUSION-SMOKE-001`，`返回同 Owner 列表` 指向 `/data-quality/review-cases?businessDate=2026-05-11&ownerId=supervisor-01`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM074 复核提交失败后的重试定位
+
+#### 审计结论
+
+- `IM074/US694` 已在 `/data-quality/review-cases/[caseId]` 的统一 `处理动作区` 内增加失败后的 `重试定位`。
+- 当 URL 返回 `evidence=failed`、`conclusion=failed` 或 `closure=failed` 时，动作区展示对应动作的重试提示，并默认打开对应 tab。
+- 成功反馈或无反馈时不展示重试定位，仍按原推荐动作打开 tab。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前定位依据仍是现有 URL 参数，不是生产级操作流水；后续生产化建议由后端返回结构化 action result。
+- 该能力只是单案例重试定位，不是任务分派、审批队列、权限隔离或批量重试。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先因缺少 `summarizeImportReviewCaseActionRetry` export 失败。
+- `node scripts/tests/import-center-model.test.mjs`：通过，57 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- in-app browser production smoke：`http://127.0.0.1:3032/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001?conclusion=failed` 命中 `处理动作区`、`补结论提交失败`、`重试定位`、`已定位到补结论`、`当前已打开补结论入口` 和 `补充复核结论`，且 active tab 为 `补结论`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

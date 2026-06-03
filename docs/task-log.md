@@ -1730,3 +1730,14 @@
 - action: 增加复核提交后的续办导航。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 在提交反馈出现时新增 `续办导航`，优先展示同 owner 下一条待处理案例入口，并提供返回同 owner 复核列表入口；复用现有 review-case list 数据和 detail 阶段快照；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM074`
+- source_ids:
+  - `R774`
+- story_ids:
+  - `US694`
+- action: 增加复核提交失败后的重试定位。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 在 `evidence=failed`、`conclusion=failed` 或 `closure=failed` 时新增 `重试定位` 提示，并默认打开对应动作 tab；成功或无反馈时不展示该提示；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

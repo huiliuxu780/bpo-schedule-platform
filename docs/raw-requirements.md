@@ -2003,3 +2003,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成复核提交后的续办导航；复核详情页在提交反馈出现时复用现有同 owner 待处理序列，展示下一条待处理案例入口和同 owner 列表返回入口；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R774 - 复核提交失败后的重试定位
+
+```yaml
+id: R774
+module: "导入中心"
+description: "复核动作提交失败时，主管现在能看到失败反馈，但仍需要自己判断应该回到补证据、补结论还是关闭案例入口重试。需要在失败反馈出现时自动定位对应处理 tab，并展示明确的重试提示。"
+source: "After IM073 continuation navigation and PM asked to continue on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已完成复核提交失败后的重试定位；复核详情页在失败反馈出现时自动打开对应处理 tab，并展示明确重试提示；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

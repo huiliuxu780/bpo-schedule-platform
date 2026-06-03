@@ -675,6 +675,15 @@ export type ImportReviewCaseActionContinuationSummary = {
   listHref: string
 }
 
+export type ImportReviewCaseActionRetrySummary = {
+  tone: "blocked"
+  title: string
+  statusLabel: string
+  detail: string
+  tabValue: "evidence" | "conclusion" | "closure"
+  actionLabel: string
+}
+
 export type ImportReviewCaseClosureActionSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
@@ -2413,6 +2422,39 @@ export function summarizeImportReviewCaseActionContinuation({
     listLabel: "返回同 Owner 列表",
     listHref: navigation.listHref,
   }
+}
+
+export function summarizeImportReviewCaseActionRetry(
+  feedback: ImportReviewCaseActionFeedbackSummary | null
+): ImportReviewCaseActionRetrySummary | null {
+  if (!feedback || feedback.tone !== "blocked") {
+    return null
+  }
+
+  const actionLabel = formatReviewCaseActionFeedbackKey(feedback.actionKey)
+
+  return {
+    tone: "blocked",
+    title: "重试定位",
+    statusLabel: `已定位到${actionLabel}`,
+    detail: `${actionLabel}写入失败，当前已打开${actionLabel}入口；检查必填字段、案例状态和本地 API 后重试。`,
+    tabValue: feedback.actionKey,
+    actionLabel,
+  }
+}
+
+function formatReviewCaseActionFeedbackKey(
+  actionKey: ImportReviewCaseActionFeedbackSummary["actionKey"]
+): string {
+  if (actionKey === "closure") {
+    return "关闭案例"
+  }
+
+  if (actionKey === "conclusion") {
+    return "补结论"
+  }
+
+  return "补证据"
 }
 
 export function summarizeImportReviewCaseClosureAction({

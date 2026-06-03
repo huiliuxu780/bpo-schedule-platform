@@ -3662,3 +3662,26 @@ dependencies:
   - "US692"
 status: "done"
 ```
+
+### US694 - 复核提交失败后的重试定位
+
+```yaml
+id: US694
+requirement_ids:
+  - R774
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望复核动作提交失败后页面直接定位到对应处理入口，以便马上重试补证据、补结论或关闭案例。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 在 `evidence=failed`、`conclusion=failed` 或 `closure=failed` 时展示重试定位提示。"
+  - "失败反馈出现时，处理动作区默认打开对应动作 tab。"
+  - "成功反馈或无反馈时不展示重试定位提示，仍按原推荐动作打开 tab。"
+  - "重试定位只解析现有页面参数和现有动作区状态，不新增后端 API、schema 或持久化。"
+  - "不新增依赖，不修改 package/lockfile，不做审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US693"
+status: "done"
+```

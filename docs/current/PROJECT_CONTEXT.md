@@ -16,6 +16,8 @@ Current story queue is empty and active tasks are empty.
 
 `US693/IM073` completed the review-case submit continuation navigation, then current queue returned to empty.
 
+`US694/IM074` completed the review-case failed-submit retry targeting, then current queue returned to empty.
+
 `US692/IM072` completed the review-case action submit feedback, then current queue returned to empty.
 
 `US691/IM071` completed the review-case detail processing action deck, then current queue returned to empty.

@@ -13,6 +13,7 @@ import {
 import {
   type ImportReviewCaseActionContinuationSummary,
   type ImportReviewCaseActionFeedbackSummary,
+  type ImportReviewCaseActionRetrySummary,
   type ImportReviewCaseDetailResponse,
   type ImportReviewCaseProcessingStageSnapshot,
   type ImportReviewCaseRecord,
@@ -21,6 +22,7 @@ import {
   summarizeImportReviewCaseActionDeck,
   summarizeImportReviewCaseActionContinuation,
   summarizeImportReviewCaseActionFeedback,
+  summarizeImportReviewCaseActionRetry,
   summarizeImportReviewCaseDetail,
   summarizeImportReviewCaseEvidenceChain,
   summarizeImportReviewOwnerNavigation,
@@ -194,11 +196,13 @@ function ReviewCaseActionDeck({
 }) {
   const deck = summarizeImportReviewCaseActionDeck({ detail, error })
   const feedback = summarizeImportReviewCaseActionFeedback(actionFeedback)
+  const retry = summarizeImportReviewCaseActionRetry(feedback)
   const continuation = summarizeImportReviewCaseActionContinuation({
     feedback,
     navigation: ownerNavigation,
   })
   const primaryStep = deck.steps.find((step) => step.isPrimary) ?? deck.steps[0]
+  const defaultActionTab = retry?.tabValue ?? primaryStep?.key ?? "evidence"
 
   return (
     <Card>
@@ -218,6 +222,7 @@ function ReviewCaseActionDeck({
       </CardHeader>
       <CardContent className="grid gap-4">
         {feedback ? <ReviewCaseActionFeedbackNotice feedback={feedback} /> : null}
+        {retry ? <ReviewCaseActionRetryPanel retry={retry} /> : null}
         {continuation ? (
           <ReviewCaseActionContinuationPanel continuation={continuation} />
         ) : null}
@@ -261,7 +266,7 @@ function ReviewCaseActionDeck({
           ))}
         </div>
 
-        <Tabs defaultValue={primaryStep?.key ?? "evidence"} className="gap-3">
+        <Tabs defaultValue={defaultActionTab} className="gap-3">
           <TabsList className="w-full justify-start overflow-x-auto">
             <TabsTrigger value="evidence">补证据</TabsTrigger>
             <TabsTrigger value="conclusion">补结论</TabsTrigger>
@@ -294,6 +299,27 @@ function ReviewCaseActionDeck({
         </Tabs>
       </CardContent>
     </Card>
+  )
+}
+
+function ReviewCaseActionRetryPanel({
+  retry,
+}: {
+  retry: ImportReviewCaseActionRetrySummary
+}) {
+  return (
+    <div className="rounded-md border bg-muted/30 p-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="text-sm font-medium">{retry.title}</div>
+            <Badge variant="destructive">{retry.statusLabel}</Badge>
+          </div>
+          <div className="mt-1 text-sm text-muted-foreground">{retry.detail}</div>
+        </div>
+        <Badge variant="secondary">{retry.actionLabel}</Badge>
+      </div>
+    </div>
   )
 }
 

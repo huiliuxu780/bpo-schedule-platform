@@ -87,6 +87,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM074 Import Center Review Failed Action Retry Targeting
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM072 after push; local branch has IM073 and IM074 changes not pushed yet.`
+- scope: add failed-submit retry targeting for review-case action deck, model helper/test coverage, shadcn-composed retry notice, failed-action default tab selection, and traceability records.
+- allowed_files_check: `components/import-center-model.ts`, `components/import-center-review-case-detail-workspace.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no app route, backend, package, lockfile, schema, migration, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: failed action retry summary helper, action deck retry notice and failed-action tab defaulting, model tests, current queue cleanup, registry trace index, project state, raw requirements, user stories, backlog, audit, task log, and branch log. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because `summarizeImportReviewCaseActionRetry` was not exported; target model test passed with 57 tests; shadcn gate passed with documented baseline only; lint and typecheck passed; production build passed; production browser smoke on 3032 rendered `重试定位` and defaulted active tab to `补结论`; final `bash scripts/check.sh` result to be reported after final verification.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM069 Import Center Review Owner Pending Navigation
 
 - branch_name: `codex/im057-review-source-context`
