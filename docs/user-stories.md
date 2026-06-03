@@ -259,7 +259,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US710"
-status: "draft"
+status: "done"
 ```
 
 ### US712 - comparison run detail 回跳闭环
@@ -280,7 +280,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US711"
-status: "draft"
+status: "ready"
 ```
 
 ### US700 - 字段映射模板上传预选链路

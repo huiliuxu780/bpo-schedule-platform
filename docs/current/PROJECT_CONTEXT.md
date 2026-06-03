@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue has advanced to `US711/IM091` after `US710/IM090` completed.
+Current story queue has advanced to `US712/IM092` after `US711/IM091` completed.
 
-The next approved chain stays inside the existing batch `结果追踪` and `comparison run detail` routes: `US711/IM091` is now the only current ready story, while `US712/IM092` remains outside `docs/current/**` until `IM091` completes.
+The next approved chain stays inside the existing batch `结果追踪` and `comparison run detail` routes: `US712/IM092` is now the only current ready story.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -29,6 +29,8 @@ The next approved chain stays inside the existing batch `结果追踪` and `comp
 `US709/IM089` completed the third slice on the same route. Version ledger rows now expose read-only downstream impact summaries for comparison runs and review cases when the current version can be matched, and they keep explicit blocked/empty explanations for no-batch, not-applied, missing-version, or no-direct-chain cases. Current queue returned to empty after this slice.
 
 After that empty-state checkpoint, the next chain was reseeded for comparison-result callback closure. `US710/IM090` completed the first slice: keep the main entry inside the current batch `结果追踪` context, and add a latest-run callback card after local comparison success before the user moves into the full `comparison run detail` page. Current state then advanced to `US711/IM091`.
+
+`US711/IM091` completed the second slice on the existing `comparison run detail` page. The page now clearly identifies itself as the current version context's full result-review homepage, shows source versions, business date range, and read-only review guidance above the existing run source/result detail sections. Current state then advanced to `US712/IM092`.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -133,4 +135,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US711/IM091` is now current for reinforcing `comparison run detail` as the full result-review page.
+`US712/IM092` is now current for adding stable return links from `comparison run detail` back to source batch result trace and the version workbench.

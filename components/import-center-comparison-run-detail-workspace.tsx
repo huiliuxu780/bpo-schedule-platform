@@ -83,6 +83,45 @@ export function ImportCenterComparisonRunDetailWorkspace({
             <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
               <div className="grid gap-1">
                 <CardTitle className="flex items-center gap-2 text-base">
+                  <Activity className="size-4 text-muted-foreground" />
+                  {summary.resultReviewContext.title}
+                </CardTitle>
+                <p className="max-w-3xl text-sm text-muted-foreground">
+                  {summary.resultReviewContext.detail}
+                </p>
+              </div>
+              <Badge variant="secondary" className="w-fit">
+                {summary.resultReviewContext.scopeLabel}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-3 text-sm md:grid-cols-3">
+            <div className="grid gap-1">
+              <span className="text-muted-foreground">来源版本</span>
+              <span className="font-medium">
+                {summary.resultReviewContext.sourceVersionLabel}
+              </span>
+            </div>
+            <div className="grid gap-1">
+              <span className="text-muted-foreground">业务日</span>
+              <span className="font-medium">
+                {summary.resultReviewContext.businessDateLabel}
+              </span>
+            </div>
+            <div className="grid gap-1">
+              <span className="text-muted-foreground">下一步</span>
+              <span className="font-medium">
+                {summary.resultReviewContext.nextAction}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="gap-3">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+              <div className="grid gap-1">
+                <CardTitle className="flex items-center gap-2 text-base">
                   <GitBranch className="size-4 text-muted-foreground" />
                   运行来源
                 </CardTitle>

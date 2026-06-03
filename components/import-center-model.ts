@@ -514,6 +514,14 @@ export type ImportComparisonRunDetailResponse = {
 export type ImportComparisonRunDetailSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
+  resultReviewContext: {
+    title: string
+    detail: string
+    scopeLabel: string
+    sourceVersionLabel: string
+    businessDateLabel: string
+    nextAction: string
+  }
   metricCards: Array<{ label: string; value: string; detail: string }>
   versionLabel: string
   apiHref: string
@@ -5077,7 +5085,6 @@ export function summarizeImportVersionComparisonTriggerNotice({
 export function summarizeImportLatestComparisonRunCallback({
   status,
   runId,
-  reason: _reason,
   comparisonRuns,
 }: {
   status?: string | null
@@ -6274,9 +6281,21 @@ export function summarizeImportComparisonRunDetail({
     })
   }
 
+  const comparisonTypeLabel = formatComparisonTypeLabel(detail.run.comparison_type)
+  const versionLabel = formatComparisonRunVersionLabel(detail.run)
+  const businessDateLabel = `${detail.run.business_date_from} ~ ${detail.run.business_date_to}`
+
   return {
     tone: detail.run.status === "failed" ? "blocked" : "ready",
-    title: `${detail.run.run_id} · ${formatComparisonTypeLabel(detail.run.comparison_type)} · ${formatComparisonRunStatus(detail.run.status)}`,
+    title: `${detail.run.run_id} · ${comparisonTypeLabel} · ${formatComparisonRunStatus(detail.run.status)}`,
+    resultReviewContext: {
+      title: "完整结果回看主页",
+      detail: `当前页面展示 ${detail.run.run_id} 的完整结果明细，来源版本为 ${versionLabel}，业务日 ${detail.run.business_date_from} 至 ${detail.run.business_date_to}。`,
+      scopeLabel: `当前版本语境 · ${comparisonTypeLabel}`,
+      sourceVersionLabel: versionLabel,
+      businessDateLabel,
+      nextAction: "先核对来源版本和业务日，再按明细行检查异常结果。",
+    },
     metricCards: [
       {
         label: "结果数",
@@ -6299,7 +6318,7 @@ export function summarizeImportComparisonRunDetail({
         detail: `至 ${detail.run.business_date_to}`,
       },
     ],
-    versionLabel: formatComparisonRunVersionLabel(detail.run),
+    versionLabel,
     apiHref: buildImportComparisonRunDetailApiUrl(detail.run.run_id),
     resultRows: [
       ...detail.forecast_schedule_results.map(formatForecastScheduleResultRow),
@@ -6455,6 +6474,20 @@ function emptyComparisonRunDetailSummary({
   return {
     tone,
     title,
+    resultReviewContext: {
+      title: tone === "blocked" ? "结果回看暂不可用" : "等待完整结果回看",
+      detail:
+        tone === "blocked"
+          ? `当前页面暂不能形成完整结果回看；${businessDateDetail}。`
+          : "选择可读取的对比运行后，这里会展示来源版本、业务日和完整结果回看语境。",
+      scopeLabel: "当前版本语境 · 未确认",
+      sourceVersionLabel: versionLabel,
+      businessDateLabel: businessDate,
+      nextAction:
+        tone === "blocked"
+          ? "先恢复对比运行读取，再回到本页检查结果明细。"
+          : "先从结果追踪或复核来源进入一个对比运行。",
+    },
     metricCards: [
       { label: "结果数", value: "0", detail: "等待运行" },
       { label: "缺口", value: "0 人", detail: "等待运行" },

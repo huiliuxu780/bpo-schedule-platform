@@ -3063,6 +3063,15 @@ test("import center comparison run detail summarizes result rows", () => {
     {
       tone: "ready",
       title: "RUN-DB008-FS · 预测排班 · 完成",
+      resultReviewContext: {
+        title: "完整结果回看主页",
+        detail:
+          "当前页面展示 RUN-DB008-FS 的完整结果明细，来源版本为 预测 FC-20260511-V1 · 排班 SCH-20260511-V1，业务日 2026-05-11 至 2026-05-11。",
+        scopeLabel: "当前版本语境 · 预测排班",
+        sourceVersionLabel: "预测 FC-20260511-V1 · 排班 SCH-20260511-V1",
+        businessDateLabel: "2026-05-11 ~ 2026-05-11",
+        nextAction: "先核对来源版本和业务日，再按明细行检查异常结果。",
+      },
       metricCards: [
         { label: "结果数", value: "2", detail: "计算结果" },
         { label: "缺口", value: "4 人", detail: "预测排班差异" },

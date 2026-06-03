@@ -380,3 +380,11 @@ To keep Story Runner state narrow, only `US710/IM090` entered `docs/current/**` 
 When the new run already appears in the current comparison-run list, the card surfaces the run ID, comparison type, result count, key metric, and direct entries to the new run detail or current result list. When the success redirect arrives before the current page can see that run in the list, the card stays explicit about that lag and exposes a blocked-but-actionable fallback instead of pretending the result is already present. The implementation stayed frontend-only, reused existing search params and comparison-run list data, and introduced no backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
 
 After `IM090` went green, current state advanced to `US711/IM091` as the only ready slice.
+
+## 2026-06-03 IM091 Comparison Run Full Result Review Page
+
+`US711/IM091` completed the second slice of the comparison-result callback chain on the existing `comparison run detail` route. The detail page now identifies itself as the `完整结果回看主页` for the current version context, with a read-only context card showing source versions, business date range, result-review scope, and the next step for checking detailed rows.
+
+The implementation stayed frontend-only. It reused the existing comparison-run detail API contract, model summary, metric cards, run source section, result rows, and related review-case section. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor was added.
+
+After `IM091` went green, current state advanced to `US712/IM092` as the only ready slice for stable return links from `comparison run detail` back to source batch result trace and the version workbench.

@@ -7203,7 +7203,7 @@ tasks:
   - id: IM091
     title: "comparison run detail 结果回看主页强化"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM090"]
     allowed_files:
@@ -7240,10 +7240,11 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    notes: "已完成。comparison run detail 现在在顶部展示完整结果回看主页语境，明确来源版本、业务日、当前版本语境和只读下一步检查方式；页面仍复用现有查询与结果明细结构，不新增写入动作。"
   - id: IM092
     title: "comparison run detail 回跳闭环"
     priority: P1
-    status: draft
+    status: ready
     required_workflow: frontend-scaffold
     dependencies: ["IM091"]
     allowed_files:

@@ -154,8 +154,8 @@ description: "当前结果追踪页适合做触发反馈和最近一次运行定
 source: "After R790 planning confirmation on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
-notes: "本条只补 comparison run detail 的当前版本语境强调和来源说明，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "本轮已完成 comparison run detail 的完整结果回看主页强化；页面现在明确展示完整结果回看主页、当前版本语境、来源版本、业务日和只读下一步检查方式；复用现有 comparison run detail 查询与页面结构，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R792 - comparison run detail 到来源批次与版本台账的回跳闭环
@@ -167,7 +167,7 @@ description: "当用户进入 comparison run detail 看完整结果后，还需�
 source: "After R791 planning confirmation on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
+status: "ready"
 notes: "本条只补现有页面之间的导航闭环，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 

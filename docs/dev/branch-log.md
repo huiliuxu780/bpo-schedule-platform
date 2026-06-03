@@ -2420,3 +2420,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM091 Comparison Run Full Result Review Page
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `253a0ac`
+- remote_status: `branch includes pushed IM086 baseline plus local version-workbench chain and IM090 callback card; IM091 implementation is local only until PM asks to push.`
+- scope: `comparison run detail` full result-review context card, model summary coverage, current-state advancement from `IM091` to `IM092`, and local detail-page smoke evidence.
+- allowed_files_check: `app/data-quality/comparison-runs/[runId]/**`, `components/import-center-comparison-run-detail-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `components/import-center-comparison-run-detail-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: model TDD first failed because `summarizeImportComparisonRunDetail` did not return `resultReviewContext`; after implementation `node scripts/tests/import-center-model.test.mjs` passed with 75 tests. Browser smoke on `http://localhost:3000/data-quality/comparison-runs/RUN-DEMO-FS-20260511` confirmed `完整结果回看主页`, `当前版本语境`, source version, business date, and result detail visibility. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
