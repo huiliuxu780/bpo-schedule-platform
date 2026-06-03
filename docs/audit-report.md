@@ -3694,3 +3694,28 @@
 #### 验证
 
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-04 - IM105 登录/状态日志生产工作台只读入口
+
+#### 审计结论
+
+- `IM105/US725` 已新增 `/actual-logs/production`，入口位于现有 `数据与集成` 下的 `CORN 状态日志`。
+- 工作台复用现有导入批次列表，按 `login_log` / `status_log` 展示来源批次、实际日志业务版本、业务日范围、应用状态、时区边界、跨天处理边界和阻塞原因。
+- 页面明确当前只读：不改状态字典、不重算实际工时、不触发排班 vs 实际比对。
+- 本轮未新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。
+- 当前状态已推进到 `US726/IM106`，用于后续单批次处理解释详情。
+
+#### 风险
+
+- 当前工作台只基于 import-batch list 的应用摘要展示，不展示逐行登录事件、状态区间或真实跨天切分明细。
+- 本地 API 当前没有 login_log/status_log 批次，页面 smoke 覆盖空态与只读边界；已应用/阻塞版本路径由模型测试覆盖。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `actual-log-production-model.ts`。
+- `node scripts/tests/actual-log-production-model.test.mjs`：通过，4 个 actual-log production model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- in-app browser smoke：`http://127.0.0.1:3000/actual-logs/production` 命中 `CORN 状态日志生产`、`登录/状态日志生产台账`、`时区只读解释`、`跨天处理边界` 和 `当前不触发比对`，且 `CORN 状态日志` 导航项处于 active 状态。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

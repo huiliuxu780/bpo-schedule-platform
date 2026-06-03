@@ -96,7 +96,7 @@ const nav: NavGroup[] = [
       { title: "文件导入", href: "/data-quality" },
       { title: "业务版本", href: "/data-quality/versions", activeMatch: "prefix", tag: "P1" },
       { title: "接入批次", href: "/data-quality" },
-      { title: "CORN 状态日志", href: "/dashboard" },
+      { title: "CORN 状态日志", href: "/actual-logs/production", activeMatch: "prefix", tag: "P1" },
       { title: "字段映射", href: "/dashboard", tag: "P1" },
       { title: "接口集成", href: "/dashboard", tag: "P1" },
       { title: "数据质量", href: "/data-quality", activeMatch: "exact", tag: "P1" },

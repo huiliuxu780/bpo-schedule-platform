@@ -8191,7 +8191,7 @@ tasks:
   - id: IM105
     title: "登录/状态日志生产工作台只读入口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM104"]
     allowed_files:
@@ -8230,6 +8230,7 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已新增 `/actual-logs/production` 只读登录/状态日志生产工作台，并将数据与集成下的 `CORN 状态日志` 指向该入口；页面展示来源批次、实际日志业务版本、应用状态、业务日范围、时区边界、跨天处理边界和只读边界。"
   - id: IM106
     title: "登录/状态日志处理解释详情"
     priority: P1

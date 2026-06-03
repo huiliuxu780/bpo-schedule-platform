@@ -4380,7 +4380,8 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US724"
-status: "ready"
+status: "done"
+notes: "IM105 已完成：`/actual-logs/production` 在数据与集成下展示只读登录/状态日志生产工作台，包含来源批次、业务版本、应用状态、业务日、时区和跨天处理边界。"
 ```
 
 ### US726 - 登录/状态日志处理解释详情

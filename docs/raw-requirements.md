@@ -2416,8 +2416,8 @@ description: "在数据与集成下建立登录/状态日志生产工作台，�
 source: "PM approved actual-log production enhancement on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "ready"
-notes: "只做只读工作台入口；不改状态字典、不重算实际工时、不触发排班 vs 实际比对。"
+status: "done"
+notes: "IM105 已完成：新增 `/actual-logs/production` 只读工作台，展示登录/状态日志来源批次、业务版本、应用状态、业务日范围、时区和跨天处理边界；不改状态字典、不重算实际工时、不触发排班 vs 实际比对。"
 ```
 
 ### R806 - 登录/状态日志处理解释详情

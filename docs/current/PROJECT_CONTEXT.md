@@ -141,6 +141,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US721/IM101` completed the personnel-schedule publish/freeze boundary safety shell. `/schedule-plans/production/[batchId]` now shows disabled publish, freeze, and unpublish action cards with source-version, 0.5h expansion, reference-check, and failure-boundary context.
 
-After IM104, the next approved block is login/status-log production handling under Data & Integration. `US725/IM105` is the only current ready task: add a read-only `/actual-logs/production` workbench for login/status source batches, business versions, business dates, timezone and cross-day boundaries.
+`US725/IM105` completed the login/status-log production workbench under Data & Integration. `/actual-logs/production` now shows login/status source batches, actual-log business versions, business dates, timezone and cross-day boundaries, and read-only production constraints.
 
-`US726/IM106` and `US727/IM107` stay outside current until IM105 is green. Keep avoiding real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, and charge-factor work unless a new confirmed task allows it.
+Current state advanced to `US726/IM106` for single-batch processing explanation. `US727/IM107` stays outside current until IM106 is green. Keep avoiding real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, and charge-factor work unless a new confirmed task allows it.

@@ -1,0 +1,284 @@
+import Link from "next/link"
+import type { ReactNode } from "react"
+import {
+  AlertTriangle,
+  ArrowRight,
+  Clock3,
+  DatabaseZap,
+  Globe2,
+  Layers3,
+  Lock,
+  Table2,
+} from "lucide-react"
+
+import {
+  type ActualLogProductionTone,
+  summarizeActualLogProductionWorkbench,
+} from "@/components/actual-log-production-model"
+import type { ImportBatchListRow } from "@/components/import-center-model"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+type ActualLogProductionWorkbenchProps = {
+  batches: ImportBatchListRow[]
+  error: string | null
+}
+
+export function ActualLogProductionWorkbench({
+  batches,
+  error,
+}: ActualLogProductionWorkbenchProps) {
+  const summary = summarizeActualLogProductionWorkbench(batches)
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
+      <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <h1 className="text-xl font-semibold tracking-normal">CORN 状态日志生产</h1>
+          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+            按登录日志和状态日志导入批次查看实际日志业务版本、应用状态、业务日范围、时区和跨天处理边界。本页只读，不改状态字典、不重算实际工时。
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
+            {formatToneLabel(summary.tone)}
+          </Badge>
+          <Badge variant="secondary">只读工作台</Badge>
+        </div>
+      </section>
+
+      {error ? (
+        <Card className="border-destructive/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <AlertTriangle className="size-4 text-destructive" />
+              日志来源读取失败
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
+        </Card>
+      ) : null}
+
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <MetricCard
+          label="日志版本"
+          value={summary.totalVersions.toLocaleString("zh-CN")}
+          detail={summary.title}
+          tone="default"
+        />
+        <MetricCard
+          label="登录日志"
+          value={summary.loginVersions.toLocaleString("zh-CN")}
+          detail="登录/登出事件来源"
+          tone={summary.loginVersions > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="状态日志"
+          value={summary.statusVersions.toLocaleString("zh-CN")}
+          detail="状态字典与区间来源"
+          tone={summary.statusVersions > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="已应用"
+          value={summary.appliedVersions.toLocaleString("zh-CN")}
+          detail="已应用到实际日志业务数据"
+          tone={summary.appliedVersions > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="仍有阻塞"
+          value={summary.blockedVersions.toLocaleString("zh-CN")}
+          detail="未应用、缺版本或缺处理记录"
+          tone={summary.blockedVersions > 0 ? "blocked" : "default"}
+        />
+      </section>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <DatabaseZap className="size-4 text-muted-foreground" />
+            当前生产边界
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 text-sm text-muted-foreground">
+          <div className="grid gap-1">
+            <p className="font-medium text-foreground">{summary.title}</p>
+            <p>{summary.detail}</p>
+            <p>
+              当前只读展示来源批次、实际日志业务版本、业务日范围和处理边界；处理解释详情待 IM106，状态字典与异常解释安全壳待 IM107。
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/data-quality/versions?domain=actual_logs">
+                查看业务版本
+                <ArrowRight data-icon="inline-end" />
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="ghost">
+              <Link href="/data-quality?fileType=status_log">查看接入批次</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Table2 className="size-4 text-muted-foreground" />
+            登录/状态日志生产台账
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>日志版本</TableHead>
+                <TableHead>来源批次</TableHead>
+                <TableHead>业务日范围</TableHead>
+                <TableHead>应用状态</TableHead>
+                <TableHead>时区边界</TableHead>
+                <TableHead>跨天边界</TableHead>
+                <TableHead>处理边界</TableHead>
+                <TableHead>阻塞原因</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {summary.rows.length > 0 ? (
+                summary.rows.map((row) => (
+                  <TableRow key={row.batchId}>
+                    <TableCell className="align-top">
+                      <div className="font-mono text-xs">{row.versionLabel}</div>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                        <Badge variant="secondary">{row.fileTypeLabel}</Badge>
+                        <span>{row.fileName}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="align-top">
+                      <Button asChild size="sm" variant="link" className="h-auto px-0 py-0">
+                        <Link href={row.sourceBatchHref}>{row.sourceBatchLabel}</Link>
+                      </Button>
+                    </TableCell>
+                    <TableCell className="align-top text-sm text-muted-foreground">
+                      {row.businessDateLabel}
+                    </TableCell>
+                    <TableCell className="align-top">
+                      <Badge variant={row.applicationLabel === "已应用" ? "outline" : "destructive"}>
+                        {row.applicationLabel}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                      {row.timezoneBoundaryLabel}
+                    </TableCell>
+                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                      {row.crossDayBoundaryLabel}
+                    </TableCell>
+                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                      {row.processingBoundaryLabel}
+                    </TableCell>
+                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                      {row.blockerSummary}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-24 text-center text-sm text-muted-foreground">
+                    暂无登录日志或状态日志导入批次
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <section className="grid gap-3 md:grid-cols-3">
+        <BoundaryItem
+          icon={<Globe2 className="size-4 text-muted-foreground" />}
+          title="时区只读解释"
+          detail="DB006 已有 Asia/Shanghai 校验口径；本页不伪造逐行时区异常，详情解释留到 IM106。"
+        />
+        <BoundaryItem
+          icon={<Clock3 className="size-4 text-muted-foreground" />}
+          title="跨天处理边界"
+          detail="跨天状态区间会按业务日切分；当前列表 API 未暴露逐行起止时间，不构造假区间。"
+        />
+        <BoundaryItem
+          icon={<Lock className="size-4 text-muted-foreground" />}
+          title="当前不触发比对"
+          detail="本轮不改状态字典、不重算实际工时、不触发排班 vs 实际比对，只建立生产台账入口。"
+        />
+      </section>
+    </main>
+  )
+}
+
+function MetricCard({
+  label,
+  value,
+  detail,
+  tone,
+}: {
+  label: string
+  value: string
+  detail: string
+  tone: "default" | "ready" | "blocked"
+}) {
+  return (
+    <Card className={tone === "blocked" ? "border-destructive/40" : undefined}>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <Layers3 className="size-4" />
+          {label}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-semibold tabular-nums">{value}</div>
+        <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
+      </CardContent>
+    </Card>
+  )
+}
+
+function BoundaryItem({
+  icon,
+  title,
+  detail,
+}: {
+  icon: ReactNode
+  title: string
+  detail: string
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-base">
+          {icon}
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="text-sm text-muted-foreground">{detail}</CardContent>
+    </Card>
+  )
+}
+
+function formatToneLabel(tone: ActualLogProductionTone) {
+  if (tone === "ready") {
+    return "日志已就绪"
+  }
+
+  if (tone === "blocked") {
+    return "仍有阻塞"
+  }
+
+  return "暂无来源"
+}

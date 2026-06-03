@@ -2743,3 +2743,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM105 Actual Log Production Workbench
+
+- branch_name: `codex/im105-actual-log-production-workbench`
+- base_main_commit: `e95bb67`
+- remote_status: `main includes merged IM105-IM107 actual-log production planning baseline; IM105 implementation is local only until final merge/push.`
+- scope: add `/actual-logs/production` as a read-only login/status-log production workbench under existing Data & Integration navigation; show source batch, actual-log business version, application state, business date range, timezone boundary, cross-day handling boundary, processing boundary, blocker summary, and IM106/IM107 next-step labels.
+- allowed_files_check: `app/actual-logs/production/**`, `components/actual-log-production-workbench.tsx`, `components/actual-log-production-model.ts`, `components/app-sidebar.tsx`, `scripts/tests/actual-log-production-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 4 tests after TDD red failed on missing `actual-log-production-model.ts`; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; in-app browser smoke on `http://127.0.0.1:3000/actual-logs/production` matched title, production ledger, timezone boundary, cross-day boundary, no-compare boundary, and active `CORN 状态日志` navigation. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -6,18 +6,18 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US725
+  - id: US726
     status: ready
-    task_id: IM105
+    task_id: IM106
     requirement_ids:
-      - R805
-    title: "登录/状态日志生产工作台只读入口"
+      - R806
+    title: "登录/状态日志处理解释详情"
     module: "登录/状态日志生产"
     priority: P1
     gate: frontend-scaffold
-    summary: "在数据与集成下新增 CORN 状态日志生产工作台，按登录日志和状态日志来源批次展示版本、应用状态、业务日、时区和跨天处理边界。"
+    summary: "从日志生产工作台进入单批次处理解释页，展示跨天切分、业务日归属、Asia/Shanghai 时区校验和状态区间处理边界。"
     acceptance:
-      - "入口放在现有数据与集成功能下，不创建新的首页或营销页。"
-      - "工作台展示登录/状态日志来源批次、业务版本、应用状态、业务日范围、时区和跨天处理边界。"
-      - "页面明确当前只读，不改状态字典、不重算实际工时、不触发排班 vs 实际比对。"
+      - "从日志生产工作台可进入单批次处理解释页。"
+      - "详情页展示跨天切分、业务日归属、Asia/Shanghai 时区校验和状态区间边界。"
+      - "缺少明细时展示明确空态，不伪造登录事件或状态区间。"
       - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"

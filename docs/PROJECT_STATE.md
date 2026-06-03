@@ -516,3 +516,9 @@ After the demand-forecast production chain, the next approved block is login/sta
 3. `US727/IM107`: add a status-dictionary and exception-explanation safety shell before any write-capability discussion.
 
 Only `US725/IM105` entered current ready state. The chain must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors without a separate confirmed task.
+
+## 2026-06-04 IM105 Actual Log Production Workbench
+
+`IM105/US725` added `/actual-logs/production` under the existing Data & Integration navigation as a read-only login/status-log production workbench. The page reuses the current import-batch list contract and filters login-log/status-log batches into production rows with source batch, actual-log business version, business date range, application state, timezone boundary, cross-day handling boundary, processing boundary, and blocker summary.
+
+The slice intentionally does not update the status dictionary, recalculate actual productive time, trigger schedule-vs-actual comparison, or write production state. It adds no backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, real external integration, automatic scheduling, production formula, settlement rule, or charge-factor change. Current state advanced to `US726/IM106` for single-batch processing explanation.
