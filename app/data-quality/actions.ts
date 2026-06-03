@@ -4,6 +4,8 @@ import { redirect } from "next/navigation"
 
 import {
   buildImportBatchApplyUrl,
+  buildImportBatchProcessingHref,
+  buildImportComparisonRunCalculateUrl,
   buildImportFieldMappingTemplateCreateUrl,
   buildImportFieldMappingTemplateDeactivateUrl,
   buildImportFieldMappingTemplateDetailUrl,
@@ -12,6 +14,7 @@ import {
   buildImportUploadWorkspaceResultHref,
   buildImportUploadUrl,
   type ImportFileType,
+  type ImportComparisonRunRecord,
 } from "@/components/import-center-model"
 
 const importFileTypes = new Set<ImportFileType>([
@@ -372,6 +375,103 @@ export async function applyImportBatchAction(formData: FormData) {
   redirect(`${detailHref}?apply=success`)
 }
 
+export async function triggerLocalComparisonRunAction(formData: FormData) {
+  const batchId = formText(formData, "batch_id")
+  const comparisonType = formText(
+    formData,
+    "comparison_type"
+  ) as ImportComparisonRunRecord["comparison_type"]
+  const forecastVersionId = formText(formData, "forecast_version_id") || null
+  const scheduleVersionId = formText(formData, "schedule_version_id") || null
+  const actualImportVersionId = formText(formData, "actual_import_version_id") || null
+  const businessDateFrom = formText(formData, "business_date_from")
+  const businessDateTo = formText(formData, "business_date_to")
+
+  if (
+    !batchId ||
+    !businessDateFrom ||
+    !businessDateTo ||
+    (comparisonType !== "forecast_vs_schedule" &&
+      comparisonType !== "schedule_vs_actual") ||
+    (comparisonType === "forecast_vs_schedule" &&
+      (!forecastVersionId || !scheduleVersionId)) ||
+    (comparisonType === "schedule_vs_actual" &&
+      (!scheduleVersionId || !actualImportVersionId))
+  ) {
+    redirect(
+      buildImportBatchProcessingHref(batchId || "", {
+        compare: "failed",
+        compareReason: "missing_required_fields",
+        tab: "result-trace",
+      })
+    )
+  }
+
+  let networkError: string | null = null
+  let apiReason: string | null = null
+  let runId = buildLocalComparisonRunId(comparisonType, businessDateFrom)
+
+  try {
+    const response = await fetch(buildImportComparisonRunCalculateUrl(), {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        run_id: runId,
+        comparison_type: comparisonType,
+        forecast_version_id: forecastVersionId,
+        schedule_version_id: scheduleVersionId,
+        actual_import_version_id: actualImportVersionId,
+        business_date_from: businessDateFrom,
+        business_date_to: businessDateTo,
+      }),
+      cache: "no-store",
+    })
+
+    const payload = await readActionJson(response)
+    const responseRunId = extractActionRunId(payload)
+    if (typeof responseRunId === "string" && responseRunId.trim().length > 0) {
+      runId = responseRunId
+    }
+
+    if (response.status < 200 || response.status >= 300) {
+      apiReason = extractActionApiReason(payload) ?? `api_${response.status}`
+    }
+  } catch (error) {
+    networkError = formatActionError(error)
+  }
+
+  if (networkError) {
+    redirect(
+      buildImportBatchProcessingHref(batchId, {
+        compare: "failed",
+        compareReason: networkError,
+        tab: "result-trace",
+      })
+    )
+  }
+
+  if (apiReason) {
+    redirect(
+      buildImportBatchProcessingHref(batchId, {
+        compare: "failed",
+        compareReason: apiReason,
+        compareRun: runId,
+        tab: "result-trace",
+      })
+    )
+  }
+
+  redirect(
+    buildImportBatchProcessingHref(batchId, {
+      compare: "success",
+      compareRun: runId,
+      tab: "result-trace",
+    })
+  )
+}
+
 function parseStandardFields(value: string): Record<string, unknown> | null {
   try {
     const parsed = JSON.parse(value) as unknown
@@ -425,4 +525,67 @@ function formatActionError(error: unknown): string {
   }
 
   return "api_unavailable"
+}
+
+async function readActionJson(response: Response): Promise<Record<string, unknown> | null> {
+  try {
+    const payload = (await response.json()) as unknown
+    if (typeof payload === "object" && payload !== null) {
+      return payload as Record<string, unknown>
+    }
+  } catch {
+    return null
+  }
+
+  return null
+}
+
+function extractActionApiReason(payload: Record<string, unknown> | null): string | null {
+  if (!payload) {
+    return null
+  }
+
+  const detail =
+    typeof payload.detail === "object" && payload.detail !== null
+      ? (payload.detail as Record<string, unknown>)
+      : null
+  const error =
+    detail && typeof detail.error === "object" && detail.error !== null
+      ? (detail.error as Record<string, unknown>)
+      : null
+
+  const message = typeof error?.message === "string" ? error.message.trim() : ""
+  if (message) {
+    return message
+  }
+
+  const code = typeof error?.code === "string" ? error.code.trim() : ""
+  return code || null
+}
+
+function extractActionRunId(payload: Record<string, unknown> | null): string | null {
+  if (!payload) {
+    return null
+  }
+
+  const run =
+    typeof payload.run === "object" && payload.run !== null
+      ? (payload.run as Record<string, unknown>)
+      : null
+
+  return typeof run?.run_id === "string" && run.run_id.trim().length > 0
+    ? run.run_id.trim()
+    : null
+}
+
+function buildLocalComparisonRunId(
+  comparisonType: ImportComparisonRunRecord["comparison_type"],
+  businessDateFrom: string
+): string {
+  const typeCode = comparisonType === "forecast_vs_schedule" ? "FS" : "SA"
+  const dateCode = businessDateFrom.replaceAll("-", "") || "LOCAL"
+  const timestamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14)
+  const randomCode = crypto.randomUUID().slice(0, 8).toUpperCase()
+
+  return `CALC-${typeCode}-${dateCode}-${timestamp}-${randomCode}`
 }

@@ -89,8 +89,8 @@ description: "已应用批次和版本结果链路打通后，主管还需要在
 source: "After R785 planning confirmation on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "confirmed"
-notes: "本需求只规划前端调用现有 comparison calculate API 的入口和反馈，不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算、自动排班或收费因子。"
+status: "done"
+notes: "本轮已完成版本结果页本地比对计算受控入口；结果追踪的版本定位区会在 comparison_type 和来源版本明确时展示 `发起一次本地比对`，提交后将成功/失败反馈带回当前版本语境，并提供进入新 comparison run 详情或结果列表的入口；主数据、版本缺失或上下文不足场景保持阻塞态且不展示写入按钮；复用现有 comparison calculate API 和结果查询能力，不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算、自动排班或收费因子。"
 ```
 
 ### R780 - 字段映射模板上传预选链路

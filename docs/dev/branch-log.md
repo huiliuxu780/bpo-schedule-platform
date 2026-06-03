@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM086 Controlled Local Comparison Trigger
+
+- date: `2026-06-03`
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `5ac83f8`
+- remote_status: `branch includes pushed IM083 baseline plus local IM084/IM085 commits; IM086 implementation is local only until PM asks to push.`
+- scope: controlled local comparison-calculate entry in the result-trace version-context section, success/failure feedback returned to the same version-result context, model test coverage, and current-state reset from `IM086` back to empty queue.
+- allowed_files_check: `app/data-quality/actions.ts`, `components/import-center-result-trace-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/actions.ts`, `components/import-center-result-trace-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test failed first because the new trigger summary referenced a missing version-pair helper; model test then passed with 71 tests. Chrome smoke on `http://localhost:3000/data-quality/BATCH-DEMO-REVIEW-20260511?apply=success&tab=result-trace` verified blocked-state no-button behavior for the current master-data demo batch, and a synthetic success query verified notice rendering plus new-run/result-list links inside the result-trace context. In-app Browser localhost smoke was attempted first but blocked by Browser Use localhost policy in this environment. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required for completion.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM080 Import Center Field Mapping Template Upload Prefill
 
 - branch_name: `codex/im080-template-upload-prefill`

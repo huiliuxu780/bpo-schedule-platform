@@ -6990,7 +6990,7 @@ tasks:
   - id: IM086
     title: "版本结果页本地比对计算受控入口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM085"]
     allowed_files:
@@ -7031,6 +7031,7 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算、自动排班或收费因子"
       - "验证失败"
     commit_after_done: true
+    notes: "已完成。版本结果页会在 comparison_type 与来源版本明确时展示受控本地比对入口；提交后反馈回到当前版本语境，并提供新 comparison run 详情或结果列表入口；主数据、版本缺失或上下文不足场景保持阻塞态且不展示写入按钮。"
   - id: IM080
     title: "字段映射模板上传预选链路"
     priority: P1

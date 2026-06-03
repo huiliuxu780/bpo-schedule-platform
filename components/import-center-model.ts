@@ -300,6 +300,44 @@ export type ImportAppliedVersionResultContext = {
   evidence: string[]
 }
 
+export type ImportVersionComparisonTriggerTone = "ready" | "blocked"
+
+export type ImportVersionComparisonTriggerRequest = {
+  comparisonType: ImportComparisonRunRecord["comparison_type"]
+  forecastVersionId: string | null
+  scheduleVersionId: string | null
+  actualImportVersionId: string | null
+  businessDateFrom: string
+  businessDateTo: string
+}
+
+export type ImportVersionComparisonTrigger = {
+  tone: ImportVersionComparisonTriggerTone
+  canSubmit: boolean
+  title: string
+  detail: string
+  actionLabel: string
+  nextAction: string
+  comparisonTypeLabel: string
+  versionPairLabel: string
+  businessDateLabel: string
+  evidence: string[]
+  request: ImportVersionComparisonTriggerRequest | null
+}
+
+export type ImportVersionComparisonTriggerNoticeTone = "success" | "failed"
+
+export type ImportVersionComparisonTriggerNotice = {
+  tone: ImportVersionComparisonTriggerNoticeTone
+  title: string
+  detail: string
+  runLabel: string
+  primaryActionLabel: string
+  primaryHref: string
+  secondaryActionLabel: string
+  secondaryHref: string
+}
+
 export type ImportReadinessIssueGroupTone = "blocked" | "ready" | "done" | "unknown"
 
 export type ImportReadinessIssueGroupKey =
@@ -1273,6 +1311,9 @@ export function buildImportBatchProcessingHref(
     row?: string | null
     upload?: string | null
     apply?: string | null
+    compare?: string | null
+    compareReason?: string | null
+    compareRun?: string | null
     tab?: ImportPageHierarchyDetailTab | null
   } = {}
 ): string {
@@ -1296,6 +1337,18 @@ export function buildImportBatchProcessingHref(
 
   if (params.apply) {
     searchParams.set("apply", params.apply)
+  }
+
+  if (params.compare) {
+    searchParams.set("compare", params.compare)
+  }
+
+  if (params.compareReason) {
+    searchParams.set("compareReason", params.compareReason)
+  }
+
+  if (params.compareRun) {
+    searchParams.set("compareRun", params.compareRun)
   }
 
   if (params.tab) {
@@ -1328,6 +1381,12 @@ export function buildImportComparisonRunDetailApiUrl(
 
 export function buildImportComparisonRunDetailWorkspaceHref(runId: string): string {
   return `/data-quality/comparison-runs/${encodeURIComponent(runId)}`
+}
+
+export function buildImportComparisonRunCalculateUrl(
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl("/api/v1/comparison-runs/calculate", apiBase)
 }
 
 export function buildImportReviewCasesUrl(
@@ -4428,6 +4487,146 @@ export function summarizeImportAppliedVersionResultContext({
   }
 }
 
+export function summarizeImportVersionComparisonTrigger({
+  batch,
+  readiness,
+  comparisonRuns,
+}: {
+  batch: ImportBatchListRow | null
+  readiness: ImportApplyReadinessResponse | null
+  comparisonRuns: ImportComparisonRunRecord[]
+}): ImportVersionComparisonTrigger | null {
+  if (!batch || !readiness) {
+    return null
+  }
+
+  if (readiness.application_status !== "applied" || batch.application_status !== "applied") {
+    return null
+  }
+
+  const versionId = readiness.import_version_id ?? batch.import_version_id
+  if (!versionId) {
+    return null
+  }
+
+  const evidence = [
+    `来源批次 ${batch.batch_id}`,
+    `业务日 ${batch.business_date_from}`,
+    `版本 ${versionId}`,
+  ]
+
+  if (!supportsDirectVersionResultContext(batch.file_type)) {
+    return {
+      tone: "blocked",
+      canSubmit: false,
+      title: "当前版本暂无可复用的本地比对入口",
+      detail: `当前 ${formatImportFileType(batch.file_type)} 版本 ${versionId} 没有受控本地比对口径；先核对版本记录和下游结果追踪。`,
+      actionLabel: "发起一次本地比对",
+      nextAction: "仅在人员排班、需求预测、状态日志且已定位对比版本时才展示写入入口。",
+      comparisonTypeLabel: "未支持",
+      versionPairLabel: versionId,
+      businessDateLabel: batch.business_date_from,
+      evidence,
+      request: null,
+    }
+  }
+
+  const primaryRun =
+    findMatchedComparisonRunsForAppliedVersion(batch.file_type, versionId, comparisonRuns)[0] ?? null
+
+  if (!primaryRun) {
+    return {
+      tone: "blocked",
+      canSubmit: false,
+      title: "当前版本暂无法确认比对口径",
+      detail: `当前版本 ${versionId} 还没有可复用的对比运行，暂不展示写入按钮。`,
+      actionLabel: "发起一次本地比对",
+      nextAction: "先确认该版本是否已有下游结果或补足配对版本，再回到当前页触发本地比对。",
+      comparisonTypeLabel: "未定位",
+      versionPairLabel: versionId,
+      businessDateLabel: batch.business_date_from,
+      evidence,
+      request: null,
+    }
+  }
+
+  const request = buildImportVersionComparisonTriggerRequest(primaryRun)
+  if (!request) {
+    return {
+      tone: "blocked",
+      canSubmit: false,
+      title: "当前版本缺少必要来源版本",
+      detail: `已定位到 ${formatComparisonTypeLabel(primaryRun.comparison_type)}，但运行上下文缺少重新计算所需的成对版本信息。`,
+      actionLabel: "发起一次本地比对",
+      nextAction: "先确认来源版本是否完整，再从当前版本结果页重新触发。",
+      comparisonTypeLabel: formatComparisonTypeLabel(primaryRun.comparison_type),
+      versionPairLabel: formatComparisonRunVersionPair(primaryRun),
+      businessDateLabel: `${primaryRun.business_date_from} ~ ${primaryRun.business_date_to}`,
+      evidence: [
+        ...evidence,
+        `对比口径 ${formatComparisonTypeLabel(primaryRun.comparison_type)}`,
+      ],
+      request: null,
+    }
+  }
+
+  return {
+    tone: "ready",
+    canSubmit: true,
+    title: "可在当前版本语境发起本地比对",
+    detail: `将按 ${formatComparisonTypeLabel(primaryRun.comparison_type)} 和已定位版本组合重新生成一次本地对比运行。`,
+    actionLabel: "发起一次本地比对",
+    nextAction: "提交后留在当前结果页查看反馈，再进入新运行详情或回看结果列表。",
+    comparisonTypeLabel: formatComparisonTypeLabel(primaryRun.comparison_type),
+    versionPairLabel: formatComparisonRunVersionPair(primaryRun),
+    businessDateLabel: `${primaryRun.business_date_from} ~ ${primaryRun.business_date_to}`,
+    evidence: [
+      ...evidence,
+      `对比口径 ${formatComparisonTypeLabel(primaryRun.comparison_type)}`,
+      `复用运行 ${primaryRun.run_id}`,
+    ],
+    request,
+  }
+}
+
+export function summarizeImportVersionComparisonTriggerNotice({
+  status,
+  runId,
+  reason,
+}: {
+  status?: string | null
+  runId?: string | null
+  reason?: string | null
+}): ImportVersionComparisonTriggerNotice | null {
+  if (status === "success" && runId) {
+    return {
+      tone: "success",
+      title: "本地比对已生成新运行",
+      detail: `当前版本语境已生成新的本地对比运行 ${runId}，可直接进入详情或回看当前结果列表。`,
+      runLabel: runId,
+      primaryActionLabel: "查看新对比运行",
+      primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
+      secondaryActionLabel: "查看结果列表",
+      secondaryHref: "#comparison-runs-list",
+    }
+  }
+
+  if (status === "failed") {
+    return {
+      tone: "failed",
+      title: "本地比对未提交",
+      detail: formatImportVersionComparisonTriggerFailureReason(reason),
+      runLabel: runId ?? "未生成运行",
+      primaryActionLabel: "查看结果列表",
+      primaryHref: "#comparison-runs-list",
+      secondaryActionLabel: "留在当前版本语境",
+      secondaryHref: "#import-result-trace",
+    }
+  }
+
+  return null
+}
+
 function supportsDirectVersionResultContext(fileType: ImportFileType): boolean {
   return (
     fileType === "personnel_schedule" ||
@@ -4523,6 +4722,64 @@ function comparisonRunCompletionRank(
   status: ImportComparisonRunRecord["status"]
 ): number {
   return status === "completed" ? 1 : 0
+}
+
+function buildImportVersionComparisonTriggerRequest(
+  run: ImportComparisonRunRecord
+): ImportVersionComparisonTriggerRequest | null {
+  if (run.comparison_type === "forecast_vs_schedule") {
+    if (!run.forecast_version_id || !run.schedule_version_id) {
+      return null
+    }
+
+    return {
+      comparisonType: run.comparison_type,
+      forecastVersionId: run.forecast_version_id,
+      scheduleVersionId: run.schedule_version_id,
+      actualImportVersionId: null,
+      businessDateFrom: run.business_date_from,
+      businessDateTo: run.business_date_to,
+    }
+  }
+
+  if (!run.schedule_version_id || !run.actual_import_version_id) {
+    return null
+  }
+
+  return {
+    comparisonType: run.comparison_type,
+    forecastVersionId: null,
+    scheduleVersionId: run.schedule_version_id,
+    actualImportVersionId: run.actual_import_version_id,
+    businessDateFrom: run.business_date_from,
+    businessDateTo: run.business_date_to,
+  }
+}
+
+function formatComparisonRunVersionPair(run: ImportComparisonRunRecord): string {
+  if (run.comparison_type === "forecast_vs_schedule") {
+    return `${run.forecast_version_id ?? "-"} / ${run.schedule_version_id ?? "-"}`
+  }
+
+  return `${run.schedule_version_id ?? "-"} / ${run.actual_import_version_id ?? "-"}`
+}
+
+function formatImportVersionComparisonTriggerFailureReason(
+  reason?: string | null
+): string {
+  if (!reason) {
+    return "提交未返回成功结果，请先确认本地 API 与版本上下文。"
+  }
+
+  if (reason === "missing_required_fields") {
+    return "提交参数不完整，当前版本语境还不足以发起本地比对。"
+  }
+
+  if (reason.startsWith("api_")) {
+    return `本地比对接口返回 ${reason.replace("api_", "")}，请先核对来源版本和业务日。`
+  }
+
+  return `本地比对提交失败：${reason}`
 }
 
 export function summarizeImportReadinessIssueGroups(

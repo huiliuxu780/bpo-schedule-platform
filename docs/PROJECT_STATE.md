@@ -318,3 +318,11 @@ After `IM084` went green, current state advanced to `US705/IM085` as the only re
 The implementation remained frontend-only. It reused current batch detail data, persisted comparison-run lists, review-case lists, and existing workspace routes. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, production formula, settlement rule, or charge factor was added.
 
 After `IM085` went green, current state advanced to `US706/IM086` as the only ready slice.
+
+## 2026-06-03 IM086 Controlled Local Comparison Trigger
+
+`US706/IM086` completed the third slice of the downstream-result chain. The second-level batch detail page now adds a controlled local comparison-calculate entry inside the positioned version-result context: when an applied version can clearly reuse a comparison type and its paired source versions from the existing positioned run context, the result-trace section shows `发起一次本地比对`; when the file type is unsupported, the import version is missing, or the paired versions are incomplete, the page stays blocked and does not render a write button. After submit, the page returns success or failure feedback into the same version-result context and links either to the newly created comparison-run detail or back to the current result list.
+
+The implementation stayed frontend-only. It reused the existing comparison calculate API, result-trace positioning helpers, and batch-detail query context without adding backend routes, schema/migration changes, dependencies, approval, export, batch operation, permission, real external integration, production formula, settlement rule, or charge factor changes.
+
+After `IM086` went green, current queue returned to empty. Any subsequent batch/version workspace slice must be reseeded explicitly before implementation.

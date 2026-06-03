@@ -1,5 +1,8 @@
+"use client"
+
 import Link from "next/link"
 import type { ReactNode } from "react"
+import { useSearchParams } from "next/navigation"
 import {
   Activity,
   AlertTriangle,
@@ -11,6 +14,7 @@ import {
   ExternalLink,
 } from "lucide-react"
 
+import { triggerLocalComparisonRunAction } from "@/app/data-quality/actions"
 import {
   type ImportApplyReadinessResponse,
   type ImportAppliedVersionResultContext,
@@ -23,10 +27,13 @@ import {
   type ImportReviewEvidenceGapDrilldown,
   type ImportResultTrace,
   type ImportReviewCaseRecord,
+  type ImportVersionComparisonTrigger,
   buildImportApiUrl,
   buildImportComparisonRunDetailWorkspaceHref,
   buildImportReviewCasesWorkspaceHref,
   summarizeImportAppliedVersionResultContext,
+  summarizeImportVersionComparisonTrigger,
+  summarizeImportVersionComparisonTriggerNotice,
   summarizeImportDownstreamResultDrilldown,
   summarizeImportQualityImpactAggregation,
   summarizeImportReviewConclusionPreview,
@@ -158,6 +165,8 @@ function AppliedVersionResultContextSection({
   comparisonRuns: ImportComparisonRunRecord[]
   reviewCases: ImportReviewCaseRecord[]
 }) {
+  const searchParams = useSearchParams()
+
   if (!batch) {
     return null
   }
@@ -172,6 +181,16 @@ function AppliedVersionResultContextSection({
   if (!context) {
     return null
   }
+  const comparisonAction = summarizeImportVersionComparisonTrigger({
+    batch,
+    readiness,
+    comparisonRuns,
+  })
+  const comparisonNotice = summarizeImportVersionComparisonTriggerNotice({
+    status: searchParams.get("compare"),
+    runId: searchParams.get("compareRun"),
+    reason: searchParams.get("compareReason"),
+  })
 
   return (
     <section className="grid gap-4 rounded-md border bg-muted/30 p-4">
@@ -218,6 +237,144 @@ function AppliedVersionResultContextSection({
         <div className="text-xs font-medium text-muted-foreground">定位依据</div>
         <div className="flex flex-wrap gap-2">
           {context.evidence.map((item) => (
+            <Badge key={item} variant="outline">
+              {item}
+            </Badge>
+          ))}
+        </div>
+      </div>
+
+      {comparisonNotice ? (
+        <ComparisonTriggerNoticeSection notice={comparisonNotice} />
+      ) : null}
+
+      {comparisonAction ? (
+        <ComparisonTriggerActionSection
+          batchId={batch.batch_id}
+          action={comparisonAction}
+        />
+      ) : null}
+    </section>
+  )
+}
+
+function ComparisonTriggerNoticeSection({
+  notice,
+}: {
+  notice: ReturnType<typeof summarizeImportVersionComparisonTriggerNotice>
+}) {
+  if (!notice) {
+    return null
+  }
+
+  return (
+    <section className="grid gap-3 rounded-md border bg-background/80 p-3">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid gap-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <CheckCircle2 className="size-4 text-muted-foreground" />
+            <div className="text-sm font-medium">{notice.title}</div>
+            <Badge variant={notice.tone === "success" ? "secondary" : "destructive"}>
+              {notice.tone === "success" ? "已生成" : "未提交"}
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground">{notice.detail}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm">
+            <Link href={notice.primaryHref}>
+              {notice.primaryActionLabel}
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href={notice.secondaryHref}>
+              {notice.secondaryActionLabel}
+              <ExternalLink data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+      <div className="text-xs font-mono text-muted-foreground">{notice.runLabel}</div>
+    </section>
+  )
+}
+
+function ComparisonTriggerActionSection({
+  batchId,
+  action,
+}: {
+  batchId: string
+  action: ImportVersionComparisonTrigger
+}) {
+  return (
+    <section className="grid gap-4 rounded-md border bg-background/80 p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <ClipboardCheck className="size-4 text-muted-foreground" />
+            <h4 className="text-sm font-medium">本地比对计算</h4>
+            <Badge variant={action.canSubmit ? "outline" : "destructive"}>
+              {action.canSubmit ? "可提交" : "已阻塞"}
+            </Badge>
+          </div>
+          <div>
+            <div className="font-medium">{action.title}</div>
+            <p className="mt-1 text-sm text-muted-foreground">{action.detail}</p>
+          </div>
+        </div>
+        {action.canSubmit && action.request ? (
+          <form action={triggerLocalComparisonRunAction}>
+            <input type="hidden" name="batch_id" value={batchId} />
+            <input
+              type="hidden"
+              name="comparison_type"
+              value={action.request.comparisonType}
+            />
+            <input
+              type="hidden"
+              name="forecast_version_id"
+              value={action.request.forecastVersionId ?? ""}
+            />
+            <input
+              type="hidden"
+              name="schedule_version_id"
+              value={action.request.scheduleVersionId ?? ""}
+            />
+            <input
+              type="hidden"
+              name="actual_import_version_id"
+              value={action.request.actualImportVersionId ?? ""}
+            />
+            <input
+              type="hidden"
+              name="business_date_from"
+              value={action.request.businessDateFrom}
+            />
+            <input
+              type="hidden"
+              name="business_date_to"
+              value={action.request.businessDateTo}
+            />
+            <Button size="sm" type="submit">
+              {action.actionLabel}
+              <ArrowRight data-icon="inline-end" />
+            </Button>
+          </form>
+        ) : null}
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-3">
+        <ContextMetric label="对比口径" value={action.comparisonTypeLabel} />
+        <ContextMetric label="来源版本" value={action.versionPairLabel} />
+        <ContextMetric label="业务日期" value={action.businessDateLabel} />
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-xs font-medium text-muted-foreground">执行约束</div>
+        <p className="text-sm text-muted-foreground">{action.nextAction}</p>
+        <div className="flex flex-wrap gap-2">
+          {action.evidence.map((item) => (
             <Badge key={item} variant="outline">
               {item}
             </Badge>
@@ -620,7 +777,7 @@ function ComparisonRunsTable({
   error: string | null
 }) {
   return (
-    <section className="grid min-w-0 gap-2">
+    <section id="comparison-runs-list" className="grid min-w-0 gap-2">
       <div className="flex items-center gap-2 text-sm font-medium">
         <Activity className="size-4 text-muted-foreground" />
         对比结果

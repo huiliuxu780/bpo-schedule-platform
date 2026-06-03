@@ -10,15 +10,17 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue now contains `US706/IM086` as the only ready slice. It scopes the next step to a controlled local comparison trigger inside the positioned version-result context.
+Current story queue is empty again after `US706/IM086` completed.
 
-No additional downstream-result slice is in `docs/current/**` after `US706/IM086`; any later batch/version workspace work must be reseeded explicitly after this task.
+No additional downstream-result slice is in `docs/current/**` after `US706/IM086`; any later batch/version workspace work must be reseeded explicitly before implementation.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
 `US704/IM084` completed the applied-result visibility slice on the second-level batch detail page. The page now shows an applied result card with target/version-state metrics and next-step links, then current state advanced to `US705/IM085` only.
 
 `US705/IM085` completed the applied-version positioning slice on the second-level batch detail page. The page now resolves direct version-result context from an applied batch, upgrades supported result-card entries to corresponding comparison-run detail links, and adds a version-context section inside result trace; unsupported or incomplete version cases stay in explicit empty/blocked state. Current state then advanced to `US706/IM086` only.
+
+`US706/IM086` completed the controlled local comparison-trigger slice on the second-level batch detail page. The result-trace version-context section now shows a gated `发起一次本地比对` entry only when comparison type and source versions are clear from the positioned result context, keeps unsupported or incomplete cases blocked without a write button, and returns success/failure feedback plus new-run/result-list links back into the same version-result context. Current queue then returned to empty.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -123,4 +125,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next product step is to execute only `US706/IM086`, add a controlled local comparison trigger inside the positioned version-result context, and keep broader version workbench or CRUD flows out of scope until that write path is stable.
+Before any new implementation, reseed the next batch/version workspace slice into `docs/current/**`. The most natural next chain is to define the first "业务版本工作台" slice on top of the now-complete apply-result, version-positioning, and local-comparison-trigger path.
