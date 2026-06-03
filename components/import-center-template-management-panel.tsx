@@ -6,6 +6,7 @@ import {
   type ImportFileType,
   type ImportTemplateFitDetail,
   type ImportTemplateFitOption,
+  buildImportFieldMappingTemplateNewWorkspaceHref,
   buildImportFieldMappingTemplateWorkspaceHref,
   formatFieldMappingTemplateSummary,
   formatImportFileType,
@@ -66,6 +67,11 @@ export function ImportCenterTemplateManagementPanel({
         <Badge variant={templateError ? "destructive" : "outline"}>
           {templateError ? "读取失败" : `${summary.totalTemplates} 个模板`}
         </Badge>
+        <Button asChild size="sm" variant="outline">
+          <Link href={buildImportFieldMappingTemplateNewWorkspaceHref()}>
+            新增模板
+          </Link>
+        </Button>
       </CardHeader>
       <CardContent className="grid gap-4">
         <section className="grid gap-3 md:grid-cols-4">

@@ -1071,6 +1071,16 @@ export function buildImportFieldMappingTemplatesUrl(
   )
 }
 
+export function buildImportFieldMappingTemplateCreateUrl(
+  apiBase = getDefaultApiBase()
+): string {
+  return buildImportApiUrl("/api/v1/import-field-mapping-templates", apiBase)
+}
+
+export function buildImportFieldMappingTemplateNewWorkspaceHref(): string {
+  return "/data-quality/field-mapping-templates/new"
+}
+
 export function buildImportFieldMappingTemplateWorkspaceHref(
   templateId: string
 ): string {
@@ -4201,18 +4211,23 @@ export function summarizeImportFieldMappingTemplateActionNotice({
 
   const isSuccess = status === "success"
   const isDeactivate = action === "deactivate"
-  const actionLabel = isDeactivate ? "停用" : "更新"
+  const isCreate = action === "create"
+  const actionLabel = isDeactivate ? "停用" : isCreate ? "创建" : "更新"
 
   if (isSuccess) {
     return {
       tone: "success",
-      title: isDeactivate ? "模板已停用" : "模板已更新",
+      title: isDeactivate ? "模板已停用" : isCreate ? "模板已创建" : "模板已更新",
       detail: isDeactivate
         ? `字段映射模板 ${templateId} 已停用，上传时不会再作为启用模板推荐。`
-        : `字段映射模板 ${templateId} 已保存最新名称和字段映射。`,
+        : isCreate
+          ? `字段映射模板 ${templateId} 已创建，可在上传时作为启用模板复用。`
+          : `字段映射模板 ${templateId} 已保存最新名称和字段映射。`,
       nextAction: isDeactivate
         ? "返回批次处理页检查同类型模板覆盖，必要时选择其他启用模板。"
-        : "返回批次处理页重新选择模板，或继续检查当前模板字段覆盖。",
+        : isCreate
+          ? "继续检查当前模板字段覆盖，或返回批次处理页选择该模板上传。"
+          : "返回批次处理页重新选择模板，或继续检查当前模板字段覆盖。",
     }
   }
 

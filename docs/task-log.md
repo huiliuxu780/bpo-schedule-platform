@@ -1785,3 +1785,14 @@
 - action: 新增字段映射模板维护详情页。
 - status: `done`
 - notes: 新增 `/data-quality/field-mapping-templates/[templateId]` 二级页，展示字段映射模板详情、字段映射明细、更新表单和停用入口；批次详情页模板卡片新增 `维护模板` 入口；本轮复用现有模板 PATCH 和 deactivate API，不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM079`
+- source_ids:
+  - `R779`
+- story_ids:
+  - `US699`
+- action: 新增字段映射模板新增页。
+- status: `done`
+- notes: 新增 `/data-quality/field-mapping-templates/new` 二级页，支持填写模板 ID、名称、文件类型、创建人和字段映射 JSON，提交后调用现有 create template API 并跳转对应模板详情页；字段映射模板管理区新增 `新增模板` 入口；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

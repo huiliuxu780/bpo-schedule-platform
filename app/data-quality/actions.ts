@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation"
 
 import {
+  buildImportFieldMappingTemplateCreateUrl,
   buildImportFieldMappingTemplateDeactivateUrl,
   buildImportFieldMappingTemplateDetailUrl,
   buildImportFieldMappingTemplateWorkspaceHref,
@@ -183,6 +184,67 @@ export async function updateImportFieldMappingTemplateAction(formData: FormData)
   }
 
   redirect(`${detailHref}?template=success&action=update`)
+}
+
+export async function createImportFieldMappingTemplateAction(formData: FormData) {
+  const templateId = formText(formData, "template_id")
+  const templateName = formText(formData, "template_name")
+  const fileType = formText(formData, "file_type") as ImportFileType
+  const createdBy = formText(formData, "created_by") || "local-operator"
+  const fieldMappingText = formText(formData, "field_mapping")
+
+  if (!templateId || !templateName || !fileType || !fieldMappingText) {
+    redirect(
+      "/data-quality/field-mapping-templates/new?template=failed&action=create&reason=missing_required_fields"
+    )
+  }
+
+  const fieldMapping = parseStringFieldMapping(fieldMappingText)
+  if (!fieldMapping) {
+    redirect(
+      "/data-quality/field-mapping-templates/new?template=failed&action=create&reason=invalid_json"
+    )
+  }
+
+  let apiStatus: number | null = null
+  let networkError: string | null = null
+
+  try {
+    const response = await fetch(buildImportFieldMappingTemplateCreateUrl(), {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        template_id: templateId,
+        template_name: templateName,
+        file_type: fileType,
+        field_mapping: fieldMapping,
+        created_by: createdBy,
+      }),
+      cache: "no-store",
+    })
+
+    apiStatus = response.status
+  } catch (error) {
+    networkError = formatActionError(error)
+  }
+
+  if (networkError) {
+    redirect(
+      `/data-quality/field-mapping-templates/new?template=failed&action=create&reason=${encodeURIComponent(networkError)}`
+    )
+  }
+
+  if (apiStatus !== null && (apiStatus < 200 || apiStatus >= 300)) {
+    redirect(
+      `/data-quality/field-mapping-templates/new?template=failed&action=create&reason=api_${apiStatus}`
+    )
+  }
+
+  redirect(
+    `${buildImportFieldMappingTemplateWorkspaceHref(templateId)}?template=success&action=create`
+  )
 }
 
 export async function deactivateImportFieldMappingTemplateAction(formData: FormData) {

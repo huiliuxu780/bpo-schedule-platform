@@ -2068,3 +2068,16 @@ version: "1.0"
 status: "done"
 notes: "本轮已完成字段映射模板维护详情页；新增 /data-quality/field-mapping-templates/[templateId] 二级页，展示模板详情、字段映射明细、模板更新表单和停用入口，并从模板卡片进入维护页；复用现有模板 PATCH 和 deactivate API，不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
+
+### R779 - 字段映射模板新增页
+
+```yaml
+id: R779
+module: "导入中心"
+description: "字段映射模板现在可以维护和停用，但新增模板仍没有前端入口。需要提供独立新增页，把常用 CSV 表头映射保存为后续上传可复用的模板。"
+source: "After IM078 and PM asked to continue on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "done"
+notes: "本轮已完成字段映射模板新增页；新增 /data-quality/field-mapping-templates/new，提交后调用现有 create template API 并跳转模板详情页，模板管理区新增进入新增页的入口；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```

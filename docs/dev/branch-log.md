@@ -2164,3 +2164,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM079 Import Center Field Mapping Template Create
+
+- branch_name: `codex/im079-template-create`
+- base_main_commit: `3bf1388`
+- remote_status: `branch created locally from pushed codex/im078-template-maintenance; not pushed yet.`
+- scope: second-level field-mapping template creation page, create server action over existing API, template management entry link, model helper/test coverage, browser smoke evidence, and traceability records.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/data-quality/field-mapping-templates/new/page.tsx`, `components/import-center-model.ts`, `components/import-center-template-management-panel.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/actions.ts`, `app/data-quality/field-mapping-templates/new/page.tsx`, `components/import-center-model.ts`, `components/import-center-template-management-panel.tsx`, `scripts/tests/import-center-model.test.mjs`, `docs/current/PROJECT_CONTEXT.md`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, new dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because create URL/new page href helpers were missing; target model test passed with 59 tests; shadcn gate passed with documented baseline only; lint, typecheck, and Node 22 build passed; in-app browser smoke on 3037 rendered the new template page; static entry check found `新增模板` linked by `buildImportFieldMappingTemplateNewWorkspaceHref()`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; first full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests; final check rerun after branch-log evidence update before local commit.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

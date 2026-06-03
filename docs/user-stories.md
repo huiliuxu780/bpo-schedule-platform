@@ -3777,3 +3777,25 @@ dependencies:
   - "US697"
 status: "done"
 ```
+
+### US699 - 字段映射模板新增页
+
+```yaml
+id: US699
+requirement_ids:
+  - R779
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在独立页面新增字段映射模板，以便把常用 CSV 表头映射保存为后续上传可复用的模板。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/field-mapping-templates/new` 展示新增模板表单，包含模板 ID、名称、文件类型、创建人和字段映射 JSON。"
+  - "提交新增模板后调用现有 create template API，成功后进入对应模板详情页并展示创建成功反馈。"
+  - "字段映射模板管理区提供进入新增模板页的入口。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US698"
+status: "done"
+```

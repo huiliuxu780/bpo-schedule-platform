@@ -223,6 +223,7 @@ Current invariants:
 - `IM076/US696` added closure-success queue handoff wording inside the review-case processing action deck, making closed-case handoff explicit and labeling the primary continuation as closing-then-next when another same-owner pending case exists; it then returned current queue and active tasks to empty.
 - `IM077/US697` kept review continuation return-list links focused on open cases by adding `status=open` to same-owner list links in the detail and action continuation flows; it then returned current queue and active tasks to empty.
 - `IM078/US698` added a second-level field-mapping template maintenance page with detail, update, and deactivate actions over existing template APIs, then returned current queue and active tasks to empty.
+- `IM079/US699` added a second-level field-mapping template creation page over the existing create template API, then returned current queue and active tasks to empty.
 
 ## Product Direction
 

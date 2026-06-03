@@ -10,6 +10,8 @@ import {
   buildImportComparisonRunsUrl,
   buildImportFieldMappingTemplateDeactivateUrl,
   buildImportFieldMappingTemplateDetailUrl,
+  buildImportFieldMappingTemplateCreateUrl,
+  buildImportFieldMappingTemplateNewWorkspaceHref,
   buildImportFieldMappingTemplateWorkspaceHref,
   buildImportQualityIssueReviewCasesHref,
   buildImportReviewCaseDetailApiUrl,
@@ -3105,9 +3107,17 @@ test("import center mapping template URL builder supports all templates and file
     buildImportFieldMappingTemplatesUrl("master_data", "http://127.0.0.1:8000"),
     "http://127.0.0.1:8000/api/v1/import-field-mapping-templates?file_type=master_data",
   );
+  assert.equal(
+    buildImportFieldMappingTemplateCreateUrl("http://127.0.0.1:8000"),
+    "http://127.0.0.1:8000/api/v1/import-field-mapping-templates",
+  );
 });
 
 test("import center field mapping template detail URLs encode template path", () => {
+  assert.equal(
+    buildImportFieldMappingTemplateNewWorkspaceHref(),
+    "/data-quality/field-mapping-templates/new",
+  );
   assert.equal(
     buildImportFieldMappingTemplateWorkspaceHref("TPL/MD 001"),
     "/data-quality/field-mapping-templates/TPL%2FMD%20001",
@@ -3126,6 +3136,20 @@ test("import center field mapping template detail URLs encode template path", ()
 });
 
 test("import center field mapping template action notice summarizes update and deactivate results", () => {
+  assert.deepEqual(
+    summarizeImportFieldMappingTemplateActionNotice({
+      status: "success",
+      action: "create",
+      reason: undefined,
+      templateId: "TPL-MD-001",
+    }),
+    {
+      tone: "success",
+      title: "模板已创建",
+      detail: "字段映射模板 TPL-MD-001 已创建，可在上传时作为启用模板复用。",
+      nextAction: "继续检查当前模板字段覆盖，或返回批次处理页选择该模板上传。",
+    },
+  );
   assert.deepEqual(
     summarizeImportFieldMappingTemplateActionNotice({
       status: "success",

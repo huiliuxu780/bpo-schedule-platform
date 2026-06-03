@@ -3231,3 +3231,30 @@
 - `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过，新路由出现在 Next build route 表中。
 - in-app browser production smoke：`http://127.0.0.1:3036/data-quality/field-mapping-templates/TPL-IM027-SMOKE-001` 命中 `模板维护`、`维护边界`、`保存模板` 和 `停用模板`；批次详情页 `导入与模板` tab 存在 `维护模板` 链接；无害更新提交后命中 `模板已更新` 成功反馈。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM079 字段映射模板新增页
+
+#### 审计结论
+
+- `IM079/US699` 已新增独立二级页 `/data-quality/field-mapping-templates/new`。
+- 新增页包含模板 ID、模板名称、文件类型、创建人和字段映射 JSON 表单。
+- 新增提交复用现有 `POST /api/v1/import-field-mapping-templates`，成功后跳转对应模板详情页并带 `template=success&action=create` 反馈参数。
+- 字段映射模板管理区新增 `新增模板` 入口，指向独立新增页。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 浏览器插件本轮对按钮点击有 3 秒 CDP 超时，提交动作未作为浏览器点击证据；create API 行为由现有后端 unittest 和完整门禁覆盖，页面渲染和入口由 DOM smoke 与源码检查覆盖。
+- 当前新增是单模板创建，不是模板批量导入、审批或权限隔离。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先失败，证明旧模型没有 create API URL、新增页 href 和创建成功反馈。
+- `node scripts/tests/import-center-model.test.mjs`：通过，59 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过，新路由出现在 Next build route 表中。
+- in-app browser production smoke：`http://127.0.0.1:3037/data-quality/field-mapping-templates/new` 命中 `新增字段映射模板`、`模板 ID`、`模板名称`、`字段映射 JSON`、`创建模板` 和 `创建边界`。
+- 静态入口检查：`components/import-center-template-management-panel.tsx` 存在 `新增模板` 链接，href 来源为 `buildImportFieldMappingTemplateNewWorkspaceHref()`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
