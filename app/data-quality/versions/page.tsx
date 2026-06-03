@@ -2,8 +2,10 @@ import { AppShell } from "@/components/app-shell"
 import { ImportCenterVersionWorkbench } from "@/components/import-center-version-workbench"
 import {
   type ImportBatchListRow,
+  type ImportComparisonRunRecord,
   type ImportVersionWorkbenchFilters,
   buildImportApiUrl,
+  buildImportComparisonRunsUrl,
 } from "@/components/import-center-model"
 
 export const dynamic = "force-dynamic"
@@ -31,13 +33,18 @@ export default async function VersionWorkbenchPage({
     status: params?.status,
   }
   const batchResult = await fetchImportBatches()
+  const comparisonRunsResult = await fetchImportComparisonRuns(
+    batchResult.data ?? [],
+    filters.businessDate ?? null
+  )
 
   return (
     <AppShell title="业务版本工作台" searchPlaceholder="搜索版本、批次或业务日">
       <ImportCenterVersionWorkbench
         batches={batchResult.data ?? []}
+        comparisonRuns={comparisonRunsResult.data ?? []}
         filters={filters}
-        error={batchResult.error}
+        error={batchResult.error ?? comparisonRunsResult.error}
       />
     </AppShell>
   )
@@ -67,6 +74,64 @@ async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
       data: [],
       error: formatApiError(error),
     }
+  }
+}
+
+async function fetchImportComparisonRuns(
+  batches: ImportBatchListRow[],
+  businessDate: string | null
+): Promise<ApiResult<ImportComparisonRunRecord[]>> {
+  const targetDates = businessDate
+    ? [businessDate]
+    : Array.from(
+        new Set(
+          batches
+            .filter(
+              (batch) =>
+                batch.application_status === "applied" && batch.business_date_from
+            )
+            .map((batch) => batch.business_date_from)
+        )
+      )
+
+  if (targetDates.length === 0) {
+    return { data: [], error: null }
+  }
+
+  const results = await Promise.all(
+    targetDates.map(async (date) => {
+      try {
+        const response = await fetch(buildImportComparisonRunsUrl(date), {
+          cache: "no-store",
+        })
+
+        if (!response.ok) {
+          return {
+            items: [] as ImportComparisonRunRecord[],
+            error: `对比运行 API 返回 ${response.status}`,
+          }
+        }
+
+        const payload = (await response.json()) as {
+          items?: ImportComparisonRunRecord[]
+        }
+
+        return {
+          items: Array.isArray(payload.items) ? payload.items : [],
+          error: null,
+        }
+      } catch (error) {
+        return {
+          items: [] as ImportComparisonRunRecord[],
+          error: formatApiError(error),
+        }
+      }
+    })
+  )
+
+  return {
+    data: results.flatMap((result) => result.items),
+    error: results.find((result) => result.error)?.error ?? null,
   }
 }
 

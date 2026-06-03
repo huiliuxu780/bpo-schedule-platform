@@ -346,3 +346,11 @@ To keep Story Runner state narrow, only `US707/IM087` entered `docs/current/**` 
 The implementation remained frontend-only. It reused the existing import-batch list API, current import-center model helpers, and the data-quality navigation shell. The page explicitly keeps current visible time scoped to the uploaded batch record for now and does not claim publish/freeze/approval semantics. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor was added.
 
 After `IM087` went green, current state advanced to `US708/IM088` as the only ready slice. `US709/IM089` remains outside `docs/current/**` until `IM088` completes.
+
+## 2026-06-03 IM088 Version Workbench Stable Jumps
+
+`US708/IM088` completed the second version-workbench slice on `/data-quality/versions`. The ledger now keeps batch detail as the stable primary action for every current-version row, then adds a second-step jump only when the applied-version context is defensible from existing frontend data.
+
+For supported applied rows, the page now resolves the matched comparison run and deep-links directly into that run detail. For other applied rows without a matched run but with known import context, the page falls back to the existing batch result-trace route. Rows that are still blocked or have no applied version no longer expose a misleading deep link and instead remain in explicit blocked/empty state. The implementation stayed frontend-only, reused current import-batch and comparison-run query helpers, and introduced no backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
+
+After `IM088` went green, current state advanced to `US709/IM089` as the only ready slice for downstream impact summaries.

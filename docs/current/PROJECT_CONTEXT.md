@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue has advanced to `US708/IM088` after `US707/IM087` completed.
+Current story queue has advanced to `US709/IM089` after `US708/IM088` completed.
 
-The approved next chain is the first `业务版本工作台` slice under `data-quality`: `US708/IM088` is now the only current ready story, while `US709/IM089` stays outside `docs/current/**` until `IM088` completes.
+The approved next chain is the first `业务版本工作台` slice under `data-quality`: `US709/IM089` is now the only current ready story for downstream impact summaries.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -23,6 +23,8 @@ The approved next chain is the first `业务版本工作台` slice under `data-q
 `US706/IM086` completed the controlled local comparison-trigger slice on the second-level batch detail page. The result-trace version-context section now shows a gated `发起一次本地比对` entry only when comparison type and source versions are clear from the positioned result context, keeps unsupported or incomplete cases blocked without a write button, and returns success/failure feedback plus new-run/result-list links back into the same version-result context. Current queue then returned to empty.
 
 `US707/IM087` started the next chain from that empty state and is now complete. The first slice adds `/data-quality/versions` as a read-only version ledger page under the existing import-center path. It stays frontend-only, reuses current import-batch list data, and does not add backend APIs, schema or migration changes, dependencies, approval, export, batch operations, permissions, automatic scheduling, production formulas, settlement, or charge factors.
+
+`US708/IM088` completed the second slice on the same route. Version ledger rows now keep `查看批次详情` as the primary entry and add a stable second-step link when the applied-version context is clear: supported rows resolve directly to the matched comparison run detail, while other applied rows fall back to the existing result-trace page. Rows without enough context or without an applied version remain blocked without misleading deep links.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -127,4 +129,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US708/IM088` is now current for stable workbench jumps. `US709/IM089` remains planned next for downstream impact summaries and must stay outside current state until `IM088` is green.
+`US709/IM089` is now current for downstream impact summaries on version rows.

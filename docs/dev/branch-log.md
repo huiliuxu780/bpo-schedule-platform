@@ -2352,3 +2352,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM088 Version Workbench Stable Jumps
+
+- branch_name: `codex/im083-single-batch-apply-entry`
+- base_main_commit: `929108d`
+- remote_status: `branch includes pushed IM086 baseline plus local version-workbench planning/spec and IM087 ledger commits; IM088 implementation is local only until PM asks to push.`
+- scope: `/data-quality/versions` stable row-level navigation, version-row comparison-run positioning reuse, current-state advancement from `IM088` to `IM089`, and local route/link smoke evidence.
+- allowed_files_check: `app/data-quality/versions/**`, `components/import-center-version-workbench.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: `app/data-quality/versions/**`, `components/import-center-version-workbench.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: model TDD first failed because version-workbench rows had no secondary stable-link fields; after implementation `node scripts/tests/import-center-model.test.mjs` passed with 74 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests. Local smoke on `http://localhost:3000/data-quality/versions` confirmed the route title plus `查看批次详情` and `查看下游结果追踪` links on the live ledger page; current demo data did not surface a direct comparison-run row, so that path remains covered by model tests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

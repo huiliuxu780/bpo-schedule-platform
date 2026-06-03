@@ -227,6 +227,7 @@ test("version workbench summarizes one current row per business domain", () => {
         uploaded_at: "2026-06-03T11:00:00+08:00",
       },
     ],
+    comparisonRuns: [],
     filters: {},
   });
 
@@ -242,6 +243,10 @@ test("version workbench summarizes one current row per business domain", () => {
       ["demand_forecast", "empty", "/data-quality"],
       ["actual_logs", "ready", "/data-quality/BATCH-STATUS-APPLIED?tab=batch-detail"],
     ],
+  );
+  assert.equal(
+    summary.rows.find((row) => row.domainKey === "master_data")?.secondaryActionHref,
+    "/data-quality/BATCH-MD-APPLIED?tab=result-trace",
   );
 });
 
@@ -280,6 +285,7 @@ test("version workbench prefers latest applied batch and respects business-date 
         uploaded_at: "2026-06-03T10:00:00+08:00",
       },
     ],
+    comparisonRuns: [],
     filters: {
       businessDate: "2026-05-12",
       status: "ready",
@@ -290,6 +296,74 @@ test("version workbench prefers latest applied batch and respects business-date 
   assert.equal(summary.rows[0].domainKey, "demand_forecast");
   assert.equal(summary.rows[0].versionLabel, "BATCH-FC-NEW::v1");
   assert.equal(summary.detail, "业务日 2026-05-12 · 当前筛出 1 / 4 个业务域");
+});
+
+test("version workbench routes matched applied versions to run detail and applied blocked rows to result trace", () => {
+  const summary = summarizeImportVersionWorkbench({
+    batches: [
+      {
+        ...baseBatch,
+        batch_id: "BATCH-FC-READY",
+        file_type: "demand_forecast",
+        application_status: "applied",
+        import_version_id: "BATCH-FC-READY::v1",
+        application_target: "forecast_version",
+        business_date_from: "2026-05-12",
+        business_date_to: "2026-05-12",
+        uploaded_at: "2026-06-03T09:00:00+08:00",
+      },
+      {
+        ...baseBatch,
+        batch_id: "BATCH-MD-BLOCKED",
+        file_type: "master_data",
+        application_status: "applied",
+        import_version_id: null,
+        uploaded_at: "2026-06-03T10:00:00+08:00",
+      },
+      {
+        ...baseBatch,
+        batch_id: "BATCH-SCH-WAIT",
+        file_type: "personnel_schedule",
+        application_status: "not_applied",
+        import_version_id: "BATCH-SCH-WAIT::v1",
+        uploaded_at: "2026-06-03T11:00:00+08:00",
+      },
+    ],
+    comparisonRuns: [
+      {
+        run_id: "RUN-FC-001",
+        comparison_type: "forecast_vs_schedule",
+        forecast_version_id: "BATCH-FC-READY::v1",
+        schedule_version_id: "SCHEDULE-V1",
+        actual_import_version_id: null,
+        business_date_from: "2026-05-12",
+        business_date_to: "2026-05-12",
+        status: "completed",
+        total_results: 24,
+        total_gap_agents: 3,
+        total_late_minutes: null,
+        created_at: "2026-06-03T12:00:00+08:00",
+      },
+    ],
+    filters: {},
+  });
+
+  assert.equal(
+    summary.rows.find((row) => row.domainKey === "demand_forecast")?.secondaryActionHref,
+    "/data-quality/comparison-runs/RUN-FC-001",
+  );
+  assert.equal(
+    summary.rows.find((row) => row.domainKey === "demand_forecast")?.secondaryActionLabel,
+    "查看对应对比运行",
+  );
+  assert.equal(
+    summary.rows.find((row) => row.domainKey === "master_data")?.secondaryActionHref,
+    "/data-quality/BATCH-MD-BLOCKED?tab=result-trace",
+  );
+  assert.equal(
+    summary.rows.find((row) => row.domainKey === "personnel_schedule")?.secondaryActionHref,
+    null,
+  );
 });
 
 test("import center batch review guide directs selected batch follow-up", () => {

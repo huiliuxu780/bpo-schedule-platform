@@ -138,6 +138,8 @@ export type ImportVersionWorkbenchRow = {
   nextAction: string
   primaryActionLabel: string
   primaryActionHref: string | null
+  secondaryActionLabel: string | null
+  secondaryActionHref: string | null
 }
 
 export type ImportVersionWorkbenchSummary = {
@@ -1678,9 +1680,11 @@ const versionWorkbenchDomains: Array<{
 
 export function summarizeImportVersionWorkbench({
   batches,
+  comparisonRuns = [],
   filters,
 }: {
   batches: ImportBatchListRow[]
+  comparisonRuns?: ImportComparisonRunRecord[]
   filters: ImportVersionWorkbenchFilters
 }): ImportVersionWorkbenchSummary {
   const businessDate = normalizeFilterValue(filters.businessDate)
@@ -1692,7 +1696,9 @@ export function summarizeImportVersionWorkbench({
     ? batches.filter((batch) => batch.business_date_from === businessDate)
     : batches
   const rows = versionWorkbenchDomains
-    .map((domain) => summarizeImportVersionWorkbenchRow(domain, scopedBatches))
+    .map((domain) =>
+      summarizeImportVersionWorkbenchRow(domain, scopedBatches, comparisonRuns)
+    )
     .filter((row) => (domainFilter ? row.domainKey === domainFilter : true))
     .filter((row) => (statusFilter ? row.tone === statusFilter : true))
 
@@ -1722,7 +1728,8 @@ export function summarizeImportVersionWorkbench({
 
 function summarizeImportVersionWorkbenchRow(
   domain: (typeof versionWorkbenchDomains)[number],
-  batches: ImportBatchListRow[]
+  batches: ImportBatchListRow[],
+  comparisonRuns: ImportComparisonRunRecord[]
 ): ImportVersionWorkbenchRow {
   const domainBatches = sortImportBatchesByUploadedAt(
     batches.filter((batch) => domain.fileTypes.includes(batch.file_type))
@@ -1747,10 +1754,30 @@ function summarizeImportVersionWorkbenchRow(
       nextAction: "先进入导入批次列表创建或定位可用批次。",
       primaryActionLabel: "查看导入批次",
       primaryActionHref: "/data-quality",
+      secondaryActionLabel: null,
+      secondaryActionHref: null,
     }
   }
 
   if (latestAppliedBatch && latestAppliedBatch.import_version_id) {
+    const batchDetailHref = buildImportBatchProcessingHref(latestAppliedBatch.batch_id, {
+      tab: "batch-detail",
+    })
+    const versionContext = summarizeImportAppliedVersionResultContext({
+      batch: latestAppliedBatch,
+      readiness: null,
+      comparisonRuns,
+      reviewCases: [],
+    })
+    const secondaryAction = buildVersionWorkbenchSecondaryAction({
+      batchDetailHref,
+      fallbackHref: buildImportBatchProcessingHref(latestAppliedBatch.batch_id, {
+        tab: "result-trace",
+      }),
+      fallbackLabel: "查看结果追踪",
+      context: versionContext,
+    })
+
     return {
       domainKey: domain.key,
       domainLabel: domain.label,
@@ -1764,11 +1791,35 @@ function summarizeImportVersionWorkbenchRow(
       blockerSummary: `当前按最近已应用批次 ${latestAppliedBatch.batch_id} 作为版本口径。`,
       nextAction: "从当前批次详情继续核对版本记录和结果追踪。",
       primaryActionLabel: "查看批次详情",
-      primaryActionHref: buildImportBatchProcessingHref(latestAppliedBatch.batch_id, {
-        tab: "batch-detail",
-      }),
+      primaryActionHref: batchDetailHref,
+      secondaryActionLabel: secondaryAction.label,
+      secondaryActionHref: secondaryAction.href,
     }
   }
+
+  const blockedBatchDetailHref = buildImportBatchProcessingHref(currentBatch.batch_id, {
+    tab: "batch-detail",
+  })
+  const blockedVersionContext =
+    currentBatch.application_status === "applied"
+      ? summarizeImportAppliedVersionResultContext({
+          batch: currentBatch,
+          readiness: null,
+          comparisonRuns,
+          reviewCases: [],
+        })
+      : null
+  const blockedSecondaryAction = buildVersionWorkbenchSecondaryAction({
+    batchDetailHref: blockedBatchDetailHref,
+    fallbackHref:
+      currentBatch.application_status === "applied"
+        ? buildImportBatchProcessingHref(currentBatch.batch_id, {
+            tab: "result-trace",
+          })
+        : null,
+    fallbackLabel: "查看结果追踪",
+    context: blockedVersionContext,
+  })
 
   return {
     domainKey: domain.key,
@@ -1792,9 +1843,47 @@ function summarizeImportVersionWorkbenchRow(
         ? "先核对版本记录和应用摘要，再继续下游追踪。"
         : "先进入当前批次处理详情，确认 readiness、失败行和应用状态。",
     primaryActionLabel: "查看批次详情",
-    primaryActionHref: buildImportBatchProcessingHref(currentBatch.batch_id, {
-      tab: "batch-detail",
-    }),
+    primaryActionHref: blockedBatchDetailHref,
+    secondaryActionLabel: blockedSecondaryAction.label,
+    secondaryActionHref: blockedSecondaryAction.href,
+  }
+}
+
+function buildVersionWorkbenchSecondaryAction({
+  batchDetailHref,
+  fallbackHref,
+  fallbackLabel,
+  context,
+}: {
+  batchDetailHref: string
+  fallbackHref: string | null
+  fallbackLabel: string
+  context: ImportAppliedVersionResultContext | null
+}): { label: string | null; href: string | null } {
+  if (context?.primaryHref && context.primaryHref !== batchDetailHref) {
+    return {
+      label: context.primaryActionLabel,
+      href: context.primaryHref,
+    }
+  }
+
+  if (context?.secondaryHref && context.secondaryHref !== batchDetailHref) {
+    return {
+      label: context.secondaryActionLabel,
+      href: context.secondaryHref,
+    }
+  }
+
+  if (fallbackHref && fallbackHref !== batchDetailHref) {
+    return {
+      label: fallbackLabel,
+      href: fallbackHref,
+    }
+  }
+
+  return {
+    label: null,
+    href: null,
   }
 }
 

@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowLeft, ArrowRight, Filter, GitBranch, Layers3 } from
 
 import {
   type ImportBatchListRow,
+  type ImportComparisonRunRecord,
   type ImportVersionWorkbenchFilters,
   summarizeImportVersionWorkbench,
 } from "@/components/import-center-model"
@@ -21,16 +22,22 @@ import {
 
 type ImportCenterVersionWorkbenchProps = {
   batches: ImportBatchListRow[]
+  comparisonRuns: ImportComparisonRunRecord[]
   filters: ImportVersionWorkbenchFilters
   error: string | null
 }
 
 export function ImportCenterVersionWorkbench({
   batches,
+  comparisonRuns,
   filters,
   error,
 }: ImportCenterVersionWorkbenchProps) {
-  const summary = summarizeImportVersionWorkbench({ batches, filters })
+  const summary = summarizeImportVersionWorkbench({
+    batches,
+    comparisonRuns,
+    filters,
+  })
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
@@ -177,7 +184,7 @@ export function ImportCenterVersionWorkbench({
                 <TableHead className="min-w-[150px]">当前可见时间</TableHead>
                 <TableHead className="min-w-[110px]">状态</TableHead>
                 <TableHead className="min-w-[320px]">阻塞摘要</TableHead>
-                <TableHead className="min-w-[120px] text-right">操作</TableHead>
+                <TableHead className="min-w-[220px] text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -208,12 +215,22 @@ export function ImportCenterVersionWorkbench({
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button asChild size="sm" variant="outline">
-                      <Link href={row.primaryActionHref ?? "/data-quality"}>
-                        {row.primaryActionLabel}
-                        <ArrowRight data-icon="inline-end" />
-                      </Link>
-                    </Button>
+                    <div className="flex flex-wrap justify-end gap-2">
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={row.primaryActionHref ?? "/data-quality"}>
+                          {row.primaryActionLabel}
+                          <ArrowRight data-icon="inline-end" />
+                        </Link>
+                      </Button>
+                      {row.secondaryActionHref ? (
+                        <Button asChild size="sm">
+                          <Link href={row.secondaryActionHref}>
+                            {row.secondaryActionLabel}
+                            <ArrowRight data-icon="inline-end" />
+                          </Link>
+                        </Button>
+                      ) : null}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

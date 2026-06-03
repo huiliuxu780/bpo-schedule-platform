@@ -115,8 +115,8 @@ description: "版本工作台第一页建立后，用户还需要从当前版本
 source: "After R787 planning confirmation on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
-notes: "本条只补导航链路，不新增写入动作、后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "本轮已完成版本工作台稳定跳转链路；当前版本行继续保留批次详情主入口，并在已应用且上下文足够明确时补齐结果追踪或 comparison run 次入口；上下文不足的行不再暴露误导性深链。实现复用现有批次列表、comparison run 查询和前端模型定位能力，不新增写入动作、后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R789 - 业务版本工作台下游影响摘要

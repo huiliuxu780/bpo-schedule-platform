@@ -195,7 +195,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US707"
-status: "draft"
+status: "done"
 ```
 
 ### US709 - 业务版本工作台下游影响摘要
