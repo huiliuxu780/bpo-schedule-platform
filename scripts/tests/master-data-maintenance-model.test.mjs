@@ -66,6 +66,7 @@ test("master data maintenance workbench uses the latest applied master data vers
   assert.equal(summary.sourceVersionLabel, "BATCH-MD-001::v1");
   assert.equal(summary.latestBatchLabel, "BATCH-MD-001");
   assert.equal(summary.rows[0].statusLabel, "只读可查看");
+  assert.equal(summary.rows[0].nextActionLabel, "查看详情与受控动作");
   assert.equal(summary.rows[0].sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
   assert.equal(summary.rows[0].sourceVersionHref, "/data-quality/versions?domain=master_data");
   assert.equal(summary.rows[0].detailHref, "/master-data/agents");
@@ -114,6 +115,14 @@ test("master data entity detail exposes source context and empty reference impac
   );
   assert.equal(detail.referenceImpacts[0].countLabel, "不伪造数量");
   assert.equal(detail.referenceImpacts[0].tone, "empty");
+  assert.deepEqual(
+    detail.maintenanceActions.map((action) => action.label),
+    ["新增绑定关系", "编辑绑定关系", "冻结绑定关系", "调整绑定关系有效期"],
+  );
+  assert.equal(detail.maintenanceActions[0].canSubmit, false);
+  assert.equal(detail.maintenanceActions[0].submitLabel, "暂不提交");
+  assert.match(detail.maintenanceActions[0].referenceCheckLabel, /引用影响校验/);
+  assert.match(detail.maintenanceActions[0].failureBoundary, /后端写入未接入/);
 });
 
 test("master data entity detail keeps a blocked source state when no applied version exists", () => {
@@ -129,4 +138,7 @@ test("master data entity detail keeps a blocked source state when no applied ver
   assert.equal(detail.sourceVersionLabel, "暂无主数据业务版本");
   assert.match(detail.detail, /尚未应用/);
   assert.equal(detail.referenceImpacts[0].detail, "来源版本未就绪，暂不展示引用影响。");
+  assert.equal(detail.maintenanceActions[0].statusLabel, "来源阻塞");
+  assert.equal(detail.maintenanceActions[0].referenceCheckLabel, "来源版本未就绪，禁止进入写入。");
+  assert.equal(detail.maintenanceActions[0].failureBoundary, "先应用主数据来源批次，再重新检查引用影响。");
 });

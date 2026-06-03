@@ -452,3 +452,9 @@ The workbench explicitly keeps write actions closed: no create/edit/freeze/effec
 `IM097/US717` added `/master-data/[entityKey]` detail pages for agents, sites, vendors, projects, skills, and bindings. The workbench now links each row into its detail view; unknown entity keys return 404.
 
 The detail view stays read-only: it shows source batch/version context, entity-level effective-period and freeze-status empty states, and reference-impact summaries for schedule, forecast, login/status logs, and comparison/review chains. Missing reference detail remains explicit as `不伪造数量`. Current queue returned to empty because `IM098` would introduce controlled write actions and requires separate PM confirmation.
+
+## 2026-06-03 IM098 Master Data Controlled Action Shell
+
+`IM098/US718` added a controlled maintenance-action shell to `/master-data/[entityKey]`. Each entity detail now shows four action categories: create, edit, freeze, and effective-period adjustment.
+
+The shell is intentionally non-writing. Each action shows single-entity scope, reference-check requirements, failure boundaries, and a disabled `暂不提交` button. No backend write API, schema/migration, dependency, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement rule, or charge-factor work was added. Current queue returned to empty after the master-data read-only/action-boundary chain.

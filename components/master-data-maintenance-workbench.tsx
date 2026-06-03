@@ -9,6 +9,7 @@ import {
   GitBranch,
   Link2,
   Lock,
+  ShieldAlert,
   ShieldCheck,
 } from "lucide-react"
 
@@ -48,7 +49,7 @@ export function MasterDataMaintenanceWorkbench({
           <div>
             <h1 className="text-xl font-semibold tracking-normal">主数据维护</h1>
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              按坐席、职场、供应商、项目、技能和绑定关系查看当前维护范围、来源版本和阻塞原因。当前阶段只读，不提供新增、修改、冻结、审批、导出或批量动作。
+              按坐席、职场、供应商、项目、技能和绑定关系查看当前维护范围、来源版本和阻塞原因。详情页提供受控动作安全壳，但不提交新增、修改、冻结、审批、导出或批量动作。
             </p>
           </div>
         </div>
@@ -210,13 +211,13 @@ export function MasterDataMaintenanceWorkbench({
       <section className="grid gap-3 md:grid-cols-2">
         <BoundaryItem
           icon={<Lock className="size-4 text-muted-foreground" />}
-          title="当前不开放写入"
-          detail="新增、编辑、冻结、有效期调整和绑定维护都不在 IM096 范围内，避免把 CRUD、权限和审批提前混进来。"
+          title="当前不提交写入"
+          detail="新增、编辑、冻结、有效期调整和绑定维护只展示动作范围、引用校验和失败边界；真实写入仍未接后端。"
         />
         <BoundaryItem
           icon={<FileClock className="size-4 text-muted-foreground" />}
           title="后续顺序"
-          detail="IM097 补实体详情和引用影响；IM098 再讨论受控维护动作、引用校验和必要确认。"
+          detail="下一步需要单独决定是否进入后端写入、schema/migration、权限或审批；本轮不提前混入。"
         />
       </section>
     </main>
@@ -365,6 +366,59 @@ export function MasterDataMaintenanceEntityDetail({
                   </TableCell>
                   <TableCell className="max-w-xl align-top text-sm text-muted-foreground">
                     {impact.detail}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ShieldAlert className="size-4 text-muted-foreground" />
+            受控维护动作
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>动作</TableHead>
+                <TableHead>实体范围</TableHead>
+                <TableHead>引用校验</TableHead>
+                <TableHead>失败边界</TableHead>
+                <TableHead className="text-right">提交</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {summary.maintenanceActions.map((action) => (
+                <TableRow key={action.key}>
+                  <TableCell className="align-top">
+                    <div className="font-medium">{action.label}</div>
+                    <Badge
+                      variant={
+                        action.statusLabel === "来源阻塞" ? "destructive" : "outline"
+                      }
+                      className="mt-2"
+                    >
+                      {action.statusLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="max-w-[14rem] align-top text-sm text-muted-foreground">
+                    {action.targetScope}
+                  </TableCell>
+                  <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                    {action.referenceCheckLabel}
+                  </TableCell>
+                  <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                    {action.failureBoundary}
+                  </TableCell>
+                  <TableCell className="align-top text-right">
+                    <Button size="sm" variant="outline" disabled={!action.canSubmit}>
+                      {action.submitLabel}
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

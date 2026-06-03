@@ -2573,3 +2573,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM098 Master Data Controlled Action Shell
+
+- branch_name: `codex/im098-master-data-controlled-actions`
+- base_main_commit: `8697f6f`
+- remote_status: `main includes merged IM097 entity-detail baseline; IM098 implementation is local only until final merge/push.`
+- scope: add a non-writing controlled maintenance-action shell to `/master-data/[entityKey]`, covering create, edit, freeze, and effective-period adjustment with single-entity scope, reference-check requirements, failure boundaries, and disabled submit state.
+- allowed_files_check: `app/master-data/**`, `components/master-data-maintenance-workbench.tsx`, `components/master-data-maintenance-model.ts`, `scripts/tests/master-data-maintenance-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 7 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; HTTP smoke confirmed controlled action shell, action labels, single-entity scope, blocked-source failure boundary, and disabled `暂不提交` buttons. `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

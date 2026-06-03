@@ -54,6 +54,17 @@ export type MasterDataReferenceImpact = {
   sourceLabel: string
 }
 
+export type MasterDataMaintenanceAction = {
+  key: "create" | "edit" | "freeze" | "effective_period"
+  label: string
+  statusLabel: "待预校验" | "来源阻塞"
+  targetScope: string
+  referenceCheckLabel: string
+  failureBoundary: string
+  submitLabel: "暂不提交"
+  canSubmit: false
+}
+
 export type MasterDataEntityDetailSummary = {
   entity: MasterDataMaintenanceEntity
   tone: MasterDataMaintenanceTone
@@ -66,6 +77,7 @@ export type MasterDataEntityDetailSummary = {
   effectivePeriodLabel: string
   freezeStatusLabel: string
   referenceImpacts: MasterDataReferenceImpact[]
+  maintenanceActions: MasterDataMaintenanceAction[]
 }
 
 export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
@@ -156,7 +168,7 @@ export function summarizeMasterDataMaintenanceWorkbench(
     blockerSummary,
     nextActionLabel:
       tone === "ready"
-        ? "详情与引用校验待 IM097 开放"
+        ? "查看详情与受控动作"
         : "先处理来源批次后再进入维护",
   }))
   const readyObjects = tone === "ready" ? rows.length : 0
@@ -180,7 +192,7 @@ export function summarizeMasterDataMaintenanceWorkbench(
       : null,
     versionWorkbenchHref: MASTER_DATA_VERSION_WORKBENCH_HREF,
     readonlyBoundary:
-      "当前工作台只读展示维护对象、来源版本和阻塞原因；不提供新增、修改、冻结、批量、审批、权限或导出动作。",
+      "当前工作台展示维护对象、来源版本和阻塞原因；详情页提供受控动作安全壳，但不提交真实新增、修改、冻结、批量、审批、权限或导出动作。",
     rows,
   }
 }
@@ -224,6 +236,7 @@ export function summarizeMasterDataMaintenanceEntityDetail(
     effectivePeriodLabel: "暂无实体级有效期明细",
     freezeStatusLabel: "暂无实体级冻结明细",
     referenceImpacts: buildMasterDataReferenceImpacts(entity, isSourceReady),
+    maintenanceActions: buildMasterDataMaintenanceActions(entity, isSourceReady),
   }
 }
 
@@ -268,6 +281,81 @@ function buildMasterDataReferenceImpacts(
       sourceLabel: "comparison run、review case",
     },
   ]
+}
+
+function buildMasterDataMaintenanceActions(
+  entity: MasterDataMaintenanceEntity,
+  isSourceReady: boolean
+): MasterDataMaintenanceAction[] {
+  const actionLabels = buildMasterDataActionLabels(entity.label)
+
+  return [
+    {
+      key: "create",
+      label: actionLabels.create,
+      statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
+      targetScope: `仅限单个${entity.label}对象，不进入批量新增。`,
+      referenceCheckLabel: buildMasterDataReferenceCheckLabel(isSourceReady),
+      failureBoundary: buildMasterDataFailureBoundary(isSourceReady),
+      submitLabel: "暂不提交",
+      canSubmit: false,
+    },
+    {
+      key: "edit",
+      label: actionLabels.edit,
+      statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
+      targetScope: `仅限单个${entity.label}字段修正，不修改生产公式或结算口径。`,
+      referenceCheckLabel: buildMasterDataReferenceCheckLabel(isSourceReady),
+      failureBoundary: buildMasterDataFailureBoundary(isSourceReady),
+      submitLabel: "暂不提交",
+      canSubmit: false,
+    },
+    {
+      key: "freeze",
+      label: actionLabels.freeze,
+      statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
+      targetScope: `仅限单个${entity.label}冻结或恢复，不建立权限、审批或发布流程。`,
+      referenceCheckLabel: buildMasterDataReferenceCheckLabel(isSourceReady),
+      failureBoundary: buildMasterDataFailureBoundary(isSourceReady),
+      submitLabel: "暂不提交",
+      canSubmit: false,
+    },
+    {
+      key: "effective_period",
+      label: actionLabels.effectivePeriod,
+      statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
+      targetScope: `仅限单个${entity.label}有效期调整，不改历史版本展开结果。`,
+      referenceCheckLabel: buildMasterDataReferenceCheckLabel(isSourceReady),
+      failureBoundary: buildMasterDataFailureBoundary(isSourceReady),
+      submitLabel: "暂不提交",
+      canSubmit: false,
+    },
+  ]
+}
+
+function buildMasterDataActionLabels(entityLabel: string) {
+  return {
+    create: `新增${entityLabel}`,
+    edit: `编辑${entityLabel}`,
+    freeze: `冻结${entityLabel}`,
+    effectivePeriod: `调整${entityLabel}有效期`,
+  }
+}
+
+function buildMasterDataReferenceCheckLabel(isSourceReady: boolean) {
+  if (!isSourceReady) {
+    return "来源版本未就绪，禁止进入写入。"
+  }
+
+  return "引用影响校验：当前只有空态摘要，不伪造数量；提交前必须补齐真实引用结果。"
+}
+
+function buildMasterDataFailureBoundary(isSourceReady: boolean) {
+  if (!isSourceReady) {
+    return "先应用主数据来源批次，再重新检查引用影响。"
+  }
+
+  return "后端写入未接入；若引用校验缺失、实体缺失、来源版本过期或动作越界，必须阻塞提交。"
 }
 
 function resolveMasterDataMaintenanceTone(
