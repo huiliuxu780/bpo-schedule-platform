@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue has advanced to `US709/IM089` after `US708/IM088` completed.
+Current story queue is empty after `US709/IM089` completed.
 
-The approved next chain is the first `业务版本工作台` slice under `data-quality`: `US709/IM089` is now the only current ready story for downstream impact summaries.
+The first `业务版本工作台` chain under `data-quality` is now complete. No new story is in `docs/current/**` yet, so the next product slice must be reseeded before execution.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -25,6 +25,8 @@ The approved next chain is the first `业务版本工作台` slice under `data-q
 `US707/IM087` started the next chain from that empty state and is now complete. The first slice adds `/data-quality/versions` as a read-only version ledger page under the existing import-center path. It stays frontend-only, reuses current import-batch list data, and does not add backend APIs, schema or migration changes, dependencies, approval, export, batch operations, permissions, automatic scheduling, production formulas, settlement, or charge factors.
 
 `US708/IM088` completed the second slice on the same route. Version ledger rows now keep `查看批次详情` as the primary entry and add a stable second-step link when the applied-version context is clear: supported rows resolve directly to the matched comparison run detail, while other applied rows fall back to the existing result-trace page. Rows without enough context or without an applied version remain blocked without misleading deep links.
+
+`US709/IM089` completed the third slice on the same route. Version ledger rows now expose read-only downstream impact summaries for comparison runs and review cases when the current version can be matched, and they keep explicit blocked/empty explanations for no-batch, not-applied, missing-version, or no-direct-chain cases. Current queue returned to empty after this slice.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -129,4 +131,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US709/IM089` is now current for downstream impact summaries on version rows.
+Current queue is empty. Do not guess the next task; reseed the next `R/US/IM` chain first.

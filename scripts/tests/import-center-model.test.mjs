@@ -248,6 +248,10 @@ test("version workbench summarizes one current row per business domain", () => {
     summary.rows.find((row) => row.domainKey === "master_data")?.secondaryActionHref,
     "/data-quality/BATCH-MD-APPLIED?tab=result-trace",
   );
+  assert.equal(
+    summary.rows.find((row) => row.domainKey === "master_data")?.downstreamSummary,
+    "当前暂无直接下游结果链路",
+  );
 });
 
 test("version workbench prefers latest applied batch and respects business-date and status filters", () => {
@@ -345,6 +349,38 @@ test("version workbench routes matched applied versions to run detail and applie
         created_at: "2026-06-03T12:00:00+08:00",
       },
     ],
+    reviewCases: [
+      {
+        case_id: "CASE-FC-001",
+        source_result_type: "forecast_schedule",
+        source_result_id: 101,
+        business_date: "2026-05-12",
+        owner_id: "owner-a",
+        severity: "high",
+        status: "open",
+        created_at: "2026-06-03T13:00:00+08:00",
+      },
+      {
+        case_id: "CASE-FC-002",
+        source_result_type: "forecast_schedule",
+        source_result_id: 102,
+        business_date: "2026-05-12",
+        owner_id: "owner-b",
+        severity: "medium",
+        status: "closed",
+        created_at: "2026-06-03T13:30:00+08:00",
+      },
+      {
+        case_id: "CASE-SA-IGNORE",
+        source_result_type: "schedule_actual",
+        source_result_id: 201,
+        business_date: "2026-05-12",
+        owner_id: "owner-c",
+        severity: "low",
+        status: "open",
+        created_at: "2026-06-03T13:40:00+08:00",
+      },
+    ],
     filters: {},
   });
 
@@ -357,12 +393,28 @@ test("version workbench routes matched applied versions to run detail and applie
     "查看对应对比运行",
   );
   assert.equal(
+    summary.rows.find((row) => row.domainKey === "demand_forecast")?.downstreamSummary,
+    "对比运行 1 个 · 复核案例 2 个",
+  );
+  assert.equal(
+    summary.rows.find((row) => row.domainKey === "demand_forecast")?.downstreamDetail,
+    "按当前版本已匹配的对比运行和同业务日复核类型汇总；其中未关闭 1 个。",
+  );
+  assert.equal(
     summary.rows.find((row) => row.domainKey === "master_data")?.secondaryActionHref,
     "/data-quality/BATCH-MD-BLOCKED?tab=result-trace",
   );
   assert.equal(
+    summary.rows.find((row) => row.domainKey === "master_data")?.downstreamSummary,
+    "版本定位不完整",
+  );
+  assert.equal(
     summary.rows.find((row) => row.domainKey === "personnel_schedule")?.secondaryActionHref,
     null,
+  );
+  assert.equal(
+    summary.rows.find((row) => row.domainKey === "personnel_schedule")?.downstreamSummary,
+    "等待应用后汇总",
   );
 });
 

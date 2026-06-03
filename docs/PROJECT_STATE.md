@@ -354,3 +354,11 @@ After `IM087` went green, current state advanced to `US708/IM088` as the only re
 For supported applied rows, the page now resolves the matched comparison run and deep-links directly into that run detail. For other applied rows without a matched run but with known import context, the page falls back to the existing batch result-trace route. Rows that are still blocked or have no applied version no longer expose a misleading deep link and instead remain in explicit blocked/empty state. The implementation stayed frontend-only, reused current import-batch and comparison-run query helpers, and introduced no backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
 
 After `IM088` went green, current state advanced to `US709/IM089` as the only ready slice for downstream impact summaries.
+
+## 2026-06-03 IM089 Version Workbench Downstream Impact Summary
+
+`US709/IM089` completed the third version-workbench slice on `/data-quality/versions`. The ledger now exposes a dedicated downstream-impact column so operators can see, per current version row, whether the version already maps to comparison runs and how many review cases are attributable through the currently matched result type.
+
+The implementation stayed frontend-only. It reused the existing import-batch list, comparison-run list, and review-case list queries, then applied conservative frontend attribution rules: matched versions show comparison-run counts and same-business-date review-case counts only when the current version already maps to concrete comparison runs; missing versions, unapplied batches, unsupported direct chains, and blank domains stay in explicit blocked or empty state instead of showing misleading counts.
+
+After `IM089` went green, current queue returned to empty. The next phase must be reseeded into `docs/current/**` before more product development starts.

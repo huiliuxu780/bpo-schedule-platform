@@ -7120,7 +7120,7 @@ tasks:
   - id: IM089
     title: "业务版本工作台下游影响摘要"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM088"]
     allowed_files:
@@ -7157,6 +7157,7 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    notes: "已完成。版本工作台当前版本行为 comparison run / review case 补齐只读下游影响摘要；已匹配版本显示运行数和复核案例数，未应用、版本缺失、无直接链路或无批次场景显示明确阻塞/空态说明。"
   - id: IM080
     title: "字段映射模板上传预选链路"
     priority: P1

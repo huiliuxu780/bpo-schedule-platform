@@ -216,7 +216,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US708"
-status: "draft"
+status: "done"
 ```
 
 ### US700 - 字段映射模板上传预选链路

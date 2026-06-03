@@ -3,9 +3,11 @@ import { ImportCenterVersionWorkbench } from "@/components/import-center-version
 import {
   type ImportBatchListRow,
   type ImportComparisonRunRecord,
+  type ImportReviewCaseRecord,
   type ImportVersionWorkbenchFilters,
   buildImportApiUrl,
   buildImportComparisonRunsUrl,
+  buildImportReviewCasesUrl,
 } from "@/components/import-center-model"
 
 export const dynamic = "force-dynamic"
@@ -37,14 +39,19 @@ export default async function VersionWorkbenchPage({
     batchResult.data ?? [],
     filters.businessDate ?? null
   )
+  const reviewCasesResult = await fetchImportReviewCases(
+    batchResult.data ?? [],
+    filters.businessDate ?? null
+  )
 
   return (
     <AppShell title="业务版本工作台" searchPlaceholder="搜索版本、批次或业务日">
       <ImportCenterVersionWorkbench
         batches={batchResult.data ?? []}
         comparisonRuns={comparisonRunsResult.data ?? []}
+        reviewCases={reviewCasesResult.data ?? []}
         filters={filters}
-        error={batchResult.error ?? comparisonRunsResult.error}
+        error={batchResult.error ?? comparisonRunsResult.error ?? reviewCasesResult.error}
       />
     </AppShell>
   )
@@ -81,18 +88,7 @@ async function fetchImportComparisonRuns(
   batches: ImportBatchListRow[],
   businessDate: string | null
 ): Promise<ApiResult<ImportComparisonRunRecord[]>> {
-  const targetDates = businessDate
-    ? [businessDate]
-    : Array.from(
-        new Set(
-          batches
-            .filter(
-              (batch) =>
-                batch.application_status === "applied" && batch.business_date_from
-            )
-            .map((batch) => batch.business_date_from)
-        )
-      )
+  const targetDates = collectVersionWorkbenchBusinessDates(batches, businessDate)
 
   if (targetDates.length === 0) {
     return { data: [], error: null }
@@ -133,6 +129,72 @@ async function fetchImportComparisonRuns(
     data: results.flatMap((result) => result.items),
     error: results.find((result) => result.error)?.error ?? null,
   }
+}
+
+async function fetchImportReviewCases(
+  batches: ImportBatchListRow[],
+  businessDate: string | null
+): Promise<ApiResult<ImportReviewCaseRecord[]>> {
+  const targetDates = collectVersionWorkbenchBusinessDates(batches, businessDate)
+
+  if (targetDates.length === 0) {
+    return { data: [], error: null }
+  }
+
+  const results = await Promise.all(
+    targetDates.map(async (date) => {
+      try {
+        const response = await fetch(buildImportReviewCasesUrl(date), {
+          cache: "no-store",
+        })
+
+        if (!response.ok) {
+          return {
+            items: [] as ImportReviewCaseRecord[],
+            error: `复核案例 API 返回 ${response.status}`,
+          }
+        }
+
+        const payload = (await response.json()) as {
+          items?: ImportReviewCaseRecord[]
+        }
+
+        return {
+          items: Array.isArray(payload.items) ? payload.items : [],
+          error: null,
+        }
+      } catch (error) {
+        return {
+          items: [] as ImportReviewCaseRecord[],
+          error: formatApiError(error),
+        }
+      }
+    })
+  )
+
+  return {
+    data: results.flatMap((result) => result.items),
+    error: results.find((result) => result.error)?.error ?? null,
+  }
+}
+
+function collectVersionWorkbenchBusinessDates(
+  batches: ImportBatchListRow[],
+  businessDate: string | null
+): string[] {
+  if (businessDate) {
+    return [businessDate]
+  }
+
+  return Array.from(
+    new Set(
+      batches
+        .filter(
+          (batch) => batch.application_status === "applied" && batch.business_date_from
+        )
+        .map((batch) => batch.business_date_from)
+    )
+  )
 }
 
 function formatApiError(error: unknown): string {

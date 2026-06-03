@@ -4,6 +4,7 @@ import { AlertTriangle, ArrowLeft, ArrowRight, Filter, GitBranch, Layers3 } from
 import {
   type ImportBatchListRow,
   type ImportComparisonRunRecord,
+  type ImportReviewCaseRecord,
   type ImportVersionWorkbenchFilters,
   summarizeImportVersionWorkbench,
 } from "@/components/import-center-model"
@@ -23,6 +24,7 @@ import {
 type ImportCenterVersionWorkbenchProps = {
   batches: ImportBatchListRow[]
   comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
   filters: ImportVersionWorkbenchFilters
   error: string | null
 }
@@ -30,12 +32,14 @@ type ImportCenterVersionWorkbenchProps = {
 export function ImportCenterVersionWorkbench({
   batches,
   comparisonRuns,
+  reviewCases,
   filters,
   error,
 }: ImportCenterVersionWorkbenchProps) {
   const summary = summarizeImportVersionWorkbench({
     batches,
     comparisonRuns,
+    reviewCases,
     filters,
   })
 
@@ -184,6 +188,7 @@ export function ImportCenterVersionWorkbench({
                 <TableHead className="min-w-[150px]">当前可见时间</TableHead>
                 <TableHead className="min-w-[110px]">状态</TableHead>
                 <TableHead className="min-w-[320px]">阻塞摘要</TableHead>
+                <TableHead className="min-w-[280px]">下游影响</TableHead>
                 <TableHead className="min-w-[220px] text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
@@ -212,6 +217,14 @@ export function ImportCenterVersionWorkbench({
                     <div className="grid gap-1">
                       <div className="text-sm">{row.blockerSummary}</div>
                       <div className="text-xs text-muted-foreground">{row.nextAction}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="grid gap-1">
+                      <div className="text-sm">{row.downstreamSummary}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {row.downstreamDetail}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
@@ -248,7 +261,7 @@ export function ImportCenterVersionWorkbench({
         </CardHeader>
         <CardContent className="grid gap-2 text-sm text-muted-foreground">
           <p>本页只读，不触发应用、计算、发布、冻结、审批、导出或批量处理。</p>
-          <p>当前时间先使用批次上传时间作为可见口径；稳定深链和下游影响摘要留在后续版本工作台切片补齐。</p>
+          <p>当前时间先使用批次上传时间作为可见口径；发布、冻结和审批语义仍留在后续版本切片处理。</p>
         </CardContent>
       </Card>
     </main>

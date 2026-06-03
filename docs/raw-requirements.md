@@ -128,8 +128,8 @@ description: "版本工作台能看到当前版本和来源批次后，运营负
 source: "After R788 planning confirmation on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
-notes: "本条只补只读摘要，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "本轮已完成版本工作台下游影响摘要；/data-quality/versions 现为当前版本行补充 comparison run / review case 只读计数或阻塞解释，并对无版本、无批次、无直接结果链路场景给出明确空态；实现复用现有 comparison runs、review cases 和前端版本定位能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R780 - 字段映射模板上传预选链路

@@ -136,6 +136,8 @@ export type ImportVersionWorkbenchRow = {
   visibleTimeLabel: string
   blockerSummary: string
   nextAction: string
+  downstreamSummary: string
+  downstreamDetail: string
   primaryActionLabel: string
   primaryActionHref: string | null
   secondaryActionLabel: string | null
@@ -1681,10 +1683,12 @@ const versionWorkbenchDomains: Array<{
 export function summarizeImportVersionWorkbench({
   batches,
   comparisonRuns = [],
+  reviewCases = [],
   filters,
 }: {
   batches: ImportBatchListRow[]
   comparisonRuns?: ImportComparisonRunRecord[]
+  reviewCases?: ImportReviewCaseRecord[]
   filters: ImportVersionWorkbenchFilters
 }): ImportVersionWorkbenchSummary {
   const businessDate = normalizeFilterValue(filters.businessDate)
@@ -1697,7 +1701,12 @@ export function summarizeImportVersionWorkbench({
     : batches
   const rows = versionWorkbenchDomains
     .map((domain) =>
-      summarizeImportVersionWorkbenchRow(domain, scopedBatches, comparisonRuns)
+      summarizeImportVersionWorkbenchRow(
+        domain,
+        scopedBatches,
+        comparisonRuns,
+        reviewCases
+      )
     )
     .filter((row) => (domainFilter ? row.domainKey === domainFilter : true))
     .filter((row) => (statusFilter ? row.tone === statusFilter : true))
@@ -1729,7 +1738,8 @@ export function summarizeImportVersionWorkbench({
 function summarizeImportVersionWorkbenchRow(
   domain: (typeof versionWorkbenchDomains)[number],
   batches: ImportBatchListRow[],
-  comparisonRuns: ImportComparisonRunRecord[]
+  comparisonRuns: ImportComparisonRunRecord[],
+  reviewCases: ImportReviewCaseRecord[]
 ): ImportVersionWorkbenchRow {
   const domainBatches = sortImportBatchesByUploadedAt(
     batches.filter((batch) => domain.fileTypes.includes(batch.file_type))
@@ -1752,6 +1762,8 @@ function summarizeImportVersionWorkbenchRow(
       visibleTimeLabel: "暂无时间",
       blockerSummary: `当前${domain.label}还没有导入批次。`,
       nextAction: "先进入导入批次列表创建或定位可用批次。",
+      downstreamSummary: "暂无下游影响",
+      downstreamDetail: "当前业务域还没有导入批次，无法形成对比运行或复核案例。",
       primaryActionLabel: "查看导入批次",
       primaryActionHref: "/data-quality",
       secondaryActionLabel: null,
@@ -1777,6 +1789,11 @@ function summarizeImportVersionWorkbenchRow(
       fallbackLabel: "查看结果追踪",
       context: versionContext,
     })
+    const downstreamImpact = summarizeVersionWorkbenchDownstreamImpact({
+      batch: latestAppliedBatch,
+      comparisonRuns,
+      reviewCases,
+    })
 
     return {
       domainKey: domain.key,
@@ -1790,6 +1807,8 @@ function summarizeImportVersionWorkbenchRow(
       visibleTimeLabel: formatVersionWorkbenchVisibleTime(latestAppliedBatch.uploaded_at),
       blockerSummary: `当前按最近已应用批次 ${latestAppliedBatch.batch_id} 作为版本口径。`,
       nextAction: "从当前批次详情继续核对版本记录和结果追踪。",
+      downstreamSummary: downstreamImpact.summary,
+      downstreamDetail: downstreamImpact.detail,
       primaryActionLabel: "查看批次详情",
       primaryActionHref: batchDetailHref,
       secondaryActionLabel: secondaryAction.label,
@@ -1820,6 +1839,11 @@ function summarizeImportVersionWorkbenchRow(
     fallbackLabel: "查看结果追踪",
     context: blockedVersionContext,
   })
+  const blockedDownstreamImpact = summarizeVersionWorkbenchDownstreamImpact({
+    batch: currentBatch,
+    comparisonRuns,
+    reviewCases,
+  })
 
   return {
     domainKey: domain.key,
@@ -1842,11 +1866,106 @@ function summarizeImportVersionWorkbenchRow(
       currentBatch.application_status === "applied"
         ? "先核对版本记录和应用摘要，再继续下游追踪。"
         : "先进入当前批次处理详情，确认 readiness、失败行和应用状态。",
+    downstreamSummary: blockedDownstreamImpact.summary,
+    downstreamDetail: blockedDownstreamImpact.detail,
     primaryActionLabel: "查看批次详情",
     primaryActionHref: blockedBatchDetailHref,
     secondaryActionLabel: blockedSecondaryAction.label,
     secondaryActionHref: blockedSecondaryAction.href,
   }
+}
+
+function summarizeVersionWorkbenchDownstreamImpact({
+  batch,
+  comparisonRuns,
+  reviewCases,
+}: {
+  batch: ImportBatchListRow
+  comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
+}): { summary: string; detail: string } {
+  if (batch.application_status !== "applied") {
+    return {
+      summary: "等待应用后汇总",
+      detail: "当前批次尚未应用，不能稳定归集这个版本已经影响的对比运行或复核案例。",
+    }
+  }
+
+  const versionLabel = batch.import_version_id
+
+  if (!versionLabel) {
+    return {
+      summary: "版本定位不完整",
+      detail: "当前批次已应用，但导入版本仍未返回，暂时不能把下游结果稳定归到这个版本。",
+    }
+  }
+
+  if (!supportsDirectVersionResultContext(batch.file_type)) {
+    return {
+      summary: "当前暂无直接下游结果链路",
+      detail: "这个业务域当前没有可直接归集到版本行的 comparison run / review case 结果口径。",
+    }
+  }
+
+  const matchedRuns = findMatchedComparisonRunsForAppliedVersion(
+    batch.file_type,
+    versionLabel,
+    comparisonRuns
+  )
+
+  if (matchedRuns.length === 0) {
+    return {
+      summary: "对比运行 0 个 · 复核案例待定位",
+      detail: "当前版本还没有匹配到对比运行，暂不把同业务日复核案例直接归到这个版本。",
+    }
+  }
+
+  const matchedReviewCases = filterVersionWorkbenchMatchedReviewCases({
+    batch,
+    matchedRuns,
+    reviewCases,
+  })
+  const openReviewCases = matchedReviewCases.filter(
+    (reviewCase) => reviewCase.status !== "closed"
+  )
+
+  return {
+    summary: `对比运行 ${matchedRuns.length.toLocaleString("zh-CN")} 个 · 复核案例 ${matchedReviewCases.length.toLocaleString("zh-CN")} 个`,
+    detail:
+      matchedReviewCases.length > 0
+        ? `按当前版本已匹配的对比运行和同业务日复核类型汇总；其中未关闭 ${openReviewCases.length.toLocaleString("zh-CN")} 个。`
+        : "当前版本已匹配到对比运行，但同业务日还没有归到该结果类型的复核案例。",
+  }
+}
+
+function filterVersionWorkbenchMatchedReviewCases({
+  batch,
+  matchedRuns,
+  reviewCases,
+}: {
+  batch: ImportBatchListRow
+  matchedRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
+}): ImportReviewCaseRecord[] {
+  const sourceTypes = new Set(
+    matchedRuns
+      .map((run) => inferReviewSourceResultTypeFromComparisonType(run.comparison_type))
+      .filter(
+        (
+          sourceType
+        ): sourceType is ImportReviewCaseRecord["source_result_type"] => Boolean(sourceType)
+      )
+  )
+
+  if (sourceTypes.size === 0) {
+    return []
+  }
+
+  return reviewCases.filter(
+    (reviewCase) =>
+      reviewCase.business_date === batch.business_date_from &&
+      sourceTypes.has(reviewCase.source_result_type)
+  )
 }
 
 function buildVersionWorkbenchSecondaryAction({
