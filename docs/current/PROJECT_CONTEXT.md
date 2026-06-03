@@ -10,9 +10,11 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue is empty and active tasks are empty.
+Current story queue now contains `US704/IM084` as the only ready slice. It scopes the next step to application-success result visibility on the second-level batch detail page.
 
-`US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then current queue returned to empty.
+`US705/IM085` and `US706/IM086` are now defined in legacy planning files for the same downstream-result chain, but they must stay out of `docs/current/**` until `US704/IM084` is green and current state is advanced.
+
+`US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -117,4 +119,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next product step is to continue only with small, confirmed slices that move the import/review workflow toward real production use without mixing in approval, export, batch operations, auth, permissions, automatic scheduling, production formulas, settlement rules, or charge factors.
+Recommended next product step is to execute only `US704/IM084`, confirm the generated-version result card and next-step entry behavior on `/data-quality/[batchId]`, and keep `IM085` plus `IM086` as sequential backlog slices until that result visibility is stable.

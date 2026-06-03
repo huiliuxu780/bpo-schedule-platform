@@ -290,3 +290,15 @@ That archive is reference material only. Do not import from it, wire it into bui
 ## 2026-06-03 IM083 Single-Batch Apply Entry
 
 `US703/IM083` completed a controlled single-batch apply entry on the second-level import batch detail page. The page now shows an apply panel for readiness-ready, not-applied batches and routes the submit through existing apply APIs by file type. Blocked, already-applied, or readiness-unknown states remain read-only. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, production formula, settlement rule, or charge factor was added.
+
+## 2026-06-03 IM084-IM086 Downstream Result Chain Planning
+
+After `US703/IM083`, PM confirmed that the next import-center chain should start from "application success to downstream result trace" rather than expanding into permissions, approval, export, batch operations, automatic scheduling, or settlement rules.
+
+The approved sequence is:
+
+1. `US704/IM084`: show the generated business-version result card and next-step entry after a successful batch apply.
+2. `US705/IM085`: let an applied batch enter the corresponding version/result context directly.
+3. `US706/IM086`: add a controlled local comparison-calculate entry inside that version-result context.
+
+To keep Story Runner state narrow, only `US704/IM084` was moved into `docs/current/**` as `ready`. `US705/IM085` and `US706/IM086` were added to the legacy planning layer and registry only, and must not enter current state until the prior slice is green.

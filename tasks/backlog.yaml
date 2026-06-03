@@ -6900,6 +6900,137 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM084
+    title: "批次应用成功结果卡片和下一步入口"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    dependencies: ["IM083"]
+    allowed_files:
+      - "app/data-quality/[batchId]/page.tsx"
+      - "components/import-center-batch-detail-panel.tsx"
+      - "components/import-center-result-trace-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "`/data-quality/[batchId]` 在应用成功后的当前批次语境展示业务版本结果卡片和下一步入口。"
+      - "结果卡片明确应用目标、版本标识和当前可见的应用结果状态，并能继续进入已有下游结果追踪或结果列表。"
+      - "未应用、应用失败、readiness 阻塞或应用摘要缺失时保持只读说明，不误报为已生成业务版本。"
+      - "复用现有批次详情、应用摘要、readiness 和下游结果查询能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM085
+    title: "已应用批次版本结果定位链路"
+    priority: P1
+    status: draft
+    required_workflow: frontend-scaffold
+    dependencies: ["IM084"]
+    allowed_files:
+      - "app/data-quality/[batchId]/page.tsx"
+      - "app/data-quality/comparison-runs/**"
+      - "app/data-quality/review-cases/**"
+      - "components/import-center-result-trace-panel.tsx"
+      - "components/import-center-comparison-run-detail-workspace.tsx"
+      - "components/import-center-review-cases-workspace.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "已应用批次可进入对应版本详情或结果列表，不需要手动拼接 API 或回到其他页面重新检索。"
+      - "版本结果视图明确版本 ID、来源批次、应用目标和已有下游结果状态。"
+      - "无结果、结果读取失败或版本上下文不完整时展示清晰空态/阻塞态，不误导为已有计算结论。"
+      - "优先复用现有 comparison runs、review cases 和批次详情能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM086
+    title: "版本结果页本地比对计算受控入口"
+    priority: P1
+    status: draft
+    required_workflow: frontend-scaffold
+    dependencies: ["IM085"]
+    allowed_files:
+      - "app/data-quality/actions.ts"
+      - "app/data-quality/comparison-runs/**"
+      - "app/data-quality/review-cases/**"
+      - "components/import-center-comparison-run-detail-workspace.tsx"
+      - "components/import-center-result-trace-panel.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "版本结果页只在来源版本和 comparison_type 足够明确时展示受控 `发起本地比对` 入口。"
+      - "提交后在当前版本结果语境展示成功/失败反馈，并提供进入新 comparison run 详情或结果列表的入口。"
+      - "来源版本缺失、类型不支持或上下文不足时只展示阻塞原因，不展示写入按钮。"
+      - "复用现有 comparison calculate API 和结果查询能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算、自动排班或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算、自动排班或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: IM080
     title: "字段映射模板上传预选链路"
     priority: P1

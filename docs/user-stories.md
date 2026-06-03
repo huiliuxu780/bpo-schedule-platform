@@ -89,6 +89,72 @@ dependencies:
 status: "done"
 ```
 
+### US704 - 批次应用成功结果卡片和下一步入口
+
+```yaml
+id: US704
+requirement_ids:
+  - R784
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在批次应用成功后立刻看到生成的业务版本结果卡片和下一步入口，以便明确当前批次已经落到了哪里、下一步该看什么。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/[batchId]` 在应用成功后的当前批次语境展示结果卡片，明确应用目标、生成版本、应用时间或当前可见写入状态。"
+  - "结果卡片根据 file_type 给出下一步入口，能继续进入已有下游结果追踪、结果列表或复核工作区，而不是只停留在通用成功提示。"
+  - "未应用、应用失败、readiness 阻塞或应用摘要缺失时维持只读说明，不误报为已生成业务版本。"
+  - "复用现有批次详情、应用摘要、readiness 和下游结果查询能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US703"
+status: "ready"
+```
+
+### US705 - 已应用批次版本结果定位链路
+
+```yaml
+id: US705
+requirement_ids:
+  - R785
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望从已应用批次直接进入对应版本的结果上下文，以便继续查看该版本已有的对比结果、复核案例和空态。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "已应用批次可从当前批次页进入对应版本详情或结果列表，不需要手动拼接 API 或回到其他页面重新检索。"
+  - "版本结果视图明确当前版本 ID、来源批次、应用目标和已有下游结果状态。"
+  - "无结果、结果读取失败或版本上下文不完整时展示清晰空态/阻塞态，不误导为已有计算结论。"
+  - "优先复用现有 comparison runs、review cases 和批次详情能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US704"
+status: "draft"
+```
+
+### US706 - 版本结果页本地比对计算受控入口
+
+```yaml
+id: US706
+requirement_ids:
+  - R786
+module: "导入中心"
+role: "导入管理员"
+story: "作为导入管理员，我希望在版本结果页受控地发起一次本地比对计算，以便不用离开当前版本语境也能生成新的对比结果。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "版本结果页只在来源版本和 comparison_type 足够明确时展示受控 `发起本地比对` 入口。"
+  - "提交后在当前版本结果语境展示成功/失败反馈，并提供进入新 comparison run 详情或结果列表的入口。"
+  - "来源版本缺失、类型不支持或现有上下文不足时只展示阻塞原因，不展示写入按钮。"
+  - "复用现有 comparison calculate API 和结果查询能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算、自动排班或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US705"
+status: "draft"
+```
+
 ### US700 - 字段映射模板上传预选链路
 
 ```yaml

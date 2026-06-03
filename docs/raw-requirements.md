@@ -54,6 +54,45 @@ status: "done"
 notes: "本轮已完成单批次详情页受控应用入口；ready 且未应用批次可调用现有 apply API，阻塞/已应用/准备度未知状态不展示写入按钮，成功/失败后回到当前批次详情页显示反馈；未新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
 
+### R784 - 批次应用成功结果卡片和下一步入口
+
+```yaml
+id: R784
+module: "导入中心"
+description: "单批次应用入口已经可把 ready 批次写入业务数据，但应用成功后页面仍以通用反馈为主，主管还不能一眼确认生成了哪个业务版本、当前写入到了哪类业务数据、下一步应进入哪个结果链路。需要在二级批次处理详情页把应用成功结果收口成可读结果卡片，并给出明确下一步入口。"
+source: "After IM083 and PM confirmed downstream result chain planning on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "confirmed"
+notes: "本需求只规划前端结果呈现和导航入口，复用现有批次详情、应用摘要、readiness 和下游结果查询能力；不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```
+
+### R785 - 已应用批次版本结果定位链路
+
+```yaml
+id: R785
+module: "导入中心"
+description: "批次应用成功后即使知道已经生成业务版本，主管仍缺少从当前批次直接进入对应版本上下文的稳定链路，难以继续查看该版本已经产生的对比结果、复核案例或空态。需要补齐从已应用批次进入对应版本详情或结果列表的定位链路。"
+source: "After R784 planning confirmation on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "confirmed"
+notes: "本需求优先复用现有对比结果、复核案例和批次详情页面，不默认引入新的后端接口、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+```
+
+### R786 - 版本结果页本地比对计算受控入口
+
+```yaml
+id: R786
+module: "导入中心"
+description: "已应用批次和版本结果链路打通后，主管还需要在版本结果语境里受控地发起一次本地对比计算，避免回退到 API 或其他页面拼接上下文。需要在版本结果页提供受控计算入口，并把计算结果继续带回当前版本结果语境。"
+source: "After R785 planning confirmation on 2026-06-03"
+submitted_at: "2026-06-03"
+version: "1.0"
+status: "confirmed"
+notes: "本需求只规划前端调用现有 comparison calculate API 的入口和反馈，不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算、自动排班或收费因子。"
+```
+
 ### R780 - 字段映射模板上传预选链路
 
 ```yaml

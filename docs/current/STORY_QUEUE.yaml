@@ -5,4 +5,23 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US704
+    requirement_ids:
+      - "R784"
+    task_ids:
+      - "IM084"
+    module: "导入中心"
+    role: "导入管理员"
+    story: "作为导入管理员，我希望在批次应用成功后立刻看到生成的业务版本结果卡片和下一步入口，以便明确当前批次已经落到了哪里、下一步该看什么。"
+    task_type: "frontend-scaffold"
+    priority: "P1"
+    status: ready
+    dependencies:
+      - "US703"
+    acceptance:
+      - "`/data-quality/[batchId]` 在应用成功后的当前批次语境展示结果卡片，明确应用目标、生成版本、应用时间或当前可见写入状态。"
+      - "结果卡片根据 file_type 给出下一步入口，能继续进入已有下游结果追踪、结果列表或复核工作区，而不是只停留在通用成功提示。"
+      - "未应用、应用失败、readiness 阻塞或应用摘要缺失时维持只读说明，不误报为已生成业务版本。"
+      - "复用现有批次详情、应用摘要、readiness 和下游结果查询能力，不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
