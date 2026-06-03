@@ -506,3 +506,13 @@ The page does not fabricate skill groups, levels, interval rows, or forecast det
 `IM104/US724` added the change-tracking boundary safety shell to the demand-forecast version detail page. The detail now shows four precheck areas before any forecast change could be considered: source version, skill-group/level/0.5h time-bucket alignment, downstream impact, and failure boundary.
 
 The shell is intentionally non-writing. It shows disabled action cards for recording forecast changes, checking downstream impact, and updating production scope. No form, server action, backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work was added. After the IM102-IM104 demand-forecast production chain, current queue returned to empty.
+
+## 2026-06-04 IM105-IM107 Actual Log Production Planning
+
+After the demand-forecast production chain, the next approved block is login/status-log production handling under the existing Data & Integration navigation. The sequence is:
+
+1. `US725/IM105`: add a read-only actual-log production workbench for login/status source batches, business versions, business dates, timezone, and cross-day boundaries.
+2. `US726/IM106`: add a single-batch processing explanation detail page for cross-day splitting, business-day ownership, Asia/Shanghai timezone checks, and status intervals.
+3. `US727/IM107`: add a status-dictionary and exception-explanation safety shell before any write-capability discussion.
+
+Only `US725/IM105` entered current ready state. The chain must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors without a separate confirmed task.

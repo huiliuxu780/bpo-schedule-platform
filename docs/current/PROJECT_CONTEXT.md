@@ -141,6 +141,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US721/IM101` completed the personnel-schedule publish/freeze boundary safety shell. `/schedule-plans/production/[batchId]` now shows disabled publish, freeze, and unpublish action cards with source-version, 0.5h expansion, reference-check, and failure-boundary context.
 
-`US724/IM104` completed the demand-forecast change-tracking boundary safety shell. `/demand-plans/production/[batchId]` now shows source-version, skill-group/level/0.5h alignment, downstream-impact, and failure-boundary prechecks plus disabled action shells for recording forecast changes, checking downstream impact, and updating production scope.
+After IM104, the next approved block is login/status-log production handling under Data & Integration. `US725/IM105` is the only current ready task: add a read-only `/actual-logs/production` workbench for login/status source batches, business versions, business dates, timezone and cross-day boundaries.
 
-The IM102-IM104 demand-forecast production chain is closed and current queue is empty. Keep avoiding real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, and charge-factor work unless a new confirmed task allows it.
+`US726/IM106` and `US727/IM107` stay outside current until IM105 is green. Keep avoiding real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, and charge-factor work unless a new confirmed task allows it.

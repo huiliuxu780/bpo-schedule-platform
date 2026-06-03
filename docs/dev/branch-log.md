@@ -2276,7 +2276,7 @@
 - scope: define `R784-R786`, `US704-US706`, and `IM084-IM086`; seed only `US704/IM084` into current ready state; update registry/project-state/branch trace for the approved next chain.
 - allowed_files_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no app, backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, production formula, settlement, or charge-factor files.
 - scope_diff_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
-- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after the planning/state update.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after the planning/state update; full check included frontend build and backend 177 tests OK.
 - local_commit_sha: to be reported in Done Report after local commit creation
 - integration_status: `not_started`
 - integration_method: `N/A`
@@ -2719,6 +2719,23 @@
 - allowed_files_check: `app/demand-plans/production/**`, `components/demand-forecast-production-workbench.tsx`, `components/demand-forecast-production-model.ts`, `scripts/tests/demand-forecast-production-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
 - scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
 - check_result: target model test first failed because `changeTracking` was missing, then passed with 8 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; in-app browser smoke on `http://127.0.0.1:3000/demand-plans/production/BATCH-MISSING-IM103` matched `变更追踪边界安全壳`, source-version blocked state, downstream-impact blocked state, failure-boundary copy, and disabled `暂不写入`/`暂不提交`/`暂不变更` buttons. Final `bash scripts/check-state.sh --strict`, `git diff --check --cached`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM105-IM107 Actual Log Production Planning
+
+- branch_name: `codex/im105-actual-log-production-planning`
+- base_main_commit: `75407dd`
+- remote_status: `main includes merged IM104 demand-forecast change-tracking shell baseline; IM105-IM107 planning/state changes are local only until final merge/push.`
+- scope: define `R805-R807`, `US725-US727`, and `IM105-IM107`; seed only `US725/IM105` into current ready state; start login/status-log production handling with a read-only workbench under existing Data & Integration navigation before processing detail or status-dictionary exception shells.
+- allowed_files_check: `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no business code, backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: planning and current-state files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after the planning/state update.
 - local_commit_sha: to be reported in Done Report after local commit creation
 - integration_status: `not_started`
 - integration_method: `N/A`

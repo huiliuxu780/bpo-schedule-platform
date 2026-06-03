@@ -8188,3 +8188,125 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已在 `/demand-plans/production/[batchId]` 预测版本详情页新增变更追踪边界安全壳，展示来源版本、技能组/等级/0.5h 时段、下游影响和失败边界校验；三个动作按钮保持禁用，不提交真实预测变更或生产状态变化。"
+  - id: IM105
+    title: "登录/状态日志生产工作台只读入口"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    dependencies: ["IM104"]
+    allowed_files:
+      - "app/actual-logs/production/**"
+      - "components/actual-log-production-workbench.tsx"
+      - "components/actual-log-production-model.ts"
+      - "components/app-sidebar.tsx"
+      - "scripts/tests/actual-log-production-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "入口放在现有数据与集成功能下，不创建新的首页或营销页。"
+      - "工作台展示登录/状态日志来源批次、业务版本、应用状态、业务日范围、时区和跨天处理边界。"
+      - "页面明确当前只读，不改状态字典、不重算实际工时、不触发排班 vs 实际比对。"
+      - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM106
+    title: "登录/状态日志处理解释详情"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    dependencies: ["IM105"]
+    allowed_files:
+      - "app/actual-logs/production/**"
+      - "components/actual-log-production-workbench.tsx"
+      - "components/actual-log-production-model.ts"
+      - "scripts/tests/actual-log-production-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "从日志生产工作台可进入单批次处理解释页。"
+      - "详情页展示跨天切分、业务日归属、Asia/Shanghai 时区校验和状态区间边界。"
+      - "缺少明细时展示明确空态，不伪造登录事件或状态区间。"
+      - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM107
+    title: "状态字典与异常解释安全壳"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    dependencies: ["IM106"]
+    allowed_files:
+      - "app/actual-logs/production/**"
+      - "components/actual-log-production-workbench.tsx"
+      - "components/actual-log-production-model.ts"
+      - "scripts/tests/actual-log-production-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "解释区展示状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界。"
+      - "动作按钮保持禁用安全壳，不提交状态字典变更或生产规则变更。"
+      - "写入动作进入前需要单独确认，不默认扩展到后端/schema/migration。"
+      - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: high
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

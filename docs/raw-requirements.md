@@ -2406,3 +2406,42 @@ version: "1.0"
 status: "done"
 notes: "IM104 已完成：预测版本详情页展示变更追踪边界安全壳，包含来源版本、技能组/等级/0.5h 时段、下游影响和失败边界校验；动作按钮禁用，不接真实写入、公式、审批、导出、批量、权限或生产状态变化。"
 ```
+
+### R805 - 登录/状态日志生产工作台只读入口
+
+```yaml
+id: R805
+module: "登录/状态日志生产"
+description: "在数据与集成下建立登录/状态日志生产工作台，先让用户看到登录日志和状态日志来源批次、应用版本、业务日、时区和跨天处理边界。"
+source: "PM approved actual-log production enhancement on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "ready"
+notes: "只做只读工作台入口；不改状态字典、不重算实际工时、不触发排班 vs 实际比对。"
+```
+
+### R806 - 登录/状态日志处理解释详情
+
+```yaml
+id: R806
+module: "登录/状态日志生产"
+description: "从日志生产工作台进入单批次处理解释页，展示跨天切分、业务日归属、Asia/Shanghai 时区校验和状态区间处理边界。"
+source: "After R805 planning on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "ready"
+notes: "待 IM105 完成后进入 current；不新增后端 API、schema/migration 或真实外部接口。"
+```
+
+### R807 - 状态字典与异常解释安全壳
+
+```yaml
+id: R807
+module: "登录/状态日志生产"
+description: "在处理解释可见后展示状态字典配置、未知状态、时区错误、跨天异常和冻结员工引用的解释边界，动作保持安全壳。"
+source: "After R806 planning on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "ready"
+notes: "只展示解释和禁用动作；不提交状态字典变更、不改生产规则。"
+```

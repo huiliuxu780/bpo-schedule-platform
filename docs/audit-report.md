@@ -3680,3 +3680,17 @@
 - in-app browser smoke：`http://127.0.0.1:3000/demand-plans/production/BATCH-MISSING-IM103` 命中 `变更追踪边界安全壳`、`来源版本未定位`、`下游影响校验阻塞`、`写入动作进入前需要单独确认`，且禁用按钮为 `暂不写入`、`暂不提交`、`暂不变更`。
 - 本地 API 当前没有 demand_forecast 批次，已应用版本的安全壳路径由模型测试覆盖。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-04 - IM105-IM107 登录/状态日志生产链路规划
+
+#### 审计结论
+
+- 已从空 current 状态拆出 `R805-R807 / US725-US727 / IM105-IM107`。
+- 当前只将 `US725/IM105` 放入 `docs/current/**`，作为唯一 ready 任务。
+- 推荐顺序为：登录/状态日志生产只读工作台、单批次处理解释详情、状态字典与异常解释安全壳。
+- 入口归属为现有 `数据与集成` 下的 `CORN 状态日志`，不创建新的首页。
+- 规划明确先不进入后端 API、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

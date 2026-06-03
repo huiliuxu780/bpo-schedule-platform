@@ -4360,3 +4360,67 @@ dependencies:
 status: "done"
 notes: "IM104 已完成：`/demand-plans/production/[batchId]` 展示变更追踪边界安全壳，先呈现来源版本、技能组/等级/0.5h 时段、下游影响和失败边界校验，动作按钮全部禁用。"
 ```
+
+### US725 - 登录/状态日志生产工作台只读入口
+
+```yaml
+id: US725
+requirement_ids:
+  - R805
+module: "登录/状态日志生产"
+role: "数据管理员"
+story: "作为数据管理员，我希望在数据与集成下查看登录/状态日志生产工作台，以便确认来源批次、业务版本、业务日、时区和跨天处理边界。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "入口放在现有数据与集成功能下，不创建新的首页或营销页。"
+  - "工作台展示登录/状态日志来源批次、业务版本、应用状态、业务日范围、时区和跨天处理边界。"
+  - "页面明确当前只读，不改状态字典、不重算实际工时、不触发排班 vs 实际比对。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US724"
+status: "ready"
+```
+
+### US726 - 登录/状态日志处理解释详情
+
+```yaml
+id: US726
+requirement_ids:
+  - R806
+module: "登录/状态日志生产"
+role: "数据管理员"
+story: "作为数据管理员，我希望进入单个登录或状态日志批次的处理解释页，以便看清跨天、业务日、时区和状态区间处理口径。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "从日志生产工作台可进入单批次处理解释页。"
+  - "详情页展示跨天切分、业务日归属、Asia/Shanghai 时区校验和状态区间边界。"
+  - "缺少明细时展示明确空态，不伪造登录事件或状态区间。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US725"
+status: "ready"
+```
+
+### US727 - 状态字典与异常解释安全壳
+
+```yaml
+id: US727
+requirement_ids:
+  - R807
+module: "登录/状态日志生产"
+role: "数据管理员"
+story: "作为数据管理员，我希望先看到状态字典和日志异常解释边界，以便不误以为当前页面会直接改变生产状态规则。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "解释区展示状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界。"
+  - "动作按钮保持禁用安全壳，不提交状态字典变更或生产规则变更。"
+  - "写入动作进入前需要单独确认，不默认扩展到后端/schema/migration。"
+  - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US726"
+status: "ready"
+```
