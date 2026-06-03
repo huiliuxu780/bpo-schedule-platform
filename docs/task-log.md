@@ -1741,3 +1741,14 @@
 - action: 增加复核提交失败后的重试定位。
 - status: `done`
 - notes: `/data-quality/review-cases/[caseId]` 在 `evidence=failed`、`conclusion=failed` 或 `closure=failed` 时新增 `重试定位` 提示，并默认打开对应动作 tab；成功或无反馈时不展示该提示；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-03
+
+- task_id: `IM075`
+- source_ids:
+  - `R775`
+- story_ids:
+  - `US695`
+- action: 修正复核提交成功后的当前案例优先续办。
+- status: `done`
+- notes: `/data-quality/review-cases/[caseId]` 在成功反馈出现时识别当前案例是否仍在同 owner 待处理序列中；当前案例仍缺下一步材料时，续办主入口优先展示 `继续处理当前案例` 并指向当前详情页，当前案例已关闭或不在待处理序列时再进入同 owner 下一条；本轮不新增后端 route、schema/migration、依赖、真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

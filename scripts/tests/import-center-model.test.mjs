@@ -2414,11 +2414,11 @@ test("import center review case detail summarizes action continuation links", ()
   assert.deepEqual(continuation, {
     tone: "ready",
     title: "续办导航",
-    statusLabel: "还有 3 条待处理",
-    detail: "OWNER-A 在 2026-05-11 还有 3 条待处理案例；建议继续处理 CASE-READY-CLOSE。",
-    primaryLabel: "继续处理下一条",
-    primaryHref: "/data-quality/review-cases/CASE-READY-CLOSE",
-    primaryDetail: "CASE-READY-CLOSE · 可关闭 · 低",
+    statusLabel: "当前案例仍待处理",
+    detail: "OWNER-A 在 2026-05-11 还有 3 条待处理案例；当前案例仍处于缺结论，建议先继续处理 CASE-CURRENT。",
+    primaryLabel: "继续处理当前案例",
+    primaryHref: "/data-quality/review-cases/CASE-CURRENT",
+    primaryDetail: "CASE-CURRENT · 缺结论 · 中",
     listLabel: "返回同 Owner 列表",
     listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=OWNER-A",
   });

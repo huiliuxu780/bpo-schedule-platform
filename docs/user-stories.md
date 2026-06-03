@@ -3685,3 +3685,26 @@ dependencies:
   - "US693"
 status: "done"
 ```
+
+### US695 - 复核提交成功后的当前案例优先续办
+
+```yaml
+id: US695
+requirement_ids:
+  - R775
+module: "导入中心"
+role: "主管"
+story: "作为主管，我希望复核动作提交成功后，如果当前案例仍缺下一步材料，续办入口先让我继续当前案例，以便避免补完证据后误跳到其他案例。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/review-cases/[caseId]` 在成功反馈出现时判断当前案例是否仍在待处理序列。"
+  - "当前案例仍待处理时，续办主入口展示继续处理当前案例，并指向当前详情页。"
+  - "当前案例已关闭或不在待处理序列时，续办主入口仍指向同 owner 下一条或首条待处理案例。"
+  - "失败反馈仍交给重试定位，不改变 IM074 行为。"
+  - "不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+  - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+dependencies:
+  - "US694"
+status: "done"
+```

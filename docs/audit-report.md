@@ -3130,3 +3130,28 @@
 - `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
 - in-app browser production smoke：`http://127.0.0.1:3032/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001?conclusion=failed` 命中 `处理动作区`、`补结论提交失败`、`重试定位`、`已定位到补结论`、`当前已打开补结论入口` 和 `补充复核结论`，且 active tab 为 `补结论`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM075 复核提交成功后的当前案例优先续办
+
+#### 审计结论
+
+- `IM075/US695` 已修正 `/data-quality/review-cases/[caseId]` 成功反馈后的续办优先级。
+- 当当前案例仍在同 owner 待处理序列中，续办主入口显示 `继续处理当前案例`，避免补证据成功后误跳到其他案例。
+- 当前案例已关闭或不在待处理序列时，续办导航仍回退到同 owner 下一条或首条待处理案例。
+- 本轮未新增后端 route，未新增依赖，未修改 package/lockfile，未新增 schema/migration，未触碰真实外部接口、审批、导出、批量、权限、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前优先级仍基于详情页已有 list API 和阶段快照，适合本地 MVP；生产连续处理仍建议由后端返回结构化队列游标。
+- 该能力不是任务分派、审批队列、权限隔离或 SLA 规则。
+
+#### 验证
+
+- TDD 红灯：前端模型测试先失败，证明旧行为会把成功反馈续办主入口指向同 owner 下一条 `CASE-READY-CLOSE`。
+- `node scripts/tests/import-center-model.test.mjs`：通过，57 个 import-center model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `PATH="/opt/homebrew/opt/node@22/bin:$PATH" npm run build`：通过。
+- in-app browser production smoke：`http://127.0.0.1:3033/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001?evidence=success` 命中 `补证据提交成功`、`续办导航`、`当前案例仍待处理` 和 `继续处理当前案例`，且主入口链接指向 `/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

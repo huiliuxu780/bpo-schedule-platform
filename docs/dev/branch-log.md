@@ -2096,3 +2096,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM075 Import Center Review Current Continuation Priority
+
+- branch_name: `codex/im057-review-source-context`
+- base_main_commit: `c4ae1b0`
+- remote_status: `origin/codex/im057-review-source-context includes IM072; local branch has IM073, IM074, and IM075 changes not pushed yet.`
+- scope: successful-submit current-case continuation priority inside `/data-quality/review-cases/[caseId]`, model helper/test coverage, browser smoke evidence, and traceability records.
+- allowed_files_check: `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, app route, package, lockfile, schema, migration, new UI component, dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files.
+- scope_diff_check: `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, legacy traceability docs, and `tasks/backlog.yaml`; no backend, app route, package, lockfile, schema, migration, new UI component, dependency, real external integration, approval, export, batch operation, permissions, production formula, settlement, or charge-factor files. `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD red frontend model test failed first because successful feedback still pointed to same-owner next case; target model test passed with 57 tests; shadcn gate passed with documented baseline only; lint, typecheck, and Node 22 build passed; in-app browser smoke on 3033 rendered `当前案例仍待处理` and `继续处理当前案例` for `CASE-EVIDENCE-SMOKE-001?evidence=success`; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, frontend lint, typecheck, Next build, and 177 backend unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

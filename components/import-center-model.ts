@@ -571,6 +571,7 @@ export type ImportReviewOwnerNavigationSummary = {
   listHref: string
   positionLabel: string
   totalActionableCount: number
+  current: ImportReviewOwnerNavigationItem | null
   previous: ImportReviewOwnerNavigationItem | null
   next: ImportReviewOwnerNavigationItem | null
   sequence: ImportReviewOwnerNavigationItem[]
@@ -1781,6 +1782,7 @@ export function summarizeImportReviewOwnerNavigation({
       listHref: "/data-quality/review-cases",
       positionLabel: "当前案例不可用",
       totalActionableCount: 0,
+      current: null,
       previous: null,
       next: null,
       sequence: [],
@@ -1802,6 +1804,7 @@ export function summarizeImportReviewOwnerNavigation({
       listHref,
       positionLabel: "待处理序列不可用",
       totalActionableCount: 0,
+      current: null,
       previous: null,
       next: null,
       sequence: [],
@@ -1854,6 +1857,7 @@ export function summarizeImportReviewOwnerNavigation({
     }))
 
   const currentIndex = sequence.findIndex((item) => item.caseId === currentCase.case_id)
+  const current = currentIndex >= 0 ? sequence[currentIndex] : null
   const previous = currentIndex > 0 ? sequence[currentIndex - 1] : null
   const next =
     currentIndex >= 0
@@ -1876,6 +1880,7 @@ export function summarizeImportReviewOwnerNavigation({
     listHref,
     positionLabel,
     totalActionableCount: sequence.length,
+    current,
     previous,
     next,
     sequence,
@@ -2389,7 +2394,25 @@ export function summarizeImportReviewCaseActionContinuation({
 
   const pendingCount = navigation.totalActionableCount
   const pendingLabel = pendingCount.toLocaleString("zh-CN")
+  const currentCase = feedback.tone === "ready" ? navigation.current : null
   const nextCase = navigation.next
+
+  if (currentCase) {
+    return {
+      tone: feedback.tone,
+      title: "续办导航",
+      statusLabel: "当前案例仍待处理",
+      detail:
+        navigation.ownerId && navigation.businessDate
+          ? `${navigation.ownerId} 在 ${navigation.businessDate} 还有 ${pendingLabel} 条待处理案例；当前案例仍处于${currentCase.stageLabel}，建议先继续处理 ${currentCase.caseId}。`
+          : `当前案例仍处于${currentCase.stageLabel}，建议先继续处理 ${currentCase.caseId}。`,
+      primaryLabel: "继续处理当前案例",
+      primaryHref: currentCase.href,
+      primaryDetail: `${currentCase.caseId} · ${currentCase.stageLabel} · ${currentCase.severityLabel}`,
+      listLabel: "返回同 Owner 列表",
+      listHref: navigation.listHref,
+    }
+  }
 
   if (!nextCase) {
     return {

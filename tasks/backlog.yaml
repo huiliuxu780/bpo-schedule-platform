@@ -6892,3 +6892,46 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+  - id: IM075
+    title: "复核提交成功后的当前案例优先续办"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM074"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "`/data-quality/review-cases/[caseId]` 在成功反馈出现时判断当前案例是否仍在待处理序列。"
+      - "当前案例仍待处理时，续办主入口展示继续处理当前案例，并指向当前详情页。"
+      - "当前案例已关闭或不在待处理序列时，续办主入口仍指向同 owner 下一条或首条待处理案例。"
+      - "失败反馈仍交给重试定位，不改变 IM074 行为。"
+      - "不新增后端 API、schema/migration、依赖、审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子。"
+      - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到后端、schema、migration 或数据库结构变更"
+      - "范围扩展到审批、导出、权限、批量、真实外部接口、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
