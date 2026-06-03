@@ -2299,8 +2299,8 @@ description: "导入中心已经能把主数据批次应用到业务数据，但
 source: "After IM095 completion and PM asked to continue on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "ready"
-notes: "第一刀只做主数据维护的入口、只读分组和维护边界说明；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "IM096 已完成：新增系统管理下的主数据维护只读工作台，按坐席、职场、供应商、项目、技能和绑定关系展示维护范围、来源批次/版本、阻塞原因和后续入口状态；不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 ```
 
 ### R797 - 主数据实体详情与引用校验说明
@@ -2312,7 +2312,7 @@ description: "主数据维护工作台需要让用户进入单个实体或绑定
 source: "After R796 planning on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "draft"
+status: "ready"
 notes: "第二刀只做详情和引用影响可视化；写入动作、真实引用阻断、批量处理和权限仍不进入。"
 ```
 

@@ -440,3 +440,9 @@ After the import-center apply, version-trace, and local-comparison trigger chain
 3. `US718/IM098`: plan controlled maintenance actions only after the read-only surface and reference context are clear.
 
 To keep Story Runner state narrow, only `US716/IM096` entered `docs/current/**` as ready. `US717/IM097` and `US718/IM098` stay outside current state until the prior slice is green. This chain must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors without a separate confirmed task.
+
+## 2026-06-03 IM096 Master Data Maintenance Workbench
+
+`IM096/US716` added `/master-data` as a read-only master-data maintenance workbench under the existing System Management navigation. The page reuses the existing import-batch list contract to show master-data source batch/version context and groups the maintenance surface by agents, sites, vendors, projects, skills, and bindings.
+
+The workbench explicitly keeps write actions closed: no create/edit/freeze/effective-date update, approval, export, batch operation, permission boundary, backend route, schema/migration, dependency, real external integration, automatic scheduling, production formula, settlement rule, or charge-factor change was added. Current state advanced to `US717/IM097` for entity detail and reference-impact visibility.

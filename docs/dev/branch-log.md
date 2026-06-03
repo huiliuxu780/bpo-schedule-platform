@@ -2539,3 +2539,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM096 Master Data Maintenance Workbench
+
+- branch_name: `codex/im096-master-data-maintenance-workbench`
+- base_main_commit: `b08f52b`
+- remote_status: `main includes merged IM096-IM098 planning baseline; IM096 implementation is local only until final merge/push.`
+- scope: add `/master-data` as a read-only master-data maintenance workbench entry under System Management; group maintenance objects by agents, sites, vendors, projects, skills, and bindings; show source batch/version, blocker summary, and next-step state without write actions.
+- allowed_files_check: `app/master-data/**`, `components/master-data-maintenance-workbench.tsx`, `components/master-data-maintenance-model.ts`, `components/app-sidebar.tsx`, `scripts/tests/master-data-maintenance-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 4 tests; shadcn gate passed with 3 documented baseline findings; `npm run lint` passed; `npm run typecheck` passed; HTTP smoke on `http://127.0.0.1:3000/master-data` matched page title, System Management navigation entry, six entity groups, read-only workbench state, and next-step labels. `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

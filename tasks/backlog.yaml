@@ -7809,7 +7809,7 @@ tasks:
   - id: IM096
     title: "主数据维护工作台只读入口"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM095"]
     allowed_files:
@@ -7848,10 +7848,11 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已新增 `/master-data` 只读工作台和系统管理导航入口；页面按坐席、职场、供应商、项目、技能和绑定关系展示维护范围、引用影响、来源批次/版本、阻塞原因和后续 IM097/IM098 入口状态，复用现有 import-batches 查询，不新增后端 API 或写入能力。"
   - id: IM097
     title: "主数据实体详情与引用影响"
     priority: P1
-    status: draft
+    status: ready
     required_workflow: frontend-scaffold
     dependencies: ["IM096"]
     allowed_files:

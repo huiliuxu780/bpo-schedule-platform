@@ -2817,7 +2817,9 @@
 - `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
 - API smoke：临时最新后端 `http://127.0.0.1:8003/api/v1/review-cases/write-closure` 返回 `closure_id=CLO-CASE-QUERY-001`、`closure_status=closed`、`closed_by=ops-lead-01`。
 - in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases/CASE-QUERY-001` 刷新后命中 `已关闭` 和 `案例已关闭`，`关闭案例` 按钮数量为 0。
-- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+- `bash scripts/check-state.sh --strict`：通过，current 已推进到 `US717/IM097`，无 done history 残留。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 frontend build 和 backend 177 tests OK。
 
 ### 2026-06-02 - IM063 复核案例证据补录写入入口
 
@@ -3430,3 +3432,22 @@
 - `bash scripts/check-state.sh --strict`：通过，current 队列只包含 `US716/IM096`，registry 无 lifecycle state 字段，current 文件行数均在预算内。
 - `git diff --check`：通过。
 - `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 frontend build 和 backend 177 tests OK。
+
+### 2026-06-03 - IM096 主数据维护工作台只读入口
+
+#### 审计结论
+
+- `IM096/US716` 已新增 `/master-data` 只读主数据维护工作台，并接入现有系统管理导航。
+- 工作台按坐席、职场、供应商、项目、技能和绑定关系展示维护范围、引用影响、来源批次/版本、阻塞原因和后续入口状态。
+- 页面复用现有 import-batches 查询，不新增后端 API、schema/migration、依赖或生产持久化配置。
+- 本轮未开放新增、编辑、冻结、有效期调整、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。
+- 当前状态已推进到 `US717/IM097`，用于后续实体详情和引用影响可视化。
+
+#### 验证
+
+- `node scripts/tests/master-data-maintenance-model.test.mjs`：通过，4 个 master-data maintenance model 测试通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- HTTP smoke：`http://127.0.0.1:3000/master-data` 命中 `主数据维护`、`只读工作台`、六类实体分组、系统管理导航选中态和 `维护动作待 IM098`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

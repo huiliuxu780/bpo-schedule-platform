@@ -98,6 +98,7 @@ const nav: NavGroup[] = [
     title: "系统管理",
     icon: Settings,
     items: [
+      { title: "主数据维护", href: "/master-data", activeMatch: "prefix", tag: "P1" },
       { title: "组织与人员", href: "/dashboard" },
       { title: "供应商管理", href: "/dashboard" },
       { title: "规则配置", href: "/dashboard" },

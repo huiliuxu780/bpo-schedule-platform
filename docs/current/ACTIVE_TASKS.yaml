@@ -6,18 +6,17 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
 tasks:
-  - id: IM096
-    title: "主数据维护工作台只读入口"
-    story_ids: ["US716"]
+  - id: IM097
+    title: "主数据实体详情与引用影响"
+    story_ids: ["US717"]
     status: ready
     required_workflow: frontend-scaffold
     dependencies:
-      - "IM095"
+      - "IM096"
     allowed_files:
       - "app/master-data/**"
       - "components/master-data-maintenance-workbench.tsx"
       - "components/master-data-maintenance-model.ts"
-      - "components/app-sidebar.tsx"
       - "scripts/tests/master-data-maintenance-model.test.mjs"
       - "docs/current/**"
       - "docs/registry/TRACE_INDEX.yaml"
@@ -35,9 +34,9 @@ tasks:
       - "backend/app/**"
       - "backend/tests/**"
     acceptance:
-      - "主数据维护入口在现有导航体系内可达，不创建新的首页或营销页。"
-      - "工作台按坐席、职场、供应商、项目、技能和绑定关系分组展示只读维护范围。"
-      - "页面明确当前只读边界、来源批次/版本口径和后续维护动作入口状态。"
+      - "从主数据维护工作台可进入实体或绑定关系详情。"
+      - "详情页展示有效期、冻结状态、来源批次/版本和引用影响摘要。"
+      - "缺少引用数据时展示明确空态或阻塞态，不伪造影响。"
       - "不新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
       - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
     auto_run: true

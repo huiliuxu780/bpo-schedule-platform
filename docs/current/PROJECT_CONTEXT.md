@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-`US715/IM095` completed the version-workbench result-review feedback slice. Current story queue has advanced to `US716/IM096`.
+`US716/IM096` completed the master-data maintenance read-only workbench entry. Current story queue has advanced to `US717/IM097`.
 
-The next approved chain starts the master-data maintenance surface. `US716/IM096` is the only current ready story; `US717/IM097` and `US718/IM098` remain outside `docs/current/**` until the previous slice is green.
+The master-data maintenance chain now has `/master-data` as a stable read-only entry. `US717/IM097` is the only current ready story for entity detail and reference-impact visibility; `US718/IM098` remains outside `docs/current/**` until the detail slice is green.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -139,4 +139,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US716/IM096` is now current for adding a read-only master-data maintenance workbench entry.
+`US717/IM097` is now current for adding master-data entity detail and reference-impact visibility from the read-only workbench.
