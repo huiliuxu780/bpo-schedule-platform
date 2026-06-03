@@ -7852,7 +7852,7 @@ tasks:
   - id: IM097
     title: "主数据实体详情与引用影响"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM096"]
     allowed_files:
@@ -7890,6 +7890,7 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已从 `/master-data` 六类对象进入 `/master-data/[entityKey]` 详情页；详情展示有效期/冻结状态空态、来源批次/版本和排班/预测/登录状态/比对复核引用影响摘要，缺少引用明细时明确不伪造数量，非法实体 key 返回 404。"
   - id: IM098
     title: "主数据受控维护动作"
     priority: P1

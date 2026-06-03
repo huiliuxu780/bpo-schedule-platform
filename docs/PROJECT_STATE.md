@@ -446,3 +446,9 @@ To keep Story Runner state narrow, only `US716/IM096` entered `docs/current/**` 
 `IM096/US716` added `/master-data` as a read-only master-data maintenance workbench under the existing System Management navigation. The page reuses the existing import-batch list contract to show master-data source batch/version context and groups the maintenance surface by agents, sites, vendors, projects, skills, and bindings.
 
 The workbench explicitly keeps write actions closed: no create/edit/freeze/effective-date update, approval, export, batch operation, permission boundary, backend route, schema/migration, dependency, real external integration, automatic scheduling, production formula, settlement rule, or charge-factor change was added. Current state advanced to `US717/IM097` for entity detail and reference-impact visibility.
+
+## 2026-06-03 IM097 Master Data Entity Detail And Reference Impact
+
+`IM097/US717` added `/master-data/[entityKey]` detail pages for agents, sites, vendors, projects, skills, and bindings. The workbench now links each row into its detail view; unknown entity keys return 404.
+
+The detail view stays read-only: it shows source batch/version context, entity-level effective-period and freeze-status empty states, and reference-impact summaries for schedule, forecast, login/status logs, and comparison/review chains. Missing reference detail remains explicit as `不伪造数量`. Current queue returned to empty because `IM098` would introduce controlled write actions and requires separate PM confirmation.

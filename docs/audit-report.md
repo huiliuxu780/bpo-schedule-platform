@@ -2848,7 +2848,9 @@
 - API smoke：临时最新后端 `http://127.0.0.1:8003/api/v1/review-cases/CASE-EVIDENCE-SMOKE-001/evidence` 返回 `evidence_count=1` 和 `last_evidence=EVD-CASE-EVIDENCE-SMOKE-001-001`。
 - in-app browser smoke：`/data-quality/review-cases/CASE-EVIDENCE-SMOKE-001` 命中 `补充复核证据`，`提交证据` 按钮数量为 1，并显示 `EVD-CASE-EVIDENCE-SMOKE-001-001`。
 - in-app browser smoke：`/data-quality/review-cases/CASE-QUERY-001` 命中 `案例已关闭`，`提交证据` 按钮数量为 0。
-- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+- `bash scripts/check-state.sh --strict`：通过，current 队列已回到空。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 frontend build 和 backend 177 tests OK。
 
 ### 2026-06-02 - IM064 复核案例结论补充写入入口
 
@@ -3450,4 +3452,24 @@
 - `npm run lint`：通过。
 - `npm run typecheck`：通过。
 - HTTP smoke：`http://127.0.0.1:3000/master-data` 命中 `主数据维护`、`只读工作台`、六类实体分组、系统管理导航选中态和 `维护动作待 IM098`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-03 - IM097 主数据实体详情与引用影响
+
+#### 审计结论
+
+- `IM097/US717` 已从 `/master-data` 六类对象进入 `/master-data/[entityKey]` 详情页。
+- 详情页展示来源批次/版本、实体级有效期空态、冻结状态空态和引用影响摘要。
+- 引用影响覆盖排班、预测、登录/状态日志、比对与复核链路；缺少明细时展示 `不伪造数量`，不构造假影响。
+- 非法实体 key 返回 404。
+- 本轮未新增后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。
+- 当前队列回到空，因为 `IM098` 是受控维护动作，需 PM 单独确认。
+
+#### 验证
+
+- `node scripts/tests/master-data-maintenance-model.test.mjs`：通过，7 个 master-data maintenance model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- HTTP smoke：`http://127.0.0.1:3000/master-data` 命中六个详情入口；`http://127.0.0.1:3000/master-data/bindings` 命中 `绑定关系详情与引用影响`、`有效期`、`冻结状态`、四类引用影响和 `不伪造数量`；`/master-data/missing` 返回 404。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

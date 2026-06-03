@@ -1,8 +1,19 @@
 import Link from "next/link"
 import type * as React from "react"
-import { AlertTriangle, ArrowRight, Database, FileClock, Lock, ShieldCheck } from "lucide-react"
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  Database,
+  FileClock,
+  GitBranch,
+  Link2,
+  Lock,
+  ShieldCheck,
+} from "lucide-react"
 
 import {
+  type MasterDataEntityDetailSummary,
   type MasterDataMaintenanceTone,
   summarizeMasterDataMaintenanceWorkbench,
 } from "@/components/master-data-maintenance-model"
@@ -174,8 +185,16 @@ export function MasterDataMaintenanceWorkbench({
                     </div>
                   </TableCell>
                   <TableCell className="align-top text-right">
-                    <div className="inline-grid gap-1 text-right">
-                      <span className="text-sm font-medium">{row.nextActionLabel}</span>
+                    <div className="inline-grid justify-items-end gap-1 text-right">
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={row.detailHref}>
+                          查看详情
+                          <ArrowRight data-icon="inline-end" />
+                        </Link>
+                      </Button>
+                      <span className="text-xs text-muted-foreground">
+                        {row.nextActionLabel}
+                      </span>
                       <span className="text-xs text-muted-foreground">
                         维护动作待 IM098
                       </span>
@@ -200,6 +219,159 @@ export function MasterDataMaintenanceWorkbench({
           detail="IM097 补实体详情和引用影响；IM098 再讨论受控维护动作、引用校验和必要确认。"
         />
       </section>
+    </main>
+  )
+}
+
+export function MasterDataMaintenanceEntityDetail({
+  summary,
+  error,
+}: {
+  summary: MasterDataEntityDetailSummary
+  error: string | null
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
+      <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid gap-2">
+          <Button asChild size="sm" variant="ghost" className="w-fit px-0">
+            <Link href="/master-data">
+              <ArrowLeft data-icon="inline-start" />
+              返回主数据维护
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-xl font-semibold tracking-normal">
+              {summary.title}
+            </h1>
+            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+              {summary.detail}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
+            {formatToneLabel(summary.tone)}
+          </Badge>
+          <Badge variant="secondary">只读详情</Badge>
+        </div>
+      </section>
+
+      {error ? (
+        <Card className="border-destructive/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <AlertTriangle className="size-4 text-destructive" />
+              主数据详情来源读取失败
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
+        </Card>
+      ) : null}
+
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          label="维护对象"
+          value={summary.entity.label}
+          detail={summary.entity.scopeLabel}
+          tone="default"
+        />
+        <MetricCard
+          label="来源版本"
+          value={summary.sourceVersionLabel}
+          detail={`来源批次 ${summary.sourceBatchLabel}`}
+          tone="default"
+        />
+        <MetricCard
+          label="有效期"
+          value={summary.effectivePeriodLabel}
+          detail="没有明细时保持空态"
+          tone="default"
+        />
+        <MetricCard
+          label="冻结状态"
+          value={summary.freezeStatusLabel}
+          detail="不伪造实体级状态"
+          tone={summary.tone === "blocked" ? "blocked" : "default"}
+        />
+      </section>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <GitBranch className="size-4 text-muted-foreground" />
+            来源与维护边界
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 text-sm text-muted-foreground">
+          <div className="grid gap-1">
+            <p>
+              <span className="font-medium text-foreground">维护范围：</span>
+              {summary.entity.maintenanceBoundary}
+            </p>
+            <p>
+              <span className="font-medium text-foreground">引用范围：</span>
+              {summary.entity.referenceLabel}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {summary.sourceVersionHref ? (
+              <Button asChild size="sm" variant="outline">
+                <Link href={summary.sourceVersionHref}>
+                  查看业务版本
+                  <ArrowRight data-icon="inline-end" />
+                </Link>
+              </Button>
+            ) : null}
+            {summary.sourceBatchHref ? (
+              <Button asChild size="sm" variant="ghost">
+                <Link href={summary.sourceBatchHref}>查看来源批次</Link>
+              </Button>
+            ) : null}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Link2 className="size-4 text-muted-foreground" />
+            引用影响摘要
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>引用类型</TableHead>
+                <TableHead>来源范围</TableHead>
+                <TableHead>数量</TableHead>
+                <TableHead>说明</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {summary.referenceImpacts.map((impact) => (
+                <TableRow key={impact.key}>
+                  <TableCell className="align-top font-medium">
+                    {impact.label}
+                  </TableCell>
+                  <TableCell className="align-top text-sm text-muted-foreground">
+                    {impact.sourceLabel}
+                  </TableCell>
+                  <TableCell className="align-top">
+                    <Badge variant={impact.tone === "blocked" ? "destructive" : "outline"}>
+                      {impact.countLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="max-w-xl align-top text-sm text-muted-foreground">
+                    {impact.detail}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </main>
   )
 }

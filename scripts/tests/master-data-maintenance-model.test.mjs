@@ -3,6 +3,8 @@ import test from "node:test";
 
 import {
   MASTER_DATA_MAINTENANCE_ENTITIES,
+  getMasterDataMaintenanceEntity,
+  summarizeMasterDataMaintenanceEntityDetail,
   summarizeMasterDataMaintenanceWorkbench,
 } from "../../components/master-data-maintenance-model.ts";
 
@@ -66,6 +68,7 @@ test("master data maintenance workbench uses the latest applied master data vers
   assert.equal(summary.rows[0].statusLabel, "只读可查看");
   assert.equal(summary.rows[0].sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
   assert.equal(summary.rows[0].sourceVersionHref, "/data-quality/versions?domain=master_data");
+  assert.equal(summary.rows[0].detailHref, "/master-data/agents");
 });
 
 test("master data maintenance workbench blocks freshness when the newest master data batch is not applied", () => {
@@ -89,4 +92,41 @@ test("master data maintenance workbench blocks freshness when the newest master 
   assert.match(summary.detail, /最新主数据批次尚未应用/);
   assert.equal(summary.rows[0].statusLabel, "待同步");
   assert.equal(summary.rows[0].blockerSummary, "最新主数据批次尚未应用，当前仍按上一已应用版本只读展示");
+});
+
+test("master data maintenance resolves known entity keys", () => {
+  assert.equal(getMasterDataMaintenanceEntity("skills")?.label, "技能");
+  assert.equal(getMasterDataMaintenanceEntity("missing"), null);
+});
+
+test("master data entity detail exposes source context and empty reference impact without fabrication", () => {
+  const detail = summarizeMasterDataMaintenanceEntityDetail("bindings", [baseBatch]);
+
+  assert.equal(detail.entity.label, "绑定关系");
+  assert.equal(detail.sourceVersionLabel, "BATCH-MD-001::v1");
+  assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
+  assert.equal(detail.effectivePeriodLabel, "暂无实体级有效期明细");
+  assert.equal(detail.freezeStatusLabel, "暂无实体级冻结明细");
+  assert.equal(detail.referenceImpacts.length, 4);
+  assert.deepEqual(
+    detail.referenceImpacts.map((impact) => impact.label),
+    ["排班引用", "预测引用", "登录/状态引用", "比对与复核引用"],
+  );
+  assert.equal(detail.referenceImpacts[0].countLabel, "不伪造数量");
+  assert.equal(detail.referenceImpacts[0].tone, "empty");
+});
+
+test("master data entity detail keeps a blocked source state when no applied version exists", () => {
+  const detail = summarizeMasterDataMaintenanceEntityDetail("agents", [
+    {
+      ...baseBatch,
+      application_status: "not_applied",
+      applied_record_count: 0,
+    },
+  ]);
+
+  assert.equal(detail.tone, "blocked");
+  assert.equal(detail.sourceVersionLabel, "暂无主数据业务版本");
+  assert.match(detail.detail, /尚未应用/);
+  assert.equal(detail.referenceImpacts[0].detail, "来源版本未就绪，暂不展示引用影响。");
 });

@@ -4198,7 +4198,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US716"
-status: "ready"
+status: "done"
 ```
 
 ### US718 - 主数据受控维护动作

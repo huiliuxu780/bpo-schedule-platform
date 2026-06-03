@@ -21,6 +21,7 @@ export type MasterDataMaintenanceEntity = {
 export type MasterDataMaintenanceRow = MasterDataMaintenanceEntity & {
   tone: MasterDataMaintenanceTone
   statusLabel: string
+  detailHref: string
   sourceVersionLabel: string
   sourceVersionHref: string | null
   sourceBatchLabel: string
@@ -42,6 +43,29 @@ export type MasterDataMaintenanceSummary = {
   versionWorkbenchHref: string
   readonlyBoundary: string
   rows: MasterDataMaintenanceRow[]
+}
+
+export type MasterDataReferenceImpact = {
+  key: "schedule" | "forecast" | "actual_logs" | "review"
+  label: string
+  tone: "empty" | "blocked"
+  countLabel: string
+  detail: string
+  sourceLabel: string
+}
+
+export type MasterDataEntityDetailSummary = {
+  entity: MasterDataMaintenanceEntity
+  tone: MasterDataMaintenanceTone
+  title: string
+  detail: string
+  sourceVersionLabel: string
+  sourceVersionHref: string | null
+  sourceBatchLabel: string
+  sourceBatchHref: string | null
+  effectivePeriodLabel: string
+  freezeStatusLabel: string
+  referenceImpacts: MasterDataReferenceImpact[]
 }
 
 export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
@@ -122,6 +146,7 @@ export function summarizeMasterDataMaintenanceWorkbench(
     ...entity,
     tone,
     statusLabel,
+    detailHref: `/master-data/${entity.key}`,
     sourceVersionLabel,
     sourceVersionHref: latestAppliedBatch ? MASTER_DATA_VERSION_WORKBENCH_HREF : null,
     sourceBatchLabel: latestBatchLabel,
@@ -158,6 +183,91 @@ export function summarizeMasterDataMaintenanceWorkbench(
       "当前工作台只读展示维护对象、来源版本和阻塞原因；不提供新增、修改、冻结、批量、审批、权限或导出动作。",
     rows,
   }
+}
+
+export function getMasterDataMaintenanceEntity(
+  entityKey: string
+): MasterDataMaintenanceEntity | null {
+  return (
+    MASTER_DATA_MAINTENANCE_ENTITIES.find((entity) => entity.key === entityKey) ??
+    null
+  )
+}
+
+export function summarizeMasterDataMaintenanceEntityDetail(
+  entityKey: MasterDataMaintenanceEntityKey,
+  batches: ImportBatchListRow[]
+): MasterDataEntityDetailSummary {
+  const entity = getMasterDataMaintenanceEntity(entityKey)
+
+  if (!entity) {
+    throw new Error(`Unknown master data entity: ${entityKey}`)
+  }
+
+  const workbench = summarizeMasterDataMaintenanceWorkbench(batches)
+  const isSourceReady = workbench.tone === "ready"
+
+  return {
+    entity,
+    tone: workbench.tone,
+    title: `${entity.label}详情与引用影响`,
+    detail: isSourceReady
+      ? `当前基于 ${workbench.sourceVersionLabel} 展示 ${entity.label} 的维护边界和引用影响空态。`
+      : `${entity.label}来源尚未应用或仍有阻塞，暂不展示引用影响明细。`,
+    sourceVersionLabel: workbench.sourceVersionLabel,
+    sourceVersionHref:
+      workbench.sourceVersionLabel === "暂无主数据业务版本"
+        ? null
+        : workbench.versionWorkbenchHref,
+    sourceBatchLabel: workbench.latestBatchLabel,
+    sourceBatchHref: workbench.sourceBatchHref,
+    effectivePeriodLabel: "暂无实体级有效期明细",
+    freezeStatusLabel: "暂无实体级冻结明细",
+    referenceImpacts: buildMasterDataReferenceImpacts(entity, isSourceReady),
+  }
+}
+
+function buildMasterDataReferenceImpacts(
+  entity: MasterDataMaintenanceEntity,
+  isSourceReady: boolean
+): MasterDataReferenceImpact[] {
+  const blockedDetail = "来源版本未就绪，暂不展示引用影响。"
+  const emptyPrefix = `${entity.label}引用影响明细尚未接入，当前不伪造数量。`
+
+  return [
+    {
+      key: "schedule",
+      label: "排班引用",
+      tone: isSourceReady ? "empty" : "blocked",
+      countLabel: "不伪造数量",
+      detail: isSourceReady ? `${emptyPrefix} 后续会说明受影响排班版本和班次展开。` : blockedDetail,
+      sourceLabel: "人员排班版本、班次明细",
+    },
+    {
+      key: "forecast",
+      label: "预测引用",
+      tone: isSourceReady ? "empty" : "blocked",
+      countLabel: "不伪造数量",
+      detail: isSourceReady ? `${emptyPrefix} 后续会说明受影响预测版本、技能组和半小时粒度。` : blockedDetail,
+      sourceLabel: "需求预测版本、技能组时段",
+    },
+    {
+      key: "actual_logs",
+      label: "登录/状态引用",
+      tone: isSourceReady ? "empty" : "blocked",
+      countLabel: "不伪造数量",
+      detail: isSourceReady ? `${emptyPrefix} 后续会说明受影响登录事件、状态区间和业务日。` : blockedDetail,
+      sourceLabel: "登录日志、状态日志",
+    },
+    {
+      key: "review",
+      label: "比对与复核引用",
+      tone: isSourceReady ? "empty" : "blocked",
+      countLabel: "不伪造数量",
+      detail: isSourceReady ? `${emptyPrefix} 后续会说明相关比对结果和复核案例。` : blockedDetail,
+      sourceLabel: "comparison run、review case",
+    },
+  ]
 }
 
 function resolveMasterDataMaintenanceTone(

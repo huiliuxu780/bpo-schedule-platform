@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-`US716/IM096` completed the master-data maintenance read-only workbench entry. Current story queue has advanced to `US717/IM097`.
+`US717/IM097` completed master-data entity detail and reference-impact visibility. Current story queue is empty.
 
-The master-data maintenance chain now has `/master-data` as a stable read-only entry. `US717/IM097` is the only current ready story for entity detail and reference-impact visibility; `US718/IM098` remains outside `docs/current/**` until the detail slice is green.
+The master-data maintenance chain now has `/master-data` plus `/master-data/[entityKey]` as read-only surfaces. `US718/IM098` remains outside `docs/current/**` because it introduces controlled maintenance actions and requires PM confirmation before any write-capability planning or implementation.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -139,4 +139,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-`US717/IM097` is now current for adding master-data entity detail and reference-impact visibility from the read-only workbench.
+Current queue is empty. Recommended next step is to review whether to confirm `US718/IM098` for controlled master-data maintenance actions, with write scope kept separate from backend/schema/migration, permissions, approval, export, batch, production formula, settlement, and charge-factor work.

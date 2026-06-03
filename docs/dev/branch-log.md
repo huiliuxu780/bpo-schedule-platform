@@ -2556,3 +2556,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM097 Master Data Entity Detail And Reference Impact
+
+- branch_name: `codex/im097-master-data-reference-detail`
+- base_main_commit: `2610844`
+- remote_status: `main includes merged IM096 workbench baseline; IM097 implementation is local only until final merge/push.`
+- scope: add `/master-data/[entityKey]` read-only detail pages for master-data entities and bindings; link every workbench row to detail; show source batch/version, effective-period and freeze-status empty states, and reference-impact summaries without fabricating counts.
+- allowed_files_check: `app/master-data/**`, `components/master-data-maintenance-workbench.tsx`, `components/master-data-maintenance-model.ts`, `scripts/tests/master-data-maintenance-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 7 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; HTTP smoke confirmed six workbench detail hrefs, `/master-data/bindings` reference-impact content, no-fabrication count labels, and 404 for an unknown entity key. `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
