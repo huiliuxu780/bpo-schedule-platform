@@ -13,6 +13,7 @@ import {
 
 import {
   type ImportApplyReadinessResponse,
+  type ImportAppliedVersionResultContext,
   type ImportBatchListRow,
   type ImportBatchPersistenceDetail,
   type ImportComparisonRunRecord,
@@ -25,6 +26,7 @@ import {
   buildImportApiUrl,
   buildImportComparisonRunDetailWorkspaceHref,
   buildImportReviewCasesWorkspaceHref,
+  summarizeImportAppliedVersionResultContext,
   summarizeImportDownstreamResultDrilldown,
   summarizeImportQualityImpactAggregation,
   summarizeImportReviewConclusionPreview,
@@ -121,6 +123,12 @@ export function ImportCenterResultTracePanel({
         </Badge>
       </CardHeader>
       <CardContent className="grid gap-4">
+        <AppliedVersionResultContextSection
+          batch={batch}
+          readiness={readiness}
+          comparisonRuns={comparisonRuns}
+          reviewCases={reviewCases}
+        />
         <ResultDrilldownSummary drilldown={drilldown} />
         <QualityImpactAggregationPanel aggregation={qualityImpact} />
         <ReviewEvidenceGapPanel businessDate={businessDate} drilldown={evidenceGap} />
@@ -136,6 +144,96 @@ export function ImportCenterResultTracePanel({
         </section>
       </CardContent>
     </Card>
+  )
+}
+
+function AppliedVersionResultContextSection({
+  batch,
+  readiness,
+  comparisonRuns,
+  reviewCases,
+}: {
+  batch: ImportBatchListRow | null
+  readiness: ImportApplyReadinessResponse | null
+  comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
+}) {
+  if (!batch) {
+    return null
+  }
+
+  const context = summarizeImportAppliedVersionResultContext({
+    batch,
+    readiness,
+    comparisonRuns,
+    reviewCases,
+  })
+
+  if (!context) {
+    return null
+  }
+
+  return (
+    <section className="grid gap-4 rounded-md border bg-muted/30 p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="grid min-w-0 gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Activity className="size-4 text-muted-foreground" />
+            <h3 className="text-sm font-medium">版本结果定位</h3>
+            <Badge
+              variant={context.tone === "blocked" ? "destructive" : "outline"}
+            >
+              {formatAppliedVersionContextTone(context.tone)}
+            </Badge>
+          </div>
+          <div>
+            <div className="font-medium">{context.title}</div>
+            <p className="mt-1 text-sm text-muted-foreground">{context.detail}</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild size="sm">
+            <Link href={context.primaryHref}>
+              {context.primaryActionLabel}
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href={context.secondaryHref}>
+              {context.secondaryActionLabel}
+              <ExternalLink data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
+        <ContextMetric label="来源批次" value={context.sourceBatchLabel} />
+        <ContextMetric label="应用目标" value={context.targetLabel} />
+        <ContextMetric label="当前版本" value={context.versionLabel} />
+        <ContextMetric label="下游状态" value={context.downstreamStatusLabel} />
+      </div>
+
+      <div className="grid gap-2">
+        <div className="text-xs font-medium text-muted-foreground">定位依据</div>
+        <div className="flex flex-wrap gap-2">
+          {context.evidence.map((item) => (
+            <Badge key={item} variant="outline">
+              {item}
+            </Badge>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function ContextMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border bg-background/60 p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="mt-1 break-all font-mono text-xs font-medium">{value}</div>
+    </div>
   )
 }
 
@@ -793,6 +891,20 @@ function formatComparisonVersions(run: ImportComparisonRunRecord): string {
   }
 
   return `${run.schedule_version_id ?? "-"} / ${run.actual_import_version_id ?? "-"}`
+}
+
+function formatAppliedVersionContextTone(
+  tone: ImportAppliedVersionResultContext["tone"]
+): string {
+  if (tone === "ready") {
+    return "已定位"
+  }
+
+  if (tone === "blocked") {
+    return "待补全"
+  }
+
+  return "空态"
 }
 
 function formatReviewStatus(status: string): string {

@@ -310,3 +310,11 @@ To keep Story Runner state narrow, only `US704/IM084` was moved into `docs/curre
 The implementation stayed inside the existing frontend/detail-page model layer. It reused current batch detail data, apply feedback, readiness state, and existing navigation helpers. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, production formula, settlement rule, or charge factor was added.
 
 After `IM084` went green, current state advanced to `US705/IM085` as the only ready slice. `US706/IM086` remains outside `docs/current/**` until `IM085` completes.
+
+## 2026-06-03 IM085 Applied Version Result Positioning
+
+`US705/IM085` completed the next step after apply-result visibility. The second-level batch detail page now resolves a version-result context from an already applied batch: supported schedule, forecast, and status-log versions can match existing comparison runs and surface direct run-detail entry links, while the result-trace area now includes a dedicated version-positioning section that shows source batch, current version, apply target, and downstream status. Master-data or version-incomplete cases stay explicit as empty/blocked positioning states instead of pretending a direct result page exists.
+
+The implementation remained frontend-only. It reused current batch detail data, persisted comparison-run lists, review-case lists, and existing workspace routes. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, production formula, settlement rule, or charge factor was added.
+
+After `IM085` went green, current state advanced to `US706/IM086` as the only ready slice.

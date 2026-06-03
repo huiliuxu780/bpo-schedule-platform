@@ -283,6 +283,23 @@ export type ImportAppliedResultCard = {
   secondaryHref: string
 }
 
+export type ImportAppliedVersionResultContextTone = "ready" | "blocked" | "empty"
+
+export type ImportAppliedVersionResultContext = {
+  tone: ImportAppliedVersionResultContextTone
+  title: string
+  detail: string
+  sourceBatchLabel: string
+  versionLabel: string
+  targetLabel: string
+  downstreamStatusLabel: string
+  primaryActionLabel: string
+  primaryHref: string
+  secondaryActionLabel: string
+  secondaryHref: string
+  evidence: string[]
+}
+
 export type ImportReadinessIssueGroupTone = "blocked" | "ready" | "done" | "unknown"
 
 export type ImportReadinessIssueGroupKey =
@@ -4197,10 +4214,14 @@ export function summarizeImportBatchApplyResultNotice({
 export function summarizeImportAppliedResultCard({
   batch,
   readiness,
+  comparisonRuns = [],
+  reviewCases = [],
   applyStatus,
 }: {
   batch: ImportBatchListRow
   readiness: ImportApplyReadinessResponse | null
+  comparisonRuns?: ImportComparisonRunRecord[]
+  reviewCases?: ImportReviewCaseRecord[]
   applyStatus?: string
 }): ImportAppliedResultCard | null {
   const isApplied =
@@ -4221,6 +4242,12 @@ export function summarizeImportAppliedResultCard({
     readiness?.applied_record_count ?? 0
   )
   const appliedRecordLabel = `${appliedRecordCount.toLocaleString("zh-CN")} 条`
+  const versionContext = summarizeImportAppliedVersionResultContext({
+    batch,
+    readiness,
+    comparisonRuns,
+    reviewCases,
+  })
 
   if (batch.file_type === "master_data") {
     return {
@@ -4242,6 +4269,22 @@ export function summarizeImportAppliedResultCard({
     }
   }
 
+  if (versionContext?.tone === "ready") {
+    return {
+      tone: applyStatus === "success" ? "success" : "done",
+      statusLabel: applyStatus === "success" ? "刚完成应用" : "已应用",
+      title: "业务版本结果已生成",
+      detail: `当前批次已写入${targetLabel}，生成版本 ${versionLabel}；已定位对应版本结果，可直接进入对比运行或复核工作台。`,
+      targetLabel,
+      versionLabel,
+      appliedRecordLabel,
+      primaryActionLabel: versionContext.primaryActionLabel,
+      primaryHref: versionContext.primaryHref,
+      secondaryActionLabel: versionContext.secondaryActionLabel,
+      secondaryHref: versionContext.secondaryHref,
+    }
+  }
+
   return {
     tone: applyStatus === "success" ? "success" : "done",
     statusLabel: applyStatus === "success" ? "刚完成应用" : "已应用",
@@ -4260,6 +4303,226 @@ export function summarizeImportAppliedResultCard({
       status: "open",
     }),
   }
+}
+
+export function summarizeImportAppliedVersionResultContext({
+  batch,
+  readiness,
+  comparisonRuns,
+  reviewCases,
+}: {
+  batch: ImportBatchListRow
+  readiness: ImportApplyReadinessResponse | null
+  comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
+}): ImportAppliedVersionResultContext | null {
+  const isApplied =
+    batch.application_status === "applied" ||
+    readiness?.application_status === "applied"
+
+  if (!isApplied) {
+    return null
+  }
+
+  const targetLabel = formatImportApplicationTarget(
+    readiness?.application_target ?? batch.application_target
+  )
+  const versionLabel = readiness?.import_version_id ?? batch.import_version_id
+  const businessDate = batch.business_date_from
+  const evidence = [
+    `来源批次 ${batch.batch_id}`,
+    `业务日 ${businessDate}`,
+    `应用目标 ${targetLabel}`,
+    `版本 ${versionLabel ?? "未生成"}`,
+  ]
+
+  if (!versionLabel) {
+    return {
+      tone: "blocked",
+      title: "当前版本定位信息不完整",
+      detail: "当前批次已应用，但导入版本仍未返回，无法定位对应版本详情或结果上下文。",
+      sourceBatchLabel: batch.batch_id,
+      versionLabel: "未生成",
+      targetLabel,
+      downstreamStatusLabel: "版本信息缺失",
+      primaryActionLabel: "查看版本记录",
+      primaryHref: buildImportBatchProcessingHref(batch.batch_id, {
+        tab: "batch-detail",
+      }),
+      secondaryActionLabel: "查看下游结果追踪",
+      secondaryHref: buildImportBatchProcessingHref(batch.batch_id, {
+        tab: "result-trace",
+      }),
+      evidence,
+    }
+  }
+
+  const matchedRuns = findMatchedComparisonRunsForAppliedVersion(
+    batch.file_type,
+    versionLabel,
+    comparisonRuns
+  )
+  const primaryRun = matchedRuns[0] ?? null
+  const openReviewCount = reviewCases.filter((reviewCase) => reviewCase.status !== "closed").length
+
+  if (!supportsDirectVersionResultContext(batch.file_type)) {
+    return {
+      tone: "empty",
+      title: "当前版本暂无直接结果页",
+      detail: `${targetLabel}版本 ${versionLabel} 当前没有可直接进入的对比运行详情；先核对版本记录，再按业务日查看下游结果空态。`,
+      sourceBatchLabel: batch.batch_id,
+      versionLabel,
+      targetLabel,
+      downstreamStatusLabel: "暂无可匹配运行",
+      primaryActionLabel: "查看版本记录",
+      primaryHref: buildImportBatchProcessingHref(batch.batch_id, {
+        tab: "batch-detail",
+      }),
+      secondaryActionLabel: "查看下游结果追踪",
+      secondaryHref: buildImportBatchProcessingHref(batch.batch_id, {
+        tab: "result-trace",
+      }),
+      evidence,
+    }
+  }
+
+  if (!primaryRun) {
+    return {
+      tone: "empty",
+      title: "当前版本暂未匹配到对比运行",
+      detail: `当前批次版本 ${versionLabel} 还没有匹配到可直接进入的对比运行；先确认是否已触发本地比对，再查看同业务日复核空态。`,
+      sourceBatchLabel: batch.batch_id,
+      versionLabel,
+      targetLabel,
+      downstreamStatusLabel: `匹配运行 0 个 · 未关闭复核 ${openReviewCount.toLocaleString("zh-CN")} 个`,
+      primaryActionLabel: "查看下游结果追踪",
+      primaryHref: buildImportBatchProcessingHref(batch.batch_id, {
+        tab: "result-trace",
+      }),
+      secondaryActionLabel: "查看复核案例工作台",
+      secondaryHref: buildImportReviewCasesWorkspaceHref({
+        businessDate,
+        sourceResultType: inferReviewSourceResultTypeFromFileType(batch.file_type),
+      }),
+      evidence,
+    }
+  }
+
+  return {
+    tone: "ready",
+    title: "已定位对应版本结果",
+    detail: `当前批次版本 ${versionLabel} 已匹配到下游结果，可直接进入对应对比运行，并继续查看同业务日复核案例。`,
+    sourceBatchLabel: batch.batch_id,
+    versionLabel,
+    targetLabel,
+    downstreamStatusLabel: `匹配运行 ${matchedRuns.length.toLocaleString("zh-CN")} 个 · 未关闭复核 ${openReviewCount.toLocaleString("zh-CN")} 个`,
+    primaryActionLabel: "查看对应对比运行",
+    primaryHref: buildImportComparisonRunDetailWorkspaceHref(primaryRun.run_id),
+    secondaryActionLabel: "查看复核案例工作台",
+    secondaryHref: buildImportReviewCasesWorkspaceHref({
+      businessDate,
+      sourceResultType:
+        inferReviewSourceResultTypeFromComparisonType(primaryRun.comparison_type),
+    }),
+    evidence,
+  }
+}
+
+function supportsDirectVersionResultContext(fileType: ImportFileType): boolean {
+  return (
+    fileType === "personnel_schedule" ||
+    fileType === "demand_forecast" ||
+    fileType === "status_log"
+  )
+}
+
+function inferReviewSourceResultTypeFromFileType(
+  fileType: ImportFileType
+): ImportReviewCaseRecord["source_result_type"] | undefined {
+  if (fileType === "demand_forecast") {
+    return "forecast_schedule"
+  }
+
+  if (fileType === "personnel_schedule" || fileType === "status_log") {
+    return "schedule_actual"
+  }
+
+  return undefined
+}
+
+function inferReviewSourceResultTypeFromComparisonType(
+  comparisonType: ImportComparisonRunRecord["comparison_type"]
+): ImportReviewCaseRecord["source_result_type"] {
+  if (comparisonType === "forecast_vs_schedule") {
+    return "forecast_schedule"
+  }
+
+  return "schedule_actual"
+}
+
+function findMatchedComparisonRunsForAppliedVersion(
+  fileType: ImportFileType,
+  versionId: string,
+  comparisonRuns: ImportComparisonRunRecord[]
+): ImportComparisonRunRecord[] {
+  const matchedRuns = comparisonRuns.filter((run) => {
+    if (fileType === "demand_forecast") {
+      return run.forecast_version_id === versionId
+    }
+
+    if (fileType === "personnel_schedule") {
+      return run.schedule_version_id === versionId
+    }
+
+    if (fileType === "status_log") {
+      return run.actual_import_version_id === versionId
+    }
+
+    return false
+  })
+
+  return matchedRuns.sort((current, next) => {
+    const comparisonTypeRank =
+      comparisonTypePriorityForFileType(fileType, current.comparison_type) -
+      comparisonTypePriorityForFileType(fileType, next.comparison_type)
+
+    if (comparisonTypeRank !== 0) {
+      return comparisonTypeRank
+    }
+
+    const statusRank = comparisonRunCompletionRank(next.status) - comparisonRunCompletionRank(current.status)
+
+    if (statusRank !== 0) {
+      return statusRank
+    }
+
+    return next.created_at.localeCompare(current.created_at)
+  })
+}
+
+function comparisonTypePriorityForFileType(
+  fileType: ImportFileType,
+  comparisonType: ImportComparisonRunRecord["comparison_type"]
+): number {
+  if (fileType === "personnel_schedule") {
+    return comparisonType === "schedule_vs_actual" ? 0 : 1
+  }
+
+  if (fileType === "status_log") {
+    return comparisonType === "schedule_vs_actual" ? 0 : 1
+  }
+
+  if (fileType === "demand_forecast") {
+    return comparisonType === "forecast_vs_schedule" ? 0 : 1
+  }
+
+  return 2
+}
+
+function comparisonRunCompletionRank(
+  status: ImportComparisonRunRecord["status"]
+): number {
+  return status === "completed" ? 1 : 0
 }
 
 export function summarizeImportReadinessIssueGroups(

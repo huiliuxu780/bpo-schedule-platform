@@ -118,6 +118,8 @@ export default async function ImportBatchDetailPage({
         <AppliedResultCard
           batch={selectedBatch}
           readiness={readinessResult.data}
+          comparisonRuns={comparisonResult.data ?? []}
+          reviewCases={reviewCaseResult.data ?? []}
           applyStatus={query?.apply}
         />
 
@@ -250,10 +252,14 @@ function ApplyFeedbackBanner({
 function AppliedResultCard({
   batch,
   readiness,
+  comparisonRuns,
+  reviewCases,
   applyStatus,
 }: {
   batch: ImportBatchListRow | null
   readiness: ImportApplyReadinessResponse | null
+  comparisonRuns: ImportComparisonRunRecord[]
+  reviewCases: ImportReviewCaseRecord[]
   applyStatus?: string
 }) {
   if (!batch) {
@@ -263,6 +269,8 @@ function AppliedResultCard({
   const result = summarizeImportAppliedResultCard({
     batch,
     readiness,
+    comparisonRuns,
+    reviewCases,
     applyStatus,
   })
 

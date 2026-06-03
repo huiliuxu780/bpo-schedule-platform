@@ -10,13 +10,15 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current story queue now contains `US705/IM085` as the only ready slice. It scopes the next step to direct version/result positioning from an already applied batch.
+Current story queue now contains `US706/IM086` as the only ready slice. It scopes the next step to a controlled local comparison trigger inside the positioned version-result context.
 
-`US706/IM086` remains defined in legacy planning files for the same downstream-result chain, but it must stay out of `docs/current/**` until `US705/IM085` is green and current state is advanced.
+No additional downstream-result slice is in `docs/current/**` after `US706/IM086`; any later batch/version workspace work must be reseeded explicitly after this task.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
 `US704/IM084` completed the applied-result visibility slice on the second-level batch detail page. The page now shows an applied result card with target/version-state metrics and next-step links, then current state advanced to `US705/IM085` only.
+
+`US705/IM085` completed the applied-version positioning slice on the second-level batch detail page. The page now resolves direct version-result context from an applied batch, upgrades supported result-card entries to corresponding comparison-run detail links, and adds a version-context section inside result trace; unsupported or incomplete version cases stay in explicit empty/blocked state. Current state then advanced to `US706/IM086` only.
 
 `US690/IM070` completed the read-only same-owner first pending entry on the review-case workspace, then current queue returned to empty.
 
@@ -121,4 +123,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 ## Current Recommendation
 
-Recommended next product step is to execute only `US705/IM085`, turn the applied result card into a stable entry toward version/result context, and keep `IM086` as the following controlled comparison-trigger slice until version positioning is stable.
+Recommended next product step is to execute only `US706/IM086`, add a controlled local comparison trigger inside the positioned version-result context, and keep broader version workbench or CRUD flows out of scope until that write path is stable.

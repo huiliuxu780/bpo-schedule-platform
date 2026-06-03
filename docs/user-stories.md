@@ -130,7 +130,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US704"
-status: "ready"
+status: "done"
 ```
 
 ### US706 - 版本结果页本地比对计算受控入口
@@ -152,7 +152,7 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US705"
-status: "draft"
+status: "ready"
 ```
 
 ### US700 - 字段映射模板上传预选链路

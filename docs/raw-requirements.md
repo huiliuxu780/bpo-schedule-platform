@@ -76,8 +76,8 @@ description: "批次应用成功后即使知道已经生成业务版本，主管
 source: "After R784 planning confirmation on 2026-06-03"
 submitted_at: "2026-06-03"
 version: "1.0"
-status: "confirmed"
-notes: "本需求优先复用现有对比结果、复核案例和批次详情页面，不默认引入新的后端接口、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
+status: "done"
+notes: "本轮已完成从已应用批次进入对应版本结果上下文的定位链路；支持的排班/预测/状态版本会匹配现有 comparison run 并提供直达入口，结果追踪区新增版本定位上下文，主数据或版本缺失场景保持明确空态/阻塞态；不新增后端接口、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子。"
 ```
 
 ### R786 - 版本结果页本地比对计算受控入口
