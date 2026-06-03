@@ -8,6 +8,7 @@ import {
   FileClock,
   Layers3,
   Lock,
+  ShieldCheck,
   Table2,
 } from "lucide-react"
 
@@ -108,7 +109,7 @@ export function DemandForecastProductionWorkbench({
             <p className="font-medium text-foreground">{summary.title}</p>
             <p>{summary.detail}</p>
             <p>
-              当前只读展示来源批次、预测业务版本、应用状态和对齐状态；版本详情待 IM103，变更追踪边界待 IM104。
+              当前只读展示来源批次、预测业务版本、应用状态和对齐状态；版本详情可查看，变更追踪安全壳位于单版本详情页。
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -212,7 +213,7 @@ export function DemandForecastProductionWorkbench({
         <BoundaryItem
           icon={<FileClock className="size-4 text-muted-foreground" />}
           title="后续顺序"
-          detail="IM103 再进入单版本详情和对齐结果；IM104 只展示变更追踪安全壳，不直接接真实写入。"
+          detail="单版本详情已经承接对齐结果和变更追踪安全壳；真实写入、影响校验提交和生产口径变更仍需单独确认。"
         />
       </section>
     </main>
@@ -308,6 +309,38 @@ export function DemandForecastProductionDetail({
           <DetailItem label="时段粒度" value={detail.timeBucketLabel} />
           <DetailItem label="预测明细边界" value={detail.forecastScopeLabel} />
           <DetailItem label="对齐结果" value={detail.alignmentResultLabel} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ShieldCheck className="size-4 text-muted-foreground" />
+            {detail.changeTracking.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <div className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
+            <DetailItem label="来源版本前置校验" value={detail.changeTracking.sourceVersionLabel} />
+            <DetailItem label="技能组/等级/时段校验" value={detail.changeTracking.alignmentCheckLabel} />
+            <DetailItem label="下游影响校验" value={detail.changeTracking.downstreamImpactLabel} />
+            <DetailItem label="失败边界" value={detail.changeTracking.failureBoundaryLabel} />
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {detail.changeTracking.actionShells.map((action) => (
+              <Card key={action.label} className="border-dashed">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">{action.label}</CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-3">
+                  <p className="text-sm text-muted-foreground">{action.detail}</p>
+                  <Button size="sm" variant="outline" disabled={action.isDisabled}>
+                    {action.disabledLabel}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </CardContent>
       </Card>
 

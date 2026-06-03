@@ -3654,3 +3654,29 @@
 - HTTP smoke：`http://127.0.0.1:3000/demand-plans/production/BATCH-MISSING-IM103` 命中 `预测版本详情`、`预测版本未定位`、`不伪造技能组/等级/时段行`、`暂未发现 0.5h 预测明细`、`变更追踪边界待 IM104` 和 `返回预测生产`。
 - in-app browser smoke：当前 URL 为 `/demand-plans/production/BATCH-MISSING-IM103`，命中详情页、阻塞态、0.5h 阻塞、不伪造预测明细和返回入口，且侧边栏 `预测生产` 处于 active 状态。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-04 - IM104 需求预测变更追踪边界安全壳
+
+#### 审计结论
+
+- `IM104/US724` 已在 `/demand-plans/production/[batchId]` 详情页新增变更追踪边界安全壳。
+- 安全壳展示来源版本前置校验、技能组/等级/0.5h 时段校验、下游影响校验和失败边界。
+- 动作按钮分别显示 `暂不写入`、`暂不提交`、`暂不变更`，均为禁用状态。
+- 本轮没有新增表单、server action、后端 API、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。
+- IM102-IM104 需求预测生产链路已闭合，当前队列回到空。
+
+#### 风险
+
+- 当前只是安全壳，不记录真实预测变更，不提交下游影响校验，不改变生产预测口径。
+- 下游影响校验为前端边界说明，真实写入和影响计算需要后续单独确认后再拆任务。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `changeTracking`。
+- `node scripts/tests/demand-forecast-production-model.test.mjs`：通过，8 个 demand-forecast production model 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
+- in-app browser smoke：`http://127.0.0.1:3000/demand-plans/production/BATCH-MISSING-IM103` 命中 `变更追踪边界安全壳`、`来源版本未定位`、`下游影响校验阻塞`、`写入动作进入前需要单独确认`，且禁用按钮为 `暂不写入`、`暂不提交`、`暂不变更`。
+- 本地 API 当前没有 demand_forecast 批次，已应用版本的安全壳路径由模型测试覆盖。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

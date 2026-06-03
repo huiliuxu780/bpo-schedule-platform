@@ -8149,7 +8149,7 @@ tasks:
   - id: IM104
     title: "需求预测变更追踪边界安全壳"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM103"]
     allowed_files:
@@ -8187,3 +8187,4 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已在 `/demand-plans/production/[batchId]` 预测版本详情页新增变更追踪边界安全壳，展示来源版本、技能组/等级/0.5h 时段、下游影响和失败边界校验；三个动作按钮保持禁用，不提交真实预测变更或生产状态变化。"

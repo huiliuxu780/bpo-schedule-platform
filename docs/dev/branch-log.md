@@ -2709,3 +2709,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM104 Demand Forecast Change Tracking Shell
+
+- branch_name: `codex/im104-demand-forecast-change-boundary`
+- base_main_commit: `2328295`
+- remote_status: `main includes merged IM103 demand-forecast version-detail baseline; IM104 implementation is local only until final merge/push.`
+- scope: add a non-writing change-tracking boundary safety shell to `/demand-plans/production/[batchId]`; show source-version precheck, skill-group/level/0.5h alignment precheck, downstream-impact precheck, failure boundary, and disabled action cards for recording forecast changes, checking downstream impact, and updating production scope.
+- allowed_files_check: `app/demand-plans/production/**`, `components/demand-forecast-production-workbench.tsx`, `components/demand-forecast-production-model.ts`, `scripts/tests/demand-forecast-production-model.test.mjs`, `docs/current/**`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected implementation and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test first failed because `changeTracking` was missing, then passed with 8 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; in-app browser smoke on `http://127.0.0.1:3000/demand-plans/production/BATCH-MISSING-IM103` matched `变更追踪边界安全壳`, source-version blocked state, downstream-impact blocked state, failure-boundary copy, and disabled `暂不写入`/`暂不提交`/`暂不变更` buttons. Final `bash scripts/check-state.sh --strict`, `git diff --check --cached`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

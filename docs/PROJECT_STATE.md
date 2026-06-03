@@ -500,3 +500,9 @@ The slice intentionally does not adjust forecasts, write change records, trigger
 `IM103/US723` added `/demand-plans/production/[batchId]` as the read-only demand-forecast version detail page reached from the production workbench. The detail page resolves the selected source batch from the existing import-batch list, then shows source batch/version, business date range, application state, successful source rows, skill-group and level alignment boundary, 0.5h time-bucket state, forecast-detail no-fabrication notice, alignment result, and blocker summary.
 
 The page does not fabricate skill groups, levels, interval rows, or forecast detail rows because the current list API only exposes batch, version, and applied-record counts. No backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work was added. Current state advanced to `US724/IM104`, which requires PM confirmation before any change-tracking boundary shell implementation.
+
+## 2026-06-04 IM104 Demand Forecast Change Tracking Shell
+
+`IM104/US724` added the change-tracking boundary safety shell to the demand-forecast version detail page. The detail now shows four precheck areas before any forecast change could be considered: source version, skill-group/level/0.5h time-bucket alignment, downstream impact, and failure boundary.
+
+The shell is intentionally non-writing. It shows disabled action cards for recording forecast changes, checking downstream impact, and updating production scope. No form, server action, backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work was added. After the IM102-IM104 demand-forecast production chain, current queue returned to empty.

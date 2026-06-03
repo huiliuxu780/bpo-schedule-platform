@@ -43,6 +43,23 @@ export type DemandForecastProductionDetailSummary = {
   alignmentResultLabel: string
   blockerSummary: string
   changeBoundaryLabel: string
+  changeTracking: DemandForecastChangeTrackingSummary
+}
+
+export type DemandForecastChangeTrackingActionShell = {
+  label: string
+  disabledLabel: string
+  detail: string
+  isDisabled: true
+}
+
+export type DemandForecastChangeTrackingSummary = {
+  title: string
+  sourceVersionLabel: string
+  alignmentCheckLabel: string
+  downstreamImpactLabel: string
+  failureBoundaryLabel: string
+  actionShells: DemandForecastChangeTrackingActionShell[]
 }
 
 export type DemandForecastProductionSummary = {
@@ -144,6 +161,12 @@ export function summarizeDemandForecastProductionDetail(
       alignmentResultLabel: "暂未发现技能组/等级/时段对齐结果",
       blockerSummary: "请返回预测生产工作台选择来源批次",
       changeBoundaryLabel: "变更追踪边界待 IM104",
+      changeTracking: buildDemandForecastChangeTrackingSummary({
+        versionLabel: null,
+        hasLocatedBatch: false,
+        isAligned: false,
+        blockerSummary: "请返回预测生产工作台选择来源批次",
+      }),
     }
   }
 
@@ -180,7 +203,100 @@ export function summarizeDemandForecastProductionDetail(
     alignmentResultLabel,
     blockerSummary: row.blockerSummary,
     changeBoundaryLabel: "变更追踪边界待 IM104",
+    changeTracking: buildDemandForecastChangeTrackingSummary({
+      versionLabel: batch.import_version_id,
+      hasLocatedBatch: true,
+      isAligned: row.tone === "ready",
+      blockerSummary: row.blockerSummary,
+    }),
   }
+}
+
+function buildDemandForecastChangeTrackingSummary({
+  versionLabel,
+  hasLocatedBatch,
+  isAligned,
+  blockerSummary,
+}: {
+  versionLabel: string | null
+  hasLocatedBatch: boolean
+  isAligned: boolean
+  blockerSummary: string
+}): DemandForecastChangeTrackingSummary {
+  return {
+    title: "变更追踪边界安全壳",
+    sourceVersionLabel: resolveChangeTrackingSourceVersionLabel(
+      versionLabel,
+      hasLocatedBatch
+    ),
+    alignmentCheckLabel: resolveChangeTrackingAlignmentLabel(
+      hasLocatedBatch,
+      isAligned
+    ),
+    downstreamImpactLabel: resolveChangeTrackingImpactLabel(
+      hasLocatedBatch,
+      isAligned
+    ),
+    failureBoundaryLabel:
+      "写入动作进入前需要单独确认后端、schema、migration 和生产状态边界",
+    actionShells: [
+      {
+        label: "记录预测变更",
+        disabledLabel: "暂不写入",
+        detail: "仅展示入口位置；不新增变更记录、不提交真实预测调整。",
+        isDisabled: true,
+      },
+      {
+        label: "校验下游影响",
+        disabledLabel: "暂不提交",
+        detail: "仅展示排班、比对、复核影响校验边界；不触发后端计算或批量操作。",
+        isDisabled: true,
+      },
+      {
+        label: "更新生产口径",
+        disabledLabel: "暂不变更",
+        detail: `当前阻塞/边界：${blockerSummary}`,
+        isDisabled: true,
+      },
+    ],
+  }
+}
+
+function resolveChangeTrackingSourceVersionLabel(
+  versionLabel: string | null,
+  hasLocatedBatch: boolean
+) {
+  if (!hasLocatedBatch || !versionLabel) {
+    return "来源版本未定位"
+  }
+
+  return `来源版本 ${versionLabel} 已定位`
+}
+
+function resolveChangeTrackingAlignmentLabel(
+  hasLocatedBatch: boolean,
+  isAligned: boolean
+) {
+  if (!hasLocatedBatch) {
+    return "阻塞：未定位来源批次，无法校验技能组/等级/0.5h 时段"
+  }
+
+  return isAligned
+    ? "技能组/等级/0.5h 时段已具备只读对齐口径"
+    : "阻塞：暂未发现技能组/等级/0.5h 时段预测明细"
+}
+
+function resolveChangeTrackingImpactLabel(
+  hasLocatedBatch: boolean,
+  isAligned: boolean
+) {
+  if (!hasLocatedBatch) {
+    return "下游影响校验阻塞：未定位预测版本，不能进入变更追踪"
+  }
+
+  return isAligned
+    ? "下游影响需先回看排班、比对和复核结果，本页不写预测变更"
+    : "下游影响校验阻塞：预测明细未形成，不能进入变更追踪"
 }
 
 function resolveAlignmentLabel(

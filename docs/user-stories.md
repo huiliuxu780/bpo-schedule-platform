@@ -4357,5 +4357,6 @@ acceptance:
   - "`bash scripts/check-state.sh --strict`、前端模型测试、shadcn gate、页面 smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
 dependencies:
   - "US723"
-status: "ready"
+status: "done"
+notes: "IM104 已完成：`/demand-plans/production/[batchId]` 展示变更追踪边界安全壳，先呈现来源版本、技能组/等级/0.5h 时段、下游影响和失败边界校验，动作按钮全部禁用。"
 ```

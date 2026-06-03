@@ -120,6 +120,40 @@ test("demand forecast production detail resolves a forecast version by source ba
   assert.equal(detail.changeBoundaryLabel, "变更追踪边界待 IM104");
 });
 
+test("demand forecast production detail exposes a non-writing change tracking shell", () => {
+  const detail = summarizeDemandForecastProductionDetail([baseBatch], "BATCH-FC-001");
+
+  assert.equal(detail.changeTracking.title, "变更追踪边界安全壳");
+  assert.equal(detail.changeTracking.sourceVersionLabel, "来源版本 BATCH-FC-001::v1 已定位");
+  assert.equal(detail.changeTracking.alignmentCheckLabel, "技能组/等级/0.5h 时段已具备只读对齐口径");
+  assert.equal(detail.changeTracking.downstreamImpactLabel, "下游影响需先回看排班、比对和复核结果，本页不写预测变更");
+  assert.equal(detail.changeTracking.failureBoundaryLabel, "写入动作进入前需要单独确认后端、schema、migration 和生产状态边界");
+  assert.deepEqual(
+    detail.changeTracking.actionShells.map((action) => ({
+      label: action.label,
+      disabledLabel: action.disabledLabel,
+      isDisabled: action.isDisabled,
+    })),
+    [
+      {
+        label: "记录预测变更",
+        disabledLabel: "暂不写入",
+        isDisabled: true,
+      },
+      {
+        label: "校验下游影响",
+        disabledLabel: "暂不提交",
+        isDisabled: true,
+      },
+      {
+        label: "更新生产口径",
+        disabledLabel: "暂不变更",
+        isDisabled: true,
+      },
+    ]
+  );
+});
+
 test("demand forecast production detail blocks missing forecast rows without fabricated details", () => {
   const detail = summarizeDemandForecastProductionDetail(
     [
@@ -136,6 +170,9 @@ test("demand forecast production detail blocks missing forecast rows without fab
   assert.equal(detail.forecastScopeLabel, "当前列表 API 未暴露预测明细，不伪造技能组/等级/时段行");
   assert.equal(detail.alignmentResultLabel, "暂未发现技能组/等级/时段对齐结果");
   assert.equal(detail.blockerSummary, "已应用但暂未发现预测明细");
+  assert.equal(detail.changeTracking.sourceVersionLabel, "来源版本 BATCH-FC-001::v1 已定位");
+  assert.equal(detail.changeTracking.alignmentCheckLabel, "阻塞：暂未发现技能组/等级/0.5h 时段预测明细");
+  assert.equal(detail.changeTracking.downstreamImpactLabel, "下游影响校验阻塞：预测明细未形成，不能进入变更追踪");
 });
 
 test("demand forecast production detail shows a blocked state for unknown batch", () => {
@@ -146,4 +183,7 @@ test("demand forecast production detail shows a blocked state for unknown batch"
   assert.equal(detail.batchId, "BATCH-MISSING");
   assert.equal(detail.versionLabel, "未找到对应需求预测批次");
   assert.equal(detail.blockerSummary, "请返回预测生产工作台选择来源批次");
+  assert.equal(detail.changeTracking.sourceVersionLabel, "来源版本未定位");
+  assert.equal(detail.changeTracking.alignmentCheckLabel, "阻塞：未定位来源批次，无法校验技能组/等级/0.5h 时段");
+  assert.equal(detail.changeTracking.downstreamImpactLabel, "下游影响校验阻塞：未定位预测版本，不能进入变更追踪");
 });
