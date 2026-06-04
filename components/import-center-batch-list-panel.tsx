@@ -54,11 +54,11 @@ export function ImportCenterBatchListPanel({
           <CardTitle className="text-base">接入批次工作台</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
             {batchError ??
-              `来自 /api/v1/import-batches · ${filteredBatches.length}/${batches.length} 批匹配`}
+              `${filteredBatches.length}/${batches.length} 批匹配`}
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
-          {batchError ? <Badge variant="destructive">服务异常</Badge> : null}
+          {batchError ? <Badge variant="destructive">读取失败</Badge> : null}
           <Button asChild size="sm">
             <Link href={buildImportUploadWorkspaceHref()}>
               <Upload data-icon="inline-start" />

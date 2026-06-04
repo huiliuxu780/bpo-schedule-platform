@@ -76,8 +76,8 @@ test("master data maintenance workbench uses the latest applied master data vers
   assert.equal(summary.blockedObjects, 0);
   assert.equal(summary.sourceVersionLabel, "BATCH-MD-001::v1");
   assert.equal(summary.latestBatchLabel, "BATCH-MD-001");
-  assert.equal(summary.rows[0].statusLabel, "只读可查看");
-  assert.equal(summary.rows[0].nextActionLabel, "查看详情与受控动作");
+  assert.equal(summary.rows[0].statusLabel, "可查看");
+  assert.equal(summary.rows[0].nextActionLabel, "查看详情与维护动作");
   assert.equal(summary.rows[0].sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
   assert.equal(summary.rows[0].sourceVersionHref, "/data-quality/versions?domain=master_data");
   assert.equal(summary.rows[0].detailHref, "/master-data/agents");
@@ -103,7 +103,7 @@ test("master data maintenance workbench blocks freshness when the newest master 
   assert.equal(summary.latestBatchLabel, "BATCH-MD-002");
   assert.match(summary.detail, /最新主数据批次尚未应用/);
   assert.equal(summary.rows[0].statusLabel, "待同步");
-  assert.equal(summary.rows[0].blockerSummary, "最新主数据批次尚未应用，当前仍按上一已应用版本只读展示");
+  assert.equal(summary.rows[0].blockerSummary, "最新主数据批次尚未应用，当前仍按上一已应用版本展示");
 });
 
 test("master data maintenance resolves known entity keys", () => {
@@ -118,9 +118,8 @@ test("master data entity detail exposes source context and empty reference impac
   assert.deepEqual(detail.workspaceTabs, [
     { key: "overview", label: "总览" },
     { key: "source", label: "来源与引用" },
-    { key: "actions", label: "受控动作" },
+    { key: "actions", label: "维护动作" },
     { key: "submit", label: "提交表单" },
-    { key: "boundary", label: "维护边界" },
   ]);
   assert.equal(detail.sourceVersionLabel, "BATCH-MD-001::v1");
   assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
@@ -131,7 +130,7 @@ test("master data entity detail exposes source context and empty reference impac
     detail.referenceImpacts.map((impact) => impact.label),
     ["排班引用", "预测引用", "登录/状态引用", "比对与复核引用"],
   );
-  assert.equal(detail.referenceImpacts[0].countLabel, "不伪造数量");
+  assert.equal(detail.referenceImpacts[0].countLabel, "暂无明细");
   assert.equal(detail.referenceImpacts[0].tone, "empty");
   assert.deepEqual(
     detail.maintenanceActions.map((action) => action.label),
@@ -139,8 +138,8 @@ test("master data entity detail exposes source context and empty reference impac
   );
   assert.equal(detail.maintenanceActions[0].canSubmit, true);
   assert.equal(detail.maintenanceActions[0].submitLabel, "提交新增");
-  assert.match(detail.maintenanceActions[0].referenceCheckLabel, /引用影响校验/);
-  assert.match(detail.maintenanceActions[0].failureBoundary, /主数据单对象 API/);
+  assert.match(detail.maintenanceActions[0].referenceCheckLabel, /对象字段/);
+  assert.match(detail.maintenanceActions[0].failureBoundary, /对象不存在/);
 });
 
 test("agent detail enables controlled submit actions only for agents", () => {
@@ -155,14 +154,14 @@ test("agent detail enables controlled submit actions only for agents", () => {
   assert.equal(agentDetail.agentSubmitSourceBatchId, "BATCH-MD-001");
   assert.deepEqual(
     agentDetail.workspaceTabs.map((tab) => tab.label),
-    ["总览", "来源与引用", "受控动作", "提交表单", "技能维护", "维护边界"],
+    ["总览", "来源与引用", "维护动作", "提交表单", "技能维护"],
   );
   assert.equal(skillDetail.maintenanceActions[0].canSubmit, true);
   assert.equal(skillDetail.maintenanceActions[0].submitLabel, "提交新增");
   assert.equal(skillDetail.referenceSubmitSourceBatchId, "BATCH-MD-001");
   assert.deepEqual(
     skillDetail.workspaceTabs.map((tab) => tab.label),
-    ["总览", "来源与引用", "受控动作", "提交表单", "维护边界"],
+    ["总览", "来源与引用", "维护动作", "提交表单"],
   );
 });
 
@@ -507,10 +506,10 @@ test("master data entity detail keeps a blocked source state when no applied ver
   assert.equal(detail.tone, "blocked");
   assert.equal(detail.sourceVersionLabel, "暂无主数据业务版本");
   assert.match(detail.detail, /尚未应用/);
-  assert.equal(detail.referenceImpacts[0].detail, "来源版本未就绪，暂不展示引用影响。");
+  assert.equal(detail.referenceImpacts[0].detail, "来源版本未就绪，未展示引用影响。");
   assert.equal(detail.maintenanceActions[0].statusLabel, "来源阻塞");
   assert.equal(detail.maintenanceActions[0].canSubmit, true);
   assert.equal(detail.agentSubmitSourceBatchId, "BATCH-MD-001");
-  assert.equal(detail.maintenanceActions[0].referenceCheckLabel, "来源版本未就绪，禁止进入写入。");
+  assert.equal(detail.maintenanceActions[0].referenceCheckLabel, "来源版本未就绪，请先处理来源批次。");
   assert.equal(detail.maintenanceActions[0].failureBoundary, "先应用主数据来源批次，再重新检查引用影响。");
 });

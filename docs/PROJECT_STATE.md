@@ -25,7 +25,7 @@ The project contains:
 - A personnel-schedule import application slice that reads persisted `personnel_schedule` CSV success rows and writes schedule versions, shift types, schedule details, and 0.5h intervals into the DB004 personnel schedule repositories.
 - A demand-forecast import application slice that reads persisted `demand_forecast` CSV success rows and writes forecast versions, 0.5h forecast intervals, and optional change records into the DB005 forecast repositories.
 - A login/status-log import application slice that reads persisted `login_log` and `status_log` CSV success rows and writes login/logout events, status dictionary entries, and status intervals into the DB006 actual log repositories.
-- A local comparison calculation slice that writes forecast-vs-schedule and schedule-vs-actual results into the DB007 comparison repositories.
+- A comparison calculation slice that writes forecast-vs-schedule and schedule-vs-actual results into the DB007 comparison repositories.
 - A review closure write API slice that writes review cases, evidence, conclusions, and closure records into the DB008 review repositories.
 - A persisted result query API slice that reads DB007 comparison run details and DB008 review case details without adding schema or migration changes.
 - A persisted result list query API slice that adds read-only filters over DB007 comparison runs and DB008 review cases without adding schema or migration changes.
@@ -85,7 +85,7 @@ Current allowed database scope:
 - IM003 personnel-schedule import application vertical: persisted `personnel_schedule` success rows are applied to DB004 personnel schedule repositories, including 0.5h expansion and master-data binding validation.
 - IM004 demand-forecast import application vertical: persisted `demand_forecast` success rows are applied to DB005 forecast repositories, including 30-minute interval validation, master-data reference validation, and optional change records.
 - IM005 login/status-log import application vertical: persisted `login_log` and `status_log` success rows are applied to DB006 actual log repositories.
-- IM006 local comparison calculation trigger: forecast-vs-schedule and schedule-vs-actual comparison runs are calculated and written to DB007 repositories.
+- IM006 comparison calculation trigger: forecast-vs-schedule and schedule-vs-actual comparison runs are calculated and written to DB007 repositories.
 - IM007 review closure write API: review cases, evidence, conclusions, and closures are written to DB008 repositories.
 - IM008 persisted result query API: DB007 comparison runs and DB008 review cases may be read through local FastAPI routes.
 - IM009 persisted result list query API: DB007 comparison runs and DB008 review cases may be listed with basic read-only filters.
@@ -168,7 +168,7 @@ Current invariants:
 - `IM003/US623` added personnel-schedule import application from persisted CSV success rows into DB004 repositories without new dependencies, schema/migration changes, schedule-maintenance UI, publish/freeze workflows, external integrations, auth/permissions, approval, export, batch rescheduling, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 - `IM004/US624` added demand-forecast import application from persisted CSV success rows into DB005 repositories without new dependencies, schema/migration changes, forecast algorithms, forecast UI, external integrations, auth/permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 - `IM005/US625` added login/status log import application from persisted CSV success rows into DB006 repositories without new dependencies, schema/migration changes, real CORN/HR/WFM integrations, status-code production rules, auth/permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
-- `IM006/US626` added a local comparison calculation trigger into DB007 without new dependencies, schema/migration changes, real CORN/HR/WFM integrations, production status-code/formula finalization, auth/permissions, approval, export, batch operations, automatic scheduling, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
+- `IM006/US626` added a comparison calculation trigger into DB007 without new dependencies, schema/migration changes, real CORN/HR/WFM integrations, production status-code/formula finalization, auth/permissions, approval, export, batch operations, automatic scheduling, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 - `IM007/US627` added a local review closure write API into DB008 without new dependencies, schema/migration changes, real external evidence services, auth/permissions, approval workflow, export, batch operations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 - `IM008/US628` added persisted result query APIs over existing DB007/DB008 repositories without new dependencies, schema/migration changes, template persistence, frontend, external integrations, auth/permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
 - `IM009/US629` added persisted result list query APIs over existing DB007/DB008 repositories without new dependencies, schema/migration changes, pagination, frontend, external integrations, auth/permissions, approval, export, batch operations, production formulas, settlement rules, or charge factors; it then returned current queue and active tasks to empty.
@@ -299,7 +299,7 @@ The approved sequence is:
 
 1. `US704/IM084`: show the generated business-version result card and next-step entry after a successful batch apply.
 2. `US705/IM085`: let an applied batch enter the corresponding version/result context directly.
-3. `US706/IM086`: add a controlled local comparison-calculate entry inside that version-result context.
+3. `US706/IM086`: add a controlled comparison-calculate entry inside that version-result context.
 
 To keep Story Runner state narrow, only `US704/IM084` was moved into `docs/current/**` as `ready`. `US705/IM085` and `US706/IM086` were added to the legacy planning layer and registry only, and must not enter current state until the prior slice is green.
 
@@ -321,7 +321,7 @@ After `IM085` went green, current state advanced to `US706/IM086` as the only re
 
 ## 2026-06-03 IM086 Controlled Local Comparison Trigger
 
-`US706/IM086` completed the third slice of the downstream-result chain. The second-level batch detail page now adds a controlled local comparison-calculate entry inside the positioned version-result context: when an applied version can clearly reuse a comparison type and its paired source versions from the existing positioned run context, the result-trace section shows `发起一次本地比对`; when the file type is unsupported, the import version is missing, or the paired versions are incomplete, the page stays blocked and does not render a write button. After submit, the page returns success or failure feedback into the same version-result context and links either to the newly created comparison-run detail or back to the current result list.
+`US706/IM086` completed the third slice of the downstream-result chain. The second-level batch detail page now adds a controlled comparison-calculate entry inside the positioned version-result context: when an applied version can clearly reuse a comparison type and its paired source versions from the existing positioned run context, the result-trace section shows `发起一次比对`; when the file type is unsupported, the import version is missing, or the paired versions are incomplete, the page stays blocked and does not render a write button. After submit, the page returns success or failure feedback into the same version-result context and links either to the newly created comparison-run detail or back to the current result list.
 
 The implementation stayed frontend-only. It reused the existing comparison calculate API, result-trace positioning helpers, and batch-detail query context without adding backend routes, schema/migration changes, dependencies, approval, export, batch operation, permission, real external integration, production formula, settlement rule, or charge factor changes.
 
@@ -367,7 +367,7 @@ After `IM089` went green, current queue returned to empty. The next phase must b
 
 After the version-workbench chain completed, PM confirmed that the next slice should not invent a new page and should keep the main callback entry inside the existing batch `结果追踪` context. The approved structure is:
 
-1. `US710/IM090`: show a latest-run callback card inside batch result trace immediately after local comparison success.
+1. `US710/IM090`: show a latest-run callback card inside batch result trace immediately after comparison success.
 2. `US711/IM091`: reinforce `comparison run detail` as the full result-review page for the current version context.
 3. `US712/IM092`: add stable return links from `comparison run detail` back to source batch result trace and version workbench.
 
@@ -375,7 +375,7 @@ To keep Story Runner state narrow, only `US710/IM090` entered `docs/current/**` 
 
 ## 2026-06-03 IM090 Latest Comparison Run Callback Card
 
-`US710/IM090` completed the first slice of the comparison-result callback chain inside the existing batch result-trace context. After local comparison success redirects back to `/data-quality/[batchId]?tab=result-trace`, the page now keeps the existing success notice and adds a dedicated latest-run callback card under the same version-result context.
+`US710/IM090` completed the first slice of the comparison-result callback chain inside the existing batch result-trace context. After comparison success redirects back to `/data-quality/[batchId]?tab=result-trace`, the page now keeps the existing success notice and adds a dedicated latest-run callback card under the same version-result context.
 
 When the new run already appears in the current comparison-run list, the card surfaces the run ID, comparison type, result count, key metric, and direct entries to the new run detail or current result list. When the success redirect arrives before the current page can see that run in the list, the card stays explicit about that lag and exposes a blocked-but-actionable fallback instead of pretending the result is already present. The implementation stayed frontend-only, reused existing search params and comparison-run list data, and introduced no backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
 
@@ -402,22 +402,22 @@ After `IM092` went green, the `US710-US712 / IM090-IM092` callback chain returne
 After the comparison-result callback chain completed, the next calculation-trigger chain was split to stay inside existing `/data-quality/versions`, batch result-trace, and comparison-run detail routes:
 
 1. `US713/IM093`: show local-comparison candidate entries on the business version workbench.
-2. `US714/IM094`: add a controlled single-version local comparison submit entry on the version workbench.
+2. `US714/IM094`: add a controlled single-version comparison submit entry on the version workbench.
 3. `US715/IM095`: show result-review feedback after a version-workbench comparison submit.
 
 To keep Story Runner state narrow, only `US713/IM093` entered `docs/current/**` as ready. `US714/IM094` and `US715/IM095` stay outside current state until the prior slice is green. This chain stays frontend-only and must not add backend routes, schema/migration changes, dependencies, approval, export, batch operations, permission, real external integrations, automatic scheduling, production formulas, settlement rules, or charge factors.
 
 ## 2026-06-03 IM093 Version Workbench Local Comparison Candidates
 
-`US713/IM093` completed the first slice of the version-workbench calculation-trigger chain. `/data-quality/versions` now exposes a read-only `本地比对` column for each business-domain row. Applied versions with a defensible same-business-date source pair can point back into the existing batch `结果追踪` trigger context, while unsupported domains, unapplied rows, missing import-version IDs, and incomplete source-version combinations show an explicit blocked state with no submit button.
+`US713/IM093` completed the first slice of the version-workbench calculation-trigger chain. `/data-quality/versions` now exposes a read-only `比对` column for each business-domain row. Applied versions with a defensible same-business-date source pair can point back into the existing batch `结果追踪` trigger context, while unsupported domains, unapplied rows, missing import-version IDs, and incomplete source-version combinations show an explicit blocked state with no submit button.
 
 The model layer now summarizes comparison candidate tone, comparison type, source version pair, business date range, action label, and target href. The page renders that summary without introducing a new backend API, route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
 
-After `IM093` completion, current state advanced to `US714/IM094` for the controlled single-version local comparison submit entry. `US715/IM095` remains outside current state until `IM094` is green.
+After `IM093` completion, current state advanced to `US714/IM094` for the controlled single-version comparison submit entry. `US715/IM095` remains outside current state until `IM094` is green.
 
 ## 2026-06-03 IM094 Version Workbench Single Comparison Submit
 
-`US714/IM094` completed the controlled single-version local comparison submit slice on `/data-quality/versions`. The workbench now upgrades complete local-comparison candidates from read-only entries into a server-action form that submits one local comparison run through the existing `comparison-runs/calculate` API. The candidate model carries the comparison type, source version pair, business date range, source batch, and request payload so unsupported domains, unapplied rows, missing import versions, or incomplete source-version combinations still show blocked state without a submit button.
+`US714/IM094` completed the controlled single-version comparison submit slice on `/data-quality/versions`. The workbench now upgrades complete local-comparison candidates from read-only entries into a server-action form that submits one comparison run through the existing `comparison-runs/calculate` API. The candidate model carries the comparison type, source version pair, business date range, source batch, and request payload so unsupported domains, unapplied rows, missing import versions, or incomplete source-version combinations still show blocked state without a submit button.
 
 The submit action returns to the same version workbench with success or failure feedback, preserves active filters, and describes duplicate/existing-run behavior as `generated or reused` instead of implying multiple new runs. The implementation stayed frontend-only and introduced no backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor.
 
@@ -425,7 +425,7 @@ After `IM094` completion, current state advanced to `US715/IM095` for richer res
 
 ## 2026-06-03 IM095 Version Workbench Result Review Feedback
 
-`US715/IM095` completed the result-review feedback slice on `/data-quality/versions`. After a version-workbench local comparison submit succeeds or reuses an existing run, the workbench now looks for the returned run in the current comparison-run list. When the run is visible, the feedback card shows the run ID, comparison type, status, result count, key metric, business date, and a direct entry to the comparison-run detail page. When the run is not yet visible, the card stays in an explicit blocked state with `待回显` metrics and keeps the detail entry without fabricating result size or key difference.
+`US715/IM095` completed the result-review feedback slice on `/data-quality/versions`. After a version-workbench comparison submit succeeds or reuses an existing run, the workbench now looks for the returned run in the current comparison-run list. When the run is visible, the feedback card shows the run ID, comparison type, status, result count, key metric, business date, and a direct entry to the comparison-run detail page. When the run is not yet visible, the card stays in an explicit blocked state with `待回显` metrics and keeps the detail entry without fabricating result size or key difference.
 
 The implementation stayed frontend-only and reused existing comparison-run list data and comparison-run detail routes. No backend route, schema/migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement rule, or charge factor was added.
 
@@ -451,13 +451,13 @@ The workbench explicitly keeps write actions closed: no create/edit/freeze/effec
 
 `IM097/US717` added `/master-data/[entityKey]` detail pages for agents, sites, vendors, projects, skills, and bindings. The workbench now links each row into its detail view; unknown entity keys return 404.
 
-The detail view stays read-only: it shows source batch/version context, entity-level effective-period and freeze-status empty states, and reference-impact summaries for schedule, forecast, login/status logs, and comparison/review chains. Missing reference detail remains explicit as `不伪造数量`. Current queue returned to empty because `IM098` would introduce controlled write actions and requires separate PM confirmation.
+The detail view stays read-only: it shows source batch/version context, entity-level effective-period and freeze-status empty states, and reference-impact summaries for schedule, forecast, login/status logs, and comparison/review chains. Missing reference detail remains explicit as `暂无明细`. Current queue returned to empty because `IM098` would introduce write actions and requires separate PM confirmation.
 
 ## 2026-06-03 IM098 Master Data Controlled Action Shell
 
 `IM098/US718` added a controlled maintenance-action shell to `/master-data/[entityKey]`. Each entity detail now shows four action categories: create, edit, freeze, and effective-period adjustment.
 
-The shell is intentionally non-writing. Each action shows single-entity scope, reference-check requirements, failure boundaries, and a disabled `暂不提交` button. No backend write API, schema/migration, dependency, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement rule, or charge-factor work was added. Current queue returned to empty after the master-data read-only/action-boundary chain.
+The shell is intentionally non-writing. Each action shows single-entity scope, reference-check requirements, failure boundaries, and a disabled `不提交` button. No backend write API, schema/migration, dependency, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement rule, or charge-factor work was added. Current queue returned to empty after the master-data read-only/action-boundary chain.
 
 ## 2026-06-03 IM099-IM101 Personnel Schedule Production Planning
 
@@ -540,14 +540,14 @@ All actions are disabled safety shells: dictionary maintenance, exception-rule s
 After the login/status-log production chain, the next approved block is master-data maintenance CRUD. The sequence intentionally starts from the smallest write surface:
 
 1. `US728/IM108`: backend-only single-agent maintenance API for create, edit, freeze, and effective-period changes.
-2. `US729/IM109`: connect `/master-data/agents` to the new controlled submit API and feedback.
+2. `US729/IM109`: connect `/master-data/agents` to the new submit API and feedback.
 3. `US730/IM110`: extend the stable maintenance pattern to workplaces, suppliers, projects, skills, and bindings.
 
 `US728/IM108` is complete. It added a backend-only single-agent maintenance API for create, edit, freeze, and effective-period changes, reusing the existing `master_data_employees` table and repository without schema/migration changes.
 
-`US729/IM109` is complete. `/master-data/agents` now exposes four controlled submit forms for agent create, edit, freeze, and effective-period changes. Submission is handled by a Next server action that calls the IM108 single-agent API, then redirects back to the detail page with success or backend error feedback. Non-agent master-data entities remain read-only safety shells.
+`US729/IM109` is complete. `/master-data/agents` now exposes four submit forms for agent create, edit, freeze, and effective-period changes. Submission is handled by a Next server action that calls the IM108 single-agent API, then redirects back to the detail page with success or backend error feedback. Non-agent master-data entities remain read-only safety shells.
 
-`US730/IM110` is complete. Backend maintenance APIs now cover workplaces, suppliers, projects, skills, and binding relationships in addition to agents. Frontend detail pages for `/master-data/sites`, `/master-data/vendors`, `/master-data/projects`, `/master-data/skills`, and `/master-data/bindings` now expose controlled submit forms and reuse the same success/error feedback pattern. Binding maintenance validates employee, supplier, workplace, project, and skill references; freeze remains disabled for bindings because there is no binding status field.
+`US730/IM110` is complete. Backend maintenance APIs now cover workplaces, suppliers, projects, skills, and binding relationships in addition to agents. Frontend detail pages for `/master-data/sites`, `/master-data/vendors`, `/master-data/projects`, `/master-data/skills`, and `/master-data/bindings` now expose submit forms and reuse the same success/error feedback pattern. Binding maintenance validates employee, supplier, workplace, project, and skill references; freeze remains disabled for bindings because there is no binding status field.
 
 Current queue returned to empty after IM110. The chain still avoids permissions, approval, export, batch operations, real external integrations, automatic scheduling, production formulas, settlement rules, and charge factors.
 
@@ -617,37 +617,37 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 
 ## 2026-06-04 IM121 Comparison Run Detail Workspace Tabs
 
-After IM120, the comparison-run detail page had enough result-review context, but the page was still organized as one long stack of cards. `US741/IM121` is complete. The detail page now uses a tabbed workspace for `总览`, `来源链路`, `结果明细`, `复核案例`, and `处理边界`; the default view keeps the user on overview metrics and result-review context, while source links, result rows, review cases, and no-write boundaries move behind explicit entries.
+After IM120, the comparison-run detail page had enough result-review context, but the page was still organized as one long stack of cards. `US741/IM121` is complete. The detail page now uses a tabbed workspace for `总览`, `来源链路`, `结果明细`, `复核案例`, and `处理说明`; the default view keeps the user on overview metrics and result-review context, while source links, result rows, review cases, and no-write boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new comparison APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM121.
 
 ## 2026-06-04 IM122 Review Case Detail Workspace Tabs
 
-After IM121 fixed the comparison-run detail page, the review-case detail page still stacked source context, evidence, conclusions, action forms, processing timeline, same-owner navigation, and boundaries in one long page. `US742/IM122` is complete. The review-case detail page now uses a tabbed workspace for `总览`, `来源链路`, `证据结论`, `处理动作`, `Owner 导航`, and `处理边界`; the default view keeps only key metrics and evidence gap context visible, while detailed source, evidence/conclusion records, controlled actions, owner navigation, and boundaries move behind explicit entries.
+After IM121 fixed the comparison-run detail page, the review-case detail page still stacked source context, evidence, conclusions, action forms, processing timeline, same-owner navigation, and boundaries in one long page. `US742/IM122` is complete. The review-case detail page now uses a tabbed workspace for `总览`, `来源链路`, `证据结论`, `处理动作`, `Owner 导航`, and `处理说明`; the default view keeps only key metrics and evidence gap context visible, while detailed source, evidence/conclusion records, controlled actions, owner navigation, and boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new review APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM122.
 
 ## 2026-06-04 IM123 Actual Log Detail Workspace Tabs
 
-After IM122, the actual-log processing detail page still stacked overview metrics, source context, timezone checks, business-day ownership, cross-day split explanation, status dictionary and exception shells, row-level explanations, and disabled boundary actions in one long page. `US743/IM123` is complete. `/actual-logs/production/[batchId]` now uses a tabbed workspace for `总览`, `时区与业务日`, `字典与异常`, `逐行明细`, and `处理边界`; the default view keeps only metrics and source overview visible, while time boundaries, dictionary/exception explanations, rows, and no-write boundaries move behind explicit entries.
+After IM122, the actual-log processing detail page still stacked overview metrics, source context, timezone checks, business-day ownership, cross-day split explanation, status dictionary and exception shells, row-level explanations, and disabled boundary actions in one long page. `US743/IM123` is complete. `/actual-logs/production/[batchId]` now uses a tabbed workspace for `总览`, `时区与业务日`, `字典与异常`, `逐行明细`, and `处理说明`; the default view keeps only metrics and source overview visible, while time boundaries, dictionary/exception explanations, rows, and no-write boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new actual-log APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM123.
 
 ## 2026-06-04 IM124 Personnel Schedule Detail Workspace Tabs
 
-After IM123, the personnel-schedule production detail page still stacked overview metrics, source batch and business version context, row-level reference summaries, real schedule detail rows, 0.5h interval rows, local-comparison entry, and publish/freeze boundaries in one long page. `US744/IM124` is complete. `/schedule-plans/production/[batchId]` now uses a tabbed workspace for `总览`, `来源与版本`, `真实明细`, `本地比对`, and `发布冻结边界`; the default view keeps only metrics and version positioning visible, while source links, row tables, comparison entry, and no-write boundaries move behind explicit entries.
+After IM123, the personnel-schedule production detail page still stacked overview metrics, source batch and business version context, row-level reference summaries, real schedule detail rows, 0.5h interval rows, local-comparison entry, and publish/freeze boundaries in one long page. `US744/IM124` is complete. `/schedule-plans/production/[batchId]` now uses a tabbed workspace for `总览`, `来源与版本`, `明细`, `比对`, and `发布冻结说明`; the default view keeps only metrics and version positioning visible, while source links, row tables, comparison entry, and no-write boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new schedule APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM124.
 
 ## 2026-06-04 IM125 Demand Forecast Detail Workspace Tabs
 
-After IM124, the demand-forecast production detail page still stacked overview metrics, source batch and forecast version context, skill/level/time alignment, 0.5h forecast intervals, version change records, local-comparison entry, and change-tracking boundaries in one long page. `US745/IM125` is complete. `/demand-plans/production/[batchId]` now uses a tabbed workspace for `总览`, `来源与对齐`, `预测明细`, `本地比对`, and `变更边界`; the default view keeps only metrics and version positioning visible, while source/alignment context, row tables, comparison entry, and no-write boundaries move behind explicit entries.
+After IM124, the demand-forecast production detail page still stacked overview metrics, source batch and forecast version context, skill/level/time alignment, 0.5h forecast intervals, version change records, local-comparison entry, and change-tracking boundaries in one long page. `US745/IM125` is complete. `/demand-plans/production/[batchId]` now uses a tabbed workspace for `总览`, `来源与对齐`, `预测明细`, `比对`, and `变更说明`; the default view keeps only metrics and version positioning visible, while source/alignment context, row tables, comparison entry, and no-write boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new forecast APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM125.
 
 ## 2026-06-04 IM126 Master Data Detail Workspace Tabs
 
-After IM125, the master-data maintenance detail page still stacked overview metrics, source/version context, reference-impact table, controlled-action table, single-object submit forms, and maintenance boundaries in one long page. `US746/IM126` is complete. `/master-data/[entityKey]` now uses a tabbed workspace for `总览`, `来源与引用`, `受控动作`, `提交表单`, and `维护边界`; the default view keeps only metrics and current-object positioning visible, while source links, impact rows, actions, forms, and boundaries move behind explicit entries.
+After IM125, the master-data maintenance detail page still stacked overview metrics, source/version context, reference-impact table, controlled-action table, single-object submit forms, and maintenance boundaries in one long page. `US746/IM126` is complete. `/master-data/[entityKey]` now uses a tabbed workspace for `总览`, `来源与引用`, `维护动作`, `提交表单`, and `维护说明`; the default view keeps only metrics and current-object positioning visible, while source links, impact rows, actions, forms, and boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new master-data APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM126.
 
@@ -659,7 +659,7 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 
 ## 2026-06-04 IM128 Field Mapping Template Detail Workspace Tabs
 
-After IM127, the field-mapping template detail page still stacked template identity, the maintenance form, mapping rows, and maintenance boundaries in one detail surface. `US748/IM128` is complete. `/data-quality/field-mapping-templates/[templateId]` now uses a tabbed workspace for `总览`, `维护表单`, `字段明细`, and `维护边界`; the default view keeps only status, file type, mapped-field count, and summary visible, while editing, row inspection, and deactivate boundaries move behind explicit entries.
+After IM127, the field-mapping template detail page still stacked template identity, the maintenance form, mapping rows, and maintenance boundaries in one detail surface. `US748/IM128` is complete. `/data-quality/field-mapping-templates/[templateId]` now uses a tabbed workspace for `总览`, `维护表单`, `字段明细`, and `维护说明`; the default view keeps only status, file type, mapped-field count, and summary visible, while editing, row inspection, and deactivate boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new template APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM128.
 

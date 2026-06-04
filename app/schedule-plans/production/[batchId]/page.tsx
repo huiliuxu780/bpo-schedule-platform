@@ -107,5 +107,5 @@ function formatApiError(error: unknown): string {
     return error.message
   }
 
-  return "服务不可用"
+  return "读取失败"
 }

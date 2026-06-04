@@ -530,7 +530,7 @@ function BatchDetailHeader({
           </div>
         ) : (
           <div className="rounded-md border border-dashed p-4 text-sm text-muted-foreground">
-            {batchError ?? "当前批次不在批次列表中，仍会尝试读取批次明细接口。"}
+            {batchError ?? "当前批次不在批次列表中，仍会尝试读取批次明细。"}
           </div>
         )}
       </CardContent>
@@ -727,5 +727,5 @@ function formatApiError(error: unknown): string {
     return error.message
   }
 
-  return "服务不可用"
+  return "读取失败"
 }

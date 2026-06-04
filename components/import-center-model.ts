@@ -1576,13 +1576,10 @@ export function buildImportBatchProcessingHref(
   return `/data-quality/${encodeURIComponent(batchId)}${query ? `?${query}` : ""}`
 }
 
-export function buildImportComparisonRunsUrl(
-  businessDate: string,
-  apiBase = getDefaultApiBase()
-): string {
-  const searchParams = new URLSearchParams({ business_date: businessDate })
+export function buildImportComparisonRunsUrl(businessDate: string): string {
+  const searchParams = new URLSearchParams({ businessDate })
 
-  return buildImportApiUrl(`/api/v1/comparison-runs?${searchParams.toString()}`, apiBase)
+  return `/data-quality/versions?${searchParams.toString()}`
 }
 
 export function buildImportComparisonRunDetailApiUrl(
@@ -1605,13 +1602,10 @@ export function buildImportComparisonRunCalculateUrl(
   return buildImportApiUrl("/api/v1/comparison-runs/calculate", apiBase)
 }
 
-export function buildImportReviewCasesUrl(
-  businessDate: string,
-  apiBase = getDefaultApiBase()
-): string {
-  const searchParams = new URLSearchParams({ business_date: businessDate })
+export function buildImportReviewCasesUrl(businessDate: string): string {
+  const searchParams = new URLSearchParams({ businessDate })
 
-  return buildImportApiUrl(`/api/v1/review-cases?${searchParams.toString()}`, apiBase)
+  return `/data-quality/review-cases?${searchParams.toString()}`
 }
 
 export function buildImportReviewCasesApiUrl(
@@ -4220,17 +4214,17 @@ export function summarizeImportDownstreamResultDrilldown({
       tone: "blocked",
       title: "下游结果读取受阻",
       detail: "当前业务日的对比结果或复核案例读取失败，不能把它判断为无下游结果。",
-      nextAction: "先确认结果查询 服务，再回到批次应用状态和业务日范围判断。",
+      nextAction: "先刷新结果追踪，再回到批次应用状态和业务日范围判断。",
       comparisonFocus: comparisonError ? "对比结果读取失败" : formatDrilldownComparisonFocus(primaryComparisonRun),
       reviewFocus: reviewError ? "复核案例读取失败" : formatDrilldownReviewFocus(primaryReviewCase),
       primaryActionLabel: "查看对比结果",
       primaryHref: businessDate
         ? buildImportComparisonRunsUrl(businessDate)
-        : buildImportApiUrl("/api/v1/comparison-runs"),
+        : "/data-quality/versions",
       secondaryActionLabel: "查看复核案例",
       secondaryHref: businessDate
         ? buildImportReviewCasesUrl(businessDate)
-        : buildImportApiUrl("/api/v1/review-cases"),
+        : "/data-quality/review-cases",
       evidence: [
         `业务日 ${businessDate ?? "未确认"}`,
         comparisonError ? "对比结果读取失败" : `对比结果 ${comparisonRuns.length.toLocaleString("zh-CN")} 个`,
@@ -4315,19 +4309,13 @@ export function summarizeImportDownstreamResultDrilldown({
     primaryActionLabel: hasOpenReviewCases ? "查看未关闭复核案例" : "查看对比运行",
     primaryHref:
       hasOpenReviewCases && primaryReviewCase
-        ? buildImportApiUrl(
-            `/api/v1/review-cases/${encodeURIComponent(primaryReviewCase.case_id)}`
-          )
+        ? buildImportReviewCaseDetailWorkspaceHref(primaryReviewCase.case_id)
         : primaryComparisonRun
-          ? buildImportApiUrl(
-              `/api/v1/comparison-runs/${encodeURIComponent(primaryComparisonRun.run_id)}`
-            )
+          ? buildImportComparisonRunDetailWorkspaceHref(primaryComparisonRun.run_id)
           : buildImportComparisonRunsUrl(businessDate),
     secondaryActionLabel: hasOpenReviewCases ? "查看关联对比运行" : "查看复核案例",
     secondaryHref: primaryComparisonRun
-      ? buildImportApiUrl(
-          `/api/v1/comparison-runs/${encodeURIComponent(primaryComparisonRun.run_id)}`
-        )
+      ? buildImportComparisonRunDetailWorkspaceHref(primaryComparisonRun.run_id)
       : buildImportReviewCasesUrl(businessDate),
     evidence: [
       `应用状态 ${formatImportApplicationStatus(batch.application_status)}`,
@@ -5397,7 +5385,7 @@ export function summarizeImportVersionComparisonTrigger({
       title: "当前版本暂无可复用的比对入口",
       detail: `当前 ${formatImportFileType(batch.file_type)} 版本 ${versionId} 没有比对口径；先核对版本记录和下游结果追踪。`,
       actionLabel: "发起一次比对",
-      nextAction: "仅在人员排班、需求预测、状态日志且已定位对比版本时才展示写入入口。",
+      nextAction: "仅在人员排班、需求预测、状态日志且已定位对比版本时才展示操作入口。",
       comparisonTypeLabel: "未支持",
       versionPairLabel: versionId,
       businessDateLabel: batch.business_date_from,
@@ -5413,8 +5401,8 @@ export function summarizeImportVersionComparisonTrigger({
     return {
       tone: "blocked",
       canSubmit: false,
-      title: "当前版本暂无法确认比对口径",
-      detail: `当前版本 ${versionId} 还没有可复用的对比运行，未展示写入按钮。`,
+      title: "当前版本无法确认比对口径",
+      detail: `当前版本 ${versionId} 还没有可复用的对比运行，未展示操作按钮。`,
       actionLabel: "发起一次比对",
       nextAction: "先确认该版本是否已有下游结果或补足配对版本，再回到当前页触发比对。",
       comparisonTypeLabel: "未定位",
@@ -5793,7 +5781,7 @@ function formatImportVersionComparisonTriggerFailureReason(
   }
 
   if (reason.startsWith("api_")) {
-    return `比对接口返回 ${reason.replace("api_", "")}，请先核对来源版本和业务日。`
+    return `比对提交返回 ${reason.replace("api_", "")}，请先核对来源版本和业务日。`
   }
 
   return `比对提交失败：${reason}`
@@ -6002,7 +5990,7 @@ export function summarizeImportExceptionGuidance({
       tone: "blocked",
       title: "准备度读取失败",
       detail: `${selectedBatchId}：${readinessError}`,
-      nextAction: "先恢复准备度接口；准备度未知时不要执行应用写入或下游复核。",
+      nextAction: "先刷新准备度；准备度未知时先不要应用或进入复核。",
     })
   }
 
@@ -6384,7 +6372,7 @@ function formatImportUploadFailureReason(reason?: string | null): string {
 
   const apiStatus = reason.match(/^api_(\d{3})$/)
   if (apiStatus) {
-    return `接口返回 ${apiStatus[1]}，可能是批次号重复或请求不满足接口校验。`
+    return `上传返回 ${apiStatus[1]}，可能是批次号重复或请求不满足校验。`
   }
 
   return decodeURIComponent(reason)
@@ -7006,7 +6994,7 @@ export function summarizeImportComparisonRunReturnLinks({
       tone: "blocked",
       title: "来源批次未定位",
       detail:
-        "当前运行能识别版本语境，但未在导入批次列表中匹配到来源批次；不要伪造批次回跳。",
+        "当前运行能识别版本语境，但未在导入批次列表中匹配到来源批次。",
       sourceBatchLabel: "未定位",
       versionWorkbenchLabel,
       primaryActionLabel: "来源批次不可回跳",
@@ -7425,7 +7413,7 @@ function formatReviewCaseDetailEvidenceGap(
   isClosed: boolean
 ): string {
   if (isClosed) {
-    return "案例已关闭，当前只回看关闭依据和证据完整性。"
+    return "案例已关闭，当前回看关闭依据和证据完整性。"
   }
 
   if (reviewCase.source_result_type === "schedule_actual") {

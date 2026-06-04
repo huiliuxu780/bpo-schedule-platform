@@ -58,7 +58,7 @@ export default async function ImportUploadWorkspacePage({
               </div>
               <CardTitle className="text-lg">CSV 上传工作区</CardTitle>
               <CardDescription className="mt-1">
-                独立发起 CSV 导入，提交到现有上传接口并生成接入批次
+                独立发起 CSV 导入并生成接入批次
               </CardDescription>
             </div>
             <Badge variant="outline">单批上传</Badge>
@@ -143,5 +143,5 @@ function formatApiError(error: unknown): string {
     return error.message
   }
 
-  return "服务不可用"
+  return "读取失败"
 }

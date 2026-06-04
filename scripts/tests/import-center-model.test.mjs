@@ -465,12 +465,12 @@ test("version workbench exposes local comparison candidates with controlled subm
   assert.deepEqual(scheduleRow?.comparisonCandidate, {
     tone: "ready",
     canSubmit: true,
-    title: "可发起一次本地比对",
-    detail: "当前版本可按 排班实际 和已定位来源版本组合提交一次本地比对；重复提交由后端幂等返回已有运行。",
+    title: "可发起一次比对",
+    detail: "当前版本可按 排班实际 和已定位来源版本组合提交一次比对；重复提交由后端幂等返回已有运行。",
     comparisonTypeLabel: "排班实际",
     versionPairLabel: "SCH-VERSION-001 / STATUS-VERSION-001",
     businessDateLabel: "2026-05-12 ~ 2026-05-12",
-    actionLabel: "发起一次本地比对",
+    actionLabel: "发起一次比对",
     href: "/data-quality/BATCH-SCH-CANDIDATE?tab=result-trace",
     sourceBatchId: "BATCH-SCH-CANDIDATE",
     request: {
@@ -487,7 +487,7 @@ test("version workbench exposes local comparison candidates with controlled subm
   assert.deepEqual(masterRow?.comparisonCandidate, {
     tone: "blocked",
     canSubmit: false,
-    title: "暂无本地比对候选",
+    title: "暂无比对候选",
     detail: "主数据当前没有可直接发起的预测排班或排班实际比对口径。",
     comparisonTypeLabel: "不支持",
     versionPairLabel: "MD-VERSION-001",
@@ -536,12 +536,12 @@ test("version workbench accepts applied status entry links for direct forecast s
   assert.deepEqual(summary.rows[0].comparisonCandidate, {
     tone: "ready",
     canSubmit: true,
-    title: "可发起一次本地比对",
-    detail: "当前版本可按 预测排班 和已定位来源版本组合提交一次本地比对；重复提交由后端幂等返回已有运行。",
+    title: "可发起一次比对",
+    detail: "当前版本可按 预测排班 和已定位来源版本组合提交一次比对；重复提交由后端幂等返回已有运行。",
     comparisonTypeLabel: "预测排班",
     versionPairLabel: "FC-VERSION-APPLIED / SCH-VERSION-APPLIED",
     businessDateLabel: "2026-05-18 ~ 2026-05-18",
-    actionLabel: "发起一次本地比对",
+    actionLabel: "发起一次比对",
     href: "/data-quality/BATCH-FC-APPLIED-LINK?tab=result-trace",
     sourceBatchId: "BATCH-FC-APPLIED-LINK",
     request: {
@@ -692,8 +692,8 @@ test("import center application visibility summarizes selected batch status", ()
       versionLabel: "BATCH-MD-001::v1",
       appliedRecordLabel: "0 条",
       title: "可进入应用前复核",
-      detail: "当前批次准备度为可应用，但本页仍只展示状态，不提供应用写入按钮。",
-      nextAction: "复核应用目标、版本和批次明细；真正应用写入需要单独受控任务。",
+      detail: "当前批次准备度为可应用。",
+      nextAction: "复核应用目标、版本和批次明细。",
     },
   );
 
@@ -744,13 +744,13 @@ test("import center downstream navigation explains next result path", () => {
       tone: "done",
       title: "可进入排班履约对比",
       detail:
-        "人员排班已应用 36 条记录，可继续查看预测 vs 排班或排班 vs 实际登录/状态的本地结果列表。",
+        "人员排班已应用 36 条记录，可继续查看预测 vs 排班或排班 vs 实际登录/状态的结果列表。",
       comparisonLabel: "对比结果：排班版本 BATCH-SCH-001::v1",
       reviewLabel: "复核案例：按履约异常结果继续追踪",
-      primaryActionLabel: "查看对比结果 API",
-      primaryHref: "/api/v1/comparison-runs?business_date=2026-05-01",
-      secondaryActionLabel: "查看复核案例 API",
-      secondaryHref: "/api/v1/review-cases?business_date=2026-05-01",
+      primaryActionLabel: "查看对比结果",
+      primaryHref: "/data-quality/versions?businessDate=2026-05-01",
+      secondaryActionLabel: "查看复核案例",
+      secondaryHref: "/data-quality/review-cases?businessDate=2026-05-01",
       evidenceLabel: "已应用 36 条 · 版本 BATCH-SCH-001::v1",
     },
   );
@@ -782,7 +782,7 @@ test("import center downstream navigation explains next result path", () => {
     {
       tone: "blocked",
       title: "先修正导入阻塞",
-      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响后续对比与复核判断。",
+      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响对比与复核判断。",
       comparisonLabel: "对比结果：等待应用版本",
       reviewLabel: "复核案例：等待质量问题清理",
       primaryActionLabel: "查看失败行",
@@ -797,7 +797,7 @@ test("import center downstream navigation explains next result path", () => {
 test("import center result trace summarizes persisted downstream lists", () => {
   assert.equal(
     buildImportComparisonRunsUrl("2026-05-11"),
-    "http://127.0.0.1:8000/api/v1/comparison-runs?business_date=2026-05-11",
+    "/data-quality/versions?businessDate=2026-05-11",
   );
   assert.equal(
     buildImportComparisonRunCalculateUrl(),
@@ -805,7 +805,7 @@ test("import center result trace summarizes persisted downstream lists", () => {
   );
   assert.equal(
     buildImportReviewCasesUrl("2026-05-11"),
-    "http://127.0.0.1:8000/api/v1/review-cases?business_date=2026-05-11",
+    "/data-quality/review-cases?businessDate=2026-05-11",
   );
 
   assert.deepEqual(
@@ -888,7 +888,7 @@ test("import center result trace summarizes persisted downstream lists", () => {
       title: "结果追踪读取受阻",
       comparisonSummary: "对比结果读取失败",
       reviewSummary: "复核案例 0 个 · 未关闭 0 个",
-      nextAction: "先确认本地结果查询 API 状态；读取失败时不要把当前批次判断为无下游结果。",
+      nextAction: "先刷新结果追踪；读取失败时保留当前批次的下游判断。",
     },
   );
 });
@@ -929,7 +929,7 @@ test("import center result drilldown blocks downstream review before batch appli
     {
       tone: "blocked",
       title: "先处理导入阻塞",
-      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响后续对比与复核判断。",
+      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响对比与复核判断。",
       nextAction: "先完成失败行修正和应用准备度检查，再判断下游结果。",
       comparisonFocus: "等待应用版本",
       reviewFocus: "等待质量问题清理",
@@ -1008,9 +1008,9 @@ test("import center result drilldown selects the most actionable downstream reco
       comparisonFocus: "RUN-001 · 预测 vs 排班 · 完成 · 12 条结果",
       reviewFocus: "CASE-001 · high · 未关闭 · supervisor-01",
       primaryActionLabel: "查看未关闭复核案例",
-      primaryHref: "http://127.0.0.1:8000/api/v1/review-cases/CASE-001",
+      primaryHref: "/data-quality/review-cases/CASE-001",
       secondaryActionLabel: "查看关联对比运行",
-      secondaryHref: "http://127.0.0.1:8000/api/v1/comparison-runs/RUN-001",
+      secondaryHref: "/data-quality/comparison-runs/RUN-001",
       evidence: ["应用状态 已应用", "对比结果 1 个", "复核未关闭 1 个", "业务日 2026-05-11"],
     },
   );
@@ -1227,7 +1227,7 @@ test("import center review conclusion preview summarizes open review cases and e
       suggestedConclusion: "当前有 1 个未关闭复核案例，且首要质量问题为 employee_id · REQUIRED_FIELD_MISSING；建议先补齐证据后再关闭。",
       evidenceSummary: "复核 CASE-001 · high · supervisor-01；对比 RUN-001 · 排班 vs 实际 · 18 条结果；质量 employee_id · REQUIRED_FIELD_MISSING",
       residualRisk: "仍有 1 个未关闭复核案例和 3 行质量问题；直接关闭会留下证据缺口。",
-      nextAction: "先处理首要质量问题和未关闭复核案例，确认补证后再进入受控关闭流程。",
+      nextAction: "先处理首要质量问题和未关闭复核案例，确认补证后再进入关闭流程。",
       evidence: [
         "业务日 2026-05-11",
         "复核案例 2 个",
@@ -1258,7 +1258,7 @@ test("import center review conclusion preview handles empty and read-error state
     }),
     {
       tone: "blocked",
-      title: "暂不能生成结论预览",
+      title: "无法生成结论预览",
       suggestedConclusion: "复核案例读取失败，当前结论预览只能作为占位，不能用于关闭判断。",
       evidenceSummary: "复核案例读取失败；对比结果 0 条；质量 暂无质量问题",
       residualRisk: "下游结果读取不完整，可能漏掉未关闭异常或证据缺口。",
@@ -1407,9 +1407,9 @@ test("import center review evidence gap drilldown handles empty and read-error s
     }),
     {
       tone: "blocked",
-      title: "暂不能判断证据缺口",
+      title: "无法判断证据缺口",
       summary: "复核案例读取失败，当前缺口列表只能作为占位。",
-      ownerSummary: "owner 暂不可用",
+      ownerSummary: "owner 不可用",
       nextAction: "先恢复复核案例读取，再判断证据缺口。",
       gaps: [],
     },
@@ -1435,7 +1435,7 @@ test("import center review evidence gap drilldown handles empty and read-error s
     {
       tone: "empty",
       title: "暂无证据缺口",
-      summary: "当前业务日没有未关闭复核案例，暂不形成证据缺口列表。",
+      summary: "当前业务日没有未关闭复核案例，未形成证据缺口列表。",
       ownerSummary: "owner 无",
       nextAction: "继续查看对比结果和复核结论预览。",
       gaps: [],
@@ -1853,7 +1853,7 @@ test("import center review case detail summarizes same-owner processing context"
     {
       tone: "blocked",
       title: "Owner 上下文不可用",
-      detail: "当前案例读取失败，暂不能聚合同 owner 处理上下文。",
+      detail: "当前案例读取失败，无法聚合同 owner 处理上下文。",
       ownerId: null,
       businessDate: null,
       totalCount: 0,
@@ -2263,7 +2263,6 @@ test("import center review case detail summarizes read-only case context", () =>
         { key: "evidence", label: "证据结论" },
         { key: "actions", label: "处理动作" },
         { key: "owner", label: "Owner 导航" },
-        { key: "boundary", label: "处理边界" },
       ],
       sourceLabel: "预测排班 #12",
       sourceResultDimensions: [
@@ -2289,8 +2288,8 @@ test("import center review case detail summarizes read-only case context", () =>
       ],
       qualityFocus: "预测版本、排班版本和质量修正记录。",
       evidenceGap: "仍需确认预测版本、排班版本引用和质量修正记录。",
-      nextAction: "owner supervisor-01 先复核 1 条证据和 1 条结论，再进入受控关闭流程。",
-      detailHref: "http://127.0.0.1:8000/api/v1/review-cases/CASE-QUERY-001",
+      nextAction: "owner supervisor-01 先复核 1 条证据和 1 条结论，再进入关闭流程。",
+      detailHref: "/data-quality/review-cases/CASE-QUERY-001",
       listHref: "/data-quality/review-cases?businessDate=2026-05-11&ownerId=supervisor-01&status=open&severity=high&sourceResultType=forecast_schedule",
       evidence: [
         "业务日 2026-05-11",
@@ -2315,16 +2314,15 @@ test("import center review case detail summarizes read-only case context", () =>
         { key: "evidence", label: "证据结论" },
         { key: "actions", label: "处理动作" },
         { key: "owner", label: "Owner 导航" },
-        { key: "boundary", label: "处理边界" },
       ],
       sourceLabel: "来源不可用",
       sourceResultDimensions: ["来源不可用"],
-      sourceResultMetrics: ["等待 API 恢复"],
+      sourceResultMetrics: ["等待服务恢复"],
       ownerLabel: "owner 不可用",
       evidenceLabel: "证据不可用",
       sourceTraceRun: "来源链路不可用",
       sourceTraceHref: "/data-quality/review-cases",
-      sourceTraceVersions: ["等待 API 恢复"],
+      sourceTraceVersions: ["等待服务恢复"],
       qualityFocus: "质量问题不可用",
       evidenceGap: "复核案例 API 返回 404",
       nextAction: "先恢复复核案例读取，再查看来源结果和证据缺口。",
@@ -2381,7 +2379,7 @@ test("import center review case detail builds evidence conclusion chain", () => 
       title: "证据与结论链路",
       statusLabel: "未关闭",
       summary: "证据 1 条 · 结论 1 条 · 未关闭",
-      nextAction: "先复核证据和结论内容，再进入受控关闭流程。",
+      nextAction: "先复核证据和结论内容，再进入关闭流程。",
       items: [
         {
           id: "EVD-QUERY-001",
@@ -2496,7 +2494,7 @@ test("import center review case detail builds processing timeline", () => {
       statusLabel: "已关闭",
       currentStage: "已关闭",
       summary: "3 个处理动作 · 最新动作 2026-05-11T10:45:00+08:00",
-      nextAction: "案例已关闭；后续只读追溯处理动作、证据和结论，不再补充写入。",
+      nextAction: "案例已关闭；可追溯处理动作、证据和结论。",
       items: [
         {
           id: "EVD-TIMELINE-001",
@@ -2660,7 +2658,7 @@ test("import center review case detail summarizes the processing action deck", (
       },
       error: null,
     }).nextAction,
-    "案例已关闭；后续只读追溯处理动作、证据和结论。"
+    "案例已关闭；可追溯处理动作、证据和结论。"
   );
 });
 
@@ -2690,7 +2688,7 @@ test("import center review case detail summarizes action submit feedback", () =>
       tone: "blocked",
       title: "补结论提交失败",
       statusLabel: "写入失败",
-      detail: "结论未写入；检查本地 API、案例状态和必填字段后重试。",
+      detail: "结论未写入；检查服务、案例状态和必填字段后重试。",
       actionKey: "conclusion",
     }
   );
@@ -2705,7 +2703,7 @@ test("import center review case detail summarizes action submit feedback", () =>
       tone: "ready",
       title: "关闭案例提交成功",
       statusLabel: "已关闭",
-      detail: "关闭记录已写入；后续只读追溯处理动作、证据和结论。",
+      detail: "关闭记录已写入；可追溯处理动作、证据和结论。",
       actionKey: "closure",
     }
   );
@@ -2733,7 +2731,7 @@ test("import center review case detail summarizes failed action retry target", (
       tone: "blocked",
       title: "重试定位",
       statusLabel: "已定位到补结论",
-      detail: "补结论写入失败，当前已打开补结论入口；检查必填字段、案例状态和本地 API 后重试。",
+      detail: "补结论写入失败，当前已打开补结论入口；检查必填字段、案例状态和服务 后重试。",
       tabValue: "conclusion",
       actionLabel: "补结论",
     }
@@ -3220,7 +3218,6 @@ test("import center comparison run detail summarizes result rows", () => {
         { key: "source", label: "来源链路" },
         { key: "results", label: "结果明细" },
         { key: "reviews", label: "复核案例" },
-        { key: "boundary", label: "处理边界" },
       ],
       resultReviewContext: {
         title: "完整结果回看主页",
@@ -3241,7 +3238,7 @@ test("import center comparison run detail summarizes result rows", () => {
         { label: "业务日", value: "2026-05-11", detail: "至 2026-05-11" },
       ],
       versionLabel: "预测 FC-20260511-V1 · 排班 SCH-20260511-V1",
-      apiHref: "http://127.0.0.1:8000/api/v1/comparison-runs/RUN-DB008-FS",
+      detailHref: "/data-quality/comparison-runs/RUN-DB008-FS",
       resultRows: [
         {
           id: "forecast-12",
@@ -3301,7 +3298,6 @@ test("import center comparison run detail summarizes result rows", () => {
         { key: "source", label: "来源链路" },
         { key: "results", label: "结果明细" },
         { key: "reviews", label: "复核案例" },
-        { key: "boundary", label: "处理边界" },
       ],
       resultReviewContext: {
         title: "完整结果回看主页",
@@ -3322,7 +3318,7 @@ test("import center comparison run detail summarizes result rows", () => {
         { label: "业务日", value: "2026-05-11", detail: "至 2026-05-11" },
       ],
       versionLabel: "排班 SCH-20260511-V1 · 实际 LOGIN-20260511-V1",
-      apiHref: "http://127.0.0.1:8000/api/v1/comparison-runs/RUN-DB008-SA",
+      detailHref: "/data-quality/comparison-runs/RUN-DB008-SA",
       resultRows: [
         {
           id: "actual-42",
@@ -3419,10 +3415,10 @@ test("import center comparison run detail returns to source batch and version wo
       tone: "blocked",
       title: "来源批次未定位",
       detail:
-        "当前运行能识别版本语境，但暂未在导入批次列表中匹配到来源批次；不要伪造批次回跳。",
-      sourceBatchLabel: "暂未定位",
+        "当前运行能识别版本语境，但未在导入批次列表中匹配到来源批次。",
+      sourceBatchLabel: "未定位",
       versionWorkbenchLabel: "业务版本工作台 · 2026-05-01",
-      primaryActionLabel: "来源批次暂不可回跳",
+      primaryActionLabel: "来源批次不可回跳",
       primaryHref: null,
       secondaryActionLabel: "查看版本工作台",
       secondaryHref: "/data-quality/versions?businessDate=2026-05-01",
@@ -3528,7 +3524,7 @@ test("import center comparison run detail links related review cases", () => {
       tone: "empty",
       title: "暂无关联复核案例",
       detail: "当前运行结果尚未匹配到复核案例。",
-      nextAction: "继续查看结果明细；后续复核写入必须进入单独受控任务。",
+      nextAction: "继续查看结果明细。",
       cases: [],
     }
   );
@@ -3858,7 +3854,7 @@ test("import center upload prefill warns when template is inactive or missing", 
     defaultTemplateId: "",
     tone: "failed",
     title: "模板不可用于上传",
-    detail: "字段映射模板 TPL-MISSING 不在当前可选模板列表中。",
+    detail: "字段映射模板 TPL-MISSING 未包含在当前可选模板列表。",
     nextAction: "请返回模板管理确认模板状态，或手填字段映射 JSON 后上传。",
   });
 });
@@ -4077,7 +4073,7 @@ test("import center batch detail readability explains next review focus", () => 
   assert.deepEqual(summarizeImportBatchDetailReadability(detail), {
     tone: "blocked",
     title: "先处理失败行",
-    detail: "当前批次共 4 行，1 行失败、1 行警告；失败行会阻塞后续应用。",
+    detail: "当前批次共 4 行，1 行失败、1 行警告；失败行会阻塞应用。",
     nextAction: "先查看全部行结果中的错误字段和失败原因，再进入失败行修正。",
     focusLabel: "失败行",
     errorFieldSummary: "source_key、employee_id",
@@ -4217,7 +4213,7 @@ test("import center row correction notice explains failed correction reasons", (
       tone: "failed",
       title: "修正失败",
       detail: "标准字段不是合法 JSON 对象。",
-      nextAction: "检查字段 JSON、行号和本地 API 状态后重新提交。",
+      nextAction: "检查字段 JSON、行号后重新提交。",
     },
   );
 
@@ -4296,7 +4292,6 @@ test("import center field mapping template detail exposes task workspaces", () =
         { key: "overview", label: "总览" },
         { key: "maintenance", label: "维护表单" },
         { key: "mapping", label: "字段明细" },
-        { key: "boundary", label: "维护边界" },
       ],
     },
   );
@@ -4362,7 +4357,7 @@ test("import center template fit hint recommends active template by selected fil
     recommendedTemplateName: null,
     mappedFieldCount: 0,
     detail: "人员排班没有启用模板。",
-    nextAction: "先使用手填字段映射 JSON 上传；模板维护在单独任务中处理。",
+    nextAction: "先使用手填字段映射 JSON 上传；模板维护在对应页面中处理。",
   });
 
   assert.deepEqual(
@@ -4491,7 +4486,7 @@ test("import center template fit detail ranks matching templates and reports sta
     templateOptions: [],
     title: "暂无启用状态日志模板",
     detail: "当前状态日志没有启用模板；上传前需要手填字段映射 JSON。",
-    nextAction: "先使用手填字段映射 JSON；模板新增或维护留到单独受控任务。",
+    nextAction: "先使用手填字段映射 JSON；模板新增或维护留到对应页面。",
   });
 });
 
@@ -4517,7 +4512,7 @@ test("import center apply action guidance explains next step before write action
     tone: "ready",
     title: "可进入应用前复核",
     detail: "10 行成功、0 行失败，已生成 1 个版本。",
-    nextAction: "复核版本和目标对象后，再由后续受控任务提供应用写入入口。",
+    nextAction: "复核版本和目标对象后，再应用到业务数据。",
   });
 
   assert.deepEqual(
@@ -4587,9 +4582,9 @@ test("import center apply action guidance explains next step before write action
     summarizeImportApplyActionGuidance(null, "准备度 API 返回 500"),
     {
       tone: "unknown",
-      title: "准备度暂不可判断",
+      title: "准备度不可判断",
       detail: "准备度 API 返回 500",
-      nextAction: "先确认本地 API 状态；不要在准备度未知时执行应用写入。",
+      nextAction: "先核对批次明细；准备度未知时先不要应用。",
     },
   );
 });
@@ -4633,7 +4628,7 @@ test("import center single batch apply action exposes a submit only for ready un
       tone: "blocked",
       canSubmit: false,
       statusLabel: "不可应用",
-      actionLabel: "暂不可应用",
+      actionLabel: "不可应用",
       title: "应用前仍有阻塞",
       detail: "导入批次仍存在失败行。",
       nextAction: "先处理失败行、行级缺字段或版本缺口，再重新查看准备度。",
@@ -4664,10 +4659,10 @@ test("import center single batch apply action exposes a submit only for ready un
       tone: "unknown",
       canSubmit: false,
       statusLabel: "准备度未知",
-      actionLabel: "暂不可应用",
-      title: "准备度暂不可判断",
+      actionLabel: "不可应用",
+      title: "准备度不可判断",
       detail: "准备度 API 返回 500",
-      nextAction: "先确认本地 API 状态；不要在准备度未知时执行应用写入。",
+      nextAction: "先核对批次明细；准备度未知时先不要应用。",
     },
   );
 });
@@ -4694,7 +4689,7 @@ test("import center batch apply result notice summarizes action feedback", () =>
     {
       tone: "failed",
       title: "批次应用失败",
-      detail: "本地应用 API 返回 400。",
+      detail: "应用返回 400。",
       nextAction: "回到状态检查区查看阻塞项；修正后只对当前批次重试。",
     },
   );
@@ -5175,9 +5170,9 @@ test("import center version comparison trigger only opens when source versions a
     {
       tone: "ready",
       canSubmit: true,
-      title: "可在当前版本语境发起本地比对",
-      detail: "将按 排班实际 和已定位版本组合重新生成一次本地对比运行。",
-      actionLabel: "发起一次本地比对",
+      title: "可在当前版本语境发起比对",
+      detail: "将按 排班实际 和已定位版本组合重新生成一次对比运行。",
+      actionLabel: "发起一次比对",
       nextAction: "提交后留在当前结果页查看反馈，再进入新运行详情或回看结果列表。",
       comparisonTypeLabel: "排班实际",
       versionPairLabel: "SCH-VERSION-001 / STATUS-VERSION-001",
@@ -5232,10 +5227,10 @@ test("import center version comparison trigger only opens when source versions a
     {
       tone: "blocked",
       canSubmit: false,
-      title: "当前版本暂无可复用的本地比对入口",
-      detail: "当前 主数据 版本 MD-VERSION-001 没有受控本地比对口径；先核对版本记录和下游结果追踪。",
-      actionLabel: "发起一次本地比对",
-      nextAction: "仅在人员排班、需求预测、状态日志且已定位对比版本时才展示写入入口。",
+      title: "当前版本暂无可复用的比对入口",
+      detail: "当前 主数据 版本 MD-VERSION-001 没有比对口径；先核对版本记录和下游结果追踪。",
+      actionLabel: "发起一次比对",
+      nextAction: "仅在人员排班、需求预测、状态日志且已定位对比版本时才展示操作入口。",
       comparisonTypeLabel: "未支持",
       versionPairLabel: "MD-VERSION-001",
       businessDateLabel: "2026-05-01",
@@ -5257,9 +5252,9 @@ test("import center version comparison trigger notice links new run and result l
     }),
     {
       tone: "success",
-      title: "本地比对已生成新运行",
+      title: "比对已生成新运行",
       detail:
-        "当前版本语境已生成新的本地对比运行 CALC-SA-20260501-LOCAL-001，可直接进入详情或回看当前结果列表。",
+        "当前版本语境已生成新的对比运行 CALC-SA-20260501-LOCAL-001，可直接进入详情或回看当前结果列表。",
       runLabel: "CALC-SA-20260501-LOCAL-001",
       primaryActionLabel: "查看新对比运行",
       primaryHref: "/data-quality/comparison-runs/CALC-SA-20260501-LOCAL-001",
@@ -5275,8 +5270,8 @@ test("import center version comparison trigger notice links new run and result l
     }),
     {
       tone: "failed",
-      title: "本地比对未提交",
-      detail: "本地比对接口返回 400，请先核对来源版本和业务日。",
+      title: "比对未提交",
+      detail: "比对提交返回 400，请先核对来源版本和业务日。",
       runLabel: "未生成运行",
       primaryActionLabel: "查看结果列表",
       primaryHref: "#comparison-runs-list",
@@ -5311,7 +5306,7 @@ test("import center latest comparison run callback summarizes the newest generat
     }),
     {
       tone: "success",
-      title: "最新一次本地比对结果",
+      title: "最新一次比对结果",
       detail:
         "当前版本语境刚生成运行 CALC-SA-20260501-LOCAL-001，可在当前页先确认结果规模，再进入完整运行详情。",
       runLabel: "CALC-SA-20260501-LOCAL-001",
@@ -5337,7 +5332,7 @@ test("import center latest comparison run callback summarizes the newest generat
     }),
     {
       tone: "blocked",
-      title: "最新运行结果暂未回显",
+      title: "最新运行结果未回显",
       detail:
         "当前页已收到运行 CALC-MISSING-001 的成功反馈，但结果列表还没有回显这次运行；先刷新当前结果追踪，再进入运行详情复核。",
       runLabel: "CALC-MISSING-001",
@@ -5379,7 +5374,7 @@ test("version workbench result review summarizes submitted comparison runs", () 
     }),
     {
       tone: "success",
-      title: "版本工作台本地比对结果",
+      title: "版本工作台比对结果",
       detail:
         "运行 CALC-FS-20260502-LOCAL-001 已在版本工作台回显；先确认结果规模和关键差异，再进入完整对比运行详情。",
       runLabel: "CALC-FS-20260502-LOCAL-001",
@@ -5404,9 +5399,9 @@ test("version workbench result review summarizes submitted comparison runs", () 
     }),
     {
       tone: "blocked",
-      title: "运行结果暂未回显",
+      title: "运行结果未回显",
       detail:
-        "版本工作台已收到运行 CALC-WAIT-001 的成功反馈，但当前结果列表还没有回显这次运行；先保留运行入口，不伪造结果规模或关键差异。",
+        "版本工作台已收到运行 CALC-WAIT-001 的成功反馈，但当前结果列表还没有回显这次运行。",
       runLabel: "CALC-WAIT-001",
       metricCards: [
         { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },
@@ -5529,7 +5524,7 @@ test("import center readiness issue groups prioritize blockers by operational ty
         title: "准备度已通过",
         count: 0,
         detail: "当前批次没有应用前阻塞，已生成可追溯导入版本。",
-        nextAction: "继续复核应用目标和下游结果；真正应用写入仍需单独受控入口。",
+        nextAction: "继续复核应用目标和下游结果；可在应用入口完成写入。",
         evidence: ["成功 3 行", "版本 BATCH-READY-001::v1"],
       },
     ],
@@ -5552,7 +5547,7 @@ test("import center exception guidance consolidates API and empty-state blockers
         tone: "blocked",
         title: "批次读取失败",
         detail: "导入批次 API 返回 500",
-        nextAction: "先确认本地 API 和 /api/v1/import-batches；批次不可读时不要继续判断准备度。",
+        nextAction: "先刷新批次列表；批次不可读时先不要继续判断准备度。",
       },
     ],
   );
@@ -5572,7 +5567,7 @@ test("import center exception guidance consolidates API and empty-state blockers
         tone: "blocked",
         title: "准备度读取失败",
         detail: "BATCH-MD-001：准备度 API 返回 404",
-        nextAction: "先恢复准备度接口；准备度未知时不要执行应用写入或下游复核。",
+        nextAction: "先刷新准备度；准备度未知时先不要应用或进入复核。",
       },
       {
         scope: "template_api",
@@ -5606,7 +5601,7 @@ test("import center exception guidance consolidates API and empty-state blockers
         tone: "warning",
         title: "暂无字段映射模板",
         detail: "当前没有启用或停用模板可供选择。",
-        nextAction: "本轮先使用手填字段映射 JSON；模板维护留到后续受控任务。",
+        nextAction: "可先手填字段映射 JSON，或新建字段映射模板。",
       },
     ],
   );
@@ -5645,7 +5640,7 @@ test("import center upload result guidance links uploads back to batch review", 
       detail: "批次 BATCH-CSV-001 已提交并可在接入批次中查看。",
       batchHref: "/data-quality/BATCH-CSV-001",
       primaryActionLabel: "进入批次处理",
-      nextAction: "查看批次行结果、失败行和应用准备度；确认无阻塞后再进入后续受控应用流程。",
+      nextAction: "查看批次行结果、失败行和应用准备度；确认无阻塞后再应用到业务数据。",
     },
   );
 
@@ -5658,7 +5653,7 @@ test("import center upload result guidance links uploads back to batch review", 
     {
       tone: "failed",
       title: "CSV 上传失败",
-      detail: "接口返回 409，可能是批次号重复或请求不满足接口校验。",
+      detail: "上传返回 409，可能是批次号重复或请求不满足校验。",
       batchHref: "/data-quality/BATCH%2FCSV%20001",
       primaryActionLabel: "回看批次",
       nextAction: "检查批次号、字段映射 JSON、模板选择和 CSV 表头后重新上传；如果批次已存在，先查看原批次结果。",

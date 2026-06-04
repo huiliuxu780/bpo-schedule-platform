@@ -3332,3 +3332,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM135 UI Narrative Cleanup Final Audit
+
+- branch_name: `codex/im135-master-data-ui-detail-polish`
+- base_main_commit: `e508067`
+- stacked_on: `e508067 fix: clean remaining internal UI wording`
+- remote_status: `e508067 was pushed; final audit correction is local until final check/commit/push.`
+- scope: final PM-requested no-omission audit for remaining implementation-path wording in app/component UI, model summaries, focused model tests, and current project-state documentation. Product pages must use business state/action wording only; Harness stop conditions stay in Harness files rather than being rendered as page requirements.
+- allowed_files_check: `app/**`, `components/**`, `scripts/tests/import-center-model.test.mjs`, `scripts/tests/master-data-maintenance-model.test.mjs`, `docs/current/PROJECT_CONTEXT.md`, `docs/PROJECT_STATE.md`, and `docs/dev/branch-log.md`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor changes.
+- scope_diff_check: expected UI copy cleanup, app-route result links instead of raw result-query API links, model/test assertion alignment, current docs wording cleanup, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: runtime/app keyword scan removed remaining user-visible service-address, local-comparison, boundary/safety-shell, no-fabrication, and unavailable-state implementation wording from `app` and `components`; code-only API builders and fetch paths remain. Target model tests passed with 95 tests. `bash scripts/check-state.sh --strict` passed with `PROJECT_CONTEXT` at 160/160 lines. `git diff --check` passed. `npm run lint` passed. `npm run typecheck` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, lint, typecheck, Next build, and backend 206 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
