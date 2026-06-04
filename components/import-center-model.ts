@@ -558,7 +558,6 @@ export type ImportComparisonRunDetailWorkspaceTabKey =
   | "source"
   | "results"
   | "reviews"
-  | "boundary"
 
 export type ImportComparisonRunDetailWorkspaceTab = {
   key: ImportComparisonRunDetailWorkspaceTabKey
@@ -596,7 +595,6 @@ const COMPARISON_RUN_DETAIL_WORKSPACE_TABS: ImportComparisonRunDetailWorkspaceTa
   { key: "source", label: "来源链路" },
   { key: "results", label: "结果明细" },
   { key: "reviews", label: "复核案例" },
-  { key: "boundary", label: "处理边界" },
 ]
 
 export type ImportComparisonRunReturnLinks = {
@@ -855,7 +853,6 @@ export type ImportReviewCaseDetailWorkspaceTabKey =
   | "evidence"
   | "actions"
   | "owner"
-  | "boundary"
 
 export type ImportReviewCaseDetailWorkspaceTab = {
   key: ImportReviewCaseDetailWorkspaceTabKey
@@ -868,7 +865,6 @@ const REVIEW_CASE_DETAIL_WORKSPACE_TABS: ImportReviewCaseDetailWorkspaceTab[] = 
   { key: "evidence", label: "证据结论" },
   { key: "actions", label: "处理动作" },
   { key: "owner", label: "Owner 导航" },
-  { key: "boundary", label: "处理边界" },
 ]
 
 export type ImportReviewCaseEvidenceChainSummary = {
@@ -1169,7 +1165,6 @@ export type ImportFieldMappingTemplateDetailWorkspaceTabKey =
   | "overview"
   | "maintenance"
   | "mapping"
-  | "boundary"
 
 export type ImportFieldMappingTemplateDetailWorkspaceTab = {
   key: ImportFieldMappingTemplateDetailWorkspaceTabKey
@@ -1341,7 +1336,6 @@ const importFieldMappingTemplateDetailWorkspaceTabs: ImportFieldMappingTemplateD
     { key: "overview", label: "总览" },
     { key: "maintenance", label: "维护表单" },
     { key: "mapping", label: "字段明细" },
-    { key: "boundary", label: "维护边界" },
   ]
 
 const importFieldMappingTemplateWorkspaceTabs: ImportFieldMappingTemplateWorkspaceTab[] =
@@ -3381,9 +3375,9 @@ export function summarizeImportReviewCaseProcessingTimeline({
     currentStage: isClosed ? "已关闭" : hasEvidence && hasConclusion ? "等待关闭" : "等待结论",
     summary: `${items.length.toLocaleString("zh-CN")} 个处理动作 · 最新动作 ${latestTimestamp ?? "无"}`,
     nextAction: isClosed
-      ? "案例已关闭；后续只读追溯处理动作、证据和结论，不再补充写入。"
+      ? "案例已关闭；可追溯处理动作、证据和结论。"
       : hasEvidence && hasConclusion
-        ? "证据和结论已齐，继续复核后进入受控关闭入口。"
+        ? "证据和结论已齐，继续复核后关闭案例。"
         : "已有证据但缺少结论；先补充复核结论，再判断是否关闭。",
     items,
   }
@@ -3451,7 +3445,7 @@ export function summarizeImportReviewCaseActionDeck({
     primaryAction,
     summary: `证据 ${evidenceCount.toLocaleString("zh-CN")} 条 · 结论 ${conclusionCount.toLocaleString("zh-CN")} 条 · ${isClosed ? "已关闭" : "未关闭"}`,
     nextAction: isClosed
-      ? "案例已关闭；后续只读追溯处理动作、证据和结论。"
+      ? "案例已关闭；可追溯处理动作、证据和结论。"
       : primaryKey === "evidence"
         ? "先补充证据，再补充复核结论；关闭入口会在材料齐全后开放。"
         : primaryKey === "conclusion"
@@ -3519,7 +3513,7 @@ export function summarizeImportReviewCaseActionFeedback({
     title: isSuccess ? "关闭案例提交成功" : "关闭案例提交失败",
     statusLabel: isSuccess ? "已关闭" : "写入失败",
     detail: isSuccess
-      ? "关闭记录已写入；后续只读追溯处理动作、证据和结论。"
+      ? "关闭记录已写入；可追溯处理动作、证据和结论。"
     : "关闭记录未写入；确认已有证据和结论后重试。",
     actionKey: "closure",
   }
@@ -4062,8 +4056,8 @@ export function summarizeImportApplicationVisibility({
       versionLabel,
       appliedRecordLabel,
       title: "可进入应用前复核",
-      detail: "当前批次准备度为可应用，但本页仍只展示状态，不提供应用写入按钮。",
-      nextAction: "复核应用目标、版本和批次明细；真正应用写入需要单独受控任务。",
+      detail: "当前批次准备度为可应用。",
+      nextAction: "复核应用目标、版本和批次明细。",
     }
   }
 
@@ -4093,7 +4087,7 @@ export function summarizeImportDownstreamResultNavigation({
     return {
       tone: "blocked",
       title: "先修正导入阻塞",
-      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响后续对比与复核判断。",
+      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响对比与复核判断。",
       comparisonLabel: "对比结果：等待应用版本",
       reviewLabel: "复核案例：等待质量问题清理",
       primaryActionLabel: "查看失败行",
@@ -4270,7 +4264,7 @@ export function summarizeImportDownstreamResultDrilldown({
     return {
       tone: "blocked",
       title: "先处理导入阻塞",
-      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响后续对比与复核判断。",
+      detail: "当前批次尚未形成可用下游结果；失败行或准备度阻塞会影响对比与复核判断。",
       nextAction: "先完成失败行修正和应用准备度检查，再判断下游结果。",
       comparisonFocus: "等待应用版本",
       reviewFocus: failedRows > 0 ? "等待质量问题清理" : "等待对比结果",
@@ -4464,7 +4458,7 @@ export function summarizeImportBatchDetailReadability(
     return {
       tone: "blocked",
       title: "先处理失败行",
-      detail: `当前批次共 ${summary.totalRows.toLocaleString("zh-CN")} 行，${summary.failedRows.toLocaleString("zh-CN")} 行失败、${summary.warningRows.toLocaleString("zh-CN")} 行警告；失败行会阻塞后续应用。`,
+      detail: `当前批次共 ${summary.totalRows.toLocaleString("zh-CN")} 行，${summary.failedRows.toLocaleString("zh-CN")} 行失败、${summary.warningRows.toLocaleString("zh-CN")} 行警告；失败行会阻塞应用。`,
       nextAction: "先查看全部行结果中的错误字段和失败原因，再进入失败行修正。",
       focusLabel: "失败行",
       errorFieldSummary,
@@ -4799,7 +4793,7 @@ export function summarizeImportReviewConclusionPreview({
   return {
     tone: "ready",
     title: "可作为关闭前摘要",
-    suggestedConclusion: "当前未发现未关闭复核案例或行级质量问题，可作为后续受控关闭前的只读摘要。",
+    suggestedConclusion: "当前未发现未关闭复核案例或行级质量问题，可作为关闭前摘要。",
     evidenceSummary: formatReviewConclusionEvidenceSummary({
       primaryComparisonRun,
       primaryReviewCase,
@@ -4808,7 +4802,7 @@ export function summarizeImportReviewConclusionPreview({
       reviewError,
     }),
     residualRisk: "仍需在正式关闭写入前确认业务证据和责任人意见。",
-    nextAction: "后续关闭写入、审批或批量处理必须进入单独受控任务。",
+    nextAction: "复核证据和责任人意见后再关闭。",
     evidence,
   }
 }
@@ -4971,7 +4965,7 @@ export function summarizeImportUploadResultGuidance({
       batchHref,
       primaryActionLabel: batchHref ? "进入批次处理" : "查看接入批次",
       nextAction:
-        "查看批次行结果、失败行和应用准备度；确认无阻塞后再进入后续受控应用流程。",
+        "查看批次行结果、失败行和应用准备度；确认无阻塞后再应用到业务数据。",
     }
   }
 
@@ -5058,7 +5052,7 @@ export function summarizeImportApplyActionGuidance(
     tone: "ready",
     title: "可进入应用前复核",
     detail: `${readiness.success_rows} 行成功、${readiness.failed_rows} 行失败，已生成 ${readiness.version_count} 个版本。`,
-    nextAction: "复核版本和目标对象后，再由后续受控任务提供应用写入入口。",
+    nextAction: "复核版本和目标对象后，再应用到业务数据。",
   }
 }
 
@@ -5596,7 +5590,7 @@ export function summarizeImportVersionWorkbenchComparisonResultReview({
     return {
       tone: "blocked",
       title: "运行结果暂未回显",
-      detail: `版本工作台已收到运行 ${runId} 的成功反馈，但当前结果列表还没有回显这次运行；先保留运行入口，不伪造结果规模或关键差异。`,
+      detail: `版本工作台已收到运行 ${runId} 的成功反馈，但当前结果列表还没有回显这次运行。`,
       runLabel: runId,
       metricCards: [
         { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },
@@ -6026,7 +6020,7 @@ export function summarizeImportExceptionGuidance({
       tone: "warning",
       title: "暂无字段映射模板",
       detail: "当前没有启用或停用模板可供选择。",
-      nextAction: "本轮先使用手填字段映射 JSON；模板维护留到后续受控任务。",
+      nextAction: "可先手填字段映射 JSON，或新建字段映射模板。",
     })
   }
 
@@ -6908,7 +6902,7 @@ export function summarizeImportComparisonRunReviewCases({
       tone: "empty",
       title: "暂无关联复核案例",
       detail: "当前运行结果尚未匹配到复核案例。",
-      nextAction: "继续查看结果明细；后续复核写入必须进入单独受控任务。",
+      nextAction: "继续查看结果明细。",
       cases: [],
     }
   }

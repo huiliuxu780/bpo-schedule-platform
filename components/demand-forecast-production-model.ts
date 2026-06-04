@@ -7,7 +7,6 @@ export type DemandForecastProductionWorkspaceTabKey =
   | "source"
   | "rows"
   | "comparison"
-  | "boundary"
 
 export type DemandForecastProductionWorkspaceTab = {
   key: DemandForecastProductionWorkspaceTabKey
@@ -57,7 +56,6 @@ export type DemandForecastProductionDetailSummary = {
   intervalRows: DemandForecastProductionIntervalRow[]
   changeRows: DemandForecastProductionChangeRow[]
   changeBoundaryLabel: string
-  changeTracking: DemandForecastChangeTrackingSummary
   comparisonEntry: DemandForecastProductionComparisonEntry
   workspaceTabs: DemandForecastProductionWorkspaceTab[]
 }
@@ -121,22 +119,6 @@ export type DemandForecastProductionChangeRow = {
   changeReasonLabel: string
 }
 
-export type DemandForecastChangeTrackingActionShell = {
-  label: string
-  disabledLabel: string
-  detail: string
-  isDisabled: true
-}
-
-export type DemandForecastChangeTrackingSummary = {
-  title: string
-  sourceVersionLabel: string
-  alignmentCheckLabel: string
-  downstreamImpactLabel: string
-  failureBoundaryLabel: string
-  actionShells: DemandForecastChangeTrackingActionShell[]
-}
-
 export type DemandForecastProductionComparisonEntry = {
   tone: "ready" | "blocked"
   title: string
@@ -163,7 +145,6 @@ const DEMAND_FORECAST_PRODUCTION_WORKSPACE_TABS: DemandForecastProductionWorkspa
     { key: "source", label: "来源与对齐" },
     { key: "rows", label: "预测明细" },
     { key: "comparison", label: "本地比对" },
-    { key: "boundary", label: "变更边界" },
   ]
 
 export function summarizeDemandForecastProductionWorkbench(
@@ -251,18 +232,12 @@ export function summarizeDemandForecastProductionDetail(
       sourceRowLabel: "未定位来源行",
       skillAlignmentLabel: "未定位来源批次，无法确认技能组和等级",
       timeBucketLabel: "暂未发现 0.5h 预测明细",
-      forecastScopeLabel: "未定位来源批次，不伪造技能组/等级/时段行",
+      forecastScopeLabel: "未定位来源批次，暂无技能组/等级/时段行",
       alignmentResultLabel: "暂未发现技能组/等级/时段对齐结果",
       blockerSummary: "请返回预测生产工作台选择来源批次",
       intervalRows: [],
       changeRows: [],
-      changeBoundaryLabel: "变更追踪边界待 IM104",
-      changeTracking: buildDemandForecastChangeTrackingSummary({
-        versionLabel: null,
-        hasLocatedBatch: false,
-        isAligned: false,
-        blockerSummary: "请返回预测生产工作台选择来源批次",
-      }),
+      changeBoundaryLabel: "暂无变更记录",
       comparisonEntry: buildDemandForecastComparisonEntry({
         tone: "blocked",
         versionLabel: null,
@@ -310,19 +285,19 @@ export function summarizeDemandForecastProductionDetail(
       : "暂未发现 0.5h 预测明细"
   const forecastScopeLabel = hasApiDetail
     ? "真实版本 API 已返回技能组/等级/0.5h 时段明细"
-    : "当前列表 API 未暴露预测明细，不伪造技能组/等级/时段行"
+    : "暂无技能组/等级/时段明细"
   const changeBoundaryLabel = hasApiDetail
     ? apiChanges.length > 0
       ? `已读取 ${apiChanges.length.toLocaleString("zh-CN")} 条版本变更记录`
       : "真实版本 API 暂未返回变更记录"
-    : "变更追踪边界待 IM104"
+    : "暂无变更记录"
 
   return {
     tone: row.tone,
     title: isReady ? "预测版本详情已定位" : "预测版本详情仍有阻塞",
     detail: isReady
-      ? "当前版本已应用并形成技能组、等级和 0.5h 时段对齐口径，可作为后续排班和比对的只读来源。"
-      : "当前版本缺少应用、业务版本或预测明细，详情页只展示可确认的来源口径。",
+      ? "当前版本已应用并形成技能组、等级和 0.5h 时段对齐口径，可进入排班和比对链路。"
+      : "当前版本缺少应用、业务版本或预测明细，详情页展示可确认的来源信息。",
     batchId: batch.batch_id,
     fileName: batch.file_name,
     versionLabel,
@@ -342,12 +317,6 @@ export function summarizeDemandForecastProductionDetail(
     intervalRows,
     changeRows,
     changeBoundaryLabel,
-    changeTracking: buildDemandForecastChangeTrackingSummary({
-      versionLabel,
-      hasLocatedBatch: true,
-      isAligned: row.tone === "ready",
-      blockerSummary: row.blockerSummary,
-    }),
     comparisonEntry: buildDemandForecastComparisonEntry({
       tone: row.tone,
       versionLabel,
@@ -490,93 +459,6 @@ function formatReferenceValue(value: string, label: string) {
   return value.trim() ? `${label} ${value}` : `未填写${label}`
 }
 
-function buildDemandForecastChangeTrackingSummary({
-  versionLabel,
-  hasLocatedBatch,
-  isAligned,
-  blockerSummary,
-}: {
-  versionLabel: string | null
-  hasLocatedBatch: boolean
-  isAligned: boolean
-  blockerSummary: string
-}): DemandForecastChangeTrackingSummary {
-  return {
-    title: "变更追踪边界安全壳",
-    sourceVersionLabel: resolveChangeTrackingSourceVersionLabel(
-      versionLabel,
-      hasLocatedBatch
-    ),
-    alignmentCheckLabel: resolveChangeTrackingAlignmentLabel(
-      hasLocatedBatch,
-      isAligned
-    ),
-    downstreamImpactLabel: resolveChangeTrackingImpactLabel(
-      hasLocatedBatch,
-      isAligned
-    ),
-    failureBoundaryLabel:
-      "写入动作进入前需要单独确认后端、schema、migration 和生产状态边界",
-    actionShells: [
-      {
-        label: "记录预测变更",
-        disabledLabel: "暂不写入",
-        detail: "仅展示入口位置；不新增变更记录、不提交真实预测调整。",
-        isDisabled: true,
-      },
-      {
-        label: "校验下游影响",
-        disabledLabel: "暂不提交",
-        detail: "仅展示排班、比对、复核影响校验边界；不触发后端计算或批量操作。",
-        isDisabled: true,
-      },
-      {
-        label: "更新生产口径",
-        disabledLabel: "暂不变更",
-        detail: `当前阻塞/边界：${blockerSummary}`,
-        isDisabled: true,
-      },
-    ],
-  }
-}
-
-function resolveChangeTrackingSourceVersionLabel(
-  versionLabel: string | null,
-  hasLocatedBatch: boolean
-) {
-  if (!hasLocatedBatch || !versionLabel) {
-    return "来源版本未定位"
-  }
-
-  return `来源版本 ${versionLabel} 已定位`
-}
-
-function resolveChangeTrackingAlignmentLabel(
-  hasLocatedBatch: boolean,
-  isAligned: boolean
-) {
-  if (!hasLocatedBatch) {
-    return "阻塞：未定位来源批次，无法校验技能组/等级/0.5h 时段"
-  }
-
-  return isAligned
-    ? "技能组/等级/0.5h 时段已具备只读对齐口径"
-    : "阻塞：暂未发现技能组/等级/0.5h 时段预测明细"
-}
-
-function resolveChangeTrackingImpactLabel(
-  hasLocatedBatch: boolean,
-  isAligned: boolean
-) {
-  if (!hasLocatedBatch) {
-    return "下游影响校验阻塞：未定位预测版本，不能进入变更追踪"
-  }
-
-  return isAligned
-    ? "下游影响需先回看排班、比对和复核结果，本页不写预测变更"
-    : "下游影响校验阻塞：预测明细未形成，不能进入变更追踪"
-}
-
 function resolveAlignmentLabel(
   hasVersion: boolean,
   isApplied: boolean,
@@ -610,7 +492,7 @@ function resolveDemandForecastBlocker(
     return "已应用但暂未发现预测明细"
   }
 
-  return "无阻塞；当前只读展示需求预测生产口径"
+  return "无阻塞"
 }
 
 function resolveDemandForecastProductionTone(
@@ -648,7 +530,7 @@ function resolveDemandForecastProductionDetail(
     return "部分预测版本缺少应用、业务版本或预测明细，暂不能进入排班比对口径。"
   }
 
-  return "当前需求预测版本已应用并具备技能组、等级和时段对齐口径，本页仍只读展示。"
+  return "当前需求预测版本已应用并具备技能组、等级和时段对齐口径。"
 }
 
 function formatBusinessDateRange(from: string, to: string) {

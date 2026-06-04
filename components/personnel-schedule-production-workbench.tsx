@@ -7,7 +7,6 @@ import {
   CalendarClock,
   FileClock,
   ListChecks,
-  Lock,
   Table2,
   Users,
 } from "lucide-react"
@@ -49,14 +48,13 @@ export function PersonnelScheduleProductionWorkbench({
         <div>
           <h1 className="text-xl font-semibold tracking-normal">排班生产</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-            按人员排班导入批次查看生产版本、应用状态、业务日范围和 0.5h 展开状态。本页只读，不发布、不冻结、不触发自动排班。
+            按人员排班导入批次查看生产版本、应用状态、业务日范围和 0.5h 展开状态。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
             {formatToneLabel(summary.tone)}
           </Badge>
-          <Badge variant="secondary">只读工作台</Badge>
         </div>
       </section>
 
@@ -88,7 +86,7 @@ export function PersonnelScheduleProductionWorkbench({
         <MetricCard
           label="0.5h 已展开"
           value={summary.expandedVersions.toLocaleString("zh-CN")}
-          detail="可进入后续比对口径"
+          detail="可进入比对口径"
           tone={summary.expandedVersions > 0 ? "ready" : "default"}
         />
         <MetricCard
@@ -103,16 +101,13 @@ export function PersonnelScheduleProductionWorkbench({
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <CalendarClock className="size-4 text-muted-foreground" />
-            当前生产边界
+            版本状态
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 text-sm text-muted-foreground">
           <div className="grid gap-1">
             <p className="font-medium text-foreground">{summary.title}</p>
             <p>{summary.detail}</p>
-            <p>
-              当前只读展示来源批次、业务版本、应用状态和展开状态；版本详情已可查看，发布/冻结边界待 IM101。
-            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="outline">
@@ -145,7 +140,7 @@ export function PersonnelScheduleProductionWorkbench({
                 <TableHead>应用状态</TableHead>
                 <TableHead>0.5h 展开</TableHead>
                 <TableHead>阻塞原因</TableHead>
-                <TableHead className="text-right">后续入口</TableHead>
+                <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -206,18 +201,6 @@ export function PersonnelScheduleProductionWorkbench({
         </CardContent>
       </Card>
 
-      <section className="grid gap-3 md:grid-cols-2">
-        <BoundaryItem
-          icon={<Lock className="size-4 text-muted-foreground" />}
-          title="当前不发布冻结"
-          detail="本轮不改变生产排班状态，只展示版本是否具备进入详情、比对和后续发布冻结边界的条件。"
-        />
-        <BoundaryItem
-          icon={<FileClock className="size-4 text-muted-foreground" />}
-          title="后续顺序"
-          detail="当前已补单版本详情和 0.5h 展开结果；IM101 只讨论发布/冻结安全壳，不直接接真实写入。"
-        />
-      </section>
     </main>
   )
 }
@@ -255,14 +238,13 @@ export function PersonnelScheduleProductionDetail({
             排班版本详情
           </h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-            查看单个人员排班来源批次对应的业务版本、班次引用口径、人员范围说明和 0.5h 展开结果。本页只读，不发布、不冻结、不触发自动排班。
+            查看单个人员排班来源批次对应的业务版本、班次引用口径、人员范围说明和 0.5h 展开结果。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant={detail.tone === "blocked" ? "destructive" : "outline"}>
             {detail.tone === "ready" ? "展开已形成" : "详情仍阻塞"}
           </Badge>
-          <Badge variant="secondary">只读详情</Badge>
         </div>
       </section>
 
@@ -389,7 +371,7 @@ export function PersonnelScheduleProductionDetail({
                 <Table2 className="size-4 text-muted-foreground" />
                 {detail.detailRows.length > 0 || detail.intervalRows.length > 0
                   ? "真实版本明细"
-                  : "当前不伪造明细"}
+                  : "暂无版本明细"}
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 text-sm text-muted-foreground">
@@ -398,9 +380,6 @@ export function PersonnelScheduleProductionDetail({
                   <div className="grid gap-1">
                     <p className="font-medium text-foreground">
                       排班明细与 0.5h 展开已来自真实版本 API
-                    </p>
-                    <p>
-                      页面只读展示已应用版本返回的人员、班次、职场、供应商、项目和技能引用；不提交发布、冻结或自动排班动作。
                     </p>
                   </div>
                   <div className="grid gap-4 xl:grid-cols-2">
@@ -418,7 +397,7 @@ export function PersonnelScheduleProductionDetail({
                 </>
               ) : (
                 <p>
-                  当前列表 API 只提供来源批次、版本和应用记录数。本页只展示这些已确认信息；人员名单、班次明细和逐 0.5h 明细待后续版本 API 暴露后再呈现。
+                  当前来源只提供批次、版本和应用记录数，暂无人员名单、班次明细和逐 0.5h 明细。
                 </p>
               )}
             </CardContent>
@@ -448,51 +427,6 @@ export function PersonnelScheduleProductionDetail({
           </Card>
         </TabsContent>
 
-        <TabsContent value="boundary" className="mt-0">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Lock className="size-4 text-muted-foreground" />
-                {detail.actionShellTitle}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <p className="text-sm text-muted-foreground">
-                {detail.actionShellDetail}
-              </p>
-              <div className="grid gap-3 lg:grid-cols-3">
-                {detail.actionShells.map((action) => (
-                  <div key={action.actionKey} className="grid gap-3 rounded-md border p-3">
-                    <p className="text-sm font-medium text-foreground">
-                      {action.actionLabel}
-                    </p>
-                    <div className="grid gap-2 text-sm text-muted-foreground">
-                      <DetailItem
-                        label="来源版本"
-                        value={action.sourceVersionLabel}
-                      />
-                      <DetailItem
-                        label="展开校验"
-                        value={action.expansionGateLabel}
-                      />
-                      <DetailItem
-                        label="引用校验"
-                        value={action.referenceGateLabel}
-                      />
-                      <DetailItem
-                        label="失败边界"
-                        value={action.failureBoundaryLabel}
-                      />
-                    </div>
-                    <Button disabled size="sm" variant="outline">
-                      {action.disabledLabel}
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </main>
   )
@@ -639,30 +573,6 @@ function DetailCard({
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground">{value}</p>
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryItem({
-  icon,
-  title,
-  detail,
-}: {
-  icon: ReactNode
-  title: string
-  detail: string
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">{detail}</p>
       </CardContent>
     </Card>
   )

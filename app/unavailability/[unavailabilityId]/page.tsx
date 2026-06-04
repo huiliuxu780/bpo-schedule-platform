@@ -110,7 +110,7 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
             <div>
               <CardTitle>不可用记录</CardTitle>
               <CardDescription>
-                本页只定位影响，不触发审批、批量调班或自动排班
+                查看不可用原因、人员团队和排班影响。
               </CardDescription>
             </div>
             <Badge variant={record.status === "active" ? "default" : "outline"}>

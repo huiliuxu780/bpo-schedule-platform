@@ -1,5 +1,4 @@
 import Link from "next/link"
-import type { ReactNode } from "react"
 import {
   AlertTriangle,
   ArrowLeft,
@@ -7,7 +6,6 @@ import {
   CalendarClock,
   FileClock,
   Layers3,
-  Lock,
   ShieldCheck,
   Table2,
 } from "lucide-react"
@@ -49,14 +47,13 @@ export function DemandForecastProductionWorkbench({
         <div>
           <h1 className="text-xl font-semibold tracking-normal">预测生产</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-            按需求预测导入批次查看预测版本、应用状态、业务日范围和技能组/等级/时段对齐状态。本页只读，不调整预测、不触发自动排班。
+            按需求预测导入批次查看预测版本、应用状态、业务日范围和技能组/等级/时段对齐状态。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
             {formatToneLabel(summary.tone)}
           </Badge>
-          <Badge variant="secondary">只读工作台</Badge>
         </div>
       </section>
 
@@ -103,16 +100,13 @@ export function DemandForecastProductionWorkbench({
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <CalendarClock className="size-4 text-muted-foreground" />
-            当前生产边界
+            版本状态
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 text-sm text-muted-foreground">
           <div className="grid gap-1">
             <p className="font-medium text-foreground">{summary.title}</p>
             <p>{summary.detail}</p>
-            <p>
-              当前只读展示来源批次、预测业务版本、应用状态和对齐状态；版本详情可查看，变更追踪安全壳位于单版本详情页。
-            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="outline">
@@ -145,7 +139,7 @@ export function DemandForecastProductionWorkbench({
                 <TableHead>应用状态</TableHead>
                 <TableHead>技能/等级/时段对齐</TableHead>
                 <TableHead>阻塞原因</TableHead>
-                <TableHead className="text-right">后续入口</TableHead>
+                <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -206,18 +200,6 @@ export function DemandForecastProductionWorkbench({
         </CardContent>
       </Card>
 
-      <section className="grid gap-3 md:grid-cols-2">
-        <BoundaryItem
-          icon={<Lock className="size-4 text-muted-foreground" />}
-          title="当前不调整预测"
-          detail="本轮不改变预测版本、不写变更记录、不触发自动排班，只展示预测是否具备进入排班和比对的只读口径。"
-        />
-        <BoundaryItem
-          icon={<FileClock className="size-4 text-muted-foreground" />}
-          title="后续顺序"
-          detail="单版本详情已经承接对齐结果和变更追踪安全壳；真实写入、影响校验提交和生产口径变更仍需单独确认。"
-        />
-      </section>
     </main>
   )
 }
@@ -249,14 +231,13 @@ export function DemandForecastProductionDetail({
           </div>
           <h1 className="text-xl font-semibold tracking-normal">预测版本详情</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-            查看单个需求预测来源批次对应的业务版本、技能组/等级/时段对齐口径和预测明细边界。本页只读，不调整预测、不写变更记录。
+            查看单个需求预测来源批次对应的业务版本、技能组/等级/时段对齐口径和预测明细。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant={detail.tone === "blocked" ? "destructive" : "outline"}>
             {detail.tone === "ready" ? "对齐已形成" : "详情仍阻塞"}
           </Badge>
-          <Badge variant="secondary">只读详情</Badge>
         </div>
       </section>
 
@@ -302,8 +283,8 @@ export function DemandForecastProductionDetail({
               tone={detail.tone === "ready" ? "ready" : "blocked"}
             />
             <MetricCard
-              label="变更追踪"
-              value="暂不写入"
+              label="版本变更"
+              value={detail.changeRows.length.toLocaleString("zh-CN")}
               detail={detail.changeBoundaryLabel}
               tone="default"
             />
@@ -357,7 +338,7 @@ export function DemandForecastProductionDetail({
             <CardContent className="grid gap-4 text-sm text-muted-foreground">
               <DetailItem label="技能组与等级" value={detail.skillAlignmentLabel} />
               <DetailItem label="时段粒度" value={detail.timeBucketLabel} />
-              <DetailItem label="预测明细边界" value={detail.forecastScopeLabel} />
+              <DetailItem label="预测明细" value={detail.forecastScopeLabel} />
               <DetailItem label="对齐结果" value={detail.alignmentResultLabel} />
             </CardContent>
           </Card>
@@ -490,48 +471,6 @@ export function DemandForecastProductionDetail({
           </Card>
         </TabsContent>
 
-        <TabsContent value="boundary" className="mt-0 grid gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ShieldCheck className="size-4 text-muted-foreground" />
-                {detail.changeTracking.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
-                <DetailItem label="来源版本前置校验" value={detail.changeTracking.sourceVersionLabel} />
-                <DetailItem label="技能组/等级/时段校验" value={detail.changeTracking.alignmentCheckLabel} />
-                <DetailItem label="下游影响校验" value={detail.changeTracking.downstreamImpactLabel} />
-                <DetailItem label="失败边界" value={detail.changeTracking.failureBoundaryLabel} />
-              </div>
-              <div className="grid gap-3 md:grid-cols-3">
-                {detail.changeTracking.actionShells.map((action) => (
-                  <div key={action.label} className="grid gap-3 rounded-md border border-dashed p-3">
-                    <p className="text-sm font-medium text-foreground">{action.label}</p>
-                    <p className="text-sm text-muted-foreground">{action.detail}</p>
-                    <Button size="sm" variant="outline" disabled={action.isDisabled}>
-                      {action.disabledLabel}
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <section className="grid gap-3 md:grid-cols-2">
-            <BoundaryItem
-              icon={<Lock className="size-4 text-muted-foreground" />}
-              title="不伪造预测明细"
-              detail="当前列表 API 只提供批次级摘要，详情页不构造技能组、等级或 0.5h 明细行。"
-            />
-            <BoundaryItem
-              icon={<FileClock className="size-4 text-muted-foreground" />}
-              title={detail.changeBoundaryLabel}
-              detail="IM104 只展示变更追踪边界安全壳，不直接接真实预测变更写入。"
-            />
-          </section>
-        </TabsContent>
       </Tabs>
     </main>
   )
@@ -560,28 +499,6 @@ function MetricCard({
         <div className="text-2xl font-semibold tabular-nums">{value}</div>
         <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
       </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryItem({
-  icon,
-  title,
-  detail,
-}: {
-  icon: ReactNode
-  title: string
-  detail: string
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">{detail}</CardContent>
     </Card>
   )
 }

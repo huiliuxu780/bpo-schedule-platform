@@ -180,7 +180,7 @@ function MetricCard({
               tone === "blocked" ? "destructive" : tone === "done" ? "secondary" : "outline"
             }
           >
-            {tone === "blocked" ? "需处理" : tone === "done" ? "已清理" : "只读"}
+            {tone === "blocked" ? "需处理" : tone === "done" ? "已清理" : "列表"}
           </Badge>
         </div>
       </CardHeader>
@@ -207,7 +207,7 @@ function ReviewCaseFilterCard({
               筛选复核案例
             </CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">
-              按业务日、owner、状态、严重度和来源定位案例；从质量问题进入时，关键词作为只读焦点保留。
+              按业务日、owner、状态、严重度和来源定位案例；从质量问题进入时，关键词作为焦点保留。
             </p>
           </div>
           <Button asChild size="sm" variant="ghost">
@@ -440,7 +440,7 @@ function ReviewCaseTable({
             复核案例列表
           </CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
-            案例详情以只读 API 为入口；补证据和关闭动作不在本页提供。
+            从列表进入案例详情，继续查看证据、结论和处理动作。
           </p>
         </div>
         {error ? <Badge variant="destructive">读取失败</Badge> : null}

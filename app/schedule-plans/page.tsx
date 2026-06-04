@@ -154,7 +154,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             <div>
               <CardTitle>排班风险提示</CardTitle>
               <CardDescription>
-                缺口与不可用记录的本地 MVP 联动提示
+                缺口与不可用记录的联动提示
               </CardDescription>
             </div>
             <Badge variant={highRiskCount > 0 ? "default" : "outline"}>

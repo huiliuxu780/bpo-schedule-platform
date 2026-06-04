@@ -151,14 +151,12 @@ function TemplateDetailWorkspace({ template }: { template: ImportFieldMappingTem
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="maintenance" className="m-0">
+        <TabsContent value="maintenance" className="m-0 grid gap-4">
           <TemplateUpdateCard template={template} />
+          <TemplateControlCard template={template} />
         </TabsContent>
         <TabsContent value="mapping" className="m-0">
           <TemplateMappingTable template={template} />
-        </TabsContent>
-        <TabsContent value="boundary" className="m-0">
-          <TemplateControlCard template={template} />
         </TabsContent>
       </Tabs>
     </section>
@@ -312,16 +310,15 @@ function TemplateControlCard({ template }: { template: ImportFieldMappingTemplat
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">维护边界</CardTitle>
+        <CardTitle className="text-base">模板状态</CardTitle>
         <p className="text-sm text-muted-foreground">
-          本页只维护字段映射模板，不触发导入批次应用或下游计算
+          查看模板字段、启用状态和停用操作。
         </p>
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="grid gap-3">
-          <BoundaryItem label="可维护" value="模板名称、字段映射 JSON、启用状态" />
-          <BoundaryItem label="不处理" value="新增模板、批量导入、审批、导出、权限" />
-          <BoundaryItem label="当前状态" value={template.is_active ? "启用" : "停用"} />
+          <InfoItem label="字段范围" value="模板名称、字段映射 JSON、启用状态" />
+          <InfoItem label="当前状态" value={template.is_active ? "启用" : "停用"} />
         </div>
         {template.is_active ? (
           <form action={deactivateImportFieldMappingTemplateAction} className="grid gap-3">
@@ -336,7 +333,7 @@ function TemplateControlCard({ template }: { template: ImportFieldMappingTemplat
           </form>
         ) : (
           <div className="rounded-md border border-dashed px-3 py-3 text-sm text-muted-foreground">
-            当前模板已停用，本页不提供重复停用入口。
+            当前模板已停用。
           </div>
         )}
       </CardContent>
@@ -393,7 +390,7 @@ function HeaderMetric({ label, value }: { label: string; value: string }) {
   )
 }
 
-function BoundaryItem({ label, value }: { label: string; value: string }) {
+function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border p-3">
       <div className="text-xs text-muted-foreground">{label}</div>

@@ -16,7 +16,6 @@ export type MasterDataMaintenanceWorkspaceTabKey =
   | "actions"
   | "submit"
   | "agent_skills"
-  | "boundary"
 
 export type MasterDataMaintenanceWorkspaceTab = {
   key: MasterDataMaintenanceWorkspaceTabKey
@@ -70,11 +69,11 @@ export type MasterDataReferenceImpact = {
 export type MasterDataMaintenanceAction = {
   key: "create" | "edit" | "freeze" | "effective_period"
   label: string
-  statusLabel: "待预校验" | "来源阻塞"
+  statusLabel: "可提交" | "来源阻塞"
   targetScope: string
   referenceCheckLabel: string
   failureBoundary: string
-  submitLabel: "暂不提交" | "提交新增" | "提交编辑" | "提交冻结" | "提交有效期"
+  submitLabel: "不可提交" | "提交新增" | "提交编辑" | "提交冻结" | "提交有效期"
   canSubmit: boolean
 }
 
@@ -310,42 +309,42 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
     label: "坐席",
     scopeLabel: "人员基础档案、在职/冻结状态、所属供应商",
     referenceLabel: "排班明细、登录日志、状态轨迹",
-    maintenanceBoundary: "本页只读；新增、冻结和有效期维护留到受控维护动作。",
+    maintenanceBoundary: "人员档案、状态、组织、职场、供应商和技能关系。",
   },
   {
     key: "sites",
     label: "职场",
     scopeLabel: "站点编码、城市、时区和运营状态",
     referenceLabel: "坐席归属、排班计划、需求预测",
-    maintenanceBoundary: "本页只展示维护对象和来源版本，不修改站点状态。",
+    maintenanceBoundary: "职场编码、城市、时区、运营状态和生效周期。",
   },
   {
     key: "vendors",
     label: "供应商",
     scopeLabel: "供应商编码、名称、合作状态",
     referenceLabel: "坐席归属、项目绑定、结算复盘口径",
-    maintenanceBoundary: "本轮不进入供应商新增、停用或权限隔离。",
+    maintenanceBoundary: "供应商编码、名称、合作状态和生效周期。",
   },
   {
     key: "projects",
     label: "项目",
     scopeLabel: "项目编码、业务线、服务范围",
     referenceLabel: "需求预测、排班计划、复核案例",
-    maintenanceBoundary: "本页不定义生产状态码或结算规则。",
+    maintenanceBoundary: "项目编码、业务线、服务范围、状态和生效周期。",
   },
   {
     key: "skills",
     label: "技能",
     scopeLabel: "技能组、技能等级、服务语种",
     referenceLabel: "预测时段、排班技能、缺口比对",
-    maintenanceBoundary: "技能变更和版本追踪由后续任务承接。",
+    maintenanceBoundary: "技能编码、技能组、技能等级、服务语种和状态。",
   },
   {
     key: "bindings",
     label: "绑定关系",
     scopeLabel: "坐席-项目-技能-职场-供应商关系",
     referenceLabel: "排班展开、预测对齐、状态日志归因",
-    maintenanceBoundary: "本轮只标记引用影响，不提供批量绑定维护。",
+    maintenanceBoundary: "人员、项目、技能、职场、供应商之间的有效绑定关系。",
   },
 ]
 
@@ -355,19 +354,13 @@ const MASTER_DATA_MAINTENANCE_WORKSPACE_TABS: MasterDataMaintenanceWorkspaceTab[
   [
     { key: "overview", label: "总览" },
     { key: "source", label: "来源与引用" },
-    { key: "actions", label: "受控动作" },
+    { key: "actions", label: "维护动作" },
     { key: "submit", label: "提交表单" },
-    { key: "boundary", label: "维护边界" },
   ]
 
 const MASTER_DATA_AGENT_WORKSPACE_TABS: MasterDataMaintenanceWorkspaceTab[] =
   MASTER_DATA_MAINTENANCE_WORKSPACE_TABS.flatMap((tab) =>
-    tab.key === "boundary"
-      ? [
-          { key: "agent_skills", label: "技能维护" },
-          tab,
-        ]
-      : [tab]
+    tab.key === "submit" ? [tab, { key: "agent_skills", label: "技能维护" }] : [tab]
   )
 
 export function summarizeMasterDataMaintenanceWorkbench(
@@ -411,8 +404,8 @@ export function summarizeMasterDataMaintenanceWorkbench(
     blockerSummary,
     nextActionLabel:
       tone === "ready"
-        ? "查看详情与受控动作"
-        : "先处理来源批次后再进入维护",
+        ? "查看详情与维护动作"
+        : "先处理来源批次",
   }))
   const readyObjects = tone === "ready" ? rows.length : 0
 
@@ -435,7 +428,7 @@ export function summarizeMasterDataMaintenanceWorkbench(
       : null,
     versionWorkbenchHref: MASTER_DATA_VERSION_WORKBENCH_HREF,
     readonlyBoundary:
-      "当前工作台展示维护对象、来源版本和阻塞原因；详情页提供受控动作安全壳，但不提交真实新增、修改、冻结、批量、审批、权限或导出动作。",
+      "工作台展示维护对象、来源版本和当前处理状态。",
     rows,
   }
 }
@@ -479,7 +472,7 @@ export function summarizeMasterDataMaintenanceEntityDetail(
     tone: workbench.tone,
     title: `${entity.label}详情与引用影响`,
     detail: isSourceReady
-      ? `当前基于 ${workbench.sourceVersionLabel} 展示 ${entity.label} 的维护边界和引用影响空态。`
+      ? `当前基于 ${workbench.sourceVersionLabel} 展示 ${entity.label} 的基础信息和引用关系。`
       : `${entity.label}来源尚未应用或仍有阻塞，暂不展示引用影响明细。`,
     sourceVersionLabel: workbench.sourceVersionLabel,
     sourceVersionHref:
@@ -814,39 +807,39 @@ function buildMasterDataReferenceImpacts(
   isSourceReady: boolean
 ): MasterDataReferenceImpact[] {
   const blockedDetail = "来源版本未就绪，暂不展示引用影响。"
-  const emptyPrefix = `${entity.label}引用影响明细尚未接入，当前不伪造数量。`
+  const emptyPrefix = `${entity.label}暂无引用影响明细。`
 
   return [
     {
       key: "schedule",
       label: "排班引用",
       tone: isSourceReady ? "empty" : "blocked",
-      countLabel: "不伪造数量",
-      detail: isSourceReady ? `${emptyPrefix} 后续会说明受影响排班版本和班次展开。` : blockedDetail,
+      countLabel: "暂无明细",
+      detail: isSourceReady ? `${emptyPrefix} 可从人员排班版本继续查看班次展开。` : blockedDetail,
       sourceLabel: "人员排班版本、班次明细",
     },
     {
       key: "forecast",
       label: "预测引用",
       tone: isSourceReady ? "empty" : "blocked",
-      countLabel: "不伪造数量",
-      detail: isSourceReady ? `${emptyPrefix} 后续会说明受影响预测版本、技能组和半小时粒度。` : blockedDetail,
+      countLabel: "暂无明细",
+      detail: isSourceReady ? `${emptyPrefix} 可从需求预测版本继续查看技能组和半小时粒度。` : blockedDetail,
       sourceLabel: "需求预测版本、技能组时段",
     },
     {
       key: "actual_logs",
       label: "登录/状态引用",
       tone: isSourceReady ? "empty" : "blocked",
-      countLabel: "不伪造数量",
-      detail: isSourceReady ? `${emptyPrefix} 后续会说明受影响登录事件、状态区间和业务日。` : blockedDetail,
+      countLabel: "暂无明细",
+      detail: isSourceReady ? `${emptyPrefix} 可从登录/状态日志继续查看事件、状态区间和业务日。` : blockedDetail,
       sourceLabel: "登录日志、状态日志",
     },
     {
       key: "review",
       label: "比对与复核引用",
       tone: isSourceReady ? "empty" : "blocked",
-      countLabel: "不伪造数量",
-      detail: isSourceReady ? `${emptyPrefix} 后续会说明相关比对结果和复核案例。` : blockedDetail,
+      countLabel: "暂无明细",
+      detail: isSourceReady ? `${emptyPrefix} 可从比对结果和复核案例继续查看。` : blockedDetail,
       sourceLabel: "comparison run、review case",
     },
   ]
@@ -872,41 +865,41 @@ function buildMasterDataMaintenanceActions(
     {
       key: "create",
       label: actionLabels.create,
-      statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
-      targetScope: `仅限单个${entity.label}对象，不进入批量新增。`,
+      statusLabel: isSourceReady ? "可提交" : "来源阻塞",
+      targetScope: `新增单个${entity.label}对象。`,
       referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
       failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
-      submitLabel: canSubmitCreate ? "提交新增" : "暂不提交",
+      submitLabel: canSubmitCreate ? "提交新增" : "不可提交",
       canSubmit: canSubmitCreate,
     },
     {
       key: "edit",
       label: actionLabels.edit,
-      statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
-      targetScope: `仅限单个${entity.label}字段修正，不修改生产公式或结算口径。`,
+      statusLabel: isSourceReady ? "可提交" : "来源阻塞",
+      targetScope: `编辑单个${entity.label}基础字段。`,
       referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
       failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
-      submitLabel: canSubmitEdit ? "提交编辑" : "暂不提交",
+      submitLabel: canSubmitEdit ? "提交编辑" : "不可提交",
       canSubmit: canSubmitEdit,
     },
     {
       key: "freeze",
       label: actionLabels.freeze,
-      statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
-      targetScope: `仅限单个${entity.label}冻结或恢复，不建立权限、审批或发布流程。`,
+      statusLabel: isSourceReady ? "可提交" : "来源阻塞",
+      targetScope: `冻结或恢复单个${entity.label}。`,
       referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
       failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
-      submitLabel: canSubmitFreeze ? "提交冻结" : "暂不提交",
+      submitLabel: canSubmitFreeze ? "提交冻结" : "不可提交",
       canSubmit: canSubmitFreeze,
     },
     {
       key: "effective_period",
       label: actionLabels.effectivePeriod,
-      statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
-      targetScope: `仅限单个${entity.label}有效期调整，不改历史版本展开结果。`,
+      statusLabel: isSourceReady ? "可提交" : "来源阻塞",
+      targetScope: `调整单个${entity.label}生效周期。`,
       referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
       failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
-      submitLabel: canSubmitEffectivePeriod ? "提交有效期" : "暂不提交",
+      submitLabel: canSubmitEffectivePeriod ? "提交有效期" : "不可提交",
       canSubmit: canSubmitEffectivePeriod,
     },
   ]
@@ -926,14 +919,14 @@ function buildMasterDataReferenceCheckLabel(
   isSourceReady: boolean
 ) {
   if (!isSourceReady) {
-    return "来源版本未就绪，禁止进入写入。"
+    return "来源版本未就绪，请先处理来源批次。"
   }
 
   if (entity.key === "agents") {
-    return "提交前只校验坐席单实体字段；引用影响仍保持空态，不伪造数量。"
+    return "提交前校验人员基础字段和关联 ID。"
   }
 
-  return "引用影响校验：当前只有空态摘要，不伪造数量；提交前必须补齐真实引用结果。"
+  return "提交前校验对象字段、状态和关联 ID。"
 }
 
 function buildMasterDataFailureBoundary(
@@ -945,10 +938,10 @@ function buildMasterDataFailureBoundary(
   }
 
   if (entity.key === "agents") {
-    return "调用 IM108 单坐席 API；缺少坐席、重复创建、字段缺失或有效期无效时展示后端错误码。"
+    return "人员不存在、重复创建、字段缺失或有效期无效时返回错误。"
   }
 
-  return "调用主数据单对象 API；若引用校验缺失、实体缺失、来源版本过期或动作越界，必须阻塞提交。"
+  return "对象不存在、重复创建、字段缺失、引用无效或有效期无效时返回错误。"
 }
 
 function compactMasterDataAgentMaintenancePayload(
@@ -1084,7 +1077,7 @@ function resolveMasterDataMaintenanceStatusLabel(
   }
 
   if (tone === "ready") {
-    return "只读可查看"
+    return "可查看"
   }
 
   return "待导入"
@@ -1100,14 +1093,14 @@ function resolveMasterDataMaintenanceBlocker(
   }
 
   if (hasPendingFreshness) {
-    return "最新主数据批次尚未应用，当前仍按上一已应用版本只读展示"
+    return "最新主数据批次尚未应用，当前仍按上一已应用版本展示"
   }
 
   if (!latestAppliedBatch) {
     return "主数据批次尚未应用到业务数据"
   }
 
-  return "无阻塞；当前仅开放只读查看"
+  return "无阻塞"
 }
 
 function resolveMasterDataMaintenanceDetail(
@@ -1125,8 +1118,8 @@ function resolveMasterDataMaintenanceDetail(
   }
 
   if (hasPendingFreshness) {
-    return `当前只读来源为 ${latestAppliedBatch.import_version_id}，但最新主数据批次尚未应用：${latestBatch?.batch_id ?? "未知批次"}。`
+    return `当前来源为 ${latestAppliedBatch.import_version_id}，最新主数据批次尚未应用：${latestBatch?.batch_id ?? "未知批次"}。`
   }
 
-  return `当前只读来源为已应用版本 ${latestAppliedBatch.import_version_id}，来源批次 ${latestAppliedBatch.batch_id}。`
+  return `当前来源为已应用版本 ${latestAppliedBatch.import_version_id}，来源批次 ${latestAppliedBatch.batch_id}。`
 }

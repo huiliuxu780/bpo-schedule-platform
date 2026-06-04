@@ -66,7 +66,7 @@ export default async function ImportUploadWorkspacePage({
           <CardContent className="grid gap-3 md:grid-cols-3">
             <HeaderItem label="上传入口" value="列表页、模板详情页" />
             <HeaderItem label="模板预选" value={query?.templateId ?? "可手动选择"} />
-            <HeaderItem label="处理边界" value="不做审批、导出、批量" />
+            <HeaderItem label="上传方式" value="单个 CSV 文件" />
           </CardContent>
         </Card>
 

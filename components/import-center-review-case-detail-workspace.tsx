@@ -18,7 +18,6 @@ import {
   type ImportReviewCaseProcessingStageSnapshot,
   type ImportReviewCaseRecord,
   type ImportReviewOwnerNavigationSummary,
-  buildImportReviewCaseDetailApiUrl,
   summarizeImportReviewCaseActionDeck,
   summarizeImportReviewCaseActionContinuation,
   summarizeImportReviewCaseActionFeedback,
@@ -124,7 +123,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
             <MetricCard
               label="来源结果"
               value={summary.sourceLabel}
-              detail="只读来源线索"
+              detail="来源线索"
             />
             <MetricCard label="Owner" value={summary.ownerLabel} detail="当前责任人" />
             <MetricCard
@@ -210,9 +209,6 @@ export function ImportCenterReviewCaseDetailWorkspace({
           />
         </TabsContent>
 
-        <TabsContent value="boundary" className="mt-0">
-          <ProcessingBoundaryCard caseId={caseId} />
-        </TabsContent>
       </Tabs>
     </main>
   )
@@ -494,33 +490,6 @@ function EvidenceChainCard({
   )
 }
 
-function ProcessingBoundaryCard({ caseId }: { caseId: string }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <ClipboardCheck className="size-4 text-muted-foreground" />
-          处理边界
-        </CardTitle>
-        <CardDescription>
-          本页只允许对当前案例执行受控证据补充、结论补充和关闭写入。
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-3 text-sm text-muted-foreground">
-        <div className="rounded-md border bg-muted/30 p-3">
-          三个动作复用现有本地 API；审批、导出、权限和批量处理仍需要单独受控任务。
-        </div>
-        <div className="rounded-md border bg-muted/30 p-3">
-          <div>当前详情来自</div>
-          <div className="mt-1 break-all font-mono text-xs">
-            {buildImportReviewCaseDetailApiUrl(caseId)}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
 function SourceTraceCard({
   run,
   href,
@@ -540,7 +509,7 @@ function SourceTraceCard({
               来源链路
             </CardTitle>
             <p className="mt-1 text-sm text-muted-foreground">
-              只读反查计算运行、版本和导入批次。
+              反查计算运行、版本和导入批次。
             </p>
           </div>
           <Button asChild size="sm" variant="outline">
@@ -585,7 +554,7 @@ function SourceResultContextCard({
           来源结果明细
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          只读展示复核案例引用的对比结果上下文。
+          展示复核案例引用的对比结果上下文。
         </p>
       </CardHeader>
       <CardContent className="grid gap-3">

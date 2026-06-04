@@ -1,14 +1,11 @@
 import Link from "next/link"
-import type { ReactNode } from "react"
 import {
   AlertTriangle,
   ArrowRight,
   Clock3,
   DatabaseZap,
   FileSearch,
-  Globe2,
   Layers3,
-  Lock,
   ShieldAlert,
   Split,
   Table2,
@@ -60,14 +57,13 @@ export function ActualLogProductionWorkbench({
         <div>
           <h1 className="text-xl font-semibold tracking-normal">CORN 状态日志生产</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-            按登录日志和状态日志导入批次查看实际日志业务版本、应用状态、业务日范围、时区和跨天处理边界。本页只读，不改状态字典、不重算实际工时。
+            按登录日志和状态日志导入批次查看实际日志业务版本、应用状态、业务日范围、时区和跨天处理结果。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
             {formatToneLabel(summary.tone)}
           </Badge>
-          <Badge variant="secondary">只读工作台</Badge>
         </div>
       </section>
 
@@ -120,16 +116,13 @@ export function ActualLogProductionWorkbench({
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <DatabaseZap className="size-4 text-muted-foreground" />
-            当前生产边界
+            版本状态
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 text-sm text-muted-foreground">
           <div className="grid gap-1">
             <p className="font-medium text-foreground">{summary.title}</p>
             <p>{summary.detail}</p>
-            <p>
-              当前只读展示来源批次、实际日志业务版本、业务日范围和处理边界；处理解释详情待 IM106，状态字典与异常解释安全壳待 IM107。
-            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="outline">
@@ -160,9 +153,9 @@ export function ActualLogProductionWorkbench({
                 <TableHead>来源批次</TableHead>
                 <TableHead>业务日范围</TableHead>
                 <TableHead>应用状态</TableHead>
-                <TableHead>时区边界</TableHead>
-                <TableHead>跨天边界</TableHead>
-                <TableHead>处理边界</TableHead>
+                <TableHead>时区校验</TableHead>
+                <TableHead>跨天处理</TableHead>
+                <TableHead>处理状态</TableHead>
                 <TableHead>阻塞原因</TableHead>
                 <TableHead>操作</TableHead>
               </TableRow>
@@ -192,13 +185,13 @@ export function ActualLogProductionWorkbench({
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
-                      {row.timezoneBoundaryLabel}
+                      {row.timezoneCheckLabel}
                     </TableCell>
                     <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
-                      {row.crossDayBoundaryLabel}
+                      {row.crossDayCheckLabel}
                     </TableCell>
                     <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
-                      {row.processingBoundaryLabel}
+                      {row.processingStatusLabel}
                     </TableCell>
                     <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
                       {row.blockerSummary}
@@ -225,23 +218,6 @@ export function ActualLogProductionWorkbench({
         </CardContent>
       </Card>
 
-      <section className="grid gap-3 md:grid-cols-3">
-        <BoundaryItem
-          icon={<Globe2 className="size-4 text-muted-foreground" />}
-          title="时区只读解释"
-          detail="DB006 已有 Asia/Shanghai 校验口径；本页不伪造逐行时区异常，详情解释留到 IM106。"
-        />
-        <BoundaryItem
-          icon={<Clock3 className="size-4 text-muted-foreground" />}
-          title="跨天处理边界"
-          detail="跨天状态区间会按业务日切分；当前列表 API 未暴露逐行起止时间，不构造假区间。"
-        />
-        <BoundaryItem
-          icon={<Lock className="size-4 text-muted-foreground" />}
-          title="当前不触发比对"
-          detail="本轮不改状态字典、不重算实际工时、不触发排班 vs 实际比对，只建立生产台账入口。"
-        />
-      </section>
     </main>
   )
 }
@@ -306,19 +282,19 @@ export function ActualLogProcessingDetail({
             <MetricCard
               label="登录事件"
               value={summary.loginEventCount.toLocaleString("zh-CN")}
-              detail={summary.loginEventBoundaryLabel}
+              detail={summary.loginEventLabel}
               tone="default"
             />
             <MetricCard
               label="状态字典"
               value={summary.statusDictionaryCount.toLocaleString("zh-CN")}
-              detail="字典配置只读展示，变更待 IM107"
+              detail={summary.exceptionShell.statusDictionaryLabel}
               tone="default"
             />
             <MetricCard
               label="状态区间"
               value={summary.statusIntervalCount.toLocaleString("zh-CN")}
-              detail={summary.statusIntervalBoundaryLabel}
+              detail={summary.statusIntervalLabel}
               tone={summary.statusIntervalCount > 0 ? "ready" : "default"}
             />
             <MetricCard
@@ -358,7 +334,7 @@ export function ActualLogProcessingDetail({
           </Card>
         </TabsContent>
 
-        <TabsContent value="timeBoundary" className="mt-0">
+        <TabsContent value="time" className="mt-0">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
@@ -367,9 +343,9 @@ export function ActualLogProcessingDetail({
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-3 md:grid-cols-3">
-              <BoundaryPill title="时区校验" detail={summary.timezoneCheckLabel} />
-              <BoundaryPill title="业务日归属" detail={summary.businessDayLabel} />
-              <BoundaryPill title="跨天切分" detail={summary.crossDaySplitLabel} />
+              <InfoPill title="时区校验" detail={summary.timezoneCheckLabel} />
+              <InfoPill title="业务日归属" detail={summary.businessDayLabel} />
+              <InfoPill title="跨天切分" detail={summary.crossDaySplitLabel} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -432,7 +408,7 @@ export function ActualLogProcessingDetail({
                     <TableHead>时区</TableHead>
                     <TableHead>业务日</TableHead>
                     <TableHead>跨天解释</TableHead>
-                    <TableHead>边界</TableHead>
+                    <TableHead>处理说明</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -465,7 +441,7 @@ export function ActualLogProcessingDetail({
                           {row.crossDayLabel}
                         </TableCell>
                         <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
-                          {row.boundaryLabel}
+                          {row.processingLabel}
                         </TableCell>
                       </TableRow>
                     ))
@@ -485,31 +461,6 @@ export function ActualLogProcessingDetail({
           </Card>
         </TabsContent>
 
-        <TabsContent value="boundary" className="mt-0">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Lock className="size-4 text-muted-foreground" />
-                处理边界
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-3">
-              {summary.exceptionShell.actions.map((action) => (
-                <div
-                  key={action.title}
-                  className="flex min-w-0 flex-col gap-2 rounded-md border px-3 py-3"
-                >
-                  <p className="font-medium text-foreground">{action.title}</p>
-                  <p className="text-xs">{action.detail}</p>
-                  <Button size="sm" variant="outline" disabled>
-                    <Lock data-icon="inline-start" />
-                    {action.disabledLabel}
-                  </Button>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </main>
   )
@@ -542,29 +493,7 @@ function MetricCard({
   )
 }
 
-function BoundaryItem({
-  icon,
-  title,
-  detail,
-}: {
-  icon: ReactNode
-  title: string
-  detail: string
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">{detail}</CardContent>
-    </Card>
-  )
-}
-
-function BoundaryPill({ title, detail }: { title: string; detail: string }) {
+function InfoPill({ title, detail }: { title: string; detail: string }) {
   return (
     <div className="rounded-md border px-3 py-2">
       <div className="text-xs font-medium text-foreground">{title}</div>
@@ -594,5 +523,5 @@ function formatExceptionToneLabel(tone: "ready" | "blocked" | "empty") {
     return "需关注"
   }
 
-  return "仅边界"
+  return "待补充"
 }

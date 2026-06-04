@@ -3296,3 +3296,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM135 UI Narrative Cleanup
+
+- branch_name: `codex/im135-master-data-ui-detail-polish`
+- base_main_commit: `5d70579`
+- stacked_on: `5d70579 fix: polish agent management controls`
+- remote_status: `local correction only until final check/commit/push.`
+- scope: remove PM-rejected non-functional page descriptions, boundary/safety-shell cards, `MVP`/`No Database` labels, `IMxxx` references, and user-visible "what this page does not do" explanations from master data, production ledgers, import center, review-case, template, upload, and legacy schedule pages.
+- allowed_files_check: `app/**`, `components/**`, and `docs/dev/branch-log.md` only for UI copy/card cleanup; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor changes.
+- scope_diff_check: expected UI/model copy cleanup and branch-log only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: `rg` keyword scan for `MVP`, `IMxxx`, `边界`, `只读`, `安全壳`, `No Database`, `不接数据库`, `审批、导出`, `批量处理`, `自动排班`, `boundary`, and related development-boundary wording returned no matches in `app` and `components`; `git diff --check` passed; `npm run lint` passed; `npm run typecheck` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 206 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

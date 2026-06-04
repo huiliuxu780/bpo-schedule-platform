@@ -7,7 +7,6 @@ export type PersonnelScheduleProductionWorkspaceTabKey =
   | "source"
   | "rows"
   | "comparison"
-  | "boundary"
 
 export type PersonnelScheduleProductionWorkspaceTab = {
   key: PersonnelScheduleProductionWorkspaceTabKey
@@ -63,9 +62,6 @@ export type PersonnelScheduleProductionDetailSummary = {
   blockerSummary: string
   detailRows: PersonnelScheduleProductionDetailRow[]
   intervalRows: PersonnelScheduleProductionIntervalRow[]
-  actionShellTitle: string
-  actionShellDetail: string
-  actionShells: PersonnelScheduleProductionActionShell[]
   comparisonEntry: PersonnelScheduleProductionComparisonEntry
   workspaceTabs: PersonnelScheduleProductionWorkspaceTab[]
 }
@@ -140,17 +136,6 @@ export type PersonnelScheduleProductionIntervalRow = {
   blockerLabel: string
 }
 
-export type PersonnelScheduleProductionActionShell = {
-  actionKey: "publish" | "freeze" | "unpublish"
-  actionLabel: string
-  disabledLabel: string
-  sourceVersionLabel: string
-  expansionGateLabel: string
-  referenceGateLabel: string
-  failureBoundaryLabel: string
-  isEnabled: false
-}
-
 export type PersonnelScheduleProductionComparisonEntry = {
   tone: "ready" | "blocked"
   title: string
@@ -166,7 +151,6 @@ const PERSONNEL_SCHEDULE_PRODUCTION_WORKSPACE_TABS: PersonnelScheduleProductionW
     { key: "source", label: "来源与版本" },
     { key: "rows", label: "真实明细" },
     { key: "comparison", label: "本地比对" },
-    { key: "boundary", label: "发布冻结边界" },
   ]
 
 export function summarizePersonnelScheduleProductionWorkbench(
@@ -249,18 +233,11 @@ export function summarizePersonnelScheduleProductionDetail(
       appliedRecordCountLabel: "0",
       sourceRowLabel: "未定位来源行",
       shiftReferenceLabel: "未定位来源批次，无法确认班次引用",
-      personScopeLabel: "未定位来源批次，不伪造人员级明细",
+      personScopeLabel: "未定位来源批次，暂无人员明细",
       halfHourResultLabel: "暂未发现 0.5h 展开记录",
       blockerSummary: "请返回排班生产工作台选择来源批次",
       detailRows: [],
       intervalRows: [],
-      actionShellTitle: "发布/冻结边界安全壳",
-      actionShellDetail: "当前只展示生产动作前置校验，不提交真实发布或冻结状态。",
-      actionShells: buildPersonnelScheduleActionShells({
-        sourceVersionLabel: "未找到对应人员排班批次",
-        expansionGateLabel: "阻塞：暂未发现 0.5h 展开记录",
-        failureBoundaryLabel: "阻塞：请返回排班生产工作台选择来源批次",
-      }),
       comparisonEntry: buildPersonnelScheduleComparisonEntry({
         tone: "blocked",
         versionLabel: null,
@@ -301,14 +278,14 @@ export function summarizePersonnelScheduleProductionDetail(
     : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，班次引用明细待版本 API 暴露`
   const personScopeLabel = hasApiDetail
     ? summarizeEmployees(apiDetails)
-    : "当前列表 API 未暴露人员清单，不伪造人员级明细"
+    : "暂无人员清单明细"
 
   return {
     tone: row.tone === "empty" ? "blocked" : row.tone,
     title: isReady ? "排班版本详情已定位" : "排班版本详情仍有阻塞",
     detail: isReady
-      ? "当前版本已应用并形成 0.5h 展开记录，可作为后续比对和复核的只读来源。"
-      : "当前版本缺少应用、业务版本或 0.5h 展开记录，详情页只展示可确认的来源口径。",
+      ? "当前版本已应用并形成 0.5h 展开记录，可进入比对和复核链路。"
+      : "当前版本缺少应用、业务版本或 0.5h 展开记录，详情页展示可确认的来源信息。",
     batchId: batch.batch_id,
     fileName: batch.file_name,
     versionLabel,
@@ -326,19 +303,6 @@ export function summarizePersonnelScheduleProductionDetail(
     blockerSummary: row.blockerSummary,
     detailRows: apiDetailRows,
     intervalRows: apiIntervalRows,
-    actionShellTitle: "发布/冻结边界安全壳",
-    actionShellDetail: "当前只展示生产动作前置校验，不提交真实发布或冻结状态。",
-    actionShells: buildPersonnelScheduleActionShells({
-      sourceVersionLabel: versionLabel,
-      expansionGateLabel:
-        intervalCount > 0
-          ? halfHourResultLabel
-          : `阻塞：${halfHourResultLabel}`,
-      failureBoundaryLabel:
-        row.tone === "ready"
-          ? "当前未接入真实写入，不能改变生产排班口径"
-          : `阻塞：${row.blockerSummary}`,
-    }),
     comparisonEntry: buildPersonnelScheduleComparisonEntry({
       tone: row.tone === "empty" ? "blocked" : row.tone,
       versionLabel,
@@ -513,49 +477,6 @@ function resolveReferenceBlocker(fields: Array<[string, string]>) {
   return `阻塞：缺少${missingLabels.join("、")}引用`
 }
 
-function buildPersonnelScheduleActionShells({
-  sourceVersionLabel,
-  expansionGateLabel,
-  failureBoundaryLabel,
-}: {
-  sourceVersionLabel: string
-  expansionGateLabel: string
-  failureBoundaryLabel: string
-}): PersonnelScheduleProductionActionShell[] {
-  return [
-    {
-      actionKey: "publish",
-      actionLabel: "发布版本",
-      disabledLabel: "暂不发布",
-      sourceVersionLabel,
-      expansionGateLabel,
-      referenceGateLabel: "引用校验待接入：需确认比对、复核和后续履约引用",
-      failureBoundaryLabel,
-      isEnabled: false,
-    },
-    {
-      actionKey: "freeze",
-      actionLabel: "冻结版本",
-      disabledLabel: "暂不冻结",
-      sourceVersionLabel,
-      expansionGateLabel,
-      referenceGateLabel: "引用校验待接入：需确认当前版本没有未关闭复核阻塞",
-      failureBoundaryLabel,
-      isEnabled: false,
-    },
-    {
-      actionKey: "unpublish",
-      actionLabel: "取消发布",
-      disabledLabel: "暂不取消发布",
-      sourceVersionLabel,
-      expansionGateLabel,
-      referenceGateLabel: "引用校验待接入：需确认下游履约、复核和版本回退边界",
-      failureBoundaryLabel,
-      isEnabled: false,
-    },
-  ]
-}
-
 function resolveExpansionLabel(
   hasVersion: boolean,
   isApplied: boolean,
@@ -589,7 +510,7 @@ function resolvePersonnelScheduleBlocker(
     return "已应用但暂未发现展开记录"
   }
 
-  return "无阻塞；当前只读展示排班生产口径"
+  return "无阻塞"
 }
 
 function resolvePersonnelScheduleProductionTone(
@@ -626,10 +547,10 @@ function resolvePersonnelScheduleProductionDetail(
   }
 
   if (blockedVersions > 0) {
-    return "部分排班版本缺少应用、业务版本或 0.5h 展开记录，暂不能进入发布或冻结口径。"
+    return "部分排班版本缺少应用、业务版本或 0.5h 展开记录。"
   }
 
-  return "当前人员排班版本已应用并形成展开记录，本页仍只读展示，不承担发布或冻结语义。"
+  return "当前人员排班版本已应用并形成展开记录。"
 }
 
 function formatBusinessDateRange(from: string, to: string) {

@@ -285,7 +285,7 @@ function QualityExceptionTracePanel({ trace }: { trace: ImportQualityExceptionTr
           <div className="mt-1 text-sm text-muted-foreground">{trace.title}</div>
         </div>
         <Badge variant={trace.tone === "blocked" ? "destructive" : "outline"}>
-          只读追踪
+          影响追踪
         </Badge>
       </div>
       <div className="grid gap-2 md:grid-cols-3">

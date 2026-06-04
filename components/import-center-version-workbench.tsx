@@ -75,7 +75,7 @@ export function ImportCenterVersionWorkbench({
           <div>
             <h1 className="text-xl font-semibold tracking-normal">业务版本工作台</h1>
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              只读查看当前业务版本、来源批次、阻塞状态和当前可见时间。本页先以已应用批次和最近上传记录聚合，不承担发布、冻结或审批语义。
+              查看当前业务版本、来源批次、阻塞状态、下游影响和本地比对入口。
             </p>
           </div>
         </div>
@@ -338,19 +338,6 @@ export function ImportCenterVersionWorkbench({
           </Table>
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <GitBranch className="size-4 text-muted-foreground" />
-            当前边界
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-2 text-sm text-muted-foreground">
-          <p>本页仅提供受控单次本地比对提交，不触发应用、发布、冻结、审批、导出或批量处理。</p>
-          <p>当前时间先使用批次上传时间作为可见口径；发布、冻结和审批语义仍留在后续版本切片处理。</p>
-        </CardContent>
-      </Card>
     </main>
   )
 }
@@ -518,7 +505,7 @@ function MetricCard({
               tone === "blocked" ? "destructive" : tone === "done" ? "secondary" : "outline"
             }
           >
-            {tone === "blocked" ? "需处理" : tone === "done" ? "已形成" : "只读"}
+            {tone === "blocked" ? "需处理" : tone === "done" ? "已形成" : "台账"}
           </Badge>
         </div>
       </CardHeader>

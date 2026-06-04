@@ -93,10 +93,10 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
             <div>
               <CardTitle>复核链路</CardTitle>
               <CardDescription>
-                在本地 MVP 内继续检查班次、风险和不可用，不接数据库
+                继续检查班次、风险和不可用影响。
               </CardDescription>
             </div>
-            <Badge variant="outline">No Database</Badge>
+            <Badge variant="outline">复核中</Badge>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="grid gap-3 md:grid-cols-4">
@@ -154,7 +154,7 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
             <div>
               <CardTitle>0.5h 时段明细</CardTitle>
               <CardDescription>
-                只读展示预测人数、已排人数、缺口与备注
+                展示预测人数、已排人数、缺口与备注
               </CardDescription>
             </div>
             <Badge variant="outline">{plan.summary.id}</Badge>

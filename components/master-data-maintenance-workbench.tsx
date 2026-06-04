@@ -1,22 +1,18 @@
 import Link from "next/link"
-import type * as React from "react"
 import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
   Database,
-  FileClock,
   GitBranch,
   Link2,
-  Lock,
   MoreHorizontal,
   Plus,
   RotateCcw,
   Search,
   Send,
   Settings2,
-  ShieldAlert,
   ShieldCheck,
   Upload,
   Users,
@@ -81,7 +77,7 @@ export function MasterDataMaintenanceWorkbench({
           <div>
             <h1 className="text-xl font-semibold tracking-normal">主数据维护</h1>
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              按坐席、职场、供应商、项目、技能和绑定关系查看当前维护范围、来源版本和阻塞原因。详情页提供受控动作安全壳，但不提交新增、修改、冻结、审批、导出或批量动作。
+              管理坐席、职场、供应商、项目、技能和绑定关系，查看来源版本、当前状态和关联范围。
             </p>
           </div>
         </div>
@@ -89,7 +85,6 @@ export function MasterDataMaintenanceWorkbench({
           <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
             {formatToneLabel(summary.tone)}
           </Badge>
-          <Badge variant="secondary">只读工作台</Badge>
         </div>
       </section>
 
@@ -113,7 +108,7 @@ export function MasterDataMaintenanceWorkbench({
           tone="default"
         />
         <MetricCard
-          label="只读可查看"
+          label="可查看对象"
           value={summary.readyObjects.toLocaleString("zh-CN")}
           detail="基于已应用主数据版本"
           tone={summary.readyObjects > 0 ? "ready" : "default"}
@@ -136,14 +131,13 @@ export function MasterDataMaintenanceWorkbench({
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <ShieldCheck className="size-4 text-muted-foreground" />
-            当前维护边界
+            来源与版本
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 text-sm text-muted-foreground">
           <div className="grid gap-1">
             <p className="font-medium text-foreground">{summary.title}</p>
             <p>{summary.detail}</p>
-            <p>{summary.readonlyBoundary}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="outline">
@@ -177,7 +171,7 @@ export function MasterDataMaintenanceWorkbench({
                 <TableHead>引用影响</TableHead>
                 <TableHead>来源</TableHead>
                 <TableHead>状态</TableHead>
-                <TableHead className="text-right">后续入口</TableHead>
+                <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -228,9 +222,6 @@ export function MasterDataMaintenanceWorkbench({
                       <span className="text-xs text-muted-foreground">
                         {row.nextActionLabel}
                       </span>
-                      <span className="text-xs text-muted-foreground">
-                        维护动作待 IM098
-                      </span>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -240,18 +231,6 @@ export function MasterDataMaintenanceWorkbench({
         </CardContent>
       </Card>
 
-      <section className="grid gap-3 md:grid-cols-2">
-        <BoundaryItem
-          icon={<Lock className="size-4 text-muted-foreground" />}
-          title="当前不提交写入"
-          detail="新增、编辑、冻结、有效期调整和绑定维护只展示动作范围、引用校验和失败边界；真实写入仍未接后端。"
-        />
-        <BoundaryItem
-          icon={<FileClock className="size-4 text-muted-foreground" />}
-          title="后续顺序"
-          detail="下一步需要单独决定是否进入后端写入、schema/migration、权限或审批；本轮不提前混入。"
-        />
-      </section>
     </main>
   )
 }
@@ -859,7 +838,6 @@ export function MasterDataMaintenanceEntityDetail({
           <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
             {formatToneLabel(summary.tone)}
           </Badge>
-          <Badge variant="secondary">只读详情</Badge>
         </div>
       </section>
 
@@ -903,13 +881,13 @@ export function MasterDataMaintenanceEntityDetail({
             <MetricCard
               label="有效期"
               value={summary.effectivePeriodLabel}
-              detail="没有明细时保持空态"
+              detail="当前生效周期"
               tone="default"
             />
             <MetricCard
               label="冻结状态"
               value={summary.freezeStatusLabel}
-              detail="不伪造实体级状态"
+              detail="当前状态摘要"
               tone={summary.tone === "blocked" ? "blocked" : "default"}
             />
           </section>
@@ -941,14 +919,14 @@ export function MasterDataMaintenanceEntityDetail({
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-base">
                 <GitBranch className="size-4 text-muted-foreground" />
-                来源与维护边界
+                来源与关联
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 text-sm text-muted-foreground">
               <div className="grid gap-1">
                 <p>
-                  <span className="font-medium text-foreground">维护范围：</span>
-                  {summary.entity.maintenanceBoundary}
+                  <span className="font-medium text-foreground">业务范围：</span>
+                  {summary.entity.scopeLabel}
                 </p>
                 <p>
                   <span className="font-medium text-foreground">引用范围：</span>
@@ -1019,8 +997,8 @@ export function MasterDataMaintenanceEntityDetail({
           <Card className="overflow-hidden">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <ShieldAlert className="size-4 text-muted-foreground" />
-                受控维护动作
+                <Settings2 className="size-4 text-muted-foreground" />
+                维护动作
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -1030,7 +1008,7 @@ export function MasterDataMaintenanceEntityDetail({
                     <TableHead>动作</TableHead>
                     <TableHead>实体范围</TableHead>
                     <TableHead>引用校验</TableHead>
-                    <TableHead>失败边界</TableHead>
+                    <TableHead>错误提示</TableHead>
                     <TableHead className="text-right">提交</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -1095,15 +1073,15 @@ export function MasterDataMaintenanceEntityDetail({
           {!canRenderAnySubmit ? (
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Send className="size-4 text-muted-foreground" />
-                  暂无可提交表单
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                当前对象或来源批次不满足受控单对象提交条件；请先查看来源与引用状态。
-              </CardContent>
-            </Card>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Send className="size-4 text-muted-foreground" />
+                暂无可提交表单
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-muted-foreground">
+                当前对象或来源批次不满足提交条件；请先查看来源与引用状态。
+            </CardContent>
+          </Card>
           ) : null}
         </TabsContent>
 
@@ -1123,41 +1101,12 @@ export function MasterDataMaintenanceEntityDetail({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">
-                  当前来源批次不满足单人技能维护提交条件。
+                  当前来源批次不满足技能维护提交条件。
                 </CardContent>
               </Card>
             )}
           </TabsContent>
         ) : null}
-
-        <TabsContent value="boundary" className="mt-0 grid gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Lock className="size-4 text-muted-foreground" />
-                维护边界
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3 text-sm text-muted-foreground">
-              <DetailItem label="对象边界" value={summary.entity.maintenanceBoundary} />
-              <DetailItem label="有效期边界" value={summary.effectivePeriodLabel} />
-              <DetailItem label="冻结边界" value={summary.freezeStatusLabel} />
-            </CardContent>
-          </Card>
-
-          <section className="grid gap-3 md:grid-cols-2">
-            <BoundaryItem
-              icon={<Lock className="size-4 text-muted-foreground" />}
-              title="不进入批量维护"
-              detail="当前只保留单对象受控提交入口，不提供批量新增、批量冻结、审批、权限或导出能力。"
-            />
-            <BoundaryItem
-              icon={<FileClock className="size-4 text-muted-foreground" />}
-              title="不伪造引用数量"
-              detail="引用影响只有来源范围和空态说明；没有真实下游引用查询时不构造影响数量。"
-            />
-          </section>
-        </TabsContent>
       </Tabs>
     </main>
   )
@@ -1306,14 +1255,14 @@ function AgentMaintenanceSubmitSection({
     <section className="grid gap-3">
       <div className="flex flex-col gap-1">
         <h2 className="text-base font-semibold tracking-normal">
-          坐席受控提交
+          坐席维护
         </h2>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          仅提交单个坐席维护动作到 IM108 API。来源批次固定为{" "}
+          维护单个坐席基础档案。来源批次{" "}
           <span className="font-mono text-foreground">
             {summary.agentSubmitSourceBatchId}
           </span>
-          ，不进入其他主数据对象、审批、导出或批量处理。
+          。
         </p>
       </div>
       <div className="grid gap-3 xl:grid-cols-2">
@@ -1394,11 +1343,11 @@ function AgentSkillMaintenanceSection({
           坐席技能维护
         </h2>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          覆盖单个坐席当前技能集合。来源批次固定为{" "}
+          覆盖单个坐席当前技能集合。来源批次{" "}
           <span className="font-mono text-foreground">
             {summary.agentSubmitSourceBatchId}
           </span>
-          ，不进入批量技能维护、权限、审批或导出。
+          。
         </p>
       </div>
       <Card>
@@ -1470,14 +1419,14 @@ function ReferenceMaintenanceSubmitSection({
     <section className="grid gap-3">
       <div className="flex flex-col gap-1">
         <h2 className="text-base font-semibold tracking-normal">
-          {summary.entity.label}受控提交
+          {summary.entity.label}维护
         </h2>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          仅提交单个{summary.entity.label}维护动作到 IM110 API。来源批次固定为{" "}
+          维护单个{summary.entity.label}基础档案。来源批次{" "}
           <span className="font-mono text-foreground">
             {summary.referenceSubmitSourceBatchId}
           </span>
-          ，不进入审批、导出、权限或批量处理。
+          。
         </p>
       </div>
       <div className="grid gap-3 xl:grid-cols-2">
@@ -1547,10 +1496,10 @@ function BindingMaintenanceSubmitSection({
     <section className="grid gap-3">
       <div className="flex flex-col gap-1">
         <h2 className="text-base font-semibold tracking-normal">
-          绑定关系受控提交
+          绑定关系维护
         </h2>
         <p className="max-w-3xl text-sm text-muted-foreground">
-          仅提交单条坐席、供应商、职场、项目、技能绑定关系。来源批次固定为{" "}
+          维护单条坐席、供应商、职场、项目、技能绑定关系。来源批次{" "}
           <span className="font-mono text-foreground">
             {summary.bindingSubmitSourceBatchId}
           </span>
@@ -1932,30 +1881,6 @@ function MetricCard({
           {value}
         </div>
         <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
-      </CardContent>
-    </Card>
-  )
-}
-
-function BoundaryItem({
-  icon,
-  title,
-  detail,
-}: {
-  icon: React.ReactNode
-  title: string
-  detail: string
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm">
-          {icon}
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">{detail}</p>
       </CardContent>
     </Card>
   )

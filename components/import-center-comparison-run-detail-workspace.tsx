@@ -73,7 +73,7 @@ export function ImportCenterComparisonRunDetailWorkspace({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
-            {summary.tone === "blocked" ? "需处理" : "只读"}
+            {summary.tone === "blocked" ? "需处理" : "详情"}
           </Badge>
           <Badge variant="secondary">{runId}</Badge>
         </div>
@@ -369,22 +369,6 @@ export function ImportCenterComparisonRunDetailWorkspace({
           </Card>
         </TabsContent>
 
-        <TabsContent value="boundary" className="mt-0">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Activity className="size-4 text-muted-foreground" />
-                处理边界
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-2 text-sm text-muted-foreground">
-              <p>本页只读展示，不触发重新计算、发布、审批、导出或批量处理。</p>
-              <p>
-                从复核案例进入时，只用于追踪来源运行和结果，不改变任何复核状态。
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </main>
   )

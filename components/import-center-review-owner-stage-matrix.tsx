@@ -56,7 +56,7 @@ export function ImportCenterReviewOwnerStageMatrix({
             <Badge variant="secondary">
               案例 {matrix.totalCases.toLocaleString("zh-CN")}
             </Badge>
-            <Badge variant="outline">只读聚合</Badge>
+            <Badge variant="outline">Owner 聚合</Badge>
           </div>
         </div>
       </CardHeader>

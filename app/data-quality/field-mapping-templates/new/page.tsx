@@ -59,7 +59,7 @@ export default async function FieldMappingTemplateCreatePage({
               </div>
               <CardTitle className="text-lg">新增字段映射模板</CardTitle>
               <p className="mt-1 text-sm text-muted-foreground">
-                保存常用 CSV 表头到标准字段的映射，后续上传可直接复用
+                保存常用 CSV 表头到标准字段的映射，上传时可直接复用
               </p>
             </div>
             <Badge variant="outline">模板新增</Badge>
@@ -91,7 +91,7 @@ export default async function FieldMappingTemplateCreatePage({
           </Card>
         ) : null}
 
-        <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="grid gap-4">
           <Card>
             <CardHeader>
               <CardTitle className="text-base">模板信息</CardTitle>
@@ -150,20 +150,6 @@ export default async function FieldMappingTemplateCreatePage({
               </form>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">创建边界</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                本页只新增字段映射模板，不触发导入批次或下游计算
-              </p>
-            </CardHeader>
-            <CardContent className="grid gap-3">
-              <BoundaryItem label="可创建" value="模板 ID、模板名称、文件类型、字段映射" />
-              <BoundaryItem label="创建后" value="进入模板详情页继续检查或维护" />
-              <BoundaryItem label="不处理" value="Excel、批量、审批、导出、权限、外部接口" />
-            </CardContent>
-          </Card>
         </section>
       </main>
     </AppShell>
@@ -182,14 +168,5 @@ function Field({
       <span className="font-medium text-muted-foreground">{label}</span>
       {children}
     </label>
-  )
-}
-
-function BoundaryItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-md border p-3">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="mt-1 text-sm font-medium">{value}</div>
-    </div>
   )
 }

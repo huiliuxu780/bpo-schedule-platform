@@ -19,9 +19,9 @@ export type ActualLogProductionRow = {
   applicationLabel: "已应用" | "待应用"
   tone: Exclude<ActualLogProductionTone, "empty">
   appliedRecordCountLabel: string
-  timezoneBoundaryLabel: string
-  crossDayBoundaryLabel: string
-  processingBoundaryLabel: string
+  timezoneCheckLabel: string
+  crossDayCheckLabel: string
+  processingStatusLabel: string
   blockerSummary: string
 }
 
@@ -45,21 +45,15 @@ export type ActualLogProcessingDetailRow = {
   timezoneLabel: string
   businessDayLabel: string
   crossDayLabel: string
-  boundaryLabel: string
+  processingLabel: string
   tone: "ready" | "blocked"
 }
 
-export type ActualLogExceptionBoundaryItem = {
+export type ActualLogExceptionItem = {
   title: string
   detail: string
   statusLabel: string
   tone: "ready" | "blocked" | "empty"
-}
-
-export type ActualLogExceptionShellAction = {
-  title: string
-  detail: string
-  disabledLabel: string
 }
 
 export type ActualLogExceptionShell = {
@@ -69,17 +63,15 @@ export type ActualLogExceptionShell = {
   unknownStatusLabel: string
   timezoneIssueLabel: string
   crossDayExceptionLabel: string
-  frozenEmployeeBoundaryLabel: string
-  items: ActualLogExceptionBoundaryItem[]
-  actions: ActualLogExceptionShellAction[]
+  frozenEmployeeLabel: string
+  items: ActualLogExceptionItem[]
 }
 
 export type ActualLogProcessingWorkspaceTabKey =
   | "overview"
-  | "timeBoundary"
+  | "time"
   | "exceptions"
   | "rows"
-  | "boundary"
 
 export type ActualLogProcessingWorkspaceTab = {
   key: ActualLogProcessingWorkspaceTabKey
@@ -105,8 +97,8 @@ export type ActualLogProcessingDetailSummary = {
   timezoneCheckLabel: string
   businessDayLabel: string
   crossDaySplitLabel: string
-  statusIntervalBoundaryLabel: string
-  loginEventBoundaryLabel: string
+  statusIntervalLabel: string
+  loginEventLabel: string
   detailEmptyLabel: string
   blockerSummary: string
   loginEventCount: number
@@ -121,10 +113,9 @@ export type ActualLogProcessingDetailSummary = {
 
 const ACTUAL_LOG_PROCESSING_WORKSPACE_TABS: ActualLogProcessingWorkspaceTab[] = [
   { key: "overview", label: "总览" },
-  { key: "timeBoundary", label: "时区与业务日" },
+  { key: "time", label: "时区与业务日" },
   { key: "exceptions", label: "字典与异常" },
   { key: "rows", label: "逐行明细" },
-  { key: "boundary", label: "处理边界" },
 ]
 
 export function summarizeActualLogProductionWorkbench(
@@ -176,9 +167,9 @@ function toActualLogProductionRow(batch: ImportBatchListRow): ActualLogProductio
     applicationLabel: isApplied ? "已应用" : "待应用",
     tone,
     appliedRecordCountLabel: batch.applied_record_count.toLocaleString("zh-CN"),
-    timezoneBoundaryLabel: resolveTimezoneBoundaryLabel(hasVersion),
-    crossDayBoundaryLabel: resolveCrossDayBoundaryLabel(batch, hasVersion),
-    processingBoundaryLabel: resolveProcessingBoundaryLabel(batch, hasVersion, isApplied),
+    timezoneCheckLabel: resolveTimezoneCheckLabel(hasVersion),
+    crossDayCheckLabel: resolveCrossDayCheckLabel(batch, hasVersion),
+    processingStatusLabel: resolveProcessingStatusLabel(batch, hasVersion, isApplied),
     blockerSummary: resolveActualLogBlocker(batch, hasVersion, isApplied),
   }
 }
@@ -247,11 +238,11 @@ export function summarizeActualLogProcessingDetail(
       hasDetailRows,
       crossDayIntervalCount
     ),
-    statusIntervalBoundaryLabel: resolveStatusIntervalBoundaryLabel(
+    statusIntervalLabel: resolveStatusIntervalLabel(
       statusIntervalCount,
       statusDictionaryCount
     ),
-    loginEventBoundaryLabel: resolveLoginEventBoundaryLabel(loginEventCount),
+    loginEventLabel: resolveLoginEventLabel(loginEventCount),
     detailEmptyLabel: hasDetailRows
       ? "已读取批次明细"
       : "批次明细未读取，不能展示逐行登录事件或状态区间",
@@ -292,11 +283,11 @@ function buildMissingActualLogProcessingDetail(
     applicationLabel: "待应用",
     appliedRecordCountLabel: "0",
     sourceRowLabel: "未定位来源行",
-    timezoneCheckLabel: "缺少逐行明细，不能伪造时区校验结果",
+    timezoneCheckLabel: "缺少逐行明细，暂未形成时区校验结果",
     businessDayLabel: "未定位业务日",
-    crossDaySplitLabel: "缺少状态区间明细，不能伪造跨天切分",
-    statusIntervalBoundaryLabel: "未定位状态区间",
-    loginEventBoundaryLabel: "未定位登录事件",
+    crossDaySplitLabel: "缺少状态区间明细，暂未形成跨天切分",
+    statusIntervalLabel: "未定位状态区间",
+    loginEventLabel: "未定位登录事件",
     detailEmptyLabel: "批次明细未读取，不能展示逐行登录事件或状态区间",
     blockerSummary: "请返回日志生产工作台选择来源批次",
     loginEventCount: 0,
@@ -375,64 +366,46 @@ function buildActualLogExceptionShell({
       : hasDetailRows
         ? "未发现跨天状态区间"
         : "缺少明细，不能判断跨天异常"
-  const frozenEmployeeBoundaryLabel =
-    "员工冻结状态需通过主数据引用校验，本页只展示边界，不提交规则变更"
+  const frozenEmployeeLabel = "员工状态需通过主数据引用校验"
 
   return {
-    title: "状态字典与异常解释安全壳",
-    detail: "当前只解释状态字典、未知状态、时区、跨天和冻结员工引用边界；所有动作均为禁用安全壳，不改变生产状态规则。",
+    title: "状态字典与异常解释",
+    detail: "查看状态字典、未知状态、时区、跨天和员工状态引用的处理结果。",
     statusDictionaryLabel,
     unknownStatusLabel,
     timezoneIssueLabel,
     crossDayExceptionLabel,
-    frozenEmployeeBoundaryLabel,
+    frozenEmployeeLabel,
     items: [
       {
         title: "状态字典",
-        detail: "只读展示已导入字典行；状态口径变更需要单独确认写入任务。",
+        detail: "展示已导入的状态字典行。",
         statusLabel: statusDictionaryLabel,
         tone: statusDictionaryCount > 0 ? "ready" : "empty",
       },
       {
         title: "未知状态",
-        detail: "仅当状态区间 code 未命中本批次字典时标记为待解释，不自动创建字典。",
+        detail: "状态区间 code 未命中本批次字典时标记为待解释。",
         statusLabel: unknownStatusLabel,
         tone: unknownStatusCount > 0 ? "blocked" : hasDetailRows ? "ready" : "empty",
       },
       {
         title: "时区错误",
-        detail: "只解释非 Asia/Shanghai 明细，当前不做时区换算或生产规则修正。",
+        detail: "标记非 Asia/Shanghai 的明细。",
         statusLabel: timezoneIssueLabel,
         tone: nonShanghaiTimezoneCount > 0 ? "blocked" : hasDetailRows ? "ready" : "empty",
       },
       {
         title: "跨天异常",
-        detail: "跨天状态区间按业务日边界解释，不在本页重算实际工时。",
+        detail: "跨天状态区间按业务日切分解释。",
         statusLabel: crossDayExceptionLabel,
         tone: crossDayIntervalCount > 0 ? "blocked" : hasDetailRows ? "ready" : "empty",
       },
       {
         title: "冻结员工引用",
-        detail: "员工在职/冻结状态属于主数据引用校验，本页不提交冻结或恢复动作。",
-        statusLabel: frozenEmployeeBoundaryLabel,
+        detail: "员工在职/冻结状态来自主数据引用校验。",
+        statusLabel: frozenEmployeeLabel,
         tone: "empty",
-      },
-    ],
-    actions: [
-      {
-        title: "维护状态字典",
-        detail: "需要后续受控写入任务才可提交字典新增、修改或停用。",
-        disabledLabel: "暂不变更字典",
-      },
-      {
-        title: "提交异常规则",
-        detail: "未知状态、时区错误和跨天异常暂只解释，不固化生产规则。",
-        disabledLabel: "暂不提交规则",
-      },
-      {
-        title: "重算实际工时",
-        detail: "实际工时和排班 vs 实际比对需要独立计算任务触发。",
-        disabledLabel: "暂不重算工时",
       },
     ],
   }
@@ -455,8 +428,8 @@ function summarizeActualLogDetailRows(
           timeRangeLabel: "未读取",
           timezoneLabel: "缺少 standard_fields",
           businessDayLabel: "未定位",
-          crossDayLabel: "缺少逐行起止时间，不能伪造跨天切分",
-          boundaryLabel: "当前明细缺少标准字段，只能展示空态解释",
+          crossDayLabel: "缺少逐行起止时间，暂未形成跨天切分",
+          processingLabel: "当前明细缺少标准字段",
           tone: "blocked",
         }
       }
@@ -485,8 +458,8 @@ function summarizeLoginEventRow(
     timeRangeLabel: eventAt ?? "未读取事件时间",
     timezoneLabel: formatTimezoneLabel(timezone),
     businessDayLabel: businessDay,
-    crossDayLabel: "登录事件不做跨天区间切分",
-    boundaryLabel: "仅解释登录/登出事件归属，不计算实际工时",
+    crossDayLabel: "登录事件无跨天区间切分",
+    processingLabel: "登录/登出事件归属已定位",
     tone: timezone === "Asia/Shanghai" ? "ready" : "blocked",
   }
 }
@@ -505,8 +478,8 @@ function summarizeStatusLogRow(
       timeRangeLabel: readText(fields, "external_status_code") ?? "未读取状态码",
       timezoneLabel: "字典行不参与时区校验",
       businessDayLabel: "字典行不归属具体业务日",
-      crossDayLabel: "字典行不做跨天切分",
-      boundaryLabel: `状态 ${readText(fields, "external_status_code") ?? "未读取"} 的生产性口径待 IM107 安全壳解释`,
+      crossDayLabel: "字典行无跨天切分",
+      processingLabel: `状态 ${readText(fields, "external_status_code") ?? "未读取"} 已进入字典解释`,
       tone: "ready",
     }
   }
@@ -528,7 +501,7 @@ function summarizeStatusLogRow(
       startDay === endDay
         ? "单业务日状态区间"
         : `跨天区间：按业务日 ${startDay} / ${endDay} 切分解释`,
-    boundaryLabel: "状态区间只读展示；实际生产性分钟由后续排班 vs 实际比对解释",
+    processingLabel: "状态区间已进入业务日归属解释",
     tone: timezone === "Asia/Shanghai" ? "ready" : "blocked",
   }
 }
@@ -601,7 +574,7 @@ function resolveProcessingDetailText(
   hasDetailRows: boolean
 ): string {
   if (!hasDetailRows) {
-    return "当前只读页面没有可用逐行处理明细，不能展示登录事件或状态区间。"
+    return "当前没有可用逐行处理明细，不能展示登录事件或状态区间。"
   }
 
   if (isReady) {
@@ -618,7 +591,7 @@ function resolveProcessingTimezoneLabel(
   nonShanghaiTimezoneCount: number
 ): string {
   if (rows.length === 0) {
-    return "缺少逐行明细，不能伪造时区校验结果"
+    return "缺少逐行明细，暂未形成时区校验结果"
   }
 
   if (nonShanghaiTimezoneCount > 0) {
@@ -634,7 +607,7 @@ function resolveProcessingCrossDayLabel(
   crossDayIntervalCount: number
 ): string {
   if (!hasDetailRows) {
-    return "缺少状态区间明细，不能伪造跨天切分"
+    return "缺少状态区间明细，暂未形成跨天切分"
   }
 
   if (fileType === "login_log") {
@@ -642,13 +615,13 @@ function resolveProcessingCrossDayLabel(
   }
 
   if (crossDayIntervalCount > 0) {
-    return `发现 ${crossDayIntervalCount.toLocaleString("zh-CN")} 条跨天状态区间；解释为按业务日边界切分`
+    return `发现 ${crossDayIntervalCount.toLocaleString("zh-CN")} 条跨天状态区间；按业务日切分`
   }
 
   return "未发现跨天状态区间"
 }
 
-function resolveStatusIntervalBoundaryLabel(
+function resolveStatusIntervalLabel(
   statusIntervalCount: number,
   statusDictionaryCount: number
 ): string {
@@ -659,12 +632,12 @@ function resolveStatusIntervalBoundaryLabel(
   return `状态字典 ${statusDictionaryCount.toLocaleString("zh-CN")} 行 · 状态区间 ${statusIntervalCount.toLocaleString("zh-CN")} 行`
 }
 
-function resolveLoginEventBoundaryLabel(loginEventCount: number): string {
+function resolveLoginEventLabel(loginEventCount: number): string {
   if (loginEventCount === 0) {
     return "暂未发现登录/登出事件明细"
   }
 
-  return `登录/登出事件 ${loginEventCount.toLocaleString("zh-CN")} 行；不在本页计算实际工时`
+  return `登录/登出事件 ${loginEventCount.toLocaleString("zh-CN")} 行`
 }
 
 function compareActualLogBatches(left: ImportBatchListRow, right: ImportBatchListRow) {
@@ -681,25 +654,25 @@ function compareActualLogBatches(left: ImportBatchListRow, right: ImportBatchLis
   return left.file_type === "status_log" ? -1 : 1
 }
 
-function resolveTimezoneBoundaryLabel(hasVersion: boolean) {
+function resolveTimezoneCheckLabel(hasVersion: boolean) {
   return hasVersion
-    ? "Asia/Shanghai 时区校验待处理详情页解释"
-    : "当前列表 API 未暴露逐行时区，不伪造时区异常"
+    ? "Asia/Shanghai 时区校验可查看"
+    : "暂无逐行时区明细"
 }
 
-function resolveCrossDayBoundaryLabel(batch: ImportBatchListRow, hasVersion: boolean) {
+function resolveCrossDayCheckLabel(batch: ImportBatchListRow, hasVersion: boolean) {
   if (!hasVersion) {
-    return "当前列表 API 未暴露逐行起止时间，不伪造跨天区间"
+    return "暂无逐行起止时间"
   }
 
   if (batch.business_date_from !== batch.business_date_to) {
-    return "跨天区间会按业务日切分，明细待 IM106"
+    return "跨天区间按业务日切分"
   }
 
-  return "单业务日范围；跨天明细待 IM106"
+  return "单业务日范围"
 }
 
-function resolveProcessingBoundaryLabel(
+function resolveProcessingStatusLabel(
   batch: ImportBatchListRow,
   hasVersion: boolean,
   isApplied: boolean
@@ -738,7 +711,7 @@ function resolveActualLogBlocker(
     return "已应用但暂未发现登录/状态处理记录"
   }
 
-  return "无阻塞；当前只读展示登录/状态日志生产口径"
+  return "无阻塞"
 }
 
 function resolveActualLogProductionTone(
@@ -776,7 +749,7 @@ function resolveActualLogProductionDetail(
     return "部分日志版本缺少应用、业务版本或处理记录，暂不能进入排班 vs 实际比对口径。"
   }
 
-  return "当前登录/状态日志版本已应用，本页只读展示业务日、时区和跨天处理边界。"
+  return "当前登录/状态日志版本已应用，可查看业务日、时区和跨天处理结果。"
 }
 
 function formatBusinessDateRange(from: string, to: string) {

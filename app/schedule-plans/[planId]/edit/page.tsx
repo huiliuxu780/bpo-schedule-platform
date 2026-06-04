@@ -107,7 +107,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
               <CardHeader>
                 <CardTitle>0.5h 时段</CardTitle>
                 <CardDescription>
-                  当前保存整份草稿明细，不做人员级排班
+                  保存草稿明细中的预测、已排、缺口和备注。
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-3">
