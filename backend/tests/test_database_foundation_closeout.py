@@ -29,7 +29,9 @@ class DatabaseFoundationCloseoutTest(unittest.TestCase):
             "master_data_workplaces",
             "master_data_projects",
             "master_data_skills",
+            "master_data_organizations",
             "master_data_employee_bindings",
+            "master_data_employee_skills",
             "schedule_shift_types",
             "personnel_schedule_versions",
             "personnel_schedule_details",
@@ -56,6 +58,21 @@ class DatabaseFoundationCloseoutTest(unittest.TestCase):
             table_names = set(inspect(engine).get_table_names())
 
             self.assertTrue(expected_tables.issubset(table_names))
+            inspector = inspect(engine)
+            employee_columns = {
+                column["name"] for column in inspector.get_columns("master_data_employees")
+            }
+            skill_columns = {
+                column["name"] for column in inspector.get_columns("master_data_skills")
+            }
+            self.assertTrue(
+                {
+                    "employee_type",
+                    "organization_id",
+                    "workplace_id",
+                }.issubset(employee_columns)
+            )
+            self.assertIn("skill_category", skill_columns)
 
     def test_minimum_database_foundation_chain_reaches_review_closure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

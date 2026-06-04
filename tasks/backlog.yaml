@@ -9236,3 +9236,48 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已把经营总览中的数据接入状态移除，并收敛侧边栏占位入口。"
+  - id: IM131
+    title: "人员主数据组织和多技能模型底座"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM130"]
+    allowed_files:
+      - "backend/app/models.py"
+      - "backend/app/master_data_persistence.py"
+      - "backend/app/master_data_import.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/app/import_readiness.py"
+      - "backend/migrations/versions/20260604_0009_master_data_org_skill_model.py"
+      - "backend/tests/test_master_data_persistence.py"
+      - "backend/tests/test_master_data_import_service.py"
+      - "backend/tests/test_master_data_import_api.py"
+      - "backend/tests/test_database_foundation_closeout.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "数据库迁移 head 创建组织表、人员技能关系表，并在人员表和技能表补充必要字段。"
+      - "主数据持久化支持组织层级路径、人员类型、人员组织/职场归属、技能类型和人员多技能。"
+      - "master_data 导入应用支持 organization、employee_skill 记录，以及 employee_type、organization_id、workplace_id、skill_category 字段。"
+      - "现有主数据导入、维护、readiness 和排班引用校验回归不破坏。"
+      - "不新增前端大页面、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到前端大页面、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子"
+      - "需要真实外部系统集成"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已扩展人员主数据组织层级、人员类型、技能类型和人员多技能模型底座。"

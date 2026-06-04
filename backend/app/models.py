@@ -19,6 +19,8 @@ ImportProcessingStatus = Literal["completed", "completed_with_errors"]
 ImportApplicationStatus = Literal["not_applied", "applied"]
 ImportReadinessStatus = Literal["ready", "blocked"]
 MasterDataStatus = Literal["active", "frozen", "inactive"]
+MasterDataEmployeeType = Literal["internal", "outsourced"]
+MasterDataSkillCategory = Literal["online", "hotline", "ticket"]
 MasterDataEmployeeMaintenanceAction = Literal["create", "edit", "freeze", "effective_period"]
 MasterDataEmployeeMaintenanceStatus = Literal[
     "created",
@@ -337,6 +339,7 @@ class MasterDataReferenceInput(BaseModel):
     status: MasterDataStatus
     effective_from: str
     effective_to: str
+    skill_category: MasterDataSkillCategory | None = None
 
 
 class MasterDataReferenceRecord(BaseModel):
@@ -346,6 +349,29 @@ class MasterDataReferenceRecord(BaseModel):
     effective_from: str
     effective_to: str
     batch_id: str
+    skill_category: MasterDataSkillCategory | None = None
+
+
+class MasterDataOrganizationInput(BaseModel):
+    organization_id: str
+    organization_name: str
+    organization_level: int = Field(ge=1)
+    parent_organization_id: str | None = None
+    status: MasterDataStatus
+    effective_from: str
+    effective_to: str
+
+
+class MasterDataOrganizationRecord(BaseModel):
+    organization_id: str
+    organization_name: str
+    organization_level: int = Field(ge=1)
+    parent_organization_id: str | None = None
+    status: MasterDataStatus
+    effective_from: str
+    effective_to: str
+    batch_id: str
+    organization_path: str
 
 
 class MasterDataReferenceMaintenanceRequest(BaseModel):
@@ -368,6 +394,9 @@ class EmployeeMasterDataInput(BaseModel):
     employee_id: str
     employee_name: str
     status: MasterDataStatus
+    employee_type: MasterDataEmployeeType = "internal"
+    organization_id: str | None = None
+    workplace_id: str | None = None
     effective_from: str
     effective_to: str
 
@@ -376,6 +405,9 @@ class MasterDataEmployeeRecord(BaseModel):
     employee_id: str
     employee_name: str
     status: MasterDataStatus
+    employee_type: MasterDataEmployeeType = "internal"
+    organization_id: str | None = None
+    workplace_id: str | None = None
     effective_from: str
     effective_to: str
     batch_id: str
@@ -386,6 +418,9 @@ class MasterDataEmployeeMaintenanceRequest(BaseModel):
     source_batch_id: str
     employee_name: str | None = None
     status: MasterDataStatus | None = None
+    employee_type: MasterDataEmployeeType | None = None
+    organization_id: str | None = None
+    workplace_id: str | None = None
     effective_from: str | None = None
     effective_to: str | None = None
 
@@ -407,13 +442,32 @@ class EmployeeBindingInput(BaseModel):
     effective_to: str
 
 
+class EmployeeSkillInput(BaseModel):
+    employee_id: str
+    skill_id: str
+    effective_from: str
+    effective_to: str
+
+
+class EmployeeSkillRecord(BaseModel):
+    employee_id: str
+    skill_id: str
+    skill_name: str
+    skill_category: MasterDataSkillCategory | None = None
+    effective_from: str
+    effective_to: str
+    batch_id: str
+
+
 class MasterDataSnapshotRequest(BaseModel):
     batch_id: str
     suppliers: list[MasterDataReferenceInput] = Field(default_factory=list)
     workplaces: list[MasterDataReferenceInput] = Field(default_factory=list)
     projects: list[MasterDataReferenceInput] = Field(default_factory=list)
     skills: list[MasterDataReferenceInput] = Field(default_factory=list)
+    organizations: list[MasterDataOrganizationInput] = Field(default_factory=list)
     employees: list[EmployeeMasterDataInput] = Field(default_factory=list)
+    employee_skills: list[EmployeeSkillInput] = Field(default_factory=list)
     bindings: list[EmployeeBindingInput] = Field(default_factory=list)
 
 
@@ -454,7 +508,9 @@ class MasterDataImportApplyResponse(BaseModel):
     workplaces: int = Field(ge=0)
     projects: int = Field(ge=0)
     skills: int = Field(ge=0)
+    organizations: int = Field(ge=0)
     employees: int = Field(ge=0)
+    employee_skills: int = Field(ge=0)
     bindings: int = Field(ge=0)
     skipped_rows: int = Field(ge=0)
 

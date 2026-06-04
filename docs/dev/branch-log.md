@@ -3206,3 +3206,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM131 Personnel Master Data Organization And Skill Model
+
+- branch_name: `codex/im131-master-data-org-skill-model`
+- base_main_commit: `6ccd1b4`
+- stacked_on: `5bf22e8 fix: correct dashboard and sidebar product structure`
+- remote_status: `IM130 branch is pushed; IM131 implementation is local only until final check/commit/push.`
+- scope: extend local master-data persistence with organization hierarchy, employee type, employee organization/workplace links, skill category, employee multi-skill rows, import parsing, and Alembic migration coverage.
+- allowed_files_check: `backend/app/models.py`, `backend/app/master_data_persistence.py`, `backend/app/master_data_import.py`, `backend/app/master_data_maintenance.py`, `backend/app/import_readiness.py`, `backend/migrations/versions/20260604_0009_master_data_org_skill_model.py`, `backend/tests/test_master_data_persistence.py`, `backend/tests/test_master_data_import_service.py`, `backend/tests/test_master_data_import_api.py`, `backend/tests/test_database_foundation_closeout.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no package, lockfile, frontend page, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected backend model/persistence/import/readiness/migration/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target persistence test first failed because `EmployeeSkillInput` was missing, then failed because same-batch child organization validation could not see the parent before flush; after implementation `.venv/bin/python -m unittest backend.tests.test_master_data_persistence -v` passed with 3 tests. Migration closeout test first failed because `master_data_organizations` and `master_data_employee_skills` were missing from Alembic head, then `.venv/bin/python -m unittest backend.tests.test_database_foundation_closeout -v` passed with 2 tests. Main master-data import/maintenance/readiness regression `.venv/bin/python -m unittest backend.tests.test_master_data_import_service backend.tests.test_master_data_import_api backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api backend.tests.test_import_readiness_api -v` passed with 32 tests. `npm run typecheck` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 201 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

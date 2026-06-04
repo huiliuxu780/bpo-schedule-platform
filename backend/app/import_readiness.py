@@ -19,11 +19,27 @@ REFERENCE_REQUIRED_FIELDS = [
     "effective_to",
 ]
 MASTER_DATA_REQUIRED_FIELDS: dict[str, list[str]] = {
+    "organization": [
+        "record_type",
+        "organization_id",
+        "organization_name",
+        "organization_level",
+        "status",
+        "effective_from",
+        "effective_to",
+    ],
     "employee": [
         "record_type",
         "employee_id",
         "employee_name",
         "status",
+        "effective_from",
+        "effective_to",
+    ],
+    "employee_skill": [
+        "record_type",
+        "employee_id",
+        "skill_id",
         "effective_from",
         "effective_to",
     ],

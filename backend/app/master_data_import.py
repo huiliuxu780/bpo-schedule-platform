@@ -4,8 +4,10 @@ from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
     EmployeeBindingInput,
     EmployeeMasterDataInput,
+    EmployeeSkillInput,
     ImportBatchPersistenceDetail,
     ImportBatchRowResultRecord,
+    MasterDataOrganizationInput,
     MasterDataReferenceInput,
     MasterDataSnapshotRequest,
 )
@@ -53,7 +55,9 @@ def apply_master_data_import_batch(
         "workplaces": len(snapshot.workplaces),
         "projects": len(snapshot.projects),
         "skills": len(snapshot.skills),
+        "organizations": len(snapshot.organizations),
         "employees": len(snapshot.employees),
+        "employee_skills": len(snapshot.employee_skills),
         "bindings": len(snapshot.bindings),
         "skipped_rows": skipped_rows,
     }
@@ -85,6 +89,34 @@ def _append_success_row(
                 status=_required_value(fields, row.row_number, "status"),
                 effective_from=_required_value(fields, row.row_number, "effective_from"),
                 effective_to=_required_value(fields, row.row_number, "effective_to"),
+                skill_category=_optional_value(fields, "skill_category")
+                if record_type == "skill"
+                else None,
+            )
+        )
+        return
+
+    if record_type == "organization":
+        snapshot.organizations.append(
+            MasterDataOrganizationInput(
+                organization_id=_required_value(fields, row.row_number, "organization_id"),
+                organization_name=_required_value(
+                    fields,
+                    row.row_number,
+                    "organization_name",
+                ),
+                organization_level=_required_int(
+                    fields,
+                    row.row_number,
+                    "organization_level",
+                ),
+                parent_organization_id=_optional_value(
+                    fields,
+                    "parent_organization_id",
+                ),
+                status=_required_value(fields, row.row_number, "status"),
+                effective_from=_required_value(fields, row.row_number, "effective_from"),
+                effective_to=_required_value(fields, row.row_number, "effective_to"),
             )
         )
         return
@@ -95,6 +127,20 @@ def _append_success_row(
                 employee_id=_required_value(fields, row.row_number, "employee_id"),
                 employee_name=_required_value(fields, row.row_number, "employee_name"),
                 status=_required_value(fields, row.row_number, "status"),
+                employee_type=_optional_value(fields, "employee_type") or "internal",
+                organization_id=_optional_value(fields, "organization_id"),
+                workplace_id=_optional_value(fields, "workplace_id"),
+                effective_from=_required_value(fields, row.row_number, "effective_from"),
+                effective_to=_required_value(fields, row.row_number, "effective_to"),
+            )
+        )
+        return
+
+    if record_type == "employee_skill":
+        snapshot.employee_skills.append(
+            EmployeeSkillInput(
+                employee_id=_required_value(fields, row.row_number, "employee_id"),
+                skill_id=_required_value(fields, row.row_number, "skill_id"),
                 effective_from=_required_value(fields, row.row_number, "effective_from"),
                 effective_to=_required_value(fields, row.row_number, "effective_to"),
             )
@@ -141,3 +187,20 @@ def _required_value(
             return str(value).strip()
     expected = " or ".join(field_names)
     raise ValueError(f"row_number={row_number} missing required field: {expected}")
+
+
+def _optional_value(fields: dict[str, Any], field_name: str) -> str | None:
+    value = fields.get(field_name)
+    if value is None or not str(value).strip():
+        return None
+    return str(value).strip()
+
+
+def _required_int(fields: dict[str, Any], row_number: int, field_name: str) -> int:
+    value = _required_value(fields, row_number, field_name)
+    try:
+        return int(value)
+    except ValueError as exc:
+        raise ValueError(
+            f"row_number={row_number} field {field_name} must be integer"
+        ) from exc

@@ -4936,3 +4936,26 @@ dependencies:
 status: "done"
 notes: "IM130 已完成：经营总览移除数据接入状态面板，侧边栏仅保留真实页面或当前主线入口，并用 product-structure 测试锁定。"
 ```
+
+### US751 - 人员主数据组织和多技能模型底座
+
+```yaml
+id: US751
+requirement_ids:
+  - R831
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望人员主数据能表达自有/外包人员类型、CC/CCO/小组组织层级、职场归属和多个技能，并能区分在线、热线、工单技能组，以便后续人员列表和单人编辑能按真实组织和技能口径展示。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "数据库迁移 head 创建组织表、人员技能关系表，并在人员表和技能表补充必要字段。"
+  - "主数据持久化支持组织层级路径、人员类型、人员组织/职场归属、技能类型和人员多技能。"
+  - "master_data 导入应用支持 organization、employee_skill 记录，以及 employee_type、organization_id、workplace_id、skill_category 字段。"
+  - "现有主数据导入、维护、readiness 和排班引用校验回归不破坏。"
+  - "不新增前端大页面、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US750"
+status: "done"
+notes: "IM131 已完成：后端模型、迁移、导入解析和测试已支持人员组织层级、人员类型、技能类型和人员多技能。"
+```

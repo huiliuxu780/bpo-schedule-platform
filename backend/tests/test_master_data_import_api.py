@@ -47,7 +47,9 @@ class MasterDataImportApiTest(unittest.TestCase):
             self.assertEqual(response.workplaces, 1)
             self.assertEqual(response.projects, 1)
             self.assertEqual(response.skills, 1)
+            self.assertEqual(response.organizations, 0)
             self.assertEqual(response.employees, 1)
+            self.assertEqual(response.employee_skills, 0)
             self.assertEqual(response.bindings, 1)
             self.assertEqual(response.applied_status, "applied")
 

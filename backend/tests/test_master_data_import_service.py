@@ -123,7 +123,9 @@ class MasterDataImportServiceTest(unittest.TestCase):
                     "workplaces": 1,
                     "projects": 1,
                     "skills": 1,
+                    "organizations": 0,
                     "employees": 1,
+                    "employee_skills": 0,
                     "bindings": 1,
                     "skipped_rows": 1,
                 },
@@ -133,6 +135,126 @@ class MasterDataImportServiceTest(unittest.TestCase):
             self.assertEqual(binding.employee_id, "A-1001")
             self.assertEqual(binding.supplier_id, "SUP-A")
             self.assertEqual(binding.batch_id, "BATCH-MD-IMPORT-001")
+
+    def test_success_rows_apply_organization_employee_type_and_employee_skills(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'master_data.db'}"
+            import_repository = ImportPersistenceRepository(database_url)
+            import_repository.init_schema()
+            detail = import_repository.create_import_batch(
+                ImportBatchCreateRequest(
+                    batch_id="BATCH-MD-IMPORT-ORG-001",
+                    file_name="master_data.csv",
+                    file_type="master_data",
+                    uploaded_by="数据管理员",
+                    business_date_from="2026-05-01",
+                    business_date_to="2026-12-31",
+                    rows=[
+                        _success_row(
+                            1,
+                            {
+                                "record_type": "workplace",
+                                "workplace_id": "NJ-01",
+                                "workplace_name": "南京职场",
+                                "status": "active",
+                                "effective_from": "2026-05-01",
+                                "effective_to": "2026-12-31",
+                            },
+                        ),
+                        _success_row(
+                            2,
+                            {
+                                "record_type": "organization",
+                                "organization_id": "ORG-CC",
+                                "organization_name": "CC",
+                                "organization_level": "1",
+                                "status": "active",
+                                "effective_from": "2026-05-01",
+                                "effective_to": "2026-12-31",
+                            },
+                        ),
+                        _success_row(
+                            3,
+                            {
+                                "record_type": "organization",
+                                "organization_id": "ORG-CCO",
+                                "organization_name": "CCO",
+                                "organization_level": "2",
+                                "parent_organization_id": "ORG-CC",
+                                "status": "active",
+                                "effective_from": "2026-05-01",
+                                "effective_to": "2026-12-31",
+                            },
+                        ),
+                        _success_row(
+                            4,
+                            {
+                                "record_type": "organization",
+                                "organization_id": "ORG-RETURN",
+                                "organization_name": "集中退换小组",
+                                "organization_level": "3",
+                                "parent_organization_id": "ORG-CCO",
+                                "status": "active",
+                                "effective_from": "2026-05-01",
+                                "effective_to": "2026-12-31",
+                            },
+                        ),
+                        _success_row(
+                            5,
+                            {
+                                "record_type": "skill",
+                                "skill_id": "SKILL-RETURN-TICKET",
+                                "skill_name": "集中退换工单",
+                                "skill_category": "ticket",
+                                "status": "active",
+                                "effective_from": "2026-05-01",
+                                "effective_to": "2026-12-31",
+                            },
+                        ),
+                        _success_row(
+                            6,
+                            {
+                                "record_type": "employee",
+                                "employee_id": "A-2001",
+                                "employee_name": "刘晓晓",
+                                "employee_type": "internal",
+                                "organization_id": "ORG-RETURN",
+                                "workplace_id": "NJ-01",
+                                "status": "active",
+                                "effective_from": "2026-05-01",
+                                "effective_to": "2026-12-31",
+                            },
+                        ),
+                        _success_row(
+                            7,
+                            {
+                                "record_type": "employee_skill",
+                                "employee_id": "A-2001",
+                                "skill_id": "SKILL-RETURN-TICKET",
+                                "effective_from": "2026-05-01",
+                                "effective_to": "2026-12-31",
+                            },
+                        ),
+                    ],
+                )
+            )
+            master_repository = MasterDataPersistenceRepository(database_url)
+            master_repository.init_schema()
+
+            summary = apply_master_data_import_batch(detail, master_repository)
+            employee = master_repository.get_employee("A-2001")
+            organization = master_repository.get_organization("ORG-RETURN")
+            employee_skills = master_repository.list_employee_skills("A-2001")
+
+            self.assertEqual(summary["organizations"], 3)
+            self.assertEqual(summary["employee_skills"], 1)
+            self.assertIsNotNone(employee)
+            self.assertEqual(employee.employee_type, "internal")
+            self.assertEqual(employee.organization_id, "ORG-RETURN")
+            self.assertEqual(employee.workplace_id, "NJ-01")
+            self.assertIsNotNone(organization)
+            self.assertEqual(organization.organization_path, "CC / CCO / 集中退换小组")
+            self.assertEqual(employee_skills[0].skill_category, "ticket")
 
     def test_duplicate_batch_returns_already_applied_without_snapshot_write(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

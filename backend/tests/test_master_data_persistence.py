@@ -7,14 +7,146 @@ from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
     EmployeeBindingInput,
     EmployeeMasterDataInput,
+    EmployeeSkillInput,
     ImportBatchCreateRequest,
     ImportBatchRowResultInput,
+    MasterDataOrganizationInput,
     MasterDataReferenceInput,
     MasterDataSnapshotRequest,
 )
 
 
 class MasterDataPersistenceTest(unittest.TestCase):
+    def test_employee_org_path_type_and_multi_skills_survive_new_repository_instance(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'master_data.db'}"
+            _create_import_batch(database_url, "BATCH-MD-ORG-001")
+            writer = MasterDataPersistenceRepository(database_url)
+            writer.init_schema()
+
+            writer.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-ORG-001",
+                    workplaces=[
+                        MasterDataReferenceInput(
+                            reference_id="NJ-01",
+                            reference_name="南京职场",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    organizations=[
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CC",
+                            organization_name="CC",
+                            organization_level=1,
+                            parent_organization_id=None,
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CCO",
+                            organization_name="CCO",
+                            organization_level=2,
+                            parent_organization_id="ORG-CC",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-RETURN",
+                            organization_name="集中退换小组",
+                            organization_level=3,
+                            parent_organization_id="ORG-CCO",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                    skills=[
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-RETURN-TICKET",
+                            reference_name="集中退换工单",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                            skill_category="ticket",
+                        ),
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-RETURN-CALL",
+                            reference_name="集中退换外呼",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                            skill_category="hotline",
+                        ),
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-GENERAL",
+                            reference_name="通用技能组",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                            skill_category="online",
+                        ),
+                    ],
+                    employees=[
+                        EmployeeMasterDataInput(
+                            employee_id="A-2001",
+                            employee_name="刘晓晓",
+                            status="active",
+                            employee_type="internal",
+                            organization_id="ORG-RETURN",
+                            workplace_id="NJ-01",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    employee_skills=[
+                        EmployeeSkillInput(
+                            employee_id="A-2001",
+                            skill_id="SKILL-RETURN-TICKET",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                        EmployeeSkillInput(
+                            employee_id="A-2001",
+                            skill_id="SKILL-RETURN-CALL",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                        EmployeeSkillInput(
+                            employee_id="A-2001",
+                            skill_id="SKILL-GENERAL",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                )
+            )
+
+            reader = MasterDataPersistenceRepository(database_url)
+            employee = reader.get_employee("A-2001")
+            organization = reader.get_organization("ORG-RETURN")
+            skill_rows = reader.list_employee_skills("A-2001")
+
+            self.assertIsNotNone(employee)
+            self.assertEqual(employee.employee_name, "刘晓晓")
+            self.assertEqual(employee.employee_type, "internal")
+            self.assertEqual(employee.organization_id, "ORG-RETURN")
+            self.assertEqual(employee.workplace_id, "NJ-01")
+            self.assertIsNotNone(organization)
+            self.assertEqual(organization.organization_path, "CC / CCO / 集中退换小组")
+            self.assertEqual(
+                [(row.skill_id, row.skill_category) for row in skill_rows],
+                [
+                    ("SKILL-GENERAL", "online"),
+                    ("SKILL-RETURN-CALL", "hotline"),
+                    ("SKILL-RETURN-TICKET", "ticket"),
+                ],
+            )
+
     def test_master_data_bindings_survive_new_repository_instance(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'master_data.db'}"

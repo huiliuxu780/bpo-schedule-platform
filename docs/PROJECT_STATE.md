@@ -674,3 +674,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After PM review, the visible product structure had drifted: the business overview still showed a data-ingestion status panel, and the sidebar exposed placeholder dashboard links plus deferred capabilities such as permissions, settlement, interface integration, and automatic scheduling. `US750/IM130` is complete. `/dashboard` no longer mounts the data-ingestion status panel, and `AppSidebar` now removes those placeholder or deferred entries while keeping real pages reachable.
 
 The task remained frontend-scaffold only. It did not add personnel CRUD, backend routes, schemas, migrations, dependencies, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM130.
+
+## 2026-06-04 IM131 Personnel Master Data Organization And Skill Model
+
+After PM clarified the personnel master-data shape, the existing employee model was too narrow: it only covered employee identity, name, status, effective period, and a single composite binding. `US751/IM131` is complete. The master-data persistence model now supports organization hierarchy and path, employee type (`internal`/`outsourced`), employee organization/workplace links, skill category (`online`/`hotline`/`ticket`), and employee multi-skill rows. The `master_data` import application can parse `organization` and `employee_skill` rows plus `employee_type`, `organization_id`, `workplace_id`, and `skill_category`.
+
+The task was a database-persistence slice. It added migration `20260604_0009` and backend tests, but did not add frontend list/detail pages, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM131.
