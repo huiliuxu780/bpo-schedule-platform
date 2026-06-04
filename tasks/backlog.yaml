@@ -9369,3 +9369,51 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已补齐单个人员新增/编辑表单的人员类型、组织 ID、职场 ID 字段。"
+  - id: IM134
+    title: "单个人员多技能维护"
+    priority: P0
+    status: done
+    required_workflow: backend-vertical
+    dependencies: ["IM133"]
+    allowed_files:
+      - "backend/app/models.py"
+      - "backend/app/master_data_persistence.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/app/main.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "app/master-data/[entityKey]/actions.ts"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/migrations/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "后端提供单员工技能集合 replace 维护能力，复用既有员工、技能、有效期和来源批次校验。"
+      - "API 返回替换后的技能列表，包含技能名称和技能组类别。"
+      - "/master-data/agents 的既有提交表单提供维护坐席技能入口，按技能 ID 列表提交。"
+      - "前端 payload builder 和 server action 调用新技能维护 API。"
+      - "不新增批量维护、权限、审批、导出、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增 schema/migration 或生产持久化配置"
+      - "范围扩展到批量维护、权限、审批、导出、自动排班、生产公式、结算或收费因子"
+      - "需要真实外部系统集成"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已接通单个人员多技能集合 replace 维护闭环。"

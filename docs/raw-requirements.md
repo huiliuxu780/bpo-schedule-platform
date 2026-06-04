@@ -2783,3 +2783,16 @@ version: "1.0"
 status: "done"
 notes: "IM133 已完成：单人新增/编辑表单和 server action payload 已支持人员类型、组织 ID、职场 ID；后端回归覆盖编辑这些字段。"
 ```
+
+### R834 - 单个人员多技能维护
+
+```yaml
+id: R834
+module: "主数据维护"
+description: "人员列表已经能展示一个人的多个技能，但维护人员还不能在单个人员维护里修正技能集合。需要提供受控的单人技能维护入口，让维护人员按技能 ID 列表覆盖某个员工当前技能集合，同时复用既有技能引用校验和有效期校验。"
+source: "PM approved continuing after IM133 push on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM134 已完成：新增单员工技能集合 replace API、server action 和现有 /master-data/agents 提交表单入口。"
+```

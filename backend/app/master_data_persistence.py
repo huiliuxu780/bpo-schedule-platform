@@ -1,6 +1,6 @@
 from typing import TypeVar
 
-from sqlalchemy import ForeignKey, String, inspect as inspect_schema, select, text
+from sqlalchemy import ForeignKey, String, delete, inspect as inspect_schema, select, text
 from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
 
 from backend.app.import_persistence import Base, ImportBatchEntity, build_engine
@@ -371,6 +371,42 @@ class MasterDataPersistenceRepository:
             if stored is None:
                 raise ValueError(f"BINDING_WRITE_FAILED: {binding.binding_id}")
             return _binding_record(stored)
+
+    def replace_employee_skills(
+        self,
+        employee_id: str,
+        skill_ids: list[str],
+        effective_from: str,
+        effective_to: str,
+        batch_id: str,
+    ) -> list[EmployeeSkillRecord]:
+        inputs = [
+            EmployeeSkillInput(
+                employee_id=employee_id,
+                skill_id=skill_id,
+                effective_from=effective_from,
+                effective_to=effective_to,
+            )
+            for skill_id in dict.fromkeys(skill_ids)
+        ]
+        with self.session_factory.begin() as session:
+            for employee_skill in inputs:
+                self._validate_employee_skill(session, employee_skill)
+            session.execute(
+                delete(EmployeeSkillEntity).where(
+                    EmployeeSkillEntity.employee_id == employee_id
+                )
+            )
+            for employee_skill in inputs:
+                session.merge(_employee_skill_entity(employee_skill, batch_id))
+            session.flush()
+            rows = session.execute(
+                select(EmployeeSkillEntity, SkillEntity)
+                .join(SkillEntity, EmployeeSkillEntity.skill_id == SkillEntity.skill_id)
+                .where(EmployeeSkillEntity.employee_id == employee_id)
+                .order_by(SkillEntity.skill_name, EmployeeSkillEntity.skill_id)
+            ).all()
+            return [_employee_skill_record(row[0], row[1]) for row in rows]
 
     def get_employee_binding(self, binding_id: str) -> EmployeeBindingRecord | None:
         with self.session_factory() as session:

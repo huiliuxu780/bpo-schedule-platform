@@ -5,13 +5,16 @@ from pathlib import Path
 from backend.app.import_persistence import ImportPersistenceRepository
 from backend.app.master_data_maintenance import maintain_employee
 from backend.app.master_data_maintenance import maintain_employee_binding
+from backend.app.master_data_maintenance import maintain_employee_skills
 from backend.app.master_data_maintenance import maintain_reference
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
     EmployeeMasterDataInput,
     EmployeeBindingInput,
+    EmployeeSkillInput,
     ImportBatchCreateRequest,
     ImportBatchRowResultInput,
+    MasterDataEmployeeSkillMaintenanceRequest,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataBindingMaintenanceRequest,
     MasterDataOrganizationInput,
@@ -198,6 +201,87 @@ class MasterDataMaintenanceServiceTest(unittest.TestCase):
             self.assertEqual(response.employee.employee_type, "outsourced")
             self.assertEqual(response.employee.organization_id, "ORG-SUPPORT")
             self.assertEqual(response.employee.workplace_id, "SH-01")
+
+    def test_replace_employee_skills_updates_skill_set(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-MAINT-011")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-MAINT-011",
+                    skills=[
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-RETURN-TICKET",
+                            reference_name="集中退换工单",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                            skill_category="ticket",
+                        ),
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-RETURN-CALL",
+                            reference_name="集中退换外呼",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                            skill_category="hotline",
+                        ),
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-GENERAL",
+                            reference_name="通用技能组",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                            skill_category="online",
+                        ),
+                    ],
+                    employees=[
+                        EmployeeMasterDataInput(
+                            employee_id="A-2011",
+                            employee_name="刘晓晓",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    employee_skills=[
+                        EmployeeSkillInput(
+                            employee_id="A-2011",
+                            skill_id="SKILL-RETURN-TICKET",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                )
+            )
+
+            response = maintain_employee_skills(
+                "A-2011",
+                MasterDataEmployeeSkillMaintenanceRequest(
+                    action="replace",
+                    source_batch_id="BATCH-MD-MAINT-011",
+                    skill_ids=["SKILL-RETURN-CALL", "SKILL-GENERAL"],
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+
+            self.assertEqual(response.action_status, "replaced")
+            self.assertEqual(response.employee_id, "A-2011")
+            self.assertEqual(
+                [(skill.skill_id, skill.skill_category) for skill in response.skills],
+                [
+                    ("SKILL-GENERAL", "online"),
+                    ("SKILL-RETURN-CALL", "hotline"),
+                ],
+            )
+            self.assertEqual(
+                [skill.skill_id for skill in repository.list_employee_skills("A-2011")],
+                ["SKILL-GENERAL", "SKILL-RETURN-CALL"],
+            )
 
     def test_effective_period_updates_dates_only(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

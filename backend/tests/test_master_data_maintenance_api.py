@@ -9,6 +9,7 @@ from sqlalchemy import text
 from backend.app.import_persistence import ImportPersistenceRepository
 from backend.app.main import app, list_master_data_employees, maintain_master_data_employee
 from backend.app.main import maintain_master_data_binding
+from backend.app.main import maintain_master_data_employee_skills
 from backend.app.main import maintain_master_data_reference
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
@@ -17,6 +18,7 @@ from backend.app.models import (
     MasterDataReferenceInput,
     ImportBatchCreateRequest,
     ImportBatchRowResultInput,
+    MasterDataEmployeeSkillMaintenanceRequest,
     MasterDataBindingMaintenanceRequest,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataOrganizationInput,
@@ -46,6 +48,13 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
         )
         self.assertIn(
             ("/api/v1/master-data/employees", "GET"),
+            routes,
+        )
+        self.assertIn(
+            (
+                "/api/v1/master-data/employees/{employee_id}/skills/maintenance",
+                "POST",
+            ),
             routes,
         )
 
@@ -268,6 +277,70 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
         self.assertEqual(response.action_status, "created")
         self.assertEqual(response.employee.employee_id, "A-3001")
         self.assertEqual(response.employee.employee_name, "孙三")
+
+    def test_replace_employee_skills_returns_skill_response(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance-api.db'}"
+            _create_import_batch(database_url, "BATCH-MD-API-006")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-API-006",
+                    skills=[
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-API-ONLINE",
+                            reference_name="在线接待",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                            skill_category="online",
+                        ),
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-API-TICKET",
+                            reference_name="工单处理",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                            skill_category="ticket",
+                        ),
+                    ],
+                    employees=[
+                        EmployeeMasterDataInput(
+                            employee_id="A-3002",
+                            employee_name="钱二",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                )
+            )
+
+            with patch(
+                "backend.app.main.MasterDataPersistenceRepository",
+                return_value=repository,
+            ):
+                response = maintain_master_data_employee_skills(
+                    "A-3002",
+                    MasterDataEmployeeSkillMaintenanceRequest(
+                        action="replace",
+                        source_batch_id="BATCH-MD-API-006",
+                        skill_ids=["SKILL-API-TICKET", "SKILL-API-ONLINE"],
+                        effective_from="2026-06-01",
+                        effective_to="2026-12-31",
+                    ),
+                )
+
+        self.assertEqual(response.employee_id, "A-3002")
+        self.assertEqual(response.action_status, "replaced")
+        self.assertEqual(
+            [(skill.skill_id, skill.skill_category) for skill in response.skills],
+            [
+                ("SKILL-API-ONLINE", "online"),
+                ("SKILL-API-TICKET", "ticket"),
+            ],
+        )
 
     def test_edit_missing_employee_returns_404_error_code(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

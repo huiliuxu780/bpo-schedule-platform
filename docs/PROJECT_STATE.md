@@ -692,3 +692,9 @@ The task was a backend-vertical slice. It did not add migrations, dependencies, 
 After IM132 made real personnel rows visible, the controlled agent form still could not edit PM-confirmed core personnel dimensions beyond name and status. `US753/IM133` is complete. The existing `/master-data/agents` create/edit submit forms now include employee type, organization ID, and workplace ID, and the server action passes those fields to the existing single-employee maintenance API. Backend regression confirms edit updates `employee_type`, `organization_id`, and `workplace_id`.
 
 The task was a backend-vertical/frontend form slice. It did not add migrations, dependencies, batch maintenance, permissions, approval, export, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM133.
+
+## 2026-06-04 IM134 Agent Skill Set Maintenance
+
+After IM133, single-agent maintenance could update core employee fields, but employee multi-skill rows were still import/list only. `US754/IM134` is complete. The backend now supports a single employee skill-set `replace` maintenance call that validates source batch, employee, skills, and effective period through the existing master-data persistence rules. `/master-data/agents` keeps the entry inside the existing submit workspace and adds a controlled skill ID list form that calls the new API through a server action.
+
+The task was a backend-vertical/frontend form slice. It reused existing employee-skill persistence and did not add migrations, dependencies, batch maintenance, permissions, approval, export, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM134.

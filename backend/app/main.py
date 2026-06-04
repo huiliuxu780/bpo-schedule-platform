@@ -19,6 +19,7 @@ from backend.app.master_data_import import apply_master_data_import_batch
 from backend.app.master_data_maintenance import (
     maintain_employee,
     maintain_employee_binding,
+    maintain_employee_skills,
     maintain_reference,
 )
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
@@ -55,6 +56,8 @@ from backend.app.models import (
     MasterDataBindingMaintenanceRequest,
     MasterDataBindingMaintenanceResponse,
     MasterDataEmployeeListResponse,
+    MasterDataEmployeeSkillMaintenanceRequest,
+    MasterDataEmployeeSkillMaintenanceResponse,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataEmployeeMaintenanceResponse,
     MasterDataImportApplyResponse,
@@ -664,6 +667,24 @@ def maintain_master_data_employee(
 ) -> MasterDataEmployeeMaintenanceResponse:
     try:
         return maintain_employee(
+            employee_id,
+            request,
+            MasterDataPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise _master_data_maintenance_http_error(exc) from exc
+
+
+@app.post(
+    "/api/v1/master-data/employees/{employee_id}/skills/maintenance",
+    response_model=MasterDataEmployeeSkillMaintenanceResponse,
+)
+def maintain_master_data_employee_skills(
+    employee_id: str,
+    request: MasterDataEmployeeSkillMaintenanceRequest,
+) -> MasterDataEmployeeSkillMaintenanceResponse:
+    try:
+        return maintain_employee_skills(
             employee_id,
             request,
             MasterDataPersistenceRepository(),

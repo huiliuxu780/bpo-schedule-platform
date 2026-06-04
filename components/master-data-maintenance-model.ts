@@ -101,6 +101,22 @@ export type MasterDataAgentMaintenanceDraft = {
   effectiveTo?: string
 }
 
+export type MasterDataAgentSkillMaintenanceDraft = {
+  sourceBatchId: string
+  employeeId: string
+  skillIds: string[]
+  effectiveFrom: string
+  effectiveTo: string
+}
+
+export type MasterDataAgentSkillMaintenancePayload = {
+  action: "replace"
+  source_batch_id: string
+  skill_ids: string[]
+  effective_from: string
+  effective_to: string
+}
+
 export type MasterDataReferenceMaintenanceDraft = {
   action: MasterDataAgentMaintenanceActionKey
   sourceBatchId: string
@@ -422,6 +438,12 @@ export function buildMasterDataAgentMaintenanceApiPath(employeeId: string): stri
   return `/api/v1/master-data/employees/${encodeURIComponent(employeeId)}/maintenance`
 }
 
+export function buildMasterDataAgentSkillMaintenanceApiPath(
+  employeeId: string
+): string {
+  return `/api/v1/master-data/employees/${encodeURIComponent(employeeId)}/skills/maintenance`
+}
+
 export function buildMasterDataAgentMaintenancePayload(
   draft: MasterDataAgentMaintenanceDraft
 ): MasterDataAgentMaintenancePayload {
@@ -436,6 +458,18 @@ export function buildMasterDataAgentMaintenancePayload(
     effective_from: draft.effectiveFrom,
     effective_to: draft.effectiveTo,
   })
+}
+
+export function buildMasterDataAgentSkillMaintenancePayload(
+  draft: MasterDataAgentSkillMaintenanceDraft
+): MasterDataAgentSkillMaintenancePayload {
+  return {
+    action: "replace",
+    source_batch_id: draft.sourceBatchId,
+    skill_ids: draft.skillIds,
+    effective_from: draft.effectiveFrom,
+    effective_to: draft.effectiveTo,
+  }
 }
 
 export function buildMasterDataReferenceMaintenanceApiPath(

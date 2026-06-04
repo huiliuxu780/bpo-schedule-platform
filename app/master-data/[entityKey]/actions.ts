@@ -12,6 +12,8 @@ import {
   type MasterDataReferenceMaintenanceType,
   buildMasterDataAgentMaintenanceApiPath,
   buildMasterDataAgentMaintenancePayload,
+  buildMasterDataAgentSkillMaintenanceApiPath,
+  buildMasterDataAgentSkillMaintenancePayload,
   buildMasterDataBindingMaintenanceApiPath,
   buildMasterDataBindingMaintenancePayload,
   buildMasterDataReferenceMaintenanceApiPath,
@@ -118,6 +120,83 @@ export async function submitMasterDataAgentMaintenance(
     redirectHref = buildMaintenanceRedirect("agents", {
       maintenance_status: "error",
       maintenance_code: "MASTER_DATA_AGENT_SUBMIT_FAILED",
+      maintenance_message: formatMaintenanceError(error),
+    })
+  }
+
+  redirect(redirectHref)
+}
+
+export async function submitMasterDataAgentSkillMaintenance(
+  formData: FormData
+): Promise<void> {
+  let redirectHref: string
+
+  try {
+    const employeeId = getFormValue(formData, "employee_id")
+    const sourceBatchId = getFormValue(formData, "source_batch_id")
+    const skillIds = parseSkillIds(formData.get("skill_ids"))
+    const effectiveFrom = getFormValue(formData, "effective_from")
+    const effectiveTo = getFormValue(formData, "effective_to")
+
+    if (
+      !employeeId ||
+      !sourceBatchId ||
+      skillIds.length === 0 ||
+      !effectiveFrom ||
+      !effectiveTo
+    ) {
+      redirectHref = buildMaintenanceRedirect("agents", {
+        maintenance_status: "error",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "坐席 ID、技能 ID 列表、来源批次和生效期不能为空",
+      })
+    } else {
+      const payload = buildMasterDataAgentSkillMaintenancePayload({
+        employeeId,
+        sourceBatchId,
+        skillIds,
+        effectiveFrom,
+        effectiveTo,
+      })
+      const response = await fetch(
+        buildImportApiUrl(buildMasterDataAgentSkillMaintenanceApiPath(employeeId)),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        }
+      )
+
+      if (!response.ok) {
+        const error = await readMaintenanceApiError(response)
+        redirectHref = buildMaintenanceRedirect("agents", {
+          maintenance_status: "error",
+          maintenance_code: error.code,
+          maintenance_message: error.message,
+        })
+      } else {
+        const result = (await response.json()) as {
+          action_status?: string
+          employee_id?: string
+          skills?: unknown[]
+        }
+        redirectHref = buildMaintenanceRedirect("agents", {
+          maintenance_status: "success",
+          action_status: result.action_status ?? "submitted",
+          record_id: result.employee_id ?? employeeId,
+          record_name: `${result.skills?.length ?? skillIds.length} 个技能`,
+          record_status: "skills_replaced",
+        })
+      }
+    }
+  } catch (error) {
+    redirectHref = buildMaintenanceRedirect("agents", {
+      maintenance_status: "error",
+      maintenance_code: "MASTER_DATA_AGENT_SKILL_SUBMIT_FAILED",
       maintenance_message: formatMaintenanceError(error),
     })
   }
@@ -337,6 +416,18 @@ function parseEmployeeType(
   }
 
   throw new Error("未知人员类型")
+}
+
+function parseSkillIds(value: FormDataEntryValue | null): string[] {
+  const rawValue = String(value ?? "")
+  return Array.from(
+    new Set(
+      rawValue
+        .split(/[\n,，;；]+/)
+        .map((skillId) => skillId.trim())
+        .filter(Boolean)
+    )
+  )
 }
 
 function parseStatus(

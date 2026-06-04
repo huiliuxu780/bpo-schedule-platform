@@ -17,6 +17,7 @@ import {
 } from "@/components/import-center-model"
 import {
   submitMasterDataAgentMaintenance,
+  submitMasterDataAgentSkillMaintenance,
   submitMasterDataBindingMaintenance,
   submitMasterDataReferenceMaintenance,
 } from "./actions"
@@ -71,6 +72,11 @@ export default async function MasterDataEntityDetailPage({
         employeeListError={employeeResult.error}
         agentSubmitAction={
           entity.key === "agents" ? submitMasterDataAgentMaintenance : undefined
+        }
+        agentSkillSubmitAction={
+          entity.key === "agents"
+            ? submitMasterDataAgentSkillMaintenance
+            : undefined
         }
         referenceSubmitAction={
           isReferenceEntity(entity.key)

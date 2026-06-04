@@ -5,6 +5,8 @@ import {
   MASTER_DATA_MAINTENANCE_ENTITIES,
   buildMasterDataAgentMaintenanceApiPath,
   buildMasterDataAgentMaintenancePayload,
+  buildMasterDataAgentSkillMaintenanceApiPath,
+  buildMasterDataAgentSkillMaintenancePayload,
   buildMasterDataBindingMaintenanceApiPath,
   buildMasterDataBindingMaintenancePayload,
   buildMasterDataReferenceMaintenanceApiPath,
@@ -290,6 +292,29 @@ test("agent maintenance payload maps create edit freeze and effective period act
       source_batch_id: "BATCH-MD-001",
       effective_from: "2026-07-01",
       effective_to: "2026-10-31",
+    },
+  );
+});
+
+test("agent skill maintenance payload maps single employee skill replacement", () => {
+  assert.equal(
+    buildMasterDataAgentSkillMaintenanceApiPath("A 100/1"),
+    "/api/v1/master-data/employees/A%20100%2F1/skills/maintenance",
+  );
+  assert.deepEqual(
+    buildMasterDataAgentSkillMaintenancePayload({
+      sourceBatchId: "BATCH-MD-001",
+      employeeId: "A-1001",
+      skillIds: ["SKILL-RETURN-CALL", "SKILL-GENERAL"],
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "replace",
+      source_batch_id: "BATCH-MD-001",
+      skill_ids: ["SKILL-RETURN-CALL", "SKILL-GENERAL"],
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
     },
   );
 });

@@ -1,9 +1,12 @@
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
     EmployeeBindingInput,
+    EmployeeSkillRecord,
     EmployeeMasterDataInput,
     MasterDataBindingMaintenanceRequest,
     MasterDataBindingMaintenanceResponse,
+    MasterDataEmployeeSkillMaintenanceRequest,
+    MasterDataEmployeeSkillMaintenanceResponse,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataEmployeeMaintenanceResponse,
     MasterDataEmployeeRecord,
@@ -78,6 +81,27 @@ def maintain_employee(
         request.source_batch_id,
     )
     return _response(employee_id, "updated", employee)
+
+
+def maintain_employee_skills(
+    employee_id: str,
+    request: MasterDataEmployeeSkillMaintenanceRequest,
+    repository: MasterDataPersistenceRepository,
+) -> MasterDataEmployeeSkillMaintenanceResponse:
+    if not repository.has_import_batch(request.source_batch_id):
+        raise ValueError(f"SOURCE_BATCH_NOT_FOUND: {request.source_batch_id}")
+    if repository.get_employee(employee_id) is None:
+        raise ValueError(f"EMPLOYEE_NOT_FOUND: {employee_id}")
+    _validate_effective_period(request.effective_from, request.effective_to)
+
+    skills = repository.replace_employee_skills(
+        employee_id,
+        request.skill_ids,
+        request.effective_from,
+        request.effective_to,
+        request.source_batch_id,
+    )
+    return _skill_response(employee_id, "replaced", skills)
 
 
 def maintain_reference(
@@ -348,6 +372,18 @@ def _response(
         employee_id=employee_id,
         action_status=action_status,
         employee=employee,
+    )
+
+
+def _skill_response(
+    employee_id: str,
+    action_status: str,
+    skills: list[EmployeeSkillRecord],
+) -> MasterDataEmployeeSkillMaintenanceResponse:
+    return MasterDataEmployeeSkillMaintenanceResponse(
+        employee_id=employee_id,
+        action_status=action_status,
+        skills=skills,
     )
 
 

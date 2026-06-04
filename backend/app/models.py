@@ -22,6 +22,7 @@ MasterDataStatus = Literal["active", "frozen", "inactive"]
 MasterDataEmployeeType = Literal["internal", "outsourced"]
 MasterDataSkillCategory = Literal["online", "hotline", "ticket"]
 MasterDataEmployeeMaintenanceAction = Literal["create", "edit", "freeze", "effective_period"]
+MasterDataEmployeeSkillMaintenanceAction = Literal["replace"]
 MasterDataEmployeeMaintenanceStatus = Literal[
     "created",
     "updated",
@@ -457,6 +458,20 @@ class EmployeeSkillRecord(BaseModel):
     effective_from: str
     effective_to: str
     batch_id: str
+
+
+class MasterDataEmployeeSkillMaintenanceRequest(BaseModel):
+    action: MasterDataEmployeeSkillMaintenanceAction
+    source_batch_id: str
+    skill_ids: list[str] = Field(min_length=1)
+    effective_from: str
+    effective_to: str
+
+
+class MasterDataEmployeeSkillMaintenanceResponse(BaseModel):
+    employee_id: str
+    action_status: Literal["replaced"]
+    skills: list[EmployeeSkillRecord]
 
 
 class MasterDataEmployeeListRow(MasterDataEmployeeRecord):
