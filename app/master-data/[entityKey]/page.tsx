@@ -2,12 +2,15 @@ import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
 import {
+  MasterDataAgentManagementPage,
   MasterDataMaintenanceEntityDetail,
 } from "@/components/master-data-maintenance-workbench"
 import {
+  type MasterDataAgentManagementFilters,
   type MasterDataEmployeeListRow,
   type MasterDataMaintenanceEntityKey,
   getMasterDataMaintenanceEntity,
+  summarizeMasterDataAgentManagement,
   summarizeMasterDataMaintenanceFeedback,
   summarizeMasterDataMaintenanceEntityDetail,
 } from "@/components/master-data-maintenance-model"
@@ -58,39 +61,89 @@ export default async function MasterDataEntityDetailPage({
     batchResult.data ?? []
   )
   const feedback = summarizeMasterDataMaintenanceFeedback(resolvedSearchParams)
+  const agentManagementSummary =
+    entity.key === "agents"
+      ? summarizeMasterDataAgentManagement(
+          employeeResult.data ?? [],
+          resolveAgentManagementFilters(resolvedSearchParams)
+        )
+      : null
+  const agentAction = resolveAgentAction(resolvedSearchParams)
+  const selectedEmployeeId = getSingleSearchParam(resolvedSearchParams.employee_id)
 
   return (
     <AppShell
-      title={`${entity.label}详情`}
-      searchPlaceholder="搜索主数据对象或来源批次"
+      title={entity.key === "agents" ? "客服人员" : `${entity.label}详情`}
+      searchPlaceholder={
+        entity.key === "agents" ? "搜索客服人员" : "搜索主数据对象或来源批次"
+      }
     >
-      <MasterDataMaintenanceEntityDetail
-        summary={summary}
-        error={batchResult.error}
-        feedback={feedback}
-        employeeList={employeeResult.data ?? []}
-        employeeListError={employeeResult.error}
-        agentSubmitAction={
-          entity.key === "agents" ? submitMasterDataAgentMaintenance : undefined
-        }
-        agentSkillSubmitAction={
-          entity.key === "agents"
-            ? submitMasterDataAgentSkillMaintenance
-            : undefined
-        }
-        referenceSubmitAction={
-          isReferenceEntity(entity.key)
-            ? submitMasterDataReferenceMaintenance
-            : undefined
-        }
-        bindingSubmitAction={
-          entity.key === "bindings"
-            ? submitMasterDataBindingMaintenance
-            : undefined
-        }
-      />
+      {entity.key === "agents" && agentManagementSummary ? (
+        <MasterDataAgentManagementPage
+          summary={summary}
+          managementSummary={agentManagementSummary}
+          error={batchResult.error}
+          feedback={feedback}
+          employeeListError={employeeResult.error}
+          selectedAction={agentAction}
+          selectedEmployeeId={selectedEmployeeId}
+          agentSubmitAction={submitMasterDataAgentMaintenance}
+          agentSkillSubmitAction={submitMasterDataAgentSkillMaintenance}
+        />
+      ) : (
+        <MasterDataMaintenanceEntityDetail
+          summary={summary}
+          error={batchResult.error}
+          feedback={feedback}
+          employeeList={employeeResult.data ?? []}
+          employeeListError={employeeResult.error}
+          referenceSubmitAction={
+            isReferenceEntity(entity.key)
+              ? submitMasterDataReferenceMaintenance
+              : undefined
+          }
+          bindingSubmitAction={
+            entity.key === "bindings"
+              ? submitMasterDataBindingMaintenance
+              : undefined
+          }
+        />
+      )}
     </AppShell>
   )
+}
+
+type AgentManagementAction = "create" | "edit" | "freeze" | "skills"
+
+function resolveAgentManagementFilters(
+  searchParams: Record<string, string | string[] | undefined>
+): MasterDataAgentManagementFilters {
+  return {
+    employee_name: getSingleSearchParam(searchParams.employee_name),
+    skill_group: getSingleSearchParam(searchParams.skill_group),
+    employee_id: getSingleSearchParam(searchParams.employee_id),
+    status: getSingleSearchParam(searchParams.status),
+    organization: getSingleSearchParam(searchParams.organization),
+    workplace: getSingleSearchParam(searchParams.workplace),
+    employee_type: getSingleSearchParam(searchParams.employee_type),
+  }
+}
+
+function resolveAgentAction(
+  searchParams: Record<string, string | string[] | undefined>
+): AgentManagementAction | null {
+  const action = getSingleSearchParam(searchParams.agent_action)
+
+  if (
+    action === "create" ||
+    action === "edit" ||
+    action === "freeze" ||
+    action === "skills"
+  ) {
+    return action
+  }
+
+  return null
 }
 
 function isReferenceEntity(
@@ -163,4 +216,12 @@ function formatApiError(error: unknown): string {
   }
 
   return "本地 API 暂不可用"
+}
+
+function getSingleSearchParam(value: string | string[] | undefined): string {
+  if (Array.isArray(value)) {
+    return value[0] ?? ""
+  }
+
+  return value ?? ""
 }

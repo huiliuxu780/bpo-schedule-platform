@@ -12,6 +12,7 @@ import {
   buildMasterDataReferenceMaintenanceApiPath,
   buildMasterDataReferenceMaintenancePayload,
   getMasterDataMaintenanceEntity,
+  summarizeMasterDataAgentManagement,
   summarizeMasterDataEmployeeList,
   summarizeMasterDataAgentMaintenanceFeedback,
   summarizeMasterDataMaintenanceEntityDetail,
@@ -215,13 +216,67 @@ test("master data employee list summarizes org path type workplace and skills", 
   assert.equal(summary.activeEmployees, 1);
   assert.equal(summary.internalEmployees, 1);
   assert.equal(summary.outsourcedEmployees, 0);
-  assert.deepEqual(summary.rows[0].display, {
+  assert.deepEqual({
+    employeeTypeLabel: summary.rows[0].display.employeeTypeLabel,
+    statusLabel: summary.rows[0].display.statusLabel,
+    organizationLabel: summary.rows[0].display.organizationLabel,
+    workplaceLabel: summary.rows[0].display.workplaceLabel,
+    skillSummary: summary.rows[0].display.skillSummary,
+  }, {
     employeeTypeLabel: "自有员工",
     statusLabel: "生效",
     organizationLabel: "CC / CCO / 集中退换小组",
     workplaceLabel: "南京职场",
     skillSummary: "通用技能组（在线技能组）、集中退换外呼（热线技能组）、集中退换工单（工单技能组）",
   });
+});
+
+test("agent management page exposes customer service list layout contract", () => {
+  const summary = summarizeMasterDataAgentManagement([
+    {
+      employee_id: "A-2001",
+      employee_name: "刘晓晓",
+      status: "active",
+      employee_type: "internal",
+      organization_id: "ORG-RETURN",
+      organization_path: "CC / CCO / 集中退换小组",
+      workplace_id: "NJ-01",
+      workplace_name: "南京职场",
+      effective_from: "2026-05-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skills: [
+        {
+          employee_id: "A-2001",
+          skill_id: "SKILL-RETURN-TICKET",
+          skill_name: "集中退换工单",
+          skill_category: "ticket",
+          effective_from: "2026-05-01",
+          effective_to: "2026-12-31",
+          batch_id: "BATCH-MD-001",
+        },
+      ],
+    },
+  ]);
+
+  assert.equal(summary.title, "客服人员");
+  assert.deepEqual(
+    summary.filterFields.map((field) => field.label),
+    ["客服名", "技能组", "账号", "状态", "组织", "职场", "坐席类型"],
+  );
+  assert.deepEqual(
+    summary.bulkActions.map((action) => action.label),
+    ["人员类型", "组织架构", "技能组", "冻结/解冻"],
+  );
+  assert.deepEqual(
+    summary.tableColumns.map((column) => column.label),
+    ["姓名", "账号", "工号", "对外展示名", "组织", "技能组", "级别", "状态", "冻结/解冻原因", "ID", "操作"],
+  );
+  assert.equal(summary.rows[0].display.accountLabel, "A-2001");
+  assert.equal(summary.rows[0].display.jobNumberLabel, "未配置");
+  assert.equal(summary.rows[0].display.publicNameLabel, "刘晓晓");
+  assert.equal(summary.rows[0].display.levelLabel, "自有员工");
+  assert.equal(summary.rows[0].display.freezeReasonLabel, "-");
 });
 
 test("agent maintenance payload maps create edit freeze and effective period actions", () => {

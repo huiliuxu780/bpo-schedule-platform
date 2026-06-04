@@ -211,6 +211,11 @@ export type MasterDataEmployeeListDisplay = {
   organizationLabel: string
   workplaceLabel: string
   skillSummary: string
+  accountLabel: string
+  jobNumberLabel: string
+  publicNameLabel: string
+  levelLabel: string
+  freezeReasonLabel: string
 }
 
 export type MasterDataEmployeeListViewRow = MasterDataEmployeeListRow & {
@@ -224,6 +229,57 @@ export type MasterDataEmployeeListSummary = {
   outsourcedEmployees: number
   rows: MasterDataEmployeeListViewRow[]
 }
+
+export type MasterDataAgentManagementFilterField = {
+  key:
+    | "employee_name"
+    | "skill_group"
+    | "employee_id"
+    | "status"
+    | "organization"
+    | "workplace"
+    | "employee_type"
+  label: string
+  placeholder: string
+  type: "input" | "select"
+  options?: {
+    value: string
+    label: string
+  }[]
+}
+
+export type MasterDataAgentManagementAction = {
+  key: "employee_type" | "organization" | "skill_group" | "freeze"
+  label: string
+}
+
+export type MasterDataAgentManagementColumn = {
+  key:
+    | "name"
+    | "account"
+    | "job_number"
+    | "public_name"
+    | "organization"
+    | "skill_group"
+    | "level"
+    | "status"
+    | "freeze_reason"
+    | "id"
+    | "actions"
+  label: string
+}
+
+export type MasterDataAgentManagementSummary = MasterDataEmployeeListSummary & {
+  title: "客服人员"
+  activeFilters: MasterDataAgentManagementFilters
+  filterFields: MasterDataAgentManagementFilterField[]
+  bulkActions: MasterDataAgentManagementAction[]
+  tableColumns: MasterDataAgentManagementColumn[]
+}
+
+export type MasterDataAgentManagementFilters = Partial<
+  Record<MasterDataAgentManagementFilterField["key"], string>
+>
 
 export type MasterDataEntityDetailSummary = {
   entity: MasterDataMaintenanceEntity
@@ -537,6 +593,11 @@ export function summarizeMasterDataEmployeeList(
       organizationLabel: employee.organization_path ?? "未绑定组织",
       workplaceLabel: employee.workplace_name ?? "未绑定职场",
       skillSummary: formatMasterDataEmployeeSkills(employee.skills),
+      accountLabel: employee.employee_id,
+      jobNumberLabel: "未配置",
+      publicNameLabel: employee.employee_name,
+      levelLabel: formatMasterDataEmployeeType(employee.employee_type),
+      freezeReasonLabel: employee.status === "frozen" ? "主数据冻结" : "-",
     },
   }))
 
@@ -548,6 +609,147 @@ export function summarizeMasterDataEmployeeList(
       .length,
     rows,
   }
+}
+
+export function summarizeMasterDataAgentManagement(
+  employees: MasterDataEmployeeListRow[],
+  filters: MasterDataAgentManagementFilters = {}
+): MasterDataAgentManagementSummary {
+  const normalizedFilters = normalizeMasterDataAgentManagementFilters(filters)
+  const filteredEmployees = employees.filter((employee) =>
+    matchesMasterDataAgentManagementFilters(employee, normalizedFilters)
+  )
+
+  return {
+    ...summarizeMasterDataEmployeeList(filteredEmployees),
+    title: "客服人员",
+    activeFilters: normalizedFilters,
+    filterFields: [
+      {
+        key: "employee_name",
+        label: "客服名",
+        placeholder: "请输入",
+        type: "input",
+      },
+      {
+        key: "skill_group",
+        label: "技能组",
+        placeholder: "请选择",
+        type: "select",
+        options: [
+          { value: "all", label: "全部技能组" },
+          { value: "online", label: "在线技能组" },
+          { value: "hotline", label: "热线技能组" },
+          { value: "ticket", label: "工单技能组" },
+        ],
+      },
+      {
+        key: "employee_id",
+        label: "账号",
+        placeholder: "请输入",
+        type: "input",
+      },
+      {
+        key: "status",
+        label: "状态",
+        placeholder: "请选择",
+        type: "select",
+        options: [
+          { value: "all", label: "全部状态" },
+          { value: "active", label: "生效" },
+          { value: "frozen", label: "冻结" },
+          { value: "inactive", label: "停用" },
+        ],
+      },
+      {
+        key: "organization",
+        label: "组织",
+        placeholder: "请选择",
+        type: "select",
+        options: [{ value: "all", label: "全部组织" }],
+      },
+      {
+        key: "workplace",
+        label: "职场",
+        placeholder: "请选择",
+        type: "select",
+        options: [{ value: "all", label: "全部职场" }],
+      },
+      {
+        key: "employee_type",
+        label: "坐席类型",
+        placeholder: "全部",
+        type: "select",
+        options: [
+          { value: "all", label: "全部" },
+          { value: "internal", label: "自有员工" },
+          { value: "outsourced", label: "外包员工" },
+        ],
+      },
+    ],
+    bulkActions: [
+      { key: "employee_type", label: "人员类型" },
+      { key: "organization", label: "组织架构" },
+      { key: "skill_group", label: "技能组" },
+      { key: "freeze", label: "冻结/解冻" },
+    ],
+    tableColumns: [
+      { key: "name", label: "姓名" },
+      { key: "account", label: "账号" },
+      { key: "job_number", label: "工号" },
+      { key: "public_name", label: "对外展示名" },
+      { key: "organization", label: "组织" },
+      { key: "skill_group", label: "技能组" },
+      { key: "level", label: "级别" },
+      { key: "status", label: "状态" },
+      { key: "freeze_reason", label: "冻结/解冻原因" },
+      { key: "id", label: "ID" },
+      { key: "actions", label: "操作" },
+    ],
+  }
+}
+
+function normalizeMasterDataAgentManagementFilters(
+  filters: MasterDataAgentManagementFilters
+): MasterDataAgentManagementFilters {
+  return Object.fromEntries(
+    Object.entries(filters)
+      .map(([key, value]) => [key, value?.trim() ?? ""])
+      .filter(([, value]) => value && value !== "all")
+  ) as MasterDataAgentManagementFilters
+}
+
+function matchesMasterDataAgentManagementFilters(
+  employee: MasterDataEmployeeListRow,
+  filters: MasterDataAgentManagementFilters
+) {
+  const employeeName = filters.employee_name
+  if (employeeName && !employee.employee_name.includes(employeeName)) {
+    return false
+  }
+
+  const employeeId = filters.employee_id
+  if (employeeId && !employee.employee_id.includes(employeeId)) {
+    return false
+  }
+
+  if (filters.status && employee.status !== filters.status) {
+    return false
+  }
+
+  if (filters.employee_type && employee.employee_type !== filters.employee_type) {
+    return false
+  }
+
+  const skillGroup = filters.skill_group
+  if (
+    skillGroup &&
+    !employee.skills.some((skill) => skill.skill_category === skillGroup)
+  ) {
+    return false
+  }
+
+  return true
 }
 
 export function summarizeMasterDataAgentMaintenanceFeedback(

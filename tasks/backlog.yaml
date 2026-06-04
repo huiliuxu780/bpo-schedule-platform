@@ -9403,7 +9403,7 @@ tasks:
     acceptance:
       - "后端提供单员工技能集合 replace 维护能力，复用既有员工、技能、有效期和来源批次校验。"
       - "API 返回替换后的技能列表，包含技能名称和技能组类别。"
-      - "/master-data/agents 提供独立的技能维护 tab，按技能 ID 列表提交。"
+      - "/master-data/agents 默认是客服人员管理列表，技能维护从行级更多操作进入并按技能 ID 列表提交。"
       - "前端 payload builder 和 server action 调用新技能维护 API。"
       - "不新增批量维护、权限、审批、导出、自动排班、生产公式、结算或收费因子。"
     auto_run: false
@@ -9416,4 +9416,4 @@ tasks:
       - "需要真实外部系统集成"
       - "验证失败"
     commit_after_done: true
-    done_notes: "已接通单个人员多技能集合 replace 维护闭环，并将入口拆到独立技能维护 tab。"
+    done_notes: "已接通单个人员多技能集合 replace 维护闭环，并将 /master-data/agents 纠正为客服人员管理列表，技能维护从行级更多操作进入。"
