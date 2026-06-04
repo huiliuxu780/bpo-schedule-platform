@@ -4694,3 +4694,25 @@ dependencies:
 status: "done"
 notes: "IM119 已完成：登录日志版本纳入 actual_logs 直接结果链路，复用 schedule_vs_actual 运行匹配和复核案例入口。"
 ```
+
+### US740 - 排班实际结果来源解释
+
+```yaml
+id: US740
+requirement_ids:
+  - R820
+module: "本地比对计算"
+role: "计划主管"
+story: "作为计划主管，我希望在对比运行详情页直接看到排班实际结果使用了哪个排班版本、哪个实际日志版本以及如何计算迟到差异，以便复核结果时不用反复回跳推断来源。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "对比运行详情页展示来源解释，说明预测排班或排班实际口径使用的来源版本和业务日区间。"
+  - "schedule_vs_actual 运行解释排班版本、实际日志版本、坐席排班分钟、有效生产分钟和迟到分钟。"
+  - "缺少来源版本时显示来源不完整提示，不伪造版本。"
+  - "不新增后端、schema/migration、依赖、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US739"
+status: "done"
+notes: "IM120 已完成：对比运行详情页完整结果回看卡片新增来源解释和来源版本完整/缺失提示。"
+```

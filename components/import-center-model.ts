@@ -549,6 +549,8 @@ export type ImportComparisonRunDetailSummary = {
     scopeLabel: string
     sourceVersionLabel: string
     businessDateLabel: string
+    sourceExplanation: string
+    sourceBlocker: string | null
     nextAction: string
   }
   metricCards: Array<{ label: string; value: string; detail: string }>
@@ -6668,6 +6670,8 @@ export function summarizeImportComparisonRunDetail({
   const comparisonTypeLabel = formatComparisonTypeLabel(detail.run.comparison_type)
   const versionLabel = formatComparisonRunVersionLabel(detail.run)
   const businessDateLabel = `${detail.run.business_date_from} ~ ${detail.run.business_date_to}`
+  const sourceExplanation = summarizeComparisonRunSourceExplanation(detail.run)
+  const sourceBlocker = summarizeComparisonRunSourceBlocker(detail.run)
 
   return {
     tone: detail.run.status === "failed" ? "blocked" : "ready",
@@ -6678,6 +6682,8 @@ export function summarizeImportComparisonRunDetail({
       scopeLabel: `当前版本语境 · ${comparisonTypeLabel}`,
       sourceVersionLabel: versionLabel,
       businessDateLabel,
+      sourceExplanation,
+      sourceBlocker,
       nextAction: "先核对来源版本和业务日，再按明细行检查异常结果。",
     },
     metricCards: [
@@ -7106,6 +7112,8 @@ function emptyComparisonRunDetailSummary({
       scopeLabel: "当前版本语境 · 未确认",
       sourceVersionLabel: versionLabel,
       businessDateLabel: businessDate,
+      sourceExplanation: "等待可读取的对比运行后再解释来源版本、业务日和结果口径。",
+      sourceBlocker: tone === "blocked" ? businessDateDetail : "等待运行结果",
       nextAction:
         tone === "blocked"
           ? "先恢复对比运行读取，再回到本页检查结果明细。"
@@ -7139,6 +7147,36 @@ function formatComparisonRunVersionLabel(run: ImportComparisonRunRecord): string
   ]
     .filter((item): item is string => item !== null)
     .join(" · ")
+}
+
+function summarizeComparisonRunSourceExplanation(
+  run: ImportComparisonRunRecord
+): string {
+  if (run.comparison_type === "forecast_vs_schedule") {
+    return `预测排班口径使用预测版本 ${run.forecast_version_id ?? "未返回"} 和排班版本 ${run.schedule_version_id ?? "未返回"}，按同一业务日区间比较 0.5h 人力缺口。`
+  }
+
+  return `排班实际口径使用排班版本 ${run.schedule_version_id ?? "未返回"} 和实际日志版本 ${run.actual_import_version_id ?? "未返回"}，按同一业务日区间比较坐席排班分钟、有效生产分钟和迟到分钟。`
+}
+
+function summarizeComparisonRunSourceBlocker(
+  run: ImportComparisonRunRecord
+): string | null {
+  if (run.comparison_type === "forecast_vs_schedule") {
+    const missing = [
+      run.forecast_version_id ? null : "预测版本",
+      run.schedule_version_id ? null : "排班版本",
+    ].filter((item): item is string => item !== null)
+
+    return missing.length > 0 ? `来源版本不完整：缺少${missing.join("、")}。` : null
+  }
+
+  const missing = [
+    run.schedule_version_id ? null : "排班版本",
+    run.actual_import_version_id ? null : "实际日志版本",
+  ].filter((item): item is string => item !== null)
+
+  return missing.length > 0 ? `来源版本不完整：缺少${missing.join("、")}。` : null
 }
 
 function formatForecastScheduleResultRow(

@@ -608,3 +608,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After IM118, actual-log comparison candidates already accepted both `login_log` and `status_log`, but direct applied-version result matching only recognized `status_log`. `US739/IM119` is complete. `login_log` now participates in the same actual_logs direct result context as `status_log`: applied result cards and version result context can match `schedule_vs_actual` runs through `actual_import_version_id`, and the downstream review-case entry stays on `schedule_actual`.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new comparison APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM119.
+
+## 2026-06-04 IM120 Comparison Run Source Explanation
+
+After IM119, applied actual-log versions can stay connected to `schedule_vs_actual` runs, but the comparison-run detail page still required users to infer why a run belonged to a pair of source versions. `US740/IM120` is complete. The detail page's full result-review card now explains the source version pair, business date range, and metric scope for both `forecast_vs_schedule` and `schedule_vs_actual`; missing source versions are shown as explicit blockers instead of fabricated context.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new comparison APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM120.

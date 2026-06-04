@@ -2601,3 +2601,16 @@ version: "1.0"
 status: "done"
 notes: "IM119 已完成：login_log 已应用版本现在与 status_log 一样支持直接版本结果定位、schedule_vs_actual 运行匹配和复核案例入口；actual_logs 中文展示统一为 登录/状态日志。"
 ```
+
+### R820 - 排班实际结果来源解释
+
+```yaml
+id: R820
+module: "本地比对计算"
+description: "登录/状态日志版本已经能进入 schedule_vs_actual 结果链路，但对比运行详情页还缺少面向排班实际口径的来源解释，用户不容易确认排班版本、实际日志版本、业务日和迟到指标之间的关系。"
+source: "After IM119 push and PM asked to continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM120 已完成：对比运行详情页新增来源解释和来源完整性提示，预测排班和排班实际分别说明来源版本、业务日区间和关键差异口径；缺版本时不伪造来源。"
+```

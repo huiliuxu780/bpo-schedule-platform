@@ -107,24 +107,40 @@ export function ImportCenterComparisonRunDetailWorkspace({
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="grid gap-3 text-sm md:grid-cols-3">
-            <div className="grid gap-1">
-              <span className="text-muted-foreground">来源版本</span>
-              <span className="font-medium">
-                {summary.resultReviewContext.sourceVersionLabel}
-              </span>
+          <CardContent className="grid gap-3 text-sm">
+            <div className="grid gap-3 md:grid-cols-3">
+              <div className="grid gap-1">
+                <span className="text-muted-foreground">来源版本</span>
+                <span className="font-medium">
+                  {summary.resultReviewContext.sourceVersionLabel}
+                </span>
+              </div>
+              <div className="grid gap-1">
+                <span className="text-muted-foreground">业务日</span>
+                <span className="font-medium">
+                  {summary.resultReviewContext.businessDateLabel}
+                </span>
+              </div>
+              <div className="grid gap-1">
+                <span className="text-muted-foreground">下一步</span>
+                <span className="font-medium">
+                  {summary.resultReviewContext.nextAction}
+                </span>
+              </div>
             </div>
-            <div className="grid gap-1">
-              <span className="text-muted-foreground">业务日</span>
-              <span className="font-medium">
-                {summary.resultReviewContext.businessDateLabel}
-              </span>
-            </div>
-            <div className="grid gap-1">
-              <span className="text-muted-foreground">下一步</span>
-              <span className="font-medium">
-                {summary.resultReviewContext.nextAction}
-              </span>
+            <div className="grid gap-2 rounded-md border bg-muted/30 p-3">
+              <div className="text-muted-foreground">
+                {summary.resultReviewContext.sourceExplanation}
+              </div>
+              {summary.resultReviewContext.sourceBlocker ? (
+                <Badge variant="destructive" className="w-fit">
+                  {summary.resultReviewContext.sourceBlocker}
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="w-fit">
+                  来源版本完整
+                </Badge>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM120 Comparison Run Source Explanation
+
+- branch_name: `codex/im120-schedule-actual-result-explanation`
+- base_main_commit: `ef52229`
+- stacked_on: `9c4e557 fix: link login log version results`
+- remote_status: `IM119 branch is pushed; IM120 implementation is local only until final check/commit/push.`
+- scope: add read-only source explanation to the existing comparison-run detail page, covering forecast-vs-schedule and schedule-vs-actual source versions, business date range, key metric scope, and missing-source blockers.
+- allowed_files_check: `components/import-center-comparison-run-detail-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected comparison-run detail component/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED first failed because `resultReviewContext` lacked source explanation and source blocker fields; after implementation `node --test scripts/tests/import-center-model.test.mjs` passed with 79 tests. `npm run lint`, `npm run typecheck`, and `bash scripts/check-state.sh --strict` passed. In-app browser smoke on `http://127.0.0.1:3000/data-quality/comparison-runs/RUN-DEMO-FS-20260511` matched `完整结果回看主页`, source explanation text, `来源版本完整`, and the read-only boundary. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM119 Login Log Version Result Link Consistency
 
 - branch_name: `codex/im119-login-log-version-result-link`

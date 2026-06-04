@@ -8807,3 +8807,42 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已把 login_log 纳入 actual_logs 直接结果链路，应用结果卡和版本结果语境都能匹配 schedule_vs_actual 对比运行与复核入口。"
+  - id: IM120
+    title: "排班实际结果来源解释"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM119"]
+    allowed_files:
+      - "components/import-center-comparison-run-detail-workspace.tsx"
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+    acceptance:
+      - "对比运行详情页展示来源解释，说明预测排班或排班实际口径使用的来源版本和业务日区间。"
+      - "schedule_vs_actual 运行解释排班版本、实际日志版本、坐席排班分钟、有效生产分钟和迟到分钟。"
+      - "缺少来源版本时显示来源不完整提示，不伪造版本。"
+      - "不新增后端、schema/migration、依赖、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或生产持久化配置"
+      - "范围扩展到审批、导出、批量、权限、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已在对比运行详情完整结果回看卡片增加来源解释和来源版本完整/缺失提示，覆盖预测排班与排班实际口径。"

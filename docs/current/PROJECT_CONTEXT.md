@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current queue is empty after `US739/IM119`. Production-detail `status=applied` links now land on ready business-version rows, forecast plus schedule versions expose forecast-vs-schedule candidates, and login/status log versions stay connected to schedule-vs-actual result links.
+Current queue is empty after `US740/IM120`. Production-detail `status=applied` links now land on ready business-version rows, login/status log versions stay connected to schedule-vs-actual result links, and comparison-run details explain source versions plus result metric scope.
 
 The master-data maintenance chain now has `/master-data` plus `/master-data/[entityKey]` surfaces with controlled single-object submit paths for agents, reference entities, and binding relationships. Permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors remain out of scope.
 
@@ -157,4 +157,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US734/IM114` completed the read-only demand-forecast production detail API. It returns source batch context, forecast version, 0.5h forecast intervals, and version change records from existing repositories without frontend wiring or production writes.
 
-`US739/IM119` completed login-log version result-link consistency. login_log now behaves like status_log inside actual_logs direct result contexts, preserving schedule-vs-actual run links and review-case entries; backend writes, schema, migration, dependency, approval, export, batch, permission, automatic scheduling, formula, settlement, and charge-factor scope remain excluded.
+`US740/IM120` completed comparison-run source explanation on the detail page. Forecast-vs-schedule and schedule-vs-actual runs now explain source versions, business dates, key metric scope, and missing-source blockers without new writes; backend writes, schema, migration, dependency, approval, export, batch, permission, automatic scheduling, formula, settlement, and charge-factor scope remain excluded.
