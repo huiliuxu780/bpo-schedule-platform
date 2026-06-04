@@ -2494,6 +2494,6 @@ description: "人员排班生产详情页已有来源版本和发布/冻结安�
 source: "After IM110 completion and PM agreed to continue on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "ready"
-notes: "IM111 下一步：只做人员排班生产版本详情只读 API；不新增 schema/migration，不做前端接入、发布、冻结、取消发布、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+status: "done"
+notes: "IM111 已完成：新增人员排班生产版本详情只读 API，可按 batch_id 返回来源批次、schedule_version_id、业务日期范围、排班明细和 0.5h 展开区间；不新增 schema/migration，不做前端接入、发布、冻结、取消发布、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
 ```

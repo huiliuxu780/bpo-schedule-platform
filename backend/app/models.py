@@ -527,6 +527,13 @@ class PersonnelScheduleVersionDetail(BaseModel):
     intervals: list[PersonnelScheduleIntervalRecord]
 
 
+class PersonnelScheduleProductionDetail(BaseModel):
+    batch: ImportBatchRecord
+    version: PersonnelScheduleVersionRecord
+    details: list[PersonnelScheduleDetailRecord]
+    intervals: list[PersonnelScheduleIntervalRecord]
+
+
 class PersonnelScheduleImportApplyResponse(BaseModel):
     batch_id: str
     schedule_version_id: str

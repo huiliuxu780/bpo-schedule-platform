@@ -2848,16 +2848,16 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
-### IM111 Personnel Schedule Version Detail API Planning
+### IM111 Personnel Schedule Version Detail API
 
 - branch_name: `codex/im111-schedule-version-detail-api`
 - base_main_commit: `ef52229`
 - stacked_on: `eb41fe9 feat: extend master data maintenance entities`
-- remote_status: `IM110 branch is pushed; IM111 planning/state changes are local only until final check/commit/push.`
-- scope: seed `R811`, `US731`, and `IM111` for a backend-only read-only personnel-schedule production version detail API by batch ID; planned response covers source batch/version context, schedule_version_id, business date range, schedule detail rows, and 0.5h expanded intervals.
+- remote_status: `IM110 branch is pushed; IM111 implementation is local only until final check/commit/push.`
+- scope: add a backend-only read-only personnel-schedule production version detail API by batch ID; response covers source batch context, schedule_version_id, business date range, schedule detail rows, and 0.5h expanded intervals.
 - allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/personnel_schedule_persistence.py`, `backend/tests/test_personnel_schedule_production_api.py`, `backend/tests/test_personnel_schedule_persistence.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no frontend app/components, package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
-- scope_diff_check: planning and current-state files only so far; `.local/` and `.qoder/` remain untracked and must not be staged.
-- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after the planning/state update.
+- scope_diff_check: expected IM111 backend/API/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED first failed on missing `get_schedule_version_by_import_version` and missing `get_personnel_schedule_production_detail`; after implementation `.venv/bin/python -m unittest backend.tests.test_personnel_schedule_persistence backend.tests.test_personnel_schedule_production_api -v` passed with 7 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 195 tests OK.
 - local_commit_sha: to be reported in Done Report after local commit creation
 - integration_status: `not_started`
 - integration_method: `N/A`

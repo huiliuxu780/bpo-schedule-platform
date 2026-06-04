@@ -551,8 +551,10 @@ After the login/status-log production chain, the next approved block is master-d
 
 Current queue returned to empty after IM110. The chain still avoids permissions, approval, export, batch operations, real external integrations, automatic scheduling, production formulas, settlement rules, and charge factors.
 
-## 2026-06-04 IM111 Personnel Schedule Version Detail API Planning
+## 2026-06-04 IM111 Personnel Schedule Version Detail API
 
 After master-data maintenance CRUD, the next slice returns to the personnel-schedule production flow. `US721/IM101` already added a publish/freeze boundary safety shell on `/schedule-plans/production/[batchId]`, but the detail page still cannot read real persisted schedule details or 0.5h expanded intervals from a backend production-detail API.
 
-Current state advanced to `US731/IM111`. The task is backend-only: add a read-only personnel-schedule production version detail API by batch ID, returning source batch/version context, schedule_version_id, business date range, schedule detail rows, and 0.5h expanded intervals. It explicitly excludes frontend wiring, schema/migration, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors.
+`US731/IM111` is complete. The backend now exposes `/api/v1/personnel-schedule/production/{batch_id}` as a read-only personnel-schedule production detail API. It resolves the source import batch, locates the applied schedule version by import_version_id, and returns source batch context, schedule_version_id, business date range, schedule detail rows, and 0.5h expanded intervals.
+
+Current queue returned to empty after IM111. The task explicitly excluded frontend wiring, schema/migration, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors.

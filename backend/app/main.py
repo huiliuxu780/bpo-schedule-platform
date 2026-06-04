@@ -60,6 +60,7 @@ from backend.app.models import (
     MasterDataReferenceMaintenanceResponse,
     MasterDataReferenceType,
     PersonnelScheduleImportApplyResponse,
+    PersonnelScheduleProductionDetail,
     ReviewCaseDetail,
     ReviewCaseListResponse,
     ReviewClosureWriteRequest,
@@ -350,6 +351,22 @@ def _raise_if_import_apply_not_ready(
                 "code": "IMPORT_APPLY_NOT_READY",
                 "message": "导入批次未满足应用条件，需先处理就绪校验阻塞项。",
                 "readiness": readiness.model_dump(),
+            }
+        },
+    )
+
+
+def _personnel_schedule_import_version_id(batch: ImportBatchPersistenceDetail) -> str:
+    for version in batch.versions:
+        if version.version_type == "personnel_schedule":
+            return version.version_id
+
+    raise HTTPException(
+        status_code=404,
+        detail={
+            "error": {
+                "code": "PERSONNEL_SCHEDULE_IMPORT_VERSION_NOT_FOUND",
+                "message": "导入批次缺少人员排班版本",
             }
         },
     )
@@ -769,6 +786,60 @@ def apply_personnel_schedule_import(batch_id: str) -> PersonnelScheduleImportApp
         ) from exc
 
     return PersonnelScheduleImportApplyResponse(**summary)
+
+
+@app.get(
+    "/api/v1/personnel-schedule/production/{batch_id}",
+    response_model=PersonnelScheduleProductionDetail,
+)
+def get_personnel_schedule_production_detail(
+    batch_id: str,
+) -> PersonnelScheduleProductionDetail:
+    batch = get_import_persistence_repository().get_import_batch(batch_id)
+    if batch is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "IMPORT_BATCH_NOT_FOUND",
+                    "message": "导入批次不存在",
+                }
+            },
+        )
+    if batch.batch.file_type != "personnel_schedule":
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "PERSONNEL_SCHEDULE_BATCH_INVALID",
+                    "message": "导入批次不是人员排班类型",
+                }
+            },
+        )
+
+    schedule_detail = (
+        PersonnelSchedulePersistenceRepository()
+        .get_schedule_version_by_import_version(
+            _personnel_schedule_import_version_id(batch)
+        )
+    )
+    if schedule_detail is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "PERSONNEL_SCHEDULE_VERSION_NOT_FOUND",
+                    "message": "人员排班业务版本尚未应用",
+                }
+            },
+        )
+
+    return PersonnelScheduleProductionDetail(
+        batch=batch.batch,
+        version=schedule_detail.version,
+        details=schedule_detail.details,
+        intervals=schedule_detail.intervals,
+    )
 
 
 @app.post(

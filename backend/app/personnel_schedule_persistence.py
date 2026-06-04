@@ -213,6 +213,23 @@ class PersonnelSchedulePersistenceRepository:
             intervals=[_interval_record(interval) for interval in intervals],
         )
 
+    def get_schedule_version_by_import_version(
+        self,
+        import_version_id: str,
+    ) -> PersonnelScheduleVersionDetail | None:
+        with self.session_factory() as session:
+            schedule_version_id = session.scalar(
+                select(PersonnelScheduleVersionEntity.schedule_version_id)
+                .where(
+                    PersonnelScheduleVersionEntity.import_version_id
+                    == import_version_id
+                )
+                .order_by(PersonnelScheduleVersionEntity.schedule_version_id)
+            )
+        if schedule_version_id is None:
+            return None
+        return self.get_schedule_version(schedule_version_id)
+
     def has_schedule_import_version(self, import_version_id: str) -> bool:
         with self.session_factory() as session:
             return (

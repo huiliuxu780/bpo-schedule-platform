@@ -71,6 +71,56 @@ class PersonnelSchedulePersistenceTest(unittest.TestCase):
                 ["09:00", "09:30", "10:00", "10:30"],
             )
 
+    def test_get_schedule_version_by_import_version_returns_detail(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'schedule.db'}"
+            _seed_import_and_master_data(database_url)
+            repository = PersonnelSchedulePersistenceRepository(database_url)
+            repository.init_schema()
+
+            repository.create_schedule_version(
+                PersonnelScheduleVersionRequest(
+                    schedule_version_id="SCH-20260511-V1",
+                    import_version_id="IMPORT-SCH-20260511",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                    shift_types=[
+                        ShiftTypeInput(
+                            shift_type_id="MORNING-2H",
+                            shift_type_name="早班",
+                            status="active",
+                            start_time="09:00",
+                            end_time="11:00",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    details=[
+                        PersonnelScheduleDetailInput(
+                            schedule_detail_id="DETAIL-A-1001-20260511",
+                            employee_id="A-1001",
+                            workplace_id="SH-01",
+                            project_id="BOSCH-CS",
+                            skill_id="L1-CN",
+                            shift_type_id="MORNING-2H",
+                            schedule_date="2026-05-11",
+                            start_time="09:00",
+                            end_time="11:00",
+                        )
+                    ],
+                )
+            )
+
+            loaded = repository.get_schedule_version_by_import_version(
+                "IMPORT-SCH-20260511"
+            )
+
+            self.assertIsNotNone(loaded)
+            self.assertEqual(loaded.version.schedule_version_id, "SCH-20260511-V1")
+            self.assertEqual(loaded.version.import_version_id, "IMPORT-SCH-20260511")
+            self.assertEqual(loaded.details[0].workplace_id, "SH-01")
+            self.assertEqual(len(loaded.intervals), 4)
+
     def test_schedule_rejects_invalid_time_range(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'schedule.db'}"
