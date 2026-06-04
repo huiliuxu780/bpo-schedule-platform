@@ -4426,3 +4426,25 @@ dependencies:
   - "US726"
 status: "ready"
 ```
+
+### US728 - Harness 验证输出瘦身
+
+```yaml
+id: US728
+requirement_ids:
+  - R808
+module: "Harness"
+role: "PM"
+story: "作为 PM，我希望最终验证默认只展示简洁的成功摘要，并在失败时保留完整失败日志，以便减少会话噪音和 token 消耗，同时不降低验证可靠性。"
+task_type: "state-hygiene"
+priority: "P1"
+acceptance:
+  - "`bash scripts/check.sh` 默认 quiet 模式下，每个成功 gate 只输出 `PASS: ...` 摘要。"
+  - "任一 gate 失败时必须展开该 gate 捕获日志，并保留原始退出码。"
+  - "`BPO_CHECK_OUTPUT_MODE=verbose` 保留原始逐命令输出，方便排障。"
+  - "不跳过 strict state、shadcn gate、lint、typecheck、Next build 或后端测试。"
+  - "不新增依赖、不修改 package/lockfile、不触碰业务代码。"
+dependencies: []
+status: "done"
+notes: "H029 已完成：新增 Harness 输出包装和回归测试，当前业务队列仍保留 US727/IM107 ready。"
+```

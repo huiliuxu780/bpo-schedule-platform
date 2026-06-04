@@ -2777,3 +2777,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### H029 Harness Check Output Compression
+
+- branch_name: `codex/h029-quiet-check-output`
+- base_main_commit: `a4bbd23`
+- remote_status: `main includes merged IM106 actual-log processing detail baseline; H029 is local only until final merge/push.`
+- scope: reduce default `bash scripts/check.sh` output volume by wrapping major gates with a quiet success summary and failure-only captured output expansion; preserve `BPO_CHECK_OUTPUT_MODE=verbose` for direct command output.
+- allowed_files_check: `scripts/check.sh`, `scripts/check-output.sh`, `scripts/tests/check-output.test.mjs`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no business code, backend, package, lockfile, dependency, schema, migration, approval, export, batch operation, permission, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected Harness script/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target output wrapper test passed with 3 tests after TDD red found missing helper behavior; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with quiet PASS summaries, frontend build, and backend unittest discovery OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

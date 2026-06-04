@@ -2445,3 +2445,16 @@ version: "1.0"
 status: "ready"
 notes: "只展示解释和禁用动作；不提交状态字典变更、不改生产规则。"
 ```
+
+### R808 - Harness 验证输出瘦身
+
+```yaml
+id: R808
+module: "Harness"
+description: "PM 观察到最终验证阶段有多个 worker 输出并质疑 token 消耗。需要在不减少验证步骤、不跳过失败详情的前提下，让 `bash scripts/check.sh` 默认只输出每个 gate 的成功摘要，失败时展开该 gate 的完整捕获日志，并保留显式 verbose 模式便于排障。"
+source: "PM approved low-risk Harness output compression on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "H029 已完成：新增 `run_check_step` 输出包装，默认 quiet 成功只打印 PASS 摘要，失败展开捕获日志并保留原退出码；`BPO_CHECK_OUTPUT_MODE=verbose` 可恢复原始输出。"
+```

@@ -1840,3 +1840,14 @@
 - action: 新增单批次导入应用写入入口。
 - status: `done`
 - notes: 批次处理详情页新增单批次应用区；readiness ready 且未应用时展示 `应用到业务数据` 提交入口，按 file_type 调用现有 apply API；应用成功或失败后回到当前批次详情页展示反馈；阻塞、已应用或准备度未知时只展示原因，不展示写入按钮；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-04
+
+- task_id: `H029`
+- source_ids:
+  - `R808`
+- story_ids:
+  - `US728`
+- action: 压缩 Harness 最终验证默认输出。
+- status: `done`
+- notes: `scripts/check.sh` 的主要验证步骤已通过 `run_check_step` 包装；默认 quiet 模式下成功步骤只打印 `PASS: ...` 摘要，失败步骤展开捕获日志并保留原退出码；`BPO_CHECK_OUTPUT_MODE=verbose` 可恢复原始输出；未跳过 strict state、shadcn gate、lint、typecheck、Next build 或后端测试；当前业务队列仍保留 `US727/IM107` ready。

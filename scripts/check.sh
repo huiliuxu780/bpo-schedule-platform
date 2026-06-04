@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+source scripts/check-output.sh
+
 preferred_node_dir="${BPO_NODE22_BIN:-/opt/homebrew/opt/node@22/bin}"
 node_major=""
 
@@ -58,11 +60,13 @@ required_files=(
   "scripts/dev.sh"
   "scripts/run-next-dev.sh"
   "scripts/check-state.sh"
+  "scripts/check-output.sh"
   "scripts/check-shadcn-ui.mjs"
   "scripts/shadcn-ui-baseline.json"
   "scripts/verify-backend-runtime.sh"
   "scripts/verify-frontend-native-runtime.mjs"
   "scripts/tests/check-shadcn-ui.test.mjs"
+  "scripts/tests/check-output.test.mjs"
   "scripts/tests/check-state.test.mjs"
   "scripts/tests/verify-backend-runtime.test.mjs"
   "scripts/tests/verify-frontend-native-runtime.test.mjs"
@@ -128,18 +132,18 @@ if (( ${#missing_tools[@]} > 0 )); then
   exit 1
 fi
 
-npm run verify:dev-runtime
-npm run test:dev-runtime
+run_check_step "frontend runtime verifier" npm run verify:dev-runtime
+run_check_step "frontend runtime tests" npm run test:dev-runtime
 state_check_mode="${BPO_STATE_CHECK_MODE:-strict}"
 case "$state_check_mode" in
   strict)
-    bash scripts/check-state.sh --strict
+    run_check_step "state check strict" bash scripts/check-state.sh --strict
     ;;
   repair-scope)
-    bash scripts/check-state.sh --repair-scope
+    run_check_step "state check repair scope" bash scripts/check-state.sh --repair-scope
     ;;
   warning)
-    bash scripts/check-state.sh
+    run_check_step "state check warning" bash scripts/check-state.sh
     ;;
   *)
     echo "unsupported BPO_STATE_CHECK_MODE: $state_check_mode" >&2
@@ -147,19 +151,17 @@ case "$state_check_mode" in
     exit 1
     ;;
 esac
-node --test scripts/tests/check-state.test.mjs
-node --test scripts/tests/check-shadcn-ui.test.mjs
-node scripts/check-shadcn-ui.mjs
-bash scripts/verify-backend-runtime.sh
-node --test scripts/tests/verify-backend-runtime.test.mjs
-npm run lint
-npm run typecheck
-npm run build
+run_check_step "state check regression tests" node --test scripts/tests/check-state.test.mjs
+run_check_step "check output regression tests" node --test scripts/tests/check-output.test.mjs
+run_check_step "shadcn convention regression tests" node --test scripts/tests/check-shadcn-ui.test.mjs
+run_check_step "shadcn convention scan" node scripts/check-shadcn-ui.mjs
+run_check_step "backend runtime verifier" bash scripts/verify-backend-runtime.sh
+run_check_step "backend runtime tests" node --test scripts/tests/verify-backend-runtime.test.mjs
+run_check_step "frontend lint" npm run lint
+run_check_step "frontend typecheck" npm run typecheck
+run_check_step "frontend production build" npm run build
 
-bash -n scripts/dev.sh
-bash -n scripts/run-next-dev.sh
-bash -n scripts/check-state.sh
-bash -n scripts/verify-backend-runtime.sh
+run_check_step "shell syntax checks" bash -lc 'bash -n scripts/dev.sh && bash -n scripts/run-next-dev.sh && bash -n scripts/check-state.sh && bash -n scripts/check-output.sh && bash -n scripts/verify-backend-runtime.sh'
 
 backend_files=(
   "backend/app/main.py"
@@ -176,6 +178,6 @@ for file in "${backend_files[@]}"; do
   fi
 done
 
-"$backend_python" -m unittest discover -s backend/tests -v
+run_check_step "backend unittest discovery" "$backend_python" -m unittest discover -s backend/tests -v
 
 echo "project Harness check passed"

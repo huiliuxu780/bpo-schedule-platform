@@ -3353,6 +3353,51 @@ tasks:
       - "需要审批、导出、批量调班、自动排班或生产工作流能力"
       - "需要固化生产风险公式、状态码、结算规则或收费因子"
     commit_after_done: true
+  - id: H029
+    title: "Harness 验证输出瘦身"
+    priority: P1
+    status: done
+    required_workflow: state-hygiene
+    allowed_files:
+      - "scripts/check.sh"
+      - "scripts/check-output.sh"
+      - "scripts/tests/check-output.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`bash scripts/check.sh` 默认 quiet 模式下，每个成功 gate 只输出 `PASS: ...` 摘要。"
+      - "任一 gate 失败时必须展开该 gate 捕获日志，并保留原始退出码。"
+      - "`BPO_CHECK_OUTPUT_MODE=verbose` 保留原始逐命令输出，方便排障。"
+      - "不跳过 strict state、shadcn gate、lint、typecheck、Next build 或后端测试。"
+      - "`node --test scripts/tests/check-output.test.mjs`、`bash scripts/check-state.sh --strict`、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "验证失败"
+      - "需要业务代码改动"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要后端接口、真实数据源、数据库、认证或权限"
+      - "需要审批、导出、批量调班、自动排班或生产工作流能力"
+      - "需要固化生产风险公式、状态码、结算规则或收费因子"
+    commit_after_done: true
+    done_notes: "`scripts/check.sh` 的主要验证步骤已通过 `run_check_step` 包装；默认 quiet 成功只打印 PASS 摘要，失败展开捕获日志并保留退出码；可用 `BPO_CHECK_OUTPUT_MODE=verbose` 恢复原始输出。"
   - id: F030
     title: "Dashboard 异常明细表 TanStack Table parity"
     priority: P1

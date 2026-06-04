@@ -528,3 +528,9 @@ The slice intentionally does not update the status dictionary, recalculate actua
 `IM106/US726` added `/actual-logs/production/[batchId]` as the read-only login/status-log processing explanation page reached from the production workbench. The detail page resolves the selected source batch from the current import-batch list and, when persisted row detail is available, explains business-day ownership, Asia/Shanghai timezone checks, cross-day status-interval splitting, status dictionary rows, status interval rows, and login-event rows.
 
 The page does not fabricate login events, status intervals, status dictionary entries, timezone failures, or cross-day splits when the row detail API has no usable rows. No backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work was added. Current state advanced to `US727/IM107` for the status-dictionary and exception-explanation safety shell.
+
+## 2026-06-04 H029 Harness Check Output Compression
+
+`H029/US728` reduced default `bash scripts/check.sh` output without reducing verification coverage. The check runner now wraps major verification gates with `run_check_step`: successful gates print a single `PASS: ...` line, while failed gates expand the captured command output and return the original exit code.
+
+`BPO_CHECK_OUTPUT_MODE=verbose` keeps the previous direct command output for debugging. The change does not skip strict state, shadcn checks, lint, typecheck, Next build, backend runtime verification, or backend unittest discovery. Current business queue remains `US727/IM107` ready.
