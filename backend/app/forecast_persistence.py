@@ -172,6 +172,20 @@ class ForecastPersistenceRepository:
                 is not None
             )
 
+    def get_forecast_version_by_import_version(
+        self,
+        import_version_id: str,
+    ) -> ForecastVersionDetail | None:
+        with self.session_factory() as session:
+            forecast_version_id = session.scalar(
+                select(ForecastVersionEntity.forecast_version_id)
+                .where(ForecastVersionEntity.import_version_id == import_version_id)
+                .order_by(ForecastVersionEntity.forecast_version_id)
+            )
+        if forecast_version_id is None:
+            return None
+        return self.get_forecast_version(forecast_version_id)
+
     def _validate_import_version(self, session: Session, import_version_id: str) -> None:
         version = session.get(ImportVersionEntity, import_version_id)
         if version is None:

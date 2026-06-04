@@ -2523,3 +2523,16 @@ version: "1.0"
 status: "done"
 notes: "IM113 已完成：排班明细行和 0.5h 展开区间行展示引用完整/缺失状态，并在缺坐席、职场、供应商、项目、技能或班次类型时给出行级阻塞说明；未新增后端、schema/migration、依赖或生产写入。"
 ```
+
+### R814 - 需求预测版本详情只读 API
+
+```yaml
+id: R814
+module: "需求预测生产"
+description: "需求预测生产详情页已有来源版本和变更追踪安全壳，但缺少后端只读详情 API 来返回真实预测版本、0.5h 预测区间和变更记录。下一步需要先补只读 API，让前端后续能展示批次应用后生成的预测结果，而不是继续停留在不伪造明细的空态。"
+source: "After IM113 completion and PM asked to push then continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM114 已完成：新增需求预测生产详情只读 API，按 batch_id 返回来源批次、forecast_version_id、业务日期范围、0.5h 预测区间和版本变更记录；不做前端接入、schema/migration、依赖或生产写入。"
+```

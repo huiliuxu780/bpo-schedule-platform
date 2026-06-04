@@ -570,3 +570,11 @@ The task remained frontend-scaffold only. It did not modify backend code, schema
 `US733/IM113` is complete. The personnel-schedule production detail page now explains row-level reference completeness for schedule details and 0.5h intervals, including explicit blocker text when employee, workplace, supplier, project, skill, or shift references are missing.
 
 The task remained frontend-scaffold only. It did not modify backend code, schemas, migrations, dependencies, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM113.
+
+## 2026-06-04 IM114 Demand Forecast Version Detail API
+
+After IM113, the next slice returns to the demand-forecast production flow. `US724/IM104` already added the change-tracking boundary safety shell on `/demand-plans/production/[batchId]`, but the detail page still lacks a backend production-detail API that can return real forecast intervals and version change records.
+
+`US734/IM114` is complete. The backend now exposes `/api/v1/demand-forecast/production/{batch_id}` as a read-only demand-forecast production detail API. It resolves the source import batch, locates the applied forecast version through the existing import version, and returns source batch context, forecast version, 0.5h forecast intervals, and version change records.
+
+The task explicitly excluded frontend wiring, schema/migration, dependencies, forecast write/change submission, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors. Current queue returned to empty after IM114.

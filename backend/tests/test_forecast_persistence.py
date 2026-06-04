@@ -70,6 +70,45 @@ class ForecastPersistenceTest(unittest.TestCase):
             self.assertEqual(loaded.changes[0].compared_from_version_id, "FC-20260511-V1")
             self.assertEqual(loaded.changes[0].change_reason, "客户更新峰值需求")
 
+    def test_get_forecast_version_by_import_version_returns_detail(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'forecast.db'}"
+            _seed_import_and_master_data(database_url)
+            repository = ForecastPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_forecast_version(
+                ForecastVersionRequest(
+                    forecast_version_id="FC-20260511-V3",
+                    import_version_id="IMPORT-FC-20260511",
+                    compared_from_version_id="FC-20260511-V2",
+                    change_reason="补充午间需求",
+                    business_date_from="2026-05-11",
+                    business_date_to="2026-05-11",
+                    intervals=[
+                        ForecastIntervalInput(
+                            forecast_interval_id="FC-INT-003",
+                            forecast_date="2026-05-11",
+                            interval_start="10:00",
+                            interval_end="10:30",
+                            workplace_id="SH-01",
+                            project_id="BOSCH-CS",
+                            skill_id="L1-CN",
+                            demand_level="L1",
+                            required_agents=16,
+                        )
+                    ],
+                )
+            )
+
+            loaded = repository.get_forecast_version_by_import_version(
+                "IMPORT-FC-20260511"
+            )
+
+            self.assertIsNotNone(loaded)
+            self.assertEqual(loaded.version.forecast_version_id, "FC-20260511-V3")
+            self.assertEqual(loaded.intervals[0].required_agents, 16)
+            self.assertEqual(loaded.changes[0].change_reason, "补充午间需求")
+
     def test_forecast_rejects_frozen_skill_reference(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'forecast.db'}"

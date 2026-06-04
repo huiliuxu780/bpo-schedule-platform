@@ -37,6 +37,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM114 Demand Forecast Version Detail API
+
+- branch_name: `codex/im114-forecast-version-detail-api`
+- base_main_commit: `ef52229`
+- stacked_on: `a5fe006 feat: explain schedule row references`
+- remote_status: `IM113 branch is pushed; IM114 implementation is local only until final check/commit/push.`
+- scope: add a backend-only read-only demand-forecast production version detail API by batch ID; response covers source batch context, forecast_version_id, business date range, 0.5h forecast intervals, and version change records.
+- allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/forecast_persistence.py`, `backend/tests/test_forecast_persistence.py`, `backend/tests/test_forecast_production_api.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no frontend app/components/lib, package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected IM114 backend/API/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED `.venv/bin/python -m unittest backend.tests.test_forecast_persistence backend.tests.test_forecast_production_api -v` first failed because `ForecastPersistenceRepository.get_forecast_version_by_import_version` and `get_demand_forecast_production_detail` were missing; after implementation the same target passed with 7 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 199 tests OK.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM112 Personnel Schedule Production Detail UI
 
 - branch_name: `codex/im112-schedule-production-detail-ui`

@@ -4561,3 +4561,25 @@ dependencies:
 status: "done"
 notes: "IM113 已完成：详情页真实明细表新增引用状态和阻塞说明列，完整行显示无阻塞，缺字段行显示具体缺少哪些引用。"
 ```
+
+### US734 - 需求预测版本详情只读 API
+
+```yaml
+id: US734
+requirement_ids:
+  - R814
+module: "需求预测生产"
+role: "计划主管"
+story: "作为计划主管，我希望需求预测生产详情能读取真实预测版本、0.5h 预测区间和变更记录，以便后续页面能展示批次应用后生成了哪些预测结果。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "后端提供按 batch_id 查询需求预测生产版本详情的只读 API。"
+  - "响应包含来源批次、forecast_version_id、业务日期范围、0.5h 预测区间和版本变更记录。"
+  - "未应用或缺少预测版本时返回明确错误码，不伪造明细。"
+  - "不做前端接入、schema/migration、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US724"
+status: "done"
+notes: "IM114 已完成：后端提供 `/api/v1/demand-forecast/production/{batch_id}` 只读 API，返回批次、预测版本、预测区间和变更记录；后续前端接入另拆。"
+```

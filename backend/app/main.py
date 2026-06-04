@@ -35,6 +35,7 @@ from backend.app.models import (
     ComparisonRunListResponse,
     ComparisonRunStatus,
     ComparisonType,
+    DemandForecastProductionDetail,
     DemandPlanListResponse,
     ForecastImportApplyResponse,
     ImportBatchApplicationSummary,
@@ -367,6 +368,22 @@ def _personnel_schedule_import_version_id(batch: ImportBatchPersistenceDetail) -
             "error": {
                 "code": "PERSONNEL_SCHEDULE_IMPORT_VERSION_NOT_FOUND",
                 "message": "导入批次缺少人员排班版本",
+            }
+        },
+    )
+
+
+def _demand_forecast_import_version_id(batch: ImportBatchPersistenceDetail) -> str:
+    for version in batch.versions:
+        if version.version_type == "demand_forecast":
+            return version.version_id
+
+    raise HTTPException(
+        status_code=404,
+        detail={
+            "error": {
+                "code": "DEMAND_FORECAST_IMPORT_VERSION_NOT_FOUND",
+                "message": "导入批次缺少需求预测版本",
             }
         },
     )
@@ -892,6 +909,57 @@ def apply_forecast_import(
         ) from exc
 
     return ForecastImportApplyResponse(**summary)
+
+
+@app.get(
+    "/api/v1/demand-forecast/production/{batch_id}",
+    response_model=DemandForecastProductionDetail,
+)
+def get_demand_forecast_production_detail(
+    batch_id: str,
+) -> DemandForecastProductionDetail:
+    batch = get_import_persistence_repository().get_import_batch(batch_id)
+    if batch is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "IMPORT_BATCH_NOT_FOUND",
+                    "message": "导入批次不存在",
+                }
+            },
+        )
+    if batch.batch.file_type != "demand_forecast":
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "DEMAND_FORECAST_BATCH_INVALID",
+                    "message": "导入批次不是需求预测类型",
+                }
+            },
+        )
+
+    forecast_detail = ForecastPersistenceRepository().get_forecast_version_by_import_version(
+        _demand_forecast_import_version_id(batch)
+    )
+    if forecast_detail is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "DEMAND_FORECAST_VERSION_NOT_FOUND",
+                    "message": "需求预测业务版本尚未应用",
+                }
+            },
+        )
+
+    return DemandForecastProductionDetail(
+        batch=batch.batch,
+        version=forecast_detail.version,
+        intervals=forecast_detail.intervals,
+        changes=forecast_detail.changes,
+    )
 
 
 @app.post(

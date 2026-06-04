@@ -600,6 +600,13 @@ class ForecastVersionDetail(BaseModel):
     changes: list[ForecastVersionChangeRecord]
 
 
+class DemandForecastProductionDetail(BaseModel):
+    batch: ImportBatchRecord
+    version: ForecastVersionRecord
+    intervals: list[ForecastIntervalRecord]
+    changes: list[ForecastVersionChangeRecord]
+
+
 class ForecastImportApplyResponse(BaseModel):
     batch_id: str
     forecast_version_id: str
