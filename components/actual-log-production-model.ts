@@ -289,7 +289,7 @@ function buildMissingActualLogProcessingDetail(
     statusIntervalLabel: "未定位状态区间",
     loginEventLabel: "未定位登录事件",
     detailEmptyLabel: "批次明细未读取，不能展示逐行登录事件或状态区间",
-    blockerSummary: "请返回日志生产工作台选择来源批次",
+    blockerSummary: "请返回日志生产列表选择来源批次",
     loginEventCount: 0,
     statusDictionaryCount: 0,
     statusIntervalCount: 0,

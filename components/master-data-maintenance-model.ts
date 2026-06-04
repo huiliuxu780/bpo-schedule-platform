@@ -428,7 +428,7 @@ export function summarizeMasterDataMaintenanceWorkbench(
       : null,
     versionWorkbenchHref: MASTER_DATA_VERSION_WORKBENCH_HREF,
     readonlyBoundary:
-      "工作台展示维护对象、来源版本和当前处理状态。",
+      "列表展示维护对象、来源版本和当前处理状态。",
     rows,
   }
 }

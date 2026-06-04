@@ -48,7 +48,7 @@ export default async function VersionWorkbenchPage({
   )
 
   return (
-    <AppShell title="业务版本工作台" searchPlaceholder="搜索版本、批次或业务日">
+    <AppShell title="业务版本列表" searchPlaceholder="搜索版本、批次或业务日">
       <ImportCenterVersionWorkbench
         batches={batchResult.data ?? []}
         comparisonRuns={comparisonRunsResult.data ?? []}

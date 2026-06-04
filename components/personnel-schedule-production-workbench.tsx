@@ -11,7 +11,10 @@ import {
   Users,
 } from "lucide-react"
 
-import type { ImportBatchListRow } from "@/components/import-center-model"
+import {
+  buildImportUploadWorkspaceHref,
+  type ImportBatchListRow,
+} from "@/components/import-center-model"
 import {
   type PersonnelScheduleProductionApiDetail,
   type PersonnelScheduleProductionTone,
@@ -111,8 +114,8 @@ export function PersonnelScheduleProductionWorkbench({
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="outline">
-              <Link href="/data-quality/versions?domain=personnel_schedule">
-                查看业务版本
+              <Link href={buildImportUploadWorkspaceHref({ fileType: "personnel_schedule" })}>
+                导入排班
                 <ArrowRight data-icon="inline-end" />
               </Link>
             </Button>
@@ -337,9 +340,7 @@ export function PersonnelScheduleProductionDetail({
                   </Link>
                 </Button>
                 <Button asChild size="sm" variant="ghost">
-                  <Link href="/data-quality/versions?domain=personnel_schedule">
-                    查看业务版本台账
-                  </Link>
+                  <Link href={detail.workbenchHref}>返回排班生产</Link>
                 </Button>
               </div>
             </CardContent>

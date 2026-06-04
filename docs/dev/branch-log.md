@@ -3350,3 +3350,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM136 Business-first IA Cleanup
+
+- branch_name: `codex/im136-business-first-ia-cleanup`
+- base_main_commit: `a4c4221`
+- stacked_on: `0d2d77b fix: finish UI narrative cleanup audit`
+- remote_status: `IM135 final audit was pushed; IM136 is local until final check/commit/push.`
+- scope: PM-requested correction to remove center-first product architecture from navigation and visible UI wording; keep import/upload/version/batch capabilities as lower-level business-page utilities and route primary actions back to personnel, schedule, forecast, and actual-log pages.
+- allowed_files_check: `app/**`, `components/**`, focused frontend model tests, `scripts/tests/product-structure.test.mjs`, and `docs/dev/branch-log.md`; no backend, package, lockfile, schema, migration, dependency, auth/permissions, approval, export, batch-operation capability, automatic scheduling, settlement, formula, or charge-factor changes.
+- scope_diff_check: expected IA/nav cleanup, business-page upload entries with file-type prefill, `/master-data` redirect to `/master-data/agents`, removal of user-visible `导入中心`/`数据质量`/`版本工作台`/`接入批次工作台` wording, focused tests aligned to current product wording, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target tests passed with 124 tests covering product structure, import model, master-data model, personnel schedule production model, demand forecast production model, and actual-log production model; user-visible keyword scan in `app` and `components` leaves only the existing `运营工作台` nav entry plus `业务版本列表` actions; `bash scripts/check-state.sh --strict` passed; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, lint, typecheck, Next build, and backend 206 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

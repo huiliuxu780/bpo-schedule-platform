@@ -6,7 +6,9 @@ import { ImportCenterTemplateManagementPanel } from "@/components/import-center-
 import { ImportCenterUploadForm } from "@/components/import-center-upload-form"
 import {
   type ImportFieldMappingTemplate,
+  type ImportFileType,
   buildImportFieldMappingTemplatesUrl,
+  formatImportFileType,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -23,6 +25,7 @@ export const dynamic = "force-dynamic"
 
 type ImportUploadWorkspacePageProps = {
   searchParams?: Promise<{
+    fileType?: string
     templateId?: string
     upload?: string
     reason?: string
@@ -39,6 +42,7 @@ export default async function ImportUploadWorkspacePage({
   searchParams,
 }: ImportUploadWorkspacePageProps) {
   const query = await searchParams
+  const selectedFileType = parseImportFileType(query?.fileType)
   const templateResult = await fetchImportFieldMappingTemplates()
   const templates = templateResult.data ?? []
 
@@ -50,22 +54,29 @@ export default async function ImportUploadWorkspacePage({
             <div className="min-w-0">
               <div className="mb-3">
                 <Button asChild size="sm" variant="outline">
-                  <Link href="/data-quality">
+                  <Link href={getUploadBackHref(selectedFileType)}>
                     <ArrowLeft data-icon="inline-start" />
-                    返回导入中心
+                    返回业务列表
                   </Link>
                 </Button>
               </div>
-              <CardTitle className="text-lg">CSV 上传工作区</CardTitle>
+              <CardTitle className="text-lg">CSV 上传</CardTitle>
               <CardDescription className="mt-1">
-                独立发起 CSV 导入并生成接入批次
+                {selectedFileType
+                  ? `${formatImportFileType(selectedFileType)}文件上传`
+                  : "选择文件类型后上传 CSV"}
               </CardDescription>
             </div>
-            <Badge variant="outline">单批上传</Badge>
+            <Badge variant="outline">
+              {selectedFileType ? formatImportFileType(selectedFileType) : "CSV"}
+            </Badge>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-3">
-            <HeaderItem label="上传入口" value="列表页、模板详情页" />
-            <HeaderItem label="模板预选" value={query?.templateId ?? "可手动选择"} />
+            <HeaderItem
+              label="文件类型"
+              value={selectedFileType ? formatImportFileType(selectedFileType) : "可手动选择"}
+            />
+            <HeaderItem label="字段模板" value={query?.templateId ?? "可手动选择"} />
             <HeaderItem label="上传方式" value="单个 CSV 文件" />
           </CardContent>
         </Card>
@@ -78,6 +89,7 @@ export default async function ImportUploadWorkspacePage({
           <TabsContent value="upload">
             <ImportCenterUploadForm
               resultRedirectTo="/data-quality/uploads/new"
+              selectedFileType={selectedFileType}
               selectedTemplateId={query?.templateId}
               templateError={templateResult.error}
               templates={templates}
@@ -96,6 +108,40 @@ export default async function ImportUploadWorkspacePage({
       </main>
     </AppShell>
   )
+}
+
+function parseImportFileType(fileType?: string): ImportFileType | null {
+  if (
+    fileType === "master_data" ||
+    fileType === "personnel_schedule" ||
+    fileType === "demand_forecast" ||
+    fileType === "login_log" ||
+    fileType === "status_log"
+  ) {
+    return fileType
+  }
+
+  return null
+}
+
+function getUploadBackHref(fileType: ImportFileType | null): string {
+  if (fileType === "master_data") {
+    return "/master-data/agents"
+  }
+
+  if (fileType === "personnel_schedule") {
+    return "/schedule-plans/production"
+  }
+
+  if (fileType === "demand_forecast") {
+    return "/demand-plans/production"
+  }
+
+  if (fileType === "login_log" || fileType === "status_log") {
+    return "/actual-logs/production"
+  }
+
+  return "/master-data/agents"
 }
 
 function HeaderItem({ label, value }: { label: string; value: string }) {

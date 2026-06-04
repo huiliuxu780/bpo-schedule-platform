@@ -10,7 +10,10 @@ import {
   Table2,
 } from "lucide-react"
 
-import type { ImportBatchListRow } from "@/components/import-center-model"
+import {
+  buildImportUploadWorkspaceHref,
+  type ImportBatchListRow,
+} from "@/components/import-center-model"
 import {
   type DemandForecastProductionApiDetail,
   type DemandForecastProductionTone,
@@ -110,8 +113,8 @@ export function DemandForecastProductionWorkbench({
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="outline">
-              <Link href="/data-quality/versions?domain=demand_forecast">
-                查看业务版本
+              <Link href={buildImportUploadWorkspaceHref({ fileType: "demand_forecast" })}>
+                导入预测
                 <ArrowRight data-icon="inline-end" />
               </Link>
             </Button>

@@ -185,9 +185,9 @@ function TemplateHeader({
         <div className="min-w-0">
           <div className="mb-3">
             <Button asChild size="sm" variant="outline">
-              <Link href="/data-quality">
+              <Link href="/data-quality/uploads/new">
                 <ArrowLeft data-icon="inline-start" />
-                返回导入中心
+                返回 CSV 上传
               </Link>
             </Button>
           </div>
@@ -358,7 +358,7 @@ function TemplateReadError({
         <p className="text-sm text-muted-foreground">{error}</p>
         <div>
           <Button asChild size="sm" variant="outline">
-            <Link href="/data-quality">返回导入中心</Link>
+            <Link href="/data-quality/uploads/new">返回 CSV 上传</Link>
           </Button>
         </div>
       </CardContent>

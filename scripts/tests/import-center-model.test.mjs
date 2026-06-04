@@ -3388,12 +3388,12 @@ test("import center comparison run detail returns to source batch and version wo
       tone: "ready",
       title: "已形成回跳闭环",
       detail:
-        "当前运行已匹配 2 个来源批次；可回到 BATCH-IM092-STATUS-001 的结果追踪，或按业务日进入版本工作台。",
+        "当前运行已匹配 2 个来源批次；可回到 BATCH-IM092-STATUS-001 的结果追踪，或按业务日进入业务版本列表。",
       sourceBatchLabel: "BATCH-IM092-STATUS-001 · BATCH-IM092-SCH-001",
-      versionWorkbenchLabel: "业务版本工作台 · 2026-05-01",
+      versionWorkbenchLabel: "业务版本列表 · 2026-05-01",
       primaryActionLabel: "回到来源批次结果追踪",
       primaryHref: "/data-quality/BATCH-IM092-STATUS-001?tab=result-trace",
-      secondaryActionLabel: "查看版本工作台",
+      secondaryActionLabel: "查看版本列表",
       secondaryHref: "/data-quality/versions?businessDate=2026-05-01&domain=actual_logs",
       evidence: [
         "来源版本 排班 SCH-VERSION-001",
@@ -3417,10 +3417,10 @@ test("import center comparison run detail returns to source batch and version wo
       detail:
         "当前运行能识别版本语境，但未在导入批次列表中匹配到来源批次。",
       sourceBatchLabel: "未定位",
-      versionWorkbenchLabel: "业务版本工作台 · 2026-05-01",
+      versionWorkbenchLabel: "业务版本列表 · 2026-05-01",
       primaryActionLabel: "来源批次不可回跳",
       primaryHref: null,
-      secondaryActionLabel: "查看版本工作台",
+      secondaryActionLabel: "查看版本列表",
       secondaryHref: "/data-quality/versions?businessDate=2026-05-01",
       evidence: [
         "来源版本 排班 SCH-VERSION-001",
@@ -3583,12 +3583,12 @@ test("import center page hierarchy keeps utilities out of the primary workflow",
       hasUploadTools: true,
     }),
     {
-      primaryRegion: "接入批次工作台",
+      primaryRegion: "导入批次",
       inspectorRegion: "状态检查",
       detailTabs: ["状态检查", "失败行修正", "批次明细", "结果追踪", "导入与模板"],
       defaultDetailTab: "status-check",
-      utilityPlacement: "导入与模板收纳到批次处理工作区",
-      layoutIntent: "先看处理总览，再进入全宽批次处理工作区。",
+      utilityPlacement: "导入与模板作为批次处理辅助入口",
+      layoutIntent: "先看处理总览，再进入批次明细。",
     },
   );
 
@@ -3769,6 +3769,17 @@ test("import center upload workspace href supports direct template prefill", () 
     buildImportUploadWorkspaceHref({ templateId: "TPL/MD 001" }),
     "/data-quality/uploads/new?templateId=TPL%2FMD+001",
   );
+  assert.equal(
+    buildImportUploadWorkspaceHref({ fileType: "master_data" }),
+    "/data-quality/uploads/new?fileType=master_data",
+  );
+  assert.equal(
+    buildImportUploadWorkspaceHref({
+      fileType: "personnel_schedule",
+      templateId: "TPL/SCH 001",
+    }),
+    "/data-quality/uploads/new?fileType=personnel_schedule&templateId=TPL%2FSCH+001",
+  );
 });
 
 test("import center upload workspace result href preserves upload feedback", () => {
@@ -3817,6 +3828,7 @@ test("import center upload prefill summarizes selected active template", () => {
   assert.deepEqual(summary, {
     selectedTemplateId: "TPL-MD-001",
     defaultTemplateId: "TPL-MD-001",
+    fileType: "master_data",
     tone: "success",
     title: "已预选字段映射模板",
     detail: "主数据模板 · 主数据 · 2 个字段",
@@ -3844,6 +3856,7 @@ test("import center upload prefill warns when template is inactive or missing", 
   assert.deepEqual(inactive, {
     selectedTemplateId: "TPL-OFF",
     defaultTemplateId: "",
+    fileType: null,
     tone: "failed",
     title: "模板不可用于上传",
     detail: "字段映射模板 TPL-OFF 已停用，上传表单不会默认使用它。",
@@ -3852,6 +3865,7 @@ test("import center upload prefill warns when template is inactive or missing", 
   assert.deepEqual(missing, {
     selectedTemplateId: "TPL-MISSING",
     defaultTemplateId: "",
+    fileType: null,
     tone: "failed",
     title: "模板不可用于上传",
     detail: "字段映射模板 TPL-MISSING 未包含在当前可选模板列表。",
@@ -4136,7 +4150,7 @@ test("import center quality exception trace explains downstream impact", () => {
 
   assert.deepEqual(summarizeImportQualityExceptionTrace(detail), {
     tone: "blocked",
-    title: "履约异常判断被数据质量阻塞",
+    title: "履约异常判断被导入数据阻塞",
     impactScope: "人员排班 -> 排班 vs 登录/状态异常",
     issueSummary: "1 行失败、1 行警告；失败行会影响迟到、缺勤、未按排班登录等异常判断。",
     nextAction: "先修正失败行并复核警告行，再查看应用准备度和下游对比结果。",
@@ -4773,13 +4787,13 @@ test("import center applied result card shows version result and next-step entri
       tone: "success",
       statusLabel: "刚完成应用",
       title: "业务版本结果已生成",
-      detail: "当前批次已写入人员排班，生成版本 SCH-VERSION-001；已定位对应版本结果，可直接进入对比运行或复核工作台。",
+      detail: "当前批次已写入人员排班，生成版本 SCH-VERSION-001；已定位对应版本结果，可直接进入对比运行或复核案例。",
       targetLabel: "人员排班",
       versionLabel: "SCH-VERSION-001",
       appliedRecordLabel: "36 条",
       primaryActionLabel: "查看对应对比运行",
       primaryHref: "/data-quality/comparison-runs/RUN-IM085-SA-001",
-      secondaryActionLabel: "查看复核案例工作台",
+      secondaryActionLabel: "查看复核案例",
       secondaryHref:
         "/data-quality/review-cases?businessDate=2026-05-01&sourceResultType=schedule_actual",
     },
@@ -4875,13 +4889,13 @@ test("import center applied result card shows version result and next-step entri
       statusLabel: "刚完成应用",
       title: "业务版本结果已生成",
       detail:
-        "当前批次已写入登录/状态日志，生成版本 LOGIN-VERSION-001；已定位对应版本结果，可直接进入对比运行或复核工作台。",
+        "当前批次已写入登录/状态日志，生成版本 LOGIN-VERSION-001；已定位对应版本结果，可直接进入对比运行或复核案例。",
       targetLabel: "登录/状态日志",
       versionLabel: "LOGIN-VERSION-001",
       appliedRecordLabel: "42 条",
       primaryActionLabel: "查看对应对比运行",
       primaryHref: "/data-quality/comparison-runs/RUN-IM119-SA-LOGIN-001",
-      secondaryActionLabel: "查看复核案例工作台",
+      secondaryActionLabel: "查看复核案例",
       secondaryHref:
         "/data-quality/review-cases?businessDate=2026-05-01&sourceResultType=schedule_actual",
     },
@@ -4979,7 +4993,7 @@ test("import center applied version result context resolves direct version posit
       downstreamStatusLabel: "匹配运行 2 个 · 未关闭复核 1 个",
       primaryActionLabel: "查看对应对比运行",
       primaryHref: "/data-quality/comparison-runs/RUN-IM085-SA-001",
-      secondaryActionLabel: "查看复核案例工作台",
+      secondaryActionLabel: "查看复核案例",
       secondaryHref:
         "/data-quality/review-cases?businessDate=2026-05-01&sourceResultType=schedule_actual",
       evidence: [
@@ -5095,7 +5109,7 @@ test("import center applied version result context resolves direct version posit
       downstreamStatusLabel: "匹配运行 1 个 · 未关闭复核 1 个",
       primaryActionLabel: "查看对应对比运行",
       primaryHref: "/data-quality/comparison-runs/RUN-IM119-SA-LOGIN-001",
-      secondaryActionLabel: "查看复核案例工作台",
+      secondaryActionLabel: "查看复核案例",
       secondaryHref:
         "/data-quality/review-cases?businessDate=2026-05-01&sourceResultType=schedule_actual",
       evidence: [
@@ -5374,9 +5388,9 @@ test("version workbench result review summarizes submitted comparison runs", () 
     }),
     {
       tone: "success",
-      title: "版本工作台比对结果",
+      title: "业务版本列表比对结果",
       detail:
-        "运行 CALC-FS-20260502-LOCAL-001 已在版本工作台回显；先确认结果规模和关键差异，再进入完整对比运行详情。",
+        "运行 CALC-FS-20260502-LOCAL-001 已在业务版本列表回显；先确认结果规模和关键差异，再进入完整对比运行详情。",
       runLabel: "CALC-FS-20260502-LOCAL-001",
       metricCards: [
         { label: "对比口径", value: "预测排班", detail: "已完成" },
@@ -5401,7 +5415,7 @@ test("version workbench result review summarizes submitted comparison runs", () 
       tone: "blocked",
       title: "运行结果未回显",
       detail:
-        "版本工作台已收到运行 CALC-WAIT-001 的成功反馈，但当前结果列表还没有回显这次运行。",
+        "业务版本列表已收到运行 CALC-WAIT-001 的成功反馈，但当前结果列表还没有回显这次运行。",
       runLabel: "CALC-WAIT-001",
       metricCards: [
         { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },

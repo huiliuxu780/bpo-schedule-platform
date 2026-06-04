@@ -20,6 +20,7 @@ import type {
   ImportBatchListRow,
   ImportBatchPersistenceDetail,
 } from "@/components/import-center-model"
+import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -126,13 +127,15 @@ export function ActualLogProductionWorkbench({
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="outline">
-              <Link href="/data-quality/versions?domain=actual_logs">
-                查看业务版本
+              <Link href={buildImportUploadWorkspaceHref({ fileType: "login_log" })}>
+                导入登录日志
                 <ArrowRight data-icon="inline-end" />
               </Link>
             </Button>
             <Button asChild size="sm" variant="ghost">
-              <Link href="/data-quality?fileType=status_log">查看接入批次</Link>
+              <Link href={buildImportUploadWorkspaceHref({ fileType: "status_log" })}>
+                导入状态日志
+              </Link>
             </Button>
           </div>
         </CardContent>
@@ -236,7 +239,7 @@ export function ActualLogProcessingDetail({
         <div>
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <Button asChild size="sm" variant="ghost">
-              <Link href={summary.workbenchHref}>返回日志生产工作台</Link>
+              <Link href={summary.workbenchHref}>返回日志生产</Link>
             </Button>
             <Badge variant={summary.tone === "ready" ? "outline" : "destructive"}>
               {summary.tone === "ready" ? "可解释" : "解释受限"}

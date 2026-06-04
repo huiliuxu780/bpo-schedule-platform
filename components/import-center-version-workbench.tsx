@@ -67,13 +67,13 @@ export function ImportCenterVersionWorkbench({
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="grid gap-2">
           <Button asChild size="sm" variant="ghost" className="w-fit px-0">
-            <Link href="/data-quality">
+            <Link href={getVersionListBackHref(filters.domain)}>
               <ArrowLeft data-icon="inline-start" />
-              返回数据质量
+              返回业务列表
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-semibold tracking-normal">业务版本工作台</h1>
+            <h1 className="text-xl font-semibold tracking-normal">业务版本列表</h1>
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
               查看当前业务版本、来源批次、阻塞状态、下游影响和比对入口。
             </p>
@@ -340,6 +340,28 @@ export function ImportCenterVersionWorkbench({
       </Card>
     </main>
   )
+}
+
+function getVersionListBackHref(
+  domain: ImportVersionWorkbenchFilters["domain"]
+): string {
+  if (domain === "master_data") {
+    return "/master-data/agents"
+  }
+
+  if (domain === "personnel_schedule") {
+    return "/schedule-plans/production"
+  }
+
+  if (domain === "demand_forecast") {
+    return "/demand-plans/production"
+  }
+
+  if (domain === "actual_logs") {
+    return "/actual-logs/production"
+  }
+
+  return "/master-data/agents"
 }
 
 function ComparisonCandidateSummary({

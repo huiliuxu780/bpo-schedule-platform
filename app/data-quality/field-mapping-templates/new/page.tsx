@@ -51,9 +51,9 @@ export default async function FieldMappingTemplateCreatePage({
             <div className="min-w-0">
               <div className="mb-3">
                 <Button asChild size="sm" variant="outline">
-                  <Link href="/data-quality">
+                  <Link href="/data-quality/uploads/new">
                     <ArrowLeft data-icon="inline-start" />
-                    返回导入中心
+                    返回 CSV 上传
                   </Link>
                 </Button>
               </div>

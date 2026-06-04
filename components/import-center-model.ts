@@ -1190,6 +1190,7 @@ export type ImportFieldMappingTemplateActionNotice = {
 export type ImportTemplateUploadPrefill = {
   selectedTemplateId: string
   defaultTemplateId: string
+  fileType: ImportFileType | null
   tone: ImportFieldMappingTemplateActionNoticeTone
   title: string
   detail: string
@@ -1431,10 +1432,15 @@ export function buildImportFieldMappingTemplateNewWorkspaceHref(): string {
 
 export function buildImportUploadWorkspaceHref(
   params: {
+    fileType?: ImportFileType | null
     templateId?: string | null
   } = {}
 ): string {
   const searchParams = new URLSearchParams()
+
+  if (params.fileType) {
+    searchParams.set("fileType", params.fileType)
+  }
 
   if (params.templateId) {
     searchParams.set("templateId", params.templateId)
@@ -3142,7 +3148,7 @@ export function summarizeImportReviewCaseDetail({
       evidenceLabel: "证据未选择",
       qualityFocus: "等待案例详情",
       evidenceGap: "还没有可展示的复核案例详情。",
-      nextAction: "先从复核案例工作台选择一个案例。",
+      nextAction: "先从复核案例列表选择一个案例。",
       detailHref: "/data-quality/review-cases",
       listHref: "/data-quality/review-cases",
       evidence: ["等待案例"],
@@ -3230,7 +3236,7 @@ export function summarizeImportReviewCaseEvidenceChain({
       title: "证据与结论链路",
       statusLabel: "等待案例",
       summary: "证据 0 条 · 结论 0 条 · 未关闭",
-      nextAction: "先从复核案例工作台选择一个案例。",
+      nextAction: "先从复核案例列表选择一个案例。",
       items: [],
     }
   }
@@ -3306,7 +3312,7 @@ export function summarizeImportReviewCaseProcessingTimeline({
       statusLabel: "等待案例",
       currentStage: "等待选择",
       summary: "暂无处理动作",
-      nextAction: "先从复核案例工作台选择一个案例。",
+      nextAction: "先从复核案例列表选择一个案例。",
       items: [],
     }
   }
@@ -3399,7 +3405,7 @@ export function summarizeImportReviewCaseActionDeck({
       summary: error ?? "暂无复核案例详情。",
       nextAction: error
         ? "先恢复复核案例读取，再执行补证据、补结论或关闭。"
-        : "先从复核案例工作台选择一个案例。",
+        : "先从复核案例列表选择一个案例。",
       steps: buildReviewCaseActionDeckSteps({
         evidenceAction,
         conclusionAction,
@@ -3656,7 +3662,7 @@ export function summarizeImportReviewCaseClosureAction({
       canSubmit: false,
       statusLabel: "等待案例",
       actionLabel: "不可关闭",
-      detail: "先从复核案例工作台选择一个案例。",
+      detail: "先从复核案例列表选择一个案例。",
       blockers: ["等待复核案例"],
       apiHref: buildImportReviewCaseClosureWriteApiUrl(),
     }
@@ -3752,7 +3758,7 @@ export function summarizeImportReviewCaseEvidenceAction({
       canSubmit: false,
       statusLabel: "等待案例",
       actionLabel: "不可补充",
-      detail: "先从复核案例工作台选择一个案例。",
+      detail: "先从复核案例列表选择一个案例。",
       blockers: ["等待复核案例"],
       apiHref: buildImportReviewEvidenceWriteApiUrl(""),
     }
@@ -3804,7 +3810,7 @@ export function summarizeImportReviewCaseConclusionAction({
       canSubmit: false,
       statusLabel: "等待案例",
       actionLabel: "不可补充",
-      detail: "先从复核案例工作台选择一个案例。",
+      detail: "先从复核案例列表选择一个案例。",
       blockers: ["等待复核案例"],
       apiHref: buildImportReviewConclusionWriteApiUrl(""),
     }
@@ -4391,12 +4397,12 @@ export function summarizeImportPageHierarchy(params: {
   const defaultDetailTab: ImportPageHierarchyDetailTab = "status-check"
 
   return {
-    primaryRegion: "接入批次工作台",
+    primaryRegion: "导入批次",
     inspectorRegion: selectedBatch ? "状态检查" : "等待选择批次",
     detailTabs: ["状态检查", "失败行修正", "批次明细", "结果追踪", "导入与模板"],
     defaultDetailTab,
-    utilityPlacement: "导入与模板收纳到批次处理工作区",
-    layoutIntent: "先看处理总览，再进入全宽批次处理工作区。",
+    utilityPlacement: "导入与模板作为批次处理辅助入口",
+    layoutIntent: "先看处理总览，再进入批次明细。",
   }
 }
 
@@ -4506,7 +4512,7 @@ export function summarizeImportQualityExceptionTrace(
   if (summary.failedRows > 0) {
     return {
       tone: "blocked",
-      title: "履约异常判断被数据质量阻塞",
+      title: "履约异常判断被导入数据阻塞",
       impactScope,
       issueSummary: formatQualityExceptionFailedIssue(detail.batch.file_type, summary),
       nextAction: "先修正失败行并复核警告行，再查看应用准备度和下游对比结果。",
@@ -4951,7 +4957,7 @@ export function summarizeImportUploadResultGuidance({
         ? `批次 ${batchId} 已提交并可在接入批次中查看。`
         : "CSV 已提交并可在接入批次中查看。",
       batchHref,
-      primaryActionLabel: batchHref ? "进入批次处理" : "查看接入批次",
+      primaryActionLabel: batchHref ? "进入批次处理" : "查看导入批次",
       nextAction:
         "查看批次行结果、失败行和应用准备度；确认无阻塞后再应用到业务数据。",
     }
@@ -5196,7 +5202,7 @@ export function summarizeImportAppliedResultCard({
       tone: applyStatus === "success" ? "success" : "done",
       statusLabel: applyStatus === "success" ? "刚完成应用" : "已应用",
       title: "业务版本结果已生成",
-      detail: `当前批次已写入${targetLabel}，生成版本 ${versionLabel}；已定位对应版本结果，可直接进入对比运行或复核工作台。`,
+      detail: `当前批次已写入${targetLabel}，生成版本 ${versionLabel}；已定位对应版本结果，可直接进入对比运行或复核案例。`,
       targetLabel,
       versionLabel,
       appliedRecordLabel,
@@ -5321,7 +5327,7 @@ export function summarizeImportAppliedVersionResultContext({
       primaryHref: buildImportBatchProcessingHref(batch.batch_id, {
         tab: "result-trace",
       }),
-      secondaryActionLabel: "查看复核案例工作台",
+      secondaryActionLabel: "查看复核案例",
       secondaryHref: buildImportReviewCasesWorkspaceHref({
         businessDate,
         sourceResultType: inferReviewSourceResultTypeFromFileType(batch.file_type),
@@ -5340,7 +5346,7 @@ export function summarizeImportAppliedVersionResultContext({
     downstreamStatusLabel: `匹配运行 ${matchedRuns.length.toLocaleString("zh-CN")} 个 · 未关闭复核 ${openReviewCount.toLocaleString("zh-CN")} 个`,
     primaryActionLabel: "查看对应对比运行",
     primaryHref: buildImportComparisonRunDetailWorkspaceHref(primaryRun.run_id),
-    secondaryActionLabel: "查看复核案例工作台",
+    secondaryActionLabel: "查看复核案例",
     secondaryHref: buildImportReviewCasesWorkspaceHref({
       businessDate,
       sourceResultType:
@@ -5578,7 +5584,7 @@ export function summarizeImportVersionWorkbenchComparisonResultReview({
     return {
       tone: "blocked",
       title: "运行结果未回显",
-      detail: `版本工作台已收到运行 ${runId} 的成功反馈，但当前结果列表还没有回显这次运行。`,
+      detail: `业务版本列表已收到运行 ${runId} 的成功反馈，但当前结果列表还没有回显这次运行。`,
       runLabel: runId,
       metricCards: [
         { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },
@@ -5595,8 +5601,8 @@ export function summarizeImportVersionWorkbenchComparisonResultReview({
 
   return {
     tone: "success",
-    title: "版本工作台比对结果",
-    detail: `运行 ${runId} 已在版本工作台回显；先确认结果规模和关键差异，再进入完整对比运行详情。`,
+    title: "业务版本列表比对结果",
+    detail: `运行 ${runId} 已在业务版本列表回显；先确认结果规模和关键差异，再进入完整对比运行详情。`,
     runLabel: runId,
     metricCards: [
       {
@@ -6129,6 +6135,7 @@ export function summarizeImportTemplateUploadPrefill(
     return {
       selectedTemplateId,
       defaultTemplateId: "",
+      fileType: null,
       tone: "failed",
       title: "模板不可用于上传",
       detail: `字段映射模板 ${selectedTemplateId} 未包含在当前可选模板列表。`,
@@ -6140,6 +6147,7 @@ export function summarizeImportTemplateUploadPrefill(
     return {
       selectedTemplateId,
       defaultTemplateId: "",
+      fileType: null,
       tone: "failed",
       title: "模板不可用于上传",
       detail: `字段映射模板 ${selectedTemplateId} 已停用，上传表单不会默认使用它。`,
@@ -6150,6 +6158,7 @@ export function summarizeImportTemplateUploadPrefill(
   return {
     selectedTemplateId,
     defaultTemplateId: template.template_id,
+    fileType: template.file_type,
     tone: "success",
     title: "已预选字段映射模板",
     detail: `${template.template_name} · ${formatImportFileType(template.file_type)} · ${Object.keys(template.field_mapping).length} 个字段`,
@@ -6942,7 +6951,7 @@ export function summarizeImportComparisonRunReturnLinks({
       tone: "blocked",
       title: "回跳链路不可用",
       detail: `当前运行读取失败：${error}。`,
-      versionWorkbenchLabel: "业务版本工作台",
+      versionWorkbenchLabel: "业务版本列表",
       secondaryHref: "/data-quality/versions",
     })
   }
@@ -6951,8 +6960,8 @@ export function summarizeImportComparisonRunReturnLinks({
     return emptyComparisonRunReturnLinks({
       tone: "empty",
       title: "等待运行语境",
-      detail: "选择可读取的对比运行后，再判断来源批次和版本工作台回跳。",
-      versionWorkbenchLabel: "业务版本工作台",
+      detail: "选择可读取的对比运行后，再判断来源批次和业务版本列表回跳。",
+      versionWorkbenchLabel: "业务版本列表",
       secondaryHref: "/data-quality/versions",
     })
   }
@@ -6961,7 +6970,7 @@ export function summarizeImportComparisonRunReturnLinks({
   const evidence = sourceVersions.map(
     (sourceVersion) => `来源版本 ${sourceVersion.label} ${sourceVersion.versionId}`
   )
-  const versionWorkbenchLabel = `业务版本工作台 · ${detail.run.business_date_from}`
+  const versionWorkbenchLabel = `业务版本列表 · ${detail.run.business_date_from}`
 
   if (batchError) {
     return {
@@ -6972,7 +6981,7 @@ export function summarizeImportComparisonRunReturnLinks({
       versionWorkbenchLabel,
       primaryActionLabel: "来源批次不可回跳",
       primaryHref: null,
-      secondaryActionLabel: "查看版本工作台",
+      secondaryActionLabel: "查看版本列表",
       secondaryHref: buildImportVersionWorkbenchHref({
         businessDate: detail.run.business_date_from,
       }),
@@ -6999,7 +7008,7 @@ export function summarizeImportComparisonRunReturnLinks({
       versionWorkbenchLabel,
       primaryActionLabel: "来源批次不可回跳",
       primaryHref: null,
-      secondaryActionLabel: "查看版本工作台",
+      secondaryActionLabel: "查看版本列表",
       secondaryHref: buildImportVersionWorkbenchHref({
         businessDate: detail.run.business_date_from,
       }),
@@ -7010,14 +7019,14 @@ export function summarizeImportComparisonRunReturnLinks({
   return {
     tone: "ready",
     title: "已形成回跳闭环",
-    detail: `当前运行已匹配 ${matchedBatches.length.toLocaleString("zh-CN")} 个来源批次；可回到 ${primaryBatch.batch_id} 的结果追踪，或按业务日进入版本工作台。`,
+    detail: `当前运行已匹配 ${matchedBatches.length.toLocaleString("zh-CN")} 个来源批次；可回到 ${primaryBatch.batch_id} 的结果追踪，或按业务日进入业务版本列表。`,
     sourceBatchLabel: matchedBatches.map((batch) => batch.batch_id).join(" · "),
     versionWorkbenchLabel,
     primaryActionLabel: "回到来源批次结果追踪",
     primaryHref: buildImportBatchProcessingHref(primaryBatch.batch_id, {
       tab: "result-trace",
     }),
-    secondaryActionLabel: "查看版本工作台",
+    secondaryActionLabel: "查看版本列表",
     secondaryHref: buildImportVersionWorkbenchHref({
       businessDate: detail.run.business_date_from,
       domain: mapImportFileTypeToVersionWorkbenchDomain(primaryBatch.file_type),
@@ -7050,7 +7059,7 @@ function emptyComparisonRunReturnLinks({
     versionWorkbenchLabel,
     primaryActionLabel: "来源批次不可回跳",
     primaryHref: null,
-    secondaryActionLabel: "查看版本工作台",
+    secondaryActionLabel: "查看版本列表",
     secondaryHref,
     evidence: [],
   }

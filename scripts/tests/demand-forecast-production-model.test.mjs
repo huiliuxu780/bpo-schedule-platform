@@ -115,7 +115,7 @@ test("demand forecast production workbench summarizes applied forecast versions"
   assert.equal(summary.rows[0].applicationLabel, "已应用");
   assert.equal(summary.rows[0].alignmentLabel, "技能组/等级/时段已对齐");
   assert.equal(summary.rows[0].appliedRecordCountLabel, "336");
-  assert.equal(summary.rows[0].blockerSummary, "无阻塞；当前只读展示需求预测生产口径");
+  assert.equal(summary.rows[0].blockerSummary, "无阻塞");
   assert.equal(summary.rows[0].nextActionLabel, "查看版本详情");
 });
 
@@ -164,8 +164,7 @@ test("demand forecast production detail resolves a forecast version by source ba
     { key: "overview", label: "总览" },
     { key: "source", label: "来源与对齐" },
     { key: "rows", label: "预测明细" },
-    { key: "comparison", label: "本地比对" },
-    { key: "boundary", label: "变更边界" },
+    { key: "comparison", label: "比对" },
   ]);
   assert.equal(detail.batchId, "BATCH-FC-001");
   assert.equal(detail.versionLabel, "BATCH-FC-001::v1");
@@ -173,12 +172,12 @@ test("demand forecast production detail resolves a forecast version by source ba
   assert.equal(detail.workbenchHref, "/demand-plans/production");
   assert.equal(detail.businessDateLabel, "2026-06-08 至 2026-06-14");
   assert.equal(detail.sourceRowLabel, "24 / 24 条成功导入");
-  assert.equal(detail.skillAlignmentLabel, "来自 24 条成功导入行，技能组和等级明细待版本 API 暴露");
+  assert.equal(detail.skillAlignmentLabel, "来自 24 条成功导入行，技能组和等级明细待版本 服务 暴露");
   assert.equal(detail.timeBucketLabel, "0.5h 时段口径已确认");
-  assert.equal(detail.forecastScopeLabel, "当前列表 API 未暴露预测明细，不伪造技能组/等级/时段行");
+  assert.equal(detail.forecastScopeLabel, "暂无技能组/等级/时段明细");
   assert.equal(detail.alignmentResultLabel, "已形成 336 条技能组/等级/时段预测明细");
-  assert.equal(detail.blockerSummary, "无阻塞；当前只读展示需求预测生产口径");
-  assert.equal(detail.changeBoundaryLabel, "变更追踪边界待 IM104");
+  assert.equal(detail.blockerSummary, "无阻塞");
+  assert.equal(detail.changeBoundaryLabel, "暂无变更记录");
 });
 
 test("demand forecast production detail uses api intervals and change records", () => {
@@ -190,19 +189,19 @@ test("demand forecast production detail uses api intervals and change records", 
 
   assert.equal(detail.versionLabel, "FC-PROD-001");
   assert.equal(detail.appliedRecordCountLabel, "2");
-  assert.equal(detail.sourceRowLabel, "2 条预测区间来自真实版本 API");
+  assert.equal(detail.sourceRowLabel, "2 条预测区间来自版本服务");
   assert.equal(detail.skillAlignmentLabel, "1 个技能组已定位：L1-CN；1 个需求等级：L1");
   assert.equal(detail.timeBucketLabel, "已读取 2 条 0.5h 预测区间");
-  assert.equal(detail.forecastScopeLabel, "真实版本 API 已返回技能组/等级/0.5h 时段明细");
+  assert.equal(detail.forecastScopeLabel, "版本服务 已返回技能组/等级/0.5h 时段明细");
   assert.equal(detail.alignmentResultLabel, "预测合计需求 26 人次");
   assert.equal(detail.changeBoundaryLabel, "已读取 1 条版本变更记录");
   assert.deepEqual(detail.comparisonEntry, {
     tone: "ready",
     title: "进入预测 vs 排班比对入口",
-    detail: "已定位预测版本 FC-PROD-001，可到业务版本工作台按同业务日寻找排班版本并发起受控本地比对。",
-    actionLabel: "去业务版本工作台",
+    detail: "已定位预测版本 FC-PROD-001，可到业务版本列表按同业务日寻找排班版本并发起比对。",
+    actionLabel: "去业务版本列表",
     href: "/data-quality/versions?domain=demand_forecast&status=applied&businessDate=2026-06-08",
-    blockerLabel: "无阻塞；从业务版本工作台继续完成成对版本确认",
+    blockerLabel: "无阻塞；从业务版本列表继续完成成对版本确认",
   });
   assert.deepEqual(detail.intervalRows, [
     {
@@ -267,38 +266,11 @@ test("demand forecast production detail explains blocked interval rows", () => {
   ]);
 });
 
-test("demand forecast production detail exposes a non-writing change tracking shell", () => {
+test("demand forecast production detail exposes source change tracking", () => {
   const detail = summarizeDemandForecastProductionDetail([baseBatch], "BATCH-FC-001");
 
-  assert.equal(detail.changeTracking.title, "变更追踪边界安全壳");
-  assert.equal(detail.changeTracking.sourceVersionLabel, "来源版本 BATCH-FC-001::v1 已定位");
-  assert.equal(detail.changeTracking.alignmentCheckLabel, "技能组/等级/0.5h 时段已具备只读对齐口径");
-  assert.equal(detail.changeTracking.downstreamImpactLabel, "下游影响需先回看排班、比对和复核结果，本页不写预测变更");
-  assert.equal(detail.changeTracking.failureBoundaryLabel, "写入动作进入前需要单独确认后端、schema、migration 和生产状态边界");
-  assert.deepEqual(
-    detail.changeTracking.actionShells.map((action) => ({
-      label: action.label,
-      disabledLabel: action.disabledLabel,
-      isDisabled: action.isDisabled,
-    })),
-    [
-      {
-        label: "记录预测变更",
-        disabledLabel: "暂不写入",
-        isDisabled: true,
-      },
-      {
-        label: "校验下游影响",
-        disabledLabel: "暂不提交",
-        isDisabled: true,
-      },
-      {
-        label: "更新生产口径",
-        disabledLabel: "暂不变更",
-        isDisabled: true,
-      },
-    ]
-  );
+  assert.equal(detail.changeBoundaryLabel, "暂无变更记录");
+  assert.deepEqual(detail.changeRows, []);
 });
 
 test("demand forecast production detail blocks missing forecast rows without fabricated details", () => {
@@ -313,13 +285,11 @@ test("demand forecast production detail blocks missing forecast rows without fab
   );
 
   assert.equal(detail.tone, "blocked");
-  assert.equal(detail.timeBucketLabel, "暂未发现 0.5h 预测明细");
-  assert.equal(detail.forecastScopeLabel, "当前列表 API 未暴露预测明细，不伪造技能组/等级/时段行");
-  assert.equal(detail.alignmentResultLabel, "暂未发现技能组/等级/时段对齐结果");
-  assert.equal(detail.blockerSummary, "已应用但暂未发现预测明细");
-  assert.equal(detail.changeTracking.sourceVersionLabel, "来源版本 BATCH-FC-001::v1 已定位");
-  assert.equal(detail.changeTracking.alignmentCheckLabel, "阻塞：暂未发现技能组/等级/0.5h 时段预测明细");
-  assert.equal(detail.changeTracking.downstreamImpactLabel, "下游影响校验阻塞：预测明细未形成，不能进入变更追踪");
+  assert.equal(detail.timeBucketLabel, "未发现 0.5h 预测明细");
+  assert.equal(detail.forecastScopeLabel, "暂无技能组/等级/时段明细");
+  assert.equal(detail.alignmentResultLabel, "未发现技能组/等级/时段对齐结果");
+  assert.equal(detail.blockerSummary, "已应用但未发现预测明细");
+  assert.equal(detail.changeBoundaryLabel, "暂无变更记录");
 });
 
 test("demand forecast production detail shows a blocked state for unknown batch", () => {
@@ -329,16 +299,15 @@ test("demand forecast production detail shows a blocked state for unknown batch"
   assert.equal(detail.title, "预测版本未定位");
   assert.equal(detail.batchId, "BATCH-MISSING");
   assert.equal(detail.versionLabel, "未找到对应需求预测批次");
-  assert.equal(detail.blockerSummary, "请返回预测生产工作台选择来源批次");
+  assert.equal(detail.blockerSummary, "请返回预测生产列表选择来源批次");
   assert.deepEqual(detail.comparisonEntry, {
     tone: "blocked",
-    title: "暂不能进入本地比对",
-    detail: "未定位预测业务版本或业务日，先回到预测生产工作台选择已应用批次。",
-    actionLabel: "查看业务版本工作台",
+    title: "无法进入比对",
+    detail: "未定位预测业务版本或业务日，先回到预测生产列表选择已应用批次。",
+    actionLabel: "查看业务版本列表",
     href: "/data-quality/versions?domain=demand_forecast",
-    blockerLabel: "阻塞：请返回预测生产工作台选择来源批次",
+    blockerLabel: "阻塞：请返回预测生产列表选择来源批次",
   });
-  assert.equal(detail.changeTracking.sourceVersionLabel, "来源版本未定位");
-  assert.equal(detail.changeTracking.alignmentCheckLabel, "阻塞：未定位来源批次，无法校验技能组/等级/0.5h 时段");
-  assert.equal(detail.changeTracking.downstreamImpactLabel, "下游影响校验阻塞：未定位预测版本，不能进入变更追踪");
+  assert.equal(detail.changeBoundaryLabel, "暂无变更记录");
+  assert.deepEqual(detail.changeRows, []);
 });

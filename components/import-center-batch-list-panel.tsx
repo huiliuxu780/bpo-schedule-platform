@@ -51,7 +51,7 @@ export function ImportCenterBatchListPanel({
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-start justify-between gap-3">
         <div>
-          <CardTitle className="text-base">接入批次工作台</CardTitle>
+          <CardTitle className="text-base">导入批次</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
             {batchError ??
               `${filteredBatches.length}/${batches.length} 批匹配`}

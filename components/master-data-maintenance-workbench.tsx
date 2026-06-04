@@ -28,7 +28,10 @@ import {
   summarizeMasterDataEmployeeList,
   summarizeMasterDataMaintenanceWorkbench,
 } from "@/components/master-data-maintenance-model"
-import type { ImportBatchListRow } from "@/components/import-center-model"
+import {
+  buildImportUploadWorkspaceHref,
+  type ImportBatchListRow,
+} from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -142,7 +145,7 @@ export function MasterDataMaintenanceWorkbench({
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="outline">
               <Link href={summary.versionWorkbenchHref}>
-                查看业务版本
+                查看来源版本
                 <ArrowRight data-icon="inline-end" />
               </Link>
             </Button>
@@ -271,7 +274,7 @@ export function MasterDataAgentManagementPage({
             </Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link href="/data-quality/uploads/new">
+            <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
               <Upload data-icon="inline-start" />
               导入人员
             </Link>
@@ -590,9 +593,9 @@ export function MasterDataAgentCreatePage({
   action: (formData: FormData) => Promise<void>
 }) {
   return (
-    <AgentFormPageShell
+      <AgentFormPageShell
       title="新建客服人员"
-      description="创建单个客服人员基础档案。人员表导入可从导入中心进入。"
+      description="创建单个客服人员基础档案。人员表导入从客服人员列表进入。"
       error={error}
       feedback={feedback}
     >
@@ -820,9 +823,9 @@ export function MasterDataMaintenanceEntityDetail({
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="grid gap-2">
           <Button asChild size="sm" variant="ghost" className="w-fit px-0">
-            <Link href="/master-data">
+            <Link href="/master-data/agents">
               <ArrowLeft data-icon="inline-start" />
-              返回主数据维护
+              返回客服人员
             </Link>
           </Button>
           <div>
@@ -937,7 +940,7 @@ export function MasterDataMaintenanceEntityDetail({
                 {summary.sourceVersionHref ? (
                   <Button asChild size="sm" variant="outline">
                     <Link href={summary.sourceVersionHref}>
-                      查看业务版本
+                      查看来源版本
                       <ArrowRight data-icon="inline-end" />
                     </Link>
                   </Button>

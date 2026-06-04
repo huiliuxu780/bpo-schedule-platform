@@ -23,6 +23,7 @@ type ImportCenterUploadFormProps = {
   uploadBatchId?: string
   templates?: ImportFieldMappingTemplate[]
   templateError?: string | null
+  selectedFileType?: ImportFileType | null
   selectedTemplateId?: string
   resultRedirectTo?: string
 }
@@ -41,6 +42,7 @@ export function ImportCenterUploadForm({
   uploadBatchId,
   templates = [],
   templateError,
+  selectedFileType,
   selectedTemplateId,
   resultRedirectTo,
 }: ImportCenterUploadFormProps) {
@@ -53,6 +55,7 @@ export function ImportCenterUploadForm({
     templates,
     selectedTemplateId
   )
+  const defaultFileType = templatePrefill?.fileType ?? selectedFileType ?? "master_data"
 
   return (
     <Card>
@@ -80,7 +83,7 @@ export function ImportCenterUploadForm({
             <Field label="文件类型">
               <select
                 name="file_type"
-                defaultValue="master_data"
+                defaultValue={defaultFileType}
                 className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               >
                 {fileTypes.map((fileType) => (

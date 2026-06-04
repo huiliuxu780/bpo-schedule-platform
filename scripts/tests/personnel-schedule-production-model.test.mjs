@@ -58,7 +58,7 @@ test("personnel schedule production workbench summarizes applied schedule versio
   assert.equal(summary.rows[0].detailHref, "/schedule-plans/production/BATCH-SCH-001");
   assert.equal(summary.rows[0].applicationLabel, "已应用");
   assert.equal(summary.rows[0].expansionLabel, "0.5h 已展开");
-  assert.equal(summary.rows[0].blockerSummary, "无阻塞；当前只读展示排班生产口径");
+  assert.equal(summary.rows[0].blockerSummary, "无阻塞");
   assert.equal(summary.rows[0].nextActionLabel, "查看版本详情");
 });
 
@@ -106,35 +106,18 @@ test("personnel schedule production detail resolves a schedule version by source
   assert.deepEqual(detail.workspaceTabs, [
     { key: "overview", label: "总览" },
     { key: "source", label: "来源与版本" },
-    { key: "rows", label: "真实明细" },
-    { key: "comparison", label: "本地比对" },
-    { key: "boundary", label: "发布冻结边界" },
+    { key: "rows", label: "明细" },
+    { key: "comparison", label: "比对" },
   ]);
   assert.equal(detail.batchId, "BATCH-SCH-001");
   assert.equal(detail.versionLabel, "BATCH-SCH-001::v1");
   assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-SCH-001");
   assert.equal(detail.workbenchHref, "/schedule-plans/production");
   assert.equal(detail.businessDateLabel, "2026-06-01 至 2026-06-07");
-  assert.equal(detail.shiftReferenceLabel, "来自 12 条成功导入行，班次引用明细待版本 API 暴露");
-  assert.equal(detail.personScopeLabel, "当前列表 API 未暴露人员清单，不伪造人员级明细");
+  assert.equal(detail.shiftReferenceLabel, "来自 12 条成功导入行，班次引用明细待版本 服务 暴露");
+  assert.equal(detail.personScopeLabel, "暂无人员清单明细");
   assert.equal(detail.halfHourResultLabel, "已形成 96 条 0.5h 展开记录");
-  assert.equal(detail.blockerSummary, "无阻塞；当前只读展示排班生产口径");
-  assert.equal(detail.actionShellTitle, "发布/冻结边界安全壳");
-  assert.equal(detail.actionShellDetail, "当前只展示生产动作前置校验，不提交真实发布或冻结状态。");
-  assert.equal(detail.actionShells.length, 3);
-  assert.deepEqual(
-    detail.actionShells.map((action) => action.actionLabel),
-    ["发布版本", "冻结版本", "取消发布"]
-  );
-  assert.deepEqual(
-    detail.actionShells.map((action) => action.disabledLabel),
-    ["暂不发布", "暂不冻结", "暂不取消发布"]
-  );
-  assert.equal(detail.actionShells[0].sourceVersionLabel, "BATCH-SCH-001::v1");
-  assert.equal(detail.actionShells[0].expansionGateLabel, "已形成 96 条 0.5h 展开记录");
-  assert.equal(detail.actionShells[0].referenceGateLabel, "引用校验待接入：需确认比对、复核和后续履约引用");
-  assert.equal(detail.actionShells[0].failureBoundaryLabel, "当前未接入真实写入，不能改变生产排班口径");
-  assert.equal(detail.actionShells[0].isEnabled, false);
+  assert.equal(detail.blockerSummary, "无阻塞");
 });
 
 test("personnel schedule production detail uses real api details when available", () => {
@@ -198,17 +181,17 @@ test("personnel schedule production detail uses real api details when available"
 
   assert.equal(detail.versionLabel, "SCH-PROD-001");
   assert.equal(detail.appliedRecordCountLabel, "2");
-  assert.equal(detail.sourceRowLabel, "1 条排班明细来自真实版本 API");
+  assert.equal(detail.sourceRowLabel, "1 条排班明细来自版本服务");
   assert.equal(detail.shiftReferenceLabel, "1 个班次引用已定位：MORNING-2H");
   assert.equal(detail.personScopeLabel, "1 名坐席已定位：A-1001");
   assert.equal(detail.halfHourResultLabel, "已形成 2 条 0.5h 展开区间");
   assert.deepEqual(detail.comparisonEntry, {
     tone: "ready",
     title: "进入预测 vs 排班比对入口",
-    detail: "已定位排班版本 SCH-PROD-001，可到业务版本工作台按同业务日寻找预测版本并发起受控本地比对。",
-    actionLabel: "去业务版本工作台",
+    detail: "已定位排班版本 SCH-PROD-001，可到业务版本列表按同业务日寻找预测版本并发起比对。",
+    actionLabel: "去业务版本列表",
     href: "/data-quality/versions?domain=personnel_schedule&status=applied&businessDate=2026-06-01",
-    blockerLabel: "无阻塞；从业务版本工作台继续完成成对版本确认",
+    blockerLabel: "无阻塞；从业务版本列表继续完成成对版本确认",
   });
   assert.equal(detail.detailRows.length, 1);
   assert.equal(detail.intervalRows.length, 2);
@@ -304,11 +287,9 @@ test("personnel schedule production detail blocks missing expansion records with
   );
 
   assert.equal(detail.tone, "blocked");
-  assert.equal(detail.halfHourResultLabel, "暂未发现 0.5h 展开记录");
-  assert.equal(detail.personScopeLabel, "当前列表 API 未暴露人员清单，不伪造人员级明细");
-  assert.equal(detail.blockerSummary, "已应用但暂未发现展开记录");
-  assert.equal(detail.actionShells[0].expansionGateLabel, "阻塞：暂未发现 0.5h 展开记录");
-  assert.equal(detail.actionShells[0].failureBoundaryLabel, "阻塞：已应用但暂未发现展开记录");
+  assert.equal(detail.halfHourResultLabel, "未发现 0.5h 展开记录");
+  assert.equal(detail.personScopeLabel, "暂无人员清单明细");
+  assert.equal(detail.blockerSummary, "已应用但未发现展开记录");
 });
 
 test("personnel schedule production detail shows a blocked state for unknown batch", () => {
@@ -318,13 +299,13 @@ test("personnel schedule production detail shows a blocked state for unknown bat
   assert.equal(detail.title, "排班版本未定位");
   assert.equal(detail.batchId, "BATCH-MISSING");
   assert.equal(detail.versionLabel, "未找到对应人员排班批次");
-  assert.equal(detail.blockerSummary, "请返回排班生产工作台选择来源批次");
+  assert.equal(detail.blockerSummary, "请返回排班生产列表选择来源批次");
   assert.deepEqual(detail.comparisonEntry, {
     tone: "blocked",
-    title: "暂不能进入本地比对",
-    detail: "未定位排班业务版本或业务日，先回到排班生产工作台选择已应用批次。",
-    actionLabel: "查看业务版本工作台",
+    title: "无法进入比对",
+    detail: "未定位排班业务版本或业务日，先回到排班生产列表选择已应用批次。",
+    actionLabel: "查看业务版本列表",
     href: "/data-quality/versions?domain=personnel_schedule",
-    blockerLabel: "阻塞：请返回排班生产工作台选择来源批次",
+    blockerLabel: "阻塞：请返回排班生产列表选择来源批次",
   });
 });

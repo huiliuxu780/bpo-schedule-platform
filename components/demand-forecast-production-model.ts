@@ -234,7 +234,7 @@ export function summarizeDemandForecastProductionDetail(
       timeBucketLabel: "未发现 0.5h 预测明细",
       forecastScopeLabel: "未定位来源批次，暂无技能组/等级/时段行",
       alignmentResultLabel: "未发现技能组/等级/时段对齐结果",
-      blockerSummary: "请返回预测生产工作台选择来源批次",
+      blockerSummary: "请返回预测生产列表选择来源批次",
       intervalRows: [],
       changeRows: [],
       changeBoundaryLabel: "暂无变更记录",
@@ -242,7 +242,7 @@ export function summarizeDemandForecastProductionDetail(
         tone: "blocked",
         versionLabel: null,
         businessDate: null,
-        blockerSummary: "请返回预测生产工作台选择来源批次",
+        blockerSummary: "请返回预测生产列表选择来源批次",
       }),
       workspaceTabs: [...DEMAND_FORECAST_PRODUCTION_WORKSPACE_TABS],
     }
@@ -349,8 +349,8 @@ function buildDemandForecastComparisonEntry({
     return {
       tone: "blocked",
       title: "无法进入比对",
-      detail: "未定位预测业务版本或业务日，先回到预测生产工作台选择已应用批次。",
-      actionLabel: "查看业务版本工作台",
+      detail: "未定位预测业务版本或业务日，先回到预测生产列表选择已应用批次。",
+      actionLabel: "查看业务版本列表",
       href,
       blockerLabel: `阻塞：${blockerSummary}`,
     }
@@ -359,10 +359,10 @@ function buildDemandForecastComparisonEntry({
   return {
     tone: "ready",
     title: "进入预测 vs 排班比对入口",
-    detail: `已定位预测版本 ${versionLabel}，可到业务版本工作台按同业务日寻找排班版本并发起比对。`,
-    actionLabel: "去业务版本工作台",
+    detail: `已定位预测版本 ${versionLabel}，可到业务版本列表按同业务日寻找排班版本并发起比对。`,
+    actionLabel: "去业务版本列表",
     href,
-    blockerLabel: "无阻塞；从业务版本工作台继续完成成对版本确认",
+    blockerLabel: "无阻塞；从业务版本列表继续完成成对版本确认",
   }
 }
 

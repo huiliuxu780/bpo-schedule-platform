@@ -235,14 +235,14 @@ export function summarizePersonnelScheduleProductionDetail(
       shiftReferenceLabel: "未定位来源批次，无法确认班次引用",
       personScopeLabel: "未定位来源批次，暂无人员明细",
       halfHourResultLabel: "未发现 0.5h 展开记录",
-      blockerSummary: "请返回排班生产工作台选择来源批次",
+    blockerSummary: "请返回排班生产列表选择来源批次",
       detailRows: [],
       intervalRows: [],
       comparisonEntry: buildPersonnelScheduleComparisonEntry({
         tone: "blocked",
         versionLabel: null,
         businessDate: null,
-        blockerSummary: "请返回排班生产工作台选择来源批次",
+        blockerSummary: "请返回排班生产列表选择来源批次",
       }),
       workspaceTabs: [...PERSONNEL_SCHEDULE_PRODUCTION_WORKSPACE_TABS],
     }
@@ -335,8 +335,8 @@ function buildPersonnelScheduleComparisonEntry({
     return {
       tone: "blocked",
       title: "无法进入比对",
-      detail: "未定位排班业务版本或业务日，先回到排班生产工作台选择已应用批次。",
-      actionLabel: "查看业务版本工作台",
+      detail: "未定位排班业务版本或业务日，先回到排班生产列表选择已应用批次。",
+      actionLabel: "查看业务版本列表",
       href,
       blockerLabel: `阻塞：${blockerSummary}`,
     }
@@ -345,10 +345,10 @@ function buildPersonnelScheduleComparisonEntry({
   return {
     tone: "ready",
     title: "进入预测 vs 排班比对入口",
-    detail: `已定位排班版本 ${versionLabel}，可到业务版本工作台按同业务日寻找预测版本并发起比对。`,
-    actionLabel: "去业务版本工作台",
+    detail: `已定位排班版本 ${versionLabel}，可到业务版本列表按同业务日寻找预测版本并发起比对。`,
+    actionLabel: "去业务版本列表",
     href,
-    blockerLabel: "无阻塞；从业务版本工作台继续完成成对版本确认",
+    blockerLabel: "无阻塞；从业务版本列表继续完成成对版本确认",
   }
 }
 

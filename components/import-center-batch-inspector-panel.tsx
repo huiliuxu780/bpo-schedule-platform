@@ -48,7 +48,7 @@ export function ImportCenterBatchInspectorPanel({
       </CardHeader>
       <CardContent className="grid gap-4">
         {!selectedBatch ? (
-          <EmptyState title="暂无选中批次" detail="先在左侧工作台选择导入批次。" compact />
+          <EmptyState title="暂无选中批次" detail="先在左侧列表选择导入批次。" compact />
         ) : mode === "summary" ? (
           <>
             <BatchReviewGuideCard

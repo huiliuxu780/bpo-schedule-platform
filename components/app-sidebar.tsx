@@ -62,21 +62,27 @@ const nav: NavGroup[] = [
     ],
   },
   {
-    title: "数据与集成",
+    title: "日志数据",
     icon: Database,
     items: [
-      { title: "文件导入", href: "/data-quality" },
-      { title: "业务版本", href: "/data-quality/versions", activeMatch: "prefix", tag: "P1" },
-      { title: "接入批次", href: "/data-quality" },
-      { title: "CORN 状态日志", href: "/actual-logs/production", activeMatch: "prefix", tag: "P1" },
-      { title: "数据质量", href: "/data-quality", activeMatch: "exact", tag: "P1" },
+      { title: "登录/状态日志", href: "/actual-logs/production", activeMatch: "prefix", tag: "P1" },
     ],
   },
   {
-    title: "系统管理",
+    title: "主数据",
     icon: Settings,
     items: [
-      { title: "主数据维护", href: "/master-data", activeMatch: "prefix", tag: "P1" },
+      {
+        title: "客服人员",
+        href: "/master-data/agents",
+        activeMatch: "prefix",
+        tag: "P1",
+      },
+      { title: "职场", href: "/master-data/sites", activeMatch: "exact" },
+      { title: "供应商", href: "/master-data/vendors", activeMatch: "exact" },
+      { title: "项目", href: "/master-data/projects", activeMatch: "exact" },
+      { title: "技能", href: "/master-data/skills", activeMatch: "exact" },
+      { title: "绑定关系", href: "/master-data/bindings", activeMatch: "exact" },
     ],
   },
 ]

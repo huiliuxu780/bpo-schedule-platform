@@ -94,11 +94,11 @@ function ReviewCasesHeader({
         <Button asChild size="sm" variant="ghost" className="w-fit px-0">
           <Link href="/data-quality">
             <ArrowLeft data-icon="inline-start" />
-            返回数据质量
+            返回导入批次
           </Link>
         </Button>
         <div>
-          <h1 className="text-xl font-semibold tracking-normal">复核案例工作台</h1>
+          <h1 className="text-xl font-semibold tracking-normal">复核案例</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
             {summary.detail}
           </p>
