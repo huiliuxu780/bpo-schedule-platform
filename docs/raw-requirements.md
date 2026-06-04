@@ -2445,3 +2445,42 @@ version: "1.0"
 status: "done"
 notes: "IM107 已完成：处理解释页新增状态字典与异常解释安全壳，展示状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界；动作按钮禁用，不提交状态字典变更或生产规则变更。"
 ```
+
+### R808 - 主数据坐席单实体维护 API 基础
+
+```yaml
+id: R808
+module: "主数据维护"
+description: "主数据详情页已有新增、编辑、冻结、有效期调整的动作安全壳。下一步需要先补最小后端写入基础，从坐席单实体开始，复用现有 master_data_employees 表和主数据仓库，不新增 schema/migration。"
+source: "After IM107 completion and PM agreed to start master-data CRUD on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM108 已完成：新增坐席单实体 create/edit/freeze/effective_period 后端维护入口，复用 master_data_employees 和既有仓库，不新增 schema/migration；错误码覆盖缺失批次、缺失坐席、重复创建、缺字段和无效有效期。"
+```
+
+### R809 - 主数据坐席维护前端受控提交
+
+```yaml
+id: R809
+module: "主数据维护"
+description: "坐席单实体维护 API 可用后，需要在 `/master-data/agents` 详情页把新增、编辑、冻结、有效期调整从禁用安全壳升级为受控提交表单，并展示成功/失败反馈。"
+source: "After R808 planning on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "ready"
+notes: "IM109 下一步进入前端受控提交：仅接 IM108 坐席 API，不扩展到其他主数据对象；失败时展示后端校验原因。"
+```
+
+### R810 - 主数据维护扩展到其他对象与绑定关系
+
+```yaml
+id: R810
+module: "主数据维护"
+description: "坐席维护闭环验证后，再将同一维护能力扩展到职场、供应商、项目、技能和绑定关系，并补绑定关系引用校验解释。"
+source: "After R809 planning on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "planned"
+notes: "扩展前需要确认 IM108/IM109 的错误码和前端反馈口径稳定。"
+```

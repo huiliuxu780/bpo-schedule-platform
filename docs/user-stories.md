@@ -4427,3 +4427,69 @@ dependencies:
 status: "done"
 notes: "IM107 已完成：`/actual-logs/production/[batchId]` 展示状态字典与异常解释安全壳，覆盖状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界，动作按钮保持禁用。"
 ```
+
+### US728 - 主数据坐席单实体维护 API 基础
+
+```yaml
+id: US728
+requirement_ids:
+  - R808
+module: "主数据维护"
+role: "数据管理员"
+story: "作为数据管理员，我希望先通过后端 API 维护单个坐席的新增、编辑、冻结和有效期，以便后续前端表单能从安全壳升级到真实受控写入。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "提供坐席单实体 create/edit/freeze/effective_period 后端入口。"
+  - "复用现有 master_data_employees 表和仓库，不新增 schema/migration。"
+  - "返回成功后的坐席记录和明确失败错误码。"
+  - "不扩展到职场、供应商、项目、技能或绑定关系。"
+  - "不做权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US718"
+status: "done"
+notes: "IM108 已完成：新增 `/api/v1/master-data/employees/{employee_id}/maintenance`，支持坐席 create/edit/freeze/effective_period；复用现有表和仓库，无 schema/migration。"
+```
+
+### US729 - 主数据坐席维护前端受控提交
+
+```yaml
+id: US729
+requirement_ids:
+  - R809
+module: "主数据维护"
+role: "数据管理员"
+story: "作为数据管理员，我希望在坐席详情页提交单个坐席的维护动作并看到成功或失败反馈，以便确认维护是否真正进入本地主数据。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/master-data/agents` 详情页提供坐席新增、编辑、冻结、有效期调整的受控表单。"
+  - "提交后展示成功记录或后端校验失败原因。"
+  - "只接坐席 API，不扩展其他主数据对象。"
+  - "不做权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US728"
+status: "ready"
+notes: "IM109 下一步：在坐席详情页接入 IM108 维护 API，做受控提交和成功/失败反馈。"
+```
+
+### US730 - 主数据维护扩展到其他对象与绑定关系
+
+```yaml
+id: US730
+requirement_ids:
+  - R810
+module: "主数据维护"
+role: "数据管理员"
+story: "作为数据管理员，我希望在坐席维护闭环稳定后，把同一维护口径扩展到职场、供应商、项目、技能和绑定关系，以便主数据维护能力覆盖生产所需对象。"
+task_type: "database-persistence"
+priority: "P1"
+acceptance:
+  - "职场、供应商、项目、技能复用单实体维护口径。"
+  - "绑定关系维护展示并校验坐席、职场、供应商、项目、技能引用。"
+  - "复用 IM108/IM109 的错误码和前端反馈口径。"
+  - "不做权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US729"
+status: "planned"
+```

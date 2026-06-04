@@ -16,6 +16,7 @@ from backend.app.import_readiness import build_import_apply_readiness
 from backend.app.import_upload import build_import_batch_from_csv
 from backend.app.import_persistence import get_import_persistence_repository
 from backend.app.master_data_import import apply_master_data_import_batch
+from backend.app.master_data_maintenance import maintain_employee
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.personnel_schedule_import import apply_personnel_schedule_import_batch
 from backend.app.personnel_schedule_persistence import PersonnelSchedulePersistenceRepository
@@ -46,6 +47,8 @@ from backend.app.models import (
     ImportFieldMappingTemplateRecord,
     ImportFieldMappingTemplateUpdateRequest,
     ImportProcessingStatus,
+    MasterDataEmployeeMaintenanceRequest,
+    MasterDataEmployeeMaintenanceResponse,
     MasterDataImportApplyResponse,
     PersonnelScheduleImportApplyResponse,
     ReviewCaseDetail,
@@ -605,6 +608,39 @@ def apply_master_data_import(batch_id: str) -> MasterDataImportApplyResponse:
         ) from exc
 
     return MasterDataImportApplyResponse(**summary)
+
+
+@app.post(
+    "/api/v1/master-data/employees/{employee_id}/maintenance",
+    response_model=MasterDataEmployeeMaintenanceResponse,
+)
+def maintain_master_data_employee(
+    employee_id: str,
+    request: MasterDataEmployeeMaintenanceRequest,
+) -> MasterDataEmployeeMaintenanceResponse:
+    try:
+        return maintain_employee(
+            employee_id,
+            request,
+            MasterDataPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise _master_data_maintenance_http_error(exc) from exc
+
+
+def _master_data_maintenance_http_error(exc: ValueError) -> HTTPException:
+    message = str(exc)
+    code = message.split(":", maxsplit=1)[0]
+    status_code = 404 if code in {"EMPLOYEE_NOT_FOUND", "SOURCE_BATCH_NOT_FOUND"} else 400
+    return HTTPException(
+        status_code=status_code,
+        detail={
+            "error": {
+                "code": code,
+                "message": message,
+            }
+        },
+    )
 
 
 @app.post(

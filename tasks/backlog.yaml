@@ -8313,3 +8313,130 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已在 `/actual-logs/production/[batchId]` 处理解释页新增状态字典与异常解释安全壳；模型输出状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界，页面展示禁用的字典变更、异常规则提交和实际工时重算动作，不提交生产规则变更。"
+  - id: IM108
+    title: "主数据坐席单实体维护 API 基础"
+    priority: P1
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM098"]
+    allowed_files:
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/master_data_persistence.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "app/**"
+      - "components/**"
+    acceptance:
+      - "提供坐席单实体 create/edit/freeze/effective_period 后端入口。"
+      - "复用现有 master_data_employees 表和仓库，不新增 schema/migration。"
+      - "返回成功后的坐席记录和明确失败错误码。"
+      - "不扩展到职场、供应商、项目、技能或绑定关系。"
+      - "`bash scripts/check-state.sh --strict`、后端目标测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增 schema/migration 或生产持久化配置"
+      - "范围扩展到职场、供应商、项目、技能或绑定关系维护"
+      - "范围扩展到前端表单、权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已新增 `/api/v1/master-data/employees/{employee_id}/maintenance` 与 service/repository/model 支撑，支持坐席 create/edit/freeze/effective_period；复用现有 master_data_employees 表，无 schema/migration；目标测试覆盖成功路径和错误码。"
+  - id: IM109
+    title: "主数据坐席维护前端受控提交"
+    priority: P1
+    status: ready
+    required_workflow: frontend-scaffold
+    dependencies: ["IM108"]
+    allowed_files:
+      - "app/master-data/**"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "components/master-data-maintenance-model.ts"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+    acceptance:
+      - "`/master-data/agents` 详情页提供坐席新增、编辑、冻结、有效期调整的受控表单。"
+      - "提交后展示成功记录或后端校验失败原因。"
+      - "只接坐席 API，不扩展其他主数据对象。"
+      - "不做权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: high
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到职场、供应商、项目、技能或绑定关系维护"
+      - "范围扩展到权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM110
+    title: "主数据维护扩展到其他对象与绑定关系"
+    priority: P1
+    status: planned
+    required_workflow: database-persistence
+    dependencies: ["IM109"]
+    allowed_files:
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/master_data_persistence.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "app/master-data/**"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "components/master-data-maintenance-model.ts"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+    acceptance:
+      - "职场、供应商、项目、技能复用单实体维护口径。"
+      - "绑定关系维护展示并校验坐席、职场、供应商、项目、技能引用。"
+      - "复用 IM108/IM109 的错误码和前端反馈口径。"
+      - "不做权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: high
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增 schema/migration 或生产持久化配置"
+      - "范围扩展到权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

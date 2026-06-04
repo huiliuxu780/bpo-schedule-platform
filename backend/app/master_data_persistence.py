@@ -3,11 +3,12 @@ from typing import TypeVar
 from sqlalchemy import ForeignKey, String, select
 from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
 
-from backend.app.import_persistence import Base, build_engine
+from backend.app.import_persistence import Base, ImportBatchEntity, build_engine
 from backend.app.models import (
     EmployeeBindingInput,
     EmployeeBindingRecord,
     EmployeeMasterDataInput,
+    MasterDataEmployeeRecord,
     MasterDataReferenceInput,
     MasterDataSnapshotRequest,
 )
@@ -199,6 +200,31 @@ class MasterDataPersistenceRepository:
             ]
             return any(session.scalar(statement) is not None for statement in checks)
 
+    def has_import_batch(self, batch_id: str) -> bool:
+        with self.session_factory() as session:
+            return session.get(ImportBatchEntity, batch_id) is not None
+
+    def get_employee(self, employee_id: str) -> MasterDataEmployeeRecord | None:
+        with self.session_factory() as session:
+            employee = session.get(EmployeeEntity, employee_id)
+            if employee is None:
+                return None
+            return _employee_record(employee)
+
+    def upsert_employee(
+        self,
+        employee: EmployeeMasterDataInput,
+        batch_id: str,
+    ) -> MasterDataEmployeeRecord:
+        with self.session_factory.begin() as session:
+            entity = _employee_entity(employee, batch_id)
+            session.merge(entity)
+            session.flush()
+            stored = session.get(EmployeeEntity, employee.employee_id)
+            if stored is None:
+                raise ValueError(f"EMPLOYEE_WRITE_FAILED: {employee.employee_id}")
+            return _employee_record(stored)
+
     def get_employee_binding(self, binding_id: str) -> EmployeeBindingRecord | None:
         with self.session_factory() as session:
             binding = session.get(EmployeeBindingEntity, binding_id)
@@ -278,6 +304,17 @@ def _employee_entity(
         effective_from=employee.effective_from,
         effective_to=employee.effective_to,
         batch_id=batch_id,
+    )
+
+
+def _employee_record(employee: EmployeeEntity) -> MasterDataEmployeeRecord:
+    return MasterDataEmployeeRecord(
+        employee_id=employee.employee_id,
+        employee_name=employee.employee_name,
+        status=employee.status,
+        effective_from=employee.effective_from,
+        effective_to=employee.effective_to,
+        batch_id=employee.batch_id,
     )
 
 

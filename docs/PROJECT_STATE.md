@@ -534,3 +534,15 @@ The page does not fabricate login events, status intervals, status dictionary en
 `IM107/US727` added a status-dictionary and exception-explanation safety shell to `/actual-logs/production/[batchId]`. The detail page now summarizes status dictionary rows, unknown status intervals, non-Asia/Shanghai timezone rows, cross-day status intervals, and frozen-employee reference boundaries.
 
 All actions are disabled safety shells: dictionary maintenance, exception-rule submission, and actual-work-hour recalculation are visible as future controlled actions only. No backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work was added. After the IM105-IM107 login/status-log production chain, current queue returned to empty.
+
+## 2026-06-04 IM108-IM110 Master Data CRUD Planning
+
+After the login/status-log production chain, the next approved block is master-data maintenance CRUD. The sequence intentionally starts from the smallest write surface:
+
+1. `US728/IM108`: backend-only single-agent maintenance API for create, edit, freeze, and effective-period changes.
+2. `US729/IM109`: connect `/master-data/agents` to the new controlled submit API and feedback.
+3. `US730/IM110`: extend the stable maintenance pattern to workplaces, suppliers, projects, skills, and bindings.
+
+`US728/IM108` is complete. It added a backend-only single-agent maintenance API for create, edit, freeze, and effective-period changes, reusing the existing `master_data_employees` table and repository without schema/migration changes.
+
+Current state advanced to `US729/IM109` so the existing `/master-data/agents` safety shell can connect to the new controlled submit API. `US730/IM110` remains planned until the agent-only frontend loop is stable. The chain still avoids permissions, approval, export, batch operations, real external integrations, automatic scheduling, production formulas, settlement rules, and charge factors.

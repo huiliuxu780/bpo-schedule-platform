@@ -5,4 +5,47 @@ notes:
   - "Only current executable tasks belong here."
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
-tasks: []
+tasks:
+  - id: IM109
+    story_ids: [US729]
+    requirement_ids:
+      - R809
+    title: "主数据坐席维护前端受控提交"
+    status: ready
+    priority: P1
+    required_workflow: frontend-scaffold
+    branch: codex/im108-master-data-maintenance-api
+    allowed_files:
+      - "app/master-data/**"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "components/master-data-maintenance-model.ts"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+      - "backend/app/**"
+      - "backend/tests/**"
+    acceptance:
+      - "`/master-data/agents` 详情页提供坐席新增、编辑、冻结、有效期调整的受控表单。"
+      - "提交后展示成功记录或后端校验失败原因。"
+      - "只接坐席 API，不扩展其他主数据对象。"
+      - "`bash scripts/check-state.sh --strict`、前端目标模型测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: high
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到职场、供应商、项目、技能或绑定关系维护"
+      - "范围扩展到权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true

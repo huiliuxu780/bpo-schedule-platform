@@ -2794,3 +2794,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM108-IM110 Master Data CRUD Planning
+
+- branch_name: `codex/im108-master-data-maintenance-api`
+- base_main_commit: `ef52229`
+- remote_status: `main includes merged IM107 actual-log exception shell baseline; IM108 implementation and IM109 current-state handoff are local only until final merge/push.`
+- scope: define `R808-R810`, `US728-US730`, and `IM108-IM110`; complete `US728/IM108` with a backend-only single-agent maintenance API before frontend forms or non-agent object expansion; advance current state to `US729/IM109`.
+- allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/master_data_persistence.py`, `backend/app/master_data_maintenance.py`, backend target tests, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, frontend form, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected IM108 backend/model/repository/service/test files plus traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED first failed on missing `backend.app.master_data_maintenance` and missing `maintain_master_data_employee`; after implementation `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` passed with 8 tests. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 185 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -19,6 +19,13 @@ ImportProcessingStatus = Literal["completed", "completed_with_errors"]
 ImportApplicationStatus = Literal["not_applied", "applied"]
 ImportReadinessStatus = Literal["ready", "blocked"]
 MasterDataStatus = Literal["active", "frozen", "inactive"]
+MasterDataEmployeeMaintenanceAction = Literal["create", "edit", "freeze", "effective_period"]
+MasterDataEmployeeMaintenanceStatus = Literal[
+    "created",
+    "updated",
+    "frozen",
+    "effective_period_updated",
+]
 ComparisonType = Literal["forecast_vs_schedule", "schedule_vs_actual"]
 ComparisonRunStatus = Literal["completed", "failed"]
 ReviewSourceResultType = Literal["forecast_schedule", "schedule_actual"]
@@ -335,6 +342,30 @@ class EmployeeMasterDataInput(BaseModel):
     status: MasterDataStatus
     effective_from: str
     effective_to: str
+
+
+class MasterDataEmployeeRecord(BaseModel):
+    employee_id: str
+    employee_name: str
+    status: MasterDataStatus
+    effective_from: str
+    effective_to: str
+    batch_id: str
+
+
+class MasterDataEmployeeMaintenanceRequest(BaseModel):
+    action: MasterDataEmployeeMaintenanceAction
+    source_batch_id: str
+    employee_name: str | None = None
+    status: MasterDataStatus | None = None
+    effective_from: str | None = None
+    effective_to: str | None = None
+
+
+class MasterDataEmployeeMaintenanceResponse(BaseModel):
+    employee_id: str
+    action_status: MasterDataEmployeeMaintenanceStatus
+    employee: MasterDataEmployeeRecord
 
 
 class EmployeeBindingInput(BaseModel):
