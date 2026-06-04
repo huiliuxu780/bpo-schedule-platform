@@ -1152,6 +1152,17 @@ export type ImportFieldMappingTemplateSummary = {
   inactiveTemplates: number
   coveredFileTypes: number
   totalMappedFields: number
+  workspaceTabs: ImportFieldMappingTemplateWorkspaceTab[]
+}
+
+export type ImportFieldMappingTemplateWorkspaceTabKey =
+  | "overview"
+  | "fit"
+  | "templates"
+
+export type ImportFieldMappingTemplateWorkspaceTab = {
+  key: ImportFieldMappingTemplateWorkspaceTabKey
+  label: string
 }
 
 export type ImportFieldMappingTemplateDetailWorkspaceTabKey =
@@ -1331,6 +1342,13 @@ const importFieldMappingTemplateDetailWorkspaceTabs: ImportFieldMappingTemplateD
     { key: "maintenance", label: "维护表单" },
     { key: "mapping", label: "字段明细" },
     { key: "boundary", label: "维护边界" },
+  ]
+
+const importFieldMappingTemplateWorkspaceTabs: ImportFieldMappingTemplateWorkspaceTab[] =
+  [
+    { key: "overview", label: "总览" },
+    { key: "fit", label: "模板适配" },
+    { key: "templates", label: "模板列表" },
   ]
 
 export function buildImportApiUrl(path: string, apiBase = getDefaultApiBase()): string {
@@ -6041,6 +6059,7 @@ export function summarizeImportFieldMappingTemplates(
         coveredFileTypes: coveredFileTypes.size,
         totalMappedFields:
           summary.totalMappedFields + Object.keys(template.field_mapping).length,
+        workspaceTabs: summary.workspaceTabs,
       }
     },
     {
@@ -6049,6 +6068,7 @@ export function summarizeImportFieldMappingTemplates(
       inactiveTemplates: 0,
       coveredFileTypes: 0,
       totalMappedFields: 0,
+      workspaceTabs: [...importFieldMappingTemplateWorkspaceTabs],
     }
   )
 }

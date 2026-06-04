@@ -16,6 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Table,
   TableBody,
@@ -75,40 +76,64 @@ export function ImportCenterTemplateManagementPanel({
           </Link>
         </Button>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        <section className="grid gap-3 md:grid-cols-4">
-          <Metric label="启用模板" value={summary.activeTemplates} />
-          <Metric label="停用模板" value={summary.inactiveTemplates} />
-          <Metric label="覆盖类型" value={summary.coveredFileTypes} />
-          <Metric label="映射字段" value={summary.totalMappedFields} />
-        </section>
-
-        {fitDetail ? <TemplateFitDetailCard detail={fitDetail} /> : null}
-
-        {templateError ? (
-          <div className="rounded-md border border-dashed px-3 py-3 text-sm text-muted-foreground">
-            字段映射模板读取失败：{templateError}
-          </div>
-        ) : templates.length === 0 ? (
-          <div className="rounded-md border border-dashed px-3 py-6 text-center text-sm text-muted-foreground">
-            暂无字段映射模板。上传时仍可手填字段映射 JSON。
-          </div>
-        ) : (
-          <div className="grid gap-3 md:grid-cols-2">
-            {orderedTemplates.map((template) => (
-              <TemplateCard
-                key={template.template_id}
-                fitOption={fitOptionsByTemplateId.get(template.template_id) ?? null}
-                isRecommended={fitDetail?.recommendedTemplateId === template.template_id}
-                selectedFileType={selectedFileType}
-                sourceBatchId={sourceBatchId}
-                template={template}
-              />
+      <CardContent>
+        <Tabs defaultValue="overview" className="grid gap-4">
+          <TabsList className="w-full justify-start overflow-x-auto md:w-fit">
+            {summary.workspaceTabs.map((tab) => (
+              <TabsTrigger key={tab.key} value={tab.key}>
+                {tab.label}
+              </TabsTrigger>
             ))}
-          </div>
-        )}
+          </TabsList>
+          <TabsContent value="overview" className="m-0 grid gap-4">
+            <section className="grid gap-3 md:grid-cols-4">
+              <Metric label="启用模板" value={summary.activeTemplates} />
+              <Metric label="停用模板" value={summary.inactiveTemplates} />
+              <Metric label="覆盖类型" value={summary.coveredFileTypes} />
+              <Metric label="映射字段" value={summary.totalMappedFields} />
+            </section>
+            <div className="rounded-md border bg-muted/20 p-3 text-sm text-muted-foreground">
+              模板适配和模板列表已收纳到独立入口，默认先确认模板库存和字段覆盖。
+            </div>
+          </TabsContent>
+          <TabsContent value="fit" className="m-0">
+            {fitDetail ? (
+              <TemplateFitDetailCard detail={fitDetail} />
+            ) : (
+              <EmptyPanel detail="未选中批次文件类型时，暂不展示模板适配建议。" />
+            )}
+          </TabsContent>
+          <TabsContent value="templates" className="m-0">
+            {templateError ? (
+              <EmptyPanel detail={`字段映射模板读取失败：${templateError}`} />
+            ) : templates.length === 0 ? (
+              <EmptyPanel detail="暂无字段映射模板。上传时仍可手填字段映射 JSON。" />
+            ) : (
+              <div className="grid gap-3 md:grid-cols-2">
+                {orderedTemplates.map((template) => (
+                  <TemplateCard
+                    key={template.template_id}
+                    fitOption={fitOptionsByTemplateId.get(template.template_id) ?? null}
+                    isRecommended={fitDetail?.recommendedTemplateId === template.template_id}
+                    selectedFileType={selectedFileType}
+                    sourceBatchId={sourceBatchId}
+                    template={template}
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
+  )
+}
+
+function EmptyPanel({ detail }: { detail: string }) {
+  return (
+    <div className="rounded-md border border-dashed px-3 py-6 text-center text-sm text-muted-foreground">
+      {detail}
+    </div>
   )
 }
 

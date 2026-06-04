@@ -4265,6 +4265,11 @@ test("import center field mapping template summary tracks inventory and coverage
       inactiveTemplates: 1,
       coveredFileTypes: 2,
       totalMappedFields: 5,
+      workspaceTabs: [
+        { key: "overview", label: "总览" },
+        { key: "fit", label: "模板适配" },
+        { key: "templates", label: "模板列表" },
+      ],
     },
   );
 });

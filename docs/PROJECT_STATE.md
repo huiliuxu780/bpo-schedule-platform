@@ -662,3 +662,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After IM127, the field-mapping template detail page still stacked template identity, the maintenance form, mapping rows, and maintenance boundaries in one detail surface. `US748/IM128` is complete. `/data-quality/field-mapping-templates/[templateId]` now uses a tabbed workspace for `总览`, `维护表单`, `字段明细`, and `维护边界`; the default view keeps only status, file type, mapped-field count, and summary visible, while editing, row inspection, and deactivate boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new template APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM128.
+
+## 2026-06-04 IM129 Field Mapping Template Management Tabs
+
+After IM128, the field-mapping template detail page was split, but the template management panel still stacked template inventory metrics, current-file-type fit guidance, and all template cards in one long card. `US749/IM129` is complete. The management panel now uses tabs for `总览`, `模板适配`, and `模板列表`; the default view keeps only inventory and field coverage metrics visible, while fit guidance and template cards move behind explicit entries.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new template APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM129.

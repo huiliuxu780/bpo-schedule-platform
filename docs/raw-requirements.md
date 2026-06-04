@@ -2718,3 +2718,16 @@ version: "1.0"
 status: "done"
 notes: "IM128 已完成：字段映射模板详情页改为总览、维护表单、字段明细、维护边界四个 tab，默认展示总览，不新增写入或业务能力。"
 ```
+
+### R829 - 字段映射模板管理面板工作区分层
+
+```yaml
+id: R829
+module: "导入中心"
+description: "字段映射模板管理面板已经承载模板库存指标、当前批次模板适配建议、模板列表和字段映射明细，但内容仍堆在一个长 Card 内。需要把模板管理面板拆成明确的工作区入口。"
+source: "Continuation after IM128 push and PM asked to continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM129 已完成：字段映射模板管理面板改为总览、模板适配、模板列表三个 tab，默认展示总览，不新增写入或业务能力。"
+```
