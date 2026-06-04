@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-`US735/IM115` completed frontend wiring from `/demand-plans/production/[batchId]` to the IM114 read-only demand-forecast production detail API. Current story queue is empty.
+Current queue is empty after `US736/IM116`. The demand-forecast production detail page now shows row-level alignment and blocker explanations on returned `/demand-plans/production/[batchId]` forecast interval rows without backend changes or production writes.
 
 The master-data maintenance chain now has `/master-data` plus `/master-data/[entityKey]` surfaces with controlled single-object submit paths for agents, reference entities, and binding relationships. Permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors remain out of scope.
 
@@ -157,4 +157,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US734/IM114` completed the read-only demand-forecast production detail API. It returns source batch context, forecast version, 0.5h forecast intervals, and version change records from existing repositories without frontend wiring or production writes.
 
-`US735/IM115` completed demand-forecast production detail frontend wiring. The page now renders real forecast intervals and change records when IM114 returns them, with explicit empty states when unavailable.
+`US736/IM116` completed demand-forecast interval row explanations. Returned forecast interval rows now show alignment status and blocker text for workplace, project, skill, demand level, time bucket, and required-agent completeness; backend writes, schema, migration, dependency, approval, export, batch, permission, automatic scheduling, formula, settlement, and charge-factor scope remain excluded.

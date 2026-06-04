@@ -73,6 +73,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM116 Demand Forecast Detail Row Explanations
+
+- branch_name: `codex/im116-forecast-detail-row-explanations`
+- base_main_commit: `ef52229`
+- stacked_on: `e68e94f feat: wire forecast production detail api`
+- remote_status: `IM115 branch is pushed; IM116 implementation is local only until final check/commit/push.`
+- scope: add row-level completeness and blocker explanations to the real forecast interval rows on `/demand-plans/production/[batchId]`, covering workplace, project, skill, demand level, time bucket, and required-agent values.
+- allowed_files_check: `app/demand-plans/production/**`, `components/demand-forecast-production-workbench.tsx`, `components/demand-forecast-production-model.ts`, `scripts/tests/demand-forecast-production-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected IM116 frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED first failed because interval rows did not expose `alignmentStatusLabel` or `blockerLabel`; after implementation `node --test scripts/tests/demand-forecast-production-model.test.mjs` passed with 10 tests. Shadcn review found no hardcoded color or component-fork drift in the changed table. `npm run lint`, `npm run typecheck`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. Browser smoke on `http://127.0.0.1:3000/demand-plans/production/BATCH-FC-001` matched `预测版本详情`, `0.5h 预测区间`, `对齐状态`, and `阻塞说明`; current local data had no forecast rows, so row values are covered by the model test. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 199 tests OK.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM112 Personnel Schedule Production Detail UI
 
 - branch_name: `codex/im112-schedule-production-detail-ui`

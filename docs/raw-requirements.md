@@ -2549,3 +2549,16 @@ version: "1.0"
 status: "done"
 notes: "IM115 已完成：`/demand-plans/production/[batchId]` 接入 IM114 API，展示真实 forecast_version_id、0.5h 预测区间和版本变更记录；不做后端、schema/migration、依赖或生产写入。"
 ```
+
+### R816 - 需求预测详情行级对齐和阻塞解释
+
+```yaml
+id: R816
+module: "需求预测生产"
+description: "预测详情页已经展示真实 0.5h 预测区间，但每行的职场、项目、技能、等级、时段和需求值是否完整还不够清楚。下一步需要补行级对齐完整性和阻塞说明。"
+source: "After IM115 completion and PM asked to push and continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM116 已完成：预测区间行展示职场、项目、技能、等级、时段和需求值完整性，完整行显示无阻塞，缺字段或需求值异常时显示行级阻塞说明；不做后端、schema/migration、依赖或生产写入。"
+```

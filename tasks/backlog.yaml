@@ -8649,3 +8649,43 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已让 `/demand-plans/production/[batchId]` 读取 IM114 只读 API，并展示真实 forecast_version_id、0.5h 预测区间表和版本变更记录表；缺 API/未应用时保持明确空态，不伪造明细。"
+  - id: IM116
+    title: "需求预测详情行级对齐和阻塞解释"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM115"]
+    allowed_files:
+      - "app/demand-plans/production/**"
+      - "components/demand-forecast-production-workbench.tsx"
+      - "components/demand-forecast-production-model.ts"
+      - "scripts/tests/demand-forecast-production-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+    acceptance:
+      - "0.5h 预测区间行展示职场、项目、技能、等级、时段和需求值完整性。"
+      - "缺少维度、等级、时段或需求值异常时显示行级阻塞说明。"
+      - "完整行显示无阻塞，不伪造后端未返回的引用校验结果。"
+      - "不做预测写入、schema/migration、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或生产持久化配置"
+      - "范围扩展到预测写入、变更提交、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已在预测详情真实 0.5h 区间表增加对齐状态和阻塞说明列；完整行显示无阻塞，缺少职场、项目、技能、需求等级、时段或需求值不大于 0 时显示行级阻塞原因。"

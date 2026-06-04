@@ -584,3 +584,9 @@ The task explicitly excluded frontend wiring, schema/migration, dependencies, fo
 After IM114, the demand-forecast production detail page can now be wired to a real backend detail API. `US735/IM115` is complete. `/demand-plans/production/[batchId]` reads `/api/v1/demand-forecast/production/{batch_id}` and shows the returned forecast version, 0.5h forecast intervals, and version change records.
 
 The task remained frontend-scaffold only. It excluded backend changes, schema/migration, dependencies, forecast write/change submission, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors. Current queue returned to empty after IM115.
+
+## 2026-06-04 IM116 Demand Forecast Detail Row Explanations
+
+After IM115, the demand-forecast production detail page shows real 0.5h forecast intervals. `US736/IM116` is complete. Forecast interval rows now show row-level alignment status and blocker explanations for workplace, project, skill, demand level, time bucket, and required-agent values.
+
+The task remained frontend-scaffold only. It excludes backend changes, schema/migration, dependencies, forecast write/change submission, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors. Current queue returned to empty after IM116.

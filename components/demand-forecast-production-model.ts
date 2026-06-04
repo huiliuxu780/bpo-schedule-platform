@@ -97,6 +97,8 @@ export type DemandForecastProductionIntervalRow = {
   dimensionLabel: string
   demandLevelLabel: string
   requiredAgentsLabel: string
+  alignmentStatusLabel: "对齐完整" | "对齐阻塞"
+  blockerLabel: string
 }
 
 export type DemandForecastProductionChangeRow = {
@@ -313,6 +315,8 @@ export function summarizeDemandForecastProductionDetail(
 function toForecastIntervalDisplayRow(
   row: DemandForecastProductionApiIntervalRow
 ): DemandForecastProductionIntervalRow {
+  const blockerLabel = resolveForecastIntervalBlocker(row)
+
   return {
     id: row.forecast_interval_id,
     dateLabel: row.forecast_date,
@@ -324,7 +328,38 @@ function toForecastIntervalDisplayRow(
     ].join(" / "),
     demandLevelLabel: row.demand_level || "未填写等级",
     requiredAgentsLabel: row.required_agents.toLocaleString("zh-CN"),
+    alignmentStatusLabel: resolveForecastIntervalAlignmentStatus(blockerLabel),
+    blockerLabel,
   }
+}
+
+function resolveForecastIntervalBlocker(row: DemandForecastProductionApiIntervalRow) {
+  const missingDimensions = [
+    row.workplace_id.trim() ? null : "职场",
+    row.project_id.trim() ? null : "项目",
+    row.skill_id.trim() ? null : "技能",
+    row.demand_level.trim() ? null : "需求等级",
+    row.interval_start.trim() && row.interval_end.trim() ? null : "时段",
+  ].filter((item): item is string => Boolean(item))
+  const valueBlockers = row.required_agents > 0 ? [] : ["需求值需大于 0"]
+
+  if (missingDimensions.length === 0 && valueBlockers.length === 0) {
+    return "无阻塞；预测区间维度、等级、时段和需求值完整"
+  }
+
+  const parts = []
+
+  if (missingDimensions.length > 0) {
+    parts.push(`缺少${missingDimensions.join("、")}`)
+  }
+
+  parts.push(...valueBlockers)
+
+  return `阻塞：${parts.join("；")}`
+}
+
+function resolveForecastIntervalAlignmentStatus(blockerLabel: string) {
+  return blockerLabel.startsWith("阻塞") ? "对齐阻塞" : "对齐完整"
 }
 
 function toForecastChangeDisplayRow(

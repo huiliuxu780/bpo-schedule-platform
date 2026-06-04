@@ -197,6 +197,8 @@ test("demand forecast production detail uses api intervals and change records", 
       dimensionLabel: "职场 SH-01 / 项目 BOSCH-CS / 技能 L1-CN",
       demandLevelLabel: "L1",
       requiredAgentsLabel: "12",
+      alignmentStatusLabel: "对齐完整",
+      blockerLabel: "无阻塞；预测区间维度、等级、时段和需求值完整",
     },
     {
       id: "FC-INT-002",
@@ -205,6 +207,8 @@ test("demand forecast production detail uses api intervals and change records", 
       dimensionLabel: "职场 SH-01 / 项目 BOSCH-CS / 技能 L1-CN",
       demandLevelLabel: "L1",
       requiredAgentsLabel: "14",
+      alignmentStatusLabel: "对齐完整",
+      blockerLabel: "无阻塞；预测区间维度、等级、时段和需求值完整",
     },
   ]);
   assert.deepEqual(detail.changeRows, [
@@ -212,6 +216,38 @@ test("demand forecast production detail uses api intervals and change records", 
       id: "1",
       comparedFromVersionLabel: "FC-PREV-001",
       changeReasonLabel: "客户更新峰值需求",
+    },
+  ]);
+});
+
+test("demand forecast production detail explains blocked interval rows", () => {
+  const detail = summarizeDemandForecastProductionDetail(
+    [baseBatch],
+    "BATCH-FC-001",
+    {
+      ...apiDetail,
+      intervals: [
+        {
+          ...apiDetail.intervals[0],
+          forecast_interval_id: "FC-INT-BLOCKED",
+          workplace_id: "",
+          demand_level: "",
+          required_agents: 0,
+        },
+      ],
+    }
+  );
+
+  assert.deepEqual(detail.intervalRows, [
+    {
+      id: "FC-INT-BLOCKED",
+      dateLabel: "2026-06-08",
+      timeLabel: "09:00-09:30",
+      dimensionLabel: "未填写职场 / 项目 BOSCH-CS / 技能 L1-CN",
+      demandLevelLabel: "未填写等级",
+      requiredAgentsLabel: "0",
+      alignmentStatusLabel: "对齐阻塞",
+      blockerLabel: "阻塞：缺少职场、需求等级；需求值需大于 0",
     },
   ]);
 });

@@ -331,6 +331,8 @@ export function DemandForecastProductionDetail({
                 <TableHead>维度</TableHead>
                 <TableHead>等级</TableHead>
                 <TableHead className="text-right">需求人次</TableHead>
+                <TableHead>对齐状态</TableHead>
+                <TableHead>阻塞说明</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -348,11 +350,25 @@ export function DemandForecastProductionDetail({
                     <TableCell className="align-top text-right tabular-nums">
                       {row.requiredAgentsLabel}
                     </TableCell>
+                    <TableCell className="align-top">
+                      <Badge
+                        variant={
+                          row.alignmentStatusLabel === "对齐完整"
+                            ? "outline"
+                            : "destructive"
+                        }
+                      >
+                        {row.alignmentStatusLabel}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-sm align-top text-sm text-muted-foreground">
+                      {row.blockerLabel}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-20 text-center text-sm text-muted-foreground">
+                  <TableCell colSpan={7} className="h-20 text-center text-sm text-muted-foreground">
                     暂未读取到真实 0.5h 预测区间
                   </TableCell>
                 </TableRow>
