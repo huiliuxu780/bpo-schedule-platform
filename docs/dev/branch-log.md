@@ -3278,3 +3278,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM135 Agent Management UI Detail Polish
+
+- branch_name: `codex/im135-master-data-ui-detail-polish`
+- base_main_commit: `a4c4221`
+- stacked_on: `a4c4221 fix: split agent management actions`
+- remote_status: `main and IM134 were pushed before IM135; IM135 is local only until final check/commit/push.`
+- scope: polish `/master-data/agents` filter dropdowns and row-level action sizing after PM UI feedback.
+- allowed_files_check: `components/master-data-maintenance-workbench.tsx`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, app route, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected master-data workbench UI detail correction and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test passed with 15 tests; `npm run typecheck` passed; `npm run lint` passed; shadcn grep found no hardcoded neutral/gray/slate/zinc/stone colors, `space-x/y`, old `variant="link" className="h-auto p-0"` row buttons, or `有效期调整待拆分` text. In-app browser smoke on `http://127.0.0.1:3000/master-data/agents` measured 5 dropdown triggers at 32px height and 14px text, dropdown content width equal to trigger width, row edit/freeze actions at 24px height and 12px text, and more action at 24px height. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 206 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

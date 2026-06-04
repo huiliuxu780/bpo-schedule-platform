@@ -2796,3 +2796,16 @@ version: "1.0"
 status: "done"
 notes: "IM134 已完成：新增单员工技能集合 replace API、server action，并将 /master-data/agents 纠正为客服人员管理列表；新建、编辑、技能维护走子页面，冻结走弹窗。"
 ```
+
+### R835 - 人员管理列表 UI 细节纠偏
+
+```yaml
+id: R835
+module: "主数据维护"
+description: "人员管理列表已经拆成列表、子页面和冻结弹窗，但筛选下拉框、表格行内操作按钮和按钮文字密度仍不协调。需要集中检查并修正这些 UI 细节，避免 B 端列表页显得粗糙或继续暴露内部规划文字。"
+source: "PM requested dropdown and row button/detail-size inspection on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM135 已完成：人员筛选下拉统一为 32px 高并让弹层宽度对齐触发器；表格行内编辑/冻结/更多操作统一为小尺寸操作，并移除内部“待拆分”文案。"
+```

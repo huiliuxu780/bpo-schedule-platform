@@ -9417,3 +9417,41 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已接通单个人员多技能集合 replace 维护闭环，并将 /master-data/agents 纠正为客服人员管理列表；新建、编辑、技能维护走子页面，冻结走弹窗。"
+  - id: IM135
+    title: "人员管理列表 UI 细节纠偏"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM134"]
+    allowed_files:
+      - "components/master-data-maintenance-workbench.tsx"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "app/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "人员筛选区下拉框与输入框保持一致高度、字号和宽度对齐。"
+      - "下拉弹层宽度与触发器对齐，不出现窄弹层或错位。"
+      - "表格行内编辑、冻结和更多操作使用一致的小尺寸操作样式。"
+      - "列表页不再暴露内部未确认能力或“待拆分”文案。"
+      - "不新增后端、数据库、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到批量维护、审批、导出、权限、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已统一 /master-data/agents 筛选下拉和行内操作尺寸，移除内部待拆分文案，并完成浏览器实际样式检查。"

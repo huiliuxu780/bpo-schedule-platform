@@ -384,10 +384,14 @@ function AgentManagementFilterField({
         />
       ) : (
         <Select name={field.key} defaultValue={value || "all"}>
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="h-8 w-full min-w-0 px-2.5 text-sm">
             <SelectValue placeholder={field.placeholder} />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent
+            align="start"
+            position="popper"
+            className="min-w-[var(--radix-select-trigger-width)]"
+          >
             <SelectGroup>
               {(field.options ?? []).map((option) => (
                 <SelectItem key={option.value} value={option.value}>
@@ -472,22 +476,14 @@ function AgentManagementTablePanel({
                 </TableCell>
                 <TableCell>{row.display.freezeReasonLabel}</TableCell>
                 <TableCell>{row.employee_id}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-3">
-                    <Button asChild size="sm" variant="link" className="h-auto p-0">
-                      <Link
-                        href={row.display.editHref}
-                      >
-                        编辑
-                      </Link>
-                    </Button>
-                    <Button asChild size="sm" variant="link" className="h-auto p-0">
-                      <Link
-                        href={row.display.freezeHref}
-                      >
-                        冻结
-                      </Link>
-                    </Button>
+                <TableCell className="whitespace-nowrap text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <AgentRowActionLink href={row.display.editHref}>
+                      编辑
+                    </AgentRowActionLink>
+                    <AgentRowActionLink href={row.display.freezeHref}>
+                      冻结
+                    </AgentRowActionLink>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button size="icon-xs" variant="ghost" aria-label="更多操作">
@@ -503,7 +499,6 @@ function AgentManagementTablePanel({
                               技能维护
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem disabled>有效期调整待拆分</DropdownMenuItem>
                         </DropdownMenuGroup>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -515,6 +510,25 @@ function AgentManagementTablePanel({
         </Table>
       )}
     </section>
+  )
+}
+
+function AgentRowActionLink({
+  href,
+  children,
+}: {
+  href: string
+  children: React.ReactNode
+}) {
+  return (
+    <Button
+      asChild
+      size="xs"
+      variant="ghost"
+      className="px-1.5 text-primary hover:text-primary"
+    >
+      <Link href={href}>{children}</Link>
+    </Button>
   )
 }
 
