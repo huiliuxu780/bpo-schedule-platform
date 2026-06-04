@@ -2731,3 +2731,16 @@ version: "1.0"
 status: "done"
 notes: "IM129 已完成：字段映射模板管理面板改为总览、模板适配、模板列表三个 tab，默认展示总览，不新增写入或业务能力。"
 ```
+
+### R830 - 产品结构纠偏：经营总览和导航收敛
+
+```yaml
+id: R830
+module: "产品结构"
+description: "经营总览中出现了数据接入状态，侧边栏也暴露了多个没有真实闭环或当前明确暂不做的占位入口，导致业务首页和导航混入工程接入状态、权限、结算、智能排班等臆想能力。需要先收敛可见结构，避免继续误导后续开发。"
+source: "PM challenged master-data understanding, imaginary navigation entries, and dashboard data ingestion status on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM130 已完成：经营总览移除数据接入状态面板，侧边栏移除纯占位和暂不做能力入口，并增加回归测试防止重新暴露。"
+```

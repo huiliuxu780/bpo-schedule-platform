@@ -5,7 +5,6 @@ import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { BpoHeatmap } from "@/components/bpo-heatmap"
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataSyncStatus } from "@/components/data-sync-status"
 import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/components/section-cards"
 import { SiteHeader } from "@/components/site-header"
@@ -48,9 +47,8 @@ export default function DashboardPage() {
             <ChartAreaInteractive />
             <BpoHeatmap />
           </section>
-          <section className="grid gap-4 px-4 lg:grid-cols-[1fr_360px] lg:px-6">
+          <section className="grid gap-4 px-4 lg:px-6">
             <DataTable />
-            <DataSyncStatus />
           </section>
         </main>
       </div>

@@ -668,3 +668,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After IM128, the field-mapping template detail page was split, but the template management panel still stacked template inventory metrics, current-file-type fit guidance, and all template cards in one long card. `US749/IM129` is complete. The management panel now uses tabs for `总览`, `模板适配`, and `模板列表`; the default view keeps only inventory and field coverage metrics visible, while fit guidance and template cards move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new template APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM129.
+
+## 2026-06-04 IM130 Product Structure Correction
+
+After PM review, the visible product structure had drifted: the business overview still showed a data-ingestion status panel, and the sidebar exposed placeholder dashboard links plus deferred capabilities such as permissions, settlement, interface integration, and automatic scheduling. `US750/IM130` is complete. `/dashboard` no longer mounts the data-ingestion status panel, and `AppSidebar` now removes those placeholder or deferred entries while keeping real pages reachable.
+
+The task remained frontend-scaffold only. It did not add personnel CRUD, backend routes, schemas, migrations, dependencies, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM130.

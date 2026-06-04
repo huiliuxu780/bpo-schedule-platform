@@ -3188,3 +3188,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM130 Product Structure Correction
+
+- branch_name: `codex/im130-product-structure-correction`
+- base_main_commit: `6ccd1b4`
+- stacked_on: `ecd46bb refactor: split template management workspace`
+- remote_status: `IM129 branch is pushed; IM130 implementation is local only until final check/commit/push.`
+- scope: remove the data-ingestion status panel from the business overview and remove placeholder or deferred-capability entries from `AppSidebar`.
+- allowed_files_check: `app/dashboard/page.tsx`, `components/app-sidebar.tsx`, `scripts/tests/product-structure.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no personnel CRUD, backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected dashboard/sidebar frontend, product-structure test, and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target product-structure test first failed because `/dashboard` still mounted `DataSyncStatus` and the sidebar still exposed placeholder entries such as `今日履约`; after implementation `node --test scripts/tests/product-structure.test.mjs` passed with 2 tests. `npm run typecheck` passed. `npm run lint` passed. In-app browser smoke on `http://127.0.0.1:3000/dashboard` verified `经营总览`, business metric content, and anomaly table content remain visible while `数据接入状态` and the removed placeholder/deferred entries are not visible. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 199 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
