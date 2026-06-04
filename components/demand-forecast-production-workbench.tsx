@@ -30,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type DemandForecastProductionWorkbenchProps = {
   batches: ImportBatchListRow[]
@@ -271,217 +272,267 @@ export function DemandForecastProductionDetail({
         </Card>
       ) : null}
 
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="来源版本" value={detail.versionLabel} detail={detail.title} tone="default" />
-        <MetricCard label="应用状态" value={detail.applicationLabel} detail={detail.appliedRecordCountLabel} tone={detail.applicationLabel === "已应用" ? "ready" : "blocked"} />
-        <MetricCard label="对齐状态" value={detail.alignmentLabel} detail={detail.alignmentResultLabel} tone={detail.tone === "ready" ? "ready" : "blocked"} />
-        <MetricCard label="变更追踪" value="暂不写入" detail={detail.changeBoundaryLabel} tone="default" />
-      </section>
+      <Tabs defaultValue="overview" className="grid gap-4">
+        <TabsList className="h-auto w-full justify-start overflow-x-auto md:w-fit">
+          {detail.workspaceTabs.map((tab) => (
+            <TabsTrigger key={tab.key} value={tab.key}>
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <CalendarClock className="size-4 text-muted-foreground" />
-            版本来源
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 text-sm text-muted-foreground md:grid-cols-2">
-          <DetailItem label="来源批次" value={detail.batchId} />
-          <DetailItem label="来源文件" value={detail.fileName} />
-          <DetailItem label="业务日范围" value={detail.businessDateLabel} />
-          <DetailItem label="上传时间" value={detail.uploadedAtLabel} />
-          <DetailItem label="成功导入" value={detail.sourceRowLabel} />
-          <DetailItem label="阻塞原因" value={detail.blockerSummary} />
-          <div className="md:col-span-2">
-            <Button asChild size="sm" variant="outline">
-              <Link href={detail.sourceBatchHref}>查看来源批次</Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="overview" className="mt-0 grid gap-4">
+          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <MetricCard
+              label="来源版本"
+              value={detail.versionLabel}
+              detail={detail.title}
+              tone="default"
+            />
+            <MetricCard
+              label="应用状态"
+              value={detail.applicationLabel}
+              detail={detail.appliedRecordCountLabel}
+              tone={detail.applicationLabel === "已应用" ? "ready" : "blocked"}
+            />
+            <MetricCard
+              label="对齐状态"
+              value={detail.alignmentLabel}
+              detail={detail.alignmentResultLabel}
+              tone={detail.tone === "ready" ? "ready" : "blocked"}
+            />
+            <MetricCard
+              label="变更追踪"
+              value="暂不写入"
+              detail={detail.changeBoundaryLabel}
+              tone="default"
+            />
+          </section>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Table2 className="size-4 text-muted-foreground" />
-            技能组/等级/时段对齐结果
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 text-sm text-muted-foreground">
-          <DetailItem label="技能组与等级" value={detail.skillAlignmentLabel} />
-          <DetailItem label="时段粒度" value={detail.timeBucketLabel} />
-          <DetailItem label="预测明细边界" value={detail.forecastScopeLabel} />
-          <DetailItem label="对齐结果" value={detail.alignmentResultLabel} />
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <CalendarClock className="size-4 text-muted-foreground" />
+                {detail.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-3">
+              <DetailItem label="业务日范围" value={detail.businessDateLabel} />
+              <DetailItem label="成功导入" value={detail.sourceRowLabel} />
+              <DetailItem label="阻塞原因" value={detail.blockerSummary} />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      <Card className={detail.comparisonEntry.tone === "blocked" ? "border-destructive/40" : undefined}>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldCheck className="size-4 text-muted-foreground" />
-            {detail.comparisonEntry.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 text-sm text-muted-foreground">
-          <p>{detail.comparisonEntry.detail}</p>
-          <DetailItem label="入口状态" value={detail.comparisonEntry.blockerLabel} />
-          <div>
-            <Button asChild size="sm" variant="outline">
-              <Link href={detail.comparisonEntry.href}>
-                {detail.comparisonEntry.actionLabel}
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="source" className="mt-0 grid gap-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <CalendarClock className="size-4 text-muted-foreground" />
+                版本来源
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 text-sm text-muted-foreground md:grid-cols-2">
+              <DetailItem label="来源批次" value={detail.batchId} />
+              <DetailItem label="来源文件" value={detail.fileName} />
+              <DetailItem label="业务日范围" value={detail.businessDateLabel} />
+              <DetailItem label="上传时间" value={detail.uploadedAtLabel} />
+              <DetailItem label="成功导入" value={detail.sourceRowLabel} />
+              <DetailItem label="阻塞原因" value={detail.blockerSummary} />
+              <div className="md:col-span-2">
+                <Button asChild size="sm" variant="outline">
+                  <Link href={detail.sourceBatchHref}>查看来源批次</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Table2 className="size-4 text-muted-foreground" />
-            0.5h 预测区间
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>业务日</TableHead>
-                <TableHead>时段</TableHead>
-                <TableHead>维度</TableHead>
-                <TableHead>等级</TableHead>
-                <TableHead className="text-right">需求人次</TableHead>
-                <TableHead>对齐状态</TableHead>
-                <TableHead>阻塞说明</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {detail.intervalRows.length > 0 ? (
-                detail.intervalRows.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell className="align-top text-sm">{row.dateLabel}</TableCell>
-                    <TableCell className="align-top font-mono text-xs">{row.timeLabel}</TableCell>
-                    <TableCell className="align-top text-sm text-muted-foreground">
-                      {row.dimensionLabel}
-                    </TableCell>
-                    <TableCell className="align-top">
-                      <Badge variant="outline">{row.demandLevelLabel}</Badge>
-                    </TableCell>
-                    <TableCell className="align-top text-right tabular-nums">
-                      {row.requiredAgentsLabel}
-                    </TableCell>
-                    <TableCell className="align-top">
-                      <Badge
-                        variant={
-                          row.alignmentStatusLabel === "对齐完整"
-                            ? "outline"
-                            : "destructive"
-                        }
-                      >
-                        {row.alignmentStatusLabel}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="max-w-sm align-top text-sm text-muted-foreground">
-                      {row.blockerLabel}
-                    </TableCell>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Table2 className="size-4 text-muted-foreground" />
+                技能组/等级/时段对齐结果
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 text-sm text-muted-foreground">
+              <DetailItem label="技能组与等级" value={detail.skillAlignmentLabel} />
+              <DetailItem label="时段粒度" value={detail.timeBucketLabel} />
+              <DetailItem label="预测明细边界" value={detail.forecastScopeLabel} />
+              <DetailItem label="对齐结果" value={detail.alignmentResultLabel} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="rows" className="mt-0 grid gap-4">
+          <Card className="overflow-hidden">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Table2 className="size-4 text-muted-foreground" />
+                0.5h 预测区间
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>业务日</TableHead>
+                    <TableHead>时段</TableHead>
+                    <TableHead>维度</TableHead>
+                    <TableHead>等级</TableHead>
+                    <TableHead className="text-right">需求人次</TableHead>
+                    <TableHead>对齐状态</TableHead>
+                    <TableHead>阻塞说明</TableHead>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={7} className="h-20 text-center text-sm text-muted-foreground">
-                    暂未读取到真实 0.5h 预测区间
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {detail.intervalRows.length > 0 ? (
+                    detail.intervalRows.map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell className="align-top text-sm">{row.dateLabel}</TableCell>
+                        <TableCell className="align-top font-mono text-xs">{row.timeLabel}</TableCell>
+                        <TableCell className="align-top text-sm text-muted-foreground">
+                          {row.dimensionLabel}
+                        </TableCell>
+                        <TableCell className="align-top">
+                          <Badge variant="outline">{row.demandLevelLabel}</Badge>
+                        </TableCell>
+                        <TableCell className="align-top text-right tabular-nums">
+                          {row.requiredAgentsLabel}
+                        </TableCell>
+                        <TableCell className="align-top">
+                          <Badge
+                            variant={
+                              row.alignmentStatusLabel === "对齐完整"
+                                ? "outline"
+                                : "destructive"
+                            }
+                          >
+                            {row.alignmentStatusLabel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="max-w-sm align-top text-sm text-muted-foreground">
+                          {row.blockerLabel}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={7} className="h-20 text-center text-sm text-muted-foreground">
+                        暂未读取到真实 0.5h 预测区间
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
 
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <FileClock className="size-4 text-muted-foreground" />
-            版本变更记录
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>上一版本</TableHead>
-                <TableHead>变更原因</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {detail.changeRows.length > 0 ? (
-                detail.changeRows.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell className="align-top font-mono text-xs">
-                      {row.comparedFromVersionLabel}
-                    </TableCell>
-                    <TableCell className="align-top text-sm text-muted-foreground">
-                      {row.changeReasonLabel}
-                    </TableCell>
+          <Card className="overflow-hidden">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <FileClock className="size-4 text-muted-foreground" />
+                版本变更记录
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>上一版本</TableHead>
+                    <TableHead>变更原因</TableHead>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={2} className="h-20 text-center text-sm text-muted-foreground">
-                    暂未读取到版本变更记录
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {detail.changeRows.length > 0 ? (
+                    detail.changeRows.map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell className="align-top font-mono text-xs">
+                          {row.comparedFromVersionLabel}
+                        </TableCell>
+                        <TableCell className="align-top text-sm text-muted-foreground">
+                          {row.changeReasonLabel}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={2} className="h-20 text-center text-sm text-muted-foreground">
+                        暂未读取到版本变更记录
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldCheck className="size-4 text-muted-foreground" />
-            {detail.changeTracking.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
-            <DetailItem label="来源版本前置校验" value={detail.changeTracking.sourceVersionLabel} />
-            <DetailItem label="技能组/等级/时段校验" value={detail.changeTracking.alignmentCheckLabel} />
-            <DetailItem label="下游影响校验" value={detail.changeTracking.downstreamImpactLabel} />
-            <DetailItem label="失败边界" value={detail.changeTracking.failureBoundaryLabel} />
-          </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            {detail.changeTracking.actionShells.map((action) => (
-              <Card key={action.label} className="border-dashed">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">{action.label}</CardTitle>
-                </CardHeader>
-                <CardContent className="grid gap-3">
-                  <p className="text-sm text-muted-foreground">{action.detail}</p>
-                  <Button size="sm" variant="outline" disabled={action.isDisabled}>
-                    {action.disabledLabel}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="comparison" className="mt-0">
+          <Card className={detail.comparisonEntry.tone === "blocked" ? "border-destructive/40" : undefined}>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <ShieldCheck className="size-4 text-muted-foreground" />
+                {detail.comparisonEntry.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 text-sm text-muted-foreground">
+              <p>{detail.comparisonEntry.detail}</p>
+              <DetailItem label="入口状态" value={detail.comparisonEntry.blockerLabel} />
+              <div>
+                <Button asChild size="sm" variant="outline">
+                  <Link href={detail.comparisonEntry.href}>
+                    {detail.comparisonEntry.actionLabel}
+                    <ArrowRight data-icon="inline-end" />
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      <section className="grid gap-3 md:grid-cols-2">
-        <BoundaryItem
-          icon={<Lock className="size-4 text-muted-foreground" />}
-          title="不伪造预测明细"
-          detail="当前列表 API 只提供批次级摘要，详情页不构造技能组、等级或 0.5h 明细行。"
-        />
-        <BoundaryItem
-          icon={<FileClock className="size-4 text-muted-foreground" />}
-          title={detail.changeBoundaryLabel}
-          detail="IM104 只展示变更追踪边界安全壳，不直接接真实预测变更写入。"
-        />
-      </section>
+        <TabsContent value="boundary" className="mt-0 grid gap-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <ShieldCheck className="size-4 text-muted-foreground" />
+                {detail.changeTracking.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
+                <DetailItem label="来源版本前置校验" value={detail.changeTracking.sourceVersionLabel} />
+                <DetailItem label="技能组/等级/时段校验" value={detail.changeTracking.alignmentCheckLabel} />
+                <DetailItem label="下游影响校验" value={detail.changeTracking.downstreamImpactLabel} />
+                <DetailItem label="失败边界" value={detail.changeTracking.failureBoundaryLabel} />
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                {detail.changeTracking.actionShells.map((action) => (
+                  <div key={action.label} className="grid gap-3 rounded-md border border-dashed p-3">
+                    <p className="text-sm font-medium text-foreground">{action.label}</p>
+                    <p className="text-sm text-muted-foreground">{action.detail}</p>
+                    <Button size="sm" variant="outline" disabled={action.isDisabled}>
+                      {action.disabledLabel}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <section className="grid gap-3 md:grid-cols-2">
+            <BoundaryItem
+              icon={<Lock className="size-4 text-muted-foreground" />}
+              title="不伪造预测明细"
+              detail="当前列表 API 只提供批次级摘要，详情页不构造技能组、等级或 0.5h 明细行。"
+            />
+            <BoundaryItem
+              icon={<FileClock className="size-4 text-muted-foreground" />}
+              title={detail.changeBoundaryLabel}
+              detail="IM104 只展示变更追踪边界安全壳，不直接接真实预测变更写入。"
+            />
+          </section>
+        </TabsContent>
+      </Tabs>
     </main>
   )
 }

@@ -2,6 +2,18 @@ import type { ImportBatchListRow } from "@/components/import-center-model"
 
 export type DemandForecastProductionTone = "ready" | "blocked" | "empty"
 
+export type DemandForecastProductionWorkspaceTabKey =
+  | "overview"
+  | "source"
+  | "rows"
+  | "comparison"
+  | "boundary"
+
+export type DemandForecastProductionWorkspaceTab = {
+  key: DemandForecastProductionWorkspaceTabKey
+  label: string
+}
+
 export type DemandForecastProductionRow = {
   batchId: string
   fileName: string
@@ -47,6 +59,7 @@ export type DemandForecastProductionDetailSummary = {
   changeBoundaryLabel: string
   changeTracking: DemandForecastChangeTrackingSummary
   comparisonEntry: DemandForecastProductionComparisonEntry
+  workspaceTabs: DemandForecastProductionWorkspaceTab[]
 }
 
 export type DemandForecastProductionApiDetail = {
@@ -143,6 +156,15 @@ export type DemandForecastProductionSummary = {
   blockedVersions: number
   rows: DemandForecastProductionRow[]
 }
+
+const DEMAND_FORECAST_PRODUCTION_WORKSPACE_TABS: DemandForecastProductionWorkspaceTab[] =
+  [
+    { key: "overview", label: "总览" },
+    { key: "source", label: "来源与对齐" },
+    { key: "rows", label: "预测明细" },
+    { key: "comparison", label: "本地比对" },
+    { key: "boundary", label: "变更边界" },
+  ]
 
 export function summarizeDemandForecastProductionWorkbench(
   batches: ImportBatchListRow[]
@@ -247,6 +269,7 @@ export function summarizeDemandForecastProductionDetail(
         businessDate: null,
         blockerSummary: "请返回预测生产工作台选择来源批次",
       }),
+      workspaceTabs: [...DEMAND_FORECAST_PRODUCTION_WORKSPACE_TABS],
     }
   }
 
@@ -331,6 +354,7 @@ export function summarizeDemandForecastProductionDetail(
       businessDate: apiDetail?.version.business_date_from ?? batch.business_date_from,
       blockerSummary: row.blockerSummary,
     }),
+    workspaceTabs: [...DEMAND_FORECAST_PRODUCTION_WORKSPACE_TABS],
   }
 }
 

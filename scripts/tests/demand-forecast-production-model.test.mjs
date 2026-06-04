@@ -160,6 +160,13 @@ test("demand forecast production detail resolves a forecast version by source ba
 
   assert.equal(detail.tone, "ready");
   assert.equal(detail.title, "预测版本详情已定位");
+  assert.deepEqual(detail.workspaceTabs, [
+    { key: "overview", label: "总览" },
+    { key: "source", label: "来源与对齐" },
+    { key: "rows", label: "预测明细" },
+    { key: "comparison", label: "本地比对" },
+    { key: "boundary", label: "变更边界" },
+  ]);
   assert.equal(detail.batchId, "BATCH-FC-001");
   assert.equal(detail.versionLabel, "BATCH-FC-001::v1");
   assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-FC-001");
