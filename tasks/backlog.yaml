@@ -8275,7 +8275,7 @@ tasks:
   - id: IM107
     title: "状态字典与异常解释安全壳"
     priority: P1
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM106"]
     allowed_files:
@@ -8312,3 +8312,4 @@ tasks:
       - "范围扩展到审批、导出、权限、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已在 `/actual-logs/production/[batchId]` 处理解释页新增状态字典与异常解释安全壳；模型输出状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界，页面展示禁用的字典变更、异常规则提交和实际工时重算动作，不提交生产规则变更。"

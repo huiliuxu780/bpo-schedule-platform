@@ -49,6 +49,31 @@ export type ActualLogProcessingDetailRow = {
   tone: "ready" | "blocked"
 }
 
+export type ActualLogExceptionBoundaryItem = {
+  title: string
+  detail: string
+  statusLabel: string
+  tone: "ready" | "blocked" | "empty"
+}
+
+export type ActualLogExceptionShellAction = {
+  title: string
+  detail: string
+  disabledLabel: string
+}
+
+export type ActualLogExceptionShell = {
+  title: string
+  detail: string
+  statusDictionaryLabel: string
+  unknownStatusLabel: string
+  timezoneIssueLabel: string
+  crossDayExceptionLabel: string
+  frozenEmployeeBoundaryLabel: string
+  items: ActualLogExceptionBoundaryItem[]
+  actions: ActualLogExceptionShellAction[]
+}
+
 export type ActualLogProcessingDetailSummary = {
   tone: Exclude<ActualLogProductionTone, "empty">
   title: string
@@ -76,6 +101,8 @@ export type ActualLogProcessingDetailSummary = {
   statusIntervalCount: number
   crossDayIntervalCount: number
   nonShanghaiTimezoneCount: number
+  unknownStatusCount: number
+  exceptionShell: ActualLogExceptionShell
   rows: ActualLogProcessingDetailRow[]
 }
 
@@ -167,6 +194,9 @@ export function summarizeActualLogProcessingDetail(
   const nonShanghaiTimezoneCount = parsedRows.filter((item) =>
     item.timezoneLabel.startsWith("非 Asia/Shanghai")
   ).length
+  const unknownStatusCount = detail
+    ? countUnknownStatusIntervals(detail.rows)
+    : 0
   const hasDetailRows = parsedRows.length > 0
   const isReady = row.tone === "ready" && hasDetailRows
 
@@ -209,6 +239,14 @@ export function summarizeActualLogProcessingDetail(
     statusIntervalCount,
     crossDayIntervalCount,
     nonShanghaiTimezoneCount,
+    unknownStatusCount,
+    exceptionShell: buildActualLogExceptionShell({
+      hasDetailRows,
+      statusDictionaryCount,
+      unknownStatusCount,
+      nonShanghaiTimezoneCount,
+      crossDayIntervalCount,
+    }),
     rows: parsedRows,
   }
 }
@@ -243,7 +281,137 @@ function buildMissingActualLogProcessingDetail(
     statusIntervalCount: 0,
     crossDayIntervalCount: 0,
     nonShanghaiTimezoneCount: 0,
+    unknownStatusCount: 0,
+    exceptionShell: buildActualLogExceptionShell({
+      hasDetailRows: false,
+      statusDictionaryCount: 0,
+      unknownStatusCount: 0,
+      nonShanghaiTimezoneCount: 0,
+      crossDayIntervalCount: 0,
+    }),
     rows: [],
+  }
+}
+
+function countUnknownStatusIntervals(rows: ImportBatchRowResult[]): number {
+  const successfulFields = rows
+    .filter((row) => row.row_status === "success")
+    .map(readStandardFields)
+    .filter((fields): fields is Record<string, unknown> => Boolean(fields))
+  const dictionaryCodes = new Set(
+    successfulFields
+      .filter((fields) => readText(fields, "record_type") === "status_dictionary")
+      .map((fields) => readText(fields, "external_status_code"))
+      .filter((code): code is string => Boolean(code))
+  )
+
+  if (dictionaryCodes.size === 0) {
+    return 0
+  }
+
+  return successfulFields
+    .filter((fields) => readText(fields, "record_type") !== "status_dictionary")
+    .filter((fields) => {
+      const code = readText(fields, "external_status_code")
+      return code ? !dictionaryCodes.has(code) : false
+    }).length
+}
+
+function buildActualLogExceptionShell({
+  hasDetailRows,
+  statusDictionaryCount,
+  unknownStatusCount,
+  nonShanghaiTimezoneCount,
+  crossDayIntervalCount,
+}: {
+  hasDetailRows: boolean
+  statusDictionaryCount: number
+  unknownStatusCount: number
+  nonShanghaiTimezoneCount: number
+  crossDayIntervalCount: number
+}): ActualLogExceptionShell {
+  const statusDictionaryLabel =
+    statusDictionaryCount > 0
+      ? `已读取状态字典 ${statusDictionaryCount.toLocaleString("zh-CN")} 行`
+      : "未读取状态字典明细"
+  const unknownStatusLabel =
+    unknownStatusCount > 0
+      ? `发现 ${unknownStatusCount.toLocaleString("zh-CN")} 条状态区间未命中字典`
+      : hasDetailRows
+        ? "未发现未命中字典的状态区间"
+        : "缺少明细，不能判断未知状态"
+  const timezoneIssueLabel =
+    nonShanghaiTimezoneCount > 0
+      ? `发现 ${nonShanghaiTimezoneCount.toLocaleString("zh-CN")} 行非 Asia/Shanghai 时区`
+      : hasDetailRows
+        ? "未发现非 Asia/Shanghai 时区"
+        : "缺少明细，不能判断时区异常"
+  const crossDayExceptionLabel =
+    crossDayIntervalCount > 0
+      ? `发现 ${crossDayIntervalCount.toLocaleString("zh-CN")} 条跨天状态区间`
+      : hasDetailRows
+        ? "未发现跨天状态区间"
+        : "缺少明细，不能判断跨天异常"
+  const frozenEmployeeBoundaryLabel =
+    "员工冻结状态需通过主数据引用校验，本页只展示边界，不提交规则变更"
+
+  return {
+    title: "状态字典与异常解释安全壳",
+    detail: "当前只解释状态字典、未知状态、时区、跨天和冻结员工引用边界；所有动作均为禁用安全壳，不改变生产状态规则。",
+    statusDictionaryLabel,
+    unknownStatusLabel,
+    timezoneIssueLabel,
+    crossDayExceptionLabel,
+    frozenEmployeeBoundaryLabel,
+    items: [
+      {
+        title: "状态字典",
+        detail: "只读展示已导入字典行；状态口径变更需要单独确认写入任务。",
+        statusLabel: statusDictionaryLabel,
+        tone: statusDictionaryCount > 0 ? "ready" : "empty",
+      },
+      {
+        title: "未知状态",
+        detail: "仅当状态区间 code 未命中本批次字典时标记为待解释，不自动创建字典。",
+        statusLabel: unknownStatusLabel,
+        tone: unknownStatusCount > 0 ? "blocked" : hasDetailRows ? "ready" : "empty",
+      },
+      {
+        title: "时区错误",
+        detail: "只解释非 Asia/Shanghai 明细，当前不做时区换算或生产规则修正。",
+        statusLabel: timezoneIssueLabel,
+        tone: nonShanghaiTimezoneCount > 0 ? "blocked" : hasDetailRows ? "ready" : "empty",
+      },
+      {
+        title: "跨天异常",
+        detail: "跨天状态区间按业务日边界解释，不在本页重算实际工时。",
+        statusLabel: crossDayExceptionLabel,
+        tone: crossDayIntervalCount > 0 ? "blocked" : hasDetailRows ? "ready" : "empty",
+      },
+      {
+        title: "冻结员工引用",
+        detail: "员工在职/冻结状态属于主数据引用校验，本页不提交冻结或恢复动作。",
+        statusLabel: frozenEmployeeBoundaryLabel,
+        tone: "empty",
+      },
+    ],
+    actions: [
+      {
+        title: "维护状态字典",
+        detail: "需要后续受控写入任务才可提交字典新增、修改或停用。",
+        disabledLabel: "暂不变更字典",
+      },
+      {
+        title: "提交异常规则",
+        detail: "未知状态、时区错误和跨天异常暂只解释，不固化生产规则。",
+        disabledLabel: "暂不提交规则",
+      },
+      {
+        title: "重算实际工时",
+        detail: "实际工时和排班 vs 实际比对需要独立计算任务触发。",
+        disabledLabel: "暂不重算工时",
+      },
+    ],
   }
 }
 

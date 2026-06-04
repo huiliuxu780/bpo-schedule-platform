@@ -1840,3 +1840,14 @@
 - action: 新增单批次导入应用写入入口。
 - status: `done`
 - notes: 批次处理详情页新增单批次应用区；readiness ready 且未应用时展示 `应用到业务数据` 提交入口，按 file_type 调用现有 apply API；应用成功或失败后回到当前批次详情页展示反馈；阻塞、已应用或准备度未知时只展示原因，不展示写入按钮；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-04
+
+- task_id: `IM107`
+- source_ids:
+  - `R807`
+- story_ids:
+  - `US727`
+- action: 增加状态字典与异常解释安全壳。
+- status: `done`
+- notes: `/actual-logs/production/[batchId]` 在处理解释页新增状态字典与异常解释安全壳，展示状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界；字典变更、异常规则提交和实际工时重算动作均保持禁用；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

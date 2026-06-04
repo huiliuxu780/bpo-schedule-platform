@@ -205,6 +205,108 @@ test("actual log processing detail explains cross-day status interval rows", () 
   assert.equal(detail.rows[1].timezoneLabel, "Asia/Shanghai 已确认");
 });
 
+test("actual log processing detail builds a status dictionary exception shell", () => {
+  const detail = summarizeActualLogProcessingDetail(
+    [baseStatusBatch],
+    "BATCH-STATUS-001",
+    {
+      batch: {
+        batch_id: "BATCH-STATUS-001",
+        file_name: "status-log.csv",
+        file_type: "status_log",
+        uploaded_by: "operator",
+        uploaded_at: "2026-06-04T08:30:00+08:00",
+        business_date_from: "2026-06-04",
+        business_date_to: "2026-06-05",
+        processing_status: "completed",
+        total_rows: 3,
+        success_rows: 3,
+        failed_rows: 0,
+        warning_rows: 0,
+      },
+      versions: [],
+      rows: [
+        {
+          row_id: 1,
+          batch_id: "BATCH-STATUS-001",
+          row_number: 1,
+          row_status: "success",
+          source_key: "READY",
+          error_field: null,
+          error_code: null,
+          error_message: null,
+          raw_data: {
+            standard_fields: {
+              record_type: "status_dictionary",
+              external_status_code: "READY",
+              normalized_status: "ready",
+              category: "available",
+              is_productive: "true",
+            },
+          },
+        },
+        {
+          row_id: 2,
+          batch_id: "BATCH-STATUS-001",
+          row_number: 2,
+          row_status: "success",
+          source_key: "STATUS-UNKNOWN",
+          error_field: null,
+          error_code: null,
+          error_message: null,
+          raw_data: {
+            standard_fields: {
+              record_type: "status_interval",
+              interval_id: "STATUS-UNKNOWN",
+              employee_id: "A-1002",
+              external_status_code: "UNKNOWN_STATUS",
+              start_at: "2026-06-04T22:30:00",
+              end_at: "2026-06-05T00:30:00",
+              timezone: "Asia/Shanghai",
+            },
+          },
+        },
+        {
+          row_id: 3,
+          batch_id: "BATCH-STATUS-001",
+          row_number: 3,
+          row_status: "success",
+          source_key: "STATUS-TZ",
+          error_field: null,
+          error_code: null,
+          error_message: null,
+          raw_data: {
+            standard_fields: {
+              record_type: "status_interval",
+              interval_id: "STATUS-TZ",
+              employee_id: "A-1003",
+              external_status_code: "READY",
+              start_at: "2026-06-04T10:00:00",
+              end_at: "2026-06-04T11:00:00",
+              timezone: "UTC",
+            },
+          },
+        },
+      ],
+      failed_rows: [],
+    }
+  );
+
+  assert.equal(detail.unknownStatusCount, 1);
+  assert.equal(detail.nonShanghaiTimezoneCount, 1);
+  assert.equal(detail.crossDayIntervalCount, 1);
+  assert.equal(detail.exceptionShell.title, "状态字典与异常解释安全壳");
+  assert.equal(detail.exceptionShell.statusDictionaryLabel, "已读取状态字典 1 行");
+  assert.equal(detail.exceptionShell.unknownStatusLabel, "发现 1 条状态区间未命中字典");
+  assert.equal(detail.exceptionShell.timezoneIssueLabel, "发现 1 行非 Asia/Shanghai 时区");
+  assert.equal(detail.exceptionShell.crossDayExceptionLabel, "发现 1 条跨天状态区间");
+  assert.equal(detail.exceptionShell.frozenEmployeeBoundaryLabel, "员工冻结状态需通过主数据引用校验，本页只展示边界，不提交规则变更");
+  assert.deepEqual(
+    detail.exceptionShell.actions.map((action) => action.disabledLabel),
+    ["暂不变更字典", "暂不提交规则", "暂不重算工时"]
+  );
+});
+
 test("actual log processing detail explains login event business day and timezone", () => {
   const detail = summarizeActualLogProcessingDetail(
     [baseLoginBatch],

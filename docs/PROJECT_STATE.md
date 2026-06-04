@@ -528,3 +528,9 @@ The slice intentionally does not update the status dictionary, recalculate actua
 `IM106/US726` added `/actual-logs/production/[batchId]` as the read-only login/status-log processing explanation page reached from the production workbench. The detail page resolves the selected source batch from the current import-batch list and, when persisted row detail is available, explains business-day ownership, Asia/Shanghai timezone checks, cross-day status-interval splitting, status dictionary rows, status interval rows, and login-event rows.
 
 The page does not fabricate login events, status intervals, status dictionary entries, timezone failures, or cross-day splits when the row detail API has no usable rows. No backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work was added. Current state advanced to `US727/IM107` for the status-dictionary and exception-explanation safety shell.
+
+## 2026-06-04 IM107 Actual Log Status Dictionary Exception Shell
+
+`IM107/US727` added a status-dictionary and exception-explanation safety shell to `/actual-logs/production/[batchId]`. The detail page now summarizes status dictionary rows, unknown status intervals, non-Asia/Shanghai timezone rows, cross-day status intervals, and frozen-employee reference boundaries.
+
+All actions are disabled safety shells: dictionary maintenance, exception-rule submission, and actual-work-hour recalculation are visible as future controlled actions only. No backend route, schema/migration, dependency, approval, export, batch operation, permission boundary, automatic scheduling, production formula, settlement rule, or charge-factor work was added. After the IM105-IM107 login/status-log production chain, current queue returned to empty.

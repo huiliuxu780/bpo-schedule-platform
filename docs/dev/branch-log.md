@@ -2777,3 +2777,20 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM107 Actual Log Status Dictionary Exception Shell
+
+- branch_name: `codex/im107-actual-log-exception-shell`
+- base_main_commit: `a4bbd23`
+- remote_status: `main includes merged IM106 actual-log processing detail baseline; IM107 implementation is local only until final merge/push.`
+- scope: add a non-writing status-dictionary and exception-explanation safety shell to `/actual-logs/production/[batchId]`; show status dictionary, unknown status, timezone error, cross-day interval, frozen-employee reference boundaries, and disabled future action buttons.
+- allowed_files_check: `app/actual-logs/production/**`, `components/actual-log-production-workbench.tsx`, `components/actual-log-production-model.ts`, `scripts/tests/actual-log-production-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected actual-log frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test first failed because `unknownStatusCount` and `exceptionShell` were missing, then passed with 8 tests; `npm run lint` passed; `npm run typecheck` passed; shadcn gate passed with 3 documented baseline findings; in-app browser smoke on `http://127.0.0.1:3000/actual-logs/production/BATCH-STATUS-001` matched `状态字典与异常解释安全壳`, disabled `暂不变更字典`/`暂不提交规则`/`暂不重算工时` buttons, `冻结员工引用`, and `逐行处理解释`. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 177 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

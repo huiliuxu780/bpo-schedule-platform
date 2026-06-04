@@ -9,6 +9,7 @@ import {
   Globe2,
   Layers3,
   Lock,
+  ShieldAlert,
   Split,
   Table2,
 } from "lucide-react"
@@ -320,6 +321,58 @@ export function ActualLogProcessingDetail({
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ShieldAlert className="size-4 text-muted-foreground" />
+            {summary.exceptionShell.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 text-sm text-muted-foreground">
+          <p>{summary.exceptionShell.detail}</p>
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            {summary.exceptionShell.items.map((item) => (
+              <div
+                key={item.title}
+                className="flex min-w-0 flex-col gap-2 rounded-md border px-3 py-3"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-medium text-foreground">{item.title}</p>
+                  <Badge
+                    variant={
+                      item.tone === "blocked"
+                        ? "destructive"
+                        : item.tone === "ready"
+                          ? "outline"
+                          : "secondary"
+                    }
+                  >
+                    {formatExceptionToneLabel(item.tone)}
+                  </Badge>
+                </div>
+                <p className="text-xs text-foreground">{item.statusLabel}</p>
+                <p className="text-xs">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {summary.exceptionShell.actions.map((action) => (
+              <div
+                key={action.title}
+                className="flex min-w-0 flex-col gap-2 rounded-md border px-3 py-3"
+              >
+                <p className="font-medium text-foreground">{action.title}</p>
+                <p className="text-xs">{action.detail}</p>
+                <Button size="sm" variant="outline" disabled>
+                  <Lock data-icon="inline-start" />
+                  {action.disabledLabel}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -442,4 +495,16 @@ function formatToneLabel(tone: ActualLogProductionTone) {
   }
 
   return "暂无来源"
+}
+
+function formatExceptionToneLabel(tone: "ready" | "blocked" | "empty") {
+  if (tone === "ready") {
+    return "已解释"
+  }
+
+  if (tone === "blocked") {
+    return "需关注"
+  }
+
+  return "仅边界"
 }

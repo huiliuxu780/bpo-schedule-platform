@@ -706,6 +706,15 @@ requirements:
   US724: {file: "docs/user-stories.md", requirement_ids: ["R804"], task_ids: ["IM104"], archive_refs: []}
   IM104: {file: "tasks/backlog.yaml", story_ids: ["US724"], gate: "frontend-scaffold"}
   R804: {file: "docs/raw-requirements.md", story_ids: ["US724"], task_ids: ["IM104"]}
+  US725: {file: "docs/user-stories.md", requirement_ids: ["R805"], task_ids: ["IM105"], archive_refs: []}
+  IM105: {file: "tasks/backlog.yaml", story_ids: ["US725"], gate: "frontend-scaffold"}
+  R805: {file: "docs/raw-requirements.md", story_ids: ["US725"], task_ids: ["IM105"]}
+  US726: {file: "docs/user-stories.md", requirement_ids: ["R806"], task_ids: ["IM106"], archive_refs: []}
+  IM106: {file: "tasks/backlog.yaml", story_ids: ["US726"], gate: "frontend-scaffold"}
+  R806: {file: "docs/raw-requirements.md", story_ids: ["US726"], task_ids: ["IM106"]}
+  US727: {file: "docs/user-stories.md", requirement_ids: ["R807"], task_ids: ["IM107"], archive_refs: []}
+  IM107: {file: "tasks/backlog.yaml", story_ids: ["US727"], gate: "frontend-scaffold"}
+  R807: {file: "docs/raw-requirements.md", story_ids: ["US727"], task_ids: ["IM107"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

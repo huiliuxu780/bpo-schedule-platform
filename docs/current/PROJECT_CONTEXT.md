@@ -145,4 +145,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US726/IM106` completed the single-batch login/status-log processing explanation detail. `/actual-logs/production/[batchId]` now shows source batch/version context, business-day ownership, Asia/Shanghai timezone checks, cross-day split explanation, status dictionary rows, status interval rows, login-event rows, and explicit no-detail empty states without fabricating events or intervals.
 
-Current state advanced to `US727/IM107` for the status-dictionary and exception-explanation safety shell. Keep avoiding real write APIs, backend/schema/migration, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, and charge-factor work unless a new confirmed task allows it.
+`US727/IM107` completed the status-dictionary and exception-explanation safety shell on the same detail page. The page now explains status dictionary rows, unknown statuses, timezone errors, cross-day intervals, and frozen-employee reference boundaries with disabled action shells. Current queue returned to empty after the login/status-log production chain.

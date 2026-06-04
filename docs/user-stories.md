@@ -4424,5 +4424,6 @@ acceptance:
   - "不做审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
 dependencies:
   - "US726"
-status: "ready"
+status: "done"
+notes: "IM107 已完成：`/actual-logs/production/[batchId]` 展示状态字典与异常解释安全壳，覆盖状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界，动作按钮保持禁用。"
 ```
