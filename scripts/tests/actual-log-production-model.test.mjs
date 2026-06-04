@@ -193,6 +193,13 @@ test("actual log processing detail explains cross-day status interval rows", () 
   );
 
   assert.equal(detail.title, "状态日志处理解释已定位");
+  assert.deepEqual(detail.workspaceTabs, [
+    { key: "overview", label: "总览" },
+    { key: "timeBoundary", label: "时区与业务日" },
+    { key: "exceptions", label: "字典与异常" },
+    { key: "rows", label: "逐行明细" },
+    { key: "boundary", label: "处理边界" },
+  ]);
   assert.equal(detail.statusDictionaryCount, 1);
   assert.equal(detail.statusIntervalCount, 1);
   assert.equal(detail.crossDayIntervalCount, 1);

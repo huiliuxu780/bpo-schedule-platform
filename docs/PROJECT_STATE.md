@@ -626,3 +626,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After IM121 fixed the comparison-run detail page, the review-case detail page still stacked source context, evidence, conclusions, action forms, processing timeline, same-owner navigation, and boundaries in one long page. `US742/IM122` is complete. The review-case detail page now uses a tabbed workspace for `总览`, `来源链路`, `证据结论`, `处理动作`, `Owner 导航`, and `处理边界`; the default view keeps only key metrics and evidence gap context visible, while detailed source, evidence/conclusion records, controlled actions, owner navigation, and boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new review APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM122.
+
+## 2026-06-04 IM123 Actual Log Detail Workspace Tabs
+
+After IM122, the actual-log processing detail page still stacked overview metrics, source context, timezone checks, business-day ownership, cross-day split explanation, status dictionary and exception shells, row-level explanations, and disabled boundary actions in one long page. `US743/IM123` is complete. `/actual-logs/production/[batchId]` now uses a tabbed workspace for `总览`, `时区与业务日`, `字典与异常`, `逐行明细`, and `处理边界`; the default view keeps only metrics and source overview visible, while time boundaries, dictionary/exception explanations, rows, and no-write boundaries move behind explicit entries.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new actual-log APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM123.

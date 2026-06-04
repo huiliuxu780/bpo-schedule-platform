@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current queue is empty after `US742/IM122`. Production-detail `status=applied` links now land on ready business-version rows, login/status log versions stay connected to schedule-vs-actual result links, and comparison-run plus review-case details now use tabbed workspaces instead of long stacked pages.
+Current queue is empty after `US743/IM123`. Production-detail `status=applied` links now land on ready business-version rows, login/status log versions stay connected to schedule-vs-actual result links, and comparison-run, review-case, and actual-log details now use tabbed workspaces instead of long stacked pages.
 
 The master-data maintenance chain now has `/master-data` plus `/master-data/[entityKey]` surfaces with controlled single-object submit paths for agents, reference entities, and binding relationships. Permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors remain out of scope.
 
@@ -157,4 +157,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US734/IM114` completed the read-only demand-forecast production detail API. It returns source batch context, forecast version, 0.5h forecast intervals, and version change records from existing repositories without frontend wiring or production writes.
 
-`US742/IM122` completed review-case detail workspace organization. The detail page now exposes `总览`, `来源链路`, `证据结论`, `处理动作`, `Owner 导航`, and `处理边界` tabs so evidence, conclusion, action, source, and owner navigation content no longer stack into one long page; backend writes, schema, migration, dependency, approval, export, batch, permission, automatic scheduling, formula, settlement, and charge-factor scope remain excluded.
+`US743/IM123` completed actual-log processing detail workspace organization. The detail page now exposes `总览`, `时区与业务日`, `字典与异常`, `逐行明细`, and `处理边界` tabs so timezone, cross-day, dictionary, exception, row, and boundary content no longer stack into one long page; backend writes, schema, migration, dependency, approval, export, batch, permission, automatic scheduling, formula, settlement, and charge-factor scope remain excluded.

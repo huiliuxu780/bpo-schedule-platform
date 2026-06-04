@@ -26,6 +26,7 @@ import type {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Table,
   TableBody,
@@ -291,138 +292,225 @@ export function ActualLogProcessingDetail({
         </Card>
       ) : null}
 
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <MetricCard label="登录事件" value={summary.loginEventCount.toLocaleString("zh-CN")} detail={summary.loginEventBoundaryLabel} tone="default" />
-        <MetricCard label="状态字典" value={summary.statusDictionaryCount.toLocaleString("zh-CN")} detail="字典配置只读展示，变更待 IM107" tone="default" />
-        <MetricCard label="状态区间" value={summary.statusIntervalCount.toLocaleString("zh-CN")} detail={summary.statusIntervalBoundaryLabel} tone={summary.statusIntervalCount > 0 ? "ready" : "default"} />
-        <MetricCard label="跨天区间" value={summary.crossDayIntervalCount.toLocaleString("zh-CN")} detail={summary.crossDaySplitLabel} tone={summary.crossDayIntervalCount > 0 ? "ready" : "default"} />
-        <MetricCard label="时区异常" value={summary.nonShanghaiTimezoneCount.toLocaleString("zh-CN")} detail={summary.timezoneCheckLabel} tone={summary.nonShanghaiTimezoneCount > 0 ? "blocked" : "default"} />
-      </section>
+      <Tabs defaultValue="overview" className="grid gap-4">
+        <TabsList className="h-auto w-full justify-start overflow-x-auto md:w-fit">
+          {summary.workspaceTabs.map((tab) => (
+            <TabsTrigger key={tab.key} value={tab.key}>
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <FileSearch className="size-4 text-muted-foreground" />
-            {summary.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 text-sm text-muted-foreground">
-          <div className="grid gap-1">
-            <p className="font-mono text-xs text-foreground">{summary.versionLabel}</p>
-            <p>{summary.fileName} · {summary.batchId}</p>
-            <p>{summary.sourceRowLabel} · 已应用记录 {summary.appliedRecordCountLabel}</p>
-            <p>{summary.businessDayLabel}</p>
-          </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            <BoundaryPill title="时区校验" detail={summary.timezoneCheckLabel} />
-            <BoundaryPill title="业务日归属" detail={summary.businessDayLabel} />
-            <BoundaryPill title="跨天切分" detail={summary.crossDaySplitLabel} />
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="overview" className="mt-0 grid gap-4">
+          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            <MetricCard
+              label="登录事件"
+              value={summary.loginEventCount.toLocaleString("zh-CN")}
+              detail={summary.loginEventBoundaryLabel}
+              tone="default"
+            />
+            <MetricCard
+              label="状态字典"
+              value={summary.statusDictionaryCount.toLocaleString("zh-CN")}
+              detail="字典配置只读展示，变更待 IM107"
+              tone="default"
+            />
+            <MetricCard
+              label="状态区间"
+              value={summary.statusIntervalCount.toLocaleString("zh-CN")}
+              detail={summary.statusIntervalBoundaryLabel}
+              tone={summary.statusIntervalCount > 0 ? "ready" : "default"}
+            />
+            <MetricCard
+              label="跨天区间"
+              value={summary.crossDayIntervalCount.toLocaleString("zh-CN")}
+              detail={summary.crossDaySplitLabel}
+              tone={summary.crossDayIntervalCount > 0 ? "ready" : "default"}
+            />
+            <MetricCard
+              label="时区异常"
+              value={summary.nonShanghaiTimezoneCount.toLocaleString("zh-CN")}
+              detail={summary.timezoneCheckLabel}
+              tone={summary.nonShanghaiTimezoneCount > 0 ? "blocked" : "default"}
+            />
+          </section>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldAlert className="size-4 text-muted-foreground" />
-            {summary.exceptionShell.title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 text-sm text-muted-foreground">
-          <p>{summary.exceptionShell.detail}</p>
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            {summary.exceptionShell.items.map((item) => (
-              <div
-                key={item.title}
-                className="flex min-w-0 flex-col gap-2 rounded-md border px-3 py-3"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-medium text-foreground">{item.title}</p>
-                  <Badge
-                    variant={
-                      item.tone === "blocked"
-                        ? "destructive"
-                        : item.tone === "ready"
-                          ? "outline"
-                          : "secondary"
-                    }
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <FileSearch className="size-4 text-muted-foreground" />
+                {summary.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 text-sm text-muted-foreground">
+              <div className="grid gap-1">
+                <p className="font-mono text-xs text-foreground">
+                  {summary.versionLabel}
+                </p>
+                <p>{summary.fileName} · {summary.batchId}</p>
+                <p>
+                  {summary.sourceRowLabel} · 已应用记录{" "}
+                  {summary.appliedRecordCountLabel}
+                </p>
+                <p>{summary.businessDayLabel}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="timeBoundary" className="mt-0">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Clock3 className="size-4 text-muted-foreground" />
+                时区与业务日
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-3 md:grid-cols-3">
+              <BoundaryPill title="时区校验" detail={summary.timezoneCheckLabel} />
+              <BoundaryPill title="业务日归属" detail={summary.businessDayLabel} />
+              <BoundaryPill title="跨天切分" detail={summary.crossDaySplitLabel} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="exceptions" className="mt-0">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <ShieldAlert className="size-4 text-muted-foreground" />
+                {summary.exceptionShell.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 text-sm text-muted-foreground">
+              <p>{summary.exceptionShell.detail}</p>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+                {summary.exceptionShell.items.map((item) => (
+                  <div
+                    key={item.title}
+                    className="flex min-w-0 flex-col gap-2 rounded-md border px-3 py-3"
                   >
-                    {formatExceptionToneLabel(item.tone)}
-                  </Badge>
-                </div>
-                <p className="text-xs text-foreground">{item.statusLabel}</p>
-                <p className="text-xs">{item.detail}</p>
-              </div>
-            ))}
-          </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            {summary.exceptionShell.actions.map((action) => (
-              <div
-                key={action.title}
-                className="flex min-w-0 flex-col gap-2 rounded-md border px-3 py-3"
-              >
-                <p className="font-medium text-foreground">{action.title}</p>
-                <p className="text-xs">{action.detail}</p>
-                <Button size="sm" variant="outline" disabled>
-                  <Lock data-icon="inline-start" />
-                  {action.disabledLabel}
-                </Button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Split className="size-4 text-muted-foreground" />
-            逐行处理解释
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>行号</TableHead>
-                <TableHead>记录</TableHead>
-                <TableHead>员工</TableHead>
-                <TableHead>时间</TableHead>
-                <TableHead>时区</TableHead>
-                <TableHead>业务日</TableHead>
-                <TableHead>跨天解释</TableHead>
-                <TableHead>边界</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {summary.rows.length > 0 ? (
-                summary.rows.map((row) => (
-                  <TableRow key={`${row.rowNumberLabel}-${row.recordLabel}`}>
-                    <TableCell className="align-top font-mono text-xs">{row.rowNumberLabel}</TableCell>
-                    <TableCell className="align-top">{row.recordLabel}</TableCell>
-                    <TableCell className="align-top text-sm text-muted-foreground">{row.employeeLabel}</TableCell>
-                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">{row.timeRangeLabel}</TableCell>
-                    <TableCell className="max-w-xs align-top">
-                      <Badge variant={row.tone === "ready" ? "outline" : "destructive"}>
-                        {row.timezoneLabel}
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="font-medium text-foreground">{item.title}</p>
+                      <Badge
+                        variant={
+                          item.tone === "blocked"
+                            ? "destructive"
+                            : item.tone === "ready"
+                              ? "outline"
+                              : "secondary"
+                        }
+                      >
+                        {formatExceptionToneLabel(item.tone)}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="align-top text-sm text-muted-foreground">{row.businessDayLabel}</TableCell>
-                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">{row.crossDayLabel}</TableCell>
-                    <TableCell className="max-w-xs align-top text-sm text-muted-foreground">{row.boundaryLabel}</TableCell>
+                    </div>
+                    <p className="text-xs text-foreground">{item.statusLabel}</p>
+                    <p className="text-xs">{item.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="rows" className="mt-0">
+          <Card className="overflow-hidden">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Split className="size-4 text-muted-foreground" />
+                逐行处理解释
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>行号</TableHead>
+                    <TableHead>记录</TableHead>
+                    <TableHead>员工</TableHead>
+                    <TableHead>时间</TableHead>
+                    <TableHead>时区</TableHead>
+                    <TableHead>业务日</TableHead>
+                    <TableHead>跨天解释</TableHead>
+                    <TableHead>边界</TableHead>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={8} className="h-24 text-center text-sm text-muted-foreground">
-                    {summary.detailEmptyLabel}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {summary.rows.length > 0 ? (
+                    summary.rows.map((row) => (
+                      <TableRow key={`${row.rowNumberLabel}-${row.recordLabel}`}>
+                        <TableCell className="align-top font-mono text-xs">
+                          {row.rowNumberLabel}
+                        </TableCell>
+                        <TableCell className="align-top">{row.recordLabel}</TableCell>
+                        <TableCell className="align-top text-sm text-muted-foreground">
+                          {row.employeeLabel}
+                        </TableCell>
+                        <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                          {row.timeRangeLabel}
+                        </TableCell>
+                        <TableCell className="max-w-xs align-top">
+                          <Badge
+                            variant={
+                              row.tone === "ready" ? "outline" : "destructive"
+                            }
+                          >
+                            {row.timezoneLabel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="align-top text-sm text-muted-foreground">
+                          {row.businessDayLabel}
+                        </TableCell>
+                        <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                          {row.crossDayLabel}
+                        </TableCell>
+                        <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                          {row.boundaryLabel}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={8}
+                        className="h-24 text-center text-sm text-muted-foreground"
+                      >
+                        {summary.detailEmptyLabel}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="boundary" className="mt-0">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Lock className="size-4 text-muted-foreground" />
+                处理边界
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-3">
+              {summary.exceptionShell.actions.map((action) => (
+                <div
+                  key={action.title}
+                  className="flex min-w-0 flex-col gap-2 rounded-md border px-3 py-3"
+                >
+                  <p className="font-medium text-foreground">{action.title}</p>
+                  <p className="text-xs">{action.detail}</p>
+                  <Button size="sm" variant="outline" disabled>
+                    <Lock data-icon="inline-start" />
+                    {action.disabledLabel}
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </main>
   )
 }

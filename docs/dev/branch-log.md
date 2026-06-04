@@ -72,6 +72,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM123 Actual Log Detail Workspace Tabs
+
+- branch_name: `codex/im123-actual-log-detail-tabs`
+- base_main_commit: `f471c1c`
+- stacked_on: `f471c1c refactor: split review case detail workspace`
+- remote_status: `IM122 branch is pushed; IM123 implementation is local only until final check/commit/push.`
+- scope: reorganize `/actual-logs/production/[batchId]` from one long stacked processing explanation page into a tabbed workspace with overview, timezone/business-day, dictionary/exception, row detail, and boundary entries; keep all existing actual-log processing explanations read-only and keep disabled actions disabled.
+- allowed_files_check: `components/actual-log-production-workbench.tsx`, `components/actual-log-production-model.ts`, `scripts/tests/actual-log-production-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected actual-log production component/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED first failed because `summarizeActualLogProcessingDetail` did not expose `workspaceTabs`; after implementation `node --test scripts/tests/actual-log-production-model.test.mjs` passed with 8 tests. `npm run lint`, `npm run typecheck`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. shadcn self-review found no hardcoded color or spacing drift in the changed component. In-app browser smoke on `http://127.0.0.1:3000/actual-logs/production/BATCH-STATUS-001` matched the five workspace tabs and verified timezone/business-day, dictionary/exception, row-detail, and boundary panels. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 199 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM119 Login Log Version Result Link Consistency
 
 - branch_name: `codex/im119-login-log-version-result-link`

@@ -74,10 +74,23 @@ export type ActualLogExceptionShell = {
   actions: ActualLogExceptionShellAction[]
 }
 
+export type ActualLogProcessingWorkspaceTabKey =
+  | "overview"
+  | "timeBoundary"
+  | "exceptions"
+  | "rows"
+  | "boundary"
+
+export type ActualLogProcessingWorkspaceTab = {
+  key: ActualLogProcessingWorkspaceTabKey
+  label: string
+}
+
 export type ActualLogProcessingDetailSummary = {
   tone: Exclude<ActualLogProductionTone, "empty">
   title: string
   detail: string
+  workspaceTabs: ActualLogProcessingWorkspaceTab[]
   batchId: string
   fileName: string
   fileTypeLabel: "登录日志" | "状态日志" | "未定位"
@@ -105,6 +118,14 @@ export type ActualLogProcessingDetailSummary = {
   exceptionShell: ActualLogExceptionShell
   rows: ActualLogProcessingDetailRow[]
 }
+
+const ACTUAL_LOG_PROCESSING_WORKSPACE_TABS: ActualLogProcessingWorkspaceTab[] = [
+  { key: "overview", label: "总览" },
+  { key: "timeBoundary", label: "时区与业务日" },
+  { key: "exceptions", label: "字典与异常" },
+  { key: "rows", label: "逐行明细" },
+  { key: "boundary", label: "处理边界" },
+]
 
 export function summarizeActualLogProductionWorkbench(
   batches: ImportBatchListRow[]
@@ -204,6 +225,7 @@ export function summarizeActualLogProcessingDetail(
     tone: isReady ? "ready" : "blocked",
     title: resolveProcessingDetailTitle(batch.file_type, isReady, hasDetailRows),
     detail: resolveProcessingDetailText(batch.file_type, isReady, hasDetailRows),
+    workspaceTabs: [...ACTUAL_LOG_PROCESSING_WORKSPACE_TABS],
     batchId: batch.batch_id,
     fileName: batch.file_name,
     fileTypeLabel: row.fileTypeLabel,
@@ -258,6 +280,7 @@ function buildMissingActualLogProcessingDetail(
     tone: "blocked",
     title: "日志处理批次未定位",
     detail: "当前来源批次不在登录/状态日志生产台账中，无法展示处理解释。",
+    workspaceTabs: [...ACTUAL_LOG_PROCESSING_WORKSPACE_TABS],
     batchId,
     fileName: "未找到来源文件",
     fileTypeLabel: "未定位",
