@@ -602,3 +602,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After IM117, production detail pages linked into `/data-quality/versions` with `status=applied`, but the workbench status filter only recognized ready/blocked/empty. `US738/IM118` is complete. The version workbench now treats `status=applied` as an alias for ready rows, so production-detail entry links preserve the intended applied-version view and can still expose direct forecast-vs-schedule candidates when demand forecast and personnel schedule versions are both applied for the same business date.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new comparison APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM118.
+
+## 2026-06-04 IM119 Login Log Version Result Link Consistency
+
+After IM118, actual-log comparison candidates already accepted both `login_log` and `status_log`, but direct applied-version result matching only recognized `status_log`. `US739/IM119` is complete. `login_log` now participates in the same actual_logs direct result context as `status_log`: applied result cards and version result context can match `schedule_vs_actual` runs through `actual_import_version_id`, and the downstream review-case entry stays on `schedule_actual`.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new comparison APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM119.

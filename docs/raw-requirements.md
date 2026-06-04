@@ -2588,3 +2588,16 @@ version: "1.0"
 status: "done"
 notes: "IM118 已完成：业务版本工作台将 `status=applied` 作为 ready 入口别名处理，生产详情跳转不会筛空；同业务日已应用预测和排班版本可直接形成 forecast_vs_schedule 受控提交请求。"
 ```
+
+### R819 - 登录日志版本结果链路一致性
+
+```yaml
+id: R819
+module: "本地比对计算"
+description: "业务版本工作台和批次应用结果链路已经支持状态日志版本匹配排班实际结果，但登录日志同属 actual_logs 应用目标，候选提交支持却缺少直接结果定位和复核入口一致性。需要把 login_log 已应用版本纳入 schedule_vs_actual 结果匹配。"
+source: "After IM118 completion and PM asked to continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM119 已完成：login_log 已应用版本现在与 status_log 一样支持直接版本结果定位、schedule_vs_actual 运行匹配和复核案例入口；actual_logs 中文展示统一为 登录/状态日志。"
+```

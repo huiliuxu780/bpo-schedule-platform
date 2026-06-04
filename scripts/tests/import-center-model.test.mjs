@@ -4670,6 +4670,80 @@ test("import center applied result card shows version result and next-step entri
     },
   );
 
+  assert.deepEqual(
+    summarizeImportAppliedResultCard({
+      batch: {
+        ...baseBatch,
+        batch_id: "BATCH-IM119-LOGIN-001",
+        file_type: "login_log",
+        application_status: "applied",
+        application_target: "actual_logs",
+        import_version_id: "LOGIN-VERSION-001",
+        applied_record_count: 42,
+      },
+      readiness: {
+        batch_id: "BATCH-IM119-LOGIN-001",
+        file_type: "login_log",
+        readiness_status: "ready",
+        blockers: [],
+        row_blockers: [],
+        total_rows: 42,
+        success_rows: 42,
+        failed_rows: 0,
+        warning_rows: 0,
+        version_count: 1,
+        application_status: "applied",
+        application_target: "actual_logs",
+        import_version_id: "LOGIN-VERSION-001",
+        applied_record_count: 42,
+      },
+      comparisonRuns: [
+        {
+          run_id: "RUN-IM119-SA-LOGIN-001",
+          comparison_type: "schedule_vs_actual",
+          forecast_version_id: null,
+          schedule_version_id: "SCH-VERSION-001",
+          actual_import_version_id: "LOGIN-VERSION-001",
+          business_date_from: "2026-05-01",
+          business_date_to: "2026-05-01",
+          status: "completed",
+          total_results: 18,
+          total_gap_agents: null,
+          total_late_minutes: 24,
+          created_at: "2026-06-03T11:00:00+08:00",
+        },
+      ],
+      reviewCases: [
+        {
+          case_id: "CASE-IM119-LOGIN-001",
+          source_result_type: "schedule_actual",
+          source_result_id: 101,
+          business_date: "2026-05-01",
+          owner_id: "supervisor-01",
+          severity: "high",
+          status: "open",
+          created_at: "2026-06-03T11:30:00+08:00",
+        },
+      ],
+      applyStatus: "success",
+    }),
+    {
+      tone: "success",
+      statusLabel: "刚完成应用",
+      title: "业务版本结果已生成",
+      detail:
+        "当前批次已写入登录/状态日志，生成版本 LOGIN-VERSION-001；已定位对应版本结果，可直接进入对比运行或复核工作台。",
+      targetLabel: "登录/状态日志",
+      versionLabel: "LOGIN-VERSION-001",
+      appliedRecordLabel: "42 条",
+      primaryActionLabel: "查看对应对比运行",
+      primaryHref: "/data-quality/comparison-runs/RUN-IM119-SA-LOGIN-001",
+      secondaryActionLabel: "查看复核案例工作台",
+      secondaryHref:
+        "/data-quality/review-cases?businessDate=2026-05-01&sourceResultType=schedule_actual",
+    },
+  );
+
   assert.equal(
     summarizeImportAppliedResultCard({
       batch: baseBatch,
@@ -4807,6 +4881,85 @@ test("import center applied version result context resolves direct version posit
         "业务日 2026-05-01",
         "应用目标 主数据",
         "版本 MD-VERSION-001",
+      ],
+    },
+  );
+
+  assert.deepEqual(
+    summarizeImportAppliedVersionResultContext({
+      batch: {
+        ...baseBatch,
+        batch_id: "BATCH-IM119-LOGIN-001",
+        file_type: "login_log",
+        application_status: "applied",
+        application_target: "actual_logs",
+        import_version_id: "LOGIN-VERSION-001",
+        applied_record_count: 42,
+      },
+      readiness: {
+        batch_id: "BATCH-IM119-LOGIN-001",
+        file_type: "login_log",
+        readiness_status: "ready",
+        blockers: [],
+        row_blockers: [],
+        total_rows: 42,
+        success_rows: 42,
+        failed_rows: 0,
+        warning_rows: 0,
+        version_count: 1,
+        application_status: "applied",
+        application_target: "actual_logs",
+        import_version_id: "LOGIN-VERSION-001",
+        applied_record_count: 42,
+      },
+      comparisonRuns: [
+        {
+          run_id: "RUN-IM119-SA-LOGIN-001",
+          comparison_type: "schedule_vs_actual",
+          forecast_version_id: null,
+          schedule_version_id: "SCH-VERSION-001",
+          actual_import_version_id: "LOGIN-VERSION-001",
+          business_date_from: "2026-05-01",
+          business_date_to: "2026-05-01",
+          status: "completed",
+          total_results: 18,
+          total_gap_agents: null,
+          total_late_minutes: 24,
+          created_at: "2026-06-03T11:00:00+08:00",
+        },
+      ],
+      reviewCases: [
+        {
+          case_id: "CASE-IM119-LOGIN-001",
+          source_result_type: "schedule_actual",
+          source_result_id: 101,
+          business_date: "2026-05-01",
+          owner_id: "supervisor-01",
+          severity: "high",
+          status: "open",
+          created_at: "2026-06-03T11:30:00+08:00",
+        },
+      ],
+    }),
+    {
+      tone: "ready",
+      title: "已定位对应版本结果",
+      detail:
+        "当前批次版本 LOGIN-VERSION-001 已匹配到下游结果，可直接进入对应对比运行，并继续查看同业务日复核案例。",
+      sourceBatchLabel: "BATCH-IM119-LOGIN-001",
+      versionLabel: "LOGIN-VERSION-001",
+      targetLabel: "登录/状态日志",
+      downstreamStatusLabel: "匹配运行 1 个 · 未关闭复核 1 个",
+      primaryActionLabel: "查看对应对比运行",
+      primaryHref: "/data-quality/comparison-runs/RUN-IM119-SA-LOGIN-001",
+      secondaryActionLabel: "查看复核案例工作台",
+      secondaryHref:
+        "/data-quality/review-cases?businessDate=2026-05-01&sourceResultType=schedule_actual",
+      evidence: [
+        "来源批次 BATCH-IM119-LOGIN-001",
+        "业务日 2026-05-01",
+        "应用目标 登录/状态日志",
+        "版本 LOGIN-VERSION-001",
       ],
     },
   );

@@ -4672,3 +4672,25 @@ dependencies:
 status: "done"
 notes: "IM118 已完成：`status=applied` 入口兼容 ready 版本筛选，并覆盖同业务日预测+排班直接比对候选。"
 ```
+
+### US739 - 登录日志版本结果链路一致性
+
+```yaml
+id: US739
+requirement_ids:
+  - R819
+module: "本地比对计算"
+role: "计划主管"
+story: "作为计划主管，我希望登录日志应用后的业务版本也能像状态日志一样定位排班实际对比结果和复核入口，以便实际日志版本链路不会在应用后断掉。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "login_log 已应用批次的应用结果卡可匹配 actual_import_version_id 相同的 schedule_vs_actual 运行。"
+  - "login_log 已应用批次的版本结果语境可进入对应对比运行详情。"
+  - "login_log 和 status_log 的 actual_logs 中文展示保持一致，指向登录/状态日志。"
+  - "不新增后端、schema/migration、依赖、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US738"
+status: "done"
+notes: "IM119 已完成：登录日志版本纳入 actual_logs 直接结果链路，复用 schedule_vs_actual 运行匹配和复核案例入口。"
+```

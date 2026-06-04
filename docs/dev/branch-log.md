@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM119 Login Log Version Result Link Consistency
+
+- branch_name: `codex/im119-login-log-version-result-link`
+- base_main_commit: `ef52229`
+- stacked_on: `fc8d747 fix: keep applied version workbench entry`
+- remote_status: `IM118 branch is pushed; IM119 implementation is local only until final check/commit/push.`
+- scope: include `login_log` in the same actual_logs direct result-link path as `status_log`, so applied login-log versions can match `schedule_vs_actual` runs and review-case entries through `actual_import_version_id`.
+- allowed_files_check: `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected import-center model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED first failed because `login_log` applied result cards and version result contexts fell back to generic actual-log empty/result-trace links instead of matching `schedule_vs_actual` runs; after implementation `node --test scripts/tests/import-center-model.test.mjs` passed with 79 tests. `npm run lint`, `npm run typecheck`, and `bash scripts/check-state.sh --strict` passed. In-app browser smoke on `http://127.0.0.1:3000/data-quality/versions?domain=actual_logs&status=applied` matched `业务版本工作台`, `登录/状态日志`, version ledger text, and the no-write boundary. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM113 Personnel Schedule Row Reference Explanations
 
 - branch_name: `codex/im113-schedule-detail-reference-explanations`

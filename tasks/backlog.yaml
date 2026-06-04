@@ -8769,3 +8769,41 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已让业务版本工作台把 `status=applied` 入口作为 ready 版本筛选处理，并验证同业务日预测+排班版本能直接形成 forecast_vs_schedule 提交请求。"
+  - id: IM119
+    title: "登录日志版本结果链路一致性"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM118"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+    acceptance:
+      - "login_log 已应用批次的应用结果卡可匹配 actual_import_version_id 相同的 schedule_vs_actual 运行。"
+      - "login_log 已应用批次的版本结果语境可进入对应对比运行详情。"
+      - "login_log 和 status_log 的 actual_logs 中文展示保持一致，指向登录/状态日志。"
+      - "不新增后端、schema/migration、依赖、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或生产持久化配置"
+      - "范围扩展到审批、导出、批量、权限、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已把 login_log 纳入 actual_logs 直接结果链路，应用结果卡和版本结果语境都能匹配 schedule_vs_actual 对比运行与复核入口。"

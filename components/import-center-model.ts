@@ -5534,6 +5534,7 @@ function supportsDirectVersionResultContext(fileType: ImportFileType): boolean {
   return (
     fileType === "personnel_schedule" ||
     fileType === "demand_forecast" ||
+    fileType === "login_log" ||
     fileType === "status_log"
   )
 }
@@ -5545,7 +5546,11 @@ function inferReviewSourceResultTypeFromFileType(
     return "forecast_schedule"
   }
 
-  if (fileType === "personnel_schedule" || fileType === "status_log") {
+  if (
+    fileType === "personnel_schedule" ||
+    fileType === "login_log" ||
+    fileType === "status_log"
+  ) {
     return "schedule_actual"
   }
 
@@ -5576,7 +5581,7 @@ function findMatchedComparisonRunsForAppliedVersion(
       return run.schedule_version_id === versionId
     }
 
-    if (fileType === "status_log") {
+    if (fileType === "login_log" || fileType === "status_log") {
       return run.actual_import_version_id === versionId
     }
 
@@ -5610,7 +5615,7 @@ function comparisonTypePriorityForFileType(
     return comparisonType === "schedule_vs_actual" ? 0 : 1
   }
 
-  if (fileType === "status_log") {
+  if (fileType === "login_log" || fileType === "status_log") {
     return comparisonType === "schedule_vs_actual" ? 0 : 1
   }
 
@@ -6294,7 +6299,7 @@ function formatImportApplicationTarget(target: string): string {
   }
 
   if (target === "actual_logs") {
-    return "实际日志"
+    return "登录/状态日志"
   }
 
   return target
