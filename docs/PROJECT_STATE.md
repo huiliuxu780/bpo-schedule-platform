@@ -644,3 +644,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After IM124, the demand-forecast production detail page still stacked overview metrics, source batch and forecast version context, skill/level/time alignment, 0.5h forecast intervals, version change records, local-comparison entry, and change-tracking boundaries in one long page. `US745/IM125` is complete. `/demand-plans/production/[batchId]` now uses a tabbed workspace for `总览`, `来源与对齐`, `预测明细`, `本地比对`, and `变更边界`; the default view keeps only metrics and version positioning visible, while source/alignment context, row tables, comparison entry, and no-write boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new forecast APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM125.
+
+## 2026-06-04 IM126 Master Data Detail Workspace Tabs
+
+After IM125, the master-data maintenance detail page still stacked overview metrics, source/version context, reference-impact table, controlled-action table, single-object submit forms, and maintenance boundaries in one long page. `US746/IM126` is complete. `/master-data/[entityKey]` now uses a tabbed workspace for `总览`, `来源与引用`, `受控动作`, `提交表单`, and `维护边界`; the default view keeps only metrics and current-object positioning visible, while source links, impact rows, actions, forms, and boundaries move behind explicit entries.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new master-data APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM126.

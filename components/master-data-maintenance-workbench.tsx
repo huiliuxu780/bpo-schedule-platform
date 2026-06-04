@@ -34,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type MasterDataMaintenanceWorkbenchProps = {
   batches: ImportBatchListRow[]
@@ -252,6 +253,8 @@ export function MasterDataMaintenanceEntityDetail({
   const canRenderBindingSubmit = Boolean(
     bindingSubmitAction && summary.bindingSubmitSourceBatchId
   )
+  const canRenderAnySubmit =
+    canRenderAgentSubmit || canRenderReferenceSubmit || canRenderBindingSubmit
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
@@ -294,183 +297,258 @@ export function MasterDataMaintenanceEntityDetail({
 
       {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          label="维护对象"
-          value={summary.entity.label}
-          detail={summary.entity.scopeLabel}
-          tone="default"
-        />
-        <MetricCard
-          label="来源版本"
-          value={summary.sourceVersionLabel}
-          detail={`来源批次 ${summary.sourceBatchLabel}`}
-          tone="default"
-        />
-        <MetricCard
-          label="有效期"
-          value={summary.effectivePeriodLabel}
-          detail="没有明细时保持空态"
-          tone="default"
-        />
-        <MetricCard
-          label="冻结状态"
-          value={summary.freezeStatusLabel}
-          detail="不伪造实体级状态"
-          tone={summary.tone === "blocked" ? "blocked" : "default"}
-        />
-      </section>
+      <Tabs defaultValue="overview" className="grid gap-4">
+        <TabsList className="h-auto w-full justify-start overflow-x-auto md:w-fit">
+          {summary.workspaceTabs.map((tab) => (
+            <TabsTrigger key={tab.key} value={tab.key}>
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <GitBranch className="size-4 text-muted-foreground" />
-            来源与维护边界
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 text-sm text-muted-foreground">
-          <div className="grid gap-1">
-            <p>
-              <span className="font-medium text-foreground">维护范围：</span>
-              {summary.entity.maintenanceBoundary}
-            </p>
-            <p>
-              <span className="font-medium text-foreground">引用范围：</span>
-              {summary.entity.referenceLabel}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {summary.sourceVersionHref ? (
-              <Button asChild size="sm" variant="outline">
-                <Link href={summary.sourceVersionHref}>
-                  查看业务版本
-                  <ArrowRight data-icon="inline-end" />
-                </Link>
-              </Button>
-            ) : null}
-            {summary.sourceBatchHref ? (
-              <Button asChild size="sm" variant="ghost">
-                <Link href={summary.sourceBatchHref}>查看来源批次</Link>
-              </Button>
-            ) : null}
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="overview" className="mt-0 grid gap-4">
+          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <MetricCard
+              label="维护对象"
+              value={summary.entity.label}
+              detail={summary.entity.scopeLabel}
+              tone="default"
+            />
+            <MetricCard
+              label="来源版本"
+              value={summary.sourceVersionLabel}
+              detail={`来源批次 ${summary.sourceBatchLabel}`}
+              tone="default"
+            />
+            <MetricCard
+              label="有效期"
+              value={summary.effectivePeriodLabel}
+              detail="没有明细时保持空态"
+              tone="default"
+            />
+            <MetricCard
+              label="冻结状态"
+              value={summary.freezeStatusLabel}
+              detail="不伪造实体级状态"
+              tone={summary.tone === "blocked" ? "blocked" : "default"}
+            />
+          </section>
 
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Link2 className="size-4 text-muted-foreground" />
-            引用影响摘要
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>引用类型</TableHead>
-                <TableHead>来源范围</TableHead>
-                <TableHead>数量</TableHead>
-                <TableHead>说明</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {summary.referenceImpacts.map((impact) => (
-                <TableRow key={impact.key}>
-                  <TableCell className="align-top font-medium">
-                    {impact.label}
-                  </TableCell>
-                  <TableCell className="align-top text-sm text-muted-foreground">
-                    {impact.sourceLabel}
-                  </TableCell>
-                  <TableCell className="align-top">
-                    <Badge variant={impact.tone === "blocked" ? "destructive" : "outline"}>
-                      {impact.countLabel}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="max-w-xl align-top text-sm text-muted-foreground">
-                    {impact.detail}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Database className="size-4 text-muted-foreground" />
+                当前对象概览
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-3">
+              <DetailItem label="维护范围" value={summary.entity.scopeLabel} />
+              <DetailItem label="引用范围" value={summary.entity.referenceLabel} />
+              <DetailItem label="来源批次" value={summary.sourceBatchLabel} />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldAlert className="size-4 text-muted-foreground" />
-            受控维护动作
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>动作</TableHead>
-                <TableHead>实体范围</TableHead>
-                <TableHead>引用校验</TableHead>
-                <TableHead>失败边界</TableHead>
-                <TableHead className="text-right">提交</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {summary.maintenanceActions.map((action) => (
-                <TableRow key={action.key}>
-                  <TableCell className="align-top">
-                    <div className="font-medium">{action.label}</div>
-                    <Badge
-                      variant={
-                        action.statusLabel === "来源阻塞" ? "destructive" : "outline"
-                      }
-                      className="mt-2"
-                    >
-                      {action.statusLabel}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="max-w-[14rem] align-top text-sm text-muted-foreground">
-                    {action.targetScope}
-                  </TableCell>
-                  <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
-                    {action.referenceCheckLabel}
-                  </TableCell>
-                  <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
-                    {action.failureBoundary}
-                  </TableCell>
-                  <TableCell className="align-top text-right">
-                    <Button size="sm" variant="outline" disabled={!action.canSubmit}>
-                      {action.submitLabel}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        <TabsContent value="source" className="mt-0 grid gap-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <GitBranch className="size-4 text-muted-foreground" />
+                来源与维护边界
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 text-sm text-muted-foreground">
+              <div className="grid gap-1">
+                <p>
+                  <span className="font-medium text-foreground">维护范围：</span>
+                  {summary.entity.maintenanceBoundary}
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">引用范围：</span>
+                  {summary.entity.referenceLabel}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {summary.sourceVersionHref ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={summary.sourceVersionHref}>
+                      查看业务版本
+                      <ArrowRight data-icon="inline-end" />
+                    </Link>
+                  </Button>
+                ) : null}
+                {summary.sourceBatchHref ? (
+                  <Button asChild size="sm" variant="ghost">
+                    <Link href={summary.sourceBatchHref}>查看来源批次</Link>
+                  </Button>
+                ) : null}
+              </div>
+            </CardContent>
+          </Card>
 
-      {canRenderAgentSubmit ? (
-        <AgentMaintenanceSubmitSection
-          summary={summary}
-          action={agentSubmitAction}
-        />
-      ) : null}
+          <Card className="overflow-hidden">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Link2 className="size-4 text-muted-foreground" />
+                引用影响摘要
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>引用类型</TableHead>
+                    <TableHead>来源范围</TableHead>
+                    <TableHead>数量</TableHead>
+                    <TableHead>说明</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {summary.referenceImpacts.map((impact) => (
+                    <TableRow key={impact.key}>
+                      <TableCell className="align-top font-medium">
+                        {impact.label}
+                      </TableCell>
+                      <TableCell className="align-top text-sm text-muted-foreground">
+                        {impact.sourceLabel}
+                      </TableCell>
+                      <TableCell className="align-top">
+                        <Badge variant={impact.tone === "blocked" ? "destructive" : "outline"}>
+                          {impact.countLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="max-w-xl align-top text-sm text-muted-foreground">
+                        {impact.detail}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {canRenderReferenceSubmit ? (
-        <ReferenceMaintenanceSubmitSection
-          summary={summary}
-          action={referenceSubmitAction}
-        />
-      ) : null}
+        <TabsContent value="actions" className="mt-0">
+          <Card className="overflow-hidden">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <ShieldAlert className="size-4 text-muted-foreground" />
+                受控维护动作
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>动作</TableHead>
+                    <TableHead>实体范围</TableHead>
+                    <TableHead>引用校验</TableHead>
+                    <TableHead>失败边界</TableHead>
+                    <TableHead className="text-right">提交</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {summary.maintenanceActions.map((action) => (
+                    <TableRow key={action.key}>
+                      <TableCell className="align-top">
+                        <div className="font-medium">{action.label}</div>
+                        <Badge
+                          variant={
+                            action.statusLabel === "来源阻塞" ? "destructive" : "outline"
+                          }
+                          className="mt-2"
+                        >
+                          {action.statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="max-w-[14rem] align-top text-sm text-muted-foreground">
+                        {action.targetScope}
+                      </TableCell>
+                      <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                        {action.referenceCheckLabel}
+                      </TableCell>
+                      <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
+                        {action.failureBoundary}
+                      </TableCell>
+                      <TableCell className="align-top text-right">
+                        <Button size="sm" variant="outline" disabled={!action.canSubmit}>
+                          {action.submitLabel}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {canRenderBindingSubmit ? (
-        <BindingMaintenanceSubmitSection
-          summary={summary}
-          action={bindingSubmitAction}
-        />
-      ) : null}
+        <TabsContent value="submit" className="mt-0 grid gap-4">
+          {canRenderAgentSubmit ? (
+            <AgentMaintenanceSubmitSection
+              summary={summary}
+              action={agentSubmitAction}
+            />
+          ) : null}
+
+          {canRenderReferenceSubmit ? (
+            <ReferenceMaintenanceSubmitSection
+              summary={summary}
+              action={referenceSubmitAction}
+            />
+          ) : null}
+
+          {canRenderBindingSubmit ? (
+            <BindingMaintenanceSubmitSection
+              summary={summary}
+              action={bindingSubmitAction}
+            />
+          ) : null}
+
+          {!canRenderAnySubmit ? (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Send className="size-4 text-muted-foreground" />
+                  暂无可提交表单
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground">
+                当前对象或来源批次不满足受控单对象提交条件；请先查看来源与引用状态。
+              </CardContent>
+            </Card>
+          ) : null}
+        </TabsContent>
+
+        <TabsContent value="boundary" className="mt-0 grid gap-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Lock className="size-4 text-muted-foreground" />
+                维护边界
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-3 text-sm text-muted-foreground">
+              <DetailItem label="对象边界" value={summary.entity.maintenanceBoundary} />
+              <DetailItem label="有效期边界" value={summary.effectivePeriodLabel} />
+              <DetailItem label="冻结边界" value={summary.freezeStatusLabel} />
+            </CardContent>
+          </Card>
+
+          <section className="grid gap-3 md:grid-cols-2">
+            <BoundaryItem
+              icon={<Lock className="size-4 text-muted-foreground" />}
+              title="不进入批量维护"
+              detail="当前只保留单对象受控提交入口，不提供批量新增、批量冻结、审批、权限或导出能力。"
+            />
+            <BoundaryItem
+              icon={<FileClock className="size-4 text-muted-foreground" />}
+              title="不伪造引用数量"
+              detail="引用影响只有来源范围和空态说明；没有真实下游引用查询时不构造影响数量。"
+            />
+          </section>
+        </TabsContent>
+      </Tabs>
     </main>
   )
 }
@@ -981,6 +1059,15 @@ function BoundaryItem({
         <p className="text-sm text-muted-foreground">{detail}</p>
       </CardContent>
     </Card>
+  )
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="grid gap-1 rounded-md border p-3">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-sm font-medium text-foreground">{value}</span>
+    </div>
   )
 }
 

@@ -10,6 +10,18 @@ export type MasterDataMaintenanceEntityKey =
   | "skills"
   | "bindings"
 
+export type MasterDataMaintenanceWorkspaceTabKey =
+  | "overview"
+  | "source"
+  | "actions"
+  | "submit"
+  | "boundary"
+
+export type MasterDataMaintenanceWorkspaceTab = {
+  key: MasterDataMaintenanceWorkspaceTabKey
+  label: string
+}
+
 export type MasterDataMaintenanceEntity = {
   key: MasterDataMaintenanceEntityKey
   label: string
@@ -159,6 +171,7 @@ export type MasterDataEntityDetailSummary = {
   agentSubmitSourceBatchId: string | null
   referenceSubmitSourceBatchId: string | null
   bindingSubmitSourceBatchId: string | null
+  workspaceTabs: MasterDataMaintenanceWorkspaceTab[]
 }
 
 export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
@@ -207,6 +220,15 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
 ]
 
 const MASTER_DATA_VERSION_WORKBENCH_HREF = "/data-quality/versions?domain=master_data"
+
+const MASTER_DATA_MAINTENANCE_WORKSPACE_TABS: MasterDataMaintenanceWorkspaceTab[] =
+  [
+    { key: "overview", label: "总览" },
+    { key: "source", label: "来源与引用" },
+    { key: "actions", label: "受控动作" },
+    { key: "submit", label: "提交表单" },
+    { key: "boundary", label: "维护边界" },
+  ]
 
 export function summarizeMasterDataMaintenanceWorkbench(
   batches: ImportBatchListRow[]
@@ -339,6 +361,7 @@ export function summarizeMasterDataMaintenanceEntityDetail(
     agentSubmitSourceBatchId,
     referenceSubmitSourceBatchId,
     bindingSubmitSourceBatchId,
+    workspaceTabs: [...MASTER_DATA_MAINTENANCE_WORKSPACE_TABS],
   }
 }
 

@@ -111,6 +111,13 @@ test("master data entity detail exposes source context and empty reference impac
   const detail = summarizeMasterDataMaintenanceEntityDetail("bindings", [baseBatch]);
 
   assert.equal(detail.entity.label, "绑定关系");
+  assert.deepEqual(detail.workspaceTabs, [
+    { key: "overview", label: "总览" },
+    { key: "source", label: "来源与引用" },
+    { key: "actions", label: "受控动作" },
+    { key: "submit", label: "提交表单" },
+    { key: "boundary", label: "维护边界" },
+  ]);
   assert.equal(detail.sourceVersionLabel, "BATCH-MD-001::v1");
   assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
   assert.equal(detail.effectivePeriodLabel, "暂无实体级有效期明细");
