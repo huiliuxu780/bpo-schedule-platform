@@ -152,9 +152,17 @@ test("agent detail enables controlled submit actions only for agents", () => {
   assert.equal(agentDetail.maintenanceActions[2].submitLabel, "提交冻结");
   assert.equal(agentDetail.maintenanceActions[3].submitLabel, "提交有效期");
   assert.equal(agentDetail.agentSubmitSourceBatchId, "BATCH-MD-001");
+  assert.deepEqual(
+    agentDetail.workspaceTabs.map((tab) => tab.label),
+    ["总览", "来源与引用", "受控动作", "提交表单", "技能维护", "维护边界"],
+  );
   assert.equal(skillDetail.maintenanceActions[0].canSubmit, true);
   assert.equal(skillDetail.maintenanceActions[0].submitLabel, "提交新增");
   assert.equal(skillDetail.referenceSubmitSourceBatchId, "BATCH-MD-001");
+  assert.deepEqual(
+    skillDetail.workspaceTabs.map((tab) => tab.label),
+    ["总览", "来源与引用", "受控动作", "提交表单", "维护边界"],
+  );
 });
 
 test("master data employee list summarizes org path type workplace and skills", () => {

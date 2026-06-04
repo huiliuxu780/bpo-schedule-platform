@@ -2794,5 +2794,5 @@ source: "PM approved continuing after IM133 push on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
 status: "done"
-notes: "IM134 已完成：新增单员工技能集合 replace API、server action 和现有 /master-data/agents 提交表单入口。"
+notes: "IM134 已完成：新增单员工技能集合 replace API、server action 和 /master-data/agents 独立技能维护 tab。"
 ```

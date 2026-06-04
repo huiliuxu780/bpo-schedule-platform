@@ -15,6 +15,7 @@ export type MasterDataMaintenanceWorkspaceTabKey =
   | "source"
   | "actions"
   | "submit"
+  | "agent_skills"
   | "boundary"
 
 export type MasterDataMaintenanceWorkspaceTab = {
@@ -299,6 +300,16 @@ const MASTER_DATA_MAINTENANCE_WORKSPACE_TABS: MasterDataMaintenanceWorkspaceTab[
     { key: "boundary", label: "维护边界" },
   ]
 
+const MASTER_DATA_AGENT_WORKSPACE_TABS: MasterDataMaintenanceWorkspaceTab[] =
+  MASTER_DATA_MAINTENANCE_WORKSPACE_TABS.flatMap((tab) =>
+    tab.key === "boundary"
+      ? [
+          { key: "agent_skills", label: "技能维护" },
+          tab,
+        ]
+      : [tab]
+  )
+
 export function summarizeMasterDataMaintenanceWorkbench(
   batches: ImportBatchListRow[]
 ): MasterDataMaintenanceSummary {
@@ -430,7 +441,10 @@ export function summarizeMasterDataMaintenanceEntityDetail(
     agentSubmitSourceBatchId,
     referenceSubmitSourceBatchId,
     bindingSubmitSourceBatchId,
-    workspaceTabs: [...MASTER_DATA_MAINTENANCE_WORKSPACE_TABS],
+    workspaceTabs:
+      entity.key === "agents"
+        ? [...MASTER_DATA_AGENT_WORKSPACE_TABS]
+        : [...MASTER_DATA_MAINTENANCE_WORKSPACE_TABS],
   }
 }
 

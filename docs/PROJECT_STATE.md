@@ -695,6 +695,6 @@ The task was a backend-vertical/frontend form slice. It did not add migrations, 
 
 ## 2026-06-04 IM134 Agent Skill Set Maintenance
 
-After IM133, single-agent maintenance could update core employee fields, but employee multi-skill rows were still import/list only. `US754/IM134` is complete. The backend now supports a single employee skill-set `replace` maintenance call that validates source batch, employee, skills, and effective period through the existing master-data persistence rules. `/master-data/agents` keeps the entry inside the existing submit workspace and adds a controlled skill ID list form that calls the new API through a server action.
+After IM133, single-agent maintenance could update core employee fields, but employee multi-skill rows were still import/list only. `US754/IM134` is complete. The backend now supports a single employee skill-set `replace` maintenance call that validates source batch, employee, skills, and effective period through the existing master-data persistence rules. `/master-data/agents` keeps basic employee submit forms in `提交表单` and puts skill-set replacement into a separate `技能维护` tab that calls the new API through a server action.
 
 The task was a backend-vertical/frontend form slice. It reused existing employee-skill persistence and did not add migrations, dependencies, batch maintenance, permissions, approval, export, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM134.

@@ -506,7 +506,6 @@ export function MasterDataMaintenanceEntityDetail({
             <AgentMaintenanceSubmitSection
               summary={summary}
               action={agentSubmitAction}
-              skillAction={agentSkillSubmitAction}
             />
           ) : null}
 
@@ -538,6 +537,29 @@ export function MasterDataMaintenanceEntityDetail({
             </Card>
           ) : null}
         </TabsContent>
+
+        {summary.entity.key === "agents" ? (
+          <TabsContent value="agent_skills" className="mt-0 grid gap-4">
+            {agentSkillSubmitAction && summary.agentSubmitSourceBatchId ? (
+              <AgentSkillMaintenanceSection
+                summary={summary}
+                action={agentSkillSubmitAction}
+              />
+            ) : (
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Send className="size-4 text-muted-foreground" />
+                    暂无可提交技能维护
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-muted-foreground">
+                  当前来源批次不满足单人技能维护提交条件。
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        ) : null}
 
         <TabsContent value="boundary" className="mt-0 grid gap-4">
           <Card>
@@ -703,11 +725,9 @@ function AgentEmployeeListSection({
 function AgentMaintenanceSubmitSection({
   summary,
   action,
-  skillAction,
 }: {
   summary: MasterDataEntityDetailSummary
   action?: (formData: FormData) => Promise<void>
-  skillAction?: (formData: FormData) => Promise<void>
 }) {
   if (!action || !summary.agentSubmitSourceBatchId) {
     return null
@@ -780,70 +800,86 @@ function AgentMaintenanceSubmitSection({
           submitLabel="提交有效期"
           fields={["employee_id", "effective_from", "effective_to"]}
         />
-        {skillAction ? (
-          <AgentSkillMaintenanceForm
-            action={skillAction}
-            sourceBatchId={summary.agentSubmitSourceBatchId}
-          />
-        ) : null}
       </div>
     </section>
   )
 }
 
-function AgentSkillMaintenanceForm({
+function AgentSkillMaintenanceSection({
+  summary,
   action,
-  sourceBatchId,
 }: {
+  summary: MasterDataEntityDetailSummary
   action: (formData: FormData) => Promise<void>
-  sourceBatchId: string
 }) {
+  if (!summary.agentSubmitSourceBatchId) {
+    return null
+  }
+
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">维护坐席技能</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form action={action} className="grid gap-3">
-          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
-          <p className="text-sm text-muted-foreground">
-            覆盖单个坐席当前技能集合，多个技能 ID 用逗号或换行分隔。
-          </p>
-          <div className="grid gap-3 md:grid-cols-2">
-            <MaintenanceInput
-              label="坐席 ID"
-              name="employee_id"
-              placeholder="A-1001"
-              required
+    <section className="grid gap-3">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-base font-semibold tracking-normal">
+          坐席技能维护
+        </h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          覆盖单个坐席当前技能集合。来源批次固定为{" "}
+          <span className="font-mono text-foreground">
+            {summary.agentSubmitSourceBatchId}
+          </span>
+          ，不进入批量技能维护、权限、审批或导出。
+        </p>
+      </div>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">维护坐席技能</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form action={action} className="grid gap-3">
+            <input
+              type="hidden"
+              name="source_batch_id"
+              value={summary.agentSubmitSourceBatchId}
             />
-            <MaintenanceTextarea
-              label="技能 ID 列表"
-              name="skill_ids"
-              placeholder="SKILL-RETURN-TICKET, SKILL-GENERAL"
-              required
-            />
-            <MaintenanceInput
-              label="生效开始"
-              name="effective_from"
-              type="date"
-              required
-            />
-            <MaintenanceInput
-              label="生效结束"
-              name="effective_to"
-              type="date"
-              required
-            />
-          </div>
-          <div className="flex justify-end">
-            <Button type="submit" size="sm">
-              <Send data-icon="inline-start" />
-              提交技能维护
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+            <p className="text-sm text-muted-foreground">
+              多个技能 ID 用逗号或换行分隔，提交后替换该坐席当前技能全集。
+            </p>
+            <div className="grid gap-3 md:grid-cols-2">
+              <MaintenanceInput
+                label="坐席 ID"
+                name="employee_id"
+                placeholder="A-1001"
+                required
+              />
+              <MaintenanceTextarea
+                label="技能 ID 列表"
+                name="skill_ids"
+                placeholder="SKILL-RETURN-TICKET, SKILL-GENERAL"
+                required
+              />
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                required
+              />
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                required
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit" size="sm">
+                <Send data-icon="inline-start" />
+                提交技能维护
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </section>
   )
 }
 
