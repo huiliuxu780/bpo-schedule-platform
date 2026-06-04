@@ -2,6 +2,18 @@ import type { ImportBatchListRow } from "@/components/import-center-model"
 
 export type PersonnelScheduleProductionTone = "ready" | "blocked" | "empty"
 
+export type PersonnelScheduleProductionWorkspaceTabKey =
+  | "overview"
+  | "source"
+  | "rows"
+  | "comparison"
+  | "boundary"
+
+export type PersonnelScheduleProductionWorkspaceTab = {
+  key: PersonnelScheduleProductionWorkspaceTabKey
+  label: string
+}
+
 export type PersonnelScheduleProductionRow = {
   batchId: string
   fileName: string
@@ -55,6 +67,7 @@ export type PersonnelScheduleProductionDetailSummary = {
   actionShellDetail: string
   actionShells: PersonnelScheduleProductionActionShell[]
   comparisonEntry: PersonnelScheduleProductionComparisonEntry
+  workspaceTabs: PersonnelScheduleProductionWorkspaceTab[]
 }
 
 export type PersonnelScheduleProductionApiDetail = {
@@ -146,6 +159,15 @@ export type PersonnelScheduleProductionComparisonEntry = {
   href: string
   blockerLabel: string
 }
+
+const PERSONNEL_SCHEDULE_PRODUCTION_WORKSPACE_TABS: PersonnelScheduleProductionWorkspaceTab[] =
+  [
+    { key: "overview", label: "总览" },
+    { key: "source", label: "来源与版本" },
+    { key: "rows", label: "真实明细" },
+    { key: "comparison", label: "本地比对" },
+    { key: "boundary", label: "发布冻结边界" },
+  ]
 
 export function summarizePersonnelScheduleProductionWorkbench(
   batches: ImportBatchListRow[]
@@ -245,6 +267,7 @@ export function summarizePersonnelScheduleProductionDetail(
         businessDate: null,
         blockerSummary: "请返回排班生产工作台选择来源批次",
       }),
+      workspaceTabs: [...PERSONNEL_SCHEDULE_PRODUCTION_WORKSPACE_TABS],
     }
   }
 
@@ -322,6 +345,7 @@ export function summarizePersonnelScheduleProductionDetail(
       businessDate: apiDetail?.version.business_date_from ?? batch.business_date_from,
       blockerSummary: row.blockerSummary,
     }),
+    workspaceTabs: [...PERSONNEL_SCHEDULE_PRODUCTION_WORKSPACE_TABS],
   }
 }
 

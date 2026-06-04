@@ -8963,3 +8963,42 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已把登录/状态日志处理详情页拆为总览、时区与业务日、字典与异常、逐行明细和处理边界五个 tab，默认聚焦总览。"
+  - id: IM124
+    title: "人员排班生产详情工作区分层"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM123"]
+    allowed_files:
+      - "components/personnel-schedule-production-workbench.tsx"
+      - "components/personnel-schedule-production-model.ts"
+      - "scripts/tests/personnel-schedule-production-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+    acceptance:
+      - "人员排班生产详情页默认展示总览，只保留关键指标和版本定位语境。"
+      - "来源与版本、真实明细、本地比对和发布冻结边界通过明确 tab 入口进入。"
+      - "tab 入口来自模型摘要并有测试覆盖，避免后续继续无约束堆叠。"
+      - "不新增后端、schema/migration、依赖、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或生产持久化配置"
+      - "范围扩展到审批、导出、批量、权限、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已把人员排班生产详情页拆为总览、来源与版本、真实明细、本地比对和发布冻结边界五个 tab，默认聚焦总览。"

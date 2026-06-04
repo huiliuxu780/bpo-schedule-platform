@@ -2653,3 +2653,16 @@ version: "1.0"
 status: "done"
 notes: "IM123 已完成：登录/状态日志处理详情页改为总览、时区与业务日、字典与异常、逐行明细、处理边界五个工作区 tab，默认展示总览，不新增写入或业务能力。"
 ```
+
+### R824 - 人员排班生产详情工作区分层
+
+```yaml
+id: R824
+module: "人员排班生产"
+description: "人员排班生产详情页已经承载来源批次、业务版本、应用状态、班次引用、人员范围、0.5h 展开明细、本地比对入口和发布冻结边界，但内容继续堆在一个长页里会让排班人员难以定位当前任务。需要把既有内容拆成明确的工作区入口。"
+source: "Continuation after IM123 push and PM asked to continue subsequent requirements on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM124 已完成：人员排班生产详情页改为总览、来源与版本、真实明细、本地比对、发布冻结边界五个工作区 tab，默认展示总览，不新增写入或业务能力。"
+```

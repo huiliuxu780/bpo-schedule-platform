@@ -103,6 +103,13 @@ test("personnel schedule production detail resolves a schedule version by source
 
   assert.equal(detail.tone, "ready");
   assert.equal(detail.title, "排班版本详情已定位");
+  assert.deepEqual(detail.workspaceTabs, [
+    { key: "overview", label: "总览" },
+    { key: "source", label: "来源与版本" },
+    { key: "rows", label: "真实明细" },
+    { key: "comparison", label: "本地比对" },
+    { key: "boundary", label: "发布冻结边界" },
+  ]);
   assert.equal(detail.batchId, "BATCH-SCH-001");
   assert.equal(detail.versionLabel, "BATCH-SCH-001::v1");
   assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-SCH-001");
