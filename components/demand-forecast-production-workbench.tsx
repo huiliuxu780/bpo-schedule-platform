@@ -315,6 +315,27 @@ export function DemandForecastProductionDetail({
         </CardContent>
       </Card>
 
+      <Card className={detail.comparisonEntry.tone === "blocked" ? "border-destructive/40" : undefined}>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ShieldCheck className="size-4 text-muted-foreground" />
+            {detail.comparisonEntry.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 text-sm text-muted-foreground">
+          <p>{detail.comparisonEntry.detail}</p>
+          <DetailItem label="入口状态" value={detail.comparisonEntry.blockerLabel} />
+          <div>
+            <Button asChild size="sm" variant="outline">
+              <Link href={detail.comparisonEntry.href}>
+                {detail.comparisonEntry.actionLabel}
+                <ArrowRight data-icon="inline-end" />
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="overflow-hidden">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">

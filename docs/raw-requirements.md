@@ -2562,3 +2562,16 @@ version: "1.0"
 status: "done"
 notes: "IM116 已完成：预测区间行展示职场、项目、技能、等级、时段和需求值完整性，完整行显示无阻塞，缺字段或需求值异常时显示行级阻塞说明；不做后端、schema/migration、依赖或生产写入。"
 ```
+
+### R817 - 生产详情进入本地比对入口
+
+```yaml
+id: R817
+module: "本地比对计算"
+description: "人员排班和需求预测生产详情页已经能展示真实版本明细，但用户还需要从生产版本上下文清楚进入已有业务版本工作台，继续确认成对版本并发起受控本地比对。"
+source: "After IM116 completion and PM asked to push and continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM117 已完成：排班生产详情和预测生产详情新增本地比对入口卡片，按业务日和版本域跳转已有业务版本工作台；不新增后端、schema/migration、依赖、提交动作或生产写入。"
+```

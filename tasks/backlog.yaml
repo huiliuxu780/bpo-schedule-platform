@@ -8689,3 +8689,45 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已在预测详情真实 0.5h 区间表增加对齐状态和阻塞说明列；完整行显示无阻塞，缺少职场、项目、技能、需求等级、时段或需求值不大于 0 时显示行级阻塞原因。"
+  - id: IM117
+    title: "生产详情进入本地比对入口"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM116"]
+    allowed_files:
+      - "components/demand-forecast-production-workbench.tsx"
+      - "components/demand-forecast-production-model.ts"
+      - "components/personnel-schedule-production-workbench.tsx"
+      - "components/personnel-schedule-production-model.ts"
+      - "scripts/tests/demand-forecast-production-model.test.mjs"
+      - "scripts/tests/personnel-schedule-production-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+    acceptance:
+      - "预测生产详情展示本地比对入口，按需求预测域、已应用状态和业务日跳转业务版本工作台。"
+      - "排班生产详情展示本地比对入口，按人员排班域、已应用状态和业务日跳转业务版本工作台。"
+      - "缺少版本或业务日时显示阻塞说明，并仍可查看对应域的业务版本工作台。"
+      - "不新增后端、schema/migration、依赖、真实提交动作、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或生产持久化配置"
+      - "范围扩展到真实提交动作、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已在预测和排班生产详情页增加本地比对入口卡片，跳转既有业务版本工作台并携带版本域、已应用状态和业务日筛选；未新增提交或写入能力。"

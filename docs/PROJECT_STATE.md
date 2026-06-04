@@ -590,3 +590,9 @@ The task remained frontend-scaffold only. It excluded backend changes, schema/mi
 After IM115, the demand-forecast production detail page shows real 0.5h forecast intervals. `US736/IM116` is complete. Forecast interval rows now show row-level alignment status and blocker explanations for workplace, project, skill, demand level, time bucket, and required-agent values.
 
 The task remained frontend-scaffold only. It excludes backend changes, schema/migration, dependencies, forecast write/change submission, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors. Current queue returned to empty after IM116.
+
+## 2026-06-04 IM117 Production Detail Comparison Entry
+
+After IM116, production detail pages can show real schedule and forecast version rows, but users still needed a clear route into the existing local-comparison workflow. `US737/IM117` is complete. `/demand-plans/production/[batchId]` and `/schedule-plans/production/[batchId]` now show read-only local-comparison entry cards that link to `/data-quality/versions` with the corresponding version domain, applied status, and business date filter when available.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, direct comparison submit actions on production details, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM117.

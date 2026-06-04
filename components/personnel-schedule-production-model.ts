@@ -54,6 +54,7 @@ export type PersonnelScheduleProductionDetailSummary = {
   actionShellTitle: string
   actionShellDetail: string
   actionShells: PersonnelScheduleProductionActionShell[]
+  comparisonEntry: PersonnelScheduleProductionComparisonEntry
 }
 
 export type PersonnelScheduleProductionApiDetail = {
@@ -135,6 +136,15 @@ export type PersonnelScheduleProductionActionShell = {
   referenceGateLabel: string
   failureBoundaryLabel: string
   isEnabled: false
+}
+
+export type PersonnelScheduleProductionComparisonEntry = {
+  tone: "ready" | "blocked"
+  title: string
+  detail: string
+  actionLabel: string
+  href: string
+  blockerLabel: string
 }
 
 export function summarizePersonnelScheduleProductionWorkbench(
@@ -229,6 +239,12 @@ export function summarizePersonnelScheduleProductionDetail(
         expansionGateLabel: "阻塞：暂未发现 0.5h 展开记录",
         failureBoundaryLabel: "阻塞：请返回排班生产工作台选择来源批次",
       }),
+      comparisonEntry: buildPersonnelScheduleComparisonEntry({
+        tone: "blocked",
+        versionLabel: null,
+        businessDate: null,
+        blockerSummary: "请返回排班生产工作台选择来源批次",
+      }),
     }
   }
 
@@ -300,6 +316,51 @@ export function summarizePersonnelScheduleProductionDetail(
           ? "当前未接入真实写入，不能改变生产排班口径"
           : `阻塞：${row.blockerSummary}`,
     }),
+    comparisonEntry: buildPersonnelScheduleComparisonEntry({
+      tone: row.tone === "empty" ? "blocked" : row.tone,
+      versionLabel,
+      businessDate: apiDetail?.version.business_date_from ?? batch.business_date_from,
+      blockerSummary: row.blockerSummary,
+    }),
+  }
+}
+
+function buildPersonnelScheduleComparisonEntry({
+  tone,
+  versionLabel,
+  businessDate,
+  blockerSummary,
+}: {
+  tone: Exclude<PersonnelScheduleProductionTone, "empty">
+  versionLabel: string | null
+  businessDate: string | null
+  blockerSummary: string
+}): PersonnelScheduleProductionComparisonEntry {
+  const query = businessDate
+    ? `?domain=personnel_schedule&status=applied&businessDate=${encodeURIComponent(
+        businessDate
+      )}`
+    : "?domain=personnel_schedule"
+  const href = `/data-quality/versions${query}`
+
+  if (tone !== "ready" || !versionLabel || !businessDate) {
+    return {
+      tone: "blocked",
+      title: "暂不能进入本地比对",
+      detail: "未定位排班业务版本或业务日，先回到排班生产工作台选择已应用批次。",
+      actionLabel: "查看业务版本工作台",
+      href,
+      blockerLabel: `阻塞：${blockerSummary}`,
+    }
+  }
+
+  return {
+    tone: "ready",
+    title: "进入预测 vs 排班比对入口",
+    detail: `已定位排班版本 ${versionLabel}，可到业务版本工作台按同业务日寻找预测版本并发起受控本地比对。`,
+    actionLabel: "去业务版本工作台",
+    href,
+    blockerLabel: "无阻塞；从业务版本工作台继续完成成对版本确认",
   }
 }
 

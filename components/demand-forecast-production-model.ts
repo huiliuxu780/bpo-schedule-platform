@@ -46,6 +46,7 @@ export type DemandForecastProductionDetailSummary = {
   changeRows: DemandForecastProductionChangeRow[]
   changeBoundaryLabel: string
   changeTracking: DemandForecastChangeTrackingSummary
+  comparisonEntry: DemandForecastProductionComparisonEntry
 }
 
 export type DemandForecastProductionApiDetail = {
@@ -121,6 +122,15 @@ export type DemandForecastChangeTrackingSummary = {
   downstreamImpactLabel: string
   failureBoundaryLabel: string
   actionShells: DemandForecastChangeTrackingActionShell[]
+}
+
+export type DemandForecastProductionComparisonEntry = {
+  tone: "ready" | "blocked"
+  title: string
+  detail: string
+  actionLabel: string
+  href: string
+  blockerLabel: string
 }
 
 export type DemandForecastProductionSummary = {
@@ -231,6 +241,12 @@ export function summarizeDemandForecastProductionDetail(
         isAligned: false,
         blockerSummary: "请返回预测生产工作台选择来源批次",
       }),
+      comparisonEntry: buildDemandForecastComparisonEntry({
+        tone: "blocked",
+        versionLabel: null,
+        businessDate: null,
+        blockerSummary: "请返回预测生产工作台选择来源批次",
+      }),
     }
   }
 
@@ -309,6 +325,51 @@ export function summarizeDemandForecastProductionDetail(
       isAligned: row.tone === "ready",
       blockerSummary: row.blockerSummary,
     }),
+    comparisonEntry: buildDemandForecastComparisonEntry({
+      tone: row.tone,
+      versionLabel,
+      businessDate: apiDetail?.version.business_date_from ?? batch.business_date_from,
+      blockerSummary: row.blockerSummary,
+    }),
+  }
+}
+
+function buildDemandForecastComparisonEntry({
+  tone,
+  versionLabel,
+  businessDate,
+  blockerSummary,
+}: {
+  tone: Exclude<DemandForecastProductionTone, "empty">
+  versionLabel: string | null
+  businessDate: string | null
+  blockerSummary: string
+}): DemandForecastProductionComparisonEntry {
+  const query = businessDate
+    ? `?domain=demand_forecast&status=applied&businessDate=${encodeURIComponent(
+        businessDate
+      )}`
+    : "?domain=demand_forecast"
+  const href = `/data-quality/versions${query}`
+
+  if (tone !== "ready" || !versionLabel || !businessDate) {
+    return {
+      tone: "blocked",
+      title: "暂不能进入本地比对",
+      detail: "未定位预测业务版本或业务日，先回到预测生产工作台选择已应用批次。",
+      actionLabel: "查看业务版本工作台",
+      href,
+      blockerLabel: `阻塞：${blockerSummary}`,
+    }
+  }
+
+  return {
+    tone: "ready",
+    title: "进入预测 vs 排班比对入口",
+    detail: `已定位预测版本 ${versionLabel}，可到业务版本工作台按同业务日寻找排班版本并发起受控本地比对。`,
+    actionLabel: "去业务版本工作台",
+    href,
+    blockerLabel: "无阻塞；从业务版本工作台继续完成成对版本确认",
   }
 }
 

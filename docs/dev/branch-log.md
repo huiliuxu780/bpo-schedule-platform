@@ -91,6 +91,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM117 Production Detail Comparison Entry
+
+- branch_name: `codex/im117-production-comparison-entry`
+- base_main_commit: `ef52229`
+- stacked_on: `a9ea528 feat: explain forecast interval blockers`
+- remote_status: `IM116 branch is pushed; IM117 implementation is local only until final check/commit/push.`
+- scope: add read-only local-comparison entry cards to demand-forecast and personnel-schedule production detail pages; link into the existing business version workbench filtered by version domain, applied status, and business date when available.
+- allowed_files_check: `components/demand-forecast-production-workbench.tsx`, `components/demand-forecast-production-model.ts`, `components/personnel-schedule-production-workbench.tsx`, `components/personnel-schedule-production-model.ts`, target model tests, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, direct comparison submit action, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected production frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED first failed because production detail summaries did not expose `comparisonEntry`; after implementation `node --test scripts/tests/demand-forecast-production-model.test.mjs` passed with 10 tests and `node --test scripts/tests/personnel-schedule-production-model.test.mjs` passed with 9 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, `npm run lint`, and `npm run typecheck` passed. Browser smoke on `http://127.0.0.1:3000/demand-plans/production/BATCH-MISSING-IM117` and `http://127.0.0.1:3000/schedule-plans/production/BATCH-MISSING-IM117` matched `暂不能进入本地比对`, `入口状态`, blocked reasons, and domain-filtered `/data-quality/versions` links. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 199 tests OK.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM112 Personnel Schedule Production Detail UI
 
 - branch_name: `codex/im112-schedule-production-detail-ui`
