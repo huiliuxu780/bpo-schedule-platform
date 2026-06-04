@@ -3134,3 +3134,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM127 Import Batch Detail Subtabs
+
+- branch_name: `codex/im127-import-batch-detail-subtabs`
+- base_main_commit: `ef52229`
+- stacked_on: `cd696f1 refactor: split master data detail workspace`
+- remote_status: `IM126 branch is pushed; IM127 implementation is local only until final check/commit/push.`
+- scope: split the `/data-quality/[batchId]` batch-detail panel into second-level tabs for overview, processing summary, exception trace, version records, and row results.
+- allowed_files_check: `components/import-center-batch-detail-panel.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected import-center frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test first failed because `workspaceTabs` was missing from `summarizeImportBatchDetail`, then passed with 79 tests; `npm run typecheck` passed; `npm run lint` passed; shadcn self-review found and fixed new hardcoded `amber-500` token drift, then `node scripts/check-shadcn-ui.mjs` passed with only the documented baseline finding; in-app browser smoke on `http://127.0.0.1:3000/data-quality/BATCH-IM083-SMOKE-002?tab=batch-detail` verified the second-level tabs `总览`, `处理摘要`, `异常追踪`, `版本记录`, and `行结果`, plus hidden-section content for error fields/next action, read-only trace, generated version, and row preview; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 199 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

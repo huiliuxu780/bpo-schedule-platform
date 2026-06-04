@@ -2692,3 +2692,16 @@ version: "1.0"
 status: "done"
 notes: "IM126 已完成：主数据维护详情页改为总览、来源与引用、受控动作、提交表单、维护边界五个工作区 tab，默认展示总览，不新增写入或业务能力。"
 ```
+
+### R827 - 导入批次明细二级工作区分层
+
+```yaml
+id: R827
+module: "导入中心"
+description: "导入批次详情页外层已经有批次处理 tab，但批次明细面板内部仍把总览指标、处理摘要、履约异常追踪、版本记录和全部行结果堆在一个长面板里。需要把批次明细内部也拆成明确的二级工作区入口。"
+source: "Continuation after IM126 push and PM asked to continue and push on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM127 已完成：导入批次明细面板改为总览、处理摘要、异常追踪、版本记录、行结果五个二级 tab，默认展示总览，不新增写入或业务能力。"
+```

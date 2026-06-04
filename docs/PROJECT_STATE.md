@@ -650,3 +650,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After IM125, the master-data maintenance detail page still stacked overview metrics, source/version context, reference-impact table, controlled-action table, single-object submit forms, and maintenance boundaries in one long page. `US746/IM126` is complete. `/master-data/[entityKey]` now uses a tabbed workspace for `总览`, `来源与引用`, `受控动作`, `提交表单`, and `维护边界`; the default view keeps only metrics and current-object positioning visible, while source links, impact rows, actions, forms, and boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new master-data APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM126.
+
+## 2026-06-04 IM127 Import Batch Detail Subtabs
+
+After IM126, `/data-quality/[batchId]` already had an outer batch-processing workspace, but the `批次明细` panel still stacked overview metrics, processing summary, exception trace, version records, and all row results in one long panel. `US747/IM127` is complete. The batch detail panel now uses second-level tabs for `总览`, `处理摘要`, `异常追踪`, `版本记录`, and `行结果`; the default view keeps only metrics and batch positioning visible, while summary, trace, versions, and rows move behind explicit entries.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new import APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM127.

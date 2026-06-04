@@ -4028,6 +4028,13 @@ test("import center detail summary counts persisted row statuses", () => {
     failedRows: 1,
     warningRows: 1,
     versionCount: 1,
+    workspaceTabs: [
+      { key: "overview", label: "总览" },
+      { key: "processing", label: "处理摘要" },
+      { key: "exception-trace", label: "异常追踪" },
+      { key: "versions", label: "版本记录" },
+      { key: "rows", label: "行结果" },
+    ],
   });
 });
 

@@ -15,6 +15,7 @@ import {
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Table,
   TableBody,
@@ -77,109 +78,163 @@ export function ImportCenterBatchDetailPanel({
           {summary.totalRows} 行
         </Badge>
       </CardHeader>
-      <CardContent className="grid gap-4">
-        <section className="grid gap-3 md:grid-cols-4">
-          <Metric label="成功" value={summary.successRows} />
-          <Metric label="失败" value={summary.failedRows} />
-          <Metric label="警告" value={summary.warningRows} />
-          <Metric label="版本" value={summary.versionCount} />
-        </section>
-
-        <section
-          className={
-            readability.tone === "blocked"
-              ? "grid gap-3 rounded-md border border-destructive/40 bg-destructive/10 p-3"
-              : readability.tone === "warning"
-                ? "grid gap-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-3"
-                : "grid gap-3 rounded-md border bg-muted/30 p-3"
-          }
-        >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <div className="text-sm font-medium">处理摘要</div>
-              <div className="mt-1 text-sm text-muted-foreground">{readability.title}</div>
-            </div>
-            <Badge variant={readability.tone === "blocked" ? "destructive" : "outline"}>
-              {readability.focusLabel}
-            </Badge>
-          </div>
-          <p className="text-sm text-muted-foreground">{readability.detail}</p>
-          <div className="grid gap-2 md:grid-cols-2">
-            <div className="rounded-md border bg-background/70 p-2">
-              <div className="text-xs text-muted-foreground">错误字段</div>
-              <div className="mt-1 font-mono text-xs font-medium">
-                {readability.errorFieldSummary}
+      <CardContent>
+        <Tabs defaultValue="overview" className="grid gap-4">
+          <TabsList className="w-full justify-start overflow-x-auto md:w-fit">
+            {summary.workspaceTabs.map((tab) => (
+              <TabsTrigger key={tab.key} value={tab.key}>
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <TabsContent value="overview" className="m-0 grid gap-4">
+            <section className="grid gap-3 md:grid-cols-4">
+              <Metric label="成功" value={summary.successRows} />
+              <Metric label="失败" value={summary.failedRows} />
+              <Metric label="警告" value={summary.warningRows} />
+              <Metric label="版本" value={summary.versionCount} />
+            </section>
+            <section className="grid gap-3 rounded-md border bg-muted/30 p-3">
+              <div className="text-sm font-medium">批次定位</div>
+              <div className="grid gap-2 md:grid-cols-3">
+                <TraceMetric
+                  label="业务日期"
+                  value={`${detail.batch.business_date_from} 至 ${detail.batch.business_date_to}`}
+                />
+                <TraceMetric
+                  label="上传人"
+                  value={`${detail.batch.uploaded_by} · ${detail.batch.uploaded_at}`}
+                />
+                <TraceMetric
+                  label="文件"
+                  value={`${detail.batch.file_name} · ${formatImportFileType(detail.batch.file_type)}`}
+                />
               </div>
-            </div>
-            <div className="rounded-md border bg-background/70 p-2">
-              <div className="text-xs text-muted-foreground">下一步</div>
-              <div className="mt-1 text-xs font-medium">{readability.nextAction}</div>
-            </div>
-          </div>
-        </section>
-
-        <QualityExceptionTracePanel trace={exceptionTrace} />
-
-        <section className="grid gap-2">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <FileText className="size-4 text-muted-foreground" />
-            版本记录
-          </div>
-          {detail.versions.length === 0 ? (
-            <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
-              当前批次没有版本记录。
-            </div>
-          ) : (
-            <div className="grid gap-2">
-              {detail.versions.map((version) => (
-                <div key={version.version_id} className="rounded-md border p-3 text-sm">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-mono text-xs">{version.version_id}</span>
-                    <Badge variant="outline">{formatImportFileType(version.version_type)}</Badge>
-                  </div>
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    {version.business_date_from} 至 {version.business_date_to} ·{" "}
-                    {version.created_at}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <section className="grid gap-2">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Database className="size-4 text-muted-foreground" />
-            全部行结果
-          </div>
-          {detail.rows.length === 0 ? (
-            <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
-              当前批次没有行结果。
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-20">行号</TableHead>
-                    <TableHead>状态</TableHead>
-                    <TableHead className="min-w-[160px]">source_key</TableHead>
-                    <TableHead className="min-w-[140px]">错误字段</TableHead>
-                    <TableHead className="min-w-[220px]">错误</TableHead>
-                    <TableHead className="min-w-[320px]">字段预览</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {detail.rows.map((row) => (
-                    <DetailRow key={row.row_id} row={row} />
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </section>
+            </section>
+          </TabsContent>
+          <TabsContent value="processing" className="m-0">
+            <ProcessingSummarySection readability={readability} />
+          </TabsContent>
+          <TabsContent value="exception-trace" className="m-0">
+            <QualityExceptionTracePanel trace={exceptionTrace} />
+          </TabsContent>
+          <TabsContent value="versions" className="m-0">
+            <VersionRecordsSection detail={detail} />
+          </TabsContent>
+          <TabsContent value="rows" className="m-0">
+            <RowResultsSection rows={detail.rows} />
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
+  )
+}
+
+function ProcessingSummarySection({
+  readability,
+}: {
+  readability: ReturnType<typeof summarizeImportBatchDetailReadability>
+}) {
+  return (
+    <section
+      className={
+        readability.tone === "blocked"
+          ? "grid gap-3 rounded-md border border-destructive/40 bg-destructive/10 p-3"
+          : readability.tone === "warning"
+            ? "grid gap-3 rounded-md border border-primary/30 bg-primary/10 p-3"
+            : "grid gap-3 rounded-md border bg-muted/30 p-3"
+      }
+    >
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div className="text-sm font-medium">处理摘要</div>
+          <div className="mt-1 text-sm text-muted-foreground">{readability.title}</div>
+        </div>
+        <Badge variant={readability.tone === "blocked" ? "destructive" : "outline"}>
+          {readability.focusLabel}
+        </Badge>
+      </div>
+      <p className="text-sm text-muted-foreground">{readability.detail}</p>
+      <div className="grid gap-2 md:grid-cols-2">
+        <div className="rounded-md border bg-background/70 p-2">
+          <div className="text-xs text-muted-foreground">错误字段</div>
+          <div className="mt-1 font-mono text-xs font-medium">
+            {readability.errorFieldSummary}
+          </div>
+        </div>
+        <div className="rounded-md border bg-background/70 p-2">
+          <div className="text-xs text-muted-foreground">下一步</div>
+          <div className="mt-1 text-xs font-medium">{readability.nextAction}</div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function VersionRecordsSection({ detail }: { detail: ImportBatchPersistenceDetail }) {
+  return (
+    <section className="grid gap-2">
+      <div className="flex items-center gap-2 text-sm font-medium">
+        <FileText className="size-4 text-muted-foreground" />
+        版本记录
+      </div>
+      {detail.versions.length === 0 ? (
+        <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
+          当前批次没有版本记录。
+        </div>
+      ) : (
+        <div className="grid gap-2">
+          {detail.versions.map((version) => (
+            <div key={version.version_id} className="rounded-md border p-3 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-mono text-xs">{version.version_id}</span>
+                <Badge variant="outline">{formatImportFileType(version.version_type)}</Badge>
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground">
+                {version.business_date_from} 至 {version.business_date_to} ·{" "}
+                {version.created_at}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function RowResultsSection({ rows }: { rows: ImportBatchRowResult[] }) {
+  return (
+    <section className="grid gap-2">
+      <div className="flex items-center gap-2 text-sm font-medium">
+        <Database className="size-4 text-muted-foreground" />
+        全部行结果
+      </div>
+      {rows.length === 0 ? (
+        <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
+          当前批次没有行结果。
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-20">行号</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead className="min-w-[160px]">source_key</TableHead>
+                <TableHead className="min-w-[140px]">错误字段</TableHead>
+                <TableHead className="min-w-[220px]">错误</TableHead>
+                <TableHead className="min-w-[320px]">字段预览</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.map((row) => (
+                <DetailRow key={row.row_id} row={row} />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -220,7 +275,7 @@ function QualityExceptionTracePanel({ trace }: { trace: ImportQualityExceptionTr
         trace.tone === "blocked"
           ? "grid gap-3 rounded-md border border-destructive/40 bg-destructive/10 p-3"
           : trace.tone === "warning"
-            ? "grid gap-3 rounded-md border border-amber-500/30 bg-amber-500/10 p-3"
+            ? "grid gap-3 rounded-md border border-primary/30 bg-primary/10 p-3"
             : "grid gap-3 rounded-md border bg-muted/30 p-3"
       }
     >

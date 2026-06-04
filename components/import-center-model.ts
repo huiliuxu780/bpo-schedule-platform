@@ -176,6 +176,19 @@ export type ImportBatchDetailSummary = {
   failedRows: number
   warningRows: number
   versionCount: number
+  workspaceTabs: ImportBatchDetailWorkspaceTab[]
+}
+
+export type ImportBatchDetailWorkspaceTabKey =
+  | "overview"
+  | "processing"
+  | "exception-trace"
+  | "versions"
+  | "rows"
+
+export type ImportBatchDetailWorkspaceTab = {
+  key: ImportBatchDetailWorkspaceTabKey
+  label: string
 }
 
 export type ImportBatchDetailReadabilityTone = "blocked" | "warning" | "ready" | "empty"
@@ -1285,6 +1298,14 @@ const recommendedImportStandardFields: Record<ImportFileType, string[]> = {
   login_log: ["source_key", "employee_id", "login_time", "logout_time"],
   status_log: ["source_key", "employee_id", "status_code", "start_time", "end_time"],
 }
+
+const importBatchDetailWorkspaceTabs: ImportBatchDetailWorkspaceTab[] = [
+  { key: "overview", label: "总览" },
+  { key: "processing", label: "处理摘要" },
+  { key: "exception-trace", label: "异常追踪" },
+  { key: "versions", label: "版本记录" },
+  { key: "rows", label: "行结果" },
+]
 
 export function buildImportApiUrl(path: string, apiBase = getDefaultApiBase()): string {
   const normalizedBase = apiBase.replace(/\/+$/, "")
@@ -4374,6 +4395,7 @@ export function summarizeImportBatchDetail(
   return {
     ...rowSummary,
     versionCount: detail.versions.length,
+    workspaceTabs: [...importBatchDetailWorkspaceTabs],
   }
 }
 
