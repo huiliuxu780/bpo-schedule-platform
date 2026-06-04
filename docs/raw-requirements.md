@@ -2757,3 +2757,16 @@ version: "1.0"
 status: "done"
 notes: "IM131 已完成：新增组织层级、人员类型、人员组织/职场字段、技能类型、人员多技能关系和对应迁移/导入解析测试。"
 ```
+
+### R832 - 人员主数据列表真实展示
+
+```yaml
+id: R832
+module: "主数据维护"
+description: "人员主数据导入应用后，维护人员需要在人员列表中看到真实员工记录，而不是只看到维护动作壳。列表至少要展示姓名、状态、人员类型、组织路径、职场和技能组类别，以便确认上传表格和应用结果是否形成可维护的人员主数据。"
+source: "PM clarified personnel master data list expectation and asked to continue after IM131 push on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM132 已完成：新增只读人员列表 API，并在 /master-data/agents 总览中展示真实人员、组织路径、职场和技能组类别。"
+```

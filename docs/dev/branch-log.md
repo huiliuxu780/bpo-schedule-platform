@@ -3224,3 +3224,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM132 Personnel Master Data Real List
+
+- branch_name: `codex/im132-personnel-list-real-data`
+- base_main_commit: `6ccd1b4`
+- stacked_on: `3530ef1 feat: extend personnel master data model`
+- remote_status: `IM131 branch is pushed; IM132 implementation is local only until final check/commit/push.`
+- scope: add a read-only personnel master-data list API and show the resulting real employee rows on `/master-data/agents` overview with employee status, employee type, organization path, workplace name, and multi-skill labels.
+- allowed_files_check: `backend/app/models.py`, `backend/app/master_data_persistence.py`, `backend/app/main.py`, `backend/tests/test_master_data_maintenance_api.py`, `app/master-data/[entityKey]/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, `scripts/tests/master-data-maintenance-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no package, lockfile, migration, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected backend read-only API/repository/model, existing agents page/model/component/test, and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target backend test first failed because `list_master_data_employees` was missing, then `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_api -v` passed with 7 tests including legacy local-schema fallback. Target frontend model test first failed because `summarizeMasterDataEmployeeList` was not exported, then passed with 13 tests. `npm run typecheck` passed. Browser smoke on `http://127.0.0.1:3000/master-data/agents` verified personnel totals, real employee row `张三`, columns `组织/职场`/`技能`/`有效期`, and no API 500. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 203 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

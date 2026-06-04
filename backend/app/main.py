@@ -54,6 +54,7 @@ from backend.app.models import (
     ImportProcessingStatus,
     MasterDataBindingMaintenanceRequest,
     MasterDataBindingMaintenanceResponse,
+    MasterDataEmployeeListResponse,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataEmployeeMaintenanceResponse,
     MasterDataImportApplyResponse,
@@ -669,6 +670,15 @@ def maintain_master_data_employee(
         )
     except ValueError as exc:
         raise _master_data_maintenance_http_error(exc) from exc
+
+
+@app.get(
+    "/api/v1/master-data/employees",
+    response_model=MasterDataEmployeeListResponse,
+)
+def list_master_data_employees() -> MasterDataEmployeeListResponse:
+    repository = MasterDataPersistenceRepository()
+    return MasterDataEmployeeListResponse(items=repository.list_employees())
 
 
 @app.post(

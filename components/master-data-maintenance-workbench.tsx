@@ -13,12 +13,16 @@ import {
   Send,
   ShieldAlert,
   ShieldCheck,
+  Users,
 } from "lucide-react"
 
 import {
   type MasterDataAgentMaintenanceFeedback,
+  type MasterDataEmployeeListRow,
+  type MasterDataEmployeeListSummary,
   type MasterDataEntityDetailSummary,
   type MasterDataMaintenanceTone,
+  summarizeMasterDataEmployeeList,
   summarizeMasterDataMaintenanceWorkbench,
 } from "@/components/master-data-maintenance-model"
 import type { ImportBatchListRow } from "@/components/import-center-model"
@@ -233,6 +237,8 @@ export function MasterDataMaintenanceEntityDetail({
   summary,
   error,
   feedback,
+  employeeList,
+  employeeListError,
   agentSubmitAction,
   referenceSubmitAction,
   bindingSubmitAction,
@@ -240,10 +246,13 @@ export function MasterDataMaintenanceEntityDetail({
   summary: MasterDataEntityDetailSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
+  employeeList?: MasterDataEmployeeListRow[]
+  employeeListError?: string | null
   agentSubmitAction?: (formData: FormData) => Promise<void>
   referenceSubmitAction?: (formData: FormData) => Promise<void>
   bindingSubmitAction?: (formData: FormData) => Promise<void>
 }) {
+  const employeeListSummary = summarizeMasterDataEmployeeList(employeeList ?? [])
   const canRenderAgentSubmit = Boolean(
     agentSubmitAction && summary.agentSubmitSourceBatchId
   )
@@ -347,6 +356,13 @@ export function MasterDataMaintenanceEntityDetail({
               <DetailItem label="来源批次" value={summary.sourceBatchLabel} />
             </CardContent>
           </Card>
+
+          {summary.entity.key === "agents" ? (
+            <AgentEmployeeListSection
+              summary={employeeListSummary}
+              error={employeeListError ?? null}
+            />
+          ) : null}
         </TabsContent>
 
         <TabsContent value="source" className="mt-0 grid gap-4">
@@ -576,6 +592,108 @@ function AgentMaintenanceFeedbackCard({
         {feedback.detail}
       </CardContent>
     </Card>
+  )
+}
+
+function AgentEmployeeListSection({
+  summary,
+  error,
+}: {
+  summary: MasterDataEmployeeListSummary
+  error: string | null
+}) {
+  return (
+    <section className="grid gap-3">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          label="人员总数"
+          value={summary.totalEmployees.toLocaleString("zh-CN")}
+          detail="来自主数据员工表"
+          tone="default"
+        />
+        <MetricCard
+          label="生效人员"
+          value={summary.activeEmployees.toLocaleString("zh-CN")}
+          detail="status=active"
+          tone={summary.activeEmployees > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="自有员工"
+          value={summary.internalEmployees.toLocaleString("zh-CN")}
+          detail="employee_type=internal"
+          tone="default"
+        />
+        <MetricCard
+          label="外包员工"
+          value={summary.outsourcedEmployees.toLocaleString("zh-CN")}
+          detail="employee_type=outsourced"
+          tone="default"
+        />
+      </div>
+
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Users className="size-4 text-muted-foreground" />
+            人员列表
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          {error ? (
+            <div className="border-t p-4 text-sm text-muted-foreground">
+              人员列表读取失败：{error}
+            </div>
+          ) : summary.rows.length === 0 ? (
+            <div className="border-t p-4 text-sm text-muted-foreground">
+              暂无人员主数据。请先上传并应用包含 employee 记录的主数据批次。
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>坐席</TableHead>
+                  <TableHead>状态</TableHead>
+                  <TableHead>类型</TableHead>
+                  <TableHead>组织/职场</TableHead>
+                  <TableHead>技能</TableHead>
+                  <TableHead>有效期</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {summary.rows.map((row) => (
+                  <TableRow key={row.employee_id}>
+                    <TableCell className="align-top">
+                      <div className="font-medium">{row.employee_name}</div>
+                      <div className="mt-1 font-mono text-xs text-muted-foreground">
+                        {row.employee_id}
+                      </div>
+                    </TableCell>
+                    <TableCell className="align-top">
+                      <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                        {row.display.statusLabel}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="align-top text-sm text-muted-foreground">
+                      {row.display.employeeTypeLabel}
+                    </TableCell>
+                    <TableCell className="max-w-[18rem] align-top text-sm text-muted-foreground">
+                      <div className="text-foreground">{row.display.organizationLabel}</div>
+                      <div className="mt-1">{row.display.workplaceLabel}</div>
+                    </TableCell>
+                    <TableCell className="max-w-[20rem] align-top text-sm text-muted-foreground">
+                      {row.display.skillSummary}
+                    </TableCell>
+                    <TableCell className="align-top text-sm text-muted-foreground">
+                      {row.effective_from} 至 {row.effective_to}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </section>
   )
 }
 

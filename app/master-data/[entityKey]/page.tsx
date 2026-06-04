@@ -5,6 +5,7 @@ import {
   MasterDataMaintenanceEntityDetail,
 } from "@/components/master-data-maintenance-workbench"
 import {
+  type MasterDataEmployeeListRow,
   type MasterDataMaintenanceEntityKey,
   getMasterDataMaintenanceEntity,
   summarizeMasterDataMaintenanceFeedback,
@@ -46,6 +47,10 @@ export default async function MasterDataEntityDetailPage({
   }
 
   const batchResult = await fetchImportBatches()
+  const employeeResult =
+    entity.key === "agents"
+      ? await fetchMasterDataEmployees()
+      : { data: [], error: null }
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const summary = summarizeMasterDataMaintenanceEntityDetail(
     entity.key as MasterDataMaintenanceEntityKey,
@@ -62,6 +67,8 @@ export default async function MasterDataEntityDetailPage({
         summary={summary}
         error={batchResult.error}
         feedback={feedback}
+        employeeList={employeeResult.data ?? []}
+        employeeListError={employeeResult.error}
         agentSubmitAction={
           entity.key === "agents" ? submitMasterDataAgentMaintenance : undefined
         }
@@ -84,6 +91,37 @@ function isReferenceEntity(
   entityKey: MasterDataMaintenanceEntityKey
 ): entityKey is "sites" | "vendors" | "projects" | "skills" {
   return ["sites", "vendors", "projects", "skills"].includes(entityKey)
+}
+
+async function fetchMasterDataEmployees(): Promise<
+  ApiResult<MasterDataEmployeeListRow[]>
+> {
+  try {
+    const response = await fetch(buildImportApiUrl("/api/v1/master-data/employees"), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `人员列表 API 返回 ${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as {
+      items?: MasterDataEmployeeListRow[]
+    }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
 }
 
 async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {

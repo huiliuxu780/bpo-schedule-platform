@@ -459,6 +459,16 @@ class EmployeeSkillRecord(BaseModel):
     batch_id: str
 
 
+class MasterDataEmployeeListRow(MasterDataEmployeeRecord):
+    organization_path: str | None = None
+    workplace_name: str | None = None
+    skills: list[EmployeeSkillRecord] = Field(default_factory=list)
+
+
+class MasterDataEmployeeListResponse(BaseModel):
+    items: list[MasterDataEmployeeListRow]
+
+
 class MasterDataSnapshotRequest(BaseModel):
     batch_id: str
     suppliers: list[MasterDataReferenceInput] = Field(default_factory=list)

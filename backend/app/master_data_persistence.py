@@ -1,6 +1,6 @@
 from typing import TypeVar
 
-from sqlalchemy import ForeignKey, String, select
+from sqlalchemy import ForeignKey, String, inspect as inspect_schema, select, text
 from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
 
 from backend.app.import_persistence import Base, ImportBatchEntity, build_engine
@@ -10,6 +10,7 @@ from backend.app.models import (
     EmployeeMasterDataInput,
     EmployeeSkillInput,
     EmployeeSkillRecord,
+    MasterDataEmployeeListRow,
     MasterDataEmployeeRecord,
     MasterDataOrganizationInput,
     MasterDataOrganizationRecord,
@@ -378,6 +379,55 @@ class MasterDataPersistenceRepository:
                 return None
             return _binding_record(binding)
 
+    def list_employees(self) -> list[MasterDataEmployeeListRow]:
+        with self.session_factory() as session:
+            if not _has_enriched_employee_list_schema(session):
+                return _legacy_employee_list_rows(session)
+
+            rows = session.execute(
+                select(EmployeeEntity, OrganizationEntity, WorkplaceEntity)
+                .outerjoin(
+                    OrganizationEntity,
+                    EmployeeEntity.organization_id == OrganizationEntity.organization_id,
+                )
+                .outerjoin(
+                    WorkplaceEntity,
+                    EmployeeEntity.workplace_id == WorkplaceEntity.workplace_id,
+                )
+                .order_by(EmployeeEntity.employee_id)
+            ).all()
+            employee_ids = [row[0].employee_id for row in rows]
+            skills_by_employee: dict[str, list[EmployeeSkillRecord]] = {
+                employee_id: [] for employee_id in employee_ids
+            }
+
+            if employee_ids:
+                skill_rows = session.execute(
+                    select(EmployeeSkillEntity, SkillEntity)
+                    .join(SkillEntity, EmployeeSkillEntity.skill_id == SkillEntity.skill_id)
+                    .where(EmployeeSkillEntity.employee_id.in_(employee_ids))
+                    .order_by(
+                        EmployeeSkillEntity.employee_id,
+                        SkillEntity.skill_name,
+                        EmployeeSkillEntity.skill_id,
+                    )
+                ).all()
+                for employee_skill, skill in skill_rows:
+                    skills_by_employee.setdefault(employee_skill.employee_id, []).append(
+                        _employee_skill_record(employee_skill, skill)
+                    )
+
+            return [
+                _employee_list_row(
+                    session,
+                    row[0],
+                    row[1],
+                    row[2],
+                    skills_by_employee.get(row[0].employee_id, []),
+                )
+                for row in rows
+            ]
+
     def list_employee_skills(self, employee_id: str) -> list[EmployeeSkillRecord]:
         with self.session_factory() as session:
             rows = session.execute(
@@ -560,6 +610,73 @@ def _employee_record(employee: EmployeeEntity) -> MasterDataEmployeeRecord:
         effective_from=employee.effective_from,
         effective_to=employee.effective_to,
         batch_id=employee.batch_id,
+    )
+
+
+def _has_enriched_employee_list_schema(session: Session) -> bool:
+    inspector = inspect_schema(session.bind)
+    employee_columns = {
+        column["name"] for column in inspector.get_columns("master_data_employees")
+    }
+    skill_columns = {
+        column["name"] for column in inspector.get_columns("master_data_skills")
+    }
+    return {"employee_type", "organization_id", "workplace_id"}.issubset(
+        employee_columns
+    ) and "skill_category" in skill_columns
+
+
+def _legacy_employee_list_rows(session: Session) -> list[MasterDataEmployeeListRow]:
+    rows = session.execute(
+        text(
+            """
+            SELECT employee_id, employee_name, status, effective_from, effective_to, batch_id
+            FROM master_data_employees
+            ORDER BY employee_id
+            """
+        )
+    ).mappings()
+    return [
+        MasterDataEmployeeListRow(
+            employee_id=row["employee_id"],
+            employee_name=row["employee_name"],
+            status=row["status"],
+            employee_type="internal",
+            organization_id=None,
+            organization_path=None,
+            workplace_id=None,
+            workplace_name=None,
+            effective_from=row["effective_from"],
+            effective_to=row["effective_to"],
+            batch_id=row["batch_id"],
+            skills=[],
+        )
+        for row in rows
+    ]
+
+
+def _employee_list_row(
+    session: Session,
+    employee: EmployeeEntity,
+    organization: OrganizationEntity | None,
+    workplace: WorkplaceEntity | None,
+    skills: list[EmployeeSkillRecord],
+) -> MasterDataEmployeeListRow:
+    return MasterDataEmployeeListRow(
+        employee_id=employee.employee_id,
+        employee_name=employee.employee_name,
+        status=employee.status,
+        employee_type=employee.employee_type,
+        organization_id=employee.organization_id,
+        organization_path=_organization_path(session, organization)
+        if organization is not None
+        else None,
+        workplace_id=employee.workplace_id,
+        workplace_name=workplace.workplace_name if workplace is not None else None,
+        effective_from=employee.effective_from,
+        effective_to=employee.effective_to,
+        batch_id=employee.batch_id,
+        skills=skills,
     )
 
 

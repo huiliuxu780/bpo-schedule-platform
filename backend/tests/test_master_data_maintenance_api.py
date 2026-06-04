@@ -4,19 +4,22 @@ from pathlib import Path
 from unittest.mock import patch
 
 from fastapi import HTTPException
+from sqlalchemy import text
 
 from backend.app.import_persistence import ImportPersistenceRepository
-from backend.app.main import app, maintain_master_data_employee
+from backend.app.main import app, list_master_data_employees, maintain_master_data_employee
 from backend.app.main import maintain_master_data_binding
 from backend.app.main import maintain_master_data_reference
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
     EmployeeMasterDataInput,
+    EmployeeSkillInput,
     MasterDataReferenceInput,
     ImportBatchCreateRequest,
     ImportBatchRowResultInput,
     MasterDataBindingMaintenanceRequest,
     MasterDataEmployeeMaintenanceRequest,
+    MasterDataOrganizationInput,
     MasterDataReferenceMaintenanceRequest,
     MasterDataSnapshotRequest,
 )
@@ -41,6 +44,204 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
             ("/api/v1/master-data/bindings/{binding_id}/maintenance", "POST"),
             routes,
         )
+        self.assertIn(
+            ("/api/v1/master-data/employees", "GET"),
+            routes,
+        )
+
+    def test_list_employees_returns_org_workplace_and_skill_context(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance-api.db'}"
+            _create_import_batch(database_url, "BATCH-MD-API-LIST")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-API-LIST",
+                    workplaces=[
+                        MasterDataReferenceInput(
+                            reference_id="NJ-01",
+                            reference_name="南京职场",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    organizations=[
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CC",
+                            organization_name="CC",
+                            organization_level=1,
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CCO",
+                            organization_name="CCO",
+                            organization_level=2,
+                            parent_organization_id="ORG-CC",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-RETURN",
+                            organization_name="集中退换小组",
+                            organization_level=3,
+                            parent_organization_id="ORG-CCO",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                    skills=[
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-RETURN-TICKET",
+                            reference_name="集中退换工单",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                            skill_category="ticket",
+                        ),
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-RETURN-CALL",
+                            reference_name="集中退换外呼",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                            skill_category="hotline",
+                        ),
+                        MasterDataReferenceInput(
+                            reference_id="SKILL-GENERAL",
+                            reference_name="通用技能组",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                            skill_category="online",
+                        ),
+                    ],
+                    employees=[
+                        EmployeeMasterDataInput(
+                            employee_id="A-2001",
+                            employee_name="刘晓晓",
+                            status="active",
+                            employee_type="internal",
+                            organization_id="ORG-RETURN",
+                            workplace_id="NJ-01",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    employee_skills=[
+                        EmployeeSkillInput(
+                            employee_id="A-2001",
+                            skill_id="SKILL-RETURN-TICKET",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                        EmployeeSkillInput(
+                            employee_id="A-2001",
+                            skill_id="SKILL-RETURN-CALL",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                        EmployeeSkillInput(
+                            employee_id="A-2001",
+                            skill_id="SKILL-GENERAL",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                )
+            )
+
+            with patch(
+                "backend.app.main.MasterDataPersistenceRepository",
+                return_value=repository,
+            ):
+                response = list_master_data_employees()
+
+        self.assertEqual(len(response.items), 1)
+        employee = response.items[0]
+        self.assertEqual(employee.employee_id, "A-2001")
+        self.assertEqual(employee.employee_name, "刘晓晓")
+        self.assertEqual(employee.employee_type, "internal")
+        self.assertEqual(employee.organization_path, "CC / CCO / 集中退换小组")
+        self.assertEqual(employee.workplace_name, "南京职场")
+        self.assertEqual(
+            [(skill.skill_name, skill.skill_category) for skill in employee.skills],
+            [
+                ("通用技能组", "online"),
+                ("集中退换外呼", "hotline"),
+                ("集中退换工单", "ticket"),
+            ],
+        )
+
+    def test_list_employees_tolerates_legacy_local_schema_without_new_columns(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'legacy-local.db'}"
+            repository = MasterDataPersistenceRepository(database_url)
+            with repository.engine.begin() as connection:
+                connection.execute(
+                    text(
+                        """
+                        CREATE TABLE master_data_employees (
+                            employee_id VARCHAR(80) NOT NULL PRIMARY KEY,
+                            employee_name VARCHAR(255) NOT NULL,
+                            status VARCHAR(20) NOT NULL,
+                            effective_from VARCHAR(20) NOT NULL,
+                            effective_to VARCHAR(20) NOT NULL,
+                            batch_id VARCHAR(80) NOT NULL
+                        )
+                        """
+                    )
+                )
+                connection.execute(
+                    text(
+                        """
+                        CREATE TABLE master_data_skills (
+                            skill_id VARCHAR(80) NOT NULL PRIMARY KEY,
+                            skill_name VARCHAR(255) NOT NULL,
+                            status VARCHAR(20) NOT NULL,
+                            effective_from VARCHAR(20) NOT NULL,
+                            effective_to VARCHAR(20) NOT NULL,
+                            batch_id VARCHAR(80) NOT NULL
+                        )
+                        """
+                    )
+                )
+                connection.execute(
+                    text(
+                        """
+                        INSERT INTO master_data_employees (
+                            employee_id,
+                            employee_name,
+                            status,
+                            effective_from,
+                            effective_to,
+                            batch_id
+                        )
+                        VALUES (
+                            'A-LEGACY',
+                            '旧库员工',
+                            'active',
+                            '2026-05-01',
+                            '2026-12-31',
+                            'BATCH-LEGACY'
+                        )
+                        """
+                    )
+                )
+
+            rows = repository.list_employees()
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0].employee_id, "A-LEGACY")
+        self.assertEqual(rows[0].employee_type, "internal")
+        self.assertIsNone(rows[0].organization_path)
+        self.assertIsNone(rows[0].workplace_name)
+        self.assertEqual(rows[0].skills, [])
 
     def test_create_employee_returns_maintenance_response(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

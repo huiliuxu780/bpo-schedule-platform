@@ -680,3 +680,9 @@ The task remained frontend-scaffold only. It did not add personnel CRUD, backend
 After PM clarified the personnel master-data shape, the existing employee model was too narrow: it only covered employee identity, name, status, effective period, and a single composite binding. `US751/IM131` is complete. The master-data persistence model now supports organization hierarchy and path, employee type (`internal`/`outsourced`), employee organization/workplace links, skill category (`online`/`hotline`/`ticket`), and employee multi-skill rows. The `master_data` import application can parse `organization` and `employee_skill` rows plus `employee_type`, `organization_id`, `workplace_id`, and `skill_category`.
 
 The task was a database-persistence slice. It added migration `20260604_0009` and backend tests, but did not add frontend list/detail pages, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM131.
+
+## 2026-06-04 IM132 Personnel Master Data Real List
+
+After IM131 created the personnel master-data model, `/master-data/agents` still did not show the real employee rows that were imported and applied. `US752/IM132` is complete. The backend now exposes a read-only `/api/v1/master-data/employees` list API with employee status, employee type, organization path, workplace name, and multi-skill context. The agents detail overview reads that API and shows personnel totals plus a real personnel table.
+
+The task was a backend-vertical slice. It did not add migrations, dependencies, batch maintenance, permissions, approval, export, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM132.

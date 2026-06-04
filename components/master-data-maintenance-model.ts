@@ -80,6 +80,8 @@ export type MasterDataMaintenanceAction = {
 export type MasterDataAgentMaintenanceActionKey = MasterDataMaintenanceAction["key"]
 
 export type MasterDataAgentMaintenanceStatus = "active" | "frozen" | "inactive"
+export type MasterDataEmployeeType = "internal" | "outsourced"
+export type MasterDataSkillCategory = "online" | "hotline" | "ticket"
 export type MasterDataReferenceMaintenanceType =
   | "suppliers"
   | "workplaces"
@@ -153,6 +155,51 @@ export type MasterDataAgentMaintenanceFeedback = {
   tone: "success" | "error"
   title: string
   detail: string
+}
+
+export type MasterDataEmployeeListSkill = {
+  employee_id: string
+  skill_id: string
+  skill_name: string
+  skill_category: MasterDataSkillCategory | null
+  effective_from: string
+  effective_to: string
+  batch_id: string
+}
+
+export type MasterDataEmployeeListRow = {
+  employee_id: string
+  employee_name: string
+  status: MasterDataAgentMaintenanceStatus
+  employee_type: MasterDataEmployeeType
+  organization_id: string | null
+  organization_path: string | null
+  workplace_id: string | null
+  workplace_name: string | null
+  effective_from: string
+  effective_to: string
+  batch_id: string
+  skills: MasterDataEmployeeListSkill[]
+}
+
+export type MasterDataEmployeeListDisplay = {
+  employeeTypeLabel: string
+  statusLabel: string
+  organizationLabel: string
+  workplaceLabel: string
+  skillSummary: string
+}
+
+export type MasterDataEmployeeListViewRow = MasterDataEmployeeListRow & {
+  display: MasterDataEmployeeListDisplay
+}
+
+export type MasterDataEmployeeListSummary = {
+  totalEmployees: number
+  activeEmployees: number
+  internalEmployees: number
+  outsourcedEmployees: number
+  rows: MasterDataEmployeeListViewRow[]
 }
 
 export type MasterDataEntityDetailSummary = {
@@ -422,6 +469,30 @@ export function buildMasterDataBindingMaintenancePayload(
   })
 }
 
+export function summarizeMasterDataEmployeeList(
+  employees: MasterDataEmployeeListRow[]
+): MasterDataEmployeeListSummary {
+  const rows = employees.map((employee) => ({
+    ...employee,
+    display: {
+      employeeTypeLabel: formatMasterDataEmployeeType(employee.employee_type),
+      statusLabel: formatMasterDataEmployeeStatus(employee.status),
+      organizationLabel: employee.organization_path ?? "未绑定组织",
+      workplaceLabel: employee.workplace_name ?? "未绑定职场",
+      skillSummary: formatMasterDataEmployeeSkills(employee.skills),
+    },
+  }))
+
+  return {
+    totalEmployees: rows.length,
+    activeEmployees: rows.filter((row) => row.status === "active").length,
+    internalEmployees: rows.filter((row) => row.employee_type === "internal").length,
+    outsourcedEmployees: rows.filter((row) => row.employee_type === "outsourced")
+      .length,
+    rows,
+  }
+}
+
 export function summarizeMasterDataAgentMaintenanceFeedback(
   searchParams: Record<string, string | string[] | undefined>
 ): MasterDataAgentMaintenanceFeedback | null {
@@ -649,6 +720,64 @@ function isReferenceEntity(
   entityKey: MasterDataMaintenanceEntityKey
 ): entityKey is "sites" | "vendors" | "projects" | "skills" {
   return ["sites", "vendors", "projects", "skills"].includes(entityKey)
+}
+
+function formatMasterDataEmployeeType(employeeType: MasterDataEmployeeType) {
+  if (employeeType === "internal") {
+    return "自有员工"
+  }
+
+  return "外包员工"
+}
+
+function formatMasterDataEmployeeStatus(status: MasterDataAgentMaintenanceStatus) {
+  if (status === "active") {
+    return "生效"
+  }
+
+  if (status === "frozen") {
+    return "冻结"
+  }
+
+  return "停用"
+}
+
+function formatMasterDataSkillCategory(
+  category: MasterDataSkillCategory | null
+) {
+  if (category === "online") {
+    return "在线技能组"
+  }
+
+  if (category === "hotline") {
+    return "热线技能组"
+  }
+
+  if (category === "ticket") {
+    return "工单技能组"
+  }
+
+  return "未分类技能组"
+}
+
+function formatMasterDataEmployeeSkills(skills: MasterDataEmployeeListSkill[]) {
+  if (skills.length === 0) {
+    return "暂无技能"
+  }
+
+  return [...skills]
+    .sort((left, right) => {
+      if (left.skill_name === right.skill_name) {
+        return left.skill_id < right.skill_id ? -1 : 1
+      }
+
+      return left.skill_name < right.skill_name ? -1 : 1
+    })
+    .map(
+      (skill) =>
+        `${skill.skill_name}（${formatMasterDataSkillCategory(skill.skill_category)}）`
+    )
+    .join("、")
 }
 
 function resolveMasterDataMaintenanceTone(
