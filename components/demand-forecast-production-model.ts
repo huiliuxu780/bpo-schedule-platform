@@ -144,7 +144,7 @@ const DEMAND_FORECAST_PRODUCTION_WORKSPACE_TABS: DemandForecastProductionWorkspa
     { key: "overview", label: "总览" },
     { key: "source", label: "来源与对齐" },
     { key: "rows", label: "预测明细" },
-    { key: "comparison", label: "本地比对" },
+    { key: "comparison", label: "比对" },
   ]
 
 export function summarizeDemandForecastProductionWorkbench(
@@ -231,9 +231,9 @@ export function summarizeDemandForecastProductionDetail(
       appliedRecordCountLabel: "0",
       sourceRowLabel: "未定位来源行",
       skillAlignmentLabel: "未定位来源批次，无法确认技能组和等级",
-      timeBucketLabel: "暂未发现 0.5h 预测明细",
+      timeBucketLabel: "未发现 0.5h 预测明细",
       forecastScopeLabel: "未定位来源批次，暂无技能组/等级/时段行",
-      alignmentResultLabel: "暂未发现技能组/等级/时段对齐结果",
+      alignmentResultLabel: "未发现技能组/等级/时段对齐结果",
       blockerSummary: "请返回预测生产工作台选择来源批次",
       intervalRows: [],
       changeRows: [],
@@ -264,7 +264,7 @@ export function summarizeDemandForecastProductionDetail(
       ? `预测合计需求 ${(totalRequiredAgents ?? 0).toLocaleString("zh-CN")} 人次`
       : batch.applied_record_count > 0
         ? `已形成 ${batch.applied_record_count.toLocaleString("zh-CN")} 条技能组/等级/时段预测明细`
-        : "暂未发现技能组/等级/时段对齐结果"
+        : "未发现技能组/等级/时段对齐结果"
   const versionLabel = apiDetail?.version.forecast_version_id ?? row.versionLabel
   const businessDateLabel = apiDetail
     ? formatBusinessDateRange(
@@ -273,23 +273,23 @@ export function summarizeDemandForecastProductionDetail(
       )
     : row.businessDateLabel
   const sourceRowLabel = hasApiDetail
-    ? `${apiIntervals.length.toLocaleString("zh-CN")} 条预测区间来自真实版本 API`
+    ? `${apiIntervals.length.toLocaleString("zh-CN")} 条预测区间来自版本服务`
     : `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`
   const skillAlignmentLabel = hasApiDetail
     ? summarizeForecastDimensions(apiIntervals)
-    : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，技能组和等级明细待版本 API 暴露`
+    : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，技能组和等级明细待版本 服务 暴露`
   const timeBucketLabel = hasApiDetail
     ? `已读取 ${apiIntervals.length.toLocaleString("zh-CN")} 条 0.5h 预测区间`
     : batch.applied_record_count > 0
       ? "0.5h 时段口径已确认"
-      : "暂未发现 0.5h 预测明细"
+      : "未发现 0.5h 预测明细"
   const forecastScopeLabel = hasApiDetail
-    ? "真实版本 API 已返回技能组/等级/0.5h 时段明细"
+    ? "版本服务 已返回技能组/等级/0.5h 时段明细"
     : "暂无技能组/等级/时段明细"
   const changeBoundaryLabel = hasApiDetail
     ? apiChanges.length > 0
       ? `已读取 ${apiChanges.length.toLocaleString("zh-CN")} 条版本变更记录`
-      : "真实版本 API 暂未返回变更记录"
+      : "版本服务 未返回变更记录"
     : "暂无变更记录"
 
   return {
@@ -348,7 +348,7 @@ function buildDemandForecastComparisonEntry({
   if (tone !== "ready" || !versionLabel || !businessDate) {
     return {
       tone: "blocked",
-      title: "暂不能进入本地比对",
+      title: "无法进入比对",
       detail: "未定位预测业务版本或业务日，先回到预测生产工作台选择已应用批次。",
       actionLabel: "查看业务版本工作台",
       href,
@@ -359,7 +359,7 @@ function buildDemandForecastComparisonEntry({
   return {
     tone: "ready",
     title: "进入预测 vs 排班比对入口",
-    detail: `已定位预测版本 ${versionLabel}，可到业务版本工作台按同业务日寻找排班版本并发起受控本地比对。`,
+    detail: `已定位预测版本 ${versionLabel}，可到业务版本工作台按同业务日寻找排班版本并发起比对。`,
     actionLabel: "去业务版本工作台",
     href,
     blockerLabel: "无阻塞；从业务版本工作台继续完成成对版本确认",
@@ -428,7 +428,7 @@ function toForecastChangeDisplayRow(
 
 function summarizeForecastDimensions(rows: DemandForecastProductionApiIntervalRow[]) {
   if (rows.length === 0) {
-    return "真实版本 API 暂未返回预测区间"
+    return "版本服务 未返回预测区间"
   }
 
   const skillIds = uniqueValues(rows.map((row) => row.skill_id))
@@ -489,7 +489,7 @@ function resolveDemandForecastBlocker(
   }
 
   if (batch.applied_record_count <= 0) {
-    return "已应用但暂未发现预测明细"
+    return "已应用但未发现预测明细"
   }
 
   return "无阻塞"
@@ -527,7 +527,7 @@ function resolveDemandForecastProductionDetail(
   }
 
   if (blockedVersions > 0) {
-    return "部分预测版本缺少应用、业务版本或预测明细，暂不能进入排班比对口径。"
+    return "部分预测版本缺少应用、业务版本或预测明细，无法进入排班比对口径。"
   }
 
   return "当前需求预测版本已应用并具备技能组、等级和时段对齐口径。"

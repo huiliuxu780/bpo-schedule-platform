@@ -100,7 +100,7 @@ export function ImportCenterTemplateManagementPanel({
             {fitDetail ? (
               <TemplateFitDetailCard detail={fitDetail} />
             ) : (
-              <EmptyPanel detail="未选中批次文件类型时，暂不展示模板适配建议。" />
+              <EmptyPanel detail="未选中批次文件类型时，未展示模板适配建议。" />
             )}
           </TabsContent>
           <TabsContent value="templates" className="m-0">

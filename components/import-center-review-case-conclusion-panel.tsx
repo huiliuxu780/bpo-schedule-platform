@@ -108,10 +108,7 @@ export function ImportCenterReviewCaseConclusionPanel({
         defaultValue="确认异常成立。"
         required
       />
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="break-all font-mono text-xs text-muted-foreground">
-          {action.apiHref}
-        </div>
+      <div className="flex justify-end">
         <Button type="submit" size="sm">
           {action.actionLabel}
         </Button>

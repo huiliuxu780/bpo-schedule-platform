@@ -151,7 +151,7 @@ export function ImportCenterReviewCaseDetailWorkspace({
               </div>
               <Button asChild size="sm" variant="outline">
                 <Link href={summary.detailHref}>
-                  查看详情 API
+                  查看详情
                   <ExternalLink data-icon="inline-end" />
                 </Link>
               </Button>

@@ -399,7 +399,7 @@ export function DemandForecastProductionDetail({
                   ) : (
                     <TableRow>
                       <TableCell colSpan={7} className="h-20 text-center text-sm text-muted-foreground">
-                        暂未读取到真实 0.5h 预测区间
+                        未读取到 0.5h 预测区间
                       </TableCell>
                     </TableRow>
                   )}
@@ -438,7 +438,7 @@ export function DemandForecastProductionDetail({
                   ) : (
                     <TableRow>
                       <TableCell colSpan={2} className="h-20 text-center text-sm text-muted-foreground">
-                        暂未读取到版本变更记录
+                        未读取到版本变更记录
                       </TableCell>
                     </TableRow>
                   )}

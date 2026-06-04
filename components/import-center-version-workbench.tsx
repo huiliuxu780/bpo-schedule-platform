@@ -75,7 +75,7 @@ export function ImportCenterVersionWorkbench({
           <div>
             <h1 className="text-xl font-semibold tracking-normal">业务版本工作台</h1>
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              查看当前业务版本、来源批次、阻塞状态、下游影响和本地比对入口。
+              查看当前业务版本、来源批次、阻塞状态、下游影响和比对入口。
             </p>
           </div>
         </div>
@@ -269,7 +269,7 @@ export function ImportCenterVersionWorkbench({
                 <TableHead className="min-w-[110px]">状态</TableHead>
                 <TableHead className="min-w-[320px]">阻塞摘要</TableHead>
                 <TableHead className="min-w-[280px]">下游影响</TableHead>
-                <TableHead className="min-w-[300px]">本地比对</TableHead>
+                <TableHead className="min-w-[300px]">比对</TableHead>
                 <TableHead className="min-w-[220px] text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
@@ -440,8 +440,8 @@ function summarizeVersionWorkbenchSubmitNotice({
   if (status === "success" && runId) {
     return {
       tone: "success",
-      title: "本地比对已提交",
-      detail: "当前版本组合已生成或复用一个本地对比运行；重复提交时后端会返回已有运行，不创建多条重复结果。",
+      title: "比对已提交",
+      detail: "当前版本组合已生成或复用一个对比运行；重复提交时后端会返回已有运行，不创建多条重复结果。",
       runLabel: runId,
       primaryActionLabel: "查看对比运行",
       primaryHref: `/data-quality/comparison-runs/${encodeURIComponent(runId)}`,
@@ -453,7 +453,7 @@ function summarizeVersionWorkbenchSubmitNotice({
   if (status === "failed") {
     return {
       tone: "failed",
-      title: "本地比对未提交",
+      title: "比对未提交",
       detail: formatVersionWorkbenchSubmitFailure(reason),
       runLabel: runId ?? "未生成运行",
       primaryActionLabel: "查看对比运行",
@@ -470,15 +470,15 @@ function summarizeVersionWorkbenchSubmitNotice({
 
 function formatVersionWorkbenchSubmitFailure(reason?: string | null): string {
   if (!reason) {
-    return "提交未返回成功结果，请确认版本组合和本地 API 状态。"
+    return "提交未返回成功结果，请确认版本组合。"
   }
 
   if (reason === "missing_required_fields") {
-    return "提交参数不完整，当前版本组合还不能发起本地比对。"
+    return "提交参数不完整，当前版本组合还不能发起比对。"
   }
 
   if (reason.startsWith("api_")) {
-    return `本地 API 返回 ${reason.replace("api_", "")}，请先回看版本组合和服务状态。`
+    return `提交返回 ${reason.replace("api_", "")}，请先回看版本组合。`
   }
 
   return reason

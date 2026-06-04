@@ -322,7 +322,7 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
     key: "vendors",
     label: "供应商",
     scopeLabel: "供应商编码、名称、合作状态",
-    referenceLabel: "坐席归属、项目绑定、结算复盘口径",
+    referenceLabel: "坐席归属、项目绑定、履约复核口径",
     maintenanceBoundary: "供应商编码、名称、合作状态和生效周期。",
   },
   {
@@ -473,7 +473,7 @@ export function summarizeMasterDataMaintenanceEntityDetail(
     title: `${entity.label}详情与引用影响`,
     detail: isSourceReady
       ? `当前基于 ${workbench.sourceVersionLabel} 展示 ${entity.label} 的基础信息和引用关系。`
-      : `${entity.label}来源尚未应用或仍有阻塞，暂不展示引用影响明细。`,
+      : `${entity.label}来源尚未应用或仍有阻塞，未展示引用影响明细。`,
     sourceVersionLabel: workbench.sourceVersionLabel,
     sourceVersionHref:
       workbench.sourceVersionLabel === "暂无主数据业务版本"
@@ -806,7 +806,7 @@ function buildMasterDataReferenceImpacts(
   entity: MasterDataMaintenanceEntity,
   isSourceReady: boolean
 ): MasterDataReferenceImpact[] {
-  const blockedDetail = "来源版本未就绪，暂不展示引用影响。"
+  const blockedDetail = "来源版本未就绪，未展示引用影响。"
   const emptyPrefix = `${entity.label}暂无引用影响明细。`
 
   return [

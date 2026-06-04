@@ -221,7 +221,7 @@ export function ShiftDetailsTable({ rows }: { rows: ShiftDetailRow[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "plan_date", desc: false },
   ])
-  // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
+  // TanStack Table exposes an imperative table 服务 that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: rows,

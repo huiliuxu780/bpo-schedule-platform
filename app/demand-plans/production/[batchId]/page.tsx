@@ -49,7 +49,7 @@ async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
     if (!response.ok) {
       return {
         data: [],
-        error: `导入批次 API 返回 ${response.status}`,
+        error: `导入批次 服务返回 ${response.status}`,
       }
     }
 
@@ -86,7 +86,7 @@ async function fetchDemandForecastProductionDetail(
         error:
           response.status === 404
             ? null
-            : `预测版本详情 API 返回 ${response.status}`,
+            : `预测版本详情 服务返回 ${response.status}`,
       }
     }
 
@@ -107,5 +107,5 @@ function formatApiError(error: unknown): string {
     return error.message
   }
 
-  return "本地 API 暂不可用"
+  return "服务不可用"
 }

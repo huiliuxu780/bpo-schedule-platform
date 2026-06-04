@@ -273,7 +273,7 @@ export function SchedulePlanTable({
     [gapFilter, globalFilter, plans, statusFilter]
   )
   const summary = summarizeSchedulePlanRows(filteredPlans)
-  // TanStack Table exposes an imperative table API that React Compiler cannot memoize.
+  // TanStack Table exposes an imperative table 服务 that React Compiler cannot memoize.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredPlans,
@@ -320,7 +320,7 @@ export function SchedulePlanTable({
         <div>
           <CardTitle>排班计划</CardTitle>
           <CardDescription>
-            本地筛选计划摘要与缺口风险
+            筛选计划摘要与缺口风险
             {filterLabel ? ` / 当前筛选：${filterLabel}` : ""}
           </CardDescription>
         </div>

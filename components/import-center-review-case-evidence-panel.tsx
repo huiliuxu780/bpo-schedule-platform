@@ -48,8 +48,7 @@ export function ImportCenterReviewCaseEvidencePanel({
     const payload = buildImportReviewEvidenceWritePayload({
       detail,
       evidenceType: evidenceType || "note",
-      evidenceUri:
-        evidenceUri || `local://review/${detail.case.case_id}/evidence-${detail.evidence.length + 1}`,
+      evidenceUri: evidenceUri || `review-evidence-${detail.evidence.length + 1}`,
       submittedBy: submittedBy || detail.case.owner_id,
       note,
     })
@@ -93,8 +92,7 @@ export function ImportCenterReviewCaseEvidencePanel({
         <Input
           aria-label="证据位置"
           name="evidence_uri"
-          defaultValue={`local://review/${caseId}/note`}
-          required
+          placeholder="填写证据位置或备注编号"
         />
       </div>
       <div className="grid gap-3 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
@@ -110,10 +108,7 @@ export function ImportCenterReviewCaseEvidencePanel({
           defaultValue="补充复核证据。"
         />
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="break-all font-mono text-xs text-muted-foreground">
-          {action.apiHref}
-        </div>
+      <div className="flex justify-end">
         <Button type="submit" size="sm">
           {action.actionLabel}
         </Button>

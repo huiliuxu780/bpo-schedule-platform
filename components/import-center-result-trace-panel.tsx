@@ -28,8 +28,8 @@ import {
   type ImportResultTrace,
   type ImportReviewCaseRecord,
   type ImportVersionComparisonTrigger,
-  buildImportApiUrl,
   buildImportComparisonRunDetailWorkspaceHref,
+  buildImportReviewCaseDetailWorkspaceHref,
   buildImportReviewCasesWorkspaceHref,
   summarizeImportAppliedVersionResultContext,
   summarizeImportLatestComparisonRunCallback,
@@ -377,7 +377,7 @@ function ComparisonTriggerActionSection({
         <div className="grid gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <ClipboardCheck className="size-4 text-muted-foreground" />
-            <h4 className="text-sm font-medium">本地比对计算</h4>
+            <h4 className="text-sm font-medium">比对计算</h4>
             <Badge variant={action.canSubmit ? "outline" : "destructive"}>
               {action.canSubmit ? "可提交" : "已阻塞"}
             </Badge>
@@ -960,11 +960,7 @@ function ReviewCasesTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild size="icon-sm" variant="ghost" aria-label="查看复核详情">
-                      <Link
-                        href={buildImportApiUrl(
-                          `/api/v1/review-cases/${encodeURIComponent(reviewCase.case_id)}`
-                        )}
-                      >
+                      <Link href={buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id)}>
                         <ExternalLink className="size-4" />
                       </Link>
                     </Button>

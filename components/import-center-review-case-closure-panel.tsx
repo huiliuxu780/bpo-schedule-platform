@@ -88,10 +88,7 @@ export function ImportCenterReviewCaseClosurePanel({
           defaultValue="证据和结论已复核。"
         />
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="break-all font-mono text-xs text-muted-foreground">
-          {action.apiHref}
-        </div>
+      <div className="flex justify-end">
         <Button type="submit" size="sm">
           {action.actionLabel}
         </Button>

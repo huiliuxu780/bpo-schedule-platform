@@ -25,7 +25,7 @@ export const metricCards = [
     value: "543.5h",
     change: "+8.36%",
     insight: "异常需要优先复核",
-    note: "37 条影响结算口径",
+    note: "37 条影响履约复核",
   },
 ]
 

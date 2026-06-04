@@ -3314,3 +3314,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM135 UI Narrative Cleanup Follow-up
+
+- branch_name: `codex/im135-master-data-ui-detail-polish`
+- base_main_commit: `2a12e4c`
+- stacked_on: `2a12e4c fix: remove internal boundary UI copy`
+- remote_status: `2a12e4c was pushed; follow-up correction is local until final check/commit/push.`
+- scope: second-pass omission audit after PM requested no misses; remove remaining user-visible `API`, `本地`, `受控`, `暂不能/暂不可/暂不`, `批量`, settlement wording, service-address links, `local://` prefill values, and `真实版本` development wording from app/component UI copy while preserving code identifiers such as `API_BASE_URL`.
+- allowed_files_check: `app/**`, `components/**`, `lib/**`, and `docs/dev/branch-log.md` only for UI copy cleanup and code-identifier repair after mechanical replacement; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor changes.
+- scope_diff_check: expected UI/model copy cleanup, service-error copy cleanup, and branch-log only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: second-pass `rg` scan for `No Database`, `MVP`, `IMxxx`, `DBxxx`, `安全壳`, `边界`, `只读`, `受控`, `本地`, `local://`, `/api/v1` page links, `真实版本`, `不接数据库`, `审批`, `导出`, `批量`, `权限`, `自动排班`, `结算`, `公式`, `API` with user-visible spacing, and related wording returns only environment/code constants `API_BASE_URL`, `BPO_API_BASE_URL`, and `NEXT_PUBLIC_BPO_API_BASE_URL`; `git diff --check` passed; `npm run lint` passed; `npm run typecheck` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 206 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

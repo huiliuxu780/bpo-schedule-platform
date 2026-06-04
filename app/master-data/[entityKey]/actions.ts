@@ -459,12 +459,12 @@ async function readMaintenanceApiError(response: Response) {
 
     return {
       code: error?.code ?? `HTTP_${response.status}`,
-      message: error?.message ?? `主数据维护 API 返回 ${response.status}`,
+      message: error?.message ?? `主数据维护 服务返回 ${response.status}`,
     }
   } catch {
     return {
       code: `HTTP_${response.status}`,
-      message: `主数据维护 API 返回 ${response.status}`,
+      message: `主数据维护 服务返回 ${response.status}`,
     }
   }
 }

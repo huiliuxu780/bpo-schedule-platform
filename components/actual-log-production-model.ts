@@ -283,9 +283,9 @@ function buildMissingActualLogProcessingDetail(
     applicationLabel: "待应用",
     appliedRecordCountLabel: "0",
     sourceRowLabel: "未定位来源行",
-    timezoneCheckLabel: "缺少逐行明细，暂未形成时区校验结果",
+    timezoneCheckLabel: "缺少逐行明细，未形成时区校验结果",
     businessDayLabel: "未定位业务日",
-    crossDaySplitLabel: "缺少状态区间明细，暂未形成跨天切分",
+    crossDaySplitLabel: "缺少状态区间明细，未形成跨天切分",
     statusIntervalLabel: "未定位状态区间",
     loginEventLabel: "未定位登录事件",
     detailEmptyLabel: "批次明细未读取，不能展示逐行登录事件或状态区间",
@@ -428,7 +428,7 @@ function summarizeActualLogDetailRows(
           timeRangeLabel: "未读取",
           timezoneLabel: "缺少 standard_fields",
           businessDayLabel: "未定位",
-          crossDayLabel: "缺少逐行起止时间，暂未形成跨天切分",
+          crossDayLabel: "缺少逐行起止时间，未形成跨天切分",
           processingLabel: "当前明细缺少标准字段",
           tone: "blocked",
         }
@@ -583,7 +583,7 @@ function resolveProcessingDetailText(
       : "当前登录日志明细可解释登录/登出事件、业务日归属和 Asia/Shanghai 时区校验。"
   }
 
-  return "当前明细存在阻塞或时区异常，只展示可确认的处理口径。"
+  return "当前明细存在阻塞或时区异常，先核对可确认的处理口径。"
 }
 
 function resolveProcessingTimezoneLabel(
@@ -591,7 +591,7 @@ function resolveProcessingTimezoneLabel(
   nonShanghaiTimezoneCount: number
 ): string {
   if (rows.length === 0) {
-    return "缺少逐行明细，暂未形成时区校验结果"
+    return "缺少逐行明细，未形成时区校验结果"
   }
 
   if (nonShanghaiTimezoneCount > 0) {
@@ -607,7 +607,7 @@ function resolveProcessingCrossDayLabel(
   crossDayIntervalCount: number
 ): string {
   if (!hasDetailRows) {
-    return "缺少状态区间明细，暂未形成跨天切分"
+    return "缺少状态区间明细，未形成跨天切分"
   }
 
   if (fileType === "login_log") {
@@ -626,7 +626,7 @@ function resolveStatusIntervalLabel(
   statusDictionaryCount: number
 ): string {
   if (statusIntervalCount === 0 && statusDictionaryCount === 0) {
-    return "暂未发现状态区间或状态字典明细"
+    return "未发现状态区间或状态字典明细"
   }
 
   return `状态字典 ${statusDictionaryCount.toLocaleString("zh-CN")} 行 · 状态区间 ${statusIntervalCount.toLocaleString("zh-CN")} 行`
@@ -634,7 +634,7 @@ function resolveStatusIntervalLabel(
 
 function resolveLoginEventLabel(loginEventCount: number): string {
   if (loginEventCount === 0) {
-    return "暂未发现登录/登出事件明细"
+    return "未发现登录/登出事件明细"
   }
 
   return `登录/登出事件 ${loginEventCount.toLocaleString("zh-CN")} 行`
@@ -688,7 +688,7 @@ function resolveProcessingStatusLabel(
   }
 
   if (batch.applied_record_count <= 0) {
-    return `已应用但暂未发现${noun}`
+    return `已应用但未发现${noun}`
   }
 
   return `${noun}已应用 ${batch.applied_record_count.toLocaleString("zh-CN")} 条记录`
@@ -708,7 +708,7 @@ function resolveActualLogBlocker(
   }
 
   if (batch.applied_record_count <= 0) {
-    return "已应用但暂未发现登录/状态处理记录"
+    return "已应用但未发现登录/状态处理记录"
   }
 
   return "无阻塞"
@@ -746,7 +746,7 @@ function resolveActualLogProductionDetail(
   }
 
   if (blockedVersions > 0) {
-    return "部分日志版本缺少应用、业务版本或处理记录，暂不能进入排班 vs 实际比对口径。"
+    return "部分日志版本缺少应用、业务版本或处理记录，无法进入排班 vs 实际比对口径。"
   }
 
   return "当前登录/状态日志版本已应用，可查看业务日、时区和跨天处理结果。"

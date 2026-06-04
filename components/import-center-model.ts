@@ -580,7 +580,7 @@ export type ImportComparisonRunDetailSummary = {
   }
   metricCards: Array<{ label: string; value: string; detail: string }>
   versionLabel: string
-  apiHref: string
+  detailHref: string
   resultRows: Array<{
     id: string
     source: string
@@ -1939,8 +1939,8 @@ function summarizeImportVersionWorkbenchRow(
       comparisonCandidate: {
         tone: "empty",
         canSubmit: false,
-        title: "暂无本地比对候选",
-        detail: `当前${domain.label}还没有导入批次，无法判断本地比对候选。`,
+        title: "暂无比对候选",
+        detail: `当前${domain.label}还没有导入批次，无法判断比对候选。`,
         comparisonTypeLabel: "未确认",
         versionPairLabel: "暂无",
         businessDateLabel: "暂无业务日",
@@ -2090,8 +2090,8 @@ function summarizeVersionWorkbenchComparisonCandidate({
     return {
       tone: "blocked",
       canSubmit: false,
-      title: "暂无本地比对候选",
-      detail: "当前版本尚未应用，不能进入本地比对触发前检查。",
+      title: "暂无比对候选",
+      detail: "当前版本尚未应用，不能进入比对触发前检查。",
       comparisonTypeLabel: "未确认",
       versionPairLabel: currentVersion,
       businessDateLabel,
@@ -2106,7 +2106,7 @@ function summarizeVersionWorkbenchComparisonCandidate({
     return {
       tone: "blocked",
       canSubmit: false,
-      title: "暂无本地比对候选",
+      title: "暂无比对候选",
       detail: "当前批次已应用，但导入版本仍未返回，不能形成比对来源版本组合。",
       comparisonTypeLabel: "未确认",
       versionPairLabel: currentVersion,
@@ -2139,7 +2139,7 @@ function summarizeVersionWorkbenchComparisonCandidate({
 
     return buildBlockedVersionWorkbenchComparisonCandidate({
       batch,
-      detail: "当前预测版本还缺同业务日已应用排班版本，暂不能形成预测排班比对候选。",
+      detail: "当前预测版本还缺同业务日已应用排班版本，无法形成预测排班比对候选。",
     })
   }
 
@@ -2183,7 +2183,7 @@ function summarizeVersionWorkbenchComparisonCandidate({
     return buildBlockedVersionWorkbenchComparisonCandidate({
       batch,
       detail:
-        "当前排班版本还缺同业务日已应用预测版本或登录/状态日志版本，暂不能形成本地比对候选。",
+        "当前排班版本还缺同业务日已应用预测版本或登录/状态日志版本，无法形成比对候选。",
     })
   }
 
@@ -2208,14 +2208,14 @@ function summarizeVersionWorkbenchComparisonCandidate({
 
     return buildBlockedVersionWorkbenchComparisonCandidate({
       batch,
-      detail: "当前实际日志版本还缺同业务日已应用排班版本，暂不能形成排班实际比对候选。",
+      detail: "当前实际日志版本还缺同业务日已应用排班版本，无法形成排班实际比对候选。",
     })
   }
 
   return {
     tone: "blocked",
     canSubmit: false,
-    title: "暂无本地比对候选",
+    title: "暂无比对候选",
     detail: "主数据当前没有可直接发起的预测排班或排班实际比对口径。",
     comparisonTypeLabel: "不支持",
     versionPairLabel: batch.import_version_id,
@@ -2270,12 +2270,12 @@ function buildReadyVersionWorkbenchComparisonCandidate({
   return {
     tone: "ready",
     canSubmit: true,
-    title: "可发起一次本地比对",
-    detail: `当前版本可按 ${comparisonTypeLabel} 和已定位来源版本组合提交一次本地比对；重复提交由后端幂等返回已有运行。`,
+    title: "可发起一次比对",
+    detail: `当前版本可按 ${comparisonTypeLabel} 和已定位来源版本组合提交一次比对；重复提交由后端幂等返回已有运行。`,
     comparisonTypeLabel,
     versionPairLabel,
     businessDateLabel: `${batch.business_date_from} ~ ${batch.business_date_to}`,
-    actionLabel: "发起一次本地比对",
+    actionLabel: "发起一次比对",
     href: buildImportBatchProcessingHref(batch.batch_id, {
       tab: "result-trace",
     }),
@@ -2301,7 +2301,7 @@ function buildBlockedVersionWorkbenchComparisonCandidate({
   return {
     tone: "blocked",
     canSubmit: false,
-    title: "暂无本地比对候选",
+    title: "暂无比对候选",
     detail,
     comparisonTypeLabel: "未确认",
     versionPairLabel: batch.import_version_id ?? "版本未返回",
@@ -2325,7 +2325,7 @@ function summarizeVersionWorkbenchDownstreamImpact({
   if (batch.application_status !== "applied") {
     return {
       summary: "等待应用后汇总",
-      detail: "当前批次尚未应用，不能稳定归集这个版本已经影响的对比运行或复核案例。",
+      detail: "当前批次尚未应用，等待应用后汇总对比运行和复核案例。",
     }
   }
 
@@ -2334,7 +2334,7 @@ function summarizeVersionWorkbenchDownstreamImpact({
   if (!versionLabel) {
     return {
       summary: "版本定位不完整",
-      detail: "当前批次已应用，但导入版本仍未返回，暂时不能把下游结果稳定归到这个版本。",
+      detail: "当前批次已应用，等待导入版本返回后汇总下游结果。",
     }
   }
 
@@ -2354,7 +2354,7 @@ function summarizeVersionWorkbenchDownstreamImpact({
   if (matchedRuns.length === 0) {
     return {
       summary: "对比运行 0 个 · 复核案例待定位",
-      detail: "当前版本还没有匹配到对比运行，暂不把同业务日复核案例直接归到这个版本。",
+      detail: "当前版本还没有匹配到对比运行，未把同业务日复核案例直接归到这个版本。",
     }
   }
 
@@ -2669,7 +2669,7 @@ export function summarizeImportReviewCaseProcessingStage(
   return {
     key: "ready_to_close",
     label: "可关闭",
-    nextAction: "证据和结论已齐，进入受控关闭入口。",
+    nextAction: "证据和结论已齐，进入关闭入口。",
     evidenceLabel,
   }
 }
@@ -2775,7 +2775,7 @@ export function summarizeImportReviewOwnerContext({
     return {
       tone: "blocked",
       title: "Owner 上下文不可用",
-      detail: error ?? "当前案例读取失败，暂不能聚合同 owner 处理上下文。",
+      detail: error ?? "当前案例读取失败，无法聚合同 owner 处理上下文。",
       ownerId: null,
       businessDate: null,
       totalCount: 0,
@@ -2910,7 +2910,7 @@ export function summarizeImportReviewOwnerNavigation({
     return {
       tone: "blocked",
       title: "同 Owner 待处理导航",
-      detail: error ?? "当前案例读取失败，暂不能计算同 owner 待处理导航。",
+      detail: error ?? "当前案例读取失败，无法计算同 owner 待处理导航。",
       ownerId: null,
       businessDate: null,
       listHref: "/data-quality/review-cases",
@@ -3118,10 +3118,10 @@ export function summarizeImportReviewCaseDetail({
       workspaceTabs: [...REVIEW_CASE_DETAIL_WORKSPACE_TABS],
       sourceLabel: "来源不可用",
       sourceResultDimensions: ["来源不可用"],
-      sourceResultMetrics: ["等待 API 恢复"],
+      sourceResultMetrics: ["等待服务恢复"],
       sourceTraceRun: "来源链路不可用",
       sourceTraceHref: "/data-quality/review-cases",
-      sourceTraceVersions: ["等待 API 恢复"],
+      sourceTraceVersions: ["等待服务恢复"],
       ownerLabel: "owner 不可用",
       evidenceLabel: "证据不可用",
       qualityFocus: "质量问题不可用",
@@ -3197,7 +3197,7 @@ export function summarizeImportReviewCaseDetail({
       conclusionCount,
       isClosed,
     }),
-    detailHref: buildImportReviewCaseDetailApiUrl(reviewCase.case_id),
+    detailHref: buildImportReviewCaseDetailWorkspaceHref(reviewCase.case_id),
     listHref,
     evidence: [
       `业务日 ${reviewCase.business_date}`,
@@ -3280,7 +3280,7 @@ export function summarizeImportReviewCaseEvidenceChain({
     nextAction: isClosed
       ? "已形成关闭记录，继续回看证据和结论是否完整。"
       : evidenceCount > 0 && conclusionCount > 0
-        ? "先复核证据和结论内容，再进入受控关闭流程。"
+        ? "先复核证据和结论内容，再进入关闭流程。"
         : "当前链路材料不足，先补齐证据和结论后再判断能否关闭。",
     items,
   }
@@ -3491,7 +3491,7 @@ export function summarizeImportReviewCaseActionFeedback({
       statusLabel: isSuccess ? "已写入" : "写入失败",
       detail: isSuccess
         ? "证据已写入当前复核案例；继续补充结论或复核关闭条件。"
-        : "证据未写入；检查本地 API、案例状态和必填字段后重试。",
+        : "证据未写入；检查服务、案例状态和必填字段后重试。",
       actionKey: "evidence",
     }
   }
@@ -3503,7 +3503,7 @@ export function summarizeImportReviewCaseActionFeedback({
       statusLabel: isSuccess ? "已写入" : "写入失败",
       detail: isSuccess
         ? "结论已写入当前复核案例；继续复核证据和关闭条件。"
-        : "结论未写入；检查本地 API、案例状态和必填字段后重试。",
+        : "结论未写入；检查服务、案例状态和必填字段后重试。",
       actionKey: "conclusion",
     }
   }
@@ -3615,7 +3615,7 @@ export function summarizeImportReviewCaseActionRetry(
     tone: "blocked",
     title: "重试定位",
     statusLabel: `已定位到${actionLabel}`,
-    detail: `${actionLabel}写入失败，当前已打开${actionLabel}入口；检查必填字段、案例状态和本地 API 后重试。`,
+    detail: `${actionLabel}写入失败，当前已打开${actionLabel}入口；检查必填字段、案例状态和服务 后重试。`,
     tabValue: feedback.actionKey,
     actionLabel,
   }
@@ -4003,7 +4003,7 @@ export function summarizeImportBatchReviewGuide({
   return {
     tone: "unknown",
     title: "等待准备度结果",
-    detail: "当前批次没有失败行；准备度暂不可判断，先查看批次明细和应用准备度区域。",
+    detail: "当前批次没有失败行；准备度不可判断，先查看批次明细和应用准备度区域。",
     primaryActionLabel: "查看批次明细",
     primaryAnchor: "#import-batch-detail",
     secondaryAnchor: "#import-apply-readiness",
@@ -4068,8 +4068,8 @@ export function summarizeImportApplicationVisibility({
     versionLabel,
     appliedRecordLabel,
     title: "等待准备度确认",
-    detail: "当前批次尚未应用，准备度暂不可判断；先确认本地 API 状态和批次明细。",
-    nextAction: "准备度未知时只做查看和修正，不进入应用写入。",
+    detail: "当前批次尚未应用，准备度需要继续确认；先核对批次明细。",
+    nextAction: "准备度未知时只做查看和修正，先确认准备度再应用。",
   }
 }
 
@@ -4103,11 +4103,11 @@ export function summarizeImportDownstreamResultNavigation({
       tone: readiness?.readiness_status === "ready" ? "ready" : "unknown",
       title:
         readiness?.readiness_status === "ready"
-          ? "等待受控应用"
+          ? "等待应用"
           : "等待应用状态确认",
       detail:
         readiness?.readiness_status === "ready"
-          ? "当前批次已通过应用前检查，但还没有形成已应用版本；下游结果需要等待受控应用完成。"
+          ? "当前批次已通过应用前检查，但还没有形成已应用版本；下游结果需要等待应用完成。"
           : "当前批次尚未应用且准备度未知；先确认准备度、版本和批次明细，再判断是否能进入下游结果。",
       comparisonLabel: "对比结果：等待应用版本",
       reviewLabel: "复核案例：等待对比结果",
@@ -4125,10 +4125,10 @@ export function summarizeImportDownstreamResultNavigation({
     detail: formatDownstreamNavigationDetail(batch),
     comparisonLabel: formatDownstreamComparisonLabel(batch.file_type, versionLabel),
     reviewLabel: "复核案例：按履约异常结果继续追踪",
-    primaryActionLabel: "查看对比结果 API",
-    primaryHref: `/api/v1/comparison-runs?business_date=${encodeURIComponent(businessDate)}`,
-    secondaryActionLabel: "查看复核案例 API",
-    secondaryHref: `/api/v1/review-cases?business_date=${encodeURIComponent(businessDate)}`,
+    primaryActionLabel: "查看对比结果",
+    primaryHref: `/data-quality/versions?businessDate=${encodeURIComponent(businessDate)}`,
+    secondaryActionLabel: "查看复核案例",
+    secondaryHref: buildImportReviewCasesWorkspaceHref({ businessDate }),
     evidenceLabel: `已应用 ${batch.applied_record_count.toLocaleString("zh-CN")} 条 · 版本 ${versionLabel}`,
   }
 }
@@ -4166,14 +4166,14 @@ export function summarizeImportResultTrace({
       title: "结果追踪读取受阻",
       comparisonSummary,
       reviewSummary,
-      nextAction: "先确认本地结果查询 API 状态；读取失败时不要把当前批次判断为无下游结果。",
+      nextAction: "先刷新结果追踪；读取失败时保留当前批次的下游判断。",
     }
   }
 
   if (!businessDate || (comparisonRuns.length === 0 && reviewCases.length === 0)) {
     return {
       tone: "empty",
-      title: businessDate ? "暂未找到下游结果" : "等待批次业务日",
+      title: businessDate ? "未找到下游结果" : "等待批次业务日",
       comparisonSummary,
       reviewSummary,
       nextAction: "没有结果时先确认批次是否已应用、对比计算是否已触发，以及复核案例是否已生成。",
@@ -4220,14 +4220,14 @@ export function summarizeImportDownstreamResultDrilldown({
       tone: "blocked",
       title: "下游结果读取受阻",
       detail: "当前业务日的对比结果或复核案例读取失败，不能把它判断为无下游结果。",
-      nextAction: "先确认结果查询 API，再回到批次应用状态和业务日范围判断。",
+      nextAction: "先确认结果查询 服务，再回到批次应用状态和业务日范围判断。",
       comparisonFocus: comparisonError ? "对比结果读取失败" : formatDrilldownComparisonFocus(primaryComparisonRun),
       reviewFocus: reviewError ? "复核案例读取失败" : formatDrilldownReviewFocus(primaryReviewCase),
-      primaryActionLabel: "查看对比结果 API",
+      primaryActionLabel: "查看对比结果",
       primaryHref: businessDate
         ? buildImportComparisonRunsUrl(businessDate)
         : buildImportApiUrl("/api/v1/comparison-runs"),
-      secondaryActionLabel: "查看复核案例 API",
+      secondaryActionLabel: "查看复核案例",
       secondaryHref: businessDate
         ? buildImportReviewCasesUrl(businessDate)
         : buildImportApiUrl("/api/v1/review-cases"),
@@ -4289,9 +4289,9 @@ export function summarizeImportDownstreamResultDrilldown({
       nextAction: "确认对比计算是否已触发；若尚未触发，不要把当前批次判断为已形成闭环。",
       comparisonFocus: "暂无对比运行",
       reviewFocus: "暂无复核案例",
-      primaryActionLabel: "查看对比结果 API",
+      primaryActionLabel: "查看对比结果",
       primaryHref: buildImportComparisonRunsUrl(businessDate),
-      secondaryActionLabel: "查看复核案例 API",
+      secondaryActionLabel: "查看复核案例",
       secondaryHref: buildImportReviewCasesUrl(businessDate),
       evidence: [
         `应用状态 ${formatImportApplicationStatus(batch.application_status)}`,
@@ -4509,7 +4509,7 @@ export function summarizeImportQualityExceptionTrace(
       tone: "empty",
       title: "等待质量结果",
       impactScope,
-      issueSummary: "当前批次还没有行结果，暂不能判断对履约异常的影响。",
+      issueSummary: "当前批次还没有行结果，无法判断对履约异常的影响。",
       nextAction: "先确认导入解析结果，再继续查看异常影响范围。",
       evidenceLabel,
     }
@@ -4713,7 +4713,7 @@ export function summarizeImportReviewConclusionPreview({
   if (comparisonError || reviewError) {
     return {
       tone: "blocked",
-      title: "暂不能生成结论预览",
+      title: "无法生成结论预览",
       suggestedConclusion: `${reviewError ? "复核案例读取失败" : "对比结果读取失败"}，当前结论预览只能作为占位，不能用于关闭判断。`,
       evidenceSummary: formatReviewConclusionEvidenceSummary({
         primaryComparisonRun,
@@ -4732,7 +4732,7 @@ export function summarizeImportReviewConclusionPreview({
     return {
       tone: "empty",
       title: "等待复核结果",
-      suggestedConclusion: "当前业务日还没有复核案例或对比结果，暂不形成结论预览。",
+      suggestedConclusion: "当前业务日还没有复核案例或对比结果，未形成结论预览。",
       evidenceSummary: formatReviewConclusionEvidenceSummary({
         primaryComparisonRun,
         primaryReviewCase,
@@ -4767,7 +4767,7 @@ export function summarizeImportReviewConclusionPreview({
         qualityIssueRows > 0
           ? `仍有 ${openReviewCases.length.toLocaleString("zh-CN")} 个未关闭复核案例和 ${qualityIssueRows.toLocaleString("zh-CN")} 行质量问题；直接关闭会留下证据缺口。`
           : `仍有 ${openReviewCases.length.toLocaleString("zh-CN")} 个未关闭复核案例；直接关闭会留下处理缺口。`,
-      nextAction: "先处理首要质量问题和未关闭复核案例，确认补证后再进入受控关闭流程。",
+      nextAction: "先处理首要质量问题和未关闭复核案例，确认补证后再进入关闭流程。",
       evidence,
     }
   }
@@ -4785,7 +4785,7 @@ export function summarizeImportReviewConclusionPreview({
         reviewError,
       }),
       residualRisk: "质量问题仍可能影响异常归因或证据完整性。",
-      nextAction: "复核质量问题证据后，再进入受控关闭流程。",
+      nextAction: "复核质量问题证据后，再进入关闭流程。",
       evidence,
     }
   }
@@ -4825,9 +4825,9 @@ export function summarizeImportReviewEvidenceGapDrilldown({
   if (reviewError || comparisonError) {
     return {
       tone: "blocked",
-      title: "暂不能判断证据缺口",
+      title: "无法判断证据缺口",
       summary: `${reviewError ? "复核案例读取失败" : "对比结果读取失败"}，当前缺口列表只能作为占位。`,
-      ownerSummary: "owner 暂不可用",
+      ownerSummary: "owner 不可用",
       nextAction: reviewError
         ? "先恢复复核案例读取，再判断证据缺口。"
         : "先恢复对比结果读取，再判断证据缺口。",
@@ -4841,7 +4841,7 @@ export function summarizeImportReviewEvidenceGapDrilldown({
     return {
       tone: "empty",
       title: "暂无证据缺口",
-      summary: "当前业务日没有未关闭复核案例，暂不形成证据缺口列表。",
+      summary: "当前业务日没有未关闭复核案例，未形成证据缺口列表。",
       ownerSummary: "owner 无",
       nextAction: "继续查看对比结果和复核结论预览。",
       gaps: [],
@@ -4933,7 +4933,7 @@ export function summarizeImportRowCorrectionNotice({
       tone: "failed",
       title: "修正失败",
       detail: formatImportRowCorrectionFailureReason(reason),
-      nextAction: "检查字段 JSON、行号和本地 API 状态后重新提交。",
+      nextAction: "检查字段 JSON、行号后重新提交。",
     }
   }
 
@@ -4988,9 +4988,9 @@ export function summarizeImportApplyActionGuidance(
   if (readinessError || !readiness) {
     return {
       tone: "unknown",
-      title: "准备度暂不可判断",
+      title: "准备度不可判断",
       detail: readinessError ?? "未返回准备度结果。",
-      nextAction: "先确认本地 API 状态；不要在准备度未知时执行应用写入。",
+      nextAction: "先核对批次明细；准备度未知时先不要应用。",
     }
   }
 
@@ -5065,10 +5065,10 @@ export function summarizeImportSingleBatchApplyAction(
       tone: "unknown",
       canSubmit: false,
       statusLabel: "准备度未知",
-      actionLabel: "暂不可应用",
-      title: "准备度暂不可判断",
+      actionLabel: "不可应用",
+      title: "准备度不可判断",
       detail: readinessError ?? "未返回准备度结果。",
-      nextAction: "先确认本地 API 状态；不要在准备度未知时执行应用写入。",
+      nextAction: "先核对批次明细；准备度未知时先不要应用。",
     }
   }
 
@@ -5095,7 +5095,7 @@ export function summarizeImportSingleBatchApplyAction(
       tone: "blocked",
       canSubmit: false,
       statusLabel: "不可应用",
-      actionLabel: "暂不可应用",
+      actionLabel: "不可应用",
       title: "应用前仍有阻塞",
       detail: blocker,
       nextAction: "先处理失败行、行级缺字段或版本缺口，再重新查看准备度。",
@@ -5323,8 +5323,8 @@ export function summarizeImportAppliedVersionResultContext({
   if (!primaryRun) {
     return {
       tone: "empty",
-      title: "当前版本暂未匹配到对比运行",
-      detail: `当前批次版本 ${versionLabel} 还没有匹配到可直接进入的对比运行；先确认是否已触发本地比对，再查看同业务日复核空态。`,
+      title: "当前版本未匹配到对比运行",
+      detail: `当前批次版本 ${versionLabel} 还没有匹配到可直接进入的对比运行；先确认是否已触发比对，再查看同业务日复核空态。`,
       sourceBatchLabel: batch.batch_id,
       versionLabel,
       targetLabel,
@@ -5394,9 +5394,9 @@ export function summarizeImportVersionComparisonTrigger({
     return {
       tone: "blocked",
       canSubmit: false,
-      title: "当前版本暂无可复用的本地比对入口",
-      detail: `当前 ${formatImportFileType(batch.file_type)} 版本 ${versionId} 没有受控本地比对口径；先核对版本记录和下游结果追踪。`,
-      actionLabel: "发起一次本地比对",
+      title: "当前版本暂无可复用的比对入口",
+      detail: `当前 ${formatImportFileType(batch.file_type)} 版本 ${versionId} 没有比对口径；先核对版本记录和下游结果追踪。`,
+      actionLabel: "发起一次比对",
       nextAction: "仅在人员排班、需求预测、状态日志且已定位对比版本时才展示写入入口。",
       comparisonTypeLabel: "未支持",
       versionPairLabel: versionId,
@@ -5414,9 +5414,9 @@ export function summarizeImportVersionComparisonTrigger({
       tone: "blocked",
       canSubmit: false,
       title: "当前版本暂无法确认比对口径",
-      detail: `当前版本 ${versionId} 还没有可复用的对比运行，暂不展示写入按钮。`,
-      actionLabel: "发起一次本地比对",
-      nextAction: "先确认该版本是否已有下游结果或补足配对版本，再回到当前页触发本地比对。",
+      detail: `当前版本 ${versionId} 还没有可复用的对比运行，未展示写入按钮。`,
+      actionLabel: "发起一次比对",
+      nextAction: "先确认该版本是否已有下游结果或补足配对版本，再回到当前页触发比对。",
       comparisonTypeLabel: "未定位",
       versionPairLabel: versionId,
       businessDateLabel: batch.business_date_from,
@@ -5432,7 +5432,7 @@ export function summarizeImportVersionComparisonTrigger({
       canSubmit: false,
       title: "当前版本缺少必要来源版本",
       detail: `已定位到 ${formatComparisonTypeLabel(primaryRun.comparison_type)}，但运行上下文缺少重新计算所需的成对版本信息。`,
-      actionLabel: "发起一次本地比对",
+      actionLabel: "发起一次比对",
       nextAction: "先确认来源版本是否完整，再从当前版本结果页重新触发。",
       comparisonTypeLabel: formatComparisonTypeLabel(primaryRun.comparison_type),
       versionPairLabel: formatComparisonRunVersionPair(primaryRun),
@@ -5448,9 +5448,9 @@ export function summarizeImportVersionComparisonTrigger({
   return {
     tone: "ready",
     canSubmit: true,
-    title: "可在当前版本语境发起本地比对",
-    detail: `将按 ${formatComparisonTypeLabel(primaryRun.comparison_type)} 和已定位版本组合重新生成一次本地对比运行。`,
-    actionLabel: "发起一次本地比对",
+    title: "可在当前版本语境发起比对",
+    detail: `将按 ${formatComparisonTypeLabel(primaryRun.comparison_type)} 和已定位版本组合重新生成一次对比运行。`,
+    actionLabel: "发起一次比对",
     nextAction: "提交后留在当前结果页查看反馈，再进入新运行详情或回看结果列表。",
     comparisonTypeLabel: formatComparisonTypeLabel(primaryRun.comparison_type),
     versionPairLabel: formatComparisonRunVersionPair(primaryRun),
@@ -5476,8 +5476,8 @@ export function summarizeImportVersionComparisonTriggerNotice({
   if (status === "success" && runId) {
     return {
       tone: "success",
-      title: "本地比对已生成新运行",
-      detail: `当前版本语境已生成新的本地对比运行 ${runId}，可直接进入详情或回看当前结果列表。`,
+      title: "比对已生成新运行",
+      detail: `当前版本语境已生成新的对比运行 ${runId}，可直接进入详情或回看当前结果列表。`,
       runLabel: runId,
       primaryActionLabel: "查看新对比运行",
       primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
@@ -5489,7 +5489,7 @@ export function summarizeImportVersionComparisonTriggerNotice({
   if (status === "failed") {
     return {
       tone: "failed",
-      title: "本地比对未提交",
+      title: "比对未提交",
       detail: formatImportVersionComparisonTriggerFailureReason(reason),
       runLabel: runId ?? "未生成运行",
       primaryActionLabel: "查看结果列表",
@@ -5521,7 +5521,7 @@ export function summarizeImportLatestComparisonRunCallback({
   if (!matchedRun) {
     return {
       tone: "blocked",
-      title: "最新运行结果暂未回显",
+      title: "最新运行结果未回显",
       detail: `当前页已收到运行 ${runId} 的成功反馈，但结果列表还没有回显这次运行；先刷新当前结果追踪，再进入运行详情复核。`,
       runLabel: runId,
       metricCards: [
@@ -5539,7 +5539,7 @@ export function summarizeImportLatestComparisonRunCallback({
 
   return {
     tone: "success",
-    title: "最新一次本地比对结果",
+    title: "最新一次比对结果",
     detail: `当前版本语境刚生成运行 ${runId}，可在当前页先确认结果规模，再进入完整运行详情。`,
     runLabel: runId,
     metricCards: [
@@ -5589,7 +5589,7 @@ export function summarizeImportVersionWorkbenchComparisonResultReview({
   if (!matchedRun) {
     return {
       tone: "blocked",
-      title: "运行结果暂未回显",
+      title: "运行结果未回显",
       detail: `版本工作台已收到运行 ${runId} 的成功反馈，但当前结果列表还没有回显这次运行。`,
       runLabel: runId,
       metricCards: [
@@ -5607,7 +5607,7 @@ export function summarizeImportVersionWorkbenchComparisonResultReview({
 
   return {
     tone: "success",
-    title: "版本工作台本地比对结果",
+    title: "版本工作台比对结果",
     detail: `运行 ${runId} 已在版本工作台回显；先确认结果规模和关键差异，再进入完整对比运行详情。`,
     runLabel: runId,
     metricCards: [
@@ -5785,18 +5785,18 @@ function formatImportVersionComparisonTriggerFailureReason(
   reason?: string | null
 ): string {
   if (!reason) {
-    return "提交未返回成功结果，请先确认本地 API 与版本上下文。"
+    return "提交未返回成功结果，请先确认服务 与版本上下文。"
   }
 
   if (reason === "missing_required_fields") {
-    return "提交参数不完整，当前版本语境还不足以发起本地比对。"
+    return "提交参数不完整，当前版本语境还不足以发起比对。"
   }
 
   if (reason.startsWith("api_")) {
-    return `本地比对接口返回 ${reason.replace("api_", "")}，请先核对来源版本和业务日。`
+    return `比对接口返回 ${reason.replace("api_", "")}，请先核对来源版本和业务日。`
   }
 
-  return `本地比对提交失败：${reason}`
+  return `比对提交失败：${reason}`
 }
 
 function formatComparisonRunKeyMetric(run: ImportComparisonRunRecord): string {
@@ -5846,10 +5846,10 @@ export function summarizeImportReadinessIssueGroups(
       {
         key: "unknown",
         tone: "unknown",
-        title: "准备度暂不可判断",
+        title: "准备度不可判断",
         count: 1,
         detail: readinessError ?? "未返回准备度结果。",
-        nextAction: "先确认本地 API 状态；准备度未知时不要执行应用写入。",
+        nextAction: "先核对批次明细；准备度未知时先不要应用。",
         evidence: readinessError ? [readinessError] : ["无 readiness 结果"],
       },
     ]
@@ -5949,7 +5949,7 @@ export function summarizeImportReadinessIssueGroups(
         title: "准备度已通过",
         count: 0,
         detail: "当前批次没有应用前阻塞，已生成可追溯导入版本。",
-        nextAction: "继续复核应用目标和下游结果；真正应用写入仍需单独受控入口。",
+        nextAction: "继续复核应用目标和下游结果；可在应用入口完成写入。",
         evidence: [
           `成功 ${readiness.success_rows.toLocaleString("zh-CN")} 行`,
           `版本 ${readiness.import_version_id ?? "未生成"}`,
@@ -5984,7 +5984,7 @@ export function summarizeImportExceptionGuidance({
       tone: "blocked",
       title: "批次读取失败",
       detail: batchError,
-      nextAction: "先确认本地 API 和 /api/v1/import-batches；批次不可读时不要继续判断准备度。",
+      nextAction: "先刷新批次列表；批次不可读时先不要继续判断准备度。",
     })
   } else if (batchCount === 0) {
     guidance.push({
@@ -6143,7 +6143,7 @@ export function summarizeImportTemplateUploadPrefill(
       defaultTemplateId: "",
       tone: "failed",
       title: "模板不可用于上传",
-      detail: `字段映射模板 ${selectedTemplateId} 不在当前可选模板列表中。`,
+      detail: `字段映射模板 ${selectedTemplateId} 未包含在当前可选模板列表。`,
       nextAction: "请返回模板管理确认模板状态，或手填字段映射 JSON 后上传。",
     }
   }
@@ -6206,7 +6206,7 @@ export function summarizeImportTemplateFitHint(
       recommendedTemplateName: null,
       mappedFieldCount: 0,
       detail: `${formatImportFileType(fileType)}没有启用模板。`,
-      nextAction: "先使用手填字段映射 JSON 上传；模板维护在单独任务中处理。",
+      nextAction: "先使用手填字段映射 JSON 上传；模板维护在对应页面中处理。",
     }
   }
 
@@ -6271,7 +6271,7 @@ export function summarizeImportTemplateFitDetail(
       templateOptions,
       title: `暂无启用${formatImportFileType(fileType)}模板`,
       detail: `当前${formatImportFileType(fileType)}没有启用模板；上传前需要手填字段映射 JSON。`,
-      nextAction: "先使用手填字段映射 JSON；模板新增或维护留到单独受控任务。",
+      nextAction: "先使用手填字段映射 JSON；模板新增或维护留到对应页面。",
     }
   }
 
@@ -6367,7 +6367,7 @@ function formatImportRowCorrectionFailureReason(reason?: string): string {
   }
 
   if (reason.startsWith("api_")) {
-    return `本地 API 返回 ${reason.replace("api_", "")}。`
+    return `提交返回 ${reason.replace("api_", "")}。`
   }
 
   return reason
@@ -6375,7 +6375,7 @@ function formatImportRowCorrectionFailureReason(reason?: string): string {
 
 function formatImportUploadFailureReason(reason?: string | null): string {
   if (!reason) {
-    return "请检查 API 状态、批次号、字段映射或 CSV 文件。"
+    return "请检查批次号、字段映射或 CSV 文件。"
   }
 
   if (reason === "missing_required_fields") {
@@ -6392,7 +6392,7 @@ function formatImportUploadFailureReason(reason?: string | null): string {
 
 function formatImportApplyFailureReason(reason?: string | null): string {
   if (!reason) {
-    return "请检查本地 API 状态、批次准备度或应用目标。"
+    return "请检查批次准备度或应用目标。"
   }
 
   if (reason === "missing_required_fields") {
@@ -6401,7 +6401,7 @@ function formatImportApplyFailureReason(reason?: string | null): string {
 
   const apiStatus = reason.match(/^api_(\d{3})$/)
   if (apiStatus) {
-    return `本地应用 API 返回 ${apiStatus[1]}。`
+    return `应用返回 ${apiStatus[1]}。`
   }
 
   return decodeURIComponent(reason)
@@ -6447,15 +6447,15 @@ function formatDownstreamNavigationDetail(batch: ImportBatchListRow): string {
   const recordCount = batch.applied_record_count.toLocaleString("zh-CN")
 
   if (batch.file_type === "personnel_schedule") {
-    return `人员排班已应用 ${recordCount} 条记录，可继续查看预测 vs 排班或排班 vs 实际登录/状态的本地结果列表。`
+    return `人员排班已应用 ${recordCount} 条记录，可继续查看预测 vs 排班或排班 vs 实际登录/状态的结果列表。`
   }
 
   if (batch.file_type === "demand_forecast") {
-    return `需求预测已应用 ${recordCount} 条记录，可继续查看预测 vs 排班的本地结果列表。`
+    return `需求预测已应用 ${recordCount} 条记录，可继续查看预测 vs 排班的结果列表。`
   }
 
   if (batch.file_type === "login_log" || batch.file_type === "status_log") {
-    return `实际日志已应用 ${recordCount} 条记录，可继续查看排班 vs 实际登录/状态的本地结果列表。`
+    return `实际日志已应用 ${recordCount} 条记录，可继续查看排班 vs 实际登录/状态的结果列表。`
   }
 
   return `主数据已应用 ${recordCount} 条记录，可继续确认版本引用，并在对比结果和复核案例中追踪归因口径。`
@@ -6830,7 +6830,7 @@ export function summarizeImportComparisonRunDetail({
       },
     ],
     versionLabel,
-    apiHref: buildImportComparisonRunDetailApiUrl(detail.run.run_id),
+    detailHref: buildImportComparisonRunDetailWorkspaceHref(detail.run.run_id),
     resultRows: [
       ...detail.forecast_schedule_results.map(formatForecastScheduleResultRow),
       ...detail.schedule_actual_results.map(formatScheduleActualResultRow),
@@ -6952,7 +6952,7 @@ export function summarizeImportComparisonRunReturnLinks({
   if (error) {
     return emptyComparisonRunReturnLinks({
       tone: "blocked",
-      title: "回跳链路暂不可用",
+      title: "回跳链路不可用",
       detail: `当前运行读取失败：${error}。`,
       versionWorkbenchLabel: "业务版本工作台",
       secondaryHref: "/data-quality/versions",
@@ -6980,9 +6980,9 @@ export function summarizeImportComparisonRunReturnLinks({
       tone: "blocked",
       title: "来源批次读取失败",
       detail: `当前运行能识别版本语境，但导入批次列表读取失败：${batchError}。`,
-      sourceBatchLabel: "暂未定位",
+      sourceBatchLabel: "未定位",
       versionWorkbenchLabel,
-      primaryActionLabel: "来源批次暂不可回跳",
+      primaryActionLabel: "来源批次不可回跳",
       primaryHref: null,
       secondaryActionLabel: "查看版本工作台",
       secondaryHref: buildImportVersionWorkbenchHref({
@@ -7006,10 +7006,10 @@ export function summarizeImportComparisonRunReturnLinks({
       tone: "blocked",
       title: "来源批次未定位",
       detail:
-        "当前运行能识别版本语境，但暂未在导入批次列表中匹配到来源批次；不要伪造批次回跳。",
-      sourceBatchLabel: "暂未定位",
+        "当前运行能识别版本语境，但未在导入批次列表中匹配到来源批次；不要伪造批次回跳。",
+      sourceBatchLabel: "未定位",
       versionWorkbenchLabel,
-      primaryActionLabel: "来源批次暂不可回跳",
+      primaryActionLabel: "来源批次不可回跳",
       primaryHref: null,
       secondaryActionLabel: "查看版本工作台",
       secondaryHref: buildImportVersionWorkbenchHref({
@@ -7058,9 +7058,9 @@ function emptyComparisonRunReturnLinks({
     tone,
     title,
     detail,
-    sourceBatchLabel: "暂未定位",
+    sourceBatchLabel: "未定位",
     versionWorkbenchLabel,
-    primaryActionLabel: "来源批次暂不可回跳",
+    primaryActionLabel: "来源批次不可回跳",
     primaryHref: null,
     secondaryActionLabel: "查看版本工作台",
     secondaryHref,
@@ -7226,10 +7226,10 @@ function emptyComparisonRunDetailSummary({
     title,
     workspaceTabs: [...COMPARISON_RUN_DETAIL_WORKSPACE_TABS],
     resultReviewContext: {
-      title: tone === "blocked" ? "结果回看暂不可用" : "等待完整结果回看",
+      title: tone === "blocked" ? "结果回看不可用" : "等待完整结果回看",
       detail:
         tone === "blocked"
-          ? `当前页面暂不能形成完整结果回看；${businessDateDetail}。`
+          ? `当前页面无法形成完整结果回看；${businessDateDetail}。`
           : "选择可读取的对比运行后，这里会展示来源版本、业务日和完整结果回看语境。",
       scopeLabel: "当前版本语境 · 未确认",
       sourceVersionLabel: versionLabel,
@@ -7248,7 +7248,7 @@ function emptyComparisonRunDetailSummary({
       { label: "业务日", value: businessDate, detail: businessDateDetail },
     ],
     versionLabel,
-    apiHref: buildImportApiUrl("/api/v1/comparison-runs"),
+    detailHref: "/data-quality/comparison-runs",
     resultRows: [],
   }
 }
@@ -7447,10 +7447,10 @@ function formatReviewCaseDetailNextAction({
   isClosed: boolean
 }): string {
   if (isClosed) {
-    return "回看关闭依据，不在本页重新打开或修改结论。"
+    return "回看关闭依据和证据完整性。"
   }
 
-  return `owner ${reviewCase.owner_id} 先复核 ${evidenceCount.toLocaleString("zh-CN")} 条证据和 ${conclusionCount.toLocaleString("zh-CN")} 条结论，再进入受控关闭流程。`
+  return `owner ${reviewCase.owner_id} 先复核 ${evidenceCount.toLocaleString("zh-CN")} 条证据和 ${conclusionCount.toLocaleString("zh-CN")} 条结论，再进入关闭流程。`
 }
 
 function isQualityIssueFocusQuery(query: string): boolean {

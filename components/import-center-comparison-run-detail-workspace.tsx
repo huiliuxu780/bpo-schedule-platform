@@ -237,8 +237,8 @@ export function ImportCenterComparisonRunDetailWorkspace({
                   </p>
                 </div>
                 <Button asChild size="sm" variant="outline" className="w-fit">
-                  <Link href={summary.apiHref}>
-                    查看运行 API
+                  <Link href={summary.detailHref}>
+                    查看运行详情
                     <ExternalLink data-icon="inline-end" />
                   </Link>
                 </Button>
@@ -255,7 +255,7 @@ export function ImportCenterComparisonRunDetailWorkspace({
                 结果明细
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                只展示该运行已返回的计算结果，不在本页触发计算或写入。
+                按当前运行回看已返回的计算结果。
               </p>
             </CardHeader>
             <CardContent className="p-0">

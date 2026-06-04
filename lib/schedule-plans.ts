@@ -545,7 +545,7 @@ function flattenFallbackDemandPlans(): DemandPlanRow[] {
       interval_start: intervalItem.interval_start,
       interval_end: intervalItem.interval_end,
       forecast_agents: intervalItem.forecast_agents,
-      source: "本地预测需求",
+      source: "预测需求",
       status: "mapped" as const,
     }))
   )

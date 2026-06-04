@@ -87,7 +87,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
           <div>
             <h1 className="text-lg font-semibold">排班计划</h1>
             <p className="text-sm text-muted-foreground">
-              查看计划列表，并创建本地 draft 草稿
+              查看计划列表，并创建 draft 草稿
             </p>
           </div>
           <Button asChild size="sm">
@@ -135,7 +135,7 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
           ) : null}
         </section>
         <section className="grid gap-4 md:grid-cols-4">
-          <SummaryCard title="计划数量" value={`${plans.length}`} description="本地计划基线" />
+          <SummaryCard title="计划数量" value={`${plans.length}`} description="计划基线" />
           <SummaryCard title="预测人次" value={`${totalForecast}`} description="0.5h 时段汇总" />
           <SummaryCard title="已排人次" value={`${totalScheduled}`} description="种子数据回传" />
           <SummaryCard

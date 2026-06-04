@@ -149,8 +149,8 @@ const PERSONNEL_SCHEDULE_PRODUCTION_WORKSPACE_TABS: PersonnelScheduleProductionW
   [
     { key: "overview", label: "总览" },
     { key: "source", label: "来源与版本" },
-    { key: "rows", label: "真实明细" },
-    { key: "comparison", label: "本地比对" },
+    { key: "rows", label: "明细" },
+    { key: "comparison", label: "比对" },
   ]
 
 export function summarizePersonnelScheduleProductionWorkbench(
@@ -234,7 +234,7 @@ export function summarizePersonnelScheduleProductionDetail(
       sourceRowLabel: "未定位来源行",
       shiftReferenceLabel: "未定位来源批次，无法确认班次引用",
       personScopeLabel: "未定位来源批次，暂无人员明细",
-      halfHourResultLabel: "暂未发现 0.5h 展开记录",
+      halfHourResultLabel: "未发现 0.5h 展开记录",
       blockerSummary: "请返回排班生产工作台选择来源批次",
       detailRows: [],
       intervalRows: [],
@@ -262,7 +262,7 @@ export function summarizePersonnelScheduleProductionDetail(
       ? `已形成 ${intervalCount.toLocaleString("zh-CN")} 条 0.5h ${
           hasApiDetail ? "展开区间" : "展开记录"
         }`
-      : "暂未发现 0.5h 展开记录"
+      : "未发现 0.5h 展开记录"
   const versionLabel = apiDetail?.version.schedule_version_id ?? row.versionLabel
   const businessDateLabel = apiDetail
     ? formatBusinessDateRange(
@@ -271,11 +271,11 @@ export function summarizePersonnelScheduleProductionDetail(
       )
     : row.businessDateLabel
   const sourceRowLabel = hasApiDetail
-    ? `${detailCount.toLocaleString("zh-CN")} 条排班明细来自真实版本 API`
+    ? `${detailCount.toLocaleString("zh-CN")} 条排班明细来自版本服务`
     : `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`
   const shiftReferenceLabel = hasApiDetail
     ? summarizeShiftReferences(apiDetails)
-    : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，班次引用明细待版本 API 暴露`
+    : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，班次引用明细待版本 服务 暴露`
   const personScopeLabel = hasApiDetail
     ? summarizeEmployees(apiDetails)
     : "暂无人员清单明细"
@@ -334,7 +334,7 @@ function buildPersonnelScheduleComparisonEntry({
   if (tone !== "ready" || !versionLabel || !businessDate) {
     return {
       tone: "blocked",
-      title: "暂不能进入本地比对",
+      title: "无法进入比对",
       detail: "未定位排班业务版本或业务日，先回到排班生产工作台选择已应用批次。",
       actionLabel: "查看业务版本工作台",
       href,
@@ -345,7 +345,7 @@ function buildPersonnelScheduleComparisonEntry({
   return {
     tone: "ready",
     title: "进入预测 vs 排班比对入口",
-    detail: `已定位排班版本 ${versionLabel}，可到业务版本工作台按同业务日寻找预测版本并发起受控本地比对。`,
+    detail: `已定位排班版本 ${versionLabel}，可到业务版本工作台按同业务日寻找预测版本并发起比对。`,
     actionLabel: "去业务版本工作台",
     href,
     blockerLabel: "无阻塞；从业务版本工作台继续完成成对版本确认",
@@ -402,7 +402,7 @@ function summarizeShiftReferences(
   rows: PersonnelScheduleProductionApiDetailRow[]
 ) {
   if (rows.length === 0) {
-    return "真实版本 API 暂未返回班次明细"
+    return "版本服务 未返回班次明细"
   }
 
   const shiftIds = uniqueValues(rows.map((row) => row.shift_type_id))
@@ -414,7 +414,7 @@ function summarizeShiftReferences(
 
 function summarizeEmployees(rows: PersonnelScheduleProductionApiDetailRow[]) {
   if (rows.length === 0) {
-    return "真实版本 API 暂未返回人员明细"
+    return "版本服务 未返回人员明细"
   }
 
   const employeeIds = uniqueValues(rows.map((row) => row.employee_id))
@@ -507,7 +507,7 @@ function resolvePersonnelScheduleBlocker(
   }
 
   if (batch.applied_record_count <= 0) {
-    return "已应用但暂未发现展开记录"
+    return "已应用但未发现展开记录"
   }
 
   return "无阻塞"

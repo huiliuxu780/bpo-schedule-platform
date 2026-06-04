@@ -327,5 +327,5 @@ function UploadStatusBadge({ status }: { status?: string }) {
     return <Badge variant="destructive">上传失败</Badge>
   }
 
-  return <Badge variant="outline">本地 CSV</Badge>
+  return <Badge variant="outline"> CSV</Badge>
 }

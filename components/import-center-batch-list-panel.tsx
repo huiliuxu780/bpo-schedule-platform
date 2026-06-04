@@ -58,7 +58,7 @@ export function ImportCenterBatchListPanel({
           </p>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
-          {batchError ? <Badge variant="destructive">API 异常</Badge> : null}
+          {batchError ? <Badge variant="destructive">服务异常</Badge> : null}
           <Button asChild size="sm">
             <Link href={buildImportUploadWorkspaceHref()}>
               <Upload data-icon="inline-start" />
@@ -77,7 +77,7 @@ export function ImportCenterBatchListPanel({
             title={batchError ? "批次读取失败" : "暂无导入批次"}
             detail={
               batchError ??
-              "本地 API 当前没有返回批次。上传 API 写入批次后，这里会直接显示。"
+              "服务 当前没有返回批次。上传服务 写入批次后，这里会直接显示。"
             }
           />
         ) : filteredBatches.length === 0 ? (

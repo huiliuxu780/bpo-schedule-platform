@@ -113,7 +113,7 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
               <DetailCard
                 title="关联风险"
                 value={`${relatedRisks.length}`}
-                description="同计划本地风险提示"
+                description="同计划风险提示"
               />
               <DetailCard
                 title="生效不可用"

@@ -370,7 +370,7 @@ export function PersonnelScheduleProductionDetail({
               <CardTitle className="flex items-center gap-2 text-base">
                 <Table2 className="size-4 text-muted-foreground" />
                 {detail.detailRows.length > 0 || detail.intervalRows.length > 0
-                  ? "真实版本明细"
+                  ? "版本明细"
                   : "暂无版本明细"}
               </CardTitle>
             </CardHeader>
@@ -379,18 +379,18 @@ export function PersonnelScheduleProductionDetail({
                 <>
                   <div className="grid gap-1">
                     <p className="font-medium text-foreground">
-                      排班明细与 0.5h 展开已来自真实版本 API
+                      排班明细与 0.5h 展开已来自版本服务
                     </p>
                   </div>
                   <div className="grid gap-4 xl:grid-cols-2">
                     <ReadOnlyRowsTable
                       title="排班明细"
-                      emptyLabel="真实版本 API 暂未返回排班明细"
+                      emptyLabel="版本服务 未返回排班明细"
                       rows={detail.detailRows}
                     />
                     <ReadOnlyRowsTable
                       title="0.5h 展开区间"
-                      emptyLabel="真实版本 API 暂未返回 0.5h 展开区间"
+                      emptyLabel="版本服务 未返回 0.5h 展开区间"
                       rows={detail.intervalRows}
                     />
                   </div>

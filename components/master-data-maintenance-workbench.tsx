@@ -273,7 +273,7 @@ export function MasterDataAgentManagementPage({
           <Button asChild size="sm" variant="outline">
             <Link href="/data-quality/uploads/new">
               <Upload data-icon="inline-start" />
-              批量导入
+              导入人员
             </Link>
           </Button>
         </div>
@@ -543,7 +543,7 @@ function AgentFreezeDialog({
               ？
             </p>
             <p className="font-mono text-xs">{employee.employee_id}</p>
-            <p>冻结后该人员状态会通过单人维护 API 更新为 frozen。</p>
+            <p>冻结后该人员状态会通过单人维护 服务 更新为 frozen。</p>
           </div>
           {summary.agentSubmitSourceBatchId ? (
             <form action={action} className="flex justify-end gap-2">
@@ -592,7 +592,7 @@ export function MasterDataAgentCreatePage({
   return (
     <AgentFormPageShell
       title="新建客服人员"
-      description="创建单个客服人员基础档案。批量导入仍回到导入中心处理。"
+      description="创建单个客服人员基础档案。人员表导入可从导入中心进入。"
       error={error}
       feedback={feedback}
     >
@@ -1314,7 +1314,7 @@ function AgentMaintenanceSubmitSection({
           actionKey="effective_period"
           sourceBatchId={summary.agentSubmitSourceBatchId}
           title="调整有效期"
-          description="只调整单个坐席有效期，不改变姓名和状态。"
+          description="调整单个坐席有效期，并保留姓名和状态。"
           submitLabel="提交有效期"
           fields={["employee_id", "effective_from", "effective_to"]}
         />
@@ -1472,7 +1472,7 @@ function ReferenceMaintenanceSubmitSection({
           sourceBatchId={summary.referenceSubmitSourceBatchId}
           hiddenFields={{ entity_key: summary.entity.key }}
           title="调整有效期"
-          description="只调整单个对象有效期，不改变名称和状态。"
+          description="调整单个对象有效期，并保留名称和状态。"
           submitLabel="提交有效期"
           fields={["reference_id", "effective_from", "effective_to"]}
         />
@@ -1546,7 +1546,7 @@ function BindingMaintenanceSubmitSection({
           actionKey="effective_period"
           sourceBatchId={summary.bindingSubmitSourceBatchId}
           title="调整绑定有效期"
-          description="只调整单条绑定关系有效期，不改变引用对象。"
+          description="调整单条绑定关系有效期，并保留引用对象。"
           submitLabel="提交有效期"
           fields={["binding_id", "effective_from", "effective_to"]}
         />
