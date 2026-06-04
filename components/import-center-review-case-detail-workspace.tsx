@@ -110,73 +110,110 @@ export function ImportCenterReviewCaseDetailWorkspace({
         </div>
       </section>
 
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="来源结果" value={summary.sourceLabel} detail="只读来源线索" />
-        <MetricCard label="Owner" value={summary.ownerLabel} detail="当前责任人" />
-        <MetricCard label="证据状态" value={summary.evidenceLabel} detail="证据与结论" />
-        <MetricCard label="质量焦点" value={summary.qualityFocus} detail="关闭前核对项" />
-      </section>
+      <Tabs defaultValue="overview" className="grid gap-4">
+        <TabsList className="h-auto w-full justify-start overflow-x-auto md:w-fit">
+          {summary.workspaceTabs.map((tab) => (
+            <TabsTrigger key={tab.key} value={tab.key}>
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      <section className="grid gap-4">
-        <ImportCenterReviewOwnerContext
-          currentCase={detail?.case ?? null}
-          cases={ownerCases}
-          processingStages={ownerProcessingStages}
-          error={ownerContextError}
-        />
-        <SourceResultContextCard
-          dimensions={summary.sourceResultDimensions}
-          metrics={summary.sourceResultMetrics}
-        />
-        <SourceTraceCard
-          run={summary.sourceTraceRun}
-          href={summary.sourceTraceHref}
-          versions={summary.sourceTraceVersions}
-        />
+        <TabsContent value="overview" className="mt-0 grid gap-4">
+          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <MetricCard
+              label="来源结果"
+              value={summary.sourceLabel}
+              detail="只读来源线索"
+            />
+            <MetricCard label="Owner" value={summary.ownerLabel} detail="当前责任人" />
+            <MetricCard
+              label="证据状态"
+              value={summary.evidenceLabel}
+              detail="证据与结论"
+            />
+            <MetricCard
+              label="质量焦点"
+              value={summary.qualityFocus}
+              detail="关闭前核对项"
+            />
+          </section>
 
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-3">
-            <div>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ShieldAlert className="size-4 text-muted-foreground" />
-                证据缺口
-              </CardTitle>
-              <CardDescription className="mt-1">{summary.evidenceGap}</CardDescription>
-            </div>
-            <Button asChild size="sm" variant="outline">
-              <Link href={summary.detailHref}>
-                查看详情 API
-                <ExternalLink data-icon="inline-end" />
-              </Link>
-            </Button>
-          </CardHeader>
-          <CardContent className="grid gap-3">
-            <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
-              {summary.nextAction}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {summary.evidence.map((item) => (
-                <Badge key={item} variant="outline">
-                  {item}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-start justify-between gap-3">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <ShieldAlert className="size-4 text-muted-foreground" />
+                  证据缺口
+                </CardTitle>
+                <CardDescription className="mt-1">
+                  {summary.evidenceGap}
+                </CardDescription>
+              </div>
+              <Button asChild size="sm" variant="outline">
+                <Link href={summary.detailHref}>
+                  查看详情 API
+                  <ExternalLink data-icon="inline-end" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent className="grid gap-3">
+              <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
+                {summary.nextAction}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {summary.evidence.map((item) => (
+                  <Badge key={item} variant="outline">
+                    {item}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        <EvidenceChainCard chain={evidenceChain} />
-        <ImportCenterReviewCaseProcessingTimeline detail={detail} error={error} />
-        <ReviewCaseActionDeck
-          caseId={caseId}
-          detail={detail}
-          error={error}
-          actionFeedback={actionFeedback}
-          ownerNavigation={ownerNavigation}
-        />
-        <EvidenceTable detail={detail} />
-        <ConclusionTable detail={detail} />
-        <ProcessingBoundaryCard caseId={caseId} />
-      </section>
+        <TabsContent value="source" className="mt-0 grid gap-4">
+          <SourceResultContextCard
+            dimensions={summary.sourceResultDimensions}
+            metrics={summary.sourceResultMetrics}
+          />
+          <SourceTraceCard
+            run={summary.sourceTraceRun}
+            href={summary.sourceTraceHref}
+            versions={summary.sourceTraceVersions}
+          />
+        </TabsContent>
+
+        <TabsContent value="evidence" className="mt-0 grid gap-4">
+          <EvidenceChainCard chain={evidenceChain} />
+          <EvidenceTable detail={detail} />
+          <ConclusionTable detail={detail} />
+        </TabsContent>
+
+        <TabsContent value="actions" className="mt-0 grid gap-4">
+          <ImportCenterReviewCaseProcessingTimeline detail={detail} error={error} />
+          <ReviewCaseActionDeck
+            caseId={caseId}
+            detail={detail}
+            error={error}
+            actionFeedback={actionFeedback}
+            ownerNavigation={ownerNavigation}
+          />
+        </TabsContent>
+
+        <TabsContent value="owner" className="mt-0">
+          <ImportCenterReviewOwnerContext
+            currentCase={detail?.case ?? null}
+            cases={ownerCases}
+            processingStages={ownerProcessingStages}
+            error={ownerContextError}
+          />
+        </TabsContent>
+
+        <TabsContent value="boundary" className="mt-0">
+          <ProcessingBoundaryCard caseId={caseId} />
+        </TabsContent>
+      </Tabs>
     </main>
   )
 }

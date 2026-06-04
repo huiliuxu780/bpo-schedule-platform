@@ -819,6 +819,7 @@ export type ImportReviewOwnerFirstPendingEntry = {
 export type ImportReviewCaseDetailSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
+  workspaceTabs: ImportReviewCaseDetailWorkspaceTab[]
   sourceLabel: string
   sourceResultDimensions: string[]
   sourceResultMetrics: string[]
@@ -834,6 +835,28 @@ export type ImportReviewCaseDetailSummary = {
   listHref: string
   evidence: string[]
 }
+
+export type ImportReviewCaseDetailWorkspaceTabKey =
+  | "overview"
+  | "source"
+  | "evidence"
+  | "actions"
+  | "owner"
+  | "boundary"
+
+export type ImportReviewCaseDetailWorkspaceTab = {
+  key: ImportReviewCaseDetailWorkspaceTabKey
+  label: string
+}
+
+const REVIEW_CASE_DETAIL_WORKSPACE_TABS: ImportReviewCaseDetailWorkspaceTab[] = [
+  { key: "overview", label: "总览" },
+  { key: "source", label: "来源链路" },
+  { key: "evidence", label: "证据结论" },
+  { key: "actions", label: "处理动作" },
+  { key: "owner", label: "Owner 导航" },
+  { key: "boundary", label: "处理边界" },
+]
 
 export type ImportReviewCaseEvidenceChainSummary = {
   tone: ImportReviewCaseDetailTone
@@ -3033,6 +3056,7 @@ export function summarizeImportReviewCaseDetail({
     return {
       tone: "blocked",
       title: "复核案例读取失败",
+      workspaceTabs: [...REVIEW_CASE_DETAIL_WORKSPACE_TABS],
       sourceLabel: "来源不可用",
       sourceResultDimensions: ["来源不可用"],
       sourceResultMetrics: ["等待 API 恢复"],
@@ -3054,6 +3078,7 @@ export function summarizeImportReviewCaseDetail({
     return {
       tone: "empty",
       title: "等待复核案例",
+      workspaceTabs: [...REVIEW_CASE_DETAIL_WORKSPACE_TABS],
       sourceLabel: "来源未选择",
       sourceResultDimensions: ["等待案例"],
       sourceResultMetrics: ["等待来源结果"],
@@ -3096,6 +3121,7 @@ export function summarizeImportReviewCaseDetail({
         ? "blocked"
         : "warning",
     title: `${reviewCase.case_id} · ${formatReviewCaseSeverity(reviewCase.severity)} · ${formatReviewCaseStatus(reviewCase.status)}`,
+    workspaceTabs: [...REVIEW_CASE_DETAIL_WORKSPACE_TABS],
     sourceLabel,
     sourceResultDimensions: sourceResultSummary.dimensions,
     sourceResultMetrics: sourceResultSummary.metrics,

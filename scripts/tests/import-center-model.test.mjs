@@ -2256,6 +2256,14 @@ test("import center review case detail summarizes read-only case context", () =>
     {
       tone: "blocked",
       title: "CASE-QUERY-001 · 高 · 未关闭",
+      workspaceTabs: [
+        { key: "overview", label: "总览" },
+        { key: "source", label: "来源链路" },
+        { key: "evidence", label: "证据结论" },
+        { key: "actions", label: "处理动作" },
+        { key: "owner", label: "Owner 导航" },
+        { key: "boundary", label: "处理边界" },
+      ],
       sourceLabel: "预测排班 #12",
       sourceResultDimensions: [
         "业务日 2026-05-11",
@@ -2300,6 +2308,14 @@ test("import center review case detail summarizes read-only case context", () =>
     {
       tone: "blocked",
       title: "复核案例读取失败",
+      workspaceTabs: [
+        { key: "overview", label: "总览" },
+        { key: "source", label: "来源链路" },
+        { key: "evidence", label: "证据结论" },
+        { key: "actions", label: "处理动作" },
+        { key: "owner", label: "Owner 导航" },
+        { key: "boundary", label: "处理边界" },
+      ],
       sourceLabel: "来源不可用",
       sourceResultDimensions: ["来源不可用"],
       sourceResultMetrics: ["等待 API 恢复"],

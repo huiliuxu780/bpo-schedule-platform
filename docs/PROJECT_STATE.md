@@ -620,3 +620,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After IM120, the comparison-run detail page had enough result-review context, but the page was still organized as one long stack of cards. `US741/IM121` is complete. The detail page now uses a tabbed workspace for `总览`, `来源链路`, `结果明细`, `复核案例`, and `处理边界`; the default view keeps the user on overview metrics and result-review context, while source links, result rows, review cases, and no-write boundaries move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new comparison APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM121.
+
+## 2026-06-04 IM122 Review Case Detail Workspace Tabs
+
+After IM121 fixed the comparison-run detail page, the review-case detail page still stacked source context, evidence, conclusions, action forms, processing timeline, same-owner navigation, and boundaries in one long page. `US742/IM122` is complete. The review-case detail page now uses a tabbed workspace for `总览`, `来源链路`, `证据结论`, `处理动作`, `Owner 导航`, and `处理边界`; the default view keeps only key metrics and evidence gap context visible, while detailed source, evidence/conclusion records, controlled actions, owner navigation, and boundaries move behind explicit entries.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new review APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM122.

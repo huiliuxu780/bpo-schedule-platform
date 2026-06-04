@@ -54,6 +54,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM122 Review Case Detail Workspace Tabs
+
+- branch_name: `codex/im122-review-case-detail-tabs`
+- base_main_commit: `3059793`
+- stacked_on: `3059793 refactor: split comparison detail workspace`
+- remote_status: `IM121 branch is pushed; IM122 implementation is local only until final check/commit/push.`
+- scope: reorganize the existing review-case detail page from one long stacked page into a tabbed workspace with overview, source chain, evidence/conclusions, processing actions, owner navigation, and boundary entries; keep existing controlled actions unchanged.
+- allowed_files_check: `components/import-center-review-case-detail-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected review-case detail component/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED first failed because `summarizeImportReviewCaseDetail` did not expose `workspaceTabs`; after implementation `node --test scripts/tests/import-center-model.test.mjs` passed with 79 tests. `npm run lint`, `npm run typecheck`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. In-app browser smoke on `http://127.0.0.1:3000/data-quality/review-cases/CASE-QUERY-001` matched the six workspace tabs and verified source, evidence/conclusion, action, owner, and boundary panels. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 199 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM119 Login Log Version Result Link Consistency
 
 - branch_name: `codex/im119-login-log-version-result-link`
