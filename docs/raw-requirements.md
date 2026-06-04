@@ -2510,3 +2510,16 @@ version: "1.0"
 status: "done"
 notes: "IM112 已完成：`/schedule-plans/production/[batchId]` 调用 IM111 只读 API，展示真实 schedule_version_id、排班明细和 0.5h 展开区间；保留未应用/缺 API 的明确阻塞空态，不新增后端、schema/migration、依赖或生产写入。"
 ```
+
+### R813 - 人员排班详情行级引用解释
+
+```yaml
+id: R813
+module: "人员排班生产"
+description: "排班详情页已展示真实排班明细和 0.5h 展开区间，但每行引用是否完整、缺少哪些引用、是否阻塞后续动作还不够清楚。下一步需要在前端只读表中补行级引用完整性和阻塞解释。"
+source: "After IM112 completion and PM asked to continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM113 已完成：排班明细行和 0.5h 展开区间行展示引用完整/缺失状态，并在缺坐席、职场、供应商、项目、技能或班次类型时给出行级阻塞说明；未新增后端、schema/migration、依赖或生产写入。"
+```

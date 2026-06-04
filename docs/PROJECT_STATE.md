@@ -564,3 +564,9 @@ Current queue returned to empty after IM111. The task explicitly excluded fronte
 `US732/IM112` is complete. The existing `/schedule-plans/production/[batchId]` page now calls `/api/v1/personnel-schedule/production/{batch_id}` and replaces the previous no-fabrication placeholder with real schedule detail and 0.5h interval visibility when the API returns an applied version.
 
 The task remained frontend-scaffold only. It did not modify backend code, schemas, migrations, dependencies, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM112.
+
+## 2026-06-04 IM113 Personnel Schedule Row Reference Explanations
+
+`US733/IM113` is complete. The personnel-schedule production detail page now explains row-level reference completeness for schedule details and 0.5h intervals, including explicit blocker text when employee, workplace, supplier, project, skill, or shift references are missing.
+
+The task remained frontend-scaffold only. It did not modify backend code, schemas, migrations, dependencies, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM113.

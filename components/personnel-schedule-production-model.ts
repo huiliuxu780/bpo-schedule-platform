@@ -112,6 +112,8 @@ export type PersonnelScheduleProductionDetailRow = {
   shiftLabel: string
   timeLabel: string
   referenceLabel: string
+  referenceStatusLabel: string
+  blockerLabel: string
 }
 
 export type PersonnelScheduleProductionIntervalRow = {
@@ -120,6 +122,8 @@ export type PersonnelScheduleProductionIntervalRow = {
   dateLabel: string
   timeLabel: string
   referenceLabel: string
+  referenceStatusLabel: string
+  blockerLabel: string
 }
 
 export type PersonnelScheduleProductionActionShell = {
@@ -302,25 +306,46 @@ export function summarizePersonnelScheduleProductionDetail(
 function toDetailDisplayRow(
   row: PersonnelScheduleProductionApiDetailRow
 ): PersonnelScheduleProductionDetailRow {
+  const blockerLabel = resolveReferenceBlocker([
+    ["坐席", row.employee_id],
+    ["职场", row.workplace_id],
+    ["供应商", row.supplier_id],
+    ["项目", row.project_id],
+    ["技能", row.skill_id],
+    ["班次类型", row.shift_type_id],
+  ])
+
   return {
     id: row.schedule_detail_id,
-    employeeLabel: row.employee_id,
+    employeeLabel: formatReferenceValue(row.employee_id, "坐席"),
     dateLabel: row.schedule_date,
-    shiftLabel: row.shift_type_id,
+    shiftLabel: formatReferenceValue(row.shift_type_id, "班次类型"),
     timeLabel: `${row.start_time}-${row.end_time}`,
     referenceLabel: formatReferenceLabel(row),
+    referenceStatusLabel: resolveReferenceStatusLabel(blockerLabel),
+    blockerLabel,
   }
 }
 
 function toIntervalDisplayRow(
   row: PersonnelScheduleProductionApiIntervalRow
 ): PersonnelScheduleProductionIntervalRow {
+  const blockerLabel = resolveReferenceBlocker([
+    ["坐席", row.employee_id],
+    ["职场", row.workplace_id],
+    ["供应商", row.supplier_id],
+    ["项目", row.project_id],
+    ["技能", row.skill_id],
+  ])
+
   return {
     id: row.schedule_interval_id,
-    employeeLabel: row.employee_id,
+    employeeLabel: formatReferenceValue(row.employee_id, "坐席"),
     dateLabel: row.interval_date,
     timeLabel: `${row.interval_start}-${row.interval_end}`,
     referenceLabel: formatReferenceLabel(row),
+    referenceStatusLabel: resolveReferenceStatusLabel(blockerLabel),
+    blockerLabel,
   }
 }
 
@@ -375,7 +400,32 @@ function formatReferenceLabel({
   project_id: string
   skill_id: string
 }) {
-  return [workplace_id, supplier_id, project_id, skill_id].join(" / ")
+  return [
+    formatReferenceValue(workplace_id, "职场"),
+    formatReferenceValue(supplier_id, "供应商"),
+    formatReferenceValue(project_id, "项目"),
+    formatReferenceValue(skill_id, "技能"),
+  ].join(" / ")
+}
+
+function formatReferenceValue(value: string, label: string) {
+  return value.trim() ? value : `未填写${label}`
+}
+
+function resolveReferenceStatusLabel(blockerLabel: string) {
+  return blockerLabel.startsWith("阻塞") ? "引用缺失" : "引用完整"
+}
+
+function resolveReferenceBlocker(fields: Array<[string, string]>) {
+  const missingLabels = fields
+    .filter(([, value]) => !value.trim())
+    .map(([label]) => label)
+
+  if (missingLabels.length === 0) {
+    return "无阻塞；行级引用字段完整"
+  }
+
+  return `阻塞：缺少${missingLabels.join("、")}引用`
 }
 
 function buildPersonnelScheduleActionShells({

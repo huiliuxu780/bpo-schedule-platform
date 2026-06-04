@@ -453,6 +453,8 @@ function ReadOnlyRowsTable({
     dateLabel: string
     timeLabel: string
     referenceLabel: string
+    referenceStatusLabel: string
+    blockerLabel: string
     shiftLabel?: string
   }>
 }) {
@@ -468,6 +470,8 @@ function ReadOnlyRowsTable({
             <TableHead>日期</TableHead>
             <TableHead>{rows.some((row) => row.shiftLabel) ? "班次/时间" : "时间"}</TableHead>
             <TableHead>引用</TableHead>
+            <TableHead>引用状态</TableHead>
+            <TableHead>阻塞说明</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -486,11 +490,25 @@ function ReadOnlyRowsTable({
                 <TableCell className="align-top text-sm text-muted-foreground">
                   {row.referenceLabel}
                 </TableCell>
+                <TableCell className="align-top">
+                  <Badge
+                    variant={
+                      row.referenceStatusLabel === "引用完整"
+                        ? "outline"
+                        : "destructive"
+                    }
+                  >
+                    {row.referenceStatusLabel}
+                  </Badge>
+                </TableCell>
+                <TableCell className="align-top text-sm text-muted-foreground">
+                  {row.blockerLabel}
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4} className="h-16 text-center text-sm text-muted-foreground">
+              <TableCell colSpan={6} className="h-16 text-center text-sm text-muted-foreground">
                 {emptyLabel}
               </TableCell>
             </TableRow>

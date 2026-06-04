@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-`US732/IM112` completed the personnel-schedule production detail frontend wiring. Current story queue is empty.
+`US733/IM113` completed row-level reference and blocker explanations on the personnel-schedule production detail page. Current story queue is empty.
 
 The master-data maintenance chain now has `/master-data` plus `/master-data/[entityKey]` surfaces with controlled single-object submit paths for agents, reference entities, and binding relationships. Permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors remain out of scope.
 
@@ -153,4 +153,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US730/IM110` completed the broader master-data maintenance loop: backend APIs now support workplaces, suppliers, projects, skills, and binding relationship maintenance; `/master-data/sites`, `/master-data/vendors`, `/master-data/projects`, `/master-data/skills`, and `/master-data/bindings` now expose controlled submit forms. Binding maintenance validates employee, supplier, workplace, project, and skill references and keeps freeze disabled because binding rows have no status field. Current queue returned to empty after this slice.
 
-`US732/IM112` completed the frontend wiring for `/schedule-plans/production/[batchId]`. The existing detail page now reads the IM111 API and shows real schedule_version_id, schedule detail rows, and 0.5h expanded intervals while keeping schema/migration, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors out of scope.
+`US733/IM113` completed row-level reference explanations for `/schedule-plans/production/[batchId]`. Schedule detail rows now explain employee, workplace, supplier, project, skill, and shift completeness; 0.5h interval rows explain employee, workplace, supplier, project, and skill completeness. Schema/migration, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors remain out of scope.

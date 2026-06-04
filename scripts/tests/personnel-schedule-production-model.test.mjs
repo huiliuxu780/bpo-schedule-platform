@@ -204,6 +204,8 @@ test("personnel schedule production detail uses real api details when available"
     shiftLabel: "MORNING-2H",
     timeLabel: "09:00-11:00",
     referenceLabel: "SH-01 / BOSCH-CS / BOSCH-HOTLINE / L1-CN",
+    referenceStatusLabel: "引用完整",
+    blockerLabel: "无阻塞；行级引用字段完整",
   });
   assert.deepEqual(detail.intervalRows[0], {
     id: "SCH-INT-001",
@@ -211,7 +213,68 @@ test("personnel schedule production detail uses real api details when available"
     dateLabel: "2026-06-01",
     timeLabel: "09:00-09:30",
     referenceLabel: "SH-01 / BOSCH-CS / BOSCH-HOTLINE / L1-CN",
+    referenceStatusLabel: "引用完整",
+    blockerLabel: "无阻塞；行级引用字段完整",
   });
+});
+
+test("personnel schedule production detail explains row-level reference blockers", () => {
+  const detail = summarizePersonnelScheduleProductionDetail(
+    [baseBatch],
+    "BATCH-SCH-001",
+    {
+      batch: baseBatch,
+      version: {
+        schedule_version_id: "SCH-PROD-002",
+        import_version_id: "BATCH-SCH-001::v1",
+        business_date_from: "2026-06-01",
+        business_date_to: "2026-06-07",
+        created_at: "2026-06-04T10:00:00+08:00",
+      },
+      details: [
+        {
+          schedule_detail_id: "SCH-DETAIL-BLOCKED",
+          schedule_version_id: "SCH-PROD-002",
+          employee_id: "A-1001",
+          workplace_id: "",
+          supplier_id: "BOSCH-CS",
+          project_id: "",
+          skill_id: "L1-CN",
+          schedule_date: "2026-06-01",
+          shift_type_id: "",
+          start_time: "09:00",
+          end_time: "11:00",
+        },
+      ],
+      intervals: [
+        {
+          schedule_interval_id: "SCH-INT-BLOCKED",
+          schedule_detail_id: "SCH-DETAIL-BLOCKED",
+          schedule_version_id: "SCH-PROD-002",
+          employee_id: "",
+          interval_date: "2026-06-01",
+          interval_start: "09:00",
+          interval_end: "09:30",
+          workplace_id: "SH-01",
+          supplier_id: "",
+          project_id: "BOSCH-HOTLINE",
+          skill_id: "",
+        },
+      ],
+    }
+  );
+
+  assert.equal(detail.detailRows[0].referenceStatusLabel, "引用缺失");
+  assert.equal(
+    detail.detailRows[0].blockerLabel,
+    "阻塞：缺少职场、项目、班次类型引用"
+  );
+  assert.equal(detail.intervalRows[0].employeeLabel, "未填写坐席");
+  assert.equal(detail.intervalRows[0].referenceStatusLabel, "引用缺失");
+  assert.equal(
+    detail.intervalRows[0].blockerLabel,
+    "阻塞：缺少坐席、供应商、技能引用"
+  );
 });
 
 test("personnel schedule production detail blocks missing expansion records without fabricated details", () => {
