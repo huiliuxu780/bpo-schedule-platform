@@ -656,3 +656,9 @@ The task remained frontend-scaffold only. It did not add backend routes, schemas
 After IM126, `/data-quality/[batchId]` already had an outer batch-processing workspace, but the `批次明细` panel still stacked overview metrics, processing summary, exception trace, version records, and all row results in one long panel. `US747/IM127` is complete. The batch detail panel now uses second-level tabs for `总览`, `处理摘要`, `异常追踪`, `版本记录`, and `行结果`; the default view keeps only metrics and batch positioning visible, while summary, trace, versions, and rows move behind explicit entries.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new import APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM127.
+
+## 2026-06-04 IM128 Field Mapping Template Detail Workspace Tabs
+
+After IM127, the field-mapping template detail page still stacked template identity, the maintenance form, mapping rows, and maintenance boundaries in one detail surface. `US748/IM128` is complete. `/data-quality/field-mapping-templates/[templateId]` now uses a tabbed workspace for `总览`, `维护表单`, `字段明细`, and `维护边界`; the default view keeps only status, file type, mapped-field count, and summary visible, while editing, row inspection, and deactivate boundaries move behind explicit entries.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new template APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM128.

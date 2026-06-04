@@ -84,6 +84,7 @@ import {
   summarizeImportSingleBatchApplyAction,
   summarizeImportBatchApplyResultNotice,
   summarizeImportFieldMappingTemplateActionNotice,
+  summarizeImportFieldMappingTemplateDetail,
   summarizeImportFieldMappingTemplates,
   summarizeImportVersionWorkbench,
   summarizeImportBatchDetail,
@@ -4264,6 +4265,34 @@ test("import center field mapping template summary tracks inventory and coverage
       inactiveTemplates: 1,
       coveredFileTypes: 2,
       totalMappedFields: 5,
+    },
+  );
+});
+
+test("import center field mapping template detail exposes task workspaces", () => {
+  assert.deepEqual(
+    summarizeImportFieldMappingTemplateDetail({
+      template_id: "TPL-MD-001",
+      template_name: "主数据 source_key",
+      file_type: "master_data",
+      field_mapping: {
+        source_key: "source_key",
+        "姓名": "employee_name",
+      },
+      created_by: "ops",
+      created_at: "2026-05-29T10:00:00+08:00",
+      is_active: true,
+    }),
+    {
+      mappedFieldCount: 2,
+      statusLabel: "启用",
+      summaryText: "source_key -> source_key, 姓名 -> employee_name",
+      workspaceTabs: [
+        { key: "overview", label: "总览" },
+        { key: "maintenance", label: "维护表单" },
+        { key: "mapping", label: "字段明细" },
+        { key: "boundary", label: "维护边界" },
+      ],
     },
   );
 });

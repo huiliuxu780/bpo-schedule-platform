@@ -1154,6 +1154,24 @@ export type ImportFieldMappingTemplateSummary = {
   totalMappedFields: number
 }
 
+export type ImportFieldMappingTemplateDetailWorkspaceTabKey =
+  | "overview"
+  | "maintenance"
+  | "mapping"
+  | "boundary"
+
+export type ImportFieldMappingTemplateDetailWorkspaceTab = {
+  key: ImportFieldMappingTemplateDetailWorkspaceTabKey
+  label: string
+}
+
+export type ImportFieldMappingTemplateDetailSummary = {
+  mappedFieldCount: number
+  statusLabel: string
+  summaryText: string
+  workspaceTabs: ImportFieldMappingTemplateDetailWorkspaceTab[]
+}
+
 export type ImportFieldMappingTemplateActionNoticeTone = "success" | "failed"
 
 export type ImportFieldMappingTemplateActionNotice = {
@@ -1306,6 +1324,14 @@ const importBatchDetailWorkspaceTabs: ImportBatchDetailWorkspaceTab[] = [
   { key: "versions", label: "版本记录" },
   { key: "rows", label: "行结果" },
 ]
+
+const importFieldMappingTemplateDetailWorkspaceTabs: ImportFieldMappingTemplateDetailWorkspaceTab[] =
+  [
+    { key: "overview", label: "总览" },
+    { key: "maintenance", label: "维护表单" },
+    { key: "mapping", label: "字段明细" },
+    { key: "boundary", label: "维护边界" },
+  ]
 
 export function buildImportApiUrl(path: string, apiBase = getDefaultApiBase()): string {
   const normalizedBase = apiBase.replace(/\/+$/, "")
@@ -6025,6 +6051,17 @@ export function summarizeImportFieldMappingTemplates(
       totalMappedFields: 0,
     }
   )
+}
+
+export function summarizeImportFieldMappingTemplateDetail(
+  template: ImportFieldMappingTemplate
+): ImportFieldMappingTemplateDetailSummary {
+  return {
+    mappedFieldCount: Object.keys(template.field_mapping).length,
+    statusLabel: template.is_active ? "启用" : "停用",
+    summaryText: formatFieldMappingTemplateSummary(template),
+    workspaceTabs: [...importFieldMappingTemplateDetailWorkspaceTabs],
+  }
 }
 
 export function summarizeImportFieldMappingTemplateActionNotice({

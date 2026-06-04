@@ -15,11 +15,13 @@ import {
   formatFieldMappingTemplateSummary,
   formatImportFileType,
   summarizeImportFieldMappingTemplateActionNotice,
+  summarizeImportFieldMappingTemplateDetail,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Table,
   TableBody,
@@ -102,18 +104,64 @@ export default async function FieldMappingTemplatePage({
         {templateResult.error ? (
           <TemplateReadError error={templateResult.error} templateId={templateId} />
         ) : template ? (
-          <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-            <div className="grid gap-4">
-              <TemplateUpdateCard template={template} />
-              <TemplateMappingTable template={template} />
-            </div>
-            <TemplateControlCard template={template} />
-          </section>
+          <TemplateDetailWorkspace template={template} />
         ) : (
           <TemplateReadError error="字段映射模板不存在" templateId={templateId} />
         )}
       </main>
     </AppShell>
+  )
+}
+
+function TemplateDetailWorkspace({ template }: { template: ImportFieldMappingTemplate }) {
+  const summary = summarizeImportFieldMappingTemplateDetail(template)
+
+  return (
+    <section id="template-detail-workspace" className="grid gap-4">
+      <Tabs defaultValue="overview" className="grid gap-4">
+        <TabsList className="w-full justify-start overflow-x-auto md:w-fit">
+          {summary.workspaceTabs.map((tab) => (
+            <TabsTrigger key={tab.key} value={tab.key}>
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <TabsContent value="overview" className="m-0">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">模板总览</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                当前模板的文件类型、字段覆盖和维护状态定位
+              </p>
+            </CardHeader>
+            <CardContent className="grid gap-3 md:grid-cols-3">
+              <HeaderMetric
+                label="映射字段"
+                value={summary.mappedFieldCount.toLocaleString("zh-CN")}
+              />
+              <HeaderMetric label="维护状态" value={summary.statusLabel} />
+              <HeaderMetric
+                label="文件类型"
+                value={formatImportFileType(template.file_type)}
+              />
+              <div className="rounded-md border bg-muted/30 p-3 md:col-span-3">
+                <div className="text-xs text-muted-foreground">字段摘要</div>
+                <p className="mt-1 text-sm font-medium">{summary.summaryText}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="maintenance" className="m-0">
+          <TemplateUpdateCard template={template} />
+        </TabsContent>
+        <TabsContent value="mapping" className="m-0">
+          <TemplateMappingTable template={template} />
+        </TabsContent>
+        <TabsContent value="boundary" className="m-0">
+          <TemplateControlCard template={template} />
+        </TabsContent>
+      </Tabs>
+    </section>
   )
 }
 

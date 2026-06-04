@@ -3152,3 +3152,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM128 Field Mapping Template Detail Workspace Tabs
+
+- branch_name: `codex/im128-template-detail-workspace-tabs`
+- base_main_commit: `ef52229`
+- stacked_on: `3db8d5a refactor: split import batch detail subtabs`
+- remote_status: `IM127 branch is pushed; IM128 implementation is local only until final check/commit/push.`
+- scope: split `/data-quality/field-mapping-templates/[templateId]` into tabs for overview, maintenance form, mapping rows, and maintenance boundaries.
+- allowed_files_check: `app/data-quality/field-mapping-templates/[templateId]/page.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected template-detail frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test first failed because `summarizeImportFieldMappingTemplateDetail` was not exported, then passed with 80 tests; `npm run typecheck` passed; `npm run lint` passed; `node scripts/check-shadcn-ui.mjs` passed with only the documented baseline finding; in-app browser smoke on `http://127.0.0.1:3000/data-quality/field-mapping-templates/TPL-IM027-SMOKE-001` verified the tabs `总览`, `维护表单`, `字段明细`, and `维护边界`, plus hidden-section content for `模板维护`/`保存模板`, mapping rows with `source_key`, and `停用模板`; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 199 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
