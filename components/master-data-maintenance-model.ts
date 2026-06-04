@@ -136,6 +136,36 @@ export type MasterDataReferenceMaintenancePayload = {
   effective_to?: string
 }
 
+export type MasterDataReferenceListRow = {
+  reference_id: string
+  reference_name: string
+  status: MasterDataAgentMaintenanceStatus
+  effective_from: string
+  effective_to: string
+  batch_id: string
+  skill_category?: MasterDataSkillCategory | null
+}
+
+export type MasterDataReferenceListDisplay = {
+  statusLabel: string
+  skillCategoryLabel: string
+  effectivePeriodLabel: string
+  sourceBatchLabel: string
+}
+
+export type MasterDataReferenceListViewRow = MasterDataReferenceListRow & {
+  display: MasterDataReferenceListDisplay
+}
+
+export type MasterDataReferenceManagementSummary = {
+  entity: MasterDataMaintenanceEntity
+  title: string
+  totalRecords: number
+  activeRecords: number
+  frozenRecords: number
+  rows: MasterDataReferenceListViewRow[]
+}
+
 export type MasterDataBindingMaintenanceDraft = {
   action: "create" | "edit" | "effective_period"
   sourceBatchId: string
@@ -159,6 +189,33 @@ export type MasterDataBindingMaintenancePayload = {
   skill_id?: string
   effective_from?: string
   effective_to?: string
+}
+
+export type MasterDataBindingListRow = {
+  binding_id: string
+  employee_id: string
+  supplier_id: string
+  workplace_id: string
+  project_id: string
+  skill_id: string
+  effective_from: string
+  effective_to: string
+  batch_id: string
+}
+
+export type MasterDataBindingListDisplay = {
+  effectivePeriodLabel: string
+  sourceBatchLabel: string
+}
+
+export type MasterDataBindingListViewRow = MasterDataBindingListRow & {
+  display: MasterDataBindingListDisplay
+}
+
+export type MasterDataBindingManagementSummary = {
+  title: string
+  totalRecords: number
+  rows: MasterDataBindingListViewRow[]
 }
 
 export type MasterDataAgentMaintenancePayload = {
@@ -350,19 +407,6 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
 
 const MASTER_DATA_VERSION_WORKBENCH_HREF = "/data-quality/versions?domain=master_data"
 
-const MASTER_DATA_MAINTENANCE_WORKSPACE_TABS: MasterDataMaintenanceWorkspaceTab[] =
-  [
-    { key: "overview", label: "总览" },
-    { key: "source", label: "来源与引用" },
-    { key: "actions", label: "维护动作" },
-    { key: "submit", label: "提交表单" },
-  ]
-
-const MASTER_DATA_AGENT_WORKSPACE_TABS: MasterDataMaintenanceWorkspaceTab[] =
-  MASTER_DATA_MAINTENANCE_WORKSPACE_TABS.flatMap((tab) =>
-    tab.key === "submit" ? [tab, { key: "agent_skills", label: "技能维护" }] : [tab]
-  )
-
 export function summarizeMasterDataMaintenanceWorkbench(
   batches: ImportBatchListRow[]
 ): MasterDataMaintenanceSummary {
@@ -404,7 +448,7 @@ export function summarizeMasterDataMaintenanceWorkbench(
     blockerSummary,
     nextActionLabel:
       tone === "ready"
-        ? "查看详情与维护动作"
+        ? "查看列表"
         : "先处理来源批次",
   }))
   const readyObjects = tone === "ready" ? rows.length : 0
@@ -470,10 +514,10 @@ export function summarizeMasterDataMaintenanceEntityDetail(
   return {
     entity,
     tone: workbench.tone,
-    title: `${entity.label}详情与引用影响`,
+    title: entity.label,
     detail: isSourceReady
-      ? `当前基于 ${workbench.sourceVersionLabel} 展示 ${entity.label} 的基础信息和引用关系。`
-      : `${entity.label}来源尚未应用或仍有阻塞，未展示引用影响明细。`,
+      ? `当前基于 ${workbench.sourceVersionLabel} 展示 ${entity.label} 列表。`
+      : `${entity.label}来源尚未应用或仍有阻塞。`,
     sourceVersionLabel: workbench.sourceVersionLabel,
     sourceVersionHref:
       workbench.sourceVersionLabel === "暂无主数据业务版本"
@@ -494,10 +538,7 @@ export function summarizeMasterDataMaintenanceEntityDetail(
     agentSubmitSourceBatchId,
     referenceSubmitSourceBatchId,
     bindingSubmitSourceBatchId,
-    workspaceTabs:
-      entity.key === "agents"
-        ? [...MASTER_DATA_AGENT_WORKSPACE_TABS]
-        : [...MASTER_DATA_MAINTENANCE_WORKSPACE_TABS],
+    workspaceTabs: [],
   }
 }
 
@@ -707,6 +748,67 @@ export function summarizeMasterDataAgentManagement(
       { key: "id", label: "ID" },
       { key: "actions", label: "操作" },
     ],
+  }
+}
+
+export function summarizeMasterDataReferenceManagement(
+  entityKey: MasterDataMaintenanceEntityKey,
+  references: MasterDataReferenceListRow[]
+): MasterDataReferenceManagementSummary {
+  const entity = getMasterDataMaintenanceEntity(entityKey)
+
+  if (!entity || !isReferenceEntity(entity.key)) {
+    throw new Error(`Unknown reference master data entity: ${entityKey}`)
+  }
+
+  const rows = [...references]
+    .sort((left, right) => left.reference_id.localeCompare(right.reference_id))
+    .map((reference) => ({
+      ...reference,
+      display: {
+        statusLabel: formatMasterDataEmployeeStatus(reference.status),
+        skillCategoryLabel:
+          entity.key === "skills"
+            ? formatMasterDataSkillCategory(reference.skill_category ?? null)
+            : entity.label,
+        effectivePeriodLabel: formatEffectivePeriod(
+          reference.effective_from,
+          reference.effective_to
+        ),
+        sourceBatchLabel: reference.batch_id,
+      },
+    }))
+
+  return {
+    entity,
+    title: entity.label,
+    totalRecords: rows.length,
+    activeRecords: rows.filter((row) => row.status === "active").length,
+    frozenRecords: rows.filter((row) => row.status === "frozen").length,
+    rows,
+  }
+}
+
+export function summarizeMasterDataBindingManagement(
+  bindings: MasterDataBindingListRow[]
+): MasterDataBindingManagementSummary {
+  const rows = [...bindings]
+    .sort((left, right) => left.binding_id.localeCompare(right.binding_id))
+    .map((binding) => ({
+      ...binding,
+      display: {
+        effectivePeriodLabel: formatEffectivePeriod(
+          binding.effective_from,
+          binding.effective_to
+        ),
+        sourceBatchLabel: binding.batch_id,
+      },
+    }))
+
+  return {
+    title: "绑定关系",
+    totalRecords: rows.length,
+    rows,
   }
 }
 
@@ -1000,6 +1102,10 @@ function formatMasterDataEmployeeStatus(status: MasterDataAgentMaintenanceStatus
   }
 
   return "停用"
+}
+
+function formatEffectivePeriod(effectiveFrom: string, effectiveTo: string) {
+  return `${effectiveFrom} 至 ${effectiveTo}`
 }
 
 function formatMasterDataSkillCategory(

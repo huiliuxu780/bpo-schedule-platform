@@ -353,6 +353,10 @@ class MasterDataReferenceRecord(BaseModel):
     skill_category: MasterDataSkillCategory | None = None
 
 
+class MasterDataReferenceListResponse(BaseModel):
+    items: list[MasterDataReferenceRecord]
+
+
 class MasterDataOrganizationInput(BaseModel):
     organization_id: str
     organization_name: str
@@ -506,6 +510,10 @@ class EmployeeBindingRecord(BaseModel):
     effective_from: str
     effective_to: str
     batch_id: str
+
+
+class MasterDataBindingListResponse(BaseModel):
+    items: list[EmployeeBindingRecord]
 
 
 class MasterDataBindingMaintenanceRequest(BaseModel):

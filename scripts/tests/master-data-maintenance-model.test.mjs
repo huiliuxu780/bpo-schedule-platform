@@ -13,10 +13,12 @@ import {
   buildMasterDataReferenceMaintenancePayload,
   getMasterDataMaintenanceEntity,
   summarizeMasterDataAgentManagement,
+  summarizeMasterDataBindingManagement,
   summarizeMasterDataEmployeeList,
   summarizeMasterDataAgentMaintenanceFeedback,
   summarizeMasterDataMaintenanceEntityDetail,
   summarizeMasterDataMaintenanceWorkbench,
+  summarizeMasterDataReferenceManagement,
 } from "../../components/master-data-maintenance-model.ts";
 
 const baseBatch = {
@@ -77,7 +79,7 @@ test("master data maintenance workbench uses the latest applied master data vers
   assert.equal(summary.sourceVersionLabel, "BATCH-MD-001::v1");
   assert.equal(summary.latestBatchLabel, "BATCH-MD-001");
   assert.equal(summary.rows[0].statusLabel, "可查看");
-  assert.equal(summary.rows[0].nextActionLabel, "查看详情与维护动作");
+  assert.equal(summary.rows[0].nextActionLabel, "查看列表");
   assert.equal(summary.rows[0].sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
   assert.equal(summary.rows[0].sourceVersionHref, "/data-quality/versions?domain=master_data");
   assert.equal(summary.rows[0].detailHref, "/master-data/agents");
@@ -111,16 +113,12 @@ test("master data maintenance resolves known entity keys", () => {
   assert.equal(getMasterDataMaintenanceEntity("missing"), null);
 });
 
-test("master data entity detail exposes source context and empty reference impact without fabrication", () => {
+test("master data entity summary exposes source context without page workspace tabs", () => {
   const detail = summarizeMasterDataMaintenanceEntityDetail("bindings", [baseBatch]);
 
   assert.equal(detail.entity.label, "绑定关系");
-  assert.deepEqual(detail.workspaceTabs, [
-    { key: "overview", label: "总览" },
-    { key: "source", label: "来源与引用" },
-    { key: "actions", label: "维护动作" },
-    { key: "submit", label: "提交表单" },
-  ]);
+  assert.equal(detail.title, "绑定关系");
+  assert.deepEqual(detail.workspaceTabs, []);
   assert.equal(detail.sourceVersionLabel, "BATCH-MD-001::v1");
   assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
   assert.equal(detail.effectivePeriodLabel, "暂无实体级有效期明细");
@@ -152,17 +150,11 @@ test("agent detail enables controlled submit actions only for agents", () => {
   assert.equal(agentDetail.maintenanceActions[2].submitLabel, "提交冻结");
   assert.equal(agentDetail.maintenanceActions[3].submitLabel, "提交有效期");
   assert.equal(agentDetail.agentSubmitSourceBatchId, "BATCH-MD-001");
-  assert.deepEqual(
-    agentDetail.workspaceTabs.map((tab) => tab.label),
-    ["总览", "来源与引用", "维护动作", "提交表单", "技能维护"],
-  );
+  assert.deepEqual(agentDetail.workspaceTabs, []);
   assert.equal(skillDetail.maintenanceActions[0].canSubmit, true);
   assert.equal(skillDetail.maintenanceActions[0].submitLabel, "提交新增");
   assert.equal(skillDetail.referenceSubmitSourceBatchId, "BATCH-MD-001");
-  assert.deepEqual(
-    skillDetail.workspaceTabs.map((tab) => tab.label),
-    ["总览", "来源与引用", "维护动作", "提交表单"],
-  );
+  assert.deepEqual(skillDetail.workspaceTabs, []);
 });
 
 test("master data employee list summarizes org path type workplace and skills", () => {
@@ -288,6 +280,101 @@ test("agent management page exposes customer service list layout contract", () =
   assert.equal(
     summary.rows[0].display.skillsEditHref,
     "/master-data/agents/A-2001/skills/edit",
+  );
+});
+
+test("reference master data management summarizes list rows by object type", () => {
+  const summary = summarizeMasterDataReferenceManagement("skills", [
+    {
+      reference_id: "SKILL-TICKET",
+      reference_name: "集中退换工单",
+      status: "frozen",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skill_category: "ticket",
+    },
+    {
+      reference_id: "SKILL-ONLINE",
+      reference_name: "在线接待",
+      status: "active",
+      effective_from: "2026-05-01",
+      effective_to: "2026-10-31",
+      batch_id: "BATCH-MD-000",
+      skill_category: "online",
+    },
+  ]);
+
+  assert.equal(summary.title, "技能");
+  assert.equal(summary.totalRecords, 2);
+  assert.equal(summary.activeRecords, 1);
+  assert.equal(summary.frozenRecords, 1);
+  assert.deepEqual(
+    summary.rows.map((row) => [
+      row.reference_id,
+      row.display.statusLabel,
+      row.display.skillCategoryLabel,
+      row.display.effectivePeriodLabel,
+      row.display.sourceBatchLabel,
+    ]),
+    [
+      [
+        "SKILL-ONLINE",
+        "生效",
+        "在线技能组",
+        "2026-05-01 至 2026-10-31",
+        "BATCH-MD-000",
+      ],
+      [
+        "SKILL-TICKET",
+        "冻结",
+        "工单技能组",
+        "2026-06-01 至 2026-12-31",
+        "BATCH-MD-001",
+      ],
+    ],
+  );
+});
+
+test("binding master data management summarizes relationship list rows", () => {
+  const summary = summarizeMasterDataBindingManagement([
+    {
+      binding_id: "BIND-002",
+      employee_id: "A-2002",
+      supplier_id: "SUP-002",
+      workplace_id: "NJ-01",
+      project_id: "PROJ-001",
+      skill_id: "SKILL-TICKET",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-002",
+    },
+    {
+      binding_id: "BIND-001",
+      employee_id: "A-2001",
+      supplier_id: "SUP-001",
+      workplace_id: "SH-01",
+      project_id: "PROJ-001",
+      skill_id: "SKILL-ONLINE",
+      effective_from: "2026-05-01",
+      effective_to: "2026-10-31",
+      batch_id: "BATCH-MD-001",
+    },
+  ]);
+
+  assert.equal(summary.title, "绑定关系");
+  assert.equal(summary.totalRecords, 2);
+  assert.deepEqual(
+    summary.rows.map((row) => [
+      row.binding_id,
+      row.employee_id,
+      row.display.effectivePeriodLabel,
+      row.display.sourceBatchLabel,
+    ]),
+    [
+      ["BIND-001", "A-2001", "2026-05-01 至 2026-10-31", "BATCH-MD-001"],
+      ["BIND-002", "A-2002", "2026-06-01 至 2026-12-31", "BATCH-MD-002"],
+    ],
   );
 });
 

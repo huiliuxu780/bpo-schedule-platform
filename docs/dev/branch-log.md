@@ -3368,3 +3368,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM136 Master Data List Correction Follow-up
+
+- branch_name: `codex/im136-business-first-ia-cleanup`
+- base_main_commit: `a4c4221`
+- stacked_on: `f0f5912 fix: realign business navigation and import entry points`
+- remote_status: `f0f5912 was pushed; this follow-up correction is local until final check/commit/push.`
+- scope: PM-requested correction to split master-data object pages away from the rejected generic long detail workspace. `/master-data` stays redirected to `/master-data/agents`; `/master-data/agents` stays a personnel list with create/edit child pages and freeze dialog; `/master-data/sites`, `/master-data/vendors`, `/master-data/projects`, `/master-data/skills`, and `/master-data/bindings` now render direct list pages from master-data rows instead of the old tabbed detail/submit workspace.
+- allowed_files_check: `app/master-data/**`, `components/master-data-maintenance-*`, focused frontend tests, local master-data list backend read APIs/tests, and `docs/dev/branch-log.md`; no package/lockfile, schema, migration, auth/permissions, approval, export, batch-operation capability, automatic scheduling, settlement, formula, or charge-factor changes.
+- scope_diff_check: expected route cleanup, removal of the old rendered `MasterDataMaintenanceEntityDetail` workspace, list-summary models for reference/binding records, read-only list endpoints for current master-data rows, focused tests, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target frontend tests passed with 20 tests; target backend master-data maintenance API tests passed with 9 tests; `npm run typecheck` passed; `npm run lint` passed; `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, lint, typecheck, Next build, and backend tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

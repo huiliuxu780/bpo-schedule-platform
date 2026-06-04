@@ -53,6 +53,7 @@ from backend.app.models import (
     ImportFieldMappingTemplateRecord,
     ImportFieldMappingTemplateUpdateRequest,
     ImportProcessingStatus,
+    MasterDataBindingListResponse,
     MasterDataBindingMaintenanceRequest,
     MasterDataBindingMaintenanceResponse,
     MasterDataEmployeeListResponse,
@@ -61,6 +62,7 @@ from backend.app.models import (
     MasterDataEmployeeMaintenanceRequest,
     MasterDataEmployeeMaintenanceResponse,
     MasterDataImportApplyResponse,
+    MasterDataReferenceListResponse,
     MasterDataReferenceMaintenanceRequest,
     MasterDataReferenceMaintenanceResponse,
     MasterDataReferenceType,
@@ -702,6 +704,15 @@ def list_master_data_employees() -> MasterDataEmployeeListResponse:
     return MasterDataEmployeeListResponse(items=repository.list_employees())
 
 
+@app.get(
+    "/api/v1/master-data/bindings",
+    response_model=MasterDataBindingListResponse,
+)
+def list_master_data_bindings() -> MasterDataBindingListResponse:
+    repository = MasterDataPersistenceRepository()
+    return MasterDataBindingListResponse(items=repository.list_employee_bindings())
+
+
 @app.post(
     "/api/v1/master-data/bindings/{binding_id}/maintenance",
     response_model=MasterDataBindingMaintenanceResponse,
@@ -718,6 +729,19 @@ def maintain_master_data_binding(
         )
     except ValueError as exc:
         raise _master_data_maintenance_http_error(exc) from exc
+
+
+@app.get(
+    "/api/v1/master-data/{reference_type}",
+    response_model=MasterDataReferenceListResponse,
+)
+def list_master_data_references(
+    reference_type: MasterDataReferenceType,
+) -> MasterDataReferenceListResponse:
+    repository = MasterDataPersistenceRepository()
+    return MasterDataReferenceListResponse(
+        items=repository.list_references(reference_type)
+    )
 
 
 @app.post(

@@ -4,6 +4,8 @@ import test from "node:test";
 
 const dashboardPagePath = new URL("../../app/dashboard/page.tsx", import.meta.url);
 const appSidebarPath = new URL("../../components/app-sidebar.tsx", import.meta.url);
+const masterDataIndexPagePath = new URL("../../app/master-data/page.tsx", import.meta.url);
+const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page.tsx", import.meta.url);
 
 test("dashboard overview does not expose data ingestion status panel", async () => {
   const source = await readFile(dashboardPagePath, "utf8");
@@ -54,4 +56,25 @@ test("sidebar does not expose placeholder or deferred product capabilities", asy
     1,
     "only the business overview entry may point to the dashboard route",
   );
+});
+
+test("master data entry redirects to agents and entity pages do not use the old long detail workspace", async () => {
+  const indexSource = await readFile(masterDataIndexPagePath, "utf8");
+  const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const forbiddenEntityPageTerms = [
+    "  MasterDataMaintenanceEntityDetail,",
+    "<MasterDataMaintenanceEntityDetail",
+    "submitMasterDataReferenceMaintenance",
+    "submitMasterDataBindingMaintenance",
+    "详情与引用影响",
+    "提交表单",
+    "维护动作",
+    "来源与引用",
+  ];
+
+  assert.equal(indexSource.includes('redirect("/master-data/agents")'), true);
+
+  for (const term of forbiddenEntityPageTerms) {
+    assert.equal(entitySource.includes(term), false, term);
+  }
 });

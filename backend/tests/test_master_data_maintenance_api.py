@@ -7,12 +7,14 @@ from fastapi import HTTPException
 from sqlalchemy import text
 
 from backend.app.import_persistence import ImportPersistenceRepository
-from backend.app.main import app, list_master_data_employees, maintain_master_data_employee
+from backend.app.main import app, list_master_data_bindings, list_master_data_employees
+from backend.app.main import list_master_data_references, maintain_master_data_employee
 from backend.app.main import maintain_master_data_binding
 from backend.app.main import maintain_master_data_employee_skills
 from backend.app.main import maintain_master_data_reference
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
+    EmployeeBindingInput,
     EmployeeMasterDataInput,
     EmployeeSkillInput,
     MasterDataReferenceInput,
@@ -48,6 +50,14 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
         )
         self.assertIn(
             ("/api/v1/master-data/employees", "GET"),
+            routes,
+        )
+        self.assertIn(
+            ("/api/v1/master-data/bindings", "GET"),
+            routes,
+        )
+        self.assertIn(
+            ("/api/v1/master-data/{reference_type}", "GET"),
             routes,
         )
         self.assertIn(
@@ -392,6 +402,41 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
         self.assertEqual(response.action_status, "created")
         self.assertEqual(response.reference.reference_id, "SKILL-API-001")
         self.assertEqual(response.reference.reference_name, "粤语")
+
+    def test_list_references_and_bindings_return_master_data_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance-api.db'}"
+            _create_import_batch(database_url, "BATCH-MD-API-LIST-REF")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            _seed_binding_references(repository, "BATCH-MD-API-LIST-REF")
+            repository.upsert_employee_binding(
+                EmployeeBindingInput(
+                    binding_id="BIND-API-001",
+                    employee_id="A-5001",
+                    supplier_id="SUP-API-001",
+                    workplace_id="SITE-API-001",
+                    project_id="PROJ-API-001",
+                    skill_id="SKILL-API-001",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                "BATCH-MD-API-LIST-REF",
+            )
+
+            with patch(
+                "backend.app.main.MasterDataPersistenceRepository",
+                return_value=repository,
+            ):
+                references = list_master_data_references("skills")
+                bindings = list_master_data_bindings()
+
+        self.assertEqual(len(references.items), 1)
+        self.assertEqual(references.items[0].reference_id, "SKILL-API-001")
+        self.assertEqual(references.items[0].reference_name, "普通话")
+        self.assertEqual(len(bindings.items), 1)
+        self.assertEqual(bindings.items[0].binding_id, "BIND-API-001")
+        self.assertEqual(bindings.items[0].employee_id, "A-5001")
 
     def test_create_binding_returns_400_for_frozen_reference(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

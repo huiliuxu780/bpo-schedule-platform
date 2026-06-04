@@ -3,25 +3,26 @@ import { notFound } from "next/navigation"
 import { AppShell } from "@/components/app-shell"
 import {
   MasterDataAgentManagementPage,
-  MasterDataMaintenanceEntityDetail,
+  MasterDataBindingManagementPage,
+  MasterDataReferenceManagementPage,
 } from "@/components/master-data-maintenance-workbench"
 import {
   type MasterDataAgentManagementFilters,
   type MasterDataMaintenanceEntityKey,
   getMasterDataMaintenanceEntity,
   summarizeMasterDataAgentManagement,
+  summarizeMasterDataBindingManagement,
   summarizeMasterDataMaintenanceFeedback,
   summarizeMasterDataMaintenanceEntityDetail,
+  summarizeMasterDataReferenceManagement,
 } from "@/components/master-data-maintenance-model"
 import {
+  fetchMasterDataBindings,
   fetchImportBatches,
   fetchMasterDataEmployees,
+  fetchMasterDataReferences,
 } from "@/app/master-data/agents/data"
-import {
-  submitMasterDataAgentMaintenance,
-  submitMasterDataBindingMaintenance,
-  submitMasterDataReferenceMaintenance,
-} from "./actions"
+import { submitMasterDataAgentMaintenance } from "./actions"
 
 export const dynamic = "force-dynamic"
 
@@ -48,6 +49,14 @@ export default async function MasterDataEntityDetailPage({
     entity.key === "agents"
       ? await fetchMasterDataEmployees()
       : { data: [], error: null }
+  const referenceResult =
+    isReferenceEntity(entity.key)
+      ? await fetchMasterDataReferences(entity.key)
+      : { data: [], error: null }
+  const bindingResult =
+    entity.key === "bindings"
+      ? await fetchMasterDataBindings()
+      : { data: [], error: null }
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const summary = summarizeMasterDataMaintenanceEntityDetail(
     entity.key as MasterDataMaintenanceEntityKey,
@@ -61,15 +70,22 @@ export default async function MasterDataEntityDetailPage({
           resolveAgentManagementFilters(resolvedSearchParams)
         )
       : null
+  const referenceManagementSummary = isReferenceEntity(entity.key)
+    ? summarizeMasterDataReferenceManagement(entity.key, referenceResult.data ?? [])
+    : null
+  const bindingManagementSummary =
+    entity.key === "bindings"
+      ? summarizeMasterDataBindingManagement(bindingResult.data ?? [])
+      : null
   const selectedFreezeEmployeeId = getSingleSearchParam(
     resolvedSearchParams.freeze_employee_id
   )
 
   return (
     <AppShell
-      title={entity.key === "agents" ? "客服人员" : `${entity.label}详情`}
+      title={entity.key === "agents" ? "客服人员" : entity.label}
       searchPlaceholder={
-        entity.key === "agents" ? "搜索客服人员" : "搜索主数据对象或来源批次"
+        entity.key === "agents" ? "搜索客服人员" : `搜索${entity.label}`
       }
     >
       {entity.key === "agents" && agentManagementSummary ? (
@@ -82,25 +98,21 @@ export default async function MasterDataEntityDetailPage({
           selectedFreezeEmployeeId={selectedFreezeEmployeeId}
           agentSubmitAction={submitMasterDataAgentMaintenance}
         />
-      ) : (
-        <MasterDataMaintenanceEntityDetail
+      ) : isReferenceEntity(entity.key) && referenceManagementSummary ? (
+        <MasterDataReferenceManagementPage
           summary={summary}
-          error={batchResult.error}
+          listSummary={referenceManagementSummary}
+          error={referenceResult.error ?? batchResult.error}
           feedback={feedback}
-          employeeList={employeeResult.data ?? []}
-          employeeListError={employeeResult.error}
-          referenceSubmitAction={
-            isReferenceEntity(entity.key)
-              ? submitMasterDataReferenceMaintenance
-              : undefined
-          }
-          bindingSubmitAction={
-            entity.key === "bindings"
-              ? submitMasterDataBindingMaintenance
-              : undefined
-          }
         />
-      )}
+      ) : entity.key === "bindings" && bindingManagementSummary ? (
+        <MasterDataBindingManagementPage
+          summary={summary}
+          listSummary={bindingManagementSummary}
+          error={bindingResult.error ?? batchResult.error}
+          feedback={feedback}
+        />
+      ) : null}
     </AppShell>
   )
 }

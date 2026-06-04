@@ -317,6 +317,17 @@ class MasterDataPersistenceRepository:
                 return None
             return _reference_record(reference, id_field, name_field)
 
+    def list_references(
+        self,
+        reference_type: MasterDataReferenceType,
+    ) -> list[MasterDataReferenceRecord]:
+        entity_class, id_field, name_field = _reference_config(reference_type)
+        with self.session_factory() as session:
+            rows = session.scalars(
+                select(entity_class).order_by(getattr(entity_class, id_field))
+            ).all()
+            return [_reference_record(row, id_field, name_field) for row in rows]
+
     def upsert_reference(
         self,
         reference_type: MasterDataReferenceType,
@@ -414,6 +425,13 @@ class MasterDataPersistenceRepository:
             if binding is None:
                 return None
             return _binding_record(binding)
+
+    def list_employee_bindings(self) -> list[EmployeeBindingRecord]:
+        with self.session_factory() as session:
+            rows = session.scalars(
+                select(EmployeeBindingEntity).order_by(EmployeeBindingEntity.binding_id)
+            ).all()
+            return [_binding_record(row) for row in rows]
 
     def list_employees(self) -> list[MasterDataEmployeeListRow]:
         with self.session_factory() as session:

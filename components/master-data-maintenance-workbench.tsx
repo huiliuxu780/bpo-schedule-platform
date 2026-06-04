@@ -2,36 +2,24 @@ import Link from "next/link"
 import {
   AlertTriangle,
   ArrowLeft,
-  ArrowRight,
   CheckCircle2,
-  Database,
-  GitBranch,
-  Link2,
   MoreHorizontal,
   Plus,
   RotateCcw,
   Search,
   Send,
   Settings2,
-  ShieldCheck,
   Upload,
-  Users,
 } from "lucide-react"
 
 import {
   type MasterDataAgentMaintenanceFeedback,
   type MasterDataAgentManagementSummary,
-  type MasterDataEmployeeListRow,
-  type MasterDataEmployeeListSummary,
+  type MasterDataBindingManagementSummary,
   type MasterDataEntityDetailSummary,
-  type MasterDataMaintenanceTone,
-  summarizeMasterDataEmployeeList,
-  summarizeMasterDataMaintenanceWorkbench,
+  type MasterDataReferenceManagementSummary,
 } from "@/components/master-data-maintenance-model"
-import {
-  buildImportUploadWorkspaceHref,
-  type ImportBatchListRow,
-} from "@/components/import-center-model"
+import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -60,183 +48,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-type MasterDataMaintenanceWorkbenchProps = {
-  batches: ImportBatchListRow[]
-  error: string | null
-}
-
-export function MasterDataMaintenanceWorkbench({
-  batches,
-  error,
-}: MasterDataMaintenanceWorkbenchProps) {
-  const summary = summarizeMasterDataMaintenanceWorkbench(batches)
-
-  return (
-    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
-      <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-        <div className="grid gap-2">
-          <div>
-            <h1 className="text-xl font-semibold tracking-normal">主数据维护</h1>
-            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              管理坐席、职场、供应商、项目、技能和绑定关系，查看来源版本、当前状态和关联范围。
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
-            {formatToneLabel(summary.tone)}
-          </Badge>
-        </div>
-      </section>
-
-      {error ? (
-        <Card className="border-destructive/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <AlertTriangle className="size-4 text-destructive" />
-              主数据来源读取失败
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
-        </Card>
-      ) : null}
-
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          label="维护对象"
-          value={summary.totalObjects.toLocaleString("zh-CN")}
-          detail="坐席、职场、供应商、项目、技能、绑定关系"
-          tone="default"
-        />
-        <MetricCard
-          label="可查看对象"
-          value={summary.readyObjects.toLocaleString("zh-CN")}
-          detail="基于已应用主数据版本"
-          tone={summary.readyObjects > 0 ? "ready" : "default"}
-        />
-        <MetricCard
-          label="仍有阻塞"
-          value={summary.blockedObjects.toLocaleString("zh-CN")}
-          detail={summary.title}
-          tone={summary.blockedObjects > 0 ? "blocked" : "default"}
-        />
-        <MetricCard
-          label="来源版本"
-          value={summary.sourceVersionLabel}
-          detail={`最新批次 ${summary.latestBatchLabel}`}
-          tone="default"
-        />
-      </section>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldCheck className="size-4 text-muted-foreground" />
-            来源与版本
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 text-sm text-muted-foreground">
-          <div className="grid gap-1">
-            <p className="font-medium text-foreground">{summary.title}</p>
-            <p>{summary.detail}</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild size="sm" variant="outline">
-              <Link href={summary.versionWorkbenchHref}>
-                查看来源版本
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
-            {summary.sourceBatchHref ? (
-              <Button asChild size="sm" variant="ghost">
-                <Link href={summary.sourceBatchHref}>查看来源批次</Link>
-              </Button>
-            ) : null}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Database className="size-4 text-muted-foreground" />
-            主数据对象台账
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>对象</TableHead>
-                <TableHead>维护范围</TableHead>
-                <TableHead>引用影响</TableHead>
-                <TableHead>来源</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead className="text-right">操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {summary.rows.map((row) => (
-                <TableRow key={row.key}>
-                  <TableCell className="align-top">
-                    <div className="font-medium">{row.label}</div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {row.maintenanceBoundary}
-                    </div>
-                  </TableCell>
-                  <TableCell className="max-w-[15rem] align-top text-sm text-muted-foreground">
-                    {row.scopeLabel}
-                  </TableCell>
-                  <TableCell className="max-w-[14rem] align-top text-sm text-muted-foreground">
-                    {row.referenceLabel}
-                  </TableCell>
-                  <TableCell className="align-top">
-                    <div className="font-mono text-xs">{row.sourceVersionLabel}</div>
-                    {row.sourceBatchHref ? (
-                      <Button asChild size="sm" variant="link" className="h-auto px-0 py-1">
-                        <Link href={row.sourceBatchHref}>{row.sourceBatchLabel}</Link>
-                      </Button>
-                    ) : (
-                      <div className="mt-1 text-xs text-muted-foreground">
-                        {row.sourceBatchLabel}
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell className="align-top">
-                    <div className="grid gap-1">
-                      <Badge variant={row.tone === "blocked" ? "destructive" : "outline"}>
-                        {row.statusLabel}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {row.blockerSummary}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="align-top text-right">
-                    <div className="inline-grid justify-items-end gap-1 text-right">
-                      <Button asChild size="sm" variant="outline">
-                        <Link href={row.detailHref}>
-                          查看详情
-                          <ArrowRight data-icon="inline-end" />
-                        </Link>
-                      </Button>
-                      <span className="text-xs text-muted-foreground">
-                        {row.nextActionLabel}
-                      </span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-    </main>
-  )
-}
 
 export function MasterDataAgentManagementPage({
   summary,
@@ -311,6 +122,197 @@ export function MasterDataAgentManagementPage({
         />
       ) : null}
     </main>
+  )
+}
+export function MasterDataReferenceManagementPage({
+  summary,
+  listSummary,
+  error,
+  feedback,
+}: {
+  summary: MasterDataEntityDetailSummary
+  listSummary: MasterDataReferenceManagementSummary
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
+        <h1 className="text-base font-semibold tracking-normal">{listSummary.title}</h1>
+        <Button asChild size="sm" variant="outline">
+          <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
+            <Upload data-icon="inline-start" />
+            导入主数据
+          </Link>
+        </Button>
+      </section>
+
+      {error ? <MasterDataListError title={`${listSummary.title}列表读取失败`} error={error} /> : null}
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-3 md:grid-cols-3">
+        <MetricCard
+          label="记录数"
+          value={listSummary.totalRecords.toLocaleString("zh-CN")}
+          detail={summary.sourceVersionLabel}
+          tone="default"
+        />
+        <MetricCard
+          label="生效"
+          value={listSummary.activeRecords.toLocaleString("zh-CN")}
+          detail="当前可引用记录"
+          tone={listSummary.activeRecords > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="冻结"
+          value={listSummary.frozenRecords.toLocaleString("zh-CN")}
+          detail="不可继续引用记录"
+          tone={listSummary.frozenRecords > 0 ? "blocked" : "default"}
+        />
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        {listSummary.rows.length === 0 ? (
+          <div className="rounded-md border p-4 text-sm text-muted-foreground">
+            暂无{listSummary.title}记录。
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>名称</TableHead>
+                <TableHead>编码</TableHead>
+                <TableHead>属性</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>有效期</TableHead>
+                <TableHead>来源批次</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {listSummary.rows.map((row) => (
+                <TableRow key={row.reference_id}>
+                  <TableCell className="font-medium">{row.reference_name}</TableCell>
+                  <TableCell className="font-mono text-xs">{row.reference_id}</TableCell>
+                  <TableCell>{row.display.skillCategoryLabel}</TableCell>
+                  <TableCell>
+                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                      {row.display.statusLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.sourceBatchLabel}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </section>
+    </main>
+  )
+}
+
+export function MasterDataBindingManagementPage({
+  summary,
+  listSummary,
+  error,
+  feedback,
+}: {
+  summary: MasterDataEntityDetailSummary
+  listSummary: MasterDataBindingManagementSummary
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
+        <h1 className="text-base font-semibold tracking-normal">{listSummary.title}</h1>
+        <Button asChild size="sm" variant="outline">
+          <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
+            <Upload data-icon="inline-start" />
+            导入主数据
+          </Link>
+        </Button>
+      </section>
+
+      {error ? <MasterDataListError title="绑定关系列表读取失败" error={error} /> : null}
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-3 md:grid-cols-2">
+        <MetricCard
+          label="绑定数"
+          value={listSummary.totalRecords.toLocaleString("zh-CN")}
+          detail={summary.sourceVersionLabel}
+          tone="default"
+        />
+        <MetricCard
+          label="来源批次"
+          value={summary.sourceBatchLabel}
+          detail="当前绑定关系来源"
+          tone="default"
+        />
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        {listSummary.rows.length === 0 ? (
+          <div className="rounded-md border p-4 text-sm text-muted-foreground">
+            暂无绑定关系记录。
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>绑定ID</TableHead>
+                <TableHead>人员</TableHead>
+                <TableHead>供应商</TableHead>
+                <TableHead>职场</TableHead>
+                <TableHead>项目</TableHead>
+                <TableHead>技能</TableHead>
+                <TableHead>有效期</TableHead>
+                <TableHead>来源批次</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {listSummary.rows.map((row) => (
+                <TableRow key={row.binding_id}>
+                  <TableCell className="font-mono text-xs">{row.binding_id}</TableCell>
+                  <TableCell>{row.employee_id}</TableCell>
+                  <TableCell>{row.supplier_id}</TableCell>
+                  <TableCell>{row.workplace_id}</TableCell>
+                  <TableCell>{row.project_id}</TableCell>
+                  <TableCell>{row.skill_id}</TableCell>
+                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.sourceBatchLabel}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </section>
+    </main>
+  )
+}
+
+function MasterDataListError({
+  title,
+  error,
+}: {
+  title: string
+  error: string
+}) {
+  return (
+    <Card className="border-destructive/50">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-base">
+          <AlertTriangle className="size-4 text-destructive" />
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
+    </Card>
   )
 }
 
@@ -784,337 +786,6 @@ function AgentFormBlockedState({
   )
 }
 
-export function MasterDataMaintenanceEntityDetail({
-  summary,
-  error,
-  feedback,
-  employeeList,
-  employeeListError,
-  agentSubmitAction,
-  agentSkillSubmitAction,
-  referenceSubmitAction,
-  bindingSubmitAction,
-}: {
-  summary: MasterDataEntityDetailSummary
-  error: string | null
-  feedback: MasterDataAgentMaintenanceFeedback | null
-  employeeList?: MasterDataEmployeeListRow[]
-  employeeListError?: string | null
-  agentSubmitAction?: (formData: FormData) => Promise<void>
-  agentSkillSubmitAction?: (formData: FormData) => Promise<void>
-  referenceSubmitAction?: (formData: FormData) => Promise<void>
-  bindingSubmitAction?: (formData: FormData) => Promise<void>
-}) {
-  const employeeListSummary = summarizeMasterDataEmployeeList(employeeList ?? [])
-  const canRenderAgentSubmit = Boolean(
-    agentSubmitAction && summary.agentSubmitSourceBatchId
-  )
-  const canRenderReferenceSubmit = Boolean(
-    referenceSubmitAction && summary.referenceSubmitSourceBatchId
-  )
-  const canRenderBindingSubmit = Boolean(
-    bindingSubmitAction && summary.bindingSubmitSourceBatchId
-  )
-  const canRenderAnySubmit =
-    canRenderAgentSubmit || canRenderReferenceSubmit || canRenderBindingSubmit
-
-  return (
-    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
-      <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-        <div className="grid gap-2">
-          <Button asChild size="sm" variant="ghost" className="w-fit px-0">
-            <Link href="/master-data/agents">
-              <ArrowLeft data-icon="inline-start" />
-              返回客服人员
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-xl font-semibold tracking-normal">
-              {summary.title}
-            </h1>
-            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-              {summary.detail}
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
-            {formatToneLabel(summary.tone)}
-          </Badge>
-        </div>
-      </section>
-
-      {error ? (
-        <Card className="border-destructive/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <AlertTriangle className="size-4 text-destructive" />
-              主数据详情来源读取失败
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
-        </Card>
-      ) : null}
-
-      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
-
-      <Tabs defaultValue="overview" className="grid gap-4">
-        <TabsList className="h-auto w-full justify-start overflow-x-auto md:w-fit">
-          {summary.workspaceTabs.map((tab) => (
-            <TabsTrigger key={tab.key} value={tab.key}>
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        <TabsContent value="overview" className="mt-0 grid gap-4">
-          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <MetricCard
-              label="维护对象"
-              value={summary.entity.label}
-              detail={summary.entity.scopeLabel}
-              tone="default"
-            />
-            <MetricCard
-              label="来源版本"
-              value={summary.sourceVersionLabel}
-              detail={`来源批次 ${summary.sourceBatchLabel}`}
-              tone="default"
-            />
-            <MetricCard
-              label="有效期"
-              value={summary.effectivePeriodLabel}
-              detail="当前生效周期"
-              tone="default"
-            />
-            <MetricCard
-              label="冻结状态"
-              value={summary.freezeStatusLabel}
-              detail="当前状态摘要"
-              tone={summary.tone === "blocked" ? "blocked" : "default"}
-            />
-          </section>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Database className="size-4 text-muted-foreground" />
-                当前对象概览
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-3">
-              <DetailItem label="维护范围" value={summary.entity.scopeLabel} />
-              <DetailItem label="引用范围" value={summary.entity.referenceLabel} />
-              <DetailItem label="来源批次" value={summary.sourceBatchLabel} />
-            </CardContent>
-          </Card>
-
-          {summary.entity.key === "agents" ? (
-            <AgentEmployeeListSection
-              summary={employeeListSummary}
-              error={employeeListError ?? null}
-            />
-          ) : null}
-        </TabsContent>
-
-        <TabsContent value="source" className="mt-0 grid gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <GitBranch className="size-4 text-muted-foreground" />
-                来源与关联
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4 text-sm text-muted-foreground">
-              <div className="grid gap-1">
-                <p>
-                  <span className="font-medium text-foreground">业务范围：</span>
-                  {summary.entity.scopeLabel}
-                </p>
-                <p>
-                  <span className="font-medium text-foreground">引用范围：</span>
-                  {summary.entity.referenceLabel}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {summary.sourceVersionHref ? (
-                  <Button asChild size="sm" variant="outline">
-                    <Link href={summary.sourceVersionHref}>
-                      查看来源版本
-                      <ArrowRight data-icon="inline-end" />
-                    </Link>
-                  </Button>
-                ) : null}
-                {summary.sourceBatchHref ? (
-                  <Button asChild size="sm" variant="ghost">
-                    <Link href={summary.sourceBatchHref}>查看来源批次</Link>
-                  </Button>
-                ) : null}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="overflow-hidden">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Link2 className="size-4 text-muted-foreground" />
-                引用影响摘要
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>引用类型</TableHead>
-                    <TableHead>来源范围</TableHead>
-                    <TableHead>数量</TableHead>
-                    <TableHead>说明</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {summary.referenceImpacts.map((impact) => (
-                    <TableRow key={impact.key}>
-                      <TableCell className="align-top font-medium">
-                        {impact.label}
-                      </TableCell>
-                      <TableCell className="align-top text-sm text-muted-foreground">
-                        {impact.sourceLabel}
-                      </TableCell>
-                      <TableCell className="align-top">
-                        <Badge variant={impact.tone === "blocked" ? "destructive" : "outline"}>
-                          {impact.countLabel}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="max-w-xl align-top text-sm text-muted-foreground">
-                        {impact.detail}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="actions" className="mt-0">
-          <Card className="overflow-hidden">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Settings2 className="size-4 text-muted-foreground" />
-                维护动作
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>动作</TableHead>
-                    <TableHead>实体范围</TableHead>
-                    <TableHead>引用校验</TableHead>
-                    <TableHead>错误提示</TableHead>
-                    <TableHead className="text-right">提交</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {summary.maintenanceActions.map((action) => (
-                    <TableRow key={action.key}>
-                      <TableCell className="align-top">
-                        <div className="font-medium">{action.label}</div>
-                        <Badge
-                          variant={
-                            action.statusLabel === "来源阻塞" ? "destructive" : "outline"
-                          }
-                          className="mt-2"
-                        >
-                          {action.statusLabel}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="max-w-[14rem] align-top text-sm text-muted-foreground">
-                        {action.targetScope}
-                      </TableCell>
-                      <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
-                        {action.referenceCheckLabel}
-                      </TableCell>
-                      <TableCell className="max-w-xs align-top text-sm text-muted-foreground">
-                        {action.failureBoundary}
-                      </TableCell>
-                      <TableCell className="align-top text-right">
-                        <Button size="sm" variant="outline" disabled={!action.canSubmit}>
-                          {action.submitLabel}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="submit" className="mt-0 grid gap-4">
-          {canRenderAgentSubmit ? (
-            <AgentMaintenanceSubmitSection
-              summary={summary}
-              action={agentSubmitAction}
-            />
-          ) : null}
-
-          {canRenderReferenceSubmit ? (
-            <ReferenceMaintenanceSubmitSection
-              summary={summary}
-              action={referenceSubmitAction}
-            />
-          ) : null}
-
-          {canRenderBindingSubmit ? (
-            <BindingMaintenanceSubmitSection
-              summary={summary}
-              action={bindingSubmitAction}
-            />
-          ) : null}
-
-          {!canRenderAnySubmit ? (
-            <Card>
-              <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Send className="size-4 text-muted-foreground" />
-                暂无可提交表单
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-                当前对象或来源批次不满足提交条件；请先查看来源与引用状态。
-            </CardContent>
-          </Card>
-          ) : null}
-        </TabsContent>
-
-        {summary.entity.key === "agents" ? (
-          <TabsContent value="agent_skills" className="mt-0 grid gap-4">
-            {agentSkillSubmitAction && summary.agentSubmitSourceBatchId ? (
-              <AgentSkillMaintenanceSection
-                summary={summary}
-                action={agentSkillSubmitAction}
-              />
-            ) : (
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <Send className="size-4 text-muted-foreground" />
-                    暂无可提交技能维护
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  当前来源批次不满足技能维护提交条件。
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        ) : null}
-      </Tabs>
-    </main>
-  )
-}
-
 function AgentMaintenanceFeedbackCard({
   feedback,
 }: {
@@ -1138,191 +809,6 @@ function AgentMaintenanceFeedbackCard({
         {feedback.detail}
       </CardContent>
     </Card>
-  )
-}
-
-function AgentEmployeeListSection({
-  summary,
-  error,
-}: {
-  summary: MasterDataEmployeeListSummary
-  error: string | null
-}) {
-  return (
-    <section className="grid gap-3">
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          label="人员总数"
-          value={summary.totalEmployees.toLocaleString("zh-CN")}
-          detail="来自主数据员工表"
-          tone="default"
-        />
-        <MetricCard
-          label="生效人员"
-          value={summary.activeEmployees.toLocaleString("zh-CN")}
-          detail="status=active"
-          tone={summary.activeEmployees > 0 ? "ready" : "default"}
-        />
-        <MetricCard
-          label="自有员工"
-          value={summary.internalEmployees.toLocaleString("zh-CN")}
-          detail="employee_type=internal"
-          tone="default"
-        />
-        <MetricCard
-          label="外包员工"
-          value={summary.outsourcedEmployees.toLocaleString("zh-CN")}
-          detail="employee_type=outsourced"
-          tone="default"
-        />
-      </div>
-
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Users className="size-4 text-muted-foreground" />
-            人员列表
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          {error ? (
-            <div className="border-t p-4 text-sm text-muted-foreground">
-              人员列表读取失败：{error}
-            </div>
-          ) : summary.rows.length === 0 ? (
-            <div className="border-t p-4 text-sm text-muted-foreground">
-              暂无人员主数据。请先上传并应用包含 employee 记录的主数据批次。
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>坐席</TableHead>
-                  <TableHead>状态</TableHead>
-                  <TableHead>类型</TableHead>
-                  <TableHead>组织/职场</TableHead>
-                  <TableHead>技能</TableHead>
-                  <TableHead>有效期</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {summary.rows.map((row) => (
-                  <TableRow key={row.employee_id}>
-                    <TableCell className="align-top">
-                      <div className="font-medium">{row.employee_name}</div>
-                      <div className="mt-1 font-mono text-xs text-muted-foreground">
-                        {row.employee_id}
-                      </div>
-                    </TableCell>
-                    <TableCell className="align-top">
-                      <Badge variant={row.status === "active" ? "outline" : "secondary"}>
-                        {row.display.statusLabel}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="align-top text-sm text-muted-foreground">
-                      {row.display.employeeTypeLabel}
-                    </TableCell>
-                    <TableCell className="max-w-[18rem] align-top text-sm text-muted-foreground">
-                      <div className="text-foreground">{row.display.organizationLabel}</div>
-                      <div className="mt-1">{row.display.workplaceLabel}</div>
-                    </TableCell>
-                    <TableCell className="max-w-[20rem] align-top text-sm text-muted-foreground">
-                      {row.display.skillSummary}
-                    </TableCell>
-                    <TableCell className="align-top text-sm text-muted-foreground">
-                      {row.effective_from} 至 {row.effective_to}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-    </section>
-  )
-}
-
-function AgentMaintenanceSubmitSection({
-  summary,
-  action,
-}: {
-  summary: MasterDataEntityDetailSummary
-  action?: (formData: FormData) => Promise<void>
-}) {
-  if (!action || !summary.agentSubmitSourceBatchId) {
-    return null
-  }
-
-  return (
-    <section className="grid gap-3">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-base font-semibold tracking-normal">
-          坐席维护
-        </h2>
-        <p className="max-w-3xl text-sm text-muted-foreground">
-          维护单个坐席基础档案。来源批次{" "}
-          <span className="font-mono text-foreground">
-            {summary.agentSubmitSourceBatchId}
-          </span>
-          。
-        </p>
-      </div>
-      <div className="grid gap-3 xl:grid-cols-2">
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="create"
-          sourceBatchId={summary.agentSubmitSourceBatchId}
-          title="新增坐席"
-          description="创建单个坐席基础档案，可同时填写人员类型、组织和职场。"
-          submitLabel="提交新增"
-          fields={[
-            "employee_id",
-            "employee_name",
-            "status",
-            "employee_type",
-            "organization_id",
-            "workplace_id",
-            "effective_from",
-            "effective_to",
-          ]}
-        />
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="edit"
-          sourceBatchId={summary.agentSubmitSourceBatchId}
-          title="编辑坐席"
-          description="修正单个坐席姓名、状态、人员类型、组织或职场，未填字段由后端保留原值。"
-          submitLabel="提交编辑"
-          fields={[
-            "employee_id",
-            "employee_name",
-            "status",
-            "employee_type",
-            "organization_id",
-            "workplace_id",
-          ]}
-        />
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="freeze"
-          sourceBatchId={summary.agentSubmitSourceBatchId}
-          title="冻结坐席"
-          description="将单个坐席状态更新为 frozen，并保留姓名与有效期。"
-          submitLabel="提交冻结"
-          fields={["employee_id"]}
-        />
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="effective_period"
-          sourceBatchId={summary.agentSubmitSourceBatchId}
-          title="调整有效期"
-          description="调整单个坐席有效期，并保留姓名和状态。"
-          submitLabel="提交有效期"
-          fields={["employee_id", "effective_from", "effective_to"]}
-        />
-      </div>
-    </section>
   )
 }
 
@@ -1403,157 +889,6 @@ function AgentSkillMaintenanceSection({
           </form>
         </CardContent>
       </Card>
-    </section>
-  )
-}
-
-function ReferenceMaintenanceSubmitSection({
-  summary,
-  action,
-}: {
-  summary: MasterDataEntityDetailSummary
-  action?: (formData: FormData) => Promise<void>
-}) {
-  if (!action || !summary.referenceSubmitSourceBatchId) {
-    return null
-  }
-
-  return (
-    <section className="grid gap-3">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-base font-semibold tracking-normal">
-          {summary.entity.label}维护
-        </h2>
-        <p className="max-w-3xl text-sm text-muted-foreground">
-          维护单个{summary.entity.label}基础档案。来源批次{" "}
-          <span className="font-mono text-foreground">
-            {summary.referenceSubmitSourceBatchId}
-          </span>
-          。
-        </p>
-      </div>
-      <div className="grid gap-3 xl:grid-cols-2">
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="create"
-          sourceBatchId={summary.referenceSubmitSourceBatchId}
-          hiddenFields={{ entity_key: summary.entity.key }}
-          title={`新增${summary.entity.label}`}
-          description={`创建单个${summary.entity.label}基础档案，状态默认 active。`}
-          submitLabel="提交新增"
-          fields={[
-            "reference_id",
-            "reference_name",
-            "status",
-            "effective_from",
-            "effective_to",
-          ]}
-        />
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="edit"
-          sourceBatchId={summary.referenceSubmitSourceBatchId}
-          hiddenFields={{ entity_key: summary.entity.key }}
-          title={`编辑${summary.entity.label}`}
-          description="修正单个对象名称或状态，未填字段由后端保留原值。"
-          submitLabel="提交编辑"
-          fields={["reference_id", "reference_name", "status"]}
-        />
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="freeze"
-          sourceBatchId={summary.referenceSubmitSourceBatchId}
-          hiddenFields={{ entity_key: summary.entity.key }}
-          title={`冻结${summary.entity.label}`}
-          description="冻结单个对象，并保留名称与有效期。"
-          submitLabel="提交冻结"
-          fields={["reference_id"]}
-        />
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="effective_period"
-          sourceBatchId={summary.referenceSubmitSourceBatchId}
-          hiddenFields={{ entity_key: summary.entity.key }}
-          title="调整有效期"
-          description="调整单个对象有效期，并保留名称和状态。"
-          submitLabel="提交有效期"
-          fields={["reference_id", "effective_from", "effective_to"]}
-        />
-      </div>
-    </section>
-  )
-}
-
-function BindingMaintenanceSubmitSection({
-  summary,
-  action,
-}: {
-  summary: MasterDataEntityDetailSummary
-  action?: (formData: FormData) => Promise<void>
-}) {
-  if (!action || !summary.bindingSubmitSourceBatchId) {
-    return null
-  }
-
-  return (
-    <section className="grid gap-3">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-base font-semibold tracking-normal">
-          绑定关系维护
-        </h2>
-        <p className="max-w-3xl text-sm text-muted-foreground">
-          维护单条坐席、供应商、职场、项目、技能绑定关系。来源批次{" "}
-          <span className="font-mono text-foreground">
-            {summary.bindingSubmitSourceBatchId}
-          </span>
-          ，绑定关系没有冻结状态字段，因此冻结动作保持禁用。
-        </p>
-      </div>
-      <div className="grid gap-3 xl:grid-cols-2">
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="create"
-          sourceBatchId={summary.bindingSubmitSourceBatchId}
-          title="新增绑定关系"
-          description="创建单条人员、供应商、职场、项目和技能绑定关系。"
-          submitLabel="提交新增"
-          fields={[
-            "binding_id",
-            "employee_id",
-            "supplier_id",
-            "workplace_id",
-            "project_id",
-            "skill_id",
-            "effective_from",
-            "effective_to",
-          ]}
-        />
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="edit"
-          sourceBatchId={summary.bindingSubmitSourceBatchId}
-          title="编辑绑定关系"
-          description="修正单条绑定关系引用对象，未填字段由后端保留原值。"
-          submitLabel="提交编辑"
-          fields={[
-            "binding_id",
-            "employee_id",
-            "supplier_id",
-            "workplace_id",
-            "project_id",
-            "skill_id",
-          ]}
-        />
-        <AgentMaintenanceForm
-          action={action}
-          actionKey="effective_period"
-          sourceBatchId={summary.bindingSubmitSourceBatchId}
-          title="调整绑定有效期"
-          description="调整单条绑定关系有效期，并保留引用对象。"
-          submitLabel="提交有效期"
-          fields={["binding_id", "effective_from", "effective_to"]}
-        />
-      </div>
     </section>
   )
 }
@@ -1887,25 +1222,4 @@ function MetricCard({
       </CardContent>
     </Card>
   )
-}
-
-function DetailItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="grid gap-1 rounded-md border p-3">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-sm font-medium text-foreground">{value}</span>
-    </div>
-  )
-}
-
-function formatToneLabel(tone: MasterDataMaintenanceTone) {
-  if (tone === "ready") {
-    return "已形成来源版本"
-  }
-
-  if (tone === "blocked") {
-    return "来源阻塞"
-  }
-
-  return "等待来源"
 }
