@@ -4583,3 +4583,26 @@ dependencies:
 status: "done"
 notes: "IM114 已完成：后端提供 `/api/v1/demand-forecast/production/{batch_id}` 只读 API，返回批次、预测版本、预测区间和变更记录；后续前端接入另拆。"
 ```
+
+### US735 - 需求预测生产详情前端接入真实 API
+
+```yaml
+id: US735
+requirement_ids:
+  - R815
+module: "需求预测生产"
+role: "计划主管"
+story: "作为计划主管，我希望预测生产详情页直接展示已应用版本中的 0.5h 预测区间和变更记录，以便确认批次应用后实际生成了哪些预测结果。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/demand-plans/production/[batchId]` 调用 IM114 只读 API。"
+  - "页面展示真实 forecast_version_id、0.5h 预测区间数量和版本变更记录数量。"
+  - "页面展示至少一组预测区间和变更记录只读表格或列表。"
+  - "未应用、缺 API 或找不到版本时保留明确阻塞/空态，不伪造明细。"
+  - "不做预测写入、schema/migration、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US734"
+status: "done"
+notes: "IM115 已完成：预测生产详情页读取 IM114 API，展示真实预测区间表和版本变更记录表；缺 API/未应用时保留明确空态。"
+```

@@ -14,6 +14,7 @@ import {
 
 import type { ImportBatchListRow } from "@/components/import-center-model"
 import {
+  type DemandForecastProductionApiDetail,
   type DemandForecastProductionTone,
   summarizeDemandForecastProductionDetail,
   summarizeDemandForecastProductionWorkbench,
@@ -224,12 +225,14 @@ export function DemandForecastProductionDetail({
   batches,
   batchId,
   error,
+  apiDetail,
 }: {
   batches: ImportBatchListRow[]
   batchId: string
   error: string | null
+  apiDetail: DemandForecastProductionApiDetail | null
 }) {
-  const detail = summarizeDemandForecastProductionDetail(batches, batchId)
+  const detail = summarizeDemandForecastProductionDetail(batches, batchId, apiDetail)
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
@@ -309,6 +312,92 @@ export function DemandForecastProductionDetail({
           <DetailItem label="时段粒度" value={detail.timeBucketLabel} />
           <DetailItem label="预测明细边界" value={detail.forecastScopeLabel} />
           <DetailItem label="对齐结果" value={detail.alignmentResultLabel} />
+        </CardContent>
+      </Card>
+
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Table2 className="size-4 text-muted-foreground" />
+            0.5h 预测区间
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>业务日</TableHead>
+                <TableHead>时段</TableHead>
+                <TableHead>维度</TableHead>
+                <TableHead>等级</TableHead>
+                <TableHead className="text-right">需求人次</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {detail.intervalRows.length > 0 ? (
+                detail.intervalRows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell className="align-top text-sm">{row.dateLabel}</TableCell>
+                    <TableCell className="align-top font-mono text-xs">{row.timeLabel}</TableCell>
+                    <TableCell className="align-top text-sm text-muted-foreground">
+                      {row.dimensionLabel}
+                    </TableCell>
+                    <TableCell className="align-top">
+                      <Badge variant="outline">{row.demandLevelLabel}</Badge>
+                    </TableCell>
+                    <TableCell className="align-top text-right tabular-nums">
+                      {row.requiredAgentsLabel}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-20 text-center text-sm text-muted-foreground">
+                    暂未读取到真实 0.5h 预测区间
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <FileClock className="size-4 text-muted-foreground" />
+            版本变更记录
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>上一版本</TableHead>
+                <TableHead>变更原因</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {detail.changeRows.length > 0 ? (
+                detail.changeRows.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell className="align-top font-mono text-xs">
+                      {row.comparedFromVersionLabel}
+                    </TableCell>
+                    <TableCell className="align-top text-sm text-muted-foreground">
+                      {row.changeReasonLabel}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={2} className="h-20 text-center text-sm text-muted-foreground">
+                    暂未读取到版本变更记录
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 

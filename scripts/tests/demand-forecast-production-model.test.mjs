@@ -26,6 +26,60 @@ const baseBatch = {
   applied_record_count: 336,
 };
 
+const apiDetail = {
+  batch: {
+    batch_id: "BATCH-FC-001",
+    file_name: "forecast.csv",
+    uploaded_at: "2026-06-04T09:00:00+08:00",
+    business_date_from: "2026-06-08",
+    business_date_to: "2026-06-14",
+    total_rows: 24,
+    success_rows: 24,
+  },
+  version: {
+    forecast_version_id: "FC-PROD-001",
+    import_version_id: "BATCH-FC-001::v1",
+    business_date_from: "2026-06-08",
+    business_date_to: "2026-06-14",
+    total_intervals: 2,
+    total_required_agents: 26,
+  },
+  intervals: [
+    {
+      forecast_interval_id: "FC-INT-001",
+      forecast_version_id: "FC-PROD-001",
+      forecast_date: "2026-06-08",
+      interval_start: "09:00",
+      interval_end: "09:30",
+      workplace_id: "SH-01",
+      project_id: "BOSCH-CS",
+      skill_id: "L1-CN",
+      demand_level: "L1",
+      required_agents: 12,
+    },
+    {
+      forecast_interval_id: "FC-INT-002",
+      forecast_version_id: "FC-PROD-001",
+      forecast_date: "2026-06-08",
+      interval_start: "09:30",
+      interval_end: "10:00",
+      workplace_id: "SH-01",
+      project_id: "BOSCH-CS",
+      skill_id: "L1-CN",
+      demand_level: "L1",
+      required_agents: 14,
+    },
+  ],
+  changes: [
+    {
+      change_id: 1,
+      forecast_version_id: "FC-PROD-001",
+      compared_from_version_id: "FC-PREV-001",
+      change_reason: "客户更新峰值需求",
+    },
+  ],
+};
+
 test("demand forecast production workbench shows an empty state without forecast batches", () => {
   const summary = summarizeDemandForecastProductionWorkbench([]);
 
@@ -118,6 +172,48 @@ test("demand forecast production detail resolves a forecast version by source ba
   assert.equal(detail.alignmentResultLabel, "已形成 336 条技能组/等级/时段预测明细");
   assert.equal(detail.blockerSummary, "无阻塞；当前只读展示需求预测生产口径");
   assert.equal(detail.changeBoundaryLabel, "变更追踪边界待 IM104");
+});
+
+test("demand forecast production detail uses api intervals and change records", () => {
+  const detail = summarizeDemandForecastProductionDetail(
+    [baseBatch],
+    "BATCH-FC-001",
+    apiDetail
+  );
+
+  assert.equal(detail.versionLabel, "FC-PROD-001");
+  assert.equal(detail.appliedRecordCountLabel, "2");
+  assert.equal(detail.sourceRowLabel, "2 条预测区间来自真实版本 API");
+  assert.equal(detail.skillAlignmentLabel, "1 个技能组已定位：L1-CN；1 个需求等级：L1");
+  assert.equal(detail.timeBucketLabel, "已读取 2 条 0.5h 预测区间");
+  assert.equal(detail.forecastScopeLabel, "真实版本 API 已返回技能组/等级/0.5h 时段明细");
+  assert.equal(detail.alignmentResultLabel, "预测合计需求 26 人次");
+  assert.equal(detail.changeBoundaryLabel, "已读取 1 条版本变更记录");
+  assert.deepEqual(detail.intervalRows, [
+    {
+      id: "FC-INT-001",
+      dateLabel: "2026-06-08",
+      timeLabel: "09:00-09:30",
+      dimensionLabel: "职场 SH-01 / 项目 BOSCH-CS / 技能 L1-CN",
+      demandLevelLabel: "L1",
+      requiredAgentsLabel: "12",
+    },
+    {
+      id: "FC-INT-002",
+      dateLabel: "2026-06-08",
+      timeLabel: "09:30-10:00",
+      dimensionLabel: "职场 SH-01 / 项目 BOSCH-CS / 技能 L1-CN",
+      demandLevelLabel: "L1",
+      requiredAgentsLabel: "14",
+    },
+  ]);
+  assert.deepEqual(detail.changeRows, [
+    {
+      id: "1",
+      comparedFromVersionLabel: "FC-PREV-001",
+      changeReasonLabel: "客户更新峰值需求",
+    },
+  ]);
 });
 
 test("demand forecast production detail exposes a non-writing change tracking shell", () => {

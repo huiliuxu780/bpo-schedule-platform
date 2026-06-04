@@ -4,6 +4,7 @@ import {
   type ImportBatchListRow,
   buildImportApiUrl,
 } from "@/components/import-center-model"
+import type { DemandForecastProductionApiDetail } from "@/components/demand-forecast-production-model"
 
 export const dynamic = "force-dynamic"
 
@@ -22,14 +23,18 @@ export default async function DemandForecastProductionDetailPage({
   params,
 }: PageProps) {
   const { batchId } = await params
+  const decodedBatchId = decodeURIComponent(batchId)
   const batchResult = await fetchImportBatches()
+  const detailResult = await fetchDemandForecastProductionDetail(decodedBatchId)
+  const error = [batchResult.error, detailResult.error].filter(Boolean).join("；") || null
 
   return (
     <AppShell title="预测版本详情" searchPlaceholder="搜索预测版本或来源批次">
       <DemandForecastProductionDetail
         batches={batchResult.data ?? []}
-        batchId={batchId}
-        error={batchResult.error}
+        batchId={decodedBatchId}
+        error={error}
+        apiDetail={detailResult.data}
       />
     </AppShell>
   )
@@ -57,6 +62,41 @@ async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
   } catch (error) {
     return {
       data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
+async function fetchDemandForecastProductionDetail(
+  batchId: string
+): Promise<ApiResult<DemandForecastProductionApiDetail>> {
+  try {
+    const response = await fetch(
+      buildImportApiUrl(
+        `/api/v1/demand-forecast/production/${encodeURIComponent(batchId)}`
+      ),
+      {
+        cache: "no-store",
+      }
+    )
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error:
+          response.status === 404
+            ? null
+            : `预测版本详情 API 返回 ${response.status}`,
+      }
+    }
+
+    return {
+      data: (await response.json()) as DemandForecastProductionApiDetail,
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: null,
       error: formatApiError(error),
     }
   }

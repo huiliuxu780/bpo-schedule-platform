@@ -578,3 +578,9 @@ After IM113, the next slice returns to the demand-forecast production flow. `US7
 `US734/IM114` is complete. The backend now exposes `/api/v1/demand-forecast/production/{batch_id}` as a read-only demand-forecast production detail API. It resolves the source import batch, locates the applied forecast version through the existing import version, and returns source batch context, forecast version, 0.5h forecast intervals, and version change records.
 
 The task explicitly excluded frontend wiring, schema/migration, dependencies, forecast write/change submission, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors. Current queue returned to empty after IM114.
+
+## 2026-06-04 IM115 Demand Forecast Production Detail UI
+
+After IM114, the demand-forecast production detail page can now be wired to a real backend detail API. `US735/IM115` is complete. `/demand-plans/production/[batchId]` reads `/api/v1/demand-forecast/production/{batch_id}` and shows the returned forecast version, 0.5h forecast intervals, and version change records.
+
+The task remained frontend-scaffold only. It excluded backend changes, schema/migration, dependencies, forecast write/change submission, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors. Current queue returned to empty after IM115.

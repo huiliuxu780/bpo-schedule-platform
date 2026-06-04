@@ -55,6 +55,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM115 Demand Forecast Production Detail UI
+
+- branch_name: `codex/im115-demand-forecast-detail-ui`
+- base_main_commit: `ef52229`
+- stacked_on: `cc78cec feat: add forecast production detail api`
+- remote_status: `IM114 branch is pushed; IM115 implementation is local only until final check/commit/push.`
+- scope: wire `/demand-plans/production/[batchId]` to the IM114 read-only demand-forecast production detail API and show real forecast version, 0.5h forecast intervals, and version change records.
+- allowed_files_check: `app/demand-plans/production/**`, `components/demand-forecast-production-workbench.tsx`, `components/demand-forecast-production-model.ts`, `scripts/tests/demand-forecast-production-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected IM115 frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED `node --test scripts/tests/demand-forecast-production-model.test.mjs` first failed because the detail summary still used the import version instead of IM114 API detail; after implementation the same target passed with 9 tests. `npm run lint` and `npm run typecheck` passed. Browser smoke on `http://127.0.0.1:3000/demand-plans/production/BATCH-MISSING-IM115` matched `预测版本详情`, `0.5h 预测区间`, `版本变更记录`, `暂未读取到真实 0.5h 预测区间`, and `返回预测生产`. Direct `npm run build` with the default runtime failed on local native optional package loading, so final verification used the project harness runtime: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 199 tests OK.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM112 Personnel Schedule Production Detail UI
 
 - branch_name: `codex/im112-schedule-production-detail-ui`

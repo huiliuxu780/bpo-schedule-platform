@@ -2536,3 +2536,16 @@ version: "1.0"
 status: "done"
 notes: "IM114 已完成：新增需求预测生产详情只读 API，按 batch_id 返回来源批次、forecast_version_id、业务日期范围、0.5h 预测区间和版本变更记录；不做前端接入、schema/migration、依赖或生产写入。"
 ```
+
+### R815 - 需求预测生产详情前端接入真实 API
+
+```yaml
+id: R815
+module: "需求预测生产"
+description: "需求预测生产详情只读 API 已可返回预测区间和变更记录，下一步需要让 `/demand-plans/production/[batchId]` 读取该 API，替换原先不伪造明细的占位状态。"
+source: "After IM114 completion and PM asked to continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM115 已完成：`/demand-plans/production/[batchId]` 接入 IM114 API，展示真实 forecast_version_id、0.5h 预测区间和版本变更记录；不做后端、schema/migration、依赖或生产写入。"
+```
