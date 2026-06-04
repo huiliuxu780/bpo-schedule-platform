@@ -2811,3 +2811,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM109 Master Data Agent Controlled Submit
+
+- branch_name: `codex/im109-master-data-agent-submit`
+- base_main_commit: `ef52229`
+- stacked_on: `d83b6e0 feat: add master data employee maintenance api`
+- remote_status: `IM108 branch is pushed; IM109 implementation is local only until final merge/push.`
+- scope: connect `/master-data/agents` to the IM108 single-agent maintenance API through a Next server action; show controlled submit forms for create, edit, freeze, and effective-period changes; show success and backend-error feedback; keep non-agent master-data entities as read-only safety shells.
+- allowed_files_check: `app/master-data/**`, `components/master-data-maintenance-workbench.tsx`, `components/master-data-maintenance-model.ts`, `scripts/tests/master-data-maintenance-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, schema, migration, package, lockfile, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected IM109 frontend page/server-action/model/component/test files plus traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target model test first failed because `buildMasterDataAgentMaintenanceApiPath` was not exported, then passed with 10 tests; `npm run lint` passed; `npm run typecheck` passed; Node 22 `npm run build` passed. In-app browser smoke on `http://127.0.0.1:3000/master-data/agents` matched `坐席受控提交`, `提交新增`, `提交编辑`, `提交冻结`, `提交有效期`, and `不进入其他主数据对象`; smoke on `/master-data/skills` confirmed no agent submit section and disabled `暂不提交` actions. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 185 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

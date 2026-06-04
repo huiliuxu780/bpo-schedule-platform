@@ -61,8 +61,37 @@ export type MasterDataMaintenanceAction = {
   targetScope: string
   referenceCheckLabel: string
   failureBoundary: string
-  submitLabel: "暂不提交"
-  canSubmit: false
+  submitLabel: "暂不提交" | "提交新增" | "提交编辑" | "提交冻结" | "提交有效期"
+  canSubmit: boolean
+}
+
+export type MasterDataAgentMaintenanceActionKey = MasterDataMaintenanceAction["key"]
+
+export type MasterDataAgentMaintenanceStatus = "active" | "frozen" | "inactive"
+
+export type MasterDataAgentMaintenanceDraft = {
+  action: MasterDataAgentMaintenanceActionKey
+  sourceBatchId: string
+  employeeId: string
+  employeeName?: string
+  status?: MasterDataAgentMaintenanceStatus
+  effectiveFrom?: string
+  effectiveTo?: string
+}
+
+export type MasterDataAgentMaintenancePayload = {
+  action: MasterDataAgentMaintenanceActionKey
+  source_batch_id: string
+  employee_name?: string
+  status?: MasterDataAgentMaintenanceStatus
+  effective_from?: string
+  effective_to?: string
+}
+
+export type MasterDataAgentMaintenanceFeedback = {
+  tone: "success" | "error"
+  title: string
+  detail: string
 }
 
 export type MasterDataEntityDetailSummary = {
@@ -78,6 +107,7 @@ export type MasterDataEntityDetailSummary = {
   freezeStatusLabel: string
   referenceImpacts: MasterDataReferenceImpact[]
   maintenanceActions: MasterDataMaintenanceAction[]
+  agentSubmitSourceBatchId: string | null
 }
 
 export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
@@ -218,6 +248,10 @@ export function summarizeMasterDataMaintenanceEntityDetail(
 
   const workbench = summarizeMasterDataMaintenanceWorkbench(batches)
   const isSourceReady = workbench.tone === "ready"
+  const agentSubmitSourceBatchId =
+    entity.key === "agents" && workbench.latestBatchLabel !== "暂无主数据批次"
+      ? workbench.latestBatchLabel
+      : null
 
   return {
     entity,
@@ -236,8 +270,62 @@ export function summarizeMasterDataMaintenanceEntityDetail(
     effectivePeriodLabel: "暂无实体级有效期明细",
     freezeStatusLabel: "暂无实体级冻结明细",
     referenceImpacts: buildMasterDataReferenceImpacts(entity, isSourceReady),
-    maintenanceActions: buildMasterDataMaintenanceActions(entity, isSourceReady),
+    maintenanceActions: buildMasterDataMaintenanceActions(
+      entity,
+      isSourceReady,
+      Boolean(agentSubmitSourceBatchId)
+    ),
+    agentSubmitSourceBatchId,
   }
+}
+
+export function buildMasterDataAgentMaintenanceApiPath(employeeId: string): string {
+  return `/api/v1/master-data/employees/${encodeURIComponent(employeeId)}/maintenance`
+}
+
+export function buildMasterDataAgentMaintenancePayload(
+  draft: MasterDataAgentMaintenanceDraft
+): MasterDataAgentMaintenancePayload {
+  return compactMasterDataAgentMaintenancePayload({
+    action: draft.action,
+    source_batch_id: draft.sourceBatchId,
+    employee_name: draft.employeeName,
+    status: draft.status,
+    effective_from: draft.effectiveFrom,
+    effective_to: draft.effectiveTo,
+  })
+}
+
+export function summarizeMasterDataAgentMaintenanceFeedback(
+  searchParams: Record<string, string | string[] | undefined>
+): MasterDataAgentMaintenanceFeedback | null {
+  const status = getSingleSearchParam(searchParams.maintenance_status)
+
+  if (status === "success") {
+    const employeeId = getSingleSearchParam(searchParams.employee_id) || "未知坐席"
+    const employeeName = getSingleSearchParam(searchParams.employee_name) || "未返回姓名"
+    const employeeStatus = getSingleSearchParam(searchParams.employee_status) || "未知状态"
+    const actionStatus = getSingleSearchParam(searchParams.action_status) || "submitted"
+
+    return {
+      tone: "success",
+      title: "坐席维护已提交",
+      detail: `${employeeId} ${employeeName} 已 ${actionStatus}，当前状态 ${employeeStatus}。`,
+    }
+  }
+
+  if (status === "error") {
+    const code = getSingleSearchParam(searchParams.maintenance_code) || "MASTER_DATA_AGENT_SUBMIT_FAILED"
+    const message = getSingleSearchParam(searchParams.maintenance_message) || "后端未返回错误说明"
+
+    return {
+      tone: "error",
+      title: "坐席维护提交失败",
+      detail: `${code}: ${message}`,
+    }
+  }
+
+  return null
 }
 
 function buildMasterDataReferenceImpacts(
@@ -285,9 +373,11 @@ function buildMasterDataReferenceImpacts(
 
 function buildMasterDataMaintenanceActions(
   entity: MasterDataMaintenanceEntity,
-  isSourceReady: boolean
+  isSourceReady: boolean,
+  hasSourceBatch: boolean
 ): MasterDataMaintenanceAction[] {
   const actionLabels = buildMasterDataActionLabels(entity.label)
+  const canSubmitAgent = entity.key === "agents" && hasSourceBatch
 
   return [
     {
@@ -295,40 +385,40 @@ function buildMasterDataMaintenanceActions(
       label: actionLabels.create,
       statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
       targetScope: `仅限单个${entity.label}对象，不进入批量新增。`,
-      referenceCheckLabel: buildMasterDataReferenceCheckLabel(isSourceReady),
-      failureBoundary: buildMasterDataFailureBoundary(isSourceReady),
-      submitLabel: "暂不提交",
-      canSubmit: false,
+      referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
+      failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
+      submitLabel: canSubmitAgent ? "提交新增" : "暂不提交",
+      canSubmit: canSubmitAgent,
     },
     {
       key: "edit",
       label: actionLabels.edit,
       statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
       targetScope: `仅限单个${entity.label}字段修正，不修改生产公式或结算口径。`,
-      referenceCheckLabel: buildMasterDataReferenceCheckLabel(isSourceReady),
-      failureBoundary: buildMasterDataFailureBoundary(isSourceReady),
-      submitLabel: "暂不提交",
-      canSubmit: false,
+      referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
+      failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
+      submitLabel: canSubmitAgent ? "提交编辑" : "暂不提交",
+      canSubmit: canSubmitAgent,
     },
     {
       key: "freeze",
       label: actionLabels.freeze,
       statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
       targetScope: `仅限单个${entity.label}冻结或恢复，不建立权限、审批或发布流程。`,
-      referenceCheckLabel: buildMasterDataReferenceCheckLabel(isSourceReady),
-      failureBoundary: buildMasterDataFailureBoundary(isSourceReady),
-      submitLabel: "暂不提交",
-      canSubmit: false,
+      referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
+      failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
+      submitLabel: canSubmitAgent ? "提交冻结" : "暂不提交",
+      canSubmit: canSubmitAgent,
     },
     {
       key: "effective_period",
       label: actionLabels.effectivePeriod,
       statusLabel: isSourceReady ? "待预校验" : "来源阻塞",
       targetScope: `仅限单个${entity.label}有效期调整，不改历史版本展开结果。`,
-      referenceCheckLabel: buildMasterDataReferenceCheckLabel(isSourceReady),
-      failureBoundary: buildMasterDataFailureBoundary(isSourceReady),
-      submitLabel: "暂不提交",
-      canSubmit: false,
+      referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
+      failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
+      submitLabel: canSubmitAgent ? "提交有效期" : "暂不提交",
+      canSubmit: canSubmitAgent,
     },
   ]
 }
@@ -342,20 +432,50 @@ function buildMasterDataActionLabels(entityLabel: string) {
   }
 }
 
-function buildMasterDataReferenceCheckLabel(isSourceReady: boolean) {
+function buildMasterDataReferenceCheckLabel(
+  entity: MasterDataMaintenanceEntity,
+  isSourceReady: boolean
+) {
   if (!isSourceReady) {
     return "来源版本未就绪，禁止进入写入。"
+  }
+
+  if (entity.key === "agents") {
+    return "提交前只校验坐席单实体字段；引用影响仍保持空态，不伪造数量。"
   }
 
   return "引用影响校验：当前只有空态摘要，不伪造数量；提交前必须补齐真实引用结果。"
 }
 
-function buildMasterDataFailureBoundary(isSourceReady: boolean) {
+function buildMasterDataFailureBoundary(
+  entity: MasterDataMaintenanceEntity,
+  isSourceReady: boolean
+) {
   if (!isSourceReady) {
     return "先应用主数据来源批次，再重新检查引用影响。"
   }
 
+  if (entity.key === "agents") {
+    return "调用 IM108 单坐席 API；缺少坐席、重复创建、字段缺失或有效期无效时展示后端错误码。"
+  }
+
   return "后端写入未接入；若引用校验缺失、实体缺失、来源版本过期或动作越界，必须阻塞提交。"
+}
+
+function compactMasterDataAgentMaintenancePayload(
+  payload: MasterDataAgentMaintenancePayload
+): MasterDataAgentMaintenancePayload {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
+  ) as MasterDataAgentMaintenancePayload
+}
+
+function getSingleSearchParam(value: string | string[] | undefined): string {
+  if (Array.isArray(value)) {
+    return value[0] ?? ""
+  }
+
+  return value ?? ""
 }
 
 function resolveMasterDataMaintenanceTone(

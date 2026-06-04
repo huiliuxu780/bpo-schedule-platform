@@ -4,16 +4,19 @@ import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  CheckCircle2,
   Database,
   FileClock,
   GitBranch,
   Link2,
   Lock,
+  Send,
   ShieldAlert,
   ShieldCheck,
 } from "lucide-react"
 
 import {
+  type MasterDataAgentMaintenanceFeedback,
   type MasterDataEntityDetailSummary,
   type MasterDataMaintenanceTone,
   summarizeMasterDataMaintenanceWorkbench,
@@ -22,6 +25,7 @@ import type { ImportBatchListRow } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -227,10 +231,18 @@ export function MasterDataMaintenanceWorkbench({
 export function MasterDataMaintenanceEntityDetail({
   summary,
   error,
+  feedback,
+  agentSubmitAction,
 }: {
   summary: MasterDataEntityDetailSummary
   error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  agentSubmitAction?: (formData: FormData) => Promise<void>
 }) {
+  const canRenderAgentSubmit = Boolean(
+    agentSubmitAction && summary.agentSubmitSourceBatchId
+  )
+
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -269,6 +281,8 @@ export function MasterDataMaintenanceEntityDetail({
           <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
         </Card>
       ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 
       <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
@@ -426,7 +440,246 @@ export function MasterDataMaintenanceEntityDetail({
           </Table>
         </CardContent>
       </Card>
+
+      {canRenderAgentSubmit ? (
+        <AgentMaintenanceSubmitSection
+          summary={summary}
+          action={agentSubmitAction}
+        />
+      ) : null}
     </main>
+  )
+}
+
+function AgentMaintenanceFeedbackCard({
+  feedback,
+}: {
+  feedback: MasterDataAgentMaintenanceFeedback
+}) {
+  const isError = feedback.tone === "error"
+
+  return (
+    <Card className={isError ? "border-destructive/50" : ""}>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-base">
+          {isError ? (
+            <AlertTriangle className="size-4 text-destructive" />
+          ) : (
+            <CheckCircle2 className="size-4 text-muted-foreground" />
+          )}
+          {feedback.title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="text-sm text-muted-foreground">
+        {feedback.detail}
+      </CardContent>
+    </Card>
+  )
+}
+
+function AgentMaintenanceSubmitSection({
+  summary,
+  action,
+}: {
+  summary: MasterDataEntityDetailSummary
+  action?: (formData: FormData) => Promise<void>
+}) {
+  if (!action || !summary.agentSubmitSourceBatchId) {
+    return null
+  }
+
+  return (
+    <section className="grid gap-3">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-base font-semibold tracking-normal">
+          坐席受控提交
+        </h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          仅提交单个坐席维护动作到 IM108 API。来源批次固定为{" "}
+          <span className="font-mono text-foreground">
+            {summary.agentSubmitSourceBatchId}
+          </span>
+          ，不进入其他主数据对象、审批、导出或批量处理。
+        </p>
+      </div>
+      <div className="grid gap-3 xl:grid-cols-2">
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.agentSubmitSourceBatchId}
+          title="新增坐席"
+          description="创建单个坐席基础档案，状态默认 active。"
+          submitLabel="提交新增"
+          fields={["employee_id", "employee_name", "status", "effective_from", "effective_to"]}
+        />
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.agentSubmitSourceBatchId}
+          title="编辑坐席"
+          description="修正单个坐席姓名或状态，未填字段由后端保留原值。"
+          submitLabel="提交编辑"
+          fields={["employee_id", "employee_name", "status"]}
+        />
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="freeze"
+          sourceBatchId={summary.agentSubmitSourceBatchId}
+          title="冻结坐席"
+          description="将单个坐席状态更新为 frozen，并保留姓名与有效期。"
+          submitLabel="提交冻结"
+          fields={["employee_id"]}
+        />
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="effective_period"
+          sourceBatchId={summary.agentSubmitSourceBatchId}
+          title="调整有效期"
+          description="只调整单个坐席有效期，不改变姓名和状态。"
+          submitLabel="提交有效期"
+          fields={["employee_id", "effective_from", "effective_to"]}
+        />
+      </div>
+    </section>
+  )
+}
+
+type AgentMaintenanceField =
+  | "employee_id"
+  | "employee_name"
+  | "status"
+  | "effective_from"
+  | "effective_to"
+
+function AgentMaintenanceForm({
+  action,
+  actionKey,
+  sourceBatchId,
+  title,
+  description,
+  submitLabel,
+  fields,
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit" | "freeze" | "effective_period"
+  sourceBatchId: string
+  title: string
+  description: string
+  submitLabel: string
+  fields: AgentMaintenanceField[]
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          <p className="text-sm text-muted-foreground">{description}</p>
+          <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("employee_id") ? (
+              <MaintenanceInput
+                label="坐席 ID"
+                name="employee_id"
+                placeholder="A-1001"
+                required
+              />
+            ) : null}
+            {fields.includes("employee_name") ? (
+              <MaintenanceInput
+                label="坐席姓名"
+                name="employee_name"
+                placeholder="输入坐席姓名"
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("status") ? (
+              <MaintenanceSelect
+                label="状态"
+                name="status"
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_from") ? (
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                required={actionKey !== "edit"}
+              />
+            ) : null}
+            {fields.includes("effective_to") ? (
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                required={actionKey !== "edit"}
+              />
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+function MaintenanceInput({
+  label,
+  name,
+  type = "text",
+  placeholder,
+  required = false,
+}: {
+  label: string
+  name: string
+  type?: string
+  placeholder?: string
+  required?: boolean
+}) {
+  return (
+    <label className="grid gap-1.5 text-sm font-medium">
+      {label}
+      <Input
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        required={required}
+      />
+    </label>
+  )
+}
+
+function MaintenanceSelect({
+  label,
+  name,
+  required = false,
+}: {
+  label: string
+  name: string
+  required?: boolean
+}) {
+  return (
+    <label className="grid gap-1.5 text-sm font-medium">
+      {label}
+      <select
+        name={name}
+        required={required}
+        defaultValue="active"
+        className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        <option value="active">active</option>
+        <option value="inactive">inactive</option>
+        <option value="frozen">frozen</option>
+      </select>
+    </label>
   )
 }
 

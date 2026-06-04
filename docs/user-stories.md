@@ -4469,8 +4469,8 @@ acceptance:
   - "不做权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子。"
 dependencies:
   - "US728"
-status: "ready"
-notes: "IM109 下一步：在坐席详情页接入 IM108 维护 API，做受控提交和成功/失败反馈。"
+status: "done"
+notes: "IM109 已完成：`/master-data/agents` 详情页提供坐席新增、编辑、冻结、有效期调整四个受控提交表单；提交走 server action 调 IM108 API，结果通过页面反馈展示。"
 ```
 
 ### US730 - 主数据维护扩展到其他对象与绑定关系
@@ -4491,5 +4491,6 @@ acceptance:
   - "不做权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子。"
 dependencies:
   - "US729"
-status: "planned"
+status: "ready"
+notes: "IM110 下一步：扩展维护能力到职场、供应商、项目、技能和绑定关系；执行前仍需 PM confirmation。"
 ```

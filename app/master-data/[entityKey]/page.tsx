@@ -7,12 +7,14 @@ import {
 import {
   type MasterDataMaintenanceEntityKey,
   getMasterDataMaintenanceEntity,
+  summarizeMasterDataAgentMaintenanceFeedback,
   summarizeMasterDataMaintenanceEntityDetail,
 } from "@/components/master-data-maintenance-model"
 import {
   type ImportBatchListRow,
   buildImportApiUrl,
 } from "@/components/import-center-model"
+import { submitMasterDataAgentMaintenance } from "./actions"
 
 export const dynamic = "force-dynamic"
 
@@ -20,6 +22,7 @@ type PageProps = {
   params: Promise<{
     entityKey: string
   }>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
 
 type ApiResult<T> = {
@@ -27,7 +30,10 @@ type ApiResult<T> = {
   error: string | null
 }
 
-export default async function MasterDataEntityDetailPage({ params }: PageProps) {
+export default async function MasterDataEntityDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { entityKey } = await params
   const entity = getMasterDataMaintenanceEntity(decodeURIComponent(entityKey))
 
@@ -36,10 +42,12 @@ export default async function MasterDataEntityDetailPage({ params }: PageProps) 
   }
 
   const batchResult = await fetchImportBatches()
+  const resolvedSearchParams = searchParams ? await searchParams : {}
   const summary = summarizeMasterDataMaintenanceEntityDetail(
     entity.key as MasterDataMaintenanceEntityKey,
     batchResult.data ?? []
   )
+  const feedback = summarizeMasterDataAgentMaintenanceFeedback(resolvedSearchParams)
 
   return (
     <AppShell
@@ -49,6 +57,10 @@ export default async function MasterDataEntityDetailPage({ params }: PageProps) 
       <MasterDataMaintenanceEntityDetail
         summary={summary}
         error={batchResult.error}
+        feedback={feedback}
+        agentSubmitAction={
+          entity.key === "agents" ? submitMasterDataAgentMaintenance : undefined
+        }
       />
     </AppShell>
   )

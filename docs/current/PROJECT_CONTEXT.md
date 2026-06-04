@@ -149,4 +149,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US728/IM108` completed the master-data CRUD backend base: `/api/v1/master-data/employees/{employee_id}/maintenance` now supports single-agent create, edit, freeze, and effective-period changes without schema/migration work.
 
-Current queue advanced to `US729/IM109`: connect `/master-data/agents` to the controlled submit API and show success/failure feedback. Do not expand IM109 into non-agent master-data objects, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors.
+`US729/IM109` completed the agent-only frontend loop: `/master-data/agents` now shows controlled create, edit, freeze, and effective-period submit forms backed by a server action that calls IM108 and returns success/failure feedback. Non-agent master-data entities remain read-only safety shells.
+
+Current queue advanced to `US730/IM110`: extend the maintenance pattern to workplaces, suppliers, projects, skills, and bindings. IM110 still requires PM confirmation before implementation and must not add permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors.

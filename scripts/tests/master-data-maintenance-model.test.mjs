@@ -3,7 +3,10 @@ import test from "node:test";
 
 import {
   MASTER_DATA_MAINTENANCE_ENTITIES,
+  buildMasterDataAgentMaintenanceApiPath,
+  buildMasterDataAgentMaintenancePayload,
   getMasterDataMaintenanceEntity,
+  summarizeMasterDataAgentMaintenanceFeedback,
   summarizeMasterDataMaintenanceEntityDetail,
   summarizeMasterDataMaintenanceWorkbench,
 } from "../../components/master-data-maintenance-model.ts";
@@ -125,6 +128,103 @@ test("master data entity detail exposes source context and empty reference impac
   assert.match(detail.maintenanceActions[0].failureBoundary, /后端写入未接入/);
 });
 
+test("agent detail enables controlled submit actions only for agents", () => {
+  const agentDetail = summarizeMasterDataMaintenanceEntityDetail("agents", [baseBatch]);
+  const skillDetail = summarizeMasterDataMaintenanceEntityDetail("skills", [baseBatch]);
+
+  assert.equal(agentDetail.maintenanceActions[0].canSubmit, true);
+  assert.equal(agentDetail.maintenanceActions[0].submitLabel, "提交新增");
+  assert.equal(agentDetail.maintenanceActions[1].submitLabel, "提交编辑");
+  assert.equal(agentDetail.maintenanceActions[2].submitLabel, "提交冻结");
+  assert.equal(agentDetail.maintenanceActions[3].submitLabel, "提交有效期");
+  assert.equal(agentDetail.agentSubmitSourceBatchId, "BATCH-MD-001");
+  assert.equal(skillDetail.maintenanceActions[0].canSubmit, false);
+  assert.equal(skillDetail.maintenanceActions[0].submitLabel, "暂不提交");
+});
+
+test("agent maintenance payload maps create edit freeze and effective period actions", () => {
+  assert.equal(
+    buildMasterDataAgentMaintenanceApiPath("A 100/1"),
+    "/api/v1/master-data/employees/A%20100%2F1/maintenance",
+  );
+
+  assert.deepEqual(
+    buildMasterDataAgentMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      employeeId: "A-1001",
+      employeeName: "王一",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      employee_name: "王一",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataAgentMaintenancePayload({
+      action: "freeze",
+      sourceBatchId: "BATCH-MD-001",
+      employeeId: "A-1001",
+    }),
+    {
+      action: "freeze",
+      source_batch_id: "BATCH-MD-001",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataAgentMaintenancePayload({
+      action: "effective_period",
+      sourceBatchId: "BATCH-MD-001",
+      employeeId: "A-1001",
+      effectiveFrom: "2026-07-01",
+      effectiveTo: "2026-10-31",
+    }),
+    {
+      action: "effective_period",
+      source_batch_id: "BATCH-MD-001",
+      effective_from: "2026-07-01",
+      effective_to: "2026-10-31",
+    },
+  );
+});
+
+test("agent maintenance feedback summarizes success and backend error codes", () => {
+  assert.deepEqual(
+    summarizeMasterDataAgentMaintenanceFeedback({
+      maintenance_status: "success",
+      employee_id: "A-1001",
+      employee_name: "王一",
+      employee_status: "active",
+      action_status: "created",
+    }),
+    {
+      tone: "success",
+      title: "坐席维护已提交",
+      detail: "A-1001 王一 已 created，当前状态 active。",
+    },
+  );
+
+  assert.deepEqual(
+    summarizeMasterDataAgentMaintenanceFeedback({
+      maintenance_status: "error",
+      maintenance_code: "EMPLOYEE_NOT_FOUND",
+      maintenance_message: "EMPLOYEE_NOT_FOUND: A-404",
+    }),
+    {
+      tone: "error",
+      title: "坐席维护提交失败",
+      detail: "EMPLOYEE_NOT_FOUND: EMPLOYEE_NOT_FOUND: A-404",
+    },
+  );
+});
+
 test("master data entity detail keeps a blocked source state when no applied version exists", () => {
   const detail = summarizeMasterDataMaintenanceEntityDetail("agents", [
     {
@@ -139,6 +239,8 @@ test("master data entity detail keeps a blocked source state when no applied ver
   assert.match(detail.detail, /尚未应用/);
   assert.equal(detail.referenceImpacts[0].detail, "来源版本未就绪，暂不展示引用影响。");
   assert.equal(detail.maintenanceActions[0].statusLabel, "来源阻塞");
+  assert.equal(detail.maintenanceActions[0].canSubmit, true);
+  assert.equal(detail.agentSubmitSourceBatchId, "BATCH-MD-001");
   assert.equal(detail.maintenanceActions[0].referenceCheckLabel, "来源版本未就绪，禁止进入写入。");
   assert.equal(detail.maintenanceActions[0].failureBoundary, "先应用主数据来源批次，再重新检查引用影响。");
 });

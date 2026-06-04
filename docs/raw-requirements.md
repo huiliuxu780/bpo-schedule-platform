@@ -2468,8 +2468,8 @@ description: "坐席单实体维护 API 可用后，需要在 `/master-data/agen
 source: "After R808 planning on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "ready"
-notes: "IM109 下一步进入前端受控提交：仅接 IM108 坐席 API，不扩展到其他主数据对象；失败时展示后端校验原因。"
+status: "done"
+notes: "IM109 已完成：`/master-data/agents` 详情页新增坐席 create/edit/freeze/effective_period 受控提交表单，通过 server action 调用 IM108 API，并展示成功/失败反馈；其他主数据对象仍保持只读安全壳。"
 ```
 
 ### R810 - 主数据维护扩展到其他对象与绑定关系
@@ -2481,6 +2481,6 @@ description: "坐席维护闭环验证后，再将同一维护能力扩展到职
 source: "After R809 planning on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "planned"
-notes: "扩展前需要确认 IM108/IM109 的错误码和前端反馈口径稳定。"
+status: "ready"
+notes: "IM110 下一步可扩展到职场、供应商、项目、技能和绑定关系；该任务仍需 PM confirmation，且不得新增 schema/migration、权限、审批、导出、批量或生产公式。"
 ```

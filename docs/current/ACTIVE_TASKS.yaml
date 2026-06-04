@@ -6,16 +6,22 @@ notes:
   - "Each ready story must have a matching active task before execution."
   - "Done task history stays in legacy files or archive during the transition."
 tasks:
-  - id: IM109
-    story_ids: [US729]
+  - id: IM110
+    story_ids: [US730]
     requirement_ids:
-      - R809
-    title: "主数据坐席维护前端受控提交"
+      - R810
+    title: "主数据维护扩展到其他对象与绑定关系"
     status: ready
     priority: P1
-    required_workflow: frontend-scaffold
-    branch: codex/im108-master-data-maintenance-api
+    required_workflow: database-persistence
+    branch: codex/im110-master-data-entities-bindings
     allowed_files:
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/master_data_persistence.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
       - "app/master-data/**"
       - "components/master-data-maintenance-workbench.tsx"
       - "components/master-data-maintenance-model.ts"
@@ -33,19 +39,17 @@ tasks:
       - "pnpm-lock.yaml"
       - "yarn.lock"
       - "backend/alembic/**"
-      - "backend/app/**"
-      - "backend/tests/**"
     acceptance:
-      - "`/master-data/agents` 详情页提供坐席新增、编辑、冻结、有效期调整的受控表单。"
-      - "提交后展示成功记录或后端校验失败原因。"
-      - "只接坐席 API，不扩展其他主数据对象。"
-      - "`bash scripts/check-state.sh --strict`、前端目标模型测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+      - "职场、供应商、项目、技能复用单实体维护口径。"
+      - "绑定关系维护展示并校验坐席、职场、供应商、项目、技能引用。"
+      - "复用 IM108/IM109 的错误码和前端反馈口径。"
+      - "`bash scripts/check-state.sh --strict`、后端/前端目标测试、`git diff --check` 和 `bash scripts/check.sh` 通过。"
     auto_run: false
     pm_confirmation_required: true
     conflict_risk: high
     stop_conditions:
       - "需要新增依赖或修改 package/lockfile"
-      - "范围扩展到职场、供应商、项目、技能或绑定关系维护"
+      - "需要新增 schema/migration 或生产持久化配置"
       - "范围扩展到权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true

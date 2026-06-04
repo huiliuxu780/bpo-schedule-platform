@@ -545,4 +545,6 @@ After the login/status-log production chain, the next approved block is master-d
 
 `US728/IM108` is complete. It added a backend-only single-agent maintenance API for create, edit, freeze, and effective-period changes, reusing the existing `master_data_employees` table and repository without schema/migration changes.
 
-Current state advanced to `US729/IM109` so the existing `/master-data/agents` safety shell can connect to the new controlled submit API. `US730/IM110` remains planned until the agent-only frontend loop is stable. The chain still avoids permissions, approval, export, batch operations, real external integrations, automatic scheduling, production formulas, settlement rules, and charge factors.
+`US729/IM109` is complete. `/master-data/agents` now exposes four controlled submit forms for agent create, edit, freeze, and effective-period changes. Submission is handled by a Next server action that calls the IM108 single-agent API, then redirects back to the detail page with success or backend error feedback. Non-agent master-data entities remain read-only safety shells.
+
+Current state advanced to `US730/IM110` so the maintenance pattern can be extended to workplaces, suppliers, projects, skills, and bindings after PM confirmation. The chain still avoids permissions, approval, export, batch operations, real external integrations, automatic scheduling, production formulas, settlement rules, and charge factors.

@@ -6,18 +6,18 @@ notes:
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
 stories:
-  - id: US729
+  - id: US730
     status: ready
-    task_id: IM109
+    task_id: IM110
     requirement_ids:
-      - R809
-    title: "主数据坐席维护前端受控提交"
+      - R810
+    title: "主数据维护扩展到其他对象与绑定关系"
     module: "主数据维护"
     priority: P1
-    gate: frontend-scaffold
-    summary: "在坐席详情页把新增、编辑、冻结、有效期调整从禁用安全壳升级为受控提交表单，只接 IM108 坐席 API。"
+    gate: database-persistence
+    summary: "在坐席维护闭环稳定后，将维护口径扩展到职场、供应商、项目、技能和绑定关系，并补绑定关系引用校验解释。"
     acceptance:
-      - "`/master-data/agents` 详情页提供坐席新增、编辑、冻结、有效期调整的受控表单。"
-      - "提交后展示成功记录或后端校验失败原因。"
-      - "只接坐席 API，不扩展其他主数据对象。"
+      - "职场、供应商、项目、技能复用单实体维护口径。"
+      - "绑定关系维护展示并校验坐席、职场、供应商、项目、技能引用。"
+      - "复用 IM108/IM109 的错误码和前端反馈口径。"
       - "不做权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子。"
