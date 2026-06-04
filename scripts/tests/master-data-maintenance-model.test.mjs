@@ -260,6 +260,7 @@ test("agent management page exposes customer service list layout contract", () =
   ]);
 
   assert.equal(summary.title, "客服人员");
+  assert.equal(summary.createHref, "/master-data/agents/new");
   assert.deepEqual(
     summary.filterFields.map((field) => field.label),
     ["客服名", "技能组", "账号", "状态", "组织", "职场", "坐席类型"],
@@ -277,6 +278,18 @@ test("agent management page exposes customer service list layout contract", () =
   assert.equal(summary.rows[0].display.publicNameLabel, "刘晓晓");
   assert.equal(summary.rows[0].display.levelLabel, "自有员工");
   assert.equal(summary.rows[0].display.freezeReasonLabel, "-");
+  assert.equal(
+    summary.rows[0].display.editHref,
+    "/master-data/agents/A-2001/edit",
+  );
+  assert.equal(
+    summary.rows[0].display.freezeHref,
+    "/master-data/agents?freeze_employee_id=A-2001",
+  );
+  assert.equal(
+    summary.rows[0].display.skillsEditHref,
+    "/master-data/agents/A-2001/skills/edit",
+  );
 });
 
 test("agent maintenance payload maps create edit freeze and effective period actions", () => {

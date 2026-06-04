@@ -256,29 +256,28 @@ export function MasterDataMaintenanceWorkbench({
   )
 }
 
-type MasterDataAgentSelectedAction = "create" | "edit" | "freeze" | "skills" | null
-
 export function MasterDataAgentManagementPage({
   summary,
   managementSummary,
   error,
   feedback,
   employeeListError,
-  selectedAction,
-  selectedEmployeeId,
+  selectedFreezeEmployeeId,
   agentSubmitAction,
-  agentSkillSubmitAction,
 }: {
   summary: MasterDataEntityDetailSummary
   managementSummary: MasterDataAgentManagementSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   employeeListError?: string | null
-  selectedAction: MasterDataAgentSelectedAction
-  selectedEmployeeId: string
+  selectedFreezeEmployeeId: string
   agentSubmitAction: (formData: FormData) => Promise<void>
-  agentSkillSubmitAction: (formData: FormData) => Promise<void>
 }) {
+  const freezeEmployee =
+    managementSummary.rows.find(
+      (row) => row.employee_id === selectedFreezeEmployeeId
+    ) ?? null
+
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
       <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
@@ -287,7 +286,7 @@ export function MasterDataAgentManagementPage({
         </h1>
         <div className="flex items-center gap-2">
           <Button asChild size="sm">
-            <Link href="/master-data/agents?agent_action=create#agent-maintenance-panel">
+            <Link href={managementSummary.createHref}>
               <Plus data-icon="inline-start" />
               新建
             </Link>
@@ -317,20 +316,18 @@ export function MasterDataAgentManagementPage({
 
       <AgentManagementFilterPanel summary={managementSummary} />
 
-      {selectedAction ? (
-        <AgentManagementActionPanel
-          summary={summary}
-          selectedAction={selectedAction}
-          selectedEmployeeId={selectedEmployeeId}
-          agentSubmitAction={agentSubmitAction}
-          agentSkillSubmitAction={agentSkillSubmitAction}
-        />
-      ) : null}
-
       <AgentManagementTablePanel
         summary={managementSummary}
         employeeListError={employeeListError ?? null}
       />
+
+      {freezeEmployee ? (
+        <AgentFreezeDialog
+          summary={summary}
+          employee={freezeEmployee}
+          action={agentSubmitAction}
+        />
+      ) : null}
     </main>
   )
 }
@@ -402,116 +399,6 @@ function AgentManagementFilterField({
         </Select>
       )}
     </label>
-  )
-}
-
-function AgentManagementActionPanel({
-  summary,
-  selectedAction,
-  selectedEmployeeId,
-  agentSubmitAction,
-  agentSkillSubmitAction,
-}: {
-  summary: MasterDataEntityDetailSummary
-  selectedAction: Exclude<MasterDataAgentSelectedAction, null>
-  selectedEmployeeId: string
-  agentSubmitAction: (formData: FormData) => Promise<void>
-  agentSkillSubmitAction: (formData: FormData) => Promise<void>
-}) {
-  if (!summary.agentSubmitSourceBatchId) {
-    return (
-      <Card id="agent-maintenance-panel">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">当前不可维护</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          当前来源批次不满足单人维护提交条件。
-        </CardContent>
-      </Card>
-    )
-  }
-
-  const panelTitle =
-    selectedAction === "create"
-      ? "新建客服人员"
-      : selectedAction === "edit"
-        ? "编辑客服人员"
-        : selectedAction === "freeze"
-          ? "冻结客服人员"
-          : "维护客服技能组"
-
-  return (
-    <section id="agent-maintenance-panel" className="rounded-lg border bg-background p-4">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="grid gap-1">
-          <h2 className="text-base font-semibold tracking-normal">{panelTitle}</h2>
-          <p className="text-sm text-muted-foreground">
-            单人受控维护入口；不进入批量、权限、审批或导出。
-          </p>
-        </div>
-        <Button asChild size="sm" variant="ghost">
-          <Link href="/master-data/agents">收起</Link>
-        </Button>
-      </div>
-      {selectedAction === "create" ? (
-        <AgentMaintenanceForm
-          action={agentSubmitAction}
-          actionKey="create"
-          sourceBatchId={summary.agentSubmitSourceBatchId}
-          title="新建客服人员"
-          description="创建单个客服人员基础档案。"
-          submitLabel="提交新增"
-          fields={[
-            "employee_id",
-            "employee_name",
-            "status",
-            "employee_type",
-            "organization_id",
-            "workplace_id",
-            "effective_from",
-            "effective_to",
-          ]}
-        />
-      ) : null}
-      {selectedAction === "edit" ? (
-        <AgentMaintenanceForm
-          action={agentSubmitAction}
-          actionKey="edit"
-          sourceBatchId={summary.agentSubmitSourceBatchId}
-          title="编辑客服人员"
-          description="修改单个客服人员姓名、状态、类型、组织或职场。"
-          submitLabel="提交编辑"
-          fields={[
-            "employee_id",
-            "employee_name",
-            "status",
-            "employee_type",
-            "organization_id",
-            "workplace_id",
-          ]}
-          defaultValues={{ employee_id: selectedEmployeeId }}
-        />
-      ) : null}
-      {selectedAction === "freeze" ? (
-        <AgentMaintenanceForm
-          action={agentSubmitAction}
-          actionKey="freeze"
-          sourceBatchId={summary.agentSubmitSourceBatchId}
-          title="冻结客服人员"
-          description="将单个客服人员状态更新为 frozen。"
-          submitLabel="提交冻结"
-          fields={["employee_id"]}
-          defaultValues={{ employee_id: selectedEmployeeId }}
-        />
-      ) : null}
-      {selectedAction === "skills" ? (
-        <AgentSkillMaintenanceSection
-          summary={summary}
-          action={agentSkillSubmitAction}
-          selectedEmployeeId={selectedEmployeeId}
-        />
-      ) : null}
-    </section>
   )
 }
 
@@ -589,14 +476,14 @@ function AgentManagementTablePanel({
                   <div className="flex justify-end gap-3">
                     <Button asChild size="sm" variant="link" className="h-auto p-0">
                       <Link
-                        href={`/master-data/agents?agent_action=edit&employee_id=${encodeURIComponent(row.employee_id)}#agent-maintenance-panel`}
+                        href={row.display.editHref}
                       >
                         编辑
                       </Link>
                     </Button>
                     <Button asChild size="sm" variant="link" className="h-auto p-0">
                       <Link
-                        href={`/master-data/agents?agent_action=freeze&employee_id=${encodeURIComponent(row.employee_id)}#agent-maintenance-panel`}
+                        href={row.display.freezeHref}
                       >
                         冻结
                       </Link>
@@ -611,7 +498,7 @@ function AgentManagementTablePanel({
                         <DropdownMenuGroup>
                           <DropdownMenuItem asChild>
                             <Link
-                              href={`/master-data/agents?agent_action=skills&employee_id=${encodeURIComponent(row.employee_id)}#agent-maintenance-panel`}
+                              href={row.display.skillsEditHref}
                             >
                               技能维护
                             </Link>
@@ -628,6 +515,276 @@ function AgentManagementTablePanel({
         </Table>
       )}
     </section>
+  )
+}
+
+function AgentFreezeDialog({
+  summary,
+  employee,
+  action,
+}: {
+  summary: MasterDataEntityDetailSummary
+  employee: MasterDataAgentManagementSummary["rows"][number]
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="agent-freeze-title"
+    >
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="pb-2">
+          <CardTitle id="agent-freeze-title" className="text-base">
+            冻结客服人员
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <div className="grid gap-1 text-sm text-muted-foreground">
+            <p>
+              确认冻结{" "}
+              <span className="font-medium text-foreground">
+                {employee.employee_name}
+              </span>
+              ？
+            </p>
+            <p className="font-mono text-xs">{employee.employee_id}</p>
+            <p>冻结后该人员状态会通过单人维护 API 更新为 frozen。</p>
+          </div>
+          {summary.agentSubmitSourceBatchId ? (
+            <form action={action} className="flex justify-end gap-2">
+              <input type="hidden" name="action" value="freeze" />
+              <input
+                type="hidden"
+                name="source_batch_id"
+                value={summary.agentSubmitSourceBatchId}
+              />
+              <input
+                type="hidden"
+                name="employee_id"
+                value={employee.employee_id}
+              />
+              <Button asChild size="sm" variant="outline">
+                <Link href="/master-data/agents">取消</Link>
+              </Button>
+              <Button type="submit" size="sm" variant="destructive">
+                确认冻结
+              </Button>
+            </form>
+          ) : (
+            <div className="flex justify-end gap-2">
+              <Button asChild size="sm" variant="outline">
+                <Link href="/master-data/agents">关闭</Link>
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+export function MasterDataAgentCreatePage({
+  summary,
+  error,
+  feedback,
+  action,
+}: {
+  summary: MasterDataEntityDetailSummary
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <AgentFormPageShell
+      title="新建客服人员"
+      description="创建单个客服人员基础档案。批量导入仍回到导入中心处理。"
+      error={error}
+      feedback={feedback}
+    >
+      {summary.agentSubmitSourceBatchId ? (
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.agentSubmitSourceBatchId}
+          title="人员信息"
+          description="填写人员账号、姓名、状态、人员类型、组织、职场和有效期。"
+          submitLabel="提交新增"
+          fields={[
+            "employee_id",
+            "employee_name",
+            "status",
+            "employee_type",
+            "organization_id",
+            "workplace_id",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+      ) : (
+        <AgentFormBlockedState />
+      )}
+    </AgentFormPageShell>
+  )
+}
+
+export function MasterDataAgentEditPage({
+  summary,
+  error,
+  feedback,
+  employee,
+  action,
+}: {
+  summary: MasterDataEntityDetailSummary
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  employee: MasterDataAgentManagementSummary["rows"][number] | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <AgentFormPageShell
+      title="编辑客服人员"
+      description="修改单个客服人员的基础字段。技能集合单独进入技能维护页。"
+      error={error}
+      feedback={feedback}
+    >
+      {summary.agentSubmitSourceBatchId && employee ? (
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.agentSubmitSourceBatchId}
+          title="人员信息"
+          description="未填写的字段由后端保留原值。"
+          submitLabel="提交编辑"
+          fields={[
+            "employee_id",
+            "employee_name",
+            "status",
+            "employee_type",
+            "organization_id",
+            "workplace_id",
+          ]}
+          defaultValues={{
+            employee_id: employee.employee_id,
+            employee_name: employee.employee_name,
+            status: employee.status,
+            employee_type: employee.employee_type,
+            organization_id: employee.organization_id ?? "",
+            workplace_id: employee.workplace_id ?? "",
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            employee
+              ? "当前来源批次不满足单人维护提交条件。"
+              : "未找到该客服人员，请返回列表重新选择。"
+          }
+        />
+      )}
+    </AgentFormPageShell>
+  )
+}
+
+export function MasterDataAgentSkillsEditPage({
+  summary,
+  error,
+  feedback,
+  employee,
+  action,
+}: {
+  summary: MasterDataEntityDetailSummary
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  employee: MasterDataAgentManagementSummary["rows"][number] | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <AgentFormPageShell
+      title="维护客服技能组"
+      description="替换单个客服人员当前技能集合。"
+      error={error}
+      feedback={feedback}
+    >
+      {summary.agentSubmitSourceBatchId && employee ? (
+        <AgentSkillMaintenanceSection
+          summary={summary}
+          action={action}
+          selectedEmployeeId={employee.employee_id}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            employee
+              ? "当前来源批次不满足单人技能维护提交条件。"
+              : "未找到该客服人员，请返回列表重新选择。"
+          }
+        />
+      )}
+    </AgentFormPageShell>
+  )
+}
+
+function AgentFormPageShell({
+  title,
+  description,
+  error,
+  feedback,
+  children,
+}: {
+  title: string
+  description: string
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  children: React.ReactNode
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      <section className="flex flex-col gap-3 rounded-lg border bg-background p-4">
+        <Button asChild size="sm" variant="ghost" className="w-fit px-0">
+          <Link href="/master-data/agents">
+            <ArrowLeft data-icon="inline-start" />
+            返回客服人员
+          </Link>
+        </Button>
+        <div className="grid gap-1">
+          <h1 className="text-xl font-semibold tracking-normal">{title}</h1>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
+      </section>
+
+      {error ? (
+        <Card className="border-destructive/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <AlertTriangle className="size-4 text-destructive" />
+              主数据来源读取失败
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
+        </Card>
+      ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-4">{children}</section>
+    </main>
+  )
+}
+
+function AgentFormBlockedState({
+  detail = "当前来源批次不满足单人维护提交条件。",
+}: {
+  detail?: string
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">当前不可维护</CardTitle>
+      </CardHeader>
+      <CardContent className="text-sm text-muted-foreground">{detail}</CardContent>
+    </Card>
   )
 }
 
@@ -1571,6 +1728,7 @@ function AgentMaintenanceForm({
               <MaintenanceSelect
                 label="状态"
                 name="status"
+                defaultValue={defaultValues.status}
                 required={actionKey === "create"}
               />
             ) : null}
@@ -1578,6 +1736,7 @@ function AgentMaintenanceForm({
               <EmployeeTypeSelect
                 label="人员类型"
                 name="employee_type"
+                defaultValue={defaultValues.employee_type}
                 required={actionKey === "create"}
               />
             ) : null}
@@ -1678,10 +1837,12 @@ function MaintenanceTextarea({
 function MaintenanceSelect({
   label,
   name,
+  defaultValue = "active",
   required = false,
 }: {
   label: string
   name: string
+  defaultValue?: string
   required?: boolean
 }) {
   return (
@@ -1690,7 +1851,7 @@ function MaintenanceSelect({
       <select
         name={name}
         required={required}
-        defaultValue="active"
+        defaultValue={defaultValue}
         className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
       >
         <option value="active">active</option>
@@ -1704,10 +1865,12 @@ function MaintenanceSelect({
 function EmployeeTypeSelect({
   label,
   name,
+  defaultValue = "internal",
   required = false,
 }: {
   label: string
   name: string
+  defaultValue?: string
   required?: boolean
 }) {
   return (
@@ -1716,7 +1879,7 @@ function EmployeeTypeSelect({
       <select
         name={name}
         required={required}
-        defaultValue="internal"
+        defaultValue={defaultValue}
         className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
       >
         <option value="internal">自有员工</option>

@@ -216,6 +216,9 @@ export type MasterDataEmployeeListDisplay = {
   publicNameLabel: string
   levelLabel: string
   freezeReasonLabel: string
+  editHref: string
+  freezeHref: string
+  skillsEditHref: string
 }
 
 export type MasterDataEmployeeListViewRow = MasterDataEmployeeListRow & {
@@ -271,6 +274,7 @@ export type MasterDataAgentManagementColumn = {
 
 export type MasterDataAgentManagementSummary = MasterDataEmployeeListSummary & {
   title: "客服人员"
+  createHref: string
   activeFilters: MasterDataAgentManagementFilters
   filterFields: MasterDataAgentManagementFilterField[]
   bulkActions: MasterDataAgentManagementAction[]
@@ -598,6 +602,9 @@ export function summarizeMasterDataEmployeeList(
       publicNameLabel: employee.employee_name,
       levelLabel: formatMasterDataEmployeeType(employee.employee_type),
       freezeReasonLabel: employee.status === "frozen" ? "主数据冻结" : "-",
+      editHref: `/master-data/agents/${encodeURIComponent(employee.employee_id)}/edit`,
+      freezeHref: `/master-data/agents?freeze_employee_id=${encodeURIComponent(employee.employee_id)}`,
+      skillsEditHref: `/master-data/agents/${encodeURIComponent(employee.employee_id)}/skills/edit`,
     },
   }))
 
@@ -623,6 +630,7 @@ export function summarizeMasterDataAgentManagement(
   return {
     ...summarizeMasterDataEmployeeList(filteredEmployees),
     title: "客服人员",
+    createHref: "/master-data/agents/new",
     activeFilters: normalizedFilters,
     filterFields: [
       {

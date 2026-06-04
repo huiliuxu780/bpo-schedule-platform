@@ -5019,11 +5019,11 @@ priority: "P0"
 acceptance:
   - "后端提供单员工技能集合 replace 维护能力，复用既有员工、技能、有效期和来源批次校验。"
   - "API 返回替换后的技能列表，包含技能名称和技能组类别。"
-  - "/master-data/agents 默认是客服人员管理列表，技能维护从行级更多操作进入并按技能 ID 列表提交。"
+  - "/master-data/agents 默认是客服人员管理列表，新建、编辑、技能维护进入子页面，冻结通过弹窗确认。"
   - "前端 payload builder 和 server action 调用新技能维护 API。"
   - "不新增批量维护、权限、审批、导出、自动排班、生产公式、结算或收费因子。"
 dependencies:
   - "US753"
 status: "done"
-notes: "IM134 已完成：单人技能集合 replace 维护闭环已接入后端、server action 和客服人员管理列表的行级技能维护入口。"
+notes: "IM134 已完成：单人技能集合 replace 维护闭环已接入后端、server action；人员列表只承载入口，新建、编辑、技能维护拆为子页面，冻结拆为弹窗。"
 ```
