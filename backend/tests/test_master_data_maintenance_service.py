@@ -4,12 +4,18 @@ from pathlib import Path
 
 from backend.app.import_persistence import ImportPersistenceRepository
 from backend.app.master_data_maintenance import maintain_employee
+from backend.app.master_data_maintenance import maintain_employee_binding
+from backend.app.master_data_maintenance import maintain_reference
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
     EmployeeMasterDataInput,
+    EmployeeBindingInput,
     ImportBatchCreateRequest,
     ImportBatchRowResultInput,
     MasterDataEmployeeMaintenanceRequest,
+    MasterDataBindingMaintenanceRequest,
+    MasterDataReferenceInput,
+    MasterDataReferenceMaintenanceRequest,
     MasterDataSnapshotRequest,
 )
 
@@ -169,6 +175,122 @@ class MasterDataMaintenanceServiceTest(unittest.TestCase):
                     repository,
                 )
 
+    def test_create_reference_writes_workplace_record(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-MAINT-006")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+
+            response = maintain_reference(
+                "workplaces",
+                "SITE-001",
+                MasterDataReferenceMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-MAINT-006",
+                    reference_name="上海职场",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+
+            self.assertEqual(response.action_status, "created")
+            self.assertEqual(response.reference.reference_id, "SITE-001")
+            self.assertEqual(response.reference.reference_name, "上海职场")
+            self.assertEqual(response.reference.status, "active")
+            self.assertEqual(response.reference.batch_id, "BATCH-MD-MAINT-006")
+
+    def test_freeze_reference_preserves_project_name_and_effective_period(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-MAINT-007")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-MAINT-007",
+                    projects=[
+                        MasterDataReferenceInput(
+                            reference_id="PROJ-001",
+                            reference_name="热线项目",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                )
+            )
+
+            response = maintain_reference(
+                "projects",
+                "PROJ-001",
+                MasterDataReferenceMaintenanceRequest(
+                    action="freeze",
+                    source_batch_id="BATCH-MD-MAINT-007",
+                ),
+                repository,
+            )
+
+            self.assertEqual(response.action_status, "frozen")
+            self.assertEqual(response.reference.reference_name, "热线项目")
+            self.assertEqual(response.reference.status, "frozen")
+            self.assertEqual(response.reference.effective_from, "2026-06-01")
+
+    def test_create_binding_rejects_frozen_supplier_reference(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-MAINT-008")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            _seed_binding_references(repository, "BATCH-MD-MAINT-008", supplier_status="frozen")
+
+            with self.assertRaisesRegex(ValueError, "supplier_id SUP-001 is frozen"):
+                maintain_employee_binding(
+                    "BIND-001",
+                    MasterDataBindingMaintenanceRequest(
+                        action="create",
+                        source_batch_id="BATCH-MD-MAINT-008",
+                        employee_id="A-4001",
+                        supplier_id="SUP-001",
+                        workplace_id="SITE-001",
+                        project_id="PROJ-001",
+                        skill_id="SKILL-001",
+                        effective_from="2026-06-01",
+                        effective_to="2026-12-31",
+                    ),
+                    repository,
+                )
+
+    def test_create_binding_writes_validated_relationship(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-MAINT-009")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            _seed_binding_references(repository, "BATCH-MD-MAINT-009")
+
+            response = maintain_employee_binding(
+                "BIND-002",
+                MasterDataBindingMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-MAINT-009",
+                    employee_id="A-4001",
+                    supplier_id="SUP-001",
+                    workplace_id="SITE-001",
+                    project_id="PROJ-001",
+                    skill_id="SKILL-001",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+
+            self.assertEqual(response.action_status, "created")
+            self.assertEqual(response.binding.binding_id, "BIND-002")
+            self.assertEqual(response.binding.employee_id, "A-4001")
+            self.assertEqual(response.binding.supplier_id, "SUP-001")
+
 
 def _create_import_batch(database_url: str, batch_id: str) -> None:
     repository = ImportPersistenceRepository(database_url)
@@ -187,6 +309,63 @@ def _create_import_batch(database_url: str, batch_id: str) -> None:
                     row_status="success",
                     source_key=batch_id,
                     raw_data={"batch_id": batch_id},
+                )
+            ],
+        )
+    )
+
+
+def _seed_binding_references(
+    repository: MasterDataPersistenceRepository,
+    batch_id: str,
+    supplier_status: str = "active",
+) -> None:
+    repository.create_snapshot(
+        MasterDataSnapshotRequest(
+            batch_id=batch_id,
+            suppliers=[
+                MasterDataReferenceInput(
+                    reference_id="SUP-001",
+                    reference_name="供应商一",
+                    status=supplier_status,
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                )
+            ],
+            workplaces=[
+                MasterDataReferenceInput(
+                    reference_id="SITE-001",
+                    reference_name="上海职场",
+                    status="active",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                )
+            ],
+            projects=[
+                MasterDataReferenceInput(
+                    reference_id="PROJ-001",
+                    reference_name="热线项目",
+                    status="active",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                )
+            ],
+            skills=[
+                MasterDataReferenceInput(
+                    reference_id="SKILL-001",
+                    reference_name="普通话",
+                    status="active",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                )
+            ],
+            employees=[
+                EmployeeMasterDataInput(
+                    employee_id="A-4001",
+                    employee_name="吴五",
+                    status="active",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
                 )
             ],
         )

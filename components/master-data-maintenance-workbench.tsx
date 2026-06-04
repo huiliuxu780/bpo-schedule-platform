@@ -233,14 +233,24 @@ export function MasterDataMaintenanceEntityDetail({
   error,
   feedback,
   agentSubmitAction,
+  referenceSubmitAction,
+  bindingSubmitAction,
 }: {
   summary: MasterDataEntityDetailSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   agentSubmitAction?: (formData: FormData) => Promise<void>
+  referenceSubmitAction?: (formData: FormData) => Promise<void>
+  bindingSubmitAction?: (formData: FormData) => Promise<void>
 }) {
   const canRenderAgentSubmit = Boolean(
     agentSubmitAction && summary.agentSubmitSourceBatchId
+  )
+  const canRenderReferenceSubmit = Boolean(
+    referenceSubmitAction && summary.referenceSubmitSourceBatchId
+  )
+  const canRenderBindingSubmit = Boolean(
+    bindingSubmitAction && summary.bindingSubmitSourceBatchId
   )
 
   return (
@@ -447,6 +457,20 @@ export function MasterDataMaintenanceEntityDetail({
           action={agentSubmitAction}
         />
       ) : null}
+
+      {canRenderReferenceSubmit ? (
+        <ReferenceMaintenanceSubmitSection
+          summary={summary}
+          action={referenceSubmitAction}
+        />
+      ) : null}
+
+      {canRenderBindingSubmit ? (
+        <BindingMaintenanceSubmitSection
+          summary={summary}
+          action={bindingSubmitAction}
+        />
+      ) : null}
     </main>
   )
 }
@@ -544,9 +568,167 @@ function AgentMaintenanceSubmitSection({
   )
 }
 
+function ReferenceMaintenanceSubmitSection({
+  summary,
+  action,
+}: {
+  summary: MasterDataEntityDetailSummary
+  action?: (formData: FormData) => Promise<void>
+}) {
+  if (!action || !summary.referenceSubmitSourceBatchId) {
+    return null
+  }
+
+  return (
+    <section className="grid gap-3">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-base font-semibold tracking-normal">
+          {summary.entity.label}受控提交
+        </h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          仅提交单个{summary.entity.label}维护动作到 IM110 API。来源批次固定为{" "}
+          <span className="font-mono text-foreground">
+            {summary.referenceSubmitSourceBatchId}
+          </span>
+          ，不进入审批、导出、权限或批量处理。
+        </p>
+      </div>
+      <div className="grid gap-3 xl:grid-cols-2">
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.referenceSubmitSourceBatchId}
+          hiddenFields={{ entity_key: summary.entity.key }}
+          title={`新增${summary.entity.label}`}
+          description={`创建单个${summary.entity.label}基础档案，状态默认 active。`}
+          submitLabel="提交新增"
+          fields={[
+            "reference_id",
+            "reference_name",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.referenceSubmitSourceBatchId}
+          hiddenFields={{ entity_key: summary.entity.key }}
+          title={`编辑${summary.entity.label}`}
+          description="修正单个对象名称或状态，未填字段由后端保留原值。"
+          submitLabel="提交编辑"
+          fields={["reference_id", "reference_name", "status"]}
+        />
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="freeze"
+          sourceBatchId={summary.referenceSubmitSourceBatchId}
+          hiddenFields={{ entity_key: summary.entity.key }}
+          title={`冻结${summary.entity.label}`}
+          description="冻结单个对象，并保留名称与有效期。"
+          submitLabel="提交冻结"
+          fields={["reference_id"]}
+        />
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="effective_period"
+          sourceBatchId={summary.referenceSubmitSourceBatchId}
+          hiddenFields={{ entity_key: summary.entity.key }}
+          title="调整有效期"
+          description="只调整单个对象有效期，不改变名称和状态。"
+          submitLabel="提交有效期"
+          fields={["reference_id", "effective_from", "effective_to"]}
+        />
+      </div>
+    </section>
+  )
+}
+
+function BindingMaintenanceSubmitSection({
+  summary,
+  action,
+}: {
+  summary: MasterDataEntityDetailSummary
+  action?: (formData: FormData) => Promise<void>
+}) {
+  if (!action || !summary.bindingSubmitSourceBatchId) {
+    return null
+  }
+
+  return (
+    <section className="grid gap-3">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-base font-semibold tracking-normal">
+          绑定关系受控提交
+        </h2>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          仅提交单条坐席、供应商、职场、项目、技能绑定关系。来源批次固定为{" "}
+          <span className="font-mono text-foreground">
+            {summary.bindingSubmitSourceBatchId}
+          </span>
+          ，绑定关系没有冻结状态字段，因此冻结动作保持禁用。
+        </p>
+      </div>
+      <div className="grid gap-3 xl:grid-cols-2">
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.bindingSubmitSourceBatchId}
+          title="新增绑定关系"
+          description="创建单条人员、供应商、职场、项目和技能绑定关系。"
+          submitLabel="提交新增"
+          fields={[
+            "binding_id",
+            "employee_id",
+            "supplier_id",
+            "workplace_id",
+            "project_id",
+            "skill_id",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.bindingSubmitSourceBatchId}
+          title="编辑绑定关系"
+          description="修正单条绑定关系引用对象，未填字段由后端保留原值。"
+          submitLabel="提交编辑"
+          fields={[
+            "binding_id",
+            "employee_id",
+            "supplier_id",
+            "workplace_id",
+            "project_id",
+            "skill_id",
+          ]}
+        />
+        <AgentMaintenanceForm
+          action={action}
+          actionKey="effective_period"
+          sourceBatchId={summary.bindingSubmitSourceBatchId}
+          title="调整绑定有效期"
+          description="只调整单条绑定关系有效期，不改变引用对象。"
+          submitLabel="提交有效期"
+          fields={["binding_id", "effective_from", "effective_to"]}
+        />
+      </div>
+    </section>
+  )
+}
+
 type AgentMaintenanceField =
   | "employee_id"
   | "employee_name"
+  | "reference_id"
+  | "reference_name"
+  | "binding_id"
+  | "supplier_id"
+  | "workplace_id"
+  | "project_id"
+  | "skill_id"
   | "status"
   | "effective_from"
   | "effective_to"
@@ -559,6 +741,7 @@ function AgentMaintenanceForm({
   description,
   submitLabel,
   fields,
+  hiddenFields = {},
 }: {
   action: (formData: FormData) => Promise<void>
   actionKey: "create" | "edit" | "freeze" | "effective_period"
@@ -567,6 +750,7 @@ function AgentMaintenanceForm({
   description: string
   submitLabel: string
   fields: AgentMaintenanceField[]
+  hiddenFields?: Record<string, string>
 }) {
   return (
     <Card>
@@ -577,8 +761,19 @@ function AgentMaintenanceForm({
         <form action={action} className="grid gap-3">
           <input type="hidden" name="action" value={actionKey} />
           <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
           <p className="text-sm text-muted-foreground">{description}</p>
           <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("binding_id") ? (
+              <MaintenanceInput
+                label="绑定关系 ID"
+                name="binding_id"
+                placeholder="BIND-1001"
+                required
+              />
+            ) : null}
             {fields.includes("employee_id") ? (
               <MaintenanceInput
                 label="坐席 ID"
@@ -592,6 +787,54 @@ function AgentMaintenanceForm({
                 label="坐席姓名"
                 name="employee_name"
                 placeholder="输入坐席姓名"
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("reference_id") ? (
+              <MaintenanceInput
+                label={`${title.replace(/^新增|^编辑|^冻结/, "")} ID`}
+                name="reference_id"
+                placeholder="OBJ-1001"
+                required
+              />
+            ) : null}
+            {fields.includes("reference_name") ? (
+              <MaintenanceInput
+                label="对象名称"
+                name="reference_name"
+                placeholder="输入对象名称"
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("supplier_id") ? (
+              <MaintenanceInput
+                label="供应商 ID"
+                name="supplier_id"
+                placeholder="SUP-001"
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("workplace_id") ? (
+              <MaintenanceInput
+                label="职场 ID"
+                name="workplace_id"
+                placeholder="SITE-001"
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("project_id") ? (
+              <MaintenanceInput
+                label="项目 ID"
+                name="project_id"
+                placeholder="PROJ-001"
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("skill_id") ? (
+              <MaintenanceInput
+                label="技能 ID"
+                name="skill_id"
+                placeholder="SKILL-001"
                 required={actionKey === "create"}
               />
             ) : null}

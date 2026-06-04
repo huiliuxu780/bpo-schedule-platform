@@ -6,8 +6,15 @@ import { buildImportApiUrl } from "@/components/import-center-model"
 import {
   type MasterDataAgentMaintenanceActionKey,
   type MasterDataAgentMaintenanceStatus,
+  type MasterDataBindingMaintenanceDraft,
+  type MasterDataMaintenanceEntityKey,
+  type MasterDataReferenceMaintenanceType,
   buildMasterDataAgentMaintenanceApiPath,
   buildMasterDataAgentMaintenancePayload,
+  buildMasterDataBindingMaintenanceApiPath,
+  buildMasterDataBindingMaintenancePayload,
+  buildMasterDataReferenceMaintenanceApiPath,
+  buildMasterDataReferenceMaintenancePayload,
 } from "@/components/master-data-maintenance-model"
 
 const AGENT_ACTIONS = new Set<MasterDataAgentMaintenanceActionKey>([
@@ -23,6 +30,21 @@ const AGENT_STATUSES = new Set<MasterDataAgentMaintenanceStatus>([
   "inactive",
 ])
 
+const BINDING_ACTIONS = new Set<MasterDataBindingMaintenanceDraft["action"]>([
+  "create",
+  "edit",
+  "effective_period",
+])
+
+const REFERENCE_TYPE_BY_ENTITY_KEY: Partial<
+  Record<MasterDataMaintenanceEntityKey, MasterDataReferenceMaintenanceType>
+> = {
+  sites: "workplaces",
+  vendors: "suppliers",
+  projects: "projects",
+  skills: "skills",
+}
+
 export async function submitMasterDataAgentMaintenance(
   formData: FormData
 ): Promise<void> {
@@ -34,11 +56,11 @@ export async function submitMasterDataAgentMaintenance(
     const sourceBatchId = getFormValue(formData, "source_batch_id")
 
     if (!employeeId || !sourceBatchId) {
-      redirectHref = buildMaintenanceRedirect({
-        maintenance_status: "error",
-        maintenance_code: "MISSING_REQUIRED_FIELD",
-        maintenance_message: "坐席 ID 和来源批次不能为空",
-      })
+        redirectHref = buildMaintenanceRedirect("agents", {
+          maintenance_status: "error",
+          maintenance_code: "MISSING_REQUIRED_FIELD",
+          maintenance_message: "坐席 ID 和来源批次不能为空",
+        })
     } else {
       const payload = buildMasterDataAgentMaintenancePayload({
         action,
@@ -63,7 +85,7 @@ export async function submitMasterDataAgentMaintenance(
 
       if (!response.ok) {
         const error = await readMaintenanceApiError(response)
-        redirectHref = buildMaintenanceRedirect({
+        redirectHref = buildMaintenanceRedirect("agents", {
           maintenance_status: "error",
           maintenance_code: error.code,
           maintenance_message: error.message,
@@ -77,19 +99,187 @@ export async function submitMasterDataAgentMaintenance(
             status?: string
           }
         }
-        redirectHref = buildMaintenanceRedirect({
+        redirectHref = buildMaintenanceRedirect("agents", {
           maintenance_status: "success",
           action_status: result.action_status ?? "submitted",
-          employee_id: result.employee?.employee_id ?? employeeId,
-          employee_name: result.employee?.employee_name ?? "未返回姓名",
-          employee_status: result.employee?.status ?? "unknown",
+          record_id: result.employee?.employee_id ?? employeeId,
+          record_name: result.employee?.employee_name ?? "未返回姓名",
+          record_status: result.employee?.status ?? "unknown",
         })
       }
     }
   } catch (error) {
-    redirectHref = buildMaintenanceRedirect({
+    redirectHref = buildMaintenanceRedirect("agents", {
       maintenance_status: "error",
       maintenance_code: "MASTER_DATA_AGENT_SUBMIT_FAILED",
+      maintenance_message: formatMaintenanceError(error),
+    })
+  }
+
+  redirect(redirectHref)
+}
+
+export async function submitMasterDataReferenceMaintenance(
+  formData: FormData
+): Promise<void> {
+  let redirectHref: string
+  const entityKey = parseEntityKey(formData.get("entity_key"))
+
+  try {
+    const referenceType = REFERENCE_TYPE_BY_ENTITY_KEY[entityKey]
+    const action = parseAction(formData.get("action"))
+    const referenceId = getFormValue(formData, "reference_id")
+    const sourceBatchId = getFormValue(formData, "source_batch_id")
+
+    if (!referenceType) {
+      redirectHref = buildMaintenanceRedirect(entityKey, {
+        maintenance_status: "error",
+        maintenance_code: "MASTER_DATA_REFERENCE_TYPE_INVALID",
+        maintenance_message: "当前对象不支持引用维护提交",
+      })
+    } else if (!referenceId || !sourceBatchId) {
+      redirectHref = buildMaintenanceRedirect(entityKey, {
+        maintenance_status: "error",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "对象 ID 和来源批次不能为空",
+      })
+    } else {
+      const payload = buildMasterDataReferenceMaintenancePayload({
+        action,
+        sourceBatchId,
+        referenceId,
+        referenceName: getFormValue(formData, "reference_name"),
+        status: parseStatus(formData.get("status")),
+        effectiveFrom: getFormValue(formData, "effective_from"),
+        effectiveTo: getFormValue(formData, "effective_to"),
+      })
+      const response = await fetch(
+        buildImportApiUrl(
+          buildMasterDataReferenceMaintenanceApiPath(referenceType, referenceId)
+        ),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        }
+      )
+
+      if (!response.ok) {
+        const error = await readMaintenanceApiError(response)
+        redirectHref = buildMaintenanceRedirect(entityKey, {
+          maintenance_status: "error",
+          maintenance_code: error.code,
+          maintenance_message: error.message,
+        })
+      } else {
+        const result = (await response.json()) as {
+          action_status?: string
+          reference?: {
+            reference_id?: string
+            reference_name?: string
+            status?: string
+          }
+        }
+        redirectHref = buildMaintenanceRedirect(entityKey, {
+          maintenance_status: "success",
+          action_status: result.action_status ?? "submitted",
+          record_id: result.reference?.reference_id ?? referenceId,
+          record_name: result.reference?.reference_name ?? "未返回名称",
+          record_status: result.reference?.status ?? "unknown",
+        })
+      }
+    }
+  } catch (error) {
+    redirectHref = buildMaintenanceRedirect(entityKey, {
+      maintenance_status: "error",
+      maintenance_code: "MASTER_DATA_REFERENCE_SUBMIT_FAILED",
+      maintenance_message: formatMaintenanceError(error),
+    })
+  }
+
+  redirect(redirectHref)
+}
+
+export async function submitMasterDataBindingMaintenance(
+  formData: FormData
+): Promise<void> {
+  let redirectHref: string
+
+  try {
+    const action = parseBindingAction(formData.get("action"))
+    const bindingId = getFormValue(formData, "binding_id")
+    const sourceBatchId = getFormValue(formData, "source_batch_id")
+
+    if (!bindingId || !sourceBatchId) {
+      redirectHref = buildMaintenanceRedirect("bindings", {
+        maintenance_status: "error",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "绑定关系 ID 和来源批次不能为空",
+      })
+    } else {
+      const payload = buildMasterDataBindingMaintenancePayload({
+        action,
+        sourceBatchId,
+        bindingId,
+        employeeId: getFormValue(formData, "employee_id"),
+        supplierId: getFormValue(formData, "supplier_id"),
+        workplaceId: getFormValue(formData, "workplace_id"),
+        projectId: getFormValue(formData, "project_id"),
+        skillId: getFormValue(formData, "skill_id"),
+        effectiveFrom: getFormValue(formData, "effective_from"),
+        effectiveTo: getFormValue(formData, "effective_to"),
+      })
+      const response = await fetch(
+        buildImportApiUrl(buildMasterDataBindingMaintenanceApiPath(bindingId)),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        }
+      )
+
+      if (!response.ok) {
+        const error = await readMaintenanceApiError(response)
+        redirectHref = buildMaintenanceRedirect("bindings", {
+          maintenance_status: "error",
+          maintenance_code: error.code,
+          maintenance_message: error.message,
+        })
+      } else {
+        const result = (await response.json()) as {
+          action_status?: string
+          binding?: {
+            binding_id?: string
+            employee_id?: string
+            project_id?: string
+            skill_id?: string
+          }
+        }
+        const binding = result.binding
+        const bindingName =
+          [binding?.employee_id, binding?.project_id, binding?.skill_id]
+            .filter(Boolean)
+            .join(" / ") || "未返回绑定对象"
+
+        redirectHref = buildMaintenanceRedirect("bindings", {
+          maintenance_status: "success",
+          action_status: result.action_status ?? "submitted",
+          record_id: binding?.binding_id ?? bindingId,
+          record_name: bindingName,
+          record_status: "validated",
+        })
+      }
+    }
+  } catch (error) {
+    redirectHref = buildMaintenanceRedirect("bindings", {
+      maintenance_status: "error",
+      maintenance_code: "MASTER_DATA_BINDING_SUBMIT_FAILED",
       maintenance_message: formatMaintenanceError(error),
     })
   }
@@ -104,6 +294,28 @@ function parseAction(value: FormDataEntryValue | null): MasterDataAgentMaintenan
   }
 
   throw new Error("未知坐席维护动作")
+}
+
+function parseBindingAction(
+  value: FormDataEntryValue | null
+): MasterDataBindingMaintenanceDraft["action"] {
+  const action = String(value ?? "")
+  if (BINDING_ACTIONS.has(action as MasterDataBindingMaintenanceDraft["action"])) {
+    return action as MasterDataBindingMaintenanceDraft["action"]
+  }
+
+  throw new Error("未知绑定关系维护动作")
+}
+
+function parseEntityKey(
+  value: FormDataEntryValue | null
+): MasterDataMaintenanceEntityKey {
+  const entityKey = String(value ?? "")
+  if (entityKey in REFERENCE_TYPE_BY_ENTITY_KEY) {
+    return entityKey as MasterDataMaintenanceEntityKey
+  }
+
+  return "agents"
 }
 
 function parseStatus(
@@ -135,19 +347,22 @@ async function readMaintenanceApiError(response: Response) {
 
     return {
       code: error?.code ?? `HTTP_${response.status}`,
-      message: error?.message ?? `坐席维护 API 返回 ${response.status}`,
+      message: error?.message ?? `主数据维护 API 返回 ${response.status}`,
     }
   } catch {
     return {
       code: `HTTP_${response.status}`,
-      message: `坐席维护 API 返回 ${response.status}`,
+      message: `主数据维护 API 返回 ${response.status}`,
     }
   }
 }
 
-function buildMaintenanceRedirect(params: Record<string, string>) {
+function buildMaintenanceRedirect(
+  entityKey: MasterDataMaintenanceEntityKey,
+  params: Record<string, string>
+) {
   const searchParams = new URLSearchParams(params)
-  return `/master-data/agents?${searchParams.toString()}`
+  return `/master-data/${entityKey}?${searchParams.toString()}`
 }
 
 function formatMaintenanceError(error: unknown): string {
@@ -155,5 +370,5 @@ function formatMaintenanceError(error: unknown): string {
     return error.message
   }
 
-  return "坐席维护提交失败"
+  return "主数据维护提交失败"
 }

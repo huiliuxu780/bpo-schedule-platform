@@ -2481,6 +2481,6 @@ description: "坐席维护闭环验证后，再将同一维护能力扩展到职
 source: "After R809 planning on 2026-06-04"
 submitted_at: "2026-06-04"
 version: "1.0"
-status: "ready"
-notes: "IM110 下一步可扩展到职场、供应商、项目、技能和绑定关系；该任务仍需 PM confirmation，且不得新增 schema/migration、权限、审批、导出、批量或生产公式。"
+status: "done"
+notes: "IM110 已完成：后端新增职场、供应商、项目、技能单实体维护与绑定关系维护入口；前端在对应详情页开放受控提交表单，绑定关系提交校验坐席、供应商、职场、项目和技能引用，并保持冻结动作禁用；未新增 schema/migration、权限、审批、导出、批量或生产公式。"
 ```

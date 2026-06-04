@@ -10,9 +10,9 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-`US717/IM097` completed master-data entity detail and reference-impact visibility. Current story queue is empty.
+`US730/IM110` completed the master-data maintenance expansion to workplaces, suppliers, projects, skills, and bindings. Current story queue is empty.
 
-The master-data maintenance chain now has `/master-data` plus `/master-data/[entityKey]` as read-only surfaces. `US718/IM098` remains outside `docs/current/**` because it introduces controlled maintenance actions and requires PM confirmation before any write-capability planning or implementation.
+The master-data maintenance chain now has `/master-data` plus `/master-data/[entityKey]` surfaces with controlled single-object submit paths for agents, reference entities, and binding relationships. Permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors remain out of scope.
 
 `US703/IM083` completed the single-batch import apply entry on the second-level batch detail page, then the next chain was reseeded from empty current state with `US704/IM084` only.
 
@@ -149,6 +149,6 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US728/IM108` completed the master-data CRUD backend base: `/api/v1/master-data/employees/{employee_id}/maintenance` now supports single-agent create, edit, freeze, and effective-period changes without schema/migration work.
 
-`US729/IM109` completed the agent-only frontend loop: `/master-data/agents` now shows controlled create, edit, freeze, and effective-period submit forms backed by a server action that calls IM108 and returns success/failure feedback. Non-agent master-data entities remain read-only safety shells.
+`US729/IM109` completed the agent-only frontend loop: `/master-data/agents` now shows controlled create, edit, freeze, and effective-period submit forms backed by a server action that calls IM108 and returns success/failure feedback.
 
-Current queue advanced to `US730/IM110`: extend the maintenance pattern to workplaces, suppliers, projects, skills, and bindings. IM110 still requires PM confirmation before implementation and must not add permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors.
+`US730/IM110` completed the broader master-data maintenance loop: backend APIs now support workplaces, suppliers, projects, skills, and binding relationship maintenance; `/master-data/sites`, `/master-data/vendors`, `/master-data/projects`, `/master-data/skills`, and `/master-data/bindings` now expose controlled submit forms. Binding maintenance validates employee, supplier, workplace, project, and skill references and keeps freeze disabled because binding rows have no status field. Current queue returned to empty after this slice.

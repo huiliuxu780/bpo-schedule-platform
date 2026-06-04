@@ -8400,7 +8400,7 @@ tasks:
   - id: IM110
     title: "主数据维护扩展到其他对象与绑定关系"
     priority: P1
-    status: ready
+    status: done
     required_workflow: database-persistence
     dependencies: ["IM109"]
     allowed_files:
@@ -8441,3 +8441,4 @@ tasks:
       - "范围扩展到权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算或收费因子"
       - "验证失败"
     commit_after_done: true
+    done_notes: "已扩展后端维护能力到职场、供应商、项目、技能和绑定关系；前端对应详情页提供受控提交表单和反馈；绑定关系维护校验坐席、供应商、职场、项目、技能引用，并因无绑定状态字段保持冻结动作禁用。"

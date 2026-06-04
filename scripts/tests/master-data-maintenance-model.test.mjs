@@ -5,6 +5,10 @@ import {
   MASTER_DATA_MAINTENANCE_ENTITIES,
   buildMasterDataAgentMaintenanceApiPath,
   buildMasterDataAgentMaintenancePayload,
+  buildMasterDataBindingMaintenanceApiPath,
+  buildMasterDataBindingMaintenancePayload,
+  buildMasterDataReferenceMaintenanceApiPath,
+  buildMasterDataReferenceMaintenancePayload,
   getMasterDataMaintenanceEntity,
   summarizeMasterDataAgentMaintenanceFeedback,
   summarizeMasterDataMaintenanceEntityDetail,
@@ -122,10 +126,10 @@ test("master data entity detail exposes source context and empty reference impac
     detail.maintenanceActions.map((action) => action.label),
     ["新增绑定关系", "编辑绑定关系", "冻结绑定关系", "调整绑定关系有效期"],
   );
-  assert.equal(detail.maintenanceActions[0].canSubmit, false);
-  assert.equal(detail.maintenanceActions[0].submitLabel, "暂不提交");
+  assert.equal(detail.maintenanceActions[0].canSubmit, true);
+  assert.equal(detail.maintenanceActions[0].submitLabel, "提交新增");
   assert.match(detail.maintenanceActions[0].referenceCheckLabel, /引用影响校验/);
-  assert.match(detail.maintenanceActions[0].failureBoundary, /后端写入未接入/);
+  assert.match(detail.maintenanceActions[0].failureBoundary, /主数据单对象 API/);
 });
 
 test("agent detail enables controlled submit actions only for agents", () => {
@@ -138,8 +142,9 @@ test("agent detail enables controlled submit actions only for agents", () => {
   assert.equal(agentDetail.maintenanceActions[2].submitLabel, "提交冻结");
   assert.equal(agentDetail.maintenanceActions[3].submitLabel, "提交有效期");
   assert.equal(agentDetail.agentSubmitSourceBatchId, "BATCH-MD-001");
-  assert.equal(skillDetail.maintenanceActions[0].canSubmit, false);
-  assert.equal(skillDetail.maintenanceActions[0].submitLabel, "暂不提交");
+  assert.equal(skillDetail.maintenanceActions[0].canSubmit, true);
+  assert.equal(skillDetail.maintenanceActions[0].submitLabel, "提交新增");
+  assert.equal(skillDetail.referenceSubmitSourceBatchId, "BATCH-MD-001");
 });
 
 test("agent maintenance payload maps create edit freeze and effective period actions", () => {
@@ -195,6 +200,76 @@ test("agent maintenance payload maps create edit freeze and effective period act
   );
 });
 
+test("reference maintenance payload maps non-agent master data objects", () => {
+  assert.equal(
+    buildMasterDataReferenceMaintenanceApiPath("skills", "SKILL 100/1"),
+    "/api/v1/master-data/skills/SKILL%20100%2F1/maintenance",
+  );
+  assert.deepEqual(
+    buildMasterDataReferenceMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      referenceId: "SKILL-1001",
+      referenceName: "粤语",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "粤语",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+});
+
+test("binding maintenance payload maps relationship references and keeps freeze disabled", () => {
+  const detail = summarizeMasterDataMaintenanceEntityDetail("bindings", [baseBatch]);
+
+  assert.equal(detail.bindingSubmitSourceBatchId, "BATCH-MD-001");
+  assert.deepEqual(
+    detail.maintenanceActions.map((action) => [action.key, action.canSubmit]),
+    [
+      ["create", true],
+      ["edit", true],
+      ["freeze", false],
+      ["effective_period", true],
+    ],
+  );
+  assert.equal(
+    buildMasterDataBindingMaintenanceApiPath("BIND 100/1"),
+    "/api/v1/master-data/bindings/BIND%20100%2F1/maintenance",
+  );
+  assert.deepEqual(
+    buildMasterDataBindingMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      bindingId: "BIND-1001",
+      employeeId: "A-1001",
+      supplierId: "SUP-001",
+      workplaceId: "SITE-001",
+      projectId: "PROJ-001",
+      skillId: "SKILL-001",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      employee_id: "A-1001",
+      supplier_id: "SUP-001",
+      workplace_id: "SITE-001",
+      project_id: "PROJ-001",
+      skill_id: "SKILL-001",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+});
+
 test("agent maintenance feedback summarizes success and backend error codes", () => {
   assert.deepEqual(
     summarizeMasterDataAgentMaintenanceFeedback({
@@ -206,7 +281,7 @@ test("agent maintenance feedback summarizes success and backend error codes", ()
     }),
     {
       tone: "success",
-      title: "坐席维护已提交",
+      title: "主数据维护已提交",
       detail: "A-1001 王一 已 created，当前状态 active。",
     },
   );
@@ -219,7 +294,7 @@ test("agent maintenance feedback summarizes success and backend error codes", ()
     }),
     {
       tone: "error",
-      title: "坐席维护提交失败",
+      title: "主数据维护提交失败",
       detail: "EMPLOYEE_NOT_FOUND: EMPLOYEE_NOT_FOUND: A-404",
     },
   );

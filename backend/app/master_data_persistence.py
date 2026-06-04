@@ -9,6 +9,8 @@ from backend.app.models import (
     EmployeeBindingRecord,
     EmployeeMasterDataInput,
     MasterDataEmployeeRecord,
+    MasterDataReferenceRecord,
+    MasterDataReferenceType,
     MasterDataReferenceInput,
     MasterDataSnapshotRequest,
 )
@@ -130,6 +132,15 @@ ReferenceEntity = TypeVar(
     EmployeeEntity,
 )
 
+ReferenceConfig = tuple[type[ReferenceEntity], str, str]
+
+REFERENCE_CONFIGS: dict[MasterDataReferenceType, ReferenceConfig] = {
+    "suppliers": (SupplierEntity, "supplier_id", "supplier_name"),
+    "workplaces": (WorkplaceEntity, "workplace_id", "workplace_name"),
+    "projects": (ProjectEntity, "project_id", "project_name"),
+    "skills": (SkillEntity, "skill_id", "skill_name"),
+}
+
 
 class MasterDataPersistenceRepository:
     def __init__(self, database_url: str | None = None):
@@ -211,6 +222,44 @@ class MasterDataPersistenceRepository:
                 return None
             return _employee_record(employee)
 
+    def get_reference(
+        self,
+        reference_type: MasterDataReferenceType,
+        reference_id: str,
+    ) -> MasterDataReferenceRecord | None:
+        entity_class, id_field, name_field = _reference_config(reference_type)
+        with self.session_factory() as session:
+            reference = session.get(entity_class, reference_id)
+            if reference is None:
+                return None
+            return _reference_record(reference, id_field, name_field)
+
+    def upsert_reference(
+        self,
+        reference_type: MasterDataReferenceType,
+        reference: MasterDataReferenceInput,
+        batch_id: str,
+    ) -> MasterDataReferenceRecord:
+        entity_class, id_field, name_field = _reference_config(reference_type)
+        with self.session_factory.begin() as session:
+            session.merge(
+                entity_class(
+                    **{
+                        id_field: reference.reference_id,
+                        name_field: reference.reference_name,
+                        "status": reference.status,
+                        "effective_from": reference.effective_from,
+                        "effective_to": reference.effective_to,
+                        "batch_id": batch_id,
+                    }
+                )
+            )
+            session.flush()
+            stored = session.get(entity_class, reference.reference_id)
+            if stored is None:
+                raise ValueError(f"REFERENCE_WRITE_FAILED: {reference.reference_id}")
+            return _reference_record(stored, id_field, name_field)
+
     def upsert_employee(
         self,
         employee: EmployeeMasterDataInput,
@@ -225,22 +274,26 @@ class MasterDataPersistenceRepository:
                 raise ValueError(f"EMPLOYEE_WRITE_FAILED: {employee.employee_id}")
             return _employee_record(stored)
 
+    def upsert_employee_binding(
+        self,
+        binding: EmployeeBindingInput,
+        batch_id: str,
+    ) -> EmployeeBindingRecord:
+        with self.session_factory.begin() as session:
+            self._validate_binding(session, binding)
+            session.merge(_binding_entity(binding, batch_id))
+            session.flush()
+            stored = session.get(EmployeeBindingEntity, binding.binding_id)
+            if stored is None:
+                raise ValueError(f"BINDING_WRITE_FAILED: {binding.binding_id}")
+            return _binding_record(stored)
+
     def get_employee_binding(self, binding_id: str) -> EmployeeBindingRecord | None:
         with self.session_factory() as session:
             binding = session.get(EmployeeBindingEntity, binding_id)
             if binding is None:
                 return None
-            return EmployeeBindingRecord(
-                binding_id=binding.binding_id,
-                employee_id=binding.employee_id,
-                supplier_id=binding.supplier_id,
-                workplace_id=binding.workplace_id,
-                project_id=binding.project_id,
-                skill_id=binding.skill_id,
-                effective_from=binding.effective_from,
-                effective_to=binding.effective_to,
-                batch_id=binding.batch_id,
-            )
+            return _binding_record(binding)
 
     def _upsert_references(
         self,
@@ -315,6 +368,39 @@ def _employee_record(employee: EmployeeEntity) -> MasterDataEmployeeRecord:
         effective_from=employee.effective_from,
         effective_to=employee.effective_to,
         batch_id=employee.batch_id,
+    )
+
+
+def _reference_config(reference_type: MasterDataReferenceType) -> ReferenceConfig:
+    return REFERENCE_CONFIGS[reference_type]
+
+
+def _reference_record(
+    reference: ReferenceEntity,
+    id_field: str,
+    name_field: str,
+) -> MasterDataReferenceRecord:
+    return MasterDataReferenceRecord(
+        reference_id=getattr(reference, id_field),
+        reference_name=getattr(reference, name_field),
+        status=reference.status,
+        effective_from=reference.effective_from,
+        effective_to=reference.effective_to,
+        batch_id=reference.batch_id,
+    )
+
+
+def _binding_record(binding: EmployeeBindingEntity) -> EmployeeBindingRecord:
+    return EmployeeBindingRecord(
+        binding_id=binding.binding_id,
+        employee_id=binding.employee_id,
+        supplier_id=binding.supplier_id,
+        workplace_id=binding.workplace_id,
+        project_id=binding.project_id,
+        skill_id=binding.skill_id,
+        effective_from=binding.effective_from,
+        effective_to=binding.effective_to,
+        batch_id=binding.batch_id,
     )
 
 

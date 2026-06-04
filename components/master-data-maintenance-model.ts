@@ -68,6 +68,11 @@ export type MasterDataMaintenanceAction = {
 export type MasterDataAgentMaintenanceActionKey = MasterDataMaintenanceAction["key"]
 
 export type MasterDataAgentMaintenanceStatus = "active" | "frozen" | "inactive"
+export type MasterDataReferenceMaintenanceType =
+  | "suppliers"
+  | "workplaces"
+  | "projects"
+  | "skills"
 
 export type MasterDataAgentMaintenanceDraft = {
   action: MasterDataAgentMaintenanceActionKey
@@ -77,6 +82,50 @@ export type MasterDataAgentMaintenanceDraft = {
   status?: MasterDataAgentMaintenanceStatus
   effectiveFrom?: string
   effectiveTo?: string
+}
+
+export type MasterDataReferenceMaintenanceDraft = {
+  action: MasterDataAgentMaintenanceActionKey
+  sourceBatchId: string
+  referenceId: string
+  referenceName?: string
+  status?: MasterDataAgentMaintenanceStatus
+  effectiveFrom?: string
+  effectiveTo?: string
+}
+
+export type MasterDataReferenceMaintenancePayload = {
+  action: MasterDataAgentMaintenanceActionKey
+  source_batch_id: string
+  reference_name?: string
+  status?: MasterDataAgentMaintenanceStatus
+  effective_from?: string
+  effective_to?: string
+}
+
+export type MasterDataBindingMaintenanceDraft = {
+  action: "create" | "edit" | "effective_period"
+  sourceBatchId: string
+  bindingId: string
+  employeeId?: string
+  supplierId?: string
+  workplaceId?: string
+  projectId?: string
+  skillId?: string
+  effectiveFrom?: string
+  effectiveTo?: string
+}
+
+export type MasterDataBindingMaintenancePayload = {
+  action: "create" | "edit" | "effective_period"
+  source_batch_id: string
+  employee_id?: string
+  supplier_id?: string
+  workplace_id?: string
+  project_id?: string
+  skill_id?: string
+  effective_from?: string
+  effective_to?: string
 }
 
 export type MasterDataAgentMaintenancePayload = {
@@ -108,6 +157,8 @@ export type MasterDataEntityDetailSummary = {
   referenceImpacts: MasterDataReferenceImpact[]
   maintenanceActions: MasterDataMaintenanceAction[]
   agentSubmitSourceBatchId: string | null
+  referenceSubmitSourceBatchId: string | null
+  bindingSubmitSourceBatchId: string | null
 }
 
 export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
@@ -252,6 +303,14 @@ export function summarizeMasterDataMaintenanceEntityDetail(
     entity.key === "agents" && workbench.latestBatchLabel !== "暂无主数据批次"
       ? workbench.latestBatchLabel
       : null
+  const referenceSubmitSourceBatchId =
+    isReferenceEntity(entity.key) && workbench.latestBatchLabel !== "暂无主数据批次"
+      ? workbench.latestBatchLabel
+      : null
+  const bindingSubmitSourceBatchId =
+    entity.key === "bindings" && workbench.latestBatchLabel !== "暂无主数据批次"
+      ? workbench.latestBatchLabel
+      : null
 
   return {
     entity,
@@ -273,9 +332,13 @@ export function summarizeMasterDataMaintenanceEntityDetail(
     maintenanceActions: buildMasterDataMaintenanceActions(
       entity,
       isSourceReady,
-      Boolean(agentSubmitSourceBatchId)
+      Boolean(agentSubmitSourceBatchId),
+      Boolean(referenceSubmitSourceBatchId),
+      Boolean(bindingSubmitSourceBatchId)
     ),
     agentSubmitSourceBatchId,
+    referenceSubmitSourceBatchId,
+    bindingSubmitSourceBatchId,
   }
 }
 
@@ -296,31 +359,88 @@ export function buildMasterDataAgentMaintenancePayload(
   })
 }
 
+export function buildMasterDataReferenceMaintenanceApiPath(
+  referenceType: MasterDataReferenceMaintenanceType,
+  referenceId: string
+): string {
+  return `/api/v1/master-data/${referenceType}/${encodeURIComponent(referenceId)}/maintenance`
+}
+
+export function buildMasterDataReferenceMaintenancePayload(
+  draft: MasterDataReferenceMaintenanceDraft
+): MasterDataReferenceMaintenancePayload {
+  return compactMasterDataReferenceMaintenancePayload({
+    action: draft.action,
+    source_batch_id: draft.sourceBatchId,
+    reference_name: draft.referenceName,
+    status: draft.status,
+    effective_from: draft.effectiveFrom,
+    effective_to: draft.effectiveTo,
+  })
+}
+
+export function buildMasterDataBindingMaintenanceApiPath(bindingId: string): string {
+  return `/api/v1/master-data/bindings/${encodeURIComponent(bindingId)}/maintenance`
+}
+
+export function buildMasterDataBindingMaintenancePayload(
+  draft: MasterDataBindingMaintenanceDraft
+): MasterDataBindingMaintenancePayload {
+  return compactMasterDataBindingMaintenancePayload({
+    action: draft.action,
+    source_batch_id: draft.sourceBatchId,
+    employee_id: draft.employeeId,
+    supplier_id: draft.supplierId,
+    workplace_id: draft.workplaceId,
+    project_id: draft.projectId,
+    skill_id: draft.skillId,
+    effective_from: draft.effectiveFrom,
+    effective_to: draft.effectiveTo,
+  })
+}
+
 export function summarizeMasterDataAgentMaintenanceFeedback(
+  searchParams: Record<string, string | string[] | undefined>
+): MasterDataAgentMaintenanceFeedback | null {
+  return summarizeMasterDataMaintenanceFeedback(searchParams)
+}
+
+export function summarizeMasterDataMaintenanceFeedback(
   searchParams: Record<string, string | string[] | undefined>
 ): MasterDataAgentMaintenanceFeedback | null {
   const status = getSingleSearchParam(searchParams.maintenance_status)
 
   if (status === "success") {
-    const employeeId = getSingleSearchParam(searchParams.employee_id) || "未知坐席"
-    const employeeName = getSingleSearchParam(searchParams.employee_name) || "未返回姓名"
-    const employeeStatus = getSingleSearchParam(searchParams.employee_status) || "未知状态"
+    const recordId =
+      getSingleSearchParam(searchParams.record_id) ||
+      getSingleSearchParam(searchParams.employee_id) ||
+      "未知对象"
+    const recordName =
+      getSingleSearchParam(searchParams.record_name) ||
+      getSingleSearchParam(searchParams.employee_name) ||
+      "未返回名称"
+    const recordStatus =
+      getSingleSearchParam(searchParams.record_status) ||
+      getSingleSearchParam(searchParams.employee_status) ||
+      "未知状态"
     const actionStatus = getSingleSearchParam(searchParams.action_status) || "submitted"
 
     return {
       tone: "success",
-      title: "坐席维护已提交",
-      detail: `${employeeId} ${employeeName} 已 ${actionStatus}，当前状态 ${employeeStatus}。`,
+      title: "主数据维护已提交",
+      detail: `${recordId} ${recordName} 已 ${actionStatus}，当前状态 ${recordStatus}。`,
     }
   }
 
   if (status === "error") {
-    const code = getSingleSearchParam(searchParams.maintenance_code) || "MASTER_DATA_AGENT_SUBMIT_FAILED"
+    const code =
+      getSingleSearchParam(searchParams.maintenance_code) ||
+      "MASTER_DATA_MAINTENANCE_SUBMIT_FAILED"
     const message = getSingleSearchParam(searchParams.maintenance_message) || "后端未返回错误说明"
 
     return {
       tone: "error",
-      title: "坐席维护提交失败",
+      title: "主数据维护提交失败",
       detail: `${code}: ${message}`,
     }
   }
@@ -374,10 +494,18 @@ function buildMasterDataReferenceImpacts(
 function buildMasterDataMaintenanceActions(
   entity: MasterDataMaintenanceEntity,
   isSourceReady: boolean,
-  hasSourceBatch: boolean
+  hasAgentSourceBatch: boolean,
+  hasReferenceSourceBatch: boolean,
+  hasBindingSourceBatch: boolean
 ): MasterDataMaintenanceAction[] {
   const actionLabels = buildMasterDataActionLabels(entity.label)
-  const canSubmitAgent = entity.key === "agents" && hasSourceBatch
+  const canSubmitAgent = entity.key === "agents" && hasAgentSourceBatch
+  const canSubmitReference = isReferenceEntity(entity.key) && hasReferenceSourceBatch
+  const canSubmitBinding = entity.key === "bindings" && hasBindingSourceBatch
+  const canSubmitCreate = canSubmitAgent || canSubmitReference || canSubmitBinding
+  const canSubmitEdit = canSubmitAgent || canSubmitReference || canSubmitBinding
+  const canSubmitFreeze = canSubmitAgent || canSubmitReference
+  const canSubmitEffectivePeriod = canSubmitAgent || canSubmitReference || canSubmitBinding
 
   return [
     {
@@ -387,8 +515,8 @@ function buildMasterDataMaintenanceActions(
       targetScope: `仅限单个${entity.label}对象，不进入批量新增。`,
       referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
       failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
-      submitLabel: canSubmitAgent ? "提交新增" : "暂不提交",
-      canSubmit: canSubmitAgent,
+      submitLabel: canSubmitCreate ? "提交新增" : "暂不提交",
+      canSubmit: canSubmitCreate,
     },
     {
       key: "edit",
@@ -397,8 +525,8 @@ function buildMasterDataMaintenanceActions(
       targetScope: `仅限单个${entity.label}字段修正，不修改生产公式或结算口径。`,
       referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
       failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
-      submitLabel: canSubmitAgent ? "提交编辑" : "暂不提交",
-      canSubmit: canSubmitAgent,
+      submitLabel: canSubmitEdit ? "提交编辑" : "暂不提交",
+      canSubmit: canSubmitEdit,
     },
     {
       key: "freeze",
@@ -407,8 +535,8 @@ function buildMasterDataMaintenanceActions(
       targetScope: `仅限单个${entity.label}冻结或恢复，不建立权限、审批或发布流程。`,
       referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
       failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
-      submitLabel: canSubmitAgent ? "提交冻结" : "暂不提交",
-      canSubmit: canSubmitAgent,
+      submitLabel: canSubmitFreeze ? "提交冻结" : "暂不提交",
+      canSubmit: canSubmitFreeze,
     },
     {
       key: "effective_period",
@@ -417,8 +545,8 @@ function buildMasterDataMaintenanceActions(
       targetScope: `仅限单个${entity.label}有效期调整，不改历史版本展开结果。`,
       referenceCheckLabel: buildMasterDataReferenceCheckLabel(entity, isSourceReady),
       failureBoundary: buildMasterDataFailureBoundary(entity, isSourceReady),
-      submitLabel: canSubmitAgent ? "提交有效期" : "暂不提交",
-      canSubmit: canSubmitAgent,
+      submitLabel: canSubmitEffectivePeriod ? "提交有效期" : "暂不提交",
+      canSubmit: canSubmitEffectivePeriod,
     },
   ]
 }
@@ -459,7 +587,7 @@ function buildMasterDataFailureBoundary(
     return "调用 IM108 单坐席 API；缺少坐席、重复创建、字段缺失或有效期无效时展示后端错误码。"
   }
 
-  return "后端写入未接入；若引用校验缺失、实体缺失、来源版本过期或动作越界，必须阻塞提交。"
+  return "调用主数据单对象 API；若引用校验缺失、实体缺失、来源版本过期或动作越界，必须阻塞提交。"
 }
 
 function compactMasterDataAgentMaintenancePayload(
@@ -470,12 +598,34 @@ function compactMasterDataAgentMaintenancePayload(
   ) as MasterDataAgentMaintenancePayload
 }
 
+function compactMasterDataReferenceMaintenancePayload(
+  payload: MasterDataReferenceMaintenancePayload
+): MasterDataReferenceMaintenancePayload {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
+  ) as MasterDataReferenceMaintenancePayload
+}
+
+function compactMasterDataBindingMaintenancePayload(
+  payload: MasterDataBindingMaintenancePayload
+): MasterDataBindingMaintenancePayload {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
+  ) as MasterDataBindingMaintenancePayload
+}
+
 function getSingleSearchParam(value: string | string[] | undefined): string {
   if (Array.isArray(value)) {
     return value[0] ?? ""
   }
 
   return value ?? ""
+}
+
+function isReferenceEntity(
+  entityKey: MasterDataMaintenanceEntityKey
+): entityKey is "sites" | "vendors" | "projects" | "skills" {
+  return ["sites", "vendors", "projects", "skills"].includes(entityKey)
 }
 
 function resolveMasterDataMaintenanceTone(

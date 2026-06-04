@@ -26,6 +26,9 @@ MasterDataEmployeeMaintenanceStatus = Literal[
     "frozen",
     "effective_period_updated",
 ]
+MasterDataReferenceType = Literal["suppliers", "workplaces", "projects", "skills"]
+MasterDataReferenceMaintenanceAction = Literal["create", "edit", "freeze", "effective_period"]
+MasterDataBindingMaintenanceAction = Literal["create", "edit", "effective_period"]
 ComparisonType = Literal["forecast_vs_schedule", "schedule_vs_actual"]
 ComparisonRunStatus = Literal["completed", "failed"]
 ReviewSourceResultType = Literal["forecast_schedule", "schedule_actual"]
@@ -336,6 +339,31 @@ class MasterDataReferenceInput(BaseModel):
     effective_to: str
 
 
+class MasterDataReferenceRecord(BaseModel):
+    reference_id: str
+    reference_name: str
+    status: MasterDataStatus
+    effective_from: str
+    effective_to: str
+    batch_id: str
+
+
+class MasterDataReferenceMaintenanceRequest(BaseModel):
+    action: MasterDataReferenceMaintenanceAction
+    source_batch_id: str
+    reference_name: str | None = None
+    status: MasterDataStatus | None = None
+    effective_from: str | None = None
+    effective_to: str | None = None
+
+
+class MasterDataReferenceMaintenanceResponse(BaseModel):
+    reference_type: MasterDataReferenceType
+    reference_id: str
+    action_status: MasterDataEmployeeMaintenanceStatus
+    reference: MasterDataReferenceRecord
+
+
 class EmployeeMasterDataInput(BaseModel):
     employee_id: str
     employee_name: str
@@ -399,6 +427,24 @@ class EmployeeBindingRecord(BaseModel):
     effective_from: str
     effective_to: str
     batch_id: str
+
+
+class MasterDataBindingMaintenanceRequest(BaseModel):
+    action: MasterDataBindingMaintenanceAction
+    source_batch_id: str
+    employee_id: str | None = None
+    supplier_id: str | None = None
+    workplace_id: str | None = None
+    project_id: str | None = None
+    skill_id: str | None = None
+    effective_from: str | None = None
+    effective_to: str | None = None
+
+
+class MasterDataBindingMaintenanceResponse(BaseModel):
+    binding_id: str
+    action_status: Literal["created", "updated", "effective_period_updated"]
+    binding: EmployeeBindingRecord
 
 
 class MasterDataImportApplyResponse(BaseModel):

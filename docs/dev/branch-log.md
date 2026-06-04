@@ -2829,3 +2829,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM110 Master Data Entities And Bindings Maintenance
+
+- branch_name: `codex/im110-master-data-entities-bindings`
+- base_main_commit: `ef52229`
+- stacked_on: `c5c8928 feat: add master data agent submit flow`
+- remote_status: `IM108 and IM109 branches are pushed; IM110 implementation is local only until final merge/push.`
+- scope: extend master-data maintenance from agents to workplaces, suppliers, projects, skills, and binding relationships; expose controlled submit forms on the corresponding `/master-data/[entityKey]` detail pages; validate binding references for employee, supplier, workplace, project, and skill; keep binding freeze disabled because bindings have no status field.
+- allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/master_data_persistence.py`, `backend/app/master_data_maintenance.py`, backend target tests, `app/master-data/**`, `components/master-data-maintenance-workbench.tsx`, `components/master-data-maintenance-model.ts`, `scripts/tests/master-data-maintenance-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected IM110 backend/frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: backend RED first failed on missing `maintain_employee_binding` and `maintain_master_data_binding`; after implementation `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` passed with 14 tests. Frontend RED first failed on missing `buildMasterDataBindingMaintenanceApiPath`; after implementation `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 12 tests. `npm run lint`, `npm run typecheck`, and Node 22 `npm run build` passed. In-app browser smoke on `http://127.0.0.1:3000/master-data/skills` matched `技能受控提交`, `提交新增`, `提交编辑`, `提交冻结`, and `提交有效期`; smoke on `/master-data/bindings` matched `绑定关系受控提交`, `提交新增`, `提交编辑`, `提交有效期`, and `冻结动作保持禁用`, with no `提交冻结`. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 191 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

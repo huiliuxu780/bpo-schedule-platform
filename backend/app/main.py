@@ -16,7 +16,11 @@ from backend.app.import_readiness import build_import_apply_readiness
 from backend.app.import_upload import build_import_batch_from_csv
 from backend.app.import_persistence import get_import_persistence_repository
 from backend.app.master_data_import import apply_master_data_import_batch
-from backend.app.master_data_maintenance import maintain_employee
+from backend.app.master_data_maintenance import (
+    maintain_employee,
+    maintain_employee_binding,
+    maintain_reference,
+)
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.personnel_schedule_import import apply_personnel_schedule_import_batch
 from backend.app.personnel_schedule_persistence import PersonnelSchedulePersistenceRepository
@@ -47,9 +51,14 @@ from backend.app.models import (
     ImportFieldMappingTemplateRecord,
     ImportFieldMappingTemplateUpdateRequest,
     ImportProcessingStatus,
+    MasterDataBindingMaintenanceRequest,
+    MasterDataBindingMaintenanceResponse,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataEmployeeMaintenanceResponse,
     MasterDataImportApplyResponse,
+    MasterDataReferenceMaintenanceRequest,
+    MasterDataReferenceMaintenanceResponse,
+    MasterDataReferenceType,
     PersonnelScheduleImportApplyResponse,
     ReviewCaseDetail,
     ReviewCaseListResponse,
@@ -628,10 +637,52 @@ def maintain_master_data_employee(
         raise _master_data_maintenance_http_error(exc) from exc
 
 
+@app.post(
+    "/api/v1/master-data/bindings/{binding_id}/maintenance",
+    response_model=MasterDataBindingMaintenanceResponse,
+)
+def maintain_master_data_binding(
+    binding_id: str,
+    request: MasterDataBindingMaintenanceRequest,
+) -> MasterDataBindingMaintenanceResponse:
+    try:
+        return maintain_employee_binding(
+            binding_id,
+            request,
+            MasterDataPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise _master_data_maintenance_http_error(exc) from exc
+
+
+@app.post(
+    "/api/v1/master-data/{reference_type}/{reference_id}/maintenance",
+    response_model=MasterDataReferenceMaintenanceResponse,
+)
+def maintain_master_data_reference(
+    reference_type: MasterDataReferenceType,
+    reference_id: str,
+    request: MasterDataReferenceMaintenanceRequest,
+) -> MasterDataReferenceMaintenanceResponse:
+    try:
+        return maintain_reference(
+            reference_type,
+            reference_id,
+            request,
+            MasterDataPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise _master_data_maintenance_http_error(exc) from exc
+
+
 def _master_data_maintenance_http_error(exc: ValueError) -> HTTPException:
     message = str(exc)
-    code = message.split(":", maxsplit=1)[0]
-    status_code = 404 if code in {"EMPLOYEE_NOT_FOUND", "SOURCE_BATCH_NOT_FOUND"} else 400
+    code = _master_data_maintenance_error_code(message)
+    status_code = (
+        404
+        if code in {"EMPLOYEE_NOT_FOUND", "SOURCE_BATCH_NOT_FOUND", "REFERENCE_NOT_FOUND", "BINDING_NOT_FOUND"}
+        else 400
+    )
     return HTTPException(
         status_code=status_code,
         detail={
@@ -641,6 +692,37 @@ def _master_data_maintenance_http_error(exc: ValueError) -> HTTPException:
             }
         },
     )
+
+
+def _master_data_maintenance_error_code(message: str) -> str:
+    code = message.split(":", maxsplit=1)[0]
+    if code in {
+        "SOURCE_BATCH_NOT_FOUND",
+        "EMPLOYEE_NOT_FOUND",
+        "EMPLOYEE_ALREADY_EXISTS",
+        "REFERENCE_NOT_FOUND",
+        "REFERENCE_ALREADY_EXISTS",
+        "BINDING_NOT_FOUND",
+        "BINDING_ALREADY_EXISTS",
+        "MISSING_REQUIRED_FIELD",
+        "INVALID_EFFECTIVE_PERIOD",
+        "EMPLOYEE_WRITE_FAILED",
+        "REFERENCE_WRITE_FAILED",
+        "BINDING_WRITE_FAILED",
+    }:
+        return code
+    if any(
+        message.startswith(field_name)
+        for field_name in (
+            "employee_id ",
+            "supplier_id ",
+            "workplace_id ",
+            "project_id ",
+            "skill_id ",
+        )
+    ):
+        return "MASTER_DATA_REFERENCE_INVALID"
+    return "MASTER_DATA_MAINTENANCE_INVALID"
 
 
 @app.post(

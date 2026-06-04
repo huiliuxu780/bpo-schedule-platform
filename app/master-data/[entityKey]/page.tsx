@@ -7,14 +7,18 @@ import {
 import {
   type MasterDataMaintenanceEntityKey,
   getMasterDataMaintenanceEntity,
-  summarizeMasterDataAgentMaintenanceFeedback,
+  summarizeMasterDataMaintenanceFeedback,
   summarizeMasterDataMaintenanceEntityDetail,
 } from "@/components/master-data-maintenance-model"
 import {
   type ImportBatchListRow,
   buildImportApiUrl,
 } from "@/components/import-center-model"
-import { submitMasterDataAgentMaintenance } from "./actions"
+import {
+  submitMasterDataAgentMaintenance,
+  submitMasterDataBindingMaintenance,
+  submitMasterDataReferenceMaintenance,
+} from "./actions"
 
 export const dynamic = "force-dynamic"
 
@@ -47,7 +51,7 @@ export default async function MasterDataEntityDetailPage({
     entity.key as MasterDataMaintenanceEntityKey,
     batchResult.data ?? []
   )
-  const feedback = summarizeMasterDataAgentMaintenanceFeedback(resolvedSearchParams)
+  const feedback = summarizeMasterDataMaintenanceFeedback(resolvedSearchParams)
 
   return (
     <AppShell
@@ -61,9 +65,25 @@ export default async function MasterDataEntityDetailPage({
         agentSubmitAction={
           entity.key === "agents" ? submitMasterDataAgentMaintenance : undefined
         }
+        referenceSubmitAction={
+          isReferenceEntity(entity.key)
+            ? submitMasterDataReferenceMaintenance
+            : undefined
+        }
+        bindingSubmitAction={
+          entity.key === "bindings"
+            ? submitMasterDataBindingMaintenance
+            : undefined
+        }
       />
     </AppShell>
   )
+}
+
+function isReferenceEntity(
+  entityKey: MasterDataMaintenanceEntityKey
+): entityKey is "sites" | "vendors" | "projects" | "skills" {
+  return ["sites", "vendors", "projects", "skills"].includes(entityKey)
 }
 
 async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
