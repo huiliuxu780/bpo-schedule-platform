@@ -3198,6 +3198,13 @@ test("import center comparison run detail summarizes result rows", () => {
     {
       tone: "ready",
       title: "RUN-DB008-FS · 预测排班 · 完成",
+      workspaceTabs: [
+        { key: "overview", label: "总览" },
+        { key: "source", label: "来源链路" },
+        { key: "results", label: "结果明细" },
+        { key: "reviews", label: "复核案例" },
+        { key: "boundary", label: "处理边界" },
+      ],
       resultReviewContext: {
         title: "完整结果回看主页",
         detail:
@@ -3272,6 +3279,13 @@ test("import center comparison run detail summarizes result rows", () => {
     {
       tone: "ready",
       title: "RUN-DB008-SA · 排班实际 · 完成",
+      workspaceTabs: [
+        { key: "overview", label: "总览" },
+        { key: "source", label: "来源链路" },
+        { key: "results", label: "结果明细" },
+        { key: "reviews", label: "复核案例" },
+        { key: "boundary", label: "处理边界" },
+      ],
       resultReviewContext: {
         title: "完整结果回看主页",
         detail:

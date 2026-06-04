@@ -540,9 +540,22 @@ export type ImportComparisonRunDetailResponse = {
   schedule_actual_results: ImportScheduleActualComparisonResultRecord[]
 }
 
+export type ImportComparisonRunDetailWorkspaceTabKey =
+  | "overview"
+  | "source"
+  | "results"
+  | "reviews"
+  | "boundary"
+
+export type ImportComparisonRunDetailWorkspaceTab = {
+  key: ImportComparisonRunDetailWorkspaceTabKey
+  label: string
+}
+
 export type ImportComparisonRunDetailSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
+  workspaceTabs: ImportComparisonRunDetailWorkspaceTab[]
   resultReviewContext: {
     title: string
     detail: string
@@ -564,6 +577,14 @@ export type ImportComparisonRunDetailSummary = {
     status: string
   }>
 }
+
+const COMPARISON_RUN_DETAIL_WORKSPACE_TABS: ImportComparisonRunDetailWorkspaceTab[] = [
+  { key: "overview", label: "总览" },
+  { key: "source", label: "来源链路" },
+  { key: "results", label: "结果明细" },
+  { key: "reviews", label: "复核案例" },
+  { key: "boundary", label: "处理边界" },
+]
 
 export type ImportComparisonRunReturnLinks = {
   tone: ImportVersionWorkbenchTone
@@ -6676,6 +6697,7 @@ export function summarizeImportComparisonRunDetail({
   return {
     tone: detail.run.status === "failed" ? "blocked" : "ready",
     title: `${detail.run.run_id} · ${comparisonTypeLabel} · ${formatComparisonRunStatus(detail.run.status)}`,
+    workspaceTabs: [...COMPARISON_RUN_DETAIL_WORKSPACE_TABS],
     resultReviewContext: {
       title: "完整结果回看主页",
       detail: `当前页面展示 ${detail.run.run_id} 的完整结果明细，来源版本为 ${versionLabel}，业务日 ${detail.run.business_date_from} 至 ${detail.run.business_date_to}。`,
@@ -7103,6 +7125,7 @@ function emptyComparisonRunDetailSummary({
   return {
     tone,
     title,
+    workspaceTabs: [...COMPARISON_RUN_DETAIL_WORKSPACE_TABS],
     resultReviewContext: {
       title: tone === "blocked" ? "结果回看暂不可用" : "等待完整结果回看",
       detail:

@@ -37,6 +37,23 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM121 Comparison Run Detail Workspace Tabs
+
+- branch_name: `codex/im121-comparison-detail-tabs`
+- base_main_commit: `6ccd1b4`
+- remote_status: `main includes merged IM120 comparison-run source explanation; IM121 implementation is local only until final check/commit/push.`
+- scope: reorganize the existing comparison-run detail page from one long stacked page into a tabbed workspace with overview, source chain, result detail, review cases, and boundary entries; keep all content read-only and reuse existing shadcn tabs.
+- allowed_files_check: `components/import-center-comparison-run-detail-workspace.tsx`, `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected comparison-run detail component/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED first failed because `summarizeImportComparisonRunDetail` did not expose `workspaceTabs`; after implementation `node --test scripts/tests/import-center-model.test.mjs` passed with 79 tests. `npm run lint` and `npm run typecheck` passed. Final state, browser, and full-check evidence will be reported in the Done Report after traceability verification.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM119 Login Log Version Result Link Consistency
 
 - branch_name: `codex/im119-login-log-version-result-link`
