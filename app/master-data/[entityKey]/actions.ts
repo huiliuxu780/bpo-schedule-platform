@@ -7,6 +7,7 @@ import {
   type MasterDataAgentMaintenanceActionKey,
   type MasterDataAgentMaintenanceStatus,
   type MasterDataBindingMaintenanceDraft,
+  type MasterDataEmployeeType,
   type MasterDataMaintenanceEntityKey,
   type MasterDataReferenceMaintenanceType,
   buildMasterDataAgentMaintenanceApiPath,
@@ -29,6 +30,8 @@ const AGENT_STATUSES = new Set<MasterDataAgentMaintenanceStatus>([
   "frozen",
   "inactive",
 ])
+
+const EMPLOYEE_TYPES = new Set<MasterDataEmployeeType>(["internal", "outsourced"])
 
 const BINDING_ACTIONS = new Set<MasterDataBindingMaintenanceDraft["action"]>([
   "create",
@@ -68,6 +71,9 @@ export async function submitMasterDataAgentMaintenance(
         sourceBatchId,
         employeeName: getFormValue(formData, "employee_name"),
         status: parseStatus(formData.get("status")),
+        employeeType: parseEmployeeType(formData.get("employee_type")),
+        organizationId: getFormValue(formData, "organization_id"),
+        workplaceId: getFormValue(formData, "workplace_id"),
         effectiveFrom: getFormValue(formData, "effective_from"),
         effectiveTo: getFormValue(formData, "effective_to"),
       })
@@ -316,6 +322,21 @@ function parseEntityKey(
   }
 
   return "agents"
+}
+
+function parseEmployeeType(
+  value: FormDataEntryValue | null
+): MasterDataEmployeeType | undefined {
+  const employeeType = String(value ?? "")
+  if (!employeeType) {
+    return undefined
+  }
+
+  if (EMPLOYEE_TYPES.has(employeeType as MasterDataEmployeeType)) {
+    return employeeType as MasterDataEmployeeType
+  }
+
+  throw new Error("未知人员类型")
 }
 
 function parseStatus(

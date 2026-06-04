@@ -686,3 +686,9 @@ The task was a database-persistence slice. It added migration `20260604_0009` an
 After IM131 created the personnel master-data model, `/master-data/agents` still did not show the real employee rows that were imported and applied. `US752/IM132` is complete. The backend now exposes a read-only `/api/v1/master-data/employees` list API with employee status, employee type, organization path, workplace name, and multi-skill context. The agents detail overview reads that API and shows personnel totals plus a real personnel table.
 
 The task was a backend-vertical slice. It did not add migrations, dependencies, batch maintenance, permissions, approval, export, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM132.
+
+## 2026-06-04 IM133 Agent Core Edit Fields
+
+After IM132 made real personnel rows visible, the controlled agent form still could not edit PM-confirmed core personnel dimensions beyond name and status. `US753/IM133` is complete. The existing `/master-data/agents` create/edit submit forms now include employee type, organization ID, and workplace ID, and the server action passes those fields to the existing single-employee maintenance API. Backend regression confirms edit updates `employee_type`, `organization_id`, and `workplace_id`.
+
+The task was a backend-vertical/frontend form slice. It did not add migrations, dependencies, batch maintenance, permissions, approval, export, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM133.

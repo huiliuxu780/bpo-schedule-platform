@@ -227,6 +227,9 @@ test("agent maintenance payload maps create edit freeze and effective period act
       employeeId: "A-1001",
       employeeName: "王一",
       status: "active",
+      employeeType: "internal",
+      organizationId: "ORG-RETURN",
+      workplaceId: "NJ-01",
       effectiveFrom: "2026-06-01",
       effectiveTo: "2026-12-31",
     }),
@@ -235,8 +238,32 @@ test("agent maintenance payload maps create edit freeze and effective period act
       source_batch_id: "BATCH-MD-001",
       employee_name: "王一",
       status: "active",
+      employee_type: "internal",
+      organization_id: "ORG-RETURN",
+      workplace_id: "NJ-01",
       effective_from: "2026-06-01",
       effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataAgentMaintenancePayload({
+      action: "edit",
+      sourceBatchId: "BATCH-MD-001",
+      employeeId: "A-1001",
+      employeeName: "王一-修正",
+      status: "inactive",
+      employeeType: "outsourced",
+      organizationId: "ORG-SUPPORT",
+      workplaceId: "SH-01",
+    }),
+    {
+      action: "edit",
+      source_batch_id: "BATCH-MD-001",
+      employee_name: "王一-修正",
+      status: "inactive",
+      employee_type: "outsourced",
+      organization_id: "ORG-SUPPORT",
+      workplace_id: "SH-01",
     },
   );
   assert.deepEqual(

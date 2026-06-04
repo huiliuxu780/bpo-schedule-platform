@@ -14,6 +14,7 @@ from backend.app.models import (
     ImportBatchRowResultInput,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataBindingMaintenanceRequest,
+    MasterDataOrganizationInput,
     MasterDataReferenceInput,
     MasterDataReferenceMaintenanceRequest,
     MasterDataSnapshotRequest,
@@ -118,6 +119,85 @@ class MasterDataMaintenanceServiceTest(unittest.TestCase):
             self.assertEqual(response.employee.employee_name, "李三-修正")
             self.assertEqual(response.employee.status, "inactive")
             self.assertEqual(response.employee.effective_from, "2026-06-01")
+
+    def test_edit_employee_updates_type_organization_and_workplace(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-MAINT-010")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-MAINT-010",
+                    workplaces=[
+                        MasterDataReferenceInput(
+                            reference_id="NJ-01",
+                            reference_name="南京职场",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        ),
+                        MasterDataReferenceInput(
+                            reference_id="SH-01",
+                            reference_name="上海职场",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                    organizations=[
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-RETURN",
+                            organization_name="集中退换小组",
+                            organization_level=1,
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        ),
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-SUPPORT",
+                            organization_name="在线支持小组",
+                            organization_level=1,
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                    employees=[
+                        EmployeeMasterDataInput(
+                            employee_id="A-2010",
+                            employee_name="刘晓晓",
+                            status="active",
+                            employee_type="internal",
+                            organization_id="ORG-RETURN",
+                            workplace_id="NJ-01",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                )
+            )
+
+            response = maintain_employee(
+                "A-2010",
+                MasterDataEmployeeMaintenanceRequest(
+                    action="edit",
+                    source_batch_id="BATCH-MD-MAINT-010",
+                    employee_name="刘晓晓-修正",
+                    status="inactive",
+                    employee_type="outsourced",
+                    organization_id="ORG-SUPPORT",
+                    workplace_id="SH-01",
+                ),
+                repository,
+            )
+
+            self.assertEqual(response.action_status, "updated")
+            self.assertEqual(response.employee.employee_name, "刘晓晓-修正")
+            self.assertEqual(response.employee.status, "inactive")
+            self.assertEqual(response.employee.employee_type, "outsourced")
+            self.assertEqual(response.employee.organization_id, "ORG-SUPPORT")
+            self.assertEqual(response.employee.workplace_id, "SH-01")
 
     def test_effective_period_updates_dates_only(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

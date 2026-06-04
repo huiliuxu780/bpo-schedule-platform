@@ -94,6 +94,9 @@ export type MasterDataAgentMaintenanceDraft = {
   employeeId: string
   employeeName?: string
   status?: MasterDataAgentMaintenanceStatus
+  employeeType?: MasterDataEmployeeType
+  organizationId?: string
+  workplaceId?: string
   effectiveFrom?: string
   effectiveTo?: string
 }
@@ -147,6 +150,9 @@ export type MasterDataAgentMaintenancePayload = {
   source_batch_id: string
   employee_name?: string
   status?: MasterDataAgentMaintenanceStatus
+  employee_type?: MasterDataEmployeeType
+  organization_id?: string
+  workplace_id?: string
   effective_from?: string
   effective_to?: string
 }
@@ -424,6 +430,9 @@ export function buildMasterDataAgentMaintenancePayload(
     source_batch_id: draft.sourceBatchId,
     employee_name: draft.employeeName,
     status: draft.status,
+    employee_type: draft.employeeType,
+    organization_id: draft.organizationId,
+    workplace_id: draft.workplaceId,
     effective_from: draft.effectiveFrom,
     effective_to: draft.effectiveTo,
   })

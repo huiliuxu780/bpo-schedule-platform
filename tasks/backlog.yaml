@@ -9325,3 +9325,47 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已接通只读人员列表 API，并在 /master-data/agents 总览展示真实人员主数据。"
+  - id: IM133
+    title: "单个人员核心字段编辑"
+    priority: P0
+    status: done
+    required_workflow: backend-vertical
+    dependencies: ["IM132"]
+    allowed_files:
+      - "app/master-data/[entityKey]/actions.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/migrations/**"
+      - "backend/app/models.py"
+      - "backend/app/master_data_persistence.py"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "编辑坐席表单展示并提交 employee_name、status、employee_type、organization_id、workplace_id。"
+      - "新增坐席表单也可填写 employee_type、organization_id、workplace_id。"
+      - "server action 和 payload builder 将这些字段传给现有单员工维护 API。"
+      - "后端回归证明 edit 能更新人员类型、组织和职场。"
+      - "不新增批量维护、权限、审批、导出、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增 schema/migration 或生产持久化配置"
+      - "范围扩展到批量维护、技能关系维护、审批、导出、权限、自动排班、生产公式、结算或收费因子"
+      - "需要真实外部系统集成"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已补齐单个人员新增/编辑表单的人员类型、组织 ID、职场 ID 字段。"

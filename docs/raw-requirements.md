@@ -2770,3 +2770,16 @@ version: "1.0"
 status: "done"
 notes: "IM132 已完成：新增只读人员列表 API，并在 /master-data/agents 总览中展示真实人员、组织路径、职场和技能组类别。"
 ```
+
+### R833 - 单个人员核心字段编辑
+
+```yaml
+id: R833
+module: "主数据维护"
+description: "人员列表已经能展示真实员工，但单人编辑表单仍只能改姓名和状态，不能按 PM 明确口径维护人员类型、所属组织和职场。需要把这些核心字段补进受控单人编辑链路。"
+source: "PM clarified single-person maintenance expectation and approved continuing after IM132 push on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM133 已完成：单人新增/编辑表单和 server action payload 已支持人员类型、组织 ID、职场 ID；后端回归覆盖编辑这些字段。"
+```

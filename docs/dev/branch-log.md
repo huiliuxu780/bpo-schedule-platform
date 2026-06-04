@@ -3242,3 +3242,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM133 Agent Core Edit Fields
+
+- branch_name: `codex/im133-agent-edit-core-fields`
+- base_main_commit: `6ccd1b4`
+- stacked_on: `c100c5b feat: show real personnel master data list`
+- remote_status: `IM132 branch is pushed; IM133 implementation is local only until final check/commit/push.`
+- scope: extend the existing single-agent create/edit form and server action payload to include employee type, organization ID, and workplace ID, with backend regression for single-agent edit.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, `scripts/tests/master-data-maintenance-model.test.mjs`, `backend/tests/test_master_data_maintenance_service.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no package, lockfile, migration, batch maintenance, approval, export, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected existing agent actions/model/workbench/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target frontend model test first failed because agent payload omitted `employee_type`, `organization_id`, and `workplace_id`, then passed with 13 tests; backend service regression passed with 10 tests; `npm run typecheck` passed; `npm run lint` passed; in-app browser smoke on `http://127.0.0.1:3000/master-data/agents` verified the existing `提交表单` workspace shows `新增坐席`, `编辑坐席`, `人员类型`, `组织 ID`, `职场 ID`, `自有员工`, and `外包员工`; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 204 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

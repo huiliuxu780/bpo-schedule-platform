@@ -4981,3 +4981,26 @@ dependencies:
 status: "done"
 notes: "IM132 已完成：人员列表 API 和 /master-data/agents 总览真实人员表已接通。"
 ```
+
+### US753 - 单个人员核心字段编辑
+
+```yaml
+id: US753
+requirement_ids:
+  - R833
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在单人坐席维护表单中编辑姓名、状态、人员类型、组织归属和职场归属，以便按真实人员档案修正单个员工，而不是只能改姓名和状态。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "编辑坐席表单展示并提交 employee_name、status、employee_type、organization_id、workplace_id。"
+  - "新增坐席表单也可填写 employee_type、organization_id、workplace_id。"
+  - "server action 和 payload builder 将这些字段传给现有单员工维护 API。"
+  - "后端回归证明 edit 能更新人员类型、组织和职场。"
+  - "不新增批量维护、权限、审批、导出、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US752"
+status: "done"
+notes: "IM133 已完成：单人员新增/编辑表单和 payload 已补齐人员类型、组织 ID、职场 ID。"
+```

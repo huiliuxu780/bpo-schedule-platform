@@ -728,18 +728,34 @@ function AgentMaintenanceSubmitSection({
           actionKey="create"
           sourceBatchId={summary.agentSubmitSourceBatchId}
           title="新增坐席"
-          description="创建单个坐席基础档案，状态默认 active。"
+          description="创建单个坐席基础档案，可同时填写人员类型、组织和职场。"
           submitLabel="提交新增"
-          fields={["employee_id", "employee_name", "status", "effective_from", "effective_to"]}
+          fields={[
+            "employee_id",
+            "employee_name",
+            "status",
+            "employee_type",
+            "organization_id",
+            "workplace_id",
+            "effective_from",
+            "effective_to",
+          ]}
         />
         <AgentMaintenanceForm
           action={action}
           actionKey="edit"
           sourceBatchId={summary.agentSubmitSourceBatchId}
           title="编辑坐席"
-          description="修正单个坐席姓名或状态，未填字段由后端保留原值。"
+          description="修正单个坐席姓名、状态、人员类型、组织或职场，未填字段由后端保留原值。"
           submitLabel="提交编辑"
-          fields={["employee_id", "employee_name", "status"]}
+          fields={[
+            "employee_id",
+            "employee_name",
+            "status",
+            "employee_type",
+            "organization_id",
+            "workplace_id",
+          ]}
         />
         <AgentMaintenanceForm
           action={action}
@@ -926,6 +942,8 @@ type AgentMaintenanceField =
   | "project_id"
   | "skill_id"
   | "status"
+  | "employee_type"
+  | "organization_id"
   | "effective_from"
   | "effective_to"
 
@@ -1041,6 +1059,21 @@ function AgentMaintenanceForm({
                 required={actionKey === "create"}
               />
             ) : null}
+            {fields.includes("employee_type") ? (
+              <EmployeeTypeSelect
+                label="人员类型"
+                name="employee_type"
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("organization_id") ? (
+              <MaintenanceInput
+                label="组织 ID"
+                name="organization_id"
+                placeholder="ORG-RETURN"
+                required={false}
+              />
+            ) : null}
             {fields.includes("effective_from") ? (
               <MaintenanceInput
                 label="生效开始"
@@ -1117,6 +1150,31 @@ function MaintenanceSelect({
         <option value="active">active</option>
         <option value="inactive">inactive</option>
         <option value="frozen">frozen</option>
+      </select>
+    </label>
+  )
+}
+
+function EmployeeTypeSelect({
+  label,
+  name,
+  required = false,
+}: {
+  label: string
+  name: string
+  required?: boolean
+}) {
+  return (
+    <label className="grid gap-1.5 text-sm font-medium">
+      {label}
+      <select
+        name={name}
+        required={required}
+        defaultValue="internal"
+        className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        <option value="internal">自有员工</option>
+        <option value="outsourced">外包员工</option>
       </select>
     </label>
   )
