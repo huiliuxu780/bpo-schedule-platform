@@ -2327,7 +2327,7 @@
 - scope: define `R787-R789`, `US707-US709`, and `IM087-IM089`; seed only `US707/IM087` into current ready state; add the version-workbench implementation plan and update registry/project-state/branch trace for the approved next chain.
 - allowed_files_check: `docs/superpowers/plans/2026-06-03-version-workbench-implementation-plan.md`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no app, backend, package, lockfile, schema, migration, dependency, approval, export, batch operation, permission, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
 - scope_diff_check: `docs/superpowers/plans/2026-06-03-version-workbench-implementation-plan.md`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; `.local/` and `.qoder/` remain untracked and must not be staged.
-- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after the planning/state update.
+- check_result: `bash scripts/check-state.sh --strict` passed with current queue `US731/IM111`; `git diff --check` passed. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed for the planning/state update; full check included frontend build and backend 191 tests OK. A final check is required after this branch-log evidence update before local commit.
 - local_commit_sha: to be reported in Done Report after local commit creation
 - integration_status: `not_started`
 - integration_method: `N/A`
@@ -2840,6 +2840,24 @@
 - allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/master_data_persistence.py`, `backend/app/master_data_maintenance.py`, backend target tests, `app/master-data/**`, `components/master-data-maintenance-workbench.tsx`, `components/master-data-maintenance-model.ts`, `scripts/tests/master-data-maintenance-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
 - scope_diff_check: expected IM110 backend/frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
 - check_result: backend RED first failed on missing `maintain_employee_binding` and `maintain_master_data_binding`; after implementation `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` passed with 14 tests. Frontend RED first failed on missing `buildMasterDataBindingMaintenanceApiPath`; after implementation `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 12 tests. `npm run lint`, `npm run typecheck`, and Node 22 `npm run build` passed. In-app browser smoke on `http://127.0.0.1:3000/master-data/skills` matched `技能受控提交`, `提交新增`, `提交编辑`, `提交冻结`, and `提交有效期`; smoke on `/master-data/bindings` matched `绑定关系受控提交`, `提交新增`, `提交编辑`, `提交有效期`, and `冻结动作保持禁用`, with no `提交冻结`. Final `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 191 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM111 Personnel Schedule Version Detail API Planning
+
+- branch_name: `codex/im111-schedule-version-detail-api`
+- base_main_commit: `ef52229`
+- stacked_on: `eb41fe9 feat: extend master data maintenance entities`
+- remote_status: `IM110 branch is pushed; IM111 planning/state changes are local only until final check/commit/push.`
+- scope: seed `R811`, `US731`, and `IM111` for a backend-only read-only personnel-schedule production version detail API by batch ID; planned response covers source batch/version context, schedule_version_id, business date range, schedule detail rows, and 0.5h expanded intervals.
+- allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/personnel_schedule_persistence.py`, `backend/tests/test_personnel_schedule_production_api.py`, `backend/tests/test_personnel_schedule_persistence.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no frontend app/components, package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: planning and current-state files only so far; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` are required after the planning/state update.
 - local_commit_sha: to be reported in Done Report after local commit creation
 - integration_status: `not_started`
 - integration_method: `N/A`

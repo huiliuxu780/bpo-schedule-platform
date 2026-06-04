@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-`US730/IM110` completed the master-data maintenance expansion to workplaces, suppliers, projects, skills, and bindings. Current story queue is empty.
+Current story queue is seeded with `US731/IM111`: add a read-only personnel-schedule production version detail API before connecting the existing production detail page to real 0.5h schedule intervals.
 
 The master-data maintenance chain now has `/master-data` plus `/master-data/[entityKey]` surfaces with controlled single-object submit paths for agents, reference entities, and binding relationships. Permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors remain out of scope.
 
@@ -152,3 +152,5 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 `US729/IM109` completed the agent-only frontend loop: `/master-data/agents` now shows controlled create, edit, freeze, and effective-period submit forms backed by a server action that calls IM108 and returns success/failure feedback.
 
 `US730/IM110` completed the broader master-data maintenance loop: backend APIs now support workplaces, suppliers, projects, skills, and binding relationship maintenance; `/master-data/sites`, `/master-data/vendors`, `/master-data/projects`, `/master-data/skills`, and `/master-data/bindings` now expose controlled submit forms. Binding maintenance validates employee, supplier, workplace, project, and skill references and keeps freeze disabled because binding rows have no status field. Current queue returned to empty after this slice.
+
+Current queue advanced to `US731/IM111`: add a backend-only read-only API for personnel-schedule production version detail, including schedule version, source batch, business date range, detail rows, and 0.5h expanded intervals. IM111 must not add frontend wiring, schema/migration, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors.
