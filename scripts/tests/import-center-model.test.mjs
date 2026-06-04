@@ -498,6 +498,62 @@ test("version workbench exposes local comparison candidates with controlled subm
   });
 });
 
+test("version workbench accepts applied status entry links for direct forecast schedule submit", () => {
+  const summary = summarizeImportVersionWorkbench({
+    batches: [
+      {
+        ...baseBatch,
+        batch_id: "BATCH-FC-APPLIED-LINK",
+        file_type: "demand_forecast",
+        application_status: "applied",
+        import_version_id: "FC-VERSION-APPLIED",
+        business_date_from: "2026-05-18",
+        business_date_to: "2026-05-18",
+        uploaded_at: "2026-06-03T10:00:00+08:00",
+      },
+      {
+        ...baseBatch,
+        batch_id: "BATCH-SCH-APPLIED-LINK",
+        file_type: "personnel_schedule",
+        application_status: "applied",
+        import_version_id: "SCH-VERSION-APPLIED",
+        business_date_from: "2026-05-18",
+        business_date_to: "2026-05-18",
+        uploaded_at: "2026-06-03T11:00:00+08:00",
+      },
+    ],
+    comparisonRuns: [],
+    filters: {
+      businessDate: "2026-05-18",
+      domain: "demand_forecast",
+      status: "applied",
+    },
+  });
+
+  assert.equal(summary.rows.length, 1);
+  assert.equal(summary.rows[0].domainKey, "demand_forecast");
+  assert.deepEqual(summary.rows[0].comparisonCandidate, {
+    tone: "ready",
+    canSubmit: true,
+    title: "可发起一次本地比对",
+    detail: "当前版本可按 预测排班 和已定位来源版本组合提交一次本地比对；重复提交由后端幂等返回已有运行。",
+    comparisonTypeLabel: "预测排班",
+    versionPairLabel: "FC-VERSION-APPLIED / SCH-VERSION-APPLIED",
+    businessDateLabel: "2026-05-18 ~ 2026-05-18",
+    actionLabel: "发起一次本地比对",
+    href: "/data-quality/BATCH-FC-APPLIED-LINK?tab=result-trace",
+    sourceBatchId: "BATCH-FC-APPLIED-LINK",
+    request: {
+      comparisonType: "forecast_vs_schedule",
+      forecastVersionId: "FC-VERSION-APPLIED",
+      scheduleVersionId: "SCH-VERSION-APPLIED",
+      actualImportVersionId: null,
+      businessDateFrom: "2026-05-18",
+      businessDateTo: "2026-05-18",
+    },
+  });
+});
+
 test("import center batch review guide directs selected batch follow-up", () => {
   assert.deepEqual(
     summarizeImportBatchReviewGuide({

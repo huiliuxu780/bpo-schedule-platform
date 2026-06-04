@@ -10,7 +10,7 @@ The project has entered a PM-confirmed database Gate. Database work may continue
 
 ## Default Next Step
 
-Current queue is empty after `US737/IM117`. Demand-forecast and personnel-schedule production detail pages now link into the existing business version workbench as the controlled local-comparison entry, without backend changes or production writes.
+Current queue is empty after `US738/IM118`. Production-detail `status=applied` links now land on ready business-version rows, and same-business-date demand forecast plus personnel schedule versions can expose a direct forecast-vs-schedule controlled submit candidate.
 
 The master-data maintenance chain now has `/master-data` plus `/master-data/[entityKey]` surfaces with controlled single-object submit paths for agents, reference entities, and binding relationships. Permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors remain out of scope.
 
@@ -157,4 +157,4 @@ The F041-F059/Q014 product pass proved the same model can run a 20-task frontend
 
 `US734/IM114` completed the read-only demand-forecast production detail API. It returns source batch context, forecast version, 0.5h forecast intervals, and version change records from existing repositories without frontend wiring or production writes.
 
-`US737/IM117` completed production-detail local-comparison entry cards. Forecast and schedule production detail pages now route users to `/data-quality/versions` with version-domain, applied-status, and business-date filters when available; direct submit actions, backend writes, schema, migration, dependency, approval, export, batch, permission, automatic scheduling, formula, settlement, and charge-factor scope remain excluded.
+`US738/IM118` completed business-version workbench applied-entry compatibility. `/data-quality/versions?status=applied` now behaves as a ready-version filter, preserving production-detail entry links and direct forecast-vs-schedule candidates; backend writes, schema, migration, dependency, approval, export, batch, permission, automatic scheduling, formula, settlement, and charge-factor scope remain excluded.

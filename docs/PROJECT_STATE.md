@@ -596,3 +596,9 @@ The task remained frontend-scaffold only. It excludes backend changes, schema/mi
 After IM116, production detail pages can show real schedule and forecast version rows, but users still needed a clear route into the existing local-comparison workflow. `US737/IM117` is complete. `/demand-plans/production/[batchId]` and `/schedule-plans/production/[batchId]` now show read-only local-comparison entry cards that link to `/data-quality/versions` with the corresponding version domain, applied status, and business date filter when available.
 
 The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, direct comparison submit actions on production details, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM117.
+
+## 2026-06-04 IM118 Version Workbench Applied Entry Compatibility
+
+After IM117, production detail pages linked into `/data-quality/versions` with `status=applied`, but the workbench status filter only recognized ready/blocked/empty. `US738/IM118` is complete. The version workbench now treats `status=applied` as an alias for ready rows, so production-detail entry links preserve the intended applied-version view and can still expose direct forecast-vs-schedule candidates when demand forecast and personnel schedule versions are both applied for the same business date.
+
+The task remained frontend-scaffold only. It did not add backend routes, schemas, migrations, dependencies, new comparison APIs, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM118.

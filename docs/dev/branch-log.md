@@ -109,6 +109,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM118 Version Workbench Applied Entry Compatibility
+
+- branch_name: `codex/im118-version-pair-comparison-submit`
+- base_main_commit: `ef52229`
+- stacked_on: `a4b8dff feat: link production details to comparison workbench`
+- remote_status: `IM117 branch is pushed; IM118 implementation is local only until final check/commit/push.`
+- scope: make `/data-quality/versions?status=applied` behave as the applied-version entry from production detail pages by mapping it to ready rows; verify that same-business-date demand forecast plus personnel schedule versions expose a direct `forecast_vs_schedule` controlled submit request.
+- allowed_files_check: `components/import-center-model.ts`, `scripts/tests/import-center-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected import-center model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target RED `node --test scripts/tests/import-center-model.test.mjs` first failed because `status=applied` produced 0 version rows; after implementation the same target passed with 79 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, `npm run lint`, and `npm run typecheck` passed. Browser smoke on `http://127.0.0.1:3000/data-quality/versions?domain=demand_forecast&status=applied&businessDate=2026-05-18` loaded the business version workbench and local-comparison column without crashing; current local service has no matching 2026-05-18 batch rows, so direct candidate row values are covered by the model test. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with frontend build and backend 199 tests OK.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM112 Personnel Schedule Production Detail UI
 
 - branch_name: `codex/im112-schedule-production-detail-ui`

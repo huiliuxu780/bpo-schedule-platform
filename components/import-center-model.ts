@@ -116,7 +116,7 @@ export type ImportVersionWorkbenchDomainKey =
 
 export type ImportVersionWorkbenchTone = "ready" | "blocked" | "empty"
 
-export type ImportVersionWorkbenchFilterValue = "all"
+export type ImportVersionWorkbenchFilterValue = "all" | "applied"
 
 export type ImportVersionWorkbenchFilters = {
   businessDate?: string | null
@@ -1758,8 +1758,7 @@ export function summarizeImportVersionWorkbench({
   const businessDate = normalizeFilterValue(filters.businessDate)
   const domainFilter =
     filters.domain && filters.domain !== "all" ? filters.domain : null
-  const statusFilter =
-    filters.status && filters.status !== "all" ? filters.status : null
+  const statusFilter = normalizeVersionWorkbenchStatusFilter(filters.status)
   const scopedBatches = businessDate
     ? batches.filter((batch) => batch.business_date_from === businessDate)
     : batches
@@ -1960,6 +1959,16 @@ function summarizeImportVersionWorkbenchRow(
     secondaryActionHref: blockedSecondaryAction.href,
     comparisonCandidate: blockedComparisonCandidate,
   }
+}
+
+function normalizeVersionWorkbenchStatusFilter(
+  status: ImportVersionWorkbenchFilters["status"]
+): ImportVersionWorkbenchTone | null {
+  if (!status || status === "all") {
+    return null
+  }
+
+  return status === "applied" ? "ready" : status
 }
 
 function summarizeVersionWorkbenchComparisonCandidate({

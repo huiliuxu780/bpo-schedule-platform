@@ -4650,3 +4650,25 @@ dependencies:
 status: "done"
 notes: "IM117 已完成：生产详情页只提供到既有业务版本工作台的过滤入口，不在详情页新增本地比对提交。"
 ```
+
+### US738 - 业务版本工作台 applied 入口兼容
+
+```yaml
+id: US738
+requirement_ids:
+  - R818
+module: "本地比对计算"
+role: "计划主管"
+story: "作为计划主管，我希望从生产详情带着已应用状态进入业务版本工作台时不会被筛为空，并能看到同业务日预测和排班版本组成的本地比对提交候选。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/data-quality/versions?status=applied` 按已形成版本口径展示 ready 版本行。"
+  - "同业务日已应用需求预测和人员排班版本在预测域下可形成 forecast_vs_schedule 提交请求。"
+  - "缺少任一侧版本时保持阻塞说明，不伪造来源版本。"
+  - "不新增后端、schema/migration、依赖、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US737"
+status: "done"
+notes: "IM118 已完成：`status=applied` 入口兼容 ready 版本筛选，并覆盖同业务日预测+排班直接比对候选。"
+```

@@ -8731,3 +8731,41 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已在预测和排班生产详情页增加本地比对入口卡片，跳转既有业务版本工作台并携带版本域、已应用状态和业务日筛选；未新增提交或写入能力。"
+  - id: IM118
+    title: "业务版本工作台 applied 入口兼容"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM117"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/alembic/**"
+    acceptance:
+      - "`/data-quality/versions?status=applied` 按已形成版本口径展示 ready 版本行。"
+      - "同业务日已应用需求预测和人员排班版本在预测域下可形成 forecast_vs_schedule 提交请求。"
+      - "缺少任一侧版本时保持阻塞说明，不伪造来源版本。"
+      - "不新增后端、schema/migration、依赖、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或生产持久化配置"
+      - "范围扩展到审批、导出、批量、权限、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已让业务版本工作台把 `status=applied` 入口作为 ready 版本筛选处理，并验证同业务日预测+排班版本能直接形成 forecast_vs_schedule 提交请求。"

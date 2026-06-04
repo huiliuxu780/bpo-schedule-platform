@@ -2575,3 +2575,16 @@ version: "1.0"
 status: "done"
 notes: "IM117 已完成：排班生产详情和预测生产详情新增本地比对入口卡片，按业务日和版本域跳转已有业务版本工作台；不新增后端、schema/migration、依赖、提交动作或生产写入。"
 ```
+
+### R818 - 业务版本工作台 applied 入口兼容
+
+```yaml
+id: R818
+module: "本地比对计算"
+description: "IM117 生产详情入口会以 `status=applied` 进入业务版本工作台，但工作台原筛选只识别 ready/blocked/empty，导致已应用版本入口被筛为空。需要让 applied 入口等价定位已形成版本，并继续暴露同业务日预测 vs 排班直接提交候选。"
+source: "After IM117 completion and PM asked to continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM118 已完成：业务版本工作台将 `status=applied` 作为 ready 入口别名处理，生产详情跳转不会筛空；同业务日已应用预测和排班版本可直接形成 forecast_vs_schedule 受控提交请求。"
+```
