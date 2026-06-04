@@ -14,6 +14,7 @@ import {
 
 import type { ImportBatchListRow } from "@/components/import-center-model"
 import {
+  type PersonnelScheduleProductionApiDetail,
   type PersonnelScheduleProductionTone,
   summarizePersonnelScheduleProductionDetail,
   summarizePersonnelScheduleProductionWorkbench,
@@ -224,12 +225,18 @@ export function PersonnelScheduleProductionDetail({
   batches,
   batchId,
   error,
+  apiDetail,
 }: {
   batches: ImportBatchListRow[]
   batchId: string
   error: string | null
+  apiDetail: PersonnelScheduleProductionApiDetail | null
 }) {
-  const detail = summarizePersonnelScheduleProductionDetail(batches, batchId)
+  const detail = summarizePersonnelScheduleProductionDetail(
+    batches,
+    batchId,
+    apiDetail
+  )
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
@@ -349,11 +356,38 @@ export function PersonnelScheduleProductionDetail({
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <Lock className="size-4 text-muted-foreground" />
-            当前不伪造明细
+            {detail.detailRows.length > 0 || detail.intervalRows.length > 0
+              ? "真实版本明细"
+              : "当前不伪造明细"}
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          当前列表 API 只提供来源批次、版本和应用记录数。本页只展示这些已确认信息；人员名单、班次明细和逐 0.5h 明细待后续版本 API 暴露后再呈现。
+        <CardContent className="grid gap-4 text-sm text-muted-foreground">
+          {detail.detailRows.length > 0 || detail.intervalRows.length > 0 ? (
+            <>
+              <div className="grid gap-1">
+                <p className="font-medium text-foreground">排班明细与 0.5h 展开已来自真实版本 API</p>
+                <p>
+                  页面只读展示已应用版本返回的人员、班次、职场、供应商、项目和技能引用；不提交发布、冻结或自动排班动作。
+                </p>
+              </div>
+              <div className="grid gap-4 xl:grid-cols-2">
+                <ReadOnlyRowsTable
+                  title="排班明细"
+                  emptyLabel="真实版本 API 暂未返回排班明细"
+                  rows={detail.detailRows}
+                />
+                <ReadOnlyRowsTable
+                  title="0.5h 展开区间"
+                  emptyLabel="真实版本 API 暂未返回 0.5h 展开区间"
+                  rows={detail.intervalRows}
+                />
+              </div>
+            </>
+          ) : (
+            <p>
+              当前列表 API 只提供来源批次、版本和应用记录数。本页只展示这些已确认信息；人员名单、班次明细和逐 0.5h 明细待后续版本 API 暴露后再呈现。
+            </p>
+          )}
         </CardContent>
       </Card>
 
@@ -403,6 +437,67 @@ export function PersonnelScheduleProductionDetail({
         </CardContent>
       </Card>
     </main>
+  )
+}
+
+function ReadOnlyRowsTable({
+  title,
+  emptyLabel,
+  rows,
+}: {
+  title: string
+  emptyLabel: string
+  rows: Array<{
+    id: string
+    employeeLabel: string
+    dateLabel: string
+    timeLabel: string
+    referenceLabel: string
+    shiftLabel?: string
+  }>
+}) {
+  return (
+    <div className="overflow-hidden rounded-md border">
+      <div className="border-b px-3 py-2 text-sm font-medium text-foreground">
+        {title}
+      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>坐席</TableHead>
+            <TableHead>日期</TableHead>
+            <TableHead>{rows.some((row) => row.shiftLabel) ? "班次/时间" : "时间"}</TableHead>
+            <TableHead>引用</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.length > 0 ? (
+            rows.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell className="align-top font-mono text-xs">
+                  {row.employeeLabel}
+                </TableCell>
+                <TableCell className="align-top text-sm text-muted-foreground">
+                  {row.dateLabel}
+                </TableCell>
+                <TableCell className="align-top text-sm text-muted-foreground">
+                  {row.shiftLabel ? `${row.shiftLabel} / ${row.timeLabel}` : row.timeLabel}
+                </TableCell>
+                <TableCell className="align-top text-sm text-muted-foreground">
+                  {row.referenceLabel}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4} className="h-16 text-center text-sm text-muted-foreground">
+                {emptyLabel}
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   )
 }
 

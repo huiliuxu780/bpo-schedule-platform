@@ -558,3 +558,9 @@ After master-data maintenance CRUD, the next slice returns to the personnel-sche
 `US731/IM111` is complete. The backend now exposes `/api/v1/personnel-schedule/production/{batch_id}` as a read-only personnel-schedule production detail API. It resolves the source import batch, locates the applied schedule version by import_version_id, and returns source batch context, schedule_version_id, business date range, schedule detail rows, and 0.5h expanded intervals.
 
 Current queue returned to empty after IM111. The task explicitly excluded frontend wiring, schema/migration, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, and charge factors.
+
+## 2026-06-04 IM112 Personnel Schedule Production Detail UI
+
+`US732/IM112` is complete. The existing `/schedule-plans/production/[batchId]` page now calls `/api/v1/personnel-schedule/production/{batch_id}` and replaces the previous no-fabrication placeholder with real schedule detail and 0.5h interval visibility when the API returns an applied version.
+
+The task remained frontend-scaffold only. It did not modify backend code, schemas, migrations, dependencies, publish/freeze writes, approval, export, batch operations, permissions, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM112.

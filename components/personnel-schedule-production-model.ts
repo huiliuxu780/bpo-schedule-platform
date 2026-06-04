@@ -49,9 +49,77 @@ export type PersonnelScheduleProductionDetailSummary = {
   personScopeLabel: string
   halfHourResultLabel: string
   blockerSummary: string
+  detailRows: PersonnelScheduleProductionDetailRow[]
+  intervalRows: PersonnelScheduleProductionIntervalRow[]
   actionShellTitle: string
   actionShellDetail: string
   actionShells: PersonnelScheduleProductionActionShell[]
+}
+
+export type PersonnelScheduleProductionApiDetail = {
+  batch: {
+    batch_id: string
+    file_name: string
+    uploaded_at: string
+    business_date_from: string
+    business_date_to: string
+    total_rows: number
+    success_rows: number
+  }
+  version: {
+    schedule_version_id: string
+    import_version_id: string
+    business_date_from: string
+    business_date_to: string
+    created_at: string
+  }
+  details: PersonnelScheduleProductionApiDetailRow[]
+  intervals: PersonnelScheduleProductionApiIntervalRow[]
+}
+
+export type PersonnelScheduleProductionApiDetailRow = {
+  schedule_detail_id: string
+  schedule_version_id: string
+  employee_id: string
+  workplace_id: string
+  supplier_id: string
+  project_id: string
+  skill_id: string
+  schedule_date: string
+  shift_type_id: string
+  start_time: string
+  end_time: string
+}
+
+export type PersonnelScheduleProductionApiIntervalRow = {
+  schedule_interval_id: string
+  schedule_detail_id: string
+  schedule_version_id: string
+  employee_id: string
+  interval_date: string
+  interval_start: string
+  interval_end: string
+  workplace_id: string
+  supplier_id: string
+  project_id: string
+  skill_id: string
+}
+
+export type PersonnelScheduleProductionDetailRow = {
+  id: string
+  employeeLabel: string
+  dateLabel: string
+  shiftLabel: string
+  timeLabel: string
+  referenceLabel: string
+}
+
+export type PersonnelScheduleProductionIntervalRow = {
+  id: string
+  employeeLabel: string
+  dateLabel: string
+  timeLabel: string
+  referenceLabel: string
 }
 
 export type PersonnelScheduleProductionActionShell = {
@@ -120,7 +188,8 @@ function toPersonnelScheduleProductionRow(
 
 export function summarizePersonnelScheduleProductionDetail(
   batches: ImportBatchListRow[],
-  batchId: string
+  batchId: string,
+  apiDetail: PersonnelScheduleProductionApiDetail | null = null
 ): PersonnelScheduleProductionDetailSummary {
   const batch = batches.find(
     (candidate) =>
@@ -147,6 +216,8 @@ export function summarizePersonnelScheduleProductionDetail(
       personScopeLabel: "未定位来源批次，不伪造人员级明细",
       halfHourResultLabel: "暂未发现 0.5h 展开记录",
       blockerSummary: "请返回排班生产工作台选择来源批次",
+      detailRows: [],
+      intervalRows: [],
       actionShellTitle: "发布/冻结边界安全壳",
       actionShellDetail: "当前只展示生产动作前置校验，不提交真实发布或冻结状态。",
       actionShells: buildPersonnelScheduleActionShells({
@@ -158,11 +229,36 @@ export function summarizePersonnelScheduleProductionDetail(
   }
 
   const row = toPersonnelScheduleProductionRow(batch)
+  const apiDetails = apiDetail?.details ?? []
+  const apiIntervals = apiDetail?.intervals ?? []
+  const apiDetailRows = apiDetails.map(toDetailDisplayRow)
+  const apiIntervalRows = apiIntervals.map(toIntervalDisplayRow)
+  const hasApiDetail = Boolean(apiDetail)
   const isReady = row.tone === "ready"
+  const detailCount = apiDetail ? apiDetails.length : batch.success_rows
+  const intervalCount = apiDetail ? apiIntervals.length : batch.applied_record_count
   const halfHourResultLabel =
-    batch.applied_record_count > 0
-      ? `已形成 ${batch.applied_record_count.toLocaleString("zh-CN")} 条 0.5h 展开记录`
+    intervalCount > 0
+      ? `已形成 ${intervalCount.toLocaleString("zh-CN")} 条 0.5h ${
+          hasApiDetail ? "展开区间" : "展开记录"
+        }`
       : "暂未发现 0.5h 展开记录"
+  const versionLabel = apiDetail?.version.schedule_version_id ?? row.versionLabel
+  const businessDateLabel = apiDetail
+    ? formatBusinessDateRange(
+        apiDetail.version.business_date_from,
+        apiDetail.version.business_date_to
+      )
+    : row.businessDateLabel
+  const sourceRowLabel = hasApiDetail
+    ? `${detailCount.toLocaleString("zh-CN")} 条排班明细来自真实版本 API`
+    : `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`
+  const shiftReferenceLabel = hasApiDetail
+    ? summarizeShiftReferences(apiDetails)
+    : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，班次引用明细待版本 API 暴露`
+  const personScopeLabel = hasApiDetail
+    ? summarizeEmployees(apiDetails)
+    : "当前列表 API 未暴露人员清单，不伪造人员级明细"
 
   return {
     tone: row.tone === "empty" ? "blocked" : row.tone,
@@ -172,25 +268,27 @@ export function summarizePersonnelScheduleProductionDetail(
       : "当前版本缺少应用、业务版本或 0.5h 展开记录，详情页只展示可确认的来源口径。",
     batchId: batch.batch_id,
     fileName: batch.file_name,
-    versionLabel: row.versionLabel,
+    versionLabel,
     sourceBatchHref: row.sourceBatchHref,
     workbenchHref: "/schedule-plans/production",
-    businessDateLabel: row.businessDateLabel,
+    businessDateLabel,
     uploadedAtLabel: row.uploadedAtLabel,
     applicationLabel: row.applicationLabel,
     expansionLabel: row.expansionLabel,
-    appliedRecordCountLabel: row.appliedRecordCountLabel,
-    sourceRowLabel: `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`,
-    shiftReferenceLabel: `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，班次引用明细待版本 API 暴露`,
-    personScopeLabel: "当前列表 API 未暴露人员清单，不伪造人员级明细",
+    appliedRecordCountLabel: intervalCount.toLocaleString("zh-CN"),
+    sourceRowLabel,
+    shiftReferenceLabel,
+    personScopeLabel,
     halfHourResultLabel,
     blockerSummary: row.blockerSummary,
+    detailRows: apiDetailRows,
+    intervalRows: apiIntervalRows,
     actionShellTitle: "发布/冻结边界安全壳",
     actionShellDetail: "当前只展示生产动作前置校验，不提交真实发布或冻结状态。",
     actionShells: buildPersonnelScheduleActionShells({
-      sourceVersionLabel: row.versionLabel,
+      sourceVersionLabel: versionLabel,
       expansionGateLabel:
-        batch.applied_record_count > 0
+        intervalCount > 0
           ? halfHourResultLabel
           : `阻塞：${halfHourResultLabel}`,
       failureBoundaryLabel:
@@ -199,6 +297,85 @@ export function summarizePersonnelScheduleProductionDetail(
           : `阻塞：${row.blockerSummary}`,
     }),
   }
+}
+
+function toDetailDisplayRow(
+  row: PersonnelScheduleProductionApiDetailRow
+): PersonnelScheduleProductionDetailRow {
+  return {
+    id: row.schedule_detail_id,
+    employeeLabel: row.employee_id,
+    dateLabel: row.schedule_date,
+    shiftLabel: row.shift_type_id,
+    timeLabel: `${row.start_time}-${row.end_time}`,
+    referenceLabel: formatReferenceLabel(row),
+  }
+}
+
+function toIntervalDisplayRow(
+  row: PersonnelScheduleProductionApiIntervalRow
+): PersonnelScheduleProductionIntervalRow {
+  return {
+    id: row.schedule_interval_id,
+    employeeLabel: row.employee_id,
+    dateLabel: row.interval_date,
+    timeLabel: `${row.interval_start}-${row.interval_end}`,
+    referenceLabel: formatReferenceLabel(row),
+  }
+}
+
+function summarizeShiftReferences(
+  rows: PersonnelScheduleProductionApiDetailRow[]
+) {
+  if (rows.length === 0) {
+    return "真实版本 API 暂未返回班次明细"
+  }
+
+  const shiftIds = uniqueValues(rows.map((row) => row.shift_type_id))
+
+  return `${shiftIds.length.toLocaleString("zh-CN")} 个班次引用已定位：${formatPreviewList(
+    shiftIds
+  )}`
+}
+
+function summarizeEmployees(rows: PersonnelScheduleProductionApiDetailRow[]) {
+  if (rows.length === 0) {
+    return "真实版本 API 暂未返回人员明细"
+  }
+
+  const employeeIds = uniqueValues(rows.map((row) => row.employee_id))
+
+  return `${employeeIds.length.toLocaleString("zh-CN")} 名坐席已定位：${formatPreviewList(
+    employeeIds
+  )}`
+}
+
+function uniqueValues(values: string[]) {
+  return Array.from(new Set(values.filter(Boolean)))
+}
+
+function formatPreviewList(values: string[]) {
+  const preview = values.slice(0, 3).join("、")
+
+  if (values.length <= 3) {
+    return preview
+  }
+
+  return `${preview} 等`
+}
+
+function formatReferenceLabel({
+  workplace_id,
+  supplier_id,
+  project_id,
+  skill_id,
+}: {
+  workplace_id: string
+  supplier_id: string
+  project_id: string
+  skill_id: string
+}) {
+  return [workplace_id, supplier_id, project_id, skill_id].join(" / ")
 }
 
 function buildPersonnelScheduleActionShells({

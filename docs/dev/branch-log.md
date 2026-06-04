@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM112 Personnel Schedule Production Detail UI
+
+- branch_name: `codex/im112-schedule-production-detail-ui`
+- base_main_commit: `ef52229`
+- stacked_on: `cfea9d2 feat: add personnel schedule production detail api`
+- remote_status: `IM111 branch is pushed; IM112 implementation is local only until final check/commit/push.`
+- scope: wire `/schedule-plans/production/[batchId]` to the IM111 read-only personnel-schedule production detail API and show real schedule details plus 0.5h expanded intervals.
+- allowed_files_check: `app/schedule-plans/production/**`, `components/personnel-schedule-production-workbench.tsx`, `components/personnel-schedule-production-model.ts`, `scripts/tests/personnel-schedule-production-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
+- scope_diff_check: expected IM112 frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED target `node --test scripts/tests/personnel-schedule-production-model.test.mjs` first failed because the detail model still returned `BATCH-SCH-001::v1` instead of real `SCH-PROD-001`; after implementation the same target test passed with 8 tests, `npm run lint` passed, `npm run typecheck` passed, and shadcn UI gate passed with 3 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 195 tests OK. In-app browser smoke on `http://127.0.0.1:3000/schedule-plans/production/BATCH-MISSING-IM112` matched `排班版本详情`, `排班版本未定位`, `当前不伪造明细`, and `返回排班生产`.
+- local_commit_sha: `pending`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM086 Controlled Local Comparison Trigger
 
 - date: `2026-06-03`

@@ -2497,3 +2497,16 @@ version: "1.0"
 status: "done"
 notes: "IM111 已完成：新增人员排班生产版本详情只读 API，可按 batch_id 返回来源批次、schedule_version_id、业务日期范围、排班明细和 0.5h 展开区间；不新增 schema/migration，不做前端接入、发布、冻结、取消发布、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R812 - 人员排班生产详情前端接入真实 API
+
+```yaml
+id: R812
+module: "人员排班生产"
+description: "人员排班生产详情 API 已可返回排班明细和 0.5h 展开区间，下一步需要让 `/schedule-plans/production/[batchId]` 读取该只读 API，替换原先不伪造明细的占位状态。"
+source: "After IM111 completion and PM asked to continue on 2026-06-04"
+submitted_at: "2026-06-04"
+version: "1.0"
+status: "done"
+notes: "IM112 已完成：`/schedule-plans/production/[batchId]` 调用 IM111 只读 API，展示真实 schedule_version_id、排班明细和 0.5h 展开区间；保留未应用/缺 API 的明确阻塞空态，不新增后端、schema/migration、依赖或生产写入。"
+```

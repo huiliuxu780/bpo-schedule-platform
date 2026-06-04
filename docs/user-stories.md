@@ -4516,3 +4516,26 @@ dependencies:
 status: "done"
 notes: "IM111 已完成：后端提供按 batch_id 查询人员排班生产版本详情的只读 API，返回来源批次、版本、排班明细和 0.5h 展开区间；前端接入和生产状态变化仍未进入。"
 ```
+
+### US732 - 人员排班生产详情前端接入真实 API
+
+```yaml
+id: US732
+requirement_ids:
+  - R812
+module: "人员排班生产"
+role: "排班主管"
+story: "作为排班主管，我希望排班生产详情页直接展示已应用版本中的排班明细和 0.5h 展开区间，以便确认批次应用后实际生成了哪些人员级排班结果。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/schedule-plans/production/[batchId]` 调用 IM111 只读 API。"
+  - "页面展示真实 schedule_version_id、排班明细数量和 0.5h 展开区间数量。"
+  - "页面展示至少一组排班明细/展开区间只读表格或列表。"
+  - "未应用、缺 API 或找不到版本时保留明确阻塞/空态，不伪造明细。"
+  - "不做发布、冻结、取消发布、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US731"
+status: "done"
+notes: "IM112 已完成：详情页接入 IM111 API，展示真实排班明细数量、0.5h 展开区间数量和只读明细表；未取到 API 明细时继续保持不伪造明细空态。"
+```
