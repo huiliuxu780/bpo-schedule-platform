@@ -2835,3 +2835,16 @@ version: "1.0"
 status: "done"
 notes: "IM142 已完成：/master-data/vendors 列表新增详情入口，/master-data/vendors/[vendorId] 展示供应商信息和服务职场；不实现合同、结算比例或最低人力。"
 ```
+
+### R843 - 客服人员列表内批量导入大弹窗
+
+```yaml
+id: R843
+module: "主数据维护"
+description: "PM 明确导入动作应从具体业务列表发起，人员导入应放在客服人员列表，而不是让用户先进入独立上传工作区。需要在客服人员列表页提供批量导入大弹窗，弹窗内分为上传文件、字段映射和导入结果三步；完整批次详情、失败行修正、准备度和应用处理仍留在批次详情页。"
+source: "PM corrected import UX and approved the agent-list dialog design on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM143 已完成：/master-data/agents 的批量导入入口改为列表内大弹窗，弹窗内分上传文件、字段映射和导入结果三步；完整批次详情、失败行修正、准备度和应用处理仍进入批次详情页。"
+```

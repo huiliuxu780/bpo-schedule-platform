@@ -3548,3 +3548,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM143 Agent Import Dialog
+
+- branch_name: `codex/im143-agent-import-dialog`
+- base_main_commit: `3060d9c`
+- stacked_on: `8b3d0cc fix: keep sidebar expanded on detail pages`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed import UX correction. Move the customer-service personnel import entry from the standalone upload workspace into an in-page large dialog on `/master-data/agents`; keep the dialog to upload, mapping choice/manual mapping, and immediate result summary only; keep full batch details, failed-row correction, readiness, application, and version trace in existing batch detail pages.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-application capability, automatic scheduling, formula, settlement, or charge-factor changes.
+- scope_diff_check: expected agent-list import dialog, template fetch for the dialog, upload action return-target whitelist for `/master-data/agents?import_dialog=1`, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED model test first failed because `summarizeMasterDataAgentImportDialog` did not exist; RED product-structure test then failed because the agent list did not render `AgentImportDialog`. After implementation, target master-data model tests passed with 20 tests, product-structure tests passed with 9 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke over `/master-data/agents` and `/master-data/agents?import_dialog=1&upload=success&batch=BATCH-MD-001` confirmed the `批量导入` entry opens the list dialog, the dialog shows upload/mapping/result steps, template download, batch detail and failed-row correction links, and returns upload results to the same dialog. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

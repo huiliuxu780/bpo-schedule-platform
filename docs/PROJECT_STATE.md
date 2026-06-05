@@ -716,3 +716,9 @@ The task remained frontend-scaffold/read-only. It did not add backend routes, sc
 After the workplace detail slice, `IM142` adds `/master-data/vendors/[vendorId]` as the supplier child-detail page. `/master-data/vendors` now links supplier rows into that child page, and the detail renders supplier basics plus service workplaces derived from existing personnel ownership records. Service workplace rows link back to the corresponding workplace detail when available.
 
 The task remained frontend-scaffold/read-only. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Current queue remains empty after IM142.
+
+## 2026-06-05 IM143 Agent Import Dialog
+
+After PM corrected the import interaction model, `IM143` moves the customer-service personnel import entry into `/master-data/agents` as an in-page large dialog. The dialog contains upload, field-mapping, and import-result steps; it offers a personnel CSV template download, supports active master-data mapping templates or manual mapping JSON, and returns upload feedback to the same dialog.
+
+The task remained frontend-scaffold only and reused existing CSV upload, mapping-template, and batch-detail contracts. Full row details, failed-row correction, readiness, application, and version trace remain in existing batch detail pages. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue remains empty after IM143.

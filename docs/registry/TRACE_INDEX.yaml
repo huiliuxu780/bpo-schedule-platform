@@ -805,6 +805,9 @@ requirements:
   R835: {file: "docs/raw-requirements.md", story_ids: ["US755"], task_ids: ["IM135"]}
   R841: {file: "docs/raw-requirements.md", story_ids: ["US761"], task_ids: ["IM141"]}
   R842: {file: "docs/raw-requirements.md", story_ids: ["US762"], task_ids: ["IM142"]}
+  US763: {file: "docs/user-stories.md", requirement_ids: ["R843"], task_ids: ["IM143"], archive_refs: []}
+  IM143: {file: "tasks/backlog.yaml", story_ids: ["US763"], gate: "frontend-scaffold"}
+  R843: {file: "docs/raw-requirements.md", story_ids: ["US763"], task_ids: ["IM143"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

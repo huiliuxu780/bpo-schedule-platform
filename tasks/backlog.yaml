@@ -9537,3 +9537,48 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已新增 /master-data/vendors/[vendorId] 子详情页，并将服务职场只读展示收敛到具体供应商详情内。"
+  - id: IM143
+    title: "客服人员批量导入大弹窗"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM142"]
+    allowed_files:
+      - "app/data-quality/actions.ts"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/agents 右上角提供批量导入入口，点击后在当前页面打开大弹窗，而不是跳转独立上传工作区。"
+      - "弹窗第一步提供人员导入模板下载和 CSV 上传字段。"
+      - "弹窗第二步支持选择启用的主数据映射模板，也支持模板为空时手动填写字段映射 JSON。"
+      - "弹窗第三步展示本次导入摘要、成功/失败行数，并提供查看批次详情和失败行修正入口。"
+      - "完整批次详情、失败行修正、readiness、应用到业务数据和版本链路仍在批次详情页处理。"
+      - "不新增后端、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将 /master-data/agents 的批量导入入口改为列表内大弹窗；弹窗包含上传文件、字段映射、导入结果三步，上传结果回流当前弹窗，并把完整批次详情、失败行修正和应用处理留在批次详情页。"

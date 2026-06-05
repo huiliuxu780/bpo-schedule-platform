@@ -1873,3 +1873,14 @@
 - action: 新增供应商详情页并把服务职场收敛到供应商子页面。
 - status: `done`
 - notes: `/master-data/vendors` 的供应商列表行新增 `详情` 入口，进入 `/master-data/vendors/[vendorId]` 后展示供应商基础信息和该供应商当前服务职场；服务职场可回链对应职场详情；侧边栏默认展开全部一级组，职场/供应商详情页继承父级高亮；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子；current queue 与 active tasks 保持为空。
+
+### 2026-06-05
+
+- task_id: `IM143`
+- source_ids:
+  - `R843`
+- story_ids:
+  - `US763`
+- action: 在客服人员列表内新增批量导入大弹窗。
+- status: `done`
+- notes: `/master-data/agents` 右上角 `批量导入` 不再跳转独立上传工作区，而是在当前列表页打开三步大弹窗；第一步提供人员导入模板下载和 CSV 上传字段，第二步支持启用的主数据映射模板或手动字段映射 JSON，第三步展示本次导入摘要并提供 `查看批次详情` 和 `失败行修正` 入口；完整行结果、readiness、应用到业务数据和版本链路仍由批次详情页承载；本轮不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

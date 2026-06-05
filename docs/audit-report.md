@@ -3769,3 +3769,28 @@
 - `npm run typecheck`：通过。
 - in-app browser smoke：`http://127.0.0.1:3000/master-data/vendors` 命中供应商详情入口；`http://127.0.0.1:3000/master-data/vendors/SUP-A` 命中 `供应商信息`、`服务职场` 和 `查看职场`，且未出现合同、结算或最低人力文案。详情页侧边栏默认展开全部一级组，并分别高亮 `供应商` 与 `职场` 父项。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM143 客服人员批量导入大弹窗
+
+#### 审计结论
+
+- `IM143` 已把 `/master-data/agents` 的人员导入入口收敛到客服人员列表内大弹窗。
+- 弹窗按 PM 确认拆为 `上传文件`、`字段映射`、`导入结果` 三步；第一步提供人员 CSV 模板下载，第二步支持映射模板或手动 JSON，第三步只展示本次摘要和后续入口。
+- 完整批次详情、失败行修正、readiness、应用到业务数据和业务版本链路仍由既有批次详情页承载，没有塞进弹窗。
+- 本轮没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只完成客服人员导入弹窗；排班、预测、登录/状态日志仍待后续按同一模式复用。
+- 当前仍复用 CSV 上传能力；Excel/multipart 导入属于单独依赖和上传策略任务。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `summarizeMasterDataAgentImportDialog`。
+- TDD 红灯：产品结构测试先失败，证明客服人员列表仍未渲染列表内导入弹窗。
+- `node --experimental-strip-types --test scripts/tests/master-data-maintenance-model.test.mjs`：通过，20 个 master-data model 测试通过。
+- `node --test scripts/tests/product-structure.test.mjs`：通过，9 个 product-structure 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3000/master-data/agents` 命中 `批量导入`，入口 href 为 `/master-data/agents?import_dialog=1`；`http://127.0.0.1:3000/master-data/agents?import_dialog=1&upload=success&batch=BATCH-MD-001` 命中 `客服人员批量导入`、`上传文件`、`字段映射`、`导入结果`、`下载导入模板`、`查看批次详情`、`失败行修正`，并确认 hidden `result_redirect_to=/master-data/agents?import_dialog=1` 和 `file_type=master_data`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -1,6 +1,8 @@
 import {
+  type ImportFieldMappingTemplate,
   type ImportBatchListRow,
   buildImportApiUrl,
+  buildImportFieldMappingTemplatesUrl,
 } from "@/components/import-center-model"
 import type {
   MasterDataEmployeeListRow,
@@ -159,6 +161,37 @@ export async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow
     }
 
     const payload = (await response.json()) as { items?: ImportBatchListRow[] }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
+export async function fetchImportFieldMappingTemplates(): Promise<
+  ApiResult<ImportFieldMappingTemplate[]>
+> {
+  try {
+    const response = await fetch(buildImportFieldMappingTemplatesUrl(), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `字段映射模板读取失败（状态码 ${response.status}）`,
+      }
+    }
+
+    const payload = (await response.json()) as {
+      items?: ImportFieldMappingTemplate[]
+    }
 
     return {
       data: Array.isArray(payload.items) ? payload.items : [],

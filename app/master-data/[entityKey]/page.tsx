@@ -18,6 +18,7 @@ import {
 } from "@/components/master-data-maintenance-model"
 import {
   fetchImportBatches,
+  fetchImportFieldMappingTemplates,
   fetchMasterDataEmployees,
   fetchMasterDataOrganizations,
   fetchMasterDataReferences,
@@ -45,9 +46,14 @@ export default async function MasterDataEntityDetailPage({
   }
 
   const batchResult = await fetchImportBatches()
+  const resolvedSearchParams = searchParams ? await searchParams : {}
   const employeeResult =
     entity.key === "agents"
       ? await fetchMasterDataEmployees()
+      : { data: [], error: null }
+  const templateResult =
+    entity.key === "agents"
+      ? await fetchImportFieldMappingTemplates()
       : { data: [], error: null }
   const organizationResult =
     entity.key === "organizations"
@@ -57,7 +63,6 @@ export default async function MasterDataEntityDetailPage({
     isReferenceEntity(entity.key)
       ? await fetchMasterDataReferences(entity.key)
       : { data: [], error: null }
-  const resolvedSearchParams = searchParams ? await searchParams : {}
   const summary = summarizeMasterDataEntitySourceContext(
     entity.key as MasterDataMaintenanceEntityKey,
     batchResult.data ?? []
@@ -67,7 +72,14 @@ export default async function MasterDataEntityDetailPage({
     entity.key === "agents"
       ? summarizeMasterDataAgentManagement(
           employeeResult.data ?? [],
-          resolveAgentManagementFilters(resolvedSearchParams)
+          resolveAgentManagementFilters(resolvedSearchParams),
+          {
+            batches: batchResult.data ?? [],
+            templates: templateResult.data ?? [],
+            uploadStatus: getSingleSearchParam(resolvedSearchParams.upload),
+            uploadReason: getSingleSearchParam(resolvedSearchParams.reason),
+            uploadBatchId: getSingleSearchParam(resolvedSearchParams.batch),
+          }
         )
       : null
   const referenceManagementSummary = isReferenceEntity(entity.key)
@@ -93,8 +105,13 @@ export default async function MasterDataEntityDetailPage({
           summary={summary}
           managementSummary={agentManagementSummary}
           error={batchResult.error}
+          templateError={templateResult.error}
           feedback={feedback}
           employeeListError={employeeResult.error}
+          importDialogOpen={
+            getSingleSearchParam(resolvedSearchParams.import_dialog) === "1" ||
+            Boolean(getSingleSearchParam(resolvedSearchParams.upload))
+          }
           selectedFreezeEmployeeId={selectedFreezeEmployeeId}
           agentSubmitAction={submitMasterDataAgentMaintenance}
         />

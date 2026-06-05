@@ -12,6 +12,7 @@ const masterDataWorkplaceDetailPagePath = new URL("../../app/master-data/sites/[
 const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[vendorId]/page.tsx", import.meta.url);
 const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions.ts", import.meta.url);
 const masterDataModelPath = new URL("../../components/master-data-maintenance-model.ts", import.meta.url);
+const masterDataWorkbenchPath = new URL("../../components/master-data-maintenance-workbench.tsx", import.meta.url);
 
 async function collectSourceFiles(directoryUrl) {
   const entries = await readdir(directoryUrl, { withFileTypes: true });
@@ -248,5 +249,46 @@ test("sidebar expands all groups by default and inherits master data detail stat
     source,
     /title: "供应商",\s+href: "\/master-data\/vendors",\s+activeMatch: "prefix"/,
     "vendor detail routes should inherit the vendor nav item",
+  );
+});
+
+test("agent bulk import starts from the agent list dialog and leaves details to batch detail pages", async () => {
+  const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const modelSource = await readFile(masterDataModelPath, "utf8");
+  const agentSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataAgentManagementPage"),
+    workbenchSource.indexOf("export function MasterDataReferenceManagementPage"),
+  );
+
+  assert.equal(
+    agentSource.includes("AgentImportDialog"),
+    true,
+    "agent list should render an in-page import dialog",
+  );
+  assert.equal(
+    agentSource.includes('buildImportUploadWorkspaceHref({ fileType: "master_data" })'),
+    false,
+    "agent list import entry should not jump to the standalone upload workspace",
+  );
+  assert.equal(
+    entitySource.includes("fetchImportFieldMappingTemplates"),
+    true,
+    "agent page should load mapping templates for the dialog",
+  );
+  assert.equal(
+    modelSource.includes("summarizeMasterDataAgentImportDialog"),
+    true,
+    "dialog flow should be modeled instead of ad hoc page markup",
+  );
+  assert.equal(
+    workbenchSource.includes("查看批次详情"),
+    true,
+    "full import details should remain on the batch detail page",
+  );
+  assert.equal(
+    workbenchSource.includes("失败行修正"),
+    true,
+    "failed-row correction should be linked from the result step",
   );
 });

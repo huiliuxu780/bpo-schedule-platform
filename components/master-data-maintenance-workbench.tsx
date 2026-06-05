@@ -12,6 +12,7 @@ import {
   Upload,
 } from "lucide-react"
 
+import { uploadImportCsvAction } from "@/app/data-quality/actions"
 import {
   type MasterDataAgentMaintenanceFeedback,
   type MasterDataAgentManagementSummary,
@@ -21,7 +22,10 @@ import {
   type MasterDataVendorDetailSummary,
   type MasterDataWorkplaceDetailSummary,
 } from "@/components/master-data-maintenance-model"
-import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
+import {
+  buildImportUploadWorkspaceHref,
+  formatFieldMappingTemplateSummary,
+} from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -55,16 +59,20 @@ export function MasterDataAgentManagementPage({
   summary,
   managementSummary,
   error,
+  templateError,
   feedback,
   employeeListError,
+  importDialogOpen,
   selectedFreezeEmployeeId,
   agentSubmitAction,
 }: {
   summary: MasterDataEntitySourceContext
   managementSummary: MasterDataAgentManagementSummary
   error: string | null
+  templateError?: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   employeeListError?: string | null
+  importDialogOpen?: boolean
   selectedFreezeEmployeeId: string
   agentSubmitAction: (formData: FormData) => Promise<void>
 }) {
@@ -87,9 +95,9 @@ export function MasterDataAgentManagementPage({
             </Link>
           </Button>
           <Button asChild size="sm" variant="outline">
-            <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
+            <Link href={managementSummary.importDialog.openHref}>
               <Upload data-icon="inline-start" />
-              导入人员
+              批量导入
             </Link>
           </Button>
         </div>
@@ -121,6 +129,13 @@ export function MasterDataAgentManagementPage({
           summary={summary}
           employee={freezeEmployee}
           action={agentSubmitAction}
+        />
+      ) : null}
+
+      {importDialogOpen ? (
+        <AgentImportDialog
+          dialog={managementSummary.importDialog}
+          templateError={templateError ?? null}
         />
       ) : null}
     </main>
@@ -804,6 +819,286 @@ function AgentRowActionLink({
     >
       <Link href={href}>{children}</Link>
     </Button>
+  )
+}
+
+function AgentImportDialog({
+  dialog,
+  templateError,
+}: {
+  dialog: MasterDataAgentManagementSummary["importDialog"]
+  templateError: string | null
+}) {
+  const defaultTemplateId = dialog.activeTemplates[0]?.template_id ?? ""
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="agent-import-title"
+    >
+      <div className="grid max-h-[calc(100vh-2rem)] w-full max-w-5xl overflow-hidden rounded-lg border bg-background shadow-lg">
+        <div className="flex items-start justify-between gap-3 border-b p-4">
+          <div className="grid gap-1">
+            <h2 id="agent-import-title" className="text-base font-semibold tracking-normal">
+              客服人员批量导入
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              从客服人员列表发起导入；行明细、失败修正和应用处理进入批次详情。
+            </p>
+          </div>
+          <Button asChild size="sm" variant="outline">
+            <Link href={dialog.closeHref}>关闭</Link>
+          </Button>
+        </div>
+
+        <div className="grid gap-4 overflow-y-auto p-4">
+          <div className="grid gap-2 md:grid-cols-3">
+            {dialog.steps.map((step, index) => (
+              <div key={step.key} className="grid gap-1 rounded-md border px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">{index + 1}</Badge>
+                  <span className="text-sm font-medium">{step.title}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">{step.detail}</p>
+              </div>
+            ))}
+          </div>
+
+          <form action={uploadImportCsvAction} className="grid gap-4">
+            <input name="file_type" type="hidden" value={dialog.fileType} />
+            <input
+              name="result_redirect_to"
+              type="hidden"
+              value={dialog.resultRedirectTo}
+            />
+
+            <section className="grid gap-3 rounded-md border p-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="grid gap-1">
+                  <h3 className="text-sm font-semibold tracking-normal">上传文件</h3>
+                  <p className="text-xs text-muted-foreground">
+                    先下载模板，按人员、组织、职场和技能字段补齐后上传。
+                  </p>
+                </div>
+                <Button asChild size="sm" variant="outline">
+                  <a
+                    download={dialog.templateDownloadName}
+                    href={dialog.templateDownloadHref}
+                  >
+                    下载导入模板
+                  </a>
+                </Button>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                <Field label="批次号">
+                  <Input name="batch_id" placeholder="MD-AGENTS-20260605-001" required />
+                </Field>
+                <Field label="文件名">
+                  <Input name="file_name" placeholder="customer-service-agents.csv" />
+                </Field>
+                <Field label="上传人">
+                  <Input name="uploaded_by" defaultValue="operator" required />
+                </Field>
+                <Field label="CSV 文件">
+                  <Input name="csv_file" type="file" accept=".csv,text/csv" required />
+                </Field>
+                <Field label="开始日期">
+                  <Input
+                    name="business_date_from"
+                    type="date"
+                    defaultValue="2026-06-01"
+                    required
+                  />
+                </Field>
+                <Field label="结束日期">
+                  <Input
+                    name="business_date_to"
+                    type="date"
+                    defaultValue="2026-06-30"
+                    required
+                  />
+                </Field>
+              </div>
+            </section>
+
+            <section className="grid gap-3 rounded-md border p-4">
+              <div className="grid gap-1">
+                <h3 className="text-sm font-semibold tracking-normal">字段映射</h3>
+                <p className="text-xs text-muted-foreground">
+                  两种方式二选一：选择模板，或保持模板为空后手动填写字段映射。
+                </p>
+              </div>
+              <div className="grid gap-3 lg:grid-cols-2">
+                <div className="grid gap-3 rounded-md bg-muted/30 p-3">
+                  <MappingModeHeader mode={dialog.mappingModes[0]} />
+                  <Field label="映射模板">
+                    <select
+                      name="template_id"
+                      defaultValue={defaultTemplateId}
+                      className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    >
+                      <option value="">不使用模板</option>
+                      {dialog.activeTemplates.map((template) => (
+                        <option key={template.template_id} value={template.template_id}>
+                          {template.template_name}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                  {templateError ? (
+                    <p className="text-xs text-destructive">{templateError}</p>
+                  ) : dialog.activeTemplates.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">
+                      暂无启用模板，本次可使用手动映射。
+                    </p>
+                  ) : (
+                    <div className="grid gap-2">
+                      {dialog.activeTemplates.slice(0, 3).map((template) => (
+                        <div
+                          key={template.template_id}
+                          className="rounded-md border bg-background px-2 py-1.5"
+                        >
+                          <div className="truncate text-xs font-medium">
+                            {template.template_name}
+                          </div>
+                          <div className="truncate text-xs text-muted-foreground">
+                            {formatFieldMappingTemplateSummary(template)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid gap-3 rounded-md bg-muted/30 p-3">
+                  <MappingModeHeader mode={dialog.mappingModes[1]} />
+                  <Field label="字段映射 JSON">
+                    <textarea
+                      name="field_mapping"
+                      defaultValue={JSON.stringify(
+                        {
+                          record_type: "record_type",
+                          employee_id: "employee_id",
+                          employee_name: "employee_name",
+                          status: "status",
+                          employee_type: "employee_type",
+                          organization_id: "organization_id",
+                          workplace_id: "workplace_id",
+                          effective_from: "effective_from",
+                          effective_to: "effective_to",
+                        },
+                        null,
+                        2
+                      )}
+                      className="min-h-32 w-full rounded-lg border border-input bg-background px-2.5 py-2 font-mono text-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    />
+                  </Field>
+                </div>
+              </div>
+            </section>
+
+            <section className="grid gap-3 rounded-md border p-4">
+              <div className="grid gap-1">
+                <h3 className="text-sm font-semibold tracking-normal">导入结果</h3>
+                <p className="text-xs text-muted-foreground">
+                  弹窗只保留本次摘要；完整成功/失败行、准备度和应用处理在批次详情页完成。
+                </p>
+              </div>
+              <AgentImportResult result={dialog.result} />
+            </section>
+
+            <div className="flex justify-end gap-2">
+              <Button asChild variant="outline">
+                <Link href={dialog.closeHref}>取消</Link>
+              </Button>
+              <Button type="submit">
+                <Upload data-icon="inline-start" />
+                开始导入
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function MappingModeHeader({
+  mode,
+}: {
+  mode: MasterDataAgentManagementSummary["importDialog"]["mappingModes"][number]
+}) {
+  return (
+    <div className="grid gap-1">
+      <div className="text-sm font-medium">{mode.label}</div>
+      <p className="text-xs text-muted-foreground">{mode.detail}</p>
+    </div>
+  )
+}
+
+function AgentImportResult({
+  result,
+}: {
+  result: MasterDataAgentManagementSummary["importDialog"]["result"]
+}) {
+  if (!result) {
+    return (
+      <div className="rounded-md border border-dashed px-3 py-2 text-sm text-muted-foreground">
+        完成上传后在这里显示批次号、成功行、失败行和下一步入口。
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className={
+        result.tone === "success"
+          ? "grid gap-3 rounded-md border bg-muted/20 px-3 py-2"
+          : "grid gap-3 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2"
+      }
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="grid gap-1">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            {result.tone === "success" ? (
+              <CheckCircle2 className="size-4 text-primary" />
+            ) : (
+              <AlertTriangle className="size-4 text-destructive" />
+            )}
+            {result.title}
+          </div>
+          <p className="text-sm text-muted-foreground">{result.detail}</p>
+          <p className="text-xs text-muted-foreground">{result.rowSummary}</p>
+        </div>
+        <div className="flex flex-wrap justify-end gap-2">
+          {result.batchHref ? (
+            <Button asChild size="sm" variant="outline">
+              <Link href={result.batchHref}>查看批次详情</Link>
+            </Button>
+          ) : (
+            <Badge variant={result.tone === "failed" ? "destructive" : "secondary"}>
+              {result.nextActionLabel}
+            </Badge>
+          )}
+          {result.failedRowsHref ? (
+            <Button asChild size="sm" variant="ghost">
+              <Link href={result.failedRowsHref}>失败行修正</Link>
+            </Button>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="grid gap-1.5 text-sm">
+      <span className="font-medium">{label}</span>
+      {children}
+    </label>
   )
 }
 
