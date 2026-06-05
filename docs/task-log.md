@@ -1983,3 +1983,14 @@
 - action: 收口非客服人员主数据页面动作。
 - status: `done`
 - notes: 组织、职场、供应商、技能等非客服人员主数据列表内容区不再显示 `导入主数据` 或跳转独立上传工作区；客服人员已确认的新建和批量导入动作继续由 Header actions 承载；本轮不新增非客服人员 CRUD、导入弹窗、排班/预测/日志导入入口、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM153`
+- source_ids:
+  - `R853`
+- story_ids:
+  - `US773`
+- action: 统一 B 端字体与控件密度基线。
+- status: `done`
+- notes: 移除 `app/globals.css` 中覆盖 shadcn 组件字号的 `button,input,select { font: inherit }`；`Button` 的 `sm/xs` 文本按钮回到 14px 基线，人员列表行内 `编辑/冻结` 文字按钮也统一为 14px/32px；`TableHead` 不再固定 12px，客服人员导入 Dialog 的步骤、说明、映射控件、textarea 和结果文案不再混用 12px；纯图标按钮保留图标密度；本轮不新增业务功能、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

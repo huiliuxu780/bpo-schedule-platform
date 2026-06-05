@@ -85,7 +85,7 @@ export function AgentImportDialog({
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="grid gap-1">
                   <h3 className="text-sm font-semibold tracking-normal">上传文件</h3>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     先下载模板，按人员、组织、职场和技能字段补齐后上传。
                   </p>
                 </div>
@@ -137,7 +137,7 @@ export function AgentImportDialog({
             >
               <div className="grid gap-1">
                 <h3 className="text-sm font-semibold tracking-normal">字段映射</h3>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   两种方式二选一：选择模板，或保持模板为空后手动填写字段映射。
                 </p>
               </div>
@@ -165,7 +165,7 @@ export function AgentImportDialog({
                       <AlertDescription>{templateError}</AlertDescription>
                     </Alert>
                   ) : dialog.activeTemplates.length === 0 ? (
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       暂无启用模板，本次可使用手动映射。
                     </p>
                   ) : (
@@ -175,10 +175,10 @@ export function AgentImportDialog({
                           key={template.template_id}
                           className="rounded-md border bg-background px-2 py-1.5"
                         >
-                          <div className="truncate text-xs font-medium">
+                          <div className="truncate text-sm font-medium">
                             {template.template_name}
                           </div>
-                          <div className="truncate text-xs text-muted-foreground">
+                          <div className="truncate text-sm text-muted-foreground">
                             {formatFieldMappingTemplateSummary(template)}
                           </div>
                         </div>
@@ -207,7 +207,7 @@ export function AgentImportDialog({
                         null,
                         2
                       )}
-                      className="min-h-32 w-full rounded-lg border border-input bg-background px-2.5 py-2 font-mono text-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                      className="min-h-32 w-full rounded-lg border border-input bg-background px-2.5 py-2 font-mono text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                     />
                   </Field>
                 </div>
@@ -221,7 +221,7 @@ export function AgentImportDialog({
             >
               <div className="grid gap-1">
                 <h3 className="text-sm font-semibold tracking-normal">导入结果</h3>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   弹窗只保留本次摘要；完整成功/失败行、准备度和应用处理在批次详情页完成。
                 </p>
               </div>
@@ -293,7 +293,7 @@ function AgentImportStepHeader({
             </Badge>
             <span className="text-sm font-medium">{step.title}</span>
           </div>
-          <p className="text-xs text-muted-foreground">{step.detail}</p>
+          <p className="text-sm text-muted-foreground">{step.detail}</p>
         </div>
       ))}
     </div>
@@ -308,7 +308,7 @@ function MappingModeHeader({
   return (
     <div className="grid gap-1">
       <div className="text-sm font-medium">{mode.label}</div>
-      <p className="text-xs text-muted-foreground">{mode.detail}</p>
+      <p className="text-sm text-muted-foreground">{mode.detail}</p>
     </div>
   )
 }

@@ -778,3 +778,9 @@ Batch processing, internal upload, and field-mapping template pages keep their b
 `IM152` cleans visible master-data workplace terminology. Workplace detail metrics, section heading, and empty state now use `服务团队`/`职场服务团队` for self-owned and supplier team context instead of `运营主体` or `职场运营主体`.
 
 The master-data workplace binding fetch error copy now says `职场服务团队来源读取失败`. This slice does not rename internal compatibility types, remove `project_id` compatibility fields, add standalone service-team pages, add CRUD/import actions, modify backend routes, schemas, migrations, dependencies, supplier contract concepts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, or charge factors. Current queue returns to empty after IM152.
+
+## 2026-06-05 IM153 UI Typography Density Baseline
+
+`IM153` fixes the visible typography drift reported on buttons, tables, and dialogs without changing business capability. The global CSS no longer overrides `button`, `input`, and `select` with `font: inherit`, so shadcn component typography utilities remain effective. `Button` `sm` and `xs` text actions now stay on the 14px baseline, while pure icon buttons keep their compact icon density.
+
+The shared table header no longer forces 12px text, and the customer-service personnel list row actions use the same 14px/32px density as other visible text buttons. The customer-service personnel import Dialog no longer uses 12px body/step/mapping/result copy; its body text, form labels, controls, and textarea align to the same 14px baseline. This slice did not add business functions, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier-contract concepts, minimum staffing requirements, or charge factors. Current queue returns to empty after IM153.

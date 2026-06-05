@@ -3728,3 +3728,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM153 UI Typography Density Baseline
+
+- branch_name: `codex/im153-ui-density-typography`
+- base_main_commit: `3060d9c`
+- stacked_on: `8c794ab fix: align master data workplace terminology`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed UI typography correction. Remove the global form font override, align Button sm/xs text-action sizing, align shared TableHead typography, align customer-service personnel row action text buttons, and remove 12px body/step/control copy from the customer-service personnel import Dialog. Keep the slice limited to typography and density baseline; do not add business behavior.
+- allowed_files_check: `app/globals.css`, `components/ui/button.tsx`, `components/ui/table.tsx`, `components/master-data-agent-import-dialog.tsx`, `components/master-data-maintenance-workbench.tsx`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected global CSS reset removal, Button size class correction, TableHead baseline correction, agent import Dialog typography correction, agent row action button density correction, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because `app/globals.css` still had `button,input,select { font: inherit }`. After implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 23 tests, `npm run lint` passed, `npm run typecheck` passed, and Browser runtime style smoke over `/master-data/agents?import_dialog=1` confirmed visible text buttons are 14px, table headers are 14px/40px, table cells are 14px, dialog body/form controls are 14px, and row action text buttons are 14px/32px. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

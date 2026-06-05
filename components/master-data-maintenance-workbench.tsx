@@ -764,9 +764,9 @@ function AgentRowActionLink({
   return (
     <Button
       asChild
-      size="xs"
+      size="sm"
       variant="ghost"
-      className="px-1.5 text-primary hover:text-primary"
+      className="px-2 text-primary hover:text-primary"
     >
       <Link href={href}>{children}</Link>
     </Button>

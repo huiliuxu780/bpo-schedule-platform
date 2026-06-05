@@ -3994,3 +3994,26 @@
 - `rg -n "职场运营主体|运营主体" app/master-data components/master-data-maintenance-workbench.tsx -S` 无匹配。
 - Browser smoke over `/master-data/sites/SH-01` confirmed the page shows `服务团队` and does not show `运营主体` or `职场运营主体`.
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM153 字体与控件密度统一
+
+#### 审计结论
+
+- 全局 CSS 不再用 `button,input,select { font: inherit }` 覆盖组件自身字号。
+- `Button` 的 `sm` 和 `xs` 文本按钮不再使用 12.8px 或 12px 字号。
+- 客服人员列表行内 `编辑/冻结` 文字按钮与页面级按钮、筛选按钮统一为 14px/32px。
+- `TableHead` 不再固定 `text-xs`，表头与正文统一到 14px 表格基线。
+- 客服人员导入 Dialog 的正文、步骤说明、字段映射、textarea、结果文案和表单控件不再混用 12px。
+- 纯图标按钮、checkbox 和 badge 的尺寸保留为组件语义密度，不作为文字按钮基线。
+- 本轮没有新增业务功能、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 项目中仍有其他历史页面存在小号元信息、badge 或代码标识文本；本轮只治理用户明确指出的按钮、表格、客服人员列表和人员导入弹窗，不做全站重排版。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明全局表单字体覆盖仍存在。
+- TDD 绿灯：补齐组件与 dialog 修复后，同一 focused test 通过，23 个 product-structure 测试通过。
+- Browser runtime style smoke over `/master-data/agents?import_dialog=1` confirmed visible text buttons are 14px, table headers are 14px/40px, table cells are 14px, dialog body/form controls are 14px, and row action text buttons are 14px/32px.
+- `npm run lint`、`npm run typecheck` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 已通过，包含 strict state、shadcn gate、Next build 和后端 209 tests OK。

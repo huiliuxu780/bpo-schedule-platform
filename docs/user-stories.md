@@ -5328,3 +5328,26 @@ dependencies:
 status: "done"
 notes: "IM144 已完成：全局 Shell 与主数据页面 Breadcrumb 已统一，侧边栏按 shadcn Collapsible + SidebarMenuSub 结构实现，Sidebar footer 使用 shadcn Avatar 和本地参考头像 /shadcn-avatar.jpg，并增加本地用户菜单、明暗主题切换和登出入口；SiteHeader 改为单行导航，不再保留无意义搜索/日期/通知占位，并通过 actions 插槽承载页面级动作；Breadcrumb 包含当前页，主数据内容区不再重复全局标题/返回路径，客服人员列表按筛选卡片、列表操作栏、表格排序，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作，客服人员导入改成 step-by-step Dialog，结果反馈改用 Alert。"
 ```
+
+### US773 - 字体与控件密度统一
+
+```yaml
+id: US773
+requirement_ids:
+  - R853
+module: "全局 UI 规范"
+role: "B 端业务用户"
+story: "作为 B 端业务用户，我希望页面级按钮、筛选控件、表格和导入弹窗使用统一的字号与控件密度，以便人员列表、详情页、结果列表和弹窗看起来像同一个产品，而不是不同页面临时拼出来的样式。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "全局 CSS 不再用 button/input/select 的 font inherit 覆盖组件自身字号。"
+  - "Button 的小尺寸不再使用 12.8px 非标准字号，页面级和表格操作按钮回到一致的 14px 基线。"
+  - "Table 表头与正文在字号上保持协调，不再固定 12px 表头。"
+  - "客服人员导入 Dialog 的步骤标题、说明、映射方式、textarea 和结果区使用统一 14px 基线，不再大量混用 12px。"
+  - "不新增业务功能、不修改后端、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US772"
+status: "done"
+notes: "IM153 已完成：页面级按钮、筛选按钮、表格表头/正文、人员列表行内文字按钮和客服人员导入弹窗正文/步骤/表单已回到一致 14px 基线；纯图标按钮保留图标密度。"
+```

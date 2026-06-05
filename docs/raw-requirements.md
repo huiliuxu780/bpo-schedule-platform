@@ -2965,3 +2965,16 @@ version: "1.0"
 status: "done"
 notes: "IM144 已完成：全局 AppShell/AppSidebar/SiteHeader 改用 shadcn Sidebar、Collapsible、SidebarTrigger、Breadcrumb；SiteHeader 改为单行导航结构，Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1；SiteHeader 去掉无意义全局搜索、固定月份和通知占位并提供页面级 actions 插槽；Sidebar footer 使用 shadcn Avatar 和本地参考头像 /shadcn-avatar.jpg，并提供本地用户菜单、明暗主题切换和登出入口，登出不接真实 auth；主数据列表、详情、新建、编辑、技能维护页由 SiteHeader 唯一承载页面标题和返回路径，内容区不再重复返回按钮、H1 和页面级说明；客服人员列表按筛选卡片、列表操作栏、表格排序，查询/重置固定在筛选卡片右下，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作；客服人员导入改为 shadcn Dialog step-by-step，并用 hidden 保持文件 input 挂载；反馈与导入结果摘要改用 Alert。"
 ```
+
+### R853 - B 端字体与控件密度统一
+
+```yaml
+id: R853
+module: "全局 UI 规范"
+description: "PM 指出当前页面整体字体不合理，按钮字号不一致，表格和弹窗字号密度也不协调。需要严格检查现有设计和实现，先修基础层的字体覆盖和组件尺寸漂移，再修客服人员导入弹窗中过小的说明文字，避免继续在页面里逐个手工补样式。"
+source: "PM requested strict design and implementation inspection for page fonts/buttons/tables/dialogs on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM153 已完成：移除全局表单 font inherit 覆盖，统一 Button 小尺寸、Table 表头、客服人员导入 Dialog 正文/步骤/表单和人员列表行内文字按钮的 14px 基线；不新增业务能力。"
+```

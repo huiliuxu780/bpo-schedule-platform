@@ -48,11 +48,14 @@ const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions
 const masterDataModelPath = new URL("../../components/master-data-maintenance-model.ts", import.meta.url);
 const masterDataWorkbenchPath = new URL("../../components/master-data-maintenance-workbench.tsx", import.meta.url);
 const masterDataAgentImportDialogPath = new URL("../../components/master-data-agent-import-dialog.tsx", import.meta.url);
+const globalsCssPath = new URL("../../app/globals.css", import.meta.url);
 const uiAlertPath = new URL("../../components/ui/alert.tsx", import.meta.url);
 const uiAvatarPath = new URL("../../components/ui/avatar.tsx", import.meta.url);
 const uiBreadcrumbPath = new URL("../../components/ui/breadcrumb.tsx", import.meta.url);
 const uiCollapsiblePath = new URL("../../components/ui/collapsible.tsx", import.meta.url);
 const uiDialogPath = new URL("../../components/ui/dialog.tsx", import.meta.url);
+const uiButtonPath = new URL("../../components/ui/button.tsx", import.meta.url);
+const uiTablePath = new URL("../../components/ui/table.tsx", import.meta.url);
 
 async function collectSourceFiles(directoryUrl) {
   const entries = await readdir(directoryUrl, { withFileTypes: true });
@@ -82,6 +85,39 @@ test("dashboard overview does not expose data ingestion status panel", async () 
 
   assert.equal(source.includes("DataSyncStatus"), false);
   assert.equal(source.includes("data-sync-status"), false);
+});
+
+test("ui typography and density baseline is not overridden by component drift", async () => {
+  const globalsSource = await readFile(globalsCssPath, "utf8");
+  const buttonSource = await readFile(uiButtonPath, "utf8");
+  const tableSource = await readFile(uiTablePath, "utf8");
+  const agentImportDialogSource = await readFile(masterDataAgentImportDialogPath, "utf8");
+
+  assert.equal(
+    /button,\s*input,\s*select\s*\{\s*font:\s*inherit;\s*\}/s.test(globalsSource),
+    false,
+    "global form reset must not override component typography utilities",
+  );
+  assert.equal(
+    buttonSource.includes("text-[0.8rem]"),
+    false,
+    "Button small size must not use a non-standard 12.8px font size",
+  );
+  assert.equal(
+    /xs:\s*"[^"]*text-xs/.test(buttonSource),
+    false,
+    "Button extra-small text actions must not render at 12px against 14px page actions",
+  );
+  assert.equal(
+    /TableHead[\s\S]*text-xs/.test(tableSource),
+    false,
+    "TableHead must not force 12px headers against 14px table body text",
+  );
+  assert.equal(
+    agentImportDialogSource.includes("text-xs"),
+    false,
+    "agent import dialog body, steps, mapping controls, and result copy should keep the 14px baseline",
+  );
 });
 
 test("application source does not retain rejected center-first visible wording", async () => {
