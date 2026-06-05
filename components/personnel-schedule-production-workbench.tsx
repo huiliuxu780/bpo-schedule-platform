@@ -49,9 +49,9 @@ export function PersonnelScheduleProductionWorkbench({
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-normal">排班生产</h1>
+          <h1 className="text-xl font-semibold tracking-normal">排班版本</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-            按人员排班导入批次查看生产版本、应用状态、业务日范围和 0.5h 展开状态。
+            按人员排班导入批次查看排班版本、应用状态、业务日范围和 0.5h 展开状态。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -130,7 +130,7 @@ export function PersonnelScheduleProductionWorkbench({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Table2 className="size-4 text-muted-foreground" />
-            人员排班生产台账
+            排班版本列表
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -233,7 +233,7 @@ export function PersonnelScheduleProductionDetail({
             <Button asChild size="sm" variant="ghost">
               <Link href={detail.workbenchHref}>
                 <ArrowLeft data-icon="inline-start" />
-                返回排班生产
+                返回排班计划
               </Link>
             </Button>
           </div>
@@ -340,7 +340,7 @@ export function PersonnelScheduleProductionDetail({
                   </Link>
                 </Button>
                 <Button asChild size="sm" variant="ghost">
-                  <Link href={detail.workbenchHref}>返回排班生产</Link>
+                  <Link href={detail.workbenchHref}>返回排班计划</Link>
                 </Button>
               </div>
             </CardContent>

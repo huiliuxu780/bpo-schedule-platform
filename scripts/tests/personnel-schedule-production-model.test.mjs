@@ -299,13 +299,13 @@ test("personnel schedule production detail shows a blocked state for unknown bat
   assert.equal(detail.title, "排班版本未定位");
   assert.equal(detail.batchId, "BATCH-MISSING");
   assert.equal(detail.versionLabel, "未找到对应人员排班批次");
-  assert.equal(detail.blockerSummary, "请返回排班生产列表选择来源批次");
+  assert.equal(detail.blockerSummary, "请返回排班计划选择来源批次");
   assert.deepEqual(detail.comparisonEntry, {
     tone: "blocked",
     title: "无法进入比对",
-    detail: "未定位排班业务版本或业务日，先回到排班生产列表选择已应用批次。",
+    detail: "未定位排班业务版本或业务日，先回到排班计划选择已应用批次。",
     actionLabel: "查看业务版本列表",
     href: "/data-quality/versions?domain=personnel_schedule",
-    blockerLabel: "阻塞：请返回排班生产列表选择来源批次",
+    blockerLabel: "阻塞：请返回排班计划选择来源批次",
   });
 });

@@ -276,7 +276,7 @@ function buildMissingActualLogProcessingDetail(
   return {
     tone: "blocked",
     title: "日志处理批次未定位",
-    detail: "当前来源批次不在登录/状态日志生产台账中，无法展示处理解释。",
+    detail: "当前来源批次不在登录/状态日志列表中，无法展示处理解释。",
     workspaceTabs: [...ACTUAL_LOG_PROCESSING_WORKSPACE_TABS],
     batchId,
     fileName: "未找到来源文件",
@@ -295,7 +295,7 @@ function buildMissingActualLogProcessingDetail(
     statusIntervalLabel: "未定位状态区间",
     loginEventLabel: "未定位登录事件",
     detailEmptyLabel: "批次明细未读取，不能展示逐行登录事件或状态区间",
-    blockerSummary: "请返回日志生产列表选择来源批次",
+    blockerSummary: "请返回登录/状态日志选择来源批次",
     loginEventCount: 0,
     statusDictionaryCount: 0,
     statusIntervalCount: 0,
@@ -733,11 +733,11 @@ function resolveActualLogProductionTone(
 
 function resolveActualLogProductionTitle(tone: ActualLogProductionTone) {
   if (tone === "ready") {
-    return "登录/状态日志生产版本已就绪"
+    return "登录/状态日志处理记录已就绪"
   }
 
   if (tone === "blocked") {
-    return "登录/状态日志生产仍有阻塞"
+    return "登录/状态日志处理记录仍有阻塞"
   }
 
   return "等待登录/状态日志来源批次"
@@ -748,7 +748,7 @@ function resolveActualLogProductionDetail(
   blockedVersions: number
 ) {
   if (totalVersions === 0) {
-    return "当前还没有登录日志或状态日志导入批次，无法建立实际日志生产台账。"
+    return "当前还没有登录日志或状态日志导入批次，无法建立日志处理列表。"
   }
 
   if (blockedVersions > 0) {

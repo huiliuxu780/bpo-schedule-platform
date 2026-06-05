@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM146 Production Wording And Return Links
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `e8cbbdb fix: collapse production nav entries`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed follow-up after IM145. Keep existing production child routes compatible, but clean visible page titles, list titles, return actions, and model guidance so users see business object wording instead of production module wording. Keep duplicate h1 cleanup, old search API cleanup, import entry relocation, data-quality abstraction downgrade, route restructuring, backend, schema/migration, dependency, permissions, approval, export, batch-operation, automatic scheduling, formula, settlement, and charge-factor changes out of this slice.
+- allowed_files_check: `app/demand-plans/production/page.tsx`, `app/schedule-plans/production/page.tsx`, `app/actual-logs/production/page.tsx`, the three production workbench components, the three production model files, focused model/product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected wording-only production child route cleanup, return-label cleanup, model guidance cleanup, regression tests, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED focused test first failed 4 tests because demand, schedule, actual-log, and production child route structure still exposed old production wording. After implementation, focused tests passed with 43 tests. Browser smoke over `/demand-plans/production`, `/schedule-plans/production`, and `/actual-logs/production` confirmed no old production title/ledger/return wording and confirmed `预测版本列表`, `排班版本列表`, and `日志处理列表`. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM120 Comparison Run Source Explanation
 
 - branch_name: `codex/im120-schedule-actual-result-explanation`

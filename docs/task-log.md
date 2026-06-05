@@ -1906,3 +1906,14 @@
 - action: 收口 Sidebar 一级导航信息架构。
 - status: `done`
 - notes: Sidebar 已移除 `预测生产`、`排班生产` 独立导航项；`需求计划` 使用 prefix active 覆盖 `/demand-plans/production/**`，`排班计划` 使用 prefix active 覆盖 `/schedule-plans/production/**`；结构测试已禁止 `预测生产`、`排班生产`、`导入中心`、`质量中心`、`数据质量` 作为 Sidebar 标题出现；本轮不改生产页标题、返回按钮、模型文案、导入弹窗、业务路由或后端能力；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM146`
+- source_ids:
+  - `R846`
+- story_ids:
+  - `US766`
+- action: 清理生产文案与返回链路。
+- status: `done`
+- notes: `/demand-plans/production`、`/schedule-plans/production`、`/actual-logs/production` 保持兼容路由，但页面标题、列表标题、详情返回按钮和模型阻塞/就绪/缺批次提示改回预测版本、排班版本、登录/状态日志处理等业务对象视角；focused tests 和 Browser smoke 已覆盖不再展示旧生产模块文案；本轮不改路由结构、重复 H1、旧搜索 API、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

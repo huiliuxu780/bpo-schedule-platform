@@ -3844,3 +3844,26 @@
 - TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明 Sidebar 仍暴露 `预测生产`。
 - TDD 绿灯：移除独立生产导航并调整父级 active 后，`node --test scripts/tests/product-structure.test.mjs` 通过，14 个 product-structure 测试通过。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM146 生产文案与返回链路清理
+
+#### 审计结论
+
+- `/demand-plans/production` 的可见页面身份从 `预测生产` 改为 `预测版本`，列表标题从 `需求预测生产台账` 改为 `预测版本列表`。
+- `/schedule-plans/production` 的可见页面身份从 `排班生产` 改为 `排班版本`，列表标题从 `人员排班生产台账` 改为 `排班版本列表`，描述中的 `生产版本` 改为 `排班版本`。
+- `/actual-logs/production` 的可见页面身份从 `登录/状态日志生产` 改为 `登录/状态日志`，列表标题从 `登录/状态日志生产台账` 改为 `日志处理列表`。
+- 详情/解释页返回按钮改为 `返回需求计划`、`返回排班计划`、`返回登录/状态日志`，不再提示返回生产列表。
+- 预测、排班、登录/状态日志模型里的缺批次、阻塞、就绪和空态文案改为业务对象视角，不再建立生产台账或生产列表心智。
+- 本轮没有改路由结构、重复 H1、旧 `searchPlaceholder` API、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 内容区重复 H1、旧 `searchPlaceholder` API、主数据非客服人员导入动作和 `/data-quality` 大抽象仍按计划留给 IM147-IM151。
+- `/production` 路由名仍保留为内部兼容路径；本轮只清理用户可见文案和返回链路。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/demand-forecast-production-model.test.mjs scripts/tests/personnel-schedule-production-model.test.mjs scripts/tests/actual-log-production-model.test.mjs scripts/tests/product-structure.test.mjs` 先失败 4 个测试，分别证明预测、排班、日志模型和生产子路由源码仍保留旧生产文案。
+- TDD 绿灯：实现后同一 focused test 命令通过，43 个测试全部通过。
+- Browser smoke：`http://127.0.0.1:3000/demand-plans/production`、`/schedule-plans/production`、`/actual-logs/production` 均不再出现旧生产标题/台账/返回文案，并命中 `预测版本列表`、`排班版本列表`、`日志处理列表`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

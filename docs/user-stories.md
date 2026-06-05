@@ -43,6 +43,30 @@ status: "done"
 notes: "IM145 已完成：一级导航移除 `预测生产`、`排班生产`，并让 `/demand-plans/production/**` 与 `/schedule-plans/production/**` 分别继承 `需求计划`、`排班计划` 导航高亮；生产文案、返回链路、重复标题和旧搜索 API 分别留给后续 IM146-IM148。"
 ```
 
+### US766 - 生产文案与返回链路清理
+
+```yaml
+id: US766
+requirement_ids:
+  - R846
+module: "全局文案 / 计划与排班"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望预测、排班和登录/状态日志页面按业务对象命名，而不是继续使用生产工作台/生产台账这类实现路径，以便我能从需求计划、排班计划和日志入口理解当前处理对象。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/demand-plans/production` 可见标题与台账文案改为预测版本视角，不再显示 `预测生产` 或 `需求预测生产台账`。"
+  - "`/schedule-plans/production` 可见标题与台账文案改为排班版本视角，不再显示 `排班生产` 或 `人员排班生产台账`。"
+  - "`/actual-logs/production` 可见标题与台账文案改为登录/状态日志处理视角，不再显示 `登录/状态日志生产` 或 `日志生产`。"
+  - "三个生产详情/解释页的返回按钮改为返回对应业务入口：`返回需求计划`、`返回排班计划`、`返回登录/状态日志`。"
+  - "模型阻塞、就绪、缺批次文案不再提示用户返回生产列表或建立生产台账。"
+  - "不改路由结构、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US765"
+status: "done"
+notes: "IM146 已完成：`/demand-plans/production`、`/schedule-plans/production`、`/actual-logs/production` 的可见标题、列表标题、返回按钮和模型提示改为预测版本、排班版本、登录/状态日志处理视角；重复 H1、旧 searchPlaceholder、导入入口业务归位和 data-quality 降级留给后续 IM147-IM151。"
+```
+
 ### US701 - 独立 CSV 上传工作区
 
 ```yaml

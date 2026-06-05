@@ -299,14 +299,14 @@ test("demand forecast production detail shows a blocked state for unknown batch"
   assert.equal(detail.title, "预测版本未定位");
   assert.equal(detail.batchId, "BATCH-MISSING");
   assert.equal(detail.versionLabel, "未找到对应需求预测批次");
-  assert.equal(detail.blockerSummary, "请返回预测生产列表选择来源批次");
+  assert.equal(detail.blockerSummary, "请返回需求计划选择来源批次");
   assert.deepEqual(detail.comparisonEntry, {
     tone: "blocked",
     title: "无法进入比对",
-    detail: "未定位预测业务版本或业务日，先回到预测生产列表选择已应用批次。",
+    detail: "未定位预测业务版本或业务日，先回到需求计划选择已应用批次。",
     actionLabel: "查看业务版本列表",
     href: "/data-quality/versions?domain=demand_forecast",
-    blockerLabel: "阻塞：请返回预测生产列表选择来源批次",
+    blockerLabel: "阻塞：请返回需求计划选择来源批次",
   });
   assert.equal(detail.changeBoundaryLabel, "暂无变更记录");
   assert.deepEqual(detail.changeRows, []);

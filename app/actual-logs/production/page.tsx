@@ -16,7 +16,7 @@ export default async function ActualLogProductionPage() {
   const batchResult = await fetchImportBatches()
 
   return (
-    <AppShell title="登录/状态日志生产" searchPlaceholder="搜索日志版本或来源批次">
+    <AppShell title="登录/状态日志" searchPlaceholder="搜索日志版本或来源批次">
       <ActualLogProductionWorkbench
         batches={batchResult.data ?? []}
         error={batchResult.error}

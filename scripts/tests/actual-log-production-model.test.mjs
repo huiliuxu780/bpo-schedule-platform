@@ -371,3 +371,12 @@ test("actual log processing detail keeps an explicit empty state without row det
   assert.equal(detail.timezoneCheckLabel, "缺少逐行明细，未形成时区校验结果");
   assert.equal(detail.crossDaySplitLabel, "缺少状态区间明细，未形成跨天切分");
 });
+
+test("actual log processing detail points unknown batches back to the log entry", () => {
+  const detail = summarizeActualLogProcessingDetail([baseStatusBatch], "BATCH-MISSING");
+
+  assert.equal(detail.tone, "blocked");
+  assert.equal(detail.title, "日志处理批次未定位");
+  assert.equal(detail.detail, "当前来源批次不在登录/状态日志列表中，无法展示处理解释。");
+  assert.equal(detail.blockerSummary, "请返回登录/状态日志选择来源批次");
+});

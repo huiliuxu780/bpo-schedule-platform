@@ -226,7 +226,7 @@ export function summarizePersonnelScheduleProductionDetail(
     return {
       tone: "blocked",
       title: "排班版本未定位",
-      detail: "当前来源批次不在人员排班生产台账中，无法展示版本详情。",
+      detail: "当前来源批次不在排班版本列表中，无法展示版本详情。",
       batchId,
       fileName: "未找到来源文件",
       versionLabel: "未找到对应人员排班批次",
@@ -241,14 +241,14 @@ export function summarizePersonnelScheduleProductionDetail(
       shiftReferenceLabel: "未定位来源批次，无法确认班次引用",
       personScopeLabel: "未定位来源批次，暂无人员明细",
       halfHourResultLabel: "未发现 0.5h 展开记录",
-    blockerSummary: "请返回排班生产列表选择来源批次",
+      blockerSummary: "请返回排班计划选择来源批次",
       detailRows: [],
       intervalRows: [],
       comparisonEntry: buildPersonnelScheduleComparisonEntry({
         tone: "blocked",
         versionLabel: null,
         businessDate: null,
-        blockerSummary: "请返回排班生产列表选择来源批次",
+        blockerSummary: "请返回排班计划选择来源批次",
       }),
       workspaceTabs: [...PERSONNEL_SCHEDULE_PRODUCTION_WORKSPACE_TABS],
     }
@@ -341,7 +341,7 @@ function buildPersonnelScheduleComparisonEntry({
     return {
       tone: "blocked",
       title: "无法进入比对",
-      detail: "未定位排班业务版本或业务日，先回到排班生产列表选择已应用批次。",
+      detail: "未定位排班业务版本或业务日，先回到排班计划选择已应用批次。",
       actionLabel: "查看业务版本列表",
       href,
       blockerLabel: `阻塞：${blockerSummary}`,
@@ -534,11 +534,11 @@ function resolvePersonnelScheduleProductionTitle(
   tone: PersonnelScheduleProductionTone
 ) {
   if (tone === "ready") {
-    return "人员排班生产版本已就绪"
+    return "排班版本已就绪"
   }
 
   if (tone === "blocked") {
-    return "人员排班生产仍有阻塞"
+    return "排班版本仍有阻塞"
   }
 
   return "等待人员排班来源批次"
@@ -549,7 +549,7 @@ function resolvePersonnelScheduleProductionDetail(
   blockedVersions: number
 ) {
   if (totalVersions === 0) {
-    return "当前还没有人员排班导入批次，无法建立生产版本台账。"
+    return "当前还没有人员排班导入批次，无法建立排班版本列表。"
   }
 
   if (blockedVersions > 0) {

@@ -736,3 +736,9 @@ The task remained frontend-scaffold only. It did not add schedule/forecast/log i
 After PM review, the Sidebar still exposed `预测生产` and `排班生产` as standalone navigation entries. `US765/IM145` is complete: those standalone entries are removed, while demand-forecast and personnel-schedule production routes remain reachable as child routes and inherit active navigation from `需求计划` and `排班计划`.
 
 The task remained frontend-scaffold only. It did not change production page titles, return buttons, production model wording, import dialogs, business routes, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM145.
+
+## 2026-06-05 IM146 Production Wording And Return Links
+
+After IM145 removed standalone production navigation entries, `IM146` clears the remaining user-visible production module wording from the compatible production child routes. `/demand-plans/production` now presents `预测版本` and `预测版本列表`, `/schedule-plans/production` presents `排班版本` and `排班版本列表`, and `/actual-logs/production` presents `登录/状态日志` and `日志处理列表`.
+
+The existing routes stay in place for compatibility and remain owned by their business navigation entries. Detail return actions now point back with business wording: `返回需求计划`, `返回排班计划`, and `返回登录/状态日志`. Model blocker, readiness, and empty-state guidance no longer tells users to return to production lists or establish production ledgers. This task remained frontend-scaffold only and did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM146.

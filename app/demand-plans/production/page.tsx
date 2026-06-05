@@ -16,7 +16,7 @@ export default async function DemandForecastProductionPage() {
   const batchResult = await fetchImportBatches()
 
   return (
-    <AppShell title="预测生产" searchPlaceholder="搜索预测版本或来源批次">
+    <AppShell title="预测版本" searchPlaceholder="搜索预测版本或来源批次">
       <DemandForecastProductionWorkbench
         batches={batchResult.data ?? []}
         error={batchResult.error}

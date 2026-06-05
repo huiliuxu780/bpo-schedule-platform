@@ -224,7 +224,7 @@ export function summarizeDemandForecastProductionDetail(
     return {
       tone: "blocked",
       title: "预测版本未定位",
-      detail: "当前来源批次不在需求预测生产台账中，无法展示版本详情。",
+      detail: "当前来源批次不在预测版本列表中，无法展示版本详情。",
       batchId,
       fileName: "未找到来源文件",
       versionLabel: "未找到对应需求预测批次",
@@ -240,7 +240,7 @@ export function summarizeDemandForecastProductionDetail(
       timeBucketLabel: "未发现 0.5h 预测明细",
       forecastScopeLabel: "未定位来源批次，暂无技能组/等级/时段行",
       alignmentResultLabel: "未发现技能组/等级/时段对齐结果",
-      blockerSummary: "请返回预测生产列表选择来源批次",
+      blockerSummary: "请返回需求计划选择来源批次",
       intervalRows: [],
       changeRows: [],
       changeBoundaryLabel: "暂无变更记录",
@@ -248,7 +248,7 @@ export function summarizeDemandForecastProductionDetail(
         tone: "blocked",
         versionLabel: null,
         businessDate: null,
-        blockerSummary: "请返回预测生产列表选择来源批次",
+        blockerSummary: "请返回需求计划选择来源批次",
       }),
       workspaceTabs: [...DEMAND_FORECAST_PRODUCTION_WORKSPACE_TABS],
     }
@@ -355,7 +355,7 @@ function buildDemandForecastComparisonEntry({
     return {
       tone: "blocked",
       title: "无法进入比对",
-      detail: "未定位预测业务版本或业务日，先回到预测生产列表选择已应用批次。",
+      detail: "未定位预测业务版本或业务日，先回到需求计划选择已应用批次。",
       actionLabel: "查看业务版本列表",
       href,
       blockerLabel: `阻塞：${blockerSummary}`,
@@ -514,11 +514,11 @@ function resolveDemandForecastProductionTone(
 
 function resolveDemandForecastProductionTitle(tone: DemandForecastProductionTone) {
   if (tone === "ready") {
-    return "需求预测生产版本已就绪"
+    return "预测版本已就绪"
   }
 
   if (tone === "blocked") {
-    return "需求预测生产仍有阻塞"
+    return "预测版本仍有阻塞"
   }
 
   return "等待需求预测来源批次"
@@ -529,7 +529,7 @@ function resolveDemandForecastProductionDetail(
   blockedVersions: number
 ) {
   if (totalVersions === 0) {
-    return "当前还没有需求预测导入批次，无法建立预测生产台账。"
+    return "当前还没有需求预测导入批次，无法建立预测版本列表。"
   }
 
   if (blockedVersions > 0) {
