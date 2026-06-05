@@ -62,6 +62,7 @@ from backend.app.models import (
     MasterDataEmployeeMaintenanceRequest,
     MasterDataEmployeeMaintenanceResponse,
     MasterDataImportApplyResponse,
+    MasterDataOrganizationListResponse,
     MasterDataReferenceListResponse,
     MasterDataReferenceMaintenanceRequest,
     MasterDataReferenceMaintenanceResponse,
@@ -711,6 +712,15 @@ def list_master_data_employees() -> MasterDataEmployeeListResponse:
 def list_master_data_bindings() -> MasterDataBindingListResponse:
     repository = MasterDataPersistenceRepository()
     return MasterDataBindingListResponse(items=repository.list_employee_bindings())
+
+
+@app.get(
+    "/api/v1/master-data/organizations",
+    response_model=MasterDataOrganizationListResponse,
+)
+def list_master_data_organizations() -> MasterDataOrganizationListResponse:
+    repository = MasterDataPersistenceRepository()
+    return MasterDataOrganizationListResponse(items=repository.list_organizations())
 
 
 @app.post(

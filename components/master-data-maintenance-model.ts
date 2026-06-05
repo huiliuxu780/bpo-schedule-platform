@@ -19,9 +19,9 @@ export type MasterDataMaintenanceTone = "ready" | "blocked" | "empty"
 
 export type MasterDataMaintenanceEntityKey =
   | "agents"
+  | "organizations"
   | "sites"
   | "vendors"
-  | "projects"
   | "skills"
   | "bindings"
 
@@ -122,6 +122,41 @@ export type MasterDataReferenceListViewRow = MasterDataReferenceListRow & {
   display: MasterDataReferenceListDisplay
 }
 
+export type MasterDataOrganizationListRow = {
+  organization_id: string
+  organization_name: string
+  organization_level: number
+  parent_organization_id: string | null
+  status: MasterDataAgentMaintenanceStatus
+  effective_from: string
+  effective_to: string
+  batch_id: string
+  organization_path: string
+}
+
+export type MasterDataOrganizationListDisplay = {
+  organizationIdLabel: string
+  organizationNameLabel: string
+  organizationLevelLabel: string
+  parentOrganizationLabel: string
+  organizationPathLabel: string
+  statusLabel: string
+  effectivePeriodLabel: string
+  sourceBatchLabel: string
+}
+
+export type MasterDataOrganizationListViewRow = MasterDataOrganizationListRow & {
+  display: MasterDataOrganizationListDisplay
+}
+
+export type MasterDataOrganizationManagementSummary = {
+  title: string
+  totalRecords: number
+  activeRecords: number
+  frozenRecords: number
+  rows: MasterDataOrganizationListViewRow[]
+}
+
 export type MasterDataReferenceManagementSummary = {
   entity: MasterDataMaintenanceEntity
   title: string
@@ -148,7 +183,6 @@ export type MasterDataBindingListDisplay = {
   employeeLabel: string
   supplierLabel: string
   workplaceLabel: string
-  projectLabel: string
   skillLabel: string
   effectivePeriodLabel: string
   sourceBatchLabel: string
@@ -308,6 +342,13 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
     maintenanceBoundary: "人员档案、状态、组织、职场、供应商和技能关系。",
   },
   {
+    key: "organizations",
+    label: "组织",
+    scopeLabel: "一级部门、二级部门和小组层级",
+    referenceLabel: "人员归属、排班归因、日志归因",
+    maintenanceBoundary: "组织编码、层级、父级组织、状态和生效周期。",
+  },
+  {
     key: "sites",
     label: "职场",
     scopeLabel: "站点编码、城市、时区和运营状态",
@@ -318,15 +359,8 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
     key: "vendors",
     label: "供应商",
     scopeLabel: "供应商编码、名称、合作状态",
-    referenceLabel: "坐席归属、项目绑定、履约复核口径",
+    referenceLabel: "坐席归属、外包员工归因、履约复核口径",
     maintenanceBoundary: "供应商编码、名称、合作状态和生效周期。",
-  },
-  {
-    key: "projects",
-    label: "项目",
-    scopeLabel: "项目编码、业务线、服务范围",
-    referenceLabel: "需求预测、排班计划、复核案例",
-    maintenanceBoundary: "项目编码、业务线、服务范围、状态和生效周期。",
   },
   {
     key: "skills",
@@ -338,9 +372,9 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
   {
     key: "bindings",
     label: "绑定关系",
-    scopeLabel: "坐席-项目-技能-职场-供应商关系",
+    scopeLabel: "坐席-组织-技能-职场-供应商关系",
     referenceLabel: "排班展开、预测对齐、状态日志归因",
-    maintenanceBoundary: "人员、项目、技能、职场、供应商之间的有效绑定关系。",
+    maintenanceBoundary: "人员、组织、技能、职场、供应商之间的有效绑定关系。",
   },
 ]
 
@@ -675,6 +709,45 @@ export function summarizeMasterDataReferenceManagement(
   }
 }
 
+export function summarizeMasterDataOrganizationManagement(
+  organizations: MasterDataOrganizationListRow[]
+): MasterDataOrganizationManagementSummary {
+  const rows = [...organizations]
+    .sort((left, right) => {
+      if (left.organization_level !== right.organization_level) {
+        return left.organization_level - right.organization_level
+      }
+
+      return left.organization_id.localeCompare(right.organization_id)
+    })
+    .map((organization) => ({
+      ...organization,
+      display: {
+        organizationIdLabel: formatMasterDataVisibleValue(organization.organization_id),
+        organizationNameLabel: formatMasterDataVisibleValue(organization.organization_name),
+        organizationLevelLabel: `${organization.organization_level}级组织`,
+        parentOrganizationLabel: organization.parent_organization_id
+          ? formatMasterDataVisibleValue(organization.parent_organization_id)
+          : "无上级组织",
+        organizationPathLabel: formatMasterDataVisibleValue(organization.organization_path),
+        statusLabel: formatMasterDataEmployeeStatus(organization.status),
+        effectivePeriodLabel: formatEffectivePeriod(
+          organization.effective_from,
+          organization.effective_to
+        ),
+        sourceBatchLabel: formatImportBatchDisplayLabel(organization.batch_id),
+      },
+    }))
+
+  return {
+    title: "组织",
+    totalRecords: rows.length,
+    activeRecords: rows.filter((row) => row.status === "active").length,
+    frozenRecords: rows.filter((row) => row.status === "frozen").length,
+    rows,
+  }
+}
+
 export function summarizeMasterDataBindingManagement(
   bindings: MasterDataBindingListRow[]
 ): MasterDataBindingManagementSummary {
@@ -687,7 +760,6 @@ export function summarizeMasterDataBindingManagement(
         employeeLabel: formatMasterDataVisibleValue(binding.employee_id),
         supplierLabel: formatMasterDataVisibleValue(binding.supplier_id),
         workplaceLabel: formatMasterDataVisibleValue(binding.workplace_id),
-        projectLabel: formatMasterDataVisibleValue(binding.project_id),
         skillLabel: formatMasterDataVisibleValue(binding.skill_id),
         effectivePeriodLabel: formatEffectivePeriod(
           binding.effective_from,
@@ -814,8 +886,8 @@ function getSingleSearchParam(value: string | string[] | undefined): string {
 
 function isReferenceEntity(
   entityKey: MasterDataMaintenanceEntityKey
-): entityKey is "sites" | "vendors" | "projects" | "skills" {
-  return ["sites", "vendors", "projects", "skills"].includes(entityKey)
+): entityKey is "sites" | "vendors" | "skills" {
+  return ["sites", "vendors", "skills"].includes(entityKey)
 }
 
 function formatMasterDataEmployeeType(employeeType: MasterDataEmployeeType) {
@@ -950,7 +1022,7 @@ function resolveMasterDataMaintenanceDetail(
   hasPendingFreshness: boolean
 ) {
   if (masterDataBatches.length === 0) {
-    return "当前还没有主数据导入批次，无法建立坐席、职场、供应商、项目、技能和绑定关系的维护台账。"
+    return "当前还没有主数据导入批次，无法建立坐席、组织、职场、供应商、技能和绑定关系的维护台账。"
   }
 
   if (!latestAppliedBatch) {

@@ -6,6 +6,7 @@ import type {
   MasterDataBindingListRow,
   MasterDataEmployeeListRow,
   MasterDataMaintenanceEntityKey,
+  MasterDataOrganizationListRow,
   MasterDataReferenceListRow,
 } from "@/components/master-data-maintenance-model"
 
@@ -68,6 +69,37 @@ export async function fetchMasterDataReferences(
 
     const payload = (await response.json()) as {
       items?: MasterDataReferenceListRow[]
+    }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
+export async function fetchMasterDataOrganizations(): Promise<
+  ApiResult<MasterDataOrganizationListRow[]>
+> {
+  try {
+    const response = await fetch(buildImportApiUrl("/api/v1/master-data/organizations"), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `组织列表读取失败：${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as {
+      items?: MasterDataOrganizationListRow[]
     }
 
     return {
@@ -151,7 +183,7 @@ function mapReferenceEntityKeyToApiType(
     return "suppliers"
   }
 
-  if (entityKey === "projects" || entityKey === "skills") {
+  if (entityKey === "skills") {
     return entityKey
   }
 
@@ -165,10 +197,6 @@ function getReferenceEntityLabel(entityKey: MasterDataMaintenanceEntityKey) {
 
   if (entityKey === "vendors") {
     return "供应商"
-  }
-
-  if (entityKey === "projects") {
-    return "项目"
   }
 
   if (entityKey === "skills") {

@@ -8,6 +8,7 @@ from sqlalchemy import text
 
 from backend.app.import_persistence import ImportPersistenceRepository
 from backend.app.main import app, list_master_data_bindings, list_master_data_employees
+from backend.app.main import list_master_data_organizations
 from backend.app.main import list_master_data_references, maintain_master_data_employee
 from backend.app.main import maintain_master_data_binding
 from backend.app.main import maintain_master_data_employee_skills
@@ -57,6 +58,10 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
             routes,
         )
         self.assertIn(
+            ("/api/v1/master-data/organizations", "GET"),
+            routes,
+        )
+        self.assertIn(
             ("/api/v1/master-data/{reference_type}", "GET"),
             routes,
         )
@@ -66,6 +71,51 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
                 "POST",
             ),
             routes,
+        )
+
+    def test_list_organizations_returns_hierarchy_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'organization-list.db'}"
+            _create_import_batch(database_url, "BATCH-MD-ORG-LIST")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-ORG-LIST",
+                    organizations=[
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CC",
+                            organization_name="CC",
+                            organization_level=1,
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CCO",
+                            organization_name="CCO",
+                            organization_level=2,
+                            parent_organization_id="ORG-CC",
+                            status="active",
+                            effective_from="2026-05-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                )
+            )
+
+            with patch(
+                "backend.app.main.MasterDataPersistenceRepository",
+                return_value=repository,
+            ):
+                response = list_master_data_organizations()
+
+        self.assertEqual(
+            [(row.organization_id, row.organization_path) for row in response.items],
+            [
+                ("ORG-CC", "CC"),
+                ("ORG-CCO", "CC / CCO"),
+            ],
         )
 
     def test_list_employees_returns_org_workplace_and_skill_context(self) -> None:

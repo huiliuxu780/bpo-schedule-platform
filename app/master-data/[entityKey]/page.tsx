@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app-shell"
 import {
   MasterDataAgentManagementPage,
   MasterDataBindingManagementPage,
+  MasterDataOrganizationManagementPage,
   MasterDataReferenceManagementPage,
 } from "@/components/master-data-maintenance-workbench"
 import {
@@ -14,12 +15,14 @@ import {
   summarizeMasterDataBindingManagement,
   summarizeMasterDataMaintenanceFeedback,
   summarizeMasterDataEntitySourceContext,
+  summarizeMasterDataOrganizationManagement,
   summarizeMasterDataReferenceManagement,
 } from "@/components/master-data-maintenance-model"
 import {
   fetchMasterDataBindings,
   fetchImportBatches,
   fetchMasterDataEmployees,
+  fetchMasterDataOrganizations,
   fetchMasterDataReferences,
 } from "@/app/master-data/agents/data"
 import { submitMasterDataAgentMaintenance } from "./actions"
@@ -49,6 +52,10 @@ export default async function MasterDataEntityDetailPage({
     entity.key === "agents"
       ? await fetchMasterDataEmployees()
       : { data: [], error: null }
+  const organizationResult =
+    entity.key === "organizations"
+      ? await fetchMasterDataOrganizations()
+      : { data: [], error: null }
   const referenceResult =
     isReferenceEntity(entity.key)
       ? await fetchMasterDataReferences(entity.key)
@@ -73,6 +80,10 @@ export default async function MasterDataEntityDetailPage({
   const referenceManagementSummary = isReferenceEntity(entity.key)
     ? summarizeMasterDataReferenceManagement(entity.key, referenceResult.data ?? [])
     : null
+  const organizationManagementSummary =
+    entity.key === "organizations"
+      ? summarizeMasterDataOrganizationManagement(organizationResult.data ?? [])
+      : null
   const bindingManagementSummary =
     entity.key === "bindings"
       ? summarizeMasterDataBindingManagement(bindingResult.data ?? [])
@@ -97,6 +108,13 @@ export default async function MasterDataEntityDetailPage({
           employeeListError={employeeResult.error}
           selectedFreezeEmployeeId={selectedFreezeEmployeeId}
           agentSubmitAction={submitMasterDataAgentMaintenance}
+        />
+      ) : entity.key === "organizations" && organizationManagementSummary ? (
+        <MasterDataOrganizationManagementPage
+          summary={summary}
+          listSummary={organizationManagementSummary}
+          error={organizationResult.error ?? batchResult.error}
+          feedback={feedback}
         />
       ) : isReferenceEntity(entity.key) && referenceManagementSummary ? (
         <MasterDataReferenceManagementPage
@@ -133,8 +151,8 @@ function resolveAgentManagementFilters(
 
 function isReferenceEntity(
   entityKey: MasterDataMaintenanceEntityKey
-): entityKey is "sites" | "vendors" | "projects" | "skills" {
-  return ["sites", "vendors", "projects", "skills"].includes(entityKey)
+): entityKey is "sites" | "vendors" | "skills" {
+  return ["sites", "vendors", "skills"].includes(entityKey)
 }
 
 function getSingleSearchParam(value: string | string[] | undefined): string {

@@ -17,6 +17,7 @@ import {
   type MasterDataAgentManagementSummary,
   type MasterDataBindingManagementSummary,
   type MasterDataEntitySourceContext,
+  type MasterDataOrganizationManagementSummary,
   type MasterDataReferenceManagementSummary,
 } from "@/components/master-data-maintenance-model"
 import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
@@ -217,6 +218,103 @@ export function MasterDataReferenceManagementPage({
   )
 }
 
+export function MasterDataOrganizationManagementPage({
+  summary,
+  listSummary,
+  error,
+  feedback,
+}: {
+  summary: MasterDataEntitySourceContext
+  listSummary: MasterDataOrganizationManagementSummary
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
+        <h1 className="text-base font-semibold tracking-normal">{listSummary.title}</h1>
+        <Button asChild size="sm" variant="outline">
+          <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
+            <Upload data-icon="inline-start" />
+            导入主数据
+          </Link>
+        </Button>
+      </section>
+
+      {error ? <MasterDataListError title="组织列表读取失败" error={error} /> : null}
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-3 md:grid-cols-3">
+        <MetricCard
+          label="记录数"
+          value={listSummary.totalRecords.toLocaleString("zh-CN")}
+          detail={summary.sourceVersionLabel}
+          tone="default"
+        />
+        <MetricCard
+          label="生效"
+          value={listSummary.activeRecords.toLocaleString("zh-CN")}
+          detail="当前可引用组织"
+          tone={listSummary.activeRecords > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="冻结"
+          value={listSummary.frozenRecords.toLocaleString("zh-CN")}
+          detail="不可继续引用组织"
+          tone={listSummary.frozenRecords > 0 ? "blocked" : "default"}
+        />
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        {listSummary.rows.length === 0 ? (
+          <div className="rounded-md border p-4 text-sm text-muted-foreground">
+            暂无组织记录。
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>组织名称</TableHead>
+                <TableHead>组织编码</TableHead>
+                <TableHead>层级</TableHead>
+                <TableHead>上级组织</TableHead>
+                <TableHead>组织路径</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>有效期</TableHead>
+                <TableHead>来源批次</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {listSummary.rows.map((row) => (
+                <TableRow key={row.organization_id}>
+                  <TableCell className="font-medium">
+                    {row.display.organizationNameLabel}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.organizationIdLabel}
+                  </TableCell>
+                  <TableCell>{row.display.organizationLevelLabel}</TableCell>
+                  <TableCell>{row.display.parentOrganizationLabel}</TableCell>
+                  <TableCell>{row.display.organizationPathLabel}</TableCell>
+                  <TableCell>
+                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                      {row.display.statusLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.sourceBatchLabel}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </section>
+    </main>
+  )
+}
+
 export function MasterDataBindingManagementPage({
   summary,
   listSummary,
@@ -271,7 +369,6 @@ export function MasterDataBindingManagementPage({
                 <TableHead>人员</TableHead>
                 <TableHead>供应商</TableHead>
                 <TableHead>职场</TableHead>
-                <TableHead>项目</TableHead>
                 <TableHead>技能</TableHead>
                 <TableHead>有效期</TableHead>
                 <TableHead>来源批次</TableHead>
@@ -286,7 +383,6 @@ export function MasterDataBindingManagementPage({
                   <TableCell>{row.display.employeeLabel}</TableCell>
                   <TableCell>{row.display.supplierLabel}</TableCell>
                   <TableCell>{row.display.workplaceLabel}</TableCell>
-                  <TableCell>{row.display.projectLabel}</TableCell>
                   <TableCell>{row.display.skillLabel}</TableCell>
                   <TableCell>{row.display.effectivePeriodLabel}</TableCell>
                   <TableCell className="font-mono text-xs">
@@ -907,7 +1003,6 @@ type AgentMaintenanceField =
   | "binding_id"
   | "supplier_id"
   | "workplace_id"
-  | "project_id"
   | "skill_id"
   | "status"
   | "employee_type"
@@ -1010,15 +1105,6 @@ function AgentMaintenanceForm({
                 name="workplace_id"
                 placeholder="SITE-001"
                 defaultValue={defaultValues.workplace_id}
-                required={actionKey === "create"}
-              />
-            ) : null}
-            {fields.includes("project_id") ? (
-              <MaintenanceInput
-                label="项目 ID"
-                name="project_id"
-                placeholder="PROJ-001"
-                defaultValue={defaultValues.project_id}
                 required={actionKey === "create"}
               />
             ) : null}

@@ -37,11 +37,13 @@ const baseBatch = {
   applied_record_count: 18,
 };
 
-test("master data maintenance defines the six read-only maintenance objects", () => {
+test("master data maintenance defines the core people-oriented maintenance objects without project", () => {
   assert.deepEqual(
     MASTER_DATA_MAINTENANCE_ENTITIES.map((entity) => entity.label),
-    ["坐席", "职场", "供应商", "项目", "技能", "绑定关系"],
+    ["坐席", "组织", "职场", "供应商", "技能", "绑定关系"],
   );
+  assert.equal(getMasterDataMaintenanceEntity("projects"), null);
+  assert.equal(getMasterDataMaintenanceEntity("organizations")?.label, "组织");
 });
 
 test("master data maintenance workbench shows an empty read-only state without source batches", () => {
@@ -328,7 +330,7 @@ test("binding master data management summarizes relationship list rows", () => {
       employee_id: "A-2002",
       supplier_id: "SUP-002",
       workplace_id: "NJ-01",
-      project_id: "PROJ-001",
+      project_id: "LEGACY-PROJ-001",
       skill_id: "SKILL-TICKET",
       effective_from: "2026-06-01",
       effective_to: "2026-12-31",
@@ -339,7 +341,7 @@ test("binding master data management summarizes relationship list rows", () => {
       employee_id: "A-2001",
       supplier_id: "SUP-IM083-READY",
       workplace_id: "SH-01",
-      project_id: "PROJ-001",
+      project_id: "LEGACY-PROJ-001",
       skill_id: "SKILL-ONLINE",
       effective_from: "2026-05-01",
       effective_to: "2026-10-31",
@@ -353,14 +355,31 @@ test("binding master data management summarizes relationship list rows", () => {
     summary.rows.map((row) => [
       row.display.bindingLabel,
       row.display.supplierLabel,
+      row.display.workplaceLabel,
+      row.display.skillLabel,
       row.display.effectivePeriodLabel,
       row.display.sourceBatchLabel,
     ]),
     [
-      ["BIND-002", "SUP-002", "2026-06-01 至 2026-12-31", "BATCH-MD-002"],
-      ["BIND-业务-001", "SUP-业务-READY", "2026-05-01 至 2026-10-31", "BATCH-MD-001"],
+      [
+        "BIND-002",
+        "SUP-002",
+        "NJ-01",
+        "SKILL-TICKET",
+        "2026-06-01 至 2026-12-31",
+        "BATCH-MD-002",
+      ],
+      [
+        "BIND-业务-001",
+        "SUP-业务-READY",
+        "SH-01",
+        "SKILL-ONLINE",
+        "2026-05-01 至 2026-10-31",
+        "BATCH-MD-001",
+      ],
     ],
   );
+  assert.equal("projectLabel" in summary.rows[0].display, false);
 });
 
 test("agent maintenance payload maps create edit freeze and effective period actions", () => {

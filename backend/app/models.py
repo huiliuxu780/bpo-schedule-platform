@@ -488,6 +488,10 @@ class MasterDataEmployeeListResponse(BaseModel):
     items: list[MasterDataEmployeeListRow]
 
 
+class MasterDataOrganizationListResponse(BaseModel):
+    items: list[MasterDataOrganizationRecord]
+
+
 class MasterDataSnapshotRequest(BaseModel):
     batch_id: str
     suppliers: list[MasterDataReferenceInput] = Field(default_factory=list)

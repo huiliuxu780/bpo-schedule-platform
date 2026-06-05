@@ -3458,3 +3458,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM138 Master Data Project Concept Removal
+
+- branch_name: `codex/im136-business-first-ia-cleanup`
+- base_main_commit: `a4c4221`
+- stacked_on: `dfdaef4 fix: clean runtime visible residue`
+- remote_status: `dfdaef4 was pushed; this concept cleanup is local until final check/commit/push.`
+- scope: PM-confirmed correction that the product should not expose `项目` as a master-data concept. Remove `/master-data/projects` from the sidebar and master-data entity model, add `/master-data/organizations` as a read-only organization list using existing organization records, remove the project column from the binding relationship UI, and keep legacy `project_id` backend fields as compatibility only.
+- allowed_files_check: `app/master-data/**`, `components/app-sidebar.tsx`, `components/master-data-maintenance-*`, focused frontend tests, read-only organization API/model/repository/tests, `docs/current/PROJECT_CONTEXT.md`, and `docs/dev/branch-log.md`; no package/lockfile, schema/migration, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, or charge-factor changes.
+- scope_diff_check: expected master-data navigation/model/page correction, read-only organization list API, binding UI column removal, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED frontend tests first failed because master-data still listed `项目` and binding display still exposed `projectLabel`; RED backend test first failed because `list_master_data_organizations` did not exist. After implementation, target master-data/product/import tests passed with 101 Node tests, backend master-data maintenance API tests passed with 11 tests, `npm run typecheck` passed, and `npm run lint` passed. Browser smoke over `/master-data/organizations`, `/master-data/bindings`, and `/master-data/projects` confirmed organization navigation exists, project navigation is absent, binding table has no project column, and `/master-data/projects` returns 404. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

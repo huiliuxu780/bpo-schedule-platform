@@ -300,10 +300,24 @@ class MasterDataPersistenceRepository:
         organization_id: str,
     ) -> MasterDataOrganizationRecord | None:
         with self.session_factory() as session:
+            if not _has_table(session, "master_data_organizations"):
+                return None
             organization = session.get(OrganizationEntity, organization_id)
             if organization is None:
                 return None
             return _organization_record(session, organization)
+
+    def list_organizations(self) -> list[MasterDataOrganizationRecord]:
+        with self.session_factory() as session:
+            if not _has_table(session, "master_data_organizations"):
+                return []
+            rows = session.scalars(
+                select(OrganizationEntity).order_by(
+                    OrganizationEntity.organization_level,
+                    OrganizationEntity.organization_id,
+                )
+            ).all()
+            return [_organization_record(session, row) for row in rows]
 
     def get_reference(
         self,
@@ -688,6 +702,11 @@ def _has_skill_category_schema(session: Session) -> bool:
         column["name"] for column in inspector.get_columns("master_data_skills")
     }
     return "skill_category" in skill_columns
+
+
+def _has_table(session: Session, table_name: str) -> bool:
+    inspector = inspect_schema(session.bind)
+    return table_name in inspector.get_table_names()
 
 
 def _legacy_skill_reference_rows(session: Session) -> list[MasterDataReferenceRecord]:

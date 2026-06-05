@@ -165,3 +165,18 @@ test("master data entry redirects to agents and entity pages do not use the old 
     assert.equal(modelSource.includes(term), false, term);
   }
 });
+
+test("master data product surface does not expose project as a maintenance object", async () => {
+  const sidebarSource = await readFile(appSidebarPath, "utf8");
+  const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const modelSource = await readFile(masterDataModelPath, "utf8");
+
+  assert.equal(sidebarSource.includes('title: "项目"'), false);
+  assert.equal(sidebarSource.includes('href: "/master-data/projects"'), false);
+  assert.equal(modelSource.includes('key: "projects"'), false);
+  assert.equal(modelSource.includes('label: "项目"'), false);
+  assert.equal(modelSource.includes('scopeLabel: "坐席-项目'), false);
+  assert.equal(modelSource.includes('人员、项目'), false);
+  assert.equal(entitySource.includes('projects" | "skills"'), false);
+  assert.equal(entitySource.includes('"projects", "skills"'), false);
+});
