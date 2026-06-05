@@ -3,7 +3,6 @@ import {
   buildImportApiUrl,
 } from "@/components/import-center-model"
 import type {
-  MasterDataBindingListRow,
   MasterDataEmployeeListRow,
   MasterDataMaintenanceEntityKey,
   MasterDataOrganizationListRow,
@@ -100,37 +99,6 @@ export async function fetchMasterDataOrganizations(): Promise<
 
     const payload = (await response.json()) as {
       items?: MasterDataOrganizationListRow[]
-    }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
-}
-
-export async function fetchMasterDataBindings(): Promise<
-  ApiResult<MasterDataBindingListRow[]>
-> {
-  try {
-    const response = await fetch(buildImportApiUrl("/api/v1/master-data/bindings"), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `绑定关系列表读取失败：${response.status}`,
-      }
-    }
-
-    const payload = (await response.json()) as {
-      items?: MasterDataBindingListRow[]
     }
 
     return {

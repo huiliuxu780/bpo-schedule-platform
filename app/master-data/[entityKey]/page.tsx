@@ -3,25 +3,20 @@ import { notFound } from "next/navigation"
 import { AppShell } from "@/components/app-shell"
 import {
   MasterDataAgentManagementPage,
-  MasterDataBindingManagementPage,
   MasterDataOrganizationManagementPage,
   MasterDataReferenceManagementPage,
-  MasterDataSiteOperatorManagementPage,
 } from "@/components/master-data-maintenance-workbench"
 import {
   type MasterDataAgentManagementFilters,
   type MasterDataMaintenanceEntityKey,
   getMasterDataMaintenanceEntity,
   summarizeMasterDataAgentManagement,
-  summarizeMasterDataBindingManagement,
   summarizeMasterDataMaintenanceFeedback,
   summarizeMasterDataEntitySourceContext,
   summarizeMasterDataOrganizationManagement,
   summarizeMasterDataReferenceManagement,
-  summarizeMasterDataSiteOperatorManagement,
 } from "@/components/master-data-maintenance-model"
 import {
-  fetchMasterDataBindings,
   fetchImportBatches,
   fetchMasterDataEmployees,
   fetchMasterDataOrganizations,
@@ -51,7 +46,7 @@ export default async function MasterDataEntityDetailPage({
 
   const batchResult = await fetchImportBatches()
   const employeeResult =
-    entity.key === "agents" || entity.key === "site-operators"
+    entity.key === "agents"
       ? await fetchMasterDataEmployees()
       : { data: [], error: null }
   const organizationResult =
@@ -61,10 +56,6 @@ export default async function MasterDataEntityDetailPage({
   const referenceResult =
     isReferenceEntity(entity.key)
       ? await fetchMasterDataReferences(entity.key)
-      : { data: [], error: null }
-  const bindingResult =
-    entity.key === "bindings" || entity.key === "site-operators"
-      ? await fetchMasterDataBindings()
       : { data: [], error: null }
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const summary = summarizeMasterDataEntitySourceContext(
@@ -85,17 +76,6 @@ export default async function MasterDataEntityDetailPage({
   const organizationManagementSummary =
     entity.key === "organizations"
       ? summarizeMasterDataOrganizationManagement(organizationResult.data ?? [])
-      : null
-  const bindingManagementSummary =
-    entity.key === "bindings"
-      ? summarizeMasterDataBindingManagement(bindingResult.data ?? [])
-      : null
-  const siteOperatorManagementSummary =
-    entity.key === "site-operators"
-      ? summarizeMasterDataSiteOperatorManagement({
-          employees: employeeResult.data ?? [],
-          bindings: bindingResult.data ?? [],
-        })
       : null
   const selectedFreezeEmployeeId = getSingleSearchParam(
     resolvedSearchParams.freeze_employee_id
@@ -130,20 +110,6 @@ export default async function MasterDataEntityDetailPage({
           summary={summary}
           listSummary={referenceManagementSummary}
           error={referenceResult.error ?? batchResult.error}
-          feedback={feedback}
-        />
-      ) : entity.key === "bindings" && bindingManagementSummary ? (
-        <MasterDataBindingManagementPage
-          summary={summary}
-          listSummary={bindingManagementSummary}
-          error={bindingResult.error ?? batchResult.error}
-          feedback={feedback}
-        />
-      ) : entity.key === "site-operators" && siteOperatorManagementSummary ? (
-        <MasterDataSiteOperatorManagementPage
-          summary={summary}
-          listSummary={siteOperatorManagementSummary}
-          error={employeeResult.error ?? bindingResult.error ?? batchResult.error}
           feedback={feedback}
         />
       ) : null}

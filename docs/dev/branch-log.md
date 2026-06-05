@@ -3494,3 +3494,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM140 Master Data IA Correction
+
+- branch_name: `codex/im136-business-first-ia-cleanup`
+- base_main_commit: `a4c4221`
+- stacked_on: `c08d9a0 feat: add workplace operating owner list`
+- remote_status: `c08d9a0 is local only; this IA correction is local until final check/commit/push.`
+- scope: PM-corrected master-data information architecture. Keep `技能` as an independent master-data entry, remove standalone `职场运营主体` and `绑定关系` entries from sidebar/entity routing, and leave workplace operating-owner content for a future workplace detail design rather than a naked navigation page.
+- allowed_files_check: `app/master-data/[entityKey]/page.tsx`, `components/app-sidebar.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, `docs/current/PROJECT_CONTEXT.md`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, charge-factor, supplier-contract, or minimum-staffing changes.
+- scope_diff_check: expected removal of standalone workplace operating-owner and binding relationship navigation/entity routing, retention of the skills entry, focused regression tests, current-state documentation correction, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED frontend tests first failed because master-data entities still included `职场运营主体` and `绑定关系`; after implementation, target master-data/product-structure tests passed with 20 Node tests. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

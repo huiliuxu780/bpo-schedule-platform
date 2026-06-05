@@ -21,10 +21,8 @@ export type MasterDataMaintenanceEntityKey =
   | "agents"
   | "organizations"
   | "sites"
-  | "site-operators"
   | "vendors"
   | "skills"
-  | "bindings"
 
 export type MasterDataMaintenanceEntity = {
   key: MasterDataMaintenanceEntityKey
@@ -165,74 +163,6 @@ export type MasterDataReferenceManagementSummary = {
   activeRecords: number
   frozenRecords: number
   rows: MasterDataReferenceListViewRow[]
-}
-
-export type MasterDataBindingListRow = {
-  binding_id: string
-  employee_id: string
-  supplier_id: string
-  workplace_id: string
-  project_id: string
-  skill_id: string
-  effective_from: string
-  effective_to: string
-  batch_id: string
-}
-
-export type MasterDataBindingListDisplay = {
-  bindingLabel: string
-  employeeLabel: string
-  supplierLabel: string
-  workplaceLabel: string
-  skillLabel: string
-  effectivePeriodLabel: string
-  sourceBatchLabel: string
-}
-
-export type MasterDataBindingListViewRow = MasterDataBindingListRow & {
-  display: MasterDataBindingListDisplay
-}
-
-export type MasterDataBindingManagementSummary = {
-  title: string
-  totalRecords: number
-  rows: MasterDataBindingListViewRow[]
-}
-
-export type MasterDataSiteOperatorType = "internal" | "supplier"
-
-export type MasterDataSiteOperatorListRow = {
-  operator_key: string
-  workplace_id: string
-  operator_type: MasterDataSiteOperatorType
-  supplier_id: string | null
-  status: MasterDataAgentMaintenanceStatus
-  effective_from: string
-  effective_to: string
-  source_type: "employee" | "binding"
-  batch_id: string
-}
-
-export type MasterDataSiteOperatorListDisplay = {
-  workplaceLabel: string
-  operatorTypeLabel: string
-  supplierLabel: string
-  statusLabel: string
-  effectivePeriodLabel: string
-  sourceLabel: string
-  sourceBatchLabel: string
-}
-
-export type MasterDataSiteOperatorListViewRow = MasterDataSiteOperatorListRow & {
-  display: MasterDataSiteOperatorListDisplay
-}
-
-export type MasterDataSiteOperatorManagementSummary = {
-  title: string
-  totalRecords: number
-  internalRecords: number
-  supplierRecords: number
-  rows: MasterDataSiteOperatorListViewRow[]
 }
 
 export type MasterDataAgentMaintenancePayload = {
@@ -393,13 +323,6 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
     maintenanceBoundary: "职场只表达地点本身，不表达团队归属。",
   },
   {
-    key: "site-operators",
-    label: "职场运营主体",
-    scopeLabel: "职场下自有团队或供应商团队归属",
-    referenceLabel: "人员归属、供应商归因、排班和日志归因",
-    maintenanceBoundary: "职场运营主体表达归属类型、供应商关系和生效周期。",
-  },
-  {
     key: "vendors",
     label: "供应商",
     scopeLabel: "供应商编码、名称、合作状态",
@@ -412,13 +335,6 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
     scopeLabel: "技能组、技能等级、服务语种",
     referenceLabel: "预测时段、排班技能、缺口比对",
     maintenanceBoundary: "技能编码、技能组、技能等级、服务语种和状态。",
-  },
-  {
-    key: "bindings",
-    label: "绑定关系",
-    scopeLabel: "坐席-组织-技能-职场-供应商关系",
-    referenceLabel: "排班展开、预测对齐、状态日志归因",
-    maintenanceBoundary: "人员、组织、技能、职场、供应商之间的有效绑定关系。",
   },
 ]
 
@@ -794,139 +710,6 @@ export function summarizeMasterDataOrganizationManagement(
   }
 }
 
-export function summarizeMasterDataBindingManagement(
-  bindings: MasterDataBindingListRow[]
-): MasterDataBindingManagementSummary {
-  const rows = [...bindings]
-    .sort((left, right) => left.binding_id.localeCompare(right.binding_id))
-    .map((binding) => ({
-      ...binding,
-      display: {
-        bindingLabel: formatMasterDataVisibleValue(binding.binding_id),
-        employeeLabel: formatMasterDataVisibleValue(binding.employee_id),
-        supplierLabel: formatMasterDataVisibleValue(binding.supplier_id),
-        workplaceLabel: formatMasterDataVisibleValue(binding.workplace_id),
-        skillLabel: formatMasterDataVisibleValue(binding.skill_id),
-        effectivePeriodLabel: formatEffectivePeriod(
-          binding.effective_from,
-          binding.effective_to
-        ),
-        sourceBatchLabel: formatImportBatchDisplayLabel(binding.batch_id),
-      },
-    }))
-
-  return {
-    title: "绑定关系",
-    totalRecords: rows.length,
-    rows,
-  }
-}
-
-export function summarizeMasterDataSiteOperatorManagement({
-  employees,
-  bindings,
-}: {
-  employees: MasterDataEmployeeListRow[]
-  bindings: MasterDataBindingListRow[]
-}): MasterDataSiteOperatorManagementSummary {
-  const operatorMap = new Map<string, MasterDataSiteOperatorListRow>()
-
-  for (const employee of employees) {
-    if (employee.employee_type !== "internal" || !employee.workplace_id) {
-      continue
-    }
-
-    const operatorKey = [
-      "internal",
-      employee.workplace_id,
-      employee.effective_from,
-      employee.effective_to,
-    ].join(":")
-
-    if (!operatorMap.has(operatorKey)) {
-      operatorMap.set(operatorKey, {
-        operator_key: operatorKey,
-        workplace_id: employee.workplace_id,
-        operator_type: "internal",
-        supplier_id: null,
-        status: employee.status,
-        effective_from: employee.effective_from,
-        effective_to: employee.effective_to,
-        source_type: "employee",
-        batch_id: employee.batch_id,
-      })
-    }
-  }
-
-  for (const binding of bindings) {
-    if (!binding.workplace_id || !binding.supplier_id) {
-      continue
-    }
-
-    const operatorKey = [
-      "supplier",
-      binding.workplace_id,
-      binding.supplier_id,
-      binding.effective_from,
-      binding.effective_to,
-    ].join(":")
-
-    if (!operatorMap.has(operatorKey)) {
-      operatorMap.set(operatorKey, {
-        operator_key: operatorKey,
-        workplace_id: binding.workplace_id,
-        operator_type: "supplier",
-        supplier_id: binding.supplier_id,
-        status: "active",
-        effective_from: binding.effective_from,
-        effective_to: binding.effective_to,
-        source_type: "binding",
-        batch_id: binding.batch_id,
-      })
-    }
-  }
-
-  const rows = [...operatorMap.values()]
-    .sort((left, right) => {
-      const workplaceOrder = left.workplace_id.localeCompare(right.workplace_id)
-      if (workplaceOrder !== 0) {
-        return workplaceOrder
-      }
-
-      if (left.operator_type !== right.operator_type) {
-        return left.operator_type === "internal" ? -1 : 1
-      }
-
-      return (left.supplier_id ?? "").localeCompare(right.supplier_id ?? "")
-    })
-    .map((operator) => ({
-      ...operator,
-      display: {
-        workplaceLabel: formatMasterDataVisibleValue(operator.workplace_id),
-        operatorTypeLabel:
-          operator.operator_type === "internal" ? "自有" : "供应商",
-        supplierLabel: operator.supplier_id
-          ? formatMasterDataVisibleValue(operator.supplier_id)
-          : "无供应商",
-        statusLabel: formatMasterDataEmployeeStatus(operator.status),
-        effectivePeriodLabel: formatEffectivePeriod(
-          operator.effective_from,
-          operator.effective_to
-        ),
-        sourceLabel: operator.source_type === "employee" ? "人员档案" : "绑定关系",
-        sourceBatchLabel: formatImportBatchDisplayLabel(operator.batch_id),
-      },
-    }))
-
-  return {
-    title: "职场运营主体",
-    totalRecords: rows.length,
-    internalRecords: rows.filter((row) => row.operator_type === "internal").length,
-    supplierRecords: rows.filter((row) => row.operator_type === "supplier").length,
-    rows,
-  }
-}
-
 function normalizeMasterDataAgentManagementFilters(
   filters: MasterDataAgentManagementFilters
 ): MasterDataAgentManagementFilters {
@@ -1173,7 +956,7 @@ function resolveMasterDataMaintenanceDetail(
   hasPendingFreshness: boolean
 ) {
   if (masterDataBatches.length === 0) {
-    return "当前还没有主数据导入批次，无法建立坐席、组织、职场、供应商、技能和绑定关系的维护台账。"
+    return "当前还没有主数据导入批次，无法建立坐席、组织、职场、供应商和技能的维护台账。"
   }
 
   if (!latestAppliedBatch) {

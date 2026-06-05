@@ -9,13 +9,11 @@ import {
   buildMasterDataAgentSkillMaintenancePayload,
   getMasterDataMaintenanceEntity,
   summarizeMasterDataAgentManagement,
-  summarizeMasterDataBindingManagement,
   summarizeMasterDataEmployeeList,
   summarizeMasterDataAgentMaintenanceFeedback,
   summarizeMasterDataEntitySourceContext,
   summarizeMasterDataMaintenanceWorkbench,
   summarizeMasterDataReferenceManagement,
-  summarizeMasterDataSiteOperatorManagement,
 } from "../../components/master-data-maintenance-model.ts";
 
 const baseBatch = {
@@ -41,9 +39,11 @@ const baseBatch = {
 test("master data maintenance defines the core people-oriented maintenance objects without project", () => {
   assert.deepEqual(
     MASTER_DATA_MAINTENANCE_ENTITIES.map((entity) => entity.label),
-    ["坐席", "组织", "职场", "职场运营主体", "供应商", "技能", "绑定关系"],
+    ["坐席", "组织", "职场", "供应商", "技能"],
   );
   assert.equal(getMasterDataMaintenanceEntity("projects"), null);
+  assert.equal(getMasterDataMaintenanceEntity("site-operators"), null);
+  assert.equal(getMasterDataMaintenanceEntity("bindings"), null);
   assert.equal(getMasterDataMaintenanceEntity("organizations")?.label, "组织");
 });
 
@@ -51,11 +51,11 @@ test("master data maintenance workbench shows an empty read-only state without s
   const summary = summarizeMasterDataMaintenanceWorkbench([]);
 
   assert.equal(summary.tone, "empty");
-  assert.equal(summary.totalObjects, 7);
+  assert.equal(summary.totalObjects, 5);
   assert.equal(summary.readyObjects, 0);
-  assert.equal(summary.blockedObjects, 7);
+  assert.equal(summary.blockedObjects, 5);
   assert.equal(summary.sourceVersionLabel, "暂无主数据业务版本");
-  assert.equal(summary.rows.length, 7);
+  assert.equal(summary.rows.length, 5);
   assert.equal(summary.rows[0].statusLabel, "待导入");
   assert.equal(summary.rows[0].blockerSummary, "尚未发现主数据导入批次");
   assert.equal(summary.rows[0].sourceBatchHref, null);
@@ -73,7 +73,7 @@ test("master data maintenance workbench uses the latest applied master data vers
   ]);
 
   assert.equal(summary.tone, "ready");
-  assert.equal(summary.readyObjects, 7);
+  assert.equal(summary.readyObjects, 5);
   assert.equal(summary.blockedObjects, 0);
   assert.equal(summary.sourceVersionLabel, "BATCH-MD-001::v1");
   assert.equal(summary.latestBatchLabel, "BATCH-MD-001");
@@ -99,7 +99,7 @@ test("master data maintenance workbench blocks freshness when the newest master 
 
   assert.equal(summary.tone, "blocked");
   assert.equal(summary.readyObjects, 0);
-  assert.equal(summary.blockedObjects, 7);
+  assert.equal(summary.blockedObjects, 5);
   assert.equal(summary.sourceVersionLabel, "BATCH-MD-001::v1");
   assert.equal(summary.latestBatchLabel, "BATCH-MD-002");
   assert.match(summary.detail, /最新主数据批次尚未应用/);
@@ -113,7 +113,7 @@ test("master data maintenance resolves known entity keys", () => {
 });
 
 test("master data entity source context keeps list source state only", () => {
-  const context = summarizeMasterDataEntitySourceContext("bindings", [
+  const context = summarizeMasterDataEntitySourceContext("skills", [
     {
       ...baseBatch,
       batch_id: "BATCH-IM083-SMOKE-002",
@@ -121,8 +121,8 @@ test("master data entity source context keeps list source state only", () => {
     },
   ]);
 
-  assert.equal(context.entity.label, "绑定关系");
-  assert.equal(context.title, "绑定关系");
+  assert.equal(context.entity.label, "技能");
+  assert.equal(context.title, "技能");
   assert.equal(context.sourceVersionLabel, "BATCH-业务-002::v1");
   assert.equal(
     context.sourceBatchHref,
@@ -322,138 +322,6 @@ test("reference master data management summarizes list rows by object type", () 
       ],
     ],
   );
-});
-
-test("binding master data management summarizes relationship list rows", () => {
-  const summary = summarizeMasterDataBindingManagement([
-    {
-      binding_id: "BIND-002",
-      employee_id: "A-2002",
-      supplier_id: "SUP-002",
-      workplace_id: "NJ-01",
-      project_id: "LEGACY-PROJ-001",
-      skill_id: "SKILL-TICKET",
-      effective_from: "2026-06-01",
-      effective_to: "2026-12-31",
-      batch_id: "BATCH-MD-002",
-    },
-    {
-      binding_id: "BIND-IM083-001",
-      employee_id: "A-2001",
-      supplier_id: "SUP-IM083-READY",
-      workplace_id: "SH-01",
-      project_id: "LEGACY-PROJ-001",
-      skill_id: "SKILL-ONLINE",
-      effective_from: "2026-05-01",
-      effective_to: "2026-10-31",
-      batch_id: "BATCH-MD-001",
-    },
-  ]);
-
-  assert.equal(summary.title, "绑定关系");
-  assert.equal(summary.totalRecords, 2);
-  assert.deepEqual(
-    summary.rows.map((row) => [
-      row.display.bindingLabel,
-      row.display.supplierLabel,
-      row.display.workplaceLabel,
-      row.display.skillLabel,
-      row.display.effectivePeriodLabel,
-      row.display.sourceBatchLabel,
-    ]),
-    [
-      [
-        "BIND-002",
-        "SUP-002",
-        "NJ-01",
-        "SKILL-TICKET",
-        "2026-06-01 至 2026-12-31",
-        "BATCH-MD-002",
-      ],
-      [
-        "BIND-业务-001",
-        "SUP-业务-READY",
-        "SH-01",
-        "SKILL-ONLINE",
-        "2026-05-01 至 2026-10-31",
-        "BATCH-MD-001",
-      ],
-    ],
-  );
-  assert.equal("projectLabel" in summary.rows[0].display, false);
-});
-
-test("site operator management derives workplace ownership rows without future contract concepts", () => {
-  const summary = summarizeMasterDataSiteOperatorManagement({
-    employees: [
-      {
-        employee_id: "A-2001",
-        employee_name: "刘晓晓",
-        status: "active",
-        employee_type: "internal",
-        organization_id: "ORG-RETURN",
-        organization_path: "CC / CCO / 集中退换小组",
-        workplace_id: "NJ-01",
-        workplace_name: "南京职场",
-        effective_from: "2026-05-01",
-        effective_to: "2026-12-31",
-        batch_id: "BATCH-MD-001",
-        skills: [],
-      },
-    ],
-    bindings: [
-      {
-        binding_id: "BIND-001",
-        employee_id: "A-3001",
-        supplier_id: "SUP-001",
-        workplace_id: "SH-01",
-        project_id: "LEGACY-PROJ-001",
-        skill_id: "SKILL-TICKET",
-        effective_from: "2026-06-01",
-        effective_to: "2026-12-31",
-        batch_id: "BATCH-MD-002",
-      },
-    ],
-  });
-
-  assert.equal(summary.title, "职场运营主体");
-  assert.equal(summary.totalRecords, 2);
-  assert.equal(summary.internalRecords, 1);
-  assert.equal(summary.supplierRecords, 1);
-  assert.deepEqual(
-    summary.rows.map((row) => [
-      row.display.workplaceLabel,
-      row.display.operatorTypeLabel,
-      row.display.supplierLabel,
-      row.display.statusLabel,
-      row.display.effectivePeriodLabel,
-      row.display.sourceLabel,
-      row.display.sourceBatchLabel,
-    ]),
-    [
-      [
-        "NJ-01",
-        "自有",
-        "无供应商",
-        "生效",
-        "2026-05-01 至 2026-12-31",
-        "人员档案",
-        "BATCH-MD-001",
-      ],
-      [
-        "SH-01",
-        "供应商",
-        "SUP-001",
-        "生效",
-        "2026-06-01 至 2026-12-31",
-        "绑定关系",
-        "BATCH-MD-002",
-      ],
-    ],
-  );
-  assert.equal(JSON.stringify(summary).includes("合同"), false);
-  assert.equal(JSON.stringify(summary).includes("结算"), false);
-  assert.equal(JSON.stringify(summary).includes("最低人力"), false);
 });
 
 test("agent maintenance payload maps create edit freeze and effective period actions", () => {

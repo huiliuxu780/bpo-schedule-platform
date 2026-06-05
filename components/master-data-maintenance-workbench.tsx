@@ -15,11 +15,9 @@ import {
 import {
   type MasterDataAgentMaintenanceFeedback,
   type MasterDataAgentManagementSummary,
-  type MasterDataBindingManagementSummary,
   type MasterDataEntitySourceContext,
   type MasterDataOrganizationManagementSummary,
   type MasterDataReferenceManagementSummary,
-  type MasterDataSiteOperatorManagementSummary,
 } from "@/components/master-data-maintenance-model"
 import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -303,182 +301,6 @@ export function MasterDataOrganizationManagementPage({
                     </Badge>
                   </TableCell>
                   <TableCell>{row.display.effectivePeriodLabel}</TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {row.display.sourceBatchLabel}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </section>
-    </main>
-  )
-}
-
-export function MasterDataBindingManagementPage({
-  summary,
-  listSummary,
-  error,
-  feedback,
-}: {
-  summary: MasterDataEntitySourceContext
-  listSummary: MasterDataBindingManagementSummary
-  error: string | null
-  feedback: MasterDataAgentMaintenanceFeedback | null
-}) {
-  return (
-    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
-      <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
-        <h1 className="text-base font-semibold tracking-normal">{listSummary.title}</h1>
-        <Button asChild size="sm" variant="outline">
-          <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
-            <Upload data-icon="inline-start" />
-            导入主数据
-          </Link>
-        </Button>
-      </section>
-
-      {error ? <MasterDataListError title="绑定关系列表读取失败" error={error} /> : null}
-      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
-
-      <section className="grid gap-3 md:grid-cols-2">
-        <MetricCard
-          label="绑定数"
-          value={listSummary.totalRecords.toLocaleString("zh-CN")}
-          detail={summary.sourceVersionLabel}
-          tone="default"
-        />
-        <MetricCard
-          label="来源批次"
-          value={summary.sourceBatchLabel}
-          detail="当前绑定关系来源"
-          tone="default"
-        />
-      </section>
-
-      <section className="rounded-lg border bg-background p-4">
-        {listSummary.rows.length === 0 ? (
-          <div className="rounded-md border p-4 text-sm text-muted-foreground">
-            暂无绑定关系记录。
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>绑定ID</TableHead>
-                <TableHead>人员</TableHead>
-                <TableHead>供应商</TableHead>
-                <TableHead>职场</TableHead>
-                <TableHead>技能</TableHead>
-                <TableHead>有效期</TableHead>
-                <TableHead>来源批次</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {listSummary.rows.map((row) => (
-                <TableRow key={row.binding_id}>
-                  <TableCell className="font-mono text-xs">
-                    {row.display.bindingLabel}
-                  </TableCell>
-                  <TableCell>{row.display.employeeLabel}</TableCell>
-                  <TableCell>{row.display.supplierLabel}</TableCell>
-                  <TableCell>{row.display.workplaceLabel}</TableCell>
-                  <TableCell>{row.display.skillLabel}</TableCell>
-                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {row.display.sourceBatchLabel}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </section>
-    </main>
-  )
-}
-
-export function MasterDataSiteOperatorManagementPage({
-  summary,
-  listSummary,
-  error,
-  feedback,
-}: {
-  summary: MasterDataEntitySourceContext
-  listSummary: MasterDataSiteOperatorManagementSummary
-  error: string | null
-  feedback: MasterDataAgentMaintenanceFeedback | null
-}) {
-  return (
-    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
-      <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
-        <h1 className="text-base font-semibold tracking-normal">{listSummary.title}</h1>
-        <Button asChild size="sm" variant="outline">
-          <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
-            <Upload data-icon="inline-start" />
-            导入主数据
-          </Link>
-        </Button>
-      </section>
-
-      {error ? <MasterDataListError title="职场运营主体列表读取失败" error={error} /> : null}
-      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
-
-      <section className="grid gap-3 md:grid-cols-3">
-        <MetricCard
-          label="运营主体"
-          value={listSummary.totalRecords.toLocaleString("zh-CN")}
-          detail={summary.sourceVersionLabel}
-          tone="default"
-        />
-        <MetricCard
-          label="自有"
-          value={listSummary.internalRecords.toLocaleString("zh-CN")}
-          detail="职场下自有团队归属"
-          tone={listSummary.internalRecords > 0 ? "ready" : "default"}
-        />
-        <MetricCard
-          label="供应商"
-          value={listSummary.supplierRecords.toLocaleString("zh-CN")}
-          detail="职场下供应商团队归属"
-          tone={listSummary.supplierRecords > 0 ? "ready" : "default"}
-        />
-      </section>
-
-      <section className="rounded-lg border bg-background p-4">
-        {listSummary.rows.length === 0 ? (
-          <div className="rounded-md border p-4 text-sm text-muted-foreground">
-            暂无职场运营主体记录。
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>职场</TableHead>
-                <TableHead>归属类型</TableHead>
-                <TableHead>供应商</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>有效期</TableHead>
-                <TableHead>来源</TableHead>
-                <TableHead>来源批次</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {listSummary.rows.map((row) => (
-                <TableRow key={row.operator_key}>
-                  <TableCell className="font-medium">
-                    {row.display.workplaceLabel}
-                  </TableCell>
-                  <TableCell>{row.display.operatorTypeLabel}</TableCell>
-                  <TableCell>{row.display.supplierLabel}</TableCell>
-                  <TableCell>
-                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
-                      {row.display.statusLabel}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
-                  <TableCell>{row.display.sourceLabel}</TableCell>
                   <TableCell className="font-mono text-xs">
                     {row.display.sourceBatchLabel}
                   </TableCell>
@@ -1094,7 +916,6 @@ type AgentMaintenanceField =
   | "employee_name"
   | "reference_id"
   | "reference_name"
-  | "binding_id"
   | "supplier_id"
   | "workplace_id"
   | "skill_id"
@@ -1139,15 +960,6 @@ function AgentMaintenanceForm({
           ))}
           <p className="text-sm text-muted-foreground">{description}</p>
           <div className="grid gap-3 md:grid-cols-2">
-            {fields.includes("binding_id") ? (
-              <MaintenanceInput
-                label="绑定关系 ID"
-                name="binding_id"
-                placeholder="BIND-1001"
-                defaultValue={defaultValues.binding_id}
-                required
-              />
-            ) : null}
             {fields.includes("employee_id") ? (
               <MaintenanceInput
                 label="坐席 ID"

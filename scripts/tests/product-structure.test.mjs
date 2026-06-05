@@ -171,14 +171,24 @@ test("master data product surface does not expose project as a maintenance objec
   const entitySource = await readFile(masterDataEntityPagePath, "utf8");
   const modelSource = await readFile(masterDataModelPath, "utf8");
 
-  assert.equal(sidebarSource.includes('title: "职场运营主体"'), true);
-  assert.equal(sidebarSource.includes('href: "/master-data/site-operators"'), true);
+  assert.equal(sidebarSource.includes('title: "技能"'), true);
+  assert.equal(sidebarSource.includes('href: "/master-data/skills"'), true);
+  assert.equal(sidebarSource.includes('title: "职场运营主体"'), false);
+  assert.equal(sidebarSource.includes('href: "/master-data/site-operators"'), false);
+  assert.equal(sidebarSource.includes('title: "绑定关系"'), false);
+  assert.equal(sidebarSource.includes('href: "/master-data/bindings"'), false);
   assert.equal(sidebarSource.includes('title: "项目"'), false);
   assert.equal(sidebarSource.includes('href: "/master-data/projects"'), false);
   assert.equal(modelSource.includes('key: "projects"'), false);
+  assert.equal(modelSource.includes('key: "site-operators"'), false);
+  assert.equal(modelSource.includes('key: "bindings"'), false);
   assert.equal(modelSource.includes('label: "项目"'), false);
+  assert.equal(modelSource.includes('label: "职场运营主体"'), false);
+  assert.equal(modelSource.includes('label: "绑定关系"'), false);
   assert.equal(modelSource.includes('scopeLabel: "坐席-项目'), false);
   assert.equal(modelSource.includes('人员、项目'), false);
   assert.equal(entitySource.includes('projects" | "skills"'), false);
   assert.equal(entitySource.includes('"projects", "skills"'), false);
+  assert.equal(entitySource.includes('entity.key === "site-operators"'), false);
+  assert.equal(entitySource.includes('entity.key === "bindings"'), false);
 });
