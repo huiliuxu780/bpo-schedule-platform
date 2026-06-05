@@ -28,6 +28,19 @@ status: "done"
 notes: "IM149 已完成：非客服人员主数据列表内容区不再显示 `导入主数据` 或跳转独立上传工作区；客服人员已确认的新建/批量导入继续在 Header actions；本轮未新增 CRUD、导入弹窗、后端、schema/migration、依赖或权限/审批/导出/批量等能力。"
 ```
 
+### R850 - 导入入口业务归位
+
+```yaml
+id: R850
+module: "业务导入 / 入口归属"
+description: "PM 明确导入不应该继续表现为一个通用导入中心主入口。人员导入应在人员列表，排班导入在排班业务页，预测导入在需求预测业务页，登录/状态日志导入在日志业务页。当前 `/data-quality` 仍显示通用 `上传 CSV` 主按钮，预测、排班、日志页面的导入按钮也塞在内容卡片里并跳向通用上传工作区。需要先收口入口归属，把通用上传页降级为内部兼容路由。"
+source: "PM approved continuing after IM149 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM150 已完成：data-quality 作为导入批次台账不再提供通用 `上传 CSV` 主按钮；预测、排班、登录/状态日志页面级导入动作进入 Header actions 并暂时复用现有预选文件类型上传路由；真正的业务 step-by-step 导入弹窗留给后续复用任务。"
+```
+
 ### R848 - 旧全局搜索 API 清理
 
 ```yaml

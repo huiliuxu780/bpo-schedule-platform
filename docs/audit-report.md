@@ -3929,3 +3929,24 @@
 - TDD 绿灯：删除旧内容区动作后，同一 focused test 通过，19 个 product-structure 测试通过。
 - `rg -n "导入主数据|buildImportUploadWorkspaceHref" components/master-data-maintenance-workbench.tsx app/master-data -S` 无业务源码匹配。
 - Browser smoke 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM150 导入入口业务归位
+
+#### 审计结论
+
+- `/data-quality` 批次台账内容区不再显示通用 `上传 CSV` 主按钮。
+- `预测版本`、`排班版本`、`登录/状态日志` 页面级导入动作已进入 Header actions。
+- 预测、排班、登录/状态日志内容区 `版本状态` 卡片不再承载导入按钮。
+- `/data-quality/uploads/new` 保留为内部兼容上传路由，用于后续业务弹窗复用和既有回流，不作为通用主入口暴露。
+- 本轮没有新增导入弹窗、后端 route/action、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 预测、排班、登录/状态日志后续仍应按业务对象补真正的 step-by-step dialog；本轮只是入口归属收口，不把新弹窗和上传流程混入同一刀。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明通用批次台账仍持有上传入口。
+- TDD 绿灯：入口调整后，同一 focused test 通过，20 个 product-structure 测试通过。
+- Browser smoke over `/data-quality`, `/demand-plans/production`, `/schedule-plans/production`, and `/actual-logs/production` confirmed generic upload is absent from the batch ledger, while business import links exist only in Header actions.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

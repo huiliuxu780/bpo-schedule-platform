@@ -42,6 +42,28 @@ status: "done"
 notes: "IM149 已完成：非客服人员主数据列表内容区的 `导入主数据` 旧入口已删除，客服人员 Header actions 保持不变。"
 ```
 
+### US770 - 导入入口业务归位
+
+```yaml
+id: US770
+requirement_ids:
+  - R850
+module: "业务导入 / 入口归属"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望导入动作出现在对应业务页面的页面级动作区，而不是在通用导入中心里找上传入口，以便按人员、排班、预测、登录/状态日志各自的业务上下文发起导入。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/data-quality` 只作为导入批次台账/处理记录，不再显示通用 `上传 CSV` 主按钮。"
+  - "`预测版本`、`排班版本`、`登录/状态日志` 的导入动作由 AppShell Header actions 承载。"
+  - "预测、排班、登录/状态日志内容区的 `版本状态` 卡片不再放导入按钮。"
+  - "本轮不新增导入弹窗、不新增后端 route、不改上传 action、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US769"
+status: "done"
+notes: "IM150 已完成：通用批次台账不再暴露上传主入口，预测、排班、登录/状态日志导入动作已归入各自页面 Header actions。"
+```
+
 ### US768 - 旧全局搜索 API 清理
 
 ```yaml

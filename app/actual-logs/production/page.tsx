@@ -1,4 +1,7 @@
-import { ActualLogProductionWorkbench } from "@/components/actual-log-production-workbench"
+import {
+  ActualLogProductionPageActions,
+  ActualLogProductionWorkbench,
+} from "@/components/actual-log-production-workbench"
 import { AppShell } from "@/components/app-shell"
 import {
   type ImportBatchListRow,
@@ -19,6 +22,7 @@ export default async function ActualLogProductionPage() {
     <AppShell
       title="登录/状态日志"
       breadcrumbItems={[{ label: "登录/状态日志" }]}
+      actions={<ActualLogProductionPageActions />}
     >
       <ActualLogProductionWorkbench
         batches={batchResult.data ?? []}

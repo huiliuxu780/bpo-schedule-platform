@@ -1,5 +1,8 @@
 import { AppShell } from "@/components/app-shell"
-import { DemandForecastProductionWorkbench } from "@/components/demand-forecast-production-workbench"
+import {
+  DemandForecastProductionPageActions,
+  DemandForecastProductionWorkbench,
+} from "@/components/demand-forecast-production-workbench"
 import {
   type ImportBatchListRow,
   buildImportApiUrl,
@@ -22,6 +25,7 @@ export default async function DemandForecastProductionPage() {
         { label: "需求计划", href: "/demand-plans" },
         { label: "预测版本" },
       ]}
+      actions={<DemandForecastProductionPageActions />}
     >
       <DemandForecastProductionWorkbench
         batches={batchResult.data ?? []}

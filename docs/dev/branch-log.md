@@ -73,6 +73,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM150 Business Import Entry Ownership
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `e94d1a0 fix: remove unconfirmed master data import actions`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed import-entry ownership cleanup. Remove the generic upload action from the `/data-quality` import batch ledger, and move forecast, schedule, and actual-log import actions to their corresponding business page Header actions while keeping `/data-quality/uploads/new` as an internal compatibility route.
+- allowed_files_check: `app/data-quality/page.tsx`, `components/import-center-batch-list-panel.tsx`, production list pages/workbenches for demand forecasts, personnel schedules, and actual logs, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/action/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected generic upload action removal from import-batch ledger, Header action additions on business import pages, content-card import action removal, regression test, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because the generic import batch ledger still owned a CSV upload entry; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 20 tests, `bash scripts/check-state.sh --strict` passed, and `git diff --check` passed. Browser smoke over `/data-quality`, `/demand-plans/production`, `/schedule-plans/production`, and `/actual-logs/production` confirmed `/data-quality` has no generic upload action, while forecast, schedule, login-log, and status-log import links live in Header actions only. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM146 Production Wording And Return Links
 
 - branch_name: `codex/im144-ui-component-standards`

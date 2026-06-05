@@ -1,5 +1,8 @@
 import { AppShell } from "@/components/app-shell"
-import { PersonnelScheduleProductionWorkbench } from "@/components/personnel-schedule-production-workbench"
+import {
+  PersonnelScheduleProductionPageActions,
+  PersonnelScheduleProductionWorkbench,
+} from "@/components/personnel-schedule-production-workbench"
 import {
   type ImportBatchListRow,
   buildImportApiUrl,
@@ -22,6 +25,7 @@ export default async function PersonnelScheduleProductionPage() {
         { label: "排班计划", href: "/schedule-plans" },
         { label: "排班版本" },
       ]}
+      actions={<PersonnelScheduleProductionPageActions />}
     >
       <PersonnelScheduleProductionWorkbench
         batches={batchResult.data ?? []}

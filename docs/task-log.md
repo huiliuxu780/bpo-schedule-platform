@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-06-05
+
+- task_id: `IM150`
+- source_ids:
+  - `R850`
+- story_ids:
+  - `US770`
+- action: 收口导入入口业务归属。
+- status: `done`
+- notes: `/data-quality` 批次台账内容区不再显示通用 `上传 CSV` 主入口；预测、排班、登录/状态日志页面级导入动作进入 Header actions，内容区版本状态卡片不再承载导入按钮；本轮保留 `/data-quality/uploads/new` 作为内部兼容上传路由，不新增导入弹窗、后端 route/action、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
 ### 2026-06-01
 
 - task_id: `IM050`

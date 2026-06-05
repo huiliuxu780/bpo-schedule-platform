@@ -8,6 +8,7 @@ import {
   Layers3,
   ShieldCheck,
   Table2,
+  Upload,
 } from "lucide-react"
 
 import {
@@ -36,6 +37,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 type DemandForecastProductionWorkbenchProps = {
   batches: ImportBatchListRow[]
   error: string | null
+}
+
+export function DemandForecastProductionPageActions() {
+  return (
+    <Button asChild size="sm">
+      <Link href={buildImportUploadWorkspaceHref({ fileType: "demand_forecast" })}>
+        <Upload data-icon="inline-start" />
+        导入预测
+      </Link>
+    </Button>
+  )
 }
 
 export function DemandForecastProductionWorkbench({
@@ -111,12 +123,6 @@ export function DemandForecastProductionWorkbench({
             <p>{summary.detail}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button asChild size="sm" variant="outline">
-              <Link href={buildImportUploadWorkspaceHref({ fileType: "demand_forecast" })}>
-                导入预测
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
             <Button asChild size="sm" variant="ghost">
               <Link href="/demand-plans">返回需求计划</Link>
             </Button>

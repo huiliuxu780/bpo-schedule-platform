@@ -760,3 +760,9 @@ This task preserves real business filters inside their list content areas. It do
 `IM149` removes unconfirmed content-area import shortcuts from non-agent master-data list pages. Organization, workplace, supplier, and skill list content no longer shows `导入主数据` or jumps to the standalone upload workspace.
 
 Confirmed customer-service personnel actions remain in the shared Header actions slot. This task does not add non-agent CRUD, new import dialogs, schedule/forecast/log import entry points, route restructuring, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM149.
+
+## 2026-06-05 IM150 Business Import Entry Ownership
+
+`IM150` moves visible import ownership away from the generic import-batch ledger. `/data-quality` remains the read-only import batch ledger and processing record surface, but its batch list no longer exposes a generic `上传 CSV` action.
+
+Demand forecast, personnel schedule, and login/status log imports are now page-level Header actions on their corresponding business version/log pages. The actions still use the existing compatible `/data-quality/uploads/new` route with preselected file type, so this slice does not create new upload dialogs, backend routes, server actions, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM150.

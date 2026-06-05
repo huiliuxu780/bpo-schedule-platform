@@ -42,6 +42,7 @@ const importCenterReviewCasesWorkspacePath = new URL("../../components/import-ce
 const importCenterReviewCaseDetailWorkspacePath = new URL("../../components/import-center-review-case-detail-workspace.tsx", import.meta.url);
 const importCenterComparisonRunDetailWorkspacePath = new URL("../../components/import-center-comparison-run-detail-workspace.tsx", import.meta.url);
 const importCenterVersionWorkbenchPath = new URL("../../components/import-center-version-workbench.tsx", import.meta.url);
+const importCenterBatchListPanelPath = new URL("../../components/import-center-batch-list-panel.tsx", import.meta.url);
 const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions.ts", import.meta.url);
 const masterDataModelPath = new URL("../../components/master-data-maintenance-model.ts", import.meta.url);
 const masterDataWorkbenchPath = new URL("../../components/master-data-maintenance-workbench.tsx", import.meta.url);
@@ -739,5 +740,73 @@ test("non-agent master data pages do not expose unconfirmed import actions in co
     entitySource.includes("entity.key === \"agents\" && agentManagementSummary"),
     true,
     "shared Header actions should stay scoped to the confirmed agent actions only",
+  );
+});
+
+test("business import actions belong to business page headers, not the generic batch ledger", async () => {
+  const batchListPanelSource = await readFile(importCenterBatchListPanelPath, "utf8");
+  const demandPageSource = await readFile(demandForecastProductionPagePath, "utf8");
+  const schedulePageSource = await readFile(personnelScheduleProductionPagePath, "utf8");
+  const actualLogPageSource = await readFile(actualLogProductionPagePath, "utf8");
+  const demandWorkbenchSource = await readFile(demandForecastProductionWorkbenchPath, "utf8");
+  const scheduleWorkbenchSource = await readFile(personnelScheduleProductionWorkbenchPath, "utf8");
+  const actualLogWorkbenchSource = await readFile(actualLogProductionWorkbenchPath, "utf8");
+  const demandWorkbenchBody = demandWorkbenchSource.slice(
+    demandWorkbenchSource.indexOf("export function DemandForecastProductionWorkbench"),
+    demandWorkbenchSource.indexOf("export function DemandForecastProductionDetail"),
+  );
+  const scheduleWorkbenchBody = scheduleWorkbenchSource.slice(
+    scheduleWorkbenchSource.indexOf("export function PersonnelScheduleProductionWorkbench"),
+    scheduleWorkbenchSource.indexOf("export function PersonnelScheduleProductionDetail"),
+  );
+  const actualLogWorkbenchBody = actualLogWorkbenchSource.slice(
+    actualLogWorkbenchSource.indexOf("export function ActualLogProductionWorkbench"),
+    actualLogWorkbenchSource.indexOf("export function ActualLogProcessingDetail"),
+  );
+
+  assert.equal(
+    batchListPanelSource.includes("buildImportUploadWorkspaceHref"),
+    false,
+    "generic import batch ledger should not own a CSV upload entry",
+  );
+  assert.equal(
+    batchListPanelSource.includes("上传 CSV"),
+    false,
+    "generic import batch ledger should not expose a generic upload button",
+  );
+  assert.equal(
+    demandPageSource.includes("DemandForecastProductionPageActions"),
+    true,
+    "demand forecast import action should be mounted in AppShell actions",
+  );
+  assert.equal(
+    schedulePageSource.includes("PersonnelScheduleProductionPageActions"),
+    true,
+    "personnel schedule import action should be mounted in AppShell actions",
+  );
+  assert.equal(
+    actualLogPageSource.includes("ActualLogProductionPageActions"),
+    true,
+    "actual log import actions should be mounted in AppShell actions",
+  );
+  assert.equal(
+    demandWorkbenchBody.includes("导入预测"),
+    false,
+    "demand forecast workbench content should not own the import action",
+  );
+  assert.equal(
+    scheduleWorkbenchBody.includes("导入排班"),
+    false,
+    "schedule workbench content should not own the import action",
+  );
+  assert.equal(
+    actualLogWorkbenchBody.includes("导入登录日志"),
+    false,
+    "actual log workbench content should not own login-log import action",
+  );
+  assert.equal(
+    actualLogWorkbenchBody.includes("导入状态日志"),
+    false,
+    "actual log workbench content should not own status-log import action",
   );
 });

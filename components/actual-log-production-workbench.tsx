@@ -9,6 +9,7 @@ import {
   ShieldAlert,
   Split,
   Table2,
+  Upload,
 } from "lucide-react"
 
 import {
@@ -44,6 +45,24 @@ type ActualLogProcessingDetailProps = {
   batchId: string
   detail: ImportBatchPersistenceDetail | null
   error: string | null
+}
+
+export function ActualLogProductionPageActions() {
+  return (
+    <>
+      <Button asChild size="sm">
+        <Link href={buildImportUploadWorkspaceHref({ fileType: "login_log" })}>
+          <Upload data-icon="inline-start" />
+          导入登录日志
+        </Link>
+      </Button>
+      <Button asChild size="sm" variant="outline">
+        <Link href={buildImportUploadWorkspaceHref({ fileType: "status_log" })}>
+          导入状态日志
+        </Link>
+      </Button>
+    </>
+  )
 }
 
 export function ActualLogProductionWorkbench({
@@ -123,19 +142,6 @@ export function ActualLogProductionWorkbench({
           <div className="grid gap-1">
             <p className="font-medium text-foreground">{summary.title}</p>
             <p>{summary.detail}</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild size="sm" variant="outline">
-              <Link href={buildImportUploadWorkspaceHref({ fileType: "login_log" })}>
-                导入登录日志
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
-            <Button asChild size="sm" variant="ghost">
-              <Link href={buildImportUploadWorkspaceHref({ fileType: "status_log" })}>
-                导入状态日志
-              </Link>
-            </Button>
           </div>
         </CardContent>
       </Card>

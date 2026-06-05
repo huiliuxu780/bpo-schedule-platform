@@ -8,6 +8,7 @@ import {
   FileClock,
   ListChecks,
   Table2,
+  Upload,
   Users,
 } from "lucide-react"
 
@@ -37,6 +38,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 type PersonnelScheduleProductionWorkbenchProps = {
   batches: ImportBatchListRow[]
   error: string | null
+}
+
+export function PersonnelScheduleProductionPageActions() {
+  return (
+    <Button asChild size="sm">
+      <Link href={buildImportUploadWorkspaceHref({ fileType: "personnel_schedule" })}>
+        <Upload data-icon="inline-start" />
+        导入排班
+      </Link>
+    </Button>
+  )
 }
 
 export function PersonnelScheduleProductionWorkbench({
@@ -112,12 +124,6 @@ export function PersonnelScheduleProductionWorkbench({
             <p>{summary.detail}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button asChild size="sm" variant="outline">
-              <Link href={buildImportUploadWorkspaceHref({ fileType: "personnel_schedule" })}>
-                导入排班
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
             <Button asChild size="sm" variant="ghost">
               <Link href="/schedule-plans">返回排班计划</Link>
             </Button>
