@@ -2,17 +2,50 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useTheme } from "next-themes"
 import { usePathname } from "next/navigation"
 import {
   CalendarDays,
   ChevronDown,
+  ChevronsUpDown,
   Database,
   LayoutDashboard,
+  LogOut,
+  Moon,
   Settings,
+  Sun,
   type LucideIcon,
 } from "lucide-react"
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+} from "@/components/ui/sidebar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
 type NavItem = {
@@ -30,10 +63,6 @@ type NavGroup = {
   icon: LucideIcon
   active?: boolean
   items: NavItem[]
-}
-
-type AppSidebarProps = {
-  collapsed: boolean
 }
 
 const nav: NavGroup[] = [
@@ -104,8 +133,10 @@ function BrandMark({ className }: { className?: string }) {
   )
 }
 
-export function AppSidebar({ collapsed }: AppSidebarProps) {
+export function AppSidebar() {
   const pathname = usePathname()
+  const { resolvedTheme, setTheme } = useTheme()
+  const isDark = resolvedTheme === "dark"
   const isActiveItem = React.useCallback(
     (item: NavItem) => {
       if (item.activeMatch === "exact") {
@@ -145,112 +176,141 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   }
 
   return (
-    <aside
-      className={cn(
-        "hidden h-svh shrink-0 border-r bg-sidebar text-sidebar-foreground transition-[width] duration-200 md:block",
-        collapsed ? "w-16" : "w-72"
-      )}
-    >
-      <div
-        className={cn(
-          "flex h-12 items-center border-b px-2",
-          collapsed ? "justify-center" : "justify-between gap-2"
-        )}
-      >
-        <a
-          href="#"
-          className={cn(
-            "flex min-w-0 items-center gap-2",
-            collapsed && "hidden"
-          )}
-        >
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="border-b">
+        <Link href="/dashboard" className="flex min-w-0 items-center gap-2 px-1">
           <div className="flex size-8 items-center justify-center text-foreground">
             <BrandMark className="size-7" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 group-data-[collapsible=icon]:hidden">
             <div className="truncate text-sm font-semibold">BPO WFM</div>
             <div className="truncate text-xs text-muted-foreground">
               人力计划与履约管理
             </div>
           </div>
-        </a>
-        {collapsed ? (
-          <div className="flex size-8 items-center justify-center text-foreground">
-            <BrandMark className="size-7" />
-          </div>
-        ) : null}
-      </div>
-      <nav
-        className={cn(
-          "flex h-[calc(100vh-3rem)] flex-col gap-1 overflow-y-auto p-2",
-          collapsed && "items-center"
-        )}
-      >
-        {nav.map((group) => (
-          <div key={group.title} className={cn("pb-1", collapsed && "w-10")}>
-            <button
-              aria-expanded={
-                expandedGroups.has(group.title) || group.title === activeGroupTitle
-              }
-              title={collapsed ? group.title : undefined}
-              onClick={() => toggleGroup(group.title)}
-              className={cn(
-                "grid h-8 w-full items-center gap-2 rounded-md text-left text-sm font-medium",
-                collapsed
-                  ? "place-items-center px-0"
-                  : "grid-cols-[1rem_1fr_1rem] px-2",
-                group.title === activeGroupTitle
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              )}
+        </Link>
+      </SidebarHeader>
+      <SidebarContent>
+        {nav.map((group) => {
+          const groupExpanded =
+            expandedGroups.has(group.title) || group.title === activeGroupTitle
+          const groupActive = group.title === activeGroupTitle
+
+          return (
+            <Collapsible
+              key={group.title}
+              open={groupExpanded}
+              onOpenChange={() => toggleGroup(group.title)}
+              className="group/collapsible"
             >
-              <group.icon className="size-4" />
-              <span className={cn("truncate", collapsed && "sr-only")}>
-                {group.title}
-              </span>
-              <ChevronDown
-                className={cn(
-                  "size-4 opacity-60 transition-transform",
-                  expandedGroups.has(group.title) && "rotate-180",
-                  collapsed && "hidden"
-                )}
-              />
-            </button>
-            {!collapsed &&
-            (expandedGroups.has(group.title) || group.title === activeGroupTitle) ? (
-              <div className="mt-1 grid gap-1 pl-7">
-                {group.items.map((item) => (
-                  <Link
-                    key={item.title}
-                    href={item.href}
-                    className={cn(
-                      "grid min-h-8 grid-cols-[1fr_auto] items-center gap-2 rounded-md px-2 text-sm",
-                      isActiveItem(item)
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                    )}
-                  >
-                    <span className="truncate">{item.title}</span>
-                    {item.badge ? (
-                      <Badge
-                        variant={item.active ? "secondary" : "outline"}
-                        className="h-5 px-1.5"
+              <SidebarGroup>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton
+                        isActive={groupActive}
+                        tooltip={group.title}
                       >
-                        {item.badge}
-                      </Badge>
-                    ) : null}
-                    {item.tag ? (
-                      <Badge variant="outline" className="h-5 px-1.5">
-                        {item.tag}
-                      </Badge>
-                    ) : null}
-                  </Link>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        ))}
-      </nav>
-    </aside>
+                        <group.icon />
+                        <span>{group.title}</span>
+                        <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180 group-data-[collapsible=icon]:hidden" />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {group.items.map((item) => (
+                          <SidebarMenuSubItem key={item.title}>
+                            <SidebarMenuSubButton
+                              asChild
+                              isActive={isActiveItem(item)}
+                            >
+                              <Link href={item.href}>
+                                <span>{item.title}</span>
+                                {item.badge ? (
+                                  <Badge
+                                    variant={item.active ? "secondary" : "outline"}
+                                    className="ml-auto h-5 px-1.5"
+                                  >
+                                    {item.badge}
+                                  </Badge>
+                                ) : null}
+                                {item.tag ? (
+                                  <Badge
+                                    variant="outline"
+                                    className="ml-auto h-5 px-1.5"
+                                  >
+                                    {item.tag}
+                                  </Badge>
+                                ) : null}
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroup>
+            </Collapsible>
+          )
+        })}
+      </SidebarContent>
+      <SidebarFooter className="border-t">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground"
+                  tooltip="本地用户"
+                >
+                  <Avatar className="rounded-lg">
+                    <AvatarImage
+                      src="/shadcn-avatar.jpg"
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  </Avatar>
+                  <div className="grid min-w-0 flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                    <span className="truncate font-medium">本地用户</span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      本地环境
+                    </span>
+                  </div>
+                  <ChevronsUpDown className="ml-auto group-data-[collapsible=icon]:hidden" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="right"
+                align="end"
+                sideOffset={8}
+                className="w-56"
+              >
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onSelect={(event) => {
+                      event.preventDefault()
+                      setTheme(isDark ? "light" : "dark")
+                    }}
+                  >
+                    {isDark ? <Sun /> : <Moon />}
+                    <span>{isDark ? "切换为浅色" : "切换为深色"}</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem disabled>
+                    <LogOut />
+                    <span>退出登录</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
   )
 }

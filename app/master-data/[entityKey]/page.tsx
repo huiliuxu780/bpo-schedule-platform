@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
 import {
+  MasterDataAgentPageActions,
   MasterDataAgentManagementPage,
   MasterDataOrganizationManagementPage,
   MasterDataReferenceManagementPage,
@@ -98,6 +99,15 @@ export default async function MasterDataEntityDetailPage({
       title={entity.key === "agents" ? "客服人员" : entity.label}
       searchPlaceholder={
         entity.key === "agents" ? "搜索客服人员" : `搜索${entity.label}`
+      }
+      breadcrumbItems={[
+        { label: "主数据", href: "/master-data/agents" },
+        { label: entity.key === "agents" ? "客服人员" : entity.label },
+      ]}
+      actions={
+        entity.key === "agents" && agentManagementSummary ? (
+          <MasterDataAgentPageActions summary={agentManagementSummary} />
+        ) : null
       }
     >
       {entity.key === "agents" && agentManagementSummary ? (

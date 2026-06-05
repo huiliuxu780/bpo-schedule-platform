@@ -2848,3 +2848,16 @@ version: "1.0"
 status: "done"
 notes: "IM143 已完成：/master-data/agents 的批量导入入口改为列表内大弹窗，弹窗内分上传文件、字段映射和导入结果三步；完整批次详情、失败行修正、准备度和应用处理仍进入批次详情页。"
 ```
+
+### R844 - 全局 UI 组件规范与客服人员导入弹窗纠偏
+
+```yaml
+id: R844
+module: "主数据维护 / 全局布局"
+description: "PM 用 Product Design 与 shadcn 规范复核后确认，当前全局侧边栏仍是手写 aside，页面缺少统一 Breadcrumb，反馈提示没有统一使用 Alert，客服人员导入弹窗也需要改成严格 step-by-step Dialog。需要在不新增业务菜单、不扩展排班/预测/日志导入的前提下，统一这些 UI 基础规范。"
+source: "PM supplied Product Design + shadcn review conclusions and approved execution on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM144 已完成：全局 AppShell/AppSidebar/SiteHeader 改用 shadcn Sidebar、Collapsible、SidebarTrigger、Breadcrumb；SiteHeader 改为单行导航结构，Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1；SiteHeader 去掉无意义全局搜索、固定月份和通知占位并提供页面级 actions 插槽；Sidebar footer 使用 shadcn Avatar 和本地参考头像 /shadcn-avatar.jpg，并提供本地用户菜单、明暗主题切换和登出入口，登出不接真实 auth；主数据列表、详情、新建、编辑、技能维护页由 SiteHeader 唯一承载页面标题和返回路径，内容区不再重复返回按钮、H1 和页面级说明；客服人员列表按筛选卡片、列表操作栏、表格排序，查询/重置固定在筛选卡片右下，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作；客服人员导入改为 shadcn Dialog step-by-step，并用 hidden 保持文件 input 挂载；反馈与导入结果摘要改用 Alert。"
+```

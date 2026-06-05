@@ -6,13 +6,24 @@ const appRootPath = new URL("../../app/", import.meta.url);
 const componentsRootPath = new URL("../../components/", import.meta.url);
 const dashboardPagePath = new URL("../../app/dashboard/page.tsx", import.meta.url);
 const appSidebarPath = new URL("../../components/app-sidebar.tsx", import.meta.url);
+const appShellPath = new URL("../../components/app-shell.tsx", import.meta.url);
+const siteHeaderPath = new URL("../../components/site-header.tsx", import.meta.url);
 const masterDataIndexPagePath = new URL("../../app/master-data/page.tsx", import.meta.url);
 const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page.tsx", import.meta.url);
+const masterDataAgentCreatePagePath = new URL("../../app/master-data/agents/new/page.tsx", import.meta.url);
+const masterDataAgentEditPagePath = new URL("../../app/master-data/agents/[employeeId]/edit/page.tsx", import.meta.url);
+const masterDataAgentSkillsEditPagePath = new URL("../../app/master-data/agents/[employeeId]/skills/edit/page.tsx", import.meta.url);
 const masterDataWorkplaceDetailPagePath = new URL("../../app/master-data/sites/[workplaceId]/page.tsx", import.meta.url);
 const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[vendorId]/page.tsx", import.meta.url);
 const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions.ts", import.meta.url);
 const masterDataModelPath = new URL("../../components/master-data-maintenance-model.ts", import.meta.url);
 const masterDataWorkbenchPath = new URL("../../components/master-data-maintenance-workbench.tsx", import.meta.url);
+const masterDataAgentImportDialogPath = new URL("../../components/master-data-agent-import-dialog.tsx", import.meta.url);
+const uiAlertPath = new URL("../../components/ui/alert.tsx", import.meta.url);
+const uiAvatarPath = new URL("../../components/ui/avatar.tsx", import.meta.url);
+const uiBreadcrumbPath = new URL("../../components/ui/breadcrumb.tsx", import.meta.url);
+const uiCollapsiblePath = new URL("../../components/ui/collapsible.tsx", import.meta.url);
+const uiDialogPath = new URL("../../components/ui/dialog.tsx", import.meta.url);
 
 async function collectSourceFiles(directoryUrl) {
   const entries = await readdir(directoryUrl, { withFileTypes: true });
@@ -252,9 +263,236 @@ test("sidebar expands all groups by default and inherits master data detail stat
   );
 });
 
+test("global shell uses shadcn sidebar and header breadcrumb primitives", async () => {
+  await access(uiAlertPath);
+  await access(uiAvatarPath);
+  await access(uiBreadcrumbPath);
+  await access(uiCollapsiblePath);
+  await access(uiDialogPath);
+
+  const shellSource = await readFile(appShellPath, "utf8");
+  const sidebarSource = await readFile(appSidebarPath, "utf8");
+  const headerSource = await readFile(siteHeaderPath, "utf8");
+
+  assert.equal(shellSource.includes("SidebarProvider"), true);
+  assert.equal(shellSource.includes("SidebarInset"), true);
+  assert.equal(shellSource.includes("sidebarCollapsed"), false);
+  assert.equal(sidebarSource.includes("@/components/ui/sidebar"), true);
+  assert.equal(sidebarSource.includes("@/components/ui/collapsible"), true);
+  assert.equal(sidebarSource.includes("<Sidebar"), true);
+  assert.equal(sidebarSource.includes("CollapsibleTrigger"), true);
+  assert.equal(sidebarSource.includes("CollapsibleContent"), true);
+  assert.equal(sidebarSource.includes("SidebarMenuSub"), true);
+  assert.equal(sidebarSource.includes("SidebarMenuSubButton"), true);
+  assert.equal(sidebarSource.includes("SidebarMenuSubItem"), true);
+  assert.equal(sidebarSource.includes("<aside"), false);
+  assert.equal(sidebarSource.includes("collapsed"), false);
+  assert.equal(sidebarSource.includes("SidebarGroupLabel asChild"), false);
+  assert.equal(sidebarSource.includes('className="pl-7"'), false);
+  assert.equal(headerSource.includes("SidebarTrigger"), true);
+  assert.equal(headerSource.includes("Breadcrumb"), true);
+  assert.equal(headerSource.includes("breadcrumbItems"), true);
+  assert.equal(headerSource.includes("parentBreadcrumbItems"), false);
+  assert.equal(headerSource.includes("breadcrumbItems.slice(0, -1)"), false);
+  assert.equal(headerSource.includes('className="sr-only"'), true);
+  assert.equal(headerSource.includes('className="truncate text-base font-medium"'), false);
+  assert.equal(headerSource.includes("actions"), true);
+  assert.equal(headerSource.includes("Search"), false);
+  assert.equal(headerSource.includes("CalendarRange"), false);
+  assert.equal(headerSource.includes("Bell"), false);
+  assert.equal(headerSource.includes("ThemeToggle"), false);
+  assert.equal(sidebarSource.includes("SidebarFooter"), true);
+  assert.equal(sidebarSource.includes("@/components/ui/avatar"), true);
+  assert.equal(sidebarSource.includes("AvatarImage"), true);
+  assert.equal(sidebarSource.includes("/shadcn-avatar.jpg"), true);
+  assert.equal(sidebarSource.includes("<AvatarFallback"), true);
+  assert.equal(sidebarSource.includes("DropdownMenu"), true);
+  assert.equal(sidebarSource.includes("切换为"), true);
+  assert.equal(sidebarSource.includes("退出登录"), true);
+});
+
+test("master data pages pass breadcrumbs through AppShell", async () => {
+  const pageSources = [
+    await readFile(masterDataEntityPagePath, "utf8"),
+    await readFile(masterDataAgentCreatePagePath, "utf8"),
+    await readFile(masterDataAgentEditPagePath, "utf8"),
+    await readFile(masterDataAgentSkillsEditPagePath, "utf8"),
+    await readFile(masterDataWorkplaceDetailPagePath, "utf8"),
+    await readFile(masterDataVendorDetailPagePath, "utf8"),
+  ];
+
+  for (const source of pageSources) {
+    assert.equal(source.includes("breadcrumbItems"), true);
+  }
+});
+
+test("agent child form pages do not duplicate the global page header", async () => {
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const formShellSource = workbenchSource.slice(
+    workbenchSource.indexOf("function AgentFormPageShell"),
+    workbenchSource.indexOf("function AgentFormBlockedState"),
+  );
+  const skillsSectionSource = workbenchSource.slice(
+    workbenchSource.indexOf("function AgentSkillMaintenanceSection"),
+    workbenchSource.indexOf("type AgentMaintenanceField"),
+  );
+
+  assert.equal(
+    formShellSource.includes("<h1"),
+    false,
+    "agent child content should rely on AppShell/SiteHeader for the page title",
+  );
+  assert.equal(
+    formShellSource.includes("返回客服人员"),
+    false,
+    "agent child content should rely on breadcrumb navigation for returning to the list",
+  );
+  assert.equal(
+    formShellSource.includes("ArrowLeft"),
+    false,
+    "agent child content should not render a duplicate page-level back action",
+  );
+  assert.equal(
+    formShellSource.includes("description"),
+    false,
+    "agent child content shell should not repeat page-level explanatory copy",
+  );
+  assert.equal(
+    skillsSectionSource.includes("坐席技能维护"),
+    false,
+    "skills edit content should not repeat the page title as a section heading",
+  );
+});
+
+test("master data content pages do not render duplicate page identity headers", async () => {
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const workplaceDetailSource = await readFile(masterDataWorkplaceDetailPagePath, "utf8");
+  const vendorDetailSource = await readFile(masterDataVendorDetailPagePath, "utf8");
+
+  assert.equal(
+    workbenchSource.includes("<h1"),
+    false,
+    "master data content should rely on AppShell/SiteHeader for page identity",
+  );
+  assert.equal(
+    workbenchSource.includes("ArrowLeft"),
+    false,
+    "master data content should rely on breadcrumb links instead of duplicate page back blocks",
+  );
+  for (const label of ["返回客服人员", "返回职场", "返回供应商"]) {
+    assert.equal(workbenchSource.includes(label), false, label);
+  }
+  assert.equal(
+    workplaceDetailSource.includes("title={detailSummary.title}"),
+    true,
+    "workplace detail SiteHeader should show the actual workplace name",
+  );
+  assert.equal(
+    vendorDetailSource.includes("title={detailSummary.title}"),
+    true,
+    "vendor detail SiteHeader should show the actual vendor name",
+  );
+});
+
+test("agent list keeps page actions and filter actions in their own zones", async () => {
+  const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const agentListSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataAgentManagementPage"),
+    workbenchSource.indexOf("export function MasterDataReferenceManagementPage"),
+  );
+  const filterSource = workbenchSource.slice(
+    workbenchSource.indexOf("function AgentManagementFilterPanel"),
+    workbenchSource.indexOf("function AgentManagementFilterField"),
+  );
+  const toolbarSource = workbenchSource.slice(
+    workbenchSource.indexOf("function AgentManagementListToolbar"),
+    workbenchSource.indexOf("function AgentManagementFilterField"),
+  );
+  const tablePanelSource = workbenchSource.slice(
+    workbenchSource.indexOf("function AgentManagementTablePanel"),
+    workbenchSource.indexOf("function AgentRowActionLink"),
+  );
+  const filterCallIndex = agentListSource.indexOf("<AgentManagementFilterPanel");
+  const toolbarCallIndex = agentListSource.indexOf("<AgentManagementListToolbar");
+  const tableCallIndex = agentListSource.indexOf("<AgentManagementTablePanel");
+
+  assert.equal(
+    entitySource.includes("actions={"),
+    true,
+    "agent page-level actions should be passed to the shared SiteHeader slot",
+  );
+  assert.equal(
+    entitySource.includes("<MasterDataAgentPageActions"),
+    true,
+    "agent create/import actions should live in the page header actions slot",
+  );
+  assert.equal(
+    filterCallIndex > -1 && toolbarCallIndex > filterCallIndex,
+    true,
+    "agent filter panel should render above the list toolbar",
+  );
+  assert.equal(
+    toolbarCallIndex > -1 && tableCallIndex > toolbarCallIndex,
+    true,
+    "agent list toolbar should sit directly above the table panel",
+  );
+  assert.equal(
+    toolbarSource.includes("justify-start"),
+    true,
+    "agent list toolbar should only align selected/bulk actions",
+  );
+  assert.equal(
+    toolbarSource.includes("summary.bulkActions.map"),
+    true,
+    "agent bulk actions should live in the shared list toolbar",
+  );
+  assert.equal(
+    toolbarSource.includes("summary.createHref"),
+    false,
+    "agent page create action should not live in the list toolbar",
+  );
+  assert.equal(
+    toolbarSource.includes("summary.importDialog.openHref"),
+    false,
+    "agent page import action should not live in the list toolbar",
+  );
+  assert.equal(
+    tablePanelSource.includes("summary.bulkActions.map"),
+    false,
+    "agent table panel should not own bulk actions",
+  );
+  assert.equal(
+    filterSource.includes('action="/master-data/agents"'),
+    true,
+    "filter actions should remain inside the agent filter form",
+  );
+  assert.equal(
+    filterSource.includes("justify-end"),
+    true,
+    "agent filter submit/reset actions should align to the lower right of the filter panel",
+  );
+  assert.equal(
+    filterSource.includes("lg:pl-[6.5rem]"),
+    false,
+    "filter actions should not be visually anchored to the left label column",
+  );
+  assert.equal(
+    filterSource.includes("managementSummary.createHref"),
+    false,
+    "page-level create action should not be mixed into the filter form",
+  );
+  assert.equal(
+    filterSource.includes("managementSummary.importDialog.openHref"),
+    false,
+    "page-level import action should not be mixed into the filter form",
+  );
+});
+
 test("agent bulk import starts from the agent list dialog and leaves details to batch detail pages", async () => {
   const entitySource = await readFile(masterDataEntityPagePath, "utf8");
   const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const importDialogSource = await readFile(masterDataAgentImportDialogPath, "utf8");
   const modelSource = await readFile(masterDataModelPath, "utf8");
   const agentSource = workbenchSource.slice(
     workbenchSource.indexOf("export function MasterDataAgentManagementPage"),
@@ -262,7 +500,7 @@ test("agent bulk import starts from the agent list dialog and leaves details to 
   );
 
   assert.equal(
-    agentSource.includes("AgentImportDialog"),
+    agentSource.includes("<AgentImportDialog"),
     true,
     "agent list should render an in-page import dialog",
   );
@@ -282,13 +520,21 @@ test("agent bulk import starts from the agent list dialog and leaves details to 
     "dialog flow should be modeled instead of ad hoc page markup",
   );
   assert.equal(
-    workbenchSource.includes("查看批次详情"),
+    importDialogSource.includes("查看批次详情"),
     true,
     "full import details should remain on the batch detail page",
   );
   assert.equal(
-    workbenchSource.includes("失败行修正"),
+    importDialogSource.includes("失败行修正"),
     true,
     "failed-row correction should be linked from the result step",
   );
+  assert.equal(importDialogSource.includes("DialogContent"), true);
+  assert.equal(importDialogSource.includes("AlertTitle"), true);
+  assert.equal(importDialogSource.includes("useState<AgentImportStepKey>"), true);
+  assert.equal(importDialogSource.includes('hidden={activeStep !== "upload"}'), true);
+  assert.equal(importDialogSource.includes('hidden={activeStep !== "mapping"}'), true);
+  assert.equal(importDialogSource.includes('hidden={activeStep !== "result"}'), true);
+  assert.equal(importDialogSource.includes('action={action}'), true);
+  assert.equal(workbenchSource.includes('role="dialog"'), false);
 });

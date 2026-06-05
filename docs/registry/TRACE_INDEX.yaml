@@ -808,6 +808,9 @@ requirements:
   US763: {file: "docs/user-stories.md", requirement_ids: ["R843"], task_ids: ["IM143"], archive_refs: []}
   IM143: {file: "tasks/backlog.yaml", story_ids: ["US763"], gate: "frontend-scaffold"}
   R843: {file: "docs/raw-requirements.md", story_ids: ["US763"], task_ids: ["IM143"]}
+  US764: {file: "docs/user-stories.md", requirement_ids: ["R844"], task_ids: ["IM144"], archive_refs: []}
+  IM144: {file: "tasks/backlog.yaml", story_ids: ["US764"], gate: "frontend-scaffold"}
+  R844: {file: "docs/raw-requirements.md", story_ids: ["US764"], task_ids: ["IM144"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

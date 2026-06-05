@@ -5119,3 +5119,31 @@ dependencies:
 status: "done"
 notes: "IM143 已完成：客服人员列表内批量导入大弹窗已接入，上传结果回流当前弹窗；完整明细和修正仍由批次详情页承载。"
 ```
+
+### US764 - 全局 UI 组件规范与客服人员导入弹窗纠偏
+
+```yaml
+id: US764
+requirement_ids:
+  - R844
+module: "主数据维护 / 全局布局"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望侧边栏、面包屑、反馈提示和人员导入弹窗都遵循统一的 B 端组件规范，以便列表页、详情页、子页面和弹窗交互稳定一致，而不是混用手写外壳和一次性长表单。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "全局 AppShell 使用 shadcn SidebarProvider/SidebarInset，AppSidebar 使用 Collapsible、Sidebar/SidebarContent/SidebarGroup/SidebarMenu/SidebarMenuSub primitives，不再手写 aside。"
+  - "保留现有菜单结构，不新增菜单；侧边栏默认全部展开，主数据详情页继承父级高亮。"
+  - "SiteHeader 支持统一 breadcrumbItems，主数据列表、详情、新建、编辑页展示 Breadcrumb；弹窗不展示 Breadcrumb。"
+  - "SiteHeader 使用单行导航结构，Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1；H1 仅在需要时作为可访问性标题保留。"
+  - "主数据列表、详情、新建、编辑、技能维护页由 SiteHeader 唯一承载 Breadcrumb、返回路径和页面 H1，内容区不得重复返回按钮、同名 H1 或页面级说明。"
+  - "客服人员列表中，筛选卡片应位于列表操作栏上方，列表操作栏紧贴表格上方；新建/批量导入作为页面级动作进入 Header 右侧，列表操作栏只保留已选/批量动作，查询/重置位于筛选卡片右下。"
+  - "SiteHeader 不保留无意义的全局搜索、固定月份和通知占位；Sidebar footer 使用 shadcn Avatar 显示本地参考头像，并提供本地用户菜单、明暗主题切换和登出入口，其中登出不接真实 auth。"
+  - "客服人员导入弹窗使用 shadcn Dialog，并严格分为上传文件、字段映射、导入结果三步；切换 step 时文件 input 保持 DOM 挂载。"
+  - "页面级反馈、表单提交结果、导入结果摘要和阻塞/告警说明使用 shadcn Alert。"
+  - "不新增排班、预测、登录/状态日志导入弹窗，不修改 package/lockfile，不新增后端、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US763"
+status: "done"
+notes: "IM144 已完成：全局 Shell 与主数据页面 Breadcrumb 已统一，侧边栏按 shadcn Collapsible + SidebarMenuSub 结构实现，Sidebar footer 使用 shadcn Avatar 和本地参考头像 /shadcn-avatar.jpg，并增加本地用户菜单、明暗主题切换和登出入口；SiteHeader 改为单行导航，不再保留无意义搜索/日期/通知占位，并通过 actions 插槽承载页面级动作；Breadcrumb 包含当前页，主数据内容区不再重复全局标题/返回路径，客服人员列表按筛选卡片、列表操作栏、表格排序，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作，客服人员导入改成 step-by-step Dialog，结果反馈改用 Alert。"
+```

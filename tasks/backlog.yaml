@@ -9582,3 +9582,64 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已将 /master-data/agents 的批量导入入口改为列表内大弹窗；弹窗包含上传文件、字段映射、导入结果三步，上传结果回流当前弹窗，并把完整批次详情、失败行修正和应用处理留在批次详情页。"
+  - id: IM144
+    title: "全局 UI 组件规范与客服人员导入弹窗纠偏"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM143"]
+    allowed_files:
+      - "app/dashboard/page.tsx"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "app/master-data/agents/new/page.tsx"
+      - "app/master-data/agents/[employeeId]/edit/page.tsx"
+      - "app/master-data/agents/[employeeId]/skills/edit/page.tsx"
+      - "app/master-data/sites/[workplaceId]/page.tsx"
+      - "app/master-data/vendors/[vendorId]/page.tsx"
+      - "components/app-shell.tsx"
+      - "components/app-sidebar.tsx"
+      - "components/site-header.tsx"
+      - "components/master-data-agent-import-dialog.tsx"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "components/ui/alert.tsx"
+      - "components/ui/avatar.tsx"
+      - "components/ui/breadcrumb.tsx"
+      - "components/ui/collapsible.tsx"
+      - "components/ui/dialog.tsx"
+      - "public/shadcn-avatar.jpg"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AppSidebar 使用 shadcn Collapsible、SidebarMenu 和 SidebarMenuSub primitives，不再手写 aside 或用缩进伪造二级菜单；保留现有菜单结构、默认全部展开和详情页父级高亮。"
+      - "SiteHeader 统一承载 Breadcrumb，主数据列表、详情、新建、编辑页通过 AppShell breadcrumbItems 展示路径。"
+      - "SiteHeader 使用单行导航结构，Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1；H1 仅在需要时作为可访问性标题保留。"
+      - "主数据列表、详情、新建、编辑、技能维护页的内容区不得重复页面级返回按钮、同名 H1 或页面级说明，页面身份由 SiteHeader/Breadcrumb 唯一承载。"
+      - "SiteHeader 右侧提供页面级 actions 插槽；客服人员列表的新建/批量导入放入 Header 右侧，列表操作栏只保留已选/批量动作，查询/重置位于筛选卡片右下。"
+      - "SiteHeader 不保留无业务意义的全局搜索、固定月份和通知占位；Sidebar footer 使用 shadcn Avatar 显示参考头像，并提供本地用户菜单、明暗主题切换和登出入口，其中登出不接真实 auth。"
+      - "客服人员导入弹窗使用 shadcn Dialog 严格分步；上传、映射、结果 section 切换时保持 DOM 挂载，避免文件 input 丢失。"
+      - "页面级反馈、表单提交结果和导入结果摘要使用 shadcn Alert。"
+      - "不扩展排班、预测、登录/状态日志导入弹窗，不新增后端、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要修改 package/lockfile 或新增依赖"
+      - "范围扩展到排班、预测、登录/状态日志导入弹窗"
+      - "范围扩展到后端、schema/migration、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已把全局 AppShell/AppSidebar/SiteHeader 收敛到 shadcn Sidebar/Collapsible/Breadcrumb 结构，SiteHeader 改为单行导航，Breadcrumb 包含当前页且不再额外渲染第二行视觉 H1；SiteHeader 去掉无意义搜索/日期/通知占位并提供页面级 actions 插槽，Sidebar footer 使用 shadcn Avatar 参考头像并增加本地用户菜单、明暗主题切换和登出入口；主数据内容区不再重复全局标题与返回路径，客服人员列表按筛选卡片、列表操作栏、表格排序，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作，客服人员导入弹窗改为 shadcn Dialog step-by-step，并将相关反馈切换为 Alert。"

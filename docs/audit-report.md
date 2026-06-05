@@ -3794,3 +3794,30 @@
 - `npm run typecheck`：通过。
 - in-app browser smoke：`http://127.0.0.1:3000/master-data/agents` 命中 `批量导入`，入口 href 为 `/master-data/agents?import_dialog=1`；`http://127.0.0.1:3000/master-data/agents?import_dialog=1&upload=success&batch=BATCH-MD-001` 命中 `客服人员批量导入`、`上传文件`、`字段映射`、`导入结果`、`下载导入模板`、`查看批次详情`、`失败行修正`，并确认 hidden `result_redirect_to=/master-data/agents?import_dialog=1` 和 `file_type=master_data`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM144 全局 UI 组件规范与客服人员导入弹窗纠偏
+
+#### 审计结论
+
+- `AppShell` 已改为 shadcn `SidebarProvider` + `SidebarInset`，并包裹 `TooltipProvider` 支撑 Sidebar tooltip。
+- `AppSidebar` 已改为 shadcn `Collapsible` / `Sidebar` / `SidebarContent` / `SidebarGroup` / `SidebarMenu` / `SidebarMenuSub` primitives，不再手写 `<aside>`，也不再用缩进伪造二级菜单；现有菜单结构未新增，默认全部展开，主数据详情页仍继承父级高亮。
+- `SiteHeader` 支持统一 `breadcrumbItems`，主数据列表、职场详情、供应商详情、客服人员新建/编辑/技能维护页都通过 `AppShell` 展示单行 Breadcrumb；Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1；弹窗不展示 Breadcrumb。Header 已去掉无意义全局搜索、固定月份和通知占位，并通过右侧 `actions` 插槽承载页面级动作。
+- `AppSidebar` footer 使用 shadcn Avatar 显示本地参考头像 `/shadcn-avatar.jpg`，并增加本地用户菜单、明暗主题切换和登出入口；登出入口不接真实 auth，避免在未确认鉴权任务前伪造退出能力。
+- 主数据列表、详情、新建、编辑、技能维护页已移除内容区重复的返回按钮、同名 H1 和页面级说明，页面身份与返回路径由 `SiteHeader` / Breadcrumb 唯一承载，内容区只承载工具栏、筛选、表格、反馈 Alert 和业务分组。
+- 客服人员列表按筛选卡片、列表操作栏、表格排序：`查询`、`重置` 位于筛选卡片右下；`新建`、`批量导入` 进入 Header 右侧页面级动作区；列表操作栏紧贴表格上方，只保留 `已选 0 项` 和批量动作。
+- 客服人员导入已拆到 `components/master-data-agent-import-dialog.tsx`，使用 shadcn Dialog 严格分为上传、映射、结果三步，并通过 `hidden` 隐藏非当前 step 以保持文件 input 与字段映射 DOM 挂载。
+- 页面级错误、表单反馈、模板错误和导入结果摘要使用 shadcn Alert；冻结确认也改为 shadcn Dialog，避免同页混用第二套手写弹窗。
+
+#### 风险
+
+- 本轮只修全局 UI 规范和客服人员导入弹窗；排班、预测、登录/状态日志导入入口仍需要后续单独复用同一模式。
+- `Alert` 已覆盖反馈/错误/结果摘要；空状态仍保持原有轻量占位，后续如统一 Empty 需单独任务。
+
+#### 验证
+
+- `npx shadcn@latest add alert breadcrumb collapsible --dry-run` 确认只新增文件；`dialog` dry-run 会覆盖 Button，因此改为 CLI view 后只新增 `components/ui/dialog.tsx`；`npx shadcn@latest add avatar --dry-run` 确认只新增 `components/ui/avatar.tsx`；参考头像落到 `public/shadcn-avatar.jpg`，避免外链加载失败。 本轮未修改 package 或 lockfile。
+- `node --test scripts/tests/product-structure.test.mjs`：通过，14 个 product-structure 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3000/master-data/sites/SH-01` 命中 shadcn Sidebar wrapper、CollapsibleTrigger/Content、SidebarMenuSub，二级 `职场` active，一级 `主数据` 在 `data-sidebar=menu-button` 上 active，Breadcrumb 正常且无运行时错误；`/master-data/agents` Header 命中 `新建`、`批量导入` 且没有全局搜索输入/搜索占位，筛选卡片在上，列表操作栏在中，表格在下，`查询/重置` 位于筛选卡片右下，列表操作栏不再包含 `新建/批量导入`，Sidebar footer 菜单可打开并包含 shadcn Avatar 头像、`切换为浅色/深色` 和 `退出登录`；`/master-data/sites/SH-01` 全页 H1 仅为 `上海职场`，内容区只保留 `职场信息`、`运营主体` 业务分组且无返回头块；`http://127.0.0.1:3000/master-data/agents/A-1001/edit` 可见 H1 仅由 `SiteHeader` 输出，内容区不再出现 `返回客服人员`，也不再重复页面标题卡片；`http://127.0.0.1:3000/master-data/agents?import_dialog=1` 命中 shadcn Dialog，上传 step 可见，映射/结果 step hidden 但 DOM 挂载，文件 input 和字段映射 textarea 均存在；`http://127.0.0.1:3000/master-data/agents?import_dialog=1&upload=failed&reason=missing_required_fields` 命中结果 step 和 Alert 失败摘要。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -3,7 +3,6 @@ import { notFound } from "next/navigation"
 import { AppShell } from "@/components/app-shell"
 import { MasterDataWorkplaceDetailPage } from "@/components/master-data-maintenance-workbench"
 import {
-  summarizeMasterDataEntitySourceContext,
   summarizeMasterDataWorkplaceDetail,
 } from "@/components/master-data-maintenance-model"
 import {
@@ -33,10 +32,6 @@ export default async function MasterDataWorkplaceDetailRoute({
       fetchMasterDataEmployees(),
       fetchMasterDataWorkplaceBindings(),
     ])
-  const summary = summarizeMasterDataEntitySourceContext(
-    "sites",
-    batchResult.data ?? []
-  )
   const detailSummary = summarizeMasterDataWorkplaceDetail({
     workplaceId: decodedWorkplaceId,
     workplaces: workplaceResult.data ?? [],
@@ -49,9 +44,16 @@ export default async function MasterDataWorkplaceDetailRoute({
   }
 
   return (
-    <AppShell title="职场详情" searchPlaceholder="搜索职场">
+    <AppShell
+      title={detailSummary.title}
+      searchPlaceholder="搜索职场"
+      breadcrumbItems={[
+        { label: "主数据", href: "/master-data/agents" },
+        { label: "职场", href: "/master-data/sites" },
+        { label: detailSummary.title },
+      ]}
+    >
       <MasterDataWorkplaceDetailPage
-        summary={summary}
         detailSummary={detailSummary}
         error={
           workplaceResult.error ??

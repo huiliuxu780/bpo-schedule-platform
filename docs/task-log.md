@@ -1884,3 +1884,14 @@
 - action: 在客服人员列表内新增批量导入大弹窗。
 - status: `done`
 - notes: `/master-data/agents` 右上角 `批量导入` 不再跳转独立上传工作区，而是在当前列表页打开三步大弹窗；第一步提供人员导入模板下载和 CSV 上传字段，第二步支持启用的主数据映射模板或手动字段映射 JSON，第三步展示本次导入摘要并提供 `查看批次详情` 和 `失败行修正` 入口；完整行结果、readiness、应用到业务数据和版本链路仍由批次详情页承载；本轮不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM144`
+- source_ids:
+  - `R844`
+- story_ids:
+  - `US764`
+- action: 统一全局 UI 组件规范并纠正客服人员导入弹窗。
+- status: `done`
+- notes: 全局布局改为 shadcn `SidebarProvider` / `Sidebar` / `SidebarInset`，`AppSidebar` 按 shadcn 文档使用 `Collapsible`、`SidebarMenuButton` 和 `SidebarMenuSub` 组织一级/二级导航，并在 Sidebar footer 使用 shadcn Avatar 和本地参考头像 `/shadcn-avatar.jpg`，增加本地用户菜单、明暗主题切换和登出入口；`SiteHeader` 统一承载单行 Breadcrumb，Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1，并去掉无意义全局搜索、固定月份和通知占位，新增右侧页面级 actions 插槽；主数据列表、详情、新建、编辑页接入 `breadcrumbItems`；主数据内容区不再重复返回按钮、同名 H1 或页面级说明，页面身份由全局 Header 唯一承载；客服人员列表改为筛选卡片、列表操作栏、表格顺序，查询/重置位于筛选卡片右下，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作；客服人员导入改为 shadcn Dialog 的 step-by-step 流程，上传、映射、结果 section 通过 `hidden` 隐藏但保持 DOM 挂载；页面级反馈、表单结果和导入结果摘要改用 Alert；本轮不新增排班、预测、登录/状态日志导入弹窗，不接入真实 auth，不修改 package/lockfile，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
