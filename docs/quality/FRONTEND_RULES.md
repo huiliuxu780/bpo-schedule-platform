@@ -194,6 +194,5 @@ components/
   chart-area-interactive.tsx
   data-table.tsx
   bpo-heatmap.tsx
-  data-sync-status.tsx
   theme-toggle.tsx
 ```

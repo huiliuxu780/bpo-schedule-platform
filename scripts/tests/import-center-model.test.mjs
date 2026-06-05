@@ -5651,9 +5651,9 @@ test("import center upload result guidance links uploads back to batch review", 
     {
       tone: "success",
       title: "CSV 上传成功",
-      detail: "批次 BATCH-CSV-001 已提交并可在接入批次中查看。",
+      detail: "批次 BATCH-CSV-001 已提交，可继续查看行结果和应用准备度。",
       batchHref: "/data-quality/BATCH-CSV-001",
-      primaryActionLabel: "进入批次处理",
+      primaryActionLabel: "进入处理详情",
       nextAction: "查看批次行结果、失败行和应用准备度；确认无阻塞后再应用到业务数据。",
     },
   );

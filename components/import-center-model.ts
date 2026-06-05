@@ -4954,10 +4954,10 @@ export function summarizeImportUploadResultGuidance({
       tone: "success",
       title: "CSV 上传成功",
       detail: batchId
-        ? `批次 ${batchId} 已提交并可在接入批次中查看。`
-        : "CSV 已提交并可在接入批次中查看。",
+        ? `批次 ${batchId} 已提交，可继续查看行结果和应用准备度。`
+        : "CSV 已提交，可继续查看行结果和应用准备度。",
       batchHref,
-      primaryActionLabel: batchHref ? "进入批次处理" : "查看导入批次",
+      primaryActionLabel: batchHref ? "进入处理详情" : "查看处理结果",
       nextAction:
         "查看批次行结果、失败行和应用准备度；确认无阻塞后再应用到业务数据。",
     }

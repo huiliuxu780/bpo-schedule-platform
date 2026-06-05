@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
+const appRootPath = new URL("../../app/", import.meta.url);
+const componentsRootPath = new URL("../../components/", import.meta.url);
 const dashboardPagePath = new URL("../../app/dashboard/page.tsx", import.meta.url);
 const appSidebarPath = new URL("../../components/app-sidebar.tsx", import.meta.url);
 const masterDataIndexPagePath = new URL("../../app/master-data/page.tsx", import.meta.url);
@@ -9,11 +11,56 @@ const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page
 const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions.ts", import.meta.url);
 const masterDataModelPath = new URL("../../components/master-data-maintenance-model.ts", import.meta.url);
 
+async function collectSourceFiles(directoryUrl) {
+  const entries = await readdir(directoryUrl, { withFileTypes: true });
+  const files = [];
+
+  for (const entry of entries) {
+    const entryUrl = new URL(entry.name, directoryUrl);
+
+    if (entry.isDirectory()) {
+      files.push(...await collectSourceFiles(new URL(`${entry.name}/`, directoryUrl)));
+      continue;
+    }
+
+    if (entry.name.endsWith(".ts") || entry.name.endsWith(".tsx")) {
+      const entryStat = await stat(entryUrl);
+      if (entryStat.isFile()) {
+        files.push(entryUrl);
+      }
+    }
+  }
+
+  return files;
+}
+
 test("dashboard overview does not expose data ingestion status panel", async () => {
   const source = await readFile(dashboardPagePath, "utf8");
 
   assert.equal(source.includes("DataSyncStatus"), false);
   assert.equal(source.includes("data-sync-status"), false);
+});
+
+test("application source does not retain rejected center-first visible wording", async () => {
+  const sourceFiles = [
+    ...await collectSourceFiles(appRootPath),
+    ...await collectSourceFiles(componentsRootPath),
+  ];
+  const forbiddenVisiblePhrases = [
+    "数据接入状态",
+    "导入中心",
+    "数据质量",
+    "质量中心",
+    "接入批次",
+  ];
+
+  for (const fileUrl of sourceFiles) {
+    const source = await readFile(fileUrl, "utf8");
+
+    for (const phrase of forbiddenVisiblePhrases) {
+      assert.equal(source.includes(phrase), false, `${fileUrl.pathname}: ${phrase}`);
+    }
+  }
 });
 
 test("sidebar does not expose placeholder or deferred product capabilities", async () => {

@@ -94,7 +94,6 @@ frontend_files=(
   "components/chart-area-interactive.tsx"
   "components/data-table.tsx"
   "components/bpo-heatmap.tsx"
-  "components/data-sync-status.tsx"
   "components/theme-toggle.tsx"
 )
 

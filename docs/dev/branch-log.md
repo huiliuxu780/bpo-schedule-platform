@@ -3404,3 +3404,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM136 Center-first Residual Cleanup Follow-up
+
+- branch_name: `codex/im136-business-first-ia-cleanup`
+- base_main_commit: `a4c4221`
+- stacked_on: `1cf3029 fix: clean master data residual actions`
+- remote_status: `1cf3029 was pushed; this follow-up is local until final check/commit/push.`
+- scope: PM-requested continuation to remove remaining center-first implementation residue after the master-data and navigation correction. Delete the unused data-ingestion status component, remove it from the current frontend scaffold check/rules, change upload success guidance away from center-first batch wording, and add a product-structure regression scan over app/component visible wording.
+- allowed_files_check: `components/data-sync-status.tsx`, `components/import-center-*`, focused frontend tests, `scripts/check.sh`, `docs/quality/FRONTEND_RULES.md`, `docs/current/PROJECT_CONTEXT.md`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, settlement, formula, or charge-factor changes.
+- scope_diff_check: expected deletion of unused `DataSyncStatus`, upload wording correction, current frontend scaffold file-list sync, focused regression test hardening, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target product/import model tests passed with 84 tests after an intentional RED first caught `components/data-sync-status.tsx`; app/component scan for rejected center-first visible wording returned no matches. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, lint, typecheck, Next build, and backend 207 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

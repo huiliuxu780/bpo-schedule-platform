@@ -63,7 +63,7 @@ export function ImportCenterUploadForm({
         <div>
           <CardTitle className="text-base">CSV 导入</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
-            上传 CSV 并生成接入批次
+            上传 CSV 并生成业务数据处理记录
           </p>
         </div>
         <UploadStatusBadge status={uploadStatus} />
