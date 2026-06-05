@@ -80,6 +80,7 @@ const nav: NavGroup[] = [
       },
       { title: "组织", href: "/master-data/organizations", activeMatch: "exact" },
       { title: "职场", href: "/master-data/sites", activeMatch: "exact" },
+      { title: "职场运营主体", href: "/master-data/site-operators", activeMatch: "exact" },
       { title: "供应商", href: "/master-data/vendors", activeMatch: "exact" },
       { title: "技能", href: "/master-data/skills", activeMatch: "exact" },
       { title: "绑定关系", href: "/master-data/bindings", activeMatch: "exact" },

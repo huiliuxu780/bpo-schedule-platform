@@ -6,6 +6,7 @@ import {
   MasterDataBindingManagementPage,
   MasterDataOrganizationManagementPage,
   MasterDataReferenceManagementPage,
+  MasterDataSiteOperatorManagementPage,
 } from "@/components/master-data-maintenance-workbench"
 import {
   type MasterDataAgentManagementFilters,
@@ -17,6 +18,7 @@ import {
   summarizeMasterDataEntitySourceContext,
   summarizeMasterDataOrganizationManagement,
   summarizeMasterDataReferenceManagement,
+  summarizeMasterDataSiteOperatorManagement,
 } from "@/components/master-data-maintenance-model"
 import {
   fetchMasterDataBindings,
@@ -49,7 +51,7 @@ export default async function MasterDataEntityDetailPage({
 
   const batchResult = await fetchImportBatches()
   const employeeResult =
-    entity.key === "agents"
+    entity.key === "agents" || entity.key === "site-operators"
       ? await fetchMasterDataEmployees()
       : { data: [], error: null }
   const organizationResult =
@@ -61,7 +63,7 @@ export default async function MasterDataEntityDetailPage({
       ? await fetchMasterDataReferences(entity.key)
       : { data: [], error: null }
   const bindingResult =
-    entity.key === "bindings"
+    entity.key === "bindings" || entity.key === "site-operators"
       ? await fetchMasterDataBindings()
       : { data: [], error: null }
   const resolvedSearchParams = searchParams ? await searchParams : {}
@@ -87,6 +89,13 @@ export default async function MasterDataEntityDetailPage({
   const bindingManagementSummary =
     entity.key === "bindings"
       ? summarizeMasterDataBindingManagement(bindingResult.data ?? [])
+      : null
+  const siteOperatorManagementSummary =
+    entity.key === "site-operators"
+      ? summarizeMasterDataSiteOperatorManagement({
+          employees: employeeResult.data ?? [],
+          bindings: bindingResult.data ?? [],
+        })
       : null
   const selectedFreezeEmployeeId = getSingleSearchParam(
     resolvedSearchParams.freeze_employee_id
@@ -128,6 +137,13 @@ export default async function MasterDataEntityDetailPage({
           summary={summary}
           listSummary={bindingManagementSummary}
           error={bindingResult.error ?? batchResult.error}
+          feedback={feedback}
+        />
+      ) : entity.key === "site-operators" && siteOperatorManagementSummary ? (
+        <MasterDataSiteOperatorManagementPage
+          summary={summary}
+          listSummary={siteOperatorManagementSummary}
+          error={employeeResult.error ?? bindingResult.error ?? batchResult.error}
           feedback={feedback}
         />
       ) : null}

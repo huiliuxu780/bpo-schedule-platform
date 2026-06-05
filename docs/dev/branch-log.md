@@ -3476,3 +3476,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM139-IM140 Workplace Concept And Site Operator List
+
+- branch_name: `codex/im136-business-first-ia-cleanup`
+- base_main_commit: `a4c4221`
+- stacked_on: `c156a64 fix: remove project from master data surface`
+- remote_status: `c156a64 is local only; this workplace concept follow-up is local until final check/commit/push.`
+- scope: PM-confirmed clarification that workplace is a location-only master-data object, while self-owned and supplier teams under a workplace are represented through a separate read-only `职场运营主体` list. Add `/master-data/site-operators`, derive rows from existing employee and binding data, and keep future supplier-contract fields out of scope.
+- allowed_files_check: `app/master-data/[entityKey]/page.tsx`, `components/app-sidebar.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, `docs/current/PROJECT_CONTEXT.md`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, charge-factor, supplier-contract, or minimum-staffing changes.
+- scope_diff_check: expected master-data entity model/navigation addition, read-only site-operator page, workplace location wording correction, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED frontend test first failed because `summarizeMasterDataSiteOperatorManagement` did not exist; after implementation, target master-data/product-structure tests passed with 21 Node tests, `npm run typecheck` passed, and `npm run lint` passed. Browser smoke over `/master-data/sites` and `/master-data/site-operators` confirmed workplace stays location-oriented, site-operator columns render, and the new pages do not expose project, contract, settlement, or minimum-staffing concepts. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

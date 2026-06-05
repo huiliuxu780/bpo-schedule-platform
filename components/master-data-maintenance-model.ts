@@ -21,6 +21,7 @@ export type MasterDataMaintenanceEntityKey =
   | "agents"
   | "organizations"
   | "sites"
+  | "site-operators"
   | "vendors"
   | "skills"
   | "bindings"
@@ -198,6 +199,42 @@ export type MasterDataBindingManagementSummary = {
   rows: MasterDataBindingListViewRow[]
 }
 
+export type MasterDataSiteOperatorType = "internal" | "supplier"
+
+export type MasterDataSiteOperatorListRow = {
+  operator_key: string
+  workplace_id: string
+  operator_type: MasterDataSiteOperatorType
+  supplier_id: string | null
+  status: MasterDataAgentMaintenanceStatus
+  effective_from: string
+  effective_to: string
+  source_type: "employee" | "binding"
+  batch_id: string
+}
+
+export type MasterDataSiteOperatorListDisplay = {
+  workplaceLabel: string
+  operatorTypeLabel: string
+  supplierLabel: string
+  statusLabel: string
+  effectivePeriodLabel: string
+  sourceLabel: string
+  sourceBatchLabel: string
+}
+
+export type MasterDataSiteOperatorListViewRow = MasterDataSiteOperatorListRow & {
+  display: MasterDataSiteOperatorListDisplay
+}
+
+export type MasterDataSiteOperatorManagementSummary = {
+  title: string
+  totalRecords: number
+  internalRecords: number
+  supplierRecords: number
+  rows: MasterDataSiteOperatorListViewRow[]
+}
+
 export type MasterDataAgentMaintenancePayload = {
   action: MasterDataAgentMaintenanceActionKey
   source_batch_id: string
@@ -351,9 +388,16 @@ export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
   {
     key: "sites",
     label: "职场",
-    scopeLabel: "站点编码、城市、时区和运营状态",
+    scopeLabel: "职场编码、城市、时区和地点状态",
     referenceLabel: "坐席归属、排班计划、需求预测",
-    maintenanceBoundary: "职场编码、城市、时区、运营状态和生效周期。",
+    maintenanceBoundary: "职场只表达地点本身，不表达团队归属。",
+  },
+  {
+    key: "site-operators",
+    label: "职场运营主体",
+    scopeLabel: "职场下自有团队或供应商团队归属",
+    referenceLabel: "人员归属、供应商归因、排班和日志归因",
+    maintenanceBoundary: "职场运营主体表达归属类型、供应商关系和生效周期。",
   },
   {
     key: "vendors",
@@ -690,6 +734,8 @@ export function summarizeMasterDataReferenceManagement(
         skillCategoryLabel:
           entity.key === "skills"
             ? formatMasterDataSkillCategory(reference.skill_category ?? null)
+            : entity.key === "sites"
+              ? "地点"
             : entity.label,
         effectivePeriodLabel: formatEffectivePeriod(
           reference.effective_from,
@@ -772,6 +818,111 @@ export function summarizeMasterDataBindingManagement(
   return {
     title: "绑定关系",
     totalRecords: rows.length,
+    rows,
+  }
+}
+
+export function summarizeMasterDataSiteOperatorManagement({
+  employees,
+  bindings,
+}: {
+  employees: MasterDataEmployeeListRow[]
+  bindings: MasterDataBindingListRow[]
+}): MasterDataSiteOperatorManagementSummary {
+  const operatorMap = new Map<string, MasterDataSiteOperatorListRow>()
+
+  for (const employee of employees) {
+    if (employee.employee_type !== "internal" || !employee.workplace_id) {
+      continue
+    }
+
+    const operatorKey = [
+      "internal",
+      employee.workplace_id,
+      employee.effective_from,
+      employee.effective_to,
+    ].join(":")
+
+    if (!operatorMap.has(operatorKey)) {
+      operatorMap.set(operatorKey, {
+        operator_key: operatorKey,
+        workplace_id: employee.workplace_id,
+        operator_type: "internal",
+        supplier_id: null,
+        status: employee.status,
+        effective_from: employee.effective_from,
+        effective_to: employee.effective_to,
+        source_type: "employee",
+        batch_id: employee.batch_id,
+      })
+    }
+  }
+
+  for (const binding of bindings) {
+    if (!binding.workplace_id || !binding.supplier_id) {
+      continue
+    }
+
+    const operatorKey = [
+      "supplier",
+      binding.workplace_id,
+      binding.supplier_id,
+      binding.effective_from,
+      binding.effective_to,
+    ].join(":")
+
+    if (!operatorMap.has(operatorKey)) {
+      operatorMap.set(operatorKey, {
+        operator_key: operatorKey,
+        workplace_id: binding.workplace_id,
+        operator_type: "supplier",
+        supplier_id: binding.supplier_id,
+        status: "active",
+        effective_from: binding.effective_from,
+        effective_to: binding.effective_to,
+        source_type: "binding",
+        batch_id: binding.batch_id,
+      })
+    }
+  }
+
+  const rows = [...operatorMap.values()]
+    .sort((left, right) => {
+      const workplaceOrder = left.workplace_id.localeCompare(right.workplace_id)
+      if (workplaceOrder !== 0) {
+        return workplaceOrder
+      }
+
+      if (left.operator_type !== right.operator_type) {
+        return left.operator_type === "internal" ? -1 : 1
+      }
+
+      return (left.supplier_id ?? "").localeCompare(right.supplier_id ?? "")
+    })
+    .map((operator) => ({
+      ...operator,
+      display: {
+        workplaceLabel: formatMasterDataVisibleValue(operator.workplace_id),
+        operatorTypeLabel:
+          operator.operator_type === "internal" ? "自有" : "供应商",
+        supplierLabel: operator.supplier_id
+          ? formatMasterDataVisibleValue(operator.supplier_id)
+          : "无供应商",
+        statusLabel: formatMasterDataEmployeeStatus(operator.status),
+        effectivePeriodLabel: formatEffectivePeriod(
+          operator.effective_from,
+          operator.effective_to
+        ),
+        sourceLabel: operator.source_type === "employee" ? "人员档案" : "绑定关系",
+        sourceBatchLabel: formatImportBatchDisplayLabel(operator.batch_id),
+      },
+    }))
+
+  return {
+    title: "职场运营主体",
+    totalRecords: rows.length,
+    internalRecords: rows.filter((row) => row.operator_type === "internal").length,
+    supplierRecords: rows.filter((row) => row.operator_type === "supplier").length,
     rows,
   }
 }
