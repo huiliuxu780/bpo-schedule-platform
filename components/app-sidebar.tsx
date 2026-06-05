@@ -77,14 +77,11 @@ const nav: NavGroup[] = [
     title: "计划与排班",
     icon: CalendarDays,
     items: [
-      { title: "需求计划", href: "/demand-plans", activeMatch: "exact" },
-      { title: "预测生产", href: "/demand-plans/production", activeMatch: "prefix", tag: "P1" },
-      { title: "排班生产", href: "/schedule-plans/production", activeMatch: "exact", tag: "P1" },
+      { title: "需求计划", href: "/demand-plans", activeMatch: "prefix" },
       {
         title: "排班计划",
         href: "/schedule-plans",
         activeMatch: "prefix",
-        excludePrefixes: ["/schedule-plans/production"],
       },
       { title: "班次明细", href: "/shift-details", activeMatch: "exact" },
       { title: "不可用管理", href: "/unavailability", activeMatch: "exact", tag: "P1" },

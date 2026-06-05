@@ -20,6 +20,29 @@
   status: "draft"
 ```
 
+### US765 - 导航信息架构收口
+
+```yaml
+id: US765
+requirement_ids:
+  - R845
+module: "全局导航 / 计划与排班"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望一级导航只暴露业务对象入口，而不是预测生产、排班生产这类实现路径，以便从需求计划、排班计划和登录/状态日志进入对应版本和处理流程。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "Sidebar 不再暴露 `预测生产` 和 `排班生产` 作为一级导航项。"
+  - "`需求计划` 导航项覆盖 `/demand-plans` 与 `/demand-plans/production/**` 的父级高亮。"
+  - "`排班计划` 导航项覆盖 `/schedule-plans` 与 `/schedule-plans/production/**` 的父级高亮。"
+  - "Sidebar 结构测试禁止 `预测生产`、`排班生产`、`导入中心`、`质量中心`、`数据质量` 作为导航标题出现。"
+  - "本轮不改生产页标题、返回按钮、模型文案、导入弹窗、业务路由或后端能力。"
+dependencies:
+  - "US764"
+status: "done"
+notes: "IM145 已完成：一级导航移除 `预测生产`、`排班生产`，并让 `/demand-plans/production/**` 与 `/schedule-plans/production/**` 分别继承 `需求计划`、`排班计划` 导航高亮；生产文案、返回链路、重复标题和旧搜索 API 分别留给后续 IM146-IM148。"
+```
+
 ### US701 - 独立 CSV 上传工作区
 
 ```yaml

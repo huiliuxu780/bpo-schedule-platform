@@ -3584,3 +3584,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM145 Navigation IA Correction
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `27169c5 refactor: align shadcn shell standards`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed navigation IA correction. Remove `预测生产` and `排班生产` from Sidebar as standalone first-level-visible items, and let `需求计划` / `排班计划` own the `/production` child routes for active-state purposes. Keep page title/text cleanup, duplicate h1 cleanup, old search API cleanup, master-data import action cleanup, and data-quality route restructuring out of this slice.
+- allowed_files_check: `components/app-sidebar.tsx`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, or charge-factor changes.
+- scope_diff_check: expected Sidebar nav item removal/highlight correction, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because Sidebar still exposed `预测生产`; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 14 tests. Browser/HTTP smoke over `/demand-plans/production` confirmed Sidebar shows `需求计划` active and does not expose standalone `预测生产`/`排班生产` items. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

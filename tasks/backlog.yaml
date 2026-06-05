@@ -9643,3 +9643,42 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已把全局 AppShell/AppSidebar/SiteHeader 收敛到 shadcn Sidebar/Collapsible/Breadcrumb 结构，SiteHeader 改为单行导航，Breadcrumb 包含当前页且不再额外渲染第二行视觉 H1；SiteHeader 去掉无意义搜索/日期/通知占位并提供页面级 actions 插槽，Sidebar footer 使用 shadcn Avatar 参考头像并增加本地用户菜单、明暗主题切换和登出入口；主数据内容区不再重复全局标题与返回路径，客服人员列表按筛选卡片、列表操作栏、表格排序，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作，客服人员导入弹窗改为 shadcn Dialog step-by-step，并将相关反馈切换为 Alert。"
+  - id: IM145
+    title: "导航信息架构收口"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM144"]
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "Sidebar 不再暴露 `预测生产` 和 `排班生产` 作为一级导航项。"
+      - "`需求计划` 导航项覆盖 `/demand-plans` 与 `/demand-plans/production/**` 的父级高亮。"
+      - "`排班计划` 导航项覆盖 `/schedule-plans` 与 `/schedule-plans/production/**` 的父级高亮。"
+      - "Sidebar 结构测试禁止 `预测生产`、`排班生产`、`导入中心`、`质量中心`、`数据质量` 作为导航标题出现。"
+      - "本轮不改生产页标题、返回按钮、模型文案、导入弹窗、业务路由或后端能力。"
+    stop_conditions:
+      - "需要修改生产页标题、返回按钮或模型文案"
+      - "需要改动 data-quality 路由归属或导入弹窗"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已从 Sidebar 一级导航移除 `预测生产`、`排班生产`，并让 `需求计划` 和 `排班计划` 分别通过 prefix active 覆盖 `/demand-plans/production/**` 与 `/schedule-plans/production/**` 子路由；结构测试已禁止这些生产实现路径重新作为 Sidebar 标题出现。"

@@ -2957,7 +2957,9 @@
 - `node --test scripts/tests/check-shadcn-ui.test.mjs` 和 `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
 - in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases` 命中 `Owner 阶段负载`、`缺证据`、`缺结论`、`可关闭`、`已关闭`、`阶段未知` 和 `复核案例列表`。
 - in-app browser href smoke：页面存在 `/data-quality/review-cases?ownerId=supervisor-01&processingStage=missing_conclusion`、`ready_to_close` 和 `closed` 链接。
-- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 209 tests OK。
 
 ### 2026-06-02 - IM068 复核详情同 Owner 处理上下文
 
@@ -3820,4 +3822,25 @@
 - `npm run lint`：通过。
 - `npm run typecheck`：通过。
 - in-app browser smoke：`http://127.0.0.1:3000/master-data/sites/SH-01` 命中 shadcn Sidebar wrapper、CollapsibleTrigger/Content、SidebarMenuSub，二级 `职场` active，一级 `主数据` 在 `data-sidebar=menu-button` 上 active，Breadcrumb 正常且无运行时错误；`/master-data/agents` Header 命中 `新建`、`批量导入` 且没有全局搜索输入/搜索占位，筛选卡片在上，列表操作栏在中，表格在下，`查询/重置` 位于筛选卡片右下，列表操作栏不再包含 `新建/批量导入`，Sidebar footer 菜单可打开并包含 shadcn Avatar 头像、`切换为浅色/深色` 和 `退出登录`；`/master-data/sites/SH-01` 全页 H1 仅为 `上海职场`，内容区只保留 `职场信息`、`运营主体` 业务分组且无返回头块；`http://127.0.0.1:3000/master-data/agents/A-1001/edit` 可见 H1 仅由 `SiteHeader` 输出，内容区不再出现 `返回客服人员`，也不再重复页面标题卡片；`http://127.0.0.1:3000/master-data/agents?import_dialog=1` 命中 shadcn Dialog，上传 step 可见，映射/结果 step hidden 但 DOM 挂载，文件 input 和字段映射 textarea 均存在；`http://127.0.0.1:3000/master-data/agents?import_dialog=1&upload=failed&reason=missing_required_fields` 命中结果 step 和 Alert 失败摘要。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM145 导航信息架构收口
+
+#### 审计结论
+
+- `IM145` 已从 Sidebar 一级导航移除 `预测生产` 和 `排班生产`。
+- `/demand-plans/production/**` 仍保留为既有子路由，但由 `需求计划` 导航项承担 active 高亮。
+- `/schedule-plans/production/**` 仍保留为既有子路由，但由 `排班计划` 导航项承担 active 高亮。
+- 结构测试已禁止 `预测生产`、`排班生产`、`导入中心`、`质量中心`、`数据质量` 作为 Sidebar 标题重新出现。
+- 本轮没有修改生产页标题、返回按钮、模型文案、导入弹窗、业务路由、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 页面标题、返回链路和模型文案中仍有 `生产` 相关残留，按计划留给 `IM146`。
+- 内容区重复 H1、旧 `searchPlaceholder` API、主数据非客服人员导入动作和 `/data-quality` 大抽象仍需后续任务继续处理。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明 Sidebar 仍暴露 `预测生产`。
+- TDD 绿灯：移除独立生产导航并调整父级 active 后，`node --test scripts/tests/product-structure.test.mjs` 通过，14 个 product-structure 测试通过。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

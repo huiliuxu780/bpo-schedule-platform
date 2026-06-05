@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R845 - 导航信息架构收口
+
+```yaml
+id: R845
+module: "全局导航 / 计划与排班"
+description: "PM 复核后确认，当前 Sidebar 仍把 `预测生产`、`排班生产` 作为一级导航项暴露，这是把实现路径伪装成业务模块。需要先把一级导航收口到业务对象入口，让需求预测和排班相关生产版本继续由各自业务入口高亮承载。"
+source: "PM confirmed IM145 execution after UI/product-structure audit on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM145 已完成：Sidebar 不再把 `预测生产`、`排班生产` 暴露为独立导航项；`需求计划` 与 `排班计划` 通过 prefix active 覆盖各自 `/production` 子路由；本轮未改生产页标题、返回按钮、模型文案、导入弹窗、业务路由或后端能力。"
+```
+
 ### R781 - 独立 CSV 上传工作区
 
 ```yaml

@@ -110,6 +110,8 @@ test("sidebar does not expose placeholder or deferred product capabilities", asy
     "数据质量",
     "质量中心",
     "导入中心",
+    "预测生产",
+    "排班生产",
     "主数据维护",
     "字段映射",
     "接口集成",
@@ -123,6 +125,22 @@ test("sidebar does not expose placeholder or deferred product capabilities", asy
   for (const label of forbiddenLabels) {
     assert.equal(source.includes(`title: "${label}"`), false, label);
   }
+
+  assert.equal(
+    source.includes('href: "/demand-plans/production"'),
+    false,
+    "demand production route should not be exposed as its own sidebar item",
+  );
+  assert.equal(
+    source.includes('href: "/schedule-plans/production"'),
+    false,
+    "schedule production route should not be exposed as its own sidebar item",
+  );
+  assert.equal(
+    source.includes('excludePrefixes: ["/schedule-plans/production"]'),
+    false,
+    "schedule parent navigation should own production child routes",
+  );
 
   assert.equal(
     [...source.matchAll(/href: "\/dashboard"/g)].length,
