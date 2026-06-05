@@ -19,6 +19,17 @@
 
 ### 2026-06-05
 
+- task_id: `IM152`
+- source_ids:
+  - `R852`
+- story_ids:
+  - `US772`
+- action: 清理主数据职场详情可见术语。
+- status: `done`
+- notes: 职场详情指标、区块标题和空态改为 `服务团队/职场服务团队`；主数据数据读取错误文案改为 `职场服务团队来源读取失败`；本轮不新增职场服务团队独立页面、CRUD 或导入入口，不删除 project_id 兼容字段，不改后端 route、schema/migration、依赖、供应商合同、结算比例、最低人力要求、权限、审批、导出、批量、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
 - task_id: `IM151`
 - source_ids:
   - `R851`

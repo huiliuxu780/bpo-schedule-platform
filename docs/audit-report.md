@@ -3972,3 +3972,25 @@
 - TDD 绿灯：结果页 Breadcrumb 调整后，同一 focused test 通过，21 个 product-structure 测试通过。
 - Browser smoke over `/data-quality/versions`, `/data-quality/comparison-runs/RUN-QUERY-001`, `/data-quality/review-cases`, and `/data-quality/review-cases/CASE-QUERY-001` confirmed result pages no longer show `导入批次` parent Breadcrumb.
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM152 主数据术语清理
+
+#### 审计结论
+
+- 职场详情指标、区块标题和空态不再显示 `运营主体` 或 `职场运营主体`。
+- 职场详情用 `服务团队` 表达自有团队和供应商团队关系。
+- 主数据数据读取错误文案从 `职场运营主体来源读取失败` 改为 `职场服务团队来源读取失败`。
+- `项目` 没有作为主数据维护对象回流；本轮没有删除 `project_id` 兼容字段或内部兼容类型名。
+- 本轮没有新增职场服务团队独立页面、CRUD、导入入口、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、供应商合同、结算比例、最低人力要求、自动排班、生产公式或收费因子。
+
+#### 风险
+
+- 内部代码类型仍保留 operator 命名作为兼容实现细节；后续如要重命名内部模型，应单独做重构任务，不应混入产品可见文案清理。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明主数据 workbench 仍有 `运营主体` 文案。
+- TDD 绿灯：术语调整后，同一 focused test 通过，22 个 product-structure 测试通过。
+- `rg -n "职场运营主体|运营主体" app/master-data components/master-data-maintenance-workbench.tsx -S` 无匹配。
+- Browser smoke over `/master-data/sites/SH-01` confirmed the page shows `服务团队` and does not show `运营主体` or `职场运营主体`.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

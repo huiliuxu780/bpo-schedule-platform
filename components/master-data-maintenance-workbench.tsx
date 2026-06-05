@@ -257,7 +257,7 @@ export function MasterDataWorkplaceDetailPage({
 
       <section className="grid gap-3 md:grid-cols-3">
         <MetricCard
-          label="运营主体"
+          label="服务团队"
           value={detailSummary.totalOperators.toLocaleString("zh-CN")}
           detail="该职场下的团队来源"
           tone={detailSummary.totalOperators > 0 ? "ready" : "default"}
@@ -291,10 +291,10 @@ export function MasterDataWorkplaceDetailPage({
       </section>
 
       <section className="rounded-lg border bg-background p-4">
-        <h2 className="mb-3 text-base font-semibold tracking-normal">运营主体</h2>
+        <h2 className="mb-3 text-base font-semibold tracking-normal">服务团队</h2>
         {detailSummary.operatorRows.length === 0 ? (
           <div className="rounded-md border p-4 text-sm text-muted-foreground">
-            暂无该职场运营主体记录。
+            暂无该职场服务团队记录。
           </div>
         ) : (
           <Table>

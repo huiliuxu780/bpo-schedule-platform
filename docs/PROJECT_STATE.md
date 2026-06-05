@@ -772,3 +772,9 @@ Demand forecast, personnel schedule, and login/status log imports are now page-l
 `IM151` lowers the visible module abstraction for result-chain pages that still live under compatible `/data-quality/**` routes. Business version list, comparison-run detail, review-case list, and review-case detail no longer present `导入批次` as their Breadcrumb parent.
 
 Batch processing, internal upload, and field-mapping template pages keep their batch/template Breadcrumb context and compatible routes. This slice does not delete or restructure `/data-quality/**`, add navigation entries, modify result queries, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM151.
+
+## 2026-06-05 IM152 Master Data Terminology Cleanup
+
+`IM152` cleans visible master-data workplace terminology. Workplace detail metrics, section heading, and empty state now use `服务团队`/`职场服务团队` for self-owned and supplier team context instead of `运营主体` or `职场运营主体`.
+
+The master-data workplace binding fetch error copy now says `职场服务团队来源读取失败`. This slice does not rename internal compatibility types, remove `project_id` compatibility fields, add standalone service-team pages, add CRUD/import actions, modify backend routes, schemas, migrations, dependencies, supplier contract concepts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, or charge factors. Current queue returns to empty after IM152.

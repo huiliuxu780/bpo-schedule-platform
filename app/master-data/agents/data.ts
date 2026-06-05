@@ -127,7 +127,7 @@ export async function fetchMasterDataWorkplaceBindings(): Promise<
     if (!response.ok) {
       return {
         data: [],
-        error: `职场运营主体来源读取失败：${response.status}`,
+        error: `职场服务团队来源读取失败：${response.status}`,
       }
     }
 

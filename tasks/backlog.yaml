@@ -2,6 +2,39 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM152
+    title: "主数据术语清理"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM151"]
+    allowed_files:
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "主数据维护可见源码不再显示 `运营主体` 或 `职场运营主体`。"
+      - "职场详情相关指标、标题和空态改为 `服务团队`。"
+      - "不新增职场服务团队独立导航、独立页面、CRUD 或导入入口。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增职场服务团队独立页面或维护动作"
+      - "需要删除 project_id 或后端兼容字段"
+      - "需要新增供应商合同、结算比例、最低人力要求、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成。职场详情指标、区块标题和空态改为 `服务团队/职场服务团队`；主数据数据读取错误文案改为 `职场服务团队来源读取失败`；未新增独立页面、CRUD、导入入口，也未修改后端 schema 或 project_id 兼容字段。"
   - id: IM151
     title: "data-quality 结果页抽象降级"
     priority: P0

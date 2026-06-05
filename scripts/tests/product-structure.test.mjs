@@ -13,6 +13,7 @@ const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page
 const masterDataAgentCreatePagePath = new URL("../../app/master-data/agents/new/page.tsx", import.meta.url);
 const masterDataAgentEditPagePath = new URL("../../app/master-data/agents/[employeeId]/edit/page.tsx", import.meta.url);
 const masterDataAgentSkillsEditPagePath = new URL("../../app/master-data/agents/[employeeId]/skills/edit/page.tsx", import.meta.url);
+const masterDataAgentDataPath = new URL("../../app/master-data/agents/data.ts", import.meta.url);
 const masterDataWorkplaceDetailPagePath = new URL("../../app/master-data/sites/[workplaceId]/page.tsx", import.meta.url);
 const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[vendorId]/page.tsx", import.meta.url);
 const demandForecastProductionPagePath = new URL("../../app/demand-plans/production/page.tsx", import.meta.url);
@@ -370,6 +371,34 @@ test("workplace operating subjects stay nested under workplace detail", async ()
   assert.equal(
     filePaths.some((path) => path.endsWith("/app/master-data/bindings/page.tsx")),
     false,
+  );
+});
+
+test("master data visible terminology does not expose operating subject concepts", async () => {
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const agentDataSource = await readFile(masterDataAgentDataPath, "utf8");
+  const visibleMasterDataSources = [
+    ["master data workbench", workbenchSource],
+    ["master data data loader", agentDataSource],
+  ];
+
+  for (const [label, source] of visibleMasterDataSources) {
+    assert.equal(
+      source.includes("职场运营主体"),
+      false,
+      `${label} should not expose workplace operating subject wording`,
+    );
+    assert.equal(
+      source.includes("运营主体"),
+      false,
+      `${label} should not expose operating subject wording`,
+    );
+  }
+
+  assert.equal(
+    workbenchSource.includes("服务团队"),
+    true,
+    "workplace detail should describe self-owned and supplier teams as service teams",
   );
 });
 

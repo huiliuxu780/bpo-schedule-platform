@@ -109,6 +109,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM152 Master Data Terminology Cleanup
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `f4f6c26 fix: downgrade result page breadcrumbs`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed master-data visible terminology cleanup. Replace visible `运营主体` / `职场运营主体` wording in workplace detail and master-data data-load error copy with service-team wording, without changing internal compatibility fields or backend contracts.
+- allowed_files_check: `app/master-data/agents/data.ts`, `components/master-data-maintenance-workbench.tsx`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/action/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected visible workplace service-team terminology, regression test, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because master-data workbench still exposed `运营主体`; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 22 tests, `bash scripts/check-state.sh --strict` passed, `git diff --check` passed, and `rg -n "职场运营主体|运营主体" app/master-data components/master-data-maintenance-workbench.tsx -S` returned no matches. Browser smoke over `/master-data/sites/SH-01` confirmed the workplace detail page shows `服务团队` and does not show `运营主体` or `职场运营主体`. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM146 Production Wording And Return Links
 
 - branch_name: `codex/im144-ui-component-standards`
