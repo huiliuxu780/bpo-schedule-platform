@@ -2,6 +2,42 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM151
+    title: "data-quality 结果页抽象降级"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM150"]
+    allowed_files:
+      - "app/data-quality/versions/page.tsx"
+      - "app/data-quality/comparison-runs/[runId]/page.tsx"
+      - "app/data-quality/review-cases/page.tsx"
+      - "app/data-quality/review-cases/[caseId]/page.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "业务版本列表、对比运行详情、复核案例列表、复核案例详情不再把 `导入批次` 作为 Breadcrumb 父级。"
+      - "批次处理、上传、模板维护页面不在本轮拆路由。"
+      - "不新增 Sidebar 导航项，不删除兼容路由，不修改后端 route/schema/migration。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要删除或重构 `/data-quality/**` 路由"
+      - "需要新增业务导航项"
+      - "需要修改批次处理、上传、模板维护流程"
+      - "需要修改后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成。业务版本列表、对比运行详情、复核案例列表和复核案例详情的 Breadcrumb 不再把 `导入批次` 作为父级；复核案例详情仍可返回复核案例列表；批次处理、上传、模板维护页面保留兼容路由和批次上下文。"
   - id: IM150
     title: "导入入口业务归位"
     priority: P0

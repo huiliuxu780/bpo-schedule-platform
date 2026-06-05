@@ -766,3 +766,9 @@ Confirmed customer-service personnel actions remain in the shared Header actions
 `IM150` moves visible import ownership away from the generic import-batch ledger. `/data-quality` remains the read-only import batch ledger and processing record surface, but its batch list no longer exposes a generic `上传 CSV` action.
 
 Demand forecast, personnel schedule, and login/status log imports are now page-level Header actions on their corresponding business version/log pages. The actions still use the existing compatible `/data-quality/uploads/new` route with preselected file type, so this slice does not create new upload dialogs, backend routes, server actions, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM150.
+
+## 2026-06-05 IM151 Result Chain Abstraction Downgrade
+
+`IM151` lowers the visible module abstraction for result-chain pages that still live under compatible `/data-quality/**` routes. Business version list, comparison-run detail, review-case list, and review-case detail no longer present `导入批次` as their Breadcrumb parent.
+
+Batch processing, internal upload, and field-mapping template pages keep their batch/template Breadcrumb context and compatible routes. This slice does not delete or restructure `/data-quality/**`, add navigation entries, modify result queries, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM151.

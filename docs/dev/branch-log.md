@@ -91,6 +91,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM151 Result Chain Abstraction Downgrade
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `c3fb857 fix: move import entries to business headers`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed visible hierarchy cleanup. Remove `导入批次` as the Breadcrumb parent from business version list, comparison-run detail, review-case list, and review-case detail pages while retaining compatible routes and batch/template contexts elsewhere.
+- allowed_files_check: result-chain pages under `app/data-quality/versions`, `app/data-quality/comparison-runs/[runId]`, `app/data-quality/review-cases`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/action/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected Breadcrumb parent removal on result-chain pages, regression test, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because result-chain pages still presented `导入批次` as their Breadcrumb parent; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 21 tests, `bash scripts/check-state.sh --strict` passed, and `git diff --check` passed. Browser smoke over `/data-quality/versions`, `/data-quality/comparison-runs/RUN-QUERY-001`, `/data-quality/review-cases`, and `/data-quality/review-cases/CASE-QUERY-001` confirmed those result pages no longer show `导入批次` parent Breadcrumb. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM146 Production Wording And Return Links
 
 - branch_name: `codex/im144-ui-component-standards`

@@ -810,3 +810,40 @@ test("business import actions belong to business page headers, not the generic b
     "actual log workbench content should not own status-log import action",
   );
 });
+
+test("result chain pages do not present import batches as their parent module", async () => {
+  const resultPageSources = [
+    ["business versions", await readFile(dataQualityVersionsPagePath, "utf8")],
+    ["comparison run detail", await readFile(dataQualityComparisonRunPagePath, "utf8")],
+    ["review cases", await readFile(dataQualityReviewCasesPagePath, "utf8")],
+    ["review case detail", await readFile(dataQualityReviewCaseDetailPagePath, "utf8")],
+  ];
+
+  for (const [label, source] of resultPageSources) {
+    assert.equal(
+      source.includes('{ label: "导入批次", href: "/data-quality" }'),
+      false,
+      `${label} should not breadcrumb under the import batch ledger`,
+    );
+  }
+
+  const batchDetailSource = await readFile(dataQualityBatchPagePath, "utf8");
+  const uploadSource = await readFile(dataQualityUploadPagePath, "utf8");
+  const templateDetailSource = await readFile(dataQualityTemplateDetailPagePath, "utf8");
+
+  assert.equal(
+    batchDetailSource.includes('{ label: "导入批次", href: "/data-quality" }'),
+    true,
+    "batch processing page should keep batch breadcrumb context",
+  );
+  assert.equal(
+    uploadSource.includes('{ label: "导入批次", href: "/data-quality" }'),
+    true,
+    "internal compatible upload page should keep batch breadcrumb context",
+  );
+  assert.equal(
+    templateDetailSource.includes('{ label: "导入批次", href: "/data-quality" }'),
+    true,
+    "template page should keep batch/template breadcrumb context",
+  );
+});

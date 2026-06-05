@@ -3950,3 +3950,25 @@
 - TDD 绿灯：入口调整后，同一 focused test 通过，20 个 product-structure 测试通过。
 - Browser smoke over `/data-quality`, `/demand-plans/production`, `/schedule-plans/production`, and `/actual-logs/production` confirmed generic upload is absent from the batch ledger, while business import links exist only in Header actions.
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM151 data-quality 结果页抽象降级
+
+#### 审计结论
+
+- `/data-quality/versions` Header/Breadcrumb 不再显示 `导入批次` 父级。
+- `/data-quality/comparison-runs/[runId]` Header/Breadcrumb 不再显示 `导入批次` 父级。
+- `/data-quality/review-cases` Header/Breadcrumb 不再显示 `导入批次` 父级。
+- `/data-quality/review-cases/[caseId]` Header/Breadcrumb 不再显示 `导入批次` 父级，只保留到 `复核案例` 列表的二级关系。
+- 批次处理、上传、字段映射模板页面继续保留批次/模板上下文；本轮没有删除或重构 `/data-quality/**` 兼容路由。
+- 本轮没有新增 Sidebar 导航项、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 结果链路仍在 `/data-quality/**` 兼容路径下，后续若要彻底按业务入口拆路由，需要单独 Gate，不能在本轮顺手重构。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明业务版本页仍把 `导入批次` 作为 Breadcrumb 父级。
+- TDD 绿灯：结果页 Breadcrumb 调整后，同一 focused test 通过，21 个 product-structure 测试通过。
+- Browser smoke over `/data-quality/versions`, `/data-quality/comparison-runs/RUN-QUERY-001`, `/data-quality/review-cases`, and `/data-quality/review-cases/CASE-QUERY-001` confirmed result pages no longer show `导入批次` parent Breadcrumb.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

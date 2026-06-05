@@ -19,6 +19,17 @@
 
 ### 2026-06-05
 
+- task_id: `IM151`
+- source_ids:
+  - `R851`
+- story_ids:
+  - `US771`
+- action: 降级 data-quality 结果页可见父级抽象。
+- status: `done`
+- notes: 业务版本列表、对比运行详情、复核案例列表和复核案例详情不再把 `导入批次` 作为 Breadcrumb 父级；复核案例详情保留到复核列表的二级关系；批次处理、上传、字段映射模板页面继续保留兼容路由和批次/模板上下文；本轮不新增导航项，不删除 `/data-quality/**` 路由，不改后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
 - task_id: `IM150`
 - source_ids:
   - `R850`

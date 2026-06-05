@@ -64,6 +64,29 @@ status: "done"
 notes: "IM150 已完成：通用批次台账不再暴露上传主入口，预测、排班、登录/状态日志导入动作已归入各自页面 Header actions。"
 ```
 
+### US771 - data-quality 结果页抽象降级
+
+```yaml
+id: US771
+requirement_ids:
+  - R851
+module: "结果链路 / 页面层级"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望业务版本、对比运行和复核案例页面不要继续表现为导入批次模块下的子页，以便这些结果链路像业务结果回看页面，而不是一个额外的质量中心或导入中心模块。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/data-quality/versions` Breadcrumb 不再把 `导入批次` 作为父级。"
+  - "`/data-quality/comparison-runs/[runId]` Breadcrumb 不再把 `导入批次` 作为父级。"
+  - "`/data-quality/review-cases` 和 `/data-quality/review-cases/[caseId]` Breadcrumb 不再把 `导入批次` 作为父级。"
+  - "批次处理、上传、模板维护页面仍保留兼容路由和批次上下文，不在本轮拆路由。"
+  - "本轮不新增导航项，不删除 `/data-quality/**` 路由，不改后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US770"
+status: "done"
+notes: "IM151 已完成：结果类页面不再显示 `导入批次` 父级，复核详情保留到复核列表的二级关系。"
+```
+
 ### US768 - 旧全局搜索 API 清理
 
 ```yaml

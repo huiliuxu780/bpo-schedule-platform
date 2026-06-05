@@ -39,7 +39,6 @@ export default async function ComparisonRunDetailPage({
     <AppShell
       title="对比运行详情"
       breadcrumbItems={[
-        { label: "导入批次", href: "/data-quality" },
         { label: "对比运行详情" },
       ]}
     >

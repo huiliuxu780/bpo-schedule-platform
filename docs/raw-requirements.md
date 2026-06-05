@@ -41,6 +41,19 @@ status: "done"
 notes: "IM150 已完成：data-quality 作为导入批次台账不再提供通用 `上传 CSV` 主按钮；预测、排班、登录/状态日志页面级导入动作进入 Header actions 并暂时复用现有预选文件类型上传路由；真正的业务 step-by-step 导入弹窗留给后续复用任务。"
 ```
 
+### R851 - data-quality 结果页抽象降级
+
+```yaml
+id: R851
+module: "结果链路 / 页面层级"
+description: "PM 明确不接受把导入、版本、对比、复核都包装成一个 `质量中心` 或 `导入中心` 大模块。Sidebar 已经隐藏 data-quality 类一级入口，但业务版本、对比运行、复核案例等结果类页面的 Breadcrumb 仍把 `导入批次` 当作父级模块。需要短期保留兼容路由，同时降低可见模块抽象：批次处理页仍归批次，结果类页面直接呈现自身页面身份，不再表现为导入批次父模块下的子页。"
+source: "PM approved continuing after IM150 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM151 已完成：业务版本列表、对比运行详情、复核案例列表和复核案例详情不再把 `导入批次` 作为 Breadcrumb 父级；批次处理、上传和模板页面继续保留兼容路由和批次上下文；未改结果查询、后端 route、schema/migration、依赖或权限/审批/导出/批量等能力。"
+```
+
 ### R848 - 旧全局搜索 API 清理
 
 ```yaml

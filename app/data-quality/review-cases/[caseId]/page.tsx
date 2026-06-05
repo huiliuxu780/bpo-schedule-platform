@@ -44,7 +44,6 @@ export default async function ReviewCaseDetailPage({
     <AppShell
       title="复核案例详情"
       breadcrumbItems={[
-        { label: "导入批次", href: "/data-quality" },
         { label: "复核案例", href: "/data-quality/review-cases" },
         { label: "复核案例详情" },
       ]}
