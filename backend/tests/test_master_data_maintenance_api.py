@@ -262,6 +262,59 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
         self.assertIsNone(rows[0].workplace_name)
         self.assertEqual(rows[0].skills, [])
 
+    def test_list_skill_references_tolerates_legacy_local_schema_without_category(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'legacy-skills.db'}"
+            repository = MasterDataPersistenceRepository(database_url)
+            with repository.engine.begin() as connection:
+                connection.execute(
+                    text(
+                        """
+                        CREATE TABLE master_data_skills (
+                            skill_id VARCHAR(80) NOT NULL PRIMARY KEY,
+                            skill_name VARCHAR(255) NOT NULL,
+                            status VARCHAR(20) NOT NULL,
+                            effective_from VARCHAR(20) NOT NULL,
+                            effective_to VARCHAR(20) NOT NULL,
+                            batch_id VARCHAR(80) NOT NULL
+                        )
+                        """
+                    )
+                )
+                connection.execute(
+                    text(
+                        """
+                        INSERT INTO master_data_skills (
+                            skill_id,
+                            skill_name,
+                            status,
+                            effective_from,
+                            effective_to,
+                            batch_id
+                        )
+                        VALUES (
+                            'L1-CN',
+                            '中文一线',
+                            'active',
+                            '2026-05-01',
+                            '2026-12-31',
+                            'BATCH-LEGACY'
+                        )
+                        """
+                    )
+                )
+
+            with patch(
+                "backend.app.main.MasterDataPersistenceRepository",
+                return_value=repository,
+            ):
+                response = list_master_data_references("skills")
+
+        self.assertEqual(len(response.items), 1)
+        self.assertEqual(response.items[0].reference_id, "L1-CN")
+        self.assertEqual(response.items[0].reference_name, "中文一线")
+        self.assertIsNone(response.items[0].skill_category)
+
     def test_create_employee_returns_maintenance_response(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance-api.db'}"

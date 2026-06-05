@@ -323,6 +323,8 @@ class MasterDataPersistenceRepository:
     ) -> list[MasterDataReferenceRecord]:
         entity_class, id_field, name_field = _reference_config(reference_type)
         with self.session_factory() as session:
+            if entity_class is SkillEntity and not _has_skill_category_schema(session):
+                return _legacy_skill_reference_rows(session)
             rows = session.scalars(
                 select(entity_class).order_by(getattr(entity_class, id_field))
             ).all()
@@ -678,6 +680,38 @@ def _has_enriched_employee_list_schema(session: Session) -> bool:
     return {"employee_type", "organization_id", "workplace_id"}.issubset(
         employee_columns
     ) and "skill_category" in skill_columns
+
+
+def _has_skill_category_schema(session: Session) -> bool:
+    inspector = inspect_schema(session.bind)
+    skill_columns = {
+        column["name"] for column in inspector.get_columns("master_data_skills")
+    }
+    return "skill_category" in skill_columns
+
+
+def _legacy_skill_reference_rows(session: Session) -> list[MasterDataReferenceRecord]:
+    rows = session.execute(
+        text(
+            """
+            SELECT skill_id, skill_name, status, effective_from, effective_to, batch_id
+            FROM master_data_skills
+            ORDER BY skill_id
+            """
+        )
+    ).mappings()
+    return [
+        MasterDataReferenceRecord(
+            reference_id=row["skill_id"],
+            reference_name=row["skill_name"],
+            status=row["status"],
+            effective_from=row["effective_from"],
+            effective_to=row["effective_to"],
+            batch_id=row["batch_id"],
+            skill_category=None,
+        )
+        for row in rows
+    ]
 
 
 def _legacy_employee_list_rows(session: Session) -> list[MasterDataEmployeeListRow]:

@@ -23,6 +23,7 @@ import {
   buildImportComparisonRunsUrl,
   buildImportFieldMappingTemplatesUrl,
   buildImportReviewCasesUrl,
+  formatImportBatchFileDisplayName,
   formatImportBatchDisplayLabel,
   formatImportApplicationStatus,
   formatImportFileType,
@@ -523,7 +524,10 @@ function BatchDetailHeader({
       <CardContent>
         {batch ? (
           <div className="grid gap-3 text-sm md:grid-cols-4">
-            <HeaderMetric label="文件" value={batch.file_name} />
+            <HeaderMetric
+              label="文件"
+              value={formatImportBatchFileDisplayName(batch.file_name)}
+            />
             <HeaderMetric
               label="业务日期"
               value={`${batch.business_date_from} 至 ${batch.business_date_to}`}

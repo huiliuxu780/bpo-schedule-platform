@@ -4,6 +4,7 @@ import {
   type ImportBatchPersistenceDetail,
   type ImportBatchRowResult,
   type ImportQualityExceptionTrace,
+  formatImportBatchFileDisplayName,
   formatImportBatchDisplayLabel,
   formatImportFileType,
   formatImportProcessingStatus,
@@ -108,7 +109,7 @@ export function ImportCenterBatchDetailPanel({
                 />
                 <TraceMetric
                   label="文件"
-                  value={`${detail.batch.file_name} · ${formatImportFileType(detail.batch.file_type)}`}
+                  value={`${formatImportBatchFileDisplayName(detail.batch.file_name)} · ${formatImportFileType(detail.batch.file_type)}`}
                 />
               </div>
             </section>

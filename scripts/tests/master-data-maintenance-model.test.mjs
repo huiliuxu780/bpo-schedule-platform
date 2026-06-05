@@ -110,12 +110,21 @@ test("master data maintenance resolves known entity keys", () => {
 });
 
 test("master data entity source context keeps list source state only", () => {
-  const context = summarizeMasterDataEntitySourceContext("bindings", [baseBatch]);
+  const context = summarizeMasterDataEntitySourceContext("bindings", [
+    {
+      ...baseBatch,
+      batch_id: "BATCH-IM083-SMOKE-002",
+      import_version_id: "BATCH-IM083-SMOKE-002::v1",
+    },
+  ]);
 
   assert.equal(context.entity.label, "绑定关系");
   assert.equal(context.title, "绑定关系");
-  assert.equal(context.sourceVersionLabel, "BATCH-MD-001::v1");
-  assert.equal(context.sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
+  assert.equal(context.sourceVersionLabel, "BATCH-业务-002::v1");
+  assert.equal(
+    context.sourceBatchHref,
+    "/data-quality/import-batches/BATCH-IM083-SMOKE-002",
+  );
   assert.equal(context.agentSubmitSourceBatchId, null);
   assert.equal("workspaceTabs" in context, false);
   assert.equal("maintenanceActions" in context, false);
@@ -268,12 +277,12 @@ test("reference master data management summarizes list rows by object type", () 
       skill_category: "ticket",
     },
     {
-      reference_id: "SKILL-ONLINE",
-      reference_name: "在线接待",
+      reference_id: "SKILL-IM083-ONLINE",
+      reference_name: "IM083在线接待",
       status: "active",
       effective_from: "2026-05-01",
       effective_to: "2026-10-31",
-      batch_id: "BATCH-MD-000",
+      batch_id: "BATCH-IM083-SMOKE-002",
       skill_category: "online",
     },
   ]);
@@ -284,7 +293,8 @@ test("reference master data management summarizes list rows by object type", () 
   assert.equal(summary.frozenRecords, 1);
   assert.deepEqual(
     summary.rows.map((row) => [
-      row.reference_id,
+      row.display.referenceIdLabel,
+      row.display.referenceNameLabel,
       row.display.statusLabel,
       row.display.skillCategoryLabel,
       row.display.effectivePeriodLabel,
@@ -292,14 +302,16 @@ test("reference master data management summarizes list rows by object type", () 
     ]),
     [
       [
-        "SKILL-ONLINE",
+        "SKILL-业务-ONLINE",
+        "业务在线接待",
         "生效",
         "在线技能组",
         "2026-05-01 至 2026-10-31",
-        "BATCH-MD-000",
+        "BATCH-业务-002",
       ],
       [
         "SKILL-TICKET",
+        "集中退换工单",
         "冻结",
         "工单技能组",
         "2026-06-01 至 2026-12-31",
@@ -323,9 +335,9 @@ test("binding master data management summarizes relationship list rows", () => {
       batch_id: "BATCH-MD-002",
     },
     {
-      binding_id: "BIND-001",
+      binding_id: "BIND-IM083-001",
       employee_id: "A-2001",
-      supplier_id: "SUP-001",
+      supplier_id: "SUP-IM083-READY",
       workplace_id: "SH-01",
       project_id: "PROJ-001",
       skill_id: "SKILL-ONLINE",
@@ -339,14 +351,14 @@ test("binding master data management summarizes relationship list rows", () => {
   assert.equal(summary.totalRecords, 2);
   assert.deepEqual(
     summary.rows.map((row) => [
-      row.binding_id,
-      row.employee_id,
+      row.display.bindingLabel,
+      row.display.supplierLabel,
       row.display.effectivePeriodLabel,
       row.display.sourceBatchLabel,
     ]),
     [
-      ["BIND-001", "A-2001", "2026-05-01 至 2026-10-31", "BATCH-MD-001"],
-      ["BIND-002", "A-2002", "2026-06-01 至 2026-12-31", "BATCH-MD-002"],
+      ["BIND-002", "SUP-002", "2026-06-01 至 2026-12-31", "BATCH-MD-002"],
+      ["BIND-业务-001", "SUP-业务-READY", "2026-05-01 至 2026-10-31", "BATCH-MD-001"],
     ],
   );
 });

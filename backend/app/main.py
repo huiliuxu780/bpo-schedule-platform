@@ -97,7 +97,7 @@ from backend.app.repository import (
 app = FastAPI(
     title="BPO Schedule Platform API",
     version="0.1.0",
-    description="Read-only MVP API for BPO WFM schedule plans.",
+    description="Local API for BPO WFM schedule plans.",
 )
 
 

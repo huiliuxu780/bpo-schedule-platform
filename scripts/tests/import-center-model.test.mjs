@@ -33,6 +33,8 @@ import {
   formatFieldMappingTemplateSummary,
   formatImportRowErrorField,
   formatImportRowStatus,
+  formatImportBatchDisplayLabel,
+  formatImportBatchFileDisplayName,
   summarizeImportApplyActionGuidance,
   summarizeImportApplicationVisibility,
   summarizeImportAppliedResultCard,
@@ -120,6 +122,21 @@ test("import center model formats file types for business-facing UI", () => {
   assert.equal(formatImportFileType("demand_forecast"), "需求预测");
   assert.equal(formatImportFileType("login_log"), "登录日志");
   assert.equal(formatImportFileType("status_log"), "状态日志");
+});
+
+test("import center display labels hide task-coded local smoke identifiers", () => {
+  assert.equal(
+    formatImportBatchDisplayLabel("BATCH-IM083-SMOKE-002"),
+    "BATCH-业务-002",
+  );
+  assert.equal(
+    formatImportBatchFileDisplayName("im083-smoke-ready.csv"),
+    "业务-ready.csv",
+  );
+  assert.equal(
+    formatImportBatchFileDisplayName("template-upload.csv"),
+    "template-upload.csv",
+  );
 });
 
 test("import center summary uses live batch rows without sample data", () => {

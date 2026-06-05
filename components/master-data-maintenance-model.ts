@@ -1,9 +1,18 @@
 import type { ImportBatchListRow } from "@/components/import-center-model"
 
 const taskCodeLabelPattern = /\b(?:F|B|Q|IM|US|DB)\d{3}\b/g
+const smokeLabelPattern = /-SMOKE(?=-|\b)/gi
 
 function formatImportBatchDisplayLabel(batchId: string): string {
-  return batchId.replace(taskCodeLabelPattern, "业务")
+  return batchId
+    .replace(taskCodeLabelPattern, "业务")
+    .replace(smokeLabelPattern, "")
+}
+
+function formatMasterDataVisibleValue(value: string): string {
+  return value
+    .replace(taskCodeLabelPattern, "业务")
+    .replace(smokeLabelPattern, "")
 }
 
 export type MasterDataMaintenanceTone = "ready" | "blocked" | "empty"
@@ -101,6 +110,8 @@ export type MasterDataReferenceListRow = {
 }
 
 export type MasterDataReferenceListDisplay = {
+  referenceIdLabel: string
+  referenceNameLabel: string
   statusLabel: string
   skillCategoryLabel: string
   effectivePeriodLabel: string
@@ -133,6 +144,12 @@ export type MasterDataBindingListRow = {
 }
 
 export type MasterDataBindingListDisplay = {
+  bindingLabel: string
+  employeeLabel: string
+  supplierLabel: string
+  workplaceLabel: string
+  projectLabel: string
+  skillLabel: string
   effectivePeriodLabel: string
   sourceBatchLabel: string
 }
@@ -347,8 +364,9 @@ export function summarizeMasterDataMaintenanceWorkbench(
     latestAppliedBatch,
     hasPendingFreshness
   )
-  const sourceVersionLabel =
-    latestAppliedBatch?.import_version_id ?? "暂无主数据业务版本"
+  const sourceVersionLabel = latestAppliedBatch?.import_version_id
+    ? formatMasterDataVisibleValue(latestAppliedBatch.import_version_id)
+    : "暂无主数据业务版本"
   const latestBatchLabel = latestBatch
     ? formatImportBatchDisplayLabel(latestBatch.batch_id)
     : "暂无主数据批次"
@@ -421,10 +439,13 @@ export function summarizeMasterDataEntitySourceContext(
   }
 
   const workbench = summarizeMasterDataMaintenanceWorkbench(batches)
+  const latestMasterDataBatch = [...batches]
+    .filter((batch) => batch.file_type === "master_data")
+    .sort((left, right) => right.uploaded_at.localeCompare(left.uploaded_at))[0] ?? null
   const isSourceReady = workbench.tone === "ready"
   const agentSubmitSourceBatchId =
-    entity.key === "agents" && workbench.latestBatchLabel !== "暂无主数据批次"
-      ? workbench.latestBatchLabel
+    entity.key === "agents" && latestMasterDataBatch
+      ? latestMasterDataBatch.batch_id
       : null
 
   return {
@@ -629,6 +650,8 @@ export function summarizeMasterDataReferenceManagement(
     .map((reference) => ({
       ...reference,
       display: {
+        referenceIdLabel: formatMasterDataVisibleValue(reference.reference_id),
+        referenceNameLabel: formatMasterDataVisibleValue(reference.reference_name),
         statusLabel: formatMasterDataEmployeeStatus(reference.status),
         skillCategoryLabel:
           entity.key === "skills"
@@ -638,7 +661,7 @@ export function summarizeMasterDataReferenceManagement(
           reference.effective_from,
           reference.effective_to
         ),
-        sourceBatchLabel: reference.batch_id,
+        sourceBatchLabel: formatImportBatchDisplayLabel(reference.batch_id),
       },
     }))
 
@@ -660,11 +683,17 @@ export function summarizeMasterDataBindingManagement(
     .map((binding) => ({
       ...binding,
       display: {
+        bindingLabel: formatMasterDataVisibleValue(binding.binding_id),
+        employeeLabel: formatMasterDataVisibleValue(binding.employee_id),
+        supplierLabel: formatMasterDataVisibleValue(binding.supplier_id),
+        workplaceLabel: formatMasterDataVisibleValue(binding.workplace_id),
+        projectLabel: formatMasterDataVisibleValue(binding.project_id),
+        skillLabel: formatMasterDataVisibleValue(binding.skill_id),
         effectivePeriodLabel: formatEffectivePeriod(
           binding.effective_from,
           binding.effective_to
         ),
-        sourceBatchLabel: binding.batch_id,
+        sourceBatchLabel: formatImportBatchDisplayLabel(binding.batch_id),
       },
     }))
 
@@ -929,8 +958,8 @@ function resolveMasterDataMaintenanceDetail(
   }
 
   if (hasPendingFreshness) {
-    return `当前来源为 ${latestAppliedBatch.import_version_id}，最新主数据批次尚未应用：${latestBatch ? formatImportBatchDisplayLabel(latestBatch.batch_id) : "未知批次"}。`
+    return `当前来源为 ${formatMasterDataVisibleValue(latestAppliedBatch.import_version_id ?? "")}，最新主数据批次尚未应用：${latestBatch ? formatImportBatchDisplayLabel(latestBatch.batch_id) : "未知批次"}。`
   }
 
-  return `当前来源为已应用版本 ${latestAppliedBatch.import_version_id}，来源批次 ${formatImportBatchDisplayLabel(latestAppliedBatch.batch_id)}。`
+  return `当前来源为已应用版本 ${formatMasterDataVisibleValue(latestAppliedBatch.import_version_id ?? "")}，来源批次 ${formatImportBatchDisplayLabel(latestAppliedBatch.batch_id)}。`
 }

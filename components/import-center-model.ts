@@ -100,13 +100,30 @@ export type ImportBatchSummary = {
 }
 
 const taskCodeLabelPattern = /\b(?:F|B|Q|IM|US|DB)\d{3}\b/g
+const taskCodeFileNamePattern = /\b(?:F|B|Q|IM|US|DB)\d{3}(?=[-_])/gi
+const smokeLabelPattern = /-SMOKE(?=-|\b)/gi
+const smokeFileNamePattern = /[-_]smoke(?=[-_.])/gi
 
 export function formatImportBatchDisplayLabel(batchId: string | null | undefined): string {
   if (!batchId) {
     return "暂无批次"
   }
 
-  return batchId.replace(taskCodeLabelPattern, "业务")
+  return batchId
+    .replace(taskCodeLabelPattern, "业务")
+    .replace(smokeLabelPattern, "")
+}
+
+export function formatImportBatchFileDisplayName(
+  fileName: string | null | undefined
+): string {
+  if (!fileName) {
+    return "未命名文件"
+  }
+
+  return fileName
+    .replace(taskCodeFileNamePattern, "业务")
+    .replace(smokeFileNamePattern, "")
 }
 
 export type ImportBatchFilterValue = "all"

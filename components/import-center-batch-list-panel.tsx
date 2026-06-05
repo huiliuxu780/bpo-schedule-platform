@@ -8,6 +8,7 @@ import {
   buildImportBatchProcessingHref,
   buildImportUploadWorkspaceHref,
   filterImportBatches,
+  formatImportBatchFileDisplayName,
   formatImportBatchDisplayLabel,
   formatImportApplicationStatus,
   formatImportFileType,
@@ -126,7 +127,7 @@ export function ImportCenterBatchListPanel({
                             {formatImportBatchDisplayLabel(batch.batch_id)}
                           </span>
                           <span className="max-w-[320px] truncate text-xs text-muted-foreground">
-                            {batch.file_name}
+                            {formatImportBatchFileDisplayName(batch.file_name)}
                           </span>
                         </Link>
                       </TableCell>

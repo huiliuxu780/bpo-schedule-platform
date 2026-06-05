@@ -3440,3 +3440,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM137 Runtime Residue Fix Follow-up
+
+- branch_name: `codex/im136-business-first-ia-cleanup`
+- base_main_commit: `a4c4221`
+- stacked_on: `1477212 fix: clean visible implementation residue`
+- remote_status: `1477212 was pushed; this runtime residue fix is local until final check/commit/push.`
+- scope: PM-requested continuation after checking the current app. Fix `/master-data/skills` 500 against an older local SQLite schema without mutating `.local`, mask task-code/smoke identifiers in visible import batch/file labels and master-data source labels, keep raw IDs for route hrefs and backend writes, and remove the remaining OpenAPI `MVP` description.
+- allowed_files_check: `app/data-quality/[batchId]/page.tsx`, `components/import-center-*`, `components/master-data-maintenance-*`, focused frontend/backend tests, `backend/app/main.py`, `backend/app/master_data_persistence.py`, `docs/current/PROJECT_CONTEXT.md`, and `docs/dev/branch-log.md`; no package/lockfile, schema/migration, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, or charge-factor changes.
+- scope_diff_check: expected runtime compatibility guard, display-only masking helpers, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target import/master-data/product-structure tests passed with 100 Node tests; target backend legacy skills-list compatibility test passed; browser smoke over `/master-data/skills`, `/master-data/vendors`, `/master-data/bindings`, and `/data-quality` found no visible `IM083`, `SMOKE`, smoke CSV names, list-read failure, or 500 text. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, lint, typecheck, Next build, and backend 208 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

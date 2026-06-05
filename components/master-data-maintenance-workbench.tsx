@@ -191,8 +191,12 @@ export function MasterDataReferenceManagementPage({
             <TableBody>
               {listSummary.rows.map((row) => (
                 <TableRow key={row.reference_id}>
-                  <TableCell className="font-medium">{row.reference_name}</TableCell>
-                  <TableCell className="font-mono text-xs">{row.reference_id}</TableCell>
+                  <TableCell className="font-medium">
+                    {row.display.referenceNameLabel}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.referenceIdLabel}
+                  </TableCell>
                   <TableCell>{row.display.skillCategoryLabel}</TableCell>
                   <TableCell>
                     <Badge variant={row.status === "active" ? "outline" : "secondary"}>
@@ -276,12 +280,14 @@ export function MasterDataBindingManagementPage({
             <TableBody>
               {listSummary.rows.map((row) => (
                 <TableRow key={row.binding_id}>
-                  <TableCell className="font-mono text-xs">{row.binding_id}</TableCell>
-                  <TableCell>{row.employee_id}</TableCell>
-                  <TableCell>{row.supplier_id}</TableCell>
-                  <TableCell>{row.workplace_id}</TableCell>
-                  <TableCell>{row.project_id}</TableCell>
-                  <TableCell>{row.skill_id}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.bindingLabel}
+                  </TableCell>
+                  <TableCell>{row.display.employeeLabel}</TableCell>
+                  <TableCell>{row.display.supplierLabel}</TableCell>
+                  <TableCell>{row.display.workplaceLabel}</TableCell>
+                  <TableCell>{row.display.projectLabel}</TableCell>
+                  <TableCell>{row.display.skillLabel}</TableCell>
                   <TableCell>{row.display.effectivePeriodLabel}</TableCell>
                   <TableCell className="font-mono text-xs">
                     {row.display.sourceBatchLabel}
