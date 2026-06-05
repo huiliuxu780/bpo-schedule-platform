@@ -749,6 +749,7 @@ requirements:
   US753: {file: "docs/user-stories.md", requirement_ids: ["R833"], task_ids: ["IM133"], archive_refs: []}
   US754: {file: "docs/user-stories.md", requirement_ids: ["R834"], task_ids: ["IM134"], archive_refs: []}
   US755: {file: "docs/user-stories.md", requirement_ids: ["R835"], task_ids: ["IM135"], archive_refs: []}
+  US761: {file: "docs/user-stories.md", requirement_ids: ["R841"], task_ids: ["IM141"], archive_refs: []}
   IM111: {file: "tasks/backlog.yaml", story_ids: ["US731"], gate: "database-persistence"}
   IM112: {file: "tasks/backlog.yaml", story_ids: ["US732"], gate: "frontend-scaffold"}
   IM113: {file: "tasks/backlog.yaml", story_ids: ["US733"], gate: "frontend-scaffold"}
@@ -774,6 +775,7 @@ requirements:
   IM133: {file: "tasks/backlog.yaml", story_ids: ["US753"], gate: "backend-vertical"}
   IM134: {file: "tasks/backlog.yaml", story_ids: ["US754"], gate: "backend-vertical"}
   IM135: {file: "tasks/backlog.yaml", story_ids: ["US755"], gate: "frontend-scaffold"}
+  IM141: {file: "tasks/backlog.yaml", story_ids: ["US761"], gate: "frontend-scaffold"}
   R811: {file: "docs/raw-requirements.md", story_ids: ["US731"], task_ids: ["IM111"]}
   R812: {file: "docs/raw-requirements.md", story_ids: ["US732"], task_ids: ["IM112"]}
   R813: {file: "docs/raw-requirements.md", story_ids: ["US733"], task_ids: ["IM113"]}
@@ -799,6 +801,7 @@ requirements:
   R833: {file: "docs/raw-requirements.md", story_ids: ["US753"], task_ids: ["IM133"]}
   R834: {file: "docs/raw-requirements.md", story_ids: ["US754"], task_ids: ["IM134"]}
   R835: {file: "docs/raw-requirements.md", story_ids: ["US755"], task_ids: ["IM135"]}
+  R841: {file: "docs/raw-requirements.md", story_ids: ["US761"], task_ids: ["IM141"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"

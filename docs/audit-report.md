@@ -3719,3 +3719,28 @@
 - `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
 - in-app browser smoke：`http://127.0.0.1:3000/actual-logs/production` 命中 `CORN 状态日志生产`、`登录/状态日志生产台账`、`时区只读解释`、`跨天处理边界` 和 `当前不触发比对`，且 `CORN 状态日志` 导航项处于 active 状态。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM141 职场详情页运营主体收敛
+
+#### 审计结论
+
+- `IM141` 已新增 `/master-data/sites/[workplaceId]` 职场子详情页。
+- `/master-data/sites` 仅对职场行提供 `详情` 入口，不恢复独立 `职场运营主体` 或 `绑定关系` 导航。
+- 职场详情页展示职场信息和该职场下的运营主体，运营主体来源限定为现有人员档案与绑定关系读取。
+- 本轮没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子。
+
+#### 风险
+
+- 当前运营主体中的供应商团队只展示供应商 ID；供应商名称、合同、结算比例、最低人力要求需要后续供应商详情/合同任务单独确认。
+- 当前详情页只读，不提供职场编辑或运营主体维护动作。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `summarizeMasterDataWorkplaceDetail`。
+- TDD 红灯：产品结构测试先失败，证明旧代码没有 `/app/master-data/sites/[workplaceId]/page.tsx`。
+- `node --experimental-strip-types --test scripts/tests/master-data-maintenance-model.test.mjs`：通过，17 个 master-data model 测试通过。
+- `node --test scripts/tests/product-structure.test.mjs`：通过，6 个 product-structure 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3000/master-data/sites` 命中职场详情入口；`http://127.0.0.1:3000/master-data/sites/SH-01` 命中 `职场信息` 和 `运营主体`，且未出现独立运营主体/绑定关系入口、合同、结算或最低人力文案。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

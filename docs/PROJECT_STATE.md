@@ -704,3 +704,9 @@ The task was a backend-vertical/frontend form slice. It reused existing employee
 After PM review, `/master-data/agents` still had rough UI details: filter dropdowns were not aligned tightly with the input fields, row-level edit/freeze actions mixed link-button overrides with a small more-action icon, and the row menu exposed an internal deferred-action label. `US755/IM135` is complete. The agent filter dropdown triggers now use the same 32px control height and 14px text rhythm as the inputs, dropdown content opens at the trigger width, row-level edit/freeze/more actions use consistent compact sizing, and the internal "待拆分" menu text was removed.
 
 The task was a frontend-scaffold UI correction only. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM135.
+
+## 2026-06-05 IM141 Workplace Detail Operating Subjects
+
+After PM clarified that workplace operating subjects belong under a specific workplace rather than standalone navigation, `IM141` adds `/master-data/sites/[workplaceId]` as the workplace child-detail page. `/master-data/sites` now links workplace rows into that child page, and the detail renders workplace basics plus operating subjects derived from existing employee and binding data.
+
+The task remained frontend-scaffold/read-only. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Current queue remains empty after IM141.

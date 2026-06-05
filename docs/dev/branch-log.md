@@ -3512,3 +3512,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM141 Workplace Detail Operating Subjects
+
+- branch_name: `codex/im141-workplace-detail`
+- base_main_commit: `3060d9c`
+- stacked_on: `3060d9c fix: remove relationship routes from master data nav`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed workplace child-detail correction. Add `/master-data/sites/[workplaceId]`, link workplace list rows to the child detail, and render operating subjects inside the selected workplace from existing employee and binding sources. Keep `职场运营主体` and `绑定关系` out of sidebar/entity routing.
+- allowed_files_check: `app/master-data/sites/[workplaceId]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, `docs/current/PROJECT_CONTEXT.md`, `docs/PROJECT_STATE.md`, `docs/task-log.md`, `docs/audit-report.md`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected nested workplace detail route, list detail entry, read-only operating-subject table, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED model test first failed because `summarizeMasterDataWorkplaceDetail` did not exist; RED product-structure test then failed because `/app/master-data/sites/[workplaceId]/page.tsx` did not exist. After implementation, target master-data model tests passed with 17 tests, product-structure tests passed with 6 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke over `/master-data/sites` and `/master-data/sites/SH-01` confirmed the list has a detail entry, the detail page shows workplace information and operating subjects, and standalone operator/binding links plus contract/settlement/minimum-staffing copy are absent. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

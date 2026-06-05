@@ -115,6 +115,7 @@ export type MasterDataReferenceListDisplay = {
   skillCategoryLabel: string
   effectivePeriodLabel: string
   sourceBatchLabel: string
+  detailHref: string | null
 }
 
 export type MasterDataReferenceListViewRow = MasterDataReferenceListRow & {
@@ -163,6 +164,54 @@ export type MasterDataReferenceManagementSummary = {
   activeRecords: number
   frozenRecords: number
   rows: MasterDataReferenceListViewRow[]
+}
+
+export type MasterDataWorkplaceBindingRow = {
+  binding_id: string
+  employee_id: string
+  supplier_id: string
+  workplace_id: string
+  skill_id: string
+  effective_from: string
+  effective_to: string
+  batch_id: string
+}
+
+export type MasterDataWorkplaceOperatorSource = "employee" | "binding"
+export type MasterDataWorkplaceOperatorType = "internal" | "supplier"
+
+export type MasterDataWorkplaceOperatorDisplay = {
+  operatorTypeLabel: string
+  operatorNameLabel: string
+  supplierLabel: string
+  statusLabel: string
+  sourceLabel: string
+  effectivePeriodLabel: string
+  sourceBatchLabel: string
+}
+
+export type MasterDataWorkplaceOperatorViewRow = {
+  operator_key: string
+  operator_type: MasterDataWorkplaceOperatorType
+  operator_name: string
+  supplier_id: string | null
+  status: MasterDataAgentMaintenanceStatus
+  source_type: MasterDataWorkplaceOperatorSource
+  effective_from: string
+  effective_to: string
+  batch_id: string
+  display: MasterDataWorkplaceOperatorDisplay
+}
+
+export type MasterDataWorkplaceDetailSummary = {
+  found: boolean
+  title: string
+  backHref: string
+  workplace: MasterDataReferenceListViewRow | null
+  totalOperators: number
+  internalOperators: number
+  supplierOperators: number
+  operatorRows: MasterDataWorkplaceOperatorViewRow[]
 }
 
 export type MasterDataAgentMaintenancePayload = {
@@ -658,6 +707,10 @@ export function summarizeMasterDataReferenceManagement(
           reference.effective_to
         ),
         sourceBatchLabel: formatImportBatchDisplayLabel(reference.batch_id),
+        detailHref:
+          entity.key === "sites"
+            ? `/master-data/sites/${encodeURIComponent(reference.reference_id)}`
+            : null,
       },
     }))
 
@@ -668,6 +721,92 @@ export function summarizeMasterDataReferenceManagement(
     activeRecords: rows.filter((row) => row.status === "active").length,
     frozenRecords: rows.filter((row) => row.status === "frozen").length,
     rows,
+  }
+}
+
+export function summarizeMasterDataWorkplaceDetail({
+  workplaceId,
+  workplaces,
+  employees,
+  bindings,
+}: {
+  workplaceId: string
+  workplaces: MasterDataReferenceListRow[]
+  employees: MasterDataEmployeeListRow[]
+  bindings: MasterDataWorkplaceBindingRow[]
+}): MasterDataWorkplaceDetailSummary {
+  const workplaceSummary = summarizeMasterDataReferenceManagement("sites", workplaces)
+  const workplace =
+    workplaceSummary.rows.find((row) => row.reference_id === workplaceId) ?? null
+
+  if (!workplace) {
+    return {
+      found: false,
+      title: "职场未找到",
+      backHref: "/master-data/sites",
+      workplace: null,
+      totalOperators: 0,
+      internalOperators: 0,
+      supplierOperators: 0,
+      operatorRows: [],
+    }
+  }
+
+  const internalRows = employees
+    .filter(
+      (employee) =>
+        employee.workplace_id === workplace.reference_id &&
+        employee.employee_type === "internal"
+    )
+    .map((employee) =>
+      buildWorkplaceOperatorRow({
+        key: `employee:${employee.employee_id}`,
+        type: "internal",
+        name: employee.employee_name,
+        supplierId: null,
+        status: employee.status,
+        sourceType: "employee",
+        effectiveFrom: employee.effective_from,
+        effectiveTo: employee.effective_to,
+        batchId: employee.batch_id,
+      })
+    )
+
+  const supplierRows = deduplicateWorkplaceSupplierBindings(
+    bindings.filter((binding) => binding.workplace_id === workplace.reference_id)
+  ).map((binding) =>
+    buildWorkplaceOperatorRow({
+      key: `supplier:${binding.supplier_id}:${binding.effective_from}:${binding.effective_to}`,
+      type: "supplier",
+      name: binding.supplier_id,
+      supplierId: binding.supplier_id,
+      status: "active",
+      sourceType: "binding",
+      effectiveFrom: binding.effective_from,
+      effectiveTo: binding.effective_to,
+      batchId: binding.batch_id,
+    })
+  )
+
+  const operatorRows = [...internalRows, ...supplierRows].sort((left, right) => {
+    if (left.operator_type !== right.operator_type) {
+      return left.operator_type === "internal" ? -1 : 1
+    }
+
+    return left.operator_name.localeCompare(right.operator_name)
+  })
+
+  return {
+    found: true,
+    title: workplace.display.referenceNameLabel,
+    backHref: "/master-data/sites",
+    workplace,
+    totalOperators: operatorRows.length,
+    internalOperators: operatorRows.filter((row) => row.operator_type === "internal")
+      .length,
+    supplierOperators: operatorRows.filter((row) => row.operator_type === "supplier")
+      .length,
+    operatorRows,
   }
 }
 
@@ -708,6 +847,74 @@ export function summarizeMasterDataOrganizationManagement(
     frozenRecords: rows.filter((row) => row.status === "frozen").length,
     rows,
   }
+}
+
+function buildWorkplaceOperatorRow({
+  key,
+  type,
+  name,
+  supplierId,
+  status,
+  sourceType,
+  effectiveFrom,
+  effectiveTo,
+  batchId,
+}: {
+  key: string
+  type: MasterDataWorkplaceOperatorType
+  name: string
+  supplierId: string | null
+  status: MasterDataAgentMaintenanceStatus
+  sourceType: MasterDataWorkplaceOperatorSource
+  effectiveFrom: string
+  effectiveTo: string
+  batchId: string
+}): MasterDataWorkplaceOperatorViewRow {
+  return {
+    operator_key: key,
+    operator_type: type,
+    operator_name: name,
+    supplier_id: supplierId,
+    status,
+    source_type: sourceType,
+    effective_from: effectiveFrom,
+    effective_to: effectiveTo,
+    batch_id: batchId,
+    display: {
+      operatorTypeLabel: type === "internal" ? "自有团队" : "供应商团队",
+      operatorNameLabel: formatMasterDataVisibleValue(name),
+      supplierLabel: supplierId ? formatMasterDataVisibleValue(supplierId) : "无供应商",
+      statusLabel: formatMasterDataEmployeeStatus(status),
+      sourceLabel: sourceType === "employee" ? "人员档案" : "人员归属记录",
+      effectivePeriodLabel: formatEffectivePeriod(effectiveFrom, effectiveTo),
+      sourceBatchLabel: formatImportBatchDisplayLabel(batchId),
+    },
+  }
+}
+
+function deduplicateWorkplaceSupplierBindings(
+  bindings: MasterDataWorkplaceBindingRow[]
+) {
+  const bySupplierPeriod = new Map<string, MasterDataWorkplaceBindingRow>()
+
+  for (const binding of bindings) {
+    if (!binding.supplier_id) {
+      continue
+    }
+
+    const key = [
+      binding.supplier_id,
+      binding.effective_from,
+      binding.effective_to,
+      binding.batch_id,
+    ].join(":")
+
+    if (!bySupplierPeriod.has(key)) {
+      bySupplierPeriod.set(key, binding)
+    }
+  }
+
+  return [...bySupplierPeriod.values()]
 }
 
 function normalizeMasterDataAgentManagementFilters(

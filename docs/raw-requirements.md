@@ -2809,3 +2809,16 @@ version: "1.0"
 status: "done"
 notes: "IM135 已完成：人员筛选下拉统一为 32px 高并让弹层宽度对齐触发器；表格行内编辑/冻结/更多操作统一为小尺寸操作，并移除内部“待拆分”文案。"
 ```
+
+### R841 - 职场详情页承载运营主体
+
+```yaml
+id: R841
+module: "主数据维护"
+description: "PM 确认职场是地点对象，职场下的自有团队和供应商团队不应作为独立导航或二级实体暴露，而应收敛到具体职场的详情页。需要在职场列表进入单个职场详情，并在详情中只读展示该职场下的运营主体来源。"
+source: "PM clarified workplace operating subjects belong in workplace detail on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM141 已完成：/master-data/sites 列表新增详情入口，/master-data/sites/[workplaceId] 展示职场信息和该职场下的运营主体；不恢复独立职场运营主体或绑定关系导航。"
+```

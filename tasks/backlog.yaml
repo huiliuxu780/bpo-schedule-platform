@@ -9455,3 +9455,45 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已统一 /master-data/agents 筛选下拉和行内操作尺寸，移除内部待拆分文案，并完成浏览器实际样式检查。"
+  - id: IM141
+    title: "职场详情页运营主体"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM135"]
+    allowed_files:
+      - "app/master-data/sites/[workplaceId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/sites 的职场行提供详情入口，进入 /master-data/sites/[workplaceId]。"
+      - "职场详情页展示职场基础信息、运营主体总数、自有团队数和供应商团队数。"
+      - "运营主体只读展示在该职场详情内，来源限定为现有人员档案和人员归属记录。"
+      - "不恢复独立职场运营主体或绑定关系导航/实体页。"
+      - "不新增后端、数据库、权限、审批、导出、批量操作、自动排班、生产公式、结算、供应商合同、最低人力或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到批量维护、审批、导出、权限、自动排班、生产公式、结算、供应商合同、最低人力或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已新增 /master-data/sites/[workplaceId] 子详情页，并将职场运营主体只读展示收敛到具体职场详情内。"

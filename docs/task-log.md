@@ -1851,3 +1851,14 @@
 - action: 增加状态字典与异常解释安全壳。
 - status: `done`
 - notes: `/actual-logs/production/[batchId]` 在处理解释页新增状态字典与异常解释安全壳，展示状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界；字典变更、异常规则提交和实际工时重算动作均保持禁用；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM141`
+- source_ids:
+  - `R841`
+- story_ids:
+  - `US761`
+- action: 新增职场详情页并把运营主体收敛到职场子页面。
+- status: `done`
+- notes: `/master-data/sites` 的职场列表行新增 `详情` 入口，进入 `/master-data/sites/[workplaceId]` 后展示职场基础信息和该职场下的运营主体；运营主体只从现有人员档案与绑定关系读取，不恢复 `职场运营主体` 或 `绑定关系` 独立导航/实体页；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子；current queue 与 active tasks 保持为空。

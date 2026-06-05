@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdir, readFile, stat } from "node:fs/promises";
+import { access, readdir, readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 const appRootPath = new URL("../../app/", import.meta.url);
@@ -8,6 +8,7 @@ const dashboardPagePath = new URL("../../app/dashboard/page.tsx", import.meta.ur
 const appSidebarPath = new URL("../../components/app-sidebar.tsx", import.meta.url);
 const masterDataIndexPagePath = new URL("../../app/master-data/page.tsx", import.meta.url);
 const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page.tsx", import.meta.url);
+const masterDataWorkplaceDetailPagePath = new URL("../../app/master-data/sites/[workplaceId]/page.tsx", import.meta.url);
 const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions.ts", import.meta.url);
 const masterDataModelPath = new URL("../../components/master-data-maintenance-model.ts", import.meta.url);
 
@@ -191,4 +192,23 @@ test("master data product surface does not expose project as a maintenance objec
   assert.equal(entitySource.includes('"projects", "skills"'), false);
   assert.equal(entitySource.includes('entity.key === "site-operators"'), false);
   assert.equal(entitySource.includes('entity.key === "bindings"'), false);
+});
+
+test("workplace operating subjects stay nested under workplace detail", async () => {
+  await access(masterDataWorkplaceDetailPagePath);
+
+  const sourceFiles = [
+    ...await collectSourceFiles(appRootPath),
+    ...await collectSourceFiles(componentsRootPath),
+  ];
+  const filePaths = sourceFiles.map((fileUrl) => fileUrl.pathname);
+
+  assert.equal(
+    filePaths.some((path) => path.endsWith("/app/master-data/site-operators/page.tsx")),
+    false,
+  );
+  assert.equal(
+    filePaths.some((path) => path.endsWith("/app/master-data/bindings/page.tsx")),
+    false,
+  );
 });

@@ -18,6 +18,7 @@ import {
   type MasterDataEntitySourceContext,
   type MasterDataOrganizationManagementSummary,
   type MasterDataReferenceManagementSummary,
+  type MasterDataWorkplaceDetailSummary,
 } from "@/components/master-data-maintenance-model"
 import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -135,6 +136,8 @@ export function MasterDataReferenceManagementPage({
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
 }) {
+  const hasDetailRows = listSummary.rows.some((row) => row.display.detailHref)
+
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
       <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
@@ -186,6 +189,7 @@ export function MasterDataReferenceManagementPage({
                 <TableHead>状态</TableHead>
                 <TableHead>有效期</TableHead>
                 <TableHead>来源批次</TableHead>
+                {hasDetailRows ? <TableHead className="text-right">操作</TableHead> : null}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -204,6 +208,134 @@ export function MasterDataReferenceManagementPage({
                     </Badge>
                   </TableCell>
                   <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.sourceBatchLabel}
+                  </TableCell>
+                  {hasDetailRows ? (
+                    <TableCell className="text-right">
+                      {row.display.detailHref ? (
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>详情</Link>
+                        </Button>
+                      ) : null}
+                    </TableCell>
+                  ) : null}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </section>
+    </main>
+  )
+}
+
+export function MasterDataWorkplaceDetailPage({
+  summary,
+  detailSummary,
+  error,
+}: {
+  summary: MasterDataEntitySourceContext
+  detailSummary: MasterDataWorkplaceDetailSummary
+  error: string | null
+}) {
+  const workplace = detailSummary.workplace
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      <section className="flex flex-col gap-3 rounded-lg border bg-background p-4">
+        <Button asChild size="sm" variant="ghost" className="w-fit px-0">
+          <Link href={detailSummary.backHref}>
+            <ArrowLeft data-icon="inline-start" />
+            返回职场
+          </Link>
+        </Button>
+        <div className="grid gap-1">
+          <h1 className="text-xl font-semibold tracking-normal">
+            {detailSummary.title}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            当前基于 {summary.sourceVersionLabel} 展示该职场基础信息和运营主体。
+          </p>
+        </div>
+      </section>
+
+      {error ? <MasterDataListError title="职场详情读取失败" error={error} /> : null}
+
+      <section className="grid gap-3 md:grid-cols-3">
+        <MetricCard
+          label="运营主体"
+          value={detailSummary.totalOperators.toLocaleString("zh-CN")}
+          detail="该职场下的团队来源"
+          tone={detailSummary.totalOperators > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="自有团队"
+          value={detailSummary.internalOperators.toLocaleString("zh-CN")}
+          detail="来自人员档案"
+          tone={detailSummary.internalOperators > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="供应商团队"
+          value={detailSummary.supplierOperators.toLocaleString("zh-CN")}
+          detail="来自人员归属记录"
+          tone={detailSummary.supplierOperators > 0 ? "ready" : "default"}
+        />
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">职场信息</h2>
+        {workplace ? (
+          <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+            <ReadOnlyField label="职场名称" value={workplace.display.referenceNameLabel} />
+            <ReadOnlyField label="职场编码" value={workplace.display.referenceIdLabel} />
+            <ReadOnlyField label="状态" value={workplace.display.statusLabel} />
+            <ReadOnlyField label="地点属性" value={workplace.display.skillCategoryLabel} />
+            <ReadOnlyField label="有效期" value={workplace.display.effectivePeriodLabel} />
+            <ReadOnlyField label="来源批次" value={workplace.display.sourceBatchLabel} />
+          </div>
+        ) : null}
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">运营主体</h2>
+        {detailSummary.operatorRows.length === 0 ? (
+          <div className="rounded-md border p-4 text-sm text-muted-foreground">
+            暂无该职场运营主体记录。
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>归属类型</TableHead>
+                <TableHead>主体</TableHead>
+                <TableHead>供应商</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>有效期</TableHead>
+                <TableHead>来源</TableHead>
+                <TableHead>来源批次</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {detailSummary.operatorRows.map((row) => (
+                <TableRow key={row.operator_key}>
+                  <TableCell>{row.display.operatorTypeLabel}</TableCell>
+                  <TableCell className="font-medium">
+                    {row.display.operatorNameLabel}
+                  </TableCell>
+                  <TableCell>{row.display.supplierLabel}</TableCell>
+                  <TableCell>
+                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                      {row.display.statusLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell>{row.display.sourceLabel}</TableCell>
                   <TableCell className="font-mono text-xs">
                     {row.display.sourceBatchLabel}
                   </TableCell>
@@ -311,6 +443,21 @@ export function MasterDataOrganizationManagementPage({
         )}
       </section>
     </main>
+  )
+}
+
+function ReadOnlyField({
+  label,
+  value,
+}: {
+  label: string
+  value: string
+}) {
+  return (
+    <div className="grid gap-1 rounded-md border bg-muted/20 p-3">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="min-w-0 break-words font-medium">{value}</span>
+    </div>
   )
 }
 

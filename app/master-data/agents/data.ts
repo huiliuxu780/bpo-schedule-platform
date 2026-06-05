@@ -7,6 +7,7 @@ import type {
   MasterDataMaintenanceEntityKey,
   MasterDataOrganizationListRow,
   MasterDataReferenceListRow,
+  MasterDataWorkplaceBindingRow,
 } from "@/components/master-data-maintenance-model"
 
 export type ApiResult<T> = {
@@ -99,6 +100,37 @@ export async function fetchMasterDataOrganizations(): Promise<
 
     const payload = (await response.json()) as {
       items?: MasterDataOrganizationListRow[]
+    }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
+export async function fetchMasterDataWorkplaceBindings(): Promise<
+  ApiResult<MasterDataWorkplaceBindingRow[]>
+> {
+  try {
+    const response = await fetch(buildImportApiUrl("/api/v1/master-data/bindings"), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `职场运营主体来源读取失败：${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as {
+      items?: MasterDataWorkplaceBindingRow[]
     }
 
     return {
