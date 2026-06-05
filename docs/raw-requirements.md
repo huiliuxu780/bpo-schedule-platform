@@ -2822,3 +2822,16 @@ version: "1.0"
 status: "done"
 notes: "IM141 已完成：/master-data/sites 列表新增详情入口，/master-data/sites/[workplaceId] 展示职场信息和该职场下的运营主体；不恢复独立职场运营主体或绑定关系导航。"
 ```
+
+### R842 - 供应商详情页承载服务职场
+
+```yaml
+id: R842
+module: "主数据维护"
+description: "供应商不应只停留在列表行。维护人员需要从供应商列表进入单个供应商详情，查看供应商基础信息，以及该供应商当前服务哪些职场。合同、结算比例和最低人力属于后续独立任务，现阶段只保留只读边界，不提前实现。"
+source: "PM approved continuing supplier detail after workplace detail on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM142 已完成：/master-data/vendors 列表新增详情入口，/master-data/vendors/[vendorId] 展示供应商信息和服务职场；不实现合同、结算比例或最低人力。"
+```

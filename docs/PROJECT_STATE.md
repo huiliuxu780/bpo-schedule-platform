@@ -710,3 +710,9 @@ The task was a frontend-scaffold UI correction only. It did not add backend rout
 After PM clarified that workplace operating subjects belong under a specific workplace rather than standalone navigation, `IM141` adds `/master-data/sites/[workplaceId]` as the workplace child-detail page. `/master-data/sites` now links workplace rows into that child page, and the detail renders workplace basics plus operating subjects derived from existing employee and binding data.
 
 The task remained frontend-scaffold/read-only. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Current queue remains empty after IM141.
+
+## 2026-06-05 IM142 Vendor Detail Service Workplaces
+
+After the workplace detail slice, `IM142` adds `/master-data/vendors/[vendorId]` as the supplier child-detail page. `/master-data/vendors` now links supplier rows into that child page, and the detail renders supplier basics plus service workplaces derived from existing personnel ownership records. Service workplace rows link back to the corresponding workplace detail when available.
+
+The task remained frontend-scaffold/read-only. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Current queue remains empty after IM142.

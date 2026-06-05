@@ -9,6 +9,7 @@ const appSidebarPath = new URL("../../components/app-sidebar.tsx", import.meta.u
 const masterDataIndexPagePath = new URL("../../app/master-data/page.tsx", import.meta.url);
 const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page.tsx", import.meta.url);
 const masterDataWorkplaceDetailPagePath = new URL("../../app/master-data/sites/[workplaceId]/page.tsx", import.meta.url);
+const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[vendorId]/page.tsx", import.meta.url);
 const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions.ts", import.meta.url);
 const masterDataModelPath = new URL("../../components/master-data-maintenance-model.ts", import.meta.url);
 
@@ -211,4 +212,21 @@ test("workplace operating subjects stay nested under workplace detail", async ()
     filePaths.some((path) => path.endsWith("/app/master-data/bindings/page.tsx")),
     false,
   );
+});
+
+test("vendor service context stays nested under vendor detail", async () => {
+  await access(masterDataVendorDetailPagePath);
+
+  const sourceFiles = [
+    ...await collectSourceFiles(appRootPath),
+    ...await collectSourceFiles(componentsRootPath),
+  ];
+
+  for (const fileUrl of sourceFiles) {
+    const source = await readFile(fileUrl, "utf8");
+
+    assert.equal(source.includes("供应商合同"), false, fileUrl.pathname);
+    assert.equal(source.includes("结算比例"), false, fileUrl.pathname);
+    assert.equal(source.includes("最低人力"), false, fileUrl.pathname);
+  }
 });

@@ -3744,3 +3744,28 @@
 - `npm run typecheck`：通过。
 - in-app browser smoke：`http://127.0.0.1:3000/master-data/sites` 命中职场详情入口；`http://127.0.0.1:3000/master-data/sites/SH-01` 命中 `职场信息` 和 `运营主体`，且未出现独立运营主体/绑定关系入口、合同、结算或最低人力文案。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM142 供应商详情页服务职场收敛
+
+#### 审计结论
+
+- `IM142` 已新增 `/master-data/vendors/[vendorId]` 供应商子详情页。
+- `/master-data/vendors` 仅对供应商行提供 `详情` 入口，不新增供应商合同、结算或最低人力入口。
+- 供应商详情页展示供应商信息和该供应商服务职场，服务职场来源限定为现有人员归属记录，并可跳转回对应职场详情。
+- 本轮没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子。
+
+#### 风险
+
+- 当前服务职场只读展示，不维护供应商合同、结算比例、最低人力要求。
+- 当前供应商详情依赖现有人员归属记录；如果本地没有对应记录，页面展示明确空态。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `summarizeMasterDataVendorDetail`。
+- TDD 红灯：产品结构测试先失败，证明旧代码没有 `/app/master-data/vendors/[vendorId]/page.tsx`。
+- `node --experimental-strip-types --test scripts/tests/master-data-maintenance-model.test.mjs`：通过，19 个 master-data model 测试通过。
+- `node --test scripts/tests/product-structure.test.mjs`：通过，7 个 product-structure 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3000/master-data/vendors` 命中供应商详情入口；`http://127.0.0.1:3000/master-data/vendors/SUP-A` 命中 `供应商信息`、`服务职场` 和 `查看职场`，且未出现合同、结算或最低人力文案。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

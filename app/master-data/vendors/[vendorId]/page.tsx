@@ -1,0 +1,64 @@
+import { notFound } from "next/navigation"
+
+import { AppShell } from "@/components/app-shell"
+import { MasterDataVendorDetailPage } from "@/components/master-data-maintenance-workbench"
+import {
+  summarizeMasterDataEntitySourceContext,
+  summarizeMasterDataVendorDetail,
+} from "@/components/master-data-maintenance-model"
+import {
+  fetchImportBatches,
+  fetchMasterDataReferences,
+  fetchMasterDataWorkplaceBindings,
+} from "@/app/master-data/agents/data"
+
+export const dynamic = "force-dynamic"
+
+type PageProps = {
+  params: Promise<{
+    vendorId: string
+  }>
+}
+
+export default async function MasterDataVendorDetailRoute({
+  params,
+}: PageProps) {
+  const { vendorId } = await params
+  const decodedVendorId = decodeURIComponent(vendorId)
+  const [batchResult, vendorResult, workplaceResult, bindingResult] =
+    await Promise.all([
+      fetchImportBatches(),
+      fetchMasterDataReferences("vendors"),
+      fetchMasterDataReferences("sites"),
+      fetchMasterDataWorkplaceBindings(),
+    ])
+  const summary = summarizeMasterDataEntitySourceContext(
+    "vendors",
+    batchResult.data ?? []
+  )
+  const detailSummary = summarizeMasterDataVendorDetail({
+    vendorId: decodedVendorId,
+    vendors: vendorResult.data ?? [],
+    workplaces: workplaceResult.data ?? [],
+    bindings: bindingResult.data ?? [],
+  })
+
+  if (!detailSummary.found) {
+    notFound()
+  }
+
+  return (
+    <AppShell title="供应商详情" searchPlaceholder="搜索供应商">
+      <MasterDataVendorDetailPage
+        summary={summary}
+        detailSummary={detailSummary}
+        error={
+          vendorResult.error ??
+          workplaceResult.error ??
+          bindingResult.error ??
+          batchResult.error
+        }
+      />
+    </AppShell>
+  )
+}

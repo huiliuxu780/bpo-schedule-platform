@@ -14,6 +14,7 @@ import {
   summarizeMasterDataEntitySourceContext,
   summarizeMasterDataMaintenanceWorkbench,
   summarizeMasterDataReferenceManagement,
+  summarizeMasterDataVendorDetail,
   summarizeMasterDataWorkplaceDetail,
 } from "../../components/master-data-maintenance-model.ts";
 
@@ -325,7 +326,7 @@ test("reference master data management summarizes list rows by object type", () 
   );
 });
 
-test("workplace list rows expose detail entry only for workplace records", () => {
+test("workplace and vendor list rows expose child detail entries", () => {
   const siteSummary = summarizeMasterDataReferenceManagement("sites", [
     {
       reference_id: "SH-01",
@@ -351,7 +352,10 @@ test("workplace list rows expose detail entry only for workplace records", () =>
     siteSummary.rows[0].display.detailHref,
     "/master-data/sites/SH-01",
   );
-  assert.equal(vendorSummary.rows[0].display.detailHref, null);
+  assert.equal(
+    vendorSummary.rows[0].display.detailHref,
+    "/master-data/vendors/SUP-001",
+  );
 });
 
 test("workplace detail keeps operating subjects inside the selected workplace", () => {
@@ -464,6 +468,120 @@ test("workplace detail returns not found for unknown workplace id", () => {
   assert.equal(detail.found, false);
   assert.equal(detail.workplace, null);
   assert.equal(detail.operatorRows.length, 0);
+});
+
+test("vendor detail keeps service workplaces inside the selected supplier", () => {
+  const detail = summarizeMasterDataVendorDetail({
+    vendorId: "SUP-001",
+    vendors: [
+      {
+        reference_id: "SUP-001",
+        reference_name: "上海供应商",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        reference_id: "SUP-002",
+        reference_name: "南京供应商",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    workplaces: [
+      {
+        reference_id: "SH-01",
+        reference_name: "上海职场",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        reference_id: "NJ-01",
+        reference_name: "南京职场",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    bindings: [
+      {
+        binding_id: "BIND-001",
+        employee_id: "A-3001",
+        supplier_id: "SUP-001",
+        workplace_id: "SH-01",
+        skill_id: "SKILL-TICKET",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        binding_id: "BIND-002",
+        employee_id: "A-3002",
+        supplier_id: "SUP-001",
+        workplace_id: "SH-01",
+        skill_id: "SKILL-HOTLINE",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        binding_id: "BIND-003",
+        employee_id: "A-3003",
+        supplier_id: "SUP-002",
+        workplace_id: "NJ-01",
+        skill_id: "SKILL-GENERAL",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+  });
+
+  assert.equal(detail.found, true);
+  assert.equal(detail.title, "上海供应商");
+  assert.equal(detail.vendor?.display.referenceIdLabel, "SUP-001");
+  assert.equal(detail.totalServiceWorkplaces, 1);
+  assert.equal(detail.activeServiceWorkplaces, 1);
+  assert.deepEqual(
+    detail.serviceRows.map((row) => [
+      row.display.workplaceLabel,
+      row.display.statusLabel,
+      row.display.detailHref,
+      row.display.sourceLabel,
+      row.display.effectivePeriodLabel,
+    ]),
+    [
+      [
+        "上海职场",
+        "生效",
+        "/master-data/sites/SH-01",
+        "人员归属记录",
+        "2026-06-01 至 2026-12-31",
+      ],
+    ],
+  );
+  assert.equal(JSON.stringify(detail).includes("合同"), false);
+  assert.equal(JSON.stringify(detail).includes("结算"), false);
+  assert.equal(JSON.stringify(detail).includes("最低人力"), false);
+});
+
+test("vendor detail returns not found for unknown supplier id", () => {
+  const detail = summarizeMasterDataVendorDetail({
+    vendorId: "UNKNOWN",
+    vendors: [],
+    workplaces: [],
+    bindings: [],
+  });
+
+  assert.equal(detail.found, false);
+  assert.equal(detail.vendor, null);
+  assert.equal(detail.serviceRows.length, 0);
 });
 
 test("agent maintenance payload maps create edit freeze and effective period actions", () => {

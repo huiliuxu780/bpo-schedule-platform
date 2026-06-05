@@ -214,6 +214,36 @@ export type MasterDataWorkplaceDetailSummary = {
   operatorRows: MasterDataWorkplaceOperatorViewRow[]
 }
 
+export type MasterDataVendorServiceWorkplaceDisplay = {
+  workplaceIdLabel: string
+  workplaceLabel: string
+  statusLabel: string
+  sourceLabel: string
+  effectivePeriodLabel: string
+  sourceBatchLabel: string
+  detailHref: string
+}
+
+export type MasterDataVendorServiceWorkplaceViewRow = {
+  service_key: string
+  workplace_id: string
+  status: MasterDataAgentMaintenanceStatus
+  effective_from: string
+  effective_to: string
+  batch_id: string
+  display: MasterDataVendorServiceWorkplaceDisplay
+}
+
+export type MasterDataVendorDetailSummary = {
+  found: boolean
+  title: string
+  backHref: string
+  vendor: MasterDataReferenceListViewRow | null
+  totalServiceWorkplaces: number
+  activeServiceWorkplaces: number
+  serviceRows: MasterDataVendorServiceWorkplaceViewRow[]
+}
+
 export type MasterDataAgentMaintenancePayload = {
   action: MasterDataAgentMaintenanceActionKey
   source_batch_id: string
@@ -710,6 +740,8 @@ export function summarizeMasterDataReferenceManagement(
         detailHref:
           entity.key === "sites"
             ? `/master-data/sites/${encodeURIComponent(reference.reference_id)}`
+            : entity.key === "vendors"
+              ? `/master-data/vendors/${encodeURIComponent(reference.reference_id)}`
             : null,
       },
     }))
@@ -721,6 +753,87 @@ export function summarizeMasterDataReferenceManagement(
     activeRecords: rows.filter((row) => row.status === "active").length,
     frozenRecords: rows.filter((row) => row.status === "frozen").length,
     rows,
+  }
+}
+
+export function summarizeMasterDataVendorDetail({
+  vendorId,
+  vendors,
+  workplaces,
+  bindings,
+}: {
+  vendorId: string
+  vendors: MasterDataReferenceListRow[]
+  workplaces: MasterDataReferenceListRow[]
+  bindings: MasterDataWorkplaceBindingRow[]
+}): MasterDataVendorDetailSummary {
+  const vendorSummary = summarizeMasterDataReferenceManagement("vendors", vendors)
+  const workplaceSummary = summarizeMasterDataReferenceManagement("sites", workplaces)
+  const vendor =
+    vendorSummary.rows.find((row) => row.reference_id === vendorId) ?? null
+
+  if (!vendor) {
+    return {
+      found: false,
+      title: "供应商未找到",
+      backHref: "/master-data/vendors",
+      vendor: null,
+      totalServiceWorkplaces: 0,
+      activeServiceWorkplaces: 0,
+      serviceRows: [],
+    }
+  }
+
+  const workplaceById = new Map(
+    workplaceSummary.rows.map((workplace) => [workplace.reference_id, workplace])
+  )
+  const serviceRows = deduplicateVendorWorkplaceBindings(
+    bindings.filter((binding) => binding.supplier_id === vendor.reference_id)
+  )
+    .map((binding) => {
+      const workplace = workplaceById.get(binding.workplace_id) ?? null
+      const workplaceName =
+        workplace?.display.referenceNameLabel ??
+        formatMasterDataVisibleValue(binding.workplace_id)
+      const status = workplace?.status ?? "active"
+
+      return {
+        service_key: [
+          binding.workplace_id,
+          binding.effective_from,
+          binding.effective_to,
+          binding.batch_id,
+        ].join(":"),
+        workplace_id: binding.workplace_id,
+        status,
+        effective_from: binding.effective_from,
+        effective_to: binding.effective_to,
+        batch_id: binding.batch_id,
+        display: {
+          workplaceIdLabel: formatMasterDataVisibleValue(binding.workplace_id),
+          workplaceLabel: workplaceName,
+          statusLabel: formatMasterDataEmployeeStatus(status),
+          sourceLabel: "人员归属记录",
+          effectivePeriodLabel: formatEffectivePeriod(
+            binding.effective_from,
+            binding.effective_to
+          ),
+          sourceBatchLabel: formatImportBatchDisplayLabel(binding.batch_id),
+          detailHref: `/master-data/sites/${encodeURIComponent(binding.workplace_id)}`,
+        },
+      }
+    })
+    .sort((left, right) => left.workplace_id.localeCompare(right.workplace_id))
+
+  return {
+    found: true,
+    title: vendor.display.referenceNameLabel,
+    backHref: "/master-data/vendors",
+    vendor,
+    totalServiceWorkplaces: serviceRows.length,
+    activeServiceWorkplaces: serviceRows.filter((row) => row.status === "active")
+      .length,
+    serviceRows,
   }
 }
 
@@ -915,6 +1028,31 @@ function deduplicateWorkplaceSupplierBindings(
   }
 
   return [...bySupplierPeriod.values()]
+}
+
+function deduplicateVendorWorkplaceBindings(
+  bindings: MasterDataWorkplaceBindingRow[]
+) {
+  const byWorkplacePeriod = new Map<string, MasterDataWorkplaceBindingRow>()
+
+  for (const binding of bindings) {
+    if (!binding.workplace_id) {
+      continue
+    }
+
+    const key = [
+      binding.workplace_id,
+      binding.effective_from,
+      binding.effective_to,
+      binding.batch_id,
+    ].join(":")
+
+    if (!byWorkplacePeriod.has(key)) {
+      byWorkplacePeriod.set(key, binding)
+    }
+  }
+
+  return [...byWorkplacePeriod.values()]
 }
 
 function normalizeMasterDataAgentManagementFilters(

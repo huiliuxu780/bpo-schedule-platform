@@ -18,6 +18,7 @@ import {
   type MasterDataEntitySourceContext,
   type MasterDataOrganizationManagementSummary,
   type MasterDataReferenceManagementSummary,
+  type MasterDataVendorDetailSummary,
   type MasterDataWorkplaceDetailSummary,
 } from "@/components/master-data-maintenance-model"
 import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
@@ -338,6 +339,131 @@ export function MasterDataWorkplaceDetailPage({
                   <TableCell>{row.display.sourceLabel}</TableCell>
                   <TableCell className="font-mono text-xs">
                     {row.display.sourceBatchLabel}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </section>
+    </main>
+  )
+}
+
+export function MasterDataVendorDetailPage({
+  summary,
+  detailSummary,
+  error,
+}: {
+  summary: MasterDataEntitySourceContext
+  detailSummary: MasterDataVendorDetailSummary
+  error: string | null
+}) {
+  const vendor = detailSummary.vendor
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      <section className="flex flex-col gap-3 rounded-lg border bg-background p-4">
+        <Button asChild size="sm" variant="ghost" className="w-fit px-0">
+          <Link href={detailSummary.backHref}>
+            <ArrowLeft data-icon="inline-start" />
+            返回供应商
+          </Link>
+        </Button>
+        <div className="grid gap-1">
+          <h1 className="text-xl font-semibold tracking-normal">
+            {detailSummary.title}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            当前基于 {summary.sourceVersionLabel} 展示该供应商基础信息和服务职场。
+          </p>
+        </div>
+      </section>
+
+      {error ? <MasterDataListError title="供应商详情读取失败" error={error} /> : null}
+
+      <section className="grid gap-3 md:grid-cols-3">
+        <MetricCard
+          label="服务职场"
+          value={detailSummary.totalServiceWorkplaces.toLocaleString("zh-CN")}
+          detail="来自人员归属记录"
+          tone={detailSummary.totalServiceWorkplaces > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="生效职场"
+          value={detailSummary.activeServiceWorkplaces.toLocaleString("zh-CN")}
+          detail="当前可引用职场"
+          tone={detailSummary.activeServiceWorkplaces > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="来源版本"
+          value={summary.sourceVersionLabel}
+          detail="主数据业务版本"
+          tone="default"
+        />
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">供应商信息</h2>
+        {vendor ? (
+          <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+            <ReadOnlyField label="供应商名称" value={vendor.display.referenceNameLabel} />
+            <ReadOnlyField label="供应商编码" value={vendor.display.referenceIdLabel} />
+            <ReadOnlyField label="状态" value={vendor.display.statusLabel} />
+            <ReadOnlyField label="对象属性" value={vendor.display.skillCategoryLabel} />
+            <ReadOnlyField label="有效期" value={vendor.display.effectivePeriodLabel} />
+            <ReadOnlyField label="来源批次" value={vendor.display.sourceBatchLabel} />
+          </div>
+        ) : null}
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">服务职场</h2>
+        {detailSummary.serviceRows.length === 0 ? (
+          <div className="rounded-md border p-4 text-sm text-muted-foreground">
+            暂无该供应商服务职场记录。
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>职场</TableHead>
+                <TableHead>职场编码</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>有效期</TableHead>
+                <TableHead>来源</TableHead>
+                <TableHead>来源批次</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {detailSummary.serviceRows.map((row) => (
+                <TableRow key={row.service_key}>
+                  <TableCell className="font-medium">
+                    {row.display.workplaceLabel}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.workplaceIdLabel}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                      {row.display.statusLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell>{row.display.sourceLabel}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.sourceBatchLabel}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-primary hover:text-primary"
+                    >
+                      <Link href={row.display.detailHref}>查看职场</Link>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

@@ -9497,3 +9497,43 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已新增 /master-data/sites/[workplaceId] 子详情页，并将职场运营主体只读展示收敛到具体职场详情内。"
+  - id: IM142
+    title: "供应商详情页服务职场"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM141"]
+    allowed_files:
+      - "app/master-data/vendors/[vendorId]/page.tsx"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/vendors 的供应商行提供详情入口，进入 /master-data/vendors/[vendorId]。"
+      - "供应商详情页展示供应商基础信息、服务职场数和生效职场数。"
+      - "服务职场只读展示在供应商详情内，并可跳转到对应职场详情。"
+      - "不新增供应商合同、结算比例、最低人力、审批、导出、批量、权限、自动排班、生产公式或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到批量维护、审批、导出、权限、自动排班、生产公式、结算、供应商合同、最低人力或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已新增 /master-data/vendors/[vendorId] 子详情页，并将服务职场只读展示收敛到具体供应商详情内。"
