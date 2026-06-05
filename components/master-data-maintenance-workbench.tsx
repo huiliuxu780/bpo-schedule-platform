@@ -22,9 +22,6 @@ import {
   type MasterDataVendorDetailSummary,
   type MasterDataWorkplaceDetailSummary,
 } from "@/components/master-data-maintenance-model"
-import {
-  buildImportUploadWorkspaceHref,
-} from "@/components/import-center-model"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -160,15 +157,6 @@ export function MasterDataReferenceManagementPage({
 
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
-      <section className="flex min-h-9 items-center justify-end gap-3 bg-background px-1">
-        <Button asChild size="sm" variant="outline">
-          <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
-            <Upload data-icon="inline-start" />
-            导入主数据
-          </Link>
-        </Button>
-      </section>
-
       {error ? <MasterDataListError title={`${listSummary.title}列表读取失败`} error={error} /> : null}
       {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 
@@ -470,15 +458,6 @@ export function MasterDataOrganizationManagementPage({
 }) {
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
-      <section className="flex min-h-9 items-center justify-end gap-3 bg-background px-1">
-        <Button asChild size="sm" variant="outline">
-          <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
-            <Upload data-icon="inline-start" />
-            导入主数据
-          </Link>
-        </Button>
-      </section>
-
       {error ? <MasterDataListError title="组织列表读取失败" error={error} /> : null}
       {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 

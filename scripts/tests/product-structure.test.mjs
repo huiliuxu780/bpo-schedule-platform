@@ -702,3 +702,42 @@ test("agent bulk import starts from the agent list dialog and leaves details to 
   assert.equal(importDialogSource.includes('action={action}'), true);
   assert.equal(workbenchSource.includes('role="dialog"'), false);
 });
+
+test("non-agent master data pages do not expose unconfirmed import actions in content", async () => {
+  const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const referenceSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataReferenceManagementPage"),
+    workbenchSource.indexOf("export function MasterDataWorkplaceDetailPage"),
+  );
+  const organizationSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataOrganizationManagementPage"),
+    workbenchSource.indexOf("function ReadOnlyField"),
+  );
+
+  assert.equal(
+    referenceSource.includes("导入主数据"),
+    false,
+    "reference list content should not expose a standalone import shortcut",
+  );
+  assert.equal(
+    organizationSource.includes("导入主数据"),
+    false,
+    "organization list content should not expose a standalone import shortcut",
+  );
+  assert.equal(
+    referenceSource.includes("buildImportUploadWorkspaceHref"),
+    false,
+    "reference list content should not jump to the standalone upload workspace",
+  );
+  assert.equal(
+    organizationSource.includes("buildImportUploadWorkspaceHref"),
+    false,
+    "organization list content should not jump to the standalone upload workspace",
+  );
+  assert.equal(
+    entitySource.includes("entity.key === \"agents\" && agentManagementSummary"),
+    true,
+    "shared Header actions should stay scoped to the confirmed agent actions only",
+  );
+});

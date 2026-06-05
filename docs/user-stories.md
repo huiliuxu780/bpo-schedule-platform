@@ -20,6 +20,28 @@
   status: "draft"
 ```
 
+### US769 - 主数据非客服人员动作收口
+
+```yaml
+id: US769
+requirement_ids:
+  - R849
+module: "主数据维护 / 页面动作"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望组织、职场、供应商、技能等非客服人员主数据页不要在内容区暴露未确认的导入动作，以便页面保持清爽的只读列表边界，已确认的页面级动作只出现在 Header actions。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "客服人员页面级动作继续只通过 Header actions 承载。"
+  - "组织、职场、供应商、技能等非客服人员主数据列表内容区不再显示 `导入主数据`。"
+  - "非客服人员主数据页不新增未确认 CRUD、导入弹窗或跳转独立上传工作区的快捷入口。"
+  - "不迁移排班、预测、登录/状态日志导入入口，不改路由结构、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US768"
+status: "done"
+notes: "IM149 已完成：非客服人员主数据列表内容区的 `导入主数据` 旧入口已删除，客服人员 Header actions 保持不变。"
+```
+
 ### US768 - 旧全局搜索 API 清理
 
 ```yaml

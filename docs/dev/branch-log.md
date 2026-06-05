@@ -55,6 +55,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM149 Non-Agent Master Data Action Cleanup
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `6237a3c fix: remove legacy header search api`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed master-data action cleanup. Remove unconfirmed content-area `导入主数据` shortcuts from organization/reference master-data list pages, keep confirmed agent actions in Header actions, and avoid adding non-agent CRUD or import dialogs.
+- allowed_files_check: `components/master-data-maintenance-workbench.tsx`, `app/master-data/[entityKey]/page.tsx` as read context, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected removal of non-agent content import shortcut, import helper cleanup, regression test, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because non-agent master-data content still exposed `导入主数据`; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 19 tests, and `rg -n "导入主数据|buildImportUploadWorkspaceHref" components/master-data-maintenance-workbench.tsx app/master-data -S` returned no business-source matches. Browser smoke over `/master-data/organizations`, `/master-data/sites`, `/master-data/skills`, and `/master-data/agents` confirmed non-agent pages have no `导入主数据` or `/data-quality/uploads/new` links, while the agent page still has Header actions `新建` and `批量导入`. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM146 Production Wording And Return Links
 
 - branch_name: `codex/im144-ui-component-standards`

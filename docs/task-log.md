@@ -1939,3 +1939,14 @@
 - action: 清理旧 Header 全局搜索参数。
 - status: `done`
 - notes: `AppShell` 和 `SiteHeader` 已删除 `searchPlaceholder` prop、默认值和透传；`app/**` 与 `components/**` 中不再向全局 Header 传入旧搜索占位参数；真正属于业务列表的筛选框仍保留在内容区；本轮不新增 Header 搜索 UI，不删除业务筛选，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM149`
+- source_ids:
+  - `R849`
+- story_ids:
+  - `US769`
+- action: 收口非客服人员主数据页面动作。
+- status: `done`
+- notes: 组织、职场、供应商、技能等非客服人员主数据列表内容区不再显示 `导入主数据` 或跳转独立上传工作区；客服人员已确认的新建和批量导入动作继续由 Header actions 承载；本轮不新增非客服人员 CRUD、导入弹窗、排班/预测/日志导入入口、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

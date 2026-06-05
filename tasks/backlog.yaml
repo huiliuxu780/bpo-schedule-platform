@@ -2,6 +2,39 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM149
+    title: "主数据非客服人员动作收口"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM148"]
+    allowed_files:
+      - "app/master-data/[entityKey]/page.tsx"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "客服人员页面级动作继续只通过 Header actions 承载。"
+      - "组织、职场、供应商、技能等非客服人员主数据列表内容区不再显示 `导入主数据`。"
+      - "非客服人员主数据页不新增未确认 CRUD、导入弹窗或跳转独立上传工作区的快捷入口。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增非客服人员 CRUD 表单或维护动作"
+      - "需要新增组织、职场、供应商、技能导入弹窗"
+      - "需要迁移导入入口到排班、预测或登录/状态日志"
+      - "需要修改路由结构、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: IM148
     title: "旧全局搜索 API 清理"
     priority: P0

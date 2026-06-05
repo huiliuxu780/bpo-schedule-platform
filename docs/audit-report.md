@@ -3909,3 +3909,23 @@
 - TDD 绿灯：删除接口和页面传参后，同一 focused test 通过，18 个 product-structure 测试通过。
 - `rg -n "searchPlaceholder" app components -S` 无结果。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM149 主数据非客服人员动作收口
+
+#### 审计结论
+
+- 组织、职场、供应商、技能等非客服人员主数据列表内容区不再显示 `导入主数据`。
+- 非客服人员主数据页不再从内容区跳转 `/data-quality/uploads/new` 这类独立上传工作区。
+- 客服人员已确认的 `新建` 和 `批量导入` 仍保留在 Header actions，客服人员三步导入弹窗不受影响。
+- 本轮没有新增非客服人员 CRUD、导入弹窗、排班/预测/登录状态日志导入入口、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 组织、职场、供应商、技能导入入口仍需后续 IM150 以业务列表内 step-by-step dialog 方式单独设计，不能回退到独立上传页快捷入口。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明非客服人员内容区仍显示 `导入主数据`。
+- TDD 绿灯：删除旧内容区动作后，同一 focused test 通过，19 个 product-structure 测试通过。
+- `rg -n "导入主数据|buildImportUploadWorkspaceHref" components/master-data-maintenance-workbench.tsx app/master-data -S` 无业务源码匹配。
+- Browser smoke 和最终 `bash scripts/check.sh` 结果见 Done Report。
