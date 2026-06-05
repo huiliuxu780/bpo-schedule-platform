@@ -79,8 +79,8 @@ const nav: NavGroup[] = [
         tag: "P1",
       },
       { title: "组织", href: "/master-data/organizations", activeMatch: "exact" },
-      { title: "职场", href: "/master-data/sites", activeMatch: "exact" },
-      { title: "供应商", href: "/master-data/vendors", activeMatch: "exact" },
+      { title: "职场", href: "/master-data/sites", activeMatch: "prefix" },
+      { title: "供应商", href: "/master-data/vendors", activeMatch: "prefix" },
       { title: "技能", href: "/master-data/skills", activeMatch: "exact" },
     ],
   },
@@ -127,7 +127,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
     nav.find((group) => group.items.some((item) => isActiveItem(item)))?.title ??
     "运营工作台"
   const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(
-    () => new Set([activeGroupTitle])
+    () => new Set(nav.map((group) => group.title))
   )
 
   function toggleGroup(title: string) {

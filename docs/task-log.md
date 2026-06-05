@@ -1872,4 +1872,4 @@
   - `US762`
 - action: 新增供应商详情页并把服务职场收敛到供应商子页面。
 - status: `done`
-- notes: `/master-data/vendors` 的供应商列表行新增 `详情` 入口，进入 `/master-data/vendors/[vendorId]` 后展示供应商基础信息和该供应商当前服务职场；服务职场可回链对应职场详情；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子；current queue 与 active tasks 保持为空。
+- notes: `/master-data/vendors` 的供应商列表行新增 `详情` 入口，进入 `/master-data/vendors/[vendorId]` 后展示供应商基础信息和该供应商当前服务职场；服务职场可回链对应职场详情；侧边栏默认展开全部一级组，职场/供应商详情页继承父级高亮；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子；current queue 与 active tasks 保持为空。

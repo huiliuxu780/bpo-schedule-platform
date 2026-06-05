@@ -3530,3 +3530,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM142 Vendor Detail Service Workplaces
+
+- branch_name: `codex/im142-vendor-detail`
+- base_main_commit: `3060d9c`
+- stacked_on: `f28d23b feat: add workplace detail operating subjects`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed supplier child-detail correction. Add `/master-data/vendors/[vendorId]`, link supplier list rows to the child detail, render service workplaces inside the selected supplier from existing personnel ownership records, and keep contract, settlement, and minimum-staffing concepts out of scope. Follow-up correction keeps sidebar groups expanded by default and lets workplace/supplier detail routes inherit their parent nav item.
+- allowed_files_check: `app/master-data/vendors/[vendorId]/page.tsx`, `components/app-sidebar.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, `docs/current/PROJECT_CONTEXT.md`, `docs/PROJECT_STATE.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/registry/TRACE_INDEX.yaml`, `tasks/backlog.yaml`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected nested supplier detail route, supplier list detail entry, read-only service-workplace table, sidebar default expansion and detail active-state correction, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED model test first failed because `summarizeMasterDataVendorDetail` did not exist; RED product-structure test then failed because `/app/master-data/vendors/[vendorId]/page.tsx` did not exist; sidebar regression RED later failed because groups were not all expanded and master-data detail routes did not inherit parent items. After implementation, target master-data model tests passed with 19 tests, product-structure tests passed with 8 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke over `/master-data/vendors`, `/master-data/vendors/SUP-A`, and `/master-data/sites/SH-01` confirmed supplier detail entry, supplier information, service workplace linkback, no contract/settlement/minimum-staffing copy, all sidebar groups expanded, and detail pages highlighting `供应商`/`职场` instead of falling back to `运营工作台`. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

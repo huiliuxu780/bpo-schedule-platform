@@ -3764,8 +3764,8 @@
 - TDD 红灯：模型测试先失败，证明旧模型没有 `summarizeMasterDataVendorDetail`。
 - TDD 红灯：产品结构测试先失败，证明旧代码没有 `/app/master-data/vendors/[vendorId]/page.tsx`。
 - `node --experimental-strip-types --test scripts/tests/master-data-maintenance-model.test.mjs`：通过，19 个 master-data model 测试通过。
-- `node --test scripts/tests/product-structure.test.mjs`：通过，7 个 product-structure 测试通过。
+- `node --test scripts/tests/product-structure.test.mjs`：通过，8 个 product-structure 测试通过。
 - `npm run lint`：通过。
 - `npm run typecheck`：通过。
-- in-app browser smoke：`http://127.0.0.1:3000/master-data/vendors` 命中供应商详情入口；`http://127.0.0.1:3000/master-data/vendors/SUP-A` 命中 `供应商信息`、`服务职场` 和 `查看职场`，且未出现合同、结算或最低人力文案。
+- in-app browser smoke：`http://127.0.0.1:3000/master-data/vendors` 命中供应商详情入口；`http://127.0.0.1:3000/master-data/vendors/SUP-A` 命中 `供应商信息`、`服务职场` 和 `查看职场`，且未出现合同、结算或最低人力文案。详情页侧边栏默认展开全部一级组，并分别高亮 `供应商` 与 `职场` 父项。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

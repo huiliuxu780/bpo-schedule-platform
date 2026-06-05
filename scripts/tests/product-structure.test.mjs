@@ -230,3 +230,23 @@ test("vendor service context stays nested under vendor detail", async () => {
     assert.equal(source.includes("最低人力"), false, fileUrl.pathname);
   }
 });
+
+test("sidebar expands all groups by default and inherits master data detail state", async () => {
+  const source = await readFile(appSidebarPath, "utf8");
+
+  assert.equal(
+    source.includes("new Set(nav.map((group) => group.title))"),
+    true,
+    "sidebar should default all nav groups to expanded",
+  );
+  assert.match(
+    source,
+    /title: "职场",\s+href: "\/master-data\/sites",\s+activeMatch: "prefix"/,
+    "workplace detail routes should inherit the workplace nav item",
+  );
+  assert.match(
+    source,
+    /title: "供应商",\s+href: "\/master-data\/vendors",\s+activeMatch: "prefix"/,
+    "vendor detail routes should inherit the vendor nav item",
+  );
+});
