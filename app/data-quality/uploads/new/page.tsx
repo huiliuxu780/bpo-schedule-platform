@@ -49,7 +49,6 @@ export default async function ImportUploadWorkspacePage({
   return (
     <AppShell
       title="CSV 上传"
-      searchPlaceholder="搜索模板、字段或批次"
       breadcrumbItems={[
         { label: "导入批次", href: "/data-quality" },
         { label: "CSV 上传" },

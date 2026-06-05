@@ -49,7 +49,6 @@ export default async function DataQualityPage({
   return (
     <AppShell
       title="导入批次"
-      searchPlaceholder="搜索导入批次、文件或上传人"
       breadcrumbItems={[{ label: "导入批次" }]}
     >
       <ImportCenterApiPanel

@@ -2,6 +2,39 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM148
+    title: "旧全局搜索 API 清理"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM147"]
+    allowed_files:
+      - "app/**"
+      - "components/app-shell.tsx"
+      - "components/site-header.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "AppShell 和 SiteHeader 不再声明、默认或透传 searchPlaceholder。"
+      - "app 与 components 源码不再向 AppShell/SiteHeader 传入 searchPlaceholder。"
+      - "真正有意义的列表内筛选框保留在各业务内容区，不迁回 Header。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增 Header 全局搜索 UI"
+      - "需要删除业务列表内筛选框"
+      - "需要修改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: IM147
     title: "Header/Breadcrumb 与内容区标题统一"
     priority: P0

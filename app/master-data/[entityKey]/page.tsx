@@ -97,9 +97,6 @@ export default async function MasterDataEntityDetailPage({
   return (
     <AppShell
       title={entity.key === "agents" ? "客服人员" : entity.label}
-      searchPlaceholder={
-        entity.key === "agents" ? "搜索客服人员" : `搜索${entity.label}`
-      }
       breadcrumbItems={[
         { label: "主数据", href: "/master-data/agents" },
         { label: entity.key === "agents" ? "客服人员" : entity.label },

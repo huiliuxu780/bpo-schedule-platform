@@ -18,7 +18,6 @@ export type AppBreadcrumbItem = {
 
 type SiteHeaderProps = {
   title?: string
-  searchPlaceholder?: string
   breadcrumbItems?: AppBreadcrumbItem[]
   actions?: React.ReactNode
 }

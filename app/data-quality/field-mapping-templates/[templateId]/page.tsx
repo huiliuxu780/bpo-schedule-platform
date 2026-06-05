@@ -70,7 +70,6 @@ export default async function FieldMappingTemplatePage({
   return (
     <AppShell
       title="字段映射模板"
-      searchPlaceholder="搜索模板、字段或文件类型"
       breadcrumbItems={[
         { label: "导入批次", href: "/data-quality" },
         { label: "字段映射模板" },

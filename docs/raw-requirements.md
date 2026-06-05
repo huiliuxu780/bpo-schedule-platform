@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R848 - 旧全局搜索 API 清理
+
+```yaml
+id: R848
+module: "全局页面结构 / Header"
+description: "IM144 已经从 SiteHeader 视觉上移除无意义全局搜索，但 AppShell/SiteHeader 接口和大量页面传参仍保留 searchPlaceholder，后续开发会误以为 Header 仍应该承载全局搜索。需要删除这个旧 API 和页面传参，只保留真正属于列表内容区的业务筛选。"
+source: "PM approved continuing after IM147 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM148 已完成：AppShell/SiteHeader 不再声明、默认或透传 searchPlaceholder；app/components 源码中的旧传参已清理，业务列表内筛选框保留在内容区；不新增 Header 搜索，不改路由、导入弹窗、后端、schema/migration、依赖或权限/审批/导出/批量等能力。"
+```
+
 ### R845 - 导航信息架构收口
 
 ```yaml

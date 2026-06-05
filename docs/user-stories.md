@@ -20,6 +20,28 @@
   status: "draft"
 ```
 
+### US768 - 旧全局搜索 API 清理
+
+```yaml
+id: US768
+requirement_ids:
+  - R848
+module: "全局页面结构 / Header"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望 Header 不再保留无实际显示的全局搜索接口，以便页面级动作、Breadcrumb 和业务筛选各自归位，不再诱导后续把列表筛选塞回全局 Header。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "AppShell 和 SiteHeader 不再声明、默认或透传 searchPlaceholder。"
+  - "app 与 components 源码不再向 AppShell/SiteHeader 传入 searchPlaceholder。"
+  - "真正有意义的列表内筛选框保留在各业务内容区，不迁回 Header。"
+  - "不新增 Header 全局搜索 UI，不删除业务列表内筛选框，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US767"
+status: "done"
+notes: "IM148 已完成：旧 Header 搜索参数从 AppShell/SiteHeader 接口和 app/components 页面传参中移除；结构测试禁止该参数回流。"
+```
+
 ### US765 - 导航信息架构收口
 
 ```yaml

@@ -52,7 +52,6 @@ export default async function EditMasterDataAgentPage({
   return (
     <AppShell
       title="编辑客服人员"
-      searchPlaceholder="搜索客服人员"
       breadcrumbItems={[
         { label: "主数据", href: "/master-data/agents" },
         { label: "客服人员", href: "/master-data/agents" },

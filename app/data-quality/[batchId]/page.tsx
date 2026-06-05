@@ -97,7 +97,6 @@ export default async function ImportBatchDetailPage({
   return (
     <AppShell
       title="批次处理"
-      searchPlaceholder="搜索导入批次、文件或上传人"
       breadcrumbItems={[
         { label: "导入批次", href: "/data-quality" },
         { label: "批次处理" },

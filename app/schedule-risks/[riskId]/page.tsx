@@ -56,7 +56,7 @@ export default async function ScheduleRiskDetailPage({ params }: PageProps) {
   )
 
   return (
-    <AppShell title="风险明细" searchPlaceholder="搜索风险、计划或职场">
+    <AppShell title="风险明细">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>

@@ -62,7 +62,7 @@ export default async function UnavailabilityImpactPage({ params }: PageProps) {
   )
 
   return (
-    <AppShell title="不可用影响定位" searchPlaceholder="搜索不可用、班次或风险">
+    <AppShell title="不可用影响定位">
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>

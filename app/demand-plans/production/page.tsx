@@ -18,7 +18,6 @@ export default async function DemandForecastProductionPage() {
   return (
     <AppShell
       title="预测版本"
-      searchPlaceholder="搜索预测版本或来源批次"
       breadcrumbItems={[
         { label: "需求计划", href: "/demand-plans" },
         { label: "预测版本" },

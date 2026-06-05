@@ -1928,3 +1928,14 @@
 - action: 统一 Header/Breadcrumb 与内容区标题层级。
 - status: `done`
 - notes: 需求计划、排班计划、预测版本、排班版本、登录/状态日志和 data-quality 兼容页统一传入 `breadcrumbItems`；内容区同名页面 H1 已删除或降级，页面身份由 `SiteHeader` / Breadcrumb 承载；保留筛选、工具栏、表格、详情分组和业务记录信息；本轮不删除旧 `searchPlaceholder` API，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM148`
+- source_ids:
+  - `R848`
+- story_ids:
+  - `US768`
+- action: 清理旧 Header 全局搜索参数。
+- status: `done`
+- notes: `AppShell` 和 `SiteHeader` 已删除 `searchPlaceholder` prop、默认值和透传；`app/**` 与 `components/**` 中不再向全局 Header 传入旧搜索占位参数；真正属于业务列表的筛选框仍保留在内容区；本轮不新增 Header 搜索 UI，不删除业务筛选，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

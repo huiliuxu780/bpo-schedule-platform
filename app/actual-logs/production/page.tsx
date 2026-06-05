@@ -18,7 +18,6 @@ export default async function ActualLogProductionPage() {
   return (
     <AppShell
       title="登录/状态日志"
-      searchPlaceholder="搜索日志版本或来源批次"
       breadcrumbItems={[{ label: "登录/状态日志" }]}
     >
       <ActualLogProductionWorkbench

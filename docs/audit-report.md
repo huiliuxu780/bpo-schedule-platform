@@ -3888,3 +3888,24 @@
 - TDD 绿灯：实现后同一 focused test 通过，17 个 product-structure 测试通过。
 - Browser smoke：`/demand-plans`、`/schedule-plans`、`/data-quality/versions` 均存在 Breadcrumb，页面 DOM 只有 `sr-only` H1，内容区没有重复页面身份 H1。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM148 旧全局搜索 API 清理
+
+#### 审计结论
+
+- `AppShell` 已删除 `searchPlaceholder` prop、默认值和向 `SiteHeader` 的透传。
+- `SiteHeader` 已删除 `searchPlaceholder` prop 定义，Header 不再保留无显示效果的搜索接口。
+- `app/**` 与 `components/**` 源码不再向共享 Header/Shell 传入 `searchPlaceholder`。
+- 真正有意义的列表筛选仍保留在业务内容区，本轮没有把筛选迁回 Header，也没有新增全局搜索 UI。
+- 本轮没有修改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 后续 IM149-IM151 仍需继续处理非客服人员主数据动作收口、导入入口业务归位和 `/data-quality` 抽象降级。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明 `AppShell` 仍保留旧搜索 API。
+- TDD 绿灯：删除接口和页面传参后，同一 focused test 通过，18 个 product-structure 测试通过。
+- `rg -n "searchPlaceholder" app components -S` 无结果。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

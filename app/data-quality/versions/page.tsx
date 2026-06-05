@@ -50,7 +50,6 @@ export default async function VersionWorkbenchPage({
   return (
     <AppShell
       title="业务版本列表"
-      searchPlaceholder="搜索版本、批次或业务日"
       breadcrumbItems={[
         { label: "导入批次", href: "/data-quality" },
         { label: "业务版本列表" },

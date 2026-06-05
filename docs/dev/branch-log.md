@@ -37,6 +37,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM148 Legacy Header Search API Cleanup
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `ec873f9 fix: unify breadcrumb page headings`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed cleanup of the old global Header search API. Remove `searchPlaceholder` from `AppShell` and `SiteHeader`, remove all app/components passthroughs, and keep real business list filters in content areas.
+- allowed_files_check: `app/**`, `components/app-shell.tsx`, `components/site-header.tsx`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected shell/header prop deletion, page prop cleanup, regression test, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because `AppShell` still retained `searchPlaceholder`; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 18 tests, `rg -n "searchPlaceholder" app components -S` returned no matches, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM146 Production Wording And Return Links
 
 - branch_name: `codex/im144-ui-component-standards`

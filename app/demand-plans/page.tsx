@@ -36,7 +36,6 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
   return (
     <AppShell
       title="需求计划"
-      searchPlaceholder="搜索需求、项目或职场"
       breadcrumbItems={[{ label: "需求计划" }]}
     >
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">

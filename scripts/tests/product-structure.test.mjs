@@ -457,6 +457,24 @@ test("global shell uses shadcn sidebar and header breadcrumb primitives", async 
   assert.equal(sidebarSource.includes("退出登录"), true);
 });
 
+test("global header shell does not retain the removed search placeholder API", async () => {
+  const shellSource = await readFile(appShellPath, "utf8");
+  const headerSource = await readFile(siteHeaderPath, "utf8");
+  const pageSources = [
+    ...await collectSourceFiles(appRootPath),
+    ...await collectSourceFiles(componentsRootPath),
+  ];
+
+  assert.equal(shellSource.includes("searchPlaceholder"), false, "AppShell API");
+  assert.equal(headerSource.includes("searchPlaceholder"), false, "SiteHeader API");
+
+  for (const fileUrl of pageSources) {
+    const source = await readFile(fileUrl, "utf8");
+
+    assert.equal(source.includes("searchPlaceholder"), false, fileUrl.pathname);
+  }
+});
+
 test("master data pages pass breadcrumbs through AppShell", async () => {
   const pageSources = [
     await readFile(masterDataEntityPagePath, "utf8"),

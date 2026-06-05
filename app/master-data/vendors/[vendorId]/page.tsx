@@ -50,7 +50,6 @@ export default async function MasterDataVendorDetailRoute({
   return (
     <AppShell
       title={detailSummary.title}
-      searchPlaceholder="搜索供应商"
       breadcrumbItems={[
         { label: "主数据", href: "/master-data/agents" },
         { label: "供应商", href: "/master-data/vendors" },

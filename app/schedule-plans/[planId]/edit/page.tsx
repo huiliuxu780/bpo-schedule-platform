@@ -33,7 +33,6 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
   return (
     <AppShell
       title="编辑排班草稿"
-      searchPlaceholder="搜索计划、项目或职场"
       breadcrumbItems={[
         { label: "排班计划", href: "/schedule-plans" },
         { label: "排班计划详情", href: `/schedule-plans/${plan.summary.id}` },

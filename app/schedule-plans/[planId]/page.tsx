@@ -55,7 +55,6 @@ export default async function SchedulePlanDetailPage({ params }: PageProps) {
   return (
     <AppShell
       title="排班计划详情"
-      searchPlaceholder="搜索计划、项目或职场"
       breadcrumbItems={[
         { label: "排班计划", href: "/schedule-plans" },
         { label: "排班计划详情" },

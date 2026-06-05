@@ -23,7 +23,6 @@ export default function NewSchedulePlanPage() {
   return (
     <AppShell
       title="新建排班草稿"
-      searchPlaceholder="搜索计划、项目或职场"
       breadcrumbItems={[
         { label: "排班计划", href: "/schedule-plans" },
         { label: "新建排班草稿" },

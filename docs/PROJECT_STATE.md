@@ -748,3 +748,9 @@ The existing routes stay in place for compatibility and remain owned by their bu
 `IM147` continues the global UI cleanup by making demand, schedule, actual-log, and data-quality compatible pages pass `breadcrumbItems` through `AppShell`. The shared `SiteHeader` now owns page identity for those pages, while content areas no longer repeat same-title H1 blocks.
 
 The cleanup deletes or downgrades content-level page identity headings in the demand/schedule pages, production workbenches, review-case workspaces, comparison-run workspace, and business-version workspace. Business cards, filters, tables, record descriptions, and section headings remain unchanged. The task did not delete the legacy `searchPlaceholder` API, change route structure, alter import dialogs, or add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM147.
+
+## 2026-06-05 IM148 Legacy Header Search API Cleanup
+
+`IM148` removes the hidden global Header search API left behind after the visual search control was removed. `AppShell` and `SiteHeader` no longer declare, default, or pass `searchPlaceholder`, and pages no longer pass that prop into the shared shell.
+
+This task preserves real business filters inside their list content areas. It does not add a new Header search UI, remove list filters, change route structure, alter import dialogs, or add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM148.
