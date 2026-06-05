@@ -7,16 +7,12 @@ import {
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
-  buildMasterDataBindingMaintenanceApiPath,
-  buildMasterDataBindingMaintenancePayload,
-  buildMasterDataReferenceMaintenanceApiPath,
-  buildMasterDataReferenceMaintenancePayload,
   getMasterDataMaintenanceEntity,
   summarizeMasterDataAgentManagement,
   summarizeMasterDataBindingManagement,
   summarizeMasterDataEmployeeList,
   summarizeMasterDataAgentMaintenanceFeedback,
-  summarizeMasterDataMaintenanceEntityDetail,
+  summarizeMasterDataEntitySourceContext,
   summarizeMasterDataMaintenanceWorkbench,
   summarizeMasterDataReferenceManagement,
 } from "../../components/master-data-maintenance-model.ts";
@@ -113,48 +109,25 @@ test("master data maintenance resolves known entity keys", () => {
   assert.equal(getMasterDataMaintenanceEntity("missing"), null);
 });
 
-test("master data entity summary exposes source context without page workspace tabs", () => {
-  const detail = summarizeMasterDataMaintenanceEntityDetail("bindings", [baseBatch]);
+test("master data entity source context keeps list source state only", () => {
+  const context = summarizeMasterDataEntitySourceContext("bindings", [baseBatch]);
 
-  assert.equal(detail.entity.label, "绑定关系");
-  assert.equal(detail.title, "绑定关系");
-  assert.deepEqual(detail.workspaceTabs, []);
-  assert.equal(detail.sourceVersionLabel, "BATCH-MD-001::v1");
-  assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
-  assert.equal(detail.effectivePeriodLabel, "暂无实体级有效期明细");
-  assert.equal(detail.freezeStatusLabel, "暂无实体级冻结明细");
-  assert.equal(detail.referenceImpacts.length, 4);
-  assert.deepEqual(
-    detail.referenceImpacts.map((impact) => impact.label),
-    ["排班引用", "预测引用", "登录/状态引用", "比对与复核引用"],
-  );
-  assert.equal(detail.referenceImpacts[0].countLabel, "暂无明细");
-  assert.equal(detail.referenceImpacts[0].tone, "empty");
-  assert.deepEqual(
-    detail.maintenanceActions.map((action) => action.label),
-    ["新增绑定关系", "编辑绑定关系", "冻结绑定关系", "调整绑定关系有效期"],
-  );
-  assert.equal(detail.maintenanceActions[0].canSubmit, true);
-  assert.equal(detail.maintenanceActions[0].submitLabel, "提交新增");
-  assert.match(detail.maintenanceActions[0].referenceCheckLabel, /对象字段/);
-  assert.match(detail.maintenanceActions[0].failureBoundary, /对象不存在/);
+  assert.equal(context.entity.label, "绑定关系");
+  assert.equal(context.title, "绑定关系");
+  assert.equal(context.sourceVersionLabel, "BATCH-MD-001::v1");
+  assert.equal(context.sourceBatchHref, "/data-quality/import-batches/BATCH-MD-001");
+  assert.equal(context.agentSubmitSourceBatchId, null);
+  assert.equal("workspaceTabs" in context, false);
+  assert.equal("maintenanceActions" in context, false);
+  assert.equal("referenceImpacts" in context, false);
 });
 
-test("agent detail enables controlled submit actions only for agents", () => {
-  const agentDetail = summarizeMasterDataMaintenanceEntityDetail("agents", [baseBatch]);
-  const skillDetail = summarizeMasterDataMaintenanceEntityDetail("skills", [baseBatch]);
+test("agent source context is the only master data context with submit source batch", () => {
+  const agentContext = summarizeMasterDataEntitySourceContext("agents", [baseBatch]);
+  const skillContext = summarizeMasterDataEntitySourceContext("skills", [baseBatch]);
 
-  assert.equal(agentDetail.maintenanceActions[0].canSubmit, true);
-  assert.equal(agentDetail.maintenanceActions[0].submitLabel, "提交新增");
-  assert.equal(agentDetail.maintenanceActions[1].submitLabel, "提交编辑");
-  assert.equal(agentDetail.maintenanceActions[2].submitLabel, "提交冻结");
-  assert.equal(agentDetail.maintenanceActions[3].submitLabel, "提交有效期");
-  assert.equal(agentDetail.agentSubmitSourceBatchId, "BATCH-MD-001");
-  assert.deepEqual(agentDetail.workspaceTabs, []);
-  assert.equal(skillDetail.maintenanceActions[0].canSubmit, true);
-  assert.equal(skillDetail.maintenanceActions[0].submitLabel, "提交新增");
-  assert.equal(skillDetail.referenceSubmitSourceBatchId, "BATCH-MD-001");
-  assert.deepEqual(skillDetail.workspaceTabs, []);
+  assert.equal(agentContext.agentSubmitSourceBatchId, "BATCH-MD-001");
+  assert.equal(skillContext.agentSubmitSourceBatchId, null);
 });
 
 test("master data employee list summarizes org path type workplace and skills", () => {
@@ -481,76 +454,6 @@ test("agent skill maintenance payload maps single employee skill replacement", (
   );
 });
 
-test("reference maintenance payload maps non-agent master data objects", () => {
-  assert.equal(
-    buildMasterDataReferenceMaintenanceApiPath("skills", "SKILL 100/1"),
-    "/api/v1/master-data/skills/SKILL%20100%2F1/maintenance",
-  );
-  assert.deepEqual(
-    buildMasterDataReferenceMaintenancePayload({
-      action: "create",
-      sourceBatchId: "BATCH-MD-001",
-      referenceId: "SKILL-1001",
-      referenceName: "粤语",
-      status: "active",
-      effectiveFrom: "2026-06-01",
-      effectiveTo: "2026-12-31",
-    }),
-    {
-      action: "create",
-      source_batch_id: "BATCH-MD-001",
-      reference_name: "粤语",
-      status: "active",
-      effective_from: "2026-06-01",
-      effective_to: "2026-12-31",
-    },
-  );
-});
-
-test("binding maintenance payload maps relationship references and keeps freeze disabled", () => {
-  const detail = summarizeMasterDataMaintenanceEntityDetail("bindings", [baseBatch]);
-
-  assert.equal(detail.bindingSubmitSourceBatchId, "BATCH-MD-001");
-  assert.deepEqual(
-    detail.maintenanceActions.map((action) => [action.key, action.canSubmit]),
-    [
-      ["create", true],
-      ["edit", true],
-      ["freeze", false],
-      ["effective_period", true],
-    ],
-  );
-  assert.equal(
-    buildMasterDataBindingMaintenanceApiPath("BIND 100/1"),
-    "/api/v1/master-data/bindings/BIND%20100%2F1/maintenance",
-  );
-  assert.deepEqual(
-    buildMasterDataBindingMaintenancePayload({
-      action: "create",
-      sourceBatchId: "BATCH-MD-001",
-      bindingId: "BIND-1001",
-      employeeId: "A-1001",
-      supplierId: "SUP-001",
-      workplaceId: "SITE-001",
-      projectId: "PROJ-001",
-      skillId: "SKILL-001",
-      effectiveFrom: "2026-06-01",
-      effectiveTo: "2026-12-31",
-    }),
-    {
-      action: "create",
-      source_batch_id: "BATCH-MD-001",
-      employee_id: "A-1001",
-      supplier_id: "SUP-001",
-      workplace_id: "SITE-001",
-      project_id: "PROJ-001",
-      skill_id: "SKILL-001",
-      effective_from: "2026-06-01",
-      effective_to: "2026-12-31",
-    },
-  );
-});
-
 test("agent maintenance feedback summarizes success and backend error codes", () => {
   assert.deepEqual(
     summarizeMasterDataAgentMaintenanceFeedback({
@@ -562,7 +465,7 @@ test("agent maintenance feedback summarizes success and backend error codes", ()
     }),
     {
       tone: "success",
-      title: "主数据维护已提交",
+      title: "人员保存成功",
       detail: "A-1001 王一 已 created，当前状态 active。",
     },
   );
@@ -575,14 +478,14 @@ test("agent maintenance feedback summarizes success and backend error codes", ()
     }),
     {
       tone: "error",
-      title: "主数据维护提交失败",
+      title: "人员保存失败",
       detail: "EMPLOYEE_NOT_FOUND: EMPLOYEE_NOT_FOUND: A-404",
     },
   );
 });
 
-test("master data entity detail keeps a blocked source state when no applied version exists", () => {
-  const detail = summarizeMasterDataMaintenanceEntityDetail("agents", [
+test("master data source context keeps a blocked source state when no applied version exists", () => {
+  const context = summarizeMasterDataEntitySourceContext("agents", [
     {
       ...baseBatch,
       application_status: "not_applied",
@@ -590,13 +493,8 @@ test("master data entity detail keeps a blocked source state when no applied ver
     },
   ]);
 
-  assert.equal(detail.tone, "blocked");
-  assert.equal(detail.sourceVersionLabel, "暂无主数据业务版本");
-  assert.match(detail.detail, /尚未应用/);
-  assert.equal(detail.referenceImpacts[0].detail, "来源版本未就绪，未展示引用影响。");
-  assert.equal(detail.maintenanceActions[0].statusLabel, "来源阻塞");
-  assert.equal(detail.maintenanceActions[0].canSubmit, true);
-  assert.equal(detail.agentSubmitSourceBatchId, "BATCH-MD-001");
-  assert.equal(detail.maintenanceActions[0].referenceCheckLabel, "来源版本未就绪，请先处理来源批次。");
-  assert.equal(detail.maintenanceActions[0].failureBoundary, "先应用主数据来源批次，再重新检查引用影响。");
+  assert.equal(context.tone, "blocked");
+  assert.equal(context.sourceVersionLabel, "暂无主数据业务版本");
+  assert.match(context.detail, /尚未应用/);
+  assert.equal(context.agentSubmitSourceBatchId, "BATCH-MD-001");
 });

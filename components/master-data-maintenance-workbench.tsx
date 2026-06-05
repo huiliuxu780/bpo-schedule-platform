@@ -16,7 +16,7 @@ import {
   type MasterDataAgentMaintenanceFeedback,
   type MasterDataAgentManagementSummary,
   type MasterDataBindingManagementSummary,
-  type MasterDataEntityDetailSummary,
+  type MasterDataEntitySourceContext,
   type MasterDataReferenceManagementSummary,
 } from "@/components/master-data-maintenance-model"
 import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
@@ -58,7 +58,7 @@ export function MasterDataAgentManagementPage({
   selectedFreezeEmployeeId,
   agentSubmitAction,
 }: {
-  summary: MasterDataEntityDetailSummary
+  summary: MasterDataEntitySourceContext
   managementSummary: MasterDataAgentManagementSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
@@ -130,7 +130,7 @@ export function MasterDataReferenceManagementPage({
   error,
   feedback,
 }: {
-  summary: MasterDataEntityDetailSummary
+  summary: MasterDataEntitySourceContext
   listSummary: MasterDataReferenceManagementSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
@@ -219,7 +219,7 @@ export function MasterDataBindingManagementPage({
   error,
   feedback,
 }: {
-  summary: MasterDataEntityDetailSummary
+  summary: MasterDataEntitySourceContext
   listSummary: MasterDataBindingManagementSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
@@ -521,7 +521,7 @@ function AgentFreezeDialog({
   employee,
   action,
 }: {
-  summary: MasterDataEntityDetailSummary
+  summary: MasterDataEntitySourceContext
   employee: MasterDataAgentManagementSummary["rows"][number]
   action: (formData: FormData) => Promise<void>
 }) {
@@ -589,7 +589,7 @@ export function MasterDataAgentCreatePage({
   feedback,
   action,
 }: {
-  summary: MasterDataEntityDetailSummary
+  summary: MasterDataEntitySourceContext
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   action: (formData: FormData) => Promise<void>
@@ -634,7 +634,7 @@ export function MasterDataAgentEditPage({
   employee,
   action,
 }: {
-  summary: MasterDataEntityDetailSummary
+  summary: MasterDataEntitySourceContext
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   employee: MasterDataAgentManagementSummary["rows"][number] | null
@@ -692,7 +692,7 @@ export function MasterDataAgentSkillsEditPage({
   employee,
   action,
 }: {
-  summary: MasterDataEntityDetailSummary
+  summary: MasterDataEntitySourceContext
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   employee: MasterDataAgentManagementSummary["rows"][number] | null
@@ -817,7 +817,7 @@ function AgentSkillMaintenanceSection({
   action,
   selectedEmployeeId = "",
 }: {
-  summary: MasterDataEntityDetailSummary
+  summary: MasterDataEntitySourceContext
   action: (formData: FormData) => Promise<void>
   selectedEmployeeId?: string
 }) {

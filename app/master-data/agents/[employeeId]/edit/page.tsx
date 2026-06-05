@@ -5,7 +5,7 @@ import { MasterDataAgentEditPage } from "@/components/master-data-maintenance-wo
 import {
   summarizeMasterDataAgentManagement,
   summarizeMasterDataMaintenanceFeedback,
-  summarizeMasterDataMaintenanceEntityDetail,
+  summarizeMasterDataEntitySourceContext,
 } from "@/components/master-data-maintenance-model"
 import {
   fetchImportBatches,
@@ -33,7 +33,7 @@ export default async function EditMasterDataAgentPage({
     fetchMasterDataEmployees(),
   ])
   const resolvedSearchParams = searchParams ? await searchParams : {}
-  const summary = summarizeMasterDataMaintenanceEntityDetail(
+  const summary = summarizeMasterDataEntitySourceContext(
     "agents",
     batchResult.data ?? []
   )

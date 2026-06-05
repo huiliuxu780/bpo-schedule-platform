@@ -6,6 +6,8 @@ const dashboardPagePath = new URL("../../app/dashboard/page.tsx", import.meta.ur
 const appSidebarPath = new URL("../../components/app-sidebar.tsx", import.meta.url);
 const masterDataIndexPagePath = new URL("../../app/master-data/page.tsx", import.meta.url);
 const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page.tsx", import.meta.url);
+const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions.ts", import.meta.url);
+const masterDataModelPath = new URL("../../components/master-data-maintenance-model.ts", import.meta.url);
 
 test("dashboard overview does not expose data ingestion status panel", async () => {
   const source = await readFile(dashboardPagePath, "utf8");
@@ -61,6 +63,8 @@ test("sidebar does not expose placeholder or deferred product capabilities", asy
 test("master data entry redirects to agents and entity pages do not use the old long detail workspace", async () => {
   const indexSource = await readFile(masterDataIndexPagePath, "utf8");
   const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const actionsSource = await readFile(masterDataActionsPath, "utf8");
+  const modelSource = await readFile(masterDataModelPath, "utf8");
   const forbiddenEntityPageTerms = [
     "  MasterDataMaintenanceEntityDetail,",
     "<MasterDataMaintenanceEntityDetail",
@@ -71,10 +75,36 @@ test("master data entry redirects to agents and entity pages do not use the old 
     "维护动作",
     "来源与引用",
   ];
+  const forbiddenActionTerms = [
+    "submitMasterDataReferenceMaintenance",
+    "submitMasterDataBindingMaintenance",
+    "parseBindingAction",
+    "parseEntityKey",
+    "buildMasterDataReferenceMaintenance",
+    "buildMasterDataBindingMaintenance",
+  ];
+  const forbiddenModelTerms = [
+    "MasterDataEntityDetailSummary",
+    "summarizeMasterDataMaintenanceEntityDetail",
+    "MasterDataMaintenanceWorkspaceTab",
+    "workspaceTabs",
+    "MasterDataReferenceMaintenancePayload",
+    "MasterDataBindingMaintenancePayload",
+    "buildMasterDataReferenceMaintenance",
+    "buildMasterDataBindingMaintenance",
+  ];
 
   assert.equal(indexSource.includes('redirect("/master-data/agents")'), true);
 
   for (const term of forbiddenEntityPageTerms) {
     assert.equal(entitySource.includes(term), false, term);
+  }
+
+  for (const term of forbiddenActionTerms) {
+    assert.equal(actionsSource.includes(term), false, term);
+  }
+
+  for (const term of forbiddenModelTerms) {
+    assert.equal(modelSource.includes(term), false, term);
   }
 });

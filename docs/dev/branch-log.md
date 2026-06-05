@@ -3386,3 +3386,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM136 Master Data Residual Cleanup
+
+- branch_name: `codex/im136-business-first-ia-cleanup`
+- base_main_commit: `a4c4221`
+- stacked_on: `964abfa fix: split master data list pages`
+- remote_status: `964abfa was pushed; residual cleanup is local until final check/commit/push.`
+- scope: PM-requested follow-up to remove residual master-data long-workspace and non-agent submit concepts after the list-page correction. Keep only personnel submit actions in the frontend action layer, rename master-data entity context to source context, remove non-agent maintenance payload builders from the frontend model, update personnel feedback copy, and synchronize current project context.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `app/master-data/**/page.tsx`, `components/master-data-maintenance-*`, focused frontend tests, `docs/current/PROJECT_CONTEXT.md`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, settlement, formula, or charge-factor changes.
+- scope_diff_check: expected residual naming/action cleanup, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: target frontend tests first failed on `submitMasterDataReferenceMaintenance`, then passed with 18 tests after cleanup; `npm run typecheck` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, lint, typecheck, Next build, and backend 207 tests OK. Browser verification on fixed services `127.0.0.1:3000` and `127.0.0.1:8000` confirmed `/master-data/agents` keeps new/edit/freeze personnel actions, `/master-data/sites` is a list page with rows, and neither page renders old long-workspace residual wording.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

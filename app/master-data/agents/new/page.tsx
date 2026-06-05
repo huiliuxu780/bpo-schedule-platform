@@ -2,7 +2,7 @@ import { AppShell } from "@/components/app-shell"
 import { MasterDataAgentCreatePage } from "@/components/master-data-maintenance-workbench"
 import {
   summarizeMasterDataMaintenanceFeedback,
-  summarizeMasterDataMaintenanceEntityDetail,
+  summarizeMasterDataEntitySourceContext,
 } from "@/components/master-data-maintenance-model"
 import { fetchImportBatches } from "@/app/master-data/agents/data"
 import { submitMasterDataAgentMaintenance } from "../../[entityKey]/actions"
@@ -18,7 +18,7 @@ export default async function NewMasterDataAgentPage({
 }: PageProps) {
   const batchResult = await fetchImportBatches()
   const resolvedSearchParams = searchParams ? await searchParams : {}
-  const summary = summarizeMasterDataMaintenanceEntityDetail(
+  const summary = summarizeMasterDataEntitySourceContext(
     "agents",
     batchResult.data ?? []
   )

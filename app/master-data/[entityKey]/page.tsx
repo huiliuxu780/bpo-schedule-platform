@@ -13,7 +13,7 @@ import {
   summarizeMasterDataAgentManagement,
   summarizeMasterDataBindingManagement,
   summarizeMasterDataMaintenanceFeedback,
-  summarizeMasterDataMaintenanceEntityDetail,
+  summarizeMasterDataEntitySourceContext,
   summarizeMasterDataReferenceManagement,
 } from "@/components/master-data-maintenance-model"
 import {
@@ -58,7 +58,7 @@ export default async function MasterDataEntityDetailPage({
       ? await fetchMasterDataBindings()
       : { data: [], error: null }
   const resolvedSearchParams = searchParams ? await searchParams : {}
-  const summary = summarizeMasterDataMaintenanceEntityDetail(
+  const summary = summarizeMasterDataEntitySourceContext(
     entity.key as MasterDataMaintenanceEntityKey,
     batchResult.data ?? []
   )
