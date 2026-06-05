@@ -16,7 +16,7 @@ export default async function ActualLogProductionPage() {
   const batchResult = await fetchImportBatches()
 
   return (
-    <AppShell title="CORN 状态日志生产" searchPlaceholder="搜索日志版本或来源批次">
+    <AppShell title="登录/状态日志生产" searchPlaceholder="搜索日志版本或来源批次">
       <ActualLogProductionWorkbench
         batches={batchResult.data ?? []}
         error={batchResult.error}
@@ -34,7 +34,7 @@ async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
     if (!response.ok) {
       return {
         data: [],
-        error: `导入批次 服务返回 ${response.status}`,
+        error: `导入批次读取失败（状态码 ${response.status}）`,
       }
     }
 

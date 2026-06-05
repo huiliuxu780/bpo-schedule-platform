@@ -380,18 +380,18 @@ export function PersonnelScheduleProductionDetail({
                 <>
                   <div className="grid gap-1">
                     <p className="font-medium text-foreground">
-                      排班明细与 0.5h 展开已来自版本服务
+                      排班明细与 0.5h 展开已来自版本明细
                     </p>
                   </div>
                   <div className="grid gap-4 xl:grid-cols-2">
                     <ReadOnlyRowsTable
                       title="排班明细"
-                      emptyLabel="版本服务 未返回排班明细"
+                      emptyLabel="版本明细未返回排班明细"
                       rows={detail.detailRows}
                     />
                     <ReadOnlyRowsTable
                       title="0.5h 展开区间"
-                      emptyLabel="版本服务 未返回 0.5h 展开区间"
+                      emptyLabel="版本明细未返回 0.5h 展开区间"
                       rows={detail.intervalRows}
                     />
                   </div>

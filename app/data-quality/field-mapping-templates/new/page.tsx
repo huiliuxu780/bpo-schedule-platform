@@ -130,7 +130,7 @@ export default async function FieldMappingTemplateCreatePage({
                     </select>
                   </Field>
                   <Field label="创建人">
-                    <Input name="created_by" defaultValue="local-operator" required />
+                    <Input name="created_by" defaultValue="operator" required />
                   </Field>
                 </div>
                 <Field label="字段映射 JSON">

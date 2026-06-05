@@ -1,5 +1,11 @@
 import type { ImportBatchListRow } from "@/components/import-center-model"
 
+const taskCodeLabelPattern = /\b(?:F|B|Q|IM|US|DB)\d{3}\b/g
+
+function formatImportBatchDisplayLabel(batchId: string): string {
+  return batchId.replace(taskCodeLabelPattern, "业务")
+}
+
 export type MasterDataMaintenanceTone = "ready" | "blocked" | "empty"
 
 export type MasterDataMaintenanceEntityKey =
@@ -343,7 +349,9 @@ export function summarizeMasterDataMaintenanceWorkbench(
   )
   const sourceVersionLabel =
     latestAppliedBatch?.import_version_id ?? "暂无主数据业务版本"
-  const latestBatchLabel = latestBatch?.batch_id ?? "暂无主数据批次"
+  const latestBatchLabel = latestBatch
+    ? formatImportBatchDisplayLabel(latestBatch.batch_id)
+    : "暂无主数据批次"
   const statusLabel = resolveMasterDataMaintenanceStatusLabel(tone, hasPendingFreshness)
   const blockerSummary = resolveMasterDataMaintenanceBlocker(
     masterDataBatches,
@@ -917,12 +925,12 @@ function resolveMasterDataMaintenanceDetail(
   }
 
   if (!latestAppliedBatch) {
-    return `已发现主数据批次 ${latestBatch?.batch_id ?? "未知批次"}，但尚未应用到业务数据。`
+    return `已发现主数据批次 ${latestBatch ? formatImportBatchDisplayLabel(latestBatch.batch_id) : "未知批次"}，但尚未应用到业务数据。`
   }
 
   if (hasPendingFreshness) {
-    return `当前来源为 ${latestAppliedBatch.import_version_id}，最新主数据批次尚未应用：${latestBatch?.batch_id ?? "未知批次"}。`
+    return `当前来源为 ${latestAppliedBatch.import_version_id}，最新主数据批次尚未应用：${latestBatch ? formatImportBatchDisplayLabel(latestBatch.batch_id) : "未知批次"}。`
   }
 
-  return `当前来源为已应用版本 ${latestAppliedBatch.import_version_id}，来源批次 ${latestAppliedBatch.batch_id}。`
+  return `当前来源为已应用版本 ${latestAppliedBatch.import_version_id}，来源批次 ${formatImportBatchDisplayLabel(latestAppliedBatch.batch_id)}。`
 }

@@ -4,6 +4,7 @@ import {
   type ImportBatchPersistenceDetail,
   type ImportBatchRowResult,
   type ImportQualityExceptionTrace,
+  formatImportBatchDisplayLabel,
   formatImportFileType,
   formatImportProcessingStatus,
   formatImportRowErrorField,
@@ -70,7 +71,7 @@ export function ImportCenterBatchDetailPanel({
         <div>
           <CardTitle className="text-base">批次明细</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
-            {detail.batch.batch_id} · {formatImportFileType(detail.batch.file_type)} ·{" "}
+            {formatImportBatchDisplayLabel(detail.batch.batch_id)} · {formatImportFileType(detail.batch.file_type)} ·{" "}
             {formatImportProcessingStatus(detail.batch.processing_status)}
           </p>
         </div>

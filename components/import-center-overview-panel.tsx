@@ -11,6 +11,7 @@ import {
   type ImportApplyReadinessResponse,
   type ImportBatchListRow,
   type ImportExceptionGuidance,
+  formatImportBatchDisplayLabel,
   formatImportReadinessStatus,
   summarizeImportBatches,
 } from "@/components/import-center-model"
@@ -58,7 +59,11 @@ export function ImportCenterOverviewPanel({
         <SummaryCard
           title="当前准备度"
           value={readiness ? formatImportReadinessStatus(readiness.readiness_status) : "-"}
-          detail={selectedBatch?.batch_id ?? "暂无选中批次"}
+          detail={
+            selectedBatch
+              ? formatImportBatchDisplayLabel(selectedBatch.batch_id)
+              : "暂无选中批次"
+          }
           icon={ShieldCheck}
           tone={readiness?.readiness_status === "blocked" ? "destructive" : "default"}
         />

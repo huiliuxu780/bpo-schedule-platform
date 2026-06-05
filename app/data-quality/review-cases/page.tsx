@@ -101,7 +101,7 @@ async function fetchImportReviewCases(
     if (!response.ok) {
       return {
         data: [],
-        error: `复核案例 服务返回 ${response.status}`,
+        error: `复核案例读取失败（状态码 ${response.status}）`,
       }
     }
 

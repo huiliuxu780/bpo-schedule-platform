@@ -7,6 +7,7 @@ import {
   type ImportDownstreamResultNavigation,
   type ImportReadinessIssueGroup,
   buildImportApiUrl,
+  formatImportBatchDisplayLabel,
   formatImportFileType,
   formatImportProcessingStatus,
   formatImportReadinessStatus,
@@ -111,7 +112,7 @@ function BatchReviewGuideCard({
         <div>
           <div className="font-medium">批次处理导览</div>
           <p className="mt-1 text-muted-foreground">
-            {batch.batch_id} · {formatImportFileType(batch.file_type)}
+            {formatImportBatchDisplayLabel(batch.batch_id)} · {formatImportFileType(batch.file_type)}
           </p>
         </div>
         <Badge

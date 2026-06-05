@@ -2688,7 +2688,7 @@ test("import center review case detail summarizes action submit feedback", () =>
       tone: "blocked",
       title: "补结论提交失败",
       statusLabel: "写入失败",
-      detail: "结论未写入；检查服务、案例状态和必填字段后重试。",
+      detail: "结论未写入；检查案例状态和必填字段后重试。",
       actionKey: "conclusion",
     }
   );
@@ -2731,7 +2731,7 @@ test("import center review case detail summarizes failed action retry target", (
       tone: "blocked",
       title: "重试定位",
       statusLabel: "已定位到补结论",
-      detail: "补结论写入失败，当前已打开补结论入口；检查必填字段、案例状态和服务 后重试。",
+      detail: "补结论写入失败，当前已打开补结论入口；检查必填字段和案例状态后重试。",
       tabValue: "conclusion",
       actionLabel: "补结论",
     }
@@ -3388,8 +3388,8 @@ test("import center comparison run detail returns to source batch and version wo
       tone: "ready",
       title: "已形成回跳闭环",
       detail:
-        "当前运行已匹配 2 个来源批次；可回到 BATCH-IM092-STATUS-001 的结果追踪，或按业务日进入业务版本列表。",
-      sourceBatchLabel: "BATCH-IM092-STATUS-001 · BATCH-IM092-SCH-001",
+        "当前运行已匹配 2 个来源批次；可回到 BATCH-业务-STATUS-001 的结果追踪，或按业务日进入业务版本列表。",
+      sourceBatchLabel: "BATCH-业务-STATUS-001 · BATCH-业务-SCH-001",
       versionWorkbenchLabel: "业务版本列表 · 2026-05-01",
       primaryActionLabel: "回到来源批次结果追踪",
       primaryHref: "/data-quality/BATCH-IM092-STATUS-001?tab=result-trace",
@@ -3398,8 +3398,8 @@ test("import center comparison run detail returns to source batch and version wo
       evidence: [
         "来源版本 排班 SCH-VERSION-001",
         "来源版本 实际 STATUS-VERSION-001",
-        "来源批次 BATCH-IM092-STATUS-001",
-        "来源批次 BATCH-IM092-SCH-001",
+        "来源批次 BATCH-业务-STATUS-001",
+        "来源批次 BATCH-业务-SCH-001",
       ],
     },
   );
@@ -4987,7 +4987,7 @@ test("import center applied version result context resolves direct version posit
       title: "已定位对应版本结果",
       detail:
         "当前批次版本 SCH-VERSION-001 已匹配到下游结果，可直接进入对应对比运行，并继续查看同业务日复核案例。",
-      sourceBatchLabel: "BATCH-IM085-SCH-001",
+      sourceBatchLabel: "BATCH-业务-SCH-001",
       versionLabel: "SCH-VERSION-001",
       targetLabel: "人员排班",
       downstreamStatusLabel: "匹配运行 2 个 · 未关闭复核 1 个",
@@ -4997,7 +4997,7 @@ test("import center applied version result context resolves direct version posit
       secondaryHref:
         "/data-quality/review-cases?businessDate=2026-05-01&sourceResultType=schedule_actual",
       evidence: [
-        "来源批次 BATCH-IM085-SCH-001",
+        "来源批次 BATCH-业务-SCH-001",
         "业务日 2026-05-01",
         "应用目标 人员排班",
         "版本 SCH-VERSION-001",
@@ -5025,7 +5025,7 @@ test("import center applied version result context resolves direct version posit
       title: "当前版本暂无直接结果页",
       detail:
         "主数据版本 MD-VERSION-001 当前没有可直接进入的对比运行详情；先核对版本记录，再按业务日查看下游结果空态。",
-      sourceBatchLabel: "BATCH-IM085-MD-001",
+      sourceBatchLabel: "BATCH-业务-MD-001",
       versionLabel: "MD-VERSION-001",
       targetLabel: "主数据",
       downstreamStatusLabel: "暂无可匹配运行",
@@ -5034,7 +5034,7 @@ test("import center applied version result context resolves direct version posit
       secondaryActionLabel: "查看下游结果追踪",
       secondaryHref: "/data-quality/BATCH-IM085-MD-001?tab=result-trace",
       evidence: [
-        "来源批次 BATCH-IM085-MD-001",
+        "来源批次 BATCH-业务-MD-001",
         "业务日 2026-05-01",
         "应用目标 主数据",
         "版本 MD-VERSION-001",
@@ -5103,7 +5103,7 @@ test("import center applied version result context resolves direct version posit
       title: "已定位对应版本结果",
       detail:
         "当前批次版本 LOGIN-VERSION-001 已匹配到下游结果，可直接进入对应对比运行，并继续查看同业务日复核案例。",
-      sourceBatchLabel: "BATCH-IM119-LOGIN-001",
+      sourceBatchLabel: "BATCH-业务-LOGIN-001",
       versionLabel: "LOGIN-VERSION-001",
       targetLabel: "登录/状态日志",
       downstreamStatusLabel: "匹配运行 1 个 · 未关闭复核 1 个",
@@ -5113,7 +5113,7 @@ test("import center applied version result context resolves direct version posit
       secondaryHref:
         "/data-quality/review-cases?businessDate=2026-05-01&sourceResultType=schedule_actual",
       evidence: [
-        "来源批次 BATCH-IM119-LOGIN-001",
+        "来源批次 BATCH-业务-LOGIN-001",
         "业务日 2026-05-01",
         "应用目标 登录/状态日志",
         "版本 LOGIN-VERSION-001",
@@ -5192,7 +5192,7 @@ test("import center version comparison trigger only opens when source versions a
       versionPairLabel: "SCH-VERSION-001 / STATUS-VERSION-001",
       businessDateLabel: "2026-05-01 ~ 2026-05-01",
       evidence: [
-        "来源批次 BATCH-IM086-SCH-001",
+        "来源批次 BATCH-业务-SCH-001",
         "业务日 2026-05-01",
         "版本 SCH-VERSION-001",
         "对比口径 排班实际",
@@ -5249,7 +5249,7 @@ test("import center version comparison trigger only opens when source versions a
       versionPairLabel: "MD-VERSION-001",
       businessDateLabel: "2026-05-01",
       evidence: [
-        "来源批次 BATCH-IM086-MD-001",
+        "来源批次 BATCH-业务-MD-001",
         "业务日 2026-05-01",
         "版本 MD-VERSION-001",
       ],

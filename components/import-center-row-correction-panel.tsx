@@ -5,6 +5,7 @@ import {
   type ImportBatchPersistenceDetail,
   type ImportRowCorrectionNotice,
   type ImportBatchRowResult,
+  formatImportBatchDisplayLabel,
   getImportRowStandardFieldsPreview,
   summarizeImportRowCorrectionNotice,
 } from "@/components/import-center-model"
@@ -49,7 +50,9 @@ export function ImportCenterRowCorrectionPanel({
         <div>
           <CardTitle className="text-base">失败行修正</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
-            {detail?.batch.batch_id ?? detailError ?? "选择批次后读取失败行"}
+            {detail
+              ? formatImportBatchDisplayLabel(detail.batch.batch_id)
+              : (detailError ?? "选择批次后读取失败行")}
           </p>
         </div>
         <StatusBadge
@@ -161,7 +164,7 @@ function CorrectionNotice({ notice }: { notice: ImportRowCorrectionNotice }) {
   const isSuccess = notice.tone === "success"
   const Icon = isSuccess ? CheckCircle2 : AlertTriangle
   const panelClass = isSuccess
-    ? "border-t bg-emerald-50 px-4 py-3 text-sm text-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-200"
+    ? "border-t bg-primary/10 px-4 py-3 text-sm text-primary"
     : "border-t bg-destructive/10 px-4 py-3 text-sm text-destructive"
 
   return (

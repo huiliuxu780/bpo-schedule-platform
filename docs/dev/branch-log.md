@@ -3422,3 +3422,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM136 Visible Residue Cleanup Follow-up
+
+- branch_name: `codex/im136-business-first-ia-cleanup`
+- base_main_commit: `a4c4221`
+- stacked_on: `6ca2e2b fix: remove center-first residual copy`
+- remote_status: `6ca2e2b was pushed; this visible-residue cleanup is local until final check/commit/push.`
+- scope: PM-requested continuation after asking whether cleanup is finished. Remove remaining user-visible implementation residue including `CORN`, task-code badges, `local-operator` default values, awkward service wording, and raw English status option labels while preserving backend enum values.
+- allowed_files_check: `app/**`, `components/**`, focused frontend tests, `docs/current/PROJECT_CONTEXT.md`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, settlement, formula, or charge-factor changes.
+- scope_diff_check: expected visible copy cleanup, product-structure regression hardening, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: product-structure test now rejects `CORN`, task-code labels, `local-operator`, and spaced service residue in `app`/`components`; target product/model tests passed with 126 tests after assertion sync. Browser smoke over dashboard, personnel list, actual-log production, import batches, demand plans, and schedule production found no rejected visible phrases, no task-code labels, and no spaced service residue. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state check, shadcn gate, lint, typecheck, Next build, and backend 207 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

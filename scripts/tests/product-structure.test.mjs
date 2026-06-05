@@ -52,7 +52,11 @@ test("application source does not retain rejected center-first visible wording",
     "数据质量",
     "质量中心",
     "接入批次",
+    "CORN",
+    "local-operator",
+    " 服务",
   ];
+  const forbiddenTaskCodePattern = /\b(?:F|B|Q|IM|US|DB)\d{3}\b/;
 
   for (const fileUrl of sourceFiles) {
     const source = await readFile(fileUrl, "utf8");
@@ -60,6 +64,12 @@ test("application source does not retain rejected center-first visible wording",
     for (const phrase of forbiddenVisiblePhrases) {
       assert.equal(source.includes(phrase), false, `${fileUrl.pathname}: ${phrase}`);
     }
+
+    assert.equal(
+      forbiddenTaskCodePattern.test(source),
+      false,
+      `${fileUrl.pathname}: task code label`,
+    );
   }
 });
 

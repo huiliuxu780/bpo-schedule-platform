@@ -87,7 +87,7 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
               <CardTitle>预测需求</CardTitle>
               <CardDescription>{query || "全部需求"}</CardDescription>
             </div>
-            <Badge variant="outline">B005 需求</Badge>
+            <Badge variant="outline">需求</Badge>
           </CardHeader>
           <CardContent>
             <DemandPlanTable rows={rows} />

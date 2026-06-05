@@ -139,7 +139,7 @@ export default async function UnavailabilityPage({ searchParams }: PageProps) {
                 {status ? `${unavailabilityStatusLabel(status)} / ${query || "全部"}` : query || "全部记录"}
               </CardDescription>
             </div>
-            <Badge variant="outline">B006 不可用</Badge>
+            <Badge variant="outline">不可用</Badge>
           </CardHeader>
           <CardContent>
             <UnavailabilityTable rows={rows} />

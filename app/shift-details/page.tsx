@@ -145,7 +145,7 @@ export default async function ShiftDetailsPage({ searchParams }: PageProps) {
                 {status ? `${schedulePlanStatusLabel(status)} / ${query || "全部"}` : query || "全部计划"}
               </CardDescription>
             </div>
-            <Badge variant="outline">B004 明细</Badge>
+            <Badge variant="outline">明细</Badge>
           </CardHeader>
           <CardContent>
             <ShiftDetailsTable rows={rows} />

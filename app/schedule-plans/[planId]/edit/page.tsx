@@ -51,8 +51,7 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
             <CardHeader>
               <CardTitle>当前计划不可编辑</CardTitle>
               <CardDescription>
-                当前状态为 {schedulePlanStatusLabel(plan.summary.status)}，F007
-                仅允许编辑 draft 草稿。
+                当前状态为 {schedulePlanStatusLabel(plan.summary.status)}，仅草稿计划可编辑。
               </CardDescription>
             </CardHeader>
             <CardContent>

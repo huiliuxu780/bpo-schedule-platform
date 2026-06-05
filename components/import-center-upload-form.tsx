@@ -94,7 +94,7 @@ export function ImportCenterUploadForm({
               </select>
             </Field>
             <Field label="上传人">
-              <Input name="uploaded_by" defaultValue="local-operator" required />
+              <Input name="uploaded_by" defaultValue="operator" required />
             </Field>
             <Field label="开始日期">
               <Input name="business_date_from" type="date" defaultValue="2026-05-01" required />

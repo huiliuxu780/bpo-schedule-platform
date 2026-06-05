@@ -23,6 +23,7 @@ import {
   buildImportComparisonRunsUrl,
   buildImportFieldMappingTemplatesUrl,
   buildImportReviewCasesUrl,
+  formatImportBatchDisplayLabel,
   formatImportApplicationStatus,
   formatImportFileType,
   formatImportReadinessStatus,
@@ -511,7 +512,9 @@ function BatchDetailHeader({
             </Button>
           </div>
           <CardTitle className="text-base">批次处理详情</CardTitle>
-          <p className="mt-1 font-mono text-sm text-muted-foreground">{batchId}</p>
+          <p className="mt-1 font-mono text-sm text-muted-foreground">
+            {formatImportBatchDisplayLabel(batchId)}
+          </p>
         </div>
         <Badge variant={batchError || !batch ? "destructive" : "outline"}>
           {batchError ? "读取失败" : batch ? formatImportFileType(batch.file_type) : "未找到"}
@@ -558,7 +561,7 @@ async function fetchImportFieldMappingTemplates(): Promise<
     if (!response.ok) {
       return {
         data: [],
-        error: `字段映射模板 服务返回 ${response.status}`,
+        error: `字段映射模板读取失败（状态码 ${response.status}）`,
       }
     }
 
@@ -587,7 +590,7 @@ async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
     if (!response.ok) {
       return {
         data: [],
-        error: `导入批次 服务返回 ${response.status}`,
+        error: `导入批次读取失败（状态码 ${response.status}）`,
       }
     }
 
@@ -621,7 +624,7 @@ async function fetchImportReadiness(
     if (!response.ok) {
       return {
         data: null,
-        error: `准备度 服务返回 ${response.status}`,
+        error: `准备度读取失败（状态码 ${response.status}）`,
       }
     }
 
@@ -648,7 +651,7 @@ async function fetchImportBatchDetail(
     if (!response.ok) {
       return {
         data: null,
-        error: `批次明细 服务返回 ${response.status}`,
+        error: `批次明细读取失败（状态码 ${response.status}）`,
       }
     }
 
@@ -675,7 +678,7 @@ async function fetchImportComparisonRuns(
     if (!response.ok) {
       return {
         data: [],
-        error: `对比结果 服务返回 ${response.status}`,
+        error: `对比结果读取失败（状态码 ${response.status}）`,
       }
     }
 
@@ -704,7 +707,7 @@ async function fetchImportReviewCases(
     if (!response.ok) {
       return {
         data: [],
-        error: `复核案例 服务返回 ${response.status}`,
+        error: `复核案例读取失败（状态码 ${response.status}）`,
       }
     }
 

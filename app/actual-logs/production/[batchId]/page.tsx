@@ -49,7 +49,7 @@ async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
     if (!response.ok) {
       return {
         data: [],
-        error: `导入批次 服务返回 ${response.status}`,
+        error: `导入批次读取失败（状态码 ${response.status}）`,
       }
     }
 
@@ -78,7 +78,7 @@ async function fetchImportBatchDetail(
     if (!response.ok) {
       return {
         data: null,
-        error: `批次明细 服务返回 ${response.status}`,
+        error: `批次明细读取失败（状态码 ${response.status}）`,
       }
     }
 

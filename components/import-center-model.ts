@@ -99,6 +99,16 @@ export type ImportBatchSummary = {
   notAppliedBatches: number
 }
 
+const taskCodeLabelPattern = /\b(?:F|B|Q|IM|US|DB)\d{3}\b/g
+
+export function formatImportBatchDisplayLabel(batchId: string | null | undefined): string {
+  if (!batchId) {
+    return "暂无批次"
+  }
+
+  return batchId.replace(taskCodeLabelPattern, "业务")
+}
+
 export type ImportBatchFilterValue = "all"
 
 export type ImportBatchFilters = {
@@ -1987,10 +1997,10 @@ function summarizeImportVersionWorkbenchRow(
       tone: "ready",
       statusLabel: "已形成当前版本",
       versionLabel: latestAppliedBatch.import_version_id,
-      sourceBatchLabel: latestAppliedBatch.batch_id,
+      sourceBatchLabel: formatImportBatchDisplayLabel(latestAppliedBatch.batch_id),
       businessDateLabel: latestAppliedBatch.business_date_from,
       visibleTimeLabel: formatVersionWorkbenchVisibleTime(latestAppliedBatch.uploaded_at),
-      blockerSummary: `当前按最近已应用批次 ${latestAppliedBatch.batch_id} 作为版本口径。`,
+      blockerSummary: `当前按最近已应用批次 ${formatImportBatchDisplayLabel(latestAppliedBatch.batch_id)} 作为版本口径。`,
       nextAction: "从当前批次详情继续核对版本记录和结果追踪。",
       downstreamSummary: downstreamImpact.summary,
       downstreamDetail: downstreamImpact.detail,
@@ -3491,7 +3501,7 @@ export function summarizeImportReviewCaseActionFeedback({
       statusLabel: isSuccess ? "已写入" : "写入失败",
       detail: isSuccess
         ? "证据已写入当前复核案例；继续补充结论或复核关闭条件。"
-        : "证据未写入；检查服务、案例状态和必填字段后重试。",
+        : "证据未写入；检查案例状态和必填字段后重试。",
       actionKey: "evidence",
     }
   }
@@ -3503,7 +3513,7 @@ export function summarizeImportReviewCaseActionFeedback({
       statusLabel: isSuccess ? "已写入" : "写入失败",
       detail: isSuccess
         ? "结论已写入当前复核案例；继续复核证据和关闭条件。"
-        : "结论未写入；检查服务、案例状态和必填字段后重试。",
+        : "结论未写入；检查案例状态和必填字段后重试。",
       actionKey: "conclusion",
     }
   }
@@ -3615,7 +3625,7 @@ export function summarizeImportReviewCaseActionRetry(
     tone: "blocked",
     title: "重试定位",
     statusLabel: `已定位到${actionLabel}`,
-    detail: `${actionLabel}写入失败，当前已打开${actionLabel}入口；检查必填字段、案例状态和服务 后重试。`,
+    detail: `${actionLabel}写入失败，当前已打开${actionLabel}入口；检查必填字段和案例状态后重试。`,
     tabValue: feedback.actionKey,
     actionLabel,
   }
@@ -5257,8 +5267,9 @@ export function summarizeImportAppliedVersionResultContext({
   )
   const versionLabel = readiness?.import_version_id ?? batch.import_version_id
   const businessDate = batch.business_date_from
+  const batchLabel = formatImportBatchDisplayLabel(batch.batch_id)
   const evidence = [
-    `来源批次 ${batch.batch_id}`,
+    `来源批次 ${batchLabel}`,
     `业务日 ${businessDate}`,
     `应用目标 ${targetLabel}`,
     `版本 ${versionLabel ?? "未生成"}`,
@@ -5269,7 +5280,7 @@ export function summarizeImportAppliedVersionResultContext({
       tone: "blocked",
       title: "当前版本定位信息不完整",
       detail: "当前批次已应用，但导入版本仍未返回，无法定位对应版本详情或结果上下文。",
-      sourceBatchLabel: batch.batch_id,
+      sourceBatchLabel: batchLabel,
       versionLabel: "未生成",
       targetLabel,
       downstreamStatusLabel: "版本信息缺失",
@@ -5298,7 +5309,7 @@ export function summarizeImportAppliedVersionResultContext({
       tone: "empty",
       title: "当前版本暂无直接结果页",
       detail: `${targetLabel}版本 ${versionLabel} 当前没有可直接进入的对比运行详情；先核对版本记录，再按业务日查看下游结果空态。`,
-      sourceBatchLabel: batch.batch_id,
+      sourceBatchLabel: batchLabel,
       versionLabel,
       targetLabel,
       downstreamStatusLabel: "暂无可匹配运行",
@@ -5319,7 +5330,7 @@ export function summarizeImportAppliedVersionResultContext({
       tone: "empty",
       title: "当前版本未匹配到对比运行",
       detail: `当前批次版本 ${versionLabel} 还没有匹配到可直接进入的对比运行；先确认是否已触发比对，再查看同业务日复核空态。`,
-      sourceBatchLabel: batch.batch_id,
+      sourceBatchLabel: batchLabel,
       versionLabel,
       targetLabel,
       downstreamStatusLabel: `匹配运行 0 个 · 未关闭复核 ${openReviewCount.toLocaleString("zh-CN")} 个`,
@@ -5340,7 +5351,7 @@ export function summarizeImportAppliedVersionResultContext({
     tone: "ready",
     title: "已定位对应版本结果",
     detail: `当前批次版本 ${versionLabel} 已匹配到下游结果，可直接进入对应对比运行，并继续查看同业务日复核案例。`,
-    sourceBatchLabel: batch.batch_id,
+    sourceBatchLabel: batchLabel,
     versionLabel,
     targetLabel,
     downstreamStatusLabel: `匹配运行 ${matchedRuns.length.toLocaleString("zh-CN")} 个 · 未关闭复核 ${openReviewCount.toLocaleString("zh-CN")} 个`,
@@ -5377,9 +5388,10 @@ export function summarizeImportVersionComparisonTrigger({
   if (!versionId) {
     return null
   }
+  const batchLabel = formatImportBatchDisplayLabel(batch.batch_id)
 
   const evidence = [
-    `来源批次 ${batch.batch_id}`,
+    `来源批次 ${batchLabel}`,
     `业务日 ${batch.business_date_from}`,
     `版本 ${versionId}`,
   ]
@@ -5779,7 +5791,7 @@ function formatImportVersionComparisonTriggerFailureReason(
   reason?: string | null
 ): string {
   if (!reason) {
-    return "提交未返回成功结果，请先确认服务 与版本上下文。"
+    return "提交未返回成功结果，请先确认版本上下文。"
   }
 
   if (reason === "missing_required_fields") {
@@ -7019,8 +7031,10 @@ export function summarizeImportComparisonRunReturnLinks({
   return {
     tone: "ready",
     title: "已形成回跳闭环",
-    detail: `当前运行已匹配 ${matchedBatches.length.toLocaleString("zh-CN")} 个来源批次；可回到 ${primaryBatch.batch_id} 的结果追踪，或按业务日进入业务版本列表。`,
-    sourceBatchLabel: matchedBatches.map((batch) => batch.batch_id).join(" · "),
+    detail: `当前运行已匹配 ${matchedBatches.length.toLocaleString("zh-CN")} 个来源批次；可回到 ${formatImportBatchDisplayLabel(primaryBatch.batch_id)} 的结果追踪，或按业务日进入业务版本列表。`,
+    sourceBatchLabel: matchedBatches
+      .map((batch) => formatImportBatchDisplayLabel(batch.batch_id))
+      .join(" · "),
     versionWorkbenchLabel,
     primaryActionLabel: "回到来源批次结果追踪",
     primaryHref: buildImportBatchProcessingHref(primaryBatch.batch_id, {
@@ -7033,7 +7047,9 @@ export function summarizeImportComparisonRunReturnLinks({
     }),
     evidence: [
       ...evidence,
-      ...matchedBatches.map((batch) => `来源批次 ${batch.batch_id}`),
+      ...matchedBatches.map(
+        (batch) => `来源批次 ${formatImportBatchDisplayLabel(batch.batch_id)}`
+      ),
     ],
   }
 }

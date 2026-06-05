@@ -4,6 +4,12 @@ import type {
   ImportBatchRowResult,
 } from "@/components/import-center-model"
 
+const taskCodeLabelPattern = /\b(?:F|B|Q|IM|US|DB)\d{3}\b/g
+
+function formatImportBatchDisplayLabel(batchId: string): string {
+  return batchId.replace(taskCodeLabelPattern, "业务")
+}
+
 export type ActualLogProductionTone = "ready" | "blocked" | "empty"
 
 export type ActualLogProductionRow = {
@@ -156,7 +162,7 @@ function toActualLogProductionRow(batch: ImportBatchListRow): ActualLogProductio
     fileName: batch.file_name,
     fileTypeLabel: batch.file_type === "status_log" ? "状态日志" : "登录日志",
     versionLabel: batch.import_version_id ?? "暂无实际日志业务版本",
-    sourceBatchLabel: batch.batch_id,
+    sourceBatchLabel: formatImportBatchDisplayLabel(batch.batch_id),
     sourceBatchHref: `/data-quality/import-batches/${batch.batch_id}`,
     detailHref: `/actual-logs/production/${batch.batch_id}`,
     businessDateLabel: formatBusinessDateRange(

@@ -32,7 +32,7 @@ function formText(formData: FormData, key: string) {
 export async function uploadImportCsvAction(formData: FormData) {
   const batchId = formText(formData, "batch_id")
   const fileType = formText(formData, "file_type") as ImportFileType
-  const uploadedBy = formText(formData, "uploaded_by") || "local-operator"
+  const uploadedBy = formText(formData, "uploaded_by") || "operator"
   const businessDateFrom = formText(formData, "business_date_from")
   const businessDateTo = formText(formData, "business_date_to")
   const fieldMapping = formText(formData, "field_mapping") || '{"source_key":"source_key"}'
@@ -236,7 +236,7 @@ export async function createImportFieldMappingTemplateAction(formData: FormData)
   const templateId = formText(formData, "template_id")
   const templateName = formText(formData, "template_name")
   const fileType = formText(formData, "file_type") as ImportFileType
-  const createdBy = formText(formData, "created_by") || "local-operator"
+  const createdBy = formText(formData, "created_by") || "operator"
   const fieldMappingText = formText(formData, "field_mapping")
 
   if (!templateId || !templateName || !fileType || !fieldMappingText) {

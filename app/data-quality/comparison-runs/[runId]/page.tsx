@@ -61,7 +61,7 @@ async function fetchImportComparisonRunDetail(
     if (!response.ok) {
       return {
         data: null,
-        error: `对比运行 服务返回 ${response.status}`,
+        error: `对比运行读取失败（状态码 ${response.status}）`,
       }
     }
 
@@ -86,7 +86,7 @@ async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
     if (!response.ok) {
       return {
         data: [],
-        error: `导入批次 服务返回 ${response.status}`,
+        error: `导入批次读取失败（状态码 ${response.status}）`,
       }
     }
 
@@ -115,7 +115,7 @@ async function fetchImportReviewCases(
     if (!response.ok) {
       return {
         data: [],
-        error: `复核案例 服务返回 ${response.status}`,
+        error: `复核案例读取失败（状态码 ${response.status}）`,
       }
     }
 

@@ -8,6 +8,7 @@ import {
   buildImportBatchProcessingHref,
   buildImportUploadWorkspaceHref,
   filterImportBatches,
+  formatImportBatchDisplayLabel,
   formatImportApplicationStatus,
   formatImportFileType,
   getImportBatchHealth,
@@ -77,7 +78,7 @@ export function ImportCenterBatchListPanel({
             title={batchError ? "批次读取失败" : "暂无导入批次"}
             detail={
               batchError ??
-              "服务 当前没有返回批次。上传服务 写入批次后，这里会直接显示。"
+              "当前没有返回批次。上传完成后，这里会直接显示。"
             }
           />
         ) : filteredBatches.length === 0 ? (
@@ -122,7 +123,7 @@ export function ImportCenterBatchListPanel({
                           className="grid gap-1"
                         >
                           <span className="font-mono text-xs font-medium">
-                            {batch.batch_id}
+                            {formatImportBatchDisplayLabel(batch.batch_id)}
                           </span>
                           <span className="max-w-[320px] truncate text-xs text-muted-foreground">
                             {batch.file_name}

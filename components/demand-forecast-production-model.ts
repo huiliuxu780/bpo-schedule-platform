@@ -1,5 +1,11 @@
 import type { ImportBatchListRow } from "@/components/import-center-model"
 
+const taskCodeLabelPattern = /\b(?:F|B|Q|IM|US|DB)\d{3}\b/g
+
+function formatImportBatchDisplayLabel(batchId: string): string {
+  return batchId.replace(taskCodeLabelPattern, "业务")
+}
+
 export type DemandForecastProductionTone = "ready" | "blocked" | "empty"
 
 export type DemandForecastProductionWorkspaceTabKey =
@@ -187,7 +193,7 @@ function toDemandForecastProductionRow(
     batchId: batch.batch_id,
     fileName: batch.file_name,
     versionLabel: batch.import_version_id ?? "暂无预测业务版本",
-    sourceBatchLabel: batch.batch_id,
+    sourceBatchLabel: formatImportBatchDisplayLabel(batch.batch_id),
     sourceBatchHref: `/data-quality/import-batches/${batch.batch_id}`,
     detailHref: `/demand-plans/production/${batch.batch_id}`,
     businessDateLabel: formatBusinessDateRange(
@@ -273,23 +279,23 @@ export function summarizeDemandForecastProductionDetail(
       )
     : row.businessDateLabel
   const sourceRowLabel = hasApiDetail
-    ? `${apiIntervals.length.toLocaleString("zh-CN")} 条预测区间来自版本服务`
+    ? `${apiIntervals.length.toLocaleString("zh-CN")} 条预测区间来自版本明细`
     : `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`
   const skillAlignmentLabel = hasApiDetail
     ? summarizeForecastDimensions(apiIntervals)
-    : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，技能组和等级明细待版本 服务 暴露`
+    : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，等待版本明细返回技能组和等级。`
   const timeBucketLabel = hasApiDetail
     ? `已读取 ${apiIntervals.length.toLocaleString("zh-CN")} 条 0.5h 预测区间`
     : batch.applied_record_count > 0
       ? "0.5h 时段口径已确认"
       : "未发现 0.5h 预测明细"
   const forecastScopeLabel = hasApiDetail
-    ? "版本服务 已返回技能组/等级/0.5h 时段明细"
+    ? "版本明细已返回技能组/等级/0.5h 时段明细"
     : "暂无技能组/等级/时段明细"
   const changeBoundaryLabel = hasApiDetail
     ? apiChanges.length > 0
       ? `已读取 ${apiChanges.length.toLocaleString("zh-CN")} 条版本变更记录`
-      : "版本服务 未返回变更记录"
+      : "版本明细未返回变更记录"
     : "暂无变更记录"
 
   return {
@@ -428,7 +434,7 @@ function toForecastChangeDisplayRow(
 
 function summarizeForecastDimensions(rows: DemandForecastProductionApiIntervalRow[]) {
   if (rows.length === 0) {
-    return "版本服务 未返回预测区间"
+    return "版本明细未返回预测区间"
   }
 
   const skillIds = uniqueValues(rows.map((row) => row.skill_id))

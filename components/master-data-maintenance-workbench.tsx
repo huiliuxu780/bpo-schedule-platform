@@ -548,7 +548,7 @@ function AgentFreezeDialog({
               ？
             </p>
             <p className="font-mono text-xs">{employee.employee_id}</p>
-            <p>冻结后该人员状态会通过单人维护 服务 更新为 frozen。</p>
+            <p>冻结后该人员会进入冻结状态。</p>
           </div>
           {summary.agentSubmitSourceBatchId ? (
             <form action={action} className="flex justify-end gap-2">
@@ -1155,9 +1155,9 @@ function MaintenanceSelect({
         defaultValue={defaultValue}
         className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
       >
-        <option value="active">active</option>
-        <option value="inactive">inactive</option>
-        <option value="frozen">frozen</option>
+        <option value="active">正常</option>
+        <option value="inactive">停用</option>
+        <option value="frozen">冻结</option>
       </select>
     </label>
   )

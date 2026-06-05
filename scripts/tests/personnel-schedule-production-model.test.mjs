@@ -114,7 +114,7 @@ test("personnel schedule production detail resolves a schedule version by source
   assert.equal(detail.sourceBatchHref, "/data-quality/import-batches/BATCH-SCH-001");
   assert.equal(detail.workbenchHref, "/schedule-plans/production");
   assert.equal(detail.businessDateLabel, "2026-06-01 至 2026-06-07");
-  assert.equal(detail.shiftReferenceLabel, "来自 12 条成功导入行，班次引用明细待版本 服务 暴露");
+  assert.equal(detail.shiftReferenceLabel, "来自 12 条成功导入行，等待版本明细返回班次引用。");
   assert.equal(detail.personScopeLabel, "暂无人员清单明细");
   assert.equal(detail.halfHourResultLabel, "已形成 96 条 0.5h 展开记录");
   assert.equal(detail.blockerSummary, "无阻塞");
@@ -181,7 +181,7 @@ test("personnel schedule production detail uses real api details when available"
 
   assert.equal(detail.versionLabel, "SCH-PROD-001");
   assert.equal(detail.appliedRecordCountLabel, "2");
-  assert.equal(detail.sourceRowLabel, "1 条排班明细来自版本服务");
+  assert.equal(detail.sourceRowLabel, "1 条排班明细来自版本明细");
   assert.equal(detail.shiftReferenceLabel, "1 个班次引用已定位：MORNING-2H");
   assert.equal(detail.personScopeLabel, "1 名坐席已定位：A-1001");
   assert.equal(detail.halfHourResultLabel, "已形成 2 条 0.5h 展开区间");

@@ -414,7 +414,7 @@ async function fetchImportFieldMappingTemplate(
     if (!response.ok) {
       return {
         data: null,
-        error: `字段映射模板 服务返回 ${response.status}`,
+        error: `字段映射模板读取失败（状态码 ${response.status}）`,
       }
     }
 

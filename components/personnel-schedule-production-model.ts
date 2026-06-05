@@ -1,5 +1,11 @@
 import type { ImportBatchListRow } from "@/components/import-center-model"
 
+const taskCodeLabelPattern = /\b(?:F|B|Q|IM|US|DB)\d{3}\b/g
+
+function formatImportBatchDisplayLabel(batchId: string): string {
+  return batchId.replace(taskCodeLabelPattern, "业务")
+}
+
 export type PersonnelScheduleProductionTone = "ready" | "blocked" | "empty"
 
 export type PersonnelScheduleProductionWorkspaceTabKey =
@@ -189,7 +195,7 @@ function toPersonnelScheduleProductionRow(
     batchId: batch.batch_id,
     fileName: batch.file_name,
     versionLabel: batch.import_version_id ?? "暂无排班业务版本",
-    sourceBatchLabel: batch.batch_id,
+    sourceBatchLabel: formatImportBatchDisplayLabel(batch.batch_id),
     sourceBatchHref: `/data-quality/import-batches/${batch.batch_id}`,
     detailHref: `/schedule-plans/production/${batch.batch_id}`,
     businessDateLabel: formatBusinessDateRange(
@@ -271,11 +277,11 @@ export function summarizePersonnelScheduleProductionDetail(
       )
     : row.businessDateLabel
   const sourceRowLabel = hasApiDetail
-    ? `${detailCount.toLocaleString("zh-CN")} 条排班明细来自版本服务`
+    ? `${detailCount.toLocaleString("zh-CN")} 条排班明细来自版本明细`
     : `${batch.success_rows.toLocaleString("zh-CN")} / ${batch.total_rows.toLocaleString("zh-CN")} 条成功导入`
   const shiftReferenceLabel = hasApiDetail
     ? summarizeShiftReferences(apiDetails)
-    : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，班次引用明细待版本 服务 暴露`
+    : `来自 ${batch.success_rows.toLocaleString("zh-CN")} 条成功导入行，等待版本明细返回班次引用。`
   const personScopeLabel = hasApiDetail
     ? summarizeEmployees(apiDetails)
     : "暂无人员清单明细"
@@ -402,7 +408,7 @@ function summarizeShiftReferences(
   rows: PersonnelScheduleProductionApiDetailRow[]
 ) {
   if (rows.length === 0) {
-    return "版本服务 未返回班次明细"
+    return "版本明细未返回班次明细"
   }
 
   const shiftIds = uniqueValues(rows.map((row) => row.shift_type_id))
@@ -414,7 +420,7 @@ function summarizeShiftReferences(
 
 function summarizeEmployees(rows: PersonnelScheduleProductionApiDetailRow[]) {
   if (rows.length === 0) {
-    return "版本服务 未返回人员明细"
+    return "版本明细未返回人员明细"
   }
 
   const employeeIds = uniqueValues(rows.map((row) => row.employee_id))

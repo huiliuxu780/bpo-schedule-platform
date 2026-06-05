@@ -18,7 +18,7 @@ export const metricCards = [
     value: "16,225.5h",
     change: "+1.86%",
     insight: "有效在线略有恢复",
-    note: "CORN 状态日志计算",
+    note: "登录/状态日志计算",
   },
   {
     title: "异常工时",
@@ -148,7 +148,7 @@ export const anomalies: Anomaly[] = [
   },
   {
     id: "ANM-202605-006",
-    type: "CORN 状态无法识别",
+    type: "状态无法识别",
     project: "Bosch CC",
     team: "华南二组",
     shiftTime: "05-09 15:00-15:30",
@@ -161,14 +161,14 @@ export const anomalies: Anomaly[] = [
 
 export const syncStatus = [
   {
-    source: "CORN 登录数据",
+    source: "登录日志",
     batch: "LOGIN-20260511-0830",
     status: "已同步",
     syncedAt: "今日 08:36",
   },
   {
-    source: "CORN 状态日志",
-    batch: "CORN-20260511-0900",
+    source: "状态日志",
+    batch: "STATUS-20260511-0900",
     status: "处理中",
     syncedAt: "今日 09:04",
   },

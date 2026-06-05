@@ -172,7 +172,7 @@ test("demand forecast production detail resolves a forecast version by source ba
   assert.equal(detail.workbenchHref, "/demand-plans/production");
   assert.equal(detail.businessDateLabel, "2026-06-08 至 2026-06-14");
   assert.equal(detail.sourceRowLabel, "24 / 24 条成功导入");
-  assert.equal(detail.skillAlignmentLabel, "来自 24 条成功导入行，技能组和等级明细待版本 服务 暴露");
+  assert.equal(detail.skillAlignmentLabel, "来自 24 条成功导入行，等待版本明细返回技能组和等级。");
   assert.equal(detail.timeBucketLabel, "0.5h 时段口径已确认");
   assert.equal(detail.forecastScopeLabel, "暂无技能组/等级/时段明细");
   assert.equal(detail.alignmentResultLabel, "已形成 336 条技能组/等级/时段预测明细");
@@ -189,10 +189,10 @@ test("demand forecast production detail uses api intervals and change records", 
 
   assert.equal(detail.versionLabel, "FC-PROD-001");
   assert.equal(detail.appliedRecordCountLabel, "2");
-  assert.equal(detail.sourceRowLabel, "2 条预测区间来自版本服务");
+  assert.equal(detail.sourceRowLabel, "2 条预测区间来自版本明细");
   assert.equal(detail.skillAlignmentLabel, "1 个技能组已定位：L1-CN；1 个需求等级：L1");
   assert.equal(detail.timeBucketLabel, "已读取 2 条 0.5h 预测区间");
-  assert.equal(detail.forecastScopeLabel, "版本服务 已返回技能组/等级/0.5h 时段明细");
+  assert.equal(detail.forecastScopeLabel, "版本明细已返回技能组/等级/0.5h 时段明细");
   assert.equal(detail.alignmentResultLabel, "预测合计需求 26 人次");
   assert.equal(detail.changeBoundaryLabel, "已读取 1 条版本变更记录");
   assert.deepEqual(detail.comparisonEntry, {
