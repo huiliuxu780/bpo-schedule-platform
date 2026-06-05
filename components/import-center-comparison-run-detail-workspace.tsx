@@ -65,8 +65,7 @@ export function ImportCenterComparisonRunDetailWorkspace({
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-semibold tracking-normal">对比运行详情</h1>
-            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+            <p className="max-w-3xl text-sm text-muted-foreground">
               {summary.title}
             </p>
           </div>

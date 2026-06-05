@@ -1917,3 +1917,14 @@
 - action: 清理生产文案与返回链路。
 - status: `done`
 - notes: `/demand-plans/production`、`/schedule-plans/production`、`/actual-logs/production` 保持兼容路由，但页面标题、列表标题、详情返回按钮和模型阻塞/就绪/缺批次提示改回预测版本、排班版本、登录/状态日志处理等业务对象视角；focused tests 和 Browser smoke 已覆盖不再展示旧生产模块文案；本轮不改路由结构、重复 H1、旧搜索 API、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM147`
+- source_ids:
+  - `R847`
+- story_ids:
+  - `US767`
+- action: 统一 Header/Breadcrumb 与内容区标题层级。
+- status: `done`
+- notes: 需求计划、排班计划、预测版本、排班版本、登录/状态日志和 data-quality 兼容页统一传入 `breadcrumbItems`；内容区同名页面 H1 已删除或降级，页面身份由 `SiteHeader` / Breadcrumb 承载；保留筛选、工具栏、表格、详情分组和业务记录信息；本轮不删除旧 `searchPlaceholder` API，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

@@ -44,7 +44,15 @@ export default async function FieldMappingTemplateCreatePage({
   })
 
   return (
-    <AppShell title="新增字段映射模板" searchPlaceholder="搜索模板、字段或文件类型">
+    <AppShell
+      title="新增字段映射模板"
+      searchPlaceholder="搜索模板、字段或文件类型"
+      breadcrumbItems={[
+        { label: "导入批次", href: "/data-quality" },
+        { label: "字段映射模板", href: "/data-quality/field-mapping-templates/new" },
+        { label: "新增字段映射模板" },
+      ]}
+    >
       <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">

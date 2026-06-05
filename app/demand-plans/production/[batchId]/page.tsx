@@ -29,7 +29,15 @@ export default async function DemandForecastProductionDetailPage({
   const error = [batchResult.error, detailResult.error].filter(Boolean).join("；") || null
 
   return (
-    <AppShell title="预测版本详情" searchPlaceholder="搜索预测版本或来源批次">
+    <AppShell
+      title="预测版本详情"
+      searchPlaceholder="搜索预测版本或来源批次"
+      breadcrumbItems={[
+        { label: "需求计划", href: "/demand-plans" },
+        { label: "预测版本", href: "/demand-plans/production" },
+        { label: "预测版本详情" },
+      ]}
+    >
       <DemandForecastProductionDetail
         batches={batchResult.data ?? []}
         batchId={decodedBatchId}

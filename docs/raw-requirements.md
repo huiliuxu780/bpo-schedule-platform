@@ -41,6 +41,19 @@ status: "done"
 notes: "IM146 已完成：预测、排班、登录/状态日志生产子路由保持兼容，但可见标题、列表标题、返回按钮、缺批次/阻塞/就绪文案改为业务对象视角；本轮未改重复 H1、旧搜索 API、导入弹窗、业务路由、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
 
+### R847 - Header/Breadcrumb 与内容区标题统一
+
+```yaml
+id: R847
+module: "全局页面结构 / Breadcrumb"
+description: "PM 复核后指出页面不能在 Header/Breadcrumb 里写一遍，又在内容区同名 H1 再写一遍。需要让列表、详情、新建、编辑页统一由 AppShell/SiteHeader 承载 Breadcrumb 和页面身份，内容区只保留筛选、工具栏、表格、详情分组或业务记录标题。"
+source: "PM feedback after IM146 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM147 已完成：需求计划、排班计划、预测/排班/日志兼容页和 data-quality 兼容页统一传入 breadcrumbItems，内容区同名 H1 已删除或降级；旧 searchPlaceholder API 留给 IM148，不改路由、导入弹窗、后端、schema/migration、依赖或权限/审批/导出/批量等能力。"
+```
+
 ### R781 - 独立 CSV 上传工作区
 
 ```yaml

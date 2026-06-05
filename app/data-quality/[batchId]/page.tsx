@@ -95,7 +95,14 @@ export default async function ImportBatchDetailPage({
       : hierarchy
 
   return (
-    <AppShell title="批次处理" searchPlaceholder="搜索导入批次、文件或上传人">
+    <AppShell
+      title="批次处理"
+      searchPlaceholder="搜索导入批次、文件或上传人"
+      breadcrumbItems={[
+        { label: "导入批次", href: "/data-quality" },
+        { label: "批次处理" },
+      ]}
+    >
       <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
         <BatchDetailHeader
           batchId={batchId}

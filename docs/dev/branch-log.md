@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM147 Header Breadcrumb And Content Title Cleanup
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `77eeb6a fix: align production route wording`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed Header/Breadcrumb and duplicate content-title cleanup. Add `breadcrumbItems` to demand, schedule, actual-log, and data-quality compatible pages, and remove/downgrade content-area page identity H1 headings. Keep old `searchPlaceholder` API cleanup, import entry relocation, data-quality abstraction downgrade, route restructuring, backend, schema/migration, dependency, permissions, approval, export, batch-operation, automatic scheduling, formula, settlement, and charge-factor changes out of this slice.
+- allowed_files_check: target `app/demand-plans/**`, `app/schedule-plans/**`, `app/actual-logs/**`, `app/data-quality/**`, target production/import-center workspace components, product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected breadcrumbItems additions, content h1 removals/downgrades, regression tests, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because target pages lacked `breadcrumbItems` and content surfaces still had `<h1>` page identity headings. After implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 17 tests. Browser smoke over `/demand-plans`, `/schedule-plans`, and `/data-quality/versions` confirmed Breadcrumb presence and no content-area duplicate H1. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM146 Production Wording And Return Links
 
 - branch_name: `codex/im144-ui-component-standards`

@@ -56,8 +56,7 @@ export function ActualLogProductionWorkbench({
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-normal">登录/状态日志</h1>
-          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+          <p className="max-w-3xl text-sm text-muted-foreground">
             按登录日志和状态日志导入批次查看实际日志业务版本、应用状态、业务日范围、时区和跨天处理结果。
           </p>
         </div>
@@ -246,7 +245,6 @@ export function ActualLogProcessingDetail({
             </Badge>
             <Badge variant="secondary">{summary.fileTypeLabel}</Badge>
           </div>
-          <h1 className="text-xl font-semibold tracking-normal">登录/状态日志处理解释</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
             {summary.detail}
           </p>

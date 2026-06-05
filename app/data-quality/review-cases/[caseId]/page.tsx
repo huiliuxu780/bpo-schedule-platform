@@ -41,7 +41,15 @@ export default async function ReviewCaseDetailPage({
   )
 
   return (
-    <AppShell title="复核案例详情" searchPlaceholder="搜索复核案例、owner 或来源">
+    <AppShell
+      title="复核案例详情"
+      searchPlaceholder="搜索复核案例、owner 或来源"
+      breadcrumbItems={[
+        { label: "导入批次", href: "/data-quality" },
+        { label: "复核案例", href: "/data-quality/review-cases" },
+        { label: "复核案例详情" },
+      ]}
+    >
       <ImportCenterReviewCaseDetailWorkspace
         caseId={caseId}
         detail={result.data}

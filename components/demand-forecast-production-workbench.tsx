@@ -48,8 +48,7 @@ export function DemandForecastProductionWorkbench({
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-normal">预测版本</h1>
-          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+          <p className="max-w-3xl text-sm text-muted-foreground">
             按需求预测导入批次查看预测版本、应用状态、业务日范围和技能组/等级/时段对齐状态。
           </p>
         </div>
@@ -232,8 +231,7 @@ export function DemandForecastProductionDetail({
               </Link>
             </Button>
           </div>
-          <h1 className="text-xl font-semibold tracking-normal">预测版本详情</h1>
-          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+          <p className="max-w-3xl text-sm text-muted-foreground">
             查看单个需求预测来源批次对应的业务版本、技能组/等级/时段对齐口径和预测明细。
           </p>
         </div>

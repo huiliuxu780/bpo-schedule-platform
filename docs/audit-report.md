@@ -3867,3 +3867,24 @@
 - TDD 绿灯：实现后同一 focused test 命令通过，43 个测试全部通过。
 - Browser smoke：`http://127.0.0.1:3000/demand-plans/production`、`/schedule-plans/production`、`/actual-logs/production` 均不再出现旧生产标题/台账/返回文案，并命中 `预测版本列表`、`排班版本列表`、`日志处理列表`。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM147 Header/Breadcrumb 与内容区标题统一
+
+#### 审计结论
+
+- 需求计划、排班计划、预测版本、排班版本、登录/状态日志和 data-quality 兼容页已通过 `AppShell breadcrumbItems` 接入统一 Breadcrumb。
+- 需求计划、排班计划、新建/编辑/详情、生产兼容 workbench、复核案例、复核案例详情、对比运行详情、业务版本列表的内容区同名 H1 已删除或降级。
+- 页面身份由 `SiteHeader` / Breadcrumb 承载；内容区继续承载描述、筛选、工具栏、表格、详情分组和业务记录信息。
+- 本轮没有删除旧 `searchPlaceholder` API，没有修改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- `searchPlaceholder` 仍作为旧 API 留存，按计划进入 IM148。
+- `/data-quality` 仍是兼容路由，按计划进入 IM151 做抽象降级。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明目标页面缺少 `breadcrumbItems` 且内容区仍有 `<h1>`。
+- TDD 绿灯：实现后同一 focused test 通过，17 个 product-structure 测试通过。
+- Browser smoke：`/demand-plans`、`/schedule-plans`、`/data-quality/versions` 均存在 Breadcrumb，页面 DOM 只有 `sr-only` H1，内容区没有重复页面身份 H1。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。

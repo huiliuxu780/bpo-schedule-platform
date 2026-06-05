@@ -29,7 +29,14 @@ export default async function ActualLogProcessingDetailPage({ params }: PageProp
   ])
 
   return (
-    <AppShell title="日志处理解释" searchPlaceholder="搜索日志批次或业务版本">
+    <AppShell
+      title="日志处理解释"
+      searchPlaceholder="搜索日志批次或业务版本"
+      breadcrumbItems={[
+        { label: "登录/状态日志", href: "/actual-logs/production" },
+        { label: "日志处理解释" },
+      ]}
+    >
       <ActualLogProcessingDetail
         batches={batchResult.data ?? []}
         batchId={decodedBatchId}

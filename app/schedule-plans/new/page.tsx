@@ -21,11 +21,17 @@ const defaultSlots = [
 
 export default function NewSchedulePlanPage() {
   return (
-    <AppShell title="新建排班草稿" searchPlaceholder="搜索计划、项目或职场">
+    <AppShell
+      title="新建排班草稿"
+      searchPlaceholder="搜索计划、项目或职场"
+      breadcrumbItems={[
+        { label: "排班计划", href: "/schedule-plans" },
+        { label: "新建排班草稿" },
+      ]}
+    >
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-lg font-semibold">新建排班草稿</h1>
             <p className="text-sm text-muted-foreground">
               创建排班草稿，维护计划信息和 0.5h 时段。
             </p>

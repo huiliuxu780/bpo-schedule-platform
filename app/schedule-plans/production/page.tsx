@@ -16,7 +16,14 @@ export default async function PersonnelScheduleProductionPage() {
   const batchResult = await fetchImportBatches()
 
   return (
-    <AppShell title="排班版本" searchPlaceholder="搜索排班版本或来源批次">
+    <AppShell
+      title="排班版本"
+      searchPlaceholder="搜索排班版本或来源批次"
+      breadcrumbItems={[
+        { label: "排班计划", href: "/schedule-plans" },
+        { label: "排班版本" },
+      ]}
+    >
       <PersonnelScheduleProductionWorkbench
         batches={batchResult.data ?? []}
         error={batchResult.error}

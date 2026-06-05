@@ -36,7 +36,14 @@ export default async function ComparisonRunDetailPage({
     : { data: [], error: result.error }
 
   return (
-    <AppShell title="对比运行详情" searchPlaceholder="搜索运行、版本或结果">
+    <AppShell
+      title="对比运行详情"
+      searchPlaceholder="搜索运行、版本或结果"
+      breadcrumbItems={[
+        { label: "导入批次", href: "/data-quality" },
+        { label: "对比运行详情" },
+      ]}
+    >
       <ImportCenterComparisonRunDetailWorkspace
         runId={runId}
         detail={result.data}

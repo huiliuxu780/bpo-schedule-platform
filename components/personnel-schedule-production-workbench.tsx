@@ -49,8 +49,7 @@ export function PersonnelScheduleProductionWorkbench({
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-normal">排班版本</h1>
-          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+          <p className="max-w-3xl text-sm text-muted-foreground">
             按人员排班导入批次查看排班版本、应用状态、业务日范围和 0.5h 展开状态。
           </p>
         </div>
@@ -237,10 +236,7 @@ export function PersonnelScheduleProductionDetail({
               </Link>
             </Button>
           </div>
-          <h1 className="text-xl font-semibold tracking-normal">
-            排班版本详情
-          </h1>
-          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+          <p className="max-w-3xl text-sm text-muted-foreground">
             查看单个人员排班来源批次对应的业务版本、班次引用口径、人员范围说明和 0.5h 展开结果。
           </p>
         </div>

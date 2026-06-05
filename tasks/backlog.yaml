@@ -2,6 +2,45 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM147
+    title: "Header/Breadcrumb 与内容区标题统一"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM146"]
+    allowed_files:
+      - "app/demand-plans/**"
+      - "app/schedule-plans/**"
+      - "app/actual-logs/**"
+      - "app/data-quality/**"
+      - "components/demand-forecast-production-workbench.tsx"
+      - "components/personnel-schedule-production-workbench.tsx"
+      - "components/actual-log-production-workbench.tsx"
+      - "components/import-center-review-cases-workspace.tsx"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "components/import-center-comparison-run-detail-workspace.tsx"
+      - "components/import-center-version-workbench.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "目标业务页统一传入 breadcrumbItems，内容区同名 H1 删除或降级。"
+      - "测试覆盖目标页面/工作区不再保留内容区页面身份 H1。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要删除 searchPlaceholder API 或改 AppShell/SiteHeader 接口"
+      - "需要修改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: IM146
     title: "生产文案与返回链路清理"
     priority: P0

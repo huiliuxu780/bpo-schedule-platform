@@ -67,6 +67,28 @@ status: "done"
 notes: "IM146 已完成：`/demand-plans/production`、`/schedule-plans/production`、`/actual-logs/production` 的可见标题、列表标题、返回按钮和模型提示改为预测版本、排班版本、登录/状态日志处理视角；重复 H1、旧 searchPlaceholder、导入入口业务归位和 data-quality 降级留给后续 IM147-IM151。"
 ```
 
+### US767 - Header/Breadcrumb 与内容区标题统一
+
+```yaml
+id: US767
+requirement_ids:
+  - R847
+module: "全局页面结构 / Breadcrumb"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望业务列表、详情、新建和编辑页的页面身份由统一 Header/Breadcrumb 承载，内容区不再重复渲染同名 H1，以便页面层级清晰且不会出现上下两套标题。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "需求计划、排班计划、预测版本、排班版本、登录/状态日志和 data-quality 兼容页向 AppShell 传入 breadcrumbItems。"
+  - "上述页面和工作区不再在内容区渲染同名 `<h1>`；必要信息降级为描述、区块标题或保留业务记录名称。"
+  - "Breadcrumb 包含当前页，弹窗不新增 Breadcrumb。"
+  - "不删除旧 searchPlaceholder API，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US766"
+status: "done"
+notes: "IM147 已完成：目标业务页由 AppShell/SiteHeader 的 breadcrumbItems 承载页面身份，内容区不再重复页面级 H1；旧搜索 API 作为 IM148 单独处理。"
+```
+
 ### US701 - 独立 CSV 上传工作区
 
 ```yaml
