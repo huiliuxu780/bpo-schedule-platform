@@ -8,11 +8,14 @@ import {
   type MasterDataAgentMaintenanceStatus,
   type MasterDataEmployeeType,
   type MasterDataMaintenanceEntityKey,
+  type MasterDataVendorMaintenanceActionKey,
   type MasterDataWorkplaceMaintenanceActionKey,
   buildMasterDataAgentMaintenanceApiPath,
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
+  buildMasterDataVendorMaintenanceApiPath,
+  buildMasterDataVendorMaintenancePayload,
   buildMasterDataWorkplaceMaintenanceApiPath,
   buildMasterDataWorkplaceMaintenancePayload,
 } from "@/components/master-data-maintenance-model"
@@ -25,6 +28,12 @@ const AGENT_ACTIONS = new Set<MasterDataAgentMaintenanceActionKey>([
 ])
 
 const WORKPLACE_ACTIONS = new Set<MasterDataWorkplaceMaintenanceActionKey>([
+  "create",
+  "edit",
+  "freeze",
+])
+
+const VENDOR_ACTIONS = new Set<MasterDataVendorMaintenanceActionKey>([
   "create",
   "edit",
   "freeze",
@@ -283,6 +292,97 @@ export async function submitMasterDataWorkplaceMaintenance(
   redirect(redirectHref)
 }
 
+export async function submitMasterDataVendorMaintenance(
+  formData: FormData
+): Promise<void> {
+  let redirectHref: string
+
+  try {
+    const action = parseVendorAction(formData.get("action"))
+    const vendorId = getFormValue(formData, "vendor_id")
+    const sourceBatchId = getFormValue(formData, "source_batch_id")
+    const vendorName = getFormValue(formData, "reference_name")
+    const effectiveFrom = getFormValue(formData, "effective_from")
+    const effectiveTo = getFormValue(formData, "effective_to")
+
+    if (!vendorId || !sourceBatchId) {
+      redirectHref = buildMaintenanceRedirect("vendors", {
+        maintenance_status: "error",
+        record_type: "供应商",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "供应商 ID 和来源批次不能为空",
+      })
+    } else if (
+      action === "create" &&
+      (!vendorName || !effectiveFrom || !effectiveTo)
+    ) {
+      redirectHref = buildMaintenanceRedirect("vendors", {
+        maintenance_status: "error",
+        record_type: "供应商",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "供应商名称和生效期不能为空",
+      })
+    } else {
+      const payload = buildMasterDataVendorMaintenancePayload({
+        action,
+        vendorId,
+        sourceBatchId,
+        vendorName,
+        status: parseStatus(formData.get("status")),
+        effectiveFrom,
+        effectiveTo,
+      })
+      const response = await fetch(
+        buildImportApiUrl(buildMasterDataVendorMaintenanceApiPath(vendorId)),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        }
+      )
+
+      if (!response.ok) {
+        const error = await readMaintenanceApiError(response)
+        redirectHref = buildMaintenanceRedirect("vendors", {
+          maintenance_status: "error",
+          record_type: "供应商",
+          maintenance_code: error.code,
+          maintenance_message: error.message,
+        })
+      } else {
+        const result = (await response.json()) as {
+          action_status?: string
+          reference?: {
+            reference_id?: string
+            reference_name?: string
+            status?: string
+          }
+        }
+        redirectHref = buildMaintenanceRedirect("vendors", {
+          maintenance_status: "success",
+          record_type: "供应商",
+          action_status: result.action_status ?? "submitted",
+          record_id: result.reference?.reference_id ?? vendorId,
+          record_name: result.reference?.reference_name ?? "未返回名称",
+          record_status: result.reference?.status ?? "unknown",
+        })
+      }
+    }
+  } catch (error) {
+    redirectHref = buildMaintenanceRedirect("vendors", {
+      maintenance_status: "error",
+      record_type: "供应商",
+      maintenance_code: "MASTER_DATA_VENDOR_SUBMIT_FAILED",
+      maintenance_message: formatMaintenanceError(error),
+    })
+  }
+
+  redirect(redirectHref)
+}
+
 function parseAction(value: FormDataEntryValue | null): MasterDataAgentMaintenanceActionKey {
   const action = String(value ?? "")
   if (AGENT_ACTIONS.has(action as MasterDataAgentMaintenanceActionKey)) {
@@ -316,6 +416,17 @@ function parseWorkplaceAction(
   }
 
   throw new Error("未知职场维护动作")
+}
+
+function parseVendorAction(
+  value: FormDataEntryValue | null
+): MasterDataVendorMaintenanceActionKey {
+  const action = String(value ?? "")
+  if (VENDOR_ACTIONS.has(action as MasterDataVendorMaintenanceActionKey)) {
+    return action as MasterDataVendorMaintenanceActionKey
+  }
+
+  throw new Error("未知供应商维护动作")
 }
 
 function parseSkillIds(value: FormDataEntryValue | null): string[] {

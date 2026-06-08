@@ -7,6 +7,8 @@ import {
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
+  buildMasterDataVendorMaintenanceApiPath,
+  buildMasterDataVendorMaintenancePayload,
   buildMasterDataWorkplaceMaintenanceApiPath,
   buildMasterDataWorkplaceMaintenancePayload,
   getMasterDataMaintenanceEntity,
@@ -139,15 +141,18 @@ test("master data entity source context keeps list source state only", () => {
   assert.equal("referenceImpacts" in context, false);
 });
 
-test("agent and workplace source contexts expose submit source batches for confirmed forms", () => {
+test("agent workplace and vendor source contexts expose submit source batches for confirmed forms", () => {
   const agentContext = summarizeMasterDataEntitySourceContext("agents", [baseBatch]);
   const workplaceContext = summarizeMasterDataEntitySourceContext("sites", [baseBatch]);
+  const vendorContext = summarizeMasterDataEntitySourceContext("vendors", [baseBatch]);
   const skillContext = summarizeMasterDataEntitySourceContext("skills", [baseBatch]);
 
   assert.equal(agentContext.agentSubmitSourceBatchId, "BATCH-MD-001");
   assert.equal(workplaceContext.workplaceSubmitSourceBatchId, "BATCH-MD-001");
+  assert.equal(vendorContext.vendorSubmitSourceBatchId, "BATCH-MD-001");
   assert.equal(skillContext.agentSubmitSourceBatchId, null);
   assert.equal(skillContext.workplaceSubmitSourceBatchId, null);
+  assert.equal(skillContext.vendorSubmitSourceBatchId, null);
 });
 
 test("master data employee list summarizes org path type workplace and skills", () => {
@@ -412,6 +417,15 @@ test("workplace and vendor list rows expose child detail entries", () => {
   assert.equal(
     vendorSummary.rows[0].display.detailHref,
     "/master-data/vendors/SUP-001",
+  );
+  assert.equal(vendorSummary.createHref, "/master-data/vendors/new");
+  assert.equal(
+    vendorSummary.rows[0].display.editHref,
+    "/master-data/vendors/SUP-001/edit",
+  );
+  assert.equal(
+    vendorSummary.rows[0].display.freezeHref,
+    "/master-data/vendors?freeze_vendor_id=SUP-001",
   );
 });
 
@@ -793,6 +807,63 @@ test("workplace maintenance payload maps create edit and freeze actions", () => 
       action: "freeze",
       sourceBatchId: "BATCH-MD-001",
       workplaceId: "SH-01",
+    }),
+    {
+      action: "freeze",
+      source_batch_id: "BATCH-MD-001",
+    },
+  );
+});
+
+test("vendor maintenance payload maps create edit and freeze actions", () => {
+  assert.equal(
+    buildMasterDataVendorMaintenanceApiPath("SUP 01/华东"),
+    "/api/v1/master-data/suppliers/SUP%2001%2F%E5%8D%8E%E4%B8%9C/maintenance",
+  );
+
+  assert.deepEqual(
+    buildMasterDataVendorMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      vendorId: "SUP-001",
+      vendorName: "上海供应商",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "上海供应商",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataVendorMaintenancePayload({
+      action: "edit",
+      sourceBatchId: "BATCH-MD-001",
+      vendorId: "SUP-001",
+      vendorName: "上海供应商二部",
+      status: "inactive",
+      effectiveFrom: "2026-07-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "edit",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "上海供应商二部",
+      status: "inactive",
+      effective_from: "2026-07-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataVendorMaintenancePayload({
+      action: "freeze",
+      sourceBatchId: "BATCH-MD-001",
+      vendorId: "SUP-001",
     }),
     {
       action: "freeze",

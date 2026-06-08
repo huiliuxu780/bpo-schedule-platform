@@ -103,6 +103,25 @@ export function MasterDataWorkplacePageActions({
   )
 }
 
+export function MasterDataVendorPageActions({
+  summary,
+}: {
+  summary: MasterDataReferenceManagementSummary
+}) {
+  if (!summary.createHref) {
+    return null
+  }
+
+  return (
+    <Button asChild size="sm">
+      <Link href={summary.createHref}>
+        <Plus data-icon="inline-start" />
+        新建
+      </Link>
+    </Button>
+  )
+}
+
 export function MasterDataAgentManagementPage({
   summary,
   managementSummary,
@@ -168,20 +187,29 @@ export function MasterDataReferenceManagementPage({
   error,
   feedback,
   selectedFreezeWorkplaceId = "",
+  selectedFreezeVendorId = "",
   workplaceSubmitAction,
+  vendorSubmitAction,
 }: {
   summary: MasterDataEntitySourceContext
   listSummary: MasterDataReferenceManagementSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   selectedFreezeWorkplaceId?: string
+  selectedFreezeVendorId?: string
   workplaceSubmitAction?: (formData: FormData) => Promise<void>
+  vendorSubmitAction?: (formData: FormData) => Promise<void>
 }) {
   const selectedFreezeWorkplace =
     listSummary.entity.key === "sites"
       ? listSummary.rows.find(
           (row) => row.reference_id === selectedFreezeWorkplaceId
         ) ?? null
+      : null
+  const selectedFreezeVendor =
+    listSummary.entity.key === "vendors"
+      ? listSummary.rows.find((row) => row.reference_id === selectedFreezeVendorId) ??
+        null
       : null
   const hasActionRows = listSummary.rows.some(
     (row) =>
@@ -299,6 +327,13 @@ export function MasterDataReferenceManagementPage({
           action={workplaceSubmitAction}
         />
       ) : null}
+      {selectedFreezeVendor && vendorSubmitAction ? (
+        <MasterDataVendorFreezeDialog
+          summary={summary}
+          vendor={selectedFreezeVendor}
+          action={vendorSubmitAction}
+        />
+      ) : null}
     </main>
   )
 }
@@ -357,6 +392,64 @@ function MasterDataWorkplaceFreezeDialog({
           <DialogFooter>
             <Button asChild size="sm" variant="outline">
               <Link href="/master-data/sites">关闭</Link>
+            </Button>
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function MasterDataVendorFreezeDialog({
+  summary,
+  vendor,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  vendor: MasterDataReferenceListViewRow
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结供应商</DialogTitle>
+          <DialogDescription>
+            冻结后该供应商会进入冻结状态。
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-1 text-sm text-muted-foreground">
+          <p>
+            确认冻结{" "}
+            <span className="font-medium text-foreground">
+              {vendor.display.referenceNameLabel}
+            </span>
+            ？
+          </p>
+          <p className="font-mono text-xs">{vendor.display.referenceIdLabel}</p>
+        </div>
+        {summary.vendorSubmitSourceBatchId ? (
+          <form action={action}>
+            <input type="hidden" name="action" value="freeze" />
+            <input
+              type="hidden"
+              name="source_batch_id"
+              value={summary.vendorSubmitSourceBatchId}
+            />
+            <input type="hidden" name="vendor_id" value={vendor.reference_id} />
+            <DialogFooter>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/master-data/vendors">取消</Link>
+              </Button>
+              <Button type="submit" size="sm" variant="destructive">
+                确认冻结
+              </Button>
+            </DialogFooter>
+          </form>
+        ) : (
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/master-data/vendors">关闭</Link>
             </Button>
           </DialogFooter>
         )}
@@ -539,6 +632,88 @@ export function MasterDataWorkplaceEditPage({
         />
       )}
     </WorkplaceFormPageShell>
+  )
+}
+
+export function MasterDataVendorCreatePage({
+  summary,
+  error,
+  feedback,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <VendorFormPageShell error={error} feedback={feedback}>
+      {summary.vendorSubmitSourceBatchId ? (
+        <VendorMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.vendorSubmitSourceBatchId}
+          submitLabel="提交新增"
+          fields={[
+            "vendor_id",
+            "reference_name",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+      ) : (
+        <AgentFormBlockedState detail="当前来源批次不满足供应商维护提交条件。" />
+      )}
+    </VendorFormPageShell>
+  )
+}
+
+export function MasterDataVendorEditPage({
+  summary,
+  error,
+  feedback,
+  vendor,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  vendor: MasterDataReferenceListViewRow | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <VendorFormPageShell error={error} feedback={feedback}>
+      {summary.vendorSubmitSourceBatchId && vendor ? (
+        <VendorMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.vendorSubmitSourceBatchId}
+          submitLabel="提交编辑"
+          fields={[
+            "reference_name",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+          hiddenFields={{ vendor_id: vendor.reference_id }}
+          defaultValues={{
+            reference_name: vendor.reference_name,
+            status: vendor.status,
+            effective_from: vendor.effective_from,
+            effective_to: vendor.effective_to,
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            vendor
+              ? "当前来源批次不满足供应商维护提交条件。"
+              : "未找到该供应商，请返回列表重新选择。"
+          }
+        />
+      )}
+    </VendorFormPageShell>
   )
 }
 
@@ -1210,6 +1385,28 @@ function WorkplaceFormPageShell({
   )
 }
 
+function VendorFormPageShell({
+  error,
+  feedback,
+  children,
+}: {
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  children: React.ReactNode
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? (
+        <MasterDataListError title="供应商来源读取失败" error={error} />
+      ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-4">{children}</section>
+    </main>
+  )
+}
+
 function AgentFormBlockedState({
   detail = "当前来源批次不满足单人维护提交条件。",
 }: {
@@ -1276,6 +1473,100 @@ function WorkplaceMaintenanceForm({
                 label="职场名称"
                 name="reference_name"
                 placeholder="输入职场名称"
+                defaultValue={defaultValues.reference_name}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("status") ? (
+              <MaintenanceSelect
+                label="状态"
+                name="status"
+                defaultValue={defaultValues.status}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_from") ? (
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                defaultValue={defaultValues.effective_from}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_to") ? (
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                defaultValue={defaultValues.effective_to}
+                required={actionKey === "create"}
+              />
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+type VendorMaintenanceField =
+  | "vendor_id"
+  | "reference_name"
+  | "status"
+  | "effective_from"
+  | "effective_to"
+
+function VendorMaintenanceForm({
+  action,
+  actionKey,
+  sourceBatchId,
+  submitLabel,
+  fields,
+  hiddenFields = {},
+  defaultValues = {},
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit"
+  sourceBatchId: string
+  submitLabel: string
+  fields: VendorMaintenanceField[]
+  hiddenFields?: Record<string, string>
+  defaultValues?: Partial<Record<VendorMaintenanceField, string>>
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">供应商信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
+          <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("vendor_id") ? (
+              <MaintenanceInput
+                label="供应商 ID"
+                name="vendor_id"
+                placeholder="SUP-001"
+                defaultValue={defaultValues.vendor_id}
+                required
+              />
+            ) : null}
+            {fields.includes("reference_name") ? (
+              <MaintenanceInput
+                label="供应商名称"
+                name="reference_name"
+                placeholder="输入供应商名称"
                 defaultValue={defaultValues.reference_name}
                 required={actionKey === "create"}
               />

@@ -4040,3 +4040,26 @@
 - `npm run lint` 和 `npm run typecheck` 已通过。
 - Browser smoke over `/master-data/sites`, `/master-data/sites/new`, `/master-data/sites/SH-01/edit`, and `/master-data/sites?freeze_workplace_id=SH-01` confirmed Header create action, no inline create form on the list, create/edit child pages, and the freeze Dialog.
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM155 供应商基础 CRUD 前端闭环
+
+#### 审计结论
+
+- `/master-data/vendors` Header actions 已提供供应商 `新建` 入口，不在列表内容区塞表单。
+- 供应商列表行已提供 `详情`、`编辑`、`冻结`；详情进入既有供应商详情页，编辑进入供应商编辑子页面，冻结打开确认 Dialog。
+- `/master-data/vendors/new` 提交供应商 ID、供应商名称、状态、生效开始和生效结束。
+- `/master-data/vendors/[vendorId]/edit` 编辑供应商名称、状态和有效期，供应商 ID 作为隐藏字段提交，不作为可编辑字段。
+- 提交复用现有 `/api/v1/master-data/suppliers/{reference_id}/maintenance` 能力，提交结果回到供应商列表并使用既有 Alert feedback。
+- 本轮没有新增供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量操作、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子。
+
+#### 风险
+
+- 供应商和职场的服务关系、合同、最低人力、结算规则属于后续独立对象/详情设计，本轮只覆盖供应商基础 reference 字段。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `buildMasterDataVendorMaintenanceApiPath`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明缺少 `/master-data/vendors/new`。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 22 tests OK，`product-structure.test.mjs` 25 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/vendors`, `/master-data/vendors/new`, `/master-data/vendors/SUP-A/edit`, and `/master-data/vendors?freeze_vendor_id=SUP-A` confirmed Header create action, no inline create form on the list, create/edit child pages, and the freeze Dialog.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

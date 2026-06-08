@@ -792,3 +792,11 @@ The shared table header no longer forces 12px text, and the customer-service per
 `/master-data/sites/new` submits workplace ID, workplace name, status, and effective period. `/master-data/sites/[workplaceId]/edit` submits workplace name, status, and effective period while keeping workplace ID hidden and non-editable. The submit path reuses the existing workplace reference maintenance API and returns success/failure feedback through the existing Alert feedback pattern.
 
 This slice did not add workplace service-team binding maintenance, supplier contracts, settlement ratios, minimum staffing requirements, approval, export, batch operations, permissions, backend routes, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM154.
+
+## 2026-06-08 IM155 Vendor CRUD Frontend Loop
+
+`IM155` continues the master-data object maintenance pattern with supplier basics only. `/master-data/vendors` now exposes a page-level `新建` action in the shared Header and keeps the list itself focused on table management. Supplier rows provide `详情`, `编辑`, and `冻结`; editing opens `/master-data/vendors/[vendorId]/edit`, while freezing uses a confirmation Dialog on the list URL.
+
+`/master-data/vendors/new` submits supplier ID, supplier name, status, and effective period. `/master-data/vendors/[vendorId]/edit` submits supplier name, status, and effective period while keeping supplier ID hidden and non-editable. The submit path reuses the existing supplier reference maintenance API and returns success/failure feedback through the existing Alert feedback pattern.
+
+This slice did not add supplier contract maintenance, service-workplace binding maintenance, settlement ratios, minimum staffing requirements, approval, export, batch operations, permissions, backend routes, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM155.

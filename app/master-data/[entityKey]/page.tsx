@@ -6,6 +6,7 @@ import {
   MasterDataAgentManagementPage,
   MasterDataOrganizationManagementPage,
   MasterDataReferenceManagementPage,
+  MasterDataVendorPageActions,
   MasterDataWorkplacePageActions,
 } from "@/components/master-data-maintenance-workbench"
 import {
@@ -27,6 +28,7 @@ import {
 } from "@/app/master-data/agents/data"
 import {
   submitMasterDataAgentMaintenance,
+  submitMasterDataVendorMaintenance,
   submitMasterDataWorkplaceMaintenance,
 } from "./actions"
 
@@ -100,6 +102,9 @@ export default async function MasterDataEntityDetailPage({
   const selectedFreezeWorkplaceId = getSingleSearchParam(
     resolvedSearchParams.freeze_workplace_id
   )
+  const selectedFreezeVendorId = getSingleSearchParam(
+    resolvedSearchParams.freeze_vendor_id
+  )
 
   return (
     <AppShell
@@ -113,6 +118,8 @@ export default async function MasterDataEntityDetailPage({
           <MasterDataAgentPageActions summary={agentManagementSummary} />
         ) : entity.key === "sites" && referenceManagementSummary ? (
           <MasterDataWorkplacePageActions summary={referenceManagementSummary} />
+        ) : entity.key === "vendors" && referenceManagementSummary ? (
+          <MasterDataVendorPageActions summary={referenceManagementSummary} />
         ) : null
       }
     >
@@ -145,7 +152,9 @@ export default async function MasterDataEntityDetailPage({
           error={referenceResult.error ?? batchResult.error}
           feedback={feedback}
           selectedFreezeWorkplaceId={selectedFreezeWorkplaceId}
+          selectedFreezeVendorId={selectedFreezeVendorId}
           workplaceSubmitAction={submitMasterDataWorkplaceMaintenance}
+          vendorSubmitAction={submitMasterDataVendorMaintenance}
         />
       ) : null}
     </AppShell>

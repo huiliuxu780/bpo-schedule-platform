@@ -2005,3 +2005,14 @@
 - action: 完成职场基础 CRUD 前端闭环。
 - status: `done`
 - notes: `/master-data/sites` Header actions 提供 `新建` 职场入口；职场列表行提供 `详情`、`编辑`、`冻结`，其中编辑进入 `/master-data/sites/[workplaceId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/sites/new` 子页面并提交职场 ID、职场名称、状态和生效期；提交复用现有 workplace reference maintenance API，反馈回到职场列表并使用 Alert；本轮不新增职场服务团队绑定、供应商合同、结算、最低人力、审批、导出、批量、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM155`
+- source_ids:
+  - `R855`
+- story_ids:
+  - `US775`
+- action: 完成供应商基础 CRUD 前端闭环。
+- status: `done`
+- notes: `/master-data/vendors` Header actions 提供 `新建` 供应商入口；供应商列表行提供 `详情`、`编辑`、`冻结`，其中编辑进入 `/master-data/vendors/[vendorId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/vendors/new` 子页面并提交供应商 ID、供应商名称、状态和生效期；提交复用现有 supplier reference maintenance API，反馈回到供应商列表并使用 Alert；本轮不新增供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

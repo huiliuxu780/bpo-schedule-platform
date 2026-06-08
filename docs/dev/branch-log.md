@@ -3764,3 +3764,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM155 Vendor CRUD Frontend Loop
+
+- branch_name: `codex/im155-vendor-crud`
+- base_main_commit: `efb5f1a`
+- stacked_on: `efb5f1a feat: add workplace crud frontend loop`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of master-data maintenance. Add the supplier create action to `/master-data/vendors` Header actions, add row-level detail/edit/freeze actions, create `/master-data/vendors/new`, create `/master-data/vendors/[vendorId]/edit`, and use a freeze confirmation Dialog. Reuse the existing supplier reference maintenance API and Alert feedback. Keep service-workplace binding, supplier contracts, settlement ratio, minimum staffing, approval, export, batch, permissions, backend route/schema/migration, dependency, automatic scheduling, formula, and charge-factor work out of scope.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/vendors/new/page.tsx`, `app/master-data/vendors/[vendorId]/edit/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected vendor model/action helpers, vendors list Header action, row edit/freeze links, create/edit child pages, freeze Dialog, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `buildMasterDataVendorMaintenanceApiPath` was missing; TDD RED product-structure test then failed because `/app/master-data/vendors/new/page.tsx` did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 22 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 25 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/vendors` has Header `新建`, row `编辑`/`冻结`, no inline create submit; `/master-data/vendors/new` renders供应商 ID/供应商名称 and `提交新增`; `/master-data/vendors/SUP-A/edit` renders `提交编辑`; `/master-data/vendors?freeze_vendor_id=SUP-A` renders `冻结供应商` Dialog after hydration. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

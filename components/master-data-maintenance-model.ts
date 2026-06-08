@@ -69,6 +69,7 @@ export type MasterDataAgentMaintenanceActionKey =
   | "freeze"
   | "effective_period"
 export type MasterDataWorkplaceMaintenanceActionKey = "create" | "edit" | "freeze"
+export type MasterDataVendorMaintenanceActionKey = "create" | "edit" | "freeze"
 
 export type MasterDataAgentMaintenanceStatus = "active" | "frozen" | "inactive"
 export type MasterDataEmployeeType = "internal" | "outsourced"
@@ -92,6 +93,16 @@ export type MasterDataWorkplaceMaintenanceDraft = {
   sourceBatchId: string
   workplaceId: string
   workplaceName?: string
+  status?: MasterDataAgentMaintenanceStatus
+  effectiveFrom?: string
+  effectiveTo?: string
+}
+
+export type MasterDataVendorMaintenanceDraft = {
+  action: MasterDataVendorMaintenanceActionKey
+  sourceBatchId: string
+  vendorId: string
+  vendorName?: string
   status?: MasterDataAgentMaintenanceStatus
   effectiveFrom?: string
   effectiveTo?: string
@@ -283,6 +294,15 @@ export type MasterDataWorkplaceMaintenancePayload = {
   effective_to?: string
 }
 
+export type MasterDataVendorMaintenancePayload = {
+  action: MasterDataVendorMaintenanceActionKey
+  source_batch_id: string
+  reference_name?: string
+  status?: MasterDataAgentMaintenanceStatus
+  effective_from?: string
+  effective_to?: string
+}
+
 export type MasterDataAgentMaintenanceFeedback = {
   tone: "success" | "error"
   title: string
@@ -441,6 +461,7 @@ export type MasterDataEntitySourceContext = {
   sourceBatchHref: string | null
   agentSubmitSourceBatchId: string | null
   workplaceSubmitSourceBatchId: string | null
+  vendorSubmitSourceBatchId: string | null
 }
 
 export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
@@ -588,6 +609,10 @@ export function summarizeMasterDataEntitySourceContext(
     entity.key === "sites" && latestMasterDataBatch
       ? latestMasterDataBatch.batch_id
       : null
+  const vendorSubmitSourceBatchId =
+    entity.key === "vendors" && latestMasterDataBatch
+      ? latestMasterDataBatch.batch_id
+      : null
 
   return {
     entity,
@@ -605,6 +630,7 @@ export function summarizeMasterDataEntitySourceContext(
     sourceBatchHref: workbench.sourceBatchHref,
     agentSubmitSourceBatchId,
     workplaceSubmitSourceBatchId,
+    vendorSubmitSourceBatchId,
   }
 }
 
@@ -616,6 +642,10 @@ export function buildMasterDataWorkplaceMaintenanceApiPath(
   workplaceId: string
 ): string {
   return `/api/v1/master-data/workplaces/${encodeURIComponent(workplaceId)}/maintenance`
+}
+
+export function buildMasterDataVendorMaintenanceApiPath(vendorId: string): string {
+  return `/api/v1/master-data/suppliers/${encodeURIComponent(vendorId)}/maintenance`
 }
 
 export function buildMasterDataAgentSkillMaintenanceApiPath(
@@ -659,6 +689,19 @@ export function buildMasterDataWorkplaceMaintenancePayload(
     action: draft.action,
     source_batch_id: draft.sourceBatchId,
     reference_name: draft.workplaceName,
+    status: draft.status,
+    effective_from: draft.effectiveFrom,
+    effective_to: draft.effectiveTo,
+  })
+}
+
+export function buildMasterDataVendorMaintenancePayload(
+  draft: MasterDataVendorMaintenanceDraft
+): MasterDataVendorMaintenancePayload {
+  return compactMasterDataVendorMaintenancePayload({
+    action: draft.action,
+    source_batch_id: draft.sourceBatchId,
+    reference_name: draft.vendorName,
     status: draft.status,
     effective_from: draft.effectiveFrom,
     effective_to: draft.effectiveTo,
@@ -998,10 +1041,14 @@ export function summarizeMasterDataReferenceManagement(
         editHref:
           entity.key === "sites"
             ? `/master-data/sites/${encodeURIComponent(reference.reference_id)}/edit`
+            : entity.key === "vendors"
+              ? `/master-data/vendors/${encodeURIComponent(reference.reference_id)}/edit`
             : null,
         freezeHref:
           entity.key === "sites"
             ? `/master-data/sites?freeze_workplace_id=${encodeURIComponent(reference.reference_id)}`
+            : entity.key === "vendors"
+              ? `/master-data/vendors?freeze_vendor_id=${encodeURIComponent(reference.reference_id)}`
             : null,
       },
     }))
@@ -1009,7 +1056,12 @@ export function summarizeMasterDataReferenceManagement(
   return {
     entity,
     title: entity.label,
-    createHref: entity.key === "sites" ? "/master-data/sites/new" : null,
+    createHref:
+      entity.key === "sites"
+        ? "/master-data/sites/new"
+        : entity.key === "vendors"
+          ? "/master-data/vendors/new"
+          : null,
     totalRecords: rows.length,
     activeRecords: rows.filter((row) => row.status === "active").length,
     frozenRecords: rows.filter((row) => row.status === "frozen").length,
@@ -1424,6 +1476,14 @@ function compactMasterDataWorkplaceMaintenancePayload(
   return Object.fromEntries(
     Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
   ) as MasterDataWorkplaceMaintenancePayload
+}
+
+function compactMasterDataVendorMaintenancePayload(
+  payload: MasterDataVendorMaintenancePayload
+): MasterDataVendorMaintenancePayload {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
+  ) as MasterDataVendorMaintenancePayload
 }
 
 function getSingleSearchParam(value: string | string[] | undefined): string {

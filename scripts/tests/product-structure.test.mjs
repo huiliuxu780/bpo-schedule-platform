@@ -18,6 +18,8 @@ const masterDataWorkplaceDetailPagePath = new URL("../../app/master-data/sites/[
 const masterDataWorkplaceCreatePagePath = new URL("../../app/master-data/sites/new/page.tsx", import.meta.url);
 const masterDataWorkplaceEditPagePath = new URL("../../app/master-data/sites/[workplaceId]/edit/page.tsx", import.meta.url);
 const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[vendorId]/page.tsx", import.meta.url);
+const masterDataVendorCreatePagePath = new URL("../../app/master-data/vendors/new/page.tsx", import.meta.url);
+const masterDataVendorEditPagePath = new URL("../../app/master-data/vendors/[vendorId]/edit/page.tsx", import.meta.url);
 const demandForecastProductionPagePath = new URL("../../app/demand-plans/production/page.tsx", import.meta.url);
 const personnelScheduleProductionPagePath = new URL("../../app/schedule-plans/production/page.tsx", import.meta.url);
 const actualLogProductionPagePath = new URL("../../app/actual-logs/production/page.tsx", import.meta.url);
@@ -850,6 +852,49 @@ test("workplace maintenance uses child pages and freeze dialog instead of list-p
   assert.equal(referenceSource.includes("DialogContent"), true);
   assert.equal(createPageSource.includes("MasterDataWorkplaceCreatePage"), true);
   assert.equal(editPageSource.includes("MasterDataWorkplaceEditPage"), true);
+  assert.equal(editPageSource.includes("notFound()"), true);
+});
+
+test("vendor maintenance uses child pages and freeze dialog instead of list-page forms", async () => {
+  await access(masterDataVendorCreatePagePath);
+  await access(masterDataVendorEditPagePath);
+
+  const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const actionsSource = await readFile(masterDataActionsPath, "utf8");
+  const modelSource = await readFile(masterDataModelPath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const createPageSource = await readFile(masterDataVendorCreatePagePath, "utf8");
+  const editPageSource = await readFile(masterDataVendorEditPagePath, "utf8");
+  const referenceSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataReferenceManagementPage"),
+    workbenchSource.indexOf("export function MasterDataWorkplaceDetailPage"),
+  );
+
+  assert.equal(
+    entitySource.includes("MasterDataVendorPageActions"),
+    true,
+    "vendor list should use Header actions for create",
+  );
+  assert.equal(
+    entitySource.includes("freeze_vendor_id"),
+    true,
+    "vendor freeze should be controlled by list-page dialog state",
+  );
+  assert.equal(
+    actionsSource.includes("submitMasterDataVendorMaintenance"),
+    true,
+    "vendor forms should use a vendor-specific server action",
+  );
+  assert.equal(
+    modelSource.includes("buildMasterDataVendorMaintenancePayload"),
+    true,
+    "vendor maintenance should be modeled explicitly",
+  );
+  assert.equal(referenceSource.includes("VendorMaintenanceForm"), false);
+  assert.equal(referenceSource.includes("MasterDataVendorFreezeDialog"), true);
+  assert.equal(referenceSource.includes("DialogContent"), true);
+  assert.equal(createPageSource.includes("MasterDataVendorCreatePage"), true);
+  assert.equal(editPageSource.includes("MasterDataVendorEditPage"), true);
   assert.equal(editPageSource.includes("notFound()"), true);
 });
 

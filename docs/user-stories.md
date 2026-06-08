@@ -5372,6 +5372,30 @@ acceptance:
   - "不新增职场服务团队绑定、供应商合同、结算比例、最低人力、审批、导出、批量、权限、自动排班、生产公式或收费因子。"
 dependencies:
   - "US773"
-status: "ready"
-notes: "IM154 执行中。"
+status: "done"
+notes: "IM154 已完成：职场新建/编辑走子页面，冻结走 Dialog，提交复用现有 workplace reference maintenance API。"
+```
+
+### US775 - 供应商基础 CRUD 前端闭环
+
+```yaml
+id: US775
+requirement_ids:
+  - R855
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在供应商列表中进入单个供应商的新建、编辑和冻结流程，以便维护供应商基础档案，而不是在列表页里展开一个大表单。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/vendors Header 右侧提供新建供应商入口。"
+  - "供应商列表行提供详情、编辑和冻结操作，其中详情进入现有供应商详情页，编辑进入子页面，冻结打开确认弹窗。"
+  - "/master-data/vendors/new 使用子页面提交供应商 ID、供应商名称、状态、生效开始、生效结束。"
+  - "/master-data/vendors/[vendorId]/edit 使用子页面编辑供应商名称、状态和有效期，供应商 ID 不作为可编辑字段。"
+  - "提交成功或失败后回到供应商列表并使用 Alert 显示反馈。"
+  - "不新增供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量、权限、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US774"
+status: "done"
+notes: "IM155 已完成：供应商新建/编辑走子页面，冻结走 Dialog，提交复用现有 supplier reference maintenance API。"
 ```

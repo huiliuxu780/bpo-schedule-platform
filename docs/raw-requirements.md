@@ -2988,6 +2988,19 @@ description: "PM 确认下一阶段从职场管理开始。职场列表不能塞
 source: "PM approved workplace CRUD product design on 2026-06-08"
 submitted_at: "2026-06-08"
 version: "1.0"
-status: "ready"
-notes: "IM154 执行中：职场 ID、职场名称、状态、生效开始、生效结束；不做职场服务团队绑定、合同、结算、最低人力、审批、导出、批量或权限。"
+status: "done"
+notes: "IM154 已完成：职场 ID、职场名称、状态、生效开始、生效结束；新建/编辑走子页面，冻结走弹窗；不做职场服务团队绑定、合同、结算、最低人力、审批、导出、批量或权限。"
+```
+
+### R855 - 供应商基础 CRUD 前端闭环
+
+```yaml
+id: R855
+module: "主数据维护"
+description: "继职场基础 CRUD 后，PM 要求继续开发剩余主数据维护功能。供应商列表也应按 B 端对象管理拆分为列表页、单对象新建页、单对象编辑页和冻结弹窗，只维护供应商基础 reference 字段，合同、结算比例、最低人力和服务职场绑定留到后续独立任务。"
+source: "PM requested continuing master-data maintenance after IM154 push on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM155 已完成：供应商 ID、供应商名称、状态、生效开始、生效结束；新建/编辑走子页面，冻结走弹窗；不做供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量或权限。"
 ```
