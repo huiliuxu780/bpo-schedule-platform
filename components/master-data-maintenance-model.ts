@@ -855,6 +855,7 @@ export function summarizeMasterDataAgentManagement(
   } = {}
 ): MasterDataAgentManagementSummary {
   const normalizedFilters = normalizeMasterDataAgentManagementFilters(filters)
+  const filterOptions = buildMasterDataAgentManagementFilterOptions(employees)
   const filteredEmployees = employees.filter((employee) =>
     matchesMasterDataAgentManagementFilters(employee, normalizedFilters)
   )
@@ -883,12 +884,7 @@ export function summarizeMasterDataAgentManagement(
         label: "技能组",
         placeholder: "请选择",
         type: "select",
-        options: [
-          { value: "all", label: "全部技能组" },
-          { value: "online", label: "在线技能组" },
-          { value: "hotline", label: "热线技能组" },
-          { value: "ticket", label: "工单技能组" },
-        ],
+        options: filterOptions.skillGroups,
       },
       {
         key: "employee_id",
@@ -913,14 +909,14 @@ export function summarizeMasterDataAgentManagement(
         label: "组织",
         placeholder: "请选择",
         type: "select",
-        options: [{ value: "all", label: "全部组织" }],
+        options: filterOptions.organizations,
       },
       {
         key: "workplace",
         label: "职场",
         placeholder: "请选择",
         type: "select",
-        options: [{ value: "all", label: "全部职场" }],
+        options: filterOptions.workplaces,
       },
       {
         key: "employee_type",
@@ -1490,6 +1486,57 @@ function normalizeMasterDataAgentManagementFilters(
   ) as MasterDataAgentManagementFilters
 }
 
+function buildMasterDataAgentManagementFilterOptions(
+  employees: MasterDataEmployeeListRow[]
+): Pick<
+  Record<
+    "skillGroups" | "organizations" | "workplaces",
+    NonNullable<MasterDataAgentManagementFilterField["options"]>
+  >,
+  "skillGroups" | "organizations" | "workplaces"
+> {
+  const skillGroups = new Map<string, string>()
+  const organizations = new Map<string, string>()
+  const workplaces = new Map<string, string>()
+
+  for (const employee of employees) {
+    if (employee.organization_id) {
+      organizations.set(
+        employee.organization_id,
+        employee.organization_path ?? employee.organization_id
+      )
+    }
+
+    if (employee.workplace_id) {
+      workplaces.set(employee.workplace_id, employee.workplace_name ?? employee.workplace_id)
+    }
+
+    for (const skill of employee.skills) {
+      if (skill.skill_id) {
+        skillGroups.set(skill.skill_id, skill.skill_name || skill.skill_id)
+      }
+    }
+  }
+
+  return {
+    skillGroups: buildSelectOptions("全部技能组", skillGroups),
+    organizations: buildSelectOptions("全部组织", organizations),
+    workplaces: buildSelectOptions("全部职场", workplaces),
+  }
+}
+
+function buildSelectOptions(
+  allLabel: string,
+  options: Map<string, string>
+): NonNullable<MasterDataAgentManagementFilterField["options"]> {
+  return [
+    { value: "all", label: allLabel },
+    ...[...options.entries()]
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([value, label]) => ({ value, label })),
+  ]
+}
+
 function matchesMasterDataAgentManagementFilters(
   employee: MasterDataEmployeeListRow,
   filters: MasterDataAgentManagementFilters
@@ -1515,7 +1562,30 @@ function matchesMasterDataAgentManagementFilters(
   const skillGroup = filters.skill_group
   if (
     skillGroup &&
-    !employee.skills.some((skill) => skill.skill_category === skillGroup)
+    !employee.skills.some(
+      (skill) =>
+        skill.skill_id === skillGroup ||
+        skill.skill_name === skillGroup ||
+        skill.skill_category === skillGroup
+    )
+  ) {
+    return false
+  }
+
+  const organization = filters.organization
+  if (
+    organization &&
+    employee.organization_id !== organization &&
+    employee.organization_path !== organization
+  ) {
+    return false
+  }
+
+  const workplace = filters.workplace
+  if (
+    workplace &&
+    employee.workplace_id !== workplace &&
+    employee.workplace_name !== workplace
   ) {
     return false
   }

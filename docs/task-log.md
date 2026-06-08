@@ -2038,3 +2038,14 @@
 - action: 完成组织基础 CRUD 前端闭环。
 - status: `done`
 - notes: `/master-data/organizations` Header actions 提供 `新建` 组织入口；组织列表行提供 `编辑`、`冻结`，其中编辑进入 `/master-data/organizations/[organizationId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/organizations/new` 子页面并提交组织 ID、组织名称、组织层级、上级组织、状态和生效期；本地后端新增窄组织维护 API 并复用既有组织表和父组织校验；本轮不新增组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量、权限、schema/migration、依赖、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM158`
+- source_ids:
+  - `R858`
+- story_ids:
+  - `US778`
+- action: 完成客服人员列表真实筛选。
+- status: `done`
+- notes: `/master-data/agents` 的技能组、组织、职场筛选下拉改为从当前人员列表数据生成；技能筛选使用技能 ID 作为稳定值并兼容技能名称/归属属性过滤，组织和职场筛选使用 ID 作为稳定值并兼容显示路径/名称过滤；既有姓名、账号、状态、人员类型筛选保持；页面结构仍是 Header 页面级动作、筛选卡片、列表操作栏、表格；本轮不新增导航、页面、后端 route、schema/migration、依赖、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

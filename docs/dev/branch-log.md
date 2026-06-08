@@ -3818,3 +3818,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM158 Agent List Real Filters
+
+- branch_name: `codex/im158-agent-list-real-filters`
+- base_main_commit: `3060d9c`
+- stacked_on: `e1c426b feat: add organization crud frontend loop`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM157 push. Tighten the existing `/master-data/agents` list filters so skill group, organization, and workplace options come from current personnel rows and query parameters actually filter rows. Keep the B-end list layout unchanged and do not add navigation, pages, backend route/schema/migration, dependencies, permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor work.
+- allowed_files_check: `components/master-data-maintenance-model.ts`, focused model tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, route, page, navigation, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected agent filter option generation, skill/organization/workplace filter matching, focused regression test, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `skill_group` options were still fixed to online/hotline/ticket categories and organization/workplace options were placeholders. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 26 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 27 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/agents?employee_name=张三` returns 1 row and keeps Header `新建/批量导入`, while `/master-data/agents?employee_name=不存在` shows the empty state. Real skill/organization/workplace page-smoke data setup was blocked by the existing local `.local` SQLite schema missing `master_data_skills.skill_category` and `master_data_employees.employee_type`; no schema workaround was applied in this frontend slice. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` result will be recorded after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

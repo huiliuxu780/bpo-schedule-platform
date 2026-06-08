@@ -4109,3 +4109,26 @@
 - `npm run lint` 和 `npm run typecheck` 已通过。
 - Browser smoke over `/master-data/organizations`, `/master-data/organizations/new`, `/master-data/organizations/ORG-CC/edit`, and `/master-data/organizations?freeze_organization_id=ORG-CC` confirmed Header create action, row edit/freeze links, create/edit child pages, and the freeze Dialog.
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM158 客服人员列表真实筛选
+
+#### 审计结论
+
+- `/master-data/agents` 的技能组筛选下拉不再固定为在线/热线/工单归属属性，而是从当前人员技能集合生成真实技能组选项。
+- `/master-data/agents` 的组织和职场筛选下拉不再只有“全部组织/全部职场”，而是从当前人员组织 ID/组织路径、职场 ID/职场名称生成真实选项。
+- `skill_group` 查询参数支持技能 ID、技能名称和技能归属属性匹配；`organization` 查询参数支持组织 ID 和组织路径匹配；`workplace` 查询参数支持职场 ID 和职场名称匹配。
+- 页面结构未扩展：Header 继续承载 `新建` 和 `批量导入`，筛选卡片在列表操作栏上方，列表页未塞新增/编辑表单。
+- 本轮没有新增导航、页面、后端 route、schema/migration、依赖、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前本地 `.local` SQLite 是旧 schema，缺少 `master_data_skills.skill_category` 和 `master_data_employees.employee_type` 列，无法通过维护 API 准备带组织/职场/技能的 smoke 人员；因此真实 option 的页面级验证以模型 RED/GREEN 测试覆盖，浏览器只验证现有 `张三` 数据的 URL 筛选和空态。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明技能组仍是固定归属属性选项，组织/职场没有真实选项。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 26 tests OK。
+- `node --test scripts/tests/product-structure.test.mjs` 27 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/agents?employee_name=张三` returned 1 row and Header `新建/批量导入`; `/master-data/agents?employee_name=不存在` showed `暂无符合条件的客服人员` without `张三`。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

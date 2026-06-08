@@ -3030,3 +3030,16 @@ version: "1.0"
 status: "done"
 notes: "IM157 已完成：组织 ID、组织名称、组织层级、上级组织、状态、生效开始、生效结束；新建/编辑走子页面，冻结走弹窗；不做组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量或权限。"
 ```
+
+### R858 - 客服人员列表真实筛选
+
+```yaml
+id: R858
+module: "主数据维护"
+description: "客服人员列表已经是主数据维护里的真实人员列表，但技能组、组织、职场筛选仍存在占位下拉或只筛选部分字段的问题。需要让筛选项来自当前真实人员数据，并让查询参数真实过滤人员行，保持页面是清爽列表页，不引入新增页面、后端能力或批量操作。"
+source: "PM requested continuing master-data cleanup after IM157 push on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM158 已完成：/master-data/agents 的技能组、组织、职场筛选选项来自当前人员数据；skill_group 支持技能 ID/名称/归属属性过滤，organization 和 workplace 支持 ID/显示名过滤；不新增导航、页面、后端 route、schema/migration、依赖、审批、导出、批量操作或权限。"
+```

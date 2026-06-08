@@ -5447,3 +5447,26 @@ dependencies:
 status: "done"
 notes: "IM157 已完成：组织新建/编辑走子页面，冻结走 Dialog，并补齐本地组织维护 API。"
 ```
+
+### US778 - 客服人员列表真实筛选
+
+```yaml
+id: US778
+requirement_ids:
+  - R858
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在客服人员列表里按真实技能组、组织和职场筛选人员，以便确认导入和维护后的人员归属，而不是看到只有占位项的下拉框。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/agents 的技能组、组织、职场筛选下拉来自当前真实人员列表数据。"
+  - "URL 查询参数 employee_name、employee_id、status、employee_type、skill_group、organization、workplace 能真实过滤人员行。"
+  - "重置入口回到 /master-data/agents。"
+  - "页面结构保持现有 B 端列表模式：Header 放页面级动作，筛选卡片在列表操作栏上方，列表页不塞新增/编辑表单。"
+  - "不新增导航、页面、后端 route、schema/migration、依赖、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US777"
+status: "done"
+notes: "IM158 已完成：客服人员列表筛选项和查询过滤已按真实人员数据收口，列表结构保持 Header actions、筛选卡片、列表操作栏、表格的 B 端模式。"
+```
