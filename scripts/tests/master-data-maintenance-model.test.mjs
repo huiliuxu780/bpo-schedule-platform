@@ -7,6 +7,8 @@ import {
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
+  buildMasterDataOrganizationMaintenanceApiPath,
+  buildMasterDataOrganizationMaintenancePayload,
   buildMasterDataSkillMaintenanceApiPath,
   buildMasterDataSkillMaintenancePayload,
   buildMasterDataVendorMaintenanceApiPath,
@@ -20,6 +22,7 @@ import {
   summarizeMasterDataAgentMaintenanceFeedback,
   summarizeMasterDataEntitySourceContext,
   summarizeMasterDataMaintenanceWorkbench,
+  summarizeMasterDataOrganizationManagement,
   summarizeMasterDataReferenceManagement,
   summarizeMasterDataVendorDetail,
   summarizeMasterDataWorkplaceDetail,
@@ -450,6 +453,74 @@ test("workplace vendor and skill list rows expose confirmed child entries", () =
   assert.equal(
     skillSummary.rows[0].display.freezeHref,
     "/master-data/skills?freeze_skill_id=SKILL-ONLINE",
+  );
+});
+
+test("organization management exposes confirmed child entries", () => {
+  const summary = summarizeMasterDataOrganizationManagement([
+    {
+      organization_id: "ORG-RETURN",
+      organization_name: "集中退换小组",
+      organization_level: 3,
+      parent_organization_id: "ORG-CCO",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      organization_path: "CC / CCO / 集中退换小组",
+    },
+  ]);
+
+  assert.equal(summary.createHref, "/master-data/organizations/new");
+  assert.equal(
+    summary.rows[0].display.editHref,
+    "/master-data/organizations/ORG-RETURN/edit",
+  );
+  assert.equal(
+    summary.rows[0].display.freezeHref,
+    "/master-data/organizations?freeze_organization_id=ORG-RETURN",
+  );
+});
+
+test("organization maintenance builders submit hierarchy through the organization API", () => {
+  assert.equal(
+    buildMasterDataOrganizationMaintenanceApiPath("ORG CCO/退换"),
+    "/api/v1/master-data/organizations/ORG%20CCO%2F%E9%80%80%E6%8D%A2/maintenance",
+  );
+
+  assert.deepEqual(
+    buildMasterDataOrganizationMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      organizationId: "ORG-RETURN",
+      organizationName: "集中退换小组",
+      organizationLevel: 3,
+      parentOrganizationId: "ORG-CCO",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      organization_name: "集中退换小组",
+      organization_level: 3,
+      parent_organization_id: "ORG-CCO",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataOrganizationMaintenancePayload({
+      action: "freeze",
+      sourceBatchId: "BATCH-MD-001",
+      organizationId: "ORG-RETURN",
+    }),
+    {
+      action: "freeze",
+      source_batch_id: "BATCH-MD-001",
+    },
   );
 });
 

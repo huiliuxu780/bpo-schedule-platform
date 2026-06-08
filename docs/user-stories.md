@@ -5423,3 +5423,27 @@ dependencies:
 status: "done"
 notes: "IM156 已完成：技能组新建/编辑走子页面，冻结走 Dialog，提交复用现有 skills reference maintenance API 并真实写入归属属性。"
 ```
+
+### US777 - 组织基础 CRUD 前端闭环
+
+```yaml
+id: US777
+requirement_ids:
+  - R857
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在组织列表中进入单个组织的新建、编辑和冻结流程，以便维护组织基础档案，而不是在列表页里展开一个大表单。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "/master-data/organizations Header 右侧提供新建组织入口。"
+  - "组织列表行提供编辑和冻结操作；编辑进入子页面，冻结打开确认弹窗。"
+  - "/master-data/organizations/new 使用子页面提交组织 ID、组织名称、组织层级、上级组织、状态、生效开始、生效结束。"
+  - "/master-data/organizations/[organizationId]/edit 使用子页面编辑组织名称、组织层级、上级组织、状态和有效期，组织 ID 不作为可编辑字段。"
+  - "提交成功或失败后回到组织列表并使用 Alert 显示反馈。"
+  - "不新增组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US776"
+status: "done"
+notes: "IM157 已完成：组织新建/编辑走子页面，冻结走 Dialog，并补齐本地组织维护 API。"
+```

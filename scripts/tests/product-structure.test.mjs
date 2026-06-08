@@ -22,6 +22,8 @@ const masterDataVendorCreatePagePath = new URL("../../app/master-data/vendors/ne
 const masterDataVendorEditPagePath = new URL("../../app/master-data/vendors/[vendorId]/edit/page.tsx", import.meta.url);
 const masterDataSkillCreatePagePath = new URL("../../app/master-data/skills/new/page.tsx", import.meta.url);
 const masterDataSkillEditPagePath = new URL("../../app/master-data/skills/[skillId]/edit/page.tsx", import.meta.url);
+const masterDataOrganizationCreatePagePath = new URL("../../app/master-data/organizations/new/page.tsx", import.meta.url);
+const masterDataOrganizationEditPagePath = new URL("../../app/master-data/organizations/[organizationId]/edit/page.tsx", import.meta.url);
 const demandForecastProductionPagePath = new URL("../../app/demand-plans/production/page.tsx", import.meta.url);
 const personnelScheduleProductionPagePath = new URL("../../app/schedule-plans/production/page.tsx", import.meta.url);
 const actualLogProductionPagePath = new URL("../../app/actual-logs/production/page.tsx", import.meta.url);
@@ -929,6 +931,49 @@ test("vendor maintenance uses child pages and freeze dialog instead of list-page
   assert.equal(referenceSource.includes("DialogContent"), true);
   assert.equal(createPageSource.includes("MasterDataVendorCreatePage"), true);
   assert.equal(editPageSource.includes("MasterDataVendorEditPage"), true);
+  assert.equal(editPageSource.includes("notFound()"), true);
+});
+
+test("organization maintenance uses child pages and freeze dialog instead of list-page forms", async () => {
+  await access(masterDataOrganizationCreatePagePath);
+  await access(masterDataOrganizationEditPagePath);
+
+  const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const actionsSource = await readFile(masterDataActionsPath, "utf8");
+  const modelSource = await readFile(masterDataModelPath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const createPageSource = await readFile(masterDataOrganizationCreatePagePath, "utf8");
+  const editPageSource = await readFile(masterDataOrganizationEditPagePath, "utf8");
+  const organizationSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataOrganizationManagementPage"),
+    workbenchSource.indexOf("function ReadOnlyField"),
+  );
+
+  assert.equal(
+    entitySource.includes("MasterDataOrganizationPageActions"),
+    true,
+    "organization list should use Header actions for create",
+  );
+  assert.equal(
+    entitySource.includes("freeze_organization_id"),
+    true,
+    "organization freeze should be controlled by list-page dialog state",
+  );
+  assert.equal(
+    actionsSource.includes("submitMasterDataOrganizationMaintenance"),
+    true,
+    "organization forms should use an organization-specific server action",
+  );
+  assert.equal(
+    modelSource.includes("buildMasterDataOrganizationMaintenancePayload"),
+    true,
+    "organization maintenance should be modeled explicitly",
+  );
+  assert.equal(organizationSource.includes("OrganizationMaintenanceForm"), false);
+  assert.equal(organizationSource.includes("MasterDataOrganizationFreezeDialog"), true);
+  assert.equal(organizationSource.includes("DialogContent"), true);
+  assert.equal(createPageSource.includes("MasterDataOrganizationCreatePage"), true);
+  assert.equal(editPageSource.includes("MasterDataOrganizationEditPage"), true);
   assert.equal(editPageSource.includes("notFound()"), true);
 });
 

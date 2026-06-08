@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app-shell"
 import {
   MasterDataAgentPageActions,
   MasterDataAgentManagementPage,
+  MasterDataOrganizationPageActions,
   MasterDataOrganizationManagementPage,
   MasterDataReferenceManagementPage,
   MasterDataSkillPageActions,
@@ -29,6 +30,7 @@ import {
 } from "@/app/master-data/agents/data"
 import {
   submitMasterDataAgentMaintenance,
+  submitMasterDataOrganizationMaintenance,
   submitMasterDataSkillMaintenance,
   submitMasterDataVendorMaintenance,
   submitMasterDataWorkplaceMaintenance,
@@ -110,6 +112,9 @@ export default async function MasterDataEntityDetailPage({
   const selectedFreezeSkillId = getSingleSearchParam(
     resolvedSearchParams.freeze_skill_id
   )
+  const selectedFreezeOrganizationId = getSingleSearchParam(
+    resolvedSearchParams.freeze_organization_id
+  )
 
   return (
     <AppShell
@@ -127,6 +132,10 @@ export default async function MasterDataEntityDetailPage({
           <MasterDataVendorPageActions summary={referenceManagementSummary} />
         ) : entity.key === "skills" && referenceManagementSummary ? (
           <MasterDataSkillPageActions summary={referenceManagementSummary} />
+        ) : entity.key === "organizations" && organizationManagementSummary ? (
+          <MasterDataOrganizationPageActions
+            summary={organizationManagementSummary}
+          />
         ) : null
       }
     >
@@ -151,6 +160,8 @@ export default async function MasterDataEntityDetailPage({
           listSummary={organizationManagementSummary}
           error={organizationResult.error ?? batchResult.error}
           feedback={feedback}
+          selectedFreezeOrganizationId={selectedFreezeOrganizationId}
+          organizationSubmitAction={submitMasterDataOrganizationMaintenance}
         />
       ) : isReferenceEntity(entity.key) && referenceManagementSummary ? (
         <MasterDataReferenceManagementPage

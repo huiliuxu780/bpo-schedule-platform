@@ -4086,3 +4086,26 @@
 - `npm run lint` 和 `npm run typecheck` 已通过。
 - Browser smoke over `/master-data/skills`, `/master-data/skills/new`, `/master-data/skills/L1-CN/edit`, and `/master-data/skills?freeze_skill_id=L1-CN` confirmed Header create action, no inline create form on the list, create/edit child pages, and the freeze Dialog.
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM157 组织基础 CRUD 前端闭环
+
+#### 审计结论
+
+- `/master-data/organizations` Header actions 已提供组织 `新建` 入口，不在列表内容区塞表单。
+- 组织列表行已提供 `编辑`、`冻结`；编辑进入组织编辑子页面，冻结打开确认 Dialog。
+- `/master-data/organizations/new` 提交组织 ID、组织名称、组织层级、上级组织、状态、生效开始和生效结束。
+- `/master-data/organizations/[organizationId]/edit` 编辑组织名称、组织层级、上级组织、状态和有效期，组织 ID 作为隐藏字段提交，不作为可编辑字段。
+- 后端新增窄 `/api/v1/master-data/organizations/{organization_id}/maintenance`，复用既有组织表、父组织校验和导入批次来源校验，不新增 schema/migration。
+- 本轮没有新增组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量操作、权限、schema/migration、依赖、自动排班、生产公式或收费因子。
+
+#### 风险
+
+- 当前只维护组织基础档案；组织树可视化、人员调岗、供应商团队归属和合同/最低人力仍属于独立后续任务。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `buildMasterDataOrganizationMaintenanceApiPath`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明缺少 `/master-data/organizations/new`；后端 `unittest` 先失败，证明缺少 `maintain_organization` 和 route。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 25 tests OK，`product-structure.test.mjs` 27 tests OK，后端 master-data maintenance 定向 25 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/organizations`, `/master-data/organizations/new`, `/master-data/organizations/ORG-CC/edit`, and `/master-data/organizations?freeze_organization_id=ORG-CC` confirmed Header create action, row edit/freeze links, create/edit child pages, and the freeze Dialog.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -371,6 +371,22 @@ class MasterDataPersistenceRepository:
                 raise ValueError(f"REFERENCE_WRITE_FAILED: {reference.reference_id}")
             return _reference_record(stored, id_field, name_field)
 
+    def upsert_organization(
+        self,
+        organization: MasterDataOrganizationInput,
+        batch_id: str,
+    ) -> MasterDataOrganizationRecord:
+        with self.session_factory.begin() as session:
+            self._validate_organization(session, organization)
+            session.merge(_organization_entity(organization, batch_id))
+            session.flush()
+            stored = session.get(OrganizationEntity, organization.organization_id)
+            if stored is None:
+                raise ValueError(
+                    f"ORGANIZATION_WRITE_FAILED: {organization.organization_id}"
+                )
+            return _organization_record(session, stored)
+
     def upsert_employee(
         self,
         employee: EmployeeMasterDataInput,

@@ -800,3 +800,19 @@ This slice did not add workplace service-team binding maintenance, supplier cont
 `/master-data/vendors/new` submits supplier ID, supplier name, status, and effective period. `/master-data/vendors/[vendorId]/edit` submits supplier name, status, and effective period while keeping supplier ID hidden and non-editable. The submit path reuses the existing supplier reference maintenance API and returns success/failure feedback through the existing Alert feedback pattern.
 
 This slice did not add supplier contract maintenance, service-workplace binding maintenance, settlement ratios, minimum staffing requirements, approval, export, batch operations, permissions, backend routes, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM155.
+
+## 2026-06-08 IM156 Skill CRUD Frontend Loop
+
+`IM156` continues the master-data object maintenance pattern with skill-group basics only. `/master-data/skills` now exposes a page-level `新建` action in the shared Header and keeps the list itself focused on table management. Skill rows provide `编辑` and `冻结`; editing opens `/master-data/skills/[skillId]/edit`, while freezing uses a confirmation Dialog on the list URL.
+
+`/master-data/skills/new` submits skill ID, skill name, skill category, status, and effective period. `/master-data/skills/[skillId]/edit` submits skill name, category, status, and effective period while keeping skill ID hidden and non-editable. The submit path reuses the existing skills reference maintenance API and now writes `skill_category` through the existing local model.
+
+This slice did not add employee-skill binding maintenance, scheduling skill references, skill hierarchy, approval, export, batch operations, permissions, new backend routes, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM156.
+
+## 2026-06-08 IM157 Organization CRUD Frontend Loop
+
+`IM157` completes the current master-data object maintenance chain with organization basics only. `/master-data/organizations` now exposes a page-level `新建` action in the shared Header and keeps the list focused on table management. Organization rows provide `编辑` and `冻结`; editing opens `/master-data/organizations/[organizationId]/edit`, while freezing uses a confirmation Dialog on the list URL.
+
+`/master-data/organizations/new` submits organization ID, organization name, organization level, optional parent organization ID, status, and effective period. `/master-data/organizations/[organizationId]/edit` submits organization name, level, parent organization ID, status, and effective period while keeping organization ID hidden and non-editable. The local backend now has a narrow `/api/v1/master-data/organizations/{organization_id}/maintenance` endpoint and repository upsert path for single organization create/edit/freeze without schema or migration changes.
+
+This slice did not add organization charts, employee reassignment, supplier binding, contracts, settlement ratios, minimum staffing requirements, approval, export, batch operations, permissions, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM157.

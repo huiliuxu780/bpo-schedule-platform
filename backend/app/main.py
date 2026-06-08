@@ -20,6 +20,7 @@ from backend.app.master_data_maintenance import (
     maintain_employee,
     maintain_employee_binding,
     maintain_employee_skills,
+    maintain_organization,
     maintain_reference,
 )
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
@@ -63,6 +64,8 @@ from backend.app.models import (
     MasterDataEmployeeMaintenanceResponse,
     MasterDataImportApplyResponse,
     MasterDataOrganizationListResponse,
+    MasterDataOrganizationMaintenanceRequest,
+    MasterDataOrganizationMaintenanceResponse,
     MasterDataReferenceListResponse,
     MasterDataReferenceMaintenanceRequest,
     MasterDataReferenceMaintenanceResponse,
@@ -724,6 +727,24 @@ def list_master_data_organizations() -> MasterDataOrganizationListResponse:
 
 
 @app.post(
+    "/api/v1/master-data/organizations/{organization_id}/maintenance",
+    response_model=MasterDataOrganizationMaintenanceResponse,
+)
+def maintain_master_data_organization(
+    organization_id: str,
+    request: MasterDataOrganizationMaintenanceRequest,
+) -> MasterDataOrganizationMaintenanceResponse:
+    try:
+        return maintain_organization(
+            organization_id,
+            request,
+            MasterDataPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise _master_data_maintenance_http_error(exc) from exc
+
+
+@app.post(
     "/api/v1/master-data/bindings/{binding_id}/maintenance",
     response_model=MasterDataBindingMaintenanceResponse,
 )
@@ -779,7 +800,7 @@ def _master_data_maintenance_http_error(exc: ValueError) -> HTTPException:
     code = _master_data_maintenance_error_code(message)
     status_code = (
         404
-        if code in {"EMPLOYEE_NOT_FOUND", "SOURCE_BATCH_NOT_FOUND", "REFERENCE_NOT_FOUND", "BINDING_NOT_FOUND"}
+        if code in {"EMPLOYEE_NOT_FOUND", "SOURCE_BATCH_NOT_FOUND", "REFERENCE_NOT_FOUND", "BINDING_NOT_FOUND", "ORGANIZATION_NOT_FOUND"}
         else 400
     )
     return HTTPException(
@@ -801,12 +822,15 @@ def _master_data_maintenance_error_code(message: str) -> str:
         "EMPLOYEE_ALREADY_EXISTS",
         "REFERENCE_NOT_FOUND",
         "REFERENCE_ALREADY_EXISTS",
+        "ORGANIZATION_NOT_FOUND",
+        "ORGANIZATION_ALREADY_EXISTS",
         "BINDING_NOT_FOUND",
         "BINDING_ALREADY_EXISTS",
         "MISSING_REQUIRED_FIELD",
         "INVALID_EFFECTIVE_PERIOD",
         "EMPLOYEE_WRITE_FAILED",
         "REFERENCE_WRITE_FAILED",
+        "ORGANIZATION_WRITE_FAILED",
         "BINDING_WRITE_FAILED",
     }:
         return code

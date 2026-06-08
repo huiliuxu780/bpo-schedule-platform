@@ -31,6 +31,7 @@ MasterDataEmployeeMaintenanceStatus = Literal[
 ]
 MasterDataReferenceType = Literal["suppliers", "workplaces", "projects", "skills"]
 MasterDataReferenceMaintenanceAction = Literal["create", "edit", "freeze", "effective_period"]
+MasterDataOrganizationMaintenanceAction = Literal["create", "edit", "freeze"]
 MasterDataBindingMaintenanceAction = Literal["create", "edit", "effective_period"]
 ComparisonType = Literal["forecast_vs_schedule", "schedule_vs_actual"]
 ComparisonRunStatus = Literal["completed", "failed"]
@@ -377,6 +378,23 @@ class MasterDataOrganizationRecord(BaseModel):
     effective_to: str
     batch_id: str
     organization_path: str
+
+
+class MasterDataOrganizationMaintenanceRequest(BaseModel):
+    action: MasterDataOrganizationMaintenanceAction
+    source_batch_id: str
+    organization_name: str | None = None
+    organization_level: int | None = Field(default=None, ge=1)
+    parent_organization_id: str | None = None
+    status: MasterDataStatus | None = None
+    effective_from: str | None = None
+    effective_to: str | None = None
+
+
+class MasterDataOrganizationMaintenanceResponse(BaseModel):
+    organization_id: str
+    action_status: MasterDataEmployeeMaintenanceStatus
+    organization: MasterDataOrganizationRecord
 
 
 class MasterDataReferenceMaintenanceRequest(BaseModel):

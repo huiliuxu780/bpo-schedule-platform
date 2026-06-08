@@ -71,6 +71,10 @@ export type MasterDataAgentMaintenanceActionKey =
 export type MasterDataWorkplaceMaintenanceActionKey = "create" | "edit" | "freeze"
 export type MasterDataVendorMaintenanceActionKey = "create" | "edit" | "freeze"
 export type MasterDataSkillMaintenanceActionKey = "create" | "edit" | "freeze"
+export type MasterDataOrganizationMaintenanceActionKey =
+  | "create"
+  | "edit"
+  | "freeze"
 
 export type MasterDataAgentMaintenanceStatus = "active" | "frozen" | "inactive"
 export type MasterDataEmployeeType = "internal" | "outsourced"
@@ -115,6 +119,18 @@ export type MasterDataSkillMaintenanceDraft = {
   skillId: string
   skillName?: string
   skillCategory?: MasterDataSkillCategory
+  status?: MasterDataAgentMaintenanceStatus
+  effectiveFrom?: string
+  effectiveTo?: string
+}
+
+export type MasterDataOrganizationMaintenanceDraft = {
+  action: MasterDataOrganizationMaintenanceActionKey
+  sourceBatchId: string
+  organizationId: string
+  organizationName?: string
+  organizationLevel?: number
+  parentOrganizationId?: string
   status?: MasterDataAgentMaintenanceStatus
   effectiveFrom?: string
   effectiveTo?: string
@@ -183,6 +199,8 @@ export type MasterDataOrganizationListDisplay = {
   statusLabel: string
   effectivePeriodLabel: string
   sourceBatchLabel: string
+  editHref: string
+  freezeHref: string
 }
 
 export type MasterDataOrganizationListViewRow = MasterDataOrganizationListRow & {
@@ -191,6 +209,7 @@ export type MasterDataOrganizationListViewRow = MasterDataOrganizationListRow & 
 
 export type MasterDataOrganizationManagementSummary = {
   title: string
+  createHref: string
   totalRecords: number
   activeRecords: number
   frozenRecords: number
@@ -320,6 +339,17 @@ export type MasterDataSkillMaintenancePayload = {
   source_batch_id: string
   reference_name?: string
   skill_category?: MasterDataSkillCategory
+  status?: MasterDataAgentMaintenanceStatus
+  effective_from?: string
+  effective_to?: string
+}
+
+export type MasterDataOrganizationMaintenancePayload = {
+  action: MasterDataOrganizationMaintenanceActionKey
+  source_batch_id: string
+  organization_name?: string
+  organization_level?: number
+  parent_organization_id?: string
   status?: MasterDataAgentMaintenanceStatus
   effective_from?: string
   effective_to?: string
@@ -482,6 +512,7 @@ export type MasterDataEntitySourceContext = {
   sourceBatchLabel: string
   sourceBatchHref: string | null
   agentSubmitSourceBatchId: string | null
+  organizationSubmitSourceBatchId: string | null
   workplaceSubmitSourceBatchId: string | null
   vendorSubmitSourceBatchId: string | null
   skillSubmitSourceBatchId: string | null
@@ -628,6 +659,10 @@ export function summarizeMasterDataEntitySourceContext(
     entity.key === "agents" && latestMasterDataBatch
       ? latestMasterDataBatch.batch_id
       : null
+  const organizationSubmitSourceBatchId =
+    entity.key === "organizations" && latestMasterDataBatch
+      ? latestMasterDataBatch.batch_id
+      : null
   const workplaceSubmitSourceBatchId =
     entity.key === "sites" && latestMasterDataBatch
       ? latestMasterDataBatch.batch_id
@@ -656,6 +691,7 @@ export function summarizeMasterDataEntitySourceContext(
     sourceBatchLabel: workbench.latestBatchLabel,
     sourceBatchHref: workbench.sourceBatchHref,
     agentSubmitSourceBatchId,
+    organizationSubmitSourceBatchId,
     workplaceSubmitSourceBatchId,
     vendorSubmitSourceBatchId,
     skillSubmitSourceBatchId,
@@ -678,6 +714,12 @@ export function buildMasterDataVendorMaintenanceApiPath(vendorId: string): strin
 
 export function buildMasterDataSkillMaintenanceApiPath(skillId: string): string {
   return `/api/v1/master-data/skills/${encodeURIComponent(skillId)}/maintenance`
+}
+
+export function buildMasterDataOrganizationMaintenanceApiPath(
+  organizationId: string
+): string {
+  return `/api/v1/master-data/organizations/${encodeURIComponent(organizationId)}/maintenance`
 }
 
 export function buildMasterDataAgentSkillMaintenanceApiPath(
@@ -748,6 +790,21 @@ export function buildMasterDataSkillMaintenancePayload(
     source_batch_id: draft.sourceBatchId,
     reference_name: draft.skillName,
     skill_category: draft.skillCategory,
+    status: draft.status,
+    effective_from: draft.effectiveFrom,
+    effective_to: draft.effectiveTo,
+  })
+}
+
+export function buildMasterDataOrganizationMaintenancePayload(
+  draft: MasterDataOrganizationMaintenanceDraft
+): MasterDataOrganizationMaintenancePayload {
+  return compactMasterDataOrganizationMaintenancePayload({
+    action: draft.action,
+    source_batch_id: draft.sourceBatchId,
+    organization_name: draft.organizationName,
+    organization_level: draft.organizationLevel,
+    parent_organization_id: draft.parentOrganizationId,
     status: draft.status,
     effective_from: draft.effectiveFrom,
     effective_to: draft.effectiveTo,
@@ -1315,11 +1372,14 @@ export function summarizeMasterDataOrganizationManagement(
           organization.effective_to
         ),
         sourceBatchLabel: formatImportBatchDisplayLabel(organization.batch_id),
+        editHref: `/master-data/organizations/${encodeURIComponent(organization.organization_id)}/edit`,
+        freezeHref: `/master-data/organizations?freeze_organization_id=${encodeURIComponent(organization.organization_id)}`,
       },
     }))
 
   return {
     title: "组织",
+    createHref: "/master-data/organizations/new",
     totalRecords: rows.length,
     activeRecords: rows.filter((row) => row.status === "active").length,
     frozenRecords: rows.filter((row) => row.status === "frozen").length,
@@ -1544,6 +1604,14 @@ function compactMasterDataSkillMaintenancePayload(
   return Object.fromEntries(
     Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
   ) as MasterDataSkillMaintenancePayload
+}
+
+function compactMasterDataOrganizationMaintenancePayload(
+  payload: MasterDataOrganizationMaintenancePayload
+): MasterDataOrganizationMaintenancePayload {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
+  ) as MasterDataOrganizationMaintenancePayload
 }
 
 function getSingleSearchParam(value: string | string[] | undefined): string {

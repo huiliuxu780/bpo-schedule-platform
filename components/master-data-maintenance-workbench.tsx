@@ -18,6 +18,7 @@ import {
   type MasterDataAgentManagementSummary,
   type MasterDataEntitySourceContext,
   type MasterDataOrganizationManagementSummary,
+  type MasterDataOrganizationListViewRow,
   type MasterDataReferenceManagementSummary,
   type MasterDataReferenceListViewRow,
   type MasterDataVendorDetailSummary,
@@ -131,6 +132,21 @@ export function MasterDataSkillPageActions({
     return null
   }
 
+  return (
+    <Button asChild size="sm">
+      <Link href={summary.createHref}>
+        <Plus data-icon="inline-start" />
+        新建
+      </Link>
+    </Button>
+  )
+}
+
+export function MasterDataOrganizationPageActions({
+  summary,
+}: {
+  summary: MasterDataOrganizationManagementSummary
+}) {
   return (
     <Button asChild size="sm">
       <Link href={summary.createHref}>
@@ -895,6 +911,94 @@ export function MasterDataSkillEditPage({
   )
 }
 
+export function MasterDataOrganizationCreatePage({
+  summary,
+  error,
+  feedback,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <OrganizationFormPageShell error={error} feedback={feedback}>
+      {summary.organizationSubmitSourceBatchId ? (
+        <OrganizationMaintenanceEditor
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.organizationSubmitSourceBatchId}
+          submitLabel="提交新增"
+          fields={[
+            "organization_id",
+            "organization_name",
+            "organization_level",
+            "parent_organization_id",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+      ) : (
+        <AgentFormBlockedState detail="当前来源批次不满足组织维护提交条件。" />
+      )}
+    </OrganizationFormPageShell>
+  )
+}
+
+export function MasterDataOrganizationEditPage({
+  summary,
+  error,
+  feedback,
+  organization,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  organization: MasterDataOrganizationListViewRow | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <OrganizationFormPageShell error={error} feedback={feedback}>
+      {summary.organizationSubmitSourceBatchId && organization ? (
+        <OrganizationMaintenanceEditor
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.organizationSubmitSourceBatchId}
+          submitLabel="提交编辑"
+          fields={[
+            "organization_name",
+            "organization_level",
+            "parent_organization_id",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+          hiddenFields={{ organization_id: organization.organization_id }}
+          defaultValues={{
+            organization_name: organization.organization_name,
+            organization_level: String(organization.organization_level),
+            parent_organization_id: organization.parent_organization_id ?? "",
+            status: organization.status,
+            effective_from: organization.effective_from,
+            effective_to: organization.effective_to,
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            organization
+              ? "当前来源批次不满足组织维护提交条件。"
+              : "未找到该组织，请返回列表重新选择。"
+          }
+        />
+      )}
+    </OrganizationFormPageShell>
+  )
+}
+
 export function MasterDataVendorDetailPage({
   summary,
   detailSummary,
@@ -1008,12 +1112,21 @@ export function MasterDataOrganizationManagementPage({
   listSummary,
   error,
   feedback,
+  selectedFreezeOrganizationId = "",
+  organizationSubmitAction,
 }: {
   summary: MasterDataEntitySourceContext
   listSummary: MasterDataOrganizationManagementSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
+  selectedFreezeOrganizationId?: string
+  organizationSubmitAction?: (formData: FormData) => Promise<void>
 }) {
+  const selectedFreezeOrganization =
+    listSummary.rows.find(
+      (row) => row.organization_id === selectedFreezeOrganizationId
+    ) ?? null
+
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
       {error ? <MasterDataListError title="组织列表读取失败" error={error} /> : null}
@@ -1057,6 +1170,7 @@ export function MasterDataOrganizationManagementPage({
                 <TableHead>状态</TableHead>
                 <TableHead>有效期</TableHead>
                 <TableHead>来源批次</TableHead>
+                <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -1080,13 +1194,90 @@ export function MasterDataOrganizationManagementPage({
                   <TableCell className="font-mono text-xs">
                     {row.display.sourceBatchLabel}
                   </TableCell>
+                  <TableCell className="whitespace-nowrap text-right">
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-primary hover:text-primary"
+                    >
+                      <Link href={row.display.editHref}>编辑</Link>
+                    </Button>
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-destructive hover:text-destructive"
+                    >
+                      <Link href={row.display.freezeHref}>冻结</Link>
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         )}
       </section>
+      {selectedFreezeOrganization && organizationSubmitAction ? (
+        <MasterDataOrganizationFreezeDialog
+          summary={summary}
+          organization={selectedFreezeOrganization}
+          action={organizationSubmitAction}
+        />
+      ) : null}
     </main>
+  )
+}
+
+function MasterDataOrganizationFreezeDialog({
+  summary,
+  organization,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  organization: MasterDataOrganizationListViewRow
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结组织</DialogTitle>
+          <DialogDescription>
+            冻结后该组织将不可继续作为新的人员归属引用，已有历史数据不在本弹窗内调整。
+          </DialogDescription>
+        </DialogHeader>
+        <form action={action} className="grid gap-4">
+          <input type="hidden" name="action" value="freeze" />
+          <input
+            type="hidden"
+            name="source_batch_id"
+            value={summary.organizationSubmitSourceBatchId ?? ""}
+          />
+          <input
+            type="hidden"
+            name="organization_id"
+            value={organization.organization_id}
+          />
+          <div className="rounded-md border bg-muted/20 p-3 text-sm">
+            <div className="font-medium">
+              {organization.display.organizationNameLabel}
+            </div>
+            <div className="text-muted-foreground">
+              {organization.display.organizationPathLabel}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/master-data/organizations">取消</Link>
+            </Button>
+            <Button type="submit" size="sm" variant="destructive">
+              冻结组织
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -1607,6 +1798,28 @@ function SkillFormPageShell({
   )
 }
 
+function OrganizationFormPageShell({
+  error,
+  feedback,
+  children,
+}: {
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  children: React.ReactNode
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? (
+        <MasterDataListError title="组织来源读取失败" error={error} />
+      ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-4">{children}</section>
+    </main>
+  )
+}
+
 function AgentFormBlockedState({
   detail = "当前来源批次不满足单人维护提交条件。",
 }: {
@@ -1872,6 +2085,120 @@ function SkillMaintenanceForm({
                 name="skill_category"
                 defaultValue={defaultValues.skill_category}
                 required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("status") ? (
+              <MaintenanceSelect
+                label="状态"
+                name="status"
+                defaultValue={defaultValues.status}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_from") ? (
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                defaultValue={defaultValues.effective_from}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_to") ? (
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                defaultValue={defaultValues.effective_to}
+                required={actionKey === "create"}
+              />
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+type OrganizationMaintenanceField =
+  | "organization_id"
+  | "organization_name"
+  | "organization_level"
+  | "parent_organization_id"
+  | "status"
+  | "effective_from"
+  | "effective_to"
+
+function OrganizationMaintenanceEditor({
+  action,
+  actionKey,
+  sourceBatchId,
+  submitLabel,
+  fields,
+  hiddenFields = {},
+  defaultValues = {},
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit"
+  sourceBatchId: string
+  submitLabel: string
+  fields: OrganizationMaintenanceField[]
+  hiddenFields?: Record<string, string>
+  defaultValues?: Partial<Record<OrganizationMaintenanceField, string>>
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">组织信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
+          <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("organization_id") ? (
+              <MaintenanceInput
+                label="组织 ID"
+                name="organization_id"
+                placeholder="ORG-RETURN"
+                defaultValue={defaultValues.organization_id}
+                required
+              />
+            ) : null}
+            {fields.includes("organization_name") ? (
+              <MaintenanceInput
+                label="组织名称"
+                name="organization_name"
+                placeholder="输入组织名称"
+                defaultValue={defaultValues.organization_name}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("organization_level") ? (
+              <MaintenanceInput
+                label="组织层级"
+                name="organization_level"
+                type="number"
+                placeholder="1"
+                defaultValue={defaultValues.organization_level}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("parent_organization_id") ? (
+              <MaintenanceInput
+                label="上级组织 ID"
+                name="parent_organization_id"
+                placeholder="一级组织可留空"
+                defaultValue={defaultValues.parent_organization_id}
               />
             ) : null}
             {fields.includes("status") ? (

@@ -6,6 +6,7 @@ from backend.app.import_persistence import ImportPersistenceRepository
 from backend.app.master_data_maintenance import maintain_employee
 from backend.app.master_data_maintenance import maintain_employee_binding
 from backend.app.master_data_maintenance import maintain_employee_skills
+from backend.app.master_data_maintenance import maintain_organization
 from backend.app.master_data_maintenance import maintain_reference
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
@@ -17,6 +18,7 @@ from backend.app.models import (
     MasterDataEmployeeSkillMaintenanceRequest,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataBindingMaintenanceRequest,
+    MasterDataOrganizationMaintenanceRequest,
     MasterDataOrganizationInput,
     MasterDataReferenceInput,
     MasterDataReferenceMaintenanceRequest,
@@ -25,6 +27,74 @@ from backend.app.models import (
 
 
 class MasterDataMaintenanceServiceTest(unittest.TestCase):
+    def test_create_edit_and_freeze_organization_writes_hierarchy_record(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'organization-maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-ORG-MAINT")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-ORG-MAINT",
+                    organizations=[
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CC",
+                            organization_name="CC",
+                            organization_level=1,
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                )
+            )
+
+            created = maintain_organization(
+                "ORG-RETURN",
+                MasterDataOrganizationMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-ORG-MAINT",
+                    organization_name="集中退换小组",
+                    organization_level=2,
+                    parent_organization_id="ORG-CC",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+            edited = maintain_organization(
+                "ORG-RETURN",
+                MasterDataOrganizationMaintenanceRequest(
+                    action="edit",
+                    source_batch_id="BATCH-MD-ORG-MAINT",
+                    organization_name="集中退换组",
+                    organization_level=2,
+                    parent_organization_id="ORG-CC",
+                    status="inactive",
+                    effective_from="2026-07-01",
+                ),
+                repository,
+            )
+            frozen = maintain_organization(
+                "ORG-RETURN",
+                MasterDataOrganizationMaintenanceRequest(
+                    action="freeze",
+                    source_batch_id="BATCH-MD-ORG-MAINT",
+                ),
+                repository,
+            )
+
+            self.assertEqual(created.action_status, "created")
+            self.assertEqual(created.organization.organization_path, "CC / 集中退换小组")
+            self.assertEqual(edited.action_status, "updated")
+            self.assertEqual(edited.organization.organization_name, "集中退换组")
+            self.assertEqual(edited.organization.status, "inactive")
+            self.assertEqual(edited.organization.effective_from, "2026-07-01")
+            self.assertEqual(frozen.action_status, "frozen")
+            self.assertEqual(frozen.organization.organization_name, "集中退换组")
+            self.assertEqual(frozen.organization.status, "frozen")
+            self.assertEqual(frozen.organization.parent_organization_id, "ORG-CC")
+
     def test_create_employee_writes_single_agent_record(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"

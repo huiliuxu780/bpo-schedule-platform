@@ -8,6 +8,7 @@ import {
   type MasterDataAgentMaintenanceStatus,
   type MasterDataEmployeeType,
   type MasterDataMaintenanceEntityKey,
+  type MasterDataOrganizationMaintenanceActionKey,
   type MasterDataSkillCategory,
   type MasterDataSkillMaintenanceActionKey,
   type MasterDataVendorMaintenanceActionKey,
@@ -16,6 +17,8 @@ import {
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
+  buildMasterDataOrganizationMaintenanceApiPath,
+  buildMasterDataOrganizationMaintenancePayload,
   buildMasterDataSkillMaintenanceApiPath,
   buildMasterDataSkillMaintenancePayload,
   buildMasterDataVendorMaintenanceApiPath,
@@ -44,6 +47,12 @@ const VENDOR_ACTIONS = new Set<MasterDataVendorMaintenanceActionKey>([
 ])
 
 const SKILL_ACTIONS = new Set<MasterDataSkillMaintenanceActionKey>([
+  "create",
+  "edit",
+  "freeze",
+])
+
+const ORGANIZATION_ACTIONS = new Set<MasterDataOrganizationMaintenanceActionKey>([
   "create",
   "edit",
   "freeze",
@@ -491,6 +500,105 @@ export async function submitMasterDataSkillMaintenance(
   redirect(redirectHref)
 }
 
+export async function submitMasterDataOrganizationMaintenance(
+  formData: FormData
+): Promise<void> {
+  let redirectHref: string
+
+  try {
+    const action = parseOrganizationAction(formData.get("action"))
+    const organizationId = getFormValue(formData, "organization_id")
+    const sourceBatchId = getFormValue(formData, "source_batch_id")
+    const organizationName = getFormValue(formData, "organization_name")
+    const organizationLevel = parseOptionalPositiveInteger(
+      formData.get("organization_level")
+    )
+    const parentOrganizationId = getFormValue(formData, "parent_organization_id")
+    const effectiveFrom = getFormValue(formData, "effective_from")
+    const effectiveTo = getFormValue(formData, "effective_to")
+
+    if (!organizationId || !sourceBatchId) {
+      redirectHref = buildMaintenanceRedirect("organizations", {
+        maintenance_status: "error",
+        record_type: "组织",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "组织 ID 和来源批次不能为空",
+      })
+    } else if (
+      action === "create" &&
+      (!organizationName || !organizationLevel || !effectiveFrom || !effectiveTo)
+    ) {
+      redirectHref = buildMaintenanceRedirect("organizations", {
+        maintenance_status: "error",
+        record_type: "组织",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "组织名称、组织层级和生效期不能为空",
+      })
+    } else {
+      const payload = buildMasterDataOrganizationMaintenancePayload({
+        action,
+        organizationId,
+        sourceBatchId,
+        organizationName,
+        organizationLevel,
+        parentOrganizationId: parentOrganizationId || undefined,
+        status: parseStatus(formData.get("status")),
+        effectiveFrom,
+        effectiveTo,
+      })
+      const response = await fetch(
+        buildImportApiUrl(
+          buildMasterDataOrganizationMaintenanceApiPath(organizationId)
+        ),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        }
+      )
+
+      if (!response.ok) {
+        const error = await readMaintenanceApiError(response)
+        redirectHref = buildMaintenanceRedirect("organizations", {
+          maintenance_status: "error",
+          record_type: "组织",
+          maintenance_code: error.code,
+          maintenance_message: error.message,
+        })
+      } else {
+        const result = (await response.json()) as {
+          action_status?: string
+          organization?: {
+            organization_id?: string
+            organization_name?: string
+            status?: string
+          }
+        }
+        redirectHref = buildMaintenanceRedirect("organizations", {
+          maintenance_status: "success",
+          record_type: "组织",
+          action_status: result.action_status ?? "submitted",
+          record_id: result.organization?.organization_id ?? organizationId,
+          record_name: result.organization?.organization_name ?? "未返回名称",
+          record_status: result.organization?.status ?? "unknown",
+        })
+      }
+    }
+  } catch (error) {
+    redirectHref = buildMaintenanceRedirect("organizations", {
+      maintenance_status: "error",
+      record_type: "组织",
+      maintenance_code: "MASTER_DATA_ORGANIZATION_SUBMIT_FAILED",
+      maintenance_message: formatMaintenanceError(error),
+    })
+  }
+
+  redirect(redirectHref)
+}
+
 function parseAction(value: FormDataEntryValue | null): MasterDataAgentMaintenanceActionKey {
   const action = String(value ?? "")
   if (AGENT_ACTIONS.has(action as MasterDataAgentMaintenanceActionKey)) {
@@ -546,6 +654,33 @@ function parseSkillAction(
   }
 
   throw new Error("未知技能组维护动作")
+}
+
+function parseOrganizationAction(
+  value: FormDataEntryValue | null
+): MasterDataOrganizationMaintenanceActionKey {
+  const action = String(value ?? "")
+  if (ORGANIZATION_ACTIONS.has(action as MasterDataOrganizationMaintenanceActionKey)) {
+    return action as MasterDataOrganizationMaintenanceActionKey
+  }
+
+  throw new Error("未知组织维护动作")
+}
+
+function parseOptionalPositiveInteger(
+  value: FormDataEntryValue | null
+): number | undefined {
+  const rawValue = String(value ?? "").trim()
+  if (!rawValue) {
+    return undefined
+  }
+
+  const parsedValue = Number.parseInt(rawValue, 10)
+  if (!Number.isInteger(parsedValue) || parsedValue < 1) {
+    throw new Error("组织层级必须为正整数")
+  }
+
+  return parsedValue
 }
 
 function parseSkillIds(value: FormDataEntryValue | null): string[] {

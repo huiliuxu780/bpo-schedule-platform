@@ -2027,3 +2027,14 @@
 - action: 完成技能组基础 CRUD 前端闭环。
 - status: `done`
 - notes: `/master-data/skills` Header actions 提供 `新建` 技能组入口；技能组列表行提供 `编辑`、`冻结`，其中编辑进入 `/master-data/skills/[skillId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/skills/new` 子页面并提交技能组 ID、技能组名称、归属属性、状态和生效期；提交复用现有 skills reference maintenance API，并补齐 `skill_category` 真实写入；本轮不新增人员技能绑定、排班技能引用、技能层级、审批、导出、批量、权限、新后端 route、schema/migration、依赖、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM157`
+- source_ids:
+  - `R857`
+- story_ids:
+  - `US777`
+- action: 完成组织基础 CRUD 前端闭环。
+- status: `done`
+- notes: `/master-data/organizations` Header actions 提供 `新建` 组织入口；组织列表行提供 `编辑`、`冻结`，其中编辑进入 `/master-data/organizations/[organizationId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/organizations/new` 子页面并提交组织 ID、组织名称、组织层级、上级组织、状态和生效期；本地后端新增窄组织维护 API 并复用既有组织表和父组织校验；本轮不新增组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量、权限、schema/migration、依赖、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

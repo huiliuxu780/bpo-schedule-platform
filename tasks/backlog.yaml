@@ -2,6 +2,51 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM157
+    title: "组织基础 CRUD 前端闭环"
+    priority: P0
+    status: done
+    required_workflow: backend-vertical
+    dependencies: ["IM156"]
+    allowed_files:
+      - "app/master-data/[entityKey]/actions.ts"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "app/master-data/organizations/new/page.tsx"
+      - "app/master-data/organizations/[organizationId]/edit/page.tsx"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/organizations Header actions 提供新建组织入口。"
+      - "组织列表行提供编辑、冻结；编辑走子页面，冻结走 Dialog；列表页不塞新建或编辑表单。"
+      - "/master-data/organizations/new 使用子页面提交组织 ID、组织名称、组织层级、上级组织、状态、生效开始、生效结束。"
+      - "/master-data/organizations/[organizationId]/edit 使用子页面编辑组织名称、组织层级、上级组织、状态和有效期，组织 ID 不作为可编辑字段。"
+      - "提交成功或失败后回到组织列表并使用现有 Alert feedback。"
+      - "不新增组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量、权限、schema/migration、依赖、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration、生产持久化配置或真实外部数据源"
+      - "范围扩展到组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量、权限、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成组织基础 CRUD 闭环：/master-data/organizations Header 新建入口、行内编辑/冻结、/master-data/organizations/new、/master-data/organizations/[organizationId]/edit、冻结 Dialog 和本地组织维护 API；current queue 与 active tasks 已清空。"
   - id: IM156
     title: "技能组基础 CRUD 前端闭环"
     priority: P0

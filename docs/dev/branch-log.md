@@ -3800,3 +3800,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM157 Organization CRUD Frontend Loop
+
+- branch_name: `codex/im157-organization-crud`
+- base_main_commit: `86c8daf`
+- stacked_on: `86c8daf feat: add skill crud frontend loop`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of master-data maintenance. Add the organization create action to `/master-data/organizations` Header actions, add row-level edit/freeze actions, create `/master-data/organizations/new`, create `/master-data/organizations/[organizationId]/edit`, and use a freeze confirmation Dialog. Add a narrow local organization maintenance API and repository upsert path because organizations are not reference entities. Keep organization charts, employee reassignment, supplier binding, contracts, settlement ratio, minimum staffing, approval, export, batch, permissions, schema/migration, dependency, automatic scheduling, formula, and charge-factor work out of scope.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/organizations/new/page.tsx`, `app/master-data/organizations/[organizationId]/edit/page.tsx`, `backend/app/main.py`, `backend/app/models.py`, `backend/app/master_data_maintenance.py`, `backend/app/master_data_persistence.py`, backend maintenance tests, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected organization model/action helpers, organizations list Header action, row edit/freeze links, create/edit child pages, freeze Dialog, local organization maintenance API, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `buildMasterDataOrganizationMaintenanceApiPath` was missing; TDD RED product-structure test then failed because `/app/master-data/organizations/new/page.tsx` did not exist; backend directed unittest first failed because `maintain_organization` and `maintain_master_data_organization` were missing. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 25 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 27 tests, `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` passed with 25 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/organizations` has Header `新建`, row `编辑`/`冻结`, no inline create submit; `/master-data/organizations/new` renders组织 ID/组织名称/组织层级/上级组织 and `提交新增`; `/master-data/organizations/ORG-CC/edit` renders `提交编辑` with hidden organization ID; `/master-data/organizations?freeze_organization_id=ORG-CC` renders `冻结组织` Dialog after hydration. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 212 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

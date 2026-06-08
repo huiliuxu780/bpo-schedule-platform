@@ -10,6 +10,10 @@ from backend.app.models import (
     MasterDataEmployeeMaintenanceRequest,
     MasterDataEmployeeMaintenanceResponse,
     MasterDataEmployeeRecord,
+    MasterDataOrganizationInput,
+    MasterDataOrganizationMaintenanceRequest,
+    MasterDataOrganizationMaintenanceResponse,
+    MasterDataOrganizationRecord,
     MasterDataReferenceInput,
     MasterDataReferenceMaintenanceRequest,
     MasterDataReferenceMaintenanceResponse,
@@ -102,6 +106,56 @@ def maintain_employee_skills(
         request.source_batch_id,
     )
     return _skill_response(employee_id, "replaced", skills)
+
+
+def maintain_organization(
+    organization_id: str,
+    request: MasterDataOrganizationMaintenanceRequest,
+    repository: MasterDataPersistenceRepository,
+) -> MasterDataOrganizationMaintenanceResponse:
+    if not repository.has_import_batch(request.source_batch_id):
+        raise ValueError(f"SOURCE_BATCH_NOT_FOUND: {request.source_batch_id}")
+
+    if request.action == "create":
+        return _create_organization(organization_id, request, repository)
+
+    existing = repository.get_organization(organization_id)
+    if existing is None:
+        raise ValueError(f"ORGANIZATION_NOT_FOUND: {organization_id}")
+
+    if request.action == "freeze":
+        organization = repository.upsert_organization(
+            MasterDataOrganizationInput(
+                organization_id=existing.organization_id,
+                organization_name=existing.organization_name,
+                organization_level=existing.organization_level,
+                parent_organization_id=existing.parent_organization_id,
+                status="frozen",
+                effective_from=existing.effective_from,
+                effective_to=existing.effective_to,
+            ),
+            request.source_batch_id,
+        )
+        return _organization_response(organization_id, "frozen", organization)
+
+    organization = repository.upsert_organization(
+        MasterDataOrganizationInput(
+            organization_id=existing.organization_id,
+            organization_name=request.organization_name or existing.organization_name,
+            organization_level=request.organization_level
+            or existing.organization_level,
+            parent_organization_id=(
+                request.parent_organization_id
+                if request.parent_organization_id is not None
+                else existing.parent_organization_id
+            ),
+            status=request.status or existing.status,
+            effective_from=request.effective_from or existing.effective_from,
+            effective_to=request.effective_to or existing.effective_to,
+        ),
+        request.source_batch_id,
+    )
+    return _organization_response(organization_id, "updated", organization)
 
 
 def maintain_reference(
@@ -281,6 +335,37 @@ def _create_reference(
     return _reference_response(reference_type, reference_id, "created", reference)
 
 
+def _create_organization(
+    organization_id: str,
+    request: MasterDataOrganizationMaintenanceRequest,
+    repository: MasterDataPersistenceRepository,
+) -> MasterDataOrganizationMaintenanceResponse:
+    if repository.get_organization(organization_id) is not None:
+        raise ValueError(f"ORGANIZATION_ALREADY_EXISTS: {organization_id}")
+    _require_organization_fields(
+        request,
+        "organization_name",
+        "organization_level",
+        "effective_from",
+        "effective_to",
+    )
+    _validate_effective_period(request.effective_from, request.effective_to)
+
+    organization = repository.upsert_organization(
+        MasterDataOrganizationInput(
+            organization_id=organization_id,
+            organization_name=request.organization_name,
+            organization_level=request.organization_level,
+            parent_organization_id=request.parent_organization_id,
+            status=request.status or "active",
+            effective_from=request.effective_from,
+            effective_to=request.effective_to,
+        ),
+        request.source_batch_id,
+    )
+    return _organization_response(organization_id, "created", organization)
+
+
 def _create_binding(
     binding_id: str,
     request: MasterDataBindingMaintenanceRequest,
@@ -335,6 +420,19 @@ def _require_fields(
 
 def _require_reference_fields(
     request: MasterDataReferenceMaintenanceRequest,
+    *field_names: str,
+) -> None:
+    missing = [
+        field_name
+        for field_name in field_names
+        if getattr(request, field_name) in (None, "")
+    ]
+    if missing:
+        raise ValueError(f"MISSING_REQUIRED_FIELD: {','.join(missing)}")
+
+
+def _require_organization_fields(
+    request: MasterDataOrganizationMaintenanceRequest,
     *field_names: str,
 ) -> None:
     missing = [
@@ -402,4 +500,16 @@ def _reference_response(
         reference_id=reference_id,
         action_status=action_status,
         reference=reference,
+    )
+
+
+def _organization_response(
+    organization_id: str,
+    action_status: str,
+    organization: MasterDataOrganizationRecord,
+) -> MasterDataOrganizationMaintenanceResponse:
+    return MasterDataOrganizationMaintenanceResponse(
+        organization_id=organization_id,
+        action_status=action_status,
+        organization=organization,
     )
