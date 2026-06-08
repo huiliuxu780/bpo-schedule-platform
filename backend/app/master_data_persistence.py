@@ -201,6 +201,8 @@ REFERENCE_CONFIGS: dict[MasterDataReferenceType, ReferenceConfig] = {
 class MasterDataPersistenceRepository:
     def __init__(self, database_url: str | None = None):
         self.engine = build_engine(database_url)
+        if self.engine.dialect.name == "sqlite":
+            _ensure_sqlite_master_data_schema(self.engine)
         self.session_factory = sessionmaker(
             bind=self.engine,
             autoflush=False,
@@ -210,6 +212,8 @@ class MasterDataPersistenceRepository:
 
     def init_schema(self) -> None:
         Base.metadata.create_all(self.engine)
+        if self.engine.dialect.name == "sqlite":
+            _ensure_sqlite_master_data_schema(self.engine)
 
     def create_snapshot(self, request: MasterDataSnapshotRequest) -> None:
         with self.session_factory.begin() as session:
@@ -718,6 +722,52 @@ def _has_skill_category_schema(session: Session) -> bool:
         column["name"] for column in inspector.get_columns("master_data_skills")
     }
     return "skill_category" in skill_columns
+
+
+def _ensure_sqlite_master_data_schema(engine) -> None:
+    Base.metadata.create_all(engine)
+    with engine.begin() as connection:
+        inspector = inspect_schema(connection)
+        table_names = set(inspector.get_table_names())
+
+        if "master_data_employees" in table_names:
+            employee_columns = {
+                column["name"]
+                for column in inspector.get_columns("master_data_employees")
+            }
+            if "employee_type" not in employee_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_employees "
+                        "ADD COLUMN employee_type VARCHAR(30) NOT NULL DEFAULT 'internal'"
+                    )
+                )
+            if "organization_id" not in employee_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_employees "
+                        "ADD COLUMN organization_id VARCHAR(80)"
+                    )
+                )
+            if "workplace_id" not in employee_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_employees "
+                        "ADD COLUMN workplace_id VARCHAR(80)"
+                    )
+                )
+
+        if "master_data_skills" in table_names:
+            skill_columns = {
+                column["name"] for column in inspector.get_columns("master_data_skills")
+            }
+            if "skill_category" not in skill_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_skills "
+                        "ADD COLUMN skill_category VARCHAR(30)"
+                    )
+                )
 
 
 def _has_table(session: Session, table_name: str) -> bool:

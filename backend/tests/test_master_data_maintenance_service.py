@@ -2,7 +2,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from backend.app.import_persistence import ImportPersistenceRepository
+from sqlalchemy import text
+
+from backend.app.import_persistence import ImportPersistenceRepository, build_engine
 from backend.app.master_data_maintenance import maintain_employee
 from backend.app.master_data_maintenance import maintain_employee_binding
 from backend.app.master_data_maintenance import maintain_employee_skills
@@ -27,6 +29,55 @@ from backend.app.models import (
 
 
 class MasterDataMaintenanceServiceTest(unittest.TestCase):
+    def test_legacy_local_schema_allows_employee_skill_and_organization_maintenance(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'legacy-maintenance.db'}"
+            _create_legacy_master_data_schema(database_url, "BATCH-MD-LEGACY")
+            repository = MasterDataPersistenceRepository(database_url)
+
+            created_employee = maintain_employee(
+                "A-LEGACY-NEW",
+                MasterDataEmployeeMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-LEGACY",
+                    employee_name="旧库新增员工",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+            created_skill = maintain_reference(
+                "skills",
+                "SKILL-LEGACY-NEW",
+                MasterDataReferenceMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-LEGACY",
+                    reference_name="旧库新增技能",
+                    skill_category="ticket",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+            created_organization = maintain_organization(
+                "ORG-LEGACY",
+                MasterDataOrganizationMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-LEGACY",
+                    organization_name="旧库组织",
+                    organization_level=1,
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+
+            self.assertEqual(created_employee.employee.employee_type, "internal")
+            self.assertIsNone(created_employee.employee.organization_id)
+            self.assertIsNone(created_employee.employee.workplace_id)
+            self.assertEqual(created_skill.reference.skill_category, "ticket")
+            self.assertEqual(created_organization.organization.organization_path, "旧库组织")
+
     def test_create_edit_and_freeze_organization_writes_hierarchy_record(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'organization-maintenance.db'}"
@@ -572,6 +623,94 @@ def _create_import_batch(database_url: str, batch_id: str) -> None:
             ],
         )
     )
+
+
+def _create_legacy_master_data_schema(database_url: str, batch_id: str) -> None:
+    engine = build_engine(database_url)
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                """
+                CREATE TABLE import_batches (
+                    batch_id VARCHAR(80) NOT NULL PRIMARY KEY,
+                    file_name VARCHAR(255) NOT NULL,
+                    file_type VARCHAR(80) NOT NULL,
+                    uploaded_by VARCHAR(120) NOT NULL,
+                    uploaded_at VARCHAR(40) NOT NULL,
+                    business_date_from VARCHAR(20) NOT NULL,
+                    business_date_to VARCHAR(20) NOT NULL,
+                    processing_status VARCHAR(40) NOT NULL,
+                    total_rows INTEGER NOT NULL,
+                    success_rows INTEGER NOT NULL,
+                    failed_rows INTEGER NOT NULL,
+                    warning_rows INTEGER NOT NULL
+                )
+                """
+            )
+        )
+        connection.execute(
+            text(
+                """
+                INSERT INTO import_batches (
+                    batch_id,
+                    file_name,
+                    file_type,
+                    uploaded_by,
+                    uploaded_at,
+                    business_date_from,
+                    business_date_to,
+                    processing_status,
+                    total_rows,
+                    success_rows,
+                    failed_rows,
+                    warning_rows
+                )
+                VALUES (
+                    :batch_id,
+                    :file_name,
+                    'master_data',
+                    '数据管理员',
+                    '2026-06-08T00:00:00+00:00',
+                    '2026-06-01',
+                    '2026-12-31',
+                    'completed',
+                    1,
+                    1,
+                    0,
+                    0
+                )
+                """
+            ),
+            {"batch_id": batch_id, "file_name": f"{batch_id}.csv"},
+        )
+        connection.execute(
+            text(
+                """
+                CREATE TABLE master_data_employees (
+                    employee_id VARCHAR(80) NOT NULL PRIMARY KEY,
+                    employee_name VARCHAR(255) NOT NULL,
+                    status VARCHAR(20) NOT NULL,
+                    effective_from VARCHAR(20) NOT NULL,
+                    effective_to VARCHAR(20) NOT NULL,
+                    batch_id VARCHAR(80) NOT NULL
+                )
+                """
+            )
+        )
+        connection.execute(
+            text(
+                """
+                CREATE TABLE master_data_skills (
+                    skill_id VARCHAR(80) NOT NULL PRIMARY KEY,
+                    skill_name VARCHAR(255) NOT NULL,
+                    status VARCHAR(20) NOT NULL,
+                    effective_from VARCHAR(20) NOT NULL,
+                    effective_to VARCHAR(20) NOT NULL,
+                    batch_id VARCHAR(80) NOT NULL
+                )
+                """
+            )
+        )
 
 
 def _seed_binding_references(

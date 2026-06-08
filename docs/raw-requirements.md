@@ -3043,3 +3043,16 @@ version: "1.0"
 status: "done"
 notes: "IM158 已完成：/master-data/agents 的技能组、组织、职场筛选选项来自当前人员数据；skill_group 支持技能 ID/名称/归属属性过滤，organization 和 workplace 支持 ID/显示名过滤；不新增导航、页面、后端 route、schema/migration、依赖、审批、导出、批量操作或权限。"
 ```
+
+### R859 - 本地旧主数据 schema 维护写入兼容
+
+```yaml
+id: R859
+module: "主数据维护"
+description: "IM158 smoke 暴露当前本地 .local SQLite 仍可能停留在旧主数据表结构，缺少 employee_type、organization_id、workplace_id、skill_category 或 organizations 表时，人员/技能/组织维护 API 会在 ORM 读取阶段直接 500。需要在不新增迁移文件、不扩展业务字段的前提下，让本地维护写入路径补齐已确认字段并返回正常业务响应。"
+source: "IM158 browser/API smoke found legacy local SQLite OperationalError on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM159 已完成：仅对 SQLite 本地库在 repository 初始化/建表时补齐已确认主数据表结构，旧库缺少 employee_type、organization_id、workplace_id、skill_category 或 organizations 表时，人员、技能组和组织维护不再直接 500；未新增迁移文件、生产数据库配置、权限、审批、导出、批量、结算或合同能力。"
+```

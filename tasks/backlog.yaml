@@ -10108,7 +10108,7 @@ tasks:
   - id: IM158
     title: "客服人员列表真实筛选"
     priority: P0
-    status: ready
+    status: done
     required_workflow: frontend-scaffold
     dependencies: ["IM157"]
     allowed_files:
@@ -10149,6 +10149,48 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已让 /master-data/agents 的技能组、组织、职场筛选下拉来自当前真实人员列表数据，并让 skill_group、organization、workplace 与既有 employee_name、employee_id、status、employee_type 一起参与 URL 查询过滤；页面结构仍保持 Header 页面级动作、筛选卡片、列表操作栏、表格，不新增导航、页面、后端、schema/migration、依赖、审批、导出、批量操作或权限。"
+  - id: IM159
+    title: "本地旧主数据 schema 维护写入兼容"
+    priority: P0
+    status: done
+    required_workflow: backend-vertical
+    dependencies: ["IM158"]
+    allowed_files:
+      - "backend/app/master_data_persistence.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/migrations/**"
+      - "alembic/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "旧本地 SQLite 缺少 master_data_employees.employee_type、organization_id、workplace_id 时，人员 create/edit/freeze 不再 500。"
+      - "旧本地 SQLite 缺少 master_data_skills.skill_category 时，技能组 create/edit/freeze 不再 500。"
+      - "旧本地 SQLite 缺少 master_data_organizations 表时，组织维护路径可按已确认本地表结构创建表后写入。"
+      - "本轮不新增迁移文件、不新增业务字段、不改生产状态/公式/结算/合同/最低人力。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖、迁移文件或生产数据库配置"
+      - "范围扩展到权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已在 SQLite 本地 repository 初始化/建表时补齐既有确认字段：master_data_employees.employee_type、organization_id、workplace_id，master_data_skills.skill_category，并通过 Base.metadata.create_all 让缺失的 master_data_organizations 等本地表可创建；旧库人员、技能组和组织维护写入不再因 ORM 读取缺列直接 500。本轮未新增迁移文件、生产数据库配置、业务字段、权限、审批、导出、批量操作、自动排班、生产公式、结算、合同、最低人力或收费因子。"
   - id: IM145
     title: "导航信息架构收口"
     priority: P0

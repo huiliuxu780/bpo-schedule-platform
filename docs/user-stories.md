@@ -5470,3 +5470,26 @@ dependencies:
 status: "done"
 notes: "IM158 已完成：客服人员列表筛选项和查询过滤已按真实人员数据收口，列表结构保持 Header actions、筛选卡片、列表操作栏、表格的 B 端模式。"
 ```
+
+### US779 - 本地旧主数据 schema 维护写入兼容
+
+```yaml
+id: US779
+requirement_ids:
+  - R859
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为正在本地试用主数据维护的用户，我希望旧本地 SQLite 数据库也能执行人员、技能组和组织维护，而不是因为缺少已确认字段直接看到 500。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "旧本地 SQLite 缺少 master_data_employees.employee_type、organization_id、workplace_id 时，人员 create/edit/freeze 不再 500。"
+  - "旧本地 SQLite 缺少 master_data_skills.skill_category 时，技能组 create/edit/freeze 不再 500。"
+  - "旧本地 SQLite 缺少 master_data_organizations 表时，组织维护路径可按已确认本地表结构创建表后写入。"
+  - "不新增迁移文件、不新增业务字段、不改生产状态/公式/结算/合同/最低人力。"
+  - "不新增权限、审批、导出、批量操作、自动排班或真实外部集成。"
+dependencies:
+  - "US778"
+status: "done"
+notes: "IM159 已完成：旧本地 SQLite schema 可执行人员、技能组和组织维护写入；本轮只做 SQLite 本地兼容补齐，不新增迁移文件、业务字段、权限、审批、导出、批量、结算或合同能力。"
+```

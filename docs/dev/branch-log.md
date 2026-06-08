@@ -3836,3 +3836,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM159 Legacy Local Master Data Schema Compatibility
+
+- branch_name: `codex/im159-legacy-local-master-data-schema`
+- base_main_commit: `3060d9c`
+- stacked_on: `d7d9772 feat: tighten agent list filters`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Fix the local old SQLite master-data schema compatibility issue exposed by IM158 smoke setup. Add SQLite-only schema compatibility for already-confirmed employee, skill, and organization structures before maintenance writes. Keep migration files, production database configuration, new business fields, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, supplier-contract, minimum-staffing, and charge-factor work out of scope.
+- allowed_files_check: `backend/app/master_data_persistence.py`, backend master-data maintenance tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no frontend files, package/lockfile changes, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected SQLite-only compatibility helper, repository initialization/init_schema hook, RED/GREEN backend tests for old local schema maintenance, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED directed unittest first failed because the legacy local table lacked `master_data_employees.employee_type`. After implementation, `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service.MasterDataMaintenanceServiceTest.test_legacy_local_schema_allows_employee_skill_and_organization_maintenance -v` passed, and `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` passed with 26 tests. API smoke against local `.local` DB confirmed skill create, employee create, and employee skill replace returned HTTP 200; browser smoke confirmed `/master-data/agents?skill_group=SKILL-IM159&organization=ORG-IM158&workplace=SITE-IM158` shows `IM159验证人员`. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 213 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

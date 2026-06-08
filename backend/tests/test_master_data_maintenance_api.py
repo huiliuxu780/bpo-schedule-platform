@@ -6,7 +6,7 @@ from unittest.mock import patch
 from fastapi import HTTPException
 from sqlalchemy import text
 
-from backend.app.import_persistence import ImportPersistenceRepository
+from backend.app.import_persistence import ImportPersistenceRepository, build_engine
 from backend.app.main import app, list_master_data_bindings, list_master_data_employees
 from backend.app.main import list_master_data_organizations
 from backend.app.main import list_master_data_references, maintain_master_data_employee
@@ -302,8 +302,8 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
     def test_list_employees_tolerates_legacy_local_schema_without_new_columns(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'legacy-local.db'}"
-            repository = MasterDataPersistenceRepository(database_url)
-            with repository.engine.begin() as connection:
+            engine = build_engine(database_url)
+            with engine.begin() as connection:
                 connection.execute(
                     text(
                         """
@@ -354,6 +354,7 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
                         """
                     )
                 )
+            repository = MasterDataPersistenceRepository(database_url)
 
             rows = repository.list_employees()
 
@@ -367,8 +368,8 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
     def test_list_skill_references_tolerates_legacy_local_schema_without_category(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'legacy-skills.db'}"
-            repository = MasterDataPersistenceRepository(database_url)
-            with repository.engine.begin() as connection:
+            engine = build_engine(database_url)
+            with engine.begin() as connection:
                 connection.execute(
                     text(
                         """
@@ -405,6 +406,7 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
                         """
                     )
                 )
+            repository = MasterDataPersistenceRepository(database_url)
 
             with patch(
                 "backend.app.main.MasterDataPersistenceRepository",

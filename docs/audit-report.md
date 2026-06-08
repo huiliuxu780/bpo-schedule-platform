@@ -3949,7 +3949,7 @@
 - TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明通用批次台账仍持有上传入口。
 - TDD 绿灯：入口调整后，同一 focused test 通过，20 个 product-structure 测试通过。
 - Browser smoke over `/data-quality`, `/demand-plans/production`, `/schedule-plans/production`, and `/actual-logs/production` confirmed generic upload is absent from the batch ledger, while business import links exist only in Header actions.
-- 最终 `bash scripts/check.sh` 结果见 Done Report。
+- 最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 213 tests OK。
 
 ### 2026-06-05 - IM151 data-quality 结果页抽象降级
 
@@ -4131,4 +4131,26 @@
 - `node --test scripts/tests/product-structure.test.mjs` 27 tests OK。
 - `npm run lint` 和 `npm run typecheck` 已通过。
 - Browser smoke over `/master-data/agents?employee_name=张三` returned 1 row and Header `新建/批量导入`; `/master-data/agents?employee_name=不存在` showed `暂无符合条件的客服人员` without `张三`。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM159 本地旧主数据 schema 维护写入兼容
+
+#### 审计结论
+
+- SQLite 本地 repository 初始化时会运行本地兼容补齐，旧 `master_data_employees` 缺少 `employee_type`、`organization_id`、`workplace_id` 时会添加已确认字段。
+- 旧 `master_data_skills` 缺少 `skill_category` 时会添加已确认字段。
+- 缺少 `master_data_organizations` 等本地主数据表时，仍通过既有 `Base.metadata.create_all` 创建当前模型表，使组织维护写入可以继续。
+- 兼容逻辑仅在 `engine.dialect.name == "sqlite"` 时执行，不新增迁移文件、生产数据库配置、业务字段、权限、审批、导出、批量操作、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 风险
+
+- 这是本地 SQLite 兼容补齐，不是生产数据库迁移策略；真实生产持久化仍需要后续独立确认。
+
+#### 验证
+
+- TDD 红灯：`.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service.MasterDataMaintenanceServiceTest.test_legacy_local_schema_allows_employee_skill_and_organization_maintenance -v` 先失败，错误为旧库缺少 `master_data_employees.employee_type`。
+- TDD 绿灯：补齐后同一测试通过。
+- `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` 通过 26 tests。
+- API smoke against local `.local` DB confirmed skill create, employee create, and employee skill replace all returned HTTP 200, then `/api/v1/master-data/employees` returned `IM159验证人员` with organization path, workplace, and skill context.
+- Browser smoke over `/master-data/agents?skill_group=SKILL-IM159&organization=ORG-IM158&workplace=SITE-IM158` showed `IM159验证人员` and no empty state。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
