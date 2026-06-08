@@ -19,6 +19,7 @@ import {
   type MasterDataEntitySourceContext,
   type MasterDataOrganizationManagementSummary,
   type MasterDataReferenceManagementSummary,
+  type MasterDataReferenceListViewRow,
   type MasterDataVendorDetailSummary,
   type MasterDataWorkplaceDetailSummary,
 } from "@/components/master-data-maintenance-model"
@@ -80,6 +81,25 @@ export function MasterDataAgentPageActions({
         </Link>
       </Button>
     </>
+  )
+}
+
+export function MasterDataWorkplacePageActions({
+  summary,
+}: {
+  summary: MasterDataReferenceManagementSummary
+}) {
+  if (!summary.createHref) {
+    return null
+  }
+
+  return (
+    <Button asChild size="sm">
+      <Link href={summary.createHref}>
+        <Plus data-icon="inline-start" />
+        新建
+      </Link>
+    </Button>
   )
 }
 
@@ -147,13 +167,26 @@ export function MasterDataReferenceManagementPage({
   listSummary,
   error,
   feedback,
+  selectedFreezeWorkplaceId = "",
+  workplaceSubmitAction,
 }: {
   summary: MasterDataEntitySourceContext
   listSummary: MasterDataReferenceManagementSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
+  selectedFreezeWorkplaceId?: string
+  workplaceSubmitAction?: (formData: FormData) => Promise<void>
 }) {
-  const hasDetailRows = listSummary.rows.some((row) => row.display.detailHref)
+  const selectedFreezeWorkplace =
+    listSummary.entity.key === "sites"
+      ? listSummary.rows.find(
+          (row) => row.reference_id === selectedFreezeWorkplaceId
+        ) ?? null
+      : null
+  const hasActionRows = listSummary.rows.some(
+    (row) =>
+      row.display.detailHref || row.display.editHref || row.display.freezeHref
+  )
 
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
@@ -196,7 +229,7 @@ export function MasterDataReferenceManagementPage({
                 <TableHead>状态</TableHead>
                 <TableHead>有效期</TableHead>
                 <TableHead>来源批次</TableHead>
-                {hasDetailRows ? <TableHead className="text-right">操作</TableHead> : null}
+                {hasActionRows ? <TableHead className="text-right">操作</TableHead> : null}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -218,8 +251,8 @@ export function MasterDataReferenceManagementPage({
                   <TableCell className="font-mono text-xs">
                     {row.display.sourceBatchLabel}
                   </TableCell>
-                  {hasDetailRows ? (
-                    <TableCell className="text-right">
+                  {hasActionRows ? (
+                    <TableCell className="whitespace-nowrap text-right">
                       {row.display.detailHref ? (
                         <Button
                           asChild
@@ -230,6 +263,26 @@ export function MasterDataReferenceManagementPage({
                           <Link href={row.display.detailHref}>详情</Link>
                         </Button>
                       ) : null}
+                      {row.display.editHref ? (
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.editHref}>编辑</Link>
+                        </Button>
+                      ) : null}
+                      {row.display.freezeHref ? (
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-destructive hover:text-destructive"
+                        >
+                          <Link href={row.display.freezeHref}>冻结</Link>
+                        </Button>
+                      ) : null}
                     </TableCell>
                   ) : null}
                 </TableRow>
@@ -238,7 +291,77 @@ export function MasterDataReferenceManagementPage({
           </Table>
         )}
       </section>
+
+      {selectedFreezeWorkplace && workplaceSubmitAction ? (
+        <MasterDataWorkplaceFreezeDialog
+          summary={summary}
+          workplace={selectedFreezeWorkplace}
+          action={workplaceSubmitAction}
+        />
+      ) : null}
     </main>
+  )
+}
+
+function MasterDataWorkplaceFreezeDialog({
+  summary,
+  workplace,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  workplace: MasterDataReferenceListViewRow
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结职场</DialogTitle>
+          <DialogDescription>
+            冻结后该职场会进入冻结状态。
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-1 text-sm text-muted-foreground">
+          <p>
+            确认冻结{" "}
+            <span className="font-medium text-foreground">
+              {workplace.display.referenceNameLabel}
+            </span>
+            ？
+          </p>
+          <p className="font-mono text-xs">{workplace.display.referenceIdLabel}</p>
+        </div>
+        {summary.workplaceSubmitSourceBatchId ? (
+          <form action={action}>
+            <input type="hidden" name="action" value="freeze" />
+            <input
+              type="hidden"
+              name="source_batch_id"
+              value={summary.workplaceSubmitSourceBatchId}
+            />
+            <input
+              type="hidden"
+              name="workplace_id"
+              value={workplace.reference_id}
+            />
+            <DialogFooter>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/master-data/sites">取消</Link>
+              </Button>
+              <Button type="submit" size="sm" variant="destructive">
+                确认冻结
+              </Button>
+            </DialogFooter>
+          </form>
+        ) : (
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/master-data/sites">关闭</Link>
+            </Button>
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -334,6 +457,88 @@ export function MasterDataWorkplaceDetailPage({
         )}
       </section>
     </main>
+  )
+}
+
+export function MasterDataWorkplaceCreatePage({
+  summary,
+  error,
+  feedback,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <WorkplaceFormPageShell error={error} feedback={feedback}>
+      {summary.workplaceSubmitSourceBatchId ? (
+        <WorkplaceMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.workplaceSubmitSourceBatchId}
+          submitLabel="提交新增"
+          fields={[
+            "workplace_id",
+            "reference_name",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+      ) : (
+        <AgentFormBlockedState detail="当前来源批次不满足职场维护提交条件。" />
+      )}
+    </WorkplaceFormPageShell>
+  )
+}
+
+export function MasterDataWorkplaceEditPage({
+  summary,
+  error,
+  feedback,
+  workplace,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  workplace: MasterDataReferenceListViewRow | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <WorkplaceFormPageShell error={error} feedback={feedback}>
+      {summary.workplaceSubmitSourceBatchId && workplace ? (
+        <WorkplaceMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.workplaceSubmitSourceBatchId}
+          submitLabel="提交编辑"
+          fields={[
+            "reference_name",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+          hiddenFields={{ workplace_id: workplace.reference_id }}
+          defaultValues={{
+            reference_name: workplace.reference_name,
+            status: workplace.status,
+            effective_from: workplace.effective_from,
+            effective_to: workplace.effective_to,
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            workplace
+              ? "当前来源批次不满足职场维护提交条件。"
+              : "未找到该职场，请返回列表重新选择。"
+          }
+        />
+      )}
+    </WorkplaceFormPageShell>
   )
 }
 
@@ -983,6 +1188,28 @@ function AgentFormPageShell({
   )
 }
 
+function WorkplaceFormPageShell({
+  error,
+  feedback,
+  children,
+}: {
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  children: React.ReactNode
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? (
+        <MasterDataListError title="职场来源读取失败" error={error} />
+      ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-4">{children}</section>
+    </main>
+  )
+}
+
 function AgentFormBlockedState({
   detail = "当前来源批次不满足单人维护提交条件。",
 }: {
@@ -994,6 +1221,100 @@ function AgentFormBlockedState({
         <CardTitle className="text-base">当前不可维护</CardTitle>
       </CardHeader>
       <CardContent className="text-sm text-muted-foreground">{detail}</CardContent>
+    </Card>
+  )
+}
+
+type WorkplaceMaintenanceField =
+  | "workplace_id"
+  | "reference_name"
+  | "status"
+  | "effective_from"
+  | "effective_to"
+
+function WorkplaceMaintenanceForm({
+  action,
+  actionKey,
+  sourceBatchId,
+  submitLabel,
+  fields,
+  hiddenFields = {},
+  defaultValues = {},
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit"
+  sourceBatchId: string
+  submitLabel: string
+  fields: WorkplaceMaintenanceField[]
+  hiddenFields?: Record<string, string>
+  defaultValues?: Partial<Record<WorkplaceMaintenanceField, string>>
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">职场信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
+          <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("workplace_id") ? (
+              <MaintenanceInput
+                label="职场 ID"
+                name="workplace_id"
+                placeholder="SITE-001"
+                defaultValue={defaultValues.workplace_id}
+                required
+              />
+            ) : null}
+            {fields.includes("reference_name") ? (
+              <MaintenanceInput
+                label="职场名称"
+                name="reference_name"
+                placeholder="输入职场名称"
+                defaultValue={defaultValues.reference_name}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("status") ? (
+              <MaintenanceSelect
+                label="状态"
+                name="status"
+                defaultValue={defaultValues.status}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_from") ? (
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                defaultValue={defaultValues.effective_from}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_to") ? (
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                defaultValue={defaultValues.effective_to}
+                required={actionKey === "create"}
+              />
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
     </Card>
   )
 }

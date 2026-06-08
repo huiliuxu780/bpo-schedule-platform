@@ -7,6 +7,8 @@ import {
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
+  buildMasterDataWorkplaceMaintenanceApiPath,
+  buildMasterDataWorkplaceMaintenancePayload,
   getMasterDataMaintenanceEntity,
   summarizeMasterDataAgentManagement,
   summarizeMasterDataAgentImportDialog,
@@ -137,12 +139,15 @@ test("master data entity source context keeps list source state only", () => {
   assert.equal("referenceImpacts" in context, false);
 });
 
-test("agent source context is the only master data context with submit source batch", () => {
+test("agent and workplace source contexts expose submit source batches for confirmed forms", () => {
   const agentContext = summarizeMasterDataEntitySourceContext("agents", [baseBatch]);
+  const workplaceContext = summarizeMasterDataEntitySourceContext("sites", [baseBatch]);
   const skillContext = summarizeMasterDataEntitySourceContext("skills", [baseBatch]);
 
   assert.equal(agentContext.agentSubmitSourceBatchId, "BATCH-MD-001");
+  assert.equal(workplaceContext.workplaceSubmitSourceBatchId, "BATCH-MD-001");
   assert.equal(skillContext.agentSubmitSourceBatchId, null);
+  assert.equal(skillContext.workplaceSubmitSourceBatchId, null);
 });
 
 test("master data employee list summarizes org path type workplace and skills", () => {
@@ -735,6 +740,63 @@ test("agent skill maintenance payload maps single employee skill replacement", (
       skill_ids: ["SKILL-RETURN-CALL", "SKILL-GENERAL"],
       effective_from: "2026-06-01",
       effective_to: "2026-12-31",
+    },
+  );
+});
+
+test("workplace maintenance payload maps create edit and freeze actions", () => {
+  assert.equal(
+    buildMasterDataWorkplaceMaintenanceApiPath("SH 01/华东"),
+    "/api/v1/master-data/workplaces/SH%2001%2F%E5%8D%8E%E4%B8%9C/maintenance",
+  );
+
+  assert.deepEqual(
+    buildMasterDataWorkplaceMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      workplaceId: "SH-01",
+      workplaceName: "上海职场",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "上海职场",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataWorkplaceMaintenancePayload({
+      action: "edit",
+      sourceBatchId: "BATCH-MD-001",
+      workplaceId: "SH-01",
+      workplaceName: "上海职场东区",
+      status: "inactive",
+      effectiveFrom: "2026-07-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "edit",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "上海职场东区",
+      status: "inactive",
+      effective_from: "2026-07-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataWorkplaceMaintenancePayload({
+      action: "freeze",
+      sourceBatchId: "BATCH-MD-001",
+      workplaceId: "SH-01",
+    }),
+    {
+      action: "freeze",
+      source_batch_id: "BATCH-MD-001",
     },
   );
 });

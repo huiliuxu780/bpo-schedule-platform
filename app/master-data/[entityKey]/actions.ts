@@ -8,10 +8,13 @@ import {
   type MasterDataAgentMaintenanceStatus,
   type MasterDataEmployeeType,
   type MasterDataMaintenanceEntityKey,
+  type MasterDataWorkplaceMaintenanceActionKey,
   buildMasterDataAgentMaintenanceApiPath,
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
+  buildMasterDataWorkplaceMaintenanceApiPath,
+  buildMasterDataWorkplaceMaintenancePayload,
 } from "@/components/master-data-maintenance-model"
 
 const AGENT_ACTIONS = new Set<MasterDataAgentMaintenanceActionKey>([
@@ -19,6 +22,12 @@ const AGENT_ACTIONS = new Set<MasterDataAgentMaintenanceActionKey>([
   "edit",
   "freeze",
   "effective_period",
+])
+
+const WORKPLACE_ACTIONS = new Set<MasterDataWorkplaceMaintenanceActionKey>([
+  "create",
+  "edit",
+  "freeze",
 ])
 
 const AGENT_STATUSES = new Set<MasterDataAgentMaintenanceStatus>([
@@ -40,11 +49,11 @@ export async function submitMasterDataAgentMaintenance(
     const sourceBatchId = getFormValue(formData, "source_batch_id")
 
     if (!employeeId || !sourceBatchId) {
-        redirectHref = buildMaintenanceRedirect("agents", {
-          maintenance_status: "error",
-          maintenance_code: "MISSING_REQUIRED_FIELD",
-          maintenance_message: "人员 ID 和来源批次不能为空",
-        })
+      redirectHref = buildMaintenanceRedirect("agents", {
+        maintenance_status: "error",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "人员 ID 和来源批次不能为空",
+      })
     } else {
       const payload = buildMasterDataAgentMaintenancePayload({
         action,
@@ -183,6 +192,97 @@ export async function submitMasterDataAgentSkillMaintenance(
   redirect(redirectHref)
 }
 
+export async function submitMasterDataWorkplaceMaintenance(
+  formData: FormData
+): Promise<void> {
+  let redirectHref: string
+
+  try {
+    const action = parseWorkplaceAction(formData.get("action"))
+    const workplaceId = getFormValue(formData, "workplace_id")
+    const sourceBatchId = getFormValue(formData, "source_batch_id")
+    const workplaceName = getFormValue(formData, "reference_name")
+    const effectiveFrom = getFormValue(formData, "effective_from")
+    const effectiveTo = getFormValue(formData, "effective_to")
+
+    if (!workplaceId || !sourceBatchId) {
+      redirectHref = buildMaintenanceRedirect("sites", {
+        maintenance_status: "error",
+        record_type: "职场",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "职场 ID 和来源批次不能为空",
+      })
+    } else if (
+      action === "create" &&
+      (!workplaceName || !effectiveFrom || !effectiveTo)
+    ) {
+      redirectHref = buildMaintenanceRedirect("sites", {
+        maintenance_status: "error",
+        record_type: "职场",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "职场名称和生效期不能为空",
+      })
+    } else {
+      const payload = buildMasterDataWorkplaceMaintenancePayload({
+        action,
+        workplaceId,
+        sourceBatchId,
+        workplaceName,
+        status: parseStatus(formData.get("status")),
+        effectiveFrom,
+        effectiveTo,
+      })
+      const response = await fetch(
+        buildImportApiUrl(buildMasterDataWorkplaceMaintenanceApiPath(workplaceId)),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        }
+      )
+
+      if (!response.ok) {
+        const error = await readMaintenanceApiError(response)
+        redirectHref = buildMaintenanceRedirect("sites", {
+          maintenance_status: "error",
+          record_type: "职场",
+          maintenance_code: error.code,
+          maintenance_message: error.message,
+        })
+      } else {
+        const result = (await response.json()) as {
+          action_status?: string
+          reference?: {
+            reference_id?: string
+            reference_name?: string
+            status?: string
+          }
+        }
+        redirectHref = buildMaintenanceRedirect("sites", {
+          maintenance_status: "success",
+          record_type: "职场",
+          action_status: result.action_status ?? "submitted",
+          record_id: result.reference?.reference_id ?? workplaceId,
+          record_name: result.reference?.reference_name ?? "未返回名称",
+          record_status: result.reference?.status ?? "unknown",
+        })
+      }
+    }
+  } catch (error) {
+    redirectHref = buildMaintenanceRedirect("sites", {
+      maintenance_status: "error",
+      record_type: "职场",
+      maintenance_code: "MASTER_DATA_WORKPLACE_SUBMIT_FAILED",
+      maintenance_message: formatMaintenanceError(error),
+    })
+  }
+
+  redirect(redirectHref)
+}
+
 function parseAction(value: FormDataEntryValue | null): MasterDataAgentMaintenanceActionKey {
   const action = String(value ?? "")
   if (AGENT_ACTIONS.has(action as MasterDataAgentMaintenanceActionKey)) {
@@ -205,6 +305,17 @@ function parseEmployeeType(
   }
 
   throw new Error("未知人员类型")
+}
+
+function parseWorkplaceAction(
+  value: FormDataEntryValue | null
+): MasterDataWorkplaceMaintenanceActionKey {
+  const action = String(value ?? "")
+  if (WORKPLACE_ACTIONS.has(action as MasterDataWorkplaceMaintenanceActionKey)) {
+    return action as MasterDataWorkplaceMaintenanceActionKey
+  }
+
+  throw new Error("未知职场维护动作")
 }
 
 function parseSkillIds(value: FormDataEntryValue | null): string[] {

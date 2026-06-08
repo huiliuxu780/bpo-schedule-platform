@@ -6,6 +6,7 @@ import {
   MasterDataAgentManagementPage,
   MasterDataOrganizationManagementPage,
   MasterDataReferenceManagementPage,
+  MasterDataWorkplacePageActions,
 } from "@/components/master-data-maintenance-workbench"
 import {
   type MasterDataAgentManagementFilters,
@@ -24,7 +25,10 @@ import {
   fetchMasterDataOrganizations,
   fetchMasterDataReferences,
 } from "@/app/master-data/agents/data"
-import { submitMasterDataAgentMaintenance } from "./actions"
+import {
+  submitMasterDataAgentMaintenance,
+  submitMasterDataWorkplaceMaintenance,
+} from "./actions"
 
 export const dynamic = "force-dynamic"
 
@@ -93,6 +97,9 @@ export default async function MasterDataEntityDetailPage({
   const selectedFreezeEmployeeId = getSingleSearchParam(
     resolvedSearchParams.freeze_employee_id
   )
+  const selectedFreezeWorkplaceId = getSingleSearchParam(
+    resolvedSearchParams.freeze_workplace_id
+  )
 
   return (
     <AppShell
@@ -104,6 +111,8 @@ export default async function MasterDataEntityDetailPage({
       actions={
         entity.key === "agents" && agentManagementSummary ? (
           <MasterDataAgentPageActions summary={agentManagementSummary} />
+        ) : entity.key === "sites" && referenceManagementSummary ? (
+          <MasterDataWorkplacePageActions summary={referenceManagementSummary} />
         ) : null
       }
     >
@@ -135,6 +144,8 @@ export default async function MasterDataEntityDetailPage({
           listSummary={referenceManagementSummary}
           error={referenceResult.error ?? batchResult.error}
           feedback={feedback}
+          selectedFreezeWorkplaceId={selectedFreezeWorkplaceId}
+          workplaceSubmitAction={submitMasterDataWorkplaceMaintenance}
         />
       ) : null}
     </AppShell>

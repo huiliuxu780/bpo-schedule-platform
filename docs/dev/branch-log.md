@@ -3746,3 +3746,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM154 Workplace CRUD Frontend Loop
+
+- branch_name: `codex/im154-workplace-crud`
+- base_main_commit: `a2d7af8`
+- stacked_on: `a2d7af8 chore: update UI standards branch handoff`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed master-data workplace CRUD slice. Add the workplace create action to `/master-data/sites` Header actions, add row-level detail/edit/freeze actions, create `/master-data/sites/new`, create `/master-data/sites/[workplaceId]/edit`, and use a freeze confirmation Dialog. Reuse the existing workplace reference maintenance API and Alert feedback. Keep service-team binding, supplier contracts, settlement, minimum staffing, approval, export, batch, permissions, backend route/schema/migration, dependency, automatic scheduling, formula, and charge-factor work out of scope.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/sites/new/page.tsx`, `app/master-data/sites/[workplaceId]/edit/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected workplace model/action helpers, sites list Header action, row edit/freeze links, create/edit child pages, freeze Dialog, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `buildMasterDataWorkplaceMaintenanceApiPath` was missing; TDD RED product-structure test then failed because `/app/master-data/sites/new/page.tsx` did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 21 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 24 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/sites` has Header `新建`, row `编辑`/`冻结`, no inline create submit; `/master-data/sites/new` renders职场 ID/职场名称 and `提交新增`; `/master-data/sites/SH-01/edit` renders `提交编辑`; `/master-data/sites?freeze_workplace_id=SH-01` renders `冻结职场` Dialog after hydration. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -784,3 +784,11 @@ The master-data workplace binding fetch error copy now says `职场服务团队�
 `IM153` fixes the visible typography drift reported on buttons, tables, and dialogs without changing business capability. The global CSS no longer overrides `button`, `input`, and `select` with `font: inherit`, so shadcn component typography utilities remain effective. `Button` `sm` and `xs` text actions now stay on the 14px baseline, while pure icon buttons keep their compact icon density.
 
 The shared table header no longer forces 12px text, and the customer-service personnel list row actions use the same 14px/32px density as other visible text buttons. The customer-service personnel import Dialog no longer uses 12px body/step/mapping/result copy; its body text, form labels, controls, and textarea align to the same 14px baseline. This slice did not add business functions, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier-contract concepts, minimum staffing requirements, or charge factors. Current queue returns to empty after IM153.
+
+## 2026-06-08 IM154 Workplace CRUD Frontend Loop
+
+`IM154` starts the non-agent master-data CRUD cleanup with workplace basics only. `/master-data/sites` now exposes a page-level `新建` action in the shared Header and keeps the list itself focused on table management. Workplace rows provide `详情`, `编辑`, and `冻结`; editing opens `/master-data/sites/[workplaceId]/edit`, while freezing uses a confirmation Dialog on the list URL.
+
+`/master-data/sites/new` submits workplace ID, workplace name, status, and effective period. `/master-data/sites/[workplaceId]/edit` submits workplace name, status, and effective period while keeping workplace ID hidden and non-editable. The submit path reuses the existing workplace reference maintenance API and returns success/failure feedback through the existing Alert feedback pattern.
+
+This slice did not add workplace service-team binding maintenance, supplier contracts, settlement ratios, minimum staffing requirements, approval, export, batch operations, permissions, backend routes, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM154.

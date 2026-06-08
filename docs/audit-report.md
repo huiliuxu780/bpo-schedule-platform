@@ -4017,3 +4017,26 @@
 - TDD 绿灯：补齐组件与 dialog 修复后，同一 focused test 通过，23 个 product-structure 测试通过。
 - Browser runtime style smoke over `/master-data/agents?import_dialog=1` confirmed visible text buttons are 14px, table headers are 14px/40px, table cells are 14px, dialog body/form controls are 14px, and row action text buttons are 14px/32px.
 - `npm run lint`、`npm run typecheck` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 已通过，包含 strict state、shadcn gate、Next build 和后端 209 tests OK。
+
+### 2026-06-08 - IM154 职场基础 CRUD 前端闭环
+
+#### 审计结论
+
+- `/master-data/sites` Header actions 已提供职场 `新建` 入口，不在列表内容区塞表单。
+- 职场列表行已提供 `详情`、`编辑`、`冻结`；详情进入既有职场详情页，编辑进入职场编辑子页面，冻结打开确认 Dialog。
+- `/master-data/sites/new` 提交职场 ID、职场名称、状态、生效开始和生效结束。
+- `/master-data/sites/[workplaceId]/edit` 编辑职场名称、状态和有效期，职场 ID 作为隐藏字段提交，不作为可编辑字段。
+- 提交复用现有 `/api/v1/master-data/workplaces/{reference_id}/maintenance` 能力，提交结果回到职场列表并使用既有 Alert feedback。
+- 本轮没有新增职场服务团队绑定、供应商合同、结算比例、最低人力、审批、导出、批量操作、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子。
+
+#### 风险
+
+- 职场和供应商的服务关系、合同、最低人力、结算规则属于后续独立对象/详情设计，本轮只覆盖基础 reference 字段。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `buildMasterDataWorkplaceMaintenanceApiPath`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明缺少 `/master-data/sites/new`。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 21 tests OK，`product-structure.test.mjs` 24 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/sites`, `/master-data/sites/new`, `/master-data/sites/SH-01/edit`, and `/master-data/sites?freeze_workplace_id=SH-01` confirmed Header create action, no inline create form on the list, create/edit child pages, and the freeze Dialog.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -15,6 +15,8 @@ const masterDataAgentEditPagePath = new URL("../../app/master-data/agents/[emplo
 const masterDataAgentSkillsEditPagePath = new URL("../../app/master-data/agents/[employeeId]/skills/edit/page.tsx", import.meta.url);
 const masterDataAgentDataPath = new URL("../../app/master-data/agents/data.ts", import.meta.url);
 const masterDataWorkplaceDetailPagePath = new URL("../../app/master-data/sites/[workplaceId]/page.tsx", import.meta.url);
+const masterDataWorkplaceCreatePagePath = new URL("../../app/master-data/sites/new/page.tsx", import.meta.url);
+const masterDataWorkplaceEditPagePath = new URL("../../app/master-data/sites/[workplaceId]/edit/page.tsx", import.meta.url);
 const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[vendorId]/page.tsx", import.meta.url);
 const demandForecastProductionPagePath = new URL("../../app/demand-plans/production/page.tsx", import.meta.url);
 const personnelScheduleProductionPagePath = new URL("../../app/schedule-plans/production/page.tsx", import.meta.url);
@@ -806,6 +808,49 @@ test("non-agent master data pages do not expose unconfirmed import actions in co
     true,
     "shared Header actions should stay scoped to the confirmed agent actions only",
   );
+});
+
+test("workplace maintenance uses child pages and freeze dialog instead of list-page forms", async () => {
+  await access(masterDataWorkplaceCreatePagePath);
+  await access(masterDataWorkplaceEditPagePath);
+
+  const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const actionsSource = await readFile(masterDataActionsPath, "utf8");
+  const modelSource = await readFile(masterDataModelPath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const createPageSource = await readFile(masterDataWorkplaceCreatePagePath, "utf8");
+  const editPageSource = await readFile(masterDataWorkplaceEditPagePath, "utf8");
+  const referenceSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataReferenceManagementPage"),
+    workbenchSource.indexOf("export function MasterDataWorkplaceDetailPage"),
+  );
+
+  assert.equal(
+    entitySource.includes("MasterDataWorkplacePageActions"),
+    true,
+    "workplace list should use Header actions for create",
+  );
+  assert.equal(
+    entitySource.includes("freeze_workplace_id"),
+    true,
+    "workplace freeze should be controlled by list-page dialog state",
+  );
+  assert.equal(
+    actionsSource.includes("submitMasterDataWorkplaceMaintenance"),
+    true,
+    "workplace forms should use a workplace-specific server action",
+  );
+  assert.equal(
+    modelSource.includes("buildMasterDataWorkplaceMaintenancePayload"),
+    true,
+    "workplace maintenance should be modeled explicitly",
+  );
+  assert.equal(referenceSource.includes("WorkplaceMaintenanceForm"), false);
+  assert.equal(referenceSource.includes("MasterDataWorkplaceFreezeDialog"), true);
+  assert.equal(referenceSource.includes("DialogContent"), true);
+  assert.equal(createPageSource.includes("MasterDataWorkplaceCreatePage"), true);
+  assert.equal(editPageSource.includes("MasterDataWorkplaceEditPage"), true);
+  assert.equal(editPageSource.includes("notFound()"), true);
 });
 
 test("business import actions belong to business page headers, not the generic batch ledger", async () => {

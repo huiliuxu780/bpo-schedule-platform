@@ -2978,3 +2978,16 @@ version: "1.0"
 status: "done"
 notes: "IM153 已完成：移除全局表单 font inherit 覆盖，统一 Button 小尺寸、Table 表头、客服人员导入 Dialog 正文/步骤/表单和人员列表行内文字按钮的 14px 基线；不新增业务能力。"
 ```
+
+### R854 - 职场基础 CRUD 前端闭环
+
+```yaml
+id: R854
+module: "主数据维护"
+description: "PM 确认下一阶段从职场管理开始。职场列表不能塞入表单，应按 B 端管理对象拆成列表页、单对象新建页、单对象编辑页和冻结弹窗。IM154 只维护职场基础 reference 字段，服务团队绑定关系留到下一阶段。"
+source: "PM approved workplace CRUD product design on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "ready"
+notes: "IM154 执行中：职场 ID、职场名称、状态、生效开始、生效结束；不做职场服务团队绑定、合同、结算、最低人力、审批、导出、批量或权限。"
+```

@@ -5351,3 +5351,27 @@ dependencies:
 status: "done"
 notes: "IM153 已完成：页面级按钮、筛选按钮、表格表头/正文、人员列表行内文字按钮和客服人员导入弹窗正文/步骤/表单已回到一致 14px 基线；纯图标按钮保留图标密度。"
 ```
+
+### US774 - 职场基础 CRUD 前端闭环
+
+```yaml
+id: US774
+requirement_ids:
+  - R854
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在职场列表中进入单个职场的新建、编辑和冻结流程，以便维护职场基础档案，而不是在列表页里展开一个大表单。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/sites Header 右侧提供新建职场入口。"
+  - "职场列表行提供详情、编辑和冻结操作，其中详情进入现有职场详情页，编辑进入子页面，冻结打开确认弹窗。"
+  - "/master-data/sites/new 使用子页面提交职场 ID、职场名称、状态、生效开始、生效结束。"
+  - "/master-data/sites/[workplaceId]/edit 使用子页面编辑职场名称、状态和有效期，职场 ID 不作为可编辑字段。"
+  - "提交成功或失败后回到职场列表并使用 Alert 显示反馈。"
+  - "不新增职场服务团队绑定、供应商合同、结算比例、最低人力、审批、导出、批量、权限、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US773"
+status: "ready"
+notes: "IM154 执行中。"
+```

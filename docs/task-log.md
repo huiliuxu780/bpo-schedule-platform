@@ -1994,3 +1994,14 @@
 - action: 统一 B 端字体与控件密度基线。
 - status: `done`
 - notes: 移除 `app/globals.css` 中覆盖 shadcn 组件字号的 `button,input,select { font: inherit }`；`Button` 的 `sm/xs` 文本按钮回到 14px 基线，人员列表行内 `编辑/冻结` 文字按钮也统一为 14px/32px；`TableHead` 不再固定 12px，客服人员导入 Dialog 的步骤、说明、映射控件、textarea 和结果文案不再混用 12px；纯图标按钮保留图标密度；本轮不新增业务功能、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM154`
+- source_ids:
+  - `R854`
+- story_ids:
+  - `US774`
+- action: 完成职场基础 CRUD 前端闭环。
+- status: `done`
+- notes: `/master-data/sites` Header actions 提供 `新建` 职场入口；职场列表行提供 `详情`、`编辑`、`冻结`，其中编辑进入 `/master-data/sites/[workplaceId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/sites/new` 子页面并提交职场 ID、职场名称、状态和生效期；提交复用现有 workplace reference maintenance API，反馈回到职场列表并使用 Alert；本轮不新增职场服务团队绑定、供应商合同、结算、最低人力、审批、导出、批量、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

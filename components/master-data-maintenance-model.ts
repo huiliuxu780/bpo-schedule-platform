@@ -68,6 +68,7 @@ export type MasterDataAgentMaintenanceActionKey =
   | "edit"
   | "freeze"
   | "effective_period"
+export type MasterDataWorkplaceMaintenanceActionKey = "create" | "edit" | "freeze"
 
 export type MasterDataAgentMaintenanceStatus = "active" | "frozen" | "inactive"
 export type MasterDataEmployeeType = "internal" | "outsourced"
@@ -82,6 +83,16 @@ export type MasterDataAgentMaintenanceDraft = {
   employeeType?: MasterDataEmployeeType
   organizationId?: string
   workplaceId?: string
+  effectiveFrom?: string
+  effectiveTo?: string
+}
+
+export type MasterDataWorkplaceMaintenanceDraft = {
+  action: MasterDataWorkplaceMaintenanceActionKey
+  sourceBatchId: string
+  workplaceId: string
+  workplaceName?: string
+  status?: MasterDataAgentMaintenanceStatus
   effectiveFrom?: string
   effectiveTo?: string
 }
@@ -120,6 +131,8 @@ export type MasterDataReferenceListDisplay = {
   effectivePeriodLabel: string
   sourceBatchLabel: string
   detailHref: string | null
+  editHref: string | null
+  freezeHref: string | null
 }
 
 export type MasterDataReferenceListViewRow = MasterDataReferenceListRow & {
@@ -164,6 +177,7 @@ export type MasterDataOrganizationManagementSummary = {
 export type MasterDataReferenceManagementSummary = {
   entity: MasterDataMaintenanceEntity
   title: string
+  createHref: string | null
   totalRecords: number
   activeRecords: number
   frozenRecords: number
@@ -256,6 +270,15 @@ export type MasterDataAgentMaintenancePayload = {
   employee_type?: MasterDataEmployeeType
   organization_id?: string
   workplace_id?: string
+  effective_from?: string
+  effective_to?: string
+}
+
+export type MasterDataWorkplaceMaintenancePayload = {
+  action: MasterDataWorkplaceMaintenanceActionKey
+  source_batch_id: string
+  reference_name?: string
+  status?: MasterDataAgentMaintenanceStatus
   effective_from?: string
   effective_to?: string
 }
@@ -417,6 +440,7 @@ export type MasterDataEntitySourceContext = {
   sourceBatchLabel: string
   sourceBatchHref: string | null
   agentSubmitSourceBatchId: string | null
+  workplaceSubmitSourceBatchId: string | null
 }
 
 export const MASTER_DATA_MAINTENANCE_ENTITIES: MasterDataMaintenanceEntity[] = [
@@ -560,6 +584,10 @@ export function summarizeMasterDataEntitySourceContext(
     entity.key === "agents" && latestMasterDataBatch
       ? latestMasterDataBatch.batch_id
       : null
+  const workplaceSubmitSourceBatchId =
+    entity.key === "sites" && latestMasterDataBatch
+      ? latestMasterDataBatch.batch_id
+      : null
 
   return {
     entity,
@@ -576,11 +604,18 @@ export function summarizeMasterDataEntitySourceContext(
     sourceBatchLabel: workbench.latestBatchLabel,
     sourceBatchHref: workbench.sourceBatchHref,
     agentSubmitSourceBatchId,
+    workplaceSubmitSourceBatchId,
   }
 }
 
 export function buildMasterDataAgentMaintenanceApiPath(employeeId: string): string {
   return `/api/v1/master-data/employees/${encodeURIComponent(employeeId)}/maintenance`
+}
+
+export function buildMasterDataWorkplaceMaintenanceApiPath(
+  workplaceId: string
+): string {
+  return `/api/v1/master-data/workplaces/${encodeURIComponent(workplaceId)}/maintenance`
 }
 
 export function buildMasterDataAgentSkillMaintenanceApiPath(
@@ -615,6 +650,19 @@ export function buildMasterDataAgentSkillMaintenancePayload(
     effective_from: draft.effectiveFrom,
     effective_to: draft.effectiveTo,
   }
+}
+
+export function buildMasterDataWorkplaceMaintenancePayload(
+  draft: MasterDataWorkplaceMaintenanceDraft
+): MasterDataWorkplaceMaintenancePayload {
+  return compactMasterDataWorkplaceMaintenancePayload({
+    action: draft.action,
+    source_batch_id: draft.sourceBatchId,
+    reference_name: draft.workplaceName,
+    status: draft.status,
+    effective_from: draft.effectiveFrom,
+    effective_to: draft.effectiveTo,
+  })
 }
 
 export function summarizeMasterDataEmployeeList(
@@ -946,6 +994,14 @@ export function summarizeMasterDataReferenceManagement(
             ? `/master-data/sites/${encodeURIComponent(reference.reference_id)}`
             : entity.key === "vendors"
               ? `/master-data/vendors/${encodeURIComponent(reference.reference_id)}`
+              : null,
+        editHref:
+          entity.key === "sites"
+            ? `/master-data/sites/${encodeURIComponent(reference.reference_id)}/edit`
+            : null,
+        freezeHref:
+          entity.key === "sites"
+            ? `/master-data/sites?freeze_workplace_id=${encodeURIComponent(reference.reference_id)}`
             : null,
       },
     }))
@@ -953,6 +1009,7 @@ export function summarizeMasterDataReferenceManagement(
   return {
     entity,
     title: entity.label,
+    createHref: entity.key === "sites" ? "/master-data/sites/new" : null,
     totalRecords: rows.length,
     activeRecords: rows.filter((row) => row.status === "active").length,
     frozenRecords: rows.filter((row) => row.status === "frozen").length,
@@ -1327,10 +1384,11 @@ export function summarizeMasterDataMaintenanceFeedback(
       getSingleSearchParam(searchParams.employee_status) ||
       "未知状态"
     const actionStatus = getSingleSearchParam(searchParams.action_status) || "submitted"
+    const recordType = getSingleSearchParam(searchParams.record_type) || "人员"
 
     return {
       tone: "success",
-      title: "人员保存成功",
+      title: `${recordType}保存成功`,
       detail: `${recordId} ${recordName} 已 ${actionStatus}，当前状态 ${recordStatus}。`,
     }
   }
@@ -1340,10 +1398,11 @@ export function summarizeMasterDataMaintenanceFeedback(
       getSingleSearchParam(searchParams.maintenance_code) ||
       "MASTER_DATA_MAINTENANCE_SUBMIT_FAILED"
     const message = getSingleSearchParam(searchParams.maintenance_message) || "后端未返回错误说明"
+    const recordType = getSingleSearchParam(searchParams.record_type) || "人员"
 
     return {
       tone: "error",
-      title: "人员保存失败",
+      title: `${recordType}保存失败`,
       detail: `${code}: ${message}`,
     }
   }
@@ -1357,6 +1416,14 @@ function compactMasterDataAgentMaintenancePayload(
   return Object.fromEntries(
     Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
   ) as MasterDataAgentMaintenancePayload
+}
+
+function compactMasterDataWorkplaceMaintenancePayload(
+  payload: MasterDataWorkplaceMaintenancePayload
+): MasterDataWorkplaceMaintenancePayload {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
+  ) as MasterDataWorkplaceMaintenancePayload
 }
 
 function getSingleSearchParam(value: string | string[] | undefined): string {
