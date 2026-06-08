@@ -2060,3 +2060,14 @@
 - action: 完成本地旧主数据 schema 维护写入兼容。
 - status: `done`
 - notes: SQLite 本地主数据 repository 初始化/建表时会补齐已确认字段 `master_data_employees.employee_type`、`organization_id`、`workplace_id` 和 `master_data_skills.skill_category`，并创建缺失的本地主数据表，使旧 `.local` 库可继续执行人员、技能组和组织维护写入；本轮不新增迁移文件、生产数据库配置、业务字段、权限、审批、导出、批量操作、自动排班、生产公式、结算、合同、最低人力或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM160`
+- source_ids:
+  - `R860`
+- story_ids:
+  - `US780`
+- action: 完成职场详情只读服务团队关系。
+- status: `done`
+- notes: `/master-data/sites/[workplaceId]` 的服务团队表已按该职场自有人员组织聚合自有团队，按该职场供应商绑定聚合供应商团队，并读取供应商主数据名称；表格展示团队类型、服务团队、供应商、人员/绑定数、状态、有效期和来源批次；本轮不新增导航、表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量操作或自动排班；current queue 与 active tasks 已清空。

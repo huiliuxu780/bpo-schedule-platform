@@ -4154,3 +4154,25 @@
 - API smoke against local `.local` DB confirmed skill create, employee create, and employee skill replace all returned HTTP 200, then `/api/v1/master-data/employees` returned `IM159验证人员` with organization path, workplace, and skill context.
 - Browser smoke over `/master-data/agents?skill_group=SKILL-IM159&organization=ORG-IM158&workplace=SITE-IM158` showed `IM159验证人员` and no empty state。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM160 职场详情只读服务团队关系
+
+#### 审计结论
+
+- `/master-data/sites/[workplaceId]` 仍是职场详情上下文，不新增服务团队独立导航或抽象模块。
+- 自有服务团队按该职场 `internal` 人员的 `organization_id / organization_path` 聚合，不再逐人员当作团队行。
+- 供应商服务团队按该职场 binding 的 `supplier_id` 聚合，并通过供应商主数据展示供应商名称。
+- 服务团队表展示团队类型、服务团队、供应商、人员/绑定数、状态、有效期、来源和来源批次。
+- 本轮没有新增表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量操作或自动排班。
+
+#### 风险
+
+- 当前仍是只读聚合展示；服务团队新增/编辑/冻结、人员归属服务团队、供应商合同、最低人力和结算规则需要后续独立任务确认。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，当前实现返回 3 行人员/绑定明细而不是 2 个服务团队聚合行。
+- TDD 绿灯：补齐后 `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/product-structure.test.mjs` 通过 54 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/sites/SH-01` confirmed supplier team `供应商 A` and `1 条绑定`; `/master-data/sites/SITE-IM158` confirmed internal team and `1 人`; both pages did not show 合同、结算、最低人力。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

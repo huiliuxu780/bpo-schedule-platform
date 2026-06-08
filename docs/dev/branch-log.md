@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM160 Workplace Detail Service Teams
+
+- branch_name: `codex/im160-workplace-service-teams`
+- base_main_commit: `3060d9c`
+- stacked_on: `8f4ee51 fix: tolerate legacy local master data schema`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of master-data maintenance. Keep service teams inside `/master-data/sites/[workplaceId]` and make the detail table read-only: self-owned teams grouped by internal employee organization, supplier teams grouped by workplace supplier bindings with supplier names resolved from supplier master data. Keep navigation, forms, backend routes, schema/migration, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/sites/[workplaceId]/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no sidebar, backend, package/lockfile, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected workplace detail supplier fetch, service-team grouping model, service-team table columns, focused RED/GREEN model and structure tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because workplace detail returned three people/binding rows instead of two grouped service-team rows. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/product-structure.test.mjs` passed with 54 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/sites/SH-01` shows supplier team `供应商 A` with `1 条绑定`, and `/master-data/sites/SITE-IM158` shows an internal service team with `1 人`, with no contract, settlement, or minimum-staffing copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` result will be recorded after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM147 Header Breadcrumb And Content Title Cleanup
 
 - branch_name: `codex/im144-ui-component-standards`

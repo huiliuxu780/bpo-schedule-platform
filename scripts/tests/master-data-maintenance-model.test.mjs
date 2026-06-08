@@ -645,7 +645,7 @@ test("skill maintenance builders submit category through the reference API", () 
   );
 });
 
-test("workplace detail keeps operating subjects inside the selected workplace", () => {
+test("workplace detail groups service teams inside the selected workplace", () => {
   const detail = summarizeMasterDataWorkplaceDetail({
     workplaceId: "SH-01",
     workplaces: [
@@ -670,6 +670,20 @@ test("workplace detail keeps operating subjects inside the selected workplace", 
       {
         employee_id: "A-1001",
         employee_name: "张三",
+        status: "active",
+        employee_type: "internal",
+        organization_id: "ORG-SELF",
+        organization_path: "CC / CCO / 自有团队",
+        workplace_id: "SH-01",
+        workplace_name: "上海职场",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [],
+      },
+      {
+        employee_id: "A-1002",
+        employee_name: "王五",
         status: "active",
         employee_type: "internal",
         organization_id: "ORG-SELF",
@@ -708,11 +722,31 @@ test("workplace detail keeps operating subjects inside the selected workplace", 
         batch_id: "BATCH-MD-001",
       },
       {
+        binding_id: "BIND-003",
+        employee_id: "A-3003",
+        supplier_id: "SUP-001",
+        workplace_id: "SH-01",
+        skill_id: "SKILL-HOTLINE",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
         binding_id: "BIND-002",
         employee_id: "A-3002",
         supplier_id: "SUP-002",
         workplace_id: "NJ-01",
         skill_id: "SKILL-HOTLINE",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    suppliers: [
+      {
+        reference_id: "SUP-001",
+        reference_name: "上海供应商",
+        status: "active",
         effective_from: "2026-06-01",
         effective_to: "2026-12-31",
         batch_id: "BATCH-MD-001",
@@ -731,12 +765,27 @@ test("workplace detail keeps operating subjects inside the selected workplace", 
       row.display.operatorTypeLabel,
       row.display.operatorNameLabel,
       row.display.supplierLabel,
+      row.display.recordCountLabel,
       row.display.sourceLabel,
       row.display.effectivePeriodLabel,
     ]),
     [
-      ["自有团队", "张三", "无供应商", "人员档案", "2026-06-01 至 2026-12-31"],
-      ["供应商团队", "SUP-001", "SUP-001", "人员归属记录", "2026-06-01 至 2026-12-31"],
+      [
+        "自有团队",
+        "CC / CCO / 自有团队",
+        "无供应商",
+        "2 人",
+        "人员档案",
+        "2026-06-01 至 2026-12-31",
+      ],
+      [
+        "供应商团队",
+        "上海供应商",
+        "上海供应商",
+        "2 条绑定",
+        "人员归属记录",
+        "2026-06-01 至 2026-12-31",
+      ],
     ],
   );
   assert.equal(JSON.stringify(detail).includes("合同"), false);

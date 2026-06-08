@@ -625,9 +625,10 @@ export function MasterDataWorkplaceDetailPage({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>归属类型</TableHead>
-                <TableHead>主体</TableHead>
+                <TableHead>团队类型</TableHead>
+                <TableHead>服务团队</TableHead>
                 <TableHead>供应商</TableHead>
+                <TableHead>人员/绑定数</TableHead>
                 <TableHead>状态</TableHead>
                 <TableHead>有效期</TableHead>
                 <TableHead>来源</TableHead>
@@ -642,6 +643,7 @@ export function MasterDataWorkplaceDetailPage({
                     {row.display.operatorNameLabel}
                   </TableCell>
                   <TableCell>{row.display.supplierLabel}</TableCell>
+                  <TableCell>{row.display.recordCountLabel}</TableCell>
                   <TableCell>
                     <Badge variant={row.status === "active" ? "outline" : "secondary"}>
                       {row.display.statusLabel}

@@ -828,3 +828,9 @@ The page structure stays unchanged: page-level actions remain in the shared Head
 `IM159` fixes the local `.local` SQLite compatibility issue exposed while preparing real personnel-list smoke data. The master-data persistence repository now performs a SQLite-only compatibility pass before maintenance writes: old employee tables receive the confirmed `employee_type`, `organization_id`, and `workplace_id` columns, old skill tables receive the confirmed `skill_category` column, and missing local master-data tables such as organizations are created through the existing model metadata.
 
 This is not a production migration design. The slice did not add migration files, production database configuration, new business fields, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier-contract concepts, minimum staffing requirements, or charge factors. Current queue returns to empty after IM159.
+
+## 2026-06-08 IM160 Workplace Detail Service Teams
+
+`IM160` corrects the workplace detail service-team view without adding a new module. `/master-data/sites/[workplaceId]` now groups self-owned service teams by the selected workplace's internal employees and their organization path, and groups supplier service teams by supplier bindings for the selected workplace. Supplier teams resolve their visible name from supplier master data instead of showing only a supplier ID.
+
+The detail table now shows team type, service team, supplier, people or binding count, status, effective period, source, and source batch. This remains read-only: no standalone service-team route, no create/edit/freeze action, no backend route, no schema or migration, and no contract, settlement, minimum-staffing, permission, approval, export, batch, automatic-scheduling, formula, or charge-factor scope. Current queue returns to empty after IM160.

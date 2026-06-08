@@ -25,16 +25,18 @@ export default async function MasterDataWorkplaceDetailRoute({
 }: PageProps) {
   const { workplaceId } = await params
   const decodedWorkplaceId = decodeURIComponent(workplaceId)
-  const [batchResult, workplaceResult, employeeResult, bindingResult] =
+  const [batchResult, workplaceResult, supplierResult, employeeResult, bindingResult] =
     await Promise.all([
       fetchImportBatches(),
       fetchMasterDataReferences("sites"),
+      fetchMasterDataReferences("vendors"),
       fetchMasterDataEmployees(),
       fetchMasterDataWorkplaceBindings(),
     ])
   const detailSummary = summarizeMasterDataWorkplaceDetail({
     workplaceId: decodedWorkplaceId,
     workplaces: workplaceResult.data ?? [],
+    suppliers: supplierResult.data ?? [],
     employees: employeeResult.data ?? [],
     bindings: bindingResult.data ?? [],
   })
@@ -56,6 +58,7 @@ export default async function MasterDataWorkplaceDetailRoute({
         detailSummary={detailSummary}
         error={
           workplaceResult.error ??
+          supplierResult.error ??
           employeeResult.error ??
           bindingResult.error ??
           batchResult.error

@@ -244,6 +244,7 @@ export type MasterDataWorkplaceOperatorDisplay = {
   operatorTypeLabel: string
   operatorNameLabel: string
   supplierLabel: string
+  recordCountLabel: string
   statusLabel: string
   sourceLabel: string
   effectivePeriodLabel: string
@@ -255,6 +256,7 @@ export type MasterDataWorkplaceOperatorViewRow = {
   operator_type: MasterDataWorkplaceOperatorType
   operator_name: string
   supplier_id: string | null
+  record_count: number
   status: MasterDataAgentMaintenanceStatus
   source_type: MasterDataWorkplaceOperatorSource
   effective_from: string
@@ -1260,11 +1262,13 @@ export function summarizeMasterDataWorkplaceDetail({
   workplaces,
   employees,
   bindings,
+  suppliers,
 }: {
   workplaceId: string
   workplaces: MasterDataReferenceListRow[]
   employees: MasterDataEmployeeListRow[]
   bindings: MasterDataWorkplaceBindingRow[]
+  suppliers?: MasterDataReferenceListRow[]
 }): MasterDataWorkplaceDetailSummary {
   const workplaceSummary = summarizeMasterDataReferenceManagement("sites", workplaces)
   const workplace =
@@ -1283,40 +1287,20 @@ export function summarizeMasterDataWorkplaceDetail({
     }
   }
 
-  const internalRows = employees
-    .filter(
+  const supplierById = new Map(
+    (suppliers ?? []).map((supplier) => [supplier.reference_id, supplier])
+  )
+  const internalRows = buildWorkplaceInternalTeamRows(
+    employees.filter(
       (employee) =>
         employee.workplace_id === workplace.reference_id &&
         employee.employee_type === "internal"
     )
-    .map((employee) =>
-      buildWorkplaceOperatorRow({
-        key: `employee:${employee.employee_id}`,
-        type: "internal",
-        name: employee.employee_name,
-        supplierId: null,
-        status: employee.status,
-        sourceType: "employee",
-        effectiveFrom: employee.effective_from,
-        effectiveTo: employee.effective_to,
-        batchId: employee.batch_id,
-      })
-    )
+  )
 
-  const supplierRows = deduplicateWorkplaceSupplierBindings(
-    bindings.filter((binding) => binding.workplace_id === workplace.reference_id)
-  ).map((binding) =>
-    buildWorkplaceOperatorRow({
-      key: `supplier:${binding.supplier_id}:${binding.effective_from}:${binding.effective_to}`,
-      type: "supplier",
-      name: binding.supplier_id,
-      supplierId: binding.supplier_id,
-      status: "active",
-      sourceType: "binding",
-      effectiveFrom: binding.effective_from,
-      effectiveTo: binding.effective_to,
-      batchId: binding.batch_id,
-    })
+  const supplierRows = buildWorkplaceSupplierTeamRows(
+    bindings.filter((binding) => binding.workplace_id === workplace.reference_id),
+    supplierById
   )
 
   const operatorRows = [...internalRows, ...supplierRows].sort((left, right) => {
@@ -1339,6 +1323,81 @@ export function summarizeMasterDataWorkplaceDetail({
       .length,
     operatorRows,
   }
+}
+
+function buildWorkplaceInternalTeamRows(
+  employees: MasterDataEmployeeListRow[]
+): MasterDataWorkplaceOperatorViewRow[] {
+  const byOrganization = new Map<string, MasterDataEmployeeListRow[]>()
+
+  for (const employee of employees) {
+    const key =
+      employee.organization_id ??
+      employee.organization_path ??
+      `unassigned:${employee.employee_id}`
+    const current = byOrganization.get(key) ?? []
+    current.push(employee)
+    byOrganization.set(key, current)
+  }
+
+  return [...byOrganization.entries()].map(([key, group]) => {
+    const firstEmployee = group[0]
+    const teamName =
+      firstEmployee.organization_path ??
+      firstEmployee.organization_id ??
+      "未绑定组织"
+
+    return buildWorkplaceOperatorRow({
+      key: `internal:${key}`,
+      type: "internal",
+      name: teamName,
+      supplierId: null,
+      recordCount: group.length,
+      status: summarizeGroupedStatus(group.map((employee) => employee.status)),
+      sourceType: "employee",
+      effectiveFrom: pickEarliestValue(group.map((employee) => employee.effective_from)),
+      effectiveTo: pickLatestValue(group.map((employee) => employee.effective_to)),
+      batchId: pickFirstValue(group.map((employee) => employee.batch_id)),
+    })
+  })
+}
+
+function buildWorkplaceSupplierTeamRows(
+  bindings: MasterDataWorkplaceBindingRow[],
+  supplierById: Map<string, MasterDataReferenceListRow>
+): MasterDataWorkplaceOperatorViewRow[] {
+  const bySupplier = new Map<string, MasterDataWorkplaceBindingRow[]>()
+
+  for (const binding of bindings) {
+    if (!binding.supplier_id) {
+      continue
+    }
+
+    const current = bySupplier.get(binding.supplier_id) ?? []
+    current.push(binding)
+    bySupplier.set(binding.supplier_id, current)
+  }
+
+  return [...bySupplier.entries()].map(([supplierId, group]) => {
+    const supplier = supplierById.get(supplierId) ?? null
+    const supplierName =
+      supplier?.reference_name ??
+      formatMasterDataVisibleValue(supplierId)
+
+    return buildWorkplaceOperatorRow({
+      key: `supplier:${supplierId}`,
+      type: "supplier",
+      name: supplierName,
+      supplierId,
+      supplierName,
+      recordCount: group.length,
+      status: supplier?.status ?? "active",
+      sourceType: "binding",
+      effectiveFrom: pickEarliestValue(group.map((binding) => binding.effective_from)),
+      effectiveTo: pickLatestValue(group.map((binding) => binding.effective_to)),
+      batchId: pickFirstValue(group.map((binding) => binding.batch_id)),
+    })
+  })
 }
 
 export function summarizeMasterDataOrganizationManagement(
@@ -1388,6 +1447,8 @@ function buildWorkplaceOperatorRow({
   type,
   name,
   supplierId,
+  supplierName,
+  recordCount,
   status,
   sourceType,
   effectiveFrom,
@@ -1398,6 +1459,8 @@ function buildWorkplaceOperatorRow({
   type: MasterDataWorkplaceOperatorType
   name: string
   supplierId: string | null
+  supplierName?: string
+  recordCount: number
   status: MasterDataAgentMaintenanceStatus
   sourceType: MasterDataWorkplaceOperatorSource
   effectiveFrom: string
@@ -1409,6 +1472,7 @@ function buildWorkplaceOperatorRow({
     operator_type: type,
     operator_name: name,
     supplier_id: supplierId,
+    record_count: recordCount,
     status,
     source_type: sourceType,
     effective_from: effectiveFrom,
@@ -1417,7 +1481,11 @@ function buildWorkplaceOperatorRow({
     display: {
       operatorTypeLabel: type === "internal" ? "自有团队" : "供应商团队",
       operatorNameLabel: formatMasterDataVisibleValue(name),
-      supplierLabel: supplierId ? formatMasterDataVisibleValue(supplierId) : "无供应商",
+      supplierLabel: supplierId
+        ? formatMasterDataVisibleValue(supplierName ?? supplierId)
+        : "无供应商",
+      recordCountLabel:
+        type === "internal" ? `${recordCount} 人` : `${recordCount} 条绑定`,
       statusLabel: formatMasterDataEmployeeStatus(status),
       sourceLabel: sourceType === "employee" ? "人员档案" : "人员归属记录",
       effectivePeriodLabel: formatEffectivePeriod(effectiveFrom, effectiveTo),
@@ -1426,29 +1494,28 @@ function buildWorkplaceOperatorRow({
   }
 }
 
-function deduplicateWorkplaceSupplierBindings(
-  bindings: MasterDataWorkplaceBindingRow[]
-) {
-  const bySupplierPeriod = new Map<string, MasterDataWorkplaceBindingRow>()
-
-  for (const binding of bindings) {
-    if (!binding.supplier_id) {
-      continue
-    }
-
-    const key = [
-      binding.supplier_id,
-      binding.effective_from,
-      binding.effective_to,
-      binding.batch_id,
-    ].join(":")
-
-    if (!bySupplierPeriod.has(key)) {
-      bySupplierPeriod.set(key, binding)
-    }
+function summarizeGroupedStatus(
+  statuses: MasterDataAgentMaintenanceStatus[]
+): MasterDataAgentMaintenanceStatus {
+  if (statuses.includes("active")) {
+    return "active"
   }
 
-  return [...bySupplierPeriod.values()]
+  return statuses[0] ?? "inactive"
+}
+
+function pickEarliestValue(values: string[]): string {
+  const sorted = values.filter(Boolean).sort()
+  return sorted[0] ?? ""
+}
+
+function pickLatestValue(values: string[]): string {
+  const sorted = values.filter(Boolean).sort()
+  return sorted[sorted.length - 1] ?? ""
+}
+
+function pickFirstValue(values: string[]): string {
+  return values.find(Boolean) ?? ""
 }
 
 function deduplicateVendorWorkplaceBindings(

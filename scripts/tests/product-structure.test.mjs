@@ -446,6 +446,30 @@ test("master data visible terminology does not expose operating subject concepts
   );
 });
 
+test("workplace detail keeps service teams read-only inside workplace detail", async () => {
+  const workplaceDetailSource = await readFile(masterDataWorkplaceDetailPagePath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const workplaceDetailComponentSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataWorkplaceDetailPage"),
+    workbenchSource.indexOf("export function MasterDataWorkplaceCreatePage"),
+  );
+
+  assert.equal(
+    workplaceDetailSource.includes('fetchMasterDataReferences("vendors")'),
+    true,
+    "workplace detail should read supplier master data for supplier service teams",
+  );
+  assert.equal(
+    workplaceDetailComponentSource.includes("人员/绑定数"),
+    true,
+    "workplace service-team table should show aggregated people or binding counts",
+  );
+  assert.equal(workplaceDetailComponentSource.includes("合同"), false);
+  assert.equal(workplaceDetailComponentSource.includes("结算"), false);
+  assert.equal(workplaceDetailComponentSource.includes("最低人力"), false);
+  assert.equal(workplaceDetailComponentSource.includes("<form"), false);
+});
+
 test("vendor service context stays nested under vendor detail", async () => {
   await access(masterDataVendorDetailPagePath);
 

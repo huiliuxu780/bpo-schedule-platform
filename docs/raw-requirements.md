@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R860 - 职场详情只读服务团队关系
+
+```yaml
+id: R860
+module: "主数据维护"
+description: "PM 明确职场是地点对象，但一个职场可以同时有自有团队和供应商团队；供应商团队需要绑定供应商主数据。下一步应在职场详情页内只读展示该职场的服务团队关系：自有团队按职场下自有人员组织聚合，供应商团队按职场下绑定供应商聚合并展示供应商名称。不新增单独导航、合同、结算、最低人力或维护动作。"
+source: "PM confirmed IM160 workplace service-team relationship design on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM160 已完成：/master-data/sites/[workplaceId] 内的服务团队按自有人员组织和供应商绑定聚合展示，并读取供应商主数据名称；未新增导航、表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量或自动排班。"
+```
+
 ### R849 - 主数据非客服人员动作收口
 
 ```yaml
