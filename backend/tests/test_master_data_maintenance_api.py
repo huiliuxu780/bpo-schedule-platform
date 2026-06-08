@@ -81,6 +81,17 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
             ),
             routes,
         )
+        self.assertIn(
+            ("/api/v1/master-data/workplace-service-teams", "GET"),
+            routes,
+        )
+        self.assertIn(
+            (
+                "/api/v1/master-data/workplace-service-teams/{service_team_id}/maintenance",
+                "POST",
+            ),
+            routes,
+        )
 
     def test_maintain_organization_endpoint_updates_hierarchy_record(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

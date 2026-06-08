@@ -28,6 +28,19 @@ status: "done"
 notes: "IM160 已完成：/master-data/sites/[workplaceId] 内的服务团队按自有人员组织和供应商绑定聚合展示，并读取供应商主数据名称；未新增导航、表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量或自动排班。"
 ```
 
+### R861 - 职场服务团队本地维护对象
+
+```yaml
+id: R861
+module: "主数据维护"
+description: "PM 确认继续把职场详情内的服务团队从只读推导升级为本地可维护对象。服务团队必须留在具体职场详情上下文内：新增/编辑走子页面，冻结走 Dialog；自有服务团队绑定组织，供应商服务团队绑定供应商主数据。不新增独立导航，不引入合同、结算比例、最低人力或其他生产规则。"
+source: "PM confirmed IM161 workplace service-team maintenance design on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM161 已完成：新增本地职场服务团队对象、列表 API 和 create/edit/freeze 维护 API；/master-data/sites/[workplaceId] 读取维护对象并提供 Header 新增入口、行内编辑/冻结入口，新建/编辑走职场详情下子页面，冻结走 Dialog；不新增独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
 ### R849 - 主数据非客服人员动作收口
 
 ```yaml

@@ -75,10 +75,15 @@ export type MasterDataOrganizationMaintenanceActionKey =
   | "create"
   | "edit"
   | "freeze"
+export type MasterDataWorkplaceServiceTeamMaintenanceActionKey =
+  | "create"
+  | "edit"
+  | "freeze"
 
 export type MasterDataAgentMaintenanceStatus = "active" | "frozen" | "inactive"
 export type MasterDataEmployeeType = "internal" | "outsourced"
 export type MasterDataSkillCategory = "online" | "hotline" | "ticket"
+export type MasterDataWorkplaceServiceTeamType = "internal" | "supplier"
 
 export type MasterDataAgentMaintenanceDraft = {
   action: MasterDataAgentMaintenanceActionKey
@@ -131,6 +136,20 @@ export type MasterDataOrganizationMaintenanceDraft = {
   organizationName?: string
   organizationLevel?: number
   parentOrganizationId?: string
+  status?: MasterDataAgentMaintenanceStatus
+  effectiveFrom?: string
+  effectiveTo?: string
+}
+
+export type MasterDataWorkplaceServiceTeamMaintenanceDraft = {
+  action: MasterDataWorkplaceServiceTeamMaintenanceActionKey
+  sourceBatchId: string
+  serviceTeamId: string
+  workplaceId?: string
+  teamType?: MasterDataWorkplaceServiceTeamType
+  teamName?: string
+  organizationId?: string
+  supplierId?: string
   status?: MasterDataAgentMaintenanceStatus
   effectiveFrom?: string
   effectiveTo?: string
@@ -237,7 +256,23 @@ export type MasterDataWorkplaceBindingRow = {
   batch_id: string
 }
 
-export type MasterDataWorkplaceOperatorSource = "employee" | "binding"
+export type MasterDataWorkplaceServiceTeamRow = {
+  service_team_id: string
+  workplace_id: string
+  team_type: MasterDataWorkplaceServiceTeamType
+  team_name: string
+  organization_id: string | null
+  supplier_id: string | null
+  status: MasterDataAgentMaintenanceStatus
+  effective_from: string
+  effective_to: string
+  batch_id: string
+}
+
+export type MasterDataWorkplaceOperatorSource =
+  | "employee"
+  | "binding"
+  | "service_team"
 export type MasterDataWorkplaceOperatorType = "internal" | "supplier"
 
 export type MasterDataWorkplaceOperatorDisplay = {
@@ -249,6 +284,8 @@ export type MasterDataWorkplaceOperatorDisplay = {
   sourceLabel: string
   effectivePeriodLabel: string
   sourceBatchLabel: string
+  editHref: string | null
+  freezeHref: string | null
 }
 
 export type MasterDataWorkplaceOperatorViewRow = {
@@ -273,6 +310,7 @@ export type MasterDataWorkplaceDetailSummary = {
   totalOperators: number
   internalOperators: number
   supplierOperators: number
+  createServiceTeamHref: string | null
   operatorRows: MasterDataWorkplaceOperatorViewRow[]
 }
 
@@ -352,6 +390,19 @@ export type MasterDataOrganizationMaintenancePayload = {
   organization_name?: string
   organization_level?: number
   parent_organization_id?: string
+  status?: MasterDataAgentMaintenanceStatus
+  effective_from?: string
+  effective_to?: string
+}
+
+export type MasterDataWorkplaceServiceTeamMaintenancePayload = {
+  action: MasterDataWorkplaceServiceTeamMaintenanceActionKey
+  source_batch_id: string
+  workplace_id?: string
+  team_type?: MasterDataWorkplaceServiceTeamType
+  team_name?: string
+  organization_id?: string
+  supplier_id?: string
   status?: MasterDataAgentMaintenanceStatus
   effective_from?: string
   effective_to?: string
@@ -724,6 +775,12 @@ export function buildMasterDataOrganizationMaintenanceApiPath(
   return `/api/v1/master-data/organizations/${encodeURIComponent(organizationId)}/maintenance`
 }
 
+export function buildMasterDataWorkplaceServiceTeamMaintenanceApiPath(
+  serviceTeamId: string
+): string {
+  return `/api/v1/master-data/workplace-service-teams/${encodeURIComponent(serviceTeamId)}/maintenance`
+}
+
 export function buildMasterDataAgentSkillMaintenanceApiPath(
   employeeId: string
 ): string {
@@ -807,6 +864,23 @@ export function buildMasterDataOrganizationMaintenancePayload(
     organization_name: draft.organizationName,
     organization_level: draft.organizationLevel,
     parent_organization_id: draft.parentOrganizationId,
+    status: draft.status,
+    effective_from: draft.effectiveFrom,
+    effective_to: draft.effectiveTo,
+  })
+}
+
+export function buildMasterDataWorkplaceServiceTeamMaintenancePayload(
+  draft: MasterDataWorkplaceServiceTeamMaintenanceDraft
+): MasterDataWorkplaceServiceTeamMaintenancePayload {
+  return compactMasterDataWorkplaceServiceTeamMaintenancePayload({
+    action: draft.action,
+    source_batch_id: draft.sourceBatchId,
+    workplace_id: draft.workplaceId,
+    team_type: draft.teamType,
+    team_name: draft.teamName,
+    organization_id: draft.organizationId,
+    supplier_id: draft.supplierId,
     status: draft.status,
     effective_from: draft.effectiveFrom,
     effective_to: draft.effectiveTo,
@@ -1263,12 +1337,14 @@ export function summarizeMasterDataWorkplaceDetail({
   employees,
   bindings,
   suppliers,
+  serviceTeams,
 }: {
   workplaceId: string
   workplaces: MasterDataReferenceListRow[]
   employees: MasterDataEmployeeListRow[]
   bindings: MasterDataWorkplaceBindingRow[]
   suppliers?: MasterDataReferenceListRow[]
+  serviceTeams?: MasterDataWorkplaceServiceTeamRow[]
 }): MasterDataWorkplaceDetailSummary {
   const workplaceSummary = summarizeMasterDataReferenceManagement("sites", workplaces)
   const workplace =
@@ -1283,6 +1359,7 @@ export function summarizeMasterDataWorkplaceDetail({
       totalOperators: 0,
       internalOperators: 0,
       supplierOperators: 0,
+      createServiceTeamHref: null,
       operatorRows: [],
     }
   }
@@ -1290,20 +1367,33 @@ export function summarizeMasterDataWorkplaceDetail({
   const supplierById = new Map(
     (suppliers ?? []).map((supplier) => [supplier.reference_id, supplier])
   )
-  const internalRows = buildWorkplaceInternalTeamRows(
-    employees.filter(
-      (employee) =>
-        employee.workplace_id === workplace.reference_id &&
-        employee.employee_type === "internal"
-    )
+  const maintainedRows = buildMaintainedWorkplaceServiceTeamRows(
+    (serviceTeams ?? []).filter(
+      (serviceTeam) => serviceTeam.workplace_id === workplace.reference_id
+    ),
+    supplierById,
+    workplace.reference_id
   )
+  const internalRows =
+    maintainedRows.length > 0
+      ? []
+      : buildWorkplaceInternalTeamRows(
+          employees.filter(
+            (employee) =>
+              employee.workplace_id === workplace.reference_id &&
+              employee.employee_type === "internal"
+          )
+        )
 
-  const supplierRows = buildWorkplaceSupplierTeamRows(
-    bindings.filter((binding) => binding.workplace_id === workplace.reference_id),
-    supplierById
-  )
+  const supplierRows =
+    maintainedRows.length > 0
+      ? []
+      : buildWorkplaceSupplierTeamRows(
+          bindings.filter((binding) => binding.workplace_id === workplace.reference_id),
+          supplierById
+        )
 
-  const operatorRows = [...internalRows, ...supplierRows].sort((left, right) => {
+  const operatorRows = [...maintainedRows, ...internalRows, ...supplierRows].sort((left, right) => {
     if (left.operator_type !== right.operator_type) {
       return left.operator_type === "internal" ? -1 : 1
     }
@@ -1321,8 +1411,37 @@ export function summarizeMasterDataWorkplaceDetail({
       .length,
     supplierOperators: operatorRows.filter((row) => row.operator_type === "supplier")
       .length,
+    createServiceTeamHref: `/master-data/sites/${encodeURIComponent(workplace.reference_id)}/service-teams/new`,
     operatorRows,
   }
+}
+
+function buildMaintainedWorkplaceServiceTeamRows(
+  serviceTeams: MasterDataWorkplaceServiceTeamRow[],
+  supplierById: Map<string, MasterDataReferenceListRow>,
+  workplaceId: string
+): MasterDataWorkplaceOperatorViewRow[] {
+  return serviceTeams.map((serviceTeam) => {
+    const supplier = serviceTeam.supplier_id
+      ? supplierById.get(serviceTeam.supplier_id) ?? null
+      : null
+
+    return buildWorkplaceOperatorRow({
+      key: serviceTeam.service_team_id,
+      type: serviceTeam.team_type,
+      name: serviceTeam.team_name,
+      supplierId: serviceTeam.supplier_id,
+      supplierName: supplier?.reference_name,
+      recordCount: 1,
+      status: serviceTeam.status,
+      sourceType: "service_team",
+      effectiveFrom: serviceTeam.effective_from,
+      effectiveTo: serviceTeam.effective_to,
+      batchId: serviceTeam.batch_id,
+      editHref: `/master-data/sites/${encodeURIComponent(workplaceId)}/service-teams/${encodeURIComponent(serviceTeam.service_team_id)}/edit`,
+      freezeHref: `/master-data/sites/${encodeURIComponent(workplaceId)}?freeze_service_team_id=${encodeURIComponent(serviceTeam.service_team_id)}`,
+    })
+  })
 }
 
 function buildWorkplaceInternalTeamRows(
@@ -1454,6 +1573,8 @@ function buildWorkplaceOperatorRow({
   effectiveFrom,
   effectiveTo,
   batchId,
+  editHref = null,
+  freezeHref = null,
 }: {
   key: string
   type: MasterDataWorkplaceOperatorType
@@ -1466,6 +1587,8 @@ function buildWorkplaceOperatorRow({
   effectiveFrom: string
   effectiveTo: string
   batchId: string
+  editHref?: string | null
+  freezeHref?: string | null
 }): MasterDataWorkplaceOperatorViewRow {
   return {
     operator_key: key,
@@ -1483,13 +1606,26 @@ function buildWorkplaceOperatorRow({
       operatorNameLabel: formatMasterDataVisibleValue(name),
       supplierLabel: supplierId
         ? formatMasterDataVisibleValue(supplierName ?? supplierId)
-        : "无供应商",
+        : sourceType === "service_team"
+          ? "-"
+          : "无供应商",
       recordCountLabel:
-        type === "internal" ? `${recordCount} 人` : `${recordCount} 条绑定`,
+        sourceType === "service_team"
+          ? `${recordCount} 条记录`
+          : type === "internal"
+            ? `${recordCount} 人`
+            : `${recordCount} 条绑定`,
       statusLabel: formatMasterDataEmployeeStatus(status),
-      sourceLabel: sourceType === "employee" ? "人员档案" : "人员归属记录",
+      sourceLabel:
+        sourceType === "employee"
+          ? "人员档案"
+          : sourceType === "binding"
+            ? "人员归属记录"
+            : "服务团队记录",
       effectivePeriodLabel: formatEffectivePeriod(effectiveFrom, effectiveTo),
       sourceBatchLabel: formatImportBatchDisplayLabel(batchId),
+      editHref,
+      freezeHref,
     },
   }
 }
@@ -1749,6 +1885,14 @@ function compactMasterDataOrganizationMaintenancePayload(
   return Object.fromEntries(
     Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
   ) as MasterDataOrganizationMaintenancePayload
+}
+
+function compactMasterDataWorkplaceServiceTeamMaintenancePayload(
+  payload: MasterDataWorkplaceServiceTeamMaintenancePayload
+): MasterDataWorkplaceServiceTeamMaintenancePayload {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([, value]) => value !== undefined && value !== "")
+  ) as MasterDataWorkplaceServiceTeamMaintenancePayload
 }
 
 function getSingleSearchParam(value: string | string[] | undefined): string {

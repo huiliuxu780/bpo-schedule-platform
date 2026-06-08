@@ -5,11 +5,14 @@ from pathlib import Path
 from sqlalchemy import text
 
 from backend.app.import_persistence import ImportPersistenceRepository, build_engine
+from backend.app import master_data_maintenance
+from backend.app import models
 from backend.app.master_data_maintenance import maintain_employee
 from backend.app.master_data_maintenance import maintain_employee_binding
 from backend.app.master_data_maintenance import maintain_employee_skills
 from backend.app.master_data_maintenance import maintain_organization
 from backend.app.master_data_maintenance import maintain_reference
+from backend.app.master_data_maintenance import maintain_workplace_service_team
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
     EmployeeMasterDataInput,
@@ -25,10 +28,119 @@ from backend.app.models import (
     MasterDataReferenceInput,
     MasterDataReferenceMaintenanceRequest,
     MasterDataSnapshotRequest,
+    MasterDataWorkplaceServiceTeamMaintenanceRequest,
 )
 
 
 class MasterDataMaintenanceServiceTest(unittest.TestCase):
+    def test_workplace_service_team_maintenance_contract_is_exposed(self) -> None:
+        self.assertTrue(
+            hasattr(models, "MasterDataWorkplaceServiceTeamMaintenanceRequest")
+        )
+        self.assertTrue(hasattr(models, "MasterDataWorkplaceServiceTeamRecord"))
+        self.assertTrue(
+            hasattr(master_data_maintenance, "maintain_workplace_service_team")
+        )
+        self.assertTrue(
+            hasattr(
+                MasterDataPersistenceRepository,
+                "list_workplace_service_teams",
+            )
+        )
+
+    def test_create_edit_and_freeze_workplace_service_team(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'service-team.db'}"
+            _create_import_batch(database_url, "BATCH-MD-SERVICE-TEAM")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-SERVICE-TEAM",
+                    workplaces=[
+                        MasterDataReferenceInput(
+                            reference_id="SH-01",
+                            reference_name="上海职场",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    suppliers=[
+                        MasterDataReferenceInput(
+                            reference_id="SUP-001",
+                            reference_name="上海供应商",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    organizations=[
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CC",
+                            organization_name="CC",
+                            organization_level=1,
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        ),
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-RETURN",
+                            organization_name="集中退换小组",
+                            organization_level=2,
+                            parent_organization_id="ORG-CC",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                )
+            )
+
+            created = maintain_workplace_service_team(
+                "TEAM-SH-RETURN",
+                MasterDataWorkplaceServiceTeamMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-SERVICE-TEAM",
+                    workplace_id="SH-01",
+                    team_type="internal",
+                    team_name="集中退换小组",
+                    organization_id="ORG-RETURN",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+            edited = maintain_workplace_service_team(
+                "TEAM-SH-RETURN",
+                MasterDataWorkplaceServiceTeamMaintenanceRequest(
+                    action="edit",
+                    source_batch_id="BATCH-MD-SERVICE-TEAM",
+                    team_type="supplier",
+                    team_name="供应商驻场团队",
+                    supplier_id="SUP-001",
+                ),
+                repository,
+            )
+            frozen = maintain_workplace_service_team(
+                "TEAM-SH-RETURN",
+                MasterDataWorkplaceServiceTeamMaintenanceRequest(
+                    action="freeze",
+                    source_batch_id="BATCH-MD-SERVICE-TEAM",
+                ),
+                repository,
+            )
+
+        self.assertEqual(created.action_status, "created")
+        self.assertEqual(created.service_team.organization_id, "ORG-RETURN")
+        self.assertIsNone(created.service_team.supplier_id)
+        self.assertEqual(edited.action_status, "updated")
+        self.assertEqual(edited.service_team.team_type, "supplier")
+        self.assertIsNone(edited.service_team.organization_id)
+        self.assertEqual(edited.service_team.supplier_id, "SUP-001")
+        self.assertEqual(frozen.action_status, "frozen")
+        self.assertEqual(frozen.service_team.status, "frozen")
+
     def test_legacy_local_schema_allows_employee_skill_and_organization_maintenance(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'legacy-maintenance.db'}"

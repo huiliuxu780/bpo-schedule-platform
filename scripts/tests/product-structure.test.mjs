@@ -17,6 +17,9 @@ const masterDataAgentDataPath = new URL("../../app/master-data/agents/data.ts", 
 const masterDataWorkplaceDetailPagePath = new URL("../../app/master-data/sites/[workplaceId]/page.tsx", import.meta.url);
 const masterDataWorkplaceCreatePagePath = new URL("../../app/master-data/sites/new/page.tsx", import.meta.url);
 const masterDataWorkplaceEditPagePath = new URL("../../app/master-data/sites/[workplaceId]/edit/page.tsx", import.meta.url);
+const masterDataWorkplaceServiceTeamCreatePagePath = new URL("../../app/master-data/sites/[workplaceId]/service-teams/new/page.tsx", import.meta.url);
+const masterDataWorkplaceServiceTeamEditPagePath = new URL("../../app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/edit/page.tsx", import.meta.url);
+const masterDataWorkplaceServiceTeamActionsPath = new URL("../../app/master-data/sites/[workplaceId]/service-teams/actions.ts", import.meta.url);
 const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[vendorId]/page.tsx", import.meta.url);
 const masterDataVendorCreatePagePath = new URL("../../app/master-data/vendors/new/page.tsx", import.meta.url);
 const masterDataVendorEditPagePath = new URL("../../app/master-data/vendors/[vendorId]/edit/page.tsx", import.meta.url);
@@ -446,7 +449,11 @@ test("master data visible terminology does not expose operating subject concepts
   );
 });
 
-test("workplace detail keeps service teams read-only inside workplace detail", async () => {
+test("workplace detail keeps service-team maintenance nested under workplace detail", async () => {
+  await access(masterDataWorkplaceServiceTeamCreatePagePath);
+  await access(masterDataWorkplaceServiceTeamEditPagePath);
+  await access(masterDataWorkplaceServiceTeamActionsPath);
+
   const workplaceDetailSource = await readFile(masterDataWorkplaceDetailPagePath, "utf8");
   const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
   const workplaceDetailComponentSource = workbenchSource.slice(
@@ -464,10 +471,26 @@ test("workplace detail keeps service teams read-only inside workplace detail", a
     true,
     "workplace service-team table should show aggregated people or binding counts",
   );
+  assert.equal(
+    workplaceDetailSource.includes("fetchMasterDataWorkplaceServiceTeams"),
+    true,
+    "workplace detail should fetch maintained service-team records",
+  );
+  assert.equal(
+    workbenchSource.includes("新增服务团队"),
+    true,
+    "workplace detail should provide a page action to the nested create page",
+  );
+  assert.equal(
+    workplaceDetailComponentSource.includes("冻结服务团队"),
+    true,
+    "service-team freeze should use a dialog in the workplace detail context",
+  );
   assert.equal(workplaceDetailComponentSource.includes("合同"), false);
   assert.equal(workplaceDetailComponentSource.includes("结算"), false);
   assert.equal(workplaceDetailComponentSource.includes("最低人力"), false);
-  assert.equal(workplaceDetailComponentSource.includes("<form"), false);
+  assert.equal(workbenchSource.includes("createServiceTeamHref"), true);
+  assert.equal(workplaceDetailComponentSource.includes("<form"), true);
 });
 
 test("vendor service context stays nested under vendor detail", async () => {

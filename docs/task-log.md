@@ -2071,3 +2071,14 @@
 - action: 完成职场详情只读服务团队关系。
 - status: `done`
 - notes: `/master-data/sites/[workplaceId]` 的服务团队表已按该职场自有人员组织聚合自有团队，按该职场供应商绑定聚合供应商团队，并读取供应商主数据名称；表格展示团队类型、服务团队、供应商、人员/绑定数、状态、有效期和来源批次；本轮不新增导航、表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量操作或自动排班；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM161`
+- source_ids:
+  - `R861`
+- story_ids:
+  - `US781`
+- action: 完成职场服务团队本地维护对象。
+- status: `done`
+- notes: 新增 `master_data_workplace_service_teams` 本地表、迁移、repository、列表 API 和单条 create/edit/freeze 维护 API；`/master-data/sites/[workplaceId]` 优先展示本地服务团队记录，Header 提供 `新增服务团队`，行内提供编辑和冻结，新增/编辑进入职场详情下子页面，冻结使用 Dialog；本轮不新增独立导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

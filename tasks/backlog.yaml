@@ -2,6 +2,54 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM161
+    title: "职场服务团队本地维护对象"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM160"]
+    allowed_files:
+      - "app/master-data/sites/[workplaceId]/page.tsx"
+      - "app/master-data/sites/[workplaceId]/service-teams/new/page.tsx"
+      - "app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/edit/page.tsx"
+      - "app/master-data/sites/[workplaceId]/service-teams/actions.ts"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/app/master_data_persistence.py"
+      - "backend/migrations/versions/20260608_0010_create_workplace_service_teams.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "后端提供本地职场服务团队对象、列表 API 和单条维护 API，支持 create/edit/freeze。"
+      - "职场服务团队对象限定字段为 service_team_id、workplace_id、team_type、team_name、organization_id、supplier_id、status、effective_from/effective_to、source_batch_id。"
+      - "自有服务团队要求 organization_id；供应商服务团队要求 supplier_id；两类关系不得混填。"
+      - "/master-data/sites/[workplaceId] 展示本地服务团队记录，并提供新增、编辑、冻结入口。"
+      - "新增和编辑使用职场详情下的子页面；冻结使用 Dialog。"
+      - "不新增导航，不引入合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到独立服务团队导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成职场服务团队本地维护对象：新增 master_data_workplace_service_teams 本地表和迁移、列表 API、单条 create/edit/freeze 维护 API；/master-data/sites/[workplaceId] 优先展示本地服务团队记录并提供 Header 新增入口、行内编辑/冻结入口；/master-data/sites/[workplaceId]/service-teams/new 和 /service-teams/[serviceTeamId]/edit 为子页面，冻结通过 Dialog。未新增导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
   - id: IM157
     title: "组织基础 CRUD 前端闭环"
     priority: P0

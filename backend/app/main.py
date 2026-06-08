@@ -22,6 +22,7 @@ from backend.app.master_data_maintenance import (
     maintain_employee_skills,
     maintain_organization,
     maintain_reference,
+    maintain_workplace_service_team,
 )
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.personnel_schedule_import import apply_personnel_schedule_import_batch
@@ -70,6 +71,9 @@ from backend.app.models import (
     MasterDataReferenceMaintenanceRequest,
     MasterDataReferenceMaintenanceResponse,
     MasterDataReferenceType,
+    MasterDataWorkplaceServiceTeamListResponse,
+    MasterDataWorkplaceServiceTeamMaintenanceRequest,
+    MasterDataWorkplaceServiceTeamMaintenanceResponse,
     PersonnelScheduleImportApplyResponse,
     PersonnelScheduleProductionDetail,
     ReviewCaseDetail,
@@ -726,6 +730,19 @@ def list_master_data_organizations() -> MasterDataOrganizationListResponse:
     return MasterDataOrganizationListResponse(items=repository.list_organizations())
 
 
+@app.get(
+    "/api/v1/master-data/workplace-service-teams",
+    response_model=MasterDataWorkplaceServiceTeamListResponse,
+)
+def list_master_data_workplace_service_teams(
+    workplace_id: str | None = Query(default=None),
+) -> MasterDataWorkplaceServiceTeamListResponse:
+    repository = MasterDataPersistenceRepository()
+    return MasterDataWorkplaceServiceTeamListResponse(
+        items=repository.list_workplace_service_teams(workplace_id=workplace_id)
+    )
+
+
 @app.post(
     "/api/v1/master-data/organizations/{organization_id}/maintenance",
     response_model=MasterDataOrganizationMaintenanceResponse,
@@ -755,6 +772,24 @@ def maintain_master_data_binding(
     try:
         return maintain_employee_binding(
             binding_id,
+            request,
+            MasterDataPersistenceRepository(),
+        )
+    except ValueError as exc:
+        raise _master_data_maintenance_http_error(exc) from exc
+
+
+@app.post(
+    "/api/v1/master-data/workplace-service-teams/{service_team_id}/maintenance",
+    response_model=MasterDataWorkplaceServiceTeamMaintenanceResponse,
+)
+def maintain_master_data_workplace_service_team(
+    service_team_id: str,
+    request: MasterDataWorkplaceServiceTeamMaintenanceRequest,
+) -> MasterDataWorkplaceServiceTeamMaintenanceResponse:
+    try:
+        return maintain_workplace_service_team(
+            service_team_id,
             request,
             MasterDataPersistenceRepository(),
         )
@@ -800,7 +835,14 @@ def _master_data_maintenance_http_error(exc: ValueError) -> HTTPException:
     code = _master_data_maintenance_error_code(message)
     status_code = (
         404
-        if code in {"EMPLOYEE_NOT_FOUND", "SOURCE_BATCH_NOT_FOUND", "REFERENCE_NOT_FOUND", "BINDING_NOT_FOUND", "ORGANIZATION_NOT_FOUND"}
+        if code in {
+            "EMPLOYEE_NOT_FOUND",
+            "SOURCE_BATCH_NOT_FOUND",
+            "REFERENCE_NOT_FOUND",
+            "BINDING_NOT_FOUND",
+            "ORGANIZATION_NOT_FOUND",
+            "SERVICE_TEAM_NOT_FOUND",
+        }
         else 400
     )
     return HTTPException(
@@ -824,6 +866,11 @@ def _master_data_maintenance_error_code(message: str) -> str:
         "REFERENCE_ALREADY_EXISTS",
         "ORGANIZATION_NOT_FOUND",
         "ORGANIZATION_ALREADY_EXISTS",
+        "SERVICE_TEAM_NOT_FOUND",
+        "SERVICE_TEAM_ALREADY_EXISTS",
+        "SERVICE_TEAM_WRITE_FAILED",
+        "SUPPLIER_NOT_ALLOWED_FOR_INTERNAL_SERVICE_TEAM",
+        "ORGANIZATION_NOT_ALLOWED_FOR_SUPPLIER_SERVICE_TEAM",
         "BINDING_NOT_FOUND",
         "BINDING_ALREADY_EXISTS",
         "MISSING_REQUIRED_FIELD",
@@ -840,6 +887,7 @@ def _master_data_maintenance_error_code(message: str) -> str:
             "employee_id ",
             "supplier_id ",
             "workplace_id ",
+            "organization_id ",
             "project_id ",
             "skill_id ",
         )

@@ -19,6 +19,9 @@ from backend.app.models import (
     MasterDataReferenceMaintenanceResponse,
     MasterDataReferenceRecord,
     MasterDataReferenceType,
+    MasterDataWorkplaceServiceTeamInput,
+    MasterDataWorkplaceServiceTeamMaintenanceRequest,
+    MasterDataWorkplaceServiceTeamMaintenanceResponse,
 )
 
 
@@ -283,6 +286,79 @@ def maintain_employee_binding(
     )
 
 
+def maintain_workplace_service_team(
+    service_team_id: str,
+    request: MasterDataWorkplaceServiceTeamMaintenanceRequest,
+    repository: MasterDataPersistenceRepository,
+) -> MasterDataWorkplaceServiceTeamMaintenanceResponse:
+    if not repository.has_import_batch(request.source_batch_id):
+        raise ValueError(f"SOURCE_BATCH_NOT_FOUND: {request.source_batch_id}")
+
+    if request.action == "create":
+        return _create_workplace_service_team(service_team_id, request, repository)
+
+    existing = repository.get_workplace_service_team(service_team_id)
+    if existing is None:
+        raise ValueError(f"SERVICE_TEAM_NOT_FOUND: {service_team_id}")
+
+    if request.action == "freeze":
+        service_team = repository.upsert_workplace_service_team(
+            MasterDataWorkplaceServiceTeamInput(
+                service_team_id=existing.service_team_id,
+                workplace_id=existing.workplace_id,
+                team_type=existing.team_type,
+                team_name=existing.team_name,
+                organization_id=existing.organization_id,
+                supplier_id=existing.supplier_id,
+                status="frozen",
+                effective_from=existing.effective_from,
+                effective_to=existing.effective_to,
+            ),
+            request.source_batch_id,
+        )
+        return MasterDataWorkplaceServiceTeamMaintenanceResponse(
+            service_team_id=service_team_id,
+            action_status="frozen",
+            service_team=service_team,
+        )
+
+    team_type = request.team_type or existing.team_type
+    organization_id = (
+        request.organization_id
+        if request.organization_id is not None
+        else existing.organization_id
+    )
+    supplier_id = (
+        request.supplier_id
+        if request.supplier_id is not None
+        else existing.supplier_id
+    )
+    if request.team_type == "internal":
+        supplier_id = None
+    if request.team_type == "supplier":
+        organization_id = None
+
+    service_team = repository.upsert_workplace_service_team(
+        MasterDataWorkplaceServiceTeamInput(
+            service_team_id=existing.service_team_id,
+            workplace_id=request.workplace_id or existing.workplace_id,
+            team_type=team_type,
+            team_name=request.team_name or existing.team_name,
+            organization_id=organization_id,
+            supplier_id=supplier_id,
+            status=request.status or existing.status,
+            effective_from=request.effective_from or existing.effective_from,
+            effective_to=request.effective_to or existing.effective_to,
+        ),
+        request.source_batch_id,
+    )
+    return MasterDataWorkplaceServiceTeamMaintenanceResponse(
+        service_team_id=service_team_id,
+        action_status="updated",
+        service_team=service_team,
+    )
+
+
 def _create_employee(
     employee_id: str,
     request: MasterDataEmployeeMaintenanceRequest,
@@ -405,6 +481,44 @@ def _create_binding(
     )
 
 
+def _create_workplace_service_team(
+    service_team_id: str,
+    request: MasterDataWorkplaceServiceTeamMaintenanceRequest,
+    repository: MasterDataPersistenceRepository,
+) -> MasterDataWorkplaceServiceTeamMaintenanceResponse:
+    if repository.get_workplace_service_team(service_team_id) is not None:
+        raise ValueError(f"SERVICE_TEAM_ALREADY_EXISTS: {service_team_id}")
+    _require_service_team_fields(
+        request,
+        "workplace_id",
+        "team_type",
+        "team_name",
+        "effective_from",
+        "effective_to",
+    )
+    _validate_effective_period(request.effective_from, request.effective_to)
+
+    service_team = repository.upsert_workplace_service_team(
+        MasterDataWorkplaceServiceTeamInput(
+            service_team_id=service_team_id,
+            workplace_id=request.workplace_id,
+            team_type=request.team_type,
+            team_name=request.team_name,
+            organization_id=request.organization_id,
+            supplier_id=request.supplier_id,
+            status=request.status or "active",
+            effective_from=request.effective_from,
+            effective_to=request.effective_to,
+        ),
+        request.source_batch_id,
+    )
+    return MasterDataWorkplaceServiceTeamMaintenanceResponse(
+        service_team_id=service_team_id,
+        action_status="created",
+        service_team=service_team,
+    )
+
+
 def _require_fields(
     request: MasterDataEmployeeMaintenanceRequest,
     *field_names: str,
@@ -446,6 +560,19 @@ def _require_organization_fields(
 
 def _require_binding_fields(
     request: MasterDataBindingMaintenanceRequest,
+    *field_names: str,
+) -> None:
+    missing = [
+        field_name
+        for field_name in field_names
+        if getattr(request, field_name) in (None, "")
+    ]
+    if missing:
+        raise ValueError(f"MISSING_REQUIRED_FIELD: {','.join(missing)}")
+
+
+def _require_service_team_fields(
+    request: MasterDataWorkplaceServiceTeamMaintenanceRequest,
     *field_names: str,
 ) -> None:
     missing = [

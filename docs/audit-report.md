@@ -4176,3 +4176,22 @@
 - `npm run lint` 和 `npm run typecheck` 已通过。
 - Browser smoke over `/master-data/sites/SH-01` confirmed supplier team `供应商 A` and `1 条绑定`; `/master-data/sites/SITE-IM158` confirmed internal team and `1 人`; both pages did not show 合同、结算、最低人力。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM161 职场服务团队本地维护对象
+
+#### 审计结论
+
+- 新增本地 `master_data_workplace_service_teams` 表和 Alembic 迁移，字段限定为服务团队 ID、职场、团队类型、团队名称、组织、供应商、状态、生效期和来源批次。
+- 新增 `/api/v1/master-data/workplace-service-teams` 列表 API 和 `/api/v1/master-data/workplace-service-teams/{service_team_id}/maintenance` 单条维护 API，支持 create/edit/freeze。
+- 自有服务团队要求组织引用，供应商服务团队要求供应商引用；编辑切换团队类型时会清理另一类引用，避免混填。
+- `/master-data/sites/[workplaceId]` 仍是唯一入口，不新增 Sidebar 导航或独立服务团队模块；页面优先展示本地服务团队记录，缺记录时保留 IM160 推导回退。
+- 新增和编辑进入 `/master-data/sites/[workplaceId]/service-teams/new` 与 `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/edit` 子页面；冻结通过职场详情 Dialog。
+- 本轮没有新增合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明职场详情未读取 maintained serviceTeams；产品结构测试先失败，证明子页面不存在；后端 contract/API 测试先失败，证明缺少维护对象和 route。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/product-structure.test.mjs` 通过 55 tests；后端维护定向测试通过 28 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- API smoke 创建 `TEAM-IM161-SMOKE` 返回 200；in-app browser smoke 确认 `/master-data/sites/SH-01` 显示服务团队记录来源、编辑/冻结入口，`/master-data/sites/SH-01/service-teams/new` 显示子页表单，`/service-teams/TEAM-IM161-SMOKE/edit` 回填字段；页面未出现合同、结算或最低人力。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -10,6 +10,7 @@ import type {
   MasterDataOrganizationListRow,
   MasterDataReferenceListRow,
   MasterDataWorkplaceBindingRow,
+  MasterDataWorkplaceServiceTeamRow,
 } from "@/components/master-data-maintenance-model"
 
 export type ApiResult<T> = {
@@ -133,6 +134,48 @@ export async function fetchMasterDataWorkplaceBindings(): Promise<
 
     const payload = (await response.json()) as {
       items?: MasterDataWorkplaceBindingRow[]
+    }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
+export async function fetchMasterDataWorkplaceServiceTeams(
+  workplaceId?: string
+): Promise<ApiResult<MasterDataWorkplaceServiceTeamRow[]>> {
+  const searchParams = new URLSearchParams()
+  if (workplaceId) {
+    searchParams.set("workplace_id", workplaceId)
+  }
+  const query = searchParams.toString()
+
+  try {
+    const response = await fetch(
+      buildImportApiUrl(
+        `/api/v1/master-data/workplace-service-teams${query ? `?${query}` : ""}`
+      ),
+      {
+        cache: "no-store",
+      }
+    )
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `职场服务团队读取失败：${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as {
+      items?: MasterDataWorkplaceServiceTeamRow[]
     }
 
     return {

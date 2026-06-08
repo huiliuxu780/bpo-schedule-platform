@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM161 Workplace Service Team Maintenance
+
+- branch_name: `codex/im161-workplace-service-team-maintenance`
+- base_main_commit: `3060d9c`
+- stacked_on: `d36e5cf feat: group workplace service teams`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed database-persistence slice. Add a local workplace service-team object/API and keep all actions under `/master-data/sites/[workplaceId]`: Header create action, nested create/edit child pages, and freeze Dialog. Keep standalone navigation, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/sites/[workplaceId]/page.tsx`, nested service-team pages/actions, `app/master-data/agents/data.ts`, master-data model/workbench components, backend master-data models/service/persistence/main route, one Alembic migration, focused frontend/backend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no package/lockfile changes, no Sidebar changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected service-team local table/API, service-team maintenance request/response models, create/edit/freeze service logic with internal-vs-supplier reference validation, workplace detail maintained-record display and actions, nested service-team form pages, focused tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because maintained `serviceTeams` were ignored; product-structure test first failed because nested service-team pages/actions did not exist; backend contract/API tests first failed because service-team models/repository/route were missing. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/product-structure.test.mjs` passed with 55 tests, backend master-data maintenance tests passed with 28 tests, `npm run lint` passed, and `npm run typecheck` passed. API smoke created `TEAM-IM161-SMOKE` successfully, and in-app browser smoke confirmed workplace detail and service-team create/edit pages without contract/settlement/minimum-staffing copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM160 Workplace Detail Service Teams
 
 - branch_name: `codex/im160-workplace-service-teams`
