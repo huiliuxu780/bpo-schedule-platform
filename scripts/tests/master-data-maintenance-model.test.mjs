@@ -7,6 +7,8 @@ import {
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
+  buildMasterDataSkillMaintenanceApiPath,
+  buildMasterDataSkillMaintenancePayload,
   buildMasterDataVendorMaintenanceApiPath,
   buildMasterDataVendorMaintenancePayload,
   buildMasterDataWorkplaceMaintenanceApiPath,
@@ -153,6 +155,7 @@ test("agent workplace and vendor source contexts expose submit source batches fo
   assert.equal(skillContext.agentSubmitSourceBatchId, null);
   assert.equal(skillContext.workplaceSubmitSourceBatchId, null);
   assert.equal(skillContext.vendorSubmitSourceBatchId, null);
+  assert.equal(skillContext.skillSubmitSourceBatchId, "BATCH-MD-001");
 });
 
 test("master data employee list summarizes org path type workplace and skills", () => {
@@ -388,7 +391,7 @@ test("reference master data management summarizes list rows by object type", () 
   );
 });
 
-test("workplace and vendor list rows expose child detail entries", () => {
+test("workplace vendor and skill list rows expose confirmed child entries", () => {
   const siteSummary = summarizeMasterDataReferenceManagement("sites", [
     {
       reference_id: "SH-01",
@@ -409,6 +412,17 @@ test("workplace and vendor list rows expose child detail entries", () => {
       batch_id: "BATCH-MD-001",
     },
   ]);
+  const skillSummary = summarizeMasterDataReferenceManagement("skills", [
+    {
+      reference_id: "SKILL-ONLINE",
+      reference_name: "在线接待",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skill_category: "online",
+    },
+  ]);
 
   assert.equal(
     siteSummary.rows[0].display.detailHref,
@@ -426,6 +440,57 @@ test("workplace and vendor list rows expose child detail entries", () => {
   assert.equal(
     vendorSummary.rows[0].display.freezeHref,
     "/master-data/vendors?freeze_vendor_id=SUP-001",
+  );
+  assert.equal(skillSummary.createHref, "/master-data/skills/new");
+  assert.equal(skillSummary.rows[0].display.detailHref, null);
+  assert.equal(
+    skillSummary.rows[0].display.editHref,
+    "/master-data/skills/SKILL-ONLINE/edit",
+  );
+  assert.equal(
+    skillSummary.rows[0].display.freezeHref,
+    "/master-data/skills?freeze_skill_id=SKILL-ONLINE",
+  );
+});
+
+test("skill maintenance builders submit category through the reference API", () => {
+  assert.equal(
+    buildMasterDataSkillMaintenanceApiPath("SKILL 在线/一线"),
+    "/api/v1/master-data/skills/SKILL%20%E5%9C%A8%E7%BA%BF%2F%E4%B8%80%E7%BA%BF/maintenance",
+  );
+
+  assert.deepEqual(
+    buildMasterDataSkillMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      skillId: "SKILL-ONLINE",
+      skillName: "在线接待",
+      skillCategory: "online",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "在线接待",
+      skill_category: "online",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+
+  assert.deepEqual(
+    buildMasterDataSkillMaintenancePayload({
+      action: "freeze",
+      sourceBatchId: "BATCH-MD-001",
+      skillId: "SKILL-ONLINE",
+    }),
+    {
+      action: "freeze",
+      source_batch_id: "BATCH-MD-001",
+    },
   );
 });
 

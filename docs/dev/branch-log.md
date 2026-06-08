@@ -3782,3 +3782,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM156 Skill CRUD Frontend Loop
+
+- branch_name: `codex/im156-skill-crud`
+- base_main_commit: `cadc9dc`
+- stacked_on: `cadc9dc feat: add vendor crud frontend loop`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of master-data maintenance. Add the skill create action to `/master-data/skills` Header actions, add row-level edit/freeze actions, create `/master-data/skills/new`, create `/master-data/skills/[skillId]/edit`, and use a freeze confirmation Dialog. Reuse the existing skills reference maintenance API and Alert feedback, with `skill_category` submitted through the existing maintenance request. Keep employee-skill binding, scheduling skill references, skill hierarchy, approval, export, batch, permissions, new backend route/schema/migration, dependency, automatic scheduling, formula, and charge-factor work out of scope.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/skills/new/page.tsx`, `app/master-data/skills/[skillId]/edit/page.tsx`, `backend/app/models.py`, `backend/app/master_data_maintenance.py`, backend maintenance tests, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected skill model/action helpers, skills list Header action, row edit/freeze links, create/edit child pages, freeze Dialog, `skill_category` request persistence through existing API, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `buildMasterDataSkillMaintenanceApiPath` was missing; TDD RED product-structure test then failed because `/app/master-data/skills/new/page.tsx` did not exist; backend directed unittest first failed because `skill_category` remained `None`. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 23 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 26 tests, `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` passed with 23 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/skills` has Header `新建`, row `编辑`/`冻结`, no inline create submit; `/master-data/skills/new` renders技能组 ID/技能组名称/归属属性 and `提交新增`; `/master-data/skills/L1-CN/edit` renders `提交编辑` with hidden skill ID; `/master-data/skills?freeze_skill_id=L1-CN` renders `冻结技能组` Dialog after hydration. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 210 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

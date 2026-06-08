@@ -497,6 +497,7 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
                         action="create",
                         source_batch_id="BATCH-MD-API-003",
                         reference_name="粤语",
+                        skill_category="hotline",
                         effective_from="2026-06-01",
                         effective_to="2026-12-31",
                     ),
@@ -505,6 +506,7 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
         self.assertEqual(response.action_status, "created")
         self.assertEqual(response.reference.reference_id, "SKILL-API-001")
         self.assertEqual(response.reference.reference_name, "粤语")
+        self.assertEqual(response.reference.skill_category, "hotline")
 
     def test_list_references_and_bindings_return_master_data_rows(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

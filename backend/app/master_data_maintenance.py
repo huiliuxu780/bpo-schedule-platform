@@ -129,6 +129,7 @@ def maintain_reference(
                 status="frozen",
                 effective_from=existing.effective_from,
                 effective_to=existing.effective_to,
+                skill_category=existing.skill_category,
             ),
             request.source_batch_id,
         )
@@ -145,6 +146,7 @@ def maintain_reference(
                 status=existing.status,
                 effective_from=request.effective_from,
                 effective_to=request.effective_to,
+                skill_category=existing.skill_category,
             ),
             request.source_batch_id,
         )
@@ -163,6 +165,7 @@ def maintain_reference(
             status=request.status or existing.status,
             effective_from=request.effective_from or existing.effective_from,
             effective_to=request.effective_to or existing.effective_to,
+            skill_category=request.skill_category or existing.skill_category,
         ),
         request.source_batch_id,
     )
@@ -271,6 +274,7 @@ def _create_reference(
             status=request.status or "active",
             effective_from=request.effective_from,
             effective_to=request.effective_to,
+            skill_category=request.skill_category,
         ),
         request.source_batch_id,
     )

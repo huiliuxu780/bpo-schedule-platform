@@ -383,6 +383,7 @@ class MasterDataReferenceMaintenanceRequest(BaseModel):
     action: MasterDataReferenceMaintenanceAction
     source_batch_id: str
     reference_name: str | None = None
+    skill_category: MasterDataSkillCategory | None = None
     status: MasterDataStatus | None = None
     effective_from: str | None = None
     effective_to: str | None = None

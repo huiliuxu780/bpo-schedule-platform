@@ -365,6 +365,31 @@ class MasterDataMaintenanceServiceTest(unittest.TestCase):
             self.assertEqual(response.reference.status, "active")
             self.assertEqual(response.reference.batch_id, "BATCH-MD-MAINT-006")
 
+    def test_create_skill_reference_writes_skill_category(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-MAINT-SKILL")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+
+            response = maintain_reference(
+                "skills",
+                "SKILL-ONLINE-001",
+                MasterDataReferenceMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-MAINT-SKILL",
+                    reference_name="在线接待",
+                    skill_category="online",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+
+            self.assertEqual(response.action_status, "created")
+            self.assertEqual(response.reference.reference_id, "SKILL-ONLINE-001")
+            self.assertEqual(response.reference.skill_category, "online")
+
     def test_freeze_reference_preserves_project_name_and_effective_period(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"

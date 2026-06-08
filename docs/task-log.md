@@ -2016,3 +2016,14 @@
 - action: 完成供应商基础 CRUD 前端闭环。
 - status: `done`
 - notes: `/master-data/vendors` Header actions 提供 `新建` 供应商入口；供应商列表行提供 `详情`、`编辑`、`冻结`，其中编辑进入 `/master-data/vendors/[vendorId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/vendors/new` 子页面并提交供应商 ID、供应商名称、状态和生效期；提交复用现有 supplier reference maintenance API，反馈回到供应商列表并使用 Alert；本轮不新增供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM156`
+- source_ids:
+  - `R856`
+- story_ids:
+  - `US776`
+- action: 完成技能组基础 CRUD 前端闭环。
+- status: `done`
+- notes: `/master-data/skills` Header actions 提供 `新建` 技能组入口；技能组列表行提供 `编辑`、`冻结`，其中编辑进入 `/master-data/skills/[skillId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/skills/new` 子页面并提交技能组 ID、技能组名称、归属属性、状态和生效期；提交复用现有 skills reference maintenance API，并补齐 `skill_category` 真实写入；本轮不新增人员技能绑定、排班技能引用、技能层级、审批、导出、批量、权限、新后端 route、schema/migration、依赖、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

@@ -122,6 +122,25 @@ export function MasterDataVendorPageActions({
   )
 }
 
+export function MasterDataSkillPageActions({
+  summary,
+}: {
+  summary: MasterDataReferenceManagementSummary
+}) {
+  if (!summary.createHref) {
+    return null
+  }
+
+  return (
+    <Button asChild size="sm">
+      <Link href={summary.createHref}>
+        <Plus data-icon="inline-start" />
+        新建
+      </Link>
+    </Button>
+  )
+}
+
 export function MasterDataAgentManagementPage({
   summary,
   managementSummary,
@@ -188,8 +207,10 @@ export function MasterDataReferenceManagementPage({
   feedback,
   selectedFreezeWorkplaceId = "",
   selectedFreezeVendorId = "",
+  selectedFreezeSkillId = "",
   workplaceSubmitAction,
   vendorSubmitAction,
+  skillSubmitAction,
 }: {
   summary: MasterDataEntitySourceContext
   listSummary: MasterDataReferenceManagementSummary
@@ -197,8 +218,10 @@ export function MasterDataReferenceManagementPage({
   feedback: MasterDataAgentMaintenanceFeedback | null
   selectedFreezeWorkplaceId?: string
   selectedFreezeVendorId?: string
+  selectedFreezeSkillId?: string
   workplaceSubmitAction?: (formData: FormData) => Promise<void>
   vendorSubmitAction?: (formData: FormData) => Promise<void>
+  skillSubmitAction?: (formData: FormData) => Promise<void>
 }) {
   const selectedFreezeWorkplace =
     listSummary.entity.key === "sites"
@@ -209,6 +232,11 @@ export function MasterDataReferenceManagementPage({
   const selectedFreezeVendor =
     listSummary.entity.key === "vendors"
       ? listSummary.rows.find((row) => row.reference_id === selectedFreezeVendorId) ??
+        null
+      : null
+  const selectedFreezeSkill =
+    listSummary.entity.key === "skills"
+      ? listSummary.rows.find((row) => row.reference_id === selectedFreezeSkillId) ??
         null
       : null
   const hasActionRows = listSummary.rows.some(
@@ -334,6 +362,13 @@ export function MasterDataReferenceManagementPage({
           action={vendorSubmitAction}
         />
       ) : null}
+      {selectedFreezeSkill && skillSubmitAction ? (
+        <MasterDataSkillFreezeDialog
+          summary={summary}
+          skill={selectedFreezeSkill}
+          action={skillSubmitAction}
+        />
+      ) : null}
     </main>
   )
 }
@@ -450,6 +485,64 @@ function MasterDataVendorFreezeDialog({
           <DialogFooter>
             <Button asChild size="sm" variant="outline">
               <Link href="/master-data/vendors">关闭</Link>
+            </Button>
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function MasterDataSkillFreezeDialog({
+  summary,
+  skill,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  skill: MasterDataReferenceListViewRow
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结技能组</DialogTitle>
+          <DialogDescription>
+            冻结后该技能组会进入冻结状态。
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-1 text-sm text-muted-foreground">
+          <p>
+            确认冻结{" "}
+            <span className="font-medium text-foreground">
+              {skill.display.referenceNameLabel}
+            </span>
+            ？
+          </p>
+          <p className="font-mono text-xs">{skill.display.referenceIdLabel}</p>
+        </div>
+        {summary.skillSubmitSourceBatchId ? (
+          <form action={action}>
+            <input type="hidden" name="action" value="freeze" />
+            <input
+              type="hidden"
+              name="source_batch_id"
+              value={summary.skillSubmitSourceBatchId}
+            />
+            <input type="hidden" name="skill_id" value={skill.reference_id} />
+            <DialogFooter>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/master-data/skills">取消</Link>
+              </Button>
+              <Button type="submit" size="sm" variant="destructive">
+                确认冻结
+              </Button>
+            </DialogFooter>
+          </form>
+        ) : (
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/master-data/skills">关闭</Link>
             </Button>
           </DialogFooter>
         )}
@@ -714,6 +807,91 @@ export function MasterDataVendorEditPage({
         />
       )}
     </VendorFormPageShell>
+  )
+}
+
+export function MasterDataSkillCreatePage({
+  summary,
+  error,
+  feedback,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <SkillFormPageShell error={error} feedback={feedback}>
+      {summary.skillSubmitSourceBatchId ? (
+        <SkillMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.skillSubmitSourceBatchId}
+          submitLabel="提交新增"
+          fields={[
+            "skill_id",
+            "reference_name",
+            "skill_category",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+      ) : (
+        <AgentFormBlockedState detail="当前来源批次不满足技能组维护提交条件。" />
+      )}
+    </SkillFormPageShell>
+  )
+}
+
+export function MasterDataSkillEditPage({
+  summary,
+  error,
+  feedback,
+  skill,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  skill: MasterDataReferenceListViewRow | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <SkillFormPageShell error={error} feedback={feedback}>
+      {summary.skillSubmitSourceBatchId && skill ? (
+        <SkillMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.skillSubmitSourceBatchId}
+          submitLabel="提交编辑"
+          fields={[
+            "reference_name",
+            "skill_category",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+          hiddenFields={{ skill_id: skill.reference_id }}
+          defaultValues={{
+            reference_name: skill.reference_name,
+            skill_category: skill.skill_category ?? undefined,
+            status: skill.status,
+            effective_from: skill.effective_from,
+            effective_to: skill.effective_to,
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            skill
+              ? "当前来源批次不满足技能组维护提交条件。"
+              : "未找到该技能组，请返回列表重新选择。"
+          }
+        />
+      )}
+    </SkillFormPageShell>
   )
 }
 
@@ -1407,6 +1585,28 @@ function VendorFormPageShell({
   )
 }
 
+function SkillFormPageShell({
+  error,
+  feedback,
+  children,
+}: {
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  children: React.ReactNode
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? (
+        <MasterDataListError title="技能组来源读取失败" error={error} />
+      ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-4">{children}</section>
+    </main>
+  )
+}
+
 function AgentFormBlockedState({
   detail = "当前来源批次不满足单人维护提交条件。",
 }: {
@@ -1568,6 +1768,109 @@ function VendorMaintenanceForm({
                 name="reference_name"
                 placeholder="输入供应商名称"
                 defaultValue={defaultValues.reference_name}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("status") ? (
+              <MaintenanceSelect
+                label="状态"
+                name="status"
+                defaultValue={defaultValues.status}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_from") ? (
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                defaultValue={defaultValues.effective_from}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_to") ? (
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                defaultValue={defaultValues.effective_to}
+                required={actionKey === "create"}
+              />
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+type SkillMaintenanceField =
+  | "skill_id"
+  | "reference_name"
+  | "skill_category"
+  | "status"
+  | "effective_from"
+  | "effective_to"
+
+function SkillMaintenanceForm({
+  action,
+  actionKey,
+  sourceBatchId,
+  submitLabel,
+  fields,
+  hiddenFields = {},
+  defaultValues = {},
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit"
+  sourceBatchId: string
+  submitLabel: string
+  fields: SkillMaintenanceField[]
+  hiddenFields?: Record<string, string>
+  defaultValues?: Partial<Record<SkillMaintenanceField, string>>
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">技能组信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
+          <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("skill_id") ? (
+              <MaintenanceInput
+                label="技能组 ID"
+                name="skill_id"
+                placeholder="SKILL-ONLINE-001"
+                defaultValue={defaultValues.skill_id}
+                required
+              />
+            ) : null}
+            {fields.includes("reference_name") ? (
+              <MaintenanceInput
+                label="技能组名称"
+                name="reference_name"
+                placeholder="输入技能组名称"
+                defaultValue={defaultValues.reference_name}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("skill_category") ? (
+              <SkillCategorySelect
+                label="归属属性"
+                name="skill_category"
+                defaultValue={defaultValues.skill_category}
                 required={actionKey === "create"}
               />
             ) : null}
@@ -1971,6 +2274,34 @@ function EmployeeTypeSelect({
       >
         <option value="internal">自有员工</option>
         <option value="outsourced">外包员工</option>
+      </select>
+    </label>
+  )
+}
+
+function SkillCategorySelect({
+  label,
+  name,
+  defaultValue = "online",
+  required = false,
+}: {
+  label: string
+  name: string
+  defaultValue?: string
+  required?: boolean
+}) {
+  return (
+    <label className="grid gap-1.5 text-sm font-medium">
+      {label}
+      <select
+        name={name}
+        required={required}
+        defaultValue={defaultValue}
+        className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        <option value="online">在线技能组</option>
+        <option value="hotline">热线技能组</option>
+        <option value="ticket">工单技能组</option>
       </select>
     </label>
   )

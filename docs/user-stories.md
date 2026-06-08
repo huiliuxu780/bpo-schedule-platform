@@ -5399,3 +5399,27 @@ dependencies:
 status: "done"
 notes: "IM155 已完成：供应商新建/编辑走子页面，冻结走 Dialog，提交复用现有 supplier reference maintenance API。"
 ```
+
+### US776 - 技能组基础 CRUD 前端闭环
+
+```yaml
+id: US776
+requirement_ids:
+  - R856
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在技能组列表中进入单个技能组的新建、编辑和冻结流程，以便维护技能组基础档案，而不是在列表页里展开一个大表单。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/skills Header 右侧提供新建技能组入口。"
+  - "技能组列表行提供编辑和冻结操作；编辑进入子页面，冻结打开确认弹窗。"
+  - "/master-data/skills/new 使用子页面提交技能组 ID、技能组名称、归属属性、状态、生效开始、生效结束。"
+  - "/master-data/skills/[skillId]/edit 使用子页面编辑技能组名称、归属属性、状态和有效期，技能组 ID 不作为可编辑字段。"
+  - "提交成功或失败后回到技能组列表并使用 Alert 显示反馈。"
+  - "不新增人员技能绑定、排班技能引用、技能层级、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US775"
+status: "done"
+notes: "IM156 已完成：技能组新建/编辑走子页面，冻结走 Dialog，提交复用现有 skills reference maintenance API 并真实写入归属属性。"
+```

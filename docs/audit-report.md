@@ -4063,3 +4063,26 @@
 - `npm run lint` 和 `npm run typecheck` 已通过。
 - Browser smoke over `/master-data/vendors`, `/master-data/vendors/new`, `/master-data/vendors/SUP-A/edit`, and `/master-data/vendors?freeze_vendor_id=SUP-A` confirmed Header create action, no inline create form on the list, create/edit child pages, and the freeze Dialog.
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM156 技能组基础 CRUD 前端闭环
+
+#### 审计结论
+
+- `/master-data/skills` Header actions 已提供技能组 `新建` 入口，不在列表内容区塞表单。
+- 技能组列表行已提供 `编辑`、`冻结`；编辑进入技能组编辑子页面，冻结打开确认 Dialog。
+- `/master-data/skills/new` 提交技能组 ID、技能组名称、归属属性、状态、生效开始和生效结束。
+- `/master-data/skills/[skillId]/edit` 编辑技能组名称、归属属性、状态和有效期，技能组 ID 作为隐藏字段提交，不作为可编辑字段。
+- 提交复用现有 `/api/v1/master-data/skills/{reference_id}/maintenance` 能力，并补齐 `skill_category` 维护请求透传，提交结果回到技能组列表并使用既有 Alert feedback。
+- 本轮没有新增人员技能绑定、排班技能引用、技能层级、审批、导出、批量操作、权限、新后端 route、schema/migration、依赖、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只维护技能组基础档案；人员技能关系和排班侧技能引用仍属于独立后续任务。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `buildMasterDataSkillMaintenanceApiPath`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明缺少 `/master-data/skills/new`；后端 `unittest` 先失败，证明 `skill_category` 仍未写入。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 23 tests OK，`product-structure.test.mjs` 26 tests OK，后端 master-data maintenance 定向 23 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/skills`, `/master-data/skills/new`, `/master-data/skills/L1-CN/edit`, and `/master-data/skills?freeze_skill_id=L1-CN` confirmed Header create action, no inline create form on the list, create/edit child pages, and the freeze Dialog.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

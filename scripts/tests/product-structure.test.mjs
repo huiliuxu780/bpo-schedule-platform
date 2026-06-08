@@ -20,6 +20,8 @@ const masterDataWorkplaceEditPagePath = new URL("../../app/master-data/sites/[wo
 const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[vendorId]/page.tsx", import.meta.url);
 const masterDataVendorCreatePagePath = new URL("../../app/master-data/vendors/new/page.tsx", import.meta.url);
 const masterDataVendorEditPagePath = new URL("../../app/master-data/vendors/[vendorId]/edit/page.tsx", import.meta.url);
+const masterDataSkillCreatePagePath = new URL("../../app/master-data/skills/new/page.tsx", import.meta.url);
+const masterDataSkillEditPagePath = new URL("../../app/master-data/skills/[skillId]/edit/page.tsx", import.meta.url);
 const demandForecastProductionPagePath = new URL("../../app/demand-plans/production/page.tsx", import.meta.url);
 const personnelScheduleProductionPagePath = new URL("../../app/schedule-plans/production/page.tsx", import.meta.url);
 const actualLogProductionPagePath = new URL("../../app/actual-logs/production/page.tsx", import.meta.url);
@@ -553,11 +555,43 @@ test("master data pages pass breadcrumbs through AppShell", async () => {
     await readFile(masterDataAgentSkillsEditPagePath, "utf8"),
     await readFile(masterDataWorkplaceDetailPagePath, "utf8"),
     await readFile(masterDataVendorDetailPagePath, "utf8"),
+    await readFile(masterDataSkillCreatePagePath, "utf8"),
+    await readFile(masterDataSkillEditPagePath, "utf8"),
   ];
 
   for (const source of pageSources) {
     assert.equal(source.includes("breadcrumbItems"), true);
   }
+});
+
+test("skill maintenance uses child pages and a freeze dialog instead of list-page forms", async () => {
+  await access(masterDataSkillCreatePagePath);
+  await access(masterDataSkillEditPagePath);
+
+  const entitySource = await readFile(masterDataEntityPagePath, "utf8");
+  const actionsSource = await readFile(masterDataActionsPath, "utf8");
+  const modelSource = await readFile(masterDataModelPath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const createPageSource = await readFile(masterDataSkillCreatePagePath, "utf8");
+  const editPageSource = await readFile(masterDataSkillEditPagePath, "utf8");
+  const referenceListSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataReferenceManagementPage"),
+    workbenchSource.indexOf("export function MasterDataWorkplaceDetailPage"),
+  );
+
+  assert.equal(entitySource.includes("MasterDataSkillPageActions"), true);
+  assert.equal(entitySource.includes("freeze_skill_id"), true);
+  assert.equal(entitySource.includes("submitMasterDataSkillMaintenance"), true);
+  assert.equal(actionsSource.includes("submitMasterDataSkillMaintenance"), true);
+  assert.equal(actionsSource.includes("parseSkillAction"), true);
+  assert.equal(modelSource.includes("buildMasterDataSkillMaintenancePayload"), true);
+  assert.equal(modelSource.includes("skillSubmitSourceBatchId"), true);
+  assert.equal(referenceListSource.includes("MasterDataSkillFreezeDialog"), true);
+  assert.equal(referenceListSource.includes("<DialogContent"), true);
+  assert.equal(referenceListSource.includes("SkillMaintenanceForm"), false);
+  assert.equal(createPageSource.includes("MasterDataSkillCreatePage"), true);
+  assert.equal(editPageSource.includes("MasterDataSkillEditPage"), true);
+  assert.equal(editPageSource.includes("notFound()"), true);
 });
 
 test("agent child form pages do not duplicate the global page header", async () => {

@@ -8,12 +8,16 @@ import {
   type MasterDataAgentMaintenanceStatus,
   type MasterDataEmployeeType,
   type MasterDataMaintenanceEntityKey,
+  type MasterDataSkillCategory,
+  type MasterDataSkillMaintenanceActionKey,
   type MasterDataVendorMaintenanceActionKey,
   type MasterDataWorkplaceMaintenanceActionKey,
   buildMasterDataAgentMaintenanceApiPath,
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
+  buildMasterDataSkillMaintenanceApiPath,
+  buildMasterDataSkillMaintenancePayload,
   buildMasterDataVendorMaintenanceApiPath,
   buildMasterDataVendorMaintenancePayload,
   buildMasterDataWorkplaceMaintenanceApiPath,
@@ -39,6 +43,12 @@ const VENDOR_ACTIONS = new Set<MasterDataVendorMaintenanceActionKey>([
   "freeze",
 ])
 
+const SKILL_ACTIONS = new Set<MasterDataSkillMaintenanceActionKey>([
+  "create",
+  "edit",
+  "freeze",
+])
+
 const AGENT_STATUSES = new Set<MasterDataAgentMaintenanceStatus>([
   "active",
   "frozen",
@@ -46,6 +56,12 @@ const AGENT_STATUSES = new Set<MasterDataAgentMaintenanceStatus>([
 ])
 
 const EMPLOYEE_TYPES = new Set<MasterDataEmployeeType>(["internal", "outsourced"])
+
+const SKILL_CATEGORIES = new Set<MasterDataSkillCategory>([
+  "online",
+  "hotline",
+  "ticket",
+])
 
 export async function submitMasterDataAgentMaintenance(
   formData: FormData
@@ -383,6 +399,98 @@ export async function submitMasterDataVendorMaintenance(
   redirect(redirectHref)
 }
 
+export async function submitMasterDataSkillMaintenance(
+  formData: FormData
+): Promise<void> {
+  let redirectHref: string
+
+  try {
+    const action = parseSkillAction(formData.get("action"))
+    const skillId = getFormValue(formData, "skill_id")
+    const sourceBatchId = getFormValue(formData, "source_batch_id")
+    const skillName = getFormValue(formData, "reference_name")
+    const effectiveFrom = getFormValue(formData, "effective_from")
+    const effectiveTo = getFormValue(formData, "effective_to")
+
+    if (!skillId || !sourceBatchId) {
+      redirectHref = buildMaintenanceRedirect("skills", {
+        maintenance_status: "error",
+        record_type: "技能组",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "技能组 ID 和来源批次不能为空",
+      })
+    } else if (
+      action === "create" &&
+      (!skillName || !effectiveFrom || !effectiveTo)
+    ) {
+      redirectHref = buildMaintenanceRedirect("skills", {
+        maintenance_status: "error",
+        record_type: "技能组",
+        maintenance_code: "MISSING_REQUIRED_FIELD",
+        maintenance_message: "技能组名称和生效期不能为空",
+      })
+    } else {
+      const payload = buildMasterDataSkillMaintenancePayload({
+        action,
+        skillId,
+        sourceBatchId,
+        skillName,
+        skillCategory: parseSkillCategory(formData.get("skill_category")),
+        status: parseStatus(formData.get("status")),
+        effectiveFrom,
+        effectiveTo,
+      })
+      const response = await fetch(
+        buildImportApiUrl(buildMasterDataSkillMaintenanceApiPath(skillId)),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+          cache: "no-store",
+        }
+      )
+
+      if (!response.ok) {
+        const error = await readMaintenanceApiError(response)
+        redirectHref = buildMaintenanceRedirect("skills", {
+          maintenance_status: "error",
+          record_type: "技能组",
+          maintenance_code: error.code,
+          maintenance_message: error.message,
+        })
+      } else {
+        const result = (await response.json()) as {
+          action_status?: string
+          reference?: {
+            reference_id?: string
+            reference_name?: string
+            status?: string
+          }
+        }
+        redirectHref = buildMaintenanceRedirect("skills", {
+          maintenance_status: "success",
+          record_type: "技能组",
+          action_status: result.action_status ?? "submitted",
+          record_id: result.reference?.reference_id ?? skillId,
+          record_name: result.reference?.reference_name ?? "未返回名称",
+          record_status: result.reference?.status ?? "unknown",
+        })
+      }
+    }
+  } catch (error) {
+    redirectHref = buildMaintenanceRedirect("skills", {
+      maintenance_status: "error",
+      record_type: "技能组",
+      maintenance_code: "MASTER_DATA_SKILL_SUBMIT_FAILED",
+      maintenance_message: formatMaintenanceError(error),
+    })
+  }
+
+  redirect(redirectHref)
+}
+
 function parseAction(value: FormDataEntryValue | null): MasterDataAgentMaintenanceActionKey {
   const action = String(value ?? "")
   if (AGENT_ACTIONS.has(action as MasterDataAgentMaintenanceActionKey)) {
@@ -429,6 +537,17 @@ function parseVendorAction(
   throw new Error("未知供应商维护动作")
 }
 
+function parseSkillAction(
+  value: FormDataEntryValue | null
+): MasterDataSkillMaintenanceActionKey {
+  const action = String(value ?? "")
+  if (SKILL_ACTIONS.has(action as MasterDataSkillMaintenanceActionKey)) {
+    return action as MasterDataSkillMaintenanceActionKey
+  }
+
+  throw new Error("未知技能组维护动作")
+}
+
 function parseSkillIds(value: FormDataEntryValue | null): string[] {
   const rawValue = String(value ?? "")
   return Array.from(
@@ -450,6 +569,21 @@ function parseStatus(
   }
 
   return undefined
+}
+
+function parseSkillCategory(
+  value: FormDataEntryValue | null
+): MasterDataSkillCategory | undefined {
+  const skillCategory = String(value ?? "")
+  if (!skillCategory) {
+    return undefined
+  }
+
+  if (SKILL_CATEGORIES.has(skillCategory as MasterDataSkillCategory)) {
+    return skillCategory as MasterDataSkillCategory
+  }
+
+  throw new Error("未知技能组归属属性")
 }
 
 function getFormValue(formData: FormData, key: string): string {
