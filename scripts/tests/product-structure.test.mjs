@@ -11,6 +11,7 @@ const siteHeaderPath = new URL("../../components/site-header.tsx", import.meta.u
 const masterDataIndexPagePath = new URL("../../app/master-data/page.tsx", import.meta.url);
 const masterDataEntityPagePath = new URL("../../app/master-data/[entityKey]/page.tsx", import.meta.url);
 const masterDataAgentCreatePagePath = new URL("../../app/master-data/agents/new/page.tsx", import.meta.url);
+const masterDataAgentDetailPagePath = new URL("../../app/master-data/agents/[employeeId]/page.tsx", import.meta.url);
 const masterDataAgentEditPagePath = new URL("../../app/master-data/agents/[employeeId]/edit/page.tsx", import.meta.url);
 const masterDataAgentSkillsEditPagePath = new URL("../../app/master-data/agents/[employeeId]/skills/edit/page.tsx", import.meta.url);
 const masterDataAgentDataPath = new URL("../../app/master-data/agents/data.ts", import.meta.url);
@@ -750,6 +751,36 @@ test("master data content pages do not render duplicate page identity headers", 
     true,
     "vendor detail SiteHeader should show the actual vendor name",
   );
+});
+
+test("agent detail stays under customer-service personnel context", async () => {
+  await access(masterDataAgentDetailPagePath);
+  const agentDetailSource = await readFile(masterDataAgentDetailPagePath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+
+  assert.equal(
+    agentDetailSource.includes("fetchMasterDataWorkplaceServiceTeams"),
+    true,
+    "agent detail should read workplace service teams for read-only relationship context",
+  );
+  assert.equal(
+    agentDetailSource.includes("fetchMasterDataWorkplaceBindings"),
+    true,
+    "agent detail should read workplace bindings for supplier-team matching",
+  );
+  assert.equal(
+    workbenchSource.includes("MasterDataAgentDetailPage"),
+    true,
+    "agent detail should render through a dedicated personnel detail component",
+  );
+  assert.equal(
+    workbenchSource.includes("关联服务团队"),
+    true,
+    "agent detail should expose a read-only associated service-team section",
+  );
+  assert.equal(agentDetailSource.includes("合同"), false);
+  assert.equal(agentDetailSource.includes("结算"), false);
+  assert.equal(agentDetailSource.includes("最低人力"), false);
 });
 
 test("agent list keeps page actions and filter actions in their own zones", async () => {

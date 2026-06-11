@@ -2111,3 +2111,12 @@
 - action: 完成供应商详情服务团队只读链路。
 - status: `done`
 - notes: `/master-data/vendors/[vendorId]` 增加只读服务团队区域；只展示当前供应商绑定的职场服务团队，表格展示服务团队名称、归属职场、状态、生效期和来源批次，并通过 `查看团队` 进入既有职场服务团队详情页继续核对关联人员；无服务团队时显示明确空态；本轮不新增后端 route、schema/migration、供应商服务团队维护、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM165`
+- source_ids:
+  - `R865`
+- story_ids:
+  - `US785`
+- action: 完成客服人员详情只读业务链路。
+- status: `done`
+- notes: `/master-data/agents` 列表行新增 `查看` 入口；`/master-data/agents/[employeeId]` 只读展示人员基础信息、技能集合和关联服务团队；关联服务团队通过 `查看团队` 进入既有职场服务团队详情页；无关联团队显示明确空态；本轮不新增后端 route、schema/migration、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

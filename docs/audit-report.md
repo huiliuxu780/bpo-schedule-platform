@@ -4247,3 +4247,21 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 组合和语义 token。
 - in-app browser smoke 确认 `/master-data/vendors/SUP-A` 出现 `服务团队`、`服务职场`、`查看团队` 链接，并指向 `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或人员分配。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM165 客服人员详情只读业务链路
+
+#### 审计结论
+
+- `/master-data/agents` 列表行新增 `查看` 入口，进入 `/master-data/agents/[employeeId]` 单个人员详情页。
+- 人员详情页只读展示人员基础信息、组织、职场、人员类型、状态、有效期、来源批次和技能集合。
+- 详情页读取既有职场服务团队和职场绑定数据，推导当前人员关联的服务团队；自有团队按同职场同组织匹配，供应商团队按同职场同供应商绑定匹配。
+- 关联服务团队表通过 `查看团队` 链接进入既有职场服务团队详情页；无关联团队显示明确空态。
+- 本轮没有新增后端 route、schema/migration、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `summarizeMasterDataAgentDetail`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明客服人员详情页文件不存在。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 29 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 29 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/master-data/agents` 存在行内 `查看` 入口并指向 `/master-data/agents/A-1001`；`/master-data/agents/A-1001` 出现 `人员信息`、`技能集合`、`关联服务团队` 和 `查看团队` 链接，并指向 `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

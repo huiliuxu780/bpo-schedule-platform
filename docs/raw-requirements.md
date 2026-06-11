@@ -80,6 +80,19 @@ status: "done"
 notes: "IM164 已完成：/master-data/vendors/[vendorId] 增加只读服务团队区域，只展示当前供应商绑定的职场服务团队，并链接到既有职场服务团队详情页；未新增后端 route、schema/migration、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
 ```
 
+### R865 - 客服人员详情只读业务链路
+
+```yaml
+id: R865
+module: "主数据维护"
+description: "PM 确认继续主数据维护链路。人员列表已经能维护单个人员，服务团队详情也能看到关联人员，下一步需要从客服人员列表进入单个人员详情页，核对人员基础信息、组织、职场、技能集合，以及该人员关联到哪些职场服务团队。该详情页只做只读核对，不做人員分配、合同、结算、最低人力或批量动作。"
+source: "PM confirmed continuing after IM164 on 2026-06-11"
+submitted_at: "2026-06-11"
+version: "1.0"
+status: "done"
+notes: "IM165 已完成：/master-data/agents 列表行提供 `查看` 入口，/master-data/agents/[employeeId] 只读展示人员基础信息、技能集合和关联服务团队，并链接到既有职场服务团队详情页；未新增后端 route、schema/migration、人员分配、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
 ### R849 - 主数据非客服人员动作收口
 
 ```yaml

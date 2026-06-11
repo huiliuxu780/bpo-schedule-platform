@@ -494,6 +494,8 @@ export type MasterDataEmployeeListDisplay = {
   publicNameLabel: string
   levelLabel: string
   freezeReasonLabel: string
+  sourceBatchLabel: string
+  detailHref: string
   editHref: string
   freezeHref: string
   skillsEditHref: string
@@ -509,6 +511,39 @@ export type MasterDataEmployeeListSummary = {
   internalEmployees: number
   outsourcedEmployees: number
   rows: MasterDataEmployeeListViewRow[]
+}
+
+export type MasterDataAgentServiceTeamDisplay = {
+  teamNameLabel: string
+  teamTypeLabel: string
+  workplaceLabel: string
+  statusLabel: string
+  effectivePeriodLabel: string
+  sourceBatchLabel: string
+  matchSourceLabel: string
+  detailHref: string
+}
+
+export type MasterDataAgentServiceTeamViewRow = {
+  service_team_id: string
+  workplace_id: string
+  team_type: MasterDataWorkplaceServiceTeamType
+  team_name: string
+  status: MasterDataAgentMaintenanceStatus
+  effective_from: string
+  effective_to: string
+  batch_id: string
+  display: MasterDataAgentServiceTeamDisplay
+}
+
+export type MasterDataAgentDetailSummary = {
+  found: boolean
+  title: string
+  backHref: string
+  employee: MasterDataEmployeeListViewRow | null
+  totalServiceTeams: number
+  emptyServiceTeamDetail: string
+  serviceTeamRows: MasterDataAgentServiceTeamViewRow[]
 }
 
 export type MasterDataAgentManagementFilterField = {
@@ -947,6 +982,8 @@ export function summarizeMasterDataEmployeeList(
       publicNameLabel: employee.employee_name,
       levelLabel: formatMasterDataEmployeeType(employee.employee_type),
       freezeReasonLabel: employee.status === "frozen" ? "主数据冻结" : "-",
+      sourceBatchLabel: formatImportBatchDisplayLabel(employee.batch_id),
+      detailHref: `/master-data/agents/${encodeURIComponent(employee.employee_id)}`,
       editHref: `/master-data/agents/${encodeURIComponent(employee.employee_id)}/edit`,
       freezeHref: `/master-data/agents?freeze_employee_id=${encodeURIComponent(employee.employee_id)}`,
       skillsEditHref: `/master-data/agents/${encodeURIComponent(employee.employee_id)}/skills/edit`,
@@ -960,6 +997,107 @@ export function summarizeMasterDataEmployeeList(
     outsourcedEmployees: rows.filter((row) => row.employee_type === "outsourced")
       .length,
     rows,
+  }
+}
+
+export function summarizeMasterDataAgentDetail({
+  employeeId,
+  employees,
+  bindings,
+  serviceTeams,
+}: {
+  employeeId: string
+  employees: MasterDataEmployeeListRow[]
+  bindings: MasterDataWorkplaceBindingRow[]
+  serviceTeams: MasterDataWorkplaceServiceTeamRow[]
+}): MasterDataAgentDetailSummary {
+  const employeeSummary = summarizeMasterDataEmployeeList(employees)
+  const employee =
+    employeeSummary.rows.find((row) => row.employee_id === employeeId) ?? null
+
+  if (!employee) {
+    return {
+      found: false,
+      title: "客服人员未找到",
+      backHref: "/master-data/agents",
+      employee: null,
+      totalServiceTeams: 0,
+      emptyServiceTeamDetail: "未找到该人员，无法匹配服务团队。",
+      serviceTeamRows: [],
+    }
+  }
+
+  const employeeBindings = bindings.filter(
+    (binding) => binding.employee_id === employee.employee_id
+  )
+  const supplierMatches = new Set(
+    employeeBindings.map(
+      (binding) => `${binding.workplace_id}:${binding.supplier_id}`
+    )
+  )
+  const matchedTeams = serviceTeams
+    .filter((serviceTeam) => {
+      if (serviceTeam.team_type === "internal") {
+        return (
+          serviceTeam.workplace_id === employee.workplace_id &&
+          serviceTeam.organization_id === employee.organization_id
+        )
+      }
+
+      if (!serviceTeam.supplier_id) {
+        return false
+      }
+
+      return supplierMatches.has(
+        `${serviceTeam.workplace_id}:${serviceTeam.supplier_id}`
+      )
+    })
+    .sort((left, right) => {
+      const workplaceComparison = left.workplace_id.localeCompare(right.workplace_id)
+      if (workplaceComparison !== 0) {
+        return workplaceComparison
+      }
+
+      return left.team_name.localeCompare(right.team_name, "zh-CN")
+    })
+    .map((serviceTeam) => ({
+      service_team_id: serviceTeam.service_team_id,
+      workplace_id: serviceTeam.workplace_id,
+      team_type: serviceTeam.team_type,
+      team_name: serviceTeam.team_name,
+      status: serviceTeam.status,
+      effective_from: serviceTeam.effective_from,
+      effective_to: serviceTeam.effective_to,
+      batch_id: serviceTeam.batch_id,
+      display: {
+        teamNameLabel: formatMasterDataVisibleValue(serviceTeam.team_name),
+        teamTypeLabel: formatMasterDataServiceTeamType(serviceTeam.team_type),
+        workplaceLabel:
+          employee.workplace_id === serviceTeam.workplace_id
+            ? employee.display.workplaceLabel
+            : formatMasterDataVisibleValue(serviceTeam.workplace_id),
+        statusLabel: formatMasterDataEmployeeStatus(serviceTeam.status),
+        effectivePeriodLabel: formatEffectivePeriod(
+          serviceTeam.effective_from,
+          serviceTeam.effective_to
+        ),
+        sourceBatchLabel: formatImportBatchDisplayLabel(serviceTeam.batch_id),
+        matchSourceLabel:
+          serviceTeam.team_type === "internal"
+            ? "同职场同组织"
+            : "同职场同供应商绑定",
+        detailHref: `/master-data/sites/${encodeURIComponent(serviceTeam.workplace_id)}/service-teams/${encodeURIComponent(serviceTeam.service_team_id)}`,
+      },
+    }))
+
+  return {
+    found: true,
+    title: employee.display.publicNameLabel,
+    backHref: "/master-data/agents",
+    employee,
+    totalServiceTeams: matchedTeams.length,
+    emptyServiceTeamDetail: "暂无该人员关联的服务团队。",
+    serviceTeamRows: matchedTeams,
   }
 }
 
@@ -2098,6 +2236,12 @@ function formatMasterDataEmployeeStatus(status: MasterDataAgentMaintenanceStatus
   }
 
   return "停用"
+}
+
+function formatMasterDataServiceTeamType(
+  teamType: MasterDataWorkplaceServiceTeamType
+) {
+  return teamType === "internal" ? "自有团队" : "供应商团队"
 }
 
 function formatEffectivePeriod(effectiveFrom: string, effectiveTo: string) {

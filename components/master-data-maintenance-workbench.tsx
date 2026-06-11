@@ -18,6 +18,7 @@ import { uploadImportCsvAction } from "@/app/data-quality/actions"
 import { AgentImportDialog } from "@/components/master-data-agent-import-dialog"
 import {
   type MasterDataAgentMaintenanceFeedback,
+  type MasterDataAgentDetailSummary,
   type MasterDataAgentManagementSummary,
   type MasterDataEntitySourceContext,
   type MasterDataOrganizationManagementSummary,
@@ -1918,6 +1919,9 @@ function AgentManagementTablePanel({
                 <TableCell>{row.employee_id}</TableCell>
                 <TableCell className="whitespace-nowrap text-right">
                   <div className="flex items-center justify-end gap-1">
+                    <AgentRowActionLink href={row.display.detailHref}>
+                      查看
+                    </AgentRowActionLink>
                     <AgentRowActionLink href={row.display.editHref}>
                       编辑
                     </AgentRowActionLink>
@@ -1950,6 +1954,134 @@ function AgentManagementTablePanel({
         </Table>
       )}
     </section>
+  )
+}
+
+export function MasterDataAgentDetailPage({
+  detailSummary,
+  error,
+}: {
+  detailSummary: MasterDataAgentDetailSummary
+  error: string | null
+}) {
+  const employee = detailSummary.employee
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="客服人员详情读取失败" error={error} /> : null}
+
+      {employee ? (
+        <>
+          <section className="grid gap-3 md:grid-cols-3">
+            <MetricCard
+              label="人员类型"
+              value={employee.display.employeeTypeLabel}
+              detail="当前人员归属"
+              tone={employee.employee_type === "internal" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="状态"
+              value={employee.display.statusLabel}
+              detail="主数据状态"
+              tone={employee.status === "active" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="关联服务团队"
+              value={detailSummary.totalServiceTeams.toLocaleString("zh-CN")}
+              detail="只读核对关系"
+              tone={detailSummary.totalServiceTeams > 0 ? "ready" : "default"}
+            />
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">人员信息</h2>
+            <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+              <ReadOnlyField label="姓名" value={employee.display.publicNameLabel} />
+              <ReadOnlyField label="人员 ID" value={employee.employee_id} />
+              <ReadOnlyField label="人员类型" value={employee.display.employeeTypeLabel} />
+              <ReadOnlyField label="组织" value={employee.display.organizationLabel} />
+              <ReadOnlyField label="职场" value={employee.display.workplaceLabel} />
+              <ReadOnlyField label="状态" value={employee.display.statusLabel} />
+              <ReadOnlyField
+                label="有效期"
+                value={`${employee.effective_from} 至 ${employee.effective_to}`}
+              />
+              <ReadOnlyField
+                label="来源批次"
+                value={employee.display.sourceBatchLabel}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">技能集合</h2>
+            <div className="rounded-md border p-4 text-sm">
+              {employee.display.skillSummary}
+            </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">关联服务团队</h2>
+              <Badge variant="secondary">
+                {detailSummary.totalServiceTeams.toLocaleString("zh-CN")} 个
+              </Badge>
+            </div>
+            {detailSummary.serviceTeamRows.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>服务团队</TableHead>
+                    <TableHead>团队类型</TableHead>
+                    <TableHead>归属职场</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead>有效期</TableHead>
+                    <TableHead>来源批次</TableHead>
+                    <TableHead>匹配来源</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detailSummary.serviceTeamRows.map((row) => (
+                    <TableRow key={row.service_team_id}>
+                      <TableCell className="font-medium">
+                        {row.display.teamNameLabel}
+                      </TableCell>
+                      <TableCell>{row.display.teamTypeLabel}</TableCell>
+                      <TableCell>{row.display.workplaceLabel}</TableCell>
+                      <TableCell>
+                        <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                          {row.display.statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {row.display.sourceBatchLabel}
+                      </TableCell>
+                      <TableCell>{row.display.matchSourceLabel}</TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>查看团队</Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <AgentFormBlockedState detail={detailSummary.emptyServiceTeamDetail} />
+            )}
+          </section>
+        </>
+      ) : (
+        <AgentFormBlockedState detail="未找到该客服人员，请返回列表重新选择。" />
+      )}
+    </main>
   )
 }
 
