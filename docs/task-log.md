@@ -2093,3 +2093,12 @@
 - action: 完成职场服务团队详情页。
 - status: `done`
 - notes: `/master-data/sites/[workplaceId]` 服务团队表新增 `查看` 入口；`/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` 展示服务团队 ID、名称、类型、归属职场、组织或供应商来源、状态、生效期和来源批次；详情页提供编辑和冻结入口，编辑复用现有编辑子页面，冻结复用 Dialog；本轮不新增 Sidebar 导航、后端 route、schema/migration、关联人员列表、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM163`
+- source_ids:
+  - `R863`
+- story_ids:
+  - `US783`
+- action: 完成服务团队详情关联人员只读列表。
+- status: `done`
+- notes: `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` 增加只读关联人员区域；自有服务团队按同职场同组织匹配人员，供应商服务团队按同职场同供应商绑定匹配人员并去重；表格展示姓名、人员 ID、人员类型、组织、职场、技能、状态和匹配来源；无匹配人员显示明确空态；本轮不新增后端 route、schema/migration、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

@@ -498,6 +498,22 @@ test("workplace detail keeps service-team maintenance nested under workplace det
     true,
     "workplace service-team detail should be rendered by a dedicated page component",
   );
+  const serviceTeamDetailSource = await readFile(masterDataWorkplaceServiceTeamDetailPagePath, "utf8");
+  assert.equal(
+    serviceTeamDetailSource.includes("fetchMasterDataEmployees"),
+    true,
+    "service-team detail should read employees for the associated people list",
+  );
+  assert.equal(
+    serviceTeamDetailSource.includes("fetchMasterDataWorkplaceBindings"),
+    true,
+    "service-team detail should read workplace bindings for supplier-team people",
+  );
+  assert.equal(
+    workbenchSource.includes("关联人员"),
+    true,
+    "service-team detail should render a read-only associated people section",
+  );
   assert.equal(workplaceDetailComponentSource.includes("合同"), false);
   assert.equal(workplaceDetailComponentSource.includes("结算"), false);
   assert.equal(workplaceDetailComponentSource.includes("最低人力"), false);

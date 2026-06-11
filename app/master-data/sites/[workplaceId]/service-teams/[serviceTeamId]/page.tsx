@@ -2,9 +2,14 @@ import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
 import { MasterDataWorkplaceServiceTeamDetailPage } from "@/components/master-data-maintenance-workbench"
-import { summarizeMasterDataWorkplaceDetail } from "@/components/master-data-maintenance-model"
 import {
+  summarizeMasterDataWorkplaceDetail,
+  summarizeMasterDataWorkplaceServiceTeamPeople,
+} from "@/components/master-data-maintenance-model"
+import {
+  fetchMasterDataEmployees,
   fetchMasterDataReferences,
+  fetchMasterDataWorkplaceBindings,
   fetchMasterDataWorkplaceServiceTeams,
 } from "@/app/master-data/agents/data"
 import { submitMasterDataWorkplaceServiceTeamMaintenance } from "../actions"
@@ -26,17 +31,25 @@ export default async function MasterDataWorkplaceServiceTeamDetailRoute({
   const { workplaceId, serviceTeamId } = await params
   const decodedWorkplaceId = decodeURIComponent(workplaceId)
   const decodedServiceTeamId = decodeURIComponent(serviceTeamId)
-  const [workplaceResult, supplierResult, serviceTeamResult] = await Promise.all([
+  const [
+    workplaceResult,
+    supplierResult,
+    employeeResult,
+    bindingResult,
+    serviceTeamResult,
+  ] = await Promise.all([
     fetchMasterDataReferences("sites"),
     fetchMasterDataReferences("vendors"),
+    fetchMasterDataEmployees(),
+    fetchMasterDataWorkplaceBindings(),
     fetchMasterDataWorkplaceServiceTeams(decodedWorkplaceId),
   ])
   const detailSummary = summarizeMasterDataWorkplaceDetail({
     workplaceId: decodedWorkplaceId,
     workplaces: workplaceResult.data ?? [],
     suppliers: supplierResult.data ?? [],
-    employees: [],
-    bindings: [],
+    employees: employeeResult.data ?? [],
+    bindings: bindingResult.data ?? [],
     serviceTeams: serviceTeamResult.data ?? [],
   })
 
@@ -60,6 +73,11 @@ export default async function MasterDataWorkplaceServiceTeamDetailRoute({
   const selectedFreezeServiceTeamId = getSingleSearchParam(
     resolvedSearchParams.freeze_service_team_id
   )
+  const peopleSummary = summarizeMasterDataWorkplaceServiceTeamPeople({
+    serviceTeam,
+    employees: employeeResult.data ?? [],
+    bindings: bindingResult.data ?? [],
+  })
 
   return (
     <AppShell
@@ -80,9 +98,16 @@ export default async function MasterDataWorkplaceServiceTeamDetailRoute({
         detailSummary={detailSummary}
         serviceTeam={serviceTeam}
         serviceTeamRow={serviceTeamRow}
+        peopleSummary={peopleSummary}
         showFreezeDialog={selectedFreezeServiceTeamId === decodedServiceTeamId}
         serviceTeamSubmitAction={submitMasterDataWorkplaceServiceTeamMaintenance}
-        error={workplaceResult.error ?? supplierResult.error ?? serviceTeamResult.error}
+        error={
+          workplaceResult.error ??
+          supplierResult.error ??
+          employeeResult.error ??
+          bindingResult.error ??
+          serviceTeamResult.error
+        }
       />
     </AppShell>
   )

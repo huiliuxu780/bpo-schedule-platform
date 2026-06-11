@@ -27,6 +27,7 @@ import {
   type MasterDataVendorDetailSummary,
   type MasterDataWorkplaceDetailSummary,
   type MasterDataWorkplaceOperatorViewRow,
+  type MasterDataWorkplaceServiceTeamPeopleSummary,
   type MasterDataWorkplaceServiceTeamRow,
   type MasterDataWorkplaceServiceTeamType,
 } from "@/components/master-data-maintenance-model"
@@ -812,6 +813,7 @@ export function MasterDataWorkplaceServiceTeamDetailPage({
   detailSummary,
   serviceTeam,
   serviceTeamRow,
+  peopleSummary,
   error,
   showFreezeDialog = false,
   serviceTeamSubmitAction,
@@ -819,6 +821,7 @@ export function MasterDataWorkplaceServiceTeamDetailPage({
   detailSummary: MasterDataWorkplaceDetailSummary
   serviceTeam: MasterDataWorkplaceServiceTeamRow | null
   serviceTeamRow: MasterDataWorkplaceOperatorViewRow | null
+  peopleSummary: MasterDataWorkplaceServiceTeamPeopleSummary
   error: string | null
   showFreezeDialog?: boolean
   serviceTeamSubmitAction?: (formData: FormData) => Promise<void>
@@ -910,6 +913,53 @@ export function MasterDataWorkplaceServiceTeamDetailPage({
                 value={serviceTeamRow.display.sourceBatchLabel}
               />
             </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">关联人员</h2>
+              <Badge variant="secondary">{peopleSummary.totalPeople} 人</Badge>
+            </div>
+            {peopleSummary.rows.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>姓名</TableHead>
+                      <TableHead>人员 ID</TableHead>
+                      <TableHead>类型</TableHead>
+                      <TableHead>组织</TableHead>
+                      <TableHead>职场</TableHead>
+                      <TableHead>技能</TableHead>
+                      <TableHead>状态</TableHead>
+                      <TableHead>匹配来源</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {peopleSummary.rows.map((person) => (
+                      <TableRow key={person.employee_id}>
+                        <TableCell className="font-medium">
+                          {person.display.employeeNameLabel}
+                        </TableCell>
+                        <TableCell className="font-mono">
+                          {person.employee_id}
+                        </TableCell>
+                        <TableCell>{person.display.employeeTypeLabel}</TableCell>
+                        <TableCell>{person.display.organizationLabel}</TableCell>
+                        <TableCell>{person.display.workplaceLabel}</TableCell>
+                        <TableCell className="min-w-64">
+                          {person.display.skillSummary}
+                        </TableCell>
+                        <TableCell>{person.display.statusLabel}</TableCell>
+                        <TableCell>{person.display.matchSourceLabel}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <AgentFormBlockedState detail={peopleSummary.emptyDetail} />
+            )}
           </section>
         </>
       ) : (

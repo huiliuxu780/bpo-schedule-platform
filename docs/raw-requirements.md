@@ -54,6 +54,19 @@ status: "done"
 notes: "IM162 已完成：/master-data/sites/[workplaceId] 服务团队表新增 `查看` 入口，/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 展示单个服务团队基础信息、归属职场、组织或供应商来源、状态、生效期和来源批次；编辑复用现有编辑子页面，冻结复用 Dialog；未新增独立导航、后端 route、schema/migration、关联人员列表、人员分配、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
 ```
 
+### R863 - 服务团队详情关联人员只读列表
+
+```yaml
+id: R863
+module: "主数据维护"
+description: "PM 确认继续主数据维护链路。服务团队详情页已经能查看团队基础信息，下一步只在该详情页补一个只读关联人员区域：自有服务团队按同职场和同组织匹配人员；供应商服务团队按同职场和同供应商绑定关系匹配人员。该区域只用于核对团队边界，不做人员分配、新增、批量、导出、合同、结算或最低人力。"
+source: "PM confirmed continuing after IM162 on 2026-06-11"
+submitted_at: "2026-06-11"
+version: "1.0"
+status: "done"
+notes: "IM163 已完成：/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 增加只读关联人员区域；自有团队按同职场同组织匹配，供应商团队按同职场同供应商绑定匹配并去重；未新增后端 route、schema/migration、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
 ### R849 - 主数据非客服人员动作收口
 
 ```yaml

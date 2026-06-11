@@ -4213,3 +4213,20 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认改动区域未引入硬编码色阶、`space-*`、重复 `h1/ArrowLeft/返回职场` 残留。
 - in-app browser smoke 确认 `/master-data/sites/SH-01` 存在 `查看` 详情入口，`/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE` 展示基础字段、编辑/冻结入口和来源信息，详情页冻结 Dialog 含标题、取消和确认冻结按钮；页面未出现合同、结算、最低人力、权限、审批、导出或批量。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM163 服务团队详情关联人员只读列表
+
+#### 审计结论
+
+- `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` 增加只读 `关联人员` 区域，仍留在职场服务团队详情上下文内。
+- 自有服务团队按同职场且同 `organization_id` 的人员匹配；供应商服务团队按同职场且同 `supplier_id` 的绑定关系匹配人员，并对同一人员去重。
+- 关联人员表展示姓名、人员 ID、人员类型、组织、职场、技能、状态和匹配来源；无匹配人员时显示明确空态。
+- 本轮没有新增后端 route、schema/migration、独立服务团队导航、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少关联人员汇总函数；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明服务团队详情页尚未读取人员和绑定数据。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 28 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 28 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button/Dialog 组合和语义 token。
+- in-app browser smoke 确认 `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE` 出现 `服务团队信息`、`关联人员`、编辑/冻结入口和关联人员匹配来源；页面未出现合同、结算、最低人力、权限、审批、导出、批量或人员分配。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

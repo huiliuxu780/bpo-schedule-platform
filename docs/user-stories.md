@@ -89,6 +89,30 @@ status: "done"
 notes: "IM162 已完成：服务团队详情页保持在职场详情子路由内，展示基础信息和来源信息；关联人员只读列表留给 IM163。"
 ```
 
+### US783 - 服务团队详情关联人员只读列表
+
+```yaml
+id: US783
+requirement_ids:
+  - R863
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在单个职场服务团队详情页看到该团队当前关联的人员，以便核对团队边界，而不是进入人员分配或新模块。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 增加只读关联人员区域。"
+  - "自有服务团队按同职场且同 organization_id 的人员匹配。"
+  - "供应商服务团队按同职场且同 supplier_id 的绑定关系匹配人员，并对同一人员去重。"
+  - "关联人员区域展示姓名、人员 ID、人员类型、组织、职场、技能、状态和匹配来源。"
+  - "无匹配人员时显示明确空态，不提供新增、分配、批量、导出或维护动作。"
+  - "不新增 Sidebar 导航、后端 route、schema/migration、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US782"
+status: "done"
+notes: "IM163 已完成：只在服务团队详情页补关联人员只读列表，不增加人员分配或新模块。"
+```
+
 ### US769 - 主数据非客服人员动作收口
 
 ```yaml

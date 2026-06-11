@@ -315,6 +315,27 @@ export type MasterDataWorkplaceDetailSummary = {
   operatorRows: MasterDataWorkplaceOperatorViewRow[]
 }
 
+export type MasterDataWorkplaceServiceTeamPersonDisplay = {
+  employeeNameLabel: string
+  employeeTypeLabel: string
+  statusLabel: string
+  organizationLabel: string
+  workplaceLabel: string
+  skillSummary: string
+  matchSourceLabel: string
+}
+
+export type MasterDataWorkplaceServiceTeamPersonViewRow =
+  MasterDataEmployeeListRow & {
+    display: MasterDataWorkplaceServiceTeamPersonDisplay
+  }
+
+export type MasterDataWorkplaceServiceTeamPeopleSummary = {
+  totalPeople: number
+  emptyDetail: string
+  rows: MasterDataWorkplaceServiceTeamPersonViewRow[]
+}
+
 export type MasterDataVendorServiceWorkplaceDisplay = {
   workplaceIdLabel: string
   workplaceLabel: string
@@ -1415,6 +1436,82 @@ export function summarizeMasterDataWorkplaceDetail({
     createServiceTeamHref: `/master-data/sites/${encodeURIComponent(workplace.reference_id)}/service-teams/new`,
     operatorRows,
   }
+}
+
+export function summarizeMasterDataWorkplaceServiceTeamPeople({
+  serviceTeam,
+  employees,
+  bindings,
+}: {
+  serviceTeam: MasterDataWorkplaceServiceTeamRow | null
+  employees: MasterDataEmployeeListRow[]
+  bindings: MasterDataWorkplaceBindingRow[]
+}): MasterDataWorkplaceServiceTeamPeopleSummary {
+  if (!serviceTeam) {
+    return {
+      totalPeople: 0,
+      emptyDetail: "未找到该服务团队，无法匹配关联人员。",
+      rows: [],
+    }
+  }
+
+  const matchedEmployees =
+    serviceTeam.team_type === "internal"
+      ? employees.filter(
+          (employee) =>
+            employee.workplace_id === serviceTeam.workplace_id &&
+            employee.organization_id === serviceTeam.organization_id
+        )
+      : resolveSupplierServiceTeamEmployees(serviceTeam, employees, bindings)
+  const matchSourceLabel =
+    serviceTeam.team_type === "internal"
+      ? "同职场同组织"
+      : "同职场同供应商绑定"
+  const rows = matchedEmployees
+    .sort((left, right) => left.employee_id.localeCompare(right.employee_id))
+    .map((employee) => ({
+      ...employee,
+      display: {
+        employeeNameLabel: formatMasterDataVisibleValue(employee.employee_name),
+        employeeTypeLabel: formatMasterDataEmployeeType(employee.employee_type),
+        statusLabel: formatMasterDataEmployeeStatus(employee.status),
+        organizationLabel: employee.organization_path ?? "未绑定组织",
+        workplaceLabel: employee.workplace_name ?? "未绑定职场",
+        skillSummary: formatMasterDataEmployeeSkills(employee.skills),
+        matchSourceLabel,
+      },
+    }))
+
+  return {
+    totalPeople: rows.length,
+    emptyDetail:
+      serviceTeam.team_type === "internal"
+        ? "暂无同职场同组织的人员。"
+        : "暂无通过供应商归属记录匹配的人员。",
+    rows,
+  }
+}
+
+function resolveSupplierServiceTeamEmployees(
+  serviceTeam: MasterDataWorkplaceServiceTeamRow,
+  employees: MasterDataEmployeeListRow[],
+  bindings: MasterDataWorkplaceBindingRow[]
+): MasterDataEmployeeListRow[] {
+  if (!serviceTeam.supplier_id) {
+    return []
+  }
+
+  const employeeIds = new Set(
+    bindings
+      .filter(
+        (binding) =>
+          binding.workplace_id === serviceTeam.workplace_id &&
+          binding.supplier_id === serviceTeam.supplier_id
+      )
+      .map((binding) => binding.employee_id)
+  )
+
+  return employees.filter((employee) => employeeIds.has(employee.employee_id))
 }
 
 function buildMaintainedWorkplaceServiceTeamRows(
