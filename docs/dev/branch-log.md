@@ -73,6 +73,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM164 Vendor Service Team Links
+
+- branch_name: `codex/im164-vendor-service-team-links`
+- base_main_commit: `3060d9c`
+- stacked_on: `d06fc39 feat: show service team associated people`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of the master-data supplier/workplace chain. Add a read-only service-team section to `/master-data/vendors/[vendorId]` that links supplier-bound workplace service teams back to existing workplace service-team details. Keep backend routes, schema/migration, standalone navigation, supplier service-team maintenance, personnel assignment, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/vendors/[vendorId]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected supplier-detail service-team summary rows, supplier-detail route service-team fetch, read-only service-team table, `查看团队` links to existing service-team detail pages, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because supplier detail lacked service-team rows; product-structure test first failed because the supplier detail route did not fetch maintained service teams. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 28 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 28 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/vendors/SUP-A` shows service teams, service workplaces, and `查看团队` links without contract/settlement/minimum-staffing/permission/approval/export/batch/personnel-assignment copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM160 Workplace Detail Service Teams
 
 - branch_name: `codex/im160-workplace-service-teams`

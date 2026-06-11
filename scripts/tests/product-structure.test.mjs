@@ -523,6 +523,19 @@ test("workplace detail keeps service-team maintenance nested under workplace det
 
 test("vendor service context stays nested under vendor detail", async () => {
   await access(masterDataVendorDetailPagePath);
+  const vendorDetailSource = await readFile(masterDataVendorDetailPagePath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+
+  assert.equal(
+    vendorDetailSource.includes("fetchMasterDataWorkplaceServiceTeams"),
+    true,
+    "vendor detail should read maintained service teams for reverse supplier links",
+  );
+  assert.equal(
+    workbenchSource.includes("查看团队"),
+    true,
+    "vendor detail should link to existing workplace service-team details",
+  );
 
   const sourceFiles = [
     ...await collectSourceFiles(appRootPath),

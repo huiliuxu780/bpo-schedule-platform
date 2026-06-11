@@ -10,6 +10,7 @@ import {
   fetchImportBatches,
   fetchMasterDataReferences,
   fetchMasterDataWorkplaceBindings,
+  fetchMasterDataWorkplaceServiceTeams,
 } from "@/app/master-data/agents/data"
 
 export const dynamic = "force-dynamic"
@@ -25,12 +26,13 @@ export default async function MasterDataVendorDetailRoute({
 }: PageProps) {
   const { vendorId } = await params
   const decodedVendorId = decodeURIComponent(vendorId)
-  const [batchResult, vendorResult, workplaceResult, bindingResult] =
+  const [batchResult, vendorResult, workplaceResult, bindingResult, serviceTeamResult] =
     await Promise.all([
       fetchImportBatches(),
       fetchMasterDataReferences("vendors"),
       fetchMasterDataReferences("sites"),
       fetchMasterDataWorkplaceBindings(),
+      fetchMasterDataWorkplaceServiceTeams(),
     ])
   const summary = summarizeMasterDataEntitySourceContext(
     "vendors",
@@ -41,6 +43,7 @@ export default async function MasterDataVendorDetailRoute({
     vendors: vendorResult.data ?? [],
     workplaces: workplaceResult.data ?? [],
     bindings: bindingResult.data ?? [],
+    serviceTeams: serviceTeamResult.data ?? [],
   })
 
   if (!detailSummary.found) {
@@ -63,6 +66,7 @@ export default async function MasterDataVendorDetailRoute({
           vendorResult.error ??
           workplaceResult.error ??
           bindingResult.error ??
+          serviceTeamResult.error ??
           batchResult.error
         }
       />

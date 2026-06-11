@@ -1147,6 +1147,32 @@ test("vendor detail keeps service workplaces inside the selected supplier", () =
         batch_id: "BATCH-MD-001",
       },
     ],
+    serviceTeams: [
+      {
+        service_team_id: "TEAM-SUP-001",
+        workplace_id: "SH-01",
+        team_type: "supplier",
+        team_name: "上海供应商驻场团队",
+        organization_id: null,
+        supplier_id: "SUP-001",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        service_team_id: "TEAM-SUP-002",
+        workplace_id: "NJ-01",
+        team_type: "supplier",
+        team_name: "南京供应商驻场团队",
+        organization_id: null,
+        supplier_id: "SUP-002",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
   });
 
   assert.equal(detail.found, true);
@@ -1175,6 +1201,23 @@ test("vendor detail keeps service workplaces inside the selected supplier", () =
   assert.equal(JSON.stringify(detail).includes("合同"), false);
   assert.equal(JSON.stringify(detail).includes("结算"), false);
   assert.equal(JSON.stringify(detail).includes("最低人力"), false);
+  assert.equal(detail.totalServiceTeams, 1);
+  assert.deepEqual(
+    detail.serviceTeamRows.map((row) => [
+      row.display.teamNameLabel,
+      row.display.workplaceLabel,
+      row.display.statusLabel,
+      row.display.detailHref,
+    ]),
+    [
+      [
+        "上海供应商驻场团队",
+        "上海职场",
+        "生效",
+        "/master-data/sites/SH-01/service-teams/TEAM-SUP-001",
+      ],
+    ],
+  );
 });
 
 test("vendor detail returns not found for unknown supplier id", () => {

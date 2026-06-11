@@ -2,6 +2,45 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM164
+    title: "供应商详情服务团队只读链路"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM163"]
+    allowed_files:
+      - "app/master-data/vendors/[vendorId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/vendors/[vendorId] 增加只读服务团队区域。"
+      - "服务团队区域只展示 supplier_id 等于当前供应商的职场服务团队记录。"
+      - "每行展示服务团队名称、归属职场、状态、生效期、来源批次，并提供进入既有服务团队详情页的链接。"
+      - "无服务团队时显示明确空态，不提供新增、分配、批量、导出或维护动作。"
+      - "不新增后端 route、schema/migration、独立服务团队导航、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或新增 API"
+      - "范围扩展到供应商服务团队维护、人员分配、独立服务团队导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成供应商详情服务团队只读链路：/master-data/vendors/[vendorId] 读取现有职场服务团队记录，筛选当前 supplier_id 的供应商团队，展示服务团队名称、归属职场、状态、生效期、来源批次，并提供 `查看团队` 链接进入既有 /master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 详情页；无记录显示明确空态。未新增后端 route、schema/migration、供应商服务团队维护、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
   - id: IM163
     title: "服务团队详情关联人员只读列表"
     priority: P0

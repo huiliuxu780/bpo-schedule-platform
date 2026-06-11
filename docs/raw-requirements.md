@@ -67,6 +67,19 @@ status: "done"
 notes: "IM163 已完成：/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 增加只读关联人员区域；自有团队按同职场同组织匹配，供应商团队按同职场同供应商绑定匹配并去重；未新增后端 route、schema/migration、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
 ```
 
+### R864 - 供应商详情服务团队只读链路
+
+```yaml
+id: R864
+module: "主数据维护"
+description: "PM 确认继续主数据维护链路。职场服务团队详情已经能看到关联人员，下一步在供应商详情页反向展示该供应商对应的职场服务团队，并提供进入既有职场服务团队详情页的链接。该页面只做核对链路，不新增供应商服务团队维护、人员分配、合同、结算比例或最低人力。"
+source: "PM confirmed continuing after IM163 on 2026-06-11"
+submitted_at: "2026-06-11"
+version: "1.0"
+status: "done"
+notes: "IM164 已完成：/master-data/vendors/[vendorId] 增加只读服务团队区域，只展示当前供应商绑定的职场服务团队，并链接到既有职场服务团队详情页；未新增后端 route、schema/migration、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
 ### R849 - 主数据非客服人员动作收口
 
 ```yaml

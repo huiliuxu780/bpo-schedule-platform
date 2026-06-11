@@ -2102,3 +2102,12 @@
 - action: 完成服务团队详情关联人员只读列表。
 - status: `done`
 - notes: `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` 增加只读关联人员区域；自有服务团队按同职场同组织匹配人员，供应商服务团队按同职场同供应商绑定匹配人员并去重；表格展示姓名、人员 ID、人员类型、组织、职场、技能、状态和匹配来源；无匹配人员显示明确空态；本轮不新增后端 route、schema/migration、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM164`
+- source_ids:
+  - `R864`
+- story_ids:
+  - `US784`
+- action: 完成供应商详情服务团队只读链路。
+- status: `done`
+- notes: `/master-data/vendors/[vendorId]` 增加只读服务团队区域；只展示当前供应商绑定的职场服务团队，表格展示服务团队名称、归属职场、状态、生效期和来源批次，并通过 `查看团队` 进入既有职场服务团队详情页继续核对关联人员；无服务团队时显示明确空态；本轮不新增后端 route、schema/migration、供应商服务团队维护、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

@@ -1421,10 +1421,10 @@ export function MasterDataVendorDetailPage({
           tone={detailSummary.totalServiceWorkplaces > 0 ? "ready" : "default"}
         />
         <MetricCard
-          label="生效职场"
-          value={detailSummary.activeServiceWorkplaces.toLocaleString("zh-CN")}
-          detail="当前可引用职场"
-          tone={detailSummary.activeServiceWorkplaces > 0 ? "ready" : "default"}
+          label="服务团队"
+          value={detailSummary.totalServiceTeams.toLocaleString("zh-CN")}
+          detail="来自职场服务团队"
+          tone={detailSummary.totalServiceTeams > 0 ? "ready" : "default"}
         />
         <MetricCard
           label="来源版本"
@@ -1446,6 +1446,57 @@ export function MasterDataVendorDetailPage({
             <ReadOnlyField label="来源批次" value={vendor.display.sourceBatchLabel} />
           </div>
         ) : null}
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">服务团队</h2>
+        {detailSummary.serviceTeamRows.length === 0 ? (
+          <div className="rounded-md border p-4 text-sm text-muted-foreground">
+            暂无该供应商服务团队记录。
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>服务团队</TableHead>
+                <TableHead>归属职场</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>有效期</TableHead>
+                <TableHead>来源批次</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {detailSummary.serviceTeamRows.map((row) => (
+                <TableRow key={row.service_team_id}>
+                  <TableCell className="font-medium">
+                    {row.display.teamNameLabel}
+                  </TableCell>
+                  <TableCell>{row.display.workplaceLabel}</TableCell>
+                  <TableCell>
+                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                      {row.display.statusLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell className="font-mono">
+                    {row.display.sourceBatchLabel}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-primary hover:text-primary"
+                    >
+                      <Link href={row.display.detailHref}>查看团队</Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </section>
 
       <section className="rounded-lg border bg-background p-4">

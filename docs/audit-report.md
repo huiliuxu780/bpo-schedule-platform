@@ -4230,3 +4230,20 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button/Dialog 组合和语义 token。
 - in-app browser smoke 确认 `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE` 出现 `服务团队信息`、`关联人员`、编辑/冻结入口和关联人员匹配来源；页面未出现合同、结算、最低人力、权限、审批、导出、批量或人员分配。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM164 供应商详情服务团队只读链路
+
+#### 审计结论
+
+- `/master-data/vendors/[vendorId]` 增加只读 `服务团队` 区域，仍留在供应商详情上下文内。
+- 服务团队区域只展示 `supplier_id` 等于当前供应商的职场服务团队记录。
+- 每行展示服务团队名称、归属职场、状态、生效期、来源批次，并通过 `查看团队` 链接到既有职场服务团队详情页。
+- 本轮没有新增后端 route、schema/migration、供应商服务团队维护、人员分配、独立服务团队导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明供应商详情缺少服务团队行；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明供应商详情页尚未读取职场服务团队记录。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 28 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 28 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 组合和语义 token。
+- in-app browser smoke 确认 `/master-data/vendors/SUP-A` 出现 `服务团队`、`服务职场`、`查看团队` 链接，并指向 `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或人员分配。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

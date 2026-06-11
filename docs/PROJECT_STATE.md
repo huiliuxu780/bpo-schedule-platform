@@ -852,3 +852,9 @@ The detail page keeps the same workplace child-route ownership. Editing continue
 `IM163` keeps the service-team detail page as the owning surface and adds a read-only associated-person section to `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]`. The route now reads existing employees and workplace bindings: internal teams match employees by the same workplace and organization, while supplier teams match employees through same-workplace supplier bindings and de-duplicate employee rows.
 
 The section shows name, employee ID, employee type, organization, workplace, skills, status, and the match source. Empty states are explicit when no people match. This slice did not add backend routes, schemas, migrations, standalone service-team navigation, personnel assignment, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM163.
+
+## 2026-06-11 IM164 Vendor Service Team Links
+
+`IM164` adds the reverse read-only service-team chain on `/master-data/vendors/[vendorId]`. The supplier detail route now reads existing workplace service-team records and filters supplier teams whose `supplier_id` matches the selected supplier.
+
+The supplier detail page shows a service-team section with team name, owning workplace, status, effective period, source batch, and a `查看团队` link into the existing `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` detail page. This slice did not add backend routes, schemas, migrations, standalone service-team navigation, supplier service-team maintenance, personnel assignment, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM164.

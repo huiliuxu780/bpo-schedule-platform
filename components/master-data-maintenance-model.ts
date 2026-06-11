@@ -356,6 +356,26 @@ export type MasterDataVendorServiceWorkplaceViewRow = {
   display: MasterDataVendorServiceWorkplaceDisplay
 }
 
+export type MasterDataVendorServiceTeamDisplay = {
+  teamNameLabel: string
+  workplaceLabel: string
+  statusLabel: string
+  effectivePeriodLabel: string
+  sourceBatchLabel: string
+  detailHref: string
+}
+
+export type MasterDataVendorServiceTeamViewRow = {
+  service_team_id: string
+  workplace_id: string
+  team_name: string
+  status: MasterDataAgentMaintenanceStatus
+  effective_from: string
+  effective_to: string
+  batch_id: string
+  display: MasterDataVendorServiceTeamDisplay
+}
+
 export type MasterDataVendorDetailSummary = {
   found: boolean
   title: string
@@ -363,7 +383,9 @@ export type MasterDataVendorDetailSummary = {
   vendor: MasterDataReferenceListViewRow | null
   totalServiceWorkplaces: number
   activeServiceWorkplaces: number
+  totalServiceTeams: number
   serviceRows: MasterDataVendorServiceWorkplaceViewRow[]
+  serviceTeamRows: MasterDataVendorServiceTeamViewRow[]
 }
 
 export type MasterDataAgentMaintenancePayload = {
@@ -1277,11 +1299,13 @@ export function summarizeMasterDataVendorDetail({
   vendors,
   workplaces,
   bindings,
+  serviceTeams,
 }: {
   vendorId: string
   vendors: MasterDataReferenceListRow[]
   workplaces: MasterDataReferenceListRow[]
   bindings: MasterDataWorkplaceBindingRow[]
+  serviceTeams?: MasterDataWorkplaceServiceTeamRow[]
 }): MasterDataVendorDetailSummary {
   const vendorSummary = summarizeMasterDataReferenceManagement("vendors", vendors)
   const workplaceSummary = summarizeMasterDataReferenceManagement("sites", workplaces)
@@ -1296,7 +1320,9 @@ export function summarizeMasterDataVendorDetail({
       vendor: null,
       totalServiceWorkplaces: 0,
       activeServiceWorkplaces: 0,
+      totalServiceTeams: 0,
       serviceRows: [],
+      serviceTeamRows: [],
     }
   }
 
@@ -1340,6 +1366,47 @@ export function summarizeMasterDataVendorDetail({
       }
     })
     .sort((left, right) => left.workplace_id.localeCompare(right.workplace_id))
+  const serviceTeamRows = (serviceTeams ?? [])
+    .filter(
+      (serviceTeam) =>
+        serviceTeam.team_type === "supplier" &&
+        serviceTeam.supplier_id === vendor.reference_id
+    )
+    .map((serviceTeam) => {
+      const workplace = workplaceById.get(serviceTeam.workplace_id) ?? null
+      const workplaceLabel =
+        workplace?.display.referenceNameLabel ??
+        formatMasterDataVisibleValue(serviceTeam.workplace_id)
+
+      return {
+        service_team_id: serviceTeam.service_team_id,
+        workplace_id: serviceTeam.workplace_id,
+        team_name: serviceTeam.team_name,
+        status: serviceTeam.status,
+        effective_from: serviceTeam.effective_from,
+        effective_to: serviceTeam.effective_to,
+        batch_id: serviceTeam.batch_id,
+        display: {
+          teamNameLabel: formatMasterDataVisibleValue(serviceTeam.team_name),
+          workplaceLabel,
+          statusLabel: formatMasterDataEmployeeStatus(serviceTeam.status),
+          effectivePeriodLabel: formatEffectivePeriod(
+            serviceTeam.effective_from,
+            serviceTeam.effective_to
+          ),
+          sourceBatchLabel: formatImportBatchDisplayLabel(serviceTeam.batch_id),
+          detailHref: `/master-data/sites/${encodeURIComponent(serviceTeam.workplace_id)}/service-teams/${encodeURIComponent(serviceTeam.service_team_id)}`,
+        },
+      }
+    })
+    .sort((left, right) => {
+      const workplaceComparison = left.workplace_id.localeCompare(right.workplace_id)
+      if (workplaceComparison !== 0) {
+        return workplaceComparison
+      }
+
+      return left.team_name.localeCompare(right.team_name)
+    })
 
   return {
     found: true,
@@ -1349,7 +1416,9 @@ export function summarizeMasterDataVendorDetail({
     totalServiceWorkplaces: serviceRows.length,
     activeServiceWorkplaces: serviceRows.filter((row) => row.status === "active")
       .length,
+    totalServiceTeams: serviceTeamRows.length,
     serviceRows,
+    serviceTeamRows,
   }
 }
 
