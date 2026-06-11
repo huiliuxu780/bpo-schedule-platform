@@ -109,6 +109,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM166 Organization Detail Links
+
+- branch_name: `codex/im166-organization-detail-links`
+- base_main_commit: `3060d9c`
+- stacked_on: `78a2d98 feat: add agent detail service links`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of the master-data organization/personnel chain. Add a read-only organization detail page under `/master-data/organizations/[organizationId]`, expose row-level `查看` from the organization list, and show direct child organizations plus current directly assigned personnel linked to existing personnel detail pages. Keep backend routes, schema/migration, personnel reassignment, organization-tree drag, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/organizations/[organizationId]/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected organization detail summary model, organization-list `查看` row action, organization detail route, read-only organization fields, direct-child organization table, direct-personnel table, `查看人员` links to existing personnel detail pages, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizeMasterDataOrganizationDetail` was missing; product-structure test first failed because `/master-data/organizations/[organizationId]` did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 30 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 30 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/organizations` has row-level `查看` linking to `/master-data/organizations/ORG-CC`; `/master-data/organizations/ORG-CC` shows organization info, direct child organizations, and personnel empty state; `/master-data/organizations/ORG-IM158` shows `归属人员` and `查看人员` linking to `/master-data/agents/A-IM159`, without contract/settlement/minimum-staffing/permission/approval/export/batch/auto-scheduling copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM160 Workplace Detail Service Teams
 
 - branch_name: `codex/im160-workplace-service-teams`

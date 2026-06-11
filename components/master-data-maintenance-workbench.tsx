@@ -21,6 +21,7 @@ import {
   type MasterDataAgentDetailSummary,
   type MasterDataAgentManagementSummary,
   type MasterDataEntitySourceContext,
+  type MasterDataOrganizationDetailSummary,
   type MasterDataOrganizationManagementSummary,
   type MasterDataOrganizationListViewRow,
   type MasterDataReferenceManagementSummary,
@@ -1652,6 +1653,14 @@ export function MasterDataOrganizationManagementPage({
                       variant="ghost"
                       className="px-1.5 text-primary hover:text-primary"
                     >
+                      <Link href={row.display.detailHref}>查看</Link>
+                    </Button>
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-primary hover:text-primary"
+                    >
                       <Link href={row.display.editHref}>编辑</Link>
                     </Button>
                     <Button
@@ -1676,6 +1685,192 @@ export function MasterDataOrganizationManagementPage({
           action={organizationSubmitAction}
         />
       ) : null}
+    </main>
+  )
+}
+
+export function MasterDataOrganizationDetailPage({
+  detailSummary,
+  error,
+}: {
+  detailSummary: MasterDataOrganizationDetailSummary
+  error: string | null
+}) {
+  const organization = detailSummary.organization
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="组织详情读取失败" error={error} /> : null}
+
+      {organization ? (
+        <>
+          <section className="grid gap-3 md:grid-cols-3">
+            <MetricCard
+              label="组织层级"
+              value={organization.display.organizationLevelLabel}
+              detail={organization.display.parentOrganizationLabel}
+              tone="default"
+            />
+            <MetricCard
+              label="直接下级组织"
+              value={detailSummary.totalChildOrganizations.toLocaleString("zh-CN")}
+              detail="只读层级核对"
+              tone={detailSummary.totalChildOrganizations > 0 ? "ready" : "default"}
+            />
+            <MetricCard
+              label="归属人员"
+              value={detailSummary.totalPeople.toLocaleString("zh-CN")}
+              detail="当前直接归属"
+              tone={detailSummary.totalPeople > 0 ? "ready" : "default"}
+            />
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">组织信息</h2>
+            <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+              <ReadOnlyField
+                label="组织名称"
+                value={organization.display.organizationNameLabel}
+              />
+              <ReadOnlyField
+                label="组织编码"
+                value={organization.display.organizationIdLabel}
+              />
+              <ReadOnlyField
+                label="层级"
+                value={organization.display.organizationLevelLabel}
+              />
+              <ReadOnlyField
+                label="上级组织"
+                value={organization.display.parentOrganizationLabel}
+              />
+              <ReadOnlyField
+                label="组织路径"
+                value={organization.display.organizationPathLabel}
+              />
+              <ReadOnlyField label="状态" value={organization.display.statusLabel} />
+              <ReadOnlyField
+                label="有效期"
+                value={organization.display.effectivePeriodLabel}
+              />
+              <ReadOnlyField
+                label="来源批次"
+                value={organization.display.sourceBatchLabel}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">直接下级组织</h2>
+              <Badge variant="secondary">
+                {detailSummary.totalChildOrganizations.toLocaleString("zh-CN")} 个
+              </Badge>
+            </div>
+            {detailSummary.childRows.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>组织名称</TableHead>
+                    <TableHead>组织编码</TableHead>
+                    <TableHead>层级</TableHead>
+                    <TableHead>组织路径</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detailSummary.childRows.map((row) => (
+                    <TableRow key={row.organization_id}>
+                      <TableCell className="font-medium">
+                        {row.display.organizationNameLabel}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {row.display.organizationIdLabel}
+                      </TableCell>
+                      <TableCell>{row.display.organizationLevelLabel}</TableCell>
+                      <TableCell>{row.display.organizationPathLabel}</TableCell>
+                      <TableCell>
+                        <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                          {row.display.statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>查看组织</Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <AgentFormBlockedState detail={detailSummary.emptyChildDetail} />
+            )}
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">归属人员</h2>
+              <Badge variant="secondary">
+                {detailSummary.totalPeople.toLocaleString("zh-CN")} 人
+              </Badge>
+            </div>
+            {detailSummary.peopleRows.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>姓名</TableHead>
+                    <TableHead>人员 ID</TableHead>
+                    <TableHead>人员类型</TableHead>
+                    <TableHead>职场</TableHead>
+                    <TableHead>技能</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detailSummary.peopleRows.map((row) => (
+                    <TableRow key={row.employee_id}>
+                      <TableCell className="font-medium">
+                        {row.display.publicNameLabel}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">{row.employee_id}</TableCell>
+                      <TableCell>{row.display.employeeTypeLabel}</TableCell>
+                      <TableCell>{row.display.workplaceLabel}</TableCell>
+                      <TableCell>{row.display.skillSummary}</TableCell>
+                      <TableCell>
+                        <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                          {row.display.statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>查看人员</Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <AgentFormBlockedState detail={detailSummary.emptyPeopleDetail} />
+            )}
+          </section>
+        </>
+      ) : (
+        <AgentFormBlockedState detail="未找到该组织，请返回列表重新选择。" />
+      )}
     </main>
   )
 }

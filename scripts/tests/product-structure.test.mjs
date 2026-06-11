@@ -28,6 +28,7 @@ const masterDataVendorEditPagePath = new URL("../../app/master-data/vendors/[ven
 const masterDataSkillCreatePagePath = new URL("../../app/master-data/skills/new/page.tsx", import.meta.url);
 const masterDataSkillEditPagePath = new URL("../../app/master-data/skills/[skillId]/edit/page.tsx", import.meta.url);
 const masterDataOrganizationCreatePagePath = new URL("../../app/master-data/organizations/new/page.tsx", import.meta.url);
+const masterDataOrganizationDetailPagePath = new URL("../../app/master-data/organizations/[organizationId]/page.tsx", import.meta.url);
 const masterDataOrganizationEditPagePath = new URL("../../app/master-data/organizations/[organizationId]/edit/page.tsx", import.meta.url);
 const demandForecastProductionPagePath = new URL("../../app/demand-plans/production/page.tsx", import.meta.url);
 const personnelScheduleProductionPagePath = new URL("../../app/schedule-plans/production/page.tsx", import.meta.url);
@@ -781,6 +782,41 @@ test("agent detail stays under customer-service personnel context", async () => 
   assert.equal(agentDetailSource.includes("合同"), false);
   assert.equal(agentDetailSource.includes("结算"), false);
   assert.equal(agentDetailSource.includes("最低人力"), false);
+});
+
+test("organization detail stays read-only under organization context", async () => {
+  await access(masterDataOrganizationDetailPagePath);
+  const organizationDetailSource = await readFile(masterDataOrganizationDetailPagePath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+
+  assert.equal(
+    organizationDetailSource.includes("fetchMasterDataOrganizations"),
+    true,
+    "organization detail should read organization rows for read-only hierarchy context",
+  );
+  assert.equal(
+    organizationDetailSource.includes("fetchMasterDataEmployees"),
+    true,
+    "organization detail should read personnel rows for current people context",
+  );
+  assert.equal(
+    workbenchSource.includes("MasterDataOrganizationDetailPage"),
+    true,
+    "organization detail should render through a dedicated organization detail component",
+  );
+  assert.equal(
+    workbenchSource.includes("直接下级组织"),
+    true,
+    "organization detail should expose direct child organizations",
+  );
+  assert.equal(
+    workbenchSource.includes("归属人员"),
+    true,
+    "organization detail should expose current people under the organization",
+  );
+  assert.equal(organizationDetailSource.includes("合同"), false);
+  assert.equal(organizationDetailSource.includes("结算"), false);
+  assert.equal(organizationDetailSource.includes("最低人力"), false);
 });
 
 test("agent list keeps page actions and filter actions in their own zones", async () => {

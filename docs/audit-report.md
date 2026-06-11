@@ -4265,3 +4265,22 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 和语义 token，未引入硬编码色阶或 `space-*`。
 - in-app browser smoke 确认 `/master-data/agents` 存在行内 `查看` 入口并指向 `/master-data/agents/A-1001`；`/master-data/agents/A-1001` 出现 `人员信息`、`技能集合`、`关联服务团队` 和 `查看团队` 链接，并指向 `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM166 组织详情只读业务链路
+
+#### 审计结论
+
+- `/master-data/organizations` 列表行新增 `查看` 入口，进入 `/master-data/organizations/[organizationId]` 单个组织详情页。
+- 组织详情页只读展示组织名称、编码、层级、上级组织、组织路径、状态、生效期和来源批次。
+- 详情页只读展示当前组织的直接下级组织，并通过 `查看组织` 链接继续进入下级组织详情页。
+- 详情页只读展示当前组织直接归属人员，并通过 `查看人员` 链接进入既有客服人员详情页。
+- 无直接下级组织或无归属人员时显示明确空态。
+- 本轮没有新增后端 route、schema/migration、人员调岗、组织树拖拽、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `summarizeMasterDataOrganizationDetail`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明组织详情页文件不存在。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 30 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 30 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/master-data/organizations` 存在行内 `查看` 入口并指向 `/master-data/organizations/ORG-CC`；`/master-data/organizations/ORG-CC` 出现 `组织信息`、`直接下级组织`、`归属人员` 和人员空态；`/master-data/organizations/ORG-IM158` 出现 `查看人员` 链接并指向 `/master-data/agents/A-IM159`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

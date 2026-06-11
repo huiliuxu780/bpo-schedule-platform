@@ -2120,3 +2120,12 @@
 - action: 完成客服人员详情只读业务链路。
 - status: `done`
 - notes: `/master-data/agents` 列表行新增 `查看` 入口；`/master-data/agents/[employeeId]` 只读展示人员基础信息、技能集合和关联服务团队；关联服务团队通过 `查看团队` 进入既有职场服务团队详情页；无关联团队显示明确空态；本轮不新增后端 route、schema/migration、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM166`
+- source_ids:
+  - `R866`
+- story_ids:
+  - `US786`
+- action: 完成组织详情只读业务链路。
+- status: `done`
+- notes: `/master-data/organizations` 列表行新增 `查看` 入口；`/master-data/organizations/[organizationId]` 只读展示组织基础信息、直接下级组织和当前直接归属人员；归属人员通过 `查看人员` 进入既有客服人员详情页；无下级组织或归属人员显示明确空态；本轮不新增后端 route、schema/migration、人员调岗、组织树拖拽、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

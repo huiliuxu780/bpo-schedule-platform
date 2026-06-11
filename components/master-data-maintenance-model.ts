@@ -218,6 +218,7 @@ export type MasterDataOrganizationListDisplay = {
   statusLabel: string
   effectivePeriodLabel: string
   sourceBatchLabel: string
+  detailHref: string
   editHref: string
   freezeHref: string
 }
@@ -233,6 +234,19 @@ export type MasterDataOrganizationManagementSummary = {
   activeRecords: number
   frozenRecords: number
   rows: MasterDataOrganizationListViewRow[]
+}
+
+export type MasterDataOrganizationDetailSummary = {
+  found: boolean
+  title: string
+  backHref: string
+  organization: MasterDataOrganizationListViewRow | null
+  totalChildOrganizations: number
+  totalPeople: number
+  emptyChildDetail: string
+  emptyPeopleDetail: string
+  childRows: MasterDataOrganizationListViewRow[]
+  peopleRows: MasterDataEmployeeListViewRow[]
 }
 
 export type MasterDataReferenceManagementSummary = {
@@ -1852,6 +1866,7 @@ export function summarizeMasterDataOrganizationManagement(
           organization.effective_to
         ),
         sourceBatchLabel: formatImportBatchDisplayLabel(organization.batch_id),
+        detailHref: `/master-data/organizations/${encodeURIComponent(organization.organization_id)}`,
         editHref: `/master-data/organizations/${encodeURIComponent(organization.organization_id)}/edit`,
         freezeHref: `/master-data/organizations?freeze_organization_id=${encodeURIComponent(organization.organization_id)}`,
       },
@@ -1864,6 +1879,56 @@ export function summarizeMasterDataOrganizationManagement(
     activeRecords: rows.filter((row) => row.status === "active").length,
     frozenRecords: rows.filter((row) => row.status === "frozen").length,
     rows,
+  }
+}
+
+export function summarizeMasterDataOrganizationDetail({
+  organizationId,
+  organizations,
+  employees,
+}: {
+  organizationId: string
+  organizations: MasterDataOrganizationListRow[]
+  employees: MasterDataEmployeeListRow[]
+}): MasterDataOrganizationDetailSummary {
+  const organizationSummary = summarizeMasterDataOrganizationManagement(organizations)
+  const organization =
+    organizationSummary.rows.find((row) => row.organization_id === organizationId) ??
+    null
+
+  if (!organization) {
+    return {
+      found: false,
+      title: "组织未找到",
+      backHref: "/master-data/organizations",
+      organization: null,
+      totalChildOrganizations: 0,
+      totalPeople: 0,
+      emptyChildDetail: "未找到该组织，无法读取下级组织。",
+      emptyPeopleDetail: "未找到该组织，无法读取归属人员。",
+      childRows: [],
+      peopleRows: [],
+    }
+  }
+
+  const childRows = organizationSummary.rows.filter(
+    (row) => row.parent_organization_id === organization.organization_id
+  )
+  const peopleRows = summarizeMasterDataEmployeeList(employees).rows.filter(
+    (row) => row.organization_id === organization.organization_id
+  )
+
+  return {
+    found: true,
+    title: organization.display.organizationNameLabel,
+    backHref: "/master-data/organizations",
+    organization,
+    totalChildOrganizations: childRows.length,
+    totalPeople: peopleRows.length,
+    emptyChildDetail: "暂无直接下级组织。",
+    emptyPeopleDetail: "暂无归属该组织的客服人员。",
+    childRows,
+    peopleRows,
   }
 }
 

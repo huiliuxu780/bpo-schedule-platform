@@ -864,3 +864,9 @@ The supplier detail page shows a service-team section with team name, owning wor
 `IM165` adds the customer-service personnel detail read-only chain. `/master-data/agents` now exposes a row-level `查看` action, and `/master-data/agents/[employeeId]` shows the selected person's basic information, organization, workplace, employee type, status, effective period, source batch, and skill set.
 
 The detail page derives associated service teams from existing workplace service-team and workplace-binding data, then links each row back into the existing workplace service-team detail page. This slice did not add backend routes, schemas, migrations, personnel assignment, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM165.
+
+## 2026-06-11 IM166 Organization Detail Links
+
+`IM166` adds the organization detail read-only chain. `/master-data/organizations` now exposes a row-level `查看` action, and `/master-data/organizations/[organizationId]` shows the selected organization's basic information, hierarchy level, parent organization, path, status, effective period, and source batch.
+
+The detail page shows direct child organizations and current directly assigned personnel. Child organizations link to their own organization detail pages, and personnel rows link to the existing customer-service personnel detail page. This slice did not add backend routes, schemas, migrations, personnel reassignment, organization-tree drag, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM166.

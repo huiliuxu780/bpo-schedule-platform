@@ -159,6 +159,29 @@ status: "done"
 notes: "IM165 已完成：客服人员列表新增行内查看详情入口，详情页只读展示人员基础信息、技能集合和关联服务团队。"
 ```
 
+### US786 - 组织详情只读业务链路
+
+```yaml
+id: US786
+requirement_ids:
+  - R866
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望从组织列表进入单个组织详情页，以便核对该组织的基础信息、直接下级组织和当前归属人员。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/organizations 列表行提供查看详情入口。"
+  - "/master-data/organizations/[organizationId] 展示组织基础信息、层级、上级组织、组织路径、状态、有效期和来源批次。"
+  - "详情页只读展示直接下级组织和当前归属人员，并能进入人员详情页。"
+  - "无下级组织或无归属人员时显示明确空态。"
+  - "不新增 Sidebar 导航、后端 route、schema/migration、人员调岗、组织树拖拽、权限、审批、导出、批量操作、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US785"
+status: "done"
+notes: "IM166 已完成：组织列表新增行内查看详情入口，组织详情页只读展示组织信息、直接下级组织和归属人员，归属人员可进入既有客服人员详情页。"
+```
+
 ### US769 - 主数据非客服人员动作收口
 
 ```yaml
