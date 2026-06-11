@@ -4195,3 +4195,21 @@
 - `npm run lint` 和 `npm run typecheck` 已通过。
 - API smoke 创建 `TEAM-IM161-SMOKE` 返回 200；in-app browser smoke 确认 `/master-data/sites/SH-01` 显示服务团队记录来源、编辑/冻结入口，`/master-data/sites/SH-01/service-teams/new` 显示子页表单，`/service-teams/TEAM-IM161-SMOKE/edit` 回填字段；页面未出现合同、结算或最低人力。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM162 职场服务团队详情页
+
+#### 审计结论
+
+- `/master-data/sites/[workplaceId]` 的服务团队表新增 `查看` 入口，只对 IM161 本地服务团队记录生成详情链接，不为旧推导行伪造详情页。
+- 新增 `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]`，仍在职场详情子路由上下文内，不新增 Sidebar 导航或独立服务团队模块。
+- 详情页展示服务团队 ID、团队名称、团队类型、归属职场、组织或供应商来源、状态、生效期和来源批次。
+- 详情页提供编辑和冻结入口；编辑复用既有编辑子页面，冻结复用 Dialog，取消后停留在详情页。
+- 本轮没有新增后端 route、schema/migration、关联人员列表、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明服务团队行缺少 `detailHref`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明详情页文件不存在。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 27 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 28 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认改动区域未引入硬编码色阶、`space-*`、重复 `h1/ArrowLeft/返回职场` 残留。
+- in-app browser smoke 确认 `/master-data/sites/SH-01` 存在 `查看` 详情入口，`/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE` 展示基础字段、编辑/冻结入口和来源信息，详情页冻结 Dialog 含标题、取消和确认冻结按钮；页面未出现合同、结算、最低人力、权限、审批、导出或批量。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

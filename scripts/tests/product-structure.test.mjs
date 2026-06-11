@@ -18,6 +18,7 @@ const masterDataWorkplaceDetailPagePath = new URL("../../app/master-data/sites/[
 const masterDataWorkplaceCreatePagePath = new URL("../../app/master-data/sites/new/page.tsx", import.meta.url);
 const masterDataWorkplaceEditPagePath = new URL("../../app/master-data/sites/[workplaceId]/edit/page.tsx", import.meta.url);
 const masterDataWorkplaceServiceTeamCreatePagePath = new URL("../../app/master-data/sites/[workplaceId]/service-teams/new/page.tsx", import.meta.url);
+const masterDataWorkplaceServiceTeamDetailPagePath = new URL("../../app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/page.tsx", import.meta.url);
 const masterDataWorkplaceServiceTeamEditPagePath = new URL("../../app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/edit/page.tsx", import.meta.url);
 const masterDataWorkplaceServiceTeamActionsPath = new URL("../../app/master-data/sites/[workplaceId]/service-teams/actions.ts", import.meta.url);
 const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[vendorId]/page.tsx", import.meta.url);
@@ -451,6 +452,7 @@ test("master data visible terminology does not expose operating subject concepts
 
 test("workplace detail keeps service-team maintenance nested under workplace detail", async () => {
   await access(masterDataWorkplaceServiceTeamCreatePagePath);
+  await access(masterDataWorkplaceServiceTeamDetailPagePath);
   await access(masterDataWorkplaceServiceTeamEditPagePath);
   await access(masterDataWorkplaceServiceTeamActionsPath);
 
@@ -485,6 +487,16 @@ test("workplace detail keeps service-team maintenance nested under workplace det
     workplaceDetailComponentSource.includes("冻结服务团队"),
     true,
     "service-team freeze should use a dialog in the workplace detail context",
+  );
+  assert.equal(
+    workplaceDetailComponentSource.includes("查看"),
+    true,
+    "workplace service-team table should link to the nested service-team detail page",
+  );
+  assert.equal(
+    workbenchSource.includes("MasterDataWorkplaceServiceTeamDetailPage"),
+    true,
+    "workplace service-team detail should be rendered by a dedicated page component",
   );
   assert.equal(workplaceDetailComponentSource.includes("合同"), false);
   assert.equal(workplaceDetailComponentSource.includes("结算"), false);

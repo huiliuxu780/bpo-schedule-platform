@@ -2,12 +2,15 @@ import Link from "next/link"
 import {
   AlertTriangle,
   CheckCircle2,
+  Eye,
   MoreHorizontal,
+  Pencil,
   Plus,
   RotateCcw,
   Search,
   Send,
   Settings2,
+  Snowflake,
   Upload,
 } from "lucide-react"
 
@@ -669,7 +672,7 @@ export function MasterDataWorkplaceDetailPage({
                 <TableHead>有效期</TableHead>
                 <TableHead>来源</TableHead>
                 <TableHead>来源批次</TableHead>
-                <TableHead className="w-28 text-right">操作</TableHead>
+                <TableHead className="w-40 text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -692,6 +695,19 @@ export function MasterDataWorkplaceDetailPage({
                     {row.display.sourceBatchLabel}
                   </TableCell>
                   <TableCell className="text-right">
+                    {row.display.detailHref ? (
+                      <Button
+                        asChild
+                        size="xs"
+                        variant="ghost"
+                        className="px-1.5 text-primary hover:text-primary"
+                      >
+                        <Link href={row.display.detailHref}>
+                          <Eye data-icon="inline-start" />
+                          查看
+                        </Link>
+                      </Button>
+                    ) : null}
                     {row.display.editHref ? (
                       <Button
                         asChild
@@ -699,7 +715,10 @@ export function MasterDataWorkplaceDetailPage({
                         variant="ghost"
                         className="px-1.5 text-primary hover:text-primary"
                       >
-                        <Link href={row.display.editHref}>编辑</Link>
+                        <Link href={row.display.editHref}>
+                          <Pencil data-icon="inline-start" />
+                          编辑
+                        </Link>
                       </Button>
                     ) : null}
                     {row.display.freezeHref ? (
@@ -709,7 +728,10 @@ export function MasterDataWorkplaceDetailPage({
                         variant="ghost"
                         className="px-1.5 text-destructive hover:text-destructive"
                       >
-                        <Link href={row.display.freezeHref}>冻结</Link>
+                        <Link href={row.display.freezeHref}>
+                          <Snowflake data-icon="inline-start" />
+                          冻结
+                        </Link>
                       </Button>
                     ) : null}
                   </TableCell>
@@ -735,10 +757,12 @@ function MasterDataWorkplaceServiceTeamFreezeDialog({
   workplaceId,
   serviceTeam,
   action,
+  cancelHref,
 }: {
   workplaceId: string
   serviceTeam: MasterDataWorkplaceOperatorViewRow
   action: (formData: FormData) => Promise<void>
+  cancelHref?: string
 }) {
   return (
     <Dialog open>
@@ -770,7 +794,7 @@ function MasterDataWorkplaceServiceTeamFreezeDialog({
           />
           <DialogFooter>
             <Button asChild size="sm" variant="outline">
-              <Link href={`/master-data/sites/${encodeURIComponent(workplaceId)}`}>
+              <Link href={cancelHref ?? `/master-data/sites/${encodeURIComponent(workplaceId)}`}>
                 取消
               </Link>
             </Button>
@@ -781,6 +805,130 @@ function MasterDataWorkplaceServiceTeamFreezeDialog({
         </form>
       </DialogContent>
     </Dialog>
+  )
+}
+
+export function MasterDataWorkplaceServiceTeamDetailPage({
+  detailSummary,
+  serviceTeam,
+  serviceTeamRow,
+  error,
+  showFreezeDialog = false,
+  serviceTeamSubmitAction,
+}: {
+  detailSummary: MasterDataWorkplaceDetailSummary
+  serviceTeam: MasterDataWorkplaceServiceTeamRow | null
+  serviceTeamRow: MasterDataWorkplaceOperatorViewRow | null
+  error: string | null
+  showFreezeDialog?: boolean
+  serviceTeamSubmitAction?: (formData: FormData) => Promise<void>
+}) {
+  const workplace = detailSummary.workplace
+  const detailHref = serviceTeamRow?.display.detailHref ?? ""
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="服务团队详情读取失败" error={error} /> : null}
+
+      <div className="flex flex-wrap justify-end gap-2">
+        {serviceTeamRow?.display.editHref ? (
+          <Button asChild size="sm" variant="outline">
+            <Link href={serviceTeamRow.display.editHref}>
+              <Pencil data-icon="inline-start" />
+              编辑服务团队
+            </Link>
+          </Button>
+        ) : null}
+        {detailHref ? (
+          <Button asChild size="sm" variant="destructive">
+            <Link
+              href={`${detailHref}?freeze_service_team_id=${encodeURIComponent(
+                serviceTeamRow?.operator_key ?? ""
+              )}`}
+            >
+              <Snowflake data-icon="inline-start" />
+              冻结服务团队
+            </Link>
+          </Button>
+        ) : null}
+      </div>
+
+      {serviceTeam && serviceTeamRow && workplace ? (
+        <>
+          <section className="grid gap-3 md:grid-cols-3">
+            <MetricCard
+              label="团队类型"
+              value={serviceTeamRow.display.operatorTypeLabel}
+              detail="服务团队分类"
+              tone={serviceTeam.team_type === "internal" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="状态"
+              value={serviceTeamRow.display.statusLabel}
+              detail="当前维护状态"
+              tone={serviceTeam.status === "active" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="来源"
+              value={serviceTeamRow.display.sourceLabel}
+              detail="记录来源"
+              tone="default"
+            />
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">服务团队信息</h2>
+            <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+              <ReadOnlyField label="服务团队 ID" value={serviceTeam.service_team_id} />
+              <ReadOnlyField
+                label="服务团队名称"
+                value={serviceTeamRow.display.operatorNameLabel}
+              />
+              <ReadOnlyField
+                label="团队类型"
+                value={serviceTeamRow.display.operatorTypeLabel}
+              />
+              <ReadOnlyField
+                label="归属职场"
+                value={workplace.display.referenceNameLabel}
+              />
+              <ReadOnlyField
+                label={serviceTeam.team_type === "internal" ? "组织来源" : "供应商来源"}
+                value={
+                  serviceTeam.team_type === "internal"
+                    ? (serviceTeam.organization_id ?? "-")
+                    : serviceTeamRow.display.supplierLabel
+                }
+              />
+              <ReadOnlyField label="状态" value={serviceTeamRow.display.statusLabel} />
+              <ReadOnlyField
+                label="生效期"
+                value={serviceTeamRow.display.effectivePeriodLabel}
+              />
+              <ReadOnlyField
+                label="来源批次"
+                value={serviceTeamRow.display.sourceBatchLabel}
+              />
+            </div>
+          </section>
+        </>
+      ) : (
+        <AgentFormBlockedState detail="未找到该服务团队，请回到职场详情重新选择。" />
+      )}
+
+      {showFreezeDialog &&
+      serviceTeamRow &&
+      workplace &&
+      detailHref &&
+      serviceTeamSubmitAction ? (
+        <MasterDataWorkplaceServiceTeamFreezeDialog
+          workplaceId={workplace.reference_id}
+          serviceTeam={serviceTeamRow}
+          action={serviceTeamSubmitAction}
+          cancelHref={detailHref}
+        />
+      ) : null}
+    </main>
   )
 }
 

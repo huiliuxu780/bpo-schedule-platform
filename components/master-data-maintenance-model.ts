@@ -284,6 +284,7 @@ export type MasterDataWorkplaceOperatorDisplay = {
   sourceLabel: string
   effectivePeriodLabel: string
   sourceBatchLabel: string
+  detailHref: string | null
   editHref: string | null
   freezeHref: string | null
 }
@@ -1438,6 +1439,7 @@ function buildMaintainedWorkplaceServiceTeamRows(
       effectiveFrom: serviceTeam.effective_from,
       effectiveTo: serviceTeam.effective_to,
       batchId: serviceTeam.batch_id,
+      detailHref: `/master-data/sites/${encodeURIComponent(workplaceId)}/service-teams/${encodeURIComponent(serviceTeam.service_team_id)}`,
       editHref: `/master-data/sites/${encodeURIComponent(workplaceId)}/service-teams/${encodeURIComponent(serviceTeam.service_team_id)}/edit`,
       freezeHref: `/master-data/sites/${encodeURIComponent(workplaceId)}?freeze_service_team_id=${encodeURIComponent(serviceTeam.service_team_id)}`,
     })
@@ -1573,6 +1575,7 @@ function buildWorkplaceOperatorRow({
   effectiveFrom,
   effectiveTo,
   batchId,
+  detailHref = null,
   editHref = null,
   freezeHref = null,
 }: {
@@ -1587,6 +1590,7 @@ function buildWorkplaceOperatorRow({
   effectiveFrom: string
   effectiveTo: string
   batchId: string
+  detailHref?: string | null
   editHref?: string | null
   freezeHref?: string | null
 }): MasterDataWorkplaceOperatorViewRow {
@@ -1624,6 +1628,7 @@ function buildWorkplaceOperatorRow({
             : "服务团队记录",
       effectivePeriodLabel: formatEffectivePeriod(effectiveFrom, effectiveTo),
       sourceBatchLabel: formatImportBatchDisplayLabel(batchId),
+      detailHref,
       editHref,
       freezeHref,
     },

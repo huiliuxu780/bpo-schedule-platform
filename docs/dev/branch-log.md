@@ -37,6 +37,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM162 Workplace Service Team Detail Page
+
+- branch_name: `codex/im162-service-team-detail`
+- base_main_commit: `3060d9c`
+- stacked_on: `36bf091 feat: add workplace service team maintenance`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of workplace service-team maintenance. Add a nested detail page for a single maintained service-team record under `/master-data/sites/[workplaceId]`, expose a row-level detail link from the workplace detail service-team table, and keep edit/freeze actions inside the same workplace child-route context. Keep backend routes, schema/migration, standalone navigation, associated-person lists, personnel assignment, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/sites/[workplaceId]/page.tsx`, `app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected service-team detail href in model rows, workplace-detail table `查看` entry, nested service-team detail route, detail component with read-only service-team fields, reuse of existing edit route and freeze Dialog, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because maintained service-team rows did not expose `detailHref`; product-structure test first failed because the nested service-team detail page did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 27 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 28 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/sites/SH-01` exposes the `查看` detail link and `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE` shows service-team fields plus edit/freeze actions without contract/settlement/minimum-staffing copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM160 Workplace Detail Service Teams
 
 - branch_name: `codex/im160-workplace-service-teams`

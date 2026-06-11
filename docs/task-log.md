@@ -2082,3 +2082,14 @@
 - action: 完成职场服务团队本地维护对象。
 - status: `done`
 - notes: 新增 `master_data_workplace_service_teams` 本地表、迁移、repository、列表 API 和单条 create/edit/freeze 维护 API；`/master-data/sites/[workplaceId]` 优先展示本地服务团队记录，Header 提供 `新增服务团队`，行内提供编辑和冻结，新增/编辑进入职场详情下子页面，冻结使用 Dialog；本轮不新增独立导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-11
+
+- task_id: `IM162`
+- source_ids:
+  - `R862`
+- story_ids:
+  - `US782`
+- action: 完成职场服务团队详情页。
+- status: `done`
+- notes: `/master-data/sites/[workplaceId]` 服务团队表新增 `查看` 入口；`/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` 展示服务团队 ID、名称、类型、归属职场、组织或供应商来源、状态、生效期和来源批次；详情页提供编辑和冻结入口，编辑复用现有编辑子页面，冻结复用 Dialog；本轮不新增 Sidebar 导航、后端 route、schema/migration、关联人员列表、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

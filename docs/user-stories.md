@@ -66,6 +66,29 @@ status: "done"
 notes: "IM161 已完成：职场详情内的服务团队对象可本地维护，新建/编辑走子页面，冻结走 Dialog，并保持在职场详情上下文内。"
 ```
 
+### US782 - 职场服务团队详情页
+
+```yaml
+id: US782
+requirement_ids:
+  - R862
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望从职场详情页进入单个服务团队详情页，以便在不离开职场上下文的情况下核对该服务团队的基础信息和归属来源。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/sites/[workplaceId] 的服务团队表提供查看详情入口。"
+  - "/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 展示服务团队 ID、团队名称、团队类型、归属职场、组织或供应商来源、状态、生效期和来源批次。"
+  - "详情页提供返回职场详情、编辑服务团队和冻结服务团队入口；编辑继续进入现有编辑子页面，冻结继续使用 Dialog。"
+  - "未找到服务团队时显示明确空态，不跳到独立主数据模块。"
+  - "不新增 Sidebar 导航、后端 route、schema/migration、关联人员列表、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US781"
+status: "done"
+notes: "IM162 已完成：服务团队详情页保持在职场详情子路由内，展示基础信息和来源信息；关联人员只读列表留给 IM163。"
+```
+
 ### US769 - 主数据非客服人员动作收口
 
 ```yaml

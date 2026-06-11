@@ -2,6 +2,46 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM162
+    title: "职场服务团队详情页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM161"]
+    allowed_files:
+      - "app/master-data/sites/[workplaceId]/page.tsx"
+      - "app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/sites/[workplaceId] 的服务团队表提供单个服务团队详情入口。"
+      - "/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 展示服务团队 ID、团队名称、团队类型、归属职场、组织或供应商来源、状态、生效期和来源批次。"
+      - "详情页提供返回职场详情、编辑服务团队和冻结服务团队入口；编辑复用现有编辑子页面，冻结复用 Dialog 模式。"
+      - "未找到服务团队时显示明确空态，不新增独立主数据模块或 Sidebar 导航。"
+      - "不新增后端 route、schema/migration、关联人员列表、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或新增 API"
+      - "范围扩展到关联人员列表、人员分配、独立服务团队导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成职场服务团队详情页：/master-data/sites/[workplaceId] 服务团队表新增 `查看` 入口；/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 展示服务团队 ID、名称、类型、归属职场、组织或供应商来源、状态、生效期和来源批次；详情页提供编辑和冻结入口，编辑复用现有编辑子页面，冻结复用 Dialog。未新增后端 route、schema/migration、独立导航、关联人员列表、人员分配、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
   - id: IM161
     title: "职场服务团队本地维护对象"
     priority: P0
