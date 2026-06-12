@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM177 Core Route Loading States
+
+- branch_name: `codex/im177-core-route-loading-states`
+- base_main_commit: `a12c7ab`
+- stacked_on: `codex/im176-global-error-boundary`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 2 second implementation slice. Add route-local loading skeletons for the six core business entries and a structural regression test.
+- allowed_files_check: six route-local `loading.tsx` files, `scripts/tests/core-route-loading-states.test.mjs`, current project context, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected loading skeleton files, structural test, and traceability updates only; no route-group migration, existing business page changes, navigation changes, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: TDD RED `node --test scripts/tests/core-route-loading-states.test.mjs` first failed because `app/dashboard/loading.tsx` was missing. After implementation, the same structure test passed, `npm run typecheck` passed, `npm run lint` passed, `bash scripts/check-state.sh --strict` passed, `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM176 Global Error Boundary
 
 - branch_name: `codex/im176-global-error-boundary`

@@ -938,3 +938,9 @@ This slice did not introduce a form library or package change, and did not chang
 `IM176` completed the first Stage 2 frontend health recovery slice. The app now has `app/error.tsx` as a global error boundary with the existing AppShell, shadcn Alert/Button components, a `reset()` retry action, and a safe return link to `/dashboard`.
 
 This slice did not add dependencies or package changes, did not migrate route groups, and did not change business pages, navigation, backend behavior, database schema or persistence, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-12 IM177 Core Route Loading States
+
+`IM177` completed the second Stage 2 frontend health recovery slice. The core business entries now have route-local loading skeletons for `/dashboard`, `/master-data`, `/demand-plans`, `/schedule-plans`, `/actual-logs/production`, and `/data-quality`.
+
+This slice uses the current per-page AppShell reality and does not migrate route groups. It did not add dependencies or package changes, and did not change business pages, navigation, backend behavior, database schema or persistence, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
