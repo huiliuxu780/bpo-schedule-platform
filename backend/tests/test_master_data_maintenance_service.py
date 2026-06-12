@@ -2,11 +2,17 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from backend.app.import_persistence import ImportPersistenceRepository
+from sqlalchemy import text
+
+from backend.app.import_persistence import ImportPersistenceRepository, build_engine
+from backend.app import master_data_maintenance
+from backend.app import models
 from backend.app.master_data_maintenance import maintain_employee
 from backend.app.master_data_maintenance import maintain_employee_binding
 from backend.app.master_data_maintenance import maintain_employee_skills
+from backend.app.master_data_maintenance import maintain_organization
 from backend.app.master_data_maintenance import maintain_reference
+from backend.app.master_data_maintenance import maintain_workplace_service_team
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
     EmployeeMasterDataInput,
@@ -17,14 +23,241 @@ from backend.app.models import (
     MasterDataEmployeeSkillMaintenanceRequest,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataBindingMaintenanceRequest,
+    MasterDataOrganizationMaintenanceRequest,
     MasterDataOrganizationInput,
     MasterDataReferenceInput,
     MasterDataReferenceMaintenanceRequest,
     MasterDataSnapshotRequest,
+    MasterDataWorkplaceServiceTeamMaintenanceRequest,
 )
 
 
 class MasterDataMaintenanceServiceTest(unittest.TestCase):
+    def test_workplace_service_team_maintenance_contract_is_exposed(self) -> None:
+        self.assertTrue(
+            hasattr(models, "MasterDataWorkplaceServiceTeamMaintenanceRequest")
+        )
+        self.assertTrue(hasattr(models, "MasterDataWorkplaceServiceTeamRecord"))
+        self.assertTrue(
+            hasattr(master_data_maintenance, "maintain_workplace_service_team")
+        )
+        self.assertTrue(
+            hasattr(
+                MasterDataPersistenceRepository,
+                "list_workplace_service_teams",
+            )
+        )
+
+    def test_create_edit_and_freeze_workplace_service_team(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'service-team.db'}"
+            _create_import_batch(database_url, "BATCH-MD-SERVICE-TEAM")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-SERVICE-TEAM",
+                    workplaces=[
+                        MasterDataReferenceInput(
+                            reference_id="SH-01",
+                            reference_name="上海职场",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    suppliers=[
+                        MasterDataReferenceInput(
+                            reference_id="SUP-001",
+                            reference_name="上海供应商",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                    organizations=[
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CC",
+                            organization_name="CC",
+                            organization_level=1,
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        ),
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-RETURN",
+                            organization_name="集中退换小组",
+                            organization_level=2,
+                            parent_organization_id="ORG-CC",
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        ),
+                    ],
+                )
+            )
+
+            created = maintain_workplace_service_team(
+                "TEAM-SH-RETURN",
+                MasterDataWorkplaceServiceTeamMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-SERVICE-TEAM",
+                    workplace_id="SH-01",
+                    team_type="internal",
+                    team_name="集中退换小组",
+                    organization_id="ORG-RETURN",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+            edited = maintain_workplace_service_team(
+                "TEAM-SH-RETURN",
+                MasterDataWorkplaceServiceTeamMaintenanceRequest(
+                    action="edit",
+                    source_batch_id="BATCH-MD-SERVICE-TEAM",
+                    team_type="supplier",
+                    team_name="供应商驻场团队",
+                    supplier_id="SUP-001",
+                ),
+                repository,
+            )
+            frozen = maintain_workplace_service_team(
+                "TEAM-SH-RETURN",
+                MasterDataWorkplaceServiceTeamMaintenanceRequest(
+                    action="freeze",
+                    source_batch_id="BATCH-MD-SERVICE-TEAM",
+                ),
+                repository,
+            )
+
+        self.assertEqual(created.action_status, "created")
+        self.assertEqual(created.service_team.organization_id, "ORG-RETURN")
+        self.assertIsNone(created.service_team.supplier_id)
+        self.assertEqual(edited.action_status, "updated")
+        self.assertEqual(edited.service_team.team_type, "supplier")
+        self.assertIsNone(edited.service_team.organization_id)
+        self.assertEqual(edited.service_team.supplier_id, "SUP-001")
+        self.assertEqual(frozen.action_status, "frozen")
+        self.assertEqual(frozen.service_team.status, "frozen")
+
+    def test_legacy_local_schema_allows_employee_skill_and_organization_maintenance(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'legacy-maintenance.db'}"
+            _create_legacy_master_data_schema(database_url, "BATCH-MD-LEGACY")
+            repository = MasterDataPersistenceRepository(database_url)
+
+            created_employee = maintain_employee(
+                "A-LEGACY-NEW",
+                MasterDataEmployeeMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-LEGACY",
+                    employee_name="旧库新增员工",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+            created_skill = maintain_reference(
+                "skills",
+                "SKILL-LEGACY-NEW",
+                MasterDataReferenceMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-LEGACY",
+                    reference_name="旧库新增技能",
+                    skill_category="ticket",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+            created_organization = maintain_organization(
+                "ORG-LEGACY",
+                MasterDataOrganizationMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-LEGACY",
+                    organization_name="旧库组织",
+                    organization_level=1,
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+
+            self.assertEqual(created_employee.employee.employee_type, "internal")
+            self.assertIsNone(created_employee.employee.organization_id)
+            self.assertIsNone(created_employee.employee.workplace_id)
+            self.assertEqual(created_skill.reference.skill_category, "ticket")
+            self.assertEqual(created_organization.organization.organization_path, "旧库组织")
+
+    def test_create_edit_and_freeze_organization_writes_hierarchy_record(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'organization-maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-ORG-MAINT")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-ORG-MAINT",
+                    organizations=[
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CC",
+                            organization_name="CC",
+                            organization_level=1,
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                )
+            )
+
+            created = maintain_organization(
+                "ORG-RETURN",
+                MasterDataOrganizationMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-ORG-MAINT",
+                    organization_name="集中退换小组",
+                    organization_level=2,
+                    parent_organization_id="ORG-CC",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+            edited = maintain_organization(
+                "ORG-RETURN",
+                MasterDataOrganizationMaintenanceRequest(
+                    action="edit",
+                    source_batch_id="BATCH-MD-ORG-MAINT",
+                    organization_name="集中退换组",
+                    organization_level=2,
+                    parent_organization_id="ORG-CC",
+                    status="inactive",
+                    effective_from="2026-07-01",
+                ),
+                repository,
+            )
+            frozen = maintain_organization(
+                "ORG-RETURN",
+                MasterDataOrganizationMaintenanceRequest(
+                    action="freeze",
+                    source_batch_id="BATCH-MD-ORG-MAINT",
+                ),
+                repository,
+            )
+
+            self.assertEqual(created.action_status, "created")
+            self.assertEqual(created.organization.organization_path, "CC / 集中退换小组")
+            self.assertEqual(edited.action_status, "updated")
+            self.assertEqual(edited.organization.organization_name, "集中退换组")
+            self.assertEqual(edited.organization.status, "inactive")
+            self.assertEqual(edited.organization.effective_from, "2026-07-01")
+            self.assertEqual(frozen.action_status, "frozen")
+            self.assertEqual(frozen.organization.organization_name, "集中退换组")
+            self.assertEqual(frozen.organization.status, "frozen")
+            self.assertEqual(frozen.organization.parent_organization_id, "ORG-CC")
+
     def test_create_employee_writes_single_agent_record(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
@@ -365,6 +598,31 @@ class MasterDataMaintenanceServiceTest(unittest.TestCase):
             self.assertEqual(response.reference.status, "active")
             self.assertEqual(response.reference.batch_id, "BATCH-MD-MAINT-006")
 
+    def test_create_skill_reference_writes_skill_category(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
+            _create_import_batch(database_url, "BATCH-MD-MAINT-SKILL")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+
+            response = maintain_reference(
+                "skills",
+                "SKILL-ONLINE-001",
+                MasterDataReferenceMaintenanceRequest(
+                    action="create",
+                    source_batch_id="BATCH-MD-MAINT-SKILL",
+                    reference_name="在线接待",
+                    skill_category="online",
+                    effective_from="2026-06-01",
+                    effective_to="2026-12-31",
+                ),
+                repository,
+            )
+
+            self.assertEqual(response.action_status, "created")
+            self.assertEqual(response.reference.reference_id, "SKILL-ONLINE-001")
+            self.assertEqual(response.reference.skill_category, "online")
+
     def test_freeze_reference_preserves_project_name_and_effective_period(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'maintenance.db'}"
@@ -477,6 +735,94 @@ def _create_import_batch(database_url: str, batch_id: str) -> None:
             ],
         )
     )
+
+
+def _create_legacy_master_data_schema(database_url: str, batch_id: str) -> None:
+    engine = build_engine(database_url)
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                """
+                CREATE TABLE import_batches (
+                    batch_id VARCHAR(80) NOT NULL PRIMARY KEY,
+                    file_name VARCHAR(255) NOT NULL,
+                    file_type VARCHAR(80) NOT NULL,
+                    uploaded_by VARCHAR(120) NOT NULL,
+                    uploaded_at VARCHAR(40) NOT NULL,
+                    business_date_from VARCHAR(20) NOT NULL,
+                    business_date_to VARCHAR(20) NOT NULL,
+                    processing_status VARCHAR(40) NOT NULL,
+                    total_rows INTEGER NOT NULL,
+                    success_rows INTEGER NOT NULL,
+                    failed_rows INTEGER NOT NULL,
+                    warning_rows INTEGER NOT NULL
+                )
+                """
+            )
+        )
+        connection.execute(
+            text(
+                """
+                INSERT INTO import_batches (
+                    batch_id,
+                    file_name,
+                    file_type,
+                    uploaded_by,
+                    uploaded_at,
+                    business_date_from,
+                    business_date_to,
+                    processing_status,
+                    total_rows,
+                    success_rows,
+                    failed_rows,
+                    warning_rows
+                )
+                VALUES (
+                    :batch_id,
+                    :file_name,
+                    'master_data',
+                    '数据管理员',
+                    '2026-06-08T00:00:00+00:00',
+                    '2026-06-01',
+                    '2026-12-31',
+                    'completed',
+                    1,
+                    1,
+                    0,
+                    0
+                )
+                """
+            ),
+            {"batch_id": batch_id, "file_name": f"{batch_id}.csv"},
+        )
+        connection.execute(
+            text(
+                """
+                CREATE TABLE master_data_employees (
+                    employee_id VARCHAR(80) NOT NULL PRIMARY KEY,
+                    employee_name VARCHAR(255) NOT NULL,
+                    status VARCHAR(20) NOT NULL,
+                    effective_from VARCHAR(20) NOT NULL,
+                    effective_to VARCHAR(20) NOT NULL,
+                    batch_id VARCHAR(80) NOT NULL
+                )
+                """
+            )
+        )
+        connection.execute(
+            text(
+                """
+                CREATE TABLE master_data_skills (
+                    skill_id VARCHAR(80) NOT NULL PRIMARY KEY,
+                    skill_name VARCHAR(255) NOT NULL,
+                    status VARCHAR(20) NOT NULL,
+                    effective_from VARCHAR(20) NOT NULL,
+                    effective_to VARCHAR(20) NOT NULL,
+                    batch_id VARCHAR(80) NOT NULL
+                )
+                """
+            )
+        )
 
 
 def _seed_binding_references(

@@ -45,7 +45,12 @@ export default async function ReviewCasesPage({
   const processingStages = await fetchReviewCaseProcessingStages(result.data ?? [])
 
   return (
-    <AppShell title="复核案例" searchPlaceholder="搜索复核案例、owner 或来源">
+    <AppShell
+      title="复核案例"
+      breadcrumbItems={[
+        { label: "复核案例" },
+      ]}
+    >
       <ImportCenterReviewCasesWorkspace
         cases={result.data ?? []}
         filters={filters}

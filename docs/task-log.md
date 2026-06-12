@@ -17,6 +17,39 @@
 
 ## Log
 
+### 2026-06-05
+
+- task_id: `IM152`
+- source_ids:
+  - `R852`
+- story_ids:
+  - `US772`
+- action: 清理主数据职场详情可见术语。
+- status: `done`
+- notes: 职场详情指标、区块标题和空态改为 `服务团队/职场服务团队`；主数据数据读取错误文案改为 `职场服务团队来源读取失败`；本轮不新增职场服务团队独立页面、CRUD 或导入入口，不删除 project_id 兼容字段，不改后端 route、schema/migration、依赖、供应商合同、结算比例、最低人力要求、权限、审批、导出、批量、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM151`
+- source_ids:
+  - `R851`
+- story_ids:
+  - `US771`
+- action: 降级 data-quality 结果页可见父级抽象。
+- status: `done`
+- notes: 业务版本列表、对比运行详情、复核案例列表和复核案例详情不再把 `导入批次` 作为 Breadcrumb 父级；复核案例详情保留到复核列表的二级关系；批次处理、上传、字段映射模板页面继续保留兼容路由和批次/模板上下文；本轮不新增导航项，不删除 `/data-quality/**` 路由，不改后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM150`
+- source_ids:
+  - `R850`
+- story_ids:
+  - `US770`
+- action: 收口导入入口业务归属。
+- status: `done`
+- notes: `/data-quality` 批次台账内容区不再显示通用 `上传 CSV` 主入口；预测、排班、登录/状态日志页面级导入动作进入 Header actions，内容区版本状态卡片不再承载导入按钮；本轮保留 `/data-quality/uploads/new` 作为内部兼容上传路由，不新增导入弹窗、后端 route/action、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
 ### 2026-06-01
 
 - task_id: `IM050`
@@ -1851,3 +1884,293 @@
 - action: 增加状态字典与异常解释安全壳。
 - status: `done`
 - notes: `/actual-logs/production/[batchId]` 在处理解释页新增状态字典与异常解释安全壳，展示状态字典、未知状态、时区错误、跨天异常和冻结员工引用边界；字典变更、异常规则提交和实际工时重算动作均保持禁用；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM141`
+- source_ids:
+  - `R841`
+- story_ids:
+  - `US761`
+- action: 新增职场详情页并把运营主体收敛到职场子页面。
+- status: `done`
+- notes: `/master-data/sites` 的职场列表行新增 `详情` 入口，进入 `/master-data/sites/[workplaceId]` 后展示职场基础信息和该职场下的运营主体；运营主体只从现有人员档案与绑定关系读取，不恢复 `职场运营主体` 或 `绑定关系` 独立导航/实体页；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子；current queue 与 active tasks 保持为空。
+
+### 2026-06-05
+
+- task_id: `IM142`
+- source_ids:
+  - `R842`
+- story_ids:
+  - `US762`
+- action: 新增供应商详情页并把服务职场收敛到供应商子页面。
+- status: `done`
+- notes: `/master-data/vendors` 的供应商列表行新增 `详情` 入口，进入 `/master-data/vendors/[vendorId]` 后展示供应商基础信息和该供应商当前服务职场；服务职场可回链对应职场详情；侧边栏默认展开全部一级组，职场/供应商详情页继承父级高亮；本轮不新增后端 route、schema/migration、依赖、审批、导出、批量、权限、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子；current queue 与 active tasks 保持为空。
+
+### 2026-06-05
+
+- task_id: `IM143`
+- source_ids:
+  - `R843`
+- story_ids:
+  - `US763`
+- action: 在客服人员列表内新增批量导入大弹窗。
+- status: `done`
+- notes: `/master-data/agents` 右上角 `批量导入` 不再跳转独立上传工作区，而是在当前列表页打开三步大弹窗；第一步提供人员导入模板下载和 CSV 上传字段，第二步支持启用的主数据映射模板或手动字段映射 JSON，第三步展示本次导入摘要并提供 `查看批次详情` 和 `失败行修正` 入口；完整行结果、readiness、应用到业务数据和版本链路仍由批次详情页承载；本轮不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM144`
+- source_ids:
+  - `R844`
+- story_ids:
+  - `US764`
+- action: 统一全局 UI 组件规范并纠正客服人员导入弹窗。
+- status: `done`
+- notes: 全局布局改为 shadcn `SidebarProvider` / `Sidebar` / `SidebarInset`，`AppSidebar` 按 shadcn 文档使用 `Collapsible`、`SidebarMenuButton` 和 `SidebarMenuSub` 组织一级/二级导航，并在 Sidebar footer 使用 shadcn Avatar 和本地参考头像 `/shadcn-avatar.jpg`，增加本地用户菜单、明暗主题切换和登出入口；`SiteHeader` 统一承载单行 Breadcrumb，Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1，并去掉无意义全局搜索、固定月份和通知占位，新增右侧页面级 actions 插槽；主数据列表、详情、新建、编辑页接入 `breadcrumbItems`；主数据内容区不再重复返回按钮、同名 H1 或页面级说明，页面身份由全局 Header 唯一承载；客服人员列表改为筛选卡片、列表操作栏、表格顺序，查询/重置位于筛选卡片右下，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作；客服人员导入改为 shadcn Dialog 的 step-by-step 流程，上传、映射、结果 section 通过 `hidden` 隐藏但保持 DOM 挂载；页面级反馈、表单结果和导入结果摘要改用 Alert；本轮不新增排班、预测、登录/状态日志导入弹窗，不接入真实 auth，不修改 package/lockfile，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM145`
+- source_ids:
+  - `R845`
+- story_ids:
+  - `US765`
+- action: 收口 Sidebar 一级导航信息架构。
+- status: `done`
+- notes: Sidebar 已移除 `预测生产`、`排班生产` 独立导航项；`需求计划` 使用 prefix active 覆盖 `/demand-plans/production/**`，`排班计划` 使用 prefix active 覆盖 `/schedule-plans/production/**`；结构测试已禁止 `预测生产`、`排班生产`、`导入中心`、`质量中心`、`数据质量` 作为 Sidebar 标题出现；本轮不改生产页标题、返回按钮、模型文案、导入弹窗、业务路由或后端能力；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM146`
+- source_ids:
+  - `R846`
+- story_ids:
+  - `US766`
+- action: 清理生产文案与返回链路。
+- status: `done`
+- notes: `/demand-plans/production`、`/schedule-plans/production`、`/actual-logs/production` 保持兼容路由，但页面标题、列表标题、详情返回按钮和模型阻塞/就绪/缺批次提示改回预测版本、排班版本、登录/状态日志处理等业务对象视角；focused tests 和 Browser smoke 已覆盖不再展示旧生产模块文案；本轮不改路由结构、重复 H1、旧搜索 API、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM147`
+- source_ids:
+  - `R847`
+- story_ids:
+  - `US767`
+- action: 统一 Header/Breadcrumb 与内容区标题层级。
+- status: `done`
+- notes: 需求计划、排班计划、预测版本、排班版本、登录/状态日志和 data-quality 兼容页统一传入 `breadcrumbItems`；内容区同名页面 H1 已删除或降级，页面身份由 `SiteHeader` / Breadcrumb 承载；保留筛选、工具栏、表格、详情分组和业务记录信息；本轮不删除旧 `searchPlaceholder` API，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM148`
+- source_ids:
+  - `R848`
+- story_ids:
+  - `US768`
+- action: 清理旧 Header 全局搜索参数。
+- status: `done`
+- notes: `AppShell` 和 `SiteHeader` 已删除 `searchPlaceholder` prop、默认值和透传；`app/**` 与 `components/**` 中不再向全局 Header 传入旧搜索占位参数；真正属于业务列表的筛选框仍保留在内容区；本轮不新增 Header 搜索 UI，不删除业务筛选，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM149`
+- source_ids:
+  - `R849`
+- story_ids:
+  - `US769`
+- action: 收口非客服人员主数据页面动作。
+- status: `done`
+- notes: 组织、职场、供应商、技能等非客服人员主数据列表内容区不再显示 `导入主数据` 或跳转独立上传工作区；客服人员已确认的新建和批量导入动作继续由 Header actions 承载；本轮不新增非客服人员 CRUD、导入弹窗、排班/预测/日志导入入口、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-05
+
+- task_id: `IM153`
+- source_ids:
+  - `R853`
+- story_ids:
+  - `US773`
+- action: 统一 B 端字体与控件密度基线。
+- status: `done`
+- notes: 移除 `app/globals.css` 中覆盖 shadcn 组件字号的 `button,input,select { font: inherit }`；`Button` 的 `sm/xs` 文本按钮回到 14px 基线，人员列表行内 `编辑/冻结` 文字按钮也统一为 14px/32px；`TableHead` 不再固定 12px，客服人员导入 Dialog 的步骤、说明、映射控件、textarea 和结果文案不再混用 12px；纯图标按钮保留图标密度；本轮不新增业务功能、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM154`
+- source_ids:
+  - `R854`
+- story_ids:
+  - `US774`
+- action: 完成职场基础 CRUD 前端闭环。
+- status: `done`
+- notes: `/master-data/sites` Header actions 提供 `新建` 职场入口；职场列表行提供 `详情`、`编辑`、`冻结`，其中编辑进入 `/master-data/sites/[workplaceId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/sites/new` 子页面并提交职场 ID、职场名称、状态和生效期；提交复用现有 workplace reference maintenance API，反馈回到职场列表并使用 Alert；本轮不新增职场服务团队绑定、供应商合同、结算、最低人力、审批、导出、批量、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM155`
+- source_ids:
+  - `R855`
+- story_ids:
+  - `US775`
+- action: 完成供应商基础 CRUD 前端闭环。
+- status: `done`
+- notes: `/master-data/vendors` Header actions 提供 `新建` 供应商入口；供应商列表行提供 `详情`、`编辑`、`冻结`，其中编辑进入 `/master-data/vendors/[vendorId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/vendors/new` 子页面并提交供应商 ID、供应商名称、状态和生效期；提交复用现有 supplier reference maintenance API，反馈回到供应商列表并使用 Alert；本轮不新增供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM156`
+- source_ids:
+  - `R856`
+- story_ids:
+  - `US776`
+- action: 完成技能组基础 CRUD 前端闭环。
+- status: `done`
+- notes: `/master-data/skills` Header actions 提供 `新建` 技能组入口；技能组列表行提供 `编辑`、`冻结`，其中编辑进入 `/master-data/skills/[skillId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/skills/new` 子页面并提交技能组 ID、技能组名称、归属属性、状态和生效期；提交复用现有 skills reference maintenance API，并补齐 `skill_category` 真实写入；本轮不新增人员技能绑定、排班技能引用、技能层级、审批、导出、批量、权限、新后端 route、schema/migration、依赖、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM157`
+- source_ids:
+  - `R857`
+- story_ids:
+  - `US777`
+- action: 完成组织基础 CRUD 前端闭环。
+- status: `done`
+- notes: `/master-data/organizations` Header actions 提供 `新建` 组织入口；组织列表行提供 `编辑`、`冻结`，其中编辑进入 `/master-data/organizations/[organizationId]/edit` 子页面，冻结通过 Dialog 确认；新增进入 `/master-data/organizations/new` 子页面并提交组织 ID、组织名称、组织层级、上级组织、状态和生效期；本地后端新增窄组织维护 API 并复用既有组织表和父组织校验；本轮不新增组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量、权限、schema/migration、依赖、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM158`
+- source_ids:
+  - `R858`
+- story_ids:
+  - `US778`
+- action: 完成客服人员列表真实筛选。
+- status: `done`
+- notes: `/master-data/agents` 的技能组、组织、职场筛选下拉改为从当前人员列表数据生成；技能筛选使用技能 ID 作为稳定值并兼容技能名称/归属属性过滤，组织和职场筛选使用 ID 作为稳定值并兼容显示路径/名称过滤；既有姓名、账号、状态、人员类型筛选保持；页面结构仍是 Header 页面级动作、筛选卡片、列表操作栏、表格；本轮不新增导航、页面、后端 route、schema/migration、依赖、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM159`
+- source_ids:
+  - `R859`
+- story_ids:
+  - `US779`
+- action: 完成本地旧主数据 schema 维护写入兼容。
+- status: `done`
+- notes: SQLite 本地主数据 repository 初始化/建表时会补齐已确认字段 `master_data_employees.employee_type`、`organization_id`、`workplace_id` 和 `master_data_skills.skill_category`，并创建缺失的本地主数据表，使旧 `.local` 库可继续执行人员、技能组和组织维护写入；本轮不新增迁移文件、生产数据库配置、业务字段、权限、审批、导出、批量操作、自动排班、生产公式、结算、合同、最低人力或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM160`
+- source_ids:
+  - `R860`
+- story_ids:
+  - `US780`
+- action: 完成职场详情只读服务团队关系。
+- status: `done`
+- notes: `/master-data/sites/[workplaceId]` 的服务团队表已按该职场自有人员组织聚合自有团队，按该职场供应商绑定聚合供应商团队，并读取供应商主数据名称；表格展示团队类型、服务团队、供应商、人员/绑定数、状态、有效期和来源批次；本轮不新增导航、表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量操作或自动排班；current queue 与 active tasks 已清空。
+
+### 2026-06-08
+
+- task_id: `IM161`
+- source_ids:
+  - `R861`
+- story_ids:
+  - `US781`
+- action: 完成职场服务团队本地维护对象。
+- status: `done`
+- notes: 新增 `master_data_workplace_service_teams` 本地表、迁移、repository、列表 API 和单条 create/edit/freeze 维护 API；`/master-data/sites/[workplaceId]` 优先展示本地服务团队记录，Header 提供 `新增服务团队`，行内提供编辑和冻结，新增/编辑进入职场详情下子页面，冻结使用 Dialog；本轮不新增独立导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+### 2026-06-11
+
+- task_id: `IM162`
+- source_ids:
+  - `R862`
+- story_ids:
+  - `US782`
+- action: 完成职场服务团队详情页。
+- status: `done`
+- notes: `/master-data/sites/[workplaceId]` 服务团队表新增 `查看` 入口；`/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` 展示服务团队 ID、名称、类型、归属职场、组织或供应商来源、状态、生效期和来源批次；详情页提供编辑和冻结入口，编辑复用现有编辑子页面，冻结复用 Dialog；本轮不新增 Sidebar 导航、后端 route、schema/migration、关联人员列表、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM163`
+- source_ids:
+  - `R863`
+- story_ids:
+  - `US783`
+- action: 完成服务团队详情关联人员只读列表。
+- status: `done`
+- notes: `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` 增加只读关联人员区域；自有服务团队按同职场同组织匹配人员，供应商服务团队按同职场同供应商绑定匹配人员并去重；表格展示姓名、人员 ID、人员类型、组织、职场、技能、状态和匹配来源；无匹配人员显示明确空态；本轮不新增后端 route、schema/migration、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM164`
+- source_ids:
+  - `R864`
+- story_ids:
+  - `US784`
+- action: 完成供应商详情服务团队只读链路。
+- status: `done`
+- notes: `/master-data/vendors/[vendorId]` 增加只读服务团队区域；只展示当前供应商绑定的职场服务团队，表格展示服务团队名称、归属职场、状态、生效期和来源批次，并通过 `查看团队` 进入既有职场服务团队详情页继续核对关联人员；无服务团队时显示明确空态；本轮不新增后端 route、schema/migration、供应商服务团队维护、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM165`
+- source_ids:
+  - `R865`
+- story_ids:
+  - `US785`
+- action: 完成客服人员详情只读业务链路。
+- status: `done`
+- notes: `/master-data/agents` 列表行新增 `查看` 入口；`/master-data/agents/[employeeId]` 只读展示人员基础信息、技能集合和关联服务团队；关联服务团队通过 `查看团队` 进入既有职场服务团队详情页；无关联团队显示明确空态；本轮不新增后端 route、schema/migration、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM166`
+- source_ids:
+  - `R866`
+- story_ids:
+  - `US786`
+- action: 完成组织详情只读业务链路。
+- status: `done`
+- notes: `/master-data/organizations` 列表行新增 `查看` 入口；`/master-data/organizations/[organizationId]` 只读展示组织基础信息、直接下级组织和当前直接归属人员；归属人员通过 `查看人员` 进入既有客服人员详情页；无下级组织或归属人员显示明确空态；本轮不新增后端 route、schema/migration、人员调岗、组织树拖拽、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM167`
+- source_ids:
+  - `R867`
+- story_ids:
+  - `US787`
+- action: 完成技能组详情只读业务链路。
+- status: `done`
+- notes: `/master-data/skills` 列表行新增 `详情` 入口；`/master-data/skills/[skillId]` 只读展示技能组基础信息、归属属性和当前拥有该技能的客服人员；归属人员通过 `查看人员` 进入既有客服人员详情页；无归属人员显示明确空态；本轮不新增后端 route、schema/migration、技能层级、技能绑定维护、批量分配、排班技能规则、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM168`
+- source_ids:
+  - `R868`
+- story_ids:
+  - `US788`
+- action: 完成主数据详情链路收尾检查。
+- status: `done`
+- notes: `/master-data/skills` 等主数据 reference 列表进入详情的行内动作统一为 `查看`，并新增结构测试防止再次混用 `详情`；动作仍进入既有详情页；本轮不新增页面、导航、后端 route、schema/migration、导入、权限、审批、导出、批量、合同、结算、最低人力、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM169`
+- source_ids:
+  - `R869`
+- story_ids:
+  - `US789`
+- action: 完成需求预测导入大弹窗。
+- status: `done`
+- notes: `/demand-plans/production` Header 的 `导入预测` 现在打开当前页 Dialog；Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步组织，非当前 step 通过 hidden 保持 DOM 挂载；上传继续复用现有 CSV action，结果回流 `/demand-plans/production?import_dialog=1` 并展示批次详情入口；本轮不扩展排班、登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM170`
+- source_ids:
+  - `R870`
+- story_ids:
+  - `US790`
+- action: 完成排班导入大弹窗。
+- status: `done`
+- notes: `/schedule-plans/production` Header 的 `导入排班` 现在打开当前页 Dialog；Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步组织，非当前 step 通过 hidden 保持 DOM 挂载；上传继续复用现有 CSV action 和 `personnel_schedule` file type，结果回流 `/schedule-plans/production?import_dialog=1` 并展示批次详情入口；本轮不扩展登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM171`
+- source_ids:
+  - `R871`
+- story_ids:
+  - `US791`
+- action: 完成登录/状态日志导入大弹窗。
+- status: `done`
+- notes: `/actual-logs/production` Header 的 `导入登录日志`、`导入状态日志` 现在打开当前页 Dialog；Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步组织，非当前 step 通过 hidden 保持 DOM 挂载；上传继续复用现有 CSV action，登录日志使用 `login_log`，状态日志使用 `status_log`，结果回流 `/actual-logs/production?import_dialog=1&log_type=...` 并展示批次详情入口；本轮不扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

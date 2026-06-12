@@ -8,14 +8,13 @@ import {
   FileClock,
   ListChecks,
   Table2,
+  Upload,
   Users,
 } from "lucide-react"
 
+import { type ImportBatchListRow } from "@/components/import-center-model"
 import {
-  buildImportUploadWorkspaceHref,
-  type ImportBatchListRow,
-} from "@/components/import-center-model"
-import {
+  type PersonnelScheduleImportDialogSummary,
   type PersonnelScheduleProductionApiDetail,
   type PersonnelScheduleProductionTone,
   summarizePersonnelScheduleProductionDetail,
@@ -39,6 +38,21 @@ type PersonnelScheduleProductionWorkbenchProps = {
   error: string | null
 }
 
+export function PersonnelScheduleProductionPageActions({
+  dialog,
+}: {
+  dialog: PersonnelScheduleImportDialogSummary
+}) {
+  return (
+    <Button asChild size="sm">
+      <Link href={dialog.openHref}>
+        <Upload data-icon="inline-start" />
+        导入排班
+      </Link>
+    </Button>
+  )
+}
+
 export function PersonnelScheduleProductionWorkbench({
   batches,
   error,
@@ -49,9 +63,8 @@ export function PersonnelScheduleProductionWorkbench({
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-normal">排班生产</h1>
-          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-            按人员排班导入批次查看生产版本、应用状态、业务日范围和 0.5h 展开状态。
+          <p className="max-w-3xl text-sm text-muted-foreground">
+            按人员排班导入批次查看排班版本、应用状态、业务日范围和 0.5h 展开状态。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -113,12 +126,6 @@ export function PersonnelScheduleProductionWorkbench({
             <p>{summary.detail}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button asChild size="sm" variant="outline">
-              <Link href={buildImportUploadWorkspaceHref({ fileType: "personnel_schedule" })}>
-                导入排班
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
             <Button asChild size="sm" variant="ghost">
               <Link href="/schedule-plans">返回排班计划</Link>
             </Button>
@@ -130,7 +137,7 @@ export function PersonnelScheduleProductionWorkbench({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Table2 className="size-4 text-muted-foreground" />
-            人员排班生产台账
+            排班版本列表
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -233,14 +240,11 @@ export function PersonnelScheduleProductionDetail({
             <Button asChild size="sm" variant="ghost">
               <Link href={detail.workbenchHref}>
                 <ArrowLeft data-icon="inline-start" />
-                返回排班生产
+                返回排班计划
               </Link>
             </Button>
           </div>
-          <h1 className="text-xl font-semibold tracking-normal">
-            排班版本详情
-          </h1>
-          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+          <p className="max-w-3xl text-sm text-muted-foreground">
             查看单个人员排班来源批次对应的业务版本、班次引用口径、人员范围说明和 0.5h 展开结果。
           </p>
         </div>
@@ -340,7 +344,7 @@ export function PersonnelScheduleProductionDetail({
                   </Link>
                 </Button>
                 <Button asChild size="sm" variant="ghost">
-                  <Link href={detail.workbenchHref}>返回排班生产</Link>
+                  <Link href={detail.workbenchHref}>返回排班计划</Link>
                 </Button>
               </div>
             </CardContent>

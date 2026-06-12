@@ -1,12 +1,11 @@
 import Link from "next/link"
-import { CircleSlash, Upload } from "lucide-react"
+import { CircleSlash } from "lucide-react"
 
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchFilters,
   type ImportBatchListRow,
   buildImportBatchProcessingHref,
-  buildImportUploadWorkspaceHref,
   filterImportBatches,
   formatImportBatchFileDisplayName,
   formatImportBatchDisplayLabel,
@@ -59,15 +58,7 @@ export function ImportCenterBatchListPanel({
               `${filteredBatches.length}/${batches.length} 批匹配`}
           </p>
         </div>
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {batchError ? <Badge variant="destructive">读取失败</Badge> : null}
-          <Button asChild size="sm">
-            <Link href={buildImportUploadWorkspaceHref()}>
-              <Upload data-icon="inline-start" />
-              上传 CSV
-            </Link>
-          </Button>
-        </div>
+        {batchError ? <Badge variant="destructive">读取失败</Badge> : null}
       </CardHeader>
       <CardContent className="grid gap-0 p-0">
         <BatchFilterForm

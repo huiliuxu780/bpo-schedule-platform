@@ -7,13 +7,29 @@ import {
   buildMasterDataAgentMaintenancePayload,
   buildMasterDataAgentSkillMaintenanceApiPath,
   buildMasterDataAgentSkillMaintenancePayload,
+  buildMasterDataOrganizationMaintenanceApiPath,
+  buildMasterDataOrganizationMaintenancePayload,
+  buildMasterDataSkillMaintenanceApiPath,
+  buildMasterDataSkillMaintenancePayload,
+  buildMasterDataVendorMaintenanceApiPath,
+  buildMasterDataVendorMaintenancePayload,
+  buildMasterDataWorkplaceMaintenanceApiPath,
+  buildMasterDataWorkplaceMaintenancePayload,
   getMasterDataMaintenanceEntity,
   summarizeMasterDataAgentManagement,
+  summarizeMasterDataAgentDetail,
+  summarizeMasterDataAgentImportDialog,
   summarizeMasterDataEmployeeList,
   summarizeMasterDataAgentMaintenanceFeedback,
   summarizeMasterDataEntitySourceContext,
   summarizeMasterDataMaintenanceWorkbench,
+  summarizeMasterDataOrganizationManagement,
+  summarizeMasterDataOrganizationDetail,
   summarizeMasterDataReferenceManagement,
+  summarizeMasterDataSkillDetail,
+  summarizeMasterDataVendorDetail,
+  summarizeMasterDataWorkplaceDetail,
+  summarizeMasterDataWorkplaceServiceTeamPeople,
 } from "../../components/master-data-maintenance-model.ts";
 
 const baseBatch = {
@@ -134,12 +150,19 @@ test("master data entity source context keeps list source state only", () => {
   assert.equal("referenceImpacts" in context, false);
 });
 
-test("agent source context is the only master data context with submit source batch", () => {
+test("agent workplace and vendor source contexts expose submit source batches for confirmed forms", () => {
   const agentContext = summarizeMasterDataEntitySourceContext("agents", [baseBatch]);
+  const workplaceContext = summarizeMasterDataEntitySourceContext("sites", [baseBatch]);
+  const vendorContext = summarizeMasterDataEntitySourceContext("vendors", [baseBatch]);
   const skillContext = summarizeMasterDataEntitySourceContext("skills", [baseBatch]);
 
   assert.equal(agentContext.agentSubmitSourceBatchId, "BATCH-MD-001");
+  assert.equal(workplaceContext.workplaceSubmitSourceBatchId, "BATCH-MD-001");
+  assert.equal(vendorContext.vendorSubmitSourceBatchId, "BATCH-MD-001");
   assert.equal(skillContext.agentSubmitSourceBatchId, null);
+  assert.equal(skillContext.workplaceSubmitSourceBatchId, null);
+  assert.equal(skillContext.vendorSubmitSourceBatchId, null);
+  assert.equal(skillContext.skillSubmitSourceBatchId, "BATCH-MD-001");
 });
 
 test("master data employee list summarizes org path type workplace and skills", () => {
@@ -268,6 +291,423 @@ test("agent management page exposes customer service list layout contract", () =
   );
 });
 
+test("organization detail summarizes direct child organizations and current people", () => {
+  const summary = summarizeMasterDataOrganizationDetail({
+    organizationId: "ORG-CCO",
+    organizations: [
+      {
+        organization_id: "ORG-CC",
+        organization_name: "CC",
+        organization_level: 1,
+        parent_organization_id: null,
+        status: "active",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        organization_path: "CC",
+      },
+      {
+        organization_id: "ORG-CCO",
+        organization_name: "CCO",
+        organization_level: 2,
+        parent_organization_id: "ORG-CC",
+        status: "active",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        organization_path: "CC / CCO",
+      },
+      {
+        organization_id: "ORG-RETURN",
+        organization_name: "集中退换小组",
+        organization_level: 3,
+        parent_organization_id: "ORG-CCO",
+        status: "active",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        organization_path: "CC / CCO / 集中退换小组",
+      },
+    ],
+    employees: [
+      {
+        employee_id: "A-1001",
+        employee_name: "刘晓晓",
+        status: "active",
+        employee_type: "internal",
+        organization_id: "ORG-CCO",
+        organization_path: "CC / CCO",
+        workplace_id: "NJ-01",
+        workplace_name: "南京职场",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [],
+      },
+      {
+        employee_id: "A-1002",
+        employee_name: "王小王",
+        status: "active",
+        employee_type: "outsourced",
+        organization_id: "ORG-RETURN",
+        organization_path: "CC / CCO / 集中退换小组",
+        workplace_id: "SH-01",
+        workplace_name: "上海职场",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [],
+      },
+    ],
+  });
+
+  assert.equal(summary.found, true);
+  assert.equal(summary.title, "CCO");
+  assert.equal(summary.organization?.display.detailHref, "/master-data/organizations/ORG-CCO");
+  assert.equal(summary.totalChildOrganizations, 1);
+  assert.equal(summary.childRows[0].organization_id, "ORG-RETURN");
+  assert.equal(summary.childRows[0].display.detailHref, "/master-data/organizations/ORG-RETURN");
+  assert.equal(summary.totalPeople, 1);
+  assert.equal(summary.peopleRows[0].employee_id, "A-1001");
+  assert.equal(summary.peopleRows[0].display.detailHref, "/master-data/agents/A-1001");
+  assert.equal(
+    summary.peopleRows.some((row) => row.employee_id === "A-1002"),
+    false,
+  );
+});
+
+test("skill detail summarizes current people who own the skill", () => {
+  const summary = summarizeMasterDataSkillDetail({
+    skillId: "SKILL-RETURN-TICKET",
+    skills: [
+      {
+        reference_id: "SKILL-RETURN-TICKET",
+        reference_name: "集中退换工单",
+        status: "active",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skill_category: "ticket",
+      },
+    ],
+    employees: [
+      {
+        employee_id: "A-1001",
+        employee_name: "刘晓晓",
+        status: "active",
+        employee_type: "internal",
+        organization_id: "ORG-RETURN",
+        organization_path: "CC / CCO / 集中退换小组",
+        workplace_id: "NJ-01",
+        workplace_name: "南京职场",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [
+          {
+            employee_id: "A-1001",
+            skill_id: "SKILL-RETURN-TICKET",
+            skill_name: "集中退换工单",
+            skill_category: "ticket",
+            effective_from: "2026-05-01",
+            effective_to: "2026-12-31",
+            batch_id: "BATCH-MD-001",
+          },
+        ],
+      },
+      {
+        employee_id: "A-1002",
+        employee_name: "王小王",
+        status: "active",
+        employee_type: "outsourced",
+        organization_id: "ORG-RETURN",
+        organization_path: "CC / CCO / 集中退换小组",
+        workplace_id: "SH-01",
+        workplace_name: "上海职场",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [
+          {
+            employee_id: "A-1002",
+            skill_id: "SKILL-GENERAL",
+            skill_name: "通用技能组",
+            skill_category: "online",
+            effective_from: "2026-05-01",
+            effective_to: "2026-12-31",
+            batch_id: "BATCH-MD-001",
+          },
+        ],
+      },
+    ],
+  });
+
+  assert.equal(summary.found, true);
+  assert.equal(summary.title, "集中退换工单");
+  assert.equal(summary.skill?.display.detailHref, "/master-data/skills/SKILL-RETURN-TICKET");
+  assert.equal(summary.totalPeople, 1);
+  assert.equal(summary.peopleRows[0].employee_id, "A-1001");
+  assert.equal(summary.peopleRows[0].display.detailHref, "/master-data/agents/A-1001");
+  assert.equal(
+    summary.peopleRows.some((row) => row.employee_id === "A-1002"),
+    false,
+  );
+});
+
+test("agent detail resolves read-only personnel context and service teams", () => {
+  const detail = summarizeMasterDataAgentDetail({
+    employeeId: "A-2001",
+    employees: [
+      {
+        employee_id: "A-2001",
+        employee_name: "刘晓晓",
+        status: "active",
+        employee_type: "outsourced",
+        organization_id: "ORG-SUP",
+        organization_path: "CC / CCO / 集中退换小组",
+        workplace_id: "SH-01",
+        workplace_name: "上海职场",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [
+          {
+            employee_id: "A-2001",
+            skill_id: "SKILL-TICKET",
+            skill_name: "集中退换工单",
+            skill_category: "ticket",
+            effective_from: "2026-06-01",
+            effective_to: "2026-12-31",
+            batch_id: "BATCH-MD-001",
+          },
+        ],
+      },
+      {
+        employee_id: "A-1001",
+        employee_name: "张三",
+        status: "active",
+        employee_type: "internal",
+        organization_id: "ORG-RETURN",
+        organization_path: "CC / CCO / 集中退换小组",
+        workplace_id: "SH-01",
+        workplace_name: "上海职场",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [],
+      },
+    ],
+    bindings: [
+      {
+        binding_id: "BIND-001",
+        employee_id: "A-2001",
+        supplier_id: "SUP-001",
+        workplace_id: "SH-01",
+        skill_id: "SKILL-TICKET",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    serviceTeams: [
+      {
+        service_team_id: "TEAM-SUP-001",
+        workplace_id: "SH-01",
+        team_type: "supplier",
+        team_name: "供应商驻场团队",
+        organization_id: null,
+        supplier_id: "SUP-001",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        service_team_id: "TEAM-INTERNAL-001",
+        workplace_id: "SH-01",
+        team_type: "internal",
+        team_name: "集中退换小组",
+        organization_id: "ORG-RETURN",
+        supplier_id: null,
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        service_team_id: "TEAM-OTHER-001",
+        workplace_id: "NJ-01",
+        team_type: "supplier",
+        team_name: "南京供应商团队",
+        organization_id: null,
+        supplier_id: "SUP-001",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+  });
+
+  assert.equal(detail.found, true);
+  assert.equal(detail.title, "刘晓晓");
+  assert.equal(detail.employee?.display.employeeTypeLabel, "外包员工");
+  assert.equal(detail.employee?.display.organizationLabel, "CC / CCO / 集中退换小组");
+  assert.equal(detail.employee?.display.workplaceLabel, "上海职场");
+  assert.equal(detail.employee?.display.skillSummary, "集中退换工单（工单技能组）");
+  assert.deepEqual(
+    detail.serviceTeamRows.map((row) => [
+      row.service_team_id,
+      row.display.teamNameLabel,
+      row.display.teamTypeLabel,
+      row.display.matchSourceLabel,
+      row.display.detailHref,
+    ]),
+    [
+      [
+        "TEAM-SUP-001",
+        "供应商驻场团队",
+        "供应商团队",
+        "同职场同供应商绑定",
+        "/master-data/sites/SH-01/service-teams/TEAM-SUP-001",
+      ],
+    ],
+  );
+  assert.equal(detail.totalServiceTeams, 1);
+  assert.equal(detail.emptyServiceTeamDetail, "暂无该人员关联的服务团队。");
+});
+
+test("agent management filters use real skill organization and workplace data", () => {
+  const employees = [
+    {
+      employee_id: "A-2001",
+      employee_name: "刘晓晓",
+      status: "active",
+      employee_type: "internal",
+      organization_id: "ORG-RETURN",
+      organization_path: "CC / CCO / 集中退换小组",
+      workplace_id: "NJ-01",
+      workplace_name: "南京职场",
+      effective_from: "2026-05-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skills: [
+        {
+          employee_id: "A-2001",
+          skill_id: "SKILL-RETURN-TICKET",
+          skill_name: "集中退换工单",
+          skill_category: "ticket",
+          effective_from: "2026-05-01",
+          effective_to: "2026-12-31",
+          batch_id: "BATCH-MD-001",
+        },
+      ],
+    },
+    {
+      employee_id: "A-2002",
+      employee_name: "王一一",
+      status: "frozen",
+      employee_type: "outsourced",
+      organization_id: "ORG-HOTLINE",
+      organization_path: "CC / CCO / 热线小组",
+      workplace_id: "SH-01",
+      workplace_name: "上海职场",
+      effective_from: "2026-05-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skills: [
+        {
+          employee_id: "A-2002",
+          skill_id: "SKILL-HOTLINE",
+          skill_name: "热线接待",
+          skill_category: "hotline",
+          effective_from: "2026-05-01",
+          effective_to: "2026-12-31",
+          batch_id: "BATCH-MD-001",
+        },
+      ],
+    },
+  ];
+
+  const summary = summarizeMasterDataAgentManagement(employees, {
+    skill_group: "SKILL-RETURN-TICKET",
+    organization: "ORG-RETURN",
+    workplace: "NJ-01",
+  });
+
+  const skillField = summary.filterFields.find((field) => field.key === "skill_group");
+  const organizationField = summary.filterFields.find((field) => field.key === "organization");
+  const workplaceField = summary.filterFields.find((field) => field.key === "workplace");
+
+  assert.deepEqual(skillField?.options, [
+    { value: "all", label: "全部技能组" },
+    { value: "SKILL-HOTLINE", label: "热线接待" },
+    { value: "SKILL-RETURN-TICKET", label: "集中退换工单" },
+  ]);
+  assert.deepEqual(organizationField?.options, [
+    { value: "all", label: "全部组织" },
+    { value: "ORG-HOTLINE", label: "CC / CCO / 热线小组" },
+    { value: "ORG-RETURN", label: "CC / CCO / 集中退换小组" },
+  ]);
+  assert.deepEqual(workplaceField?.options, [
+    { value: "all", label: "全部职场" },
+    { value: "NJ-01", label: "南京职场" },
+    { value: "SH-01", label: "上海职场" },
+  ]);
+  assert.deepEqual(summary.rows.map((row) => row.employee_id), ["A-2001"]);
+});
+
+test("agent import dialog summary keeps upload flow in the agent list context", () => {
+  const summary = summarizeMasterDataAgentImportDialog({
+    batches: [
+      {
+        ...baseBatch,
+        batch_id: "BATCH-MD-IMPORT-001",
+        uploaded_at: "2026-06-05T09:00:00+08:00",
+        total_rows: 3,
+        success_rows: 2,
+        failed_rows: 1,
+        application_status: "not_applied",
+        import_version_id: "BATCH-MD-IMPORT-001::v1",
+        applied_record_count: 0,
+      },
+    ],
+    templates: [
+      {
+        template_id: "TPL-MD-AGENT",
+        template_name: "客服人员字段映射",
+        file_type: "master_data",
+        field_mapping: {
+          record_type: "record_type",
+          employee_id: "employee_id",
+          employee_name: "employee_name",
+        },
+        is_active: true,
+        created_by: "ops",
+        created_at: "2026-06-05T09:00:00+08:00",
+        updated_at: "2026-06-05T09:00:00+08:00",
+      },
+    ],
+    uploadStatus: "success",
+    uploadBatchId: "BATCH-MD-IMPORT-001",
+  });
+
+  assert.equal(summary.openHref, "/master-data/agents?import_dialog=1");
+  assert.equal(summary.closeHref, "/master-data/agents");
+  assert.equal(summary.resultRedirectTo, "/master-data/agents?import_dialog=1");
+  assert.equal(summary.fileType, "master_data");
+  assert.deepEqual(
+    summary.steps.map((step) => step.title),
+    ["上传文件", "字段映射", "导入结果"],
+  );
+  assert.equal(summary.mappingModes[0].label, "选择映射模板");
+  assert.equal(summary.mappingModes[1].label, "手动映射字段");
+  assert.equal(summary.activeTemplates.length, 1);
+  assert.equal(summary.result?.batchHref, "/data-quality/import-batches/BATCH-MD-IMPORT-001");
+  assert.equal(summary.result?.rowSummary, "成功 2 行 / 失败 1 行");
+  assert.equal(summary.result?.nextActionLabel, "查看批次详情");
+});
+
 test("reference master data management summarizes list rows by object type", () => {
   const summary = summarizeMasterDataReferenceManagement("skills", [
     {
@@ -322,6 +762,767 @@ test("reference master data management summarizes list rows by object type", () 
       ],
     ],
   );
+});
+
+test("workplace vendor and skill list rows expose confirmed child entries", () => {
+  const siteSummary = summarizeMasterDataReferenceManagement("sites", [
+    {
+      reference_id: "SH-01",
+      reference_name: "上海职场",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+    },
+  ]);
+  const vendorSummary = summarizeMasterDataReferenceManagement("vendors", [
+    {
+      reference_id: "SUP-001",
+      reference_name: "上海供应商",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+    },
+  ]);
+  const skillSummary = summarizeMasterDataReferenceManagement("skills", [
+    {
+      reference_id: "SKILL-ONLINE",
+      reference_name: "在线接待",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skill_category: "online",
+    },
+  ]);
+
+  assert.equal(
+    siteSummary.rows[0].display.detailHref,
+    "/master-data/sites/SH-01",
+  );
+  assert.equal(
+    vendorSummary.rows[0].display.detailHref,
+    "/master-data/vendors/SUP-001",
+  );
+  assert.equal(vendorSummary.createHref, "/master-data/vendors/new");
+  assert.equal(
+    vendorSummary.rows[0].display.editHref,
+    "/master-data/vendors/SUP-001/edit",
+  );
+  assert.equal(
+    vendorSummary.rows[0].display.freezeHref,
+    "/master-data/vendors?freeze_vendor_id=SUP-001",
+  );
+  assert.equal(skillSummary.createHref, "/master-data/skills/new");
+  assert.equal(
+    skillSummary.rows[0].display.detailHref,
+    "/master-data/skills/SKILL-ONLINE",
+  );
+  assert.equal(
+    skillSummary.rows[0].display.editHref,
+    "/master-data/skills/SKILL-ONLINE/edit",
+  );
+  assert.equal(
+    skillSummary.rows[0].display.freezeHref,
+    "/master-data/skills?freeze_skill_id=SKILL-ONLINE",
+  );
+});
+
+test("organization management exposes confirmed child entries", () => {
+  const summary = summarizeMasterDataOrganizationManagement([
+    {
+      organization_id: "ORG-RETURN",
+      organization_name: "集中退换小组",
+      organization_level: 3,
+      parent_organization_id: "ORG-CCO",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      organization_path: "CC / CCO / 集中退换小组",
+    },
+  ]);
+
+  assert.equal(summary.createHref, "/master-data/organizations/new");
+  assert.equal(
+    summary.rows[0].display.editHref,
+    "/master-data/organizations/ORG-RETURN/edit",
+  );
+  assert.equal(
+    summary.rows[0].display.freezeHref,
+    "/master-data/organizations?freeze_organization_id=ORG-RETURN",
+  );
+});
+
+test("organization maintenance builders submit hierarchy through the organization API", () => {
+  assert.equal(
+    buildMasterDataOrganizationMaintenanceApiPath("ORG CCO/退换"),
+    "/api/v1/master-data/organizations/ORG%20CCO%2F%E9%80%80%E6%8D%A2/maintenance",
+  );
+
+  assert.deepEqual(
+    buildMasterDataOrganizationMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      organizationId: "ORG-RETURN",
+      organizationName: "集中退换小组",
+      organizationLevel: 3,
+      parentOrganizationId: "ORG-CCO",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      organization_name: "集中退换小组",
+      organization_level: 3,
+      parent_organization_id: "ORG-CCO",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataOrganizationMaintenancePayload({
+      action: "freeze",
+      sourceBatchId: "BATCH-MD-001",
+      organizationId: "ORG-RETURN",
+    }),
+    {
+      action: "freeze",
+      source_batch_id: "BATCH-MD-001",
+    },
+  );
+});
+
+test("skill maintenance builders submit category through the reference API", () => {
+  assert.equal(
+    buildMasterDataSkillMaintenanceApiPath("SKILL 在线/一线"),
+    "/api/v1/master-data/skills/SKILL%20%E5%9C%A8%E7%BA%BF%2F%E4%B8%80%E7%BA%BF/maintenance",
+  );
+
+  assert.deepEqual(
+    buildMasterDataSkillMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      skillId: "SKILL-ONLINE",
+      skillName: "在线接待",
+      skillCategory: "online",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "在线接待",
+      skill_category: "online",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+
+  assert.deepEqual(
+    buildMasterDataSkillMaintenancePayload({
+      action: "freeze",
+      sourceBatchId: "BATCH-MD-001",
+      skillId: "SKILL-ONLINE",
+    }),
+    {
+      action: "freeze",
+      source_batch_id: "BATCH-MD-001",
+    },
+  );
+});
+
+test("workplace detail groups service teams inside the selected workplace", () => {
+  const detail = summarizeMasterDataWorkplaceDetail({
+    workplaceId: "SH-01",
+    workplaces: [
+      {
+        reference_id: "SH-01",
+        reference_name: "上海职场",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        reference_id: "NJ-01",
+        reference_name: "南京职场",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    employees: [
+      {
+        employee_id: "A-1001",
+        employee_name: "张三",
+        status: "active",
+        employee_type: "internal",
+        organization_id: "ORG-SELF",
+        organization_path: "CC / CCO / 自有团队",
+        workplace_id: "SH-01",
+        workplace_name: "上海职场",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [],
+      },
+      {
+        employee_id: "A-1002",
+        employee_name: "王五",
+        status: "active",
+        employee_type: "internal",
+        organization_id: "ORG-SELF",
+        organization_path: "CC / CCO / 自有团队",
+        workplace_id: "SH-01",
+        workplace_name: "上海职场",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [],
+      },
+      {
+        employee_id: "A-2001",
+        employee_name: "李四",
+        status: "active",
+        employee_type: "internal",
+        organization_id: "ORG-NJ",
+        organization_path: "CC / CCO / 南京团队",
+        workplace_id: "NJ-01",
+        workplace_name: "南京职场",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [],
+      },
+    ],
+    bindings: [
+      {
+        binding_id: "BIND-001",
+        employee_id: "A-3001",
+        supplier_id: "SUP-001",
+        workplace_id: "SH-01",
+        skill_id: "SKILL-TICKET",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        binding_id: "BIND-003",
+        employee_id: "A-3003",
+        supplier_id: "SUP-001",
+        workplace_id: "SH-01",
+        skill_id: "SKILL-HOTLINE",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        binding_id: "BIND-002",
+        employee_id: "A-3002",
+        supplier_id: "SUP-002",
+        workplace_id: "NJ-01",
+        skill_id: "SKILL-HOTLINE",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    suppliers: [
+      {
+        reference_id: "SUP-001",
+        reference_name: "上海供应商",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+  });
+
+  assert.equal(detail.found, true);
+  assert.equal(detail.title, "上海职场");
+  assert.equal(detail.workplace?.display.referenceIdLabel, "SH-01");
+  assert.equal(detail.totalOperators, 2);
+  assert.equal(detail.internalOperators, 1);
+  assert.equal(detail.supplierOperators, 1);
+  assert.deepEqual(
+    detail.operatorRows.map((row) => [
+      row.display.operatorTypeLabel,
+      row.display.operatorNameLabel,
+      row.display.supplierLabel,
+      row.display.recordCountLabel,
+      row.display.sourceLabel,
+      row.display.effectivePeriodLabel,
+    ]),
+    [
+      [
+        "自有团队",
+        "CC / CCO / 自有团队",
+        "无供应商",
+        "2 人",
+        "人员档案",
+        "2026-06-01 至 2026-12-31",
+      ],
+      [
+        "供应商团队",
+        "上海供应商",
+        "上海供应商",
+        "2 条绑定",
+        "人员归属记录",
+        "2026-06-01 至 2026-12-31",
+      ],
+    ],
+  );
+  assert.equal(JSON.stringify(detail).includes("合同"), false);
+  assert.equal(JSON.stringify(detail).includes("结算"), false);
+  assert.equal(JSON.stringify(detail).includes("最低人力"), false);
+});
+
+test("workplace detail returns not found for unknown workplace id", () => {
+  const detail = summarizeMasterDataWorkplaceDetail({
+    workplaceId: "UNKNOWN",
+    workplaces: [],
+    employees: [],
+    bindings: [],
+  });
+
+  assert.equal(detail.found, false);
+  assert.equal(detail.workplace, null);
+  assert.equal(detail.operatorRows.length, 0);
+});
+
+test("workplace detail prefers maintained service-team records with action links", () => {
+  const detail = summarizeMasterDataWorkplaceDetail({
+    workplaceId: "SH-01",
+    workplaces: [
+      {
+        reference_id: "SH-01",
+        reference_name: "上海职场",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    employees: [],
+    bindings: [],
+    suppliers: [
+      {
+        reference_id: "SUP-001",
+        reference_name: "上海供应商",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    serviceTeams: [
+      {
+        service_team_id: "TEAM-INTERNAL-001",
+        workplace_id: "SH-01",
+        team_type: "internal",
+        team_name: "集中退换小组",
+        organization_id: "ORG-RETURN",
+        supplier_id: null,
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        service_team_id: "TEAM-SUP-001",
+        workplace_id: "SH-01",
+        team_type: "supplier",
+        team_name: "供应商驻场团队",
+        organization_id: null,
+        supplier_id: "SUP-001",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+  });
+
+  assert.equal(detail.totalOperators, 2);
+  assert.equal(detail.internalOperators, 1);
+  assert.equal(detail.supplierOperators, 1);
+  assert.equal(
+    detail.createServiceTeamHref,
+    "/master-data/sites/SH-01/service-teams/new",
+  );
+  assert.deepEqual(
+    detail.operatorRows.map((row) => [
+      row.operator_key,
+      row.operator_name,
+      row.display.supplierLabel,
+      row.display.detailHref,
+      row.display.editHref,
+      row.display.freezeHref,
+    ]),
+    [
+      [
+        "TEAM-INTERNAL-001",
+        "集中退换小组",
+        "-",
+        "/master-data/sites/SH-01/service-teams/TEAM-INTERNAL-001",
+        "/master-data/sites/SH-01/service-teams/TEAM-INTERNAL-001/edit",
+        "/master-data/sites/SH-01?freeze_service_team_id=TEAM-INTERNAL-001",
+      ],
+      [
+        "TEAM-SUP-001",
+        "供应商驻场团队",
+        "上海供应商",
+        "/master-data/sites/SH-01/service-teams/TEAM-SUP-001",
+        "/master-data/sites/SH-01/service-teams/TEAM-SUP-001/edit",
+        "/master-data/sites/SH-01?freeze_service_team_id=TEAM-SUP-001",
+      ],
+    ],
+  );
+});
+
+test("service-team detail resolves read-only people by team ownership", () => {
+  const employees = [
+    {
+      employee_id: "A-1001",
+      employee_name: "刘晓晓",
+      status: "active",
+      employee_type: "internal",
+      organization_id: "ORG-RETURN",
+      organization_path: "CC / CCO / 集中退换小组",
+      workplace_id: "SH-01",
+      workplace_name: "上海职场",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skills: [
+        {
+          employee_id: "A-1001",
+          skill_id: "SKILL-TICKET",
+          skill_name: "集中退换工单",
+          skill_category: "ticket",
+          effective_from: "2026-06-01",
+          effective_to: "2026-12-31",
+          batch_id: "BATCH-MD-001",
+        },
+      ],
+    },
+    {
+      employee_id: "A-1002",
+      employee_name: "张三",
+      status: "active",
+      employee_type: "internal",
+      organization_id: "ORG-OTHER",
+      organization_path: "CC / CCO / 在线小组",
+      workplace_id: "SH-01",
+      workplace_name: "上海职场",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skills: [],
+    },
+    {
+      employee_id: "A-2001",
+      employee_name: "李四",
+      status: "frozen",
+      employee_type: "outsourced",
+      organization_id: "ORG-SUP",
+      organization_path: "供应商团队",
+      workplace_id: "SH-01",
+      workplace_name: "上海职场",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skills: [
+        {
+          employee_id: "A-2001",
+          skill_id: "SKILL-HOTLINE",
+          skill_name: "热线接待",
+          skill_category: "hotline",
+          effective_from: "2026-06-01",
+          effective_to: "2026-12-31",
+          batch_id: "BATCH-MD-001",
+        },
+      ],
+    },
+    {
+      employee_id: "A-2002",
+      employee_name: "王五",
+      status: "active",
+      employee_type: "outsourced",
+      organization_id: "ORG-SUP",
+      organization_path: "供应商团队",
+      workplace_id: "NJ-01",
+      workplace_name: "南京职场",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+      skills: [],
+    },
+  ];
+  const bindings = [
+    {
+      binding_id: "BIND-001",
+      employee_id: "A-2001",
+      supplier_id: "SUP-001",
+      workplace_id: "SH-01",
+      skill_id: "SKILL-HOTLINE",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+    },
+    {
+      binding_id: "BIND-002",
+      employee_id: "A-2001",
+      supplier_id: "SUP-001",
+      workplace_id: "SH-01",
+      skill_id: "SKILL-TICKET",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+    },
+    {
+      binding_id: "BIND-003",
+      employee_id: "A-2002",
+      supplier_id: "SUP-001",
+      workplace_id: "NJ-01",
+      skill_id: "SKILL-HOTLINE",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+    },
+  ];
+
+  const internalPeople = summarizeMasterDataWorkplaceServiceTeamPeople({
+    serviceTeam: {
+      service_team_id: "TEAM-INTERNAL-001",
+      workplace_id: "SH-01",
+      team_type: "internal",
+      team_name: "集中退换小组",
+      organization_id: "ORG-RETURN",
+      supplier_id: null,
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+    },
+    employees,
+    bindings,
+  });
+  const supplierPeople = summarizeMasterDataWorkplaceServiceTeamPeople({
+    serviceTeam: {
+      service_team_id: "TEAM-SUP-001",
+      workplace_id: "SH-01",
+      team_type: "supplier",
+      team_name: "供应商驻场团队",
+      organization_id: null,
+      supplier_id: "SUP-001",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+      batch_id: "BATCH-MD-001",
+    },
+    employees,
+    bindings,
+  });
+
+  assert.deepEqual(
+    internalPeople.rows.map((row) => [
+      row.employee_id,
+      row.display.employeeNameLabel,
+      row.display.employeeTypeLabel,
+      row.display.organizationLabel,
+      row.display.skillSummary,
+      row.display.matchSourceLabel,
+    ]),
+    [
+      [
+        "A-1001",
+        "刘晓晓",
+        "自有员工",
+        "CC / CCO / 集中退换小组",
+        "集中退换工单（工单技能组）",
+        "同职场同组织",
+      ],
+    ],
+  );
+  assert.deepEqual(
+    supplierPeople.rows.map((row) => [
+      row.employee_id,
+      row.display.employeeNameLabel,
+      row.display.employeeTypeLabel,
+      row.display.statusLabel,
+      row.display.matchSourceLabel,
+    ]),
+    [["A-2001", "李四", "外包员工", "冻结", "同职场同供应商绑定"]],
+  );
+  assert.equal(supplierPeople.totalPeople, 1);
+  assert.equal(supplierPeople.emptyDetail, "暂无通过供应商归属记录匹配的人员。");
+});
+
+test("vendor detail keeps service workplaces inside the selected supplier", () => {
+  const detail = summarizeMasterDataVendorDetail({
+    vendorId: "SUP-001",
+    vendors: [
+      {
+        reference_id: "SUP-001",
+        reference_name: "上海供应商",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        reference_id: "SUP-002",
+        reference_name: "南京供应商",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    workplaces: [
+      {
+        reference_id: "SH-01",
+        reference_name: "上海职场",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        reference_id: "NJ-01",
+        reference_name: "南京职场",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    bindings: [
+      {
+        binding_id: "BIND-001",
+        employee_id: "A-3001",
+        supplier_id: "SUP-001",
+        workplace_id: "SH-01",
+        skill_id: "SKILL-TICKET",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        binding_id: "BIND-002",
+        employee_id: "A-3002",
+        supplier_id: "SUP-001",
+        workplace_id: "SH-01",
+        skill_id: "SKILL-HOTLINE",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        binding_id: "BIND-003",
+        employee_id: "A-3003",
+        supplier_id: "SUP-002",
+        workplace_id: "NJ-01",
+        skill_id: "SKILL-GENERAL",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+    serviceTeams: [
+      {
+        service_team_id: "TEAM-SUP-001",
+        workplace_id: "SH-01",
+        team_type: "supplier",
+        team_name: "上海供应商驻场团队",
+        organization_id: null,
+        supplier_id: "SUP-001",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+      {
+        service_team_id: "TEAM-SUP-002",
+        workplace_id: "NJ-01",
+        team_type: "supplier",
+        team_name: "南京供应商驻场团队",
+        organization_id: null,
+        supplier_id: "SUP-002",
+        status: "active",
+        effective_from: "2026-06-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+      },
+    ],
+  });
+
+  assert.equal(detail.found, true);
+  assert.equal(detail.title, "上海供应商");
+  assert.equal(detail.vendor?.display.referenceIdLabel, "SUP-001");
+  assert.equal(detail.totalServiceWorkplaces, 1);
+  assert.equal(detail.activeServiceWorkplaces, 1);
+  assert.deepEqual(
+    detail.serviceRows.map((row) => [
+      row.display.workplaceLabel,
+      row.display.statusLabel,
+      row.display.detailHref,
+      row.display.sourceLabel,
+      row.display.effectivePeriodLabel,
+    ]),
+    [
+      [
+        "上海职场",
+        "生效",
+        "/master-data/sites/SH-01",
+        "人员归属记录",
+        "2026-06-01 至 2026-12-31",
+      ],
+    ],
+  );
+  assert.equal(JSON.stringify(detail).includes("合同"), false);
+  assert.equal(JSON.stringify(detail).includes("结算"), false);
+  assert.equal(JSON.stringify(detail).includes("最低人力"), false);
+  assert.equal(detail.totalServiceTeams, 1);
+  assert.deepEqual(
+    detail.serviceTeamRows.map((row) => [
+      row.display.teamNameLabel,
+      row.display.workplaceLabel,
+      row.display.statusLabel,
+      row.display.detailHref,
+    ]),
+    [
+      [
+        "上海供应商驻场团队",
+        "上海职场",
+        "生效",
+        "/master-data/sites/SH-01/service-teams/TEAM-SUP-001",
+      ],
+    ],
+  );
+});
+
+test("vendor detail returns not found for unknown supplier id", () => {
+  const detail = summarizeMasterDataVendorDetail({
+    vendorId: "UNKNOWN",
+    vendors: [],
+    workplaces: [],
+    bindings: [],
+  });
+
+  assert.equal(detail.found, false);
+  assert.equal(detail.vendor, null);
+  assert.equal(detail.serviceRows.length, 0);
 });
 
 test("agent maintenance payload maps create edit freeze and effective period actions", () => {
@@ -423,6 +1624,120 @@ test("agent skill maintenance payload maps single employee skill replacement", (
       skill_ids: ["SKILL-RETURN-CALL", "SKILL-GENERAL"],
       effective_from: "2026-06-01",
       effective_to: "2026-12-31",
+    },
+  );
+});
+
+test("workplace maintenance payload maps create edit and freeze actions", () => {
+  assert.equal(
+    buildMasterDataWorkplaceMaintenanceApiPath("SH 01/华东"),
+    "/api/v1/master-data/workplaces/SH%2001%2F%E5%8D%8E%E4%B8%9C/maintenance",
+  );
+
+  assert.deepEqual(
+    buildMasterDataWorkplaceMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      workplaceId: "SH-01",
+      workplaceName: "上海职场",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "上海职场",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataWorkplaceMaintenancePayload({
+      action: "edit",
+      sourceBatchId: "BATCH-MD-001",
+      workplaceId: "SH-01",
+      workplaceName: "上海职场东区",
+      status: "inactive",
+      effectiveFrom: "2026-07-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "edit",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "上海职场东区",
+      status: "inactive",
+      effective_from: "2026-07-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataWorkplaceMaintenancePayload({
+      action: "freeze",
+      sourceBatchId: "BATCH-MD-001",
+      workplaceId: "SH-01",
+    }),
+    {
+      action: "freeze",
+      source_batch_id: "BATCH-MD-001",
+    },
+  );
+});
+
+test("vendor maintenance payload maps create edit and freeze actions", () => {
+  assert.equal(
+    buildMasterDataVendorMaintenanceApiPath("SUP 01/华东"),
+    "/api/v1/master-data/suppliers/SUP%2001%2F%E5%8D%8E%E4%B8%9C/maintenance",
+  );
+
+  assert.deepEqual(
+    buildMasterDataVendorMaintenancePayload({
+      action: "create",
+      sourceBatchId: "BATCH-MD-001",
+      vendorId: "SUP-001",
+      vendorName: "上海供应商",
+      status: "active",
+      effectiveFrom: "2026-06-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "create",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "上海供应商",
+      status: "active",
+      effective_from: "2026-06-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataVendorMaintenancePayload({
+      action: "edit",
+      sourceBatchId: "BATCH-MD-001",
+      vendorId: "SUP-001",
+      vendorName: "上海供应商二部",
+      status: "inactive",
+      effectiveFrom: "2026-07-01",
+      effectiveTo: "2026-12-31",
+    }),
+    {
+      action: "edit",
+      source_batch_id: "BATCH-MD-001",
+      reference_name: "上海供应商二部",
+      status: "inactive",
+      effective_from: "2026-07-01",
+      effective_to: "2026-12-31",
+    },
+  );
+  assert.deepEqual(
+    buildMasterDataVendorMaintenancePayload({
+      action: "freeze",
+      sourceBatchId: "BATCH-MD-001",
+      vendorId: "SUP-001",
+    }),
+    {
+      action: "freeze",
+      source_batch_id: "BATCH-MD-001",
     },
   );
 });

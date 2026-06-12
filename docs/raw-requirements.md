@@ -15,6 +15,253 @@
   notes: "补充说明"
 ```
 
+### R860 - 职场详情只读服务团队关系
+
+```yaml
+id: R860
+module: "主数据维护"
+description: "PM 明确职场是地点对象，但一个职场可以同时有自有团队和供应商团队；供应商团队需要绑定供应商主数据。下一步应在职场详情页内只读展示该职场的服务团队关系：自有团队按职场下自有人员组织聚合，供应商团队按职场下绑定供应商聚合并展示供应商名称。不新增单独导航、合同、结算、最低人力或维护动作。"
+source: "PM confirmed IM160 workplace service-team relationship design on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM160 已完成：/master-data/sites/[workplaceId] 内的服务团队按自有人员组织和供应商绑定聚合展示，并读取供应商主数据名称；未新增导航、表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量或自动排班。"
+```
+
+### R861 - 职场服务团队本地维护对象
+
+```yaml
+id: R861
+module: "主数据维护"
+description: "PM 确认继续把职场详情内的服务团队从只读推导升级为本地可维护对象。服务团队必须留在具体职场详情上下文内：新增/编辑走子页面，冻结走 Dialog；自有服务团队绑定组织，供应商服务团队绑定供应商主数据。不新增独立导航，不引入合同、结算比例、最低人力或其他生产规则。"
+source: "PM confirmed IM161 workplace service-team maintenance design on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM161 已完成：新增本地职场服务团队对象、列表 API 和 create/edit/freeze 维护 API；/master-data/sites/[workplaceId] 读取维护对象并提供 Header 新增入口、行内编辑/冻结入口，新建/编辑走职场详情下子页面，冻结走 Dialog；不新增独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
+### R862 - 职场服务团队详情页
+
+```yaml
+id: R862
+module: "主数据维护"
+description: "PM 确认 IM161 后继续主数据维护链路。下一步先给职场详情下的服务团队对象补详情页：用户从职场详情服务团队表进入单个服务团队详情，查看团队基础信息、归属职场、组织或供应商来源、状态、生效期和来源批次。详情页必须留在 /master-data/sites/[workplaceId] 子路由上下文内，不新增独立导航；本轮不做关联人员列表、人员分配、合同、结算、最低人力或生产规则。"
+source: "PM confirmed continuing after IM161 on 2026-06-11"
+submitted_at: "2026-06-11"
+version: "1.0"
+status: "done"
+notes: "IM162 已完成：/master-data/sites/[workplaceId] 服务团队表新增 `查看` 入口，/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 展示单个服务团队基础信息、归属职场、组织或供应商来源、状态、生效期和来源批次；编辑复用现有编辑子页面，冻结复用 Dialog；未新增独立导航、后端 route、schema/migration、关联人员列表、人员分配、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
+### R863 - 服务团队详情关联人员只读列表
+
+```yaml
+id: R863
+module: "主数据维护"
+description: "PM 确认继续主数据维护链路。服务团队详情页已经能查看团队基础信息，下一步只在该详情页补一个只读关联人员区域：自有服务团队按同职场和同组织匹配人员；供应商服务团队按同职场和同供应商绑定关系匹配人员。该区域只用于核对团队边界，不做人员分配、新增、批量、导出、合同、结算或最低人力。"
+source: "PM confirmed continuing after IM162 on 2026-06-11"
+submitted_at: "2026-06-11"
+version: "1.0"
+status: "done"
+notes: "IM163 已完成：/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 增加只读关联人员区域；自有团队按同职场同组织匹配，供应商团队按同职场同供应商绑定匹配并去重；未新增后端 route、schema/migration、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
+### R864 - 供应商详情服务团队只读链路
+
+```yaml
+id: R864
+module: "主数据维护"
+description: "PM 确认继续主数据维护链路。职场服务团队详情已经能看到关联人员，下一步在供应商详情页反向展示该供应商对应的职场服务团队，并提供进入既有职场服务团队详情页的链接。该页面只做核对链路，不新增供应商服务团队维护、人员分配、合同、结算比例或最低人力。"
+source: "PM confirmed continuing after IM163 on 2026-06-11"
+submitted_at: "2026-06-11"
+version: "1.0"
+status: "done"
+notes: "IM164 已完成：/master-data/vendors/[vendorId] 增加只读服务团队区域，只展示当前供应商绑定的职场服务团队，并链接到既有职场服务团队详情页；未新增后端 route、schema/migration、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
+### R865 - 客服人员详情只读业务链路
+
+```yaml
+id: R865
+module: "主数据维护"
+description: "PM 确认继续主数据维护链路。人员列表已经能维护单个人员，服务团队详情也能看到关联人员，下一步需要从客服人员列表进入单个人员详情页，核对人员基础信息、组织、职场、技能集合，以及该人员关联到哪些职场服务团队。该详情页只做只读核对，不做人員分配、合同、结算、最低人力或批量动作。"
+source: "PM confirmed continuing after IM164 on 2026-06-11"
+submitted_at: "2026-06-11"
+version: "1.0"
+status: "done"
+notes: "IM165 已完成：/master-data/agents 列表行提供 `查看` 入口，/master-data/agents/[employeeId] 只读展示人员基础信息、技能集合和关联服务团队，并链接到既有职场服务团队详情页；未新增后端 route、schema/migration、人员分配、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
+### R866 - 组织详情只读业务链路
+
+```yaml
+id: R866
+module: "主数据维护"
+description: "PM 确认继续主数据维护链路。组织列表已经具备单条维护能力，下一步需要从组织列表进入单个组织详情页，核对组织基础信息、直接下级组织和当前归属人员。该详情页只做只读核对，不做人员调岗、组织树拖拽、批量调整、权限、审批或导出。"
+source: "PM confirmed continuing after IM165 on 2026-06-11"
+submitted_at: "2026-06-11"
+version: "1.0"
+status: "done"
+notes: "IM166 已完成：/master-data/organizations 列表行提供 `查看` 入口，/master-data/organizations/[organizationId] 只读展示组织基础信息、直接下级组织和当前归属人员，并链接到既有人员详情页；未新增后端 route、schema/migration、人员调岗、组织树拖拽、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+```
+
+### R867 - 技能组详情只读业务链路
+
+```yaml
+id: R867
+module: "主数据维护"
+description: "PM 确认继续主数据维护链路。技能组列表已经具备单条维护能力，下一步需要从技能组列表进入单个技能组详情页，核对技能组基础信息、归属属性，以及当前拥有该技能的客服人员。该详情页只做只读核对，不做技能层级、技能绑定维护、批量分配、排班技能规则、权限、审批或导出。"
+source: "PM confirmed continuing after IM166 on 2026-06-12"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM167 已完成：/master-data/skills 列表行提供 `详情` 入口，/master-data/skills/[skillId] 只读展示技能组基础信息、归属属性和当前拥有该技能的客服人员，并链接到既有人员详情页；未新增后端 route、schema/migration、技能层级、技能绑定维护、批量分配、排班技能规则、权限、审批、导出、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+```
+
+### R868 - 主数据详情链路收尾检查
+
+```yaml
+id: R868
+module: "主数据维护"
+description: "PM 要求继续但不扩大功能，当前主数据详情链路已经覆盖职场、供应商、服务团队、人员、组织和技能组。需要做一轮收尾检查：列表行内进入详情的动作口径应保持一致，避免技能组等对象混用 `详情`，同时用结构测试防止回退。该任务只允许已有链路的小修和测试，不新增页面、导航、后端、导入或生产能力。"
+source: "PM requested continuing after IM167 on 2026-06-12"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM168 已完成：主数据 reference 列表进入详情的行内动作统一为 `查看`，并用结构测试覆盖，防止再次混用 `详情`；未新增页面、导航、后端 route、schema/migration、导入、权限、审批、导出、批量、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+```
+
+### R869 - 需求预测导入大弹窗
+
+```yaml
+id: R869
+module: "需求计划 / 业务导入"
+description: "PM 已明确导入功能应归属到业务列表页面：人员在人员列表，排班在排班页面，预测在需求预测页面，登录/状态日志在日志页面。人员导入弹窗已经形成 step-by-step 模式，下一步先只把需求预测导入入口从独立 CSV 上传页收回到 /demand-plans/production 当前页大弹窗；排班和登录/状态日志后续按同模式单独做。"
+source: "PM requested continuing business import ownership after IM168 on 2026-06-12"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM169 已完成：/demand-plans/production 的 `导入预测` 打开当前页 step-by-step Dialog，复用现有上传 action 并回流导入结果；未扩展排班、登录/状态日志导入弹窗，未新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+```
+
+### R870 - 排班导入大弹窗
+
+```yaml
+id: R870
+module: "排班计划 / 业务导入"
+description: "继 IM169 将需求预测导入收回到预测版本页 Dialog 后，继续按同一产品模式处理排班导入：排班导入应归属到 /schedule-plans/production 当前业务页，由 Header 页面级动作打开 step-by-step 大弹窗；上传、映射和结果回看在弹窗内完成，完整行结果和后续应用处理仍进入批次详情。"
+source: "PM requested continuing business import ownership after IM169 on 2026-06-12"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM170 已完成：/schedule-plans/production 的 `导入排班` 打开当前页 step-by-step Dialog，复用现有上传 action 并回流导入结果；未扩展登录/状态日志导入弹窗，未新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子。"
+```
+
+### R849 - 主数据非客服人员动作收口
+
+```yaml
+id: R849
+module: "主数据维护 / 页面动作"
+description: "客服人员列表的页面级动作已经进入 Header actions，但组织、职场、供应商、技能等非客服人员主数据列表内容区仍保留 `导入主数据` 旧快捷入口。这会把未确认的导入方式继续暴露在列表内容里。需要先移除这些内容区动作，保持非客服人员主数据页只读列表边界，后续导入入口按业务对象单独设计。"
+source: "PM approved continuing after IM148 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM149 已完成：非客服人员主数据列表内容区不再显示 `导入主数据` 或跳转独立上传工作区；客服人员已确认的新建/批量导入继续在 Header actions；本轮未新增 CRUD、导入弹窗、后端、schema/migration、依赖或权限/审批/导出/批量等能力。"
+```
+
+### R850 - 导入入口业务归位
+
+```yaml
+id: R850
+module: "业务导入 / 入口归属"
+description: "PM 明确导入不应该继续表现为一个通用导入中心主入口。人员导入应在人员列表，排班导入在排班业务页，预测导入在需求预测业务页，登录/状态日志导入在日志业务页。当前 `/data-quality` 仍显示通用 `上传 CSV` 主按钮，预测、排班、日志页面的导入按钮也塞在内容卡片里并跳向通用上传工作区。需要先收口入口归属，把通用上传页降级为内部兼容路由。"
+source: "PM approved continuing after IM149 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM150 已完成：data-quality 作为导入批次台账不再提供通用 `上传 CSV` 主按钮；预测、排班、登录/状态日志页面级导入动作进入 Header actions 并暂时复用现有预选文件类型上传路由；真正的业务 step-by-step 导入弹窗留给后续复用任务。"
+```
+
+### R851 - data-quality 结果页抽象降级
+
+```yaml
+id: R851
+module: "结果链路 / 页面层级"
+description: "PM 明确不接受把导入、版本、对比、复核都包装成一个 `质量中心` 或 `导入中心` 大模块。Sidebar 已经隐藏 data-quality 类一级入口，但业务版本、对比运行、复核案例等结果类页面的 Breadcrumb 仍把 `导入批次` 当作父级模块。需要短期保留兼容路由，同时降低可见模块抽象：批次处理页仍归批次，结果类页面直接呈现自身页面身份，不再表现为导入批次父模块下的子页。"
+source: "PM approved continuing after IM150 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM151 已完成：业务版本列表、对比运行详情、复核案例列表和复核案例详情不再把 `导入批次` 作为 Breadcrumb 父级；批次处理、上传和模板页面继续保留兼容路由和批次上下文；未改结果查询、后端 route、schema/migration、依赖或权限/审批/导出/批量等能力。"
+```
+
+### R852 - 主数据术语清理
+
+```yaml
+id: R852
+module: "主数据维护 / 术语"
+description: "PM 明确不接受把 `项目` 当作主数据对象，也不接受把职场内的自有/供应商团队关系做成单独 `职场运营主体` 概念。当前主数据对象中 `项目` 已不再作为维护对象暴露，但职场详情和错误文案仍残留 `运营主体/职场运营主体` 可见术语。需要把它改成更贴合业务的职场服务团队表达，同时不删除后端兼容字段。"
+source: "PM approved continuing after IM151 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM152 已完成：职场详情和主数据读取错误文案不再显示 `运营主体/职场运营主体`，改为 `服务团队/职场服务团队`；本轮只清理主数据可见文案和结构测试，不改后端 schema、project_id 兼容字段、供应商合同、结算比例、最低人力要求或任何生产规则。"
+```
+
+### R848 - 旧全局搜索 API 清理
+
+```yaml
+id: R848
+module: "全局页面结构 / Header"
+description: "IM144 已经从 SiteHeader 视觉上移除无意义全局搜索，但 AppShell/SiteHeader 接口和大量页面传参仍保留 searchPlaceholder，后续开发会误以为 Header 仍应该承载全局搜索。需要删除这个旧 API 和页面传参，只保留真正属于列表内容区的业务筛选。"
+source: "PM approved continuing after IM147 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM148 已完成：AppShell/SiteHeader 不再声明、默认或透传 searchPlaceholder；app/components 源码中的旧传参已清理，业务列表内筛选框保留在内容区；不新增 Header 搜索，不改路由、导入弹窗、后端、schema/migration、依赖或权限/审批/导出/批量等能力。"
+```
+
+### R845 - 导航信息架构收口
+
+```yaml
+id: R845
+module: "全局导航 / 计划与排班"
+description: "PM 复核后确认，当前 Sidebar 仍把 `预测生产`、`排班生产` 作为一级导航项暴露，这是把实现路径伪装成业务模块。需要先把一级导航收口到业务对象入口，让需求预测和排班相关生产版本继续由各自业务入口高亮承载。"
+source: "PM confirmed IM145 execution after UI/product-structure audit on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM145 已完成：Sidebar 不再把 `预测生产`、`排班生产` 暴露为独立导航项；`需求计划` 与 `排班计划` 通过 prefix active 覆盖各自 `/production` 子路由；本轮未改生产页标题、返回按钮、模型文案、导入弹窗、业务路由或后端能力。"
+```
+
+### R846 - 生产文案与返回链路清理
+
+```yaml
+id: R846
+module: "全局文案 / 计划与排班"
+description: "PM 复核后确认，虽然 Sidebar 已移除 `预测生产`、`排班生产` 独立入口，但生产概念仍残留在页面标题、返回按钮、台账标题和模型提示中。需要把这些实现路径文案改回业务对象视角，让预测、排班、登录/状态日志继续从对应业务入口承载。"
+source: "PM confirmed after IM145 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM146 已完成：预测、排班、登录/状态日志生产子路由保持兼容，但可见标题、列表标题、返回按钮、缺批次/阻塞/就绪文案改为业务对象视角；本轮未改重复 H1、旧搜索 API、导入弹窗、业务路由、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
+
+### R847 - Header/Breadcrumb 与内容区标题统一
+
+```yaml
+id: R847
+module: "全局页面结构 / Breadcrumb"
+description: "PM 复核后指出页面不能在 Header/Breadcrumb 里写一遍，又在内容区同名 H1 再写一遍。需要让列表、详情、新建、编辑页统一由 AppShell/SiteHeader 承载 Breadcrumb 和页面身份，内容区只保留筛选、工具栏、表格、详情分组或业务记录标题。"
+source: "PM feedback after IM146 on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM147 已完成：需求计划、排班计划、预测/排班/日志兼容页和 data-quality 兼容页统一传入 breadcrumbItems，内容区同名 H1 已删除或降级；旧 searchPlaceholder API 留给 IM148，不改路由、导入弹窗、后端、schema/migration、依赖或权限/审批/导出/批量等能力。"
+```
+
 ### R781 - 独立 CSV 上传工作区
 
 ```yaml
@@ -2808,4 +3055,157 @@ submitted_at: "2026-06-05"
 version: "1.0"
 status: "done"
 notes: "IM135 已完成：人员筛选下拉统一为 32px 高并让弹层宽度对齐触发器；表格行内编辑/冻结/更多操作统一为小尺寸操作，并移除内部“待拆分”文案。"
+```
+
+### R841 - 职场详情页承载运营主体
+
+```yaml
+id: R841
+module: "主数据维护"
+description: "PM 确认职场是地点对象，职场下的自有团队和供应商团队不应作为独立导航或二级实体暴露，而应收敛到具体职场的详情页。需要在职场列表进入单个职场详情，并在详情中只读展示该职场下的运营主体来源。"
+source: "PM clarified workplace operating subjects belong in workplace detail on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM141 已完成：/master-data/sites 列表新增详情入口，/master-data/sites/[workplaceId] 展示职场信息和该职场下的运营主体；不恢复独立职场运营主体或绑定关系导航。"
+```
+
+### R842 - 供应商详情页承载服务职场
+
+```yaml
+id: R842
+module: "主数据维护"
+description: "供应商不应只停留在列表行。维护人员需要从供应商列表进入单个供应商详情，查看供应商基础信息，以及该供应商当前服务哪些职场。合同、结算比例和最低人力属于后续独立任务，现阶段只保留只读边界，不提前实现。"
+source: "PM approved continuing supplier detail after workplace detail on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM142 已完成：/master-data/vendors 列表新增详情入口，/master-data/vendors/[vendorId] 展示供应商信息和服务职场；不实现合同、结算比例或最低人力。"
+```
+
+### R843 - 客服人员列表内批量导入大弹窗
+
+```yaml
+id: R843
+module: "主数据维护"
+description: "PM 明确导入动作应从具体业务列表发起，人员导入应放在客服人员列表，而不是让用户先进入独立上传工作区。需要在客服人员列表页提供批量导入大弹窗，弹窗内分为上传文件、字段映射和导入结果三步；完整批次详情、失败行修正、准备度和应用处理仍留在批次详情页。"
+source: "PM corrected import UX and approved the agent-list dialog design on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM143 已完成：/master-data/agents 的批量导入入口改为列表内大弹窗，弹窗内分上传文件、字段映射和导入结果三步；完整批次详情、失败行修正、准备度和应用处理仍进入批次详情页。"
+```
+
+### R844 - 全局 UI 组件规范与客服人员导入弹窗纠偏
+
+```yaml
+id: R844
+module: "主数据维护 / 全局布局"
+description: "PM 用 Product Design 与 shadcn 规范复核后确认，当前全局侧边栏仍是手写 aside，页面缺少统一 Breadcrumb，反馈提示没有统一使用 Alert，客服人员导入弹窗也需要改成严格 step-by-step Dialog。需要在不新增业务菜单、不扩展排班/预测/日志导入的前提下，统一这些 UI 基础规范。"
+source: "PM supplied Product Design + shadcn review conclusions and approved execution on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM144 已完成：全局 AppShell/AppSidebar/SiteHeader 改用 shadcn Sidebar、Collapsible、SidebarTrigger、Breadcrumb；SiteHeader 改为单行导航结构，Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1；SiteHeader 去掉无意义全局搜索、固定月份和通知占位并提供页面级 actions 插槽；Sidebar footer 使用 shadcn Avatar 和本地参考头像 /shadcn-avatar.jpg，并提供本地用户菜单、明暗主题切换和登出入口，登出不接真实 auth；主数据列表、详情、新建、编辑、技能维护页由 SiteHeader 唯一承载页面标题和返回路径，内容区不再重复返回按钮、H1 和页面级说明；客服人员列表按筛选卡片、列表操作栏、表格排序，查询/重置固定在筛选卡片右下，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作；客服人员导入改为 shadcn Dialog step-by-step，并用 hidden 保持文件 input 挂载；反馈与导入结果摘要改用 Alert。"
+```
+
+### R853 - B 端字体与控件密度统一
+
+```yaml
+id: R853
+module: "全局 UI 规范"
+description: "PM 指出当前页面整体字体不合理，按钮字号不一致，表格和弹窗字号密度也不协调。需要严格检查现有设计和实现，先修基础层的字体覆盖和组件尺寸漂移，再修客服人员导入弹窗中过小的说明文字，避免继续在页面里逐个手工补样式。"
+source: "PM requested strict design and implementation inspection for page fonts/buttons/tables/dialogs on 2026-06-05"
+submitted_at: "2026-06-05"
+version: "1.0"
+status: "done"
+notes: "IM153 已完成：移除全局表单 font inherit 覆盖，统一 Button 小尺寸、Table 表头、客服人员导入 Dialog 正文/步骤/表单和人员列表行内文字按钮的 14px 基线；不新增业务能力。"
+```
+
+### R854 - 职场基础 CRUD 前端闭环
+
+```yaml
+id: R854
+module: "主数据维护"
+description: "PM 确认下一阶段从职场管理开始。职场列表不能塞入表单，应按 B 端管理对象拆成列表页、单对象新建页、单对象编辑页和冻结弹窗。IM154 只维护职场基础 reference 字段，服务团队绑定关系留到下一阶段。"
+source: "PM approved workplace CRUD product design on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM154 已完成：职场 ID、职场名称、状态、生效开始、生效结束；新建/编辑走子页面，冻结走弹窗；不做职场服务团队绑定、合同、结算、最低人力、审批、导出、批量或权限。"
+```
+
+### R855 - 供应商基础 CRUD 前端闭环
+
+```yaml
+id: R855
+module: "主数据维护"
+description: "继职场基础 CRUD 后，PM 要求继续开发剩余主数据维护功能。供应商列表也应按 B 端对象管理拆分为列表页、单对象新建页、单对象编辑页和冻结弹窗，只维护供应商基础 reference 字段，合同、结算比例、最低人力和服务职场绑定留到后续独立任务。"
+source: "PM requested continuing master-data maintenance after IM154 push on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM155 已完成：供应商 ID、供应商名称、状态、生效开始、生效结束；新建/编辑走子页面，冻结走弹窗；不做供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量或权限。"
+```
+
+### R856 - 技能组基础 CRUD 前端闭环
+
+```yaml
+id: R856
+module: "主数据维护"
+description: "继职场和供应商基础 CRUD 后，PM 要求继续补齐剩余主数据维护功能。技能组应作为独立主数据对象保留，但不能在列表页塞表单；需要按 B 端对象管理拆为列表页、单对象新建页、单对象编辑页和冻结弹窗。技能组本轮只维护基础字段：技能组 ID、技能组名称、归属属性、状态和生效期；人员技能绑定、排班技能引用和技能层级关系留到后续独立任务。"
+source: "PM requested continuing master-data maintenance after IM155 push on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM156 已完成：技能组 ID、技能组名称、归属属性、状态、生效开始、生效结束；新建/编辑走子页面，冻结走弹窗；不做人员技能绑定、排班技能引用、技能层级、审批、导出、批量或权限。"
+```
+
+### R857 - 组织基础 CRUD 前端闭环
+
+```yaml
+id: R857
+module: "主数据维护"
+description: "继职场、供应商和技能组基础 CRUD 后，PM 要求继续补齐剩余主数据维护功能。组织应按 B 端对象管理拆为列表页、单对象新建页、单对象编辑页和冻结弹窗，只维护组织基础字段：组织 ID、组织名称、组织层级、上级组织、状态和生效期。组织架构图、人员调岗、供应商绑定、合同、结算和最低人力留到后续独立任务。"
+source: "PM requested continuing master-data maintenance after IM156 push on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM157 已完成：组织 ID、组织名称、组织层级、上级组织、状态、生效开始、生效结束；新建/编辑走子页面，冻结走弹窗；不做组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量或权限。"
+```
+
+### R858 - 客服人员列表真实筛选
+
+```yaml
+id: R858
+module: "主数据维护"
+description: "客服人员列表已经是主数据维护里的真实人员列表，但技能组、组织、职场筛选仍存在占位下拉或只筛选部分字段的问题。需要让筛选项来自当前真实人员数据，并让查询参数真实过滤人员行，保持页面是清爽列表页，不引入新增页面、后端能力或批量操作。"
+source: "PM requested continuing master-data cleanup after IM157 push on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM158 已完成：/master-data/agents 的技能组、组织、职场筛选选项来自当前人员数据；skill_group 支持技能 ID/名称/归属属性过滤，organization 和 workplace 支持 ID/显示名过滤；不新增导航、页面、后端 route、schema/migration、依赖、审批、导出、批量操作或权限。"
+```
+
+### R859 - 本地旧主数据 schema 维护写入兼容
+
+```yaml
+id: R859
+module: "主数据维护"
+description: "IM158 smoke 暴露当前本地 .local SQLite 仍可能停留在旧主数据表结构，缺少 employee_type、organization_id、workplace_id、skill_category 或 organizations 表时，人员/技能/组织维护 API 会在 ORM 读取阶段直接 500。需要在不新增迁移文件、不扩展业务字段的前提下，让本地维护写入路径补齐已确认字段并返回正常业务响应。"
+source: "IM158 browser/API smoke found legacy local SQLite OperationalError on 2026-06-08"
+submitted_at: "2026-06-08"
+version: "1.0"
+status: "done"
+notes: "IM159 已完成：仅对 SQLite 本地库在 repository 初始化/建表时补齐已确认主数据表结构，旧库缺少 employee_type、organization_id、workplace_id、skill_category 或 organizations 表时，人员、技能组和组织维护不再直接 500；未新增迁移文件、生产数据库配置、权限、审批、导出、批量、结算或合同能力。"
+```
+### R871 - 登录/状态日志导入大弹窗
+
+```yaml
+id: R871
+status: "done"
+source: "PM confirmed continuation after IM170"
+summary: "将登录/状态日志导入入口收回到 `/actual-logs/production` 的当前页分步 Dialog，复用现有 CSV 上传能力并回流导入结果。"
+owner: "PM"
+notes: "IM171 已完成：/actual-logs/production 的 `导入登录日志`、`导入状态日志` 打开当前页 step-by-step Dialog，复用现有上传 action 并按 log_type 回流导入结果；未扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
 ```

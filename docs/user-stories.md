@@ -20,6 +20,438 @@
   status: "draft"
 ```
 
+### US780 - 职场详情只读服务团队关系
+
+```yaml
+id: US780
+requirement_ids:
+  - R860
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在职场详情页看到该职场下的自有服务团队和供应商服务团队，以便理解一个职场同时承载自有团队与供应商团队的关系，而不是进入单独的抽象模块。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "职场详情页服务团队表按该职场自有人员的 organization_id / organization_path 聚合自有团队。"
+  - "职场详情页服务团队表按该职场 binding 的 supplier_id 聚合供应商团队，并展示供应商主数据名称。"
+  - "服务团队表展示团队类型、服务团队、供应商、人员/绑定数、状态、有效期和来源批次。"
+  - "空态仍为 `暂无该职场服务团队记录。`。"
+  - "不新增导航、表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量操作或自动排班。"
+dependencies:
+  - "US779"
+status: "done"
+notes: "IM160 已完成：职场详情页只读展示自有服务团队和供应商服务团队聚合关系，保持在职场详情上下文内，不新增独立模块或维护动作。"
+```
+
+### US781 - 职场服务团队本地维护对象
+
+```yaml
+id: US781
+requirement_ids:
+  - R861
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在职场详情页内维护该职场的服务团队对象，以便把自有团队和供应商团队关系落到明确记录，而不是继续依赖只读推导。"
+task_type: "database-persistence"
+priority: "P0"
+acceptance:
+  - "/master-data/sites/[workplaceId] 的服务团队表读取本地职场服务团队对象，并保留在职场详情上下文内。"
+  - "服务团队新增和编辑进入职场详情下的子页面，不在详情页或列表页塞表单。"
+  - "服务团队冻结使用 Dialog 确认，不做批量冻结。"
+  - "自有服务团队要求绑定组织，供应商服务团队要求绑定供应商主数据。"
+  - "不新增 Sidebar 导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US780"
+status: "done"
+notes: "IM161 已完成：职场详情内的服务团队对象可本地维护，新建/编辑走子页面，冻结走 Dialog，并保持在职场详情上下文内。"
+```
+
+### US782 - 职场服务团队详情页
+
+```yaml
+id: US782
+requirement_ids:
+  - R862
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望从职场详情页进入单个服务团队详情页，以便在不离开职场上下文的情况下核对该服务团队的基础信息和归属来源。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/sites/[workplaceId] 的服务团队表提供查看详情入口。"
+  - "/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 展示服务团队 ID、团队名称、团队类型、归属职场、组织或供应商来源、状态、生效期和来源批次。"
+  - "详情页提供返回职场详情、编辑服务团队和冻结服务团队入口；编辑继续进入现有编辑子页面，冻结继续使用 Dialog。"
+  - "未找到服务团队时显示明确空态，不跳到独立主数据模块。"
+  - "不新增 Sidebar 导航、后端 route、schema/migration、关联人员列表、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US781"
+status: "done"
+notes: "IM162 已完成：服务团队详情页保持在职场详情子路由内，展示基础信息和来源信息；关联人员只读列表留给 IM163。"
+```
+
+### US783 - 服务团队详情关联人员只读列表
+
+```yaml
+id: US783
+requirement_ids:
+  - R863
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在单个职场服务团队详情页看到该团队当前关联的人员，以便核对团队边界，而不是进入人员分配或新模块。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 增加只读关联人员区域。"
+  - "自有服务团队按同职场且同 organization_id 的人员匹配。"
+  - "供应商服务团队按同职场且同 supplier_id 的绑定关系匹配人员，并对同一人员去重。"
+  - "关联人员区域展示姓名、人员 ID、人员类型、组织、职场、技能、状态和匹配来源。"
+  - "无匹配人员时显示明确空态，不提供新增、分配、批量、导出或维护动作。"
+  - "不新增 Sidebar 导航、后端 route、schema/migration、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US782"
+status: "done"
+notes: "IM163 已完成：只在服务团队详情页补关联人员只读列表，不增加人员分配或新模块。"
+```
+
+### US784 - 供应商详情服务团队只读链路
+
+```yaml
+id: US784
+requirement_ids:
+  - R864
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在供应商详情页看到该供应商绑定的职场服务团队，并能进入对应服务团队详情继续核对关联人员。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/vendors/[vendorId] 增加只读服务团队区域。"
+  - "服务团队区域只展示 supplier_id 等于当前供应商的职场服务团队记录。"
+  - "每行展示服务团队名称、归属职场、状态、生效期、来源批次，并提供进入既有服务团队详情页的链接。"
+  - "无服务团队时显示明确空态，不提供新增、分配、批量、导出或维护动作。"
+  - "不新增 Sidebar 导航、后端 route、schema/migration、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US783"
+status: "done"
+notes: "IM164 已完成：只在供应商详情页补服务团队只读链路，不新增维护动作或新模块。"
+```
+
+### US785 - 客服人员详情只读业务链路
+
+```yaml
+id: US785
+requirement_ids:
+  - R865
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望从客服人员列表进入单个人员详情页，以便核对该人员的基础信息、组织、职场、技能集合和服务团队关系。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/agents 列表行提供查看详情入口。"
+  - "/master-data/agents/[employeeId] 展示人员基础信息、组织、职场、人员类型、状态、有效期和技能集合。"
+  - "详情页只读展示该人员关联的职场服务团队，并链接到既有服务团队详情页。"
+  - "无关联服务团队时显示明确空态，不提供人员分配、新增、批量或导出动作。"
+  - "不新增 Sidebar 导航、后端 route、schema/migration、权限、审批、导出、批量操作、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US784"
+status: "done"
+notes: "IM165 已完成：客服人员列表新增行内查看详情入口，详情页只读展示人员基础信息、技能集合和关联服务团队。"
+```
+
+### US786 - 组织详情只读业务链路
+
+```yaml
+id: US786
+requirement_ids:
+  - R866
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望从组织列表进入单个组织详情页，以便核对该组织的基础信息、直接下级组织和当前归属人员。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/organizations 列表行提供查看详情入口。"
+  - "/master-data/organizations/[organizationId] 展示组织基础信息、层级、上级组织、组织路径、状态、有效期和来源批次。"
+  - "详情页只读展示直接下级组织和当前归属人员，并能进入人员详情页。"
+  - "无下级组织或无归属人员时显示明确空态。"
+  - "不新增 Sidebar 导航、后端 route、schema/migration、人员调岗、组织树拖拽、权限、审批、导出、批量操作、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US785"
+status: "done"
+notes: "IM166 已完成：组织列表新增行内查看详情入口，组织详情页只读展示组织信息、直接下级组织和归属人员，归属人员可进入既有客服人员详情页。"
+```
+
+### US787 - 技能组详情只读业务链路
+
+```yaml
+id: US787
+requirement_ids:
+  - R867
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望从技能组列表进入单个技能组详情页，以便核对该技能组的基础信息、归属属性和当前拥有该技能的客服人员。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/skills 列表行提供查看详情入口。"
+  - "/master-data/skills/[skillId] 展示技能组基础信息、归属属性、状态、有效期和来源批次。"
+  - "详情页只读展示当前拥有该技能的客服人员，并能进入人员详情页。"
+  - "无归属人员时显示明确空态。"
+  - "不新增 Sidebar 导航、后端 route、schema/migration、技能层级、技能绑定维护、批量分配、排班技能规则、权限、审批、导出、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US786"
+status: "done"
+notes: "IM167 已完成：技能组列表新增行内详情入口，技能组详情页只读展示技能组信息、归属属性和拥有该技能的客服人员，人员可进入既有客服人员详情页。"
+```
+
+### US788 - 主数据详情链路收尾检查
+
+```yaml
+id: US788
+requirement_ids:
+  - R868
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望主数据列表里进入详情的行内动作口径一致，以便在职场、供应商、技能组等对象之间切换时不被不同文案干扰。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "主数据 reference 列表进入详情的行内动作统一使用 `查看`。"
+  - "动作仍进入既有详情页，不新增页面、导航或业务模块。"
+  - "结构测试覆盖该口径，避免后续再次混用 `详情`。"
+  - "不新增后端 route、schema/migration、导入、权限、审批、导出、批量、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US787"
+status: "done"
+notes: "IM168 已完成：技能组等主数据 reference 列表进入详情的行内动作统一为 `查看`，并新增结构测试防止回退。"
+```
+
+### US789 - 需求预测导入大弹窗
+
+```yaml
+id: US789
+requirement_ids:
+  - R869
+module: "需求计划 / 业务导入"
+role: "需求计划维护人员"
+story: "作为需求计划维护人员，我希望在预测版本页直接打开需求预测导入弹窗，以便完成上传、映射和结果回看，而不是跳到独立 CSV 上传工作区。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/demand-plans/production Header 的 `导入预测` 打开当前页 Dialog。"
+  - "Dialog 包含上传文件、字段映射、导入结果三步，且切换 step 时文件 input 不卸载。"
+  - "上传结果回流当前预测版本页，并在 Dialog 结果 step 展示批次详情入口。"
+  - "不扩展排班、登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US788"
+status: "done"
+notes: "IM169 已完成：预测版本页 Header 的 `导入预测` 打开当前页 Dialog；Dialog 三步为上传文件、字段映射、导入结果，文件 input 在 step 切换时保持挂载；上传结果回流当前页并提供批次详情入口。排班和登录/状态日志导入后续单独拆。"
+```
+
+### US790 - 排班导入大弹窗
+
+```yaml
+id: US790
+requirement_ids:
+  - R870
+module: "排班计划 / 业务导入"
+role: "排班计划维护人员"
+story: "作为排班计划维护人员，我希望在排班版本页直接打开排班导入弹窗，以便完成上传、映射和结果回看，而不是跳到独立 CSV 上传工作区。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/schedule-plans/production Header 的 `导入排班` 打开当前页 Dialog。"
+  - "Dialog 包含上传文件、字段映射、导入结果三步，且切换 step 时文件 input 不卸载。"
+  - "上传结果回流当前排班版本页，并在 Dialog 结果 step 展示批次详情入口。"
+  - "不扩展登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US789"
+status: "done"
+notes: "IM170 已完成：排班版本页 Header 的 `导入排班` 打开当前页 Dialog；Dialog 三步为上传文件、字段映射、导入结果，文件 input 在 step 切换时保持挂载；上传结果回流当前页并提供批次详情入口。登录/状态日志导入后续单独拆。"
+```
+
+### US769 - 主数据非客服人员动作收口
+
+```yaml
+id: US769
+requirement_ids:
+  - R849
+module: "主数据维护 / 页面动作"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望组织、职场、供应商、技能等非客服人员主数据页不要在内容区暴露未确认的导入动作，以便页面保持清爽的只读列表边界，已确认的页面级动作只出现在 Header actions。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "客服人员页面级动作继续只通过 Header actions 承载。"
+  - "组织、职场、供应商、技能等非客服人员主数据列表内容区不再显示 `导入主数据`。"
+  - "非客服人员主数据页不新增未确认 CRUD、导入弹窗或跳转独立上传工作区的快捷入口。"
+  - "不迁移排班、预测、登录/状态日志导入入口，不改路由结构、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US768"
+status: "done"
+notes: "IM149 已完成：非客服人员主数据列表内容区的 `导入主数据` 旧入口已删除，客服人员 Header actions 保持不变。"
+```
+
+### US770 - 导入入口业务归位
+
+```yaml
+id: US770
+requirement_ids:
+  - R850
+module: "业务导入 / 入口归属"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望导入动作出现在对应业务页面的页面级动作区，而不是在通用导入中心里找上传入口，以便按人员、排班、预测、登录/状态日志各自的业务上下文发起导入。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/data-quality` 只作为导入批次台账/处理记录，不再显示通用 `上传 CSV` 主按钮。"
+  - "`预测版本`、`排班版本`、`登录/状态日志` 的导入动作由 AppShell Header actions 承载。"
+  - "预测、排班、登录/状态日志内容区的 `版本状态` 卡片不再放导入按钮。"
+  - "本轮不新增导入弹窗、不新增后端 route、不改上传 action、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US769"
+status: "done"
+notes: "IM150 已完成：通用批次台账不再暴露上传主入口，预测、排班、登录/状态日志导入动作已归入各自页面 Header actions。"
+```
+
+### US771 - data-quality 结果页抽象降级
+
+```yaml
+id: US771
+requirement_ids:
+  - R851
+module: "结果链路 / 页面层级"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望业务版本、对比运行和复核案例页面不要继续表现为导入批次模块下的子页，以便这些结果链路像业务结果回看页面，而不是一个额外的质量中心或导入中心模块。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/data-quality/versions` Breadcrumb 不再把 `导入批次` 作为父级。"
+  - "`/data-quality/comparison-runs/[runId]` Breadcrumb 不再把 `导入批次` 作为父级。"
+  - "`/data-quality/review-cases` 和 `/data-quality/review-cases/[caseId]` Breadcrumb 不再把 `导入批次` 作为父级。"
+  - "批次处理、上传、模板维护页面仍保留兼容路由和批次上下文，不在本轮拆路由。"
+  - "本轮不新增导航项，不删除 `/data-quality/**` 路由，不改后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US770"
+status: "done"
+notes: "IM151 已完成：结果类页面不再显示 `导入批次` 父级，复核详情保留到复核列表的二级关系。"
+```
+
+### US772 - 主数据术语清理
+
+```yaml
+id: US772
+requirement_ids:
+  - R852
+module: "主数据维护 / 术语"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望职场详情里的自有团队和供应商团队关系用 `服务团队` 这类业务语言呈现，而不是 `运营主体/职场运营主体`，以便主数据页面不继续制造未确认的新对象概念。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "主数据维护可见页面不再显示 `运营主体` 或 `职场运营主体`。"
+  - "职场详情中的相关指标和表格标题改为 `服务团队`。"
+  - "职场服务团队仍然作为职场详情下的内容，不新增独立导航、独立页面或 CRUD。"
+  - "`项目` 不作为主数据维护对象回流；本轮不删除 project_id 兼容字段。"
+  - "本轮不改后端 route、schema/migration、依赖、权限、审批、导出、批量、供应商合同、结算比例、最低人力要求、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US771"
+status: "done"
+notes: "IM152 已完成：职场详情用 `服务团队` 表达自有团队和供应商团队关系，不再显示 `运营主体/职场运营主体`。"
+```
+
+### US768 - 旧全局搜索 API 清理
+
+```yaml
+id: US768
+requirement_ids:
+  - R848
+module: "全局页面结构 / Header"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望 Header 不再保留无实际显示的全局搜索接口，以便页面级动作、Breadcrumb 和业务筛选各自归位，不再诱导后续把列表筛选塞回全局 Header。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "AppShell 和 SiteHeader 不再声明、默认或透传 searchPlaceholder。"
+  - "app 与 components 源码不再向 AppShell/SiteHeader 传入 searchPlaceholder。"
+  - "真正有意义的列表内筛选框保留在各业务内容区，不迁回 Header。"
+  - "不新增 Header 全局搜索 UI，不删除业务列表内筛选框，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US767"
+status: "done"
+notes: "IM148 已完成：旧 Header 搜索参数从 AppShell/SiteHeader 接口和 app/components 页面传参中移除；结构测试禁止该参数回流。"
+```
+
+### US765 - 导航信息架构收口
+
+```yaml
+id: US765
+requirement_ids:
+  - R845
+module: "全局导航 / 计划与排班"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望一级导航只暴露业务对象入口，而不是预测生产、排班生产这类实现路径，以便从需求计划、排班计划和登录/状态日志进入对应版本和处理流程。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "Sidebar 不再暴露 `预测生产` 和 `排班生产` 作为一级导航项。"
+  - "`需求计划` 导航项覆盖 `/demand-plans` 与 `/demand-plans/production/**` 的父级高亮。"
+  - "`排班计划` 导航项覆盖 `/schedule-plans` 与 `/schedule-plans/production/**` 的父级高亮。"
+  - "Sidebar 结构测试禁止 `预测生产`、`排班生产`、`导入中心`、`质量中心`、`数据质量` 作为导航标题出现。"
+  - "本轮不改生产页标题、返回按钮、模型文案、导入弹窗、业务路由或后端能力。"
+dependencies:
+  - "US764"
+status: "done"
+notes: "IM145 已完成：一级导航移除 `预测生产`、`排班生产`，并让 `/demand-plans/production/**` 与 `/schedule-plans/production/**` 分别继承 `需求计划`、`排班计划` 导航高亮；生产文案、返回链路、重复标题和旧搜索 API 分别留给后续 IM146-IM148。"
+```
+
+### US766 - 生产文案与返回链路清理
+
+```yaml
+id: US766
+requirement_ids:
+  - R846
+module: "全局文案 / 计划与排班"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望预测、排班和登录/状态日志页面按业务对象命名，而不是继续使用生产工作台/生产台账这类实现路径，以便我能从需求计划、排班计划和日志入口理解当前处理对象。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/demand-plans/production` 可见标题与台账文案改为预测版本视角，不再显示 `预测生产` 或 `需求预测生产台账`。"
+  - "`/schedule-plans/production` 可见标题与台账文案改为排班版本视角，不再显示 `排班生产` 或 `人员排班生产台账`。"
+  - "`/actual-logs/production` 可见标题与台账文案改为登录/状态日志处理视角，不再显示 `登录/状态日志生产` 或 `日志生产`。"
+  - "三个生产详情/解释页的返回按钮改为返回对应业务入口：`返回需求计划`、`返回排班计划`、`返回登录/状态日志`。"
+  - "模型阻塞、就绪、缺批次文案不再提示用户返回生产列表或建立生产台账。"
+  - "不改路由结构、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US765"
+status: "done"
+notes: "IM146 已完成：`/demand-plans/production`、`/schedule-plans/production`、`/actual-logs/production` 的可见标题、列表标题、返回按钮和模型提示改为预测版本、排班版本、登录/状态日志处理视角；重复 H1、旧 searchPlaceholder、导入入口业务归位和 data-quality 降级留给后续 IM147-IM151。"
+```
+
+### US767 - Header/Breadcrumb 与内容区标题统一
+
+```yaml
+id: US767
+requirement_ids:
+  - R847
+module: "全局页面结构 / Breadcrumb"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望业务列表、详情、新建和编辑页的页面身份由统一 Header/Breadcrumb 承载，内容区不再重复渲染同名 H1，以便页面层级清晰且不会出现上下两套标题。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "需求计划、排班计划、预测版本、排班版本、登录/状态日志和 data-quality 兼容页向 AppShell 传入 breadcrumbItems。"
+  - "上述页面和工作区不再在内容区渲染同名 `<h1>`；必要信息降级为描述、区块标题或保留业务记录名称。"
+  - "Breadcrumb 包含当前页，弹窗不新增 Breadcrumb。"
+  - "不删除旧 searchPlaceholder API，不改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US766"
+status: "done"
+notes: "IM147 已完成：目标业务页由 AppShell/SiteHeader 的 breadcrumbItems 承载页面身份，内容区不再重复页面级 H1；旧搜索 API 作为 IM148 单独处理。"
+```
+
 ### US701 - 独立 CSV 上传工作区
 
 ```yaml
@@ -5049,4 +5481,284 @@ dependencies:
   - "US754"
 status: "done"
 notes: "IM135 已完成：筛选下拉和表格行内操作尺寸已统一，并通过浏览器实际样式检查。"
+```
+
+### US761 - 职场详情页运营主体
+
+```yaml
+id: US761
+requirement_ids:
+  - R841
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望从职场列表进入单个职场详情，并在该详情页看到这个职场下的自有团队和供应商团队，以便理解上海职场这类地点当前由哪些运营主体承接，而不是在导航里看到脱离职场的抽象关系页。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/sites 的职场行提供详情入口，进入 /master-data/sites/[workplaceId]。"
+  - "职场详情页展示职场基础信息、运营主体总数、自有团队数和供应商团队数。"
+  - "运营主体只读展示在该职场详情内，来源限定为现有人员档案和人员归属记录。"
+  - "不恢复独立职场运营主体或绑定关系导航/实体页。"
+  - "不新增后端、数据库、权限、审批、导出、批量操作、自动排班、生产公式、结算、供应商合同、最低人力或收费因子。"
+dependencies:
+  - "US755"
+status: "done"
+notes: "IM141 已完成：职场列表详情入口和职场子详情页已接通，运营主体展示被收敛到职场详情内。"
+```
+
+### US762 - 供应商详情页服务职场
+
+```yaml
+id: US762
+requirement_ids:
+  - R842
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望从供应商列表进入单个供应商详情，并看到这个供应商当前服务的职场，以便理解供应商与上海职场、南京职场等地点的实际归属关系，而不是只停留在供应商列表编码。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/vendors 的供应商行提供详情入口，进入 /master-data/vendors/[vendorId]。"
+  - "供应商详情页展示供应商基础信息、服务职场数和生效职场数。"
+  - "服务职场只读展示在供应商详情内，并可跳转到对应职场详情。"
+  - "不新增供应商合同、结算比例、最低人力、审批、导出、批量、权限、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US761"
+status: "done"
+notes: "IM142 已完成：供应商列表详情入口和供应商子详情页已接通，服务职场展示被收敛到供应商详情内。"
+```
+
+### US763 - 客服人员批量导入大弹窗
+
+```yaml
+id: US763
+requirement_ids:
+  - R843
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在客服人员列表页通过大弹窗完成批量导入的上传、字段映射和导入结果摘要，以便从人员业务列表发起导入，并把完整批次详情、失败行修正和应用处理留在批次详情页。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/agents 右上角提供批量导入入口，点击后在当前页面打开大弹窗，而不是跳转独立上传工作区。"
+  - "弹窗第一步提供人员导入模板下载和 CSV 上传字段。"
+  - "弹窗第二步支持选择启用的主数据映射模板，也支持模板为空时手动填写字段映射 JSON。"
+  - "弹窗第三步展示本次导入摘要、成功/失败行数，并提供查看批次详情和失败行修正入口。"
+  - "完整批次详情、失败行修正、readiness、应用到业务数据和版本链路仍在批次详情页处理。"
+  - "不新增后端、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US762"
+status: "done"
+notes: "IM143 已完成：客服人员列表内批量导入大弹窗已接入，上传结果回流当前弹窗；完整明细和修正仍由批次详情页承载。"
+```
+
+### US764 - 全局 UI 组件规范与客服人员导入弹窗纠偏
+
+```yaml
+id: US764
+requirement_ids:
+  - R844
+module: "主数据维护 / 全局布局"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望侧边栏、面包屑、反馈提示和人员导入弹窗都遵循统一的 B 端组件规范，以便列表页、详情页、子页面和弹窗交互稳定一致，而不是混用手写外壳和一次性长表单。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "全局 AppShell 使用 shadcn SidebarProvider/SidebarInset，AppSidebar 使用 Collapsible、Sidebar/SidebarContent/SidebarGroup/SidebarMenu/SidebarMenuSub primitives，不再手写 aside。"
+  - "保留现有菜单结构，不新增菜单；侧边栏默认全部展开，主数据详情页继承父级高亮。"
+  - "SiteHeader 支持统一 breadcrumbItems，主数据列表、详情、新建、编辑页展示 Breadcrumb；弹窗不展示 Breadcrumb。"
+  - "SiteHeader 使用单行导航结构，Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1；H1 仅在需要时作为可访问性标题保留。"
+  - "主数据列表、详情、新建、编辑、技能维护页由 SiteHeader 唯一承载 Breadcrumb、返回路径和页面 H1，内容区不得重复返回按钮、同名 H1 或页面级说明。"
+  - "客服人员列表中，筛选卡片应位于列表操作栏上方，列表操作栏紧贴表格上方；新建/批量导入作为页面级动作进入 Header 右侧，列表操作栏只保留已选/批量动作，查询/重置位于筛选卡片右下。"
+  - "SiteHeader 不保留无意义的全局搜索、固定月份和通知占位；Sidebar footer 使用 shadcn Avatar 显示本地参考头像，并提供本地用户菜单、明暗主题切换和登出入口，其中登出不接真实 auth。"
+  - "客服人员导入弹窗使用 shadcn Dialog，并严格分为上传文件、字段映射、导入结果三步；切换 step 时文件 input 保持 DOM 挂载。"
+  - "页面级反馈、表单提交结果、导入结果摘要和阻塞/告警说明使用 shadcn Alert。"
+  - "不新增排班、预测、登录/状态日志导入弹窗，不修改 package/lockfile，不新增后端、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US763"
+status: "done"
+notes: "IM144 已完成：全局 Shell 与主数据页面 Breadcrumb 已统一，侧边栏按 shadcn Collapsible + SidebarMenuSub 结构实现，Sidebar footer 使用 shadcn Avatar 和本地参考头像 /shadcn-avatar.jpg，并增加本地用户菜单、明暗主题切换和登出入口；SiteHeader 改为单行导航，不再保留无意义搜索/日期/通知占位，并通过 actions 插槽承载页面级动作；Breadcrumb 包含当前页，主数据内容区不再重复全局标题/返回路径，客服人员列表按筛选卡片、列表操作栏、表格排序，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作，客服人员导入改成 step-by-step Dialog，结果反馈改用 Alert。"
+```
+
+### US773 - 字体与控件密度统一
+
+```yaml
+id: US773
+requirement_ids:
+  - R853
+module: "全局 UI 规范"
+role: "B 端业务用户"
+story: "作为 B 端业务用户，我希望页面级按钮、筛选控件、表格和导入弹窗使用统一的字号与控件密度，以便人员列表、详情页、结果列表和弹窗看起来像同一个产品，而不是不同页面临时拼出来的样式。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "全局 CSS 不再用 button/input/select 的 font inherit 覆盖组件自身字号。"
+  - "Button 的小尺寸不再使用 12.8px 非标准字号，页面级和表格操作按钮回到一致的 14px 基线。"
+  - "Table 表头与正文在字号上保持协调，不再固定 12px 表头。"
+  - "客服人员导入 Dialog 的步骤标题、说明、映射方式、textarea 和结果区使用统一 14px 基线，不再大量混用 12px。"
+  - "不新增业务功能、不修改后端、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US772"
+status: "done"
+notes: "IM153 已完成：页面级按钮、筛选按钮、表格表头/正文、人员列表行内文字按钮和客服人员导入弹窗正文/步骤/表单已回到一致 14px 基线；纯图标按钮保留图标密度。"
+```
+
+### US774 - 职场基础 CRUD 前端闭环
+
+```yaml
+id: US774
+requirement_ids:
+  - R854
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在职场列表中进入单个职场的新建、编辑和冻结流程，以便维护职场基础档案，而不是在列表页里展开一个大表单。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/sites Header 右侧提供新建职场入口。"
+  - "职场列表行提供详情、编辑和冻结操作，其中详情进入现有职场详情页，编辑进入子页面，冻结打开确认弹窗。"
+  - "/master-data/sites/new 使用子页面提交职场 ID、职场名称、状态、生效开始、生效结束。"
+  - "/master-data/sites/[workplaceId]/edit 使用子页面编辑职场名称、状态和有效期，职场 ID 不作为可编辑字段。"
+  - "提交成功或失败后回到职场列表并使用 Alert 显示反馈。"
+  - "不新增职场服务团队绑定、供应商合同、结算比例、最低人力、审批、导出、批量、权限、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US773"
+status: "done"
+notes: "IM154 已完成：职场新建/编辑走子页面，冻结走 Dialog，提交复用现有 workplace reference maintenance API。"
+```
+
+### US775 - 供应商基础 CRUD 前端闭环
+
+```yaml
+id: US775
+requirement_ids:
+  - R855
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在供应商列表中进入单个供应商的新建、编辑和冻结流程，以便维护供应商基础档案，而不是在列表页里展开一个大表单。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/vendors Header 右侧提供新建供应商入口。"
+  - "供应商列表行提供详情、编辑和冻结操作，其中详情进入现有供应商详情页，编辑进入子页面，冻结打开确认弹窗。"
+  - "/master-data/vendors/new 使用子页面提交供应商 ID、供应商名称、状态、生效开始、生效结束。"
+  - "/master-data/vendors/[vendorId]/edit 使用子页面编辑供应商名称、状态和有效期，供应商 ID 不作为可编辑字段。"
+  - "提交成功或失败后回到供应商列表并使用 Alert 显示反馈。"
+  - "不新增供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量、权限、自动排班、生产公式或收费因子。"
+dependencies:
+  - "US774"
+status: "done"
+notes: "IM155 已完成：供应商新建/编辑走子页面，冻结走 Dialog，提交复用现有 supplier reference maintenance API。"
+```
+
+### US776 - 技能组基础 CRUD 前端闭环
+
+```yaml
+id: US776
+requirement_ids:
+  - R856
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在技能组列表中进入单个技能组的新建、编辑和冻结流程，以便维护技能组基础档案，而不是在列表页里展开一个大表单。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/skills Header 右侧提供新建技能组入口。"
+  - "技能组列表行提供编辑和冻结操作；编辑进入子页面，冻结打开确认弹窗。"
+  - "/master-data/skills/new 使用子页面提交技能组 ID、技能组名称、归属属性、状态、生效开始、生效结束。"
+  - "/master-data/skills/[skillId]/edit 使用子页面编辑技能组名称、归属属性、状态和有效期，技能组 ID 不作为可编辑字段。"
+  - "提交成功或失败后回到技能组列表并使用 Alert 显示反馈。"
+  - "不新增人员技能绑定、排班技能引用、技能层级、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US775"
+status: "done"
+notes: "IM156 已完成：技能组新建/编辑走子页面，冻结走 Dialog，提交复用现有 skills reference maintenance API 并真实写入归属属性。"
+```
+
+### US777 - 组织基础 CRUD 前端闭环
+
+```yaml
+id: US777
+requirement_ids:
+  - R857
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在组织列表中进入单个组织的新建、编辑和冻结流程，以便维护组织基础档案，而不是在列表页里展开一个大表单。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "/master-data/organizations Header 右侧提供新建组织入口。"
+  - "组织列表行提供编辑和冻结操作；编辑进入子页面，冻结打开确认弹窗。"
+  - "/master-data/organizations/new 使用子页面提交组织 ID、组织名称、组织层级、上级组织、状态、生效开始、生效结束。"
+  - "/master-data/organizations/[organizationId]/edit 使用子页面编辑组织名称、组织层级、上级组织、状态和有效期，组织 ID 不作为可编辑字段。"
+  - "提交成功或失败后回到组织列表并使用 Alert 显示反馈。"
+  - "不新增组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量、权限、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US776"
+status: "done"
+notes: "IM157 已完成：组织新建/编辑走子页面，冻结走 Dialog，并补齐本地组织维护 API。"
+```
+
+### US778 - 客服人员列表真实筛选
+
+```yaml
+id: US778
+requirement_ids:
+  - R858
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为主数据维护人员，我希望在客服人员列表里按真实技能组、组织和职场筛选人员，以便确认导入和维护后的人员归属，而不是看到只有占位项的下拉框。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/master-data/agents 的技能组、组织、职场筛选下拉来自当前真实人员列表数据。"
+  - "URL 查询参数 employee_name、employee_id、status、employee_type、skill_group、organization、workplace 能真实过滤人员行。"
+  - "重置入口回到 /master-data/agents。"
+  - "页面结构保持现有 B 端列表模式：Header 放页面级动作，筛选卡片在列表操作栏上方，列表页不塞新增/编辑表单。"
+  - "不新增导航、页面、后端 route、schema/migration、依赖、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US777"
+status: "done"
+notes: "IM158 已完成：客服人员列表筛选项和查询过滤已按真实人员数据收口，列表结构保持 Header actions、筛选卡片、列表操作栏、表格的 B 端模式。"
+```
+
+### US779 - 本地旧主数据 schema 维护写入兼容
+
+```yaml
+id: US779
+requirement_ids:
+  - R859
+module: "主数据维护"
+role: "主数据维护人员"
+story: "作为正在本地试用主数据维护的用户，我希望旧本地 SQLite 数据库也能执行人员、技能组和组织维护，而不是因为缺少已确认字段直接看到 500。"
+task_type: "backend-vertical"
+priority: "P0"
+acceptance:
+  - "旧本地 SQLite 缺少 master_data_employees.employee_type、organization_id、workplace_id 时，人员 create/edit/freeze 不再 500。"
+  - "旧本地 SQLite 缺少 master_data_skills.skill_category 时，技能组 create/edit/freeze 不再 500。"
+  - "旧本地 SQLite 缺少 master_data_organizations 表时，组织维护路径可按已确认本地表结构创建表后写入。"
+  - "不新增迁移文件、不新增业务字段、不改生产状态/公式/结算/合同/最低人力。"
+  - "不新增权限、审批、导出、批量操作、自动排班或真实外部集成。"
+dependencies:
+  - "US778"
+status: "done"
+notes: "IM159 已完成：旧本地 SQLite schema 可执行人员、技能组和组织维护写入；本轮只做 SQLite 本地兼容补齐，不新增迁移文件、业务字段、权限、审批、导出、批量、结算或合同能力。"
+```
+### US791 - 登录/状态日志导入大弹窗
+
+```yaml
+id: US791
+requirement_ids:
+  - R871
+status: "done"
+as_a: "排班履约运营人员"
+i_want: "在登录/状态日志业务页内完成日志 CSV 导入"
+so_that: "我不需要跳转到抽象上传页，也能在当前业务语境里看到上传、映射和导入结果"
+acceptance:
+  - "/actual-logs/production Header 的 `导入登录日志`、`导入状态日志` 打开当前页 Dialog。"
+  - "Dialog 分为 `上传文件`、`字段映射`、`导入结果` 三步，非当前 step 保持 DOM 挂载。"
+  - "登录日志提交 `file_type=login_log`，状态日志提交 `file_type=status_log`。"
+  - "上传结果回流 `/actual-logs/production?import_dialog=1` 并展示批次详情入口。"
+  - "不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+notes: "IM171 已完成：登录/状态日志页 Header 的两个导入入口打开当前页 Dialog；Dialog 三步为上传文件、字段映射、导入结果，文件 input 在 step 切换时保持挂载；登录日志提交 `login_log`，状态日志提交 `status_log`，上传结果回流当前页并提供批次详情入口。"
 ```

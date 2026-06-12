@@ -18,6 +18,8 @@ from backend.app.models import (
     MasterDataReferenceType,
     MasterDataReferenceInput,
     MasterDataSnapshotRequest,
+    MasterDataWorkplaceServiceTeamInput,
+    MasterDataWorkplaceServiceTeamRecord,
 )
 
 
@@ -179,6 +181,36 @@ class EmployeeBindingEntity(Base):
     )
 
 
+class WorkplaceServiceTeamEntity(Base):
+    __tablename__ = "master_data_workplace_service_teams"
+
+    service_team_id: Mapped[str] = mapped_column(String(120), primary_key=True)
+    workplace_id: Mapped[str] = mapped_column(
+        ForeignKey("master_data_workplaces.workplace_id"),
+        nullable=False,
+        index=True,
+    )
+    team_type: Mapped[str] = mapped_column(String(30), nullable=False)
+    team_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    organization_id: Mapped[str | None] = mapped_column(
+        ForeignKey("master_data_organizations.organization_id"),
+        nullable=True,
+        index=True,
+    )
+    supplier_id: Mapped[str | None] = mapped_column(
+        ForeignKey("master_data_suppliers.supplier_id"),
+        nullable=True,
+        index=True,
+    )
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    effective_from: Mapped[str] = mapped_column(String(20), nullable=False)
+    effective_to: Mapped[str] = mapped_column(String(20), nullable=False)
+    batch_id: Mapped[str] = mapped_column(
+        ForeignKey("import_batches.batch_id"),
+        nullable=False,
+    )
+
+
 ReferenceEntity = TypeVar(
     "ReferenceEntity",
     SupplierEntity,
@@ -201,6 +233,8 @@ REFERENCE_CONFIGS: dict[MasterDataReferenceType, ReferenceConfig] = {
 class MasterDataPersistenceRepository:
     def __init__(self, database_url: str | None = None):
         self.engine = build_engine(database_url)
+        if self.engine.dialect.name == "sqlite":
+            _ensure_sqlite_master_data_schema(self.engine)
         self.session_factory = sessionmaker(
             bind=self.engine,
             autoflush=False,
@@ -210,6 +244,8 @@ class MasterDataPersistenceRepository:
 
     def init_schema(self) -> None:
         Base.metadata.create_all(self.engine)
+        if self.engine.dialect.name == "sqlite":
+            _ensure_sqlite_master_data_schema(self.engine)
 
     def create_snapshot(self, request: MasterDataSnapshotRequest) -> None:
         with self.session_factory.begin() as session:
@@ -371,6 +407,22 @@ class MasterDataPersistenceRepository:
                 raise ValueError(f"REFERENCE_WRITE_FAILED: {reference.reference_id}")
             return _reference_record(stored, id_field, name_field)
 
+    def upsert_organization(
+        self,
+        organization: MasterDataOrganizationInput,
+        batch_id: str,
+    ) -> MasterDataOrganizationRecord:
+        with self.session_factory.begin() as session:
+            self._validate_organization(session, organization)
+            session.merge(_organization_entity(organization, batch_id))
+            session.flush()
+            stored = session.get(OrganizationEntity, organization.organization_id)
+            if stored is None:
+                raise ValueError(
+                    f"ORGANIZATION_WRITE_FAILED: {organization.organization_id}"
+                )
+            return _organization_record(session, stored)
+
     def upsert_employee(
         self,
         employee: EmployeeMasterDataInput,
@@ -448,6 +500,54 @@ class MasterDataPersistenceRepository:
                 select(EmployeeBindingEntity).order_by(EmployeeBindingEntity.binding_id)
             ).all()
             return [_binding_record(row) for row in rows]
+
+    def get_workplace_service_team(
+        self,
+        service_team_id: str,
+    ) -> MasterDataWorkplaceServiceTeamRecord | None:
+        with self.session_factory() as session:
+            service_team = session.get(WorkplaceServiceTeamEntity, service_team_id)
+            if service_team is None:
+                return None
+            return _workplace_service_team_record(service_team)
+
+    def list_workplace_service_teams(
+        self,
+        workplace_id: str | None = None,
+    ) -> list[MasterDataWorkplaceServiceTeamRecord]:
+        with self.session_factory() as session:
+            statement = select(WorkplaceServiceTeamEntity)
+            if workplace_id is not None:
+                statement = statement.where(
+                    WorkplaceServiceTeamEntity.workplace_id == workplace_id
+                )
+            rows = session.scalars(
+                statement.order_by(
+                    WorkplaceServiceTeamEntity.workplace_id,
+                    WorkplaceServiceTeamEntity.team_type,
+                    WorkplaceServiceTeamEntity.service_team_id,
+                )
+            ).all()
+            return [_workplace_service_team_record(row) for row in rows]
+
+    def upsert_workplace_service_team(
+        self,
+        service_team: MasterDataWorkplaceServiceTeamInput,
+        batch_id: str,
+    ) -> MasterDataWorkplaceServiceTeamRecord:
+        with self.session_factory.begin() as session:
+            self._validate_workplace_service_team(session, service_team)
+            session.merge(_workplace_service_team_entity(service_team, batch_id))
+            session.flush()
+            stored = session.get(
+                WorkplaceServiceTeamEntity,
+                service_team.service_team_id,
+            )
+            if stored is None:
+                raise ValueError(
+                    f"SERVICE_TEAM_WRITE_FAILED: {service_team.service_team_id}"
+                )
+            return _workplace_service_team_record(stored)
 
     def list_employees(self) -> list[MasterDataEmployeeListRow]:
         with self.session_factory() as session:
@@ -651,6 +751,59 @@ class MasterDataPersistenceRepository:
             ):
                 raise ValueError(f"{field_name} {reference_id} is outside effective dates")
 
+    def _validate_workplace_service_team(
+        self,
+        session: Session,
+        service_team: MasterDataWorkplaceServiceTeamInput,
+    ) -> None:
+        workplace = session.get(WorkplaceEntity, service_team.workplace_id)
+        if workplace is None:
+            raise ValueError(f"workplace_id {service_team.workplace_id} does not exist")
+        _validate_active_reference_period(
+            "workplace_id",
+            service_team.workplace_id,
+            workplace,
+            service_team.effective_from,
+            service_team.effective_to,
+        )
+
+        if service_team.team_type == "internal":
+            if not service_team.organization_id:
+                raise ValueError("MISSING_REQUIRED_FIELD: organization_id")
+            if service_team.supplier_id:
+                raise ValueError("SUPPLIER_NOT_ALLOWED_FOR_INTERNAL_SERVICE_TEAM")
+            organization = session.get(
+                OrganizationEntity,
+                service_team.organization_id,
+            )
+            if organization is None:
+                raise ValueError(
+                    f"organization_id {service_team.organization_id} does not exist"
+                )
+            _validate_active_reference_period(
+                "organization_id",
+                service_team.organization_id,
+                organization,
+                service_team.effective_from,
+                service_team.effective_to,
+            )
+            return
+
+        if not service_team.supplier_id:
+            raise ValueError("MISSING_REQUIRED_FIELD: supplier_id")
+        if service_team.organization_id:
+            raise ValueError("ORGANIZATION_NOT_ALLOWED_FOR_SUPPLIER_SERVICE_TEAM")
+        supplier = session.get(SupplierEntity, service_team.supplier_id)
+        if supplier is None:
+            raise ValueError(f"supplier_id {service_team.supplier_id} does not exist")
+        _validate_active_reference_period(
+            "supplier_id",
+            service_team.supplier_id,
+            supplier,
+            service_team.effective_from,
+            service_team.effective_to,
+        )
+
 
 def _employee_entity(
     employee: EmployeeMasterDataInput,
@@ -702,6 +855,52 @@ def _has_skill_category_schema(session: Session) -> bool:
         column["name"] for column in inspector.get_columns("master_data_skills")
     }
     return "skill_category" in skill_columns
+
+
+def _ensure_sqlite_master_data_schema(engine) -> None:
+    Base.metadata.create_all(engine)
+    with engine.begin() as connection:
+        inspector = inspect_schema(connection)
+        table_names = set(inspector.get_table_names())
+
+        if "master_data_employees" in table_names:
+            employee_columns = {
+                column["name"]
+                for column in inspector.get_columns("master_data_employees")
+            }
+            if "employee_type" not in employee_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_employees "
+                        "ADD COLUMN employee_type VARCHAR(30) NOT NULL DEFAULT 'internal'"
+                    )
+                )
+            if "organization_id" not in employee_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_employees "
+                        "ADD COLUMN organization_id VARCHAR(80)"
+                    )
+                )
+            if "workplace_id" not in employee_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_employees "
+                        "ADD COLUMN workplace_id VARCHAR(80)"
+                    )
+                )
+
+        if "master_data_skills" in table_names:
+            skill_columns = {
+                column["name"] for column in inspector.get_columns("master_data_skills")
+            }
+            if "skill_category" not in skill_columns:
+                connection.execute(
+                    text(
+                        "ALTER TABLE master_data_skills "
+                        "ADD COLUMN skill_category VARCHAR(30)"
+                    )
+                )
 
 
 def _has_table(session: Session, table_name: str) -> bool:
@@ -871,6 +1070,23 @@ def _binding_record(binding: EmployeeBindingEntity) -> EmployeeBindingRecord:
     )
 
 
+def _workplace_service_team_record(
+    service_team: WorkplaceServiceTeamEntity,
+) -> MasterDataWorkplaceServiceTeamRecord:
+    return MasterDataWorkplaceServiceTeamRecord(
+        service_team_id=service_team.service_team_id,
+        workplace_id=service_team.workplace_id,
+        team_type=service_team.team_type,
+        team_name=service_team.team_name,
+        organization_id=service_team.organization_id,
+        supplier_id=service_team.supplier_id,
+        status=service_team.status,
+        effective_from=service_team.effective_from,
+        effective_to=service_team.effective_to,
+        batch_id=service_team.batch_id,
+    )
+
+
 def _binding_entity(
     binding: EmployeeBindingInput,
     batch_id: str,
@@ -886,6 +1102,39 @@ def _binding_entity(
         effective_to=binding.effective_to,
         batch_id=batch_id,
     )
+
+
+def _workplace_service_team_entity(
+    service_team: MasterDataWorkplaceServiceTeamInput,
+    batch_id: str,
+) -> WorkplaceServiceTeamEntity:
+    return WorkplaceServiceTeamEntity(
+        service_team_id=service_team.service_team_id,
+        workplace_id=service_team.workplace_id,
+        team_type=service_team.team_type,
+        team_name=service_team.team_name,
+        organization_id=service_team.organization_id,
+        supplier_id=service_team.supplier_id,
+        status=service_team.status,
+        effective_from=service_team.effective_from,
+        effective_to=service_team.effective_to,
+        batch_id=batch_id,
+    )
+
+
+def _validate_active_reference_period(
+    field_name: str,
+    reference_id: str,
+    entity: SupplierEntity | WorkplaceEntity | OrganizationEntity,
+    effective_from: str,
+    effective_to: str,
+) -> None:
+    if entity.status == "frozen":
+        raise ValueError(f"{field_name} {reference_id} is frozen")
+    if entity.status != "active":
+        raise ValueError(f"{field_name} {reference_id} is not active")
+    if effective_from < entity.effective_from or effective_to > entity.effective_to:
+        raise ValueError(f"{field_name} {reference_id} is outside effective dates")
 
 
 def _employee_skill_entity(

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  summarizePersonnelScheduleImportDialog,
   summarizePersonnelScheduleProductionDetail,
   summarizePersonnelScheduleProductionWorkbench,
 } from "../../components/personnel-schedule-production-model.ts";
@@ -96,6 +97,46 @@ test("personnel schedule production workbench blocks missing import version", ()
   assert.equal(summary.rows[0].versionLabel, "暂无排班业务版本");
   assert.equal(summary.rows[0].expansionLabel, "缺少版本无法展开");
   assert.equal(summary.rows[0].blockerSummary, "缺少人员排班业务版本");
+});
+
+test("personnel schedule import dialog summary keeps upload flow in schedule page context", () => {
+  const dialog = summarizePersonnelScheduleImportDialog({
+    batches: [baseBatch],
+    templates: [
+      {
+        template_id: "TPL-SCH-001",
+        template_name: "排班模板",
+        file_type: "personnel_schedule",
+        field_mapping: { schedule_date: "schedule_date" },
+        required_fields: ["schedule_date"],
+        is_active: true,
+        updated_at: "2026-06-12T09:00:00+08:00",
+      },
+      {
+        template_id: "TPL-FC-001",
+        template_name: "预测模板",
+        file_type: "demand_forecast",
+        field_mapping: { forecast_date: "forecast_date" },
+        required_fields: ["forecast_date"],
+        is_active: true,
+        updated_at: "2026-06-12T09:00:00+08:00",
+      },
+    ],
+    uploadStatus: "success",
+    uploadBatchId: "BATCH-SCH-001",
+  });
+
+  assert.equal(dialog.openHref, "/schedule-plans/production?import_dialog=1");
+  assert.equal(dialog.closeHref, "/schedule-plans/production");
+  assert.equal(dialog.resultRedirectTo, "/schedule-plans/production?import_dialog=1");
+  assert.equal(dialog.fileType, "personnel_schedule");
+  assert.equal(dialog.templateDownloadName, "personnel-schedule-template.csv");
+  assert.equal(dialog.templateDownloadHref.startsWith("data:text/csv;charset=utf-8,"), true);
+  assert.deepEqual(dialog.steps.map((step) => step.key), ["upload", "mapping", "result"]);
+  assert.deepEqual(dialog.activeTemplates.map((template) => template.template_id), ["TPL-SCH-001"]);
+  assert.equal(dialog.result?.tone, "success");
+  assert.equal(dialog.result?.title, "导入已提交");
+  assert.equal(dialog.result?.batchHref, "/data-quality/import-batches/BATCH-SCH-001");
 });
 
 test("personnel schedule production detail resolves a schedule version by source batch", () => {
@@ -299,13 +340,13 @@ test("personnel schedule production detail shows a blocked state for unknown bat
   assert.equal(detail.title, "排班版本未定位");
   assert.equal(detail.batchId, "BATCH-MISSING");
   assert.equal(detail.versionLabel, "未找到对应人员排班批次");
-  assert.equal(detail.blockerSummary, "请返回排班生产列表选择来源批次");
+  assert.equal(detail.blockerSummary, "请返回排班计划选择来源批次");
   assert.deepEqual(detail.comparisonEntry, {
     tone: "blocked",
     title: "无法进入比对",
-    detail: "未定位排班业务版本或业务日，先回到排班生产列表选择已应用批次。",
+    detail: "未定位排班业务版本或业务日，先回到排班计划选择已应用批次。",
     actionLabel: "查看业务版本列表",
     href: "/data-quality/versions?domain=personnel_schedule",
-    blockerLabel: "阻塞：请返回排班生产列表选择来源批次",
+    blockerLabel: "阻塞：请返回排班计划选择来源批次",
   });
 });

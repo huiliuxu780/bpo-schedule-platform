@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  summarizeDemandForecastImportDialog,
   summarizeDemandForecastProductionDetail,
   summarizeDemandForecastProductionWorkbench,
 } from "../../components/demand-forecast-production-model.ts";
@@ -155,6 +156,54 @@ test("demand forecast production workbench blocks missing import version", () =>
   assert.equal(summary.rows[0].blockerSummary, "缺少需求预测业务版本");
 });
 
+test("demand forecast import dialog summary keeps upload flow in forecast page context", () => {
+  const summary = summarizeDemandForecastImportDialog({
+    batches: [
+      {
+        ...baseBatch,
+        batch_id: "BATCH-FC-IMPORT-001",
+        uploaded_at: "2026-06-12T09:00:00+08:00",
+        total_rows: 10,
+        success_rows: 9,
+        failed_rows: 1,
+        application_status: "not_applied",
+        import_version_id: "BATCH-FC-IMPORT-001::v1",
+        applied_record_count: 0,
+      },
+    ],
+    templates: [
+      {
+        template_id: "TPL-FC",
+        template_name: "需求预测字段映射",
+        file_type: "demand_forecast",
+        field_mapping: {
+          forecast_date: "forecast_date",
+          interval_start: "interval_start",
+          skill_id: "skill_id",
+        },
+        is_active: true,
+        created_by: "planner",
+        created_at: "2026-06-12T09:00:00+08:00",
+        updated_at: "2026-06-12T09:00:00+08:00",
+      },
+    ],
+    uploadStatus: "success",
+    uploadBatchId: "BATCH-FC-IMPORT-001",
+  });
+
+  assert.equal(summary.openHref, "/demand-plans/production?import_dialog=1");
+  assert.equal(summary.closeHref, "/demand-plans/production");
+  assert.equal(summary.resultRedirectTo, "/demand-plans/production?import_dialog=1");
+  assert.equal(summary.fileType, "demand_forecast");
+  assert.deepEqual(
+    summary.steps.map((step) => step.title),
+    ["上传文件", "字段映射", "导入结果"],
+  );
+  assert.equal(summary.activeTemplates.length, 1);
+  assert.equal(summary.result?.batchHref, "/data-quality/import-batches/BATCH-FC-IMPORT-001");
+  assert.equal(summary.result?.rowSummary, "成功 9 行 / 失败 1 行");
+});
+
 test("demand forecast production detail resolves a forecast version by source batch", () => {
   const detail = summarizeDemandForecastProductionDetail([baseBatch], "BATCH-FC-001");
 
@@ -299,14 +348,14 @@ test("demand forecast production detail shows a blocked state for unknown batch"
   assert.equal(detail.title, "预测版本未定位");
   assert.equal(detail.batchId, "BATCH-MISSING");
   assert.equal(detail.versionLabel, "未找到对应需求预测批次");
-  assert.equal(detail.blockerSummary, "请返回预测生产列表选择来源批次");
+  assert.equal(detail.blockerSummary, "请返回需求计划选择来源批次");
   assert.deepEqual(detail.comparisonEntry, {
     tone: "blocked",
     title: "无法进入比对",
-    detail: "未定位预测业务版本或业务日，先回到预测生产列表选择已应用批次。",
+    detail: "未定位预测业务版本或业务日，先回到需求计划选择已应用批次。",
     actionLabel: "查看业务版本列表",
     href: "/data-quality/versions?domain=demand_forecast",
-    blockerLabel: "阻塞：请返回预测生产列表选择来源批次",
+    blockerLabel: "阻塞：请返回需求计划选择来源批次",
   });
   assert.equal(detail.changeBoundaryLabel, "暂无变更记录");
   assert.deepEqual(detail.changeRows, []);

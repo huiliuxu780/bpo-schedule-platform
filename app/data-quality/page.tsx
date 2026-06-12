@@ -47,7 +47,10 @@ export default async function DataQualityPage({
     : { data: null, error: null }
 
   return (
-    <AppShell title="导入批次" searchPlaceholder="搜索导入批次、文件或上传人">
+    <AppShell
+      title="导入批次"
+      breadcrumbItems={[{ label: "导入批次" }]}
+    >
       <ImportCenterApiPanel
         batches={batches}
         selectedBatchId={selectedBatchId}

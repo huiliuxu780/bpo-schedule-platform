@@ -81,11 +81,13 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const highRiskCount = risks.filter((risk) => risk.risk_level === "high").length
 
   return (
-    <AppShell title="排班计划" searchPlaceholder="搜索计划、项目或职场">
+    <AppShell
+      title="排班计划"
+      breadcrumbItems={[{ label: "排班计划" }]}
+    >
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-lg font-semibold">排班计划</h1>
             <p className="text-sm text-muted-foreground">
               查看计划列表，并创建 draft 草稿
             </p>

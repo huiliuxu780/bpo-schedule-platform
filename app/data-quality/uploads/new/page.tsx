@@ -47,7 +47,13 @@ export default async function ImportUploadWorkspacePage({
   const templates = templateResult.data ?? []
 
   return (
-    <AppShell title="CSV 上传" searchPlaceholder="搜索模板、字段或批次">
+    <AppShell
+      title="CSV 上传"
+      breadcrumbItems={[
+        { label: "导入批次", href: "/data-quality" },
+        { label: "CSV 上传" },
+      ]}
+    >
       <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
         <Card>
           <CardHeader className="flex flex-row items-start justify-between gap-4">

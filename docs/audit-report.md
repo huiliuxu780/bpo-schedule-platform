@@ -2957,7 +2957,9 @@
 - `node --test scripts/tests/check-shadcn-ui.test.mjs` 和 `node scripts/check-shadcn-ui.mjs`：通过，沿用 5 个 documented baseline finding，无新增 shadcn/ui 规则违例。
 - in-app browser smoke：`http://127.0.0.1:3026/data-quality/review-cases` 命中 `Owner 阶段负载`、`缺证据`、`缺结论`、`可关闭`、`已关闭`、`阶段未知` 和 `复核案例列表`。
 - in-app browser href smoke：页面存在 `/data-quality/review-cases?ownerId=supervisor-01&processingStage=missing_conclusion`、`ready_to_close` 和 `closed` 链接。
-- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 209 tests OK。
 
 ### 2026-06-02 - IM068 复核详情同 Owner 处理上下文
 
@@ -3719,3 +3721,653 @@
 - `node scripts/check-shadcn-ui.mjs`：通过，剩余 3 个 documented baseline finding，无新增 shadcn/ui 规则违例。
 - in-app browser smoke：`http://127.0.0.1:3000/actual-logs/production` 命中 `CORN 状态日志生产`、`登录/状态日志生产台账`、`时区只读解释`、`跨天处理边界` 和 `当前不触发比对`，且 `CORN 状态日志` 导航项处于 active 状态。
 - `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM141 职场详情页运营主体收敛
+
+#### 审计结论
+
+- `IM141` 已新增 `/master-data/sites/[workplaceId]` 职场子详情页。
+- `/master-data/sites` 仅对职场行提供 `详情` 入口，不恢复独立 `职场运营主体` 或 `绑定关系` 导航。
+- 职场详情页展示职场信息和该职场下的运营主体，运营主体来源限定为现有人员档案与绑定关系读取。
+- 本轮没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子。
+
+#### 风险
+
+- 当前运营主体中的供应商团队只展示供应商 ID；供应商名称、合同、结算比例、最低人力要求需要后续供应商详情/合同任务单独确认。
+- 当前详情页只读，不提供职场编辑或运营主体维护动作。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `summarizeMasterDataWorkplaceDetail`。
+- TDD 红灯：产品结构测试先失败，证明旧代码没有 `/app/master-data/sites/[workplaceId]/page.tsx`。
+- `node --experimental-strip-types --test scripts/tests/master-data-maintenance-model.test.mjs`：通过，17 个 master-data model 测试通过。
+- `node --test scripts/tests/product-structure.test.mjs`：通过，6 个 product-structure 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3000/master-data/sites` 命中职场详情入口；`http://127.0.0.1:3000/master-data/sites/SH-01` 命中 `职场信息` 和 `运营主体`，且未出现独立运营主体/绑定关系入口、合同、结算或最低人力文案。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM142 供应商详情页服务职场收敛
+
+#### 审计结论
+
+- `IM142` 已新增 `/master-data/vendors/[vendorId]` 供应商子详情页。
+- `/master-data/vendors` 仅对供应商行提供 `详情` 入口，不新增供应商合同、结算或最低人力入口。
+- 供应商详情页展示供应商信息和该供应商服务职场，服务职场来源限定为现有人员归属记录，并可跳转回对应职场详情。
+- 本轮没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量、真实外部接口、自动排班、生产公式、结算、供应商合同、最低人力或收费因子。
+
+#### 风险
+
+- 当前服务职场只读展示，不维护供应商合同、结算比例、最低人力要求。
+- 当前供应商详情依赖现有人员归属记录；如果本地没有对应记录，页面展示明确空态。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `summarizeMasterDataVendorDetail`。
+- TDD 红灯：产品结构测试先失败，证明旧代码没有 `/app/master-data/vendors/[vendorId]/page.tsx`。
+- `node --experimental-strip-types --test scripts/tests/master-data-maintenance-model.test.mjs`：通过，19 个 master-data model 测试通过。
+- `node --test scripts/tests/product-structure.test.mjs`：通过，8 个 product-structure 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3000/master-data/vendors` 命中供应商详情入口；`http://127.0.0.1:3000/master-data/vendors/SUP-A` 命中 `供应商信息`、`服务职场` 和 `查看职场`，且未出现合同、结算或最低人力文案。详情页侧边栏默认展开全部一级组，并分别高亮 `供应商` 与 `职场` 父项。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM143 客服人员批量导入大弹窗
+
+#### 审计结论
+
+- `IM143` 已把 `/master-data/agents` 的人员导入入口收敛到客服人员列表内大弹窗。
+- 弹窗按 PM 确认拆为 `上传文件`、`字段映射`、`导入结果` 三步；第一步提供人员 CSV 模板下载，第二步支持映射模板或手动 JSON，第三步只展示本次摘要和后续入口。
+- 完整批次详情、失败行修正、readiness、应用到业务数据和业务版本链路仍由既有批次详情页承载，没有塞进弹窗。
+- 本轮没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只完成客服人员导入弹窗；排班、预测、登录/状态日志仍待后续按同一模式复用。
+- 当前仍复用 CSV 上传能力；Excel/multipart 导入属于单独依赖和上传策略任务。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明旧模型没有 `summarizeMasterDataAgentImportDialog`。
+- TDD 红灯：产品结构测试先失败，证明客服人员列表仍未渲染列表内导入弹窗。
+- `node --experimental-strip-types --test scripts/tests/master-data-maintenance-model.test.mjs`：通过，20 个 master-data model 测试通过。
+- `node --test scripts/tests/product-structure.test.mjs`：通过，9 个 product-structure 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3000/master-data/agents` 命中 `批量导入`，入口 href 为 `/master-data/agents?import_dialog=1`；`http://127.0.0.1:3000/master-data/agents?import_dialog=1&upload=success&batch=BATCH-MD-001` 命中 `客服人员批量导入`、`上传文件`、`字段映射`、`导入结果`、`下载导入模板`、`查看批次详情`、`失败行修正`，并确认 hidden `result_redirect_to=/master-data/agents?import_dialog=1` 和 `file_type=master_data`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM144 全局 UI 组件规范与客服人员导入弹窗纠偏
+
+#### 审计结论
+
+- `AppShell` 已改为 shadcn `SidebarProvider` + `SidebarInset`，并包裹 `TooltipProvider` 支撑 Sidebar tooltip。
+- `AppSidebar` 已改为 shadcn `Collapsible` / `Sidebar` / `SidebarContent` / `SidebarGroup` / `SidebarMenu` / `SidebarMenuSub` primitives，不再手写 `<aside>`，也不再用缩进伪造二级菜单；现有菜单结构未新增，默认全部展开，主数据详情页仍继承父级高亮。
+- `SiteHeader` 支持统一 `breadcrumbItems`，主数据列表、职场详情、供应商详情、客服人员新建/编辑/技能维护页都通过 `AppShell` 展示单行 Breadcrumb；Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1；弹窗不展示 Breadcrumb。Header 已去掉无意义全局搜索、固定月份和通知占位，并通过右侧 `actions` 插槽承载页面级动作。
+- `AppSidebar` footer 使用 shadcn Avatar 显示本地参考头像 `/shadcn-avatar.jpg`，并增加本地用户菜单、明暗主题切换和登出入口；登出入口不接真实 auth，避免在未确认鉴权任务前伪造退出能力。
+- 主数据列表、详情、新建、编辑、技能维护页已移除内容区重复的返回按钮、同名 H1 和页面级说明，页面身份与返回路径由 `SiteHeader` / Breadcrumb 唯一承载，内容区只承载工具栏、筛选、表格、反馈 Alert 和业务分组。
+- 客服人员列表按筛选卡片、列表操作栏、表格排序：`查询`、`重置` 位于筛选卡片右下；`新建`、`批量导入` 进入 Header 右侧页面级动作区；列表操作栏紧贴表格上方，只保留 `已选 0 项` 和批量动作。
+- 客服人员导入已拆到 `components/master-data-agent-import-dialog.tsx`，使用 shadcn Dialog 严格分为上传、映射、结果三步，并通过 `hidden` 隐藏非当前 step 以保持文件 input 与字段映射 DOM 挂载。
+- 页面级错误、表单反馈、模板错误和导入结果摘要使用 shadcn Alert；冻结确认也改为 shadcn Dialog，避免同页混用第二套手写弹窗。
+
+#### 风险
+
+- 本轮只修全局 UI 规范和客服人员导入弹窗；排班、预测、登录/状态日志导入入口仍需要后续单独复用同一模式。
+- `Alert` 已覆盖反馈/错误/结果摘要；空状态仍保持原有轻量占位，后续如统一 Empty 需单独任务。
+
+#### 验证
+
+- `npx shadcn@latest add alert breadcrumb collapsible --dry-run` 确认只新增文件；`dialog` dry-run 会覆盖 Button，因此改为 CLI view 后只新增 `components/ui/dialog.tsx`；`npx shadcn@latest add avatar --dry-run` 确认只新增 `components/ui/avatar.tsx`；参考头像落到 `public/shadcn-avatar.jpg`，避免外链加载失败。 本轮未修改 package 或 lockfile。
+- `node --test scripts/tests/product-structure.test.mjs`：通过，14 个 product-structure 测试通过。
+- `npm run lint`：通过。
+- `npm run typecheck`：通过。
+- in-app browser smoke：`http://127.0.0.1:3000/master-data/sites/SH-01` 命中 shadcn Sidebar wrapper、CollapsibleTrigger/Content、SidebarMenuSub，二级 `职场` active，一级 `主数据` 在 `data-sidebar=menu-button` 上 active，Breadcrumb 正常且无运行时错误；`/master-data/agents` Header 命中 `新建`、`批量导入` 且没有全局搜索输入/搜索占位，筛选卡片在上，列表操作栏在中，表格在下，`查询/重置` 位于筛选卡片右下，列表操作栏不再包含 `新建/批量导入`，Sidebar footer 菜单可打开并包含 shadcn Avatar 头像、`切换为浅色/深色` 和 `退出登录`；`/master-data/sites/SH-01` 全页 H1 仅为 `上海职场`，内容区只保留 `职场信息`、`运营主体` 业务分组且无返回头块；`http://127.0.0.1:3000/master-data/agents/A-1001/edit` 可见 H1 仅由 `SiteHeader` 输出，内容区不再出现 `返回客服人员`，也不再重复页面标题卡片；`http://127.0.0.1:3000/master-data/agents?import_dialog=1` 命中 shadcn Dialog，上传 step 可见，映射/结果 step hidden 但 DOM 挂载，文件 input 和字段映射 textarea 均存在；`http://127.0.0.1:3000/master-data/agents?import_dialog=1&upload=failed&reason=missing_required_fields` 命中结果 step 和 Alert 失败摘要。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM145 导航信息架构收口
+
+#### 审计结论
+
+- `IM145` 已从 Sidebar 一级导航移除 `预测生产` 和 `排班生产`。
+- `/demand-plans/production/**` 仍保留为既有子路由，但由 `需求计划` 导航项承担 active 高亮。
+- `/schedule-plans/production/**` 仍保留为既有子路由，但由 `排班计划` 导航项承担 active 高亮。
+- 结构测试已禁止 `预测生产`、`排班生产`、`导入中心`、`质量中心`、`数据质量` 作为 Sidebar 标题重新出现。
+- 本轮没有修改生产页标题、返回按钮、模型文案、导入弹窗、业务路由、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 页面标题、返回链路和模型文案中仍有 `生产` 相关残留，按计划留给 `IM146`。
+- 内容区重复 H1、旧 `searchPlaceholder` API、主数据非客服人员导入动作和 `/data-quality` 大抽象仍需后续任务继续处理。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明 Sidebar 仍暴露 `预测生产`。
+- TDD 绿灯：移除独立生产导航并调整父级 active 后，`node --test scripts/tests/product-structure.test.mjs` 通过，14 个 product-structure 测试通过。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM146 生产文案与返回链路清理
+
+#### 审计结论
+
+- `/demand-plans/production` 的可见页面身份从 `预测生产` 改为 `预测版本`，列表标题从 `需求预测生产台账` 改为 `预测版本列表`。
+- `/schedule-plans/production` 的可见页面身份从 `排班生产` 改为 `排班版本`，列表标题从 `人员排班生产台账` 改为 `排班版本列表`，描述中的 `生产版本` 改为 `排班版本`。
+- `/actual-logs/production` 的可见页面身份从 `登录/状态日志生产` 改为 `登录/状态日志`，列表标题从 `登录/状态日志生产台账` 改为 `日志处理列表`。
+- 详情/解释页返回按钮改为 `返回需求计划`、`返回排班计划`、`返回登录/状态日志`，不再提示返回生产列表。
+- 预测、排班、登录/状态日志模型里的缺批次、阻塞、就绪和空态文案改为业务对象视角，不再建立生产台账或生产列表心智。
+- 本轮没有改路由结构、重复 H1、旧 `searchPlaceholder` API、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 内容区重复 H1、旧 `searchPlaceholder` API、主数据非客服人员导入动作和 `/data-quality` 大抽象仍按计划留给 IM147-IM151。
+- `/production` 路由名仍保留为内部兼容路径；本轮只清理用户可见文案和返回链路。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/demand-forecast-production-model.test.mjs scripts/tests/personnel-schedule-production-model.test.mjs scripts/tests/actual-log-production-model.test.mjs scripts/tests/product-structure.test.mjs` 先失败 4 个测试，分别证明预测、排班、日志模型和生产子路由源码仍保留旧生产文案。
+- TDD 绿灯：实现后同一 focused test 命令通过，43 个测试全部通过。
+- Browser smoke：`http://127.0.0.1:3000/demand-plans/production`、`/schedule-plans/production`、`/actual-logs/production` 均不再出现旧生产标题/台账/返回文案，并命中 `预测版本列表`、`排班版本列表`、`日志处理列表`。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM147 Header/Breadcrumb 与内容区标题统一
+
+#### 审计结论
+
+- 需求计划、排班计划、预测版本、排班版本、登录/状态日志和 data-quality 兼容页已通过 `AppShell breadcrumbItems` 接入统一 Breadcrumb。
+- 需求计划、排班计划、新建/编辑/详情、生产兼容 workbench、复核案例、复核案例详情、对比运行详情、业务版本列表的内容区同名 H1 已删除或降级。
+- 页面身份由 `SiteHeader` / Breadcrumb 承载；内容区继续承载描述、筛选、工具栏、表格、详情分组和业务记录信息。
+- 本轮没有删除旧 `searchPlaceholder` API，没有修改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- `searchPlaceholder` 仍作为旧 API 留存，按计划进入 IM148。
+- `/data-quality` 仍是兼容路由，按计划进入 IM151 做抽象降级。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明目标页面缺少 `breadcrumbItems` 且内容区仍有 `<h1>`。
+- TDD 绿灯：实现后同一 focused test 通过，17 个 product-structure 测试通过。
+- Browser smoke：`/demand-plans`、`/schedule-plans`、`/data-quality/versions` 均存在 Breadcrumb，页面 DOM 只有 `sr-only` H1，内容区没有重复页面身份 H1。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM148 旧全局搜索 API 清理
+
+#### 审计结论
+
+- `AppShell` 已删除 `searchPlaceholder` prop、默认值和向 `SiteHeader` 的透传。
+- `SiteHeader` 已删除 `searchPlaceholder` prop 定义，Header 不再保留无显示效果的搜索接口。
+- `app/**` 与 `components/**` 源码不再向共享 Header/Shell 传入 `searchPlaceholder`。
+- 真正有意义的列表筛选仍保留在业务内容区，本轮没有把筛选迁回 Header，也没有新增全局搜索 UI。
+- 本轮没有修改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 后续 IM149-IM151 仍需继续处理非客服人员主数据动作收口、导入入口业务归位和 `/data-quality` 抽象降级。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明 `AppShell` 仍保留旧搜索 API。
+- TDD 绿灯：删除接口和页面传参后，同一 focused test 通过，18 个 product-structure 测试通过。
+- `rg -n "searchPlaceholder" app components -S` 无结果。
+- `bash scripts/check-state.sh --strict`、`git diff --check` 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM149 主数据非客服人员动作收口
+
+#### 审计结论
+
+- 组织、职场、供应商、技能等非客服人员主数据列表内容区不再显示 `导入主数据`。
+- 非客服人员主数据页不再从内容区跳转 `/data-quality/uploads/new` 这类独立上传工作区。
+- 客服人员已确认的 `新建` 和 `批量导入` 仍保留在 Header actions，客服人员三步导入弹窗不受影响。
+- 本轮没有新增非客服人员 CRUD、导入弹窗、排班/预测/登录状态日志导入入口、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 组织、职场、供应商、技能导入入口仍需后续 IM150 以业务列表内 step-by-step dialog 方式单独设计，不能回退到独立上传页快捷入口。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明非客服人员内容区仍显示 `导入主数据`。
+- TDD 绿灯：删除旧内容区动作后，同一 focused test 通过，19 个 product-structure 测试通过。
+- `rg -n "导入主数据|buildImportUploadWorkspaceHref" components/master-data-maintenance-workbench.tsx app/master-data -S` 无业务源码匹配。
+- Browser smoke 和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM150 导入入口业务归位
+
+#### 审计结论
+
+- `/data-quality` 批次台账内容区不再显示通用 `上传 CSV` 主按钮。
+- `预测版本`、`排班版本`、`登录/状态日志` 页面级导入动作已进入 Header actions。
+- 预测、排班、登录/状态日志内容区 `版本状态` 卡片不再承载导入按钮。
+- `/data-quality/uploads/new` 保留为内部兼容上传路由，用于后续业务弹窗复用和既有回流，不作为通用主入口暴露。
+- 本轮没有新增导入弹窗、后端 route/action、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 预测、排班、登录/状态日志后续仍应按业务对象补真正的 step-by-step dialog；本轮只是入口归属收口，不把新弹窗和上传流程混入同一刀。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明通用批次台账仍持有上传入口。
+- TDD 绿灯：入口调整后，同一 focused test 通过，20 个 product-structure 测试通过。
+- Browser smoke over `/data-quality`, `/demand-plans/production`, `/schedule-plans/production`, and `/actual-logs/production` confirmed generic upload is absent from the batch ledger, while business import links exist only in Header actions.
+- 最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 213 tests OK。
+
+### 2026-06-05 - IM151 data-quality 结果页抽象降级
+
+#### 审计结论
+
+- `/data-quality/versions` Header/Breadcrumb 不再显示 `导入批次` 父级。
+- `/data-quality/comparison-runs/[runId]` Header/Breadcrumb 不再显示 `导入批次` 父级。
+- `/data-quality/review-cases` Header/Breadcrumb 不再显示 `导入批次` 父级。
+- `/data-quality/review-cases/[caseId]` Header/Breadcrumb 不再显示 `导入批次` 父级，只保留到 `复核案例` 列表的二级关系。
+- 批次处理、上传、字段映射模板页面继续保留批次/模板上下文；本轮没有删除或重构 `/data-quality/**` 兼容路由。
+- 本轮没有新增 Sidebar 导航项、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 结果链路仍在 `/data-quality/**` 兼容路径下，后续若要彻底按业务入口拆路由，需要单独 Gate，不能在本轮顺手重构。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明业务版本页仍把 `导入批次` 作为 Breadcrumb 父级。
+- TDD 绿灯：结果页 Breadcrumb 调整后，同一 focused test 通过，21 个 product-structure 测试通过。
+- Browser smoke over `/data-quality/versions`, `/data-quality/comparison-runs/RUN-QUERY-001`, `/data-quality/review-cases`, and `/data-quality/review-cases/CASE-QUERY-001` confirmed result pages no longer show `导入批次` parent Breadcrumb.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM152 主数据术语清理
+
+#### 审计结论
+
+- 职场详情指标、区块标题和空态不再显示 `运营主体` 或 `职场运营主体`。
+- 职场详情用 `服务团队` 表达自有团队和供应商团队关系。
+- 主数据数据读取错误文案从 `职场运营主体来源读取失败` 改为 `职场服务团队来源读取失败`。
+- `项目` 没有作为主数据维护对象回流；本轮没有删除 `project_id` 兼容字段或内部兼容类型名。
+- 本轮没有新增职场服务团队独立页面、CRUD、导入入口、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、供应商合同、结算比例、最低人力要求、自动排班、生产公式或收费因子。
+
+#### 风险
+
+- 内部代码类型仍保留 operator 命名作为兼容实现细节；后续如要重命名内部模型，应单独做重构任务，不应混入产品可见文案清理。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明主数据 workbench 仍有 `运营主体` 文案。
+- TDD 绿灯：术语调整后，同一 focused test 通过，22 个 product-structure 测试通过。
+- `rg -n "职场运营主体|运营主体" app/master-data components/master-data-maintenance-workbench.tsx -S` 无匹配。
+- Browser smoke over `/master-data/sites/SH-01` confirmed the page shows `服务团队` and does not show `运营主体` or `职场运营主体`.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-05 - IM153 字体与控件密度统一
+
+#### 审计结论
+
+- 全局 CSS 不再用 `button,input,select { font: inherit }` 覆盖组件自身字号。
+- `Button` 的 `sm` 和 `xs` 文本按钮不再使用 12.8px 或 12px 字号。
+- 客服人员列表行内 `编辑/冻结` 文字按钮与页面级按钮、筛选按钮统一为 14px/32px。
+- `TableHead` 不再固定 `text-xs`，表头与正文统一到 14px 表格基线。
+- 客服人员导入 Dialog 的正文、步骤说明、字段映射、textarea、结果文案和表单控件不再混用 12px。
+- 纯图标按钮、checkbox 和 badge 的尺寸保留为组件语义密度，不作为文字按钮基线。
+- 本轮没有新增业务功能、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、真实外部接口、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 项目中仍有其他历史页面存在小号元信息、badge 或代码标识文本；本轮只治理用户明确指出的按钮、表格、客服人员列表和人员导入弹窗，不做全站重排版。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明全局表单字体覆盖仍存在。
+- TDD 绿灯：补齐组件与 dialog 修复后，同一 focused test 通过，23 个 product-structure 测试通过。
+- Browser runtime style smoke over `/master-data/agents?import_dialog=1` confirmed visible text buttons are 14px, table headers are 14px/40px, table cells are 14px, dialog body/form controls are 14px, and row action text buttons are 14px/32px.
+- `npm run lint`、`npm run typecheck` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 已通过，包含 strict state、shadcn gate、Next build 和后端 209 tests OK。
+
+### 2026-06-08 - IM154 职场基础 CRUD 前端闭环
+
+#### 审计结论
+
+- `/master-data/sites` Header actions 已提供职场 `新建` 入口，不在列表内容区塞表单。
+- 职场列表行已提供 `详情`、`编辑`、`冻结`；详情进入既有职场详情页，编辑进入职场编辑子页面，冻结打开确认 Dialog。
+- `/master-data/sites/new` 提交职场 ID、职场名称、状态、生效开始和生效结束。
+- `/master-data/sites/[workplaceId]/edit` 编辑职场名称、状态和有效期，职场 ID 作为隐藏字段提交，不作为可编辑字段。
+- 提交复用现有 `/api/v1/master-data/workplaces/{reference_id}/maintenance` 能力，提交结果回到职场列表并使用既有 Alert feedback。
+- 本轮没有新增职场服务团队绑定、供应商合同、结算比例、最低人力、审批、导出、批量操作、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子。
+
+#### 风险
+
+- 职场和供应商的服务关系、合同、最低人力、结算规则属于后续独立对象/详情设计，本轮只覆盖基础 reference 字段。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `buildMasterDataWorkplaceMaintenanceApiPath`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明缺少 `/master-data/sites/new`。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 21 tests OK，`product-structure.test.mjs` 24 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/sites`, `/master-data/sites/new`, `/master-data/sites/SH-01/edit`, and `/master-data/sites?freeze_workplace_id=SH-01` confirmed Header create action, no inline create form on the list, create/edit child pages, and the freeze Dialog.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM155 供应商基础 CRUD 前端闭环
+
+#### 审计结论
+
+- `/master-data/vendors` Header actions 已提供供应商 `新建` 入口，不在列表内容区塞表单。
+- 供应商列表行已提供 `详情`、`编辑`、`冻结`；详情进入既有供应商详情页，编辑进入供应商编辑子页面，冻结打开确认 Dialog。
+- `/master-data/vendors/new` 提交供应商 ID、供应商名称、状态、生效开始和生效结束。
+- `/master-data/vendors/[vendorId]/edit` 编辑供应商名称、状态和有效期，供应商 ID 作为隐藏字段提交，不作为可编辑字段。
+- 提交复用现有 `/api/v1/master-data/suppliers/{reference_id}/maintenance` 能力，提交结果回到供应商列表并使用既有 Alert feedback。
+- 本轮没有新增供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量操作、权限、后端 route、schema/migration、依赖、自动排班、生产公式或收费因子。
+
+#### 风险
+
+- 供应商和职场的服务关系、合同、最低人力、结算规则属于后续独立对象/详情设计，本轮只覆盖供应商基础 reference 字段。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `buildMasterDataVendorMaintenanceApiPath`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明缺少 `/master-data/vendors/new`。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 22 tests OK，`product-structure.test.mjs` 25 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/vendors`, `/master-data/vendors/new`, `/master-data/vendors/SUP-A/edit`, and `/master-data/vendors?freeze_vendor_id=SUP-A` confirmed Header create action, no inline create form on the list, create/edit child pages, and the freeze Dialog.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM156 技能组基础 CRUD 前端闭环
+
+#### 审计结论
+
+- `/master-data/skills` Header actions 已提供技能组 `新建` 入口，不在列表内容区塞表单。
+- 技能组列表行已提供 `编辑`、`冻结`；编辑进入技能组编辑子页面，冻结打开确认 Dialog。
+- `/master-data/skills/new` 提交技能组 ID、技能组名称、归属属性、状态、生效开始和生效结束。
+- `/master-data/skills/[skillId]/edit` 编辑技能组名称、归属属性、状态和有效期，技能组 ID 作为隐藏字段提交，不作为可编辑字段。
+- 提交复用现有 `/api/v1/master-data/skills/{reference_id}/maintenance` 能力，并补齐 `skill_category` 维护请求透传，提交结果回到技能组列表并使用既有 Alert feedback。
+- 本轮没有新增人员技能绑定、排班技能引用、技能层级、审批、导出、批量操作、权限、新后端 route、schema/migration、依赖、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前只维护技能组基础档案；人员技能关系和排班侧技能引用仍属于独立后续任务。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `buildMasterDataSkillMaintenanceApiPath`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明缺少 `/master-data/skills/new`；后端 `unittest` 先失败，证明 `skill_category` 仍未写入。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 23 tests OK，`product-structure.test.mjs` 26 tests OK，后端 master-data maintenance 定向 23 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/skills`, `/master-data/skills/new`, `/master-data/skills/L1-CN/edit`, and `/master-data/skills?freeze_skill_id=L1-CN` confirmed Header create action, no inline create form on the list, create/edit child pages, and the freeze Dialog.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM157 组织基础 CRUD 前端闭环
+
+#### 审计结论
+
+- `/master-data/organizations` Header actions 已提供组织 `新建` 入口，不在列表内容区塞表单。
+- 组织列表行已提供 `编辑`、`冻结`；编辑进入组织编辑子页面，冻结打开确认 Dialog。
+- `/master-data/organizations/new` 提交组织 ID、组织名称、组织层级、上级组织、状态、生效开始和生效结束。
+- `/master-data/organizations/[organizationId]/edit` 编辑组织名称、组织层级、上级组织、状态和有效期，组织 ID 作为隐藏字段提交，不作为可编辑字段。
+- 后端新增窄 `/api/v1/master-data/organizations/{organization_id}/maintenance`，复用既有组织表、父组织校验和导入批次来源校验，不新增 schema/migration。
+- 本轮没有新增组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量操作、权限、schema/migration、依赖、自动排班、生产公式或收费因子。
+
+#### 风险
+
+- 当前只维护组织基础档案；组织树可视化、人员调岗、供应商团队归属和合同/最低人力仍属于独立后续任务。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `buildMasterDataOrganizationMaintenanceApiPath`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明缺少 `/master-data/organizations/new`；后端 `unittest` 先失败，证明缺少 `maintain_organization` 和 route。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 25 tests OK，`product-structure.test.mjs` 27 tests OK，后端 master-data maintenance 定向 25 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/organizations`, `/master-data/organizations/new`, `/master-data/organizations/ORG-CC/edit`, and `/master-data/organizations?freeze_organization_id=ORG-CC` confirmed Header create action, row edit/freeze links, create/edit child pages, and the freeze Dialog.
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM158 客服人员列表真实筛选
+
+#### 审计结论
+
+- `/master-data/agents` 的技能组筛选下拉不再固定为在线/热线/工单归属属性，而是从当前人员技能集合生成真实技能组选项。
+- `/master-data/agents` 的组织和职场筛选下拉不再只有“全部组织/全部职场”，而是从当前人员组织 ID/组织路径、职场 ID/职场名称生成真实选项。
+- `skill_group` 查询参数支持技能 ID、技能名称和技能归属属性匹配；`organization` 查询参数支持组织 ID 和组织路径匹配；`workplace` 查询参数支持职场 ID 和职场名称匹配。
+- 页面结构未扩展：Header 继续承载 `新建` 和 `批量导入`，筛选卡片在列表操作栏上方，列表页未塞新增/编辑表单。
+- 本轮没有新增导航、页面、后端 route、schema/migration、依赖、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 当前本地 `.local` SQLite 是旧 schema，缺少 `master_data_skills.skill_category` 和 `master_data_employees.employee_type` 列，无法通过维护 API 准备带组织/职场/技能的 smoke 人员；因此真实 option 的页面级验证以模型 RED/GREEN 测试覆盖，浏览器只验证现有 `张三` 数据的 URL 筛选和空态。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明技能组仍是固定归属属性选项，组织/职场没有真实选项。
+- TDD 绿灯：补齐后 `master-data-maintenance-model.test.mjs` 26 tests OK。
+- `node --test scripts/tests/product-structure.test.mjs` 27 tests OK。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/agents?employee_name=张三` returned 1 row and Header `新建/批量导入`; `/master-data/agents?employee_name=不存在` showed `暂无符合条件的客服人员` without `张三`。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM159 本地旧主数据 schema 维护写入兼容
+
+#### 审计结论
+
+- SQLite 本地 repository 初始化时会运行本地兼容补齐，旧 `master_data_employees` 缺少 `employee_type`、`organization_id`、`workplace_id` 时会添加已确认字段。
+- 旧 `master_data_skills` 缺少 `skill_category` 时会添加已确认字段。
+- 缺少 `master_data_organizations` 等本地主数据表时，仍通过既有 `Base.metadata.create_all` 创建当前模型表，使组织维护写入可以继续。
+- 兼容逻辑仅在 `engine.dialect.name == "sqlite"` 时执行，不新增迁移文件、生产数据库配置、业务字段、权限、审批、导出、批量操作、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 风险
+
+- 这是本地 SQLite 兼容补齐，不是生产数据库迁移策略；真实生产持久化仍需要后续独立确认。
+
+#### 验证
+
+- TDD 红灯：`.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service.MasterDataMaintenanceServiceTest.test_legacy_local_schema_allows_employee_skill_and_organization_maintenance -v` 先失败，错误为旧库缺少 `master_data_employees.employee_type`。
+- TDD 绿灯：补齐后同一测试通过。
+- `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` 通过 26 tests。
+- API smoke against local `.local` DB confirmed skill create, employee create, and employee skill replace all returned HTTP 200, then `/api/v1/master-data/employees` returned `IM159验证人员` with organization path, workplace, and skill context.
+- Browser smoke over `/master-data/agents?skill_group=SKILL-IM159&organization=ORG-IM158&workplace=SITE-IM158` showed `IM159验证人员` and no empty state。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM160 职场详情只读服务团队关系
+
+#### 审计结论
+
+- `/master-data/sites/[workplaceId]` 仍是职场详情上下文，不新增服务团队独立导航或抽象模块。
+- 自有服务团队按该职场 `internal` 人员的 `organization_id / organization_path` 聚合，不再逐人员当作团队行。
+- 供应商服务团队按该职场 binding 的 `supplier_id` 聚合，并通过供应商主数据展示供应商名称。
+- 服务团队表展示团队类型、服务团队、供应商、人员/绑定数、状态、有效期、来源和来源批次。
+- 本轮没有新增表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量操作或自动排班。
+
+#### 风险
+
+- 当前仍是只读聚合展示；服务团队新增/编辑/冻结、人员归属服务团队、供应商合同、最低人力和结算规则需要后续独立任务确认。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，当前实现返回 3 行人员/绑定明细而不是 2 个服务团队聚合行。
+- TDD 绿灯：补齐后 `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/product-structure.test.mjs` 通过 54 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- Browser smoke over `/master-data/sites/SH-01` confirmed supplier team `供应商 A` and `1 条绑定`; `/master-data/sites/SITE-IM158` confirmed internal team and `1 人`; both pages did not show 合同、结算、最低人力。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-08 - IM161 职场服务团队本地维护对象
+
+#### 审计结论
+
+- 新增本地 `master_data_workplace_service_teams` 表和 Alembic 迁移，字段限定为服务团队 ID、职场、团队类型、团队名称、组织、供应商、状态、生效期和来源批次。
+- 新增 `/api/v1/master-data/workplace-service-teams` 列表 API 和 `/api/v1/master-data/workplace-service-teams/{service_team_id}/maintenance` 单条维护 API，支持 create/edit/freeze。
+- 自有服务团队要求组织引用，供应商服务团队要求供应商引用；编辑切换团队类型时会清理另一类引用，避免混填。
+- `/master-data/sites/[workplaceId]` 仍是唯一入口，不新增 Sidebar 导航或独立服务团队模块；页面优先展示本地服务团队记录，缺记录时保留 IM160 推导回退。
+- 新增和编辑进入 `/master-data/sites/[workplaceId]/service-teams/new` 与 `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/edit` 子页面；冻结通过职场详情 Dialog。
+- 本轮没有新增合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：模型测试先失败，证明职场详情未读取 maintained serviceTeams；产品结构测试先失败，证明子页面不存在；后端 contract/API 测试先失败，证明缺少维护对象和 route。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/product-structure.test.mjs` 通过 55 tests；后端维护定向测试通过 28 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过。
+- API smoke 创建 `TEAM-IM161-SMOKE` 返回 200；in-app browser smoke 确认 `/master-data/sites/SH-01` 显示服务团队记录来源、编辑/冻结入口，`/master-data/sites/SH-01/service-teams/new` 显示子页表单，`/service-teams/TEAM-IM161-SMOKE/edit` 回填字段；页面未出现合同、结算或最低人力。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM162 职场服务团队详情页
+
+#### 审计结论
+
+- `/master-data/sites/[workplaceId]` 的服务团队表新增 `查看` 入口，只对 IM161 本地服务团队记录生成详情链接，不为旧推导行伪造详情页。
+- 新增 `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]`，仍在职场详情子路由上下文内，不新增 Sidebar 导航或独立服务团队模块。
+- 详情页展示服务团队 ID、团队名称、团队类型、归属职场、组织或供应商来源、状态、生效期和来源批次。
+- 详情页提供编辑和冻结入口；编辑复用既有编辑子页面，冻结复用 Dialog，取消后停留在详情页。
+- 本轮没有新增后端 route、schema/migration、关联人员列表、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明服务团队行缺少 `detailHref`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明详情页文件不存在。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 27 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 28 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认改动区域未引入硬编码色阶、`space-*`、重复 `h1/ArrowLeft/返回职场` 残留。
+- in-app browser smoke 确认 `/master-data/sites/SH-01` 存在 `查看` 详情入口，`/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE` 展示基础字段、编辑/冻结入口和来源信息，详情页冻结 Dialog 含标题、取消和确认冻结按钮；页面未出现合同、结算、最低人力、权限、审批、导出或批量。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM163 服务团队详情关联人员只读列表
+
+#### 审计结论
+
+- `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` 增加只读 `关联人员` 区域，仍留在职场服务团队详情上下文内。
+- 自有服务团队按同职场且同 `organization_id` 的人员匹配；供应商服务团队按同职场且同 `supplier_id` 的绑定关系匹配人员，并对同一人员去重。
+- 关联人员表展示姓名、人员 ID、人员类型、组织、职场、技能、状态和匹配来源；无匹配人员时显示明确空态。
+- 本轮没有新增后端 route、schema/migration、独立服务团队导航、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少关联人员汇总函数；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明服务团队详情页尚未读取人员和绑定数据。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 28 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 28 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button/Dialog 组合和语义 token。
+- in-app browser smoke 确认 `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE` 出现 `服务团队信息`、`关联人员`、编辑/冻结入口和关联人员匹配来源；页面未出现合同、结算、最低人力、权限、审批、导出、批量或人员分配。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM164 供应商详情服务团队只读链路
+
+#### 审计结论
+
+- `/master-data/vendors/[vendorId]` 增加只读 `服务团队` 区域，仍留在供应商详情上下文内。
+- 服务团队区域只展示 `supplier_id` 等于当前供应商的职场服务团队记录。
+- 每行展示服务团队名称、归属职场、状态、生效期、来源批次，并通过 `查看团队` 链接到既有职场服务团队详情页。
+- 本轮没有新增后端 route、schema/migration、供应商服务团队维护、人员分配、独立服务团队导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明供应商详情缺少服务团队行；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明供应商详情页尚未读取职场服务团队记录。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 28 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 28 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 组合和语义 token。
+- in-app browser smoke 确认 `/master-data/vendors/SUP-A` 出现 `服务团队`、`服务职场`、`查看团队` 链接，并指向 `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或人员分配。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM165 客服人员详情只读业务链路
+
+#### 审计结论
+
+- `/master-data/agents` 列表行新增 `查看` 入口，进入 `/master-data/agents/[employeeId]` 单个人员详情页。
+- 人员详情页只读展示人员基础信息、组织、职场、人员类型、状态、有效期、来源批次和技能集合。
+- 详情页读取既有职场服务团队和职场绑定数据，推导当前人员关联的服务团队；自有团队按同职场同组织匹配，供应商团队按同职场同供应商绑定匹配。
+- 关联服务团队表通过 `查看团队` 链接进入既有职场服务团队详情页；无关联团队显示明确空态。
+- 本轮没有新增后端 route、schema/migration、人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `summarizeMasterDataAgentDetail`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明客服人员详情页文件不存在。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 29 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 29 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/master-data/agents` 存在行内 `查看` 入口并指向 `/master-data/agents/A-1001`；`/master-data/agents/A-1001` 出现 `人员信息`、`技能集合`、`关联服务团队` 和 `查看团队` 链接，并指向 `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-11 - IM166 组织详情只读业务链路
+
+#### 审计结论
+
+- `/master-data/organizations` 列表行新增 `查看` 入口，进入 `/master-data/organizations/[organizationId]` 单个组织详情页。
+- 组织详情页只读展示组织名称、编码、层级、上级组织、组织路径、状态、生效期和来源批次。
+- 详情页只读展示当前组织的直接下级组织，并通过 `查看组织` 链接继续进入下级组织详情页。
+- 详情页只读展示当前组织直接归属人员，并通过 `查看人员` 链接进入既有客服人员详情页。
+- 无直接下级组织或无归属人员时显示明确空态。
+- 本轮没有新增后端 route、schema/migration、人员调岗、组织树拖拽、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `summarizeMasterDataOrganizationDetail`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明组织详情页文件不存在。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 30 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 30 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/master-data/organizations` 存在行内 `查看` 入口并指向 `/master-data/organizations/ORG-CC`；`/master-data/organizations/ORG-CC` 出现 `组织信息`、`直接下级组织`、`归属人员` 和人员空态；`/master-data/organizations/ORG-IM158` 出现 `查看人员` 链接并指向 `/master-data/agents/A-IM159`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM167 技能组详情只读业务链路
+
+#### 审计结论
+
+- `/master-data/skills` 列表行新增 `详情` 入口，进入 `/master-data/skills/[skillId]` 单个技能组详情页。
+- 技能组详情页只读展示技能组名称、编码、归属属性、状态、生效期和来源批次。
+- 详情页只读展示当前拥有该技能的客服人员，并通过 `查看人员` 链接进入既有客服人员详情页。
+- 无归属人员时显示明确空态。
+- 本轮没有新增后端 route、schema/migration、技能层级、技能绑定维护、批量分配、排班技能规则、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `summarizeMasterDataSkillDetail`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明技能组详情页文件不存在。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 31 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 31 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/master-data/skills` 存在行内 `详情` 入口并指向 `/master-data/skills/L1-CN`；`/master-data/skills/L1-CN` 出现 `技能组信息`、`拥有该技能的客服人员` 和人员空态；`/master-data/skills/SKILL-IM159` 出现 `查看人员` 链接并指向 `/master-data/agents/A-IM159`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM168 主数据详情链路收尾检查
+
+#### 审计结论
+
+- 主数据 reference 列表进入详情的行内动作统一为 `查看`，修正 IM167 留下的技能组列表 `详情` 口径。
+- 行内动作仍使用既有 `detailHref`，没有新增页面、导航或业务模块。
+- 新增结构测试覆盖 `MasterDataReferenceManagementPage`，防止 reference 列表再次混用 `详情`。
+- 本轮没有新增后端 route、schema/migration、导入、权限、审批、导出、批量操作、合同、结算、最低人力、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明 reference 列表仍包含 `>详情</Link>`。
+- TDD 绿灯：`node --test scripts/tests/product-structure.test.mjs` 通过 32 tests。
+- `node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 31 tests；`npm run lint` 和 `npm run typecheck` 已通过。
+- shadcn 自查确认本轮没有引入硬编码色阶、`space-*` 或任意圆角，实际改动只替换既有 Link 文案。
+- in-app browser smoke 确认 `/master-data/skills` 行内链接文本为 `查看/编辑/冻结`，`详情` 数量为 0；`/master-data/skills/L1-CN` 仍展示 `技能组信息` 和 `拥有该技能的客服人员`，且未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM169 需求预测导入大弹窗
+
+#### 审计结论
+
+- `/demand-plans/production` Header 的 `导入预测` 不再跳转独立 CSV 上传页，而是打开当前预测版本页 Dialog。
+- Dialog 使用 `上传文件`、`字段映射`、`导入结果` 三步；非当前 step 通过 `hidden` 隐藏但保持 DOM 挂载，避免文件 input 在 step 切换时丢失选择。
+- 上传继续复用现有 `uploadImportCsvAction` 和 `demand_forecast` file type；结果回流 `/demand-plans/production?import_dialog=1`，并在结果 step 提供批次详情入口。
+- 本轮没有扩展排班、登录/状态日志导入弹窗，没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/demand-forecast-production-model.test.mjs` 先失败，证明缺少 `summarizeDemandForecastImportDialog`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明预测版本页仍缺少页内 Dialog 流程。
+- TDD 绿灯：`node --test scripts/tests/demand-forecast-production-model.test.mjs` 通过 11 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 33 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增 Dialog 使用既有 Dialog、Alert、Button、Input、Badge 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/demand-plans/production?import_dialog=1` 渲染 `需求预测导入` Dialog，三步标题均存在，文件 input 数量为 1，hidden section 数量为 2，旧独立上传链接数量为 0；`/demand-plans/production?import_dialog=1&upload=success&batch=BATCH-FC-001` 显示 `导入已提交` 并提供 `/data-quality/import-batches/BATCH-FC-001` 链接。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM170 排班导入大弹窗
+
+#### 审计结论
+
+- `/schedule-plans/production` Header 的 `导入排班` 不再跳转独立 CSV 上传页，而是打开当前排班版本页 Dialog。
+- Dialog 使用 `上传文件`、`字段映射`、`导入结果` 三步；非当前 step 通过 `hidden` 隐藏但保持 DOM 挂载，避免文件 input 在 step 切换时丢失选择。
+- 上传继续复用现有 `uploadImportCsvAction` 和 `personnel_schedule` file type；结果回流 `/schedule-plans/production?import_dialog=1`，并在结果 step 提供批次详情入口。
+- 本轮没有扩展登录/状态日志导入弹窗，没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/personnel-schedule-production-model.test.mjs` 先失败，证明缺少 `summarizePersonnelScheduleImportDialog`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明排班版本页仍缺少页内 Dialog 流程。
+- TDD 绿灯：`node --test scripts/tests/personnel-schedule-production-model.test.mjs` 通过 10 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 34 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增 Dialog 使用既有 Dialog、Alert、Button、Input、Badge 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/schedule-plans/production?import_dialog=1` 渲染 `排班导入` Dialog，三步标题均存在，文件 input 数量为 1，hidden section 数量为 2，旧独立上传链接数量为 0；`/schedule-plans/production?import_dialog=1&upload=success&batch=BATCH-SCH-001` 显示 `导入已提交` 并提供 `/data-quality/import-batches/BATCH-SCH-001` 链接。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM171 登录/状态日志导入大弹窗
+
+#### 审计结论
+
+- `/actual-logs/production` Header 的 `导入登录日志`、`导入状态日志` 不再跳转独立 CSV 上传页，而是打开当前登录/状态日志页 Dialog。
+- Dialog 使用 `上传文件`、`字段映射`、`导入结果` 三步；非当前 step 通过 `hidden` 隐藏但保持 DOM 挂载，避免文件 input 在 step 切换时丢失选择。
+- 登录日志提交 `file_type=login_log`，状态日志提交 `file_type=status_log`；上传继续复用现有 `uploadImportCsvAction`，结果回流 `/actual-logs/production?import_dialog=1&log_type=...`，并在结果 step 提供批次详情入口。
+- 本轮没有扩展解析增强、状态字典配置维护，没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/actual-log-production-model.test.mjs` 先失败，证明缺少 `summarizeActualLogImportDialog`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明登录/状态日志页仍缺少页内 Dialog 流程。
+- TDD 绿灯：`node --test scripts/tests/actual-log-production-model.test.mjs` 通过 10 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 35 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增 Dialog 使用既有 Dialog、Alert、Button、Input、Badge 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/actual-logs/production?import_dialog=1&log_type=login` 和 `log_type=status` 均渲染对应 Dialog；登录/状态两个标题各唯一，`CSV 文件` 字段可见，旧独立上传链接数量为 0；`/actual-logs/production?import_dialog=1&log_type=login&upload=success&batch=BATCH-LOGIN-001` 显示 `导入已提交` 并提供 `/data-quality/import-batches/BATCH-LOGIN-001` 链接。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

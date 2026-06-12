@@ -2,6 +2,904 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM171
+    title: "登录/状态日志导入大弹窗"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM170"]
+    allowed_files:
+      - "app/data-quality/actions.ts"
+      - "app/actual-logs/production/page.tsx"
+      - "components/actual-log-import-dialog.tsx"
+      - "components/actual-log-production-workbench.tsx"
+      - "components/actual-log-production-model.ts"
+      - "scripts/tests/actual-log-production-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/actual-logs/production Header 的 `导入登录日志`、`导入状态日志` 打开当前页 Dialog，而不是跳转 `/data-quality/uploads/new`。"
+      - "Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步展示，非当前 step 保持 DOM 挂载。"
+      - "上传提交继续复用现有 CSV 上传 action，结果回流 `/actual-logs/production?import_dialog=1`。"
+      - "登录日志提交 `file_type=login_log`，状态日志提交 `file_type=status_log`。"
+      - "不扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端 route、schema/migration 或 API"
+      - "范围扩展到解析增强、状态字典配置维护、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将 /actual-logs/production 的 `导入登录日志`、`导入状态日志` 从独立 CSV 上传页收回到当前登录/状态日志页 Dialog。Dialog 使用上传文件、字段映射、导入结果三步，非当前 step 通过 hidden 保持 DOM 挂载，文件 input 不因 step 切换卸载；上传继续复用现有 CSV action，登录日志提交 `login_log`，状态日志提交 `status_log`，结果回流 `/actual-logs/production?import_dialog=1&log_type=...` 并显示批次详情入口。本轮未扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+  - id: IM170
+    title: "排班导入大弹窗"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM169"]
+    allowed_files:
+      - "app/data-quality/actions.ts"
+      - "app/schedule-plans/production/page.tsx"
+      - "components/personnel-schedule-import-dialog.tsx"
+      - "components/personnel-schedule-production-workbench.tsx"
+      - "components/personnel-schedule-production-model.ts"
+      - "scripts/tests/personnel-schedule-production-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/schedule-plans/production Header 的 `导入排班` 打开当前页 Dialog，而不是跳转 `/data-quality/uploads/new`。"
+      - "Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步展示，非当前 step 保持 DOM 挂载。"
+      - "上传提交继续复用现有 CSV 上传 action，结果回流 `/schedule-plans/production?import_dialog=1`。"
+      - "不扩展登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端 route、schema/migration 或 API"
+      - "范围扩展到登录/状态日志导入弹窗"
+      - "范围扩展到权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将 /schedule-plans/production 的 `导入排班` 从独立 CSV 上传页收回到当前排班版本页 Dialog。Dialog 使用上传文件、字段映射、导入结果三步，非当前 step 通过 hidden 保持 DOM 挂载，文件 input 不因 step 切换卸载；上传继续复用现有 CSV action，结果回流 `/schedule-plans/production?import_dialog=1` 并显示批次详情入口。本轮未扩展登录/状态日志导入弹窗，未新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子。"
+  - id: IM169
+    title: "需求预测导入大弹窗"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM168"]
+    allowed_files:
+      - "app/data-quality/actions.ts"
+      - "app/demand-plans/production/page.tsx"
+      - "components/demand-forecast-import-dialog.tsx"
+      - "components/demand-forecast-production-workbench.tsx"
+      - "components/demand-forecast-production-model.ts"
+      - "scripts/tests/demand-forecast-production-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/demand-plans/production Header 的 `导入预测` 打开当前页 Dialog，而不是跳转 `/data-quality/uploads/new`。"
+      - "Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步展示，非当前 step 保持 DOM 挂载。"
+      - "上传提交继续复用现有 CSV 上传 action，结果回流 `/demand-plans/production?import_dialog=1`。"
+      - "不扩展排班、登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端 route、schema/migration 或 API"
+      - "范围扩展到排班、登录/状态日志导入弹窗"
+      - "范围扩展到权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将 /demand-plans/production 的 `导入预测` 从独立 CSV 上传页收回到当前预测版本页 Dialog。Dialog 使用上传文件、字段映射、导入结果三步，非当前 step 通过 hidden 保持 DOM 挂载，文件 input 不因 step 切换卸载；上传继续复用现有 CSV action，结果回流 `/demand-plans/production?import_dialog=1` 并显示批次详情入口。本轮未扩展排班、登录/状态日志导入弹窗，未新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+  - id: IM168
+    title: "主数据详情链路收尾检查"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM167"]
+    allowed_files:
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "主数据职场、供应商、技能组等 reference 列表进入详情的行内动作统一使用 `查看`。"
+      - "动作仍链接到既有详情页，不新增页面、导航或业务模块。"
+      - "结构测试覆盖该口径，Browser smoke 覆盖至少一个技能组详情入口。"
+      - "不新增后端 route、schema/migration、导入、权限、审批、导出、批量操作、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增页面、导航、后端 route、schema/migration 或 API"
+      - "范围扩展到导入、权限、审批、导出、批量操作、合同、结算、最低人力、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "IM168 已完成：主数据 reference 列表进入详情的行内动作统一为 `查看`，结构测试防止再次混用 `详情`；Browser smoke 确认 `/master-data/skills` 行内 `查看` 可进入既有技能组详情页；未新增页面、导航、后端、导入、权限、审批、导出、批量、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+  - id: IM167
+    title: "技能组详情只读业务链路"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM166"]
+    allowed_files:
+      - "app/master-data/skills/[skillId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/skills 列表行提供进入单个技能组详情页的查看入口。"
+      - "/master-data/skills/[skillId] 展示技能组基础信息、归属属性、状态、有效期和来源批次。"
+      - "详情页只读展示当前拥有该技能的客服人员，并能进入人员详情页。"
+      - "无归属人员时显示明确空态。"
+      - "不新增后端 route、schema/migration、技能层级、技能绑定维护、批量分配、排班技能规则、权限、审批、导出、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或新增 API"
+      - "范围扩展到技能层级、技能绑定维护、批量分配、排班技能规则、权限、审批、导出、合同、结算、最低人力、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "IM167 已完成：技能组列表行新增详情入口；技能组详情页只读展示技能组基础信息、归属属性和当前拥有该技能的客服人员，并通过查看人员进入既有人员详情页；focused tests、Browser smoke、lint、typecheck 已通过，最终 scripts/check.sh 通过后提交。"
+  - id: IM166
+    title: "组织详情只读业务链路"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM165"]
+    allowed_files:
+      - "app/master-data/organizations/[organizationId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/organizations 列表行提供进入单个组织详情页的查看入口。"
+      - "/master-data/organizations/[organizationId] 展示组织基础信息、层级、上级组织、组织路径、状态、有效期和来源批次。"
+      - "详情页只读展示直接下级组织和当前归属人员，并能进入人员详情页。"
+      - "无下级组织或无归属人员时显示明确空态。"
+      - "不新增后端 route、schema/migration、人员调岗、组织树拖拽、权限、审批、导出、批量、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或新增 API"
+      - "范围扩展到人员调岗、组织树拖拽、权限、审批、导出、批量操作、合同、结算、最低人力、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "IM166 已完成：组织列表行新增查看入口；组织详情页只读展示组织基础信息、直接下级组织和当前归属人员，并通过查看人员进入既有人员详情页；focused tests、Browser smoke、lint、typecheck 已通过，最终 scripts/check.sh 通过后提交。"
+  - id: IM165
+    title: "客服人员详情只读业务链路"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM164"]
+    allowed_files:
+      - "app/master-data/agents/page.tsx"
+      - "app/master-data/agents/[employeeId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/agents 列表行提供进入单个人员详情页的查看入口。"
+      - "/master-data/agents/[employeeId] 展示人员基础信息、组织、职场、人员类型、状态、有效期和技能集合。"
+      - "详情页只读展示该人员关联的职场服务团队，并链接到既有服务团队详情页。"
+      - "无关联服务团队时显示明确空态，不提供人员分配、新增、批量或导出动作。"
+      - "不新增后端 route、schema/migration、权限、审批、导出、批量、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或新增 API"
+      - "范围扩展到人员分配、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成客服人员详情只读业务链路：/master-data/agents 列表行提供 `查看` 入口，/master-data/agents/[employeeId] 读取既有人员、职场服务团队和职场绑定数据，展示人员基础信息、技能集合和只读关联服务团队；关联服务团队可通过 `查看团队` 进入既有职场服务团队详情页；无关联团队显示明确空态。未新增后端 route、schema/migration、人员分配、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+  - id: IM164
+    title: "供应商详情服务团队只读链路"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM163"]
+    allowed_files:
+      - "app/master-data/vendors/[vendorId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/vendors/[vendorId] 增加只读服务团队区域。"
+      - "服务团队区域只展示 supplier_id 等于当前供应商的职场服务团队记录。"
+      - "每行展示服务团队名称、归属职场、状态、生效期、来源批次，并提供进入既有服务团队详情页的链接。"
+      - "无服务团队时显示明确空态，不提供新增、分配、批量、导出或维护动作。"
+      - "不新增后端 route、schema/migration、独立服务团队导航、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或新增 API"
+      - "范围扩展到供应商服务团队维护、人员分配、独立服务团队导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成供应商详情服务团队只读链路：/master-data/vendors/[vendorId] 读取现有职场服务团队记录，筛选当前 supplier_id 的供应商团队，展示服务团队名称、归属职场、状态、生效期、来源批次，并提供 `查看团队` 链接进入既有 /master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 详情页；无记录显示明确空态。未新增后端 route、schema/migration、供应商服务团队维护、人员分配、独立导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+  - id: IM163
+    title: "服务团队详情关联人员只读列表"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM162"]
+    allowed_files:
+      - "app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 增加只读关联人员区域。"
+      - "自有服务团队按同职场且同 organization_id 的人员匹配。"
+      - "供应商服务团队按同职场且同 supplier_id 的绑定关系匹配人员，并对同一人员去重。"
+      - "关联人员区域展示姓名、人员 ID、人员类型、组织、职场、技能、状态和匹配来源。"
+      - "无匹配人员时显示明确空态，不提供新增、分配、批量、导出或维护动作。"
+      - "不新增后端 route、schema/migration、独立服务团队导航、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或新增 API"
+      - "范围扩展到人员分配、独立服务团队导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成服务团队详情关联人员只读列表：/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 读取现有人员和职场绑定数据，自有团队按同职场同 organization_id 匹配，供应商团队按同职场同 supplier_id 绑定匹配并去重；详情页展示姓名、人员 ID、人员类型、组织、职场、技能、状态和匹配来源；无匹配人员显示明确空态；未新增后端 route、schema/migration、人员分配、独立服务团队导航、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+  - id: IM162
+    title: "职场服务团队详情页"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM161"]
+    allowed_files:
+      - "app/master-data/sites/[workplaceId]/page.tsx"
+      - "app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/sites/[workplaceId] 的服务团队表提供单个服务团队详情入口。"
+      - "/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 展示服务团队 ID、团队名称、团队类型、归属职场、组织或供应商来源、状态、生效期和来源批次。"
+      - "详情页提供返回职场详情、编辑服务团队和冻结服务团队入口；编辑复用现有编辑子页面，冻结复用 Dialog 模式。"
+      - "未找到服务团队时显示明确空态，不新增独立主数据模块或 Sidebar 导航。"
+      - "不新增后端 route、schema/migration、关联人员列表、人员分配、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或新增 API"
+      - "范围扩展到关联人员列表、人员分配、独立服务团队导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成职场服务团队详情页：/master-data/sites/[workplaceId] 服务团队表新增 `查看` 入口；/master-data/sites/[workplaceId]/service-teams/[serviceTeamId] 展示服务团队 ID、名称、类型、归属职场、组织或供应商来源、状态、生效期和来源批次；详情页提供编辑和冻结入口，编辑复用现有编辑子页面，冻结复用 Dialog。未新增后端 route、schema/migration、独立导航、关联人员列表、人员分配、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
+  - id: IM161
+    title: "职场服务团队本地维护对象"
+    priority: P0
+    status: done
+    required_workflow: database-persistence
+    dependencies: ["IM160"]
+    allowed_files:
+      - "app/master-data/sites/[workplaceId]/page.tsx"
+      - "app/master-data/sites/[workplaceId]/service-teams/new/page.tsx"
+      - "app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/edit/page.tsx"
+      - "app/master-data/sites/[workplaceId]/service-teams/actions.ts"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/app/master_data_persistence.py"
+      - "backend/migrations/versions/20260608_0010_create_workplace_service_teams.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "后端提供本地职场服务团队对象、列表 API 和单条维护 API，支持 create/edit/freeze。"
+      - "职场服务团队对象限定字段为 service_team_id、workplace_id、team_type、team_name、organization_id、supplier_id、status、effective_from/effective_to、source_batch_id。"
+      - "自有服务团队要求 organization_id；供应商服务团队要求 supplier_id；两类关系不得混填。"
+      - "/master-data/sites/[workplaceId] 展示本地服务团队记录，并提供新增、编辑、冻结入口。"
+      - "新增和编辑使用职场详情下的子页面；冻结使用 Dialog。"
+      - "不新增导航，不引入合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "范围扩展到独立服务团队导航、合同、结算比例、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成职场服务团队本地维护对象：新增 master_data_workplace_service_teams 本地表和迁移、列表 API、单条 create/edit/freeze 维护 API；/master-data/sites/[workplaceId] 优先展示本地服务团队记录并提供 Header 新增入口、行内编辑/冻结入口；/master-data/sites/[workplaceId]/service-teams/new 和 /service-teams/[serviceTeamId]/edit 为子页面，冻结通过 Dialog。未新增导航、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。"
+  - id: IM157
+    title: "组织基础 CRUD 前端闭环"
+    priority: P0
+    status: done
+    required_workflow: backend-vertical
+    dependencies: ["IM156"]
+    allowed_files:
+      - "app/master-data/[entityKey]/actions.ts"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "app/master-data/organizations/new/page.tsx"
+      - "app/master-data/organizations/[organizationId]/edit/page.tsx"
+      - "backend/app/main.py"
+      - "backend/app/models.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/organizations Header actions 提供新建组织入口。"
+      - "组织列表行提供编辑、冻结；编辑走子页面，冻结走 Dialog；列表页不塞新建或编辑表单。"
+      - "/master-data/organizations/new 使用子页面提交组织 ID、组织名称、组织层级、上级组织、状态、生效开始、生效结束。"
+      - "/master-data/organizations/[organizationId]/edit 使用子页面编辑组织名称、组织层级、上级组织、状态和有效期，组织 ID 不作为可编辑字段。"
+      - "提交成功或失败后回到组织列表并使用现有 Alert feedback。"
+      - "不新增组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量、权限、schema/migration、依赖、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要 schema/migration、生产持久化配置或真实外部数据源"
+      - "范围扩展到组织架构图、人员调岗、供应商绑定、合同、结算、最低人力、审批、导出、批量、权限、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成组织基础 CRUD 闭环：/master-data/organizations Header 新建入口、行内编辑/冻结、/master-data/organizations/new、/master-data/organizations/[organizationId]/edit、冻结 Dialog 和本地组织维护 API；current queue 与 active tasks 已清空。"
+  - id: IM156
+    title: "技能组基础 CRUD 前端闭环"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM155"]
+    allowed_files:
+      - "app/master-data/[entityKey]/actions.ts"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "app/master-data/skills/new/page.tsx"
+      - "app/master-data/skills/[skillId]/edit/page.tsx"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "backend/app/models.py"
+      - "backend/app/master_data_maintenance.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/skills Header actions 提供新建技能组入口。"
+      - "技能组列表行提供编辑、冻结；编辑走子页面，冻结走 Dialog；列表页不塞新建或编辑表单。"
+      - "/master-data/skills/new 使用子页面提交技能组 ID、技能组名称、归属属性、状态、生效开始、生效结束。"
+      - "/master-data/skills/[skillId]/edit 使用子页面编辑技能组名称、归属属性、状态和有效期，技能组 ID 不作为可编辑字段。"
+      - "技能组归属属性必须通过既有本地 reference maintenance API 真实提交，不做只在前端显示的假字段。"
+      - "提交成功或失败后回到技能组列表并使用现有 Alert feedback。"
+      - "不新增人员技能绑定、排班技能引用、供应商合同、最低人力、审批、导出、批量、权限、新后端 route、schema/migration、依赖、自动排班、生产公式、结算或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增技能层级、人员技能绑定维护或排班技能引用能力"
+      - "需要新增后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成。`/master-data/skills` Header actions 新增技能组入口，列表行提供编辑、冻结；新建和编辑分别走 `/master-data/skills/new` 与 `/master-data/skills/[skillId]/edit` 子页面，冻结通过 Dialog 确认；提交复用现有 skills reference 维护 API，并补齐 skill_category 透传，不新增人员技能绑定、排班技能引用、技能层级、审批、导出、批量、权限、新后端 route、schema/migration 或依赖。"
+  - id: IM155
+    title: "供应商基础 CRUD 前端闭环"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM154"]
+    allowed_files:
+      - "app/master-data/[entityKey]/actions.ts"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "app/master-data/vendors/new/page.tsx"
+      - "app/master-data/vendors/[vendorId]/edit/page.tsx"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "/master-data/vendors Header actions 提供新建供应商入口。"
+      - "供应商列表行提供详情、编辑、冻结；编辑走子页面，冻结走 Dialog。"
+      - "/master-data/vendors/new 提交供应商 ID、供应商名称、状态、生效开始、生效结束。"
+      - "/master-data/vendors/[vendorId]/edit 编辑供应商名称、状态和有效期，供应商 ID 不作为可编辑字段。"
+      - "提交结果回到供应商列表，并使用现有 Alert feedback。"
+      - "不新增供应商合同、结算比例、最低人力、服务职场绑定、审批、导出、批量、权限、后端 route、schema/migration 或依赖。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增供应商字段、合同、结算比例、最低人力或服务职场绑定维护"
+      - "需要修改后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成。`/master-data/vendors` Header actions 新增供应商入口，列表行提供详情、编辑、冻结；新建和编辑分别走 `/master-data/vendors/new` 与 `/master-data/vendors/[vendorId]/edit` 子页面，冻结通过 Dialog 确认；提交复用现有供应商 reference 维护 API 和 Alert feedback，不新增合同、结算比例、最低人力、服务职场绑定、审批、导出、批量、权限、后端 route、schema/migration 或依赖。"
+  - id: IM154
+    title: "职场基础 CRUD 前端闭环"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM153"]
+    allowed_files:
+      - "app/master-data/[entityKey]/actions.ts"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "app/master-data/sites/new/page.tsx"
+      - "app/master-data/sites/[workplaceId]/edit/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "/master-data/sites Header actions 提供新建职场入口。"
+      - "职场列表行提供详情、编辑、冻结；编辑走子页面，冻结走 Dialog。"
+      - "/master-data/sites/new 提交职场 ID、职场名称、状态、生效开始、生效结束。"
+      - "/master-data/sites/[workplaceId]/edit 编辑职场名称、状态和有效期，职场 ID 不作为可编辑字段。"
+      - "提交结果回到职场列表，并使用现有 Alert feedback。"
+      - "不新增职场服务团队绑定、合同、结算、最低人力、审批、导出、批量、权限、后端 route、schema/migration 或依赖。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增职场字段、服务团队绑定维护或供应商合同/结算/最低人力字段"
+      - "需要修改后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成。`/master-data/sites` Header actions 新增职场入口，列表行提供详情、编辑、冻结；新建和编辑分别走 `/master-data/sites/new` 与 `/master-data/sites/[workplaceId]/edit` 子页面，冻结通过 Dialog 确认；提交复用现有职场 reference 维护 API 和 Alert feedback，不新增服务团队绑定、合同、结算、最低人力、审批、导出、批量、权限、后端 route、schema/migration 或依赖。"
+  - id: IM153
+    title: "统一字体与控件密度基线"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM152"]
+    allowed_files:
+      - "app/globals.css"
+      - "components/ui/button.tsx"
+      - "components/ui/table.tsx"
+      - "components/master-data-agent-import-dialog.tsx"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "全局 CSS 不再用 `button,input,select { font: inherit }` 覆盖组件字体。"
+      - "Button `sm` 尺寸不再使用 `text-[0.8rem]` 或 12.8px 非标准字号。"
+      - "Button `xs` 文本按钮和人员列表行内文字操作不再使用 12px 字号。"
+      - "TableHead 不再固定为 `text-xs`，表头与正文保持 B 端表格一致密度。"
+      - "客服人员导入 Dialog 不再大量使用 `text-xs` 作为正文/说明/映射控件字号。"
+      - "focused tests、Browser runtime style smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增 UI 依赖或应用 shadcn preset overwrite"
+      - "需要全站重做布局或新增业务页面"
+      - "需要修改后端、schema/migration、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成。移除全局表单字体覆盖；Button sm/xs、人员列表行内文字操作、TableHead 和客服人员导入 Dialog 字号密度已收敛到 14px 基线；纯图标按钮保留图标密度；未新增业务功能或后端/依赖/权限等能力。"
+  - id: IM152
+    title: "主数据术语清理"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM151"]
+    allowed_files:
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "主数据维护可见源码不再显示 `运营主体` 或 `职场运营主体`。"
+      - "职场详情相关指标、标题和空态改为 `服务团队`。"
+      - "不新增职场服务团队独立导航、独立页面、CRUD 或导入入口。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增职场服务团队独立页面或维护动作"
+      - "需要删除 project_id 或后端兼容字段"
+      - "需要新增供应商合同、结算比例、最低人力要求、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成。职场详情指标、区块标题和空态改为 `服务团队/职场服务团队`；主数据数据读取错误文案改为 `职场服务团队来源读取失败`；未新增独立页面、CRUD、导入入口，也未修改后端 schema 或 project_id 兼容字段。"
+  - id: IM151
+    title: "data-quality 结果页抽象降级"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM150"]
+    allowed_files:
+      - "app/data-quality/versions/page.tsx"
+      - "app/data-quality/comparison-runs/[runId]/page.tsx"
+      - "app/data-quality/review-cases/page.tsx"
+      - "app/data-quality/review-cases/[caseId]/page.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "业务版本列表、对比运行详情、复核案例列表、复核案例详情不再把 `导入批次` 作为 Breadcrumb 父级。"
+      - "批次处理、上传、模板维护页面不在本轮拆路由。"
+      - "不新增 Sidebar 导航项，不删除兼容路由，不修改后端 route/schema/migration。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要删除或重构 `/data-quality/**` 路由"
+      - "需要新增业务导航项"
+      - "需要修改批次处理、上传、模板维护流程"
+      - "需要修改后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成。业务版本列表、对比运行详情、复核案例列表和复核案例详情的 Breadcrumb 不再把 `导入批次` 作为父级；复核案例详情仍可返回复核案例列表；批次处理、上传、模板维护页面保留兼容路由和批次上下文。"
+  - id: IM150
+    title: "导入入口业务归位"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM149"]
+    allowed_files:
+      - "app/data-quality/page.tsx"
+      - "components/import-center-batch-list-panel.tsx"
+      - "app/demand-plans/production/page.tsx"
+      - "components/demand-forecast-production-workbench.tsx"
+      - "app/schedule-plans/production/page.tsx"
+      - "components/personnel-schedule-production-workbench.tsx"
+      - "app/actual-logs/production/page.tsx"
+      - "components/actual-log-production-workbench.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "`/data-quality` 批次列表不再暴露通用 `上传 CSV` 主按钮。"
+      - "预测、排班、登录/状态日志的导入入口由 Header actions 承载。"
+      - "预测、排班、登录/状态日志内容卡片不再放导入按钮。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增排班、预测或登录/状态日志导入弹窗"
+      - "需要新增或修改上传后端 route/action"
+      - "需要删除 `/data-quality/uploads/new` 兼容路由"
+      - "需要修改 schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成。`/data-quality` 批次列表不再显示通用 `上传 CSV` 主按钮；预测、排班、登录/状态日志的导入动作移入各自页面 Header actions，内容区版本状态卡片不再承载导入按钮；本轮保留 `/data-quality/uploads/new` 作为内部兼容路由，未新增导入弹窗、后端 route/action、schema/migration、依赖或权限/审批/导出/批量等能力。"
+  - id: IM149
+    title: "主数据非客服人员动作收口"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM148"]
+    allowed_files:
+      - "app/master-data/[entityKey]/page.tsx"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "客服人员页面级动作继续只通过 Header actions 承载。"
+      - "组织、职场、供应商、技能等非客服人员主数据列表内容区不再显示 `导入主数据`。"
+      - "非客服人员主数据页不新增未确认 CRUD、导入弹窗或跳转独立上传工作区的快捷入口。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增非客服人员 CRUD 表单或维护动作"
+      - "需要新增组织、职场、供应商、技能导入弹窗"
+      - "需要迁移导入入口到排班、预测或登录/状态日志"
+      - "需要修改路由结构、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM148
+    title: "旧全局搜索 API 清理"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM147"]
+    allowed_files:
+      - "app/**"
+      - "components/app-shell.tsx"
+      - "components/site-header.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "AppShell 和 SiteHeader 不再声明、默认或透传 searchPlaceholder。"
+      - "app 与 components 源码不再向 AppShell/SiteHeader 传入 searchPlaceholder。"
+      - "真正有意义的列表内筛选框保留在各业务内容区，不迁回 Header。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增 Header 全局搜索 UI"
+      - "需要删除业务列表内筛选框"
+      - "需要修改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM147
+    title: "Header/Breadcrumb 与内容区标题统一"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM146"]
+    allowed_files:
+      - "app/demand-plans/**"
+      - "app/schedule-plans/**"
+      - "app/actual-logs/**"
+      - "app/data-quality/**"
+      - "components/demand-forecast-production-workbench.tsx"
+      - "components/personnel-schedule-production-workbench.tsx"
+      - "components/actual-log-production-workbench.tsx"
+      - "components/import-center-review-cases-workspace.tsx"
+      - "components/import-center-review-case-detail-workspace.tsx"
+      - "components/import-center-comparison-run-detail-workspace.tsx"
+      - "components/import-center-version-workbench.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "目标业务页统一传入 breadcrumbItems，内容区同名 H1 删除或降级。"
+      - "测试覆盖目标页面/工作区不再保留内容区页面身份 H1。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要删除 searchPlaceholder API 或改 AppShell/SiteHeader 接口"
+      - "需要修改路由结构、导入弹窗、后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+  - id: IM146
+    title: "生产文案与返回链路清理"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM145"]
+    allowed_files:
+      - "app/demand-plans/production/page.tsx"
+      - "app/schedule-plans/production/page.tsx"
+      - "app/actual-logs/production/page.tsx"
+      - "components/demand-forecast-production-workbench.tsx"
+      - "components/personnel-schedule-production-workbench.tsx"
+      - "components/actual-log-production-workbench.tsx"
+      - "components/demand-forecast-production-model.ts"
+      - "components/personnel-schedule-production-model.ts"
+      - "components/actual-log-production-model.ts"
+      - "scripts/tests/demand-forecast-production-model.test.mjs"
+      - "scripts/tests/personnel-schedule-production-model.test.mjs"
+      - "scripts/tests/actual-log-production-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "backend/**"
+    acceptance:
+      - "预测、排班、登录/状态日志的生产子路由保持可访问，但可见标题、列表标题、返回按钮和模型提示改为业务对象视角。"
+      - "测试覆盖禁止生产页继续暴露旧的生产模块命名和生产列表提示。"
+      - "`bash scripts/check-state.sh --strict`、focused tests、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: medium
+    stop_conditions:
+      - "需要修改路由结构或删除兼容路由"
+      - "需要后端 route、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
   - id: Q127
     title: "数据库基础 QA 收口"
     priority: P0
@@ -9455,3 +10353,360 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已统一 /master-data/agents 筛选下拉和行内操作尺寸，移除内部待拆分文案，并完成浏览器实际样式检查。"
+  - id: IM141
+    title: "职场详情页运营主体"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM135"]
+    allowed_files:
+      - "app/master-data/sites/[workplaceId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/sites 的职场行提供详情入口，进入 /master-data/sites/[workplaceId]。"
+      - "职场详情页展示职场基础信息、运营主体总数、自有团队数和供应商团队数。"
+      - "运营主体只读展示在该职场详情内，来源限定为现有人员档案和人员归属记录。"
+      - "不恢复独立职场运营主体或绑定关系导航/实体页。"
+      - "不新增后端、数据库、权限、审批、导出、批量操作、自动排班、生产公式、结算、供应商合同、最低人力或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到批量维护、审批、导出、权限、自动排班、生产公式、结算、供应商合同、最低人力或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已新增 /master-data/sites/[workplaceId] 子详情页，并将职场运营主体只读展示收敛到具体职场详情内。"
+  - id: IM142
+    title: "供应商详情页服务职场"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM141"]
+    allowed_files:
+      - "app/master-data/vendors/[vendorId]/page.tsx"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/PROJECT_STATE.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/vendors 的供应商行提供详情入口，进入 /master-data/vendors/[vendorId]。"
+      - "供应商详情页展示供应商基础信息、服务职场数和生效职场数。"
+      - "服务职场只读展示在供应商详情内，并可跳转到对应职场详情。"
+      - "不新增供应商合同、结算比例、最低人力、审批、导出、批量、权限、自动排班、生产公式或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到批量维护、审批、导出、权限、自动排班、生产公式、结算、供应商合同、最低人力或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已新增 /master-data/vendors/[vendorId] 子详情页，并将服务职场只读展示收敛到具体供应商详情内。"
+  - id: IM143
+    title: "客服人员批量导入大弹窗"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM142"]
+    allowed_files:
+      - "app/data-quality/actions.ts"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/agents 右上角提供批量导入入口，点击后在当前页面打开大弹窗，而不是跳转独立上传工作区。"
+      - "弹窗第一步提供人员导入模板下载和 CSV 上传字段。"
+      - "弹窗第二步支持选择启用的主数据映射模板，也支持模板为空时手动填写字段映射 JSON。"
+      - "弹窗第三步展示本次导入摘要、成功/失败行数，并提供查看批次详情和失败行修正入口。"
+      - "完整批次详情、失败行修正、readiness、应用到业务数据和版本链路仍在批次详情页处理。"
+      - "不新增后端、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将 /master-data/agents 的批量导入入口改为列表内大弹窗；弹窗包含上传文件、字段映射、导入结果三步，上传结果回流当前弹窗，并把完整批次详情、失败行修正和应用处理留在批次详情页。"
+  - id: IM144
+    title: "全局 UI 组件规范与客服人员导入弹窗纠偏"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM143"]
+    allowed_files:
+      - "app/dashboard/page.tsx"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "app/master-data/agents/new/page.tsx"
+      - "app/master-data/agents/[employeeId]/edit/page.tsx"
+      - "app/master-data/agents/[employeeId]/skills/edit/page.tsx"
+      - "app/master-data/sites/[workplaceId]/page.tsx"
+      - "app/master-data/vendors/[vendorId]/page.tsx"
+      - "components/app-shell.tsx"
+      - "components/app-sidebar.tsx"
+      - "components/site-header.tsx"
+      - "components/master-data-agent-import-dialog.tsx"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "components/ui/alert.tsx"
+      - "components/ui/avatar.tsx"
+      - "components/ui/breadcrumb.tsx"
+      - "components/ui/collapsible.tsx"
+      - "components/ui/dialog.tsx"
+      - "public/shadcn-avatar.jpg"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/**"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "AppSidebar 使用 shadcn Collapsible、SidebarMenu 和 SidebarMenuSub primitives，不再手写 aside 或用缩进伪造二级菜单；保留现有菜单结构、默认全部展开和详情页父级高亮。"
+      - "SiteHeader 统一承载 Breadcrumb，主数据列表、详情、新建、编辑页通过 AppShell breadcrumbItems 展示路径。"
+      - "SiteHeader 使用单行导航结构，Breadcrumb 包含当前页，不再额外渲染第二行视觉 H1；H1 仅在需要时作为可访问性标题保留。"
+      - "主数据列表、详情、新建、编辑、技能维护页的内容区不得重复页面级返回按钮、同名 H1 或页面级说明，页面身份由 SiteHeader/Breadcrumb 唯一承载。"
+      - "SiteHeader 右侧提供页面级 actions 插槽；客服人员列表的新建/批量导入放入 Header 右侧，列表操作栏只保留已选/批量动作，查询/重置位于筛选卡片右下。"
+      - "SiteHeader 不保留无业务意义的全局搜索、固定月份和通知占位；Sidebar footer 使用 shadcn Avatar 显示参考头像，并提供本地用户菜单、明暗主题切换和登出入口，其中登出不接真实 auth。"
+      - "客服人员导入弹窗使用 shadcn Dialog 严格分步；上传、映射、结果 section 切换时保持 DOM 挂载，避免文件 input 丢失。"
+      - "页面级反馈、表单提交结果和导入结果摘要使用 shadcn Alert。"
+      - "不扩展排班、预测、登录/状态日志导入弹窗，不新增后端、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要修改 package/lockfile 或新增依赖"
+      - "范围扩展到排班、预测、登录/状态日志导入弹窗"
+      - "范围扩展到后端、schema/migration、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已把全局 AppShell/AppSidebar/SiteHeader 收敛到 shadcn Sidebar/Collapsible/Breadcrumb 结构，SiteHeader 改为单行导航，Breadcrumb 包含当前页且不再额外渲染第二行视觉 H1；SiteHeader 去掉无意义搜索/日期/通知占位并提供页面级 actions 插槽，Sidebar footer 使用 shadcn Avatar 参考头像并增加本地用户菜单、明暗主题切换和登出入口；主数据内容区不再重复全局标题与返回路径，客服人员列表按筛选卡片、列表操作栏、表格排序，新建/批量导入进入 Header 右侧，列表操作栏只保留已选/批量动作，客服人员导入弹窗改为 shadcn Dialog step-by-step，并将相关反馈切换为 Alert。"
+  - id: IM158
+    title: "客服人员列表真实筛选"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM157"]
+    allowed_files:
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "app/master-data/[entityKey]/page.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/agents 的技能组、组织、职场筛选下拉来自当前真实人员列表数据，而不是只有固定占位项。"
+      - "URL 查询参数 employee_name、employee_id、status、employee_type、skill_group、organization、workplace 能真实过滤人员行。"
+      - "重置入口回到 /master-data/agents。"
+      - "页面结构保持现有 B 端列表模式：Header 放页面级动作，筛选卡片在列表操作栏上方，列表页不塞新增/编辑表单。"
+      - "不新增导航、页面、后端 route、schema/migration、依赖、权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增后端 route、schema/migration 或依赖"
+      - "范围扩展到批量操作提交、权限、审批、导出、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已让 /master-data/agents 的技能组、组织、职场筛选下拉来自当前真实人员列表数据，并让 skill_group、organization、workplace 与既有 employee_name、employee_id、status、employee_type 一起参与 URL 查询过滤；页面结构仍保持 Header 页面级动作、筛选卡片、列表操作栏、表格，不新增导航、页面、后端、schema/migration、依赖、审批、导出、批量操作或权限。"
+  - id: IM159
+    title: "本地旧主数据 schema 维护写入兼容"
+    priority: P0
+    status: done
+    required_workflow: backend-vertical
+    dependencies: ["IM158"]
+    allowed_files:
+      - "backend/app/master_data_persistence.py"
+      - "backend/tests/test_master_data_maintenance_api.py"
+      - "backend/tests/test_master_data_maintenance_service.py"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/migrations/**"
+      - "alembic/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "旧本地 SQLite 缺少 master_data_employees.employee_type、organization_id、workplace_id 时，人员 create/edit/freeze 不再 500。"
+      - "旧本地 SQLite 缺少 master_data_skills.skill_category 时，技能组 create/edit/freeze 不再 500。"
+      - "旧本地 SQLite 缺少 master_data_organizations 表时，组织维护路径可按已确认本地表结构创建表后写入。"
+      - "本轮不新增迁移文件、不新增业务字段、不改生产状态/公式/结算/合同/最低人力。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增依赖、迁移文件或生产数据库配置"
+      - "范围扩展到权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已在 SQLite 本地 repository 初始化/建表时补齐既有确认字段：master_data_employees.employee_type、organization_id、workplace_id，master_data_skills.skill_category，并通过 Base.metadata.create_all 让缺失的 master_data_organizations 等本地表可创建；旧库人员、技能组和组织维护写入不再因 ORM 读取缺列直接 500。本轮未新增迁移文件、生产数据库配置、业务字段、权限、审批、导出、批量操作、自动排班、生产公式、结算、合同、最低人力或收费因子。"
+  - id: IM160
+    title: "职场详情只读服务团队关系"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM159"]
+    allowed_files:
+      - "app/master-data/sites/[workplaceId]/page.tsx"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/sites/[workplaceId] 的服务团队表按该职场自有人员组织聚合自有团队。"
+      - "/master-data/sites/[workplaceId] 的服务团队表按该职场绑定供应商聚合供应商团队，并展示供应商主数据名称。"
+      - "表格展示团队类型、服务团队、供应商、人员/绑定数、状态、有效期和来源批次。"
+      - "本轮不新增导航、表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量操作或自动排班。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增导航、维护表单、后端 route、schema/migration 或依赖"
+      - "范围扩展到合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将 /master-data/sites/[workplaceId] 的服务团队表从人员/绑定明细改为团队关系聚合：自有团队按该职场 internal 人员的组织聚合，供应商团队按该职场 binding 的 supplier_id 聚合并展示供应商主数据名称；表格展示团队类型、服务团队、供应商、人员/绑定数、状态、有效期和来源批次。本轮未新增导航、表单、后端 route、schema/migration、合同、结算、最低人力、权限、审批、导出、批量操作或自动排班。"
+  - id: IM145
+    title: "导航信息架构收口"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM144"]
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/dev/branch-log.md"
+      - "docs/PROJECT_STATE.md"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "Sidebar 不再暴露 `预测生产` 和 `排班生产` 作为一级导航项。"
+      - "`需求计划` 导航项覆盖 `/demand-plans` 与 `/demand-plans/production/**` 的父级高亮。"
+      - "`排班计划` 导航项覆盖 `/schedule-plans` 与 `/schedule-plans/production/**` 的父级高亮。"
+      - "Sidebar 结构测试禁止 `预测生产`、`排班生产`、`导入中心`、`质量中心`、`数据质量` 作为导航标题出现。"
+      - "本轮不改生产页标题、返回按钮、模型文案、导入弹窗、业务路由或后端能力。"
+    stop_conditions:
+      - "需要修改生产页标题、返回按钮或模型文案"
+      - "需要改动 data-quality 路由归属或导入弹窗"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已从 Sidebar 一级导航移除 `预测生产`、`排班生产`，并让 `需求计划` 和 `排班计划` 分别通过 prefix active 覆盖 `/demand-plans/production/**` 与 `/schedule-plans/production/**` 子路由；结构测试已禁止这些生产实现路径重新作为 Sidebar 标题出现。"

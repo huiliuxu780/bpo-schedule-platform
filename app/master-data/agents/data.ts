@@ -1,12 +1,16 @@
 import {
+  type ImportFieldMappingTemplate,
   type ImportBatchListRow,
   buildImportApiUrl,
+  buildImportFieldMappingTemplatesUrl,
 } from "@/components/import-center-model"
 import type {
   MasterDataEmployeeListRow,
   MasterDataMaintenanceEntityKey,
   MasterDataOrganizationListRow,
   MasterDataReferenceListRow,
+  MasterDataWorkplaceBindingRow,
+  MasterDataWorkplaceServiceTeamRow,
 } from "@/components/master-data-maintenance-model"
 
 export type ApiResult<T> = {
@@ -82,6 +86,12 @@ export async function fetchMasterDataReferences(
   }
 }
 
+export async function fetchMasterDataSkills(): Promise<
+  ApiResult<MasterDataReferenceListRow[]>
+> {
+  return fetchMasterDataReferences("skills")
+}
+
 export async function fetchMasterDataOrganizations(): Promise<
   ApiResult<MasterDataOrganizationListRow[]>
 > {
@@ -113,6 +123,79 @@ export async function fetchMasterDataOrganizations(): Promise<
   }
 }
 
+export async function fetchMasterDataWorkplaceBindings(): Promise<
+  ApiResult<MasterDataWorkplaceBindingRow[]>
+> {
+  try {
+    const response = await fetch(buildImportApiUrl("/api/v1/master-data/bindings"), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `职场服务团队来源读取失败：${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as {
+      items?: MasterDataWorkplaceBindingRow[]
+    }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
+export async function fetchMasterDataWorkplaceServiceTeams(
+  workplaceId?: string
+): Promise<ApiResult<MasterDataWorkplaceServiceTeamRow[]>> {
+  const searchParams = new URLSearchParams()
+  if (workplaceId) {
+    searchParams.set("workplace_id", workplaceId)
+  }
+  const query = searchParams.toString()
+
+  try {
+    const response = await fetch(
+      buildImportApiUrl(
+        `/api/v1/master-data/workplace-service-teams${query ? `?${query}` : ""}`
+      ),
+      {
+        cache: "no-store",
+      }
+    )
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `职场服务团队读取失败：${response.status}`,
+      }
+    }
+
+    const payload = (await response.json()) as {
+      items?: MasterDataWorkplaceServiceTeamRow[]
+    }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
 export async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
   try {
     const response = await fetch(buildImportApiUrl("/api/v1/import-batches"), {
@@ -127,6 +210,37 @@ export async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow
     }
 
     const payload = (await response.json()) as { items?: ImportBatchListRow[] }
+
+    return {
+      data: Array.isArray(payload.items) ? payload.items : [],
+      error: null,
+    }
+  } catch (error) {
+    return {
+      data: [],
+      error: formatApiError(error),
+    }
+  }
+}
+
+export async function fetchImportFieldMappingTemplates(): Promise<
+  ApiResult<ImportFieldMappingTemplate[]>
+> {
+  try {
+    const response = await fetch(buildImportFieldMappingTemplatesUrl(), {
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      return {
+        data: [],
+        error: `字段映射模板读取失败（状态码 ${response.status}）`,
+      }
+    }
+
+    const payload = (await response.json()) as {
+      items?: ImportFieldMappingTemplate[]
+    }
 
     return {
       data: Array.isArray(payload.items) ? payload.items : [],

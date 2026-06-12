@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  summarizeActualLogImportDialog,
   summarizeActualLogProcessingDetail,
   summarizeActualLogProductionWorkbench,
 } from "../../components/actual-log-production-model.ts";
@@ -115,6 +116,78 @@ test("actual log production workbench blocks missing actual log version without 
   assert.equal(summary.rows[0].timezoneCheckLabel, "暂无逐行时区明细");
   assert.equal(summary.rows[0].crossDayCheckLabel, "暂无逐行起止时间");
   assert.equal(summary.rows[0].blockerSummary, "缺少实际日志业务版本");
+});
+
+test("actual log import dialog summary keeps login and status upload flows in actual-log page context", () => {
+  const loginDialog = summarizeActualLogImportDialog({
+    logType: "login",
+    batches: [
+      {
+        ...baseLoginBatch,
+        batch_id: "BATCH-LOGIN-IMPORT-001",
+        total_rows: 8,
+        success_rows: 7,
+        failed_rows: 1,
+        application_status: "not_applied",
+        import_version_id: "BATCH-LOGIN-IMPORT-001::v1",
+        applied_record_count: 0,
+      },
+    ],
+    templates: [
+      {
+        template_id: "TPL-LOGIN-001",
+        template_name: "登录日志模板",
+        file_type: "login_log",
+        field_mapping: { event_time: "event_time" },
+        required_fields: ["event_time"],
+        is_active: true,
+        updated_at: "2026-06-12T09:00:00+08:00",
+      },
+      {
+        template_id: "TPL-STATUS-001",
+        template_name: "状态日志模板",
+        file_type: "status_log",
+        field_mapping: { start_at: "start_at" },
+        required_fields: ["start_at"],
+        is_active: true,
+        updated_at: "2026-06-12T09:00:00+08:00",
+      },
+    ],
+    uploadStatus: "success",
+    uploadBatchId: "BATCH-LOGIN-IMPORT-001",
+  });
+  const statusDialog = summarizeActualLogImportDialog({
+    logType: "status",
+    batches: [],
+    templates: [
+      {
+        template_id: "TPL-STATUS-001",
+        template_name: "状态日志模板",
+        file_type: "status_log",
+        field_mapping: { start_at: "start_at" },
+        required_fields: ["start_at"],
+        is_active: true,
+        updated_at: "2026-06-12T09:00:00+08:00",
+      },
+    ],
+  });
+
+  assert.equal(loginDialog.openHref, "/actual-logs/production?import_dialog=1&log_type=login");
+  assert.equal(statusDialog.openHref, "/actual-logs/production?import_dialog=1&log_type=status");
+  assert.equal(loginDialog.closeHref, "/actual-logs/production");
+  assert.equal(loginDialog.resultRedirectTo, "/actual-logs/production?import_dialog=1&log_type=login");
+  assert.equal(statusDialog.resultRedirectTo, "/actual-logs/production?import_dialog=1&log_type=status");
+  assert.equal(loginDialog.fileType, "login_log");
+  assert.equal(statusDialog.fileType, "status_log");
+  assert.equal(loginDialog.templateDownloadName, "login-log-template.csv");
+  assert.equal(statusDialog.templateDownloadName, "status-log-template.csv");
+  assert.equal(loginDialog.templateDownloadHref.startsWith("data:text/csv;charset=utf-8,"), true);
+  assert.deepEqual(loginDialog.steps.map((step) => step.key), ["upload", "mapping", "result"]);
+  assert.deepEqual(loginDialog.activeTemplates.map((template) => template.template_id), ["TPL-LOGIN-001"]);
+  assert.equal(loginDialog.result?.tone, "success");
+  assert.equal(loginDialog.result?.title, "导入已提交");
+  assert.equal(loginDialog.result?.rowSummary, "成功 7 行 / 失败 1 行");
+  assert.equal(loginDialog.result?.batchHref, "/data-quality/import-batches/BATCH-LOGIN-IMPORT-001");
 });
 
 test("actual log processing detail explains cross-day status interval rows", () => {
@@ -370,4 +443,13 @@ test("actual log processing detail keeps an explicit empty state without row det
   assert.equal(detail.detailEmptyLabel, "批次明细未读取，不能展示逐行登录事件或状态区间");
   assert.equal(detail.timezoneCheckLabel, "缺少逐行明细，未形成时区校验结果");
   assert.equal(detail.crossDaySplitLabel, "缺少状态区间明细，未形成跨天切分");
+});
+
+test("actual log processing detail points unknown batches back to the log entry", () => {
+  const detail = summarizeActualLogProcessingDetail([baseStatusBatch], "BATCH-MISSING");
+
+  assert.equal(detail.tone, "blocked");
+  assert.equal(detail.title, "日志处理批次未定位");
+  assert.equal(detail.detail, "当前来源批次不在登录/状态日志列表中，无法展示处理解释。");
+  assert.equal(detail.blockerSummary, "请返回登录/状态日志选择来源批次");
 });

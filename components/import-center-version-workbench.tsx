@@ -73,8 +73,7 @@ export function ImportCenterVersionWorkbench({
             </Link>
           </Button>
           <div>
-            <h1 className="text-xl font-semibold tracking-normal">业务版本列表</h1>
-            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+            <p className="max-w-3xl text-sm text-muted-foreground">
               查看当前业务版本、来源批次、阻塞状态、下游影响和比对入口。
             </p>
           </div>

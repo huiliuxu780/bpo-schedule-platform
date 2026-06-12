@@ -2,9 +2,14 @@ import { notFound } from "next/navigation"
 
 import { AppShell } from "@/components/app-shell"
 import {
+  MasterDataAgentPageActions,
   MasterDataAgentManagementPage,
+  MasterDataOrganizationPageActions,
   MasterDataOrganizationManagementPage,
   MasterDataReferenceManagementPage,
+  MasterDataSkillPageActions,
+  MasterDataVendorPageActions,
+  MasterDataWorkplacePageActions,
 } from "@/components/master-data-maintenance-workbench"
 import {
   type MasterDataAgentManagementFilters,
@@ -18,11 +23,18 @@ import {
 } from "@/components/master-data-maintenance-model"
 import {
   fetchImportBatches,
+  fetchImportFieldMappingTemplates,
   fetchMasterDataEmployees,
   fetchMasterDataOrganizations,
   fetchMasterDataReferences,
 } from "@/app/master-data/agents/data"
-import { submitMasterDataAgentMaintenance } from "./actions"
+import {
+  submitMasterDataAgentMaintenance,
+  submitMasterDataOrganizationMaintenance,
+  submitMasterDataSkillMaintenance,
+  submitMasterDataVendorMaintenance,
+  submitMasterDataWorkplaceMaintenance,
+} from "./actions"
 
 export const dynamic = "force-dynamic"
 
@@ -45,9 +57,14 @@ export default async function MasterDataEntityDetailPage({
   }
 
   const batchResult = await fetchImportBatches()
+  const resolvedSearchParams = searchParams ? await searchParams : {}
   const employeeResult =
     entity.key === "agents"
       ? await fetchMasterDataEmployees()
+      : { data: [], error: null }
+  const templateResult =
+    entity.key === "agents"
+      ? await fetchImportFieldMappingTemplates()
       : { data: [], error: null }
   const organizationResult =
     entity.key === "organizations"
@@ -57,7 +74,6 @@ export default async function MasterDataEntityDetailPage({
     isReferenceEntity(entity.key)
       ? await fetchMasterDataReferences(entity.key)
       : { data: [], error: null }
-  const resolvedSearchParams = searchParams ? await searchParams : {}
   const summary = summarizeMasterDataEntitySourceContext(
     entity.key as MasterDataMaintenanceEntityKey,
     batchResult.data ?? []
@@ -67,7 +83,14 @@ export default async function MasterDataEntityDetailPage({
     entity.key === "agents"
       ? summarizeMasterDataAgentManagement(
           employeeResult.data ?? [],
-          resolveAgentManagementFilters(resolvedSearchParams)
+          resolveAgentManagementFilters(resolvedSearchParams),
+          {
+            batches: batchResult.data ?? [],
+            templates: templateResult.data ?? [],
+            uploadStatus: getSingleSearchParam(resolvedSearchParams.upload),
+            uploadReason: getSingleSearchParam(resolvedSearchParams.reason),
+            uploadBatchId: getSingleSearchParam(resolvedSearchParams.batch),
+          }
         )
       : null
   const referenceManagementSummary = isReferenceEntity(entity.key)
@@ -80,12 +103,40 @@ export default async function MasterDataEntityDetailPage({
   const selectedFreezeEmployeeId = getSingleSearchParam(
     resolvedSearchParams.freeze_employee_id
   )
+  const selectedFreezeWorkplaceId = getSingleSearchParam(
+    resolvedSearchParams.freeze_workplace_id
+  )
+  const selectedFreezeVendorId = getSingleSearchParam(
+    resolvedSearchParams.freeze_vendor_id
+  )
+  const selectedFreezeSkillId = getSingleSearchParam(
+    resolvedSearchParams.freeze_skill_id
+  )
+  const selectedFreezeOrganizationId = getSingleSearchParam(
+    resolvedSearchParams.freeze_organization_id
+  )
 
   return (
     <AppShell
       title={entity.key === "agents" ? "客服人员" : entity.label}
-      searchPlaceholder={
-        entity.key === "agents" ? "搜索客服人员" : `搜索${entity.label}`
+      breadcrumbItems={[
+        { label: "主数据", href: "/master-data/agents" },
+        { label: entity.key === "agents" ? "客服人员" : entity.label },
+      ]}
+      actions={
+        entity.key === "agents" && agentManagementSummary ? (
+          <MasterDataAgentPageActions summary={agentManagementSummary} />
+        ) : entity.key === "sites" && referenceManagementSummary ? (
+          <MasterDataWorkplacePageActions summary={referenceManagementSummary} />
+        ) : entity.key === "vendors" && referenceManagementSummary ? (
+          <MasterDataVendorPageActions summary={referenceManagementSummary} />
+        ) : entity.key === "skills" && referenceManagementSummary ? (
+          <MasterDataSkillPageActions summary={referenceManagementSummary} />
+        ) : entity.key === "organizations" && organizationManagementSummary ? (
+          <MasterDataOrganizationPageActions
+            summary={organizationManagementSummary}
+          />
+        ) : null
       }
     >
       {entity.key === "agents" && agentManagementSummary ? (
@@ -93,8 +144,13 @@ export default async function MasterDataEntityDetailPage({
           summary={summary}
           managementSummary={agentManagementSummary}
           error={batchResult.error}
+          templateError={templateResult.error}
           feedback={feedback}
           employeeListError={employeeResult.error}
+          importDialogOpen={
+            getSingleSearchParam(resolvedSearchParams.import_dialog) === "1" ||
+            Boolean(getSingleSearchParam(resolvedSearchParams.upload))
+          }
           selectedFreezeEmployeeId={selectedFreezeEmployeeId}
           agentSubmitAction={submitMasterDataAgentMaintenance}
         />
@@ -104,6 +160,8 @@ export default async function MasterDataEntityDetailPage({
           listSummary={organizationManagementSummary}
           error={organizationResult.error ?? batchResult.error}
           feedback={feedback}
+          selectedFreezeOrganizationId={selectedFreezeOrganizationId}
+          organizationSubmitAction={submitMasterDataOrganizationMaintenance}
         />
       ) : isReferenceEntity(entity.key) && referenceManagementSummary ? (
         <MasterDataReferenceManagementPage
@@ -111,6 +169,12 @@ export default async function MasterDataEntityDetailPage({
           listSummary={referenceManagementSummary}
           error={referenceResult.error ?? batchResult.error}
           feedback={feedback}
+          selectedFreezeWorkplaceId={selectedFreezeWorkplaceId}
+          selectedFreezeVendorId={selectedFreezeVendorId}
+          selectedFreezeSkillId={selectedFreezeSkillId}
+          workplaceSubmitAction={submitMasterDataWorkplaceMaintenance}
+          vendorSubmitAction={submitMasterDataVendorMaintenance}
+          skillSubmitAction={submitMasterDataSkillMaintenance}
         />
       ) : null}
     </AppShell>

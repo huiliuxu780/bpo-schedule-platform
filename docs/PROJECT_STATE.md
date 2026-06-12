@@ -704,3 +704,205 @@ The task was a backend-vertical/frontend form slice. It reused existing employee
 After PM review, `/master-data/agents` still had rough UI details: filter dropdowns were not aligned tightly with the input fields, row-level edit/freeze actions mixed link-button overrides with a small more-action icon, and the row menu exposed an internal deferred-action label. `US755/IM135` is complete. The agent filter dropdown triggers now use the same 32px control height and 14px text rhythm as the inputs, dropdown content opens at the trigger width, row-level edit/freeze/more actions use consistent compact sizing, and the internal "待拆分" menu text was removed.
 
 The task was a frontend-scaffold UI correction only. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returned to empty after IM135.
+
+## 2026-06-05 IM141 Workplace Detail Operating Subjects
+
+After PM clarified that workplace operating subjects belong under a specific workplace rather than standalone navigation, `IM141` adds `/master-data/sites/[workplaceId]` as the workplace child-detail page. `/master-data/sites` now links workplace rows into that child page, and the detail renders workplace basics plus operating subjects derived from existing employee and binding data.
+
+The task remained frontend-scaffold/read-only. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Current queue remains empty after IM141.
+
+## 2026-06-05 IM142 Vendor Detail Service Workplaces
+
+After the workplace detail slice, `IM142` adds `/master-data/vendors/[vendorId]` as the supplier child-detail page. `/master-data/vendors` now links supplier rows into that child page, and the detail renders supplier basics plus service workplaces derived from existing personnel ownership records. Service workplace rows link back to the corresponding workplace detail when available.
+
+The task remained frontend-scaffold/read-only. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, external integrations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Current queue remains empty after IM142.
+
+## 2026-06-05 IM143 Agent Import Dialog
+
+After PM corrected the import interaction model, `IM143` moves the customer-service personnel import entry into `/master-data/agents` as an in-page large dialog. The dialog contains upload, field-mapping, and import-result steps; it offers a personnel CSV template download, supports active master-data mapping templates or manual mapping JSON, and returns upload feedback to the same dialog.
+
+The task remained frontend-scaffold only and reused existing CSV upload, mapping-template, and batch-detail contracts. Full row details, failed-row correction, readiness, application, and version trace remain in existing batch detail pages. It did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue remains empty after IM143.
+
+## 2026-06-05 IM144 UI Component Standards
+
+After Product Design + shadcn review, `IM144` corrects the global UI foundation without adding new business modules. `AppShell` now uses shadcn `SidebarProvider` / `SidebarInset`, `AppSidebar` uses shadcn `Collapsible`, Sidebar primitives, and `SidebarMenuSub` instead of a hand-written aside or fake indented submenu, and `SiteHeader` owns the shared Breadcrumb row through `breadcrumbItems`.
+
+Master-data list/detail/new/edit pages now pass Breadcrumbs through `AppShell`. `SiteHeader` is a compact single-row navigation bar: Breadcrumbs include the current page instead of creating a second visible H1 line, and the H1 is only retained as accessibility text when breadcrumbs are present. `SiteHeader` no longer keeps a meaningless global search, fixed month button, or notification placeholder; it provides a right-side page actions slot instead. `AppSidebar` now includes a footer user menu with shadcn Avatar and the local reference image `/shadcn-avatar.jpg`, theme switching, and a disabled logout entry because real auth remains out of scope. Master-data content areas rely on the shared `SiteHeader` for the only page identity and return path, so list/detail/form content no longer repeats a back button, same-title H1, or page-level explanatory block. On the customer-service personnel list, the layout runs filter card, list toolbar, then table; query/reset sit at the lower right of the filter card, create/import actions are page-level actions in the Header, and the list toolbar only keeps selected/bulk actions. The customer-service personnel import dialog is a shadcn Dialog with strict upload, mapping, and result steps. Inactive steps are hidden but remain mounted so the selected CSV file and mapping controls are not lost while moving through the flow. Feedback and import result summaries use shadcn Alert.
+
+The task remained frontend-scaffold only. It did not add schedule/forecast/log import dialogs, backend routes, schemas, migrations, dependencies, package or lockfile changes, permissions, approval, export, batch application, external integrations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM144.
+
+## 2026-06-05 IM145 Navigation IA Correction
+
+After PM review, the Sidebar still exposed `预测生产` and `排班生产` as standalone navigation entries. `US765/IM145` is complete: those standalone entries are removed, while demand-forecast and personnel-schedule production routes remain reachable as child routes and inherit active navigation from `需求计划` and `排班计划`.
+
+The task remained frontend-scaffold only. It did not change production page titles, return buttons, production model wording, import dialogs, business routes, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM145.
+
+## 2026-06-05 IM146 Production Wording And Return Links
+
+After IM145 removed standalone production navigation entries, `IM146` clears the remaining user-visible production module wording from the compatible production child routes. `/demand-plans/production` now presents `预测版本` and `预测版本列表`, `/schedule-plans/production` presents `排班版本` and `排班版本列表`, and `/actual-logs/production` presents `登录/状态日志` and `日志处理列表`.
+
+The existing routes stay in place for compatibility and remain owned by their business navigation entries. Detail return actions now point back with business wording: `返回需求计划`, `返回排班计划`, and `返回登录/状态日志`. Model blocker, readiness, and empty-state guidance no longer tells users to return to production lists or establish production ledgers. This task remained frontend-scaffold only and did not add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM146.
+
+## 2026-06-05 IM147 Header Breadcrumb And Content Title Cleanup
+
+`IM147` continues the global UI cleanup by making demand, schedule, actual-log, and data-quality compatible pages pass `breadcrumbItems` through `AppShell`. The shared `SiteHeader` now owns page identity for those pages, while content areas no longer repeat same-title H1 blocks.
+
+The cleanup deletes or downgrades content-level page identity headings in the demand/schedule pages, production workbenches, review-case workspaces, comparison-run workspace, and business-version workspace. Business cards, filters, tables, record descriptions, and section headings remain unchanged. The task did not delete the legacy `searchPlaceholder` API, change route structure, alter import dialogs, or add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM147.
+
+## 2026-06-05 IM148 Legacy Header Search API Cleanup
+
+`IM148` removes the hidden global Header search API left behind after the visual search control was removed. `AppShell` and `SiteHeader` no longer declare, default, or pass `searchPlaceholder`, and pages no longer pass that prop into the shared shell.
+
+This task preserves real business filters inside their list content areas. It does not add a new Header search UI, remove list filters, change route structure, alter import dialogs, or add backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM148.
+
+## 2026-06-05 IM149 Non-Agent Master Data Action Cleanup
+
+`IM149` removes unconfirmed content-area import shortcuts from non-agent master-data list pages. Organization, workplace, supplier, and skill list content no longer shows `导入主数据` or jumps to the standalone upload workspace.
+
+Confirmed customer-service personnel actions remain in the shared Header actions slot. This task does not add non-agent CRUD, new import dialogs, schedule/forecast/log import entry points, route restructuring, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM149.
+
+## 2026-06-05 IM150 Business Import Entry Ownership
+
+`IM150` moves visible import ownership away from the generic import-batch ledger. `/data-quality` remains the read-only import batch ledger and processing record surface, but its batch list no longer exposes a generic `上传 CSV` action.
+
+Demand forecast, personnel schedule, and login/status log imports are now page-level Header actions on their corresponding business version/log pages. The actions still use the existing compatible `/data-quality/uploads/new` route with preselected file type, so this slice does not create new upload dialogs, backend routes, server actions, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM150.
+
+## 2026-06-05 IM151 Result Chain Abstraction Downgrade
+
+`IM151` lowers the visible module abstraction for result-chain pages that still live under compatible `/data-quality/**` routes. Business version list, comparison-run detail, review-case list, and review-case detail no longer present `导入批次` as their Breadcrumb parent.
+
+Batch processing, internal upload, and field-mapping template pages keep their batch/template Breadcrumb context and compatible routes. This slice does not delete or restructure `/data-quality/**`, add navigation entries, modify result queries, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM151.
+
+## 2026-06-05 IM152 Master Data Terminology Cleanup
+
+`IM152` cleans visible master-data workplace terminology. Workplace detail metrics, section heading, and empty state now use `服务团队`/`职场服务团队` for self-owned and supplier team context instead of `运营主体` or `职场运营主体`.
+
+The master-data workplace binding fetch error copy now says `职场服务团队来源读取失败`. This slice does not rename internal compatibility types, remove `project_id` compatibility fields, add standalone service-team pages, add CRUD/import actions, modify backend routes, schemas, migrations, dependencies, supplier contract concepts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, or charge factors. Current queue returns to empty after IM152.
+
+## 2026-06-05 IM153 UI Typography Density Baseline
+
+`IM153` fixes the visible typography drift reported on buttons, tables, and dialogs without changing business capability. The global CSS no longer overrides `button`, `input`, and `select` with `font: inherit`, so shadcn component typography utilities remain effective. `Button` `sm` and `xs` text actions now stay on the 14px baseline, while pure icon buttons keep their compact icon density.
+
+The shared table header no longer forces 12px text, and the customer-service personnel list row actions use the same 14px/32px density as other visible text buttons. The customer-service personnel import Dialog no longer uses 12px body/step/mapping/result copy; its body text, form labels, controls, and textarea align to the same 14px baseline. This slice did not add business functions, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier-contract concepts, minimum staffing requirements, or charge factors. Current queue returns to empty after IM153.
+
+## 2026-06-08 IM154 Workplace CRUD Frontend Loop
+
+`IM154` starts the non-agent master-data CRUD cleanup with workplace basics only. `/master-data/sites` now exposes a page-level `新建` action in the shared Header and keeps the list itself focused on table management. Workplace rows provide `详情`, `编辑`, and `冻结`; editing opens `/master-data/sites/[workplaceId]/edit`, while freezing uses a confirmation Dialog on the list URL.
+
+`/master-data/sites/new` submits workplace ID, workplace name, status, and effective period. `/master-data/sites/[workplaceId]/edit` submits workplace name, status, and effective period while keeping workplace ID hidden and non-editable. The submit path reuses the existing workplace reference maintenance API and returns success/failure feedback through the existing Alert feedback pattern.
+
+This slice did not add workplace service-team binding maintenance, supplier contracts, settlement ratios, minimum staffing requirements, approval, export, batch operations, permissions, backend routes, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM154.
+
+## 2026-06-08 IM155 Vendor CRUD Frontend Loop
+
+`IM155` continues the master-data object maintenance pattern with supplier basics only. `/master-data/vendors` now exposes a page-level `新建` action in the shared Header and keeps the list itself focused on table management. Supplier rows provide `详情`, `编辑`, and `冻结`; editing opens `/master-data/vendors/[vendorId]/edit`, while freezing uses a confirmation Dialog on the list URL.
+
+`/master-data/vendors/new` submits supplier ID, supplier name, status, and effective period. `/master-data/vendors/[vendorId]/edit` submits supplier name, status, and effective period while keeping supplier ID hidden and non-editable. The submit path reuses the existing supplier reference maintenance API and returns success/failure feedback through the existing Alert feedback pattern.
+
+This slice did not add supplier contract maintenance, service-workplace binding maintenance, settlement ratios, minimum staffing requirements, approval, export, batch operations, permissions, backend routes, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM155.
+
+## 2026-06-08 IM156 Skill CRUD Frontend Loop
+
+`IM156` continues the master-data object maintenance pattern with skill-group basics only. `/master-data/skills` now exposes a page-level `新建` action in the shared Header and keeps the list itself focused on table management. Skill rows provide `编辑` and `冻结`; editing opens `/master-data/skills/[skillId]/edit`, while freezing uses a confirmation Dialog on the list URL.
+
+`/master-data/skills/new` submits skill ID, skill name, skill category, status, and effective period. `/master-data/skills/[skillId]/edit` submits skill name, category, status, and effective period while keeping skill ID hidden and non-editable. The submit path reuses the existing skills reference maintenance API and now writes `skill_category` through the existing local model.
+
+This slice did not add employee-skill binding maintenance, scheduling skill references, skill hierarchy, approval, export, batch operations, permissions, new backend routes, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM156.
+
+## 2026-06-08 IM157 Organization CRUD Frontend Loop
+
+`IM157` completes the current master-data object maintenance chain with organization basics only. `/master-data/organizations` now exposes a page-level `新建` action in the shared Header and keeps the list focused on table management. Organization rows provide `编辑` and `冻结`; editing opens `/master-data/organizations/[organizationId]/edit`, while freezing uses a confirmation Dialog on the list URL.
+
+`/master-data/organizations/new` submits organization ID, organization name, organization level, optional parent organization ID, status, and effective period. `/master-data/organizations/[organizationId]/edit` submits organization name, level, parent organization ID, status, and effective period while keeping organization ID hidden and non-editable. The local backend now has a narrow `/api/v1/master-data/organizations/{organization_id}/maintenance` endpoint and repository upsert path for single organization create/edit/freeze without schema or migration changes.
+
+This slice did not add organization charts, employee reassignment, supplier binding, contracts, settlement ratios, minimum staffing requirements, approval, export, batch operations, permissions, schemas, migrations, dependencies, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM157.
+
+## 2026-06-08 IM158 Agent List Real Filters
+
+`IM158` tightens the confirmed customer-service personnel list instead of adding another master-data surface. `/master-data/agents` now derives skill-group, organization, and workplace filter options from the current employee rows. Skill filters submit stable skill IDs and still accept skill names or skill categories for compatibility; organization and workplace filters submit stable IDs and still accept visible path/name values.
+
+The page structure stays unchanged: page-level actions remain in the shared Header, the filter card stays above the list toolbar, and the list page does not contain create or edit forms. This slice did not add navigation, pages, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier-contract concepts, minimum staffing requirements, or charge factors. Current queue returns to empty after IM158.
+
+## 2026-06-08 IM159 Legacy Local Master Data Schema Compatibility
+
+`IM159` fixes the local `.local` SQLite compatibility issue exposed while preparing real personnel-list smoke data. The master-data persistence repository now performs a SQLite-only compatibility pass before maintenance writes: old employee tables receive the confirmed `employee_type`, `organization_id`, and `workplace_id` columns, old skill tables receive the confirmed `skill_category` column, and missing local master-data tables such as organizations are created through the existing model metadata.
+
+This is not a production migration design. The slice did not add migration files, production database configuration, new business fields, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier-contract concepts, minimum staffing requirements, or charge factors. Current queue returns to empty after IM159.
+
+## 2026-06-08 IM160 Workplace Detail Service Teams
+
+`IM160` corrects the workplace detail service-team view without adding a new module. `/master-data/sites/[workplaceId]` now groups self-owned service teams by the selected workplace's internal employees and their organization path, and groups supplier service teams by supplier bindings for the selected workplace. Supplier teams resolve their visible name from supplier master data instead of showing only a supplier ID.
+
+The detail table now shows team type, service team, supplier, people or binding count, status, effective period, source, and source batch. This remains read-only: no standalone service-team route, no create/edit/freeze action, no backend route, no schema or migration, and no contract, settlement, minimum-staffing, permission, approval, export, batch, automatic-scheduling, formula, or charge-factor scope. Current queue returns to empty after IM160.
+
+## 2026-06-08 IM161 Workplace Service Team Maintenance
+
+`IM161` upgrades workplace service teams from a read-only derivation into a narrow local master-data object under the workplace detail context. The backend now has `master_data_workplace_service_teams`, a migration, repository methods, a list API, and a single-record maintenance API for create, edit, and freeze.
+
+The workplace detail page remains the owning surface. `/master-data/sites/[workplaceId]` reads maintained service-team records first and keeps the IM160 derivation only as a no-record fallback. `新增服务团队` is a Header action, editing opens `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/edit`, creation opens `/master-data/sites/[workplaceId]/service-teams/new`, and freeze stays in a Dialog. This slice did not add standalone service-team navigation, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM161.
+
+## 2026-06-11 IM162 Workplace Service Team Detail Page
+
+`IM162` adds the missing single service-team detail view without creating a new module. `/master-data/sites/[workplaceId]` now exposes a `查看` row action for maintained service-team records, and `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` shows the selected team's ID, name, type, owning workplace, organization or supplier source, status, effective period, and source batch.
+
+The detail page keeps the same workplace child-route ownership. Editing continues to `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/edit`, and freezing uses the existing Dialog pattern with cancel returning to the detail page. This slice did not add backend routes, schemas, migrations, standalone service-team navigation, associated-person lists, personnel assignment, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM162.
+
+## 2026-06-11 IM163 Service Team Associated People
+
+`IM163` keeps the service-team detail page as the owning surface and adds a read-only associated-person section to `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]`. The route now reads existing employees and workplace bindings: internal teams match employees by the same workplace and organization, while supplier teams match employees through same-workplace supplier bindings and de-duplicate employee rows.
+
+The section shows name, employee ID, employee type, organization, workplace, skills, status, and the match source. Empty states are explicit when no people match. This slice did not add backend routes, schemas, migrations, standalone service-team navigation, personnel assignment, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM163.
+
+## 2026-06-11 IM164 Vendor Service Team Links
+
+`IM164` adds the reverse read-only service-team chain on `/master-data/vendors/[vendorId]`. The supplier detail route now reads existing workplace service-team records and filters supplier teams whose `supplier_id` matches the selected supplier.
+
+The supplier detail page shows a service-team section with team name, owning workplace, status, effective period, source batch, and a `查看团队` link into the existing `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` detail page. This slice did not add backend routes, schemas, migrations, standalone service-team navigation, supplier service-team maintenance, personnel assignment, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM164.
+
+## 2026-06-11 IM165 Agent Detail Service Team Links
+
+`IM165` adds the customer-service personnel detail read-only chain. `/master-data/agents` now exposes a row-level `查看` action, and `/master-data/agents/[employeeId]` shows the selected person's basic information, organization, workplace, employee type, status, effective period, source batch, and skill set.
+
+The detail page derives associated service teams from existing workplace service-team and workplace-binding data, then links each row back into the existing workplace service-team detail page. This slice did not add backend routes, schemas, migrations, personnel assignment, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM165.
+
+## 2026-06-11 IM166 Organization Detail Links
+
+`IM166` adds the organization detail read-only chain. `/master-data/organizations` now exposes a row-level `查看` action, and `/master-data/organizations/[organizationId]` shows the selected organization's basic information, hierarchy level, parent organization, path, status, effective period, and source batch.
+
+The detail page shows direct child organizations and current directly assigned personnel. Child organizations link to their own organization detail pages, and personnel rows link to the existing customer-service personnel detail page. This slice did not add backend routes, schemas, migrations, personnel reassignment, organization-tree drag, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM166.
+
+## 2026-06-12 IM167 Skill Detail Links
+
+`IM167` adds the skill detail read-only chain. `/master-data/skills` now exposes a row-level `详情` action, and `/master-data/skills/[skillId]` shows the selected skill group's basic information, category, status, effective period, and source batch.
+
+The detail page shows current personnel whose skill set includes the selected skill, and each row links to the existing customer-service personnel detail page. This slice did not add backend routes, schemas, migrations, skill hierarchy, skill binding maintenance, batch assignment, scheduling skill rules, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM167.
+
+## 2026-06-12 IM168 Master Data Detail Link Audit
+
+`IM168` closes the visible action-label inconsistency left after the master-data detail-link chain. Reference master-data list rows now use the same row-level `查看` label for detail navigation, including `/master-data/skills`, while retaining the existing `detailHref` routes.
+
+This slice is a guardrail and small UI correction only. It added a product-structure regression test against `MasterDataReferenceManagementPage` so the list-to-detail action does not drift back to `详情`. It did not add pages, navigation, backend routes, schemas, migrations, imports, permissions, approval, export, batch operations, contracts, settlement ratios, minimum staffing requirements, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM168.
+
+## 2026-06-12 IM169 Demand Forecast Import Dialog
+
+`IM169` moves the demand forecast import entry back to its owning business page. `/demand-plans/production` keeps the page-level `导入预测` action in the shared Header, and that action now opens a page-local Dialog instead of sending the user to the generic CSV upload workspace.
+
+The Dialog follows the same controlled step-by-step pattern as the accepted personnel import flow: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the CSV file input is not unmounted while the user moves between upload and mapping. The submit path continues to use the existing CSV upload action with `file_type=demand_forecast`, then returns to `/demand-plans/production?import_dialog=1` where the result step shows the batch outcome and links to the existing batch detail page.
+
+This slice did not add schedule or login/status-log import dialogs, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM169.
+
+## 2026-06-12 IM170 Schedule Import Dialog
+
+`IM170` moves the personnel schedule import entry back to its owning business page. `/schedule-plans/production` keeps the page-level `导入排班` action in the shared Header, and that action now opens a page-local Dialog instead of sending the user to the generic CSV upload workspace.
+
+The Dialog follows the controlled step-by-step pattern: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the CSV file input is not unmounted while the user moves between upload and mapping. The submit path continues to use the existing CSV upload action with `file_type=personnel_schedule`, then returns to `/schedule-plans/production?import_dialog=1` where the result step shows the batch outcome and links to the existing batch detail page.
+
+This slice did not add a login/status-log import dialog, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, publish/freeze, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM170.
+
+## 2026-06-12 IM171 Actual Log Import Dialog
+
+`IM171` moves the login/status-log import entries back to their owning business page. `/actual-logs/production` keeps the page-level `导入登录日志` and `导入状态日志` actions in the shared Header, and those actions now open page-local Dialogs instead of sending the user to the generic CSV upload workspace.
+
+The Dialog uses the controlled three-step pattern: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the file input stays stable across step changes. Login-log upload submits `file_type=login_log`; status-log upload submits `file_type=status_log`; both return to `/actual-logs/production?import_dialog=1&log_type=...` and show the existing batch detail link on success or failure.
+
+This slice did not add parsing enhancements, status-dictionary configuration maintenance, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM171.

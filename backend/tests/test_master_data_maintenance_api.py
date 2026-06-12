@@ -6,12 +6,13 @@ from unittest.mock import patch
 from fastapi import HTTPException
 from sqlalchemy import text
 
-from backend.app.import_persistence import ImportPersistenceRepository
+from backend.app.import_persistence import ImportPersistenceRepository, build_engine
 from backend.app.main import app, list_master_data_bindings, list_master_data_employees
 from backend.app.main import list_master_data_organizations
 from backend.app.main import list_master_data_references, maintain_master_data_employee
 from backend.app.main import maintain_master_data_binding
 from backend.app.main import maintain_master_data_employee_skills
+from backend.app.main import maintain_master_data_organization
 from backend.app.main import maintain_master_data_reference
 from backend.app.master_data_persistence import MasterDataPersistenceRepository
 from backend.app.models import (
@@ -25,6 +26,7 @@ from backend.app.models import (
     MasterDataBindingMaintenanceRequest,
     MasterDataEmployeeMaintenanceRequest,
     MasterDataOrganizationInput,
+    MasterDataOrganizationMaintenanceRequest,
     MasterDataReferenceMaintenanceRequest,
     MasterDataSnapshotRequest,
 )
@@ -62,6 +64,13 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
             routes,
         )
         self.assertIn(
+            (
+                "/api/v1/master-data/organizations/{organization_id}/maintenance",
+                "POST",
+            ),
+            routes,
+        )
+        self.assertIn(
             ("/api/v1/master-data/{reference_type}", "GET"),
             routes,
         )
@@ -72,6 +81,60 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
             ),
             routes,
         )
+        self.assertIn(
+            ("/api/v1/master-data/workplace-service-teams", "GET"),
+            routes,
+        )
+        self.assertIn(
+            (
+                "/api/v1/master-data/workplace-service-teams/{service_team_id}/maintenance",
+                "POST",
+            ),
+            routes,
+        )
+
+    def test_maintain_organization_endpoint_updates_hierarchy_record(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            database_url = f"sqlite+pysqlite:///{Path(directory) / 'organization-api.db'}"
+            _create_import_batch(database_url, "BATCH-MD-ORG-API")
+            repository = MasterDataPersistenceRepository(database_url)
+            repository.init_schema()
+            repository.create_snapshot(
+                MasterDataSnapshotRequest(
+                    batch_id="BATCH-MD-ORG-API",
+                    organizations=[
+                        MasterDataOrganizationInput(
+                            organization_id="ORG-CC",
+                            organization_name="CC",
+                            organization_level=1,
+                            status="active",
+                            effective_from="2026-06-01",
+                            effective_to="2026-12-31",
+                        )
+                    ],
+                )
+            )
+
+            with patch(
+                "backend.app.main.MasterDataPersistenceRepository",
+                return_value=repository,
+            ):
+                response = maintain_master_data_organization(
+                    "ORG-CCO",
+                    MasterDataOrganizationMaintenanceRequest(
+                        action="create",
+                        source_batch_id="BATCH-MD-ORG-API",
+                        organization_name="CCO",
+                        organization_level=2,
+                        parent_organization_id="ORG-CC",
+                        effective_from="2026-06-01",
+                        effective_to="2026-12-31",
+                    ),
+                )
+
+        self.assertEqual(response.action_status, "created")
+        self.assertEqual(response.organization.organization_id, "ORG-CCO")
+        self.assertEqual(response.organization.organization_path, "CC / CCO")
 
     def test_list_organizations_returns_hierarchy_rows(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -250,8 +313,8 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
     def test_list_employees_tolerates_legacy_local_schema_without_new_columns(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'legacy-local.db'}"
-            repository = MasterDataPersistenceRepository(database_url)
-            with repository.engine.begin() as connection:
+            engine = build_engine(database_url)
+            with engine.begin() as connection:
                 connection.execute(
                     text(
                         """
@@ -302,6 +365,7 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
                         """
                     )
                 )
+            repository = MasterDataPersistenceRepository(database_url)
 
             rows = repository.list_employees()
 
@@ -315,8 +379,8 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
     def test_list_skill_references_tolerates_legacy_local_schema_without_category(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             database_url = f"sqlite+pysqlite:///{Path(directory) / 'legacy-skills.db'}"
-            repository = MasterDataPersistenceRepository(database_url)
-            with repository.engine.begin() as connection:
+            engine = build_engine(database_url)
+            with engine.begin() as connection:
                 connection.execute(
                     text(
                         """
@@ -353,6 +417,7 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
                         """
                     )
                 )
+            repository = MasterDataPersistenceRepository(database_url)
 
             with patch(
                 "backend.app.main.MasterDataPersistenceRepository",
@@ -497,6 +562,7 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
                         action="create",
                         source_batch_id="BATCH-MD-API-003",
                         reference_name="粤语",
+                        skill_category="hotline",
                         effective_from="2026-06-01",
                         effective_to="2026-12-31",
                     ),
@@ -505,6 +571,7 @@ class MasterDataMaintenanceApiTest(unittest.TestCase):
         self.assertEqual(response.action_status, "created")
         self.assertEqual(response.reference.reference_id, "SKILL-API-001")
         self.assertEqual(response.reference.reference_name, "粤语")
+        self.assertEqual(response.reference.skill_category, "hotline")
 
     def test_list_references_and_bindings_return_master_data_rows(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

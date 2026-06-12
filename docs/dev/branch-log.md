@@ -19,6 +19,276 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM161 Workplace Service Team Maintenance
+
+- branch_name: `codex/im161-workplace-service-team-maintenance`
+- base_main_commit: `3060d9c`
+- stacked_on: `d36e5cf feat: group workplace service teams`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed database-persistence slice. Add a local workplace service-team object/API and keep all actions under `/master-data/sites/[workplaceId]`: Header create action, nested create/edit child pages, and freeze Dialog. Keep standalone navigation, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/sites/[workplaceId]/page.tsx`, nested service-team pages/actions, `app/master-data/agents/data.ts`, master-data model/workbench components, backend master-data models/service/persistence/main route, one Alembic migration, focused frontend/backend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no package/lockfile changes, no Sidebar changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected service-team local table/API, service-team maintenance request/response models, create/edit/freeze service logic with internal-vs-supplier reference validation, workplace detail maintained-record display and actions, nested service-team form pages, focused tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because maintained `serviceTeams` were ignored; product-structure test first failed because nested service-team pages/actions did not exist; backend contract/API tests first failed because service-team models/repository/route were missing. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/product-structure.test.mjs` passed with 55 tests, backend master-data maintenance tests passed with 28 tests, `npm run lint` passed, and `npm run typecheck` passed. API smoke created `TEAM-IM161-SMOKE` successfully, and in-app browser smoke confirmed workplace detail and service-team create/edit pages without contract/settlement/minimum-staffing copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM162 Workplace Service Team Detail Page
+
+- branch_name: `codex/im162-service-team-detail`
+- base_main_commit: `3060d9c`
+- stacked_on: `36bf091 feat: add workplace service team maintenance`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of workplace service-team maintenance. Add a nested detail page for a single maintained service-team record under `/master-data/sites/[workplaceId]`, expose a row-level detail link from the workplace detail service-team table, and keep edit/freeze actions inside the same workplace child-route context. Keep backend routes, schema/migration, standalone navigation, associated-person lists, personnel assignment, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/sites/[workplaceId]/page.tsx`, `app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected service-team detail href in model rows, workplace-detail table `查看` entry, nested service-team detail route, detail component with read-only service-team fields, reuse of existing edit route and freeze Dialog, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because maintained service-team rows did not expose `detailHref`; product-structure test first failed because the nested service-team detail page did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 27 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 28 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/sites/SH-01` exposes the `查看` detail link and `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE` shows service-team fields plus edit/freeze actions without contract/settlement/minimum-staffing copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM163 Service Team Associated People
+
+- branch_name: `codex/im163-service-team-people`
+- base_main_commit: `3060d9c`
+- stacked_on: `fe3c607 feat: add workplace service team detail page`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of workplace service-team detail. Add a read-only associated-person section to `/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]` using existing employee and workplace-binding data. Keep backend routes, schema/migration, standalone navigation, personnel assignment, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/sites/[workplaceId]/service-teams/[serviceTeamId]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected service-team people summary model, service-team detail route employee/binding reads, read-only associated people table, explicit empty state, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizeMasterDataWorkplaceServiceTeamPeople` was missing; product-structure test first failed because the service-team detail page did not fetch employees or workplace bindings. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 28 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 28 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/sites/SH-01/service-teams/TEAM-IM161-SMOKE` shows service-team info, associated people, edit/freeze actions, and no contract/settlement/minimum-staffing/permission/approval/export/batch/personnel-assignment copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM164 Vendor Service Team Links
+
+- branch_name: `codex/im164-vendor-service-team-links`
+- base_main_commit: `3060d9c`
+- stacked_on: `d06fc39 feat: show service team associated people`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of the master-data supplier/workplace chain. Add a read-only service-team section to `/master-data/vendors/[vendorId]` that links supplier-bound workplace service teams back to existing workplace service-team details. Keep backend routes, schema/migration, standalone navigation, supplier service-team maintenance, personnel assignment, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/vendors/[vendorId]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected supplier-detail service-team summary rows, supplier-detail route service-team fetch, read-only service-team table, `查看团队` links to existing service-team detail pages, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because supplier detail lacked service-team rows; product-structure test first failed because the supplier detail route did not fetch maintained service teams. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 28 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 28 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/vendors/SUP-A` shows service teams, service workplaces, and `查看团队` links without contract/settlement/minimum-staffing/permission/approval/export/batch/personnel-assignment copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM165 Agent Detail Service Team Links
+
+- branch_name: `codex/im165-agent-detail-links`
+- base_main_commit: `3060d9c`
+- stacked_on: `0d410e5 feat: link vendor service teams`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of the master-data personnel/service-team chain. Add a read-only customer-service personnel detail page under `/master-data/agents/[employeeId]`, expose row-level `查看` from the personnel list, and show associated service teams linked back to existing workplace service-team details. Keep backend routes, schema/migration, personnel assignment, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/agents/[employeeId]/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected agent detail summary model, personnel-list `查看` row action, customer-service personnel detail route, read-only personnel fields, skill set, associated service-team table, `查看团队` links to existing service-team detail pages, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizeMasterDataAgentDetail` was missing; product-structure test first failed because `/master-data/agents/[employeeId]` did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 29 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 29 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/agents` has row-level `查看` linking to `/master-data/agents/A-1001`, and `/master-data/agents/A-1001` shows personnel info, skill set, associated service teams, and `查看团队` link without contract/settlement/minimum-staffing/permission/approval/export/batch/auto-scheduling copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM166 Organization Detail Links
+
+- branch_name: `codex/im166-organization-detail-links`
+- base_main_commit: `3060d9c`
+- stacked_on: `78a2d98 feat: add agent detail service links`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of the master-data organization/personnel chain. Add a read-only organization detail page under `/master-data/organizations/[organizationId]`, expose row-level `查看` from the organization list, and show direct child organizations plus current directly assigned personnel linked to existing personnel detail pages. Keep backend routes, schema/migration, personnel reassignment, organization-tree drag, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/organizations/[organizationId]/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected organization detail summary model, organization-list `查看` row action, organization detail route, read-only organization fields, direct-child organization table, direct-personnel table, `查看人员` links to existing personnel detail pages, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizeMasterDataOrganizationDetail` was missing; product-structure test first failed because `/master-data/organizations/[organizationId]` did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 30 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 30 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/organizations` has row-level `查看` linking to `/master-data/organizations/ORG-CC`; `/master-data/organizations/ORG-CC` shows organization info, direct child organizations, and personnel empty state; `/master-data/organizations/ORG-IM158` shows `归属人员` and `查看人员` linking to `/master-data/agents/A-IM159`, without contract/settlement/minimum-staffing/permission/approval/export/batch/auto-scheduling copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM167 Skill Detail Links
+
+- branch_name: `codex/im167-skill-detail-links`
+- base_main_commit: `3060d9c`
+- stacked_on: `d3e10ce feat: add organization detail links`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of the master-data skill/personnel chain. Add a read-only skill detail page under `/master-data/skills/[skillId]`, expose row-level `详情` from the skill list, and show current personnel whose skill set includes the selected skill linked to existing personnel detail pages. Keep backend routes, schema/migration, skill hierarchy, skill binding maintenance, batch assignment, scheduling skill rules, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/skills/[skillId]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected skill detail summary model, skill-list detail row action, skill detail route, read-only skill fields, current-personnel table, `查看人员` links to existing personnel detail pages, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizeMasterDataSkillDetail` was missing; product-structure test first failed because `/master-data/skills/[skillId]` did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 31 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 31 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/skills` has row-level `详情` linking to `/master-data/skills/L1-CN`; `/master-data/skills/L1-CN` shows skill info, personnel section, and personnel empty state; `/master-data/skills/SKILL-IM159` shows `查看人员` linking to `/master-data/agents/A-IM159`, without contract/settlement/minimum-staffing/permission/approval/export/batch/auto-scheduling copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM160 Workplace Detail Service Teams
+
+- branch_name: `codex/im160-workplace-service-teams`
+- base_main_commit: `3060d9c`
+- stacked_on: `8f4ee51 fix: tolerate legacy local master data schema`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of master-data maintenance. Keep service teams inside `/master-data/sites/[workplaceId]` and make the detail table read-only: self-owned teams grouped by internal employee organization, supplier teams grouped by workplace supplier bindings with supplier names resolved from supplier master data. Keep navigation, forms, backend routes, schema/migration, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/sites/[workplaceId]/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no sidebar, backend, package/lockfile, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected workplace detail supplier fetch, service-team grouping model, service-team table columns, focused RED/GREEN model and structure tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because workplace detail returned three people/binding rows instead of two grouped service-team rows. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/product-structure.test.mjs` passed with 54 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/sites/SH-01` shows supplier team `供应商 A` with `1 条绑定`, and `/master-data/sites/SITE-IM158` shows an internal service team with `1 人`, with no contract, settlement, or minimum-staffing copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` result will be recorded after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM147 Header Breadcrumb And Content Title Cleanup
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `77eeb6a fix: align production route wording`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed Header/Breadcrumb and duplicate content-title cleanup. Add `breadcrumbItems` to demand, schedule, actual-log, and data-quality compatible pages, and remove/downgrade content-area page identity H1 headings. Keep old `searchPlaceholder` API cleanup, import entry relocation, data-quality abstraction downgrade, route restructuring, backend, schema/migration, dependency, permissions, approval, export, batch-operation, automatic scheduling, formula, settlement, and charge-factor changes out of this slice.
+- allowed_files_check: target `app/demand-plans/**`, `app/schedule-plans/**`, `app/actual-logs/**`, `app/data-quality/**`, target production/import-center workspace components, product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected breadcrumbItems additions, content h1 removals/downgrades, regression tests, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because target pages lacked `breadcrumbItems` and content surfaces still had `<h1>` page identity headings. After implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 17 tests. Browser smoke over `/demand-plans`, `/schedule-plans`, and `/data-quality/versions` confirmed Breadcrumb presence and no content-area duplicate H1. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM148 Legacy Header Search API Cleanup
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `ec873f9 fix: unify breadcrumb page headings`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed cleanup of the old global Header search API. Remove `searchPlaceholder` from `AppShell` and `SiteHeader`, remove all app/components passthroughs, and keep real business list filters in content areas.
+- allowed_files_check: `app/**`, `components/app-shell.tsx`, `components/site-header.tsx`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected shell/header prop deletion, page prop cleanup, regression test, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because `AppShell` still retained `searchPlaceholder`; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 18 tests, `rg -n "searchPlaceholder" app components -S` returned no matches, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM149 Non-Agent Master Data Action Cleanup
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `6237a3c fix: remove legacy header search api`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed master-data action cleanup. Remove unconfirmed content-area `导入主数据` shortcuts from organization/reference master-data list pages, keep confirmed agent actions in Header actions, and avoid adding non-agent CRUD or import dialogs.
+- allowed_files_check: `components/master-data-maintenance-workbench.tsx`, `app/master-data/[entityKey]/page.tsx` as read context, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected removal of non-agent content import shortcut, import helper cleanup, regression test, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because non-agent master-data content still exposed `导入主数据`; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 19 tests, and `rg -n "导入主数据|buildImportUploadWorkspaceHref" components/master-data-maintenance-workbench.tsx app/master-data -S` returned no business-source matches. Browser smoke over `/master-data/organizations`, `/master-data/sites`, `/master-data/skills`, and `/master-data/agents` confirmed non-agent pages have no `导入主数据` or `/data-quality/uploads/new` links, while the agent page still has Header actions `新建` and `批量导入`. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM150 Business Import Entry Ownership
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `e94d1a0 fix: remove unconfirmed master data import actions`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed import-entry ownership cleanup. Remove the generic upload action from the `/data-quality` import batch ledger, and move forecast, schedule, and actual-log import actions to their corresponding business page Header actions while keeping `/data-quality/uploads/new` as an internal compatibility route.
+- allowed_files_check: `app/data-quality/page.tsx`, `components/import-center-batch-list-panel.tsx`, production list pages/workbenches for demand forecasts, personnel schedules, and actual logs, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/action/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected generic upload action removal from import-batch ledger, Header action additions on business import pages, content-card import action removal, regression test, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because the generic import batch ledger still owned a CSV upload entry; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 20 tests, `bash scripts/check-state.sh --strict` passed, and `git diff --check` passed. Browser smoke over `/data-quality`, `/demand-plans/production`, `/schedule-plans/production`, and `/actual-logs/production` confirmed `/data-quality` has no generic upload action, while forecast, schedule, login-log, and status-log import links live in Header actions only. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM151 Result Chain Abstraction Downgrade
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `c3fb857 fix: move import entries to business headers`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed visible hierarchy cleanup. Remove `导入批次` as the Breadcrumb parent from business version list, comparison-run detail, review-case list, and review-case detail pages while retaining compatible routes and batch/template contexts elsewhere.
+- allowed_files_check: result-chain pages under `app/data-quality/versions`, `app/data-quality/comparison-runs/[runId]`, `app/data-quality/review-cases`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/action/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected Breadcrumb parent removal on result-chain pages, regression test, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because result-chain pages still presented `导入批次` as their Breadcrumb parent; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 21 tests, `bash scripts/check-state.sh --strict` passed, and `git diff --check` passed. Browser smoke over `/data-quality/versions`, `/data-quality/comparison-runs/RUN-QUERY-001`, `/data-quality/review-cases`, and `/data-quality/review-cases/CASE-QUERY-001` confirmed those result pages no longer show `导入批次` parent Breadcrumb. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM152 Master Data Terminology Cleanup
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `f4f6c26 fix: downgrade result page breadcrumbs`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed master-data visible terminology cleanup. Replace visible `运营主体` / `职场运营主体` wording in workplace detail and master-data data-load error copy with service-team wording, without changing internal compatibility fields or backend contracts.
+- allowed_files_check: `app/master-data/agents/data.ts`, `components/master-data-maintenance-workbench.tsx`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/action/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected visible workplace service-team terminology, regression test, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because master-data workbench still exposed `运营主体`; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 22 tests, `bash scripts/check-state.sh --strict` passed, `git diff --check` passed, and `rg -n "职场运营主体|运营主体" app/master-data components/master-data-maintenance-workbench.tsx -S` returned no matches. Browser smoke over `/master-data/sites/SH-01` confirmed the workplace detail page shows `服务团队` and does not show `运营主体` or `职场运营主体`. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM146 Production Wording And Return Links
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `e8cbbdb fix: collapse production nav entries`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed follow-up after IM145. Keep existing production child routes compatible, but clean visible page titles, list titles, return actions, and model guidance so users see business object wording instead of production module wording. Keep duplicate h1 cleanup, old search API cleanup, import entry relocation, data-quality abstraction downgrade, route restructuring, backend, schema/migration, dependency, permissions, approval, export, batch-operation, automatic scheduling, formula, settlement, and charge-factor changes out of this slice.
+- allowed_files_check: `app/demand-plans/production/page.tsx`, `app/schedule-plans/production/page.tsx`, `app/actual-logs/production/page.tsx`, the three production workbench components, the three production model files, focused model/product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes.
+- scope_diff_check: expected wording-only production child route cleanup, return-label cleanup, model guidance cleanup, regression tests, Browser smoke evidence, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED focused test first failed 4 tests because demand, schedule, actual-log, and production child route structure still exposed old production wording. After implementation, focused tests passed with 43 tests. Browser smoke over `/demand-plans/production`, `/schedule-plans/production`, and `/actual-logs/production` confirmed no old production title/ledger/return wording and confirmed `预测版本列表`, `排班版本列表`, and `日志处理列表`. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM120 Comparison Run Source Explanation
 
 - branch_name: `codex/im120-schedule-actual-result-explanation`
@@ -3505,6 +3775,294 @@
 - allowed_files_check: `app/master-data/[entityKey]/page.tsx`, `components/app-sidebar.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, `docs/current/PROJECT_CONTEXT.md`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, charge-factor, supplier-contract, or minimum-staffing changes.
 - scope_diff_check: expected removal of standalone workplace operating-owner and binding relationship navigation/entity routing, retention of the skills entry, focused regression tests, current-state documentation correction, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
 - check_result: RED frontend tests first failed because master-data entities still included `职场运营主体` and `绑定关系`; after implementation, target master-data/product-structure tests passed with 20 Node tests. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM141 Workplace Detail Operating Subjects
+
+- branch_name: `codex/im141-workplace-detail`
+- base_main_commit: `3060d9c`
+- stacked_on: `3060d9c fix: remove relationship routes from master data nav`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed workplace child-detail correction. Add `/master-data/sites/[workplaceId]`, link workplace list rows to the child detail, and render operating subjects inside the selected workplace from existing employee and binding sources. Keep `职场运营主体` and `绑定关系` out of sidebar/entity routing.
+- allowed_files_check: `app/master-data/sites/[workplaceId]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, `docs/current/PROJECT_CONTEXT.md`, `docs/PROJECT_STATE.md`, `docs/task-log.md`, `docs/audit-report.md`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected nested workplace detail route, list detail entry, read-only operating-subject table, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED model test first failed because `summarizeMasterDataWorkplaceDetail` did not exist; RED product-structure test then failed because `/app/master-data/sites/[workplaceId]/page.tsx` did not exist. After implementation, target master-data model tests passed with 17 tests, product-structure tests passed with 6 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke over `/master-data/sites` and `/master-data/sites/SH-01` confirmed the list has a detail entry, the detail page shows workplace information and operating subjects, and standalone operator/binding links plus contract/settlement/minimum-staffing copy are absent. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM142 Vendor Detail Service Workplaces
+
+- branch_name: `codex/im142-vendor-detail`
+- base_main_commit: `3060d9c`
+- stacked_on: `f28d23b feat: add workplace detail operating subjects`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed supplier child-detail correction. Add `/master-data/vendors/[vendorId]`, link supplier list rows to the child detail, render service workplaces inside the selected supplier from existing personnel ownership records, and keep contract, settlement, and minimum-staffing concepts out of scope. Follow-up correction keeps sidebar groups expanded by default and lets workplace/supplier detail routes inherit their parent nav item.
+- allowed_files_check: `app/master-data/vendors/[vendorId]/page.tsx`, `components/app-sidebar.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, `docs/current/PROJECT_CONTEXT.md`, `docs/PROJECT_STATE.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/registry/TRACE_INDEX.yaml`, `tasks/backlog.yaml`, and `docs/dev/branch-log.md`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected nested supplier detail route, supplier list detail entry, read-only service-workplace table, sidebar default expansion and detail active-state correction, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED model test first failed because `summarizeMasterDataVendorDetail` did not exist; RED product-structure test then failed because `/app/master-data/vendors/[vendorId]/page.tsx` did not exist; sidebar regression RED later failed because groups were not all expanded and master-data detail routes did not inherit parent items. After implementation, target master-data model tests passed with 19 tests, product-structure tests passed with 8 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke over `/master-data/vendors`, `/master-data/vendors/SUP-A`, and `/master-data/sites/SH-01` confirmed supplier detail entry, supplier information, service workplace linkback, no contract/settlement/minimum-staffing copy, all sidebar groups expanded, and detail pages highlighting `供应商`/`职场` instead of falling back to `运营工作台`. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM143 Agent Import Dialog
+
+- branch_name: `codex/im143-agent-import-dialog`
+- base_main_commit: `3060d9c`
+- stacked_on: `8b3d0cc fix: keep sidebar expanded on detail pages`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed import UX correction. Move the customer-service personnel import entry from the standalone upload workspace into an in-page large dialog on `/master-data/agents`; keep the dialog to upload, mapping choice/manual mapping, and immediate result summary only; keep full batch details, failed-row correction, readiness, application, and version trace in existing batch detail pages.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/task-log.md`, `docs/audit-report.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-application capability, automatic scheduling, formula, settlement, or charge-factor changes.
+- scope_diff_check: expected agent-list import dialog, template fetch for the dialog, upload action return-target whitelist for `/master-data/agents?import_dialog=1`, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: RED model test first failed because `summarizeMasterDataAgentImportDialog` did not exist; RED product-structure test then failed because the agent list did not render `AgentImportDialog`. After implementation, target master-data model tests passed with 20 tests, product-structure tests passed with 9 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke over `/master-data/agents` and `/master-data/agents?import_dialog=1&upload=success&batch=BATCH-MD-001` confirmed the `批量导入` entry opens the list dialog, the dialog shows upload/mapping/result steps, template download, batch detail and failed-row correction links, and returns upload results to the same dialog. Final `check.sh` will run after this traceability update.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM144 UI Component Standards
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `7d7d175 feat: add agent import dialog`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed Product Design + shadcn review correction. Move the global shell to shadcn Sidebar primitives, use shadcn Collapsible and SidebarMenuSub for the sidebar group/submenu composition, add Breadcrumb support in SiteHeader/AppShell, render Header as a compact single-row navigation bar with Breadcrumb including the current page, make the shared SiteHeader the only page-identity layer for master-data list/detail/form pages, remove meaningless SiteHeader global search/date/notification placeholders, add a Header right-side page actions slot, add a Sidebar footer user menu with shadcn Avatar and local reference image `/shadcn-avatar.jpg`, theme toggle, and a non-auth logout entry, order the customer-service personnel list as filter card then list toolbar then table, add shadcn Alert/Avatar/Breadcrumb/Collapsible/Dialog components without package/lockfile changes, and rebuild the customer-service personnel import modal as a strict step-by-step Dialog. Keep the scope limited to global UI standards plus the agent import dialog.
+- allowed_files_check: `app/dashboard/page.tsx`, master-data list/detail/new/edit pages, `components/app-shell.tsx`, `components/app-sidebar.tsx`, `components/site-header.tsx`, `components/master-data-agent-import-dialog.tsx`, `components/master-data-maintenance-workbench.tsx`, `components/ui/alert.tsx`, `components/ui/avatar.tsx`, `components/ui/breadcrumb.tsx`, `components/ui/collapsible.tsx`, `components/ui/dialog.tsx`, `public/shadcn-avatar.jpg`, focused product-structure tests, and Harness traceability docs; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-application capability, automatic scheduling, formula, settlement, or charge-factor changes.
+- scope_diff_check: expected shadcn Sidebar shell migration, Collapsible + SidebarMenuSub sidebar composition, single-row Header Breadcrumb support with current page included, master-data content header de-duplication, Header page actions slot, SiteHeader placeholder removal, Sidebar footer Avatar user menu, local reference avatar asset, agent filter/list-toolbar/table ordering, agent import Dialog extraction, Alert feedback replacement, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: product-structure test passed with 14 tests, `npm run lint` passed, `npm run typecheck` passed, and browser smoke confirmed `/master-data/sites/SH-01` renders Breadcrumb, shadcn Sidebar, CollapsibleTrigger/Content, SidebarMenuSub, active `职场` child item and active `主数据` parent group; `/master-data/agents` Header contains `新建` and `批量导入`, has no global search input/search placeholder, keeps filter card above list toolbar, keeps list toolbar above table, keeps filter actions `查询/重置` at the filter card lower right, and keeps the list toolbar limited to `已选 0 项` plus bulk actions; Sidebar footer shows the local shadcn Avatar image, and its menu opens with theme switching plus `退出登录`; `/master-data/sites/SH-01` has a single visible page H1 `上海职场` and only business section headings in content; `/master-data/agents/A-1001/edit` has a single visible page H1 from SiteHeader and no duplicate `返回客服人员` content header; `/master-data/agents?import_dialog=1` renders the upload step while hidden mapping/result sections stay mounted with file input and mapping textarea, and `upload=failed` renders the result step with Alert feedback. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM145 Navigation IA Correction
+
+- branch_name: `codex/im144-ui-component-standards`
+- base_main_commit: `3060d9c`
+- stacked_on: `27169c5 refactor: align shadcn shell standards`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed navigation IA correction. Remove `预测生产` and `排班生产` from Sidebar as standalone first-level-visible items, and let `需求计划` / `排班计划` own the `/production` child routes for active-state purposes. Keep page title/text cleanup, duplicate h1 cleanup, old search API cleanup, master-data import action cleanup, and data-quality route restructuring out of this slice.
+- allowed_files_check: `components/app-sidebar.tsx`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, or charge-factor changes.
+- scope_diff_check: expected Sidebar nav item removal/highlight correction, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because Sidebar still exposed `预测生产`; after implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 14 tests. Browser/HTTP smoke over `/demand-plans/production` confirmed Sidebar shows `需求计划` active and does not expose standalone `预测生产`/`排班生产` items. `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM153 UI Typography Density Baseline
+
+- branch_name: `codex/im153-ui-density-typography`
+- base_main_commit: `3060d9c`
+- stacked_on: `8c794ab fix: align master data workplace terminology`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed UI typography correction. Remove the global form font override, align Button sm/xs text-action sizing, align shared TableHead typography, align customer-service personnel row action text buttons, and remove 12px body/step/control copy from the customer-service personnel import Dialog. Keep the slice limited to typography and density baseline; do not add business behavior.
+- allowed_files_check: `app/globals.css`, `components/ui/button.tsx`, `components/ui/table.tsx`, `components/master-data-agent-import-dialog.tsx`, `components/master-data-maintenance-workbench.tsx`, focused product-structure tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected global CSS reset removal, Button size class correction, TableHead baseline correction, agent import Dialog typography correction, agent row action button density correction, regression tests, current-state documentation sync, and this branch-log entry only; `.local/` and `.qoder/` remain untracked and must not be staged.
+- check_result: TDD RED product-structure test first failed because `app/globals.css` still had `button,input,select { font: inherit }`. After implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 23 tests, `npm run lint` passed, `npm run typecheck` passed, and Browser runtime style smoke over `/master-data/agents?import_dialog=1` confirmed visible text buttons are 14px, table headers are 14px/40px, table cells are 14px, dialog body/form controls are 14px, and row action text buttons are 14px/32px. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM154 Workplace CRUD Frontend Loop
+
+- branch_name: `codex/im154-workplace-crud`
+- base_main_commit: `a2d7af8`
+- stacked_on: `a2d7af8 chore: update UI standards branch handoff`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed master-data workplace CRUD slice. Add the workplace create action to `/master-data/sites` Header actions, add row-level detail/edit/freeze actions, create `/master-data/sites/new`, create `/master-data/sites/[workplaceId]/edit`, and use a freeze confirmation Dialog. Reuse the existing workplace reference maintenance API and Alert feedback. Keep service-team binding, supplier contracts, settlement, minimum staffing, approval, export, batch, permissions, backend route/schema/migration, dependency, automatic scheduling, formula, and charge-factor work out of scope.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/sites/new/page.tsx`, `app/master-data/sites/[workplaceId]/edit/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected workplace model/action helpers, sites list Header action, row edit/freeze links, create/edit child pages, freeze Dialog, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `buildMasterDataWorkplaceMaintenanceApiPath` was missing; TDD RED product-structure test then failed because `/app/master-data/sites/new/page.tsx` did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 21 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 24 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/sites` has Header `新建`, row `编辑`/`冻结`, no inline create submit; `/master-data/sites/new` renders职场 ID/职场名称 and `提交新增`; `/master-data/sites/SH-01/edit` renders `提交编辑`; `/master-data/sites?freeze_workplace_id=SH-01` renders `冻结职场` Dialog after hydration. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM155 Vendor CRUD Frontend Loop
+
+- branch_name: `codex/im155-vendor-crud`
+- base_main_commit: `efb5f1a`
+- stacked_on: `efb5f1a feat: add workplace crud frontend loop`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of master-data maintenance. Add the supplier create action to `/master-data/vendors` Header actions, add row-level detail/edit/freeze actions, create `/master-data/vendors/new`, create `/master-data/vendors/[vendorId]/edit`, and use a freeze confirmation Dialog. Reuse the existing supplier reference maintenance API and Alert feedback. Keep service-workplace binding, supplier contracts, settlement ratio, minimum staffing, approval, export, batch, permissions, backend route/schema/migration, dependency, automatic scheduling, formula, and charge-factor work out of scope.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/vendors/new/page.tsx`, `app/master-data/vendors/[vendorId]/edit/page.tsx`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend route/schema/migration changes, no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected vendor model/action helpers, vendors list Header action, row edit/freeze links, create/edit child pages, freeze Dialog, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `buildMasterDataVendorMaintenanceApiPath` was missing; TDD RED product-structure test then failed because `/app/master-data/vendors/new/page.tsx` did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 22 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 25 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/vendors` has Header `新建`, row `编辑`/`冻结`, no inline create submit; `/master-data/vendors/new` renders供应商 ID/供应商名称 and `提交新增`; `/master-data/vendors/SUP-A/edit` renders `提交编辑`; `/master-data/vendors?freeze_vendor_id=SUP-A` renders `冻结供应商` Dialog after hydration. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 209 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM156 Skill CRUD Frontend Loop
+
+- branch_name: `codex/im156-skill-crud`
+- base_main_commit: `cadc9dc`
+- stacked_on: `cadc9dc feat: add vendor crud frontend loop`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of master-data maintenance. Add the skill create action to `/master-data/skills` Header actions, add row-level edit/freeze actions, create `/master-data/skills/new`, create `/master-data/skills/[skillId]/edit`, and use a freeze confirmation Dialog. Reuse the existing skills reference maintenance API and Alert feedback, with `skill_category` submitted through the existing maintenance request. Keep employee-skill binding, scheduling skill references, skill hierarchy, approval, export, batch, permissions, new backend route/schema/migration, dependency, automatic scheduling, formula, and charge-factor work out of scope.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/skills/new/page.tsx`, `app/master-data/skills/[skillId]/edit/page.tsx`, `backend/app/models.py`, `backend/app/master_data_maintenance.py`, backend maintenance tests, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected skill model/action helpers, skills list Header action, row edit/freeze links, create/edit child pages, freeze Dialog, `skill_category` request persistence through existing API, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `buildMasterDataSkillMaintenanceApiPath` was missing; TDD RED product-structure test then failed because `/app/master-data/skills/new/page.tsx` did not exist; backend directed unittest first failed because `skill_category` remained `None`. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 23 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 26 tests, `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` passed with 23 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/skills` has Header `新建`, row `编辑`/`冻结`, no inline create submit; `/master-data/skills/new` renders技能组 ID/技能组名称/归属属性 and `提交新增`; `/master-data/skills/L1-CN/edit` renders `提交编辑` with hidden skill ID; `/master-data/skills?freeze_skill_id=L1-CN` renders `冻结技能组` Dialog after hydration. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 210 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM157 Organization CRUD Frontend Loop
+
+- branch_name: `codex/im157-organization-crud`
+- base_main_commit: `86c8daf`
+- stacked_on: `86c8daf feat: add skill crud frontend loop`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of master-data maintenance. Add the organization create action to `/master-data/organizations` Header actions, add row-level edit/freeze actions, create `/master-data/organizations/new`, create `/master-data/organizations/[organizationId]/edit`, and use a freeze confirmation Dialog. Add a narrow local organization maintenance API and repository upsert path because organizations are not reference entities. Keep organization charts, employee reassignment, supplier binding, contracts, settlement ratio, minimum staffing, approval, export, batch, permissions, schema/migration, dependency, automatic scheduling, formula, and charge-factor work out of scope.
+- allowed_files_check: `app/master-data/[entityKey]/actions.ts`, `app/master-data/[entityKey]/page.tsx`, `app/master-data/organizations/new/page.tsx`, `app/master-data/organizations/[organizationId]/edit/page.tsx`, `backend/app/main.py`, `backend/app/models.py`, `backend/app/master_data_maintenance.py`, `backend/app/master_data_persistence.py`, backend maintenance tests, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no package/lockfile changes, no auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected organization model/action helpers, organizations list Header action, row edit/freeze links, create/edit child pages, freeze Dialog, local organization maintenance API, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `buildMasterDataOrganizationMaintenanceApiPath` was missing; TDD RED product-structure test then failed because `/app/master-data/organizations/new/page.tsx` did not exist; backend directed unittest first failed because `maintain_organization` and `maintain_master_data_organization` were missing. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 25 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 27 tests, `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` passed with 25 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/organizations` has Header `新建`, row `编辑`/`冻结`, no inline create submit; `/master-data/organizations/new` renders组织 ID/组织名称/组织层级/上级组织 and `提交新增`; `/master-data/organizations/ORG-CC/edit` renders `提交编辑` with hidden organization ID; `/master-data/organizations?freeze_organization_id=ORG-CC` renders `冻结组织` Dialog after hydration. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 212 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM158 Agent List Real Filters
+
+- branch_name: `codex/im158-agent-list-real-filters`
+- base_main_commit: `3060d9c`
+- stacked_on: `e1c426b feat: add organization crud frontend loop`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM157 push. Tighten the existing `/master-data/agents` list filters so skill group, organization, and workplace options come from current personnel rows and query parameters actually filter rows. Keep the B-end list layout unchanged and do not add navigation, pages, backend route/schema/migration, dependencies, permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor work.
+- allowed_files_check: `components/master-data-maintenance-model.ts`, focused model tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, route, page, navigation, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected agent filter option generation, skill/organization/workplace filter matching, focused regression test, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `skill_group` options were still fixed to online/hotline/ticket categories and organization/workplace options were placeholders. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 26 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 27 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/agents?employee_name=张三` returns 1 row and keeps Header `新建/批量导入`, while `/master-data/agents?employee_name=不存在` shows the empty state. Real skill/organization/workplace page-smoke data setup was blocked by the existing local `.local` SQLite schema missing `master_data_skills.skill_category` and `master_data_employees.employee_type`; no schema workaround was applied in this frontend slice. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` result will be recorded after traceability updates.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM159 Legacy Local Master Data Schema Compatibility
+
+- branch_name: `codex/im159-legacy-local-master-data-schema`
+- base_main_commit: `3060d9c`
+- stacked_on: `d7d9772 feat: tighten agent list filters`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Fix the local old SQLite master-data schema compatibility issue exposed by IM158 smoke setup. Add SQLite-only schema compatibility for already-confirmed employee, skill, and organization structures before maintenance writes. Keep migration files, production database configuration, new business fields, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement, supplier-contract, minimum-staffing, and charge-factor work out of scope.
+- allowed_files_check: `backend/app/master_data_persistence.py`, backend master-data maintenance tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no frontend files, package/lockfile changes, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected SQLite-only compatibility helper, repository initialization/init_schema hook, RED/GREEN backend tests for old local schema maintenance, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED directed unittest first failed because the legacy local table lacked `master_data_employees.employee_type`. After implementation, `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service.MasterDataMaintenanceServiceTest.test_legacy_local_schema_allows_employee_skill_and_organization_maintenance -v` passed, and `.venv/bin/python -m unittest backend.tests.test_master_data_maintenance_service backend.tests.test_master_data_maintenance_api -v` passed with 26 tests. API smoke against local `.local` DB confirmed skill create, employee create, and employee skill replace returned HTTP 200; browser smoke confirmed `/master-data/agents?skill_group=SKILL-IM159&organization=ORG-IM158&workplace=SITE-IM158` shows `IM159验证人员`. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 213 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM168 Master Data Detail Link Audit
+
+- branch_name: `codex/im168-master-data-link-audit`
+- base_main_commit: `e69d1c9`
+- stacked_on: `e69d1c9 feat: add skill detail links`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM167. Close the master-data detail-link chain by making existing reference-list detail actions use the established `查看` row action label and adding a regression test. Keep all routes, navigation, backend, schema/migration, import, permission, approval, export, batch, contract, settlement, minimum-staffing, automatic-scheduling, formula, and charge-factor scope out.
+- allowed_files_check: `components/master-data-maintenance-workbench.tsx`, `scripts/tests/product-structure.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, route, page, navigation, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected one UI label replacement in the existing reference-list detail action, product-structure regression test, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED product-structure test first failed because `MasterDataReferenceManagementPage` still contained `>详情</Link>`. After implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 32 tests, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 31 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/skills` row links render `查看/编辑/冻结`, no `详情` label remains, and `/master-data/skills/L1-CN` still renders the existing skill detail page with skill info and owned-personnel section. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM169 Demand Forecast Import Dialog
+
+- branch_name: `codex/im169-demand-forecast-import-dialog`
+- base_main_commit: `e69d1c9`
+- stacked_on: `e1714cc IM083 add single batch apply entry and later local feature chain`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM168. Move only demand forecast import into `/demand-plans/production` as a page-local step-by-step Dialog, reusing existing CSV upload action and returning result state to the same page. Keep schedule import, login/status-log import, backend route/schema/migration, dependency, auth/permissions, approval, export, batch application, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, and charge-factor work out of scope.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/demand-plans/production/page.tsx`, `components/demand-forecast-import-dialog.tsx`, `components/demand-forecast-production-workbench.tsx`, `components/demand-forecast-production-model.ts`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, auth/permissions, approval, export, batch-application capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected demand forecast Dialog model summary, page-local Dialog component, Header action href change, upload result redirect preservation, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizeDemandForecastImportDialog` was missing; TDD RED product-structure test then failed because `/demand-plans/production` did not own a strict step-by-step Dialog. After implementation, `node --test scripts/tests/demand-forecast-production-model.test.mjs` passed with 11 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 33 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/demand-plans/production?import_dialog=1` renders the demand forecast import Dialog with three mounted steps, one file input, two hidden sections, and no old upload-workspace link; the success result URL renders `导入已提交` and a batch detail link. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM170 Schedule Import Dialog
+
+- branch_name: `codex/im170-schedule-import-dialog`
+- base_main_commit: `c353476`
+- stacked_on: `c353476 feat: add demand forecast import dialog`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM169. Move only personnel schedule import into `/schedule-plans/production` as a page-local step-by-step Dialog, reusing existing CSV upload action and returning result state to the same page. Keep login/status-log import, backend route/schema/migration, dependency, auth/permissions, approval, export, batch application, publish/freeze, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, and charge-factor work out of scope.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/schedule-plans/production/page.tsx`, `components/personnel-schedule-import-dialog.tsx`, `components/personnel-schedule-production-workbench.tsx`, `components/personnel-schedule-production-model.ts`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, auth/permissions, approval, export, batch-application capability, publish/freeze, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected personnel schedule Dialog model summary, page-local Dialog component, Header action href change, upload result redirect preservation, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizePersonnelScheduleImportDialog` was missing; TDD RED product-structure test then failed because `/schedule-plans/production` did not own a strict step-by-step Dialog. After implementation, `node --test scripts/tests/personnel-schedule-production-model.test.mjs` passed with 10 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 34 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/schedule-plans/production?import_dialog=1` renders the schedule import Dialog with three mounted steps, one file input, two hidden sections, and no old upload-workspace link; the success result URL renders `导入已提交` and a batch detail link. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM171 Actual Log Import Dialog
+
+- branch_name: `codex/im171-actual-log-import-dialog`
+- base_main_commit: `ed8adf4`
+- stacked_on: `ed8adf4 feat: add schedule import dialog`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM170. Move only login/status-log import into `/actual-logs/production` as page-local step-by-step Dialogs, reusing existing CSV upload action and returning result state to the same page. Keep parsing enhancements, status-dictionary configuration maintenance, backend route/schema/migration, dependency, auth/permissions, approval, export, batch application, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, and charge-factor work out of scope.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/actual-logs/production/page.tsx`, `components/actual-log-import-dialog.tsx`, `components/actual-log-production-workbench.tsx`, `components/actual-log-production-model.ts`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, auth/permissions, approval, export, batch-application capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected actual-log Dialog model summary, page-local Dialog component, Header action href changes, upload result redirect preservation for login/status log types, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizeActualLogImportDialog` was missing; TDD RED product-structure test then failed because `/actual-logs/production` did not own a strict step-by-step Dialog. After implementation, `node --test scripts/tests/actual-log-production-model.test.mjs` passed with 10 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 35 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed login/status import Dialogs render from `/actual-logs/production`, CSV file field is visible, old upload-workspace links are absent, and the success result URL renders `导入已提交` with a batch detail link. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
 - local_commit_sha: to be reported in Done Report after local commit creation
 - integration_status: `not_started`
 - integration_method: `N/A`

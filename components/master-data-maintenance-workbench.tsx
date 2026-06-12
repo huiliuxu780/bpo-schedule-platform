@@ -1,29 +1,52 @@
 import Link from "next/link"
 import {
   AlertTriangle,
-  ArrowLeft,
   CheckCircle2,
+  Eye,
   MoreHorizontal,
+  Pencil,
   Plus,
   RotateCcw,
   Search,
   Send,
   Settings2,
+  Snowflake,
   Upload,
 } from "lucide-react"
 
+import { uploadImportCsvAction } from "@/app/data-quality/actions"
+import { AgentImportDialog } from "@/components/master-data-agent-import-dialog"
 import {
   type MasterDataAgentMaintenanceFeedback,
+  type MasterDataAgentDetailSummary,
   type MasterDataAgentManagementSummary,
   type MasterDataEntitySourceContext,
+  type MasterDataOrganizationDetailSummary,
   type MasterDataOrganizationManagementSummary,
+  type MasterDataOrganizationListViewRow,
   type MasterDataReferenceManagementSummary,
+  type MasterDataReferenceListViewRow,
+  type MasterDataSkillDetailSummary,
+  type MasterDataVendorDetailSummary,
+  type MasterDataWorkplaceDetailSummary,
+  type MasterDataWorkplaceOperatorViewRow,
+  type MasterDataWorkplaceServiceTeamPeopleSummary,
+  type MasterDataWorkplaceServiceTeamRow,
+  type MasterDataWorkplaceServiceTeamType,
 } from "@/components/master-data-maintenance-model"
-import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,20 +72,138 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+export function MasterDataAgentPageActions({
+  summary,
+}: {
+  summary: MasterDataAgentManagementSummary
+}) {
+  return (
+    <>
+      <Button asChild size="sm">
+        <Link href={summary.createHref}>
+          <Plus data-icon="inline-start" />
+          新建
+        </Link>
+      </Button>
+      <Button asChild size="sm" variant="outline">
+        <Link href={summary.importDialog.openHref}>
+          <Upload data-icon="inline-start" />
+          批量导入
+        </Link>
+      </Button>
+    </>
+  )
+}
+
+export function MasterDataWorkplacePageActions({
+  summary,
+}: {
+  summary: MasterDataReferenceManagementSummary
+}) {
+  if (!summary.createHref) {
+    return null
+  }
+
+  return (
+    <Button asChild size="sm">
+      <Link href={summary.createHref}>
+        <Plus data-icon="inline-start" />
+        新建
+      </Link>
+    </Button>
+  )
+}
+
+export function MasterDataVendorPageActions({
+  summary,
+}: {
+  summary: MasterDataReferenceManagementSummary
+}) {
+  if (!summary.createHref) {
+    return null
+  }
+
+  return (
+    <Button asChild size="sm">
+      <Link href={summary.createHref}>
+        <Plus data-icon="inline-start" />
+        新建
+      </Link>
+    </Button>
+  )
+}
+
+export function MasterDataSkillPageActions({
+  summary,
+}: {
+  summary: MasterDataReferenceManagementSummary
+}) {
+  if (!summary.createHref) {
+    return null
+  }
+
+  return (
+    <Button asChild size="sm">
+      <Link href={summary.createHref}>
+        <Plus data-icon="inline-start" />
+        新建
+      </Link>
+    </Button>
+  )
+}
+
+export function MasterDataOrganizationPageActions({
+  summary,
+}: {
+  summary: MasterDataOrganizationManagementSummary
+}) {
+  return (
+    <Button asChild size="sm">
+      <Link href={summary.createHref}>
+        <Plus data-icon="inline-start" />
+        新建
+      </Link>
+    </Button>
+  )
+}
+
+export function MasterDataWorkplaceServiceTeamPageActions({
+  detailSummary,
+}: {
+  detailSummary: MasterDataWorkplaceDetailSummary
+}) {
+  if (!detailSummary.createServiceTeamHref) {
+    return null
+  }
+
+  return (
+    <Button asChild size="sm">
+      <Link href={detailSummary.createServiceTeamHref}>
+        <Plus data-icon="inline-start" />
+        新增服务团队
+      </Link>
+    </Button>
+  )
+}
+
 export function MasterDataAgentManagementPage({
   summary,
   managementSummary,
   error,
+  templateError,
   feedback,
   employeeListError,
+  importDialogOpen,
   selectedFreezeEmployeeId,
   agentSubmitAction,
 }: {
   summary: MasterDataEntitySourceContext
   managementSummary: MasterDataAgentManagementSummary
   error: string | null
+  templateError?: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   employeeListError?: string | null
+  importDialogOpen?: boolean
   selectedFreezeEmployeeId: string
   agentSubmitAction: (formData: FormData) => Promise<void>
 }) {
@@ -73,41 +214,13 @@ export function MasterDataAgentManagementPage({
 
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
-      <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
-        <h1 className="text-base font-semibold tracking-normal">
-          {managementSummary.title}
-        </h1>
-        <div className="flex items-center gap-2">
-          <Button asChild size="sm">
-            <Link href={managementSummary.createHref}>
-              <Plus data-icon="inline-start" />
-              新建
-            </Link>
-          </Button>
-          <Button asChild size="sm" variant="outline">
-            <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
-              <Upload data-icon="inline-start" />
-              导入人员
-            </Link>
-          </Button>
-        </div>
-      </section>
-
-      {error ? (
-        <Card className="border-destructive/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <AlertTriangle className="size-4 text-destructive" />
-              主数据来源读取失败
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
-        </Card>
-      ) : null}
+      {error ? <MasterDataListError title="主数据来源读取失败" error={error} /> : null}
 
       {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 
       <AgentManagementFilterPanel summary={managementSummary} />
+
+      <AgentManagementListToolbar summary={managementSummary} />
 
       <AgentManagementTablePanel
         summary={managementSummary}
@@ -121,6 +234,14 @@ export function MasterDataAgentManagementPage({
           action={agentSubmitAction}
         />
       ) : null}
+
+      {importDialogOpen ? (
+        <AgentImportDialog
+          dialog={managementSummary.importDialog}
+          templateError={templateError ?? null}
+          action={uploadImportCsvAction}
+        />
+      ) : null}
     </main>
   )
 }
@@ -129,24 +250,47 @@ export function MasterDataReferenceManagementPage({
   listSummary,
   error,
   feedback,
+  selectedFreezeWorkplaceId = "",
+  selectedFreezeVendorId = "",
+  selectedFreezeSkillId = "",
+  workplaceSubmitAction,
+  vendorSubmitAction,
+  skillSubmitAction,
 }: {
   summary: MasterDataEntitySourceContext
   listSummary: MasterDataReferenceManagementSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
+  selectedFreezeWorkplaceId?: string
+  selectedFreezeVendorId?: string
+  selectedFreezeSkillId?: string
+  workplaceSubmitAction?: (formData: FormData) => Promise<void>
+  vendorSubmitAction?: (formData: FormData) => Promise<void>
+  skillSubmitAction?: (formData: FormData) => Promise<void>
 }) {
+  const selectedFreezeWorkplace =
+    listSummary.entity.key === "sites"
+      ? listSummary.rows.find(
+          (row) => row.reference_id === selectedFreezeWorkplaceId
+        ) ?? null
+      : null
+  const selectedFreezeVendor =
+    listSummary.entity.key === "vendors"
+      ? listSummary.rows.find((row) => row.reference_id === selectedFreezeVendorId) ??
+        null
+      : null
+  const selectedFreezeSkill =
+    listSummary.entity.key === "skills"
+      ? listSummary.rows.find((row) => row.reference_id === selectedFreezeSkillId) ??
+        null
+      : null
+  const hasActionRows = listSummary.rows.some(
+    (row) =>
+      row.display.detailHref || row.display.editHref || row.display.freezeHref
+  )
+
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
-      <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
-        <h1 className="text-base font-semibold tracking-normal">{listSummary.title}</h1>
-        <Button asChild size="sm" variant="outline">
-          <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
-            <Upload data-icon="inline-start" />
-            导入主数据
-          </Link>
-        </Button>
-      </section>
-
       {error ? <MasterDataListError title={`${listSummary.title}列表读取失败`} error={error} /> : null}
       {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 
@@ -186,6 +330,7 @@ export function MasterDataReferenceManagementPage({
                 <TableHead>状态</TableHead>
                 <TableHead>有效期</TableHead>
                 <TableHead>来源批次</TableHead>
+                {hasActionRows ? <TableHead className="text-right">操作</TableHead> : null}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -207,6 +352,1204 @@ export function MasterDataReferenceManagementPage({
                   <TableCell className="font-mono text-xs">
                     {row.display.sourceBatchLabel}
                   </TableCell>
+                  {hasActionRows ? (
+                    <TableCell className="whitespace-nowrap text-right">
+                      {row.display.detailHref ? (
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>查看</Link>
+                        </Button>
+                      ) : null}
+                      {row.display.editHref ? (
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.editHref}>编辑</Link>
+                        </Button>
+                      ) : null}
+                      {row.display.freezeHref ? (
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-destructive hover:text-destructive"
+                        >
+                          <Link href={row.display.freezeHref}>冻结</Link>
+                        </Button>
+                      ) : null}
+                    </TableCell>
+                  ) : null}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </section>
+
+      {selectedFreezeWorkplace && workplaceSubmitAction ? (
+        <MasterDataWorkplaceFreezeDialog
+          summary={summary}
+          workplace={selectedFreezeWorkplace}
+          action={workplaceSubmitAction}
+        />
+      ) : null}
+      {selectedFreezeVendor && vendorSubmitAction ? (
+        <MasterDataVendorFreezeDialog
+          summary={summary}
+          vendor={selectedFreezeVendor}
+          action={vendorSubmitAction}
+        />
+      ) : null}
+      {selectedFreezeSkill && skillSubmitAction ? (
+        <MasterDataSkillFreezeDialog
+          summary={summary}
+          skill={selectedFreezeSkill}
+          action={skillSubmitAction}
+        />
+      ) : null}
+    </main>
+  )
+}
+
+function MasterDataWorkplaceFreezeDialog({
+  summary,
+  workplace,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  workplace: MasterDataReferenceListViewRow
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结职场</DialogTitle>
+          <DialogDescription>
+            冻结后该职场会进入冻结状态。
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-1 text-sm text-muted-foreground">
+          <p>
+            确认冻结{" "}
+            <span className="font-medium text-foreground">
+              {workplace.display.referenceNameLabel}
+            </span>
+            ？
+          </p>
+          <p className="font-mono text-xs">{workplace.display.referenceIdLabel}</p>
+        </div>
+        {summary.workplaceSubmitSourceBatchId ? (
+          <form action={action}>
+            <input type="hidden" name="action" value="freeze" />
+            <input
+              type="hidden"
+              name="source_batch_id"
+              value={summary.workplaceSubmitSourceBatchId}
+            />
+            <input
+              type="hidden"
+              name="workplace_id"
+              value={workplace.reference_id}
+            />
+            <DialogFooter>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/master-data/sites">取消</Link>
+              </Button>
+              <Button type="submit" size="sm" variant="destructive">
+                确认冻结
+              </Button>
+            </DialogFooter>
+          </form>
+        ) : (
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/master-data/sites">关闭</Link>
+            </Button>
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function MasterDataVendorFreezeDialog({
+  summary,
+  vendor,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  vendor: MasterDataReferenceListViewRow
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结供应商</DialogTitle>
+          <DialogDescription>
+            冻结后该供应商会进入冻结状态。
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-1 text-sm text-muted-foreground">
+          <p>
+            确认冻结{" "}
+            <span className="font-medium text-foreground">
+              {vendor.display.referenceNameLabel}
+            </span>
+            ？
+          </p>
+          <p className="font-mono text-xs">{vendor.display.referenceIdLabel}</p>
+        </div>
+        {summary.vendorSubmitSourceBatchId ? (
+          <form action={action}>
+            <input type="hidden" name="action" value="freeze" />
+            <input
+              type="hidden"
+              name="source_batch_id"
+              value={summary.vendorSubmitSourceBatchId}
+            />
+            <input type="hidden" name="vendor_id" value={vendor.reference_id} />
+            <DialogFooter>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/master-data/vendors">取消</Link>
+              </Button>
+              <Button type="submit" size="sm" variant="destructive">
+                确认冻结
+              </Button>
+            </DialogFooter>
+          </form>
+        ) : (
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/master-data/vendors">关闭</Link>
+            </Button>
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function MasterDataSkillFreezeDialog({
+  summary,
+  skill,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  skill: MasterDataReferenceListViewRow
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结技能组</DialogTitle>
+          <DialogDescription>
+            冻结后该技能组会进入冻结状态。
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-1 text-sm text-muted-foreground">
+          <p>
+            确认冻结{" "}
+            <span className="font-medium text-foreground">
+              {skill.display.referenceNameLabel}
+            </span>
+            ？
+          </p>
+          <p className="font-mono text-xs">{skill.display.referenceIdLabel}</p>
+        </div>
+        {summary.skillSubmitSourceBatchId ? (
+          <form action={action}>
+            <input type="hidden" name="action" value="freeze" />
+            <input
+              type="hidden"
+              name="source_batch_id"
+              value={summary.skillSubmitSourceBatchId}
+            />
+            <input type="hidden" name="skill_id" value={skill.reference_id} />
+            <DialogFooter>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/master-data/skills">取消</Link>
+              </Button>
+              <Button type="submit" size="sm" variant="destructive">
+                确认冻结
+              </Button>
+            </DialogFooter>
+          </form>
+        ) : (
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/master-data/skills">关闭</Link>
+            </Button>
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function MasterDataWorkplaceDetailPage({
+  detailSummary,
+  error,
+  feedback = null,
+  selectedFreezeServiceTeamId = "",
+  serviceTeamSubmitAction,
+}: {
+  detailSummary: MasterDataWorkplaceDetailSummary
+  error: string | null
+  feedback?: MasterDataAgentMaintenanceFeedback | null
+  selectedFreezeServiceTeamId?: string
+  serviceTeamSubmitAction?: (formData: FormData) => Promise<void>
+}) {
+  const workplace = detailSummary.workplace
+  const selectedFreezeServiceTeam =
+    detailSummary.operatorRows.find(
+      (row) =>
+        row.operator_key === selectedFreezeServiceTeamId &&
+        row.source_type === "service_team"
+    ) ?? null
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="职场详情读取失败" error={error} /> : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-3 md:grid-cols-3">
+        <MetricCard
+          label="服务团队"
+          value={detailSummary.totalOperators.toLocaleString("zh-CN")}
+          detail="该职场下的团队来源"
+          tone={detailSummary.totalOperators > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="自有团队"
+          value={detailSummary.internalOperators.toLocaleString("zh-CN")}
+          detail="来自人员档案"
+          tone={detailSummary.internalOperators > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="供应商团队"
+          value={detailSummary.supplierOperators.toLocaleString("zh-CN")}
+          detail="来自人员归属记录"
+          tone={detailSummary.supplierOperators > 0 ? "ready" : "default"}
+        />
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">职场信息</h2>
+        {workplace ? (
+          <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+            <ReadOnlyField label="职场名称" value={workplace.display.referenceNameLabel} />
+            <ReadOnlyField label="职场编码" value={workplace.display.referenceIdLabel} />
+            <ReadOnlyField label="状态" value={workplace.display.statusLabel} />
+            <ReadOnlyField label="地点属性" value={workplace.display.skillCategoryLabel} />
+            <ReadOnlyField label="有效期" value={workplace.display.effectivePeriodLabel} />
+            <ReadOnlyField label="来源批次" value={workplace.display.sourceBatchLabel} />
+          </div>
+        ) : null}
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">服务团队</h2>
+        {detailSummary.operatorRows.length === 0 ? (
+          <div className="rounded-md border p-4 text-sm text-muted-foreground">
+            暂无该职场服务团队记录。
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>团队类型</TableHead>
+                <TableHead>服务团队</TableHead>
+                <TableHead>供应商</TableHead>
+                <TableHead>人员/绑定数</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>有效期</TableHead>
+                <TableHead>来源</TableHead>
+                <TableHead>来源批次</TableHead>
+                <TableHead className="w-40 text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {detailSummary.operatorRows.map((row) => (
+                <TableRow key={row.operator_key}>
+                  <TableCell>{row.display.operatorTypeLabel}</TableCell>
+                  <TableCell className="font-medium">
+                    {row.display.operatorNameLabel}
+                  </TableCell>
+                  <TableCell>{row.display.supplierLabel}</TableCell>
+                  <TableCell>{row.display.recordCountLabel}</TableCell>
+                  <TableCell>
+                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                      {row.display.statusLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell>{row.display.sourceLabel}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.sourceBatchLabel}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {row.display.detailHref ? (
+                      <Button
+                        asChild
+                        size="xs"
+                        variant="ghost"
+                        className="px-1.5 text-primary hover:text-primary"
+                      >
+                        <Link href={row.display.detailHref}>
+                          <Eye data-icon="inline-start" />
+                          查看
+                        </Link>
+                      </Button>
+                    ) : null}
+                    {row.display.editHref ? (
+                      <Button
+                        asChild
+                        size="xs"
+                        variant="ghost"
+                        className="px-1.5 text-primary hover:text-primary"
+                      >
+                        <Link href={row.display.editHref}>
+                          <Pencil data-icon="inline-start" />
+                          编辑
+                        </Link>
+                      </Button>
+                    ) : null}
+                    {row.display.freezeHref ? (
+                      <Button
+                        asChild
+                        size="xs"
+                        variant="ghost"
+                        className="px-1.5 text-destructive hover:text-destructive"
+                      >
+                        <Link href={row.display.freezeHref}>
+                          <Snowflake data-icon="inline-start" />
+                          冻结
+                        </Link>
+                      </Button>
+                    ) : null}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </section>
+
+      {selectedFreezeServiceTeam && workplace && serviceTeamSubmitAction ? (
+        <MasterDataWorkplaceServiceTeamFreezeDialog
+          workplaceId={workplace.reference_id}
+          serviceTeam={selectedFreezeServiceTeam}
+          action={serviceTeamSubmitAction}
+        />
+      ) : null}
+    </main>
+  )
+}
+
+function MasterDataWorkplaceServiceTeamFreezeDialog({
+  workplaceId,
+  serviceTeam,
+  action,
+  cancelHref,
+}: {
+  workplaceId: string
+  serviceTeam: MasterDataWorkplaceOperatorViewRow
+  action: (formData: FormData) => Promise<void>
+  cancelHref?: string
+}) {
+  return (
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结服务团队</DialogTitle>
+          <DialogDescription>
+            冻结后该服务团队会进入冻结状态。
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-1 text-sm text-muted-foreground">
+          <p>
+            确认冻结{" "}
+            <span className="font-medium text-foreground">
+              {serviceTeam.display.operatorNameLabel}
+            </span>
+            ？
+          </p>
+          <p className="font-mono text-xs">{serviceTeam.operator_key}</p>
+        </div>
+        <form action={action}>
+          <input type="hidden" name="action" value="freeze" />
+          <input type="hidden" name="source_batch_id" value={serviceTeam.batch_id} />
+          <input type="hidden" name="workplace_id" value={workplaceId} />
+          <input
+            type="hidden"
+            name="service_team_id"
+            value={serviceTeam.operator_key}
+          />
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href={cancelHref ?? `/master-data/sites/${encodeURIComponent(workplaceId)}`}>
+                取消
+              </Link>
+            </Button>
+            <Button type="submit" size="sm" variant="destructive">
+              确认冻结
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export function MasterDataWorkplaceServiceTeamDetailPage({
+  detailSummary,
+  serviceTeam,
+  serviceTeamRow,
+  peopleSummary,
+  error,
+  showFreezeDialog = false,
+  serviceTeamSubmitAction,
+}: {
+  detailSummary: MasterDataWorkplaceDetailSummary
+  serviceTeam: MasterDataWorkplaceServiceTeamRow | null
+  serviceTeamRow: MasterDataWorkplaceOperatorViewRow | null
+  peopleSummary: MasterDataWorkplaceServiceTeamPeopleSummary
+  error: string | null
+  showFreezeDialog?: boolean
+  serviceTeamSubmitAction?: (formData: FormData) => Promise<void>
+}) {
+  const workplace = detailSummary.workplace
+  const detailHref = serviceTeamRow?.display.detailHref ?? ""
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="服务团队详情读取失败" error={error} /> : null}
+
+      <div className="flex flex-wrap justify-end gap-2">
+        {serviceTeamRow?.display.editHref ? (
+          <Button asChild size="sm" variant="outline">
+            <Link href={serviceTeamRow.display.editHref}>
+              <Pencil data-icon="inline-start" />
+              编辑服务团队
+            </Link>
+          </Button>
+        ) : null}
+        {detailHref ? (
+          <Button asChild size="sm" variant="destructive">
+            <Link
+              href={`${detailHref}?freeze_service_team_id=${encodeURIComponent(
+                serviceTeamRow?.operator_key ?? ""
+              )}`}
+            >
+              <Snowflake data-icon="inline-start" />
+              冻结服务团队
+            </Link>
+          </Button>
+        ) : null}
+      </div>
+
+      {serviceTeam && serviceTeamRow && workplace ? (
+        <>
+          <section className="grid gap-3 md:grid-cols-3">
+            <MetricCard
+              label="团队类型"
+              value={serviceTeamRow.display.operatorTypeLabel}
+              detail="服务团队分类"
+              tone={serviceTeam.team_type === "internal" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="状态"
+              value={serviceTeamRow.display.statusLabel}
+              detail="当前维护状态"
+              tone={serviceTeam.status === "active" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="来源"
+              value={serviceTeamRow.display.sourceLabel}
+              detail="记录来源"
+              tone="default"
+            />
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">服务团队信息</h2>
+            <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+              <ReadOnlyField label="服务团队 ID" value={serviceTeam.service_team_id} />
+              <ReadOnlyField
+                label="服务团队名称"
+                value={serviceTeamRow.display.operatorNameLabel}
+              />
+              <ReadOnlyField
+                label="团队类型"
+                value={serviceTeamRow.display.operatorTypeLabel}
+              />
+              <ReadOnlyField
+                label="归属职场"
+                value={workplace.display.referenceNameLabel}
+              />
+              <ReadOnlyField
+                label={serviceTeam.team_type === "internal" ? "组织来源" : "供应商来源"}
+                value={
+                  serviceTeam.team_type === "internal"
+                    ? (serviceTeam.organization_id ?? "-")
+                    : serviceTeamRow.display.supplierLabel
+                }
+              />
+              <ReadOnlyField label="状态" value={serviceTeamRow.display.statusLabel} />
+              <ReadOnlyField
+                label="生效期"
+                value={serviceTeamRow.display.effectivePeriodLabel}
+              />
+              <ReadOnlyField
+                label="来源批次"
+                value={serviceTeamRow.display.sourceBatchLabel}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">关联人员</h2>
+              <Badge variant="secondary">{peopleSummary.totalPeople} 人</Badge>
+            </div>
+            {peopleSummary.rows.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>姓名</TableHead>
+                      <TableHead>人员 ID</TableHead>
+                      <TableHead>类型</TableHead>
+                      <TableHead>组织</TableHead>
+                      <TableHead>职场</TableHead>
+                      <TableHead>技能</TableHead>
+                      <TableHead>状态</TableHead>
+                      <TableHead>匹配来源</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {peopleSummary.rows.map((person) => (
+                      <TableRow key={person.employee_id}>
+                        <TableCell className="font-medium">
+                          {person.display.employeeNameLabel}
+                        </TableCell>
+                        <TableCell className="font-mono">
+                          {person.employee_id}
+                        </TableCell>
+                        <TableCell>{person.display.employeeTypeLabel}</TableCell>
+                        <TableCell>{person.display.organizationLabel}</TableCell>
+                        <TableCell>{person.display.workplaceLabel}</TableCell>
+                        <TableCell className="min-w-64">
+                          {person.display.skillSummary}
+                        </TableCell>
+                        <TableCell>{person.display.statusLabel}</TableCell>
+                        <TableCell>{person.display.matchSourceLabel}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <AgentFormBlockedState detail={peopleSummary.emptyDetail} />
+            )}
+          </section>
+        </>
+      ) : (
+        <AgentFormBlockedState detail="未找到该服务团队，请回到职场详情重新选择。" />
+      )}
+
+      {showFreezeDialog &&
+      serviceTeamRow &&
+      workplace &&
+      detailHref &&
+      serviceTeamSubmitAction ? (
+        <MasterDataWorkplaceServiceTeamFreezeDialog
+          workplaceId={workplace.reference_id}
+          serviceTeam={serviceTeamRow}
+          action={serviceTeamSubmitAction}
+          cancelHref={detailHref}
+        />
+      ) : null}
+    </main>
+  )
+}
+
+export function MasterDataWorkplaceCreatePage({
+  summary,
+  error,
+  feedback,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <WorkplaceFormPageShell error={error} feedback={feedback}>
+      {summary.workplaceSubmitSourceBatchId ? (
+        <WorkplaceMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.workplaceSubmitSourceBatchId}
+          submitLabel="提交新增"
+          fields={[
+            "workplace_id",
+            "reference_name",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+      ) : (
+        <AgentFormBlockedState detail="当前来源批次不满足职场维护提交条件。" />
+      )}
+    </WorkplaceFormPageShell>
+  )
+}
+
+export function MasterDataWorkplaceEditPage({
+  summary,
+  error,
+  feedback,
+  workplace,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  workplace: MasterDataReferenceListViewRow | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <WorkplaceFormPageShell error={error} feedback={feedback}>
+      {summary.workplaceSubmitSourceBatchId && workplace ? (
+        <WorkplaceMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.workplaceSubmitSourceBatchId}
+          submitLabel="提交编辑"
+          fields={[
+            "reference_name",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+          hiddenFields={{ workplace_id: workplace.reference_id }}
+          defaultValues={{
+            reference_name: workplace.reference_name,
+            status: workplace.status,
+            effective_from: workplace.effective_from,
+            effective_to: workplace.effective_to,
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            workplace
+              ? "当前来源批次不满足职场维护提交条件。"
+              : "未找到该职场，请返回列表重新选择。"
+          }
+        />
+      )}
+    </WorkplaceFormPageShell>
+  )
+}
+
+export function MasterDataWorkplaceServiceTeamCreatePage({
+  summary,
+  error,
+  feedback,
+  workplaceId,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  workplaceId: string
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <WorkplaceFormPageShell error={error} feedback={feedback}>
+      {summary.workplaceSubmitSourceBatchId ? (
+        <WorkplaceServiceTeamMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.workplaceSubmitSourceBatchId}
+          workplaceId={workplaceId}
+          submitLabel="提交新增"
+          showServiceTeamId
+        />
+      ) : (
+        <AgentFormBlockedState detail="当前来源批次不满足服务团队维护提交条件。" />
+      )}
+    </WorkplaceFormPageShell>
+  )
+}
+
+export function MasterDataWorkplaceServiceTeamEditPage({
+  summary,
+  error,
+  feedback,
+  workplaceId,
+  serviceTeam,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  workplaceId: string
+  serviceTeam: MasterDataWorkplaceServiceTeamRow | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <WorkplaceFormPageShell error={error} feedback={feedback}>
+      {summary.workplaceSubmitSourceBatchId && serviceTeam ? (
+        <WorkplaceServiceTeamMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.workplaceSubmitSourceBatchId}
+          workplaceId={workplaceId}
+          submitLabel="提交编辑"
+          hiddenServiceTeamId={serviceTeam.service_team_id}
+          defaultValues={{
+            team_type: serviceTeam.team_type,
+            team_name: serviceTeam.team_name,
+            organization_id: serviceTeam.organization_id ?? "",
+            supplier_id: serviceTeam.supplier_id ?? "",
+            status: serviceTeam.status,
+            effective_from: serviceTeam.effective_from,
+            effective_to: serviceTeam.effective_to,
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            serviceTeam
+              ? "当前来源批次不满足服务团队维护提交条件。"
+              : "未找到该服务团队，请回到职场详情重新选择。"
+          }
+        />
+      )}
+    </WorkplaceFormPageShell>
+  )
+}
+
+export function MasterDataVendorCreatePage({
+  summary,
+  error,
+  feedback,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <VendorFormPageShell error={error} feedback={feedback}>
+      {summary.vendorSubmitSourceBatchId ? (
+        <VendorMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.vendorSubmitSourceBatchId}
+          submitLabel="提交新增"
+          fields={[
+            "vendor_id",
+            "reference_name",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+      ) : (
+        <AgentFormBlockedState detail="当前来源批次不满足供应商维护提交条件。" />
+      )}
+    </VendorFormPageShell>
+  )
+}
+
+export function MasterDataVendorEditPage({
+  summary,
+  error,
+  feedback,
+  vendor,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  vendor: MasterDataReferenceListViewRow | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <VendorFormPageShell error={error} feedback={feedback}>
+      {summary.vendorSubmitSourceBatchId && vendor ? (
+        <VendorMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.vendorSubmitSourceBatchId}
+          submitLabel="提交编辑"
+          fields={[
+            "reference_name",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+          hiddenFields={{ vendor_id: vendor.reference_id }}
+          defaultValues={{
+            reference_name: vendor.reference_name,
+            status: vendor.status,
+            effective_from: vendor.effective_from,
+            effective_to: vendor.effective_to,
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            vendor
+              ? "当前来源批次不满足供应商维护提交条件。"
+              : "未找到该供应商，请返回列表重新选择。"
+          }
+        />
+      )}
+    </VendorFormPageShell>
+  )
+}
+
+export function MasterDataSkillCreatePage({
+  summary,
+  error,
+  feedback,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <SkillFormPageShell error={error} feedback={feedback}>
+      {summary.skillSubmitSourceBatchId ? (
+        <SkillMaintenanceForm
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.skillSubmitSourceBatchId}
+          submitLabel="提交新增"
+          fields={[
+            "skill_id",
+            "reference_name",
+            "skill_category",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+      ) : (
+        <AgentFormBlockedState detail="当前来源批次不满足技能组维护提交条件。" />
+      )}
+    </SkillFormPageShell>
+  )
+}
+
+export function MasterDataSkillEditPage({
+  summary,
+  error,
+  feedback,
+  skill,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  skill: MasterDataReferenceListViewRow | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <SkillFormPageShell error={error} feedback={feedback}>
+      {summary.skillSubmitSourceBatchId && skill ? (
+        <SkillMaintenanceForm
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.skillSubmitSourceBatchId}
+          submitLabel="提交编辑"
+          fields={[
+            "reference_name",
+            "skill_category",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+          hiddenFields={{ skill_id: skill.reference_id }}
+          defaultValues={{
+            reference_name: skill.reference_name,
+            skill_category: skill.skill_category ?? undefined,
+            status: skill.status,
+            effective_from: skill.effective_from,
+            effective_to: skill.effective_to,
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            skill
+              ? "当前来源批次不满足技能组维护提交条件。"
+              : "未找到该技能组，请返回列表重新选择。"
+          }
+        />
+      )}
+    </SkillFormPageShell>
+  )
+}
+
+export function MasterDataOrganizationCreatePage({
+  summary,
+  error,
+  feedback,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <OrganizationFormPageShell error={error} feedback={feedback}>
+      {summary.organizationSubmitSourceBatchId ? (
+        <OrganizationMaintenanceEditor
+          action={action}
+          actionKey="create"
+          sourceBatchId={summary.organizationSubmitSourceBatchId}
+          submitLabel="提交新增"
+          fields={[
+            "organization_id",
+            "organization_name",
+            "organization_level",
+            "parent_organization_id",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+        />
+      ) : (
+        <AgentFormBlockedState detail="当前来源批次不满足组织维护提交条件。" />
+      )}
+    </OrganizationFormPageShell>
+  )
+}
+
+export function MasterDataOrganizationEditPage({
+  summary,
+  error,
+  feedback,
+  organization,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  organization: MasterDataOrganizationListViewRow | null
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <OrganizationFormPageShell error={error} feedback={feedback}>
+      {summary.organizationSubmitSourceBatchId && organization ? (
+        <OrganizationMaintenanceEditor
+          action={action}
+          actionKey="edit"
+          sourceBatchId={summary.organizationSubmitSourceBatchId}
+          submitLabel="提交编辑"
+          fields={[
+            "organization_name",
+            "organization_level",
+            "parent_organization_id",
+            "status",
+            "effective_from",
+            "effective_to",
+          ]}
+          hiddenFields={{ organization_id: organization.organization_id }}
+          defaultValues={{
+            organization_name: organization.organization_name,
+            organization_level: String(organization.organization_level),
+            parent_organization_id: organization.parent_organization_id ?? "",
+            status: organization.status,
+            effective_from: organization.effective_from,
+            effective_to: organization.effective_to,
+          }}
+        />
+      ) : (
+        <AgentFormBlockedState
+          detail={
+            organization
+              ? "当前来源批次不满足组织维护提交条件。"
+              : "未找到该组织，请返回列表重新选择。"
+          }
+        />
+      )}
+    </OrganizationFormPageShell>
+  )
+}
+
+export function MasterDataVendorDetailPage({
+  summary,
+  detailSummary,
+  error,
+}: {
+  summary: MasterDataEntitySourceContext
+  detailSummary: MasterDataVendorDetailSummary
+  error: string | null
+}) {
+  const vendor = detailSummary.vendor
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="供应商详情读取失败" error={error} /> : null}
+
+      <section className="grid gap-3 md:grid-cols-3">
+        <MetricCard
+          label="服务职场"
+          value={detailSummary.totalServiceWorkplaces.toLocaleString("zh-CN")}
+          detail="来自人员归属记录"
+          tone={detailSummary.totalServiceWorkplaces > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="服务团队"
+          value={detailSummary.totalServiceTeams.toLocaleString("zh-CN")}
+          detail="来自职场服务团队"
+          tone={detailSummary.totalServiceTeams > 0 ? "ready" : "default"}
+        />
+        <MetricCard
+          label="来源版本"
+          value={summary.sourceVersionLabel}
+          detail="主数据业务版本"
+          tone="default"
+        />
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">供应商信息</h2>
+        {vendor ? (
+          <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+            <ReadOnlyField label="供应商名称" value={vendor.display.referenceNameLabel} />
+            <ReadOnlyField label="供应商编码" value={vendor.display.referenceIdLabel} />
+            <ReadOnlyField label="状态" value={vendor.display.statusLabel} />
+            <ReadOnlyField label="对象属性" value={vendor.display.skillCategoryLabel} />
+            <ReadOnlyField label="有效期" value={vendor.display.effectivePeriodLabel} />
+            <ReadOnlyField label="来源批次" value={vendor.display.sourceBatchLabel} />
+          </div>
+        ) : null}
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">服务团队</h2>
+        {detailSummary.serviceTeamRows.length === 0 ? (
+          <div className="rounded-md border p-4 text-sm text-muted-foreground">
+            暂无该供应商服务团队记录。
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>服务团队</TableHead>
+                <TableHead>归属职场</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>有效期</TableHead>
+                <TableHead>来源批次</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {detailSummary.serviceTeamRows.map((row) => (
+                <TableRow key={row.service_team_id}>
+                  <TableCell className="font-medium">
+                    {row.display.teamNameLabel}
+                  </TableCell>
+                  <TableCell>{row.display.workplaceLabel}</TableCell>
+                  <TableCell>
+                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                      {row.display.statusLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell className="font-mono">
+                    {row.display.sourceBatchLabel}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-primary hover:text-primary"
+                    >
+                      <Link href={row.display.detailHref}>查看团队</Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </section>
+
+      <section className="rounded-lg border bg-background p-4">
+        <h2 className="mb-3 text-base font-semibold tracking-normal">服务职场</h2>
+        {detailSummary.serviceRows.length === 0 ? (
+          <div className="rounded-md border p-4 text-sm text-muted-foreground">
+            暂无该供应商服务职场记录。
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>职场</TableHead>
+                <TableHead>职场编码</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>有效期</TableHead>
+                <TableHead>来源</TableHead>
+                <TableHead>来源批次</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {detailSummary.serviceRows.map((row) => (
+                <TableRow key={row.service_key}>
+                  <TableCell className="font-medium">
+                    {row.display.workplaceLabel}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.workplaceIdLabel}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                      {row.display.statusLabel}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                  <TableCell>{row.display.sourceLabel}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {row.display.sourceBatchLabel}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-primary hover:text-primary"
+                    >
+                      <Link href={row.display.detailHref}>查看职场</Link>
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -222,24 +1565,23 @@ export function MasterDataOrganizationManagementPage({
   listSummary,
   error,
   feedback,
+  selectedFreezeOrganizationId = "",
+  organizationSubmitAction,
 }: {
   summary: MasterDataEntitySourceContext
   listSummary: MasterDataOrganizationManagementSummary
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
+  selectedFreezeOrganizationId?: string
+  organizationSubmitAction?: (formData: FormData) => Promise<void>
 }) {
+  const selectedFreezeOrganization =
+    listSummary.rows.find(
+      (row) => row.organization_id === selectedFreezeOrganizationId
+    ) ?? null
+
   return (
     <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
-      <section className="flex min-h-9 items-center justify-between gap-3 bg-background px-1">
-        <h1 className="text-base font-semibold tracking-normal">{listSummary.title}</h1>
-        <Button asChild size="sm" variant="outline">
-          <Link href={buildImportUploadWorkspaceHref({ fileType: "master_data" })}>
-            <Upload data-icon="inline-start" />
-            导入主数据
-          </Link>
-        </Button>
-      </section>
-
       {error ? <MasterDataListError title="组织列表读取失败" error={error} /> : null}
       {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
 
@@ -281,6 +1623,7 @@ export function MasterDataOrganizationManagementPage({
                 <TableHead>状态</TableHead>
                 <TableHead>有效期</TableHead>
                 <TableHead>来源批次</TableHead>
+                <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -304,13 +1647,425 @@ export function MasterDataOrganizationManagementPage({
                   <TableCell className="font-mono text-xs">
                     {row.display.sourceBatchLabel}
                   </TableCell>
+                  <TableCell className="whitespace-nowrap text-right">
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-primary hover:text-primary"
+                    >
+                      <Link href={row.display.detailHref}>查看</Link>
+                    </Button>
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-primary hover:text-primary"
+                    >
+                      <Link href={row.display.editHref}>编辑</Link>
+                    </Button>
+                    <Button
+                      asChild
+                      size="xs"
+                      variant="ghost"
+                      className="px-1.5 text-destructive hover:text-destructive"
+                    >
+                      <Link href={row.display.freezeHref}>冻结</Link>
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         )}
       </section>
+      {selectedFreezeOrganization && organizationSubmitAction ? (
+        <MasterDataOrganizationFreezeDialog
+          summary={summary}
+          organization={selectedFreezeOrganization}
+          action={organizationSubmitAction}
+        />
+      ) : null}
     </main>
+  )
+}
+
+export function MasterDataOrganizationDetailPage({
+  detailSummary,
+  error,
+}: {
+  detailSummary: MasterDataOrganizationDetailSummary
+  error: string | null
+}) {
+  const organization = detailSummary.organization
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="组织详情读取失败" error={error} /> : null}
+
+      {organization ? (
+        <>
+          <section className="grid gap-3 md:grid-cols-3">
+            <MetricCard
+              label="组织层级"
+              value={organization.display.organizationLevelLabel}
+              detail={organization.display.parentOrganizationLabel}
+              tone="default"
+            />
+            <MetricCard
+              label="直接下级组织"
+              value={detailSummary.totalChildOrganizations.toLocaleString("zh-CN")}
+              detail="只读层级核对"
+              tone={detailSummary.totalChildOrganizations > 0 ? "ready" : "default"}
+            />
+            <MetricCard
+              label="归属人员"
+              value={detailSummary.totalPeople.toLocaleString("zh-CN")}
+              detail="当前直接归属"
+              tone={detailSummary.totalPeople > 0 ? "ready" : "default"}
+            />
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">组织信息</h2>
+            <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+              <ReadOnlyField
+                label="组织名称"
+                value={organization.display.organizationNameLabel}
+              />
+              <ReadOnlyField
+                label="组织编码"
+                value={organization.display.organizationIdLabel}
+              />
+              <ReadOnlyField
+                label="层级"
+                value={organization.display.organizationLevelLabel}
+              />
+              <ReadOnlyField
+                label="上级组织"
+                value={organization.display.parentOrganizationLabel}
+              />
+              <ReadOnlyField
+                label="组织路径"
+                value={organization.display.organizationPathLabel}
+              />
+              <ReadOnlyField label="状态" value={organization.display.statusLabel} />
+              <ReadOnlyField
+                label="有效期"
+                value={organization.display.effectivePeriodLabel}
+              />
+              <ReadOnlyField
+                label="来源批次"
+                value={organization.display.sourceBatchLabel}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">直接下级组织</h2>
+              <Badge variant="secondary">
+                {detailSummary.totalChildOrganizations.toLocaleString("zh-CN")} 个
+              </Badge>
+            </div>
+            {detailSummary.childRows.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>组织名称</TableHead>
+                    <TableHead>组织编码</TableHead>
+                    <TableHead>层级</TableHead>
+                    <TableHead>组织路径</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detailSummary.childRows.map((row) => (
+                    <TableRow key={row.organization_id}>
+                      <TableCell className="font-medium">
+                        {row.display.organizationNameLabel}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {row.display.organizationIdLabel}
+                      </TableCell>
+                      <TableCell>{row.display.organizationLevelLabel}</TableCell>
+                      <TableCell>{row.display.organizationPathLabel}</TableCell>
+                      <TableCell>
+                        <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                          {row.display.statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>查看组织</Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <AgentFormBlockedState detail={detailSummary.emptyChildDetail} />
+            )}
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">归属人员</h2>
+              <Badge variant="secondary">
+                {detailSummary.totalPeople.toLocaleString("zh-CN")} 人
+              </Badge>
+            </div>
+            {detailSummary.peopleRows.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>姓名</TableHead>
+                    <TableHead>人员 ID</TableHead>
+                    <TableHead>人员类型</TableHead>
+                    <TableHead>职场</TableHead>
+                    <TableHead>技能</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detailSummary.peopleRows.map((row) => (
+                    <TableRow key={row.employee_id}>
+                      <TableCell className="font-medium">
+                        {row.display.publicNameLabel}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">{row.employee_id}</TableCell>
+                      <TableCell>{row.display.employeeTypeLabel}</TableCell>
+                      <TableCell>{row.display.workplaceLabel}</TableCell>
+                      <TableCell>{row.display.skillSummary}</TableCell>
+                      <TableCell>
+                        <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                          {row.display.statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>查看人员</Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <AgentFormBlockedState detail={detailSummary.emptyPeopleDetail} />
+            )}
+          </section>
+        </>
+      ) : (
+        <AgentFormBlockedState detail="未找到该组织，请返回列表重新选择。" />
+      )}
+    </main>
+  )
+}
+
+export function MasterDataSkillDetailPage({
+  detailSummary,
+  error,
+}: {
+  detailSummary: MasterDataSkillDetailSummary
+  error: string | null
+}) {
+  const skill = detailSummary.skill
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="技能组详情读取失败" error={error} /> : null}
+
+      {skill ? (
+        <>
+          <section className="grid gap-3 md:grid-cols-3">
+            <MetricCard
+              label="归属属性"
+              value={skill.display.skillCategoryLabel}
+              detail="技能组分类"
+              tone="default"
+            />
+            <MetricCard
+              label="状态"
+              value={skill.display.statusLabel}
+              detail="主数据状态"
+              tone={skill.status === "active" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="拥有该技能的客服人员"
+              value={detailSummary.totalPeople.toLocaleString("zh-CN")}
+              detail="当前技能集合"
+              tone={detailSummary.totalPeople > 0 ? "ready" : "default"}
+            />
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">技能组信息</h2>
+            <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+              <ReadOnlyField
+                label="技能组名称"
+                value={skill.display.referenceNameLabel}
+              />
+              <ReadOnlyField
+                label="技能组编码"
+                value={skill.display.referenceIdLabel}
+              />
+              <ReadOnlyField
+                label="归属属性"
+                value={skill.display.skillCategoryLabel}
+              />
+              <ReadOnlyField label="状态" value={skill.display.statusLabel} />
+              <ReadOnlyField
+                label="有效期"
+                value={skill.display.effectivePeriodLabel}
+              />
+              <ReadOnlyField
+                label="来源批次"
+                value={skill.display.sourceBatchLabel}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">
+                拥有该技能的客服人员
+              </h2>
+              <Badge variant="secondary">
+                {detailSummary.totalPeople.toLocaleString("zh-CN")} 人
+              </Badge>
+            </div>
+            {detailSummary.peopleRows.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>姓名</TableHead>
+                    <TableHead>人员 ID</TableHead>
+                    <TableHead>人员类型</TableHead>
+                    <TableHead>组织</TableHead>
+                    <TableHead>职场</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detailSummary.peopleRows.map((row) => (
+                    <TableRow key={row.employee_id}>
+                      <TableCell className="font-medium">
+                        {row.display.publicNameLabel}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">{row.employee_id}</TableCell>
+                      <TableCell>{row.display.employeeTypeLabel}</TableCell>
+                      <TableCell>{row.display.organizationLabel}</TableCell>
+                      <TableCell>{row.display.workplaceLabel}</TableCell>
+                      <TableCell>
+                        <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                          {row.display.statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>查看人员</Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <AgentFormBlockedState detail={detailSummary.emptyPeopleDetail} />
+            )}
+          </section>
+        </>
+      ) : (
+        <AgentFormBlockedState detail="未找到该技能组，请返回列表重新选择。" />
+      )}
+    </main>
+  )
+}
+
+function MasterDataOrganizationFreezeDialog({
+  summary,
+  organization,
+  action,
+}: {
+  summary: MasterDataEntitySourceContext
+  organization: MasterDataOrganizationListViewRow
+  action: (formData: FormData) => Promise<void>
+}) {
+  return (
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结组织</DialogTitle>
+          <DialogDescription>
+            冻结后该组织将不可继续作为新的人员归属引用，已有历史数据不在本弹窗内调整。
+          </DialogDescription>
+        </DialogHeader>
+        <form action={action} className="grid gap-4">
+          <input type="hidden" name="action" value="freeze" />
+          <input
+            type="hidden"
+            name="source_batch_id"
+            value={summary.organizationSubmitSourceBatchId ?? ""}
+          />
+          <input
+            type="hidden"
+            name="organization_id"
+            value={organization.organization_id}
+          />
+          <div className="rounded-md border bg-muted/20 p-3 text-sm">
+            <div className="font-medium">
+              {organization.display.organizationNameLabel}
+            </div>
+            <div className="text-muted-foreground">
+              {organization.display.organizationPathLabel}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/master-data/organizations">取消</Link>
+            </Button>
+            <Button type="submit" size="sm" variant="destructive">
+              冻结组织
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function ReadOnlyField({
+  label,
+  value,
+}: {
+  label: string
+  value: string
+}) {
+  return (
+    <div className="grid gap-1 rounded-md border bg-muted/20 p-3">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="min-w-0 break-words font-medium">{value}</span>
+    </div>
   )
 }
 
@@ -322,15 +2077,11 @@ function MasterDataListError({
   error: string
 }) {
   return (
-    <Card className="border-destructive/50">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <AlertTriangle className="size-4 text-destructive" />
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
-    </Card>
+    <Alert variant="destructive">
+      <AlertTriangle />
+      <AlertTitle>{title}</AlertTitle>
+      <AlertDescription>{error}</AlertDescription>
+    </Alert>
   )
 }
 
@@ -351,7 +2102,7 @@ function AgentManagementFilterPanel({
             />
           ))}
         </div>
-        <div className="flex items-center gap-2 pl-0 lg:pl-[6.5rem]">
+        <div className="flex items-center justify-end gap-2">
           <Button type="submit" size="sm">
             <Search data-icon="inline-start" />
             查询
@@ -364,6 +2115,25 @@ function AgentManagementFilterPanel({
           </Button>
         </div>
       </form>
+    </section>
+  )
+}
+
+function AgentManagementListToolbar({
+  summary,
+}: {
+  summary: MasterDataAgentManagementSummary
+}) {
+  return (
+    <section className="flex min-h-9 flex-wrap items-center justify-start gap-3 px-1">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm text-muted-foreground">已选 0 项</span>
+        {summary.bulkActions.map((action) => (
+          <Button key={action.key} size="sm" variant="outline" disabled>
+            {action.label}
+          </Button>
+        ))}
+      </div>
     </section>
   )
 }
@@ -417,15 +2187,6 @@ function AgentManagementTablePanel({
 }) {
   return (
     <section className="rounded-lg border bg-background p-4">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className="text-sm text-muted-foreground">已选 0 项</span>
-        {summary.bulkActions.map((action) => (
-          <Button key={action.key} size="sm" variant="outline" disabled>
-            {action.label}
-          </Button>
-        ))}
-      </div>
-
       {employeeListError ? (
         <div className="rounded-md border p-4 text-sm text-muted-foreground">
           人员列表读取失败：{employeeListError}
@@ -480,6 +2241,9 @@ function AgentManagementTablePanel({
                 <TableCell>{row.employee_id}</TableCell>
                 <TableCell className="whitespace-nowrap text-right">
                   <div className="flex items-center justify-end gap-1">
+                    <AgentRowActionLink href={row.display.detailHref}>
+                      查看
+                    </AgentRowActionLink>
                     <AgentRowActionLink href={row.display.editHref}>
                       编辑
                     </AgentRowActionLink>
@@ -515,6 +2279,134 @@ function AgentManagementTablePanel({
   )
 }
 
+export function MasterDataAgentDetailPage({
+  detailSummary,
+  error,
+}: {
+  detailSummary: MasterDataAgentDetailSummary
+  error: string | null
+}) {
+  const employee = detailSummary.employee
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="客服人员详情读取失败" error={error} /> : null}
+
+      {employee ? (
+        <>
+          <section className="grid gap-3 md:grid-cols-3">
+            <MetricCard
+              label="人员类型"
+              value={employee.display.employeeTypeLabel}
+              detail="当前人员归属"
+              tone={employee.employee_type === "internal" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="状态"
+              value={employee.display.statusLabel}
+              detail="主数据状态"
+              tone={employee.status === "active" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="关联服务团队"
+              value={detailSummary.totalServiceTeams.toLocaleString("zh-CN")}
+              detail="只读核对关系"
+              tone={detailSummary.totalServiceTeams > 0 ? "ready" : "default"}
+            />
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">人员信息</h2>
+            <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+              <ReadOnlyField label="姓名" value={employee.display.publicNameLabel} />
+              <ReadOnlyField label="人员 ID" value={employee.employee_id} />
+              <ReadOnlyField label="人员类型" value={employee.display.employeeTypeLabel} />
+              <ReadOnlyField label="组织" value={employee.display.organizationLabel} />
+              <ReadOnlyField label="职场" value={employee.display.workplaceLabel} />
+              <ReadOnlyField label="状态" value={employee.display.statusLabel} />
+              <ReadOnlyField
+                label="有效期"
+                value={`${employee.effective_from} 至 ${employee.effective_to}`}
+              />
+              <ReadOnlyField
+                label="来源批次"
+                value={employee.display.sourceBatchLabel}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">技能集合</h2>
+            <div className="rounded-md border p-4 text-sm">
+              {employee.display.skillSummary}
+            </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">关联服务团队</h2>
+              <Badge variant="secondary">
+                {detailSummary.totalServiceTeams.toLocaleString("zh-CN")} 个
+              </Badge>
+            </div>
+            {detailSummary.serviceTeamRows.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>服务团队</TableHead>
+                    <TableHead>团队类型</TableHead>
+                    <TableHead>归属职场</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead>有效期</TableHead>
+                    <TableHead>来源批次</TableHead>
+                    <TableHead>匹配来源</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detailSummary.serviceTeamRows.map((row) => (
+                    <TableRow key={row.service_team_id}>
+                      <TableCell className="font-medium">
+                        {row.display.teamNameLabel}
+                      </TableCell>
+                      <TableCell>{row.display.teamTypeLabel}</TableCell>
+                      <TableCell>{row.display.workplaceLabel}</TableCell>
+                      <TableCell>
+                        <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                          {row.display.statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{row.display.effectivePeriodLabel}</TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {row.display.sourceBatchLabel}
+                      </TableCell>
+                      <TableCell>{row.display.matchSourceLabel}</TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>查看团队</Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <AgentFormBlockedState detail={detailSummary.emptyServiceTeamDetail} />
+            )}
+          </section>
+        </>
+      ) : (
+        <AgentFormBlockedState detail="未找到该客服人员，请返回列表重新选择。" />
+      )}
+    </main>
+  )
+}
+
 function AgentRowActionLink({
   href,
   children,
@@ -525,9 +2417,9 @@ function AgentRowActionLink({
   return (
     <Button
       asChild
-      size="xs"
+      size="sm"
       variant="ghost"
-      className="px-1.5 text-primary hover:text-primary"
+      className="px-2 text-primary hover:text-primary"
     >
       <Link href={href}>{children}</Link>
     </Button>
@@ -544,60 +2436,55 @@ function AgentFreezeDialog({
   action: (formData: FormData) => Promise<void>
 }) {
   return (
-    <div
-      className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="agent-freeze-title"
-    >
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="pb-2">
-          <CardTitle id="agent-freeze-title" className="text-base">
-            冻结客服人员
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="grid gap-1 text-sm text-muted-foreground">
-            <p>
-              确认冻结{" "}
-              <span className="font-medium text-foreground">
-                {employee.employee_name}
-              </span>
-              ？
-            </p>
-            <p className="font-mono text-xs">{employee.employee_id}</p>
-            <p>冻结后该人员会进入冻结状态。</p>
-          </div>
-          {summary.agentSubmitSourceBatchId ? (
-            <form action={action} className="flex justify-end gap-2">
-              <input type="hidden" name="action" value="freeze" />
-              <input
-                type="hidden"
-                name="source_batch_id"
-                value={summary.agentSubmitSourceBatchId}
-              />
-              <input
-                type="hidden"
-                name="employee_id"
-                value={employee.employee_id}
-              />
+    <Dialog open>
+      <DialogContent showCloseButton={false} className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>冻结客服人员</DialogTitle>
+          <DialogDescription>
+            冻结后该人员会进入冻结状态。
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-1 text-sm text-muted-foreground">
+          <p>
+            确认冻结{" "}
+            <span className="font-medium text-foreground">
+              {employee.employee_name}
+            </span>
+            ？
+          </p>
+          <p className="font-mono text-xs">{employee.employee_id}</p>
+        </div>
+        {summary.agentSubmitSourceBatchId ? (
+          <form action={action}>
+            <input type="hidden" name="action" value="freeze" />
+            <input
+              type="hidden"
+              name="source_batch_id"
+              value={summary.agentSubmitSourceBatchId}
+            />
+            <input
+              type="hidden"
+              name="employee_id"
+              value={employee.employee_id}
+            />
+            <DialogFooter>
               <Button asChild size="sm" variant="outline">
                 <Link href="/master-data/agents">取消</Link>
               </Button>
               <Button type="submit" size="sm" variant="destructive">
                 确认冻结
               </Button>
-            </form>
-          ) : (
-            <div className="flex justify-end gap-2">
-              <Button asChild size="sm" variant="outline">
-                <Link href="/master-data/agents">关闭</Link>
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+            </DialogFooter>
+          </form>
+        ) : (
+          <DialogFooter>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/master-data/agents">关闭</Link>
+            </Button>
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -613,12 +2500,7 @@ export function MasterDataAgentCreatePage({
   action: (formData: FormData) => Promise<void>
 }) {
   return (
-      <AgentFormPageShell
-      title="新建客服人员"
-      description="创建单个客服人员基础档案。人员表导入从客服人员列表进入。"
-      error={error}
-      feedback={feedback}
-    >
+    <AgentFormPageShell error={error} feedback={feedback}>
       {summary.agentSubmitSourceBatchId ? (
         <AgentMaintenanceForm
           action={action}
@@ -659,12 +2541,7 @@ export function MasterDataAgentEditPage({
   action: (formData: FormData) => Promise<void>
 }) {
   return (
-    <AgentFormPageShell
-      title="编辑客服人员"
-      description="修改单个客服人员的基础字段。技能集合单独进入技能维护页。"
-      error={error}
-      feedback={feedback}
-    >
+    <AgentFormPageShell error={error} feedback={feedback}>
       {summary.agentSubmitSourceBatchId && employee ? (
         <AgentMaintenanceForm
           action={action}
@@ -717,12 +2594,7 @@ export function MasterDataAgentSkillsEditPage({
   action: (formData: FormData) => Promise<void>
 }) {
   return (
-    <AgentFormPageShell
-      title="维护客服技能组"
-      description="替换单个客服人员当前技能集合。"
-      error={error}
-      feedback={feedback}
-    >
+    <AgentFormPageShell error={error} feedback={feedback}>
       {summary.agentSubmitSourceBatchId && employee ? (
         <AgentSkillMaintenanceSection
           summary={summary}
@@ -743,43 +2615,106 @@ export function MasterDataAgentSkillsEditPage({
 }
 
 function AgentFormPageShell({
-  title,
-  description,
   error,
   feedback,
   children,
 }: {
-  title: string
-  description: string
   error: string | null
   feedback: MasterDataAgentMaintenanceFeedback | null
   children: React.ReactNode
 }) {
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
-      <section className="flex flex-col gap-3 rounded-lg border bg-background p-4">
-        <Button asChild size="sm" variant="ghost" className="w-fit px-0">
-          <Link href="/master-data/agents">
-            <ArrowLeft data-icon="inline-start" />
-            返回客服人员
-          </Link>
-        </Button>
-        <div className="grid gap-1">
-          <h1 className="text-xl font-semibold tracking-normal">{title}</h1>
-          <p className="text-sm text-muted-foreground">{description}</p>
-        </div>
-      </section>
-
       {error ? (
-        <Card className="border-destructive/50">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <AlertTriangle className="size-4 text-destructive" />
-              主数据来源读取失败
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
-        </Card>
+        <MasterDataListError title="主数据来源读取失败" error={error} />
+      ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-4">{children}</section>
+    </main>
+  )
+}
+
+function WorkplaceFormPageShell({
+  error,
+  feedback,
+  children,
+}: {
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  children: React.ReactNode
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? (
+        <MasterDataListError title="职场来源读取失败" error={error} />
+      ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-4">{children}</section>
+    </main>
+  )
+}
+
+function VendorFormPageShell({
+  error,
+  feedback,
+  children,
+}: {
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  children: React.ReactNode
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? (
+        <MasterDataListError title="供应商来源读取失败" error={error} />
+      ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-4">{children}</section>
+    </main>
+  )
+}
+
+function SkillFormPageShell({
+  error,
+  feedback,
+  children,
+}: {
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  children: React.ReactNode
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? (
+        <MasterDataListError title="技能组来源读取失败" error={error} />
+      ) : null}
+
+      {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
+
+      <section className="grid gap-4">{children}</section>
+    </main>
+  )
+}
+
+function OrganizationFormPageShell({
+  error,
+  feedback,
+  children,
+}: {
+  error: string | null
+  feedback: MasterDataAgentMaintenanceFeedback | null
+  children: React.ReactNode
+}) {
+  return (
+    <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? (
+        <MasterDataListError title="组织来源读取失败" error={error} />
       ) : null}
 
       {feedback ? <AgentMaintenanceFeedbackCard feedback={feedback} /> : null}
@@ -804,6 +2739,411 @@ function AgentFormBlockedState({
   )
 }
 
+type WorkplaceMaintenanceField =
+  | "workplace_id"
+  | "reference_name"
+  | "status"
+  | "effective_from"
+  | "effective_to"
+
+function WorkplaceMaintenanceForm({
+  action,
+  actionKey,
+  sourceBatchId,
+  submitLabel,
+  fields,
+  hiddenFields = {},
+  defaultValues = {},
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit"
+  sourceBatchId: string
+  submitLabel: string
+  fields: WorkplaceMaintenanceField[]
+  hiddenFields?: Record<string, string>
+  defaultValues?: Partial<Record<WorkplaceMaintenanceField, string>>
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">职场信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
+          <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("workplace_id") ? (
+              <MaintenanceInput
+                label="职场 ID"
+                name="workplace_id"
+                placeholder="SITE-001"
+                defaultValue={defaultValues.workplace_id}
+                required
+              />
+            ) : null}
+            {fields.includes("reference_name") ? (
+              <MaintenanceInput
+                label="职场名称"
+                name="reference_name"
+                placeholder="输入职场名称"
+                defaultValue={defaultValues.reference_name}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("status") ? (
+              <MaintenanceSelect
+                label="状态"
+                name="status"
+                defaultValue={defaultValues.status}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_from") ? (
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                defaultValue={defaultValues.effective_from}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_to") ? (
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                defaultValue={defaultValues.effective_to}
+                required={actionKey === "create"}
+              />
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+type VendorMaintenanceField =
+  | "vendor_id"
+  | "reference_name"
+  | "status"
+  | "effective_from"
+  | "effective_to"
+
+function VendorMaintenanceForm({
+  action,
+  actionKey,
+  sourceBatchId,
+  submitLabel,
+  fields,
+  hiddenFields = {},
+  defaultValues = {},
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit"
+  sourceBatchId: string
+  submitLabel: string
+  fields: VendorMaintenanceField[]
+  hiddenFields?: Record<string, string>
+  defaultValues?: Partial<Record<VendorMaintenanceField, string>>
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">供应商信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
+          <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("vendor_id") ? (
+              <MaintenanceInput
+                label="供应商 ID"
+                name="vendor_id"
+                placeholder="SUP-001"
+                defaultValue={defaultValues.vendor_id}
+                required
+              />
+            ) : null}
+            {fields.includes("reference_name") ? (
+              <MaintenanceInput
+                label="供应商名称"
+                name="reference_name"
+                placeholder="输入供应商名称"
+                defaultValue={defaultValues.reference_name}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("status") ? (
+              <MaintenanceSelect
+                label="状态"
+                name="status"
+                defaultValue={defaultValues.status}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_from") ? (
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                defaultValue={defaultValues.effective_from}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_to") ? (
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                defaultValue={defaultValues.effective_to}
+                required={actionKey === "create"}
+              />
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+type SkillMaintenanceField =
+  | "skill_id"
+  | "reference_name"
+  | "skill_category"
+  | "status"
+  | "effective_from"
+  | "effective_to"
+
+function SkillMaintenanceForm({
+  action,
+  actionKey,
+  sourceBatchId,
+  submitLabel,
+  fields,
+  hiddenFields = {},
+  defaultValues = {},
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit"
+  sourceBatchId: string
+  submitLabel: string
+  fields: SkillMaintenanceField[]
+  hiddenFields?: Record<string, string>
+  defaultValues?: Partial<Record<SkillMaintenanceField, string>>
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">技能组信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
+          <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("skill_id") ? (
+              <MaintenanceInput
+                label="技能组 ID"
+                name="skill_id"
+                placeholder="SKILL-ONLINE-001"
+                defaultValue={defaultValues.skill_id}
+                required
+              />
+            ) : null}
+            {fields.includes("reference_name") ? (
+              <MaintenanceInput
+                label="技能组名称"
+                name="reference_name"
+                placeholder="输入技能组名称"
+                defaultValue={defaultValues.reference_name}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("skill_category") ? (
+              <SkillCategorySelect
+                label="归属属性"
+                name="skill_category"
+                defaultValue={defaultValues.skill_category}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("status") ? (
+              <MaintenanceSelect
+                label="状态"
+                name="status"
+                defaultValue={defaultValues.status}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_from") ? (
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                defaultValue={defaultValues.effective_from}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_to") ? (
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                defaultValue={defaultValues.effective_to}
+                required={actionKey === "create"}
+              />
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+type OrganizationMaintenanceField =
+  | "organization_id"
+  | "organization_name"
+  | "organization_level"
+  | "parent_organization_id"
+  | "status"
+  | "effective_from"
+  | "effective_to"
+
+function OrganizationMaintenanceEditor({
+  action,
+  actionKey,
+  sourceBatchId,
+  submitLabel,
+  fields,
+  hiddenFields = {},
+  defaultValues = {},
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit"
+  sourceBatchId: string
+  submitLabel: string
+  fields: OrganizationMaintenanceField[]
+  hiddenFields?: Record<string, string>
+  defaultValues?: Partial<Record<OrganizationMaintenanceField, string>>
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">组织信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          {Object.entries(hiddenFields).map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} />
+          ))}
+          <div className="grid gap-3 md:grid-cols-2">
+            {fields.includes("organization_id") ? (
+              <MaintenanceInput
+                label="组织 ID"
+                name="organization_id"
+                placeholder="ORG-RETURN"
+                defaultValue={defaultValues.organization_id}
+                required
+              />
+            ) : null}
+            {fields.includes("organization_name") ? (
+              <MaintenanceInput
+                label="组织名称"
+                name="organization_name"
+                placeholder="输入组织名称"
+                defaultValue={defaultValues.organization_name}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("organization_level") ? (
+              <MaintenanceInput
+                label="组织层级"
+                name="organization_level"
+                type="number"
+                placeholder="1"
+                defaultValue={defaultValues.organization_level}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("parent_organization_id") ? (
+              <MaintenanceInput
+                label="上级组织 ID"
+                name="parent_organization_id"
+                placeholder="一级组织可留空"
+                defaultValue={defaultValues.parent_organization_id}
+              />
+            ) : null}
+            {fields.includes("status") ? (
+              <MaintenanceSelect
+                label="状态"
+                name="status"
+                defaultValue={defaultValues.status}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_from") ? (
+              <MaintenanceInput
+                label="生效开始"
+                name="effective_from"
+                type="date"
+                defaultValue={defaultValues.effective_from}
+                required={actionKey === "create"}
+              />
+            ) : null}
+            {fields.includes("effective_to") ? (
+              <MaintenanceInput
+                label="生效结束"
+                name="effective_to"
+                type="date"
+                defaultValue={defaultValues.effective_to}
+                required={actionKey === "create"}
+              />
+            ) : null}
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
 function AgentMaintenanceFeedbackCard({
   feedback,
 }: {
@@ -812,21 +3152,11 @@ function AgentMaintenanceFeedbackCard({
   const isError = feedback.tone === "error"
 
   return (
-    <Card className={isError ? "border-destructive/50" : ""}>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          {isError ? (
-            <AlertTriangle className="size-4 text-destructive" />
-          ) : (
-            <CheckCircle2 className="size-4 text-muted-foreground" />
-          )}
-          {feedback.title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">
-        {feedback.detail}
-      </CardContent>
-    </Card>
+    <Alert variant={isError ? "destructive" : "default"}>
+      {isError ? <AlertTriangle /> : <CheckCircle2 />}
+      <AlertTitle>{feedback.title}</AlertTitle>
+      <AlertDescription>{feedback.detail}</AlertDescription>
+    </Alert>
   )
 }
 
@@ -844,22 +3174,10 @@ function AgentSkillMaintenanceSection({
   }
 
   return (
-    <section className="grid gap-3">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-base font-semibold tracking-normal">
-          坐席技能维护
-        </h2>
-        <p className="max-w-3xl text-sm text-muted-foreground">
-          覆盖单个坐席当前技能集合。来源批次{" "}
-          <span className="font-mono text-foreground">
-            {summary.agentSubmitSourceBatchId}
-          </span>
-          。
-        </p>
-      </div>
+    <section>
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">维护坐席技能</CardTitle>
+          <CardTitle className="text-base">技能组</CardTitle>
         </CardHeader>
         <CardContent>
           <form action={action} className="grid gap-3">
@@ -869,7 +3187,11 @@ function AgentSkillMaintenanceSection({
               value={summary.agentSubmitSourceBatchId}
             />
             <p className="text-sm text-muted-foreground">
-              多个技能 ID 用逗号或换行分隔，提交后替换该坐席当前技能全集。
+              多个技能 ID 用逗号或换行分隔，提交后替换该坐席当前技能全集。来源批次{" "}
+              <span className="font-mono text-foreground">
+                {summary.agentSubmitSourceBatchId}
+              </span>
+              。
             </p>
             <div className="grid gap-3 md:grid-cols-2">
               <MaintenanceInput
@@ -908,6 +3230,117 @@ function AgentSkillMaintenanceSection({
         </CardContent>
       </Card>
     </section>
+  )
+}
+
+function WorkplaceServiceTeamMaintenanceForm({
+  action,
+  actionKey,
+  sourceBatchId,
+  workplaceId,
+  submitLabel,
+  showServiceTeamId = false,
+  hiddenServiceTeamId,
+  defaultValues = {},
+}: {
+  action: (formData: FormData) => Promise<void>
+  actionKey: "create" | "edit"
+  sourceBatchId: string
+  workplaceId: string
+  submitLabel: string
+  showServiceTeamId?: boolean
+  hiddenServiceTeamId?: string
+  defaultValues?: Partial<{
+    team_type: MasterDataWorkplaceServiceTeamType
+    team_name: string
+    organization_id: string
+    supplier_id: string
+    status: string
+    effective_from: string
+    effective_to: string
+  }>
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">服务团队信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="grid gap-3">
+          <input type="hidden" name="action" value={actionKey} />
+          <input type="hidden" name="source_batch_id" value={sourceBatchId} />
+          <input type="hidden" name="workplace_id" value={workplaceId} />
+          {hiddenServiceTeamId ? (
+            <input
+              type="hidden"
+              name="service_team_id"
+              value={hiddenServiceTeamId}
+            />
+          ) : null}
+          <div className="grid gap-3 md:grid-cols-2">
+            {showServiceTeamId ? (
+              <MaintenanceInput
+                label="服务团队 ID"
+                name="service_team_id"
+                placeholder="TEAM-SH-001"
+                required
+              />
+            ) : null}
+            <ServiceTeamTypeSelect
+              label="团队类型"
+              name="team_type"
+              defaultValue={defaultValues.team_type}
+              required={actionKey === "create"}
+            />
+            <MaintenanceInput
+              label="服务团队名称"
+              name="team_name"
+              placeholder="集中退换小组"
+              defaultValue={defaultValues.team_name}
+              required={actionKey === "create"}
+            />
+            <MaintenanceInput
+              label="组织 ID（自有团队）"
+              name="organization_id"
+              placeholder="ORG-RETURN"
+              defaultValue={defaultValues.organization_id}
+            />
+            <MaintenanceInput
+              label="供应商 ID（供应商团队）"
+              name="supplier_id"
+              placeholder="SUP-001"
+              defaultValue={defaultValues.supplier_id}
+            />
+            <MaintenanceSelect
+              label="状态"
+              name="status"
+              defaultValue={defaultValues.status}
+              required={actionKey === "create"}
+            />
+            <MaintenanceInput
+              label="生效开始"
+              name="effective_from"
+              type="date"
+              defaultValue={defaultValues.effective_from}
+              required={actionKey === "create"}
+            />
+            <MaintenanceInput
+              label="生效结束"
+              name="effective_to"
+              type="date"
+              defaultValue={defaultValues.effective_to}
+              required={actionKey === "create"}
+            />
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm">
+              <Send data-icon="inline-start" />
+              {submitLabel}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -1183,6 +3616,61 @@ function EmployeeTypeSelect({
       >
         <option value="internal">自有员工</option>
         <option value="outsourced">外包员工</option>
+      </select>
+    </label>
+  )
+}
+
+function ServiceTeamTypeSelect({
+  label,
+  name,
+  defaultValue = "internal",
+  required = false,
+}: {
+  label: string
+  name: string
+  defaultValue?: string
+  required?: boolean
+}) {
+  return (
+    <label className="grid gap-1.5 text-sm font-medium">
+      {label}
+      <select
+        name={name}
+        required={required}
+        defaultValue={defaultValue}
+        className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        <option value="internal">自有团队</option>
+        <option value="supplier">供应商团队</option>
+      </select>
+    </label>
+  )
+}
+
+function SkillCategorySelect({
+  label,
+  name,
+  defaultValue = "online",
+  required = false,
+}: {
+  label: string
+  name: string
+  defaultValue?: string
+  required?: boolean
+}) {
+  return (
+    <label className="grid gap-1.5 text-sm font-medium">
+      {label}
+      <select
+        name={name}
+        required={required}
+        defaultValue={defaultValue}
+        className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+      >
+        <option value="online">在线技能组</option>
+        <option value="hotline">热线技能组</option>
+        <option value="ticket">工单技能组</option>
       </select>
     </label>
   )

@@ -122,6 +122,26 @@ function buildUploadResultRedirectHref(
     searchParams.set("batch", params.batchId)
   }
 
+  if (resultTarget === "/master-data/agents?import_dialog=1") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
+  if (resultTarget === "/demand-plans/production?import_dialog=1") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
+  if (resultTarget === "/schedule-plans/production?import_dialog=1") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
+  if (resultTarget === "/actual-logs/production?import_dialog=1&log_type=login") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
+  if (resultTarget === "/actual-logs/production?import_dialog=1&log_type=status") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
   return `/data-quality?${searchParams.toString()}`
 }
 

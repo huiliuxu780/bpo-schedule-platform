@@ -9,10 +9,12 @@ import {
   ShieldAlert,
   Split,
   Table2,
+  Upload,
 } from "lucide-react"
 
 import {
   summarizeActualLogProcessingDetail,
+  type ActualLogImportDialogSummary,
   type ActualLogProductionTone,
   summarizeActualLogProductionWorkbench,
 } from "@/components/actual-log-production-model"
@@ -20,7 +22,6 @@ import type {
   ImportBatchListRow,
   ImportBatchPersistenceDetail,
 } from "@/components/import-center-model"
-import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -46,6 +47,30 @@ type ActualLogProcessingDetailProps = {
   error: string | null
 }
 
+export function ActualLogProductionPageActions({
+  loginDialog,
+  statusDialog,
+}: {
+  loginDialog: ActualLogImportDialogSummary
+  statusDialog: ActualLogImportDialogSummary
+}) {
+  return (
+    <>
+      <Button asChild size="sm">
+        <Link href={loginDialog.openHref}>
+          <Upload data-icon="inline-start" />
+          导入登录日志
+        </Link>
+      </Button>
+      <Button asChild size="sm" variant="outline">
+        <Link href={statusDialog.openHref}>
+          导入状态日志
+        </Link>
+      </Button>
+    </>
+  )
+}
+
 export function ActualLogProductionWorkbench({
   batches,
   error,
@@ -56,8 +81,7 @@ export function ActualLogProductionWorkbench({
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-normal">登录/状态日志生产</h1>
-          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
+          <p className="max-w-3xl text-sm text-muted-foreground">
             按登录日志和状态日志导入批次查看实际日志业务版本、应用状态、业务日范围、时区和跨天处理结果。
           </p>
         </div>
@@ -125,19 +149,6 @@ export function ActualLogProductionWorkbench({
             <p className="font-medium text-foreground">{summary.title}</p>
             <p>{summary.detail}</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild size="sm" variant="outline">
-              <Link href={buildImportUploadWorkspaceHref({ fileType: "login_log" })}>
-                导入登录日志
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
-            <Button asChild size="sm" variant="ghost">
-              <Link href={buildImportUploadWorkspaceHref({ fileType: "status_log" })}>
-                导入状态日志
-              </Link>
-            </Button>
-          </div>
         </CardContent>
       </Card>
 
@@ -145,7 +156,7 @@ export function ActualLogProductionWorkbench({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Table2 className="size-4 text-muted-foreground" />
-            登录/状态日志生产台账
+            日志处理列表
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -239,14 +250,13 @@ export function ActualLogProcessingDetail({
         <div>
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <Button asChild size="sm" variant="ghost">
-              <Link href={summary.workbenchHref}>返回日志生产</Link>
+              <Link href={summary.workbenchHref}>返回登录/状态日志</Link>
             </Button>
             <Badge variant={summary.tone === "ready" ? "outline" : "destructive"}>
               {summary.tone === "ready" ? "可解释" : "解释受限"}
             </Badge>
             <Badge variant="secondary">{summary.fileTypeLabel}</Badge>
           </div>
-          <h1 className="text-xl font-semibold tracking-normal">登录/状态日志处理解释</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
             {summary.detail}
           </p>

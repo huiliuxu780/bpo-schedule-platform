@@ -25,7 +25,14 @@ export default async function NewMasterDataAgentPage({
   const feedback = summarizeMasterDataMaintenanceFeedback(resolvedSearchParams)
 
   return (
-    <AppShell title="新建客服人员" searchPlaceholder="搜索客服人员">
+    <AppShell
+      title="新建客服人员"
+      breadcrumbItems={[
+        { label: "主数据", href: "/master-data/agents" },
+        { label: "客服人员", href: "/master-data/agents" },
+        { label: "新建" },
+      ]}
+    >
       <MasterDataAgentCreatePage
         summary={summary}
         error={batchResult.error}

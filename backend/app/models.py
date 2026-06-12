@@ -31,7 +31,10 @@ MasterDataEmployeeMaintenanceStatus = Literal[
 ]
 MasterDataReferenceType = Literal["suppliers", "workplaces", "projects", "skills"]
 MasterDataReferenceMaintenanceAction = Literal["create", "edit", "freeze", "effective_period"]
+MasterDataOrganizationMaintenanceAction = Literal["create", "edit", "freeze"]
 MasterDataBindingMaintenanceAction = Literal["create", "edit", "effective_period"]
+MasterDataWorkplaceServiceTeamType = Literal["internal", "supplier"]
+MasterDataWorkplaceServiceTeamMaintenanceAction = Literal["create", "edit", "freeze"]
 ComparisonType = Literal["forecast_vs_schedule", "schedule_vs_actual"]
 ComparisonRunStatus = Literal["completed", "failed"]
 ReviewSourceResultType = Literal["forecast_schedule", "schedule_actual"]
@@ -379,10 +382,28 @@ class MasterDataOrganizationRecord(BaseModel):
     organization_path: str
 
 
+class MasterDataOrganizationMaintenanceRequest(BaseModel):
+    action: MasterDataOrganizationMaintenanceAction
+    source_batch_id: str
+    organization_name: str | None = None
+    organization_level: int | None = Field(default=None, ge=1)
+    parent_organization_id: str | None = None
+    status: MasterDataStatus | None = None
+    effective_from: str | None = None
+    effective_to: str | None = None
+
+
+class MasterDataOrganizationMaintenanceResponse(BaseModel):
+    organization_id: str
+    action_status: MasterDataEmployeeMaintenanceStatus
+    organization: MasterDataOrganizationRecord
+
+
 class MasterDataReferenceMaintenanceRequest(BaseModel):
     action: MasterDataReferenceMaintenanceAction
     source_batch_id: str
     reference_name: str | None = None
+    skill_category: MasterDataSkillCategory | None = None
     status: MasterDataStatus | None = None
     effective_from: str | None = None
     effective_to: str | None = None
@@ -536,6 +557,45 @@ class MasterDataBindingMaintenanceResponse(BaseModel):
     binding_id: str
     action_status: Literal["created", "updated", "effective_period_updated"]
     binding: EmployeeBindingRecord
+
+
+class MasterDataWorkplaceServiceTeamInput(BaseModel):
+    service_team_id: str
+    workplace_id: str
+    team_type: MasterDataWorkplaceServiceTeamType
+    team_name: str
+    organization_id: str | None = None
+    supplier_id: str | None = None
+    status: MasterDataStatus
+    effective_from: str
+    effective_to: str
+
+
+class MasterDataWorkplaceServiceTeamRecord(MasterDataWorkplaceServiceTeamInput):
+    batch_id: str
+
+
+class MasterDataWorkplaceServiceTeamListResponse(BaseModel):
+    items: list[MasterDataWorkplaceServiceTeamRecord]
+
+
+class MasterDataWorkplaceServiceTeamMaintenanceRequest(BaseModel):
+    action: MasterDataWorkplaceServiceTeamMaintenanceAction
+    source_batch_id: str
+    workplace_id: str | None = None
+    team_type: MasterDataWorkplaceServiceTeamType | None = None
+    team_name: str | None = None
+    organization_id: str | None = None
+    supplier_id: str | None = None
+    status: MasterDataStatus | None = None
+    effective_from: str | None = None
+    effective_to: str | None = None
+
+
+class MasterDataWorkplaceServiceTeamMaintenanceResponse(BaseModel):
+    service_team_id: str
+    action_status: Literal["created", "updated", "frozen"]
+    service_team: MasterDataWorkplaceServiceTeamRecord
 
 
 class MasterDataImportApplyResponse(BaseModel):

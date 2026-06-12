@@ -1,5 +1,6 @@
 import type {
   ImportBatchListRow,
+  ImportFieldMappingTemplate,
   ImportBatchPersistenceDetail,
   ImportBatchRowResult,
 } from "@/components/import-center-model"
@@ -41,6 +42,45 @@ export type ActualLogProductionSummary = {
   appliedVersions: number
   blockedVersions: number
   rows: ActualLogProductionRow[]
+}
+
+export type ActualLogImportDialogLogType = "login" | "status"
+
+export type ActualLogImportDialogStepKey = "upload" | "mapping" | "result"
+
+export type ActualLogImportDialogStep = {
+  key: ActualLogImportDialogStepKey
+  title: string
+  detail: string
+}
+
+export type ActualLogImportDialogMappingMode = {
+  key: "template" | "manual"
+  label: string
+  detail: string
+}
+
+export type ActualLogImportDialogResult = {
+  tone: "success" | "failed"
+  title: string
+  detail: string
+  rowSummary: string
+  batchHref: string | null
+}
+
+export type ActualLogImportDialogSummary = {
+  logType: ActualLogImportDialogLogType
+  title: string
+  openHref: string
+  closeHref: string
+  resultRedirectTo: string
+  fileType: "login_log" | "status_log"
+  templateDownloadHref: string
+  templateDownloadName: string
+  steps: ActualLogImportDialogStep[]
+  mappingModes: ActualLogImportDialogMappingMode[]
+  activeTemplates: ImportFieldMappingTemplate[]
+  result: ActualLogImportDialogResult | null
 }
 
 export type ActualLogProcessingDetailRow = {
@@ -148,6 +188,144 @@ export function summarizeActualLogProductionWorkbench(
     blockedVersions,
     rows,
   }
+}
+
+export function summarizeActualLogImportDialog({
+  logType,
+  batches,
+  templates,
+  uploadStatus,
+  uploadReason,
+  uploadBatchId,
+}: {
+  logType: ActualLogImportDialogLogType
+  batches: ImportBatchListRow[]
+  templates: ImportFieldMappingTemplate[]
+  uploadStatus?: string | null
+  uploadReason?: string | null
+  uploadBatchId?: string | null
+}): ActualLogImportDialogSummary {
+  const fileType = logType === "status" ? "status_log" : "login_log"
+  const activeTemplates = templates
+    .filter((template) => template.file_type === fileType && template.is_active)
+    .sort((left, right) => left.template_name.localeCompare(right.template_name, "zh-CN"))
+  const resultBatch = uploadBatchId
+    ? batches.find((batch) => batch.batch_id === uploadBatchId) ?? null
+    : null
+  const openHref = `/actual-logs/production?import_dialog=1&log_type=${logType}`
+
+  return {
+    logType,
+    title: logType === "status" ? "状态日志导入" : "登录日志导入",
+    openHref,
+    closeHref: "/actual-logs/production",
+    resultRedirectTo: openHref,
+    fileType,
+    templateDownloadHref: buildActualLogImportTemplateHref(logType),
+    templateDownloadName:
+      logType === "status" ? "status-log-template.csv" : "login-log-template.csv",
+    steps: [
+      {
+        key: "upload",
+        title: "上传文件",
+        detail: logType === "status"
+          ? "下载状态日志模板后上传状态字典或状态区间 CSV。"
+          : "下载登录日志模板后上传登录/登出事件 CSV。",
+      },
+      {
+        key: "mapping",
+        title: "字段映射",
+        detail: "选择已有映射模板；表头不一致时使用手动字段映射。",
+      },
+      {
+        key: "result",
+        title: "导入结果",
+        detail: "只展示本次导入摘要，完整行结果进入批次详情处理。",
+      },
+    ],
+    mappingModes: [
+      {
+        key: "template",
+        label: "选择映射模板",
+        detail: activeTemplates.length > 0
+          ? "使用已维护的实际日志字段映射。"
+          : "暂无启用模板，可改用手动映射。",
+      },
+      {
+        key: "manual",
+        label: "手动映射字段",
+        detail: "按 CSV 表头填写字段映射 JSON，仅作用于本次导入。",
+      },
+    ],
+    activeTemplates,
+    result: summarizeActualLogImportDialogResult({
+      logType,
+      uploadStatus,
+      uploadReason,
+      uploadBatchId,
+      batch: resultBatch,
+    }),
+  }
+}
+
+function summarizeActualLogImportDialogResult({
+  logType,
+  uploadStatus,
+  uploadReason,
+  uploadBatchId,
+  batch,
+}: {
+  logType: ActualLogImportDialogLogType
+  uploadStatus?: string | null
+  uploadReason?: string | null
+  uploadBatchId?: string | null
+  batch: ImportBatchListRow | null
+}): ActualLogImportDialogResult | null {
+  if (uploadStatus !== "success" && uploadStatus !== "failed") {
+    return null
+  }
+
+  const label = logType === "status" ? "状态日志" : "登录日志"
+  const batchHref = uploadBatchId
+    ? `/data-quality/import-batches/${encodeURIComponent(uploadBatchId)}`
+    : null
+
+  if (uploadStatus === "success") {
+    return {
+      tone: "success",
+      title: "导入已提交",
+      detail: uploadBatchId
+        ? `${label}导入批次 ${formatImportBatchDisplayLabel(uploadBatchId)} 已创建。`
+        : `${label}导入已提交。`,
+      rowSummary: batch
+        ? `成功 ${batch.success_rows.toLocaleString("zh-CN")} 行 / 失败 ${batch.failed_rows.toLocaleString("zh-CN")} 行`
+        : "批次行结果待批次详情返回",
+      batchHref,
+    }
+  }
+
+  return {
+    tone: "failed",
+    title: "导入未提交",
+    detail: uploadReason ? `失败原因：${uploadReason}` : "请检查必填字段和 CSV 文件后重试。",
+    rowSummary: `未形成可处理的${label}导入批次`,
+    batchHref,
+  }
+}
+
+function buildActualLogImportTemplateHref(logType: ActualLogImportDialogLogType) {
+  const rows =
+    logType === "status"
+      ? [
+          "record_type,interval_id,employee_id,external_status_code,start_at,end_at,timezone,normalized_status,category,is_productive",
+          "status_interval,ST-001,A-1001,READY,2026-06-08T09:00:00,2026-06-08T09:30:00,Asia/Shanghai,ready,available,true",
+        ]
+      : [
+          "event_id,employee_id,event_type,event_time,timezone",
+          "LOGIN-001,A-1001,login,2026-06-08T09:00:00,Asia/Shanghai",
+        ]
+
+  return `data:text/csv;charset=utf-8,${encodeURIComponent(rows.join("\n"))}`
 }
 
 function toActualLogProductionRow(batch: ImportBatchListRow): ActualLogProductionRow {
@@ -276,7 +454,7 @@ function buildMissingActualLogProcessingDetail(
   return {
     tone: "blocked",
     title: "日志处理批次未定位",
-    detail: "当前来源批次不在登录/状态日志生产台账中，无法展示处理解释。",
+    detail: "当前来源批次不在登录/状态日志列表中，无法展示处理解释。",
     workspaceTabs: [...ACTUAL_LOG_PROCESSING_WORKSPACE_TABS],
     batchId,
     fileName: "未找到来源文件",
@@ -295,7 +473,7 @@ function buildMissingActualLogProcessingDetail(
     statusIntervalLabel: "未定位状态区间",
     loginEventLabel: "未定位登录事件",
     detailEmptyLabel: "批次明细未读取，不能展示逐行登录事件或状态区间",
-    blockerSummary: "请返回日志生产列表选择来源批次",
+    blockerSummary: "请返回登录/状态日志选择来源批次",
     loginEventCount: 0,
     statusDictionaryCount: 0,
     statusIntervalCount: 0,
@@ -733,11 +911,11 @@ function resolveActualLogProductionTone(
 
 function resolveActualLogProductionTitle(tone: ActualLogProductionTone) {
   if (tone === "ready") {
-    return "登录/状态日志生产版本已就绪"
+    return "登录/状态日志处理记录已就绪"
   }
 
   if (tone === "blocked") {
-    return "登录/状态日志生产仍有阻塞"
+    return "登录/状态日志处理记录仍有阻塞"
   }
 
   return "等待登录/状态日志来源批次"
@@ -748,7 +926,7 @@ function resolveActualLogProductionDetail(
   blockedVersions: number
 ) {
   if (totalVersions === 0) {
-    return "当前还没有登录日志或状态日志导入批次，无法建立实际日志生产台账。"
+    return "当前还没有登录日志或状态日志导入批次，无法建立日志处理列表。"
   }
 
   if (blockedVersions > 0) {

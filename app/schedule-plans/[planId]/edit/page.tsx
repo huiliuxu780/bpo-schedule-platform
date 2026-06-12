@@ -31,11 +31,17 @@ export default async function EditSchedulePlanPage({ params }: PageProps) {
   const isDraft = plan.summary.status === "draft"
 
   return (
-    <AppShell title="编辑排班草稿" searchPlaceholder="搜索计划、项目或职场">
+    <AppShell
+      title="编辑排班草稿"
+      breadcrumbItems={[
+        { label: "排班计划", href: "/schedule-plans" },
+        { label: "排班计划详情", href: `/schedule-plans/${plan.summary.id}` },
+        { label: "编辑排班草稿" },
+      ]}
+    >
       <main className="flex flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 lg:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-lg font-semibold">编辑排班草稿</h1>
             <p className="text-sm text-muted-foreground">
               {plan.summary.site_name} / {plan.summary.plan_date} /{" "}
               {plan.summary.version}
