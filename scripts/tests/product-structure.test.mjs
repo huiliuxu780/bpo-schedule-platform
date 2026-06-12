@@ -63,6 +63,7 @@ const masterDataActionsPath = new URL("../../app/master-data/[entityKey]/actions
 const masterDataModelPath = new URL("../../components/master-data-maintenance-model.ts", import.meta.url);
 const masterDataWorkbenchPath = new URL("../../components/master-data-maintenance-workbench.tsx", import.meta.url);
 const masterDataAgentImportDialogPath = new URL("../../components/master-data-agent-import-dialog.tsx", import.meta.url);
+const demandForecastImportDialogPath = new URL("../../components/demand-forecast-import-dialog.tsx", import.meta.url);
 const globalsCssPath = new URL("../../app/globals.css", import.meta.url);
 const uiAlertPath = new URL("../../components/ui/alert.tsx", import.meta.url);
 const uiAvatarPath = new URL("../../components/ui/avatar.tsx", import.meta.url);
@@ -1224,6 +1225,16 @@ test("business import actions belong to business page headers, not the generic b
     "demand forecast import action should be mounted in AppShell actions",
   );
   assert.equal(
+    demandPageSource.includes("<DemandForecastImportDialog"),
+    true,
+    "demand forecast import should open a page-local Dialog",
+  );
+  assert.equal(
+    demandWorkbenchSource.includes('buildImportUploadWorkspaceHref({ fileType: "demand_forecast" })'),
+    false,
+    "demand forecast action should not jump to the standalone upload workspace",
+  );
+  assert.equal(
     schedulePageSource.includes("PersonnelScheduleProductionPageActions"),
     true,
     "personnel schedule import action should be mounted in AppShell actions",
@@ -1252,6 +1263,26 @@ test("business import actions belong to business page headers, not the generic b
     actualLogWorkbenchBody.includes("导入状态日志"),
     false,
     "actual log workbench content should not own status-log import action",
+  );
+});
+
+test("demand forecast import dialog uses the strict step-by-step upload flow", async () => {
+  const dialogSource = await readFile(demandForecastImportDialogPath, "utf8");
+  const actionSource = await readFile(new URL("../../app/data-quality/actions.ts", import.meta.url), "utf8");
+
+  assert.equal(dialogSource.includes("DialogContent"), true);
+  assert.equal(dialogSource.includes("AlertTitle"), true);
+  assert.equal(dialogSource.includes("useState<DemandForecastImportDialogStepKey>"), true);
+  assert.equal(dialogSource.includes('hidden={activeStep !== "upload"}'), true);
+  assert.equal(dialogSource.includes('hidden={activeStep !== "mapping"}'), true);
+  assert.equal(dialogSource.includes('hidden={activeStep !== "result"}'), true);
+  assert.equal(dialogSource.includes('name="file_type"'), true);
+  assert.equal(dialogSource.includes('value={dialog.fileType}'), true);
+  assert.equal(dialogSource.includes('name="result_redirect_to"'), true);
+  assert.equal(
+    actionSource.includes('resultTarget === "/demand-plans/production?import_dialog=1"'),
+    true,
+    "upload action should return demand forecast results to the page-local Dialog",
   );
 });
 

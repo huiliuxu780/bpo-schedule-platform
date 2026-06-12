@@ -12,10 +12,10 @@ import {
 } from "lucide-react"
 
 import {
-  buildImportUploadWorkspaceHref,
   type ImportBatchListRow,
 } from "@/components/import-center-model"
 import {
+  type DemandForecastImportDialogSummary,
   type DemandForecastProductionApiDetail,
   type DemandForecastProductionTone,
   summarizeDemandForecastProductionDetail,
@@ -39,10 +39,14 @@ type DemandForecastProductionWorkbenchProps = {
   error: string | null
 }
 
-export function DemandForecastProductionPageActions() {
+export function DemandForecastProductionPageActions({
+  dialog,
+}: {
+  dialog: DemandForecastImportDialogSummary
+}) {
   return (
     <Button asChild size="sm">
-      <Link href={buildImportUploadWorkspaceHref({ fileType: "demand_forecast" })}>
+      <Link href={dialog.openHref}>
         <Upload data-icon="inline-start" />
         导入预测
       </Link>

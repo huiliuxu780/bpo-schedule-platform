@@ -132,6 +132,19 @@ status: "done"
 notes: "IM168 已完成：主数据 reference 列表进入详情的行内动作统一为 `查看`，并用结构测试覆盖，防止再次混用 `详情`；未新增页面、导航、后端 route、schema/migration、导入、权限、审批、导出、批量、合同、结算、最低人力、自动排班、生产公式或收费因子。"
 ```
 
+### R869 - 需求预测导入大弹窗
+
+```yaml
+id: R869
+module: "需求计划 / 业务导入"
+description: "PM 已明确导入功能应归属到业务列表页面：人员在人员列表，排班在排班页面，预测在需求预测页面，登录/状态日志在日志页面。人员导入弹窗已经形成 step-by-step 模式，下一步先只把需求预测导入入口从独立 CSV 上传页收回到 /demand-plans/production 当前页大弹窗；排班和登录/状态日志后续按同模式单独做。"
+source: "PM requested continuing business import ownership after IM168 on 2026-06-12"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM169 已完成：/demand-plans/production 的 `导入预测` 打开当前页 step-by-step Dialog，复用现有上传 action 并回流导入结果；未扩展排班、登录/状态日志导入弹窗，未新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+```
+
 ### R849 - 主数据非客服人员动作收口
 
 ```yaml

@@ -1,4 +1,7 @@
-import type { ImportBatchListRow } from "@/components/import-center-model"
+import type {
+  ImportBatchListRow,
+  ImportFieldMappingTemplate,
+} from "@/components/import-center-model"
 
 const taskCodeLabelPattern = /\b(?:F|B|Q|IM|US|DB)\d{3}\b/g
 
@@ -145,6 +148,41 @@ export type DemandForecastProductionSummary = {
   rows: DemandForecastProductionRow[]
 }
 
+export type DemandForecastImportDialogStepKey = "upload" | "mapping" | "result"
+
+export type DemandForecastImportDialogStep = {
+  key: DemandForecastImportDialogStepKey
+  title: string
+  detail: string
+}
+
+export type DemandForecastImportDialogMappingMode = {
+  key: "template" | "manual"
+  label: string
+  detail: string
+}
+
+export type DemandForecastImportDialogResult = {
+  tone: "success" | "failed"
+  title: string
+  detail: string
+  rowSummary: string
+  batchHref: string | null
+}
+
+export type DemandForecastImportDialogSummary = {
+  openHref: string
+  closeHref: string
+  resultRedirectTo: string
+  fileType: "demand_forecast"
+  templateDownloadHref: string
+  templateDownloadName: string
+  steps: DemandForecastImportDialogStep[]
+  mappingModes: DemandForecastImportDialogMappingMode[]
+  activeTemplates: ImportFieldMappingTemplate[]
+  result: DemandForecastImportDialogResult | null
+}
+
 const DEMAND_FORECAST_PRODUCTION_WORKSPACE_TABS: DemandForecastProductionWorkspaceTab[] =
   [
     { key: "overview", label: "总览" },
@@ -177,6 +215,125 @@ export function summarizeDemandForecastProductionWorkbench(
     blockedVersions,
     rows,
   }
+}
+
+export function summarizeDemandForecastImportDialog({
+  batches,
+  templates,
+  uploadStatus,
+  uploadReason,
+  uploadBatchId,
+}: {
+  batches: ImportBatchListRow[]
+  templates: ImportFieldMappingTemplate[]
+  uploadStatus?: string | null
+  uploadReason?: string | null
+  uploadBatchId?: string | null
+}): DemandForecastImportDialogSummary {
+  const activeTemplates = templates
+    .filter((template) => template.file_type === "demand_forecast" && template.is_active)
+    .sort((left, right) => left.template_name.localeCompare(right.template_name, "zh-CN"))
+  const resultBatch = uploadBatchId
+    ? batches.find((batch) => batch.batch_id === uploadBatchId) ?? null
+    : null
+
+  return {
+    openHref: "/demand-plans/production?import_dialog=1",
+    closeHref: "/demand-plans/production",
+    resultRedirectTo: "/demand-plans/production?import_dialog=1",
+    fileType: "demand_forecast",
+    templateDownloadHref: buildDemandForecastImportTemplateHref(),
+    templateDownloadName: "demand-forecast-template.csv",
+    steps: [
+      {
+        key: "upload",
+        title: "上传文件",
+        detail: "下载需求预测模板后上传本次预测 CSV。",
+      },
+      {
+        key: "mapping",
+        title: "字段映射",
+        detail: "选择已有映射模板；表头不一致时使用手动字段映射。",
+      },
+      {
+        key: "result",
+        title: "导入结果",
+        detail: "只展示本次导入摘要，完整行结果进入批次详情处理。",
+      },
+    ],
+    mappingModes: [
+      {
+        key: "template",
+        label: "选择映射模板",
+        detail: activeTemplates.length > 0
+          ? "使用已维护的需求预测字段映射。"
+          : "暂无启用模板，可改用手动映射。",
+      },
+      {
+        key: "manual",
+        label: "手动映射字段",
+        detail: "按 CSV 表头填写字段映射 JSON，仅作用于本次导入。",
+      },
+    ],
+    activeTemplates,
+    result: summarizeDemandForecastImportDialogResult({
+      uploadStatus,
+      uploadReason,
+      uploadBatchId,
+      batch: resultBatch,
+    }),
+  }
+}
+
+function summarizeDemandForecastImportDialogResult({
+  uploadStatus,
+  uploadReason,
+  uploadBatchId,
+  batch,
+}: {
+  uploadStatus?: string | null
+  uploadReason?: string | null
+  uploadBatchId?: string | null
+  batch: ImportBatchListRow | null
+}): DemandForecastImportDialogResult | null {
+  if (uploadStatus !== "success" && uploadStatus !== "failed") {
+    return null
+  }
+
+  const batchHref = uploadBatchId
+    ? `/data-quality/import-batches/${encodeURIComponent(uploadBatchId)}`
+    : null
+
+  if (uploadStatus === "success") {
+    return {
+      tone: "success",
+      title: "导入已提交",
+      detail: uploadBatchId
+        ? `需求预测导入批次 ${formatImportBatchDisplayLabel(uploadBatchId)} 已创建。`
+        : "需求预测导入已提交。",
+      rowSummary: batch
+        ? `成功 ${batch.success_rows.toLocaleString("zh-CN")} 行 / 失败 ${batch.failed_rows.toLocaleString("zh-CN")} 行`
+        : "批次行结果待批次详情返回",
+      batchHref,
+    }
+  }
+
+  return {
+    tone: "failed",
+    title: "导入未提交",
+    detail: uploadReason ? `失败原因：${uploadReason}` : "请检查必填字段和 CSV 文件后重试。",
+    rowSummary: "未形成可处理的需求预测导入批次",
+    batchHref,
+  }
+}
+
+function buildDemandForecastImportTemplateHref() {
+  const rows = [
+    "forecast_date,interval_start,interval_end,workplace_id,skill_id,demand_level,required_agents",
+    "2026-06-08,09:00,09:30,SH-01,L1-CN,L1,12",
+  ]
+
+  return `data:text/csv;charset=utf-8,${encodeURIComponent(rows.join("\n"))}`
 }
 
 function toDemandForecastProductionRow(

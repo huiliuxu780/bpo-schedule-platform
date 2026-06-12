@@ -2147,3 +2147,12 @@
 - action: 完成主数据详情链路收尾检查。
 - status: `done`
 - notes: `/master-data/skills` 等主数据 reference 列表进入详情的行内动作统一为 `查看`，并新增结构测试防止再次混用 `详情`；动作仍进入既有详情页；本轮不新增页面、导航、后端 route、schema/migration、导入、权限、审批、导出、批量、合同、结算、最低人力、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM169`
+- source_ids:
+  - `R869`
+- story_ids:
+  - `US789`
+- action: 完成需求预测导入大弹窗。
+- status: `done`
+- notes: `/demand-plans/production` Header 的 `导入预测` 现在打开当前页 Dialog；Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步组织，非当前 step 通过 hidden 保持 DOM 挂载；上传继续复用现有 CSV action，结果回流 `/demand-plans/production?import_dialog=1` 并展示批次详情入口；本轮不扩展排班、登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

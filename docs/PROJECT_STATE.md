@@ -882,3 +882,11 @@ The detail page shows current personnel whose skill set includes the selected sk
 `IM168` closes the visible action-label inconsistency left after the master-data detail-link chain. Reference master-data list rows now use the same row-level `查看` label for detail navigation, including `/master-data/skills`, while retaining the existing `detailHref` routes.
 
 This slice is a guardrail and small UI correction only. It added a product-structure regression test against `MasterDataReferenceManagementPage` so the list-to-detail action does not drift back to `详情`. It did not add pages, navigation, backend routes, schemas, migrations, imports, permissions, approval, export, batch operations, contracts, settlement ratios, minimum staffing requirements, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM168.
+
+## 2026-06-12 IM169 Demand Forecast Import Dialog
+
+`IM169` moves the demand forecast import entry back to its owning business page. `/demand-plans/production` keeps the page-level `导入预测` action in the shared Header, and that action now opens a page-local Dialog instead of sending the user to the generic CSV upload workspace.
+
+The Dialog follows the same controlled step-by-step pattern as the accepted personnel import flow: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the CSV file input is not unmounted while the user moves between upload and mapping. The submit path continues to use the existing CSV upload action with `file_type=demand_forecast`, then returns to `/demand-plans/production?import_dialog=1` where the result step shows the batch outcome and links to the existing batch detail page.
+
+This slice did not add schedule or login/status-log import dialogs, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM169.

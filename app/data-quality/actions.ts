@@ -126,6 +126,10 @@ function buildUploadResultRedirectHref(
     return `${resultTarget}&${searchParams.toString()}`
   }
 
+  if (resultTarget === "/demand-plans/production?import_dialog=1") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
   return `/data-quality?${searchParams.toString()}`
 }
 
