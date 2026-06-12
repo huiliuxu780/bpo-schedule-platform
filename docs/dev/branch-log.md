@@ -4124,3 +4124,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM175 Data Quality Action Runtime Guards
+
+- branch_name: `codex/im175-action-runtime-guards`
+- base_main_commit: `511dc7a`
+- stacked_on: `codex/im174-import-fetch-utilities`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 1 third implementation slice. Add runtime guard helpers in `app/data-quality/actions.ts` for `file_type`, `comparison_type`, and upload `result_redirect_to`; add structural regression tests.
+- allowed_files_check: `app/data-quality/actions.ts`, `scripts/tests/data-quality-actions-guards.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected Server Action guard helpers, guard call sites, structural tests, and traceability updates only; no UI, navigation, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed on 2026-06-12; includes strict state, shadcn gate, lint, typecheck, Next build, and backend `Ran 215 tests ... OK`.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

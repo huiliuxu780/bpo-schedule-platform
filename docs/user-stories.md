@@ -5823,3 +5823,23 @@ acceptance:
 status: "done"
 notes: "IM174 已完成：共享 import fetch 工具已抽取，结构测试已防止目标文件重新定义本地 `fetchImportBatches` 或 `fetchImportFieldMappingTemplates`；Server Action runtime guards 仍留给 IM175。"
 ```
+
+### US795 - 补充导入和比对 Server Action 运行时保护
+
+```yaml
+id: US795
+requirement_ids:
+  - R875
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望数据质量相关 Server Action 在运行时校验关键枚举和回跳目标，以便非法表单值不会进入 API 请求或成功回跳。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`uploadImportCsvAction` 对 `file_type` 和 `result_redirect_to` 做运行时白名单校验。"
+  - "`createImportFieldMappingTemplateAction` 和 `applyImportBatchAction` 对 `file_type` 做运行时白名单校验。"
+  - "本地比对触发 action 对 `comparison_type` 做共享 guard，非法值进入失败回跳，不构造成功请求。"
+  - "不改变页面 UI、导航、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM175 已完成：上传、字段映射模板创建、批次应用、批次详情比对触发和版本工作台比对触发均先解析受控枚举或回跳目标；非法值进入失败回跳，不构造成功请求。error/loading 页面仍留给 IM176/IM177。"
+```

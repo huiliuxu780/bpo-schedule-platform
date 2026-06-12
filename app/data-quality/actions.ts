@@ -25,20 +25,73 @@ const importFileTypes = new Set<ImportFileType>([
   "status_log",
 ])
 
+type ComparisonType = ImportComparisonRunRecord["comparison_type"]
+
+const comparisonTypes = new Set<ComparisonType>([
+  "forecast_vs_schedule",
+  "schedule_vs_actual",
+])
+
+type UploadResultRedirectTarget =
+  | "/data-quality/uploads/new"
+  | "/master-data/agents?import_dialog=1"
+  | "/demand-plans/production?import_dialog=1"
+  | "/schedule-plans/production?import_dialog=1"
+  | "/actual-logs/production?import_dialog=1&log_type=login"
+  | "/actual-logs/production?import_dialog=1&log_type=status"
+
+const uploadResultRedirectTargets = new Set<UploadResultRedirectTarget>([
+  "/data-quality/uploads/new",
+  "/master-data/agents?import_dialog=1",
+  "/demand-plans/production?import_dialog=1",
+  "/schedule-plans/production?import_dialog=1",
+  "/actual-logs/production?import_dialog=1&log_type=login",
+  "/actual-logs/production?import_dialog=1&log_type=status",
+])
+
 function formText(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim()
 }
 
+function parseImportFileType(value: string): ImportFileType | null {
+  const fileType = value as ImportFileType
+  return importFileTypes.has(fileType) ? fileType : null
+}
+
+function parseComparisonType(value: string): ComparisonType | null {
+  const comparisonType = value as ComparisonType
+  return comparisonTypes.has(comparisonType) ? comparisonType : null
+}
+
+function parseUploadResultRedirectTarget(value: string): UploadResultRedirectTarget | null {
+  const resultTarget = value as UploadResultRedirectTarget
+  return uploadResultRedirectTargets.has(resultTarget) ? resultTarget : null
+}
+
 export async function uploadImportCsvAction(formData: FormData) {
   const batchId = formText(formData, "batch_id")
-  const fileType = formText(formData, "file_type") as ImportFileType
+  const fileType = parseImportFileType(formText(formData, "file_type"))
   const uploadedBy = formText(formData, "uploaded_by") || "operator"
   const businessDateFrom = formText(formData, "business_date_from")
   const businessDateTo = formText(formData, "business_date_to")
   const fieldMapping = formText(formData, "field_mapping") || '{"source_key":"source_key"}'
   const templateId = formText(formData, "template_id")
-  const resultTarget = formText(formData, "result_redirect_to")
+  const resultTarget = parseUploadResultRedirectTarget(formText(formData, "result_redirect_to"))
   const file = formData.get("csv_file")
+
+  if (!resultTarget) {
+    redirect(buildUploadResultRedirectHref("/data-quality/uploads/new", {
+      status: "failed",
+      reason: "invalid_redirect_target",
+    }))
+  }
+
+  if (!fileType) {
+    redirect(buildUploadResultRedirectHref(resultTarget, {
+      status: "failed",
+      reason: "invalid_file_type",
+    }))
+  }
 
   if (!batchId || !businessDateFrom || !businessDateTo || !(file instanceof File)) {
     redirect(buildUploadResultRedirectHref(resultTarget, {
@@ -101,7 +154,7 @@ export async function uploadImportCsvAction(formData: FormData) {
 }
 
 function buildUploadResultRedirectHref(
-  resultTarget: string,
+  resultTarget: UploadResultRedirectTarget,
   params: {
     status: "success" | "failed"
     batchId?: string | null
@@ -142,7 +195,7 @@ function buildUploadResultRedirectHref(
     return `${resultTarget}&${searchParams.toString()}`
   }
 
-  return `/data-quality?${searchParams.toString()}`
+  return `${resultTarget}&${searchParams.toString()}`
 }
 
 export async function correctImportFailedRowAction(formData: FormData) {
@@ -255,11 +308,17 @@ export async function updateImportFieldMappingTemplateAction(formData: FormData)
 export async function createImportFieldMappingTemplateAction(formData: FormData) {
   const templateId = formText(formData, "template_id")
   const templateName = formText(formData, "template_name")
-  const fileType = formText(formData, "file_type") as ImportFileType
+  const fileType = parseImportFileType(formText(formData, "file_type"))
   const createdBy = formText(formData, "created_by") || "operator"
   const fieldMappingText = formText(formData, "field_mapping")
 
-  if (!templateId || !templateName || !fileType || !fieldMappingText) {
+  if (!fileType) {
+    redirect(
+      "/data-quality/field-mapping-templates/new?template=failed&action=create&reason=invalid_file_type"
+    )
+  }
+
+  if (!templateId || !templateName || !fieldMappingText) {
     redirect(
       "/data-quality/field-mapping-templates/new?template=failed&action=create&reason=missing_required_fields"
     )
@@ -359,13 +418,17 @@ export async function deactivateImportFieldMappingTemplateAction(formData: FormD
 
 export async function applyImportBatchAction(formData: FormData) {
   const batchId = formText(formData, "batch_id")
-  const fileType = formText(formData, "file_type") as ImportFileType
+  const fileType = parseImportFileType(formText(formData, "file_type"))
   const detailHref = batchId
     ? `/data-quality/${encodeURIComponent(batchId)}`
     : "/data-quality"
 
-  if (!batchId || !importFileTypes.has(fileType)) {
+  if (!batchId) {
     redirect(`${detailHref}?apply=failed&reason=missing_required_fields`)
+  }
+
+  if (!fileType) {
+    redirect(`${detailHref}?apply=failed&reason=invalid_file_type`)
   }
 
   let apiStatus: number | null = null
@@ -397,22 +460,29 @@ export async function applyImportBatchAction(formData: FormData) {
 
 export async function triggerLocalComparisonRunAction(formData: FormData) {
   const batchId = formText(formData, "batch_id")
-  const comparisonType = formText(
-    formData,
-    "comparison_type"
-  ) as ImportComparisonRunRecord["comparison_type"]
+  const comparisonType = parseComparisonType(
+    formText(formData, "comparison_type")
+  )
   const forecastVersionId = formText(formData, "forecast_version_id") || null
   const scheduleVersionId = formText(formData, "schedule_version_id") || null
   const actualImportVersionId = formText(formData, "actual_import_version_id") || null
   const businessDateFrom = formText(formData, "business_date_from")
   const businessDateTo = formText(formData, "business_date_to")
 
+  if (!comparisonType) {
+    redirect(
+      buildImportBatchProcessingHref(batchId || "", {
+        compare: "failed",
+        compareReason: "invalid_comparison_type",
+        tab: "result-trace",
+      })
+    )
+  }
+
   if (
     !batchId ||
     !businessDateFrom ||
     !businessDateTo ||
-    (comparisonType !== "forecast_vs_schedule" &&
-      comparisonType !== "schedule_vs_actual") ||
     (comparisonType === "forecast_vs_schedule" &&
       (!forecastVersionId || !scheduleVersionId)) ||
     (comparisonType === "schedule_vs_actual" &&
@@ -494,22 +564,28 @@ export async function triggerLocalComparisonRunAction(formData: FormData) {
 
 export async function triggerVersionWorkbenchLocalComparisonRunAction(formData: FormData) {
   const sourceBatchId = formText(formData, "source_batch_id")
-  const comparisonType = formText(
-    formData,
-    "comparison_type"
-  ) as ImportComparisonRunRecord["comparison_type"]
+  const comparisonType = parseComparisonType(
+    formText(formData, "comparison_type")
+  )
   const forecastVersionId = formText(formData, "forecast_version_id") || null
   const scheduleVersionId = formText(formData, "schedule_version_id") || null
   const actualImportVersionId = formText(formData, "actual_import_version_id") || null
   const businessDateFrom = formText(formData, "business_date_from")
   const businessDateTo = formText(formData, "business_date_to")
 
+  if (!comparisonType) {
+    redirect(
+      buildVersionWorkbenchComparisonReturnHref(formData, {
+        compare: "failed",
+        compareReason: "invalid_comparison_type",
+      })
+    )
+  }
+
   if (
     !sourceBatchId ||
     !businessDateFrom ||
     !businessDateTo ||
-    (comparisonType !== "forecast_vs_schedule" &&
-      comparisonType !== "schedule_vs_actual") ||
     (comparisonType === "forecast_vs_schedule" &&
       (!forecastVersionId || !scheduleVersionId)) ||
     (comparisonType === "schedule_vs_actual" &&
