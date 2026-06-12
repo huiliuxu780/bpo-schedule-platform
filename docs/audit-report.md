@@ -4438,3 +4438,17 @@
 - `createImportFieldMappingTemplateAction` 与 `applyImportBatchAction` 现在先校验 `file_type`；非法值返回 `invalid_file_type`。
 - `triggerLocalComparisonRunAction` 与 `triggerVersionWorkbenchLocalComparisonRunAction` 现在通过共享 `comparison_type` guard 拦截非法值并返回 `invalid_comparison_type`。
 - 未改变可见 UI、导航、后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+### 2026-06-12 - IM176 全局页面异常恢复边界
+
+#### 审计计划
+
+- 按恢复计划 Stage 2 第一刀执行，只新增全局 `app/error.tsx`。
+- 使用现有 shadcn Alert/Button 和 AppShell，不新增依赖，不做 route-group 迁移。
+- 本轮不改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 `app/error.tsx` 作为 Next.js app router error boundary。
+- 异常内容区使用 destructive Alert，提供 `reset()` 重试和 `/dashboard` 安全返回。
+- 已新增结构测试 `scripts/tests/global-error-boundary.test.mjs`，先确认缺少 `app/error.tsx` 时红灯，再实现。

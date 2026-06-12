@@ -932,3 +932,9 @@ This slice must not change visible UI, navigation, data-fetch URLs, response sha
 `IM175` completed the third implementation slice from the frontend health recovery plan. The scope was limited to `app/data-quality/actions.ts`: runtime guards now parse import file types, comparison types, and upload result redirect targets before those values are used in API URL construction, request bodies, or success redirects. Invalid values now return controlled failure redirects instead of reaching downstream API requests.
 
 This slice did not introduce a form library or package change, and did not change visible UI, navigation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-12 IM176 Global Error Boundary
+
+`IM176` completed the first Stage 2 frontend health recovery slice. The app now has `app/error.tsx` as a global error boundary with the existing AppShell, shadcn Alert/Button components, a `reset()` retry action, and a safe return link to `/dashboard`.
+
+This slice did not add dependencies or package changes, did not migrate route groups, and did not change business pages, navigation, backend behavior, database schema or persistence, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

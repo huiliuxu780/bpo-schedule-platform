@@ -3261,3 +3261,16 @@ version: "1.0"
 status: "done"
 notes: "IM175 已完成：`app/data-quality/actions.ts` 新增 `file_type`、`comparison_type` 和 `result_redirect_to` 运行时白名单 guard；非法值在进入 API URL、请求体或成功回跳前进入失败回跳。本需求未引入表单库，未改变可见 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R876 - 全局页面异常恢复边界
+
+```yaml
+id: R876
+module: "前端健康恢复"
+description: "项目缺少 `app/error.tsx`，Server Component 或页面渲染异常时用户可能看到空白或不可恢复状态。需要新增全局 error boundary，提供明确错误提示、重试入口和安全返回入口。"
+source: "docs/frontend-health-recovery-plan.md Stage 2 IM176"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM176 已完成：新增 `app/error.tsx`，使用现有 AppShell、shadcn Alert/Button 和语义 token，提供 `reset()` 重试与 `/dashboard` 安全返回。未新增依赖，未改变业务页面、导航、后端、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

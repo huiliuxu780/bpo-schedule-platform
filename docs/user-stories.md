@@ -5843,3 +5843,23 @@ acceptance:
 status: "done"
 notes: "IM175 已完成：上传、字段映射模板创建、批次应用、批次详情比对触发和版本工作台比对触发均先解析受控枚举或回跳目标；非法值进入失败回跳，不构造成功请求。error/loading 页面仍留给 IM176/IM177。"
 ```
+
+### US796 - 提供全局页面异常恢复入口
+
+```yaml
+id: US796
+requirement_ids:
+  - R876
+module: "前端健康恢复"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望页面异常时仍能看到统一的错误提示和恢复操作，以便可以重试或回到经营总览继续工作。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 `app/error.tsx`，作为 Next.js app router 全局 error boundary。"
+  - "错误页使用现有 AppShell、shadcn Alert/Button 和语义主题 token。"
+  - "提供 `reset()` 重试按钮和返回 `/dashboard` 的安全入口。"
+  - "不新增依赖，不改变业务页面、导航、后端、数据库、权限、审批、导出、批量、自动排班、公式、结算或收费因子。"
+status: "done"
+notes: "IM176 已完成：全局 error boundary 可恢复；route-local loading 仍留给 IM177。"
+```
