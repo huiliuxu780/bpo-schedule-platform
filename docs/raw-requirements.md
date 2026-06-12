@@ -145,6 +145,19 @@ status: "done"
 notes: "IM169 已完成：/demand-plans/production 的 `导入预测` 打开当前页 step-by-step Dialog，复用现有上传 action 并回流导入结果；未扩展排班、登录/状态日志导入弹窗，未新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
 ```
 
+### R870 - 排班导入大弹窗
+
+```yaml
+id: R870
+module: "排班计划 / 业务导入"
+description: "继 IM169 将需求预测导入收回到预测版本页 Dialog 后，继续按同一产品模式处理排班导入：排班导入应归属到 /schedule-plans/production 当前业务页，由 Header 页面级动作打开 step-by-step 大弹窗；上传、映射和结果回看在弹窗内完成，完整行结果和后续应用处理仍进入批次详情。"
+source: "PM requested continuing business import ownership after IM169 on 2026-06-12"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM170 已完成：/schedule-plans/production 的 `导入排班` 打开当前页 step-by-step Dialog，复用现有上传 action 并回流导入结果；未扩展登录/状态日志导入弹窗，未新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子。"
+```
+
 ### R849 - 主数据非客服人员动作收口
 
 ```yaml

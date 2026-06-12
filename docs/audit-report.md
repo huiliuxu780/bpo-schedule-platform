@@ -4337,3 +4337,20 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增 Dialog 使用既有 Dialog、Alert、Button、Input、Badge 和语义 token，未引入硬编码色阶或 `space-*`。
 - in-app browser smoke 确认 `/demand-plans/production?import_dialog=1` 渲染 `需求预测导入` Dialog，三步标题均存在，文件 input 数量为 1，hidden section 数量为 2，旧独立上传链接数量为 0；`/demand-plans/production?import_dialog=1&upload=success&batch=BATCH-FC-001` 显示 `导入已提交` 并提供 `/data-quality/import-batches/BATCH-FC-001` 链接。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM170 排班导入大弹窗
+
+#### 审计结论
+
+- `/schedule-plans/production` Header 的 `导入排班` 不再跳转独立 CSV 上传页，而是打开当前排班版本页 Dialog。
+- Dialog 使用 `上传文件`、`字段映射`、`导入结果` 三步；非当前 step 通过 `hidden` 隐藏但保持 DOM 挂载，避免文件 input 在 step 切换时丢失选择。
+- 上传继续复用现有 `uploadImportCsvAction` 和 `personnel_schedule` file type；结果回流 `/schedule-plans/production?import_dialog=1`，并在结果 step 提供批次详情入口。
+- 本轮没有扩展登录/状态日志导入弹窗，没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/personnel-schedule-production-model.test.mjs` 先失败，证明缺少 `summarizePersonnelScheduleImportDialog`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明排班版本页仍缺少页内 Dialog 流程。
+- TDD 绿灯：`node --test scripts/tests/personnel-schedule-production-model.test.mjs` 通过 10 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 34 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增 Dialog 使用既有 Dialog、Alert、Button、Input、Badge 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/schedule-plans/production?import_dialog=1` 渲染 `排班导入` Dialog，三步标题均存在，文件 input 数量为 1，hidden section 数量为 2，旧独立上传链接数量为 0；`/schedule-plans/production?import_dialog=1&upload=success&batch=BATCH-SCH-001` 显示 `导入已提交` 并提供 `/data-quality/import-batches/BATCH-SCH-001` 链接。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

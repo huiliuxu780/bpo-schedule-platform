@@ -64,6 +64,7 @@ const masterDataModelPath = new URL("../../components/master-data-maintenance-mo
 const masterDataWorkbenchPath = new URL("../../components/master-data-maintenance-workbench.tsx", import.meta.url);
 const masterDataAgentImportDialogPath = new URL("../../components/master-data-agent-import-dialog.tsx", import.meta.url);
 const demandForecastImportDialogPath = new URL("../../components/demand-forecast-import-dialog.tsx", import.meta.url);
+const personnelScheduleImportDialogPath = new URL("../../components/personnel-schedule-import-dialog.tsx", import.meta.url);
 const globalsCssPath = new URL("../../app/globals.css", import.meta.url);
 const uiAlertPath = new URL("../../components/ui/alert.tsx", import.meta.url);
 const uiAvatarPath = new URL("../../components/ui/avatar.tsx", import.meta.url);
@@ -1240,6 +1241,16 @@ test("business import actions belong to business page headers, not the generic b
     "personnel schedule import action should be mounted in AppShell actions",
   );
   assert.equal(
+    schedulePageSource.includes("<PersonnelScheduleImportDialog"),
+    true,
+    "personnel schedule import should open a page-local Dialog",
+  );
+  assert.equal(
+    scheduleWorkbenchSource.includes('buildImportUploadWorkspaceHref({ fileType: "personnel_schedule" })'),
+    false,
+    "personnel schedule action should not jump to the standalone upload workspace",
+  );
+  assert.equal(
     actualLogPageSource.includes("ActualLogProductionPageActions"),
     true,
     "actual log import actions should be mounted in AppShell actions",
@@ -1283,6 +1294,26 @@ test("demand forecast import dialog uses the strict step-by-step upload flow", a
     actionSource.includes('resultTarget === "/demand-plans/production?import_dialog=1"'),
     true,
     "upload action should return demand forecast results to the page-local Dialog",
+  );
+});
+
+test("personnel schedule import dialog uses the strict step-by-step upload flow", async () => {
+  const dialogSource = await readFile(personnelScheduleImportDialogPath, "utf8");
+  const actionSource = await readFile(new URL("../../app/data-quality/actions.ts", import.meta.url), "utf8");
+
+  assert.equal(dialogSource.includes("DialogContent"), true);
+  assert.equal(dialogSource.includes("AlertTitle"), true);
+  assert.equal(dialogSource.includes("useState<PersonnelScheduleImportDialogStepKey>"), true);
+  assert.equal(dialogSource.includes('hidden={activeStep !== "upload"}'), true);
+  assert.equal(dialogSource.includes('hidden={activeStep !== "mapping"}'), true);
+  assert.equal(dialogSource.includes('hidden={activeStep !== "result"}'), true);
+  assert.equal(dialogSource.includes('name="file_type"'), true);
+  assert.equal(dialogSource.includes('value={dialog.fileType}'), true);
+  assert.equal(dialogSource.includes('name="result_redirect_to"'), true);
+  assert.equal(
+    actionSource.includes('resultTarget === "/schedule-plans/production?import_dialog=1"'),
+    true,
+    "upload action should return personnel schedule results to the page-local Dialog",
   );
 });
 

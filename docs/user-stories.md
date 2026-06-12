@@ -249,6 +249,28 @@ status: "done"
 notes: "IM169 已完成：预测版本页 Header 的 `导入预测` 打开当前页 Dialog；Dialog 三步为上传文件、字段映射、导入结果，文件 input 在 step 切换时保持挂载；上传结果回流当前页并提供批次详情入口。排班和登录/状态日志导入后续单独拆。"
 ```
 
+### US790 - 排班导入大弹窗
+
+```yaml
+id: US790
+requirement_ids:
+  - R870
+module: "排班计划 / 业务导入"
+role: "排班计划维护人员"
+story: "作为排班计划维护人员，我希望在排班版本页直接打开排班导入弹窗，以便完成上传、映射和结果回看，而不是跳到独立 CSV 上传工作区。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "/schedule-plans/production Header 的 `导入排班` 打开当前页 Dialog。"
+  - "Dialog 包含上传文件、字段映射、导入结果三步，且切换 step 时文件 input 不卸载。"
+  - "上传结果回流当前排班版本页，并在 Dialog 结果 step 展示批次详情入口。"
+  - "不扩展登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US789"
+status: "done"
+notes: "IM170 已完成：排班版本页 Header 的 `导入排班` 打开当前页 Dialog；Dialog 三步为上传文件、字段映射、导入结果，文件 input 在 step 切换时保持挂载；上传结果回流当前页并提供批次详情入口。登录/状态日志导入后续单独拆。"
+```
+
 ### US769 - 主数据非客服人员动作收口
 
 ```yaml

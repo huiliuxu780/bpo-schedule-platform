@@ -12,11 +12,9 @@ import {
   Users,
 } from "lucide-react"
 
+import { type ImportBatchListRow } from "@/components/import-center-model"
 import {
-  buildImportUploadWorkspaceHref,
-  type ImportBatchListRow,
-} from "@/components/import-center-model"
-import {
+  type PersonnelScheduleImportDialogSummary,
   type PersonnelScheduleProductionApiDetail,
   type PersonnelScheduleProductionTone,
   summarizePersonnelScheduleProductionDetail,
@@ -40,10 +38,14 @@ type PersonnelScheduleProductionWorkbenchProps = {
   error: string | null
 }
 
-export function PersonnelScheduleProductionPageActions() {
+export function PersonnelScheduleProductionPageActions({
+  dialog,
+}: {
+  dialog: PersonnelScheduleImportDialogSummary
+}) {
   return (
     <Button asChild size="sm">
-      <Link href={buildImportUploadWorkspaceHref({ fileType: "personnel_schedule" })}>
+      <Link href={dialog.openHref}>
         <Upload data-icon="inline-start" />
         导入排班
       </Link>

@@ -2156,3 +2156,12 @@
 - action: 完成需求预测导入大弹窗。
 - status: `done`
 - notes: `/demand-plans/production` Header 的 `导入预测` 现在打开当前页 Dialog；Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步组织，非当前 step 通过 hidden 保持 DOM 挂载；上传继续复用现有 CSV action，结果回流 `/demand-plans/production?import_dialog=1` 并展示批次详情入口；本轮不扩展排班、登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM170`
+- source_ids:
+  - `R870`
+- story_ids:
+  - `US790`
+- action: 完成排班导入大弹窗。
+- status: `done`
+- notes: `/schedule-plans/production` Header 的 `导入排班` 现在打开当前页 Dialog；Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步组织，非当前 step 通过 hidden 保持 DOM 挂载；上传继续复用现有 CSV action 和 `personnel_schedule` file type，结果回流 `/schedule-plans/production?import_dialog=1` 并展示批次详情入口；本轮不扩展登录/状态日志导入弹窗，不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、发布/冻结、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

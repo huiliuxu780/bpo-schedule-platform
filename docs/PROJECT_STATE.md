@@ -890,3 +890,11 @@ This slice is a guardrail and small UI correction only. It added a product-struc
 The Dialog follows the same controlled step-by-step pattern as the accepted personnel import flow: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the CSV file input is not unmounted while the user moves between upload and mapping. The submit path continues to use the existing CSV upload action with `file_type=demand_forecast`, then returns to `/demand-plans/production?import_dialog=1` where the result step shows the batch outcome and links to the existing batch detail page.
 
 This slice did not add schedule or login/status-log import dialogs, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM169.
+
+## 2026-06-12 IM170 Schedule Import Dialog
+
+`IM170` moves the personnel schedule import entry back to its owning business page. `/schedule-plans/production` keeps the page-level `导入排班` action in the shared Header, and that action now opens a page-local Dialog instead of sending the user to the generic CSV upload workspace.
+
+The Dialog follows the controlled step-by-step pattern: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the CSV file input is not unmounted while the user moves between upload and mapping. The submit path continues to use the existing CSV upload action with `file_type=personnel_schedule`, then returns to `/schedule-plans/production?import_dialog=1` where the result step shows the batch outcome and links to the existing batch detail page.
+
+This slice did not add a login/status-log import dialog, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, publish/freeze, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM170.

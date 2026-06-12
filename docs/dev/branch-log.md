@@ -4034,3 +4034,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM170 Schedule Import Dialog
+
+- branch_name: `codex/im170-schedule-import-dialog`
+- base_main_commit: `c353476`
+- stacked_on: `c353476 feat: add demand forecast import dialog`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM169. Move only personnel schedule import into `/schedule-plans/production` as a page-local step-by-step Dialog, reusing existing CSV upload action and returning result state to the same page. Keep login/status-log import, backend route/schema/migration, dependency, auth/permissions, approval, export, batch application, publish/freeze, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, and charge-factor work out of scope.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/schedule-plans/production/page.tsx`, `components/personnel-schedule-import-dialog.tsx`, `components/personnel-schedule-production-workbench.tsx`, `components/personnel-schedule-production-model.ts`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, auth/permissions, approval, export, batch-application capability, publish/freeze, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected personnel schedule Dialog model summary, page-local Dialog component, Header action href change, upload result redirect preservation, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizePersonnelScheduleImportDialog` was missing; TDD RED product-structure test then failed because `/schedule-plans/production` did not own a strict step-by-step Dialog. After implementation, `node --test scripts/tests/personnel-schedule-production-model.test.mjs` passed with 10 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 34 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/schedule-plans/production?import_dialog=1` renders the schedule import Dialog with three mounted steps, one file input, two hidden sections, and no old upload-workspace link; the success result URL renders `导入已提交` and a batch detail link. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
