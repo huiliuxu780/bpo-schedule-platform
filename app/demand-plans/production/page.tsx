@@ -1,5 +1,4 @@
-import { formatApiError } from "@/lib/api-error"
-import type { ApiResult } from "@/lib/api-result"
+import { fetchImportBatches, fetchImportFieldMappingTemplates } from "@/lib/import-api"
 import { AppShell } from "@/components/app-shell"
 import { uploadImportCsvAction } from "@/app/data-quality/actions"
 import { DemandForecastImportDialog } from "@/components/demand-forecast-import-dialog"
@@ -7,12 +6,6 @@ import {
   DemandForecastProductionPageActions,
   DemandForecastProductionWorkbench,
 } from "@/components/demand-forecast-production-workbench"
-import {
-  type ImportFieldMappingTemplate,
-  type ImportBatchListRow,
-  buildImportApiUrl,
-  buildImportFieldMappingTemplatesUrl,
-} from "@/components/import-center-model"
 import { summarizeDemandForecastImportDialog } from "@/components/demand-forecast-production-model"
 
 export const dynamic = "force-dynamic"
@@ -58,64 +51,6 @@ export default async function DemandForecastProductionPage({ searchParams }: Pag
       ) : null}
     </AppShell>
   )
-}
-
-async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
-  try {
-    const response = await fetch(buildImportApiUrl("/api/v1/import-batches"), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `导入批次读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as { items?: ImportBatchListRow[] }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
-}
-
-async function fetchImportFieldMappingTemplates(): Promise<
-  ApiResult<ImportFieldMappingTemplate[]>
-> {
-  try {
-    const response = await fetch(buildImportFieldMappingTemplatesUrl(), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `字段映射模板读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as {
-      items?: ImportFieldMappingTemplate[]
-    }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
 }
 
 function getSingleSearchParam(value: string | string[] | undefined): string {

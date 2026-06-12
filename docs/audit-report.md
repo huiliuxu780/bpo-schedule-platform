@@ -4401,3 +4401,19 @@
 - TDD 红灯：`node --test scripts/tests/frontend-api-utilities.test.mjs` 先失败，证明缺少 `lib/api-result.ts`。
 - TDD 绿灯：结构测试通过；`npm run typecheck` 和 `npm run lint` 已通过。
 - strict state、`git diff --check` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM174 导入 fetch 工具去重
+
+#### 审计结论
+
+- 按恢复计划 Stage 1 第二刀执行，只抽取导入批次与字段映射模板的共享 fetch 工具。
+- 新增 `lib/import-api.ts`，提供共享 `fetchImportBatches` 和 `fetchImportFieldMappingTemplates`。
+- 目标页面不再本地定义重复 fetch；`app/master-data/agents/data.ts` 通过 re-export 保持既有调用方兼容。
+- 页面专属 detail/readiness/review/calculation fetch 继续 colocated，没有混入本轮抽象。
+- 本轮不改变页面 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/import-api-utilities.test.mjs` 先失败，证明缺少 `lib/import-api.ts`。
+- TDD 绿灯：结构测试通过；`npm run typecheck` 和 `npm run lint` 已通过。
+- strict state、`git diff --check` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 结果见 Done Report。

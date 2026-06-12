@@ -920,3 +920,9 @@ This slice did not modify app, components, lib, backend, package files, lockfile
 `IM173` completed the first implementation slice from the frontend health recovery plan. The scope was deliberately mechanical: create shared frontend API result and error-formatting utilities, replace duplicated local `ApiResult<T>` and `formatApiError` definitions in the target data-reading files, and add a structure test that prevents the same duplication from returning. The shared error formatter keeps the old default `读取失败` fallback and allows an explicit fallback for the existing `api_unavailable` case.
 
 This slice does not change visible UI, navigation, data-fetch URLs, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-12 IM174 Import Fetch Utility Extraction
+
+`IM174` completed the second implementation slice from the frontend health recovery plan. The scope was mechanical: create a shared import fetch utility for import batches and field-mapping templates, replace duplicated local implementations, and keep page-specific fetch functions colocated in their current pages. `app/master-data/agents/data.ts` re-exports the shared fetch functions so existing master-data callers keep the same import path.
+
+This slice must not change visible UI, navigation, data-fetch URLs, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

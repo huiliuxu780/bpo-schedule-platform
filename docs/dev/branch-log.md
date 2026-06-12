@@ -4106,3 +4106,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM174 Import Fetch Utilities
+
+- branch_name: `codex/im174-import-fetch-utilities`
+- base_main_commit: `43fb518`
+- stacked_on: `codex/im173-api-result-error-utilities`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 1 second implementation slice. Extract shared `fetchImportBatches` and `fetchImportFieldMappingTemplates` into `lib/import-api.ts`, replace repeated local definitions in target files, and add structural regression tests. Keep page-specific fetch functions colocated.
+- allowed_files_check: `lib/import-api.ts`, target frontend data-reading files listed in `tasks/backlog.yaml`, `scripts/tests/import-api-utilities.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected shared import fetch utility, imports/re-exports replacing repeated local fetch definitions, structural test, and traceability updates only; no UI, navigation, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: TDD RED `node --test scripts/tests/import-api-utilities.test.mjs` first failed because `lib/import-api.ts` was missing. After implementation, the same structure test passed, `npm run typecheck` passed, and `npm run lint` passed. `bash scripts/check-state.sh --strict` passed with current queue empty, `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

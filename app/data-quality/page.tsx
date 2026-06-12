@@ -1,10 +1,10 @@
+import { fetchImportBatches } from "@/lib/import-api"
 import { formatApiError } from "@/lib/api-error"
 import type { ApiResult } from "@/lib/api-result"
 import { AppShell } from "@/components/app-shell"
 import { ImportCenterApiPanel } from "@/components/import-center-api-panel"
 import {
   type ImportApplyReadinessResponse,
-  type ImportBatchListRow,
   type ImportBatchFilters,
   buildImportApiUrl,
   filterImportBatches,
@@ -58,33 +58,6 @@ export default async function DataQualityPage({
       />
     </AppShell>
   )
-}
-
-async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
-  try {
-    const response = await fetch(buildImportApiUrl("/api/v1/import-batches"), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `导入批次读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as { items?: ImportBatchListRow[] }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
 }
 
 async function fetchImportReadiness(
