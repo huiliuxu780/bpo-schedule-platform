@@ -3248,3 +3248,16 @@ version: "1.0"
 status: "done"
 notes: "IM174 已完成：新增 lib/import-api.ts，提供共享 `fetchImportBatches` 与 `fetchImportFieldMappingTemplates`；目标页面和 master-data data module 已改为引用或 re-export 共享工具。未改变可见 UI、导航、fetch URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R875 - 导入和比对 Server Action 运行时保护
+
+```yaml
+id: R875
+module: "前端健康恢复"
+description: "`app/data-quality/actions.ts` 中部分 Server Action 直接把 FormData 中的 `file_type`、`comparison_type` 和 `result_redirect_to` 当作可信枚举或回跳目标使用。需要补充运行时 guard，防止非法值进入 API URL、请求体或成功回跳。"
+source: "docs/frontend-health-recovery-plan.md Stage 1 IM175"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM175 已完成：`app/data-quality/actions.ts` 新增 `file_type`、`comparison_type` 和 `result_redirect_to` 运行时白名单 guard；非法值在进入 API URL、请求体或成功回跳前进入失败回跳。本需求未引入表单库，未改变可见 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

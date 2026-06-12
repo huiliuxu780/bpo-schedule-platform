@@ -4417,3 +4417,24 @@
 - TDD 红灯：`node --test scripts/tests/import-api-utilities.test.mjs` 先失败，证明缺少 `lib/import-api.ts`。
 - TDD 绿灯：结构测试通过；`npm run typecheck` 和 `npm run lint` 已通过。
 - strict state、`git diff --check` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM175 导入和比对 Server Action 运行时保护
+
+#### 审计计划
+
+- 按恢复计划 Stage 1 第三刀执行，只补充 Server Action 入参 runtime guards。
+- 保护范围限定为 `file_type`、`comparison_type`、`result_redirect_to`，不引入表单库，不改可见 UI。
+- 本轮不改变页面 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证计划
+
+- 先写结构测试并看到红灯，再实现 guard。
+- 聚焦测试、strict state、`git diff --check` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 结果写入 Done Report。
+
+#### 执行结果
+
+- 已新增结构测试 `scripts/tests/data-quality-actions-guards.test.mjs`，先确认缺少 parser 时红灯，再实现运行时 guard。
+- `uploadImportCsvAction` 现在先校验 `file_type` 和 `result_redirect_to`；非法值返回 `invalid_file_type` 或 `invalid_redirect_target`。
+- `createImportFieldMappingTemplateAction` 与 `applyImportBatchAction` 现在先校验 `file_type`；非法值返回 `invalid_file_type`。
+- `triggerLocalComparisonRunAction` 与 `triggerVersionWorkbenchLocalComparisonRunAction` 现在通过共享 `comparison_type` guard 拦截非法值并返回 `invalid_comparison_type`。
+- 未改变可见 UI、导航、后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。

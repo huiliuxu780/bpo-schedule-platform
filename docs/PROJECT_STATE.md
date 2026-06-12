@@ -926,3 +926,9 @@ This slice does not change visible UI, navigation, data-fetch URLs, response sha
 `IM174` completed the second implementation slice from the frontend health recovery plan. The scope was mechanical: create a shared import fetch utility for import batches and field-mapping templates, replace duplicated local implementations, and keep page-specific fetch functions colocated in their current pages. `app/master-data/agents/data.ts` re-exports the shared fetch functions so existing master-data callers keep the same import path.
 
 This slice must not change visible UI, navigation, data-fetch URLs, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-12 IM175 Server Action Runtime Guards
+
+`IM175` completed the third implementation slice from the frontend health recovery plan. The scope was limited to `app/data-quality/actions.ts`: runtime guards now parse import file types, comparison types, and upload result redirect targets before those values are used in API URL construction, request bodies, or success redirects. Invalid values now return controlled failure redirects instead of reaching downstream API requests.
+
+This slice did not introduce a form library or package change, and did not change visible UI, navigation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
