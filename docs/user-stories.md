@@ -5744,3 +5744,21 @@ dependencies:
 status: "done"
 notes: "IM159 已完成：旧本地 SQLite schema 可执行人员、技能组和组织维护写入；本轮只做 SQLite 本地兼容补齐，不新增迁移文件、业务字段、权限、审批、导出、批量、结算或合同能力。"
 ```
+### US791 - 登录/状态日志导入大弹窗
+
+```yaml
+id: US791
+requirement_ids:
+  - R871
+status: "done"
+as_a: "排班履约运营人员"
+i_want: "在登录/状态日志业务页内完成日志 CSV 导入"
+so_that: "我不需要跳转到抽象上传页，也能在当前业务语境里看到上传、映射和导入结果"
+acceptance:
+  - "/actual-logs/production Header 的 `导入登录日志`、`导入状态日志` 打开当前页 Dialog。"
+  - "Dialog 分为 `上传文件`、`字段映射`、`导入结果` 三步，非当前 step 保持 DOM 挂载。"
+  - "登录日志提交 `file_type=login_log`，状态日志提交 `file_type=status_log`。"
+  - "上传结果回流 `/actual-logs/production?import_dialog=1` 并展示批次详情入口。"
+  - "不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+notes: "IM171 已完成：登录/状态日志页 Header 的两个导入入口打开当前页 Dialog；Dialog 三步为上传文件、字段映射、导入结果，文件 input 在 step 切换时保持挂载；登录日志提交 `login_log`，状态日志提交 `status_log`，上传结果回流当前页并提供批次详情入口。"
+```

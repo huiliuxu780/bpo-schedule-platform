@@ -2,6 +2,45 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM171
+    title: "登录/状态日志导入大弹窗"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM170"]
+    allowed_files:
+      - "app/data-quality/actions.ts"
+      - "app/actual-logs/production/page.tsx"
+      - "components/actual-log-import-dialog.tsx"
+      - "components/actual-log-production-workbench.tsx"
+      - "components/actual-log-production-model.ts"
+      - "scripts/tests/actual-log-production-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/actual-logs/production Header 的 `导入登录日志`、`导入状态日志` 打开当前页 Dialog，而不是跳转 `/data-quality/uploads/new`。"
+      - "Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步展示，非当前 step 保持 DOM 挂载。"
+      - "上传提交继续复用现有 CSV 上传 action，结果回流 `/actual-logs/production?import_dialog=1`。"
+      - "登录日志提交 `file_type=login_log`，状态日志提交 `file_type=status_log`。"
+      - "不扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: false
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增后端 route、schema/migration 或 API"
+      - "范围扩展到解析增强、状态字典配置维护、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将 /actual-logs/production 的 `导入登录日志`、`导入状态日志` 从独立 CSV 上传页收回到当前登录/状态日志页 Dialog。Dialog 使用上传文件、字段映射、导入结果三步，非当前 step 通过 hidden 保持 DOM 挂载，文件 input 不因 step 切换卸载；上传继续复用现有 CSV action，登录日志提交 `login_log`，状态日志提交 `status_log`，结果回流 `/actual-logs/production?import_dialog=1&log_type=...` 并显示批次详情入口。本轮未扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
   - id: IM170
     title: "排班导入大弹窗"
     priority: P0

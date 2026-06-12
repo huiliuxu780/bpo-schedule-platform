@@ -134,6 +134,14 @@ function buildUploadResultRedirectHref(
     return `${resultTarget}&${searchParams.toString()}`
   }
 
+  if (resultTarget === "/actual-logs/production?import_dialog=1&log_type=login") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
+  if (resultTarget === "/actual-logs/production?import_dialog=1&log_type=status") {
+    return `${resultTarget}&${searchParams.toString()}`
+  }
+
   return `/data-quality?${searchParams.toString()}`
 }
 

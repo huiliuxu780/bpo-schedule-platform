@@ -65,6 +65,7 @@ const masterDataWorkbenchPath = new URL("../../components/master-data-maintenanc
 const masterDataAgentImportDialogPath = new URL("../../components/master-data-agent-import-dialog.tsx", import.meta.url);
 const demandForecastImportDialogPath = new URL("../../components/demand-forecast-import-dialog.tsx", import.meta.url);
 const personnelScheduleImportDialogPath = new URL("../../components/personnel-schedule-import-dialog.tsx", import.meta.url);
+const actualLogImportDialogPath = new URL("../../components/actual-log-import-dialog.tsx", import.meta.url);
 const globalsCssPath = new URL("../../app/globals.css", import.meta.url);
 const uiAlertPath = new URL("../../components/ui/alert.tsx", import.meta.url);
 const uiAvatarPath = new URL("../../components/ui/avatar.tsx", import.meta.url);
@@ -1314,6 +1315,44 @@ test("personnel schedule import dialog uses the strict step-by-step upload flow"
     actionSource.includes('resultTarget === "/schedule-plans/production?import_dialog=1"'),
     true,
     "upload action should return personnel schedule results to the page-local Dialog",
+  );
+});
+
+test("actual log import dialog uses the strict step-by-step upload flow", async () => {
+  const pageSource = await readFile(actualLogProductionPagePath, "utf8");
+  const workbenchSource = await readFile(actualLogProductionWorkbenchPath, "utf8");
+  const dialogSource = await readFile(actualLogImportDialogPath, "utf8");
+  const actionSource = await readFile(new URL("../../app/data-quality/actions.ts", import.meta.url), "utf8");
+
+  assert.equal(pageSource.includes("<ActualLogImportDialog"), true);
+  assert.equal(
+    workbenchSource.includes('buildImportUploadWorkspaceHref({ fileType: "login_log" })'),
+    false,
+    "actual log page actions should not link login logs to the standalone upload workspace",
+  );
+  assert.equal(
+    workbenchSource.includes('buildImportUploadWorkspaceHref({ fileType: "status_log" })'),
+    false,
+    "actual log page actions should not link status logs to the standalone upload workspace",
+  );
+  assert.equal(dialogSource.includes("DialogContent"), true);
+  assert.equal(dialogSource.includes("AlertTitle"), true);
+  assert.equal(dialogSource.includes("useState<ActualLogImportDialogStepKey>"), true);
+  assert.equal(dialogSource.includes('hidden={activeStep !== "upload"}'), true);
+  assert.equal(dialogSource.includes('hidden={activeStep !== "mapping"}'), true);
+  assert.equal(dialogSource.includes('hidden={activeStep !== "result"}'), true);
+  assert.equal(dialogSource.includes('name="file_type"'), true);
+  assert.equal(dialogSource.includes('value={dialog.fileType}'), true);
+  assert.equal(dialogSource.includes('name="result_redirect_to"'), true);
+  assert.equal(
+    actionSource.includes('resultTarget === "/actual-logs/production?import_dialog=1&log_type=login"'),
+    true,
+    "upload action should return login-log results to the page-local Dialog",
+  );
+  assert.equal(
+    actionSource.includes('resultTarget === "/actual-logs/production?import_dialog=1&log_type=status"'),
+    true,
+    "upload action should return status-log results to the page-local Dialog",
   );
 });
 

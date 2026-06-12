@@ -14,6 +14,7 @@ import {
 
 import {
   summarizeActualLogProcessingDetail,
+  type ActualLogImportDialogSummary,
   type ActualLogProductionTone,
   summarizeActualLogProductionWorkbench,
 } from "@/components/actual-log-production-model"
@@ -21,7 +22,6 @@ import type {
   ImportBatchListRow,
   ImportBatchPersistenceDetail,
 } from "@/components/import-center-model"
-import { buildImportUploadWorkspaceHref } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -47,17 +47,23 @@ type ActualLogProcessingDetailProps = {
   error: string | null
 }
 
-export function ActualLogProductionPageActions() {
+export function ActualLogProductionPageActions({
+  loginDialog,
+  statusDialog,
+}: {
+  loginDialog: ActualLogImportDialogSummary
+  statusDialog: ActualLogImportDialogSummary
+}) {
   return (
     <>
       <Button asChild size="sm">
-        <Link href={buildImportUploadWorkspaceHref({ fileType: "login_log" })}>
+        <Link href={loginDialog.openHref}>
           <Upload data-icon="inline-start" />
           导入登录日志
         </Link>
       </Button>
       <Button asChild size="sm" variant="outline">
-        <Link href={buildImportUploadWorkspaceHref({ fileType: "status_log" })}>
+        <Link href={statusDialog.openHref}>
           导入状态日志
         </Link>
       </Button>

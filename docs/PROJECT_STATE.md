@@ -898,3 +898,11 @@ This slice did not add schedule or login/status-log import dialogs, backend rout
 The Dialog follows the controlled step-by-step pattern: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the CSV file input is not unmounted while the user moves between upload and mapping. The submit path continues to use the existing CSV upload action with `file_type=personnel_schedule`, then returns to `/schedule-plans/production?import_dialog=1` where the result step shows the batch outcome and links to the existing batch detail page.
 
 This slice did not add a login/status-log import dialog, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, publish/freeze, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM170.
+
+## 2026-06-12 IM171 Actual Log Import Dialog
+
+`IM171` moves the login/status-log import entries back to their owning business page. `/actual-logs/production` keeps the page-level `导入登录日志` and `导入状态日志` actions in the shared Header, and those actions now open page-local Dialogs instead of sending the user to the generic CSV upload workspace.
+
+The Dialog uses the controlled three-step pattern: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the file input stays stable across step changes. Login-log upload submits `file_type=login_log`; status-log upload submits `file_type=status_log`; both return to `/actual-logs/production?import_dialog=1&log_type=...` and show the existing batch detail link on success or failure.
+
+This slice did not add parsing enhancements, status-dictionary configuration maintenance, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM171.

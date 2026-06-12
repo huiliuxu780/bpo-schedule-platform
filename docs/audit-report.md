@@ -4354,3 +4354,20 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增 Dialog 使用既有 Dialog、Alert、Button、Input、Badge 和语义 token，未引入硬编码色阶或 `space-*`。
 - in-app browser smoke 确认 `/schedule-plans/production?import_dialog=1` 渲染 `排班导入` Dialog，三步标题均存在，文件 input 数量为 1，hidden section 数量为 2，旧独立上传链接数量为 0；`/schedule-plans/production?import_dialog=1&upload=success&batch=BATCH-SCH-001` 显示 `导入已提交` 并提供 `/data-quality/import-batches/BATCH-SCH-001` 链接。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM171 登录/状态日志导入大弹窗
+
+#### 审计结论
+
+- `/actual-logs/production` Header 的 `导入登录日志`、`导入状态日志` 不再跳转独立 CSV 上传页，而是打开当前登录/状态日志页 Dialog。
+- Dialog 使用 `上传文件`、`字段映射`、`导入结果` 三步；非当前 step 通过 `hidden` 隐藏但保持 DOM 挂载，避免文件 input 在 step 切换时丢失选择。
+- 登录日志提交 `file_type=login_log`，状态日志提交 `file_type=status_log`；上传继续复用现有 `uploadImportCsvAction`，结果回流 `/actual-logs/production?import_dialog=1&log_type=...`，并在结果 step 提供批次详情入口。
+- 本轮没有扩展解析增强、状态字典配置维护，没有新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/actual-log-production-model.test.mjs` 先失败，证明缺少 `summarizeActualLogImportDialog`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明登录/状态日志页仍缺少页内 Dialog 流程。
+- TDD 绿灯：`node --test scripts/tests/actual-log-production-model.test.mjs` 通过 10 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 35 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增 Dialog 使用既有 Dialog、Alert、Button、Input、Badge 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/actual-logs/production?import_dialog=1&log_type=login` 和 `log_type=status` 均渲染对应 Dialog；登录/状态两个标题各唯一，`CSV 文件` 字段可见，旧独立上传链接数量为 0；`/actual-logs/production?import_dialog=1&log_type=login&upload=success&batch=BATCH-LOGIN-001` 显示 `导入已提交` 并提供 `/data-quality/import-batches/BATCH-LOGIN-001` 链接。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

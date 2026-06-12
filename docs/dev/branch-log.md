@@ -4052,3 +4052,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM171 Actual Log Import Dialog
+
+- branch_name: `codex/im171-actual-log-import-dialog`
+- base_main_commit: `ed8adf4`
+- stacked_on: `ed8adf4 feat: add schedule import dialog`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM170. Move only login/status-log import into `/actual-logs/production` as page-local step-by-step Dialogs, reusing existing CSV upload action and returning result state to the same page. Keep parsing enhancements, status-dictionary configuration maintenance, backend route/schema/migration, dependency, auth/permissions, approval, export, batch application, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, and charge-factor work out of scope.
+- allowed_files_check: `app/data-quality/actions.ts`, `app/actual-logs/production/page.tsx`, `components/actual-log-import-dialog.tsx`, `components/actual-log-production-workbench.tsx`, `components/actual-log-production-model.ts`, focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, auth/permissions, approval, export, batch-application capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected actual-log Dialog model summary, page-local Dialog component, Header action href changes, upload result redirect preservation for login/status log types, focused regression tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizeActualLogImportDialog` was missing; TDD RED product-structure test then failed because `/actual-logs/production` did not own a strict step-by-step Dialog. After implementation, `node --test scripts/tests/actual-log-production-model.test.mjs` passed with 10 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 35 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed login/status import Dialogs render from `/actual-logs/production`, CSV file field is visible, old upload-workspace links are absent, and the success result URL renders `导入已提交` with a batch detail link. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

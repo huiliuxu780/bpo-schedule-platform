@@ -3199,3 +3199,13 @@ version: "1.0"
 status: "done"
 notes: "IM159 已完成：仅对 SQLite 本地库在 repository 初始化/建表时补齐已确认主数据表结构，旧库缺少 employee_type、organization_id、workplace_id、skill_category 或 organizations 表时，人员、技能组和组织维护不再直接 500；未新增迁移文件、生产数据库配置、权限、审批、导出、批量、结算或合同能力。"
 ```
+### R871 - 登录/状态日志导入大弹窗
+
+```yaml
+id: R871
+status: "done"
+source: "PM confirmed continuation after IM170"
+summary: "将登录/状态日志导入入口收回到 `/actual-logs/production` 的当前页分步 Dialog，复用现有 CSV 上传能力并回流导入结果。"
+owner: "PM"
+notes: "IM171 已完成：/actual-logs/production 的 `导入登录日志`、`导入状态日志` 打开当前页 step-by-step Dialog，复用现有上传 action 并按 log_type 回流导入结果；未扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
+```
