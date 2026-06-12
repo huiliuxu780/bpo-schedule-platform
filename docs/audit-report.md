@@ -4385,3 +4385,19 @@
 #### 验证
 
 - 严格状态检查和最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM173 前端 API 结果和错误工具去重
+
+#### 审计结论
+
+- 按恢复计划 Stage 1 第一刀执行，只抽取共享 `ApiResult<T>` 与 `formatApiError`。
+- 新增 `lib/api-result.ts` 和 `lib/api-error.ts`；目标前端数据读取文件不再本地定义 `ApiResult<T>` 或 `formatApiError`。
+- `formatApiError` 支持 optional fallback，保留字段映射模板详情页原有 `api_unavailable` 兜底语义。
+- `fetchImportBatches` / field-mapping fetch 去重仍留给 IM174，没有混入本轮。
+- 本轮不改变页面 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/frontend-api-utilities.test.mjs` 先失败，证明缺少 `lib/api-result.ts`。
+- TDD 绿灯：结构测试通过；`npm run typecheck` 和 `npm run lint` 已通过。
+- strict state、`git diff --check` 和最终 `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` 结果见 Done Report。

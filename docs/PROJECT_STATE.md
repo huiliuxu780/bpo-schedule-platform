@@ -914,3 +914,9 @@ This slice did not add parsing enhancements, status-dictionary configuration mai
 The durable recovery entry is `docs/frontend-health-recovery-plan.md`, with detailed execution steps in `docs/superpowers/plans/2026-06-12-frontend-health-recovery.md`. Current state contains only `US792/IM172`; later recovery slices such as API utility extraction, loading/error states, giant-file decomposition, action placement, empty states, and form cleanup must be seeded one at a time.
 
 This slice did not modify app, components, lib, backend, package files, lockfiles, product navigation, permissions, approval, export, batch operations, automatic scheduling, formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Current queue returns to empty after IM172.
+
+## 2026-06-12 IM173 Frontend API Utility Extraction
+
+`IM173` completed the first implementation slice from the frontend health recovery plan. The scope was deliberately mechanical: create shared frontend API result and error-formatting utilities, replace duplicated local `ApiResult<T>` and `formatApiError` definitions in the target data-reading files, and add a structure test that prevents the same duplication from returning. The shared error formatter keeps the old default `读取失败` fallback and allows an explicit fallback for the existing `api_unavailable` case.
+
+This slice does not change visible UI, navigation, data-fetch URLs, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

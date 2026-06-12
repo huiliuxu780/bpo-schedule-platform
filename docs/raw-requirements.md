@@ -3222,3 +3222,16 @@ version: "1.0"
 status: "done"
 notes: "IM172 已完成：写入 docs/frontend-health-recovery-plan.md 和 docs/superpowers/plans/2026-06-12-frontend-health-recovery.md；后续 IM173+ 必须从恢复计划单独 seed 到 current queue；涉及可见 UI/页面/交互的任务必须先使用 Product Design 插件确认 brief。本轮未改 app/components/lib/backend/package。"
 ```
+
+### R873 - 前端 API 结果和错误工具去重
+
+```yaml
+id: R873
+module: "前端健康恢复"
+description: "多个前端页面和数据读取模块重复定义 `ApiResult<T>` 与 `formatApiError`，导致错误处理语义分散、后续页面维护成本高。需要先抽取共享工具，作为后续 fetch/import 去重和 error/loading 体系的低风险基础。"
+source: "docs/frontend-health-recovery-plan.md Stage 1 IM173"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM173 已完成：新增 lib/api-result.ts 和 lib/api-error.ts，并将目标前端数据读取文件改为引用共享 `ApiResult<T>` 与 `formatApiError`；字段映射模板详情的 `api_unavailable` 兜底语义通过 optional fallback 保留。未改变可见 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

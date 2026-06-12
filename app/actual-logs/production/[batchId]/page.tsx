@@ -1,3 +1,5 @@
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import { AppShell } from "@/components/app-shell"
 import { ActualLogProcessingDetail } from "@/components/actual-log-production-workbench"
 import {
@@ -13,11 +15,6 @@ type PageProps = {
   params: Promise<{
     batchId: string
   }>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function ActualLogProcessingDetailPage({ params }: PageProps) {
@@ -98,12 +95,4 @@ async function fetchImportBatchDetail(
       error: formatApiError(error),
     }
   }
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }

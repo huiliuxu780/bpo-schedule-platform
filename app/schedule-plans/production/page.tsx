@@ -1,3 +1,5 @@
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import { AppShell } from "@/components/app-shell"
 import { uploadImportCsvAction } from "@/app/data-quality/actions"
 import { PersonnelScheduleImportDialog } from "@/components/personnel-schedule-import-dialog"
@@ -17,11 +19,6 @@ export const dynamic = "force-dynamic"
 
 type PageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function PersonnelScheduleProductionPage({ searchParams }: PageProps) {
@@ -119,14 +116,6 @@ async function fetchImportFieldMappingTemplates(): Promise<
       error: formatApiError(error),
     }
   }
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }
 
 function getSingleSearchParam(value: string | string[] | undefined): string {

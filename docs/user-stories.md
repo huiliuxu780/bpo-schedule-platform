@@ -5783,3 +5783,23 @@ acceptance:
 status: "done"
 notes: "IM172 已完成：计划和恢复入口已固化，current queue 已清空；后续前端/页面/功能设计任务必须先使用 Product Design 插件确认 brief；IM173+ 只在计划中列出，需要单独 seed。"
 ```
+
+### US793 - 抽取前端 API 结果和错误工具
+
+```yaml
+id: US793
+requirement_ids:
+  - R873
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望前端页面共用同一套 API 结果类型和错误格式化函数，以便后续页面数据读取和错误展示不再复制粘贴同一段逻辑。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增共享 `ApiResult<T>` 类型，现有重复页面改为引用共享类型。"
+  - "新增共享 `formatApiError` 函数，现有重复页面改为引用共享函数。"
+  - "结构测试防止继续在目标页面内定义重复 `type ApiResult<T>` 或 `function formatApiError`。"
+  - "不改变页面 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM173 已完成：共享 API result/error 工具已抽取，结构测试已防止目标文件重新定义本地 `ApiResult<T>` 或 `formatApiError`；`fetchImportBatches` 和 field-mapping fetch 去重仍留给 IM174。"
+```
