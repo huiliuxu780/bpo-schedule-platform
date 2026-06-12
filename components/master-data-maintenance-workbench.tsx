@@ -361,7 +361,7 @@ export function MasterDataReferenceManagementPage({
                           variant="ghost"
                           className="px-1.5 text-primary hover:text-primary"
                         >
-                          <Link href={row.display.detailHref}>详情</Link>
+                          <Link href={row.display.detailHref}>查看</Link>
                         </Button>
                       ) : null}
                       {row.display.editHref ? (

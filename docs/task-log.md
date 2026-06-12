@@ -2138,3 +2138,12 @@
 - action: 完成技能组详情只读业务链路。
 - status: `done`
 - notes: `/master-data/skills` 列表行新增 `详情` 入口；`/master-data/skills/[skillId]` 只读展示技能组基础信息、归属属性和当前拥有该技能的客服人员；归属人员通过 `查看人员` 进入既有客服人员详情页；无归属人员显示明确空态；本轮不新增后端 route、schema/migration、技能层级、技能绑定维护、批量分配、排班技能规则、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM168`
+- source_ids:
+  - `R868`
+- story_ids:
+  - `US788`
+- action: 完成主数据详情链路收尾检查。
+- status: `done`
+- notes: `/master-data/skills` 等主数据 reference 列表进入详情的行内动作统一为 `查看`，并新增结构测试防止再次混用 `详情`；动作仍进入既有详情页；本轮不新增页面、导航、后端 route、schema/migration、导入、权限、审批、导出、批量、合同、结算、最低人力、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。

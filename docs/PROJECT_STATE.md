@@ -876,3 +876,9 @@ The detail page shows direct child organizations and current directly assigned p
 `IM167` adds the skill detail read-only chain. `/master-data/skills` now exposes a row-level `详情` action, and `/master-data/skills/[skillId]` shows the selected skill group's basic information, category, status, effective period, and source batch.
 
 The detail page shows current personnel whose skill set includes the selected skill, and each row links to the existing customer-service personnel detail page. This slice did not add backend routes, schemas, migrations, skill hierarchy, skill binding maintenance, batch assignment, scheduling skill rules, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM167.
+
+## 2026-06-12 IM168 Master Data Detail Link Audit
+
+`IM168` closes the visible action-label inconsistency left after the master-data detail-link chain. Reference master-data list rows now use the same row-level `查看` label for detail navigation, including `/master-data/skills`, while retaining the existing `detailHref` routes.
+
+This slice is a guardrail and small UI correction only. It added a product-structure regression test against `MasterDataReferenceManagementPage` so the list-to-detail action does not drift back to `详情`. It did not add pages, navigation, backend routes, schemas, migrations, imports, permissions, approval, export, batch operations, contracts, settlement ratios, minimum staffing requirements, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM168.

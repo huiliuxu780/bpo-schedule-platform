@@ -4302,3 +4302,21 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 和语义 token，未引入硬编码色阶或 `space-*`。
 - in-app browser smoke 确认 `/master-data/skills` 存在行内 `详情` 入口并指向 `/master-data/skills/L1-CN`；`/master-data/skills/L1-CN` 出现 `技能组信息`、`拥有该技能的客服人员` 和人员空态；`/master-data/skills/SKILL-IM159` 出现 `查看人员` 链接并指向 `/master-data/agents/A-IM159`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM168 主数据详情链路收尾检查
+
+#### 审计结论
+
+- 主数据 reference 列表进入详情的行内动作统一为 `查看`，修正 IM167 留下的技能组列表 `详情` 口径。
+- 行内动作仍使用既有 `detailHref`，没有新增页面、导航或业务模块。
+- 新增结构测试覆盖 `MasterDataReferenceManagementPage`，防止 reference 列表再次混用 `详情`。
+- 本轮没有新增后端 route、schema/migration、导入、权限、审批、导出、批量操作、合同、结算、最低人力、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/product-structure.test.mjs` 先失败，证明 reference 列表仍包含 `>详情</Link>`。
+- TDD 绿灯：`node --test scripts/tests/product-structure.test.mjs` 通过 32 tests。
+- `node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 31 tests；`npm run lint` 和 `npm run typecheck` 已通过。
+- shadcn 自查确认本轮没有引入硬编码色阶、`space-*` 或任意圆角，实际改动只替换既有 Link 文案。
+- in-app browser smoke 确认 `/master-data/skills` 行内链接文本为 `查看/编辑/冻结`，`详情` 数量为 0；`/master-data/skills/L1-CN` 仍展示 `技能组信息` 和 `拥有该技能的客服人员`，且未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

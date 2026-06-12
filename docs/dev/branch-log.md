@@ -3998,3 +3998,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM168 Master Data Detail Link Audit
+
+- branch_name: `codex/im168-master-data-link-audit`
+- base_main_commit: `e69d1c9`
+- stacked_on: `e69d1c9 feat: add skill detail links`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM167. Close the master-data detail-link chain by making existing reference-list detail actions use the established `查看` row action label and adding a regression test. Keep all routes, navigation, backend, schema/migration, import, permission, approval, export, batch, contract, settlement, minimum-staffing, automatic-scheduling, formula, and charge-factor scope out.
+- allowed_files_check: `components/master-data-maintenance-workbench.tsx`, `scripts/tests/product-structure.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, route, page, navigation, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected one UI label replacement in the existing reference-list detail action, product-structure regression test, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED product-structure test first failed because `MasterDataReferenceManagementPage` still contained `>详情</Link>`. After implementation, `node --test scripts/tests/product-structure.test.mjs` passed with 32 tests, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 31 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/skills` row links render `查看/编辑/冻结`, no `详情` label remains, and `/master-data/skills/L1-CN` still renders the existing skill detail page with skill info and owned-personnel section. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

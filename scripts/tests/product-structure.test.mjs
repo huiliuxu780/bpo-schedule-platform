@@ -687,6 +687,25 @@ test("skill maintenance uses child pages and a freeze dialog instead of list-pag
   assert.equal(editPageSource.includes("notFound()"), true);
 });
 
+test("master data reference detail actions use a consistent view label", async () => {
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+  const referenceListSource = workbenchSource.slice(
+    workbenchSource.indexOf("export function MasterDataReferenceManagementPage"),
+    workbenchSource.indexOf("export function MasterDataWorkplaceDetailPage"),
+  );
+
+  assert.equal(
+    referenceListSource.includes(">详情</Link>"),
+    false,
+    "reference master-data rows should not mix 详情 with the established 查看 row action label",
+  );
+  assert.equal(
+    referenceListSource.includes(">查看</Link>"),
+    true,
+    "reference master-data rows should expose the detail link as 查看",
+  );
+});
+
 test("agent child form pages do not duplicate the global page header", async () => {
   const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
   const formShellSource = workbenchSource.slice(
