@@ -2,6 +2,45 @@
 # Business implementation tasks must be added explicitly and confirmed by PM before execution.
 
 tasks:
+  - id: IM167
+    title: "技能组详情只读业务链路"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM166"]
+    allowed_files:
+      - "app/master-data/skills/[skillId]/page.tsx"
+      - "app/master-data/agents/data.ts"
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-workbench.tsx"
+      - "scripts/tests/master-data-maintenance-model.test.mjs"
+      - "scripts/tests/product-structure.test.mjs"
+      - "docs/**"
+      - "tasks/backlog.yaml"
+    forbidden_files:
+      - "components/app-sidebar.tsx"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "/master-data/skills 列表行提供进入单个技能组详情页的查看入口。"
+      - "/master-data/skills/[skillId] 展示技能组基础信息、归属属性、状态、有效期和来源批次。"
+      - "详情页只读展示当前拥有该技能的客服人员，并能进入人员详情页。"
+      - "无归属人员时显示明确空态。"
+      - "不新增后端 route、schema/migration、技能层级、技能绑定维护、批量分配、排班技能规则、权限、审批、导出、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+      - "focused tests、Browser smoke、`git diff --check` 和 `bash scripts/check.sh` 通过。"
+    auto_run: true
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要修改后端、schema/migration 或新增 API"
+      - "范围扩展到技能层级、技能绑定维护、批量分配、排班技能规则、权限、审批、导出、合同、结算、最低人力、自动排班、生产公式或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "IM167 已完成：技能组列表行新增详情入口；技能组详情页只读展示技能组基础信息、归属属性和当前拥有该技能的客服人员，并通过查看人员进入既有人员详情页；focused tests、Browser smoke、lint、typecheck 已通过，最终 scripts/check.sh 通过后提交。"
   - id: IM166
     title: "组织详情只读业务链路"
     priority: P0

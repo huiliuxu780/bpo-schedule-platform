@@ -86,6 +86,12 @@ export async function fetchMasterDataReferences(
   }
 }
 
+export async function fetchMasterDataSkills(): Promise<
+  ApiResult<MasterDataReferenceListRow[]>
+> {
+  return fetchMasterDataReferences("skills")
+}
+
 export async function fetchMasterDataOrganizations(): Promise<
   ApiResult<MasterDataOrganizationListRow[]>
 > {

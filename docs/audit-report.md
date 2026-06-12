@@ -4284,3 +4284,21 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 和语义 token，未引入硬编码色阶或 `space-*`。
 - in-app browser smoke 确认 `/master-data/organizations` 存在行内 `查看` 入口并指向 `/master-data/organizations/ORG-CC`；`/master-data/organizations/ORG-CC` 出现 `组织信息`、`直接下级组织`、`归属人员` 和人员空态；`/master-data/organizations/ORG-IM158` 出现 `查看人员` 链接并指向 `/master-data/agents/A-IM159`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM167 技能组详情只读业务链路
+
+#### 审计结论
+
+- `/master-data/skills` 列表行新增 `详情` 入口，进入 `/master-data/skills/[skillId]` 单个技能组详情页。
+- 技能组详情页只读展示技能组名称、编码、归属属性、状态、生效期和来源批次。
+- 详情页只读展示当前拥有该技能的客服人员，并通过 `查看人员` 链接进入既有客服人员详情页。
+- 无归属人员时显示明确空态。
+- 本轮没有新增后端 route、schema/migration、技能层级、技能绑定维护、批量分配、排班技能规则、合同、结算、最低人力、权限、审批、导出、批量操作、自动排班、生产公式或收费因子。
+
+#### 验证
+
+- TDD 红灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 先失败，证明缺少 `summarizeMasterDataSkillDetail`；`node --test scripts/tests/product-structure.test.mjs` 先失败，证明技能组详情页文件不存在。
+- TDD 绿灯：`node --test scripts/tests/master-data-maintenance-model.test.mjs` 通过 31 tests，`node --test scripts/tests/product-structure.test.mjs` 通过 31 tests。
+- `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增区域使用既有 Table、Badge、Button 和语义 token，未引入硬编码色阶或 `space-*`。
+- in-app browser smoke 确认 `/master-data/skills` 存在行内 `详情` 入口并指向 `/master-data/skills/L1-CN`；`/master-data/skills/L1-CN` 出现 `技能组信息`、`拥有该技能的客服人员` 和人员空态；`/master-data/skills/SKILL-IM159` 出现 `查看人员` 链接并指向 `/master-data/agents/A-IM159`；页面未出现合同、结算、最低人力、权限、审批、导出、批量或自动排班。
+- 最终 `bash scripts/check.sh` 结果见 Done Report。

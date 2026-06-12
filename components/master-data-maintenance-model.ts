@@ -259,6 +259,16 @@ export type MasterDataReferenceManagementSummary = {
   rows: MasterDataReferenceListViewRow[]
 }
 
+export type MasterDataSkillDetailSummary = {
+  found: boolean
+  title: string
+  backHref: string
+  skill: MasterDataReferenceListViewRow | null
+  totalPeople: number
+  emptyPeopleDetail: string
+  peopleRows: MasterDataEmployeeListViewRow[]
+}
+
 export type MasterDataWorkplaceBindingRow = {
   binding_id: string
   employee_id: string
@@ -1408,6 +1418,8 @@ export function summarizeMasterDataReferenceManagement(
             ? `/master-data/sites/${encodeURIComponent(reference.reference_id)}`
             : entity.key === "vendors"
               ? `/master-data/vendors/${encodeURIComponent(reference.reference_id)}`
+              : entity.key === "skills"
+                ? `/master-data/skills/${encodeURIComponent(reference.reference_id)}`
               : null,
         editHref:
           entity.key === "sites"
@@ -1443,6 +1455,46 @@ export function summarizeMasterDataReferenceManagement(
     activeRecords: rows.filter((row) => row.status === "active").length,
     frozenRecords: rows.filter((row) => row.status === "frozen").length,
     rows,
+  }
+}
+
+export function summarizeMasterDataSkillDetail({
+  skillId,
+  skills,
+  employees,
+}: {
+  skillId: string
+  skills: MasterDataReferenceListRow[]
+  employees: MasterDataEmployeeListRow[]
+}): MasterDataSkillDetailSummary {
+  const skillSummary = summarizeMasterDataReferenceManagement("skills", skills)
+  const skill =
+    skillSummary.rows.find((row) => row.reference_id === skillId) ?? null
+
+  if (!skill) {
+    return {
+      found: false,
+      title: "技能组未找到",
+      backHref: "/master-data/skills",
+      skill: null,
+      totalPeople: 0,
+      emptyPeopleDetail: "未找到该技能组，无法读取归属人员。",
+      peopleRows: [],
+    }
+  }
+
+  const peopleRows = summarizeMasterDataEmployeeList(employees).rows.filter((row) =>
+    row.skills.some((employeeSkill) => employeeSkill.skill_id === skill.reference_id)
+  )
+
+  return {
+    found: true,
+    title: skill.display.referenceNameLabel,
+    backHref: "/master-data/skills",
+    skill,
+    totalPeople: peopleRows.length,
+    emptyPeopleDetail: "暂无拥有该技能的客服人员。",
+    peopleRows,
   }
 }
 

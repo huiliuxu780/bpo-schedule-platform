@@ -106,6 +106,19 @@ status: "done"
 notes: "IM166 已完成：/master-data/organizations 列表行提供 `查看` 入口，/master-data/organizations/[organizationId] 只读展示组织基础信息、直接下级组织和当前归属人员，并链接到既有人员详情页；未新增后端 route、schema/migration、人员调岗、组织树拖拽、合同、结算、最低人力、权限、审批、导出、批量、自动排班、生产公式或收费因子。"
 ```
 
+### R867 - 技能组详情只读业务链路
+
+```yaml
+id: R867
+module: "主数据维护"
+description: "PM 确认继续主数据维护链路。技能组列表已经具备单条维护能力，下一步需要从技能组列表进入单个技能组详情页，核对技能组基础信息、归属属性，以及当前拥有该技能的客服人员。该详情页只做只读核对，不做技能层级、技能绑定维护、批量分配、排班技能规则、权限、审批或导出。"
+source: "PM confirmed continuing after IM166 on 2026-06-12"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM167 已完成：/master-data/skills 列表行提供 `详情` 入口，/master-data/skills/[skillId] 只读展示技能组基础信息、归属属性和当前拥有该技能的客服人员，并链接到既有人员详情页；未新增后端 route、schema/migration、技能层级、技能绑定维护、批量分配、排班技能规则、权限、审批、导出、合同、结算、最低人力、自动排班、生产公式或收费因子。"
+```
+
 ### R849 - 主数据非客服人员动作收口
 
 ```yaml

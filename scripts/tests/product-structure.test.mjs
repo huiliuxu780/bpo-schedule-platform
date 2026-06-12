@@ -26,6 +26,7 @@ const masterDataVendorDetailPagePath = new URL("../../app/master-data/vendors/[v
 const masterDataVendorCreatePagePath = new URL("../../app/master-data/vendors/new/page.tsx", import.meta.url);
 const masterDataVendorEditPagePath = new URL("../../app/master-data/vendors/[vendorId]/edit/page.tsx", import.meta.url);
 const masterDataSkillCreatePagePath = new URL("../../app/master-data/skills/new/page.tsx", import.meta.url);
+const masterDataSkillDetailPagePath = new URL("../../app/master-data/skills/[skillId]/page.tsx", import.meta.url);
 const masterDataSkillEditPagePath = new URL("../../app/master-data/skills/[skillId]/edit/page.tsx", import.meta.url);
 const masterDataOrganizationCreatePagePath = new URL("../../app/master-data/organizations/new/page.tsx", import.meta.url);
 const masterDataOrganizationDetailPagePath = new URL("../../app/master-data/organizations/[organizationId]/page.tsx", import.meta.url);
@@ -817,6 +818,41 @@ test("organization detail stays read-only under organization context", async () 
   assert.equal(organizationDetailSource.includes("合同"), false);
   assert.equal(organizationDetailSource.includes("结算"), false);
   assert.equal(organizationDetailSource.includes("最低人力"), false);
+});
+
+test("skill detail stays read-only under skill context", async () => {
+  await access(masterDataSkillDetailPagePath);
+  const skillDetailSource = await readFile(masterDataSkillDetailPagePath, "utf8");
+  const workbenchSource = await readFile(masterDataWorkbenchPath, "utf8");
+
+  assert.equal(
+    skillDetailSource.includes("fetchMasterDataSkills"),
+    true,
+    "skill detail should read skill rows for read-only skill context",
+  );
+  assert.equal(
+    skillDetailSource.includes("fetchMasterDataEmployees"),
+    true,
+    "skill detail should read personnel rows for current people context",
+  );
+  assert.equal(
+    workbenchSource.includes("MasterDataSkillDetailPage"),
+    true,
+    "skill detail should render through a dedicated skill detail component",
+  );
+  assert.equal(
+    workbenchSource.includes("技能组信息"),
+    true,
+    "skill detail should expose skill basic information",
+  );
+  assert.equal(
+    workbenchSource.includes("拥有该技能的客服人员"),
+    true,
+    "skill detail should expose people who own the skill",
+  );
+  assert.equal(skillDetailSource.includes("合同"), false);
+  assert.equal(skillDetailSource.includes("结算"), false);
+  assert.equal(skillDetailSource.includes("最低人力"), false);
 });
 
 test("agent list keeps page actions and filter actions in their own zones", async () => {

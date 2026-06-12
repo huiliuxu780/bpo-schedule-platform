@@ -870,3 +870,9 @@ The detail page derives associated service teams from existing workplace service
 `IM166` adds the organization detail read-only chain. `/master-data/organizations` now exposes a row-level `查看` action, and `/master-data/organizations/[organizationId]` shows the selected organization's basic information, hierarchy level, parent organization, path, status, effective period, and source batch.
 
 The detail page shows direct child organizations and current directly assigned personnel. Child organizations link to their own organization detail pages, and personnel rows link to the existing customer-service personnel detail page. This slice did not add backend routes, schemas, migrations, personnel reassignment, organization-tree drag, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM166.
+
+## 2026-06-12 IM167 Skill Detail Links
+
+`IM167` adds the skill detail read-only chain. `/master-data/skills` now exposes a row-level `详情` action, and `/master-data/skills/[skillId]` shows the selected skill group's basic information, category, status, effective period, and source batch.
+
+The detail page shows current personnel whose skill set includes the selected skill, and each row links to the existing customer-service personnel detail page. This slice did not add backend routes, schemas, migrations, skill hierarchy, skill binding maintenance, batch assignment, scheduling skill rules, contracts, settlement ratios, minimum staffing requirements, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM167.

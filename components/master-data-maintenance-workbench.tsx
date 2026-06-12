@@ -26,6 +26,7 @@ import {
   type MasterDataOrganizationListViewRow,
   type MasterDataReferenceManagementSummary,
   type MasterDataReferenceListViewRow,
+  type MasterDataSkillDetailSummary,
   type MasterDataVendorDetailSummary,
   type MasterDataWorkplaceDetailSummary,
   type MasterDataWorkplaceOperatorViewRow,
@@ -1870,6 +1871,132 @@ export function MasterDataOrganizationDetailPage({
         </>
       ) : (
         <AgentFormBlockedState detail="未找到该组织，请返回列表重新选择。" />
+      )}
+    </main>
+  )
+}
+
+export function MasterDataSkillDetailPage({
+  detailSummary,
+  error,
+}: {
+  detailSummary: MasterDataSkillDetailSummary
+  error: string | null
+}) {
+  const skill = detailSummary.skill
+
+  return (
+    <main className="grid flex-1 auto-rows-max gap-3 overflow-x-hidden overflow-y-auto bg-muted/40 p-3 lg:p-4">
+      {error ? <MasterDataListError title="技能组详情读取失败" error={error} /> : null}
+
+      {skill ? (
+        <>
+          <section className="grid gap-3 md:grid-cols-3">
+            <MetricCard
+              label="归属属性"
+              value={skill.display.skillCategoryLabel}
+              detail="技能组分类"
+              tone="default"
+            />
+            <MetricCard
+              label="状态"
+              value={skill.display.statusLabel}
+              detail="主数据状态"
+              tone={skill.status === "active" ? "ready" : "default"}
+            />
+            <MetricCard
+              label="拥有该技能的客服人员"
+              value={detailSummary.totalPeople.toLocaleString("zh-CN")}
+              detail="当前技能集合"
+              tone={detailSummary.totalPeople > 0 ? "ready" : "default"}
+            />
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <h2 className="mb-3 text-base font-semibold tracking-normal">技能组信息</h2>
+            <div className="grid gap-3 text-sm md:grid-cols-2 lg:grid-cols-3">
+              <ReadOnlyField
+                label="技能组名称"
+                value={skill.display.referenceNameLabel}
+              />
+              <ReadOnlyField
+                label="技能组编码"
+                value={skill.display.referenceIdLabel}
+              />
+              <ReadOnlyField
+                label="归属属性"
+                value={skill.display.skillCategoryLabel}
+              />
+              <ReadOnlyField label="状态" value={skill.display.statusLabel} />
+              <ReadOnlyField
+                label="有效期"
+                value={skill.display.effectivePeriodLabel}
+              />
+              <ReadOnlyField
+                label="来源批次"
+                value={skill.display.sourceBatchLabel}
+              />
+            </div>
+          </section>
+
+          <section className="rounded-lg border bg-background p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-base font-semibold tracking-normal">
+                拥有该技能的客服人员
+              </h2>
+              <Badge variant="secondary">
+                {detailSummary.totalPeople.toLocaleString("zh-CN")} 人
+              </Badge>
+            </div>
+            {detailSummary.peopleRows.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>姓名</TableHead>
+                    <TableHead>人员 ID</TableHead>
+                    <TableHead>人员类型</TableHead>
+                    <TableHead>组织</TableHead>
+                    <TableHead>职场</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead className="text-right">操作</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detailSummary.peopleRows.map((row) => (
+                    <TableRow key={row.employee_id}>
+                      <TableCell className="font-medium">
+                        {row.display.publicNameLabel}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">{row.employee_id}</TableCell>
+                      <TableCell>{row.display.employeeTypeLabel}</TableCell>
+                      <TableCell>{row.display.organizationLabel}</TableCell>
+                      <TableCell>{row.display.workplaceLabel}</TableCell>
+                      <TableCell>
+                        <Badge variant={row.status === "active" ? "outline" : "secondary"}>
+                          {row.display.statusLabel}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          asChild
+                          size="xs"
+                          variant="ghost"
+                          className="px-1.5 text-primary hover:text-primary"
+                        >
+                          <Link href={row.display.detailHref}>查看人员</Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <AgentFormBlockedState detail={detailSummary.emptyPeopleDetail} />
+            )}
+          </section>
+        </>
+      ) : (
+        <AgentFormBlockedState detail="未找到该技能组，请返回列表重新选择。" />
       )}
     </main>
   )

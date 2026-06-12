@@ -127,6 +127,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM167 Skill Detail Links
+
+- branch_name: `codex/im167-skill-detail-links`
+- base_main_commit: `3060d9c`
+- stacked_on: `d3e10ce feat: add organization detail links`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation of the master-data skill/personnel chain. Add a read-only skill detail page under `/master-data/skills/[skillId]`, expose row-level `详情` from the skill list, and show current personnel whose skill set includes the selected skill linked to existing personnel detail pages. Keep backend routes, schema/migration, skill hierarchy, skill binding maintenance, batch assignment, scheduling skill rules, contracts, settlement, minimum staffing, permissions, approval, export, batch operations, automatic scheduling, formulas, and charge factors out of scope.
+- allowed_files_check: `app/master-data/skills/[skillId]/page.tsx`, `app/master-data/agents/data.ts`, `components/master-data-maintenance-model.ts`, `components/master-data-maintenance-workbench.tsx`, focused frontend tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only; no backend, package/lockfile, Sidebar, auth/permissions, approval, export, batch-operation capability, automatic scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- scope_diff_check: expected skill detail summary model, skill-list detail row action, skill detail route, read-only skill fields, current-personnel table, `查看人员` links to existing personnel detail pages, focused RED/GREEN tests, current-state documentation sync, and this branch-log entry only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED model test first failed because `summarizeMasterDataSkillDetail` was missing; product-structure test first failed because `/master-data/skills/[skillId]` did not exist. After implementation, `node --test scripts/tests/master-data-maintenance-model.test.mjs` passed with 31 tests, `node --test scripts/tests/product-structure.test.mjs` passed with 31 tests, `npm run lint` passed, and `npm run typecheck` passed. Browser smoke confirmed `/master-data/skills` has row-level `详情` linking to `/master-data/skills/L1-CN`; `/master-data/skills/L1-CN` shows skill info, personnel section, and personnel empty state; `/master-data/skills/SKILL-IM159` shows `查看人员` linking to `/master-data/agents/A-IM159`, without contract/settlement/minimum-staffing/permission/approval/export/batch/auto-scheduling copy. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM160 Workplace Detail Service Teams
 
 - branch_name: `codex/im160-workplace-service-teams`

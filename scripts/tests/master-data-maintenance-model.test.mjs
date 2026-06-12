@@ -26,6 +26,7 @@ import {
   summarizeMasterDataOrganizationManagement,
   summarizeMasterDataOrganizationDetail,
   summarizeMasterDataReferenceManagement,
+  summarizeMasterDataSkillDetail,
   summarizeMasterDataVendorDetail,
   summarizeMasterDataWorkplaceDetail,
   summarizeMasterDataWorkplaceServiceTeamPeople,
@@ -366,6 +367,84 @@ test("organization detail summarizes direct child organizations and current peop
   assert.equal(summary.totalChildOrganizations, 1);
   assert.equal(summary.childRows[0].organization_id, "ORG-RETURN");
   assert.equal(summary.childRows[0].display.detailHref, "/master-data/organizations/ORG-RETURN");
+  assert.equal(summary.totalPeople, 1);
+  assert.equal(summary.peopleRows[0].employee_id, "A-1001");
+  assert.equal(summary.peopleRows[0].display.detailHref, "/master-data/agents/A-1001");
+  assert.equal(
+    summary.peopleRows.some((row) => row.employee_id === "A-1002"),
+    false,
+  );
+});
+
+test("skill detail summarizes current people who own the skill", () => {
+  const summary = summarizeMasterDataSkillDetail({
+    skillId: "SKILL-RETURN-TICKET",
+    skills: [
+      {
+        reference_id: "SKILL-RETURN-TICKET",
+        reference_name: "集中退换工单",
+        status: "active",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skill_category: "ticket",
+      },
+    ],
+    employees: [
+      {
+        employee_id: "A-1001",
+        employee_name: "刘晓晓",
+        status: "active",
+        employee_type: "internal",
+        organization_id: "ORG-RETURN",
+        organization_path: "CC / CCO / 集中退换小组",
+        workplace_id: "NJ-01",
+        workplace_name: "南京职场",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [
+          {
+            employee_id: "A-1001",
+            skill_id: "SKILL-RETURN-TICKET",
+            skill_name: "集中退换工单",
+            skill_category: "ticket",
+            effective_from: "2026-05-01",
+            effective_to: "2026-12-31",
+            batch_id: "BATCH-MD-001",
+          },
+        ],
+      },
+      {
+        employee_id: "A-1002",
+        employee_name: "王小王",
+        status: "active",
+        employee_type: "outsourced",
+        organization_id: "ORG-RETURN",
+        organization_path: "CC / CCO / 集中退换小组",
+        workplace_id: "SH-01",
+        workplace_name: "上海职场",
+        effective_from: "2026-05-01",
+        effective_to: "2026-12-31",
+        batch_id: "BATCH-MD-001",
+        skills: [
+          {
+            employee_id: "A-1002",
+            skill_id: "SKILL-GENERAL",
+            skill_name: "通用技能组",
+            skill_category: "online",
+            effective_from: "2026-05-01",
+            effective_to: "2026-12-31",
+            batch_id: "BATCH-MD-001",
+          },
+        ],
+      },
+    ],
+  });
+
+  assert.equal(summary.found, true);
+  assert.equal(summary.title, "集中退换工单");
+  assert.equal(summary.skill?.display.detailHref, "/master-data/skills/SKILL-RETURN-TICKET");
   assert.equal(summary.totalPeople, 1);
   assert.equal(summary.peopleRows[0].employee_id, "A-1001");
   assert.equal(summary.peopleRows[0].display.detailHref, "/master-data/agents/A-1001");
@@ -736,7 +815,10 @@ test("workplace vendor and skill list rows expose confirmed child entries", () =
     "/master-data/vendors?freeze_vendor_id=SUP-001",
   );
   assert.equal(skillSummary.createHref, "/master-data/skills/new");
-  assert.equal(skillSummary.rows[0].display.detailHref, null);
+  assert.equal(
+    skillSummary.rows[0].display.detailHref,
+    "/master-data/skills/SKILL-ONLINE",
+  );
   assert.equal(
     skillSummary.rows[0].display.editHref,
     "/master-data/skills/SKILL-ONLINE/edit",
