@@ -2192,3 +2192,12 @@
 - action: 完成前端 API 结果和错误工具去重。
 - status: `done`
 - notes: 新增共享 `lib/api-result.ts` 与 `lib/api-error.ts`，目标前端数据读取文件已改为引用共享 `ApiResult<T>` 和 `formatApiError`；字段映射模板详情页原有 `api_unavailable` 兜底通过 optional fallback 保留；结构测试防止目标文件重新定义本地 `ApiResult<T>` 或 `formatApiError`。本轮未改变可见 UI、导航、fetch URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM174`
+- source_ids:
+  - `R874`
+- story_ids:
+  - `US794`
+- action: 完成导入批次和字段映射模板 fetch 工具去重。
+- status: `done`
+- notes: 新增 `lib/import-api.ts`，提供共享 `fetchImportBatches` 与 `fetchImportFieldMappingTemplates`；目标页面已改为引用共享工具，`app/master-data/agents/data.ts` 通过 re-export 保持既有调用方兼容；页面专属 fetch 函数继续留在页面内。结构测试防止目标文件重新定义本地 fetch。本轮未改变可见 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。

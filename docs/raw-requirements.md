@@ -3235,3 +3235,16 @@ version: "1.0"
 status: "done"
 notes: "IM173 已完成：新增 lib/api-result.ts 和 lib/api-error.ts，并将目标前端数据读取文件改为引用共享 `ApiResult<T>` 与 `formatApiError`；字段映射模板详情的 `api_unavailable` 兜底语义通过 optional fallback 保留。未改变可见 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R874 - 导入批次和字段映射模板 fetch 工具去重
+
+```yaml
+id: R874
+module: "前端健康恢复"
+description: "多个前端页面重复实现 `fetchImportBatches` 和 `fetchImportFieldMappingTemplates`，虽然业务语义一致，但维护成本高且容易在错误处理、空数组兜底或 URL 构造上漂移。需要抽取共享导入 fetch 工具。"
+source: "docs/frontend-health-recovery-plan.md Stage 1 IM174"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM174 已完成：新增 lib/import-api.ts，提供共享 `fetchImportBatches` 与 `fetchImportFieldMappingTemplates`；目标页面和 master-data data module 已改为引用或 re-export 共享工具。未改变可见 UI、导航、fetch URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

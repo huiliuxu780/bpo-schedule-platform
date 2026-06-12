@@ -5803,3 +5803,23 @@ acceptance:
 status: "done"
 notes: "IM173 已完成：共享 API result/error 工具已抽取，结构测试已防止目标文件重新定义本地 `ApiResult<T>` 或 `formatApiError`；`fetchImportBatches` 和 field-mapping fetch 去重仍留给 IM174。"
 ```
+
+### US794 - 抽取导入批次和字段映射模板 fetch 工具
+
+```yaml
+id: US794
+requirement_ids:
+  - R874
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望导入批次和字段映射模板读取逻辑共用同一套工具，以便后续页面数据读取不再复制同一段 fetch、错误处理和空数组兜底。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增共享 `lib/import-api.ts`，提供 `fetchImportBatches` 和 `fetchImportFieldMappingTemplates`。"
+  - "重复页面改为引用共享 fetch 工具，页面专属 fetch 函数继续留在页面内。"
+  - "结构测试防止目标页面继续本地定义 `fetchImportBatches` 或 `fetchImportFieldMappingTemplates`。"
+  - "不改变页面 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM174 已完成：共享 import fetch 工具已抽取，结构测试已防止目标文件重新定义本地 `fetchImportBatches` 或 `fetchImportFieldMappingTemplates`；Server Action runtime guards 仍留给 IM175。"
+```

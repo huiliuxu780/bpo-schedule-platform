@@ -1,3 +1,4 @@
+import { fetchImportBatches, fetchImportFieldMappingTemplates } from "@/lib/import-api"
 import { formatApiError } from "@/lib/api-error"
 import type { ApiResult } from "@/lib/api-result"
 import Link from "next/link"
@@ -18,12 +19,10 @@ import {
   type ImportBatchPersistenceDetail,
   type ImportComparisonRunRecord,
   type ImportPageHierarchyDetailTab,
-  type ImportFieldMappingTemplate,
   type ImportReviewCaseRecord,
   buildImportApiUrl,
   buildImportBatchDetailUrl,
   buildImportComparisonRunsUrl,
-  buildImportFieldMappingTemplatesUrl,
   buildImportReviewCasesUrl,
   formatImportBatchFileDisplayName,
   formatImportBatchDisplayLabel,
@@ -555,64 +554,6 @@ function HeaderMetric({ label, value }: { label: string; value: string }) {
       <div className="mt-1 truncate font-mono text-xs font-medium">{value}</div>
     </div>
   )
-}
-
-async function fetchImportFieldMappingTemplates(): Promise<
-  ApiResult<ImportFieldMappingTemplate[]>
-> {
-  try {
-    const response = await fetch(buildImportFieldMappingTemplatesUrl(), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `字段映射模板读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as {
-      items?: ImportFieldMappingTemplate[]
-    }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
-}
-
-async function fetchImportBatches(): Promise<ApiResult<ImportBatchListRow[]>> {
-  try {
-    const response = await fetch(buildImportApiUrl("/api/v1/import-batches"), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `导入批次读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as { items?: ImportBatchListRow[] }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
 }
 
 async function fetchImportReadiness(
