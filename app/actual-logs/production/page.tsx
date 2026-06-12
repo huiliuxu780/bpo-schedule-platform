@@ -1,3 +1,5 @@
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import {
   ActualLogProductionPageActions,
   ActualLogProductionWorkbench,
@@ -17,11 +19,6 @@ import {
 } from "@/components/actual-log-production-model"
 
 export const dynamic = "force-dynamic"
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
-}
 
 type PageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
@@ -137,14 +134,6 @@ async function fetchImportFieldMappingTemplates(): Promise<
       error: formatApiError(error),
     }
   }
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }
 
 function getSingleSearchParam(value: string | string[] | undefined): string {

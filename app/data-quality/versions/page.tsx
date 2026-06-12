@@ -1,3 +1,5 @@
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import { AppShell } from "@/components/app-shell"
 import { ImportCenterVersionWorkbench } from "@/components/import-center-version-workbench"
 import {
@@ -21,11 +23,6 @@ type VersionWorkbenchPageProps = {
     compareRun?: string
     compareReason?: string
   }>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function VersionWorkbenchPage({
@@ -206,12 +203,4 @@ function collectVersionWorkbenchBusinessDates(
         .map((batch) => batch.business_date_from)
     )
   )
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }

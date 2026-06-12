@@ -2183,3 +2183,12 @@
 - action: 固化前端健康恢复计划和可恢复执行入口。
 - status: `done`
 - notes: `docs/frontend-health-recovery-plan.md` 作为上下文压缩后的恢复入口，`docs/superpowers/plans/2026-06-12-frontend-health-recovery.md` 作为细化执行计划；current queue 已返回空；后续 IM173+ 只在计划中列出，执行前必须单独 seed。UI/页面/交互任务 implementation 前必须使用 Product Design 插件确认 brief；本轮未修改 app、components、lib、backend、package 或 lockfile。
+
+- task_id: `IM173`
+- source_ids:
+  - `R873`
+- story_ids:
+  - `US793`
+- action: 完成前端 API 结果和错误工具去重。
+- status: `done`
+- notes: 新增共享 `lib/api-result.ts` 与 `lib/api-error.ts`，目标前端数据读取文件已改为引用共享 `ApiResult<T>` 和 `formatApiError`；字段映射模板详情页原有 `api_unavailable` 兜底通过 optional fallback 保留；结构测试防止目标文件重新定义本地 `ApiResult<T>` 或 `formatApiError`。本轮未改变可见 UI、导航、fetch URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。

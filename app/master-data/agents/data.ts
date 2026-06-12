@@ -1,3 +1,5 @@
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import {
   type ImportFieldMappingTemplate,
   type ImportBatchListRow,
@@ -12,11 +14,6 @@ import type {
   MasterDataWorkplaceBindingRow,
   MasterDataWorkplaceServiceTeamRow,
 } from "@/components/master-data-maintenance-model"
-
-export type ApiResult<T> = {
-  data: T | null
-  error: string | null
-}
 
 export async function fetchMasterDataEmployees(): Promise<
   ApiResult<MasterDataEmployeeListRow[]>
@@ -286,12 +283,4 @@ function getReferenceEntityLabel(entityKey: MasterDataMaintenanceEntityKey) {
   }
 
   return "主数据"
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }

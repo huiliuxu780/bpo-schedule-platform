@@ -4088,3 +4088,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM173 Frontend API Result Error Utilities
+
+- branch_name: `codex/im173-api-result-error-utilities`
+- base_main_commit: `2c4f028`
+- stacked_on: `codex/im172-frontend-health-recovery-plan`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 1 first implementation slice. Extract shared frontend `ApiResult<T>` and `formatApiError`, replace repeated local definitions in the known target files, and add structural regression tests. Keep `fetchImportBatches` and field-mapping fetch extraction for IM174.
+- allowed_files_check: `lib/api-result.ts`, `lib/api-error.ts`, target frontend data-reading files listed in `tasks/backlog.yaml`, `scripts/tests/frontend-api-utilities.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected shared utility files, imports replacing local duplicate type/function definitions, structural test, and traceability updates only; no UI, navigation, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: TDD RED `node --test scripts/tests/frontend-api-utilities.test.mjs` first failed because `lib/api-result.ts` was missing. After implementation, the same structure test passed, `npm run typecheck` passed, and `npm run lint` passed. `bash scripts/check-state.sh --strict` passed with current queue empty, `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

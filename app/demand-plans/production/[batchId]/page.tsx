@@ -1,3 +1,5 @@
+import { formatApiError } from "@/lib/api-error"
+import type { ApiResult } from "@/lib/api-result"
 import { AppShell } from "@/components/app-shell"
 import { DemandForecastProductionDetail } from "@/components/demand-forecast-production-workbench"
 import {
@@ -12,11 +14,6 @@ type PageProps = {
   params: Promise<{
     batchId: string
   }>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function DemandForecastProductionDetailPage({
@@ -107,12 +104,4 @@ async function fetchDemandForecastProductionDetail(
       error: formatApiError(error),
     }
   }
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }
