@@ -5863,3 +5863,23 @@ acceptance:
 status: "done"
 notes: "IM176 已完成：全局 error boundary 可恢复；route-local loading 仍留给 IM177。"
 ```
+
+### US797 - 核心业务入口显示加载骨架屏
+
+```yaml
+id: US797
+requirement_ids:
+  - R877
+module: "前端健康恢复"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望进入核心业务入口等待数据时看到与页面结构一致的加载骨架，以便知道页面正在加载而不是空白。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 均有 route-local `loading.tsx`。"
+  - "loading 使用现有 AppShell 和 shadcn Skeleton，保留对应页面标题或 Breadcrumb。"
+  - "不写无意义的功能说明，不做 route-group 迁移，不修改现有业务页面。"
+  - "不新增依赖，不改变后端、数据库、权限、审批、导出、批量、自动排班、公式、结算或收费因子。"
+status: "done"
+notes: "IM177 已完成：核心入口具备 route-local loading skeleton；长期 `(main)` route-group 迁移仍保持延期。"
+```

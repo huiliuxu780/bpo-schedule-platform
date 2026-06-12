@@ -2219,3 +2219,12 @@
 - action: 完成全局页面异常恢复边界。
 - status: `done`
 - notes: 新增 `app/error.tsx`，使用现有 AppShell、shadcn Alert/Button 和语义 token；页面异常时提供 `reset()` 重试和 `/dashboard` 安全返回。本轮未改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM177`
+- source_ids:
+  - `R877`
+- story_ids:
+  - `US797`
+- action: 完成核心业务路由加载骨架屏。
+- status: `done`
+- notes: 为 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 新增 route-local `loading.tsx`，使用现有 AppShell 和 shadcn Skeleton；不写额外功能说明，不做 route-group 迁移。本轮未改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。

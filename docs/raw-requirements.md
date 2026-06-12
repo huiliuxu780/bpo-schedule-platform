@@ -3274,3 +3274,16 @@ version: "1.0"
 status: "done"
 notes: "IM176 已完成：新增 `app/error.tsx`，使用现有 AppShell、shadcn Alert/Button 和语义 token，提供 `reset()` 重试与 `/dashboard` 安全返回。未新增依赖，未改变业务页面、导航、后端、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R877 - 核心业务路由加载骨架屏
+
+```yaml
+id: R877
+module: "前端健康恢复"
+description: "核心业务入口缺少 route-local `loading.tsx`，数据等待期间可能出现空白。需要先为 6 个核心入口补充与页面结构匹配的 loading skeleton。"
+source: "docs/frontend-health-recovery-plan.md Stage 2 IM177"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM177 已完成：为 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 新增 route-local `loading.tsx`，使用现有 AppShell 与 shadcn Skeleton。未做 route-group 迁移，未改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

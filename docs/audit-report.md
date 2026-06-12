@@ -4452,3 +4452,16 @@
 - 已新增 `app/error.tsx` 作为 Next.js app router error boundary。
 - 异常内容区使用 destructive Alert，提供 `reset()` 重试和 `/dashboard` 安全返回。
 - 已新增结构测试 `scripts/tests/global-error-boundary.test.mjs`，先确认缺少 `app/error.tsx` 时红灯，再实现。
+
+### 2026-06-12 - IM177 核心业务路由加载骨架屏
+
+#### 审计计划
+
+- 按恢复计划 Stage 2 第二刀执行，只新增 6 个核心入口的 route-local `loading.tsx`。
+- 使用当前 AppShell 和 shadcn Skeleton；因为未做 shared layout/route-group 迁移，loading 文件按当前项目现实包含 AppShell。
+- 本轮不修改现有业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 的 loading skeleton。
+- 已新增结构测试 `scripts/tests/core-route-loading-states.test.mjs`，先确认 loading 文件缺失时红灯，再实现。

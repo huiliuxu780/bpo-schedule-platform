@@ -10954,3 +10954,50 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已新增 `app/error.tsx`，全局页面异常时保留 AppShell，使用 shadcn Alert/Button 提供错误提示、`reset()` 重试和 `/dashboard` 安全返回。新增结构测试防止 error boundary 缺失或退回非 shadcn 恢复控件。本轮未改变业务页面、导航、后端、数据库、依赖或 package/lockfile。"
+  - id: IM177
+    title: "新增核心业务路由加载骨架屏"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM176"]
+    allowed_files:
+      - "app/dashboard/loading.tsx"
+      - "app/master-data/loading.tsx"
+      - "app/demand-plans/loading.tsx"
+      - "app/schedule-plans/loading.tsx"
+      - "app/actual-logs/production/loading.tsx"
+      - "app/data-quality/loading.tsx"
+      - "scripts/tests/core-route-loading-states.test.mjs"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "components/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "6 个核心业务入口均新增 route-local `loading.tsx`。"
+      - "loading 使用 AppShell 和 shadcn Skeleton，保留对应标题或 Breadcrumb。"
+      - "不做 route-group 迁移，不修改现有业务页面。"
+      - "不改变后端、数据库、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要 route-group 迁移或批量移动页面目录"
+      - "需要修改现有业务页面、导航或 AppShell 结构"
+      - "需要新增依赖或 package/lockfile 变更"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已为 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 新增 route-local loading skeleton。每个 loading 使用当前 AppShell 和 shadcn Skeleton，避免空白等待；未做 route-group 迁移，未修改现有业务页面、导航、后端、数据库、依赖或 package/lockfile。"
