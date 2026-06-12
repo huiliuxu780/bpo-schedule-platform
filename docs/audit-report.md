@@ -4371,3 +4371,17 @@
 - `npm run lint` 和 `npm run typecheck` 已通过；shadcn 自查确认新增 Dialog 使用既有 Dialog、Alert、Button、Input、Badge 和语义 token，未引入硬编码色阶或 `space-*`。
 - in-app browser smoke 确认 `/actual-logs/production?import_dialog=1&log_type=login` 和 `log_type=status` 均渲染对应 Dialog；登录/状态两个标题各唯一，`CSV 文件` 字段可见，旧独立上传链接数量为 0；`/actual-logs/production?import_dialog=1&log_type=login&upload=success&batch=BATCH-LOGIN-001` 显示 `导入已提交` 并提供 `/data-quality/import-batches/BATCH-LOGIN-001` 链接。
 - 最终 `bash scripts/check.sh` 结果见 Done Report。
+
+### 2026-06-12 - IM172 前端健康恢复计划固化
+
+#### 审计结论
+
+- 将第三方综合审计后的恢复策略固化到仓库，不再依赖聊天上下文保存执行顺序。
+- `docs/frontend-health-recovery-plan.md` 记录恢复入口、Product Design 插件门禁、阶段拆分、验收指标和明确非目标。
+- `docs/superpowers/plans/2026-06-12-frontend-health-recovery.md` 记录可执行计划，后续 worker 可按任务恢复。
+- Current state 只包含 US792/IM172；后续 IM173+ 不直接进入 active queue，避免上下文压缩后误执行多个任务。
+- 本轮不修改 app、components、lib、backend、package、lockfile，不新增业务功能、导航、权限、审批、导出、批量、自动排班、公式、结算或收费因子。
+
+#### 验证
+
+- 严格状态检查和最终 `bash scripts/check.sh` 结果见 Done Report。

@@ -906,3 +906,11 @@ This slice did not add a login/status-log import dialog, backend routes, schemas
 The Dialog uses the controlled three-step pattern: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the file input stays stable across step changes. Login-log upload submits `file_type=login_log`; status-log upload submits `file_type=status_log`; both return to `/actual-logs/production?import_dialog=1&log_type=...` and show the existing batch detail link on success or failure.
 
 This slice did not add parsing enhancements, status-dictionary configuration maintenance, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM171.
+
+## 2026-06-12 IM172 Frontend Health Recovery Plan
+
+`IM172` starts and records the frontend health recovery stage as a governance-only task. The third-party audit is treated as input, not as an executable order. The recovery plan records which issues are engineering P0 work, which UI tasks require Product Design plugin review, and which audit suggestions remain out of scope without separate PM confirmation.
+
+The durable recovery entry is `docs/frontend-health-recovery-plan.md`, with detailed execution steps in `docs/superpowers/plans/2026-06-12-frontend-health-recovery.md`. Current state contains only `US792/IM172`; later recovery slices such as API utility extraction, loading/error states, giant-file decomposition, action placement, empty states, and form cleanup must be seeded one at a time.
+
+This slice did not modify app, components, lib, backend, package files, lockfiles, product navigation, permissions, approval, export, batch operations, automatic scheduling, formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Current queue returns to empty after IM172.

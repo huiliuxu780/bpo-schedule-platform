@@ -4070,3 +4070,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM172 Frontend Health Recovery Plan
+
+- branch_name: `codex/im172-frontend-health-recovery-plan`
+- base_main_commit: `66193b1`
+- stacked_on: `origin/main`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed governance task to persist the frontend health recovery plan after the third-party audit and make it recoverable after context compaction. This is documentation/Harness only.
+- allowed_files_check: `docs/frontend-health-recovery-plan.md`, `docs/superpowers/plans/2026-06-12-frontend-health-recovery.md`, current Harness files, registry trace index, raw requirements, user stories, backlog, task log, audit report, project state, and this branch-log entry only.
+- scope_diff_check: expected plan docs plus current/traceability updates only; `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: `bash scripts/check-state.sh --strict` passed after correcting active task story references; `git diff --check` passed; final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
