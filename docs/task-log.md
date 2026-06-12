@@ -2210,3 +2210,12 @@
 - action: 完成导入和比对 Server Action 运行时保护。
 - status: `done`
 - notes: 已新增 `parseImportFileType`、`parseComparisonType`、`parseUploadResultRedirectTarget` 并替换 action 主体中的裸 FormData 枚举断言；非法 `file_type`、`comparison_type`、`result_redirect_to` 进入失败回跳，不进入 API 请求或成功回跳。本轮未改变可见 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM176`
+- source_ids:
+  - `R876`
+- story_ids:
+  - `US796`
+- action: 完成全局页面异常恢复边界。
+- status: `done`
+- notes: 新增 `app/error.tsx`，使用现有 AppShell、shadcn Alert/Button 和语义 token；页面异常时提供 `reset()` 重试和 `/dashboard` 安全返回。本轮未改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
