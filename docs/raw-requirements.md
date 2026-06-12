@@ -3209,3 +3209,16 @@ summary: "将登录/状态日志导入入口收回到 `/actual-logs/production` 
 owner: "PM"
 notes: "IM171 已完成：/actual-logs/production 的 `导入登录日志`、`导入状态日志` 打开当前页 step-by-step Dialog，复用现有上传 action 并按 log_type 回流导入结果；未扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R872 - 前端健康恢复计划固化
+
+```yaml
+id: R872
+module: "前端健康恢复"
+description: "第三方综合审计指出当前前端存在重复数据访问函数、缺少 error/loading、巨型 model/workbench 文件、产品设计门禁缺失和上下文压缩后计划易丢失的问题。PM 要求先把恢复计划固化为可拆解、可验证、可审计的仓库状态，再进入后续实现。"
+source: "PM requested durable frontend health recovery plan after audit review on 2026-06-12"
+submitted_at: "2026-06-12"
+version: "1.0"
+status: "done"
+notes: "IM172 已完成：写入 docs/frontend-health-recovery-plan.md 和 docs/superpowers/plans/2026-06-12-frontend-health-recovery.md；后续 IM173+ 必须从恢复计划单独 seed 到 current queue；涉及可见 UI/页面/交互的任务必须先使用 Product Design 插件确认 brief。本轮未改 app/components/lib/backend/package。"
+```

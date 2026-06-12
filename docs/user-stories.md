@@ -5762,3 +5762,24 @@ acceptance:
   - "不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
 notes: "IM171 已完成：登录/状态日志页 Header 的两个导入入口打开当前页 Dialog；Dialog 三步为上传文件、字段映射、导入结果，文件 input 在 step 切换时保持挂载；登录日志提交 `login_log`，状态日志提交 `status_log`，上传结果回流当前页并提供批次详情入口。"
 ```
+
+### US792 - 前端健康恢复计划固化
+
+```yaml
+id: US792
+requirement_ids:
+  - R872
+module: "前端健康恢复"
+role: "PM"
+story: "作为 PM，我希望把前端健康恢复计划写入仓库、队列和追踪文件，以便上下文压缩后仍能按明确顺序继续执行，而不是靠聊天历史记忆。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "docs/frontend-health-recovery-plan.md 记录恢复入口、阶段顺序、Product Design 门禁、非目标和验收指标。"
+  - "docs/superpowers/plans/2026-06-12-frontend-health-recovery.md 记录可执行细化计划。"
+  - "docs/current/STORY_QUEUE.yaml 和 docs/current/ACTIVE_TASKS.yaml 只包含 US792/IM172。"
+  - "TRACE_INDEX.yaml 建立 R872/US792/IM172 映射且不存储 lifecycle status。"
+  - "本轮不修改 app、components、lib、backend、package 或 lockfile。"
+status: "done"
+notes: "IM172 已完成：计划和恢复入口已固化，current queue 已清空；后续前端/页面/功能设计任务必须先使用 Product Design 插件确认 brief；IM173+ 只在计划中列出，需要单独 seed。"
+```

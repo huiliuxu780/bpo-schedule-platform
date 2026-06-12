@@ -2174,3 +2174,12 @@
 - action: 完成登录/状态日志导入大弹窗。
 - status: `done`
 - notes: `/actual-logs/production` Header 的 `导入登录日志`、`导入状态日志` 现在打开当前页 Dialog；Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步组织，非当前 step 通过 hidden 保持 DOM 挂载；上传继续复用现有 CSV action，登录日志使用 `login_log`，状态日志使用 `status_log`，结果回流 `/actual-logs/production?import_dialog=1&log_type=...` 并展示批次详情入口；本轮不扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM172`
+- source_ids:
+  - `R872`
+- story_ids:
+  - `US792`
+- action: 固化前端健康恢复计划和可恢复执行入口。
+- status: `done`
+- notes: `docs/frontend-health-recovery-plan.md` 作为上下文压缩后的恢复入口，`docs/superpowers/plans/2026-06-12-frontend-health-recovery.md` 作为细化执行计划；current queue 已返回空；后续 IM173+ 只在计划中列出，执行前必须单独 seed。UI/页面/交互任务 implementation 前必须使用 Product Design 插件确认 brief；本轮未修改 app、components、lib、backend、package 或 lockfile。
