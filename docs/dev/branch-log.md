@@ -4214,3 +4214,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM180 Master Data Workbench Split
+
+- branch_name: `codex/im180-master-data-workbench-split`
+- base_main_commit: `6fb0979`
+- stacked_on: `codex/im179-import-center-summary-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 3 third implementation slice. Mechanically split the master-data maintenance workbench into responsibility files and keep `components/master-data-maintenance-workbench.tsx` as the legacy compatibility entrypoint.
+- allowed_files_check: `components/master-data-maintenance-workbench.tsx`, six new master-data maintenance responsibility files, `scripts/tests/master-data-workbench-split.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected responsibility UI split, compatibility re-exports, structural test, and traceability updates only; no visible UI, route, interaction, business semantic, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/master-data-workbench-split.test.mjs` first failed because the responsibility files were missing. After implementation, the structure test passed, `npm run typecheck` passed, and `npm run lint` passed. `bash scripts/check-state.sh --strict` passed, `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

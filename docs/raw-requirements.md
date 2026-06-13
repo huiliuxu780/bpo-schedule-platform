@@ -3313,3 +3313,16 @@ version: "1.0"
 status: "done"
 notes: "IM179 已完成：新增导入中心 list/version/review/batch/template/comparison 六个责任 model 文件，`components/import-center-model.ts` 降为兼容 re-export 入口。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R880 - 主数据维护 workbench 行为不变拆分
+
+```yaml
+id: R880
+module: "前端健康恢复"
+description: "`components/master-data-maintenance-workbench.tsx` 已膨胀为巨型 UI 文件，混合页面动作、列表页、详情页、表单页、弹窗和字段控件。需要按页面责任做不改变行为的机械拆分，并让旧入口继续兼容导出。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM180"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM180 已完成：主数据维护 workbench 已拆为 actions、agents、references、details、forms、fields 六个责任文件，旧 `components/master-data-maintenance-workbench.tsx` 降为兼容 re-export 入口。本轮未改变可见 UI、路由、交互、业务语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
