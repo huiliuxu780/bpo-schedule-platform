@@ -956,3 +956,9 @@ This slice is intentionally mechanical. It does not change visible UI, product n
 `IM179` completed the second import-center model decomposition slice. The legacy `components/import-center-model.ts` is now a thin compatibility entrypoint, while the remaining summarizer and builder logic is split into list, version, review, batch, template, and comparison responsibility files.
 
 This slice is mechanical and behavior-preserving. It does not change visible UI, product navigation, API URL semantics, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-13 IM180 Master Data Workbench Split
+
+`IM180` completed the master-data maintenance workbench decomposition slice. The legacy `components/master-data-maintenance-workbench.tsx` is now a thin compatibility entrypoint, while the original UI logic is split into actions, agents, references, details, forms, and shared field-control responsibility files.
+
+This slice is mechanical and behavior-preserving. It does not change visible UI, routes, interactions, business semantics, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

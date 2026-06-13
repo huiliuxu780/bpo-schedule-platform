@@ -5926,3 +5926,24 @@ acceptance:
 status: "done"
 notes: "IM179 已完成：导入中心剩余 summarizer/builder 已按责任拆分；可见 UI 和业务行为不变。"
 ```
+
+### US800 - 拆分主数据维护 workbench 巨型文件
+
+```yaml
+id: US800
+requirement_ids:
+  - R880
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望主数据维护 workbench 按页面责任拆到独立文件，以便后续修人员、职场、供应商、组织和技能页面时不再集中修改单个巨型 UI 文件。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 actions、agents、references、details、forms、fields 六个主数据维护责任文件。"
+  - "`components/master-data-maintenance-workbench.tsx` 降为 thin compatibility entrypoint，只保留 re-export。"
+  - "旧公开组件名和 import path 保持兼容，现有调用方无需改 import path。"
+  - "结构测试防止主要页面组件和表单控件回退到旧巨型入口。"
+  - "不改变可见 UI、路由、交互、业务语义、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM180 已完成：主数据维护 workbench 已按 actions/agents/references/details/forms/fields 拆分；旧入口保持兼容导出，可见 UI 和业务行为不变。"
+```

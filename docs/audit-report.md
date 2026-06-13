@@ -4495,3 +4495,17 @@
 - 已新增 list/version/review/batch/template/comparison 六个导入中心责任 model 文件。
 - `components/import-center-model.ts` 只保留类型、格式化、导航和六个责任 model 的 re-export。
 - 已新增结构测试 `scripts/tests/import-center-summary-split.test.mjs`，先确认缺少拆分文件时红灯，再实现拆分。
+
+### 2026-06-13 - IM180 主数据维护 workbench 行为不变拆分
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第三刀执行，只拆分 `components/master-data-maintenance-workbench.tsx`。
+- 旧入口必须降为兼容 re-export 入口，现有调用方 import path 不变。
+- 本轮不改变可见 UI、路由、交互、业务语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 actions/agents/references/details/forms/fields 六个主数据维护责任文件。
+- `components/master-data-maintenance-workbench.tsx` 只保留六个责任文件的 re-export。
+- 已新增结构测试 `scripts/tests/master-data-workbench-split.test.mjs`，先确认缺少拆分文件时红灯，再实现拆分。

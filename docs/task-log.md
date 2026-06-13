@@ -2246,3 +2246,12 @@
 - action: 完成导入中心剩余汇总构造逻辑拆分。
 - status: `done`
 - notes: 新增 `components/import-center-list-model.ts`、`components/import-center-version-model.ts`、`components/import-center-review-model.ts`、`components/import-center-batch-model.ts`、`components/import-center-template-model.ts`、`components/import-center-comparison-model.ts`，按列表、版本、复核、批次、模板、比对责任承载原 summarizer/builder；`components/import-center-model.ts` 降为兼容 re-export 入口。结构测试防止主要 summarizer 回退到旧巨型入口。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM180`
+- source_ids:
+  - `R880`
+- story_ids:
+  - `US800`
+- action: 完成主数据维护 workbench 行为不变拆分。
+- status: `done`
+- notes: 新增 `components/master-data-maintenance-actions.tsx`、`components/master-data-maintenance-agents.tsx`、`components/master-data-maintenance-references.tsx`、`components/master-data-maintenance-details.tsx`、`components/master-data-maintenance-forms.tsx`、`components/master-data-maintenance-fields.tsx`，按页面动作、客服人员、主数据 reference 列表、详情页、表单页和共享字段控件承载原 workbench 逻辑；`components/master-data-maintenance-workbench.tsx` 降为兼容 re-export 入口。结构测试防止主要页面组件和表单控件回退到旧巨型入口。本轮未改变可见 UI、路由、交互、业务语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
