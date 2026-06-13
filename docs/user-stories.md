@@ -5883,3 +5883,25 @@ acceptance:
 status: "done"
 notes: "IM177 已完成：核心入口具备 route-local loading skeleton；长期 `(main)` route-group 迁移仍保持延期。"
 ```
+
+### US798 - 保持导入中心模型入口兼容并拆出基础工具
+
+```yaml
+id: US798
+requirement_ids:
+  - R878
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望导入中心巨型 model 文件先拆出类型、格式化函数和导航 URL 构造函数，以便后续继续拆分汇总逻辑时不会破坏现有页面调用。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 `components/import-center-types.ts`，承载原 model 中的导出类型定义。"
+  - "新增 `components/import-center-formatters.ts`，承载批次显示、文件类型、处理状态、应用状态、就绪状态和行状态格式化函数。"
+  - "新增 `components/import-center-navigation.ts`，承载导入中心 API URL 与页面 href 构造函数。"
+  - "`components/import-center-model.ts` 继续 re-export 旧公开入口，现有调用方无需改 import path。"
+  - "结构测试防止入口回退为继续本地定义核心类型、格式化函数或 URL 构造函数。"
+  - "不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM178 已完成：第一刀只做模型基础设施拆分；剩余业务 summarizer/builder 继续留给后续 IM。"
+```

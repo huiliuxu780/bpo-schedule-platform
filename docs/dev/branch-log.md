@@ -4178,3 +4178,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM178 Import Center Model First Split
+
+- branch_name: `codex/im178-import-center-model-first-split`
+- base_main_commit: `faebb34`
+- stacked_on: `codex/im177-core-route-loading-states`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 3 first implementation slice. Mechanically split import-center model types, formatters, and navigation helpers into dedicated component model files while keeping `components/import-center-model.ts` as the legacy compatibility entrypoint.
+- allowed_files_check: `components/import-center-model.ts`, `components/import-center-types.ts`, `components/import-center-formatters.ts`, `components/import-center-navigation.ts`, `scripts/tests/import-center-model-first-split.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected model split files, compatibility re-exports, structural test, and traceability updates only; no visible UI, navigation, API URL semantic, response-shape, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/import-center-model-first-split.test.mjs` first failed because `components/import-center-types.ts` was missing. After implementation, the structure test passed, `npm run typecheck` passed, and `npm run lint` passed. `bash scripts/check-state.sh --strict` passed, `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK. Prettier formatting command failed because the repo `.prettierrc` references missing `prettier-plugin-tailwindcss`; no package changes were made in this slice.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

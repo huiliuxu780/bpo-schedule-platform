@@ -3287,3 +3287,16 @@ version: "1.0"
 status: "done"
 notes: "IM177 已完成：为 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 新增 route-local `loading.tsx`，使用现有 AppShell 与 shadcn Skeleton。未做 route-group 迁移，未改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R878 - 导入中心模型第一刀拆分
+
+```yaml
+id: R878
+module: "前端健康恢复"
+description: "`components/import-center-model.ts` 已膨胀为巨型文件，混合类型定义、格式化函数、URL 构造函数和大量业务汇总函数。需要先做不改变行为的第一刀机械拆分，降低后续维护和审计成本。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM178"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM178 已完成：新增 `components/import-center-types.ts`、`components/import-center-formatters.ts`、`components/import-center-navigation.ts`，旧 `components/import-center-model.ts` 继续作为兼容入口 re-export 类型、格式化函数和 URL 构造函数，并保留后续汇总逻辑。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
