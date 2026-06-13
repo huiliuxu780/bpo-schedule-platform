@@ -4196,3 +4196,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM179 Import Center Summary Split
+
+- branch_name: `codex/im179-import-center-summary-split`
+- base_main_commit: `fedc17b`
+- stacked_on: `codex/im178-import-center-model-first-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 3 second implementation slice. Mechanically split the remaining import-center summarizer/builder logic into responsibility files and keep `components/import-center-model.ts` as the legacy compatibility entrypoint.
+- allowed_files_check: `components/import-center-model.ts`, six new import-center responsibility model files, `scripts/tests/import-center-summary-split.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected responsibility model split, compatibility re-exports, structural test, and traceability updates only; no visible UI, navigation, API URL semantic, response-shape, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/import-center-summary-split.test.mjs` first failed because the responsibility files were missing. After implementation, `node --test scripts/tests/import-center-model-first-split.test.mjs scripts/tests/import-center-summary-split.test.mjs` passed, `npm run typecheck` passed, and `npm run lint` passed. `bash scripts/check-state.sh --strict` passed, `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -950,3 +950,9 @@ This slice uses the current per-page AppShell reality and does not migrate route
 `IM178` completed the first giant-file decomposition slice for the import center model. The old `components/import-center-model.ts` remains the compatibility entrypoint, while exported types now live in `components/import-center-types.ts`, display/status formatters live in `components/import-center-formatters.ts`, and import-center API URL plus page href builders live in `components/import-center-navigation.ts`.
 
 This slice is intentionally mechanical. It does not change visible UI, product navigation, API URL semantics, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Remaining import-center summarizer and builder decomposition stays for later confirmed IMs.
+
+## 2026-06-13 IM179 Import Center Summary Split
+
+`IM179` completed the second import-center model decomposition slice. The legacy `components/import-center-model.ts` is now a thin compatibility entrypoint, while the remaining summarizer and builder logic is split into list, version, review, batch, template, and comparison responsibility files.
+
+This slice is mechanical and behavior-preserving. It does not change visible UI, product navigation, API URL semantics, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

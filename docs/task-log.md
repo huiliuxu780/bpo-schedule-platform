@@ -2237,3 +2237,12 @@
 - action: 完成导入中心模型第一刀拆分。
 - status: `done`
 - notes: 新增 `components/import-center-types.ts`、`components/import-center-formatters.ts`、`components/import-center-navigation.ts`，分别承载导入中心类型、格式化函数、API URL 与页面 href 构造函数；`components/import-center-model.ts` 继续 re-export 旧公开入口并保留业务汇总逻辑。结构测试防止核心类型、格式化函数和 URL 构造函数回退到巨型 model 文件。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM179`
+- source_ids:
+  - `R879`
+- story_ids:
+  - `US799`
+- action: 完成导入中心剩余汇总构造逻辑拆分。
+- status: `done`
+- notes: 新增 `components/import-center-list-model.ts`、`components/import-center-version-model.ts`、`components/import-center-review-model.ts`、`components/import-center-batch-model.ts`、`components/import-center-template-model.ts`、`components/import-center-comparison-model.ts`，按列表、版本、复核、批次、模板、比对责任承载原 summarizer/builder；`components/import-center-model.ts` 降为兼容 re-export 入口。结构测试防止主要 summarizer 回退到旧巨型入口。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
