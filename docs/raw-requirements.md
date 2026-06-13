@@ -3300,3 +3300,16 @@ version: "1.0"
 status: "done"
 notes: "IM178 已完成：新增 `components/import-center-types.ts`、`components/import-center-formatters.ts`、`components/import-center-navigation.ts`，旧 `components/import-center-model.ts` 继续作为兼容入口 re-export 类型、格式化函数和 URL 构造函数，并保留后续汇总逻辑。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R879 - 导入中心剩余汇总构造逻辑拆分
+
+```yaml
+id: R879
+module: "前端健康恢复"
+description: "IM178 已拆出导入中心类型、格式化函数和导航 helper，但 `components/import-center-model.ts` 仍承载大量 summarizer/builder 逻辑。需要继续按责任拆分剩余汇总构造函数，并让旧入口继续兼容导出。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM179"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM179 已完成：新增导入中心 list/version/review/batch/template/comparison 六个责任 model 文件，`components/import-center-model.ts` 降为兼容 re-export 入口。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

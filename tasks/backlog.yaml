@@ -11047,3 +11047,53 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已新增 `components/import-center-types.ts`、`components/import-center-formatters.ts`、`components/import-center-navigation.ts`，并让旧 `components/import-center-model.ts` 继续 re-export 旧入口和保留后续汇总逻辑。新增结构测试防止核心类型、格式化函数和 URL 构造函数回退到巨型 model 文件。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+  - id: IM179
+    title: "导入中心剩余汇总构造逻辑拆分"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM178"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "components/import-center-list-model.ts"
+      - "components/import-center-version-model.ts"
+      - "components/import-center-review-model.ts"
+      - "components/import-center-batch-model.ts"
+      - "components/import-center-template-model.ts"
+      - "components/import-center-comparison-model.ts"
+      - "scripts/tests/import-center-summary-split.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 list/version/review/batch/template/comparison 六个导入中心责任 model 文件。"
+      - "`components/import-center-model.ts` 只保留旧公开入口 re-export。"
+      - "现有调用方 import path 不变。"
+      - "不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要修改可见 UI、导航、页面布局或页面交互"
+      - "需要改变 API URL 语义、请求参数或返回数据结构"
+      - "需要新增依赖或 package/lockfile 变更"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将导入中心剩余 summarizer/builder 拆为 `components/import-center-list-model.ts`、`components/import-center-version-model.ts`、`components/import-center-review-model.ts`、`components/import-center-batch-model.ts`、`components/import-center-template-model.ts`、`components/import-center-comparison-model.ts`；`components/import-center-model.ts` 只保留旧公开入口 re-export。新增结构测试防止主要 summarizer 回退到巨型 model 文件。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖或 package/lockfile。"

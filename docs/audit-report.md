@@ -4481,3 +4481,17 @@
 - 已新增 `components/import-center-navigation.ts`，承载导入中心 API URL 与页面 href 构造函数。
 - `components/import-center-model.ts` 继续 re-export 旧公开入口，并保留后续业务 summarizer/builder 逻辑。
 - 已新增结构测试 `scripts/tests/import-center-model-first-split.test.mjs`，先确认缺少拆分文件时红灯，再实现兼容拆分。
+
+### 2026-06-13 - IM179 导入中心剩余汇总构造逻辑拆分
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第二刀执行，只拆分导入中心剩余 summarizer/builder。
+- 旧 `components/import-center-model.ts` 必须降为兼容 re-export 入口，现有调用方 import path 不变。
+- 本轮不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 list/version/review/batch/template/comparison 六个导入中心责任 model 文件。
+- `components/import-center-model.ts` 只保留类型、格式化、导航和六个责任 model 的 re-export。
+- 已新增结构测试 `scripts/tests/import-center-summary-split.test.mjs`，先确认缺少拆分文件时红灯，再实现拆分。

@@ -5905,3 +5905,24 @@ acceptance:
 status: "done"
 notes: "IM178 已完成：第一刀只做模型基础设施拆分；剩余业务 summarizer/builder 继续留给后续 IM。"
 ```
+
+### US799 - 拆分导入中心剩余汇总构造逻辑
+
+```yaml
+id: US799
+requirement_ids:
+  - R879
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望导入中心剩余 summarizer 和 builder 按责任拆到独立文件，以便后续维护时不再集中修改单个巨型 model 文件。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 list/version/review/batch/template/comparison 六个导入中心责任 model 文件。"
+  - "`components/import-center-model.ts` 降为 thin compatibility entrypoint，只保留 re-export。"
+  - "旧公开函数名和 import path 保持兼容，现有调用方无需改 import path。"
+  - "结构测试防止主要 summarizer 回退到 `components/import-center-model.ts`。"
+  - "不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM179 已完成：导入中心剩余 summarizer/builder 已按责任拆分；可见 UI 和业务行为不变。"
+```
