@@ -968,3 +968,9 @@ This slice is mechanical and behavior-preserving. It does not change visible UI,
 `IM181` completed the master-data maintenance model decomposition slice. The legacy `components/master-data-maintenance-model.ts` is now a thin compatibility entrypoint, while the original model logic is split into types, entities, payloads, agents, references, details, import-dialog, and formatter responsibility files.
 
 This slice is mechanical and behavior-preserving. It does not change visible UI, routes, interactions, business semantics, API URL semantics, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-13 IM182 Action Placement Scope Guard
+
+`IM182` codified the visible action placement rules that the master-data agent page now follows. The shared header page-action area, agent filter panel, list toolbar, row actions, and freeze dialog dangerous action footer now carry explicit `data-action-scope` markers, with a structure test preventing page actions from drifting into filter/list areas or filter actions from drifting into the page header.
+
+This slice does not add buttons, business capabilities, routes, navigation, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

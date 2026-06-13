@@ -5968,3 +5968,26 @@ acceptance:
 status: "done"
 notes: "IM181 已完成：主数据维护 model 已按八个责任文件拆分；旧入口保持兼容导出，可见 UI、业务行为和数据契约不变。"
 ```
+
+### US802 - 固化可见动作位置规则
+
+```yaml
+id: US802
+requirement_ids:
+  - R882
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望页面级、筛选区、列表级、行内和危险确认动作有稳定结构约束，以便后续页面开发不会再把动作混放到同一个区域。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`SiteHeader` 的页面级动作区域有稳定 `data-action-scope=\"page\"`。"
+  - "客服人员筛选区只承载 `查询`、`重置`，并有稳定 `data-action-scope=\"filter\"`。"
+  - "客服人员列表工具栏只承载选择态与批量/列表级占位动作，并有稳定 `data-action-scope=\"list\"`。"
+  - "客服人员行内动作区域有稳定 `data-action-scope=\"row\"`。"
+  - "冻结确认 Dialog 的危险确认区域有稳定 `data-action-scope=\"danger\"`。"
+  - "结构测试防止页级动作、筛选动作和列表动作重新混放。"
+  - "不新增按钮、业务能力、路由、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM182 已完成：动作区域已有结构标记和回归测试；页面级动作、筛选动作、列表动作、行内动作和危险确认动作边界被固化。"
+```

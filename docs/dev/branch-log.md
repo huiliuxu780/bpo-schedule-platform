@@ -4250,3 +4250,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM182 Action Placement Rules
+
+- branch_name: `codex/im182-action-placement-rules`
+- base_main_commit: `dd4d9c1`
+- stacked_on: `codex/im181-master-data-model-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 3 fifth implementation slice. Codify visible action placement scopes for page, filter, list, row, and dangerous dialog actions without adding business capability.
+- allowed_files_check: `components/site-header.tsx`, `components/master-data-maintenance-agents.tsx`, `scripts/tests/action-placement-structure.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected action-scope markers, structural test, and traceability updates only; no new buttons, business capability, route, navigation, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/action-placement-structure.test.mjs` first failed because the page action scope was missing. After implementation, the structure test passed, `npm run typecheck` passed, `npm run lint` passed, `bash scripts/check-state.sh --strict` passed, and browser smoke on `/master-data/agents` confirmed page actions `新建/批量导入`, filter actions `查询/重置`, list toolbar scope, and row actions `查看/编辑/冻结`. `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -2264,3 +2264,12 @@
 - action: 完成主数据维护 model 行为不变拆分。
 - status: `done`
 - notes: 新增 `components/master-data-maintenance-types.ts`、`components/master-data-maintenance-formatters.ts`、`components/master-data-maintenance-entities.ts`、`components/master-data-maintenance-payloads.ts`、`components/master-data-maintenance-agent-model.ts`、`components/master-data-maintenance-reference-model.ts`、`components/master-data-maintenance-detail-model.ts`、`components/master-data-maintenance-import-dialog-model.ts`，按类型、格式化、维护对象、payload、人员、reference、详情和导入弹窗责任承载原 model 逻辑；`components/master-data-maintenance-model.ts` 降为兼容 re-export 入口。结构测试防止主要 summarizer、payload builder 和 helper 回退到旧巨型入口。本轮未改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM182`
+- source_ids:
+  - `R882`
+- story_ids:
+  - `US802`
+- action: 完成可见动作位置规则固化。
+- status: `done`
+- notes: `SiteHeader` 页级动作区、客服人员筛选区、列表工具栏、行内动作和冻结 Dialog 危险确认区已分别有 `data-action-scope` 结构标记；新增结构测试防止 `新建/批量导入` 回流到筛选区或列表工具栏，也防止 `查询/重置` 混入页级动作。本轮未新增按钮、业务能力、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
