@@ -962,3 +962,9 @@ This slice is mechanical and behavior-preserving. It does not change visible UI,
 `IM180` completed the master-data maintenance workbench decomposition slice. The legacy `components/master-data-maintenance-workbench.tsx` is now a thin compatibility entrypoint, while the original UI logic is split into actions, agents, references, details, forms, and shared field-control responsibility files.
 
 This slice is mechanical and behavior-preserving. It does not change visible UI, routes, interactions, business semantics, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-13 IM181 Master Data Model Split
+
+`IM181` completed the master-data maintenance model decomposition slice. The legacy `components/master-data-maintenance-model.ts` is now a thin compatibility entrypoint, while the original model logic is split into types, entities, payloads, agents, references, details, import-dialog, and formatter responsibility files.
+
+This slice is mechanical and behavior-preserving. It does not change visible UI, routes, interactions, business semantics, API URL semantics, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

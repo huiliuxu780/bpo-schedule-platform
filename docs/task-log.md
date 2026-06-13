@@ -2255,3 +2255,12 @@
 - action: 完成主数据维护 workbench 行为不变拆分。
 - status: `done`
 - notes: 新增 `components/master-data-maintenance-actions.tsx`、`components/master-data-maintenance-agents.tsx`、`components/master-data-maintenance-references.tsx`、`components/master-data-maintenance-details.tsx`、`components/master-data-maintenance-forms.tsx`、`components/master-data-maintenance-fields.tsx`，按页面动作、客服人员、主数据 reference 列表、详情页、表单页和共享字段控件承载原 workbench 逻辑；`components/master-data-maintenance-workbench.tsx` 降为兼容 re-export 入口。结构测试防止主要页面组件和表单控件回退到旧巨型入口。本轮未改变可见 UI、路由、交互、业务语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM181`
+- source_ids:
+  - `R881`
+- story_ids:
+  - `US801`
+- action: 完成主数据维护 model 行为不变拆分。
+- status: `done`
+- notes: 新增 `components/master-data-maintenance-types.ts`、`components/master-data-maintenance-formatters.ts`、`components/master-data-maintenance-entities.ts`、`components/master-data-maintenance-payloads.ts`、`components/master-data-maintenance-agent-model.ts`、`components/master-data-maintenance-reference-model.ts`、`components/master-data-maintenance-detail-model.ts`、`components/master-data-maintenance-import-dialog-model.ts`，按类型、格式化、维护对象、payload、人员、reference、详情和导入弹窗责任承载原 model 逻辑；`components/master-data-maintenance-model.ts` 降为兼容 re-export 入口。结构测试防止主要 summarizer、payload builder 和 helper 回退到旧巨型入口。本轮未改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
