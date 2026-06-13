@@ -11001,3 +11001,49 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已为 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 新增 route-local loading skeleton。每个 loading 使用当前 AppShell 和 shadcn Skeleton，避免空白等待；未做 route-group 迁移，未修改现有业务页面、导航、后端、数据库、依赖或 package/lockfile。"
+  - id: IM178
+    title: "导入中心模型第一刀拆分"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM177"]
+    allowed_files:
+      - "components/import-center-model.ts"
+      - "components/import-center-types.ts"
+      - "components/import-center-formatters.ts"
+      - "components/import-center-navigation.ts"
+      - "scripts/tests/import-center-model-first-split.test.mjs"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "导出类型定义移入 `components/import-center-types.ts`。"
+      - "核心格式化函数移入 `components/import-center-formatters.ts`。"
+      - "导入中心 API URL 与页面 href 构造函数移入 `components/import-center-navigation.ts`。"
+      - "`components/import-center-model.ts` 继续 re-export 旧公开入口，并保留业务汇总逻辑。"
+      - "不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要修改可见 UI、导航、页面布局或页面交互"
+      - "需要改变 API URL 语义、请求参数或返回数据结构"
+      - "需要新增依赖或 package/lockfile 变更"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已新增 `components/import-center-types.ts`、`components/import-center-formatters.ts`、`components/import-center-navigation.ts`，并让旧 `components/import-center-model.ts` 继续 re-export 旧入口和保留后续汇总逻辑。新增结构测试防止核心类型、格式化函数和 URL 构造函数回退到巨型 model 文件。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖或 package/lockfile。"

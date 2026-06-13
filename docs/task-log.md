@@ -2228,3 +2228,12 @@
 - action: 完成核心业务路由加载骨架屏。
 - status: `done`
 - notes: 为 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 新增 route-local `loading.tsx`，使用现有 AppShell 和 shadcn Skeleton；不写额外功能说明，不做 route-group 迁移。本轮未改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM178`
+- source_ids:
+  - `R878`
+- story_ids:
+  - `US798`
+- action: 完成导入中心模型第一刀拆分。
+- status: `done`
+- notes: 新增 `components/import-center-types.ts`、`components/import-center-formatters.ts`、`components/import-center-navigation.ts`，分别承载导入中心类型、格式化函数、API URL 与页面 href 构造函数；`components/import-center-model.ts` 继续 re-export 旧公开入口并保留业务汇总逻辑。结构测试防止核心类型、格式化函数和 URL 构造函数回退到巨型 model 文件。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。

@@ -4465,3 +4465,19 @@
 
 - 已新增 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 的 loading skeleton。
 - 已新增结构测试 `scripts/tests/core-route-loading-states.test.mjs`，先确认 loading 文件缺失时红灯，再实现。
+
+### 2026-06-13 - IM178 导入中心模型第一刀拆分
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第一刀执行，只拆分 `components/import-center-model.ts` 中的基础设施代码。
+- 新文件限定为类型、格式化函数、URL/href 构造函数；旧入口继续 re-export，避免大范围改调用方。
+- 本轮不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 `components/import-center-types.ts`，承载原 model 中的导出类型定义。
+- 已新增 `components/import-center-formatters.ts`，承载批次显示名、文件类型、处理状态、应用状态、就绪状态和行状态格式化函数。
+- 已新增 `components/import-center-navigation.ts`，承载导入中心 API URL 与页面 href 构造函数。
+- `components/import-center-model.ts` 继续 re-export 旧公开入口，并保留后续业务 summarizer/builder 逻辑。
+- 已新增结构测试 `scripts/tests/import-center-model-first-split.test.mjs`，先确认缺少拆分文件时红灯，再实现兼容拆分。
