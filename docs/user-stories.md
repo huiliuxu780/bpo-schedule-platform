@@ -5947,3 +5947,24 @@ acceptance:
 status: "done"
 notes: "IM180 已完成：主数据维护 workbench 已按 actions/agents/references/details/forms/fields 拆分；旧入口保持兼容导出，可见 UI 和业务行为不变。"
 ```
+
+### US801 - 拆分主数据维护 model 巨型文件
+
+```yaml
+id: US801
+requirement_ids:
+  - R881
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望主数据维护 model 按类型、实体、payload、人员、reference、详情、导入弹窗和格式化职责拆到独立文件，以便后续可见产品修复不会继续堆到单个巨型 model 文件。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 types、entities、payloads、agent-model、reference-model、detail-model、import-dialog-model、formatters 八个责任文件。"
+  - "`components/master-data-maintenance-model.ts` 降为 thin compatibility entrypoint，只保留 re-export。"
+  - "旧公开类型、函数名和 import path 保持兼容，现有调用方无需改 import path。"
+  - "结构测试防止主要 summarizer、payload builder 和 helper 回退到旧巨型入口。"
+  - "不改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM181 已完成：主数据维护 model 已按八个责任文件拆分；旧入口保持兼容导出，可见 UI、业务行为和数据契约不变。"
+```

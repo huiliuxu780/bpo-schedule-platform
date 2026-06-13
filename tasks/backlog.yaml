@@ -11147,3 +11147,55 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已将主数据维护 workbench 拆为 `components/master-data-maintenance-actions.tsx`、`components/master-data-maintenance-agents.tsx`、`components/master-data-maintenance-references.tsx`、`components/master-data-maintenance-details.tsx`、`components/master-data-maintenance-forms.tsx`、`components/master-data-maintenance-fields.tsx`；`components/master-data-maintenance-workbench.tsx` 只保留旧公开入口 re-export。新增结构测试防止主要页面组件和表单控件回退到巨型 UI 文件。本轮未改变可见 UI、路由、交互、业务语义、后端、数据库、依赖或 package/lockfile。"
+  - id: IM181
+    title: "主数据维护 model 行为不变拆分"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM180"]
+    allowed_files:
+      - "components/master-data-maintenance-model.ts"
+      - "components/master-data-maintenance-types.ts"
+      - "components/master-data-maintenance-formatters.ts"
+      - "components/master-data-maintenance-entities.ts"
+      - "components/master-data-maintenance-payloads.ts"
+      - "components/master-data-maintenance-agent-model.ts"
+      - "components/master-data-maintenance-reference-model.ts"
+      - "components/master-data-maintenance-detail-model.ts"
+      - "components/master-data-maintenance-import-dialog-model.ts"
+      - "scripts/tests/master-data-model-split.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 types、entities、payloads、agent-model、reference-model、detail-model、import-dialog-model、formatters 八个主数据维护 model 责任文件。"
+      - "`components/master-data-maintenance-model.ts` 只保留旧公开入口 re-export。"
+      - "现有调用方 import path 不变。"
+      - "不改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要修改可见 UI、路由、页面布局或页面交互"
+      - "需要改变业务字段语义、API URL、请求参数或返回数据结构"
+      - "需要新增依赖或 package/lockfile 变更"
+      - "需要新增后端、schema/migration 或生产持久化配置"
+      - "范围扩展到权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将主数据维护 model 拆为 `components/master-data-maintenance-types.ts`、`components/master-data-maintenance-formatters.ts`、`components/master-data-maintenance-entities.ts`、`components/master-data-maintenance-payloads.ts`、`components/master-data-maintenance-agent-model.ts`、`components/master-data-maintenance-reference-model.ts`、`components/master-data-maintenance-detail-model.ts`、`components/master-data-maintenance-import-dialog-model.ts`；`components/master-data-maintenance-model.ts` 只保留旧公开入口 re-export。新增结构测试防止主要 summarizer、payload builder 和 helper 回退到巨型 model 文件。本轮未改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖或 package/lockfile。"

@@ -3326,3 +3326,16 @@ version: "1.0"
 status: "done"
 notes: "IM180 已完成：主数据维护 workbench 已拆为 actions、agents、references、details、forms、fields 六个责任文件，旧 `components/master-data-maintenance-workbench.tsx` 降为兼容 re-export 入口。本轮未改变可见 UI、路由、交互、业务语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R881 - 主数据维护 model 行为不变拆分
+
+```yaml
+id: R881
+module: "前端健康恢复"
+description: "`components/master-data-maintenance-model.ts` 已膨胀为巨型 model 文件，混合类型、维护对象、payload 构造、人员汇总、reference 汇总、详情汇总、导入弹窗状态和格式化 helper。需要按责任做不改变行为的机械拆分，并让旧入口继续兼容导出。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM181"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM181 已完成：主数据维护 model 已拆为 types、entities、payloads、agent-model、reference-model、detail-model、import-dialog-model 和 formatters 八个责任文件，旧 `components/master-data-maintenance-model.ts` 降为兼容 re-export 入口。本轮未改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

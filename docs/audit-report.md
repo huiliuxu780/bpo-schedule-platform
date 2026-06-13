@@ -4509,3 +4509,17 @@
 - 已新增 actions/agents/references/details/forms/fields 六个主数据维护责任文件。
 - `components/master-data-maintenance-workbench.tsx` 只保留六个责任文件的 re-export。
 - 已新增结构测试 `scripts/tests/master-data-workbench-split.test.mjs`，先确认缺少拆分文件时红灯，再实现拆分。
+
+### 2026-06-13 - IM181 主数据维护 model 行为不变拆分
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第四刀执行，只拆分 `components/master-data-maintenance-model.ts`。
+- 旧入口必须降为兼容 re-export 入口，现有调用方 import path 不变。
+- 本轮不改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 已新增 types/entities/payloads/agent/reference/detail/import-dialog/formatters 八个主数据维护 model 责任文件。
+- `components/master-data-maintenance-model.ts` 只保留八个责任文件的 re-export。
+- 已新增结构测试 `scripts/tests/master-data-model-split.test.mjs`，先确认缺少拆分文件时红灯，再实现拆分。
