@@ -3339,3 +3339,16 @@ version: "1.0"
 status: "done"
 notes: "IM181 已完成：主数据维护 model 已拆为 types、entities、payloads、agent-model、reference-model、detail-model、import-dialog-model 和 formatters 八个责任文件，旧 `components/master-data-maintenance-model.ts` 降为兼容 re-export 入口。本轮未改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R882 - 可见动作位置规则固化
+
+```yaml
+id: R882
+module: "前端健康恢复"
+description: "主数据客服人员页面已经按产品反馈调整动作位置，但缺少结构性约束，后续容易重新把页级动作、筛选动作、列表动作、行内动作和危险确认混放。需要用最小结构标记和回归测试固化动作分层，不新增业务能力。"
+source: "docs/frontend-health-recovery-plan.md Stage 3 IM182"
+submitted_at: "2026-06-13"
+version: "1.0"
+status: "done"
+notes: "IM182 已完成：`SiteHeader` 页级动作、客服人员筛选区、列表工具栏、行内动作和冻结 Dialog 危险动作均有明确 `data-action-scope` 结构标记；结构测试防止 `新建/批量导入` 回流到筛选区或列表工具栏，也防止 `查询/重置` 混入页级动作。本轮未新增按钮、业务能力、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

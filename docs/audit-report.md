@@ -4523,3 +4523,18 @@
 - 已新增 types/entities/payloads/agent/reference/detail/import-dialog/formatters 八个主数据维护 model 责任文件。
 - `components/master-data-maintenance-model.ts` 只保留八个责任文件的 re-export。
 - 已新增结构测试 `scripts/tests/master-data-model-split.test.mjs`，先确认缺少拆分文件时红灯，再实现拆分。
+
+### 2026-06-13 - IM182 可见动作位置规则固化
+
+#### 审计计划
+
+- 按恢复计划 Stage 3 第五刀执行，只固化可见动作位置边界。
+- 用结构标记区分页级、筛选、列表、行内和危险确认动作，防止后续重新混放。
+- 本轮不新增按钮、业务动作、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `SiteHeader` 页级动作区已标记为 `data-action-scope="page"`。
+- 客服人员筛选区、列表工具栏、行内动作和冻结 Dialog 危险确认区分别标记为 `filter`、`list`、`row`、`danger`。
+- 已新增结构测试 `scripts/tests/action-placement-structure.test.mjs`，先确认缺少页级 action scope 时红灯，再实现标记。
+- 浏览器烟测确认 `/master-data/agents` 上页级动作是 `新建/批量导入`，筛选动作是 `查询/重置`，列表工具栏和行内动作边界可读。

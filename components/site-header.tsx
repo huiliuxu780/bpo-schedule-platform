@@ -55,7 +55,10 @@ export function SiteHeader({
         )}
       </div>
       {actions ? (
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+        <div
+          data-action-scope="page"
+          className="flex shrink-0 flex-wrap items-center justify-end gap-2"
+        >
           {actions}
         </div>
       ) : null}

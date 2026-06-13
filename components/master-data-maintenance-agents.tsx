@@ -133,7 +133,10 @@ function AgentManagementFilterPanel({
             />
           ))}
         </div>
-        <div className="flex items-center justify-end gap-2">
+        <div
+          data-action-scope="filter"
+          className="flex items-center justify-end gap-2"
+        >
           <Button type="submit" size="sm">
             <Search data-icon="inline-start" />
             查询
@@ -156,7 +159,10 @@ function AgentManagementListToolbar({
   summary: MasterDataAgentManagementSummary
 }) {
   return (
-    <section className="flex min-h-9 flex-wrap items-center justify-start gap-3 px-1">
+    <section
+      data-action-scope="list"
+      className="flex min-h-9 flex-wrap items-center justify-start gap-3 px-1"
+    >
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm text-muted-foreground">已选 0 项</span>
         {summary.bulkActions.map((action) => (
@@ -271,7 +277,10 @@ function AgentManagementTablePanel({
                 <TableCell>{row.display.freezeReasonLabel}</TableCell>
                 <TableCell>{row.employee_id}</TableCell>
                 <TableCell className="whitespace-nowrap text-right">
-                  <div className="flex items-center justify-end gap-1">
+                  <div
+                    data-action-scope="row"
+                    className="flex items-center justify-end gap-1"
+                  >
                     <AgentRowActionLink href={row.display.detailHref}>
                       查看
                     </AgentRowActionLink>
@@ -498,7 +507,7 @@ function AgentFreezeDialog({
               name="employee_id"
               value={employee.employee_id}
             />
-            <DialogFooter>
+            <DialogFooter data-action-scope="danger">
               <Button asChild size="sm" variant="outline">
                 <Link href="/master-data/agents">取消</Link>
               </Button>
@@ -508,7 +517,7 @@ function AgentFreezeDialog({
             </DialogFooter>
           </form>
         ) : (
-          <DialogFooter>
+          <DialogFooter data-action-scope="danger">
             <Button asChild size="sm" variant="outline">
               <Link href="/master-data/agents">关闭</Link>
             </Button>
