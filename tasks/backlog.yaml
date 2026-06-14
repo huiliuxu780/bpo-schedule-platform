@@ -11291,3 +11291,47 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "新增 `components/empty-state.tsx`，提供统一图标、标题、详情、compact 和外部动作区域；替换 `components/import-center-batch-list-panel.tsx`、`components/import-center-batch-inspector-panel.tsx`、`components/import-center-review-cases-workspace.tsx` 中本地同名 EmptyState；新增 `scripts/tests/shared-empty-state.test.mjs` 防止目标文件继续定义本地 EmptyState。本轮未新增业务按钮、路由、后端、数据库、依赖或 package/lockfile。"
+  - id: IM184
+    title: "主数据维护表单反馈一致性"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM183"]
+    allowed_files:
+      - "components/master-data-maintenance-fields.tsx"
+      - "components/master-data-maintenance-forms.tsx"
+      - "components/maintenance-submit-button.tsx"
+      - "scripts/tests/master-data-form-feedback.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "维护表单使用共享 submit 组件承载图标、按钮尺寸、禁用态和提交中文案。"
+      - "必填字段使用统一视觉标识，但不改变现有 required 条件。"
+      - "结构测试防止维护表单回退到散落的裸 submit Button。"
+      - "不新增业务字段、按钮、路由、后端、数据库、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增业务字段、业务按钮或提交能力"
+      - "需要修改路由、导航结构、后端、schema/migration 或生产持久化配置"
+      - "需要新增依赖或 package/lockfile 变更"
+      - "范围扩展到权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "新增 `components/maintenance-submit-button.tsx` 作为 client submit 组件，使用 `useFormStatus` 统一 pending 禁用态和提交中文案；`components/master-data-maintenance-fields.tsx` 新增统一必填视觉标识；`components/master-data-maintenance-forms.tsx` 已替换散落的裸 submit Button；新增 `scripts/tests/master-data-form-feedback.test.mjs` 防止回退。本轮未新增业务字段、按钮、路由、后端、数据库、依赖或 package/lockfile。"

@@ -4553,3 +4553,19 @@
 - 替换 `components/import-center-batch-list-panel.tsx`、`components/import-center-batch-inspector-panel.tsx`、`components/import-center-review-cases-workspace.tsx` 中的本地同名 EmptyState。
 - 新增结构测试 `scripts/tests/shared-empty-state.test.mjs`，先确认缺少共享组件时红灯，再实现共享空状态。
 - 浏览器烟测确认数据质量页无匹配筛选下渲染共享空状态节点、标题、详情和图标。
+
+### 2026-06-14 - IM184 主数据维护表单反馈一致性
+
+#### 审计计划
+
+- 按恢复计划 Stage 4 执行，只统一主数据维护表单反馈。
+- 使用共享 client submit 组件承载提交中状态，避免在 server 表单文件里直接使用 hook。
+- 本轮不新增业务字段、按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `components/maintenance-submit-button.tsx`，使用 `useFormStatus` 提供 pending 禁用态和提交中文案。
+- `components/master-data-maintenance-fields.tsx` 新增统一 `MaintenanceFieldLabel` 和必填视觉标识。
+- `components/master-data-maintenance-forms.tsx` 已替换散落的裸 submit Button。
+- 新增结构测试 `scripts/tests/master-data-form-feedback.test.mjs`，先确认缺少共享组件、字段标识和表单引用时红灯，再实现统一反馈。
+- 浏览器烟测确认 `/master-data/agents/new` 渲染共享 submit、7 个必填标识且控制台无 error。

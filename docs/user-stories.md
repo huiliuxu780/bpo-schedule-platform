@@ -6012,3 +6012,23 @@ acceptance:
 status: "done"
 notes: "IM183 已完成：共享 EmptyState 已用于三个已有同名空状态位置；本轮没有扩大到所有 EmptyPanel/PanelState。"
 ```
+
+### US804 - 统一主数据维护表单反馈
+
+```yaml
+id: US804
+requirement_ids:
+  - R884
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望主数据维护表单的必填提示、提交按钮和提交中反馈使用统一组件，以便后续人员、职场、供应商、组织和技能表单不会继续出现按钮字体、尺寸和反馈状态漂移。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "维护表单使用共享 submit 组件承载图标、按钮尺寸、禁用态和提交中文案。"
+  - "必填字段使用统一视觉标识，但不改变现有 required 条件。"
+  - "结构测试防止维护表单回退到散落的裸 submit Button。"
+  - "不新增业务字段、按钮、路由、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM184 已完成：主数据维护表单已使用统一 submit pending 组件和必填视觉标识；本轮未新增业务字段、按钮、路由或后端能力。"
+```
