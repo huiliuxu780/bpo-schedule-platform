@@ -3378,3 +3378,16 @@ version: "1.0"
 status: "done"
 notes: "IM184 已完成：新增共享维护表单 submit 组件，主数据维护表单已改为统一提交按钮、提交中状态和必填视觉标识；保留现有字段、required 条件、后端 action、路由、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R885 - 导航和 Breadcrumb 规则复核
+
+```yaml
+id: R885
+module: "前端健康恢复"
+description: "恢复阶段已经修复动作位置、空状态和表单反馈，但导航与 Breadcrumb 仍需要规则化，避免详情/新建/编辑页父级高亮错误、页面内容区重复造标题结构，或后续恢复未经确认的大模块入口。"
+source: "docs/frontend-health-recovery-plan.md Stage 4 IM185"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM185 已完成：主数据组织/技能导航项改为 prefix 高亮，SiteHeader 增加稳定 header/breadcrumb/title slot，结构测试防止恢复未经确认的质量中心/数据质量中心/导入中心入口；未新增业务导航模块、业务页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

@@ -11335,3 +11335,46 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "新增 `components/maintenance-submit-button.tsx` 作为 client submit 组件，使用 `useFormStatus` 统一 pending 禁用态和提交中文案；`components/master-data-maintenance-fields.tsx` 新增统一必填视觉标识；`components/master-data-maintenance-forms.tsx` 已替换散落的裸 submit Button；新增 `scripts/tests/master-data-form-feedback.test.mjs` 防止回退。本轮未新增业务字段、按钮、路由、后端、数据库、依赖或 package/lockfile。"
+  - id: IM185
+    title: "导航和 Breadcrumb 规则复核"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM184"]
+    allowed_files:
+      - "components/app-sidebar.tsx"
+      - "components/app-shell.tsx"
+      - "components/site-header.tsx"
+      - "scripts/tests/navigation-breadcrumb-rules.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "详情、新建、编辑页通过父级 path 规则高亮正确导航项。"
+      - "Breadcrumb 入口由 shell/header 统一承载，页面内容区不重复造同级标题结构。"
+      - "结构测试防止新增大模块导航或恢复禁用的 generic 数据质量/导入中心入口。"
+      - "不新增业务导航模块、业务页面、后端、数据库、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要新增业务导航模块或恢复禁用的大模块入口"
+      - "需要修改业务页面内容、后端、schema/migration 或生产持久化配置"
+      - "需要新增依赖或 package/lockfile 变更"
+      - "范围扩展到权限、审批、导出、批量操作、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将主数据组织/技能导航项从 exact 调整为 prefix，确保详情/新建/编辑页高亮父级导航；`SiteHeader` 增加稳定 `site-header`、`site-header-breadcrumb`、`site-header-title` slot；新增 `scripts/tests/navigation-breadcrumb-rules.test.mjs` 防止恢复未经确认的质量中心/数据质量中心/导入中心入口，并固化 Breadcrumb 由 header 承载。本轮未新增业务导航模块、业务页面、后端、数据库、依赖或 package/lockfile。"

@@ -986,3 +986,9 @@ This slice intentionally does not migrate every existing EmptyPanel or PanelStat
 `IM184` introduced `components/maintenance-submit-button.tsx` as the shared client submit control for master-data maintenance forms. It centralizes the submit icon, size, disabled pending state, and pending label through `useFormStatus`, while `components/master-data-maintenance-fields.tsx` now centralizes required-field visual markers.
 
 This slice preserves existing form fields, required conditions, server actions, routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-15 IM185 Navigation And Breadcrumb Rules
+
+`IM185` completed the recovery-stage navigation and Breadcrumb rule pass. Master-data organization and skill sidebar items now use prefix matching so detail, create, and edit child pages keep the correct parent item active, while `SiteHeader` exposes stable header, breadcrumb, and title slots for future structure checks.
+
+This slice does not add business navigation modules, pages, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. The recovery stage is now ready to hand back to business-version flows.

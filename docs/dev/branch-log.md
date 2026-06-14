@@ -4304,3 +4304,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM185 Navigation And Breadcrumb Rules
+
+- branch_name: `codex/im185-navigation-breadcrumb-rules`
+- base_main_commit: `66193b1d694dabcd7621935262fbcddc7a0d2fa7`
+- stacked_on: `codex/im184-form-feedback-consistency`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 4 final implementation slice. Codify navigation and Breadcrumb rules without adding business navigation modules or new pages.
+- allowed_files_check: `components/app-sidebar.tsx`, `components/site-header.tsx`, `scripts/tests/navigation-breadcrumb-rules.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected master-data parent path matching, header/breadcrumb/title slots, structure test, and traceability updates only; no new business module, page, route, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/navigation-breadcrumb-rules.test.mjs` first failed because organization/skill parent path matching and header slots were missing. After implementation, the structure test passed, `npm run typecheck` passed, `npm run lint` passed, `bash scripts/check-state.sh --strict` passed, browser smoke on `/master-data/organizations/new` and `/master-data/skills/new` confirmed parent navigation highlight, Breadcrumb slots, and no console errors, `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

@@ -2291,3 +2291,12 @@
 - action: 完成主数据维护表单反馈一致性。
 - status: `done`
 - notes: 新增共享 `components/maintenance-submit-button.tsx`，统一维护表单提交按钮、图标、禁用态和提交中文案；`components/master-data-maintenance-fields.tsx` 统一必填视觉标识；主数据维护表单已替换散落的裸 submit Button。浏览器烟测确认 `/master-data/agents/new` 渲染共享 submit、7 个必填标识且控制台无 error。本轮未新增业务字段、按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM185`
+- source_ids:
+  - `R885`
+- story_ids:
+  - `US805`
+- action: 完成导航和 Breadcrumb 规则复核。
+- status: `done`
+- notes: 主数据组织/技能导航项已改为 prefix，高亮覆盖详情/新建/编辑页；`SiteHeader` 增加 header、breadcrumb、title 稳定 slot；新增结构测试防止恢复未经确认的质量中心/数据质量中心/导入中心入口。浏览器烟测确认 `/master-data/organizations/new` 与 `/master-data/skills/new` 对应父级导航高亮、Breadcrumb slot 存在且控制台无 error。本轮未新增业务导航模块、业务页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
