@@ -104,10 +104,10 @@ const nav: NavGroup[] = [
         activeMatch: "prefix",
         tag: "P1",
       },
-      { title: "组织", href: "/master-data/organizations", activeMatch: "exact" },
+      { title: "组织", href: "/master-data/organizations", activeMatch: "prefix" },
       { title: "职场", href: "/master-data/sites", activeMatch: "prefix" },
       { title: "供应商", href: "/master-data/vendors", activeMatch: "prefix" },
-      { title: "技能", href: "/master-data/skills", activeMatch: "exact" },
+      { title: "技能", href: "/master-data/skills", activeMatch: "prefix" },
     ],
   },
 ]

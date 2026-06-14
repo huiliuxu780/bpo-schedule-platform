@@ -6032,3 +6032,23 @@ acceptance:
 status: "done"
 notes: "IM184 已完成：主数据维护表单已使用统一 submit pending 组件和必填视觉标识；本轮未新增业务字段、按钮、路由或后端能力。"
 ```
+
+### US805 - 复核导航和 Breadcrumb 规则
+
+```yaml
+id: US805
+requirement_ids:
+  - R885
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望现有导航和 Breadcrumb 规则被结构化约束，以便详情、新建、编辑页能稳定高亮正确父级，并避免页面内容区重复堆标题或恢复未经确认的大模块入口。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "详情、新建、编辑页通过父级 path 规则高亮正确导航项。"
+  - "Breadcrumb 入口由 shell/header 统一承载，页面内容区不重复造同级标题结构。"
+  - "结构测试防止新增大模块导航或恢复禁用的 generic 数据质量/导入中心入口。"
+  - "不新增业务导航模块、业务页面、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM185 已完成：导航/Breadcrumb 规则已由结构测试固化，详情/新建/编辑页父级高亮和 header breadcrumb slot 有回归保护。"
+```

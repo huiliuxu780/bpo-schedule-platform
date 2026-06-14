@@ -4569,3 +4569,18 @@
 - `components/master-data-maintenance-forms.tsx` 已替换散落的裸 submit Button。
 - 新增结构测试 `scripts/tests/master-data-form-feedback.test.mjs`，先确认缺少共享组件、字段标识和表单引用时红灯，再实现统一反馈。
 - 浏览器烟测确认 `/master-data/agents/new` 渲染共享 submit、7 个必填标识且控制台无 error。
+
+### 2026-06-15 - IM185 导航和 Breadcrumb 规则复核
+
+#### 审计计划
+
+- 按恢复计划 Stage 4 最后一刀执行，只固化导航和 Breadcrumb 规则。
+- 不恢复未经确认的 `质量中心`、`数据质量中心` 或 generic `导入中心` Sidebar 入口。
+- 不追求所有详情/新建/编辑页的 Sidebar 覆盖，不新增业务导航模块。
+
+#### 执行结果
+
+- `components/app-sidebar.tsx` 中主数据 `组织`、`技能` 导航项改为 prefix 匹配，覆盖详情/新建/编辑子路由。
+- `components/site-header.tsx` 增加稳定 `site-header`、`site-header-breadcrumb`、`site-header-title` slot。
+- 新增结构测试 `scripts/tests/navigation-breadcrumb-rules.test.mjs`，先确认组织/技能 prefix 和 header slot 缺失时红灯，再实现规则。
+- 浏览器烟测确认 `/master-data/organizations/new` 与 `/master-data/skills/new` 对应父级导航高亮、Breadcrumb slot 存在且控制台无 error。
