@@ -2273,3 +2273,12 @@
 - action: 完成可见动作位置规则固化。
 - status: `done`
 - notes: `SiteHeader` 页级动作区、客服人员筛选区、列表工具栏、行内动作和冻结 Dialog 危险确认区已分别有 `data-action-scope` 结构标记；新增结构测试防止 `新建/批量导入` 回流到筛选区或列表工具栏，也防止 `查询/重置` 混入页级动作。本轮未新增按钮、业务能力、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM183`
+- source_ids:
+  - `R883`
+- story_ids:
+  - `US803`
+- action: 完成共享空状态模式第一刀。
+- status: `done`
+- notes: 新增共享 `components/empty-state.tsx`，统一空状态图标、标题、详情、compact 高度和外部动作 slot；替换导入批次列表、批次状态检查和复核案例列表中的本地同名 EmptyState。浏览器烟测确认 `/data-quality?batchQuery=__empty_state_smoke__` 渲染共享空状态。本轮未新增业务按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。

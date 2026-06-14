@@ -974,3 +974,9 @@ This slice is mechanical and behavior-preserving. It does not change visible UI,
 `IM182` codified the visible action placement rules that the master-data agent page now follows. The shared header page-action area, agent filter panel, list toolbar, row actions, and freeze dialog dangerous action footer now carry explicit `data-action-scope` markers, with a structure test preventing page actions from drifting into filter/list areas or filter actions from drifting into the page header.
 
 This slice does not add buttons, business capabilities, routes, navigation, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-14 IM183 Shared Empty State Pattern
+
+`IM183` introduced the first shared empty-state component at `components/empty-state.tsx`. It centralizes the neutral empty icon, title, detail, compact height, external action slot, and `data-slot` selectors, then replaces the local same-name EmptyState copies in the import batch list, import batch inspector, and review-case list workspaces.
+
+This slice intentionally does not migrate every existing EmptyPanel or PanelState. It does not add buttons, business capabilities, routes, navigation, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

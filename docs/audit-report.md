@@ -4538,3 +4538,18 @@
 - 客服人员筛选区、列表工具栏、行内动作和冻结 Dialog 危险确认区分别标记为 `filter`、`list`、`row`、`danger`。
 - 已新增结构测试 `scripts/tests/action-placement-structure.test.mjs`，先确认缺少页级 action scope 时红灯，再实现标记。
 - 浏览器烟测确认 `/master-data/agents` 上页级动作是 `新建/批量导入`，筛选动作是 `查询/重置`，列表工具栏和行内动作边界可读。
+
+### 2026-06-14 - IM183 共享空状态模式
+
+#### 审计计划
+
+- 按恢复计划 Stage 4 第二刀执行，只引入共享空状态组件。
+- 先替换已经存在的同名本地 EmptyState，不扩大到所有 EmptyPanel/PanelState。
+- 本轮不新增业务按钮、业务动作、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- 新增 `components/empty-state.tsx`，使用 lucide 图标、语义 token、稳定 `data-slot`、compact 高度和外部动作 slot。
+- 替换 `components/import-center-batch-list-panel.tsx`、`components/import-center-batch-inspector-panel.tsx`、`components/import-center-review-cases-workspace.tsx` 中的本地同名 EmptyState。
+- 新增结构测试 `scripts/tests/shared-empty-state.test.mjs`，先确认缺少共享组件时红灯，再实现共享空状态。
+- 浏览器烟测确认数据质量页无匹配筛选下渲染共享空状态节点、标题、详情和图标。

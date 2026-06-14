@@ -4268,3 +4268,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM183 Shared Empty State
+
+- branch_name: `codex/im183-shared-empty-state`
+- base_main_commit: `28ab50b`
+- stacked_on: `codex/im182-action-placement-rules`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Recovery-plan Stage 4 second implementation slice. Introduce a shared empty-state component and replace existing local same-name EmptyState copies without adding business actions.
+- allowed_files_check: `components/empty-state.tsx`, three target import/review panels, `scripts/tests/shared-empty-state.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected shared component, imports replacing local EmptyState definitions, structural test, and traceability updates only; no new business button, business capability, route, navigation, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/shared-empty-state.test.mjs` first failed because `components/empty-state.tsx` was missing. After implementation, the structure test passed, `npm run typecheck` passed, `npm run lint` passed, shadcn review found no hardcoded colors or spacing drift in the target files, and browser smoke on `/data-quality?batchQuery=__empty_state_smoke__` confirmed the shared empty state rendered title, detail, and icon without an action slot. `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

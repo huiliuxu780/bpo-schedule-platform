@@ -5991,3 +5991,24 @@ acceptance:
 status: "done"
 notes: "IM182 已完成：动作区域已有结构标记和回归测试；页面级动作、筛选动作、列表动作、行内动作和危险确认动作边界被固化。"
 ```
+
+### US803 - 复用统一空状态
+
+```yaml
+id: US803
+requirement_ids:
+  - R883
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望常见空列表、读取失败和无匹配结果使用统一空状态组件，以便页面不会因为局部实现不同而出现字体、间距、图标和动作位置漂移。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增共享 `components/empty-state.tsx`。"
+  - "共享空状态使用语义 token、稳定 `data-slot`，并支持 compact 和外部传入动作区域。"
+  - "替换已存在的同名本地 `EmptyState` 实现，保留原文案和原业务行为。"
+  - "结构测试防止目标文件继续定义本地 `EmptyState`。"
+  - "不新增业务按钮、路由、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM183 已完成：共享 EmptyState 已用于三个已有同名空状态位置；本轮没有扩大到所有 EmptyPanel/PanelState。"
+```
