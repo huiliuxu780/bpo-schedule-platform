@@ -980,3 +980,9 @@ This slice does not add buttons, business capabilities, routes, navigation, back
 `IM183` introduced the first shared empty-state component at `components/empty-state.tsx`. It centralizes the neutral empty icon, title, detail, compact height, external action slot, and `data-slot` selectors, then replaces the local same-name EmptyState copies in the import batch list, import batch inspector, and review-case list workspaces.
 
 This slice intentionally does not migrate every existing EmptyPanel or PanelState. It does not add buttons, business capabilities, routes, navigation, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-14 IM184 Master Data Form Feedback Consistency
+
+`IM184` introduced `components/maintenance-submit-button.tsx` as the shared client submit control for master-data maintenance forms. It centralizes the submit icon, size, disabled pending state, and pending label through `useFormStatus`, while `components/master-data-maintenance-fields.tsx` now centralizes required-field visual markers.
+
+This slice preserves existing form fields, required conditions, server actions, routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.

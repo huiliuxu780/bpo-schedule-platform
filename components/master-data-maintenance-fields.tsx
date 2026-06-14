@@ -18,6 +18,29 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
+function MaintenanceFieldLabel({
+  children,
+  required,
+}: {
+  children: React.ReactNode
+  required: boolean
+}) {
+  return (
+    <span className="flex items-center gap-1" data-slot="maintenance-field-label">
+      {children}
+      {required ? (
+        <span
+          aria-hidden="true"
+          className="text-destructive"
+          data-slot="maintenance-field-required"
+        >
+          *
+        </span>
+      ) : null}
+    </span>
+  )
+}
+
 export function ReadOnlyField({
   label,
   value,
@@ -97,7 +120,7 @@ export function MaintenanceInput({
 }) {
   return (
     <label className="grid gap-1.5 text-sm font-medium">
-      {label}
+      <MaintenanceFieldLabel required={required}>{label}</MaintenanceFieldLabel>
       <Input
         name={name}
         type={type}
@@ -122,7 +145,7 @@ export function MaintenanceTextarea({
 }) {
   return (
     <label className="grid gap-1.5 text-sm font-medium md:col-span-2">
-      {label}
+      <MaintenanceFieldLabel required={required}>{label}</MaintenanceFieldLabel>
       <textarea
         name={name}
         placeholder={placeholder}
@@ -147,7 +170,7 @@ export function MaintenanceSelect({
 }) {
   return (
     <label className="grid gap-1.5 text-sm font-medium">
-      {label}
+      <MaintenanceFieldLabel required={required}>{label}</MaintenanceFieldLabel>
       <select
         name={name}
         required={required}
@@ -175,7 +198,7 @@ export function EmployeeTypeSelect({
 }) {
   return (
     <label className="grid gap-1.5 text-sm font-medium">
-      {label}
+      <MaintenanceFieldLabel required={required}>{label}</MaintenanceFieldLabel>
       <select
         name={name}
         required={required}
@@ -202,7 +225,7 @@ export function ServiceTeamTypeSelect({
 }) {
   return (
     <label className="grid gap-1.5 text-sm font-medium">
-      {label}
+      <MaintenanceFieldLabel required={required}>{label}</MaintenanceFieldLabel>
       <select
         name={name}
         required={required}
@@ -229,7 +252,7 @@ export function SkillCategorySelect({
 }) {
   return (
     <label className="grid gap-1.5 text-sm font-medium">
-      {label}
+      <MaintenanceFieldLabel required={required}>{label}</MaintenanceFieldLabel>
       <select
         name={name}
         required={required}

@@ -1,4 +1,3 @@
-import { Send } from "lucide-react"
 import {
   type MasterDataAgentMaintenanceFeedback,
   type MasterDataAgentManagementSummary,
@@ -8,7 +7,7 @@ import {
   type MasterDataWorkplaceServiceTeamRow,
   type MasterDataWorkplaceServiceTeamType,
 } from "@/components/master-data-maintenance-model"
-import { Button } from "@/components/ui/button"
+import { MaintenanceSubmitButton } from "@/components/maintenance-submit-button"
 import {
   Card,
   CardContent,
@@ -762,10 +761,7 @@ function WorkplaceMaintenanceForm({
             ) : null}
           </div>
           <div className="flex justify-end">
-            <Button type="submit" size="sm">
-              <Send data-icon="inline-start" />
-              {submitLabel}
-            </Button>
+            <MaintenanceSubmitButton label={submitLabel} />
           </div>
         </form>
       </CardContent>
@@ -856,10 +852,7 @@ function VendorMaintenanceForm({
             ) : null}
           </div>
           <div className="flex justify-end">
-            <Button type="submit" size="sm">
-              <Send data-icon="inline-start" />
-              {submitLabel}
-            </Button>
+            <MaintenanceSubmitButton label={submitLabel} />
           </div>
         </form>
       </CardContent>
@@ -959,10 +952,7 @@ function SkillMaintenanceForm({
             ) : null}
           </div>
           <div className="flex justify-end">
-            <Button type="submit" size="sm">
-              <Send data-icon="inline-start" />
-              {submitLabel}
-            </Button>
+            <MaintenanceSubmitButton label={submitLabel} />
           </div>
         </form>
       </CardContent>
@@ -1073,10 +1063,7 @@ function OrganizationMaintenanceEditor({
             ) : null}
           </div>
           <div className="flex justify-end">
-            <Button type="submit" size="sm">
-              <Send data-icon="inline-start" />
-              {submitLabel}
-            </Button>
+            <MaintenanceSubmitButton label={submitLabel} />
           </div>
         </form>
       </CardContent>
@@ -1145,10 +1132,7 @@ function AgentSkillMaintenanceSection({
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit" size="sm">
-                <Send data-icon="inline-start" />
-                提交技能维护
-              </Button>
+              <MaintenanceSubmitButton label="提交技能维护" />
             </div>
           </form>
         </CardContent>
@@ -1257,10 +1241,7 @@ function WorkplaceServiceTeamMaintenanceForm({
             />
           </div>
           <div className="flex justify-end">
-            <Button type="submit" size="sm">
-              <Send data-icon="inline-start" />
-              {submitLabel}
-            </Button>
+            <MaintenanceSubmitButton label={submitLabel} />
           </div>
         </form>
       </CardContent>
@@ -1425,10 +1406,7 @@ function AgentMaintenanceForm({
             ) : null}
           </div>
           <div className="flex justify-end">
-            <Button type="submit" size="sm">
-              <Send data-icon="inline-start" />
-              {submitLabel}
-            </Button>
+            <MaintenanceSubmitButton label={submitLabel} />
           </div>
         </form>
       </CardContent>

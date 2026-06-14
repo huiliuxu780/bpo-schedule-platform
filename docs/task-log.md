@@ -2282,3 +2282,12 @@
 - action: 完成共享空状态模式第一刀。
 - status: `done`
 - notes: 新增共享 `components/empty-state.tsx`，统一空状态图标、标题、详情、compact 高度和外部动作 slot；替换导入批次列表、批次状态检查和复核案例列表中的本地同名 EmptyState。浏览器烟测确认 `/data-quality?batchQuery=__empty_state_smoke__` 渲染共享空状态。本轮未新增业务按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM184`
+- source_ids:
+  - `R884`
+- story_ids:
+  - `US804`
+- action: 完成主数据维护表单反馈一致性。
+- status: `done`
+- notes: 新增共享 `components/maintenance-submit-button.tsx`，统一维护表单提交按钮、图标、禁用态和提交中文案；`components/master-data-maintenance-fields.tsx` 统一必填视觉标识；主数据维护表单已替换散落的裸 submit Button。浏览器烟测确认 `/master-data/agents/new` 渲染共享 submit、7 个必填标识且控制台无 error。本轮未新增业务字段、按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
