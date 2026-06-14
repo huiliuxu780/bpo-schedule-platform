@@ -3352,3 +3352,16 @@ version: "1.0"
 status: "done"
 notes: "IM182 已完成：`SiteHeader` 页级动作、客服人员筛选区、列表工具栏、行内动作和冻结 Dialog 危险动作均有明确 `data-action-scope` 结构标记；结构测试防止 `新建/批量导入` 回流到筛选区或列表工具栏，也防止 `查询/重置` 混入页级动作。本轮未新增按钮、业务能力、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R883 - 共享空状态模式
+
+```yaml
+id: R883
+module: "前端健康恢复"
+description: "多个页面存在本地重复的 `EmptyState`/空状态实现，容易产生字体、间距、图标和动作入口不一致。需要先引入一个共享空状态组件，并只替换已经存在的同名本地空状态，不新增业务动作。"
+source: "docs/frontend-health-recovery-plan.md Stage 4 IM183"
+submitted_at: "2026-06-14"
+version: "1.0"
+status: "done"
+notes: "IM183 已完成：新增共享 `components/empty-state.tsx`，替换导入批次列表、批次状态检查和复核案例列表中的本地同名 EmptyState，保留原文案和原业务行为；结构测试防止目标文件回退到本地 EmptyState。本轮未新增业务按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

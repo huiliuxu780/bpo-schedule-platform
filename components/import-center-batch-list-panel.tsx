@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { CircleSlash } from "lucide-react"
 
+import { EmptyState } from "@/components/empty-state"
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchFilters,
@@ -25,7 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { cn } from "@/lib/utils"
 
 type ImportCenterBatchListPanelProps = {
   batches: ImportBatchListRow[]
@@ -313,27 +312,4 @@ function HealthBadge({ health }: { health: ReturnType<typeof getImportBatchHealt
   }
 
   return <Badge>可预检</Badge>
-}
-
-function EmptyState({
-  title,
-  detail,
-  compact = false,
-}: {
-  title: string
-  detail: string
-  compact?: boolean
-}) {
-  return (
-    <div
-      className={cn(
-        "flex flex-col items-center justify-center gap-2 text-center",
-        compact ? "min-h-36" : "min-h-64"
-      )}
-    >
-      <CircleSlash className="size-5 text-muted-foreground" />
-      <div className="text-sm font-medium">{title}</div>
-      <div className="max-w-md text-sm text-muted-foreground">{detail}</div>
-    </div>
-  )
 }
