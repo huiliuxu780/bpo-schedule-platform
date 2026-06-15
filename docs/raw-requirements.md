@@ -3404,3 +3404,16 @@ version: "1.0"
 status: "done"
 notes: "IM186 已完成：`components/app-sidebar.tsx` 不再暴露 `班次明细` 和 `不可用管理` Sidebar 入口；旧 `/shift-details`、`/unavailability` 路由未删除；结构测试防止这些旧 demo 入口回流。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R887 - 收口排班计划旧链路入口
+
+```yaml
+id: R887
+module: "前端健康恢复"
+description: "Sidebar 旧 demo 入口已移除，但当前 `/schedule-plans` 列表和 `/schedule-plans/[planId]` 详情仍通过旧链路卡、风险表或复核链路按钮把用户带入 `/schedule-risks`、`/shift-details`、`/unavailability`。需要收口这些内容入口，避免当前排班计划页面继续暴露未确认旧 demo 流程。"
+source: "IM186 后续清理：只收当前页面入口，不删除旧路由。"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM187 已完成：`/schedule-plans` 不再渲染旧链路卡和风险表，`/schedule-plans/[planId]` 不再渲染旧复核链路按钮；已删除两个不再使用的旧链路组件；旧 `/schedule-risks`、`/shift-details`、`/unavailability` 路由保留。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

@@ -998,3 +998,9 @@ This slice does not add business navigation modules, pages, backend behavior, da
 `IM186` removed the old planning demo entries `班次明细` and `不可用管理` from the product Sidebar, while keeping `/shift-details` and `/unavailability` route files in place for compatibility.
 
 This slice adds a navigation structure test to prevent those legacy demo entries from returning. It does not add pages, delete routes, change business models, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM187 Schedule Plan Legacy Entry Cleanup
+
+`IM187` stopped the current schedule-plan list and detail pages from linking into old demo route clusters. `/schedule-plans` no longer renders the old flow summary or risk table, and `/schedule-plans/[planId]` no longer queries old risk/unavailability data or renders old review-chain buttons.
+
+The legacy `/schedule-risks`, `/shift-details`, and `/unavailability` route files remain in place for compatibility. This slice does not add pages, change backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

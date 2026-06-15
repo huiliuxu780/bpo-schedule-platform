@@ -2,17 +2,13 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
-import { MvpFlowSummary } from "@/components/mvp-flow-summary"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
-import { ScheduleRiskTable } from "@/components/schedule-risk-table"
 import {
   formatCoverageRate,
   getSchedulePlansWithFilters,
-  getScheduleRisks,
   schedulePlanStatusLabel,
   type SchedulePlanStatus,
 } from "@/lib/schedule-plans"
-import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
@@ -69,7 +65,6 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const query = params.query?.trim() ?? ""
   const status = parseStatus(params.status)
   const plans = await getSchedulePlansWithFilters({ query, status })
-  const risks = await getScheduleRisks(query)
   const totalForecast = plans.reduce((sum, plan) => sum + plan.forecast_agents, 0)
   const totalScheduled = plans.reduce(
     (sum, plan) => sum + plan.scheduled_agents,
@@ -78,7 +73,6 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
   const totalGap = plans.reduce((sum, plan) => sum + plan.gap_agents, 0)
   const coverageRate =
     plans.length === 0 ? 0 : totalForecast === 0 ? 1 : totalScheduled / totalForecast
-  const highRiskCount = risks.filter((risk) => risk.risk_level === "high").length
 
   return (
     <AppShell
@@ -146,27 +140,6 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             description={`缺口 ${totalGap} 人次`}
           />
         </section>
-        <MvpFlowSummary
-          planCount={plans.length}
-          highRiskCount={highRiskCount}
-          totalGap={totalGap}
-        />
-        <Card>
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle>排班风险提示</CardTitle>
-              <CardDescription>
-                缺口与不可用记录的联动提示
-              </CardDescription>
-            </div>
-            <Badge variant={highRiskCount > 0 ? "default" : "outline"}>
-              {highRiskCount} 条高风险
-            </Badge>
-          </CardHeader>
-          <CardContent>
-            <ScheduleRiskTable risks={risks.slice(0, 5)} />
-          </CardContent>
-        </Card>
         <SchedulePlanTable
           plans={plans}
           filterLabel={

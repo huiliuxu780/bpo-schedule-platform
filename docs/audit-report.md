@@ -4598,3 +4598,17 @@
 - `components/app-sidebar.tsx` 已移除旧 demo 入口。
 - `scripts/tests/navigation-breadcrumb-rules.test.mjs` 新增结构测试，防止旧 demo 入口重新回到 Sidebar。
 - 浏览器烟测确认本地 Sidebar 保留已确认入口，且不再显示 `班次明细`、`不可用管理`。
+
+### 2026-06-15 - IM187 收口排班计划旧链路入口
+
+#### 审计计划
+
+- 只收口当前 `/schedule-plans` 和 `/schedule-plans/[planId]` 页面里的旧 demo 深链。
+- 旧 `/schedule-risks`、`/shift-details`、`/unavailability` 路由保持兼容，不扩大为路由删除。
+- 本轮不新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `/schedule-plans` 已移除旧链路卡和旧风险表。
+- `/schedule-plans/[planId]` 已移除旧复核链路按钮和旧风险/不可用查询。
+- 已删除两个不再使用的旧链路组件，并新增结构测试防止当前排班计划入口重新链接到旧 demo 路由。

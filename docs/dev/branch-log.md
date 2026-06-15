@@ -4340,3 +4340,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM187 Schedule Plan Legacy Entry Cleanup
+
+- branch_name: `codex/im187-schedule-plan-legacy-entry-cleanup`
+- base_main_commit: `42d0571`
+- stacked_on: `codex/im186-legacy-planning-ia-cleanup`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM186. Remove old demo deep links from the current schedule-plan list and detail pages while preserving the legacy `/schedule-risks`, `/shift-details`, and `/unavailability` route files.
+- allowed_files_check: `app/schedule-plans/page.tsx`, `app/schedule-plans/[planId]/page.tsx`, old link components, focused structure test, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected removal of schedule-plan old flow/risk entry points, deletion of unused old link components, regression test, and traceability updates only; no legacy route deletion, new page, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/schedule-plan-legacy-entry-rules.test.mjs` first failed because schedule-plan pages still linked to old demo routes and old link components still existed; after implementation, the test passed. `npm run typecheck` and `npm run lint` passed. Browser smoke on `/schedule-plans` and a schedule-plan detail page confirmed current pages no longer expose old demo route hrefs. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
