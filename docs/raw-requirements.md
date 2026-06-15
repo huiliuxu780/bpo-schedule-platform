@@ -3391,3 +3391,16 @@ version: "1.0"
 status: "done"
 notes: "IM185 已完成：主数据组织/技能导航项改为 prefix 高亮，SiteHeader 增加稳定 header/breadcrumb/title slot，结构测试防止恢复未经确认的质量中心/数据质量中心/导入中心入口；未新增业务导航模块、业务页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R886 - 收口旧计划脚手架导航入口
+
+```yaml
+id: R886
+module: "前端健康恢复"
+description: "恢复阶段完成后，Sidebar 仍保留旧前端 demo 的 `班次明细` 和 `不可用管理` 入口。它们不是当前已确认业务主线入口，容易让产品 IA 再次混入未确认模块。需要只从 Sidebar 收口这些入口，并保留旧路由兼容。"
+source: "PM 反馈：不要把未确认模块伪装成需求；恢复后继续清理旧 demo 导航残留。"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM186 已完成：`components/app-sidebar.tsx` 不再暴露 `班次明细` 和 `不可用管理` Sidebar 入口；旧 `/shift-details`、`/unavailability` 路由未删除；结构测试防止这些旧 demo 入口回流。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```

@@ -2300,3 +2300,12 @@
 - action: 完成导航和 Breadcrumb 规则复核。
 - status: `done`
 - notes: 主数据组织/技能导航项已改为 prefix，高亮覆盖详情/新建/编辑页；`SiteHeader` 增加 header、breadcrumb、title 稳定 slot；新增结构测试防止恢复未经确认的质量中心/数据质量中心/导入中心入口。浏览器烟测确认 `/master-data/organizations/new` 与 `/master-data/skills/new` 对应父级导航高亮、Breadcrumb slot 存在且控制台无 error。本轮未新增业务导航模块、业务页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM186`
+- source_ids:
+  - `R886`
+- story_ids:
+  - `US806`
+- action: 收口旧计划脚手架导航入口。
+- status: `done`
+- notes: `components/app-sidebar.tsx` 不再暴露旧 demo 的 `班次明细` 和 `不可用管理` 入口；旧 `/shift-details`、`/unavailability` 路由保留不删除；`scripts/tests/navigation-breadcrumb-rules.test.mjs` 新增结构规则防止旧入口回流。浏览器烟测确认本地 Sidebar 仍显示已确认入口并且不再显示旧 demo 入口。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

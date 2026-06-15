@@ -6052,3 +6052,24 @@ acceptance:
 status: "done"
 notes: "IM185 已完成：导航/Breadcrumb 规则已由结构测试固化，详情/新建/编辑页父级高亮和 header breadcrumb slot 有回归保护。"
 ```
+
+### US806 - 收口旧计划脚手架导航入口
+
+```yaml
+id: US806
+requirement_ids:
+  - R886
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 Sidebar 不再暴露旧 demo 的班次明细和不可用管理入口，以便当前产品入口只呈现已确认业务模块。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "Sidebar 保留已确认的经营总览、需求计划、排班计划、登录/状态日志和主数据入口。"
+  - "Sidebar 不再暴露 `班次明细`、`不可用管理`、`/shift-details`、`/unavailability` 入口。"
+  - "旧路由文件不删除，避免扩大为路由清理或迁移任务。"
+  - "结构测试防止旧 demo 入口回流。"
+  - "不新增页面、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM186 已完成：旧计划脚手架入口已从 Sidebar 收口，导航结构测试已覆盖。"
+```

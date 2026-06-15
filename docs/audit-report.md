@@ -4584,3 +4584,17 @@
 - `components/site-header.tsx` 增加稳定 `site-header`、`site-header-breadcrumb`、`site-header-title` slot。
 - 新增结构测试 `scripts/tests/navigation-breadcrumb-rules.test.mjs`，先确认组织/技能 prefix 和 header slot 缺失时红灯，再实现规则。
 - 浏览器烟测确认 `/master-data/organizations/new` 与 `/master-data/skills/new` 对应父级导航高亮、Breadcrumb slot 存在且控制台无 error。
+
+### 2026-06-15 - IM186 收口旧计划脚手架导航入口
+
+#### 审计计划
+
+- 只从 Sidebar 收口旧 demo 入口 `班次明细` 和 `不可用管理`。
+- 旧 `/shift-details`、`/unavailability` 路由保持兼容，不扩大为路由删除或模型改名。
+- 本轮不新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 执行结果
+
+- `components/app-sidebar.tsx` 已移除旧 demo 入口。
+- `scripts/tests/navigation-breadcrumb-rules.test.mjs` 新增结构测试，防止旧 demo 入口重新回到 Sidebar。
+- 浏览器烟测确认本地 Sidebar 保留已确认入口，且不再显示 `班次明细`、`不可用管理`。

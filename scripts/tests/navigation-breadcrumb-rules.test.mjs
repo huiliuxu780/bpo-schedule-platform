@@ -29,6 +29,13 @@ test("sidebar keeps confirmed navigation modules and rejects generic data-qualit
   assert.doesNotMatch(sidebar, /href: "\/data-quality"/)
 })
 
+test("sidebar does not expose legacy planning demo routes as product entries", () => {
+  assert.doesNotMatch(sidebar, /title: "班次明细"/)
+  assert.doesNotMatch(sidebar, /href: "\/shift-details"/)
+  assert.doesNotMatch(sidebar, /title: "不可用管理"/)
+  assert.doesNotMatch(sidebar, /href: "\/unavailability"/)
+})
+
 test("master-data detail create and edit pages use parent-path sidebar matching", () => {
   assertPrefixNavItem("客服人员", "/master-data/agents")
   assertPrefixNavItem("组织", "/master-data/organizations")

@@ -83,8 +83,6 @@ const nav: NavGroup[] = [
         href: "/schedule-plans",
         activeMatch: "prefix",
       },
-      { title: "班次明细", href: "/shift-details", activeMatch: "exact" },
-      { title: "不可用管理", href: "/unavailability", activeMatch: "exact", tag: "P1" },
     ],
   },
   {
