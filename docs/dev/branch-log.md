@@ -19,6 +19,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM188 Forecast Version Entry Semantics
+
+- branch_name: `codex/im188-forecast-version-entry-semantics`
+- base_main_commit: `bbb5ba3`
+- stacked_on: `codex/im187-schedule-plan-legacy-entry-cleanup`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM187 and frontend recovery Stage 5. Clarify forecast-version entry semantics on the existing demand forecast version list/detail route without adding routes or write capabilities.
+- allowed_files_check: `app/demand-plans/production/[batchId]/page.tsx`, `components/demand-forecast-production-model.ts`, `components/demand-forecast-production-workbench.tsx`, demand-forecast focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected forecast-version copy/model semantics, focused regression test, and traceability updates only; no new route, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/demand-forecast-version-entry-semantics.test.mjs` first failed because list action and detail return/copy still used old semantics; after implementation, the new structure test passed. Existing `node --test scripts/tests/demand-forecast-production-model.test.mjs` passed, `npm run typecheck` passed, `npm run lint` passed, `bash scripts/check-state.sh --strict` passed, and HTTP smoke on `/demand-plans/production` plus `/demand-plans/production/BATCH-FC-001` returned 200 with new version semantics. `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM177 Core Route Loading States
 
 - branch_name: `codex/im177-core-route-loading-states`

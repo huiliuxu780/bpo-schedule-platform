@@ -117,7 +117,7 @@ test("demand forecast production workbench summarizes applied forecast versions"
   assert.equal(summary.rows[0].alignmentLabel, "技能组/等级/时段已对齐");
   assert.equal(summary.rows[0].appliedRecordCountLabel, "336");
   assert.equal(summary.rows[0].blockerSummary, "无阻塞");
-  assert.equal(summary.rows[0].nextActionLabel, "查看版本详情");
+  assert.equal(summary.rows[0].nextActionLabel, "查看预测版本");
 });
 
 test("demand forecast production workbench blocks unapplied forecast versions", () => {
@@ -348,14 +348,14 @@ test("demand forecast production detail shows a blocked state for unknown batch"
   assert.equal(detail.title, "预测版本未定位");
   assert.equal(detail.batchId, "BATCH-MISSING");
   assert.equal(detail.versionLabel, "未找到对应需求预测批次");
-  assert.equal(detail.blockerSummary, "请返回需求计划选择来源批次");
+  assert.equal(detail.blockerSummary, "请返回预测版本列表选择已应用版本");
   assert.deepEqual(detail.comparisonEntry, {
     tone: "blocked",
     title: "无法进入比对",
     detail: "未定位预测业务版本或业务日，先回到需求计划选择已应用批次。",
     actionLabel: "查看业务版本列表",
     href: "/data-quality/versions?domain=demand_forecast",
-    blockerLabel: "阻塞：请返回需求计划选择来源批次",
+    blockerLabel: "阻塞：请返回预测版本列表选择已应用版本",
   });
   assert.equal(detail.changeBoundaryLabel, "暂无变更记录");
   assert.deepEqual(detail.changeRows, []);

@@ -80,7 +80,7 @@ export function DemandForecastProductionWorkbench({
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <AlertTriangle className="size-4 text-destructive" />
-              预测来源读取失败
+              预测版本读取失败
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">{error}</CardContent>
@@ -128,7 +128,7 @@ export function DemandForecastProductionWorkbench({
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild size="sm" variant="ghost">
-              <Link href="/demand-plans">返回需求计划</Link>
+              <Link href="/demand-plans">返回需求计划列表</Link>
             </Button>
           </div>
         </CardContent>
@@ -237,12 +237,12 @@ export function DemandForecastProductionDetail({
             <Button asChild size="sm" variant="ghost">
               <Link href={detail.workbenchHref}>
                 <ArrowLeft data-icon="inline-start" />
-                返回需求计划
+                {detail.workbenchLabel}
               </Link>
             </Button>
           </div>
           <p className="max-w-3xl text-sm text-muted-foreground">
-            查看单个需求预测来源批次对应的业务版本、技能组/等级/时段对齐口径和预测明细。
+            查看单个需求预测业务版本的技能组、等级、0.5h 时段对齐口径和预测明细。
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -257,7 +257,7 @@ export function DemandForecastProductionDetail({
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <AlertTriangle className="size-4 text-destructive" />
-              预测来源读取失败
+              预测版本读取失败
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">{error}</CardContent>

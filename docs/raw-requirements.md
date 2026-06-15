@@ -3417,3 +3417,16 @@ version: "1.0"
 status: "done"
 notes: "IM187 已完成：`/schedule-plans` 不再渲染旧链路卡和风险表，`/schedule-plans/[planId]` 不再渲染旧复核链路按钮；已删除两个不再使用的旧链路组件；旧 `/schedule-risks`、`/shift-details`、`/unavailability` 路由保留。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R888 - 预测版本详情入口语义收口
+
+```yaml
+id: R888
+module: "业务版本流"
+description: "前端健康恢复阶段完成后，业务版本流从预测版本开始继续推进。现有 `/demand-plans/production` 与详情页已经可查看预测版本，但入口、返回文案和详情说明仍容易混入来源批次处理语义。需要在不新增路由或能力的前提下，把列表行操作、详情页 header 和 Breadcrumb 语义收口为预测版本详情。"
+source: "docs/frontend-health-recovery-plan.md Stage 5 business-version flows"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM188 已完成：`/demand-plans/production` 列表行操作改为 `查看预测版本`，预测版本详情页返回入口和说明文案保持预测版本语义；新增结构测试防止退回来源批次处理语义。本轮未新增页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
