@@ -6073,3 +6073,24 @@ acceptance:
 status: "done"
 notes: "IM186 已完成：旧计划脚手架入口已从 Sidebar 收口，导航结构测试已覆盖。"
 ```
+
+### US807 - 收口排班计划旧链路入口
+
+```yaml
+id: US807
+requirement_ids:
+  - R887
+module: "前端健康恢复"
+role: "排班计划使用者"
+story: "作为排班计划使用者，我希望排班计划列表和详情页只停留在计划本身，不再把我带入旧 demo 的风险、班次明细或不可用页面。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/schedule-plans` 不再导入或渲染旧链路卡、旧风险表或旧 demo 路由链接。"
+  - "`/schedule-plans/[planId]` 不再查询旧风险/不可用数据，也不再渲染旧复核链路按钮。"
+  - "旧 `/schedule-risks`、`/shift-details`、`/unavailability` 路由保留，不扩大为路由删除任务。"
+  - "结构测试防止当前排班计划入口重新链接到旧 demo 路由。"
+  - "不新增页面、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM187 已完成：当前排班计划入口已停止跳转旧 demo 路由，旧路由仍保留兼容。"
+```

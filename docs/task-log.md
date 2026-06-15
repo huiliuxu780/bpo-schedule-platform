@@ -2309,3 +2309,12 @@
 - action: 收口旧计划脚手架导航入口。
 - status: `done`
 - notes: `components/app-sidebar.tsx` 不再暴露旧 demo 的 `班次明细` 和 `不可用管理` 入口；旧 `/shift-details`、`/unavailability` 路由保留不删除；`scripts/tests/navigation-breadcrumb-rules.test.mjs` 新增结构规则防止旧入口回流。浏览器烟测确认本地 Sidebar 仍显示已确认入口并且不再显示旧 demo 入口。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM187`
+- source_ids:
+  - `R887`
+- story_ids:
+  - `US807`
+- action: 收口排班计划旧链路入口。
+- status: `done`
+- notes: `/schedule-plans` 不再渲染旧链路卡和旧风险表，`/schedule-plans/[planId]` 不再查询旧风险/不可用数据或渲染旧复核链路按钮；删除不再使用的 `components/mvp-flow-summary.tsx` 和 `components/schedule-risk-table.tsx`；旧 `/schedule-risks`、`/shift-details`、`/unavailability` 路由保留不删除。浏览器烟测确认当前排班计划入口没有旧 demo 路由 href。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
