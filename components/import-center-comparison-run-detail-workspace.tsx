@@ -59,9 +59,9 @@ export function ImportCenterComparisonRunDetailWorkspace({
       <section className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="grid gap-2">
           <Button asChild size="sm" variant="ghost" className="w-fit px-0">
-            <Link href="/data-quality/review-cases">
+            <Link href="/data-quality/versions">
               <ArrowLeft data-icon="inline-start" />
-              返回复核案例
+              返回业务版本列表
             </Link>
           </Button>
           <div>

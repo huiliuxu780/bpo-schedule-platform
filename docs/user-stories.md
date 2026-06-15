@@ -6154,3 +6154,23 @@ acceptance:
 status: "done"
 notes: "IM190 已完成：登录/状态日志版本列表和详情页入口语义已收口为日志版本，不新增路由或写能力。"
 ```
+
+### US811 - 对比运行详情结果回看入口语义收口
+
+```yaml
+id: US811
+requirement_ids:
+  - R891
+module: "业务版本流"
+role: "比对结果查看者"
+story: "作为比对结果查看者，我希望对比运行详情页明确是业务版本语境下的结果回看页，而不是默认把我带回复核案例列表。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/data-quality/comparison-runs/[runId]` 顶部返回入口回到业务版本列表。"
+  - "页面保留来源链路 tab 内的来源批次和复核案例入口，不把来源批次或复核案例设为详情页父级。"
+  - "结构测试防止对比运行详情页主返回入口退回 `返回复核案例`。"
+  - "不新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM191 已完成：对比运行详情页主返回入口已收口为业务版本列表，不新增路由或写能力。"
+```
