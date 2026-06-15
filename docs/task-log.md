@@ -2336,3 +2336,12 @@
 - action: 排班版本详情入口语义收口。
 - status: `done`
 - notes: `/schedule-plans/production` 列表行操作改为 `查看排班版本`，`/schedule-plans/production/[batchId]` 返回入口改为 `返回排班版本列表`，错误标题和详情说明改为排班版本语义；新增结构测试防止退回来源批次处理语义。HTTP 烟测确认列表页和详情页返回 200，页面 HTML 包含新语义且不包含旧短语。本轮未新增路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM190`
+- source_ids:
+  - `R890`
+- story_ids:
+  - `US810`
+- action: 登录/状态日志版本详情入口语义收口。
+- status: `done`
+- notes: `/actual-logs/production` 列表行操作改为 `查看日志版本`，`/actual-logs/production/[batchId]` 返回入口改为 `返回日志版本列表`，错误标题和详情说明改为日志版本语义；新增结构测试防止退回来源批次处理语义。Browser/HTTP 烟测确认详情页返回 200，页面包含 `日志版本详情`、`返回日志版本列表` 和 `日志版本详情读取失败`，且不包含旧返回入口或旧批次明细错误文案。本轮未新增路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

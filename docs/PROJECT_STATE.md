@@ -1016,3 +1016,9 @@ This slice reuses the existing `/demand-plans/production/[batchId]` compatibilit
 `IM189` applies the same business-version entry rule to personnel schedules. The existing schedule-version list and detail route now use schedule-version semantics consistently: list rows say `查看排班版本`, the detail return action says `返回排班版本列表`, and the detail explanation no longer frames the page as source-batch processing.
 
 This slice reuses the existing `/schedule-plans/production/[batchId]` compatibility route and existing API. It does not add routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM190 Actual Log Version Entry Semantics
+
+`IM190` applies the same business-version entry rule to actual logs. The existing login/status-log version list and detail route now use log-version semantics consistently: list rows say `查看日志版本`, the detail return action says `返回日志版本列表`, and the detail error/copy no longer frames the page as source-batch processing.
+
+This slice reuses the existing `/actual-logs/production/[batchId]` compatibility route and existing API. It does not add routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
