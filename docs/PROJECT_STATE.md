@@ -1004,3 +1004,9 @@ This slice adds a navigation structure test to prevent those legacy demo entries
 `IM187` stopped the current schedule-plan list and detail pages from linking into old demo route clusters. `/schedule-plans` no longer renders the old flow summary or risk table, and `/schedule-plans/[planId]` no longer queries old risk/unavailability data or renders old review-chain buttons.
 
 The legacy `/schedule-risks`, `/shift-details`, and `/unavailability` route files remain in place for compatibility. This slice does not add pages, change backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM188 Forecast Version Entry Semantics
+
+`IM188` resumed the business-version flow after the frontend recovery cleanup. The existing forecast-version list and detail route now use forecast-version semantics consistently: list rows say `查看预测版本`, the detail return action says `返回预测版本列表`, and the detail explanation no longer frames the page as source-batch processing.
+
+This slice reuses the existing `/demand-plans/production/[batchId]` compatibility route and existing API. It does not add routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

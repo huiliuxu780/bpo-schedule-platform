@@ -6094,3 +6094,23 @@ acceptance:
 status: "done"
 notes: "IM187 已完成：当前排班计划入口已停止跳转旧 demo 路由，旧路由仍保留兼容。"
 ```
+
+### US808 - 预测版本详情入口语义收口
+
+```yaml
+id: US808
+requirement_ids:
+  - R888
+module: "业务版本流"
+role: "需求预测使用者"
+story: "作为需求预测使用者，我希望预测版本列表里的查看操作和详情页都明确围绕预测业务版本，而不是让我误以为进入的是导入批次处理页面。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/demand-plans/production` 列表行操作明确进入预测版本详情。"
+  - "`/demand-plans/production/[batchId]` Breadcrumb、返回入口和页面说明保持预测版本语义。"
+  - "结构测试防止预测版本详情入口退回来源批次处理语义。"
+  - "不新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM188 已完成：预测版本列表和详情页入口语义已收口为预测版本，不新增路由或写能力。"
+```

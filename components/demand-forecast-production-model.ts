@@ -51,6 +51,7 @@ export type DemandForecastProductionDetailSummary = {
   versionLabel: string
   sourceBatchHref: string
   workbenchHref: string
+  workbenchLabel: string
   businessDateLabel: string
   uploadedAtLabel: string
   applicationLabel: DemandForecastProductionRow["applicationLabel"]
@@ -363,7 +364,7 @@ function toDemandForecastProductionRow(
     tone,
     appliedRecordCountLabel: batch.applied_record_count.toLocaleString("zh-CN"),
     blockerSummary: resolveDemandForecastBlocker(batch, hasVersion, isApplied),
-    nextActionLabel: "查看版本详情",
+    nextActionLabel: "查看预测版本",
   }
 }
 
@@ -387,6 +388,7 @@ export function summarizeDemandForecastProductionDetail(
       versionLabel: "未找到对应需求预测批次",
       sourceBatchHref: "/demand-plans/production",
       workbenchHref: "/demand-plans/production",
+      workbenchLabel: "返回预测版本列表",
       businessDateLabel: "未定位",
       uploadedAtLabel: "未定位",
       applicationLabel: "待应用",
@@ -397,7 +399,7 @@ export function summarizeDemandForecastProductionDetail(
       timeBucketLabel: "未发现 0.5h 预测明细",
       forecastScopeLabel: "未定位来源批次，暂无技能组/等级/时段行",
       alignmentResultLabel: "未发现技能组/等级/时段对齐结果",
-      blockerSummary: "请返回需求计划选择来源批次",
+      blockerSummary: "请返回预测版本列表选择已应用版本",
       intervalRows: [],
       changeRows: [],
       changeBoundaryLabel: "暂无变更记录",
@@ -405,7 +407,7 @@ export function summarizeDemandForecastProductionDetail(
         tone: "blocked",
         versionLabel: null,
         businessDate: null,
-        blockerSummary: "请返回需求计划选择来源批次",
+        blockerSummary: "请返回预测版本列表选择已应用版本",
       }),
       workspaceTabs: [...DEMAND_FORECAST_PRODUCTION_WORKSPACE_TABS],
     }
@@ -466,6 +468,7 @@ export function summarizeDemandForecastProductionDetail(
     versionLabel,
     sourceBatchHref: row.sourceBatchHref,
     workbenchHref: "/demand-plans/production",
+    workbenchLabel: "返回预测版本列表",
     businessDateLabel,
     uploadedAtLabel: row.uploadedAtLabel,
     applicationLabel: row.applicationLabel,
