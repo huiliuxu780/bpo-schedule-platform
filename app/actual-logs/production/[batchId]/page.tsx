@@ -26,10 +26,10 @@ export default async function ActualLogProcessingDetailPage({ params }: PageProp
 
   return (
     <AppShell
-      title="日志处理解释"
+      title="日志版本详情"
       breadcrumbItems={[
         { label: "登录/状态日志", href: "/actual-logs/production" },
-        { label: "日志处理解释" },
+        { label: "日志版本详情" },
       ]}
     >
       <ActualLogProcessingDetail
@@ -53,7 +53,7 @@ async function fetchImportBatchDetail(
     if (!response.ok) {
       return {
         data: null,
-        error: `批次明细读取失败（状态码 ${response.status}）`,
+        error: `日志版本详情读取失败（状态码 ${response.status}）`,
       }
     }
 

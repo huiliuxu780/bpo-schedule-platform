@@ -37,6 +37,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM190 Actual Log Version Entry Semantics
+
+- branch_name: `codex/im190-actual-log-version-entry-semantics`
+- base_main_commit: `7ee732b`
+- stacked_on: `codex/im189-schedule-version-entry-semantics`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM189. Clarify actual-log version entry semantics on the existing login/status-log version list/detail route without adding routes or write capabilities.
+- allowed_files_check: `app/actual-logs/production/[batchId]/page.tsx`, `components/actual-log-production-model.ts`, `components/actual-log-production-workbench.tsx`, actual-log focused tests, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected log-version copy/model semantics, focused regression test, and traceability updates only; no new route, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/actual-log-version-entry-semantics.test.mjs` first failed because list action and detail return/copy still used old semantics; after implementation, the new structure test passed. Existing `node --test scripts/tests/actual-log-production-model.test.mjs` passed, `npm run typecheck` passed, `npm run lint` passed, and Browser/HTTP smoke on `/actual-logs/production/BATCH-STATUS-001` returned 200 with new version semantics and without the old batch-detail error copy. `bash scripts/check-state.sh --strict` and `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM188 Forecast Version Entry Semantics
 
 - branch_name: `codex/im188-forecast-version-entry-semantics`

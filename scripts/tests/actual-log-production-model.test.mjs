@@ -449,7 +449,8 @@ test("actual log processing detail points unknown batches back to the log entry"
   const detail = summarizeActualLogProcessingDetail([baseStatusBatch], "BATCH-MISSING");
 
   assert.equal(detail.tone, "blocked");
-  assert.equal(detail.title, "日志处理批次未定位");
-  assert.equal(detail.detail, "当前来源批次不在登录/状态日志列表中，无法展示处理解释。");
-  assert.equal(detail.blockerSummary, "请返回登录/状态日志选择来源批次");
+  assert.equal(detail.title, "日志版本未定位");
+  assert.equal(detail.detail, "当前日志版本不在日志版本列表中，无法展示处理解释。");
+  assert.equal(detail.workbenchLabel, "返回日志版本列表");
+  assert.equal(detail.blockerSummary, "请返回日志版本列表选择已应用版本");
 });

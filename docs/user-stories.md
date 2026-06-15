@@ -6134,3 +6134,23 @@ acceptance:
 status: "done"
 notes: "IM189 已完成：排班版本列表和详情页入口语义已收口为排班版本，不新增路由或写能力。"
 ```
+
+### US810 - 登录/状态日志版本详情入口语义收口
+
+```yaml
+id: US810
+requirement_ids:
+  - R890
+module: "业务版本流"
+role: "登录/状态日志使用者"
+story: "作为登录/状态日志使用者，我希望日志版本列表里的查看操作和详情页都明确围绕实际日志业务版本，而不是让我误以为进入的是导入批次处理页面。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/actual-logs/production` 列表行操作明确进入日志版本详情。"
+  - "`/actual-logs/production/[batchId]` Breadcrumb、返回入口和页面说明保持日志版本语义。"
+  - "结构测试防止日志版本详情入口退回来源批次处理语义。"
+  - "不新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM190 已完成：登录/状态日志版本列表和详情页入口语义已收口为日志版本，不新增路由或写能力。"
+```
