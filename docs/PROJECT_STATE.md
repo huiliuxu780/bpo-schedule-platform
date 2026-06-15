@@ -1022,3 +1022,9 @@ This slice reuses the existing `/schedule-plans/production/[batchId]` compatibil
 `IM190` applies the same business-version entry rule to actual logs. The existing login/status-log version list and detail route now use log-version semantics consistently: list rows say `查看日志版本`, the detail return action says `返回日志版本列表`, and the detail error/copy no longer frames the page as source-batch processing.
 
 This slice reuses the existing `/actual-logs/production/[batchId]` compatibility route and existing API. It does not add routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM191 Comparison Result Entry Semantics
+
+`IM191` aligns the comparison-run detail page with business-version result review navigation. The existing `/data-quality/comparison-runs/[runId]` page now uses `返回业务版本列表` as its primary return action instead of defaulting to the review-case list.
+
+This slice keeps source-batch and review-case links inside their existing tabs. It does not add routes, comparison triggers, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

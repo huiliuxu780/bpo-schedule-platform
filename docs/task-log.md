@@ -2345,3 +2345,12 @@
 - action: 登录/状态日志版本详情入口语义收口。
 - status: `done`
 - notes: `/actual-logs/production` 列表行操作改为 `查看日志版本`，`/actual-logs/production/[batchId]` 返回入口改为 `返回日志版本列表`，错误标题和详情说明改为日志版本语义；新增结构测试防止退回来源批次处理语义。Browser/HTTP 烟测确认详情页返回 200，页面包含 `日志版本详情`、`返回日志版本列表` 和 `日志版本详情读取失败`，且不包含旧返回入口或旧批次明细错误文案。本轮未新增路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM191`
+- source_ids:
+  - `R891`
+- story_ids:
+  - `US811`
+- action: 对比运行详情结果回看入口语义收口。
+- status: `done`
+- notes: `/data-quality/comparison-runs/[runId]` 顶部主返回入口改为 `返回业务版本列表`，来源链路 tab 内的来源批次和复核案例入口保持不变；新增结构测试防止退回 `返回复核案例`。HTTP 烟测确认详情页 HTML 包含 `返回业务版本列表` 和 `对比运行详情`，不包含旧主返回文案。本轮未新增路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

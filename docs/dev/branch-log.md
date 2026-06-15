@@ -55,6 +55,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM191 Comparison Result Entry Semantics
+
+- branch_name: `codex/im191-comparison-result-entry-semantics`
+- base_main_commit: `7fc155d`
+- stacked_on: `codex/im190-actual-log-version-entry-semantics`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM190. Clarify comparison-run detail primary return semantics without adding routes, calculation triggers, or write capabilities.
+- allowed_files_check: `components/import-center-comparison-run-detail-workspace.tsx`, `scripts/tests/comparison-result-entry-semantics.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected primary return href/copy change, focused regression test, and traceability updates only; no new route, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/comparison-result-entry-semantics.test.mjs` first failed because the page still returned to review cases; after implementation, the focused test passed. `npm run typecheck` passed, `npm run lint` passed, and HTTP smoke on `/data-quality/comparison-runs/RUN-IM085-SA-001` returned 200 with `返回业务版本列表` and without `返回复核案例`. `bash scripts/check-state.sh --strict` and `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM188 Forecast Version Entry Semantics
 
 - branch_name: `codex/im188-forecast-version-entry-semantics`

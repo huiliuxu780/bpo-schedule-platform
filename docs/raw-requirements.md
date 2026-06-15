@@ -3456,3 +3456,16 @@ version: "1.0"
 status: "done"
 notes: "IM190 已完成：`/actual-logs/production` 列表行操作改为 `查看日志版本`，日志版本详情页返回入口改为 `返回日志版本列表`，错误标题和详情说明改为日志版本语义；新增结构测试防止退回来源批次处理语义。本轮未新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
 ```
+
+### R891 - 对比运行详情结果回看入口语义收口
+
+```yaml
+id: R891
+module: "业务版本流"
+description: "业务版本列表和三类版本详情入口语义已经收口后，对比运行详情应继续采用结果回看口径。现有 `/data-quality/comparison-runs/[runId]` 已经展示完整结果回看、来源链路和复核案例，但顶部主返回入口仍默认回到复核案例，容易把对比运行详情误导成复核案例子页。需要在不新增路由或计算能力的前提下，把主入口统一为业务版本结果回看语义。"
+source: "docs/frontend-health-recovery-plan.md Stage 5 comparison trigger and result review"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM191 已完成：`/data-quality/comparison-runs/[runId]` 顶部主返回入口改为 `返回业务版本列表`，来源链路和复核案例仍保留在页内 tab；新增结构测试防止退回 `返回复核案例`。本轮未新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+```
