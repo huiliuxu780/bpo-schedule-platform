@@ -1010,3 +1010,9 @@ The legacy `/schedule-risks`, `/shift-details`, and `/unavailability` route file
 `IM188` resumed the business-version flow after the frontend recovery cleanup. The existing forecast-version list and detail route now use forecast-version semantics consistently: list rows say `查看预测版本`, the detail return action says `返回预测版本列表`, and the detail explanation no longer frames the page as source-batch processing.
 
 This slice reuses the existing `/demand-plans/production/[batchId]` compatibility route and existing API. It does not add routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM189 Schedule Version Entry Semantics
+
+`IM189` applies the same business-version entry rule to personnel schedules. The existing schedule-version list and detail route now use schedule-version semantics consistently: list rows say `查看排班版本`, the detail return action says `返回排班版本列表`, and the detail explanation no longer frames the page as source-batch processing.
+
+This slice reuses the existing `/schedule-plans/production/[batchId]` compatibility route and existing API. It does not add routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

@@ -4626,3 +4626,17 @@
 - 预测版本列表行操作改为 `查看预测版本`。
 - 预测版本详情页返回入口改为 `返回预测版本列表`，说明文案聚焦预测业务版本。
 - 新增结构测试 `scripts/tests/demand-forecast-version-entry-semantics.test.mjs`，防止详情入口退回来源批次处理语义。
+
+### 2026-06-15 - IM189 排班版本详情入口语义收口
+
+#### 审计计划
+
+- 延续 IM188 的业务版本入口规则，对排班版本做同构收口。
+- 只使用现有 `/schedule-plans/production` 与 `/schedule-plans/production/[batchId]` 路由，不新增版本路由或后端接口。
+- 本轮不新增发布、冻结、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 排班版本列表行操作改为 `查看排班版本`。
+- 排班版本详情页返回入口改为 `返回排班版本列表`，说明文案聚焦排班业务版本。
+- 新增结构测试 `scripts/tests/personnel-schedule-version-entry-semantics.test.mjs`，防止详情入口退回来源批次处理语义。

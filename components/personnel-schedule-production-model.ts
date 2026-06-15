@@ -94,6 +94,7 @@ export type PersonnelScheduleProductionDetailSummary = {
   versionLabel: string
   sourceBatchHref: string
   workbenchHref: string
+  workbenchLabel: string
   businessDateLabel: string
   uploadedAtLabel: string
   applicationLabel: PersonnelScheduleProductionRow["applicationLabel"]
@@ -365,7 +366,7 @@ function toPersonnelScheduleProductionRow(
     tone,
     appliedRecordCountLabel: batch.applied_record_count.toLocaleString("zh-CN"),
     blockerSummary: resolvePersonnelScheduleBlocker(batch, hasVersion, isApplied),
-    nextActionLabel: "查看版本详情",
+    nextActionLabel: "查看排班版本",
   }
 }
 
@@ -389,6 +390,7 @@ export function summarizePersonnelScheduleProductionDetail(
       versionLabel: "未找到对应人员排班批次",
       sourceBatchHref: "/schedule-plans/production",
       workbenchHref: "/schedule-plans/production",
+      workbenchLabel: "返回排班版本列表",
       businessDateLabel: "未定位",
       uploadedAtLabel: "未定位",
       applicationLabel: "待应用",
@@ -398,14 +400,14 @@ export function summarizePersonnelScheduleProductionDetail(
       shiftReferenceLabel: "未定位来源批次，无法确认班次引用",
       personScopeLabel: "未定位来源批次，暂无人员明细",
       halfHourResultLabel: "未发现 0.5h 展开记录",
-      blockerSummary: "请返回排班计划选择来源批次",
+      blockerSummary: "请返回排班版本列表选择已应用版本",
       detailRows: [],
       intervalRows: [],
       comparisonEntry: buildPersonnelScheduleComparisonEntry({
         tone: "blocked",
         versionLabel: null,
         businessDate: null,
-        blockerSummary: "请返回排班计划选择来源批次",
+        blockerSummary: "请返回排班版本列表选择已应用版本",
       }),
       workspaceTabs: [...PERSONNEL_SCHEDULE_PRODUCTION_WORKSPACE_TABS],
     }
@@ -454,6 +456,7 @@ export function summarizePersonnelScheduleProductionDetail(
     versionLabel,
     sourceBatchHref: row.sourceBatchHref,
     workbenchHref: "/schedule-plans/production",
+    workbenchLabel: "返回排班版本列表",
     businessDateLabel,
     uploadedAtLabel: row.uploadedAtLabel,
     applicationLabel: row.applicationLabel,

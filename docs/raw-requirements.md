@@ -3430,3 +3430,16 @@ version: "1.0"
 status: "done"
 notes: "IM188 已完成：`/demand-plans/production` 列表行操作改为 `查看预测版本`，预测版本详情页返回入口和说明文案保持预测版本语义；新增结构测试防止退回来源批次处理语义。本轮未新增页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
 ```
+
+### R889 - 排班版本详情入口语义收口
+
+```yaml
+id: R889
+module: "业务版本流"
+description: "预测版本入口语义已经收口后，排班版本应采用同一产品口径。现有 `/schedule-plans/production` 与详情页已经可查看排班版本，但列表操作、详情返回和页面说明仍容易混入来源批次处理语义。需要在不新增路由或能力的前提下，把这些入口统一为排班版本详情语义。"
+source: "docs/frontend-health-recovery-plan.md Stage 5 business-version flows"
+submitted_at: "2026-06-15"
+version: "1.0"
+status: "done"
+notes: "IM189 已完成：`/schedule-plans/production` 列表行操作改为 `查看排班版本`，排班版本详情页返回入口和说明文案保持排班版本语义；新增结构测试防止退回来源批次处理语义。本轮未新增页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。"
+```
