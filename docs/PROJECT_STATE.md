@@ -992,3 +992,9 @@ This slice preserves existing form fields, required conditions, server actions, 
 `IM185` completed the recovery-stage navigation and Breadcrumb rule pass. Master-data organization and skill sidebar items now use prefix matching so detail, create, and edit child pages keep the correct parent item active, while `SiteHeader` exposes stable header, breadcrumb, and title slots for future structure checks.
 
 This slice does not add business navigation modules, pages, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. The recovery stage is now ready to hand back to business-version flows.
+
+## 2026-06-15 IM186 Legacy Planning Demo Sidebar Cleanup
+
+`IM186` removed the old planning demo entries `班次明细` and `不可用管理` from the product Sidebar, while keeping `/shift-details` and `/unavailability` route files in place for compatibility.
+
+This slice adds a navigation structure test to prevent those legacy demo entries from returning. It does not add pages, delete routes, change business models, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

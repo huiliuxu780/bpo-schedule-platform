@@ -4322,3 +4322,21 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM186 Legacy Planning Demo Sidebar Cleanup
+
+- branch_name: `codex/im186-legacy-planning-ia-cleanup`
+- base_main_commit: `66193b1d694dabcd7621935262fbcddc7a0d2fa7`
+- stacked_on: `codex/im185-navigation-breadcrumb-rules`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after recovery-stage cleanup. Remove only the old planning demo Sidebar entries `班次明细` and `不可用管理`; keep `/shift-details` and `/unavailability` route files for compatibility. Do not add business navigation modules or pages.
+- allowed_files_check: `components/app-sidebar.tsx`, `scripts/tests/navigation-breadcrumb-rules.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected Sidebar item removal, navigation regression test, traceability updates only; no route deletion, new page, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/navigation-breadcrumb-rules.test.mjs` first failed because Sidebar still exposed `班次明细`; after implementation, the navigation test passed. Browser smoke on local `127.0.0.1:3000` confirmed Sidebar keeps `经营总览/需求计划/排班计划/主数据` and no longer shows `班次明细/不可用管理`. `bash scripts/check-state.sh --strict`, `npm run lint`, `npm run typecheck`, and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
