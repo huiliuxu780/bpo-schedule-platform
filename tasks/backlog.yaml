@@ -11886,3 +11886,50 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "新增 `SearchInputBar` 和 `StatusFilterPills`，迁移 `/demand-plans`、`/schedule-plans`、`/shift-details`、`/unavailability` 四个列表页；保留原有查询参数、状态值、清空 href 和业务文案；结构测试通过。"
+  - id: IM197
+    title: "SimpleTable 首刀迁移 demand-plan-table"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM196"]
+    qoder_mode: true
+    product_design_brief:
+      goal: "抽取轻量表格渲染层，并只迁移预测需求表验证模式。"
+      visual_source: "现有 shadcn Table 与 TanStack Table 排序 UI，不做视觉重设计。"
+      interactivity: "保留排序、默认排序和空状态；不新增搜索、分页或列显隐。"
+    allowed_files:
+      - "components/simple-table.tsx"
+      - "components/demand-plan-table.tsx"
+      - "scripts/tests/simple-table-structure.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `components/simple-table.tsx`，集中轻量表格的 TanStack Table 渲染、排序和空状态。"
+      - "`components/demand-plan-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+      - "保留预测需求表的列、排序入口、默认排序、空状态文案和业务数据不变。"
+      - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "Qoder 需要修改 allowed_files 之外的文件"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要改动页面、路由、业务文案、后端、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "新增 `SimpleTable`，将 `demand-plan-table` 迁移为列定义 + SimpleTable 调用；保留默认排序、列、空状态文案和业务数据；结构测试、typecheck、lint、HTTP smoke 和最终 check.sh 通过。"

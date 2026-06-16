@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R897 - SimpleTable 首刀迁移 demand-plan-table
+
+```yaml
+id: R897
+module: "前端健康恢复"
+description: "第三方前端重构方案 Task 3 建议拆分表格渲染层，但一次性迁移 11 个表格风险过高。需要先新增轻量 `SimpleTable`，只迁移 `components/demand-plan-table.tsx` 作为第一刀，验证排序、渲染和空状态抽取方式。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + 代码事实盘点"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口和空状态文案；不重设计表格。"
+```
+
 ### R896 - 共享列表搜索与状态筛选控件
 
 ```yaml

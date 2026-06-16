@@ -4745,3 +4745,19 @@
 - 新增 `StatusFilterPills`，集中状态筛选按钮组 active/outline 渲染。
 - 四个旧列表页复用共享筛选控件；状态筛选页保留原有 status 值和 href 生成逻辑。
 - 新增结构测试防止四页重新内联 Search/Input/status map。
+
+### 2026-06-16 - IM197 SimpleTable 首刀迁移 demand-plan-table
+
+#### 审计计划
+
+- 按第三方重构方案 Task 3 做首刀验证，只迁移一个轻量子表格，不一次性迁移 11 个表格。
+- Product Design brief 锁定为保持现有 shadcn Table 视觉、列定义、排序入口和空状态文案。
+- Qoder 只允许新增 `SimpleTable` 和迁移 `demand-plan-table`；Codex 负责 diff 审查、验证、提交和推送控制。
+- 本轮不新增页面、路由、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `SimpleTable`，集中轻量表格的 TanStack Table 渲染、排序状态、header/body render loop 和空状态。
+- `demand-plan-table` 保留原列定义、状态 Badge、排序按钮和默认 `plan_date` 排序，渲染委托给 `SimpleTable`。
+- 新增结构测试防止 `demand-plan-table` 重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
+- HTTP smoke 覆盖正常列表和空状态。

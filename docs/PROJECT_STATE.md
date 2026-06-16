@@ -1062,3 +1062,9 @@ The structure test now covers six pages and prevents those pages from reintroduc
 `IM196` adds `components/search-input-bar.tsx` and `components/status-filter-pills.tsx` for the repeated old list filter bar pattern. `/demand-plans`, `/schedule-plans`, `/shift-details`, and `/unavailability` now reuse the shared search control; the three status-filtered pages also reuse the shared status pill renderer.
 
 This slice preserves existing route paths, query parameter names, status values, clear links, business copy, and table/card data. It does not change backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM197 SimpleTable First Slice
+
+`IM197` introduces `components/simple-table.tsx` as the first light-table extraction from the Task 3 refactor plan. `components/demand-plan-table.tsx` now keeps the demand forecast column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to `SimpleTable`.
+
+This validates the extraction pattern on one low-risk table before broader migration. It preserves existing columns, default sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
