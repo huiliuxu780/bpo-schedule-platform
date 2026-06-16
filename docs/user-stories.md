@@ -6195,3 +6195,23 @@ acceptance:
 status: "done"
 notes: "IM192 已完成：业务版本列表的本地比对入口、提交反馈和结果回看标题已收口为比对运行语义，不新增路由或写能力。"
 ```
+
+### US813 - 共享 lib helper 回归护栏
+
+```yaml
+id: US813
+requirement_ids:
+  - R893
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望共享 API/import helper 的恢复成果有结构回归护栏，以便后续重构不会悄悄恢复重复定义。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "新增结构测试确认 `lib/api-result.ts`、`lib/api-error.ts`、`lib/import-api.ts` 存在。"
+  - "结构测试确认共享 helper 的关键导出存在。"
+  - "结构测试限制 `formatApiError`、`fetchImportBatches`、`fetchImportFieldMappingTemplates` 的重复函数定义回流。"
+  - "不修改现有 `app/**`、`components/**`、`lib/**` 业务源码，不修改 package/lockfile 或 check 脚本。"
+status: "done"
+notes: "IM193 已完成：使用 Qoder 受控实现新增共享 lib helper 回归结构测试，Codex 审查与验证。"
+```

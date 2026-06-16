@@ -916,6 +916,7 @@ requirements:
   IM190: {file: "tasks/backlog.yaml", story_ids: ["US810"], gate: "frontend-scaffold"}
   IM191: {file: "tasks/backlog.yaml", story_ids: ["US811"], gate: "frontend-scaffold"}
   IM192: {file: "tasks/backlog.yaml", story_ids: ["US812"], gate: "frontend-scaffold"}
+  IM193: {file: "tasks/backlog.yaml", story_ids: ["US813"], gate: "harness"}
   R855: {file: "docs/raw-requirements.md", story_ids: ["US775"], task_ids: ["IM155"]}
   R856: {file: "docs/raw-requirements.md", story_ids: ["US776"], task_ids: ["IM156"]}
   R857: {file: "docs/raw-requirements.md", story_ids: ["US777"], task_ids: ["IM157"]}
@@ -954,6 +955,7 @@ requirements:
   R890: {file: "docs/raw-requirements.md", story_ids: ["US810"], task_ids: ["IM190"]}
   R891: {file: "docs/raw-requirements.md", story_ids: ["US811"], task_ids: ["IM191"]}
   R892: {file: "docs/raw-requirements.md", story_ids: ["US812"], task_ids: ["IM192"]}
+  R893: {file: "docs/raw-requirements.md", story_ids: ["US813"], task_ids: ["IM193"]}
 decisions:
   - "D-2026-05-12-state-governance-v3"
   - "D-2026-05-12-check-state-warning-only"
