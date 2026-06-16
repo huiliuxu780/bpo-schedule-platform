@@ -20,6 +20,26 @@
   status: "draft"
 ```
 
+### US817 - SimpleTable 首刀迁移 demand-plan-table
+
+```yaml
+id: US817
+requirement_ids:
+  - R897
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望先把一个轻量子表格迁移到共享 SimpleTable，以便验证表格分层抽取方式后再扩展到更多表格。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增 `components/simple-table.tsx`，集中轻量表格的 TanStack Table 渲染、排序和空状态。"
+  - "`components/demand-plan-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留预测需求表的列、排序入口、默认排序、空状态文案和业务数据不变。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
 ### US816 - 共享列表搜索与状态筛选控件
 
 ```yaml

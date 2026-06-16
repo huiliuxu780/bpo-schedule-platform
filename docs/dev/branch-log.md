@@ -57,6 +57,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM197 Simple Table First Slice
+
+- branch_name: `codex/im197-simple-table-first-slice`
+- base_main_commit: `pending stacked continuation from codex/im196-shared-list-filter-controls`
+- stacked_on: `codex/im196-shared-list-filter-controls`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Product Design preservation pass for Task 3. Add a reusable `SimpleTable` and migrate only `components/demand-plan-table.tsx` to validate the light-table extraction pattern before any broader table migration.
+- qoder_mode: `true; Codex writes Harness/task packet, Qoder may only perform mechanical component/test updates, Codex reviews diff and owns verification/commit.`
+- allowed_files_check: `components/simple-table.tsx`, `components/demand-plan-table.tsx`, `scripts/tests/simple-table-structure.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected shared SimpleTable, demand-plan table migration, one focused structure test, and traceability updates only; no page, route, business copy, data model, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/simple-table-structure.test.mjs` first failed because `components/simple-table.tsx` was missing and `components/demand-plan-table.tsx` still owned `useReactTable`, `flexRender`, and the shadcn Table render loop. Qoder ran with `--model ultimate` and only changed the allowed implementation files. Focused `node --test scripts/tests/simple-table-structure.test.mjs` passed with 3 tests. `npm run typecheck`, `npm run lint`, shadcn review grep checks, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. HTTP smoke for `/demand-plans` and `/demand-plans?query=__empty_simple_table_smoke__` preserved the normal list and empty state. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`
