@@ -482,12 +482,12 @@ test("version workbench exposes local comparison candidates with controlled subm
   assert.deepEqual(scheduleRow?.comparisonCandidate, {
     tone: "ready",
     canSubmit: true,
-    title: "可发起一次比对",
+    title: "可发起比对运行",
     detail: "当前版本可按 排班实际 和已定位来源版本组合提交一次比对；重复提交由后端幂等返回已有运行。",
     comparisonTypeLabel: "排班实际",
     versionPairLabel: "SCH-VERSION-001 / STATUS-VERSION-001",
     businessDateLabel: "2026-05-12 ~ 2026-05-12",
-    actionLabel: "发起一次比对",
+    actionLabel: "发起比对运行",
     href: "/data-quality/BATCH-SCH-CANDIDATE?tab=result-trace",
     sourceBatchId: "BATCH-SCH-CANDIDATE",
     request: {
@@ -553,12 +553,12 @@ test("version workbench accepts applied status entry links for direct forecast s
   assert.deepEqual(summary.rows[0].comparisonCandidate, {
     tone: "ready",
     canSubmit: true,
-    title: "可发起一次比对",
+    title: "可发起比对运行",
     detail: "当前版本可按 预测排班 和已定位来源版本组合提交一次比对；重复提交由后端幂等返回已有运行。",
     comparisonTypeLabel: "预测排班",
     versionPairLabel: "FC-VERSION-APPLIED / SCH-VERSION-APPLIED",
     businessDateLabel: "2026-05-18 ~ 2026-05-18",
-    actionLabel: "发起一次比对",
+    actionLabel: "发起比对运行",
     href: "/data-quality/BATCH-FC-APPLIED-LINK?tab=result-trace",
     sourceBatchId: "BATCH-FC-APPLIED-LINK",
     request: {
@@ -5201,10 +5201,10 @@ test("import center version comparison trigger only opens when source versions a
     {
       tone: "ready",
       canSubmit: true,
-      title: "可在当前版本语境发起比对",
+      title: "可在当前版本语境发起比对运行",
       detail: "将按 排班实际 和已定位版本组合重新生成一次对比运行。",
-      actionLabel: "发起一次比对",
-      nextAction: "提交后留在当前结果页查看反馈，再进入新运行详情或回看结果列表。",
+      actionLabel: "发起比对运行",
+      nextAction: "提交后留在当前结果页查看反馈，再进入新运行详情或回看比对运行列表。",
       comparisonTypeLabel: "排班实际",
       versionPairLabel: "SCH-VERSION-001 / STATUS-VERSION-001",
       businessDateLabel: "2026-05-01 ~ 2026-05-01",
@@ -5260,7 +5260,7 @@ test("import center version comparison trigger only opens when source versions a
       canSubmit: false,
       title: "当前版本暂无可复用的比对入口",
       detail: "当前 主数据 版本 MD-VERSION-001 没有比对口径；先核对版本记录和下游结果追踪。",
-      actionLabel: "发起一次比对",
+      actionLabel: "发起比对运行",
       nextAction: "仅在人员排班、需求预测、状态日志且已定位对比版本时才展示操作入口。",
       comparisonTypeLabel: "未支持",
       versionPairLabel: "MD-VERSION-001",
@@ -5283,13 +5283,13 @@ test("import center version comparison trigger notice links new run and result l
     }),
     {
       tone: "success",
-      title: "比对已生成新运行",
+      title: "比对运行已生成",
       detail:
-        "当前版本语境已生成新的对比运行 CALC-SA-20260501-LOCAL-001，可直接进入详情或回看当前结果列表。",
+        "当前版本语境已生成新的对比运行 CALC-SA-20260501-LOCAL-001，可直接进入详情或回看当前比对运行列表。",
       runLabel: "CALC-SA-20260501-LOCAL-001",
       primaryActionLabel: "查看新对比运行",
       primaryHref: "/data-quality/comparison-runs/CALC-SA-20260501-LOCAL-001",
-      secondaryActionLabel: "查看结果列表",
+      secondaryActionLabel: "查看比对运行列表",
       secondaryHref: "#comparison-runs-list",
     },
   );
@@ -5304,7 +5304,7 @@ test("import center version comparison trigger notice links new run and result l
       title: "比对未提交",
       detail: "比对提交返回 400，请先核对来源版本和业务日。",
       runLabel: "未生成运行",
-      primaryActionLabel: "查看结果列表",
+      primaryActionLabel: "查看比对运行列表",
       primaryHref: "#comparison-runs-list",
       secondaryActionLabel: "留在当前版本语境",
       secondaryHref: "#import-result-trace",
@@ -5337,7 +5337,7 @@ test("import center latest comparison run callback summarizes the newest generat
     }),
     {
       tone: "success",
-      title: "最新一次比对结果",
+      title: "最新一次比对运行结果",
       detail:
         "当前版本语境刚生成运行 CALC-SA-20260501-LOCAL-001，可在当前页先确认结果规模，再进入完整运行详情。",
       runLabel: "CALC-SA-20260501-LOCAL-001",
@@ -5349,7 +5349,7 @@ test("import center latest comparison run callback summarizes the newest generat
       ],
       primaryActionLabel: "查看新对比运行",
       primaryHref: "/data-quality/comparison-runs/CALC-SA-20260501-LOCAL-001",
-      secondaryActionLabel: "查看结果列表",
+      secondaryActionLabel: "查看比对运行列表",
       secondaryHref: "#comparison-runs-list",
     },
   );
@@ -5365,17 +5365,17 @@ test("import center latest comparison run callback summarizes the newest generat
       tone: "blocked",
       title: "最新运行结果未回显",
       detail:
-        "当前页已收到运行 CALC-MISSING-001 的成功反馈，但结果列表还没有回显这次运行；先刷新当前结果追踪，再进入运行详情复核。",
+        "当前页已收到运行 CALC-MISSING-001 的成功反馈，但比对运行列表还没有回显这次运行；先刷新当前结果追踪，再进入运行详情复核。",
       runLabel: "CALC-MISSING-001",
       metricCards: [
-        { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },
+        { label: "对比口径", value: "待回显", detail: "比对运行列表尚未同步" },
         { label: "结果数", value: "待回显", detail: "当前运行结果" },
-        { label: "关键差异", value: "待回显", detail: "等待结果列表同步" },
-        { label: "业务日", value: "待回显", detail: "等待结果列表同步" },
+        { label: "关键差异", value: "待回显", detail: "等待比对运行列表同步" },
+        { label: "业务日", value: "待回显", detail: "等待比对运行列表同步" },
       ],
       primaryActionLabel: "查看新对比运行",
       primaryHref: "/data-quality/comparison-runs/CALC-MISSING-001",
-      secondaryActionLabel: "查看结果列表",
+      secondaryActionLabel: "查看比对运行列表",
       secondaryHref: "#comparison-runs-list",
     },
   );
@@ -5405,7 +5405,7 @@ test("version workbench result review summarizes submitted comparison runs", () 
     }),
     {
       tone: "success",
-      title: "业务版本列表比对结果",
+      title: "业务版本列表比对运行结果",
       detail:
         "运行 CALC-FS-20260502-LOCAL-001 已在业务版本列表回显；先确认结果规模和关键差异，再进入完整对比运行详情。",
       runLabel: "CALC-FS-20260502-LOCAL-001",
@@ -5432,10 +5432,10 @@ test("version workbench result review summarizes submitted comparison runs", () 
       tone: "blocked",
       title: "运行结果未回显",
       detail:
-        "业务版本列表已收到运行 CALC-WAIT-001 的成功反馈，但当前结果列表还没有回显这次运行。",
+        "业务版本列表已收到运行 CALC-WAIT-001 的成功反馈，但当前比对运行列表还没有回显这次运行。",
       runLabel: "CALC-WAIT-001",
       metricCards: [
-        { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },
+        { label: "对比口径", value: "待回显", detail: "比对运行列表尚未同步" },
         { label: "结果数", value: "待回显", detail: "等待运行回显" },
         { label: "关键差异", value: "待回显", detail: "等待运行回显" },
         { label: "业务日", value: "待回显", detail: "等待运行回显" },
