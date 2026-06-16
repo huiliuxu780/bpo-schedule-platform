@@ -2372,3 +2372,12 @@
 - action: 共享 lib helper 回归护栏。
 - status: `done`
 - notes: Qoder 以 `ultimate` 模型受控新增 `scripts/tests/lib-helpers-regression.test.mjs`，Codex 审查确认 Qoder 只新增允许文件；测试覆盖 `lib/api-result.ts`、`lib/api-error.ts`、`lib/import-api.ts` 文件存在、关键导出存在，以及 `formatApiError`、`fetchImportBatches`、`fetchImportFieldMappingTemplates` 不会在 `app/`、`components/`、`lib/` 下重复函数定义回流。本轮未修改业务源码、lib 实现、check 脚本、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM194`
+- source_ids:
+  - `R894`
+- story_ids:
+  - `US814`
+- action: 共享 MetricCard 首刀。
+- status: `done`
+- notes: Qoder 以 `ultimate` 模型受控新增共享 `components/metric-card.tsx`，并将 `/demand-plans`、`/schedule-plans`、`/shift-details` 三处完全同构指标卡迁移到共享组件；新增 `scripts/tests/shared-metric-card-structure.test.mjs` 防止三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。Codex 审查确认实现只做机械替换；三页 HTTP smoke 返回 200 且关键指标文字仍在。本轮未修改页面路由、数据读取、业务文案、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

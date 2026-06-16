@@ -11736,3 +11736,52 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "Qoder 以 `ultimate` 模型受控新增 `scripts/tests/lib-helpers-regression.test.mjs`，Codex 审查确认 Qoder 只新增允许文件；测试覆盖 `lib/api-result.ts`、`lib/api-error.ts`、`lib/import-api.ts` 文件存在、`formatApiError` / `fetchImportBatches` / `fetchImportFieldMappingTemplates` 关键导出存在，以及相关函数定义不会在 `app/`、`components/`、`lib/` 下重复回流。本轮未修改业务源码、lib 实现、check 脚本、后端、依赖或 package/lockfile。"
+  - id: IM194
+    title: "共享 MetricCard 首刀"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM193"]
+    qoder_mode: true
+    product_design_brief:
+      goal: "把三个完全同构旧页面指标卡收敛到共享 MetricCard。"
+      visual_source: "当前 shadcn Card 指标卡样式，不做视觉重设计。"
+      interactivity: "静态展示，无新增动作。"
+    allowed_files:
+      - "components/metric-card.tsx"
+      - "app/demand-plans/page.tsx"
+      - "app/schedule-plans/page.tsx"
+      - "app/shift-details/page.tsx"
+      - "scripts/tests/shared-metric-card-structure.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增共享 `components/metric-card.tsx`，使用既有 shadcn Card 组合和语义 token。"
+      - "`app/demand-plans/page.tsx`、`app/schedule-plans/page.tsx`、`app/shift-details/page.tsx` 改为引用共享 MetricCard，不再保留本地同构指标卡函数。"
+      - "新增结构测试防止这三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。"
+      - "不修改页面路由、数据读取、业务文案、后端、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "Qoder 需要修改 allowed_files 之外的文件"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要改动页面业务文案、路由、数据读取、后端、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "Qoder 以 `ultimate` 模型受控新增共享 `components/metric-card.tsx`，并将 `/demand-plans`、`/schedule-plans`、`/shift-details` 三处完全同构指标卡迁移到共享组件；新增 `scripts/tests/shared-metric-card-structure.test.mjs` 防止三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。本轮未修改页面路由、数据读取、业务文案、后端、依赖或 package/lockfile。"

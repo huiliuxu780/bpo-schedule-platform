@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
+import { MetricCard } from "@/components/metric-card"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
 import {
   formatCoverageRate,
@@ -9,13 +10,6 @@ import {
   schedulePlanStatusLabel,
   type SchedulePlanStatus,
 } from "@/lib/schedule-plans"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -131,10 +125,10 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
           ) : null}
         </section>
         <section className="grid gap-4 md:grid-cols-4">
-          <SummaryCard title="计划数量" value={`${plans.length}`} description="计划基线" />
-          <SummaryCard title="预测人次" value={`${totalForecast}`} description="0.5h 时段汇总" />
-          <SummaryCard title="已排人次" value={`${totalScheduled}`} description="种子数据回传" />
-          <SummaryCard
+          <MetricCard title="计划数量" value={`${plans.length}`} description="计划基线" />
+          <MetricCard title="预测人次" value={`${totalForecast}`} description="0.5h 时段汇总" />
+          <MetricCard title="已排人次" value={`${totalScheduled}`} description="种子数据回传" />
+          <MetricCard
             title="整体覆盖率"
             value={formatCoverageRate(coverageRate)}
             description={`缺口 ${totalGap} 人次`}
@@ -148,29 +142,5 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
         />
       </main>
     </AppShell>
-  )
-}
-
-function SummaryCard({
-  title,
-  value,
-  description,
-}: {
-  title: string
-  value: string
-  description: string
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardDescription>{title}</CardDescription>
-        <CardTitle className="text-2xl font-semibold tabular-nums">
-          {value}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-xs text-muted-foreground">
-        {description}
-      </CardContent>
-    </Card>
   )
 }

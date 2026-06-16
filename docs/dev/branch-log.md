@@ -19,6 +19,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM194 Shared Metric Card First Slice
+
+- branch_name: `codex/im194-shared-metric-card`
+- base_main_commit: `pending stacked continuation from codex/im193-lib-helper-regression-guard`
+- stacked_on: `codex/im193-lib-helper-regression-guard`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Product Design brief locked to preserving existing shadcn Card metric visual. Introduce a shared MetricCard and migrate only the three fully isomorphic old pages: `/demand-plans`, `/schedule-plans`, and `/shift-details`.
+- qoder_mode: `true; Codex writes Harness/task packet, Qoder may only implement the focused component/page/test changes, Codex reviews diff and owns verification/commit.`
+- allowed_files_check: `components/metric-card.tsx`, `app/demand-plans/page.tsx`, `app/schedule-plans/page.tsx`, `app/shift-details/page.tsx`, `scripts/tests/shared-metric-card-structure.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected shared component, three mechanical imports/replacements, one focused structure test, and traceability updates only; no route, data fetch, business copy, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/shared-metric-card-structure.test.mjs` first failed because the test file did not exist. Qoder ran with `--model ultimate` twice and returned max-turns errors both times, so Codex reviewed the actual diff before accepting it; Qoder only changed the allowed implementation/test files. Focused `node --test scripts/tests/shared-metric-card-structure.test.mjs` passed with 9 tests. `npm run typecheck`, `npm run lint`, `bash scripts/check-state.sh --strict`, and HTTP smoke for `/demand-plans`, `/schedule-plans`, and `/shift-details` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM189 Schedule Version Entry Semantics
 
 - branch_name: `codex/im189-schedule-version-entry-semantics`

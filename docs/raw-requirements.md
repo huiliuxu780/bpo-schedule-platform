@@ -3495,3 +3495,16 @@ version: "1.0"
 status: "done"
 notes: "IM193 已完成：Qoder 以 `ultimate` 模型受控新增 `scripts/tests/lib-helpers-regression.test.mjs`，Codex 审查确认未越权改文件；测试覆盖共享 helper 文件存在、关键导出存在和重复函数定义回流。本轮未修改业务源码、lib 实现、check 脚本、后端、依赖或 package/lockfile。"
 ```
+
+### R894 - 共享 MetricCard 首刀
+
+```yaml
+id: R894
+module: "前端健康恢复"
+description: "第三方前端重构方案指出多个页面重复定义 MetricCard/SummaryCard/DetailCard。当前代码事实仍存在多处同构指标卡，本轮只先处理三个完全同构旧页面：`/demand-plans`、`/schedule-plans`、`/shift-details`。需要新增共享 MetricCard 并迁移这三处页面，不改变页面路由、数据读取、业务文案或视觉层级。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 1 + 代码事实盘点"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "IM194 已完成：Qoder 受控新增共享 `components/metric-card.tsx`，并迁移 `/demand-plans`、`/schedule-plans`、`/shift-details` 三处完全同构指标卡；结构测试防止三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。本轮未修改页面路由、数据读取、业务文案、后端、依赖或 package/lockfile。"
+```

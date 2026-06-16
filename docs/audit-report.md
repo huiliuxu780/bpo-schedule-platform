@@ -4697,3 +4697,19 @@
 - Qoder 以 `ultimate` 模型新增共享 helper 回归结构测试；虽然 Qoder 返回 max-turns 错误，Codex 审查确认实际 diff 只有允许的测试文件。
 - 新测试确认 `lib/api-result.ts`、`lib/api-error.ts`、`lib/import-api.ts` 存在，关键导出仍存在。
 - 新测试扫描 `app/`、`components/`、`lib/`，防止 `formatApiError`、`fetchImportBatches`、`fetchImportFieldMappingTemplates` 函数定义重复回流。
+
+### 2026-06-16 - IM194 共享 MetricCard 首刀
+
+#### 审计计划
+
+- 按第三方重构方案 Task 1 做最小首刀，不一次性全站替换。
+- Product Design brief 锁定为保留现有 shadcn Card 指标卡视觉、静态展示、无新增动作。
+- Qoder 只允许新增共享 MetricCard、迁移 `/demand-plans`、`/schedule-plans`、`/shift-details` 三个完全同构页面，并补结构测试。
+- 本轮不新增页面、路由、数据读取、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `components/metric-card.tsx`，沿用现有 Card/Header/Description/Title/Content 结构。
+- 三个目标页面改为引用共享 MetricCard，并移除本地 `MetricCard` 或 `SummaryCard` 函数。
+- 新增 `scripts/tests/shared-metric-card-structure.test.mjs`，防止三处页面重新定义本地指标卡函数。
+- Qoder 两次返回 max-turns，Codex 按实际 diff 审查后确认没有越权修改。
