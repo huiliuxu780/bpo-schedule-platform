@@ -4448,3 +4448,22 @@
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
+
+### IM193 Lib Helper Regression Guard
+
+- branch_name: `codex/im193-lib-helper-regression-guard`
+- base_main_commit: `pending stacked continuation from codex/im192-version-comparison-action-semantics`
+- stacked_on: `codex/im192-version-comparison-action-semantics`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Qoder-mode low-risk mechanical trial. Add a structure regression test for shared API/import helper extraction results without touching runtime source.
+- qoder_mode: `true; Codex writes Harness/task packet, Qoder may only implement the focused test, Codex reviews diff and owns verification/commit.`
+- allowed_files_check: `scripts/tests/lib-helpers-regression.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected new focused structure test and traceability updates only; no changes to `app/**`, `components/**`, `lib/**`, backend, package/lockfile, check scripts, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/lib-helpers-regression.test.mjs` first failed because the test file did not exist. Qoder ran with `--model ultimate` and returned a max-turns error, so Codex reviewed the diff before accepting it; Qoder only created the allowed `scripts/tests/lib-helpers-regression.test.mjs` file and did not touch forbidden runtime or Harness files. Focused `node --test scripts/tests/lib-helpers-regression.test.mjs` passed with 3 tests. `npm run lint`, `npm run typecheck`, `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`

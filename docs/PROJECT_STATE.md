@@ -1034,3 +1034,11 @@ This slice keeps source-batch and review-case links inside their existing tabs. 
 `IM192` aligns the business-version workbench comparison actions with comparison-run terminology. Existing comparison candidates, trigger feedback, latest-run callbacks, and version-list result review titles now describe the operation as a trackable `比对运行` instead of generic comparison or result-list wording.
 
 This slice reuses the existing `/data-quality/versions` route, existing local comparison submit flow, and existing result anchors. It does not add routes, computation capability, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM193 Lib Helper Regression Guard
+
+`IM193` records the first controlled Qoder execution slice in this project flow. Qoder implemented only `scripts/tests/lib-helpers-regression.test.mjs`; Codex reviewed the diff and kept Harness, verification, commit, and push responsibility.
+
+The test protects the shared helper extraction by requiring `lib/api-result.ts`, `lib/api-error.ts`, and `lib/import-api.ts`, checking the canonical helper exports, and preventing duplicate function declarations for `formatApiError`, `fetchImportBatches`, and `fetchImportFieldMappingTemplates` across `app/`, `components/`, and `lib/`.
+
+This slice is regression-guard only. It does not change runtime source, UI, routes, navigation, API behavior, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

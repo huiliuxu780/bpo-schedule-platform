@@ -3482,3 +3482,16 @@ version: "1.0"
 status: "done"
 notes: "IM192 已完成：`/data-quality/versions` 现有本地比对候选、提交反馈和结果回看标题已统一为比对运行语义；新增结构测试防止退回 `发起一次比对`、`查看结果列表` 或泛泛 `比对结果`。本轮未新增 comparison run 列表路由、业务能力、后端、数据库、依赖或 package/lockfile。"
 ```
+
+### R893 - 共享 lib helper 回归护栏
+
+```yaml
+id: R893
+module: "前端健康恢复"
+description: "恢复阶段已抽取共享 API/import helper，但这些机械恢复成果需要结构回归测试防止后续改动重新引入重复定义。需要新增一个低风险测试文件确认共享 helper 文件和关键导出存在，并限制相关函数重复定义回流。"
+source: "PM 指令：用 Qoder 执行下一部分；Qoder 只读试跑建议的低风险机械任务"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "IM193 已完成：Qoder 以 `ultimate` 模型受控新增 `scripts/tests/lib-helpers-regression.test.mjs`，Codex 审查确认未越权改文件；测试覆盖共享 helper 文件存在、关键导出存在和重复函数定义回流。本轮未修改业务源码、lib 实现、check 脚本、后端、依赖或 package/lockfile。"
+```

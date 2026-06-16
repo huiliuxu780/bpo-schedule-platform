@@ -2363,3 +2363,12 @@
 - action: 业务版本列表本地比对动作语义收口。
 - status: `done`
 - notes: `/data-quality/versions` 的本地比对候选、当前版本触发入口、提交成功/失败反馈、最新运行回看和业务版本列表回看标题已统一为 `比对运行` 语义；新增结构测试防止退回 `发起一次比对`、`查看结果列表` 或泛泛 `比对结果`。HTTP 烟测确认版本列表路由返回 200；当前种子数据未渲染可提交比对入口，因此可见文案由结构测试覆盖。本轮未新增 comparison run 列表路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM193`
+- source_ids:
+  - `R893`
+- story_ids:
+  - `US813`
+- action: 共享 lib helper 回归护栏。
+- status: `done`
+- notes: Qoder 以 `ultimate` 模型受控新增 `scripts/tests/lib-helpers-regression.test.mjs`，Codex 审查确认 Qoder 只新增允许文件；测试覆盖 `lib/api-result.ts`、`lib/api-error.ts`、`lib/import-api.ts` 文件存在、关键导出存在，以及 `formatApiError`、`fetchImportBatches`、`fetchImportFieldMappingTemplates` 不会在 `app/`、`components/`、`lib/` 下重复函数定义回流。本轮未修改业务源码、lib 实现、check 脚本、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

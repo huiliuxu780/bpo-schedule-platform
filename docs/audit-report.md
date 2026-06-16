@@ -4683,3 +4683,17 @@
 - 比对提交反馈和回看入口改为 `比对运行已生成`、`查看比对运行列表`、`最新一次比对运行结果`。
 - 业务版本列表回看标题改为 `业务版本列表比对运行结果`。
 - 新增结构测试 `scripts/tests/version-comparison-action-semantics.test.mjs`，防止退回泛化比对/结果列表文案。
+
+### 2026-06-16 - IM193 共享 lib helper 回归护栏
+
+#### 审计计划
+
+- 使用 Qoder 执行一个低风险机械测试任务，Codex 负责 Harness、范围、diff 审查、验证、提交和推送控制。
+- Qoder 只允许新增 `scripts/tests/lib-helpers-regression.test.mjs`，不允许修改业务源码、共享 lib 实现、后端、check 脚本或依赖。
+- 本轮不新增 UI、导航、路由、后端接口、数据库、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- Qoder 以 `ultimate` 模型新增共享 helper 回归结构测试；虽然 Qoder 返回 max-turns 错误，Codex 审查确认实际 diff 只有允许的测试文件。
+- 新测试确认 `lib/api-result.ts`、`lib/api-error.ts`、`lib/import-api.ts` 存在，关键导出仍存在。
+- 新测试扫描 `app/`、`components/`、`lib/`，防止 `formatApiError`、`fetchImportBatches`、`fetchImportFieldMappingTemplates` 函数定义重复回流。
