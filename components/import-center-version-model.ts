@@ -483,12 +483,12 @@ function buildReadyVersionWorkbenchComparisonCandidate({
   return {
     tone: "ready",
     canSubmit: true,
-    title: "可发起一次比对",
+    title: "可发起比对运行",
     detail: `当前版本可按 ${comparisonTypeLabel} 和已定位来源版本组合提交一次比对；重复提交由后端幂等返回已有运行。`,
     comparisonTypeLabel,
     versionPairLabel,
     businessDateLabel: `${batch.business_date_from} ~ ${batch.business_date_to}`,
-    actionLabel: "发起一次比对",
+    actionLabel: "发起比对运行",
     href: buildImportBatchProcessingHref(batch.batch_id, {
       tab: "result-trace",
     }),
@@ -938,7 +938,7 @@ export function summarizeImportVersionComparisonTrigger({
       canSubmit: false,
       title: "当前版本暂无可复用的比对入口",
       detail: `当前 ${formatImportFileType(batch.file_type)} 版本 ${versionId} 没有比对口径；先核对版本记录和下游结果追踪。`,
-      actionLabel: "发起一次比对",
+      actionLabel: "发起比对运行",
       nextAction: "仅在人员排班、需求预测、状态日志且已定位对比版本时才展示操作入口。",
       comparisonTypeLabel: "未支持",
       versionPairLabel: versionId,
@@ -957,7 +957,7 @@ export function summarizeImportVersionComparisonTrigger({
       canSubmit: false,
       title: "当前版本无法确认比对口径",
       detail: `当前版本 ${versionId} 还没有可复用的对比运行，未展示操作按钮。`,
-      actionLabel: "发起一次比对",
+      actionLabel: "发起比对运行",
       nextAction: "先确认该版本是否已有下游结果或补足配对版本，再回到当前页触发比对。",
       comparisonTypeLabel: "未定位",
       versionPairLabel: versionId,
@@ -974,7 +974,7 @@ export function summarizeImportVersionComparisonTrigger({
       canSubmit: false,
       title: "当前版本缺少必要来源版本",
       detail: `已定位到 ${formatComparisonTypeLabel(primaryRun.comparison_type)}，但运行上下文缺少重新计算所需的成对版本信息。`,
-      actionLabel: "发起一次比对",
+      actionLabel: "发起比对运行",
       nextAction: "先确认来源版本是否完整，再从当前版本结果页重新触发。",
       comparisonTypeLabel: formatComparisonTypeLabel(primaryRun.comparison_type),
       versionPairLabel: formatComparisonRunVersionPair(primaryRun),
@@ -990,10 +990,10 @@ export function summarizeImportVersionComparisonTrigger({
   return {
     tone: "ready",
     canSubmit: true,
-    title: "可在当前版本语境发起比对",
+    title: "可在当前版本语境发起比对运行",
     detail: `将按 ${formatComparisonTypeLabel(primaryRun.comparison_type)} 和已定位版本组合重新生成一次对比运行。`,
-    actionLabel: "发起一次比对",
-    nextAction: "提交后留在当前结果页查看反馈，再进入新运行详情或回看结果列表。",
+    actionLabel: "发起比对运行",
+    nextAction: "提交后留在当前结果页查看反馈，再进入新运行详情或回看比对运行列表。",
     comparisonTypeLabel: formatComparisonTypeLabel(primaryRun.comparison_type),
     versionPairLabel: formatComparisonRunVersionPair(primaryRun),
     businessDateLabel: `${primaryRun.business_date_from} ~ ${primaryRun.business_date_to}`,
@@ -1018,12 +1018,12 @@ export function summarizeImportVersionComparisonTriggerNotice({
   if (status === "success" && runId) {
     return {
       tone: "success",
-      title: "比对已生成新运行",
-      detail: `当前版本语境已生成新的对比运行 ${runId}，可直接进入详情或回看当前结果列表。`,
+      title: "比对运行已生成",
+      detail: `当前版本语境已生成新的对比运行 ${runId}，可直接进入详情或回看当前比对运行列表。`,
       runLabel: runId,
       primaryActionLabel: "查看新对比运行",
       primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
-      secondaryActionLabel: "查看结果列表",
+      secondaryActionLabel: "查看比对运行列表",
       secondaryHref: "#comparison-runs-list",
     }
   }
@@ -1034,7 +1034,7 @@ export function summarizeImportVersionComparisonTriggerNotice({
       title: "比对未提交",
       detail: formatImportVersionComparisonTriggerFailureReason(reason),
       runLabel: runId ?? "未生成运行",
-      primaryActionLabel: "查看结果列表",
+      primaryActionLabel: "查看比对运行列表",
       primaryHref: "#comparison-runs-list",
       secondaryActionLabel: "留在当前版本语境",
       secondaryHref: "#import-result-trace",
@@ -1064,24 +1064,24 @@ export function summarizeImportLatestComparisonRunCallback({
     return {
       tone: "blocked",
       title: "最新运行结果未回显",
-      detail: `当前页已收到运行 ${runId} 的成功反馈，但结果列表还没有回显这次运行；先刷新当前结果追踪，再进入运行详情复核。`,
+      detail: `当前页已收到运行 ${runId} 的成功反馈，但比对运行列表还没有回显这次运行；先刷新当前结果追踪，再进入运行详情复核。`,
       runLabel: runId,
       metricCards: [
-        { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },
+        { label: "对比口径", value: "待回显", detail: "比对运行列表尚未同步" },
         { label: "结果数", value: "待回显", detail: "当前运行结果" },
-        { label: "关键差异", value: "待回显", detail: "等待结果列表同步" },
-        { label: "业务日", value: "待回显", detail: "等待结果列表同步" },
+        { label: "关键差异", value: "待回显", detail: "等待比对运行列表同步" },
+        { label: "业务日", value: "待回显", detail: "等待比对运行列表同步" },
       ],
       primaryActionLabel: "查看新对比运行",
       primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
-      secondaryActionLabel: "查看结果列表",
+      secondaryActionLabel: "查看比对运行列表",
       secondaryHref: "#comparison-runs-list",
     }
   }
 
   return {
     tone: "success",
-    title: "最新一次比对结果",
+    title: "最新一次比对运行结果",
     detail: `当前版本语境刚生成运行 ${runId}，可在当前页先确认结果规模，再进入完整运行详情。`,
     runLabel: runId,
     metricCards: [
@@ -1108,7 +1108,7 @@ export function summarizeImportLatestComparisonRunCallback({
     ],
     primaryActionLabel: "查看新对比运行",
     primaryHref: buildImportComparisonRunDetailWorkspaceHref(runId),
-    secondaryActionLabel: "查看结果列表",
+    secondaryActionLabel: "查看比对运行列表",
     secondaryHref: "#comparison-runs-list",
   }
 }
@@ -1132,10 +1132,10 @@ export function summarizeImportVersionWorkbenchComparisonResultReview({
     return {
       tone: "blocked",
       title: "运行结果未回显",
-      detail: `业务版本列表已收到运行 ${runId} 的成功反馈，但当前结果列表还没有回显这次运行。`,
+      detail: `业务版本列表已收到运行 ${runId} 的成功反馈，但当前比对运行列表还没有回显这次运行。`,
       runLabel: runId,
       metricCards: [
-        { label: "对比口径", value: "待回显", detail: "结果列表尚未同步" },
+        { label: "对比口径", value: "待回显", detail: "比对运行列表尚未同步" },
         { label: "结果数", value: "待回显", detail: "等待运行回显" },
         { label: "关键差异", value: "待回显", detail: "等待运行回显" },
         { label: "业务日", value: "待回显", detail: "等待运行回显" },
@@ -1149,7 +1149,7 @@ export function summarizeImportVersionWorkbenchComparisonResultReview({
 
   return {
     tone: "success",
-    title: "业务版本列表比对结果",
+    title: "业务版本列表比对运行结果",
     detail: `运行 ${runId} 已在业务版本列表回显；先确认结果规模和关键差异，再进入完整对比运行详情。`,
     runLabel: runId,
     metricCards: [

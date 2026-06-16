@@ -11646,3 +11646,47 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已将对比运行详情页顶部主返回入口改为 `返回业务版本列表`，保留来源链路 tab 内的来源批次和复核案例入口；新增 `scripts/tests/comparison-result-entry-semantics.test.mjs` 防止退回 `返回复核案例`。本轮未新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+  - id: IM192
+    title: "业务版本列表本地比对动作语义收口"
+    priority: P0
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM191"]
+    allowed_files:
+      - "components/import-center-version-model.ts"
+      - "scripts/tests/version-comparison-action-semantics.test.mjs"
+      - "scripts/tests/import-center-model.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`/data-quality/versions` 的可提交比对入口使用 `比对运行` 语义。"
+      - "比对提交后的成功/失败反馈和结果回看入口使用 `比对运行` 语义。"
+      - "业务版本列表的结果回看标题使用 `比对运行结果` 语义。"
+      - "结构测试防止文案退回 `发起一次比对`、`查看结果列表` 或泛泛 `比对结果`。"
+      - "不新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要新增 comparison run 列表路由、后端 route、schema/migration 或生产持久化配置"
+      - "需要新增计算能力、审批、导出、批量或自动排班能力"
+      - "需要新增依赖或 package/lockfile 变更"
+      - "范围扩展到生产公式、结算、供应商合同、最低人力或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将业务版本列表本地比对候选、当前版本触发入口、提交成功/失败反馈、最新运行回看和列表回看标题统一为 `比对运行` 语义；新增 `scripts/tests/version-comparison-action-semantics.test.mjs` 防止退回 `发起一次比对`、`查看结果列表` 或泛泛 `比对结果`。本轮未新增 comparison run 列表路由、业务能力、后端、数据库、依赖或 package/lockfile。"

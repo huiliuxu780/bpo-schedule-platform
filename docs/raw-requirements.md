@@ -3469,3 +3469,16 @@ version: "1.0"
 status: "done"
 notes: "IM191 已完成：`/data-quality/comparison-runs/[runId]` 顶部主返回入口改为 `返回业务版本列表`，来源链路和复核案例仍保留在页内 tab；新增结构测试防止退回 `返回复核案例`。本轮未新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
 ```
+
+### R892 - 业务版本列表本地比对动作语义收口
+
+```yaml
+id: R892
+module: "业务版本流"
+description: "业务版本列表已经能从完整版本对发起本地比对并回看结果，但入口和反馈仍使用 `发起一次比对`、`查看结果列表` 等泛化文案，容易让用户误解为普通页面动作或不可追踪结果。需要在不新增路由或计算能力的前提下，把可提交入口、提交反馈和结果回看统一为 `比对运行` 语义。"
+source: "docs/frontend-health-recovery-plan.md Stage 5 comparison trigger and result review"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "IM192 已完成：`/data-quality/versions` 现有本地比对候选、提交反馈和结果回看标题已统一为比对运行语义；新增结构测试防止退回 `发起一次比对`、`查看结果列表` 或泛泛 `比对结果`。本轮未新增 comparison run 列表路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+```

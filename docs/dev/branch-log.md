@@ -496,7 +496,7 @@
 - allowed_files_check: `app/schedule-plans/production/**`, `components/personnel-schedule-production-workbench.tsx`, `components/personnel-schedule-production-model.ts`, `scripts/tests/personnel-schedule-production-model.test.mjs`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no backend, package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
 - scope_diff_check: expected IM113 frontend/model/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
 - check_result: RED target `node --test scripts/tests/personnel-schedule-production-model.test.mjs` first failed because row-level `referenceStatusLabel` and `blockerLabel` were missing; after implementation the same target test passed with 9 tests. `npm run lint`, `npm run typecheck`, and shadcn UI gate passed. `bash scripts/check-state.sh --strict`, `git diff --check`, and `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 195 tests OK. In-app browser smoke on `http://127.0.0.1:3000/schedule-plans/production/BATCH-MISSING-IM113` matched `排班版本详情`, `排班版本未定位`, `当前不伪造明细`, and `返回排班生产`.
-- local_commit_sha: `pending`
+- local_commit_sha: to be reported in Done Report after local commit creation
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
@@ -514,7 +514,7 @@
 - allowed_files_check: `backend/app/main.py`, `backend/app/models.py`, `backend/app/forecast_persistence.py`, `backend/tests/test_forecast_persistence.py`, `backend/tests/test_forecast_production_api.py`, `docs/current/**`, `docs/registry/TRACE_INDEX.yaml`, `docs/PROJECT_STATE.md`, `docs/raw-requirements.md`, `docs/user-stories.md`, `docs/dev/branch-log.md`, and `tasks/backlog.yaml`; no frontend app/components/lib, package, lockfile, schema, migration, permission, approval, export, batch operation, real external integration, automatic scheduling, production formula, settlement, or charge-factor files.
 - scope_diff_check: expected IM114 backend/API/test and traceability files only; `.local/` and `.qoder/` remain untracked and must not be staged.
 - check_result: target RED `.venv/bin/python -m unittest backend.tests.test_forecast_persistence backend.tests.test_forecast_production_api -v` first failed because `ForecastPersistenceRepository.get_forecast_version_by_import_version` and `get_demand_forecast_production_detail` were missing; after implementation the same target passed with 7 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed after traceability updates; full check included frontend build and backend 199 tests OK.
-- local_commit_sha: `pending`
+- local_commit_sha: to be reported in Done Report after local commit creation
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
@@ -4424,6 +4424,24 @@
 - scope_diff_check: expected removal of schedule-plan old flow/risk entry points, deletion of unused old link components, regression test, and traceability updates only; no legacy route deletion, new page, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
 - check_result: TDD RED `node --test scripts/tests/schedule-plan-legacy-entry-rules.test.mjs` first failed because schedule-plan pages still linked to old demo routes and old link components still existed; after implementation, the test passed. `npm run typecheck` and `npm run lint` passed. Browser smoke on `/schedule-plans` and a schedule-plan detail page confirmed current pages no longer expose old demo route hrefs. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
 - local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM192 Version Comparison Action Semantics
+
+- branch_name: `codex/im192-version-comparison-action-semantics`
+- base_main_commit: `pending stacked continuation from codex/im191-comparison-result-entry-semantics`
+- stacked_on: `codex/im191-comparison-result-entry-semantics`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Stage 5 comparison trigger/result review semantics. Clarify existing `/data-quality/versions` local comparison entry, submit feedback, and result-review labels as comparison-run semantics without adding routes or computation capability.
+- allowed_files_check: `components/import-center-version-model.ts`, focused structure test, optional existing model test expectation updates, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected copy semantics and regression tests only; no comparison-run list route, new API, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/version-comparison-action-semantics.test.mjs` first failed because `components/import-center-version-model.ts` still used `可发起一次比对`; after implementation, the new structure test passed. `node --test scripts/tests/import-center-model.test.mjs` remains blocked by the pre-existing Node ESM extensionless import issue on `components/import-center-formatters`, unrelated to this slice. `npm run typecheck`, `npm run lint`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. HTTP smoke confirmed `/data-quality/versions` returned 200; current seed data did not render a ready comparison candidate, so visible copy is covered by the structure test. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: `pending`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

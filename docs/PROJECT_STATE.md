@@ -1028,3 +1028,9 @@ This slice reuses the existing `/actual-logs/production/[batchId]` compatibility
 `IM191` aligns the comparison-run detail page with business-version result review navigation. The existing `/data-quality/comparison-runs/[runId]` page now uses `返回业务版本列表` as its primary return action instead of defaulting to the review-case list.
 
 This slice keeps source-batch and review-case links inside their existing tabs. It does not add routes, comparison triggers, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM192 Version Comparison Action Semantics
+
+`IM192` aligns the business-version workbench comparison actions with comparison-run terminology. Existing comparison candidates, trigger feedback, latest-run callbacks, and version-list result review titles now describe the operation as a trackable `比对运行` instead of generic comparison or result-list wording.
+
+This slice reuses the existing `/data-quality/versions` route, existing local comparison submit flow, and existing result anchors. It does not add routes, computation capability, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
