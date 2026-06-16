@@ -2390,3 +2390,12 @@
   action: 共享 MetricCard 旧风险不可用页迁移。
   status: `done`
   notes: Qoder 以 `ultimate` 模型受控将 `/unavailability`、`/unavailability/[unavailabilityId]`、`/schedule-risks/[riskId]` 三处旧页面改为引用共享 `MetricCard`，并删除本地同构 `MetricCard` 函数；结构测试扩展覆盖 6 个页面。Codex 审查确认未修改共享组件 API、页面路由、数据读取、业务文案、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；三条 HTTP smoke 返回 200；current queue 与 active tasks 已清空。
+
+- task_id: `IM196`
+  source_ids:
+    - `R896`
+  story_ids:
+    - `US816`
+  action: 共享列表搜索与状态筛选控件。
+  status: `done`
+  notes: 新增 `components/search-input-bar.tsx` 和 `components/status-filter-pills.tsx`，并将 `/demand-plans`、`/schedule-plans`、`/shift-details`、`/unavailability` 四个旧列表页迁移到共享筛选控件；`/demand-plans` 只使用搜索栏，其余三页保留状态筛选和清空入口。Codex 审查确认未修改页面路由、查询参数、状态值、业务文案、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；四条 HTTP smoke 返回 200；current queue 与 active tasks 已清空。

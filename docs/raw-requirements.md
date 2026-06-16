@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R896 - 共享列表搜索与状态筛选控件
+
+```yaml
+id: R896
+module: "前端健康恢复"
+description: "第三方前端重构方案 Task 2 指出四个旧列表页重复实现搜索栏，其中三页还重复状态筛选按钮。需要按产品设计保持模式抽取 `SearchInputBar` 与 `StatusFilterPills` 两个可组合控件，迁移 `/demand-plans`、`/schedule-plans`、`/shift-details`、`/unavailability`，并保持现有查询参数、清空入口、文案和视觉不变。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 2 + 代码事实盘点"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：匹配现有 shadcn Button/Input 列表筛选外观；完整保留搜索、状态筛选、清空交互；不重设信息架构或视觉风格。"
+```
+
 ### R860 - 职场详情只读服务团队关系
 
 ```yaml

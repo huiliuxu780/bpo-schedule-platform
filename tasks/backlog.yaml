@@ -11835,3 +11835,54 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "Qoder 以 `ultimate` 模型受控完成三处旧风险/不可用页面的共享 MetricCard 迁移；Codex 审查确认只做 import 和本地函数删除，结构测试扩展到 6 个页面并通过。"
+  - id: IM196
+    title: "共享列表搜索与状态筛选控件"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM195"]
+    qoder_mode: true
+    product_design_brief:
+      goal: "把四个旧列表页的重复搜索栏和状态筛选 JSX 收敛到可组合共享控件。"
+      visual_source: "现有 shadcn Button/Input 列表筛选条，不做视觉重设计。"
+      interactivity: "完整保留搜索提交、状态筛选链接、清空入口和隐藏字段。"
+    allowed_files:
+      - "components/search-input-bar.tsx"
+      - "components/status-filter-pills.tsx"
+      - "app/demand-plans/page.tsx"
+      - "app/schedule-plans/page.tsx"
+      - "app/shift-details/page.tsx"
+      - "app/unavailability/page.tsx"
+      - "scripts/tests/shared-list-filter-controls.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `SearchInputBar` 和 `StatusFilterPills` 两个可组合控件，沿用现有 shadcn Button/Input 外观。"
+      - "`/demand-plans`、`/schedule-plans`、`/shift-details`、`/unavailability` 不再保留重复搜索栏 JSX。"
+      - "`/demand-plans` 只使用 `SearchInputBar`，不渲染状态筛选；其他三页保留现有状态筛选和清空能力。"
+      - "不修改页面路由、查询参数、业务文案、后端、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "Qoder 需要修改 allowed_files 之外的文件"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要改动页面业务文案、路由、查询参数、后端、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "新增 `SearchInputBar` 和 `StatusFilterPills`，迁移 `/demand-plans`、`/schedule-plans`、`/shift-details`、`/unavailability` 四个列表页；保留原有查询参数、状态值、清空 href 和业务文案；结构测试通过。"

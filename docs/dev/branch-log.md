@@ -38,6 +38,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM196 Shared List Filter Controls
+
+- branch_name: `codex/im196-shared-list-filter-controls`
+- base_main_commit: `pending stacked continuation from codex/im195-shared-metric-card-legacy-risk`
+- stacked_on: `codex/im195-shared-metric-card-legacy-risk`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Product Design preservation pass for Task 2. Extract shared `SearchInputBar` and `StatusFilterPills` for `/demand-plans`, `/schedule-plans`, `/shift-details`, and `/unavailability` without redesigning list pages or changing query semantics.
+- qoder_mode: `true; Codex writes Harness/task packet, Qoder may only perform mechanical component/page/test updates, Codex reviews diff and owns verification/commit.`
+- allowed_files_check: `components/search-input-bar.tsx`, `components/status-filter-pills.tsx`, the four target list pages, `scripts/tests/shared-list-filter-controls.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected two shared controls, four mechanical page migrations, one focused structure test, and traceability updates only; no route, query parameter, business copy, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/shared-list-filter-controls.test.mjs` first failed because shared list filter controls were missing and the four target pages still owned raw Search/Input/status option JSX. Qoder ran with `--model ultimate` and returned max-turns after adding only the two shared components; Codex reviewed the diff and completed the page migrations within the allowed files. Focused `node --test scripts/tests/shared-list-filter-controls.test.mjs` passed with 10 tests. `npm run typecheck`, `npm run lint`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. HTTP smoke for `/demand-plans?query=shanghai`, `/schedule-plans?query=shanghai&status=draft`, `/shift-details?query=shanghai&status=published`, and `/unavailability?query=shanghai&status=active` returned 200 and matched page titles. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`
