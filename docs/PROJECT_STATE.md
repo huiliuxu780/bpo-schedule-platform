@@ -1042,3 +1042,11 @@ This slice reuses the existing `/data-quality/versions` route, existing local co
 The test protects the shared helper extraction by requiring `lib/api-result.ts`, `lib/api-error.ts`, and `lib/import-api.ts`, checking the canonical helper exports, and preventing duplicate function declarations for `formatApiError`, `fetchImportBatches`, and `fetchImportFieldMappingTemplates` across `app/`, `components/`, and `lib/`.
 
 This slice is regression-guard only. It does not change runtime source, UI, routes, navigation, API behavior, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM194 Shared MetricCard First Slice
+
+`IM194` starts the third-party Task 1 metric-card cleanup with a narrow, visible-but-behavior-preserving slice. It adds `components/metric-card.tsx` and migrates only the three fully isomorphic old pages: `/demand-plans`, `/schedule-plans`, and `/shift-details`.
+
+The Product Design boundary for this slice is preservation: keep the current shadcn Card metric visual, static display, current copy, current data fetching, and current page layout. The new structure test prevents those three pages from reintroducing local `MetricCard` or `SummaryCard` functions.
+
+This slice does not change routes, navigation, API behavior, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

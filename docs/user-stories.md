@@ -6215,3 +6215,23 @@ acceptance:
 status: "done"
 notes: "IM193 已完成：使用 Qoder 受控实现新增共享 lib helper 回归结构测试，Codex 审查与验证。"
 ```
+
+### US814 - 共享 MetricCard 首刀
+
+```yaml
+id: US814
+requirement_ids:
+  - R894
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望完全同构的指标卡先收敛到共享 MetricCard，以便后续页面重构不继续复制局部卡片实现。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增共享 `components/metric-card.tsx`，使用既有 shadcn Card 组合和语义 token。"
+  - "`app/demand-plans/page.tsx`、`app/schedule-plans/page.tsx`、`app/shift-details/page.tsx` 改为引用共享 MetricCard，不再保留本地同构指标卡函数。"
+  - "新增结构测试防止这三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。"
+  - "不修改页面路由、数据读取、业务文案、后端、依赖或 package/lockfile。"
+status: "done"
+notes: "IM194 已完成：共享 MetricCard 首刀已迁移三处旧页面并补结构测试。"
+```
