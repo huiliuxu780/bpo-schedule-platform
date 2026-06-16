@@ -6235,3 +6235,23 @@ acceptance:
 status: "done"
 notes: "IM194 已完成：共享 MetricCard 首刀已迁移三处旧页面并补结构测试。"
 ```
+
+### US815 - 旧风险不可用页共享 MetricCard 迁移
+
+```yaml
+id: US815
+requirement_ids:
+  - R895
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望旧排班风险和不可用页面也复用共享 MetricCard，以便相同指标卡形态不继续分散复制。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/unavailability`、`/unavailability/[unavailabilityId]`、`/schedule-risks/[riskId]` 改为引用共享 MetricCard。"
+  - "三处页面不再保留本地同构 `MetricCard` 函数。"
+  - "结构测试扩展覆盖这三处页面，防止重新定义本地 MetricCard。"
+  - "不修改共享组件 API、页面路由、数据读取、业务文案、后端、依赖或 package/lockfile。"
+status: "done"
+notes: "已完成。继续沿用 Product Design brief：保持现有 Card 视觉、静态展示、不新增动作。"
+```

@@ -1050,3 +1050,9 @@ This slice is regression-guard only. It does not change runtime source, UI, rout
 The Product Design boundary for this slice is preservation: keep the current shadcn Card metric visual, static display, current copy, current data fetching, and current page layout. The new structure test prevents those three pages from reintroducing local `MetricCard` or `SummaryCard` functions.
 
 This slice does not change routes, navigation, API behavior, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM195 Shared MetricCard Legacy Risk And Unavailability
+
+`IM195` continues the MetricCard cleanup into the remaining fully isomorphic legacy risk and unavailability pages. `/unavailability`, `/unavailability/[unavailabilityId]`, and `/schedule-risks/[riskId]` now import the shared `MetricCard` instead of declaring local copies.
+
+The structure test now covers six pages and prevents those pages from reintroducing local `MetricCard` or `SummaryCard` definitions. This slice does not change the shared component API, routes, navigation, API behavior, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

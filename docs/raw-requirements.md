@@ -3508,3 +3508,16 @@ version: "1.0"
 status: "done"
 notes: "IM194 已完成：Qoder 受控新增共享 `components/metric-card.tsx`，并迁移 `/demand-plans`、`/schedule-plans`、`/shift-details` 三处完全同构指标卡；结构测试防止三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。本轮未修改页面路由、数据读取、业务文案、后端、依赖或 package/lockfile。"
 ```
+
+### R895 - 旧风险不可用页共享 MetricCard 迁移
+
+```yaml
+id: R895
+module: "前端健康恢复"
+description: "IM194 已完成共享 MetricCard 首刀，代码事实显示旧 `/unavailability`、`/unavailability/[unavailabilityId]`、`/schedule-risks/[riskId]` 仍保留完全同构本地 MetricCard。需要在不修改共享组件 API、不改页面语义的前提下，把这三处迁移到共享 MetricCard，并扩展结构测试。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 1 + IM194 后代码事实盘点"
+submitted_at: "2026-06-16"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：继续保持当前 shadcn Card 指标卡视觉；静态展示；不新增动作、文案或业务语义。"
+```
