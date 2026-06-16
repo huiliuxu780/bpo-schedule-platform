@@ -4729,3 +4729,19 @@
 - 三处页面本地同构 `MetricCard` 函数已删除。
 - `scripts/tests/shared-metric-card-structure.test.mjs` 扩展到 6 个页面，防止本地指标卡函数回流。
 - Codex 审查确认 Qoder 只做机械迁移；HTTP smoke 覆盖列表页和两条详情页。
+
+### 2026-06-16 - IM196 共享列表搜索与状态筛选控件
+
+#### 审计计划
+
+- 按第三方重构方案 Task 2 做最小组件抽取，不做单一泛型大组件。
+- Product Design brief 锁定为保持现有 shadcn Button/Input 列表筛选视觉和完整搜索/筛选/清空交互。
+- Qoder 只允许机械实现两个共享控件和四个页面替换；Codex 负责 diff 审查、验证、提交和推送控制。
+- 本轮不新增页面、路由、查询语义、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `SearchInputBar`，集中搜索图标、query 输入、隐藏字段和搜索按钮。
+- 新增 `StatusFilterPills`，集中状态筛选按钮组 active/outline 渲染。
+- 四个旧列表页复用共享筛选控件；状态筛选页保留原有 status 值和 href 生成逻辑。
+- 新增结构测试防止四页重新内联 Search/Input/status map。

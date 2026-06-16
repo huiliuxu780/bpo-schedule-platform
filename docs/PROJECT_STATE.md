@@ -1056,3 +1056,9 @@ This slice does not change routes, navigation, API behavior, data fetching, busi
 `IM195` continues the MetricCard cleanup into the remaining fully isomorphic legacy risk and unavailability pages. `/unavailability`, `/unavailability/[unavailabilityId]`, and `/schedule-risks/[riskId]` now import the shared `MetricCard` instead of declaring local copies.
 
 The structure test now covers six pages and prevents those pages from reintroducing local `MetricCard` or `SummaryCard` definitions. This slice does not change the shared component API, routes, navigation, API behavior, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM196 Shared List Filter Controls
+
+`IM196` adds `components/search-input-bar.tsx` and `components/status-filter-pills.tsx` for the repeated old list filter bar pattern. `/demand-plans`, `/schedule-plans`, `/shift-details`, and `/unavailability` now reuse the shared search control; the three status-filtered pages also reuse the shared status pill renderer.
+
+This slice preserves existing route paths, query parameter names, status values, clear links, business copy, and table/card data. It does not change backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

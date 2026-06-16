@@ -1,9 +1,10 @@
 import Link from "next/link"
-import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
 import { MetricCard } from "@/components/metric-card"
 import { SchedulePlanTable } from "@/components/schedule-plan-table"
+import { SearchInputBar } from "@/components/search-input-bar"
+import { StatusFilterPills } from "@/components/status-filter-pills"
 import {
   formatCoverageRate,
   getSchedulePlansWithFilters,
@@ -11,7 +12,6 @@ import {
   type SchedulePlanStatus,
 } from "@/lib/schedule-plans"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 
 const statusOptions: { label: string; value?: SchedulePlanStatus }[] = [
   { label: "全部" },
@@ -84,46 +84,22 @@ export default async function SchedulePlansPage({ searchParams }: PageProps) {
             <Link href="/schedule-plans/new">新建草稿</Link>
           </Button>
         </div>
-        <section className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3">
-          <form className="flex min-w-64 flex-1 items-center gap-2">
-            <div className="flex flex-1 items-center gap-2 rounded-md border bg-background px-2">
-              <Search className="size-4 text-muted-foreground" />
-              <Input
-                name="query"
-                defaultValue={query}
-                placeholder="搜索计划编号、日期、项目、职场"
-                className="h-8 border-0 px-0 shadow-none focus-visible:ring-0"
-              />
-            </div>
-            {status ? <input name="status" type="hidden" value={status} /> : null}
-            <Button type="submit" variant="outline" size="sm">
-              搜索
-            </Button>
-          </form>
-          <div className="flex flex-wrap items-center gap-2">
-            {statusOptions.map((option) => {
-              const active = option.value === status || (!option.value && !status)
-
-              return (
-                <Button
-                  key={option.label}
-                  asChild
-                  variant={active ? "default" : "outline"}
-                  size="sm"
-                >
-                  <Link href={statusHref(option.value, query)}>
-                    {option.label}
-                  </Link>
-                </Button>
-              )
-            })}
-          </div>
+        <SearchInputBar
+          defaultQuery={query}
+          placeholder="搜索计划编号、日期、项目、职场"
+          hiddenFields={status ? { status } : undefined}
+        >
+          <StatusFilterPills
+            options={statusOptions}
+            activeValue={status}
+            buildHref={(value) => statusHref(value, query)}
+          />
           {query || status ? (
             <Button asChild variant="ghost" size="sm">
               <Link href="/schedule-plans">清空</Link>
             </Button>
           ) : null}
-        </section>
+        </SearchInputBar>
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard title="计划数量" value={`${plans.length}`} description="计划基线" />
           <MetricCard title="预测人次" value={`${totalForecast}`} description="0.5h 时段汇总" />

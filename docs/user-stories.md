@@ -20,6 +20,26 @@
   status: "draft"
 ```
 
+### US816 - 共享列表搜索与状态筛选控件
+
+```yaml
+id: US816
+requirement_ids:
+  - R896
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望四个旧列表页复用一致的搜索栏和状态筛选控件，以便列表筛选交互不继续复制局部 JSX。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增 `SearchInputBar` 和 `StatusFilterPills` 两个可组合控件，沿用现有 shadcn Button/Input 外观。"
+  - "`/demand-plans`、`/schedule-plans`、`/shift-details`、`/unavailability` 不再保留重复搜索栏 JSX。"
+  - "`/demand-plans` 只使用 `SearchInputBar`，不渲染状态筛选；其他三页保留现有状态筛选和清空能力。"
+  - "不修改页面路由、查询参数、业务文案、后端、依赖或 package/lockfile。"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有列表筛选视觉与交互，不做重设计。"
+```
+
 ### US780 - 职场详情只读服务团队关系
 
 ```yaml
