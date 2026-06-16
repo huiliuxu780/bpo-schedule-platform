@@ -50,6 +50,9 @@ const pagePaths = [
   "app/demand-plans/page.tsx",
   "app/schedule-plans/page.tsx",
   "app/shift-details/page.tsx",
+  "app/unavailability/page.tsx",
+  "app/unavailability/[unavailabilityId]/page.tsx",
+  "app/schedule-risks/[riskId]/page.tsx",
 ]
 
 for (const pagePath of pagePaths) {

@@ -2381,3 +2381,12 @@
 - action: 共享 MetricCard 首刀。
 - status: `done`
 - notes: Qoder 以 `ultimate` 模型受控新增共享 `components/metric-card.tsx`，并将 `/demand-plans`、`/schedule-plans`、`/shift-details` 三处完全同构指标卡迁移到共享组件；新增 `scripts/tests/shared-metric-card-structure.test.mjs` 防止三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。Codex 审查确认实现只做机械替换；三页 HTTP smoke 返回 200 且关键指标文字仍在。本轮未修改页面路由、数据读取、业务文案、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM195`
+  source_ids:
+    - `R895`
+  story_ids:
+    - `US815`
+  action: 共享 MetricCard 旧风险不可用页迁移。
+  status: `done`
+  notes: Qoder 以 `ultimate` 模型受控将 `/unavailability`、`/unavailability/[unavailabilityId]`、`/schedule-risks/[riskId]` 三处旧页面改为引用共享 `MetricCard`，并删除本地同构 `MetricCard` 函数；结构测试扩展覆盖 6 个页面。Codex 审查确认未修改共享组件 API、页面路由、数据读取、业务文案、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；三条 HTTP smoke 返回 200；current queue 与 active tasks 已清空。

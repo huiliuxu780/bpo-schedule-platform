@@ -4713,3 +4713,19 @@
 - 三个目标页面改为引用共享 MetricCard，并移除本地 `MetricCard` 或 `SummaryCard` 函数。
 - 新增 `scripts/tests/shared-metric-card-structure.test.mjs`，防止三处页面重新定义本地指标卡函数。
 - Qoder 两次返回 max-turns，Codex 按实际 diff 审查后确认没有越权修改。
+
+### 2026-06-16 - IM195 共享 MetricCard 旧风险不可用页迁移
+
+#### 审计计划
+
+- 延续 IM194，只处理已经确认完全同构的旧风险/不可用指标卡，不扩展到生产工作台变体。
+- Product Design brief 继续锁定为保留现有 shadcn Card 指标卡视觉、静态展示、无新增动作。
+- Qoder 只允许修改三处页面；Codex 负责结构测试扩展、diff 审查、验证、提交和推送控制。
+- 本轮不新增页面、路由、数据读取、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `/unavailability`、`/unavailability/[unavailabilityId]`、`/schedule-risks/[riskId]` 改为引用共享 `MetricCard`。
+- 三处页面本地同构 `MetricCard` 函数已删除。
+- `scripts/tests/shared-metric-card-structure.test.mjs` 扩展到 6 个页面，防止本地指标卡函数回流。
+- Codex 审查确认 Qoder 只做机械迁移；HTTP smoke 覆盖列表页和两条详情页。

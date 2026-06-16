@@ -19,6 +19,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM195 Shared Metric Card Legacy Risk And Unavailability
+
+- branch_name: `codex/im195-shared-metric-card-legacy-risk`
+- base_main_commit: `pending stacked continuation from codex/im194-shared-metric-card`
+- stacked_on: `codex/im194-shared-metric-card`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Continue MetricCard cleanup only for three old pages with the same local implementation: `/unavailability`, `/unavailability/[unavailabilityId]`, and `/schedule-risks/[riskId]`.
+- qoder_mode: `true; Codex writes Harness/task packet, Qoder may only perform mechanical page/test updates, Codex reviews diff and owns verification/commit.`
+- allowed_files_check: `app/unavailability/page.tsx`, `app/unavailability/[unavailabilityId]/page.tsx`, `app/schedule-risks/[riskId]/page.tsx`, `scripts/tests/shared-metric-card-structure.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected mechanical imports/removal of local MetricCard functions and structure test extension only; no shared component API change, route, data fetch, business copy, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/shared-metric-card-structure.test.mjs` first failed after adding the three legacy risk/unavailability paths because those pages still declared local MetricCard functions. Qoder ran with `--model ultimate` and only changed the three allowed page files. Focused `node --test scripts/tests/shared-metric-card-structure.test.mjs` passed with 15 tests. `npm run typecheck`, `npm run lint`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. HTTP smoke for `/unavailability`, `/unavailability/unavail-20260511-001`, and `/schedule-risks/risk-plan-20260511-suzhou-bosch-v1-10%3A00` returned 200 and matched page titles. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`
