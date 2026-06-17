@@ -148,6 +148,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM202 Simple Table Unavailability Impact Risk Slice
+
+- branch_name: `codex/im202-simple-table-unavailability-impact-risk`
+- base_main_commit: `pending stacked continuation from codex/im201-simple-table-unavailability-impact-shift`
+- stacked_on: `codex/im201-simple-table-unavailability-impact-shift`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Product Design preservation pass for Task 3. Migrate only `components/unavailability-impact-risk-table.tsx` to the existing `SimpleTable` after IM197 through IM201 validated the pattern.
+- allowed_files_check: `components/unavailability-impact-risk-table.tsx`, `scripts/tests/simple-table-structure.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected unavailability impact risk table migration, focused structure-test extension, and traceability updates only; no page, route, business copy, data model, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/simple-table-structure.test.mjs` first failed because `components/unavailability-impact-risk-table.tsx` still owned `useReactTable`, `flexRender`, and the shadcn Table render loop. After implementation, the focused structure test passed with 8 tests. `npm run typecheck`, `npm run lint`, `bash scripts/check-state.sh --strict`, shadcn grep checks, and `git diff --check` passed. Browser smoke on `/unavailability/unavail-20260511-001` confirmed the impact risk table headers, 1 row, detail link, and no false empty state. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`

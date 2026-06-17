@@ -67,6 +67,19 @@ status: "done"
 notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序、计划链接和空状态文案；不重设计表格。"
 ```
 
+### R902 - SimpleTable 第六刀迁移 unavailability-impact-risk-table
+
+```yaml
+id: R902
+module: "前端健康恢复"
+description: "IM197 到 IM201 已验证轻量 `SimpleTable` 抽取模式。第三方前端重构方案 Task 3 仍有不可用影响风险子表格保留重复 TanStack Table 渲染循环；本轮继续只迁移 `components/unavailability-impact-risk-table.tsx`，保持不可用影响详情页的风险表体验不变。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + IM201 后代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序、明细链接和空状态文案；不重设计表格。"
+```
+
 ### R897 - SimpleTable 首刀迁移 demand-plan-table
 
 ```yaml

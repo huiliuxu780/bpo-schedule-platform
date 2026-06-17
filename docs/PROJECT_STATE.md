@@ -1088,3 +1088,9 @@ This slice preserves existing columns, default `interval_start` sorting, empty-s
 `IM201` continues the light-table extraction by migrating `components/unavailability-impact-shift-table.tsx` to the existing `SimpleTable`. The unavailability impact shift table now keeps only its column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to the shared component while preserving the default `plan_id` sort, plan links, and existing empty state copy.
 
 This slice preserves existing columns, plan detail hrefs, default `plan_id` sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM202 SimpleTable Unavailability Impact Risk Slice
+
+`IM202` continues the light-table extraction by migrating `components/unavailability-impact-risk-table.tsx` to the existing `SimpleTable`. The unavailability impact risk table now keeps only its column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to the shared component while preserving the default `risk_level` sort, risk detail links, and existing empty state copy.
+
+This slice preserves existing columns, risk detail hrefs, default `risk_level` sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
