@@ -4848,3 +4848,18 @@
 - `scripts/tests/simple-table-structure.test.mjs` 扩展覆盖 `shift-details-table`，防止该表重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
 - HTTP smoke 确认 `/shift-details?query=suzhou` 的班次明细页标题、表头、计划链接保持正常，空态未误显示。
 - 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM204 MainTableShell 边界规格
+
+#### 审计计划
+
+- IM203 已完成七个低风险 SimpleTable 迁移；继续机械迁移剩余 `useReactTable` 会触碰主列表/工作台表格。
+- 本轮只允许新增边界规格和 trace 记录，确认 `schedule-plan-table`、`unavailability-table`、`data-table` 的候选优先级。
+- 本轮不修改 UI 代码、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/main-table-shell-boundary-spec.md`，明确 `SimpleTable` 只适用于轻量子表格。
+- 规格定义未来 `MainTableShell` 只可拥有 toolbar slot、筛选布局 slot、列显隐、summary strip slot、表格 render loop、empty row 和分页控制。
+- 规格明确业务列定义、状态语义、row action、route href、数据查询、页面指标和生产能力必须留在具体表格或页面内。
+- 候选顺序建议先 `schedule-plan-table`，再 `unavailability-table`，暂缓 `data-table`。

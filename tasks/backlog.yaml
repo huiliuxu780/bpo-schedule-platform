@@ -12158,3 +12158,93 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已将 `unavailability-impact-risk-table` 迁移为列定义 + SimpleTable 调用；保留默认 `risk_level` 排序、明细链接、列、空状态文案和业务数据；结构测试、typecheck、lint、state/diff checks、Browser smoke 和最终 check.sh 通过。"
+  - id: IM203
+    title: "SimpleTable 第七刀迁移 shift-details-table"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM202"]
+    product_design_brief:
+      goal: "继续抽取轻量表格渲染层，只迁移班次明细表验证复用模式，并在进入主列表/工作台表格前停止复盘。"
+      visual_source: "现有 shadcn Table 与 TanStack Table 排序 UI，不做视觉重设计。"
+      interactivity: "保留排序、默认排序、计划链接和空状态；不新增搜索、分页或列显隐。"
+    allowed_files:
+      - "components/shift-details-table.tsx"
+      - "scripts/tests/simple-table-structure.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`components/shift-details-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+      - "保留班次明细表的列、计划链接、排序入口、默认 `plan_date` 排序、空状态文案和业务数据不变。"
+      - "扩展结构测试覆盖 `shift-details-table`，防止重复渲染循环回流。"
+      - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改 allowed_files 之外的文件"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要改动页面、路由、业务文案、后端、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将 `shift-details-table` 迁移为列定义 + SimpleTable 调用；保留默认 `plan_date` 排序、计划链接、列、空状态文案和业务数据；结构测试、typecheck、lint、state/diff checks、HTTP smoke 和最终 check.sh 通过。"
+  - id: IM204
+    title: "MainTableShell 边界规格"
+    priority: P1
+    status: done
+    required_workflow: frontend-audit
+    dependencies: ["IM203"]
+    product_design_brief:
+      goal: "在继续主列表/工作台表格抽象前，定义 MainTableShell 边界和候选优先级，避免机械迁移偏离产品责任。"
+      visual_source: "当前 shadcn admin console 表格形态；本轮只做规格，不做视觉或代码实现。"
+      interactivity: "本轮无交互实现；只规定未来 shell 不拥有业务动作、路由、查询参数或业务语义。"
+    allowed_files:
+      - "docs/design/main-table-shell-boundary-spec.md"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `docs/design/main-table-shell-boundary-spec.md`，说明为什么 SimpleTable 不应继续机械覆盖主列表/工作台表格。"
+      - "规格明确 `SimpleTable`、未来 `MainTableShell`、业务列/动作/查询/语义的职责边界。"
+      - "规格给出 `schedule-plan-table`、`unavailability-table`、`data-table` 的候选优先级与暂缓理由。"
+      - "不修改 UI 代码、页面、路由、后端、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改 UI 代码、页面、路由、后端或数据读取"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要改变业务动作、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已新增 MainTableShell 边界规格，明确 SimpleTable 停在轻量子表格，未来主表 shell 只可承接布局、列显隐、分页、渲染壳层和空态结构；业务列、动作、查询参数、路由和业务语义继续留在具体表格/页面。"

@@ -171,12 +171,30 @@
 - branch_name: `codex/im203-simple-table-shift-details`
 - base_main_commit: `pending stacked continuation from codex/im202-simple-table-unavailability-impact-risk`
 - stacked_on: `codex/im202-simple-table-unavailability-impact-risk`
-- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- remote_status: `pushed to origin/codex/im203-simple-table-shift-details after PM continuation; remote head 924a546f82b653aeb9921b0d0168c060dd26436e.`
 - scope: Product Design preservation pass for Task 3. Migrate only `components/shift-details-table.tsx` to the existing `SimpleTable` after IM197 through IM202 validated the pattern, while stopping before larger main-list/workbench table abstractions.
 - allowed_files_check: `components/shift-details-table.tsx`, `scripts/tests/simple-table-structure.test.mjs`, current Harness files, registry trace index, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
 - scope_diff_check: expected shift details table migration, focused structure-test extension, and traceability updates only; no page, route, business copy, data model, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
 - check_result: TDD RED `node --test scripts/tests/simple-table-structure.test.mjs` first failed because `components/shift-details-table.tsx` still owned `useReactTable`, `flexRender`, and the shadcn Table render loop. After implementation, the focused structure test passed with 9 tests. `npm run typecheck`, `npm run lint`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. HTTP smoke on `/shift-details?query=suzhou` confirmed the shift details page, table headers, plan link, and no false empty state. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
-- local_commit_sha: to be reported in Done Report after local commit creation
+- local_commit_sha: `924a546`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM204 MainTableShell Boundary Spec
+
+- branch_name: `codex/im204-main-table-shell-boundary-spec`
+- base_main_commit: `pending stacked continuation from codex/im203-simple-table-shift-details`
+- stacked_on: `codex/im203-simple-table-shift-details`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Product Design checkpoint after seven SimpleTable light-table slices. Define the future MainTableShell boundary before touching main-list/workbench tables.
+- allowed_files_check: `docs/design/main-table-shell-boundary-spec.md`, current project context, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected docs/spec and traceability updates only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: `bash scripts/check-state.sh --strict` passed with current context line budget 160/160. `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: pending
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`

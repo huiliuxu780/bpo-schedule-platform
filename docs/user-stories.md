@@ -20,6 +20,50 @@
   status: "draft"
 ```
 
+### US824 - MainTableShell 边界规格
+
+```yaml
+id: US824
+requirement_ids:
+  - R904
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望在迁移主列表/工作台表格前先定义 MainTableShell 边界，以便避免把搜索、筛选、分页、动作和业务语义误塞进轻量 SimpleTable。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增 `docs/design/main-table-shell-boundary-spec.md`，说明为什么不继续机械迁移剩余 useReactTable。"
+  - "规格明确 `SimpleTable` 只适用于轻量子表格，未来 `MainTableShell` 只拥有布局、列显隐、分页和渲染壳层。"
+  - "规格给出 `schedule-plan-table`、`unavailability-table`、`data-table` 的候选优先级和暂缓理由。"
+  - "不修改 UI 代码、页面、路由、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US823"
+status: "done"
+notes: "IM204 已完成：先写边界规格，不进入主表实现。"
+```
+
+### US823 - SimpleTable 第七刀迁移 shift-details-table
+
+```yaml
+id: US823
+requirement_ids:
+  - R903
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把班次明细表迁移到共享 SimpleTable，以便完成当前低风险轻量表格迁移链并在进入主列表抽象前停止复盘。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/shift-details-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留班次明细表的列、计划链接、排序入口、默认 `plan_date` 排序、空状态文案和业务数据不变。"
+  - "扩展结构测试覆盖 `shift-details-table`，防止重复渲染循环回流。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US822"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
 ### US818 - SimpleTable 第二刀迁移 schedule-plan-interval-table
 
 ```yaml
