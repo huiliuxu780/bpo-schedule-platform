@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createJiti } from "jiti";
 
-import {
+const jiti = createJiti(import.meta.url);
+
+const {
   buildImportApiUrl,
   buildImportBatchApplyUrl,
   buildImportBatchDetailUrl,
@@ -94,7 +97,7 @@ import {
   formatImportFileType,
   getImportBatchHealth,
   summarizeImportBatches,
-} from "../../components/import-center-model.ts";
+} = jiti("../../components/import-center-model.ts");
 
 const baseBatch = {
   batch_id: "BATCH-MD-001",

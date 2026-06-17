@@ -89,6 +89,27 @@ status: "done"
 notes: "IM215 已降级收口：3000 页面壳与反馈参数部分可达，共享 API/空态合约测试通过；真实 seeded case 数据仍因 8000 review-case API 不可达而未完成 live UI/API 验收。"
 ```
 
+### US836 - 复核案例 model test 运行器硬化
+
+```yaml
+id: US836
+requirement_ids:
+  - R916
+module: "复核案例工作区"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望复核案例 model/contract 断言能在正式门禁里执行，以便在不启动 8000 的前提下继续保护处理阶段、动作区、失败重试和关闭后交接语义。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "复现 `scripts/tests/import-center-model.test.mjs` direct Node 执行失败，记录根因是 TS/ESM extensionless import resolution。"
+  - "修复测试加载方式，使 `node --test scripts/tests/import-center-model.test.mjs` 通过。"
+  - "把该测试接入 `scripts/check.sh`。"
+  - "不启动 8000，不修改 `app/**`、业务组件行为、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空。"
+status: "done"
+notes: "IM216 已完成：import-center model test 现在可直接执行并纳入 `scripts/check.sh`，复核案例处理阶段、owner 矩阵、动作区、失败重试和关闭后续办断言成为正式门禁的一部分。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

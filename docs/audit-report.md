@@ -4,6 +4,26 @@
 
 ## Current Audit
 
+### 2026-06-17 - IM216 复核案例 model test 运行器硬化
+
+#### 审计结论
+
+- `IM216/US836` 已把 `scripts/tests/import-center-model.test.mjs` 从加载失败状态修复为正式可执行测试。
+- 根因是 direct Node ESM resolver 不解析 import-center barrel 内部的 extensionless TS imports；测试文件改用现有 `jiti` 加载 `components/import-center-model.ts`，不改业务组件源码。
+- 该测试已接入 `scripts/check.sh`，现在会覆盖 import-center model 的 81 个断言，包括复核案例处理阶段、owner 矩阵、详情上下文、动作区、失败重试、关闭后续办，以及导入/版本/对比相关模型契约。
+- 本轮不启动 `127.0.0.1:8000`，不修改 UI、路由、数据读取、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是 model/contract gate hardening，不等同于 live seeded UI/API smoke；真实页面数据验收仍需要已批准的 8000/API runtime。
+- `jiti` 当前来自既有安装树；本轮未新增依赖或修改 package/lockfile。若未来依赖树收紧，应单独确认是否把测试加载器变成显式 devDependency。
+
+#### 验证
+
+- RED：`BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs` 在修复前失败，报 `ERR_MODULE_NOT_FOUND`，缺失 `components/import-center-formatters`。
+- GREEN：同一命令修复后通过，81/81 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含新增 import-center model test、strict state、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
 ### 2026-06-17 - IM215 复核案例 model/contract-only 验收收口
 
 #### 审计结论

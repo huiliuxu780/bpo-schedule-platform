@@ -19,6 +19,17 @@
 
 ### 2026-06-17
 
+- task_id: `IM216`
+- source_ids:
+  - `R916`
+- story_ids:
+  - `US836`
+- action: 复核案例 model test 运行器硬化。
+- status: `done`
+- notes: 复现 `scripts/tests/import-center-model.test.mjs` direct Node 执行失败，根因为 import-center barrel 内部 extensionless TS imports 无法被 Node ESM resolver 解析。测试改用现有 `jiti` 加载 TS barrel 后，81 个 import-center model assertions 全部通过，并接入 `scripts/check.sh`；本轮不启动 8000，不修改业务 UI、后端、依赖或 package/lockfile，current queue 与 active tasks 已清空。
+
+### 2026-06-17
+
 - task_id: `IM215`
 - source_ids:
   - `R915`

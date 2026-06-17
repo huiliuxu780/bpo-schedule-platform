@@ -1204,3 +1204,11 @@ PM continued without allowing another test environment, so `IM215` was closed as
 The closeout records shared API/error helper coverage, shared empty-state coverage, and code-level review-case model assertions for processing stages, owner matrix, detail context, action deck, failed retry, and continuation/closure handoff. Direct execution of `scripts/tests/import-center-model.test.mjs` remains blocked by an existing TS/ESM import-resolution issue and is not claimed as passing evidence.
 
 Current queue and active tasks returned to empty. A future true live acceptance task should start only after PM approves or provides a backend/API runtime; a future model-test hardening task should be separate from live UI/API smoke.
+
+## 2026-06-17 IM216 Review Case Model Test Runner Hardening
+
+`IM216` turned the import-center model assertions into an executable gate. Before the fix, `scripts/tests/import-center-model.test.mjs` failed at load time because Node ESM could not resolve extensionless TS imports from the `components/import-center-model.ts` barrel.
+
+The test now uses the already-installed `jiti` loader to import the TS barrel without changing production imports or business UI behavior. `scripts/check.sh` now runs `node --test scripts/tests/import-center-model.test.mjs`, adding 81 model assertions to the default gate, including review-case processing stages, owner matrix, detail context, action deck, failed retry targeting, evidence/conclusion/closure action payloads, and continuation handoff.
+
+This is a model/contract gate improvement only. It does not start or require `127.0.0.1:8000`, and it does not prove live seeded UI/API acceptance.
