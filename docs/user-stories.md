@@ -108,6 +108,28 @@ status: "done"
 notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
 ```
 
+### US822 - SimpleTable 第六刀迁移 unavailability-impact-risk-table
+
+```yaml
+id: US822
+requirement_ids:
+  - R902
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把不可用影响风险子表格迁移到共享 SimpleTable，以便继续压缩轻量子表格里的重复 TanStack 渲染循环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/unavailability-impact-risk-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留不可用影响风险表的列、明细链接、排序入口、默认 `risk_level` 排序、空状态文案和业务数据不变。"
+  - "扩展结构测试覆盖 `unavailability-impact-risk-table`，防止重复渲染循环回流。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US821"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
 ### US817 - SimpleTable 首刀迁移 demand-plan-table
 
 ```yaml
