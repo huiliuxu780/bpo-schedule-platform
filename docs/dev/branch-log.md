@@ -400,6 +400,24 @@
 - push_decision: `pending PM decision after local closeout commit`
 - blocked_reason: `N/A; live seeded smoke remains not accepted, but IM215 is closed as a no-new-env model/contract-only QA record.`
 
+### IM216 Review Case Model Test Runner
+
+- branch_name: `codex/im216-review-case-model-test-runner`
+- base_main_commit: `2d6e749a2984d769cbd29d0b8c86dcebd92bb8d7`
+- stacked_on: `codex/im215-review-case-acceptance-smoke`
+- remote_status: `not_pushed; pending PM push decision after local commit.`
+- scope: Harden the import-center model test runner so existing review-case model assertions execute under direct Node and are included in `scripts/check.sh`.
+- allowed_files_check: `scripts/tests/import-center-model.test.mjs`, `scripts/check.sh`, current queue and active tasks, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and branch log only.
+- scope_diff_check: expected test-runner and Harness changes only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: RED reproduced with direct `node --test scripts/tests/import-center-model.test.mjs` failing on `ERR_MODULE_NOT_FOUND` for extensionless `components/import-center-formatters`; GREEN passed after loading the TS barrel via existing `jiti`, with 81/81 import-center model assertions passing. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with the new model test included, strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests.
+- local_commit_sha: pending
+- integration_status: `done`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`

@@ -54,6 +54,19 @@ status: "done"
 notes: "IM215 已按 PM 继续指令收口为 no-new-env model/contract-only QA 记录：3000 页面壳可达，但 live seeded data 仍因 8000 review-case API 不可达而未验收；本轮未启动其他测试环境、未修改业务代码。"
 ```
 
+### R916 - 复核案例 model test 运行器硬化
+
+```yaml
+id: R916
+module: "复核案例工作区"
+description: "IM215 收口时发现 `scripts/tests/import-center-model.test.mjs` 已包含复核案例处理阶段、Owner 矩阵、详情上下文、动作区、失败重试和关闭后续办断言，但 direct Node 执行被 import-center barrel 内部的 TS/ESM extensionless import resolution 挡住。当前需要修复测试运行器路径，并把该测试纳入正式 `scripts/check.sh`，使复核案例 model/contract 验收可执行。"
+source: "IM215 closeout recommended test-runner hardening + PM confirmed"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM216 已完成：`scripts/tests/import-center-model.test.mjs` 改用现有 `jiti` 加载 TS barrel，direct Node 执行 81/81 通过，并已接入 `scripts/check.sh`；未启动 8000，未修改业务 UI、后端、依赖或 package/lockfile。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
