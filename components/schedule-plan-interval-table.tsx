@@ -1,25 +1,10 @@
 "use client"
 
 import { ArrowUpDown } from "lucide-react"
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  type SortingState,
-  useReactTable,
-} from "@tanstack/react-table"
-import * as React from "react"
+import { type ColumnDef } from "@tanstack/react-table"
 
+import { SimpleTable } from "@/components/simple-table"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import { formatCoverageRate, type SchedulePlanInterval } from "@/lib/schedule-plans"
 
 const columns: ColumnDef<SchedulePlanInterval>[] = [
@@ -144,61 +129,12 @@ export function SchedulePlanIntervalTable({
 }: {
   intervals: SchedulePlanInterval[]
 }) {
-  "use no memo"
-
-  const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "interval_start", desc: false },
-  ])
-  // TanStack Table exposes an imperative table service that React Compiler cannot memoize.
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
-    data: intervals,
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  })
-
   return (
-    <Table>
-      <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          <TableRow key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-        {intervals.length === 0 ? (
-          <TableRow>
-            <TableCell
-              colSpan={columns.length}
-              className="h-24 text-center text-sm text-muted-foreground"
-            >
-              当前计划暂无时段明细
-            </TableCell>
-          </TableRow>
-        ) : null}
-      </TableBody>
-    </Table>
+    <SimpleTable
+      columns={columns}
+      data={intervals}
+      emptyMessage="当前计划暂无时段明细"
+      defaultSorting={[{ id: "interval_start", desc: false }]}
+    />
   )
 }
