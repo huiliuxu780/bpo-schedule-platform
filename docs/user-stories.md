@@ -20,6 +20,29 @@
   status: "draft"
 ```
 
+### US828 - MainTableShell 收口与 data-table 暂缓决策
+
+```yaml
+id: US828
+requirement_ids:
+  - R908
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望收口 SimpleTable 与 MainTableShell 表格抽象链路，以便确认 `data-table` 暂缓迁移并把下一阶段产品优先级从技术债切回业务价值。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "明确 IM197-IM207 已完成的表格抽象边界和当前收益。"
+  - "明确 `components/data-table.tsx` 暂缓迁移的产品原因：它属于 `/dashboard` 异常演示表，产品 owner、路由责任和真实业务用途尚未重新确认。"
+  - "更新 MainTableShell 边界文档，写清重新评估 `data-table` 的前置条件。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US827"
+status: "done"
+notes: "IM208 已完成：当前表格抽象链路收口，`data-table` 继续暂缓，下一阶段应回到业务价值更清晰的产品切片。"
+```
+
 ### US827 - MainTableShell 第二刀迁移 unavailability-table
 
 ```yaml

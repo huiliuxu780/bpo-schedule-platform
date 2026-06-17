@@ -24,7 +24,7 @@ The next candidate tables are larger product surfaces, not equivalent child/deta
 | --- | --- | --- | --- | --- |
 | `components/schedule-plan-table.tsx` | `/schedule-plans` | 1 | plan summary, keyword/status/gap filters, column visibility, pagination, summary strip, detail links | First future shell consumer after the shell boundary is tested. |
 | `components/unavailability-table.tsx` | `/unavailability` | 2 | unavailability query/status filters, column visibility, pagination, summary strip, impact/shift links | Second future shell consumer; keep domain actions outside the shell. |
-| `components/data-table.tsx` | `/dashboard` | defer | dashboard/anomaly demo table, column visibility, pagination, row action placeholder | Do not use as the first source; it is less aligned with the current BPO workflow. |
+| `components/data-table.tsx` | `/dashboard` | defer | dashboard/anomaly demo table, column visibility, pagination, row action placeholder | Keep deferred after IM208; it needs a clearer dashboard anomaly owner, route responsibility, and real workflow value before migration. |
 
 ## SimpleTable Boundary
 
@@ -61,7 +61,14 @@ It must not own:
 2. IM206: migrate `schedule-plan-table` to `MainTableShell` while preserving visible UI, filters, pagination, links, and copy.
 3. IM207: migrate `unavailability-table` only after IM206 proves the shell boundary.
 
-Defer `components/data-table.tsx` until the dashboard/anomaly table has a clearer product owner and route responsibility.
+IM208 closes the current table-abstraction chain. Defer `components/data-table.tsx`
+until the dashboard/anomaly table has:
+
+- a confirmed product owner and route responsibility
+- a clear role in the current BPO WFM workflow rather than only a dashboard demo role
+- an acceptance path that proves migration improves maintainability without hiding row actions or anomaly semantics in the shell
+
+Do not reopen table migration work only because `data-table` still imports TanStack Table directly.
 
 ## Future Acceptance Gates
 

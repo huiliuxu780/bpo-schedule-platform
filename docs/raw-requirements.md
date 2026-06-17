@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R908 - MainTableShell 收口与 data-table 暂缓决策
+
+```yaml
+id: R908
+module: "前端健康恢复"
+description: "IM197 到 IM207 已完成轻量子表格 SimpleTable 链路、MainTableShell 边界定义、结构护栏，以及 `schedule-plan-table` 和 `unavailability-table` 两个主表迁移。当前仅剩 `components/data-table.tsx` 仍直接拥有 TanStack Table 渲染循环，但它属于 `/dashboard` 异常演示表，产品归属和下一阶段业务责任不如排班计划与不可用管理清晰。本轮需要收口表格抽象链路，确认暂缓 `data-table` 迁移，并把后续工作从机械技术债切回有业务价值的产品切片。"
+source: "IM207 completion + PM confirmed closeout continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM208 已完成：记录 `data-table` 暂缓条件，关闭当前 SimpleTable/MainTableShell 表格抽象链路；后续只有在 dashboard anomaly table 的产品 owner、路由责任和真实业务用途明确后才重新评估迁移。"
+```
+
 ### R907 - MainTableShell 第二刀迁移 unavailability-table
 
 ```yaml
