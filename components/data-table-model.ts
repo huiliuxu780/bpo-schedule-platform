@@ -16,6 +16,18 @@ export type DashboardAnomalyFilters = {
   status?: Anomaly["status"] | "all"
 }
 
+export type DashboardAnomalyEntryState =
+  | {
+      kind: "blocked"
+      label: string
+      detail: string
+    }
+  | {
+      kind: "link"
+      label: string
+      href: string
+    }
+
 export type DashboardSyncStatusRow = {
   source: string
   batch: string
@@ -93,6 +105,61 @@ export function filterDashboardAnomalies(
 
     return true
   })
+}
+
+export function buildDashboardAnomalyEntryState(
+  row: Anomaly
+): DashboardAnomalyEntryState {
+  const entry = row.downstreamEntry
+
+  if (!entry) {
+    return {
+      kind: "blocked",
+      label: "等待下游定位",
+      detail:
+        "当前异常还没有稳定的复核案例、对比运行或来源批次，不能从经营总览直接跳转。",
+    }
+  }
+
+  const encodedId = encodeURIComponent(entry.id)
+
+  if (entry.type === "review_case") {
+    return {
+      kind: "link",
+      label: "查看复核案例",
+      href: `/data-quality/review-cases/${encodedId}`,
+    }
+  }
+
+  if (entry.type === "comparison_run") {
+    return {
+      kind: "link",
+      label: "查看对比运行",
+      href: `/data-quality/comparison-runs/${encodedId}`,
+    }
+  }
+
+  if (entry.type === "import_batch_result_trace") {
+    return {
+      kind: "link",
+      label: "查看结果追踪",
+      href: `/data-quality/${encodedId}?tab=result-trace`,
+    }
+  }
+
+  if (entry.type === "actual_log_production") {
+    return {
+      kind: "link",
+      label: "查看日志版本",
+      href: `/actual-logs/production/${encodedId}`,
+    }
+  }
+
+  return {
+    kind: "link",
+    label: "查看排班版本",
+    href: `/schedule-plans/production/${encodedId}`,
+  }
 }
 
 export function clampDashboardPageIndex({

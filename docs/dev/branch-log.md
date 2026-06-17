@@ -310,6 +310,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM211 Dashboard Anomaly Entry Blocked State
+
+- branch_name: `codex/im211-dashboard-anomaly-entry-blocked-state`
+- base_main_commit: `66193b1d694dabcd7621935262fbcddc7a0d2fa7`
+- stacked_on: `codex/im210-dashboard-downstream-entry-spec`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Frontend-only dashboard anomaly row entry correction. Replace the generic row action placeholder with a blocked downstream-entry state when the row has no stable downstream ID, while preserving future read-only link generation for known existing workspaces.
+- allowed_files_check: `app/dashboard/data.ts`, `components/data-table.tsx`, `components/data-table-model.ts`, `scripts/tests/dashboard-table-model.test.mjs`, current queue and active tasks, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and this branch-log entry only.
+- scope_diff_check: expected model/test/UI blocked-state and traceability updates only; no backend, database, dependency, package/lockfile, new route, new query-contract, real exception query, review write, case closure, comparison execution, batch apply, production action, permission, approval, export, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: TDD RED `node --test scripts/tests/dashboard-table-model.test.mjs` first failed because `components/data-table-model.ts` did not export `buildDashboardAnomalyEntryState`. After implementation, the focused dashboard table model test passed with 11 tests. shadcn component review found the changed table action still composes existing Button/Table/Card, uses semantic tokens, lucide icons, `gap-*`, standard radius, and no hardcoded color-scale classes. Browser smoke on `http://127.0.0.1:3000/dashboard` confirmed visible disabled `等待下游定位` row actions and no fabricated review/comparison links; console had no errors, only React DevTools/HMR and pre-existing chart-size warnings. `git diff --check` passed. `bash scripts/check-state.sh --strict` passed after current queue/active tasks returned to empty. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: pending
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`

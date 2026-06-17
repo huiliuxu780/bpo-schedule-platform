@@ -41,6 +41,19 @@ status: "done"
 notes: "IM210 已完成：dashboard 未来只可作为 summary-to-workspace entry，候选入口限定在既有 comparison run、review case、import batch result trace、actual-log production detail 和 schedule production detail；没有稳定下游 ID 时不得伪造行级跳转或处理状态。"
 ```
 
+### R911 - Dashboard anomaly row 下游入口阻塞态
+
+```yaml
+id: R911
+module: "运营工作台"
+description: "IM210 已定义 dashboard anomaly row 未来只能作为 summary-to-workspace entry。当前 `/dashboard` 静态 anomaly 数据还没有稳定的 caseId、runId 或 batchId，因此需要把行操作占位改成明确的不可跳转/等待下游定位状态，避免 PM 或运营误以为经营总览已经具备异常处理入口。"
+source: "IM210 downstream entry spec + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM211 已完成：dashboard anomaly row 缺少稳定下游 ID 时显示 `等待下游定位` 阻塞态；只有 future row 明确携带稳定 downstreamEntry 时模型才会生成既有工作区链接。"
+```
+
 ### R908 - MainTableShell 收口与 data-table 暂缓决策
 
 ```yaml
