@@ -20,6 +20,29 @@
   status: "draft"
 ```
 
+### US826 - MainTableShell 首刀迁移 schedule-plan-table
+
+```yaml
+id: US826
+requirement_ids:
+  - R906
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望先把排班计划主表迁移到 MainTableShell，以便共享主表布局、列显隐、分页和渲染壳层，同时不把排班计划的业务筛选、摘要、列定义或详情入口抽进通用组件。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增 `components/main-table-shell.tsx`，拥有 TanStack Table 渲染、排序、列显隐、分页、empty row 和 toolbar/summary slot。"
+  - "`components/schedule-plan-table.tsx` 改为传入列定义、筛选后的数据、摘要和 toolbar，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留排班计划搜索、状态筛选、缺口筛选、列显隐、分页、排序、汇总、详情链接、空状态文案和业务数据不变。"
+  - "扩展结构测试，防止 `schedule-plan-table` 重新拥有主表渲染循环，并防止 `unavailability-table`/`data-table` 在各自任务前提前接入 MainTableShell。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US825"
+status: "done"
+notes: "IM206 已完成：MainTableShell 首刀只迁移排班计划主表，业务职责仍留在具体表格。"
+```
+
 ### US825 - MainTableShell 结构护栏
 
 ```yaml

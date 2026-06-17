@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R906 - MainTableShell 首刀迁移 schedule-plan-table
+
+```yaml
+id: R906
+module: "前端健康恢复"
+description: "IM204/IM205 已明确 MainTableShell 边界并加上结构护栏。当前第一个适合迁移的主表是 `components/schedule-plan-table.tsx`：它包含搜索、状态/缺口筛选、列显隐、汇总、分页和详情入口，需要把共享表格壳层抽到 `MainTableShell`，同时保留业务列、筛选语义、详情路由和页面文案在具体表格内。"
+source: "IM205 MainTableShell structure guard + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM206 已完成：新增 `components/main-table-shell.tsx`，并让 `schedule-plan-table` 委托共享壳层；保留搜索、状态/缺口筛选、列显隐、分页、汇总、详情入口和业务文案。"
+```
+
 ### R905 - MainTableShell 结构护栏
 
 ```yaml

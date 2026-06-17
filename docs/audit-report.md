@@ -4877,3 +4877,19 @@
 - 新增 `scripts/tests/main-table-shell-structure.test.mjs`，红灯失败原因是缺少 `docs/design/main-table-shell-structure-guard.md`。
 - 新增 `docs/design/main-table-shell-structure-guard.md`，记录允许职责、禁止职责和候选顺序。
 - 结构测试确认本轮没有创建 `components/main-table-shell.tsx`，`schedule-plan-table`、`unavailability-table`、`data-table` 也没有提前 import/render MainTableShell。
+
+### 2026-06-17 - IM206 MainTableShell 首刀迁移 schedule-plan-table
+
+#### 审计计划
+
+- 延续 IM204/IM205 边界，只把第一个主表候选 `schedule-plan-table` 迁移到 MainTableShell，不扩大到 `unavailability-table` 或 `data-table`。
+- Product Design brief 锁定为保持当前 shadcn Card/Table/Select/Button/DropdownMenu 视觉，保留排班计划搜索、状态筛选、缺口筛选、列显隐、排序、分页、汇总、重置和详情入口。
+- MainTableShell 只拥有主表壳层、toolbar/summary slot、列显隐、TanStack 渲染循环、排序状态、分页状态和空态结构；业务筛选、列定义、详情路由和业务文案继续留在 `schedule-plan-table`。
+- 本轮不新增页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `components/main-table-shell.tsx`，提供共享主表壳层和分页/列显隐能力。
+- `components/schedule-plan-table.tsx` 委托 MainTableShell 渲染主表，同时保留排班计划业务列、筛选状态、摘要、详情链接和文案。
+- `scripts/tests/main-table-shell-structure.test.mjs` 扩展为实现护栏：确认 MainTableShell 拥有共享结构，排班计划主表不再直接拥有渲染循环，其他候选表未提前接入。
+- 结构测试、typecheck、lint、shadcn/tokens review 和浏览器烟测覆盖排班计划列表；最终验证结果记录在 branch log。

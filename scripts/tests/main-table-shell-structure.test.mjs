@@ -69,14 +69,67 @@ test("MainTableShell structure guard document records allowed and forbidden owne
   }
 })
 
-test("IM205 does not introduce or wire a MainTableShell implementation", () => {
+test("MainTableShell component exists and owns main table structure", () => {
   assert.equal(
     existsSync(mainTableShellPath),
-    false,
-    `${mainTableShellPath} should not exist in the docs/test-only guard slice`
+    true,
+    `${mainTableShellPath} should exist for the first implementation slice`
   )
 
-  for (const tablePath of candidateTablePaths) {
+  const source = read(mainTableShellPath)
+
+  assert.match(source, /export function MainTableShell/)
+  assert.match(source, /type MainTableShellProps/)
+  assert.match(source, /useReactTable/)
+  assert.match(source, /flexRender/)
+  assert.match(source, /getCoreRowModel/)
+  assert.match(source, /getPaginationRowModel/)
+  assert.match(source, /getSortedRowModel/)
+  assert.match(source, /DropdownMenuCheckboxItem/)
+  assert.match(source, /getAllLeafColumns/)
+  assert.match(source, /getVisibleLeafColumns/)
+  assert.match(source, /getDashboardPaginationRange/)
+  assert.match(source, /clampDashboardPageIndex/)
+})
+
+test("SchedulePlanTable delegates main table structure to MainTableShell", () => {
+  const source = read("components/schedule-plan-table.tsx")
+
+  assert.match(
+    source,
+    /import \{ MainTableShell \} from "@\/components\/main-table-shell"/,
+    "SchedulePlanTable should import MainTableShell"
+  )
+  assert.match(source, /<MainTableShell/)
+  assert.match(source, /columns=\{columns\}/)
+  assert.match(source, /data=\{filteredPlans\}/)
+  assert.match(source, /columnLabels=\{columnLabels\}/)
+  assert.match(source, /emptyMessage="暂无符合条件的排班计划"/)
+  assert.match(source, /initialSorting=\{\[\{ id: "plan_date", desc: false \}\]\}/)
+
+  assert.doesNotMatch(source, /useReactTable/)
+  assert.doesNotMatch(source, /flexRender/)
+  assert.doesNotMatch(source, /getCoreRowModel/)
+  assert.doesNotMatch(source, /getPaginationRowModel/)
+  assert.doesNotMatch(source, /getSortedRowModel/)
+  assert.doesNotMatch(source, /type PaginationState/)
+  assert.doesNotMatch(source, /type SortingState/)
+  assert.doesNotMatch(source, /type VisibilityState/)
+  assert.doesNotMatch(source, /<Table\b/)
+  assert.doesNotMatch(source, /<TableHeader\b/)
+  assert.doesNotMatch(source, /<TableBody\b/)
+})
+
+test("remaining candidates do not wire MainTableShell before their slices", () => {
+  assert.equal(
+    existsSync(mainTableShellPath),
+    true,
+    `${mainTableShellPath} should exist before remaining candidates migrate`
+  )
+
+  for (const tablePath of candidateTablePaths.filter(
+    (path) => path !== "components/schedule-plan-table.tsx"
+  )) {
     const source = read(tablePath)
 
     assert.doesNotMatch(
