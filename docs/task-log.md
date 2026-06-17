@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM219`
+- source_ids:
+  - `R919`
+- story_ids:
+  - `US839`
+- action: master-data maintenance model gate 拆分接入。
+- status: `done`
+- notes: 复现原 `scripts/tests/master-data-maintenance-model.test.mjs` direct Node 执行失败，根因为 master-data barrel 内部 extensionless TS imports 无法被 Node ESM resolver 解析。测试改用现有 `jiti` 加载 TS barrel，并拆为 core/workbench 8 个 tests、agent 8 个 tests、reference 8 个 tests、detail/payload 7 个 tests；`scripts/check.sh` 已显式运行四个拆分测试文件。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM218`
 - source_ids:
   - `R918`

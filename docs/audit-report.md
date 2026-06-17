@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM219 master-data maintenance model gate 拆分接入
+
+#### 审计结论
+
+- `IM219/US839` 已把 master-data maintenance model 断言从单个大测试文件拆成四个业务边界门禁。
+- `scripts/tests/master-data-maintenance-model.test.mjs` 保留 core/workbench/source-context 8 个 tests。
+- `scripts/tests/master-data-maintenance-agent-model.test.mjs` 新增 8 个 agent 相关 tests，覆盖员工列表、坐席管理、坐席详情、筛选、导入弹窗、坐席 payload、技能替换 payload 和反馈。
+- `scripts/tests/master-data-maintenance-reference-model.test.mjs` 新增 8 个 reference/organization/skill/vendor tests。
+- `scripts/tests/master-data-maintenance-detail-model.test.mjs` 新增 7 个 workplace/service-team/vendor detail 和 workplace payload tests。
+- `scripts/check.sh` 已显式运行四个拆分后的 master-data maintenance model 测试文件。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁覆盖改进，不等同于新增主数据维护业务能力。
+- 后续若继续拆 `product-structure.test.mjs`，需要先按产品结构职责分组，避免只按文件长度机械拆分。
+
+#### 验证
+
+- `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/master-data-maintenance-agent-model.test.mjs scripts/tests/master-data-maintenance-reference-model.test.mjs scripts/tests/master-data-maintenance-detail-model.test.mjs scripts/tests/master-data-model-split.test.mjs scripts/tests/master-data-workbench-split.test.mjs`：通过，33/33 tests pass。
+- `npm run lint`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、import-center model gates、master-data maintenance model gates、split guards、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
 ### 2026-06-18 - IM218 import-center model gate 业务边界拆分
 
 #### 审计结论

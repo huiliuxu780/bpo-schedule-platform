@@ -154,6 +154,28 @@ status: "done"
 notes: "IM218 已完成：import-center model gate 继续拆为 core、review-case、version、batch/template/apply 边界，并把 split guard 接入正式 check。"
 ```
 
+### US839 - master-data maintenance model gate 拆分接入
+
+```yaml
+id: US839
+requirement_ids:
+  - R919
+module: "主数据维护测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 master-data maintenance model 断言也按业务边界拆分并进入正式门禁，以便主数据维护工作区的 core、agent、reference、detail/payload 语义都能被稳定回归保护。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "复现 `scripts/tests/master-data-maintenance-model.test.mjs` direct Node 执行失败，记录根因是 TS/ESM extensionless import resolution。"
+  - "将 31 个断言按 core/workbench、agent、reference、detail/payload 拆成独立测试文件。"
+  - "拆分后的测试使用现有 `jiti` 加载 `components/master-data-maintenance-model.ts`，不修改生产 import。"
+  - "`scripts/check.sh` 显式运行拆分后的 master-data maintenance model 测试文件。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM219 已完成：master-data maintenance model gate 已拆分并接入正式 check。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

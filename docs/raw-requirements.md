@@ -93,6 +93,19 @@ status: "done"
 notes: "IM218 已完成：新增 `import-center-version-model.test.mjs` 10 个 tests 和 `import-center-batch-template-model.test.mjs` 27 个 tests，原 `import-center-model.test.mjs` 保留 23 个 core/comparison/exception tests；`scripts/check.sh` 同时运行新增测试和 4 个 split guard。未启动 8000，未修改业务 UI、后端、依赖或 package/lockfile。"
 ```
 
+### R919 - master-data maintenance model gate 拆分接入
+
+```yaml
+id: R919
+module: "主数据维护测试门禁"
+description: "`scripts/tests/master-data-maintenance-model.test.mjs` 已膨胀为 31 个断言、1788 行，并且 direct Node 执行被 master-data barrel 内部 TS/ESM extensionless import resolution 挡住，导致它未接入正式 `scripts/check.sh`。当前需要按 core/workbench、agent、reference、detail/payload 边界拆分测试文件，使用现有 `jiti` 加载 TS barrel，并把拆分后的测试纳入正式门禁。"
+source: "PM requested continuing test gate split after IM218"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM219 已完成：master-data maintenance model gate 拆为 core/workbench 8 个 tests、agent 8 个 tests、reference 8 个 tests、detail/payload 7 个 tests，并全部接入 `scripts/check.sh`；未修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
