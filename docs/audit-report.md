@@ -4893,3 +4893,19 @@
 - `components/schedule-plan-table.tsx` 委托 MainTableShell 渲染主表，同时保留排班计划业务列、筛选状态、摘要、详情链接和文案。
 - `scripts/tests/main-table-shell-structure.test.mjs` 扩展为实现护栏：确认 MainTableShell 拥有共享结构，排班计划主表不再直接拥有渲染循环，其他候选表未提前接入。
 - 结构测试、typecheck、lint、shadcn/tokens review 和浏览器烟测覆盖排班计划列表；最终验证结果记录在 branch log。
+
+### 2026-06-17 - IM207 MainTableShell 第二刀迁移 unavailability-table
+
+#### 审计计划
+
+- 延续 IM204/IM205 边界和 IM206 实现，只把第二个主表候选 `unavailability-table` 迁移到 MainTableShell，不扩大到 `data-table`。
+- Product Design brief 锁定为保持当前 shadcn Card/Table/Select/Button/DropdownMenu 视觉，保留不可用管理搜索、状态筛选、列显隐、排序、分页、汇总、重置、影响入口和班次入口。
+- 不可用页面已有外层业务 Card，因此 MainTableShell 需要 embedded 模式避免 card-in-card；业务筛选、列定义、影响/班次路由和业务文案继续留在 `unavailability-table`。
+- 本轮不新增页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `components/main-table-shell.tsx` 增加 embedded 模式，并把列显隐控制作为 toolbar context 暴露给嵌入式表格。
+- `components/unavailability-table.tsx` 委托 MainTableShell 渲染主表，同时保留不可用业务列、筛选状态、摘要、影响/班次链接和文案。
+- `scripts/tests/main-table-shell-structure.test.mjs` 扩展为第二个实现护栏：确认不可用主表不再直接拥有渲染循环，`data-table` 未提前接入。
+- 结构测试、typecheck、lint、shadcn/tokens review 和浏览器烟测覆盖不可用管理列表；最终验证结果记录在 branch log。

@@ -20,6 +20,29 @@
   status: "draft"
 ```
 
+### US827 - MainTableShell 第二刀迁移 unavailability-table
+
+```yaml
+id: US827
+requirement_ids:
+  - R907
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把不可用管理主表迁移到 MainTableShell，以便复用主表布局、列显隐、分页和渲染壳层，同时保留不可用记录的业务筛选、摘要、影响入口和班次入口。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/main-table-shell.tsx` 支持 embedded 模式，避免在已有页面 Card 内再渲染一层 Card。"
+  - "`components/unavailability-table.tsx` 改为传入列定义、筛选后的数据、摘要和 toolbar，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留不可用表搜索、状态筛选、列显隐、分页、排序、汇总、影响链接、班次链接、空状态文案和业务数据不变。"
+  - "扩展结构测试，防止 `unavailability-table` 重新拥有主表渲染循环，并防止 `data-table` 在任务前提前接入 MainTableShell。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US826"
+status: "done"
+notes: "IM207 已完成：MainTableShell 第二刀只迁移不可用管理主表，页面外层 Card 与业务职责保持原位。"
+```
+
 ### US826 - MainTableShell 首刀迁移 schedule-plan-table
 
 ```yaml

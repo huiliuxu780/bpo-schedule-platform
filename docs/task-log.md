@@ -2489,3 +2489,12 @@
   action: MainTableShell 首刀迁移 schedule-plan-table。
   status: `done`
   notes: 新增 `components/main-table-shell.tsx`，集中主表的 Card/Table 壳层、toolbar slot、summary slot、列显隐、TanStack 渲染循环、排序状态、分页状态和空态结构；`components/schedule-plan-table.tsx` 改为传入排班计划列定义、筛选后数据、摘要和 toolbar，业务筛选、详情链接、列文案和空状态文案仍留在具体表格。结构测试扩展覆盖 MainTableShell 实现边界、排班计划主表委托，以及 `unavailability-table`/`data-table` 未提前接入。本轮未修改页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM207`
+  source_ids:
+    - `R907`
+  story_ids:
+    - `US827`
+  action: MainTableShell 第二刀迁移 unavailability-table。
+  status: `done`
+  notes: `components/main-table-shell.tsx` 增加 embedded 模式和 toolbar column visibility slot，默认 Card 模式保持兼容；`components/unavailability-table.tsx` 改为传入不可用列定义、筛选后数据、摘要和 toolbar，业务筛选、影响/班次链接、列文案和空状态文案仍留在具体表格。结构测试扩展覆盖不可用主表委托，并确认 `data-table` 未提前接入 MainTableShell。本轮未修改页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。

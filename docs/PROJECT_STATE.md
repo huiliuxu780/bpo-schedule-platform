@@ -1120,3 +1120,11 @@ This slice preserves all UI code, routes, data fetching, business copy, backend 
 `schedule-plan-table` now keeps the排班计划-specific responsibilities: column definitions, business filters, summary metrics, detail hrefs, status/gap semantics, and copy. This is the intended boundary for future main-table slices.
 
 This slice preserves existing routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM207 MainTableShell Unavailability Slice
+
+`IM207` implements the second `MainTableShell` slice on `components/unavailability-table.tsx`. The shared shell now supports an embedded mode so tables inside an existing page-level Card can reuse the TanStack/Table/pagination/column-visibility shell without creating a nested Card.
+
+`unavailability-table` now keeps the不可用-specific responsibilities: column definitions, business filters, summary metrics, impact/detail hrefs, shift-list hrefs, status semantics, and copy. `components/data-table.tsx` remains deferred until its product owner and anomaly-table responsibility are clearer.
+
+This slice preserves existing pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.

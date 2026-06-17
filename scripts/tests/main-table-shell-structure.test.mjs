@@ -120,6 +120,39 @@ test("SchedulePlanTable delegates main table structure to MainTableShell", () =>
   assert.doesNotMatch(source, /<TableBody\b/)
 })
 
+test("UnavailabilityTable delegates main table structure to MainTableShell", () => {
+  const source = read("components/unavailability-table.tsx")
+
+  assert.match(
+    source,
+    /import \{ MainTableShell \} from "@\/components\/main-table-shell"/,
+    "UnavailabilityTable should import MainTableShell"
+  )
+  assert.match(source, /<MainTableShell/)
+  assert.match(source, /columns=\{columns\}/)
+  assert.match(source, /data=\{filteredRows\}/)
+  assert.match(source, /columnLabels=\{columnLabels\}/)
+  assert.match(source, /emptyMessage="暂无符合条件的不可用记录"/)
+  assert.match(
+    source,
+    /initialSorting=\{\[\{ id: "unavailable_date", desc: false \}\]\}/
+  )
+  assert.match(source, /variant="embedded"/)
+  assert.match(source, /columnVisibilityControl/)
+
+  assert.doesNotMatch(source, /useReactTable/)
+  assert.doesNotMatch(source, /flexRender/)
+  assert.doesNotMatch(source, /getCoreRowModel/)
+  assert.doesNotMatch(source, /getPaginationRowModel/)
+  assert.doesNotMatch(source, /getSortedRowModel/)
+  assert.doesNotMatch(source, /type PaginationState/)
+  assert.doesNotMatch(source, /type SortingState/)
+  assert.doesNotMatch(source, /type VisibilityState/)
+  assert.doesNotMatch(source, /<Table\b/)
+  assert.doesNotMatch(source, /<TableHeader\b/)
+  assert.doesNotMatch(source, /<TableBody\b/)
+})
+
 test("remaining candidates do not wire MainTableShell before their slices", () => {
   assert.equal(
     existsSync(mainTableShellPath),
@@ -128,7 +161,11 @@ test("remaining candidates do not wire MainTableShell before their slices", () =
   )
 
   for (const tablePath of candidateTablePaths.filter(
-    (path) => path !== "components/schedule-plan-table.tsx"
+    (path) =>
+      ![
+        "components/schedule-plan-table.tsx",
+        "components/unavailability-table.tsx",
+      ].includes(path)
   )) {
     const source = read(tablePath)
 
