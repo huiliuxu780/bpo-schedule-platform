@@ -207,11 +207,29 @@
 - branch_name: `codex/im205-main-table-shell-structure-guard`
 - base_main_commit: `pending stacked continuation from codex/im204-main-table-shell-boundary-spec`
 - stacked_on: `codex/im204-main-table-shell-boundary-spec`
-- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- remote_status: `pushed to origin/codex/im205-main-table-shell-structure-guard after PM continuation; remote head e832dd82ef7aa7fae4d07e6aebe20f2f001d58f0.`
 - scope: Docs/test-only guard for the future MainTableShell boundary. Add a structure test and guard document before any UI implementation.
 - allowed_files_check: `scripts/tests/main-table-shell-structure.test.mjs`, `docs/design/main-table-shell-structure-guard.md`, current project context, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
 - scope_diff_check: expected structure test, guard document, and traceability updates only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
 - check_result: TDD RED `node --test scripts/tests/main-table-shell-structure.test.mjs` first failed because `docs/design/main-table-shell-structure-guard.md` did not exist. After adding the guard document, the focused structure test passed with 3 tests. `bash scripts/check-state.sh --strict` passed with current context line budget 160/160. `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: `e832dd8`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM206 MainTableShell Schedule Plan Slice
+
+- branch_name: `codex/im206-main-table-shell-schedule-plan`
+- base_main_commit: `pending stacked continuation from codex/im205-main-table-shell-structure-guard`
+- stacked_on: `codex/im205-main-table-shell-structure-guard`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: First MainTableShell implementation slice. Add the shared main-table shell and migrate only `components/schedule-plan-table.tsx` while preserving schedule-plan business filters, summary, detail links, copy, routes, and data.
+- allowed_files_check: `components/main-table-shell.tsx`, `components/schedule-plan-table.tsx`, `scripts/tests/main-table-shell-structure.test.mjs`, current project context, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected shared shell, schedule-plan-table delegation, structure-test update, and traceability updates only; no `app/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/main-table-shell-structure.test.mjs` first failed because `components/main-table-shell.tsx` did not exist and `schedule-plan-table` still owned the render loop. After implementation, the focused structure test passed with 5 tests. `npm run typecheck` and `npm run lint` passed. `bash scripts/check-state.sh --strict` passed with current context line budget 160/160. `git diff --check` passed. Browser smoke on `/schedule-plans` confirmed the list title, summary, 3 rows, detail hrefs, search filtering to `苏州`, column visibility hiding `版本`, and detail navigation to `/schedule-plans/plan-20260511-suzhou-bosch-v1`; console output only contained DevTools/HMR/Fast Refresh messages. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
 - local_commit_sha: pending
 - integration_status: `not_started`
 - integration_method: `N/A`

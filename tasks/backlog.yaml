@@ -12294,3 +12294,50 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已新增 MainTableShell 结构护栏文档和结构测试；测试覆盖 IM204 实现顺序、职责白名单/黑名单，以及 IM205 不创建、不接入 MainTableShell UI 的约束。"
+  - id: IM206
+    title: "MainTableShell 首刀迁移 schedule-plan-table"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM205"]
+    product_design_brief:
+      goal: "在已确认的边界内实现第一个 MainTableShell 主表切片，只迁移排班计划主表的共享壳层。"
+      visual_source: "现有 shadcn Card/Table/Select/Button/DropdownMenu 与当前排班计划列表视觉，不做重新设计。"
+      interactivity: "保留搜索、状态筛选、缺口筛选、列显隐、排序、分页、汇总、重置和详情入口；shell 不拥有业务筛选或路由语义。"
+    allowed_files:
+      - "components/main-table-shell.tsx"
+      - "components/schedule-plan-table.tsx"
+      - "scripts/tests/main-table-shell-structure.test.mjs"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `components/main-table-shell.tsx`，拥有主表布局、toolbar slot、summary slot、列显隐、TanStack 渲染循环、排序状态、分页状态和空态结构。"
+      - "`components/schedule-plan-table.tsx` 只保留排班计划列定义、业务筛选、摘要、详情链接和 MainTableShell 调用。"
+      - "保留搜索、状态/缺口筛选、列显隐、分页、默认 `plan_date` 排序、详情链接、空状态文案和业务数据不变。"
+      - "扩展结构测试防止 `schedule-plan-table` 重新拥有主表渲染循环，并防止其他候选表提前接入。"
+      - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: medium
+    stop_conditions:
+      - "需要修改 allowed_files 之外的文件"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要改动页面、路由、业务文案、后端、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已新增 `MainTableShell` 并迁移 `schedule-plan-table`；排班计划业务列、筛选、摘要、详情入口和文案仍留在具体表格，结构测试、typecheck、lint、browser smoke、state/diff checks 和最终 check.sh 通过。"

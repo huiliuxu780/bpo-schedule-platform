@@ -1112,3 +1112,11 @@ The boundary spec names `components/schedule-plan-table.tsx` as the first future
 `IM205` adds a docs/test-only guard for the future `MainTableShell` boundary. The new structure test protects the IM204 candidate order, requires `docs/design/main-table-shell-structure-guard.md` to state allowed and forbidden shell ownership, and confirms this slice does not create `components/main-table-shell.tsx` or wire candidate tables to `MainTableShell`.
 
 This slice preserves all UI code, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM206 MainTableShell Schedule Plan Slice
+
+`IM206` implements the first `MainTableShell` slice on `components/schedule-plan-table.tsx`. The new `components/main-table-shell.tsx` owns the reusable main-table shell: Card/Table rendering, toolbar and summary slots, column visibility, TanStack sorting and pagination state, empty-row structure, and pagination controls.
+
+`schedule-plan-table` now keeps the排班计划-specific responsibilities: column definitions, business filters, summary metrics, detail hrefs, status/gap semantics, and copy. This is the intended boundary for future main-table slices.
+
+This slice preserves existing routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
