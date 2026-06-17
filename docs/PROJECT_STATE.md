@@ -1106,3 +1106,9 @@ This slice preserves existing columns, plan detail hrefs, default `plan_date` so
 `IM204` pauses the mechanical SimpleTable chain before the remaining main/workbench tables. The new `docs/design/main-table-shell-boundary-spec.md` defines `SimpleTable` as a light child/detail table renderer and reserves any future `MainTableShell` for shared toolbar layout slots, column visibility, summary strip layout, table render loop, empty row structure, and pagination controls only.
 
 The boundary spec names `components/schedule-plan-table.tsx` as the first future candidate, `components/unavailability-table.tsx` as the second candidate, and defers `components/data-table.tsx` until the dashboard/anomaly table has a clearer product owner. This slice preserves all UI code, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM205 MainTableShell Structure Guard
+
+`IM205` adds a docs/test-only guard for the future `MainTableShell` boundary. The new structure test protects the IM204 candidate order, requires `docs/design/main-table-shell-structure-guard.md` to state allowed and forbidden shell ownership, and confirms this slice does not create `components/main-table-shell.tsx` or wire candidate tables to `MainTableShell`.
+
+This slice preserves all UI code, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.

@@ -2471,3 +2471,12 @@
   action: MainTableShell 边界规格。
   status: `done`
   notes: 新增 `docs/design/main-table-shell-boundary-spec.md`，明确 SimpleTable 停在轻量子表格；未来 MainTableShell 只能承接主表布局、列显隐、分页、渲染壳层和空态结构，不能拥有业务列、动作、路由、查询参数、业务文案或生产语义。Codex 审查确认本轮未修改 UI 代码、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM205`
+  source_ids:
+    - `R905`
+  story_ids:
+    - `US825`
+  action: MainTableShell 结构护栏。
+  status: `done`
+  notes: 新增 `docs/design/main-table-shell-structure-guard.md` 与 `scripts/tests/main-table-shell-structure.test.mjs`；TDD 红灯先确认 guard 文档缺失导致测试失败，绿灯后测试覆盖 IM204 候选顺序、MainTableShell 允许/禁止职责，以及 IM205 不创建 `components/main-table-shell.tsx`、候选表不提前接入 MainTableShell。Codex 审查确认本轮未修改 UI 代码、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
