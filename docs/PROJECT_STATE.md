@@ -1068,3 +1068,9 @@ This slice preserves existing route paths, query parameter names, status values,
 `IM197` introduces `components/simple-table.tsx` as the first light-table extraction from the Task 3 refactor plan. `components/demand-plan-table.tsx` now keeps the demand forecast column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to `SimpleTable`.
 
 This validates the extraction pattern on one low-risk table before broader migration. It preserves existing columns, default sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM198 SimpleTable Schedule Interval Slice
+
+`IM198` continues the light-table extraction by migrating `components/schedule-plan-interval-table.tsx` to the existing `SimpleTable`. The schedule interval table now keeps only its column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to the shared component.
+
+This slice preserves existing columns, default `interval_start` sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.

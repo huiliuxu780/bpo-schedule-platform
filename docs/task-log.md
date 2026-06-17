@@ -2408,3 +2408,12 @@
   action: SimpleTable 首刀迁移 demand-plan-table。
   status: `done`
   notes: 新增 `components/simple-table.tsx`，集中轻量表格的 TanStack Table 渲染、排序和空状态；`components/demand-plan-table.tsx` 只保留列定义和 `SimpleTable` 调用，行数从 200 降到 136。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；HTTP smoke 覆盖正常列表和空状态；current queue 与 active tasks 已清空。
+
+- task_id: `IM198`
+  source_ids:
+    - `R898`
+  story_ids:
+    - `US818`
+  action: SimpleTable 第二刀迁移 schedule-plan-interval-table。
+  status: `done`
+  notes: `components/schedule-plan-interval-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环；结构测试扩展覆盖该表，保留默认 `interval_start` 排序、列、空状态文案和业务数据。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

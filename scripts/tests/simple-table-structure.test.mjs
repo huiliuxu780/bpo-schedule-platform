@@ -8,6 +8,7 @@ function read(path) {
 
 const simpleTablePath = "components/simple-table.tsx"
 const demandPlanTablePath = "components/demand-plan-table.tsx"
+const schedulePlanIntervalTablePath = "components/schedule-plan-interval-table.tsx"
 
 test("SimpleTable component exists and owns light table rendering", () => {
   assert.equal(existsSync(simpleTablePath), true, `${simpleTablePath} should exist`)
@@ -57,4 +58,31 @@ test("DemandPlanTable stays focused after extraction", () => {
     lineCount <= 150,
     `DemandPlanTable should stay at or below 150 lines after SimpleTable extraction, got ${lineCount}`
   )
+})
+
+test("SchedulePlanIntervalTable delegates rendering to SimpleTable", () => {
+  const source = read(schedulePlanIntervalTablePath)
+
+  assert.match(
+    source,
+    /import \{ SimpleTable \} from "@\/components\/simple-table"/,
+    "SchedulePlanIntervalTable should import SimpleTable"
+  )
+  assert.match(source, /<SimpleTable/)
+  assert.match(source, /columns=\{columns\}/)
+  assert.match(source, /data=\{intervals\}/)
+  assert.match(source, /emptyMessage="当前计划暂无时段明细"/)
+  assert.match(
+    source,
+    /defaultSorting=\{\[\{ id: "interval_start", desc: false \}\]\}/
+  )
+
+  assert.doesNotMatch(source, /useReactTable/)
+  assert.doesNotMatch(source, /flexRender/)
+  assert.doesNotMatch(source, /getCoreRowModel/)
+  assert.doesNotMatch(source, /getSortedRowModel/)
+  assert.doesNotMatch(source, /type SortingState/)
+  assert.doesNotMatch(source, /<Table\b/)
+  assert.doesNotMatch(source, /<TableHeader\b/)
+  assert.doesNotMatch(source, /<TableBody\b/)
 })
