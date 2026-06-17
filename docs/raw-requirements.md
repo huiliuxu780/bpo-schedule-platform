@@ -28,6 +28,19 @@ status: "done"
 notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序和空状态文案；不重设计表格。"
 ```
 
+### R899 - SimpleTable 第三刀迁移 schedule-risk-shift-table
+
+```yaml
+id: R899
+module: "前端健康恢复"
+description: "IM197 和 IM198 已验证轻量 `SimpleTable` 抽取模式。第三方前端重构方案 Task 3 仍有子表格保留重复 TanStack Table 渲染循环；本轮继续只迁移一个低风险子表格 `components/schedule-risk-shift-table.tsx`，验证同一抽取模式可持续复用。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + IM198 后代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序和空状态文案；不重设计表格。"
+```
+
 ### R897 - SimpleTable 首刀迁移 demand-plan-table
 
 ```yaml

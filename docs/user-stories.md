@@ -42,6 +42,28 @@ status: "done"
 notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
 ```
 
+### US819 - SimpleTable 第三刀迁移 schedule-risk-shift-table
+
+```yaml
+id: US819
+requirement_ids:
+  - R899
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把排班风险班次子表格迁移到共享 SimpleTable，以便继续压缩轻量子表格里的重复 TanStack 渲染循环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/schedule-risk-shift-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留排班风险班次表的列、排序入口、默认 `plan_id` 排序、空状态文案和业务数据不变。"
+  - "扩展结构测试覆盖 `schedule-risk-shift-table`，防止重复渲染循环回流。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US818"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
 ### US817 - SimpleTable 首刀迁移 demand-plan-table
 
 ```yaml

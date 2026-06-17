@@ -9,6 +9,7 @@ function read(path) {
 const simpleTablePath = "components/simple-table.tsx"
 const demandPlanTablePath = "components/demand-plan-table.tsx"
 const schedulePlanIntervalTablePath = "components/schedule-plan-interval-table.tsx"
+const scheduleRiskShiftTablePath = "components/schedule-risk-shift-table.tsx"
 
 test("SimpleTable component exists and owns light table rendering", () => {
   assert.equal(existsSync(simpleTablePath), true, `${simpleTablePath} should exist`)
@@ -76,6 +77,30 @@ test("SchedulePlanIntervalTable delegates rendering to SimpleTable", () => {
     source,
     /defaultSorting=\{\[\{ id: "interval_start", desc: false \}\]\}/
   )
+
+  assert.doesNotMatch(source, /useReactTable/)
+  assert.doesNotMatch(source, /flexRender/)
+  assert.doesNotMatch(source, /getCoreRowModel/)
+  assert.doesNotMatch(source, /getSortedRowModel/)
+  assert.doesNotMatch(source, /type SortingState/)
+  assert.doesNotMatch(source, /<Table\b/)
+  assert.doesNotMatch(source, /<TableHeader\b/)
+  assert.doesNotMatch(source, /<TableBody\b/)
+})
+
+test("ScheduleRiskShiftTable delegates rendering to SimpleTable", () => {
+  const source = read(scheduleRiskShiftTablePath)
+
+  assert.match(
+    source,
+    /import \{ SimpleTable \} from "@\/components\/simple-table"/,
+    "ScheduleRiskShiftTable should import SimpleTable"
+  )
+  assert.match(source, /<SimpleTable/)
+  assert.match(source, /columns=\{columns\}/)
+  assert.match(source, /data=\{rows\}/)
+  assert.match(source, /emptyMessage="暂无匹配的班次明细"/)
+  assert.match(source, /defaultSorting=\{\[\{ id: "plan_id", desc: false \}\]\}/)
 
   assert.doesNotMatch(source, /useReactTable/)
   assert.doesNotMatch(source, /flexRender/)
