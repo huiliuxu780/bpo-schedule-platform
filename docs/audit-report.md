@@ -4972,3 +4972,17 @@
 - RED：`node --test scripts/tests/dashboard-table-model.test.mjs` 先因缺少 `buildDashboardAnomalyEntryState` export 失败。
 - GREEN：新增 anomaly downstream entry 状态模型；无 `downstreamEntry` 返回 `等待下游定位` blocked 状态，有稳定 review case ID 时生成既有详情链接。
 - `components/data-table.tsx` 的操作列不再显示泛化占位按钮；当前静态数据没有 stable downstream ID，因此显示 disabled 阻塞态。
+
+### 2026-06-17 - IM212 Dashboard anomaly 链路收口与真实工作区回切
+
+#### 审计计划
+
+- 收口 IM209-IM211，不继续在 dashboard anomaly 静态行上扩展异常处理语义。
+- 对照项目理解与需求基线：经营总览是 Dashboard，真实复核、对比、导入质量和生产处理应在下游业务域承载。
+- 只新增 product/design 收口记录和 Harness 追踪，不修改 UI、路由、数据、后端或依赖。
+
+#### 执行结果
+
+- 新增 `docs/design/dashboard-anomaly-chain-closeout.md`。
+- 结论：dashboard anomaly 链路已到停止点，当前只保留经营总览摘要、future summary-to-workspace 规格，以及缺少稳定下游 ID 时的 `等待下游定位`。
+- 下一阶段推荐从真实复核案例工作区、对比运行工作区、导入质量结果追踪中选择，不再向静态 dashboard 行补伪 ID 或处理动作。

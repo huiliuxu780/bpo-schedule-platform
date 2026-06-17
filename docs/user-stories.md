@@ -20,6 +20,29 @@
   status: "draft"
 ```
 
+### US832 - Dashboard anomaly 链路收口与真实工作区回切
+
+```yaml
+id: US832
+requirement_ids:
+  - R912
+module: "运营工作台"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望收口 dashboard anomaly 链路并切回真实工作区优先级，以便停止继续在经营总览中堆叠异常处理语义。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增 dashboard anomaly 链路收口文档，汇总 IM209、IM210、IM211 的产品边界。"
+  - "明确 dashboard 不继续补静态 downstream ID、异常处理状态、复核结论或生产动作。"
+  - "给出下一阶段回切真实 review-case、comparison-run、data-quality 工作区的推荐顺序。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US831"
+status: "done"
+notes: "IM212 已完成：dashboard anomaly 链路停止扩展，下一阶段应回到真实复核、对比或导入质量工作区。"
+```
+
 ### US829 - Dashboard anomaly table 产品归属审计
 
 ```yaml

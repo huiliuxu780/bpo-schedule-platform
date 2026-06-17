@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R912 - Dashboard anomaly 链路收口与真实工作区回切
+
+```yaml
+id: R912
+module: "运营工作台"
+description: "IM209-IM211 已确认 dashboard anomaly table 属于经营总览 overview、未来只能作为 summary-to-workspace entry，并且当前缺少稳定下游 ID 时显示 `等待下游定位`。当前需要正式收口 dashboard anomaly 链路，明确不继续在静态 dashboard 行里补伪 caseId/runId/batchId 或异常处理语义，并把下一阶段优先级切回 review-case、comparison-run、data-quality 等真实工作区。"
+source: "IM211 completion + PM requested closeout before reviewing project understanding requirements"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM212 已完成：dashboard anomaly 链路收口为经营总览摘要与诚实阻塞态；下一阶段推荐从真实复核/对比/导入质量工作区继续，不再扩展 dashboard 静态异常处理语义。"
+```
+
 ### R909 - Dashboard anomaly table 产品归属审计
 
 ```yaml

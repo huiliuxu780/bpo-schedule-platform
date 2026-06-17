@@ -1162,3 +1162,11 @@ This slice preserves all UI components, pages, routes, data fetching, business c
 The shared dashboard table model now supports future read-only downstream entries only when a row provides a stable `downstreamEntry`. The first covered link target is review-case detail at `/data-quality/review-cases/[caseId]`; other existing workspace targets are kept within the same no-new-route boundary.
 
 This slice preserves existing pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM212 Dashboard Anomaly Chain Closeout
+
+`IM212` closes the dashboard anomaly continuation chain after IM209 ownership audit, IM210 downstream entry specification, and IM211 blocked-state implementation. Dashboard remains the business overview surface; it should not be expanded into the primary review-case, comparison-run, import-quality, actual-log, or schedule-production workspace.
+
+The next product-development slice should return to a real downstream workspace. Recommended order: review-case workspace first for exception handling value, comparison-run workspace second for evidence/result context, and data-quality result trace third for import-administration continuity. Do not add fabricated static downstream IDs, handling states, review conclusions, production actions, or new route/query contracts to dashboard anomaly rows.
+
+This slice preserves all UI components, pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
