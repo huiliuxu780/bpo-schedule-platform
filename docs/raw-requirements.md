@@ -41,6 +41,19 @@ status: "done"
 notes: "IM214 已完成：新增复核案例工作区校准文档，明确当前列表、详情、证据/结论/关闭、Owner 续办和提交反馈已形成受控本地复核工作区；权限、审批、导出、批量、外部集成和生产语义仍需新 Gate。"
 ```
 
+### R915 - 复核案例验收 smoke
+
+```yaml
+id: R915
+module: "复核案例工作区"
+description: "IM214 已校准复核案例工作区为真实受控本地异常处理工作区。当前需要做一次验收 smoke，验证列表、详情、处理阶段、失败重试和关闭后交接在当前本地环境中的可达性；如果环境不满足，不允许伪造通过结论。"
+source: "IM214 recommended next slice + PM continued"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "blocked"
+notes: "IM215 阻塞：`127.0.0.1:3000` 页面可达，但所需 `127.0.0.1:8000` review-case API 不可达；PM 已要求不启动其他测试环境，因此只能记录阻塞证据。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

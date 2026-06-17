@@ -67,6 +67,27 @@ status: "done"
 notes: "IM214 已完成：复核案例工作区当前能力和边界已校准，不修改业务代码。"
 ```
 
+### US835 - 复核案例验收 smoke
+
+```yaml
+id: US835
+requirement_ids:
+  - R915
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望用当前本地环境验收复核案例工作区的关键状态，以便确认已有工作区可用后再决定是否继续做文案、空态或 comparison-run 校准。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "验证 `/data-quality/review-cases` 列表页可达。"
+  - "验证缺证据、缺结论、可关闭、已关闭处理阶段筛选可达并能显示真实案例状态。"
+  - "验证 `CASE-QUERY-001` 详情页可达并能显示证据/结论/处理动作。"
+  - "验证失败提交重试反馈和关闭成功交接反馈。"
+  - "不启动新的测试环境；如果现有环境缺少后端/API，记录 blocked，不伪造通过。"
+status: "blocked"
+notes: "IM215 阻塞：3000 页面可达，但 8000 review-case API 不可达；当前不能完成真实 seeded case 状态验收。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

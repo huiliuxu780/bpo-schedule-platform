@@ -1188,3 +1188,11 @@ The current review-case surface supports list triage, processing-stage filters, 
 The workspace remains a controlled local review workflow. Permissions, approval, export, bulk closure, external evidence integrations, reopen/reassign/escalation/SLA, notification, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors still require separate Gate confirmation.
 
 This slice preserves all UI components, pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM215 Review Case Acceptance Smoke Blocked
+
+`IM215` attempted a live review-case acceptance smoke using the current `127.0.0.1:3000` environment only. The frontend routes for the review-case list, processing-stage filters, `CASE-QUERY-001` detail, failed evidence feedback, and closure success feedback all returned HTTP 200.
+
+The smoke cannot be accepted because the pages render `复核案例读取失败 / fetch failed`: the required review-case API on `127.0.0.1:8000` is not running. PM instructed not to start other test environments, so the task is blocked rather than marked passed.
+
+Unblock by allowing an approved backend/API runtime on `127.0.0.1:8000`, providing a running API endpoint, or explicitly downgrading the slice to model/contract-only acceptance.

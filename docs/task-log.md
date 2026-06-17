@@ -19,6 +19,17 @@
 
 ### 2026-06-17
 
+- task_id: `IM215`
+- source_ids:
+  - `R915`
+- story_ids:
+  - `US835`
+- action: 复核案例验收 smoke。
+- status: `blocked`
+- notes: 当前 `127.0.0.1:3000` 复核案例列表、处理阶段筛选和 `CASE-QUERY-001` 详情 URL 均返回 200，但页面显示 `复核案例读取失败 / fetch failed`；直接访问 `127.0.0.1:8000/api/v1/review-cases` 失败，说明当前 3000-only 环境缺少所需后端 API。按 PM 指令未启动其他测试环境，本轮只记录阻塞证据，不修改业务代码。
+
+### 2026-06-17
+
 - task_id: `IM214`
 - source_ids:
   - `R914`

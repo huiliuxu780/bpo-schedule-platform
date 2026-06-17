@@ -5,4 +5,12 @@ notes:
   - "Only ready, in_progress, and blocked stories belong here."
   - "Done history stays in legacy files or archive during the transition."
   - "Archive entries are not executable."
-stories: []
+stories:
+  - id: US835
+    status: blocked
+    task_id: IM215
+    requirement_ids:
+      - R915
+    module: "复核案例工作区"
+    priority: P1
+    summary: "复核案例验收 smoke 被当前 3000-only 环境阻塞，后端 API 8000 不可达。"
