@@ -149,6 +149,7 @@ esac
 node --test scripts/tests/check-state.test.mjs
 node --test scripts/tests/check-shadcn-ui.test.mjs
 node --test scripts/tests/import-center-model.test.mjs
+node --test scripts/tests/import-center-review-case-model.test.mjs
 node scripts/check-shadcn-ui.mjs
 bash scripts/verify-backend-runtime.sh
 node --test scripts/tests/verify-backend-runtime.test.mjs

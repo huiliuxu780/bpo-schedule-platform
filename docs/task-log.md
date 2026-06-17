@@ -19,6 +19,17 @@
 
 ### 2026-06-17
 
+- task_id: `IM217`
+- source_ids:
+  - `R917`
+- story_ids:
+  - `US837`
+- action: 复核案例 model test 拆分。
+- status: `done`
+- notes: Qoder 受控拆分 review-case assertions 后，Codex 审查实际 diff 并清理拆分残留 import。`scripts/tests/import-center-review-case-model.test.mjs` 承载 21 个复核案例 model assertions；`scripts/tests/import-center-model.test.mjs` 保留 60 个导入、版本和 comparison-run assertions，其中 `import center comparison run detail links related review cases` 仍留在原 comparison-run 作用域。`scripts/check.sh` 已同时运行两个测试文件；本轮不启动 8000，不修改业务 UI、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+### 2026-06-17
+
 - task_id: `IM216`
 - source_ids:
   - `R916`

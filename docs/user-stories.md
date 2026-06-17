@@ -110,6 +110,28 @@ status: "done"
 notes: "IM216 已完成：import-center model test 现在可直接执行并纳入 `scripts/check.sh`，复核案例处理阶段、owner 矩阵、动作区、失败重试和关闭后续办断言成为正式门禁的一部分。"
 ```
 
+### US837 - 复核案例 model test 拆分
+
+```yaml
+id: US837
+requirement_ids:
+  - R917
+module: "复核案例工作区"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望复核案例 model/contract 断言从通用 import-center model test 中拆出，以便后续维护复核案例工作区时能更快定位测试边界，同时不削弱 comparison-run 相关覆盖。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "新增 `scripts/tests/import-center-review-case-model.test.mjs`，包含 21 个 review-case model assertions。"
+  - "`scripts/tests/import-center-model.test.mjs` 保留 60 个非 review-case / comparison-run assertions。"
+  - "`import center comparison run detail links related review cases` 保留在原文件，因为它属于 comparison-run 输出结构。"
+  - "`scripts/check.sh` 同时运行两个 import-center model 测试文件。"
+  - "不启动 8000，不修改 `app/**`、业务组件行为、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空。"
+status: "done"
+notes: "IM217 已完成：复核案例 model tests 已拆分成独立门禁文件，comparison-run 复核链接覆盖保持在原 comparison-run 测试中。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
