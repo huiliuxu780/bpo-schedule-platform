@@ -4925,3 +4925,19 @@
 - 更新 MainTableShell 边界规格，写清重新评估 `data-table` 的前置条件。
 - `data-table` 暂缓迁移不代表技术债遗漏；它是产品归属未确认前的有意停止。
 - 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM209 Dashboard anomaly table 产品归属审计
+
+#### 审计计划
+
+- 延续 IM208 收口结论，只审计 `/dashboard` anomaly table 的产品归属，不做 UI 改造。
+- 读取 `/dashboard` 页面、`components/data-table.tsx`、`app/dashboard/data.ts`、F030/F031/Q012 历史需求和 MainTableShell 收口文档。
+- 判断 `DataTable` 是经营总览 summary widget、异常分诊入口，还是应替换为真实下游结果摘要。
+- 本轮不修改 UI 组件、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/dashboard-anomaly-table-ownership-audit.md`。
+- 结论：`DataTable` 当前归属 `/dashboard` 经营总览，是本地 anomaly overview widget。
+- 证据：数据来自静态 `app/dashboard/data.ts`，行操作仍是占位；历史 R058-R060/US070-US072 定义的是 dashboard table parity；真实异常追踪上下文已经在 data-quality、comparison-run、review-case、import-batch 和 actual-log production 页面形成。
+- 默认路径：保留 overview，不进入 MainTableShell 机械迁移队列。未来如要升级，先定义异常行路由到 comparison run、review case、import quality trace 或 actual-log production detail 的产品语义。

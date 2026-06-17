@@ -2507,3 +2507,12 @@
   action: MainTableShell 收口与 data-table 暂缓决策。
   status: `done`
   notes: 已收口 IM197-IM207 表格抽象链路：`SimpleTable` 停在轻量子/详情表格，`MainTableShell` 已覆盖排班计划和不可用管理两个产品职责清晰的主表；`components/data-table.tsx` 继续暂缓，因为它属于 `/dashboard` anomaly/demo table，产品 owner、路由责任和真实工作流价值尚未重新确认。本轮只修改文档和 Harness 状态，不修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM209`
+  source_ids:
+    - `R909`
+  story_ids:
+    - `US829`
+  action: Dashboard anomaly table 产品归属审计。
+  status: `done`
+  notes: 新增 `docs/design/dashboard-anomaly-table-ownership-audit.md`，确认 `/dashboard` 的 `DataTable` 当前属于经营总览下的本地 anomaly overview widget，数据来自 `app/dashboard/data.ts`，行操作仍是占位，不承担 review-case、comparison-run、import quality trace 或 actual-log production detail 的主入口责任。默认建议保留为 overview；只有在异常行路由语义和真实工作流 owner 明确后，才考虑升级为异常分诊入口或替换为真实下游摘要。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

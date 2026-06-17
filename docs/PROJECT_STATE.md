@@ -1136,3 +1136,13 @@ This slice preserves existing pages, routes, data fetching, business copy, backe
 `components/data-table.tsx` remains intentionally deferred. It belongs to the dashboard anomaly/demo surface, and should not be migrated only because it still imports TanStack Table directly. Reopen it only after the dashboard anomaly table has a confirmed product owner, route responsibility, and workflow value.
 
 This slice preserves all UI components, pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM209 Dashboard Anomaly Ownership Audit
+
+`IM209` confirms that `components/data-table.tsx` currently belongs to `/dashboard` as a local anomaly overview widget, not as the primary exception handling workspace.
+
+The table uses static `app/dashboard/data.ts` rows, keeps row actions as placeholders, and descends from F030/F031 dashboard parity work. Real investigation and follow-up ownership now lives in the data-quality, comparison-run, review-case, import-batch, and actual-log production flows.
+
+Default decision: keep the dashboard anomaly table as an overview summary. Do not move it into `MainTableShell` or build more table abstraction around it until a future task defines row-level navigation into a confirmed exception workflow.
+
+This slice preserves all UI components, pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
