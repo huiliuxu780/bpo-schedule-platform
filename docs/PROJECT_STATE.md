@@ -1212,3 +1212,11 @@ Current queue and active tasks returned to empty. A future true live acceptance 
 The test now uses the already-installed `jiti` loader to import the TS barrel without changing production imports or business UI behavior. `scripts/check.sh` now runs `node --test scripts/tests/import-center-model.test.mjs`, adding 81 model assertions to the default gate, including review-case processing stages, owner matrix, detail context, action deck, failed retry targeting, evidence/conclusion/closure action payloads, and continuation handoff.
 
 This is a model/contract gate improvement only. It does not start or require `127.0.0.1:8000`, and it does not prove live seeded UI/API acceptance.
+
+## 2026-06-17 IM217 Review Case Model Test Split
+
+`IM217` splits the executable import-center model gate created by IM216 into clearer ownership files. `scripts/tests/import-center-review-case-model.test.mjs` now owns 21 review-case assertions for conclusion preview, evidence gap drilldown, workspace filtering/grouping, owner-stage matrix, detail context, evidence/conclusion chain, processing timeline, action deck, submit feedback, retry targeting, continuation links, and controlled evidence/conclusion/closure write payloads.
+
+`scripts/tests/import-center-model.test.mjs` now keeps 60 import-center, business-version, and comparison-run assertions. The comparison-run assertion that links related review cases stays in the original file because it verifies comparison-run output shape, not review-case workspace behavior.
+
+`scripts/check.sh` runs both test files. This is a test structure and maintainability improvement only; it does not start or require `127.0.0.1:8000`, and it does not change live UI/API acceptance status.

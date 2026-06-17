@@ -418,6 +418,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM217 Review Case Model Test Split
+
+- branch_name: `codex/im217-review-case-model-test-split`
+- base_main_commit: `4288b19ef3d0b5365ca000a3fbe7ecdba26b2372`
+- stacked_on: `codex/im216-review-case-model-test-runner`
+- remote_status: `not_pushed; pending PM push decision after local commit.`
+- scope: Split review-case-specific import-center model assertions into a dedicated test file while keeping comparison-run review-link coverage in the original model test.
+- qoder_mode: `true; Qoder performed the bounded mechanical split only, Codex reviewed the actual diff, cleaned stale imports, updated Harness, and owns verification/commit.`
+- allowed_files_check: `scripts/tests/import-center-model.test.mjs`, `scripts/tests/import-center-review-case-model.test.mjs`, `scripts/check.sh`, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and branch log only.
+- scope_diff_check: expected test-file split, check.sh wiring, and Harness traceability only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: Focused `import-center-model.test.mjs` passed with 60/60 tests; focused `import-center-review-case-model.test.mjs` passed with 21/21 tests; lint passed after Codex removed stale imports; `bash scripts/check-state.sh --strict` and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, both import-center model gates, shadcn gate, lint, typecheck, Next build, and backend 215 tests.
+- local_commit_sha: pending
+- integration_status: `done`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`

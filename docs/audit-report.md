@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-06-17 - IM217 复核案例 model test 拆分
+
+#### 审计结论
+
+- `IM217/US837` 已把复核案例相关 21 个 model assertions 从通用 `scripts/tests/import-center-model.test.mjs` 拆到 `scripts/tests/import-center-review-case-model.test.mjs`。
+- 原 `scripts/tests/import-center-model.test.mjs` 保留 60 个导入中心、业务版本和 comparison-run assertions；`import center comparison run detail links related review cases` 仍留在原文件，因为它验证的是 comparison-run 结果结构如何聚合复核案例链接。
+- `scripts/check.sh` 现在同时运行两个 import-center model 测试文件，保持 IM216 的正式门禁覆盖，同时降低单文件维护成本。
+- Qoder 只执行受控拆分，未提交、未推送；Codex 审查 diff、清理拆分后残留 import，并负责最终验证与本地提交。
+- 本轮不启动 `127.0.0.1:8000`，不修改 UI、路由、数据读取、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增复核业务能力，也不等同于 live seeded UI/API smoke。
+- 后续若继续拆分其他 import-center model tests，需要按业务边界切分，避免只按文件长度机械拆分。
+
+#### 验证
+
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，60/60 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-review-case-model.test.mjs`：通过，21/21 tests pass。
+- `npm run lint`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、两个 import-center model gate、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
 ### 2026-06-17 - IM216 复核案例 model test 运行器硬化
 
 #### 审计结论

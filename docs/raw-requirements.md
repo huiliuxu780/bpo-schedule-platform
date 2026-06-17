@@ -67,6 +67,19 @@ status: "done"
 notes: "IM216 已完成：`scripts/tests/import-center-model.test.mjs` 改用现有 `jiti` 加载 TS barrel，direct Node 执行 81/81 通过，并已接入 `scripts/check.sh`；未启动 8000，未修改业务 UI、后端、依赖或 package/lockfile。"
 ```
 
+### R917 - 复核案例 model test 拆分
+
+```yaml
+id: R917
+module: "复核案例工作区"
+description: "IM216 已把 import-center model assertions 接入正式门禁，但单个 `scripts/tests/import-center-model.test.mjs` 同时承载导入、版本、对比运行和复核案例断言，后续维护成本偏高。当前需要把复核案例相关 21 个断言拆到独立 `scripts/tests/import-center-review-case-model.test.mjs`，并保持 comparison-run 复核案例链接断言留在原 comparison-run 作用域。"
+source: "IM216 closeout + PM confirmed Qoder bounded implementation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM217 已完成：复核案例 model assertions 已拆入独立测试文件，原 import-center model test 保留 60 个非 review-case / comparison-run assertions，`scripts/check.sh` 同时运行两个测试文件；未启动 8000，未修改业务 UI、后端、依赖或 package/lockfile。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
