@@ -4863,3 +4863,17 @@
 - 规格定义未来 `MainTableShell` 只可拥有 toolbar slot、筛选布局 slot、列显隐、summary strip slot、表格 render loop、empty row 和分页控制。
 - 规格明确业务列定义、状态语义、row action、route href、数据查询、页面指标和生产能力必须留在具体表格或页面内。
 - 候选顺序建议先 `schedule-plan-table`，再 `unavailability-table`，暂缓 `data-table`。
+
+### 2026-06-17 - IM205 MainTableShell 结构护栏
+
+#### 审计计划
+
+- 延续 IM204 边界规格，先用 docs/test-only 结构护栏锁住 MainTableShell 职责边界。
+- TDD 红灯必须先证明缺少 guard 文档会失败，再补最小文档让测试通过。
+- 本轮不创建 `components/main-table-shell.tsx`，不修改候选表、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `scripts/tests/main-table-shell-structure.test.mjs`，红灯失败原因是缺少 `docs/design/main-table-shell-structure-guard.md`。
+- 新增 `docs/design/main-table-shell-structure-guard.md`，记录允许职责、禁止职责和候选顺序。
+- 结构测试确认本轮没有创建 `components/main-table-shell.tsx`，`schedule-plan-table`、`unavailability-table`、`data-table` 也没有提前 import/render MainTableShell。

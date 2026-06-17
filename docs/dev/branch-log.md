@@ -189,11 +189,29 @@
 - branch_name: `codex/im204-main-table-shell-boundary-spec`
 - base_main_commit: `pending stacked continuation from codex/im203-simple-table-shift-details`
 - stacked_on: `codex/im203-simple-table-shift-details`
-- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- remote_status: `pushed to origin/codex/im204-main-table-shell-boundary-spec after PM continuation; remote head 6f5dc837f12da45d659c4f6dc81caebb3694a2e4.`
 - scope: Product Design checkpoint after seven SimpleTable light-table slices. Define the future MainTableShell boundary before touching main-list/workbench tables.
 - allowed_files_check: `docs/design/main-table-shell-boundary-spec.md`, current project context, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
 - scope_diff_check: expected docs/spec and traceability updates only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
 - check_result: `bash scripts/check-state.sh --strict` passed with current context line budget 160/160. `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: `6f5dc83`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM205 MainTableShell Structure Guard
+
+- branch_name: `codex/im205-main-table-shell-structure-guard`
+- base_main_commit: `pending stacked continuation from codex/im204-main-table-shell-boundary-spec`
+- stacked_on: `codex/im204-main-table-shell-boundary-spec`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Docs/test-only guard for the future MainTableShell boundary. Add a structure test and guard document before any UI implementation.
+- allowed_files_check: `scripts/tests/main-table-shell-structure.test.mjs`, `docs/design/main-table-shell-structure-guard.md`, current project context, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected structure test, guard document, and traceability updates only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
+- check_result: TDD RED `node --test scripts/tests/main-table-shell-structure.test.mjs` first failed because `docs/design/main-table-shell-structure-guard.md` did not exist. After adding the guard document, the focused structure test passed with 3 tests. `bash scripts/check-state.sh --strict` passed with current context line budget 160/160. `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
 - local_commit_sha: pending
 - integration_status: `not_started`
 - integration_method: `N/A`

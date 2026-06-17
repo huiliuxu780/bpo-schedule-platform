@@ -20,6 +20,28 @@
   status: "draft"
 ```
 
+### US825 - MainTableShell 结构护栏
+
+```yaml
+id: US825
+requirement_ids:
+  - R905
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望先用文档和结构测试锁住 MainTableShell 边界，以便未来实现主表壳层时不会提前混入业务列、动作、路由、查询参数或业务语义。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增 `docs/design/main-table-shell-structure-guard.md`，列出未来 shell 允许和禁止拥有的职责。"
+  - "新增 `scripts/tests/main-table-shell-structure.test.mjs`，保护 IM204 的候选顺序、职责边界和 no-implementation 约束。"
+  - "测试确认 IM205 不创建 `components/main-table-shell.tsx`，也不让候选表提前 import/render MainTableShell。"
+  - "不修改 UI 代码、页面、路由、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US824"
+status: "done"
+notes: "IM205 已完成：只新增 docs/test 结构护栏，未进入 UI 实现。"
+```
+
 ### US824 - MainTableShell 边界规格
 
 ```yaml

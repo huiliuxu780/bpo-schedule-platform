@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R905 - MainTableShell 结构护栏
+
+```yaml
+id: R905
+module: "前端健康恢复"
+description: "IM204 已定义 MainTableShell 边界，但在真正实现主表壳层前，需要先新增一个 docs/test-only 结构护栏，防止后续把业务列、动作、路由、查询参数或业务语义塞进 shell，也防止 IM205 提前创建或接入 UI 组件。"
+source: "IM204 MainTableShell boundary spec + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM205 已完成：新增 `docs/design/main-table-shell-structure-guard.md` 与 `scripts/tests/main-table-shell-structure.test.mjs`，只做结构护栏，不创建或接入 MainTableShell UI。"
+```
+
 ### R904 - MainTableShell 边界规格
 
 ```yaml

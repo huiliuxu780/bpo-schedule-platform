@@ -12248,3 +12248,49 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已新增 MainTableShell 边界规格，明确 SimpleTable 停在轻量子表格，未来主表 shell 只可承接布局、列显隐、分页、渲染壳层和空态结构；业务列、动作、查询参数、路由和业务语义继续留在具体表格/页面。"
+  - id: IM205
+    title: "MainTableShell 结构护栏"
+    priority: P1
+    status: done
+    required_workflow: frontend-audit
+    dependencies: ["IM204"]
+    product_design_brief:
+      goal: "用文档和结构测试锁定 MainTableShell 职责边界，防止未来主表抽象偏离产品责任。"
+      visual_source: "本轮无视觉实现；延续 IM204 边界规格。"
+      interactivity: "本轮无交互实现；结构测试确认不创建或接入 MainTableShell UI。"
+    allowed_files:
+      - "docs/design/main-table-shell-structure-guard.md"
+      - "scripts/tests/main-table-shell-structure.test.mjs"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 `docs/design/main-table-shell-structure-guard.md`，列出未来 MainTableShell 可拥有和不可拥有的职责。"
+      - "新增 `scripts/tests/main-table-shell-structure.test.mjs`，保护 IM204 候选顺序、职责边界和 no-implementation 约束。"
+      - "结构测试确认本轮未创建 `components/main-table-shell.tsx`，候选表也未提前 import/render MainTableShell。"
+      - "不修改 UI 代码、页面、路由、后端、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要创建或修改 UI 组件、页面、路由、后端或数据读取"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要改变业务动作、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已新增 MainTableShell 结构护栏文档和结构测试；测试覆盖 IM204 实现顺序、职责白名单/黑名单，以及 IM205 不创建、不接入 MainTableShell UI 的约束。"
