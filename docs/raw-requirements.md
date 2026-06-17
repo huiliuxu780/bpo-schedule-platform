@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R913 - 项目理解需求基线校准
+
+```yaml
+id: R913
+module: "产品需求基线"
+description: "PM 确认继续后，需要把 `/Users/mac/Documents/Codex/01_Projects/bpo-schedule-platform-project-understanding-and-requirements.md` 作为 2026-06-14 的产品理解基线进行校准：保留其业务域、角色、愿景和目标 IA 的有效部分，但标记其中已经被 2026-06-15 至 2026-06-17 迭代改变的状态判断，避免把旧 P0/P1 清单直接当成当前可执行 backlog。"
+source: "PM confirmed requirements-baseline calibration after IM212"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM213 已完成：新增需求基线校准文档，明确该外部文档适合作为产品北极星和需求地图，不适合作为当前实现状态或自动开发队列；下一阶段仍需从当前 Harness 重新 seed 最小确认切片。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
