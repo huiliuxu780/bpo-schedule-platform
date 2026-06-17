@@ -15,6 +15,32 @@
   notes: "补充说明"
 ```
 
+### R904 - MainTableShell 边界规格
+
+```yaml
+id: R904
+module: "前端健康恢复"
+description: "IM197 到 IM203 已完成七个低风险轻量表格的 SimpleTable 迁移。继续机械迁移会碰到主列表/工作台表格，它们包含搜索、筛选、列显隐、分页、汇总和动作入口，产品职责明显大于轻量子表格。本轮需要先定义未来 MainTableShell 的边界、候选表优先级和停止条件，不修改 UI 代码。"
+source: "IM203 后产品设计 checkpoint + 代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM204 已完成：新增 `docs/design/main-table-shell-boundary-spec.md`，明确 SimpleTable 停在轻量表格，MainTableShell 只作为未来主表布局/分页/列显隐壳层，不拥有业务列、动作、查询参数或业务语义。"
+```
+
+### R903 - SimpleTable 第七刀迁移 shift-details-table
+
+```yaml
+id: R903
+module: "前端健康恢复"
+description: "IM197 到 IM202 已验证轻量 `SimpleTable` 抽取模式。第三方前端重构方案 Task 3 仍有班次明细表保留重复 TanStack Table 渲染循环；本轮继续只迁移 `components/shift-details-table.tsx`，同时在完成后停止进入更大的主列表/工作台表格。"
+source: "bpo-schedule-platform-frontend-refactor-plan.md Task 3 + IM202 后代码事实盘点"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "已完成。Product Design brief：保持现有 shadcn Table 视觉、列定义、排序入口、默认排序、计划链接和空状态文案；不重设计表格。"
+```
+
 ### R898 - SimpleTable 第二刀迁移 schedule-plan-interval-table
 
 ```yaml
