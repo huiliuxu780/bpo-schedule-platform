@@ -2453,3 +2453,12 @@
   action: SimpleTable 第六刀迁移 unavailability-impact-risk-table。
   status: `done`
   notes: `components/unavailability-impact-risk-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环；结构测试扩展覆盖该表，保留默认 `risk_level` 排序、明细链接、列、空状态文案和业务数据。浏览器烟测确认 `/unavailability/unavail-20260511-001` 的关联风险表有 7 个表头、1 行数据、明细链接 href 正确且无误显示空态。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM203`
+  source_ids:
+    - `R903`
+  story_ids:
+    - `US823`
+  action: SimpleTable 第七刀迁移 shift-details-table。
+  status: `done`
+  notes: `components/shift-details-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环；结构测试扩展覆盖该表，保留默认 `plan_date` 排序、计划链接、列、空状态文案和业务数据。HTTP smoke 确认 `/shift-details?query=suzhou` 的班次明细页标题、表头、计划链接保持正常且无误显示空态。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
