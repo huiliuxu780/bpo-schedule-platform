@@ -4,6 +4,33 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM218 import-center model gate 业务边界拆分
+
+#### 审计结论
+
+- `IM218/US838` 已继续按业务边界拆分 import-center model gate。
+- `scripts/tests/import-center-version-model.test.mjs` 新增 10 个 version/workbench assertions，覆盖版本台账、应用版本定位、本地比对触发、触发反馈、最新运行回看和业务版本列表结果回看。
+- `scripts/tests/import-center-batch-template-model.test.mjs` 新增 27 个 batch/template/apply assertions，覆盖批次应用 URL、字段映射模板、上传预填、模板 fit、失败行、批次详情、准备度分组、应用入口和上传结果反馈。
+- 原 `scripts/tests/import-center-model.test.mjs` 保留 23 个 core/comparison/exception assertions，包括基础格式、批次筛选、downstream navigation/drilldown、quality impact、comparison-run detail、page hierarchy、API/upload URL 和 exception guidance。
+- `scripts/check.sh` 已接入新增两个测试文件，并把既有 `import-center-model-first-split`、`import-center-summary-split`、`master-data-model-split`、`master-data-workbench-split` 四个 split guard 纳入正式门禁。
+- Qoder 只执行受控测试拆分，未提交、未推送；Codex 审查 diff、补 Harness、负责最终验证与本地提交。
+- 本轮不启动 `127.0.0.1:8000`，不修改 UI、路由、数据读取、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增导入中心业务能力，也不等同于 live UI/API smoke。
+- 后续若继续拆 `product-structure.test.mjs`，需要先做只读产品语义分组，不能按文件长度机械移动。
+
+#### 验证
+
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：通过，23/23 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-version-model.test.mjs`：通过，10/10 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-batch-template-model.test.mjs`：通过，27/27 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model-first-split.test.mjs scripts/tests/import-center-summary-split.test.mjs scripts/tests/master-data-model-split.test.mjs scripts/tests/master-data-workbench-split.test.mjs`：通过，4/4 tests pass。
+- `npm run lint`：通过。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、四个 import-center model gate、四个 split guard、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
 ### 2026-06-17 - IM217 复核案例 model test 拆分
 
 #### 审计结论
