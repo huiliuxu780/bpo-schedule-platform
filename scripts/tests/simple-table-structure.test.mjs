@@ -12,6 +12,8 @@ const schedulePlanIntervalTablePath = "components/schedule-plan-interval-table.t
 const scheduleRiskShiftTablePath = "components/schedule-risk-shift-table.tsx"
 const scheduleRiskUnavailabilityTablePath =
   "components/schedule-risk-unavailability-table.tsx"
+const unavailabilityImpactShiftTablePath =
+  "components/unavailability-impact-shift-table.tsx"
 
 test("SimpleTable component exists and owns light table rendering", () => {
   assert.equal(existsSync(simpleTablePath), true, `${simpleTablePath} should exist`)
@@ -133,6 +135,30 @@ test("ScheduleRiskUnavailabilityTable delegates rendering to SimpleTable", () =>
     source,
     /defaultSorting=\{\[\{ id: "staff_name", desc: false \}\]\}/
   )
+
+  assert.doesNotMatch(source, /useReactTable/)
+  assert.doesNotMatch(source, /flexRender/)
+  assert.doesNotMatch(source, /getCoreRowModel/)
+  assert.doesNotMatch(source, /getSortedRowModel/)
+  assert.doesNotMatch(source, /type SortingState/)
+  assert.doesNotMatch(source, /<Table\b/)
+  assert.doesNotMatch(source, /<TableHeader\b/)
+  assert.doesNotMatch(source, /<TableBody\b/)
+})
+
+test("UnavailabilityImpactShiftTable delegates rendering to SimpleTable", () => {
+  const source = read(unavailabilityImpactShiftTablePath)
+
+  assert.match(
+    source,
+    /import \{ SimpleTable \} from "@\/components\/simple-table"/,
+    "UnavailabilityImpactShiftTable should import SimpleTable"
+  )
+  assert.match(source, /<SimpleTable/)
+  assert.match(source, /columns=\{columns\}/)
+  assert.match(source, /data=\{rows\}/)
+  assert.match(source, /emptyMessage="当前不可用时段暂无匹配班次"/)
+  assert.match(source, /defaultSorting=\{\[\{ id: "plan_id", desc: false \}\]\}/)
 
   assert.doesNotMatch(source, /useReactTable/)
   assert.doesNotMatch(source, /flexRender/)
