@@ -2498,3 +2498,12 @@
   action: MainTableShell 第二刀迁移 unavailability-table。
   status: `done`
   notes: `components/main-table-shell.tsx` 增加 embedded 模式和 toolbar column visibility slot，默认 Card 模式保持兼容；`components/unavailability-table.tsx` 改为传入不可用列定义、筛选后数据、摘要和 toolbar，业务筛选、影响/班次链接、列文案和空状态文案仍留在具体表格。结构测试扩展覆盖不可用主表委托，并确认 `data-table` 未提前接入 MainTableShell。本轮未修改页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM208`
+  source_ids:
+    - `R908`
+  story_ids:
+    - `US828`
+  action: MainTableShell 收口与 data-table 暂缓决策。
+  status: `done`
+  notes: 已收口 IM197-IM207 表格抽象链路：`SimpleTable` 停在轻量子/详情表格，`MainTableShell` 已覆盖排班计划和不可用管理两个产品职责清晰的主表；`components/data-table.tsx` 继续暂缓，因为它属于 `/dashboard` anomaly/demo table，产品 owner、路由责任和真实工作流价值尚未重新确认。本轮只修改文档和 Harness 状态，不修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

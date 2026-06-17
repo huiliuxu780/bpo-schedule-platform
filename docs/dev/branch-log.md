@@ -243,11 +243,29 @@
 - branch_name: `codex/im207-main-table-shell-unavailability`
 - base_main_commit: `pending stacked continuation from codex/im206-main-table-shell-schedule-plan`
 - stacked_on: `codex/im206-main-table-shell-schedule-plan`
-- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- remote_status: `pushed to origin/codex/im207-main-table-shell-unavailability after PM continuation; remote head fe82af0a0df2587af330d9262721ef690e0dc8b4 includes IM207 plus local-artifact ignore cleanup.`
 - scope: Second MainTableShell implementation slice. Add embedded shell support and migrate only `components/unavailability-table.tsx` while preserving unavailability business filters, summary, impact links, shift links, copy, routes, and data.
 - allowed_files_check: `components/main-table-shell.tsx`, `components/unavailability-table.tsx`, `scripts/tests/main-table-shell-structure.test.mjs`, current project context, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
 - scope_diff_check: expected embedded shell support, unavailability-table delegation, structure-test update, and traceability updates only; no `app/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes. `.local/`, `.qoder/`, and the pre-existing unrelated `docs/design/shadcn-dashboard-01-visual-alignment-report.md` deletion must not be staged.
 - check_result: TDD RED `node --test scripts/tests/main-table-shell-structure.test.mjs` first failed because `components/unavailability-table.tsx` did not import/render `MainTableShell` and still owned the TanStack/Table render loop. After implementation, the focused structure test passed with 6 tests. `npm run typecheck` and `npm run lint` passed. shadcn review found no hardcoded color-scale classes, `space-*` drift, button icon size drift, or nested Card regression; project style is `radix-nova`. Browser smoke on `/unavailability` confirmed the list title, one outer Card only, summary, 3 rows, impact/shift hrefs, table search filtering to `苏州`, column visibility hiding `备注`, and detail navigation to `/unavailability/unavail-20260511-002`; console output only contained DevTools/HMR/Fast Refresh messages. `bash scripts/check-state.sh --strict` passed with current context line budget 160/160. `git diff --check` passed. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: `22bc488`
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
+### IM208 MainTableShell Closeout
+
+- branch_name: `codex/im208-main-table-shell-closeout`
+- base_main_commit: `66193b1d694dabcd7621935262fbcddc7a0d2fa7`
+- stacked_on: `codex/im207-main-table-shell-unavailability`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Documentation and Harness closeout for the SimpleTable/MainTableShell table-abstraction chain. Confirm that `components/data-table.tsx` stays deferred until dashboard anomaly product ownership, route responsibility, and workflow value are clear.
+- allowed_files_check: current queue and active tasks, current project context, raw requirements, user stories, backlog, task log, audit report, project state, branch log, and `docs/design/main-table-shell-boundary-spec.md` only.
+- scope_diff_check: expected documentation/state closeout only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: `bash scripts/check-state.sh --strict` passed with current context line budget 160/160 and empty current queue/active tasks. `git diff --check` passed. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
 - local_commit_sha: pending
 - integration_status: `not_started`
 - integration_method: `N/A`

@@ -1128,3 +1128,11 @@ This slice preserves existing routes, data fetching, business copy, backend beha
 `unavailability-table` now keeps the不可用-specific responsibilities: column definitions, business filters, summary metrics, impact/detail hrefs, shift-list hrefs, status semantics, and copy. `components/data-table.tsx` remains deferred until its product owner and anomaly-table responsibility are clearer.
 
 This slice preserves existing pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM208 MainTableShell Closeout
+
+`IM208` closes the current `SimpleTable` and `MainTableShell` table-abstraction chain. The project now treats `SimpleTable` as the stable light child/detail table renderer, and `MainTableShell` as the main-table shell proven on schedule plans and unavailability management.
+
+`components/data-table.tsx` remains intentionally deferred. It belongs to the dashboard anomaly/demo surface, and should not be migrated only because it still imports TanStack Table directly. Reopen it only after the dashboard anomaly table has a confirmed product owner, route responsibility, and workflow value.
+
+This slice preserves all UI components, pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.

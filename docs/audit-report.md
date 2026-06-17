@@ -4909,3 +4909,19 @@
 - `components/unavailability-table.tsx` 委托 MainTableShell 渲染主表，同时保留不可用业务列、筛选状态、摘要、影响/班次链接和文案。
 - `scripts/tests/main-table-shell-structure.test.mjs` 扩展为第二个实现护栏：确认不可用主表不再直接拥有渲染循环，`data-table` 未提前接入。
 - 结构测试、typecheck、lint、shadcn/tokens review 和浏览器烟测覆盖不可用管理列表；最终验证结果记录在 branch log。
+
+### 2026-06-17 - IM208 MainTableShell 收口与 data-table 暂缓决策
+
+#### 审计计划
+
+- IM197-IM207 已完成七个轻量 SimpleTable 表格、MainTableShell 边界/护栏，以及排班计划和不可用管理两个主表迁移。
+- 本轮只做文档和 Harness 收口，确认不把 `components/data-table.tsx` 作为下一刀机械迁移。
+- `data-table` 属于 `/dashboard` anomaly/demo table；在产品 owner、路由责任和真实 BPO 工作流价值重新确认前，迁移它的产品收益不足。
+- 本轮不修改 UI 组件、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 R908/US828/IM208 记录，明确当前表格抽象链路收口。
+- 更新 MainTableShell 边界规格，写清重新评估 `data-table` 的前置条件。
+- `data-table` 暂缓迁移不代表技术债遗漏；它是产品归属未确认前的有意停止。
+- 当前队列和 active tasks 已在完成后清空，不保留 done history。
