@@ -4803,3 +4803,18 @@
 - `schedule-risk-unavailability-table` 保留原列定义、状态 Badge、排序按钮和默认 `staff_name` 排序，渲染委托给 `SimpleTable`。
 - `scripts/tests/simple-table-structure.test.mjs` 扩展覆盖 `schedule-risk-unavailability-table`，防止该表重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
 - 当前队列和 active tasks 已在完成后清空，不保留 done history。
+
+### 2026-06-17 - IM201 SimpleTable 第五刀迁移 unavailability-impact-shift-table
+
+#### 审计计划
+
+- 延续第三方重构方案 Task 3、IM197 到 IM200 结果，只迁移第五个轻量子表格，不扩大到所有表格。
+- Product Design brief 锁定为保持现有 shadcn Table 视觉、列定义、排序入口、计划链接和空状态文案。
+- 本轮只允许迁移 `unavailability-impact-shift-table` 并扩展结构测试；不新增页面、路由、业务文案、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- `unavailability-impact-shift-table` 保留原列定义、状态 Badge、计划链接、覆盖率格式化、排序按钮和默认 `plan_id` 排序，渲染委托给 `SimpleTable`。
+- `scripts/tests/simple-table-structure.test.mjs` 扩展覆盖 `unavailability-impact-shift-table`，防止该表重新拥有 `useReactTable`、`flexRender` 或 shadcn Table 循环。
+- 浏览器烟测确认 `/unavailability/unavail-20260511-001` 的影响班次表表头、2 行数据和计划链接保持正常，空态未误显示。
+- 当前队列和 active tasks 已在完成后清空，不保留 done history。

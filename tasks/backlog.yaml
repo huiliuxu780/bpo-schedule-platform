@@ -12068,3 +12068,48 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已将 `schedule-risk-unavailability-table` 迁移为列定义 + SimpleTable 调用；保留默认 `staff_name` 排序、列、空状态文案和业务数据；结构测试、typecheck、lint、state/diff checks、Browser smoke 和最终 check.sh 通过。"
+  - id: IM201
+    title: "SimpleTable 第五刀迁移 unavailability-impact-shift-table"
+    priority: P1
+    status: done
+    required_workflow: frontend-scaffold
+    dependencies: ["IM200"]
+    product_design_brief:
+      goal: "继续抽取轻量表格渲染层，只迁移不可用影响班次子表格验证复用模式。"
+      visual_source: "现有 shadcn Table 与 TanStack Table 排序 UI，不做视觉重设计。"
+      interactivity: "保留排序、默认排序、计划链接和空状态；不新增搜索、分页或列显隐。"
+    allowed_files:
+      - "components/unavailability-impact-shift-table.tsx"
+      - "scripts/tests/simple-table-structure.test.mjs"
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/registry/TRACE_INDEX.yaml"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "`components/unavailability-impact-shift-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+      - "保留不可用影响班次表的列、计划链接、排序入口、默认 `plan_id` 排序、空状态文案和业务数据不变。"
+      - "扩展结构测试覆盖 `unavailability-impact-shift-table`，防止重复渲染循环回流。"
+      - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改 allowed_files 之外的文件"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要改动页面、路由、业务文案、后端、数据库、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已将 `unavailability-impact-shift-table` 迁移为列定义 + SimpleTable 调用；保留默认 `plan_id` 排序、计划链接、列、空状态文案和业务数据；结构测试、typecheck、lint、state/diff checks、Browser smoke 和最终 check.sh 通过。"
