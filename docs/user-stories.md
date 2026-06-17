@@ -66,6 +66,29 @@ status: "done"
 notes: "IM210 已完成：未来 dashboard 下游入口只能链接到已有详情工作区；缺少稳定下游 ID 时保持 overview 或进入已确认列表入口，不伪造处理闭环。"
 ```
 
+### US831 - Dashboard anomaly row 下游入口阻塞态
+
+```yaml
+id: US831
+requirement_ids:
+  - R911
+module: "运营工作台"
+role: "运营负责人"
+story: "作为运营负责人，我希望 dashboard anomaly row 在缺少稳定下游 ID 时明确显示不可跳转状态，以便不把经营总览误认为异常处理入口。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增模型测试覆盖无 downstreamEntry 时返回 blocked entry。"
+  - "新增模型测试覆盖有稳定 review case downstreamEntry 时才生成既有工作区链接。"
+  - "`components/data-table.tsx` 不再显示泛化行操作占位；缺少稳定下游 ID 时显示 `等待下游定位` disabled 状态。"
+  - "不新增真实异常查询、新路由、新查询参数、后端、数据库、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US830"
+status: "done"
+notes: "IM211 已完成：当前静态 dashboard anomaly rows 不携带 downstreamEntry，因此表格显示阻塞态；模型只在 future stable downstream ID 存在时生成链接。"
+```
+
 ### US828 - MainTableShell 收口与 data-table 暂缓决策
 
 ```yaml

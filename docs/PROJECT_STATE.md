@@ -1154,3 +1154,11 @@ This slice preserves all UI components, pages, routes, data fetching, business c
 The allowed future link targets are existing workspaces only: `/data-quality/comparison-runs/[runId]`, `/data-quality/review-cases/[caseId]`, `/data-quality/[batchId]?tab=result-trace`, `/actual-logs/production/[batchId]`, and `/schedule-plans/production/[batchId]`. Rows without a stable downstream ID should remain overview-only until a future product task confirms a list or query contract.
 
 This slice preserves all UI components, pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM211 Dashboard Anomaly Entry Blocked State
+
+`IM211` turns the dashboard anomaly row action placeholder into an explicit downstream-entry state. Current static anomaly rows do not carry a stable `caseId`, `runId`, or `batchId`, so the table now shows a disabled `等待下游定位` state instead of implying that the dashboard can directly handle the anomaly.
+
+The shared dashboard table model now supports future read-only downstream entries only when a row provides a stable `downstreamEntry`. The first covered link target is review-case detail at `/data-quality/review-cases/[caseId]`; other existing workspace targets are kept within the same no-new-route boundary.
+
+This slice preserves existing pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.

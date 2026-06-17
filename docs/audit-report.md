@@ -4957,3 +4957,18 @@
 - 结论：未来 dashboard anomaly entry 只能是 summary-to-workspace link。
 - 允许目标限定为已有详情工作区：comparison run detail、review case detail、import batch result trace、actual-log production detail、schedule production detail。
 - 缺少稳定 `caseId`、`runId` 或来源 `batchId` 时，未来实现不得伪造行级跳转、状态、复核结论或生产动作。
+
+### 2026-06-17 - IM211 Dashboard anomaly row 下游入口阻塞态
+
+#### 审计计划
+
+- 延续 IM210 规格，只做 read-only/link-only 的最小前端实现。
+- 当前静态 dashboard anomaly rows 没有稳定下游 ID，因此默认应显示 blocked entry，而不是泛化行操作按钮。
+- TDD 先补模型测试，再改 `data-table-model` 和 `data-table`。
+- 本轮不新增真实异常查询、新路由、新查询参数、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- RED：`node --test scripts/tests/dashboard-table-model.test.mjs` 先因缺少 `buildDashboardAnomalyEntryState` export 失败。
+- GREEN：新增 anomaly downstream entry 状态模型；无 `downstreamEntry` 返回 `等待下游定位` blocked 状态，有稳定 review case ID 时生成既有详情链接。
+- `components/data-table.tsx` 的操作列不再显示泛化占位按钮；当前静态数据没有 stable downstream ID，因此显示 disabled 阻塞态。

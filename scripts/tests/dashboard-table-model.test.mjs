@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildDashboardAnomalyEntryState,
   clampDashboardPageIndex,
   dashboardAnomalyMatchesQuery,
   filterDashboardAnomalies,
@@ -57,6 +58,31 @@ test("dashboard anomaly filters combine query, severity, and status", () => {
   assert.deepEqual(
     filterDashboardAnomalies(rows, { query: "", severity: "all", status: "待复核" }).map((row) => row.id),
     ["ANM-202605-001"],
+  );
+});
+
+test("dashboard anomaly entry stays blocked without a stable downstream target", () => {
+  assert.deepEqual(buildDashboardAnomalyEntryState(anomaly), {
+    kind: "blocked",
+    label: "等待下游定位",
+    detail: "当前异常还没有稳定的复核案例、对比运行或来源批次，不能从经营总览直接跳转。",
+  });
+});
+
+test("dashboard anomaly entry links only when a stable downstream target exists", () => {
+  assert.deepEqual(
+    buildDashboardAnomalyEntryState({
+      ...anomaly,
+      downstreamEntry: {
+        type: "review_case",
+        id: "CASE-QUERY-001",
+      },
+    }),
+    {
+      kind: "link",
+      label: "查看复核案例",
+      href: "/data-quality/review-cases/CASE-QUERY-001",
+    },
   );
 });
 

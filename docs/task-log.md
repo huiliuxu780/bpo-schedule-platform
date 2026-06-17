@@ -2525,3 +2525,12 @@
   action: Dashboard 下游工作区入口规格。
   status: `done`
   notes: 新增 `docs/design/dashboard-downstream-entry-spec.md`，定义未来 dashboard anomaly row 只能作为 summary-to-workspace entry，候选目标限定为已有 `/data-quality/comparison-runs/[runId]`、`/data-quality/review-cases/[caseId]`、`/data-quality/[batchId]?tab=result-trace`、`/actual-logs/production/[batchId]` 和 `/schedule-plans/production/[batchId]`。缺少稳定下游 ID 时不得伪造行级跳转、处理状态、复核结果或生产动作；真实调查、复核、关闭、批次和生产语义继续由下游工作区承载。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM211`
+  source_ids:
+    - `R911`
+  story_ids:
+    - `US831`
+  action: Dashboard anomaly row 下游入口阻塞态。
+  status: `done`
+  notes: 新增 `buildDashboardAnomalyEntryState` 模型并扩展 dashboard table model 测试；无 `downstreamEntry` 的 anomaly row 返回 `等待下游定位` blocked 状态，有稳定 review case downstreamEntry 时才生成既有 `/data-quality/review-cases/[caseId]` 链接。`components/data-table.tsx` 不再展示泛化行操作占位，当前静态 dashboard anomaly rows 因缺少稳定下游 ID 只显示 disabled 阻塞态。本轮未新增真实异常查询、新路由、新查询参数、后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
