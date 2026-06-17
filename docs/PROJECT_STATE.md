@@ -1178,3 +1178,13 @@ This slice preserves all UI components, pages, routes, data fetching, backend be
 Several status statements in that document are now stale after later work: error/loading recovery, shared empty states, tabbed workspaces, data-quality traceability, review-case workspaces, comparison-run detail context, dashboard anomaly ownership, and dashboard blocked-entry semantics have moved forward. High-risk items such as auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors still require separate Gate confirmation.
 
 This slice preserves all UI components, pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM214 Review Case Workspace Calibration
+
+`IM214` calibrates the current review-case workspace after the dashboard anomaly chain was closed. `/data-quality/review-cases` and `/data-quality/review-cases/[caseId]` are already real downstream exception-handling workspaces, not blank future modules and not dashboard table extensions.
+
+The current review-case surface supports list triage, processing-stage filters, owner workload context, first-pending entry, source result and source trace context, evidence and conclusion records, processing timeline, controlled local evidence/conclusion/closure actions, failed-submit retry targeting, successful-submit continuation, and closure handoff.
+
+The workspace remains a controlled local review workflow. Permissions, approval, export, bulk closure, external evidence integrations, reopen/reassign/escalation/SLA, notification, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors still require separate Gate confirmation.
+
+This slice preserves all UI components, pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.

@@ -44,6 +44,29 @@ status: "done"
 notes: "IM213 已完成：外部项目理解文档保留为产品基线，不作为当前实现状态或自动 backlog。"
 ```
 
+### US834 - 复核案例工作区现状校准
+
+```yaml
+id: US834
+requirement_ids:
+  - R914
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望校准当前复核案例工作区已经能支撑哪些处理动作、哪些仍不能做，以便下一步不会重复做已有能力，也不会越界进入审批、导出、权限或批量处理。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增复核案例工作区校准文档，覆盖列表页、详情页、处理阶段、证据/结论/关闭、Owner 续办和提交反馈。"
+  - "明确当前可用能力与仍需新 Gate 的能力边界。"
+  - "给出下一阶段可 seed 的 2-3 个小切片建议。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US833"
+status: "done"
+notes: "IM214 已完成：复核案例工作区当前能力和边界已校准，不修改业务代码。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

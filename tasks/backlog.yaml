@@ -12688,3 +12688,54 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成项目理解需求基线校准；2026-06-14 外部文档保留为产品北极星和需求地图，当前实现状态与下一步开发仍以 Harness/Gate 为准。"
+  - id: IM214
+    title: "复核案例工作区现状校准"
+    priority: P1
+    status: done
+    required_workflow: frontend-audit
+    dependencies: ["IM213"]
+    product_design_brief:
+      goal: "校准当前复核案例工作区的真实可用能力和产品边界，避免下一步重复建设或越界扩展。"
+      visual_source: "既有 `/data-quality/review-cases` 与 `/data-quality/review-cases/[caseId]` 页面、IM052-IM077 复核案例链路、IM122 tabbed detail workspace；本轮无视觉改造。"
+      interactivity: "无交互实现；只输出 PM 可读的能力边界、仍需 Gate 的事项和下一阶段 seed 建议。"
+      design_note: "复核案例已经是异常处理工作区，但当前仍是受控本地复核链路，不等于生产审批、权限、导出、批量或外部集成工作台。"
+    allowed_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/design/review-case-workspace-calibration.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增复核案例工作区校准文档。"
+      - "明确列表、详情、处理阶段、证据/结论/关闭、Owner 续办和提交反馈已具备的当前能力。"
+      - "明确权限、审批、导出、批量、生产动作、外部集成、重开/转派/升级/SLA 等仍需新 Gate。"
+      - "明确下一阶段推荐从复核案例验收烟测、文案/空态微调或对比运行工作区校准继续。"
+      - "不修改 UI 组件、页面、路由、数据读取、后端、依赖或 package/lockfile。"
+      - "完成后清空 current queue 与 active tasks。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改 allowed_files 之外的文件"
+      - "需要修改 app/**、components/**、hooks/**、lib/** 或 backend/**"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增或改变路由、查询参数契约、真实异常查询、复核写入、关闭动作、批次应用、生产动作、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成复核案例工作区现状校准；当前 `/data-quality/review-cases` 和详情页已经形成列表 triage、处理阶段、证据/结论/关闭、Owner 续办和提交反馈的受控本地复核工作区。权限、审批、导出、批量、外部集成、重开/转派/升级/SLA 和生产语义仍需新 Gate。"

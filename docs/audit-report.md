@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-06-17 - IM214 复核案例工作区现状校准
+
+#### 审计结论
+
+- `IM214/US834` 已新增复核案例工作区校准文档。
+- 当前 `/data-quality/review-cases` 是复核案例 triage 列表，覆盖业务日、owner、状态、严重度、来源类型、处理阶段和关键词筛选，并提供 owner x 阶段负载和首个待处理入口。
+- 当前 `/data-quality/review-cases/[caseId]` 是单案例处理工作区，覆盖来源上下文、来源链路、证据/结论链路、处理时间线、动作区、Owner 上下文和续办导航。
+- 当前动作区支持受控本地证据补充、结论补充和关闭；关闭仍受证据/结论完整性和已关闭状态约束。
+- 本轮不修改 UI、路由、数据读取、后端、schema/migration、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+#### 风险
+
+- 复核案例工作区容易被误读为已经具备生产审批、权限、批量关闭或导出能力；这些仍需新 Gate。
+- 如果后续从 dashboard 行跳转复核案例，必须先确认稳定 `caseId` 或明确查询契约，不能伪造 downstream ID。
+
+#### 验证
+
+- `bash scripts/check-state.sh --strict`：执行态通过。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict`：完成态 current queue / active tasks 清空后通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
 ### 2026-06-01 - IM050 shadcn/ui 自动化验证链路
 
 #### 审计结论

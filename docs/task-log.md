@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-06-17
+
+- task_id: `IM214`
+- source_ids:
+  - `R914`
+- story_ids:
+  - `US834`
+- action: 复核案例工作区现状校准。
+- status: `done`
+- notes: 新增 `docs/design/review-case-workspace-calibration.md`，明确 `/data-quality/review-cases` 和 `/data-quality/review-cases/[caseId]` 已具备列表筛选、处理阶段、Owner 负载/续办、来源链路、证据/结论、受控关闭、提交反馈和队列交接能力；该工作区仍是受控本地复核链路，不等同于权限、审批、导出、批量、外部集成、自动排班、生产公式、结算或收费因子能力；current queue 与 active tasks 已清空。
+
 ### 2026-06-05
 
 - task_id: `IM152`
