@@ -437,6 +437,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM218 Import Center Model Gate Boundary Split
+
+- branch_name: `codex/im218-import-center-model-gate-split`
+- base_main_commit: `edce30d863fb21d7ef2d8e2ddab0f97f553f6a2a`
+- stacked_on: `codex/im217-review-case-model-test-split`
+- remote_status: `not_pushed; pending PM push decision after local commit.`
+- scope: Continue import-center model gate splitting by moving version/workbench and batch/template/apply assertions into dedicated test files, and wire existing split guards into `scripts/check.sh`.
+- qoder_mode: `true; Qoder performed bounded serial test splits and check.sh wiring only, Codex reviewed actual diff, updated Harness, and owns verification/commit.`
+- allowed_files_check: `scripts/tests/import-center-model.test.mjs`, `scripts/tests/import-center-version-model.test.mjs`, `scripts/tests/import-center-batch-template-model.test.mjs`, `scripts/check.sh`, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and branch log only.
+- scope_diff_check: expected test-file split, check.sh wiring, and Harness traceability only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: Focused `import-center-model.test.mjs` passed with 23/23 tests; focused `import-center-version-model.test.mjs` passed with 10/10 tests; focused `import-center-batch-template-model.test.mjs` passed with 27/27 tests; four split guards passed with 4/4 tests; `npm run lint`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, all import-center model gates, split guards, shadcn gate, lint, typecheck, Next build, and backend 215 tests.
+- local_commit_sha: pending
+- integration_status: `done`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`

@@ -80,6 +80,19 @@ status: "done"
 notes: "IM217 已完成：复核案例 model assertions 已拆入独立测试文件，原 import-center model test 保留 60 个非 review-case / comparison-run assertions，`scripts/check.sh` 同时运行两个测试文件；未启动 8000，未修改业务 UI、后端、依赖或 package/lockfile。"
 ```
 
+### R918 - import-center model gate 业务边界拆分
+
+```yaml
+id: R918
+module: "导入中心测试门禁"
+description: "IM217 已先拆出 review-case model assertions，但 `scripts/tests/import-center-model.test.mjs` 仍承载 version/workbench、batch/template/apply 和 core/comparison 多类断言。当前需要继续按业务边界拆分 version/workbench 与 batch/template/apply 断言，并把已有 split guard 测试接入 `scripts/check.sh`，降低单个门禁文件维护成本。"
+source: "PM requested more Qoder tasks after IM217 + Codex bounded task packets"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM218 已完成：新增 `import-center-version-model.test.mjs` 10 个 tests 和 `import-center-batch-template-model.test.mjs` 27 个 tests，原 `import-center-model.test.mjs` 保留 23 个 core/comparison/exception tests；`scripts/check.sh` 同时运行新增测试和 4 个 split guard。未启动 8000，未修改业务 UI、后端、依赖或 package/lockfile。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

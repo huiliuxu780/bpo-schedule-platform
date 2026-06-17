@@ -1220,3 +1220,13 @@ This is a model/contract gate improvement only. It does not start or require `12
 `scripts/tests/import-center-model.test.mjs` now keeps 60 import-center, business-version, and comparison-run assertions. The comparison-run assertion that links related review cases stays in the original file because it verifies comparison-run output shape, not review-case workspace behavior.
 
 `scripts/check.sh` runs both test files. This is a test structure and maintainability improvement only; it does not start or require `127.0.0.1:8000`, and it does not change live UI/API acceptance status.
+
+## 2026-06-18 IM218 Import Center Model Gate Boundary Split
+
+`IM218` continues the executable import-center model gate split after IM217. `scripts/tests/import-center-version-model.test.mjs` now owns 10 version/workbench assertions for the business version ledger, applied-version positioning, local comparison trigger, trigger feedback, latest comparison callback, and version workbench result review.
+
+`scripts/tests/import-center-batch-template-model.test.mjs` now owns 27 batch/template/apply assertions for batch apply URLs, field-mapping template URLs and summaries, upload prefill and result guidance, row correction, batch detail readability, readiness issue grouping, apply guidance, single-batch apply action, and applied result cards.
+
+`scripts/tests/import-center-model.test.mjs` keeps 23 core/comparison/exception assertions. `scripts/check.sh` now also runs the two new files plus the existing split guards for import-center and master-data model boundaries.
+
+This is a test structure and maintainability improvement only; it does not start or require `127.0.0.1:8000`, and it does not change live UI/API acceptance status.

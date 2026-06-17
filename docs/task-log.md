@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-06-18
+
+- task_id: `IM218`
+- source_ids:
+  - `R918`
+- story_ids:
+  - `US838`
+- action: import-center model gate 业务边界拆分。
+- status: `done`
+- notes: Qoder 串行完成 version/workbench、batch/template/apply 拆分和 split guard 接入后，Codex 审查实际 diff。`scripts/tests/import-center-version-model.test.mjs` 承载 10 个 version/workbench assertions，`scripts/tests/import-center-batch-template-model.test.mjs` 承载 27 个 batch/template/apply assertions，原 `scripts/tests/import-center-model.test.mjs` 保留 23 个 core/comparison/exception assertions；`scripts/check.sh` 已接入新增两个测试文件和 4 个 split guard。本轮不启动 8000，不修改业务 UI、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 ### 2026-06-17
 
 - task_id: `IM217`
