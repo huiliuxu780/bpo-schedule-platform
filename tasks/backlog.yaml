@@ -12587,3 +12587,53 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已把 dashboard anomaly row 的行操作占位改成下游入口阻塞态；当前静态 anomaly rows 没有稳定 downstream ID，因此不生成伪链接。"
+  - id: IM212
+    title: "Dashboard anomaly 链路收口与真实工作区回切"
+    priority: P1
+    status: done
+    required_workflow: frontend-audit
+    dependencies: ["IM211"]
+    product_design_brief:
+      goal: "正式收口 dashboard anomaly 链路，停止在经营总览里继续扩展异常处理语义。"
+      visual_source: "IM209 ownership audit、IM210 downstream entry spec、IM211 blocked state；本轮无视觉改造。"
+      interactivity: "无交互实现；只记录 product/design boundary 和下一阶段真实工作区优先级。"
+      design_note: "Dashboard 是经营总览摘要页，不应成为复核、对比、导入质量或生产动作主工作台。"
+    allowed_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/design/dashboard-anomaly-chain-closeout.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "新增 dashboard anomaly 链路收口文档。"
+      - "明确 IM209-IM211 后 dashboard anomaly 不继续添加伪 downstream ID、处理状态、复核结果或生产动作。"
+      - "明确下一阶段推荐切回真实 review-case、comparison-run、data-quality 工作区。"
+      - "不修改 UI 组件、页面、路由、数据读取、后端、依赖或 package/lockfile。"
+      - "完成后清空 current queue 与 active tasks。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要修改 allowed_files 之外的文件"
+      - "需要修改 app/**、components/**、hooks/**、lib/** 或 backend/**"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增或改变路由、查询参数契约、真实异常查询、复核写入、关闭动作、批次应用、生产动作、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成 dashboard anomaly 链路收口；经营总览保持摘要和诚实阻塞态，下一阶段回到真实复核、对比或导入质量工作区。"

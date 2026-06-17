@@ -328,6 +328,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM212 Dashboard Anomaly Chain Closeout
+
+- branch_name: `codex/im212-dashboard-chain-closeout`
+- base_main_commit: `66193b1d694dabcd7621935262fbcddc7a0d2fa7`
+- stacked_on: `codex/im211-dashboard-anomaly-entry-blocked-state`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Product/design closeout for the dashboard anomaly continuation chain. Confirm that dashboard remains an overview surface with honest blocked state when no stable downstream ID exists, and move the next recommendation back to real review/comparison/data-quality workspaces.
+- allowed_files_check: current queue and active tasks, current project context, raw requirements, user stories, backlog, task log, audit report, project state, branch log, and `docs/design/dashboard-anomaly-chain-closeout.md` only.
+- scope_diff_check: expected documentation/state closeout only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: `git diff --check` passed after adding the new closeout document to the diff. `bash scripts/check-state.sh --strict` passed twice: once with IM212 in current execution state and once after current queue/active tasks returned to empty. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: pending
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`
