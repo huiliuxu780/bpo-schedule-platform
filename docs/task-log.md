@@ -2516,3 +2516,12 @@
   action: Dashboard anomaly table 产品归属审计。
   status: `done`
   notes: 新增 `docs/design/dashboard-anomaly-table-ownership-audit.md`，确认 `/dashboard` 的 `DataTable` 当前属于经营总览下的本地 anomaly overview widget，数据来自 `app/dashboard/data.ts`，行操作仍是占位，不承担 review-case、comparison-run、import quality trace 或 actual-log production detail 的主入口责任。默认建议保留为 overview；只有在异常行路由语义和真实工作流 owner 明确后，才考虑升级为异常分诊入口或替换为真实下游摘要。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM210`
+  source_ids:
+    - `R910`
+  story_ids:
+    - `US830`
+  action: Dashboard 下游工作区入口规格。
+  status: `done`
+  notes: 新增 `docs/design/dashboard-downstream-entry-spec.md`，定义未来 dashboard anomaly row 只能作为 summary-to-workspace entry，候选目标限定为已有 `/data-quality/comparison-runs/[runId]`、`/data-quality/review-cases/[caseId]`、`/data-quality/[batchId]?tab=result-trace`、`/actual-logs/production/[batchId]` 和 `/schedule-plans/production/[batchId]`。缺少稳定下游 ID 时不得伪造行级跳转、处理状态、复核结果或生产动作；真实调查、复核、关闭、批次和生产语义继续由下游工作区承载。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

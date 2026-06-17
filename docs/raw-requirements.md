@@ -28,6 +28,19 @@ status: "done"
 notes: "IM209 已完成：`data-table` 当前归属为 `/dashboard` 经营总览的本地 anomaly overview widget，不作为 MainTableShell 下一刀；后续默认保留为 overview，只有在异常行路由到 comparison run、review case、import quality trace 或 actual-log production detail 的产品语义明确后再进入实现。"
 ```
 
+### R910 - Dashboard 下游工作区入口规格
+
+```yaml
+id: R910
+module: "运营工作台"
+description: "IM209 已确认 dashboard anomaly table 当前只属于经营总览 overview，但未来如果异常行需要进入真实业务闭环，必须先定义下游入口规格。当前需要明确 dashboard 行级入口可指向哪些既有工作区、什么时候允许跳转、哪些处理责任必须留在下游页面，避免把总览页误扩成异常处理工作台。"
+source: "IM209 ownership audit + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM210 已完成：dashboard 未来只可作为 summary-to-workspace entry，候选入口限定在既有 comparison run、review case、import batch result trace、actual-log production detail 和 schedule production detail；没有稳定下游 ID 时不得伪造行级跳转或处理状态。"
+```
+
 ### R908 - MainTableShell 收口与 data-table 暂缓决策
 
 ```yaml

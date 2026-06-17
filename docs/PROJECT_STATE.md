@@ -1146,3 +1146,11 @@ The table uses static `app/dashboard/data.ts` rows, keeps row actions as placeho
 Default decision: keep the dashboard anomaly table as an overview summary. Do not move it into `MainTableShell` or build more table abstraction around it until a future task defines row-level navigation into a confirmed exception workflow.
 
 This slice preserves all UI components, pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM210 Dashboard Downstream Entry Spec
+
+`IM210` defines the future boundary for dashboard anomaly row entries. Dashboard may summarize operational risk and link into existing downstream workspaces, but it must not own investigation, review evidence, case closure, comparison execution, batch application, production actions, permissions, approval, export, settlement, formulas, or charge factors.
+
+The allowed future link targets are existing workspaces only: `/data-quality/comparison-runs/[runId]`, `/data-quality/review-cases/[caseId]`, `/data-quality/[batchId]?tab=result-trace`, `/actual-logs/production/[batchId]`, and `/schedule-plans/production/[batchId]`. Rows without a stable downstream ID should remain overview-only until a future product task confirms a list or query contract.
+
+This slice preserves all UI components, pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.

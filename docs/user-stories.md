@@ -43,6 +43,29 @@ status: "done"
 notes: "IM209 已完成：dashboard anomaly table 当前保留为经营总览的本地 overview widget，不进入 MainTableShell 机械迁移队列。"
 ```
 
+### US830 - Dashboard 下游工作区入口规格
+
+```yaml
+id: US830
+requirement_ids:
+  - R910
+module: "运营工作台"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望定义 dashboard anomaly row 的下游工作区入口规格，以便未来实现入口时只做总览到既有工作区的跳转，而不把 dashboard 改成异常处理主工作台。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "读取 IM209 审计文档和现有 comparison-run、review-case、import batch、actual-log production、schedule production 详情路由。"
+  - "明确 dashboard 可指向的既有下游工作区、允许跳转条件和不可跳转空态。"
+  - "明确 dashboard 只拥有摘要与入口，不拥有复核写入、关闭、对比计算、批次应用或生产动作。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US829"
+status: "done"
+notes: "IM210 已完成：未来 dashboard 下游入口只能链接到已有详情工作区；缺少稳定下游 ID 时保持 overview 或进入已确认列表入口，不伪造处理闭环。"
+```
+
 ### US828 - MainTableShell 收口与 data-table 暂缓决策
 
 ```yaml
