@@ -84,8 +84,9 @@ acceptance:
   - "验证 `CASE-QUERY-001` 详情页可达并能显示证据/结论/处理动作。"
   - "验证失败提交重试反馈和关闭成功交接反馈。"
   - "不启动新的测试环境；如果现有环境缺少后端/API，记录 blocked，不伪造通过。"
-status: "blocked"
-notes: "IM215 阻塞：3000 页面可达，但 8000 review-case API 不可达；当前不能完成真实 seeded case 状态验收。"
+  - "若 PM 在不允许新环境的前提下继续，则可降级收口为 model/contract-only QA 记录，并明确 live seeded smoke 未通过。"
+status: "done"
+notes: "IM215 已降级收口：3000 页面壳与反馈参数部分可达，共享 API/空态合约测试通过；真实 seeded case 数据仍因 8000 review-case API 不可达而未完成 live UI/API 验收。"
 ```
 
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切

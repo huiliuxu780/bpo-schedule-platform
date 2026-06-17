@@ -24,6 +24,17 @@
   - `R915`
 - story_ids:
   - `US835`
+- action: 复核案例验收 smoke 降级收口。
+- status: `done`
+- notes: PM 在不允许启动其他测试环境的前提下继续，因此 IM215 从 live seeded smoke 降级为 no-new-env model/contract-only QA 记录。当前只确认 3000 route shell 和反馈参数部分可达、共享 API/空态合约测试通过；真实 seeded case 数据仍因 8000 review-case API 不可达而未完成 live UI/API 验收。本轮不修改业务代码，current queue 与 active tasks 已清空。
+
+### 2026-06-17
+
+- task_id: `IM215`
+- source_ids:
+  - `R915`
+- story_ids:
+  - `US835`
 - action: 复核案例验收 smoke。
 - status: `blocked`
 - notes: 当前 `127.0.0.1:3000` 复核案例列表、处理阶段筛选和 `CASE-QUERY-001` 详情 URL 均返回 200，但页面显示 `复核案例读取失败 / fetch failed`；直接访问 `127.0.0.1:8000/api/v1/review-cases` 失败，说明当前 3000-only 环境缺少所需后端 API。按 PM 指令未启动其他测试环境，本轮只记录阻塞证据，不修改业务代码。
