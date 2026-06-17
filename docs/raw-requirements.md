@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R907 - MainTableShell 第二刀迁移 unavailability-table
+
+```yaml
+id: R907
+module: "前端健康恢复"
+description: "IM206 已完成 MainTableShell 首刀并验证主表壳层可承接排班计划列表。下一个候选是 `components/unavailability-table.tsx`，它同样包含搜索、状态筛选、列显隐、汇总、分页和行级影响/班次入口，但页面外层已经有业务 Card，因此迁移时需要避免 nested Card，保留外层页面结构，只把表格壳层迁移到 MainTableShell embedded 模式。"
+source: "IM204/IM205 MainTableShell boundary + IM206 implementation + PM confirmed continuation"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM207 已完成：扩展 `MainTableShell` embedded 模式，并让 `unavailability-table` 委托共享壳层；保留搜索、状态筛选、列显隐、分页、汇总、影响/班次入口和业务文案。"
+```
+
 ### R906 - MainTableShell 首刀迁移 schedule-plan-table
 
 ```yaml

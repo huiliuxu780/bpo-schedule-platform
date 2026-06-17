@@ -57,6 +57,7 @@ import {
 } from "@/components/ui/table"
 
 type MainTableShellToolbarContext = {
+  columnVisibilityControl: React.ReactNode
   pageSizeSelect: React.ReactNode
   resetPageIndex: () => void
 }
@@ -73,6 +74,7 @@ type MainTableShellProps<TData> = {
   pageSizeOptions?: number[]
   renderToolbar?: (context: MainTableShellToolbarContext) => React.ReactNode
   summary?: React.ReactNode
+  variant?: "card" | "embedded"
 }
 
 export function MainTableShell<TData>({
@@ -87,6 +89,7 @@ export function MainTableShell<TData>({
   pageSizeOptions = [5, 10, 20],
   renderToolbar,
   summary,
+  variant = "card",
 }: MainTableShellProps<TData>) {
   "use no memo"
 
@@ -160,47 +163,45 @@ export function MainTableShell<TData>({
     </Select>
   )
 
-  return (
-    <Card data-slot="main-table-shell">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
-        <div>
-          <CardTitle>{title}</CardTitle>
-          {description ? (
-            <CardDescription>{description}</CardDescription>
-          ) : null}
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
-              <Columns3 data-icon="inline-start" />
-              列控制
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-44">
-            <DropdownMenuLabel>显示字段</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllLeafColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {columnLabels[column.id] ?? column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </CardHeader>
-      <CardContent>
+  const columnVisibilityControl = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Columns3 data-icon="inline-start" />
+          列控制
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuLabel>显示字段</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {table
+          .getAllLeafColumns()
+          .filter((column) => column.getCanHide())
+          .map((column) => (
+            <DropdownMenuCheckboxItem
+              key={column.id}
+              checked={column.getIsVisible()}
+              onCheckedChange={(value) => column.toggleVisibility(!!value)}
+            >
+              {columnLabels[column.id] ?? column.id}
+            </DropdownMenuCheckboxItem>
+          ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+
+  const tableContent = (
+    <>
         {renderToolbar ? (
           <div
             data-slot="main-table-shell-toolbar"
             className="mb-3 flex flex-wrap items-center gap-2"
           >
-            {renderToolbar({ pageSizeSelect, resetPageIndex })}
+            {renderToolbar({
+              columnVisibilityControl,
+              pageSizeSelect,
+              resetPageIndex,
+            })}
           </div>
         ) : null}
         {summary ? (
@@ -299,7 +300,25 @@ export function MainTableShell<TData>({
             </Button>
           </div>
         </div>
-      </CardContent>
+      </>
+  )
+
+  if (variant === "embedded") {
+    return <div data-slot="main-table-shell">{tableContent}</div>
+  }
+
+  return (
+    <Card data-slot="main-table-shell">
+      <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <div>
+          <CardTitle>{title}</CardTitle>
+          {description ? (
+            <CardDescription>{description}</CardDescription>
+          ) : null}
+        </div>
+        {columnVisibilityControl}
+      </CardHeader>
+      <CardContent>{tableContent}</CardContent>
     </Card>
   )
 }
