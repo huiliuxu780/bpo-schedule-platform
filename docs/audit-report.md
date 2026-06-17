@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-06-17 - IM215 复核案例验收 smoke
+
+#### 审计结论
+
+- `IM215/US835` 已尝试使用当前已运行的 `127.0.0.1:3000` 做复核案例验收 smoke。
+- 复核案例列表、处理阶段筛选、`CASE-QUERY-001` 详情、失败反馈参数和关闭成功反馈参数的前端 URL 均返回 200。
+- 但页面实际状态为 `复核案例读取失败 / fetch failed`，因为 `127.0.0.1:8000` review-case API 当前不可达。
+- PM 已明确不要启动其他测试环境，因此本轮不能完成 seeded case 状态矩阵验收。
+
+#### 风险
+
+- 如果只看 3000 HTTP 200，容易误判复核案例工作区已通过验收；真实状态数据仍未加载。
+- 在 API 未运行时继续做文案或空态修复，可能掩盖环境问题。
+
+#### 验证
+
+- `curl` 访问 3000 复核案例列表、阶段筛选、详情和反馈 URL：均返回 200。
+- `curl` 访问 8000 review-case API：连接失败。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict`：blocked current queue / active tasks 通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
 ### 2026-06-17 - IM214 复核案例工作区现状校准
 
 #### 审计结论

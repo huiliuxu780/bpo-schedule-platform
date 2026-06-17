@@ -382,6 +382,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM215 Review Case Acceptance Smoke
+
+- branch_name: `codex/im215-review-case-acceptance-smoke`
+- base_main_commit: `66193b1d694dabcd7621935262fbcddc7a0d2fa7`
+- stacked_on: `codex/im214-review-case-workspace-calibration`
+- remote_status: `not_pushed; blocked until PM decides environment path.`
+- scope: QA acceptance smoke for current review-case workspace using only the already-running `127.0.0.1:3000` environment.
+- allowed_files_check: current queue and active tasks, current blockers, current project context, raw requirements, user stories, backlog, task log, audit report, project state, branch log, and `docs/design/review-case-workspace-acceptance-smoke.md` only.
+- scope_diff_check: expected QA/blocker documentation only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: Live smoke evidence: 3000 review-case list, processing-stage filters, `CASE-QUERY-001` detail, `?evidence=failed`, and `?closure=success` URLs returned 200, but pages rendered `fetch failed` because direct 8000 review-case API calls could not connect. `git diff --check` passed. `bash scripts/check-state.sh --strict` passed with `US835/IM215` blocked in current queue/active tasks. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: pending
+- integration_status: `blocked`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `blocked; needs PM environment decision`
+- blocked_reason: `127.0.0.1:3000 review-case routes return 200, but pages show fetch failed because 127.0.0.1:8000 review-case API is unavailable; PM asked not to start other test environments.`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`

@@ -12739,3 +12739,46 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成复核案例工作区现状校准；当前 `/data-quality/review-cases` 和详情页已经形成列表 triage、处理阶段、证据/结论/关闭、Owner 续办和提交反馈的受控本地复核工作区。权限、审批、导出、批量、外部集成、重开/转派/升级/SLA 和生产语义仍需新 Gate。"
+  - id: IM215
+    title: "复核案例验收 smoke"
+    priority: P1
+    status: blocked
+    required_workflow: qa
+    dependencies: ["IM214"]
+    allowed_files:
+      - "docs/current/STORY_QUEUE.yaml"
+      - "docs/current/ACTIVE_TASKS.yaml"
+      - "docs/current/BLOCKERS.md"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/design/review-case-workspace-acceptance-smoke.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "验证复核案例列表页、处理阶段筛选、`CASE-QUERY-001` 详情页、失败重试反馈和关闭成功反馈。"
+      - "只使用当前已运行的 3000 环境，不启动其他测试环境。"
+      - "如果后端/API 不可达，记录 blocked，不修改业务代码，不伪造通过结论。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动新的测试环境或后端/API runtime"
+      - "需要修改 app/**、components/**、hooks/**、lib/** 或 backend/**"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增或改变路由、查询参数契约、真实异常查询、复核写入、关闭动作、批次应用、生产动作、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+    commit_after_done: false
+    blocked_reason: "3000 页面可达，但 8000 review-case API 不可达；PM 指示不启动其他测试环境。"

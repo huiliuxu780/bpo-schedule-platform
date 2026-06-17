@@ -2,7 +2,7 @@
 
 ## Active Blockers
 
-None.
+- `IM215` review-case acceptance smoke cannot complete in the current live environment: `127.0.0.1:3000` routes are reachable, but the required review-case API on `127.0.0.1:8000` is not running. PM has instructed not to start other test environments. Unblock by allowing an approved backend/API runtime, providing a running API endpoint, or downgrading IM215 to model/contract-only acceptance.
 
 ## Active Scope Constraints
 
