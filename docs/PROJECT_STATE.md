@@ -1230,3 +1230,9 @@ This is a model/contract gate improvement only. It does not start or require `12
 `scripts/tests/import-center-model.test.mjs` keeps 23 core/comparison/exception assertions. `scripts/check.sh` now also runs the two new files plus the existing split guards for import-center and master-data model boundaries.
 
 This is a test structure and maintainability improvement only; it does not start or require `127.0.0.1:8000`, and it does not change live UI/API acceptance status.
+
+## 2026-06-18 IM219 Master Data Maintenance Model Gate Split
+
+`IM219` turns the large master-data maintenance model test into an executable split gate. The previous direct Node run failed because the master-data barrel used extensionless TS imports internally; the tests now use the existing `jiti` loader without changing production imports.
+
+The 31 assertions are split across core/workbench/source-context, agent, reference/organization/skill/vendor, and detail/payload files, and `scripts/check.sh` runs all four files explicitly. This is a test-structure and gate-coverage improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

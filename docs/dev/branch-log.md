@@ -456,6 +456,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM219 Master Data Maintenance Model Gate Split
+
+- branch_name: `codex/im219-master-data-maintenance-test-split`
+- base_main_commit: `483337762080c58c279c3914f96a9cbc7e227fd0`
+- stacked_on: `codex/im218-import-center-model-gate-split`
+- remote_status: `not_pushed; pending PM push decision after local commit.`
+- scope: Continue model test gate splitting by hardening and splitting the master-data maintenance model assertions into executable business-boundary test files.
+- allowed_files_check: `scripts/tests/master-data-maintenance-model.test.mjs`, `scripts/tests/master-data-maintenance-agent-model.test.mjs`, `scripts/tests/master-data-maintenance-reference-model.test.mjs`, `scripts/tests/master-data-maintenance-detail-model.test.mjs`, `scripts/check.sh`, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and branch log only.
+- scope_diff_check: expected test-runner hardening, test-file split, check.sh wiring, and Harness traceability only; no `app/**`, `components/**` implementation changes, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: Focused master-data maintenance split tests passed with 31/31 tests, split guards passed with 2/2 tests, `npm run lint`, `bash scripts/check-state.sh --strict`, and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, import-center model gates, master-data maintenance model gates, split guards, shadcn gate, lint, typecheck, Next build, and backend 215 tests.
+- local_commit_sha: pending
+- integration_status: `done`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`
