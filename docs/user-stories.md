@@ -20,6 +20,29 @@
   status: "draft"
 ```
 
+### US829 - Dashboard anomaly table 产品归属审计
+
+```yaml
+id: US829
+requirement_ids:
+  - R909
+module: "运营工作台"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望审计 `/dashboard` anomaly table 的产品归属和后续方向，以便决定它应保留为总览摘要、迁入异常复核链路，还是继续作为本地展示表暂缓改造。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "读取 `/dashboard`、`components/data-table.tsx`、`app/dashboard/data.ts`、历史 dashboard parity 需求和当前 MainTableShell 收口文档。"
+  - "明确 dashboard anomaly table 当前产品 owner、当前责任和不应承担的业务责任。"
+  - "给出后续 2-3 条产品路径，并标明哪些路径需要新的产品 Gate。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US828"
+status: "done"
+notes: "IM209 已完成：dashboard anomaly table 当前保留为经营总览的本地 overview widget，不进入 MainTableShell 机械迁移队列。"
+```
+
 ### US828 - MainTableShell 收口与 data-table 暂缓决策
 
 ```yaml

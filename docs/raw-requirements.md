@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R909 - Dashboard anomaly table 产品归属审计
+
+```yaml
+id: R909
+module: "运营工作台"
+description: "IM208 已关闭当前表格抽象链路，并把 `components/data-table.tsx` 暂缓到 dashboard anomaly table 产品归属明确之后。当前需要对 `/dashboard` anomaly table 做一次只读产品归属审计，确认它是经营总览摘要、本地 parity 展示，还是应进入异常复核/对比结果/导入质量追踪链路。"
+source: "IM208 closeout + PM continued recommended next step"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM209 已完成：`data-table` 当前归属为 `/dashboard` 经营总览的本地 anomaly overview widget，不作为 MainTableShell 下一刀；后续默认保留为 overview，只有在异常行路由到 comparison run、review case、import quality trace 或 actual-log production detail 的产品语义明确后再进入实现。"
+```
+
 ### R908 - MainTableShell 收口与 data-table 暂缓决策
 
 ```yaml
