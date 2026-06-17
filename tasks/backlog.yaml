@@ -12742,7 +12742,7 @@ tasks:
   - id: IM215
     title: "复核案例验收 smoke"
     priority: P1
-    status: blocked
+    status: done
     required_workflow: qa
     dependencies: ["IM214"]
     allowed_files:
@@ -12772,6 +12772,7 @@ tasks:
       - "验证复核案例列表页、处理阶段筛选、`CASE-QUERY-001` 详情页、失败重试反馈和关闭成功反馈。"
       - "只使用当前已运行的 3000 环境，不启动其他测试环境。"
       - "如果后端/API 不可达，记录 blocked，不修改业务代码，不伪造通过结论。"
+      - "若 PM 在不允许新环境的前提下继续，则可降级收口为 model/contract-only QA 记录，并明确 live seeded smoke 未通过。"
     auto_run: false
     pm_confirmation_required: true
     conflict_risk: low
@@ -12780,5 +12781,5 @@ tasks:
       - "需要修改 app/**、components/**、hooks/**、lib/** 或 backend/**"
       - "需要新增依赖或修改 package/lockfile"
       - "需要新增或改变路由、查询参数契约、真实异常查询、复核写入、关闭动作、批次应用、生产动作、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
-    commit_after_done: false
-    blocked_reason: "3000 页面可达，但 8000 review-case API 不可达；PM 指示不启动其他测试环境。"
+    commit_after_done: true
+    done_notes: "已按 PM 继续指令降级收口为 no-new-env model/contract-only QA 记录：3000 route shell 和反馈参数部分可达，共享 API/空态合约测试通过；live seeded case 数据仍因 8000 review-case API 不可达而未验收。"

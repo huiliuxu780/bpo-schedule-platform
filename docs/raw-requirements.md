@@ -50,8 +50,8 @@ description: "IM214 已校准复核案例工作区为真实受控本地异常处
 source: "IM214 recommended next slice + PM continued"
 submitted_at: "2026-06-17"
 version: "1.0"
-status: "blocked"
-notes: "IM215 阻塞：`127.0.0.1:3000` 页面可达，但所需 `127.0.0.1:8000` review-case API 不可达；PM 已要求不启动其他测试环境，因此只能记录阻塞证据。"
+status: "done"
+notes: "IM215 已按 PM 继续指令收口为 no-new-env model/contract-only QA 记录：3000 页面壳可达，但 live seeded data 仍因 8000 review-case API 不可达而未验收；本轮未启动其他测试环境、未修改业务代码。"
 ```
 
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切

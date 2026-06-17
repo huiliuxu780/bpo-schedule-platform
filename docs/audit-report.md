@@ -4,6 +4,31 @@
 
 ## Current Audit
 
+### 2026-06-17 - IM215 复核案例 model/contract-only 验收收口
+
+#### 审计结论
+
+- `IM215/US835` 已按 PM 继续指令收口为 no-new-env model/contract-only QA 记录。
+- 本轮不启动 `127.0.0.1:8000` 或其他测试环境，不修改复核案例 UI、路由、数据读取、后端、依赖或 package/lockfile。
+- live smoke 结论保持克制：3000 route shell 和反馈参数部分可达，但 seeded case 数据没有通过 live UI/API 验收。
+- 现有覆盖盘点显示：共享 API/error helper、共享 empty-state、处理阶段、owner 矩阵、详情上下文、动作区、失败重试、关闭后续办均有代码级测试或结构覆盖来源；其中 `import-center-model.test.mjs` 目前不能直接作为通过证据，因为 direct Node 执行被既有 TS/ESM import resolution 问题挡住。
+
+#### 风险
+
+- 后续若需要真实验收，仍必须提供已批准的 `127.0.0.1:8000` review-case API 或等效运行端点。
+- 直接把本次收口理解成“live seeded review-case 已可用”会误导后续优先级。
+- 如果要把复核案例 model assertions 纳入硬门禁，需要单独修复测试运行器或把相关断言迁入当前正式 `scripts/check.sh` 可执行路径。
+
+#### 验证
+
+- `node --test scripts/tests/frontend-api-utilities.test.mjs`：通过。
+- `node --test scripts/tests/shared-empty-state.test.mjs`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin /opt/homebrew/opt/node@22/bin/node --test scripts/tests/import-center-model.test.mjs`：加载阶段失败，原因是既有 TS/ESM extensionless import resolution；不作为 IM215 pass evidence。
+- `node --test scripts/tests/product-structure.test.mjs scripts/tests/frontend-api-utilities.test.mjs scripts/tests/shared-empty-state.test.mjs`：失败，失败来自 unrelated historical master-data structure assertions；不作为 IM215 pass evidence。
+- `git diff --check`：通过。
+- `bash scripts/check-state.sh --strict`：通过，current queue / active tasks 已清空。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build 和后端 215 个测试。
+
 ### 2026-06-17 - IM215 复核案例验收 smoke
 
 #### 审计结论

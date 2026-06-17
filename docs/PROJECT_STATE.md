@@ -1196,3 +1196,11 @@ This slice preserves all UI components, pages, routes, data fetching, backend be
 The smoke cannot be accepted because the pages render `复核案例读取失败 / fetch failed`: the required review-case API on `127.0.0.1:8000` is not running. PM instructed not to start other test environments, so the task is blocked rather than marked passed.
 
 Unblock by allowing an approved backend/API runtime on `127.0.0.1:8000`, providing a running API endpoint, or explicitly downgrading the slice to model/contract-only acceptance.
+
+## 2026-06-17 IM215 Review Case QA Closeout
+
+PM continued without allowing another test environment, so `IM215` was closed as a no-new-env model/contract-only QA record. This does not change the live smoke evidence above: `127.0.0.1:3000` route shells and feedback parameters were partially reachable, but live seeded review-case data still requires a reachable `127.0.0.1:8000` review-case API.
+
+The closeout records shared API/error helper coverage, shared empty-state coverage, and code-level review-case model assertions for processing stages, owner matrix, detail context, action deck, failed retry, and continuation/closure handoff. Direct execution of `scripts/tests/import-center-model.test.mjs` remains blocked by an existing TS/ESM import-resolution issue and is not claimed as passing evidence.
+
+Current queue and active tasks returned to empty. A future true live acceptance task should start only after PM approves or provides a backend/API runtime; a future model-test hardening task should be separate from live UI/API smoke.
