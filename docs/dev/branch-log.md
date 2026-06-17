@@ -364,6 +364,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM214 Review Case Workspace Calibration
+
+- branch_name: `codex/im214-review-case-workspace-calibration`
+- base_main_commit: `66193b1d694dabcd7621935262fbcddc7a0d2fa7`
+- stacked_on: `codex/im213-requirements-baseline-calibration`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: Product/design calibration for the current review-case workspace. Confirm existing list triage, detail workspace, evidence/conclusion/closure, owner continuation, and submit-feedback capabilities while keeping approval/export/permission/batch/production semantics out of scope.
+- allowed_files_check: current queue and active tasks, current project context, raw requirements, user stories, backlog, task log, audit report, project state, branch log, and `docs/design/review-case-workspace-calibration.md` only.
+- scope_diff_check: expected documentation/state calibration only; no `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: `git diff --check` passed after adding the new calibration document to the diff. `bash scripts/check-state.sh --strict` passed twice: once with IM214 in current execution state and once after current queue/active tasks returned to empty. Full `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: pending
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`

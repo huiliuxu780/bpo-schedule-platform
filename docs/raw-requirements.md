@@ -28,6 +28,19 @@ status: "done"
 notes: "IM213 已完成：新增需求基线校准文档，明确该外部文档适合作为产品北极星和需求地图，不适合作为当前实现状态或自动开发队列；下一阶段仍需从当前 Harness 重新 seed 最小确认切片。"
 ```
 
+### R914 - 复核案例工作区现状校准
+
+```yaml
+id: R914
+module: "复核案例工作区"
+description: "IM212 已建议从 dashboard anomaly 回切到真实复核、对比和导入质量工作区，IM213 已确认旧需求文档不能直接作为当前 backlog。当前需要校准 `/data-quality/review-cases` 和 `/data-quality/review-cases/[caseId]` 已经具备的列表筛选、处理阶段、证据/结论/关闭、Owner 续办和提交反馈能力，并明确仍需新 Gate 的权限、审批、导出、批量、生产动作和外部集成边界。"
+source: "IM213 completion + PM confirmed continuation into real review-case workspace"
+submitted_at: "2026-06-17"
+version: "1.0"
+status: "done"
+notes: "IM214 已完成：新增复核案例工作区校准文档，明确当前列表、详情、证据/结论/关闭、Owner 续办和提交反馈已形成受控本地复核工作区；权限、审批、导出、批量、外部集成和生产语义仍需新 Gate。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
