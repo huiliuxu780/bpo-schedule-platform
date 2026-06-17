@@ -1170,3 +1170,11 @@ This slice preserves existing pages, routes, data fetching, backend behavior, da
 The next product-development slice should return to a real downstream workspace. Recommended order: review-case workspace first for exception handling value, comparison-run workspace second for evidence/result context, and data-quality result trace third for import-administration continuity. Do not add fabricated static downstream IDs, handling states, review conclusions, production actions, or new route/query contracts to dashboard anomaly rows.
 
 This slice preserves all UI components, pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM213 Project Understanding Requirements Calibration
+
+`IM213` calibrates `/Users/mac/Documents/Codex/01_Projects/bpo-schedule-platform-project-understanding-and-requirements.md` against the current Harness state. The 2026-06-14 document remains valid as a product baseline for BPO WFM positioning, domain map, user roles, and target information architecture, but it is not the source of truth for current implementation status or executable backlog.
+
+Several status statements in that document are now stale after later work: error/loading recovery, shared empty states, tabbed workspaces, data-quality traceability, review-case workspaces, comparison-run detail context, dashboard anomaly ownership, and dashboard blocked-entry semantics have moved forward. High-risk items such as auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors still require separate Gate confirmation.
+
+This slice preserves all UI components, pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.

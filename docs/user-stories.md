@@ -20,6 +20,30 @@
   status: "draft"
 ```
 
+### US833 - 项目理解需求基线校准
+
+```yaml
+id: US833
+requirement_ids:
+  - R913
+module: "产品需求基线"
+role: "产品经理"
+story: "作为产品经理，我希望校准 2026-06-14 项目理解与需求文档和当前实现状态，以便后续开发不把过期清单误当成当前 backlog。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增需求基线校准文档，引用 2026-06-14 项目理解与需求文档的定位、业务域、需求矩阵和待实现清单。"
+  - "明确哪些内容仍可作为产品基线，哪些当前状态判断已经过期。"
+  - "明确哪些事项仍是硬 stop 或需要新 Gate，不得直接开发。"
+  - "给出下一阶段可 seed 的 2-3 个小切片建议。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US832"
+status: "done"
+notes: "IM213 已完成：外部项目理解文档保留为产品基线，不作为当前实现状态或自动 backlog。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

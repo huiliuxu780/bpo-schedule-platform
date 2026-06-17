@@ -2543,3 +2543,12 @@
   action: Dashboard anomaly 链路收口与真实工作区回切。
   status: `done`
   notes: 新增 `docs/design/dashboard-anomaly-chain-closeout.md`，收口 IM209-IM211 的产品边界：dashboard anomaly table 保持经营总览摘要和 `等待下游定位` 诚实阻塞态，不继续补静态 downstream ID、处理状态、复核结论、对比执行、批次应用或生产动作。下一阶段推荐切回真实 review-case、comparison-run、data-quality 工作区。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM213`
+  source_ids:
+    - `R913`
+  story_ids:
+    - `US833`
+  action: 项目理解需求基线校准。
+  status: `done`
+  notes: 新增 `docs/design/project-understanding-requirements-calibration.md`，把 2026-06-14 外部项目理解与需求文档校准为产品北极星和需求地图，而不是当前实现状态或自动 backlog。校准结果明确：业务背景、核心概念、五大业务域、用户角色和目标 IA 仍有效；错误边界、loading、详情页 Tab 化、空状态组件化、数据质量/复核链路等状态判断已经被后续迭代改变；认证、权限、审批、导出、批量、生产公式、结算和收费因子仍需新 Gate。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
