@@ -4941,3 +4941,19 @@
 - 结论：`DataTable` 当前归属 `/dashboard` 经营总览，是本地 anomaly overview widget。
 - 证据：数据来自静态 `app/dashboard/data.ts`，行操作仍是占位；历史 R058-R060/US070-US072 定义的是 dashboard table parity；真实异常追踪上下文已经在 data-quality、comparison-run、review-case、import-batch 和 actual-log production 页面形成。
 - 默认路径：保留 overview，不进入 MainTableShell 机械迁移队列。未来如要升级，先定义异常行路由到 comparison run、review case、import quality trace 或 actual-log production detail 的产品语义。
+
+### 2026-06-17 - IM210 Dashboard 下游工作区入口规格
+
+#### 审计计划
+
+- 延续 IM209 结论，不做 dashboard UI 改造，只定义 future row entry semantics。
+- 读取现有 comparison-run、review-case、import batch、actual-log production、schedule production 详情页面，确认可复用的真实下游工作区。
+- 明确 dashboard 只能持有摘要和入口，不能拥有复核写入、关闭、对比计算、批次应用、生产动作或权限/审批/导出等能力。
+- 本轮不修改 UI 组件、页面、路由、数据读取、后端、依赖、权限、审批、导出、批量、自动排班、生产公式、结算、合同、最低人力或收费因子。
+
+#### 执行结果
+
+- 新增 `docs/design/dashboard-downstream-entry-spec.md`。
+- 结论：未来 dashboard anomaly entry 只能是 summary-to-workspace link。
+- 允许目标限定为已有详情工作区：comparison run detail、review case detail、import batch result trace、actual-log production detail、schedule production detail。
+- 缺少稳定 `caseId`、`runId` 或来源 `batchId` 时，未来实现不得伪造行级跳转、状态、复核结论或生产动作。
