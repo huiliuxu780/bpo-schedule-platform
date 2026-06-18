@@ -187,6 +187,8 @@ node --test scripts/tests/personnel-schedule-production-reference-blocker-model.
 node --test scripts/tests/demand-forecast-production-workbench-model.test.mjs
 node --test scripts/tests/demand-forecast-production-detail-model.test.mjs
 node --test scripts/tests/demand-forecast-production-change-trace-model.test.mjs
+node --test scripts/tests/product-structure-app-shell.test.mjs
+node --test scripts/tests/product-structure-master-data.test.mjs
 node scripts/check-shadcn-ui.mjs
 bash scripts/verify-backend-runtime.sh
 node --test scripts/tests/verify-backend-runtime.test.mjs

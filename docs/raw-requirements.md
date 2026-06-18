@@ -171,6 +171,19 @@ status: "done"
 notes: "IM224 已完成：actual-log production 10 个 tests 拆为 workbench、detail status、detail login 三个门禁；personnel-schedule production 10 个 tests 拆为 workbench、detail、reference blocker 三个门禁；demand-forecast production 11 个 tests 拆为 workbench、detail、change trace 三个门禁。"
 ```
 
+### R925 - product-structure 绿色安全子集拆分
+
+```yaml
+id: R925
+module: "产品结构测试门禁"
+description: "IM224 后，PM 同意继续处理 `product-structure.test.mjs`。该文件整体仍包含拆分前已有断言偏差，不能直接作为默认门禁。当前需要只将已验证绿色的 app-shell 与 master-data 安全结构子集拆出并接入 `scripts/check.sh`，把仍失败或需要产品边界确认的断言留在原文件作为非默认审计基线。"
+source: "PM approved product-structure safe split after IM224 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM225 已完成：app-shell 6 个 tests 与 master-data 6 个 tests 拆为两个绿色门禁并接入 `scripts/check.sh`；原 `product-structure.test.mjs` 保留 23 个非默认审计 tests，其中 14 个仍为拆分前已有失败，需后续产品/实现校准。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

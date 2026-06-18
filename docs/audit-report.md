@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM225 product-structure 绿色安全子集拆分
+
+#### 审计结论
+
+- `IM225/US845` 已将 product-structure 中可验证为绿色的安全结构子集拆出并接入默认 `scripts/check.sh`。
+- `scripts/tests/product-structure-app-shell.test.mjs` 覆盖 app-shell/global wording/page identity 结构守卫，6/6 tests pass。
+- `scripts/tests/product-structure-master-data.test.mjs` 覆盖 master-data 入口、对象边界、breadcrumb 与重复标题结构守卫，6/6 tests pass。
+- 原 `scripts/tests/product-structure.test.mjs` 保留 23 个非默认审计 tests，其中当前 9/23 pass、14/23 fail；失败均为拆分前已有断言偏差或需要产品/实现校准的边界，不接入默认门禁。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这不是 product-structure 全量修复，只是把绿色安全子集变成默认门禁。
+- 剩余 business-import、result-chain 和部分 master-data drift 断言需要单独评审；直接机械拆或接入 `scripts/check.sh` 会让默认门禁失败。
+
+#### 验证
+
+- `node --test scripts/tests/product-structure-app-shell.test.mjs`：通过，6/6 tests pass。
+- `node --test scripts/tests/product-structure-master-data.test.mjs`：通过，6/6 tests pass。
+- `node --test scripts/tests/product-structure.test.mjs`：当前 9/23 pass、14/23 fail，保留为非默认审计基线。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
 ### 2026-06-18 - IM224 production model gate 子拆分
 
 #### 审计结论
