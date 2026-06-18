@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM224`
+- source_ids:
+  - `R924`
+- story_ids:
+  - `US844`
+- action: production model gate 子拆分。
+- status: `done`
+- notes: Qoder 完成 actual-log、personnel-schedule、demand-forecast 三组 production model gate 的机械拆分后，Codex 审查实际 diff 并接入 `scripts/check.sh`。actual-log 10 个 tests 拆为 workbench 5、detail status 2、detail login 3；personnel-schedule 10 个 tests 拆为 workbench 5、detail 2、reference blocker 3；demand-forecast 11 个 tests 拆为 workbench 5、detail 3、change trace 3。product-structure 只读分析未产生文件修改。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM223`
 - source_ids:
   - `R923`

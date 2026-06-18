@@ -4,6 +4,30 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM224 production model gate 子拆分
+
+#### 审计结论
+
+- `IM224/US844` 已接管 Qoder 的 production model gate 拆分结果，并将新文件接入默认 `scripts/check.sh`。
+- 原 `scripts/tests/actual-log-production-model.test.mjs` 的 10 个 tests 拆为 workbench 5 tests、detail status 2 tests、detail login 3 tests。
+- 原 `scripts/tests/personnel-schedule-production-model.test.mjs` 的 10 个 tests 拆为 workbench 5 tests、detail 2 tests、reference blocker 3 tests。
+- 原 `scripts/tests/demand-forecast-production-model.test.mjs` 的 11 个 tests 拆为 workbench 5 tests、detail 3 tests、change trace 3 tests。
+- 旧通用 production 测试文件已完全迁出并删除；`scripts/check.sh` 已改为显式运行 9 个拆分后的 production model gates。
+- product-structure 只读分析未产生文件变更；其 business-import 与 data-quality-result 分组需要产品评审后再决定是否拆分。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增 actual-log、personnel-schedule、demand-forecast 生产处理能力。
+- `product-structure.test.mjs` 仍是最大单文件，但其中 business-import/result-chain 断言承载产品所有权边界，不应直接机械拆分。
+
+#### 验证
+
+- `node --test scripts/tests/actual-log-production-workbench-model.test.mjs scripts/tests/actual-log-production-detail-status-model.test.mjs scripts/tests/actual-log-production-detail-login-model.test.mjs`：通过，10/10 tests pass。
+- `node --test scripts/tests/personnel-schedule-production-workbench-model.test.mjs scripts/tests/personnel-schedule-production-detail-model.test.mjs scripts/tests/personnel-schedule-production-reference-blocker-model.test.mjs`：通过，10/10 tests pass。
+- `node --test scripts/tests/demand-forecast-production-workbench-model.test.mjs scripts/tests/demand-forecast-production-detail-model.test.mjs scripts/tests/demand-forecast-production-change-trace-model.test.mjs`：通过，11/11 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
 ### 2026-06-18 - IM223 Qoder 拆分结果接入与剩余大门禁细分
 
 #### 审计结论

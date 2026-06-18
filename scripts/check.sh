@@ -178,6 +178,15 @@ node --test scripts/tests/master-data-maintenance-vendor-detail-model.test.mjs
 node --test scripts/tests/master-data-maintenance-workplace-payload-model.test.mjs
 node --test scripts/tests/master-data-model-split.test.mjs
 node --test scripts/tests/master-data-workbench-split.test.mjs
+node --test scripts/tests/actual-log-production-workbench-model.test.mjs
+node --test scripts/tests/actual-log-production-detail-status-model.test.mjs
+node --test scripts/tests/actual-log-production-detail-login-model.test.mjs
+node --test scripts/tests/personnel-schedule-production-workbench-model.test.mjs
+node --test scripts/tests/personnel-schedule-production-detail-model.test.mjs
+node --test scripts/tests/personnel-schedule-production-reference-blocker-model.test.mjs
+node --test scripts/tests/demand-forecast-production-workbench-model.test.mjs
+node --test scripts/tests/demand-forecast-production-detail-model.test.mjs
+node --test scripts/tests/demand-forecast-production-change-trace-model.test.mjs
 node scripts/check-shadcn-ui.mjs
 bash scripts/verify-backend-runtime.sh
 node --test scripts/tests/verify-backend-runtime.test.mjs

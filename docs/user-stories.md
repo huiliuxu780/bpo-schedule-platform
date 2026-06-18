@@ -265,6 +265,30 @@ status: "done"
 notes: "IM223 已完成：Qoder 机械拆分结果已由 Codex 接入门禁，旧通用测试文件已移除。"
 ```
 
+### US844 - production model gate 子拆分
+
+```yaml
+id: US844
+requirement_ids:
+  - R924
+module: "生产版本测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 actual-log、personnel-schedule、demand-forecast 的 production model gate 继续拆成小文件，以便后续维护生产版本工作台、处理详情和阻塞说明时能快速定位失败责任。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 actual-log production 10 个 tests 拆成 workbench、detail status、detail login 三个测试文件。"
+  - "将 personnel-schedule production 10 个 tests 拆成 workbench、detail、reference blocker 三个测试文件。"
+  - "将 demand-forecast production 11 个 tests 拆成 workbench、detail、change trace 三个测试文件。"
+  - "删除已经完全迁出的旧 production 通用测试文件。"
+  - "`scripts/check.sh` 显式运行所有拆分后的 production model gates。"
+  - "product-structure 只读分析不产生文件修改，后续是否拆分另行评审。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM224 已完成：三组 production model gate 已拆到 9 个更细测试文件，并接入默认门禁。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

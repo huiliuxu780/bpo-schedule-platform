@@ -158,6 +158,19 @@ status: "done"
 notes: "IM223 已完成：import-center core 16 个 tests 拆为 format/url、batch list、result trace 三个门禁；review-case workspace/action 14 个 tests 拆为 workspace list、workspace owner、workspace grouping、action deck、action write 五个门禁；master-data maintenance detail/payload 7 个 tests 拆为 workplace detail、service-team detail、vendor detail、workplace payload 四个门禁。"
 ```
 
+### R924 - production model gate 子拆分
+
+```yaml
+id: R924
+module: "生产版本测试门禁"
+description: "IM223 后，PM 同意继续用 Qoder 做低风险测试拆分。当前需要由 Codex 接管 Qoder 输出，将 actual-log、personnel-schedule、demand-forecast 三个 production model gate 按 workbench、detail、blocker/change-trace 等业务边界拆分，接入 `scripts/check.sh`，并完成 Harness、全量门禁和本地提交。"
+source: "PM approved continuing test split with Qoder after IM223 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM224 已完成：actual-log production 10 个 tests 拆为 workbench、detail status、detail login 三个门禁；personnel-schedule production 10 个 tests 拆为 workbench、detail、reference blocker 三个门禁；demand-forecast production 11 个 tests 拆为 workbench、detail、change trace 三个门禁。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
