@@ -355,6 +355,29 @@ status: "done"
 notes: "IM227 已完成：import-center batch apply 6 个 tests 拆为 action 4、applied-result 1、readiness 1。"
 ```
 
+### US848 - master-data agent 门禁子拆分
+
+```yaml
+id: US848
+requirement_ids:
+  - R928
+module: "主数据测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色的大型主数据客服人员测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `master-data-maintenance-agent-model.test.mjs` 改为薄入口。"
+  - "客服人员列表/筛选、详情上下文、导入弹窗、维护动作/反馈分别成为独立测试文件。"
+  - "`scripts/check.sh` 显式运行拆分后的四个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US847"
+status: "done"
+notes: "IM228 已完成：master-data agent 8 个 tests 拆为 list 3、detail 1、import 1、action 3。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

@@ -210,6 +210,19 @@ status: "done"
 notes: "IM227 已完成：旧 `import-center-batch-apply-model.test.mjs` 改为薄入口，新增 action、applied-result、readiness 三个子门禁并接入 `scripts/check.sh`。"
 ```
 
+### R928 - master-data agent 门禁子拆分
+
+```yaml
+id: R928
+module: "主数据测试门禁"
+description: "继续测试治理时，拆分仍然偏大的 `master-data-maintenance-agent-model.test.mjs`，按客服人员列表、详情、导入弹窗、维护动作四类断言形成独立绿色门禁，降低单文件上下文负担。"
+source: "PM approved continuation after IM227 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM228 已完成：旧 `master-data-maintenance-agent-model.test.mjs` 改为薄入口，新增 list、detail、import、action 四个子门禁并接入 `scripts/check.sh`。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

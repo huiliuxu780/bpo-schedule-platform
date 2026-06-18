@@ -2,6 +2,24 @@
 
 ## 2026-06-18
 
+### IM228 Master Data Agent Gate Split
+
+- branch_name: `codex/im228-master-data-agent-gate-split`
+- base_main_commit: `stacked on codex/im227-import-center-batch-apply-split`
+- stacked_on: `codex/im227-import-center-batch-apply-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM227. Split the already-green master-data agent model gate into smaller list, detail, import, and action gates, and keep the old file as a thin entrypoint.
+- allowed_files_check: `scripts/tests/master-data-maintenance-agent-model.test.mjs`, new master-data agent split tests, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected test gate split, check.sh integration, and traceability updates only; no changes to `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, package/lockfile, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- check_result: focused master-data agent split run passed with 16/16 tests including the thin entrypoint and four new files. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, split master-data agent gates, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM227 Import Center Batch Apply Split
 
 - branch_name: `codex/im227-import-center-batch-apply-split`
