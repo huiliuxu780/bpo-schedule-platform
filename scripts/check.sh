@@ -172,7 +172,10 @@ node --test scripts/tests/import-center-batch-detail-model.test.mjs
 node --test scripts/tests/import-center-model-first-split.test.mjs
 node --test scripts/tests/import-center-summary-split.test.mjs
 node --test scripts/tests/master-data-maintenance-model.test.mjs
-node --test scripts/tests/master-data-maintenance-agent-model.test.mjs
+node --test scripts/tests/master-data-maintenance-agent-list-model.test.mjs
+node --test scripts/tests/master-data-maintenance-agent-detail-model.test.mjs
+node --test scripts/tests/master-data-maintenance-agent-import-model.test.mjs
+node --test scripts/tests/master-data-maintenance-agent-action-model.test.mjs
 node --test scripts/tests/master-data-maintenance-reference-model.test.mjs
 node --test scripts/tests/master-data-maintenance-workplace-detail-model.test.mjs
 node --test scripts/tests/master-data-maintenance-service-team-detail-model.test.mjs

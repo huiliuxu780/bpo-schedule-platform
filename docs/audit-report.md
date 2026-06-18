@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM228 master-data agent 门禁子拆分
+
+#### 审计结论
+
+- `IM228/US848` 已将偏大的 master-data agent 测试门禁拆成 4 个小门禁。
+- `scripts/tests/master-data-maintenance-agent-model.test.mjs` 现在只是薄入口，导入 list、detail、import、action 四个子门禁。
+- 新增门禁覆盖客服人员列表/筛选、人员详情服务团队上下文、客服人员导入弹窗、维护 payload 与反馈。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增主数据维护能力。
+- IM228 分支叠在尚未合并的 IM227 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/master-data-maintenance-agent-model.test.mjs scripts/tests/master-data-maintenance-agent-list-model.test.mjs scripts/tests/master-data-maintenance-agent-detail-model.test.mjs scripts/tests/master-data-maintenance-agent-import-model.test.mjs scripts/tests/master-data-maintenance-agent-action-model.test.mjs`：通过，16/16 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
 ### 2026-06-18 - IM227 import-center batch apply 门禁子拆分
 
 #### 审计结论

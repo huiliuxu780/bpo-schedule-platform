@@ -13,6 +13,12 @@ For current execution context, default next step, active queue, active tasks, an
 
 This file is now long-term project state only. It must not maintain the ready queue or a running list of completed stories.
 
+## 2026-06-18 IM228 Master Data Agent Gate Split
+
+`IM228` continues the post-IM227 test-gate cleanup without changing product behavior. The master-data agent gate is split from one large file into list, detail, import, and action gates, while the old file remains a thin entrypoint for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
 ## 2026-06-18 IM227 Import Center Batch Apply Split
 
 `IM227` continues the post-IM226 test-gate cleanup without changing product behavior. The import-center batch apply gate is split from one large file into action, applied-result, and readiness gates, while the old file remains a thin entrypoint for compatibility.
