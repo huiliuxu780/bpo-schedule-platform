@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM229 master-data reference 门禁子拆分
+
+#### 审计结论
+
+- `IM229/US849` 已将偏大的 master-data reference 测试门禁拆成 3 个小门禁。
+- `scripts/tests/master-data-maintenance-reference-model.test.mjs` 现在只是薄入口，导入 list、action、detail 三个子门禁。
+- 新增门禁覆盖引用对象列表/入口、组织/技能/供应商维护 payload、组织/技能详情归属。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增主数据维护能力。
+- IM229 分支叠在尚未合并的 IM228 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/master-data-maintenance-reference-model.test.mjs scripts/tests/master-data-maintenance-reference-list-model.test.mjs scripts/tests/master-data-maintenance-reference-action-model.test.mjs scripts/tests/master-data-maintenance-reference-detail-model.test.mjs`：通过，16/16 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、master-data reference 子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
 ### 2026-06-18 - IM228 master-data agent 门禁子拆分
 
 #### 审计结论
