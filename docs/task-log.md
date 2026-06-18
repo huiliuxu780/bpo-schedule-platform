@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM225`
+- source_ids:
+  - `R925`
+- story_ids:
+  - `US845`
+- action: product-structure 绿色安全子集拆分。
+- status: `done`
+- notes: Qoder 串行拆分 app-shell 与 master-data 后，Codex 复跑发现新文件中仍包含拆分前已有失败断言。Codex 将失败断言退回原 `product-structure.test.mjs`，只保留并接入绿色子集：app-shell 6/6 tests、master-data 6/6 tests。原 `product-structure.test.mjs` 保留 23 个非默认审计 tests，当前 9/23 pass、14/23 fail，不接入默认门禁。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM224`
 - source_ids:
   - `R924`

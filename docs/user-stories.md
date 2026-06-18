@@ -289,6 +289,27 @@ status: "done"
 notes: "IM224 已完成：三组 production model gate 已拆到 9 个更细测试文件，并接入默认门禁。"
 ```
 
+### US845 - product-structure 绿色安全子集拆分
+
+```yaml
+id: US845
+requirement_ids:
+  - R925
+module: "产品结构测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望先把 product-structure 中已验证绿色的安全结构断言拆成小门禁，以便默认检查获得可执行的产品结构守卫，同时不把仍漂移的产品边界断言误接入绿色门禁。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 app-shell 绿色结构断言拆成 `product-structure-app-shell.test.mjs` 并接入 `scripts/check.sh`。"
+  - "将 master-data 绿色结构断言拆成 `product-structure-master-data.test.mjs` 并接入 `scripts/check.sh`。"
+  - "原 `product-structure.test.mjs` 保留仍失败或需要产品边界确认的非默认审计断言，不接入 `scripts/check.sh`。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM225 已完成：两个绿色 product-structure 子集已进入默认门禁；原文件继续作为非默认审计基线。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

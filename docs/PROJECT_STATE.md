@@ -1266,3 +1266,9 @@ The old generic core, review-case workspace, review-case action, and master-data
 `IM224` continues the Qoder-assisted test gate decomposition for production model tests. Actual-log production assertions now run through workbench, detail-status, and detail-login gates; personnel-schedule production assertions now run through workbench, detail, and reference-blocker gates; demand-forecast production assertions now run through workbench, detail, and change-trace gates.
 
 The old generic production model test files have been removed because their assertions moved to narrower executable gates, and `scripts/check.sh` now runs the new gates explicitly. Product-structure analysis stayed read-only and will require a separate product-boundary decision before any future split. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM225 Product Structure Safe Green Split
+
+`IM225` starts converting `product-structure.test.mjs` from a non-default audit file into smaller executable gates, but only for currently green assertions. The app-shell subset and master-data subset now run as dedicated default gates in `scripts/check.sh`.
+
+The remaining `product-structure.test.mjs` assertions stay outside the default gate because they still contain known drift from before this split. This is a test-gate improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

@@ -567,6 +567,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM225 Product Structure Safe Green Split
+
+- branch_name: `codex/im225-product-structure-safe-split`
+- base_main_commit: `b923aa50f17327874874fbdbed099d9cb8d68da4`
+- stacked_on: `codex/im224-production-model-test-split`
+- remote_status: `not_pushed; pending PM push decision after local commit.`
+- scope: Split only currently green app-shell and master-data product-structure assertions into default executable gates while keeping failing drift assertions outside `scripts/check.sh`.
+- qoder_mode: `true; Qoder may perform bounded product-structure test moves. Codex reviews diff, determines green gate eligibility, wires check.sh, owns Harness updates, verification, commit, and push decision.`
+- allowed_files_check: `scripts/tests/product-structure.test.mjs`, `scripts/tests/product-structure-app-shell.test.mjs`, `scripts/tests/product-structure-master-data.test.mjs`, `scripts/check.sh`, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and branch log only.
+- scope_diff_check: expected test-file split, default-gate wiring for green subsets only, and Harness traceability only; no `app/**`, `components/**` implementation changes, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: Focused `product-structure-app-shell.test.mjs` passed with 6/6 tests. Focused `product-structure-master-data.test.mjs` passed with 6/6 tests. Original `product-structure.test.mjs` remains a non-default audit baseline at 9/23 pass and 14/23 fail. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed.
+- local_commit_sha: pending
+- integration_status: `done`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`
