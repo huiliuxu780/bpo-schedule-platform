@@ -1236,3 +1236,9 @@ This is a test structure and maintainability improvement only; it does not start
 `IM219` turns the large master-data maintenance model test into an executable split gate. The previous direct Node run failed because the master-data barrel used extensionless TS imports internally; the tests now use the existing `jiti` loader without changing production imports.
 
 The 31 assertions are split across core/workbench/source-context, agent, reference/organization/skill/vendor, and detail/payload files, and `scripts/check.sh` runs all four files explicitly. This is a test-structure and gate-coverage improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM220 Import Center Model Gate Final Split
+
+`IM220` finishes the current import-center model gate decomposition. Review-case assertions are now split into conclusion/evidence, workspace/list/owner, detail/context, and action/write test files. The remaining core/comparison/exception assertions from the old generic import-center model test are split into dedicated core, comparison, and exception files.
+
+`scripts/tests/import-center-model.test.mjs` has been removed because all assertions moved to narrower executable gates, and `scripts/check.sh` now runs the split gates explicitly. Product-structure test analysis stayed read-only and will require a separate product-boundary task before any future split. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

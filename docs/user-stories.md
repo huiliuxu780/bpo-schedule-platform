@@ -176,6 +176,29 @@ status: "done"
 notes: "IM219 已完成：master-data maintenance model gate 已拆分并接入正式 check。"
 ```
 
+### US840 - import-center model gate 最终子拆分
+
+```yaml
+id: US840
+requirement_ids:
+  - R920
+module: "导入中心测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 import-center model gate 的 review-case、core、comparison 和 exception 覆盖继续拆成小文件，以便后续维护导入中心工作区时能减少冲突并快速定位失败责任。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 21 个 review-case tests 拆成 conclusion/evidence、workspace、detail、action 四个测试文件。"
+  - "将 23 个 core/comparison/exception tests 拆成 core、comparison、exception 三个测试文件。"
+  - "删除已经完全迁出的 `scripts/tests/import-center-model.test.mjs`。"
+  - "`scripts/check.sh` 显式运行 7 个拆分后的 import-center 测试文件，并保留 version 与 batch/template 门禁。"
+  - "product-structure 只读分析不得修改文件；其结论仅作为后续拆分建议。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM220 已完成：import-center model gate 已拆到 7 个更细业务边界文件，旧通用执行入口已移除。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

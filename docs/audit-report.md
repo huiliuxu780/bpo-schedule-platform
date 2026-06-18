@@ -4,6 +4,28 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM220 import-center model gate 最终子拆分
+
+#### 审计结论
+
+- `IM220/US840` 已继续拆分 import-center model gate，Qoder 执行低风险机械拆分，Codex 审查 diff 与验证。
+- review-case gate 拆为 conclusion/evidence 4 tests、workspace/list/owner 7 tests、detail/context/chain/timeline 3 tests、action/feedback/retry/write 7 tests。
+- 原 core/comparison/exception gate 拆为 core 16 tests、comparison 3 tests、exception 4 tests。
+- 旧 `scripts/tests/import-center-model.test.mjs` 已完全迁出并删除；`scripts/check.sh` 改为显式运行 7 个更细的 import-center model gate，并保留 version 与 batch/template gate。
+- product-structure 只读分析未产生文件变更；其结论是建议未来拆为 global-shell、master-data-entity、agent-workflow、reference-maintenance、business-import 五组，其中 business-import/result-chain 需要产品评审后再拆。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁覆盖维护，不等同于新增导入中心或复核案例业务能力。
+- `product-structure.test.mjs` 后续不应直接机械拆 business-import/result-chain 组，需要先确认产品语义边界。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-core-model.test.mjs scripts/tests/import-center-comparison-model.test.mjs scripts/tests/import-center-exception-model.test.mjs scripts/tests/import-center-review-case-model.test.mjs scripts/tests/import-center-review-case-workspace-model.test.mjs scripts/tests/import-center-review-case-detail-model.test.mjs scripts/tests/import-center-review-case-action-model.test.mjs`：通过，44/44 tests pass。
+- `git diff --check`：通过。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
 ### 2026-06-18 - IM219 master-data maintenance model gate 拆分接入
 
 #### 审计结论

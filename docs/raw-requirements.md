@@ -106,6 +106,19 @@ status: "done"
 notes: "IM219 已完成：master-data maintenance model gate 拆为 core/workbench 8 个 tests、agent 8 个 tests、reference 8 个 tests、detail/payload 7 个 tests，并全部接入 `scripts/check.sh`；未修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
 ```
 
+### R920 - import-center model gate 最终子拆分
+
+```yaml
+id: R920
+module: "导入中心测试门禁"
+description: "IM218 后 import-center model gate 已拆出 version 与 batch/template，但 review-case 文件仍有 21 个断言、core 文件仍承载 core/comparison/exception 三类断言。当前需要继续按 review-case workspace/detail/action 与 core/comparison/exception 边界拆分，并删除已经完全迁出的旧 `scripts/tests/import-center-model.test.mjs` 执行入口，降低后续维护冲突。"
+source: "PM requested continuing Qoder task arrangement after IM219"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM220 已完成：review-case 21 个 tests 拆为 conclusion/evidence、workspace、detail、action 四个门禁；core/comparison/exception 23 个 tests 拆为三个门禁；旧 `import-center-model.test.mjs` 已删除，`scripts/check.sh` 改为运行 7 个更细 import-center 门禁。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

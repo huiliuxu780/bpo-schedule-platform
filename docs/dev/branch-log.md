@@ -474,6 +474,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM220 Import Center Test Gate Final Split
+
+- branch_name: `codex/im220-import-center-test-gate-final-split`
+- base_main_commit: `56835b195f2ae67ec2567f4bdf4915b282901a72`
+- stacked_on: `codex/im219-master-data-maintenance-test-split`
+- remote_status: `not_pushed; pending PM push decision after local commit.`
+- scope: Continue Qoder-bounded import-center test gate splitting by decomposing review-case and core/comparison/exception model assertions into narrower executable files.
+- qoder_mode: `true; Qoder performed bounded test splits and read-only product-structure analysis; Codex reviewed actual diff, updated Harness, and owns verification/commit.`
+- allowed_files_check: import-center split test files, deletion of the fully migrated `scripts/tests/import-center-model.test.mjs`, `scripts/check.sh`, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and branch log only.
+- scope_diff_check: expected test-file split, old generic test deletion, check.sh wiring, and Harness traceability only; no `app/**`, `components/**` implementation changes, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: Focused split import-center tests passed with 44/44 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed.
+- local_commit_sha: pending
+- integration_status: `done`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`
