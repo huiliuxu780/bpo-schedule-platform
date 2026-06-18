@@ -424,6 +424,29 @@ status: "done"
 notes: "IM230 已完成：import-center 三个旧入口共 17 个 tests 拆为 9 个子门禁，旧入口保留 import 薄入口。"
 ```
 
+### US851 - import-center 长门禁继续子拆分
+
+```yaml
+id: US851
+requirement_ids:
+  - R931
+module: "导入中心测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色但单文件偏长的导入中心测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `import-center-comparison-model.test.mjs`、`import-center-version-action-model.test.mjs`、`import-center-version-comparison-model.test.mjs`、`import-center-result-trace-model.test.mjs`、`import-center-exception-model.test.mjs` 改为薄入口。"
+  - "comparison、version、result trace、exception 按单一产品断言拆成 17 个子门禁。"
+  - "`scripts/check.sh` 显式运行拆分后的十七个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US850"
+status: "done"
+notes: "IM231 已完成：import-center 五个旧入口共 18 个 tests 拆为 17 个子门禁，旧入口保留 import 薄入口。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

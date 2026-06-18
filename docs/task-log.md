@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM231`
+- source_ids:
+  - `R931`
+- story_ids:
+  - `US851`
+- action: import-center 长门禁继续子拆分。
+- status: `done`
+- notes: Qoder 执行机械拆分，Codex 审查后修正 comparison、result-trace、exception 三个旧入口为 import 薄入口，并把 17 个子门禁接入 `scripts/check.sh`。本轮拆分 comparison 3、version action/comparison 7、result trace 4、exception 3 个子门禁；不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM230`
 - source_ids:
   - `R930`

@@ -2,6 +2,25 @@
 
 ## 2026-06-18
 
+### IM231 Import Center Long Gate Split
+
+- branch_name: `codex/im231-import-center-long-gate-split`
+- base_main_commit: `stacked on codex/im230-import-center-gate-subsplit`
+- stacked_on: `codex/im230-import-center-gate-subsplit`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed Qoder delegation after IM230. Split already-green long import-center comparison, version, result-trace, and exception gates into smaller sub-gates, and keep the old files as thin entrypoints.
+- allowed_files_check: the five old import-center test entry files, seventeen new import-center split test files, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected test gate split, check.sh integration, and traceability updates only; no changes to `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, package/lockfile, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- qoder_review: Qoder created the seventeen split files but left three old entry files as 0-test comments; Codex corrected them to import thin entrypoints before integrating `scripts/check.sh`.
+- check_result: focused import-center long gate split run passed with 36/36 tests including the five thin entrypoints and seventeen new files. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, split import-center long gates, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM230 Import Center Gate Subsplit
 
 - branch_name: `codex/im230-import-center-gate-subsplit`
