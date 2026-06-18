@@ -176,7 +176,9 @@ node --test scripts/tests/master-data-maintenance-agent-list-model.test.mjs
 node --test scripts/tests/master-data-maintenance-agent-detail-model.test.mjs
 node --test scripts/tests/master-data-maintenance-agent-import-model.test.mjs
 node --test scripts/tests/master-data-maintenance-agent-action-model.test.mjs
-node --test scripts/tests/master-data-maintenance-reference-model.test.mjs
+node --test scripts/tests/master-data-maintenance-reference-list-model.test.mjs
+node --test scripts/tests/master-data-maintenance-reference-action-model.test.mjs
+node --test scripts/tests/master-data-maintenance-reference-detail-model.test.mjs
 node --test scripts/tests/master-data-maintenance-workplace-detail-model.test.mjs
 node --test scripts/tests/master-data-maintenance-service-team-detail-model.test.mjs
 node --test scripts/tests/master-data-maintenance-vendor-detail-model.test.mjs

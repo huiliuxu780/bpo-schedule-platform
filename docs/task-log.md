@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM229`
+- source_ids:
+  - `R929`
+- story_ids:
+  - `US849`
+- action: master-data reference 门禁子拆分。
+- status: `done`
+- notes: Codex 继续测试治理，选择已在默认门禁中绿色但仍偏大的 `master-data-maintenance-reference-model.test.mjs`。8 个 tests 已拆成 list 3、action 3、detail 2 三个小门禁，旧文件保留为薄入口；`scripts/check.sh` 已显式运行三个新门禁。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM228`
 - source_ids:
   - `R928`

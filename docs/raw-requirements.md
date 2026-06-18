@@ -223,6 +223,19 @@ status: "done"
 notes: "IM228 已完成：旧 `master-data-maintenance-agent-model.test.mjs` 改为薄入口，新增 list、detail、import、action 四个子门禁并接入 `scripts/check.sh`。"
 ```
 
+### R929 - master-data reference 门禁子拆分
+
+```yaml
+id: R929
+module: "主数据测试门禁"
+description: "继续测试治理时，拆分仍然偏大的 `master-data-maintenance-reference-model.test.mjs`，按引用对象列表、维护动作、详情归属三类断言形成独立绿色门禁，降低单文件上下文负担。"
+source: "PM approved task splitting continuation after IM228 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM229 已完成：旧 `master-data-maintenance-reference-model.test.mjs` 改为薄入口，新增 list、action、detail 三个子门禁并接入 `scripts/check.sh`。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

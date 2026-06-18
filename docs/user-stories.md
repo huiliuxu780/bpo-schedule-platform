@@ -378,6 +378,29 @@ status: "done"
 notes: "IM228 已完成：master-data agent 8 个 tests 拆为 list 3、detail 1、import 1、action 3。"
 ```
 
+### US849 - master-data reference 门禁子拆分
+
+```yaml
+id: US849
+requirement_ids:
+  - R929
+module: "主数据测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色的大型主数据引用对象测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `master-data-maintenance-reference-model.test.mjs` 改为薄入口。"
+  - "引用对象列表/入口、维护动作 payload、组织/技能详情归属分别成为独立测试文件。"
+  - "`scripts/check.sh` 显式运行拆分后的三个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US848"
+status: "done"
+notes: "IM229 已完成：master-data reference 8 个 tests 拆为 list 3、action 3、detail 2。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

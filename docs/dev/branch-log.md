@@ -2,6 +2,24 @@
 
 ## 2026-06-18
 
+### IM229 Master Data Reference Gate Split
+
+- branch_name: `codex/im229-master-data-reference-gate-split`
+- base_main_commit: `stacked on codex/im228-master-data-agent-gate-split`
+- stacked_on: `codex/im228-master-data-agent-gate-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM228. Split the already-green master-data reference model gate into smaller list, action, and detail gates, and keep the old file as a thin entrypoint.
+- allowed_files_check: `scripts/tests/master-data-maintenance-reference-model.test.mjs`, new master-data reference split tests, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected test gate split, check.sh integration, and traceability updates only; no changes to `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, package/lockfile, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- check_result: focused master-data reference split run passed with 16/16 tests including the thin entrypoint and three new files. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, split master-data reference gates, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM228 Master Data Agent Gate Split
 
 - branch_name: `codex/im228-master-data-agent-gate-split`
