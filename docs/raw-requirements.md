@@ -197,6 +197,19 @@ status: "done"
 notes: "IM226 已完成：旧 `product-structure.test.mjs` 改为薄入口；剩余 23 个 assertions 拆为 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain 七个绿色门禁并接入 `scripts/check.sh`。"
 ```
 
+### R927 - import-center batch apply 门禁子拆分
+
+```yaml
+id: R927
+module: "导入中心测试门禁"
+description: "继续测试治理时，优先拆分仍然偏大的 `import-center-batch-apply-model.test.mjs`，把 URL/action、applied result、readiness issue 三类断言拆成独立绿色门禁，降低单文件上下文负担。"
+source: "PM approved continuation after IM226 closeout"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM227 已完成：旧 `import-center-batch-apply-model.test.mjs` 改为薄入口，新增 action、applied-result、readiness 三个子门禁并接入 `scripts/check.sh`。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
