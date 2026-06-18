@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM234 import-center 中等门禁继续拆分
+
+#### 审计结论
+
+- `IM234/US854` 已将 import-center review-case preview/gap、version workbench、batch apply action 三组偏长测试门禁拆成 6 个中等粒度子门禁。
+- 三个旧测试文件现在只是 import 薄入口，分别导入对应子门禁，避免默认入口空跑。
+- 新增门禁覆盖 review conclusion preview/evidence gap、version workbench list-filter/result-link、batch apply url-guidance/submit-feedback。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增导入中心业务能力。
+- IM234 分支叠在尚未合并的 IM233 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 -> IM231 -> IM232 -> IM233 -> IM234 顺序处理。
+
+#### 验证
+
+- `node --test` focused run 覆盖 3 个旧入口和 6 个新子门禁：通过，22/22 entry-plus-child tests pass；6 个子门禁单独运行通过，11/11 tests pass。
+- Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、import-center 子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
 ### 2026-06-18 - IM233 复核案例中等门禁继续拆分
 
 #### 审计结论

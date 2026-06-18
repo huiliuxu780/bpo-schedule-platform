@@ -20,6 +20,29 @@
   status: "draft"
 ```
 
+### US854 - import-center 中等门禁继续拆分
+
+```yaml
+id: US854
+requirement_ids:
+  - R934
+module: "测试门禁治理"
+role: "开发维护者"
+story: "作为开发维护者，我希望继续把 import-center 中偏长的默认测试门禁拆成中等粒度文件，以便默认门禁更容易定位失败，同时保持旧入口兼容。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 `import-center-review-case-model.test.mjs`、`import-center-version-workbench-model.test.mjs`、`import-center-batch-apply-action-model.test.mjs` 改为 import 薄入口。"
+  - "新增 review conclusion/evidence gap、version workbench list-filter/result-link、batch apply url-guidance/submit-feedback 六个子门禁。"
+  - "`scripts/check.sh` 显式运行六个子门禁，避免旧入口重复执行。"
+  - "不修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+dependencies:
+  - "US853"
+status: "done"
+notes: "IM234 已完成：三组 import-center 默认门禁拆为六个中等粒度子门禁，旧入口保留 import 薄入口。"
+```
+
 ### US853 - 复核案例中等门禁继续拆分
 
 ```yaml

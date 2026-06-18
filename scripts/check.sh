@@ -166,7 +166,8 @@ node --test scripts/tests/import-center-comparison-review-case-model.test.mjs
 node --test scripts/tests/import-center-exception-impact-model.test.mjs
 node --test scripts/tests/import-center-exception-trace-model.test.mjs
 node --test scripts/tests/import-center-exception-guidance-model.test.mjs
-node --test scripts/tests/import-center-review-case-model.test.mjs
+node --test scripts/tests/import-center-review-conclusion-preview-model.test.mjs
+node --test scripts/tests/import-center-review-evidence-gap-model.test.mjs
 node --test scripts/tests/import-center-review-case-workspace-list-model.test.mjs
 node --test scripts/tests/import-center-review-case-workspace-owner-matrix-model.test.mjs
 node --test scripts/tests/import-center-review-case-workspace-owner-detail-model.test.mjs
@@ -178,7 +179,8 @@ node --test scripts/tests/import-center-review-case-action-deck-summary-model.te
 node --test scripts/tests/import-center-review-case-action-feedback-navigation-model.test.mjs
 node --test scripts/tests/import-center-review-case-action-write-closure-model.test.mjs
 node --test scripts/tests/import-center-review-case-action-write-supplement-model.test.mjs
-node --test scripts/tests/import-center-version-workbench-model.test.mjs
+node --test scripts/tests/import-center-version-workbench-list-filter-model.test.mjs
+node --test scripts/tests/import-center-version-workbench-result-link-model.test.mjs
 node --test scripts/tests/import-center-version-candidate-model.test.mjs
 node --test scripts/tests/import-center-version-direct-entry-model.test.mjs
 node --test scripts/tests/import-center-version-result-context-model.test.mjs
@@ -186,7 +188,8 @@ node --test scripts/tests/import-center-version-trigger-model.test.mjs
 node --test scripts/tests/import-center-version-submit-notice-model.test.mjs
 node --test scripts/tests/import-center-version-run-callback-model.test.mjs
 node --test scripts/tests/import-center-version-result-review-model.test.mjs
-node --test scripts/tests/import-center-batch-apply-action-model.test.mjs
+node --test scripts/tests/import-center-batch-apply-url-guidance-model.test.mjs
+node --test scripts/tests/import-center-batch-apply-submit-feedback-model.test.mjs
 node --test scripts/tests/import-center-batch-applied-result-model.test.mjs
 node --test scripts/tests/import-center-batch-readiness-model.test.mjs
 node --test scripts/tests/import-center-template-url-model.test.mjs

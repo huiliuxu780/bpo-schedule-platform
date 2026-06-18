@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM234`
+- source_ids:
+  - `R934`
+- story_ids:
+  - `US854`
+- action: import-center 中等测试门禁继续拆分。
+- status: `done`
+- notes: Codex 直接执行机械拆分，把 review-case preview/gap、version workbench、batch apply action 三个旧入口保留为 import 薄入口，并将六个子门禁接入 `scripts/check.sh`。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM233`
 - source_ids:
   - `R933`

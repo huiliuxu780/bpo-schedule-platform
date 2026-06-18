@@ -2,6 +2,24 @@
 
 ## 2026-06-18
 
+### IM234 Import Center Medium Gate Split
+
+- branch_name: `codex/im234-import-center-medium-gate-split`
+- base_main_commit: `stacked on codex/im233-review-case-medium-gate-split`
+- stacked_on: `codex/im233-review-case-medium-gate-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM233. Split import-center review-case preview/gap, version workbench, and batch apply action gates into medium-grained sub-gates, and keep the old files as thin entrypoints.
+- allowed_files_check: the three old import-center test entry files, six new split test files, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected test gate split, check.sh integration, and traceability updates only; no changes to `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, package/lockfile, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- check_result: focused import-center medium gate split runs passed with 22/22 entry-plus-child tests and 11/11 child-only tests. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, import-center sub-gates, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM233 Review Case Medium Gate Split
 
 - branch_name: `codex/im233-review-case-medium-gate-split`
