@@ -2,6 +2,25 @@
 
 ## 2026-06-18
 
+### IM230 Import Center Gate Subsplit
+
+- branch_name: `codex/im230-import-center-gate-subsplit`
+- base_main_commit: `stacked on codex/im229-master-data-reference-gate-split`
+- stacked_on: `codex/im229-master-data-reference-gate-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed Qoder delegation after IM229. Split the already-green import-center template, batch list, and review-case detail gates into smaller sub-gates, and keep the old files as thin entrypoints.
+- allowed_files_check: the three old import-center test entry files, nine new import-center split test files, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected test gate split, check.sh integration, and traceability updates only; no changes to `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, package/lockfile, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- qoder_review: Qoder created the nine split files but left the old entry files as 0-test comments; Codex corrected them to import thin entrypoints before integrating `scripts/check.sh`.
+- check_result: focused import-center gate subsplit run passed with 34/34 tests including the three thin entrypoints and nine new files. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, split import-center sub-gates, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM229 Master Data Reference Gate Split
 
 - branch_name: `codex/im229-master-data-reference-gate-split`

@@ -4,6 +4,26 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM230 import-center 剩余大门禁子拆分
+
+#### 审计结论
+
+- `IM230/US850` 已将 import-center template、batch list、review-case detail 三个偏大的测试门禁拆成 9 个小门禁。
+- 三个旧测试文件现在只是薄入口，分别导入对应子门禁，避免默认入口空跑。
+- 新增门禁覆盖 template URL/action/fit、batch summary/filter/navigation、review-case detail context/evidence/timeline。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- Qoder 初始产物把旧入口改成 0-test 注释入口，Codex review 后已修正为 import 薄入口。
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增导入中心业务能力。
+- IM230 分支叠在尚未合并的 IM229 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-template-model.test.mjs scripts/tests/import-center-template-url-model.test.mjs scripts/tests/import-center-template-action-model.test.mjs scripts/tests/import-center-template-fit-model.test.mjs scripts/tests/import-center-batch-list-model.test.mjs scripts/tests/import-center-batch-summary-model.test.mjs scripts/tests/import-center-batch-filter-model.test.mjs scripts/tests/import-center-batch-navigation-model.test.mjs scripts/tests/import-center-review-case-detail-model.test.mjs scripts/tests/import-center-review-case-detail-context-model.test.mjs scripts/tests/import-center-review-case-detail-evidence-model.test.mjs scripts/tests/import-center-review-case-detail-timeline-model.test.mjs`：通过，34/34 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、split import-center 子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
 ### 2026-06-18 - IM229 master-data reference 门禁子拆分
 
 #### 审计结论

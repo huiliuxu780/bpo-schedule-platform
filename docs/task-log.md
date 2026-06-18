@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM230`
+- source_ids:
+  - `R930`
+- story_ids:
+  - `US850`
+- action: import-center 剩余大门禁子拆分。
+- status: `done`
+- notes: Qoder 执行机械拆分，Codex 审查后修正三个旧入口为 import 薄入口，并把 9 个子门禁接入 `scripts/check.sh`。`import-center-template-model.test.mjs` 拆为 URL 2、action 4、fit 2；`import-center-batch-list-model.test.mjs` 拆为 summary 2、filter 1、navigation 3；`import-center-review-case-detail-model.test.mjs` 拆为 context 1、evidence 1、timeline 1。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM229`
 - source_ids:
   - `R929`
