@@ -163,7 +163,9 @@ node --test scripts/tests/import-center-review-case-action-write-model.test.mjs
 node --test scripts/tests/import-center-version-workbench-model.test.mjs
 node --test scripts/tests/import-center-version-action-model.test.mjs
 node --test scripts/tests/import-center-version-comparison-model.test.mjs
-node --test scripts/tests/import-center-batch-apply-model.test.mjs
+node --test scripts/tests/import-center-batch-apply-action-model.test.mjs
+node --test scripts/tests/import-center-batch-applied-result-model.test.mjs
+node --test scripts/tests/import-center-batch-readiness-model.test.mjs
 node --test scripts/tests/import-center-template-model.test.mjs
 node --test scripts/tests/import-center-upload-model.test.mjs
 node --test scripts/tests/import-center-batch-detail-model.test.mjs

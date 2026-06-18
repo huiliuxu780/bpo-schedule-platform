@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM227 import-center batch apply 门禁子拆分
+
+#### 审计结论
+
+- `IM227/US847` 已将偏大的 import-center batch apply 测试门禁拆成 3 个小门禁。
+- `scripts/tests/import-center-batch-apply-model.test.mjs` 现在只是薄入口，导入 action、applied-result、readiness 三个子门禁。
+- 新增门禁覆盖批次应用 URL/action guidance/submit feedback、applied result card、readiness issue groups。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增导入应用能力。
+- IM227 分支叠在尚未合并的 IM226 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-batch-apply-model.test.mjs scripts/tests/import-center-batch-apply-action-model.test.mjs scripts/tests/import-center-batch-applied-result-model.test.mjs scripts/tests/import-center-batch-readiness-model.test.mjs`：通过，12/12 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
 ### 2026-06-18 - IM226 product-structure 过期断言重定向与最终拆分
 
 #### 审计结论

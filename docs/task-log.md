@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM227`
+- source_ids:
+  - `R927`
+- story_ids:
+  - `US847`
+- action: import-center batch apply 门禁子拆分。
+- status: `done`
+- notes: Codex 继续测试治理，选择已在默认门禁中绿色但仍偏大的 `import-center-batch-apply-model.test.mjs`。6 个 tests 已拆成 action 4、applied-result 1、readiness 1 三个小门禁，旧文件保留为薄入口；`scripts/check.sh` 已显式运行三个新门禁。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM226`
 - source_ids:
   - `R926`

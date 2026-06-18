@@ -332,6 +332,29 @@ status: "done"
 notes: "IM226 已完成：剩余 product-structure 断言全部转为绿色小门禁并进入默认检查。"
 ```
 
+### US847 - import-center batch apply 门禁子拆分
+
+```yaml
+id: US847
+requirement_ids:
+  - R927
+module: "导入中心测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色的大型导入中心测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `import-center-batch-apply-model.test.mjs` 改为薄入口。"
+  - "批次应用 URL/action、applied result card、readiness issue groups 分别成为独立测试文件。"
+  - "`scripts/check.sh` 显式运行拆分后的三个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US846"
+status: "done"
+notes: "IM227 已完成：import-center batch apply 6 个 tests 拆为 action 4、applied-result 1、readiness 1。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
