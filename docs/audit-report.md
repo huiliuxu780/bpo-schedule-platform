@@ -4,6 +4,29 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM223 Qoder 拆分结果接入与剩余大门禁细分
+
+#### 审计结论
+
+- `IM223/US843` 已接管 Qoder 的测试拆分结果，并继续细分剩余较大的 import-center 与 master-data model gates。
+- 原 `scripts/tests/import-center-core-model.test.mjs` 的 16 个 tests 拆为 format/url 6 tests、batch list 6 tests、result trace 4 tests。
+- 原 review-case workspace/action 14 个 tests 拆为 workspace list 2 tests、workspace owner 3 tests、workspace grouping 2 tests、action deck 4 tests、action write 3 tests。
+- 原 master-data maintenance detail/payload 7 个 tests 拆为 workplace detail 3 tests、service-team detail 1 test、vendor detail 2 tests、workplace payload 1 test。
+- 旧通用测试文件已完全迁出并删除；`scripts/check.sh` 已改为显式运行拆分后的新 model gates。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增导入中心、复核案例或主数据维护业务能力。
+- Qoder 本轮只允许机械拆分；Codex 保留 diff 审查、门禁接入、Harness、最终验证和提交责任。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-format-url-model.test.mjs scripts/tests/import-center-batch-list-model.test.mjs scripts/tests/import-center-result-trace-model.test.mjs`：通过，16/16 tests pass。
+- `node --test scripts/tests/import-center-review-case-model.test.mjs scripts/tests/import-center-review-case-workspace-list-model.test.mjs scripts/tests/import-center-review-case-workspace-owner-model.test.mjs scripts/tests/import-center-review-case-workspace-grouping-model.test.mjs scripts/tests/import-center-review-case-detail-model.test.mjs scripts/tests/import-center-review-case-action-deck-model.test.mjs scripts/tests/import-center-review-case-action-write-model.test.mjs`：通过，21/21 tests pass。
+- `node --test scripts/tests/master-data-maintenance-model.test.mjs scripts/tests/master-data-maintenance-agent-model.test.mjs scripts/tests/master-data-maintenance-reference-model.test.mjs scripts/tests/master-data-maintenance-workplace-detail-model.test.mjs scripts/tests/master-data-maintenance-service-team-detail-model.test.mjs scripts/tests/master-data-maintenance-vendor-detail-model.test.mjs scripts/tests/master-data-maintenance-workplace-payload-model.test.mjs`：通过，31/31 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
 ### 2026-06-18 - IM222 import-center version gate 子拆分
 
 #### 审计结论

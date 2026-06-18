@@ -242,6 +242,29 @@ status: "done"
 notes: "IM222 已完成：import-center version gate 已拆到 3 个更细业务边界文件，旧通用 version 执行入口已移除。"
 ```
 
+### US843 - Qoder 拆分结果接入与剩余大门禁细分
+
+```yaml
+id: US843
+requirement_ids:
+  - R923
+module: "测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 Codex 接管 Qoder 的机械拆分结果，并把剩余较大的 import-center 与 master-data 测试门禁继续拆成小文件，以便后续定位失败时能按业务边界快速收敛。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 import-center core 16 个 tests 拆成 format/url、batch list、result trace 三个测试文件。"
+  - "将 review-case workspace/action 14 个 tests 拆成 workspace list、workspace owner、workspace grouping、action deck、action write 五个测试文件。"
+  - "将 master-data maintenance detail/payload 7 个 tests 拆成 workplace detail、service-team detail、vendor detail、workplace payload 四个测试文件。"
+  - "删除已经完全迁出的旧 core、workspace、action、detail 通用测试文件。"
+  - "`scripts/check.sh` 显式运行所有拆分后的测试文件。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM223 已完成：Qoder 机械拆分结果已由 Codex 接入门禁，旧通用测试文件已移除。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

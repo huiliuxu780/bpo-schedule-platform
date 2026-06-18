@@ -13120,3 +13120,64 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：version 10 个 tests 拆为 3 个门禁，旧 `import-center-version-model.test.mjs` 已删除并由新门禁替代。"
+  - id: IM223
+    title: "Qoder 拆分结果接入与剩余大门禁细分"
+    priority: P1
+    status: done
+    required_workflow: harness
+    dependencies: ["IM222"]
+    allowed_files:
+      - "scripts/tests/import-center-core-model.test.mjs"
+      - "scripts/tests/import-center-format-url-model.test.mjs"
+      - "scripts/tests/import-center-batch-list-model.test.mjs"
+      - "scripts/tests/import-center-result-trace-model.test.mjs"
+      - "scripts/tests/import-center-review-case-workspace-model.test.mjs"
+      - "scripts/tests/import-center-review-case-workspace-list-model.test.mjs"
+      - "scripts/tests/import-center-review-case-workspace-owner-model.test.mjs"
+      - "scripts/tests/import-center-review-case-workspace-grouping-model.test.mjs"
+      - "scripts/tests/import-center-review-case-action-model.test.mjs"
+      - "scripts/tests/import-center-review-case-action-deck-model.test.mjs"
+      - "scripts/tests/import-center-review-case-action-write-model.test.mjs"
+      - "scripts/tests/master-data-maintenance-detail-model.test.mjs"
+      - "scripts/tests/master-data-maintenance-workplace-detail-model.test.mjs"
+      - "scripts/tests/master-data-maintenance-service-team-detail-model.test.mjs"
+      - "scripts/tests/master-data-maintenance-vendor-detail-model.test.mjs"
+      - "scripts/tests/master-data-maintenance-workplace-payload-model.test.mjs"
+      - "scripts/check.sh"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "将 import-center core 16 个 model assertions 拆成 format/url、batch list、result trace 三个测试文件。"
+      - "将 review-case workspace/action 14 个 model assertions 拆成 workspace list、workspace owner、workspace grouping、action deck、action write 五个测试文件。"
+      - "将 master-data maintenance detail/payload 7 个 model assertions 拆成 workplace detail、service-team detail、vendor detail、workplace payload 四个测试文件。"
+      - "删除已完全迁出的 `import-center-core-model.test.mjs`、`import-center-review-case-workspace-model.test.mjs`、`import-center-review-case-action-model.test.mjs`、`master-data-maintenance-detail-model.test.mjs`。"
+      - "`scripts/check.sh` 显式运行所有拆分后的新 model gates。"
+      - "不修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+      - "完成后 current queue 与 active tasks 保持空。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动新的测试环境或后端/API runtime"
+      - "需要修改 app/**、components/**、hooks/**、lib/** 或 backend/**"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增或改变路由、查询参数契约、业务写入能力、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：Qoder 机械拆分结果已由 Codex 接入 `scripts/check.sh`；import-center core 16 个 tests 拆为 3 个门禁，review-case workspace/action 14 个 tests 拆为 5 个门禁，master-data maintenance detail/payload 7 个 tests 拆为 4 个门禁，旧通用测试文件已删除。"

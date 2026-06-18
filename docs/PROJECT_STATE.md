@@ -1254,3 +1254,9 @@ The 31 assertions are split across core/workbench/source-context, agent, referen
 `IM222` continues the import-center model gate decomposition by splitting the previously green version gate. Version workbench list/filter/link assertions, version action/applied-context assertions, and version comparison trigger/review assertions now run as three separate executable test files.
 
 `scripts/tests/import-center-version-model.test.mjs` has been removed because all 10 assertions moved to narrower gates, and `scripts/check.sh` now runs those gates explicitly. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM223 Qoder Split Gate Integration
+
+`IM223` integrates the next Qoder-executed mechanical test split under Codex review. Import-center core assertions now run through format/url, batch-list, and result-trace gates; review-case workspace/action assertions now run through workspace-list, workspace-owner, workspace-grouping, action-deck, and action-write gates; master-data maintenance detail/payload assertions now run through workplace-detail, service-team-detail, vendor-detail, and workplace-payload gates.
+
+The old generic core, review-case workspace, review-case action, and master-data detail test files have been removed because their assertions moved to narrower executable gates, and `scripts/check.sh` now runs the new gates explicitly. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

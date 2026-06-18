@@ -145,6 +145,19 @@ status: "done"
 notes: "IM222 已完成：version 10 个 tests 拆为 version workbench、version action/applied context、version comparison 三个门禁；原 `import-center-version-model.test.mjs` 已删除并由新门禁替代。"
 ```
 
+### R923 - Qoder 拆分结果接入与剩余大门禁细分
+
+```yaml
+id: R923
+module: "测试门禁"
+description: "IM222 后，PM 要求继续拆分测试门禁并由 Qoder 执行低风险机械拆分。当前需要由 Codex 接管 Qoder 输出，将 import-center core、review-case workspace/action、master-data maintenance detail/payload 继续拆到更小执行文件，接入 `scripts/check.sh`，并完成 Harness、全量门禁和本地提交。"
+source: "PM requested push, continued Qoder task split, and Codex integration"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM223 已完成：import-center core 16 个 tests 拆为 format/url、batch list、result trace 三个门禁；review-case workspace/action 14 个 tests 拆为 workspace list、workspace owner、workspace grouping、action deck、action write 五个门禁；master-data maintenance detail/payload 7 个 tests 拆为 workplace detail、service-team detail、vendor detail、workplace payload 四个门禁。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
