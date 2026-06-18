@@ -310,6 +310,28 @@ status: "done"
 notes: "IM225 已完成：两个绿色 product-structure 子集已进入默认门禁；原文件继续作为非默认审计基线。"
 ```
 
+### US846 - product-structure 过期断言重定向与最终拆分
+
+```yaml
+id: US846
+requirement_ids:
+  - R926
+module: "产品结构测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望把 product-structure 剩余失败断言重定向到真实源码模块并拆成小门禁，以便默认检查覆盖完整产品结构守卫，同时避免旧 monolith 文件路径导致误判。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将旧 `product-structure.test.mjs` 改为薄入口，不再保留失败审计基线。"
+  - "将剩余 product-structure assertions 拆成 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain 七个测试文件。"
+  - "将过期断言从 `master-data-maintenance-workbench.tsx` 重定向到 agents、details、references、forms、payloads、entities、import-dialog model 等真实源码模块。"
+  - "七个新门禁接入 `scripts/check.sh`，旧薄入口可单独运行通过。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM226 已完成：剩余 product-structure 断言全部转为绿色小门禁并进入默认检查。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

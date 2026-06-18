@@ -13285,3 +13285,55 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：product-structure app-shell 6 个 tests 与 master-data 6 个 tests 拆为绿色默认门禁；原 `product-structure.test.mjs` 保留 23 个非默认审计 tests，其中 14 个仍为拆分前已有失败。"
+  - id: IM226
+    title: "product-structure 过期断言重定向与最终拆分"
+    priority: P1
+    status: done
+    required_workflow: harness
+    dependencies: ["IM225"]
+    allowed_files:
+      - "scripts/tests/product-structure.test.mjs"
+      - "scripts/tests/product-structure-production-wording.test.mjs"
+      - "scripts/tests/product-structure-global-shell.test.mjs"
+      - "scripts/tests/product-structure-master-data-detail-context.test.mjs"
+      - "scripts/tests/product-structure-master-data-maintenance-actions.test.mjs"
+      - "scripts/tests/product-structure-master-data-agent-workflow.test.mjs"
+      - "scripts/tests/product-structure-business-import.test.mjs"
+      - "scripts/tests/product-structure-result-chain.test.mjs"
+      - "scripts/check.sh"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "将旧 `product-structure.test.mjs` 改为薄入口，导入拆分后的子门禁。"
+      - "将剩余 23 个 product-structure assertions 拆成 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain 七个测试文件。"
+      - "将过期断言重定向到当前真实源码模块，不再依赖旧 master-data monolith 文件切片。"
+      - "`scripts/check.sh` 显式运行所有拆分后的 product-structure gates。"
+      - "不修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+      - "完成后 current queue 与 active tasks 保持空。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动新的测试环境或后端/API runtime"
+      - "需要修改 app/**、components/**、hooks/**、lib/** 或 backend/**"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增或改变路由、查询参数契约、业务写入能力、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：旧 `product-structure.test.mjs` 改为薄入口；剩余 23 个 assertions 已拆为 7 个绿色默认门禁并接入 `scripts/check.sh`，未修改业务实现。"

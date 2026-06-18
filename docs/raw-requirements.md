@@ -184,6 +184,19 @@ status: "done"
 notes: "IM225 已完成：app-shell 6 个 tests 与 master-data 6 个 tests 拆为两个绿色门禁并接入 `scripts/check.sh`；原 `product-structure.test.mjs` 保留 23 个非默认审计 tests，其中 14 个仍为拆分前已有失败，需后续产品/实现校准。"
 ```
 
+### R926 - product-structure 过期断言重定向与最终拆分
+
+```yaml
+id: R926
+module: "产品结构测试门禁"
+description: "IM225 后，PM 要求先反思剩余 product-structure 失败是否存在遗漏，再继续执行。只读复核确认剩余失败主要来自测试仍按旧 monolith 文件查找源码字符串，而当前 master-data 实现已经拆到 agents、details、references、forms、payloads 等模块。当前需要将过期断言重定向到真实源码模块，按产品边界拆为更小门禁，并接入 `scripts/check.sh`，不修改业务实现。"
+source: "PM approved IM226 after product-structure remaining assertion reflection"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM226 已完成：旧 `product-structure.test.mjs` 改为薄入口；剩余 23 个 assertions 拆为 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain 七个绿色门禁并接入 `scripts/check.sh`。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

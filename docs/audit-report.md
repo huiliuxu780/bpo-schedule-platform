@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM226 product-structure 过期断言重定向与最终拆分
+
+#### 审计结论
+
+- `IM226/US846` 已将 IM225 后剩余的 product-structure 断言从旧 monolith 源码位置重定向到真实模块，并拆成 7 个可执行门禁。
+- `scripts/tests/product-structure.test.mjs` 现在只是薄入口，导入 7 个子门禁，不再保留失败审计基线。
+- 新增门禁覆盖 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试表达过期和门禁结构问题，不代表新增产品能力。
+- IM226 分支叠在尚未合并的 IM225 分支之后；PR/merge 时需要按 IM225 -> IM226 顺序处理。
+
+#### 验证
+
+- `node --test scripts/tests/product-structure.test.mjs scripts/tests/product-structure-production-wording.test.mjs scripts/tests/product-structure-global-shell.test.mjs scripts/tests/product-structure-master-data-detail-context.test.mjs scripts/tests/product-structure-master-data-maintenance-actions.test.mjs scripts/tests/product-structure-master-data-agent-workflow.test.mjs scripts/tests/product-structure-business-import.test.mjs scripts/tests/product-structure-result-chain.test.mjs`：通过，46/46 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
 ### 2026-06-18 - IM225 product-structure 绿色安全子集拆分
 
 #### 审计结论
