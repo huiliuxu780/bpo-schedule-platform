@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM222`
+- source_ids:
+  - `R922`
+- story_ids:
+  - `US842`
+- action: import-center version gate 子拆分。
+- status: `done`
+- notes: Codex 继续拆分已在默认门禁中绿色的 `import-center-version-model.test.mjs`。10 个 tests 拆为 version workbench 3、version action/applied context 3、version comparison 4 个 tests，旧 version 通用文件已删除。`scripts/check.sh` 已显式运行三个新门禁。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM221`
 - source_ids:
   - `R921`
