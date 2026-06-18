@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM226`
+- source_ids:
+  - `R926`
+- story_ids:
+  - `US846`
+- action: product-structure 过期断言重定向与最终拆分。
+- status: `done`
+- notes: Codex 只读复核剩余失败后确认主要是测试仍按旧 monolith 文件查找源码字符串，而非业务实现缺口。已将旧 `product-structure.test.mjs` 改为薄入口，并将剩余 23 个 assertions 拆为 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain 七个绿色门禁；`scripts/check.sh` 已显式运行这些门禁。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM225`
 - source_ids:
   - `R925`

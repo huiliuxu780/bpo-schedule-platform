@@ -1272,3 +1272,9 @@ The old generic production model test files have been removed because their asse
 `IM225` starts converting `product-structure.test.mjs` from a non-default audit file into smaller executable gates, but only for currently green assertions. The app-shell subset and master-data subset now run as dedicated default gates in `scripts/check.sh`.
 
 The remaining `product-structure.test.mjs` assertions stay outside the default gate because they still contain known drift from before this split. This is a test-gate improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM226 Product Structure Retarget Split
+
+`IM226` completes the product-structure gate decomposition after a read-only reflection pass. The remaining failures were primarily stale assertions that still inspected the old master-data monolith file; those assertions now target the actual agents, details, references, forms, payloads, entities, and import-dialog model modules.
+
+The old `scripts/tests/product-structure.test.mjs` is now a thin entrypoint that imports seven narrower gates: production wording, global shell, master-data detail context, master-data maintenance actions, master-data agent workflow, business import, and result chain. `scripts/check.sh` runs those gates explicitly. This is a test-gate improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

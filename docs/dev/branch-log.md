@@ -1,5 +1,25 @@
 # Branch Log
 
+## 2026-06-18
+
+### IM226 Product Structure Retarget Split
+
+- branch_name: `codex/im226-product-structure-retarget-split`
+- base_main_commit: `stacked on codex/im225-product-structure-safe-split`
+- stacked_on: `codex/im225-product-structure-safe-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM225. Retarget stale product-structure assertions from old monolith source checks to current split modules, split the remaining assertions into narrower default gates, and keep the old `product-structure.test.mjs` as a thin entrypoint.
+- allowed_files_check: `scripts/tests/product-structure.test.mjs`, new product-structure split tests, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected test gate split, stale assertion retargeting, check.sh integration, and traceability updates only; no changes to `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, package/lockfile, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- check_result: focused product-structure split run passed with 46/46 tests. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, product-structure split gates, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ## 2026-06-01
 
 ### IM050 shadcn/ui Automated Verification Gate
