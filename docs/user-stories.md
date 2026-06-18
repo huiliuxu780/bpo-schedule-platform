@@ -20,6 +20,29 @@
   status: "draft"
 ```
 
+### US853 - 复核案例中等门禁继续拆分
+
+```yaml
+id: US853
+requirement_ids:
+  - R933
+module: "测试门禁治理"
+role: "开发维护者"
+story: "作为开发维护者，我希望复核案例相关的长测试门禁继续拆成中等粒度文件，以便默认门禁更容易定位失败，同时保持旧入口兼容。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 `import-center-review-case-workspace-owner-model.test.mjs`、`import-center-review-case-action-deck-model.test.mjs`、`import-center-review-case-action-write-model.test.mjs` 改为 import 薄入口。"
+  - "新增 workspace-owner matrix/detail、action deck summary/feedback-navigation、action write closure/supplement 六个子门禁。"
+  - "`scripts/check.sh` 显式运行六个子门禁，避免旧入口重复执行。"
+  - "不修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+dependencies:
+  - "US852"
+status: "done"
+notes: "IM233 已完成：复核案例 workspace owner、action deck、action write 三组门禁拆为六个中等粒度子门禁，旧入口保留 import 薄入口。"
+```
+
 ### US833 - 项目理解需求基线校准
 
 ```yaml

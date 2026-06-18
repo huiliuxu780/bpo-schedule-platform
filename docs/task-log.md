@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM233`
+- source_ids:
+  - `R933`
+- story_ids:
+  - `US853`
+- action: 复核案例中等测试门禁继续拆分。
+- status: `done`
+- notes: Qoder 尝试执行但返回 max-turns，Codex 审查后复用其 workspace-owner 拆分产物并补齐 action-deck/action-write 两组拆分；三个旧入口保留 import 薄入口，六个子门禁已接入 `scripts/check.sh`。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM232`
 - source_ids:
   - `R932`

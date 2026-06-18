@@ -13,6 +13,12 @@ For current execution context, default next step, active queue, active tasks, an
 
 This file is now long-term project state only. It must not maintain the ready queue or a running list of completed stories.
 
+## 2026-06-18 IM233 Review Case Medium Gate Split
+
+`IM233` continues the post-IM232 test-gate cleanup without changing product behavior. Three longer import-center review-case gates are split into six medium-grained gates, while the old files remain thin entrypoints for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
 ## 2026-06-18 IM232 Medium Gate Split
 
 `IM232` continues the post-IM231 test-gate cleanup without changing product behavior. Dashboard model, import-center batch detail, and product-structure master-data detail-context gates are split into ten medium-grained gates, while the old files remain thin entrypoints for compatibility.
