@@ -148,13 +148,18 @@ case "$state_check_mode" in
 esac
 node --test scripts/tests/check-state.test.mjs
 node --test scripts/tests/check-shadcn-ui.test.mjs
-node --test scripts/tests/import-center-core-model.test.mjs
+node --test scripts/tests/import-center-format-url-model.test.mjs
+node --test scripts/tests/import-center-batch-list-model.test.mjs
+node --test scripts/tests/import-center-result-trace-model.test.mjs
 node --test scripts/tests/import-center-comparison-model.test.mjs
 node --test scripts/tests/import-center-exception-model.test.mjs
 node --test scripts/tests/import-center-review-case-model.test.mjs
-node --test scripts/tests/import-center-review-case-workspace-model.test.mjs
+node --test scripts/tests/import-center-review-case-workspace-list-model.test.mjs
+node --test scripts/tests/import-center-review-case-workspace-owner-model.test.mjs
+node --test scripts/tests/import-center-review-case-workspace-grouping-model.test.mjs
 node --test scripts/tests/import-center-review-case-detail-model.test.mjs
-node --test scripts/tests/import-center-review-case-action-model.test.mjs
+node --test scripts/tests/import-center-review-case-action-deck-model.test.mjs
+node --test scripts/tests/import-center-review-case-action-write-model.test.mjs
 node --test scripts/tests/import-center-version-workbench-model.test.mjs
 node --test scripts/tests/import-center-version-action-model.test.mjs
 node --test scripts/tests/import-center-version-comparison-model.test.mjs
@@ -167,7 +172,10 @@ node --test scripts/tests/import-center-summary-split.test.mjs
 node --test scripts/tests/master-data-maintenance-model.test.mjs
 node --test scripts/tests/master-data-maintenance-agent-model.test.mjs
 node --test scripts/tests/master-data-maintenance-reference-model.test.mjs
-node --test scripts/tests/master-data-maintenance-detail-model.test.mjs
+node --test scripts/tests/master-data-maintenance-workplace-detail-model.test.mjs
+node --test scripts/tests/master-data-maintenance-service-team-detail-model.test.mjs
+node --test scripts/tests/master-data-maintenance-vendor-detail-model.test.mjs
+node --test scripts/tests/master-data-maintenance-workplace-payload-model.test.mjs
 node --test scripts/tests/master-data-model-split.test.mjs
 node --test scripts/tests/master-data-workbench-split.test.mjs
 node scripts/check-shadcn-ui.mjs

@@ -529,6 +529,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM223 Qoder Split Gate Integration
+
+- branch_name: `codex/im223-test-gate-qoder-split-integration`
+- base_main_commit: `7172b7a0b9afc3581e648cdbf3bd74833a8770a4`
+- stacked_on: `codex/im222-import-center-version-test-split`
+- remote_status: `not_pushed; pending PM push decision after local commit.`
+- scope: Integrate Qoder's mechanical split of the remaining larger import-center core, review-case workspace/action, and master-data detail/payload model gates.
+- qoder_mode: `true; Qoder may only perform bounded mechanical test-file splits. Codex reviews diff, wires check.sh, owns Harness updates, verification, commit, and push decision.`
+- allowed_files_check: old/new split model test files for import-center core, review-case workspace/action, master-data maintenance detail/payload, `scripts/check.sh`, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and branch log only.
+- scope_diff_check: expected test-file splits, old generic test deletions, check.sh wiring, and Harness traceability only; no `app/**`, `components/**` implementation changes, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: Focused import-center core split tests passed with 16/16 tests. Focused review-case split tests passed with 21/21 tests. Focused master-data split tests passed with 31/31 tests. `npm run lint`, `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed.
+- local_commit_sha: pending
+- integration_status: `done`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`

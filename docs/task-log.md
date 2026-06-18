@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM223`
+- source_ids:
+  - `R923`
+- story_ids:
+  - `US843`
+- action: Qoder 拆分结果接入与剩余大门禁细分。
+- status: `done`
+- notes: Qoder 完成 import-center core、review-case workspace/action、master-data maintenance detail/payload 的机械拆分后，Codex 审查实际 diff 并接入 `scripts/check.sh`。core 16 个 tests 拆为 format/url 6、batch list 6、result trace 4；review-case workspace/action 14 个 tests 拆为 workspace list 2、workspace owner 3、workspace grouping 2、action deck 4、action write 3；master-data detail/payload 7 个 tests 拆为 workplace detail 3、service-team detail 1、vendor detail 2、workplace payload 1。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM222`
 - source_ids:
   - `R922`
