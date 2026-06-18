@@ -13024,3 +13024,52 @@ tasks:
       - "验证失败"
     commit_after_done: true
     done_notes: "已完成：review-case 21 个 tests 拆为 4 个门禁，core/comparison/exception 23 个 tests 拆为 3 个门禁，旧 `import-center-model.test.mjs` 已删除并由新门禁替代。"
+  - id: IM221
+    title: "import-center batch/template gate 子拆分"
+    priority: P1
+    status: done
+    required_workflow: harness
+    dependencies: ["IM220"]
+    allowed_files:
+      - "scripts/tests/import-center-batch-template-model.test.mjs"
+      - "scripts/tests/import-center-batch-apply-model.test.mjs"
+      - "scripts/tests/import-center-template-model.test.mjs"
+      - "scripts/tests/import-center-upload-model.test.mjs"
+      - "scripts/tests/import-center-batch-detail-model.test.mjs"
+      - "scripts/check.sh"
+      - "docs/current/PROJECT_CONTEXT.md"
+      - "docs/raw-requirements.md"
+      - "docs/user-stories.md"
+      - "tasks/backlog.yaml"
+      - "docs/task-log.md"
+      - "docs/audit-report.md"
+      - "docs/PROJECT_STATE.md"
+      - "docs/dev/branch-log.md"
+    forbidden_files:
+      - "app/**"
+      - "components/**"
+      - "hooks/**"
+      - "lib/**"
+      - "backend/**"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+    acceptance:
+      - "将 27 个 batch/template model assertions 拆成 batch apply、template、upload、batch detail 四个测试文件。"
+      - "删除已完全迁出的 `scripts/tests/import-center-batch-template-model.test.mjs`。"
+      - "`scripts/check.sh` 显式运行拆分后的四个 batch/template model gates。"
+      - "记录 `product-structure.test.mjs` 当前原始基线失败，不在本轮接入默认门禁。"
+      - "不修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+      - "完成后清空 current queue 与 active tasks。"
+    auto_run: false
+    pm_confirmation_required: true
+    conflict_risk: low
+    stop_conditions:
+      - "需要启动新的测试环境或后端/API runtime"
+      - "需要修改 app/**、components/**、hooks/**、lib/** 或 backend/**"
+      - "需要新增依赖或修改 package/lockfile"
+      - "需要新增或改变路由、查询参数契约、导入模板写入能力、批次应用能力、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子"
+      - "验证失败"
+    commit_after_done: true
+    done_notes: "已完成：batch/template 27 个 tests 拆为 4 个门禁，旧 `import-center-batch-template-model.test.mjs` 已删除并由新门禁替代。"

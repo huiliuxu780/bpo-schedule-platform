@@ -199,6 +199,28 @@ status: "done"
 notes: "IM220 已完成：import-center model gate 已拆到 7 个更细业务边界文件，旧通用执行入口已移除。"
 ```
 
+### US841 - import-center batch/template gate 子拆分
+
+```yaml
+id: US841
+requirement_ids:
+  - R921
+module: "导入中心测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 import-center batch/template gate 继续拆成 batch apply、template、upload 和 batch detail 小文件，以便后续维护批次应用、模板配置、上传入口和失败行处理时能快速定位失败责任。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 27 个 batch/template tests 拆成 batch apply/readiness/result、template inventory/detail/fit、upload workspace/prefill/result、batch detail/row correction 四个测试文件。"
+  - "删除已经完全迁出的 `scripts/tests/import-center-batch-template-model.test.mjs`。"
+  - "`scripts/check.sh` 显式运行四个拆分后的 batch/template 测试文件。"
+  - "记录 `product-structure.test.mjs` 原始基线当前 21/35 通过，暂不纳入默认门禁。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM221 已完成：import-center batch/template gate 已拆到 4 个更细业务边界文件，旧通用 batch/template 执行入口已移除。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

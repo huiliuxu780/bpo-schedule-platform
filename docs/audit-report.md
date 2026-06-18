@@ -4,6 +4,26 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM221 import-center batch/template gate 子拆分
+
+#### 审计结论
+
+- `IM221/US841` 已继续拆分 import-center batch/template model gate。
+- 原 `scripts/tests/import-center-batch-template-model.test.mjs` 的 27 个 tests 拆为 batch apply/readiness/result 6 tests、template inventory/detail/fit 8 tests、upload workspace/prefill/result 6 tests、batch detail/row correction 7 tests。
+- 旧 `scripts/tests/import-center-batch-template-model.test.mjs` 已完全迁出并删除；`scripts/check.sh` 改为显式运行四个更细的 batch/template model gate。
+- `product-structure.test.mjs` 原始基线当前为 21/35 tests pass，失败集中在已漂移的 master-data/product-structure 断言；本轮未将其接入默认门禁。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增导入、模板、上传或批次应用业务能力。
+- `product-structure.test.mjs` 后续需要单独审计和产品校准；不应作为绿色机械拆分候选直接接入 `scripts/check.sh`。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-batch-apply-model.test.mjs scripts/tests/import-center-template-model.test.mjs scripts/tests/import-center-upload-model.test.mjs scripts/tests/import-center-batch-detail-model.test.mjs`：通过，27/27 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
 ### 2026-06-18 - IM220 import-center model gate 最终子拆分
 
 #### 审计结论

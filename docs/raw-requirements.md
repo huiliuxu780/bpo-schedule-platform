@@ -119,6 +119,19 @@ status: "done"
 notes: "IM220 已完成：review-case 21 个 tests 拆为 conclusion/evidence、workspace、detail、action 四个门禁；core/comparison/exception 23 个 tests 拆为三个门禁；旧 `import-center-model.test.mjs` 已删除，`scripts/check.sh` 改为运行 7 个更细 import-center 门禁。"
 ```
 
+### R921 - import-center batch/template gate 子拆分
+
+```yaml
+id: R921
+module: "导入中心测试门禁"
+description: "IM220 后 import-center model gate 主干已拆完，但 `scripts/tests/import-center-batch-template-model.test.mjs` 仍同时承载 batch apply、template、upload 和 batch detail/row correction 四类断言。当前需要把这 27 个已在默认门禁中通过的 assertions 继续按业务边界拆分，并保持 `scripts/check.sh` 显式运行拆分后的文件。"
+source: "PM confirmed push and requested continuing test split after IM220"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM221 已完成：batch/template 27 个 tests 拆为 batch apply/readiness/result、template inventory/detail/fit、upload workspace/prefill/result、batch detail/row correction 四个门禁；原 `import-center-batch-template-model.test.mjs` 已删除并由新门禁替代。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
