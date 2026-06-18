@@ -262,6 +262,19 @@ status: "done"
 notes: "IM231 已完成：Qoder 机械拆分 5 个旧入口，Codex 修正薄入口、接入 17 个子门禁到 `scripts/check.sh` 并完成验证。"
 ```
 
+### R932 - 中等粒度测试门禁拆分
+
+```yaml
+id: R932
+module: "测试门禁治理"
+description: "继续测试治理时，按不太散的中等粒度拆分 dashboard model、import-center batch detail、product-structure master-data detail context 三组已绿色但仍偏大的测试门禁，降低 review 和故障定位成本。"
+source: "PM requested continued Qoder task splitting with medium granularity after IM231 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM232 已完成：Qoder 机械拆分 3 个旧入口，Codex 接入 10 个子门禁到 `scripts/check.sh` 并完成验证。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

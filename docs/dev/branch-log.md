@@ -2,6 +2,25 @@
 
 ## 2026-06-18
 
+### IM232 Medium Gate Split
+
+- branch_name: `codex/im232-medium-gate-split`
+- base_main_commit: `stacked on codex/im231-import-center-long-gate-split`
+- stacked_on: `codex/im231-import-center-long-gate-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed Qoder delegation after IM231. Split dashboard model, import-center batch detail, and product-structure master-data detail-context gates into medium-grained sub-gates, and keep the old files as thin entrypoints.
+- allowed_files_check: the three old test entry files, ten new split test files, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected test gate split, check.sh integration, and traceability updates only; no changes to `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, package/lockfile, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- qoder_review: Qoder created the ten split files and kept the three old files as import thin entrypoints; Codex integrated the sub-gates into `scripts/check.sh` and normalized thin-entry comments.
+- check_result: focused medium gate split runs passed with 48/48 entry-plus-child tests including the three thin entrypoints and ten new files. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, dashboard/batch-detail/product-structure sub-gates, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM231 Import Center Long Gate Split
 
 - branch_name: `codex/im231-import-center-long-gate-split`

@@ -148,6 +148,10 @@ case "$state_check_mode" in
 esac
 node --test scripts/tests/check-state.test.mjs
 node --test scripts/tests/check-shadcn-ui.test.mjs
+node --test scripts/tests/dashboard-anomaly-table-model.test.mjs
+node --test scripts/tests/dashboard-sync-heatmap-model.test.mjs
+node --test scripts/tests/dashboard-schedule-plan-model.test.mjs
+node --test scripts/tests/dashboard-risk-unavailability-model.test.mjs
 node --test scripts/tests/import-center-format-url-model.test.mjs
 node --test scripts/tests/import-center-batch-summary-model.test.mjs
 node --test scripts/tests/import-center-batch-filter-model.test.mjs
@@ -186,7 +190,9 @@ node --test scripts/tests/import-center-template-url-model.test.mjs
 node --test scripts/tests/import-center-template-action-model.test.mjs
 node --test scripts/tests/import-center-template-fit-model.test.mjs
 node --test scripts/tests/import-center-upload-model.test.mjs
-node --test scripts/tests/import-center-batch-detail-model.test.mjs
+node --test scripts/tests/import-center-batch-detail-url-row-model.test.mjs
+node --test scripts/tests/import-center-batch-detail-summary-model.test.mjs
+node --test scripts/tests/import-center-batch-detail-correction-model.test.mjs
 node --test scripts/tests/import-center-model-first-split.test.mjs
 node --test scripts/tests/import-center-summary-split.test.mjs
 node --test scripts/tests/master-data-maintenance-model.test.mjs
@@ -216,7 +222,9 @@ node --test scripts/tests/product-structure-app-shell.test.mjs
 node --test scripts/tests/product-structure-master-data.test.mjs
 node --test scripts/tests/product-structure-production-wording.test.mjs
 node --test scripts/tests/product-structure-global-shell.test.mjs
-node --test scripts/tests/product-structure-master-data-detail-context.test.mjs
+node --test scripts/tests/product-structure-master-data-terminology.test.mjs
+node --test scripts/tests/product-structure-master-data-workplace-vendor.test.mjs
+node --test scripts/tests/product-structure-master-data-agent-reference-detail.test.mjs
 node --test scripts/tests/product-structure-master-data-maintenance-actions.test.mjs
 node --test scripts/tests/product-structure-master-data-agent-workflow.test.mjs
 node --test scripts/tests/product-structure-business-import.test.mjs
