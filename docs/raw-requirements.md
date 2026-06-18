@@ -15,6 +15,19 @@
   notes: "补充说明"
 ```
 
+### R933 - 复核案例中等门禁继续拆分
+
+```yaml
+id: R933
+module: "测试门禁治理"
+description: "IM232 推送后，继续把默认门禁中仍偏大的 import-center review-case 测试文件拆成中等粒度子门禁。拆分必须保持旧入口为 import 薄入口，避免 0-test 空跑；不得修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+source: "PM 指令：拆吧；延续 IM230-IM232 测试门禁治理"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM233 已完成：Qoder 尝试执行后超出轮次，Codex 复用其 workspace-owner 部分产物并补齐 action-deck/action-write 拆分；三个旧入口拆为六个中等粒度子门禁并接入 `scripts/check.sh`。"
+```
+
 ### R913 - 项目理解需求基线校准
 
 ```yaml

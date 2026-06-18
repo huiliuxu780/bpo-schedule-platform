@@ -2,6 +2,25 @@
 
 ## 2026-06-18
 
+### IM233 Review Case Medium Gate Split
+
+- branch_name: `codex/im233-review-case-medium-gate-split`
+- base_main_commit: `stacked on codex/im232-medium-gate-split`
+- stacked_on: `codex/im232-medium-gate-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed continuation after IM232. Split import-center review-case workspace owner, action deck, and action write gates into medium-grained sub-gates, and keep the old files as thin entrypoints.
+- allowed_files_check: the three old review-case test entry files, six new split test files, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected test gate split, check.sh integration, and traceability updates only; no changes to `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, package/lockfile, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- qoder_review: Qoder returned max-turns; Codex reviewed the partial diff, reused the in-scope workspace-owner split, and completed action-deck/action-write splitting directly.
+- check_result: focused review-case medium gate split runs passed with 20/20 entry-plus-child tests and 10/10 child-only tests. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, review-case sub-gates, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM232 Medium Gate Split
 
 - branch_name: `codex/im232-medium-gate-split`
