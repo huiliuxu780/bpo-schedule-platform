@@ -548,6 +548,25 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM224 Production Model Test Split
+
+- branch_name: `codex/im224-production-model-test-split`
+- base_main_commit: `d35dd6744abcad12912aa7af2a186ba61ccd3a4b`
+- stacked_on: `codex/im223-test-gate-qoder-split-integration`
+- remote_status: `not_pushed; pending PM push decision after local commit.`
+- scope: Integrate Qoder's mechanical split of actual-log, personnel-schedule, and demand-forecast production model gates.
+- qoder_mode: `true; Qoder may only perform bounded mechanical test-file splits and one read-only product-structure analysis. Codex reviews diff, wires check.sh, owns Harness updates, verification, commit, and push decision.`
+- allowed_files_check: old/new split production model test files for actual-log, personnel-schedule, and demand-forecast, `scripts/check.sh`, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and branch log only.
+- scope_diff_check: expected test-file splits, old generic production test deletions, check.sh wiring, and Harness traceability only; no `app/**`, `components/**` implementation changes, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: Focused actual-log production split tests passed with 10/10 tests. Focused personnel-schedule production split tests passed with 10/10 tests. Focused demand-forecast production split tests passed with 11/11 tests. `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed.
+- local_commit_sha: pending
+- integration_status: `done`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`
