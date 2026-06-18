@@ -236,6 +236,19 @@ status: "done"
 notes: "IM229 已完成：旧 `master-data-maintenance-reference-model.test.mjs` 改为薄入口，新增 list、action、detail 三个子门禁并接入 `scripts/check.sh`。"
 ```
 
+### R930 - import-center 剩余大门禁子拆分
+
+```yaml
+id: R930
+module: "导入中心测试门禁"
+description: "继续测试治理时，拆分仍然偏大的 import-center template、batch list、review-case detail 测试门禁，按 URL/action/fit、summary/filter/navigation、context/evidence/timeline 形成独立绿色门禁，降低单文件上下文负担。"
+source: "PM requested Qoder task splitting after IM229 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM230 已完成：Qoder 机械拆分 3 个旧入口，Codex 修正薄入口、接入 9 个子门禁到 `scripts/check.sh` 并完成验证。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

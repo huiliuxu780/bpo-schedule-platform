@@ -401,6 +401,29 @@ status: "done"
 notes: "IM229 已完成：master-data reference 8 个 tests 拆为 list 3、action 3、detail 2。"
 ```
 
+### US850 - import-center 剩余大门禁子拆分
+
+```yaml
+id: US850
+requirement_ids:
+  - R930
+module: "导入中心测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色但偏大的导入中心测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `import-center-template-model.test.mjs`、`import-center-batch-list-model.test.mjs`、`import-center-review-case-detail-model.test.mjs` 改为薄入口。"
+  - "template 按 URL、action、fit 拆分；batch list 按 summary、filter、navigation 拆分；review-case detail 按 context、evidence、timeline 拆分。"
+  - "`scripts/check.sh` 显式运行拆分后的九个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US849"
+status: "done"
+notes: "IM230 已完成：import-center 三个旧入口共 17 个 tests 拆为 9 个子门禁，旧入口保留 import 薄入口。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

@@ -149,7 +149,9 @@ esac
 node --test scripts/tests/check-state.test.mjs
 node --test scripts/tests/check-shadcn-ui.test.mjs
 node --test scripts/tests/import-center-format-url-model.test.mjs
-node --test scripts/tests/import-center-batch-list-model.test.mjs
+node --test scripts/tests/import-center-batch-summary-model.test.mjs
+node --test scripts/tests/import-center-batch-filter-model.test.mjs
+node --test scripts/tests/import-center-batch-navigation-model.test.mjs
 node --test scripts/tests/import-center-result-trace-model.test.mjs
 node --test scripts/tests/import-center-comparison-model.test.mjs
 node --test scripts/tests/import-center-exception-model.test.mjs
@@ -157,7 +159,9 @@ node --test scripts/tests/import-center-review-case-model.test.mjs
 node --test scripts/tests/import-center-review-case-workspace-list-model.test.mjs
 node --test scripts/tests/import-center-review-case-workspace-owner-model.test.mjs
 node --test scripts/tests/import-center-review-case-workspace-grouping-model.test.mjs
-node --test scripts/tests/import-center-review-case-detail-model.test.mjs
+node --test scripts/tests/import-center-review-case-detail-context-model.test.mjs
+node --test scripts/tests/import-center-review-case-detail-evidence-model.test.mjs
+node --test scripts/tests/import-center-review-case-detail-timeline-model.test.mjs
 node --test scripts/tests/import-center-review-case-action-deck-model.test.mjs
 node --test scripts/tests/import-center-review-case-action-write-model.test.mjs
 node --test scripts/tests/import-center-version-workbench-model.test.mjs
@@ -166,7 +170,9 @@ node --test scripts/tests/import-center-version-comparison-model.test.mjs
 node --test scripts/tests/import-center-batch-apply-action-model.test.mjs
 node --test scripts/tests/import-center-batch-applied-result-model.test.mjs
 node --test scripts/tests/import-center-batch-readiness-model.test.mjs
-node --test scripts/tests/import-center-template-model.test.mjs
+node --test scripts/tests/import-center-template-url-model.test.mjs
+node --test scripts/tests/import-center-template-action-model.test.mjs
+node --test scripts/tests/import-center-template-fit-model.test.mjs
 node --test scripts/tests/import-center-upload-model.test.mjs
 node --test scripts/tests/import-center-batch-detail-model.test.mjs
 node --test scripts/tests/import-center-model-first-split.test.mjs
