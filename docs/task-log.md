@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM221`
+- source_ids:
+  - `R921`
+- story_ids:
+  - `US841`
+- action: import-center batch/template gate 子拆分。
+- status: `done`
+- notes: Codex 先验证 `product-structure.test.mjs` 原始基线为 21/35 通过，确认其不适合直接接入默认门禁；随后改拆已在 `scripts/check.sh` 中绿色的 `import-center-batch-template-model.test.mjs`。27 个 tests 拆为 batch apply/readiness/result 6、template inventory/detail/fit 8、upload workspace/prefill/result 6、batch detail/row correction 7 个 tests，旧 batch/template 通用文件已删除。`scripts/check.sh` 已显式运行四个新门禁。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM220`
 - source_ids:
   - `R920`
