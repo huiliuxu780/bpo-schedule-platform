@@ -447,6 +447,31 @@ status: "done"
 notes: "IM231 已完成：import-center 五个旧入口共 18 个 tests 拆为 17 个子门禁，旧入口保留 import 薄入口。"
 ```
 
+### US852 - 中等粒度测试门禁拆分
+
+```yaml
+id: US852
+requirement_ids:
+  - R932
+module: "测试门禁治理"
+role: "产品经理"
+story: "作为产品经理，我希望继续按中等粒度拆分已绿色但偏大的测试门禁，以便减少上下文负担，同时避免把测试文件拆得过散。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `dashboard-table-model.test.mjs`、`import-center-batch-detail-model.test.mjs`、`product-structure-master-data-detail-context.test.mjs` 改为 import 薄入口。"
+  - "dashboard model 拆为 anomaly、sync/heatmap、schedule-plan、risk/unavailability 四个子门禁。"
+  - "import-center batch detail 拆为 URL/row、summary、correction 三个子门禁。"
+  - "product-structure master-data detail context 拆为 terminology、workplace/vendor、agent/reference detail 三个子门禁。"
+  - "`scripts/check.sh` 显式运行拆分后的十个子门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US851"
+status: "done"
+notes: "IM232 已完成：三组中等粒度测试门禁共 24 个 tests 拆为 10 个子门禁，旧入口保留 import 薄入口。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

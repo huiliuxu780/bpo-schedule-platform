@@ -4,6 +4,26 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM232 中等粒度测试门禁拆分
+
+#### 审计结论
+
+- `IM232/US852` 已将 dashboard model、import-center batch detail、product-structure master-data detail context 三组测试门禁拆成 10 个中等粒度子门禁。
+- 三个旧测试文件现在只是 import 薄入口，分别导入对应子门禁，避免默认入口空跑。
+- 新增门禁覆盖 dashboard anomaly/sync-heatmap/schedule-plan/risk-unavailability、batch detail URL-row/summary/correction、master-data detail terminology/workplace-vendor/agent-reference-detail。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- dashboard model 旧入口之前不在 `scripts/check.sh` 中，本轮将拆分后的四个 dashboard 子门禁纳入默认门禁，提升覆盖但可能增加少量门禁耗时。
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增 dashboard、导入中心或主数据业务能力。
+- IM232 分支叠在尚未合并的 IM231 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 -> IM231 -> IM232 顺序处理。
+
+#### 验证
+
+- `node --test` focused run 覆盖 3 个旧入口和 10 个新子门禁：通过，48/48 entry-plus-child tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、dashboard/batch-detail/product-structure 子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
 ### 2026-06-18 - IM231 import-center 长门禁继续子拆分
 
 #### 审计结论

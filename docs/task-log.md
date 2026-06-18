@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM232`
+- source_ids:
+  - `R932`
+- story_ids:
+  - `US852`
+- action: 中等粒度测试门禁拆分。
+- status: `done`
+- notes: Qoder 执行机械拆分，Codex 审查后把 dashboard、import-center batch detail、product-structure master-data detail context 三组子门禁接入 `scripts/check.sh`。本轮拆分 dashboard 4、batch detail 3、master-data detail context 3 个子门禁；不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM231`
 - source_ids:
   - `R931`
