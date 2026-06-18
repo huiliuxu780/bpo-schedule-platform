@@ -13,6 +13,12 @@ For current execution context, default next step, active queue, active tasks, an
 
 This file is now long-term project state only. It must not maintain the ready queue or a running list of completed stories.
 
+## 2026-06-18 IM231 Import Center Long Gate Split
+
+`IM231` continues the post-IM230 test-gate cleanup without changing product behavior. Five longer import-center gates are split into seventeen smaller gates, while the old files remain thin entrypoints for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
 ## 2026-06-18 IM230 Import Center Gate Subsplit
 
 `IM230` continues the post-IM229 test-gate cleanup without changing product behavior. Three import-center gates are split into nine smaller gates, while the old files remain thin entrypoints for compatibility.

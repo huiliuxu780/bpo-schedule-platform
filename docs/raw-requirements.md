@@ -249,6 +249,19 @@ status: "done"
 notes: "IM230 已完成：Qoder 机械拆分 3 个旧入口，Codex 修正薄入口、接入 9 个子门禁到 `scripts/check.sh` 并完成验证。"
 ```
 
+### R931 - import-center 长门禁继续子拆分
+
+```yaml
+id: R931
+module: "导入中心测试门禁"
+description: "继续测试治理时，拆分 import-center comparison、version action/comparison、result trace、exception 等仍然偏长的测试门禁，按单一产品断言形成独立绿色门禁，降低单文件上下文负担。"
+source: "PM requested continued Qoder task splitting after IM230 push"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM231 已完成：Qoder 机械拆分 5 个旧入口，Codex 修正薄入口、接入 17 个子门禁到 `scripts/check.sh` 并完成验证。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
