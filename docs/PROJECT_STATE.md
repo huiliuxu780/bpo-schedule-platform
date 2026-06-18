@@ -1248,3 +1248,9 @@ The 31 assertions are split across core/workbench/source-context, agent, referen
 `IM221` continues the import-center model gate decomposition by splitting the previously green batch/template gate. Batch apply/readiness/result, template inventory/detail/fit, upload workspace/prefill/result, and batch detail/row correction assertions now run as four separate executable test files.
 
 `scripts/tests/import-center-batch-template-model.test.mjs` has been removed because all 27 assertions moved to narrower gates, and `scripts/check.sh` now runs those gates explicitly. A product-structure split was intentionally not continued because the original `product-structure.test.mjs` baseline currently passes only 21/35 tests and needs separate product calibration before it can become a default gate. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM222 Import Center Version Gate Split
+
+`IM222` continues the import-center model gate decomposition by splitting the previously green version gate. Version workbench list/filter/link assertions, version action/applied-context assertions, and version comparison trigger/review assertions now run as three separate executable test files.
+
+`scripts/tests/import-center-version-model.test.mjs` has been removed because all 10 assertions moved to narrower gates, and `scripts/check.sh` now runs those gates explicitly. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

@@ -511,6 +511,24 @@
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
 
+### IM222 Import Center Version Test Split
+
+- branch_name: `codex/im222-import-center-version-test-split`
+- base_main_commit: `b5c35b1553244058e4e8cb362fa4eeb5170d86d2`
+- stacked_on: `codex/im221-import-center-batch-template-test-split`
+- remote_status: `not_pushed; pending PM push decision after local commit.`
+- scope: Continue import-center test gate splitting by decomposing the green version model assertions into narrower executable files.
+- allowed_files_check: `scripts/tests/import-center-version-model.test.mjs`, `scripts/tests/import-center-version-workbench-model.test.mjs`, `scripts/tests/import-center-version-action-model.test.mjs`, `scripts/tests/import-center-version-comparison-model.test.mjs`, `scripts/check.sh`, current project context, raw requirements, user stories, backlog, task log, audit report, project state, and branch log only.
+- scope_diff_check: expected test-file split, old version test deletion, check.sh wiring, and Harness traceability only; no `app/**`, `components/**` implementation changes, `hooks/**`, `lib/**`, backend, database, dependency, package/lockfile, route, query-contract, data, permission, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor changes.
+- check_result: Focused split version tests passed with 10/10 tests. `npm run lint`, `bash scripts/check-state.sh --strict`, `git diff --check`, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed.
+- local_commit_sha: pending
+- integration_status: `done`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM194 Shared Metric Card First Slice
 
 - branch_name: `codex/im194-shared-metric-card`

@@ -4,6 +4,24 @@
 
 ## Current Audit
 
+### 2026-06-18 - IM222 import-center version gate 子拆分
+
+#### 审计结论
+
+- `IM222/US842` 已继续拆分 import-center version model gate。
+- 原 `scripts/tests/import-center-version-model.test.mjs` 的 10 个 tests 拆为 version workbench 3 tests、version action/applied context 3 tests、version comparison 4 tests。
+- 旧 `scripts/tests/import-center-version-model.test.mjs` 已完全迁出并删除；`scripts/check.sh` 改为显式运行三个更细的 version model gate。
+- 本轮不启动额外测试环境，不修改 UI、路由、数据读取、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 这是测试结构和门禁维护，不等同于新增业务版本、应用版本定位或本地比对业务能力。
+
+#### 验证
+
+- `node --test scripts/tests/import-center-version-workbench-model.test.mjs scripts/tests/import-center-version-action-model.test.mjs scripts/tests/import-center-version-comparison-model.test.mjs`：通过，10/10 tests pass。
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过。
+
 ### 2026-06-18 - IM221 import-center batch/template gate 子拆分
 
 #### 审计结论

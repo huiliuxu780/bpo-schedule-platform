@@ -155,7 +155,9 @@ node --test scripts/tests/import-center-review-case-model.test.mjs
 node --test scripts/tests/import-center-review-case-workspace-model.test.mjs
 node --test scripts/tests/import-center-review-case-detail-model.test.mjs
 node --test scripts/tests/import-center-review-case-action-model.test.mjs
-node --test scripts/tests/import-center-version-model.test.mjs
+node --test scripts/tests/import-center-version-workbench-model.test.mjs
+node --test scripts/tests/import-center-version-action-model.test.mjs
+node --test scripts/tests/import-center-version-comparison-model.test.mjs
 node --test scripts/tests/import-center-batch-apply-model.test.mjs
 node --test scripts/tests/import-center-template-model.test.mjs
 node --test scripts/tests/import-center-upload-model.test.mjs

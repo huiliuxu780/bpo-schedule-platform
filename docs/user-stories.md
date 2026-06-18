@@ -221,6 +221,27 @@ status: "done"
 notes: "IM221 已完成：import-center batch/template gate 已拆到 4 个更细业务边界文件，旧通用 batch/template 执行入口已移除。"
 ```
 
+### US842 - import-center version gate 子拆分
+
+```yaml
+id: US842
+requirement_ids:
+  - R922
+module: "导入中心测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 import-center version gate 继续拆成 version workbench、version action 和 version comparison 小文件，以便后续维护业务版本列表、应用版本定位和本地比对链路时能快速定位失败责任。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 10 个 version tests 拆成 version workbench、version action/applied context、version comparison 三个测试文件。"
+  - "删除已经完全迁出的 `scripts/tests/import-center-version-model.test.mjs`。"
+  - "`scripts/check.sh` 显式运行三个拆分后的 version 测试文件。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM222 已完成：import-center version gate 已拆到 3 个更细业务边界文件，旧通用 version 执行入口已移除。"
+```
+
 ### US832 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml

@@ -132,6 +132,19 @@ status: "done"
 notes: "IM221 已完成：batch/template 27 个 tests 拆为 batch apply/readiness/result、template inventory/detail/fit、upload workspace/prefill/result、batch detail/row correction 四个门禁；原 `import-center-batch-template-model.test.mjs` 已删除并由新门禁替代。"
 ```
 
+### R922 - import-center version gate 子拆分
+
+```yaml
+id: R922
+module: "导入中心测试门禁"
+description: "IM221 后 import-center batch/template gate 已完成子拆分，但 `scripts/tests/import-center-version-model.test.mjs` 仍同时承载版本台账、应用版本定位、本地比对触发、触发反馈和结果回看断言。当前需要把这 10 个已在默认门禁中通过的 assertions 按 version workbench、version action/applied context、version comparison 三个边界拆分，并保持 `scripts/check.sh` 显式运行拆分后的文件。"
+source: "PM requested continuing test split after IM221"
+submitted_at: "2026-06-18"
+version: "1.0"
+status: "done"
+notes: "IM222 已完成：version 10 个 tests 拆为 version workbench、version action/applied context、version comparison 三个门禁；原 `import-center-version-model.test.mjs` 已删除并由新门禁替代。"
+```
+
 ### R912 - Dashboard anomaly 链路收口与真实工作区回切
 
 ```yaml
