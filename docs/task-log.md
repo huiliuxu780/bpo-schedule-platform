@@ -19,6 +19,15 @@
 
 ### 2026-06-18
 
+- task_id: `IM220`
+- source_ids:
+  - `R920`
+- story_ids:
+  - `US840`
+- action: import-center model gate 最终子拆分。
+- status: `done`
+- notes: Qoder 受控完成 review-case 子拆分和 core/comparison/exception 拆分后，Codex 审查实际 diff。`scripts/tests/import-center-review-case-model.test.mjs` 保留 conclusion/evidence 4 个 tests，新增 workspace 7、detail 3、action 7 个 tests；原 `scripts/tests/import-center-model.test.mjs` 的 23 个 tests 拆为 core 16、comparison 3、exception 4 个 tests，旧通用文件已删除。`scripts/check.sh` 已显式运行拆分后的 import-center model gates。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 - task_id: `IM219`
 - source_ids:
   - `R919`

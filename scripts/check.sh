@@ -148,8 +148,13 @@ case "$state_check_mode" in
 esac
 node --test scripts/tests/check-state.test.mjs
 node --test scripts/tests/check-shadcn-ui.test.mjs
-node --test scripts/tests/import-center-model.test.mjs
+node --test scripts/tests/import-center-core-model.test.mjs
+node --test scripts/tests/import-center-comparison-model.test.mjs
+node --test scripts/tests/import-center-exception-model.test.mjs
 node --test scripts/tests/import-center-review-case-model.test.mjs
+node --test scripts/tests/import-center-review-case-workspace-model.test.mjs
+node --test scripts/tests/import-center-review-case-detail-model.test.mjs
+node --test scripts/tests/import-center-review-case-action-model.test.mjs
 node --test scripts/tests/import-center-version-model.test.mjs
 node --test scripts/tests/import-center-batch-template-model.test.mjs
 node --test scripts/tests/import-center-model-first-split.test.mjs
