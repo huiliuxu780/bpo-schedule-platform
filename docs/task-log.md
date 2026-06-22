@@ -17,6 +17,17 @@
 
 ## Log
 
+### 2026-06-22
+
+- task_id: `IM235`
+- source_ids:
+  - `R935`
+- story_ids:
+  - `US855`
+- action: 结构与主数据中等测试门禁继续拆分。
+- status: `done`
+- notes: Qoder 并行执行三组受控机械拆分，均返回 max-turns；Codex 审查确认实际 diff 只触及允许的测试文件并保留合规产物，再统一接入 `scripts/check.sh`。本轮将 product-structure app-shell/master-data 与 master-data maintenance agent-list/workplace-detail 四个旧入口保留为 import 薄入口，并新增八个子门禁；不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
 ### 2026-06-18
 
 - task_id: `IM234`

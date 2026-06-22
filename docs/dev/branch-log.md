@@ -1,5 +1,26 @@
 # Branch Log
 
+## 2026-06-22
+
+### IM235 Structure And Maintenance Gate Split
+
+- branch_name: `codex/im235-structure-maintenance-gate-split`
+- base_main_commit: `stacked on codex/im234-import-center-medium-gate-split`
+- stacked_on: `codex/im234-import-center-medium-gate-split`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed Qoder delegation after IM234. Split product-structure app-shell/master-data and master-data maintenance agent-list/workplace-detail gates into medium-grained sub-gates, and keep the old files as thin entrypoints.
+- allowed_files_check: the four old test entry files, eight new split test files, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
+- scope_diff_check: expected test gate split, check.sh integration, and traceability updates only; no changes to `app/**`, `components/**`, `hooks/**`, `lib/**`, backend, package/lockfile, dependencies, navigation, UI, database, permissions, approval, export, batch-operation, automatic-scheduling, formula, settlement, supplier-contract, minimum-staffing, or charge-factor files.
+- qoder_review: Qoder ran three parallel bounded packets and returned max-turns; Codex reviewed the actual diff, accepted only the in-scope test split files, and wired the child gates into `scripts/check.sh`.
+- check_result: focused structure/master-data medium gate split runs passed with 36/36 entry-plus-child tests and 18/18 child-only tests. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, structure/master-data sub-gates, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: to be reported in Done Report after local commit creation
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ## 2026-06-18
 
 ### IM234 Import Center Medium Gate Split
