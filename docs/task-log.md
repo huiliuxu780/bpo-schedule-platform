@@ -19,6 +19,13 @@
 
 ### 2026-06-22
 
+- task_id: `IM237`
+- source_ids: []
+- story_ids: []
+- action: Harness 与 review-case 产品/门禁链集成。
+- status: `done`
+- notes: 从 `codex/harness-state-hygiene` 新建集成分支，合入 `codex/review-case-acceptance-block`。冲突限定在 `docs/current/PROJECT_CONTEXT.md`、`docs/dev/branch-log.md`、`scripts/check.sh`：保留新 Harness 的精简 current context 和动态脚本测试门禁，保留 IM236 复核案例处理路径以及 IM220-IM235 测试门禁拆分链。追踪更新后完整 `scripts/check.sh` 已通过；本轮不新增业务能力、后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、公式、结算或收费因子。
+
 - task_id: `IM236`
 - source_ids:
   - `R936`

@@ -18,7 +18,8 @@ When the queue is empty, the next worker must not guess the next implementation 
 
 ## Recent State Summary
 
-- The latest completed work before this hygiene pass added operator-facing review-case processing paths without exposing Codex/Gate/PM acceptance language in product pages.
+- The current integration branch combines the compact Harness state-governance pass with the review-case processing-path branch so future work can start from one baseline.
+- The latest product work added operator-facing review-case processing paths without exposing Codex/Gate/PM acceptance language in product pages.
 - Future live review-case acceptance still requires an approved 8000/API runtime.
 - Harness state optimization is now the active maintenance concern: current context must stay compact, default reads must use the current layer, and history must be queried on demand through registry/legacy references.
 
