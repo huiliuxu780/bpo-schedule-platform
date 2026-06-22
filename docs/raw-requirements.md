@@ -12,7 +12,20 @@
   submitted_at: "YYYY-MM-DD"
   version: "1.0"
   status: "draft"
-  notes: "补充说明"
+notes: "补充说明"
+```
+
+### R935 - 结构与主数据中等门禁继续拆分
+
+```yaml
+id: R935
+module: "测试门禁治理"
+description: "IM234 推送后，继续把默认门禁中仍偏大的 product-structure 与 master-data maintenance 测试文件拆成中等粒度子门禁。拆分必须保持旧入口为 import 薄入口，避免 0-test 空跑；Qoder 只承担受控机械拆分，Codex 负责审查、接入 check.sh、Harness、验证、提交和推送。不得修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+source: "PM 指令：继续吧，给 Qoder 拆任务"
+submitted_at: "2026-06-22"
+version: "1.0"
+status: "done"
+notes: "IM235 已完成：product-structure app-shell/master-data、master-data maintenance agent-list/workplace-detail 四个旧入口拆为八个中等粒度子门禁并接入 `scripts/check.sh`。"
 ```
 
 ### R934 - import-center 中等门禁继续拆分

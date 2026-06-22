@@ -4,6 +4,25 @@
 
 ## Current Audit
 
+### 2026-06-22 - IM235 结构与主数据中等门禁继续拆分
+
+#### 审计结论
+
+- `IM235/US855` 已将 product-structure app-shell/master-data 与 master-data maintenance agent-list/workplace-detail 四组偏长测试门禁拆成 8 个中等粒度子门禁。
+- 四个旧测试文件现在只是 import 薄入口，分别导入对应子门禁，避免默认入口空跑。
+- Qoder 并行执行三组受控拆分但均返回 max-turns；Codex 审查实际 diff 后确认只保留 in-scope 测试拆分产物，并由 Codex 接入 `scripts/check.sh` 与 Harness。
+- 这次没有修改业务 UI、路由、组件实现、后端、schema/migration、依赖、package/lockfile、权限、审批、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮解决的是测试文件结构和默认门禁粒度，不代表新增 product-structure 或 master-data maintenance 业务能力。
+- IM235 分支叠在尚未合并的 IM234 分支之后；PR/merge 时需要按 IM225 -> IM226 -> IM227 -> IM228 -> IM229 -> IM230 -> IM231 -> IM232 -> IM233 -> IM234 -> IM235 顺序处理。
+
+#### 验证
+
+- `node --test` focused run 覆盖 4 个旧入口和 8 个新子门禁：通过，36/36 entry-plus-child tests pass；8 个子门禁单独运行通过，18/18 tests pass。
+- Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、结构/主数据子门禁、lint、typecheck、Next build、backend 215 tests OK。
+
 ### 2026-06-18 - IM234 import-center 中等门禁继续拆分
 
 #### 审计结论

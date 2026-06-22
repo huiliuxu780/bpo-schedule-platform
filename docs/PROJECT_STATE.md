@@ -13,6 +13,12 @@ For current execution context, default next step, active queue, active tasks, an
 
 This file is now long-term project state only. It must not maintain the ready queue or a running list of completed stories.
 
+## 2026-06-22 IM235 Structure And Maintenance Gate Split
+
+`IM235` continues the post-IM234 test-gate cleanup without changing product behavior. Product-structure app-shell/master-data and master-data maintenance agent-list/workplace-detail gates are split into eight medium-grained gates, while the old files remain thin entrypoints for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
 ## 2026-06-18 IM234 Import Center Medium Gate Split
 
 `IM234` continues the post-IM233 test-gate cleanup without changing product behavior. Review-case preview/gap, version workbench, and batch apply action gates are split into six medium-grained gates, while the old files remain thin entrypoints for compatibility.
