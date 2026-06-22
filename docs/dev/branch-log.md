@@ -1,5 +1,24 @@
 # Branch Log
 
+## 2026-06-22
+
+### H029 Harness State Hygiene
+
+- branch_name: `codex/harness-state-hygiene`
+- base_main_commit: `66193b1d694dabcd7621935262fbcddc7a0d2fa7`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-requested Harness hygiene pass. Compact current context, align default Harness entry rules, replace stale global no-database wording with unconfirmed-production-expansion blocking, add strict current-context history guard, and make `check.sh` run all `scripts/tests/*.test.mjs` dynamically.
+- allowed_files_check: `AGENTS.md`, `docs/current/PROJECT_CONTEXT.md`, `docs/quality/GATE_REGISTRY.md`, `docs/quality/GIT_BRANCH_WORKFLOW.md`, `docs/quality/STATE_MANAGEMENT.md`, `scripts/check-state.sh`, `scripts/check.sh`, `scripts/tests/check-state.test.mjs`, `scripts/tests/check-script-coverage.test.mjs`, and this branch-log entry only; no business code, package/lockfile, dependency, database schema, integration, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- scope_diff_check: expected Harness docs and verification-script changes only; `.local/` and `.qoder/` remain untracked and untouched.
+- check_result: TDD RED check-state test first failed because accumulated done-history markers in `PROJECT_CONTEXT.md` were not blocked; TDD RED check-script coverage test first failed because `check.sh` manually listed only part of `scripts/tests`. After implementation, `node --test scripts/tests/check-state.test.mjs scripts/tests/check-script-coverage.test.mjs` passed with 10 tests, `bash scripts/check-state.sh --strict` passed with `PROJECT_CONTEXT.md` at 50/160 lines, `git diff --check` passed, and `bash scripts/check.sh` passed with strict state, 205 Node subtests, shadcn check, lint, typecheck, Next build, and backend 215 unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ## 2026-06-01
 
 ### IM050 shadcn/ui Automated Verification Gate

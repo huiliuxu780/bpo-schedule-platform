@@ -55,6 +55,7 @@ done
 story_file="$ROOT_DIR/docs/current/STORY_QUEUE.yaml"
 task_file="$ROOT_DIR/docs/current/ACTIVE_TASKS.yaml"
 trace_file="$ROOT_DIR/docs/registry/TRACE_INDEX.yaml"
+project_context_file="$ROOT_DIR/docs/current/PROJECT_CONTEXT.md"
 
 extract_ids() {
   local file="$1"
@@ -104,6 +105,17 @@ if [[ -f "$task_file" ]]; then
     warn "docs/current/ACTIVE_TASKS.yaml must not retain done task history"
   else
     pass "current active tasks do not retain done history"
+  fi
+fi
+
+if [[ -f "$project_context_file" ]]; then
+  done_history_markers="$(
+    grep -Eic 'current queue returned to empty|current queue is empty after|completed .*then current queue returned to empty' "$project_context_file" || true
+  )"
+  if (( done_history_markers > 3 )); then
+    warn "docs/current/PROJECT_CONTEXT.md contains accumulated done-history markers ($done_history_markers); move history to legacy/archive and keep only current state"
+  else
+    pass "PROJECT_CONTEXT.md keeps done-history markers within current-state budget"
   fi
 fi
 
