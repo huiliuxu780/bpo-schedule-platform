@@ -13,6 +13,68 @@ For current execution context, default next step, active queue, active tasks, an
 
 This file is now long-term project state only. It must not maintain the ready queue or a running list of completed stories.
 
+## 2026-06-22 IM236 Review Case Processing Path
+
+`IM236` resumes product development after the IM225-IM235 test-gate cleanup chain. It adds operator-facing processing path summaries to the existing review-case list and detail workspaces: the list shows queue stage coverage and the next case to process, while the detail overview shows source, evidence, conclusion, closure, and continuation states for the current case.
+
+This slice also codifies a UI-language correction: Codex/Gate/PM acceptance language must not become visible product page content. Gate plans, acceptance matrices, stop conditions, and non-goal explanations belong in specs, tests, audit records, and Done Reports; product UI should use queue state, processing path, evidence state, source trace, next action, and blocked-data language.
+
+No backend, database, schema/migration, dependency, package/lockfile, new route, approval, permission, export, batch-operation, automatic scheduling, production formula, settlement, or charge-factor scope is added by this task.
+
+## 2026-06-22 IM235 Structure And Maintenance Gate Split
+
+`IM235` continues the post-IM234 test-gate cleanup without changing product behavior. Product-structure app-shell/master-data and master-data maintenance agent-list/workplace-detail gates are split into eight medium-grained gates, while the old files remain thin entrypoints for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
+## 2026-06-18 IM234 Import Center Medium Gate Split
+
+`IM234` continues the post-IM233 test-gate cleanup without changing product behavior. Review-case preview/gap, version workbench, and batch apply action gates are split into six medium-grained gates, while the old files remain thin entrypoints for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
+## 2026-06-18 IM233 Review Case Medium Gate Split
+
+`IM233` continues the post-IM232 test-gate cleanup without changing product behavior. Three longer import-center review-case gates are split into six medium-grained gates, while the old files remain thin entrypoints for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
+## 2026-06-18 IM232 Medium Gate Split
+
+`IM232` continues the post-IM231 test-gate cleanup without changing product behavior. Dashboard model, import-center batch detail, and product-structure master-data detail-context gates are split into ten medium-grained gates, while the old files remain thin entrypoints for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
+## 2026-06-18 IM231 Import Center Long Gate Split
+
+`IM231` continues the post-IM230 test-gate cleanup without changing product behavior. Five longer import-center gates are split into seventeen smaller gates, while the old files remain thin entrypoints for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
+## 2026-06-18 IM230 Import Center Gate Subsplit
+
+`IM230` continues the post-IM229 test-gate cleanup without changing product behavior. Three import-center gates are split into nine smaller gates, while the old files remain thin entrypoints for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
+## 2026-06-18 IM229 Master Data Reference Gate Split
+
+`IM229` continues the post-IM228 test-gate cleanup without changing product behavior. The master-data reference gate is split from one large file into list, action, and detail gates, while the old file remains a thin entrypoint for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
+## 2026-06-18 IM228 Master Data Agent Gate Split
+
+`IM228` continues the post-IM227 test-gate cleanup without changing product behavior. The master-data agent gate is split from one large file into list, detail, import, and action gates, while the old file remains a thin entrypoint for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
+## 2026-06-18 IM227 Import Center Batch Apply Split
+
+`IM227` continues the post-IM226 test-gate cleanup without changing product behavior. The import-center batch apply gate is split from one large file into action, applied-result, and readiness gates, while the old file remains a thin entrypoint for compatibility.
+
+No business UI, backend, database, dependency, package/lockfile, permission, approval, export, batch-operation, formula, settlement, or charge-factor scope is added by this task.
+
 ## Active Scope
 
 The project contains:
@@ -906,3 +968,375 @@ This slice did not add a login/status-log import dialog, backend routes, schemas
 The Dialog uses the controlled three-step pattern: upload file, field mapping, and import result. Non-active steps remain mounted with `hidden`, so the file input stays stable across step changes. Login-log upload submits `file_type=login_log`; status-log upload submits `file_type=status_log`; both return to `/actual-logs/production?import_dialog=1&log_type=...` and show the existing batch detail link on success or failure.
 
 This slice did not add parsing enhancements, status-dictionary configuration maintenance, backend routes, schemas, migrations, dependencies, permissions, approval, export, batch application, automatic scheduling, production formulas, settlement rules, or charge factors. Current queue returns to empty after IM171.
+
+## 2026-06-12 IM172 Frontend Health Recovery Plan
+
+`IM172` starts and records the frontend health recovery stage as a governance-only task. The third-party audit is treated as input, not as an executable order. The recovery plan records which issues are engineering P0 work, which UI tasks require Product Design plugin review, and which audit suggestions remain out of scope without separate PM confirmation.
+
+The durable recovery entry is `docs/frontend-health-recovery-plan.md`, with detailed execution steps in `docs/superpowers/plans/2026-06-12-frontend-health-recovery.md`. Current state contains only `US792/IM172`; later recovery slices such as API utility extraction, loading/error states, giant-file decomposition, action placement, empty states, and form cleanup must be seeded one at a time.
+
+This slice did not modify app, components, lib, backend, package files, lockfiles, product navigation, permissions, approval, export, batch operations, automatic scheduling, formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Current queue returns to empty after IM172.
+
+## 2026-06-12 IM173 Frontend API Utility Extraction
+
+`IM173` completed the first implementation slice from the frontend health recovery plan. The scope was deliberately mechanical: create shared frontend API result and error-formatting utilities, replace duplicated local `ApiResult<T>` and `formatApiError` definitions in the target data-reading files, and add a structure test that prevents the same duplication from returning. The shared error formatter keeps the old default `读取失败` fallback and allows an explicit fallback for the existing `api_unavailable` case.
+
+This slice does not change visible UI, navigation, data-fetch URLs, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-12 IM174 Import Fetch Utility Extraction
+
+`IM174` completed the second implementation slice from the frontend health recovery plan. The scope was mechanical: create a shared import fetch utility for import batches and field-mapping templates, replace duplicated local implementations, and keep page-specific fetch functions colocated in their current pages. `app/master-data/agents/data.ts` re-exports the shared fetch functions so existing master-data callers keep the same import path.
+
+This slice must not change visible UI, navigation, data-fetch URLs, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-12 IM175 Server Action Runtime Guards
+
+`IM175` completed the third implementation slice from the frontend health recovery plan. The scope was limited to `app/data-quality/actions.ts`: runtime guards now parse import file types, comparison types, and upload result redirect targets before those values are used in API URL construction, request bodies, or success redirects. Invalid values now return controlled failure redirects instead of reaching downstream API requests.
+
+This slice did not introduce a form library or package change, and did not change visible UI, navigation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-12 IM176 Global Error Boundary
+
+`IM176` completed the first Stage 2 frontend health recovery slice. The app now has `app/error.tsx` as a global error boundary with the existing AppShell, shadcn Alert/Button components, a `reset()` retry action, and a safe return link to `/dashboard`.
+
+This slice did not add dependencies or package changes, did not migrate route groups, and did not change business pages, navigation, backend behavior, database schema or persistence, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-12 IM177 Core Route Loading States
+
+`IM177` completed the second Stage 2 frontend health recovery slice. The core business entries now have route-local loading skeletons for `/dashboard`, `/master-data`, `/demand-plans`, `/schedule-plans`, `/actual-logs/production`, and `/data-quality`.
+
+This slice uses the current per-page AppShell reality and does not migrate route groups. It did not add dependencies or package changes, and did not change business pages, navigation, backend behavior, database schema or persistence, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-13 IM178 Import Center Model First Split
+
+`IM178` completed the first giant-file decomposition slice for the import center model. The old `components/import-center-model.ts` remains the compatibility entrypoint, while exported types now live in `components/import-center-types.ts`, display/status formatters live in `components/import-center-formatters.ts`, and import-center API URL plus page href builders live in `components/import-center-navigation.ts`.
+
+This slice is intentionally mechanical. It does not change visible UI, product navigation, API URL semantics, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. Remaining import-center summarizer and builder decomposition stays for later confirmed IMs.
+
+## 2026-06-13 IM179 Import Center Summary Split
+
+`IM179` completed the second import-center model decomposition slice. The legacy `components/import-center-model.ts` is now a thin compatibility entrypoint, while the remaining summarizer and builder logic is split into list, version, review, batch, template, and comparison responsibility files.
+
+This slice is mechanical and behavior-preserving. It does not change visible UI, product navigation, API URL semantics, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-13 IM180 Master Data Workbench Split
+
+`IM180` completed the master-data maintenance workbench decomposition slice. The legacy `components/master-data-maintenance-workbench.tsx` is now a thin compatibility entrypoint, while the original UI logic is split into actions, agents, references, details, forms, and shared field-control responsibility files.
+
+This slice is mechanical and behavior-preserving. It does not change visible UI, routes, interactions, business semantics, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-13 IM181 Master Data Model Split
+
+`IM181` completed the master-data maintenance model decomposition slice. The legacy `components/master-data-maintenance-model.ts` is now a thin compatibility entrypoint, while the original model logic is split into types, entities, payloads, agents, references, details, import-dialog, and formatter responsibility files.
+
+This slice is mechanical and behavior-preserving. It does not change visible UI, routes, interactions, business semantics, API URL semantics, response shapes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-13 IM182 Action Placement Scope Guard
+
+`IM182` codified the visible action placement rules that the master-data agent page now follows. The shared header page-action area, agent filter panel, list toolbar, row actions, and freeze dialog dangerous action footer now carry explicit `data-action-scope` markers, with a structure test preventing page actions from drifting into filter/list areas or filter actions from drifting into the page header.
+
+This slice does not add buttons, business capabilities, routes, navigation, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-14 IM183 Shared Empty State Pattern
+
+`IM183` introduced the first shared empty-state component at `components/empty-state.tsx`. It centralizes the neutral empty icon, title, detail, compact height, external action slot, and `data-slot` selectors, then replaces the local same-name EmptyState copies in the import batch list, import batch inspector, and review-case list workspaces.
+
+This slice intentionally does not migrate every existing EmptyPanel or PanelState. It does not add buttons, business capabilities, routes, navigation, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-14 IM184 Master Data Form Feedback Consistency
+
+`IM184` introduced `components/maintenance-submit-button.tsx` as the shared client submit control for master-data maintenance forms. It centralizes the submit icon, size, disabled pending state, and pending label through `useFormStatus`, while `components/master-data-maintenance-fields.tsx` now centralizes required-field visual markers.
+
+This slice preserves existing form fields, required conditions, server actions, routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-15 IM185 Navigation And Breadcrumb Rules
+
+`IM185` completed the recovery-stage navigation and Breadcrumb rule pass. Master-data organization and skill sidebar items now use prefix matching so detail, create, and edit child pages keep the correct parent item active, while `SiteHeader` exposes stable header, breadcrumb, and title slots for future structure checks.
+
+This slice does not add business navigation modules, pages, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors. The recovery stage is now ready to hand back to business-version flows.
+
+## 2026-06-15 IM186 Legacy Planning Demo Sidebar Cleanup
+
+`IM186` removed the old planning demo entries `班次明细` and `不可用管理` from the product Sidebar, while keeping `/shift-details` and `/unavailability` route files in place for compatibility.
+
+This slice adds a navigation structure test to prevent those legacy demo entries from returning. It does not add pages, delete routes, change business models, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM187 Schedule Plan Legacy Entry Cleanup
+
+`IM187` stopped the current schedule-plan list and detail pages from linking into old demo route clusters. `/schedule-plans` no longer renders the old flow summary or risk table, and `/schedule-plans/[planId]` no longer queries old risk/unavailability data or renders old review-chain buttons.
+
+The legacy `/schedule-risks`, `/shift-details`, and `/unavailability` route files remain in place for compatibility. This slice does not add pages, change backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM188 Forecast Version Entry Semantics
+
+`IM188` resumed the business-version flow after the frontend recovery cleanup. The existing forecast-version list and detail route now use forecast-version semantics consistently: list rows say `查看预测版本`, the detail return action says `返回预测版本列表`, and the detail explanation no longer frames the page as source-batch processing.
+
+This slice reuses the existing `/demand-plans/production/[batchId]` compatibility route and existing API. It does not add routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM189 Schedule Version Entry Semantics
+
+`IM189` applies the same business-version entry rule to personnel schedules. The existing schedule-version list and detail route now use schedule-version semantics consistently: list rows say `查看排班版本`, the detail return action says `返回排班版本列表`, and the detail explanation no longer frames the page as source-batch processing.
+
+This slice reuses the existing `/schedule-plans/production/[batchId]` compatibility route and existing API. It does not add routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM190 Actual Log Version Entry Semantics
+
+`IM190` applies the same business-version entry rule to actual logs. The existing login/status-log version list and detail route now use log-version semantics consistently: list rows say `查看日志版本`, the detail return action says `返回日志版本列表`, and the detail error/copy no longer frames the page as source-batch processing.
+
+This slice reuses the existing `/actual-logs/production/[batchId]` compatibility route and existing API. It does not add routes, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-15 IM191 Comparison Result Entry Semantics
+
+`IM191` aligns the comparison-run detail page with business-version result review navigation. The existing `/data-quality/comparison-runs/[runId]` page now uses `返回业务版本列表` as its primary return action instead of defaulting to the review-case list.
+
+This slice keeps source-batch and review-case links inside their existing tabs. It does not add routes, comparison triggers, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM192 Version Comparison Action Semantics
+
+`IM192` aligns the business-version workbench comparison actions with comparison-run terminology. Existing comparison candidates, trigger feedback, latest-run callbacks, and version-list result review titles now describe the operation as a trackable `比对运行` instead of generic comparison or result-list wording.
+
+This slice reuses the existing `/data-quality/versions` route, existing local comparison submit flow, and existing result anchors. It does not add routes, computation capability, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM193 Lib Helper Regression Guard
+
+`IM193` records the first controlled Qoder execution slice in this project flow. Qoder implemented only `scripts/tests/lib-helpers-regression.test.mjs`; Codex reviewed the diff and kept Harness, verification, commit, and push responsibility.
+
+The test protects the shared helper extraction by requiring `lib/api-result.ts`, `lib/api-error.ts`, and `lib/import-api.ts`, checking the canonical helper exports, and preventing duplicate function declarations for `formatApiError`, `fetchImportBatches`, and `fetchImportFieldMappingTemplates` across `app/`, `components/`, and `lib/`.
+
+This slice is regression-guard only. It does not change runtime source, UI, routes, navigation, API behavior, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM194 Shared MetricCard First Slice
+
+`IM194` starts the third-party Task 1 metric-card cleanup with a narrow, visible-but-behavior-preserving slice. It adds `components/metric-card.tsx` and migrates only the three fully isomorphic old pages: `/demand-plans`, `/schedule-plans`, and `/shift-details`.
+
+The Product Design boundary for this slice is preservation: keep the current shadcn Card metric visual, static display, current copy, current data fetching, and current page layout. The new structure test prevents those three pages from reintroducing local `MetricCard` or `SummaryCard` functions.
+
+This slice does not change routes, navigation, API behavior, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM195 Shared MetricCard Legacy Risk And Unavailability
+
+`IM195` continues the MetricCard cleanup into the remaining fully isomorphic legacy risk and unavailability pages. `/unavailability`, `/unavailability/[unavailabilityId]`, and `/schedule-risks/[riskId]` now import the shared `MetricCard` instead of declaring local copies.
+
+The structure test now covers six pages and prevents those pages from reintroducing local `MetricCard` or `SummaryCard` definitions. This slice does not change the shared component API, routes, navigation, API behavior, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM196 Shared List Filter Controls
+
+`IM196` adds `components/search-input-bar.tsx` and `components/status-filter-pills.tsx` for the repeated old list filter bar pattern. `/demand-plans`, `/schedule-plans`, `/shift-details`, and `/unavailability` now reuse the shared search control; the three status-filtered pages also reuse the shared status pill renderer.
+
+This slice preserves existing route paths, query parameter names, status values, clear links, business copy, and table/card data. It does not change backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-16 IM197 SimpleTable First Slice
+
+`IM197` introduces `components/simple-table.tsx` as the first light-table extraction from the Task 3 refactor plan. `components/demand-plan-table.tsx` now keeps the demand forecast column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to `SimpleTable`.
+
+This validates the extraction pattern on one low-risk table before broader migration. It preserves existing columns, default sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM198 SimpleTable Schedule Interval Slice
+
+`IM198` continues the light-table extraction by migrating `components/schedule-plan-interval-table.tsx` to the existing `SimpleTable`. The schedule interval table now keeps only its column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to the shared component.
+
+## 2026-06-17 IM199 SimpleTable Risk Shift Slice
+
+`IM199` continues the light-table extraction by migrating `components/schedule-risk-shift-table.tsx` to the existing `SimpleTable`. The risk shift table now keeps only its column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to the shared component while preserving the default `plan_id` sort and existing empty state copy.
+
+## 2026-06-17 IM200 SimpleTable Risk Unavailability Slice
+
+`IM200` continues the light-table extraction by migrating `components/schedule-risk-unavailability-table.tsx` to the existing `SimpleTable`. The risk unavailability table now keeps only its column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to the shared component while preserving the default `staff_name` sort and existing empty state copy.
+
+This slice preserves existing columns, default `interval_start` sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM201 SimpleTable Unavailability Impact Shift Slice
+
+`IM201` continues the light-table extraction by migrating `components/unavailability-impact-shift-table.tsx` to the existing `SimpleTable`. The unavailability impact shift table now keeps only its column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to the shared component while preserving the default `plan_id` sort, plan links, and existing empty state copy.
+
+This slice preserves existing columns, plan detail hrefs, default `plan_id` sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM202 SimpleTable Unavailability Impact Risk Slice
+
+`IM202` continues the light-table extraction by migrating `components/unavailability-impact-risk-table.tsx` to the existing `SimpleTable`. The unavailability impact risk table now keeps only its column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to the shared component while preserving the default `risk_level` sort, risk detail links, and existing empty state copy.
+
+This slice preserves existing columns, risk detail hrefs, default `risk_level` sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM203 SimpleTable Shift Details Slice
+
+`IM203` continues the light-table extraction by migrating `components/shift-details-table.tsx` to the existing `SimpleTable`. The shift details table now keeps only its column definitions and delegates TanStack rendering, sorting state, shadcn Table rendering, and the empty row to the shared component while preserving the default `plan_date` sort, plan links, and existing empty state copy.
+
+This slice preserves existing columns, plan detail hrefs, default `plan_date` sorting, empty-state text, route behavior, page layout, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM204 MainTableShell Boundary Spec
+
+`IM204` pauses the mechanical SimpleTable chain before the remaining main/workbench tables. The new `docs/design/main-table-shell-boundary-spec.md` defines `SimpleTable` as a light child/detail table renderer and reserves any future `MainTableShell` for shared toolbar layout slots, column visibility, summary strip layout, table render loop, empty row structure, and pagination controls only.
+
+The boundary spec names `components/schedule-plan-table.tsx` as the first future candidate, `components/unavailability-table.tsx` as the second candidate, and defers `components/data-table.tsx` until the dashboard/anomaly table has a clearer product owner. This slice preserves all UI code, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM205 MainTableShell Structure Guard
+
+`IM205` adds a docs/test-only guard for the future `MainTableShell` boundary. The new structure test protects the IM204 candidate order, requires `docs/design/main-table-shell-structure-guard.md` to state allowed and forbidden shell ownership, and confirms this slice does not create `components/main-table-shell.tsx` or wire candidate tables to `MainTableShell`.
+
+This slice preserves all UI code, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM206 MainTableShell Schedule Plan Slice
+
+`IM206` implements the first `MainTableShell` slice on `components/schedule-plan-table.tsx`. The new `components/main-table-shell.tsx` owns the reusable main-table shell: Card/Table rendering, toolbar and summary slots, column visibility, TanStack sorting and pagination state, empty-row structure, and pagination controls.
+
+`schedule-plan-table` now keeps the排班计划-specific responsibilities: column definitions, business filters, summary metrics, detail hrefs, status/gap semantics, and copy. This is the intended boundary for future main-table slices.
+
+This slice preserves existing routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM207 MainTableShell Unavailability Slice
+
+`IM207` implements the second `MainTableShell` slice on `components/unavailability-table.tsx`. The shared shell now supports an embedded mode so tables inside an existing page-level Card can reuse the TanStack/Table/pagination/column-visibility shell without creating a nested Card.
+
+`unavailability-table` now keeps the不可用-specific responsibilities: column definitions, business filters, summary metrics, impact/detail hrefs, shift-list hrefs, status semantics, and copy. `components/data-table.tsx` remains deferred until its product owner and anomaly-table responsibility are clearer.
+
+This slice preserves existing pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM208 MainTableShell Closeout
+
+`IM208` closes the current `SimpleTable` and `MainTableShell` table-abstraction chain. The project now treats `SimpleTable` as the stable light child/detail table renderer, and `MainTableShell` as the main-table shell proven on schedule plans and unavailability management.
+
+`components/data-table.tsx` remains intentionally deferred. It belongs to the dashboard anomaly/demo surface, and should not be migrated only because it still imports TanStack Table directly. Reopen it only after the dashboard anomaly table has a confirmed product owner, route responsibility, and workflow value.
+
+This slice preserves all UI components, pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM209 Dashboard Anomaly Ownership Audit
+
+`IM209` confirms that `components/data-table.tsx` currently belongs to `/dashboard` as a local anomaly overview widget, not as the primary exception handling workspace.
+
+The table uses static `app/dashboard/data.ts` rows, keeps row actions as placeholders, and descends from F030/F031 dashboard parity work. Real investigation and follow-up ownership now lives in the data-quality, comparison-run, review-case, import-batch, and actual-log production flows.
+
+Default decision: keep the dashboard anomaly table as an overview summary. Do not move it into `MainTableShell` or build more table abstraction around it until a future task defines row-level navigation into a confirmed exception workflow.
+
+This slice preserves all UI components, pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM210 Dashboard Downstream Entry Spec
+
+`IM210` defines the future boundary for dashboard anomaly row entries. Dashboard may summarize operational risk and link into existing downstream workspaces, but it must not own investigation, review evidence, case closure, comparison execution, batch application, production actions, permissions, approval, export, settlement, formulas, or charge factors.
+
+The allowed future link targets are existing workspaces only: `/data-quality/comparison-runs/[runId]`, `/data-quality/review-cases/[caseId]`, `/data-quality/[batchId]?tab=result-trace`, `/actual-logs/production/[batchId]`, and `/schedule-plans/production/[batchId]`. Rows without a stable downstream ID should remain overview-only until a future product task confirms a list or query contract.
+
+This slice preserves all UI components, pages, routes, data fetching, business copy, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM211 Dashboard Anomaly Entry Blocked State
+
+`IM211` turns the dashboard anomaly row action placeholder into an explicit downstream-entry state. Current static anomaly rows do not carry a stable `caseId`, `runId`, or `batchId`, so the table now shows a disabled `等待下游定位` state instead of implying that the dashboard can directly handle the anomaly.
+
+The shared dashboard table model now supports future read-only downstream entries only when a row provides a stable `downstreamEntry`. The first covered link target is review-case detail at `/data-quality/review-cases/[caseId]`; other existing workspace targets are kept within the same no-new-route boundary.
+
+This slice preserves existing pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM212 Dashboard Anomaly Chain Closeout
+
+`IM212` closes the dashboard anomaly continuation chain after IM209 ownership audit, IM210 downstream entry specification, and IM211 blocked-state implementation. Dashboard remains the business overview surface; it should not be expanded into the primary review-case, comparison-run, import-quality, actual-log, or schedule-production workspace.
+
+The next product-development slice should return to a real downstream workspace. Recommended order: review-case workspace first for exception handling value, comparison-run workspace second for evidence/result context, and data-quality result trace third for import-administration continuity. Do not add fabricated static downstream IDs, handling states, review conclusions, production actions, or new route/query contracts to dashboard anomaly rows.
+
+This slice preserves all UI components, pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM213 Project Understanding Requirements Calibration
+
+`IM213` calibrates `/Users/mac/Documents/Codex/01_Projects/bpo-schedule-platform-project-understanding-and-requirements.md` against the current Harness state. The 2026-06-14 document remains valid as a product baseline for BPO WFM positioning, domain map, user roles, and target information architecture, but it is not the source of truth for current implementation status or executable backlog.
+
+Several status statements in that document are now stale after later work: error/loading recovery, shared empty states, tabbed workspaces, data-quality traceability, review-case workspaces, comparison-run detail context, dashboard anomaly ownership, and dashboard blocked-entry semantics have moved forward. High-risk items such as auth, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, and charge factors still require separate Gate confirmation.
+
+This slice preserves all UI components, pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM214 Review Case Workspace Calibration
+
+`IM214` calibrates the current review-case workspace after the dashboard anomaly chain was closed. `/data-quality/review-cases` and `/data-quality/review-cases/[caseId]` are already real downstream exception-handling workspaces, not blank future modules and not dashboard table extensions.
+
+The current review-case surface supports list triage, processing-stage filters, owner workload context, first-pending entry, source result and source trace context, evidence and conclusion records, processing timeline, controlled local evidence/conclusion/closure actions, failed-submit retry targeting, successful-submit continuation, and closure handoff.
+
+The workspace remains a controlled local review workflow. Permissions, approval, export, bulk closure, external evidence integrations, reopen/reassign/escalation/SLA, notification, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors still require separate Gate confirmation.
+
+This slice preserves all UI components, pages, routes, data fetching, backend behavior, database schema or persistence, dependencies, package files, permissions, approval, export, batch operations, automatic scheduling, production formulas, settlement rules, supplier contracts, minimum staffing, and charge factors.
+
+## 2026-06-17 IM215 Review Case Acceptance Smoke Blocked
+
+`IM215` attempted a live review-case acceptance smoke using the current `127.0.0.1:3000` environment only. The frontend routes for the review-case list, processing-stage filters, `CASE-QUERY-001` detail, failed evidence feedback, and closure success feedback all returned HTTP 200.
+
+The smoke cannot be accepted because the pages render `复核案例读取失败 / fetch failed`: the required review-case API on `127.0.0.1:8000` is not running. PM instructed not to start other test environments, so the task is blocked rather than marked passed.
+
+Unblock by allowing an approved backend/API runtime on `127.0.0.1:8000`, providing a running API endpoint, or explicitly downgrading the slice to model/contract-only acceptance.
+
+## 2026-06-17 IM215 Review Case QA Closeout
+
+PM continued without allowing another test environment, so `IM215` was closed as a no-new-env model/contract-only QA record. This does not change the live smoke evidence above: `127.0.0.1:3000` route shells and feedback parameters were partially reachable, but live seeded review-case data still requires a reachable `127.0.0.1:8000` review-case API.
+
+The closeout records shared API/error helper coverage, shared empty-state coverage, and code-level review-case model assertions for processing stages, owner matrix, detail context, action deck, failed retry, and continuation/closure handoff. Direct execution of `scripts/tests/import-center-model.test.mjs` remains blocked by an existing TS/ESM import-resolution issue and is not claimed as passing evidence.
+
+Current queue and active tasks returned to empty. A future true live acceptance task should start only after PM approves or provides a backend/API runtime; a future model-test hardening task should be separate from live UI/API smoke.
+
+## 2026-06-17 IM216 Review Case Model Test Runner Hardening
+
+`IM216` turned the import-center model assertions into an executable gate. Before the fix, `scripts/tests/import-center-model.test.mjs` failed at load time because Node ESM could not resolve extensionless TS imports from the `components/import-center-model.ts` barrel.
+
+The test now uses the already-installed `jiti` loader to import the TS barrel without changing production imports or business UI behavior. `scripts/check.sh` now runs `node --test scripts/tests/import-center-model.test.mjs`, adding 81 model assertions to the default gate, including review-case processing stages, owner matrix, detail context, action deck, failed retry targeting, evidence/conclusion/closure action payloads, and continuation handoff.
+
+This is a model/contract gate improvement only. It does not start or require `127.0.0.1:8000`, and it does not prove live seeded UI/API acceptance.
+
+## 2026-06-17 IM217 Review Case Model Test Split
+
+`IM217` splits the executable import-center model gate created by IM216 into clearer ownership files. `scripts/tests/import-center-review-case-model.test.mjs` now owns 21 review-case assertions for conclusion preview, evidence gap drilldown, workspace filtering/grouping, owner-stage matrix, detail context, evidence/conclusion chain, processing timeline, action deck, submit feedback, retry targeting, continuation links, and controlled evidence/conclusion/closure write payloads.
+
+`scripts/tests/import-center-model.test.mjs` now keeps 60 import-center, business-version, and comparison-run assertions. The comparison-run assertion that links related review cases stays in the original file because it verifies comparison-run output shape, not review-case workspace behavior.
+
+`scripts/check.sh` runs both test files. This is a test structure and maintainability improvement only; it does not start or require `127.0.0.1:8000`, and it does not change live UI/API acceptance status.
+
+## 2026-06-18 IM218 Import Center Model Gate Boundary Split
+
+`IM218` continues the executable import-center model gate split after IM217. `scripts/tests/import-center-version-model.test.mjs` now owns 10 version/workbench assertions for the business version ledger, applied-version positioning, local comparison trigger, trigger feedback, latest comparison callback, and version workbench result review.
+
+`scripts/tests/import-center-batch-template-model.test.mjs` now owns 27 batch/template/apply assertions for batch apply URLs, field-mapping template URLs and summaries, upload prefill and result guidance, row correction, batch detail readability, readiness issue grouping, apply guidance, single-batch apply action, and applied result cards.
+
+`scripts/tests/import-center-model.test.mjs` keeps 23 core/comparison/exception assertions. `scripts/check.sh` now also runs the two new files plus the existing split guards for import-center and master-data model boundaries.
+
+This is a test structure and maintainability improvement only; it does not start or require `127.0.0.1:8000`, and it does not change live UI/API acceptance status.
+
+## 2026-06-18 IM219 Master Data Maintenance Model Gate Split
+
+`IM219` turns the large master-data maintenance model test into an executable split gate. The previous direct Node run failed because the master-data barrel used extensionless TS imports internally; the tests now use the existing `jiti` loader without changing production imports.
+
+The 31 assertions are split across core/workbench/source-context, agent, reference/organization/skill/vendor, and detail/payload files, and `scripts/check.sh` runs all four files explicitly. This is a test-structure and gate-coverage improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM220 Import Center Model Gate Final Split
+
+`IM220` finishes the current import-center model gate decomposition. Review-case assertions are now split into conclusion/evidence, workspace/list/owner, detail/context, and action/write test files. The remaining core/comparison/exception assertions from the old generic import-center model test are split into dedicated core, comparison, and exception files.
+
+`scripts/tests/import-center-model.test.mjs` has been removed because all assertions moved to narrower executable gates, and `scripts/check.sh` now runs the split gates explicitly. Product-structure test analysis stayed read-only and will require a separate product-boundary task before any future split. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM221 Import Center Batch Template Gate Split
+
+`IM221` continues the import-center model gate decomposition by splitting the previously green batch/template gate. Batch apply/readiness/result, template inventory/detail/fit, upload workspace/prefill/result, and batch detail/row correction assertions now run as four separate executable test files.
+
+`scripts/tests/import-center-batch-template-model.test.mjs` has been removed because all 27 assertions moved to narrower gates, and `scripts/check.sh` now runs those gates explicitly. A product-structure split was intentionally not continued because the original `product-structure.test.mjs` baseline currently passes only 21/35 tests and needs separate product calibration before it can become a default gate. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM222 Import Center Version Gate Split
+
+`IM222` continues the import-center model gate decomposition by splitting the previously green version gate. Version workbench list/filter/link assertions, version action/applied-context assertions, and version comparison trigger/review assertions now run as three separate executable test files.
+
+`scripts/tests/import-center-version-model.test.mjs` has been removed because all 10 assertions moved to narrower gates, and `scripts/check.sh` now runs those gates explicitly. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM223 Qoder Split Gate Integration
+
+`IM223` integrates the next Qoder-executed mechanical test split under Codex review. Import-center core assertions now run through format/url, batch-list, and result-trace gates; review-case workspace/action assertions now run through workspace-list, workspace-owner, workspace-grouping, action-deck, and action-write gates; master-data maintenance detail/payload assertions now run through workplace-detail, service-team-detail, vendor-detail, and workplace-payload gates.
+
+The old generic core, review-case workspace, review-case action, and master-data detail test files have been removed because their assertions moved to narrower executable gates, and `scripts/check.sh` now runs the new gates explicitly. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM224 Production Model Gate Split
+
+`IM224` continues the Qoder-assisted test gate decomposition for production model tests. Actual-log production assertions now run through workbench, detail-status, and detail-login gates; personnel-schedule production assertions now run through workbench, detail, and reference-blocker gates; demand-forecast production assertions now run through workbench, detail, and change-trace gates.
+
+The old generic production model test files have been removed because their assertions moved to narrower executable gates, and `scripts/check.sh` now runs the new gates explicitly. Product-structure analysis stayed read-only and will require a separate product-boundary decision before any future split. This is a test-structure improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM225 Product Structure Safe Green Split
+
+`IM225` starts converting `product-structure.test.mjs` from a non-default audit file into smaller executable gates, but only for currently green assertions. The app-shell subset and master-data subset now run as dedicated default gates in `scripts/check.sh`.
+
+The remaining `product-structure.test.mjs` assertions stay outside the default gate because they still contain known drift from before this split. This is a test-gate improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.
+
+## 2026-06-18 IM226 Product Structure Retarget Split
+
+`IM226` completes the product-structure gate decomposition after a read-only reflection pass. The remaining failures were primarily stale assertions that still inspected the old master-data monolith file; those assertions now target the actual agents, details, references, forms, payloads, entities, and import-dialog model modules.
+
+The old `scripts/tests/product-structure.test.mjs` is now a thin entrypoint that imports seven narrower gates: production wording, global shell, master-data detail context, master-data maintenance actions, master-data agent workflow, business import, and result chain. `scripts/check.sh` runs those gates explicitly. This is a test-gate improvement only; it does not change UI behavior, routes, component implementation, backend behavior, database schema or persistence, dependencies, permissions, approval, export, batch operations, production formulas, settlement rules, supplier contracts, minimum staffing, or charge factors.

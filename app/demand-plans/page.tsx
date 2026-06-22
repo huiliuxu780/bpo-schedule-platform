@@ -1,8 +1,9 @@
 import Link from "next/link"
-import { Search } from "lucide-react"
 
 import { AppShell } from "@/components/app-shell"
 import { DemandPlanTable } from "@/components/demand-plan-table"
+import { MetricCard } from "@/components/metric-card"
+import { SearchInputBar } from "@/components/search-input-bar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,7 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { getDemandPlans, type DemandPlanRow } from "@/lib/schedule-plans"
 
 type PageProps = {
@@ -50,27 +50,16 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
           </Button>
         </div>
 
-        <section className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-3">
-          <form className="flex min-w-64 flex-1 items-center gap-2">
-            <div className="flex flex-1 items-center gap-2 rounded-md border bg-background px-2">
-              <Search className="size-4 text-muted-foreground" />
-              <Input
-                name="query"
-                defaultValue={query}
-                placeholder="搜索日期、项目、职场、时段"
-                className="h-8 border-0 px-0 shadow-none focus-visible:ring-0"
-              />
-            </div>
-            <Button type="submit" variant="outline" size="sm">
-              搜索
-            </Button>
-          </form>
+        <SearchInputBar
+          defaultQuery={query}
+          placeholder="搜索日期、项目、职场、时段"
+        >
           {query ? (
             <Button asChild variant="ghost" size="sm">
               <Link href="/demand-plans">清空</Link>
             </Button>
           ) : null}
-        </section>
+        </SearchInputBar>
 
         <section className="grid gap-4 md:grid-cols-4">
           <MetricCard title="需求时段" value={`${rows.length}`} description="0.5h 颗粒度" />
@@ -97,29 +86,5 @@ export default async function DemandPlansPage({ searchParams }: PageProps) {
         </Card>
       </main>
     </AppShell>
-  )
-}
-
-function MetricCard({
-  title,
-  value,
-  description,
-}: {
-  title: string
-  value: string
-  description: string
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardDescription>{title}</CardDescription>
-        <CardTitle className="text-2xl font-semibold tabular-nums">
-          {value}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-xs text-muted-foreground">
-        {description}
-      </CardContent>
-    </Card>
   )
 }

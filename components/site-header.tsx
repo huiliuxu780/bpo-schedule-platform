@@ -28,12 +28,15 @@ export function SiteHeader({
   actions,
 }: SiteHeaderProps) {
   return (
-    <header className="sticky top-0 z-20 flex min-h-12 shrink-0 items-center gap-3 border-b bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:px-6">
+    <header
+      data-slot="site-header"
+      className="sticky top-0 z-20 flex min-h-12 shrink-0 items-center gap-3 border-b bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:px-6"
+    >
       <SidebarTrigger aria-label="切换导航栏" className="hidden md:inline-flex" />
       <div className="flex min-w-0 flex-1 items-center">
         {breadcrumbItems.length > 0 ? (
           <>
-            <Breadcrumb>
+            <Breadcrumb data-slot="site-header-breadcrumb">
               <BreadcrumbList className="text-sm">
                 {breadcrumbItems.map((item, index) => {
                   const isLast = index === breadcrumbItems.length - 1
@@ -48,14 +51,19 @@ export function SiteHeader({
                 })}
               </BreadcrumbList>
             </Breadcrumb>
-            <h1 className="sr-only">{title}</h1>
+            <h1 className="sr-only" data-slot="site-header-title">{title}</h1>
           </>
         ) : (
-          <h1 className="truncate text-sm font-medium">{title}</h1>
+          <h1 className="truncate text-sm font-medium" data-slot="site-header-title">
+            {title}
+          </h1>
         )}
       </div>
       {actions ? (
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+        <div
+          data-action-scope="page"
+          className="flex shrink-0 flex-wrap items-center justify-end gap-2"
+        >
           {actions}
         </div>
       ) : null}

@@ -23,6 +23,7 @@ import {
   summarizeImportReviewCaseActionFeedback,
   summarizeImportReviewCaseActionRetry,
   summarizeImportReviewCaseDetail,
+  summarizeImportReviewCaseDetailAcceptance,
   summarizeImportReviewCaseEvidenceChain,
   summarizeImportReviewOwnerNavigation,
 } from "@/components/import-center-model"
@@ -83,6 +84,11 @@ export function ImportCenterReviewCaseDetailWorkspace({
     processingStages: ownerProcessingStages,
     error: ownerContextError,
   })
+  const processingPath = summarizeImportReviewCaseDetailAcceptance({
+    detail,
+    error,
+    navigation: ownerNavigation,
+  })
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
@@ -136,6 +142,8 @@ export function ImportCenterReviewCaseDetailWorkspace({
               detail="关闭前核对项"
             />
           </section>
+
+          <ReviewCaseDetailProcessingPath summary={processingPath} />
 
           <Card>
             <CardHeader className="flex flex-row items-start justify-between gap-3">
@@ -210,6 +218,66 @@ export function ImportCenterReviewCaseDetailWorkspace({
 
       </Tabs>
     </main>
+  )
+}
+
+function ReviewCaseDetailProcessingPath({
+  summary,
+}: {
+  summary: ReturnType<typeof summarizeImportReviewCaseDetailAcceptance>
+}) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ClipboardCheck className="size-4 text-muted-foreground" />
+            单案例处理路径
+          </CardTitle>
+          <CardDescription className="mt-1">{summary.detail}</CardDescription>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
+            {summary.statusLabel}
+          </Badge>
+          <Button asChild size="sm" variant="outline">
+            <Link href={summary.primaryHref}>
+              {summary.primaryActionLabel}
+              <ExternalLink data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-3">
+        {summary.steps.length === 0 ? (
+          <div className="rounded-md border border-dashed p-3 text-sm text-muted-foreground">
+            {summary.nextAction}
+          </div>
+        ) : (
+          <>
+            <div className="grid gap-2 md:grid-cols-5">
+              {summary.steps.map((step) => (
+                <div
+                  key={step.key}
+                  className="rounded-md border bg-muted/30 p-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="text-sm font-medium">{step.label}</div>
+                    <Badge variant="outline">{step.statusLabel}</Badge>
+                  </div>
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    {step.detail}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
+              {summary.nextAction}
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 

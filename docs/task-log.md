@@ -17,6 +17,236 @@
 
 ## Log
 
+### 2026-06-22
+
+- task_id: `IM236`
+- source_ids:
+  - `R936`
+- story_ids:
+  - `US856`
+- action: 复核案例处理路径收口。
+- status: `done`
+- notes: 在 Product Design 复盘后，将原“验收闭环面板”收窄为运营人员可用的处理路径。列表页新增队列处理路径，详情页新增单案例处理路径；模型测试覆盖阶段分布、读取受阻、空队列、缺证据、缺结论、可关闭、已关闭和队列已清空；结构测试防止 Gate、PM 验收、停机条件、审批、导出、批量、权限等项目治理语言进入页面。本轮不新增后端、数据库、依赖、package/lockfile、页面路由或生产能力，current queue 与 active tasks 保持清空。
+
+- task_id: `IM235`
+- source_ids:
+  - `R935`
+- story_ids:
+  - `US855`
+- action: 结构与主数据中等测试门禁继续拆分。
+- status: `done`
+- notes: Qoder 并行执行三组受控机械拆分，均返回 max-turns；Codex 审查确认实际 diff 只触及允许的测试文件并保留合规产物，再统一接入 `scripts/check.sh`。本轮将 product-structure app-shell/master-data 与 master-data maintenance agent-list/workplace-detail 四个旧入口保留为 import 薄入口，并新增八个子门禁；不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+### 2026-06-18
+
+- task_id: `IM234`
+- source_ids:
+  - `R934`
+- story_ids:
+  - `US854`
+- action: import-center 中等测试门禁继续拆分。
+- status: `done`
+- notes: Codex 直接执行机械拆分，把 review-case preview/gap、version workbench、batch apply action 三个旧入口保留为 import 薄入口，并将六个子门禁接入 `scripts/check.sh`。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM233`
+- source_ids:
+  - `R933`
+- story_ids:
+  - `US853`
+- action: 复核案例中等测试门禁继续拆分。
+- status: `done`
+- notes: Qoder 尝试执行但返回 max-turns，Codex 审查后复用其 workspace-owner 拆分产物并补齐 action-deck/action-write 两组拆分；三个旧入口保留 import 薄入口，六个子门禁已接入 `scripts/check.sh`。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM232`
+- source_ids:
+  - `R932`
+- story_ids:
+  - `US852`
+- action: 中等粒度测试门禁拆分。
+- status: `done`
+- notes: Qoder 执行机械拆分，Codex 审查后把 dashboard、import-center batch detail、product-structure master-data detail context 三组子门禁接入 `scripts/check.sh`。本轮拆分 dashboard 4、batch detail 3、master-data detail context 3 个子门禁；不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM231`
+- source_ids:
+  - `R931`
+- story_ids:
+  - `US851`
+- action: import-center 长门禁继续子拆分。
+- status: `done`
+- notes: Qoder 执行机械拆分，Codex 审查后修正 comparison、result-trace、exception 三个旧入口为 import 薄入口，并把 17 个子门禁接入 `scripts/check.sh`。本轮拆分 comparison 3、version action/comparison 7、result trace 4、exception 3 个子门禁；不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM230`
+- source_ids:
+  - `R930`
+- story_ids:
+  - `US850`
+- action: import-center 剩余大门禁子拆分。
+- status: `done`
+- notes: Qoder 执行机械拆分，Codex 审查后修正三个旧入口为 import 薄入口，并把 9 个子门禁接入 `scripts/check.sh`。`import-center-template-model.test.mjs` 拆为 URL 2、action 4、fit 2；`import-center-batch-list-model.test.mjs` 拆为 summary 2、filter 1、navigation 3；`import-center-review-case-detail-model.test.mjs` 拆为 context 1、evidence 1、timeline 1。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM229`
+- source_ids:
+  - `R929`
+- story_ids:
+  - `US849`
+- action: master-data reference 门禁子拆分。
+- status: `done`
+- notes: Codex 继续测试治理，选择已在默认门禁中绿色但仍偏大的 `master-data-maintenance-reference-model.test.mjs`。8 个 tests 已拆成 list 3、action 3、detail 2 三个小门禁，旧文件保留为薄入口；`scripts/check.sh` 已显式运行三个新门禁。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM228`
+- source_ids:
+  - `R928`
+- story_ids:
+  - `US848`
+- action: master-data agent 门禁子拆分。
+- status: `done`
+- notes: Codex 继续测试治理，选择已在默认门禁中绿色但仍偏大的 `master-data-maintenance-agent-model.test.mjs`。8 个 tests 已拆成 list 3、detail 1、import 1、action 3 四个小门禁，旧文件保留为薄入口；`scripts/check.sh` 已显式运行四个新门禁。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM227`
+- source_ids:
+  - `R927`
+- story_ids:
+  - `US847`
+- action: import-center batch apply 门禁子拆分。
+- status: `done`
+- notes: Codex 继续测试治理，选择已在默认门禁中绿色但仍偏大的 `import-center-batch-apply-model.test.mjs`。6 个 tests 已拆成 action 4、applied-result 1、readiness 1 三个小门禁，旧文件保留为薄入口；`scripts/check.sh` 已显式运行三个新门禁。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM226`
+- source_ids:
+  - `R926`
+- story_ids:
+  - `US846`
+- action: product-structure 过期断言重定向与最终拆分。
+- status: `done`
+- notes: Codex 只读复核剩余失败后确认主要是测试仍按旧 monolith 文件查找源码字符串，而非业务实现缺口。已将旧 `product-structure.test.mjs` 改为薄入口，并将剩余 23 个 assertions 拆为 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain 七个绿色门禁；`scripts/check.sh` 已显式运行这些门禁。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM225`
+- source_ids:
+  - `R925`
+- story_ids:
+  - `US845`
+- action: product-structure 绿色安全子集拆分。
+- status: `done`
+- notes: Qoder 串行拆分 app-shell 与 master-data 后，Codex 复跑发现新文件中仍包含拆分前已有失败断言。Codex 将失败断言退回原 `product-structure.test.mjs`，只保留并接入绿色子集：app-shell 6/6 tests、master-data 6/6 tests。原 `product-structure.test.mjs` 保留 23 个非默认审计 tests，当前 9/23 pass、14/23 fail，不接入默认门禁。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM224`
+- source_ids:
+  - `R924`
+- story_ids:
+  - `US844`
+- action: production model gate 子拆分。
+- status: `done`
+- notes: Qoder 完成 actual-log、personnel-schedule、demand-forecast 三组 production model gate 的机械拆分后，Codex 审查实际 diff 并接入 `scripts/check.sh`。actual-log 10 个 tests 拆为 workbench 5、detail status 2、detail login 3；personnel-schedule 10 个 tests 拆为 workbench 5、detail 2、reference blocker 3；demand-forecast 11 个 tests 拆为 workbench 5、detail 3、change trace 3。product-structure 只读分析未产生文件修改。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM223`
+- source_ids:
+  - `R923`
+- story_ids:
+  - `US843`
+- action: Qoder 拆分结果接入与剩余大门禁细分。
+- status: `done`
+- notes: Qoder 完成 import-center core、review-case workspace/action、master-data maintenance detail/payload 的机械拆分后，Codex 审查实际 diff 并接入 `scripts/check.sh`。core 16 个 tests 拆为 format/url 6、batch list 6、result trace 4；review-case workspace/action 14 个 tests 拆为 workspace list 2、workspace owner 3、workspace grouping 2、action deck 4、action write 3；master-data detail/payload 7 个 tests 拆为 workplace detail 3、service-team detail 1、vendor detail 2、workplace payload 1。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM222`
+- source_ids:
+  - `R922`
+- story_ids:
+  - `US842`
+- action: import-center version gate 子拆分。
+- status: `done`
+- notes: Codex 继续拆分已在默认门禁中绿色的 `import-center-version-model.test.mjs`。10 个 tests 拆为 version workbench 3、version action/applied context 3、version comparison 4 个 tests，旧 version 通用文件已删除。`scripts/check.sh` 已显式运行三个新门禁。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM221`
+- source_ids:
+  - `R921`
+- story_ids:
+  - `US841`
+- action: import-center batch/template gate 子拆分。
+- status: `done`
+- notes: Codex 先验证 `product-structure.test.mjs` 原始基线为 21/35 通过，确认其不适合直接接入默认门禁；随后改拆已在 `scripts/check.sh` 中绿色的 `import-center-batch-template-model.test.mjs`。27 个 tests 拆为 batch apply/readiness/result 6、template inventory/detail/fit 8、upload workspace/prefill/result 6、batch detail/row correction 7 个 tests，旧 batch/template 通用文件已删除。`scripts/check.sh` 已显式运行四个新门禁。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM220`
+- source_ids:
+  - `R920`
+- story_ids:
+  - `US840`
+- action: import-center model gate 最终子拆分。
+- status: `done`
+- notes: Qoder 受控完成 review-case 子拆分和 core/comparison/exception 拆分后，Codex 审查实际 diff。`scripts/tests/import-center-review-case-model.test.mjs` 保留 conclusion/evidence 4 个 tests，新增 workspace 7、detail 3、action 7 个 tests；原 `scripts/tests/import-center-model.test.mjs` 的 23 个 tests 拆为 core 16、comparison 3、exception 4 个 tests，旧通用文件已删除。`scripts/check.sh` 已显式运行拆分后的 import-center model gates。本轮不启动 8000，不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM219`
+- source_ids:
+  - `R919`
+- story_ids:
+  - `US839`
+- action: master-data maintenance model gate 拆分接入。
+- status: `done`
+- notes: 复现原 `scripts/tests/master-data-maintenance-model.test.mjs` direct Node 执行失败，根因为 master-data barrel 内部 extensionless TS imports 无法被 Node ESM resolver 解析。测试改用现有 `jiti` 加载 TS barrel，并拆为 core/workbench 8 个 tests、agent 8 个 tests、reference 8 个 tests、detail/payload 7 个 tests；`scripts/check.sh` 已显式运行四个拆分测试文件。本轮不修改业务 UI、组件实现、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+- task_id: `IM218`
+- source_ids:
+  - `R918`
+- story_ids:
+  - `US838`
+- action: import-center model gate 业务边界拆分。
+- status: `done`
+- notes: Qoder 串行完成 version/workbench、batch/template/apply 拆分和 split guard 接入后，Codex 审查实际 diff。`scripts/tests/import-center-version-model.test.mjs` 承载 10 个 version/workbench assertions，`scripts/tests/import-center-batch-template-model.test.mjs` 承载 27 个 batch/template/apply assertions，原 `scripts/tests/import-center-model.test.mjs` 保留 23 个 core/comparison/exception assertions；`scripts/check.sh` 已接入新增两个测试文件和 4 个 split guard。本轮不启动 8000，不修改业务 UI、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+### 2026-06-17
+
+- task_id: `IM217`
+- source_ids:
+  - `R917`
+- story_ids:
+  - `US837`
+- action: 复核案例 model test 拆分。
+- status: `done`
+- notes: Qoder 受控拆分 review-case assertions 后，Codex 审查实际 diff 并清理拆分残留 import。`scripts/tests/import-center-review-case-model.test.mjs` 承载 21 个复核案例 model assertions；`scripts/tests/import-center-model.test.mjs` 保留 60 个导入、版本和 comparison-run assertions，其中 `import center comparison run detail links related review cases` 仍留在原 comparison-run 作用域。`scripts/check.sh` 已同时运行两个测试文件；本轮不启动 8000，不修改业务 UI、后端、依赖或 package/lockfile，current queue 与 active tasks 保持清空。
+
+### 2026-06-17
+
+- task_id: `IM216`
+- source_ids:
+  - `R916`
+- story_ids:
+  - `US836`
+- action: 复核案例 model test 运行器硬化。
+- status: `done`
+- notes: 复现 `scripts/tests/import-center-model.test.mjs` direct Node 执行失败，根因为 import-center barrel 内部 extensionless TS imports 无法被 Node ESM resolver 解析。测试改用现有 `jiti` 加载 TS barrel 后，81 个 import-center model assertions 全部通过，并接入 `scripts/check.sh`；本轮不启动 8000，不修改业务 UI、后端、依赖或 package/lockfile，current queue 与 active tasks 已清空。
+
+### 2026-06-17
+
+- task_id: `IM215`
+- source_ids:
+  - `R915`
+- story_ids:
+  - `US835`
+- action: 复核案例验收 smoke 降级收口。
+- status: `done`
+- notes: PM 在不允许启动其他测试环境的前提下继续，因此 IM215 从 live seeded smoke 降级为 no-new-env model/contract-only QA 记录。当前只确认 3000 route shell 和反馈参数部分可达、共享 API/空态合约测试通过；真实 seeded case 数据仍因 8000 review-case API 不可达而未完成 live UI/API 验收。本轮不修改业务代码，current queue 与 active tasks 已清空。
+
+### 2026-06-17
+
+- task_id: `IM215`
+- source_ids:
+  - `R915`
+- story_ids:
+  - `US835`
+- action: 复核案例验收 smoke。
+- status: `blocked`
+- notes: 当前 `127.0.0.1:3000` 复核案例列表、处理阶段筛选和 `CASE-QUERY-001` 详情 URL 均返回 200，但页面显示 `复核案例读取失败 / fetch failed`；直接访问 `127.0.0.1:8000/api/v1/review-cases` 失败，说明当前 3000-only 环境缺少所需后端 API。按 PM 指令未启动其他测试环境，本轮只记录阻塞证据，不修改业务代码。
+
+### 2026-06-17
+
+- task_id: `IM214`
+- source_ids:
+  - `R914`
+- story_ids:
+  - `US834`
+- action: 复核案例工作区现状校准。
+- status: `done`
+- notes: 新增 `docs/design/review-case-workspace-calibration.md`，明确 `/data-quality/review-cases` 和 `/data-quality/review-cases/[caseId]` 已具备列表筛选、处理阶段、Owner 负载/续办、来源链路、证据/结论、受控关闭、提交反馈和队列交接能力；该工作区仍是受控本地复核链路，不等同于权限、审批、导出、批量、外部集成、自动排班、生产公式、结算或收费因子能力；current queue 与 active tasks 已清空。
+
 ### 2026-06-05
 
 - task_id: `IM152`
@@ -2174,3 +2404,381 @@
 - action: 完成登录/状态日志导入大弹窗。
 - status: `done`
 - notes: `/actual-logs/production` Header 的 `导入登录日志`、`导入状态日志` 现在打开当前页 Dialog；Dialog 按 `上传文件`、`字段映射`、`导入结果` 三步组织，非当前 step 通过 hidden 保持 DOM 挂载；上传继续复用现有 CSV action，登录日志使用 `login_log`，状态日志使用 `status_log`，结果回流 `/actual-logs/production?import_dialog=1&log_type=...` 并展示批次详情入口；本轮不扩展解析增强、状态字典配置维护、后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM172`
+- source_ids:
+  - `R872`
+- story_ids:
+  - `US792`
+- action: 固化前端健康恢复计划和可恢复执行入口。
+- status: `done`
+- notes: `docs/frontend-health-recovery-plan.md` 作为上下文压缩后的恢复入口，`docs/superpowers/plans/2026-06-12-frontend-health-recovery.md` 作为细化执行计划；current queue 已返回空；后续 IM173+ 只在计划中列出，执行前必须单独 seed。UI/页面/交互任务 implementation 前必须使用 Product Design 插件确认 brief；本轮未修改 app、components、lib、backend、package 或 lockfile。
+
+- task_id: `IM173`
+- source_ids:
+  - `R873`
+- story_ids:
+  - `US793`
+- action: 完成前端 API 结果和错误工具去重。
+- status: `done`
+- notes: 新增共享 `lib/api-result.ts` 与 `lib/api-error.ts`，目标前端数据读取文件已改为引用共享 `ApiResult<T>` 和 `formatApiError`；字段映射模板详情页原有 `api_unavailable` 兜底通过 optional fallback 保留；结构测试防止目标文件重新定义本地 `ApiResult<T>` 或 `formatApiError`。本轮未改变可见 UI、导航、fetch URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM174`
+- source_ids:
+  - `R874`
+- story_ids:
+  - `US794`
+- action: 完成导入批次和字段映射模板 fetch 工具去重。
+- status: `done`
+- notes: 新增 `lib/import-api.ts`，提供共享 `fetchImportBatches` 与 `fetchImportFieldMappingTemplates`；目标页面已改为引用共享工具，`app/master-data/agents/data.ts` 通过 re-export 保持既有调用方兼容；页面专属 fetch 函数继续留在页面内。结构测试防止目标文件重新定义本地 fetch。本轮未改变可见 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM175`
+- source_ids:
+  - `R875`
+- story_ids:
+  - `US795`
+- action: 完成导入和比对 Server Action 运行时保护。
+- status: `done`
+- notes: 已新增 `parseImportFileType`、`parseComparisonType`、`parseUploadResultRedirectTarget` 并替换 action 主体中的裸 FormData 枚举断言；非法 `file_type`、`comparison_type`、`result_redirect_to` 进入失败回跳，不进入 API 请求或成功回跳。本轮未改变可见 UI、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM176`
+- source_ids:
+  - `R876`
+- story_ids:
+  - `US796`
+- action: 完成全局页面异常恢复边界。
+- status: `done`
+- notes: 新增 `app/error.tsx`，使用现有 AppShell、shadcn Alert/Button 和语义 token；页面异常时提供 `reset()` 重试和 `/dashboard` 安全返回。本轮未改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM177`
+- source_ids:
+  - `R877`
+- story_ids:
+  - `US797`
+- action: 完成核心业务路由加载骨架屏。
+- status: `done`
+- notes: 为 `/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 新增 route-local `loading.tsx`，使用现有 AppShell 和 shadcn Skeleton；不写额外功能说明，不做 route-group 迁移。本轮未改变业务页面、导航、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM178`
+- source_ids:
+  - `R878`
+- story_ids:
+  - `US798`
+- action: 完成导入中心模型第一刀拆分。
+- status: `done`
+- notes: 新增 `components/import-center-types.ts`、`components/import-center-formatters.ts`、`components/import-center-navigation.ts`，分别承载导入中心类型、格式化函数、API URL 与页面 href 构造函数；`components/import-center-model.ts` 继续 re-export 旧公开入口并保留业务汇总逻辑。结构测试防止核心类型、格式化函数和 URL 构造函数回退到巨型 model 文件。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM179`
+- source_ids:
+  - `R879`
+- story_ids:
+  - `US799`
+- action: 完成导入中心剩余汇总构造逻辑拆分。
+- status: `done`
+- notes: 新增 `components/import-center-list-model.ts`、`components/import-center-version-model.ts`、`components/import-center-review-model.ts`、`components/import-center-batch-model.ts`、`components/import-center-template-model.ts`、`components/import-center-comparison-model.ts`，按列表、版本、复核、批次、模板、比对责任承载原 summarizer/builder；`components/import-center-model.ts` 降为兼容 re-export 入口。结构测试防止主要 summarizer 回退到旧巨型入口。本轮未改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM180`
+- source_ids:
+  - `R880`
+- story_ids:
+  - `US800`
+- action: 完成主数据维护 workbench 行为不变拆分。
+- status: `done`
+- notes: 新增 `components/master-data-maintenance-actions.tsx`、`components/master-data-maintenance-agents.tsx`、`components/master-data-maintenance-references.tsx`、`components/master-data-maintenance-details.tsx`、`components/master-data-maintenance-forms.tsx`、`components/master-data-maintenance-fields.tsx`，按页面动作、客服人员、主数据 reference 列表、详情页、表单页和共享字段控件承载原 workbench 逻辑；`components/master-data-maintenance-workbench.tsx` 降为兼容 re-export 入口。结构测试防止主要页面组件和表单控件回退到旧巨型入口。本轮未改变可见 UI、路由、交互、业务语义、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM181`
+- source_ids:
+  - `R881`
+- story_ids:
+  - `US801`
+- action: 完成主数据维护 model 行为不变拆分。
+- status: `done`
+- notes: 新增 `components/master-data-maintenance-types.ts`、`components/master-data-maintenance-formatters.ts`、`components/master-data-maintenance-entities.ts`、`components/master-data-maintenance-payloads.ts`、`components/master-data-maintenance-agent-model.ts`、`components/master-data-maintenance-reference-model.ts`、`components/master-data-maintenance-detail-model.ts`、`components/master-data-maintenance-import-dialog-model.ts`，按类型、格式化、维护对象、payload、人员、reference、详情和导入弹窗责任承载原 model 逻辑；`components/master-data-maintenance-model.ts` 降为兼容 re-export 入口。结构测试防止主要 summarizer、payload builder 和 helper 回退到旧巨型入口。本轮未改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM182`
+- source_ids:
+  - `R882`
+- story_ids:
+  - `US802`
+- action: 完成可见动作位置规则固化。
+- status: `done`
+- notes: `SiteHeader` 页级动作区、客服人员筛选区、列表工具栏、行内动作和冻结 Dialog 危险确认区已分别有 `data-action-scope` 结构标记；新增结构测试防止 `新建/批量导入` 回流到筛选区或列表工具栏，也防止 `查询/重置` 混入页级动作。本轮未新增按钮、业务能力、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM183`
+- source_ids:
+  - `R883`
+- story_ids:
+  - `US803`
+- action: 完成共享空状态模式第一刀。
+- status: `done`
+- notes: 新增共享 `components/empty-state.tsx`，统一空状态图标、标题、详情、compact 高度和外部动作 slot；替换导入批次列表、批次状态检查和复核案例列表中的本地同名 EmptyState。浏览器烟测确认 `/data-quality?batchQuery=__empty_state_smoke__` 渲染共享空状态。本轮未新增业务按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM184`
+- source_ids:
+  - `R884`
+- story_ids:
+  - `US804`
+- action: 完成主数据维护表单反馈一致性。
+- status: `done`
+- notes: 新增共享 `components/maintenance-submit-button.tsx`，统一维护表单提交按钮、图标、禁用态和提交中文案；`components/master-data-maintenance-fields.tsx` 统一必填视觉标识；主数据维护表单已替换散落的裸 submit Button。浏览器烟测确认 `/master-data/agents/new` 渲染共享 submit、7 个必填标识且控制台无 error。本轮未新增业务字段、按钮、路由、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM185`
+- source_ids:
+  - `R885`
+- story_ids:
+  - `US805`
+- action: 完成导航和 Breadcrumb 规则复核。
+- status: `done`
+- notes: 主数据组织/技能导航项已改为 prefix，高亮覆盖详情/新建/编辑页；`SiteHeader` 增加 header、breadcrumb、title 稳定 slot；新增结构测试防止恢复未经确认的质量中心/数据质量中心/导入中心入口。浏览器烟测确认 `/master-data/organizations/new` 与 `/master-data/skills/new` 对应父级导航高亮、Breadcrumb slot 存在且控制台无 error。本轮未新增业务导航模块、业务页面、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM186`
+- source_ids:
+  - `R886`
+- story_ids:
+  - `US806`
+- action: 收口旧计划脚手架导航入口。
+- status: `done`
+- notes: `components/app-sidebar.tsx` 不再暴露旧 demo 的 `班次明细` 和 `不可用管理` 入口；旧 `/shift-details`、`/unavailability` 路由保留不删除；`scripts/tests/navigation-breadcrumb-rules.test.mjs` 新增结构规则防止旧入口回流。浏览器烟测确认本地 Sidebar 仍显示已确认入口并且不再显示旧 demo 入口。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM187`
+- source_ids:
+  - `R887`
+- story_ids:
+  - `US807`
+- action: 收口排班计划旧链路入口。
+- status: `done`
+- notes: `/schedule-plans` 不再渲染旧链路卡和旧风险表，`/schedule-plans/[planId]` 不再查询旧风险/不可用数据或渲染旧复核链路按钮；删除不再使用的 `components/mvp-flow-summary.tsx` 和 `components/schedule-risk-table.tsx`；旧 `/schedule-risks`、`/shift-details`、`/unavailability` 路由保留不删除。浏览器烟测确认当前排班计划入口没有旧 demo 路由 href。本轮未新增页面、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM188`
+- source_ids:
+  - `R888`
+- story_ids:
+  - `US808`
+- action: 预测版本详情入口语义收口。
+- status: `done`
+- notes: `/demand-plans/production` 列表行操作改为 `查看预测版本`，`/demand-plans/production/[batchId]` 返回入口改为 `返回预测版本列表`，错误标题和详情说明改为预测版本语义；新增结构测试防止退回来源批次处理语义。HTTP 烟测确认列表页和详情页返回 200，页面 HTML 包含新语义且不包含旧短语。本轮未新增路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM189`
+- source_ids:
+  - `R889`
+- story_ids:
+  - `US809`
+- action: 排班版本详情入口语义收口。
+- status: `done`
+- notes: `/schedule-plans/production` 列表行操作改为 `查看排班版本`，`/schedule-plans/production/[batchId]` 返回入口改为 `返回排班版本列表`，错误标题和详情说明改为排班版本语义；新增结构测试防止退回来源批次处理语义。HTTP 烟测确认列表页和详情页返回 200，页面 HTML 包含新语义且不包含旧短语。本轮未新增路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM190`
+- source_ids:
+  - `R890`
+- story_ids:
+  - `US810`
+- action: 登录/状态日志版本详情入口语义收口。
+- status: `done`
+- notes: `/actual-logs/production` 列表行操作改为 `查看日志版本`，`/actual-logs/production/[batchId]` 返回入口改为 `返回日志版本列表`，错误标题和详情说明改为日志版本语义；新增结构测试防止退回来源批次处理语义。Browser/HTTP 烟测确认详情页返回 200，页面包含 `日志版本详情`、`返回日志版本列表` 和 `日志版本详情读取失败`，且不包含旧返回入口或旧批次明细错误文案。本轮未新增路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM191`
+- source_ids:
+  - `R891`
+- story_ids:
+  - `US811`
+- action: 对比运行详情结果回看入口语义收口。
+- status: `done`
+- notes: `/data-quality/comparison-runs/[runId]` 顶部主返回入口改为 `返回业务版本列表`，来源链路 tab 内的来源批次和复核案例入口保持不变；新增结构测试防止退回 `返回复核案例`。HTTP 烟测确认详情页 HTML 包含 `返回业务版本列表` 和 `对比运行详情`，不包含旧主返回文案。本轮未新增路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM192`
+- source_ids:
+  - `R892`
+- story_ids:
+  - `US812`
+- action: 业务版本列表本地比对动作语义收口。
+- status: `done`
+- notes: `/data-quality/versions` 的本地比对候选、当前版本触发入口、提交成功/失败反馈、最新运行回看和业务版本列表回看标题已统一为 `比对运行` 语义；新增结构测试防止退回 `发起一次比对`、`查看结果列表` 或泛泛 `比对结果`。HTTP 烟测确认版本列表路由返回 200；当前种子数据未渲染可提交比对入口，因此可见文案由结构测试覆盖。本轮未新增 comparison run 列表路由、业务能力、后端、数据库、依赖、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM193`
+- source_ids:
+  - `R893`
+- story_ids:
+  - `US813`
+- action: 共享 lib helper 回归护栏。
+- status: `done`
+- notes: Qoder 以 `ultimate` 模型受控新增 `scripts/tests/lib-helpers-regression.test.mjs`，Codex 审查确认 Qoder 只新增允许文件；测试覆盖 `lib/api-result.ts`、`lib/api-error.ts`、`lib/import-api.ts` 文件存在、关键导出存在，以及 `formatApiError`、`fetchImportBatches`、`fetchImportFieldMappingTemplates` 不会在 `app/`、`components/`、`lib/` 下重复函数定义回流。本轮未修改业务源码、lib 实现、check 脚本、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM194`
+- source_ids:
+  - `R894`
+- story_ids:
+  - `US814`
+- action: 共享 MetricCard 首刀。
+- status: `done`
+- notes: Qoder 以 `ultimate` 模型受控新增共享 `components/metric-card.tsx`，并将 `/demand-plans`、`/schedule-plans`、`/shift-details` 三处完全同构指标卡迁移到共享组件；新增 `scripts/tests/shared-metric-card-structure.test.mjs` 防止三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。Codex 审查确认实现只做机械替换；三页 HTTP smoke 返回 200 且关键指标文字仍在。本轮未修改页面路由、数据读取、业务文案、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM195`
+  source_ids:
+    - `R895`
+  story_ids:
+    - `US815`
+  action: 共享 MetricCard 旧风险不可用页迁移。
+  status: `done`
+  notes: Qoder 以 `ultimate` 模型受控将 `/unavailability`、`/unavailability/[unavailabilityId]`、`/schedule-risks/[riskId]` 三处旧页面改为引用共享 `MetricCard`，并删除本地同构 `MetricCard` 函数；结构测试扩展覆盖 6 个页面。Codex 审查确认未修改共享组件 API、页面路由、数据读取、业务文案、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；三条 HTTP smoke 返回 200；current queue 与 active tasks 已清空。
+
+- task_id: `IM196`
+  source_ids:
+    - `R896`
+  story_ids:
+    - `US816`
+  action: 共享列表搜索与状态筛选控件。
+  status: `done`
+  notes: 新增 `components/search-input-bar.tsx` 和 `components/status-filter-pills.tsx`，并将 `/demand-plans`、`/schedule-plans`、`/shift-details`、`/unavailability` 四个旧列表页迁移到共享筛选控件；`/demand-plans` 只使用搜索栏，其余三页保留状态筛选和清空入口。Codex 审查确认未修改页面路由、查询参数、状态值、业务文案、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；四条 HTTP smoke 返回 200；current queue 与 active tasks 已清空。
+
+- task_id: `IM197`
+  source_ids:
+    - `R897`
+  story_ids:
+    - `US817`
+  action: SimpleTable 首刀迁移 demand-plan-table。
+  status: `done`
+  notes: 新增 `components/simple-table.tsx`，集中轻量表格的 TanStack Table 渲染、排序和空状态；`components/demand-plan-table.tsx` 只保留列定义和 `SimpleTable` 调用，行数从 200 降到 136。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；HTTP smoke 覆盖正常列表和空状态；current queue 与 active tasks 已清空。
+
+- task_id: `IM198`
+  source_ids:
+    - `R898`
+  story_ids:
+    - `US818`
+  action: SimpleTable 第二刀迁移 schedule-plan-interval-table。
+  status: `done`
+  notes: `components/schedule-plan-interval-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环；结构测试扩展覆盖该表，保留默认 `interval_start` 排序、列、空状态文案和业务数据。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM199`
+  source_ids:
+    - `R899`
+  story_ids:
+    - `US819`
+  action: SimpleTable 第三刀迁移 schedule-risk-shift-table。
+  status: `done`
+  notes: `components/schedule-risk-shift-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环；结构测试扩展覆盖该表，保留默认 `plan_id` 排序、列、空状态文案和业务数据。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM200`
+  source_ids:
+    - `R900`
+  story_ids:
+    - `US820`
+  action: SimpleTable 第四刀迁移 schedule-risk-unavailability-table。
+  status: `done`
+  notes: `components/schedule-risk-unavailability-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环；结构测试扩展覆盖该表，保留默认 `staff_name` 排序、列、空状态文案和业务数据。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM201`
+  source_ids:
+    - `R901`
+  story_ids:
+    - `US821`
+  action: SimpleTable 第五刀迁移 unavailability-impact-shift-table。
+  status: `done`
+  notes: `components/unavailability-impact-shift-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环；结构测试扩展覆盖该表，保留默认 `plan_id` 排序、计划链接、列、空状态文案和业务数据。浏览器烟测确认 `/unavailability/unavail-20260511-001` 的影响班次表有 9 个表头、2 行数据、计划链接 href 正确且无误显示空态。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM202`
+  source_ids:
+    - `R902`
+  story_ids:
+    - `US822`
+  action: SimpleTable 第六刀迁移 unavailability-impact-risk-table。
+  status: `done`
+  notes: `components/unavailability-impact-risk-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环；结构测试扩展覆盖该表，保留默认 `risk_level` 排序、明细链接、列、空状态文案和业务数据。浏览器烟测确认 `/unavailability/unavail-20260511-001` 的关联风险表有 7 个表头、1 行数据、明细链接 href 正确且无误显示空态。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM203`
+  source_ids:
+    - `R903`
+  story_ids:
+    - `US823`
+  action: SimpleTable 第七刀迁移 shift-details-table。
+  status: `done`
+  notes: `components/shift-details-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环；结构测试扩展覆盖该表，保留默认 `plan_date` 排序、计划链接、列、空状态文案和业务数据。HTTP smoke 确认 `/shift-details?query=suzhou` 的班次明细页标题、表头、计划链接保持正常且无误显示空态。Codex 审查确认未修改页面、路由、业务文案、数据字段、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM204`
+  source_ids:
+    - `R904`
+  story_ids:
+    - `US824`
+  action: MainTableShell 边界规格。
+  status: `done`
+  notes: 新增 `docs/design/main-table-shell-boundary-spec.md`，明确 SimpleTable 停在轻量子表格；未来 MainTableShell 只能承接主表布局、列显隐、分页、渲染壳层和空态结构，不能拥有业务列、动作、路由、查询参数、业务文案或生产语义。Codex 审查确认本轮未修改 UI 代码、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM205`
+  source_ids:
+    - `R905`
+  story_ids:
+    - `US825`
+  action: MainTableShell 结构护栏。
+  status: `done`
+  notes: 新增 `docs/design/main-table-shell-structure-guard.md` 与 `scripts/tests/main-table-shell-structure.test.mjs`；TDD 红灯先确认 guard 文档缺失导致测试失败，绿灯后测试覆盖 IM204 候选顺序、MainTableShell 允许/禁止职责，以及 IM205 不创建 `components/main-table-shell.tsx`、候选表不提前接入 MainTableShell。Codex 审查确认本轮未修改 UI 代码、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM206`
+  source_ids:
+    - `R906`
+  story_ids:
+    - `US826`
+  action: MainTableShell 首刀迁移 schedule-plan-table。
+  status: `done`
+  notes: 新增 `components/main-table-shell.tsx`，集中主表的 Card/Table 壳层、toolbar slot、summary slot、列显隐、TanStack 渲染循环、排序状态、分页状态和空态结构；`components/schedule-plan-table.tsx` 改为传入排班计划列定义、筛选后数据、摘要和 toolbar，业务筛选、详情链接、列文案和空状态文案仍留在具体表格。结构测试扩展覆盖 MainTableShell 实现边界、排班计划主表委托，以及 `unavailability-table`/`data-table` 未提前接入。本轮未修改页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM207`
+  source_ids:
+    - `R907`
+  story_ids:
+    - `US827`
+  action: MainTableShell 第二刀迁移 unavailability-table。
+  status: `done`
+  notes: `components/main-table-shell.tsx` 增加 embedded 模式和 toolbar column visibility slot，默认 Card 模式保持兼容；`components/unavailability-table.tsx` 改为传入不可用列定义、筛选后数据、摘要和 toolbar，业务筛选、影响/班次链接、列文案和空状态文案仍留在具体表格。结构测试扩展覆盖不可用主表委托，并确认 `data-table` 未提前接入 MainTableShell。本轮未修改页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子。
+
+- task_id: `IM208`
+  source_ids:
+    - `R908`
+  story_ids:
+    - `US828`
+  action: MainTableShell 收口与 data-table 暂缓决策。
+  status: `done`
+  notes: 已收口 IM197-IM207 表格抽象链路：`SimpleTable` 停在轻量子/详情表格，`MainTableShell` 已覆盖排班计划和不可用管理两个产品职责清晰的主表；`components/data-table.tsx` 继续暂缓，因为它属于 `/dashboard` anomaly/demo table，产品 owner、路由责任和真实工作流价值尚未重新确认。本轮只修改文档和 Harness 状态，不修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM209`
+  source_ids:
+    - `R909`
+  story_ids:
+    - `US829`
+  action: Dashboard anomaly table 产品归属审计。
+  status: `done`
+  notes: 新增 `docs/design/dashboard-anomaly-table-ownership-audit.md`，确认 `/dashboard` 的 `DataTable` 当前属于经营总览下的本地 anomaly overview widget，数据来自 `app/dashboard/data.ts`，行操作仍是占位，不承担 review-case、comparison-run、import quality trace 或 actual-log production detail 的主入口责任。默认建议保留为 overview；只有在异常行路由语义和真实工作流 owner 明确后，才考虑升级为异常分诊入口或替换为真实下游摘要。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM210`
+  source_ids:
+    - `R910`
+  story_ids:
+    - `US830`
+  action: Dashboard 下游工作区入口规格。
+  status: `done`
+  notes: 新增 `docs/design/dashboard-downstream-entry-spec.md`，定义未来 dashboard anomaly row 只能作为 summary-to-workspace entry，候选目标限定为已有 `/data-quality/comparison-runs/[runId]`、`/data-quality/review-cases/[caseId]`、`/data-quality/[batchId]?tab=result-trace`、`/actual-logs/production/[batchId]` 和 `/schedule-plans/production/[batchId]`。缺少稳定下游 ID 时不得伪造行级跳转、处理状态、复核结果或生产动作；真实调查、复核、关闭、批次和生产语义继续由下游工作区承载。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM211`
+  source_ids:
+    - `R911`
+  story_ids:
+    - `US831`
+  action: Dashboard anomaly row 下游入口阻塞态。
+  status: `done`
+  notes: 新增 `buildDashboardAnomalyEntryState` 模型并扩展 dashboard table model 测试；无 `downstreamEntry` 的 anomaly row 返回 `等待下游定位` blocked 状态，有稳定 review case downstreamEntry 时才生成既有 `/data-quality/review-cases/[caseId]` 链接。`components/data-table.tsx` 不再展示泛化行操作占位，当前静态 dashboard anomaly rows 因缺少稳定下游 ID 只显示 disabled 阻塞态。本轮未新增真实异常查询、新路由、新查询参数、后端、数据库、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM212`
+  source_ids:
+    - `R912`
+  story_ids:
+    - `US832`
+  action: Dashboard anomaly 链路收口与真实工作区回切。
+  status: `done`
+  notes: 新增 `docs/design/dashboard-anomaly-chain-closeout.md`，收口 IM209-IM211 的产品边界：dashboard anomaly table 保持经营总览摘要和 `等待下游定位` 诚实阻塞态，不继续补静态 downstream ID、处理状态、复核结论、对比执行、批次应用或生产动作。下一阶段推荐切回真实 review-case、comparison-run、data-quality 工作区。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。
+
+- task_id: `IM213`
+  source_ids:
+    - `R913`
+  story_ids:
+    - `US833`
+  action: 项目理解需求基线校准。
+  status: `done`
+  notes: 新增 `docs/design/project-understanding-requirements-calibration.md`，把 2026-06-14 外部项目理解与需求文档校准为产品北极星和需求地图，而不是当前实现状态或自动 backlog。校准结果明确：业务背景、核心概念、五大业务域、用户角色和目标 IA 仍有效；错误边界、loading、详情页 Tab 化、空状态组件化、数据质量/复核链路等状态判断已经被后续迭代改变；认证、权限、审批、导出、批量、生产公式、结算和收费因子仍需新 Gate。本轮未修改 UI 组件、页面、路由、数据读取、后端、依赖、package/lockfile、权限、审批、导出、批量、自动排班、生产公式、结算或收费因子；current queue 与 active tasks 已清空。

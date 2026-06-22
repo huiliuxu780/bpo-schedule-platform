@@ -2,19 +2,21 @@ import Link from "next/link"
 import {
   ArrowLeft,
   ArrowRight,
-  CircleSlash,
+  ClipboardCheck,
   ClipboardList,
   Filter,
   RotateCcw,
   UserRound,
 } from "lucide-react"
 
+import { EmptyState } from "@/components/empty-state"
 import {
   type ImportReviewCaseRecord,
   type ImportReviewCaseProcessingStageSnapshot,
   type ImportReviewCasesWorkspaceFilters,
   buildImportReviewCaseDetailWorkspaceHref,
   filterImportReviewCases,
+  summarizeImportReviewCaseAcceptanceBlock,
   summarizeImportReviewCaseProcessingStage,
   summarizeImportReviewCasesWorkspace,
   summarizeImportReviewOwnerFirstPendingEntries,
@@ -53,11 +55,18 @@ export function ImportCenterReviewCasesWorkspace({
     error,
     processingStages,
   })
+  const processingPath = summarizeImportReviewCaseAcceptanceBlock({
+    cases,
+    filters,
+    processingStages,
+    error,
+  })
 
   return (
     <main className="grid flex-1 auto-rows-max gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 lg:px-6">
       <ReviewCasesHeader filters={filters} summary={summary} />
       <ReviewCaseSummaryCards summary={summary} />
+      <ReviewCaseProcessingPath summary={processingPath} />
       <ImportCenterReviewOwnerStageMatrix
         cases={cases}
         filters={filters}
@@ -78,6 +87,55 @@ export function ImportCenterReviewCasesWorkspace({
         />
       </section>
     </main>
+  )
+}
+
+function ReviewCaseProcessingPath({
+  summary,
+}: {
+  summary: ReturnType<typeof summarizeImportReviewCaseAcceptanceBlock>
+}) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <ClipboardCheck className="size-4 text-muted-foreground" />
+            队列处理路径
+          </CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">{summary.detail}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant={summary.tone === "blocked" ? "destructive" : "outline"}>
+            {summary.statusLabel}
+          </Badge>
+          <Button asChild size="sm" variant="outline">
+            <Link href={summary.primaryHref}>
+              {summary.primaryActionLabel}
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-3">
+        <div className="grid gap-2 md:grid-cols-5">
+          {summary.stageCoverage.map((stage) => (
+            <div
+              key={stage.key}
+              className="rounded-md border bg-muted/30 p-3"
+            >
+              <div className="text-sm font-medium">{stage.label}</div>
+              <div className="mt-1 text-2xl font-semibold tracking-normal">
+                {stage.count.toLocaleString("zh-CN")}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-md border bg-muted/30 p-3 text-sm text-muted-foreground">
+          {summary.nextAction}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -446,9 +504,13 @@ function ReviewCaseTable({
       </CardHeader>
       <CardContent className="p-0">
         {error ? (
-          <EmptyState title="复核案例读取失败" detail={error} />
+          <EmptyState title="复核案例读取失败" detail={error} className="min-h-80" />
         ) : cases.length === 0 ? (
-          <EmptyState title="暂无匹配复核案例" detail="调整筛选条件后重新查看。" />
+          <EmptyState
+            title="暂无匹配复核案例"
+            detail="调整筛选条件后重新查看。"
+            className="min-h-80"
+          />
         ) : (
           <div className="overflow-x-auto">
             <Table>
@@ -569,18 +631,6 @@ function FilterSelect({
         ))}
       </select>
     </label>
-  )
-}
-
-function EmptyState({ title, detail }: { title: string; detail: string }) {
-  return (
-    <div className="grid min-h-80 place-items-center p-6 text-center">
-      <div className="grid max-w-md gap-2">
-        <CircleSlash className="mx-auto size-5 text-muted-foreground" />
-        <div className="text-sm font-medium">{title}</div>
-        <div className="text-sm text-muted-foreground">{detail}</div>
-      </div>
-    </div>
   )
 }
 

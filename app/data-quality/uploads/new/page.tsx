@@ -1,3 +1,4 @@
+import { fetchImportFieldMappingTemplates } from "@/lib/import-api"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
@@ -5,9 +6,7 @@ import { AppShell } from "@/components/app-shell"
 import { ImportCenterTemplateManagementPanel } from "@/components/import-center-template-management-panel"
 import { ImportCenterUploadForm } from "@/components/import-center-upload-form"
 import {
-  type ImportFieldMappingTemplate,
   type ImportFileType,
-  buildImportFieldMappingTemplatesUrl,
   formatImportFileType,
 } from "@/components/import-center-model"
 import { Badge } from "@/components/ui/badge"
@@ -31,11 +30,6 @@ type ImportUploadWorkspacePageProps = {
     reason?: string
     batch?: string
   }>
-}
-
-type ApiResult<T> = {
-  data: T | null
-  error: string | null
 }
 
 export default async function ImportUploadWorkspacePage({
@@ -157,43 +151,4 @@ function HeaderItem({ label, value }: { label: string; value: string }) {
       <div className="truncate text-sm font-medium">{value}</div>
     </div>
   )
-}
-
-async function fetchImportFieldMappingTemplates(): Promise<
-  ApiResult<ImportFieldMappingTemplate[]>
-> {
-  try {
-    const response = await fetch(buildImportFieldMappingTemplatesUrl(), {
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      return {
-        data: [],
-        error: `字段映射模板读取失败（状态码 ${response.status}）`,
-      }
-    }
-
-    const payload = (await response.json()) as {
-      items?: ImportFieldMappingTemplate[]
-    }
-
-    return {
-      data: Array.isArray(payload.items) ? payload.items : [],
-      error: null,
-    }
-  } catch (error) {
-    return {
-      data: [],
-      error: formatApiError(error),
-    }
-  }
-}
-
-function formatApiError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message
-  }
-
-  return "读取失败"
 }

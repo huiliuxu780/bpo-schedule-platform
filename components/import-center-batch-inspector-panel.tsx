@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { CircleSlash } from "lucide-react"
 
+import { EmptyState } from "@/components/empty-state"
 import {
   type ImportApplyReadinessResponse,
   type ImportBatchListRow,
@@ -496,29 +496,6 @@ function Metric({ label, value }: { label: string; value: number }) {
     <div className="rounded-md border p-3">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="mt-1 font-mono text-lg font-semibold">{value}</div>
-    </div>
-  )
-}
-
-function EmptyState({
-  title,
-  detail,
-  compact = false,
-}: {
-  title: string
-  detail: string
-  compact?: boolean
-}) {
-  return (
-    <div
-      className={cn(
-        "flex flex-col items-center justify-center gap-2 text-center",
-        compact ? "min-h-36" : "min-h-64"
-      )}
-    >
-      <CircleSlash className="size-5 text-muted-foreground" />
-      <div className="text-sm font-medium">{title}</div>
-      <div className="max-w-md text-sm text-muted-foreground">{detail}</div>
     </div>
   )
 }

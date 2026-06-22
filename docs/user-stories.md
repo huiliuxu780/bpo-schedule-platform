@@ -17,7 +17,928 @@
     - "验收标准 1"
     - "验收标准 2"
   dependencies: []
-  status: "draft"
+status: "draft"
+```
+
+### US856 - 复核案例处理路径收口
+
+```yaml
+id: US856
+requirement_ids:
+  - R936
+module: "复核案例工作区"
+role: "复核处理人员"
+story: "作为复核处理人员，我希望在复核案例列表和详情页直接看到当前队列或当前案例的处理路径，以便知道先处理哪类案例、当前案例卡在哪一步，以及处理后是否还有同 owner 待办。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/data-quality/review-cases` 显示运营人员可理解的队列处理路径，包含阶段分布、优先处理入口和读取/空队列状态。"
+  - "`/data-quality/review-cases/[caseId]` 总览显示单案例处理路径，包含来源、证据、结论、关闭和续办五步状态。"
+  - "无下一条同 owner 待办时表达为当前队列已清空，不作为错误阻塞。"
+  - "结构测试防止页面暴露 Gate、PM 验收、停机条件、审批、导出、批量、权限等项目治理语言。"
+  - "不新增后端、数据库、依赖、package/lockfile、页面路由、审批、权限、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US855"
+status: "done"
+notes: "IM236 已完成：复核案例处理路径已接入列表和详情页，并用模型测试与结构测试约束 UI 语言边界。"
+```
+
+### US855 - 结构与主数据中等门禁继续拆分
+
+```yaml
+id: US855
+requirement_ids:
+  - R935
+module: "测试门禁治理"
+role: "开发维护者"
+story: "作为开发维护者，我希望继续把 product-structure 与 master-data maintenance 中偏长的默认测试门禁拆成中等粒度文件，以便默认门禁更容易定位失败，同时保持旧入口兼容。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 `product-structure-app-shell.test.mjs`、`product-structure-master-data.test.mjs`、`master-data-maintenance-agent-list-model.test.mjs`、`master-data-maintenance-workplace-detail-model.test.mjs` 改为 import 薄入口。"
+  - "新增 app-shell global/page-layout、master-data entry-surface/page-shell、agent-list summary/contract-filter、workplace-detail service-team/action 八个子门禁。"
+  - "`scripts/check.sh` 显式运行八个子门禁，避免旧入口重复执行。"
+  - "Qoder 只执行受控机械拆分，不修改 `scripts/check.sh`、Harness、业务 UI、组件实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+dependencies:
+  - "US854"
+status: "done"
+notes: "IM235 已完成：Qoder 受控拆分四组结构/主数据门禁，Codex 审查后接入 `scripts/check.sh`，旧入口保留 import 薄入口。"
+```
+
+### US854 - import-center 中等门禁继续拆分
+
+```yaml
+id: US854
+requirement_ids:
+  - R934
+module: "测试门禁治理"
+role: "开发维护者"
+story: "作为开发维护者，我希望继续把 import-center 中偏长的默认测试门禁拆成中等粒度文件，以便默认门禁更容易定位失败，同时保持旧入口兼容。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 `import-center-review-case-model.test.mjs`、`import-center-version-workbench-model.test.mjs`、`import-center-batch-apply-action-model.test.mjs` 改为 import 薄入口。"
+  - "新增 review conclusion/evidence gap、version workbench list-filter/result-link、batch apply url-guidance/submit-feedback 六个子门禁。"
+  - "`scripts/check.sh` 显式运行六个子门禁，避免旧入口重复执行。"
+  - "不修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+dependencies:
+  - "US853"
+status: "done"
+notes: "IM234 已完成：三组 import-center 默认门禁拆为六个中等粒度子门禁，旧入口保留 import 薄入口。"
+```
+
+### US853 - 复核案例中等门禁继续拆分
+
+```yaml
+id: US853
+requirement_ids:
+  - R933
+module: "测试门禁治理"
+role: "开发维护者"
+story: "作为开发维护者，我希望复核案例相关的长测试门禁继续拆成中等粒度文件，以便默认门禁更容易定位失败，同时保持旧入口兼容。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 `import-center-review-case-workspace-owner-model.test.mjs`、`import-center-review-case-action-deck-model.test.mjs`、`import-center-review-case-action-write-model.test.mjs` 改为 import 薄入口。"
+  - "新增 workspace-owner matrix/detail、action deck summary/feedback-navigation、action write closure/supplement 六个子门禁。"
+  - "`scripts/check.sh` 显式运行六个子门禁，避免旧入口重复执行。"
+  - "不修改业务 UI、组件实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+dependencies:
+  - "US852"
+status: "done"
+notes: "IM233 已完成：复核案例 workspace owner、action deck、action write 三组门禁拆为六个中等粒度子门禁，旧入口保留 import 薄入口。"
+```
+
+### US833 - 项目理解需求基线校准
+
+```yaml
+id: US833
+requirement_ids:
+  - R913
+module: "产品需求基线"
+role: "产品经理"
+story: "作为产品经理，我希望校准 2026-06-14 项目理解与需求文档和当前实现状态，以便后续开发不把过期清单误当成当前 backlog。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增需求基线校准文档，引用 2026-06-14 项目理解与需求文档的定位、业务域、需求矩阵和待实现清单。"
+  - "明确哪些内容仍可作为产品基线，哪些当前状态判断已经过期。"
+  - "明确哪些事项仍是硬 stop 或需要新 Gate，不得直接开发。"
+  - "给出下一阶段可 seed 的 2-3 个小切片建议。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US832"
+status: "done"
+notes: "IM213 已完成：外部项目理解文档保留为产品基线，不作为当前实现状态或自动 backlog。"
+```
+
+### US834 - 复核案例工作区现状校准
+
+```yaml
+id: US834
+requirement_ids:
+  - R914
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望校准当前复核案例工作区已经能支撑哪些处理动作、哪些仍不能做，以便下一步不会重复做已有能力，也不会越界进入审批、导出、权限或批量处理。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增复核案例工作区校准文档，覆盖列表页、详情页、处理阶段、证据/结论/关闭、Owner 续办和提交反馈。"
+  - "明确当前可用能力与仍需新 Gate 的能力边界。"
+  - "给出下一阶段可 seed 的 2-3 个小切片建议。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US833"
+status: "done"
+notes: "IM214 已完成：复核案例工作区当前能力和边界已校准，不修改业务代码。"
+```
+
+### US835 - 复核案例验收 smoke
+
+```yaml
+id: US835
+requirement_ids:
+  - R915
+module: "复核案例工作区"
+role: "产品经理"
+story: "作为产品经理，我希望用当前本地环境验收复核案例工作区的关键状态，以便确认已有工作区可用后再决定是否继续做文案、空态或 comparison-run 校准。"
+task_type: "qa"
+priority: "P1"
+acceptance:
+  - "验证 `/data-quality/review-cases` 列表页可达。"
+  - "验证缺证据、缺结论、可关闭、已关闭处理阶段筛选可达并能显示真实案例状态。"
+  - "验证 `CASE-QUERY-001` 详情页可达并能显示证据/结论/处理动作。"
+  - "验证失败提交重试反馈和关闭成功交接反馈。"
+  - "不启动新的测试环境；如果现有环境缺少后端/API，记录 blocked，不伪造通过。"
+  - "若 PM 在不允许新环境的前提下继续，则可降级收口为 model/contract-only QA 记录，并明确 live seeded smoke 未通过。"
+status: "done"
+notes: "IM215 已降级收口：3000 页面壳与反馈参数部分可达，共享 API/空态合约测试通过；真实 seeded case 数据仍因 8000 review-case API 不可达而未完成 live UI/API 验收。"
+```
+
+### US836 - 复核案例 model test 运行器硬化
+
+```yaml
+id: US836
+requirement_ids:
+  - R916
+module: "复核案例工作区"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望复核案例 model/contract 断言能在正式门禁里执行，以便在不启动 8000 的前提下继续保护处理阶段、动作区、失败重试和关闭后交接语义。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "复现 `scripts/tests/import-center-model.test.mjs` direct Node 执行失败，记录根因是 TS/ESM extensionless import resolution。"
+  - "修复测试加载方式，使 `node --test scripts/tests/import-center-model.test.mjs` 通过。"
+  - "把该测试接入 `scripts/check.sh`。"
+  - "不启动 8000，不修改 `app/**`、业务组件行为、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空。"
+status: "done"
+notes: "IM216 已完成：import-center model test 现在可直接执行并纳入 `scripts/check.sh`，复核案例处理阶段、owner 矩阵、动作区、失败重试和关闭后续办断言成为正式门禁的一部分。"
+```
+
+### US837 - 复核案例 model test 拆分
+
+```yaml
+id: US837
+requirement_ids:
+  - R917
+module: "复核案例工作区"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望复核案例 model/contract 断言从通用 import-center model test 中拆出，以便后续维护复核案例工作区时能更快定位测试边界，同时不削弱 comparison-run 相关覆盖。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "新增 `scripts/tests/import-center-review-case-model.test.mjs`，包含 21 个 review-case model assertions。"
+  - "`scripts/tests/import-center-model.test.mjs` 保留 60 个非 review-case / comparison-run assertions。"
+  - "`import center comparison run detail links related review cases` 保留在原文件，因为它属于 comparison-run 输出结构。"
+  - "`scripts/check.sh` 同时运行两个 import-center model 测试文件。"
+  - "不启动 8000，不修改 `app/**`、业务组件行为、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空。"
+status: "done"
+notes: "IM217 已完成：复核案例 model tests 已拆分成独立门禁文件，comparison-run 复核链接覆盖保持在原 comparison-run 测试中。"
+```
+
+### US838 - import-center model gate 业务边界拆分
+
+```yaml
+id: US838
+requirement_ids:
+  - R918
+module: "导入中心测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 import-center model gate 继续按业务边界拆分，以便 version/workbench、batch/template/apply 和 core/comparison 覆盖更容易维护，并且既有 split guard 真正进入正式门禁。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "新增 `scripts/tests/import-center-version-model.test.mjs`，包含 10 个 version/workbench model assertions。"
+  - "新增 `scripts/tests/import-center-batch-template-model.test.mjs`，包含 27 个 batch/template/apply model assertions。"
+  - "`scripts/tests/import-center-model.test.mjs` 保留 23 个 core/comparison/exception assertions。"
+  - "`scripts/check.sh` 同时运行新增两个测试文件和既有 4 个 split guard 测试。"
+  - "不启动 8000，不修改 `app/**`、业务组件行为、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM218 已完成：import-center model gate 继续拆为 core、review-case、version、batch/template/apply 边界，并把 split guard 接入正式 check。"
+```
+
+### US839 - master-data maintenance model gate 拆分接入
+
+```yaml
+id: US839
+requirement_ids:
+  - R919
+module: "主数据维护测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 master-data maintenance model 断言也按业务边界拆分并进入正式门禁，以便主数据维护工作区的 core、agent、reference、detail/payload 语义都能被稳定回归保护。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "复现 `scripts/tests/master-data-maintenance-model.test.mjs` direct Node 执行失败，记录根因是 TS/ESM extensionless import resolution。"
+  - "将 31 个断言按 core/workbench、agent、reference、detail/payload 拆成独立测试文件。"
+  - "拆分后的测试使用现有 `jiti` 加载 `components/master-data-maintenance-model.ts`，不修改生产 import。"
+  - "`scripts/check.sh` 显式运行拆分后的 master-data maintenance model 测试文件。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM219 已完成：master-data maintenance model gate 已拆分并接入正式 check。"
+```
+
+### US840 - import-center model gate 最终子拆分
+
+```yaml
+id: US840
+requirement_ids:
+  - R920
+module: "导入中心测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 import-center model gate 的 review-case、core、comparison 和 exception 覆盖继续拆成小文件，以便后续维护导入中心工作区时能减少冲突并快速定位失败责任。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 21 个 review-case tests 拆成 conclusion/evidence、workspace、detail、action 四个测试文件。"
+  - "将 23 个 core/comparison/exception tests 拆成 core、comparison、exception 三个测试文件。"
+  - "删除已经完全迁出的 `scripts/tests/import-center-model.test.mjs`。"
+  - "`scripts/check.sh` 显式运行 7 个拆分后的 import-center 测试文件，并保留 version 与 batch/template 门禁。"
+  - "product-structure 只读分析不得修改文件；其结论仅作为后续拆分建议。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM220 已完成：import-center model gate 已拆到 7 个更细业务边界文件，旧通用执行入口已移除。"
+```
+
+### US841 - import-center batch/template gate 子拆分
+
+```yaml
+id: US841
+requirement_ids:
+  - R921
+module: "导入中心测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 import-center batch/template gate 继续拆成 batch apply、template、upload 和 batch detail 小文件，以便后续维护批次应用、模板配置、上传入口和失败行处理时能快速定位失败责任。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 27 个 batch/template tests 拆成 batch apply/readiness/result、template inventory/detail/fit、upload workspace/prefill/result、batch detail/row correction 四个测试文件。"
+  - "删除已经完全迁出的 `scripts/tests/import-center-batch-template-model.test.mjs`。"
+  - "`scripts/check.sh` 显式运行四个拆分后的 batch/template 测试文件。"
+  - "记录 `product-structure.test.mjs` 原始基线当前 21/35 通过，暂不纳入默认门禁。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM221 已完成：import-center batch/template gate 已拆到 4 个更细业务边界文件，旧通用 batch/template 执行入口已移除。"
+```
+
+### US842 - import-center version gate 子拆分
+
+```yaml
+id: US842
+requirement_ids:
+  - R922
+module: "导入中心测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 import-center version gate 继续拆成 version workbench、version action 和 version comparison 小文件，以便后续维护业务版本列表、应用版本定位和本地比对链路时能快速定位失败责任。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 10 个 version tests 拆成 version workbench、version action/applied context、version comparison 三个测试文件。"
+  - "删除已经完全迁出的 `scripts/tests/import-center-version-model.test.mjs`。"
+  - "`scripts/check.sh` 显式运行三个拆分后的 version 测试文件。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM222 已完成：import-center version gate 已拆到 3 个更细业务边界文件，旧通用 version 执行入口已移除。"
+```
+
+### US843 - Qoder 拆分结果接入与剩余大门禁细分
+
+```yaml
+id: US843
+requirement_ids:
+  - R923
+module: "测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 Codex 接管 Qoder 的机械拆分结果，并把剩余较大的 import-center 与 master-data 测试门禁继续拆成小文件，以便后续定位失败时能按业务边界快速收敛。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 import-center core 16 个 tests 拆成 format/url、batch list、result trace 三个测试文件。"
+  - "将 review-case workspace/action 14 个 tests 拆成 workspace list、workspace owner、workspace grouping、action deck、action write 五个测试文件。"
+  - "将 master-data maintenance detail/payload 7 个 tests 拆成 workplace detail、service-team detail、vendor detail、workplace payload 四个测试文件。"
+  - "删除已经完全迁出的旧 core、workspace、action、detail 通用测试文件。"
+  - "`scripts/check.sh` 显式运行所有拆分后的测试文件。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM223 已完成：Qoder 机械拆分结果已由 Codex 接入门禁，旧通用测试文件已移除。"
+```
+
+### US844 - production model gate 子拆分
+
+```yaml
+id: US844
+requirement_ids:
+  - R924
+module: "生产版本测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 actual-log、personnel-schedule、demand-forecast 的 production model gate 继续拆成小文件，以便后续维护生产版本工作台、处理详情和阻塞说明时能快速定位失败责任。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 actual-log production 10 个 tests 拆成 workbench、detail status、detail login 三个测试文件。"
+  - "将 personnel-schedule production 10 个 tests 拆成 workbench、detail、reference blocker 三个测试文件。"
+  - "将 demand-forecast production 11 个 tests 拆成 workbench、detail、change trace 三个测试文件。"
+  - "删除已经完全迁出的旧 production 通用测试文件。"
+  - "`scripts/check.sh` 显式运行所有拆分后的 production model gates。"
+  - "product-structure 只读分析不产生文件修改，后续是否拆分另行评审。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM224 已完成：三组 production model gate 已拆到 9 个更细测试文件，并接入默认门禁。"
+```
+
+### US845 - product-structure 绿色安全子集拆分
+
+```yaml
+id: US845
+requirement_ids:
+  - R925
+module: "产品结构测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望先把 product-structure 中已验证绿色的安全结构断言拆成小门禁，以便默认检查获得可执行的产品结构守卫，同时不把仍漂移的产品边界断言误接入绿色门禁。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将 app-shell 绿色结构断言拆成 `product-structure-app-shell.test.mjs` 并接入 `scripts/check.sh`。"
+  - "将 master-data 绿色结构断言拆成 `product-structure-master-data.test.mjs` 并接入 `scripts/check.sh`。"
+  - "原 `product-structure.test.mjs` 保留仍失败或需要产品边界确认的非默认审计断言，不接入 `scripts/check.sh`。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM225 已完成：两个绿色 product-structure 子集已进入默认门禁；原文件继续作为非默认审计基线。"
+```
+
+### US846 - product-structure 过期断言重定向与最终拆分
+
+```yaml
+id: US846
+requirement_ids:
+  - R926
+module: "产品结构测试门禁"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望把 product-structure 剩余失败断言重定向到真实源码模块并拆成小门禁，以便默认检查覆盖完整产品结构守卫，同时避免旧 monolith 文件路径导致误判。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "将旧 `product-structure.test.mjs` 改为薄入口，不再保留失败审计基线。"
+  - "将剩余 product-structure assertions 拆成 production wording、global shell、master-data detail context、master-data maintenance actions、master-data agent workflow、business import、result chain 七个测试文件。"
+  - "将过期断言从 `master-data-maintenance-workbench.tsx` 重定向到 agents、details、references、forms、payloads、entities、import-dialog model 等真实源码模块。"
+  - "七个新门禁接入 `scripts/check.sh`，旧薄入口可单独运行通过。"
+  - "不修改 `app/**`、`components/**` 业务实现、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空。"
+status: "done"
+notes: "IM226 已完成：剩余 product-structure 断言全部转为绿色小门禁并进入默认检查。"
+```
+
+### US847 - import-center batch apply 门禁子拆分
+
+```yaml
+id: US847
+requirement_ids:
+  - R927
+module: "导入中心测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色的大型导入中心测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `import-center-batch-apply-model.test.mjs` 改为薄入口。"
+  - "批次应用 URL/action、applied result card、readiness issue groups 分别成为独立测试文件。"
+  - "`scripts/check.sh` 显式运行拆分后的三个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US846"
+status: "done"
+notes: "IM227 已完成：import-center batch apply 6 个 tests 拆为 action 4、applied-result 1、readiness 1。"
+```
+
+### US848 - master-data agent 门禁子拆分
+
+```yaml
+id: US848
+requirement_ids:
+  - R928
+module: "主数据测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色的大型主数据客服人员测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `master-data-maintenance-agent-model.test.mjs` 改为薄入口。"
+  - "客服人员列表/筛选、详情上下文、导入弹窗、维护动作/反馈分别成为独立测试文件。"
+  - "`scripts/check.sh` 显式运行拆分后的四个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US847"
+status: "done"
+notes: "IM228 已完成：master-data agent 8 个 tests 拆为 list 3、detail 1、import 1、action 3。"
+```
+
+### US849 - master-data reference 门禁子拆分
+
+```yaml
+id: US849
+requirement_ids:
+  - R929
+module: "主数据测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色的大型主数据引用对象测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `master-data-maintenance-reference-model.test.mjs` 改为薄入口。"
+  - "引用对象列表/入口、维护动作 payload、组织/技能详情归属分别成为独立测试文件。"
+  - "`scripts/check.sh` 显式运行拆分后的三个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US848"
+status: "done"
+notes: "IM229 已完成：master-data reference 8 个 tests 拆为 list 3、action 3、detail 2。"
+```
+
+### US850 - import-center 剩余大门禁子拆分
+
+```yaml
+id: US850
+requirement_ids:
+  - R930
+module: "导入中心测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色但偏大的导入中心测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `import-center-template-model.test.mjs`、`import-center-batch-list-model.test.mjs`、`import-center-review-case-detail-model.test.mjs` 改为薄入口。"
+  - "template 按 URL、action、fit 拆分；batch list 按 summary、filter、navigation 拆分；review-case detail 按 context、evidence、timeline 拆分。"
+  - "`scripts/check.sh` 显式运行拆分后的九个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US849"
+status: "done"
+notes: "IM230 已完成：import-center 三个旧入口共 17 个 tests 拆为 9 个子门禁，旧入口保留 import 薄入口。"
+```
+
+### US851 - import-center 长门禁继续子拆分
+
+```yaml
+id: US851
+requirement_ids:
+  - R931
+module: "导入中心测试门禁"
+role: "产品经理"
+story: "作为产品经理，我希望继续把已绿色但单文件偏长的导入中心测试门禁拆成更小的可读文件，以便后续 review、上下文加载和故障定位更稳定。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `import-center-comparison-model.test.mjs`、`import-center-version-action-model.test.mjs`、`import-center-version-comparison-model.test.mjs`、`import-center-result-trace-model.test.mjs`、`import-center-exception-model.test.mjs` 改为薄入口。"
+  - "comparison、version、result trace、exception 按单一产品断言拆成 17 个子门禁。"
+  - "`scripts/check.sh` 显式运行拆分后的十七个门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US850"
+status: "done"
+notes: "IM231 已完成：import-center 五个旧入口共 18 个 tests 拆为 17 个子门禁，旧入口保留 import 薄入口。"
+```
+
+### US852 - 中等粒度测试门禁拆分
+
+```yaml
+id: US852
+requirement_ids:
+  - R932
+module: "测试门禁治理"
+role: "产品经理"
+story: "作为产品经理，我希望继续按中等粒度拆分已绿色但偏大的测试门禁，以便减少上下文负担，同时避免把测试文件拆得过散。"
+task_type: "harness"
+priority: "P1"
+acceptance:
+  - "旧 `dashboard-table-model.test.mjs`、`import-center-batch-detail-model.test.mjs`、`product-structure-master-data-detail-context.test.mjs` 改为 import 薄入口。"
+  - "dashboard model 拆为 anomaly、sync/heatmap、schedule-plan、risk/unavailability 四个子门禁。"
+  - "import-center batch detail 拆为 URL/row、summary、correction 三个子门禁。"
+  - "product-structure master-data detail context 拆为 terminology、workplace/vendor、agent/reference detail 三个子门禁。"
+  - "`scripts/check.sh` 显式运行拆分后的十个子门禁。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 保持空，不保留 done history。"
+dependencies:
+  - "US851"
+status: "done"
+notes: "IM232 已完成：三组中等粒度测试门禁共 24 个 tests 拆为 10 个子门禁，旧入口保留 import 薄入口。"
+```
+
+### US832 - Dashboard anomaly 链路收口与真实工作区回切
+
+```yaml
+id: US832
+requirement_ids:
+  - R912
+module: "运营工作台"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望收口 dashboard anomaly 链路并切回真实工作区优先级，以便停止继续在经营总览中堆叠异常处理语义。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增 dashboard anomaly 链路收口文档，汇总 IM209、IM210、IM211 的产品边界。"
+  - "明确 dashboard 不继续补静态 downstream ID、异常处理状态、复核结论或生产动作。"
+  - "给出下一阶段回切真实 review-case、comparison-run、data-quality 工作区的推荐顺序。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US831"
+status: "done"
+notes: "IM212 已完成：dashboard anomaly 链路停止扩展，下一阶段应回到真实复核、对比或导入质量工作区。"
+```
+
+### US829 - Dashboard anomaly table 产品归属审计
+
+```yaml
+id: US829
+requirement_ids:
+  - R909
+module: "运营工作台"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望审计 `/dashboard` anomaly table 的产品归属和后续方向，以便决定它应保留为总览摘要、迁入异常复核链路，还是继续作为本地展示表暂缓改造。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "读取 `/dashboard`、`components/data-table.tsx`、`app/dashboard/data.ts`、历史 dashboard parity 需求和当前 MainTableShell 收口文档。"
+  - "明确 dashboard anomaly table 当前产品 owner、当前责任和不应承担的业务责任。"
+  - "给出后续 2-3 条产品路径，并标明哪些路径需要新的产品 Gate。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US828"
+status: "done"
+notes: "IM209 已完成：dashboard anomaly table 当前保留为经营总览的本地 overview widget，不进入 MainTableShell 机械迁移队列。"
+```
+
+### US830 - Dashboard 下游工作区入口规格
+
+```yaml
+id: US830
+requirement_ids:
+  - R910
+module: "运营工作台"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望定义 dashboard anomaly row 的下游工作区入口规格，以便未来实现入口时只做总览到既有工作区的跳转，而不把 dashboard 改成异常处理主工作台。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "读取 IM209 审计文档和现有 comparison-run、review-case、import batch、actual-log production、schedule production 详情路由。"
+  - "明确 dashboard 可指向的既有下游工作区、允许跳转条件和不可跳转空态。"
+  - "明确 dashboard 只拥有摘要与入口，不拥有复核写入、关闭、对比计算、批次应用或生产动作。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US829"
+status: "done"
+notes: "IM210 已完成：未来 dashboard 下游入口只能链接到已有详情工作区；缺少稳定下游 ID 时保持 overview 或进入已确认列表入口，不伪造处理闭环。"
+```
+
+### US831 - Dashboard anomaly row 下游入口阻塞态
+
+```yaml
+id: US831
+requirement_ids:
+  - R911
+module: "运营工作台"
+role: "运营负责人"
+story: "作为运营负责人，我希望 dashboard anomaly row 在缺少稳定下游 ID 时明确显示不可跳转状态，以便不把经营总览误认为异常处理入口。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增模型测试覆盖无 downstreamEntry 时返回 blocked entry。"
+  - "新增模型测试覆盖有稳定 review case downstreamEntry 时才生成既有工作区链接。"
+  - "`components/data-table.tsx` 不再显示泛化行操作占位；缺少稳定下游 ID 时显示 `等待下游定位` disabled 状态。"
+  - "不新增真实异常查询、新路由、新查询参数、后端、数据库、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US830"
+status: "done"
+notes: "IM211 已完成：当前静态 dashboard anomaly rows 不携带 downstreamEntry，因此表格显示阻塞态；模型只在 future stable downstream ID 存在时生成链接。"
+```
+
+### US828 - MainTableShell 收口与 data-table 暂缓决策
+
+```yaml
+id: US828
+requirement_ids:
+  - R908
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望收口 SimpleTable 与 MainTableShell 表格抽象链路，以便确认 `data-table` 暂缓迁移并把下一阶段产品优先级从技术债切回业务价值。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "明确 IM197-IM207 已完成的表格抽象边界和当前收益。"
+  - "明确 `components/data-table.tsx` 暂缓迁移的产品原因：它属于 `/dashboard` 异常演示表，产品 owner、路由责任和真实业务用途尚未重新确认。"
+  - "更新 MainTableShell 边界文档，写清重新评估 `data-table` 的前置条件。"
+  - "不修改 `app/**`、`components/**`、`hooks/**`、`lib/**`、后端、依赖或 package/lockfile。"
+  - "完成后 current queue 与 active tasks 回到空，不保留 done history。"
+dependencies:
+  - "US827"
+status: "done"
+notes: "IM208 已完成：当前表格抽象链路收口，`data-table` 继续暂缓，下一阶段应回到业务价值更清晰的产品切片。"
+```
+
+### US827 - MainTableShell 第二刀迁移 unavailability-table
+
+```yaml
+id: US827
+requirement_ids:
+  - R907
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把不可用管理主表迁移到 MainTableShell，以便复用主表布局、列显隐、分页和渲染壳层，同时保留不可用记录的业务筛选、摘要、影响入口和班次入口。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/main-table-shell.tsx` 支持 embedded 模式，避免在已有页面 Card 内再渲染一层 Card。"
+  - "`components/unavailability-table.tsx` 改为传入列定义、筛选后的数据、摘要和 toolbar，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留不可用表搜索、状态筛选、列显隐、分页、排序、汇总、影响链接、班次链接、空状态文案和业务数据不变。"
+  - "扩展结构测试，防止 `unavailability-table` 重新拥有主表渲染循环，并防止 `data-table` 在任务前提前接入 MainTableShell。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US826"
+status: "done"
+notes: "IM207 已完成：MainTableShell 第二刀只迁移不可用管理主表，页面外层 Card 与业务职责保持原位。"
+```
+
+### US826 - MainTableShell 首刀迁移 schedule-plan-table
+
+```yaml
+id: US826
+requirement_ids:
+  - R906
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望先把排班计划主表迁移到 MainTableShell，以便共享主表布局、列显隐、分页和渲染壳层，同时不把排班计划的业务筛选、摘要、列定义或详情入口抽进通用组件。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增 `components/main-table-shell.tsx`，拥有 TanStack Table 渲染、排序、列显隐、分页、empty row 和 toolbar/summary slot。"
+  - "`components/schedule-plan-table.tsx` 改为传入列定义、筛选后的数据、摘要和 toolbar，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留排班计划搜索、状态筛选、缺口筛选、列显隐、分页、排序、汇总、详情链接、空状态文案和业务数据不变。"
+  - "扩展结构测试，防止 `schedule-plan-table` 重新拥有主表渲染循环，并防止 `unavailability-table`/`data-table` 在各自任务前提前接入 MainTableShell。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US825"
+status: "done"
+notes: "IM206 已完成：MainTableShell 首刀只迁移排班计划主表，业务职责仍留在具体表格。"
+```
+
+### US825 - MainTableShell 结构护栏
+
+```yaml
+id: US825
+requirement_ids:
+  - R905
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望先用文档和结构测试锁住 MainTableShell 边界，以便未来实现主表壳层时不会提前混入业务列、动作、路由、查询参数或业务语义。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增 `docs/design/main-table-shell-structure-guard.md`，列出未来 shell 允许和禁止拥有的职责。"
+  - "新增 `scripts/tests/main-table-shell-structure.test.mjs`，保护 IM204 的候选顺序、职责边界和 no-implementation 约束。"
+  - "测试确认 IM205 不创建 `components/main-table-shell.tsx`，也不让候选表提前 import/render MainTableShell。"
+  - "不修改 UI 代码、页面、路由、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US824"
+status: "done"
+notes: "IM205 已完成：只新增 docs/test 结构护栏，未进入 UI 实现。"
+```
+
+### US824 - MainTableShell 边界规格
+
+```yaml
+id: US824
+requirement_ids:
+  - R904
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望在迁移主列表/工作台表格前先定义 MainTableShell 边界，以便避免把搜索、筛选、分页、动作和业务语义误塞进轻量 SimpleTable。"
+task_type: "frontend-audit"
+priority: "P1"
+acceptance:
+  - "新增 `docs/design/main-table-shell-boundary-spec.md`，说明为什么不继续机械迁移剩余 useReactTable。"
+  - "规格明确 `SimpleTable` 只适用于轻量子表格，未来 `MainTableShell` 只拥有布局、列显隐、分页和渲染壳层。"
+  - "规格给出 `schedule-plan-table`、`unavailability-table`、`data-table` 的候选优先级和暂缓理由。"
+  - "不修改 UI 代码、页面、路由、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US823"
+status: "done"
+notes: "IM204 已完成：先写边界规格，不进入主表实现。"
+```
+
+### US823 - SimpleTable 第七刀迁移 shift-details-table
+
+```yaml
+id: US823
+requirement_ids:
+  - R903
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把班次明细表迁移到共享 SimpleTable，以便完成当前低风险轻量表格迁移链并在进入主列表抽象前停止复盘。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/shift-details-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留班次明细表的列、计划链接、排序入口、默认 `plan_date` 排序、空状态文案和业务数据不变。"
+  - "扩展结构测试覆盖 `shift-details-table`，防止重复渲染循环回流。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US822"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
+### US818 - SimpleTable 第二刀迁移 schedule-plan-interval-table
+
+```yaml
+id: US818
+requirement_ids:
+  - R898
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把排班计划时段子表格迁移到共享 SimpleTable，以便在第二个低风险表格上验证轻量表格抽取模式。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/schedule-plan-interval-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留排班计划时段表的列、排序入口、默认 `interval_start` 排序、空状态文案和业务数据不变。"
+  - "扩展结构测试覆盖 `schedule-plan-interval-table`，防止重复渲染循环回流。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US817"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
+### US819 - SimpleTable 第三刀迁移 schedule-risk-shift-table
+
+```yaml
+id: US819
+requirement_ids:
+  - R899
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把排班风险班次子表格迁移到共享 SimpleTable，以便继续压缩轻量子表格里的重复 TanStack 渲染循环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/schedule-risk-shift-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留排班风险班次表的列、排序入口、默认 `plan_id` 排序、空状态文案和业务数据不变。"
+  - "扩展结构测试覆盖 `schedule-risk-shift-table`，防止重复渲染循环回流。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US818"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
+### US820 - SimpleTable 第四刀迁移 schedule-risk-unavailability-table
+
+```yaml
+id: US820
+requirement_ids:
+  - R900
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把排班风险不可用记录子表格迁移到共享 SimpleTable，以便继续压缩轻量子表格里的重复 TanStack 渲染循环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/schedule-risk-unavailability-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留排班风险不可用记录表的列、排序入口、默认 `staff_name` 排序、空状态文案和业务数据不变。"
+  - "扩展结构测试覆盖 `schedule-risk-unavailability-table`，防止重复渲染循环回流。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US819"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
+### US821 - SimpleTable 第五刀迁移 unavailability-impact-shift-table
+
+```yaml
+id: US821
+requirement_ids:
+  - R901
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把不可用影响班次子表格迁移到共享 SimpleTable，以便继续压缩轻量子表格里的重复 TanStack 渲染循环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/unavailability-impact-shift-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留不可用影响班次表的列、计划链接、排序入口、默认 `plan_id` 排序、空状态文案和业务数据不变。"
+  - "扩展结构测试覆盖 `unavailability-impact-shift-table`，防止重复渲染循环回流。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US820"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
+### US822 - SimpleTable 第六刀迁移 unavailability-impact-risk-table
+
+```yaml
+id: US822
+requirement_ids:
+  - R902
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望把不可用影响风险子表格迁移到共享 SimpleTable，以便继续压缩轻量子表格里的重复 TanStack 渲染循环。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`components/unavailability-impact-risk-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留不可用影响风险表的列、明细链接、排序入口、默认 `risk_level` 排序、空状态文案和业务数据不变。"
+  - "扩展结构测试覆盖 `unavailability-impact-risk-table`，防止重复渲染循环回流。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+dependencies:
+  - "US821"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
+### US817 - SimpleTable 首刀迁移 demand-plan-table
+
+```yaml
+id: US817
+requirement_ids:
+  - R897
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望先把一个轻量子表格迁移到共享 SimpleTable，以便验证表格分层抽取方式后再扩展到更多表格。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增 `components/simple-table.tsx`，集中轻量表格的 TanStack Table 渲染、排序和空状态。"
+  - "`components/demand-plan-table.tsx` 只保留列定义和 `SimpleTable` 调用，不再直接拥有 `useReactTable`、`flexRender` 或 shadcn Table 渲染循环。"
+  - "保留预测需求表的列、排序入口、默认排序、空状态文案和业务数据不变。"
+  - "不修改页面、路由、业务文案、后端、依赖或 package/lockfile。"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有表格视觉与交互，不做重设计。"
+```
+
+### US816 - 共享列表搜索与状态筛选控件
+
+```yaml
+id: US816
+requirement_ids:
+  - R896
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望四个旧列表页复用一致的搜索栏和状态筛选控件，以便列表筛选交互不继续复制局部 JSX。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增 `SearchInputBar` 和 `StatusFilterPills` 两个可组合控件，沿用现有 shadcn Button/Input 外观。"
+  - "`/demand-plans`、`/schedule-plans`、`/shift-details`、`/unavailability` 不再保留重复搜索栏 JSX。"
+  - "`/demand-plans` 只使用 `SearchInputBar`，不渲染状态筛选；其他三页保留现有状态筛选和清空能力。"
+  - "不修改页面路由、查询参数、业务文案、后端、依赖或 package/lockfile。"
+status: "done"
+notes: "已完成。Product Design brief 已回放：保持现有列表筛选视觉与交互，不做重设计。"
 ```
 
 ### US780 - 职场详情只读服务团队关系
@@ -5761,4 +6682,497 @@ acceptance:
   - "上传结果回流 `/actual-logs/production?import_dialog=1` 并展示批次详情入口。"
   - "不新增后端 route、schema/migration、依赖、权限、审批、导出、批量应用、自动排班、生产公式、结算或收费因子。"
 notes: "IM171 已完成：登录/状态日志页 Header 的两个导入入口打开当前页 Dialog；Dialog 三步为上传文件、字段映射、导入结果，文件 input 在 step 切换时保持挂载；登录日志提交 `login_log`，状态日志提交 `status_log`，上传结果回流当前页并提供批次详情入口。"
+```
+
+### US792 - 前端健康恢复计划固化
+
+```yaml
+id: US792
+requirement_ids:
+  - R872
+module: "前端健康恢复"
+role: "PM"
+story: "作为 PM，我希望把前端健康恢复计划写入仓库、队列和追踪文件，以便上下文压缩后仍能按明确顺序继续执行，而不是靠聊天历史记忆。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "docs/frontend-health-recovery-plan.md 记录恢复入口、阶段顺序、Product Design 门禁、非目标和验收指标。"
+  - "docs/superpowers/plans/2026-06-12-frontend-health-recovery.md 记录可执行细化计划。"
+  - "docs/current/STORY_QUEUE.yaml 和 docs/current/ACTIVE_TASKS.yaml 只包含 US792/IM172。"
+  - "TRACE_INDEX.yaml 建立 R872/US792/IM172 映射且不存储 lifecycle status。"
+  - "本轮不修改 app、components、lib、backend、package 或 lockfile。"
+status: "done"
+notes: "IM172 已完成：计划和恢复入口已固化，current queue 已清空；后续前端/页面/功能设计任务必须先使用 Product Design 插件确认 brief；IM173+ 只在计划中列出，需要单独 seed。"
+```
+
+### US793 - 抽取前端 API 结果和错误工具
+
+```yaml
+id: US793
+requirement_ids:
+  - R873
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望前端页面共用同一套 API 结果类型和错误格式化函数，以便后续页面数据读取和错误展示不再复制粘贴同一段逻辑。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增共享 `ApiResult<T>` 类型，现有重复页面改为引用共享类型。"
+  - "新增共享 `formatApiError` 函数，现有重复页面改为引用共享函数。"
+  - "结构测试防止继续在目标页面内定义重复 `type ApiResult<T>` 或 `function formatApiError`。"
+  - "不改变页面 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM173 已完成：共享 API result/error 工具已抽取，结构测试已防止目标文件重新定义本地 `ApiResult<T>` 或 `formatApiError`；`fetchImportBatches` 和 field-mapping fetch 去重仍留给 IM174。"
+```
+
+### US794 - 抽取导入批次和字段映射模板 fetch 工具
+
+```yaml
+id: US794
+requirement_ids:
+  - R874
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望导入批次和字段映射模板读取逻辑共用同一套工具，以便后续页面数据读取不再复制同一段 fetch、错误处理和空数组兜底。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增共享 `lib/import-api.ts`，提供 `fetchImportBatches` 和 `fetchImportFieldMappingTemplates`。"
+  - "重复页面改为引用共享 fetch 工具，页面专属 fetch 函数继续留在页面内。"
+  - "结构测试防止目标页面继续本地定义 `fetchImportBatches` 或 `fetchImportFieldMappingTemplates`。"
+  - "不改变页面 UI、导航、fetch URL、返回数据结构、错误文案语义、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM174 已完成：共享 import fetch 工具已抽取，结构测试已防止目标文件重新定义本地 `fetchImportBatches` 或 `fetchImportFieldMappingTemplates`；Server Action runtime guards 仍留给 IM175。"
+```
+
+### US795 - 补充导入和比对 Server Action 运行时保护
+
+```yaml
+id: US795
+requirement_ids:
+  - R875
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望数据质量相关 Server Action 在运行时校验关键枚举和回跳目标，以便非法表单值不会进入 API 请求或成功回跳。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`uploadImportCsvAction` 对 `file_type` 和 `result_redirect_to` 做运行时白名单校验。"
+  - "`createImportFieldMappingTemplateAction` 和 `applyImportBatchAction` 对 `file_type` 做运行时白名单校验。"
+  - "本地比对触发 action 对 `comparison_type` 做共享 guard，非法值进入失败回跳，不构造成功请求。"
+  - "不改变页面 UI、导航、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM175 已完成：上传、字段映射模板创建、批次应用、批次详情比对触发和版本工作台比对触发均先解析受控枚举或回跳目标；非法值进入失败回跳，不构造成功请求。error/loading 页面仍留给 IM176/IM177。"
+```
+
+### US796 - 提供全局页面异常恢复入口
+
+```yaml
+id: US796
+requirement_ids:
+  - R876
+module: "前端健康恢复"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望页面异常时仍能看到统一的错误提示和恢复操作，以便可以重试或回到经营总览继续工作。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 `app/error.tsx`，作为 Next.js app router 全局 error boundary。"
+  - "错误页使用现有 AppShell、shadcn Alert/Button 和语义主题 token。"
+  - "提供 `reset()` 重试按钮和返回 `/dashboard` 的安全入口。"
+  - "不新增依赖，不改变业务页面、导航、后端、数据库、权限、审批、导出、批量、自动排班、公式、结算或收费因子。"
+status: "done"
+notes: "IM176 已完成：全局 error boundary 可恢复；route-local loading 仍留给 IM177。"
+```
+
+### US797 - 核心业务入口显示加载骨架屏
+
+```yaml
+id: US797
+requirement_ids:
+  - R877
+module: "前端健康恢复"
+role: "BPO 运营人员"
+story: "作为 BPO 运营人员，我希望进入核心业务入口等待数据时看到与页面结构一致的加载骨架，以便知道页面正在加载而不是空白。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/dashboard`、`/master-data`、`/demand-plans`、`/schedule-plans`、`/actual-logs/production`、`/data-quality` 均有 route-local `loading.tsx`。"
+  - "loading 使用现有 AppShell 和 shadcn Skeleton，保留对应页面标题或 Breadcrumb。"
+  - "不写无意义的功能说明，不做 route-group 迁移，不修改现有业务页面。"
+  - "不新增依赖，不改变后端、数据库、权限、审批、导出、批量、自动排班、公式、结算或收费因子。"
+status: "done"
+notes: "IM177 已完成：核心入口具备 route-local loading skeleton；长期 `(main)` route-group 迁移仍保持延期。"
+```
+
+### US798 - 保持导入中心模型入口兼容并拆出基础工具
+
+```yaml
+id: US798
+requirement_ids:
+  - R878
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望导入中心巨型 model 文件先拆出类型、格式化函数和导航 URL 构造函数，以便后续继续拆分汇总逻辑时不会破坏现有页面调用。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 `components/import-center-types.ts`，承载原 model 中的导出类型定义。"
+  - "新增 `components/import-center-formatters.ts`，承载批次显示、文件类型、处理状态、应用状态、就绪状态和行状态格式化函数。"
+  - "新增 `components/import-center-navigation.ts`，承载导入中心 API URL 与页面 href 构造函数。"
+  - "`components/import-center-model.ts` 继续 re-export 旧公开入口，现有调用方无需改 import path。"
+  - "结构测试防止入口回退为继续本地定义核心类型、格式化函数或 URL 构造函数。"
+  - "不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM178 已完成：第一刀只做模型基础设施拆分；剩余业务 summarizer/builder 继续留给后续 IM。"
+```
+
+### US799 - 拆分导入中心剩余汇总构造逻辑
+
+```yaml
+id: US799
+requirement_ids:
+  - R879
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望导入中心剩余 summarizer 和 builder 按责任拆到独立文件，以便后续维护时不再集中修改单个巨型 model 文件。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 list/version/review/batch/template/comparison 六个导入中心责任 model 文件。"
+  - "`components/import-center-model.ts` 降为 thin compatibility entrypoint，只保留 re-export。"
+  - "旧公开函数名和 import path 保持兼容，现有调用方无需改 import path。"
+  - "结构测试防止主要 summarizer 回退到 `components/import-center-model.ts`。"
+  - "不改变可见 UI、导航、API URL 语义、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM179 已完成：导入中心剩余 summarizer/builder 已按责任拆分；可见 UI 和业务行为不变。"
+```
+
+### US800 - 拆分主数据维护 workbench 巨型文件
+
+```yaml
+id: US800
+requirement_ids:
+  - R880
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望主数据维护 workbench 按页面责任拆到独立文件，以便后续修人员、职场、供应商、组织和技能页面时不再集中修改单个巨型 UI 文件。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 actions、agents、references、details、forms、fields 六个主数据维护责任文件。"
+  - "`components/master-data-maintenance-workbench.tsx` 降为 thin compatibility entrypoint，只保留 re-export。"
+  - "旧公开组件名和 import path 保持兼容，现有调用方无需改 import path。"
+  - "结构测试防止主要页面组件和表单控件回退到旧巨型入口。"
+  - "不改变可见 UI、路由、交互、业务语义、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM180 已完成：主数据维护 workbench 已按 actions/agents/references/details/forms/fields 拆分；旧入口保持兼容导出，可见 UI 和业务行为不变。"
+```
+
+### US801 - 拆分主数据维护 model 巨型文件
+
+```yaml
+id: US801
+requirement_ids:
+  - R881
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望主数据维护 model 按类型、实体、payload、人员、reference、详情、导入弹窗和格式化职责拆到独立文件，以便后续可见产品修复不会继续堆到单个巨型 model 文件。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增 types、entities、payloads、agent-model、reference-model、detail-model、import-dialog-model、formatters 八个责任文件。"
+  - "`components/master-data-maintenance-model.ts` 降为 thin compatibility entrypoint，只保留 re-export。"
+  - "旧公开类型、函数名和 import path 保持兼容，现有调用方无需改 import path。"
+  - "结构测试防止主要 summarizer、payload builder 和 helper 回退到旧巨型入口。"
+  - "不改变可见 UI、路由、交互、业务语义、API URL、返回数据结构、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM181 已完成：主数据维护 model 已按八个责任文件拆分；旧入口保持兼容导出，可见 UI、业务行为和数据契约不变。"
+```
+
+### US802 - 固化可见动作位置规则
+
+```yaml
+id: US802
+requirement_ids:
+  - R882
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望页面级、筛选区、列表级、行内和危险确认动作有稳定结构约束，以便后续页面开发不会再把动作混放到同一个区域。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`SiteHeader` 的页面级动作区域有稳定 `data-action-scope=\"page\"`。"
+  - "客服人员筛选区只承载 `查询`、`重置`，并有稳定 `data-action-scope=\"filter\"`。"
+  - "客服人员列表工具栏只承载选择态与批量/列表级占位动作，并有稳定 `data-action-scope=\"list\"`。"
+  - "客服人员行内动作区域有稳定 `data-action-scope=\"row\"`。"
+  - "冻结确认 Dialog 的危险确认区域有稳定 `data-action-scope=\"danger\"`。"
+  - "结构测试防止页级动作、筛选动作和列表动作重新混放。"
+  - "不新增按钮、业务能力、路由、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM182 已完成：动作区域已有结构标记和回归测试；页面级动作、筛选动作、列表动作、行内动作和危险确认动作边界被固化。"
+```
+
+### US803 - 复用统一空状态
+
+```yaml
+id: US803
+requirement_ids:
+  - R883
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望常见空列表、读取失败和无匹配结果使用统一空状态组件，以便页面不会因为局部实现不同而出现字体、间距、图标和动作位置漂移。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "新增共享 `components/empty-state.tsx`。"
+  - "共享空状态使用语义 token、稳定 `data-slot`，并支持 compact 和外部传入动作区域。"
+  - "替换已存在的同名本地 `EmptyState` 实现，保留原文案和原业务行为。"
+  - "结构测试防止目标文件继续定义本地 `EmptyState`。"
+  - "不新增业务按钮、路由、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM183 已完成：共享 EmptyState 已用于三个已有同名空状态位置；本轮没有扩大到所有 EmptyPanel/PanelState。"
+```
+
+### US804 - 统一主数据维护表单反馈
+
+```yaml
+id: US804
+requirement_ids:
+  - R884
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望主数据维护表单的必填提示、提交按钮和提交中反馈使用统一组件，以便后续人员、职场、供应商、组织和技能表单不会继续出现按钮字体、尺寸和反馈状态漂移。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "维护表单使用共享 submit 组件承载图标、按钮尺寸、禁用态和提交中文案。"
+  - "必填字段使用统一视觉标识，但不改变现有 required 条件。"
+  - "结构测试防止维护表单回退到散落的裸 submit Button。"
+  - "不新增业务字段、按钮、路由、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM184 已完成：主数据维护表单已使用统一 submit pending 组件和必填视觉标识；本轮未新增业务字段、按钮、路由或后端能力。"
+```
+
+### US805 - 复核导航和 Breadcrumb 规则
+
+```yaml
+id: US805
+requirement_ids:
+  - R885
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望现有导航和 Breadcrumb 规则被结构化约束，以便详情、新建、编辑页能稳定高亮正确父级，并避免页面内容区重复堆标题或恢复未经确认的大模块入口。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "详情、新建、编辑页通过父级 path 规则高亮正确导航项。"
+  - "Breadcrumb 入口由 shell/header 统一承载，页面内容区不重复造同级标题结构。"
+  - "结构测试防止新增大模块导航或恢复禁用的 generic 数据质量/导入中心入口。"
+  - "不新增业务导航模块、业务页面、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM185 已完成：导航/Breadcrumb 规则已由结构测试固化，详情/新建/编辑页父级高亮和 header breadcrumb slot 有回归保护。"
+```
+
+### US806 - 收口旧计划脚手架导航入口
+
+```yaml
+id: US806
+requirement_ids:
+  - R886
+module: "前端健康恢复"
+role: "产品与开发维护者"
+story: "作为产品与开发维护者，我希望 Sidebar 不再暴露旧 demo 的班次明细和不可用管理入口，以便当前产品入口只呈现已确认业务模块。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "Sidebar 保留已确认的经营总览、需求计划、排班计划、登录/状态日志和主数据入口。"
+  - "Sidebar 不再暴露 `班次明细`、`不可用管理`、`/shift-details`、`/unavailability` 入口。"
+  - "旧路由文件不删除，避免扩大为路由清理或迁移任务。"
+  - "结构测试防止旧 demo 入口回流。"
+  - "不新增页面、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM186 已完成：旧计划脚手架入口已从 Sidebar 收口，导航结构测试已覆盖。"
+```
+
+### US807 - 收口排班计划旧链路入口
+
+```yaml
+id: US807
+requirement_ids:
+  - R887
+module: "前端健康恢复"
+role: "排班计划使用者"
+story: "作为排班计划使用者，我希望排班计划列表和详情页只停留在计划本身，不再把我带入旧 demo 的风险、班次明细或不可用页面。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/schedule-plans` 不再导入或渲染旧链路卡、旧风险表或旧 demo 路由链接。"
+  - "`/schedule-plans/[planId]` 不再查询旧风险/不可用数据，也不再渲染旧复核链路按钮。"
+  - "旧 `/schedule-risks`、`/shift-details`、`/unavailability` 路由保留，不扩大为路由删除任务。"
+  - "结构测试防止当前排班计划入口重新链接到旧 demo 路由。"
+  - "不新增页面、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM187 已完成：当前排班计划入口已停止跳转旧 demo 路由，旧路由仍保留兼容。"
+```
+
+### US808 - 预测版本详情入口语义收口
+
+```yaml
+id: US808
+requirement_ids:
+  - R888
+module: "业务版本流"
+role: "需求预测使用者"
+story: "作为需求预测使用者，我希望预测版本列表里的查看操作和详情页都明确围绕预测业务版本，而不是让我误以为进入的是导入批次处理页面。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/demand-plans/production` 列表行操作明确进入预测版本详情。"
+  - "`/demand-plans/production/[batchId]` Breadcrumb、返回入口和页面说明保持预测版本语义。"
+  - "结构测试防止预测版本详情入口退回来源批次处理语义。"
+  - "不新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM188 已完成：预测版本列表和详情页入口语义已收口为预测版本，不新增路由或写能力。"
+```
+
+### US809 - 排班版本详情入口语义收口
+
+```yaml
+id: US809
+requirement_ids:
+  - R889
+module: "业务版本流"
+role: "排班计划使用者"
+story: "作为排班计划使用者，我希望排班版本列表里的查看操作和详情页都明确围绕排班业务版本，而不是让我误以为进入的是导入批次处理页面。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/schedule-plans/production` 列表行操作明确进入排班版本详情。"
+  - "`/schedule-plans/production/[batchId]` Breadcrumb、返回入口和页面说明保持排班版本语义。"
+  - "结构测试防止排班版本详情入口退回来源批次处理语义。"
+  - "不新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM189 已完成：排班版本列表和详情页入口语义已收口为排班版本，不新增路由或写能力。"
+```
+
+### US810 - 登录/状态日志版本详情入口语义收口
+
+```yaml
+id: US810
+requirement_ids:
+  - R890
+module: "业务版本流"
+role: "登录/状态日志使用者"
+story: "作为登录/状态日志使用者，我希望日志版本列表里的查看操作和详情页都明确围绕实际日志业务版本，而不是让我误以为进入的是导入批次处理页面。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/actual-logs/production` 列表行操作明确进入日志版本详情。"
+  - "`/actual-logs/production/[batchId]` Breadcrumb、返回入口和页面说明保持日志版本语义。"
+  - "结构测试防止日志版本详情入口退回来源批次处理语义。"
+  - "不新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM190 已完成：登录/状态日志版本列表和详情页入口语义已收口为日志版本，不新增路由或写能力。"
+```
+
+### US811 - 对比运行详情结果回看入口语义收口
+
+```yaml
+id: US811
+requirement_ids:
+  - R891
+module: "业务版本流"
+role: "比对结果查看者"
+story: "作为比对结果查看者，我希望对比运行详情页明确是业务版本语境下的结果回看页，而不是默认把我带回复核案例列表。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/data-quality/comparison-runs/[runId]` 顶部返回入口回到业务版本列表。"
+  - "页面保留来源链路 tab 内的来源批次和复核案例入口，不把来源批次或复核案例设为详情页父级。"
+  - "结构测试防止对比运行详情页主返回入口退回 `返回复核案例`。"
+  - "不新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM191 已完成：对比运行详情页主返回入口已收口为业务版本列表，不新增路由或写能力。"
+```
+
+### US812 - 业务版本列表本地比对动作语义收口
+
+```yaml
+id: US812
+requirement_ids:
+  - R892
+module: "业务版本流"
+role: "业务版本列表使用者"
+story: "作为业务版本列表使用者，我希望列表里的本地比对动作和结果回看都明确表达为比对运行，以便我知道这是一次可追踪的计算运行，而不是普通页面跳转或泛泛结果入口。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/data-quality/versions` 的可提交比对入口使用 `比对运行` 语义。"
+  - "比对提交后的成功/失败反馈和结果回看入口使用 `比对运行` 语义。"
+  - "业务版本列表的结果回看标题使用 `比对运行结果` 语义。"
+  - "结构测试防止文案退回 `发起一次比对`、`查看结果列表` 或泛泛 `比对结果`。"
+  - "不新增路由、业务能力、后端、数据库、依赖或 package/lockfile。"
+status: "done"
+notes: "IM192 已完成：业务版本列表的本地比对入口、提交反馈和结果回看标题已收口为比对运行语义，不新增路由或写能力。"
+```
+
+### US813 - 共享 lib helper 回归护栏
+
+```yaml
+id: US813
+requirement_ids:
+  - R893
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望共享 API/import helper 的恢复成果有结构回归护栏，以便后续重构不会悄悄恢复重复定义。"
+task_type: "harness"
+priority: "P0"
+acceptance:
+  - "新增结构测试确认 `lib/api-result.ts`、`lib/api-error.ts`、`lib/import-api.ts` 存在。"
+  - "结构测试确认共享 helper 的关键导出存在。"
+  - "结构测试限制 `formatApiError`、`fetchImportBatches`、`fetchImportFieldMappingTemplates` 的重复函数定义回流。"
+  - "不修改现有 `app/**`、`components/**`、`lib/**` 业务源码，不修改 package/lockfile 或 check 脚本。"
+status: "done"
+notes: "IM193 已完成：使用 Qoder 受控实现新增共享 lib helper 回归结构测试，Codex 审查与验证。"
+```
+
+### US814 - 共享 MetricCard 首刀
+
+```yaml
+id: US814
+requirement_ids:
+  - R894
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望完全同构的指标卡先收敛到共享 MetricCard，以便后续页面重构不继续复制局部卡片实现。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "新增共享 `components/metric-card.tsx`，使用既有 shadcn Card 组合和语义 token。"
+  - "`app/demand-plans/page.tsx`、`app/schedule-plans/page.tsx`、`app/shift-details/page.tsx` 改为引用共享 MetricCard，不再保留本地同构指标卡函数。"
+  - "新增结构测试防止这三处页面重新定义本地 `MetricCard` 或 `SummaryCard`。"
+  - "不修改页面路由、数据读取、业务文案、后端、依赖或 package/lockfile。"
+status: "done"
+notes: "IM194 已完成：共享 MetricCard 首刀已迁移三处旧页面并补结构测试。"
+```
+
+### US815 - 旧风险不可用页共享 MetricCard 迁移
+
+```yaml
+id: US815
+requirement_ids:
+  - R895
+module: "前端健康恢复"
+role: "开发维护者"
+story: "作为开发维护者，我希望旧排班风险和不可用页面也复用共享 MetricCard，以便相同指标卡形态不继续分散复制。"
+task_type: "frontend-scaffold"
+priority: "P1"
+acceptance:
+  - "`/unavailability`、`/unavailability/[unavailabilityId]`、`/schedule-risks/[riskId]` 改为引用共享 MetricCard。"
+  - "三处页面不再保留本地同构 `MetricCard` 函数。"
+  - "结构测试扩展覆盖这三处页面，防止重新定义本地 MetricCard。"
+  - "不修改共享组件 API、页面路由、数据读取、业务文案、后端、依赖或 package/lockfile。"
+status: "done"
+notes: "已完成。继续沿用 Product Design brief：保持现有 Card 视觉、静态展示、不新增动作。"
 ```
