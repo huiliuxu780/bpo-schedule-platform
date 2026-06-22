@@ -264,5 +264,6 @@ The lab archive is reference material only. Codex must not import from it, wire 
 ## Documentation Rules
 
 - Task progress must update `docs/dev/branch-log.md`.
-- Important scope decisions must update `docs/PROJECT_STATE.md`.
+- Important scope decisions must update `docs/current/PROJECT_CONTEXT.md` and `docs/registry/DECISION_INDEX.yaml` when they affect current execution state or decision lookup.
+- Legacy `docs/PROJECT_STATE.md` is History-On-Demand after the current layer exists; update it only when the active Gate explicitly requires legacy traceability.
 - Done Reports should follow `docs/quality/DONE_REPORT_TEMPLATE.md`.

@@ -62,6 +62,7 @@ required_files=(
   "scripts/shadcn-ui-baseline.json"
   "scripts/verify-backend-runtime.sh"
   "scripts/verify-frontend-native-runtime.mjs"
+  "scripts/tests/check-script-coverage.test.mjs"
   "scripts/tests/check-shadcn-ui.test.mjs"
   "scripts/tests/check-state.test.mjs"
   "scripts/tests/verify-backend-runtime.test.mjs"
@@ -128,7 +129,6 @@ if (( ${#missing_tools[@]} > 0 )); then
 fi
 
 npm run verify:dev-runtime
-npm run test:dev-runtime
 state_check_mode="${BPO_STATE_CHECK_MODE:-strict}"
 case "$state_check_mode" in
   strict)
@@ -146,104 +146,20 @@ case "$state_check_mode" in
     exit 1
     ;;
 esac
-node --test scripts/tests/check-state.test.mjs
-node --test scripts/tests/check-shadcn-ui.test.mjs
-node --test scripts/tests/dashboard-anomaly-table-model.test.mjs
-node --test scripts/tests/dashboard-sync-heatmap-model.test.mjs
-node --test scripts/tests/dashboard-schedule-plan-model.test.mjs
-node --test scripts/tests/dashboard-risk-unavailability-model.test.mjs
-node --test scripts/tests/import-center-format-url-model.test.mjs
-node --test scripts/tests/import-center-batch-summary-model.test.mjs
-node --test scripts/tests/import-center-batch-filter-model.test.mjs
-node --test scripts/tests/import-center-batch-navigation-model.test.mjs
-node --test scripts/tests/import-center-result-navigation-model.test.mjs
-node --test scripts/tests/import-center-result-list-model.test.mjs
-node --test scripts/tests/import-center-result-drilldown-blocker-model.test.mjs
-node --test scripts/tests/import-center-result-drilldown-target-model.test.mjs
-node --test scripts/tests/import-center-comparison-detail-model.test.mjs
-node --test scripts/tests/import-center-comparison-return-model.test.mjs
-node --test scripts/tests/import-center-comparison-review-case-model.test.mjs
-node --test scripts/tests/import-center-exception-impact-model.test.mjs
-node --test scripts/tests/import-center-exception-trace-model.test.mjs
-node --test scripts/tests/import-center-exception-guidance-model.test.mjs
-node --test scripts/tests/import-center-review-conclusion-preview-model.test.mjs
-node --test scripts/tests/import-center-review-evidence-gap-model.test.mjs
-node --test scripts/tests/import-center-review-case-workspace-list-model.test.mjs
-node --test scripts/tests/import-center-review-case-workspace-owner-matrix-model.test.mjs
-node --test scripts/tests/import-center-review-case-workspace-owner-detail-model.test.mjs
-node --test scripts/tests/import-center-review-case-workspace-grouping-model.test.mjs
-node --test scripts/tests/import-center-review-case-acceptance-model.test.mjs
-node --test scripts/tests/product-structure-review-case-processing-path.test.mjs
-node --test scripts/tests/import-center-review-case-detail-context-model.test.mjs
-node --test scripts/tests/import-center-review-case-detail-evidence-model.test.mjs
-node --test scripts/tests/import-center-review-case-detail-timeline-model.test.mjs
-node --test scripts/tests/import-center-review-case-action-deck-summary-model.test.mjs
-node --test scripts/tests/import-center-review-case-action-feedback-navigation-model.test.mjs
-node --test scripts/tests/import-center-review-case-action-write-closure-model.test.mjs
-node --test scripts/tests/import-center-review-case-action-write-supplement-model.test.mjs
-node --test scripts/tests/import-center-version-workbench-list-filter-model.test.mjs
-node --test scripts/tests/import-center-version-workbench-result-link-model.test.mjs
-node --test scripts/tests/import-center-version-candidate-model.test.mjs
-node --test scripts/tests/import-center-version-direct-entry-model.test.mjs
-node --test scripts/tests/import-center-version-result-context-model.test.mjs
-node --test scripts/tests/import-center-version-trigger-model.test.mjs
-node --test scripts/tests/import-center-version-submit-notice-model.test.mjs
-node --test scripts/tests/import-center-version-run-callback-model.test.mjs
-node --test scripts/tests/import-center-version-result-review-model.test.mjs
-node --test scripts/tests/import-center-batch-apply-url-guidance-model.test.mjs
-node --test scripts/tests/import-center-batch-apply-submit-feedback-model.test.mjs
-node --test scripts/tests/import-center-batch-applied-result-model.test.mjs
-node --test scripts/tests/import-center-batch-readiness-model.test.mjs
-node --test scripts/tests/import-center-template-url-model.test.mjs
-node --test scripts/tests/import-center-template-action-model.test.mjs
-node --test scripts/tests/import-center-template-fit-model.test.mjs
-node --test scripts/tests/import-center-upload-model.test.mjs
-node --test scripts/tests/import-center-batch-detail-url-row-model.test.mjs
-node --test scripts/tests/import-center-batch-detail-summary-model.test.mjs
-node --test scripts/tests/import-center-batch-detail-correction-model.test.mjs
-node --test scripts/tests/import-center-model-first-split.test.mjs
-node --test scripts/tests/import-center-summary-split.test.mjs
-node --test scripts/tests/master-data-maintenance-model.test.mjs
-node --test scripts/tests/master-data-maintenance-agent-list-summary-model.test.mjs
-node --test scripts/tests/master-data-maintenance-agent-list-contract-filter-model.test.mjs
-node --test scripts/tests/master-data-maintenance-agent-detail-model.test.mjs
-node --test scripts/tests/master-data-maintenance-agent-import-model.test.mjs
-node --test scripts/tests/master-data-maintenance-agent-action-model.test.mjs
-node --test scripts/tests/master-data-maintenance-reference-list-model.test.mjs
-node --test scripts/tests/master-data-maintenance-reference-action-model.test.mjs
-node --test scripts/tests/master-data-maintenance-reference-detail-model.test.mjs
-node --test scripts/tests/master-data-maintenance-workplace-detail-service-team-model.test.mjs
-node --test scripts/tests/master-data-maintenance-workplace-detail-action-model.test.mjs
-node --test scripts/tests/master-data-maintenance-service-team-detail-model.test.mjs
-node --test scripts/tests/master-data-maintenance-vendor-detail-model.test.mjs
-node --test scripts/tests/master-data-maintenance-workplace-payload-model.test.mjs
-node --test scripts/tests/master-data-model-split.test.mjs
-node --test scripts/tests/master-data-workbench-split.test.mjs
-node --test scripts/tests/actual-log-production-workbench-model.test.mjs
-node --test scripts/tests/actual-log-production-detail-status-model.test.mjs
-node --test scripts/tests/actual-log-production-detail-login-model.test.mjs
-node --test scripts/tests/personnel-schedule-production-workbench-model.test.mjs
-node --test scripts/tests/personnel-schedule-production-detail-model.test.mjs
-node --test scripts/tests/personnel-schedule-production-reference-blocker-model.test.mjs
-node --test scripts/tests/demand-forecast-production-workbench-model.test.mjs
-node --test scripts/tests/demand-forecast-production-detail-model.test.mjs
-node --test scripts/tests/demand-forecast-production-change-trace-model.test.mjs
-node --test scripts/tests/product-structure-app-shell-global.test.mjs
-node --test scripts/tests/product-structure-app-shell-page-layout.test.mjs
-node --test scripts/tests/product-structure-master-data-entry-surface.test.mjs
-node --test scripts/tests/product-structure-master-data-page-shell.test.mjs
-node --test scripts/tests/product-structure-production-wording.test.mjs
-node --test scripts/tests/product-structure-global-shell.test.mjs
-node --test scripts/tests/product-structure-master-data-terminology.test.mjs
-node --test scripts/tests/product-structure-master-data-workplace-vendor.test.mjs
-node --test scripts/tests/product-structure-master-data-agent-reference-detail.test.mjs
-node --test scripts/tests/product-structure-master-data-maintenance-actions.test.mjs
-node --test scripts/tests/product-structure-master-data-agent-workflow.test.mjs
-node --test scripts/tests/product-structure-business-import.test.mjs
-node --test scripts/tests/product-structure-result-chain.test.mjs
+
+script_tests=()
+while IFS= read -r test_file; do
+  script_tests+=("$test_file")
+done < <(find scripts/tests -maxdepth 1 -name '*.test.mjs' -print | sort)
+
+if (( ${#script_tests[@]} == 0 )); then
+  echo "missing scripts/tests/*.test.mjs coverage" >&2
+  exit 1
+fi
+
+node --test "${script_tests[@]}"
 node scripts/check-shadcn-ui.mjs
 bash scripts/verify-backend-runtime.sh
-node --test scripts/tests/verify-backend-runtime.test.mjs
 npm run lint
 npm run typecheck
 npm run build
