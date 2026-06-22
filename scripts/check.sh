@@ -172,6 +172,8 @@ node --test scripts/tests/import-center-review-case-workspace-list-model.test.mj
 node --test scripts/tests/import-center-review-case-workspace-owner-matrix-model.test.mjs
 node --test scripts/tests/import-center-review-case-workspace-owner-detail-model.test.mjs
 node --test scripts/tests/import-center-review-case-workspace-grouping-model.test.mjs
+node --test scripts/tests/import-center-review-case-acceptance-model.test.mjs
+node --test scripts/tests/product-structure-review-case-processing-path.test.mjs
 node --test scripts/tests/import-center-review-case-detail-context-model.test.mjs
 node --test scripts/tests/import-center-review-case-detail-evidence-model.test.mjs
 node --test scripts/tests/import-center-review-case-detail-timeline-model.test.mjs

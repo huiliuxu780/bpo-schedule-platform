@@ -4,6 +4,32 @@
 
 ## Current Audit
 
+### 2026-06-22 - IM236 复核案例处理路径收口
+
+#### 审计结论
+
+- `IM236/US856` 已将复核案例列表和详情页的分散信息收成运营人员可用的处理路径。
+- `/data-quality/review-cases` 新增队列处理路径，展示处理阶段分布、优先处理入口和读取/空队列状态。
+- `/data-quality/review-cases/[caseId]` 总览新增单案例处理路径，展示来源、证据、结论、关闭和续办五步状态。
+- 本轮明确修正了过去把 Codex 思路、Gate、PM 验收矩阵和停机条件写成页面内容的错误：页面只保留运营处理语言，项目治理语言留在规格、测试和报告中。
+- 这次没有新增后端、数据库、schema/migration、依赖、package/lockfile、页面路由、审批、权限、导出、批量、生产公式、结算或收费因子。
+
+#### 风险
+
+- 本轮不是 live UI/API 验收；如需真实 seeded 数据渲染验收，仍需要 PM 允许可达的 `127.0.0.1:8000` review-case API runtime。
+- 页面新增的是处理路径提示，不代表新增审批、转派、重开、导出、批量关闭或生产工作流能力。
+
+#### 验证
+
+- TDD RED：`node --test scripts/tests/import-center-review-case-acceptance-model.test.mjs` 先因新摘要函数缺失失败。
+- GREEN：`node --test scripts/tests/import-center-review-case-acceptance-model.test.mjs` 通过，4/4 tests pass。
+- 结构 RED：`node --test scripts/tests/product-structure-review-case-processing-path.test.mjs` 先因页面未渲染处理路径失败。
+- GREEN：`node --test scripts/tests/product-structure-review-case-processing-path.test.mjs` 通过，2/2 tests pass，并确认页面源码不暴露 Gate/PM 验收/停机条件/审批/导出/批量/权限等治理语言。
+- `bash scripts/check-state.sh --strict`：通过。
+- `git diff --check`：通过。
+- Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh`：通过，包含 strict state、shadcn gate、lint、typecheck、Next build、backend 215 tests OK。
+- 现有 `127.0.0.1:3000` 在 3 秒内未返回；遵守 PM 指令未启动新的测试环境，因此不声称完成 browser smoke。
+
 ### 2026-06-22 - IM235 结构与主数据中等门禁继续拆分
 
 #### 审计结论

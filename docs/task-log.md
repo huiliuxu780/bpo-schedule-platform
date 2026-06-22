@@ -19,6 +19,15 @@
 
 ### 2026-06-22
 
+- task_id: `IM236`
+- source_ids:
+  - `R936`
+- story_ids:
+  - `US856`
+- action: 复核案例处理路径收口。
+- status: `done`
+- notes: 在 Product Design 复盘后，将原“验收闭环面板”收窄为运营人员可用的处理路径。列表页新增队列处理路径，详情页新增单案例处理路径；模型测试覆盖阶段分布、读取受阻、空队列、缺证据、缺结论、可关闭、已关闭和队列已清空；结构测试防止 Gate、PM 验收、停机条件、审批、导出、批量、权限等项目治理语言进入页面。本轮不新增后端、数据库、依赖、package/lockfile、页面路由或生产能力，current queue 与 active tasks 保持清空。
+
 - task_id: `IM235`
 - source_ids:
   - `R935`

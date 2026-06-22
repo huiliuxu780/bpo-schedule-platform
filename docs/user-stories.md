@@ -20,6 +20,29 @@
 status: "draft"
 ```
 
+### US856 - 复核案例处理路径收口
+
+```yaml
+id: US856
+requirement_ids:
+  - R936
+module: "复核案例工作区"
+role: "复核处理人员"
+story: "作为复核处理人员，我希望在复核案例列表和详情页直接看到当前队列或当前案例的处理路径，以便知道先处理哪类案例、当前案例卡在哪一步，以及处理后是否还有同 owner 待办。"
+task_type: "frontend-scaffold"
+priority: "P0"
+acceptance:
+  - "`/data-quality/review-cases` 显示运营人员可理解的队列处理路径，包含阶段分布、优先处理入口和读取/空队列状态。"
+  - "`/data-quality/review-cases/[caseId]` 总览显示单案例处理路径，包含来源、证据、结论、关闭和续办五步状态。"
+  - "无下一条同 owner 待办时表达为当前队列已清空，不作为错误阻塞。"
+  - "结构测试防止页面暴露 Gate、PM 验收、停机条件、审批、导出、批量、权限等项目治理语言。"
+  - "不新增后端、数据库、依赖、package/lockfile、页面路由、审批、权限、导出、批量、自动排班、生产公式、结算或收费因子。"
+dependencies:
+  - "US855"
+status: "done"
+notes: "IM236 已完成：复核案例处理路径已接入列表和详情页，并用模型测试与结构测试约束 UI 语言边界。"
+```
+
 ### US855 - 结构与主数据中等门禁继续拆分
 
 ```yaml
