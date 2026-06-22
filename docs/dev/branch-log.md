@@ -2,6 +2,24 @@
 
 ## 2026-06-22
 
+### H030 Harness Template Export
+
+- branch_name: `codex/im237-harness-review-case-integration`
+- base_main_commit: `36b38a0`
+- stacked_on: `IM237 integration branch after compact Harness governance and review-case processing-path integration`
+- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- scope: PM-confirmed reusable Harness template export. Add a project-neutral `harness-template/` package with template files, bootstrap script, and self-test so other projects can initialize the same current/registry/state-check workflow without copying product history.
+- allowed_files_check: `harness-template/**`, `scripts/tests/harness-template.test.mjs`, `docs/dev/branch-log.md`, and verification files already covered by dynamic `scripts/check.sh`; no business app code, backend/database/schema/migration, package/lockfile, dependency, auth, permission, approval, export, batch, production formula, settlement, or charge-factor changes.
+- scope_diff_check: expected template package and test only; no project state queue seeding, no product implementation, no BPO history copied into generated template output.
+- check_result: TDD RED `node --test scripts/tests/harness-template.test.mjs` first failed because `harness-template/scripts/init-harness.sh` was missing. After implementation, the test initialized a temporary project, verified required Harness files, confirmed placeholder replacement, and passed target `scripts/check-state.sh --strict`. `git diff --check` passed, `bash scripts/check-state.sh --strict` passed with `PROJECT_CONTEXT.md` at 51/160 lines, and final `bash scripts/check.sh` passed with strict state, 433 Node subtests, shadcn check, lint, typecheck, Next build, and backend 215 unittests.
+- local_commit_sha: to be reported in Done Report after local commit creation.
+- integration_status: `not_started`
+- integration_method: `N/A`
+- integration_commit_sha: `N/A`
+- merge_to_main_commit: `N/A`
+- push_decision: `pending PM decision after local commit`
+- blocked_reason: `N/A`
+
 ### IM237 Harness And Review Case Integration
 
 - branch_name: `codex/im237-harness-review-case-integration`
