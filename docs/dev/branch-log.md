@@ -7,17 +7,17 @@
 - branch_name: `codex/review-case-acceptance-block`
 - base_main_commit: `54a8cc5`
 - stacked_on: `codex/im235-structure-maintenance-gate-split`
-- remote_status: `not_pushed; local branch until final check/commit and PM push confirmation.`
+- remote_status: `pushed to origin/codex/review-case-acceptance-block after PM confirmation.`
 - scope: Product Design corrected review-case module block. Add operator-facing queue processing path and single-case processing path to existing review-case workspaces while keeping Codex/Gate/PM acceptance language out of product UI.
 - allowed_files_check: `components/import-center-types.ts`, `components/import-center-review-model.ts`, `components/import-center-model.ts`, `components/import-center-review-cases-workspace.tsx`, `components/import-center-review-case-detail-workspace.tsx`, new focused tests, `scripts/check.sh`, current Harness files, raw requirements, user stories, task log, audit report, project state, backlog, and this branch-log entry only.
 - scope_diff_check: expected processing-path model summaries, compact existing-shadcn UI sections, model/structure tests, check wiring, and traceability updates only; no backend, database, schema/migration, dependency, package/lockfile, new route, approval, permission, export, batch operation, automatic scheduling, production formula, settlement, or charge-factor changes. Product UI must not expose Gate, PM acceptance matrix, stop conditions, or non-goal governance copy.
 - check_result: TDD RED `node --test scripts/tests/import-center-review-case-acceptance-model.test.mjs` first failed because new summary functions were missing. Structure RED `node --test scripts/tests/product-structure-review-case-processing-path.test.mjs` first failed because the UI did not render processing path sections. GREEN focused model + structure tests passed with 6/6 tests. `bash scripts/check-state.sh --strict` passed, `git diff --check` passed, and final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with strict state, shadcn gate, lint, typecheck, Next build, and backend 215 tests OK. Existing `127.0.0.1:3000` did not return within 3 seconds, so no browser smoke was claimed and no new environment was started.
-- local_commit_sha: to be reported in Done Report after local commit creation.
+- local_commit_sha: `bc8b7b9`
 - integration_status: `not_started`
 - integration_method: `N/A`
 - integration_commit_sha: `N/A`
 - merge_to_main_commit: `N/A`
-- push_decision: `pending PM decision after local commit`
+- push_decision: `PM confirmed push; pushed to origin/codex/review-case-acceptance-block`
 - blocked_reason: `N/A`
 
 ### IM235 Structure And Maintenance Gate Split
