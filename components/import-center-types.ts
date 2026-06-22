@@ -932,6 +932,48 @@ export type ImportReviewCaseActionRetrySummary = {
   actionLabel: string
 }
 
+export type ImportReviewCaseAcceptanceStageCoverage = {
+  key: Exclude<ImportReviewCaseProcessingStageKey, "all">
+  label: string
+  count: number
+}
+
+export type ImportReviewCaseAcceptanceBlockSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  statusLabel: string
+  detail: string
+  primaryActionLabel: string
+  primaryHref: string
+  stageCoverage: ImportReviewCaseAcceptanceStageCoverage[]
+  nextAction: string
+}
+
+export type ImportReviewCaseDetailAcceptanceStepKey =
+  | "source"
+  | "evidence"
+  | "conclusion"
+  | "closure"
+  | "continuation"
+
+export type ImportReviewCaseDetailAcceptanceStep = {
+  key: ImportReviewCaseDetailAcceptanceStepKey
+  label: string
+  statusLabel: string
+  detail: string
+}
+
+export type ImportReviewCaseDetailAcceptanceSummary = {
+  tone: ImportReviewCaseDetailTone
+  title: string
+  statusLabel: string
+  detail: string
+  primaryActionLabel: string
+  primaryHref: string
+  steps: ImportReviewCaseDetailAcceptanceStep[]
+  nextAction: string
+}
+
 export type ImportReviewCaseClosureActionSummary = {
   tone: ImportReviewCaseDetailTone
   title: string
