@@ -12,11 +12,11 @@
 - scope: PM-confirmed integration Gate. Bring the compact Harness state-governance pass and the IM220-IM236 product/test-gate chain onto one branch, preserving the empty-current-queue rule, dynamic script-test gate, and review-case processing-path UI/model work.
 - allowed_files_check: merge result from `codex/harness-state-hygiene` plus `codex/review-case-acceptance-block`; conflict edits limited to `docs/current/PROJECT_CONTEXT.md`, `docs/dev/branch-log.md`, and `scripts/check.sh`. `.local/` and `.qoder/` remain untracked and untouched.
 - scope_diff_check: expected merge integration only; no new product behavior beyond the merged branches, no package/lockfile changes, no backend/database/schema/migration expansion, no auth, permissions, approval, export, batch operation, automatic scheduling, formula, settlement, or charge-factor scope.
-- check_result: pending final verification after conflict resolution.
-- local_commit_sha: to be reported in Done Report after local commit creation
-- integration_status: `in_progress`
+- check_result: Conflict-resolution verification passed: `bash scripts/check-state.sh --strict`, `bash scripts/check-state.sh --repair-scope`, and `git diff --check` passed. Final `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` passed with dynamic Node script tests, shadcn check, lint, typecheck, Next build, and backend 215 tests OK.
+- local_commit_sha: `417963a`
+- integration_status: `verified; trace follow-up pending local commit`
 - integration_method: `merge codex/review-case-acceptance-block into codex/harness-state-hygiene-derived integration branch`
-- integration_commit_sha: `pending`
+- integration_commit_sha: `417963a`
 - merge_to_main_commit: `N/A`
 - push_decision: `pending PM decision after local commit`
 - blocked_reason: `N/A`
