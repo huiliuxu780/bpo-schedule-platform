@@ -399,7 +399,81 @@ Return:
 - Future seed extension recommendation.
 - Confirmation that no backend code was changed and no runtime was started.
 
-## 11. Unblock Path
+## 11. Future Gate: Review Case Stage Seed Extension (Draft, Not Confirmed)
+
+> This section is a **design draft** for a potential future task. It is not a confirmed Gate, not in `docs/current/**`, and not in `tasks/backlog.yaml`. PM must explicitly confirm before any implementation begins.
+
+### 11.1 Why Seed Extension Is Needed
+
+The current `seed_review_case_demo()` creates a single case (`CASE-QUERY-001`) that covers only `ready_to_close`. The review-case list workspace supports four processing-stage filters (`missing_evidence`, `missing_conclusion`, `ready_to_close`, `closed`), but live runtime acceptance can only verify one of them with existing seed data.
+
+Without extension, PM live acceptance of the other three stage filters will always show empty results, which cannot distinguish between "filter works correctly and returns zero matches" and "filter is broken."
+
+### 11.2 Target Coverage
+
+| Processing Stage | Current Coverage | Extension Needed? |
+| --- | --- | --- |
+| `missing_evidence` | No case exists with zero evidence | Yes — new case with case record only |
+| `missing_conclusion` | No case exists with evidence but zero conclusions | Yes — new case with case + 1 evidence |
+| `ready_to_close` | `CASE-QUERY-001` already covers this | No |
+| `closed` | No case exists with a closure record | Yes — new case with full records + `ReviewClosureInput` |
+
+### 11.3 Proposed Seed Extension Cases
+
+| Case ID | Stage | Records | Construction |
+| --- | --- | --- | --- |
+| `CASE-SEED-ME-001` | `missing_evidence` | Case only (status=open, no evidence, no conclusion) | `repository.create_review_case(ReviewCaseCreateRequest(...))` with valid `source_result_id` from `_ensure_forecast_schedule_result()` |
+| `CASE-SEED-MC-001` | `missing_conclusion` | Case + 1 evidence (status=open, 1 evidence, no conclusion) | `create_review_case()` + `add_evidence()` |
+| `CASE-SEED-CL-001` | `closed` | Case + 1 evidence + 1 conclusion + closure record | `write_review_closure(ReviewClosureWriteRequest(case=..., evidence=[...], conclusions=[...], closure=ReviewClosureInput(...)))` |
+
+All three cases share the same `source_result_id` from `_ensure_forecast_schedule_result()` (idempotent).
+
+### 11.4 Allowed Files (When Implemented)
+
+If PM confirms this task in the future:
+
+- `backend/app/review_demo_seed.py` — add new seed function (e.g. `seed_review_case_stage_matrix()`)
+- `backend/tests/test_review_demo_seed.py` — add tests for new seed function idempotency and stage coverage
+
+### 11.5 Forbidden Files and Behaviors (When Implemented)
+
+- No changes to `backend/app/review_persistence.py`, `review_closure.py`, `review_evidence.py`, `review_conclusion.py`, or `main.py`
+- No changes to `app/**`, `components/**`, `hooks/**`, `lib/**`
+- No changes to `scripts/check.sh` or test gate configuration
+- No changes to `package.json`, lockfiles, or dependencies
+- No database schema changes or migrations
+- No approval, permission, export, batch operations, production formulas, settlement rules, or charge factors
+- No auto-startup hooks (`lifespan`, `on_event("startup")`) that would run seed without explicit PM confirmation
+
+### 11.6 Future Acceptance Commands (Candidates)
+
+These are candidates for when the seed extension is implemented and a PM-confirmed runtime is available:
+
+- `node --test scripts/tests/import-center-review-case-*.test.mjs` — frontend model tests (no runtime needed)
+- `python -m unittest backend.tests.test_review_demo_seed -v` — seed unit tests (no runtime needed)
+- `BPO_NODE22_BIN=/opt/homebrew/opt/node@22/bin bash scripts/check.sh` — full gate (no runtime needed)
+- Smoke sequence from Section 6 — live runtime acceptance (PM-confirmed runtime required)
+
+### 11.7 Stop Conditions
+
+- Seed extension fails to create expected cases or breaks existing `CASE-QUERY-001` idempotency.
+- New seed function introduces side effects outside `review_demo_seed.py`.
+- Backend unit tests fail after seed extension.
+- `bash scripts/check.sh` fails after seed extension.
+- PM does not confirm backend runtime availability for live acceptance.
+- Any change requires new dependencies, database migration, or schema changes.
+
+### 11.8 PM Decision Points
+
+PM must decide:
+
+1. **Accept partial runtime smoke now**: Run only Steps 1-4 and Step 5a (Section 6) with the current seed. The three uncovered stage filters (`missing_evidence`, `missing_conclusion`, `closed`) remain unverified in live acceptance and are explicitly deferred.
+
+2. **Extend seed first, then do full runtime acceptance**: Confirm the seed extension task, implement the three additional cases, re-run `bash scripts/check.sh`, then execute the full smoke sequence (Steps 1-6) including all stage filters.
+
+3. **Defer seed extension indefinitely**: Accept that live runtime acceptance covers only `ready_to_close`, and rely on the existing automated unit test surface (17 frontend test files + backend test suite) for the other three stages.
+
+## 12. Unblock Path
 
 If PM wants to proceed with this acceptance:
 
