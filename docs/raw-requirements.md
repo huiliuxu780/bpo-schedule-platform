@@ -15,6 +15,19 @@
 notes: "补充说明"
 ```
 
+### R939 - 复核案例 Live Runtime Smoke
+
+```yaml
+id: R939
+module: "复核案例工作区"
+description: "IM238 已定义 live runtime 验收边界，IM239 已补齐四阶段 stage matrix seed。现在 PM 确认可以启动本地 runtime，允许默认端口被占用时换端口。需要用隔离本地数据库执行 live smoke，验证复核案例列表、详情、四阶段 processing-stage filter 和 URL feedback 在真实前后端运行下可用。"
+source: "PM 确认：确认，或者换个端口"
+submitted_at: "2026-06-24"
+version: "1.0"
+status: "done"
+notes: "IM240 已完成本地 runtime smoke：隔离数据库 `.local/im240-runtime-smoke.db` 加载 stage matrix seed，backend 使用 `127.0.0.1:8000`，frontend 使用 `127.0.0.1:3002`；列表、详情、四阶段 filter 和三类 URL feedback 均返回 200 且命中预期内容。本需求未新增业务功能、API route、schema/migration、依赖、权限、审批、导出、批量或生产规则。"
+```
+
 ### R938 - 复核案例阶段 Seed Matrix
 
 ```yaml

@@ -470,7 +470,52 @@ PM must decide:
 
 3. **Add automation before runtime**: Define a separate task for an executable smoke script; do not add it inside IM239.
 
-## 12. Unblock Path
+## 12. Runtime Smoke Evidence (IM240)
+
+This section records the PM-confirmed local runtime smoke. It is local runtime evidence only; it does not claim production readiness, write-action acceptance, permission coverage, PR merge readiness, or external integration readiness.
+
+### 12.1 Runtime Setup
+
+- Branch: `codex/im237-harness-review-case-integration`
+- Database: isolated `.local/im240-runtime-smoke.db`
+- Seed call: explicit `seed_review_case_stage_matrix()`
+- Backend: `http://127.0.0.1:8000`
+- Frontend: `http://127.0.0.1:3002`
+- Port note: existing BPO Next dev on `3000` was stale and unresponsive while holding `.next/dev/lock`; it was stopped before starting frontend on `3002`. `3001` belonged to `wikinode-studio` and was left untouched.
+
+### 12.2 Seed Evidence
+
+| Case ID | Status | Evidence | Conclusions | Closure |
+| --- | --- | ---: | ---: | --- |
+| `CASE-QUERY-001` | `open` | 1 | 1 | false |
+| `CASE-SEED-ME-001` | `open` | 0 | 0 | false |
+| `CASE-SEED-MC-001` | `open` | 1 | 0 | false |
+| `CASE-SEED-CL-001` | `open` | 1 | 1 | true |
+
+### 12.3 Smoke Checks
+
+| Check | Result |
+| --- | --- |
+| `GET /docs` | 200 |
+| `GET /api/v1/review-cases` | 200 and contains all four seed case IDs |
+| `/data-quality/review-cases` | 200 and contains all four seed case IDs |
+| `/data-quality/review-cases/CASE-QUERY-001` | 200 and contains `CASE-QUERY-001` plus `可关闭` |
+| `?processingStage=ready_to_close` | 200 and contains `CASE-QUERY-001` |
+| `?processingStage=missing_evidence` | 200 and contains `CASE-SEED-ME-001` |
+| `?processingStage=missing_conclusion` | 200 and contains `CASE-SEED-MC-001` |
+| `?processingStage=closed` | 200 and contains `CASE-SEED-CL-001` |
+| `?evidence=failed` | 200 and contains `补证据提交失败` |
+| `?conclusion=failed` | 200 and contains `补结论提交失败` |
+| `?closure=success` | 200 and contains `关闭案例提交成功` |
+
+### 12.4 Non-Goals Preserved
+
+- No POST write-action smoke.
+- No product UI, backend implementation, API route, schema, dependency, or package/lockfile changes.
+- No production readiness claim.
+- No permission, approval, export, batch-operation, production formula, settlement, or charge-factor coverage.
+
+## 13. Unblock Path
 
 If PM wants to proceed with this acceptance:
 
