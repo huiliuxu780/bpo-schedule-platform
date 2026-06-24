@@ -26,7 +26,7 @@
   - `US857`
 - action: 复核案例 live runtime 验收准备入队。
 - status: `ready`
-- notes: Qoder 只读梳理复核案例 runtime 入口后，Codex 将其正规化为 R937/US857/IM238，并 seed 到 current story queue 与 active task。当前任务只允许完善 preflight 文档和 Harness traceability；不启动 8000，不执行 live seeded 验收，不修改业务 UI、组件、后端、数据库、依赖或 package/lockfile。真正 runtime 验收、seed 扩展或自动化 smoke 需要 PM 确认 Gate Plan 后另行执行。
+- notes: Qoder 只读梳理复核案例 runtime 入口后，Codex 将其正规化为 R937/US857/IM238，并 seed 到 current story queue 与 active task。当前任务只允许完善 preflight 文档和 Harness traceability；不启动 8000，不执行 live seeded 验收，不修改业务 UI、组件、后端、数据库、依赖或 package/lockfile。Packet D 已把未来 seed extension Gate 草案写入 preflight 文档，明确当前 seed 只覆盖 `ready_to_close`，其余三个 processing stage 需 PM 另行确认后才可实现或验收。真正 runtime 验收、seed 扩展或自动化 smoke 需要 PM 确认 Gate Plan 后另行执行。
 
 ### 2026-06-22
 
